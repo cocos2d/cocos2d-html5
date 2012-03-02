@@ -110,31 +110,36 @@ CCRect.CCRectEqualToRect = function(rect1, rect2)
 
 };
 
+//! return the rightmost x-value of 'rect'
 CCRect.CCrectGetMaxX = function(rect)
 {
     return (rect.origin.x + rect.size.width);
 };
 
+//! return the midpoint x-value of 'rect'
 CCRect.CCRectGetMidX = function(rect)
 {
     return ((rect.origin.x +rect.size.width)/2.0);
 };
-
+//! return the leftmost x-value of 'rect'
 CCRect.CCRectGetMinX = function(rect)
 {
     return rect.origin.x;
 };
 
+//! Return the topmost y-value of `rect'
 CCRect.CCRectGetMaxY = function(rect)
 {
     return(rect.origin.y+rect.size.height);
 };
 
+//! Return the midpoint y-value of `rect'
 CCRect.CCRectGetMidY = function(rect)
 {
     return ((rect.origin.y+rect.size.height)/2.0);
 };
 
+//! Return the bottommost y-value of `rect'
 CCRect.CCGetRectMinY = function(rect)
 {
     return rect.origin.y;
@@ -176,7 +181,12 @@ function CCRectMake(x, y, width, height)
 }
 CC.CCRectMake = CCRectMake;
 
+/* The "left bottom" point -- equivalent to CCPointMake(0, 0). */
 CC.CCPointZero = new CCPoint(0,0);
+
+/* The "zero" size -- equivalent to CCSizeMake(0, 0). */
 CC.CCSizeZero = new CCSize(0,0);
+
+/* The "zero" rectangle -- equivalent to CCRectMake(0, 0, 0, 0). */
 CC.CCRectZero = new CCRect(0,0,0,0);
 
