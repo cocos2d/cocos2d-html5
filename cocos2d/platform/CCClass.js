@@ -71,8 +71,8 @@ THE SOFTWARE.
         // The dummy Class constructor
         function CCClass() {
             // All construction is actually done in the init method
-            if ( !initializing && this.init )
-                this.init.apply(this, arguments);
+            if ( !initializing && this.ctor )
+                this.ctor.apply(this, arguments);
         }
 
         // Populate our constructed prototype object
