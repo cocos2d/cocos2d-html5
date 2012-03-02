@@ -195,7 +195,7 @@ var CCScheduler = CCClass.extend({
     _removeUpdateFromHash:function(entry){
         var element = new tHashUpdateEntry(null,null,null,null);
 
-        //TODO 分配内存然后从Hashtable中查找element,找到就清除它
+        //TODO
         //HASH_FIND_INT(m_pHashForUpdates, &entry->target, element);
         if(element!=null){
             //list entry
@@ -478,7 +478,7 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     unscheduleSelector:function(pfnSelector,pTarget){
-        //TODO 这里的i索引值需要认真对待一下
+        //TODO
         // explicity handle nil arguments when removing an object
         if((pTarget == null) || (pfnSelector == null)){
             return;
