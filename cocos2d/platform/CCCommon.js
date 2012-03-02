@@ -64,11 +64,17 @@ CC.kLanguageGerman = 4;
 CC.kLanguageSpanish = 5;
 CC.kLanguageRussian = 6;
 
+/**
+ @brief Output Debug message.
+ */
 function CCLog(message)
 {
     console.log(message);
 }
 
+/**
+ @brief Pop out a message box
+ */
 function CCMessageBox(message)
 {
     console.log(message);
