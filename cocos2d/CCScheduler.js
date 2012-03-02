@@ -65,8 +65,7 @@ function tHashScriptFuncEntry(timer,paused,funcName,hh){
 /** @brief Light weight timer */
 var CCTimer = CCClass.extend({
     m_fInterval:0.0,
-    m_scriptFunc:"",
-    m_pfnSelector:null,
+    m_pfnSelector:"",
 
     m_pTarget:null,
     m_fElapsed:0.0,
@@ -107,17 +106,6 @@ var CCTimer = CCClass.extend({
         }
     },
 
-    /**
-     *
-     */
-    initWithScriptFuncName:function(pszFuncName,fSecond){
-        this.m_scriptFunc = pszFuncName;
-        this.m_fInterval = fSecond;
-        this.m_fElapsed = -1;
-
-        return true;
-    },
-
     /** triggers the timer
      * @param {float} dt
      * */
@@ -130,8 +118,6 @@ var CCTimer = CCClass.extend({
 
         if(this.m_fElapsed >= this.m_fInterval){
             if(this.m_pfnSelector != null){
-                //TODO Need to Test
-                //(m_pTarget->*m_pfnSelector)(m_fElapsed);
                 this.m_pTarget[this.m_pfnSelector](this.m_fElapsed);
                 this.m_fElapsed = 0;
             }
@@ -161,21 +147,6 @@ CCTimer.timerWithTarget = function(pTarget,pfnSelector,fSeconds){
         return pTimer;
     }
 }
-
-/** Allocates a timer with a script function name.
- *
- * @param pszFuncName function Name
- * @param fSecond Second
- *
- * @return a CCTimer instance
- * */
-CCTimer.timerWithScriptFuncName = function(pszFuncName,fSecond){
-    var pTimer = new CCTimer();
-    pTimer.initWithScriptFuncName(pszFuncName,fSecond);
-
-    return pTimer;
-}
-
 
 CC._pSharedScheduler = null;
 /** @brief Scheduler is responsible of triggering the scheduled callbacks.
@@ -471,26 +442,6 @@ var CCScheduler = CCClass.extend({
         //pTimer.release();
     },
 
-    /** Schedule the script function
-     */
-    scheduleScriptFunc:function(pszFuncName,fInterval,bPaused){
-        //TODO
-        ////CCAssert(pfnSelector);
-        //CCAssert(pszFuncName, "");
-
-        var pElement = null;
-        //HASH_FIND_INT(m_pHashForScriptFunctions, &pszFuncName, pElement);
-
-        if(pElement == null){
-            var timer = new CCTimer();
-            timer.initWithScriptFuncName(pszFuncName,fInterval);
-            pElement = new tHashScriptFuncEntry(timer,bPaused,pszFuncName,null);
-            //HASH_ADD_INT(m_pHashForScriptFunctions, funcName, pElement);
-        }else{
-            //CCAssert(pElement->paused == bPaused, "");
-        }
-    },
-
     /** Schedules the 'update' selector for a given target with a given priority.
      The 'update' selector will be called every frame.
      The lower the priority, the earlier it is called.
@@ -565,25 +516,6 @@ var CCScheduler = CCClass.extend({
                     return;
                 }
             }
-        }
-    },
-
-    /** Unschedule the script function
-     */
-    unscheduleScriptFunc:function(pszFuncName){
-        //TODO
-        //explicity handle nil arguments when removing an object
-        if(pszFuncName == undefined || pszFuncName == ''){
-            return;
-        }
-
-        var pElement = null;
-        //HASH_FIND_INT(m_pHashForScriptFunctions, &pszFuncName, pElement);
-        if(pElement!= null){
-            //pElement.timer.release();
-
-            //HASH_DEL(m_pHashForScriptFunctions, pElement);
-            pElement = null;
         }
     },
 
