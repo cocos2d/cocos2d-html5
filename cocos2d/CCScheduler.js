@@ -195,7 +195,7 @@ var CCScheduler = CCClass.extend({
     _removeUpdateFromHash:function(entry){
         var element = new tHashUpdateEntry(null,null,null,null);
 
-        //TODO 分配内存然后从Hashtable中查找element,找到就清除它
+        //TODO
         //HASH_FIND_INT(m_pHashForUpdates, &entry->target, element);
         if(element!=null){
             //list entry
