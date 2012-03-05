@@ -81,7 +81,7 @@ CC.kCCNodeTagInvalid = -1;
  - Each node has a camera. By default it points to the center of the CCNode.
  */
 
-var CCNode = CCClass.extend({
+CC.CCNode = CC.Class.extend({
     m_nZOrder:0,
     m_fVertexZ:0.0,
     m_fRotation:0.0,
@@ -114,31 +114,30 @@ var CCNode = CCClass.extend({
     m_tTransform:null,
     m_tInverse:null,
     m_pTransformGL:null,
-    m_bIsTransformDirty:null,
-    m_bIsInverseDirty:null,
 
     ctor:function () {
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this.m_bIsTransformGLDirty = true;
         }
         if(CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX){
-            this.m_pTransformGL = new GLfloat();
+            this.m_pTransformGL = new CC.GLfloat();
         }
     },
-    arrayMakeObjectsPerformSelector:function (pArray, func) {
+    _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if (pArray && pArray.count() > 0) {
-            var child;
-            CCARRAY_FOREACH(pArray, child)
+            var child = new Object();
+            for(child in pArray)
             {
                 var pNode = child;
                 if (pNode && (0 != func)) {
                     (pNode.func)();
                 }
             }
+
         }
     },
     getSkewX:function () {
-        return m_fSkewX;
+        return this.m_fSkewX;
     },
     setSkewX:function (newSkewX) {
         this.m_fSkewX = newSkewX;
@@ -148,11 +147,11 @@ var CCNode = CCClass.extend({
         }
     },
     getSkewY:function () {
-        return this.m_fSkewY;
         this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this.m_bIsTransformGLDirty = true;
         }
+        return this.m_fSkewY;
     },
     setSkewY:function (newSkewY) {
         this.m_fSkewY = newSkewY;
@@ -163,7 +162,7 @@ var CCNode = CCClass.extend({
     },
     // zOrder setter : private method
     // used internally to alter the zOrder variable. DON'T call this method manually
-    setZOrder:function (z) {
+    _setZOrder:function (z) {
         this.m_nZOrder = z
     },
     // ertexZ getter
@@ -396,7 +395,7 @@ var CCNode = CCClass.extend({
      @since v0.8.2
      */
     boundingBox:function () {
-        var ret = new CCRect();
+        var ret = new CC.CCRect();
         ret = this.boundingBoxInPixels();
         return CC.CC_RECT_PIXELS_TO_POINTS(ret);
     },
@@ -407,7 +406,7 @@ var CCNode = CCClass.extend({
      @since v0.99.5
      */
     boundingBoxInPixels:function () {
-        var rect = new CCRect();
+        var rect = new CC.CCRect();
         rect = CC.CCRectMake(0, 0, this.m_tContentSizeInPixels.width, this.m_tContentSizeInPixels.height);
         return CC.CCRectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
@@ -415,7 +414,7 @@ var CCNode = CCClass.extend({
      The node will be created as "autorelease".
      */
     node:function () {
-        var pRet = new CCNode();
+        var pRet = new CC.CCNode();
         pRet.autorelease();
         return pRet;
     },
@@ -428,14 +427,14 @@ var CCNode = CCClass.extend({
         this.unscheduleAllSelectors();
 
         // timers
-        this.arrayMakeObjectsPerformSelector(this.m_pChildren, this.cleanup());
+        this._arrayMakeObjectsPerformSelector(this.m_pChildren, this.cleanup());
     },
     description:function () {
         var ret = "<CCNode | Tag =" + this.m_nTag + ">";
         return ret;
     },
-    childrenAlloc:function () {
-        this.m_pChildren = CC.CCArray.arrayWithCapacity(4);
+    _childrenAlloc:function () {
+        this.m_pChildren = [];
         this.m_pChildren.retain();
     },
     // composition: GET
@@ -446,8 +445,8 @@ var CCNode = CCClass.extend({
     getChildByTag:function (aTag) {
         CC.CCAssert(aTag != CC.kCCNodeTagInvalid, "Invalid tag");
         if (this.m_pChildren && this.m_pChildren.count() > 0) {
-            var child = new CCObject();
-            CC.CCARRAY_FOREACH(this.m_pChildren, child)
+            var child = new Object();
+            for(child in this.m_pChildren)
             {
                 var pNode = new child();
                 if (pNode && pNode.m_nTag == aTag)
@@ -485,14 +484,14 @@ var CCNode = CCClass.extend({
          If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
          @since v0.7.1
          */
-            case 3:
+            case 3:new CCNode()
                 CC.CCAssert(child != null, "Argument must be non-nil");
                 CC.CCAssert(child.m_pParent == null, "child already added. It can't be added again");
 
                 if (!this.m_pChildren) {
-                    this.childrenAlloc();
+                    this._childrenAlloc();
                 }
-                this.insertChild(child, zOrder);
+                this._insertChild(child, zOrder);
                 child.m_nTag = tag;
                 child.setParent(this);
                 if (this.m_bIsRunning) {
@@ -529,7 +528,7 @@ var CCNode = CCClass.extend({
         }
 
         if (this.m_pChildren.containsObject(child)) {
-            this.detachChild(child, cleanup);
+            this._detachChild(child, cleanup);
         }
     },
     /** Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter
@@ -552,8 +551,8 @@ var CCNode = CCClass.extend({
     removeAllChildrenWithCleanup:function (cleanup) {
         // not using detachChild improves speed here
         if (this.m_pChildren && this.m_pChildren.count() > 0) {
-            var child;
-            CC.CCARRAY_FOREACH(this.m_pChildren, child)
+            var child = new Object();
+            for(child in this.m_pChildren)
             {
                 var pNode = child;
                 if (pNode) {
@@ -563,7 +562,6 @@ var CCNode = CCClass.extend({
                     if (this.m_bIsRunning) {
                         pNode.onExit();
                     }
-
                     if (cleanup) {
                         pNode.cleanup();
                     }
@@ -571,11 +569,10 @@ var CCNode = CCClass.extend({
                     pNode.setParent(null);
                 }
             }
-
             this.m_pChildren.removeAllObjects();
         }
     },
-    detachChild:function (child, doCleanup) {
+    _detachChild:function (child, doCleanup) {
         // IMPORTANT:
         //  -1st do onExit
         //  -2nd cleanup
@@ -595,15 +592,15 @@ var CCNode = CCClass.extend({
         this.m_pChildren.removeObject(child);
     },
     // helper used by reorderChild & add
-    insertChild:function (child, z) {
+    _insertChild:function (child, z) {
         var index = 0;
         var a = this.m_pChildren.lastObject();
         if (!a || a.getZOrder() <= z) {
             this.m_pChildren.addObject(child);
         }
         else {
-            var pObject;
-            CC.CCARRAY_FOREACH(ths.m_pChildren, pObject)
+            var pObject = new Object();
+            for(pObject in this.m_pChildren)
             {
                 var pNode = pObject;
                 if (pNode && (pNode.m_nZOrder > z )) {
@@ -612,7 +609,7 @@ var CCNode = CCClass.extend({
                 index++;
             }
         }
-        child.setZOrder(z);
+        child._setZOrder(z);
     },
     /** Reorders a child according to a new z value.
      * The child MUST be already added.
@@ -623,7 +620,7 @@ var CCNode = CCClass.extend({
         child.retain();
         this.m_pChildren.removeObject(child);
 
-        this.insertChild(child, zOrder);
+        this._insertChild(child, zOrder);
         child.release();
     },
     // draw
@@ -651,7 +648,8 @@ var CCNode = CCClass.extend({
         if (!this.m_bIsVisible) {
             return;
         }
-        glPushMatrix();
+        //TODO
+        //glPushMatrix();
 
         if (this.m_pGrid && this.m_pGrid.isActive()) {
             this.m_pGrid.beforeDraw();
@@ -665,7 +663,7 @@ var CCNode = CCClass.extend({
 
         if (this.m_pChildren && this.m_pChildren.count() > 0) {
             // draw children zOrder < 0
-            var arrayData = new CC.ccArray();
+            var arrayData = [];
             arrayData = this.m_pChildren.data;
             for (; i < arrayData.num; i++) {
                 pNode = arrayData.arr[i];
@@ -684,7 +682,7 @@ var CCNode = CCClass.extend({
 
         // draw children zOrder >= 0
         if (this.m_pChildren && this.m_pChildren.count() > 0) {
-            var arrayData = new CC.ccArray();
+            var arrayData = [];
             arrayData = this.m_pChildren.data;
             for (; i < arrayData.num; i++) {
                 pNode = arrayData.arr[i];
@@ -697,8 +695,8 @@ var CCNode = CCClass.extend({
         if (this.m_pGrid && this.m_pGrid.isActive()) {
             this.m_pGrid.afterDraw(this);
         }
-
-        glPopMatrix();
+        //TODO
+        //glPopMatrix();
     },
     /** performs OpenGL view-matrix transformation of it's ancestors.
      Generally the ancestors are already transformed, but in certain cases (eg: attaching a FBO)
@@ -721,15 +719,16 @@ var CCNode = CCClass.extend({
             // BEGIN alternative -- using cached transform
             //
             if (this.m_bIsTransformGLDirty) {
-                var t = new CCAffineTransform();
+                var t = new CC.CCAffineTransform();
                 t = this.nodeToParentTransform();
-                CGAffineToGL(t, this.m_pTransformGL);
+                CC.CGAffineToGL(t, this.m_pTransformGL);
                 this.m_bIsTransformGLDirty = false;
             }
-
-            glMultMatrixf(this.m_pTransformGL);
+            //TODO
+            //glMultMatrixf(this.m_pTransformGL);
             if (this.m_fVertexZ) {
-                glTranslatef(0, 0, this.m_fVertexZ);
+                //TODO
+                //glTranslatef(0, 0, this.m_fVertexZ);
             }
 
             // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
@@ -737,13 +736,15 @@ var CCNode = CCClass.extend({
                 var ranslate = (this.m_tAnchorPointInPixels.x != 0.0 || this.m_tAnchorPointInPixels.y != 0.0);
 
                 if (translate) {
-                    ccglTranslate(RENDER_IN_SUBPIXEL(this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this.m_tAnchorPointInPixels.y), 0);
+                    //TODO
+                    //CC.ccglTranslate(RENDER_IN_SUBPIXEL(this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this.m_tAnchorPointInPixels.y), 0);
                 }
 
                 this.m_pCamera.locate();
 
                 if (translate) {
-                    ccglTranslate(RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.y), 0);
+                    //TODO
+                    //CC.ccglTranslate(RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.y), 0);
                 }
             }
 
@@ -754,38 +755,46 @@ var CCNode = CCClass.extend({
             // BEGIN original implementation
             //
             // translate
-            if (this.m_bIsRelativeAnchorPoint && (this.m_tAnchorPointInPixels.x != 0 || this.m_tAnchorPointInPixels.y != 0 ))
-                glTranslatef(RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.y), 0);
-
-            if (this.m_tAnchorPointInPixels.x != 0 || this.m_tAnchorPointInPixels.y != 0)
-                glTranslatef(RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.x + this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.y + this.m_tAnchorPointInPixels.y), m_fVertexZ);
-            else if (this.m_tPositionInPixels.x != 0 || this.m_tPositionInPixels.y != 0 || m_fVertexZ != 0)
-                glTranslatef(RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.x), RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.y), this.m_fVertexZ);
-
+            if (this.m_bIsRelativeAnchorPoint && (this.m_tAnchorPointInPixels.x != 0 || this.m_tAnchorPointInPixels.y != 0 )) {
+                //TODO
+                //CC.glTranslatef(RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.y), 0);
+            }
+            if (this.m_tAnchorPointInPixels.x != 0 || this.m_tAnchorPointInPixels.y != 0){
+                //TODO
+                //CC.glTranslatef(RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.x + this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.y + this.m_tAnchorPointInPixels.y), this.m_fVertexZ);
+            }
+            else if (this.m_tPositionInPixels.x != 0 || this.m_tPositionInPixels.y != 0 || this.m_fVertexZ != 0){
+                //TODO
+                //CC.glTranslatef(RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.x), RENDER_IN_SUBPIXEL(this.m_tPositionInPixels.y), this.m_fVertexZ);
+            }
             // rotate
-            if (m_fRotation != 0.0)
-                glRotatef(-this.m_fRotation, 0.0, 0.0, 1.0);
+            if (this.m_fRotation != 0.0)
+            //TODO
+            //glRotatef(-this.m_fRotation, 0.0, 0.0, 1.0);
 
             // skew
-            if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
-                var skewMatrix = new CCAffineTransform();
-                skewMatrix = CCAffineTransformMake(1.0, Math.tan(CC_DEGREES_TO_RADIANS(skewY_)), Math.tan(CC_DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
-                new glMatrix = GLfloat();
-                CCAffineToGL(skewMatrix, glMatrix);
-                glMultMatrixf(glMatrix);
-            }
+                if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
+                    var skewMatrix = new CC.CCAffineTransform();
+                    skewMatrix = CCAffineTransformMake(1.0, Math.tan(CC_DEGREES_TO_RADIANS(skewY_)), Math.tan(CC_DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
+                    //TODO
+                    // glMatrix = new GLfloat();
+                    CCAffineToGL(skewMatrix, glMatrix);
+                    //TODO
+                    // glMultMatrixf(glMatrix);
+                }
 
             // scale
-            if (this.m_fScaleX != 1.0 || this.m_fScaleY != 1.0)
-                glScalef(this.m_fScaleX, this.m_fScaleY, 1.0);
-
-            if (this.m_pCamera && !(this.m_pGrid && this.m_pGrid.isActive()))
-                this.m_pCamera.locate();
+            if (this.m_fScaleX != 1.0 || this.m_fScaleY != 1.0){
+                //TODO
+                // glScalef(this.m_fScaleX, this.m_fScaleY, 1.0);
+            }
+            if (this.m_pCamera && !(this.m_pGrid && this.m_pGrid.isActive())) this.m_pCamera.locate();
 
             // restore and re-position point
-            if (this.m_tAnchorPointInPixels.x != 0.0 || this.m_tAnchorPointInPixels.y != 0.0)
-                glTranslatef(RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.y), 0);
-
+            if (this.m_tAnchorPointInPixels.x != 0.0 || this.m_tAnchorPointInPixels.y != 0.0){
+                //TODO
+                // glTranslatef(RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this.m_tAnchorPointInPixels.y), 0);
+            }
             //
             // END original implementation
         }
@@ -797,7 +806,7 @@ var CCNode = CCClass.extend({
      During onEnter you can't a "sister/brother" node.
      */
     onEnter:function () {
-        this.arrayMakeObjectsPerformSelector(this.m_pChildren, this.onEnter);
+        this._arrayMakeObjectsPerformSelector(this.m_pChildren, this.onEnter);
         this.resumeSchedulerAndActions();
         this.m_bIsRunning = true;
     },
@@ -807,7 +816,7 @@ var CCNode = CCClass.extend({
      @since v0.8
      */
     onEnterTransitionDidFinish:function () {
-        this.arrayMakeObjectsPerformSelector(this.m_pChildren, this.onEnterTransitionDidFinish);
+        this._arrayMakeObjectsPerformSelector(this.m_pChildren, this.onEnterTransitionDidFinish);
     },
     /** callback that is called every time the CCNode leaves the 'stage'.
      If the CCNode leaves the 'stage' with a transition, this callback is called when the transition finishes.
@@ -816,7 +825,7 @@ var CCNode = CCClass.extend({
     onExit:function () {
         this.pauseSchedulerAndActions();
         this.m_bIsRunning = false;
-        this.arrayMakeObjectsPerformSelector(this.m_pChildren, this.onExit);
+        this._arrayMakeObjectsPerformSelector(this.m_pChildren, this.onExit);
     },
     // actions
 
@@ -833,13 +842,15 @@ var CCNode = CCClass.extend({
     },
     /** Removes all actions from the running action list */
     stopAllActions:function (action) {
-        CC.CCAssert(action != null, "Argument must be non-nil");
-        CC.CCActionManager.sharedManager().addAction(action, this, !this.m_bIsRunning);
-        return action;
-    },
-    /** Removes all actions from the running action list */
-    stopAllActions:function () {
-        CC.CCActionManager.sharedManager().removeAllActionsFromTarget(this);
+        var argnum = arguments.length;
+        if (argnum < 1) {
+            CC.CCActionManager.sharedManager().removeAllActionsFromTarget(this);
+        }
+        else {
+            CC.CCAssert(action != null, "Argument must be non-nil");
+            CC.CCActionManager.sharedManager().addAction(action, this, !this.m_bIsRunning);
+            return action;
+        }
     },
     /** Removes an action from the running action list */
     stopAction:function (action) {
@@ -866,7 +877,7 @@ var CCNode = CCClass.extend({
      *    If you are running 7 Sequences of 2 actions, it will return 7.
      */
     numberOfRunningActions:function () {
-        return CC.CCActionManager::sharedManager.numberOfRunningActionsInTarget(this);
+        return CC.CCActionManager.sharedManager.numberOfRunningActionsInTarget(this);
     },
 
     // CCNode - Callbacks
@@ -892,14 +903,14 @@ var CCNode = CCClass.extend({
      @since v0.99.3
      */
     scheduleUpdateWithPriority:function (priority) {
-        CCScheduler.sharedScheduler().scheduleUpdateForTarget(this, priority, !this.m_bIsRunning);
+        CC.CCScheduler.sharedScheduler().scheduleUpdateForTarget(this, priority, !this.m_bIsRunning);
     },
     /* unschedules the "update" method.
 
      @since v0.99.3
      */
     unscheduleUpdate:function () {
-        CCScheduler.sharedScheduler().unscheduleUpdateForTarget(this);
+        CC.CCScheduler.sharedScheduler().unscheduleUpdateForTarget(this);
     },
     schedule:function (selector, interval) {
         var argnum = arguments.length;
@@ -918,7 +929,7 @@ var CCNode = CCClass.extend({
         else {
             CC.CCAssert(selector, "Argument must be non-nil");
             CC.CCAssert(interval >= 0, "Argument must be positive");
-            CCScheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this.m_bIsRunning);
+            CC.CCScheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this.m_bIsRunning);
         }
 
     },
@@ -928,27 +939,27 @@ var CCNode = CCClass.extend({
         if (selector == 0)
             return;
 
-        CCScheduler.sharedScheduler().unscheduleSelector(selector, this);
+        CC.CCScheduler.sharedScheduler().unscheduleSelector(selector, this);
     },
     /** unschedule all scheduled selectors: custom selectors, and the 'update' selector.
      Actions are not affected by this method.
      @since v0.99.3
      */
     unscheduleAllSelectors:function () {
-        CCScheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
+        CC.CCScheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
     },
     /** resumes all scheduled selectors and actions.
      Called internally by onEnter
      */
     resumeSchedulerAndActions:function () {
-        CCScheduler.sharedScheduler().resumeTarget(this);
+        CC.CCScheduler.sharedScheduler().resumeTarget(this);
         CC.CCActionManager.sharedManager().resumeTarget(this);
     },
     /** pauses all scheduled selectors and actions.
      Called internally by onExit
      */
     pauseSchedulerAndActions:function () {
-        CCScheduler.sharedScheduler().pauseTarget(this);
+        CC.CCScheduler.sharedScheduler().pauseTarget(this);
         CC.CCActionManager.sharedManager().pauseTarget(this);
     },
     /** Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.
@@ -973,7 +984,7 @@ var CCNode = CCClass.extend({
 
             if (this.m_fSkewX != 0 || this.m_fSkewY != 0) {
                 // create a skewed coordinate system
-                var skew = new CCAffineTransform();
+                var skew = new CC.CCAffineTransform();
                 skew = CC.CCAffineTransformMake(1.0, Math.tan(CC.CC_DEGREES_TO_RADIANS(this.m_fSkewY)), Math.tan(CC.CC_DEGREES_TO_RADIANS(this.m_fSkewX)), 1.0, 0.0, 0.0);
                 // apply the skew to the transform
                 this.m_tTransform = CC.CCAffineTransformConcat(skew, this.m_tTransform);
@@ -1008,7 +1019,7 @@ var CCNode = CCClass.extend({
      @since v0.7.1
      */
     nodeToWorldTransform:function () {
-        var t = new CCAffineTransform();
+        var t = new CC.CCAffineTransform();
         t = this.nodeToParentTransform();
         for (var p = this.m_pParent; p != null; p = p.getParent())
             t = CC.CCAffineTransformConcat(t, p.nodeToParentTransform());
@@ -1025,7 +1036,7 @@ var CCNode = CCClass.extend({
      @since v0.7.1
      */
     convertToNodeSpace:function (worldPoint) {
-        var ret = new CCPoint();
+        var ret = new CC.CCPoint();
         if (CC.CC_CONTENT_SCALE_FACTOR() == 1) {
             ret = CC.CCPointApplyAffineTransform(worldPoint, this.worldToNodeTransform());
         }
@@ -1040,7 +1051,7 @@ var CCNode = CCClass.extend({
      @since v0.7.1
      */
     convertToWorldSpace:function (nodePoint) {
-        var ret = new CCPoint();
+        var ret = new CC.CCPoint();
         if (CC.CC_CONTENT_SCALE_FACTOR() == 1) {
             ret = CC.CCPointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
         }
@@ -1057,9 +1068,9 @@ var CCNode = CCClass.extend({
      @since v0.7.1
      */
     convertToNodeSpaceAR:function (worldPoint) {
-        var nodePoint = new CCPoint();
+        var nodePoint = new CC.CCPoint();
         nodePoint = convertToNodeSpace(worldPoint);
-        var anchorInPoints = new CCPoint();
+        var anchorInPoints = new CC.CCPoint();
         if (CC.CC_CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this.m_tAnchorPointInPixels;
         }
@@ -1074,40 +1085,39 @@ var CCNode = CCClass.extend({
      @since v0.7.1
      */
     convertToWorldSpaceAR:function (nodePoint) {
-        var anchorInPoints = new CCPoint();
+        var anchorInPoints = new CC.CCPoint();
         if (CC.CC_CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this.m_tAnchorPointInPixels;
         }
         else {
             anchorInPoints = CC.ccpMult(this.m_tAnchorPointInPixels, 1 / CC.CC_CONTENT_SCALE_FACTOR());
         }
-        var pt = new CCPoint();
+        var pt = new CC.CCPoint();
         pt = ccpAdd(nodePoint, anchorInPoints);
         return convertToWorldSpace(pt);
     },
-
-    convertToWindowSpace:function (nodePoint) {
-        var worldPoint = new CCPoint();
+    _convertToWindowSpace:function (nodePoint) {
+        var worldPoint = new CC.CCPoint();
         worldPoint = this.convertToWorldSpace(nodePoint);
-        return CCDirector.sharedDirector().convertToUI(worldPoint);
+        return CC.CCDirector.sharedDirector().convertToUI(worldPoint);
     },
     /** convenience methods which take a CCTouch instead of CCPoint
      @since v0.7.1
      */
     // convenience methods which take a CCTouch instead of CCPoint
     convertTouchToNodeSpace:function (touch) {
-        var point = new CCPoint();
+        var point = new CC.CCPoint();
         point = touch.locationInView(touch.view());
-        point = CCDirector.sharedDirector().convertToGL(point);
+        point = CC.CCDirector.sharedDirector().convertToGL(point);
         return this.convertToNodeSpace(point);
     },
     /** converts a CCTouch (world coordinates) into a local coordiante. This method is AR (Anchor Relative).
      @since v0.7.1
      */
     convertTouchToNodeSpaceAR:function (touch) {
-        var point = new CCPoint();
+        var point = new CC.CCPoint();
         point = touch.locationInView(touch.view());
-        point = CCDirector.sharedDirector().convertToGL(point);
+        point = CC.CCDirector.sharedDirector().convertToGL(point);
         return this.convertToNodeSpaceAR(point);
     }
-});
+})
