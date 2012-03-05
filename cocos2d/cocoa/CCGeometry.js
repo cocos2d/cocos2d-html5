@@ -25,7 +25,7 @@ THE SOFTWARE.
 ****************************************************************************/
 
 
-CCPoint = CCClass.extend(
+CC.CCPoint = CC.Class.extend(
 {
 
     x : 0.0,
@@ -45,13 +45,13 @@ CCPoint = CCClass.extend(
     }
 
 });
-CCPoint.CCPointEqualToPoint = function(point1, point2)
+CC.CCPoint.CCPointEqualToPoint = function(point1, point2)
 {
     return ((point1.x == point2.x) && (point1.y == point2.y));
 
 };
 
-CCSize = CCClass.extend(
+CC.CCSize = CC.Class.extend(
 {
 
     width : 0.0,
@@ -71,13 +71,13 @@ CCSize = CCClass.extend(
     }
 
 });
-CCSize.CCSizeEqualToSize = function(size1, size2)
+CC.CCSize.CCSizeEqualToSize = function(size1, size2)
 {
     return ((size1.width == size2.width) && (size1.height == size2.height));
 
 };
 
-CCRect = CCClass.extend(
+CC.CCRect = CC.Class.extend(
 {
 
      origin : null,
@@ -85,8 +85,8 @@ CCRect = CCClass.extend(
 
     ctor:function( x1, y1, width1,  height1)
     {
-        this.origin = new CCPoint();
-        this.size = new CCSize();
+        this.origin = new CC.CCPoint();
+        this.size = new CC.CCSize();
         if(width1 > 0 && height1 > 0){
             this.origin.x = x1;
             this.origin.y = y1;
@@ -103,90 +103,88 @@ CCRect = CCClass.extend(
     }
 
 });
-CCRect.CCRectEqualToRect = function(rect1, rect2)
+CC.CCRect.CCRectEqualToRect = function(rect1, rect2)
 {
-    return ((CCPoint.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
-        (CCSize.CCSizeEqualToSize(rect1.size, rect2.size)));
+    return ((CC.CCPoint.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
+        (CC.CCSize.CCSizeEqualToSize(rect1.size, rect2.size)));
 
 };
 
 //! return the rightmost x-value of 'rect'
-CCRect.CCrectGetMaxX = function(rect)
+CC.CCRect.CCrectGetMaxX = function(rect)
 {
     return (rect.origin.x + rect.size.width);
 };
 
 //! return the midpoint x-value of 'rect'
-CCRect.CCRectGetMidX = function(rect)
+CC.CCRect.CCRectGetMidX = function(rect)
 {
     return ((rect.origin.x +rect.size.width)/2.0);
 };
 //! return the leftmost x-value of 'rect'
-CCRect.CCRectGetMinX = function(rect)
+CC.CCRect.CCRectGetMinX = function(rect)
 {
     return rect.origin.x;
 };
 
 //! Return the topmost y-value of `rect'
-CCRect.CCRectGetMaxY = function(rect)
+CC.CCRect.CCRectGetMaxY = function(rect)
 {
     return(rect.origin.y+rect.size.height);
 };
 
 //! Return the midpoint y-value of `rect'
-CCRect.CCRectGetMidY = function(rect)
+CC.CCRect.CCRectGetMidY = function(rect)
 {
     return ((rect.origin.y+rect.size.height)/2.0);
 };
 
 //! Return the bottommost y-value of `rect'
-CCRect.CCGetRectMinY = function(rect)
+CC.CCRect.CCRectGetMinY = function(rect)
 {
     return rect.origin.y;
 };
 
-CCRect.CCRectContainPoint = function(rect, point)
+CC.CCRect.CCRectContainPoint = function(rect, point)
 {
     var bRet = false;
-    if(point.x >= CCRect.CCRectGetMinX(rect) && point.x <= CCRect.CCrectGetMaxX(rect)
-        && point.y >= CCRect.CCRectGetMinY(rect) && point.y <= CCRect.CCrectGetMaxY(rect)){
+    if(point.x >= CC.CCRect.CCRectGetMinX(rect) && point.x <= CC.CCRect.CCrectGetMaxX(rect)
+        && point.y >= CC.CCRect.CCRectGetMinY(rect) && point.y <= CC.CCRect.CCRectGetMaxY(rect)){
         bRet = true;
     }
-    retrun bRet;
+    return bRet;
 };
 
-CCRect.CCRectIntersectsRect = function(rectA, rectB)
+CC.CCRect.CCRectIntersectsRect = function(rectA, rectB)
 {
-    return !(CCRect.CCrectGetMaxX(rectA)< CCRect.CCRectGetMinX(rectB) ||
-        CCRect.CCrectGetMaxX(rectB) < CCRect.CCRectGetMinX(rectA)||
-        CCRect.CCrectGetMaxY(rectA)< CCRect.CCRectGetMinY(rectB) ||
-        CCRect.CCrectGetMaxY(rectB) < CCRect.CCRectGetMinY(rectA));
+    return !(CC.CCRect.CCrectGetMaxX(rectA)< CC.CCRect.CCRectGetMinX(rectB) ||
+        CC.CCRect.CCrectGetMaxX(rectB) < CC.CCRect.CCRectGetMinX(rectA)||
+        CC.CCRect.CCRectGetMaxY(rectA)< CC.CCRect.CCRectGetMinY(rectB) ||
+        CC.CCRect.CCRectGetMaxY(rectB) < CC.CCRect.CCRectGetMinY(rectA));
 };
 
-function CCPointMake(x, y)
-{
-    return new CCPOint(x,y);
-}
-CC.CCPoiintMake = CCPointMake;
 
-function CCSizeMake(width, height)
+CC.CCPointMake =  function(x, y)
 {
-    return new CCSize(width, height);
-}
-CC.CCSizeMake = CCSizeMake;
+    return new CC.CCPoint(x,y);
+};
 
-function CCRectMake(x, y, width, height)
+CC.CCSizeMake = function(width, height)
 {
-    return new CCRect(x, y, width, height);
-}
-CC.CCRectMake = CCRectMake;
+    return new CC.CCSize(width, height);
+};
+
+CC.CCRectMake = function(x, y, width, height)
+{
+    return new CC.CCRect(x, y, width, height);
+};
 
 /* The "left bottom" point -- equivalent to CCPointMake(0, 0). */
-CC.CCPointZero = new CCPoint(0,0);
+CC.CCPointZero = new CC.CCPoint(0,0);
 
 /* The "zero" size -- equivalent to CCSizeMake(0, 0). */
-CC.CCSizeZero = new CCSize(0,0);
+CC.CCSizeZero = new CC.CCSize(0,0);
 
 /* The "zero" rectangle -- equivalent to CCRectMake(0, 0, 0, 0). */
-CC.CCRectZero = new CCRect(0,0,0,0);
+CC.CCRectZero = new CC.CCRect(0,0,0,0);
 
