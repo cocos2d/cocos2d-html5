@@ -87,5 +87,3 @@ THE SOFTWARE.
         return CCClass;
     };
 })();
-
-
