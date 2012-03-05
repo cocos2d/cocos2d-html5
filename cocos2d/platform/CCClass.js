@@ -28,14 +28,15 @@ THE SOFTWARE.
  * MIT Licensed.
  */
 // Inspired by base2 and Prototype
+var CC = CC = CC || {};
 (function(){
     var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
     // The base Class implementation (does nothing)
-    this.CCClass = function(){};
+    CC.Class = function(){};
 
     // Create a new Class that inherits from this Class
-    CCClass.extend = function(prop) {
+    CC.Class.extend = function(prop) {
         var _super = this.prototype;
 
         // Instantiate a base Class (but only create the instance,
@@ -54,7 +55,7 @@ THE SOFTWARE.
                         var tmp = this._super;
 
                         // Add a new ._super() method that is the same method
-                        // but on the super-CCClass
+                        // but on the super-Class
                         this._super = _super[name];
 
                         // The method only need to be bound temporarily, so we
@@ -69,22 +70,22 @@ THE SOFTWARE.
         }
 
         // The dummy Class constructor
-        function CCClass() {
+        CC.Class = function() {
             // All construction is actually done in the init method
             if ( !initializing && this.ctor )
                 this.ctor.apply(this, arguments);
-        }
+        };
 
         // Populate our constructed prototype object
-        CCClass.prototype = prototype;
+        CC.Class.prototype = prototype;
 
         // Enforce the constructor to be what we expect
-        CCClass.prototype.constructor = CCClass;
+        CC.Class.prototype.constructor = Class;
 
         // And make this Class extendable
-        CCClass.extend = arguments.callee;
+        CC.Class.extend = arguments.callee;
 
-        return CCClass;
+        return CC.Class;
     };
 })();
 

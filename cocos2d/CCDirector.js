@@ -129,7 +129,7 @@ CC.CCDeviceOrientationLandscapeRight = CC.kCCDeviceOrientationLandscapeRight;
  - GL_COLOR_ARRAY is enabled
  - GL_TEXTURE_COORD_ARRAY is enabled
  */
-var CCDirector = CCClass.extend({
+CC.CCDirector = CC.Class.extend({
     //Variables
     m_bDisplayFPS : false,
     _m_bIsContentScaleSupported : false,
@@ -163,7 +163,7 @@ var CCDirector = CCClass.extend({
     _m_uTotalFrames: 0,
     init : function()
     {
-        CCLOG("cocos2d: "+ cocos2dVersion());
+        CC.CCLOG("cocos2d: "+ cocos2dVersion());
 
         // scenes
         //TODO these are already set to null, so maybe we can remove them in the init?
@@ -237,7 +237,7 @@ var CCDirector = CCClass.extend({
         var now = new cc_timeval();
         if(CCTime.gettimeofdayCocos2d(now, null) != 0)
         {
-            CCLOG("error in gettimeofday");
+            CC.CCLOG("error in gettimeofday");
             this._m_fDeltaTime = 0;
             return;
         }
@@ -405,7 +405,7 @@ var CCDirector = CCClass.extend({
         this.setContentScaleFactor(newScale);
 
         // release cached texture
-        CCTextureCache.purgeSharedTextureCache();
+        CC.CCTextureCache.purgeSharedTextureCache();
 
         if (CC.CC_DIRECTOR_FAST_FPS)
         {
@@ -500,14 +500,14 @@ var CCDirector = CCClass.extend({
     },
     purgeCachedData: function()
     {
-        CCLabelBMFont.purgeCachedData();
-        CCTextureCache.sharedTextureCache().removeUnusedTextures();
+        CC.CCLabelBMFont.purgeCachedData();
+        CC.CCTextureCache.sharedTextureCache().removeUnusedTextures();
     },
      _purgeDirector: function()
     {
         // don't release the event handlers
         // They are needed in case the director is run again
-        CCTouchDispatcher.sharedDispatcher().removeAllDelegates();
+        CC.CCTouchDispatcher.sharedDispatcher().removeAllDelegates();
 
         if (this._m_pRunningScene)
         {
@@ -533,18 +533,18 @@ var CCDirector = CCClass.extend({
         CC.CC_SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
 
         // purge bitmap cache
-        CCLabelBMFont.purgeCachedData();
+        CC.CCLabelBMFont.purgeCachedData();
 
         // purge all managers
-        CCAnimationCache.purgeSharedAnimationCache();
-        CCSpriteFrameCache.purgeSharedSpriteFrameCache();
-        CCActionManager.sharedManager().purgeSharedManager();
-        CCScheduler.purgeSharedScheduler();
-        CCTextureCache.purgeSharedTextureCache();
+        CC.CCAnimationCache.purgeSharedAnimationCache();
+        CC.CCSpriteFrameCache.purgeSharedSpriteFrameCache();
+        CC.CCActionManager.sharedManager().purgeSharedManager();
+        CC.CCScheduler.purgeSharedScheduler();
+        CC.CCTextureCache.purgeSharedTextureCache();
 
         if (CC.CC_TARGET_PLATFORM != CC.CC_PLATFORM_MARMALADE)
         {
-            CCUserDefault.purgeSharedUserDefault();
+            CC.CCUserDefault.purgeSharedUserDefault();
         }
         // OpenGL view
         this._m_pobOpenGLView.release();
@@ -574,7 +574,7 @@ var CCDirector = CCClass.extend({
     {
         // don't release the event handlers
         // They are needed in case the director is run again
-        CCTouchDispatcher.sharedDispatcher().removeAllDelegates();
+        CC.CCTouchDispatcher.sharedDispatcher().removeAllDelegates();
 
         if (this._m_pRunningScene)
         {
@@ -595,14 +595,14 @@ var CCDirector = CCClass.extend({
         CC.CC_SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
 
         // purge bitmap cache
-        CCLabelBMFont.purgeCachedData();
+        CC.CCLabelBMFont.purgeCachedData();
 
         // purge all managers
-        CCAnimationCache.purgeSharedAnimationCache();
-        CCSpriteFrameCache.purgeSharedSpriteFrameCache();
-        CCActionManager.sharedManager().purgeSharedManager();
-        CCScheduler.purgeSharedScheduler();
-        CCTextureCache.purgeSharedTextureCache();
+        CC.CCAnimationCache.purgeSharedAnimationCache();
+        CC.CCSpriteFrameCache.purgeSharedSpriteFrameCache();
+        CC.CCActionManager.sharedManager().purgeSharedManager();
+        CC.CCScheduler.purgeSharedScheduler();
+        CC.CCTextureCache.purgeSharedTextureCache();
     },
     reshapeProjection: function(newWindowSize)
     {
@@ -706,7 +706,7 @@ var CCDirector = CCClass.extend({
     {
         CC.CC_UNUSED_PARAM(obDirectorType);
         // we only support CCDisplayLinkDirector
-        CCDirector.sharedDirector();
+        CC.CCDirector.sharedDirector();
 
         return true;
     },
@@ -775,7 +775,7 @@ var CCDirector = CCClass.extend({
     {
         CC.CC_SAFE_RELEASE(this._m_pNotificationNode);
         this._m_pNotificationNode = node;
-        CCCC_SAFE_RETAIN(this._m_pNotificationNode);
+        CC.CC_SAFE_RETAIN(this._m_pNotificationNode);
     },
     setOpenGLView: function(pobOpenGLView)
     {
@@ -878,7 +878,7 @@ var CCDirector = CCClass.extend({
             if (this._m_fAccumDtForProfiler > 1.0)
             {
                 this._m_fAccumDtForProfiler = 0;
-                CCProfiler.sharedProfiler().displayTimers();
+                CC.CCProfiler.sharedProfiler().displayTimers();
             }
         }
     },
@@ -918,7 +918,7 @@ var CCDirector = CCClass.extend({
     /** Sets an OpenGL projection*/
     getProjection: function(){ return this._m_eProjection;}
 });
-function CCDirector.sharedDirector(){
+CC.CCDirector.sharedDirector = function(){
     if(CC.s_bFirstRun)
     {
         CC.s_sharedDirector.init();
@@ -943,17 +943,17 @@ function CCDirector.sharedDirector(){
 
  @since v0.8.2
  */
-var CCDisplayLinkDirector = CCDirector.extend({
+CC.CCDisplayLinkDirector = CC.CCDirector.extend({
     _m_bInvalid: false,
     startAnimation: function()
     {
-        if (CCTime.gettimeofdayCocos2d(this._m_pLastUpdate, null) != 0)
+        if (CC.CCTime.gettimeofdayCocos2d(this._m_pLastUpdate, null) != 0)
         {
             CCLOG("cocos2d: DisplayLinkDirector: Error on gettimeofday");
         }
 
         this._m_bInvalid = false;
-        CCApplication.sharedApplication().setAnimationInterval(this.m_dAnimationInterval);
+        CC.CCApplication.sharedApplication().setAnimationInterval(this.m_dAnimationInterval);
     },
     mainLoop: function()
     {
@@ -984,6 +984,6 @@ var CCDisplayLinkDirector = CCDirector.extend({
         }
     }
 });
-CC.s_sharedDirector = new CCDisplayLinkDirector();
+CC.s_sharedDirector = new CC.CCDisplayLinkDirector();
 CC.s_bFirstRun = true;
 CC.kDefaultFPS = 60;//set default fps to 60
