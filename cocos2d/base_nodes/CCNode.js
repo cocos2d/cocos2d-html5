@@ -484,7 +484,7 @@ CC.CCNode = CC.Class.extend({
          If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
          @since v0.7.1
          */
-            case 3:new CCNode()
+            case 3:
                 CC.CCAssert(child != null, "Argument must be non-nil");
                 CC.CCAssert(child.m_pParent == null, "child already added. It can't be added again");
 
