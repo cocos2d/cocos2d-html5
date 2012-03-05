@@ -26,32 +26,48 @@ THE SOFTWARE.
 
 var CC = CC = CC || {};
 
+/**
+ @brief Output Debug message.
+ */
+CC.CCLog = function(message)
+{
+    console.log(message);
+}
+
+/**
+ @brief Pop out a message box
+ */
+CC.CCMessageBox = function(message)
+{
+    console.log(message);
+}
+
 // cocos2d debug
 if(CC.COCOS2D_DEBUG == 0){
-    var CCLOG  = function(){};
-    var CCLOGINFO = function(){};
-    var CCLOGERROR = function(){};
+    CC.CCLOG  = function(){};
+    CC.CCLOGINFO = function(){};
+    CC.CCLOGERROR = function(){};
 }
 else if (CC.COCOS2D_DEBUG == 1){
-    var CCLOG = CCLog;
-    var CCLOGINFO = CCLog;
-    var CCLOGERROR = function(){};
+    CC.CCLOG = CCLog;
+    CC.CCLOGINFO = CCLog;
+    CC.CCLOGERROR = function(){};
 }
 else if(CC.COCOS2D_DEBUG > 1){
-    var CCLOG = CCLog;
-    var CCLOGINFO = CCLog;
-    var CCLOGERROR = CCLog;
+    CC.CCLOG = CCLog;
+    CC.CCLOGINFO = CCLog;
+    CC.CCLOGERROR = CCLog;
 }// COCOS2D_DEBUG
 
 if(CC._DEBUG){
-    var CCAssert = function(cond){
+    CC.CCAssert = function(cond){
         if(!cond){
             alert(cond);
         }
     }
 }
 else {
-    var CCAssert = function(){};
+    CC.CCAssert = function(){};
 }
 /**
  @brief Enum the language type supportted now
@@ -63,19 +79,3 @@ CC.kLanguageItalian = 3;
 CC.kLanguageGerman = 4;
 CC.kLanguageSpanish = 5;
 CC.kLanguageRussian = 6;
-
-/**
- @brief Output Debug message.
- */
-function CCLog(message)
-{
-    console.log(message);
-}
-
-/**
- @brief Pop out a message box
- */
-function CCMessageBox(message)
-{
-    console.log(message);
-}
