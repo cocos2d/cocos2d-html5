@@ -113,7 +113,7 @@ CC.CCSet = CC.Class.extend(
     /**
      *@brief Return the iterator that points to the first element.
      */
-    begin:function()
+    /* begin:function()
     {
         if(this._m_pSet.length > 0){
         return 0;        // We only return the index of first element.
@@ -122,18 +122,18 @@ CC.CCSet = CC.Class.extend(
             return null;
         }
 
-    },
+    },*/
 
     /**
      *@brief Return the iterator that points to the poisition after the last element.
      */
-    end:function()
+    /* end:function()
     {
         if(this._m_pSet.length >= 0){
         return this._m_pSet.length;
         }
 
-    },
+    },*/
 
     /**
      *@brief Return the first element if it contains elements, or null if it doesn't contain any element.
