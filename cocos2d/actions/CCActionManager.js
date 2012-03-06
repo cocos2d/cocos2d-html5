@@ -74,8 +74,16 @@ CC.CCActionManager = CC.Class.extend({
         CC.CCAssert(pAction != null, "");
         CC.CCAssert(pTarget != null, "");
 
-        //var pElement = null;
-        if(pTarget in this._m_pTargets)
+        var pElement = null;
+        for(var k in this._m_pTargets)
+        {
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
+        if(!pElement)
         {
             this._m_pTargets.paused = paused;
             this._m_pTargets.target = pTarget;
@@ -106,8 +114,16 @@ CC.CCActionManager = CC.Class.extend({
         {
             return;
         }
-
-        var pElement = (pTarget in this._m_pTargets)? this._m_pTargets: null;
+        var pElement = null;
+        for(var k in this._m_pTargets)
+        {
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
+        //var pElement = (pTarget in this._m_pTargets)? this._m_pTargets[ptarget]: null;
         if (pElement)
         {
             if (pElement.currentAction in pElement.actions && !(pElement.currentActionSalvaged))
@@ -140,7 +156,15 @@ CC.CCActionManager = CC.Class.extend({
             return;
         }
         var pTarget = pAction.getOriginalTarget();
-        var pElement = (pTarget in this._m_pTargets)? this._m_pTargets: null;
+        var pElement = null;
+        for(var k in this._m_pTargets)
+        {
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
 
         if (pElement)
         {
@@ -148,7 +172,7 @@ CC.CCActionManager = CC.Class.extend({
             {
                 if(pElement.actions[i] == pAction)
                 {
-                    pElement.actions[i] = null;
+                    pElement.actions.splice(i,1);
                     break;
                 }
             }
@@ -164,7 +188,15 @@ CC.CCActionManager = CC.Class.extend({
         CC.CCAssert(tag != CC.kCCActionTagInvalid, "");
         CC.CCAssert(pTarget != null, "");
 
-        var pElement = (pTarget in this._m_pTargets)? this._m_pTargets: null;
+        var pElement = null;
+        for(var k in this._m_pTargets)
+        {
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
 
         if (pElement)
         {
@@ -188,7 +220,15 @@ CC.CCActionManager = CC.Class.extend({
     {
         CC.CCAssert(tag != CC.kCCActionTagInvalid, "");
 
-        var pElement = (pTarget in this._m_pTargets)? this._m_pTargets: null;
+        var pElement = null;
+        for(var k in this._m_pTargets)
+        {
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
 
         if (pElement)
         {
@@ -221,7 +261,15 @@ CC.CCActionManager = CC.Class.extend({
      */
     numberOfRunningActionsInTarget: function(pTarget)
     {
-        var pElement = (pTarget in this._m_pTargets)? this._m_pTargets: null;
+        var pElement = null;
+        for(var k in this._m_pTargets)
+        {
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
         if (pElement)
         {
             return (pElement.actions) ? pElement.actions.length : 0;
@@ -233,18 +281,36 @@ CC.CCActionManager = CC.Class.extend({
      */
     pauseTarget:function(pTarget)
     {
-        if(pTarget in this._m_pTargets)
+        var pElement = null;
+        for(var k in this._m_pTargets)
         {
-            this._m_pTargets[pTarget] = true;
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
+        if(pElement)
+        {
+            pElement.paused = true;
         }
     },
     /** Resumes the target. All queued actions will be resumed.
      */
     resumeTarget: function(pTarget)
     {
-        if(pTarget in this._m_pTargets)
+        var pElement = null;
+        for(var k in this._m_pTargets)
         {
-            this._m_pTargets[pTarget] = false;
+            if (pTarget = k.target)
+            {
+                pElement = k;
+                break;
+            }
+        }
+        if(pElement)
+        {
+            pElement.paused = true;
         }
     },
     /** purges the shared action manager. It releases the retained instance.
