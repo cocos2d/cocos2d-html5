@@ -147,7 +147,7 @@ CC.CCSpeed = CC.CCAction.extend({
     /** initializes the action */
     initWithAction: function(pAction, fRate)
     {
-        CC.CCAssert(pAction != NULL, "");
+        CC.CCAssert(pAction != null, "");
         pAction.retain();
         this._m_pInnerAction = pAction;
         this._m_fSpeed = fRate;
@@ -155,20 +155,20 @@ CC.CCSpeed = CC.CCAction.extend({
     },
     copyWithZone: function(pZone)
     {
-        pNewZone = null;
-        pRet = null;
+        var pNewZone = null;
+        var pRet = null;
         if(pZone && pZone.m_pCopyObject) //in case of being called at sub class
         {
             pRet = (pZone.m_pCopyObject);
         }
         else
         {
-            pRet = new CCSpeed();
-            pZone = pNewZone = new CCZone(pRet);
+            pRet = new CC.CCSpeed();
+            pZone = pNewZone = new CC.CCZone(pRet);
         }
         CC.CCAction.copyWithZone(pZone);
 
-        pRet.initWithAction(this._m_pInnerAction, m_fSpeed );
+        pRet.initWithAction(this._m_pInnerAction, this._m_fSpeed );
         return pRet;
     },
     startWithTarget:function(pTarget)
@@ -208,7 +208,7 @@ CC.CCSpeed = CC.CCAction.extend({
 /** creates the action */
 CC.CCSpeed.actionWithAction = function(pAction, fRate)
 {
-    pRet = new CCSpeed();
+    var pRet = new CC.CCSpeed();
     if (pRet && pRet.initWithAction(pAction, fRate))
     {
         return pRet;
@@ -233,7 +233,7 @@ CC.CCFollow = CC.CCAction.extend({
     /** initializes the action with a set boundary */
     initWithTarget:function(pFollowedNode, rect)
     {
-        CC.CCAssert(pFollowedNode != NULL, "");
+        CC.CCAssert(pFollowedNode != null, "");
         pFollowedNode.retain();
         this._m_pobFollowedNode = pFollowedNode;
         this._m_bBoundarySet = false;
@@ -280,9 +280,9 @@ CC.CCFollow = CC.CCAction.extend({
         }
         else
         {
-            pRet = new CCFollow();
-            pNewZone = new CCZone(pRet);
-            pZone = pNewZone;
+            pRet = new CC.CCFollow();
+            pNewZone = new CC.CCZone(pRet);
+            pZone = pNewZone;//TODO Modifying a pointer in c++?
         }
         CC.CCAction.copyWithZone(pZone);
         // copy member data
@@ -337,7 +337,7 @@ CC.CCFollow = CC.CCAction.extend({
 /** creates the action with no boundary set */
 CC.CCFollow.actionWithTarget = function(pFollowedNode, rect)
 {
-    pRet = new CC.CCFollow();
+    var pRet = new CC.CCFollow();
     if(rect != null && pRet && pRet.initWithTarget(pFollowedNode, rect))
     {
         return pRet;
