@@ -74,7 +74,7 @@ function transformValues(pos, scale, rotation, skew, ap, visible) {
     this.visible = visible;
 }
 
-CC.CCSprite = CCNode.extend({
+CC.CCSprite = CC.CCNode.extend({
     //
     // Data used when the sprite is rendered using a CCSpriteSheet
     //
