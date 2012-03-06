@@ -85,6 +85,14 @@ var CC = CC = CC || {};
         // And make this Class extendable
         CC.Class.extend = arguments.callee;
 
+        //add implementation method
+        CC.Class.implement = function(prop)
+        {
+            for(var name in prop)
+            {
+                prototype[name] = prop[name];
+            }
+        };
         return CC.Class;
     };
 })();
