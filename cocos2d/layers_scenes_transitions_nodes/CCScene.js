@@ -25,3 +25,46 @@ THE SOFTWARE.
 ****************************************************************************/
 
 
+var CC = CC = CC || {};
+/** @brief CCScene is a subclass of CCNode that is used only as an abstract concept.
+
+ CCScene an CCNode are almost identical with the difference that CCScene has it's
+ anchor point (by default) at the center of the screen.
+
+ For the moment CCScene has no other logic than that, but in future releases it might have
+ additional logic.
+
+ It is a good practice to use and CCScene as the parent of all your nodes.
+ */
+CC.CCScene = CC.CCNode.extend({
+    ctor: function()
+    {
+        this._m_bIsRelativeAnchorPoint = false;
+        this.setAnchorPoint(CC.ccp(0.5,0.5));
+    },
+    init: function()
+    {
+        var bret = false;
+        do{
+            var pDirector;
+            if(!(pDirector = CCDirector.sharedDirector()))
+            {
+                break;
+            }
+            this.setContentSize(pDirector.getWinSize());
+            bret = true;
+        }while(0);
+        return bret;
+    }
+});
+CC.CCScene.node = function()
+{
+    var pret = new CC.CCScene();
+    if(pret.init())
+    {
+        return pret;
+    }
+    else{
+        return null;
+    }
+};
