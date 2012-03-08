@@ -25,6 +25,136 @@
  ****************************************************************************/
 var CC = CC = CC || {};
 
+CC.DL_APPEND = function(head,add){
+    if(head != null){
+        add.prev = head.prev;
+        head.prev.next = add;
+        head.prev = add;
+        add.next = null;
+    }else{
+        head = add;
+        head.prev = head;
+        head.next = null;
+    }
+};
+
+CC.DL_PREPEND = function(head,add){
+    add.next = head;
+    if(head != null){
+        add.prev = head.prev;
+        head.prev = add;
+    }else{
+        add.prev = add;
+    }
+};
+
+CC.DL_DELETE = function(head,del){
+    if(del.prev == del){
+        head = null;
+    }else if(del == head){
+        del.next.prev = del.prev;
+        head = del.next;
+    }else{
+        del.prev.next = del.next;
+        if(del.next != null){
+            del.next.prev = del.prev;
+        }else{
+            head.prev = del.prev;
+        }
+    }
+};
+
+/** Removes object at specified index and pushes back all subsequent objects.
+ Behaviour undefined if index outside [0, num-1]. */
+CC.ccArrayRemoveObjectAtIndex = function(arr,index){
+    arr.splice(index,1);
+};
+
+/** Removes object at specified index and fills the gap with the last object,
+ thereby avoiding the need to push back subsequent objects.
+ Behaviour undefined if index outside [0, num-1]. */
+CC.ccArrayFastRemoveObjectAtIndex = function(arr,index){
+    arr.splice(index,1);
+};
+
+CC.ccArrayFastRemoveObject = function(arr,delObj){
+    CC.ccArrayRemoveObject(arr,delObj);
+};
+
+/** Searches for the first occurance of object and removes it. If object is not
+ found the function has no effect. */
+CC.ccArrayRemoveObject = function(arr,delObj){
+    for(var i = 0; i< arr.length;i++){
+        if(arr[i] == delObj){
+            arr.splice(i,1);
+        }
+    }
+};
+
+/** Removes from arr all values in minusArr. For each Value in minusArr, the
+ first matching instance in arr will be removed. */
+CC.ccArrayRemoveArray = function(arr,minusArr){
+    for(var i=0;i<minusArr.length;i++){
+        CC.ccArrayRemoveObject(arr,minusArr[i]);
+    }
+};
+
+/** Returns index of first occurence of value, NSNotFound if value not found. */
+CC.ccCArrayGetIndexOfValue = function(arr,value){
+    for(var i=0;i<arr.length;i++){
+        if(arr[i] == value){
+            return i;
+        }
+    }
+    return -1;
+};
+
+CC.ccArrayAppendObject = function(arr,addObj){
+    arr.push(addObj);
+};
+
+CC.ccArrayGetIndexOfObject = function(arr,findObj){
+    for(var i =0; i < arr.length;i++){
+        if(arr[i] == findObj)
+            return i;
+    }
+    return -1;
+};
+
+CC.ccArrayContainsObject = function(arr,findObj){
+  return CC.ccArrayGetIndexOfObject(arr,findObj) != -1;
+};
+
+CC.HASH_FIND_INT = function(head,findInt){
+    var ret = null;
+
+    if(head == null){
+        return ret;
+    }
+
+    if(head.hh.target == findInt)
+        return head;
+
+    for(var curr = head.hh;curr != null;){
+        if(curr.target == findInt){
+            return curr;
+        }
+        curr = curr.hh;
+    }
+
+    return ret;
+};
+
+CC.HASH_ADD_INT = function(head,intfield,add){
+    //TODO
+    CC.Log("HASH_ADD_INT no implemetion!");
+};
+
+CC.HASH_DEL = function(head,delptr){
+    //TODO
+    CC.Log("HASH_DEL no implemetion!");
+};
+
 //data structures
 function tListEntry(prev,next,target,priority,paused,markedForDeletion){
     this.prev = prev;
@@ -64,11 +194,11 @@ function tHashScriptFuncEntry(timer,paused,funcName,hh){
 
 /** @brief Light weight timer */
 var CCTimer = CCClass.extend({
-    m_fInterval:0.0,
-    m_pfnSelector:"",
+    _m_fInterval:0.0,
+    _m_pfnSelector:"",
 
-    m_pTarget:null,
-    m_fElapsed:0.0,
+    _m_pTarget:null,
+    _m_fElapsed:0.0,
 
     /**
      * CCTimer's Constructor
@@ -78,7 +208,7 @@ var CCTimer = CCClass.extend({
     },
 
     getInterval:function(){
-        return this.m_fInterval;
+        return this._m_fInterval;
     },
 
     /** Initializes a timer with a target, a selector and an interval in seconds.
@@ -95,10 +225,10 @@ var CCTimer = CCClass.extend({
                 fSeconds = 0;
             }
 
-            this.m_pTarget = pTarget;
-            this.m_pfnSelector = pfnSelector;
-            this.m_fElapsed = -1;
-            this.m_fInterval = fSeconds;
+            this._m_pTarget = pTarget;
+            this._m_pfnSelector = pfnSelector;
+            this._m_fElapsed = -1;
+            this._m_fInterval = fSeconds;
 
             return true;
         }catch(e){
@@ -110,16 +240,16 @@ var CCTimer = CCClass.extend({
      * @param {float} dt
      * */
     update:function(dt){
-        if(this.m_fElapsed == -1){
-            this.m_fElapsed = 0;
+        if(this._m_fElapsed == -1){
+            this._m_fElapsed = 0;
         }else{
-            this.m_fElapsed += dt;
+            this._m_fElapsed += dt;
         }
 
-        if(this.m_fElapsed >= this.m_fInterval){
-            if(this.m_pfnSelector != null){
-                this.m_pTarget[this.m_pfnSelector](this.m_fElapsed);
-                this.m_fElapsed = 0;
+        if(this._m_fElapsed >= this._m_fInterval){
+            if(this._m_pfnSelector != null){
+                this._m_pTarget[this._m_pfnSelector](this._m_fElapsed);
+                this._m_fElapsed = 0;
             }
         }
     }
@@ -161,17 +291,17 @@ CC._pSharedScheduler = null;
 
  */
 var CCScheduler = CCClass.extend({
-    m_fTimeScale:0.0,
-    m_pUpdatesNegList:null,                             // list of priority < 0
-    m_pUpdates0List:null,                               // list priority == 0
-    m_pUpdatesPosList:null,                             // list priority > 0
-    m_pHashForUpdates:null,                             // hash used to fetch quickly the list entries for pause,delete,etc
+    _m_fTimeScale:0.0,
+    _m_pUpdatesNegList:null,                             // list of priority < 0
+    _m_pUpdates0List:null,                               // list priority == 0
+    _m_pUpdatesPosList:null,                             // list priority > 0
+    _m_pHashForUpdates:null,                             // hash used to fetch quickly the list entries for pause,delete,etc
 
-    m_pHashForSelecotrs:null,                           //Used for "selectors with interval"
-    m_pCurrentTarget:null,
-    m_bCurrentTargetSalvaged:false,
-    m_bUpdateHashLocked:false,                          //If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
-    m_pHashForScriptFunctions:null,                    // Used for "script function call back with interval"
+    _m_pHashForSelectors:null,                           //Used for "selectors with interval"
+    _m_pCurrentTarget:null,
+    _m_bCurrentTargetSalvaged:false,
+    _m_bUpdateHashLocked:false,                          //If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
+    _m_pHashForScriptFunctions:null,                    // Used for "script function call back with interval"
 
     ctor:function(){
     },
@@ -182,29 +312,57 @@ var CCScheduler = CCClass.extend({
      */
     _removeHashElement:function(pElement){
         pElement.Timer = null;
-        //dynamic_cast<CCObject*>(pElement->target)->release();
+
         pElement.target = null;
-        //TODO
-        //HASH_DEL(m_pHashForSelectors, pElement);
+
+        this._arrayRemove(this._m_pHashForSelectors,pElement);
+
         pElement = null;
+    },
+
+    /**
+     * @brief delete object from Array
+     * @private
+     * @param Source Array
+     * @param delete Object
+     */
+    _arrayRemove:function(array,delObj){
+        for(var i = 0; i< array.length;i++){
+            if(array[i] == delObj){
+                array.splice(i,1);
+            }
+        }
+    },
+
+    /**
+     * @brief find Object from Array
+     * @param Source Array
+     * @param destination object
+     * @return object if finded, or return null
+     */
+    _findElementFromArray:function(array,target){
+        for(var i=0; i< array.length; i++){
+            if(array[i].target == target){
+                return array[i];
+            }
+        }
+        return null;
     },
 
     /**
      * @private
      */
     _removeUpdateFromHash:function(entry){
-        var element = new tHashUpdateEntry(null,null,null,null);
+        var element = this._findElementFromArray(this._m_pHashForUpdates,entry.target);
 
-        //TODO
-        //HASH_FIND_INT(m_pHashForUpdates, &entry->target, element);
         if(element!=null){
             //list entry
-            //DL_DELETE(*element->list, element->entry);
+            this._arrayRemove(element.list,element.entry);
             element.entry = null;
 
             //hash entry
-            //dynamic_cast<CCObject*>(element->target)->release();
-            //HASH_DEL(m_pHashForUpdates, element);
+            element.target = null;
+            this._arrayRemove(this._m_pHashForUpdates,element);
             element == null;
         }
     },
@@ -213,17 +371,17 @@ var CCScheduler = CCClass.extend({
      * @private
      */
     _init:function(){
-        this.m_fTimeScale = 1.0;
+        this._m_fTimeScale = 1.0;
 
-        this.m_pUpdatesNegList = null;
-        this.m_pUpdates0List = null;
-        this.m_pUpdatesPosList = null;
-        this.m_pHashForUpdates = null;
-        this.m_pHashForSelecotrs = null;
-        this.m_pCurrentTarget = null;
-        this.m_bCurrentTargetSalvaged = false;
-        this.m_pHashForScriptFunctions = null;
-        this.m_bUpdateHashLocked = false;
+        this._m_pUpdatesNegList = null;
+        this._m_pUpdates0List = null;
+        this._m_pUpdatesPosList = null;
+        this._m_pHashForUpdates = null;
+        this._m_pHashForSelectors = null;
+        this._m_pCurrentTarget = null;
+        this._m_bCurrentTargetSalvaged = false;
+        this._m_pHashForScriptFunctions = null;
+        this._m_bUpdateHashLocked = false;
 
         return true;
     },
@@ -233,17 +391,17 @@ var CCScheduler = CCClass.extend({
      */
     _priorityIn:function(ppList,pTarget,nPriority,bPaused){
         var pListElement = new tListEntry(null,null,pTarget,nPriority,bPaused,false);
-        // TODO
+
         // empey list ?
         if(!ppList){
-            //DL_APPEND(*ppList, pListElement);
+            CC.DL_APPEND(ppList, pListElement);
         }else{
             var bAdded = false;
 
             for(var pElement = ppList;pElement == null;pElement = pElement.next){
                 if(nPriority < pElement.priority){
                     if(pElement == ppList){
-                        //DL_PREPEND(*ppList, pListElement);
+                        CC.DL_PREPEND(ppList, pListElement);
                     }else{
                         pListElement.next = pElement;
                         pListElement.prev = pElement.prev;
@@ -258,14 +416,14 @@ var CCScheduler = CCClass.extend({
 
             // Not added? priority has the higher value. Append it.
             if(!bAdded){
-                //DL_APPEND(*ppList, pListElement);
+                CC.DL_APPEND(ppList, pListElement);
             }
         }
 
         //update hash entry for quick access
         var pHashElement = new tHashUpdateEntry(ppList,pListElement,pTarget,null);
-        //dynamic_cast<CCObject*>(pTarget)->retain();
-        // HASH_ADD_INT(m_pHashForUpdates, target, pHashElement);
+
+        // HASH_ADD_INT(_m_pHashForUpdates, target, pHashElement);
     },
 
     /**
@@ -274,13 +432,12 @@ var CCScheduler = CCClass.extend({
     _appendIn:function(ppList,pTarget,bPaused){
         var pListElement = new tListEntry(null,null,pTarget,0,bPaused,false);
 
-        //TODO
-        //DL_APPEND(*ppList, pListElement);
+        CC.DL_APPEND(ppList, pListElement);
 
         //update hash entry for quicker access
         var pHashElement = new tHashUpdateEntry(ppList,pListElement,pTarget,null);
-        //dynamic_cast<CCObject*>(pTarget)->retain();
-        //HASH_ADD_INT(m_pHashForUpdates, target, pHashElement);
+
+        CC.HASH_ADD_INT(this._m_pHashForUpdates, target, pHashElement);
     },
 
     //-----------------------public method-------------------------
@@ -291,51 +448,51 @@ var CCScheduler = CCClass.extend({
      @warning It will affect EVERY scheduled selector / action.
      */
     setTimeScale:function(fTimeScale){
-        this._m_fTimeScale = fTimeScale;
+        this.__m_fTimeScale = fTimeScale;
     },
 
     getTimeScale:function(){
-        return this._m_fTimeScale;
+        return this.__m_fTimeScale;
     },
 
     /** 'tick' the scheduler. main loop
      You should NEVER call this method, unless you know what you are doing.
      */
     tick:function(dt){
-        this.m_bUpdateHashLocked = true;
+        this._m_bUpdateHashLocked = true;
 
-        if(this.m_fTimeScale != 1.0){
-            dt *= this.m_fTimeScale;
+        if(this._m_fTimeScale != 1.0){
+            dt *= this._m_fTimeScale;
         }
-        //TODO
+
         //Iterate all over the Updates selectors
         var pEntry,pTmp;
-        //DL_FOREACH_SAFE(m_pUpdatesNegList, pEntry, pTmp){
+        for(pEntry = this._m_pUpdatesNegList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
             if((!pEntry.paused)&&(!pEntry.makedForDeletion)){
                 pEntry.target.update(dt);
             }
-        //}
+        }
 
         // updates with priority == 0
-        // DL_FOREACH_SAFE(m_pUpdates0List, pEntry, pTmp){
+        for(pEntry = this._m_pUpdates0List;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
             if((!pEntry.paused)&&(!pEntry.makedForDeletion)){
                 pEntry.target.update(dt);
             }
-        //}
+        }
 
         // updates with priority > 0
-        // DL_FOREACH_SAFE(m_pUpdatesPosList, pEntry, pTmp){
-        if((!pEntry.paused)&&(!pEntry.makedForDeletion)){
-            pEntry.target.update(dt);
+        for(pEntry = this._m_pUpdatesPosList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
+            if((!pEntry.paused)&&(!pEntry.makedForDeletion)){
+                pEntry.target.update(dt);
+            }
         }
-        //}
 
         //Interate all over the custom selectors
-        for(var elt = this.m_pHashForSelectors; elt != null;){
-            this.m_pCurrentTarget = elt;
-            this.m_bCurrentTargetSalvaged = false;
+        for(var elt = this._m_pHashForSelectors; elt != null;){
+            this._m_pCurrentTarget = elt;
+            this._m_bCurrentTargetSalvaged = false;
 
-            if(!this.m_pCurrentTarget.paused){
+            if(!this._m_pCurrentTarget.paused){
                 // The 'timers' array may change while inside this loop
                 for(elt.timerIndex = 0; elt.timerIndex < elt.timers.length;++(elt.timerIndex)){
                     elt.currentTimer = elt.timers[elt.timerIndex];
@@ -354,38 +511,38 @@ var CCScheduler = CCClass.extend({
             }
 
             elt = elt.hh.next;
-            if((this.m_bCurrentTargetSalvaged) &&(this.m_pCurrentTarget.timers.length == 0)){
-                this._removeHashElement(this.m_pCurrentTarget);
+            if((this._m_bCurrentTargetSalvaged) &&(this._m_pCurrentTarget.timers.length == 0)){
+                this._removeHashElement(this._m_pCurrentTarget);
             }
         }
 
         //delete all updates that are marked for deletion
         // updates with priority < 0
-        //DL_FOREACH_SAFE(m_pUpdatesNegList, pEntry, pTmp){
+        for(pEntry = this._m_pUpdatesNegList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
             if(pEntry.makedForDeletion){
                 this._removeUpdateFromHash(pEntry);
             }
-        //}
+        }
 
         // updates with priority == 0
-        // DL_FOREACH_SAFE(m_pUpdates0List, pEntry, pTmp){
+        for(pEntry = this._m_pUpdates0List;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
             if(pEntry.makedForDeletion){
                 this._removeUpdateFromHash(pEntry);
             }
-        //}
+        }
 
         // updates with priority > 0
-        // DL_FOREACH_SAFE(m_pUpdatesPosList, pEntry, pTmp){
+        for(pEntry = this._m_pUpdatesPosList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
             if(pEntry.makedForDeletion){
                 this._removeUpdateFromHash(pEntry);
             }
-        //}
+        }
 
-        this.m_bUpdateHashLocked = false;
-        this.m_pCurrentTarget = null;
+        this._m_bUpdateHashLocked = false;
+        this._m_pCurrentTarget = null;
 
         //Interate all script functions
-        for(var elt = this.m_pHashForScriptFunctions;elt != null;){
+        for(var elt = this._m_pHashForScriptFunctions;elt != null;){
             if(!elt.paused){
                 elt.timer.update(dt);
             }
@@ -401,23 +558,18 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     scheduleSelector:function(pfnSelector, pTarget,fInterval,bPaused){
-        //TODO
-        //CCAssert(pfnSelector, "");
-        //CCAssert(pTarget, "");
+        CC.CCAssert(pfnSelector, "");
+        CC.CCAssert(pTarget, "");
 
-        var pElement = null;
-        //HASH_FIND_INT(m_pHashForSelectors, &pTarget, pElement);
+        var pElement = CC.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
 
         if(pElement != null){
             // Is this the 1st element ? Then set the pause level to all the selectors of this target
             pElement = new tHashSelectorEntry(null,pTarget,0,null,null,bPaused,null);
-            //if (pTarget)
-            //{
-            //    dynamic_cast<CCObject*>(pTarget)->retain();
-            //}
-            //HASH_ADD_INT(m_pHashForSelectors, target, pElement);
+
+            CC.HASH_ADD_INT(this._m_pHashForSelectors, target, pElement);
         }else{
-          //CCAssert(pElement->paused == bPaused, "");
+          CC.CCAssert(pElement.paused == bPaused, "");
         }
 
         if(pElement.timers == null){
@@ -425,21 +577,18 @@ var CCScheduler = CCClass.extend({
         }else{
             for(var i =0; i<pElement.timers.length;i++){
                 var timer = pElement.timers[i];
-                if(pfnSelector == timer.m_pfnSelector){
-                    //CCLOG("CCSheduler#scheduleSelector. Selector already scheduled.");
-                    timer.m_fInterval = fInterval;
+                if(pfnSelector == timer._m_pfnSelector){
+                    CC.CCLOG("CCSheduler#scheduleSelector. Selector already scheduled.");
+                    timer._m_fInterval = fInterval;
                     return;
                 }
             }
-            //TODO
-            //ccArrayEnsureExtraCapacity(pElement->timers, 1);
         }
 
         var pTimer = new CCTimer();
         pTimer.initWithTarget(pTarget,pfnSelector,fInterval);
-        //ccArrayAppendObject(pElement->timers, pTimer);==
         pElement.timers.push(pTimer);
-        //pTimer.release();
+        pTimer = null;
     },
 
     /** Schedules the 'update' selector for a given target with a given priority.
@@ -448,13 +597,12 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     scheduleUpdateForTarget:function(pTarget,nPriority,bPaused){
-        //TODO
-        var pHashElement = null;
-        //HASH_FIND_INT(m_pHashForUpdates, &pTarget, pHashElement);
+        var pHashElement = CC.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
+
         if(pHashElement != null){
-            //#if COCOS2D_DEBUG >= 1
-            //    CCAssert(pHashElement->entry->markedForDeletion,"");
-            //#endif
+            if (CC.COCOS2D_DEBUG >= 1){
+                CC.CCAssert(pHashElement.entry.markedForDeletion,"");
+            }
             // TODO: check if priority has changed!
 
             pHashElement.entry.markedForDeletion = false;
@@ -464,12 +612,12 @@ var CCScheduler = CCClass.extend({
         // most of the updates are going to be 0, that's way there
         // is an special list for updates with priority 0
         if(nPriority == 0){
-            this._appendIn(this.m_pUpdates0List,pTarget,bPaused);
+            this._appendIn(this._m_pUpdates0List,pTarget,bPaused);
         }else if(nPriority <0){
-            this._priorityIn(this.m_pUpdatesNegList,pTarget,nPriority,bPaused);
+            this._priorityIn(this._m_pUpdatesNegList,pTarget,nPriority,bPaused);
         }else{
             // priority > 0
-            this._priorityIn(this.m_pUpdatesPosList,pTarget,nPriority,bPaused);
+            this._priorityIn(this._m_pUpdatesPosList,pTarget,nPriority,bPaused);
         }
     },
 
@@ -478,7 +626,6 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     unscheduleSelector:function(pfnSelector,pTarget){
-        //TODO
         // explicity handle nil arguments when removing an object
         if((pTarget == null) || (pfnSelector == null)){
             return;
@@ -487,19 +634,17 @@ var CCScheduler = CCClass.extend({
         ////CCAssert(pTarget);
         ////CCAssert(pfnSelector);
 
-        var pElement = null;
-        //HASH_FIND_INT(m_pHashForSelectors, &pTarget, pElement);
+        var pElement = CC.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
 
         if(pElement != null){
             for(var i =0; i < pElement.timers.length;i++){
                 var pTimer = pElement.timers[i];
-                if(pfnSelector == pTimer.m_pfnSelector){
+                if(pfnSelector == pTimer._m_pfnSelector){
                     if((pTimer == pElement.currentTimer)&&(!pElement.currentTimerSalvaged)){
-                        //pElement.currentTimer.retain();
                         pElement.currentTimerSalvaged = true;
                     }
 
-                    //ccArrayRemoveObjectAtIndex(pElement->timers, i );
+                    CC.ccArrayRemoveObjectAtIndex(pElement.timers, i);
 
                     //update timerIndex in case we are in tick;, looping over the actions
                     if(pElement.timerIndex >= i){
@@ -507,8 +652,8 @@ var CCScheduler = CCClass.extend({
                     }
 
                     if(pElement.timers.length == 0){
-                        if(this.m_pCurrentTarget == pElement){
-                            this.m_bCurrentTargetSalvaged = true;
+                        if(this._m_pCurrentTarget == pElement){
+                            this._m_bCurrentTargetSalvaged = true;
                         }else{
                             this._removeHashElement(pElement);
                         }
@@ -523,15 +668,14 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     unscheduleUpdateForTarget:function(pTarget){
-       //TODO
         if(pTarget == null){
             return;
         }
 
-        var pElement = null;
-        //HASH_FIND_INT(m_pHashForUpdates, &pTarget, pElement);
+        var pElement = CC.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
+
         if(pElement != null){
-            if(this.m_bUpdateHashLocked){
+            if(this._m_bUpdateHashLocked){
                 pElement.entry.markedForDeletion = true;
             }else{
                 this._removeUpdateFromHash(pElement.entry);
@@ -544,25 +688,22 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     unscheduleAllSelectorsForTarget:function(pTarget){
-        //TODO
         //explicit NULL handling
         if(pTarget == null){
             return;
         }
 
-        var pElement = null;
-        //HASH_FIND_INT(m_pHashForSelectors, &pTarget, pElement);
+        var pElement = CC.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
+
         if(pElement != null){
-            if((!pElement.currentTimerSalvaged)
-                //&&(ccArrayContainsObject(pElement->timers, pElement->currentTimer))
+            if((!pElement.currentTimerSalvaged) &&(CC.ccArrayContainsObject(pElement.timers, pElement.currentTimer))
                 ){
-                //pElement.currentTimer.retain();
                 pElement.currentTimerSalvaged = true;
             }
-            //ccArrayRemoveAllObjects(pElement->timers);
+            pElement.timers.length = 0;
 
-            if(this.m_pCurrentTarget == pElement){
-                this.m_bCurrentTargetSalvaged = true;
+            if(this._m_pCurrentTarget == pElement){
+                this._m_bCurrentTargetSalvaged = true;
             }else{
                 this._removeHashElement(pElement);
             }
@@ -577,11 +718,10 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     unscheduleAllSelectors:function(){
-        //TODO
         // Custom Selectors
         var pElement = null;
         var pNextElement = null;
-        for(pElement = this.m_pHashForSelecotrs;pElement != null;){
+        for(pElement = this._m_pHashForSelectors;pElement != null;){
             // pElement may be removed in unscheduleAllSelectorsForTarget
             pNextElement = pElement.hh.next;
             this.unscheduleAllSelectorsForTarget(pElement.target);
@@ -590,21 +730,23 @@ var CCScheduler = CCClass.extend({
 
         //updates selectors
         var pEntry = null, pTmp = null;
-        //DL_FOREACH_SAFE(m_pUpdates0List, pEntry, pTmp){
-            unscheduleUpdateForTarget(pEntry.target);
-        //}
-        //DL_FOREACH_SAFE(m_pUpdatesNegList, pEntry, pTmp){
-            unscheduleUpdateForTarget(pEntry.target);
-        //}
-        //DL_FOREACH_SAFE(m_pUpdatesPosList, pEntry, pTmp){
-            unscheduleUpdateForTarget(pEntry.target);
-        //}
+        for(pEntry = this._m_pUpdates0List;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
+            this.unscheduleUpdateForTarget(pEntry.target);
+        }
+
+        for(pEntry = this._m_pUpdatesNegList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
+            this.unscheduleUpdateForTarget(pEntry.target);
+        }
+
+        for(pEntry = this._m_pUpdatesPosList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
+            this.unscheduleUpdateForTarget(pEntry.target);
+        }
 
         //unschedule all script functions
-        for(var elt = this.m_pHashForScriptFunctions;elt != null;){
+        for(var elt = this._m_pHashForScriptFunctions;elt != null;){
             var pNextElement = elt.hh.next;
             //elt.timer.release();
-            //HASH_DEL(m_pHashForScriptFunctions, elt);
+            CC.HASH_DEL(this._m_pHashForScriptFunctions, elt);
             //elt = null;
             elt = pNextElement;
         }
@@ -616,28 +758,20 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     pauseTarget:function(pTarget){
-        /*
-         CCAssert(pTarget != NULL, "");
-
-         // custom selectors
-         tHashSelectorEntry *pElement = NULL;
-         HASH_FIND_INT(m_pHashForSelectors, &pTarget, pElement);
-         if (pElement)
-         {
-         pElement->paused = true;
-         }
-
-         // update selector
-         tHashUpdateEntry *pElementUpdate = NULL;
-         HASH_FIND_INT(m_pHashForUpdates, &pTarget, pElementUpdate);
-         if (pElementUpdate)
-         {
-         CCAssert(pElementUpdate->entry != NULL, "");
-         pElementUpdate->entry->paused = true;
-         }
-         */
-        //TODO
         CC.CCAssert(pTarget != null,"");
+
+        //customer selectors
+        var pElement = CC.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
+        if(pElement != null){
+            pElement.paused = true;
+        }
+
+        //update selector
+        var pElementUpdate = CC.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
+        if(pElementUpdate != null){
+            CC.CCAssert(pElementUpdate.entry != NULL, "");
+            pElementUpdate.entry.paused = true;
+        }
     },
 
     /** Resumes the target.
@@ -646,21 +780,20 @@ var CCScheduler = CCClass.extend({
      @since v0.99.3
      */
     resumeTarget:function(pTarget){
-        //TODO
-        //CCAssert(pTarget != NULL, "");
+        CC.CCAssert(pTarget != NULL, "");
 
         // custom selectors
-        var pElement = null;
-        //HASH_FIND_INT(m_pHashForSelectors, &pTarget, pElement);
+        var pElement = CC.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
+
         if(pElement != null){
             pElement.paused = false;
         }
 
         //update selector
-        var pElementUpdate = null;
-        //HASH_FIND_INT(m_pHashForUpdates, &pTarget, pElementUpdate);
+        var pElementUpdate = CC.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
+
         if(pElementUpdate != null){
-            //CCAssert(pElementUpdate->entry != NULL, "");
+            CC.CCAssert(pElementUpdate.entry != NULL, "");
             pElementUpdate.entry.paused = false;
         }
     },
@@ -669,12 +802,10 @@ var CCScheduler = CCClass.extend({
      @since v1.0.0
      */
     isTargetPaused:function(pTarget){
-        //CCAssert( pTarget != NULL, "target must be non nil" );
+        CC.CCAssert( pTarget != NULL, "target must be non nil" );
 
         // Custom selectors
-        var pElement = null;
-        //TODO
-        //HASH_FIND_INT(m_pHashForSelectors, &pTarget, pElement);
+        var pElement = CC.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
         if(pElement != null){
             return pElement.paused;
         }
