@@ -193,7 +193,7 @@ function tHashScriptFuncEntry(timer,paused,funcName,hh){
 
 
 /** @brief Light weight timer */
-var CCTimer = CCClass.extend({
+CC.CCTimer = CC.Class.extend({
     _m_fInterval:0.0,
     _m_pfnSelector:"",
 
@@ -263,7 +263,7 @@ var CCTimer = CCClass.extend({
  *
  * @return a CCTimer instance
  * */
-CCTimer.timerWithTarget = function(pTarget,pfnSelector,fSeconds){
+CC.CCTimer.timerWithTarget = function(pTarget,pfnSelector,fSeconds){
     if(arguments < 2)
         throw new Error("timerWithTarget'argument can't is null");
 
@@ -290,7 +290,7 @@ CC._pSharedScheduler = null;
  The 'custom selectors' should be avoided when possible. It is faster, and consumes less memory to use the 'update selector'.
 
  */
-var CCScheduler = CCClass.extend({
+CC.CCScheduler = CC.Class.extend({
     _m_fTimeScale:0.0,
     _m_pUpdatesNegList:null,                             // list of priority < 0
     _m_pUpdates0List:null,                               // list priority == 0
@@ -813,7 +813,7 @@ var CCScheduler = CCClass.extend({
     }
 });
 
-CCScheduler.sharedScheduler = function(){
+CC.CCScheduler.sharedScheduler = function(){
     if(!CC._pSharedScheduler){
         CC._pSharedScheduler = new CCScheduler();
         CC._pSharedScheduler._init();
@@ -821,7 +821,7 @@ CCScheduler.sharedScheduler = function(){
     return CC._pSharedScheduler;
 }
 
-CCScheduler.purgeSharedScheduler = function(){
+CC.CCScheduler.purgeSharedScheduler = function(){
     CC._pSharedScheduler = null;
 }
 
