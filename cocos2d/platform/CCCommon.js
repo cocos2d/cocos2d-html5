@@ -25,8 +25,7 @@ THE SOFTWARE.
 ****************************************************************************/
 
 var CC = CC = CC || {};
-CC._DEBUG = 1;
-CC.COCOS2D_DEBUG = 2;
+
 /**
  @brief Output Debug message.
  */
