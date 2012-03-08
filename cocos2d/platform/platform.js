@@ -35,20 +35,39 @@ CC.cc_timeval = CC.Class.extend({
     tv_usec:0//microseconds
 });
 
-CC.CCTime = CC.Class.extend({
-    gettimeofdayCocos2d: function()//alias to Date.now()
+CC.CCTime = {};
+CC.CCTime.gettimeofdayCocos2d = function()
+{
+    var timeval = new CC.cc_timeval();
+    var tmp = Date.now();
+    timeval.tv_usec = (tmp % 1000)*1000;
+    timeval.tv_sec = MAth.floor(tmp/1000);
+    return timeval;
+};
+CC.CCTime.now = function()//alias to Date.now()
+{
+    return Date.now();
+};
+CC.CCTime.timersubCocos2d = function(start, end)
+{
+    if(! out || !start ||!end)
     {
-        return Date.now();
-    },
-    timersubCocos2d:function(start, end)
+        return;
+    }
+    if(start instanceof CC.cc_timeval && end instanceof CC.cc_timeval)
     {
-        if(! out || !start ||!end)
-        {
-            return;
-        }
         var out = new CC.cc_timeval();
         out.tv_sec = end.tv_sec - start.tv_sec;
         out.tv_usec = end.tv_usec - start.tv_usec;
+        if(end.tv_usec < start.tv_usec)
+        {
+            out.tv_usec += 1000000;
+            out.tv_sec--;
+        }
         return out;
     }
-});
+    else if(!isNaN(start) && !isNaN(end))
+    {
+        return end-start;
+    }
+};
