@@ -37,7 +37,7 @@ var CC = CC = CC || {};
  - It can receive Accelerometer input
  */
 
-CC.CC.CC.CCLayer = CC.CC.CC.CCNode.extend({
+CC.CCLayer = CC.CCNode.extend({
     _m_bIsTouchEnabled:false,
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
