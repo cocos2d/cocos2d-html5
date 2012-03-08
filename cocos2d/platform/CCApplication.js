@@ -25,3 +25,158 @@ THE SOFTWARE.
 ****************************************************************************/
 
 
+/// Device oriented vertically, home button on the bottom
+CC.kOrientationPortrait = 0,
+/// Device oriented vertically, home button on the top
+CC.kOrientationPortraitUpsideDown = 1,
+/// Device oriented horizontally, home button on the right
+CC.kOrientationLandscapeLeft = 2,
+/// Device oriented horizontally, home button on the left
+CC.kOrientationLandscapeRight = 3,
+
+CC.sm_pSharedApplication = null;
+
+CC.CCApplication = CC.Class.extend(
+{
+    ctor:function(){
+        this._m_nAnimationInterval = 0;
+        CC.CCAssert(!CC.sm_pSharedApplication);
+        CC.sm_pSharedApplication = this;
+    },
+
+
+    /**
+     @brief	Implement for initialize OpenGL instance, set source path, etc...
+     */
+    initInstance:function(){
+
+
+    },
+
+    /**
+     @brief	Implement CCDirector and CCScene init code here.
+     @return true    Initialize success, app continue.
+     @return false   Initialize failed, app terminate.
+     */
+    applicationDidFinishLaunching:function(){
+
+    },
+
+    /**
+     @brief  The function be called when the application enter background
+     @param  the pointer of the application
+     */
+    applicationDidEnterBackground:function(){
+
+    },
+
+    /**
+     @brief  The function be called when the application enter foreground
+     @param  the pointer of the application
+     */
+    applicationWillEnterForeground:function(){
+
+    },
+
+    /**
+     @brief	Callback by CCDirector for limit FPS.
+     @interval       The time, which expressed in second in second, between current frame and next.
+     */
+    setAnimationInterval:function(interval){
+        this._m_nAnimationInterval = interval;
+    },
+
+
+
+    /**
+     @brief	Callback by CCDirector for change device orientation.
+     @orientation    The defination of orientation which CCDirector want change to.
+     @return         The actual orientation of the application.
+     */
+     setOrientation:function(orientation){
+        // swap width and height
+        // TODO, need to be fixed.
+        /* var pView = CC.CCDirector.sharedDirector().getOpenGLView();
+        if (pView)
+        {
+            return pView.setDeviceOrientation(orientation);
+        }
+        return CC.CCDirector.sharedDirector().getDeviceOrientation(); */
+
+    },
+
+    /**
+     @brief	Get status bar rectangle in EGLView window.
+     */
+    statusBarFrame:function(rect){
+        if (rect)
+        {
+            // Windows doesn't have status bar.
+            rect = CC.CCRectMake(0, 0, 0, 0);
+        }
+
+    },
+
+    /**
+     @brief	Run the message loop.
+     */
+    run:function(){
+        // Initialize instance and cocos2d.
+        if (! this.initInstance() || ! this.applicationDidFinishLaunching())
+        {
+            return 0;
+        }
+        // TODO, need to be fixed.
+         setInterval(CC.CCDirector.sharedDirector().mainLoop(), this._m_nAnimationInterval * 1000);
+
+    },
+    _m_nAnimationInterval:null
+
+});
+
+/**
+ @brief	Get current applicaiton instance.
+ @return Current application instance pointer.
+ */
+CC.CCApplication.sharedApplication =  function(){
+    CC.CCAssert(CC.sm_pSharedApplication);
+    return CC.sm_pSharedApplication;
+};
+
+/**
+ @brief Get current language config
+ @return Current language config
+ */
+CC.CCApplication.getCurrentLanguage = function(){
+    var ret = CC.kLanguageEnglish;
+
+    // TODO, need to be fixed.
+    /*
+    var localeID = CC.GetUserDefaultLCID();
+    var primaryLanguageID = localeID & 0xFF;
+
+    switch (primaryLanguageID)
+    {
+        case LANG_CHINESE:
+            ret = CC.kLanguageChinese;
+            break;
+        case LANG_FRENCH:
+            ret = CC.kLanguageFrench;
+            break;
+        case LANG_ITALIAN:
+            ret = CC.kLanguageItalian;
+            break;
+        case LANG_GERMAN:
+            ret = CC.kLanguageGerman;
+            break;
+        case LANG_SPANISH:
+            ret = CC.kLanguageSpanish;
+            break;
+        case LANG_RUSSIAN:
+            ret = CC.kLanguageRussian;
+            break;
+    }
+    */
+
+    return ret;
+};
