@@ -25,3 +25,19 @@ THE SOFTWARE.
 ****************************************************************************/
 
 
+var CC = CC = CC || {};
+
+//Determine the browser version, and wether we support it
+CC.loadjs('platform/CCClass.js');
+CC.loadjs('platform/CCCommon.js');
+CC.loadjs('cocoa/CCGeometry.js');
+CC.loadjs('cocoa/CCSet.js');
+CC.loadjs('platform/CCTypes.js');
+CC.loadjs('platform/ccMacro.js');
+CC.loadjs('base_nodes/CCNode.js');
+CC.loadjs('layers_scenes_transitions_nodes/CCScene.js');
+CC.loadjs('layers_scenes_transitions_nodes/CCLayer.js');
+CC.loadjs('sprite_nodes/CCSprite.js');
+CC.loadjs('CCDirector.js');
+CC.loadjs('CCScheduler.js');
+CC.loadjs('platform/CCApplication.js');
