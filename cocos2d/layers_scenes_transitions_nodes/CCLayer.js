@@ -42,7 +42,7 @@ CC.CCLayer = CC.CCNode.extend({
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
     _m_pScriptHandlerEntry:null,
-    setAnchorPoint:CC.ccp(0.5, 0.5),
+    setAnchorPoint:new CC.ccp(0.5,0.5),
     m_bIsRelativeAnchorPoint:false,
 
     init:function () {
@@ -349,7 +349,6 @@ CC.CCLayer.node = function () {
         return pRet;
     }
     else {
-        CC.CC_SAFE_DELETE(pRet)
         return null;
     }
 };
@@ -488,7 +487,6 @@ CC.CCLayerColor.layerWithColorWidthHeight = function (color, width, height) {
     if (pLayer && pLayer.initWithColorWidthHeight(color, width, height)) {
         return pLayer;
     }
-    CC.CC_SAFE_DELETE(pLayer);
     return null;
 };
 /** creates a CCLayer with color. Width and height are the window size. */
@@ -497,7 +495,6 @@ CC.CCLayerColor.layerWithColor = function (color) {
     if (pLayer && pLayer.initWithColor(color)) {
         return pLayer;
     }
-    CC.CC_SAFE_DELETE(pLayer);
     return null;
 };
 
@@ -668,7 +665,6 @@ CC.CCLayerGradient.layerWithColor = function (start, end, v) {
             if (pLayer && pLayer.initWithColor(start, end)) {
                 return pLayer;
             }
-            CC.CC_SAFE_DELETE(pLayer);
             return null;
             break;
         case 3:
@@ -676,7 +672,6 @@ CC.CCLayerGradient.layerWithColor = function (start, end, v) {
             if (pLayer && pLayer.initWithColor(start, end, v)) {
                 return pLayer;
             }
-            CC.CC_SAFE_DELETE(pLayer);
             return null;
             break;
         default:
@@ -769,9 +764,8 @@ CC.CCLayerMultiplex.layerWithLayers = function (layer) {
         return pMultiplexLayer;
     }
     CC.va_end(args);
-    CC.CC_SAFE_DELETE(pMultiplexLayer);
     return null;
-}
+};
 /**
  * lua script can not init with undetermined number of variables
  * so add these functinons to be used with lua.
