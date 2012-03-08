@@ -61,7 +61,8 @@ CC.CCTime.timersubCocos2d = function(start, end)
         out.tv_usec = end.tv_usec - start.tv_usec;
         if(end.tv_usec < start.tv_usec)
         {
-            out.tv_usec += 1000;
+            out.tv_usec += 1000000;
+            out.tv_sec--;
         }
         return out;
     }
