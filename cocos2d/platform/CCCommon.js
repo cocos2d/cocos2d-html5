@@ -64,7 +64,6 @@ if(CC._DEBUG){
         if(!cond){
             if(message){
                 alert(message);
-                var temp = this;
             }
             else{
                 alert("No message!");
