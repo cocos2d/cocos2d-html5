@@ -26,6 +26,9 @@ THE SOFTWARE.
 var CC = CC = CC || {};
 
 CC.kCCNodeTagInvalid = -1;
+CC.kCCNodeOnEnter = null;
+CC.kCCNodeOnExit = null;
+
 /** @brief CCNode is the main element. Anything thats gets drawn or contains things that get drawn is a CCNode.
  The most popular CCNodes are: CCScene, CCLayer, CCSprite, CCMenu.
 
@@ -108,19 +111,20 @@ CC.CCNode = CC.Class.extend({
     m_nTag:CC.kCCNodeTagInvalid,
     // userData is always inited as nil
     m_pUserData:null,
-    m_bIsTransformDirty:true,
-    m_bIsInverseDirty:true,
-    m_bIsTransformGLDirty:null,
-    m_tTransform:null,
-    m_tInverse:null,
-    m_pTransformGL:null,
+    _m_bIsTransformDirty:true,
+    _m_bIsInverseDirty:true,
+    _m_bIsTransformGLDirty:null,
+    _m_tTransform:null,
+    _m_tInverse:null,
+    _m_pTransformGL:null,
+    _m_nScriptHandler:0,
 
     ctor:function () {
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
         if(CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX){
-            this.m_pTransformGL = new CC.GLfloat();
+            this._m_pTransformGL = new CC.GLfloat();
         }
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
@@ -141,15 +145,15 @@ CC.CCNode = CC.Class.extend({
     },
     setSkewX:function (newSkewX) {
         this.m_fSkewX = newSkewX;
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
     },
     getSkewY:function () {
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
         return this.m_fSkewY;
     },
@@ -180,9 +184,9 @@ CC.CCNode = CC.Class.extend({
     // rotation setter
     setRotation:function (newRotation) {
         this.m_fRotation = newRotation;
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
     },
     /** Get the scale factor of the node.
@@ -195,9 +199,9 @@ CC.CCNode = CC.Class.extend({
     /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. */
     setScale:function (scale) {
         this.m_fScaleX = this.m_fScaleY = scale;
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
     },
 
@@ -208,9 +212,9 @@ CC.CCNode = CC.Class.extend({
     /// scaleX setter
     setScaleX:function (newScaleX) {
         this.m_fScaleX = newScaleX;
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
     },
     /// scaleY getter
@@ -220,9 +224,9 @@ CC.CCNode = CC.Class.extend({
     /// scaleY setter
     setScaleY:function (newScaleY) {
         this.m_fScaleY = newScaleY;
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
     },
     /// position getter
@@ -238,9 +242,9 @@ CC.CCNode = CC.Class.extend({
         else {
             this.m_tPositionInPixels = CC.ccpMult(newPosition, CC.CC_CONTENT_SCALE_FACTOR());
         }
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
     },
     setPositionInPixels:function (newPosition) {
@@ -251,9 +255,9 @@ CC.CCNode = CC.Class.extend({
         else {
             this.m_tPosition = CC.ccpMult(newPosition, 1 / CC.CC_CONTENT_SCALE_FACTOR());
         }
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
     getPositionInPixels:function () {
@@ -299,9 +303,9 @@ CC.CCNode = CC.Class.extend({
             if (!CCPoint.CCPointEqualToPoint(point, this.m_tAnchorPoint)) {
                 this.m_tAnchorPoint = point;
                 this.m_tAnchorPointInPixels = CC.ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
-                this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+                this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
                 if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                    this.m_bIsTransformGLDirty = true;
+                    this._m_bIsTransformGLDirty = true;
                 }
             }
         }
@@ -325,9 +329,9 @@ CC.CCNode = CC.Class.extend({
                     this.m_tContentSizeInPixels = CC.CCSizeMake(size.width * CC.CC_CONTENT_SCALE_FACTOR(), size.height * CC.CC_CONTENT_SCALE_FACTOR());
                 }
                 this.m_tAnchorPointInPixels = ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
-                this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+                this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
                 if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                    this.m_bIsTransformGLDirty = true;
+                    this._m_bIsTransformGLDirty = true;
                 }
             }
         }
@@ -342,9 +346,9 @@ CC.CCNode = CC.Class.extend({
                 this.m_tContentSize = CC.CCSizeMake(size.width / CC.CC_CONTENT_SCALE_FACTOR(), size.height / CC.CC_CONTENT_SCALE_FACTOR());
             }
             this.m_tAnchorPointInPixels = CC.ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
-            this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+            this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
             if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                this.m_bIsTransformGLDirty = true;
+                this._m_bIsTransformGLDirty = true;
             } // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
         }
     },
@@ -370,9 +374,9 @@ CC.CCNode = CC.Class.extend({
     /// isRelativeAnchorPoint setter
     setIsRelativeAnchorPoint:function (newValue) {
         this.m_bIsRelativeAnchorPoint = newValue;
-        this.m_bIsTransformDirty = this.m_bIsInverseDirty = true;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this.m_bIsTransformGLDirty = true;
+            this._m_bIsTransformGLDirty = true;
         }
     },
     /// tag getter
@@ -710,14 +714,14 @@ CC.CCNode = CC.Class.extend({
         if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             // BEGIN alternative -- using cached transform
             //
-            if (this.m_bIsTransformGLDirty) {
+            if (this._m_bIsTransformGLDirty) {
                 var t = new CC.CCAffineTransform();
                 t = this.nodeToParentTransform();
-                CC.CGAffineToGL(t, this.m_pTransformGL);
-                this.m_bIsTransformGLDirty = false;
+                CC.CGAffineToGL(t, this._m_pTransformGL);
+                this._m_bIsTransformGLDirty = false;
             }
             //TODO
-            //glMultMatrixf(this.m_pTransformGL);
+            //glMultMatrixf(this._m_pTransformGL);
             if (this.m_fVertexZ) {
                 //TODO
                 //glTranslatef(0, 0, this.m_fVertexZ);
@@ -959,19 +963,19 @@ CC.CCNode = CC.Class.extend({
      @since v0.7.1
      */
     nodeToParentTransform:function () {
-        if (this.m_bIsTransformDirty) {
+        if (this._m_bIsTransformDirty) {
 
-            this.m_tTransform = CC.CCAffineTransformIdentity;
+            this._m_tTransform = CC.CCAffineTransformIdentity;
             if (!this.m_bIsRelativeAnchorPoint && !CC.CCPoint.CCPointEqualToPoint(this.m_tAnchorPointInPixels, CC.CCPointZero)) {
-                this.m_tTransform = CC.CCAffineTransformTranslate(this.m_tTransform, this.m_tAnchorPointInPixels.x, this.m_tAnchorPointInPixels.y);
+                this._m_tTransform = CC.CCAffineTransformTranslate(this._m_tTransform, this.m_tAnchorPointInPixels.x, this.m_tAnchorPointInPixels.y);
             }
 
             if (!CC.CCPoint.CCPointEqualToPoint(this.m_tPositionInPixels, CC.CCPointZero)) {
-                this.m_tTransform = CC.CCAffineTransformTranslate(this.m_tTransform, this.m_tPositionInPixels.x, this.m_tPositionInPixels.y);
+                this._m_tTransform = CC.CCAffineTransformTranslate(this._m_tTransform, this.m_tPositionInPixels.x, this.m_tPositionInPixels.y);
             }
 
             if (this.m_fRotation != 0) {
-                this.m_tTransform = CC.CCAffineTransformRotate(this.m_tTransform, -CC.CC_DEGREES_TO_RADIANS(this.m_fRotation));
+                this._m_tTransform = CC.CCAffineTransformRotate(this._m_tTransform, -CC.CC_DEGREES_TO_RADIANS(this.m_fRotation));
             }
 
             if (this.m_fSkewX != 0 || this.m_fSkewY != 0) {
@@ -979,33 +983,33 @@ CC.CCNode = CC.Class.extend({
                 var skew = new CC.CCAffineTransform();
                 skew = CC.CCAffineTransformMake(1.0, Math.tan(CC.CC_DEGREES_TO_RADIANS(this.m_fSkewY)), Math.tan(CC.CC_DEGREES_TO_RADIANS(this.m_fSkewX)), 1.0, 0.0, 0.0);
                 // apply the skew to the transform
-                this.m_tTransform = CC.CCAffineTransformConcat(skew, this.m_tTransform);
+                this._m_tTransform = CC.CCAffineTransformConcat(skew, this._m_tTransform);
             }
 
             if (!(this.m_fScaleX == 1 && this.m_fScaleY == 1)) {
-                this.m_tTransform = CC.CCAffineTransformScale(this.m_tTransform, this.m_fScaleX, this.m_fScaleY);
+                this._m_tTransform = CC.CCAffineTransformScale(this._m_tTransform, this.m_fScaleX, this.m_fScaleY);
             }
 
             if (!CCPoint.CCPointEqualToPoint(this.m_tAnchorPointInPixels, CC.CCPointZero)) {
-                this.m_tTransform = CC.CCAffineTransformTranslate(this.m_tTransform, -this.m_tAnchorPointInPixels.x, -this.m_tAnchorPointInPixels.y);
+                this._m_tTransform = CC.CCAffineTransformTranslate(this._m_tTransform, -this.m_tAnchorPointInPixels.x, -this.m_tAnchorPointInPixels.y);
             }
 
-            this.m_bIsTransformDirty = false;
+            this._m_bIsTransformDirty = false;
         }
 
-        return this.m_tTransform;
+        return this._m_tTransform;
     },
     /** Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.
      The matrix is in Pixels.
      @since v0.7.1
      */
     parentToNodeTransform:function () {
-        if (this.m_bIsInverseDirty) {
-            this.m_tInverse = CC.CCAffineTransformInvert(this.nodeToParentTransform());
-            this.m_bIsInverseDirty = false;
+        if (this._m_bIsInverseDirty) {
+            this._m_tInverse = CC.CCAffineTransformInvert(this.nodeToParentTransform());
+            this._m_bIsInverseDirty = false;
         }
 
-        return this.m_tInverse;
+        return this._m_tInverse;
     },
     /** Retrusn the world affine transform matrix. The matrix is in Pixels.
      @since v0.7.1
@@ -1115,7 +1119,7 @@ CC.CCNode = CC.Class.extend({
 });
 /** allocates and initializes a node.
  */
-CC.CCNode.node.prototype = function () {
+CC.CCNode.node = function () {
     var pRet = new CC.CCNode();
     return pRet;
 };
