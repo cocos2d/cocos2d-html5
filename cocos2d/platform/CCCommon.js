@@ -32,7 +32,7 @@ var CC = CC = CC || {};
 CC.CCLog = function(message)
 {
     console.log(message);
-}
+};
 
 /**
  @brief Pop out a message box
@@ -40,7 +40,7 @@ CC.CCLog = function(message)
 CC.CCMessageBox = function(message)
 {
     console.log(message);
-}
+};
 
 // cocos2d debug
 if(CC.COCOS2D_DEBUG == 0){
@@ -49,20 +49,25 @@ if(CC.COCOS2D_DEBUG == 0){
     CC.CCLOGERROR = function(){};
 }
 else if (CC.COCOS2D_DEBUG == 1){
-    CC.CCLOG = CCLog;
-    CC.CCLOGINFO = CCLog;
+    CC.CCLOG = CC.CCLog;
+    CC.CCLOGINFO = CC.CCLog;
     CC.CCLOGERROR = function(){};
 }
 else if(CC.COCOS2D_DEBUG > 1){
-    CC.CCLOG = CCLog;
-    CC.CCLOGINFO = CCLog;
-    CC.CCLOGERROR = CCLog;
+    CC.CCLOG = CC.CCLog;
+    CC.CCLOGINFO = CC.CCLog;
+    CC.CCLOGERROR = CC.CCLog;
 }// COCOS2D_DEBUG
 
 if(CC._DEBUG){
-    CC.CCAssert = function(cond){
+    CC.CCAssert = function(cond, message){
         if(!cond){
-            alert(cond);
+            if(message){
+                alert(message);
+            }
+            else{
+                alert("No message!");
+            }
         }
     }
 }
