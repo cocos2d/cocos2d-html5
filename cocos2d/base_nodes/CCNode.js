@@ -90,8 +90,8 @@ CC.CCNode = CC.Class.extend({
     m_fRotation:0.0,
     m_fScaleX:1.0,
     m_fScaleY:1.0,
-    m_tPosition:0,
-    m_tPositionInPixels:0,
+    m_tPosition:CC.CCPointZero,
+    m_tPositionInPixels:CC.CCPointZero,
     m_fSkewX:0.0,
     m_fSkewY:0.0,
     // children (lazy allocs),
@@ -100,10 +100,10 @@ CC.CCNode = CC.Class.extend({
     m_pCamera:null,
     m_pGrid:null,
     m_bIsVisible:true,
-    m_tAnchorPoint:0,
-    m_tAnchorPointInPixels:0,
-    m_tContentSize:0,
-    m_tContentSizeInPixels:0,
+    m_tAnchorPoint:CC.CCPointZero,
+    m_tAnchorPointInPixels:CC.CCPointZero,
+    m_tContentSize:CC.CCSizeZero,
+    m_tContentSizeInPixels:CC.CCSizeZero,
     m_bIsRunning:false,
     m_pParent:null,
     // "whole screen" objects. like Scenes and Layers, should set isRelativeAnchorPoint to false
@@ -300,7 +300,7 @@ CC.CCNode = CC.Class.extend({
             return this.m_tAnchorPoint;
         }
         else {
-            if (!CCPoint.CCPointEqualToPoint(point, this.m_tAnchorPoint)) {
+            if (!CC.CCPoint.CCPointEqualToPoint(point, this.m_tAnchorPoint)) {
                 this.m_tAnchorPoint = point;
                 this.m_tAnchorPointInPixels = CC.ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
                 this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
@@ -328,7 +328,7 @@ CC.CCNode = CC.Class.extend({
                 else {
                     this.m_tContentSizeInPixels = CC.CCSizeMake(size.width * CC.CC_CONTENT_SCALE_FACTOR(), size.height * CC.CC_CONTENT_SCALE_FACTOR());
                 }
-                this.m_tAnchorPointInPixels = ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
+                this.m_tAnchorPointInPixels = CC.ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
                 this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
                 if (CC.CC_NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                     this._m_bIsTransformGLDirty = true;
@@ -431,7 +431,7 @@ CC.CCNode = CC.Class.extend({
     },
     _childrenAlloc:function () {
         this.m_pChildren = [];
-        this.m_pChildren.retain();
+        
     },
     // composition: GET
     /** Gets a child from the container given its tag
@@ -590,9 +590,9 @@ CC.CCNode = CC.Class.extend({
     // helper used by reorderChild & add
     _insertChild:function (child, z) {
         var index = 0;
-        var a = this.m_pChildren.lastObject();
+        var a = this.m_pChildren[this.m_pChildren.length -1];
         if (!a || a.getZOrder() <= z) {
-            this.m_pChildren.addObject(child);
+            this.m_pChildren.push(child);
         }
         else {
             var pObject = new Object();
@@ -657,12 +657,10 @@ CC.CCNode = CC.Class.extend({
         var pNode = null;
         var i = 0;
 
-        if (this.m_pChildren && this.m_pChildren.count() > 0) {
+        if (this.m_pChildren && this.m_pChildren.length > 0) {
             // draw children zOrder < 0
-            var arrayData = [];
-            arrayData = this.m_pChildren.data;
-            for (; i < arrayData.num; i++) {
-                pNode = arrayData.arr[i];
+            for (; i < this.m_pChildren.length; i++) {
+                pNode = this.m_pChildren[i];
 
                 if (pNode && pNode.m_nZOrder < 0) {
                     pNode.visit();
@@ -677,11 +675,9 @@ CC.CCNode = CC.Class.extend({
         this.draw();
 
         // draw children zOrder >= 0
-        if (this.m_pChildren && this.m_pChildren.count() > 0) {
-            var arrayData = [];
-            arrayData = this.m_pChildren.data;
-            for (; i < arrayData.num; i++) {
-                pNode = arrayData.arr[i];
+        if (this.m_pChildren && this.m_pChildren.length > 0) {
+            for (; i < this.m_pChildren.length; i++) {
+                pNode = this.m_pChildren[i];
                 if (pNode) {
                     pNode.visit();
                 }

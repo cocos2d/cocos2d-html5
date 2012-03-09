@@ -40,14 +40,14 @@ CC.CCScene = CC.CCNode.extend({
     ctor: function()
     {
         this._m_bIsRelativeAnchorPoint = false;
-        this.setAnchorPoint(CC.ccp(0.5,0.5));
+        //this.setAnchorPoint(CC.ccp(0.5,0.5));
     },
     init: function()
     {
         var bret = false;
         do{
             var pDirector;
-            if(!(pDirector = CCDirector.sharedDirector()))
+            if(!(pDirector = CC.CCDirector.sharedDirector()))
             {
                 break;
             }

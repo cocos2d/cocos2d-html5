@@ -26,23 +26,22 @@ THE SOFTWARE.
 
 
 /// Device oriented vertically, home button on the bottom
-CC.kOrientationPortrait = 0,
+CC.kOrientationPortrait = 0;
 /// Device oriented vertically, home button on the top
-CC.kOrientationPortraitUpsideDown = 1,
+CC.kOrientationPortraitUpsideDown = 1;
 /// Device oriented horizontally, home button on the right
-CC.kOrientationLandscapeLeft = 2,
+CC.kOrientationLandscapeLeft = 2;
 /// Device oriented horizontally, home button on the left
-CC.kOrientationLandscapeRight = 3,
+CC.kOrientationLandscapeRight = 3;
 
-CC.sm_pSharedApplication = null;
 
 CC.CCApplication = CC.Class.extend(
 {
     ctor:function(){
         this._m_nAnimationInterval = 0;
-        CC.CCAssert(!CC.sm_pSharedApplication);
-        CC.sm_pSharedApplication = this;
+        CC.CCAssert(!CC.sm_pSharedApplication,"CCApplication ctor");
     },
+
 
     /**
      @brief	Callback by CCDirector for limit FPS.
@@ -88,12 +87,14 @@ CC.CCApplication = CC.Class.extend(
      */
     run:function(){
         // Initialize instance and cocos2d.
-        if (! CC.AppDelegate.initInstance() || ! CC.AppDelegate.applicationDidFinishLaunching())
+        var newAppDelegate = new CC.AppDelegate();
+        if(! newAppDelegate.initInstance() || ! newAppDelegate.applicationDidFinishLaunching())
         {
             return 0;
         }
         // TODO, need to be fixed.
-         setInterval(CC.CCDirector.sharedDirector().mainLoop(), this._m_nAnimationInterval * 1000);
+        console.log(this._m_nAnimationInterval * 1000);
+         setInterval(CC.CCDirector.sharedDirector().mainLoop, this._m_nAnimationInterval * 1000);
 
     },
     _m_nAnimationInterval:null
@@ -105,7 +106,12 @@ CC.CCApplication = CC.Class.extend(
  @return Current application instance pointer.
  */
 CC.CCApplication.sharedApplication =  function(){
-    CC.CCAssert(CC.sm_pSharedApplication);
+
+    if(CC.sm_pSharedApplication == null){
+        CC.sm_pSharedApplication = new CC.CCApplication();
+    }
+
+    CC.CCAssert(CC.sm_pSharedApplication,"sharedApplication");
     return CC.sm_pSharedApplication;
 };
 
@@ -146,3 +152,5 @@ CC.CCApplication.getCurrentLanguage = function(){
 
     return ret;
 };
+
+CC.sm_pSharedApplication = null;

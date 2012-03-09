@@ -41,7 +41,7 @@ CC.CCTime.gettimeofdayCocos2d = function()
     var timeval = new CC.cc_timeval();
     var tmp = Date.now();
     timeval.tv_usec = (tmp % 1000)*1000;
-    timeval.tv_sec = MAth.floor(tmp/1000);
+    timeval.tv_sec = Math.floor(tmp/1000);
     return timeval;
 };
 CC.CCTime.now = function()//alias to Date.now()

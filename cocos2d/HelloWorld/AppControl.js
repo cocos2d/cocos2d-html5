@@ -26,17 +26,18 @@ THE SOFTWARE.
 
 var CC = CC = CC || {};
 
-// cocos2d application instance
-CC.s_sharedApplication = null;
 
 CC.AppController = CC.Class.extend(
 {
 
-    didFinishLaunchingWithOptions:function(){
-    // Override point for customization after application launch.
-    CC.CCApplication.sharedApplication().run();
 
-    return true;
+    
+    didFinishLaunchingWithOptions:function(){
+        // Override point for customization after application launch.
+
+        CC.CCApplication.sharedApplication().run();
+
+        return true;
     },
 
 
@@ -77,3 +78,13 @@ CC.AppController = CC.Class.extend(
          */
     }
 });
+
+CC.AppController.shareAppController = function(){
+    if(CC.s_sharedAppController == null){
+        CC.s_sharedAppController = new CC.AppController();
+    }
+    CC.CCAssert(CC.s_sharedAppController,"shareAppController");
+    return CC.s_sharedAppController;
+};
+// cocos2d application instance
+CC.s_sharedAppController = null;
