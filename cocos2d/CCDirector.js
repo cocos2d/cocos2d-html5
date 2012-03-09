@@ -919,14 +919,14 @@ CC.CCDirector = CC.Class.extend({
     /** Sets an OpenGL projection*/
     getProjection: function(){ return this._m_eProjection;}
 });
-function CCDirector.sharedDirector(){
+CC.CCDirector.sharedDirector = function(){
     if(CC.s_bFirstRun)
     {
         CC.s_sharedDirector.init();
         CC.s_bFirstRun = false;
     }
     return CC.s_sharedDirector;
-}
+};
 
 /***************************************************
  * implementation of DisplayLinkDirector
