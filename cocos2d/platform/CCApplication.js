@@ -44,40 +44,6 @@ CC.CCApplication = CC.Class.extend(
         CC.sm_pSharedApplication = this;
     },
 
-
-    /**
-     @brief	Implement for initialize OpenGL instance, set source path, etc...
-     */
-    initInstance:function(){
-
-
-    },
-
-    /**
-     @brief	Implement CCDirector and CCScene init code here.
-     @return true    Initialize success, app continue.
-     @return false   Initialize failed, app terminate.
-     */
-    applicationDidFinishLaunching:function(){
-
-    },
-
-    /**
-     @brief  The function be called when the application enter background
-     @param  the pointer of the application
-     */
-    applicationDidEnterBackground:function(){
-
-    },
-
-    /**
-     @brief  The function be called when the application enter foreground
-     @param  the pointer of the application
-     */
-    applicationWillEnterForeground:function(){
-
-    },
-
     /**
      @brief	Callback by CCDirector for limit FPS.
      @interval       The time, which expressed in second in second, between current frame and next.
@@ -122,7 +88,7 @@ CC.CCApplication = CC.Class.extend(
      */
     run:function(){
         // Initialize instance and cocos2d.
-        if (! this.initInstance() || ! this.applicationDidFinishLaunching())
+        if (! CC.AppDelegate.initInstance() || ! CC.AppDelegate.applicationDidFinishLaunching())
         {
             return 0;
         }
