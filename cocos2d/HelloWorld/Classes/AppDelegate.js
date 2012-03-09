@@ -34,7 +34,6 @@ var CC = CC = CC || {};
 CC.AppDelegate = CC.Class.extend(
 {
 
-
     /**
      @brief	Implement for initialize OpenGL instance, set source path, etc...
      */
@@ -63,7 +62,7 @@ CC.AppDelegate = CC.Class.extend(
         pDirector.setAnimationInterval(1.0 / 60);
 
         // create a scene. it's an autorelease object
-        var pScene = CC.HelloWorld.scene();
+        var pScene = Helloworld.scene();
 
         // run
         pDirector.runWithScene(pScene);

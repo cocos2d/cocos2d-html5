@@ -42,7 +42,7 @@ CC.CCLayer = CC.CCNode.extend({
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
     _m_pScriptHandlerEntry:null,
-    setAnchorPoint:new CC.ccp(0.5,0.5),
+    setAnchorPoint:null,
     m_bIsRelativeAnchorPoint:false,
 
     init:function () {
@@ -50,7 +50,10 @@ CC.CCLayer = CC.CCNode.extend({
         do
         {
             var pDirector = new CC.CCDirector();
-            CC.CC_BREAK_IF(!(pDirector = CC.CCDirector.sharedDirector()));
+            if(!(pDirector = CC.CCDirector.sharedDirector()))
+            {
+                break;
+            }
             this.setContentSize(pDirector.getWinSize());
             this._m_bIsTouchEnabled = false;
             this._m_bIsAccelerometerEnabled = false;
@@ -286,59 +289,8 @@ CC.CCLayer = CC.CCNode.extend({
         CC.CC_UNUSED_PARAM(pTouches);
         CC.CC_UNUSED_PARAM(pEvent);
     },
-
-    /// ColorLayer
-    CCLayerColor:function () {
-        this._m_cOpacity = 0;
-        this._m_tColor = CC.ccc3(0, 0, 0);
-        // default blend function
-        this._m_tBlendFunc.src = CC.CC_BLEND_SRC;
-        this._m_tBlendFunc.dst = CC.CC_BLEND_DST;
-    },
-    draw:function () {
-        CC.CCLayer.draw();
-
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_VERTEX_ARRAY, GL_COLOR_ARRAY
-        // Unneeded states: GL_TEXTURE_2D, GL_TEXTURE_COORD_ARRAY
-        //TODO
-        // glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        //TODO
-        // glDisable(GL_TEXTURE_2D);
-
-        //TODO
-        // glVertexPointer(2, GL_FLOAT, 0, this._m_pSquareVertices);
-        //TODO
-        // glColorPointer(4, GL_UNSIGNED_BYTE, 0, this._m_pSquareColors);
-
-        var newBlend = false;
-        if (this._m_tBlendFunc.src != CC.CC_BLEND_SRC || this._m_tBlendFunc.dst != CC.CC_BLEND_DST) {
-            newBlend = true;
-            //TODO
-            //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
-        }
-        else if (this._m_cOpacity != 255) {
-            newBlend = true;
-            //TODO
-            // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        }
-
-        //TODO
-        // glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        if (newBlend) {
-            //TODO
-            // glBlendFunc(CC.CC_BLEND_SRC, CC.CC_BLEND_DST);
-        }
-        // restore default GL state
-        //TODO
-        // glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        //TODO
-        // glEnable(GL_TEXTURE_2D);
-
-    },
     addLayer:function (layer) {
-        CC.CCAssert(this.m_pLayers, "");
+        CC.CCAssert(this.m_pLayers, "CCLayer addLayer");
         this.m_pLayers.addObject(layer);
     }
 });
@@ -396,6 +348,7 @@ CC.CCLayerColor = CC.CCLayer.extend({
     setBlendFunc:function (Var) {
         this._m_tBlendFunc = Var;
     },
+    initWithColor: function(){},//TODO 2012/3/9
     initWithColorWidthHeight:function (color, width, height) {
         var argnum = arguments.length;
         switch (argnum) {
@@ -478,6 +431,56 @@ CC.CCLayerColor = CC.CCLayer.extend({
             pRet = null;
             return null;
         }
+    },
+    /// ColorLayer
+    ctor:function () {
+        this._m_cOpacity = 0;
+        this._m_tColor = CC.ccc3(0, 0, 0);
+        // default blend function
+        this._m_tBlendFunc.src = CC.CC_BLEND_SRC;
+        this._m_tBlendFunc.dst = CC.CC_BLEND_DST;
+    },
+    draw:function () {
+        this._super();
+
+        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+        // Needed states: GL_VERTEX_ARRAY, GL_COLOR_ARRAY
+        // Unneeded states: GL_TEXTURE_2D, GL_TEXTURE_COORD_ARRAY
+        //TODO
+        // glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+        //TODO
+        // glDisable(GL_TEXTURE_2D);
+
+        //TODO
+        // glVertexPointer(2, GL_FLOAT, 0, this._m_pSquareVertices);
+        //TODO
+        // glColorPointer(4, GL_UNSIGNED_BYTE, 0, this._m_pSquareColors);
+
+        var newBlend = false;
+        if (this._m_tBlendFunc.src != CC.CC_BLEND_SRC || this._m_tBlendFunc.dst != CC.CC_BLEND_DST) {
+            newBlend = true;
+            //TODO
+            //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
+        }
+        else if (this._m_cOpacity != 255) {
+            newBlend = true;
+            //TODO
+            // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
+
+        //TODO
+        // glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+        if (newBlend) {
+            //TODO
+            // glBlendFunc(CC.CC_BLEND_SRC, CC.CC_BLEND_DST);
+        }
+        // restore default GL state
+        //TODO
+        // glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+        //TODO
+        // glEnable(GL_TEXTURE_2D);
+
     }
 });
 
