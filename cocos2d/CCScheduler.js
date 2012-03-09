@@ -815,7 +815,7 @@ CC.CCScheduler = CC.Class.extend({
 
 CC.CCScheduler.sharedScheduler = function(){
     if(!CC._pSharedScheduler){
-        CC._pSharedScheduler = new CCScheduler();
+        CC._pSharedScheduler = new CC.CCScheduler();
         CC._pSharedScheduler._init();
     }
     return CC._pSharedScheduler;

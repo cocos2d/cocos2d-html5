@@ -70,30 +70,30 @@ var CC = CC = CC || {};
         }
 
         // The dummy Class constructor
-        CC.Class = function() {
+        function Class() {
             // All construction is actually done in the init method
             if ( !initializing && this.ctor )
                 this.ctor.apply(this, arguments);
         }
 
         // Populate our constructed prototype object
-        CC.Class.prototype = prototype;
+        Class.prototype = prototype;
 
         // Enforce the constructor to be what we expect
-        CC.Class.prototype.constructor = CC.Class;
+        Class.prototype.constructor = Class;
 
         // And make this Class extendable
-        CC.Class.extend = arguments.callee;
+        Class.extend = arguments.callee;
 
         //add implementation method
-        CC.Class.implement = function(prop)
+        Class.implement = function(prop)
         {
             for(var name in prop)
             {
                 prototype[name] = prop[name];
             }
         };
-        return CC.Class;
+        return Class;
     };
 })();
 

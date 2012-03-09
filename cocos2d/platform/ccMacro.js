@@ -155,7 +155,7 @@ if(CC.CC_IS_RETINA_DISPLAY_SUPPORTED)
      On Mac it returns 1;
      On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
      */
-    CC.CC_CONTENT_SCALE_FACTOR = function(){ return CC.CCDirector.sharedDirector().getContentScaleFactor();}
+    CC.CC_CONTENT_SCALE_FACTOR = function(){ return CC.CCDirector.sharedDirector().getContentScaleFactor();};
 
     /** @def CC_RECT_PIXELS_TO_POINTS
      Converts a rect in pixels to points
@@ -172,7 +172,7 @@ if(CC.CC_IS_RETINA_DISPLAY_SUPPORTED)
 }
 else
 {
-    CC.CC_CONTENT_SCALE_FACTOR = 1;
+    CC.CC_CONTENT_SCALE_FACTOR = function(){return 1;};
     CC.CC_RECT_PIXELS_TO_POINTS = function(p){return p};
     CC.CC_RECT_POINTS_TO_PIXELS = function(p){return p};
 }

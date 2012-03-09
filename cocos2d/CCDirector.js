@@ -163,7 +163,7 @@ CC.CCDirector = CC.Class.extend({
     _m_uTotalFrames: 0,
     init : function()
     {
-        CC.CCLOG("cocos2d: "+ CC.cocos2dVersion());
+        //CC.CCLOG("cocos2d: "+ CC.cocos2dVersion());
 
         // scenes
         //TODO these are already set to null, so maybe we can remove them in the init?
@@ -236,7 +236,7 @@ CC.CCDirector = CC.Class.extend({
     {
         var now = new CC.cc_timeval();
         now = CC.CCTime.gettimeofdayCocos2d();
-        if(now  != 0)
+        if(!now)
         {
             CC.CCLOG("error in gettimeofday");
             this._m_fDeltaTime = 0;
@@ -329,7 +329,7 @@ CC.CCDirector = CC.Class.extend({
         //tick before glClear: issue #533
         if (! this._m_bPaused)
         {
-            CCScheduler.sharedScheduler().tick(this._m_fDeltaTime);//TODO this statement might not be correct
+            CC.CCScheduler.sharedScheduler().tick(this._m_fDeltaTime);//TODO this statement might not be correct
         }
         //TODO openGL stuff
         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -557,7 +557,7 @@ CC.CCDirector = CC.Class.extend({
 
         this._m_bSendCleanupToScene = false;
 
-        this._m_pobScenesStack.addObject(pScene);
+        this._m_pobScenesStack.push(pScene);
         this._m_pNextScene = pScene;
     },
     replaceScene: function(pScene)
@@ -623,7 +623,7 @@ CC.CCDirector = CC.Class.extend({
 
         this.setAnimationInterval(this._m_dOldAnimationInterval);
         this._m_pLastUpdate = CC.CCTime.gettimeofdayCocos2d();
-        if (this._m_pLastUpdate != 0)
+        if (!this._m_pLastUpdate)
         {
             CC.CCLOG("cocos2d: Director: Error in gettimeofday");
         }
@@ -740,7 +740,7 @@ CC.CCDirector = CC.Class.extend({
     setNextScene: function()
     {
         var runningIsTransition = (typeof(this._m_pRunningScene) != undefined);
-        var newIsTransition = this._m_pNextScene instanceof CCTransitionScene;
+        var newIsTransition = this._m_pNextScene instanceof CC.CCTransitionScene;
 
         // If it is not a transition, call onExit/cleanup
         if (! newIsTransition)
@@ -763,7 +763,7 @@ CC.CCDirector = CC.Class.extend({
             this._m_pRunningScene.release();
         }
         this._m_pRunningScene = this._m_pNextScene;
-        this._m_pNextScene.retain();
+        //this._m_pNextScene.retain();
         this._m_pNextScene = null;
 
         if ((! runningIsTransition) && this._m_pRunningScene)
