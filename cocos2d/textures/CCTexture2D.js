@@ -69,12 +69,12 @@ cc.kCCTexture2DPixelFormat_Default = cc.kCCTexture2DPixelFormat_RGBA8888,
     cc.kTexture2DPixelFormat_RGB5A1 = cc.kCCTexture2DPixelFormat_RGB5A1,
     cc.kTexture2DPixelFormat_Default = cc.kCCTexture2DPixelFormat_Default
 
-if (cc._FONT_LABEL_SUPPORT) {
+if (cc.FONT_LABEL_SUPPORT) {
 //TODO
 // FontLabel support
 }// CC_FONT_LABEL_SUPPORT
 
-if (cc._ENABLE_CACHE_TEXTTURE_DATA) {
+if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
     //TODO include CCTextureCache.h
 }
 
@@ -103,7 +103,7 @@ function ccTexParams(minFilter, magFilter, wrapS, wrapT) {
  * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).
  * Be aware that the content of the generated textures will be upside-down!
  */
-cc..CCTexture2D = cc.Class.extend({
+cc.CCTexture2D = cc.Class.extend({
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
     _m_bPVRHaveAlphaPremultiplied:null,
     _m_ePixelFormat:null,
@@ -118,7 +118,7 @@ cc..CCTexture2D = cc.Class.extend({
     /*public:*/
     ctor:function () {
         // implementation CCTexture2D (PVRTC);
-        if (cc._SUPPORT_PVRTC) {
+        if (cc.SUPPORT_PVRTC) {
             /**
              Extensions to make it easy to create a cc.Texture2D object from a PVRTC file
              Note that the generated textures don't have their alpha premultiplied - use the blending mode (cc.GL_SRC_ALPHA, cc.GL_ONE_MINUS_SRC_ALPHA).
@@ -161,7 +161,7 @@ cc..CCTexture2D = cc.Class.extend({
 
                 return true;
             };
-        }// cc._SUPPORT_PVRTC
+        }// cc.SUPPORT_PVRTC
     },
     /** pixel format of the texture */
     getPixelFormat:function () {
@@ -182,8 +182,8 @@ cc..CCTexture2D = cc.Class.extend({
 //** content size *//
     getContentSize:function () {
         var ret = new cc.Size();
-        ret.width = this._m_tContentSize.width / cc._CONTENT_SCALE_FACTOR();
-        ret.height = this._m_tContentSize.height / cc._CONTENT_SCALE_FACTOR();
+        ret.width = this._m_tContentSize.width / cc.CONTENT_SCALE_FACTOR();
+        ret.height = this._m_tContentSize.height / cc.CONTENT_SCALE_FACTOR();
 
         return ret;
     },
@@ -214,7 +214,7 @@ cc..CCTexture2D = cc.Class.extend({
         cc.free(data);
     },
     keepData:function (data, length) {
-        cc._UNUSED_PARAM(length);
+        cc.UNUSED_PARAM(length);
         //The texture data mustn't be saved becuase it isn't a mutable texture.
         return data;
     },
@@ -346,7 +346,7 @@ cc..CCTexture2D = cc.Class.extend({
 
         var conf = cc.Configuration.sharedConfiguration();
 
-        if (cc._TEXTURE_NPOT_SUPPORT) {
+        if (cc.TEXTURE_NPOT_SUPPORT) {
             if (conf.isSupportsNPOT()) {
                 POTWide = uiImage.getWidth();
                 POTHigh = uiImage.getHeight();
@@ -373,7 +373,7 @@ cc..CCTexture2D = cc.Class.extend({
      */
     /** Initializes a texture from a string with dimensions, alignment, font name and font size */
     initWithString:function (text, dimensions, alignment, fontName, fontSize) {
-        if (cc._ENABLE_CACHE_TEXTTURE_DATA) {
+        if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
             // cache the texture data
             cc.VolatileTexture.addStringTexture(this, text, dimensions, alignment, fontName, fontSize);
         }

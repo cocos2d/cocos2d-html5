@@ -59,7 +59,7 @@ cc.TransitionScene = cc.Scene.extend({
     //private
     _setNewScene:function(dt){
         //TODO
-        //cc._UNUSED_PARAM(dt);
+        //cc.UNUSED_PARAM(dt);
         // [self unschedule:_cmd];
         // "_cmd" is a local variable automatically defined in a method
         // that contains the selector for the method
@@ -975,7 +975,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend({
         inTexture.end();
 
         // create the second render texture for outScene
-        var outTexture = CCRenderTexture.renderTextureWithWidthAndHeight(size.width, size.height);
+        var outTexture = cc.RenderTexture.renderTextureWithWidthAndHeight(size.width, size.height);
         outTexture.getSprite().setAnchorPoint( cc.ccp(0.5,0.5) );
         outTexture.setPosition( cc.ccp(size.width/2, size.height/2) );
         outTexture.setAnchorPoint( cc.ccp(0.5,0.5) );
@@ -1027,7 +1027,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend({
     }
 });
 cc.TransitionCrossFade.transitionWithDuration = function(t,scene){
-    var Transition = new CCTransitionCrossFade();
+    var Transition = new cc.TransitionCrossFade();
     Transition.initWithDuration(d, s);
     return Transition;
 };
@@ -1052,7 +1052,7 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend({
                 cc.Sequence.actions
                     (
                         action,
-                        CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                         cc.StopGrid.action(),
                         null
                     )

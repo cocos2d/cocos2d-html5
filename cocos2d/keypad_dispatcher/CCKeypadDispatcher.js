@@ -123,7 +123,9 @@ cc.KeypadDispatcher = cc.Class.extend({
         {
             for (iter = this._m_pDelegates.begin(); iter != this_m_pDelegates.end(); ++iter)
             {
-                cc._BREAK_IF(!(iter));
+                if(!(iter)){
+                    break;
+                }
 
                 pHandler = iter;
                 pDelegate = pHandler.getDelegate();
@@ -184,7 +186,7 @@ cc.KeypadDispatcher.sharedDispatcher = function()
 {
     if(! cc.s_KeypadDispatcher)
     {
-        cc.s_KeypadDispatcher = new CCKeypadDispatcher();
+        cc.s_KeypadDispatcher = new cc.KeypadDispatcher();
     }
     return cc.s_KeypadDispatcher;
 };
