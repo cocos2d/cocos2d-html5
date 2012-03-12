@@ -29,34 +29,34 @@
  ****************************************************************************/
 
 
-var CC = CC = CC || {};
-CC.cc_timeval = CC.Class.extend({
+var cc = cc = cc || {};
+cc.timeval = cc.Class.extend({
     tv_sec:0,//seconds
     tv_usec:0//microseconds
 });
 
-CC.CCTime = {};
-CC.CCTime.gettimeofdayCocos2d = function()
+cc.Time = {};
+cc.Time.gettimeofdayCocos2d = function()
 {
-    var timeval = new CC.cc_timeval();
+    var timeval = new cc.timeval();
     var tmp = Date.now();
     timeval.tv_usec = (tmp % 1000)*1000;
     timeval.tv_sec = Math.floor(tmp/1000);
     return timeval;
 };
-CC.CCTime.now = function()//alias to Date.now()
+cc.Time.now = function()//alias to Date.now()
 {
     return Date.now();
 };
-CC.CCTime.timersubCocos2d = function(start, end)
+cc.Time.timersubCocos2d = function(start, end)
 {
     if(! out || !start ||!end)
     {
         return;
     }
-    if(start instanceof CC.cc_timeval && end instanceof CC.cc_timeval)
+    if(start instanceof cc.timeval && end instanceof cc.timeval)
     {
-        var out = new CC.cc_timeval();
+        var out = new cc.timeval();
         out.tv_sec = end.tv_sec - start.tv_sec;
         out.tv_usec = end.tv_usec - start.tv_usec;
         if(end.tv_usec < start.tv_usec)

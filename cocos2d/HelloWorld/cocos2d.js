@@ -28,78 +28,78 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 //Cocos2d directory
-CC.CCDir = '../';//in relate to the html file or use absolute
-CC.loadQue = [];//the load que which js files are loaded
-CC.COCOS2D_DEBUG =2;
-CC._DEBUG =1;
-CC.CC_IS_RETINA_DISPLAY_SUPPORTED = 0;
+cc.Dir = '../';//in relate to the html file or use absolute
+cc.loadQue = [];//the load que which js files are loaded
+cc.COCOS2D_DEBUG =2;
+cc._DEBUG =1;
+cc._IS_RETINA_DISPLAY_SUPPORTED = 0;
 //html5 selector method
-CC.$ = function(x)
+cc.$ = function(x)
 {
     return document.querySelector(x);
 };
-CC.$new = function(x)
+cc.$new = function(x)
 {
     return document.createElement(x);
 };
 //function to load files into html
 /*
-CC.loadjs = function(filename)
+cc.loadjs = function(filename)
 {
     //get a ref to header
-    var head = CC.$('head');
+    var head = cc.$('head');
     var insert = document.createElement('script');
-    insert.setAttribute('src',CC.CCDir+filename);
+    insert.setAttribute('src',cc.Dir+filename);
     head.appendChild(insert);
 };*/
 
-CC.loadjs = function(filename)
+cc.loadjs = function(filename)
 {
     //add the file to the que
-    var script = CC.$new('script');
-    script.src = CC.CCDir + filename;
-    script.order = CC.loadQue.length;
-    CC.loadQue.push(script);
+    var script = cc.$new('script');
+    script.src = cc.Dir + filename;
+    script.order = cc.loadQue.length;
+    cc.loadQue.push(script);
 
 
     script.onload = function()
     {
         //file have finished loading,
         //if there is more file to load, we should put the next file on the head
-        if(this.order+1 < CC.loadQue.length)
+        if(this.order+1 < cc.loadQue.length)
         {
-            CC.$('head').appendChild(CC.loadQue[this.order+1]);
-            CC.CCLOG(this.order);
+            cc.$('head').appendChild(cc.loadQue[this.order+1]);
+            cc.LOG(this.order);
         }
         else
         {
             //we are ready to run the game
-            CC.AppController.shareAppController().didFinishLaunchingWithOptions();
+            cc.AppController.shareAppController().didFinishLaunchingWithOptions();
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
     {
-        CC.$('head').appendChild(script);
+        cc.$('head').appendChild(script);
     }
 };
 
 
-CC.loadjs('platform/CCClass.js');//0
-CC.loadjs('platform/CCCommon.js');//1
-CC.loadjs('platform/platform.js');//2
-CC.loadjs('cocoa/CCGeometry.js');//3
-CC.loadjs('cocoa/CCSet.js');//4
-CC.loadjs('platform/CCTypes.js');//5
-CC.loadjs('base_nodes/CCNode.js');//6
-CC.loadjs('platform/ccMacro.js');//7
-CC.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
-CC.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
-CC.loadjs('sprite_nodes/CCSprite.js');//10
-CC.loadjs('CCDirector.js');//11
-CC.loadjs('CCScheduler.js');//12
-CC.loadjs('platform/CCApplication.js');//13
-CC.loadjs('HelloWorld/Classes/AppDelegate.js');//14
-CC.loadjs('HelloWorld/AppControl.js');//15
-CC.loadjs('HelloWorld/Classes/Helloworld.js');//16
+cc.loadjs('platform/CCClass.js');//0
+cc.loadjs('platform/CCCommon.js');//1
+cc.loadjs('platform/platform.js');//2
+cc.loadjs('cocoa/CCGeometry.js');//3
+cc.loadjs('cocoa/CCSet.js');//4
+cc.loadjs('platform/CCTypes.js');//5
+cc.loadjs('base_nodes/CCNode.js');//6
+cc.loadjs('platform/ccMacro.js');//7
+cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
+cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
+cc.loadjs('sprite_nodes/CCSprite.js');//10
+cc.loadjs('CCDirector.js');//11
+cc.loadjs('CCScheduler.js');//12
+cc.loadjs('platform/CCApplication.js');//13
+cc.loadjs('HelloWorld/Classes/AppDelegate.js');//14
+cc.loadjs('HelloWorld/AppControl.js');//15
+cc.loadjs('HelloWorld/Classes/Helloworld.js');//16

@@ -23,14 +23,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 //! Default tag
-CC.kCCActionTagInvalid = -1;
+cc.kCCActionTagInvalid = -1;
 
 /**
  @brief Base class for CCAction objects.
  */
-CC.CCAction = CC.Class.extend({
+cc.Action = cc.Class.extend({
     //***********variables*************
     _m_pOriginalTarget: null,
     /** The "target".
@@ -39,7 +39,7 @@ CC.CCAction = CC.Class.extend({
      The target is 'assigned', it is not 'retained'.
      */
     _m_pTarget: null,
-    _m_nTag: CC.kCCActionTagInvalid,
+    _m_nTag: cc.kCCActionTagInvalid,
     //**************Public Functions***********
     description: function()
     {
@@ -48,7 +48,7 @@ CC.CCAction = CC.Class.extend({
     copyWithZone: function(pZone)//TODO Investigate into CCZone
     {
         var pRet = null;
-        pRet = new CC.CCAction();
+        pRet = new cc.Action();
         pRet._m_nTag = this._m_nTag;
         return pRet;
     },
@@ -70,8 +70,8 @@ CC.CCAction = CC.Class.extend({
     //! called every frame with it's delta time. DON'T override unless you know what you are doing.
     step:function(dt)
     {
-        CC.CC_UNUSED_PARAM(dt);
-        CC.CCLOG("[Action step]. override me");
+        cc._UNUSED_PARAM(dt);
+        cc.LOG("[Action step]. override me");
     },
     /**
      called once per frame. time a value between 0 and 1
@@ -83,8 +83,8 @@ CC.CCAction = CC.Class.extend({
      */
     update: function(time)
     {
-        CC.CC_UNUSED_PARAM(time);
-        CC.CCLOG("[Action update]. override me");
+        cc._UNUSED_PARAM(time);
+        cc.LOG("[Action update]. override me");
     },
     getTarget: function() { return this._m_pTarget; },
     /** The action will modify the target properties. */
@@ -100,8 +100,8 @@ CC.CCAction = CC.Class.extend({
     setTag:function(nTag) { this._m_nTag = nTag; }
 });
 /** Allocates and initializes the action */
-CC.CCAction.action = function(){
-    var pRet = new CC.CCAction();
+cc.Action.action = function(){
+    var pRet = new cc.Action();
     return pRet;
 };
 
@@ -116,7 +116,7 @@ CC.CCAction.action = function(){
 
  Infinite time actions are valid
  */
-CC.CCFiniteTimeAction = CC.CCAction.extend({
+cc.FiniteTimeAction = cc.Action.extend({
     //! duration in seconds
     _m_fDuration:0,
     //! get duration in seconds of the action
@@ -126,7 +126,7 @@ CC.CCFiniteTimeAction = CC.CCAction.extend({
     /** returns a reversed action */
     reverse: function()
     {
-        CC.CCLOG("cocos2d: FiniteTimeAction#reverse: Implement me");
+        cc.LOG("cocos2d: FiniteTimeAction#reverse: Implement me");
         return null;
     }
 });
@@ -138,7 +138,7 @@ CC.CCFiniteTimeAction = CC.CCAction.extend({
  Useful to simulate 'slow motion' or 'fast forward' effect.
  @warning This action can't be Sequenceable because it is not an CCIntervalAction
  */
-CC.CCSpeed = CC.CCAction.extend({
+cc.Speed = cc.Action.extend({
     _m_fSpeed: 0.0,
     _m_pInnerAction:null,
     getSpeed: function() { return this._m_fSpeed; },
@@ -147,7 +147,7 @@ CC.CCSpeed = CC.CCAction.extend({
     /** initializes the action */
     initWithAction: function(pAction, fRate)
     {
-        CC.CCAssert(pAction != null, "");
+        cc.Assert(pAction != null, "");
         pAction.retain();
         this._m_pInnerAction = pAction;
         this._m_fSpeed = fRate;
@@ -163,23 +163,23 @@ CC.CCSpeed = CC.CCAction.extend({
         }
         else
         {
-            pRet = new CC.CCSpeed();
-            pZone = pNewZone = new CC.CCZone(pRet);
+            pRet = new cc.Speed();
+            pZone = pNewZone = new cc.Zone(pRet);
         }
-        CC.CCAction.copyWithZone(pZone);
+        cc.Action.copyWithZone(pZone);
 
         pRet.initWithAction(this._m_pInnerAction, this._m_fSpeed );
         return pRet;
     },
     startWithTarget:function(pTarget)
     {
-        CC.CCAction.startWithTarget(pTarget);
+        cc.Action.startWithTarget(pTarget);
         this._m_pInnerAction.startWithTarget(pTarget);
     },
     stop: function()
     {
         this._m_pInnerAction.stop();
-        CC.CCAction.stop();
+        cc.Action.stop();
     },
     step: function(dt)
     {
@@ -191,7 +191,7 @@ CC.CCSpeed = CC.CCAction.extend({
     },
     reverse: function()
     {
-        return (CC.CCSpeed.actionWithAction(this._m_pInnerAction.reverse(), this._m_fSpeed));
+        return (cc.Speed.actionWithAction(this._m_pInnerAction.reverse(), this._m_fSpeed));
     },
     setInnerAction: function(pAction)
     {
@@ -206,9 +206,9 @@ CC.CCSpeed = CC.CCAction.extend({
     }
 });
 /** creates the action */
-CC.CCSpeed.actionWithAction = function(pAction, fRate)
+cc.Speed.actionWithAction = function(pAction, fRate)
 {
-    var pRet = new CC.CCSpeed();
+    var pRet = new cc.Speed();
     if (pRet && pRet.initWithAction(pAction, fRate))
     {
         return pRet;
@@ -225,7 +225,7 @@ CC.CCSpeed.actionWithAction = function(pAction, fRate)
  Instead of using CCCamera as a "follower", use this action instead.
  @since v0.99.2
  */
-CC.CCFollow = CC.CCAction.extend({
+cc.Follow = cc.Action.extend({
     isBoundarySet: function(){ return this._m_bBoundarySet; },
     /** alter behavior - turn on/off boundary */
     setBoudarySet:function(bValue) { this._m_bBoundarySet = bValue; },
@@ -233,15 +233,15 @@ CC.CCFollow = CC.CCAction.extend({
     /** initializes the action with a set boundary */
     initWithTarget:function(pFollowedNode, rect)
     {
-        CC.CCAssert(pFollowedNode != null, "");
+        cc.Assert(pFollowedNode != null, "");
         pFollowedNode.retain();
         this._m_pobFollowedNode = pFollowedNode;
         this._m_bBoundarySet = false;
         this._m_bBoundaryFullyCovered = false;
 
-        var winSize = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_obFullScreenSize = CC.CCPointMake(winSize.width, winSize.height);
-        this._m_obHalfScreenSize = CC.ccpMult(m_obFullScreenSize, 0.5);
+        var winSize = cc.Director.sharedDirector().getWinSize();
+        this._m_obFullScreenSize = cc.PointMake(winSize.width, winSize.height);
+        this._m_obHalfScreenSize = cc.ccpMult(m_obFullScreenSize, 0.5);
 
         if(rect)
         {
@@ -280,18 +280,18 @@ CC.CCFollow = CC.CCAction.extend({
         }
         else
         {
-            pRet = new CC.CCFollow();
-            pNewZone = new CC.CCZone(pRet);
+            pRet = new cc.Follow();
+            pNewZone = new cc.Zone(pRet);
             pZone = pNewZone;//TODO Modifying a pointer in c++?
         }
-        CC.CCAction.copyWithZone(pZone);
+        cc.Action.copyWithZone(pZone);
         // copy member data
         pRet._m_nTag = this._m_nTag;
         return pRet;
     },
     step:function(dt)
     {
-        CC.CC_UNUSED_PARAM(dt);
+        cc._UNUSED_PARAM(dt);
 
         if(this._m_bBoundarySet)
         {
@@ -299,14 +299,14 @@ CC.CCFollow = CC.CCAction.extend({
             if(this._m_bBoundaryFullyCovered)
                 return;
 
-            var tempPos = CC.ccpSub( this._m_obHalfScreenSize, this._m_pobFollowedNode.getPosition());
+            var tempPos = cc.ccpSub( this._m_obHalfScreenSize, this._m_pobFollowedNode.getPosition());
 
-            this._m_pTarget.setPosition(CC.ccp(CC.clampf(tempPos.x, m_fLeftBoundary, m_fRightBoundary),
-                CC.clampf(tempPos.y, m_fBottomBoundary, m_fTopBoundary)));
+            this._m_pTarget.setPosition(cc.ccp(cc.clampf(tempPos.x, m_fLeftBoundary, m_fRightBoundary),
+                cc.clampf(tempPos.y, m_fBottomBoundary, m_fTopBoundary)));
         }
         else
         {
-            this._m_pTarget.setPosition(CC.ccpSub(this._m_obHalfScreenSize, this._m_pobFollowedNode.getPosition()));
+            this._m_pTarget.setPosition(cc.ccpSub(this._m_obHalfScreenSize, this._m_pobFollowedNode.getPosition()));
         }
     },
     isDone:function()
@@ -316,7 +316,7 @@ CC.CCFollow = CC.CCAction.extend({
     stop:function()
     {
         this._m_pTarget = null;
-        CC.CCAction.stop();
+        cc.Action.stop();
     },
     // node to follow
     _m_pobFollowedNode:null,
@@ -335,9 +335,9 @@ CC.CCFollow = CC.CCAction.extend({
 });
 /** creates the action with a set boundary */
 /** creates the action with no boundary set */
-CC.CCFollow.actionWithTarget = function(pFollowedNode, rect)
+cc.Follow.actionWithTarget = function(pFollowedNode, rect)
 {
-    var pRet = new CC.CCFollow();
+    var pRet = new cc.Follow();
     if(rect != null && pRet && pRet.initWithTarget(pFollowedNode, rect))
     {
         return pRet;

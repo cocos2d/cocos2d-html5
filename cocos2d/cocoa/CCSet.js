@@ -24,7 +24,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-CC.CCSet = CC.Class.extend(
+cc.Set = cc.Class.extend(
 {
     ctor:function( rSetObject)
     {
@@ -153,4 +153,4 @@ CC.CCSet = CC.Class.extend(
 
 });
 
-CC.NSMutableSet = CC.CCSet;
+cc.NSMutableSet = cc.Set;
