@@ -70,7 +70,7 @@ cc.Action = cc.Class.extend({
     //! called every frame with it's delta time. DON'T override unless you know what you are doing.
     step:function(dt)
     {
-        cc._UNUSED_PARAM(dt);
+        cc.UNUSED_PARAM(dt);
         cc.LOG("[Action step]. override me");
     },
     /**
@@ -83,7 +83,7 @@ cc.Action = cc.Class.extend({
      */
     update: function(time)
     {
-        cc._UNUSED_PARAM(time);
+        cc.UNUSED_PARAM(time);
         cc.LOG("[Action update]. override me");
     },
     getTarget: function() { return this._m_pTarget; },
@@ -291,7 +291,7 @@ cc.Follow = cc.Action.extend({
     },
     step:function(dt)
     {
-        cc._UNUSED_PARAM(dt);
+        cc.UNUSED_PARAM(dt);
 
         if(this._m_bBoundarySet)
         {

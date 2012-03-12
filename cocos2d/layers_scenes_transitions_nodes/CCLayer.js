@@ -227,8 +227,8 @@ cc.Layer = cc.Node.extend({
         if (this._m_pScriptHandlerEntry) {
             return _excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
         }
-        cc._UNUSED_PARAM(pTouch);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouch);
+        cc.UNUSED_PARAM(pEvent);
         cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
@@ -237,24 +237,24 @@ cc.Layer = cc.Node.extend({
             _excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
             return;
         }
-        cc._UNUSED_PARAM(pTouch);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouch);
+        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchEnded:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             _excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
             return;
         }
-        cc._UNUSED_PARAM(pTouch);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouch);
+        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchCancelled:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouch);
             return;
         }
-        cc._UNUSED_PARAM(pTouch);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouch);
+        cc.UNUSED_PARAM(pEvent);
     },
     // default implements are used to call script callback if exist
     ccTouchesBegan:function (pTouches, pEvent) {
@@ -262,35 +262,35 @@ cc.Layer = cc.Node.extend({
             this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouches);
             return;
         }
-        cc._UNUSED_PARAM(pTouches);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouches);
+        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouches);
             return;
         }
-        cc._UNUSED_PARAM(pTouches);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouches);
+        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesEnded:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouches);
             return;
         }
-        cc._UNUSED_PARAM(pTouches);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouches);
+        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesCancelled:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouches);
             return;
         }
-        cc._UNUSED_PARAM(pTouches);
-        cc._UNUSED_PARAM(pEvent);
+        cc.UNUSED_PARAM(pTouches);
+        cc.UNUSED_PARAM(pEvent);
     },
     addLayer:function (layer) {
-        cc.Assert(this.m_pLayers, "CCLayer addLayer");
+        cc.Assert(this.m_pLayers, "cc.Layer addLayer");
         this.m_pLayers.addObject(layer);
     }
 });
@@ -355,8 +355,8 @@ cc.LayerColor = cc.Layer.extend({
             case 3:
                 /** initializes a CCLayer with color, width and height in Points */
                     // default blend function
-                this._m_tBlendFunc.src = cc._BLEND_SRC;
-                this._m_tBlendFunc.dst = cc._BLEND_DST;
+                this._m_tBlendFunc.src = cc.BLEND_SRC;
+                this._m_tBlendFunc.dst = cc.BLEND_DST;
 
                 this._m_tColor.r = color.r;
                 this._m_tColor.g = color.g;
@@ -386,10 +386,10 @@ cc.LayerColor = cc.Layer.extend({
     },
     /// override contentSize
     setContentSize:function (size) {
-        this._m_pSquareVertices[1].x = size.width * cc._CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[2].y = size.height * cc._CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[3].x = size.width * cc._CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[3].y = size.height * cc._CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[1].x = size.width * cc.CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[2].y = size.height * cc.CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[3].x = size.width * cc.CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[3].y = size.height * cc.CONTENT_SCALE_FACTOR();
 
         cc.Layer.setContentSize(size);
     },
@@ -416,7 +416,7 @@ cc.LayerColor = cc.Layer.extend({
         }
     },
     setIsOpacityModifyRGB:function (bValue) {
-        cc._UNUSED_PARAM(bValue)
+        cc.UNUSED_PARAM(bValue)
     },
     getIsOpacityModifyRGB:function () {
         return false;
@@ -437,8 +437,8 @@ cc.LayerColor = cc.Layer.extend({
         this._m_cOpacity = 0;
         this._m_tColor = cc.ccc3(0, 0, 0);
         // default blend function
-        this._m_tBlendFunc.src = cc._BLEND_SRC;
-        this._m_tBlendFunc.dst = cc._BLEND_DST;
+        this._m_tBlendFunc.src = cc.BLEND_SRC;
+        this._m_tBlendFunc.dst = cc.BLEND_DST;
     },
     draw:function () {
         this._super();
@@ -457,7 +457,7 @@ cc.LayerColor = cc.Layer.extend({
         // glColorPointer(4, GL_UNSIGNED_BYTE, 0, this._m_pSquareColors);
 
         var newBlend = false;
-        if (this._m_tBlendFunc.src != cc._BLEND_SRC || this._m_tBlendFunc.dst != cc._BLEND_DST) {
+        if (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) {
             newBlend = true;
             //TODO
             //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
@@ -473,7 +473,7 @@ cc.LayerColor = cc.Layer.extend({
 
         if (newBlend) {
             //TODO
-            // glBlendFunc(cc._BLEND_SRC, cc._BLEND_DST);
+            // glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         }
         // restore default GL state
         //TODO

@@ -346,7 +346,7 @@ cc.Director = cc.Class.extend({
         this.applyOrientation();
 
         // By default enable VertexArray, ColorArray, TextureCoordArray and Texture2D
-        cc._ENABLE_DEFAULT_GL_STATES();
+        cc.ENABLE_DEFAULT_GL_STATES();
 
         // draw the scene
         if (this._m_pRunningScene)
@@ -365,12 +365,12 @@ cc.Director = cc.Class.extend({
             this.showFPS();
         }
 
-        if (cc._ENABLE_PROFILERS)
+        if (cc.ENABLE_PROFILERS)
         {
             this.showProfilers();
         }
 
-        cc._DISABLE_DEFAULT_GL_STATES();
+        cc.DISABLE_DEFAULT_GL_STATES();
         //TODO OpenGL
         //glPopMatrix();
 
@@ -408,12 +408,12 @@ cc.Director = cc.Class.extend({
         // release cached texture
         cc.TextureCache.purgeSharedTextureCache();
 
-        if (cc._DIRECTOR_FAST_FPS)
+        if (cc.DIRECTOR_FAST_FPS)
         {
             if (this._m_pFPSLabel)
             {
-                cc._SAFE_RELEASE_NULL(this._m_pFPSLabel);
-                this._m_pFPSLabel = CCLabelTTF.labelWithString("00.0", "Arial", 24);
+                cc.SAFE_RELEASE_NULL(this._m_pFPSLabel);
+                this._m_pFPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
                 this._m_pFPSLabel.retain();
             }
         }
@@ -460,8 +460,8 @@ cc.Director = cc.Class.extend({
     {
         var s = this.getWinSize();
 
-        s.width *= cc._CONTENT_SCALE_FACTOR();
-        s.height *= cc._CONTENT_SCALE_FACTOR();
+        s.width *= cc.CONTENT_SCALE_FACTOR();
+        s.height *= cc.CONTENT_SCALE_FACTOR();
 
         return s;
     },
@@ -526,12 +526,12 @@ cc.Director = cc.Class.extend({
 
         this.stopAnimation();
 
-        if (cc._DIRECTOR_FAST_FPS)
+        if (cc.DIRECTOR_FAST_FPS)
         {
-            cc._SAFE_RELEASE_NULL(this._m_pFPSLabel);
+            cc.SAFE_RELEASE_NULL(this._m_pFPSLabel);
         }
 
-        cc._SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
+        cc.SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
 
         // purge bitmap cache
         cc.LabelBMFont.purgeCachedData();
@@ -543,7 +543,7 @@ cc.Director = cc.Class.extend({
         cc.Scheduler.purgeSharedScheduler();
         cc.TextureCache.purgeSharedTextureCache();
 
-        if (cc._TARGET_PLATFORM != cc._PLATFORM_MARMALADE)
+        if (cc.TARGET_PLATFORM != cc.PLATFORM_MARMALADE)
         {
             cc.UserDefault.purgeSharedUserDefault();
         }
@@ -593,7 +593,7 @@ cc.Director = cc.Class.extend({
 
         this.stopAnimation();
 
-        cc._SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
+        cc.SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
 
         // purge bitmap cache
         cc.LabelBMFont.purgeCachedData();
@@ -602,12 +602,12 @@ cc.Director = cc.Class.extend({
         cc.AnimationCache.purgeSharedAnimationCache();
         cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
         cc.ActionManager.sharedManager().purgeSharedManager();
-        CCScheduler.purgeSharedScheduler();
+        cc.Scheduler.purgeSharedScheduler();
         cc.TextureCache.purgeSharedTextureCache();
     },
     reshapeProjection: function(newWindowSize)
     {
-        cc._UNUSED_PARAM(newWindowSize);
+        cc.UNUSED_PARAM(newWindowSize);
         this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
         this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor,
             this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
@@ -645,7 +645,7 @@ cc.Director = cc.Class.extend({
         {
             //TODO OpenGL
             //glEnable(GL_BLEND);
-            //glBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
+            //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         }
         else
         {
@@ -705,7 +705,7 @@ cc.Director = cc.Class.extend({
     },
     setDirectorType: function(obDirectorType)
     {
-        cc._UNUSED_PARAM(obDirectorType);
+        cc.UNUSED_PARAM(obDirectorType);
         // we only support CCDisplayLinkDirector
         cc.Director.sharedDirector();
 
@@ -724,7 +724,7 @@ cc.Director = cc.Class.extend({
         //TODO OpenGl
         //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        if (cc._DIRECTOR_FAST_FPS)
+        if (cc.DIRECTOR_FAST_FPS)
         {
             if (! this._m_pFPSLabel)
             {
@@ -774,9 +774,9 @@ cc.Director = cc.Class.extend({
     },
     setNotificationNode: function(node)
     {
-        cc._SAFE_RELEASE(this_m_pNotificationNode);
+        cc.SAFE_RELEASE(this_m_pNotificationNode);
         this._m_pNotificationNode = node;
-        cc._SAFE_RETAIN(this._m_pNotificationNode);
+        cc.SAFE_RETAIN(this._m_pNotificationNode);
     },
     setOpenGLView: function(pobOpenGLView)
     {
@@ -798,7 +798,7 @@ cc.Director = cc.Class.extend({
                 this.updateContentScaleFactor();
             }
 
-            var pTouchDispatcher = CCTouchDispatcher.sharedDispatcher();
+            var pTouchDispatcher = cc.TouchDispatcher.sharedDispatcher();
             this._m_pobOpenGLView.setTouchDelegate(pTouchDispatcher);
             pTouchDispatcher.setDispatchEvents(true);
         }
@@ -817,7 +817,7 @@ cc.Director = cc.Class.extend({
                 //TODO OpenGL
                 //glMatrixMode(GL_PROJECTION);
                 //glLoadIdentity();
-                //ccglOrtho(0, size.width, 0, size.height, -1024 * CC_CONTENT_SCALE_FACTOR(),1024 * CC_CONTENT_SCALE_FACTOR());
+                //ccglOrtho(0, size.width, 0, size.height, -1024 * cc.CONTENT_SCALE_FACTOR(),1024 * cc.CONTENT_SCALE_FACTOR());
                 //glMatrixMode(GL_MODELVIEW);
                 //glLoadIdentity();
                 break;
@@ -859,7 +859,7 @@ cc.Director = cc.Class.extend({
         this._m_uFrames++;
         this._m_fAccumDt += this._m_fDeltaTime;
 
-        if (this._m_fAccumDt > cc._DIRECTOR_FPS_INTERVAL)
+        if (this._m_fAccumDt > cc.DIRECTOR_FPS_INTERVAL)
         {
             this._m_fFrameRate = this._m_uFrames / this._m_fAccumDt;
             this._m_uFrames = 0;
@@ -873,7 +873,7 @@ cc.Director = cc.Class.extend({
     },
     showProfilers: function()
     {
-        if(cc._ENABLE_PROFILERS)
+        if(cc.ENABLE_PROFILERS)
         {
             this._m_fAccumDtForProfiler += this._m_fDeltaTime;
             if (this._m_fAccumDtForProfiler > 1.0)
@@ -969,7 +969,7 @@ cc.DisplayLinkDirector = cc.Director.extend({
             this.drawScene();
 
             // release the objects
-            //CCPoolManager::getInstance()->pop();
+            //cc.PoolManager::getInstance()->pop();
         }
     },
     stopAnimation: function()
