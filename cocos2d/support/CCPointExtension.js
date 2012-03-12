@@ -200,7 +200,7 @@ cc.ccpToAngle = function(v){
  */
 cc.clampf = function(value,min_inclusive,max_inclusive){
     if (min_inclusive > max_inclusive) {
-        //cc._SWAP(min_inclusive, max_inclusive,ref);
+        //cc.SWAP(min_inclusive, max_inclusive,ref);
         var temp = min_inclusive;
         min_inclusive = max_inclusive;
         max_inclusive = temp;

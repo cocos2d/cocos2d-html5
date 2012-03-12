@@ -93,7 +93,7 @@ cc.AffineTransformTranslate = function(t,tx,ty){
     return cc.__AffineTransformMake(t.a, t.b, t.c, t.d, t.tx + t.a * tx + t.c * ty, t.ty + t.b * tx + t.d * ty);
 };
 
-cc.CCAffineTransformScale = function(t,sx,sy){
+cc.AffineTransformScale = function(t,sx,sy){
     return cc.__AffineTransformMake(t.a * sx, t.b * sx, t.c * sy, t.d * sy, t.tx, t.ty);
 };
 

@@ -120,10 +120,10 @@ cc.Node = cc.Class.extend({
     _m_nScriptHandler:0,
 
     ctor:function () {
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
-        if(cc._NODE_TRANSFORM_USING_AFFINE_MATRIX){
+        if(cc.NODE_TRANSFORM_USING_AFFINE_MATRIX){
             this._m_pTransformGL = new cc.GLfloat();
         }
     },
@@ -146,13 +146,13 @@ cc.Node = cc.Class.extend({
     setSkewX:function (newSkewX) {
         this.m_fSkewX = newSkewX;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
     getSkewY:function () {
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
         return this.m_fSkewY;
@@ -171,11 +171,11 @@ cc.Node = cc.Class.extend({
     },
     // ertexZ getter
     getVertexZ:function () {
-        return this.m_fVertexZ / cc._CONTENT_SCALE_FACTOR();
+        return this.m_fVertexZ / cc.CONTENT_SCALE_FACTOR();
     },
     // vertexZ setter
     setVertexZ:function (Var) {
-        this.m_fVertexZ = Var * cc._CONTENT_SCALE_FACTOR();
+        this.m_fVertexZ = Var * cc.CONTENT_SCALE_FACTOR();
     },
     // rotation getter
     getRotation:function () {
@@ -185,7 +185,7 @@ cc.Node = cc.Class.extend({
     setRotation:function (newRotation) {
         this.m_fRotation = newRotation;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
@@ -193,14 +193,14 @@ cc.Node = cc.Class.extend({
      @warning: Assert when m_fScaleX != m_fScaleY.
      */
     getScale:function () {
-        cc.Assert(this.m_fScaleX == this.m_fScaleY, "CCNode#scale. ScaleX != ScaleY. Don't know which one to return");
+        cc.Assert(this.m_fScaleX == this.m_fScaleY, "cc.Node#scale. ScaleX != ScaleY. Don't know which one to return");
         return this.m_fScaleX;
     },
     /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. */
     setScale:function (scale) {
         this.m_fScaleX = this.m_fScaleY = scale;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
@@ -213,7 +213,7 @@ cc.Node = cc.Class.extend({
     setScaleX:function (newScaleX) {
         this.m_fScaleX = newScaleX;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
@@ -225,7 +225,7 @@ cc.Node = cc.Class.extend({
     setScaleY:function (newScaleY) {
         this.m_fScaleY = newScaleY;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
@@ -236,27 +236,27 @@ cc.Node = cc.Class.extend({
     /// position setter
     setPosition:function (newPosition) {
         this.m_tPosition = newPosition;
-        if (cc._CONTENT_SCALE_FACTOR() == 1) {
+        if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this.m_tPositionInPixels = this.m_tPosition;
         }
         else {
-            this.m_tPositionInPixels = cc.ccpMult(newPosition, cc._CONTENT_SCALE_FACTOR());
+            this.m_tPositionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
         }
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
     setPositionInPixels:function (newPosition) {
         this.m_tPositionInPixels = newPosition;
-        if (cc._CONTENT_SCALE_FACTOR() == 1) {
+        if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this.m_tPosition = this.m_tPositionInPixels;
         }
         else {
-            this.m_tPosition = cc.ccpMult(newPosition, 1 / cc._CONTENT_SCALE_FACTOR());
+            this.m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
@@ -281,8 +281,8 @@ cc.Node = cc.Class.extend({
     },
     /// grid setter
     setGrid:function (pGrid) {
-        cc._SAFE_RETAIN(pGrid);
-        cc._SAFE_RELEASE(this.m_pGrid);
+        cc.SAFE_RETAIN(pGrid);
+        cc.SAFE_RELEASE(this.m_pGrid);
         this.m_pGrid = pGrid;
     },
     /// isVisible getter
@@ -304,7 +304,7 @@ cc.Node = cc.Class.extend({
                 this.m_tAnchorPoint = point;
                 this.m_tAnchorPointInPixels = cc.ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
                 this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-                if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+                if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                     this._m_bIsTransformGLDirty = true;
                 }
             }
@@ -322,15 +322,15 @@ cc.Node = cc.Class.extend({
         else {
             if (!cc.Size.CCSizeEqualToSize(size, this.m_tContentSize)) {
                 this.m_tContentSize = size;
-                if (cc._CONTENT_SCALE_FACTOR() == 1) {
+                if (cc.CONTENT_SCALE_FACTOR() == 1) {
                     this.m_tContentSizeInPixels = this.m_tContentSize;
                 }
                 else {
-                    this.m_tContentSizeInPixels = cc.SizeMake(size.width * cc._CONTENT_SCALE_FACTOR(), size.height * cc._CONTENT_SCALE_FACTOR());
+                    this.m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
                 }
                 this.m_tAnchorPointInPixels = cc.ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
                 this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-                if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+                if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                     this._m_bIsTransformGLDirty = true;
                 }
             }
@@ -339,15 +339,15 @@ cc.Node = cc.Class.extend({
     setContentSizeInPixels:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this.m_tContentSizeInPixels)) {
             this.m_tContentSizeInPixels = size;
-            if (cc._CONTENT_SCALE_FACTOR() == 1) {
+            if (cc.CONTENT_SCALE_FACTOR() == 1) {
                 this.m_tContentSize = this.m_tContentSizeInPixels;
             }
             else {
-                this.m_tContentSize = cc.SizeMake(size.width / cc._CONTENT_SCALE_FACTOR(), size.height / cc._CONTENT_SCALE_FACTOR());
+                this.m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
             this.m_tAnchorPointInPixels = cc.ccp(this.m_tContentSizeInPixels.width * this.m_tAnchorPoint.x, this.m_tContentSizeInPixels.height * this.m_tAnchorPoint.y);
             this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-            if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                 this._m_bIsTransformGLDirty = true;
             } // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
         }
@@ -375,7 +375,7 @@ cc.Node = cc.Class.extend({
     setIsRelativeAnchorPoint:function (newValue) {
         this.m_bIsRelativeAnchorPoint = newValue;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
@@ -401,7 +401,7 @@ cc.Node = cc.Class.extend({
     boundingBox:function () {
         var ret = new cc.Rect();
         ret = this.boundingBoxInPixels();
-        return cc._RECT_PIXELS_TO_POINTS(ret);
+        return cc.RECT_PIXELS_TO_POINTS(ret);
     },
     /** returns a "local" axis aligned bounding box of the node in pixels.
      The returned box is relative only to its parent.
@@ -707,7 +707,7 @@ cc.Node = cc.Class.extend({
     transform:function () {
         // transformations
 
-        if (cc._NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             // BEGIN alternative -- using cached transform
             //
             if (this._m_bIsTransformGLDirty) {
@@ -767,10 +767,10 @@ cc.Node = cc.Class.extend({
             // skew
                 if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
                     var skewMatrix = new cc.AffineTransform();
-                    skewMatrix = CCAffineTransformMake(1.0, Math.tan(CC_DEGREES_TO_RADIANS(skewY_)), Math.tan(CC_DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
+                    skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(skewY_)), Math.tan(cc.DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
                     //TODO
                     // glMatrix = new GLfloat();
-                    CCAffineToGL(skewMatrix, glMatrix);
+                    cc.AffineToGL(skewMatrix, glMatrix);
                     //TODO
                     // glMultMatrixf(glMatrix);
                 }
@@ -971,13 +971,13 @@ cc.Node = cc.Class.extend({
             }
 
             if (this.m_fRotation != 0) {
-                this._m_tTransform = cc.AffineTransformRotate(this._m_tTransform, -cc._DEGREES_TO_RADIANS(this.m_fRotation));
+                this._m_tTransform = cc.AffineTransformRotate(this._m_tTransform, -cc.DEGREES_TO_RADIANS(this.m_fRotation));
             }
 
             if (this.m_fSkewX != 0 || this.m_fSkewY != 0) {
                 // create a skewed coordinate system
                 var skew = new cc.AffineTransform();
-                skew = cc.AffineTransformMake(1.0, Math.tan(cc._DEGREES_TO_RADIANS(this.m_fSkewY)), Math.tan(cc._DEGREES_TO_RADIANS(this.m_fSkewX)), 1.0, 0.0, 0.0);
+                skew = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this.m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this.m_fSkewX)), 1.0, 0.0, 0.0);
                 // apply the skew to the transform
                 this._m_tTransform = cc.AffineTransformConcat(skew, this._m_tTransform);
             }
@@ -986,7 +986,7 @@ cc.Node = cc.Class.extend({
                 this._m_tTransform = cc.AffineTransformScale(this._m_tTransform, this.m_fScaleX, this.m_fScaleY);
             }
 
-            if (!CCPoint.CCPointEqualToPoint(this.m_tAnchorPointInPixels, cc.PointZero)) {
+            if (!cc.Point.CCPointEqualToPoint(this.m_tAnchorPointInPixels, cc.PointZero)) {
                 this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, -this.m_tAnchorPointInPixels.x, -this.m_tAnchorPointInPixels.y);
             }
 
@@ -1029,13 +1029,13 @@ cc.Node = cc.Class.extend({
      */
     convertToNodeSpace:function (worldPoint) {
         var ret = new cc.Point();
-        if (cc._CONTENT_SCALE_FACTOR() == 1) {
+        if (cc.CONTENT_SCALE_FACTOR() == 1) {
             ret = cc.PointApplyAffineTransform(worldPoint, this.worldToNodeTransform());
         }
         else {
-            ret = cc.ccpMult(worldPoint, cc._CONTENT_SCALE_FACTOR());
+            ret = cc.ccpMult(worldPoint, cc.CONTENT_SCALE_FACTOR());
             ret = cc.PointApplyAffineTransform(ret, this.worldToNodeTransform());
-            ret = cc.ccpMult(ret, 1 / cc._CONTENT_SCALE_FACTOR());
+            ret = cc.ccpMult(ret, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         return ret;
     },
@@ -1044,13 +1044,13 @@ cc.Node = cc.Class.extend({
      */
     convertToWorldSpace:function (nodePoint) {
         var ret = new cc.Point();
-        if (cc._CONTENT_SCALE_FACTOR() == 1) {
+        if (cc.CONTENT_SCALE_FACTOR() == 1) {
             ret = cc.PointApplyAffineTransform(nodePoint, this.nodeToWorldTransform());
         }
         else {
-            ret = cc.ccpMult(nodePoint, cc._CONTENT_SCALE_FACTOR());
+            ret = cc.ccpMult(nodePoint, cc.CONTENT_SCALE_FACTOR());
             ret = cc.PointApplyAffineTransform(ret, this.nodeToWorldTransform());
-            ret = cc.ccpMult(ret, 1 / cc._CONTENT_SCALE_FACTOR());
+            ret = cc.ccpMult(ret, 1 / cc.CONTENT_SCALE_FACTOR());
         }
 
         return ret;
@@ -1063,11 +1063,11 @@ cc.Node = cc.Class.extend({
         var nodePoint = new cc.Point();
         nodePoint = convertToNodeSpace(worldPoint);
         var anchorInPoints = new cc.Point();
-        if (cc._CONTENT_SCALE_FACTOR() == 1) {
+        if (cc.CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this.m_tAnchorPointInPixels;
         }
         else {
-            anchorInPoints = cc.ccpMult(this.m_tAnchorPointInPixels, 1 / cc._CONTENT_SCALE_FACTOR());
+            anchorInPoints = cc.ccpMult(this.m_tAnchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
         }
 
         return cc.ccpSub(nodePoint, anchorInPoints);
@@ -1078,11 +1078,11 @@ cc.Node = cc.Class.extend({
      */
     convertToWorldSpaceAR:function (nodePoint) {
         var anchorInPoints = new cc.Point();
-        if (cc._CONTENT_SCALE_FACTOR() == 1) {
+        if (cc.CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this.m_tAnchorPointInPixels;
         }
         else {
-            anchorInPoints = cc.ccpMult(this.m_tAnchorPointInPixels, 1 / cc._CONTENT_SCALE_FACTOR());
+            anchorInPoints = cc.ccpMult(this.m_tAnchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         var pt = new cc.Point();
         pt = ccpAdd(nodePoint, anchorInPoints);
