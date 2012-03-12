@@ -24,14 +24,14 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 
 /**
  @brief	The cocos2d Application.
 
  The reason for implement as private inheritance is to hide some interface call by CCDirector.
  */
-CC.AppDelegate = CC.Class.extend(
+cc.AppDelegate = cc.Class.extend(
 {
 
     /**
@@ -48,7 +48,7 @@ CC.AppDelegate = CC.Class.extend(
      */
     applicationDidFinishLaunching:function(){
         // initialize director
-        var pDirector = CC.CCDirector.sharedDirector();
+        var pDirector = cc.Director.sharedDirector();
 
         // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
 //     pDirector->enableRetinaDisplay(true);
@@ -76,7 +76,7 @@ CC.AppDelegate = CC.Class.extend(
      @param  the pointer of the application
      */
     applicationDidEnterBackground:function(){
-        CC.CCDirector.sharedDirector().pause();
+        cc.Director.sharedDirector().pause();
     },
 
     /**
@@ -84,6 +84,6 @@ CC.AppDelegate = CC.Class.extend(
      @param  the pointer of the application
      */
     applicationWillEnterForeground:function(){
-        CC.CCDirector.sharedDirector().resume();
+        cc.Director.sharedDirector().resume();
     }
 });

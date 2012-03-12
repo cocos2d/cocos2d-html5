@@ -24,10 +24,10 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 
 
-CC.AppController = CC.Class.extend(
+cc.AppController = cc.Class.extend(
 {
 
 
@@ -35,7 +35,7 @@ CC.AppController = CC.Class.extend(
     didFinishLaunchingWithOptions:function(){
         // Override point for customization after application launch.
 
-        CC.CCApplication.sharedApplication().run();
+        cc.Application.sharedApplication().run();
 
         return true;
     },
@@ -46,14 +46,14 @@ CC.AppController = CC.Class.extend(
          Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
          Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
          */
-        CC.CCDirector.sharedDirector().pause();
+        cc.Director.sharedDirector().pause();
     },
 
     applicationDidBecomeActive:function(){
         /*
          Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
          */
-        CC.CCDirector.sharedDirector().resume();
+        cc.Director.sharedDirector().resume();
     },
 
     applicationDidEnterBackground:function(){
@@ -61,14 +61,14 @@ CC.AppController = CC.Class.extend(
          Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
          If your application supports background execution, called instead of applicationWillTerminate: when the user quits.
          */
-        CC.CCApplication.sharedApplication().applicationDidEnterBackground();
+        cc.Application.sharedApplication().applicationDidEnterBackground();
     },
 
     applicationWillEnterForeground:function(){
         /*
          Called as part of  transition from the background to the inactive state: here you can undo many of the changes made on entering the background.
          */
-        CC.CCApplication.sharedApplication().applicationWillEnterForeground();
+        cc.Application.sharedApplication().applicationWillEnterForeground();
     },
 
     applicationWillTerminate:function(){
@@ -79,12 +79,12 @@ CC.AppController = CC.Class.extend(
     }
 });
 
-CC.AppController.shareAppController = function(){
-    if(CC.s_sharedAppController == null){
-        CC.s_sharedAppController = new CC.AppController();
+cc.AppController.shareAppController = function(){
+    if(cc.s_sharedAppController == null){
+        cc.s_sharedAppController = new cc.AppController();
     }
-    CC.CCAssert(CC.s_sharedAppController,"shareAppController");
-    return CC.s_sharedAppController;
+    cc.Assert(cc.s_sharedAppController,"shareAppController");
+    return cc.s_sharedAppController;
 };
 // cocos2d application instance
-CC.s_sharedAppController = null;
+cc.s_sharedAppController = null;

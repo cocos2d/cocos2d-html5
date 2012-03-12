@@ -25,7 +25,7 @@ THE SOFTWARE.
 ****************************************************************************/
 
 
-CC.CCPoint = CC.Class.extend(
+cc.Point = cc.Class.extend(
 {
 
     x : 0.0,
@@ -45,13 +45,13 @@ CC.CCPoint = CC.Class.extend(
     }
 
 });
-CC.CCPoint.CCPointEqualToPoint = function(point1, point2)
+cc.Point.CCPointEqualToPoint = function(point1, point2)
 {
     return ((point1.x == point2.x) && (point1.y == point2.y));
 
 };
 
-CC.CCSize = CC.Class.extend(
+cc.Size = cc.Class.extend(
 {
 
     width : 0.0,
@@ -71,13 +71,13 @@ CC.CCSize = CC.Class.extend(
     }
 
 });
-CC.CCSize.CCSizeEqualToSize = function(size1, size2)
+cc.Size.CCSizeEqualToSize = function(size1, size2)
 {
     return ((size1.width == size2.width) && (size1.height == size2.height));
 
 };
 
-CC.CCRect = CC.Class.extend(
+cc.Rect = cc.Class.extend(
 {
 
      origin : null,
@@ -85,8 +85,8 @@ CC.CCRect = CC.Class.extend(
 
     ctor:function( x1, y1, width1,  height1)
     {
-        this.origin = new CC.CCPoint();
-        this.size = new CC.CCSize();
+        this.origin = new cc.Point();
+        this.size = new cc.Size();
         if(width1 > 0 && height1 > 0){
             this.origin.x = x1;
             this.origin.y = y1;
@@ -103,88 +103,88 @@ CC.CCRect = CC.Class.extend(
     }
 
 });
-CC.CCRect.CCRectEqualToRect = function(rect1, rect2)
+cc.Rect.CCRectEqualToRect = function(rect1, rect2)
 {
-    return ((CC.CCPoint.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
-        (CC.CCSize.CCSizeEqualToSize(rect1.size, rect2.size)));
+    return ((cc.Point.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
+        (cc.Size.CCSizeEqualToSize(rect1.size, rect2.size)));
 
 };
 
 //! return the rightmost x-value of 'rect'
-CC.CCRect.CCrectGetMaxX = function(rect)
+cc.Rect.CCrectGetMaxX = function(rect)
 {
     return (rect.origin.x + rect.size.width);
 };
 
 //! return the midpoint x-value of 'rect'
-CC.CCRect.CCRectGetMidX = function(rect)
+cc.Rect.CCRectGetMidX = function(rect)
 {
     return ((rect.origin.x +rect.size.width)/2.0);
 };
 //! return the leftmost x-value of 'rect'
-CC.CCRect.CCRectGetMinX = function(rect)
+cc.Rect.CCRectGetMinX = function(rect)
 {
     return rect.origin.x;
 };
 
 //! Return the topmost y-value of `rect'
-CC.CCRect.CCRectGetMaxY = function(rect)
+cc.Rect.CCRectGetMaxY = function(rect)
 {
     return(rect.origin.y+rect.size.height);
 };
 
 //! Return the midpoint y-value of `rect'
-CC.CCRect.CCRectGetMidY = function(rect)
+cc.Rect.CCRectGetMidY = function(rect)
 {
     return ((rect.origin.y+rect.size.height)/2.0);
 };
 
 //! Return the bottommost y-value of `rect'
-CC.CCRect.CCRectGetMinY = function(rect)
+cc.Rect.CCRectGetMinY = function(rect)
 {
     return rect.origin.y;
 };
 
-CC.CCRect.CCRectContainPoint = function(rect, point)
+cc.Rect.CCRectContainPoint = function(rect, point)
 {
     var bRet = false;
-    if(point.x >= CC.CCRect.CCRectGetMinX(rect) && point.x <= CC.CCRect.CCrectGetMaxX(rect)
-        && point.y >= CC.CCRect.CCRectGetMinY(rect) && point.y <= CC.CCRect.CCRectGetMaxY(rect)){
+    if(point.x >= cc.Rect.CCRectGetMinX(rect) && point.x <= cc.Rect.CCrectGetMaxX(rect)
+        && point.y >= cc.Rect.CCRectGetMinY(rect) && point.y <= cc.Rect.CCRectGetMaxY(rect)){
         bRet = true;
     }
     return bRet;
 };
 
-CC.CCRect.CCRectIntersectsRect = function(rectA, rectB)
+cc.Rect.CCRectIntersectsRect = function(rectA, rectB)
 {
-    return !(CC.CCRect.CCrectGetMaxX(rectA)< CC.CCRect.CCRectGetMinX(rectB) ||
-        CC.CCRect.CCrectGetMaxX(rectB) < CC.CCRect.CCRectGetMinX(rectA)||
-        CC.CCRect.CCRectGetMaxY(rectA)< CC.CCRect.CCRectGetMinY(rectB) ||
-        CC.CCRect.CCRectGetMaxY(rectB) < CC.CCRect.CCRectGetMinY(rectA));
+    return !(cc.Rect.CCrectGetMaxX(rectA)< cc.Rect.CCRectGetMinX(rectB) ||
+        cc.Rect.CCrectGetMaxX(rectB) < cc.Rect.CCRectGetMinX(rectA)||
+        cc.Rect.CCRectGetMaxY(rectA)< cc.Rect.CCRectGetMinY(rectB) ||
+        cc.Rect.CCRectGetMaxY(rectB) < cc.Rect.CCRectGetMinY(rectA));
 };
 
 
-CC.CCPointMake =  function(x, y)
+cc.PointMake =  function(x, y)
 {
-    return new CC.CCPoint(x,y);
+    return new cc.Point(x,y);
 };
 
-CC.CCSizeMake = function(width, height)
+cc.SizeMake = function(width, height)
 {
-    return new CC.CCSize(width, height);
+    return new cc.Size(width, height);
 };
 
-CC.CCRectMake = function(x, y, width, height)
+cc.RectMake = function(x, y, width, height)
 {
-    return new CC.CCRect(x, y, width, height);
+    return new cc.Rect(x, y, width, height);
 };
 
 /* The "left bottom" point -- equivalent to CCPointMake(0, 0). */
-CC.CCPointZero = new CC.CCPoint(0,0);
+cc.PointZero = new cc.Point(0,0);
 
 /* The "zero" size -- equivalent to CCSizeMake(0, 0). */
-CC.CCSizeZero = new CC.CCSize(0,0);
+cc.SizeZero = new cc.Size(0,0);
 
 /* The "zero" rectangle -- equivalent to CCRectMake(0, 0, 0, 0). */
-CC.CCRectZero = new CC.CCRect(0,0,0,0);
+cc.RectZero = new cc.Rect(0,0,0,0);
 

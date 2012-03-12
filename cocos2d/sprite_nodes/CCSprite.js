@@ -23,9 +23,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 
-CC.CCSpriteIndexNotInitialized = "0xffffffff";
+cc.SpriteIndexNotInitialized = "0xffffffff";
 /// CCSprite invalid index on the CCSpriteBatchode
 
 /**
@@ -35,15 +35,15 @@ CC.CCSpriteIndexNotInitialized = "0xffffffff";
  @since v0.99.0
  */
 //! Translate with it's parent
-CC.CC_HONOR_PARENT_TRANSFORM_TRANSLATE = 1 << 0;
+cc._HONOR_PARENT_TRANSFORM_TRANSLATE = 1 << 0;
 //! Rotate with it's parent
-CC.CC_HONOR_PARENT_TRANSFORM_ROTATE = 1 << 1;
+cc._HONOR_PARENT_TRANSFORM_ROTATE = 1 << 1;
 //! Scale with it's parent
-CC.CC_HONOR_PARENT_TRANSFORM_SCALE = 1 << 2;
+cc._HONOR_PARENT_TRANSFORM_SCALE = 1 << 2;
 //! Skew with it's parent
-CC.CC_HONOR_PARENT_TRANSFORM_SKEW = 1 << 3;
+cc._HONOR_PARENT_TRANSFORM_SKEW = 1 << 3;
 //! All possible transformation enabled. Default value.
-CC.CC_HONOR_PARENT_TRANSFORM_ALL = CC.CC_HONOR_PARENT_TRANSFORM_TRANSLATE | CC.CC_HONOR_PARENT_TRANSFORM_ROTATE | CC.CC_HONOR_PARENT_TRANSFORM_SCALE | CC.CC_HONOR_PARENT_TRANSFORM_SKEW;
+cc._HONOR_PARENT_TRANSFORM_ALL = cc._HONOR_PARENT_TRANSFORM_TRANSLATE | cc._HONOR_PARENT_TRANSFORM_ROTATE | cc._HONOR_PARENT_TRANSFORM_SCALE | cc._HONOR_PARENT_TRANSFORM_SKEW;
 
 
 /** CCSprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) )
@@ -78,7 +78,7 @@ function transformValues(pos, scale, rotation, skew, ap, visible) {
     this.visible = visible;
 }
 
-CC.CCSprite = CC.CCNode.extend({
+cc.Sprite = cc.Node.extend({
     //
     // Data used when the sprite is rendered using a CCSpriteSheet
     //
@@ -229,16 +229,16 @@ CC.CCSprite = CC.CCNode.extend({
 
         this._m_bOpacityModifyRGB = true;
         this._m_nOpacity = 255;
-        this._m_sColor = this._m_sColorUnmodified = CC.ccWHITE;
+        this._m_sColor = this._m_sColorUnmodified = cc.WHITE;
 
-        this._m_sBlendFunc.src = CC.CC_BLEND_SRC;
-        this._m_sBlendFunc.dst = CC.CC_BLEND_DST;
+        this._m_sBlendFunc.src = cc._BLEND_SRC;
+        this._m_sBlendFunc.dst = cc._BLEND_DST;
 
         // update texture (calls _updateBlendFunc)
         this.setTexture(null);
 
         // clean the Quad
-        CC.memset(this._m_sQuad, 0, sizeof(this._m_sQuad));
+        cc.memset(this._m_sQuad, 0, sizeof(this._m_sQuad));
 
         this._m_bFlipX = this._m_bFlipY = false;
 
@@ -246,13 +246,13 @@ CC.CCSprite = CC.CCNode.extend({
         this.setAnchorPoint(ccp(0.5, 0.5));
 
         // zwoptex default values
-        this._m_obOffsetPositionInPixels = CC.CCPointZero;
+        this._m_obOffsetPositionInPixels = cc.PointZero;
 
-        this._m_eHonorParentTransform = CC.CC_HONOR_PARENT_TRANSFORM_ALL;
+        this._m_eHonorParentTransform = cc._HONOR_PARENT_TRANSFORM_ALL;
         this._m_bHasChildren = false;
 
         // Atlas: Color
-        var tmpColor = new CC.ccColor4B(255, 255, 255, 255);
+        var tmpColor = new cc.Color4B(255, 255, 255, 255);
         this._m_sQuad.bl.colors = tmpColor;
         this._m_sQuad.br.colors = tmpColor;
         this._m_sQuad.tl.colors = tmpColor;
@@ -263,7 +263,7 @@ CC.CCSprite = CC.CCNode.extend({
         // updated in "useSelfRender"
 
         // Atlas: TexCoords
-        this.setTextureRectInPixels(CC.CCRectZero, false, CC.CCSizeZero);
+        this.setTextureRectInPixels(cc.RectZero, false, cc.SizeZero);
 
         return true;
     },
@@ -275,8 +275,8 @@ CC.CCSprite = CC.CCNode.extend({
                  The rect used will be the size of the texture.
                  The offset will be (0,0).
                  */
-                CC.CCAssert(pTexture != null, "");
-                var rect = new CC.CCRect();
+                cc.Assert(pTexture != null, "");
+                var rect = new cc.Rect();
                 rect.size = pTexture.getContentSize();
                 return this.initWithTexture(pTexture, rect);
                 break;
@@ -284,7 +284,7 @@ CC.CCSprite = CC.CCNode.extend({
                 /** Initializes an sprite with a texture and a rect.
                  The offset will be (0,0).
                  */
-                CC.CCAssert(pTexture != null, "");
+                cc.Assert(pTexture != null, "");
                 // IMPORTANT: [self init] and not [super init];
                 this.init();
                 this.setTexture(pTexture);
@@ -305,12 +305,12 @@ CC.CCSprite = CC.CCNode.extend({
                  The rect used will be the size of the image.
                  The offset will be (0,0).
                  */
-                CC.CCAssert(pszFilename != null, "");
-                var pTexture = new CC.CCTexture2D();
-                pTexture = CC.CCTextureCache.sharedTextureCache().addImage(pszFilename);
+                cc.Assert(pszFilename != null, "");
+                var pTexture = new cc.Texture2D();
+                pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
                 if (pTexture) {
-                    var rect = new CC.CCRect();
-                    rect = CC.CCRectZero;
+                    var rect = new cc.Rect();
+                    rect = cc.RectZero;
                     rect.size = pTexture.getContentSize();
                     return this.initWithTexture(pTexture, rect);
                 }
@@ -324,9 +324,9 @@ CC.CCSprite = CC.CCNode.extend({
                 /** Initializes an sprite with an image filename, and a rect.
                  The offset will be (0,0).
                  */
-                CC.CCAssert(pszFilename != null, "");
-                var pTexture = new CC.CCTexture2D();
-                pTexture = CC.CCTextureCache.sharedTextureCache().addImage(pszFilename);
+                cc.Assert(pszFilename != null, "");
+                var pTexture = new cc.Texture2D();
+                pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
                 if (pTexture) {
                     return this.initWithTexture(pTexture, rect);
                 }
@@ -343,7 +343,7 @@ CC.CCSprite = CC.CCNode.extend({
     },
     // Initializes an sprite with an sprite frame.
     initWithSpriteFrame:function (pSpriteFrame) {
-        CC.CCAssert(pSpriteFrame != null, "");
+        cc.Assert(pSpriteFrame != null, "");
         var bRet = this.initWithTexture(pSpriteFrame.getTexture(), pSpriteFrame.getRect());
         this.setDisplayFrame(pSpriteFrame);
 
@@ -355,9 +355,9 @@ CC.CCSprite = CC.CCNode.extend({
      @since v0.9
      */
     initWithSpriteFrameName:function (pszSpriteFrameName) {
-        CC.CCAssert(pszSpriteFrameName != null, "");
-        var pFrame = new CC.CCSpriteFrame();
-        pFrame = CC.CCSpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
+        cc.Assert(pszSpriteFrameName != null, "");
+        var pFrame = new cc.SpriteFrame();
+        pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
         return this.initWithSpriteFrame(pFrame);
     },
     // XXX: deprecated
@@ -370,12 +370,12 @@ CC.CCSprite = CC.CCNode.extend({
                  return null;
                  break;
              case 2:
-                 CC.CCAssert(pImage != null);
-                 var pTexture  = new CC.CCTexture2D();
-                 pTexture = CC.CCTextureCache.sharedTextureCache().addCGImage(pImage, pszKey);
-                 var size = new CC.CCSize(),rect = new CC.CCRect();
+                 cc.Assert(pImage != null);
+                 var pTexture  = new cc.Texture2D();
+                 pTexture = cc.TextureCache.sharedTextureCache().addCGImage(pImage, pszKey);
+                 var size = new cc.Size(),rect = new cc.Rect();
                  size = pTexture.getContentSize();
-                 rect = CC.CCRectMake(0 ,0, size.width, size.height);
+                 rect = cc.RectMake(0 ,0, size.width, size.height);
                  return this.initWithTexture(texture, rect);
                  break;
              default:
@@ -389,7 +389,7 @@ CC.CCSprite = CC.CCNode.extend({
      @since v0.99.0
      */
     useSelfRender:function () {
-        this._m_uAtlasIndex = CC.CCSpriteIndexNotInitialized;
+        this._m_uAtlasIndex = cc.SpriteIndexNotInitialized;
         this._m_bUsesBatchNode = false;
         this.__m_pobTextureAtlas = null;
         this._m_pobBatchNode = null;
@@ -414,21 +414,21 @@ CC.CCSprite = CC.CCNode.extend({
     },
     /** updates the texture rect of the CCSprite in points. */
     setTextureRect:function (rect) {
-        var rectInPixels = new CC.CCRect();
-        rectInPixels = CC.CC_RECT_POINTS_TO_PIXELS(rect);
+        var rectInPixels = new cc.Rect();
+        rectInPixels = cc._RECT_POINTS_TO_PIXELS(rect);
         this.setTextureRectInPixels(rectInPixels, false, rectInPixels.size);
     },
     /** updates the texture rect, rectRotated and untrimmed size of the CCSprite in pixels
      */
     setTextureRectInPixels:function (rect, rotated, size) {
         this._m_obRectInPixels = rect;
-        this._m_obRect = CC.CC_RECT_PIXELS_TO_POINTS(rect);
+        this._m_obRect = cc._RECT_PIXELS_TO_POINTS(rect);
         this._m_bRectRotated = rotated;
 
         this.setContentSizeInPixels(size);
         this._updateTextureCoords(this._m_obRectInPixels);
 
-        var relativeOffsetInPixels = new CC.CCPoint();
+        var relativeOffsetInPixels = new cc.Point();
         relativeOffsetInPixels = this._m_obUnflippedOffsetPositionFromCenter;
 
         if (this._m_bFlipX) {
@@ -463,7 +463,7 @@ CC.CCSprite = CC.CCNode.extend({
         }
     },
     _updateTextureCoords:function (rect) {
-        var tex = new CC.CCTexture2D();
+        var tex = new cc.Texture2D();
         tex = this._m_bUsesBatchNode ? this.__m_pobTextureAtlas.getTexture() : this._m_pobTexture;
         if (!tex) {
             return;
@@ -475,7 +475,7 @@ CC.CCSprite = CC.CCNode.extend({
         var left, right, top, bottom;
 
         if (this._m_bRectRotated) {
-            if (CC.CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+            if (cc._FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
                 right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
                 top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
@@ -490,11 +490,11 @@ CC.CCSprite = CC.CCNode.extend({
 
 
             if (this._m_bFlipX) {
-                CC.CC_SWAP(top, bottom);
+                cc._SWAP(top, bottom);
             }
 
             if (this._m_bFlipY) {
-                CC.CC_SWAP(left, right);
+                cc._SWAP(left, right);
             }
 
             this._m_sQuad.bl.texCoords.u = left;
@@ -507,7 +507,7 @@ CC.CCSprite = CC.CCNode.extend({
             this._m_sQuad.tr.texCoords.v = bottom;
         }
         else {
-            if (CC.CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+            if (cc._FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                 left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
                 right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
                 top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
@@ -521,11 +521,11 @@ CC.CCSprite = CC.CCNode.extend({
             } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
             if (this._m_bFlipX) {
-                CC.CC_SWAP(left, right);
+                cc._SWAP(left, right);
             }
 
             if (this._m_bFlipY) {
-                CC.CC_SWAP(top, bottom);
+                cc._SWAP(top, bottom);
             }
 
             this._m_sQuad.bl.texCoords.u = left;
@@ -541,14 +541,14 @@ CC.CCSprite = CC.CCNode.extend({
     // BatchNode methods
     /** updates the quad according the the rotation, position, scale values. */
     updateTransform:function () {
-        CC.CCAssert(this._m_bUsesBatchNode, "");
+        cc.Assert(this._m_bUsesBatchNode, "");
 
         // optimization. Quick return if not dirty
         if (!this._m_bDirty) {
             return;
         }
 
-        var matrix = new CC.CCAffineTransform();
+        var matrix = new cc.AffineTransform();
 
         // Optimization: if it is not visible, then do nothing
         if (!this.m_bIsVisible) {
@@ -561,29 +561,29 @@ CC.CCSprite = CC.CCNode.extend({
         // Optimization: If parent is batchnode, or parent is nil
         // build Affine transform manually
         if (!this.m_pParent || this.m_pParent == this._m_pobBatchNode) {
-            var radians = -CC.CC_DEGREES_TO_RADIANS(this.m_fRotation);
+            var radians = -cc._DEGREES_TO_RADIANS(this.m_fRotation);
             var c = Math.cos(radians);
             var s = Math.sin(radians);
 
-            matrix = CC.CCAffineTransformMake(c * this.m_fScaleX, s * this.m_fScaleX, -s * this.m_fScaleY, c * this.m_fScaleY,
+            matrix = cc.AffineTransformMake(c * this.m_fScaleX, s * this.m_fScaleX, -s * this.m_fScaleY, c * this.m_fScaleY,
                 this.m_tPositionInPixels.x, this.m_tPositionInPixels.y);
             if (this.m_fSkewX || this.m_fSkewY) {
-                var skewMatrix = new CC.CCAffineTransform();
-                skewMatrix = CC.CCAffineTransformMake(1.0, Math.tan(CC.CC_DEGREES_TO_RADIANS(this.m_fSkewY)), Math.tan(CC.CC_DEGREES_TO_RADIANS(this.m_fSkewX)), 1.0, 0.0, 0.0);
-                matrix = CC.CCAffineTransformConcat(skewMatrix, matrix);
+                var skewMatrix = new cc.AffineTransform();
+                skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc._DEGREES_TO_RADIANS(this.m_fSkewY)), Math.tan(cc._DEGREES_TO_RADIANS(this.m_fSkewX)), 1.0, 0.0, 0.0);
+                matrix = cc.AffineTransformConcat(skewMatrix, matrix);
             }
-            matrix = CC.CCAffineTransformTranslate(matrix, -this.m_tAnchorPointInPixels.x, -this.m_tAnchorPointInPixels.y);
+            matrix = cc.AffineTransformTranslate(matrix, -this.m_tAnchorPointInPixels.x, -this.m_tAnchorPointInPixels.y);
         } else // parent_ != batchNode_
         {
             // else do affine transformation according to the HonorParentTransform
-            matrix = CC.CCAffineTransformIdentity;
-            var prevHonor = new CC.ccHonorParentTransform();
-            prevHonor = CC.CC_HONOR_PARENT_TRANSFORM_ALL;
+            matrix = cc.AffineTransformIdentity;
+            var prevHonor = new cc.HonorParentTransform();
+            prevHonor = cc._HONOR_PARENT_TRANSFORM_ALL;
 
             for (var p = this; p && p != this._m_pobBatchNode; p = p.getParent()) {
                 // Might happen. Issue #1053
                 // how to implement, we can not use dynamic
-                // CC.CCAssert( [p isKindOfClass:[CCSprite class]], @"CCSprite should be a CCSprite subclass. Probably you initialized an sprite with a batchnode, but you didn't add it to the batch node." );
+                // cc.Assert( [p isKindOfClass:[CCSprite class]], @"CCSprite should be a CCSprite subclass. Probably you initialized an sprite with a batchnode, but you didn't add it to the batch node." );
                 var tv = new this._getTransformValues();
                 p._getTransformValues(tv);
 
@@ -595,34 +595,34 @@ CC.CCSprite = CC.CCNode.extend({
                     return;
                 }
 
-                var newMatrix = new CC.CCAffineTransform();
-                newMatrix = CC.CCAffineTransformIdentity;
+                var newMatrix = new cc.AffineTransform();
+                newMatrix = cc.AffineTransformIdentity;
 
                 // 2nd: Translate, Skew, Rotate, Scale
-                if (prevHonor && CC.CC_HONOR_PARENT_TRANSFORM_TRANSLATE) {
-                    newMatrix = CC.CCAffineTransformTranslate(newMatrix, tv.pos.x, tv.pos.y);
+                if (prevHonor && cc._HONOR_PARENT_TRANSFORM_TRANSLATE) {
+                    newMatrix = cc.AffineTransformTranslate(newMatrix, tv.pos.x, tv.pos.y);
                 }
 
-                if (prevHonor && CC.CC_HONOR_PARENT_TRANSFORM_ROTATE) {
-                    newMatrix = CC.CCAffineTransformRotate(newMatrix, -CC.CC_DEGREES_TO_RADIANS(tv.rotation));
+                if (prevHonor && cc._HONOR_PARENT_TRANSFORM_ROTATE) {
+                    newMatrix = cc.AffineTransformRotate(newMatrix, -cc._DEGREES_TO_RADIANS(tv.rotation));
                 }
 
-                if (prevHonor && CC.CC_HONOR_PARENT_TRANSFORM_SKEW) {
-                    var skew = new CC.CCAffineTransform();
-                    skew = CC.CCAffineTransformMake(1.0, Math.tan(CC.CC_DEGREES_TO_RADIANS(tv.skew.y)), Math.tan(CC.CC_DEGREES_TO_RADIANS(tv.skew.x)), 1.0, 0.0, 0.0);
+                if (prevHonor && cc._HONOR_PARENT_TRANSFORM_SKEW) {
+                    var skew = new cc.AffineTransform();
+                    skew = cc.AffineTransformMake(1.0, Math.tan(cc._DEGREES_TO_RADIANS(tv.skew.y)), Math.tan(cc._DEGREES_TO_RADIANS(tv.skew.x)), 1.0, 0.0, 0.0);
                     // apply the skew to the transform
-                    newMatrix = CC.CCAffineTransformConcat(skew, newMatrix);
+                    newMatrix = cc.AffineTransformConcat(skew, newMatrix);
                 }
 
-                if (prevHonor && CC.CC_HONOR_PARENT_TRANSFORM_SCALE) {
-                    newMatrix = CC.CCAffineTransformScale(newMatrix, tv.scale.x, tv.scale.y);
+                if (prevHonor && cc._HONOR_PARENT_TRANSFORM_SCALE) {
+                    newMatrix = cc.AffineTransformScale(newMatrix, tv.scale.x, tv.scale.y);
                 }
 
                 // 3rd: Translate anchor point
-                newMatrix = CC.CCAffineTransformTranslate(newMatrix, -tv.ap.x, -tv.ap.y);
+                newMatrix = cc.AffineTransformTranslate(newMatrix, -tv.ap.x, -tv.ap.y);
 
                 // 4th: Matrix multiplication
-                matrix = CC.CCAffineTransformConcat(matrix, newMatrix);
+                matrix = cc.AffineTransformConcat(matrix, newMatrix);
 
                 prevHonor = p;
                 this.getHonorParentTransform();
@@ -632,7 +632,7 @@ CC.CCSprite = CC.CCNode.extend({
         //
         // calculate the Quad based on the Affine Matrix
         //
-        var size = new CC.CCSize();
+        var size = new cc.Size();
         size = this._m_obRectInPixels.size;
 
         var x1 = this._m_obOffsetPositionInPixels.x;
@@ -682,14 +682,14 @@ CC.CCSprite = CC.CCNode.extend({
     },
 // draw
     draw:function () {
-        CC.CCNode.draw();
+        cc.Node.draw();
 
-        CC.CCAssert(!this._m_bUsesBatchNode, "");
+        cc.Assert(!this._m_bUsesBatchNode, "");
 
         // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Unneeded states: -
-        var newBlend = this._m_sBlendFunc.src != CC_BLEND_SRC || this._m_sBlendFunc.dst != CC.CC_BLEND_DST;
+        var newBlend = this._m_sBlendFunc.src != CC_BLEND_SRC || this._m_sBlendFunc.dst != cc._BLEND_DST;
         if (newBlend) {
             //TODO
             //glBlendFunc(this._m_sBlendFunc.src, this._m_sBlendFunc.dst);
@@ -708,41 +708,41 @@ CC.CCSprite = CC.CCNode.extend({
         var offset = this._m_sQuad;
 
         // vertex
-        var diff = CC.offsetof(ccV3F_C4B_T2F, vertices);
+        var diff = cc.offsetof(ccV3F_C4B_T2F, vertices);
         //TODO
         // glVertexPointer(3, GL_FLOAT, kQuadSize, (offset + diff));
 
         // color
-        diff = CC.offsetof(ccV3F_C4B_T2F, colors);
+        diff = cc.offsetof(ccV3F_C4B_T2F, colors);
         //TODO
         // glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
 
         // tex coords
-        diff = CC.offsetof(ccV3F_C4B_T2F, texCoords);
+        diff = cc.offsetof(ccV3F_C4B_T2F, texCoords);
         //TODO
         //glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
 
         //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         if (newBlend) {
-            //glBlendFunc(CC.CC_BLEND_SRC, CC_BLEND_DST);
+            //glBlendFunc(cc._BLEND_SRC, CC_BLEND_DST);
         }
 
-        if (CC.CC_SPRITE_DEBUG_DRAW == 1) {
+        if (cc._SPRITE_DEBUG_DRAW == 1) {
             // draw bounding box
-            var s = new CC.CCSize();
+            var s = new cc.Size();
             s = this.m_tContentSize;
-            var vertices =[CC.ccp(0, 0), CC.ccp(s.width, 0),CC.ccp(s.width, s.height), CC.ccp(0, s.height)];
-            CC.ccDrawPoly(vertices, 4, true);
+            var vertices =[cc.ccp(0, 0), cc.ccp(s.width, 0),cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
+            cc.DrawPoly(vertices, 4, true);
         }
-        else if (CC.CC_SPRITE_DEBUG_DRAW == 2) {
+        else if (cc._SPRITE_DEBUG_DRAW == 2) {
             // draw texture box
-            var s = new CC.CCSize();
+            var s = new cc.Size();
             s = this._m_obRect.size;
-            var offsetPix = new CC.CCPoint();
+            var offsetPix = new cc.Point();
             offsetPix = this.getOffsetPositionInPixels();
-            var vertices  = [CC.ccp(offsetPix.x, offsetPix.y), CC.ccp(offsetPix.x + s.width, offsetPix.y), CC.ccp(offsetPix.x + s.width, offsetPix.y + s.height), CC.ccp(offsetPix.x, offsetPix.y + s.height)];
-            CC.ccDrawPoly(vertices, 4, true);
+            var vertices  = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
+            cc.DrawPoly(vertices, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
     },
 // CCNode overrides
@@ -750,17 +750,17 @@ CC.CCSprite = CC.CCNode.extend({
         var argnum = arguments.length;
         switch(argnum){
             case 1:
-                CC.CCNode.addChild(pChild);
+                cc.Node.addChild(pChild);
                 break;
             case 2:
-                CC.CCNode.addChild(pChild, zOrder);
+                cc.Node.addChild(pChild, zOrder);
                 break;
             case 3:
-                CC.CCAssert(pChild != null, "");
-                CC.CCNode.addChild(pChild, zOrder, tag);
+                cc.Assert(pChild != null, "");
+                cc.Node.addChild(pChild, zOrder, tag);
 
                 if (this._m_bUsesBatchNode) {
-                    CC.CCAssert(pChild.getTexture().getName() == this.__m_pobTextureAtlas.getTexture().getName(), "");
+                    cc.Assert(pChild.getTexture().getName() == this.__m_pobTextureAtlas.getTexture().getName(), "");
                     var index = this._m_pobBatchNode.atlasIndexForChild(pChild, zOrder);
                     this._m_pobBatchNode.insertChild(pChild, index);
                 }
@@ -773,8 +773,8 @@ CC.CCSprite = CC.CCNode.extend({
 
     },
     reorderChild:function (pChild, zOrder) {
-        CC.CCAssert(pChild != null, "");
-        CC.CCAssert(this.m_pChildren.containsObject(pChild), "");
+        cc.Assert(pChild != null, "");
+        cc.Assert(this.m_pChildren.containsObject(pChild), "");
 
         if (zOrder == pChild.getZOrder()) {
             return;
@@ -788,21 +788,21 @@ CC.CCSprite = CC.CCNode.extend({
             pChild.release();
         }
         else {
-            CC.CCNode.reorderChild(pChild, zOrder);
+            cc.Node.reorderChild(pChild, zOrder);
         }
     },
     removeChild:function (pChild, bCleanup) {
         if (this._m_bUsesBatchNode) {
             this._m_pobBatchNode.removeSpriteFromAtlas(pChild);
         }
-        CC.CCNode.removeChild(pChild, bCleanup);
+        cc.Node.removeChild(pChild, bCleanup);
     },
     removeAllChildrenWithCleanup:function (bCleanup) {
         if (this._m_bUsesBatchNode) {
             var pObject = new Object();
             for(pObject in this.m_pChildren)
             {
-                var pChild = new CC.CCSprite();
+                var pChild = new cc.Sprite();
                 pChild = pObject;
                 if (pChild) {
                     this._m_pobBatchNode.removeSpriteFromAtlas(pChild);
@@ -810,7 +810,7 @@ CC.CCSprite = CC.CCNode.extend({
             }
         }
 
-        CC.CCNode.removeAllChildrenWithCleanup(bCleanup);
+        cc.Node.removeAllChildrenWithCleanup(bCleanup);
         this._m_bHasChildren = false;
     },
 //
@@ -825,7 +825,7 @@ CC.CCSprite = CC.CCNode.extend({
             var pObject = new Object();
             for (pObject in this.m_pChildren)
             {
-                var pChild = new CC.CCSprite();
+                var pChild = new cc.Sprite();
                 pChild = pObject;
                 if (pChild) {
                     pChild.setDirtyRecursively(true);
@@ -843,52 +843,52 @@ CC.CCSprite = CC.CCNode.extend({
      }
      },
     setPosition:function (pos) {
-        CC.CCNode.setPosition(pos);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setPosition(pos);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setPositionInPixels:function (pos) {
-        CC.CCNode.setPositionInPixels(pos);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setPositionInPixels(pos);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setRotation:function (fRotation) {
-        CC.CCNode.setRotation(fRotation);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setRotation(fRotation);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setSkewX:function (sx) {
-        CC.CCNode.setSkewX(sx);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setSkewX(sx);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setSkewY:function (sy) {
-        CC.CCNode.setSkewY(sy);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setSkewY(sy);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setScaleX:function (fScaleX) {
-        CC.CCNode.setScaleX(fScaleX);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setScaleX(fScaleX);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setScaleY:function (fScaleY) {
-        CC.CCNode.setScaleY(fScaleY);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setScaleY(fScaleY);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setScale:function (fScale) {
-        CC.CCNode.setScale(fScale);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setScale(fScale);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setVertexZ:function (fVertexZ) {
-        CC.CCNode.setVertexZ(fVertexZ);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setVertexZ(fVertexZ);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setAnchorPoint:function (anchor) {
-        CC.CCNode.setAnchorPoint(anchor);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setAnchorPoint(anchor);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setIsRelativeAnchorPoint:function (bRelative) {
-        CC.CCAssert(!this._m_bUsesBatchNode, "");
-        CC.CCNode.setIsRelativeAnchorPoint(bRelative);
+        cc.Assert(!this._m_bUsesBatchNode, "");
+        cc.Node.setIsRelativeAnchorPoint(bRelative);
     },
     setIsVisible:function (bVisible) {
-        CC.CCNode.setIsVisible(bVisible);
-        CC.SET_DIRTY_RECURSIVELY();
+        cc.Node.setIsVisible(bVisible);
+        cc.SET_DIRTY_RECURSIVELY();
     },
     setFlipX:function (bFlipX) {
         if (this._m_bFlipX != bFlipX) {
@@ -927,7 +927,7 @@ CC.CCSprite = CC.CCNode.extend({
 //
 
     updateColor:function () {
-        var color4 = new CC.ccColor4B();
+        var color4 = new cc.Color4B();
         color4 = (this._m_sColor.r, this._m_sColor.g, this._m_sColor.b, this._m_nOpacity);
 
         this._m_sQuad.bl.colors = color4;
@@ -937,7 +937,7 @@ CC.CCSprite = CC.CCNode.extend({
 
 // renders using Sprite Manager
         if (this._m_bUsesBatchNode) {
-            if (this._m_uAtlasIndex != CC.CCSpriteIndexNotInitialized) {
+            if (this._m_uAtlasIndex != cc.SpriteIndexNotInitialized) {
                 this.__m_pobTextureAtlas.updateQuad(this._m_sQuad, this._m_uAtlasIndex)
             }
             else {
@@ -983,7 +983,7 @@ CC.CCSprite = CC.CCNode.extend({
     // RGBAProtocol
     /** opacity: conforms to CCRGBAProtocol protocol */
     setIsOpacityModifyRGB:function (bValue) {
-        var oldColor = new CC.ccColor3B();
+        var oldColor = new cc.Color3B();
         oldColor = this._m_sColor;
         this._m_bOpacityModifyRGB = bValue;
         this._m_sColor = oldColor;
@@ -995,7 +995,7 @@ CC.CCSprite = CC.CCNode.extend({
     /** sets a new display frame to the CCSprite. */
     setDisplayFrame:function (pNewFrame) {
         this._m_obUnflippedOffsetPositionFromCenter = pNewFrame.getOffsetInPixels();
-        var pNewTexture = new CC.CCTexture2D();
+        var pNewTexture = new cc.Texture2D();
         pNewTexture = pNewFrame.getTexture();
         // update texture before updating texture rect
         if (pNewTexture != this._m_pobTexture) {
@@ -1013,29 +1013,29 @@ CC.CCSprite = CC.CCNode.extend({
      @since v0.99.5
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
-        CC.CCAssert(animationName, "");
-        var a = new CC.CCAnimation();
-        a = CC.CCAnimationCache.sharedAnimationCache().animationByName(animationName);
+        cc.Assert(animationName, "");
+        var a = new cc.Animation();
+        a = cc.AnimationCache.sharedAnimationCache().animationByName(animationName);
 
-        CC.CCAssert(a, "");
+        cc.Assert(a, "");
 
-        var frame = new CC.CCSpriteFrame();
+        var frame = new cc.SpriteFrame();
         frame = a.getFrames().getObjectAtIndex(frameIndex);
 
-        CC.CCAssert(frame, "");
+        cc.Assert(frame, "");
 
         this.setDisplayFrame(frame);
     },
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
-        var r = new CC.CCRect();
+        var r = new cc.Rect();
         r = pFrame.getRect();
 
-        return (CC.CCRect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
+        return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
     },
     /** returns the current displayed frame. */
     displayedFrame:function () {
-        return CC.CCSpriteFrame.frameWithTexture(this._m_pobTexture,
+        return cc.SpriteFrame.frameWithTexture(this._m_pobTexture,
             this._m_obRectInPixels,
             this._m_bRectRotated,
             this._m_obUnflippedOffsetPositionFromCenter,
@@ -1044,30 +1044,30 @@ CC.CCSprite = CC.CCNode.extend({
 // Texture protocol
 
     _updateBlendFunc:function () {
-        CC.CCAssert(!this._m_bUsesBatchNode, "CCSprite: _updateBlendFunc doesn't work when the sprite is rendered using a CCSpriteSheet");
+        cc.Assert(!this._m_bUsesBatchNode, "CCSprite: _updateBlendFunc doesn't work when the sprite is rendered using a CCSpriteSheet");
 
         // it's possible to have an untextured sprite
         if (!this._m_pobTexture || !this._m_pobTexture.getHasPremultipliedAlpha()) {
-            this._m_sBlendFunc.src = CC.GL_SRC_ALPHA;
-            this._m_sBlendFunc.dst = CC.GL_ONE_MINUS_SRC_ALPHA;
+            this._m_sBlendFunc.src = cc.GL_SRC_ALPHA;
+            this._m_sBlendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
             this.setIsOpacityModifyRGB(false);
         }
         else {
-            this._m_sBlendFunc.src = CC.CC_BLEND_SRC;
-            this._m_sBlendFunc.dst = CC.CC_BLEND_DST;
+            this._m_sBlendFunc.src = cc._BLEND_SRC;
+            this._m_sBlendFunc.dst = cc._BLEND_DST;
             this.setIsOpacityModifyRGB(true);
         }
     },
     // CCTextureProtocol
     setTexture:function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        CC.CCAssert(!this._m_bUsesBatchNode, "setTexture doesn't work when the sprite is rendered using a CCSpriteSheet");
+        cc.Assert(!this._m_bUsesBatchNode, "setTexture doesn't work when the sprite is rendered using a CCSpriteSheet");
 
         // we can not use RTTI, so we do not known the type of object
         // accept texture==nil as argument
-        /*CC.CCAssert((! texture) || dynamic_cast<CCTexture2D*>(texture));*/
+        /*cc.Assert((! texture) || dynamic_cast<CCTexture2D*>(texture));*/
 
-        CC.CC_SAFE_RELEASE(this._m_pobTexture);
+        cc._SAFE_RELEASE(this._m_pobTexture);
 
         this._m_pobTexture = texture;
         if (texture) {
@@ -1080,9 +1080,9 @@ CC.CCSprite = CC.CCNode.extend({
         return this._m_pobTexture;
     }
 });
-CC.CCSprite.spriteWithTexture = function (pTexture, rect, offset) {
+cc.Sprite.spriteWithTexture = function (pTexture, rect, offset) {
     var argnum = arguments;
-    var pobSprite = new CC.CCSprite();
+    var pobSprite = new cc.Sprite();
     switch (argnum) {
         case 1:
             /** Creates an sprite with a texture.
@@ -1092,7 +1092,7 @@ CC.CCSprite.spriteWithTexture = function (pTexture, rect, offset) {
             if (pobSprite && pobSprite.initWithTexture(pTexture)) {
                 return pobSprite;
             }
-            CC.CC_SAFE_DELETE(pobSprite);
+            cc._SAFE_DELETE(pobSprite);
             return null;
             break;
 
@@ -1103,17 +1103,17 @@ CC.CCSprite.spriteWithTexture = function (pTexture, rect, offset) {
             if (pobSprite && pobSprite.initWithTexture(pTexture, rect)) {
                 return pobSprite;
             }
-            CC.CC_SAFE_DELETE(pobSprite);
+            cc._SAFE_DELETE(pobSprite);
             return null;
             break;
 
         case 3:
             /** Creates an sprite with a texture, a rect and offset. */
-            CC.CC_UNUSED_PARAM(pTexture);
-            CC.CC_UNUSED_PARAM(rect);
-            CC.CC_UNUSED_PARAM(offset);
+            cc._UNUSED_PARAM(pTexture);
+            cc._UNUSED_PARAM(rect);
+            cc._UNUSED_PARAM(offset);
             // not implement
-            CC.CCAssert(0, "");
+            cc.Assert(0, "");
             return null;
             break;
 
@@ -1123,12 +1123,12 @@ CC.CCSprite.spriteWithTexture = function (pTexture, rect, offset) {
     }
 };
 /** Creates an sprite with an sprite frame. */
-CC.CCSprite.spriteWithSpriteFrame = function (pSpriteFrame) {
-    var pobSprite = new CC.CCSprite();
+cc.Sprite.spriteWithSpriteFrame = function (pSpriteFrame) {
+    var pobSprite = new cc.Sprite();
     if (pobSprite && pobSprite.initWithSpriteFrame(pSpriteFrame)) {
         return pobSprite;
     }
-    CC.CC_SAFE_DELETE(pobSprite);
+    cc._SAFE_DELETE(pobSprite);
     return null;
 };
 /** Creates an sprite with an sprite frame name.
@@ -1136,16 +1136,16 @@ CC.CCSprite.spriteWithSpriteFrame = function (pSpriteFrame) {
  If the CCSpriteFrame doesn't exist it will raise an exception.
  @since v0.9
  */
-CC.CCSprite.spriteWithSpriteFrameName = function (pszSpriteFrameName) {
-    var pFrame = CC.CCSpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
+cc.Sprite.spriteWithSpriteFrameName = function (pszSpriteFrameName) {
+    var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
     var msg = "Invalid spriteFrameName:" + pszSpriteFrameName;
-    CC.CCAssert(pFrame != null, msg);
+    cc.Assert(pFrame != null, msg);
     return this.spriteWithSpriteFrame(pFrame);
 };
 
-CC.CCSprite.spriteWithFile = function (pszFileName, rect) {
+cc.Sprite.spriteWithFile = function (pszFileName, rect) {
     var argnum = arguments.length;
-    var pobSprite = new CC.CCSprite();
+    var pobSprite = new cc.Sprite();
     if (argnum < 2) {
         /** Creates an sprite with an image filename.
          The rect used will be the size of the image.
@@ -1154,7 +1154,7 @@ CC.CCSprite.spriteWithFile = function (pszFileName, rect) {
         if (pobSprite && pobSprite.initWithFile(pszFileName)) {
             return pobSprite;
         }
-        CC.CC_SAFE_DELETE(pobSprite);
+        cc._SAFE_DELETE(pobSprite);
         return null;
     }
     else {
@@ -1163,16 +1163,16 @@ CC.CCSprite.spriteWithFile = function (pszFileName, rect) {
         if (pobSprite && pobSprite.initWithFile(pszFileName, rect)) {
             return pobSprite;
         }
-        CC.CC_SAFE_DELETE(pobSprite);
+        cc._SAFE_DELETE(pobSprite);
         return null;
     }
 };
 
-CC.CCSprite.spriteWithBatchNode = function (batchNode, rect) {
-    var pobSprite = new CC.CCSprite();
+cc.Sprite.spriteWithBatchNode = function (batchNode, rect) {
+    var pobSprite = new cc.Sprite();
     if (pobSprite && pobSprite.initWithBatchNode(batchNode, rect)) {
         return pobSprite;
     }
-    CC.CC_SAFE_DELETE(pobSprite);
+    cc._SAFE_DELETE(pobSprite);
     return null;
 };
