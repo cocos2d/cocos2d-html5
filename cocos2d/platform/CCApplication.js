@@ -94,8 +94,8 @@ cc.Application = cc.Class.extend(
         }
         // TODO, need to be fixed.
         console.log(this._m_nAnimationInterval * 1000);
-         setInterval(cc.Director.sharedDirector().mainLoop, this._m_nAnimationInterval * 1000);
-
+        var callback = function(){cc.Director.sharedDirector().mainLoop();};
+        setInterval(callback, this._m_nAnimationInterval * 1000);
     },
     _m_nAnimationInterval:null
 
