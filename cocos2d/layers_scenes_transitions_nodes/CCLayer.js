@@ -24,20 +24,20 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 
 
 //
-// CC.CCLayer
+// cc.Layer
 //
-/** @brief CC.CCLayer is a subclass of CC.CCNode that implements the TouchEventsDelegate protocol.
+/** @brief cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.
 
- All features from CC.CCNode are valid, plus the following new features:
+ All features from cc.Node are valid, plus the following new features:
  - It can receive iPhone Touches
  - It can receive Accelerometer input
  */
 
-CC.CCLayer = CC.CCNode.extend({
+cc.Layer = cc.Node.extend({
     _m_bIsTouchEnabled:false,
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
@@ -49,8 +49,8 @@ CC.CCLayer = CC.CCNode.extend({
         var bRet = false;
         do
         {
-            var pDirector = new CC.CCDirector();
-            if(!(pDirector = CC.CCDirector.sharedDirector()))
+            var pDirector = new cc.Director();
+            if(!(pDirector = cc.Director.sharedDirector()))
             {
                 break;
             }
@@ -77,23 +77,23 @@ CC.CCLayer = CC.CCNode.extend({
     registerWithTouchDispatcher:function () {
         if (this._m_pScriptHandlerEntry) {
             if (this._m_pScriptHandlerEntry.getIsMultiTouches()) {
-                CC.CCTouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
-                CC.LUALOG("[LUA] Add multi-touches event handler: %d", this._m_pScriptHandlerEntry.getHandler());
+                cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
+                cc.LUALOG("[LUA] Add multi-touches event handler: %d", this._m_pScriptHandlerEntry.getHandler());
             }
             else {
-                CC.CCTouchDispatcher.sharedDispatcher().addTargetedDelegate(this,
+                cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,
                     this._m_pScriptHandlerEntry.getPriority(),
                     this._m_pScriptHandlerEntry.getSwallowsTouches());
-                CC.LUALOG("[LUA] Add touch event handler: %d", this._m_pScriptHandlerEntry.getHandler());
+                cc.LUALOG("[LUA] Add touch event handler: %d", this._m_pScriptHandlerEntry.getHandler());
             }
             return;
         }
-        CC.CCTouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
+        cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
     },
     /** Register script touch events handler */
     registerScriptTouchHandler:function (nHandler, bIsMultiTouches, nPriority, bSwallowsTouches) {
         this.unregisterScriptTouchHandler();
-        this._m_pScriptHandlerEntry = CC.CCTouchScriptHandlerEntry.entryWithHandler(nHandler, bIsMultiTouches, nPriority, bSwallowsTouches);
+        this._m_pScriptHandlerEntry = cc.TouchScriptHandlerEntry.entryWithHandler(nHandler, bIsMultiTouches, nPriority, bSwallowsTouches);
         this._m_pScriptHandlerEntry.retain();
     },
     /** Unregister script touch events handler */
@@ -103,7 +103,7 @@ CC.CCLayer = CC.CCNode.extend({
         }
     },
     _excuteScriptTouchHandler:function (nEventType, pTouch) {
-        return CC.CCScriptEngineManager.sharedManager().getScriptEngine().executeTouchEvent(this._m_pScriptHandlerEntry.getHandler(), nEventType, pTouch);
+        return cc.ScriptEngineManager.sharedManager().getScriptEngine().executeTouchEvent(this._m_pScriptHandlerEntry.getHandler(), nEventType, pTouch);
     },
     /** whether or not it will receive Touch events.
      You can enable / disable touch events with this property.
@@ -124,7 +124,7 @@ CC.CCLayer = CC.CCNode.extend({
                 }
                 else {
                     // have problems?
-                    CC.CCTouchDispatcher.sharedDispatcher().removeDelegate(this);
+                    cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
                 }
             }
         }
@@ -144,10 +144,10 @@ CC.CCLayer = CC.CCNode.extend({
 
             if (this.m_bIsRunning) {
                 if (enabled) {
-                    CC.CCAccelerometer.sharedAccelerometer().setDelegate(this);
+                    cc.Accelerometer.sharedAccelerometer().setDelegate(this);
                 }
                 else {
-                    CC.CCAccelerometer.sharedAccelerometer().setDelegate(null);
+                    cc.Accelerometer.sharedAccelerometer().setDelegate(null);
                 }
             }
         }
@@ -167,10 +167,10 @@ CC.CCLayer = CC.CCNode.extend({
 
             if (this.m_bIsRunning) {
                 if (enabled) {
-                    CC.CCKeypadDispatcher.sharedDispatcher().addDelegate(this);
+                    cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
                 }
                 else {
-                    CC.CCKeypadDispatcher.sharedDispatcher().removeDelegate(this);
+                    cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
                 }
             }
         }
@@ -185,118 +185,118 @@ CC.CCLayer = CC.CCNode.extend({
         }
 
         // then iterate over all the children
-        CC.CCNode.onEnter();
+        cc.Node.onEnter();
 
         // add this layer to concern the Accelerometer Sensor
         if (this._m_bIsAccelerometerEnabled) {
-            CC.CCAccelerometer.sharedAccelerometer().setDelegate(this);
+            cc.Accelerometer.sharedAccelerometer().setDelegate(this);
         }
 
         // add this layer to concern the kaypad msg
         if (this._m_bIsKeypadEnabled) {
-            CC.CCKeypadDispatcher.sharedDispatcher().addDelegate(this);
+            cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
         }
     },
     onExit:function () {
         if (this._m_bIsTouchEnabled) {
-            CC.CCTouchDispatcher.sharedDispatcher().removeDelegate(this);
+            cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
             this.unregisterScriptTouchHandler();
         }
 
         // remove this layer from the delegates who concern Accelerometer Sensor
         if (this._m_bIsAccelerometerEnabled) {
-            CC.CCAccelerometer.sharedAccelerometer().setDelegate(null);
+            cc.Accelerometer.sharedAccelerometer().setDelegate(null);
         }
 
         // remove this layer from the delegates who concern the kaypad msg
         if (this._m_bIsKeypadEnabled) {
-            CC.CCKeypadDispatcher.sharedDispatcher().removeDelegate(this);
+            cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
         }
 
-        CC.CCNode.onExit();
+        cc.Node.onExit();
     },
     onEnterTransitionDidFinish:function () {
         if (this._m_bIsAccelerometerEnabled) {
-            CC.CCAccelerometer.sharedAccelerometer().setDelegate(this);
+            cc.Accelerometer.sharedAccelerometer().setDelegate(this);
         }
 
-        CC.CCNode.onEnterTransitionDidFinish();
+        cc.Node.onEnterTransitionDidFinish();
     },
     // default implements are used to call script callback if exist
     ccTouchBegan:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            return _excuteScriptTouchHandler(CC.CCTOUCHBEGAN, pTouch);
+            return _excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
         }
-        CC.CC_UNUSED_PARAM(pTouch);
-        CC.CC_UNUSED_PARAM(pEvent);
-        CC.CCAssert(false, "Layer#ccTouchBegan override me");
+        cc._UNUSED_PARAM(pTouch);
+        cc._UNUSED_PARAM(pEvent);
+        cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
     ccTouchMoved:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            _excuteScriptTouchHandler(CC.CCTOUCHMOVED, pTouch);
+            _excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
             return;
         }
-        CC.CC_UNUSED_PARAM(pTouch);
-        CC.CC_UNUSED_PARAM(pEvent);
+        cc._UNUSED_PARAM(pTouch);
+        cc._UNUSED_PARAM(pEvent);
     },
     ccTouchEnded:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            _excuteScriptTouchHandler(CC.CCTOUCHENDED, pTouch);
+            _excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
             return;
         }
-        CC.CC_UNUSED_PARAM(pTouch);
-        CC.CC_UNUSED_PARAM(pEvent);
+        cc._UNUSED_PARAM(pTouch);
+        cc._UNUSED_PARAM(pEvent);
     },
     ccTouchCancelled:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(CC.CCTOUCHCANCELLED, pTouch);
+            this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouch);
             return;
         }
-        CC.CC_UNUSED_PARAM(pTouch);
-        CC.CC_UNUSED_PARAM(pEvent);
+        cc._UNUSED_PARAM(pTouch);
+        cc._UNUSED_PARAM(pEvent);
     },
     // default implements are used to call script callback if exist
     ccTouchesBegan:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(CC.CCTOUCHBEGAN, pTouches);
+            this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouches);
             return;
         }
-        CC.CC_UNUSED_PARAM(pTouches);
-        CC.CC_UNUSED_PARAM(pEvent);
+        cc._UNUSED_PARAM(pTouches);
+        cc._UNUSED_PARAM(pEvent);
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(CC.CCTOUCHMOVED, pTouches);
+            this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouches);
             return;
         }
-        CC.CC_UNUSED_PARAM(pTouches);
-        CC.CC_UNUSED_PARAM(pEvent);
+        cc._UNUSED_PARAM(pTouches);
+        cc._UNUSED_PARAM(pEvent);
     },
     ccTouchesEnded:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(CC.CCTOUCHENDED, pTouches);
+            this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouches);
             return;
         }
-        CC.CC_UNUSED_PARAM(pTouches);
-        CC.CC_UNUSED_PARAM(pEvent);
+        cc._UNUSED_PARAM(pTouches);
+        cc._UNUSED_PARAM(pEvent);
     },
     ccTouchesCancelled:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(CC.CCTOUCHCANCELLED, pTouches);
+            this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouches);
             return;
         }
-        CC.CC_UNUSED_PARAM(pTouches);
-        CC.CC_UNUSED_PARAM(pEvent);
+        cc._UNUSED_PARAM(pTouches);
+        cc._UNUSED_PARAM(pEvent);
     },
     addLayer:function (layer) {
-        CC.CCAssert(this.m_pLayers, "CCLayer addLayer");
+        cc.Assert(this.m_pLayers, "CCLayer addLayer");
         this.m_pLayers.addObject(layer);
     }
 });
 
-CC.CCLayer.node = function () {
-    var pRet = new CC.CCLayer();
+cc.Layer.node = function () {
+    var pRet = new cc.Layer();
     if (pRet && pRet.init()) {
         return pRet;
     }
@@ -315,7 +315,7 @@ CC.CCLayer.node = function () {
  - opacity
  - RGB colors
  */
-CC.CCLayerColor = CC.CCLayer.extend({
+cc.LayerColor = cc.Layer.extend({
     _m_pSquareVertices:[],
     _m_pSquareColors:[],
     _m_cOpacity:null,
@@ -355,8 +355,8 @@ CC.CCLayerColor = CC.CCLayer.extend({
             case 3:
                 /** initializes a CCLayer with color, width and height in Points */
                     // default blend function
-                this._m_tBlendFunc.src = CC.CC_BLEND_SRC;
-                this._m_tBlendFunc.dst = CC.CC_BLEND_DST;
+                this._m_tBlendFunc.src = cc._BLEND_SRC;
+                this._m_tBlendFunc.dst = cc._BLEND_DST;
 
                 this._m_tColor.r = color.r;
                 this._m_tColor.g = color.g;
@@ -369,13 +369,13 @@ CC.CCLayerColor = CC.CCLayer.extend({
                 }
 
                 this._updateColor();
-                this.setContentSize(CC.CCSizeMake(width, height));
+                this.setContentSize(cc.SizeMake(width, height));
                 return true;
                 break;
             case 2:
                 /** initializes a CCLayer with color. Width and height are the window size. */
-                var s = new CC.CCSize();
-                s = CC.CCDirector.sharedDirector().getWinSize();
+                var s = new cc.Size();
+                s = cc.Director.sharedDirector().getWinSize();
                 this.initWithColorWidthHeight(color, s.width, s.height);
                 return true;
                 break;
@@ -386,26 +386,26 @@ CC.CCLayerColor = CC.CCLayer.extend({
     },
     /// override contentSize
     setContentSize:function (size) {
-        this._m_pSquareVertices[1].x = size.width * CC.CC_CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[2].y = size.height * CC.CC_CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[3].x = size.width * CC.CC_CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[3].y = size.height * CC.CC_CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[1].x = size.width * cc._CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[2].y = size.height * cc._CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[3].x = size.width * cc._CONTENT_SCALE_FACTOR();
+        this._m_pSquareVertices[3].y = size.height * cc._CONTENT_SCALE_FACTOR();
 
-        CC.CCLayer.setContentSize(size);
+        cc.Layer.setContentSize(size);
     },
     /** change width and height in Points
      @since v0.8
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(CC.CCSizeMake(w, h));
+        this.setContentSize(cc.SizeMake(w, h));
     },
     /** change width in Points*/
     changeWidth:function (w) {
-        this.setContentSize(CC.CCSizeMake(w, this.m_tContentSize.height));
+        this.setContentSize(cc.SizeMake(w, this.m_tContentSize.height));
     },
     /** change height in Points*/
     changeHeight:function (h) {
-        this.setContentSize(CC.CCSizeMake(this.m_tContentSize.width, h));
+        this.setContentSize(cc.SizeMake(this.m_tContentSize.width, h));
     },
     _updateColor:function () {
         for (var i = 0; i < 4; i++) {
@@ -416,13 +416,13 @@ CC.CCLayerColor = CC.CCLayer.extend({
         }
     },
     setIsOpacityModifyRGB:function (bValue) {
-        CC.CC_UNUSED_PARAM(bValue)
+        cc._UNUSED_PARAM(bValue)
     },
     getIsOpacityModifyRGB:function () {
         return false;
     },
     node:function () {
-        var pRet = new CC.CCLayerColor();
+        var pRet = new cc.LayerColor();
         if (pRet && pRet.init()) {
             return pRet;
         }
@@ -435,10 +435,10 @@ CC.CCLayerColor = CC.CCLayer.extend({
     /// ColorLayer
     ctor:function () {
         this._m_cOpacity = 0;
-        this._m_tColor = CC.ccc3(0, 0, 0);
+        this._m_tColor = cc.ccc3(0, 0, 0);
         // default blend function
-        this._m_tBlendFunc.src = CC.CC_BLEND_SRC;
-        this._m_tBlendFunc.dst = CC.CC_BLEND_DST;
+        this._m_tBlendFunc.src = cc._BLEND_SRC;
+        this._m_tBlendFunc.dst = cc._BLEND_DST;
     },
     draw:function () {
         this._super();
@@ -457,7 +457,7 @@ CC.CCLayerColor = CC.CCLayer.extend({
         // glColorPointer(4, GL_UNSIGNED_BYTE, 0, this._m_pSquareColors);
 
         var newBlend = false;
-        if (this._m_tBlendFunc.src != CC.CC_BLEND_SRC || this._m_tBlendFunc.dst != CC.CC_BLEND_DST) {
+        if (this._m_tBlendFunc.src != cc._BLEND_SRC || this._m_tBlendFunc.dst != cc._BLEND_DST) {
             newBlend = true;
             //TODO
             //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
@@ -473,7 +473,7 @@ CC.CCLayerColor = CC.CCLayer.extend({
 
         if (newBlend) {
             //TODO
-            // glBlendFunc(CC.CC_BLEND_SRC, CC.CC_BLEND_DST);
+            // glBlendFunc(cc._BLEND_SRC, cc._BLEND_DST);
         }
         // restore default GL state
         //TODO
@@ -485,16 +485,16 @@ CC.CCLayerColor = CC.CCLayer.extend({
 });
 
 /** creates a CCLayer with color, width and height in Points */
-CC.CCLayerColor.layerWithColorWidthHeight = function (color, width, height) {
-    var pLayer = new CC.CCLayerColor();
+cc.LayerColor.layerWithColorWidthHeight = function (color, width, height) {
+    var pLayer = new cc.LayerColor();
     if (pLayer && pLayer.initWithColorWidthHeight(color, width, height)) {
         return pLayer;
     }
     return null;
 };
 /** creates a CCLayer with color. Width and height are the window size. */
-CC.CCLayerColor.layerWithColor = function (color) {
-    var pLayer = new CC.CCLayerColor();
+cc.LayerColor.layerWithColor = function (color) {
+    var pLayer = new cc.LayerColor();
     if (pLayer && pLayer.initWithColor(color)) {
         return pLayer;
     }
@@ -524,7 +524,7 @@ CC.CCLayerColor.layerWithColor = function (color) {
 
  @since v0.99.5
  */
-CC.CCLayerGradient = CC.CCLayerColor.extend({
+cc.LayerGradient = cc.LayerColor.extend({
     _m_startColor:null,
     _m_endColor:null,
     _m_cStartOpacity:null,
@@ -577,7 +577,7 @@ CC.CCLayerGradient = CC.CCLayerColor.extend({
         switch (argnum) {
             case 2:
                 /** Initializes the CCLayer with a gradient between start and end. */
-                return this.initWithColor(start, end, CC.ccp(0, -1));
+                return this.initWithColor(start, end, cc.ccp(0, -1));
                 break;
             case 3:
                 /** Initializes the CCLayer with a gradient between start and end in the direction of v. */
@@ -591,7 +591,7 @@ CC.CCLayerGradient = CC.CCLayerColor.extend({
 
                 this._m_bCompressedInterpolation = true;
 
-                return CC.CCLayerColor.initWithColor(ccc4(start.r, start.g, start.b, 255));
+                return cc.LayerColor.initWithColor(ccc4(start.r, start.g, start.b, 255));
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -600,20 +600,20 @@ CC.CCLayerGradient = CC.CCLayerColor.extend({
 
     },
     _updateColor:function () {
-        CC.CCLayerColor._updateColor();
+        cc.LayerColor._updateColor();
 
-        var h = CC.ccpLength(this.m_AlongVector);
+        var h = cc.ccpLength(this.m_AlongVector);
         if (h == 0)
             return;
 
         var c = Math.sqrt(2.0);
-        var u = new CC.CCPoint();
-        u = CC.ccp(this.m_AlongVector.x / h, this.m_AlongVector.y / h);
+        var u = new cc.Point();
+        u = cc.ccp(this.m_AlongVector.x / h, this.m_AlongVector.y / h);
 
         // Compressed Interpolation mode
         if (this._m_bCompressedInterpolation) {
-            var h2 = 1 / ( CC.fabsf(u.x) + CC.fabsf(u.y) );
-            u = CC.ccpMult(u, h2 * c);
+            var h2 = 1 / ( cc.fabsf(u.x) + cc.fabsf(u.y) );
+            u = cc.ccpMult(u, h2 * c);
         }
 
         var opacityf = this._m_cOpacity / 255.0;
@@ -644,7 +644,7 @@ CC.CCLayerGradient = CC.CCLayerColor.extend({
         this._m_pSquareColors[3].a = (E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c)));
     },
     node:function () {
-        var pRet = new CC.CCLayerGradient();
+        var pRet = new cc.LayerGradient();
         if (pRet && pRet.init()) {
             return pRet;
         }
@@ -657,11 +657,11 @@ CC.CCLayerGradient = CC.CCLayerColor.extend({
 });
 
 
-// CC.CCLayerGradient
+// cc.LayerGradient
 //
-CC.CCLayerGradient.layerWithColor = function (start, end, v) {
+cc.LayerGradient.layerWithColor = function (start, end, v) {
     var argnum = arguments.length;
-    var pLayer = new CC.CCLayerGradient();
+    var pLayer = new cc.LayerGradient();
     switch (argnum) {
         case 2:
             /** Creates a full-screen CCLayer with a gradient between start and end. */
@@ -690,26 +690,26 @@ CC.CCLayerGradient.layerWithColor = function (start, end, v) {
  - Only one children will be active a time
  */
 /// MultiplexLayer
-CC.CCLayerMultiplex = CC.CCLayer.extend({
+cc.LayerMultiplex = cc.Layer.extend({
     m_nEnabledLayer:0,
     m_pLayers:null,
     initWithLayer:function (layer) {
-        this.m_pLayers = new CC.CCMutableArray(1);
+        this.m_pLayers = new cc.MutableArray(1);
         this.m_pLayers.addObject(layer);
         this.m_nEnabledLayer = 0;
         this.addChild(layer);
         return true;
     },
     initWithLayers:function (layer, params) {
-        this.m_pLayers = new CC.CCMutableArray(5);
+        this.m_pLayers = new cc.MutableArray(5);
         //this.m_pLayers.retain();
 
         this.m_pLayers.addObject(layer);
 
-        var l = CC.va_arg(params, CC.CCLayer);
+        var l = cc.va_arg(params, cc.Layer);
         while (l) {
             this.m_pLayers.addObject(l);
-            l = CC.va_arg(params, CC.CCLayer);
+            l = cc.va_arg(params, cc.Layer);
         }
 
         this.m_nEnabledLayer = 0;
@@ -721,7 +721,7 @@ CC.CCLayerMultiplex = CC.CCLayer.extend({
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      */
     switchTo:function (n) {
-        CC.CCAssert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
+        cc.Assert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
 
         this.removeChild(this.m_pLayers.getObjectAtIndex(this.m_nEnabledLayer), true);
 
@@ -733,7 +733,7 @@ CC.CCLayerMultiplex = CC.CCLayer.extend({
      The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      */
     switchToAndReleaseMe:function (n) {
-        CC.CCAssert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
+        cc.Assert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
 
         this.removeChild(this.m_pLayers.getObjectAtIndex(this.m_nEnabledLayer), true);
 
@@ -745,7 +745,7 @@ CC.CCLayerMultiplex = CC.CCLayer.extend({
         this.addChild(this.m_pLayers.getObjectAtIndex(n));
     },
     node:function () {
-        var pRet = new CC.CCLayerMultiplex();
+        var pRet = new cc.LayerMultiplex();
         if (pRet && pRet.init()) {
             return pRet;
         }
@@ -757,24 +757,24 @@ CC.CCLayerMultiplex = CC.CCLayer.extend({
     }
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
-CC.CCLayerMultiplex.layerWithLayers = function (layer) {
+cc.LayerMultiplex.layerWithLayers = function (layer) {
     var args;
-    CC.va_start(args, layer);
+    cc.va_start(args, layer);
 
-    var pMultiplexLayer = new CC.CCLayerMultiplex();
+    var pMultiplexLayer = new cc.LayerMultiplex();
     if (pMultiplexLayer && pMultiplexLayer.initWithLayers(layer, args)) {
-        CC.va_end(args);
+        cc.va_end(args);
         return pMultiplexLayer;
     }
-    CC.va_end(args);
+    cc.va_end(args);
     return null;
 };
 /**
  * lua script can not init with undetermined number of variables
  * so add these functinons to be used with lua.
  */
-CC.CCLayerMultiplex.layerWithLayer = function (layer) {
-    var pMultiplexLayer = new CC.CCLayerMultiplex();
+cc.LayerMultiplex.layerWithLayer = function (layer) {
+    var pMultiplexLayer = new cc.LayerMultiplex();
     pMultiplexLayer.initWithLayer(layer);
     return pMultiplexLayer;
 };

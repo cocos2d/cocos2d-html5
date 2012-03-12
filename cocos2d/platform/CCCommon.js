@@ -24,12 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 
 /**
  @brief Output Debug message.
  */
-CC.CCLog = function(message)
+cc.Log = function(message)
 {
     console.log(message);
 };
@@ -37,30 +37,30 @@ CC.CCLog = function(message)
 /**
  @brief Pop out a message box
  */
-CC.CCMessageBox = function(message)
+cc.MessageBox = function(message)
 {
     console.log(message);
 };
 
 // cocos2d debug
-if(CC.COCOS2D_DEBUG == 0){
-    CC.CCLOG  = function(){};
-    CC.CCLOGINFO = function(){};
-    CC.CCLOGERROR = function(){};
+if(cc.COCOS2D_DEBUG == 0){
+    cc.LOG  = function(){};
+    cc.LOGINFO = function(){};
+    cc.LOGERROR = function(){};
 }
-else if (CC.COCOS2D_DEBUG == 1){
-    CC.CCLOG = CC.CCLog;
-    CC.CCLOGINFO = CC.CCLog;
-    CC.CCLOGERROR = function(){};
+else if (cc.COCOS2D_DEBUG == 1){
+    cc.LOG = cc.Log;
+    cc.LOGINFO = cc.Log;
+    cc.LOGERROR = function(){};
 }
-else if(CC.COCOS2D_DEBUG > 1){
-    CC.CCLOG = CC.CCLog;
-    CC.CCLOGINFO = CC.CCLog;
-    CC.CCLOGERROR = CC.CCLog;
+else if(cc.COCOS2D_DEBUG > 1){
+    cc.LOG = cc.Log;
+    cc.LOGINFO = cc.Log;
+    cc.LOGERROR = cc.Log;
 }// COCOS2D_DEBUG
 
-if(CC._DEBUG){
-    CC.CCAssert = function(cond, message){
+if(cc._DEBUG){
+    cc.Assert = function(cond, message){
         if(!cond){
             if(message){
                 alert(message);
@@ -72,15 +72,15 @@ if(CC._DEBUG){
     }
 }
 else {
-    CC.CCAssert = function(){};
+    cc.Assert = function(){};
 }
 /**
  @brief Enum the language type supportted now
  */
-CC.kLanguageEnglish = 0;
-CC.kLanguageChinese = 1;
-CC.kLanguageFrench = 2;
-CC.kLanguageItalian = 3;
-CC.kLanguageGerman = 4;
-CC.kLanguageSpanish = 5;
-CC.kLanguageRussian = 6;
+cc.kLanguageEnglish = 0;
+cc.kLanguageChinese = 1;
+cc.kLanguageFrench = 2;
+cc.kLanguageItalian = 3;
+cc.kLanguageGerman = 4;
+cc.kLanguageSpanish = 5;
+cc.kLanguageRussian = 6;

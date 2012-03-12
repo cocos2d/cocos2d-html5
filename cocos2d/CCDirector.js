@@ -23,8 +23,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
-var CC = CC = CC || {};
-if(CC.ENABLE_PROFILERS){
+var cc = cc = cc || {};
+if(cc.ENABLE_PROFILERS){
     //TODO include support/CCProfiling
 }
 
@@ -32,14 +32,14 @@ if(CC.ENABLE_PROFILERS){
 /** @typedef ccDirectorProjection
  Possible OpenGL projections used by director
  */
-CC.kCCDirectorProjection2D      = 0;//sets a 2D projection (orthogonal projection)
-CC.kCCDirectorProjection3D      = 1;//sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
-CC.kCCDirectorProjectionCustom  = 3;//it calls "updateProjection" on the projection delegate.
-CC.kCCDirectorProjectionDefault = CC.kCCDirectorProjection3D;// Detault projection is 3D projection
+cc.kCCDirectorProjection2D      = 0;//sets a 2D projection (orthogonal projection)
+cc.kCCDirectorProjection3D      = 1;//sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
+cc.kCCDirectorProjectionCustom  = 3;//it calls "updateProjection" on the projection delegate.
+cc.kCCDirectorProjectionDefault = cc.kCCDirectorProjection3D;// Detault projection is 3D projection
 // backward compatibility stuff
-CC.CCDirectorProjection2D       = CC.kCCDirectorProjection2D;
-CC.CCDirectorProjection3D       = CC.kCCDirectorProjection3D;
-CC.CCDirectorProjectionCustom   = CC.kCCDirectorProjectionCustom;
+cc.DirectorProjection2D       = cc.kCCDirectorProjection2D;
+cc.DirectorProjection3D       = cc.kCCDirectorProjection3D;
+cc.DirectorProjectionCustom   = cc.kCCDirectorProjectionCustom;
 
 /** @typedef ccDirectorType
  Possible Director Types.
@@ -52,7 +52,7 @@ CC.CCDirectorProjectionCustom   = CC.kCCDirectorProjectionCustom;
  * - It the slowest director
  * - The interval update is customizable from 1 to 60
  */
-CC.kCCDirectorTypeNSTimer = 0;
+cc.kCCDirectorTypeNSTimer = 0;
 /** will use a Director that triggers the main loop from a custom main loop.
  *
  * Features and Limitations:
@@ -60,7 +60,7 @@ CC.kCCDirectorTypeNSTimer = 0;
  * - It doesn't integrate well with UIKit objects
  * - The interval update can't be customizable
  */
-CC.kCCDirectorTypeMainLoop = 1;
+cc.kCCDirectorTypeMainLoop = 1;
 /** Will use a Director that triggers the main loop from a thread, but the main loop will be executed on the main thread.
  *
  * Features and Limitations:
@@ -68,7 +68,7 @@ CC.kCCDirectorTypeMainLoop = 1;
  * - It doesn't integrate well with UIKit objects
  * - The interval update can't be customizable
  */
-CC.kCCDirectorTypeThreadMainLoop= 2;
+cc.kCCDirectorTypeThreadMainLoop= 2;
 /** Will use a Director that synchronizes timers with the refresh rate of the display.
  *
  * Features and Limitations:
@@ -78,15 +78,15 @@ CC.kCCDirectorTypeThreadMainLoop= 2;
  * - Integrates OK with UIKit objects
  * - The interval update can be 1/60, 1/30, 1/15
  */
-CC.kCCDirectorTypeDisplayLink = 3;
+cc.kCCDirectorTypeDisplayLink = 3;
 /** Default director is the NSTimer directory */
-CC.kCCDirectorTypeDefault = CC.kCCDirectorTypeNSTimer;
+cc.kCCDirectorTypeDefault = cc.kCCDirectorTypeNSTimer;
 // backward compatibility stuff
-CC.CCDirectorTypeNSTimer = CC.kCCDirectorTypeNSTimer;
-CC.CCDirectorTypeMainLoop = CC.kCCDirectorTypeMainLoop;
-CC.CCDirectorTypeThreadMainLoop = CC.kCCDirectorTypeThreadMainLoop;
-CC.CCDirectorTypeDisplayLink = CC.kCCDirectorTypeDisplayLink;
-CC.CCDirectorTypeDefault =CC.kCCDirectorTypeDefault;
+cc.DirectorTypeNSTimer = cc.kCCDirectorTypeNSTimer;
+cc.DirectorTypeMainLoop = cc.kCCDirectorTypeMainLoop;
+cc.DirectorTypeThreadMainLoop = cc.kCCDirectorTypeThreadMainLoop;
+cc.DirectorTypeDisplayLink = cc.kCCDirectorTypeDisplayLink;
+cc.DirectorTypeDefault =cc.kCCDirectorTypeDefault;
 
 
 /** @typedef ccDeviceOrientation
@@ -94,19 +94,19 @@ CC.CCDirectorTypeDefault =CC.kCCDirectorTypeDefault;
  */
 
 /// Device oriented vertically, home button on the bottom
-CC.kCCDeviceOrientationPortrait = 0; // UIDeviceOrientationPortrait,
+cc.kCCDeviceOrientationPortrait = 0; // UIDeviceOrientationPortrait,
 /// Device oriented vertically, home button on the top
-CC.kCCDeviceOrientationPortraitUpsideDown = 1; // UIDeviceOrientationPortraitUpsideDown,
+cc.kCCDeviceOrientationPortraitUpsideDown = 1; // UIDeviceOrientationPortraitUpsideDown,
 /// Device oriented horizontally, home button on the right
-CC.kCCDeviceOrientationLandscapeLeft = 2; // UIDeviceOrientationLandscapeLeft,
+cc.kCCDeviceOrientationLandscapeLeft = 2; // UIDeviceOrientationLandscapeLeft,
 /// Device oriented horizontally, home button on the left
-CC.kCCDeviceOrientationLandscapeRight = 3; // UIDeviceOrientationLandscapeRight,
+cc.kCCDeviceOrientationLandscapeRight = 3; // UIDeviceOrientationLandscapeRight,
 
 // Backward compatibility stuff
-CC.CCDeviceOrientationPortrait = CC.kCCDeviceOrientationPortrait;
-CC.CCDeviceOrientationPortraitUpsideDown = CC.kCCDeviceOrientationPortraitUpsideDown;
-CC.CCDeviceOrientationLandscapeLeft = CC.kCCDeviceOrientationLandscapeLeft;
-CC.CCDeviceOrientationLandscapeRight = CC.kCCDeviceOrientationLandscapeRight;
+cc.DeviceOrientationPortrait = cc.kCCDeviceOrientationPortrait;
+cc.DeviceOrientationPortraitUpsideDown = cc.kCCDeviceOrientationPortraitUpsideDown;
+cc.DeviceOrientationLandscapeLeft = cc.kCCDeviceOrientationLandscapeLeft;
+cc.DeviceOrientationLandscapeRight = cc.kCCDeviceOrientationLandscapeRight;
 
 
 /**
@@ -129,7 +129,7 @@ CC.CCDeviceOrientationLandscapeRight = CC.kCCDeviceOrientationLandscapeRight;
  - GL_COLOR_ARRAY is enabled
  - GL_TEXTURE_COORD_ARRAY is enabled
  */
-CC.CCDirector = CC.Class.extend({
+cc.Director = cc.Class.extend({
     //Variables
     _m_bDisplayFPS : false,
     _m_bIsContentScaleSupported : false,
@@ -163,7 +163,7 @@ CC.CCDirector = CC.Class.extend({
     _m_uTotalFrames: 0,
     init : function()
     {
-        //CC.CCLOG("cocos2d: "+ CC.cocos2dVersion());
+        //cc.LOG("cocos2d: "+ cc.cocos2dVersion());
 
         // scenes
         //TODO these are already set to null, so maybe we can remove them in the init?
@@ -172,10 +172,10 @@ CC.CCDirector = CC.Class.extend({
         this._m_pNotificationNode = null;
 
 
-        this._m_dOldAnimationInterval = this._m_dAnimationInterval = 1.0 / CC.kDefaultFPS;
+        this._m_dOldAnimationInterval = this._m_dAnimationInterval = 1.0 / cc.kDefaultFPS;
         this._m_pobScenesStack = [];
         // Set default projection (3D)
-        this._m_eProjection = CC.kCCDirectorProjectionDefault;
+        this._m_eProjection = cc.kCCDirectorProjectionDefault;
         // projection delegate if "Custom" projection is used
         this._m_pProjectionDelegate = null;
 
@@ -183,17 +183,17 @@ CC.CCDirector = CC.Class.extend({
         this._m_bDisplayFPS = false;//can remove
         this._m_uTotalFrames = this._m_uFrames = 0;
         this._m_pszFPS = "";
-        this._m_pLastUpdate = new CC.cc_timeval();
+        this._m_pLastUpdate = new cc.timeval();
 
         //Paused?
         this._m_bPaused = false;
 
         //purge?
         this._m_bPurgeDirecotorInNextLoop = false;
-        this._m_obWinSizeInPixels = this._m_obWinSizeInPoints = CC.CCSizeZero;
+        this._m_obWinSizeInPixels = this._m_obWinSizeInPoints = cc.SizeZero;
 
         //portrait mode default
-        this._m_eDeviceOrientation = CC.CCDeviceOrientationPortrait;
+        this._m_eDeviceOrientation = cc.DeviceOrientationPortrait;
         this._m_pobOpenGLView = null;
         this._m_bRetinaDisplay = false;
         this._m_fContentScaleFactor = 1.0;
@@ -202,7 +202,7 @@ CC.CCDirector = CC.Class.extend({
     },
     applyOrientation : function()
     {
-        var s = new CC.CCSize();
+        var s = new cc.Size();
         s = this._m_obWinSizeInPixels;
         var w = s.width /2;
         var h = s.height / 2;
@@ -210,22 +210,22 @@ CC.CCDirector = CC.Class.extend({
         // What if the the screen size changes in the future?
         switch (this._m_eDeviceOrientation)
         {
-            case CC.CCDeviceOrientationPortrait:
+            case cc.DeviceOrientationPortrait:
                 // nothing
                 break;
-            case CC.CCDeviceOrientationPortraitUpsideDown:
+            case cc.DeviceOrientationPortraitUpsideDown:
                 // upside down
                 //TODO OpenGL stuff
                 /*glTranslatef(w,h,0);
                 glRotatef(180,0,0,1);
                 glTranslatef(-w,-h,0);*/
                 break;
-            case CC.CCDeviceOrientationLandscapeRight:
+            case cc.DeviceOrientationLandscapeRight:
                 /*glTranslatef(w,h,0);
                 glRotatef(90,0,0,1);
                 glTranslatef(-h,-w,0);*/
                 break;
-            case CC.CCDeviceOrientationLandscapeLeft:
+            case cc.DeviceOrientationLandscapeLeft:
                 /*glTranslatef(w,h,0);
                 glRotatef(-90,0,0,1);
                 glTranslatef(-h,-w,0);*/
@@ -234,11 +234,11 @@ CC.CCDirector = CC.Class.extend({
     },
     calculateDeltaTime : function()
     {
-        var now = new CC.cc_timeval();
-        now = CC.CCTime.gettimeofdayCocos2d();
+        var now = new cc.timeval();
+        now = cc.Time.gettimeofdayCocos2d();
         if(!now)
         {
-            CC.CCLOG("error in gettimeofday");
+            cc.LOG("error in gettimeofday");
             this._m_fDeltaTime = 0;
             return;
         }
@@ -255,7 +255,7 @@ CC.CCDirector = CC.Class.extend({
             this._m_fDeltaTime = Math.max(0, this._m_fDeltaTime);
         }
 
-        if(CC.DEBUG)
+        if(cc.DEBUG)
         {
             if(this._m_fDeltaTime > 0.2)
             {
@@ -266,26 +266,26 @@ CC.CCDirector = CC.Class.extend({
     },
     convertToGL : function(obPoint)
     {
-        var s = new CC.CCSize();
+        var s = new cc.Size();
         s = this._m_obWinSizeInPoints;
         var newY = s.height - obPoint.y;
         var newX = s.width - obPoint.x;
 
-        var ret = new CC.CCPoint();
-        ret = CC.CCPointZero;
+        var ret = new cc.Point();
+        ret = cc.PointZero;
         switch (this._m_eDeviceOrientation)
         {
-            case CC.CCDeviceOrientationPortrait:
-                ret = CC.ccp(obPoint.x, newY);
+            case cc.DeviceOrientationPortrait:
+                ret = cc.ccp(obPoint.x, newY);
                 break;
-            case CC.CCDeviceOrientationPortraitUpsideDown:
-                ret = CC.ccp(newX, obPoint.y);
+            case cc.DeviceOrientationPortraitUpsideDown:
+                ret = cc.ccp(newX, obPoint.y);
                 break;
-            case CC.CCDeviceOrientationLandscapeLeft:
+            case cc.DeviceOrientationLandscapeLeft:
                 ret.x = obPoint.y;
                 ret.y = obPoint.x;
                 break;
-            case CC.CCDeviceOrientationLandscapeRight:
+            case cc.DeviceOrientationLandscapeRight:
                 ret.x = newY;
                 ret.y = newX;
                 break;
@@ -294,27 +294,27 @@ CC.CCDirector = CC.Class.extend({
     },
     convertToUI: function(obPoint)
     {
-        var winSize = new CC.CCSize();
+        var winSize = new cc.Size();
         winSize = this._m_obWinSizeInPoints;
         var oppositeX = winSize.width - obPoint.x;
         var oppositeY = winSize.height - obPoint.y;
-        var uiPoint = new CC.CCPoint();
-        uiPoint = CC.CCPointZero;
+        var uiPoint = new cc.Point();
+        uiPoint = cc.PointZero;
 
         switch(this._m_eDeviceOrientation)
         {
-            case CC.CCDeviceOrientationPortrait:
-                uiPoint = CC.ccp(obPoint.x, oppositeY);
+            case cc.DeviceOrientationPortrait:
+                uiPoint = cc.ccp(obPoint.x, oppositeY);
                 break;
-            case CC.CCDeviceOrientationPortraitUpsideDown:
-                uiPoint = CC.ccp(oppositeX, obPoint.y);
+            case cc.DeviceOrientationPortraitUpsideDown:
+                uiPoint = cc.ccp(oppositeX, obPoint.y);
                 break;
-            case CC.CCDeviceOrientationLandscapeLeft:
-                uiPoint = CC.ccp(obPoint.y, obPoint.x);
+            case cc.DeviceOrientationLandscapeLeft:
+                uiPoint = cc.ccp(obPoint.y, obPoint.x);
                 break;
-            case CC.CCDeviceOrientationLandscapeRight:
+            case cc.DeviceOrientationLandscapeRight:
                 // Can't use oppositeX/Y because x/y are flipped
-                uiPoint = CC.ccp(winSize.width - obPoint.y, winSize.height - obPoint.x);
+                uiPoint = cc.ccp(winSize.width - obPoint.y, winSize.height - obPoint.x);
                 break;
         }
         return uiPoint;
@@ -329,7 +329,7 @@ CC.CCDirector = CC.Class.extend({
         //tick before glClear: issue #533
         if (! this._m_bPaused)
         {
-            CC.CCScheduler.sharedScheduler().tick(this._m_fDeltaTime);//TODO this statement might not be correct
+            cc.Scheduler.sharedScheduler().tick(this._m_fDeltaTime);//TODO this statement might not be correct
         }
         //TODO openGL stuff
         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -346,7 +346,7 @@ CC.CCDirector = CC.Class.extend({
         this.applyOrientation();
 
         // By default enable VertexArray, ColorArray, TextureCoordArray and Texture2D
-        CC.CC_ENABLE_DEFAULT_GL_STATES();
+        cc._ENABLE_DEFAULT_GL_STATES();
 
         // draw the scene
         if (this._m_pRunningScene)
@@ -365,12 +365,12 @@ CC.CCDirector = CC.Class.extend({
             this.showFPS();
         }
 
-        if (CC.CC_ENABLE_PROFILERS)
+        if (cc._ENABLE_PROFILERS)
         {
             this.showProfilers();
         }
 
-        CC.CC_DISABLE_DEFAULT_GL_STATES();
+        cc._DISABLE_DEFAULT_GL_STATES();
         //TODO OpenGL
         //glPopMatrix();
 
@@ -406,13 +406,13 @@ CC.CCDirector = CC.Class.extend({
         this.setContentScaleFactor(newScale);
 
         // release cached texture
-        CC.CCTextureCache.purgeSharedTextureCache();
+        cc.TextureCache.purgeSharedTextureCache();
 
-        if (CC.CC_DIRECTOR_FAST_FPS)
+        if (cc._DIRECTOR_FAST_FPS)
         {
             if (this._m_pFPSLabel)
             {
-                CC.CC_SAFE_RELEASE_NULL(this._m_pFPSLabel);
+                cc._SAFE_RELEASE_NULL(this._m_pFPSLabel);
                 this._m_pFPSLabel = CCLabelTTF.labelWithString("00.0", "Arial", 24);
                 this._m_pFPSLabel.retain();
             }
@@ -447,7 +447,7 @@ CC.CCDirector = CC.Class.extend({
     {
         var S = (this._m_obWinSizeInPoints);
 
-        if (this._m_eDeviceOrientation == CC.CCDeviceOrientationLandscapeLeft || this._m_eDeviceOrientation == CC.CCDeviceOrientationLandscapeRight)
+        if (this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeLeft || this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeRight)
         {
             // swap x,y in landspace mode
             var tmp = S;
@@ -460,8 +460,8 @@ CC.CCDirector = CC.Class.extend({
     {
         var s = this.getWinSize();
 
-        s.width *= CC.CC_CONTENT_SCALE_FACTOR();
-        s.height *= CC.CC_CONTENT_SCALE_FACTOR();
+        s.width *= cc._CONTENT_SCALE_FACTOR();
+        s.height *= cc._CONTENT_SCALE_FACTOR();
 
         return s;
     },
@@ -484,7 +484,7 @@ CC.CCDirector = CC.Class.extend({
     },
     popScene: function()
     {
-        CC.CCAssert(this._m_pRunningScene != null, "running scene should not null");
+        cc.Assert(this._m_pRunningScene != null, "running scene should not null");
 
         this._m_pobScenesStack.removeLastObject();
         var c = this._m_pobScenesStack.count();
@@ -501,14 +501,14 @@ CC.CCDirector = CC.Class.extend({
     },
     purgeCachedData: function()
     {
-        CC.CCLabelBMFont.purgeCachedData();
-        CC.CCTextureCache.sharedTextureCache().removeUnusedTextures();
+        cc.LabelBMFont.purgeCachedData();
+        cc.TextureCache.sharedTextureCache().removeUnusedTextures();
     },
     purgeDirector: function()
     {
         // don't release the event handlers
         // They are needed in case the director is run again
-        CC.CCTouchDispatcher.sharedDispatcher().removeAllDelegates();
+        cc.TouchDispatcher.sharedDispatcher().removeAllDelegates();
 
         if (this._m_pRunningScene)
         {
@@ -526,26 +526,26 @@ CC.CCDirector = CC.Class.extend({
 
         this.stopAnimation();
 
-        if (CC.CC_DIRECTOR_FAST_FPS)
+        if (cc._DIRECTOR_FAST_FPS)
         {
-            CC.CC_SAFE_RELEASE_NULL(this._m_pFPSLabel);
+            cc._SAFE_RELEASE_NULL(this._m_pFPSLabel);
         }
 
-        CC.CC_SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
+        cc._SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
 
         // purge bitmap cache
-        CC.CCLabelBMFont.purgeCachedData();
+        cc.LabelBMFont.purgeCachedData();
 
         // purge all managers
-        CC.CCAnimationCache.purgeSharedAnimationCache();
-        CC.CCSpriteFrameCache.purgeSharedSpriteFrameCache();
-        CC.CCActionManager.sharedManager().purgeSharedManager();
-        CC.CCScheduler.purgeSharedScheduler();
-        CC.CCTextureCache.purgeSharedTextureCache();
+        cc.AnimationCache.purgeSharedAnimationCache();
+        cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
+        cc.ActionManager.sharedManager().purgeSharedManager();
+        cc.Scheduler.purgeSharedScheduler();
+        cc.TextureCache.purgeSharedTextureCache();
 
-        if (CC.CC_TARGET_PLATFORM != CC.CC_PLATFORM_MARMALADE)
+        if (cc._TARGET_PLATFORM != cc._PLATFORM_MARMALADE)
         {
-            CC.CCUserDefault.purgeSharedUserDefault();
+            cc.UserDefault.purgeSharedUserDefault();
         }
         // OpenGL view
         this._m_pobOpenGLView.release();
@@ -553,7 +553,7 @@ CC.CCDirector = CC.Class.extend({
     },
     pushScene: function(pScene)
     {
-        CC.CCAssert(pScene, "the scene should not null");
+        cc.Assert(pScene, "the scene should not null");
 
         this._m_bSendCleanupToScene = false;
 
@@ -562,7 +562,7 @@ CC.CCDirector = CC.Class.extend({
     },
     replaceScene: function(pScene)
     {
-        CC.CCAssert(pScene != null, "the scene should not be null");
+        cc.Assert(pScene != null, "the scene should not be null");
 
         var i = this._m_pobScenesStack.count();
 
@@ -575,7 +575,7 @@ CC.CCDirector = CC.Class.extend({
     {
         // don't release the event handlers
         // They are needed in case the director is run again
-        CC.CCTouchDispatcher.sharedDispatcher().removeAllDelegates();
+        cc.TouchDispatcher.sharedDispatcher().removeAllDelegates();
 
         if (this._m_pRunningScene)
         {
@@ -593,23 +593,23 @@ CC.CCDirector = CC.Class.extend({
 
         this.stopAnimation();
 
-        CC.CC_SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
+        cc._SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
 
         // purge bitmap cache
-        CC.CCLabelBMFont.purgeCachedData();
+        cc.LabelBMFont.purgeCachedData();
 
         // purge all managers
-        CC.CCAnimationCache.purgeSharedAnimationCache();
-        CC.CCSpriteFrameCache.purgeSharedSpriteFrameCache();
-        CC.CCActionManager.sharedManager().purgeSharedManager();
+        cc.AnimationCache.purgeSharedAnimationCache();
+        cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
+        cc.ActionManager.sharedManager().purgeSharedManager();
         CCScheduler.purgeSharedScheduler();
-        CC.CCTextureCache.purgeSharedTextureCache();
+        cc.TextureCache.purgeSharedTextureCache();
     },
     reshapeProjection: function(newWindowSize)
     {
-        CC.CC_UNUSED_PARAM(newWindowSize);
+        cc._UNUSED_PARAM(newWindowSize);
         this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
-        this._m_obWinSizeInPixels = CC.CCSizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor,
+        this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor,
             this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
 
         this.setProjection(this._m_eProjection);
@@ -622,10 +622,10 @@ CC.CCDirector = CC.Class.extend({
         }
 
         this.setAnimationInterval(this._m_dOldAnimationInterval);
-        this._m_pLastUpdate = CC.CCTime.gettimeofdayCocos2d();
+        this._m_pLastUpdate = cc.Time.gettimeofdayCocos2d();
         if (!this._m_pLastUpdate)
         {
-            CC.CCLOG("cocos2d: Director: Error in gettimeofday");
+            cc.LOG("cocos2d: Director: Error in gettimeofday");
         }
 
         this._m_bPaused = false;
@@ -633,8 +633,8 @@ CC.CCDirector = CC.Class.extend({
     },
     runWithScene: function(pScene)
     {
-        CC.CCAssert(pScene != null, "running scene should not be null");
-        CC.CCAssert(this._m_pRunningScene == null, "_m_pRunningScene should be null");
+        cc.Assert(pScene != null, "running scene should not be null");
+        cc.Assert(this._m_pRunningScene == null, "_m_pRunningScene should be null");
 
         this.pushScene(pScene);
         this.startAnimation();
@@ -657,7 +657,7 @@ CC.CCDirector = CC.Class.extend({
         if (scaleFactor != this._m_fContentScaleFactor)
         {
             this._m_fContentScaleFactor = scaleFactor;
-            this._m_obWinSizeInPixels = CC.CCSizeMake(this._m_obWinSizeInPoints.width * scaleFactor, this._m_obWinSizeInPoints.height * scaleFactor);
+            this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * scaleFactor, this._m_obWinSizeInPoints.height * scaleFactor);
 
             if (this._m_pobOpenGLView)
             {
@@ -687,7 +687,7 @@ CC.CCDirector = CC.Class.extend({
     {
         var eNewOrientation;
 
-        eNewOrientation = CC.CCApplication.sharedApplication().setOrientation(kDeviceOrientation);
+        eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
         if (this._m_eDeviceOrientation != eNewOrientation)
         {
@@ -699,22 +699,22 @@ CC.CCDirector = CC.Class.extend({
             // On win32,the return value of CCApplication::setDeviceOrientation is always kCCDeviceOrientationPortrait
             // So,we should calculate the Projection and window size again.
             this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
-            this._m_obWinSizeInPixels = CC.CCSizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
+            this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
             this.setProjection(this._m_eProjection);
         }
     },
     setDirectorType: function(obDirectorType)
     {
-        CC.CC_UNUSED_PARAM(obDirectorType);
+        cc._UNUSED_PARAM(obDirectorType);
         // we only support CCDisplayLinkDirector
-        CC.CCDirector.sharedDirector();
+        cc.Director.sharedDirector();
 
         return true;
     },
     setGLDefaultValues: function()
     {
         // This method SHOULD be called only after openGLView_ was initialized
-        CC.CCAssert(this._m_pobOpenGLView, "opengl view should not be null");
+        cc.Assert(this._m_pobOpenGLView, "opengl view should not be null");
 
         this.setAlphaBlending(true);
         this.setDepthTest(true);
@@ -724,11 +724,11 @@ CC.CCDirector = CC.Class.extend({
         //TODO OpenGl
         //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        if (CC.CC_DIRECTOR_FAST_FPS)
+        if (cc._DIRECTOR_FAST_FPS)
         {
             if (! this._m_pFPSLabel)
             {
-                this._m_pFPSLabel = CC.CCLabelTTF.labelWithString("00.0", "Arial", 24);
+                this._m_pFPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
                 this._m_pFPSLabel.retain();
             }
         }
@@ -740,7 +740,7 @@ CC.CCDirector = CC.Class.extend({
     setNextScene: function()
     {
         var runningIsTransition = (typeof(this._m_pRunningScene) != undefined);
-        var newIsTransition = this._m_pNextScene instanceof CC.CCTransitionScene;
+        var newIsTransition = this._m_pNextScene instanceof cc.TransitionScene;
 
         // If it is not a transition, call onExit/cleanup
         if (! newIsTransition)
@@ -774,13 +774,13 @@ CC.CCDirector = CC.Class.extend({
     },
     setNotificationNode: function(node)
     {
-        CC.CC_SAFE_RELEASE(this_m_pNotificationNode);
+        cc._SAFE_RELEASE(this_m_pNotificationNode);
         this._m_pNotificationNode = node;
-        CC.CC_SAFE_RETAIN(this._m_pNotificationNode);
+        cc._SAFE_RETAIN(this._m_pNotificationNode);
     },
     setOpenGLView: function(pobOpenGLView)
     {
-        CC.CCAssert(pobOpenGLView, "opengl view should not be null");
+        cc.Assert(pobOpenGLView, "opengl view should not be null");
 
         if (this._m_pobOpenGLView != pobOpenGLView)
         {
@@ -790,7 +790,7 @@ CC.CCDirector = CC.Class.extend({
 
             // set size
             this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
-            this._m_obWinSizeInPixels = CC.CCSizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
+            this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
             this.setGLDefaultValues();
 
             if (this._m_fContentScaleFactor != 1)
@@ -809,7 +809,7 @@ CC.CCDirector = CC.Class.extend({
         var zeye = this.getZEye();
         switch (kProjection)
         {
-            case CC.kCCDirectorProjection2D:
+            case cc.kCCDirectorProjection2D:
                 if (this._m_pobOpenGLView)
                 {
                     this._m_pobOpenGLView.setViewPortInPoints(0, 0, size.width, size.height);
@@ -822,7 +822,7 @@ CC.CCDirector = CC.Class.extend({
                 //glLoadIdentity();
                 break;
 
-            case CC.kCCDirectorProjection3D:
+            case cc.kCCDirectorProjection3D:
                 if (this._m_pobOpenGLView)
                 {
                     this._m_pobOpenGLView.setViewPortInPoints(0, 0, size.width, size.height);
@@ -840,7 +840,7 @@ CC.CCDirector = CC.Class.extend({
                     0.0f, 1.0f, 0.0f);*/
                 break;
 
-            case CC.kCCDirectorProjectionCustom:
+            case cc.kCCDirectorProjectionCustom:
                 if (this._m_pProjectionDelegate)
                 {
                     this._m_pProjectionDelegate.updateProjection();
@@ -848,7 +848,7 @@ CC.CCDirector = CC.Class.extend({
                 break;
 
             default:
-                CC.CCLOG("cocos2d: Director: unrecognized projecgtion");
+                cc.LOG("cocos2d: Director: unrecognized projecgtion");
                 break;
         }
 
@@ -859,7 +859,7 @@ CC.CCDirector = CC.Class.extend({
         this._m_uFrames++;
         this._m_fAccumDt += this._m_fDeltaTime;
 
-        if (this._m_fAccumDt > CC.CC_DIRECTOR_FPS_INTERVAL)
+        if (this._m_fAccumDt > cc._DIRECTOR_FPS_INTERVAL)
         {
             this._m_fFrameRate = this._m_uFrames / this._m_fAccumDt;
             this._m_uFrames = 0;
@@ -873,13 +873,13 @@ CC.CCDirector = CC.Class.extend({
     },
     showProfilers: function()
     {
-        if(CC.CC_ENABLE_PROFILERS)
+        if(cc._ENABLE_PROFILERS)
         {
             this._m_fAccumDtForProfiler += this._m_fDeltaTime;
             if (this._m_fAccumDtForProfiler > 1.0)
             {
                 this._m_fAccumDtForProfiler = 0;
-                CC.CCProfiler.sharedProfiler().displayTimers();
+                cc.Profiler.sharedProfiler().displayTimers();
             }
         }
     },
@@ -893,7 +893,7 @@ CC.CCDirector = CC.Class.extend({
         }
         else
         {
-            CC.CCLOG("cocos2d: setContentScaleFactor:'is not supported on this device");
+            cc.LOG("cocos2d: setContentScaleFactor:'is not supported on this device");
         }
     },
     isRetinaDisplay: function() { return this._m_bRetinaDisplay; },
@@ -919,13 +919,13 @@ CC.CCDirector = CC.Class.extend({
     /** Sets an OpenGL projection*/
     getProjection: function(){ return this._m_eProjection;}
 });
-CC.CCDirector.sharedDirector = function(){
-    if(CC.s_bFirstRun)
+cc.Director.sharedDirector = function(){
+    if(cc.s_bFirstRun)
     {
-        CC.s_sharedDirector.init();
-        CC.s_bFirstRun = false;
+        cc.s_sharedDirector.init();
+        cc.s_bFirstRun = false;
     }
-    return CC.s_sharedDirector;
+    return cc.s_sharedDirector;
 };
 
 /***************************************************
@@ -944,18 +944,18 @@ CC.CCDirector.sharedDirector = function(){
 
  @since v0.8.2
  */
-CC.CCDisplayLinkDirector = CC.CCDirector.extend({
+cc.DisplayLinkDirector = cc.Director.extend({
     m_bInvalid: false,
     startAnimation: function()
     {
-        this._m_pLastUpdate = CC.CCTime.gettimeofdayCocos2d();
+        this._m_pLastUpdate = cc.Time.gettimeofdayCocos2d();
         if (this._m_pLastUpdate != 0)
         {
-            CC.CCLOG("cocos2d: DisplayLinkDirector: Error on gettimeofday");
+            cc.LOG("cocos2d: DisplayLinkDirector: Error on gettimeofday");
         }
 
         this.m_bInvalid = false;
-        CC.CCApplication.sharedApplication().setAnimationInterval(this._m_dAnimationInterval);
+        cc.Application.sharedApplication().setAnimationInterval(this._m_dAnimationInterval);
     },
     mainLoop: function()
     {
@@ -986,6 +986,6 @@ CC.CCDisplayLinkDirector = CC.CCDirector.extend({
         }
     }
 });
-CC.s_sharedDirector = new CC.CCDisplayLinkDirector();
-CC.s_bFirstRun = true;
-CC.kDefaultFPS = 60;//set default fps to 60
+cc.s_sharedDirector = new cc.DisplayLinkDirector();
+cc.s_bFirstRun = true;
+cc.kDefaultFPS = 60;//set default fps to 60

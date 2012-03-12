@@ -28,17 +28,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 
-CC.kTypeBackClicked = 1;
-CC.kTypeMenuClicked = 2;
+cc.kTypeBackClicked = 1;
+cc.kTypeMenuClicked = 2;
 
-CC.s_KeypadDispatcher = null;
+cc.s_KeypadDispatcher = null;
 /**
  @class CCKeypadDispatcher
  @brief Dispatch the keypad message from the phone
  */
-CC.CCKeypadDispatcher = CC.Class.extend({
+cc.KeypadDispatcher = cc.Class.extend({
     /**
      @brief add delegate to concern keypad msg
      */
@@ -83,7 +83,7 @@ CC.CCKeypadDispatcher = CC.Class.extend({
      */
     forceAddDelegate: function(pDelegate)
     {
-        var pHandler = CC.CCKeypadHandler.handlerWithDelegate(pDelegate);
+        var pHandler = cc.KeypadHandler.handlerWithDelegate(pDelegate);
 
         if (pHandler)
         {
@@ -123,7 +123,7 @@ CC.CCKeypadDispatcher = CC.Class.extend({
         {
             for (iter = this._m_pDelegates.begin(); iter != this_m_pDelegates.end(); ++iter)
             {
-                CC.CC_BREAK_IF(!(iter));
+                cc._BREAK_IF(!(iter));
 
                 pHandler = iter;
                 pDelegate = pHandler.getDelegate();
@@ -180,22 +180,22 @@ CC.CCKeypadDispatcher = CC.Class.extend({
 /**
  @brief Returns the shared CCKeypadDispatcher object for the system.
  */
-CC.CCKeypadDispatcher.sharedDispatcher = function()
+cc.KeypadDispatcher.sharedDispatcher = function()
 {
-    if(! CC.s_KeypadDispatcher)
+    if(! cc.s_KeypadDispatcher)
     {
-        CC.s_KeypadDispatcher = new CCKeypadDispatcher();
+        cc.s_KeypadDispatcher = new CCKeypadDispatcher();
     }
-    return CC.s_KeypadDispatcher;
+    return cc.s_KeypadDispatcher;
 };
 /**
  @brief Release the shared CCKeypadDispatcher object from the system.
  */
-CC.CCKeypadDispatcher.purgeSharedDispatcher = function()
+cc.KeypadDispatcher.purgeSharedDispatcher = function()
 {
-    if (CC.s_KeypadDispatcher)
+    if (cc.s_KeypadDispatcher)
     {
-        delete CC.s_KeypadDispatcher;
-        CC.s_KeypadDispatcher = null;
+        delete cc.s_KeypadDispatcher;
+        cc.s_KeypadDispatcher = null;
     }
 };

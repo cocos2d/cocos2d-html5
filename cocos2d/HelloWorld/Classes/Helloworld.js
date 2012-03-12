@@ -29,14 +29,14 @@
  ****************************************************************************/
 
 
-var Helloworld = CC.CCLayer.extend({
+var Helloworld = cc.Layer.extend({
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     init: function()
     {
         //////////////////////////////
         // 1. super init first
         var test = this._super();
-        CC.CCLOG(test);
+        cc.LOG(test);
         if ( !test )
         {
 
@@ -49,16 +49,16 @@ var Helloworld = CC.CCLayer.extend({
 
         // add a "close" icon to exit the progress. it's an autorelease object
         /*
-        var pCloseItem = CC.CCMenuItemImage.itemFromNormalImage(
+        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
             "CloseNormal.png",
             "CloseSelected.png",
             this,
-            CC.menu_selector(Helloworld.menuCloseCallback) );
-        pCloseItem.setPosition( CC.ccp(CC.CCDirector.sharedDirector().getWinSize().width - 20, 20) );
+            cc.menu_selector(Helloworld.menuCloseCallback) );
+        pCloseItem.setPosition( cc.ccp(cc.Director.sharedDirector().getWinSize().width - 20, 20) );
 
         // create menu, it's an autorelease object
-        var pMenu = CC.CCMenu.menuWithItems(pCloseItem, null);
-        pMenu.setPosition( CC.CCPointZero );
+        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
+        pMenu.setPosition( cc.PointZero );
         this.addChild(pMenu, 1);
         */
         /////////////////////////////
@@ -66,22 +66,22 @@ var Helloworld = CC.CCLayer.extend({
 
         // add a label shows "Hello World"
         // create and initialize a label
-        //var pLabel = CC.CCLabelTTF.labelWithString("Hello World", "Arial", 24);
+        //var pLabel = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         // ask director the window size
-        var size = CC.CCDirector.sharedDirector().getWinSize();
+        var size = cc.Director.sharedDirector().getWinSize();
 
         // position the label on the center of the screen
-        //pLabel.setPosition( CC.ccp(size.width / 2, size.height - 50) );
+        //pLabel.setPosition( cc.ccp(size.width / 2, size.height - 50) );
 
         // add the label as a child to this layer
         //this.addChild(pLabel, 1);
 
         // add "HelloWorld" splash screen"
         /*******************
-        var pSprite = CC.CCSprite.spriteWithFile("HelloWorld.png");
+        var pSprite = cc.Sprite.spriteWithFile("HelloWorld.png");
 
         // position the sprite on the center of the screen
-        pSprite.setPosition( CC.ccp(size.width/2, size.height/2) );
+        pSprite.setPosition( cc.ccp(size.width/2, size.height/2) );
 
         // add the sprite as a child to this layer
         this.addChild(pSprite, 0);
@@ -91,13 +91,13 @@ var Helloworld = CC.CCLayer.extend({
     // a selector callback
     menuCloseCallback: function(pSender)
     {
-        CC.CCDirector.sharedDirector().end();
+        cc.Director.sharedDirector().end();
     }
 });
 // there's no 'id' in cpp, so we recommand to return the exactly class pointer
 Helloworld.scene = function(){
     // 'scene' is an autorelease object
-    var scene = CC.CCScene.node();
+    var scene = cc.Scene.node();
 
     // 'layer' is an autorelease object
     var layer = this.node();

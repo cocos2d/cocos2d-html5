@@ -28,15 +28,15 @@ THE SOFTWARE.
  * MIT Licensed.
  */
 // Inspired by base2 and Prototype
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 (function(){
     var initializing = false, fnTest = /xyz/.test(function(){xyz;}) ? /\b_super\b/ : /.*/;
 
     // The base Class implementation (does nothing)
-    CC.Class = function(){};
+    cc.Class = function(){};
 
     // Create a new Class that inherits from this Class
-    CC.Class.extend = function(prop) {
+    cc.Class.extend = function(prop) {
         var _super = this.prototype;
 
         // Instantiate a base Class (but only create the instance,

@@ -26,20 +26,20 @@ THE SOFTWARE.
 
 
 /// Device oriented vertically, home button on the bottom
-CC.kOrientationPortrait = 0;
+cc.kOrientationPortrait = 0;
 /// Device oriented vertically, home button on the top
-CC.kOrientationPortraitUpsideDown = 1;
+cc.kOrientationPortraitUpsideDown = 1;
 /// Device oriented horizontally, home button on the right
-CC.kOrientationLandscapeLeft = 2;
+cc.kOrientationLandscapeLeft = 2;
 /// Device oriented horizontally, home button on the left
-CC.kOrientationLandscapeRight = 3;
+cc.kOrientationLandscapeRight = 3;
 
 
-CC.CCApplication = CC.Class.extend(
+cc.Application = cc.Class.extend(
 {
     ctor:function(){
         this._m_nAnimationInterval = 0;
-        CC.CCAssert(!CC.sm_pSharedApplication,"CCApplication ctor");
+        cc.Assert(!cc.sm_pSharedApplication,"CCApplication ctor");
     },
 
 
@@ -61,12 +61,12 @@ CC.CCApplication = CC.Class.extend(
      setOrientation:function(orientation){
         // swap width and height
         // TODO, need to be fixed.
-        /* var pView = CC.CCDirector.sharedDirector().getOpenGLView();
+        /* var pView = cc.Director.sharedDirector().getOpenGLView();
         if (pView)
         {
             return pView.setDeviceOrientation(orientation);
         }
-        return CC.CCDirector.sharedDirector().getDeviceOrientation(); */
+        return cc.Director.sharedDirector().getDeviceOrientation(); */
 
     },
 
@@ -77,7 +77,7 @@ CC.CCApplication = CC.Class.extend(
         if (rect)
         {
             // Windows doesn't have status bar.
-            rect = CC.CCRectMake(0, 0, 0, 0);
+            rect = cc.RectMake(0, 0, 0, 0);
         }
 
     },
@@ -87,14 +87,14 @@ CC.CCApplication = CC.Class.extend(
      */
     run:function(){
         // Initialize instance and cocos2d.
-        var newAppDelegate = new CC.AppDelegate();
+        var newAppDelegate = new cc.AppDelegate();
         if(! newAppDelegate.initInstance() || ! newAppDelegate.applicationDidFinishLaunching())
         {
             return 0;
         }
         // TODO, need to be fixed.
         console.log(this._m_nAnimationInterval * 1000);
-         setInterval(CC.CCDirector.sharedDirector().mainLoop, this._m_nAnimationInterval * 1000);
+         setInterval(cc.Director.sharedDirector().mainLoop, this._m_nAnimationInterval * 1000);
 
     },
     _m_nAnimationInterval:null
@@ -105,47 +105,47 @@ CC.CCApplication = CC.Class.extend(
  @brief	Get current applicaiton instance.
  @return Current application instance pointer.
  */
-CC.CCApplication.sharedApplication =  function(){
+cc.Application.sharedApplication =  function(){
 
-    if(CC.sm_pSharedApplication == null){
-        CC.sm_pSharedApplication = new CC.CCApplication();
+    if(cc.sm_pSharedApplication == null){
+        cc.sm_pSharedApplication = new cc.Application();
     }
 
-    CC.CCAssert(CC.sm_pSharedApplication,"sharedApplication");
-    return CC.sm_pSharedApplication;
+    cc.Assert(cc.sm_pSharedApplication,"sharedApplication");
+    return cc.sm_pSharedApplication;
 };
 
 /**
  @brief Get current language config
  @return Current language config
  */
-CC.CCApplication.getCurrentLanguage = function(){
-    var ret = CC.kLanguageEnglish;
+cc.Application.getCurrentLanguage = function(){
+    var ret = cc.kLanguageEnglish;
 
     // TODO, need to be fixed.
     /*
-    var localeID = CC.GetUserDefaultLCID();
+    var localeID = cc.GetUserDefaultLCID();
     var primaryLanguageID = localeID & 0xFF;
 
     switch (primaryLanguageID)
     {
         case LANG_CHINESE:
-            ret = CC.kLanguageChinese;
+            ret = cc.kLanguageChinese;
             break;
         case LANG_FRENCH:
-            ret = CC.kLanguageFrench;
+            ret = cc.kLanguageFrench;
             break;
         case LANG_ITALIAN:
-            ret = CC.kLanguageItalian;
+            ret = cc.kLanguageItalian;
             break;
         case LANG_GERMAN:
-            ret = CC.kLanguageGerman;
+            ret = cc.kLanguageGerman;
             break;
         case LANG_SPANISH:
-            ret = CC.kLanguageSpanish;
+            ret = cc.kLanguageSpanish;
             break;
         case LANG_RUSSIAN:
-            ret = CC.kLanguageRussian;
+            ret = cc.kLanguageRussian;
             break;
     }
     */
@@ -153,4 +153,4 @@ CC.CCApplication.getCurrentLanguage = function(){
     return ret;
 };
 
-CC.sm_pSharedApplication = null;
+cc.sm_pSharedApplication = null;

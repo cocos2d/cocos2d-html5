@@ -23,14 +23,14 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 
-CC.kSceneFade = parseInt("0xFADEFADE");
+cc.kSceneFade = parseInt("0xFADEFADE");
 
 /** @brief CCTransitionEaseScene can ease the actions of the scene protocol.
  @since v0.8.2
  */
-CC.CCTransitionEaseScene = CC.Class.extend({
+cc.TransitionEaseScene = cc.Class.extend({
     /** returns the Ease action that will be performed on a linear action.
      @since v0.8.2
      */
@@ -41,15 +41,15 @@ CC.CCTransitionEaseScene = CC.Class.extend({
  * Orientation Type used by some transitions
  */
 /// An horizontal orientation where the Left is nearer
-CC.kOrientationLeftOver = 0;
+cc.kOrientationLeftOver = 0;
 /// An horizontal orientation where the Right is nearer
-CC.kOrientationRightOver = 1;
+cc.kOrientationRightOver = 1;
 /// A vertical orientation where the Up is nearer
-CC.kOrientationUpOver = 0;
+cc.kOrientationUpOver = 0;
 /// A vertical orientation where the Bottom is nearer
-CC.kOrientationDownOver = 1;
+cc.kOrientationDownOver = 1;
 
-CC.CCTransitionScene = CC.CCScene.extend({
+cc.TransitionScene = cc.Scene.extend({
     _m_pInScene:null,
     _m_pOutScene:null,
     _m_fDuration:null,
@@ -59,20 +59,20 @@ CC.CCTransitionScene = CC.CCScene.extend({
     //private
     _setNewScene:function(dt){
         //TODO
-        //CC.CC_UNUSED_PARAM(dt);
+        //cc._UNUSED_PARAM(dt);
         // [self unschedule:_cmd];
         // "_cmd" is a local variable automatically defined in a method
         // that contains the selector for the method
 
         //TODO
         //this.unschedule(schedule_selector(CCTransitionScene::setNewScene));
-        var director = CC.CCDirector.sharedDirector();
+        var director = cc.Director.sharedDirector();
         // Before replacing, save the "send cleanup to scene"
         this._m_bIsSendCleanupToScene = director.isSendCleanupToScene();
         director.replaceScene(m_pInScene);
 
         // enable events while transitions
-        CC.CCTouchDispatcher.sharedDispatcher().setDispatchEvents(true);
+        cc.TouchDispatcher.sharedDispatcher().setDispatchEvents(true);
         // issue #267
         this._m_pOutScene.setIsVisible(true);
     },
@@ -116,19 +116,19 @@ CC.CCTransitionScene = CC.CCScene.extend({
 
     /** initializes a transition with duration and incoming scene */
     initWithDuration:function(t,scene){
-        CC.CCAssert( scene != null, "CCTransitionScene.initWithDuration() Argument scene must be non-nil");
+        cc.Assert( scene != null, "CCTransitionScene.initWithDuration() Argument scene must be non-nil");
 
         if (this.init()) {
             this._m_fDuration = t;
 
             // retain
             this._m_pInScene = scene;
-            this._m_pOutScene = CC.CCDirector.sharedDirector().getRunningScene();
+            this._m_pOutScene = cc.Director.sharedDirector().getRunningScene();
 
-            CC.CCAssert( this._m_pInScene != this._m_pOutScene, "CCTransitionScene.initWithDuration() Incoming scene must be different from the outgoing scene" );
+            cc.Assert( this._m_pInScene != this._m_pOutScene, "CCTransitionScene.initWithDuration() Incoming scene must be different from the outgoing scene" );
 
             // disable events while transitions
-            CC.CCTouchDispatcher.sharedDispatcher().setDispatchEvents(false);
+            cc.TouchDispatcher.sharedDispatcher().setDispatchEvents(false);
             this._sceneOrder();
 
             return true;
@@ -163,8 +163,8 @@ CC.CCTransitionScene = CC.CCScene.extend({
     }
 });
 /** creates a base transition with duration and incoming scene */
-CC.CCTransitionScene.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionScene();
+cc.TransitionScene.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionScene();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -174,7 +174,7 @@ CC.CCTransitionScene.transitionWithDuration = function(t,scene){
 /** @brief A CCTransition that supports orientation like.
  * Possible orientation: LeftOver, RightOver, UpOver, DownOver
  */
-CC.CCTransitionSceneOriented = CC.CCTransitionScene.extend({
+cc.TransitionSceneOriented = cc.TransitionScene.extend({
     _m_eOrientation:0,
 
     initWithDuration:function(t,scene,orientation){
@@ -185,8 +185,8 @@ CC.CCTransitionSceneOriented = CC.CCTransitionScene.extend({
     }
 });
 /** creates a base transition with duration and incoming scene */
-CC.CCTransitionSceneOriented.transitionWithDuration = function(t,scene,orientation){
-    var pScene = new CC.CCTransitionSceneOriented();
+cc.TransitionSceneOriented.transitionWithDuration = function(t,scene,orientation){
+    var pScene = new cc.TransitionSceneOriented();
     pScene.initWithDuration(t,scene,orientation);
 
     return pScene;
@@ -195,7 +195,7 @@ CC.CCTransitionSceneOriented.transitionWithDuration = function(t,scene,orientati
 /** @brief CCTransitionRotoZoom:
  Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming
  */
-CC.CCTransitionRotoZoom = CC.CCTransitionScene.extend({
+cc.TransitionRotoZoom = cc.TransitionScene.extend({
     ctor:function(){},
     onEnter:function(){
         this._super();
@@ -207,20 +207,20 @@ CC.CCTransitionRotoZoom = CC.CCTransitionScene.extend({
         this._m_pOutScene.setAnchorPoint(ccp(0.5, 0.5));
 
         //TODO
-        var rotozoom = CC.CCSequence.actions(
-            CC.CCSpawn.actions(CC.CCScaleBy.actionWithDuration(this._m_fDuration/2, 0.001),
-                CC.CCRotateBy.actionWithDuration(this._m_fDuration/2, 360 * 2), null ),
-            CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),null);
+        var rotozoom = cc.Sequence.actions(
+            cc.Spawn.actions(cc.ScaleBy.actionWithDuration(this._m_fDuration/2, 0.001),
+                cc.RotateBy.actionWithDuration(this._m_fDuration/2, 360 * 2), null ),
+            cc.DelayTime.actionWithDuration(this._m_fDuration/2),null);
 
         this._m_pOutScene.runAction(rotozoom);
         this._m_pInScene.runAction(
-            CC.CCSequence.actions( rotozoom.reverse(),
-                CC.CCCallFunc.actionWithTarget(this, CC.callfunc_selector(this.finish)), null));
+            cc.Sequence.actions( rotozoom.reverse(),
+                cc.CallFunc.actionWithTarget(this, cc.callfunc_selector(this.finish)), null));
     }
 });
 
-CC.CCTransitionRotoZoom.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionRotoZoom();
+cc.TransitionRotoZoom.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionRotoZoom();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -230,35 +230,35 @@ CC.CCTransitionRotoZoom.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionJumpZoom:
  Zoom out and jump the outgoing scene, and then jump and zoom in the incoming
  */
-CC.CCTransitionJumpZoom = CC.CCTransitionScene.extend({
+cc.TransitionJumpZoom = cc.TransitionScene.extend({
     onEnter:function(){
         this._super();
 
-        var s = CC.CCDirector.sharedDirector().getWinSize();
+        var s = cc.Director.sharedDirector().getWinSize();
 
         this._m_pInScene.setScale(0.5);
         this._m_pInScene.setPosition(ccp(s.width, 0));
         this._m_pInScene.setAnchorPoint(ccp(0.5, 0.5));
         this._m_pOutScene.setAnchorPoint(ccp(0.5, 0.5));
         //TODO
-        var jump = CC.CCJumpBy.actionWithDuration(this._m_fDuration/4, ccp(-s.width,0), s.width/4, 2);
-        var scaleIn = CC.CCScaleTo.actionWithDuration(this._m_fDuration/4, 1.0);
-        var scaleOut = CC.CCScaleTo.actionWithDuration(this._m_fDuration/4, 0.5);
+        var jump = cc.JumpBy.actionWithDuration(this._m_fDuration/4, ccp(-s.width,0), s.width/4, 2);
+        var scaleIn = cc.ScaleTo.actionWithDuration(this._m_fDuration/4, 1.0);
+        var scaleOut = cc.ScaleTo.actionWithDuration(this._m_fDuration/4, 0.5);
 
-        var jumpZoomOut = CC.CCSequence.actions(scaleOut, jump, null);
-        var jumpZoomIn = CC.CCSequence.actions(jump, scaleIn, null);
+        var jumpZoomOut = cc.Sequence.actions(scaleOut, jump, null);
+        var jumpZoomIn = cc.Sequence.actions(jump, scaleIn, null);
 
-        var delay = CC.CCDelayTime.actionWithDuration(this._m_fDuration/2);
+        var delay = cc.DelayTime.actionWithDuration(this._m_fDuration/2);
 
         this._m_pOutScene.runAction(jumpZoomOut);
-        this._m_pInScene.runAction(CC.CCSequence.actions(delay,jumpZoomIn,
-            CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+        this._m_pInScene.runAction(cc.Sequence.actions(delay,jumpZoomIn,
+            cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
             null));
     }
 });
 
-CC.CCTransitionJumpZoom.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionJumpZoom();
+cc.TransitionJumpZoom.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionJumpZoom();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -268,7 +268,7 @@ CC.CCTransitionJumpZoom.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionMoveInL:
  Move in from to the left the incoming scene.
  */
-CC.CCTransitionMoveInL = CC.CCTransitionScene.extend({
+cc.TransitionMoveInL = cc.TransitionScene.extend({
     onEnter:function(){
         this._super();
         this.initScenes();
@@ -277,25 +277,25 @@ CC.CCTransitionMoveInL = CC.CCTransitionScene.extend({
 
         //TODO
         this._m_pInScene.runAction(
-            CC.CCSequence.actions
+            cc.Sequence.actions
                 (
                     this.easeActionWithAction(a),
-                    CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                    cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                     null
                 )
         );
     },
     /** initializes the scenes */
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(-s.width,0) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(-s.width,0) );
     },
     /** returns the action that will be performed */
-    action:function(){return CC.CCMoveTo.actionWithDuration(this._m_fDuration, CC.ccp(0,0));},
-    easeActionWithAction:function(action){return CC.CCEaseOut.actionWithAction(action, 2.0);}
+    action:function(){return cc.MoveTo.actionWithDuration(this._m_fDuration, cc.ccp(0,0));},
+    easeActionWithAction:function(action){return cc.EaseOut.actionWithAction(action, 2.0);}
 });
-CC.CCTransitionMoveInL.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionMoveInL();
+cc.TransitionMoveInL.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionMoveInL();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -305,14 +305,14 @@ CC.CCTransitionMoveInL.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionMoveInR:
  Move in from to the right the incoming scene.
  */
-CC.CCTransitionMoveInR = CC.CCTransitionMoveInL.extend({
+cc.TransitionMoveInR = cc.TransitionMoveInL.extend({
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(s.width,0) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(s.width,0) );
     }
 });
-CC.CCTransitionMoveInR.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionMoveInR();
+cc.TransitionMoveInR.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionMoveInR();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -322,14 +322,14 @@ CC.CCTransitionMoveInR.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionMoveInT:
  Move in from to the top the incoming scene.
  */
-CC.CCTransitionMoveInT = CC.CCTransitionMoveInL.extend({
+cc.TransitionMoveInT = cc.TransitionMoveInL.extend({
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(s.height,0) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(s.height,0) );
     }
 });
-CC.CCTransitionMoveInT.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionMoveInT();
+cc.TransitionMoveInT.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionMoveInT();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -339,21 +339,21 @@ CC.CCTransitionMoveInT.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionMoveInB:
  Move in from to the bottom the incoming scene.
  */
-CC.CCTransitionMoveInB = CC.CCTransitionMoveInL.extend({
+cc.TransitionMoveInB = cc.TransitionMoveInL.extend({
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(0,-s.height) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(0,-s.height) );
     }
 });
-CC.CCTransitionMoveInB.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionMoveInB();
+cc.TransitionMoveInB.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionMoveInB();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
     return null;
 };
 
-CC.ADJUST_FACTOR = 0.5;
+cc.ADJUST_FACTOR = 0.5;
 /** @brief CCTransitionSlideInL:
  Slide in the incoming scene from the left border.
  */
@@ -361,7 +361,7 @@ CC.ADJUST_FACTOR = 0.5;
 // One solution is to use DONT_RENDER_IN_SUBPIXELS images, but NO
 // The other issue is that in some transitions (and I don't know why)
 // the order should be reversed (In in top of Out or vice-versa).
-CC.CCTransitionSlideInL = CC.CCTransitionScene.extend({
+cc.TransitionSlideInL = cc.TransitionScene.extend({
     _sceneOrder:function(){this._m_bIsInSceneOnTop = false;},
     ctor:function(){},
     onEnter:function(){
@@ -372,10 +372,10 @@ CC.CCTransitionSlideInL = CC.CCTransitionScene.extend({
         var outA = this.action();
 
         var inAction = this.easeActionWithAction(inA);
-        var outAction = CC.CCSequence.actions
+        var outAction = cc.Sequence.actions
             (
                 this.easeActionWithAction(outA),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
         this._m_pInScene.runAction(inAction);
@@ -383,18 +383,18 @@ CC.CCTransitionSlideInL = CC.CCTransitionScene.extend({
     },
     /** initializes the scenes */
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(-(s.width-CC.ADJUST_FACTOR),0) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(-(s.width-cc.ADJUST_FACTOR),0) );
     },
     /** returns the action that will be performed by the incomming and outgoing scene */
     action:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        return CC.CCMoveBy.actionWithDuration(this._m_fDuration, CC.ccp(s.width-CC.ADJUST_FACTOR,0));
+        var s = cc.Director.sharedDirector().getWinSize();
+        return cc.MoveBy.actionWithDuration(this._m_fDuration, cc.ccp(s.width-cc.ADJUST_FACTOR,0));
     },
-    easeActionWithAction:function(action){return CC.CCEaseOut.actionWithAction(action, 2.0);}
+    easeActionWithAction:function(action){return cc.EaseOut.actionWithAction(action, 2.0);}
 });
-CC.CCTransitionSlideInL.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionSlideInL();
+cc.TransitionSlideInL.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionSlideInL();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -404,21 +404,21 @@ CC.CCTransitionSlideInL.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionSlideInR:
  Slide in the incoming scene from the right border.
  */
-CC.CCTransitionSlideInR = CC.CCTransitionSlideInL.extend({
+cc.TransitionSlideInR = cc.TransitionSlideInL.extend({
     _sceneOrder:function(){this._m_bIsInSceneOnTop = true;},
     /** initializes the scenes */
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(s.width-CC.ADJUST_FACTOR,0) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(s.width-cc.ADJUST_FACTOR,0) );
     },
     /** returns the action that will be performed by the incomming and outgoing scene */
     action:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        return CC.CCMoveBy.actionWithDuration(this._m_fDuration, CC.ccp(-(s.width-CC.ADJUST_FACTOR),0));
+        var s = cc.Director.sharedDirector().getWinSize();
+        return cc.MoveBy.actionWithDuration(this._m_fDuration, cc.ccp(-(s.width-cc.ADJUST_FACTOR),0));
     }
 });
-CC.CCTransitionSlideInR.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionSlideInR();
+cc.TransitionSlideInR.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionSlideInR();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -428,21 +428,21 @@ CC.CCTransitionSlideInR.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionSlideInB:
  Slide in the incoming scene from the bottom border.
  */
-CC.CCTransitionSlideInB = CC.CCTransitionSlideInL.extend({
+cc.TransitionSlideInB = cc.TransitionSlideInL.extend({
     _sceneOrder:function(){this._m_bIsInSceneOnTop = false;},
     /** initializes the scenes */
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(0,s.height-CC.ADJUST_FACTOR) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(0,s.height-cc.ADJUST_FACTOR) );
     },
     /** returns the action that will be performed by the incomming and outgoing scene */
     action:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        return CC.CCMoveBy.actionWithDuration(this._m_fDuration, CC.ccp(0,-(s.height-CC.ADJUST_FACTOR)));
+        var s = cc.Director.sharedDirector().getWinSize();
+        return cc.MoveBy.actionWithDuration(this._m_fDuration, cc.ccp(0,-(s.height-cc.ADJUST_FACTOR)));
     }
 });
-CC.CCTransitionSlideInB.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionSlideInB();
+cc.TransitionSlideInB.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionSlideInB();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -452,21 +452,21 @@ CC.CCTransitionSlideInB.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionSlideInT:
  Slide in the incoming scene from the top border.
  */
-CC.CCTransitionSlideInT = CC.CCTransitionSlideInL.extend({
+cc.TransitionSlideInT = cc.TransitionSlideInL.extend({
     _sceneOrder:function(){this._m_bIsInSceneOnTop = true;},
     /** initializes the scenes */
     initScenes:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition( CC.ccp(0,-(s.height-CC.ADJUST_FACTOR)) );
+        var s = cc.Director.sharedDirector().getWinSize();
+        this._m_pInScene.setPosition( cc.ccp(0,-(s.height-cc.ADJUST_FACTOR)) );
     },
     /** returns the action that will be performed by the incomming and outgoing scene */
     action:function(){
-        var s = CC.CCDirector.sharedDirector().getWinSize();
-        return CC.CCMoveBy.actionWithDuration(this._m_fDuration, CC.ccp(0,s.height-CC.ADJUST_FACTOR));
+        var s = cc.Director.sharedDirector().getWinSize();
+        return cc.MoveBy.actionWithDuration(this._m_fDuration, cc.ccp(0,s.height-cc.ADJUST_FACTOR));
     }
 });
-CC.CCTransitionSlideInT.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionSlideInT();
+cc.TransitionSlideInT.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionSlideInT();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -476,7 +476,7 @@ CC.CCTransitionSlideInT.transitionWithDuration = function(t,scene){
 /**
  @brief Shrink the outgoing scene while grow the incoming scene
  */
-CC.CCTransitionShrinkGrow = CC.CCTransitionScene.extend({
+cc.TransitionShrinkGrow = cc.TransitionScene.extend({
     onEnter:function(){
         this._super();
 
@@ -486,25 +486,25 @@ CC.CCTransitionShrinkGrow = CC.CCTransitionScene.extend({
         this._m_pInScene.setAnchorPoint(ccp(2/3.0,0.5));
         this._m_pOutScene.setAnchorPoint(ccp(1/3.0,0.5));
 
-        var scaleOut = CC.CCScaleTo.actionWithDuration(this._m_fDuration, 0.01);
-        var scaleIn = CC.CCScaleTo.actionWithDuration(this._m_fDuration, 1.0);
+        var scaleOut = cc.ScaleTo.actionWithDuration(this._m_fDuration, 0.01);
+        var scaleIn = cc.ScaleTo.actionWithDuration(this._m_fDuration, 1.0);
 
         //TODO
         this._m_pInScene.runAction(this.easeActionWithAction(scaleIn));
         this._m_pOutScene.runAction
             (
-                CC.CCSequence.actions
+                cc.Sequence.actions
                     (
                         this.easeActionWithAction(scaleOut),
-                        CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                         null
                     )
             );
     },
-    easeActionWithAction:function(action){return CC.CCEaseOut.actionWithAction(action, 2.0);}
+    easeActionWithAction:function(action){return cc.EaseOut.actionWithAction(action, 2.0);}
 });
-CC.CCTransitionShrinkGrow.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionShrinkGrow();
+cc.TransitionShrinkGrow.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionShrinkGrow();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -515,7 +515,7 @@ CC.CCTransitionShrinkGrow.transitionWithDuration = function(t,scene){
  Flips the screen horizontally.
  The front face is the outgoing scene and the back face is the incoming scene.
  */
-CC.CCTransitionFlipX = CC.CCTransitionSceneOriented.extend({
+cc.TransitionFlipX = cc.TransitionSceneOriented.extend({
     onEnter:function(){
         this._super();
 
@@ -525,7 +525,7 @@ CC.CCTransitionFlipX = CC.CCTransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if( this._m_eOrientation == CC.kOrientationRightOver ){
+        if( this._m_eOrientation == cc.kOrientationRightOver ){
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -538,20 +538,20 @@ CC.CCTransitionFlipX = CC.CCTransitionSceneOriented.extend({
         }
 
         //TODO
-        inA = CC.CCSequence.actions
+        inA = cc.Sequence.actions
             (
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
-                CC.CCShow.action(),
-                CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Show.action(),
+                cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
 
-        outA = CC.CCSequence.actions
+        outA = cc.Sequence.actions
             (
-                CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
-                CC.CCHide.action(),
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
+                cc.Hide.action(),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
                 null
             );
 
@@ -559,11 +559,11 @@ CC.CCTransitionFlipX = CC.CCTransitionSceneOriented.extend({
         this._m_pOutScene.runAction(outA);
     }
 });
-CC.CCTransitionFlipX.transitionWithDuration = function(t,scene,o){
+cc.TransitionFlipX.transitionWithDuration = function(t,scene,o){
     if(o == null)
-        o = CC.kOrientationRightOver;
+        o = cc.kOrientationRightOver;
 
-    var pScene = new CC.CCTransitionFlipX();
+    var pScene = new cc.TransitionFlipX();
     pScene.initWithDuration(t, scene, o);
 
     return pScene;
@@ -573,7 +573,7 @@ CC.CCTransitionFlipX.transitionWithDuration = function(t,scene,o){
  Flips the screen vertically.
  The front face is the outgoing scene and the back face is the incoming scene.
  */
-CC.CCTransitionFlipY = CC.CCTransitionSceneOriented.extend({
+cc.TransitionFlipY = cc.TransitionSceneOriented.extend({
     onEnter:function(){
         this._super();
 
@@ -583,7 +583,7 @@ CC.CCTransitionFlipY = CC.CCTransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if( this._m_eOrientation == CC.kOrientationUpOver ){
+        if( this._m_eOrientation == cc.kOrientationUpOver ){
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -596,19 +596,19 @@ CC.CCTransitionFlipY = CC.CCTransitionSceneOriented.extend({
         }
 
         //TODO
-        inA = CC.CCSequence.actions
+        inA = cc.Sequence.actions
             (
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
-                CC.CCShow.action(),
-                CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Show.action(),
+                cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
-        outA = CC.CCSequence.actions
+        outA = cc.Sequence.actions
             (
-                CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
-                CC.CCHide.action(),
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
+                cc.Hide.action(),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
                 null
             );
 
@@ -616,11 +616,11 @@ CC.CCTransitionFlipY = CC.CCTransitionSceneOriented.extend({
         this._m_pOutScene.runAction(outA);
     }
 });
-CC.CCTransitionFlipY.transitionWithDuration = function(t,scene,o){
+cc.TransitionFlipY.transitionWithDuration = function(t,scene,o){
     if(o == null)
-        o = CC.kOrientationUpOver;
+        o = cc.kOrientationUpOver;
 
-    var pScene = new CC.CCTransitionFlipY();
+    var pScene = new cc.TransitionFlipY();
     pScene.initWithDuration(t, scene, o);
 
     return pScene;
@@ -630,7 +630,7 @@ CC.CCTransitionFlipY.transitionWithDuration = function(t,scene,o){
  Flips the screen half horizontally and half vertically.
  The front face is the outgoing scene and the back face is the incoming scene.
  */
-CC.CCTransitionFlipAngular = CC.CCTransitionSceneOriented.extend({
+cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend({
     onEnter:function(){
         this._super();
 
@@ -640,7 +640,7 @@ CC.CCTransitionFlipAngular = CC.CCTransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if( this._m_eOrientation == CC.kOrientationRightOver ){
+        if( this._m_eOrientation == cc.kOrientationRightOver ){
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -653,19 +653,19 @@ CC.CCTransitionFlipAngular = CC.CCTransitionSceneOriented.extend({
         }
 
         //TODO
-        inA = CC.CCSequence.actions
+        inA = cc.Sequence.actions
             (
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
-                CC.CCShow.action(),
-                CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Show.action(),
+                cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
-        outA = CC.CCSequence.actions
+        outA = cc.Sequence.actions
             (
-                CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
-                CC.CCHide.action(),
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
+                cc.Hide.action(),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
                 null
             );
 
@@ -673,11 +673,11 @@ CC.CCTransitionFlipAngular = CC.CCTransitionSceneOriented.extend({
         this._m_pOutScene.runAction(outA);
     }
 });
-CC.CCTransitionFlipAngular.transitionWithDuration = function(t,scene,o){
+cc.TransitionFlipAngular.transitionWithDuration = function(t,scene,o){
     if(o == null)
-        o = CC.kOrientationRightOver;
+        o = cc.kOrientationRightOver;
 
-    var pScene = new CC.CCTransitionFlipAngular();
+    var pScene = new cc.TransitionFlipAngular();
     pScene.initWithDuration(t, scene, o);
 
     return pScene;
@@ -687,7 +687,7 @@ CC.CCTransitionFlipAngular.transitionWithDuration = function(t,scene,o){
  Flips the screen horizontally doing a zoom out/in
  The front face is the outgoing scene and the back face is the incoming scene.
  */
-CC.CCTransitionZoomFlipX = CC.CCTransitionSceneOriented.extend({
+cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend({
     onEnter:function(){
         this._super();
 
@@ -697,7 +697,7 @@ CC.CCTransitionZoomFlipX = CC.CCTransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if( this._m_eOrientation == CC.kOrientationRightOver ) {
+        if( this._m_eOrientation == cc.kOrientationRightOver ) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -709,29 +709,29 @@ CC.CCTransitionZoomFlipX = CC.CCTransitionSceneOriented.extend({
             outAngleZ = 0;
         }
         //TODO
-        inA = CC.CCSequence.actions
+        inA = cc.Sequence.actions
             (
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
-                CC.CCSpawn.actions
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Spawn.actions
                     (
-                        CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
-                        CC.CCScaleTo.actionWithDuration(this._m_fDuration/2, 1),
-                        CC.CCShow.action(),
+                        cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
+                        cc.ScaleTo.actionWithDuration(this._m_fDuration/2, 1),
+                        cc.Show.action(),
                         null
                     ),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
-        outA = CC.CCSequence.actions
+        outA = cc.Sequence.actions
             (
-                CC.CCSpawn.actions
+                cc.Spawn.actions
                     (
-                        CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
-                        CC.CCScaleTo.actionWithDuration(this._m_fDuration/2, 0.5),
+                        cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
+                        cc.ScaleTo.actionWithDuration(this._m_fDuration/2, 0.5),
                         null
                     ),
-                CC.CCHide.action(),
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Hide.action(),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
                 null
             );
 
@@ -740,11 +740,11 @@ CC.CCTransitionZoomFlipX = CC.CCTransitionSceneOriented.extend({
         this._m_pOutScene.runAction(outA);
     }
 });
-CC.CCTransitionZoomFlipX.transitionWithDuration = function(t,scene,o){
+cc.TransitionZoomFlipX.transitionWithDuration = function(t,scene,o){
     if(o == null)
-        o = CC.kOrientationRightOver;
+        o = cc.kOrientationRightOver;
 
-    var pScene = new CC.CCTransitionZoomFlipX();
+    var pScene = new cc.TransitionZoomFlipX();
     pScene.initWithDuration(t, scene, o);
 
     return pScene;
@@ -754,7 +754,7 @@ CC.CCTransitionZoomFlipX.transitionWithDuration = function(t,scene,o){
  Flips the screen vertically doing a little zooming out/in
  The front face is the outgoing scene and the back face is the incoming scene.
  */
-CC.CCTransitionZoomFlipY = CC.CCTransitionSceneOriented.extend({
+cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend({
     onEnter:function(){
         this._super();
 
@@ -764,7 +764,7 @@ CC.CCTransitionZoomFlipY = CC.CCTransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if( this._m_eOrientation== CC.kOrientationUpOver ) {
+        if( this._m_eOrientation== cc.kOrientationUpOver ) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -777,30 +777,30 @@ CC.CCTransitionZoomFlipY = CC.CCTransitionSceneOriented.extend({
         }
 
         //TODO
-        inA = CC.CCSequence.actions
+        inA = cc.Sequence.actions
             (
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
-                CC.CCSpawn.actions
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Spawn.actions
                     (
-                        CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-                        CC.CCScaleTo.actionWithDuration(this._m_fDuration/2, 1),
-                        CC.CCShow.action(),
+                        cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
+                        cc.ScaleTo.actionWithDuration(this._m_fDuration/2, 1),
+                        cc.Show.action(),
                         null
                     ),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
 
-        outA = CC.CCSequence.actions
+        outA = cc.Sequence.actions
             (
-                CC.CCSpawn.actions
+                cc.Spawn.actions
                     (
-                        CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
-                        CC.CCScaleTo.actionWithDuration(this._m_fDuration/2, 0.5),
+                        cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
+                        cc.ScaleTo.actionWithDuration(this._m_fDuration/2, 0.5),
                         null
                     ),
-                CC.CCHide.action(),
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Hide.action(),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
                 null
             );
 
@@ -809,11 +809,11 @@ CC.CCTransitionZoomFlipY = CC.CCTransitionSceneOriented.extend({
         this._m_pOutScene.runAction(outA);
     }
 });
-CC.CCTransitionZoomFlipY.transitionWithDuration = function(t,scene,o){
+cc.TransitionZoomFlipY.transitionWithDuration = function(t,scene,o){
     if(o == null)
-        o = CC.kOrientationUpOver;
+        o = cc.kOrientationUpOver;
 
-    var pScene = new CC.CCTransitionZoomFlipY();
+    var pScene = new cc.TransitionZoomFlipY();
     pScene.initWithDuration(t, scene, o);
 
     return pScene;
@@ -823,7 +823,7 @@ CC.CCTransitionZoomFlipY.transitionWithDuration = function(t,scene,o){
  Flips the screen half horizontally and half vertically doing a little zooming out/in.
  The front face is the outgoing scene and the back face is the incoming scene.
  */
-CC.CCTransitionZoomFlipAngular = CC.CCTransitionSceneOriented.extend({
+cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend({
     onEnter:function(){
         this._super();
 
@@ -833,7 +833,7 @@ CC.CCTransitionZoomFlipAngular = CC.CCTransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if(this._m_eOrientation == CC.kOrientationRightOver ) {
+        if(this._m_eOrientation == cc.kOrientationRightOver ) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -846,30 +846,30 @@ CC.CCTransitionZoomFlipAngular = CC.CCTransitionSceneOriented.extend({
         }
 
         //TODO
-        inA = CC.CCSequence.actions
+        inA = cc.Sequence.actions
             (
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
-                CC.CCSpawn.actions
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Spawn.actions
                     (
-                        CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
-                        CC.CCScaleTo.actionWithDuration(this._m_fDuration/2, 1),
-                        CC.CCShow.action(),
+                        cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
+                        cc.ScaleTo.actionWithDuration(this._m_fDuration/2, 1),
+                        cc.Show.action(),
                         null
                     ),
-                CC.CCShow.action(),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.Show.action(),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
-        outA = CC.CCSequence.actions
+        outA = cc.Sequence.actions
             (
-                CC.CCSpawn.actions
+                cc.Spawn.actions
                     (
-                        CC.CCOrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0 , outAngleZ, outDeltaZ, 45, 0),
-                        CC.CCScaleTo.actionWithDuration(this._m_fDuration/2, 0.5),
+                        cc.OrbitCamera.actionWithDuration(this._m_fDuration/2, 1, 0 , outAngleZ, outDeltaZ, 45, 0),
+                        cc.ScaleTo.actionWithDuration(this._m_fDuration/2, 0.5),
                         null
                     ),
-                CC.CCHide.action(),
-                CC.CCDelayTime.actionWithDuration(this._m_fDuration/2),
+                cc.Hide.action(),
+                cc.DelayTime.actionWithDuration(this._m_fDuration/2),
                 null
             );
 
@@ -878,11 +878,11 @@ CC.CCTransitionZoomFlipAngular = CC.CCTransitionSceneOriented.extend({
         this._m_pOutScene.runAction(outA);
     }
 });
-CC.CCTransitionZoomFlipAngular.transitionWithDuration = function(t,scene,o){
+cc.TransitionZoomFlipAngular.transitionWithDuration = function(t,scene,o){
     if(o == null)
-        o = CC.kOrientationRightOver;
+        o = cc.kOrientationRightOver;
 
-    var pScene = new CC.CCTransitionZoomFlipAngular();
+    var pScene = new cc.TransitionZoomFlipAngular();
     pScene.initWithDuration(t, scene, o);
 
     return pScene;
@@ -891,38 +891,38 @@ CC.CCTransitionZoomFlipAngular.transitionWithDuration = function(t,scene,o){
 /** @brief CCTransitionFade:
  Fade out the outgoing scene and then fade in the incoming scene.'''
  */
-CC.CCTransitionFade = CC.CCTransitionScene.extend({
+cc.TransitionFade = cc.TransitionScene.extend({
     _m_tColor:null,
 
     ctor:function(){},
     onEnter:function(){
         this._super();
 
-        var l = CC.CCLayerColor.layerWithColor(this._m_tColor);
+        var l = cc.LayerColor.layerWithColor(this._m_tColor);
         this._m_pInScene.setIsVisible(false);
 
-        this.addChild(l, 2, CC.kSceneFade);
-        var f = getChildByTag(CC.kSceneFade);
+        this.addChild(l, 2, cc.kSceneFade);
+        var f = getChildByTag(cc.kSceneFade);
 
         //TODO
-        var a = CC.CCSequence.actions
+        var a = cc.Sequence.actions
             (
-                CC.CCFadeIn.actionWithDuration(this._m_fDuration/2),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),//CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
-                CC.CCFadeOut.actionWithDuration(this._m_fDuration/2),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)), //:self selector:@selector(finish)],
+                cc.FadeIn.actionWithDuration(this._m_fDuration/2),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),//CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
+                cc.FadeOut.actionWithDuration(this._m_fDuration/2),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)), //:self selector:@selector(finish)],
                 null
             );
         f.runAction(a);
     },
     onExit:function(){
         this._super();
-        this.removeChildByTag(CC.kSceneFade, false);
+        this.removeChildByTag(cc.kSceneFade, false);
     },
     /** initializes the transition with a duration and with an RGB color */
     initWithDuration:function(t,scene,color){
         if((color == 'undefined')||(color == null)){
-            color = CC.ccBLACK;
+            color = cc.BLACK;
         }
 
         if (this._super(t, scene)){
@@ -937,8 +937,8 @@ CC.CCTransitionFade = CC.CCTransitionScene.extend({
 /** creates the transition with a duration and with an RGB color
  * Example: FadeTransition::transitionWithDuration(2, scene, ccc3(255,0,0); // red color
  */
-CC.CCTransitionFade.transitionWithDuration = function(t,scene,color){
-    var pTransition = new CC.CCTransitionFade();
+cc.TransitionFade.transitionWithDuration = function(t,scene,color){
+    var pTransition = new cc.TransitionFade();
     pTransition.initWithDuration(t, scene, color);
 
     return pTransition;
@@ -948,26 +948,26 @@ CC.CCTransitionFade.transitionWithDuration = function(t,scene,color){
  @brief CCTransitionCrossFade:
  Cross fades two scenes using the CCRenderTexture object.
  */
-CC.CCTransitionCrossFade = CC.CCTransitionScene.extend({
+cc.TransitionCrossFade = cc.TransitionScene.extend({
     onEnter:function(){
         this._super();
 
         // create a transparent color layer
         // in which we are going to add our rendertextures
-        var color = new CC.ccColor4B(0,0,0,0);
-        var size = CC.CCDirector.sharedDirector().getWinSize();
-        var layer = CC.CCLayerColor.layerWithColor(color);
+        var color = new cc.Color4B(0,0,0,0);
+        var size = cc.Director.sharedDirector().getWinSize();
+        var layer = cc.LayerColor.layerWithColor(color);
 
         // create the first render texture for inScene
-        var inTexture = CC.CCRenderTexture.renderTextureWithWidthAndHeight(size.width, size.height);
+        var inTexture = cc.RenderTexture.renderTextureWithWidthAndHeight(size.width, size.height);
 
         if (null == inTexture) {
             return;
         }
 
-        inTexture.getSprite().setAnchorPoint(CC.ccp(0.5,0.5));
-        inTexture.setPosition(CC.ccp(size.width/2, size.height/2));
-        inTexture.setAnchorPoint(CC.ccp(0.5,0.5));
+        inTexture.getSprite().setAnchorPoint(cc.ccp(0.5,0.5));
+        inTexture.setPosition(cc.ccp(size.width/2, size.height/2));
+        inTexture.setAnchorPoint(cc.ccp(0.5,0.5));
 
         // render inScene to its texturebuffer
         inTexture.begin();
@@ -976,9 +976,9 @@ CC.CCTransitionCrossFade = CC.CCTransitionScene.extend({
 
         // create the second render texture for outScene
         var outTexture = CCRenderTexture.renderTextureWithWidthAndHeight(size.width, size.height);
-        outTexture.getSprite().setAnchorPoint( CC.ccp(0.5,0.5) );
-        outTexture.setPosition( CC.ccp(size.width/2, size.height/2) );
-        outTexture.setAnchorPoint( CC.ccp(0.5,0.5) );
+        outTexture.getSprite().setAnchorPoint( cc.ccp(0.5,0.5) );
+        outTexture.setPosition( cc.ccp(size.width/2, size.height/2) );
+        outTexture.setAnchorPoint( cc.ccp(0.5,0.5) );
 
         // render outScene to its texturebuffer
         outTexture.begin();
@@ -987,8 +987,8 @@ CC.CCTransitionCrossFade = CC.CCTransitionScene.extend({
 
         // create blend functions
 
-        var blend1 = new CC.ccBlendFunc(CC.GL_ONE,CC.GL_ONE); // inScene will lay on background and will not be used with alpha
-        var blend2 = CC.ccBlendFunc(CC.GL_SRC_ALPHA, CC.GL_ONE_MINUS_SRC_ALPHA); // we are going to blend outScene via alpha
+        var blend1 = new cc.BlendFunc(cc.GL_ONE,cc.GL_ONE); // inScene will lay on background and will not be used with alpha
+        var blend2 = cc.BlendFunc(cc.GL_SRC_ALPHA, cc.GL_ONE_MINUS_SRC_ALPHA); // we are going to blend outScene via alpha
 
         // set blendfunctions
         inTexture.getSprite().setBlendFunc(blend1);
@@ -1004,11 +1004,11 @@ CC.CCTransitionCrossFade = CC.CCTransitionScene.extend({
 
         // create the blend action
         //TODO
-        var layerAction = CC.CCSequence.actions
+        var layerAction = cc.Sequence.actions
             (
-                CC.CCFadeTo.actionWithDuration(this._m_fDuration, 0),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.FadeTo.actionWithDuration(this._m_fDuration, 0),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
                 null
             );
 
@@ -1016,17 +1016,17 @@ CC.CCTransitionCrossFade = CC.CCTransitionScene.extend({
         outTexture.getSprite().runAction( layerAction );
 
         // add the layer (which contains our two rendertextures) to the scene
-        this.addChild(layer, 2, CC.kSceneFade);
+        this.addChild(layer, 2, cc.kSceneFade);
     },
     onExit:function(){
-        this.removeChildByTag(CC.kSceneFade, false);
+        this.removeChildByTag(cc.kSceneFade, false);
         this._super();
     },
     draw:function(){
         // override draw since both scenes (textures) are rendered in 1 scene
     }
 });
-CC.CCTransitionCrossFade.transitionWithDuration = function(t,scene){
+cc.TransitionCrossFade.transitionWithDuration = function(t,scene){
     var Transition = new CCTransitionCrossFade();
     Transition.initWithDuration(d, s);
     return Transition;
@@ -1035,33 +1035,33 @@ CC.CCTransitionCrossFade.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionTurnOffTiles:
  Turn off the tiles of the outgoing scene in random order
  */
-CC.CCTransitionTurnOffTiles = CC.CCTransitionScene.extend({
+cc.TransitionTurnOffTiles = cc.TransitionScene.extend({
     _sceneOrder:function(){this._m_bIsInSceneOnTop = false;},
     onEnter:function(){
         this._super();
-        var s = CC.CCDirector.sharedDirector().getWinSize();
+        var s = cc.Director.sharedDirector().getWinSize();
         var aspect = s.width / s.height;
         var x = (12 * aspect);
         var y = 12;
 
-        var toff = CC.CCTurnOffTiles.actionWithSize( CC.ccg(x,y), this._m_fDuration);
+        var toff = cc.TurnOffTiles.actionWithSize( cc.ccg(x,y), this._m_fDuration);
         var action = this.easeActionWithAction(toff);
         //TODO
         this._m_pOutScene.runAction
             (
-                CC.CCSequence.actions
+                cc.Sequence.actions
                     (
                         action,
                         CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
-                        CC.CCStopGrid.action(),
+                        cc.StopGrid.action(),
                         null
                     )
             );
     },
     easeActionWithAction:function(action){return action;}
 });
-CC.CCTransitionTurnOffTiles.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionTurnOffTiles();
+cc.TransitionTurnOffTiles.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionTurnOffTiles();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -1071,41 +1071,41 @@ CC.CCTransitionTurnOffTiles.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionSplitCols:
  The odd columns goes upwards while the even columns goes downwards.
  */
-CC.CCTransitionSplitCols = CC.CCTransitionScene.extend({
+cc.TransitionSplitCols = cc.TransitionScene.extend({
     onEnter:function(){
         this._super();
         this._m_pInScene.setIsVisible(false);
 
         var split = this.action();
         //TODO
-        var seq = CC.CCSequence.actions
+        var seq = cc.Sequence.actions
             (
                 split,
-                CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),
+                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),
                 split.reverse(),
                 null
             );
 
         this.runAction
             (
-                CC.CCSequence.actions
+                cc.Sequence.actions
                     (
                         this.easeActionWithAction(seq),
-                        CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
-                        CC.CCStopGrid.action(),
+                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.StopGrid.action(),
                         null
                     )
             );
     },
     easeActionWithAction:function(action){
-        return CC.CCEaseInOut.actionWithAction(action, 3.0);
+        return cc.EaseInOut.actionWithAction(action, 3.0);
     },
     action:function(){
-        return CC.CCSplitCols.actionWithCols(3, this._m_fDuration/2.0);
+        return cc.SplitCols.actionWithCols(3, this._m_fDuration/2.0);
     }
 });
-CC.CCTransitionSplitCols.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionSplitCols();
+cc.TransitionSplitCols.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionSplitCols();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -1115,11 +1115,11 @@ CC.CCTransitionSplitCols.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionSplitRows:
  The odd rows goes to the left while the even rows goes to the right.
  */
-CC.CCTransitionSplitRows = CC.CCTransitionSplitCols.extend({
-    action:function(){return CC.CCSplitRows.actionWithRows(3, this._m_fDuration/2.0);}
+cc.TransitionSplitRows = cc.TransitionSplitCols.extend({
+    action:function(){return cc.SplitRows.actionWithRows(3, this._m_fDuration/2.0);}
 });
-CC.CCTransitionSplitRows.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionSplitRows();
+cc.TransitionSplitRows.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionSplitRows();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -1129,35 +1129,35 @@ CC.CCTransitionSplitRows.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionFadeTR:
  Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
  */
-CC.CCTransitionFadeTR = CC.CCTransitionScene.extend({
+cc.TransitionFadeTR = cc.TransitionScene.extend({
     _sceneOrder:function(){this._m_bIsInSceneOnTop = false;},
 
     onEnter:function(){
         this._super();
 
-        var s = CC.CCDirector.sharedDirector().getWinSize();
+        var s = cc.Director.sharedDirector().getWinSize();
         var aspect = s.width / s.height;
         var x = (12 * aspect);
         var y = 12;
 
-        var action  = this.actionWithSize(CC.ccg(x,y));
+        var action  = this.actionWithSize(cc.ccg(x,y));
 
         this._m_pOutScene.runAction
             (
-                CC.CCSequence.actions
+                cc.Sequence.actions
                     (
                         this.easeActionWithAction(action),
-                        CC.CCCallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
-                        CC.CCStopGrid.action(),
+                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.StopGrid.action(),
                         null
                     )
             );
     },
     easeActionWithAction:function(action){return action;},
-    actionWithSize:function(size){return CC.CCFadeOutTRTiles.actionWithSize(size, this._m_fDuration);}
+    actionWithSize:function(size){return cc.FadeOutTRTiles.actionWithSize(size, this._m_fDuration);}
 });
-CC.CCTransitionFadeTR.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionFadeTR();
+cc.TransitionFadeTR.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionFadeTR();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -1167,11 +1167,11 @@ CC.CCTransitionFadeTR.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionFadeBL:
  Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
  */
-CC.CCTransitionFadeBL = CC.CCTransitionFadeTR.extend({
-    actionWithSize:function(size){return CC.CCFadeOutBLTiles.actionWithSize(size, this._m_fDuration);}
+cc.TransitionFadeBL = cc.TransitionFadeTR.extend({
+    actionWithSize:function(size){return cc.FadeOutBLTiles.actionWithSize(size, this._m_fDuration);}
 });
-CC.CCTransitionFadeBL.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionFadeBL();
+cc.TransitionFadeBL.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionFadeBL();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -1181,11 +1181,11 @@ CC.CCTransitionFadeBL.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionFadeUp:
  * Fade the tiles of the outgoing scene from the bottom to the top.
  */
-CC.CCTransitionFadeUp = CC.CCTransitionFadeTR.extend({
-    actionWithSize:function(size){return CC.CCFadeOutUpTiles.actionWithSize(size, this._m_fDuration);}
+cc.TransitionFadeUp = cc.TransitionFadeTR.extend({
+    actionWithSize:function(size){return cc.FadeOutUpTiles.actionWithSize(size, this._m_fDuration);}
 });
-CC.CCTransitionFadeUp.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionFadeUp();
+cc.TransitionFadeUp.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionFadeUp();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }
@@ -1195,11 +1195,11 @@ CC.CCTransitionFadeUp.transitionWithDuration = function(t,scene){
 /** @brief CCTransitionFadeDown:
  * Fade the tiles of the outgoing scene from the top to the bottom.
  */
-CC.CCTransitionFadeDown = CC.CCTransitionFadeTR.extend({
-    actionWithSize:function(size){return CC.CCFadeOutDownTiles.actionWithSize(size, this._m_fDuration);}
+cc.TransitionFadeDown = cc.TransitionFadeTR.extend({
+    actionWithSize:function(size){return cc.FadeOutDownTiles.actionWithSize(size, this._m_fDuration);}
 });
-CC.CCTransitionFadeDown.transitionWithDuration = function(t,scene){
-    var pScene = new CC.CCTransitionFadeDown();
+cc.TransitionFadeDown.transitionWithDuration = function(t,scene){
+    var pScene = new cc.TransitionFadeDown();
     if((pScene != null)&&(pScene.initWithDuration(t,scene))){
         return pScene;
     }

@@ -29,7 +29,7 @@
  ****************************************************************************/
 
 
-var CC = CC = CC || {};
+var cc = cc = cc || {};
 /**
  @brief CCActionManager is a singleton that manages all the actions.
  Normally you won't need to use this singleton directly. 99% of the cases you will use the CCNode interface,
@@ -41,7 +41,7 @@ var CC = CC = CC || {};
 
  @since v0.8
  */
-CC.tHashElement = CC.Class.extend({
+cc.tHashElement = cc.Class.extend({
     actions: [],
     target:null,//ccobject
     actionIndex: 0,
@@ -50,16 +50,16 @@ CC.tHashElement = CC.Class.extend({
     paused: false,
     hh: null//ut hash handle
 });
-CC.CCActionManager = CC.Class.extend({
+cc.ActionManager = cc.Class.extend({
     _m_pTargets: null,
     _m_pCurrentTarget: null,
     _m_bCurrentTargetSalvaged: false,
     ctor: function(){
-        CC.CCAssert(CC.gSharedManager == null,"");
+        cc.Assert(cc.gSharedManager == null,"");
     },
     init:function()
     {
-        CC.CCScheduler.sharedScheduler().scheduleUpdateForTarget(this, 0, false);
+        cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, 0, false);
         this._m_pTargets = null;
 
         return true;
@@ -71,8 +71,8 @@ CC.CCActionManager = CC.Class.extend({
      */
     addAction: function(pAction, pTarget, paused)
     {
-        CC.CCAssert(pAction != null, "");
-        CC.CCAssert(pTarget != null, "");
+        cc.Assert(pAction != null, "");
+        cc.Assert(pTarget != null, "");
 
         var pElement = null;
         for(var k in this._m_pTargets)
@@ -90,7 +90,7 @@ CC.CCActionManager = CC.Class.extend({
             //TODO HASH ADD INT
         }
         this._actionAllocWithHashElement(this._m_pTargets);
-        CC.CCAssert(!(pAction in this._m_pTargets.actions),"");
+        cc.Assert(!(pAction in this._m_pTargets.actions),"");
         this._m_pTargets.actions.push(pAction);
         pAction.startWithTarget(pTarget);
     },
@@ -179,14 +179,14 @@ CC.CCActionManager = CC.Class.extend({
         }
         else
         {
-            CC.CCLOG("cocos2d: removeAction: Target not found");
+            cc.LOG("cocos2d: removeAction: Target not found");
         }
     },
     /** Removes an action given its tag and the target */
     removeActionByTag: function(tag, pTarget)
     {
-        CC.CCAssert(tag != CC.kCCActionTagInvalid, "");
-        CC.CCAssert(pTarget != null, "");
+        cc.Assert(tag != cc.kCCActionTagInvalid, "");
+        cc.Assert(pTarget != null, "");
 
         var pElement = null;
         for(var k in this._m_pTargets)
@@ -218,7 +218,7 @@ CC.CCActionManager = CC.Class.extend({
      */
     getActionByTag: function(tag, pTarget)
     {
-        CC.CCAssert(tag != CC.kCCActionTagInvalid, "");
+        cc.Assert(tag != cc.kCCActionTagInvalid, "");
 
         var pElement = null;
         for(var k in this._m_pTargets)
@@ -245,11 +245,11 @@ CC.CCActionManager = CC.Class.extend({
                     }
                 }
             }
-            CC.CCLOG("cocos2d : getActionByTag: Action not found");
+            cc.LOG("cocos2d : getActionByTag: Action not found");
         }
         else
         {
-            CC.CCLOG("cocos2d : getActionByTag: Target not found");
+            cc.LOG("cocos2d : getActionByTag: Target not found");
         }
 
         return null;
@@ -319,12 +319,12 @@ CC.CCActionManager = CC.Class.extend({
      */
     purgeSharedManager: function()
     {
-        CC.CCScheduler.sharedScheduler().unscheduleUpdateForTarget(this);
+        cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
     },
     //protected
     _removeActionAtIndex: function(uIndex, pElement)
     {
-        var pAction = pElement.actions.arr[uIndex] = new CC.CCAction();
+        var pAction = pElement.actions.arr[uIndex] = new cc.Action();
 
         if (pAction == pElement.currentAction && (! pElement.currentActionSalvaged))
         {
@@ -430,19 +430,19 @@ CC.CCActionManager = CC.Class.extend({
  * because it uses this, so it can not be static
  @since v0.99.0
  */
-CC.CCActionManager.sharedManager = function()
+cc.ActionManager.sharedManager = function()
 {
-    var pRet = CC.gSharedManager;
-    if(!CC.gSharedManager)
+    var pRet = cc.gSharedManager;
+    if(!cc.gSharedManager)
     {
-        CC.gSharedManager = new CC.CCActionManager();
-        if(! CC.gSharedManager.init())
+        cc.gSharedManager = new cc.ActionManager();
+        if(! cc.gSharedManager.init())
         {
             //delete CCActionManager if init error
-            delete CC.gSharedManager;
+            delete cc.gSharedManager;
         }
     }
     return pRet;
 };
 
-CC.gSharedManager = null;
+cc.gSharedManager = null;
