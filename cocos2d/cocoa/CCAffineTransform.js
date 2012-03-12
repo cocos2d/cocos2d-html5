@@ -32,7 +32,7 @@ cc.AffineTransform = function(a,b,c,d,tx,ty){
     this.d = d;
     this.tx = tx;
     this.ty = ty;
-}
+};
 
 cc.__AffineTransformMake = function(a,b,c,d,tx,ty){
     return new cc.AffineTransform(a,b,c,d,tx,ty);
@@ -53,7 +53,7 @@ cc.PointApplyAffineTransform = function(point,t){
     return cc.__PointApplyAffineTransform(point,t);
 };
 
-cc.__CCSizeApplyAffineTransform = function(size,t){
+cc.__SizeApplyAffineTransform = function(size,t){
     var s = new cc.Size();
     s.width = t.a * size.width + t.c * size.height;
     s.height = t.b * size.width + t.d * size.height;
@@ -128,4 +128,4 @@ cc.AffineTransformInvert = function(t){
 
     return cc.__AffineTransformMake(determinant * t.d, -determinant * t.b, -determinant * t.c, determinant * t.a,
         determinant * (t.c * t.ty - t.d * t.tx), determinant * (t.b * t.tx - t.a * t.ty) );
-}
+};
