@@ -134,10 +134,9 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
             this._renderContext.lineTo(vertices[i].x* cc.CONTENT_SCALE_FACTOR(),vertices[i].y* cc.CONTENT_SCALE_FACTOR());
         }
         if(closePolygon){
-            this._renderContext.lineTo(firstPoint.x* cc.CONTENT_SCALE_FACTOR(),firstPoint.y* cc.CONTENT_SCALE_FACTOR());
+            this._renderContext.closePath();
         }
 
-        this._renderContext.closePath();
         if(fill){
             this._renderContext.fill();
         }else{
@@ -213,11 +212,30 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         {
             var x = Math.pow(1 - t, 3) * origin.x + 3.0 * Math.pow(1 - t, 2) * t * control1.x + 3.0 * (1 - t) * t * t * control2.x + t * t * t * destination.x;
             var y = Math.pow(1 - t, 3) * origin.y + 3.0 * Math.pow(1 - t, 2) * t * control1.y + 3.0 * (1 - t) * t * t * control2.y + t * t * t * destination.y;
-            vertices.push(new CCPoint(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
+            vertices.push(new cc.Point(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
             t += 1.0 / segments;
         }
-        vertices.push(new CCPoint(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
+        vertices.push(new cc.Point(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
 
         this.drawPoly(vertices,segments+1,false,false);
+    },
+
+    drawImage:function(image,sourcePoint,sourceSize,destPoint,destSize){
+        var len = arguments.length;
+
+        switch(len){
+            case 2:
+                this._renderContext.drawImage(image,sourcePoint.x,sourcePoint.y);
+                break;
+            case 3:
+                this._renderContext.drawImage(image,sourcePoint.x,sourcePoint.y,sourceSize.width,sourceSize.height);
+                break;
+            case 5:
+                this._renderContext.drawImage(image,sourcePoint.x,sourcePoint.y,sourceSize.width,sourceSize.height,destPoint.x,destPoint.y,destSize.width,destSize.height);
+                break;
+            default:
+                throw new Error("Argument must be non-nil");
+                break;
+        }
     }
 });
