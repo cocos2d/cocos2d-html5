@@ -103,7 +103,7 @@ function ccTexParams(minFilter, magFilter, wrapS, wrapT) {
  * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).
  * Be aware that the content of the generated textures will be upside-down!
  */
-cc.CCTexture2D = cc.Class.extend({
+cc.Texture2D = cc.Class.extend({
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
     _m_bPVRHaveAlphaPremultiplied:null,
     _m_ePixelFormat:null,
