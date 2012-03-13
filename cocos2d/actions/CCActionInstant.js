@@ -37,7 +37,6 @@ var cc = cc = cc || {};
 cc.ActionInstant = cc.FiniteTimeAction.extend({
     copyWithZone:function(pZone)
     {
-        var pNewZone = null;
         var pRet = null;
         if(pZone && pZone._m_pCopyObject)
         {
@@ -46,9 +45,9 @@ cc.ActionInstant = cc.FiniteTimeAction.extend({
         else
         {
             pRet = new cc.ActionInstant();
-            pZone = pNewZone = new cc.Zone(pRet);
+            pZone = new cc.Zone(pRet);
         }
-        cc.ActionInstant.copyWithZone(pZone);
+        this._super(pZone);
         return pRet;
     },
     isDone: function(){ return true;},
@@ -77,7 +76,6 @@ cc.Show = cc.ActionInstant.extend({
     },
     copyWithZone:function(pZone)
     {
-        var pNewZone = null;
         var pRet = null;
         if(pZone && pZone._m_pCopyObject)
         {
@@ -86,7 +84,7 @@ cc.Show = cc.ActionInstant.extend({
         else
         {
             pRet = new cc.Show();
-            pZone = pNewZone = new cc.Zone(pRet);
+            pZone = new cc.Zone(pRet);
         }
         cc.FiniteTimeAction.copyWithZone(pZone);
         return pRet;
@@ -94,8 +92,7 @@ cc.Show = cc.ActionInstant.extend({
 });
 cc.Show.action = function()
 {
-    var pRet = new cc.Show();
-    return pRet;
+    return (new cc.Show());
 };
 
 /**
@@ -113,7 +110,6 @@ cc.Hide = cc.ActionInstant.extend({
     },
     copyWithZone:function(pZone)
     {
-        var pNewZone = null;
         var pRet = null;
         if(pZone && pZone._m_pCopyObject)
         {
@@ -122,16 +118,15 @@ cc.Hide = cc.ActionInstant.extend({
         else
         {
             pRet = new cc.Hide();
-            pZone = pNewZone = new cc.Zone(pRet);
+            pZone = new cc.Zone(pRet);
         }
-        this._super();
+        cc.FiniteTimeAction.copyWithZone(pZone);
         return pRet;
     }
 });
 cc.Hide.action = function()
 {
-    var pRet = new cc.Hide();
-    return pRet;
+    return (new cc.Hide());
 };
 
 
@@ -146,8 +141,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend({
 });
 cc.ActionInstant.action = function()
 {
-    var pRet = new cc.ToggleVisibility();
-    return pRet;
+    return (new cc.ToggleVisibility());
 };
 
 /**
@@ -171,8 +165,7 @@ cc.FlipX = cc.ActionInstant.extend({
     },
     copyWithZone:function(pZone)
     {
-        var pNewZone = null;
-        var pRet = nll;
+        var pRet = null;
 
         if(pZone && pZone._m_pCopyObject)
         {
@@ -181,9 +174,9 @@ cc.FlipX = cc.ActionInstant.extend({
         else
         {
             pRet = new cc.FlipX();
-            pZone = pNewZone = new cc.Zone(pRet);
+            pZone = new cc.Zone(pRet);
         }
-        this._super();
+        this._super(pZone);
         pRet.initWithFlipX(this._m_bFlipX);
         return pRet;
     },
@@ -217,8 +210,7 @@ cc.FlipY = cc.ActionInstant.extend({
     },
     copyWithZone:function(pZone)
     {
-        var pNewZone = null;
-        var pRet = nll;
+        var pRet = null;
 
         if(pZone && pZone._m_pCopyObject)
         {
@@ -227,9 +219,9 @@ cc.FlipY = cc.ActionInstant.extend({
         else
         {
             pRet = new cc.FlipY();
-            pZone = pNewZone = new cc.Zone(pRet);
+            pZone = new cc.Zone(pRet);
         }
-        this._super();
+        this._super(pZone);
         pRet.initWithFlipY(this._m_bFlipY);
         return pRet;
     },
@@ -254,12 +246,11 @@ cc.Place = cc.ActionInstant.extend({
     },
     startWithTarget:function(pTarget)
     {
-        this._super();
+        this._super(pTarget);
         this._m_pTarget.setPosition(this._m_tPosition);
     },
     copyWithZone:function(pZone)
     {
-        var pNewZone = null;
         var pRet = null;
         if(pZone && pZone._m_pCopyObject)
         {
@@ -268,9 +259,9 @@ cc.Place = cc.ActionInstant.extend({
         else
         {
             pRet = new cc.Place();
-            pZone = pNewZone = new cc.Zone(pRet);
+            pZone = new cc.Zone(pRet);
         }
-        this._super();
+        this._super(pZone);
         pRet.initWithPosition(this._m_tPosition);
         return pRet;
     },
@@ -279,8 +270,7 @@ cc.Place = cc.ActionInstant.extend({
 /** creates a Place action with a position */
 cc.Place.actionWithPosition= function(pos)
 {
-    var pRet = new cc.Place();
-    return pRet;
+    return (new cc.Place());
 };
 
 
@@ -318,7 +308,6 @@ cc.CallFunc = cc.ActionInstant.extend({
     },
     copyWithZone:function(pZone)
     {
-        var pNewZone = null;
         var pRet = null;
         if(pZone && pZone._m_pCopyObject)
         {
@@ -327,9 +316,9 @@ cc.CallFunc = cc.ActionInstant.extend({
         else
         {
             pRet = new cc.CallFunc();
-            pZone = pNewZone = new cc.Zone(pRet);
+            pZone = new cc.Zone(pRet);
         }
-        this._super();
+        this._super(pzone);
         if(this._m_pData)//CallFuncND
         {
             pRet.initWithTarget(this._m_pSelectorTarget, this._m_pCallFunc, this._m_pData);
@@ -358,8 +347,7 @@ cc.CallFunc = cc.ActionInstant.extend({
         }
     },
     _m_pSelectorTarget: null,
-    _m_pObject:null,
-    _m_pCallFunc: null,
+    _m_pCallFunc: null
 });
 /** creates the action with the callback
 
