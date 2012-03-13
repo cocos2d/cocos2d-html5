@@ -35,21 +35,6 @@ var cc = cc = cc || {};
  the CCIntervalAction actions.
  */
 cc.ActionInstant = cc.FiniteTimeAction.extend({
-    copyWithZone:function(pZone)
-    {
-        var pRet = null;
-        if(pZone && pZone._m_pCopyObject)
-        {
-            pRet = pZone._m_pCopyObject;
-        }
-        else
-        {
-            pRet = new cc.ActionInstant();
-            pZone = new cc.Zone(pRet);
-        }
-        this._super(pZone);
-        return pRet;
-    },
     isDone: function(){ return true;},
     step: function(dt)
     {
@@ -73,21 +58,6 @@ cc.Show = cc.ActionInstant.extend({
     reverse:function()
     {
         return cc.Hide.action.call(this);
-    },
-    copyWithZone:function(pZone)
-    {
-        var pRet = null;
-        if(pZone && pZone._m_pCopyObject)
-        {
-            pRet = pZone._m_pCopyObject;
-        }
-        else
-        {
-            pRet = new cc.Show();
-            pZone = new cc.Zone(pRet);
-        }
-        cc.FiniteTimeAction.copyWithZone(pZone);
-        return pRet;
     }
 });
 cc.Show.action = function()
@@ -107,21 +77,6 @@ cc.Hide = cc.ActionInstant.extend({
     reverse:function()
     {
         return cc.Show.action.call(this);
-    },
-    copyWithZone:function(pZone)
-    {
-        var pRet = null;
-        if(pZone && pZone._m_pCopyObject)
-        {
-            pRet = pZone._m_pCopyObject;
-        }
-        else
-        {
-            pRet = new cc.Hide();
-            pZone = new cc.Zone(pRet);
-        }
-        cc.FiniteTimeAction.copyWithZone(pZone);
-        return pRet;
     }
 });
 cc.Hide.action = function()
@@ -163,23 +118,6 @@ cc.FlipX = cc.ActionInstant.extend({
     {
         return this.actionWithFlipX(!this._m_bFlipX);
     },
-    copyWithZone:function(pZone)
-    {
-        var pRet = null;
-
-        if(pZone && pZone._m_pCopyObject)
-        {
-            pRet = pZone._m_pCopyObject;
-        }
-        else
-        {
-            pRet = new cc.FlipX();
-            pZone = new cc.Zone(pRet);
-        }
-        this._super(pZone);
-        pRet.initWithFlipX(this._m_bFlipX);
-        return pRet;
-    },
     _m_bFlipX: false
 });
 cc.FlipX.actionWithFlipX = function(x)
@@ -208,23 +146,6 @@ cc.FlipY = cc.ActionInstant.extend({
     {
         return this.actionWithFlipY(!this._m_bFlipY);
     },
-    copyWithZone:function(pZone)
-    {
-        var pRet = null;
-
-        if(pZone && pZone._m_pCopyObject)
-        {
-            pRet = pZone._m_pCopyObject;
-        }
-        else
-        {
-            pRet = new cc.FlipY();
-            pZone = new cc.Zone(pRet);
-        }
-        this._super(pZone);
-        pRet.initWithFlipY(this._m_bFlipY);
-        return pRet;
-    },
     _m_bFlipY: false
 });
 cc.FlipY.actionWithFlipY = function(y)
@@ -248,22 +169,6 @@ cc.Place = cc.ActionInstant.extend({
     {
         this._super(pTarget);
         this._m_pTarget.setPosition(this._m_tPosition);
-    },
-    copyWithZone:function(pZone)
-    {
-        var pRet = null;
-        if(pZone && pZone._m_pCopyObject)
-        {
-            pRet = pZone._m_pCopyObject;
-        }
-        else
-        {
-            pRet = new cc.Place();
-            pZone = new cc.Zone(pRet);
-        }
-        this._super(pZone);
-        pRet.initWithPosition(this._m_tPosition);
-        return pRet;
     },
     _m_tPosition:new cc.Point()
 });
@@ -305,34 +210,6 @@ cc.CallFunc = cc.ActionInstant.extend({
     {
         this._super(pTarget);
         this.execute();
-    },
-    copyWithZone:function(pZone)
-    {
-        var pRet = null;
-        if(pZone && pZone._m_pCopyObject)
-        {
-            pRet = pZone._m_pCopyObject;
-        }
-        else
-        {
-            pRet = new cc.CallFunc();
-            pZone = new cc.Zone(pRet);
-        }
-        this._super(pzone);
-        if(this._m_pData)//CallFuncND
-        {
-            pRet.initWithTarget(this._m_pSelectorTarget, this._m_pCallFunc, this._m_pData);
-        }
-        else if(this._m_pCallFunc)//CallFuncN
-        {
-            pRet.initWithTarget(this._m_pSelectorTarget, this._m_pCallFunc);
-        }
-        else//CallFunc
-        {
-            pRet.initWithTarget(this._m_pSelectorTarget);
-            pRet._m_pCallFunc = this._m_pCallFunc;
-        }
-        return pRet;
     },
     getTargetCallback: function(){return this._m_pSelectorTarget;},
     setTargetCallback: function(pSel)
