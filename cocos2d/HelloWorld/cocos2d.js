@@ -71,12 +71,14 @@ cc.loadjs = function(filename)
         if(this.order+1 < cc.loadQue.length)
         {
             cc.$('head').appendChild(cc.loadQue[this.order+1]);
-            cc.LOG(this.order);
+            console.log(this.order);
         }
         else
         {
             //we are ready to run the game
             cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+            var gameContext = document.getElementById("gameConvas").getContext("2d");
+            cc.Application.sharedApplication().setRenderContext(gameContext);
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
@@ -97,9 +99,12 @@ cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
-cc.loadjs('CCDirector.js');//11
-cc.loadjs('CCScheduler.js');//12
-cc.loadjs('platform/CCApplication.js');//13
-cc.loadjs('HelloWorld/Classes/AppDelegate.js');//14
-cc.loadjs('HelloWorld/AppControl.js');//15
-cc.loadjs('HelloWorld/Classes/Helloworld.js');//16
+cc.loadjs('label_nodes/CCLabelTTF.js');//11
+cc.loadjs('sprite_nodes/CCSprite.js');//12
+cc.loadjs('CCDirector.js');//13
+cc.loadjs('CCScheduler.js');//14
+cc.loadjs('CCDrawingPrimitives.js');//15
+cc.loadjs('platform/CCApplication.js');//16
+cc.loadjs('HelloWorld/Classes/AppDelegate.js');//17
+cc.loadjs('HelloWorld/AppControl.js');//18
+cc.loadjs('HelloWorld/Classes/Helloworld.js');//19
