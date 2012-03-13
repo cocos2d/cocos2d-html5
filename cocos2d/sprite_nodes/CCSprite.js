@@ -77,6 +77,14 @@ function transformValues_(pos, scale, rotation, skew, ap, visible) {
     this.ap = ap;			// anchor point in pixels
     this.visible = visible;
 }
+cc.RENDER_IN_SUBPIXEL = function(A){
+    if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL){
+        return A;
+    }
+    else{
+        return parseInt(A);
+    }
+}
 
 cc.Sprite = cc.Node.extend({
     //
@@ -121,7 +129,6 @@ cc.Sprite = cc.Node.extend({
     _m_bFlipY:null,
 
     _m_nOpacity:null,
-
     /** whether or not the Sprite needs to be updated in the Atlas */
     isDirty:function () {
         return this._m_bDirty;
@@ -652,10 +659,10 @@ cc.Sprite = cc.Node.extend({
         var dx = x1 * cr - y2 * sr2 + x;
         var dy = x1 * sr + y2 * cr2 + y;
 
-        this._m_sQuad.bl.vertices = cc.vertex3(RENDER_IN_SUBPIXEL(ax), RENDER_IN_SUBPIXEL(ay), this.m_fVertexZ);
-        this._m_sQuad.br.vertices = cc.vertex3(RENDER_IN_SUBPIXEL(bx), RENDER_IN_SUBPIXEL(by), this.m_fVertexZ);
-        this._m_sQuad.tl.vertices = cc.vertex3(RENDER_IN_SUBPIXEL(dx), RENDER_IN_SUBPIXEL(dy), this.m_fVertexZ);
-        this._m_sQuad.tr.vertices = cc.vertex3(RENDER_IN_SUBPIXEL(cx), RENDER_IN_SUBPIXEL(cy), this.m_fVertexZ);
+        this._m_sQuad.bl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(ax), cc.RENDER_IN_SUBPIXEL(ay), this.m_fVertexZ);
+        this._m_sQuad.br.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(bx), cc.RENDER_IN_SUBPIXEL(by), this.m_fVertexZ);
+        this._m_sQuad.tl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(dx), cc.RENDER_IN_SUBPIXEL(dy), this.m_fVertexZ);
+        this._m_sQuad.tr.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(cx), cc.RENDER_IN_SUBPIXEL(cy), this.m_fVertexZ);
 
         this._m_pobTextureAtlas.updateQuad(this._m_sQuad, this._m_uAtlasIndex);
         this._m_bDirty = this._m_bRecursiveDirty = false;
