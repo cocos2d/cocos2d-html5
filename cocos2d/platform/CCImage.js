@@ -26,9 +26,9 @@
 var cc = cc = cc || {};
 
 cc.kFmtJpg = 0;
-cc.kFmtPng = null;
-cc.kFmtRawData = null;
-cc.kFmtUnKnown = null;
+cc.kFmtPng = 1;
+cc.kFmtRawData = 2;
+cc.kFmtUnKnown = 3;
 
 cc.kAlignCenter = 0x33; ///< Horizontal center and vertical center.
 cc.kAlignTop = 0x13; ///< Horizontal center and vertical top.
