@@ -34,7 +34,7 @@ var cc = cc = cc || {};
  * Support for RGBA_4_4_4_4 and RGBA_5_5_5_1 was copied from:
  * https://devforums.apple.com/message/37855#37855 by a1studmuffin
  */
-cc..kCCTexture2DPixelFormat_Automatic = 0;
+cc.kCCTexture2DPixelFormat_Automatic = 0;
 //! 32-bit texture: RGBA8888
 cc.kCCTexture2DPixelFormat_RGBA8888 = null;
 //! 24-bit texture: RGBA888
@@ -88,7 +88,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
  Extension to set the Min / Mag filter
  */
 
-function ccTexParams(minFilter, magFilter, wrapS, wrapT) {
+function _ccTexParams(minFilter, magFilter, wrapS, wrapT) {
     this.minFilter = minFilter;
     this.magFilter = magFilter;
     this.wrapS = wrapS;
@@ -156,7 +156,7 @@ cc.Texture2D = cc.Class.extend({
                 this._m_uPixelsHigh = length;
                 this._m_fMaxS = 1.0;
                 this._m_fMaxT = 1.0;
-                this._m_bHasPremultipliedAlpha = PVRHaveAlphaPremultiplied_;
+                this._m_bHasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
                 this._m_ePixelFormat = pixelFormat;
 
                 return true;
@@ -373,6 +373,12 @@ cc.Texture2D = cc.Class.extend({
      */
     /** Initializes a texture from a string with dimensions, alignment, font name and font size */
     initWithString:function (text, dimensions, alignment, fontName, fontSize) {
+        if(arguments.length == 3){
+            fontName = arguments[1];
+            fontSize = arguments[2];
+            dimensions = cc.SizeMake(0, 0);
+            alignment = cc.TextAlignmentCenter;
+        }
         if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
             // cache the texture data
             cc.VolatileTexture.addStringTexture(this, text, dimensions, alignment, fontName, fontSize);
@@ -385,10 +391,6 @@ cc.Texture2D = cc.Class.extend({
             return false;
         }
         return this.initWithImage(image);
-    },
-    /** Initializes a texture from a string with font name and font size */
-    initWithString:function (text, fontName, fontSize) {
-        return this.initWithString(text, cc.SizeMake(0, 0), cc.TextAlignmentCenter, fontName, fontSize);
     },
 
     /** Initializes a texture from a PVR file */
@@ -408,7 +410,7 @@ cc.Texture2D = cc.Class.extend({
             this._m_uPixelsWide = pvr.getWidth();
             this._m_uPixelsHigh = pvr.getHeight();
             this._m_tContentSize = cc.SizeMake(this._m_uPixelsWide, this._m_uPixelsHigh);
-            this._m_bHasPremultipliedAlpha = PVRHaveAlphaPremultiplied_;
+            this._m_bHasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
             this._m_ePixelFormat = pvr.getFormat();
 
             this.setAntiAliasTexParameters();
@@ -471,7 +473,7 @@ cc.Texture2D = cc.Class.extend({
         cc.Assert(this._m_uPixelsWide == cc.NextPOT(this._m_uPixelsWide) && this._m_uPixelsHigh == cc.NextPOT(this._m_uPixelsHigh), "Mimpap texture only works in POT textures");
         //TODO
         // glBindTexture( cc.GL_TEXTURE_2D, this.this._m_uName );
-        cc.glGenerateMipmap(cc.GL_TEXTURE_2D);
+        //cc.glGenerateMipmap(cc.GL_TEXTURE_2D);
     },
 
     /** returns the bits-per-pixel of the in-memory OpenGL texture
@@ -566,7 +568,6 @@ cc.Texture2D = cc.Class.extend({
                 }
                 else {
                     data = new (POTHigh * POTWide * 4);
-                    cc.memset(data, 0, POTHigh * POTWide * 4);
 
                     var pPixelData = tempData;
                     var pTargetData = data;
@@ -587,7 +588,6 @@ cc.Texture2D = cc.Class.extend({
                 }
                 else {
                     data = new (POTHigh * POTWide * 3);
-                    cc.memset(data, 0, POTHigh * POTWide * 3);
 
                     var pPixelData = tempData;
                     var pTargetData = data;
@@ -730,5 +730,5 @@ cc.Texture2D.defaultAlphaPixelFormat = function () {
  @since v0.99.5
  */
 cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied) {
-    PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
+    cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
 };
