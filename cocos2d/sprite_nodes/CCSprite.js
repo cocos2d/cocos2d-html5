@@ -558,7 +558,7 @@ cc.Sprite = cc.Node.extend({
         var matrix = new cc.AffineTransform();
 
         // Optimization: if it is not visible, then do nothing
-        if (!this.m_bIsVisible) {
+        if (!this._m_bIsVisible) {
             this._m_sQuad.br.vertices = this._m_sQuad.tl.vertices = this._m_sQuad.tr.vertices = this._m_sQuad.bl.vertices = cc.vertex3(0, 0, 0);
             this._m_pobTextureAtlas.updateQuad(this._m_sQuad, this._m_uAtlasIndex)
             this._m_bDirty = this._m_bRecursiveDirty = false;
@@ -567,19 +567,19 @@ cc.Sprite = cc.Node.extend({
 
         // Optimization: If parent is batchnode, or parent is nil
         // build Affine transform manually
-        if (!this.m_pParent || this.m_pParent == this._m_pobBatchNode) {
-            var radians = -cc.DEGREES_TO_RADIANS(this.m_fRotation);
+        if (!this._m_pParent || this._m_pParent == this._m_pobBatchNode) {
+            var radians = -cc.DEGREES_TO_RADIANS(this._m_fRotation);
             var c = Math.cos(radians);
             var s = Math.sin(radians);
 
-            matrix = cc.AffineTransformMake(c * this.m_fScaleX, s * this.m_fScaleX, -s * this.m_fScaleY, c * this.m_fScaleY,
-                this.m_tPositionInPixels.x, this.m_tPositionInPixels.y);
-            if (this.m_fSkewX || this.m_fSkewY) {
+            matrix = cc.AffineTransformMake(c * this._m_fScaleX, s * this._m_fScaleX, -s * this._m_fScaleY, c * this._m_fScaleY,
+                this._m_tPositionInPixels.x, this._m_tPositionInPixels.y);
+            if (this._m_fSkewX || this._m_fSkewY) {
                 var skewMatrix = new cc.AffineTransform();
-                skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this.m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this.m_fSkewX)), 1.0, 0.0, 0.0);
+                skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)), 1.0, 0.0, 0.0);
                 matrix = cc.AffineTransformConcat(skewMatrix, matrix);
             }
-            matrix = cc.AffineTransformTranslate(matrix, -this.m_tAnchorPointInPixels.x, -this.m_tAnchorPointInPixels.y);
+            matrix = cc.AffineTransformTranslate(matrix, -this._m_tAnchorPointInPixels.x, -this._m_tAnchorPointInPixels.y);
         } else // parent_ != batchNode_
         {
             // else do affine transformation according to the HonorParentTransform
@@ -666,10 +666,10 @@ cc.Sprite = cc.Node.extend({
         var dx = x1 * cr - y2 * sr2 + x;
         var dy = x1 * sr + y2 * cr2 + y;
 
-        this._m_sQuad.bl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(ax), cc.RENDER_IN_SUBPIXEL(ay), this.m_fVertexZ);
-        this._m_sQuad.br.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(bx), cc.RENDER_IN_SUBPIXEL(by), this.m_fVertexZ);
-        this._m_sQuad.tl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(dx), cc.RENDER_IN_SUBPIXEL(dy), this.m_fVertexZ);
-        this._m_sQuad.tr.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(cx), cc.RENDER_IN_SUBPIXEL(cy), this.m_fVertexZ);
+        this._m_sQuad.bl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(ax), cc.RENDER_IN_SUBPIXEL(ay), this._m_fVertexZ);
+        this._m_sQuad.br.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(bx), cc.RENDER_IN_SUBPIXEL(by), this._m_fVertexZ);
+        this._m_sQuad.tl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(dx), cc.RENDER_IN_SUBPIXEL(dy), this._m_fVertexZ);
+        this._m_sQuad.tr.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(cx), cc.RENDER_IN_SUBPIXEL(cy), this._m_fVertexZ);
 
         this._m_pobTextureAtlas.updateQuad(this._m_sQuad, this._m_uAtlasIndex);
         this._m_bDirty = this._m_bRecursiveDirty = false;
@@ -677,14 +677,14 @@ cc.Sprite = cc.Node.extend({
 // XXX: Optimization: instead of calling 5 times the parent sprite to obtain: position, scale.x, scale.y, anchorpoint and rotation,
 // this fuction return the 5 values in 1 single call
     _getTransformValues:function (tv) {
-        tv.pos = this.m_tPositionInPixels;
-        tv.scale.x = this.m_fScaleX;
-        tv.scale.y = this.m_fScaleY;
-        tv.rotation = this.m_fRotation;
-        tv.skew.x = this.m_fSkewX;
-        tv.skew.y = this.m_fSkewY;
-        tv.ap = this.m_tAnchorPointInPixels;
-        tv.visible = this.m_bIsVisible;
+        tv.pos = this._m_tPositionInPixels;
+        tv.scale.x = this._m_fScaleX;
+        tv.scale.y = this._m_fScaleY;
+        tv.rotation = this._m_fRotation;
+        tv.skew.x = this._m_fSkewX;
+        tv.skew.y = this._m_fSkewY;
+        tv.ap = this._m_tAnchorPointInPixels;
+        tv.visible = this._m_bIsVisible;
         return tv
     },
 // draw
@@ -777,7 +777,7 @@ cc.Sprite = cc.Node.extend({
                 if (this._m_bUsesBatchNode) {
                     cc.Assert(pChild.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "");
                     var index = this._m_pobBatchNode.atlasIndexForChild(pChild, zOrder);
-                    this._m_pobBatchNode.insertChild(pChild, index);
+                    this._m_pobBatchNode._insertChild(pChild, index);
                 }
                 this._m_bHasChildren = true;
                 break;
@@ -789,7 +789,7 @@ cc.Sprite = cc.Node.extend({
     },
     reorderChild:function (pChild, zOrder) {
         cc.Assert(pChild != null, "");
-        cc.Assert(this.m_pChildren.containsObject(pChild), "");
+        cc.Assert(this._m_pChildren.containsObject(pChild), "");
 
         if (zOrder == pChild.getZOrder()) {
             return;
@@ -812,10 +812,10 @@ cc.Sprite = cc.Node.extend({
     },
     removeAllChildrenWithCleanup:function (bCleanup) {
         if (this._m_bUsesBatchNode) {
-            if (this.m_pChildren != null) {
-            for(var i in this.m_pChildren){
-                   if (this.m_pChildren[i] instanceof cc.Sprite) {
-                       this._m_pobBatchNode.removeSpriteFromAtlas(pObject);
+            if (this._m_pChildren != null) {
+            for(var i in this._m_pChildren){
+                   if (this._m_pChildren[i] instanceof cc.Sprite) {
+                       this._m_pobBatchNode.removeSpriteFromAtlas(this._m_pChildren[i]);
                    }
                 }
             }
@@ -832,11 +832,10 @@ cc.Sprite = cc.Node.extend({
     setDirtyRecursively:function (bValue) {
         this._m_bDirty = this._m_bRecursiveDirty = bValue;
         // recursively set dirty
-        if (this.m_pChildren != null) {
-            for(var i in this.m_pChildren){
-                if (this.m_pChildren[i] instanceof cc.Sprite) {
-                    this._m_pobBatchNode.removeSpriteFromAtlas(pObject);
-                    this.m_pChildren[i].setDirtyRecursively(true);
+        if (this._m_pChildren != null) {
+            for(var i in this._m_pChildren){
+                if (this._m_pChildren[i] instanceof cc.Sprite) {
+                    this._m_pChildren[i].setDirtyRecursively(true);
                 }
             }
         }
@@ -1110,9 +1109,6 @@ cc.Sprite.spriteWithTexture = function (pTexture, rect, offset) {
 
         case 3:
             /** Creates an sprite with a texture, a rect and offset. */
-            cc.UNUSED_PARAM(pTexture);
-            cc.UNUSED_PARAM(rect);
-            cc.UNUSED_PARAM(offset);
             // not implement
             cc.Assert(0, "");
             return null;
