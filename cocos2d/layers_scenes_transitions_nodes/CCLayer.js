@@ -608,7 +608,7 @@ cc.LayerGradient = cc.LayerColor.extend({
 
         // Compressed Interpolation mode
         if (this._m_bCompressedInterpolation) {
-            var h2 = 1 / ( cc.fabsf(u.x) + cc.fabsf(u.y) );
+            var h2 = 1 / ( Math.floor(u.x) + Math.floor(u.y) );
             u = cc.ccpMult(u, h2 * c);
         }
 
