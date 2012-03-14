@@ -695,20 +695,10 @@ cc.LayerMultiplex = cc.Layer.extend({
         this.addChild(layer);
         return true;
     },
-    initWithLayers:function (layer, params) {
-        this.m_pLayers = [];
-
-        this.m_pLayers.addObject(layer);
-
-        var l = params.pop();
-        while (l) {
-            this.m_pLayers.addObject(l);
-            l = params.pop();
-        }
-
+    initWithLayers:function () {
+        this.m_pLayers = arguments;
         this.m_nEnabledLayer = 0;
-        this.addChild(this.m_pLayers.getObjectAtIndex(this.m_nEnabledLayer));
-
+        this.addChild(this.m_pLayers[this.m_nEnabledLayer]);
         return true;
     },
     /** switches to a certain layer indexed by n.
@@ -741,14 +731,10 @@ cc.LayerMultiplex = cc.Layer.extend({
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
 cc.LayerMultiplex.layerWithLayers = function (/*Multiple Arguments*/) {
-    var pLayer = arguments[0];
-    for(var i = 1; i < arguments.length; i++)
+    var pMultiplexLayer = new cc.LayerMultiplex();
+    if(pMultiplexLayer.initWithLayers(arguments))
     {
-        var pMultiplexLayer = new cc.LayerMultiplex();
-        if(pMultiplexLayer && pMultiplexLayer.initWithLayers(pLayer, arguments))
-        {
-            return pMultiplexLayer;
-        }
+        return pMultiplexLayer;
     }
     return null;
 };
