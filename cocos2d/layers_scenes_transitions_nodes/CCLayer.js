@@ -117,7 +117,7 @@ cc.Layer = cc.Node.extend({
     setIsTouchEnabled:function (enabled) {
         if (this._m_bIsTouchEnabled != enabled) {
             this._m_bIsTouchEnabled = enabled;
-            if (this.m_bIsRunning) {
+            if (this._m_bIsRunning) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
                 }
@@ -141,7 +141,7 @@ cc.Layer = cc.Node.extend({
         if (enabled != this._m_bIsAccelerometerEnabled) {
             this._m_bIsAccelerometerEnabled = enabled;
 
-            if (this.m_bIsRunning) {
+            if (this._m_bIsRunning) {
                 if (enabled) {
                     cc.Accelerometer.sharedAccelerometer().setDelegate(this);
                 }
@@ -164,7 +164,7 @@ cc.Layer = cc.Node.extend({
         if (enabled != this._m_bIsKeypadEnabled) {
             this._m_bIsKeypadEnabled = enabled;
 
-            if (this.m_bIsRunning) {
+            if (this._m_bIsRunning) {
                 if (enabled) {
                     cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
                 }
@@ -351,7 +351,7 @@ cc.LayerColor = cc.Layer.extend({
                 this._m_tColor.b = color.b;
                 this._m_cOpacity = color.a;
 
-                for (var i = 0; i < sizeof(this._m_pSquareVertices) / sizeof(this._m_pSquareVertices[0]); i++) {
+                for (var i = 0; i < this._m_pSquareVertices.length; i++) {
                     this._m_pSquareVertices[i].x = 0.0;
                     this._m_pSquareVertices[i].y = 0.0;
                 }
@@ -406,14 +406,14 @@ cc.LayerColor = cc.Layer.extend({
     setIsOpacityModifyRGB:function (bValue) {
         var argnum = arguments.length;
         switch(argnum) {
-        case 1:
-            break;
-        case 0:
-            return false;
-            break;
-        default:
-            throw "Argument must be non-nil ";
-            break;
+            case 1:
+                break;
+            case 0:
+                return false;
+                break;
+            default:
+                throw "Argument must be non-nil ";
+                break;
         }
     },
     /// ColorLayer
@@ -689,7 +689,7 @@ cc.LayerMultiplex = cc.Layer.extend({
     m_nEnabledLayer:0,
     m_pLayers:null,
     initWithLayer:function (layer) {
-        this.m_pLayers = new cc.MutableArray(1);
+        this.m_pLayers = [];
         this.m_pLayers.addObject(layer);
         this.m_nEnabledLayer = 0;
         this.addChild(layer);
