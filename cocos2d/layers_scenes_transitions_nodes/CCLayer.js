@@ -94,7 +94,6 @@ cc.Layer = cc.Node.extend({
     registerScriptTouchHandler:function (nHandler, bIsMultiTouches, nPriority, bSwallowsTouches) {
         this.unregisterScriptTouchHandler();
         this._m_pScriptHandlerEntry = cc.TouchScriptHandlerEntry.entryWithHandler(nHandler, bIsMultiTouches, nPriority, bSwallowsTouches);
-        this._m_pScriptHandlerEntry.retain();
     },
     /** Unregister script touch events handler */
     unregisterScriptTouchHandler:function () {
@@ -225,36 +224,28 @@ cc.Layer = cc.Node.extend({
     // default implements are used to call script callback if exist
     ccTouchBegan:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            return _excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
+            return this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
         cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
     ccTouchMoved:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            _excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
+            this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchEnded:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            _excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
+            this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchCancelled:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     // default implements are used to call script callback if exist
     ccTouchesBegan:function (pTouches, pEvent) {
@@ -262,32 +253,24 @@ cc.Layer = cc.Node.extend({
             this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesEnded:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesCancelled:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     addLayer:function (layer) {
         cc.Assert(this.m_pLayers, "cc.Layer addLayer");
@@ -348,7 +331,12 @@ cc.LayerColor = cc.Layer.extend({
     setBlendFunc:function (Var) {
         this._m_tBlendFunc = Var;
     },
-    initWithColor: function(){},//TODO 2012/3/9
+    initWithColor: function(color){
+        var s = new cc.Size();
+        s = cc.Director.sharedDirector().getWinSize();
+        this.initWithColorWidthHeight(color, s.width, s.height);
+        return true;
+    },//TODO 2012/3/9
     initWithColorWidthHeight:function (color, width, height) {
         var argnum = arguments.length;
         switch (argnum) {
@@ -416,20 +404,16 @@ cc.LayerColor = cc.Layer.extend({
         }
     },
     setIsOpacityModifyRGB:function (bValue) {
-        cc.UNUSED_PARAM(bValue)
-    },
-    getIsOpacityModifyRGB:function () {
-        return false;
-    },
-    node:function () {
-        var pRet = new cc.LayerColor();
-        if (pRet && pRet.init()) {
-            return pRet;
-        }
-        else {
-            delete pRet;
-            pRet = null;
-            return null;
+        var argnum = arguments.length;
+        switch(argnum) {
+        case 1:
+            break;
+        case 0:
+            return false;
+            break;
+        default:
+            throw "Argument must be non-nil ";
+            break;
         }
     },
     /// ColorLayer
@@ -499,6 +483,18 @@ cc.LayerColor.layerWithColor = function (color) {
         return pLayer;
     }
     return null;
+};
+
+cc.LayerColor.node = function () {
+    var pRet = new cc.LayerColor();
+    if (pRet && pRet.init()) {
+        return pRet;
+    }
+    else {
+        delete pRet;
+        pRet = null;
+        return null;
+    }
 };
 
 //
@@ -591,7 +587,7 @@ cc.LayerGradient = cc.LayerColor.extend({
 
                 this._m_bCompressedInterpolation = true;
 
-                return cc.LayerColor.initWithColor(ccc4(start.r, start.g, start.b, 255));
+                return cc.LayerColor.initWithColor(cc.cs4(start.r, start.g, start.b, 255));
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -642,17 +638,6 @@ cc.LayerGradient = cc.LayerColor.extend({
         this._m_pSquareColors[3].g = (E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c)));
         this._m_pSquareColors[3].b = (E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c)));
         this._m_pSquareColors[3].a = (E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c)));
-    },
-    node:function () {
-        var pRet = new cc.LayerGradient();
-        if (pRet && pRet.init()) {
-            return pRet;
-        }
-        else {
-            delete pRet;
-            pRet = null;
-            return null;
-        }
     }
 });
 
@@ -682,7 +667,17 @@ cc.LayerGradient.layerWithColor = function (start, end, v) {
             break;
     }
 };
-
+cc.LayerGradient.node = function () {
+    var pRet = new cc.LayerGradient();
+    if (pRet && pRet.init()) {
+        return pRet;
+    }
+    else {
+        delete pRet;
+        pRet = null;
+        return null;
+    }
+};
 
 /** @brief CCMultipleLayer is a CCLayer with the ability to multiplex it's children.
  Features:
@@ -702,7 +697,6 @@ cc.LayerMultiplex = cc.Layer.extend({
     },
     initWithLayers:function (layer, params) {
         this.m_pLayers = new cc.MutableArray(5);
-        //this.m_pLayers.retain();
 
         this.m_pLayers.addObject(layer);
 
@@ -743,24 +737,12 @@ cc.LayerMultiplex = cc.Layer.extend({
         this.m_nEnabledLayer = n;
 
         this.addChild(this.m_pLayers.getObjectAtIndex(n));
-    },
-    node:function () {
-        var pRet = new cc.LayerMultiplex();
-        if (pRet && pRet.init()) {
-            return pRet;
-        }
-        else {
-            delete pRet;
-            pRet = null;
-            return null;
-        }
     }
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
 cc.LayerMultiplex.layerWithLayers = function (layer) {
     var args;
     cc.va_start(args, layer);
-
     var pMultiplexLayer = new cc.LayerMultiplex();
     if (pMultiplexLayer && pMultiplexLayer.initWithLayers(layer, args)) {
         cc.va_end(args);
@@ -777,4 +759,15 @@ cc.LayerMultiplex.layerWithLayer = function (layer) {
     var pMultiplexLayer = new cc.LayerMultiplex();
     pMultiplexLayer.initWithLayer(layer);
     return pMultiplexLayer;
+};
+cc.LayerMultiplex.node = function () {
+    var pRet = new cc.LayerMultiplex();
+    if (pRet && pRet.init()) {
+        return pRet;
+    }
+    else {
+        delete pRet;
+        pRet = null;
+        return null;
+    }
 };
