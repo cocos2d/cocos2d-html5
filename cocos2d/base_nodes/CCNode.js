@@ -124,7 +124,8 @@ cc.Node = cc.Class.extend({
             this._m_bIsTransformGLDirty = true;
         }
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_pTransformGL = new cc.GLfloat();
+            //this._m_pTransformGL = new cc.GLfloat();
+            this._m_pTransformGL = 0.0;
         }
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
@@ -321,23 +322,7 @@ cc.Node = cc.Class.extend({
     setIsVisible:function (Var) {
         this._m_bIsVisible = Var;
     },
-    /// anchorPoint getter
-    setAnchorPoint:function (point) {
-        var argnum = arguments.length;
-        if (argnum < 1) {
-            return this._m_tAnchorPoint;
-        }
-        else {
-            if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
-                this._m_tAnchorPoint = point;
-                this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
-                this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-                if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                    this._m_bIsTransformGLDirty = true;
-                }
-            }
-        }
-    },
+
     /** anchorPoint is the point around which all transformations and positioning manipulations take place.
      It's like a pin in the node where it is "attached" to its parent.
      The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner.
@@ -387,11 +372,11 @@ cc.Node = cc.Class.extend({
         return this._m_tContentSize;
     },
     setContentSize:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this.m_tContentSize)) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
             this.m_tContentSize = size;
 
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
-                this._m_tContentSizeInPixels = this.m_tContentSize;
+                this._m_tContentSizeInPixels = this._m_tContentSize;
             }
             else {
                 this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
@@ -758,7 +743,8 @@ cc.Node = cc.Class.extend({
             if (this._m_bIsTransformGLDirty) {
                 var t = new cc.AffineTransform();
                 t = this.nodeToParentTransform();
-                cc.CGAffineToGL(t, this._m_pTransformGL);
+                //TODO Need to implement
+                //cc.CGAffineToGL(t, this._m_pTransformGL);
                 this._m_bIsTransformGLDirty = false;
             }
             //TODO
