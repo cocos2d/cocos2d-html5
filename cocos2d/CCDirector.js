@@ -150,7 +150,7 @@ cc.Director = cc.Class.extend({
     _m_fFrameRate : 0.0,
     _m_obWinSizeInPixels : null,
     _m_obWinSizeInPoints : null,
-    _m_pFPSLabel: null,
+    _m_pFPSLabel: cc.LabelTTF.labelWithString("00.0", "Arial", 24),
     _m_pLastUpdate : null,
     _m_pNextScene : null,
     _m_pNotificationNode: null,
@@ -865,7 +865,7 @@ cc.Director = cc.Class.extend({
             this._m_uFrames = 0;
             this._m_fAccumDt = 0;
 
-            this._m_pszFPS =  ('' + this._m_fFrameRate);
+            this._m_pszFPS =  ('' + this._m_fFrameRate.toFixed(1));
             this._m_pFPSLabel.setString(this._m_pszFPS);
         }
 

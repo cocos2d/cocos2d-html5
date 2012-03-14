@@ -117,10 +117,10 @@ var Helloworld = cc.Layer.extend({
         //tools.drawPoint(new cc.Point(200,100));
         tools.drawImage(helloImg, new cc.Point(0,0));
 
-        this._radians += 5;
+        this._radians += 6;
         if(this._radians > 360)
             this._radians = 0;
-        tools.drawCircle(new cc.Point(150,150),100,cc.DEGREES_TO_RADIANS(this._radians),5,false);
+        tools.drawCircle(new cc.Point(150,150),100,cc.DEGREES_TO_RADIANS(this._radians),60,false);
 
         //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
         //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
