@@ -100,7 +100,7 @@ cc.Sprite = cc.Node.extend({
     //
     // Data used when the sprite is self-rendered
     //
-    _m_sBlendFunc:null,
+    _m_sBlendFunc:new cc.BlendFunc(),
     _m_pobTexture:new cc.Texture2D(),
 
     //
@@ -110,15 +110,15 @@ cc.Sprite = cc.Node.extend({
     _m_bUsesBatchNode:null,
     // texture
     _m_obRect:new cc.Rect(),
-    _m_obRectInPixels:null,
+    _m_obRectInPixels:cc.RectZero,
     _m_bRectRotated:null,
 
     // Offset Position (used by Zwoptex)
-    _m_obOffsetPositionInPixels:null, // absolute
-    _m_obUnflippedOffsetPositionFromCenter:null,
+    _m_obOffsetPositionInPixels:cc.PointZero, // absolute
+    _m_obUnflippedOffsetPositionFromCenter:cc.PointZero,
 
     // vertex coords, texture coords and color info
-    _m_sQuad:null,
+    _m_sQuad:cc.V3F_C4B_T2F_QuadZero(),
 
     // opacity and RGB protocol
     m_sColorUnmodified:null,
@@ -129,6 +129,13 @@ cc.Sprite = cc.Node.extend({
     _m_bFlipY:null,
 
     _m_nOpacity:null,
+
+    //TODO Test ImageObject for canvas
+    _spriteImage:null,
+
+    setSpriteImage:function(img){
+        this._spriteImage = img;
+    },
     /** whether or not the Sprite needs to be updated in the Atlas */
     isDirty:function () {
         return this._m_bDirty;
@@ -438,8 +445,8 @@ cc.Sprite = cc.Node.extend({
             relativeOffsetInPixels.y = -relativeOffsetInPixels.y;
         }
 
-        this._m_obOffsetPositionInPixels.x = relativeOffsetInPixels.x + (this.m_tContentSizeInPixels.width - this._m_obRectInPixels.size.width) / 2;
-        this._m_obOffsetPositionInPixels.y = relativeOffsetInPixels.y + (this.m_tContentSizeInPixels.height - this._m_obRectInPixels.size.height) / 2;
+        this._m_obOffsetPositionInPixels.x = relativeOffsetInPixels.x + (this._m_tContentSizeInPixels.width - this._m_obRectInPixels.size.width) / 2;
+        this._m_obOffsetPositionInPixels.y = relativeOffsetInPixels.y + (this._m_tContentSizeInPixels.height - this._m_obRectInPixels.size.height) / 2;
 
         // rendering using batch node
         if (this._m_bUsesBatchNode) {
@@ -682,7 +689,15 @@ cc.Sprite = cc.Node.extend({
     },
 // draw
     draw:function () {
-        cc.Node.draw();
+        this._super();
+
+        //TODO need to fixed
+        //draw some image(temp code)
+        //direct draw image by canvas drawImage
+        var tools = cc.Application.sharedApplication().getDrawingUtil();
+        tools.drawImage(this._spriteImage,cc.ccp(this.getPositionX(),this.getPositionY()));
+        return;
+
 
         cc.Assert(!this._m_bUsesBatchNode, "");
 
@@ -836,57 +851,57 @@ cc.Sprite = cc.Node.extend({
         }
     },
     setPosition:function (pos) {
-        cc.Node.setPosition(pos);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(pos);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setPositionInPixels:function (pos) {
-        cc.Node.setPositionInPixels(pos);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(pos);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setRotation:function (fRotation) {
-        cc.Node.setRotation(fRotation);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(fRotation);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setSkewX:function (sx) {
-        cc.Node.setSkewX(sx);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(sx);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setSkewY:function (sy) {
-        cc.Node.setSkewY(sy);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(sy);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setScaleX:function (fScaleX) {
-        cc.Node.setScaleX(fScaleX);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(fScaleX);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setScaleY:function (fScaleY) {
-        cc.Node.setScaleY(fScaleY);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(fScaleY);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setScale:function (fScale) {
-        cc.Node.setScale(fScale);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(fScale);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setVertexZ:function (fVertexZ) {
-        cc.Node.setVertexZ(fVertexZ);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(fVertexZ);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setAnchorPoint:function (anchor) {
-        cc.Node.setAnchorPoint(anchor);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(anchor);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setIsRelativeAnchorPoint:function (bRelative) {
         cc.Assert(!this._m_bUsesBatchNode, "");
-        cc.Node.setIsRelativeAnchorPoint(bRelative);
+        this._super(bRelative);
     },
     setIsVisible:function (bVisible) {
-        cc.Node.setIsVisible(bVisible);
-        cc.SET_DIRTY_RECURSIVELY();
+        this._super(bVisible);
+        this.SET_DIRTY_RECURSIVELY();
     },
     setFlipX:function (bFlipX) {
         if (this._m_bFlipX != bFlipX) {
             this._m_bFlipX = bFlipX;
-            this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this.m_tContentSizeInPixels);
+            this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
         }
     },
     /** whether or not the sprite is flipped horizontally.
@@ -909,7 +924,7 @@ cc.Sprite = cc.Node.extend({
     setFlipY:function (bFlipY) {
         if (this._m_bFlipY != bFlipY) {
             this._m_bFlipY = bFlipY;
-            this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this.m_tContentSizeInPixels);
+            this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
         }
     },
     isFlipY:function () {
@@ -1032,7 +1047,7 @@ cc.Sprite = cc.Node.extend({
             this._m_obRectInPixels,
             this._m_bRectRotated,
             this._m_obUnflippedOffsetPositionFromCenter,
-            this.m_tContentSizeInPixels);
+            this._m_tContentSizeInPixels);
     },
 // Texture protocol
 

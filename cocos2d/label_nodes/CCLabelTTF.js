@@ -47,8 +47,7 @@ cc.LabelTTF = cc.Sprite.extend({
     initWithString:function(label,dimensions,alignment,fontName,fontSize){
         cc.Assert(label != null, "cc.LabelTTF.initWithString() label is null");
         if(arguments.length > 3){
-            if (this.init())
-            {
+            if (this.init()){
                 this._m_tDimensions = cc.SizeMake( dimensions.width * cc.CONTENT_SCALE_FACTOR(), dimensions.height * cc.CONTENT_SCALE_FACTOR());
                 this._m_eAlignment = alignment;
                 this._m_pFontName = fontName;
@@ -61,8 +60,7 @@ cc.LabelTTF = cc.Sprite.extend({
             fontName = arguments[1];
             fontSize = arguments[2];
 
-            if (this.init())
-            {
+            if (this.init()){
                 this._m_tDimensions = cc.SizeZero;
                 this._m_pFontName = fontName;
                 this._m_fFontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
@@ -79,14 +77,12 @@ cc.LabelTTF = cc.Sprite.extend({
     setString:function(label){
         this._m_pString = label;
 
-        var texture = null;
-        if( cc.Size.CCSizeEqualToSize( this._m_tDimensions, cc.SizeZero ) )
-        {
-            texture = new cc.Texture2D();
+        return;
+
+        var texture = new cc.Texture2D();
+        if( cc.Size.CCSizeEqualToSize( this._m_tDimensions, cc.SizeZero ) ){
             texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
-        }
-        else
-        {
+        }else{
             texture = new cc.Texture2D();
             texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
         }
@@ -95,6 +91,17 @@ cc.LabelTTF = cc.Sprite.extend({
         var rect = cc.RectZero;
         rect.size = this._m_pobTexture.getContentSize();
         this.setTextureRect(rect);
+    },
+
+    //temp method
+    draw:function(){
+        //this is fillText for canvas
+        //console.log(this._m_pString + "X:" + this.getPositionX() + " Y:" + this.getPositionY());
+        var context = cc.Application.sharedApplication().getRenderContext();
+        context.fillStyle = "#ffffff";
+        context.font = this._m_fFontSize + "px '"+this._m_pFontName +"'";
+        cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,this.getPositionX(),this.getPositionY());
+        //cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,0,320);
     },
     getString:function(){
         return this._m_pString;

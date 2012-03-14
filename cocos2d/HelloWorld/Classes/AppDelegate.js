@@ -68,7 +68,6 @@ cc.AppDelegate = cc.Class.extend(
         pDirector.runWithScene(pScene);
 
         return true;
-
     },
 
     /**
