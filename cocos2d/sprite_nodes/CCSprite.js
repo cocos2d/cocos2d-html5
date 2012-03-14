@@ -815,7 +815,7 @@ cc.Sprite = cc.Node.extend({
             if (this._m_pChildren != null) {
             for(var i in this._m_pChildren){
                    if (this._m_pChildren[i] instanceof cc.Sprite) {
-                       this._m_pobBatchNode.removeSpriteFromAtlas(pObject);
+                       this._m_pobBatchNode.removeSpriteFromAtlas(this._m_pChildren[i]);
                    }
                 }
             }
@@ -835,7 +835,6 @@ cc.Sprite = cc.Node.extend({
         if (this._m_pChildren != null) {
             for(var i in this._m_pChildren){
                 if (this._m_pChildren[i] instanceof cc.Sprite) {
-                    this._m_pobBatchNode.removeSpriteFromAtlas(pObject);
                     this._m_pChildren[i].setDirtyRecursively(true);
                 }
             }
