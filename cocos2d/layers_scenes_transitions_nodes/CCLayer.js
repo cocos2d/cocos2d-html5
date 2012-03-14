@@ -226,8 +226,6 @@ cc.Layer = cc.Node.extend({
         if (this._m_pScriptHandlerEntry) {
             return this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
         cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
@@ -236,24 +234,18 @@ cc.Layer = cc.Node.extend({
             this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchEnded:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchCancelled:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     // default implements are used to call script callback if exist
     ccTouchesBegan:function (pTouches, pEvent) {
@@ -261,32 +253,24 @@ cc.Layer = cc.Node.extend({
             this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesEnded:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesCancelled:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     addLayer:function (layer) {
         cc.Assert(this.m_pLayers, "cc.Layer addLayer");
@@ -423,7 +407,6 @@ cc.LayerColor = cc.Layer.extend({
         var argnum = arguments.length;
         switch(argnum) {
         case 1:
-            cc.UNUSED_PARAM(bValue)
             break;
         case 0:
             return false;
@@ -713,14 +696,14 @@ cc.LayerMultiplex = cc.Layer.extend({
         return true;
     },
     initWithLayers:function (layer, params) {
-        this.m_pLayers = new cc.MutableArray(5);
+        this.m_pLayers = [];
 
         this.m_pLayers.addObject(layer);
 
-        var l = cc.va_arg(params, cc.Layer);
+        var l = params.pop();
         while (l) {
             this.m_pLayers.addObject(l);
-            l = cc.va_arg(params, cc.Layer);
+            l = params.pop();
         }
 
         this.m_nEnabledLayer = 0;
@@ -757,15 +740,16 @@ cc.LayerMultiplex = cc.Layer.extend({
     }
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
-cc.LayerMultiplex.layerWithLayers = function (layer) {
-    var args = new cc.va_list();
-    cc.va_start(args, layer);
-    var pMultiplexLayer = new cc.LayerMultiplex();
-    if (pMultiplexLayer && pMultiplexLayer.initWithLayers(layer, args)) {
-        cc.va_end(args);
-        return pMultiplexLayer;
+cc.LayerMultiplex.layerWithLayers = function (/*Multiple Arguments*/) {
+    var pLayer = arguments[0];
+    for(var i = 1; i < arguments.length; i++)
+    {
+        var pMultiplexLayer = new cc.LayerMultiplex();
+        if(pMultiplexLayer && pMultiplexLayer.initWithLayers(pLayer, arguments))
+        {
+            return pMultiplexLayer;
+        }
     }
-    cc.va_end(args);
     return null;
 };
 /**
