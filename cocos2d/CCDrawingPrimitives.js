@@ -79,7 +79,11 @@ cc.DrawingPrimitive = cc.Class.extend({
     /** draws a cubic bezier path
      @since v0.8
      */
-    drawCubicBezier:function(origin,control1,control2,destination,segments){cc.log("DrawingPrimitive.drawCubicBezier() not implement!");}
+    drawCubicBezier:function(origin,control1,control2,destination,segments){cc.log("DrawingPrimitive.drawCubicBezier() not implement!");},
+
+    drawImage:function(image,sourcePoint,sourceSize,destPoint,destSize){cc.log("DrawingPrimitive.drawImage() not implement!");},
+
+    fillText:function(){cc.log("DrawingPrimitive.fillText() not implement!");}
 });
 
 /**
@@ -237,5 +241,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
                 throw new Error("Argument must be non-nil");
                 break;
         }
+    },
+    fillText:function(strText,x,y){
+        this._renderContext.fillText(strText,x,y);
     }
 });

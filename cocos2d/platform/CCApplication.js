@@ -34,9 +34,15 @@ cc.kOrientationLandscapeLeft = 2;
 /// Device oriented horizontally, home button on the left
 cc.kOrientationLandscapeRight = 3;
 
+//setup game context
 
 cc.Application = cc.Class.extend(
     {
+        _parentDiv:null,
+
+        //Canvas
+        _gameCanvas: null,
+
         //canvas context
         _renderContext:null,
 
