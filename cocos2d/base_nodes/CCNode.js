@@ -622,7 +622,7 @@ cc.Node = cc.Class.extend({
         }
 
         // set parent nil at the end
-        child.setParent(NULL);
+        child.setParent(null);
 
         this._m_pChildren.removeObject(child);
     },
@@ -1089,7 +1089,7 @@ cc.Node = cc.Class.extend({
      */
     convertToNodeSpaceAR:function (worldPoint) {
         var nodePoint = new cc.Point();
-        nodePoint = convertToNodeSpace(worldPoint);
+        nodePoint = this.convertToNodeSpace(worldPoint);
         var anchorInPoints = new cc.Point();
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this._m_tAnchorPointInPixels;
