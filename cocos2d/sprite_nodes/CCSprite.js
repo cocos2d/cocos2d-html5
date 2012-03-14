@@ -129,6 +129,13 @@ cc.Sprite = cc.Node.extend({
     _m_bFlipY:null,
 
     _m_nOpacity:null,
+
+    //TODO Test ImageObject for canvas
+    _spriteImage:null,
+
+    setSpriteImage:function(img){
+        this._spriteImage = img;
+    },
     /** whether or not the Sprite needs to be updated in the Atlas */
     isDirty:function () {
         return this._m_bDirty;
@@ -682,7 +689,15 @@ cc.Sprite = cc.Node.extend({
     },
 // draw
     draw:function () {
-        cc.Node.draw();
+        this._super();
+
+        //TODO need to fixed
+        //draw some image(temp code)
+        //direct draw image by canvas drawImage
+        var tools = cc.Application.sharedApplication().getDrawingUtil();
+        tools.drawImage(this._spriteImage,cc.ccp(this.getPositionX(),this.getPositionY()));
+        return;
+
 
         cc.Assert(!this._m_bUsesBatchNode, "");
 
@@ -836,39 +851,39 @@ cc.Sprite = cc.Node.extend({
         }
     },
     setPosition:function (pos) {
-        cc.Node.setPosition(pos);
+        this._super(pos);
         this.SET_DIRTY_RECURSIVELY();
     },
     setPositionInPixels:function (pos) {
-        cc.Node.setPositionInPixels(pos);
+        this._super(pos);
         this.SET_DIRTY_RECURSIVELY();
     },
     setRotation:function (fRotation) {
-        cc.Node.setRotation(fRotation);
+        this._super(fRotation);
         this.SET_DIRTY_RECURSIVELY();
     },
     setSkewX:function (sx) {
-        cc.Node.setSkewX(sx);
+        this._super(sx);
         this.SET_DIRTY_RECURSIVELY();
     },
     setSkewY:function (sy) {
-        cc.Node.setSkewY(sy);
+        this._super(sy);
         this.SET_DIRTY_RECURSIVELY();
     },
     setScaleX:function (fScaleX) {
-        cc.Node.setScaleX(fScaleX);
+        this._super(fScaleX);
         this.SET_DIRTY_RECURSIVELY();
     },
     setScaleY:function (fScaleY) {
-        cc.Node.setScaleY(fScaleY);
+        this._super(fScaleY);
         this.SET_DIRTY_RECURSIVELY();
     },
     setScale:function (fScale) {
-        cc.Node.setScale(fScale);
+        this._super(fScale);
         this.SET_DIRTY_RECURSIVELY();
     },
     setVertexZ:function (fVertexZ) {
-        cc.Node.setVertexZ(fVertexZ);
+        this._super(fVertexZ);
         this.SET_DIRTY_RECURSIVELY();
     },
     setAnchorPoint:function (anchor) {
@@ -877,10 +892,10 @@ cc.Sprite = cc.Node.extend({
     },
     setIsRelativeAnchorPoint:function (bRelative) {
         cc.Assert(!this._m_bUsesBatchNode, "");
-        cc.Node.setIsRelativeAnchorPoint(bRelative);
+        this._super(bRelative);
     },
     setIsVisible:function (bVisible) {
-        cc.Node.setIsVisible(bVisible);
+        this._super(bVisible);
         this.SET_DIRTY_RECURSIVELY();
     },
     setFlipX:function (bFlipX) {

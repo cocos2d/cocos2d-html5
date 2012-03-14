@@ -502,7 +502,9 @@ cc.Node = cc.Class.extend({
          */
             case 1:
                 cc.Assert(child != null, "Argument must be non-nil");
-                this.addChild(child, child._m_nZOrder, child._m_nTag);
+                zOrder = child._m_nZOrder;
+                tag = child._m_nTag;
+                //this.addChild(child, child._m_nZOrder, child._m_nTag);
                 break;
         /** Adds a child to the container with a z-order
          If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
@@ -510,7 +512,8 @@ cc.Node = cc.Class.extend({
          */
             case 2:
                 cc.Assert(child != null, "Argument must be non-nil");
-                this.addChild(child, zOrder, child._m_nTag);
+                tag = child._m_nTag;
+                //this.addChild(child, zOrder, child._m_nTag);
                 break;
         /** Adds a child to the container with z order and tag
          If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
@@ -520,20 +523,22 @@ cc.Node = cc.Class.extend({
                 cc.Assert(child != null, "Argument must be non-nil");
                 cc.Assert(child._m_pParent == null, "child already added. It can't be added again");
 
-                if (!this._m_pChildren) {
-                    this._childrenAlloc();
-                }
-                this._insertChild(child, zOrder);
-                child._m_nTag = tag;
-                child.setParent(this);
-                if (this._m_bIsRunning) {
-                    child.onEnter();
-                    child.onEnterTransitionDidFinish();
-                }
+
                 break;
             default:
                 throw "Argument must be non-nil ";
                 break;
+        }
+
+        if (!this._m_pChildren) {
+            this._childrenAlloc();
+        }
+        this._insertChild(child, zOrder);
+        child._m_nTag = tag;
+        child.setParent(this);
+        if (this._m_bIsRunning) {
+            child.onEnter();
+            child.onEnterTransitionDidFinish();
         }
 
     },
@@ -632,7 +637,7 @@ cc.Node = cc.Class.extend({
             for (var i in this._m_pChildren) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && (pNode._m_nZOrder > z )) {
-                    this._m_pChildren.insertObject(child, index);
+                    this._m_pChildren._insertObject(child, index);
                 }
                 index++;
             }

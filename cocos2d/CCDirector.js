@@ -164,7 +164,7 @@ cc.Director = cc.Class.extend({
     init : function()
     {
         //cc.LOG("cocos2d: "+ cc.cocos2dVersion());
-
+        this._m_pFPSLabel.setPosition(cc.ccp(0,24));
         // scenes
         //TODO these are already set to null, so maybe we can remove them in the init?
         this._m_pRunningScene = null;

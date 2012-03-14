@@ -100,8 +100,8 @@ cc.LabelTTF = cc.Sprite.extend({
         var context = cc.Application.sharedApplication().getRenderContext();
         context.fillStyle = "#ffffff";
         context.font = this._m_fFontSize + "px '"+this._m_pFontName +"'";
-        //cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,this.getPositionX(),this.getPositionY());
-        cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,0,320);
+        cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,this.getPositionX(),this.getPositionY());
+        //cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,0,320);
     },
     getString:function(){
         return this._m_pString;
