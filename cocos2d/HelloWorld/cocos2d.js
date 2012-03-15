@@ -75,10 +75,10 @@ cc.loadjs = function(filename)
         }
         else
         {
+            cc.setup("gameCanvas");
             //we are ready to run the game
             cc.AppController.shareAppController().didFinishLaunchingWithOptions();
-            var gameContext = document.getElementById("gameConvas").getContext("2d");
-            cc.Application.sharedApplication().setRenderContext(gameContext);
+
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
