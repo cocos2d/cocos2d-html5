@@ -264,6 +264,14 @@ cc.V3F_C4B_T2F_Quad =  function(tl1, bl1, tr1, br1)
     this.br = br1;
 };
 
+cc.V3F_C4B_T2F_QuadZero = function(){
+    return new cc.V3F_C4B_T2F_Quad(
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0,0,0),new cc.Color4B(0,0,0,0),new cc.Tex2F(0,0)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0,0,0),new cc.Color4B(0,0,0,0),new cc.Tex2F(0,0)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0,0,0),new cc.Color4B(0,0,0,0),new cc.Tex2F(0,0)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(0,0,0),new cc.Color4B(0,0,0,0),new cc.Tex2F(0,0)));
+};
+
 //! 4 ccVertex2FTex2FColor4F Quad
 cc.V2F_C4F_T2F_Quad = function(bl1, br1, tl1, tr1)
 {

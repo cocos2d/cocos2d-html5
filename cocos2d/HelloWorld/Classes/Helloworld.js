@@ -28,6 +28,33 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+var CircleSprite = cc.Sprite.extend({
+    _radians:0,
+    draw:function(){
+        //
+        var gameContext = cc.Application.sharedApplication().getRenderContext();
+        var tools = cc.Application.sharedApplication().getDrawingUtil();
+
+        gameContext.fillStyle = "rgba(255,255,255,1)";
+        gameContext.strokeStyle = "rgba(255,255,255,1)";
+        //gameContext.clearRect(0,0,480,320);
+
+        //var points = [new cc.Point(20,20),new cc.Point(300,100),new cc.Point(400,350),new cc.Point(100,400)];
+        //tools.drawPoly(points,3,true,false);
+
+        //tools.drawLine(new cc.Point(20,50),new cc.Point(300,350));
+        //tools.drawPoint(new cc.Point(200,100));
+        //tools.drawImage(helloImg, new cc.Point(0,0));
+
+        this._radians += 6;
+        if(this._radians > 360)
+            this._radians = 0;
+        tools.drawCircle(new cc.Point(40,280),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
+
+        //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
+        //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
+    }
+});
 
 var Helloworld = cc.Layer.extend({
     helloImg:null,
@@ -44,8 +71,8 @@ var Helloworld = cc.Layer.extend({
             return false;
         }
 
-        helloImg = new Image();
-        helloImg.src = "helloworld.png";
+        this.helloImg = new Image();
+        this.helloImg.src = "helloworld.png";
 
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -93,37 +120,23 @@ var Helloworld = cc.Layer.extend({
         //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
 
         //this.addChild(helloSprite,0);
+        var pSprite = new cc.Sprite();
+        pSprite.setSpriteImage(this.helloImg);
+        this.addChild(pSprite,0);
+
+        var lb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        lb.setPosition(cc.ccp(180,300));
+        this.addChild(lb,0);
+
+        var circle = new CircleSprite();
+        this.addChild(circle,0);
+
         return true;
     },
     // a selector callback
     menuCloseCallback: function(pSender)
     {
         cc.Director.sharedDirector().end();
-    },
-    _radians:0,
-    draw:function(){
-        //
-        var gameContext = cc.Application.sharedApplication().getRenderContext();
-        var tools = cc.Application.sharedApplication().getDrawingUtil();
-
-        gameContext.fillStyle = "rgba(255,255,255,1)";
-        gameContext.strokeStyle = "rgba(255,255,255,1)";
-        gameContext.clearRect(0,0,480,320);
-
-        //var points = [new cc.Point(20,20),new cc.Point(300,100),new cc.Point(400,350),new cc.Point(100,400)];
-        //tools.drawPoly(points,3,true,false);
-
-        //tools.drawLine(new cc.Point(20,50),new cc.Point(300,350));
-        //tools.drawPoint(new cc.Point(200,100));
-        tools.drawImage(helloImg, new cc.Point(0,0));
-
-        this._radians += 5;
-        if(this._radians > 360)
-            this._radians = 0;
-        tools.drawCircle(new cc.Point(150,150),100,cc.DEGREES_TO_RADIANS(this._radians),5,false);
-
-        //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
-        //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
     }
 });
 // there's no 'id' in cpp, so we recommand to return the exactly class pointer
