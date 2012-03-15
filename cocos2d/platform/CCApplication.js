@@ -39,6 +39,14 @@ cc.renderContext = null;
 cc.canvas = null;
 cc.gameDiv = null;
 
+window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame    ||
+        window.oRequestAnimationFrame      ||
+        window.msRequestAnimationFrame
+})();
+
 //setup game context
 cc.setup = function(){
     //Browser Support Information
@@ -151,9 +159,21 @@ cc.Application = cc.Class.extend(
                 return 0;
             }
             // TODO, need to be fixed.
-            console.log(this._m_nAnimationInterval * 1000);
-            var callback = function(){cc.Director.sharedDirector().mainLoop();};
-            setInterval(callback, this._m_nAnimationInterval * 1000);
+            if(window.requestAnimFrame){
+                var callback = function(){
+                    cc.Director.sharedDirector().mainLoop();
+                    window.requestAnimFrame(callback);
+                };
+                cc.Log(window.requestAnimFrame);
+                window.requestAnimFrame(callback);
+            }
+            else{
+                var callback = function(){
+                    cc.Director.sharedDirector().mainLoop();
+                };
+                setInterval(callback, this._m_nAnimationInterval * 1000);
+            }
+
         },
         _m_nAnimationInterval:null
 
