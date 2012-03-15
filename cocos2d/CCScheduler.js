@@ -113,6 +113,13 @@ cc.ArrayAppendObject = function(arr,addObj){
     arr.push(addObj);
 };
 
+cc.ArrayAppendObjectToIndex = function(arr,addObj,index){
+    var part1 = arr.slice( 0, index );
+    var part2 = arr.slice( index );
+    part1.push( addObj );
+    arr = ( part1.concat( part2 ) );
+};
+
 cc.ArrayGetIndexOfObject = function(arr,findObj){
     for(var i =0; i < arr.length;i++){
         if(arr[i] == findObj)

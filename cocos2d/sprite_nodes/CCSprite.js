@@ -694,8 +694,7 @@ cc.Sprite = cc.Node.extend({
         //TODO need to fixed
         //draw some image(temp code)
         //direct draw image by canvas drawImage
-        var tools = cc.Application.sharedApplication().getDrawingUtil();
-        tools.drawImage(this._spriteImage,cc.ccp(this.getPositionX(),this.getPositionY()));
+        cc.drawingUtil.drawImage(this._spriteImage,cc.ccp(this.getPositionX(),this.getPositionY()));
         return;
 
 

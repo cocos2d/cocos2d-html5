@@ -97,11 +97,9 @@ cc.LabelTTF = cc.Sprite.extend({
     draw:function(){
         //this is fillText for canvas
         //console.log(this._m_pString + "X:" + this.getPositionX() + " Y:" + this.getPositionY());
-        var context = cc.Application.sharedApplication().getRenderContext();
-        context.fillStyle = "#ffffff";
-        context.font = this._m_fFontSize + "px '"+this._m_pFontName +"'";
-        cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,this.getPositionX(),this.getPositionY());
-        //cc.Application.sharedApplication().getDrawingUtil().fillText(this._m_pString,0,320);
+        cc.renderContext.fillStyle = "#ffffff";
+        cc.renderContext.font = this._m_fFontSize + "px '"+this._m_pFontName +"'";
+        cc.drawingUtil.fillText(this._m_pString,this.getPositionX(),this.getPositionY());
     },
     getString:function(){
         return this._m_pString;
