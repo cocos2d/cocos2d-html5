@@ -280,32 +280,22 @@ cc.Sprite = cc.Node.extend({
     },
     initWithTexture:function (pTexture, rect) {
         var argnum = arguments.length;
-        switch (argnum) {
-            case 1:
-                /** Initializes an sprite with a texture.
-                 The rect used will be the size of the texture.
-                 The offset will be (0,0).
-                 */
-                cc.Assert(pTexture != null, "");
-                var rect = new cc.Rect();
-                rect.size = pTexture.getContentSize();
-                return this.initWithTexture(pTexture, rect);
-                break;
-            case 2:
-                /** Initializes an sprite with a texture and a rect.
-                 The offset will be (0,0).
-                 */
-                cc.Assert(pTexture != null, "");
-                // IMPORTANT: [self init] and not [super init];
-                this.init();
-                this.setTexture(pTexture);
-                this.setTextureRect(rect);
-                return true;
-                break;
-            default:
-                throw "Argument must be non-nil ";
-                break;
+        if(argnum == 0)
+            throw "Argument must be non-nil ";
+
+        cc.Assert(pTexture != null, "");
+
+        if(argnum == 1){
+
+            rect = new cc.Rect();
+            rect.size = pTexture.getContentSize();
         }
+
+        // IMPORTANT: [self init] and not [super init];
+        this.init();
+        this.setTexture(pTexture);
+        this.setTextureRect(rect);
+        return true;
     },
 
     initWithFile:function (pszFilename, rect) {
@@ -320,9 +310,12 @@ cc.Sprite = cc.Node.extend({
                 var pTexture = new cc.Texture2D();
                 pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
                 if (pTexture) {
-                    var rect = new cc.Rect();
                     rect = cc.RectZero;
-                    rect.size = pTexture.getContentSize();
+                    if(cc.renderContextType == cc.kCanvas)
+                        rect.size =cc.SizeMake(pTexture.width,pTexture.height);
+                    else
+                        rect.size = pTexture.getContentSize();
+
                     return this.initWithTexture(pTexture, rect);
                 }
 
@@ -347,6 +340,8 @@ cc.Sprite = cc.Node.extend({
                 throw "Argument must be non-nil ";
                 break;
         }
+
+
     },
     // Initializes an sprite with an sprite frame.
     initWithSpriteFrame:function (pSpriteFrame) {
@@ -470,79 +465,79 @@ cc.Sprite = cc.Node.extend({
         }
     },
     _updateTextureCoords:function (rect) {
-        var tex = new cc.Texture2D();
-        tex = this._m_bUsesBatchNode ? this._m_pobTextureAtlas.getTexture() : this._m_pobTexture;
-        if (!tex) {
-            return;
-        }
-
-        var atlasWidth = tex.getPixelsWide();
-        var atlasHeight = tex.getPixelsHigh();
-
-        var left, right, top, bottom;
-
-        if (this._m_bRectRotated) {
-            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.size.width * 2 - 2) / (2 * atlasHeight);
-            }
-            else {
-                left = rect.origin.x / atlasWidth;
-                right = left + (rect.size.height / atlasWidth);
-                top = rect.origin.y / atlasHeight;
-                bottom = top + (rect.size.width / atlasHeight);
-            }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
-
-
-            if (this._m_bFlipX) {
-                cc.SWAP(top, bottom);
+        if(cc.renderContextType == cc.kWebGL){
+            var tex = new cc.Texture2D();
+            tex = this._m_bUsesBatchNode ? this._m_pobTextureAtlas.getTexture() : this._m_pobTexture;
+            if (!tex) {
+                return;
             }
 
-            if (this._m_bFlipY) {
-                cc.SWAP(left, right);
-            }
+            var atlasWidth = tex.getPixelsWide();
+            var atlasHeight = tex.getPixelsHigh();
 
-            this._m_sQuad.bl.texCoords.u = left;
-            this._m_sQuad.bl.texCoords.v = top;
-            this._m_sQuad.br.texCoords.u = left;
-            this._m_sQuad.br.texCoords.v = bottom;
-            this._m_sQuad.tl.texCoords.u = right;
-            this._m_sQuad.tl.texCoords.v = top;
-            this._m_sQuad.tr.texCoords.u = right;
-            this._m_sQuad.tr.texCoords.v = bottom;
-        }
-        else {
-            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.size.height * 2 - 2) / (2 * atlasHeight);
-            }
-            else {
-                left = rect.origin.x / atlasWidth;
-                right = left + rect.size.width / atlasWidth;
-                top = rect.origin.y / atlasHeight;
-                bottom = top + rect.size.height / atlasHeight;
-            } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+            var left, right, top, bottom;
 
-            if (this._m_bFlipX) {
-                cc.SWAP(left, right);
-            }
+            if (this._m_bRectRotated) {
+                if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+                    left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
+                    right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
+                    top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
+                    bottom = top + (rect.size.width * 2 - 2) / (2 * atlasHeight);
+                }else {
+                    left = rect.origin.x / atlasWidth;
+                    right = left + (rect.size.height / atlasWidth);
+                    top = rect.origin.y / atlasHeight;
+                    bottom = top + (rect.size.width / atlasHeight);
+                }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
-            if (this._m_bFlipY) {
-                cc.SWAP(top, bottom);
-            }
 
-            this._m_sQuad.bl.texCoords.u = left;
-            this._m_sQuad.bl.texCoords.v = bottom;
-            this._m_sQuad.br.texCoords.u = right;
-            this._m_sQuad.br.texCoords.v = bottom;
-            this._m_sQuad.tl.texCoords.u = left;
-            this._m_sQuad.tl.texCoords.v = top;
-            this._m_sQuad.tr.texCoords.u = right;
-            this._m_sQuad.tr.texCoords.v = top;
+                if (this._m_bFlipX) {
+                    cc.SWAP(top, bottom);
+                }
+
+                if (this._m_bFlipY) {
+                    cc.SWAP(left, right);
+                }
+
+                this._m_sQuad.bl.texCoords.u = left;
+                this._m_sQuad.bl.texCoords.v = top;
+                this._m_sQuad.br.texCoords.u = left;
+                this._m_sQuad.br.texCoords.v = bottom;
+                this._m_sQuad.tl.texCoords.u = right;
+                this._m_sQuad.tl.texCoords.v = top;
+                this._m_sQuad.tr.texCoords.u = right;
+                this._m_sQuad.tr.texCoords.v = bottom;
+            }else {
+                if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+                    left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
+                    right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
+                    top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
+                    bottom = top + (rect.size.height * 2 - 2) / (2 * atlasHeight);
+                }
+                else {
+                    left = rect.origin.x / atlasWidth;
+                    right = left + rect.size.width / atlasWidth;
+                    top = rect.origin.y / atlasHeight;
+                    bottom = top + rect.size.height / atlasHeight;
+                } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+
+                if (this._m_bFlipX) {
+                    cc.SWAP(left, right);
+                }
+
+                if (this._m_bFlipY) {
+                    cc.SWAP(top, bottom);
+                }
+
+                this._m_sQuad.bl.texCoords.u = left;
+                this._m_sQuad.bl.texCoords.v = bottom;
+                this._m_sQuad.br.texCoords.u = right;
+                this._m_sQuad.br.texCoords.v = bottom;
+                this._m_sQuad.tl.texCoords.u = left;
+                this._m_sQuad.tl.texCoords.v = top;
+                this._m_sQuad.tr.texCoords.u = right;
+                this._m_sQuad.tr.texCoords.v = top;
+            }
         }
     },
     // BatchNode methods
@@ -692,72 +687,73 @@ cc.Sprite = cc.Node.extend({
         this._super();
 
         //TODO need to fixed
-        //draw some image(temp code)
-        //direct draw image by canvas drawImage
-        cc.drawingUtil.drawImage(this._spriteImage,cc.ccp(this.getPositionX(),this.getPositionY()));
-        return;
+        if(cc.renderContextType == cc.kCanvas){
+            //draw some image(temp code)
+            //direct draw image by canvas drawImage
+            cc.drawingUtil.drawImage(this._m_pobTexture,cc.ccp(this.getPositionX(),this.getPositionY()));
+            return;
+        }else{
+            cc.Assert(!this._m_bUsesBatchNode, "");
 
+            // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Unneeded states: -
+            var newBlend = this._m_sBlendFunc.src != cc.BLEND_SRC || this._m_sBlendFunc.dst != cc.BLEND_DST;
+            if (newBlend) {
+                //TODO
+                //glBlendFunc(this._m_sBlendFunc.src, this._m_sBlendFunc.dst);
+            }
 
-        cc.Assert(!this._m_bUsesBatchNode, "");
+            //#define kQuadSize  sizeof(this._m_sQuad.bl)
+            if (this._m_pobTexture) {
+                //TODO
+                //glBindTexture(GL_TEXTURE_2D, this._m_pobTexture.getName());
+            }
+            else {
+                //TODO
+                //glBindTexture(GL_TEXTURE_2D, 0);
+            }
 
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Unneeded states: -
-        var newBlend = this._m_sBlendFunc.src != cc.BLEND_SRC || this._m_sBlendFunc.dst != cc.BLEND_DST;
-        if (newBlend) {
+            var offset = this._m_sQuad;
+
+            // vertex
+            var diff = cc.offsetof(cc.V3F_C4B_T2F, cc.vertices);
             //TODO
-            //glBlendFunc(this._m_sBlendFunc.src, this._m_sBlendFunc.dst);
-        }
+            // glVertexPointer(3, GL_FLOAT, kQuadSize, (offset + diff));
 
-        //#define kQuadSize  sizeof(this._m_sQuad.bl)
-        if (this._m_pobTexture) {
+            // color
+            diff = cc.offsetof(cc.V3F_C4B_T2F, cc.colors);
             //TODO
-            //glBindTexture(GL_TEXTURE_2D, this._m_pobTexture.getName());
-        }
-        else {
+            // glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
+
+            // tex coords
+            diff = cc.offsetof(cc.V3F_C4B_T2F, cc.texCoords);
             //TODO
-            //glBindTexture(GL_TEXTURE_2D, 0);
+            //glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+
+            //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+            if (newBlend) {
+                //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+            }
+
+            if (cc.SPRITE_DEBUG_DRAW == 1) {
+                // draw bounding box
+                var s = new cc.Size();
+                s = this.m_tContentSize;
+                var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
+                cc.DrawPoly(vertices, 4, true);
+            }
+            else if (cc.SPRITE_DEBUG_DRAW == 2) {
+                // draw texture box
+                var s = new cc.Size();
+                s = this._m_obRect.size;
+                var offsetPix = new cc.Point();
+                offsetPix = this.getOffsetPositionInPixels();
+                var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
+                cc.drawingUtil.DrawPoly(vertices, 4, true);
+            } // CC_SPRITE_DEBUG_DRAW
         }
-
-        var offset = this._m_sQuad;
-
-        // vertex
-        var diff = cc.offsetof(cc.V3F_C4B_T2F, cc.vertices);
-        //TODO
-        // glVertexPointer(3, GL_FLOAT, kQuadSize, (offset + diff));
-
-        // color
-        diff = cc.offsetof(cc.V3F_C4B_T2F, cc.colors);
-        //TODO
-        // glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
-
-        // tex coords
-        diff = cc.offsetof(cc.V3F_C4B_T2F, cc.texCoords);
-        //TODO
-        //glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
-
-        //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-
-        if (newBlend) {
-            //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        }
-
-        if (cc.SPRITE_DEBUG_DRAW == 1) {
-            // draw bounding box
-            var s = new cc.Size();
-            s = this.m_tContentSize;
-            var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
-            cc.DrawPoly(vertices, 4, true);
-        }
-        else if (cc.SPRITE_DEBUG_DRAW == 2) {
-            // draw texture box
-            var s = new cc.Size();
-            s = this._m_obRect.size;
-            var offsetPix = new cc.Point();
-            offsetPix = this.getOffsetPositionInPixels();
-            var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
-            cc.DrawPoly(vertices, 4, true);
-        } // CC_SPRITE_DEBUG_DRAW
     },
 // CCNode overrides
     addChild:function (pChild, zOrder) {
@@ -1052,16 +1048,17 @@ cc.Sprite = cc.Node.extend({
     _updateBlendFunc:function () {
         cc.Assert(!this._m_bUsesBatchNode, "CCSprite: _updateBlendFunc doesn't work when the sprite is rendered using a CCSpriteSheet");
 
-        // it's possible to have an untextured sprite
-        if (!this._m_pobTexture || !this._m_pobTexture.getHasPremultipliedAlpha()) {
-            this._m_sBlendFunc.src = cc.GL_SRC_ALPHA;
-            this._m_sBlendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
-            this.setIsOpacityModifyRGB(false);
-        }
-        else {
-            this._m_sBlendFunc.src = cc.BLEND_SRC;
-            this._m_sBlendFunc.dst = cc.BLEND_DST;
-            this.setIsOpacityModifyRGB(true);
+        if(cc.renderContextType == cc.kWebGL){
+            // it's possible to have an untextured sprite
+            if (!this._m_pobTexture || !this._m_pobTexture.getHasPremultipliedAlpha()) {
+                this._m_sBlendFunc.src = cc.GL_SRC_ALPHA;
+                this._m_sBlendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+                this.setIsOpacityModifyRGB(false);
+            } else {
+                this._m_sBlendFunc.src = cc.BLEND_SRC;
+                this._m_sBlendFunc.dst = cc.BLEND_DST;
+                this.setIsOpacityModifyRGB(true);
+            }
         }
     },
     // CCTextureProtocol
