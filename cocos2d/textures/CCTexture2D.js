@@ -36,25 +36,25 @@ var cc = cc = cc || {};
  */
 cc.kCCTexture2DPixelFormat_Automatic = 0;
 //! 32-bit texture: RGBA8888
-cc.kCCTexture2DPixelFormat_RGBA8888 = null;
+cc.kCCTexture2DPixelFormat_RGBA8888 = 1;
 //! 24-bit texture: RGBA888
-cc.kCCTexture2DPixelFormat_RGB888 = null;
+cc.kCCTexture2DPixelFormat_RGB888 = 2;
 //! 16-bit texture without Alpha channel
-cc.kCCTexture2DPixelFormat_RGB565 = null;
+cc.kCCTexture2DPixelFormat_RGB565 = 3;
 //! 8-bit textures used as masks
-cc.kCCTexture2DPixelFormat_A8 = null;
+cc.kCCTexture2DPixelFormat_A8 = 4;
 //! 8-bit intensity texture
-cc.kCCTexture2DPixelFormat_I8 = null;
+cc.kCCTexture2DPixelFormat_I8 = 5;
 //! 16-bit textures used as masks
-cc.kCCTexture2DPixelFormat_AI88 = null;
+cc.kCCTexture2DPixelFormat_AI88 = 6;
 //! 16-bit textures: RGBA4444
-cc.kCCTexture2DPixelFormat_RGBA4444 = null;
+cc.kCCTexture2DPixelFormat_RGBA4444 = 7;
 //! 16-bit textures: RGB5A1
-cc.kCCTexture2DPixelFormat_RGB5A1 = null;
+cc.kCCTexture2DPixelFormat_RGB5A1 = 8;
 //! 4-bit PVRTC-compressed texture: PVRTC4
-cc.kCCTexture2DPixelFormat_PVRTC4 = null;
+cc.kCCTexture2DPixelFormat_PVRTC4 = 9;
 //! 2-bit PVRTC-compressed texture: PVRTC2
-cc.kCCTexture2DPixelFormat_PVRTC2 = null;
+cc.kCCTexture2DPixelFormat_PVRTC2 = 10;
 
 //! Default texture format: RGBA8888
 cc.kCCTexture2DPixelFormat_Default = cc.kCCTexture2DPixelFormat_RGBA8888,
@@ -77,7 +77,6 @@ if (cc.FONT_LABEL_SUPPORT) {
 if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
     //TODO include CCTextureCache.h
 }
-
 
 // If the image has alpha, you can create RGBA8 (32-bit) or RGBA4 (16-bit) or RGB5A1 (16-bit)
 // Default is: RGBA8888 (32-bit textures)
@@ -206,7 +205,8 @@ cc.Texture2D = cc.Class.extend({
         return this._m_bHasPremultipliedAlpha;
     },
     description:function () {
-        var ret = "<cc.Texture2D | Name = " + this._m_uName + " | Dimensions = " + this._m_uPixelsWide + " x " + this._m_uPixelsHigh + " | Coordinates = (" + this._m_fMaxS + ", " + this._m_fMaxT + ")>";
+        var ret = "<cc.Texture2D | Name = " + this._m_uName + " | Dimensions = " + this._m_uPixelsWide + " x " + this._m_uPixelsHigh
+            + " | Coordinates = (" + this._m_fMaxS + ", " + this._m_fMaxT + ")>";
         return ret;
     },
     /** These functions are needed to create mutable textures */

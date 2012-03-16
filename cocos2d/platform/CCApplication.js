@@ -34,10 +34,14 @@ cc.kOrientationLandscapeLeft = 2;
 /// Device oriented horizontally, home button on the left
 cc.kOrientationLandscapeRight = 3;
 
+cc.kCanvas = 0;
+cc.kWebGL = 1;
+
 cc.drawingUtil = null;
 cc.renderContext = null;
 cc.canvas = null;
 cc.gameDiv = null;
+cc.renderContextType= cc.kCanvas;
 
 window.requestAnimFrame = (function(){
     return  window.requestAnimationFrame       ||
@@ -63,7 +67,7 @@ cc.setup = function(){
             cc.canvas = gameCanvas;
             cc.renderContext = cc.canvas.getContext("2d");
             cc.gameDiv = document.body;
-            cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
+            cc.renderContextType= cc.kCanvas;
             //document
             break;
         case 1:
@@ -80,7 +84,7 @@ cc.setup = function(){
                 cc.canvas = getElement;
                 cc.gameDiv = getElement.parentNode;
                 cc.renderContext = cc.canvas.getContext("2d");
-                cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
+                cc.renderContextType= cc.kCanvas;
             }else if(getElement instanceof HTMLDivElement){
                 //HTMLDivElement
                 var gameCanvas  = document.createElement("Canvas");
@@ -90,8 +94,8 @@ cc.setup = function(){
                 getElement.appendChild(gameCanvas);
                 cc.canvas = gameCanvas;
                 cc.renderContext = cc.canvas.getContext("2d");
-                cc.gameDiv = document.body;
-                cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
+                cc.gameDiv = getElement;
+                cc.renderContextType= cc.kCanvas;
             }
 
             break;
@@ -99,6 +103,10 @@ cc.setup = function(){
             break;
         case 3:
             break;
+    }
+
+    if(cc.renderContextType == cc.kCanvas){
+        cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
 };
 

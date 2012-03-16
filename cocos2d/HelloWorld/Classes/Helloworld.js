@@ -116,8 +116,8 @@ var Helloworld = cc.Layer.extend({
         //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
 
         //this.addChild(helloSprite,0);
-        var pSprite = new cc.Sprite();
-        pSprite.setSpriteImage(this.helloImg);
+        var pSprite = cc.Sprite.spriteWithFile("helloworld.png");
+        //pSprite.setSpriteImage(this.helloImg);
         this.addChild(pSprite,-1);
 
         var lb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
