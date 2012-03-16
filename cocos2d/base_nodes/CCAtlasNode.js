@@ -200,11 +200,6 @@ cc.AtlasNode = cc.Node.extend(
         return this._m_bIsOpacityModifyRGB;
     },
 
-    updateOpacityModifyRGB:function()
-    {
-        this._m_bIsOpacityModifyRGB = this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha();
-    },
-
     // CCAtlasNode - CocosNodeTexture protocol
 
     getBlendFunc:function()
