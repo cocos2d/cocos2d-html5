@@ -278,6 +278,9 @@ cc.Node = cc.Class.extend({
     getPositionLua:function () {
         return this._m_tPosition;
     },
+    getPosition:function () {
+        return this._m_tPosition;
+    },
     getPositionX:function () {
         return this._m_tPosition.x;
     },
