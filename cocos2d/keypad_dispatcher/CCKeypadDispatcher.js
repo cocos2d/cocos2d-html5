@@ -259,7 +259,6 @@ cc.KeypadDispatcher = cc.Class.extend({
             }
             this._m_pHandlersToAdd = [];
         }
-
         return true;
     },
 
