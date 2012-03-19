@@ -592,10 +592,10 @@ cc.MoveTo.actionwithDuration = function(duration, position)
  x and y are relative to the position of the object.
  Duration is is seconds.
  */
-cc.MoveBy = cc.ActionInterval.extend({
+cc.MoveBy = cc.MoveTo.extend({
     initWithDuration:function(duration, position)
     {
-        if (this._super(duration))
+        if (this._super(duration, position))
         {
             this._m_delta = position;
             return true;
@@ -606,7 +606,7 @@ cc.MoveBy = cc.ActionInterval.extend({
     startWithTarget:function(pTarget)
     {
         var dTmp = this._m_delta;
-        cc.MoveTo.startWithTarget(pTarget);
+        this._super(pTarget);
         this._m_delta = dTmp;
     },
     reverse: function()
