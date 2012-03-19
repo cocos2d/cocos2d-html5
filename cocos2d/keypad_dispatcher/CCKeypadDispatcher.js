@@ -198,7 +198,7 @@ cc.KeypadDispatcher = cc.Class.extend({
 
         if (pHandler)
         {
-            this._m_pDelegates.addObject(pHandler);
+            this._m_pDelegates.push(pHandler);
         }
     },
     /**
@@ -206,17 +206,10 @@ cc.KeypadDispatcher = cc.Class.extend({
      */
     forceRemoveDelegate: function(pDelegate)
     {
-        var pHandler;
-        var iter;
-
-        for (iter = this._m_pDelegates.begin(); iter != this._m_pDelegates.end(); ++iter)
+        var i = this._m_pDelegates.indexOf(pDelegate);
+        if(i != -1)
         {
-            pHandler = iter;
-            if (pHandler && pHandler.getDelegate() == pDelegate)
-            {
-                this._m_pDelegates.removeObject(pHandler);
-                break;
-            }
+            this._m_pDelegates.splice(this._m_pDelegates.indexOf(pDelegate),1);
         }
     },
     /**
@@ -231,19 +224,19 @@ cc.KeypadDispatcher = cc.Class.extend({
             this._keydown[e.keyCode] = true;
             //execute all deletegate that registered a keyboard event
             var keys = this._keydown;
-            this._m_pDelegates.every(function(pDelegate)
+            for(var i = 0; i < this._m_pDelegates.length; i++)
             {
-                pDelegate.keyDown(keys);
-            });
+                this._m_pDelegates[i].keyDown(keys);
+            }
         }
         else if(!keydown && this._keydown[e.keyCode])//if keyup and our keymap have that key in it
         {
             this._keydown.splice(e.keyCode,1);
             var keys = this._keydown;
-            this._m_pDelegates.every(function(pDelegate)
+            for(var i = 0; i < this._m_pDelegates.length; i++)
             {
-                pDelegate.keyUp(keys);
-            });
+                this._m_pDelegates[i].keyUp(keys);
+            }
         }
         this._m_bLocked = false;
         if (this._m_bToRemove)
