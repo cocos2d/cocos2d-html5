@@ -235,7 +235,7 @@ cc.KeypadDispatcher = cc.Class.extend({
             var keys = this._keydown;
             for(var i = 0; i < this._m_pDelegates.length; i++)
             {
-                this._m_pDelegates[i].keyUp(keys);
+                this._m_pDelegates[i].keyUp(e.keyCode);
             }
         }
         this._m_bLocked = false;
@@ -259,7 +259,6 @@ cc.KeypadDispatcher = cc.Class.extend({
             }
             this._m_pHandlersToAdd = [];
         }
-
         return true;
     },
 
