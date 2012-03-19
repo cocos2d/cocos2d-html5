@@ -127,6 +127,8 @@ var Helloworld = cc.Layer.extend({
         var circle = new CircleSprite();
         this.addChild(circle,2);
 
+        lb.runAction(cc.MoveBy.actionWithDuration(1.5,cc.ccp(50,50)));
+
         return true;
     },
     // a selector callback
