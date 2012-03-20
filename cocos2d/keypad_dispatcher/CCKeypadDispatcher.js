@@ -150,6 +150,7 @@ cc.s_KeypadDispatcher = null;
  */
 cc.KeypadDispatcher = cc.Class.extend({
     _keydown:[],
+    _delayedKeyUp:[],
     /**
      @brief add delegate to concern keypad msg
      */
@@ -213,11 +214,27 @@ cc.KeypadDispatcher = cc.Class.extend({
         }
     },
     /**
+     @brief clear the keyup array just before mainloop finishes, to ensure the keydown is atleast executed once
+     */
+    clearKeyUp: function()
+    {
+        for(var i = 0; i < this._delayedKeyUp.length; i++)
+        {
+            if(this._keydown[this._delayedKeyUp[i]])
+            {
+                this._keydown.splice(this._delayedKeyUp[i],1);
+            }
+        }
+        this._delayedKeyUp = [];
+    },
+    /**
      @brief dispatch the key pad msg
      */
     dispatchKeypadMSG: function(e, keydown)
     {
         this._m_bLocked = true;
+        e.stopPropagation();
+        e.preventDefault();
         //update keymap
         if(keydown && !this._keydown[e.keyCode])//if keydown and our keymap doesnt have it
         {
@@ -231,8 +248,7 @@ cc.KeypadDispatcher = cc.Class.extend({
         }
         else if(!keydown && this._keydown[e.keyCode])//if keyup and our keymap have that key in it
         {
-            this._keydown.splice(e.keyCode,1);
-            var keys = this._keydown;
+            this._delayedKeyUp.push(e.keyCode);
             for(var i = 0; i < this._m_pDelegates.length; i++)
             {
                 this._m_pDelegates[i].keyUp(e.keyCode);
