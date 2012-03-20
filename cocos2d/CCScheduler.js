@@ -132,24 +132,17 @@ cc.ArrayContainsObject = function(arr,findObj){
   return cc.ArrayGetIndexOfObject(arr,findObj) != -1;
 };
 
-cc.HASH_FIND_INT = function(head,findInt){
-    var ret = null;
-
-    if(head == null){
-        return ret;
+cc.HASH_FIND_INT = function(arr,findInt){
+    if(arr == null){
+        return null;
     }
 
-    if(head.hh.target == findInt)
-        return head;
-
-    for(var curr = head.hh;curr != null;){
-        if(curr.target == findInt){
+    for(var i=0; i< arr.length;i++){
+        if(arr[i].target == findInt){
             return curr;
         }
-        curr = curr.hh;
     }
-
-    return ret;
+    return null;
 };
 
 cc.HASH_ADD_INT = function(head,intfield,add){
@@ -247,6 +240,7 @@ cc.Timer = cc.Class.extend({
 
         if(this._m_fElapsed >= this._m_fInterval){
             if(this._m_pfnSelector != null){
+                //TODO NEED TEST
                 this._m_pTarget[this._m_pfnSelector](this._m_fElapsed);
                 this._m_fElapsed = 0;
             }
@@ -320,20 +314,6 @@ cc.Scheduler = cc.Class.extend({
     },
 
     /**
-     * @brief delete object from Array
-     * @private
-     * @param Source Array
-     * @param delete Object
-     */
-    _arrayRemove:function(array,delObj){
-        for(var i = 0; i< array.length;i++){
-            if(array[i] == delObj){
-                array.splice(i,1);
-            }
-        }
-    },
-
-    /**
      * @brief find Object from Array
      * @param Source Array
      * @param destination object
@@ -356,12 +336,12 @@ cc.Scheduler = cc.Class.extend({
 
         if(element!=null){
             //list entry
-            this._arrayRemove(element.list,element.entry);
+            cc.ArrayRemoveObject(element.list,element.entry);
             element.entry = null;
 
             //hash entry
             element.target = null;
-            this._arrayRemove(this._m_pHashForUpdates,element);
+            cc.ArrayRemoveObject(this._m_pHashForUpdates,element);
             element == null;
         }
     },
@@ -372,12 +352,13 @@ cc.Scheduler = cc.Class.extend({
     _init:function(){
         this._m_fTimeScale = 1.0;
 
-        this._m_pUpdatesNegList = null;
-        this._m_pUpdates0List = null;
-        this._m_pUpdatesPosList = null;
+        this._m_pUpdatesNegList = [];
+        this._m_pUpdates0List = [];
+        this._m_pUpdatesPosList = [];
 
-        this._m_pHashForUpdates = null;
-        this._m_pHashForSelectors = null;
+        this._m_pHashForUpdates = [];
+        this._m_pHashForSelectors = [];
+
         this._m_pCurrentTarget = null;
         this._m_bCurrentTargetSalvaged = false;
         this._m_bUpdateHashLocked = false;
@@ -393,22 +374,13 @@ cc.Scheduler = cc.Class.extend({
 
         // empey list ?
         if(!ppList){
+            ppList = [];
             ppList.push(pListElement);
-            //cc.DL_APPEND(ppList, pListElement);
         }else{
             var bAdded = false;
-
-            for(var pElement = ppList;pElement == null;pElement = pElement.next){
-                if(nPriority < pElement.priority){
-                    if(pElement == ppList){
-                        cc.DL_PREPEND(ppList, pListElement);
-                    }else{
-                        pListElement.next = pElement;
-                        pListElement.prev = pElement.prev;
-
-                        pElement.prev.next = pListElement;
-                        pElement.prev = pListElement;
-                    }
+            for(var i=0; i< ppList.length;i++){
+                if(nPriority < ppList[i].priority){
+                    cc.ArrayAppendObjectToIndex(ppList,pListElement,i);
                     bAdded = true;
                     break;
                 }
@@ -416,14 +388,14 @@ cc.Scheduler = cc.Class.extend({
 
             // Not added? priority has the higher value. Append it.
             if(!bAdded){
-                cc.DL_APPEND(ppList, pListElement);
+                ppList.push(pListElement);
             }
         }
 
         //update hash entry for quick access
         var pHashElement = new tHashUpdateEntry(ppList,pListElement,pTarget,null);
-
-        // HASH_ADD_INT(_m_pHashForUpdates, target, pHashElement);
+        //cc.HASH_ADD_INT(this._m_pHashForUpdates, pTarget, pHashElement);
+        this._m_pHashForUpdates.push(pHashElement);
     },
 
     /**
@@ -431,13 +403,13 @@ cc.Scheduler = cc.Class.extend({
      */
     _appendIn:function(ppList,pTarget,bPaused){
         var pListElement = new tListEntry(null,null,pTarget,0,bPaused,false);
-
-        cc.DL_APPEND(ppList, pListElement);
+        //cc.DL_APPEND(ppList, pListElement);
+        ppList.push(pListElement);
 
         //update hash entry for quicker access
         var pHashElement = new tHashUpdateEntry(ppList,pListElement,pTarget,null);
-
-        cc.HASH_ADD_INT(this._m_pHashForUpdates, pTarget, pHashElement);
+        this._m_pHashForUpdates.push(pHashElement);
+        //cc.HASH_ADD_INT(this._m_pHashForUpdates, pTarget, pHashElement);
     },
 
     //-----------------------public method-------------------------
@@ -467,50 +439,48 @@ cc.Scheduler = cc.Class.extend({
 
         //Iterate all over the Updates selectors
         var pEntry,pTmp;
-        for(pEntry = this._m_pUpdatesNegList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
+        var i =0;
+        for(i=0;i<this._m_pUpdatesNegList.length;i++){
+            pEntry = this._m_pUpdatesNegList[i];
             if((!pEntry.paused)&&(!pEntry.makedForDeletion)){
                 pEntry.target.update(dt);
             }
         }
 
         // updates with priority == 0
-        for(pEntry = this._m_pUpdates0List;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
+        for(i=0;i<this._m_pUpdates0List.length;i++){
+            pEntry = this._m_pUpdates0List[i];
             if((!pEntry.paused)&&(!pEntry.makedForDeletion)){
                 pEntry.target.update(dt);
             }
         }
 
         // updates with priority > 0
-        for(pEntry = this._m_pUpdatesPosList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
+        for(i=0;i<this._m_pUpdatesPosList.length;i++){
+            pEntry = this._m_pUpdatesPosList[i];
             if((!pEntry.paused)&&(!pEntry.makedForDeletion)){
                 pEntry.target.update(dt);
             }
         }
 
         //Interate all over the custom selectors
-        for(var elt = this._m_pHashForSelectors; elt != null;){
-            this._m_pCurrentTarget = elt;
+        var elt ;
+        for(i =0;i<this._m_pHashForSelectors.length ; i++){
+            this._m_pCurrentTarget = this._m_pHashForSelectors[i];
+            elt = this._m_pCurrentTarget;
             this._m_bCurrentTargetSalvaged = false;
 
             if(!this._m_pCurrentTarget.paused){
                 // The 'timers' array may change while inside this loop
-                for(elt.timerIndex = 0; elt.timerIndex < elt.timers.length;++(elt.timerIndex)){
+                for(elt.timerIndex = 0; elt.timerIndex < elt.timers.length;elt.timerIndex++){
                     elt.currentTimer = elt.timers[elt.timerIndex];
                     elt.currentTimerSalvaged = false;
 
                     elt.currentTimer.update(dt);
-
-                    if(elt.currentTimerSalvaged){
-                        // The currentTimer told the remove itself. To prevent the timer from
-                        // accidentally deallocating itself before finishing its step, we retained
-                        // it. Now that step is done, it's safe to release it.
-                        elt.currentTimer.release();
-                    }
                     elt.currentTimer = null;
                 }
             }
 
-            elt = elt.hh.next;
             if((this._m_bCurrentTargetSalvaged) &&(this._m_pCurrentTarget.timers.length == 0)){
                 this._removeHashElement(this._m_pCurrentTarget);
             }
@@ -518,22 +488,22 @@ cc.Scheduler = cc.Class.extend({
 
         //delete all updates that are marked for deletion
         // updates with priority < 0
-        for(pEntry = this._m_pUpdatesNegList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
-            if(pEntry.makedForDeletion){
+        for(i=0;i<this._m_pUpdatesNegList.length;i++){
+            if(this._m_pUpdatesNegList[i].makedForDeletion){
                 this._removeUpdateFromHash(pEntry);
             }
         }
 
         // updates with priority == 0
-        for(pEntry = this._m_pUpdates0List;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
-            if(pEntry.makedForDeletion){
+        for(i=0;i<this._m_pUpdates0List.length;i++){
+            if(this._m_pUpdates0List[i].makedForDeletion){
                 this._removeUpdateFromHash(pEntry);
             }
         }
 
         // updates with priority > 0
-        for(pEntry = this._m_pUpdatesPosList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
-            if(pEntry.makedForDeletion){
+        for(i=0;i<this._m_pUpdatesPosList.length;i++){
+            if(this._m_pUpdatesPosList[i].makedForDeletion){
                 this._removeUpdateFromHash(pEntry);
             }
         }
@@ -555,13 +525,13 @@ cc.Scheduler = cc.Class.extend({
 
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
 
-        if(pElement != null){
+        if(!pElement){
             // Is this the 1st element ? Then set the pause level to all the selectors of this target
             pElement = new tHashSelectorEntry(null,pTarget,0,null,null,bPaused,null);
-
-            cc.HASH_ADD_INT(this._m_pHashForSelectors, target, pElement);
+            this._m_pHashForSelectors.push(pElement);
+            //cc.HASH_ADD_INT(this._m_pHashForSelectors, pTarget, pElement);
         }else{
-          cc.Assert(pElement.paused == bPaused, "");
+            cc.Assert(pElement.paused == bPaused, "Sheduler.scheduleSelector()");
         }
 
         if(pElement.timers == null){
@@ -577,10 +547,9 @@ cc.Scheduler = cc.Class.extend({
             }
         }
 
-        var pTimer = new CCTimer();
+        var pTimer = new cc.Timer();
         pTimer.initWithTarget(pTarget,pfnSelector,fInterval);
         pElement.timers.push(pTimer);
-        pTimer = null;
     },
 
     /** Schedules the 'update' selector for a given target with a given priority.
@@ -591,7 +560,7 @@ cc.Scheduler = cc.Class.extend({
     scheduleUpdateForTarget:function(pTarget,nPriority,bPaused){
         var pHashElement = cc.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
 
-        if(pHashElement != null){
+        if(pHashElement){
             if (cc.COCOS2D_DEBUG >= 1){
                 cc.Assert(pHashElement.entry.markedForDeletion,"");
             }
@@ -688,8 +657,7 @@ cc.Scheduler = cc.Class.extend({
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
 
         if(pElement != null){
-            if((!pElement.currentTimerSalvaged) &&(cc.ArrayContainsObject(pElement.timers, pElement.currentTimer))
-                ){
+            if((!pElement.currentTimerSalvaged) &&(cc.ArrayContainsObject(pElement.timers, pElement.currentTimer))){
                 pElement.currentTimerSalvaged = true;
             }
             pElement.timers.length = 0;
@@ -711,27 +679,22 @@ cc.Scheduler = cc.Class.extend({
      */
     unscheduleAllSelectors:function(){
         // Custom Selectors
-        var pElement = null;
-        var pNextElement = null;
-        for(pElement = this._m_pHashForSelectors;pElement != null;){
+        var i = 0;
+        for(i=0; i<this._m_pHashForSelectors.length;i++){
             // pElement may be removed in unscheduleAllSelectorsForTarget
-            pNextElement = pElement.hh.next;
-            this.unscheduleAllSelectorsForTarget(pElement.target);
-            pElement = pNextElement;
+            this.unscheduleAllSelectorsForTarget(this._m_pHashForSelectors[i].target);
         }
 
         //updates selectors
         var pEntry = null, pTmp = null;
-        for(pEntry = this._m_pUpdates0List;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
-            this.unscheduleUpdateForTarget(pEntry.target);
+        for(i = 0;i<this._m_pUpdates0List.length;i++){
+            this.unscheduleUpdateForTarget(this._m_pUpdates0List[i].target);
         }
-
-        for(pEntry = this._m_pUpdatesNegList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
-            this.unscheduleUpdateForTarget(pEntry.target);
+        for(i = 0;i<this._m_pUpdatesNegList.length;i++){
+            this.unscheduleUpdateForTarget(this._m_pUpdatesNegList[i].target);
         }
-
-        for(pEntry = this._m_pUpdatesPosList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
-            this.unscheduleUpdateForTarget(pEntry.target);
+        for(i = 0;i<this._m_pUpdatesPosList.length;i++){
+            this.unscheduleUpdateForTarget(this._m_pUpdatesPosList[i].target);
         }
     },
 
@@ -741,7 +704,7 @@ cc.Scheduler = cc.Class.extend({
      @since v0.99.3
      */
     pauseTarget:function(pTarget){
-        cc.Assert(pTarget != null,"");
+        cc.Assert(pTarget != null,"Scheduler.pauseTarget():entry must be non nil");
 
         //customer selectors
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
@@ -752,7 +715,7 @@ cc.Scheduler = cc.Class.extend({
         //update selector
         var pElementUpdate = cc.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
         if(pElementUpdate != null){
-            cc.Assert(pElementUpdate.entry != null, "");
+            cc.Assert(pElementUpdate.entry != null, "Scheduler.pauseTarget():entry must be non nil");
             pElementUpdate.entry.paused = true;
         }
     },

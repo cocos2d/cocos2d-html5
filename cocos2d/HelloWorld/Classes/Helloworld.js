@@ -129,7 +129,8 @@ var Helloworld = cc.Layer.extend({
         var circle = new CircleSprite();
         this.addChild(circle,2);
 
-        lb.runAction(cc.MoveBy.actionWithDuration(1.5,cc.ccp(50,50)));
+        //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
+        lb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,-260)));
 
         //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
         //this.setIsTouchEnabled(true);
