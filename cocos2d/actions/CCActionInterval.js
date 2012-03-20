@@ -578,7 +578,7 @@ cc.MoveTo = cc.ActionInterval.extend({
     _m_startPosition: new cc.Point(),
     _m_delta: new cc.Point()
 });
-cc.MoveTo.actionwithDuration = function(duration, position)
+cc.MoveTo.actionWithDuration = function(duration, position)
 {
     var pMoveTo = new cc.MoveTo();
     pMoveTo.initWithDuration(duration, position);

@@ -129,13 +129,11 @@ cc.Node = cc.Class.extend({
         }
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
-        if(pArray.length > 0) {
-            for(var i in pArray)
-            {
+        if(pArray && pArray.length > 0) {
+            for(var i in pArray){
                var pNode = pArray[i];
-                if(pNode && (0 != func))
-                {
-                    window[pNode][func]();
+                if(pNode && (0 != func)){
+                    pNode[func]();
                 }
             }
         }
@@ -463,7 +461,7 @@ cc.Node = cc.Class.extend({
         this.unscheduleAllSelectors();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, this.cleanup());
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "cleanup");
     },
     description:function () {
         var ret = "<cc.Node | Tag =" + this._m_nTag + ">";
@@ -837,7 +835,7 @@ cc.Node = cc.Class.extend({
      During onEnter you can't a "sister/brother" node.
      */
     onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, this.onEnter);
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
         this.resumeSchedulerAndActions();
         this._m_bIsRunning = true;
     },
@@ -847,7 +845,7 @@ cc.Node = cc.Class.extend({
      @since v0.8
      */
     onEnterTransitionDidFinish:function () {
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, this.onEnterTransitionDidFinish);
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnterTransitionDidFinish");
     },
     /** callback that is called every time the cc.Node leaves the 'stage'.
      If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes.
@@ -856,7 +854,7 @@ cc.Node = cc.Class.extend({
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._m_bIsRunning = false;
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, this.onExit);
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onExit");
     },
     // actions
 
