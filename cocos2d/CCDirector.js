@@ -970,6 +970,7 @@ cc.DisplayLinkDirector = cc.Director.extend({
 
             // release the objects
             //cc.PoolManager::getInstance()->pop();
+            cc.KeypadDispatcher.sharedDispatcher().clearKeyUp();
         }
     },
     stopAnimation: function()
