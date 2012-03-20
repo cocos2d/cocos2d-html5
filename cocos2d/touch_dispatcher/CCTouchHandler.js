@@ -44,24 +44,6 @@ cc.TouchHandler = cc.Class.extend({
         return this._m_pDelegate;
     },
     setDelegate:function(pDelegate){
-        /*
-         * RTTI may return null on android. More info please refer issue #926(cocos2d-x)
-         */
-        if (pDelegate){
-            if(pDelegate instanceof cc.TouchDelegate){
-                pDelegate.touchDelegateRetain();
-            }
-        }
-
-        /*
-         * RTTI may return null on android. More info please refer issue #926(cocos2d-x)
-         */
-        if (this._m_pDelegate)
-        {
-            if(this._m_pDelegate instanceof cc.TouchDelegate){
-                this._m_pDelegate.touchDelegateRelease();
-            }
-        }
         this._m_pDelegate = pDelegate;
     },
 

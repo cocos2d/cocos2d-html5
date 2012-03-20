@@ -71,7 +71,7 @@ cc.loadjs = function(filename)
         if(this.order+1 < cc.loadQue.length)
         {
             cc.$('head').appendChild(cc.loadQue[this.order+1]);
-            console.log(this.order);
+            //console.log(this.order);
         }
         else
         {
@@ -111,6 +111,8 @@ cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
 cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
 cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
+cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
+cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
