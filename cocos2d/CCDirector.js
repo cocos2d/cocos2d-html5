@@ -333,6 +333,7 @@ cc.Director = cc.Class.extend({
         }
         //TODO openGL stuff
         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        cc.renderContext.clearRect(0,0,cc.canvas.width,cc.canvas.height);
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
