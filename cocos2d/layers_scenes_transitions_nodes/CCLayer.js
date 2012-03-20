@@ -42,8 +42,6 @@ cc.Layer = cc.Node.extend({
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
     _m_pScriptHandlerEntry:null,
-    setAnchorPoint:null,
-    m_bIsRelativeAnchorPoint:false,
 
     init:function () {
         var bRet = false;
@@ -418,6 +416,8 @@ cc.LayerColor = cc.Layer.extend({
     },
     /// ColorLayer
     ctor:function () {
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this._m_bIsRelativeAnchorPoint = false;
         this._m_cOpacity = 0;
         this._m_tColor = cc.ccc3(0, 0, 0);
         // default blend function
