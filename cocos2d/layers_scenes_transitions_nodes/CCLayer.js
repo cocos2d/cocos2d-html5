@@ -185,7 +185,8 @@ cc.Layer = cc.Node.extend({
         }
 
         // then iterate over all the children
-        cc.Node.onEnter();
+        //cc.Node.onEnter();
+        this._super();
 
         // add this layer to concern the Accelerometer Sensor
         if (this._m_bIsAccelerometerEnabled) {
@@ -213,14 +214,13 @@ cc.Layer = cc.Node.extend({
             cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
         }
 
-        cc.Node.onExit();
+        this._super();
     },
     onEnterTransitionDidFinish:function () {
         if (this._m_bIsAccelerometerEnabled) {
             cc.Accelerometer.sharedAccelerometer().setDelegate(this);
         }
-
-        cc.Node.onEnterTransitionDidFinish();
+        this._super();
     },
     // default implements are used to call script callback if exist
     ccTouchBegan:function (pTouch, pEvent) {
