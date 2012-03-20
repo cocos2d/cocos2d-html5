@@ -30,6 +30,12 @@
 
 
 var cc = cc = cc || {};
+/**
+ @brief
+ you must extend the keypadDelegate and
+ implement your own game logic in
+ keydown and keyup functions
+ */
 cc.KeypadDelegate = cc.Class.extend({
     keyDown:function(){},
     keyUp:function(){}
