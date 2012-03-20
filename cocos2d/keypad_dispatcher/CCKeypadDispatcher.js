@@ -150,6 +150,7 @@ cc.s_KeypadDispatcher = null;
  */
 cc.KeypadDispatcher = cc.Class.extend({
     _keydown:[],
+    _delayedKeyUp:[],
     /**
      @brief add delegate to concern keypad msg
      */
@@ -198,7 +199,7 @@ cc.KeypadDispatcher = cc.Class.extend({
 
         if (pHandler)
         {
-            this._m_pDelegates.addObject(pHandler);
+            this._m_pDelegates.push(pHandler);
         }
     },
     /**
@@ -206,18 +207,25 @@ cc.KeypadDispatcher = cc.Class.extend({
      */
     forceRemoveDelegate: function(pDelegate)
     {
-        var pHandler;
-        var iter;
-
-        for (iter = this._m_pDelegates.begin(); iter != this._m_pDelegates.end(); ++iter)
+        var i = this._m_pDelegates.indexOf(pDelegate);
+        if(i != -1)
         {
-            pHandler = iter;
-            if (pHandler && pHandler.getDelegate() == pDelegate)
+            this._m_pDelegates.splice(this._m_pDelegates.indexOf(pDelegate),1);
+        }
+    },
+    /**
+     @brief clear the keyup array just before mainloop finishes, to ensure the keydown is atleast executed once
+     */
+    clearKeyUp: function()
+    {
+        for(var i = 0; i < this._delayedKeyUp.length; i++)
+        {
+            if(this._keydown[this._delayedKeyUp[i]])
             {
-                this._m_pDelegates.removeObject(pHandler);
-                break;
+                this._keydown.splice(this._delayedKeyUp[i],1);
             }
         }
+        this._delayedKeyUp = [];
     },
     /**
      @brief dispatch the key pad msg
@@ -225,25 +233,26 @@ cc.KeypadDispatcher = cc.Class.extend({
     dispatchKeypadMSG: function(e, keydown)
     {
         this._m_bLocked = true;
+        e.stopPropagation();
+        e.preventDefault();
         //update keymap
         if(keydown && !this._keydown[e.keyCode])//if keydown and our keymap doesnt have it
         {
             this._keydown[e.keyCode] = true;
             //execute all deletegate that registered a keyboard event
             var keys = this._keydown;
-            this._m_pDelegates.every(function(pDelegate)
+            for(var i = 0; i < this._m_pDelegates.length; i++)
             {
-                pDelegate.keyDown(keys);
-            });
+                this._m_pDelegates[i].keyDown(keys);
+            }
         }
         else if(!keydown && this._keydown[e.keyCode])//if keyup and our keymap have that key in it
         {
-            this._keydown.splice(e.keyCode,1);
-            var keys = this._keydown;
-            this._m_pDelegates.every(function(pDelegate)
+            this._delayedKeyUp.push(e.keyCode);
+            for(var i = 0; i < this._m_pDelegates.length; i++)
             {
-                pDelegate.keyUp(keys);
-            });
+                this._m_pDelegates[i].keyUp(e.keyCode);
+            }
         }
         this._m_bLocked = false;
         if (this._m_bToRemove)
@@ -266,7 +275,6 @@ cc.KeypadDispatcher = cc.Class.extend({
             }
             this._m_pHandlersToAdd = [];
         }
-
         return true;
     },
 
