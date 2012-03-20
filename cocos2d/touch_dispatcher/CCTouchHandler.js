@@ -65,13 +65,6 @@ cc.TouchHandler = cc.Class.extend({
 
         this._m_pDelegate = pDelegate;
 
-        /*
-         * RTTI may return null on android. More info please refer issue #926(cocos2d-x)
-         */
-        if(pDelegate instanceof cc.TouchDelegate){
-            pDelegate.touchDelegateRetain();
-        }
-
         this._m_nPriority = nPriority;
         this._m_nEnabledSelectors = 0;
 
