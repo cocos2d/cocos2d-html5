@@ -322,18 +322,18 @@ cc.SpriteFrameCache = cc.Class.extend({
     }
 });
 
-cc.SpriteFrameCache.pSharedSpriteFrameCache = null;
+cc.pSharedSpriteFrameCache = null;
 
 /** Returns the shared instance of the Sprite Frame cache */
 cc.SpriteFrameCache.sharedSpriteFrameCache = function () {
-    if (!this.pSharedSpriteFrameCache) {
-        this.pSharedSpriteFrameCache = new cc.SpriteFrameCache();
-        this.pSharedSpriteFrameCache.init();
+    if (!cc.pSharedSpriteFrameCache) {
+        cc.pSharedSpriteFrameCache = new cc.SpriteFrameCache();
+        cc.pSharedSpriteFrameCache.init();
     }
-    return this.pSharedSpriteFrameCache;
+    return cc.pSharedSpriteFrameCache;
 };
 
 /** Purges the cache. It releases all the Sprite Frames and the retained instance. */
 cc.SpriteFrameCache.purgeSharedSpriteFrameCache = function () {
-    this.pSharedSpriteFrameCache = null;
+    cc.pSharedSpriteFrameCache = null;
 };
