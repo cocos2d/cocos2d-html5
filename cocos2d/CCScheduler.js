@@ -190,14 +190,6 @@ function tHashSelectorEntry(timers,target,timerIndex,currentTimer,currentTimerSa
     this.hh = hh;
 }
 
-// Hash Element used for "script functions with interval"
-function tHashScriptFuncEntry(timer,paused,funcName,hh){
-    this.timer = timer;
-    this.paused = paused;
-    this.funcName = funcName;
-    this.hh = hh;
-}
-
 
 /** @brief Light weight timer */
 cc.Timer = cc.Class.extend({
@@ -275,11 +267,11 @@ cc.Timer.timerWithTarget = function(pTarget,pfnSelector,fSeconds){
         throw new Error("timerWithTarget'argument can't is null");
 
     if(arguments.length > 2){
-        var pTimer = new CCTimer();
+        var pTimer = new cc.Timer();
         pTimer.initWithTarget(pTarget,pfnSelector);
         return pTimer;
     }else{
-        var pTimer = new CCTimer();
+        var pTimer = new cc.Timer();
         pTimer.initWithTarget(pTarget,pfnSelector,fSeconds);
         return pTimer;
     }
@@ -299,16 +291,16 @@ cc._pSharedScheduler = null;
  */
 cc.Scheduler = cc.Class.extend({
     _m_fTimeScale:0.0,
-    _m_pUpdatesNegList:null,                             // list of priority < 0
-    _m_pUpdates0List:null,                               // list priority == 0
-    _m_pUpdatesPosList:null,                             // list priority > 0
-    _m_pHashForUpdates:null,                             // hash used to fetch quickly the list entries for pause,delete,etc
+    _m_pUpdatesNegList:[],                             // list of priority < 0
+    _m_pUpdates0List:[],                               // list priority == 0
+    _m_pUpdatesPosList:[],                             // list priority > 0
+    _m_pHashForUpdates:[],                             // hash used to fetch quickly the list entries for pause,delete,etc
 
-    _m_pHashForSelectors:null,                           //Used for "selectors with interval"
+    _m_pHashForSelectors:[],                           //Used for "selectors with interval"
+
     _m_pCurrentTarget:null,
     _m_bCurrentTargetSalvaged:false,
     _m_bUpdateHashLocked:false,                          //If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
-    _m_pHashForScriptFunctions:null,                    // Used for "script function call back with interval"
 
     ctor:function(){
     },
@@ -322,7 +314,7 @@ cc.Scheduler = cc.Class.extend({
 
         pElement.target = null;
 
-        this._arrayRemove(this._m_pHashForSelectors,pElement);
+        cc.ArrayRemoveObject(this._m_pHashForSelectors,pElement);
 
         pElement = null;
     },
@@ -383,11 +375,11 @@ cc.Scheduler = cc.Class.extend({
         this._m_pUpdatesNegList = null;
         this._m_pUpdates0List = null;
         this._m_pUpdatesPosList = null;
+
         this._m_pHashForUpdates = null;
         this._m_pHashForSelectors = null;
         this._m_pCurrentTarget = null;
         this._m_bCurrentTargetSalvaged = false;
-        this._m_pHashForScriptFunctions = null;
         this._m_bUpdateHashLocked = false;
 
         return true;
@@ -401,7 +393,8 @@ cc.Scheduler = cc.Class.extend({
 
         // empey list ?
         if(!ppList){
-            cc.DL_APPEND(ppList, pListElement);
+            ppList.push(pListElement);
+            //cc.DL_APPEND(ppList, pListElement);
         }else{
             var bAdded = false;
 
@@ -547,14 +540,6 @@ cc.Scheduler = cc.Class.extend({
 
         this._m_bUpdateHashLocked = false;
         this._m_pCurrentTarget = null;
-
-        //Interate all script functions
-        for(var elt = this._m_pHashForScriptFunctions;elt != null;){
-            if(!elt.paused){
-                elt.timer.update(dt);
-            }
-            elt = elt.hh.next;
-        }
     },
 
     /** The scheduled method will be called every 'interval' seconds.
@@ -565,7 +550,7 @@ cc.Scheduler = cc.Class.extend({
      @since v0.99.3
      */
     scheduleSelector:function(pfnSelector, pTarget,fInterval,bPaused){
-        cc.Assert(pfnSelector, "");
+        cc.Assert(pfnSelector, "scheduler.scheduleSelector()");
         cc.Assert(pTarget, "");
 
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
@@ -748,15 +733,6 @@ cc.Scheduler = cc.Class.extend({
         for(pEntry = this._m_pUpdatesPosList;(pEntry != null) &&(pTmp = pEntry.next,1);pEntry = pTmp){
             this.unscheduleUpdateForTarget(pEntry.target);
         }
-
-        //unschedule all script functions
-        for(var elt = this._m_pHashForScriptFunctions;elt != null;){
-            var pNextElement = elt.hh.next;
-            //elt.timer.release();
-            cc.HASH_DEL(this._m_pHashForScriptFunctions, elt);
-            //elt = null;
-            elt = pNextElement;
-        }
     },
 
     /** Pauses the target.
@@ -800,7 +776,7 @@ cc.Scheduler = cc.Class.extend({
         var pElementUpdate = cc.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
 
         if(pElementUpdate != null){
-            cc.Assert(pElementUpdate.entry != null, "");
+            cc.Assert(pElementUpdate.entry != null, "Scheduler.resumeTarget():entry must be non nil");
             pElementUpdate.entry.paused = false;
         }
     },
@@ -809,7 +785,7 @@ cc.Scheduler = cc.Class.extend({
      @since v1.0.0
      */
     isTargetPaused:function(pTarget){
-        cc.Assert( pTarget != null, "target must be non nil" );
+        cc.Assert( pTarget != null, "Scheduler.isTargetPaused():target must be non nil" );
 
         // Custom selectors
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);

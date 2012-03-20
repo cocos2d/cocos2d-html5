@@ -118,7 +118,7 @@ cc.Layer = cc.Node.extend({
     setIsTouchEnabled:function (enabled) {
         if (this._m_bIsTouchEnabled != enabled) {
             this._m_bIsTouchEnabled = enabled;
-            if (this.m_bIsRunning) {
+            if (this._m_bIsRunning) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
                 }
