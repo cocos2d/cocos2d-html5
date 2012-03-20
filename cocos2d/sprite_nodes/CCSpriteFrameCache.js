@@ -111,7 +111,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var frameKey = key.toString();
                     for (var i in aliases) {
                         if (this._m_pSpriteFramesAliases[i]) {
-                            cc.LOG("cocos2d: WARNING: an alias with name %s already exists", i);
+                            cc.LOG("cocos2d: WARNING: an alias with name "+i+" already exists");
                         }
                         this._m_pSpriteFramesAliases[i] = frameKey;
                     }
@@ -163,7 +163,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     // append .png
                     texturePath = texturePath + ".png";
 
-                    cc.LOG("cocos2d: cc.SpriteFrameCache: Trying to use file %s as texture", texturePath.toString());
+                    cc.LOG("cocos2d: cc.SpriteFrameCache: Trying to use file "+texturePath.toString()+ " as texture");
                 }
 
                 var pTexture = new cc.Texture2D();
@@ -195,7 +195,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                         this.addSpriteFramesWithFile(plist, texture);
                     }
                     else {
-                        cc.LOG("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found %s", textureFileName);
+                        cc.LOG("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found " + textureFileName);
                     }
                 }
                 break;
@@ -230,7 +230,7 @@ cc.SpriteFrameCache = cc.Class.extend({
         for (var key in this._m_pSpriteFrames) {
             var spriteFrame =  null;
             if (spriteFrame == this._m_pSpriteFrames[key]) {
-                cc.LOG("cocos2d: cc.SpriteFrameCache: removing unused frame: %s", key);
+                cc.LOG("cocos2d: cc.SpriteFrameCache: removing unused frame:"+key);
                 delete(this._m_pSpriteFrames[key]);
             }
         };
@@ -307,7 +307,7 @@ cc.SpriteFrameCache = cc.Class.extend({
             if (key) {
                 frame = this._m_pSpriteFrames[key.toString()];
                 if (!frame) {
-                    cc.LOG("cocos2d: cc.SpriteFrameCahce: Frame '%s' not found", pszName);
+                    cc.LOG("cocos2d: cc.SpriteFrameCahce: Frame "+pszName+" not found");
                 }
             }
         }
