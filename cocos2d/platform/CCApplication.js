@@ -34,48 +34,91 @@ cc.kOrientationLandscapeLeft = 2;
 /// Device oriented horizontally, home button on the left
 cc.kOrientationLandscapeRight = 3;
 
+cc.kCanvas = 0;
+cc.kWebGL = 1;
+
+cc.drawingUtil = null;
+cc.renderContext = null;
+cc.canvas = null;
+cc.gameDiv = null;
+cc.renderContextType= cc.kCanvas;
+
+window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame       ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame    ||
+        window.oRequestAnimationFrame      ||
+        window.msRequestAnimationFrame
+})();
+
 //setup game context
+cc.setup = function(){
+    //Browser Support Information
+
+    //event register
+    switch(arguments.length){
+        case 0:
+            //add canvas at document
+            var gameCanvas  = document.createElement("Canvas");
+            gameCanvas.setAttribute("id", "gameCanvas");
+            gameCanvas.setAttribute("width",480);
+            gameCanvas.setAttribute("height",320);
+            document.body.appendChild(gameCanvas);
+            cc.canvas = gameCanvas;
+            cc.renderContext = cc.canvas.getContext("2d");
+            cc.gameDiv = document.body;
+            cc.renderContextType= cc.kCanvas;
+            //document
+            break;
+        case 1:
+            var cName = arguments[0];
+            var getElement = null;
+            if(typeof(cName) == "string"){
+                getElement = document.getElementById(cName);
+            }else{
+                getElement = arguments[0];
+            }
+
+            if(getElement instanceof HTMLCanvasElement){
+                //HTMLCanvasElement
+                cc.canvas = getElement;
+                cc.gameDiv = getElement.parentNode;
+                cc.renderContext = cc.canvas.getContext("2d");
+                cc.renderContextType= cc.kCanvas;
+            }else if(getElement instanceof HTMLDivElement){
+                //HTMLDivElement
+                var gameCanvas  = document.createElement("Canvas");
+                gameCanvas.setAttribute("id", "gameCanvas");
+                gameCanvas.setAttribute("width",getElement.width);
+                gameCanvas.setAttribute("height",getElement.height);
+                getElement.appendChild(gameCanvas);
+                cc.canvas = gameCanvas;
+                cc.renderContext = cc.canvas.getContext("2d");
+                cc.gameDiv = getElement;
+                cc.renderContextType= cc.kCanvas;
+            }
+
+            break;
+        case 2:
+            break;
+        case 3:
+            break;
+    }
+
+    if(cc.renderContextType == cc.kCanvas){
+        cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
+    }
+};
+
+
 
 cc.Application = cc.Class.extend(
     {
-        _parentDiv:null,
-
-        //Canvas
-        _gameCanvas: null,
-
-        //canvas context
-        _renderContext:null,
-
-        //event register
-
-        //DrawingTool
-        _drawingUtil:null,
-
-        //some envoronment variables
-
-        //Browser Support Information
-
         ctor:function(){
             this._m_nAnimationInterval = 0;
             cc.Assert(!cc.sm_pSharedApplication,"CCApplication ctor");
         },
 
-
-        setRenderContext:function(context){
-            this._renderContext = context;
-
-            //temp code
-            this._drawingUtil = new cc.DrawingPrimitiveCanvas();
-            this._drawingUtil.setRenderContext(context);
-        },
-
-        getRenderContext:function(){
-            return this._renderContext;
-        },
-
-        getDrawingUtil:function(){
-          return this._drawingUtil;
-        },
         /**
          @brief	Callback by CCDirector for limit FPS.
          @interval       The time, which expressed in second in second, between current frame and next.
@@ -124,9 +167,21 @@ cc.Application = cc.Class.extend(
                 return 0;
             }
             // TODO, need to be fixed.
-            console.log(this._m_nAnimationInterval * 1000);
-            var callback = function(){cc.Director.sharedDirector().mainLoop();};
-            setInterval(callback, this._m_nAnimationInterval * 1000);
+            if(window.requestAnimFrame){
+                var callback = function(){
+                    cc.Director.sharedDirector().mainLoop();
+                    window.requestAnimFrame(callback);
+                };
+                cc.Log(window.requestAnimFrame);
+                window.requestAnimFrame(callback);
+            }
+            else{
+                var callback = function(){
+                    cc.Director.sharedDirector().mainLoop();
+                };
+                setInterval(callback, this._m_nAnimationInterval * 1000);
+            }
+
         },
         _m_nAnimationInterval:null
 

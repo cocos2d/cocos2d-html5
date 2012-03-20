@@ -278,6 +278,9 @@ cc.Node = cc.Class.extend({
     getPositionLua:function () {
         return this._m_tPosition;
     },
+    getPosition:function () {
+        return this._m_tPosition;
+    },
     getPositionX:function () {
         return this._m_tPosition.x;
     },
@@ -637,7 +640,7 @@ cc.Node = cc.Class.extend({
             for (var i in this._m_pChildren) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && (pNode._m_nZOrder > z )) {
-                    this._m_pChildren._insertObject(child, index);
+                    cc.ArrayAppendObjectToIndex(this._m_pChildren,child,index);
                 }
                 index++;
             }
@@ -650,7 +653,7 @@ cc.Node = cc.Class.extend({
     reorderChild:function (child, zOrder) {
         cc.Assert(child != null, "Child must be non-nil");
 
-        this._m_pChildren.removeObject(child);
+        cc.ArrayRemoveObject(this._m_pChildren,child);
 
         this._insertChild(child, zOrder);
     },

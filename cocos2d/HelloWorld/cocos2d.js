@@ -75,10 +75,10 @@ cc.loadjs = function(filename)
         }
         else
         {
+            cc.setup("gameCanvas");
             //we are ready to run the game
             cc.AppController.shareAppController().didFinishLaunchingWithOptions();
-            var gameContext = document.getElementById("gameConvas").getContext("2d");
-            cc.Application.sharedApplication().setRenderContext(gameContext);
+
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
@@ -100,6 +100,10 @@ cc.loadjs('base_nodes/CCNode.js');//6
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
+cc.loadjs('textures/CCTextureCache.js');//12
+cc.loadjs('actions/CCAction.js');//7
+cc.loadjs('actions/CCActionInterval.js');//7
+cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10

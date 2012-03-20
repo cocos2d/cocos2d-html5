@@ -31,12 +31,8 @@
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
     draw:function(){
-        //
-        var gameContext = cc.Application.sharedApplication().getRenderContext();
-        var tools = cc.Application.sharedApplication().getDrawingUtil();
-
-        gameContext.fillStyle = "rgba(255,255,255,1)";
-        gameContext.strokeStyle = "rgba(255,255,255,1)";
+        cc.renderContext.fillStyle = "rgba(255,255,255,1)";
+        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
         //gameContext.clearRect(0,0,480,320);
 
         //var points = [new cc.Point(20,20),new cc.Point(300,100),new cc.Point(400,350),new cc.Point(100,400)];
@@ -49,7 +45,7 @@ var CircleSprite = cc.Sprite.extend({
         this._radians += 6;
         if(this._radians > 360)
             this._radians = 0;
-        tools.drawCircle(new cc.Point(40,280),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
+        cc.drawingUtil.drawCircle(new cc.Point(40,280),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
 
         //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
         //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
@@ -120,16 +116,18 @@ var Helloworld = cc.Layer.extend({
         //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
 
         //this.addChild(helloSprite,0);
-        var pSprite = new cc.Sprite();
-        pSprite.setSpriteImage(this.helloImg);
-        this.addChild(pSprite,0);
+        var pSprite = cc.Sprite.spriteWithFile("helloworld.png");
+        //pSprite.setSpriteImage(this.helloImg);
+        this.addChild(pSprite,-1);
 
         var lb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         lb.setPosition(cc.ccp(180,300));
-        this.addChild(lb,0);
+        this.addChild(lb,1);
 
         var circle = new CircleSprite();
-        this.addChild(circle,0);
+        this.addChild(circle,2);
+
+        lb.runAction(cc.MoveBy.actionWithDuration(1.5,cc.ccp(50,50)));
 
         return true;
     },
