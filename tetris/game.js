@@ -236,8 +236,8 @@ Game.tick = function () {
  */
 Game.start = function () {
 	// load tile frames
-	cc.SpriteFrameCache.addSpriteFramesWithFile("tiles.plist");
-	
+	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("tiles.plist");
+
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
 	Game.batchNode = new cc.SpriteBatchNode("tiles.png");
 	Game.batchNode.setPosition(new cc.Point(0, 0));
@@ -265,7 +265,7 @@ Game.start = function () {
 		}
 	}, 0);
 
-	scene.registerAsTouchHandler();
+/*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
 		this.initialPoint = points[0];
 		this.movedBlock = false;
@@ -294,13 +294,14 @@ Game.start = function () {
 		}
 		Game.movedBlock = false;
 	};
-
+*/
 	Game.scene = scene;
 	// play the music (not at full volume, and loop)
-	cc.AudioManager.playBackgroundMusic("music.mp3", true);
-	cc.AudioManager.setBackgroundMusicVolume(0.2);
+	//cc.AudioManager.playBackgroundMusic("music.mp3", true);
+	//cc.AudioManager.setBackgroundMusicVolume(0.2);
 
 	// run the game scene with a transition
-	var transitionScene = new cc.TransitionTurnOffTiles(1.0, Game.scene);
-	cc.Director.pushScene(transitionScene);
+	//var transitionScene = new cc.TransitionTurnOffTiles(1.0, Game.scene);
+	//cc.Director.pushScene(transitionScene);
+    return Game.scene;
 };
