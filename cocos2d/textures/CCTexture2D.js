@@ -34,27 +34,27 @@ var cc = cc = cc || {};
  * Support for RGBA_4_4_4_4 and RGBA_5_5_5_1 was copied from:
  * https://devforums.apple.com/message/37855#37855 by a1studmuffin
  */
-cc..kCCTexture2DPixelFormat_Automatic = 0;
+cc.kCCTexture2DPixelFormat_Automatic = 0;
 //! 32-bit texture: RGBA8888
-cc.kCCTexture2DPixelFormat_RGBA8888 = null;
+cc.kCCTexture2DPixelFormat_RGBA8888 = 1;
 //! 24-bit texture: RGBA888
-cc.kCCTexture2DPixelFormat_RGB888 = null;
+cc.kCCTexture2DPixelFormat_RGB888 = 2;
 //! 16-bit texture without Alpha channel
-cc.kCCTexture2DPixelFormat_RGB565 = null;
+cc.kCCTexture2DPixelFormat_RGB565 = 3;
 //! 8-bit textures used as masks
-cc.kCCTexture2DPixelFormat_A8 = null;
+cc.kCCTexture2DPixelFormat_A8 = 4;
 //! 8-bit intensity texture
-cc.kCCTexture2DPixelFormat_I8 = null;
+cc.kCCTexture2DPixelFormat_I8 = 5;
 //! 16-bit textures used as masks
-cc.kCCTexture2DPixelFormat_AI88 = null;
+cc.kCCTexture2DPixelFormat_AI88 = 6;
 //! 16-bit textures: RGBA4444
-cc.kCCTexture2DPixelFormat_RGBA4444 = null;
+cc.kCCTexture2DPixelFormat_RGBA4444 = 7;
 //! 16-bit textures: RGB5A1
-cc.kCCTexture2DPixelFormat_RGB5A1 = null;
+cc.kCCTexture2DPixelFormat_RGB5A1 = 8;
 //! 4-bit PVRTC-compressed texture: PVRTC4
-cc.kCCTexture2DPixelFormat_PVRTC4 = null;
+cc.kCCTexture2DPixelFormat_PVRTC4 = 9;
 //! 2-bit PVRTC-compressed texture: PVRTC2
-cc.kCCTexture2DPixelFormat_PVRTC2 = null;
+cc.kCCTexture2DPixelFormat_PVRTC2 = 10;
 
 //! Default texture format: RGBA8888
 cc.kCCTexture2DPixelFormat_Default = cc.kCCTexture2DPixelFormat_RGBA8888,
@@ -69,15 +69,14 @@ cc.kCCTexture2DPixelFormat_Default = cc.kCCTexture2DPixelFormat_RGBA8888,
     cc.kTexture2DPixelFormat_RGB5A1 = cc.kCCTexture2DPixelFormat_RGB5A1,
     cc.kTexture2DPixelFormat_Default = cc.kCCTexture2DPixelFormat_Default
 
-if (cc._FONT_LABEL_SUPPORT) {
+if (cc.FONT_LABEL_SUPPORT) {
 //TODO
 // FontLabel support
 }// CC_FONT_LABEL_SUPPORT
 
-if (cc._ENABLE_CACHE_TEXTTURE_DATA) {
+if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
     //TODO include CCTextureCache.h
 }
-
 
 // If the image has alpha, you can create RGBA8 (32-bit) or RGBA4 (16-bit) or RGB5A1 (16-bit)
 // Default is: RGBA8888 (32-bit textures)
@@ -88,7 +87,7 @@ cc.PVRHaveAlphaPremultiplied_ = false;
  Extension to set the Min / Mag filter
  */
 
-function ccTexParams(minFilter, magFilter, wrapS, wrapT) {
+function _ccTexParams(minFilter, magFilter, wrapS, wrapT) {
     this.minFilter = minFilter;
     this.magFilter = magFilter;
     this.wrapS = wrapS;
@@ -103,7 +102,7 @@ function ccTexParams(minFilter, magFilter, wrapS, wrapT) {
  * Depending on how you create the cc.Texture2D object, the actual image area of the texture might be smaller than the texture dimensions i.e. "contentSize" != (pixelsWide, pixelsHigh) and (maxS, maxT) != (1.0, 1.0).
  * Be aware that the content of the generated textures will be upside-down!
  */
-cc..CCTexture2D = cc.Class.extend({
+cc.Texture2D = cc.Class.extend({
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
     _m_bPVRHaveAlphaPremultiplied:null,
     _m_ePixelFormat:null,
@@ -118,7 +117,7 @@ cc..CCTexture2D = cc.Class.extend({
     /*public:*/
     ctor:function () {
         // implementation CCTexture2D (PVRTC);
-        if (cc._SUPPORT_PVRTC) {
+        if (cc.SUPPORT_PVRTC) {
             /**
              Extensions to make it easy to create a cc.Texture2D object from a PVRTC file
              Note that the generated textures don't have their alpha premultiplied - use the blending mode (cc.GL_SRC_ALPHA, cc.GL_ONE_MINUS_SRC_ALPHA).
@@ -156,12 +155,12 @@ cc..CCTexture2D = cc.Class.extend({
                 this._m_uPixelsHigh = length;
                 this._m_fMaxS = 1.0;
                 this._m_fMaxT = 1.0;
-                this._m_bHasPremultipliedAlpha = PVRHaveAlphaPremultiplied_;
+                this._m_bHasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
                 this._m_ePixelFormat = pixelFormat;
 
                 return true;
             };
-        }// cc._SUPPORT_PVRTC
+        }// cc.SUPPORT_PVRTC
     },
     /** pixel format of the texture */
     getPixelFormat:function () {
@@ -182,8 +181,8 @@ cc..CCTexture2D = cc.Class.extend({
 //** content size *//
     getContentSize:function () {
         var ret = new cc.Size();
-        ret.width = this._m_tContentSize.width / cc._CONTENT_SCALE_FACTOR();
-        ret.height = this._m_tContentSize.height / cc._CONTENT_SCALE_FACTOR();
+        ret.width = this._m_tContentSize.width / cc.CONTENT_SCALE_FACTOR();
+        ret.height = this._m_tContentSize.height / cc.CONTENT_SCALE_FACTOR();
 
         return ret;
     },
@@ -206,7 +205,8 @@ cc..CCTexture2D = cc.Class.extend({
         return this._m_bHasPremultipliedAlpha;
     },
     description:function () {
-        var ret = "<cc.Texture2D | Name = " + this._m_uName + " | Dimensions = " + this._m_uPixelsWide + " x " + this._m_uPixelsHigh + " | Coordinates = (" + this._m_fMaxS + ", " + this._m_fMaxT + ")>";
+        var ret = "<cc.Texture2D | Name = " + this._m_uName + " | Dimensions = " + this._m_uPixelsWide + " x " + this._m_uPixelsHigh
+            + " | Coordinates = (" + this._m_fMaxS + ", " + this._m_fMaxT + ")>";
         return ret;
     },
     /** These functions are needed to create mutable textures */
@@ -214,7 +214,7 @@ cc..CCTexture2D = cc.Class.extend({
         cc.free(data);
     },
     keepData:function (data, length) {
-        cc._UNUSED_PARAM(length);
+        cc.UNUSED_PARAM(length);
         //The texture data mustn't be saved becuase it isn't a mutable texture.
         return data;
     },
@@ -346,7 +346,7 @@ cc..CCTexture2D = cc.Class.extend({
 
         var conf = cc.Configuration.sharedConfiguration();
 
-        if (cc._TEXTURE_NPOT_SUPPORT) {
+        if (cc.TEXTURE_NPOT_SUPPORT) {
             if (conf.isSupportsNPOT()) {
                 POTWide = uiImage.getWidth();
                 POTHigh = uiImage.getHeight();
@@ -373,7 +373,13 @@ cc..CCTexture2D = cc.Class.extend({
      */
     /** Initializes a texture from a string with dimensions, alignment, font name and font size */
     initWithString:function (text, dimensions, alignment, fontName, fontSize) {
-        if (cc._ENABLE_CACHE_TEXTTURE_DATA) {
+        if(arguments.length == 3){
+            fontName = arguments[1];
+            fontSize = arguments[2];
+            dimensions = cc.SizeMake(0, 0);
+            alignment = cc.TextAlignmentCenter;
+        }
+        if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
             // cache the texture data
             cc.VolatileTexture.addStringTexture(this, text, dimensions, alignment, fontName, fontSize);
         }
@@ -385,10 +391,6 @@ cc..CCTexture2D = cc.Class.extend({
             return false;
         }
         return this.initWithImage(image);
-    },
-    /** Initializes a texture from a string with font name and font size */
-    initWithString:function (text, fontName, fontSize) {
-        return this.initWithString(text, cc.SizeMake(0, 0), cc.TextAlignmentCenter, fontName, fontSize);
     },
 
     /** Initializes a texture from a PVR file */
@@ -408,7 +410,7 @@ cc..CCTexture2D = cc.Class.extend({
             this._m_uPixelsWide = pvr.getWidth();
             this._m_uPixelsHigh = pvr.getHeight();
             this._m_tContentSize = cc.SizeMake(this._m_uPixelsWide, this._m_uPixelsHigh);
-            this._m_bHasPremultipliedAlpha = PVRHaveAlphaPremultiplied_;
+            this._m_bHasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
             this._m_ePixelFormat = pvr.getFormat();
 
             this.setAntiAliasTexParameters();
@@ -471,7 +473,7 @@ cc..CCTexture2D = cc.Class.extend({
         cc.Assert(this._m_uPixelsWide == cc.NextPOT(this._m_uPixelsWide) && this._m_uPixelsHigh == cc.NextPOT(this._m_uPixelsHigh), "Mimpap texture only works in POT textures");
         //TODO
         // glBindTexture( cc.GL_TEXTURE_2D, this.this._m_uName );
-        cc.glGenerateMipmap(cc.GL_TEXTURE_2D);
+        //cc.glGenerateMipmap(cc.GL_TEXTURE_2D);
     },
 
     /** returns the bits-per-pixel of the in-memory OpenGL texture
@@ -566,7 +568,6 @@ cc..CCTexture2D = cc.Class.extend({
                 }
                 else {
                     data = new (POTHigh * POTWide * 4);
-                    cc.memset(data, 0, POTHigh * POTWide * 4);
 
                     var pPixelData = tempData;
                     var pTargetData = data;
@@ -587,7 +588,6 @@ cc..CCTexture2D = cc.Class.extend({
                 }
                 else {
                     data = new (POTHigh * POTWide * 3);
-                    cc.memset(data, 0, POTHigh * POTWide * 3);
 
                     var pPixelData = tempData;
                     var pTargetData = data;
@@ -730,5 +730,5 @@ cc.Texture2D.defaultAlphaPixelFormat = function () {
  @since v0.99.5
  */
 cc.Texture2D.PVRImagesHavePremultipliedAlpha = function (haveAlphaPremultiplied) {
-    PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
+    cc.PVRHaveAlphaPremultiplied_ = haveAlphaPremultiplied;
 };

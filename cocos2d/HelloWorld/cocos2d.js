@@ -71,12 +71,14 @@ cc.loadjs = function(filename)
         if(this.order+1 < cc.loadQue.length)
         {
             cc.$('head').appendChild(cc.loadQue[this.order+1]);
-            cc.LOG(this.order);
+            console.log(this.order);
         }
         else
         {
+            cc.setup("gameCanvas");
             //we are ready to run the game
             cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
@@ -92,14 +94,25 @@ cc.loadjs('platform/platform.js');//2
 cc.loadjs('cocoa/CCGeometry.js');//3
 cc.loadjs('cocoa/CCSet.js');//4
 cc.loadjs('platform/CCTypes.js');//5
+cc.loadjs('cocoa/CCAffineTransform.js');//5
+cc.loadjs('support/CCPointExtension.js');//12
 cc.loadjs('base_nodes/CCNode.js');//6
 cc.loadjs('platform/ccMacro.js');//7
+cc.loadjs('platform/ccConfig.js');//7
+cc.loadjs('textures/CCTexture2D.js');//12
+cc.loadjs('textures/CCTextureCache.js');//12
+cc.loadjs('actions/CCAction.js');//7
+cc.loadjs('actions/CCActionInterval.js');//7
+cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
-cc.loadjs('CCDirector.js');//11
-cc.loadjs('CCScheduler.js');//12
-cc.loadjs('platform/CCApplication.js');//13
-cc.loadjs('HelloWorld/Classes/AppDelegate.js');//14
-cc.loadjs('HelloWorld/AppControl.js');//15
-cc.loadjs('HelloWorld/Classes/Helloworld.js');//16
+cc.loadjs('label_nodes/CCLabelTTF.js');//11
+cc.loadjs('sprite_nodes/CCSprite.js');//12
+cc.loadjs('CCDirector.js');//13
+cc.loadjs('CCScheduler.js');//14
+cc.loadjs('CCDrawingPrimitives.js');//15
+cc.loadjs('platform/CCApplication.js');//16
+cc.loadjs('HelloWorld/Classes/AppDelegate.js');//17
+cc.loadjs('HelloWorld/AppControl.js');//18
+cc.loadjs('HelloWorld/Classes/Helloworld.js');//19

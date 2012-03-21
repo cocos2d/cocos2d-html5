@@ -42,7 +42,7 @@ cc.Set = cc.Class.extend(
      */
     copy:function()
     {
-        return new this.CCSet(this);
+        return new this.Set(this);
     },
 
     /**

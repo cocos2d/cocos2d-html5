@@ -37,7 +37,7 @@ cc.DEG = cc.PI*180;
  */
 //modified from c++ macro, you need to pass in the x and y variables names in string,
 // and then a reference to the whole object as third variable
-cc._SWAP = function(x, y, ref)
+cc.SWAP = function(x, y, ref)
 {
     if((typeof ref) == 'object' && (typeof ref.x) != 'undefined' && (typeof ref.y) != 'undefined')
     {
@@ -70,14 +70,14 @@ cc.RANDOM_0_1 = function()
 /** @def CC_DEGREES_TO_RADIANS
  converts degrees to radians
  */
-cc._DEGREES_TO_RADIANS = function(angle)
+cc.DEGREES_TO_RADIANS = function(angle)
 {
     return angle * cc.RAD;
 };
 /** @def CC_RADIANS_TO_DEGREES
  converts radians to degrees
  */
-cc._RADIANS_TO_DEGREES = function(angle)
+cc.RADIANS_TO_DEGREES = function(angle)
 {
     return angle * cc.DEG;
 };
@@ -85,19 +85,19 @@ cc._RADIANS_TO_DEGREES = function(angle)
 /** @def CC_BLEND_SRC
  default gl blend src function. Compatible with premultiplied alpha images.
  */
-if (cc._OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA)
+if (cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA)
 {
-    cc._BLEND_SRC = 1;
-    cc._BLEND_DST = 0x0303;
+    cc.BLEND_SRC = 1;
+    cc.BLEND_DST = 0x0303;
 }
 else{
-    cc._BLEND_SRC = 0x0302;
-    cc._BLEND_DST = 0x0303
+    cc.BLEND_SRC = 0x0302;
+    cc.BLEND_DST = 0x0303
 }
 /** @def CC_BLEND_DST
  default gl blend dst function. Compatible with premultiplied alpha images.
  */
-cc._BLEND_DST = 0x0303;
+cc.BLEND_DST = 0x0303;
 
 /** @def CC_ENABLE_DEFAULT_GL_STATES
  GL states that are enabled:
@@ -106,7 +106,7 @@ cc._BLEND_DST = 0x0303;
  - GL_TEXTURE_COORD_ARRAY
  - GL_COLOR_ARRAY
  */
-cc._ENABLE_DEFAULT_GL_STATES = function()
+cc.ENABLE_DEFAULT_GL_STATES = function()
 {
     //TODO OPENGL STUFF
     /*
@@ -123,7 +123,7 @@ cc._ENABLE_DEFAULT_GL_STATES = function()
  - GL_TEXTURE_COORD_ARRAY
  - GL_COLOR_ARRAY
  */
-cc._DISABLE_DEFAULT_GL_STATES = function()
+cc.DISABLE_DEFAULT_GL_STATES = function()
 {
     //TODO OPENGL
     /*
@@ -149,32 +149,32 @@ if(cc.FLT_EPSILON == 'undefined')
 @since v0.99.5
 @todo upto-0.99.5 check the code  for retina
                                           */
-if(cc._IS_RETINA_DISPLAY_SUPPORTED)
+if(cc.IS_RETINA_DISPLAY_SUPPORTED)
 {
     /** @def CC_CONTENT_SCALE_FACTOR
      On Mac it returns 1;
      On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
      */
-    cc._CONTENT_SCALE_FACTOR = function(){ return cc.Director.sharedDirector().getContentScaleFactor();};
+    cc.CONTENT_SCALE_FACTOR = function(){ return cc.Director.sharedDirector().getContentScaleFactor();};
 
     /** @def CC_RECT_PIXELS_TO_POINTS
      Converts a rect in pixels to points
      */
-    cc._RECT_PIXELS_TO_POINTS = function(pixel)
+    cc.RECT_PIXELS_TO_POINTS = function(pixel)
     {
-        return cc.RectMake(pixel.origin.x / cc._CONTENT_SCALE_FACTOR(),pixel.origin.y / cc._CONTENT_SCALE_FACTOR(),  pixel.size.width /cc._CONTENT_SCALE_FACTOR(),pixel.size.height / cc._CONTENT_SCALE_FACTOR() );
+        return cc.RectMake(pixel.origin.x / cc.CONTENT_SCALE_FACTOR(),pixel.origin.y / cc.CONTENT_SCALE_FACTOR(),  pixel.size.width /cc.CONTENT_SCALE_FACTOR(),pixel.size.height / cc.CONTENT_SCALE_FACTOR() );
     };
 
-    cc._RECT_POINTS_TO_RECT = function(point)
+    cc.RECT_POINTS_TO_RECT = function(point)
     {
-        return cc.RectMake(point.origin.x * cc._CONTENT_SCALE_FACTOR(), point.origin.y * cc._CONTENT_SCALE_FACTOR(), point.size.width * cc._CONTENT_SCALE_FACTOR(), point.size.height * cc._CONTENT_SCALE_FACTOR());
+        return cc.RectMake(point.origin.x * cc.CONTENT_SCALE_FACTOR(), point.origin.y * cc.CONTENT_SCALE_FACTOR(), point.size.width * cc.CONTENT_SCALE_FACTOR(), point.size.height * cc.CONTENT_SCALE_FACTOR());
     };
 }
 else
 {
-    cc._CONTENT_SCALE_FACTOR = function(){return 1;};
-    cc._RECT_PIXELS_TO_POINTS = function(p){return p};
-    cc._RECT_POINTS_TO_PIXELS = function(p){return p};
+    cc.CONTENT_SCALE_FACTOR = function(){return 1;};
+    cc.RECT_PIXELS_TO_POINTS = function(p){return p};
+    cc.RECT_POINTS_TO_PIXELS = function(p){return p};
 }
 
 /**

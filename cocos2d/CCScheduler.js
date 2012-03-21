@@ -113,6 +113,13 @@ cc.ArrayAppendObject = function(arr,addObj){
     arr.push(addObj);
 };
 
+cc.ArrayAppendObjectToIndex = function(arr,addObj,index){
+    var part1 = arr.slice( 0, index );
+    var part2 = arr.slice( index );
+    part1.push( addObj );
+    arr = ( part1.concat( part2 ) );
+};
+
 cc.ArrayGetIndexOfObject = function(arr,findObj){
     for(var i =0; i < arr.length;i++){
         if(arr[i] == findObj)
@@ -437,7 +444,7 @@ cc.Scheduler = cc.Class.extend({
         //update hash entry for quicker access
         var pHashElement = new tHashUpdateEntry(ppList,pListElement,pTarget,null);
 
-        cc.HASH_ADD_INT(this._m_pHashForUpdates, target, pHashElement);
+        cc.HASH_ADD_INT(this._m_pHashForUpdates, pTarget, pHashElement);
     },
 
     //-----------------------public method-------------------------
@@ -769,7 +776,7 @@ cc.Scheduler = cc.Class.extend({
         //update selector
         var pElementUpdate = cc.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
         if(pElementUpdate != null){
-            cc.Assert(pElementUpdate.entry != NULL, "");
+            cc.Assert(pElementUpdate.entry != null, "");
             pElementUpdate.entry.paused = true;
         }
     },
@@ -780,7 +787,7 @@ cc.Scheduler = cc.Class.extend({
      @since v0.99.3
      */
     resumeTarget:function(pTarget){
-        cc.Assert(pTarget != NULL, "");
+        cc.Assert(pTarget != null, "");
 
         // custom selectors
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
@@ -793,7 +800,7 @@ cc.Scheduler = cc.Class.extend({
         var pElementUpdate = cc.HASH_FIND_INT(this._m_pHashForUpdates,pTarget);
 
         if(pElementUpdate != null){
-            cc.Assert(pElementUpdate.entry != NULL, "");
+            cc.Assert(pElementUpdate.entry != null, "");
             pElementUpdate.entry.paused = false;
         }
     },
@@ -802,7 +809,7 @@ cc.Scheduler = cc.Class.extend({
      @since v1.0.0
      */
     isTargetPaused:function(pTarget){
-        cc.Assert( pTarget != NULL, "target must be non nil" );
+        cc.Assert( pTarget != null, "target must be non nil" );
 
         // Custom selectors
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);

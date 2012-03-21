@@ -54,13 +54,15 @@ cc.ActionManager = cc.Class.extend({
     _m_pTargets: null,
     _m_pCurrentTarget: null,
     _m_bCurrentTargetSalvaged: false,
+
     ctor: function(){
         cc.Assert(cc.gSharedManager == null,"");
     },
+
     init:function()
     {
         cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, 0, false);
-        this._m_pTargets = null;
+        this._m_pTargets = [];
 
         return true;
     },
@@ -75,20 +77,21 @@ cc.ActionManager = cc.Class.extend({
         cc.Assert(pTarget != null, "");
 
         var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
+        for(var k in this._m_pTargets){
+            if (pTarget = this._m_pTargets[k].target){
+                pElement = this._m_pTargets[k];
                 break;
             }
         }
-        if(!pElement)
-        {
-            this._m_pTargets.paused = paused;
-            this._m_pTargets.target = pTarget;
+        if(!pElement){
+            pElement = new cc.tHashElement();
+            pElement.paused = paused;
+            pElement.target = pTarget;
+
             //TODO HASH ADD INT
+            this._m_pTargets.push(pElement);
         }
+
         this._actionAllocWithHashElement(this._m_pTargets);
         cc.Assert(!(pAction in this._m_pTargets.actions),"");
         this._m_pTargets.actions.push(pAction);
@@ -96,8 +99,7 @@ cc.ActionManager = cc.Class.extend({
     },
     /** Removes all actions from all the targets.
      */
-    removeAllActions: function()
-    {
+    removeAllActions: function(){
         for(var pElement in this._m_pTargets)
         {
             var pTarget = pElement.target;
@@ -310,7 +312,7 @@ cc.ActionManager = cc.Class.extend({
         }
         if(pElement)
         {
-            pElement.paused = true;
+            pElement.paused = false;
         }
     },
     /** purges the shared action manager. It releases the retained instance.
@@ -321,22 +323,20 @@ cc.ActionManager = cc.Class.extend({
     {
         cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
     },
+
     //protected
     _removeActionAtIndex: function(uIndex, pElement)
     {
-        var pAction = pElement.actions.arr[uIndex] = new cc.Action();
+        var pAction = pElement.actions[uIndex];
 
-        if (pAction == pElement.currentAction && (! pElement.currentActionSalvaged))
-        {
-            pElement.currentAction.retain();
+        if ((pAction == pElement.currentAction) && (! pElement.currentActionSalvaged)){
             pElement.currentActionSalvaged = true;
         }
 
         pElement.actions[uIndex]= null;
 
         // update actionIndex in case we are in tick. looping over the actions
-        if (pElement.actionIndex >= uIndex)
-        {
+        if (pElement.actionIndex >= uIndex){
             pElement.actionIndex--;
         }
 
@@ -368,8 +368,8 @@ cc.ActionManager = cc.Class.extend({
             pElement.actions = [];
         }
     },
-    _update: function(dt)
-    {
+
+    update: function(dt){
         for (var elt = 0; elt < this._m_pTargets.length; elt++)
         {
             this._m_pCurrentTarget =this._m_pTargets[elt];
@@ -382,8 +382,7 @@ cc.ActionManager = cc.Class.extend({
                      this._m_pCurrentTarget.actionIndex++)
                 {
                     this._m_pCurrentTarget.currentAction = this._m_pCurrentTarget.actions[this._m_pCurrentTarget.actionIndex];
-                    if (this._m_pCurrentTarget.currentAction == null)
-                    {
+                    if (this._m_pCurrentTarget.currentAction == null){
                         continue;
                     }
 
@@ -430,9 +429,7 @@ cc.ActionManager = cc.Class.extend({
  * because it uses this, so it can not be static
  @since v0.99.0
  */
-cc.ActionManager.sharedManager = function()
-{
-    var pRet = cc.gSharedManager;
+cc.ActionManager.sharedManager = function(){
     if(!cc.gSharedManager)
     {
         cc.gSharedManager = new cc.ActionManager();
@@ -442,7 +439,7 @@ cc.ActionManager.sharedManager = function()
             delete cc.gSharedManager;
         }
     }
-    return pRet;
+    return cc.gSharedManager;
 };
 
 cc.gSharedManager = null;
