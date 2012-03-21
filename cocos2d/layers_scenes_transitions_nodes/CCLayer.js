@@ -41,7 +41,6 @@ cc.Layer = cc.Node.extend({
     _m_bIsTouchEnabled:false,
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
-    _m_pScriptHandlerEntry:null,
 
     init:function () {
         var bRet = false;
@@ -73,35 +72,9 @@ cc.Layer = cc.Node.extend({
      @since v0.8.0
      */
     registerWithTouchDispatcher:function () {
-        if (this._m_pScriptHandlerEntry) {
-            if (this._m_pScriptHandlerEntry.getIsMultiTouches()) {
-                cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
-                cc.LUALOG("[LUA] Add multi-touches event handler: %d", this._m_pScriptHandlerEntry.getHandler());
-            }
-            else {
-                cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,
-                    this._m_pScriptHandlerEntry.getPriority(),
-                    this._m_pScriptHandlerEntry.getSwallowsTouches());
-                cc.LUALOG("[LUA] Add touch event handler: %d", this._m_pScriptHandlerEntry.getHandler());
-            }
-            return;
-        }
         cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
     },
-    /** Register script touch events handler */
-    registerScriptTouchHandler:function (nHandler, bIsMultiTouches, nPriority, bSwallowsTouches) {
-        this.unregisterScriptTouchHandler();
-        this._m_pScriptHandlerEntry = cc.TouchScriptHandlerEntry.entryWithHandler(nHandler, bIsMultiTouches, nPriority, bSwallowsTouches);
-    },
-    /** Unregister script touch events handler */
-    unregisterScriptTouchHandler:function () {
-        if (this._m_pScriptHandlerEntry) {
-            this._m_pScriptHandlerEntry = null;
-        }
-    },
-    _excuteScriptTouchHandler:function (nEventType, pTouch) {
-        return cc.ScriptEngineManager.sharedManager().getScriptEngine().executeTouchEvent(this._m_pScriptHandlerEntry.getHandler(), nEventType, pTouch);
-    },
+
     /** whether or not it will receive Touch events.
      You can enable / disable touch events with this property.
      Only the touches of this node will be affected. This "method" is not propagated to it's children.
@@ -118,8 +91,7 @@ cc.Layer = cc.Node.extend({
             if (this._m_bIsRunning) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
-                }
-                else {
+                }else {
                     // have problems?
                     cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
                 }
@@ -165,8 +137,7 @@ cc.Layer = cc.Node.extend({
             if (this._m_bIsRunning) {
                 if (enabled) {
                     cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
-                }
-                else {
+                }else {
                     cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
                 }
             }
@@ -198,7 +169,6 @@ cc.Layer = cc.Node.extend({
     onExit:function () {
         if (this._m_bIsTouchEnabled) {
             cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
-            this.unregisterScriptTouchHandler();
         }
 
         // remove this layer from the delegates who concern Accelerometer Sensor
@@ -221,54 +191,14 @@ cc.Layer = cc.Node.extend({
     },
     // default implements are used to call script callback if exist
     ccTouchBegan:function (pTouch, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            return this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
-        }
         cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
     ccTouchMoved:function (pTouch, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
-            return;
-        }
     },
     ccTouchEnded:function (pTouch, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
-            return;
-        }
     },
     ccTouchCancelled:function (pTouch, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouch);
-            return;
-        }
-    },
-    // default implements are used to call script callback if exist
-    ccTouchesBegan:function (pTouches, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouches);
-            return;
-        }
-    },
-    ccTouchesMoved:function (pTouches, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouches);
-            return;
-        }
-    },
-    ccTouchesEnded:function (pTouches, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouches);
-            return;
-        }
-    },
-    ccTouchesCancelled:function (pTouches, pEvent) {
-        if (this._m_pScriptHandlerEntry) {
-            this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouches);
-            return;
-        }
     },
     addLayer:function (layer) {
         cc.Assert(this.m_pLayers, "cc.Layer addLayer");
