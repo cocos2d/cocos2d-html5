@@ -165,9 +165,7 @@ cc.SpriteBatchNode = cc.Node.extend({
         // this is likely computationally expensive
         var quantity = (this._m_pobTextureAtlas.getCapacity() + 1) * 4 / 3;
 
-        cc.LOG("cocos2d: CCSpriteBatchNode: resizing TextureAtlas capacity from [%lu] to [%lu].",
-            this._m_pobTextureAtlas.getCapacity(),
-            quantity);
+        cc.LOG("cocos2d: CCSpriteBatchNode: resizing TextureAtlas capacity from " +this._m_pobTextureAtlas.getCapacity()+" to ["+quantity+"].");
 
         if (! this._m_pobTextureAtlas.resizeCapacity(quantity)){
             // serious problems

@@ -48,7 +48,7 @@ cc.loadImage = function (imageUrl) {
     // compute image type
     var imageType = cc.computeImageFormatType(imageUrl);
     if (imageType == cc.kFmtUnKnown) {
-        cc.LOG("unsupportted format %s", imageUrl);
+        cc.LOG("unsupportted format" + imageUrl);
         return;
     }
 
@@ -150,7 +150,7 @@ cc.TextureCache = cc.Class.extend({
             (bpp == 2 ? cc.kTexture2DPixelFormat_PVRTC2 : cc.kTexture2DPixelFormat_PVRTC4))) {
             this.m_pTextures.setObject(texture, temp);
         }else {
-            cc.LOG("cocos2d: Couldn't add PVRTCImage:%s in TextureCache", path);
+            cc.LOG("cocos2d: Couldn't add PVRTCImage:" +path+ " in TextureCache" );
         }
         return texture;
     },
@@ -205,7 +205,7 @@ cc.TextureCache = cc.Class.extend({
                     this.m_pTextures[path] = texture;
                 }
                 else {
-                    cc.LOG("cocos2d: Couldn't add image:%s in TextureCache", path);
+                    cc.LOG("cocos2d: Couldn't add image:"+path+" in TextureCache");
                 }
             }
             else {
@@ -221,7 +221,7 @@ cc.TextureCache = cc.Class.extend({
                     this.m_pTextures[pathKey]= texture;
                 }
                 else {
-                    cc.LOG("cocos2d: Couldn't add image:%s in TextureCache", path);
+                    cc.LOG("cocos2d: Couldn't add image:"+path+" in TextureCache" );
                 }
             }
 
@@ -350,16 +350,10 @@ cc.TextureCache = cc.Class.extend({
             var bytes = tex.getPixelsWide() * tex.getPixelsHigh() * bpp / 8;
             totalBytes += bytes;
             count++;
-            cc.LOG("cocos2d: \"%s\" id=%lu %lu x %lu @ %ld bpp => %lu KB",
-                key,
-                tex.getName(),
-                tex.getPixelsWide(),
-                tex.getPixelsHigh(),
-                bpp,
-                bytes / 1024);
+            cc.LOG("cocos2d: '"+ tex.toString() +"' id="+tex.getName()+" " +tex.getPixelsWide()+" x "+tex.getPixelsHigh()+" @ "+bpp+" bpp => "+bytes / 1024+" KB");
         }
 
-        cc.LOG("cocos2d: TextureCache dumpDebugInfo: %ld textures, for %lu KB (%.2f MB)", count, totalBytes / 1024, totalBytes / (1024.0 * 1024.0));
+        cc.LOG("cocos2d: TextureCache dumpDebugInfo: "+count+" textures, for "+(totalBytes / 1024)+" KB ("+ (totalBytes / (1024.0 * 1024.0)).toFixed(2)+" MB)");
     },
 
 
@@ -395,7 +389,7 @@ cc.TextureCache = cc.Class.extend({
         if (tex.initWithPVRFile(key)) {
             this.m_pTextures[key] = tex;
         } else {
-            cc.LOG("cocos2d: Couldn't add PVRImage:%s in TextureCache", key);
+            cc.LOG("cocos2d: Couldn't add PVRImage:"+key+" in TextureCache");
         }
 
         return tex;

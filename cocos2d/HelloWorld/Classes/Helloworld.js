@@ -50,7 +50,9 @@ var CircleSprite = cc.Sprite.extend({
         //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
         //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
     }
+
 });
+
 
 var Helloworld = cc.Layer.extend({
     helloImg:null,
@@ -127,14 +129,29 @@ var Helloworld = cc.Layer.extend({
         var circle = new CircleSprite();
         this.addChild(circle,2);
 
-        lb.runAction(cc.MoveBy.actionWithDuration(1.5,cc.ccp(50,50)));
+        //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
+        lb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,-260)));
 
+        //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
+        //this.setIsTouchEnabled(true);
         return true;
     },
     // a selector callback
     menuCloseCallback: function(pSender)
     {
         cc.Director.sharedDirector().end();
+    },
+    ccTouchesBegan:function(pTouches,pEvent){
+        console.log("ccTouchesBegan");
+    },
+    ccTouchesMoved:function(pTouches,pEvent){
+        console.log("ccTouchesMoved");
+    },
+    ccTouchesEnded:function(pTouches,pEvent){
+        console.log("ccTouchesEnded");
+    },
+    ccTouchesCancelled:function(pTouches,pEvent){
+        console.log("ccTouchesCancelled");
     }
 });
 // there's no 'id' in cpp, so we recommand to return the exactly class pointer
@@ -160,4 +177,6 @@ Helloworld.node = function(){
         return null;
     }
 };
+
+
 

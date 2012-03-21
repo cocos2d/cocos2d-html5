@@ -333,6 +333,7 @@ cc.Director = cc.Class.extend({
         }
         //TODO openGL stuff
         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        cc.renderContext.clearRect(0,0,cc.canvas.width,cc.canvas.height);
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
@@ -729,7 +730,7 @@ cc.Director = cc.Class.extend({
             if (! this._m_pFPSLabel)
             {
                 this._m_pFPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
-                this._m_pFPSLabel.retain();
+                //this._m_pFPSLabel.retain();
             }
         }
     },
@@ -739,10 +740,11 @@ cc.Director = cc.Class.extend({
     },
     setNextScene: function()
     {
-        var runningIsTransition = (typeof(this._m_pRunningScene) != undefined);
+        var runningIsTransition = this._m_pRunningScene instanceof cc.TransitionScene;
         var newIsTransition = this._m_pNextScene instanceof cc.TransitionScene;
 
         // If it is not a transition, call onExit/cleanup
+
         if (! newIsTransition)
         {
             if (this._m_pRunningScene)
@@ -760,14 +762,14 @@ cc.Director = cc.Class.extend({
 
         if (this._m_pRunningScene)
         {
-            this._m_pRunningScene.release();
+            //this._m_pRunningScene.release();
         }
         this._m_pRunningScene = this._m_pNextScene;
         //this._m_pNextScene.retain();
         this._m_pNextScene = null;
-
-        if ((! runningIsTransition) && this._m_pRunningScene)
+        if ((! runningIsTransition) && (this._m_pRunningScene!= null))
         {
+
             this._m_pRunningScene.onEnter();
             this._m_pRunningScene.onEnterTransitionDidFinish();
         }
@@ -970,6 +972,7 @@ cc.DisplayLinkDirector = cc.Director.extend({
 
             // release the objects
             //cc.PoolManager::getInstance()->pop();
+            cc.KeypadDispatcher.sharedDispatcher().clearKeyUp();
         }
     },
     stopAnimation: function()

@@ -42,8 +42,6 @@ cc.Layer = cc.Node.extend({
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
     _m_pScriptHandlerEntry:null,
-    setAnchorPoint:null,
-    m_bIsRelativeAnchorPoint:false,
 
     init:function () {
         var bRet = false;
@@ -94,7 +92,6 @@ cc.Layer = cc.Node.extend({
     registerScriptTouchHandler:function (nHandler, bIsMultiTouches, nPriority, bSwallowsTouches) {
         this.unregisterScriptTouchHandler();
         this._m_pScriptHandlerEntry = cc.TouchScriptHandlerEntry.entryWithHandler(nHandler, bIsMultiTouches, nPriority, bSwallowsTouches);
-        this._m_pScriptHandlerEntry.retain();
     },
     /** Unregister script touch events handler */
     unregisterScriptTouchHandler:function () {
@@ -118,7 +115,7 @@ cc.Layer = cc.Node.extend({
     setIsTouchEnabled:function (enabled) {
         if (this._m_bIsTouchEnabled != enabled) {
             this._m_bIsTouchEnabled = enabled;
-            if (this.m_bIsRunning) {
+            if (this._m_bIsRunning) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
                 }
@@ -142,7 +139,7 @@ cc.Layer = cc.Node.extend({
         if (enabled != this._m_bIsAccelerometerEnabled) {
             this._m_bIsAccelerometerEnabled = enabled;
 
-            if (this.m_bIsRunning) {
+            if (this._m_bIsRunning) {
                 if (enabled) {
                     cc.Accelerometer.sharedAccelerometer().setDelegate(this);
                 }
@@ -165,7 +162,7 @@ cc.Layer = cc.Node.extend({
         if (enabled != this._m_bIsKeypadEnabled) {
             this._m_bIsKeypadEnabled = enabled;
 
-            if (this.m_bIsRunning) {
+            if (this._m_bIsRunning) {
                 if (enabled) {
                     cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
                 }
@@ -185,7 +182,8 @@ cc.Layer = cc.Node.extend({
         }
 
         // then iterate over all the children
-        cc.Node.onEnter();
+        //cc.Node.onEnter();
+        this._super();
 
         // add this layer to concern the Accelerometer Sensor
         if (this._m_bIsAccelerometerEnabled) {
@@ -213,48 +211,39 @@ cc.Layer = cc.Node.extend({
             cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
         }
 
-        cc.Node.onExit();
+        this._super();
     },
     onEnterTransitionDidFinish:function () {
         if (this._m_bIsAccelerometerEnabled) {
             cc.Accelerometer.sharedAccelerometer().setDelegate(this);
         }
-
-        cc.Node.onEnterTransitionDidFinish();
+        this._super();
     },
     // default implements are used to call script callback if exist
     ccTouchBegan:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            return _excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
+            return this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouch);
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
         cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
     ccTouchMoved:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            _excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
+            this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchEnded:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
-            _excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
+            this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchCancelled:function (pTouch, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouch);
             return;
         }
-        cc.UNUSED_PARAM(pTouch);
-        cc.UNUSED_PARAM(pEvent);
     },
     // default implements are used to call script callback if exist
     ccTouchesBegan:function (pTouches, pEvent) {
@@ -262,32 +251,24 @@ cc.Layer = cc.Node.extend({
             this._excuteScriptTouchHandler(cc.TOUCHBEGAN, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHMOVED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesEnded:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHENDED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     ccTouchesCancelled:function (pTouches, pEvent) {
         if (this._m_pScriptHandlerEntry) {
             this._excuteScriptTouchHandler(cc.TOUCHCANCELLED, pTouches);
             return;
         }
-        cc.UNUSED_PARAM(pTouches);
-        cc.UNUSED_PARAM(pEvent);
     },
     addLayer:function (layer) {
         cc.Assert(this.m_pLayers, "cc.Layer addLayer");
@@ -348,7 +329,12 @@ cc.LayerColor = cc.Layer.extend({
     setBlendFunc:function (Var) {
         this._m_tBlendFunc = Var;
     },
-    initWithColor: function(){},//TODO 2012/3/9
+    initWithColor: function(color){
+        var s = new cc.Size();
+        s = cc.Director.sharedDirector().getWinSize();
+        this.initWithColorWidthHeight(color, s.width, s.height);
+        return true;
+    },//TODO 2012/3/9
     initWithColorWidthHeight:function (color, width, height) {
         var argnum = arguments.length;
         switch (argnum) {
@@ -363,7 +349,7 @@ cc.LayerColor = cc.Layer.extend({
                 this._m_tColor.b = color.b;
                 this._m_cOpacity = color.a;
 
-                for (var i = 0; i < sizeof(this._m_pSquareVertices) / sizeof(this._m_pSquareVertices[0]); i++) {
+                for (var i = 0; i < this._m_pSquareVertices.length; i++) {
                     this._m_pSquareVertices[i].x = 0.0;
                     this._m_pSquareVertices[i].y = 0.0;
                 }
@@ -416,24 +402,22 @@ cc.LayerColor = cc.Layer.extend({
         }
     },
     setIsOpacityModifyRGB:function (bValue) {
-        cc.UNUSED_PARAM(bValue)
-    },
-    getIsOpacityModifyRGB:function () {
-        return false;
-    },
-    node:function () {
-        var pRet = new cc.LayerColor();
-        if (pRet && pRet.init()) {
-            return pRet;
-        }
-        else {
-            delete pRet;
-            pRet = null;
-            return null;
+        var argnum = arguments.length;
+        switch(argnum) {
+            case 1:
+                break;
+            case 0:
+                return false;
+                break;
+            default:
+                throw "Argument must be non-nil ";
+                break;
         }
     },
     /// ColorLayer
     ctor:function () {
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this._m_bIsRelativeAnchorPoint = false;
         this._m_cOpacity = 0;
         this._m_tColor = cc.ccc3(0, 0, 0);
         // default blend function
@@ -499,6 +483,18 @@ cc.LayerColor.layerWithColor = function (color) {
         return pLayer;
     }
     return null;
+};
+
+cc.LayerColor.node = function () {
+    var pRet = new cc.LayerColor();
+    if (pRet && pRet.init()) {
+        return pRet;
+    }
+    else {
+        delete pRet;
+        pRet = null;
+        return null;
+    }
 };
 
 //
@@ -591,7 +587,7 @@ cc.LayerGradient = cc.LayerColor.extend({
 
                 this._m_bCompressedInterpolation = true;
 
-                return cc.LayerColor.initWithColor(ccc4(start.r, start.g, start.b, 255));
+                return cc.LayerColor.initWithColor(cc.cs4(start.r, start.g, start.b, 255));
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -612,7 +608,7 @@ cc.LayerGradient = cc.LayerColor.extend({
 
         // Compressed Interpolation mode
         if (this._m_bCompressedInterpolation) {
-            var h2 = 1 / ( cc.fabsf(u.x) + cc.fabsf(u.y) );
+            var h2 = 1 / ( Math.floor(u.x) + Math.floor(u.y) );
             u = cc.ccpMult(u, h2 * c);
         }
 
@@ -642,17 +638,6 @@ cc.LayerGradient = cc.LayerColor.extend({
         this._m_pSquareColors[3].g = (E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c)));
         this._m_pSquareColors[3].b = (E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c)));
         this._m_pSquareColors[3].a = (E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c)));
-    },
-    node:function () {
-        var pRet = new cc.LayerGradient();
-        if (pRet && pRet.init()) {
-            return pRet;
-        }
-        else {
-            delete pRet;
-            pRet = null;
-            return null;
-        }
     }
 });
 
@@ -682,7 +667,17 @@ cc.LayerGradient.layerWithColor = function (start, end, v) {
             break;
     }
 };
-
+cc.LayerGradient.node = function () {
+    var pRet = new cc.LayerGradient();
+    if (pRet && pRet.init()) {
+        return pRet;
+    }
+    else {
+        delete pRet;
+        pRet = null;
+        return null;
+    }
+};
 
 /** @brief CCMultipleLayer is a CCLayer with the ability to multiplex it's children.
  Features:
@@ -694,27 +689,16 @@ cc.LayerMultiplex = cc.Layer.extend({
     m_nEnabledLayer:0,
     m_pLayers:null,
     initWithLayer:function (layer) {
-        this.m_pLayers = new cc.MutableArray(1);
+        this.m_pLayers = [];
         this.m_pLayers.addObject(layer);
         this.m_nEnabledLayer = 0;
         this.addChild(layer);
         return true;
     },
-    initWithLayers:function (layer, params) {
-        this.m_pLayers = new cc.MutableArray(5);
-        //this.m_pLayers.retain();
-
-        this.m_pLayers.addObject(layer);
-
-        var l = cc.va_arg(params, cc.Layer);
-        while (l) {
-            this.m_pLayers.addObject(l);
-            l = cc.va_arg(params, cc.Layer);
-        }
-
+    initWithLayers:function () {
+        this.m_pLayers = arguments;
         this.m_nEnabledLayer = 0;
-        this.addChild(this.m_pLayers.getObjectAtIndex(this.m_nEnabledLayer));
-
+        this.addChild(this.m_pLayers[this.m_nEnabledLayer]);
         return true;
     },
     /** switches to a certain layer indexed by n.
@@ -743,30 +727,15 @@ cc.LayerMultiplex = cc.Layer.extend({
         this.m_nEnabledLayer = n;
 
         this.addChild(this.m_pLayers.getObjectAtIndex(n));
-    },
-    node:function () {
-        var pRet = new cc.LayerMultiplex();
-        if (pRet && pRet.init()) {
-            return pRet;
-        }
-        else {
-            delete pRet;
-            pRet = null;
-            return null;
-        }
     }
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
-cc.LayerMultiplex.layerWithLayers = function (layer) {
-    var args;
-    cc.va_start(args, layer);
-
+cc.LayerMultiplex.layerWithLayers = function (/*Multiple Arguments*/) {
     var pMultiplexLayer = new cc.LayerMultiplex();
-    if (pMultiplexLayer && pMultiplexLayer.initWithLayers(layer, args)) {
-        cc.va_end(args);
+    if(pMultiplexLayer.initWithLayers(arguments))
+    {
         return pMultiplexLayer;
     }
-    cc.va_end(args);
     return null;
 };
 /**
@@ -777,4 +746,15 @@ cc.LayerMultiplex.layerWithLayer = function (layer) {
     var pMultiplexLayer = new cc.LayerMultiplex();
     pMultiplexLayer.initWithLayer(layer);
     return pMultiplexLayer;
+};
+cc.LayerMultiplex.node = function () {
+    var pRet = new cc.LayerMultiplex();
+    if (pRet && pRet.init()) {
+        return pRet;
+    }
+    else {
+        delete pRet;
+        pRet = null;
+        return null;
+    }
 };

@@ -55,6 +55,15 @@ cc.ActionManager = cc.Class.extend({
     _m_pCurrentTarget: null,
     _m_bCurrentTargetSalvaged: false,
 
+    _searchElementByTarget:function(arr,pTarget){
+        for(var k in arr){
+            if (pTarget = arr[k].target){
+                return arr[k];
+            }
+        }
+        return null;
+    },
+
     ctor: function(){
         cc.Assert(cc.gSharedManager == null,"");
     },
@@ -76,13 +85,8 @@ cc.ActionManager = cc.Class.extend({
         cc.Assert(pAction != null, "");
         cc.Assert(pTarget != null, "");
 
-        var pElement = null;
-        for(var k in this._m_pTargets){
-            if (pTarget = this._m_pTargets[k].target){
-                pElement = this._m_pTargets[k];
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
+
         if(!pElement){
             pElement = new cc.tHashElement();
             pElement.paused = paused;
@@ -92,9 +96,11 @@ cc.ActionManager = cc.Class.extend({
             this._m_pTargets.push(pElement);
         }
 
-        this._actionAllocWithHashElement(this._m_pTargets);
-        cc.Assert(!(pAction in this._m_pTargets.actions),"");
-        this._m_pTargets.actions.push(pAction);
+        this._actionAllocWithHashElement(pElement);
+        cc.Assert((pElement.actions.indexOf(pAction) == -1),"ActionManager.addAction(),");
+
+        pElement.actions.push(pAction);
+        //console.log(this._m_pTargets.actions.length);
         pAction.startWithTarget(pTarget);
     },
     /** Removes all actions from all the targets.
@@ -116,18 +122,10 @@ cc.ActionManager = cc.Class.extend({
         {
             return;
         }
-        var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
+
         //var pElement = (pTarget in this._m_pTargets)? this._m_pTargets[ptarget]: null;
-        if (pElement)
-        {
+        if (pElement){
             if (pElement.currentAction in pElement.actions && !(pElement.currentActionSalvaged))
             {
                 pElement.currentActionSalvaged = true;
@@ -158,15 +156,7 @@ cc.ActionManager = cc.Class.extend({
             return;
         }
         var pTarget = pAction.getOriginalTarget();
-        var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
 
         if (pElement)
         {
@@ -190,15 +180,7 @@ cc.ActionManager = cc.Class.extend({
         cc.Assert(tag != cc.kCCActionTagInvalid, "");
         cc.Assert(pTarget != null, "");
 
-        var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
 
         if (pElement)
         {
@@ -222,15 +204,7 @@ cc.ActionManager = cc.Class.extend({
     {
         cc.Assert(tag != cc.kCCActionTagInvalid, "");
 
-        var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
 
         if (pElement)
         {
@@ -256,6 +230,8 @@ cc.ActionManager = cc.Class.extend({
 
         return null;
     },
+
+
     /** Returns the numbers of actions that are running in a certain target.
      * Composable actions are counted as 1 action. Example:
      * - If you are running 1 Sequence of 7 actions, it will return 1.
@@ -263,15 +239,8 @@ cc.ActionManager = cc.Class.extend({
      */
     numberOfRunningActionsInTarget: function(pTarget)
     {
-        var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
+
         if (pElement)
         {
             return (pElement.actions) ? pElement.actions.length : 0;
@@ -283,15 +252,7 @@ cc.ActionManager = cc.Class.extend({
      */
     pauseTarget:function(pTarget)
     {
-        var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
         if(pElement)
         {
             pElement.paused = true;
@@ -301,15 +262,7 @@ cc.ActionManager = cc.Class.extend({
      */
     resumeTarget: function(pTarget)
     {
-        var pElement = null;
-        for(var k in this._m_pTargets)
-        {
-            if (pTarget = k.target)
-            {
-                pElement = k;
-                break;
-            }
-        }
+        var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
         if(pElement)
         {
             pElement.paused = false;
@@ -363,8 +316,7 @@ cc.ActionManager = cc.Class.extend({
     _actionAllocWithHashElement: function(pElement)
     {
         // 4 actions per Node by default
-        if (pElement.actions == null)
-        {
+        if (pElement.actions == null){
             pElement.actions = [];
         }
     },
@@ -375,7 +327,7 @@ cc.ActionManager = cc.Class.extend({
             this._m_pCurrentTarget =this._m_pTargets[elt];
             this._m_bCurrentTargetSalvaged = false;
 
-            if (! this._m_pCurrentTarget.paused)
+            if ( !this._m_pCurrentTarget.paused)
             {
                 // The 'actions' CCMutableArray may change while inside this loop.
                 for (this._m_pCurrentTarget.actionIndex = 0; this._m_pCurrentTarget.actionIndex < this._m_pCurrentTarget.actions.length;
