@@ -45,7 +45,7 @@ var CircleSprite = cc.Sprite.extend({
         this._radians += 6;
         if(this._radians > 360)
             this._radians = 0;
-        cc.drawingUtil.drawCircle(new cc.Point(40,280),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
+        cc.drawingUtil.drawCircle(this.getPosition(),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
 
         //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
         //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
@@ -56,6 +56,9 @@ var CircleSprite = cc.Sprite.extend({
 
 var Helloworld = cc.Layer.extend({
     helloImg:null,
+    helloLb:null,
+    circle:null,
+    pSprite:null,
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     init: function()
     {
@@ -118,22 +121,27 @@ var Helloworld = cc.Layer.extend({
         //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
 
         //this.addChild(helloSprite,0);
-        var pSprite = cc.Sprite.spriteWithFile("helloworld.png");
+
+
+        this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        this.helloLb.setPosition(cc.ccp(180,300));
+        this.addChild(this.helloLb,1);
+
+        this.pSprite = cc.Sprite.spriteWithFile("helloworld.png");
+        this.pSprite.setPosition(0,0);
+        //window.test = this.pSprite;
         //pSprite.setSpriteImage(this.helloImg);
-        this.addChild(pSprite,-1);
+        this.addChild(this.pSprite,0);
 
-        var lb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
-        lb.setPosition(cc.ccp(180,300));
-        this.addChild(lb,1);
-
-        var circle = new CircleSprite();
-        this.addChild(circle,2);
+        this.circle = new CircleSprite();
+        this.circle.setPosition(new cc.Point(40,280));
+        this.addChild(this.circle,2);
 
         //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
-        lb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,-260)));
+        this.helloLb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,-260)));
 
         //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
-        //this.setIsTouchEnabled(true);
+        this.setIsTouchEnabled(true);
         return true;
     },
     // a selector callback
@@ -145,7 +153,10 @@ var Helloworld = cc.Layer.extend({
         console.log("ccTouchesBegan");
     },
     ccTouchesMoved:function(pTouches,pEvent){
-        console.log("ccTouchesMoved");
+        if(pTouches){
+            //console.log(pTouches[0].locationInView().x +"   "+pTouches[0].locationInView().y);
+            this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y));
+        }
     },
     ccTouchesEnded:function(pTouches,pEvent){
         console.log("ccTouchesEnded");
