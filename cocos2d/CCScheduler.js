@@ -242,7 +242,11 @@ cc.Timer = cc.Class.extend({
         if(this._m_fElapsed >= this._m_fInterval){
             if(this._m_pfnSelector != null){
                 //TODO NEED TEST
-                this._m_pTarget[this._m_pfnSelector](this._m_fElapsed);
+                if(typeof(this._m_pfnSelector)=="string"){
+                    this._m_pTarget[this._m_pfnSelector](this._m_fElapsed);
+                }else if(typeof(this._m_pfnSelector) == "function"){
+                    this._m_pfnSelector.call(this._m_pTarget,this._m_fElapsed);
+                }
                 this._m_fElapsed = 0;
             }
         }
