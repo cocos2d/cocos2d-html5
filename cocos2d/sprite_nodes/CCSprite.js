@@ -690,6 +690,7 @@ cc.Sprite = cc.Node.extend({
         if(cc.renderContextType == cc.kCanvas){
             //draw some image(temp code)
             //direct draw image by canvas drawImage
+            //console.log("X:" + this.getPositionX() + "  Y:" + this.getPositionY());
             cc.drawingUtil.drawImage(this._m_pobTexture,cc.ccp(this.getPositionX(),this.getPositionY()));
             return;
         }else{
@@ -742,7 +743,7 @@ cc.Sprite = cc.Node.extend({
                 var s = new cc.Size();
                 s = this.m_tContentSize;
                 var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
-                cc.DrawPoly(vertices, 4, true);
+                cc.drawingUtil.drawPoly(vertices, 4, true);
             }
             else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
@@ -751,12 +752,12 @@ cc.Sprite = cc.Node.extend({
                 var offsetPix = new cc.Point();
                 offsetPix = this.getOffsetPositionInPixels();
                 var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
-                cc.drawingUtil.DrawPoly(vertices, 4, true);
+                cc.drawingUtil.drawPoly(vertices, 4, true);
             } // CC_SPRITE_DEBUG_DRAW
         }
     },
 // CCNode overrides
-    addChild:function (pChild, zOrder) {
+    addChild:function (pChild, zOrder,tag) {
         var argnum = arguments.length;
         switch (argnum) {
             case 1:

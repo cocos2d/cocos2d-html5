@@ -112,7 +112,7 @@ cc.SpriteBatchNode = cc.Node.extend({
                 }
             }
         }
-        cc.ArrayAppendObjectToIndex(this._m_pobDescendants,child, i);
+        this._m_pobDescendants = cc.ArrayAppendObjectToIndex(this._m_pobDescendants,child, i);
 
         // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
         this._superprototype.addChild.call(this,child, z, aTag);
@@ -195,7 +195,7 @@ cc.SpriteBatchNode = cc.Node.extend({
         var quad = pobSprite.getQuad();
         this._m_pobTextureAtlas.insertQuad(quad, uIndex);
 
-        cc.ArrayAppendObjectToIndex(this._m_pobDescendants,pobSprite,uIndex);
+        this._m_pobDescendants = cc.ArrayAppendObjectToIndex(this._m_pobDescendants,pobSprite,uIndex);
         //this._m_pobDescendants.insertObject(pobSprite, uIndex);
 
         // update indices
