@@ -131,6 +131,8 @@ cc.Node = cc.Class.extend({
                var pNode = pArray[i];
                 if(pNode && (typeof(func) == "string")){
                     pNode[func]();
+                }else if(pNode && (typeof(func) == "function")){
+                    func.call(pNode);
                 }
             }
         }
@@ -919,25 +921,12 @@ cc.Node = cc.Class.extend({
         cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
     },
     schedule:function (selector, interval) {
-        var argnum = arguments.length;
-        /** schedules a selector.
-         The scheduled selector will be ticked every frame
-         */
-        if (argnum < 2) {
-            this.schedule(selector, 0);
-        }
-        /** schedules a custom selector with an interval time in seconds.
-         If time is 0 it will be ticked every frame.
-         If time is 0, it is recommended to use 'scheduleUpdate' instead.
-         If the selector is already scheduled, then the interval parameter
-         will be updated without scheduling it again.
-         */
-        else {
-            cc.Assert(selector, "Argument must be non-nil");
-            cc.Assert(interval >= 0, "Argument must be positive");
-            cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._m_bIsRunning);
-        }
+        if(!interval)
+            interval = 0;
 
+        cc.Assert(selector, "Argument must be non-nil");
+        cc.Assert(interval >= 0, "Argument must be positive");
+        cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._m_bIsRunning);
     },
     /** unschedules a custom selector.*/
     unschedule:function (selector) {

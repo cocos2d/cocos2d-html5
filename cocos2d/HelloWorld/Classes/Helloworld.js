@@ -42,19 +42,21 @@ var CircleSprite = cc.Sprite.extend({
         //tools.drawPoint(new cc.Point(200,100));
         //tools.drawImage(helloImg, new cc.Point(0,0));
 
-        this._radians += 6;
         if(this._radians > 360)
             this._radians = 0;
         cc.drawingUtil.drawCircle(this.getPosition(),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
 
         //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
         //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
+    },
+    myUpdate:function(dt){
+        this._radians += 6;
     }
-
 });
 
 
 var Helloworld = cc.Layer.extend({
+    bIsMouseDown :false,
     helloImg:null,
     helloLb:null,
     circle:null,
@@ -68,7 +70,6 @@ var Helloworld = cc.Layer.extend({
         cc.LOG(test);
         if ( !test )
         {
-
             return false;
         }
 
@@ -136,6 +137,7 @@ var Helloworld = cc.Layer.extend({
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40,280));
         this.addChild(this.circle,2);
+        this.circle.schedule(this.circle.myUpdate,1/60);
 
         //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
         this.helloLb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,-260)));
@@ -150,16 +152,18 @@ var Helloworld = cc.Layer.extend({
         cc.Director.sharedDirector().end();
     },
     ccTouchesBegan:function(pTouches,pEvent){
-        console.log("ccTouchesBegan");
+        this.bIsMouseDown = true;
     },
     ccTouchesMoved:function(pTouches,pEvent){
-        if(pTouches){
-            //console.log(pTouches[0].locationInView().x +"   "+pTouches[0].locationInView().y);
-            this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y));
+        if(this.bIsMouseDown){
+            if(pTouches){
+                //console.log(pTouches[0].locationInView().x +"   "+pTouches[0].locationInView().y);
+                this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y));
+            }
         }
     },
     ccTouchesEnded:function(pTouches,pEvent){
-        console.log("ccTouchesEnded");
+        this.bIsMouseDown = false;
     },
     ccTouchesCancelled:function(pTouches,pEvent){
         console.log("ccTouchesCancelled");
