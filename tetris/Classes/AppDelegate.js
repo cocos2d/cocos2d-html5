@@ -31,7 +31,7 @@ var cc = cc = cc || {};
 
  The reason for implement as private inheritance is to hide some interface call by CCDirector.
  */
-cc.AppDelegate = cc.Class.extend(
+cc.AppDelegate = cc.Application.extend(
 {
 
     /**
@@ -62,7 +62,7 @@ cc.AppDelegate = cc.Class.extend(
         pDirector.setAnimationInterval(1.0 / 60);
 
         // create a scene. it's an autorelease object
-        var pScene = newTest.scene();
+        var pScene = Game.start();
 
         // run
         pDirector.runWithScene(pScene);
