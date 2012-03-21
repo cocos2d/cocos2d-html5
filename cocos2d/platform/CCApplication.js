@@ -117,6 +117,7 @@ cc.Application = cc.Class.extend(
         ctor:function(){
             this._m_nAnimationInterval = 0;
             cc.Assert(!cc.sm_pSharedApplication,"CCApplication ctor");
+            cc.sm_pSharedApplication  = this;
         },
 
         /**
@@ -161,8 +162,8 @@ cc.Application = cc.Class.extend(
          */
         run:function(){
             // Initialize instance and cocos2d.
-            var newAppDelegate = new cc.AppDelegate();
-            if(! newAppDelegate.initInstance() || ! newAppDelegate.applicationDidFinishLaunching())
+
+            if(! this.initInstance() || ! this.applicationDidFinishLaunching())
             {
                 return 0;
             }
@@ -192,10 +193,6 @@ cc.Application = cc.Class.extend(
  @return Current application instance pointer.
  */
 cc.Application.sharedApplication =  function(){
-
-    if(cc.sm_pSharedApplication == null){
-        cc.sm_pSharedApplication = new cc.Application();
-    }
 
     cc.Assert(cc.sm_pSharedApplication,"sharedApplication");
     return cc.sm_pSharedApplication;

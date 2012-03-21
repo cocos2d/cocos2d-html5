@@ -30,11 +30,9 @@ var cc = cc = cc || {};
 cc.AppController = cc.Class.extend(
 {
 
-
-    
     didFinishLaunchingWithOptions:function(){
         // Override point for customization after application launch.
-
+        var app = new cc.AppDelegate();
         cc.Application.sharedApplication().run();
 
         return true;
