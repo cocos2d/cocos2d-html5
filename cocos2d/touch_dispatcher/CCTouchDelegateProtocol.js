@@ -32,8 +32,8 @@ var cc = cc = cc || {};
 
 cc.Touch = cc.Class.extend({
     _m_nViewId:0,
-    _m_point:cc.PointZero,
-    _m_prevPoint:cc.PointZero,
+    _m_point:cc.PointZero(),
+    _m_prevPoint:cc.PointZero(),
     _m_iId:0,
 
     ctor:function(nViewId,x,y){},

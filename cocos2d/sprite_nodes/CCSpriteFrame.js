@@ -103,7 +103,7 @@ cc.SpriteFrame = cc.Class.extend({
             case 2:
                 var rectInPixels = new cc.Rect();
                 rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
-                return this.initWithTexture(pobTexture, rectInPixels, false, cc.PointZero, rectInPixels.size);
+                return this.initWithTexture(pobTexture, rectInPixels, false, cc.PointZero(), rectInPixels.size);
                 break;
 
         /** Initializes a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
