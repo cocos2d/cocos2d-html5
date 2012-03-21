@@ -33,7 +33,9 @@ var cc = cc = cc || {};
  */
 cc.AppDelegate = cc.Application.extend(
 {
-
+    ctor:function(){
+        this._super();
+    },
     /**
      @brief	Implement for initialize OpenGL instance, set source path, etc...
      */

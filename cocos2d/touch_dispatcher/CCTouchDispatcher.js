@@ -92,11 +92,11 @@ cc.TouchDispatcher = cc.Class.extend({
      */
     init:function(){
         this._m_bDispatchEvents = true;
-        this._m_pTargetedHandlers = [];
-        this._m_pStandardHandlers = [];
+        this._m_pTargetedHandlers = new Array();
+        this._m_pStandardHandlers = new Array();
 
-        this._m_pHandlersToAdd = [];
-        this._m_pHandlersToRemove = [];
+        this._m_pHandlersToAdd = new Array();
+        this._m_pHandlersToRemove = new Array();
 
         this._m_bToRemove = false;
         this._m_bToAdd = false;
@@ -116,8 +116,9 @@ cc.TouchDispatcher = cc.Class.extend({
      */
     addStandardDelegate:function(pDelegate,nPriority){
         var pHandler = cc.StandardTouchHandler.handlerWithDelegate(pDelegate, nPriority);
+
         if (! this._m_bLocked) {
-            this.forceAddHandler(pHandler, this._m_pStandardHandlers);
+            this._m_pStandardHandlers = this.forceAddHandler(pHandler, this._m_pStandardHandlers);
         }else{
             /* If pHandler is contained in m_pHandlersToRemove, if so remove it from m_pHandlersToRemove and retrun.
              * Refer issue #752(cocos2d-x)
@@ -135,7 +136,7 @@ cc.TouchDispatcher = cc.Class.extend({
     addTargetedDelegate:function(pDelegate,nPriority,bSwallowsTouches){
         var pHandler = cc.TargetedTouchHandler.handlerWithDelegate(pDelegate, nPriority, bSwallowsTouches);
         if (! this._m_bLocked){
-            this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
+            this._m_pTargetedHandlers = this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
         }else{
             /* If pHandler is contained in m_pHandlersToRemove, if so remove it from m_pHandlersToRemove and retrun.
              * Refer issue #752(cocos2d-x)
@@ -148,6 +149,30 @@ cc.TouchDispatcher = cc.Class.extend({
             this._m_pHandlersToAdd.push(pHandler);
             this._m_bToAdd = true;
         }
+    },
+
+    forceAddHandler:function(pHandler,pArray){
+        var u = 0;
+
+        for(var i=0;i< pArray.length;i++){
+            var h = pArray[i];
+            if(h){
+                if(h.getPriority()<pHandler.getPriority()){
+                    ++u;
+                }
+                if (h.getDelegate() == pHandler.getDelegate()){
+                    cc.Assert(0, "TouchDispatcher.forceAddHandler()");
+                    return;
+                }
+            }
+        }
+
+        return cc.ArrayAppendObjectToIndex(pArray,pHandler,u);
+    },
+
+    forceRemoveAllDelegates:function(){
+        this._m_pStandardHandlers.length = 0;
+        this._m_pTargetedHandlers.length = 0;
     },
     /** Removes a touch delegate.
      The delegate will be released
@@ -208,9 +233,8 @@ cc.TouchDispatcher = cc.Class.extend({
         var uTargetedHandlersCount = this._m_pTargetedHandlers.length;
         var uStandardHandlersCount = this._m_pStandardHandlers.length;
         var bNeedsMutableSet = (uTargetedHandlersCount && uStandardHandlersCount);
-
+        //console.log("uTargetedHandlersCount:" + uTargetedHandlersCount+ "   uStandardHandlersCount:" + uStandardHandlersCount);
         pMutableTouches = (bNeedsMutableSet ? pTouches.slice() : pTouches);
-
         var sHelper = this._m_sHandlerHelperData[uIndex];
         //
         // process the target handlers 1st
@@ -408,29 +432,6 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
-    forceAddHandler:function(pHandler,pArray){
-        var u = 0;
-
-        for(var i=0;i< pArray.length;i++){
-            var h = pArray[i];
-            if(h){
-                if(h.getPriority()<pHandler.getPriority()){
-                    ++u;
-                }
-                if (h.getDelegate() == pHandler.getDelegate()){
-                    cc.Assert(0, "TouchDispatcher.forceAddHandler()");
-                    return;
-                }
-            }
-        }
-
-        cc.ArrayAppendObjectToIndex(pArray,pHandler,u);
-    },
-    forceRemoveAllDelegates:function(){
-        this._m_pStandardHandlers.length = 0;
-        this._m_pTargetedHandlers.length = 0;
-    },
-
     rearrangeHandlers:function(pArray){
         pArray.sort(cc.less);
     }
@@ -439,6 +440,7 @@ cc.TouchDispatcher = cc.Class.extend({
 cc._pSharedDispatcher = null;
 cc.TouchDispatcher.sharedDispatcher = function(){
     if (cc._pSharedDispatcher == null){
+        //console.log("TouchDispatcher.sharedDispatcher()");
         cc._pSharedDispatcher = new cc.TouchDispatcher();
         cc._pSharedDispatcher.init();
 
@@ -461,7 +463,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
             touch.SetTouchInfo(0,mouseX,mouseY);
             var pSet = [];
             pSet.push(touch);
-            cc._pSharedDispatcher.touchesBegan(pSet,null);
+            cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet,null);
         });
 
         cc.canvas.addEventListener("mouseup",function(event){
@@ -482,10 +484,11 @@ cc.TouchDispatcher.sharedDispatcher = function(){
             touch.SetTouchInfo(0,mouseX,mouseY);
             var pSet = [];
             pSet.push(touch);
-            cc._pSharedDispatcher.touchesEnded(pSet,null);
+            cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet,null);
         });
 
         cc.canvas.addEventListener("mousemove",function(event){
+
             var el = cc.canvas;
             var pos = {left: 0, top: 0};
             while( el != null ) {
@@ -502,7 +505,8 @@ cc.TouchDispatcher.sharedDispatcher = function(){
             touch.SetTouchInfo(0,mouseX,mouseY);
             var pSet = [];
             pSet.push(touch);
-            cc._pSharedDispatcher.touchesMoved(pSet,null);
+
+            cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
         });
 
         //register canvas touch event
@@ -532,7 +536,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
                 touch.SetTouchInfo(0,mouseX,mouseY);
                 pSet.push(touch);
             }
-            cc._pSharedDispatcher.touchesBegan(pSet,null);
+            cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet,null);
             event.stopPropagation();
             event.preventDefault();
         });
@@ -562,7 +566,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
                 touch.SetTouchInfo(0,mouseX,mouseY);
                 pSet.push(touch);
             }
-            cc._pSharedDispatcher.touchesMoved(pSet,null);
+            cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
             event.stopPropagation();
             event.preventDefault();
         });
@@ -592,7 +596,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
                 touch.SetTouchInfo(0,mouseX,mouseY);
                 pSet.push(touch);
             }
-            cc._pSharedDispatcher.touchesEnded(pSet,null);
+            cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet,null);
             event.stopPropagation();
             event.preventDefault();
         });
@@ -622,7 +626,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
                 touch.SetTouchInfo(0,mouseX,mouseY);
                 pSet.push(touch);
             }
-            cc._pSharedDispatcher.touchesCancelled(pSet,null);
+            cc.TouchDispatcher.sharedDispatcher().touchesCancelled(pSet,null);
             event.stopPropagation();
             event.preventDefault();
         });
