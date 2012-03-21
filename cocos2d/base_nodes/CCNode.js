@@ -90,8 +90,8 @@ cc.Node = cc.Class.extend({
     _m_fRotation:0.0,
     _m_fScaleX:1.0,
     _m_fScaleY:1.0,
-    _m_tPosition:cc.PointZero,
-    _m_tPositionInPixels:cc.PointZero,
+    _m_tPosition:cc.PointZero(),
+    _m_tPositionInPixels:cc.PointZero(),
     _m_fSkewX:0.0,
     _m_fSkewY:0.0,
     // children (lazy allocs),
@@ -100,10 +100,10 @@ cc.Node = cc.Class.extend({
     _m_pCamera:null,
     _m_pGrid:null,
     _m_bIsVisible:true,
-    _m_tAnchorPoint:cc.PointZero,
-    _m_tAnchorPointInPixels:cc.PointZero,
-    _m_tContentSize:cc.SizeZero,
-    _m_tContentSizeInPixels:cc.SizeZero,
+    _m_tAnchorPoint:cc.PointZero(),
+    _m_tAnchorPointInPixels:cc.PointZero(),
+    _m_tContentSize:cc.SizeZero(),
+    _m_tContentSizeInPixels:cc.SizeZero(),
     _m_bIsRunning:false,
     _m_pParent:null,
     // "whole screen" objects. like Scenes and Layers, should set isRelativeAnchorPoint to false
@@ -976,11 +976,11 @@ cc.Node = cc.Class.extend({
         if (this._m_bIsTransformDirty) {
 
             this._m_tTransform = cc.AffineTransformIdentity;
-            if (!this._m_bIsRelativeAnchorPoint && !cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero)) {
+            if (!this._m_bIsRelativeAnchorPoint && !cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero())) {
                 this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, this._m_tAnchorPointInPixels.x, this._m_tAnchorPointInPixels.y);
             }
 
-            if (!cc.Point.CCPointEqualToPoint(this._m_tPositionInPixels, cc.PointZero)) {
+            if (!cc.Point.CCPointEqualToPoint(this._m_tPositionInPixels, cc.PointZero())) {
                 this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, this._m_tPositionInPixels.x, this._m_tPositionInPixels.y);
             }
 
@@ -1000,7 +1000,7 @@ cc.Node = cc.Class.extend({
                 this._m_tTransform = cc.AffineTransformScale(this._m_tTransform, this._m_fScaleX, this._m_fScaleY);
             }
 
-            if (!cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero)) {
+            if (!cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero())) {
                 this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, -this._m_tAnchorPointInPixels.x, -this._m_tAnchorPointInPixels.y);
             }
 

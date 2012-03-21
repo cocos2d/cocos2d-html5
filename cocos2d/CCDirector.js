@@ -190,7 +190,7 @@ cc.Director = cc.Class.extend({
 
         //purge?
         this._m_bPurgeDirecotorInNextLoop = false;
-        this._m_obWinSizeInPixels = this._m_obWinSizeInPoints = cc.SizeZero;
+        this._m_obWinSizeInPixels = this._m_obWinSizeInPoints = cc.SizeZero();
 
         //portrait mode default
         this._m_eDeviceOrientation = cc.DeviceOrientationPortrait;
@@ -272,7 +272,7 @@ cc.Director = cc.Class.extend({
         var newX = s.width - obPoint.x;
 
         var ret = new cc.Point();
-        ret = cc.PointZero;
+        ret = cc.PointZero();
         switch (this._m_eDeviceOrientation)
         {
             case cc.DeviceOrientationPortrait:
@@ -299,7 +299,7 @@ cc.Director = cc.Class.extend({
         var oppositeX = winSize.width - obPoint.x;
         var oppositeY = winSize.height - obPoint.y;
         var uiPoint = new cc.Point();
-        uiPoint = cc.PointZero;
+        uiPoint = cc.PointZero();
 
         switch(this._m_eDeviceOrientation)
         {

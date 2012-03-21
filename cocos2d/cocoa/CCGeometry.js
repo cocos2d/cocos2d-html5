@@ -180,11 +180,11 @@ cc.RectMake = function(x, y, width, height)
 };
 
 /* The "left bottom" point -- equivalent to CCPointMake(0, 0). */
-cc.PointZero = new cc.Point(0,0);
+cc.PointZero = function(){ return new cc.Point(0,0)};
 
 /* The "zero" size -- equivalent to CCSizeMake(0, 0). */
-cc.SizeZero = new cc.Size(0,0);
+cc.SizeZero = function(){ return new cc.Size(0,0)};
 
 /* The "zero" rectangle -- equivalent to CCRectMake(0, 0, 0, 0). */
-cc.RectZero = new cc.Rect(0,0,0,0);
+cc.RectZero = function(){ return new cc.Rect(0,0,0,0)};
 

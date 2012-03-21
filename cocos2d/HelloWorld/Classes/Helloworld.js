@@ -87,7 +87,7 @@ var Helloworld = cc.Layer.extend({
 
         // create menu, it's an autorelease object
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
-        pMenu.setPosition( cc.PointZero );
+        pMenu.setPosition( cc.PointZero() );
         this.addChild(pMenu, 1);
         */
         /////////////////////////////
