@@ -122,17 +122,14 @@ cc.Node = cc.Class.extend({
     ctor:function () {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
-        }
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            //this._m_pTransformGL = new cc.GLfloat();
             this._m_pTransformGL = 0.0;
         }
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if(pArray && pArray.length > 0) {
-            for(var i in pArray){
+            for(var i=0;i < pArray.length;i++){
                var pNode = pArray[i];
-                if(pNode && (0 != func)){
+                if(pNode && (typeof(func) == "function")){
                     pNode[func]();
                 }
             }
@@ -202,7 +199,6 @@ cc.Node = cc.Class.extend({
             this._m_bIsTransformGLDirty = true;
         }
     },
-
     /// scaleX getter
     getScaleX:function () {
         return this._m_fScaleX;
@@ -264,7 +260,6 @@ cc.Node = cc.Class.extend({
     /** get/set Position for Lua (pass number faster than CCPoint object)
 
      lua code:
-     local pos  = node:getPositionLua() -- return CCPoint object from C++
      local x, y = node:getPosition()    -- return x, y values from C++
      local x    = node:getPositionX()
      local y    = node:getPositionY()
@@ -273,9 +268,6 @@ cc.Node = cc.Class.extend({
      node:setPositionY(y)
      node:setPositionInPixels(x, y)     -- pass x, y values to C++
      */
-    getPositionLua:function () {
-        return this._m_tPosition;
-    },
     getPosition:function () {
         return this._m_tPosition;
     },
@@ -478,8 +470,7 @@ cc.Node = cc.Class.extend({
     getChildByTag:function (aTag) {
         cc.Assert(aTag != cc.kCCNodeTagInvalid, "Invalid tag");
         if(this._m_pChildren.length > 0) {
-            for(var i in this._m_pChildren)
-            {
+            for(var i=0;i< this._m_pChildren.length;i++){
                 var pNode = this._m_pChildren[i];
                 if (pNode && pNode._m_nTag == aTag)
                     return pNode;
@@ -523,8 +514,6 @@ cc.Node = cc.Class.extend({
             case 3:
                 cc.Assert(child != null, "Argument must be non-nil");
                 cc.Assert(child._m_pParent == null, "child already added. It can't be added again");
-
-
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -589,7 +578,7 @@ cc.Node = cc.Class.extend({
     removeAllChildrenWithCleanup:function (cleanup) {
         // not using detachChild improves speed here
         if (this._m_pChildren.length > 0) {
-            for (var i in this._m_pChildren) {
+            for (var i=0;i < this._m_pChildren;i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode) {
                     // IMPORTANT:
@@ -629,18 +618,16 @@ cc.Node = cc.Class.extend({
     },
     // helper used by reorderChild & add
     _insertChild:function (child, z) {
-        var index = 0;
         var a = this._m_pChildren[this._m_pChildren.length - 1];
         if (!a || a.getZOrder() <= z) {
             this._m_pChildren.push(child);
         }
         else {
-            for (var i in this._m_pChildren) {
+            for (var i =0;i < this._m_pChildren.length;i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && (pNode._m_nZOrder > z )) {
                     this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren,child,index);
                 }
-                index++;
             }
         }
         child._setZOrder(z);
@@ -690,13 +677,11 @@ cc.Node = cc.Class.extend({
 
         this.transform();
 
-        var pNode = null;
-        var i = 0;
 
         if (this._m_pChildren && this._m_pChildren.length > 0) {
             // draw children zOrder < 0
-            for (; i < this._m_pChildren.length; i++) {
-                pNode = this._m_pChildren[i];
+            for (var i = 0; i < this._m_pChildren.length; i++) {
+                var pNode = this._m_pChildren[i];
 
                 if (pNode && pNode._m_nZOrder < 0) {
                     pNode.visit();
@@ -712,8 +697,8 @@ cc.Node = cc.Class.extend({
 
         // draw children zOrder >= 0
         if (this._m_pChildren && this._m_pChildren.length > 0) {
-            for (; i < this._m_pChildren.length; i++) {
-                pNode = this._m_pChildren[i];
+            for (var i =0; i < this._m_pChildren.length; i++) {
+                var pNode = this._m_pChildren[i];
                 if (pNode) {
                     pNode.visit();
                 }
@@ -1042,9 +1027,9 @@ cc.Node = cc.Class.extend({
     nodeToWorldTransform:function () {
         var t = new cc.AffineTransform();
         t = this.nodeToParentTransform();
-        for (var p = this._m_pParent; p != null; p = p.getParent())
+        for (var p = this._m_pParent; p != null; p = p.getParent()){
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
-
+        }
         return t;
     },
     /** Returns the inverse world affine transform matrix. The matrix is in Pixels.

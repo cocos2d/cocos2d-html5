@@ -45,12 +45,13 @@ cc.Action = cc.Class.extend({
     {
         return "<CCAction | Tag = "+ this._m_nTag +">";
     },
-    copyWithZone: function(pZone)//TODO Investigate into CCZone
+    copyWithZone: function(pZone)
     {
-        var pRet = null;
-        pRet = new cc.Action();
-        pRet._m_nTag = this._m_nTag;
-        return pRet;
+        return this.copy();
+    },
+    copy: function()
+    {
+        return Object.create(this);
     },
     //! return true if the action has finished
     isDone: function(){return true;},
@@ -153,24 +154,6 @@ cc.Speed = cc.Action.extend({
         this._m_fSpeed = fRate;
         return true;
     },
-    copyWithZone: function(pZone)
-    {
-        var pNewZone = null;
-        var pRet = null;
-        if(pZone && pZone.m_pCopyObject) //in case of being called at sub class
-        {
-            pRet = (pZone.m_pCopyObject);
-        }
-        else
-        {
-            pRet = new cc.Speed();
-            pZone = pNewZone = new cc.Zone(pRet);
-        }
-        cc.Action.copyWithZone(pZone);
-
-        pRet.initWithAction(this._m_pInnerAction, this._m_fSpeed );
-        return pRet;
-    },
     startWithTarget:function(pTarget)
     {
         cc.Action.startWithTarget(pTarget);
@@ -270,25 +253,6 @@ cc.Follow = cc.Action.extend({
         }
         return true;
     },//this is a function overload
-    copyWithZone: function(pZone)
-    {
-        var pNewZone = null;
-        var pRet = null;
-        if(pZone && pZone.m_pCopyObject) //in case of being called at sub class
-        {
-            pRet = (pZone.m_pCopyObject);
-        }
-        else
-        {
-            pRet = new cc.Follow();
-            pNewZone = new cc.Zone(pRet);
-            pZone = pNewZone;//TODO Modifying a pointer in c++?
-        }
-        cc.Action.copyWithZone(pZone);
-        // copy member data
-        pRet._m_nTag = this._m_nTag;
-        return pRet;
-    },
     step:function(dt)
     {
         cc.UNUSED_PARAM(dt);
