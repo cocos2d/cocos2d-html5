@@ -110,12 +110,12 @@ cc.Sprite = cc.Node.extend({
     _m_bUsesBatchNode:null,
     // texture
     _m_obRect:new cc.Rect(),
-    _m_obRectInPixels:cc.RectZero,
+    _m_obRectInPixels:cc.RectZero(),
     _m_bRectRotated:null,
 
     // Offset Position (used by Zwoptex)
-    _m_obOffsetPositionInPixels:cc.PointZero, // absolute
-    _m_obUnflippedOffsetPositionFromCenter:cc.PointZero,
+    _m_obOffsetPositionInPixels:cc.PointZero(), // absolute
+    _m_obUnflippedOffsetPositionFromCenter:cc.PointZero(),
 
     // vertex coords, texture coords and color info
     _m_sQuad:cc.V3F_C4B_T2F_QuadZero(),
@@ -257,7 +257,7 @@ cc.Sprite = cc.Node.extend({
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         // zwoptex default values
-        this._m_obOffsetPositionInPixels = cc.PointZero;
+        this._m_obOffsetPositionInPixels = cc.PointZero();
 
         this._m_eHonorParentTransform = cc.HONOR_PARENT_TRANSFORM_ALL;
         this._m_bHasChildren = false;
@@ -274,7 +274,7 @@ cc.Sprite = cc.Node.extend({
         // updated in "useSelfRender"
 
         // Atlas: TexCoords
-        this.setTextureRectInPixels(cc.RectZero, false, cc.SizeZero);
+        this.setTextureRectInPixels(cc.RectZero(), false, cc.SizeZero());
 
         return true;
     },
@@ -310,7 +310,7 @@ cc.Sprite = cc.Node.extend({
                 var pTexture = new cc.Texture2D();
                 pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
                 if (pTexture) {
-                    rect = cc.RectZero;
+                    rect = cc.RectZero();
                     if(cc.renderContextType == cc.kCanvas)
                         rect.size =cc.SizeMake(pTexture.width,pTexture.height);
                     else
