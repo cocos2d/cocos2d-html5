@@ -846,7 +846,6 @@ cc.Sprite = cc.Node.extend({
         }
     },
     setPosition:function (pos) {
-        console.log("Sprite.setPosition()");
         this._super(pos);
         this.SET_DIRTY_RECURSIVELY();
     },

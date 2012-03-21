@@ -72,6 +72,7 @@ cc.Layer = cc.Node.extend({
      @since v0.8.0
      */
     registerWithTouchDispatcher:function () {
+        //console.log("registerWithTouchDispatcher()");
         cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
     },
 

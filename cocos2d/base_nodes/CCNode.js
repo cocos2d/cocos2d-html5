@@ -129,7 +129,7 @@ cc.Node = cc.Class.extend({
         if(pArray && pArray.length > 0) {
             for(var i=0;i < pArray.length;i++){
                var pNode = pArray[i];
-                if(pNode && (typeof(func) == "function")){
+                if(pNode && (typeof(func) == "string")){
                     pNode[func]();
                 }
             }
@@ -242,7 +242,6 @@ cc.Node = cc.Class.extend({
         }
     },
     setPositionInPixels:function (newPosition) {
-        console.log("Node.setPositionInPixels()");
         this._m_tPositionInPixels = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this._m_tPosition = this._m_tPositionInPixels;
@@ -626,7 +625,8 @@ cc.Node = cc.Class.extend({
             for (var i =0;i < this._m_pChildren.length;i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && (pNode._m_nZOrder > z )) {
-                    this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren,child,index);
+                    this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren,child,i);
+                    break;
                 }
             }
         }

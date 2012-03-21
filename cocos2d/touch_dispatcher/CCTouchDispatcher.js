@@ -488,6 +488,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
         });
 
         cc.canvas.addEventListener("mousemove",function(event){
+
             var el = cc.canvas;
             var pos = {left: 0, top: 0};
             while( el != null ) {
@@ -504,6 +505,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
             touch.SetTouchInfo(0,mouseX,mouseY);
             var pSet = [];
             pSet.push(touch);
+
             cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
         });
 

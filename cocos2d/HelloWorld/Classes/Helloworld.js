@@ -128,7 +128,7 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.helloLb,1);
 
         this.pSprite = cc.Sprite.spriteWithFile("helloworld.png");
-        //this.pSprite.setPosition(0,0);
+        this.pSprite.setPosition(0,0);
         //window.test = this.pSprite;
         //pSprite.setSpriteImage(this.helloImg);
         this.addChild(this.pSprite,0);
