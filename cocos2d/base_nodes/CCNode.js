@@ -555,7 +555,7 @@ cc.Node = cc.Class.extend({
             return;
         }
 
-        if (this._m_pChildren.containsObject(child)) {
+        if (this._m_pChildren.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
     },
@@ -615,7 +615,7 @@ cc.Node = cc.Class.extend({
         // set parent nil at the end
         child.setParent(null);
 
-        this._m_pChildren.removeObject(child);
+        cc.ArrayRemoveObject(this._m_pChildren,child);
     },
     // helper used by reorderChild & add
     _insertChild:function (child, z) {

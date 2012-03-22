@@ -121,7 +121,7 @@ Game.copyToMatrix = function (block) {
 				var pos = new cc.Point(block.position.x + i, block.position.y + (cols - j) - 1);
 				// cc.LOG("creating block for matrix in " + pos.x + "," + pos.y);
 				this.matrix[pos.y * Game.COLS + pos.x] = 1;
-				var sprite = new cc.Sprite(COLOR_NAMES[block.color], 1);
+				var sprite = cc.Sprite.spriteWithSpriteFrameName(COLOR_NAMES[block.color]);
 				sprite.setTag(hashFromCoord(pos));
 				sprite.setAnchorPoint(new cc.Point(0, 0));
 				sprite.setPosition(new cc.Point(pos.x * Game.TILE_SIZE, pos.y * Game.TILE_SIZE));
@@ -205,8 +205,8 @@ Game.gameOver = function () {
  * clean up the game scene and other things
  */
 Game.cleanup = function () {
-	Game.scene.unregisterAsTouchHandler();
-	cc.Scheduler.unschedule(Game.__updateId);
+	//Game.scene.unregisterAsTouchHandler();
+    cc.Scheduler.sharedScheduler().unscheduleSelector(Game.updateLoop,this);
 };
 
 /**
@@ -231,6 +231,16 @@ Game.tick = function () {
 	}
 };
 
+Game.updateLoop = function (delta) {
+    //console.log("Game.tick();"+ delta);
+    Game.__timeAccum += delta;
+    if (Game.__timeAccum >= Game.speed) {
+        //console.log("Game.tick();");
+        Game.tick();
+        Game.__timeAccum = 0.0;
+    }
+}
+
 /**
  * start a new game
  */
@@ -249,23 +259,15 @@ Game.start = function () {
 
 	var background = cc.Sprite.spriteWithFile("Resources/background.png");
 	background.setPosition(new cc.Point(-4, 0));
-	scene.addChild(background);
+	scene.addChild(background,0);
 
-	scene.addChild(Game.batchNode);
+	scene.addChild(Game.batchNode,1);
 
 	Game.state = GAME_STATES.RUNNING;
 	Game.addNewBlock(scene);
 
 	// schedule every frame
-	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(function (delta) {
-        //console.log("Game.tick();"+ delta);
-		Game.__timeAccum += delta;
-		if (Game.__timeAccum >= Game.speed) {
-            console.log("Game.tick();");
-			Game.tick();
-			Game.__timeAccum = 0.0;
-		}
-	}, this,0,!true);
+	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,!true);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
