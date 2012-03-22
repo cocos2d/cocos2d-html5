@@ -81,6 +81,14 @@ var Helloworld = cc.Layer.extend({
         //    you may modify it.
 
         // add a "close" icon to exit the progress. it's an autorelease object
+        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
+            "CloseNormal.png",
+            "CloseSelected.png",
+            this,
+            function(){alert("bye bye")} );
+        pCloseItem.setPosition(cc.canvas.width-40,10);
+        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
+
         /*
         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
             "CloseNormal.png",
