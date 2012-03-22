@@ -31,7 +31,7 @@ var cc = cc = cc || {};
  @since v0.9
  */
 cc.SpriteFrameCache = cc.Class.extend({
-    _m_pSpriteFrames:null,
+    _m_pSpriteFrames:[],
     _m_pSpriteFramesAliases:null,
 
     init:function () {
@@ -44,7 +44,6 @@ cc.SpriteFrameCache = cc.Class.extend({
         var metadataDict = dictionary["metadata"];
         var framesDict = dictionary["frames"];
         var format = 0;
-
         // get the format
         if (metadataDict != null) {
             format = parseInt(this._valueForKey("format", metadataDict));
@@ -55,9 +54,10 @@ cc.SpriteFrameCache = cc.Class.extend({
 
         var frameDict = null;
         for (var key in framesDict) {
-            if (frameDict == framesDict[key]) {
+            frameDict = framesDict[key];
+            if (frameDict) {
                 var spriteFrame = this._m_pSpriteFrames[key];
-                if (spriteFrame) {
+                if (spriteFrame == "undefined") {
                     continue;
                 }
 
@@ -89,12 +89,11 @@ cc.SpriteFrameCache = cc.Class.extend({
                     if (format == 2) {
                         rotated = (parseInt(this._valueForKey("rotated", frameDict)) == 0);
                     }
-                    var offset = new cc.Point(), sourceSize = new cc.Size();
-                    offset = cc.PointFromString(this._valueForKey("offset", frameDict));
-                    sourceSize = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
-
+                    var offset = cc.PointFromString(this._valueForKey("offset", frameDict));
+                    var sourceSize = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
+                    console.log("spriteFrame-----------------:",spriteFrame);
                     spriteFrame.initWithTexture(pobTexture, frame, rotated, offset, sourceSize);
                 }
                 else if (format == 3) {
@@ -150,7 +149,8 @@ cc.SpriteFrameCache = cc.Class.extend({
 
                 if (texturePath != "") {
                     // build texture path relative to plist file
-                    texturePath = cc.FileUtils.fullPathFromRelativeFile(texturePath.toString(), pszPath);
+                   /* texturePath = cc.FileUtils.fullPathFromRelativeFile(texturePath.toString(), pszPath);*/
+                    texturePath = "../Resources/" + texturePath;
                 }
                 else {
                     // build texture path by replacing file extension
@@ -167,8 +167,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                 }
 
                 var pTexture = new cc.Texture2D();
-                pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath.toString());
-
+                pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
                 if (pTexture) {
                     this.addSpriteFramesWithDictionary(dict, pTexture);
                 }

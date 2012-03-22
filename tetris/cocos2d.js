@@ -93,12 +93,15 @@ cc.loadjs('platform/CCCommon.js');//1
 cc.loadjs('platform/platform.js');//2
 cc.loadjs('cocoa/CCGeometry.js');//3
 cc.loadjs('cocoa/CCSet.js');//4
+cc.loadjs('cocoa/CCNS.js');//4
 cc.loadjs('platform/CCTypes.js');//5
 cc.loadjs('cocoa/CCAffineTransform.js');//5
 cc.loadjs('support/CCPointExtension.js');//12
 cc.loadjs('base_nodes/CCNode.js');//6
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
+cc.loadjs('platform/CCSAXParser.js');//7
+cc.loadjs('platform/CCFileUtils.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('textures/CCTextureAtlas.js');//12
