@@ -206,7 +206,7 @@ Block.prototype.setMatrix = function (matrix, cols, color) {
 				// this means the number of nodes is always the same
 				var sp = this.batchNode.getChildByTag(count);
 				if (!sp) {
-					sp = new cc.Sprite(COLOR_NAMES[this.color], 1);
+					sp = cc.Sprite.spriteWithSpriteFrameName(COLOR_NAMES[this.color]);
 					this.batchNode.addChild(sp);
 					sp.setTag(count);
 					sp.setAnchorPoint(new cc.Point(0, 0));

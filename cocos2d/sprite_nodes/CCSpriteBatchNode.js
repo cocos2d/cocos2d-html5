@@ -476,44 +476,54 @@ cc.SpriteBatchNode = cc.Node.extend({
     // draw
     draw:function(){
         this._super();
+        //console.log(this._m_pChildren.length);
+        if(cc.renderContextType == cc.kCanvas){
+            //console.log(this._m_pChildren.length);
+            for(var index =0; index< this._m_pChildren.length;index++){
+                var sp = this._m_pChildren[index];
+                //if(sp instanceof cc.Sprite){
+                    sp.draw();
+                //}
+            }
+        }else{
+            // Optimization: Fast Dispatch
+            if (this._m_pobTextureAtlas.getTotalQuads() == 0){
+                return;
+            }
 
-        // Optimization: Fast Dispatch
-        if (this._m_pobTextureAtlas.getTotalQuads() == 0){
-            return;
-        }
+            if (this._m_pobDescendants && this._m_pobDescendants.length > 0){
+                var pObject = null;
+                for(var i=0;i< this._m_pobDescendants.length;i++){
+                    pObject = this._m_pobDescendants[i];
+                    if(pObject){
+                        pObject.updateTransform();
 
-        if (this._m_pobDescendants && this._m_pobDescendants.length > 0){
-            var pObject = null;
-            for(var i=0;i< this._m_pobDescendants.length;i++){
-                pObject = this._m_pobDescendants[i];
-                if(pObject){
-                    pObject.updateTransform();
-
-                    // issue #528
-                    var rect = pObject.boundingBox();
-                    var vertices=[
-                        cc.ccp(rect.origin.x,rect.origin.y),
-                        cc.ccp(rect.origin.x+rect.size.width,rect.origin.y),
-                        cc.ccp(rect.origin.x+rect.size.width,rect.origin.y+rect.size.height),
-                        cc.ccp(rect.origin.x,rect.origin.y+rect.size.height)
-                    ];
-                    cc.drawingUtil.drawPoly(vertices, 4, true);
+                        // issue #528
+                        var rect = pObject.boundingBox();
+                        var vertices=[
+                            cc.ccp(rect.origin.x,rect.origin.y),
+                            cc.ccp(rect.origin.x+rect.size.width,rect.origin.y),
+                            cc.ccp(rect.origin.x+rect.size.width,rect.origin.y+rect.size.height),
+                            cc.ccp(rect.origin.x,rect.origin.y+rect.size.height)
+                        ];
+                        cc.drawingUtil.drawPoly(vertices, 4, true);
+                    }
                 }
             }
-        }
 
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Unneeded states: -
-        //TODO OpenGL Method
-        var newBlend = this._m_blendFunc.src != cc.BLEND_SRC || this._m_blendFunc.dst != cc.BLEND_DST;
-        if (newBlend){
-            //glBlendFunc(m_blendFunc.src, m_blendFunc.dst);
-        }
+            // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Unneeded states: -
+            //TODO OpenGL Method
+            var newBlend = this._m_blendFunc.src != cc.BLEND_SRC || this._m_blendFunc.dst != cc.BLEND_DST;
+            if (newBlend){
+                //glBlendFunc(m_blendFunc.src, m_blendFunc.dst);
+            }
 
-        this._m_pobTextureAtlas.drawQuads();
-        if (newBlend){
-            //glBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
+            this._m_pobTextureAtlas.drawQuads();
+            if (newBlend){
+                //glBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
+            }
         }
     }
 });

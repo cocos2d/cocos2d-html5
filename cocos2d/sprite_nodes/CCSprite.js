@@ -689,8 +689,8 @@ cc.Sprite = cc.Node.extend({
         if(cc.renderContextType == cc.kCanvas){
             //draw some image(temp code)
             //direct draw image by canvas drawImage
-            //console.log("X:" + this.getPositionX() + "  Y:" + this.getPositionY());
-            cc.drawingUtil.drawImage(this._m_pobTexture,cc.ccp(this.getPositionX(),this.getPositionY()));
+            cc.drawingUtil.drawImage(this._m_pobTexture,this.getTextureRect().origin,this.getTextureRect().size
+                    ,cc.ccp(this.getPositionX(),this.getPositionY()),this.getContentSize());
             return;
         }else{
             cc.Assert(!this._m_bUsesBatchNode, "");
