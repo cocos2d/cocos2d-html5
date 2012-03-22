@@ -150,7 +150,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                 if (texturePath != "") {
                     // build texture path relative to plist file
                    /* texturePath = cc.FileUtils.fullPathFromRelativeFile(texturePath.toString(), pszPath);*/
-                    texturePath = "../Resources/" + texturePath;
+                    texturePath = "Resources/" + texturePath;
                 }
                 else {
                     // build texture path by replacing file extension
