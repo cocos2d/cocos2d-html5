@@ -115,7 +115,8 @@ cc.SpriteBatchNode = cc.Node.extend({
         this._m_pobDescendants = cc.ArrayAppendObjectToIndex(this._m_pobDescendants,child, i);
 
         // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
-        this._parent.addChild.call(this,child, z, aTag);
+        this.addChild(child, z, aTag,true);
+        //this._parent.addChild.call(this,child, z, aTag);
         //CCNode::addChild(child, z, aTag);
         return this;
     },
@@ -407,12 +408,17 @@ cc.SpriteBatchNode = cc.Node.extend({
 
                 var pSprite = child;
                 // check CCSprite is using the same texture id
-                cc.Assert(pSprite.getTexture().getName() == m_pobTextureAtlas.getTexture().getName(), "SpriteBatchNode.addChild():check CCSprite is using the same texture id");
+                cc.Assert(pSprite.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "SpriteBatchNode.addChild():check CCSprite is using the same texture id");
 
                 this._super(child, zOrder, tag);
 
                 var uIndex = this.atlasIndexForChild(pSprite, zOrder);
                 this.insertChild(pSprite, uIndex);
+                break;
+            case 4:
+                if(arguments[3]){
+                    this._super(child, zOrder, tag);
+                }
                 break;
             default:
                 throw "Argument must be non-nil ";
