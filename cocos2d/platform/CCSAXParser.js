@@ -1,0 +1,161 @@
+/****************************************************************************
+ Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2008-2010 Ricardo Quesada
+ Copyright (c) 2011      Zynga Inc.
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
+var cc = cc = cc || {};
+
+cc.SAXParser = cc.Class.extend({
+    xmlDoc:null,
+    parser:null,
+    xmlList:[],
+    m_pPlist:[],
+    // parse a xml from a string (xmlhttpObj.responseText)
+    parse:function (textxml) {
+        var textxml = this.getXMLList(textxml)
+        // get a reference to the requested corresponding xml file
+        if (window.DOMParser) {
+            this.parser = new DOMParser();
+            this.xmlDoc = this.parser.parseFromString(textxml, "text/xml");
+        } else // Internet Explorer (untested!)
+        {
+            this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            this.xmlDoc.async = "false";
+            this.xmlDoc.loadXML(textxml);
+        }
+        if (this.xmlDoc == null) {
+            console.log("xml " + this.xmlDoc + " not found!");
+        }
+        var plist = this.xmlDoc.documentElement;
+        if (plist.tagName != 'plist') {
+            throw "Not a plist file"
+        }
+        // Get first real node
+        var node = null
+        for (var i = 0, len = plist.childNodes.length; i < len; i++) {
+            node = plist.childNodes[i]
+            if (node.nodeType == 1) {
+                break
+            }
+        }
+        this.m_pPlist = this._parseNode(node)
+        return this.m_pPlist;
+    },
+    _parseNode:function (node) {
+        var data = null
+        switch (node.tagName) {
+            case 'dict':
+                data = this._parseDict(node);
+                break
+            case 'array':
+                data = this._parseArray(node);
+                break
+            case 'string':
+                // FIXME - This needs to handle Firefox's 4KB nodeValue limit
+                data = node.firstChild.nodeValue
+                break
+            case 'false':
+                data = false
+                break
+            case 'true':
+                data = true
+                break
+            case 'real':
+                data = parseFloat(node.firstChild.nodeValue)
+                break
+            case 'integer':
+                data = parseInt(node.firstChild.nodeValue, 10)
+                break
+        }
+
+        return data
+    },
+    _parseArray:function (node) {
+        var data = []
+        for (var i = 0, len = node.childNodes.length; i < len; i++) {
+            var child = node.childNodes[i]
+            if (child.nodeType != 1) {
+                continue
+            }
+            data.push(this._parseNode(child))
+        }
+        return data
+    },
+    _parseDict:function (node) {
+        var data = {}
+
+        var key = null
+        for (var i = 0, len = node.childNodes.length; i < len; i++) {
+            var child = node.childNodes[i]
+            if (child.nodeType != 1) {
+                continue
+            }
+
+            // Grab the key, next noe should be the value
+            if (child.tagName == 'key') {
+                key = child.firstChild.nodeValue
+            } else {
+                // Parse the value node
+                data[key] = this._parseNode(child)
+            }
+        }
+        return data
+    },
+    preloadXML:function (xmlData) {
+        if (window.XMLHttpRequest) {
+            // for IE7+, Firefox, Chrome, Opera, Safari brower
+            var xmlhttp = new XMLHttpRequest();
+            // is xml file?
+            if (xmlhttp.overrideMimeType)
+                xmlhttp.overrideMimeType('text/xml');
+        } else {
+            // for IE6, IE5 brower
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        if (xmlhttp != null) {
+            // load xml
+            xmlhttp.open("GET", xmlData, false);
+            xmlhttp.send(null);
+            var xmlName = this.getXMLName(xmlData)
+            this.xmlList[xmlName.toString()] = xmlhttp.responseText;
+            console.log("xmlName:", xmlName);
+        }
+        else {
+            alert("Your browser does not support XMLHTTP.");
+        }
+    },
+    getXMLName:function (xmlData) {
+        var startPos = xmlData.lastIndexOf("/", xmlData.length) + 1;
+        var endPos = xmlData.lastIndexOf(".", xmlData.length);
+        return xmlData.substring(startPos, endPos);
+    },
+    getXMLList:function (elt) {
+        if (this.xmlList != null) {
+            return this.xmlList[elt]
+        }
+        else {
+            return null;
+        }
+    }
+});
