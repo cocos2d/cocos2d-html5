@@ -286,7 +286,6 @@ cc.Sprite = cc.Node.extend({
         cc.Assert(pTexture != null, "");
 
         if(argnum == 1){
-
             rect = new cc.Rect();
             rect.size = pTexture.getContentSize();
         }
@@ -1080,7 +1079,7 @@ cc.Sprite = cc.Node.extend({
     }
 });
 cc.Sprite.spriteWithTexture = function (pTexture, rect, offset) {
-    var argnum = arguments;
+    var argnum = arguments.length;
     var pobSprite = new cc.Sprite();
     switch (argnum) {
         case 1:
