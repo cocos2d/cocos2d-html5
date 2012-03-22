@@ -437,6 +437,192 @@ cc.TouchDispatcher = cc.Class.extend({
     }
 });
 
+cc.TouchDispatcher.registerHtmlElementEvent = function(element){
+    //register canvas mouse event
+    element.addEventListener("mousedown",function(event){
+        var el = element;
+        var pos = {left: 0, top: 0};
+        while( el != null ) {
+            pos.left += el.offsetLeft;
+            pos.top += el.offsetTop;
+            el = el.offsetParent;
+        }
+        var tx = event.pageX;
+        var ty = event.pageY;
+
+        var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
+        var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
+
+        var touch = new cc.Touch();
+        touch.SetTouchInfo(0,mouseX,mouseY);
+        var pSet = [];
+        pSet.push(touch);
+        cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet,null);
+    });
+    element.addEventListener("mouseup",function(event){
+        var el = element;
+        var pos = {left: 0, top: 0};
+        while( el != null ) {
+            pos.left += el.offsetLeft;
+            pos.top += el.offsetTop;
+            el = el.offsetParent;
+        }
+        var tx = event.pageX;
+        var ty = event.pageY;
+
+        var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
+        var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
+
+        var touch = new cc.Touch();
+        touch.SetTouchInfo(0,mouseX,mouseY);
+        var pSet = [];
+        pSet.push(touch);
+        cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet,null);
+    });
+    element.addEventListener("mousemove",function(event){
+        var el = element;
+        var pos = {left: 0, top: 0};
+        while( el != null ) {
+            pos.left += el.offsetLeft;
+            pos.top += el.offsetTop;
+            el = el.offsetParent;
+        }
+        var tx = event.pageX;
+        var ty = event.pageY;
+
+        var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
+        var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
+        var touch = new cc.Touch();
+        touch.SetTouchInfo(0,mouseX,mouseY);
+        var pSet = [];
+        pSet.push(touch);
+
+        cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
+    });
+
+    //register canvas touch event
+    element.addEventListener("touchstart",function(event){
+        if(!event.touches)
+            return;
+
+        var pSet = [];
+        var el = element;
+        var pos = {left: 0, top: 0};
+        while( el != null ) {
+            pos.left += el.offsetLeft;
+            pos.top += el.offsetTop;
+            el = el.offsetParent;
+        }
+
+        for(var i = 0; i< event.touches.length;i++){
+            var tx = event.touches[i].pageX;
+            var ty = event.touches[i].pageY;
+            if( event.touches[i] ) {
+                tx = event.touches[i].clientX;
+                ty = event.touches[i].clientY;
+            }
+            var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
+            var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
+            var touch = new cc.Touch();
+            touch.SetTouchInfo(0,mouseX,mouseY);
+            pSet.push(touch);
+        }
+        cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet,null);
+        event.stopPropagation();
+        event.preventDefault();
+    });
+    element.addEventListener("touchmove",function(event){
+        if(!event.touches)
+            return;
+
+        var pSet = [];
+        var el = element;
+        var pos = {left: 0, top: 0};
+        while( el != null ) {
+            pos.left += el.offsetLeft;
+            pos.top += el.offsetTop;
+            el = el.offsetParent;
+        }
+
+        for(var i = 0; i< event.touches.length;i++){
+            var tx = event.touches[i].pageX;
+            var ty = event.touches[i].pageY;
+            if( event.touches[i] ) {
+                tx = event.touches[i].clientX;
+                ty = event.touches[i].clientY;
+            }
+            var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
+            var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
+            var touch = new cc.Touch();
+            touch.SetTouchInfo(0,mouseX,mouseY);
+            pSet.push(touch);
+        }
+        cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
+        event.stopPropagation();
+        event.preventDefault();
+    });
+    element.addEventListener("touchend",function(event){
+        if(!event.touches)
+            return;
+
+        var pSet = [];
+        var el = element;
+        var pos = {left: 0, top: 0};
+        while( el != null ) {
+            pos.left += el.offsetLeft;
+            pos.top += el.offsetTop;
+            el = el.offsetParent;
+        }
+
+        for(var i = 0; i< event.touches.length;i++){
+            var tx = event.touches[i].pageX;
+            var ty = event.touches[i].pageY;
+            if( event.touches[i] ) {
+                tx = event.touches[i].clientX;
+                ty = event.touches[i].clientY;
+            }
+            var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
+            var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
+            var touch = new cc.Touch();
+            touch.SetTouchInfo(0,mouseX,mouseY);
+            pSet.push(touch);
+        }
+        cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet,null);
+        event.stopPropagation();
+        event.preventDefault();
+    });
+    element.addEventListener("touchcancel",function(event){
+        if(!event.touches)
+            return;
+
+        var pSet = [];
+        var el = element;
+        var pos = {left: 0, top: 0};
+        while( el != null ) {
+            pos.left += el.offsetLeft;
+            pos.top += el.offsetTop;
+            el = el.offsetParent;
+        }
+
+        for(var i = 0; i< event.touches.length;i++){
+            var tx = event.touches[i].pageX;
+            var ty = event.touches[i].pageY;
+            if( event.touches[i] ) {
+                tx = event.touches[i].clientX;
+                ty = event.touches[i].clientY;
+            }
+            var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
+            var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
+            var touch = new cc.Touch();
+            touch.SetTouchInfo(0,mouseX,mouseY);
+            pSet.push(touch);
+        }
+        cc.TouchDispatcher.sharedDispatcher().touchesCancelled(pSet,null);
+        event.stopPropagation();
+        event.preventDefault();
+    });
+};
+
 cc._pSharedDispatcher = null;
 cc.TouchDispatcher.sharedDispatcher = function(){
     if (cc._pSharedDispatcher == null){
@@ -444,192 +630,7 @@ cc.TouchDispatcher.sharedDispatcher = function(){
         cc._pSharedDispatcher = new cc.TouchDispatcher();
         cc._pSharedDispatcher.init();
 
-        //register canvas mouse event
-        cc.canvas.addEventListener("mousedown",function(event){
-            var el = cc.canvas;
-            var pos = {left: 0, top: 0};
-            while( el != null ) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-            var tx = event.pageX;
-            var ty = event.pageY;
-
-            var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
-
-            var touch = new cc.Touch();
-            touch.SetTouchInfo(0,mouseX,mouseY);
-            var pSet = [];
-            pSet.push(touch);
-            cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet,null);
-        });
-
-        cc.canvas.addEventListener("mouseup",function(event){
-            var el = cc.canvas;
-            var pos = {left: 0, top: 0};
-            while( el != null ) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-            var tx = event.pageX;
-            var ty = event.pageY;
-
-            var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
-
-            var touch = new cc.Touch();
-            touch.SetTouchInfo(0,mouseX,mouseY);
-            var pSet = [];
-            pSet.push(touch);
-            cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet,null);
-        });
-
-        cc.canvas.addEventListener("mousemove",function(event){
-
-            var el = cc.canvas;
-            var pos = {left: 0, top: 0};
-            while( el != null ) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-            var tx = event.pageX;
-            var ty = event.pageY;
-
-            var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
-            var touch = new cc.Touch();
-            touch.SetTouchInfo(0,mouseX,mouseY);
-            var pSet = [];
-            pSet.push(touch);
-
-            cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
-        });
-
-        //register canvas touch event
-        cc.canvas.addEventListener("touchstart",function(event){
-            if(!event.touches)
-                return;
-
-            var pSet = [];
-            var el = cc.canvas;
-            var pos = {left: 0, top: 0};
-            while( el != null ) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-
-            for(var i = 0; i< event.touches.length;i++){
-                var tx = event.touches[i].pageX;
-                var ty = event.touches[i].pageY;
-                if( event.touches[i] ) {
-                    tx = event.touches[i].clientX;
-                    ty = event.touches[i].clientY;
-                }
-                var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-                var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
-                var touch = new cc.Touch();
-                touch.SetTouchInfo(0,mouseX,mouseY);
-                pSet.push(touch);
-            }
-            cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet,null);
-            event.stopPropagation();
-            event.preventDefault();
-        });
-        cc.canvas.addEventListener("touchmove",function(event){
-            if(!event.touches)
-                return;
-
-            var pSet = [];
-            var el = cc.canvas;
-            var pos = {left: 0, top: 0};
-            while( el != null ) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-
-            for(var i = 0; i< event.touches.length;i++){
-                var tx = event.touches[i].pageX;
-                var ty = event.touches[i].pageY;
-                if( event.touches[i] ) {
-                    tx = event.touches[i].clientX;
-                    ty = event.touches[i].clientY;
-                }
-                var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-                var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
-                var touch = new cc.Touch();
-                touch.SetTouchInfo(0,mouseX,mouseY);
-                pSet.push(touch);
-            }
-            cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
-            event.stopPropagation();
-            event.preventDefault();
-        });
-        cc.canvas.addEventListener("touchend",function(event){
-            if(!event.touches)
-                return;
-
-            var pSet = [];
-            var el = cc.canvas;
-            var pos = {left: 0, top: 0};
-            while( el != null ) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-
-            for(var i = 0; i< event.touches.length;i++){
-                var tx = event.touches[i].pageX;
-                var ty = event.touches[i].pageY;
-                if( event.touches[i] ) {
-                    tx = event.touches[i].clientX;
-                    ty = event.touches[i].clientY;
-                }
-                var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-                var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
-                var touch = new cc.Touch();
-                touch.SetTouchInfo(0,mouseX,mouseY);
-                pSet.push(touch);
-            }
-            cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet,null);
-            event.stopPropagation();
-            event.preventDefault();
-        });
-        cc.canvas.addEventListener("touchcancel",function(event){
-            if(!event.touches)
-                return;
-
-            var pSet = [];
-            var el = cc.canvas;
-            var pos = {left: 0, top: 0};
-            while( el != null ) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-
-            for(var i = 0; i< event.touches.length;i++){
-                var tx = event.touches[i].pageX;
-                var ty = event.touches[i].pageY;
-                if( event.touches[i] ) {
-                    tx = event.touches[i].clientX;
-                    ty = event.touches[i].clientY;
-                }
-                var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-                var mouseY = (ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor();
-                var touch = new cc.Touch();
-                touch.SetTouchInfo(0,mouseX,mouseY);
-                pSet.push(touch);
-            }
-            cc.TouchDispatcher.sharedDispatcher().touchesCancelled(pSet,null);
-            event.stopPropagation();
-            event.preventDefault();
-        });
+        cc.TouchDispatcher.registerHtmlElementEvent(cc.canvas);
     }
 
     return cc._pSharedDispatcher;

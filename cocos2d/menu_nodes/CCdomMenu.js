@@ -45,7 +45,9 @@ cc.Menu = cc.domNode.extend({
         this.style.width = canvas.width+"px";
         this.style.height = canvas.height+"px";
         this.style.position = "absolute";
+
         this._container.appendChild(this._domElement);
+        cc.TouchDispatcher.registerHtmlElementEvent(this._domElement);
         cc.$("body").insertBefore(this._container, canvas);
         this._container.appendChild(canvas);
     },
