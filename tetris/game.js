@@ -236,7 +236,7 @@ Game.tick = function () {
  */
 Game.start = function () {
 	// load tile frames
-	//cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("tiles.plist");
+	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("../resources/tiles.plist");
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
 	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("../resources/tiles.png");
@@ -254,7 +254,7 @@ Game.start = function () {
 	scene.addChild(Game.batchNode);
 
 	Game.state = GAME_STATES.RUNNING;
-	//Game.addNewBlock(scene);
+	Game.addNewBlock(scene);
 
 	// schedule every frame
 	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(function (delta) {
