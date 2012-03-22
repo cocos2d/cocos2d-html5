@@ -61,7 +61,7 @@ cc.LabelTTF = cc.Sprite.extend({
             fontSize = arguments[2];
 
             if (this.init()){
-                this._m_tDimensions = cc.SizeZero;
+                this._m_tDimensions = cc.SizeZero();
                 this._m_pFontName = fontName;
                 this._m_fFontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
                 this.setString(label);
@@ -80,7 +80,7 @@ cc.LabelTTF = cc.Sprite.extend({
         return;
 
         var texture = new cc.Texture2D();
-        if( cc.Size.CCSizeEqualToSize( this._m_tDimensions, cc.SizeZero ) ){
+        if( cc.Size.CCSizeEqualToSize( this._m_tDimensions, cc.SizeZero() ) ){
             texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
         }else{
             texture = new cc.Texture2D();
@@ -88,7 +88,7 @@ cc.LabelTTF = cc.Sprite.extend({
         }
         this.setTexture(texture);
 
-        var rect = cc.RectZero;
+        var rect = cc.RectZero();
         rect.size = this._m_pobTexture.getContentSize();
         this.setTextureRect(rect);
     },

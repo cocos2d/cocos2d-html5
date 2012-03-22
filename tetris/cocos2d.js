@@ -101,12 +101,17 @@ cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
+cc.loadjs('textures/CCTextureAtlas.js');//12
 cc.loadjs('actions/CCAction.js');//7
 cc.loadjs('actions/CCActionInterval.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
+cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
+cc.loadjs('sprite_nodes/CCSpriteFrame.js');//10
+cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');//10
+cc.loadjs('sprite_nodes/CCAnimationCache.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
 cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
@@ -118,7 +123,7 @@ cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('menu_nodes/CCMenu.js');
-cc.loadjs('menu_nodes/ccMenuItem.js');
+//cc.loadjs('menu_nodes/ccMenuItem.js');
 cc.loadjs('../tetris/Classes/AppDelegate.js');//17
 cc.loadjs('../tetris/AppControl.js');//18
 cc.loadjs('../tetris/game.js');//19

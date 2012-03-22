@@ -117,7 +117,8 @@ cc.ArrayAppendObjectToIndex = function(arr,addObj,index){
     var part1 = arr.slice( 0, index );
     var part2 = arr.slice( index );
     part1.push( addObj );
-    arr = ( part1.concat( part2 ) );
+    arr = (part1.concat( part2 ));
+    return arr;
 };
 
 cc.ArrayGetIndexOfObject = function(arr,findObj){
@@ -139,7 +140,7 @@ cc.HASH_FIND_INT = function(arr,findInt){
 
     for(var i=0; i< arr.length;i++){
         if(arr[i].target == findInt){
-            return curr;
+            return arr[i];
         }
     }
     return null;
@@ -241,7 +242,11 @@ cc.Timer = cc.Class.extend({
         if(this._m_fElapsed >= this._m_fInterval){
             if(this._m_pfnSelector != null){
                 //TODO NEED TEST
-                this._m_pTarget[this._m_pfnSelector](this._m_fElapsed);
+                if(typeof(this._m_pfnSelector)=="string"){
+                    this._m_pTarget[this._m_pfnSelector](this._m_fElapsed);
+                }else if(typeof(this._m_pfnSelector) == "function"){
+                    this._m_pfnSelector.call(this._m_pTarget,this._m_fElapsed);
+                }
                 this._m_fElapsed = 0;
             }
         }
@@ -380,7 +385,7 @@ cc.Scheduler = cc.Class.extend({
             var bAdded = false;
             for(var i=0; i< ppList.length;i++){
                 if(nPriority < ppList[i].priority){
-                    cc.ArrayAppendObjectToIndex(ppList,pListElement,i);
+                    ppList = cc.ArrayAppendObjectToIndex(ppList,pListElement,i);
                     bAdded = true;
                     break;
                 }

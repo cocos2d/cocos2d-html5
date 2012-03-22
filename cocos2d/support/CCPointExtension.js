@@ -388,5 +388,5 @@ cc.ccpIntersectPoint = function(A,B,C,D){
         return P;
     }
 
-    return cc.PointZero;
+    return cc.PointZero();
 };

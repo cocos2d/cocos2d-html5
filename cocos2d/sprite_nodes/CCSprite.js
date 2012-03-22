@@ -110,12 +110,12 @@ cc.Sprite = cc.Node.extend({
     _m_bUsesBatchNode:null,
     // texture
     _m_obRect:new cc.Rect(),
-    _m_obRectInPixels:cc.RectZero,
+    _m_obRectInPixels:cc.RectZero(),
     _m_bRectRotated:null,
 
     // Offset Position (used by Zwoptex)
-    _m_obOffsetPositionInPixels:cc.PointZero, // absolute
-    _m_obUnflippedOffsetPositionFromCenter:cc.PointZero,
+    _m_obOffsetPositionInPixels:cc.PointZero(), // absolute
+    _m_obUnflippedOffsetPositionFromCenter:cc.PointZero(),
 
     // vertex coords, texture coords and color info
     _m_sQuad:cc.V3F_C4B_T2F_QuadZero(),
@@ -257,7 +257,7 @@ cc.Sprite = cc.Node.extend({
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         // zwoptex default values
-        this._m_obOffsetPositionInPixels = cc.PointZero;
+        this._m_obOffsetPositionInPixels = cc.PointZero();
 
         this._m_eHonorParentTransform = cc.HONOR_PARENT_TRANSFORM_ALL;
         this._m_bHasChildren = false;
@@ -274,7 +274,7 @@ cc.Sprite = cc.Node.extend({
         // updated in "useSelfRender"
 
         // Atlas: TexCoords
-        this.setTextureRectInPixels(cc.RectZero, false, cc.SizeZero);
+        this.setTextureRectInPixels(cc.RectZero(), false, cc.SizeZero());
 
         return true;
     },
@@ -286,7 +286,6 @@ cc.Sprite = cc.Node.extend({
         cc.Assert(pTexture != null, "");
 
         if(argnum == 1){
-
             rect = new cc.Rect();
             rect.size = pTexture.getContentSize();
         }
@@ -310,7 +309,7 @@ cc.Sprite = cc.Node.extend({
                 var pTexture = new cc.Texture2D();
                 pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
                 if (pTexture) {
-                    rect = cc.RectZero;
+                    rect = cc.RectZero();
                     if(cc.renderContextType == cc.kCanvas)
                         rect.size =cc.SizeMake(pTexture.width,pTexture.height);
                     else
@@ -690,6 +689,7 @@ cc.Sprite = cc.Node.extend({
         if(cc.renderContextType == cc.kCanvas){
             //draw some image(temp code)
             //direct draw image by canvas drawImage
+            //console.log("X:" + this.getPositionX() + "  Y:" + this.getPositionY());
             cc.drawingUtil.drawImage(this._m_pobTexture,cc.ccp(this.getPositionX(),this.getPositionY()));
             return;
         }else{
@@ -742,7 +742,7 @@ cc.Sprite = cc.Node.extend({
                 var s = new cc.Size();
                 s = this.m_tContentSize;
                 var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
-                cc.DrawPoly(vertices, 4, true);
+                cc.drawingUtil.drawPoly(vertices, 4, true);
             }
             else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
@@ -751,12 +751,12 @@ cc.Sprite = cc.Node.extend({
                 var offsetPix = new cc.Point();
                 offsetPix = this.getOffsetPositionInPixels();
                 var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
-                cc.drawingUtil.DrawPoly(vertices, 4, true);
+                cc.drawingUtil.drawPoly(vertices, 4, true);
             } // CC_SPRITE_DEBUG_DRAW
         }
     },
 // CCNode overrides
-    addChild:function (pChild, zOrder) {
+    addChild:function (pChild, zOrder,tag) {
         var argnum = arguments.length;
         switch (argnum) {
             case 1:
@@ -1079,7 +1079,7 @@ cc.Sprite = cc.Node.extend({
     }
 });
 cc.Sprite.spriteWithTexture = function (pTexture, rect, offset) {
-    var argnum = arguments;
+    var argnum = arguments.length;
     var pobSprite = new cc.Sprite();
     switch (argnum) {
         case 1:

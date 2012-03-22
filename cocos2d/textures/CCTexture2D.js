@@ -299,15 +299,16 @@ cc.Texture2D = cc.Class.extend({
             point.x, height + point.y, 0.0,
             width + point.x, height + point.y, 0.0 ];
 
-//TODO
-// glBindTexture(cc.GL_TEXTURE_2D, this._m_uName);
-//TODO
-// glVertexPointer(3, cc.GL_FLOAT, 0, vertices);
-//TODO
-// glTexCoordPointer(2, cc.GL_FLOAT, 0, coordinates);
-//TODO
-// glDrawArrays(cc.GL_TRIANGLE_STRIP, 0, 4);
+        //TODO
+        // glBindTexture(cc.GL_TEXTURE_2D, this._m_uName);
+        //TODO
+        // glVertexPointer(3, cc.GL_FLOAT, 0, vertices);
+        //TODO
+        // glTexCoordPointer(2, cc.GL_FLOAT, 0, coordinates);
+        //TODO
+        // glDrawArrays(cc.GL_TRIANGLE_STRIP, 0, 4);
     },
+
     /** draws a texture inside a rect */
     drawInRect:function (rect) {
         var coordinates = [
@@ -321,14 +322,14 @@ cc.Texture2D = cc.Class.extend({
             rect.origin.x, rect.origin.y + rect.size.height, /*0.0,*/
             rect.origin.x + rect.size.width, rect.origin.y + rect.size.height        /*0.0*/ ];
 
-//TODO
-// glBindTexture(cc.GL_TEXTURE_2D, this._m_uName);
-//TODO
-// glVertexPointer(2, cc.GL_FLOAT, 0, vertices);
-//TODO
-// glTexCoordPointer(2, cc.GL_FLOAT, 0, coordinates);
-//TODO
-// glDrawArrays(cc.GL_TRIANGLE_STRIP, 0, 4);
+        //TODO
+        // glBindTexture(cc.GL_TEXTURE_2D, this._m_uName);
+        //TODO
+        // glVertexPointer(2, cc.GL_FLOAT, 0, vertices);
+        //TODO
+        // glTexCoordPointer(2, cc.GL_FLOAT, 0, coordinates);
+        //TODO
+        // glDrawArrays(cc.GL_TRIANGLE_STRIP, 0, 4);
     },
 
     /**

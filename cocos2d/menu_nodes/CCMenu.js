@@ -436,7 +436,7 @@ cc.Menu = cc.Layer.extend({
                 {
                     var local = this._m_pChildren[i].convertToNodeSpace(touchLocation);
                     var r = this._m_pChildren[i].rect();
-                    r.origin = cc.PointZero;
+                    r.origin = cc.PointZero();
                     if (cc.Rect.CCRectContainsPoint(r, local))
                     {
                         return this._m_pChildren[i];
