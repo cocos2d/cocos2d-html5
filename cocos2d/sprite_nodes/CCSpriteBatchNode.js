@@ -48,9 +48,11 @@ cc.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 
 cc.SpriteBatchNode = cc.Node.extend({
     _m_pobTextureAtlas:null,
-    _m_blendFunc:null,
+    _m_blendFunc:new cc.BlendFunc(0,0),
     // all descendants: chlidren, gran children, etc...
     _m_pobDescendants:[],
+
+    ctor:function(){},
 
     _updateBlendFunc:function(){
         if (! this._m_pobTextureAtlas.getTexture().getHasPremultipliedAlpha())
@@ -95,7 +97,7 @@ cc.SpriteBatchNode = cc.Node.extend({
      It add the sprite to the children and descendants array, but it doesn't update add it to the texture atlas
      */
     addSpriteWithoutQuad:function(child,z,aTag){
-        cc.Assert( child != NULL, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
+        cc.Assert( child != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
         /// @todo CCAssert( [child isKindOfClass:[CCSprite class]], @"CCSpriteSheet only supports CCSprites as children");
 
         // quad index is Z
@@ -105,9 +107,9 @@ cc.SpriteBatchNode = cc.Node.extend({
         var i=0;
         if (this._m_pobDescendants && this._m_pobDescendants.length > 0){
             var pObject = null;
-            for(var index in this._m_pobDescendants){
+            for(var index = 0; index < this._m_pobDescendants.length;index++){
                 pObject = this._m_pobDescendants[index];
-                if (pChild && (pChild.getAtlasIndex() >= z)){
+                if (pObject && (pObject.getAtlasIndex() >= z)){
                     ++i;
                 }
             }
@@ -115,7 +117,8 @@ cc.SpriteBatchNode = cc.Node.extend({
         this._m_pobDescendants = cc.ArrayAppendObjectToIndex(this._m_pobDescendants,child, i);
 
         // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
-        this._superprototype.addChild.call(this,child, z, aTag);
+        this.addChild(child, z, aTag,true);
+        //this._parent.addChild.call(this,child, z, aTag);
         //CCNode::addChild(child, z, aTag);
         return this;
     },
@@ -123,10 +126,7 @@ cc.SpriteBatchNode = cc.Node.extend({
     // property
     getTextureAtlas:function(){return this._m_pobTextureAtlas;},
     setTextureAtlas:function(textureAtlas){
-        if (textureAtlas != this._m_pobTextureAtlas)
-        {
-            //CC_SAFE_RETAIN(textureAtlas);
-            //CC_SAFE_RELEASE(m_pobTextureAtlas);
+        if (textureAtlas != this._m_pobTextureAtlas){
             this._m_pobTextureAtlas = textureAtlas;
         }
     },
@@ -137,16 +137,18 @@ cc.SpriteBatchNode = cc.Node.extend({
      The capacity will be increased in 33% in runtime if it run out of space.
      */
     initWithTexture:function(tex,capacity){
+        this._m_pChildren = [];
+        this._m_pobDescendants = [];
+
         this._m_blendFunc.src = cc.BLEND_SRC;
         this._m_blendFunc.dst = cc.BLEND_DST;
         this._m_pobTextureAtlas = new cc.TextureAtlas();
         this._m_pobTextureAtlas.initWithTexture(tex, capacity);
 
-        this._updateBlendFunc();
-
+        if(cc.renderContextType == cc.kWebGL){
+            this._updateBlendFunc();
+        }
         // no lazy alloc in this node
-        this._m_pChildren = [];
-        this._m_pobDescendants = [];
         return true;
     },
 
@@ -156,7 +158,7 @@ cc.SpriteBatchNode = cc.Node.extend({
      */
     initWithFile:function(fileImage,capacity){
        var pTexture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
-        return initWithTexture(pTexture2D, capacity);
+        return this.initWithTexture(pTexture2D, capacity);
     },
 
     increaseAtlasCapacity:function(){
@@ -200,10 +202,9 @@ cc.SpriteBatchNode = cc.Node.extend({
 
         // update indices
         var i = 0;
-        if (this._m_pobDescendants && this._m_pobDescendants.length > 0)
-        {
+        if (this._m_pobDescendants && this._m_pobDescendants.length > 0){
             var  pObject = null;
-            for(var index in this._m_pobDescendants){
+            for(var index=0;index < this._m_pobDescendants.length;index++){
                 pObject = this._m_pobDescendants[index];
                 if(pObject){
                     if(i>uIndex){
@@ -218,7 +219,7 @@ cc.SpriteBatchNode = cc.Node.extend({
         var pChildren = pobSprite.getChildren();
         if (pChildren && pChildren.length > 0){
             var pObject = null;
-            for(var index in this._m_pobDescendants){
+            for(var index ;index < this._m_pobDescendants.length;index++){
                 pObject = this._m_pobDescendants[index];
                 if(pObject){
                     var getIndex = this.atlasIndexForChild(pObject,pObject.getZOrder());
@@ -410,12 +411,17 @@ cc.SpriteBatchNode = cc.Node.extend({
 
                 var pSprite = child;
                 // check CCSprite is using the same texture id
-                cc.Assert(pSprite.getTexture().getName() == m_pobTextureAtlas.getTexture().getName(), "SpriteBatchNode.addChild():check CCSprite is using the same texture id");
+                cc.Assert(pSprite.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "SpriteBatchNode.addChild():check CCSprite is using the same texture id");
 
                 this._super(child, zOrder, tag);
 
                 var uIndex = this.atlasIndexForChild(pSprite, zOrder);
                 this.insertChild(pSprite, uIndex);
+                break;
+            case 4:
+                if(arguments[3]){
+                    this._super(child, zOrder, tag);
+                }
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -478,7 +484,7 @@ cc.SpriteBatchNode = cc.Node.extend({
 
         if (this._m_pobDescendants && this._m_pobDescendants.length > 0){
             var pObject = null;
-            for(var i in this._m_pobDescendants){
+            for(var i=0;i< this._m_pobDescendants.length;i++){
                 pObject = this._m_pobDescendants[i];
                 if(pObject){
                     pObject.updateTransform();
