@@ -56,6 +56,11 @@ cc.MenuItemImage.itemFromNormalImage = function(normal, selected, target, callba
     tmp.src = selected;
     that._image.addEventListener("mouseover",function(){this.src = selected;});
     that._image.addEventListener("mouseout",function(){this.src = normal;});
+    that._image.addEventListener("mousedown", function(e){
+        var evt = e || window.event;
+        e.preventDefault();
+        return false;
+    });
     that._image.addEventListener("click", callback);
     //attach callback to onclick
     return that;
