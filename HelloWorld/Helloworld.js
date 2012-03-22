@@ -74,7 +74,7 @@ var Helloworld = cc.Layer.extend({
         }
 
         this.helloImg = new Image();
-        this.helloImg.src = "helloworld.png";
+        this.helloImg.src = "Resources/HelloWorld.png";
 
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
@@ -82,8 +82,8 @@ var Helloworld = cc.Layer.extend({
 
         // add a "close" icon to exit the progress. it's an autorelease object
         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
-            "CloseNormal.png",
-            "CloseSelected.png",
+            "Resources/CloseNormal.png",
+            "Resources/CloseSelected.png",
             this,
             function(){alert("bye bye")} );
         pCloseItem.setPosition(cc.canvas.width-40,10);
@@ -136,7 +136,7 @@ var Helloworld = cc.Layer.extend({
         this.helloLb.setPosition(cc.ccp(180,300));
         this.addChild(this.helloLb,1);
 
-        this.pSprite = cc.Sprite.spriteWithFile("helloworld.png");
+        this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
         this.pSprite.setPosition(0,0);
         //window.test = this.pSprite;
         //pSprite.setSpriteImage(this.helloImg);

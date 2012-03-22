@@ -30,7 +30,7 @@
 
 var cc = cc = cc || {};
 //Cocos2d directory
-cc.Dir = '../';//in relate to the html file or use absolute
+cc.Dir = '../cocos2d/';//in relate to the html file or use absolute
 cc.loadQue = [];//the load que which js files are loaded
 cc.COCOS2D_DEBUG =2;
 cc._DEBUG =1;
@@ -118,8 +118,8 @@ cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
-cc.loadjs('HelloWorld/Classes/AppDelegate.js');//17
-cc.loadjs('HelloWorld/AppControl.js');//18
-cc.loadjs('HelloWorld/Classes/Helloworld.js');//19
+cc.loadjs('../HelloWorld/Classes/AppDelegate.js');//17
+cc.loadjs('platform/AppControl.js');//18
+cc.loadjs('../HelloWorld/Helloworld.js');//19
 cc.loadjs('menu_nodes/CCdomMenuItem.js');
 cc.loadjs('menu_nodes/CCdomMenu.js');

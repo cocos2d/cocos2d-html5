@@ -199,13 +199,14 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         }
     }
 });
+/*
 cc.MenuItemLabel = function(label, target, selector)
 {
     var pRet = new cc.MenuItemLabel();
     pRet.initWithLabel(label, target, selector);
     return pRet;
 };
-
+*/
 
 /** @brief A CCMenuItemAtlasFont
  Helper class that creates a MenuItemLabel class with a LabelAtlas

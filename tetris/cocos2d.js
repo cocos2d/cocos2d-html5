@@ -128,7 +128,7 @@ cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('menu_nodes/CCMenu.js');
 //cc.loadjs('menu_nodes/ccMenuItem.js');
 cc.loadjs('../tetris/Classes/AppDelegate.js');//17
-cc.loadjs('../tetris/AppControl.js');//18
+cc.loadjs('platform/AppControl.js');//18
 cc.loadjs('../tetris/game.js');//19
 cc.loadjs('../tetris/block.js');//20
 cc.loadjs('../tetris/menuScene.js');//21
