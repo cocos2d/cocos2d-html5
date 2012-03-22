@@ -93,12 +93,15 @@ cc.loadjs('platform/CCCommon.js');//1
 cc.loadjs('platform/platform.js');//2
 cc.loadjs('cocoa/CCGeometry.js');//3
 cc.loadjs('cocoa/CCSet.js');//4
+cc.loadjs('cocoa/CCNS.js');//4
 cc.loadjs('platform/CCTypes.js');//5
 cc.loadjs('cocoa/CCAffineTransform.js');//5
 cc.loadjs('support/CCPointExtension.js');//12
 cc.loadjs('base_nodes/CCNode.js');//6
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
+cc.loadjs('platform/CCSAXParser.js');//7
+cc.loadjs('platform/CCFileUtils.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('textures/CCTextureAtlas.js');//12
@@ -125,7 +128,7 @@ cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('menu_nodes/CCMenu.js');
 //cc.loadjs('menu_nodes/ccMenuItem.js');
 cc.loadjs('../tetris/Classes/AppDelegate.js');//17
-cc.loadjs('../tetris/AppControl.js');//18
+cc.loadjs('platform/AppControl.js');//18
 cc.loadjs('../tetris/game.js');//19
 cc.loadjs('../tetris/block.js');//20
 cc.loadjs('../tetris/menuScene.js');//21
