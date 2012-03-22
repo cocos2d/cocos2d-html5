@@ -147,6 +147,7 @@ cc.domNode = cc.Class.extend({
         this.style = this._domElement.style;
         this.style[cc.Browser.prefix+"transform-origin"] = "50% 50%";
         this.style["float"] = "left";
+        this.style[cc.Browser.prefix+"user-select"] = "none";
     },
     test:function()
     {
