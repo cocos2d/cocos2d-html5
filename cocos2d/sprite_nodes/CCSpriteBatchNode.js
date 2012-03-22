@@ -48,9 +48,11 @@ cc.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 
 cc.SpriteBatchNode = cc.Node.extend({
     _m_pobTextureAtlas:null,
-    _m_blendFunc:null,
+    _m_blendFunc:new cc.BlendFunc(0,0),
     // all descendants: chlidren, gran children, etc...
     _m_pobDescendants:[],
+
+    ctor:function(){},
 
     _updateBlendFunc:function(){
         if (! this._m_pobTextureAtlas.getTexture().getHasPremultipliedAlpha())
@@ -135,16 +137,18 @@ cc.SpriteBatchNode = cc.Node.extend({
      The capacity will be increased in 33% in runtime if it run out of space.
      */
     initWithTexture:function(tex,capacity){
+        this._m_pChildren = [];
+        this._m_pobDescendants = [];
+
         this._m_blendFunc.src = cc.BLEND_SRC;
         this._m_blendFunc.dst = cc.BLEND_DST;
         this._m_pobTextureAtlas = new cc.TextureAtlas();
         this._m_pobTextureAtlas.initWithTexture(tex, capacity);
 
-        this._updateBlendFunc();
-
+        if(cc.renderContextType == cc.kWebGL){
+            this._updateBlendFunc();
+        }
         // no lazy alloc in this node
-        this._m_pChildren = [];
-        this._m_pobDescendants = [];
         return true;
     },
 
@@ -198,8 +202,7 @@ cc.SpriteBatchNode = cc.Node.extend({
 
         // update indices
         var i = 0;
-        if (this._m_pobDescendants && this._m_pobDescendants.length > 0)
-        {
+        if (this._m_pobDescendants && this._m_pobDescendants.length > 0){
             var  pObject = null;
             for(var index=0;index < this._m_pobDescendants.length;index++){
                 pObject = this._m_pobDescendants[index];

@@ -38,14 +38,14 @@ var cc = cc = cc || {};
  To render the quads using an interleaved vertex array list, you should modify the ccConfig.h file
  */
 cc.TextureAtlas = cc.Class.extend({
-    _m_pIndices:[],
+    _m_pIndices:null,
     //0: vertex  1: indices
     _m_pBuffersVBO:[0,1],
     //indicates whether or not the array buffer of the VBO needs to be updated
     _m_bDirty:false,
     _m_uCapacity:0,
     _m_pTexture:null,
-    _m_pQuads:[],
+    _m_pQuads:null,
     /**
      * Property
      */

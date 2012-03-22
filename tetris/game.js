@@ -56,7 +56,7 @@ Game.state = GAME_STATES.RUNNING;
 /**
  * The current speed of the game
  */
-Game.speed = 200;
+Game.speed = 0.200;
 
 /**
  * Internal time accumulator
@@ -236,10 +236,10 @@ Game.tick = function () {
  */
 Game.start = function () {
 	// load tile frames
-	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("tiles.plist");
+	//cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("tiles.plist");
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
-	Game.batchNode = new cc.SpriteBatchNode("tiles.png");
+	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("../resources/tiles.png");
 	Game.batchNode.setPosition(new cc.Point(0, 0));
 	Game.batchNode.setAnchorPoint(new cc.Point(0, 0));
 
@@ -247,23 +247,25 @@ Game.start = function () {
 	var scene = new cc.Scene();
 	scene.setPosition(new cc.Point(4, 0));
 
-	var background = new cc.Sprite("background.png");
+	var background = cc.Sprite.spriteWithFile("../resources/background.png");
 	background.setPosition(new cc.Point(-4, 0));
 	scene.addChild(background);
 
 	scene.addChild(Game.batchNode);
 
 	Game.state = GAME_STATES.RUNNING;
-	Game.addNewBlock(scene);
+	//Game.addNewBlock(scene);
 
 	// schedule every frame
-	Game.__updateId = cc.Scheduler.schedule(function (delta) {
+	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(function (delta) {
+        //console.log("Game.tick();"+ delta);
 		Game.__timeAccum += delta;
 		if (Game.__timeAccum >= Game.speed) {
+            console.log("Game.tick();");
 			Game.tick();
 			Game.__timeAccum = 0.0;
 		}
-	}, 0);
+	}, this,0,!true);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
