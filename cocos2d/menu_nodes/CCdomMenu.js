@@ -41,6 +41,7 @@ cc.Menu = cc.domNode.extend({
         this._container = cc.$new("div");
         this._container.id ="Cocos2dGameContainer";
         this._container.style.position = "relative";
+        this._container.style.overflow = "hidden";
         this._domElement.id = "Cocos2dMenuLayer";
         this.style.width = canvas.width+"px";
         this.style.height = 0;
