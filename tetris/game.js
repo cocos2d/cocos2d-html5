@@ -88,6 +88,7 @@ Game.batchNode = null;
 Game.addNewBlock = function (scene) {
 	Game.currentBlock = Block.random();
 	Game.currentBlock.setPosition(5, Game.ROWS - 1);
+    //Game.currentBlock.setPosition(5, 0);
 	Game.currentBlock.addToScene(scene);
 };
 
@@ -161,7 +162,7 @@ Game.checkLines = function () {
  * @param {number} row
  */
 Game.destroyRow = function (row) {
-	cc.AudioManager.playEffect("check_in.caf");
+	//cc.AudioManager.playEffect("check_in.caf");
 	Game.state = GAME_STATES.REMOVING_ROW;
 	var i;
 	for (i=0; i < Game.COLS; i++) {
@@ -214,8 +215,8 @@ Game.cleanup = function () {
  * move the contents of the block to the matrix
  */
 Game.tick = function () {
-	// cc.LOG("tick");
 	if (Game.currentBlock && Game.state == GAME_STATES.RUNNING) {
+        //cc.Log("ChildrenLength:" + Game.scene.getChildrenCount());
 		if (Game.currentBlock.canMoveDown(Game.matrix)) {
 			// cc.LOG("  will move block down");
 			Game.currentBlock.moveDown();
@@ -267,7 +268,7 @@ Game.start = function () {
 	Game.addNewBlock(scene);
 
 	// schedule every frame
-	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,!true);
+	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,false);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
