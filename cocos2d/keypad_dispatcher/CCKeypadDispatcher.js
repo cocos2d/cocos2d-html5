@@ -149,7 +149,7 @@ cc.s_KeypadDispatcher = null;
  @brief Dispatch the keypad message from the phone
  */
 cc.KeypadDispatcher = cc.Class.extend({
-    _keydown:[],
+    _keydown:{},
     _delayedKeyUp:[],
     /**
      @brief add delegate to concern keypad msg
@@ -160,7 +160,6 @@ cc.KeypadDispatcher = cc.Class.extend({
         {
             return;
         }
-
         if (! this._m_bLocked)
         {
             this.forceAddDelegate(pDelegate);
@@ -196,7 +195,6 @@ cc.KeypadDispatcher = cc.Class.extend({
     forceAddDelegate: function(pDelegate)
     {
         var pHandler = cc.KeypadHandler.handlerWithDelegate(pDelegate);
-
         if (pHandler)
         {
             this._m_pDelegates.push(pHandler);
@@ -222,7 +220,7 @@ cc.KeypadDispatcher = cc.Class.extend({
         {
             if(this._keydown[this._delayedKeyUp[i]])
             {
-                this._keydown.splice(this._delayedKeyUp[i],1);
+                delete this._keydown[this._delayedKeyUp[i]];
             }
         }
         this._delayedKeyUp = [];
@@ -243,7 +241,7 @@ cc.KeypadDispatcher = cc.Class.extend({
             var keys = this._keydown;
             for(var i = 0; i < this._m_pDelegates.length; i++)
             {
-                this._m_pDelegates[i].keyDown(keys);
+                this._m_pDelegates[i].getDelegate().keyDown(keys);
             }
         }
         else if(!keydown && this._keydown[e.keyCode])//if keyup and our keymap have that key in it
@@ -251,7 +249,7 @@ cc.KeypadDispatcher = cc.Class.extend({
             this._delayedKeyUp.push(e.keyCode);
             for(var i = 0; i < this._m_pDelegates.length; i++)
             {
-                this._m_pDelegates[i].keyUp(e.keyCode);
+                this._m_pDelegates[i].getDelegate().keyUp(e.keyCode);
             }
         }
         this._m_bLocked = false;

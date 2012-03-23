@@ -56,7 +56,7 @@ Game.state = GAME_STATES.RUNNING;
 /**
  * The current speed of the game
  */
-Game.speed = 0.200;
+Game.speed = 0.500;
 
 /**
  * Internal time accumulator
@@ -257,6 +257,7 @@ Game.start = function () {
 	//var scene = new cc.Scene();
     var scene = new Game.TetrisLayer();
     scene.setIsTouchEnabled(true);
+    scene.setIsKeypadEnabled(true);
 	scene.setPosition(new cc.Point(4, 0));
 
 	var background = cc.Sprite.spriteWithFile("Resources/background.png");
@@ -318,6 +319,36 @@ Game.TetrisLayer = cc.Layer.extend({
     initialPoint:cc.PointZero(),
     movedBlock:false,
     isMouseDown:false,
+    keyDown:function(e)
+    {
+        //alert(1);
+        if(e[cc.key.left])
+        {
+            if(Game.currentBlock)
+            {
+                Game.currentBlock.moveHorizontally(-Game.TILE_SIZE);
+            }
+        }
+        else if(e[cc.key.right])
+        {
+            if(Game.currentBlock)
+            {
+                Game.currentBlock.moveHorizontally(Game.TILE_SIZE);
+            }
+        }
+        if(e[cc.key.space] || e[cc.key.up])
+        {
+            Game.currentBlock.rotate();
+        }
+        if(e[cc.key.down])
+        {
+            Game.currentBlock.moveDown();
+        }
+    },
+    keyUp: function()
+    {
+
+    },
     ccTouchesBegan:function(pTouches,pEvent){
         this.isMouseDown = true;
         var getPoint = new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y);
