@@ -88,7 +88,6 @@ Game.batchNode = null;
 Game.addNewBlock = function (scene) {
 	Game.currentBlock = Block.random();
 	Game.currentBlock.setPosition(5, Game.ROWS - 1);
-    //Game.currentBlock.setPosition(5, 0);
 	Game.currentBlock.addToScene(scene);
 };
 
@@ -255,7 +254,9 @@ Game.start = function () {
 	Game.batchNode.setAnchorPoint(new cc.Point(0, 0));
 
 	// create the scene
-	var scene = new cc.Scene();
+	//var scene = new cc.Scene();
+    var scene = new Game.TetrisLayer();
+    scene.setIsTouchEnabled(true);
 	scene.setPosition(new cc.Point(4, 0));
 
 	var background = cc.Sprite.spriteWithFile("Resources/background.png");
@@ -308,5 +309,51 @@ Game.start = function () {
 	// run the game scene with a transition
 	//var transitionScene = new cc.TransitionTurnOffTiles(1.0, Game.scene);
 	//cc.Director.pushScene(transitionScene);
+    //var tScene = new cc.Scene();
+    //tScene.addChild(tScene);
     return Game.scene;
 };
+
+Game.TetrisLayer = cc.Layer.extend({
+    initialPoint:cc.PointZero(),
+    movedBlock:false,
+    isMouseDown:false,
+    ccTouchesBegan:function(pTouches,pEvent){
+        this.isMouseDown = true;
+        var getPoint = new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y);
+        this.initialPoint = getPoint;
+        this.movedBlock = false;
+    },
+    ccTouchesMoved:function(pTouches,pEvent){
+        if(!this.isMouseDown){
+            return;
+        }
+        if (Game.currentBlock) {
+            var getPoint = new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y);
+            var distx = getPoint.x - this.initialPoint.x;
+            var disty = getPoint.y - this.initialPoint.y;
+            console.log("moveHorizontally:" + Math.abs(distx));
+            if (Math.abs(distx) > Game.TILE_SIZE) {
+
+                Game.currentBlock.moveHorizontally(distx);
+                this.initialPoint = getPoint;
+                Game.movedBlock = true;
+            }
+            // do not use the drag down/up for now
+            // but do not allow to rotate the block using that
+            if (Math.abs(disty) > Game.TILE_SIZE) {
+                Game.movedBlock = true;
+            }
+        }
+    },
+    ccTouchesEnded:function(pTouches,pEvent){
+        this.isMouseDown = false;
+        if (Game.currentBlock && !Game.movedBlock) {
+            Game.currentBlock.rotate();
+        }
+        Game.movedBlock = false;
+    },
+    ccTouchesCancelled:function(pTouches,pEvent){
+        console.log("ccTouchesCancelled");
+    }
+});
