@@ -152,7 +152,7 @@ cc.TextureAtlas = cc.Class.extend({
      @since v0.8
      */
     insertQuad:function(quad,index){
-        cc.Assert( index < this._m_uCapacity, "TextureAtlas.updateQuad():insertQuadWithTexture: Invalid index");
+        cc.Assert( index < this._m_uCapacity, "TextureAtlas.insertQuad():insertQuadWithTexture: Invalid index");
 
         this._m_pQuads = cc.ArrayAppendObjectToIndex(this._m_pQuads,quad,index);
         this._m_bDirty = true;
@@ -163,8 +163,8 @@ cc.TextureAtlas = cc.Class.extend({
      @since v0.7.2
      */
     insertQuadFromIndex:function(fromIndex,newIndex){
-        cc.Assert( newIndex >= 0 && newIndex < this._m_pQuads.length, "TextureAtlas.insertQuadFromIndex():atIndex: Invalid index");
-        cc.Assert( fromIndex >= 0 && fromIndex < this._m_pQuads.length, "TextureAtlas.insertQuadFromIndex():atIndex: Invalid index");
+        //cc.Assert( newIndex >= 0 && newIndex < this._m_pQuads.length, "TextureAtlas.insertQuadFromIndex():atIndex: Invalid index");
+        //cc.Assert( fromIndex >= 0 && fromIndex < this._m_pQuads.length, "TextureAtlas.insertQuadFromIndex():atIndex: Invalid index");
 
         if( fromIndex == newIndex )
             return;
@@ -185,7 +185,7 @@ cc.TextureAtlas = cc.Class.extend({
      @since v0.7.2
      */
     removeQuadAtIndex:function(index){
-        cc.Assert( index < this._m_pQuads.length, "TextureAtlas.insertQuadFromIndex():removeQuadAtIndex: Invalid index");
+        //cc.Assert( index < this._m_pQuads.length, "TextureAtlas.insertQuadFromIndex():removeQuadAtIndex: Invalid index");
         cc.ArrayRemoveObjectAtIndex(this._m_pQuads,index);
 
         this._m_bDirty = true;

@@ -96,7 +96,6 @@ cc.LabelTTF = cc.Sprite.extend({
     //temp method
     draw:function(){
         //this is fillText for canvas
-        //console.log(this._m_pString + "X:" + this.getPositionX() + " Y:" + this.getPositionY());
         cc.renderContext.fillStyle = "#ffffff";
         cc.renderContext.font = this._m_fFontSize + "px '"+this._m_pFontName +"'";
         cc.drawingUtil.fillText(this._m_pString,this.getPositionX(),this.getPositionY());

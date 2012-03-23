@@ -432,7 +432,7 @@ cc.SpriteBatchNode = cc.Node.extend({
     // override reorderChild
     reorderChild:function(child,zOrder){
         cc.Assert(child != null, "SpriteBatchNode.addChild():the child should not be null");
-        cc.Assert(this._m_pChildren.containsObject(child), "SpriteBatchNode.addChild():sprite batch node should contain the child");
+        cc.Assert(this._m_pChildren.indexOf(child) > -1, "SpriteBatchNode.addChild():sprite batch node should contain the child");
 
         if (zOrder == child.getZOrder()){
             return;
@@ -450,7 +450,7 @@ cc.SpriteBatchNode = cc.Node.extend({
             return;
         }
 
-        cc.Assert(this._m_pChildren.containsObject(child), "SpriteBatchNode.addChild():sprite batch node should contain the child");
+        cc.Assert(this._m_pChildren.indexOf(child) > -1, "SpriteBatchNode.addChild():sprite batch node should contain the child");
 
         // cleanup before removing
         this.removeSpriteFromAtlas(child);
