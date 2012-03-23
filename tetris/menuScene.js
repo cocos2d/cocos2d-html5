@@ -5,12 +5,12 @@ var MainMenu = {};
 MainMenu.scene = function () {
 	var menuScene = new cc.Scene();
 
-	var menu = new cc.Menu();
+	/*var menu = new cc.Menu();*/
 
 	var label1 = new cc.LabelTTF("Play","Chalkboard SE", 18.0);
 	var label2 = new cc.LabelTTF("Options","Chalkboard SE", 18.0);
 
-	var item1 = new cc.MenuItemLabel(label1, function () {
+	/*var item1 = new cc.MenuItemLabel(label1, function () {
 		cc.LOG("game will start");
 		Game.start();
 	});
@@ -22,7 +22,7 @@ MainMenu.scene = function () {
 
 	menu.addChild(item1, item2);
 	menu.setPosition(new cc.Point(0, 0));
-	menuScene.addChild(menu);
+	menuScene.addChild(menu);*/
 
 
 	// preload music
