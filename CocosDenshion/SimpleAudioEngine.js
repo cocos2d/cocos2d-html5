@@ -61,14 +61,12 @@ cc.AudioManager = cc.Class.extend({
                 this.m_pCapabilities.ogg ||
                 this.m_pCapabilities.wav;
         }
-        console.log(a)
     },
     /**
      @brief Preload background music
      @param pszFilePath The path of the background music file,or the FileName of T_SoundResInfo
      */
     preloadBackgroundMusic:function (pszFilePath) {
-            var a = new Audio(pszFilePath);
     },
 
     /**
