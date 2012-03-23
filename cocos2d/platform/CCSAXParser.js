@@ -45,7 +45,7 @@ cc.SAXParser = cc.Class.extend({
             this.xmlDoc.loadXML(textxml);
         }
         if (this.xmlDoc == null) {
-            console.log("xml " + this.xmlDoc + " not found!");
+            cc.LOG("xml " + this.xmlDoc + " not found!");
         }
         var plist = this.xmlDoc.documentElement;
         if (plist.tagName != 'plist') {
@@ -139,7 +139,6 @@ cc.SAXParser = cc.Class.extend({
             xmlhttp.send(null);
             var xmlName = this.getXMLName(xmlData)
             this.xmlList[xmlName.toString()] = xmlhttp.responseText;
-            console.log("xmlName:", xmlName);
         }
         else {
             alert("Your browser does not support XMLHTTP.");

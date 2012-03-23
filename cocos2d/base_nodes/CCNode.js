@@ -470,7 +470,7 @@ cc.Node = cc.Class.extend({
      */
     getChildByTag:function (aTag) {
         cc.Assert(aTag != cc.kCCNodeTagInvalid, "Invalid tag");
-        if(this._m_pChildren.length > 0) {
+        if(this._m_pChildren != null) {
             for(var i=0;i< this._m_pChildren.length;i++){
                 var pNode = this._m_pChildren[i];
                 if (pNode && pNode._m_nTag == aTag)
@@ -578,7 +578,7 @@ cc.Node = cc.Class.extend({
      */
     removeAllChildrenWithCleanup:function (cleanup) {
         // not using detachChild improves speed here
-        if (this._m_pChildren.length > 0) {
+        if (this._m_pChildren != null) {
             for (var i=0;i < this._m_pChildren;i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode) {
@@ -680,7 +680,7 @@ cc.Node = cc.Class.extend({
         this.transform();
 
 
-        if (this._m_pChildren && this._m_pChildren.length > 0) {
+        if (this._m_pChildren != null) {
             // draw children zOrder < 0
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
@@ -698,7 +698,7 @@ cc.Node = cc.Class.extend({
         this.draw();
 
         // draw children zOrder >= 0
-        if (this._m_pChildren && this._m_pChildren.length > 0) {
+        if (this._m_pChildren != null) {
             for (var i =0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode) {

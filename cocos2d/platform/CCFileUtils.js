@@ -189,8 +189,6 @@ cc.DictMaker = cc.Class.extend({
     parser.preloadXML(pFileName);
     //parser.parse(xmlName);
     this.m_pRootDict =parser.parse(xmlName);
-    console.log("eeee:",this.m_pRootDict);
     return this.m_pRootDict;
-
     }
 });
