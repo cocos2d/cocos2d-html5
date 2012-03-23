@@ -30,6 +30,11 @@
 
 var cc = cc = cc || {};
 cc.MenuItem = cc.domNode.extend({
+
+});
+
+
+cc.MenuItemImage = cc.MenuItem.extend({
     _image:null,
     init: function(file){
         //create div containing an image - div created in ctor
@@ -37,14 +42,15 @@ cc.MenuItem = cc.domNode.extend({
         this._image = new Image();
         this._image.src = file;
         this._image.id ="test";
+        this._image.style.margin = "auto";
+        this._image.style.right="50%";
+        this._image.style.left="-50%";
+        this._image.style.top="-50%";
+        this._image.style.bottom="50%";
+        this._image.style.position = "absolute";
         //add to the div
         this._domElement.appendChild(this._image);
     }
-});
-
-
-cc.MenuItemImage = cc.MenuItem.extend({
-
 });
 cc.MenuItemImage.itemFromNormalImage = function(normal, selected, target, callback)
 {
@@ -58,10 +64,43 @@ cc.MenuItemImage.itemFromNormalImage = function(normal, selected, target, callba
     that._image.addEventListener("mouseout",function(){this.src = normal;});
     that._image.addEventListener("mousedown", function(e){
         var evt = e || window.event;
-        e.preventDefault();
+        evt.preventDefault();
         return false;
     });
     that._image.addEventListener("click", callback);
     //attach callback to onclick
+    that.style.cursor = (callback)? "pointer" : "default";
+    return that;
+};
+
+cc.MenuItemLabel = cc.MenuItem.extend({
+    _text: '',
+    _fontSize:"14px",
+    _fontName:'',
+    init:function(label)
+    {
+        this._text = label.getString();
+        this._fontName = label._m_pFontName;
+        this._fontSize = label._m_fFontSize+"px";
+        //create a div containing the text
+        this._domElement.innerText = this._text;
+        this.style.fontFamily = this._fontName;
+        this.style.fontSize = this._fontSize;
+        this.style.color = "#FFF";
+        this.style.position = "absolute";
+        this.style.bottom = "0px";
+    }
+});
+cc.MenuItemLabel.itemWithLabel= function(label, dimension, target, selector)
+{
+    var that = new this();
+    that.init(label);
+    that._domElement.addEventListener("mousedown", function(e){
+        var evt = e || window.event;
+        evt.preventDefault();
+        return false;
+    });
+    that._domElement.addEventListener("click", selector);
+    that.style.cursor = (selector)? "pointer" : "default";
     return that;
 };

@@ -43,13 +43,15 @@ cc.Menu = cc.domNode.extend({
         this._container.style.position = "relative";
         this._domElement.id = "Cocos2dMenuLayer";
         this.style.width = canvas.width+"px";
-        this.style.height = canvas.height+"px";
+        this.style.height = 0;
+        this.style.bottom = 0;
         this.style.position = "absolute";
 
         this._container.appendChild(this._domElement);
         cc.TouchDispatcher.registerHtmlElementEvent(this._domElement);
         cc.$("body").insertBefore(this._container, canvas);
         this._container.appendChild(canvas);
+        this.style.cursor = "crosshair";
     },
     initWithItems: function(args)
     {

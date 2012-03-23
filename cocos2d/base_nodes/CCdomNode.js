@@ -146,7 +146,7 @@ cc.domNode = cc.Class.extend({
         this._domElement = cc.$new('div');
         this.style = this._domElement.style;
         this.style[cc.Browser.prefix+"transform-origin"] = "50% 50%";
-        this.style["float"] = "left";
+        //this.style["float"] = "left";
         this.style[cc.Browser.prefix+"user-select"] = "none";
     },
     test:function()
@@ -169,12 +169,12 @@ cc.domNode = cc.Class.extend({
     {
         if(!y)//if only 1 param, then x is an object
         {
-            this._m_tPosition = x;
+            this._m_tPosition = {x:x.x, y:-x.y};
         }
         else{
-            this._m_tPosition = {x:x, y:y};
+            this._m_tPosition = {x:x, y:-y};
         }
         //this.transform.translate;
-        this.style[cc.Browser.prefix+"transform"] = this._transform.translate(x, y);
+        this.style[cc.Browser.prefix+"transform"] = this._transform.translate(this._m_tPosition.x, this._m_tPosition.y);
     }
 });
