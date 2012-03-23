@@ -86,7 +86,7 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseSelected.png",
             this,
             function(){alert("bye bye")} );
-        pCloseItem.setPosition(cc.canvas.width-40,10);
+        pCloseItem.setPosition(cc.canvas.width-20,20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
 
         /*
