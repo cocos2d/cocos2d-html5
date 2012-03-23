@@ -89,6 +89,7 @@ Game.addNewBlock = function (scene) {
 	Game.currentBlock = Block.random();
 	Game.currentBlock.setPosition(5, Game.ROWS - 1);
 	Game.currentBlock.addToScene(scene);
+    Game.fast = false;
 };
 
 /**
@@ -271,6 +272,25 @@ Game.start = function () {
 
 	// schedule every frame
 	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,false);
+    var accelerate = function()
+    {
+        if(Game.goleft && Game.currentBlock)
+        {
+            Game.currentBlock.moveHorizontally(-Game.TILE_SIZE);
+        }
+        if(Game.goright && Game.currentBlock)
+        {
+            Game.currentBlock.moveHorizontally(Game.TILE_SIZE);
+        }
+        if(Game.fast && Game.currentBlock)
+        {
+            if (Game.currentBlock.canMoveDown(Game.matrix)) {
+                // cc.LOG("  will move block down");
+                Game.currentBlock.moveDown();
+            }
+        }
+    };
+    cc.Scheduler.sharedScheduler().scheduleSelector(accelerate,this,0.1,false);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
@@ -324,6 +344,7 @@ Game.TetrisLayer = cc.Layer.extend({
         //alert(1);
         if(e[cc.key.left])
         {
+            Game.goleft = true;
             if(Game.currentBlock)
             {
                 Game.currentBlock.moveHorizontally(-Game.TILE_SIZE);
@@ -331,6 +352,7 @@ Game.TetrisLayer = cc.Layer.extend({
         }
         else if(e[cc.key.right])
         {
+            Game.goright = true;
             if(Game.currentBlock)
             {
                 Game.currentBlock.moveHorizontally(Game.TILE_SIZE);
@@ -342,12 +364,24 @@ Game.TetrisLayer = cc.Layer.extend({
         }
         if(e[cc.key.down])
         {
-            Game.currentBlock.moveDown();
+            Game.fast = true;
         }
     },
-    keyUp: function()
+    keyUp: function(e)
     {
-
+        switch(e)
+        {
+            case cc.key.down:
+                Game.fast = false;
+                Game.speed = 0.5;
+                break;
+            case cc.key.left:
+                Game.goleft=false;
+                break;
+            case cc.key.right:
+                Game.goright = false;
+                break;
+        }
     },
     ccTouchesBegan:function(pTouches,pEvent){
         this.isMouseDown = true;
