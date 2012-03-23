@@ -56,7 +56,7 @@ Game.state = GAME_STATES.RUNNING;
 /**
  * The current speed of the game
  */
-Game.speed = 0.200;
+Game.speed = 0.500;
 
 /**
  * Internal time accumulator
@@ -339,6 +339,10 @@ Game.TetrisLayer = cc.Layer.extend({
         if(e[cc.key.space] || e[cc.key.up])
         {
             Game.currentBlock.rotate();
+        }
+        if(e[cc.key.down])
+        {
+            Game.currentBlock.moveDown();
         }
     },
     keyUp: function()
