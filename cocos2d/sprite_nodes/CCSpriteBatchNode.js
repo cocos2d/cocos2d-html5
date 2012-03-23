@@ -476,22 +476,16 @@ cc.SpriteBatchNode = cc.Node.extend({
     // draw
     draw:function(){
         this._super();
-        //console.log(this._m_pChildren.length);
-        if(cc.renderContextType == cc.kCanvas){
-            //console.log(this._m_pChildren.length);
-            //cc.Log("X:" + this.getPosition().x + "  Y:" + this.getPosition().y);
 
+        if(cc.renderContextType == cc.kCanvas){
             for(var index =0; index< this._m_pChildren.length;index++){
                 var sp = this._m_pChildren[index];
-                //if(sp instanceof cc.Sprite){
                 if((sp.getContentSize().width == 0)&&(sp.getContentSize().height == 0)){
                     cc.drawingUtil.drawImage(sp.getTexture(),cc.ccp(this.getPositionX() + sp.getPositionX(),this.getPositionY() + sp.getPositionY()));
                 }else{
                     cc.drawingUtil.drawImage(sp.getTexture(),sp.getTextureRect().origin,sp.getTextureRect().size
                         ,cc.ccp(this.getPositionX() + sp.getPositionX(),this.getPositionY() + sp.getPositionY()),sp.getContentSize());
                 }
-                //sp.draw();
-                //}
             }
         }else{
             // Optimization: Fast Dispatch

@@ -106,6 +106,7 @@ cc.setup = function(){
     }
 
     if(cc.renderContextType == cc.kCanvas){
+        cc.renderContext.translate(0,cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
 };

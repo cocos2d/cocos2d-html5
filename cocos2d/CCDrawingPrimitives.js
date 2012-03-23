@@ -93,7 +93,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
     drawPoint:function(point){
         var newPoint = new cc.Point(point.x * cc.CONTENT_SCALE_FACTOR(),point.y * cc.CONTENT_SCALE_FACTOR());
         this._renderContext.beginPath();
-        this._renderContext.arc(newPoint.x, newPoint.y,1*cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
+        this._renderContext.arc(newPoint.x, -newPoint.y,1*cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
         this._renderContext.closePath();
         this._renderContext.fill();
     },
@@ -105,7 +105,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
 
         this._renderContext.beginPath();
         for(var i =0; i<points.length;i++){
-            this._renderContext.arc(points[i].x* cc.CONTENT_SCALE_FACTOR(), points[i].y* cc.CONTENT_SCALE_FACTOR(),1* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
+            this._renderContext.arc(points[i].x* cc.CONTENT_SCALE_FACTOR(), -points[i].y* cc.CONTENT_SCALE_FACTOR(),1* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
         }
         this._renderContext.closePath();
         this._renderContext.fill();
@@ -113,8 +113,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
 
     drawLine:function(origin,destination){
         this._renderContext.beginPath();
-        this._renderContext.moveTo(origin.x* cc.CONTENT_SCALE_FACTOR(),origin.y* cc.CONTENT_SCALE_FACTOR());
-        this._renderContext.lineTo(destination.x* cc.CONTENT_SCALE_FACTOR(),destination.y* cc.CONTENT_SCALE_FACTOR());
+        this._renderContext.moveTo(origin.x* cc.CONTENT_SCALE_FACTOR(),-origin.y* cc.CONTENT_SCALE_FACTOR());
+        this._renderContext.lineTo(destination.x* cc.CONTENT_SCALE_FACTOR(),-destination.y* cc.CONTENT_SCALE_FACTOR());
         this._renderContext.closePath();
         this._renderContext.stroke();
     },
@@ -133,9 +133,9 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
 
         var firstPoint = vertices[0];
         this._renderContext.beginPath();
-        this._renderContext.moveTo(firstPoint.x* cc.CONTENT_SCALE_FACTOR(),firstPoint.y* cc.CONTENT_SCALE_FACTOR());
+        this._renderContext.moveTo(firstPoint.x* cc.CONTENT_SCALE_FACTOR(),-firstPoint.y* cc.CONTENT_SCALE_FACTOR());
         for(var i = 1; i<vertices.length;i++){
-            this._renderContext.lineTo(vertices[i].x* cc.CONTENT_SCALE_FACTOR(),vertices[i].y* cc.CONTENT_SCALE_FACTOR());
+            this._renderContext.lineTo(vertices[i].x* cc.CONTENT_SCALE_FACTOR(),-vertices[i].y* cc.CONTENT_SCALE_FACTOR());
         }
         if(closePolygon){
             this._renderContext.closePath();
@@ -150,7 +150,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
 
     drawCircle:function(center,radius,angle,segments,drawLineToCenter){
         this._renderContext.beginPath();
-        this._renderContext.arc(center.x* cc.CONTENT_SCALE_FACTOR(), center.y* cc.CONTENT_SCALE_FACTOR(),radius* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
+        this._renderContext.arc(center.x* cc.CONTENT_SCALE_FACTOR(), -center.y* cc.CONTENT_SCALE_FACTOR(),radius* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
         this._renderContext.closePath();
         this._renderContext.stroke();
 
@@ -182,8 +182,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         if(drawLineToCenter){
             this._renderContext.beginPath();
             for(var i=0;i<vertices.length;i++){
-                this._renderContext.moveTo(vertices[i].x,vertices[i].y);
-                this._renderContext.lineTo(center.x* cc.CONTENT_SCALE_FACTOR(),center.y* cc.CONTENT_SCALE_FACTOR());
+                this._renderContext.moveTo(vertices[i].x,-vertices[i].y);
+                this._renderContext.lineTo(center.x* cc.CONTENT_SCALE_FACTOR(),-center.y* cc.CONTENT_SCALE_FACTOR());
             }
             this._renderContext.closePath();
             this._renderContext.stroke();
@@ -226,16 +226,17 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
 
     drawImage:function(image,sourcePoint,sourceSize,destPoint,destSize){
         var len = arguments.length;
-
         switch(len){
             case 2:
-                this._renderContext.drawImage(image,sourcePoint.x,sourcePoint.y);
+                var height = image.height;
+                this._renderContext.drawImage(image,sourcePoint.x,-(sourcePoint.y + height));
                 break;
             case 3:
-                this._renderContext.drawImage(image,sourcePoint.x,sourcePoint.y,sourceSize.width,sourceSize.height);
+                this._renderContext.drawImage(image,sourcePoint.x,-(sourcePoint.y+sourceSize.height),sourceSize.width,sourceSize.height);
                 break;
             case 5:
-                this._renderContext.drawImage(image,sourcePoint.x,sourcePoint.y,sourceSize.width,sourceSize.height,destPoint.x,destPoint.y,destSize.width,destSize.height);
+                this._renderContext.drawImage(image,sourcePoint.x,sourcePoint.y,sourceSize.width,sourceSize.height,destPoint.x,-(destPoint.y+destSize.height),
+                    destSize.width,destSize.height);
                 break;
             default:
                 throw new Error("Argument must be non-nil");
@@ -243,6 +244,6 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         }
     },
     fillText:function(strText,x,y){
-        this._renderContext.fillText(strText,x,y);
+        this._renderContext.fillText(strText,x,-y);
     }
 });
