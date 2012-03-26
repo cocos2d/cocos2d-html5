@@ -45,8 +45,7 @@ cc.AudioManager = cc.Class.extend({
     m_bBackgroundPlaying:false,
     m_EffectsVolume:1,
     ctor:function () {
-
-        // init some audio variables
+      /*  // init some audio variables
         var a = document.createElement('audio');
 
         if (a.canPlayType) {
@@ -60,11 +59,10 @@ cc.AudioManager = cc.Class.extend({
                 && ("" != a.canPlayType('audio/wav; codecs="1"'));
 
             // enable sound if any of the audio format is supported
-            //todo
             this.sound = cc.m_pCapabilities.mp3 ||
                 cc.m_pCapabilities.ogg ||
                 cc.m_pCapabilities.wav;
-        }
+        }*/
     },
     /**
      @brief Preload background music
@@ -76,8 +74,7 @@ cc.AudioManager = cc.Class.extend({
         soundCache.preload = 'auto';
 
         soundCache.addEventListener('canplaythrough', function (e) {
-            this.removeEventListener('canplaythrough', arguments.callee,
-                false);
+            this.removeEventListener('canplaythrough', arguments.callee,false);
         }, false);
 
         soundCache.addEventListener("error", function (e) {
@@ -236,7 +233,6 @@ cc.AudioManager = cc.Class.extend({
             soundCache.loop = bLoop || false;
             soundCache.play();
         }
-        console.log(soundCache)
         return nRet;
     },
 
@@ -267,7 +263,6 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     resumeEffect:function (nSoundId) {
-        console.log(nSoundId)
         if(this.s_List[nSoundId]){
             this.s_List[nSoundId].play();
         }
@@ -325,12 +320,6 @@ cc.AudioManager = cc.Class.extend({
 
         soundCache.addEventListener("error", function (e) {
             //soundLoadError(sound.name);
-        }, false);
-        soundCache.addEventListener("playing", function (e) {
-            //cc.s_SharedEngine.m_bBackgroundPlaying = true;
-        }, false);
-        soundCache.addEventListener("pause", function (e) {
-            //cc.s_SharedEngine.m_bBackgroundPlaying = false;
         }, false);
 
         soundCache.src = pszFilePath;
