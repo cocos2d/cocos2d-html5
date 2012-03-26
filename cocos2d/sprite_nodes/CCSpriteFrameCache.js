@@ -93,7 +93,6 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var sourceSize = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    console.log("spriteFrame-----------------:",spriteFrame);
                     spriteFrame.initWithTexture(pobTexture, frame, rotated, offset, sourceSize);
                 }
                 else if (format == 3) {
