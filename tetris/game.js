@@ -89,6 +89,7 @@ Game.addNewBlock = function (scene) {
 	Game.currentBlock = Block.random();
 	Game.currentBlock.setPosition(5, Game.ROWS - 1);
 	Game.currentBlock.addToScene(scene);
+    Game.fast = false;
 };
 
 /**
@@ -161,7 +162,7 @@ Game.checkLines = function () {
  * @param {number} row
  */
 Game.destroyRow = function (row) {
-	//cc.AudioManager.playEffect("check_in.caf");
+	cc.AudioManager.sharedEngine().playEffect("Resources/check_in.ogg");
 	Game.state = GAME_STATES.REMOVING_ROW;
 	var i;
 	for (i=0; i < Game.COLS; i++) {
@@ -196,7 +197,7 @@ Game.destroyRow = function (row) {
 Game.gameOver = function () {
 	Game.state = GAME_STATES.OVER;
 	Game.cleanup();
-	cc.AudioManager.stopBackgroundMusic();
+	cc.AudioManager.sharedEngine().stopBackgroundMusic();
 	cc.LOG("game over!");
 	cc.Director.popScene();
 };
@@ -247,6 +248,9 @@ Game.updateLoop = function (delta) {
 Game.start = function () {
 	// load tile frames
 	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("Resources/tiles.plist");
+     // preload music
+    cc.AudioManager.sharedEngine().preloadBackgroundMusic("Resources/music.mp3", true);
+    cc.AudioManager.sharedEngine().preloadEffect("Resources/check_in.ogg", true);
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
 	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/tiles.png");
@@ -271,6 +275,25 @@ Game.start = function () {
 
 	// schedule every frame
 	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,false);
+    var accelerate = function()
+    {
+        if(Game.goleft && Game.currentBlock)
+        {
+            Game.currentBlock.moveHorizontally(-Game.TILE_SIZE);
+        }
+        if(Game.goright && Game.currentBlock)
+        {
+            Game.currentBlock.moveHorizontally(Game.TILE_SIZE);
+        }
+        if(Game.fast && Game.currentBlock)
+        {
+            if (Game.currentBlock.canMoveDown(Game.matrix)) {
+                // cc.LOG("  will move block down");
+                Game.currentBlock.moveDown();
+            }
+        }
+    };
+    cc.Scheduler.sharedScheduler().scheduleSelector(accelerate,this,0.1,false);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
@@ -304,8 +327,8 @@ Game.start = function () {
 */
 	Game.scene = scene;
 	// play the music (not at full volume, and loop)
-	//cc.AudioManager.playBackgroundMusic("music.mp3", true);
-	//cc.AudioManager.setBackgroundMusicVolume(0.2);
+	cc.AudioManager.sharedEngine().playBackgroundMusic("Resources/music.mp3", true);
+	cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.1);
 
 	// run the game scene with a transition
 	//var transitionScene = new cc.TransitionTurnOffTiles(1.0, Game.scene);
@@ -324,6 +347,7 @@ Game.TetrisLayer = cc.Layer.extend({
         //alert(1);
         if(e[cc.key.left])
         {
+            Game.goleft = true;
             if(Game.currentBlock)
             {
                 Game.currentBlock.moveHorizontally(-Game.TILE_SIZE);
@@ -331,6 +355,7 @@ Game.TetrisLayer = cc.Layer.extend({
         }
         else if(e[cc.key.right])
         {
+            Game.goright = true;
             if(Game.currentBlock)
             {
                 Game.currentBlock.moveHorizontally(Game.TILE_SIZE);
@@ -342,14 +367,24 @@ Game.TetrisLayer = cc.Layer.extend({
         }
         if(e[cc.key.down])
         {
-            if (Game.currentBlock.canMoveDown(Game.matrix)) {
-                Game.currentBlock.moveDown();
-            }
+            Game.fast = true;
         }
     },
-    keyUp: function()
+    keyUp: function(e)
     {
-
+        switch(e)
+        {
+            case cc.key.down:
+                Game.fast = false;
+                Game.speed = 0.5;
+                break;
+            case cc.key.left:
+                Game.goleft=false;
+                break;
+            case cc.key.right:
+                Game.goright = false;
+                break;
+        }
     },
     ccTouchesBegan:function(pTouches,pEvent){
         this.isMouseDown = true;
