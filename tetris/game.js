@@ -332,7 +332,9 @@ Game.start = function () {
 	//cc.Director.pushScene(transitionScene);
     //var tScene = new cc.Scene();
     //tScene.addChild(tScene);
-    return Game.scene;
+    //return Game.scene;
+    //cc.Director.sharedDirector().popScene();
+    cc.Director.sharedDirector().replaceScene(Game.scene);
 };
 
 Game.TetrisLayer = cc.Layer.extend({

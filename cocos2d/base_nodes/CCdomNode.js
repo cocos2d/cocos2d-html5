@@ -176,5 +176,67 @@ cc.domNode = cc.Class.extend({
         }
         //this.transform.translate;
         this.style[cc.Browser.prefix+"transform"] = this._transform.translate(this._m_tPosition.x, this._m_tPosition.y);
+    },
+    addChild: function(child)
+    {
+        console.log(typeof child);
+    },
+    _setZOrder: function(z)
+    {
+        this.style.zIndex = z;
+    },
+    setParent:function (Var) {
+        this._m_pParent = Var;
+    },
+    onEnter:function () {
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
+        this.resumeSchedulerAndActions();
+        this._m_bIsRunning = true;
+    },
+    _arrayMakeObjectsPerformSelector:function (pArray, func) {
+        if(pArray && pArray.length > 0) {
+            for(var i=0;i < pArray.length;i++){
+                var pNode = pArray[i];
+                if(pNode && (typeof(func) == "string")){
+                    pNode[func]();
+                }else if(pNode && (typeof(func) == "function")){
+                    func.call(pNode);
+                }
+            }
+        }
+    },
+    resumeSchedulerAndActions:function () {
+        cc.Scheduler.sharedScheduler().resumeTarget(this);
+        cc.ActionManager.sharedManager().resumeTarget(this);
+    },
+    onEnterTransitionDidFinish:function () {
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnterTransitionDidFinish");
+    },
+    visit: function()
+    {
+
+    },
+    onExit:function () {
+        this.pauseSchedulerAndActions();
+        this._m_bIsRunning = false;
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onExit");
+    },
+    pauseSchedulerAndActions:function () {
+        cc.Scheduler.sharedScheduler().pauseTarget(this);
+        cc.ActionManager.sharedManager().pauseTarget(this);
+    },
+    cleanup:function () {
+        // actions
+        this.stopAllActions();
+        this.unscheduleAllSelectors();
+
+        // timers
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "cleanup");
+    },
+    stopAllActions:function () {
+        cc.ActionManager.sharedManager().removeAllActionsFromTarget(this);
+    },
+    unscheduleAllSelectors:function () {
+        cc.Scheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
     }
 });

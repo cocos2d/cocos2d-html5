@@ -64,6 +64,10 @@ cc.Menu = cc.domNode.extend({
                 this._domElement.appendChild(args[i].getElement());
             }
         }
+    },
+    hide: function()//hide all children!
+    {
+        this.style.visibility = "hidden";
     }
 });
 cc.Menu.menuWithItems = function()
