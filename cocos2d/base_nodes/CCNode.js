@@ -367,7 +367,7 @@ cc.Node = cc.Class.extend({
     },
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
-            this.m_tContentSize = size;
+            this._m_tContentSize = size;
 
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
                 this._m_tContentSizeInPixels = this._m_tContentSize;
