@@ -443,15 +443,16 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         var el = element;
         var pos = null;
         if(element instanceof HTMLCanvasElement){
-            pos = {left: 0, top: 0,height:el.height};
+            pos = {left: 0, top: 0, height:el.height};
         }else{
-            pos = {left: 0, top: 0,height:parseInt(el.style.height)};
+            pos = {left: 0, top: 0, height:parseInt(el.style.height)};
         }
         while( el != null ) {
             pos.left += el.offsetLeft;
             pos.top += el.offsetTop;
             el = el.offsetParent;
         }
+
         var tx = event.pageX;
         var ty = event.pageY;
 
@@ -514,6 +515,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         pSet.push(touch);
 
         cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
+    });
+    element.addEventListener("contextmenu",function(event){
+        event.stopPropagation();
+        event.preventDefault();
     });
 
     //register canvas touch event

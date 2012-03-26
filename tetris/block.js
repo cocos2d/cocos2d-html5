@@ -299,6 +299,77 @@ Block.prototype.canMoveDown = function (myMatrix, globalMatrix, dy) {
 	return false;
 };
 
+Block.prototype.canMoveLeft = function(myMatrix, globalMatrix){
+    var cols = this.cols;
+    if (arguments.length == 1) {
+        globalMatrix = myMatrix;
+        myMatrix = this.matrix;
+    }
+    var lX = this.getRealPositionX() - this.position.x;
+    for (var j=0; j < cols; j++) {
+        var pos = new cc.Point(this.position.x + lX, this.position.y + j);
+        if((myMatrix[j*cols+lX] > 0) &&(globalMatrix[pos.x-1 + pos.y * Game.COLS ] > 0))
+            return false;
+    }
+
+    return true;
+};
+
+Block.prototype.canMoveRight = function(myMatrix, globalMatrix){
+    var cols = this.cols;
+    if (arguments.length == 1) {
+        globalMatrix = myMatrix;
+        myMatrix = this.matrix;
+    }
+    var lX = this.getLastPositionX() - this.position.x;
+    for (var j=0; j < cols; j++) {
+        var pos = new cc.Point(this.position.x + lX, this.position.y + j);
+        if((myMatrix[j*cols+lX] > 0) &&(globalMatrix[pos.x+1 + pos.y * Game.COLS ] > 0))
+            return false;
+    }
+
+    return true;
+};
+
+Block.prototype.getWidth = function(){
+    var iWidth = 0;
+    for (var j=0; j < this.cols; j++) {
+        var hasBlock = false;
+        for (var i=0; i < this.cols; i++) {
+            if(this.matrix[j  + i* this.cols] > 0){
+                hasBlock = true;
+            }
+        }
+        if(hasBlock)iWidth++;
+    }
+    return iWidth;
+};
+
+Block.prototype.getRealPositionX = function(){
+    for (var j=0; j < this.cols; j++) {
+        for (var i=0; i < this.cols; i++) {
+            if(this.matrix[j  + i* this.cols] > 0){
+                return this.position.x + j;
+            }
+        }
+    }
+    return this.position.x;
+};
+
+Block.prototype.getLastPositionX = function(){
+    for (var j=0; j < this.cols; j++) {
+        for (var i=0; i < this.cols; i++) {
+            var col = this.cols - j;
+            if(this.matrix[i* this.cols  + col] > 0){
+                return this.position.x + col;
+            }
+        }
+    }
+    return this.position.x;
+};
+
+
+
 /**
  * will move the block one row down
  */
@@ -308,9 +379,15 @@ Block.prototype.moveDown = function () {
 
 Block.prototype.moveHorizontally = function (dx) {
 	if (dx > 0 && (this.position.x + this.maxX) < Game.COLS) {
-		this.setPosition(this.position.x + 1, this.position.y);
+        if(this.getRealPositionX() + this.getWidth() < Game.COLS){
+            if(this.canMoveRight(Game.matrix)){
+                this.setPosition(this.position.x + 1, this.position.y);
+            }
+        }
 	} else if (this.position.x + this.minX > 0) {
-		this.setPosition(this.position.x - 1, this.position.y);
+        if(this.canMoveLeft(Game.matrix)){
+            this.setPosition(this.position.x - 1, this.position.y);
+        }
 	}
 };
 

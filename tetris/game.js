@@ -56,7 +56,7 @@ Game.state = GAME_STATES.RUNNING;
 /**
  * The current speed of the game
  */
-Game.speed = 0.500;
+Game.speed = 0.200;
 
 /**
  * Internal time accumulator
@@ -342,7 +342,9 @@ Game.TetrisLayer = cc.Layer.extend({
         }
         if(e[cc.key.down])
         {
-            Game.currentBlock.moveDown();
+            if (Game.currentBlock.canMoveDown(Game.matrix)) {
+                Game.currentBlock.moveDown();
+            }
         }
     },
     keyUp: function()
@@ -363,9 +365,7 @@ Game.TetrisLayer = cc.Layer.extend({
             var getPoint = new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y);
             var distx = getPoint.x - this.initialPoint.x;
             var disty = getPoint.y - this.initialPoint.y;
-            console.log("moveHorizontally:" + Math.abs(distx));
             if (Math.abs(distx) > Game.TILE_SIZE) {
-
                 Game.currentBlock.moveHorizontally(distx);
                 this.initialPoint = getPoint;
                 Game.movedBlock = true;
