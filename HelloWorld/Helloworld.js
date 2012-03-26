@@ -86,7 +86,7 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseSelected.png",
             this,
             function(){alert("bye bye")} );
-        pCloseItem.setPosition(cc.canvas.width-40,10);
+        pCloseItem.setPosition(cc.canvas.width-20,20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
 
         /*
@@ -133,7 +133,7 @@ var Helloworld = cc.Layer.extend({
 
 
         this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
-        this.helloLb.setPosition(cc.ccp(180,300));
+        this.helloLb.setPosition(cc.ccp(180,0));
         this.addChild(this.helloLb,1);
 
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
@@ -148,7 +148,7 @@ var Helloworld = cc.Layer.extend({
         this.circle.schedule(this.circle.myUpdate,1/60);
 
         //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
-        this.helloLb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,-260)));
+        this.helloLb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,280)));
 
         //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
         this.setIsTouchEnabled(true);

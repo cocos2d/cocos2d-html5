@@ -164,7 +164,7 @@ cc.Director = cc.Class.extend({
     init : function()
     {
         //cc.LOG("cocos2d: "+ cc.cocos2dVersion());
-        this._m_pFPSLabel.setPosition(cc.ccp(0,24));
+        this._m_pFPSLabel.setPosition(cc.ccp(0,0));
         // scenes
         //TODO these are already set to null, so maybe we can remove them in the init?
         this._m_pRunningScene = null;
@@ -333,7 +333,7 @@ cc.Director = cc.Class.extend({
         }
         //TODO openGL stuff
         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        cc.renderContext.clearRect(0,0,cc.canvas.width,cc.canvas.height);
+        cc.renderContext.clearRect(0,-cc.canvas.height,cc.canvas.width,cc.canvas.height);
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */

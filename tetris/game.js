@@ -56,7 +56,7 @@ Game.state = GAME_STATES.RUNNING;
 /**
  * The current speed of the game
  */
-Game.speed = 0.200;
+Game.speed = 0.500;
 
 /**
  * Internal time accumulator
@@ -88,8 +88,8 @@ Game.batchNode = null;
 Game.addNewBlock = function (scene) {
 	Game.currentBlock = Block.random();
 	Game.currentBlock.setPosition(5, Game.ROWS - 1);
-    //Game.currentBlock.setPosition(5, 0);
 	Game.currentBlock.addToScene(scene);
+    Game.fast = false;
 };
 
 /**
@@ -255,7 +255,10 @@ Game.start = function () {
 	Game.batchNode.setAnchorPoint(new cc.Point(0, 0));
 
 	// create the scene
-	var scene = new cc.Scene();
+	//var scene = new cc.Scene();
+    var scene = new Game.TetrisLayer();
+    scene.setIsTouchEnabled(true);
+    scene.setIsKeypadEnabled(true);
 	scene.setPosition(new cc.Point(4, 0));
 
 	var background = cc.Sprite.spriteWithFile("Resources/background.png");
@@ -269,6 +272,25 @@ Game.start = function () {
 
 	// schedule every frame
 	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,false);
+    var accelerate = function()
+    {
+        if(Game.goleft && Game.currentBlock)
+        {
+            Game.currentBlock.moveHorizontally(-Game.TILE_SIZE);
+        }
+        if(Game.goright && Game.currentBlock)
+        {
+            Game.currentBlock.moveHorizontally(Game.TILE_SIZE);
+        }
+        if(Game.fast && Game.currentBlock)
+        {
+            if (Game.currentBlock.canMoveDown(Game.matrix)) {
+                // cc.LOG("  will move block down");
+                Game.currentBlock.moveDown();
+            }
+        }
+    };
+    cc.Scheduler.sharedScheduler().scheduleSelector(accelerate,this,0.1,false);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
@@ -308,5 +330,95 @@ Game.start = function () {
 	// run the game scene with a transition
 	//var transitionScene = new cc.TransitionTurnOffTiles(1.0, Game.scene);
 	//cc.Director.pushScene(transitionScene);
+    //var tScene = new cc.Scene();
+    //tScene.addChild(tScene);
     return Game.scene;
 };
+
+Game.TetrisLayer = cc.Layer.extend({
+    initialPoint:cc.PointZero(),
+    movedBlock:false,
+    isMouseDown:false,
+    keyDown:function(e)
+    {
+        //alert(1);
+        if(e[cc.key.left])
+        {
+            Game.goleft = true;
+            if(Game.currentBlock)
+            {
+                Game.currentBlock.moveHorizontally(-Game.TILE_SIZE);
+            }
+        }
+        else if(e[cc.key.right])
+        {
+            Game.goright = true;
+            if(Game.currentBlock)
+            {
+                Game.currentBlock.moveHorizontally(Game.TILE_SIZE);
+            }
+        }
+        if(e[cc.key.space] || e[cc.key.up])
+        {
+            Game.currentBlock.rotate();
+        }
+        if(e[cc.key.down])
+        {
+            Game.fast = true;
+        }
+    },
+    keyUp: function(e)
+    {
+        switch(e)
+        {
+            case cc.key.down:
+                Game.fast = false;
+                Game.speed = 0.5;
+                break;
+            case cc.key.left:
+                Game.goleft=false;
+                break;
+            case cc.key.right:
+                Game.goright = false;
+                break;
+        }
+    },
+    ccTouchesBegan:function(pTouches,pEvent){
+        this.isMouseDown = true;
+        var getPoint = new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y);
+        this.initialPoint = getPoint;
+        this.movedBlock = false;
+    },
+    ccTouchesMoved:function(pTouches,pEvent){
+        if(!this.isMouseDown){
+            return;
+        }
+        if (Game.currentBlock) {
+            var getPoint = new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y);
+            var distx = getPoint.x - this.initialPoint.x;
+            var disty = getPoint.y - this.initialPoint.y;
+            console.log("moveHorizontally:" + Math.abs(distx));
+            if (Math.abs(distx) > Game.TILE_SIZE) {
+
+                Game.currentBlock.moveHorizontally(distx);
+                this.initialPoint = getPoint;
+                Game.movedBlock = true;
+            }
+            // do not use the drag down/up for now
+            // but do not allow to rotate the block using that
+            if (Math.abs(disty) > Game.TILE_SIZE) {
+                Game.movedBlock = true;
+            }
+        }
+    },
+    ccTouchesEnded:function(pTouches,pEvent){
+        this.isMouseDown = false;
+        if (Game.currentBlock && !Game.movedBlock) {
+            Game.currentBlock.rotate();
+        }
+        Game.movedBlock = false;
+    },
+    ccTouchesCancelled:function(pTouches,pEvent){
+        console.log("ccTouchesCancelled");
+    }
+});
