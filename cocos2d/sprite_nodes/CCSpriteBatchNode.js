@@ -52,7 +52,11 @@ cc.SpriteBatchNode = cc.Node.extend({
     // all descendants: chlidren, gran children, etc...
     _m_pobDescendants:[],
 
-    ctor:function(){},
+    ctor:function(fileImage){
+        if(fileImage){
+            this.initWithFile(fileImage, cc.defaultCapacity);
+        }
+    },
 
     _updateBlendFunc:function(){
         if (! this._m_pobTextureAtlas.getTexture().getHasPremultipliedAlpha())
