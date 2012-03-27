@@ -137,7 +137,6 @@ cc.HASH_FIND_INT = function(arr,findInt){
     if(arr == null){
         return null;
     }
-
     for(var i=0; i< arr.length;i++){
         if(arr[i].target == findInt){
             return arr[i];
@@ -599,9 +598,7 @@ cc.Scheduler = cc.Class.extend({
 
         ////CCAssert(pTarget);
         ////CCAssert(pfnSelector);
-
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors,pTarget);
-
         if(pElement != null){
             for(var i =0; i < pElement.timers.length;i++){
                 var pTimer = pElement.timers[i];
@@ -609,9 +606,7 @@ cc.Scheduler = cc.Class.extend({
                     if((pTimer == pElement.currentTimer)&&(!pElement.currentTimerSalvaged)){
                         pElement.currentTimerSalvaged = true;
                     }
-
                     cc.ArrayRemoveObjectAtIndex(pElement.timers, i);
-
                     //update timerIndex in case we are in tick;, looping over the actions
                     if(pElement.timerIndex >= i){
                         pElement.timerIndex--;
