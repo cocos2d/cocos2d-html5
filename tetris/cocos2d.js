@@ -35,6 +35,7 @@ cc.loadQue = [];//the load que which js files are loaded
 cc.COCOS2D_DEBUG =2;
 cc._DEBUG =1;
 cc._IS_RETINA_DISPLAY_SUPPORTED = 0;
+
 //html5 selector method
 cc.$ = function(x)
 {
@@ -76,9 +77,15 @@ cc.loadjs = function(filename)
         else
         {
             cc.setup("gameCanvas");
-            //we are ready to run the game
-            cc.AppController.shareAppController().didFinishLaunchingWithOptions();
-
+            //run the
+            cc.Loader.shareLoader().onloading=function(){
+                cc.LoaderScene.shareLoaderScene().draw();
+            };
+            cc.Loader.shareLoader().onload=function(){
+                cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+            };
+            //preload ressources
+            cc.Loader.shareLoader().preload(g_ressources);
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
@@ -87,8 +94,9 @@ cc.loadjs = function(filename)
     }
 };
 
-
+cc.loadjs('../tetris/Resources/Resources.js');//14
 cc.loadjs('platform/CCClass.js');//0
+cc.loadjs('CCLoader.js');//14
 cc.loadjs('platform/CCCommon.js');//1
 cc.loadjs('platform/platform.js');//2
 cc.loadjs('cocoa/CCGeometry.js');//3
