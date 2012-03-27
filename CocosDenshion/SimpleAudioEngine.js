@@ -44,37 +44,38 @@ cc.AudioManager = cc.Class.extend({
     m_sBackground:null,
     m_bBackgroundPlaying:false,
     m_EffectsVolume:1,
+    m_Callback:null,
     ctor:function () {
-      /*  // init some audio variables
-        var a = document.createElement('audio');
+        /*  // init some audio variables
+         var a = document.createElement('audio');
 
-        if (a.canPlayType) {
-            cc.m_pCapabilities.mp3 = ("no" != a.canPlayType("audio/mpeg"))
-                && ("" != a.canPlayType("audio/mpeg"));
+         if (a.canPlayType) {
+         cc.m_pCapabilities.mp3 = ("no" != a.canPlayType("audio/mpeg"))
+         && ("" != a.canPlayType("audio/mpeg"));
 
-            cc.m_pCapabilities.ogg = ("no" != a.canPlayType('audio/ogg; codecs="vorbis"'))
-                && ("" != a.canPlayType('audio/ogg; codecs="vorbis"'));
+         cc.m_pCapabilities.ogg = ("no" != a.canPlayType('audio/ogg; codecs="vorbis"'))
+         && ("" != a.canPlayType('audio/ogg; codecs="vorbis"'));
 
-            cc.m_pCapabilities.wav = ("no" != a.canPlayType('audio/wav; codecs="1"'))
-                && ("" != a.canPlayType('audio/wav; codecs="1"'));
+         cc.m_pCapabilities.wav = ("no" != a.canPlayType('audio/wav; codecs="1"'))
+         && ("" != a.canPlayType('audio/wav; codecs="1"'));
 
-            // enable sound if any of the audio format is supported
-            this.sound = cc.m_pCapabilities.mp3 ||
-                cc.m_pCapabilities.ogg ||
-                cc.m_pCapabilities.wav;
-        }*/
+         // enable sound if any of the audio format is supported
+         this.sound = cc.m_pCapabilities.mp3 ||
+         cc.m_pCapabilities.ogg ||
+         cc.m_pCapabilities.wav;
+         }*/
     },
     /**
      @brief Preload background music
      @param pszFilePath The path of the background music file,or the FileName of T_SoundResInfo
      */
-    preloadBackgroundMusic:function (pszFilePath) {
-        var soundCache = new Audio(pszFilePath);
+    preloadBackgroundMusic:function (obj) {
+        var soundCache = new Audio(obj.src);
 
         soundCache.preload = 'auto';
 
         soundCache.addEventListener('canplaythrough', function (e) {
-            this.removeEventListener('canplaythrough', arguments.callee,false);
+            this.removeEventListener('canplaythrough', arguments.callee, false);
         }, false);
 
         soundCache.addEventListener("error", function (e) {
@@ -87,13 +88,16 @@ cc.AudioManager = cc.Class.extend({
             cc.s_SharedEngine.m_bBackgroundPlaying = false;
         }, false);
 
-        soundCache.src = pszFilePath;
+        soundCache.src = obj.src;
 
         // load it
         soundCache.load();
 
         this.m_sBackground = soundCache;
-        return 1;
+
+        if (this.m_Callback) {
+            this.m_Callback();
+        }
     },
 
     /**
@@ -195,7 +199,7 @@ cc.AudioManager = cc.Class.extend({
      @brief The volume of the effects max value is 1.0,the min value is 0.0
      */
     getEffectsVolume:function () {
-          return this.m_EffectsVolume;
+        return this.m_EffectsVolume;
     },
 
     /**
@@ -225,15 +229,14 @@ cc.AudioManager = cc.Class.extend({
      @param pszFilePath The path of the effect file,or the FileName of T_SoundResInfo
      @bLoop Whether to loop the effect playing, default value is false
      */
-    playEffect:function (pszFilePath, bLoop) {
-        var nRet = this.getEffectName(pszFilePath);
-        var soundCache = this.getEffectList(nRet);
+    playEffect:function (objName, bLoop) {
+        var soundCache = this.getEffectList(objName);
         if (soundCache) {
             soundCache.currentTime = 0;
             soundCache.loop = bLoop || false;
             soundCache.play();
         }
-        return nRet;
+        return objName;
     },
 
     /**
@@ -241,7 +244,7 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     pauseEffect:function (nSoundId) {
-        if(this.s_List[nSoundId]){
+        if (this.s_List[nSoundId]) {
             this.s_List[nSoundId].pause();
         }
     },
@@ -263,7 +266,7 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     resumeEffect:function (nSoundId) {
-        if(this.s_List[nSoundId]){
+        if (this.s_List[nSoundId]) {
             this.s_List[nSoundId].play();
         }
     },
@@ -285,7 +288,7 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     stopEffect:function (nSoundId) {
-        if(this.s_List[nSoundId]){
+        if (this.s_List[nSoundId]) {
             this.s_List[nSoundId].pause();
             this.s_List[nSoundId].currentTime = 0;
         }
@@ -308,8 +311,8 @@ cc.AudioManager = cc.Class.extend({
      @details        the compressed audio will be decode to wave, then write into an
      internal buffer in SimpleaudioEngine
      */
-    preloadEffect:function (pszFilePath) {
-        var soundCache = new Audio(pszFilePath);
+    preloadEffect:function (obj) {
+        var soundCache = new Audio(obj.src);
 
         soundCache.preload = 'auto';
 
@@ -322,13 +325,15 @@ cc.AudioManager = cc.Class.extend({
             //soundLoadError(sound.name);
         }, false);
 
-        soundCache.src = pszFilePath;
+        soundCache.src = obj.src;
 
         // load it
         soundCache.load();
-        var EffectName = this.getEffectName(pszFilePath)
-        this.s_List[EffectName.toString()] = soundCache;
-        return 1;
+        var EffectName = this.getEffectName(obj.src);
+        this.s_List[EffectName] = soundCache;
+        if (this.m_Callback) {
+            this.m_Callback();
+        }
     },
 
     /**
@@ -341,7 +346,7 @@ cc.AudioManager = cc.Class.extend({
     },
     getEffectName:function (Effect) {
         var startPos = Effect.lastIndexOf("/", Effect.length) + 1;
-        var endPos = Effect.lastIndexOf(".", Effect.length);
+        var endPos = Effect.length;
         return Effect.substring(startPos, endPos);
     },
     getEffectList:function (elt) {
@@ -351,6 +356,9 @@ cc.AudioManager = cc.Class.extend({
         else {
             return null;
         }
+    },
+    setCallback:function (callback) {
+        this.m_Callback = callback;
     }
 });
 
