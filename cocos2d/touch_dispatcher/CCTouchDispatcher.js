@@ -290,7 +290,7 @@ cc.TouchDispatcher = cc.Class.extend({
         //
         // process standard handlers 2nd
         //
-        if (uStandardHandlersCount > 0 && pMutableTouches.length > 0){
+        if (uStandardHandlersCount > 0 ){
             for (i =0; i<this._m_pStandardHandlers.length;i++){
                 pHandler = this._m_pStandardHandlers[i];
 
@@ -300,10 +300,14 @@ cc.TouchDispatcher = cc.Class.extend({
 
                 switch (sHelper.m_type){
                     case cc.TOUCHBEGAN:
-                        pHandler.getDelegate().ccTouchesBegan(pMutableTouches, pEvent);
+                        if(pMutableTouches.length > 0){
+                            pHandler.getDelegate().ccTouchesBegan(pMutableTouches, pEvent);
+                        }
                         break;
                     case cc.TOUCHMOVED:
-                        pHandler.getDelegate().ccTouchesMoved(pMutableTouches, pEvent);
+                        if(pMutableTouches.length > 0){
+                            pHandler.getDelegate().ccTouchesMoved(pMutableTouches, pEvent);
+                        }
                         break;
                     case cc.TOUCHENDED:
                         pHandler.getDelegate().ccTouchesEnded(pMutableTouches, pEvent);
@@ -556,7 +560,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet,null);
         event.stopPropagation();
         event.preventDefault();
-    });
+    },false);
     element.addEventListener("touchmove",function(event){
         if(!event.touches)
             return;
@@ -591,7 +595,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet,null);
         event.stopPropagation();
         event.preventDefault();
-    });
+    },false);
     element.addEventListener("touchend",function(event){
         if(!event.touches)
             return;
@@ -626,7 +630,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet,null);
         event.stopPropagation();
         event.preventDefault();
-    });
+    },false);
     element.addEventListener("touchcancel",function(event){
         if(!event.touches)
             return;
@@ -661,7 +665,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         cc.TouchDispatcher.sharedDispatcher().touchesCancelled(pSet,null);
         event.stopPropagation();
         event.preventDefault();
-    });
+    },false);
 };
 
 cc._pSharedDispatcher = null;

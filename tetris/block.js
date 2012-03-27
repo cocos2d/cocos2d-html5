@@ -322,6 +322,7 @@ Block.prototype.canMoveRight = function(myMatrix, globalMatrix){
         myMatrix = this.matrix;
     }
     var lX = this.getLastPositionX() - this.position.x;
+    console.log("lx:" + lX);
     for (var j=0; j < cols; j++) {
         var pos = new cc.Point(this.position.x + lX, this.position.y + j);
         if((myMatrix[j*cols+lX] > 0) &&(globalMatrix[pos.x+1 + pos.y * Game.COLS ] > 0))
@@ -359,7 +360,7 @@ Block.prototype.getRealPositionX = function(){
 Block.prototype.getLastPositionX = function(){
     for (var j=0; j < this.cols; j++) {
         for (var i=0; i < this.cols; i++) {
-            var col = this.cols - j;
+            var col = this.cols - j -1;
             if(this.matrix[i* this.cols  + col] > 0){
                 return this.position.x + col;
             }

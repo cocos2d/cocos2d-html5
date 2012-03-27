@@ -12,9 +12,14 @@
 	cc.ccp = function(){};
 	cc.Texture2D = function(){};
 	cc.TransitionScene = function(){};
+    function myLog(str){
+        var txtLog = document.getElementById("txtLog");
+        txtLog.innerHTML = txtLog.innerHTML + "<p>" + str + "</p>";
+    };
 </script>
 <canvas id="gameCanvas"  width="315" height="480" style="border: #333300 1px solid; background: #000000"></canvas>
 
 <script src="cocos2d.js"></script>
+<div id="txtLog"></div>
 </body>
 </html>
