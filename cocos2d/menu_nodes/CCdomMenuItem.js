@@ -89,6 +89,12 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this.style.color = "#FFF";
         this.style.position = "absolute";
         this.style.bottom = "0px";
+        this.style.margin = "auto";
+        this.style.right="50%";
+        this.style.left="-50%";
+        this.style.top="-50%";
+        this.style.bottom="50%";
+        this.style.textAlign = "center";
     }
 });
 cc.MenuItemLabel.itemWithLabel= function(label, dimension, target, selector)
@@ -100,7 +106,14 @@ cc.MenuItemLabel.itemWithLabel= function(label, dimension, target, selector)
         evt.preventDefault();
         return false;
     });
-    that._domElement.addEventListener("click", selector);
+    if(arguments.length == 4)
+    {
+        that._domElement.addEventListener("click", selector);
+    }
+    else if(arguments.length == 2)
+    {
+        that._domElement.addEventListener("click", dimension);//the second argument is now the selector
+    }
     that.style.cursor = (selector)? "pointer" : "default";
     return that;
 };

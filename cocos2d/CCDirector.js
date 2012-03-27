@@ -480,8 +480,8 @@ cc.Director = cc.Class.extend({
     {
         cc.Assert(this._m_pRunningScene != null, "running scene should not null");
 
-        this._m_pobScenesStack.removeLastObject();
-        var c = this._m_pobScenesStack.count();
+        this._m_pobScenesStack.pop();
+        var c = this._m_pobScenesStack.length;
 
         if (c == 0)
         {
@@ -490,7 +490,7 @@ cc.Director = cc.Class.extend({
         else
         {
             this._m_bSendCleanupToScene = true;
-            this._m_pNextScene = this._m_pobScenesStack.getObjectAtIndex(c - 1);
+            this._m_pNextScene = this._m_pobScenesStack[c - 1];
         }
     },
     purgeCachedData: function()
@@ -500,6 +500,7 @@ cc.Director = cc.Class.extend({
     },
     purgeDirector: function()
     {
+        console.log("purge direector");
         // don't release the event handlers
         // They are needed in case the director is run again
         cc.TouchDispatcher.sharedDispatcher().removeAllDelegates();
@@ -508,7 +509,6 @@ cc.Director = cc.Class.extend({
         {
             this._m_pRunningScene.onExit();
             this._m_pRunningScene.cleanup();
-            this._m_pRunningScene.release();
         }
 
         this._m_pRunningScene = null;
@@ -516,19 +516,12 @@ cc.Director = cc.Class.extend({
 
         // remove all objects, but don't release it.
         // runWithScene might be executed after 'end'.
-        this._m_pobScenesStack.removeAllObjects();
+        this._m_pobScenesStack= [];
 
         this.stopAnimation();
 
-        if (cc.DIRECTOR_FAST_FPS)
-        {
-            cc.SAFE_RELEASE_NULL(this._m_pFPSLabel);
-        }
-
-        cc.SAFE_RELEASE_NULL(this._m_pProjectionDelegate);
-
         // purge bitmap cache
-        cc.LabelBMFont.purgeCachedData();
+        //cc.LabelBMFont.purgeCachedData();
 
         // purge all managers
         cc.AnimationCache.purgeSharedAnimationCache();
@@ -542,7 +535,6 @@ cc.Director = cc.Class.extend({
             cc.UserDefault.purgeSharedUserDefault();
         }
         // OpenGL view
-        this._m_pobOpenGLView.release();
         this._m_pobOpenGLView = null;
     },
     pushScene: function(pScene)
@@ -558,10 +550,10 @@ cc.Director = cc.Class.extend({
     {
         cc.Assert(pScene != null, "the scene should not be null");
 
-        var i = this._m_pobScenesStack.count();
+        var i = this._m_pobScenesStack.length;
 
         this._m_bSendCleanupToScene = true;
-        this._m_pobScenesStack.replaceObjectAtIndex(i - 1, pScene);
+        this._m_pobScenesStack[i] = pScene;
 
         this._m_pNextScene = pScene;
     },
