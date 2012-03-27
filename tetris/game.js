@@ -407,12 +407,14 @@ Game.TetrisLayer = cc.Layer.extend({
             }
             // do not use the drag down/up for now
             // but do not allow to rotate the block using that
+            //myLog("disty:" + disty);
             if (Math.abs(disty) > Game.TILE_SIZE) {
                 Game.movedBlock = true;
             }
         }
     },
     ccTouchesEnded:function(pTouches,pEvent){
+        //myLog("ccTouchesEnded:" + Game.movedBlock);
         this.isMouseDown = false;
         if (Game.currentBlock && !Game.movedBlock) {
             Game.currentBlock.rotate();
