@@ -199,7 +199,7 @@ Game.gameOver = function () {
 	Game.cleanup();
 	cc.AudioManager.sharedEngine().stopBackgroundMusic();
 	cc.LOG("game over!");
-	cc.Director.popScene();
+	cc.Director.sharedDirector().popScene();
 };
 
 /**
@@ -207,7 +207,10 @@ Game.gameOver = function () {
  */
 Game.cleanup = function () {
 	//Game.scene.unregisterAsTouchHandler();
-    cc.Scheduler.sharedScheduler().unscheduleSelector(Game.updateLoop,this);
+    console.log("game cleanup");
+    cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
+    //cc.Scheduler.sharedScheduler().unscheduleSelector(Game.updateLoop,this);
+    //cc.Scheduler.sharedScheduler().unscheduleSelector(Game.start.accelerate, this);
 };
 
 /**
@@ -275,7 +278,7 @@ Game.start = function () {
 
 	// schedule every frame
 	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,false);
-    var accelerate = function()
+    this.accelerate = function()
     {
         if(Game.goleft && Game.currentBlock)
         {
@@ -293,7 +296,7 @@ Game.start = function () {
             }
         }
     };
-    cc.Scheduler.sharedScheduler().scheduleSelector(accelerate,this,0.1,false);
+    cc.Scheduler.sharedScheduler().scheduleSelector(this.accelerate,this,0.1,false);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
@@ -335,7 +338,9 @@ Game.start = function () {
 	//cc.Director.pushScene(transitionScene);
     //var tScene = new cc.Scene();
     //tScene.addChild(tScene);
-    return Game.scene;
+    //return Game.scene;
+    //cc.Director.sharedDirector().popScene();
+    cc.Director.sharedDirector().pushScene(Game.scene);
 };
 
 Game.TetrisLayer = cc.Layer.extend({
@@ -368,6 +373,10 @@ Game.TetrisLayer = cc.Layer.extend({
         if(e[cc.key.down])
         {
             Game.fast = true;
+        }
+        if(e[cc.key.escape])
+        {
+            Game.gameOver();
         }
     },
     keyUp: function(e)

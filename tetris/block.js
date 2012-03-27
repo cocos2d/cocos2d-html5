@@ -382,12 +382,24 @@ Block.prototype.moveHorizontally = function (dx) {
 	if (dx > 0 && (this.position.x + this.maxX) < Game.COLS) {
         if(this.getRealPositionX() + this.getWidth() < Game.COLS){
             if(this.canMoveRight(Game.matrix)){
-                this.setPosition(this.position.x + 1, this.position.y);
+                //add a timestamp
+                this.now = Date.now();
+                if((this.now - this.last > 99) || (!this.last))
+                {
+                    this.setPosition(this.position.x + 1, this.position.y);
+                    this.last = this.now;
+                }
             }
         }
 	} else if (this.position.x + this.minX > 0) {
         if(this.canMoveLeft(Game.matrix)){
-            this.setPosition(this.position.x - 1, this.position.y);
+            //add a timestamp
+            this.now = Date.now();
+            if((this.now - this.last > 99) || (!this.last))
+            {
+                this.setPosition(this.position.x - 1, this.position.y);
+                this.last = this.now;
+            }
         }
 	}
 };

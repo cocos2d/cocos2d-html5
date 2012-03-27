@@ -2,29 +2,30 @@
 //require("JS/block.js");
 
 var MainMenu = {};
-MainMenu.scene = function () {
-    var menuScene = new cc.Scene();
-
-    var menu = new cc.Menu();
-
-    var label1 = new cc.LabelTTF("Play","Chalkboard SE", 18.0);
-    var label2 = new cc.LabelTTF("Options","Chalkboard SE", 18.0);
-
-    var item1 = new cc.MenuItemLabel(label1, function () {
-        cc.LOG("game will start");
+MainMenu.start = function()
+{
+    var menuScene = cc.Scene.node();
+    var label1 = cc.LabelTTF.labelWithString("Play","Chalkboard SE", 18.0);
+    var label2 = cc.LabelTTF.labelWithString("Options","Chalkboard SE", 18.0);
+    var item1 = cc.MenuItemLabel.itemWithLabel(label1, function () {
         Game.start();
     });
-    var item2 = new cc.MenuItemLabel(label2, function () {
-        cc.LOG("options");
+    var item2 = cc.MenuItemLabel.itemWithLabel(label2, function () {
+        console.log("options");
     });
-    item1.setPosition(new cc.Point(160, 300));
-    item2.setPosition(new cc.Point(160, 150));
+    item1.setPosition(cc.ccp(160, 300));
+    item2.setPosition(cc.ccp(160, 150));
 
-    menu.addChild(item1, item2);
-    menu.setPosition(new cc.Point(0, 0));
+    var menu = cc.Menu.menuWithItems(item1, item2);
     menuScene.addChild(menu);
-
-
+    menuScene.onExit = function()//hide the dom menu
+    {
+        menuScene.getChildren()[0].hide();
+    };
+    menuScene.onEnter = function()
+    {
+        menuScene.getChildren()[0].show();
+    };
     // preload music
     //cc.AudioManager.preloadBackgroundMusic("music.mp3", true);
 
