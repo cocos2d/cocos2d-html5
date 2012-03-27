@@ -253,7 +253,7 @@ Game.start = function () {
     cc.AudioManager.sharedEngine().preloadEffect("Resources/check_in.ogg", true);
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
-	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/tiles.png");
+	Game.batchNode = new cc.SpriteBatchNode("Resources/tiles.png");
 	Game.batchNode.setPosition(new cc.Point(0, 0));
 	Game.batchNode.setAnchorPoint(new cc.Point(0, 0));
 
@@ -407,14 +407,12 @@ Game.TetrisLayer = cc.Layer.extend({
             }
             // do not use the drag down/up for now
             // but do not allow to rotate the block using that
-            //myLog("disty:" + disty);
             if (Math.abs(disty) > Game.TILE_SIZE) {
                 Game.movedBlock = true;
             }
         }
     },
     ccTouchesEnded:function(pTouches,pEvent){
-        //myLog("ccTouchesEnded:" + Game.movedBlock);
         this.isMouseDown = false;
         if (Game.currentBlock && !Game.movedBlock) {
             Game.currentBlock.rotate();

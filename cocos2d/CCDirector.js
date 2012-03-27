@@ -190,7 +190,7 @@ cc.Director = cc.Class.extend({
 
         //purge?
         this._m_bPurgeDirecotorInNextLoop = false;
-        this._m_obWinSizeInPixels = this._m_obWinSizeInPoints = cc.SizeZero();
+        this._m_obWinSizeInPixels = this._m_obWinSizeInPoints = cc.SizeMake(cc.canvas.width,cc.canvas.height);
 
         //portrait mode default
         this._m_eDeviceOrientation = cc.DeviceOrientationPortrait;
@@ -202,8 +202,7 @@ cc.Director = cc.Class.extend({
     },
     applyOrientation : function()
     {
-        var s = new cc.Size();
-        s = this._m_obWinSizeInPixels;
+        var s = this._m_obWinSizeInPixels;
         var w = s.width /2;
         var h = s.height / 2;
         // XXX it's using hardcoded values.
@@ -266,13 +265,11 @@ cc.Director = cc.Class.extend({
     },
     convertToGL : function(obPoint)
     {
-        var s = new cc.Size();
-        s = this._m_obWinSizeInPoints;
+        var s = this._m_obWinSizeInPoints;
         var newY = s.height - obPoint.y;
         var newX = s.width - obPoint.x;
 
-        var ret = new cc.Point();
-        ret = cc.PointZero();
+        var ret = cc.PointZero();
         switch (this._m_eDeviceOrientation)
         {
             case cc.DeviceOrientationPortrait:
@@ -294,12 +291,10 @@ cc.Director = cc.Class.extend({
     },
     convertToUI: function(obPoint)
     {
-        var winSize = new cc.Size();
-        winSize = this._m_obWinSizeInPoints;
+        var winSize = this._m_obWinSizeInPoints;
         var oppositeX = winSize.width - obPoint.x;
         var oppositeY = winSize.height - obPoint.y;
-        var uiPoint = new cc.Point();
-        uiPoint = cc.PointZero();
+        var uiPoint = cc.PointZero();
 
         switch(this._m_eDeviceOrientation)
         {
@@ -411,11 +406,9 @@ cc.Director = cc.Class.extend({
 
         if (cc.DIRECTOR_FAST_FPS)
         {
-            if (this._m_pFPSLabel)
+            if (!this._m_pFPSLabel)
             {
-                cc.SAFE_RELEASE_NULL(this._m_pFPSLabel);
                 this._m_pFPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
-                this._m_pFPSLabel.retain();
             }
         }
 
