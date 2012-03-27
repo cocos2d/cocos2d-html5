@@ -251,9 +251,6 @@ Game.updateLoop = function (delta) {
 Game.start = function () {
 	// load tile frames
 	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("Resources/tiles.plist");
-     // preload music
-    cc.AudioManager.sharedEngine().preloadBackgroundMusic("Resources/music.mp3", true);
-    cc.AudioManager.sharedEngine().preloadEffect("Resources/check_in.ogg", true);
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
 	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/tiles.png");
