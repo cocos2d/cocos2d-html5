@@ -162,7 +162,7 @@ Game.checkLines = function () {
  * @param {number} row
  */
 Game.destroyRow = function (row) {
-	cc.AudioManager.sharedEngine().playEffect("Resources/check_in.ogg");
+	cc.AudioManager.sharedEngine().playEffect("check_in.ogg");
 	Game.state = GAME_STATES.REMOVING_ROW;
 	var i;
 	for (i=0; i < Game.COLS; i++) {
@@ -248,12 +248,9 @@ Game.updateLoop = function (delta) {
 Game.start = function () {
 	// load tile frames
 	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("Resources/tiles.plist");
-     // preload music
-    cc.AudioManager.sharedEngine().preloadBackgroundMusic("Resources/music.mp3", true);
-    cc.AudioManager.sharedEngine().preloadEffect("Resources/check_in.ogg", true);
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
-	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/tiles.png");
+	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("tiles.png");
 	Game.batchNode.setPosition(new cc.Point(0, 0));
 	Game.batchNode.setAnchorPoint(new cc.Point(0, 0));
 
@@ -264,7 +261,7 @@ Game.start = function () {
     scene.setIsKeypadEnabled(true);
 	scene.setPosition(new cc.Point(4, 0));
 
-	var background = cc.Sprite.spriteWithFile("Resources/background.png");
+	var background = cc.Sprite.spriteWithFile("background.png");
 	background.setPosition(new cc.Point(-4, 0));
 	scene.addChild(background,0);
 
@@ -327,7 +324,7 @@ Game.start = function () {
 */
 	Game.scene = scene;
 	// play the music (not at full volume, and loop)
-	cc.AudioManager.sharedEngine().playBackgroundMusic("Resources/music.mp3", true);
+	cc.AudioManager.sharedEngine().playBackgroundMusic("music.mp3", true);
 	cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.1);
 
 	// run the game scene with a transition
