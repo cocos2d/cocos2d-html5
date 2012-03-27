@@ -36,38 +36,6 @@ cc.COCOS2D_DEBUG =2;
 cc._DEBUG =1;
 cc._IS_RETINA_DISPLAY_SUPPORTED = 0;
 
-var g_ressources= [
-    // images res
-   {name: "background",  type:"image",	src: "Resources/background.png"},
-    {name: "tiles",  type:"image",	src: "Resources/tiles.png"},
-
-    {name: "asdfa",  type:"image",	src: "http://bbs.html5china.com/uc_server/data/avatar/000/00/00/03_avatar_middle.jpg"},
-    {name: "asdfsd",  type:"image",	src: "http://www.html5china.com/uploads/101229/1-101229144029609.jpg"},
-    {name: "asdf",  type:"image",	src: "http://www.html5china.com/uploads/101229/1-101229160405930.jpg"},
-    {name: "adsfasd",  type:"image",	src: "http://www.html5china.com/uploads/101229/1-101229160622351.jpg"},
-    {name: "asdf",  type:"image",	src: "http://www.html5china.com/uploads/101230/1-10123009544J57.jpg"},
-    {name: "dsd",  type:"image",	src: "http://www.html5china.com/uploads/101230/1-1012301FG2329.jpg"},
-    {name: "xcv",  type:"image",	src: "http://www.html5china.com/uploads/101230/1-1012301I525Z4.jpg"},
-
-    {name: "zcv",  type:"image",	src: "http://d.lanrentuku.com/down/png/1203/iron-man-avatars/iron_man_mark_i-01.png"},
-    {name: "sdsd",  type:"image",	src: "http://d.lanrentuku.com/down/png/1203/iron-man-avatars/iron_man_mark_iv-01.png"},
-    {name: "dsd",  type:"image",	src: "http://d.lanrentuku.com/down/png/1203/iron-man-avatars/iron_man_mark_ii-01.png"},
-    {name: "zv",  type:"image",	src: "http://d.lanrentuku.com/down/png/1203/iron-man-avatars/iron_man_mark_ii-01.png"},
-    {name: "asdf",  type:"image",	src: "http://d.lanrentuku.com/down/png/1203/iron-man-avatars/iron_man_mark_iii-01.png"},
-    {name: "asdfasd",  type:"image",	src: "http://d.lanrentuku.com/down/png/1203/iron-man-avatars/iron_man_mark_v-01.png"},
-
-    {name: "sdsd",  type:"image",	src: "http://pic4.nipic.com/20090901/2676157_073228068362_2.jpg"},
-    {name: "dsd",  type:"image",	src: "http://pic1a.nipic.com/2009-02-04/200924836944_2.jpg"},
-    {name: "ewe",  type:"image",	src: "http://pic2.nipic.com/20090406/1296346_215050048_2.jpg"},
-    {name: "ewe",  type:"image",	src: "http://pic9.nipic.com/20100916/2531170_093514212258_2.jpg"},
-    {name: "adfs",  type:"image",	src: "http://pic7.nipic.com/20100607/2032250_202440073984_2.jpg"},
-    {name: "xcsds",  type:"image",	src: "http://pic1a.nipic.com/20090310/1988006_233249082_2.jpg"},
-
-    // audio ressources
-    {name: "music",            type: "bgm",    src: "Resources/music.mp3"},
-    {name: "check_in",            type: "effect",    src: "Resources/check_in.ogg"}
-];
-
 //html5 selector method
 cc.$ = function(x)
 {
@@ -126,7 +94,7 @@ cc.loadjs = function(filename)
     }
 };
 
-
+cc.loadjs('../tetris/Resources/Resources.js');//14
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('CCLoader.js');//14
 cc.loadjs('platform/CCCommon.js');//1

@@ -345,9 +345,7 @@ cc.AudioManager = cc.Class.extend({
         delete(this.s_List[nRet]);
     },
     getEffectName:function (Effect) {
-        var startPos = Effect.lastIndexOf("/", Effect.length) + 1;
-        var endPos = Effect.length;
-        return Effect.substring(startPos, endPos);
+        return Effect.toString();
     },
     getEffectList:function (elt) {
         if (this.s_List != null) {

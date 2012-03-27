@@ -54,7 +54,6 @@ cc.Loader = cc.Class.extend({
 
     preloadImage:function (img, onload, onerror) {
         var resName = this.getResName(img.src);
-        //this.m_pImgList.push(resName);
         this.m_pImgList[resName] = new Image();
         this.m_pImgList[resName].onload = onload || this.onResLoaded.bind(this);
         this.m_pImgList[resName].onerror = onerror || this.onResLoadingErr.bind(this);
@@ -87,7 +86,6 @@ cc.Loader = cc.Class.extend({
         for (var i = 0; i < res.length; i++) {
             switch (res[i].type) {
                 case "image":
-                    // console.log("image");
                     this.preloadImage(res[i])
                     this.m_sResourceCount += 1;
                     break;
@@ -117,7 +115,6 @@ cc.Loader = cc.Class.extend({
     },
     getImage:function (name) {
         if (this.m_pImgList[name] != null) {
-            console.log("ffff",this.m_pImgList[name])
             return this.m_pImgList[name];
         } else {
             return null;
@@ -127,9 +124,7 @@ cc.Loader = cc.Class.extend({
 
     },
     getResName:function (resRes) {
-        var startPos = resRes.lastIndexOf("/", resRes.length) + 1;
-        var endPos = resRes.length;
-        return resRes.substring(startPos, endPos);
+        return resRes.toString();
     }
 });
 cc.Loader.shareLoader = function () {
