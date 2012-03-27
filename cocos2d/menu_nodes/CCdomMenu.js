@@ -40,7 +40,7 @@ cc.Menu = cc.domNode.extend({
         var canvas = cc.canvas;
         this._container = cc.$new("div");
         this._container.id ="Cocos2dGameContainer";
-        this._container.style.position = "relative";
+        this._container.style.position = "absolute";
         this._container.style.overflow = "hidden";
         this._domElement.id = "Cocos2dMenuLayer";
         this.style.width = canvas.width+"px";
@@ -68,6 +68,10 @@ cc.Menu = cc.domNode.extend({
     hide: function()//hide all children!
     {
         this.style.visibility = "hidden";
+    },
+    show: function()
+    {
+        this.style.visibility = "visible";
     }
 });
 cc.Menu.menuWithItems = function()

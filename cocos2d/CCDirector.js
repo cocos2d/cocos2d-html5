@@ -497,7 +497,7 @@ cc.Director = cc.Class.extend({
         else
         {
             this._m_bSendCleanupToScene = true;
-            this._m_pNextScene = this._m_pobScenesStack.getObjectAtIndex(c - 1);
+            this._m_pNextScene = this._m_pobScenesStack[c - 1];
         }
     },
     purgeCachedData: function()
@@ -507,6 +507,7 @@ cc.Director = cc.Class.extend({
     },
     purgeDirector: function()
     {
+        console.log("purge direector");
         // don't release the event handlers
         // They are needed in case the director is run again
         cc.TouchDispatcher.sharedDispatcher().removeAllDelegates();

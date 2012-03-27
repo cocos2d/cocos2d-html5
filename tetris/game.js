@@ -56,7 +56,7 @@ Game.state = GAME_STATES.RUNNING;
 /**
  * The current speed of the game
  */
-Game.speed = 0.500;
+Game.speed = 0.200;
 
 /**
  * Internal time accumulator
@@ -162,7 +162,7 @@ Game.checkLines = function () {
  * @param {number} row
  */
 Game.destroyRow = function (row) {
-	//cc.AudioManager.playEffect("check_in.caf");
+	cc.AudioManager.sharedEngine().playEffect("Resources/check_in.ogg");
 	Game.state = GAME_STATES.REMOVING_ROW;
 	var i;
 	for (i=0; i < Game.COLS; i++) {
@@ -197,9 +197,9 @@ Game.destroyRow = function (row) {
 Game.gameOver = function () {
 	Game.state = GAME_STATES.OVER;
 	Game.cleanup();
-	cc.AudioManager.stopBackgroundMusic();
+	cc.AudioManager.sharedEngine().stopBackgroundMusic();
 	cc.LOG("game over!");
-	cc.Director.popScene();
+	cc.Director.sharedDirector().popScene();
 };
 
 /**
@@ -207,7 +207,10 @@ Game.gameOver = function () {
  */
 Game.cleanup = function () {
 	//Game.scene.unregisterAsTouchHandler();
-    cc.Scheduler.sharedScheduler().unscheduleSelector(Game.updateLoop,this);
+    console.log("game cleanup");
+    cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
+    //cc.Scheduler.sharedScheduler().unscheduleSelector(Game.updateLoop,this);
+    //cc.Scheduler.sharedScheduler().unscheduleSelector(Game.start.accelerate, this);
 };
 
 /**
@@ -248,6 +251,9 @@ Game.updateLoop = function (delta) {
 Game.start = function () {
 	// load tile frames
 	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("Resources/tiles.plist");
+     // preload music
+    cc.AudioManager.sharedEngine().preloadBackgroundMusic("Resources/music.mp3", true);
+    cc.AudioManager.sharedEngine().preloadEffect("Resources/check_in.ogg", true);
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
 	Game.batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/tiles.png");
@@ -272,7 +278,7 @@ Game.start = function () {
 
 	// schedule every frame
 	Game.__updateId = cc.Scheduler.sharedScheduler().scheduleSelector(Game.updateLoop, this,0,false);
-    var accelerate = function()
+    this.accelerate = function()
     {
         if(Game.goleft && Game.currentBlock)
         {
@@ -290,7 +296,7 @@ Game.start = function () {
             }
         }
     };
-    cc.Scheduler.sharedScheduler().scheduleSelector(accelerate,this,0.1,false);
+    cc.Scheduler.sharedScheduler().scheduleSelector(this.accelerate,this,0.1,false);
 
 /*	scene.registerAsTouchHandler();
 	scene.touchesBegan = function (points) {
@@ -324,8 +330,8 @@ Game.start = function () {
 */
 	Game.scene = scene;
 	// play the music (not at full volume, and loop)
-	//cc.AudioManager.playBackgroundMusic("music.mp3", true);
-	//cc.AudioManager.setBackgroundMusicVolume(0.2);
+	cc.AudioManager.sharedEngine().playBackgroundMusic("Resources/music.mp3", true);
+	cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.1);
 
 	// run the game scene with a transition
 	//var transitionScene = new cc.TransitionTurnOffTiles(1.0, Game.scene);
@@ -334,7 +340,7 @@ Game.start = function () {
     //tScene.addChild(tScene);
     //return Game.scene;
     //cc.Director.sharedDirector().popScene();
-    cc.Director.sharedDirector().replaceScene(Game.scene);
+    cc.Director.sharedDirector().pushScene(Game.scene);
 };
 
 Game.TetrisLayer = cc.Layer.extend({
@@ -368,6 +374,10 @@ Game.TetrisLayer = cc.Layer.extend({
         {
             Game.fast = true;
         }
+        if(e[cc.key.escape])
+        {
+            Game.gameOver();
+        }
     },
     keyUp: function(e)
     {
@@ -399,9 +409,7 @@ Game.TetrisLayer = cc.Layer.extend({
             var getPoint = new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y);
             var distx = getPoint.x - this.initialPoint.x;
             var disty = getPoint.y - this.initialPoint.y;
-            console.log("moveHorizontally:" + Math.abs(distx));
             if (Math.abs(distx) > Game.TILE_SIZE) {
-
                 Game.currentBlock.moveHorizontally(distx);
                 this.initialPoint = getPoint;
                 Game.movedBlock = true;

@@ -197,6 +197,14 @@ cc.KeypadDispatcher = cc.Class.extend({
         var pHandler = cc.KeypadHandler.handlerWithDelegate(pDelegate);
         if (pHandler)
         {
+            //if handler already exist
+            for(var i = 0; i < this._m_pDelegates; i++)
+            {
+                if(this._m_pDelegates[i].getDelegate() == pHandler.getDelegate())
+                {
+                    alert("ding!");
+                }
+            }
             this._m_pDelegates.push(pHandler);
         }
     },

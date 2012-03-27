@@ -22,6 +22,10 @@ MainMenu.start = function()
     {
         menuScene.getChildren()[0].hide();
     };
+    menuScene.onEnter = function()
+    {
+        menuScene.getChildren()[0].show();
+    };
     // preload music
     //cc.AudioManager.preloadBackgroundMusic("music.mp3", true);
 

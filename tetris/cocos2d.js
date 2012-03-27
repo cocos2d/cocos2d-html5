@@ -127,6 +127,7 @@ cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('menu_nodes/CCdomMenu.js');
+cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('menu_nodes/CCdomMenuItem.js');
 cc.loadjs('../tetris/Classes/AppDelegate.js');//17
 cc.loadjs('platform/AppControl.js');//18
