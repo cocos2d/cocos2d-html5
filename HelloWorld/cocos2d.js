@@ -77,8 +77,14 @@ cc.loadjs = function(filename)
         {
             cc.setup("gameCanvas");
             //we are ready to run the game
-            cc.AppController.shareAppController().didFinishLaunchingWithOptions();
-
+            cc.Loader.shareLoader().onloading=function(){
+                cc.LoaderScene.shareLoaderScene().draw();
+            };
+            cc.Loader.shareLoader().onload=function(){
+                cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+            };
+            //preload ressources
+            cc.Loader.shareLoader().preload([{type:"image",	src: "Resources/HelloWorld.png"}]);
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
@@ -116,6 +122,7 @@ cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCScheduler.js');//14
+cc.loadjs('CCLoader.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('../HelloWorld/Classes/AppDelegate.js');//17

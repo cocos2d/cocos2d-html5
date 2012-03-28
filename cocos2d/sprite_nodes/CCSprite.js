@@ -331,8 +331,10 @@ cc.Sprite = cc.Node.extend({
                  The offset will be (0,0).
                  */
                 cc.Assert(pszFilename != null, "");
-                var pTexture = new cc.Texture2D();
-                pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
+                var pTexture = cc.Loader.shareLoader().getImage(pszFilename);
+                if(pTexture){
+                    pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
+                }
                 if (pTexture) {
                     rect = cc.RectZero();
                     if(cc.renderContextType == cc.kCanvas)

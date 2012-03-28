@@ -209,6 +209,8 @@ Game.cleanup = function () {
 	//Game.scene.unregisterAsTouchHandler();
     console.log("game cleanup");
     cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
+    cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
+    cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
     //cc.Scheduler.sharedScheduler().unscheduleSelector(Game.updateLoop,this);
     //cc.Scheduler.sharedScheduler().unscheduleSelector(Game.start.accelerate, this);
 };
