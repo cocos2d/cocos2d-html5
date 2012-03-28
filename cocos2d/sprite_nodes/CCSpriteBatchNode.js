@@ -52,7 +52,11 @@ cc.SpriteBatchNode = cc.Node.extend({
     // all descendants: chlidren, gran children, etc...
     _m_pobDescendants:[],
 
-    ctor:function(){},
+    ctor:function(fileImage){
+        if(fileImage){
+            this.initWithFile(fileImage, cc.defaultCapacity);
+        }
+    },
 
     _updateBlendFunc:function(){
         if (! this._m_pobTextureAtlas.getTexture().getHasPremultipliedAlpha())
@@ -157,7 +161,9 @@ cc.SpriteBatchNode = cc.Node.extend({
      The file will be loaded using the TextureMgr.
      */
     initWithFile:function(fileImage,capacity){
-       var pTexture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
+        var pTexture2D = cc.Loader.shareLoader().getImage(fileImage);
+        if(pTexture2D)
+            pTexture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
         return this.initWithTexture(pTexture2D, capacity);
     },
 

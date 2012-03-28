@@ -73,9 +73,6 @@ var Helloworld = cc.Layer.extend({
             return false;
         }
 
-        this.helloImg = new Image();
-        this.helloImg.src = "Resources/HelloWorld.png";
-
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
         //    you may modify it.

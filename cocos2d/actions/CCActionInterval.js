@@ -186,7 +186,7 @@ cc.Sequence.actions = function(/*Multiple Arguments*/)
     var pPrev = arguments[0];
     for(var i = 1; i < arguments.length; i++)
     {
-        pPrev = this.actionOneTwo(pPrev, arguments[i]);
+        pPrev = cc.Sequence.actionOneTwo(pPrev, arguments[i]);
     }
     return pPrev;
 };
@@ -856,7 +856,7 @@ cc.BezierBy = cc.ActionInterval.extend({
     startWithTarget:function(pTarget)
     {
         this._super(pTarget);
-        m_startPosition = pTarget.getPosition();
+        this._m_startPosition = pTarget.getPosition();
     },
     update:function(time)
     {
