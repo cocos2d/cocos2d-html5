@@ -184,11 +184,10 @@ cc.DictMaker = cc.Class.extend({
     m_tArrayStack:null,
     m_tStateStack:null,*/
     dictionaryWithContentsOfFile:function(pFileName){
-    var parser = new cc.SAXParser();
-    var xmlName = parser.getXMLName(pFileName);
-    parser.preloadXML(pFileName);
-    //parser.parse(xmlName);
-    this.m_pRootDict =parser.parse(xmlName);
+    var parser = cc.SAXParser.shareParser();
+    var parserName = parser.getName(pFileName);
+    parser.preloadPlist(pFileName);
+    this.m_pRootDict =parser.parse(parserName);
     return this.m_pRootDict;
     }
 });
