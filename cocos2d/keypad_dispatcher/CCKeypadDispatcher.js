@@ -51,7 +51,7 @@ cc.key = {
     right:39,
     down:40,
     insert:45,
-    delete:46,
+    Delete:46,
     0:48,
     1:49,
     2:50,
