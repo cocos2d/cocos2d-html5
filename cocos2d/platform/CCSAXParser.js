@@ -33,7 +33,7 @@ cc.SAXParser = cc.Class.extend({
     m_pPlist:[],
     // parse a xml from a string (xmlhttpObj.responseText)
     parse:function (textxml) {
-        var textxml = this.getXMLList(textxml)
+        var textxml = this.getList(textxml)
         // get a reference to the requested corresponding xml file
         if (window.DOMParser) {
             this.parser = new DOMParser();
@@ -122,7 +122,7 @@ cc.SAXParser = cc.Class.extend({
         }
         return data
     },
-    preloadXML:function (xmlData) {
+    preloadPlist:function (filePath) {
         if (window.XMLHttpRequest) {
             // for IE7+, Firefox, Chrome, Opera, Safari brower
             var xmlhttp = new XMLHttpRequest();
@@ -135,21 +135,25 @@ cc.SAXParser = cc.Class.extend({
         }
         if (xmlhttp != null) {
             // load xml
-            xmlhttp.open("GET", xmlData, false);
+            xmlhttp.open("GET", filePath, false);
             xmlhttp.send(null);
-            var xmlName = this.getXMLName(xmlData)
+            var xmlName = this.getName(filePath)
             this.xmlList[xmlName.toString()] = xmlhttp.responseText;
         }
         else {
             alert("Your browser does not support XMLHTTP.");
         }
     },
-    getXMLName:function (xmlData) {
-        var startPos = xmlData.lastIndexOf("/", xmlData.length) + 1;
-        var endPos = xmlData.lastIndexOf(".", xmlData.length);
-        return xmlData.substring(startPos, endPos);
+    getName:function (filePath) {
+        var startPos = filePath.lastIndexOf("/", filePath.length) + 1;
+        var endPos = filePath.lastIndexOf(".", filePath.length);
+        return filePath.substring(startPos, endPos);
     },
-    getXMLList:function (elt) {
+    getExt:function(filePath){
+        var startPos = filePath.lastIndexOf(".", filePath.length)+1;
+        return filePath.substring(startPos,filePath.length)
+    },
+    getList:function (elt) {
         if (this.xmlList != null) {
             return this.xmlList[elt]
         }
@@ -158,3 +162,10 @@ cc.SAXParser = cc.Class.extend({
         }
     }
 });
+
+cc.SAXParser.shareParser = function () {
+    if (!cc.s_shareParser) {
+        cc.s_shareParser = new cc.SAXParser();
+    }
+    return cc.s_shareParser;
+};
