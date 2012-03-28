@@ -252,7 +252,8 @@ Game.updateLoop = function (delta) {
  */
 Game.start = function () {
 	// load tile frames
-	cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("Resources/tiles.plist");
+    cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithJson(tiles);
+    //cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile("Resources/tiles.plist");
 
 	Game.matrix = new Array(Game.COLS * Game.ROWS);
 	Game.batchNode = new cc.SpriteBatchNode("Resources/tiles.png");
