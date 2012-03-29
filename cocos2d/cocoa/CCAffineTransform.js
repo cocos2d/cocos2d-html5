@@ -71,10 +71,10 @@ cc.AffineTransformMakeIdentity = function(){
 cc.AffineTransformIdentity = cc.AffineTransformMakeIdentity();
 
 cc.RectApplyAffineTransform = function(rect,anAffineTransform){
-    var top = cc.Rect.RectGetMinY(rect);
-    var left = cc.Rect.RectGetMinX(rect);
-    var right = cc.Rect.RectGetMaxX(rect);
-    var bottom = cc.Rect.RectGetMaxY(rect);
+    var top = cc.Rect.CCRectGetMinY(rect);
+    var left = cc.Rect.CCRectGetMinX(rect);
+    var right = cc.Rect.CCRectGetMaxX(rect);
+    var bottom = cc.Rect.CCRectGetMaxY(rect);
 
     var topLeft = cc.PointApplyAffineTransform(cc.PointMake(left, top), anAffineTransform);
     var topRight = cc.PointApplyAffineTransform(cc.PointMake(right, top), anAffineTransform);
