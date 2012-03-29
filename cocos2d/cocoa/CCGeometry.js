@@ -111,7 +111,7 @@ cc.Rect.CCRectEqualToRect = function(rect1, rect2)
 };
 
 //! return the rightmost x-value of 'rect'
-cc.Rect.CCrectGetMaxX = function(rect)
+cc.Rect.CCRectGetMaxX = function(rect)
 {
     return (rect.origin.x + rect.size.width);
 };
@@ -145,10 +145,10 @@ cc.Rect.CCRectGetMinY = function(rect)
     return rect.origin.y;
 };
 
-cc.Rect.CCRectContainPoint = function(rect, point)
+cc.Rect.CCRectContainsPoint = function(rect, point)
 {
     var bRet = false;
-    if(point.x >= cc.Rect.CCRectGetMinX(rect) && point.x <= cc.Rect.CCrectGetMaxX(rect)
+    if(point.x >= cc.Rect.CCRectGetMinX(rect) && point.x <= cc.Rect.CCRectGetMaxX(rect)
         && point.y >= cc.Rect.CCRectGetMinY(rect) && point.y <= cc.Rect.CCRectGetMaxY(rect)){
         bRet = true;
     }
@@ -157,8 +157,8 @@ cc.Rect.CCRectContainPoint = function(rect, point)
 
 cc.Rect.CCRectIntersectsRect = function(rectA, rectB)
 {
-    return !(cc.Rect.CCrectGetMaxX(rectA)< cc.Rect.CCRectGetMinX(rectB) ||
-        cc.Rect.CCrectGetMaxX(rectB) < cc.Rect.CCRectGetMinX(rectA)||
+    return !(cc.Rect.CCRectGetMaxX(rectA)< cc.Rect.CCRectGetMinX(rectB) ||
+        cc.Rect.CCRectGetMaxX(rectB) < cc.Rect.CCRectGetMinX(rectA)||
         cc.Rect.CCRectGetMaxY(rectA)< cc.Rect.CCRectGetMinY(rectB) ||
         cc.Rect.CCRectGetMaxY(rectB) < cc.Rect.CCRectGetMinY(rectA));
 };
