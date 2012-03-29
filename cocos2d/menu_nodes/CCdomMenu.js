@@ -50,7 +50,7 @@ cc.Menu = cc.domNode.extend({
 
         this._container.appendChild(this._domElement);
         cc.TouchDispatcher.registerHtmlElementEvent(this._domElement);
-        cc.$("body").insertBefore(this._container, canvas);
+        cc.gameDiv.insertBefore(this._container, canvas);
         this._container.appendChild(canvas);
         this.style.cursor = "crosshair";
     },

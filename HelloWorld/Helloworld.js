@@ -54,6 +54,38 @@ var CircleSprite = cc.Sprite.extend({
     }
 });
 
+var Cocos2dSprite = cc.Sprite.extend({
+    _dirX : 5,
+    _dirY:5,
+    _speedPx:10,
+
+    ctor:function(){
+        this._super();
+        this.initWithFile("Resources/cocos64.png");
+        this.setPosition(cc.ccp(Math.random() * cc.canvas.width,Math.random()*cc.canvas.height));
+        this.schedule(this.randomMove,0);
+    },
+    randomMove:function(){
+        if((this.getPositionX()< 80 ) || (this.getPositionX() > (cc.canvas.width-80))){
+            this._dirX = -this._dirX;
+        }
+
+        if((this.getPositionY()< 80 ) || (this.getPositionY() > (cc.canvas.height-80))){
+            this._dirY = -this._dirY;
+        }
+        var mX = Math.random() * this._speedPx -4;
+        var mY = Math.random() * this._speedPx -4;
+        if(this._dirX < 0){
+            mX = -mX;
+        }
+        if(this._dirY < 0){
+            mY = -mY;
+        }
+        //this.runAction(cc.MoveBy.actionWithDuration(1,cc.ccp(mX ,mY)));
+        this.setPosition(cc.ccp(this.getPositionX() + mX ,this.getPositionY() + mY));
+    }
+});
+
 
 var Helloworld = cc.Layer.extend({
     bIsMouseDown :false,
@@ -64,6 +96,7 @@ var Helloworld = cc.Layer.extend({
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
     init: function()
     {
+        var selfPoint = this;
         //////////////////////////////
         // 1. super init first
         var test = this._super();
@@ -82,7 +115,7 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
-            function(){alert("bye bye")} );
+            function(){selfPoint.addSprite();} );
         pCloseItem.setPosition(cc.canvas.width-20,20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
 
@@ -131,13 +164,28 @@ var Helloworld = cc.Layer.extend({
 
         this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         this.helloLb.setPosition(cc.ccp(180,0));
-        this.addChild(this.helloLb,1);
+        this.addChild(this.helloLb,5);
 
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setPosition(0,0);
-        //window.test = this.pSprite;
-        //pSprite.setSpriteImage(this.helloImg);
+        this.pSprite.setPosition(cc.ccp(0,0));
+        this.pSprite.setIsVisible(true);
+        this.pSprite.setAnchorPoint(cc.ccp(0.5,0.5));
+        //cc.Log("anchorPoint:" + this.pSprite.getAnchorPoint().x + this.pSprite.getAnchorPoint().y );
+        this.pSprite.setScale(0.5);
+        this.pSprite.setRotation(180);
         this.addChild(this.pSprite,0);
+
+        var rotateToA = cc.RotateTo.actionWithDuration(2,0);
+        var scaleToA = cc.ScaleTo.actionWithDuration(2,1,1);
+
+        this.pSprite.runAction(cc.Sequence.actions(rotateToA,scaleToA));
+
+        var danceSprite = cc.Sprite.spriteWithFile("Resources/grossini_dance_07.png");
+        danceSprite.setPosition(cc.ccp(200,100));
+        danceSprite.setAnchorPoint(cc.ccp(0.5,0.5));
+        danceSprite.setScale(0.8);
+        //cc.Log("getScaleX:" + danceSprite.getScaleX() + "    getScaleY:" + danceSprite.getScaleY());
+        //this.addChild(danceSprite,3);
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40,280));
@@ -145,11 +193,18 @@ var Helloworld = cc.Layer.extend({
         this.circle.schedule(this.circle.myUpdate,1/60);
 
         //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
-        this.helloLb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,280)));
+        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5,cc.ccp(0,280)));
+
 
         //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
         this.setIsTouchEnabled(true);
         return true;
+    },
+    addSprite:function(){
+        for(var i = 0; i< 100;i++){
+            var cocosSp = new Cocos2dSprite();
+            this.addChild(cocosSp,1);
+        }
     },
     // a selector callback
     menuCloseCallback: function(pSender)
