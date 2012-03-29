@@ -156,9 +156,8 @@ cc.SpriteFrameCache = cc.Class.extend({
      */
     addSpriteFramesWithFile:function (pszPlist, pobTexture) {
         var argnum = arguments.length;
-        var pszPath = cc.FileUtils.fullPathFromRelativePath(pszPlist);
-        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(pszPath);
-        var getIndex = pszPlist.lastIndexOf('/');
+        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(pszPlist);
+        var getIndex = pszPlist.lastIndexOf('/'),pszPath;
         if(getIndex == -1){
             pszPath = "";
         }else{

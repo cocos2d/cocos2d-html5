@@ -5,5 +5,8 @@ var g_ressources= [
 
     // audio ressources
     {type: "bgm",    src: "Resources/music.mp3"},
-    {type: "effect",    src: "Resources/check_in.ogg"}
+    {type: "effect",    src: "Resources/check_in.ogg"},
+
+    //plist ressources
+   /* {type: "plist",    src: "Resources/tiles.plist"}*/
 ];
