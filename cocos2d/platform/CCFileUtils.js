@@ -186,7 +186,6 @@ cc.DictMaker = cc.Class.extend({
     dictionaryWithContentsOfFile:function(pFileName){
     var parser = cc.SAXParser.shareParser();
     var parserName = parser.getName(pFileName);
-    parser.preloadPlist(pFileName);
     this.m_pRootDict =parser.parse(parserName);
     return this.m_pRootDict;
     }
