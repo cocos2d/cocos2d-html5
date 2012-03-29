@@ -60,9 +60,6 @@ cc.Loader = cc.Class.extend({
         this.m_pImgList[resName].src = img.src;
     },
 
-    preloadPlist:function (level) {
-    },
-
     onResLoadingErr:function () {
         throw "Failed loading resource";
     },
@@ -100,7 +97,8 @@ cc.Loader = cc.Class.extend({
                     this.m_sResourceCount += 1;
                     break;
                 case "plist":
-                    this.preloadPlist(res[i])
+                    cc.SAXParser.shareParser().setCallback(this.onResLoaded.bind(this));
+                    cc.SAXParser.shareParser().preloadPlist(res[i]);
                     this.m_sResourceCount += 1;
                     break;
                 default:
@@ -155,6 +153,9 @@ cc.LoaderScene = cc.Class.extend({
         cc.renderContext.font = 'Bold 12px Verdana';
         cc.renderContext.textAlign = 'left';
         cc.drawingUtil.fillText("Loading " + cc.Loader.shareLoader().getProgressBar() + "%", logoWidth + 30, logoHeight - 15);
+    },
+    FadeOut:function () {
+        //cc.renderContext.globalAlpha = sineWave;
     }
 });
 cc.LoaderScene.shareLoaderScene = function () {
