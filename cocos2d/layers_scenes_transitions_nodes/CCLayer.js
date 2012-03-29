@@ -72,7 +72,6 @@ cc.Layer = cc.Node.extend({
      @since v0.8.0
      */
     registerWithTouchDispatcher:function () {
-        //console.log("registerWithTouchDispatcher()");
         cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
     },
 
@@ -136,7 +135,6 @@ cc.Layer = cc.Node.extend({
     setIsKeypadEnabled:function (enabled) {
         if (enabled != this._m_bIsKeypadEnabled) {
             this._m_bIsKeypadEnabled = enabled;
-               console.log(this._m_bIsRunning);
             if (this._m_bIsRunning) {
                 if (enabled) {
                     cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);

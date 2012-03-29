@@ -84,7 +84,8 @@ cc.loadjs = function(filename)
                 cc.AppController.shareAppController().didFinishLaunchingWithOptions();
             };
             //preload ressources
-            cc.Loader.shareLoader().preload([{type:"image",	src: "Resources/HelloWorld.png"}]);
+            cc.Loader.shareLoader().preload([{type:"image",	src: "Resources/HelloWorld.png"},{type:"image",	src: "Resources/grossini_dance_07.png"}
+                ,{type:"image",	src: "Resources/cocos64.png"}]);
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
