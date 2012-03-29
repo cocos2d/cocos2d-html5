@@ -82,7 +82,7 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
-            function(){alert("bye bye")} );
+            function(){alert("Bye Bye");} );
         pCloseItem.setPosition(cc.canvas.width-20,20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
 
@@ -131,13 +131,27 @@ var Helloworld = cc.Layer.extend({
 
         this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         this.helloLb.setPosition(cc.ccp(180,0));
-        this.addChild(this.helloLb,1);
+        this.addChild(this.helloLb,5);
 
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setPosition(0,0);
-        //window.test = this.pSprite;
-        //pSprite.setSpriteImage(this.helloImg);
+        this.pSprite.setPosition(cc.ccp(0,0));
+        this.pSprite.setIsVisible(true);
+        this.pSprite.setAnchorPoint(cc.ccp(0.5,0.5));
+        this.pSprite.setScale(0.5);
+        this.pSprite.setRotation(180);
         this.addChild(this.pSprite,0);
+
+        var rotateToA = cc.RotateTo.actionWithDuration(2,0);
+        var scaleToA = cc.ScaleTo.actionWithDuration(2,1,1);
+
+        this.pSprite.runAction(cc.Sequence.actions(rotateToA,scaleToA));
+
+        var danceSprite = cc.Sprite.spriteWithFile("Resources/grossini_dance_07.png");
+        danceSprite.setPosition(cc.ccp(200,100));
+        danceSprite.setAnchorPoint(cc.ccp(0.5,0.5));
+        danceSprite.setScale(0.8);
+        //cc.Log("getScaleX:" + danceSprite.getScaleX() + "    getScaleY:" + danceSprite.getScaleY());
+        //this.addChild(danceSprite,3);
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40,280));
@@ -145,7 +159,8 @@ var Helloworld = cc.Layer.extend({
         this.circle.schedule(this.circle.myUpdate,1/60);
 
         //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
-        this.helloLb.runAction(cc.MoveBy.actionWithDuration(3.5,cc.ccp(0,280)));
+        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5,cc.ccp(0,280)));
+
 
         //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
         this.setIsTouchEnabled(true);

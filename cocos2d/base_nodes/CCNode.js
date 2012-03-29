@@ -195,7 +195,8 @@ cc.Node = cc.Class.extend({
     },
     /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. */
     setScale:function (scale) {
-        this._m_fScaleX = this._m_fScaleY = scale;
+        this._m_fScaleX = scale;
+        this._m_fScaleY = scale;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
@@ -224,10 +225,6 @@ cc.Node = cc.Class.extend({
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
-    },
-    /// position getter
-    getPositionInPixels:function () {
-        return this._m_tPosition;
     },
     /// position setter
     setPosition:function (newPosition) {
@@ -931,7 +928,7 @@ cc.Node = cc.Class.extend({
     /** unschedules a custom selector.*/
     unschedule:function (selector) {
         // explicit nil handling
-        if (selector == 0)
+        if (!selector)
             return;
 
         cc.Scheduler.sharedScheduler().unscheduleSelector(selector, this);
