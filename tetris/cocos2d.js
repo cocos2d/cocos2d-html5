@@ -101,6 +101,7 @@ cc.loadjs = function(filename)
 };
 
 cc.loadjs('../tetris/Resources/Resources.js');//14
+cc.loadjs('../tetris/Resources/tiles.js');//14
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('CCLoader.js');//14
 cc.loadjs('platform/CCCommon.js');//1

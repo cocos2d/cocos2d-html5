@@ -127,6 +127,29 @@ cc.SpriteFrameCache = cc.Class.extend({
             }
         }
     },
+    /** Adds multiple Sprite Frames from a json file
+     * A texture will be loaded automatically.
+     */
+    addSpriteFramesWithJson:function(jsonData){
+        var dict = jsonData;
+        var texturePath = "";
+
+        var metadataDict = dict["metadata"];
+        if (metadataDict) {
+            // try to read  texture file name from meta data
+            texturePath = this._valueForKey("textureFileName", metadataDict);
+            texturePath = texturePath.toString();
+        }
+
+        var pTexture = new cc.Texture2D();
+        pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
+        if (pTexture) {
+            this.addSpriteFramesWithDictionary(dict, pTexture);
+        }
+        else {
+            cc.LOG("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
+        }
+    },
     /** Adds multiple Sprite Frames from a plist file.
      * A texture will be loaded automatically. The texture name will composed by replacing the .plist suffix with .png
      * If you want to use another texture, you should use the addSpriteFramesWithFile:texture method.
@@ -135,6 +158,12 @@ cc.SpriteFrameCache = cc.Class.extend({
         var argnum = arguments.length;
         var pszPath = cc.FileUtils.fullPathFromRelativePath(pszPlist);
         var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(pszPath);
+        var getIndex = pszPlist.lastIndexOf('/');
+        if(getIndex == -1){
+            pszPath = "";
+        }else{
+            pszPath = pszPlist.substring(0,getIndex+1);
+        }
         switch (argnum) {
             case 1:
                 var texturePath = "";
@@ -148,10 +177,9 @@ cc.SpriteFrameCache = cc.Class.extend({
 
                 if (texturePath != "") {
                     // build texture path relative to plist file
-                   /* texturePath = cc.FileUtils.fullPathFromRelativeFile(texturePath.toString(), pszPath);*/
-                    texturePath = "Resources/" + texturePath;
-                }
-                else {
+                    /* texturePath = cc.FileUtils.fullPathFromRelativeFile(texturePath.toString(), pszPath);*/
+                    texturePath = pszPath + texturePath;
+                }else {
                     // build texture path by replacing file extension
                     texturePath = pszPath;
 

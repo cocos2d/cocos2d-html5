@@ -130,6 +130,31 @@ cc.Sprite = cc.Node.extend({
 
     _m_nOpacity:null,
 
+    ctor:function(fileName){
+        this._super();
+        if(fileName){
+            if(typeof(fileName) == "string"){
+                var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(fileName);
+                this.initWithSpriteFrame(pFrame);
+            }else if(typeof(fileName) == "object"){
+                if(fileName instanceof cc.SpriteFrame){
+                    this.initWithSpriteFrame(fileName);
+                }else if(fileName instanceof cc.SpriteBatchNode){
+                    if(arguments.length > 1){
+                        var rect = arguments[1];
+                        if(rect instanceof cc.Rect){
+                            this.initWithBatchNode(fileName, rect);
+                        }
+                    }
+                }else if(fileName instanceof HTMLImageElement){
+                    this.initWithTexture(fileName)
+                }else if(fileName instanceof cc.Texture2D){
+                    this.initWithTexture(fileName)
+                }
+            }
+        }
+    },
+
     //TODO Test ImageObject for canvas
     _spriteImage:null,
 
@@ -281,7 +306,7 @@ cc.Sprite = cc.Node.extend({
     initWithTexture:function (pTexture, rect) {
         var argnum = arguments.length;
         if(argnum == 0)
-            throw "Argument must be non-nil ";
+            throw "Sprite.initWithTexture(): Argument must be non-nil ";
 
         cc.Assert(pTexture != null, "");
 
@@ -306,8 +331,10 @@ cc.Sprite = cc.Node.extend({
                  The offset will be (0,0).
                  */
                 cc.Assert(pszFilename != null, "");
-                var pTexture = new cc.Texture2D();
-                pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
+                var pTexture = cc.Loader.shareLoader().getImage(pszFilename);
+                if(pTexture){
+                    pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
+                }
                 if (pTexture) {
                     rect = cc.RectZero();
                     if(cc.renderContextType == cc.kCanvas)
@@ -336,7 +363,7 @@ cc.Sprite = cc.Node.extend({
                 return false;
                 break;
             default:
-                throw "Argument must be non-nil ";
+                throw "initWithFile():Argument must be non-nil ";
                 break;
         }
 
@@ -781,7 +808,7 @@ cc.Sprite = cc.Node.extend({
                 this._m_bHasChildren = true;
                 break;
             default:
-                throw "Argument must be non-nil ";
+                throw "Sprite.addChild():Argument must be non-nil ";
                 break;
         }
 
@@ -1115,7 +1142,7 @@ cc.Sprite.spriteWithTexture = function (pTexture, rect, offset) {
             break;
 
         default:
-            throw "Argument must be non-nil ";
+            throw "Sprite.spriteWithTexture(): Argument must be non-nil ";
             break;
     }
 };
@@ -1136,7 +1163,7 @@ cc.Sprite.spriteWithSpriteFrameName = function (pszSpriteFrameName) {
     var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
     var msg = "Invalid spriteFrameName:" + pszSpriteFrameName;
     cc.Assert(pFrame != null, msg);
-    return this.spriteWithSpriteFrame(pFrame);
+    return cc.Sprite.spriteWithSpriteFrame(pFrame);
 };
 
 cc.Sprite.spriteWithFile = function (pszFileName, rect) {
