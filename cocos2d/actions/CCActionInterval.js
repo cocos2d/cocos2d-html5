@@ -129,6 +129,14 @@ cc.Sequence = cc.ActionInterval.extend({
     {
         cc.Assert(pActionOne != null, "Sequence.initOneTwo");
         cc.Assert(pActionTwo != null, "Sequence.initOneTwo");
+
+        var d = pActionOne.getDuration() + pActionTwo.getDuration();
+        this.initWithDuration(d);
+
+        this._m_pActions[0] = pActionOne;
+        this._m_pActions[1] = pActionTwo;
+
+        return true;
     },
     startWithTarget:function(pTarget)
     {
@@ -455,7 +463,7 @@ cc.RotateTo = cc.ActionInterval.extend({
     _m_fDiffAngle: 0,
     initWithDuration:function(duration, fDeltaAngle)
     {
-        if (cc.ActionInterval.initWithDuration(duration))
+        if (this._super(duration))
         {
             this._m_fDstAngle = fDeltaAngle;
             return true;
