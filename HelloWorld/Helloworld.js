@@ -61,9 +61,10 @@ var Helloworld = cc.Layer.extend({
     helloLb:null,
     circle:null,
     pSprite:null,
+    pCloseItem:null,
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
-    init: function()
-    {
+    init: function(){
+        var selfPointer = this;
         //////////////////////////////
         // 1. super init first
         var test = this._super();
@@ -78,13 +79,13 @@ var Helloworld = cc.Layer.extend({
         //    you may modify it.
 
         // add a "close" icon to exit the progress. it's an autorelease object
-        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
+        this.pCloseItem = cc.MenuItemImage.itemFromNormalImage(
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
             function(){alert("Bye Bye");} );
-        pCloseItem.setPosition(cc.canvas.width-20,20);
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
+        this.pCloseItem.setPosition(cc.canvas.width-20,20);
+        var pMenu = cc.Menu.menuWithItems(this.pCloseItem, null);
 
         /*
         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
@@ -150,20 +151,49 @@ var Helloworld = cc.Layer.extend({
         danceSprite.setPosition(cc.ccp(200,100));
         danceSprite.setAnchorPoint(cc.ccp(0.5,0.5));
         danceSprite.setScale(0.8);
-        //cc.Log("getScaleX:" + danceSprite.getScaleX() + "    getScaleY:" + danceSprite.getScaleY());
+        danceSprite.setOpacity(0);
         //this.addChild(danceSprite,3);
+
+        //var fadeinAction = cc.FadeIn.actionWithDuration(2);
+        //var fadeoutAction = cc.FadeOut.actionwithDuration(2);
+        //danceSprite.runAction(fadeinAction);
+        //var fadeoutAction = cc.FadeOut.actionwithDuration(2);
+        //danceSprite.runAction(cc.Sequence.actions(fadeinAction,fadeoutAction));
+
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40,280));
         this.addChild(this.circle,2);
         this.circle.schedule(this.circle.myUpdate,1/60);
 
-        //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
         this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5,cc.ccp(0,280)));
 
-
-        //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
         this.setIsTouchEnabled(true);
+
+        window.addEventListener("resize",function(event){
+            if(document.documentElement.clientWidth < 480){
+                cc.canvas.width = 480;
+            }else{
+                cc.canvas.width = document.documentElement.clientWidth - 30;
+            }
+
+            if(document.documentElement.clientHeight < 320){
+                cc.canvas.height = 320;
+            }else{
+                cc.canvas.height = document.documentElement.clientHeight - 30;
+            }
+
+            var xScale = cc.canvas.width /480;
+            var yScale = cc.canvas.height /320;
+            if(xScale > yScale){
+                xScale = yScale;
+            }
+            cc.canvas.width = 480 * xScale;
+            cc.canvas.height = 320 * xScale;
+            cc.renderContext.translate(0,cc.canvas.height);
+            cc.renderContext.scale(xScale,xScale);
+            cc.Director.sharedDirector().setContentScaleFactor(xScale);
+        });
         return true;
     },
     // a selector callback

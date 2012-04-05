@@ -545,6 +545,7 @@ cc.Director = cc.Class.extend({
 
         this._m_pobScenesStack.push(pScene);
         this._m_pNextScene = pScene;
+        console.log(pScene);
     },
     replaceScene: function(pScene)
     {
