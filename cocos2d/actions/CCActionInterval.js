@@ -1060,10 +1060,10 @@ cc.Blink.actionWithDuration= function(duration, uBlinks)
 cc.FadeIn = cc.ActionInterval.extend({
     update:function(time)
     {
-        if (this._m_pTarget.RGBAProtocol)
-        {
+        //if (this._m_pTarget.RGBAProtocol)
+        //{
             this._m_pTarget.setOpacity(255 * time);
-        }
+        //}
     },
     reverse:function()
     {
@@ -1087,11 +1087,7 @@ cc.FadeIn.actionWithDuration = function(d)
 cc.FadeOut = cc.ActionInterval.extend({
     update:function(time)
     {
-        //var pRGBAProtocol = this._m_pTarget.RGBAProtocol;
-        if (this._m_pTarget.RGBAProtocol)
-        {
-            this._m_pTarget.setOpacity(255 * (1 - time));
-        }
+        this._m_pTarget.setOpacity(255 * (1 - time));
     },
     reverse:function()
     {
@@ -1125,18 +1121,12 @@ cc.FadeTo = cc.ActionInterval.extend({
     },
     update:function(time)
     {
-        if (this._m_pTarget.RGBAProtocol)
-        {
-            this._m_pTarget.setOpacity((GLubyte)(this._m_fromOpacity + (this._m_toOpacity - this._m_fromOpacity) * time));
-        }
+        this._m_pTarget.setOpacity((this._m_fromOpacity + (this._m_toOpacity - this._m_fromOpacity) * time));
     },
     startWithTarget: function(pTarget)
     {
         this._super(pTarget);
-        if (pTarget.RGBAProtocol)
-        {
-            this._m_fromOpacity = pTarget.getOpacity();
-        }
+        this._m_fromOpacity = pTarget.getOpacity();
     },
     _m_toOpacity:'',
     _m_fromOpacity:''
