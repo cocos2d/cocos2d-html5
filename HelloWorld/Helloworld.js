@@ -141,32 +141,38 @@ var Helloworld = cc.Layer.extend({
         this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5,cc.ccp(0,280)));
 
         this.setIsTouchEnabled(true);
+        this.adjustSizeForWindow();
 
         window.addEventListener("resize",function(event){
-            if(document.documentElement.clientWidth < 480){
-                cc.canvas.width = 480;
-            }else{
-                cc.canvas.width = document.documentElement.clientWidth - 30;
-            }
-
-            if(document.documentElement.clientHeight < 320){
-                cc.canvas.height = 320;
-            }else{
-                cc.canvas.height = document.documentElement.clientHeight - 30;
-            }
-
-            var xScale = cc.canvas.width /480;
-            var yScale = cc.canvas.height /320;
-            if(xScale > yScale){
-                xScale = yScale;
-            }
-            cc.canvas.width = 480 * xScale;
-            cc.canvas.height = 320 * xScale;
-            cc.renderContext.translate(0,cc.canvas.height);
-            cc.renderContext.scale(xScale,xScale);
-            cc.Director.sharedDirector().setContentScaleFactor(xScale);
+            selfPointer.adjustSizeForWindow();
         });
         return true;
+    },
+
+    adjustSizeForWindow:function(){
+        var margin = document.documentElement.clientWidth - document.body.clientWidth;
+        if(document.documentElement.clientWidth < 480){
+            cc.canvas.width = 480;
+        }else{
+            cc.canvas.width = document.documentElement.clientWidth - margin;
+        }
+
+        if(document.documentElement.clientHeight < 320){
+            cc.canvas.height = 320;
+        }else{
+            cc.canvas.height = document.documentElement.clientHeight - margin;
+        }
+
+        var xScale = cc.canvas.width /480;
+        var yScale = cc.canvas.height /320;
+        if(xScale > yScale){
+            xScale = yScale;
+        }
+        cc.canvas.width = 480 * xScale;
+        cc.canvas.height = 320 * xScale;
+        cc.renderContext.translate(0,cc.canvas.height);
+        cc.renderContext.scale(xScale,xScale);
+        cc.Director.sharedDirector().setContentScaleFactor(xScale);
     },
     // a selector callback
     menuCloseCallback: function(pSender)
