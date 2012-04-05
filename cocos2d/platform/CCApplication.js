@@ -109,6 +109,9 @@ cc.setup = function(){
         cc.renderContext.translate(0,cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
+
+    //binding window size
+
 };
 
 

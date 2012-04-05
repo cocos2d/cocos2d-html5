@@ -461,7 +461,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         var ty = event.pageY;
 
         var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-        var mouseY = pos.height - ((ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor());
+        var mouseY = (pos.height - (ty - pos.top))/cc.Director.sharedDirector().getContentScaleFactor();
 
         var touch = new cc.Touch();
         touch.SetTouchInfo(0,mouseX,mouseY);
@@ -486,7 +486,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         var ty = event.pageY;
 
         var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-        var mouseY = pos.height - ((ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor());
+        var mouseY = (pos.height - (ty - pos.top))/cc.Director.sharedDirector().getContentScaleFactor();
 
 
         var touch = new cc.Touch();
@@ -512,7 +512,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
         var ty = event.pageY;
 
         var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-        var mouseY = pos.height - ((ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor());
+        var mouseY = (pos.height - (ty - pos.top))/cc.Director.sharedDirector().getContentScaleFactor();
         var touch = new cc.Touch();
         touch.SetTouchInfo(0,mouseX,mouseY);
         var pSet = [];
@@ -552,7 +552,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
                 ty = event.touches[i].clientY;
             }
             var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = pos.height - ((ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor());
+            var mouseY = (pos.height - (ty - pos.top))/cc.Director.sharedDirector().getContentScaleFactor();
             var touch = new cc.Touch();
             touch.SetTouchInfo(0,mouseX,mouseY);
             pSet.push(touch);
@@ -587,7 +587,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
                 ty = event.touches[i].clientY;
             }
             var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = pos.height - ((ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor());
+            var mouseY = (pos.height - (ty - pos.top))/cc.Director.sharedDirector().getContentScaleFactor();
             var touch = new cc.Touch();
             touch.SetTouchInfo(0,mouseX,mouseY);
             pSet.push(touch);
@@ -622,7 +622,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
                 ty = event.touches[i].clientY;
             }
             var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = pos.height - ((ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor());
+            var mouseY = (pos.height - (ty - pos.top))/cc.Director.sharedDirector().getContentScaleFactor();
             var touch = new cc.Touch();
             touch.SetTouchInfo(0,mouseX,mouseY);
             pSet.push(touch);
@@ -657,7 +657,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element){
                 ty = event.touches[i].clientY;
             }
             var mouseX = (tx - pos.left)/cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = pos.height - ((ty - pos.top)/cc.Director.sharedDirector().getContentScaleFactor());
+            var mouseY = (pos.height - (ty - pos.top))/cc.Director.sharedDirector().getContentScaleFactor();
             var touch = new cc.Touch();
             touch.SetTouchInfo(0,mouseX,mouseY);
             pSet.push(touch);

@@ -33,21 +33,10 @@ var CircleSprite = cc.Sprite.extend({
     draw:function(){
         cc.renderContext.fillStyle = "rgba(255,255,255,1)";
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
-        //gameContext.clearRect(0,0,480,320);
-
-        //var points = [new cc.Point(20,20),new cc.Point(300,100),new cc.Point(400,350),new cc.Point(100,400)];
-        //tools.drawPoly(points,3,true,false);
-
-        //tools.drawLine(new cc.Point(20,50),new cc.Point(300,350));
-        //tools.drawPoint(new cc.Point(200,100));
-        //tools.drawImage(helloImg, new cc.Point(0,0));
 
         if(this._radians > 360)
             this._radians = 0;
         cc.drawingUtil.drawCircle(this.getPosition(),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
-
-        //tools.drawQuadBezier(new cc.Point(30,20),new cc.Point(150,20),new cc.Point(50,300),50);
-        //tools.drawCubicBezier(new cc.Point(30,50),new cc.Point(150,20),new cc.Point(350,120),new cc.Point(150,300),50);
     },
     myUpdate:function(dt){
         this._radians += 6;
@@ -62,8 +51,8 @@ var Helloworld = cc.Layer.extend({
     circle:null,
     pSprite:null,
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
-    init: function()
-    {
+    init: function(){
+        var selfPointer = this;
         //////////////////////////////
         // 1. super init first
         var test = this._super();
@@ -87,18 +76,18 @@ var Helloworld = cc.Layer.extend({
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
 
         /*
-        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
-            "CloseNormal.png",
-            "CloseSelected.png",
-            this,
-            cc.menu_selector(Helloworld.menuCloseCallback) );
-        pCloseItem.setPosition( cc.ccp(cc.Director.sharedDirector().getWinSize().width - 20, 20) );
+         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
+         "CloseNormal.png",
+         "CloseSelected.png",
+         this,
+         cc.menu_selector(Helloworld.menuCloseCallback) );
+         pCloseItem.setPosition( cc.ccp(cc.Director.sharedDirector().getWinSize().width - 20, 20) );
 
-        // create menu, it's an autorelease object
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
-        pMenu.setPosition( cc.PointZero() );
-        this.addChild(pMenu, 1);
-        */
+         // create menu, it's an autorelease object
+         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
+         pMenu.setPosition( cc.PointZero() );
+         this.addChild(pMenu, 1);
+         */
         /////////////////////////////
         // 3. add your codes below...
 
@@ -116,18 +105,16 @@ var Helloworld = cc.Layer.extend({
 
         // add "HelloWorld" splash screen"
         /*******************
-        var pSprite = cc.Sprite.spriteWithFile("HelloWorld.png");
+         var pSprite = cc.Sprite.spriteWithFile("HelloWorld.png");
 
-        // position the sprite on the center of the screen
-        pSprite.setPosition( cc.ccp(size.width/2, size.height/2) );
+         // position the sprite on the center of the screen
+         pSprite.setPosition( cc.ccp(size.width/2, size.height/2) );
 
-        // add the sprite as a child to this layer
-        this.addChild(pSprite, 0);
-        *******************/
-        //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
-
-        //this.addChild(helloSprite,0);
-
+         // add the sprite as a child to this layer
+         this.addChild(pSprite, 0);
+         *******************/
+            //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
+            //this.addChild(helloSprite,0);
 
         this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         this.helloLb.setPosition(cc.ccp(180,0));
@@ -146,24 +133,39 @@ var Helloworld = cc.Layer.extend({
 
         this.pSprite.runAction(cc.Sequence.actions(rotateToA,scaleToA));
 
-        var danceSprite = cc.Sprite.spriteWithFile("Resources/grossini_dance_07.png");
-        danceSprite.setPosition(cc.ccp(200,100));
-        danceSprite.setAnchorPoint(cc.ccp(0.5,0.5));
-        danceSprite.setScale(0.8);
-        //cc.Log("getScaleX:" + danceSprite.getScaleX() + "    getScaleY:" + danceSprite.getScaleY());
-        //this.addChild(danceSprite,3);
-
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40,280));
         this.addChild(this.circle,2);
         this.circle.schedule(this.circle.myUpdate,1/60);
 
-        //lb.runAction(cc.MoveTo.actionwithDuration(1.5,cc.ccp(50,50)));
         this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5,cc.ccp(0,280)));
 
-
-        //cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this,0,true);
         this.setIsTouchEnabled(true);
+
+        window.addEventListener("resize",function(event){
+            if(document.documentElement.clientWidth < 480){
+                cc.canvas.width = 480;
+            }else{
+                cc.canvas.width = document.documentElement.clientWidth - 30;
+            }
+
+            if(document.documentElement.clientHeight < 320){
+                cc.canvas.height = 320;
+            }else{
+                cc.canvas.height = document.documentElement.clientHeight - 30;
+            }
+
+            var xScale = cc.canvas.width /480;
+            var yScale = cc.canvas.height /320;
+            if(xScale > yScale){
+                xScale = yScale;
+            }
+            cc.canvas.width = 480 * xScale;
+            cc.canvas.height = 320 * xScale;
+            cc.renderContext.translate(0,cc.canvas.height);
+            cc.renderContext.scale(xScale,xScale);
+            cc.Director.sharedDirector().setContentScaleFactor(xScale);
+        });
         return true;
     },
     // a selector callback
@@ -177,7 +179,6 @@ var Helloworld = cc.Layer.extend({
     ccTouchesMoved:function(pTouches,pEvent){
         if(this.bIsMouseDown){
             if(pTouches){
-                //console.log(pTouches[0].locationInView().x +"   "+pTouches[0].locationInView().y);
                 this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y));
             }
         }

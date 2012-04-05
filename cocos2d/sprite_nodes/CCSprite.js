@@ -128,7 +128,7 @@ cc.Sprite = cc.Node.extend({
     _m_bFlipX:null,
     _m_bFlipY:null,
 
-    _m_nOpacity:null,
+    _m_nOpacity:255,
 
     ctor:function(fileName){
         this._super();
@@ -710,9 +710,12 @@ cc.Sprite = cc.Node.extend({
         if(cc.renderContextType == cc.kCanvas){
             //direct draw image by canvas drawImage
             cc.renderContext.save();
+            if(this.getOpacity() != 255){
+                cc.renderContext.globalAlpha = this.getOpacity()/255;
+            }
             var rapx = this.getPositionX() + this.getContentSize().width * this.getAnchorPoint().x;
             var rapy = this.getPositionY() + this.getContentSize().height * this.getAnchorPoint().y;
-            //cc.Log("x:" + rapx + "  y:" + rapy);
+
             cc.renderContext.translate(rapx,-rapy);
             if(this.getRotation() != 0){
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
@@ -721,12 +724,10 @@ cc.Sprite = cc.Node.extend({
             var lpy = 0-((rapy-this.getPositionY()) * this.getScaleY());
             var tWidth = this.getContentSize().width * this.getScaleX();
             var tHeight = this.getContentSize().height * this.getScaleY();
-            //cc.Log("lpx:" + lpx + "    lpy:" + tHeight + "  rapx:" + rapx + "   rapy:" + rapy);
 
             if((this.getContentSize().width == 0)&&(this.getContentSize().height == 0)){
                 cc.drawingUtil.drawImage(this._m_pobTexture,cc.ccp(lpx,lpy));
             }else{
-                //cc.Log("width:" + tWidth + "    Height:" + tHeight + "  getScaleX()" + this.getScaleX() + "     getScaleY" + this.getScaleY());
                 cc.drawingUtil.drawImage(this._m_pobTexture,this.getTextureRect().origin,this.getTextureRect().size
                     ,cc.ccp(lpx,lpy),cc.SizeMake(tWidth,tHeight));
             }
