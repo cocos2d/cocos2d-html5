@@ -55,13 +55,18 @@ cc.Loader = cc.Class.extend({
     preloadImage:function (img, onload, onerror) {
         var resName = this.getResName(img.src);
         this.m_pImgList[resName] = new Image();
-        this.m_pImgList[resName].onload = onload || this.onResLoaded.bind(this);
-        this.m_pImgList[resName].onerror = onerror || this.onResLoadingErr.bind(this);
+        var loaderCache = this;
+        this.m_pImgList[resName].addEventListener("load",function(){
+            onload ? onload : loaderCache.onResLoaded()
+        });
+        this.m_pImgList[resName].addEventListener("error",function(){
+            onload ? onload : loaderCache.onResLoadingErr(img.src)
+        });
         this.m_pImgList[resName].src = img.src;
     },
 
-    onResLoadingErr:function () {
-        throw "Failed loading resource";
+    onResLoadingErr:function (e) {
+        cc.LOG("Failed loading resource: " + e);
     },
 
     onResLoaded:function (e) {
@@ -80,6 +85,7 @@ cc.Loader = cc.Class.extend({
     onloading:undefined,
 
     preload:function (res) {
+        var sharedEngine = cc.AudioManager.sharedEngine(),shareParser = cc.SAXParser.shareParser();
         for (var i = 0; i < res.length; i++) {
             switch (res[i].type) {
                 case "image":
@@ -87,18 +93,18 @@ cc.Loader = cc.Class.extend({
                     this.m_sResourceCount += 1;
                     break;
                 case "bgm":
-                    cc.AudioManager.sharedEngine().setCallback(this.onResLoaded.bind(this));
-                    cc.AudioManager.sharedEngine().preloadBackgroundMusic(res[i]);
+                    sharedEngine.setCallback(this.onResLoaded());
+                    sharedEngine.preloadBackgroundMusic(res[i]);
                     this.m_sResourceCount += 1;
                     break;
                 case "effect":
-                    cc.AudioManager.sharedEngine().setCallback(this.onResLoaded.bind(this));
-                    cc.AudioManager.sharedEngine().preloadEffect(res[i]);
+                    sharedEngine.setCallback(this.onResLoaded());
+                    sharedEngine.preloadEffect(res[i]);
                     this.m_sResourceCount += 1;
                     break;
                 case "plist":
-                    cc.SAXParser.shareParser().setCallback(this.onResLoaded.bind(this));
-                    cc.SAXParser.shareParser().preloadPlist(res[i]);
+                    shareParser.setCallback(this.onResLoaded());
+                    shareParser.preloadPlist(res[i]);
                     this.m_sResourceCount += 1;
                     break;
                 default:

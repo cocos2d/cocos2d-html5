@@ -25,10 +25,11 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.m_pCapabilities = {
+cc.sound = true;
+
+cc.pCapabilities = {
     mp3:false,
     ogg:false,
-    ma4:false,
     wav:false
 };
 /**
@@ -37,64 +38,111 @@ cc.m_pCapabilities = {
  */
 cc.AudioManager = cc.Class.extend({
     // supported Audio Format
+    m_initialized:false,
     m_pSupportedFormat:[ "mp3", "ogg", "wav" ],
     m_sRequestedFormat:null,
     m_bSound_enable:true,
-    s_List:[],
+    m_pAudioList:[],
+    m_activeAudioExt:-1,
     m_sBackground:null,
     m_bBackgroundPlaying:false,
     m_EffectsVolume:1,
     m_Callback:null,
     ctor:function () {
-        /*  // init some audio variables
-         var a = document.createElement('audio');
+        if (this.m_initialized)
+        return;
 
-         if (a.canPlayType) {
-         cc.m_pCapabilities.mp3 = ("no" != a.canPlayType("audio/mpeg"))
-         && ("" != a.canPlayType("audio/mpeg"));
+        // init audio
+        var au = document.createElement('audio');
+        if (au.canPlayType) {
+            cc.pCapabilities.mp3 = ("no" != au.canPlayType("audio/mpeg"))
+                && ("" != au.canPlayType("audio/mpeg"));
 
-         cc.m_pCapabilities.ogg = ("no" != a.canPlayType('audio/ogg; codecs="vorbis"'))
-         && ("" != a.canPlayType('audio/ogg; codecs="vorbis"'));
+            cc.pCapabilities.ogg = ("no" != au.canPlayType('audio/ogg; codecs="vorbis"'))
+                && ("" != au.canPlayType('audio/ogg; codecs="vorbis"'));
 
-         cc.m_pCapabilities.wav = ("no" != a.canPlayType('audio/wav; codecs="1"'))
-         && ("" != a.canPlayType('audio/wav; codecs="1"'));
+            cc.pCapabilities.wav = ("no" != au.canPlayType('audio/wav; codecs="1"'))
+                && ("" != au.canPlayType('audio/wav; codecs="1"'));
 
-         // enable sound if any of the audio format is supported
-         this.sound = cc.m_pCapabilities.mp3 ||
-         cc.m_pCapabilities.ogg ||
-         cc.m_pCapabilities.wav;
-         }*/
+            // enable sound if any of the audio format is supported
+            cc.sound = cc.pCapabilities.mp3 || cc.pCapabilities.ogg || cc.pCapabilities.wav;
+        }
+        this.m_initialized = true;
+    },
+    /**
+     @brief init audio
+     @param audioType
+     */
+    init:function (audioType) {
+        if (audioType){
+            this.m_sRequestedFormat = new String(audioType)
+        }
+        else{
+        // if no param is given to init we use mp3 by default
+            this.m_sRequestedFormat = new String("mp3");
+        }
+
+        // detect the prefered audio format
+        this.m_activeAudioExt = this.getSupportedAudioFormat();
+        return this.m_bSound_enable;
+    },
+    getSupportedAudioFormat:function () {
+        var extIdx = 0;
+        // check for sound support by the browser
+        if (!cc.sound) {
+            this.m_bSound_enable = false;
+            return;
+        }
+
+        // check for MP3
+        if ((this.m_sRequestedFormat.search(/mp3/i) != -1) && cc.pCapabilities.mp3) {
+            return this.m_pSupportedFormat[extIdx];
+        }
+
+        // check for OGG/Vorbis
+        if ((this.m_sRequestedFormat.search(/ogg/i) != -1) && cc.pCapabilities.ogg) {
+            return this.m_pSupportedFormat[++extIdx];
+        }
+
+        // check for WAV
+        if ((this.m_sRequestedFormat.search(/wav/i) != -1) && cc.pCapabilities.wav) {
+            return this.m_pSupportedFormat[++extIdx];
+        }
+
+        // deactivate sound
+        this.m_bSound_enable = false;
+
+        return -1;
     },
     /**
      @brief Preload background music
      @param pszFilePath The path of the background music file,or the FileName of T_SoundResInfo
      */
     preloadBackgroundMusic:function (obj) {
-        var soundCache = new Audio(obj.src);
+        if (this.m_bSound_enable) {
+            if (this.m_activeAudioExt == -1) return;
+            var soundPath =  obj.src + "." + this.m_activeAudioExt;
+            var soundCache = new Audio(soundPath);
+            soundCache.preload = 'auto';
 
-        soundCache.preload = 'auto';
+            soundCache.addEventListener('canplaythrough', function (e) {
+                this.removeEventListener('canplaythrough', arguments.callee, false);
+            }, false);
+            soundCache.addEventListener("error", function (e) {
+                //soundLoadError(sound.name);
+            }, false);
+            soundCache.addEventListener("playing", function (e) {
+                cc.s_SharedEngine.m_bBackgroundPlaying = true;
+            }, false);
+            soundCache.addEventListener("pause", function (e) {
+                cc.s_SharedEngine.m_bBackgroundPlaying = false;
+            }, false);
 
-        soundCache.addEventListener('canplaythrough', function (e) {
-            this.removeEventListener('canplaythrough', arguments.callee, false);
-        }, false);
+            // load it
+            soundCache.load();
 
-        soundCache.addEventListener("error", function (e) {
-            //soundLoadError(sound.name);
-        }, false);
-        soundCache.addEventListener("playing", function (e) {
-            cc.s_SharedEngine.m_bBackgroundPlaying = true;
-        }, false);
-        soundCache.addEventListener("pause", function (e) {
-            cc.s_SharedEngine.m_bBackgroundPlaying = false;
-        }, false);
-
-        soundCache.src = obj.src;
-
-        // load it
-        soundCache.load();
-
-        this.m_sBackground = soundCache;
-
+            this.m_sBackground = soundCache
+        }
         if (this.m_Callback) {
             this.m_Callback();
         }
@@ -216,9 +264,9 @@ cc.AudioManager = cc.Class.extend({
         else {
             this.m_EffectsVolume = volume;
         }
-        if (this.s_List) {
-            for (var i in this.s_List) {
-                this.s_List[i].volume = this.m_EffectsVolume;
+        if (this.m_pAudioList) {
+            for (var i in this.m_pAudioList) {
+                this.m_pAudioList[i].volume = this.m_EffectsVolume;
             }
         }
     },
@@ -230,7 +278,8 @@ cc.AudioManager = cc.Class.extend({
      @bLoop Whether to loop the effect playing, default value is false
      */
     playEffect:function (objName, bLoop) {
-        var soundCache = this.getEffectList(objName);
+        var soundPath =  objName + "." + this.m_activeAudioExt;
+        var soundCache = this.getEffectList(soundPath);
         if (soundCache) {
             soundCache.currentTime = 0;
             soundCache.loop = bLoop || false;
@@ -244,8 +293,8 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     pauseEffect:function (nSoundId) {
-        if (this.s_List[nSoundId]) {
-            this.s_List[nSoundId].pause();
+        if (this.m_pAudioList[nSoundId]) {
+            this.m_pAudioList[nSoundId].pause();
         }
     },
 
@@ -254,9 +303,9 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     pauseAllEffects:function () {
-        if (this.s_List) {
-            for (var i in this.s_List) {
-                this.s_List[i].pause();
+        if (this.m_pAudioList) {
+            for (var i in this.m_pAudioList) {
+                this.m_pAudioList[i].pause();
             }
         }
     },
@@ -266,8 +315,8 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     resumeEffect:function (nSoundId) {
-        if (this.s_List[nSoundId]) {
-            this.s_List[nSoundId].play();
+        if (this.m_pAudioList[nSoundId]) {
+            this.m_pAudioList[nSoundId].play();
         }
     },
 
@@ -276,9 +325,9 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     resumeAllEffects:function () {
-        if (this.s_List) {
-            for (var i in this.s_List) {
-                this.s_List[i].play();
+        if (this.m_pAudioList) {
+            for (var i in this.m_pAudioList) {
+                this.m_pAudioList[i].play();
             }
         }
     },
@@ -288,9 +337,9 @@ cc.AudioManager = cc.Class.extend({
      @param nSoundId The return value of function playEffect
      */
     stopEffect:function (nSoundId) {
-        if (this.s_List[nSoundId]) {
-            this.s_List[nSoundId].pause();
-            this.s_List[nSoundId].currentTime = 0;
+        if (this.m_pAudioList[nSoundId]) {
+            this.m_pAudioList[nSoundId].pause();
+            this.m_pAudioList[nSoundId].currentTime = 0;
         }
     },
 
@@ -298,10 +347,10 @@ cc.AudioManager = cc.Class.extend({
      @brief Stop all playing sound effects
      */
     stopAllEffects:function () {
-        if (this.s_List) {
-            for (var i in this.s_List) {
-                this.s_List[i].pause();
-                this.s_List[i].currentTime = 0;
+        if (this.m_pAudioList) {
+            for (var i in this.m_pAudioList) {
+                this.m_pAudioList[i].pause();
+                this.m_pAudioList[i].currentTime = 0;
             }
         }
     },
@@ -312,25 +361,26 @@ cc.AudioManager = cc.Class.extend({
      internal buffer in SimpleaudioEngine
      */
     preloadEffect:function (obj) {
-        var soundCache = new Audio(obj.src);
+        if (this.m_bSound_enable) {
+            if (this.m_activeAudioExt == -1) return;
+            var soundPath =  obj.src + "." + this.m_activeAudioExt;
+            var soundCache = new Audio(soundPath);
+            soundCache.preload = 'auto';
 
-        soundCache.preload = 'auto';
+            soundCache.addEventListener('canplaythrough', function (e) {
+                this.removeEventListener('canplaythrough', arguments.callee,
+                    false);
+            }, false);
 
-        soundCache.addEventListener('canplaythrough', function (e) {
-            this.removeEventListener('canplaythrough', arguments.callee,
-                false);
-        }, false);
+            soundCache.addEventListener("error", function (e) {
+                //soundLoadError(sound.name);
+            }, false);
 
-        soundCache.addEventListener("error", function (e) {
-            //soundLoadError(sound.name);
-        }, false);
-
-        soundCache.src = obj.src;
-
-        // load it
-        soundCache.load();
-        var EffectName = this.getEffectName(obj.src);
-        this.s_List[EffectName] = soundCache;
+            // load it
+            soundCache.load();
+            var EffectName = this.getEffectName(soundPath);
+            this.m_pAudioList[EffectName] = soundCache;
+        }
         if (this.m_Callback) {
             this.m_Callback();
         }
@@ -342,14 +392,14 @@ cc.AudioManager = cc.Class.extend({
      */
     unloadEffect:function (pszFilePath) {
         var nRet = this.getEffectName(pszFilePath);
-        delete(this.s_List[nRet]);
+        delete(this.m_pAudioList[nRet]);
     },
     getEffectName:function (Effect) {
-        return Effect.toString();
+        return Effect;
     },
     getEffectList:function (elt) {
-        if (this.s_List != null) {
-            return this.s_List[elt];
+        if (this.m_pAudioList != null) {
+            return this.m_pAudioList[elt];
         }
         else {
             return null;

@@ -77,13 +77,19 @@ cc.loadjs = function(filename)
         else
         {
             cc.setup("gameCanvas");
-            //run the
+            //init audio
+            cc.AudioManager.sharedEngine().init("mp3,ogg");
+
+           //Loading screen
             cc.Loader.shareLoader().onloading=function(){
                 cc.LoaderScene.shareLoaderScene().draw();
             };
+
+            //run the game
             cc.Loader.shareLoader().onload=function(){
                 cc.AppController.shareAppController().didFinishLaunchingWithOptions();
             };
+
             //preload ressources
             cc.Loader.shareLoader().preload(g_ressources);
         }
