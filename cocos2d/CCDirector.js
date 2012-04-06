@@ -725,8 +725,22 @@ cc.Director = cc.Class.extend({
     },
     setNextScene: function()
     {
-        var runningIsTransition = this._m_pRunningScene instanceof cc.TransitionScene;
-        var newIsTransition = this._m_pNextScene instanceof cc.TransitionScene;
+        if(this._m_pRunningScene)
+        {
+            var runningIsTransition = this._m_pRunningScene instanceof cc.TransitionScene;
+        }
+        else
+        {
+            var runningIsTransition= false;
+        }
+        if(this._m_pNextScene)
+        {
+            var newIsTransition = this._m_pNextScene instanceof cc.TransitionScene;
+        }
+        else
+        {
+            var newIsTransition = false;
+        }
 
         // If it is not a transition, call onExit/cleanup
 
