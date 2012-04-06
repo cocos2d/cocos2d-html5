@@ -162,7 +162,7 @@ Game.checkLines = function () {
  * @param {number} row
  */
 Game.destroyRow = function (row) {
-	cc.AudioManager.sharedEngine().playEffect("Resources/check_in.ogg");
+	cc.AudioManager.sharedEngine().playEffect("Resources/check_in");
 	Game.state = GAME_STATES.REMOVING_ROW;
 	var i;
 	for (i=0; i < Game.COLS; i++) {
@@ -330,7 +330,7 @@ Game.start = function () {
 */
 	Game.scene = scene;
 	// play the music (not at full volume, and loop)
-	cc.AudioManager.sharedEngine().playBackgroundMusic("Resources/music.mp3", true);
+	cc.AudioManager.sharedEngine().playBackgroundMusic("Resources/music", true);
 	cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.1);
 
 	// run the game scene with a transition
