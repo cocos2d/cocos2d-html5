@@ -98,7 +98,7 @@ var TestController = cc.Layer.extend({
     menuCallback: function(pSender){
         // get the userdata, it's the index of the menu item clicked
         //var pMenuItem = pSender;
-        var nIdx = pSender.target.idl;
+        var nIdx = pSender.target.id;
 
         // create the test scene and run it
         var pScene = new g_aTestNames[nIdx]();
