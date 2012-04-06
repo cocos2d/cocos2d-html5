@@ -4,8 +4,8 @@ var g_ressources= [
     {type:"image",	src: "Resources/tiles.png"},
 
     // audio ressources
-    {type: "bgm",    src: "Resources/music.mp3"},
-    {type: "effect",    src: "Resources/check_in.ogg"},
+    {type: "bgm",    src: "Resources/music"},
+    {type: "effect",    src: "Resources/check_in"}
 
     //plist ressources
    /* {type: "plist",    src: "Resources/tiles.plist"}*/
