@@ -130,8 +130,10 @@ cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCLoader.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
+cc.loadjs('platform/CCSAXParser.js');//16
 cc.loadjs('../tests/Classes/AppDelegate.js');//17
 cc.loadjs('platform/AppControl.js');//18
 cc.loadjs('menu_nodes/CCdomMenuItem.js');
 cc.loadjs('menu_nodes/CCdomMenu.js');
+cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('../tests/testbasic.js');
