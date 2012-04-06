@@ -150,6 +150,17 @@ cc.domNode = cc.Class.extend({
         //this.style["float"] = "left";
         this.style[cc.Browser.prefix+"user-select"] = "none";
     },
+    id:function(x)
+    {
+        if(x != null)
+        {
+            this._domElement.id = x;
+        }
+        else
+        {
+            return this._domElement.id;
+        }
+    },
     test:function()
     {
         this.style.background = "red";
