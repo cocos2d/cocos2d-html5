@@ -38,7 +38,7 @@ var TestScene = cc.Scene.extend({
     onEnter: function(){
         this._super();
         var label = cc.LabelTTF.labelWithString("MainMenu", "Arial", 20);
-        var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, menu_selector(TestScene.MainMenuCallback));
+        var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.MainMenuCallback);
 
         var pMenu =cc.Menu.menuWithItems(pMenuItem, null);
         var s = cc.Director.sharedDirector().getWinSize();
