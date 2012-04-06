@@ -201,7 +201,7 @@ var TestController = cc.Layer.extend({
         }
     },
     closeCallback: function(){
-        cc.Director.sharedDirector().end();
+        history.go(-1);
     },
     ccTouchesBegan: function(pTouches, pEvent){
         if(!this.bIsMouseDown)
