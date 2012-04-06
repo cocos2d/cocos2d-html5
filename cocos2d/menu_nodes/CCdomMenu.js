@@ -30,10 +30,20 @@
 
 
 var cc = cc = cc || {};
-
 cc.Menu = cc.domNode.extend({
     _container:null,
     init: function()
+    {
+        if(!cc.$("#Cocos2dGameContainer"))
+        {
+            this.setupHTML();
+        }
+        else
+        {
+            this._container = cc.$("#Cocos2dGameContainer");
+        }
+    },
+    setupHTML: function()
     {
         //set up html;
         //get the canvas
@@ -42,21 +52,24 @@ cc.Menu = cc.domNode.extend({
         this._container.id ="Cocos2dGameContainer";
         this._container.style.position = "absolute";
         this._container.style.overflow = "hidden";
-        this._domElement.id = "Cocos2dMenuLayer";
-        this.style.width = canvas.width+"px";
-        this.style.height = 0;
-        this.style.bottom = 0;
-        this.style.position = "absolute";
 
-        this._container.appendChild(this._domElement);
-        cc.TouchDispatcher.registerHtmlElementEvent(this._domElement);
         cc.gameDiv.insertBefore(this._container, canvas);
         this._container.appendChild(canvas);
-        this.style.cursor = "crosshair";
     },
     initWithItems: function(args)
     {
         this.init();
+        this._domElement.id = "Cocos2dMenuLayer"+Date.now();
+        this._domElement.className = "Cocos2dMenuLayer";
+        this.style.width = cc.Director.sharedDirector().getWinSize().width+"px";
+        this.style.height = 0;
+        this.style.bottom = 0;
+        this.style.position = "absolute";
+        this._container.appendChild(this._domElement);
+        cc.TouchDispatcher.registerHtmlElementEvent(this._domElement);
+        this.style.cursor = "crosshair";
+
+
         for(var i = 0; i < args.length; i++)
         {
             if(args[i])
@@ -72,6 +85,17 @@ cc.Menu = cc.domNode.extend({
     show: function()
     {
         this.style.visibility = "visible";
+    },
+    addChild: function(child, zindex)
+    {
+        if(zindex)
+        {
+            child._setZOrder(zindex);
+        }
+        if(child.getElement)
+        {
+            this._domElement.appendChild(child.getElement());
+        }
     }
 });
 cc.Menu.menuWithItems = function()

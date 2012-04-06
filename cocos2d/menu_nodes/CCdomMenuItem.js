@@ -54,6 +54,14 @@ cc.MenuItemImage = cc.MenuItem.extend({
 });
 cc.MenuItemImage.itemFromNormalImage = function(normal, selected, target, callback)
 {
+    if(normal.src)
+    {
+        normal = normal.src;
+    }
+    if(selected.src)
+    {
+        selected = selected.src;
+    }
     //create div containing an image - should be done in menuitem
     var that = new this();
     that.init(normal);
@@ -109,11 +117,17 @@ cc.MenuItemLabel.itemWithLabel= function(label, dimension, target, selector)
     if(arguments.length == 4)
     {
         that._domElement.addEventListener("click", selector);
+        that.style.cursor = "pointer";
     }
     else if(arguments.length == 2)
     {
         that._domElement.addEventListener("click", dimension);//the second argument is now the selector
+        that.style.cursor = "pointer";
     }
-    that.style.cursor = (selector)? "pointer" : "default";
+    else if(arguments.length == 3)
+    {
+        that._domElement.addEventListener("click", target);
+        that.style.cursor = "pointer";
+    }
     return that;
 };

@@ -94,6 +94,7 @@ cc.domNode = cc.Class.extend({
     _m_tAnchorPoint:cc.PointZero(),
     _m_pParent:null,
     _domElement:null,
+    _m_tContentSize: cc.PointZero(),
     getElement: function(){return this._domElement},
     transform: function()
     {
@@ -158,6 +159,10 @@ cc.domNode = cc.Class.extend({
 
         cc.$("body").appendChild(this._domElement);
     },
+    getZOrder: function()
+    {
+        return this.style.zIndex;
+    },
     getSkewX:function () {
         return this._m_fSkewX;
     },
@@ -167,7 +172,7 @@ cc.domNode = cc.Class.extend({
     },
     setPosition: function(x,y)
     {
-        if(!y)//if only 1 param, then x is an object
+        if(arguments.length == 1)//if only 1 param, then x is an object
         {
             this._m_tPosition = {x:x.x, y:-x.y};
         }
@@ -176,6 +181,10 @@ cc.domNode = cc.Class.extend({
         }
         //this.transform.translate;
         this.style[cc.Browser.prefix+"transform"] = this._transform.translate(this._m_tPosition.x, this._m_tPosition.y);
+    },
+    getPosition: function()
+    {
+        return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
     },
     addChild: function(child)
     {
@@ -238,5 +247,23 @@ cc.domNode = cc.Class.extend({
     },
     unscheduleAllSelectors:function () {
         cc.Scheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
+    },
+    setContentSize:function (size) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
+            this._m_tContentSize = size;
+
+            if (cc.CONTENT_SCALE_FACTOR() == 1) {
+                this._m_tContentSizeInPixels = this._m_tContentSize;
+            }
+            else {
+                this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+            }
+
+            //this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            //this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
+            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+                this._m_bIsTransformGLDirty = true;
+            }
+        }
     }
 });
