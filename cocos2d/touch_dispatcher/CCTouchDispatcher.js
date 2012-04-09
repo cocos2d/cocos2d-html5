@@ -352,7 +352,7 @@ cc.TouchDispatcher = cc.Class.extend({
                     this.forceAddHandler(pHandler, this._m_pStandardHandlers);
                 }
             }
-            this._m_pHandlersToAdd.lenght = 0;
+            this._m_pHandlersToAdd.length = 0;
         }
 
         if (this._m_bToQuit){

@@ -32,7 +32,13 @@
 var cc = cc = cc || {};
 
 var TestScene = cc.Scene.extend({
-    ctor: function(){
+    _portrait:false,
+    ctor: function(bPortrait){
+        this._portrait = bPortrait;
+        if (this._portrait)
+        {
+            cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationLandscapeRight);
+        }
         this.init();
     },
     onEnter: function(){
@@ -42,7 +48,7 @@ var TestScene = cc.Scene.extend({
 
         var pMenu =cc.Menu.menuWithItems(pMenuItem, null);
         var s = cc.Director.sharedDirector().getWinSize();
-        pMenu.setPosition( cc.PointZero );
+        pMenu.setPosition( cc.PointZero());
         pMenuItem.setPosition( cc.PointMake( s.width - 50, 25) );
 
         this.addChild(pMenu, 1);

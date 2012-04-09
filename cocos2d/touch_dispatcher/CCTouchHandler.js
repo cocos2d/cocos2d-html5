@@ -122,7 +122,7 @@ cc.TargetedTouchHandler=cc.TouchHandler.extend({
     /** initializes a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not */
     initWithDelegate:function(pDelegate,nPriority,bSwallow){
         if(this._super(pDelegate, nPriority)){
-            this._m_pClaimedTouches = new cc.NSMutableSet();
+            this._m_pClaimedTouches = [];
             this._m_bSwallowsTouches = bSwallow;
 
             return true;
