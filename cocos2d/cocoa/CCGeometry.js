@@ -136,7 +136,7 @@ cc.Rect.CCRectGetMaxY = function(rect)
 //! Return the midpoint y-value of `rect'
 cc.Rect.CCRectGetMidY = function(rect)
 {
-    return ((rect.origin.y+rect.size.height)/2.0);
+    return rect.origin.y+rect.size.height/2.0;
 };
 
 //! Return the bottommost y-value of `rect'

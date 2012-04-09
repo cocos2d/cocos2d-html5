@@ -670,9 +670,14 @@ cc.Director = cc.Class.extend({
     },
     setDeviceOrientation: function(kDeviceOrientation)
     {
-        var eNewOrientation;
+        var eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
-        eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
+        if(cc.renderContextType == cc.kCanvas){
+            var height = cc.canvas.height;
+            cc.canvas.height = cc.canvas.width;
+            cc.canvas.width = height;
+            cc.renderContext.translate(0,cc.canvas.height);
+        }
 
         if (this._m_eDeviceOrientation != eNewOrientation)
         {
@@ -687,6 +692,7 @@ cc.Director = cc.Class.extend({
             this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
             this.setProjection(this._m_eProjection);
         }
+
     },
     setDirectorType: function(obDirectorType)
     {
