@@ -14,9 +14,11 @@ var Paddle = cc.Sprite.extend({
         }
         if(aTexture instanceof cc.Texture2D){
             var s = aTexture.getContentSize();
-            this._rect = cc.RectMake(-s.width / 2, -s.height / 2, s.width, s.height);
+            //this._rect = cc.RectMake(-s.width / 2, -s.height / 2, s.width, s.height);
+            this._rect = cc.RectMake(0, 0, s.width, s.height);
         }else if(aTexture instanceof HTMLImageElement){
-            this._rect = cc.RectMake(-aTexture.width / 2, -aTexture.height / 2, aTexture.width, aTexture.height);
+            //this._rect = cc.RectMake(-aTexture.width / 2, -aTexture.height / 2, aTexture.width, aTexture.height);
+            this._rect = cc.RectMake(0, 0, aTexture.width, aTexture.height);
         }
         return true;
     },
@@ -29,16 +31,18 @@ var Paddle = cc.Sprite.extend({
         this._super();
     },
     containsTouchLocation:function(touch){
-        var isIn = cc.Rect.CCRectContainsPoint(this.rect(), this.convertTouchToNodeSpaceAR(touch));
-        cc.Log("containsTouchLocation:" + isIn);
-        return isIn;
+        var getPoint = touch.locationInView(touch.view());
+        var myRect = this.rect();
+
+        myRect.origin.x += this.getPosition().x;
+        myRect.origin.y += this.getPosition().y;
+        return cc.Rect.CCRectContainsPoint(myRect, getPoint);//this.convertTouchToNodeSpaceAR(touch));
     },
 
     ccTouchBegan:function(touch,event){
         if (this._state != kPaddleStateUngrabbed) return false;
         if ( !this.containsTouchLocation(touch) ) return false;
 
-        cc.Log("ccTouchBegan");
         this._state = kPaddleStateGrabbed;
         return true;
     },
@@ -50,11 +54,11 @@ var Paddle = cc.Sprite.extend({
         // you get CCSets instead of 1 UITouch, so you'd need to loop through the set
         // in each touchXXX method.
         cc.Assert(this._state == kPaddleStateGrabbed, "Paddle - Unexpected state!");
-        cc.Log("ccTouchMoved");
-        var touchPoint = touch.locationInView( touch.view() );
-        touchPoint = cc.Director.sharedDirector().convertToGL( touchPoint );
 
-        this.setPosition( cc.PointMake(touchPoint.x, this.getPosition().y) );
+        var touchPoint = touch.locationInView( touch.view() );
+        //touchPoint = cc.Director.sharedDirector().convertToGL( touchPoint );
+
+        this.setPosition( cc.PointMake(touchPoint.x - (this._rect.size.width / 2), this.getPosition().y) );
     },
     ccTouchEnded:function(touch,event){
         cc.Assert(this._state == kPaddleStateGrabbed, "Paddle - Unexpected state!");

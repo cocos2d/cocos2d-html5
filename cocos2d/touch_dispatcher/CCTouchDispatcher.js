@@ -226,15 +226,14 @@ cc.TouchDispatcher = cc.Class.extend({
     touches:function(pTouches,pEvent,uIndex){
         cc.Assert(uIndex >= 0 && uIndex < 4, "TouchDispatcher.touches()");
 
-        var pMutableTouches;
         this._m_bLocked = true;
 
         // optimization to prevent a mutable copy when it is not necessary
         var uTargetedHandlersCount = this._m_pTargetedHandlers.length;
         var uStandardHandlersCount = this._m_pStandardHandlers.length;
         var bNeedsMutableSet = (uTargetedHandlersCount && uStandardHandlersCount);
-        //console.log("uTargetedHandlersCount:" + uTargetedHandlersCount+ "   uStandardHandlersCount:" + uStandardHandlersCount);
-        pMutableTouches = (bNeedsMutableSet ? pTouches.slice() : pTouches);
+
+        var pMutableTouches = (bNeedsMutableSet ? pTouches.slice() : pTouches);
         var sHelper = this._m_sHandlerHelperData[uIndex];
         //
         // process the target handlers 1st
@@ -245,7 +244,8 @@ cc.TouchDispatcher = cc.Class.extend({
             for (var i = 0; i< pTouches.length; i++){
                 pTouch = pTouches[i];
                 var pHandler;
-                for (var j=0;i<this._m_pTargetedHandlers.length; i++){
+
+                for (var j=0;j<this._m_pTargetedHandlers.length; j++){
                     pHandler = this._m_pTargetedHandlers[j];
 
                     if (! pHandler){
@@ -259,7 +259,8 @@ cc.TouchDispatcher = cc.Class.extend({
                         if (bClaimed){
                             pHandler.getClaimedTouches().push(pTouch);
                         }
-                    } else if (pHandler.getClaimedTouches().indexOf(pTouch)> -1){
+                    //} else if (pHandler.getClaimedTouches().indexOf(pTouch)> -1){
+                    } else if (pHandler.getClaimedTouches().length > 0){
                         // moved ended cancelled
                         bClaimed = true;
                         switch (sHelper.m_type){
@@ -268,11 +269,13 @@ cc.TouchDispatcher = cc.Class.extend({
                                 break;
                             case cc.TOUCHENDED:
                                 pHandler.getDelegate().ccTouchEnded(pTouch, pEvent);
-                                cc.ArrayRemoveObject(pHandler.getClaimedTouches(),pTouch);
+                                pHandler.getClaimedTouches().length = 0;
+                                //cc.ArrayRemoveObject(pHandler.getClaimedTouches(),pTouch);
                                 break;
                             case cc.TOUCHCANCELLED:
                                 pHandler.getDelegate().ccTouchCancelled(pTouch, pEvent);
-                                cc.ArrayRemoveObject(pHandler.getClaimedTouches(),pTouch);
+                                pHandler.getClaimedTouches().length = 0;
+                                //cc.ArrayRemoveObject(pHandler.getClaimedTouches(),pTouch);
                                 break;
                         }
                     }
@@ -373,6 +376,7 @@ cc.TouchDispatcher = cc.Class.extend({
     },
     touchesEnded:function(touches,pEvent){
         if (this._m_bDispatchEvents){
+            //cc.Log("touchesEnded: touches.Length is " + touches.length);
             this.touches(touches, pEvent, cc.TOUCHENDED);
         }
     },
