@@ -1060,8 +1060,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     convertToNodeSpaceAR:function (worldPoint) {
-        var nodePoint = new cc.Point();
-        nodePoint = this.convertToNodeSpace(worldPoint);
+        var nodePoint = this.convertToNodeSpace(worldPoint);
         var anchorInPoints = new cc.Point();
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this._m_tAnchorPointInPixels;
@@ -1107,8 +1106,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     convertTouchToNodeSpaceAR:function (touch) {
-        var point = new cc.Point();
-        point = touch.locationInView(touch.view());
+        var point = touch.locationInView(touch.view());
         point = cc.Director.sharedDirector().convertToGL(point);
         return this.convertToNodeSpaceAR(point);
     }

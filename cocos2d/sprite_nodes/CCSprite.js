@@ -306,7 +306,10 @@ cc.Sprite = cc.Node.extend({
 
         if(argnum == 1){
             rect = new cc.Rect();
-            rect.size = pTexture.getContentSize();
+            if(pTexture instanceof cc.Texture2D)
+                rect.size = pTexture.getContentSize();
+            else if(pTexture instanceof HTMLImageElement)
+                rect.size = cc.SizeMake(pTexture.width,pTexture.height);
         }
 
         // IMPORTANT: [self init] and not [super init];

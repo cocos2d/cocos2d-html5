@@ -71,7 +71,7 @@ cc.Loader = cc.Class.extend({
 
     onResLoaded:function (e) {
         this.m_sLoadedResourceCount++;
-        cc.LOG("Loading:" + cc.Loader.shareLoader().getProgressBar() + "%");
+        //cc.LOG("Loading:" + cc.Loader.shareLoader().getProgressBar() + "%");
     },
 
     getProgressBar:function () {

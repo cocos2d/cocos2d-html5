@@ -32,17 +32,23 @@
 var cc = cc = cc || {};
 
 var TestScene = cc.Scene.extend({
-    ctor: function(){
+    _portrait:false,
+    ctor: function(bPortrait){
+        this._portrait = bPortrait;
+        if (this._portrait)
+        {
+            cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationLandscapeRight);
+        }
         this.init();
     },
     onEnter: function(){
         this._super();
         var label = cc.LabelTTF.labelWithString("MainMenu", "Arial", 20);
-        var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, menu_selector(TestScene.MainMenuCallback));
+        var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.MainMenuCallback);
 
         var pMenu =cc.Menu.menuWithItems(pMenuItem, null);
         var s = cc.Director.sharedDirector().getWinSize();
-        pMenu.setPosition( cc.PointZero );
+        pMenu.setPosition( cc.PointZero());
         pMenuItem.setPosition( cc.PointMake( s.width - 50, 25) );
 
         this.addChild(pMenu, 1);

@@ -78,6 +78,12 @@ cc.Menu = cc.domNode.extend({
             }
         }
     },
+    onEnter:function(){
+        this.show();
+    },
+    onExit:function(){
+        this.hide();
+    },
     hide: function()//hide all children!
     {
         this.style.visibility = "hidden";

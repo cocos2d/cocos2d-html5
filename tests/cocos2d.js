@@ -63,7 +63,6 @@ cc.loadjs = function(filename)
     script.order = cc.loadQue.length;
     cc.loadQue.push(script);
 
-
     script.onload = function()
     {
         //file have finished loading,
@@ -84,11 +83,7 @@ cc.loadjs = function(filename)
                 cc.AppController.shareAppController().didFinishLaunchingWithOptions();
             };
             //preload ressources
-            cc.Loader.shareLoader().preload([
-            {
-                type:"image",
-                src: "Resources/CloseNormal.png"
-            }]);
+            cc.Loader.shareLoader().preload(g_ressources);
         }
     };
     if(script.order === 0)//if the first file to load, then we put it on the head
@@ -137,3 +132,7 @@ cc.loadjs('menu_nodes/CCdomMenuItem.js');
 cc.loadjs('menu_nodes/CCdomMenu.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('../tests/testbasic.js');
+cc.loadjs('../tests/testResource.js');
+cc.loadjs('../tests/Classes/tests/TouchesTest/Ball.js');
+cc.loadjs('../tests/Classes/tests/TouchesTest/Paddle.js');
+cc.loadjs('../tests/Classes/tests/TouchesTest/TouchesTest.js');
