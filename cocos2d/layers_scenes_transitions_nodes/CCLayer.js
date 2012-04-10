@@ -201,6 +201,15 @@ cc.Layer = cc.Node.extend({
     },
     ccTouchCancelled:function (pTouch, pEvent) {
     },
+
+    // default implements are used to call script callback if exist
+    ccTouchesBegan:function (pTouch, pEvent) {},
+    ccTouchesMoved:function (pTouch, pEvent) {},
+    ccTouchesEnded:function (pTouch, pEvent) {},
+    ccTouchesCancelled:function (pTouch, pEvent) {},
+
+    didAccelerate:function(pAccelerationValue){},
+
     addLayer:function (layer) {
         cc.Assert(this.m_pLayers, "cc.Layer addLayer");
         this.m_pLayers.addObject(layer);
@@ -228,11 +237,18 @@ cc.Layer.node = function () {
  - RGB colors
  */
 cc.LayerColor = cc.Layer.extend({
-    _m_pSquareVertices:[],
-    _m_pSquareColors:[],
-    _m_cOpacity:null,
-    _m_tColor:null,
-    _m_tBlendFunc:null,
+    _m_pSquareVertices:[new cc.Vertex2F(0,0),new cc.Vertex2F(0,0),new cc.Vertex2F(0,0),new cc.Vertex2F(0,0)],
+    _m_pSquareColors:[cc.ccc4(0,0,0,1),cc.ccc4(0,0,0,1),cc.ccc4(0,0,0,1),cc.ccc4(0,0,0,1)],
+    _m_cOpacity:0,
+    _m_tColor:cc.BLACK,
+    _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC,cc.BLEND_DST),
+
+    /// ColorLayer
+    ctor:function () {
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this._m_bIsRelativeAnchorPoint = false;
+    },
+
     // Opacity and RGB color protocol
     /// opacity getter
     getOpacity:function () {
@@ -260,46 +276,30 @@ cc.LayerColor = cc.Layer.extend({
     setBlendFunc:function (Var) {
         this._m_tBlendFunc = Var;
     },
+
     initWithColor: function(color){
-        var s = new cc.Size();
-        s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.sharedDirector().getWinSize();
         this.initWithColorWidthHeight(color, s.width, s.height);
         return true;
-    },//TODO 2012/3/9
+    },
+
     initWithColorWidthHeight:function (color, width, height) {
-        var argnum = arguments.length;
-        switch (argnum) {
-            case 3:
-                /** initializes a CCLayer with color, width and height in Points */
-                    // default blend function
-                this._m_tBlendFunc.src = cc.BLEND_SRC;
-                this._m_tBlendFunc.dst = cc.BLEND_DST;
+        this._m_tBlendFunc.src = cc.BLEND_SRC;
+        this._m_tBlendFunc.dst = cc.BLEND_DST;
 
-                this._m_tColor.r = color.r;
-                this._m_tColor.g = color.g;
-                this._m_tColor.b = color.b;
-                this._m_cOpacity = color.a;
+        this._m_tColor.r = color.r;
+        this._m_tColor.g = color.g;
+        this._m_tColor.b = color.b;
+        this._m_cOpacity = color.a;
 
-                for (var i = 0; i < this._m_pSquareVertices.length; i++) {
-                    this._m_pSquareVertices[i].x = 0.0;
-                    this._m_pSquareVertices[i].y = 0.0;
-                }
-
-                this._updateColor();
-                this.setContentSize(cc.SizeMake(width, height));
-                return true;
-                break;
-            case 2:
-                /** initializes a CCLayer with color. Width and height are the window size. */
-                var s = new cc.Size();
-                s = cc.Director.sharedDirector().getWinSize();
-                this.initWithColorWidthHeight(color, s.width, s.height);
-                return true;
-                break;
-            default:
-                throw "Argument must be non-nil ";
-                break;
+        for (var i = 0; i < this._m_pSquareVertices.length; i++) {
+            this._m_pSquareVertices[i].x = 0.0;
+            this._m_pSquareVertices[i].y = 0.0;
         }
+
+        this._updateColor();
+        this.setContentSize(cc.SizeMake(width, height));
+        return true;
     },
     /// override contentSize
     setContentSize:function (size) {
@@ -308,7 +308,7 @@ cc.LayerColor = cc.Layer.extend({
         this._m_pSquareVertices[3].x = size.width * cc.CONTENT_SCALE_FACTOR();
         this._m_pSquareVertices[3].y = size.height * cc.CONTENT_SCALE_FACTOR();
 
-        cc.Layer.setContentSize(size);
+        this._super(size);
     },
     /** change width and height in Points
      @since v0.8
@@ -318,11 +318,11 @@ cc.LayerColor = cc.Layer.extend({
     },
     /** change width in Points*/
     changeWidth:function (w) {
-        this.setContentSize(cc.SizeMake(w, this.m_tContentSize.height));
+        this.setContentSize(cc.SizeMake(w, this._m_tContentSize.height));
     },
     /** change height in Points*/
     changeHeight:function (h) {
-        this.setContentSize(cc.SizeMake(this.m_tContentSize.width, h));
+        this.setContentSize(cc.SizeMake(this._m_tContentSize.width, h));
     },
     _updateColor:function () {
         for (var i = 0; i < 4; i++) {
@@ -332,70 +332,52 @@ cc.LayerColor = cc.Layer.extend({
             this._m_pSquareColors[i].a = this._m_cOpacity;
         }
     },
-    setIsOpacityModifyRGB:function (bValue) {
-        var argnum = arguments.length;
-        switch(argnum) {
-            case 1:
-                break;
-            case 0:
-                return false;
-                break;
-            default:
-                throw "Argument must be non-nil ";
-                break;
-        }
-    },
-    /// ColorLayer
-    ctor:function () {
-        this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this._m_bIsRelativeAnchorPoint = false;
-        this._m_cOpacity = 0;
-        this._m_tColor = cc.ccc3(0, 0, 0);
-        // default blend function
-        this._m_tBlendFunc.src = cc.BLEND_SRC;
-        this._m_tBlendFunc.dst = cc.BLEND_DST;
-    },
-    draw:function () {
-        this._super();
+    setIsOpacityModifyRGB:function (bValue) {},
+    getIsOpacityModifyRGB:function(){return false;},
 
+    draw:function () {
+        //TODO
+        if(cc.renderContextType == cc.kCanvas){
+            cc.renderContext.save();
+            var opVal = this._m_cOpacity/255;
+            if(opVal > 1)
+                opVal = 1;
+            cc.renderContext.fillStyle = "rgba("+this._m_tColor.r +"," + this._m_tColor.g + "," + this._m_tColor.b + "," + opVal + ")";
+            cc.renderContext.fillRect(0,0,this.getContentSize().width, -this.getContentSize().height);
+            cc.renderContext.restore();
+            return;
+        }
+        this._super();
         // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Needed states: GL_VERTEX_ARRAY, GL_COLOR_ARRAY
         // Unneeded states: GL_TEXTURE_2D, GL_TEXTURE_COORD_ARRAY
-        //TODO
+
         // glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-        //TODO
+
         // glDisable(GL_TEXTURE_2D);
 
-        //TODO
         // glVertexPointer(2, GL_FLOAT, 0, this._m_pSquareVertices);
-        //TODO
+
         // glColorPointer(4, GL_UNSIGNED_BYTE, 0, this._m_pSquareColors);
 
         var newBlend = false;
         if (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) {
             newBlend = true;
-            //TODO
             //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
         }
         else if (this._m_cOpacity != 255) {
             newBlend = true;
-            //TODO
             // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
 
-        //TODO
         // glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
         if (newBlend) {
-            //TODO
             // glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         }
         // restore default GL state
-        //TODO
         // glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-        //TODO
         // glEnable(GL_TEXTURE_2D);
-
     }
 });
 
@@ -407,6 +389,7 @@ cc.LayerColor.layerWithColorWidthHeight = function (color, width, height) {
     }
     return null;
 };
+
 /** creates a CCLayer with color. Width and height are the window size. */
 cc.LayerColor.layerWithColor = function (color) {
     var pLayer = new cc.LayerColor();
@@ -421,11 +404,7 @@ cc.LayerColor.node = function () {
     if (pRet && pRet.init()) {
         return pRet;
     }
-    else {
-        delete pRet;
-        pRet = null;
-        return null;
-    }
+    return null;
 };
 
 //

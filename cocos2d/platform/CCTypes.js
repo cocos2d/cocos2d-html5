@@ -75,7 +75,7 @@ cc.Color4B = function(r1, g1, b1, a1)
 };
 
 //! helper macro that creates an ccColor4B type
-cc.cs4 = function(r, g, b, o)
+cc.ccc4 = function(r, g, b, o)
 {
     return new cc.Color4B(r, g, b, o);
 };
