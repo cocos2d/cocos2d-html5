@@ -50,6 +50,8 @@ var MainLayer = cc.Layer.extend({
             else
                 at = 180 - Math.abs(at);
         }
+        at = at %360;
+
         sprite.runAction(cc.RotateTo.actionWithDuration(1, at));
     }
 });
