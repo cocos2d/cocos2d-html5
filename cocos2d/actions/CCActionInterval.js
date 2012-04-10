@@ -194,7 +194,10 @@ cc.Sequence.actions = function(/*Multiple Arguments*/)
     var pPrev = arguments[0];
     for(var i = 1; i < arguments.length; i++)
     {
-        pPrev = cc.Sequence.actionOneTwo(pPrev, arguments[i]);
+        if(arguments[i]!=null)
+        {
+            pPrev = cc.Sequence.actionOneTwo(pPrev, arguments[i]);
+        }
     }
     return pPrev;
 };
@@ -351,7 +354,7 @@ cc.RepeatForever = cc.ActionInterval.extend({
         return this._m_pInnerAction;
     }
 });
-cc.RepeatForever.actionsWithAction = function(pAction)
+cc.RepeatForever.actionWithAction = function(pAction)
 {
     var pRet = new cc.RepeatForever();
     if (pRet && pRet.initWithAction(pAction))
@@ -698,7 +701,7 @@ cc.SkewTo = cc.ActionInterval.extend({
             this._m_fDeltaY += 360;
         }
     },
-    update:function(time)
+    update:function(t)
     {
         this._m_pTarget.setSkewX(this._m_fStartSkewX + this._m_fDeltaX * t);
         this._m_pTarget.setSkewY(this._m_fStartSkewY + this._m_fDeltaY * t);
@@ -751,7 +754,7 @@ cc.SkewBy = cc.SkewTo.extend({
     },
     reverse: function()
     {
-        return this.actionWithDuration(this._m_fDuration, -this._m_fSkewX, -this._m_fSkewY);
+        return cc.SkewBy.actionWithDuration(this._m_fDuration, -this._m_fSkewX, -this._m_fSkewY);
     }
 });
 cc.SkewBy.actionWithDuration= function(t, sx, sy)
@@ -940,7 +943,7 @@ cc.ScaleTo = cc.ActionInterval.extend({
         if (this._super(duration))
         {
             this._m_fEndScaleX = sx;
-            this._m_fEndScaleY = (sy)? sy: s;
+            this._m_fEndScaleY = (sy)? sy: sx;
 
             return true;
         }
@@ -1002,16 +1005,16 @@ cc.ScaleBy = cc.ScaleTo.extend({
         return cc.ScaleBy.actionWithDuration(this._m_fDuration, 1 / this._m_fEndScaleX, 1 / this._m_fEndScaleY);
     }
 });
-cc.ScaleBy.actionwithDuration= function(duration, sx, sy)
+cc.ScaleBy.actionWithDuration= function(duration, sx, sy)
 {
     var pScaleBy = new cc.ScaleBy();
-    if(sy)
+    if(arguments.length == 3)
     {
         pScaleBy.initWithDuration(duration, sx, sy);
     }
     else
     {
-        pScaleBy.initWithDuration(duration, s);
+        pScaleBy.initWithDuration(duration, sx);
     }
 
     return pScaleBy;
