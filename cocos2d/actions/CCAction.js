@@ -58,7 +58,8 @@ cc.Action = cc.Class.extend({
     //! called before the action start. It will also set the target.
     startWithTarget: function(aTarget)
     {
-        this._m_pOriginalTarget = this._m_pTarget = aTarget;
+        this._m_pOriginalTarget =aTarget;
+        this._m_pTarget = aTarget;
     },
     /**
      called after the action has finished. It will set the 'target' to nil.
@@ -71,7 +72,6 @@ cc.Action = cc.Class.extend({
     //! called every frame with it's delta time. DON'T override unless you know what you are doing.
     step:function(dt)
     {
-        cc.UNUSED_PARAM(dt);
         cc.LOG("[Action step]. override me");
     },
     /**
@@ -84,7 +84,6 @@ cc.Action = cc.Class.extend({
      */
     update: function(time)
     {
-        cc.UNUSED_PARAM(time);
         cc.LOG("[Action update]. override me");
     },
     getTarget: function() { return this._m_pTarget; },
