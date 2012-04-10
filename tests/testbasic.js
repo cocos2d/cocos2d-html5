@@ -157,7 +157,6 @@ var TestController = cc.Layer.extend({
 });
 
 var g_aTestNames = {
-    /*
     "ActionsTest":"ActionsTestScene",
     "TransitionsTest":"TransitionsTestScene",
     "ProgressActionsTest":"ProgressActionsTestScene",
@@ -169,9 +168,7 @@ var g_aTestNames = {
     "MotionStreakTest":"MotionStreakTestScene",
     "DrawPrimitivesTest":"DrawPrimitivesTestScene",
     "CocosNodeTest":"CocosNodeTestScene",
-     */
     "TouchesTest":"PongScene",
-    /*
     "MenuTest":"MenuTestScene",
     "ActionManagerTest":"ActionManagerTestScene",
     "LayerTest":"LayerTestScene",
@@ -183,7 +180,6 @@ var g_aTestNames = {
     "LabelTest":"AtlasTestScene",
     "TextInputTest":"TextInputTestScene",
     "SpriteTest":"SpriteTestScene",
-    */
     "SchdulerTest":"SchedulerTestScene",
     "RenderTextureTest":"RenderTextureScene",
     "Texture2DTest":"TextureTestScene",
