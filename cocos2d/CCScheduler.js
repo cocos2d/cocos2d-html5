@@ -616,6 +616,7 @@ cc.Scheduler = cc.Class.extend({
                         if(this._m_pCurrentTarget == pElement){
                             this._m_bCurrentTargetSalvaged = true;
                         }else{
+
                             this._removeHashElement(pElement);
                         }
                     }

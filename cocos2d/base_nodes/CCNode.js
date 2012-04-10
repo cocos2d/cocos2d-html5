@@ -1109,7 +1109,10 @@ cc.Node = cc.Class.extend({
         var point = touch.locationInView(touch.view());
         point = cc.Director.sharedDirector().convertToGL(point);
         return this.convertToNodeSpaceAR(point);
-    }
+    },
+
+    //implement CCObject's method
+    update:function(dt){ }
 });
 /** allocates and initializes a node.
  */
