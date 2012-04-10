@@ -57,7 +57,7 @@ cc.ActionManager = cc.Class.extend({
 
     _searchElementByTarget:function(arr,pTarget){
         for(var k in arr){
-            if (pTarget = arr[k].target){
+            if (pTarget == arr[k].target){
                 return arr[k];
             }
         }

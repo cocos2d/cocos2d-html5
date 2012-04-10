@@ -287,10 +287,40 @@ var ActionScale = ActionsDemo.extend({
         var actionBy = cc.ScaleBy.actionWithDuration(2 ,  2);
         var actionBy2 = cc.ScaleBy.actionWithDuration(2, 0.25, 4.5);
         var actionByBack = actionBy.reverse();
+        //testing
+        actionBy2.update = function(time)
+        {
+            //alert(1);
+            if (this._m_pTarget)
+            {
+                this._m_pTarget.setScaleX(this._m_fStartScaleX + this._m_fDeltaX * time);
+                this._m_pTarget.setScaleY(this._m_fStartScaleY + this._m_fDeltaY * time);
+            }
+            if(this._m_pTarget == window.gros)
+            {
+                console.log("yes");
+            }
+        };
 
+        //testing
+        window.gros = this._m_grossini;
+        window.act = actionBy;
         this._m_tamara.runAction( actionTo);
-        this._m_grossini.runAction( cc.Sequence.actions(actionBy, actionByBack, null));
+        this._m_grossini.runAction( cc.Sequence.actions(actionBy, actionBy.reverse(), null));
         this._m_kathia.runAction( cc.Sequence.actions(actionBy2, actionBy2.reverse(), null));
+
+
+        //debug
+        var debug = cc.$new("div");
+        debug.id = "debug";
+        debug.style.textAlign = "right";
+        cc.$("body").appendChild(debug);
+        //console.log(actionBy);
+        setInterval(function()
+        {
+            debug.innerText= (window.gros._m_fScaleX+" "+window.gros._m_fScaleY)+"<br/>"+
+                            window.act._m_fStartScaleX;
+        },17);
     },
     subtitle:function()
     {

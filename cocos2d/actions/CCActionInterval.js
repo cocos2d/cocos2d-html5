@@ -943,7 +943,7 @@ cc.ScaleTo = cc.ActionInterval.extend({
         if (this._super(duration))
         {
             this._m_fEndScaleX = sx;
-            this._m_fEndScaleY = (sy)? sy: sx;
+            this._m_fEndScaleY = (sy!=null)? sy: sx;
 
             return true;
         }
@@ -966,10 +966,10 @@ cc.ScaleTo = cc.ActionInterval.extend({
             this._m_pTarget.setScaleY(this._m_fStartScaleY + this._m_fDeltaY * time);
         }
     },
-    _m_fScaleX:0,
-    _m_fScaleY:0,
-    _m_fStartScaleX:0,
-    _m_fStartScaleY:0,
+    _m_fScaleX:1,
+    _m_fScaleY:1,
+    _m_fStartScaleX:1,
+    _m_fStartScaleY:1,
     _m_fEndScaleX:0,
     _m_fEndScaleY:0,
     _m_fDeltaX:0,
