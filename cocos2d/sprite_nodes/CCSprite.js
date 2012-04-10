@@ -716,18 +716,19 @@ cc.Sprite = cc.Node.extend({
             if(this.getOpacity() != 255){
                 cc.renderContext.globalAlpha = this.getOpacity()/255;
             }
-            var rapx = this.getPositionX() + this.getContentSize().width * (this.getAnchorPoint().x);
-            var rapy = this.getPositionY() + this.getContentSize().height * (this.getAnchorPoint().y);
+            var rapx = this.getPositionX();
+            var rapy = this.getPositionY();
 
             cc.renderContext.translate(rapx,-rapy);
             if(this.getRotation() != 0){
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
-            var lpx = 0-((rapx-this.getPositionX()) * this.getScaleX());
-            var lpy = 0-((rapy-this.getPositionY()) * this.getScaleY());
-            var tWidth = this.getContentSize().width * this.getScaleX();
-            var tHeight = this.getContentSize().height * this.getScaleY();
             cc.renderContext.scale(this.getScaleX(),this.getScaleY());
+
+            var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
+            var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
+            var tWidth = this.getContentSize().width;
+            var tHeight = this.getContentSize().height;
 
             if((this.getContentSize().width == 0)&&(this.getContentSize().height == 0)){
                 cc.drawingUtil.drawImage(this._m_pobTexture,cc.ccp(lpx,lpy));
