@@ -140,3 +140,4 @@ cc.loadjs('../tests/Classes/tests/SchedulerTest/SchedulerTest.js');
 cc.loadjs('../tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
 cc.loadjs('../tests/Classes/tests/MenuTest/MenuTest.js');
 cc.loadjs('../tests/Classes/tests/ActionsTest/ActionsTest.js');
+cc.loadjs('../tests/Classes/tests/DrawPrimitivesTest/DrawPrimitivesTest.js');
