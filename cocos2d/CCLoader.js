@@ -102,7 +102,7 @@ cc.Loader = cc.Class.extend({
                     sharedEngine.preloadEffect(res[i]);
                     this.m_sResourceCount += 1;
                     break;
-                case "plist":
+                case "plist","tmx":
                     shareParser.setCallback(this.onResLoaded());
                     shareParser.preloadPlist(res[i]);
                     this.m_sResourceCount += 1;
