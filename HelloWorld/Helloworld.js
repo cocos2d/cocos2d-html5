@@ -36,7 +36,7 @@ var CircleSprite = cc.Sprite.extend({
 
         if(this._radians > 360)
             this._radians = 0;
-        cc.drawingUtil.drawCircle(this.getPosition(),30,cc.DEGREES_TO_RADIANS(this._radians),60,false);
+        cc.drawingUtil.drawCircle(this.getPosition(),30,cc.DEGREES_TO_RADIANS(this._radians),60,true);
     },
     myUpdate:function(dt){
         this._radians += 6;
@@ -117,11 +117,11 @@ var Helloworld = cc.Layer.extend({
             //this.addChild(helloSprite,0);
 
         this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
-        this.helloLb.setPosition(cc.ccp(180,0));
+        this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width/2,0));
         this.addChild(this.helloLb,5);
 
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setPosition(cc.ccp(0,0));
+        this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width/2,cc.Director.sharedDirector().getWinSize().height/2));
         this.pSprite.setIsVisible(true);
         this.pSprite.setAnchorPoint(cc.ccp(0.5,0.5));
         this.pSprite.setScale(0.5);

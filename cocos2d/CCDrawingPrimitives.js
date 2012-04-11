@@ -90,22 +90,29 @@ cc.DrawingPrimitive = cc.Class.extend({
  * @brief DrawingPrimitive's canvas implemention version
  */
 cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
-    drawPoint:function(point){
+    drawPoint:function(point,size){
+        if(!size){
+            size = 1;
+        }
         var newPoint = new cc.Point(point.x * cc.CONTENT_SCALE_FACTOR(),point.y * cc.CONTENT_SCALE_FACTOR());
         this._renderContext.beginPath();
-        this._renderContext.arc(newPoint.x, -newPoint.y,1*cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
+        this._renderContext.arc(newPoint.x, -newPoint.y, size*cc.CONTENT_SCALE_FACTOR(), 0, Math.PI*2, false);
         this._renderContext.closePath();
         this._renderContext.fill();
     },
 
-    drawPoints:function(points,numberOfPoints){
+    drawPoints:function(points,numberOfPoints,size){
         if(points == null){
             return ;
+        }
+        if(!size){
+            size = 1;
         }
 
         this._renderContext.beginPath();
         for(var i =0; i<points.length;i++){
-            this._renderContext.arc(points[i].x* cc.CONTENT_SCALE_FACTOR(), -points[i].y* cc.CONTENT_SCALE_FACTOR(),1* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
+            this._renderContext.arc(points[i].x* cc.CONTENT_SCALE_FACTOR(), -points[i].y* cc.CONTENT_SCALE_FACTOR(),
+                size * cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
         }
         this._renderContext.closePath();
         this._renderContext.fill();
@@ -149,10 +156,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
     },
 
     drawCircle:function(center,radius,angle,segments,drawLineToCenter){
-        this._renderContext.beginPath();
-        this._renderContext.arc(center.x* cc.CONTENT_SCALE_FACTOR(), -center.y* cc.CONTENT_SCALE_FACTOR(),radius* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
-        this._renderContext.closePath();
-        this._renderContext.stroke();
+        //this._renderContext.beginPath();
+        //this._renderContext.arc(center.x* cc.CONTENT_SCALE_FACTOR(), -center.y* cc.CONTENT_SCALE_FACTOR(),radius* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
+        //this._renderContext.closePath();
+        //this._renderContext.stroke();
 
         if((segments == "undefined")||(segments == 0)){
             return;
@@ -174,20 +181,22 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
             vertices.push(addPoint);
         }
 
-        var lastPoint = new cc.Point(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
-        vertices.push(lastPoint);
+        if(drawLineToCenter){
+            var lastPoint = new cc.Point(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
+            vertices.push(lastPoint);
+        }
 
         this.drawPoly(vertices,segments+2,true,false);
 
-        if(drawLineToCenter){
-            this._renderContext.beginPath();
-            for(var i=0;i<vertices.length;i++){
-                this._renderContext.moveTo(vertices[i].x,-vertices[i].y);
-                this._renderContext.lineTo(center.x* cc.CONTENT_SCALE_FACTOR(),-center.y* cc.CONTENT_SCALE_FACTOR());
-            }
-            this._renderContext.closePath();
-            this._renderContext.stroke();
-        }
+        //if(drawLineToCenter){
+        //    this._renderContext.beginPath();
+        //    for(var i=0;i<vertices.length;i++){
+        //        this._renderContext.moveTo(vertices[i].x,-vertices[i].y);
+        //        this._renderContext.lineTo(center.x* cc.CONTENT_SCALE_FACTOR(),-center.y* cc.CONTENT_SCALE_FACTOR());
+        //    }
+        //    this._renderContext.closePath();
+        //    this._renderContext.stroke();
+        //}
     },
 
     drawQuadBezier:function(origin,control,destination,segments){
