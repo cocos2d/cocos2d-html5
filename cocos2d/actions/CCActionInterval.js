@@ -98,7 +98,6 @@ cc.ActionInterval = cc.FiniteTimeAction.extend({
     },
     setAmplitudeRate:function(amp)
     {
-        cc.UNUSED_PARAM(amp);
         cc.Assert(0, 'Actioninterval setAmplitudeRate');
     },
     getAmplitudeRate:function()
@@ -258,7 +257,7 @@ cc.Repeat = cc.ActionInterval.extend({
         if (t > this._m_uTotal + 1)
         {
             this._m_pInnerAction.update(1);
-            thi._m_uTotal++;
+            this._m_uTotal++;
             this._m_pInnerAction.stop();
             this._m_pInnerAction.startWithTarget(this._m_pTarget);
 
@@ -323,7 +322,12 @@ cc.Repeat.actionWithAction = function(pAction,times)
  */
 cc.RepeatForever = cc.ActionInterval.extend({
     _m_pInnerAction:null,//CCActionInterval
-    initWithAction:function(pAction){},
+    initWithAction:function(pAction){
+        cc.Assert(pAction != null, "");
+
+        this._m_pInnerAction = pAction;
+        return true;
+    },
     startWithTarget:function(pTarget)
     {
         this._super(pTarget);
@@ -1063,10 +1067,7 @@ cc.Blink.actionWithDuration= function(duration, uBlinks)
 cc.FadeIn = cc.ActionInterval.extend({
     update:function(time)
     {
-        //if (this._m_pTarget.RGBAProtocol)
-        //{
-            this._m_pTarget.setOpacity(255 * time);
-        //}
+        this._m_pTarget.setOpacity(255 * time);
     },
     reverse:function()
     {
@@ -1097,7 +1098,7 @@ cc.FadeOut = cc.ActionInterval.extend({
         return cc.FadeIn.actionWithDuration(this._m_fDuration);
     }
 });
-cc.FadeOut.actionwithDuration = function(d)
+cc.FadeOut.actionWithDuration = function(d)
 {
     var pAction = new cc.FadeOut();
 

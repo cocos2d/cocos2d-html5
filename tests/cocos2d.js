@@ -136,5 +136,7 @@ cc.loadjs('../tests/testResource.js');
 cc.loadjs('../tests/Classes/tests/TouchesTest/Ball.js');
 cc.loadjs('../tests/Classes/tests/TouchesTest/Paddle.js');
 cc.loadjs('../tests/Classes/tests/TouchesTest/TouchesTest.js');
+cc.loadjs('../tests/Classes/tests/SchedulerTest/SchedulerTest.js');
+cc.loadjs('../tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
 cc.loadjs('../tests/Classes/tests/MenuTest/MenuTest.js');
 cc.loadjs('../tests/Classes/tests/ActionsTest/ActionsTest.js');

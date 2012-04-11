@@ -42,7 +42,7 @@ var cc = cc = cc || {};
  @since v0.8
  */
 cc.tHashElement = cc.Class.extend({
-    actions: [],
+    actions: null,
     target:null,//ccobject
     actionIndex: 0,
     currentAction: null,//CCAction
@@ -80,6 +80,7 @@ cc.ActionManager = cc.Class.extend({
      If the target is not present, a new instance of this target will be created either paused or not, and the action will be added to the newly created target.
      When the target is paused, the queued actions won't be 'ticked'.
      */
+    selTarget:null,
     addAction: function(pAction, pTarget, paused)
     {
         cc.Assert(pAction != null, "");
@@ -91,8 +92,7 @@ cc.ActionManager = cc.Class.extend({
             pElement = new cc.tHashElement();
             pElement.paused = paused;
             pElement.target = pTarget;
-
-            //TODO HASH ADD INT
+            this.selTarget = pElement;
             this._m_pTargets.push(pElement);
         }
 
@@ -100,7 +100,6 @@ cc.ActionManager = cc.Class.extend({
         cc.Assert((pElement.actions.indexOf(pAction) == -1),"ActionManager.addAction(),");
 
         pElement.actions.push(pAction);
-        //console.log(this._m_pTargets.actions.length);
         pAction.startWithTarget(pTarget);
     },
     /** Removes all actions from all the targets.
@@ -143,7 +142,7 @@ cc.ActionManager = cc.Class.extend({
         }
         else
         {
-            //CCLOG("cocos2d: removeAllActionsFromTarget: Target not found");
+            //cc.Log("cocos2d: removeAllActionsFromTarget: Target not found");
         }
     },
     /** Removes an action given an action reference.
@@ -158,19 +157,14 @@ cc.ActionManager = cc.Class.extend({
         var pTarget = pAction.getOriginalTarget();
         var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
 
-        if (pElement)
-        {
-            for(var i = 0; i < pElement.actions.length; i++)
-            {
-                if(pElement.actions[i] == pAction)
-                {
+        if (pElement){
+            for(var i = 0; i < pElement.actions.length; i++){
+                if(pElement.actions[i] == pAction){
                     pElement.actions.splice(i,1);
                     break;
                 }
             }
-        }
-        else
-        {
+        }else{
             cc.LOG("cocos2d: removeAction: Target not found");
         }
     },
@@ -210,13 +204,11 @@ cc.ActionManager = cc.Class.extend({
         {
             if (pElement.actions != null)
             {
-                var limit = pElement.actions.length;
-                for (var i = 0; i < limit; ++i)
+                for (var i = 0; i < pElement.actions.length; ++i)
                 {
                     var pAction = pElement.actions[i];
 
-                    if (pAction.getTag() == tag)
-                    {
+                    if (pAction.getTag() == tag){
                         return pAction;
                     }
                 }
@@ -263,8 +255,7 @@ cc.ActionManager = cc.Class.extend({
     resumeTarget: function(pTarget)
     {
         var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
-        if(pElement)
-        {
+        if(pElement) {
             pElement.paused = false;
         }
     },
@@ -278,8 +269,7 @@ cc.ActionManager = cc.Class.extend({
     },
 
     //protected
-    _removeActionAtIndex: function(uIndex, pElement)
-    {
+    _removeActionAtIndex: function(uIndex, pElement){
         var pAction = pElement.actions[uIndex];
 
         if ((pAction == pElement.currentAction) && (! pElement.currentActionSalvaged)){
@@ -293,7 +283,7 @@ cc.ActionManager = cc.Class.extend({
             pElement.actionIndex--;
         }
 
-        if (pElement.actions.num == 0)
+        if (pElement.actions.length == 0)
         {
             if (this._m_pCurrentTarget == pElement)
             {
@@ -305,13 +295,7 @@ cc.ActionManager = cc.Class.extend({
             }
         }
     },
-    _deleteHashElement: function(pElement)
-    {
-        /*TODO no need memory management in js?
-        ccArrayFree(pElement->actions);
-        HASH_DEL(m_pTargets, pElement);
-        pElement->target->release();
-        free(pElement);*/
+    _deleteHashElement: function(pElement){
     },
     _actionAllocWithHashElement: function(pElement)
     {
@@ -322,13 +306,10 @@ cc.ActionManager = cc.Class.extend({
     },
 
     update: function(dt){
-        for (var elt = 0; elt < this._m_pTargets.length; elt++)
-        {
+        for (var elt = 0; elt < this._m_pTargets.length; elt++){
             this._m_pCurrentTarget =this._m_pTargets[elt];
             this._m_bCurrentTargetSalvaged = false;
-
-            if ( !this._m_pCurrentTarget.paused)
-            {
+            if ( !this._m_pCurrentTarget.paused){
                 // The 'actions' CCMutableArray may change while inside this loop.
                 for (this._m_pCurrentTarget.actionIndex = 0; this._m_pCurrentTarget.actionIndex < this._m_pCurrentTarget.actions.length;
                      this._m_pCurrentTarget.actionIndex++)
@@ -342,15 +323,12 @@ cc.ActionManager = cc.Class.extend({
 
                     this._m_pCurrentTarget.currentAction.step(dt);
 
-                    if (this._m_pCurrentTarget.currentActionSalvaged)
-                    {
+                    if (this._m_pCurrentTarget.currentActionSalvaged){
                         // The currentAction told the node to remove it. To prevent the action from
                         // accidentally deallocating itself before finishing its step, we retained
                         // it. Now that step is done, it's safe to release it.
                         this._m_pCurrentTarget.currentAction = null;//release
-                    } else
-                    if (this._m_pCurrentTarget.currentAction.isDone())
-                    {
+                    } else if (this._m_pCurrentTarget.currentAction.isDone()){
                         this._m_pCurrentTarget.currentAction.stop();
 
                         var pAction = this._m_pCurrentTarget.currentAction;
@@ -367,14 +345,10 @@ cc.ActionManager = cc.Class.extend({
             // so it is safe to ask this here (issue #490)
 
             // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
-            if (this._m_bCurrentTargetSalvaged && this._m_pCurrentTarget.actions.length == 0)
-            {
+            if (this._m_bCurrentTargetSalvaged && this._m_pCurrentTarget.actions.length == 0){
                 this._deleteHashElement(this._m_pCurrentTarget);
             }
         }
-
-        // issue #635
-        this._m_pCurrentTarget = null;
     }
 });
 /** purges the shared action manager. It releases the retained instance.
@@ -382,8 +356,7 @@ cc.ActionManager = cc.Class.extend({
  @since v0.99.0
  */
 cc.ActionManager.sharedManager = function(){
-    if(!cc.gSharedManager)
-    {
+    if(!cc.gSharedManager){
         cc.gSharedManager = new cc.ActionManager();
         if(! cc.gSharedManager.init())
         {
