@@ -96,6 +96,9 @@ cc.loadjs = function(filename)
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('platform/CCCommon.js');//1
 cc.loadjs('platform/platform.js');//2
+cc.loadjs('platform/JXGUtil.js');//4
+cc.loadjs('platform/base64.js');//4
+cc.loadjs('platform/gzip.js');//4
 cc.loadjs('cocoa/CCGeometry.js');//3
 cc.loadjs('cocoa/CCSet.js');//4
 cc.loadjs('platform/CCTypes.js');//5
@@ -114,6 +117,7 @@ cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
+cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
 cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
@@ -130,6 +134,10 @@ cc.loadjs('../tests/Classes/AppDelegate.js');//17
 cc.loadjs('platform/AppControl.js');//18
 cc.loadjs('menu_nodes/CCdomMenuItem.js');
 cc.loadjs('menu_nodes/CCdomMenu.js');
+cc.loadjs('tileMap_parallax_nodes/CCTMXTiledMap.js');
+cc.loadjs('tileMap_parallax_nodes/CCTMXXMLParser.js');
+cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');
+cc.loadjs('tileMap_parallax_nodes/CCTMXLayer.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('../tests/testbasic.js');
 cc.loadjs('../tests/testResource.js');
