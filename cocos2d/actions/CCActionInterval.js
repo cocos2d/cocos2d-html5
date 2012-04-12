@@ -118,9 +118,13 @@ cc.ActionInterval.actionWithDuration=function(d)
 /** @brief Runs actions sequentially, one after another
  */
 cc.Sequence = cc.ActionInterval.extend({
-    _m_pActions: [],
+    _m_pActions: null,
     _m_split: null,
     _m_last:0,
+
+    ctor:function(){
+        this._m_pActions = [];
+    },
 
     /** initializes the action */
    // bool initOneTwo(CCFiniteTimeAction *pActionOne, CCFiniteTimeAction *pActionTwo);
@@ -231,7 +235,7 @@ cc.Repeat = cc.ActionInterval.extend({
     {
         var d = pAction.getDuration() * times;
 
-        if (this._super(d))
+        if (this.initWithDuration(d))
         {
             this._m_uTimes = times;
             this._m_pInnerAction = pAction;
@@ -375,15 +379,15 @@ cc.Spawn = cc.ActionInterval.extend({
     /** initializes the Spawn action with the 2 actions to spawn */
     initOneTwo:function(pAction1, pAction2)
     {
-        cc.Assert(pAction1 != null, "");
-        cc.Assert(pAction2 != null, "");
+        cc.Assert(pAction1 != null, "no action1");
+        cc.Assert(pAction2 != null, "no action2");
 
         var bRet = false;
 
         var d1 = pAction1.getDuration();
         var d2 = pAction2.getDuration();
 
-        if (cc.ActionInterval.initWithDuration(Math.max(d1, d2)))
+        if (this.initWithDuration(Math.max(d1, d2)))
         {
             this._m_pOne = pAction1;
             this._m_pTwo = pAction2;
@@ -403,7 +407,7 @@ cc.Spawn = cc.ActionInterval.extend({
     },
     startWithTarget:function(pTarget)
     {
-        cc.ActionInterval.startWithTarget(pTarget);
+        this._super(pTarget);
         this._m_pOne.startWithTarget(pTarget);
         this._m_pTwo.startWithTarget(pTarget);
     },
@@ -436,7 +440,10 @@ cc.Spawn.actions = function(/*Multiple Arguments*/)
     var pPrev = arguments[0];
     for(var i = 1; i < arguments.length; i++)
     {
-        pPrev = this.actionOneTwo(pPrev, arguments[i]);
+        if(arguments[i]!=null)
+        {
+            pPrev = this.actionOneTwo(pPrev, arguments[i]);
+        }
     }
     return pPrev;
 };
@@ -538,7 +545,7 @@ cc.RotateBy = cc.ActionInterval.extend({
     },
     startWithTarget:function(pTarget)
     {
-        cc.ActionInterval(pTarget);
+        this._super(pTarget);
         this._m_fStartAngle = pTarget.getRotation();
     },
     update:function(time)
@@ -843,9 +850,12 @@ cc.JumpTo.actionWithDuration = function(duration, position, height, jumps)
 /** @typedef bezier configuration structure
  */
 cc.BezierConfig = cc.Class.extend({
-    endPosition: new cc.Point(),
-    controlPoint_1: new cc.Point(),
-    controlPoint_2: new cc.Point()
+    ctor:function()
+    {
+        this.endPosition= new cc.Point();
+        this.controlPoint_1= new cc.Point();
+        this.controlPoint_2= new cc.Point();
+    }
 });
 cc.bezierat = function(a,b,c,d,t )
 {
@@ -894,7 +904,7 @@ cc.BezierBy = cc.ActionInterval.extend({
     },
     reverse: function()
     {
-        var r;
+        var r = new cc.BezierConfig();
 
         r.endPosition = cc.ccpNeg(this._m_sConfig.endPosition);
         r.controlPoint_1 = cc.ccpAdd(this._m_sConfig.controlPoint_2, cc.ccpNeg(this._m_sConfig.endPosition));
@@ -903,8 +913,11 @@ cc.BezierBy = cc.ActionInterval.extend({
         var pAction = cc.BezierBy.actionWithDuration(this._m_fDuration, r);
         return pAction;
     },
-    _m_sConfig: new cc.BezierConfig(),
-    _m_startPosition: new cc.Point()
+    ctor:function()
+    {
+        this._m_sConfig = new cc.BezierConfig();
+        this._m_startPosition= new cc.Point();
+    }
 });
 cc.BezierBy.actionWithDuration = function(t, c)
 {
@@ -919,14 +932,13 @@ cc.BezierBy.actionWithDuration = function(t, c)
  @since v0.8.2
  */
 cc.BezierTo = cc.BezierBy.extend({
-    update:function(time){},
-    reverse:function(){},
     startWithTarget: function(pTarget)
     {
         this._super(pTarget);
         this._m_sConfig.controlPoint_1 = cc.ccpSub(this._m_sConfig.controlPoint_1, this._m_startPosition);
         this._m_sConfig.controlPoint_2 = cc.ccpSub(this._m_sConfig.controlPoint_2, this._m_startPosition);
         this._m_sConfig.endPosition = cc.ccpSub(this._m_sConfig.endPosition, this._m_startPosition);
+        console.log(this._m_sConfig.endPosition);
     }
 });
 cc.BezierTo.actionWithDuration=function(t, c)
@@ -1239,7 +1251,7 @@ cc.TintBy = cc.ActionInterval.extend({
     _m_fromG:0,
     _m_fromB:0
 });
-cc.TintBy.actionwithDuration = function(duration, deltaRed, deltaGreen, deltaBlue)
+cc.TintBy.actionWithDuration = function(duration, deltaRed, deltaGreen, deltaBlue)
 {
     var pTintBy = new cc.TintBy();
     pTintBy.initWithDuration(duration, deltaRed, deltaGreen, deltaBlue);
@@ -1260,7 +1272,7 @@ cc.DelayTime = cc.ActionInterval.extend({
         return cc.DelayTime.actionWithDuration(this._m_fDuration);
     }
 });
-cc.DelayTime.actionwithDuration= function(d)
+cc.DelayTime.actionWithDuration= function(d)
 {
     var pAction = new cc.DelayTime();
 
@@ -1369,7 +1381,7 @@ cc.Animate = cc.ActionInterval.extend({
     },
     startWithTarget: function(pTarget)
     {
-        cc.ActionInterval.startWithTarget(pTarget);
+        this._super(pTarget);
         var pSprite = pTarget;
 
         if (this._m_bRestoreOriginalFrame)
@@ -1380,7 +1392,7 @@ cc.Animate = cc.ActionInterval.extend({
     update:function(time)
     {
         var pFrames = this._m_pAnimation.getFrames();
-        var numberOfFrames = pFrames.count();
+        var numberOfFrames = pFrames.length;
 
         var idx = time * numberOfFrames;
 
@@ -1418,7 +1430,7 @@ cc.Animate.actionWithAnimation = function(pAnimation, bRestoreOriginalFrame)
 
     return pAnimate;
 };
-cc.Animate.actionwithDuration = function(duration, pAnimation, bRestoreOriginalFrame)
+cc.Animate.actionWithDuration = function(duration, pAnimation, bRestoreOriginalFrame)
 {
     var pAnimate = new cc.Animate();
     pAnimate.initWithDuration(duration, pAnimation, bRestoreOriginalFrame);

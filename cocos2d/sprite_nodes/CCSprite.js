@@ -1076,9 +1076,9 @@ cc.Sprite = cc.Node.extend({
     },
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
+        console.log(this._m_pobTexture);
         var r = new cc.Rect();
         r = pFrame.getRect();
-
         return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
     },
     /** returns the current displayed frame. */
