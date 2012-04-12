@@ -715,6 +715,7 @@ cc.SkewTo = cc.ActionInterval.extend({
     update:function(t)
     {
         this._m_pTarget.setSkewX(this._m_fStartSkewX + this._m_fDeltaX * t);
+
         this._m_pTarget.setSkewY(this._m_fStartSkewY + this._m_fDeltaY * t);
     },
     _m_fSkewX:0,

@@ -52,10 +52,10 @@ var actionTests = [
     "ActionCallFunc",
     "ActionCallFuncND",
     "ActionReverseSequence",
-    "ActionReverseSequence2",
-    "ActionOrbit",
-    "ActionFollow",
-    "ActionAnimate"
+    //"ActionReverseSequence2",
+    //"ActionOrbit",
+    "ActionFollow"
+    //"ActionAnimate"
 ];
 var s_nActionIdx = -1;
 function NextAction()

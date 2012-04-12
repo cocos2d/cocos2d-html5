@@ -724,7 +724,7 @@ cc.Sprite = cc.Node.extend({
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
 
-            cc.renderContext.transform(this.getScaleX(),this.getSkewX(),this.getSkewY(),this.getScaleY(),0,0);
+            cc.renderContext.transform(this.getScaleX(),this._m_fSkewX,this._m_fSkewY,this.getScaleY(),0,0);
 
             var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
             var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
