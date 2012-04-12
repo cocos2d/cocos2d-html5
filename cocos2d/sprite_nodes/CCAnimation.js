@@ -36,8 +36,11 @@ var cc = cc = cc || {};
 cc.Animation = cc.Class.extend({
     _name:"",
     _delay:0,
-    _frames:[],
-
+    _frames:null,
+    ctor: function()
+    {
+        this._frames = [];
+    },
     // attributes
     /** get name of the animation */
     getName:function(){return this._name;},
@@ -57,6 +60,7 @@ cc.Animation = cc.Class.extend({
     /** Initializes a CCAnimation with frames and a delay between frames
      @since v0.99.5
      */
+
     initWithFrames:function(frames,delay){
         this._delay = delay;
         if(frames)

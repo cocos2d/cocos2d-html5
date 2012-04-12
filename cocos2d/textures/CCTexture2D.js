@@ -104,6 +104,7 @@ function _ccTexParams(minFilter, magFilter, wrapS, wrapT) {
  */
 cc.Texture2D = cc.Class.extend({
     // By default PVR images are treated as if they don't have the alpha channel premultiplied
+    _imageElement:null,
     _m_bPVRHaveAlphaPremultiplied:null,
     _m_ePixelFormat:null,
     _m_uPixelsWide:null,
