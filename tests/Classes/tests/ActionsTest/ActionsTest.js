@@ -41,28 +41,28 @@ var actionTests = [
     "ActionBlink",
     "ActionFade",
     "ActionTint",
-    "ActionAnimate",
     "ActionSequence",
     "ActionSequence2",
     "ActionSpawn",
-    "ActionSpawn",
     "ActionDelayTime",
     "ActionRepeat",
-    "ActionRepeatForever",
+    //"ActionRepeatForever",
     "ActionRotateToRepeat",
     "ActionRotateJerk",
     "ActionCallFunc",
     "ActionCallFuncND",
     "ActionReverseSequence",
-    "ActionReverseSequance2",
+    "ActionReverseSequence2",
     "ActionOrbit",
-    "ActionFollow"
+    "ActionFollow",
+    "ActionAnimate"
 ];
 var s_nActionIdx = -1;
 function NextAction()
 {
     ++s_nActionIdx;
     s_nActionIdx = s_nActionIdx % actionTests.length;
+    console.log(actionTests[s_nActionIdx]);
     return new window[actionTests[s_nActionIdx]];
 }
 function BackAction()
@@ -287,40 +287,12 @@ var ActionScale = ActionsDemo.extend({
         var actionBy = cc.ScaleBy.actionWithDuration(2 ,  2);
         var actionBy2 = cc.ScaleBy.actionWithDuration(2, 0.25, 4.5);
         var actionByBack = actionBy.reverse();
-        //testing
-        actionBy2.update = function(time)
-        {
-            //alert(1);
-            if (this._m_pTarget)
-            {
-                this._m_pTarget.setScaleX(this._m_fStartScaleX + this._m_fDeltaX * time);
-                this._m_pTarget.setScaleY(this._m_fStartScaleY + this._m_fDeltaY * time);
-            }
-            if(this._m_pTarget == window.gros)
-            {
-                console.log("yes");
-            }
-        };
+        var actionBy2Back = actionBy2.reverse();
 
-        //testing
-        window.gros = this._m_grossini;
-        window.act = actionBy;
         this._m_tamara.runAction( actionTo);
-        this._m_grossini.runAction( cc.Sequence.actions(actionBy, actionBy.reverse(), null));
-        this._m_kathia.runAction( cc.Sequence.actions(actionBy2, actionBy2.reverse(), null));
+        this._m_kathia.runAction( cc.Sequence.actions(actionBy2, actionBy2Back));
+        this._m_grossini.runAction( cc.Sequence.actions(actionBy, actionByBack, null));
 
-
-        //debug
-        var debug = cc.$new("div");
-        debug.id = "debug";
-        debug.style.textAlign = "right";
-        cc.$("body").appendChild(debug);
-        //console.log(actionBy);
-        setInterval(function()
-        {
-            debug.innerText= (window.gros._m_fScaleX+" "+window.gros._m_fScaleY)+"<br/>"+
-                            window.act._m_fStartScaleX;
-        },17);
     },
     subtitle:function()
     {
@@ -395,7 +367,7 @@ var ActionSkewRotateScale = ActionsDemo.extend({
 
         box.runAction(cc.Sequence.actions(actionTo, actionToBack, null));
         box.runAction(cc.Sequence.actions(rotateTo, rotateToBack, null));
-        box.runAction(c.Sequence.actions(actionScaleTo, actionScaleToBack, null));
+        box.runAction(cc.Sequence.actions(actionScaleTo, actionScaleToBack, null));
     },
     subtitle:function()
     {
@@ -500,9 +472,14 @@ var ActionBezier = ActionsDemo.extend({
         this._m_kathia.setPosition(cc.PointMake(400,160));
         var bezierTo2 = cc.BezierTo.actionWithDuration(2, bezier2);
 
+        this._m_grossini.id = "gro";
+        this._m_tamara.id = "tam";
+        this._m_kathia.id = "kat";
+
         this._m_grossini.runAction( rep);
         this._m_tamara.runAction(bezierTo1);
         this._m_kathia.runAction(bezierTo2);
+
     },
     subtitle:function()
     {
@@ -597,9 +574,11 @@ var ActionAnimate = ActionsDemo.extend({
 
         var animation = cc.Animation.animation();
         var frameName = "";
+        var format;
         for( var i=1;i<15;i++)
         {
-            frameName = "Images/grossini_dance_"+i+"2d.png";
+            format = (i<10)? "0"+i : ""+i;
+            frameName = "Resources/Images/grossini_dance_"+format+".png";
             animation.addFrameWithFileName(frameName);
         }
 
@@ -623,7 +602,7 @@ var ActionSequence = ActionsDemo.extend({
     onEnter:function()
     {
         this._super();
-        this.centerSprites(1);
+        this.alignSpritesLeft(1);
 
         var action = cc.Sequence.actions(
             cc.MoveBy.actionWithDuration( 2, cc.PointMake(240,0)),
