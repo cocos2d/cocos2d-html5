@@ -165,6 +165,7 @@ cc.Director = cc.Class.extend({
     {
         //cc.LOG("cocos2d: "+ cc.cocos2dVersion());
         this._m_pFPSLabel.setPosition(cc.ccp(0,0));
+        this._m_pFPSLabel.setAnchorPoint(cc.ccp(0,0));
         // scenes
         //TODO these are already set to null, so maybe we can remove them in the init?
         this._m_pRunningScene = null;
@@ -406,9 +407,10 @@ cc.Director = cc.Class.extend({
 
         if (cc.DIRECTOR_FAST_FPS)
         {
-            if (!this._m_pFPSLabel)
-            {
+            if (!this._m_pFPSLabel){
                 this._m_pFPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
+                this._m_pFPSLabel.setPosition(cc.ccp(0,0));
+                this._m_pFPSLabel.setAnchorPoint(cc.ccp(0,0));
             }
         }
 
@@ -720,6 +722,8 @@ cc.Director = cc.Class.extend({
             if (! this._m_pFPSLabel)
             {
                 this._m_pFPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
+                this._m_pFPSLabel.setPosition(cc.ccp(0,0));
+                this._m_pFPSLabel.setAnchorPoint(cc.ccp(0,0));
                 //this._m_pFPSLabel.retain();
             }
         }
