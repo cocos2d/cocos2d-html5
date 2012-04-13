@@ -241,35 +241,36 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         var version = map.getAttribute('version');
         var orientationStr = map.getAttribute('orientation');
 
-        if (version != "1.0" && version !== null) {
-            cc.LOG("cocos2d: TMXFormat: Unsupported TMX version:" + version);
+        if (map.nodeName == "map") {
+            if (version != "1.0" && version !== null) {
+                cc.LOG("cocos2d: TMXFormat: Unsupported TMX version:" + version);
+            }
+
+            if (orientationStr == "orthogonal")
+                this.setOrientation(cc.TMXOrientationOrtho);
+            else if (orientationStr == "isometric")
+                this.setOrientation(cc.TMXOrientationIso);
+            else if (orientationStr == "hexagonal")
+                this.setOrientation(cc.TMXOrientationHex);
+            else if (orientationStr !== null)
+                cc.LOG("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
+
+            var s = new cc.Size;
+            s.width = parseFloat(map.getAttribute('width'));
+            s.height = parseFloat(map.getAttribute('height'));
+            this.setMapSize(s);
+
+            s.width = parseFloat(map.getAttribute('tilewidth'));
+            s.height = parseFloat(map.getAttribute('tileheight'));
+            this.setTileSize(s)
+
+            // The parent element is now "map"
+            this.setParentElement(cc.TMXPropertyMap);
         }
-
-        if (orientationStr == "orthogonal")
-            this.setOrientation(cc.TMXOrientationOrtho);
-        else if (orientationStr == "isometric")
-            this.setOrientation(cc.TMXOrientationIso);
-        else if (orientationStr == "hexagonal")
-            this.setOrientation(cc.TMXOrientationHex);
-        else if( orientationStr !== null)
-            cc.LOG("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
-
-        var s = new cc.Size;
-        s.width = parseFloat(map.getAttribute('width'));
-        s.height = parseFloat(map.getAttribute('height'));
-        this.setMapSize(s);
-
-        s.width = parseFloat(map.getAttribute('tilewidth'));
-        s.height = parseFloat(map.getAttribute('tileheight'));
-        this.setTileSize(s);
-
-        // The parent element is now "map"
-        this.setParentElement(cc.TMXPropertyMap);
-
 
         // PARSE <tileset>
         var tilesets = map.getElementsByTagName('tileset');
-        if (tilesets.length == 0) {
+        if (map.nodeName !== "map") {
             tilesets = []
             tilesets.push(map);
         }
@@ -277,7 +278,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
             var t = tilesets[i];
             // If this is an external tileset then start parsing that
             var externalTilesetFilename = t.getAttribute('source');
-            var imgpath = xmlFilename.substring(0,xmlFilename.lastIndexOf("/")+1);
+            var imgpath = xmlFilename.substring(0, xmlFilename.lastIndexOf("/") + 1);
             if (externalTilesetFilename) {
                 this.parseXMLFile(imgpath + externalTilesetFilename);
             }
@@ -295,7 +296,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
 
                 var image = t.getElementsByTagName('image')[0];
                 var imgSource = image.getAttribute('source');
-                if(imgSource){
+                if (imgSource) {
                     imgSource = imgpath + imgSource;
                 }
                 tileset.m_sSourceImage = imgSource;

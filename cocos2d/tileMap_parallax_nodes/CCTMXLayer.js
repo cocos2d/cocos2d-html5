@@ -191,11 +191,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         var gid = this.tileGIDAt(pos);
 
         // if GID == 0, then no tile is present
-        if( gid )
-        {
+        if(gid){
             var z = pos.x + pos.y * this._m_tLayerSize.width;
             tile = this.getChildByTag(z);
-
             // tile not created yet. create it
             if( ! tile ){
                 var rect = this._m_pTileSet.rectForGID(gid);
@@ -469,8 +467,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         var z = pos.x + pos.y * this._m_tLayerSize.width;
 
         this._m_pReusedTile = new cc.Sprite();
-        this._m_pReusedTile.setContentSize(new cc.Size(101,81));
-        console.log(this._m_pReusedTile)
         this._m_pReusedTile.initWithBatchNode(this, rect);
         this._m_pReusedTile.setPosition(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));

@@ -129,6 +129,7 @@ cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
 cc.loadjs('CCDirector.js');//13
+cc.loadjs('CCCamera.js');//13
 cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCLoader.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
