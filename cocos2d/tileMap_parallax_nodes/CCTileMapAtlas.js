@@ -25,8 +25,6 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.StringToIntegerDictionary = null;
-cc.StringToIntegerPair = null;
 cc.TGA_OK = null;
 cc.TGA_ERROR_FILE_OPEN = null;
 cc.TGA_ERROR_READING_FILE = null;
@@ -63,29 +61,29 @@ function sImageTGA(status, type, pixelDepth, width, height, imageData, flipped) 
  */
 cc.TileMapAtlas = cc.AtlasNode.extend({
     /** TileMap info */
-    m_pTGAInfo:null,
+    _m_pTGAInfo:null,
     m_pIndices:null,
     //! numbers of tiles to render
-    m_nItemsToRender:0,
+    _m_nItemsToRender:0,
     //! x,y to altas dicctionary
-    m_pPosToAtlasIndex:null,
+    _m_pPosToAtlasIndex:null,
     getTGAInfo:function () {
-        return this.m_pTGAInfo;
+        return this._m_pTGAInfo;
     },
     setTGAInfo:function (Var) {
-        this.m_pTGAInfo = Var;
+        this._m_pTGAInfo = Var;
     },
     /** initializes a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.
      The file will be loaded using the TextureMgr.
      */
     initWithTileFile:function (tile, mapFile, tileWidth, tileHeight) {
-        this.loadTGAfile(mapFile);
-        this.calculateItemsToRender();
-        if (cc.AtlasNode.initWithTileFile(tile, tileWidth, tileHeight, this.m_nItemsToRender)) {
-            this.m_pPosToAtlasIndex = new Object();
-            this.updateAtlasValues();
-            this.setContentSize(cc.SizeMake((this.m_pTGAInfo.width * this._m_uItemWidth),
-                (this.m_pTGAInfo.height * this._m_uItemHeight)));
+        this._loadTGAfile(mapFile);
+        this._calculateItemsToRender();
+        if (cc.AtlasNode.initWithTileFile(tile, tileWidth, tileHeight, this._m_nItemsToRender)) {
+            this._m_pPosToAtlasIndex = new Object();
+            this._updateAtlasValues();
+            this.setContentSize(cc.SizeMake((this._m_pTGAInfo.width * this._m_uItemWidth),
+                (this._m_pTGAInfo.height * this._m_uItemHeight)));
             return true;
         }
         return false;
@@ -94,12 +92,12 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
      For the moment only channel R is used
      */
     tileAt:function (position) {
-        cc.Assert(this.m_pTGAInfo != null, "tgaInfo must not be nil");
-        cc.Assert(position.x < this.m_pTGAInfo.width, "Invalid position.x");
-        cc.Assert(position.y < this.m_pTGAInfo.height, "Invalid position.y");
+        cc.Assert(this._m_pTGAInfo != null, "tgaInfo must not be nil");
+        cc.Assert(position.x < this._m_pTGAInfo.width, "Invalid position.x");
+        cc.Assert(position.y < this._m_pTGAInfo.height, "Invalid position.y");
 
-        var ptr = this.m_pTGAInfo.imageData;
-        var value = ptr[position.x + position.y * this.m_pTGAInfo.width];
+        var ptr = this._m_pTGAInfo.imageData;
+        var value = ptr[position.x + position.y * this._m_pTGAInfo.width];
 
         return value;
     },
@@ -107,18 +105,18 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
      For the moment only channel R is used
      */
     setTile:function (tile, position) {
-        cc.Assert(this.m_pTGAInfo != null, "tgaInfo must not be nil");
-        cc.Assert(this.m_pPosToAtlasIndex != null, "posToAtlasIndex must not be nil");
-        cc.Assert(position.x < this.m_pTGAInfo.width, "Invalid position.x");
-        cc.Assert(position.y < this.m_pTGAInfo.height, "Invalid position.x");
+        cc.Assert(this._m_pTGAInfo != null, "tgaInfo must not be nil");
+        cc.Assert(this._m_pPosToAtlasIndex != null, "posToAtlasIndex must not be nil");
+        cc.Assert(position.x < this._m_pTGAInfo.width, "Invalid position.x");
+        cc.Assert(position.y < this._m_pTGAInfo.height, "Invalid position.x");
         cc.Assert(tile.r != 0, "R component must be non 0");
 
-        var ptr = this.m_pTGAInfo.imageData;
-        var value = ptr[position.x + position.y * this.m_pTGAInfo.width];
+        var ptr = this._m_pTGAInfo.imageData;
+        var value = ptr[position.x + position.y * this._m_pTGAInfo.width];
         if (value.r == 0) {
             cc.LOG("cocos2d: Value.r must be non 0.");
         } else {
-            ptr[position.x + position.y * this.m_pTGAInfo.width] = tile;
+            ptr[position.x + position.y * this._m_pTGAInfo.width] = tile;
 
             // XXX: this method consumes a lot of memory
             // XXX: a tree of something like that shall be impolemented
@@ -131,25 +129,25 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
             cc.LOG(buffer, position.y)
             key += buffer;
 
-            var num = this.m_pPosToAtlasIndex[key];
-            this.updateAtlasValueAt(position, tile, num);
+            var num = this._m_pPosToAtlasIndex[key];
+            this._updateAtlasValueAt(position, tile, num);
         }
     },
     /** dealloc the map from memory */
     releaseMap:function () {
-        if (this.m_pTGAInfo) {
-            cc.tgaDestroy(this.m_pTGAInfo);
+        if (this._m_pTGAInfo) {
+            cc.tgaDestroy(this._m_pTGAInfo);
         }
-        this.m_pTGAInfo = null;
+        this._m_pTGAInfo = null;
 
-        if (this.m_pPosToAtlasIndex) {
-            this.m_pPosToAtlasIndex.clear();
-            delete this.m_pPosToAtlasIndex;
-            this.m_pPosToAtlasIndex = null;
+        if (this._m_pPosToAtlasIndex) {
+            this._m_pPosToAtlasIndex.clear();
+            delete this._m_pPosToAtlasIndex;
+            this._m_pPosToAtlasIndex = null;
         }
     },
     /*private:*/
-    loadTGAfile:function (file) {
+    _loadTGAfile:function (file) {
         cc.Assert(file != null, "file must be non-nil");
 
         //	//Find the path of the file
@@ -157,26 +155,26 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
         //	cc.String *resourcePath = [mainBndl resourcePath];
         //	cc.String * path = [resourcePath stringByAppendingPathComponent:file];
 
-        this.m_pTGAInfo = cc.tgaLoad(cc.FileUtils.fullPathFromRelativePath(file));
-        if (this.m_pTGAInfo.status != cc.TGA_OK) {
+        this._m_pTGAInfo = cc.tgaLoad(cc.FileUtils.fullPathFromRelativePath(file));
+        if (this._m_pTGAInfo.status != cc.TGA_OK) {
             cc.Assert(0, "TileMapAtlasLoadTGA : TileMapAtas cannot load TGA file");
         }
     },
-    calculateItemsToRender:function () {
-        cc.Assert(this.m_pTGAInfo != null, "tgaInfo must be non-nil");
+    _calculateItemsToRender:function () {
+        cc.Assert(this._m_pTGAInfo != null, "tgaInfo must be non-nil");
 
-        this.m_nItemsToRender = 0;
-        for (var x = 0; x < this.m_pTGAInfo.width; x++) {
-            for (var y = 0; y < this.m_pTGAInfo.height; y++) {
-                var ptr = this.m_pTGAInfo.imageData;
-                var value = ptr[x + y * this.m_pTGAInfo.width];
+        this._m_nItemsToRender = 0;
+        for (var x = 0; x < this._m_pTGAInfo.width; x++) {
+            for (var y = 0; y < this._m_pTGAInfo.height; y++) {
+                var ptr = this._m_pTGAInfo.imageData;
+                var value = ptr[x + y * this._m_pTGAInfo.width];
                 if (value.r) {
-                    ++this.m_nItemsToRender;
+                    ++this._m_nItemsToRender;
                 }
             }
         }
     },
-    updateAtlasValueAt:function (pos, value, index) {
+    _updateAtlasValueAt:function (pos, value, index) {
         var quad = new cc.V3F_C4B_T2F_Quad();
 
         var x = pos.x;
@@ -223,19 +221,19 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
 
         this._m_pTextureAtlas.updateQuad(quad, index);
     },
-    updateAtlasValues:function () {
-        cc.Assert(this.m_pTGAInfo != null, "tgaInfo must be non-nil");
+    _updateAtlasValues:function () {
+        cc.Assert(this._m_pTGAInfo != null, "tgaInfo must be non-nil");
 
         var total = 0;
 
-        for (var x = 0; x < this.m_pTGAInfo.width; x++) {
-            for (var y = 0; y < this.m_pTGAInfo.height; y++) {
-                if (total < this.m_nItemsToRender) {
-                    var ptr = this.m_pTGAInfo.imageData;
-                    var value = ptr[x + y * this.m_pTGAInfo.width];
+        for (var x = 0; x < this._m_pTGAInfo.width; x++) {
+            for (var y = 0; y < this._m_pTGAInfo.height; y++) {
+                if (total < this._m_nItemsToRender) {
+                    var ptr = this._m_pTGAInfo.imageData;
+                    var value = ptr[x + y * this._m_pTGAInfo.width];
 
                     if (value.r != 0) {
-                        this.updateAtlasValueAt(cc.ccg(x, y), value, total);
+                        this._updateAtlasValueAt(cc.ccg(x, y), value, total);
 
                         var buffer;
 
@@ -246,7 +244,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
                         cc.LOG(buffer, y)
                         key += buffer;
 
-                        this.m_pPosToAtlasIndex.insert(StringToIntegerPair(key, total));
+                        this._m_pPosToAtlasIndex[key] = total;
 
                         total++;
                     }
