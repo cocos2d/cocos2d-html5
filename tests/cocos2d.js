@@ -118,6 +118,8 @@ cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');//9
+cc.loadjs('layers_scenes_transitions_nodes/CCTransitionPageTurn.js');//9
+cc.loadjs('layers_scenes_transitions_nodes/CCTransitionRadial.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
 cc.loadjs('sprite_nodes/CCAnimation.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
@@ -131,6 +133,7 @@ cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCLoader.js');//14
+cc.loadjs('CCCamera.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('platform/CCSAXParser.js');//16
@@ -153,4 +156,5 @@ cc.loadjs('../tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
 cc.loadjs('../tests/Classes/tests/MenuTest/MenuTest.js');
 cc.loadjs('../tests/Classes/tests/ActionsTest/ActionsTest.js');
 cc.loadjs('../tests/Classes/tests/TileMapTest/TileMapTest.js');
+cc.loadjs('../tests/Classes/tests/TransitionsTest/TransitionsTest.js');
 cc.loadjs('../tests/Classes/tests/DrawPrimitivesTest/DrawPrimitivesTest.js');
