@@ -66,12 +66,12 @@ cc.ActionManager = cc.Class.extend({
 
     ctor: function(){
         cc.Assert(cc.gSharedManager == null,"");
+        this._m_pTargets = [];
     },
 
     init:function()
     {
         cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, 0, false);
-        this._m_pTargets = [];
 
         return true;
     },
@@ -83,11 +83,10 @@ cc.ActionManager = cc.Class.extend({
     selTarget:null,
     addAction: function(pAction, pTarget, paused)
     {
-        cc.Assert(pAction != null, "");
+        cc.Assert(pAction != null, "no action");
         cc.Assert(pTarget != null, "");
 
         var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
-
         if(!pElement){
             pElement = new cc.tHashElement();
             pElement.paused = paused;

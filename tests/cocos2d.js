@@ -112,11 +112,14 @@ cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('actions/CCAction.js');//7
 cc.loadjs('actions/CCActionInterval.js');//7
+cc.loadjs('actions/CCActionInstant.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
+cc.loadjs('sprite_nodes/CCAnimation.js');
+cc.loadjs('sprite_nodes/CCSpriteFrame.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
