@@ -138,21 +138,20 @@ cc.Node = cc.Class.extend({
         }
     },
     getSkewX:function () {
-        return cc.DEGREES_TO_RADIANS(this._m_fSkewX);
+        return this._m_fSkewX;
     },
     setSkewX:function (newSkewX) {
-        this._m_fSkewX = cc.DEGREES_TO_RADIANS(newSkewX);
-        console.log(this._m_fSkewX);
+        this._m_fSkewX = newSkewX;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
     getSkewY:function () {
-        return cc.DEGREES_TO_RADIANS(this._m_fSkewY);
+        return this._m_fSkewY;
     },
     setSkewY:function (newSkewY) {
-        this._m_fSkewY = cc.DEGREES_TO_RADIANS(newSkewY);
+        this._m_fSkewY = newSkewY;
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;

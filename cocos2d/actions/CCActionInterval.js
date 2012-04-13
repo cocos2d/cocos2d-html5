@@ -133,6 +133,13 @@ cc.Sequence = cc.ActionInterval.extend({
         cc.Assert(pActionOne != null, "Sequence.initOneTwo");
         cc.Assert(pActionTwo != null, "Sequence.initOneTwo");
 
+        var one = pActionOne.getDuration();
+        var two = pActionTwo.getDuration();
+        if(isNaN(one) || isNaN(two))
+        {
+            console.log(pActionOne);
+            console.log(pActionTwo);
+        }
         var d = pActionOne.getDuration() + pActionTwo.getDuration();
         this.initWithDuration(d);
 
@@ -203,6 +210,7 @@ cc.Sequence.actions = function(/*Multiple Arguments*/)
         }
     }
     return pPrev;
+
 };
 /** helper contructor to create an array of sequenceable actions given an array */
 cc.Sequence.actionsWithArray = function(actions)
@@ -511,6 +519,10 @@ cc.RotateTo = cc.ActionInterval.extend({
             this._m_fDiffAngle += 360;
         }
     },
+    reverse: function()
+    {
+        cc.Assert(0,"RotateTo reverse not implemented");
+    },
     update:function(time)
     {
         if (this._m_pTarget)
@@ -596,6 +608,10 @@ cc.MoveTo = cc.ActionInterval.extend({
                 this._m_startPosition.y + this._m_delta.y * time));
         }
     },
+    reverse:function()
+    {
+        cc.Assert(0, "moveto implement reverse");
+    },
     _m_endPosition:new cc.Point(),
     _m_startPosition: new cc.Point(),
     _m_delta: new cc.Point()
@@ -670,6 +686,7 @@ cc.SkewTo = cc.ActionInterval.extend({
 
         this._m_fStartSkewX = pTarget.getSkewX();
 
+
         if (this._m_fStartSkewX > 0)
         {
             this._m_fStartSkewX = this._m_fStartSkewX % 180;
@@ -690,8 +707,8 @@ cc.SkewTo = cc.ActionInterval.extend({
             this._m_fDeltaX += 360;
         }
 
-        this._m_fStartSkewY = pTarget.getSkewY();
 
+        this._m_fStartSkewY = pTarget.getSkewY();
         if (this._m_fStartSkewY > 0)
         {
             this._m_fStartSkewY = this._m_fStartSkewY % 360;
@@ -742,7 +759,7 @@ cc.SkewTo.actionWithDuration= function(t, sx, sy)
  @since v1.0
  */
 cc.SkewBy = cc.SkewTo.extend({
-    initWithDuration:function(t, deltaSkewX, deltaSkewY)
+    initWithDuration:function(t, deltaSkewX,deltaSkewY)
     {
         var bRet = false;
 
@@ -939,7 +956,6 @@ cc.BezierTo = cc.BezierBy.extend({
         this._m_sConfig.controlPoint_1 = cc.ccpSub(this._m_sConfig.controlPoint_1, this._m_startPosition);
         this._m_sConfig.controlPoint_2 = cc.ccpSub(this._m_sConfig.controlPoint_2, this._m_startPosition);
         this._m_sConfig.endPosition = cc.ccpSub(this._m_sConfig.endPosition, this._m_startPosition);
-        console.log(this._m_sConfig.endPosition);
     }
 });
 cc.BezierTo.actionWithDuration=function(t, c)
