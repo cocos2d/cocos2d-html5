@@ -723,7 +723,8 @@ cc.Sprite = cc.Node.extend({
             if(this.getRotation() != 0){
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
-            cc.renderContext.scale(this.getScaleX(),this.getScaleY());
+
+            cc.renderContext.transform(this.getScaleX(),this.getSkewX(),this.getSkewY(),this.getScaleY(),0,0);
 
             var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
             var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
@@ -1076,9 +1077,9 @@ cc.Sprite = cc.Node.extend({
     },
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
+        console.log(this._m_pobTexture);
         var r = new cc.Rect();
         r = pFrame.getRect();
-
         return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
     },
     /** returns the current displayed frame. */

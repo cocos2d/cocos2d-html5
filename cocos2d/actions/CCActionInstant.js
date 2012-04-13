@@ -43,7 +43,7 @@ cc.ActionInstant = cc.FiniteTimeAction.extend({
     },
     update: function(time)
     {
-        cc.UNUSED_PARAM(time);
+        //cc.UNUSED_PARAM(time);
     }
 });
 
@@ -187,7 +187,7 @@ cc.CallFunc = cc.ActionInstant.extend({
         if(selector)//CallFuncN
         {
             this._m_pData = (d)? d: null;//CallFuncND
-            if(cc.CallFunc.initWithTarget(pSelectorTarget))
+            if(this.initWithTarget(pSelectorTarget))
             {
                 this._m_pCallFunc = selector;
                 return true;

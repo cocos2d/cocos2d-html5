@@ -57,14 +57,14 @@ var SchedulerTestLayer = cc.Layer.extend({
 
         var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 30);
         this.addChild(label);
-        label.setPosition(cc.ccp(50, s.height-50));
+        label.setPosition(cc.ccp(s.width/2, s.height-50));
 
         var subTitle = this.subtitle();
         if( subTitle != "")
         {
             var subLabel = cc.LabelTTF.labelWithString(subTitle, "Thonburi", 13);
             this.addChild(subLabel, 1);
-            subLabel.setPosition(cc.ccp(50, s.height-80));
+            subLabel.setPosition(cc.ccp(s.width/2, s.height-80));
         }
 
         var item1 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/b1.png", "Resources/Images/b2.png", this, this.backCallback);
