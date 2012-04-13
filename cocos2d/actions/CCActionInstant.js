@@ -62,7 +62,7 @@ cc.Show = cc.ActionInstant.extend({
 });
 cc.Show.action = function()
 {
-    return (new cc.Show());
+    return new cc.Show();
 };
 
 /**
@@ -92,6 +92,10 @@ cc.ToggleVisibility = cc.ActionInstant.extend({
     {
         this._super();
         pTarget.setIsVisible(!pTarget.getIsVisible());
+    },
+    reverse:function()
+    {
+        return new cc.ToggleVisibility();
     }
 });
 cc.ActionInstant.action = function()
@@ -169,13 +173,14 @@ cc.Place = cc.ActionInstant.extend({
     {
         this._super(pTarget);
         this._m_pTarget.setPosition(this._m_tPosition);
-    },
-    _m_tPosition:new cc.Point()
+    }
 });
 /** creates a Place action with a position */
 cc.Place.actionWithPosition= function(pos)
 {
-    return (new cc.Place());
+    var ret = new cc.Place();
+    ret.initWithPosition(pos);
+    return ret;
 };
 
 
@@ -184,26 +189,16 @@ cc.Place.actionWithPosition= function(pos)
 cc.CallFunc = cc.ActionInstant.extend({
     initWithTarget: function(pSelectorTarget, selector, d)
     {
-        if(selector)//CallFuncN
-        {
-            this._m_pData = (d)? d: null;//CallFuncND
-            if(this.initWithTarget(pSelectorTarget))
-            {
-                this._m_pCallFunc = selector;
-                return true;
-            }
-        }
-        else//CallFunc
-        {
-            this._m_pSelectorTarget = pSelectorTarget;
-            return true;
-        }
+        this._m_pData = d || null;
+        this._m_pCallFunc = selector || null;
+        this._m_pSelectorTarget = pSelectorTarget || null;
+        return true;
     },
     execute:function()
     {
-        if(this._m_pCallFunc)//CallFunc, N, ND
+        if(this._m_pCallFunc != null)//CallFunc, N, ND
         {
-            this._m_pSelectorTarget._m_pCallFunc(this._m_pTarget);
+            this._m_pCallFunc.call(this._m_pSelectorTarget,this._m_pTarget, this._m_pData);
         }
     },
     startWithTarget:function(pTarget)

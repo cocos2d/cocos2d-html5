@@ -48,7 +48,11 @@ cc.tHashElement = cc.Class.extend({
     currentAction: null,//CCAction
     currentActionSalvaged: false,
     paused: false,
-    hh: null//ut hash handle
+    hh: null,//ut hash handle
+    ctor:function()
+    {
+        this.actions = [];
+    }
 });
 cc.ActionManager = cc.Class.extend({
     _m_pTargets: null,
@@ -57,7 +61,7 @@ cc.ActionManager = cc.Class.extend({
 
     _searchElementByTarget:function(arr,pTarget){
         for(var k in arr){
-            if (pTarget == arr[k].target){
+            if (pTarget === arr[k].target){
                 return arr[k];
             }
         }
@@ -85,16 +89,19 @@ cc.ActionManager = cc.Class.extend({
     {
         cc.Assert(pAction != null, "no action");
         cc.Assert(pTarget != null, "");
-
+        //check if the action target already exists
         var pElement = this._searchElementByTarget(this._m_pTargets,pTarget);
+        //if doesnt exists, create a hashelement and push in mpTargets
         if(!pElement){
             pElement = new cc.tHashElement();
             pElement.paused = paused;
             pElement.target = pTarget;
+            pElement.id = pTarget.id || "no id";
             this.selTarget = pElement;
+            //this._m_pTargets = [];
             this._m_pTargets.push(pElement);
         }
-
+        //creates a array for that eleemnt to hold the actions
         this._actionAllocWithHashElement(pElement);
         cc.Assert((pElement.actions.indexOf(pAction) == -1),"ActionManager.addAction(),");
 
