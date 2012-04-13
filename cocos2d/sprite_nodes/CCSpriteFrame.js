@@ -83,13 +83,6 @@ cc.SpriteFrame = cc.Class.extend({
     },
     /** get texture of the frame */
     getTexture:function () {
-        if(this._m_pobTexture instanceof HTMLImageElement)
-        {
-            alert(1);
-        }
-        else{
-            console.log(this._m_pobTexture);
-        }
         return this._m_pobTexture;
     },
     /** set texture of the frame, the texture is retained */
