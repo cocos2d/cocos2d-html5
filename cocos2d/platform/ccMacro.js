@@ -134,10 +134,8 @@ cc.DISABLE_DEFAULT_GL_STATES = function()
 	*/
 };
 
-if(cc.FLT_EPSILON == 'undefined')
-{
+
     cc.FLT_EPSILON = 0.0000001192092896;
-}
 
 /*
  #define DISALLOW_COPY_AND_ASSIGN(TypeName) \

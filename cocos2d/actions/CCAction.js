@@ -216,21 +216,20 @@ cc.Follow = cc.Action.extend({
     initWithTarget:function(pFollowedNode, rect)
     {
         cc.Assert(pFollowedNode != null, "");
-        pFollowedNode.retain();
         this._m_pobFollowedNode = pFollowedNode;
         this._m_bBoundarySet = false;
         this._m_bBoundaryFullyCovered = false;
 
         var winSize = cc.Director.sharedDirector().getWinSize();
         this._m_obFullScreenSize = cc.PointMake(winSize.width, winSize.height);
-        this._m_obHalfScreenSize = cc.ccpMult(m_obFullScreenSize, 0.5);
+        this._m_obHalfScreenSize = cc.ccpMult(this._m_obFullScreenSize, 0.5);
 
         if(rect)
         {
             this.m_fLeftBoundary = -((rect.origin.x+rect.size.width) - this._m_obFullScreenSize.x);
             this.m_fRightBoundary = -rect.origin.x ;
             this.m_fTopBoundary = -rect.origin.y;
-            this.m_fBottomBoundary = -((rect.origin.y+rect.size.height) - this.m_obFullScreenSize.y);
+            this.m_fBottomBoundary = -((rect.origin.y+rect.size.height) - this._m_obFullScreenSize.y);
 
             if(this.m_fRightBoundary < this.m_fLeftBoundary)
             {
@@ -254,8 +253,6 @@ cc.Follow = cc.Action.extend({
     },//this is a function overload
     step:function(dt)
     {
-        cc.UNUSED_PARAM(dt);
-
         if(this._m_bBoundarySet)
         {
             // whole map fits inside a single screen, no need to modify the position - unless map boundaries are increased
@@ -264,8 +261,8 @@ cc.Follow = cc.Action.extend({
 
             var tempPos = cc.ccpSub( this._m_obHalfScreenSize, this._m_pobFollowedNode.getPosition());
 
-            this._m_pTarget.setPosition(cc.ccp(cc.clampf(tempPos.x, m_fLeftBoundary, m_fRightBoundary),
-                cc.clampf(tempPos.y, m_fBottomBoundary, m_fTopBoundary)));
+            this._m_pTarget.setPosition(cc.ccp(cc.clampf(tempPos.x, this.m_fLeftBoundary, this.m_fRightBoundary),
+                cc.clampf(tempPos.y, this.m_fBottomBoundary, this.m_fTopBoundary)));
         }
         else
         {

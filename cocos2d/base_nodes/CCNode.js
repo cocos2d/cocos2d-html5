@@ -148,15 +148,16 @@ cc.Node = cc.Class.extend({
         }
     },
     getSkewY:function () {
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
         return this._m_fSkewY;
     },
     setSkewY:function (newSkewY) {
         this._m_fSkewY = newSkewY;
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+            this._m_bIsTransformGLDirty = true;
+        }
     },
+
     // zOrder getter
     getZOrder:function () {
         return this._m_nZOrder;
