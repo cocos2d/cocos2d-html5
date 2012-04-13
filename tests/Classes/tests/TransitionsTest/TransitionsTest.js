@@ -97,13 +97,13 @@ var createTransition = function (nIndex, t, s) {
         case 2:
             return FadeWhiteTransition.transitionWithDuration(t, s);
         case 3:
-            //return FlipXLeftOver.transitionWithDuration(t, s);
+            return FlipXLeftOver.transitionWithDuration(t, s);
         case 4:
-            //return FlipXRightOver.transitionWithDuration(t, s);
+            return FlipXRightOver.transitionWithDuration(t, s);
         case 5:
-            //return FlipYUpOver.transitionWithDuration(t, s);
+            return FlipYUpOver.transitionWithDuration(t, s);
         case 6:
-            //return FlipYDownOver.transitionWithDuration(t, s);
+            return FlipYDownOver.transitionWithDuration(t, s);
         case 7:
             return FlipAngularLeftOver.transitionWithDuration(t, s);
         case 8:
