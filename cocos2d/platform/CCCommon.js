@@ -65,9 +65,9 @@ if(cc._DEBUG){
             if(message){
                 alert(message);
             }
-            else{
+            /*else{
                 alert("No message!");
-            }
+            }*/
         }
     }
 }

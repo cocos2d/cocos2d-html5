@@ -110,6 +110,7 @@ cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
+cc.loadjs('textures/CCTextureAtlas.js');//12
 cc.loadjs('actions/CCAction.js');//7
 cc.loadjs('actions/CCActionInterval.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
@@ -148,3 +149,4 @@ cc.loadjs('../tests/Classes/tests/SchedulerTest/SchedulerTest.js');
 cc.loadjs('../tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
 cc.loadjs('../tests/Classes/tests/MenuTest/MenuTest.js');
 cc.loadjs('../tests/Classes/tests/ActionsTest/ActionsTest.js');
+cc.loadjs('../tests/Classes/tests/TileMapTest/TileMapTest.js');

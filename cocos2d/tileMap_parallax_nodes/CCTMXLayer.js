@@ -67,6 +67,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     _m_pAtlasIndexArray:null,
     // used for retina display
     _m_fContentScaleFactor:null,
+    ctor:function(){
+        this._m_pChildren = [];
+        this._m_pobDescendants = [];
+    },
     getLayerSize:function () {
         return this._m_tLayerSize;
     },
@@ -119,8 +123,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         if(tilesetInfo){
             texture = cc.TextureCache.sharedTextureCache().addImage(tilesetInfo.m_sSourceImage.toString());
         }
-        if (cc.SpriteBatchNode.batchNodeWithTexture(texture, capacity)){
-
+        if (this.initWithTexture(texture, capacity)){
             // layerInfo
             this._m_sLayerName = layerInfo.m_sName;
             this._m_tLayerSize = layerInfo._m_tLayerSize;
@@ -151,7 +154,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             this._m_bUseAutomaticVertexZ = false;
             this._m_nVertexZvalue = 0;
             this._m_fAlphaFuncValue = 0;
-
+            /*console.log(this._m_sLayerName,this._m_tLayerSize,this._m_pTiles,this._m_uMinGID,this._m_uMaxGID,this._m_cOpacity,this._m_pProperties,
+                this._m_fContentScaleFactor,this._m_pTileSet,this._m_tMapTileSize,"x",this._m_uLayerOrientation,layerInfo.m_tOffset,"a",this._m_pAtlasIndexArray,
+                this.getContentSizeInPixels(), this._m_bUseAutomaticVertexZ,this._m_nVertexZvalue,this._m_fAlphaFuncValue)*/
             return true;
         }
         return false;
@@ -310,7 +315,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
     /** returns the position in pixels of a given tile coordinate */
     positionAt:function (pos) {
-        var ret = cc.PointZero;
+        var ret = cc.PointZero();
         switch( this._m_uLayerOrientation )
         {
             case cc.TMXOrientationOrtho:
@@ -334,10 +339,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     /** Creates the tiles */
     setupTiles:function () {
 // Optimization: quick hack that sets the image size on the tileset
+        var textureCache = this._m_pobTextureAtlas.getTexture();
+        this._m_pTileSet.m_tImageSize = new cc.Size(textureCache.width,textureCache.height);
 
-        //this._m_pTileSet.m_tImageSize = this._m_pobTextureAtlas.getTexture().getContentSizeInPixels();
-        this._m_pTileSet.m_tImageSize = new cc.Size(409,255);
-        //todo fix m_tImageSize
         // By default all the tiles are aliased
         // pros:
         //  - easier to render
@@ -363,7 +367,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
                 // XXX: gid == 0 -. empty tile
                if(gid != 0) {
                     this._appendTileForGID(gid, cc.ccp(x, y));
-
                     // Optimization: update min and max GID rendered by the layer
                     this._m_uMinGID = Math.min(gid, this._m_uMinGID);
                     this._m_uMaxGID = Math.max(gid, this._m_uMaxGID);
@@ -378,8 +381,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     /** cc.TMXLayer doesn't support adding a cc.Sprite manually.
      @warning addchild(z, tag); is not supported on cc.TMXLayer. Instead of setTileGID.
      */
-    addChild:function (child, zOrder, tag) {
+    addChild:function (child) {
         cc.Assert(0, "addChild: is not supported on cc.TMXLayer. Instead use setTileGID:at:/tileAt:");
+
     },
 // super method
     removeChild:function (child, cleanup) {
@@ -397,13 +401,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         cc.SpriteBatchNode.removeChild(sprite, cleanup);
     },
     draw:function () {
+        //cc.Log("Start TMXLayer Draw()");
         if( this._m_bUseAutomaticVertexZ ) {
             //TODO need to fix
             //glEnable(GL_ALPHA_TEST);
             //glAlphaFunc(GL_GREATER, this._m_fAlphaFuncValue);
         }
 
-        cc.SpriteBatchNode.draw();
+        this._super();
 
         if( this._m_bUseAutomaticVertexZ ){
             //glDisable(GL_ALPHA_TEST);
@@ -463,14 +468,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         var z = pos.x + pos.y * this._m_tLayerSize.width;
 
-        if( ! this._m_pReusedTile ) {
-            this._m_pReusedTile = new cc.Sprite();
-            this._m_pReusedTile.initWithBatchNode(this, rect);
-        }
-        else{
-            this._m_pReusedTile.initWithBatchNode(this, rect);
-        }
-
+        this._m_pReusedTile = new cc.Sprite();
+        this._m_pReusedTile.setContentSize(new cc.Size(101,81));
+        console.log(this._m_pReusedTile)
+        this._m_pReusedTile.initWithBatchNode(this, rect);
         this._m_pReusedTile.setPosition(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
         this._m_pReusedTile.setAnchorPoint(cc.PointZero());
@@ -480,14 +481,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         // The difference between _appendTileForGID and _insertTileForGID is that append is faster, since
         // it appends the tile at the end of the texture atlas
         //todo fix
-        //var indexForZ = this._m_pAtlasIndexArray.length;
+        var indexForZ = this._m_pAtlasIndexArray.length;
 
         // don't add it using the "standard" way.
-        //this.addQuadFromSprite(this._m_pReusedTile, indexForZ);
+        this.addQuadFromSprite(this._m_pReusedTile, indexForZ);
 
         // append should be after addQuadFromSprite since it modifies the quantity values
-        //cc.ArrayAppendObjectToIndex(this._m_pAtlasIndexArray, z, indexForZ);
-
+        cc.ArrayAppendObjectToIndex(this._m_pAtlasIndexArray, z, indexForZ);
         return this._m_pReusedTile;
     },
     _insertTileForGID:function (gid, pos) {

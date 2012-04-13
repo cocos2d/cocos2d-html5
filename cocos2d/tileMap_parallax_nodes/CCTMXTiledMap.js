@@ -27,11 +27,11 @@ var cc = cc = cc || {};
 
 /** Possible oritentations of the TMX map */
 /** Orthogonal orientation */
-cc.TMXOrientationOrtho = null;
+cc.TMXOrientationOrtho = 1;
 /** Hexagonal orientation */
-cc.TMXOrientationHex = null;
+cc.TMXOrientationHex = 2;
 /** Isometric orientation */
-cc.TMXOrientationIso = null;
+cc.TMXOrientationIso = 3;
 
 /** @brief cc.TMXTiledMap knows how to parse and render a TMX map.
 
@@ -90,10 +90,9 @@ cc.TMXTiledMap = cc.Node.extend({
     _m_tTileSize:cc.SizeZero(),
     _m_pProperties:null,
     _m_pObjectGroups:null,
-    _m_pProperties:null,
     _m_nMapOrientation:null,
     //! tile properties
-    _m_pTMXLayers:[],
+    _m_pTMXLayers:null,
     _m_pTileProperties:[],
     getMapSize:function () {
         return this._m_tMapSize;
@@ -128,6 +127,12 @@ cc.TMXTiledMap = cc.Node.extend({
     setProperties:function (Var) {
         this._m_pProperties = Var;
     },
+    setPosition:function(position){
+        this._super(position);
+        for(var key in this._m_pTMXLayers){
+            this._m_pTMXLayers[key].setPosition(position);
+        }
+    },
     /*public:*/
     initWithTMXFile:function (tmxFile) {
         cc.Assert(tmxFile != null && tmxFile.length>0, "TMXTiledMap: tmx file should not bi nil");
@@ -151,10 +156,9 @@ cc.TMXTiledMap = cc.Node.extend({
         var idx = 0;
 
         var layers = mapInfo.getLayers();
-
         if (layers){
             if (this._m_pTMXLayers == null) {
-                this._m_pTMXLayers = [];
+                this._m_pTMXLayers = new Object();
                 cc.Assert(this._m_pTMXLayers, "Allocate memory failed!");
             }
 
@@ -164,7 +168,7 @@ cc.TMXTiledMap = cc.Node.extend({
                 if (layerInfo && layerInfo.m_bVisible) {
                     var child = this.parseLayer(layerInfo, mapInfo);
                     this.addChild(child, idx, idx);
-
+                    //todo add layer
                     // record the cc.TMXLayer object by it's name
                     var layerName = child.getLayerName();
                     this._m_pTMXLayers[layerName] = child;

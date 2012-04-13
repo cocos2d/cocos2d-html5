@@ -97,11 +97,11 @@ cc.TMXTilesetInfo = cc.Class.extend({
     rectForGID:function (gid) {
         var rect = new cc.Rect;
         rect.size = this._m_tTileSize;
-        gid = gid - this.m_uFirstGid;
-
+        gid = gid - parseInt(this.m_uFirstGid);
         var max_x = parseInt((this.m_tImageSize.width - this.m_uMargin * 2 + this.m_uSpacing) / (this._m_tTileSize.width + this.m_uSpacing));
         rect.origin.x = parseInt((gid % max_x) * (this._m_tTileSize.width + this.m_uSpacing) + this.m_uMargin);
-        rect.origin.y = parseInt((gid / max_x) * (this._m_tTileSize.height + this.m_uSpacing) + this.m_uMargin);
+        rect.origin.y = parseInt(parseInt(gid / max_x) * (this._m_tTileSize.height + this.m_uSpacing) + this.m_uMargin);
+        //console.log(gid , max_x,rect)
         return rect;
     }
 });
@@ -218,7 +218,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
     initWithTMXFile:function (tmxFile) {
         this._m_pTileSets = [];
         this._m_pLayers = [];
-        this._m_sTMXFileName = cc.FileUtils.fullPathFromRelativePath(tmxFile);
+        this._m_sTMXFileName = tmxFile;
         this._m_pObjectGroups = [];
         this._m_pProperties = [];
         this._m_pTileProperties = [];
@@ -234,14 +234,14 @@ cc.TMXMapInfo = cc.SAXParser.extend({
     /** initalises parsing of an XML file, either a tmx (Map) file or tsx (Tileset) file */
     parseXMLFile:function (xmlFilename) {
         var mapXML = cc.SAXParser.shareParser().tmxParse(xmlFilename);
-        var attributeDict = [];
 
         // PARSE <map>
         var map = mapXML.documentElement;
+
         var version = map.getAttribute('version');
         var orientationStr = map.getAttribute('orientation');
 
-        if (version != "1.0") {
+        if (version != "1.0" && version !== null) {
             cc.LOG("cocos2d: TMXFormat: Unsupported TMX version:" + version);
         }
 
@@ -251,7 +251,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
             this.setOrientation(cc.TMXOrientationIso);
         else if (orientationStr == "hexagonal")
             this.setOrientation(cc.TMXOrientationHex);
-        else
+        else if( orientationStr !== null)
             cc.LOG("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
 
         var s = new cc.Size;
@@ -266,39 +266,41 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         // The parent element is now "map"
         this.setParentElement(cc.TMXPropertyMap);
 
+
         // PARSE <tileset>
         var tilesets = map.getElementsByTagName('tileset');
-        if (tilesets) {
-            for (var i = 0, len = tilesets.length; i < len; i++) {
-                var t = tilesets[i];
-                // If this is an external tileset then start parsing that
-                var externalTilesetFilename = t.getAttribute('source');
-                if (externalTilesetFilename) {
-                    externalTilesetFilename = cc.FileUtils.fullPathFromRelativeFile(externalTilesetFilename, this.getTMXFileName());
-                    this.parseXMLFile(externalTilesetFilename);
+        if (tilesets.length == 0) {
+            tilesets = []
+            tilesets.push(map);
+        }
+        for (var i = 0, len = tilesets.length; i < len; i++) {
+            var t = tilesets[i];
+            // If this is an external tileset then start parsing that
+            var externalTilesetFilename = t.getAttribute('source');
+            var imgpath = xmlFilename.substring(0,xmlFilename.lastIndexOf("/")+1);
+            if (externalTilesetFilename) {
+                this.parseXMLFile(imgpath + externalTilesetFilename);
+            }
+            else {
+                var tileset = new cc.TMXTilesetInfo();
+                tileset.m_sName = t.getAttribute('name')
+                tileset.m_uFirstGid = parseInt(t.getAttribute('firstgid'));
+                tileset.m_uSpacing = parseInt(t.getAttribute('spacing'));
+                tileset.m_uMargin = parseInt(t.getAttribute('margin'));
+
+                var s = cc.Size;
+                s.width = parseFloat(t.getAttribute('tilewidth'));
+                s.height = parseFloat(t.getAttribute('tileheight'));
+                tileset._m_tTileSize = s;
+
+                var image = t.getElementsByTagName('image')[0];
+                var imgSource = image.getAttribute('source');
+                if(imgSource){
+                    imgSource = imgpath + imgSource;
                 }
-                else {
-                    var tileset = new cc.TMXTilesetInfo();
-                    tileset.m_sName = t.getAttribute('name')
-                    tileset.m_uFirstGid = parseInt(t.getAttribute('firstgid'));
-                    tileset.m_uSpacing = parseInt(t.getAttribute('spacing'));
-                    tileset.m_uMargin = parseInt(t.getAttribute('margin'));
+                tileset.m_sSourceImage = imgSource;
 
-                    var s = cc.Size;
-                    s.width = parseFloat(t.getAttribute('tilewidth'));
-                    s.height = parseFloat(t.getAttribute('tileheight'));
-                    tileset._m_tTileSize = s;
-
-                    var image = t.getElementsByTagName('image')[0];
-                    var imgSource = image.getAttribute('source');
-                    if(imgSource){
-                        var imgpath = xmlFilename.substring(0,xmlFilename.lastIndexOf("/")+1)
-                        imgSource = imgpath + imgSource;
-                    }
-                    tileset.m_sSourceImage = imgSource;
-
-                    this.getTilesets().push(tileset);
-                }
+                this.getTilesets().push(tileset);
             }
         }
 
@@ -368,9 +370,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                     default:
                         cc.Assert(this.getLayerAttribs() != cc.TMXLayerAttribNone, "TMX tile map: Only base64 and/or gzip/zlib maps are supported");
                 }
-
                 this.getLayers().push(layer);
-
                 // The parent element is now "layer"
                 this.setParentElement(cc.TMXPropertyLayer);
             }
