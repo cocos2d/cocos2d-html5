@@ -157,6 +157,7 @@ var TestController = cc.Layer.extend({
 });
 
 var g_aTestNames = {
+    "TileMapTest":"TileMapTestScene",
     "ActionsTest":"ActionsTestScene",
     "TransitionsTest":"TransitionsTestScene",
     "ProgressActionsTest":"ProgressActionsTestScene",
@@ -174,7 +175,7 @@ var g_aTestNames = {
     "LayerTest":"LayerTestScene",
     "SceneTest":"SceneTestScene",
     "ParallaxTest":"ParallaxTestScene",
-    "TileMapTest":"TileMapTestScene",
+
     "IntervalTest":"IntervalTestScene",
     "ChipmunkTest":"ChipmunkTestScene",
     "LabelTest":"AtlasTestScene",

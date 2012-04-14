@@ -63,6 +63,23 @@ cc.SAXParser = cc.Class.extend({
         this.m_pPlist = this._parseNode(node)
         return this.m_pPlist;
     },
+    tmxParse:function (textxml) {
+        var textxml = this.getList(textxml)
+        // get a reference to the requested corresponding xml file
+        if (window.DOMParser) {
+            this.parser = new DOMParser();
+            this.xmlDoc = this.parser.parseFromString(textxml, "text/xml");
+        } else // Internet Explorer (untested!)
+        {
+            this.xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+            this.xmlDoc.async = "false";
+            this.xmlDoc.loadXML(textxml);
+        }
+        if (this.xmlDoc == null) {
+            cc.LOG("xml " + this.xmlDoc + " not found!");
+        }
+        return this.xmlDoc;
+    },
     _parseNode:function (node) {
         var data = null
         switch (node.tagName) {
@@ -139,9 +156,8 @@ cc.SAXParser = cc.Class.extend({
             // load xml
             xmlhttp.open("GET", filePath, false);
             xmlhttp.send(null);
-            var resName = this.getName(filePath)
-            this.xmlList[resName.toString()] = xmlhttp.responseText;
-            if(this.m_Callback){
+            this.xmlList[filePath] = xmlhttp.responseText;
+            if (this.m_Callback) {
                 this.m_Callback();
             }
         }
@@ -154,9 +170,9 @@ cc.SAXParser = cc.Class.extend({
         var endPos = filePath.lastIndexOf(".", filePath.length);
         return filePath.substring(startPos, endPos);
     },
-    getExt:function(filePath){
-        var startPos = filePath.lastIndexOf(".", filePath.length)+1;
-        return filePath.substring(startPos,filePath.length)
+    getExt:function (filePath) {
+        var startPos = filePath.lastIndexOf(".", filePath.length) + 1;
+        return filePath.substring(startPos, filePath.length)
     },
     getList:function (elt) {
         if (this.xmlList != null) {
