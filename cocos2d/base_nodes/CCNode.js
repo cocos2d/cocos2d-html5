@@ -126,12 +126,12 @@ cc.Node = cc.Class.extend({
         }
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
-        if(pArray && pArray.length > 0) {
-            for(var i=0;i < pArray.length;i++){
-               var pNode = pArray[i];
-                if(pNode && (typeof(func) == "string")){
+        if (pArray && pArray.length > 0) {
+            for (var i = 0; i < pArray.length; i++) {
+                var pNode = pArray[i];
+                if (pNode && (typeof(func) == "string")) {
                     pNode[func]();
-                }else if(pNode && (typeof(func) == "function")){
+                } else if (pNode && (typeof(func) == "function")) {
                     func.call(pNode);
                 }
             }
@@ -245,7 +245,7 @@ cc.Node = cc.Class.extend({
         this._m_tPositionInPixels = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this._m_tPosition = this._m_tPositionInPixels;
-        }else {
+        } else {
             this._m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
@@ -468,8 +468,8 @@ cc.Node = cc.Class.extend({
      */
     getChildByTag:function (aTag) {
         cc.Assert(aTag != cc.kCCNodeTagInvalid, "Invalid tag");
-        if(this._m_pChildren != null) {
-            for(var i=0;i< this._m_pChildren.length;i++){
+        if (this._m_pChildren != null) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && pNode._m_nTag == aTag)
                     return pNode;
@@ -577,7 +577,7 @@ cc.Node = cc.Class.extend({
     removeAllChildrenWithCleanup:function (cleanup) {
         // not using detachChild improves speed here
         if (this._m_pChildren != null) {
-            for (var i=0;i < this._m_pChildren;i++) {
+            for (var i = 0; i < this._m_pChildren; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode) {
                     // IMPORTANT:
@@ -613,7 +613,7 @@ cc.Node = cc.Class.extend({
         // set parent nil at the end
         child.setParent(null);
 
-        cc.ArrayRemoveObject(this._m_pChildren,child);
+        cc.ArrayRemoveObject(this._m_pChildren, child);
     },
     // helper used by reorderChild & add
     _insertChild:function (child, z) {
@@ -622,10 +622,10 @@ cc.Node = cc.Class.extend({
             this._m_pChildren.push(child);
         }
         else {
-            for (var i =0;i < this._m_pChildren.length;i++) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && (pNode._m_nZOrder > z )) {
-                    this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren,child,i);
+                    this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren, child, i);
                     break;
                 }
             }
@@ -638,7 +638,7 @@ cc.Node = cc.Class.extend({
     reorderChild:function (child, zOrder) {
         cc.Assert(child != null, "Child must be non-nil");
 
-        cc.ArrayRemoveObject(this._m_pChildren,child);
+        cc.ArrayRemoveObject(this._m_pChildren, child);
 
         this._insertChild(child, zOrder);
     },
@@ -697,7 +697,7 @@ cc.Node = cc.Class.extend({
 
         // draw children zOrder >= 0
         if (this._m_pChildren != null) {
-            for (var i =0; i < this._m_pChildren.length; i++) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode) {
                     pNode.visit();
@@ -787,21 +787,21 @@ cc.Node = cc.Class.extend({
             //glRotatef(-this._m_fRotation, 0.0, 0.0, 1.0);
 
             // skew
-                //if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
-                    //var skewMatrix = new cc.AffineTransform();
-                    //skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(skewY_)), Math.tan(cc.DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
-                    //TODO
-                    // glMatrix = new GLfloat();
-                    //cc.AffineToGL(skewMatrix, glMatrix);
-                    //TODO
-                    // glMultMatrixf(glMatrix);
-               // }
+            //if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
+            //var skewMatrix = new cc.AffineTransform();
+            //skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(skewY_)), Math.tan(cc.DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
+            //TODO
+            // glMatrix = new GLfloat();
+            //cc.AffineToGL(skewMatrix, glMatrix);
+            //TODO
+            // glMultMatrixf(glMatrix);
+            // }
 
             // scale
-            if (this._m_fScaleX != 1.0 || this._m_fScaleY != 1.0) {
-                //TODO
-                // glScalef(this._m_fScaleX, this._m_fScaleY, 1.0);
-            }
+                if (this._m_fScaleX != 1.0 || this._m_fScaleY != 1.0) {
+                    //TODO
+                    // glScalef(this._m_fScaleX, this._m_fScaleY, 1.0);
+                }
             if (this._m_pCamera && !(this._m_pGrid && this._m_pGrid.isActive())) this._m_pCamera.locate();
 
             // restore and re-position point
@@ -919,7 +919,7 @@ cc.Node = cc.Class.extend({
         cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
     },
     schedule:function (selector, interval) {
-        if(!interval)
+        if (!interval)
             interval = 0;
 
         cc.Assert(selector, "Argument must be non-nil");
@@ -1014,7 +1014,7 @@ cc.Node = cc.Class.extend({
     nodeToWorldTransform:function () {
         var t = new cc.AffineTransform();
         t = this.nodeToParentTransform();
-        for (var p = this._m_pParent; p != null; p = p.getParent()){
+        for (var p = this._m_pParent; p != null; p = p.getParent()) {
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
         }
         return t;
@@ -1113,7 +1113,8 @@ cc.Node = cc.Class.extend({
     },
 
     //implement CCObject's method
-    update:function(dt){ }
+    update:function (dt) {
+    }
 });
 /** allocates and initializes a node.
  */

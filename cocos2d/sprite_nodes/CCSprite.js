@@ -77,11 +77,11 @@ function transformValues_(pos, scale, rotation, skew, ap, visible) {
     this.ap = ap;			// anchor point in pixels
     this.visible = visible;
 }
-cc.RENDER_IN_SUBPIXEL = function(A){
-    if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL){
+cc.RENDER_IN_SUBPIXEL = function (A) {
+    if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
         return A;
     }
-    else{
+    else {
         return parseInt(A);
     }
 }
@@ -130,25 +130,25 @@ cc.Sprite = cc.Node.extend({
 
     _m_nOpacity:255,
 
-    ctor:function(fileName){
+    ctor:function (fileName) {
         this._super();
-        if(fileName){
-            if(typeof(fileName) == "string"){
+        if (fileName) {
+            if (typeof(fileName) == "string") {
                 var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(fileName);
                 this.initWithSpriteFrame(pFrame);
-            }else if(typeof(fileName) == "object"){
-                if(fileName instanceof cc.SpriteFrame){
+            } else if (typeof(fileName) == "object") {
+                if (fileName instanceof cc.SpriteFrame) {
                     this.initWithSpriteFrame(fileName);
-                }else if(fileName instanceof cc.SpriteBatchNode){
-                    if(arguments.length > 1){
+                } else if (fileName instanceof cc.SpriteBatchNode) {
+                    if (arguments.length > 1) {
                         var rect = arguments[1];
-                        if(rect instanceof cc.Rect){
+                        if (rect instanceof cc.Rect) {
                             this.initWithBatchNode(fileName, rect);
                         }
                     }
-                }else if(fileName instanceof HTMLImageElement){
+                } else if (fileName instanceof HTMLImageElement) {
                     this.initWithTexture(fileName)
-                }else if(fileName instanceof cc.Texture2D){
+                } else if (fileName instanceof cc.Texture2D) {
                     this.initWithTexture(fileName)
                 }
             }
@@ -299,17 +299,17 @@ cc.Sprite = cc.Node.extend({
     },
     initWithTexture:function (pTexture, rect) {
         var argnum = arguments.length;
-        if(argnum == 0)
+        if (argnum == 0)
             throw "Sprite.initWithTexture(): Argument must be non-nil ";
 
         cc.Assert(pTexture != null, "");
 
-        if(argnum == 1){
+        if (argnum == 1) {
             rect = new cc.Rect();
-            if(pTexture instanceof cc.Texture2D)
+            if (pTexture instanceof cc.Texture2D)
                 rect.size = pTexture.getContentSize();
-            else if(pTexture instanceof HTMLImageElement)
-                rect.size = cc.SizeMake(pTexture.width,pTexture.height);
+            else if (pTexture instanceof HTMLImageElement)
+                rect.size = cc.SizeMake(pTexture.width, pTexture.height);
         }
 
         // IMPORTANT: [self init] and not [super init];
@@ -329,13 +329,13 @@ cc.Sprite = cc.Node.extend({
                  */
                 cc.Assert(pszFilename != null, "");
                 var pTexture = cc.Loader.shareLoader().getImage(pszFilename);
-                if(pTexture){
+                if (pTexture) {
                     pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
                 }
                 if (pTexture) {
                     rect = cc.RectZero();
-                    if(cc.renderContextType == cc.kCanvas)
-                        rect.size =cc.SizeMake(pTexture.width,pTexture.height);
+                    if (cc.renderContextType == cc.kCanvas)
+                        rect.size = cc.SizeMake(pTexture.width, pTexture.height);
                     else
                         rect.size = pTexture.getContentSize();
 
@@ -488,7 +488,7 @@ cc.Sprite = cc.Node.extend({
         }
     },
     _updateTextureCoords:function (rect) {
-        if(cc.renderContextType == cc.kWebGL){
+        if (cc.renderContextType == cc.kWebGL) {
             var tex = new cc.Texture2D();
             tex = this._m_bUsesBatchNode ? this._m_pobTextureAtlas.getTexture() : this._m_pobTexture;
             if (!tex) {
@@ -506,7 +506,7 @@ cc.Sprite = cc.Node.extend({
                     right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
                     top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
                     bottom = top + (rect.size.width * 2 - 2) / (2 * atlasHeight);
-                }else {
+                } else {
                     left = rect.origin.x / atlasWidth;
                     right = left + (rect.size.height / atlasWidth);
                     top = rect.origin.y / atlasHeight;
@@ -530,7 +530,7 @@ cc.Sprite = cc.Node.extend({
                 this._m_sQuad.tl.texCoords.v = top;
                 this._m_sQuad.tr.texCoords.u = right;
                 this._m_sQuad.tr.texCoords.v = bottom;
-            }else {
+            } else {
                 if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                     left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
                     right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
@@ -710,46 +710,46 @@ cc.Sprite = cc.Node.extend({
         this._super();
 
         //TODO need to fixed
-        if(cc.renderContextType == cc.kCanvas){
+        if (cc.renderContextType == cc.kCanvas) {
             //direct draw image by canvas drawImage
             cc.renderContext.save();
-            if(this.getOpacity() != 255){
-                cc.renderContext.globalAlpha = this.getOpacity()/255;
+            if (this.getOpacity() != 255) {
+                cc.renderContext.globalAlpha = this.getOpacity() / 255;
             }
             var offsetPos = cc.PointZero();
-            if(this.getParent()){
+            if (this.getParent()) {
                 offsetPos = this.getParent().getPosition();
             }
             var rapx = offsetPos.x + this.getPositionX();
             var rapy = offsetPos.y + this.getPositionY();
 
-            cc.renderContext.translate(rapx,-rapy);
-            if(this.getRotation() != 0){
+            cc.renderContext.translate(rapx, -rapy);
+            if (this.getRotation() != 0) {
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
 
-            cc.renderContext.transform( this.getScaleX(),
-                                        Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
-                                        Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
-                                        this.getScaleY(),
-                                        0,
-                                        0);
+            cc.renderContext.transform(this.getScaleX(),
+                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
+                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
+                this.getScaleY(),
+                0,
+                0);
 
             var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
             var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
 
-            if((this.getContentSize().width == 0)&&(this.getContentSize().height == 0)){
-                cc.drawingUtil.drawImage(this._m_pobTexture,cc.ccp(lpx,lpy));
-            }else{
-                cc.drawingUtil.drawImage(this._m_pobTexture,this.getTextureRect().origin,this.getTextureRect().size
-                    ,cc.ccp(lpx,lpy),cc.SizeMake(tWidth,tHeight));
+            if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
+                cc.drawingUtil.drawImage(this._m_pobTexture, cc.ccp(lpx, lpy));
+            } else {
+                cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size
+                    , cc.ccp(lpx, lpy), cc.SizeMake(tWidth, tHeight));
             }
 
             cc.renderContext.restore();
             return;
-        }else{
+        } else {
             cc.Assert(!this._m_bUsesBatchNode, "");
 
             // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
@@ -813,7 +813,7 @@ cc.Sprite = cc.Node.extend({
         }
     },
 // CCNode overrides
-    addChild:function (pChild, zOrder,tag) {
+    addChild:function (pChild, zOrder, tag) {
         var argnum = arguments.length;
         switch (argnum) {
             case 1:
@@ -865,10 +865,10 @@ cc.Sprite = cc.Node.extend({
     removeAllChildrenWithCleanup:function (bCleanup) {
         if (this._m_bUsesBatchNode) {
             if (this._m_pChildren != null) {
-            for(var i in this._m_pChildren){
-                   if (this._m_pChildren[i] instanceof cc.Sprite) {
-                       this._m_pobBatchNode.removeSpriteFromAtlas(this._m_pChildren[i]);
-                   }
+                for (var i in this._m_pChildren) {
+                    if (this._m_pChildren[i] instanceof cc.Sprite) {
+                        this._m_pobBatchNode.removeSpriteFromAtlas(this._m_pChildren[i]);
+                    }
                 }
             }
         }
@@ -885,7 +885,7 @@ cc.Sprite = cc.Node.extend({
         this._m_bDirty = this._m_bRecursiveDirty = bValue;
         // recursively set dirty
         if (this._m_pChildren != null) {
-            for(var i in this._m_pChildren){
+            for (var i in this._m_pChildren) {
                 if (this._m_pChildren[i] instanceof cc.Sprite) {
                     this._m_pChildren[i].setDirtyRecursively(true);
                 }
@@ -1104,7 +1104,7 @@ cc.Sprite = cc.Node.extend({
     _updateBlendFunc:function () {
         cc.Assert(!this._m_bUsesBatchNode, "CCSprite: _updateBlendFunc doesn't work when the sprite is rendered using a CCSpriteSheet");
 
-        if(cc.renderContextType == cc.kWebGL){
+        if (cc.renderContextType == cc.kWebGL) {
             // it's possible to have an untextured sprite
             if (!this._m_pobTexture || !this._m_pobTexture.getHasPremultipliedAlpha()) {
                 this._m_sBlendFunc.src = cc.GL_SRC_ALPHA;
@@ -1161,7 +1161,7 @@ cc.Sprite.spriteWithTexture = function (pTexture, rect, offset) {
 
         case 3:
             /** Creates an sprite with a texture, a rect and offset. */
-            // not implement
+                // not implement
             cc.Assert(0, "");
             return null;
             break;

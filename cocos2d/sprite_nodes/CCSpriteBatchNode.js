@@ -517,7 +517,7 @@ cc.SpriteBatchNode = cc.Node.extend({
             cc.renderContext.transform(this.getScaleX(), this.getSkewX(), this.getSkewY(), this.getScaleY(), 0, 0);
             var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
             var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
-            var sp,inBounding = true;
+            var sp, inBounding = true;
             //console.log(this.getLayerName());
             for (var index = 0; index < this._m_pChildren.length; index++) {
                 sp = this._m_pChildren[index];
@@ -531,12 +531,12 @@ cc.SpriteBatchNode = cc.Node.extend({
                         cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
                             , cc.ccp(lpx + sp.getPositionX(), lpy + sp.getPositionY()), sp.getContentSize());
                         //console.log(this)
-                       if(index == this._m_pChildren.length -1){
+                        if (index == this._m_pChildren.length - 1) {
 
                             //throw ""
-                        }else{
+                        } else {
                             /*console.log(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
-                                , cc.ccp(lpx + sp.getPositionX(), lpy + sp.getPositionY()), sp.getContentSize());*/
+                             , cc.ccp(lpx + sp.getPositionX(), lpy + sp.getPositionY()), sp.getContentSize());*/
 
                         }
                     }

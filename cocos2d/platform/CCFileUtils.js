@@ -27,12 +27,12 @@
 var cc = cc = cc || {};
 
 cc.SAX_NONE = 0;
-    cc.SAX_KEY = 1;
-    cc.SAX_DICT = 2;
-    cc.SAX_INT = 3;
-    cc.SAX_REAL = 4;
-    cc.SAX_STRING = 5;
-    cc.SAX_ARRAY = 6;
+cc.SAX_KEY = 1;
+cc.SAX_DICT = 2;
+cc.SAX_INT = 3;
+cc.SAX_REAL = 4;
+cc.SAX_STRING = 5;
+cc.SAX_ARRAY = 6;
 cc.s_pszResourcePath = [];
 
 cc.FileUtils = cc.Class.extend({});
@@ -115,7 +115,7 @@ cc.FileUtils.dictionaryWithContentsOfFile = function (pFileName) {
  invoker should call release().
  */
 cc.FileUtils.dictionaryWithContentsOfFileThreadSafe = function (pFileName) {
-   var  tMaker = new cc.DictMaker();
+    var tMaker = new cc.DictMaker();
     return tMaker.dictionaryWithContentsOfFile(pFileName);
 };
 
@@ -159,15 +159,15 @@ cc.FileData = cc.Class.extend({
     _m_pBuffer:0,
     _m_uSize:0,
     ctor:function (pszFileName, pszMode) {
-        this._m_pBuffer = cc.FileUtils.getFileData(pszFileName, pszMode,  this._m_uSize);
+        this._m_pBuffer = cc.FileUtils.getFileData(pszFileName, pszMode, this._m_uSize);
     },
     reset:function (pszFileName, pszMode) {
         this._m_uSize = 0;
-        this._m_pBuffer = cc.FileUtils.getFileData(pszFileName, pszMode,  this._m_uSize) ;
+        this._m_pBuffer = cc.FileUtils.getFileData(pszFileName, pszMode, this._m_uSize);
         return (this._m_pBuffer) ? true : false;
     },
     getBuffer:function () {
-         return this._m_pBuffer;
+        return this._m_pBuffer;
     },
     getSize:function () {
         return this._m_uSize;
@@ -177,16 +177,16 @@ cc.FileData = cc.Class.extend({
 cc.DictMaker = cc.Class.extend({
     m_pRootDict:[],
     /*m_pCurDict:null,
-    m_tDictStack:null,
-    m_sCurKey:null,
-    m_tState:cc.SAX_NONE,
-    m_pArray:null,
-    m_tArrayStack:null,
-    m_tStateStack:null,*/
-    dictionaryWithContentsOfFile:function(pFileName){
-    var parser = cc.SAXParser.shareParser();
-    var parserName = parser.getName(pFileName);
-    this.m_pRootDict =parser.parse(parserName);
-    return this.m_pRootDict;
+     m_tDictStack:null,
+     m_sCurKey:null,
+     m_tState:cc.SAX_NONE,
+     m_pArray:null,
+     m_tArrayStack:null,
+     m_tStateStack:null,*/
+    dictionaryWithContentsOfFile:function (pFileName) {
+        var parser = cc.SAXParser.shareParser();
+        var parserName = parser.getName(pFileName);
+        this.m_pRootDict = parser.parse(parserName);
+        return this.m_pRootDict;
     }
 });

@@ -30,8 +30,7 @@ var cc = cc = cc || {};
 // if the form is right,the string will be splited into the parameter strs;
 // or the parameter strs will be empty.
 // if the form is right return true,else return false.
-cc.splitWithForm = function(pStr, strs)
-{
+cc.splitWithForm = function (pStr, strs) {
     var bRet = false;
 
     do
@@ -40,13 +39,13 @@ cc.splitWithForm = function(pStr, strs)
 
         // string is empty
         var content = pStr;
-        if(content.length == 0) break;
+        if (content.length == 0) break;
 
-        var nPosLeft  = content.indexOf('{');
+        var nPosLeft = content.indexOf('{');
         var nPosRight = content.indexOf('}');
 
         // don't have '{' and '}'
-        if(nPosLeft == -1 || nPosRight == -1) break;
+        if (nPosLeft == -1 || nPosRight == -1) break;
         // '}' is before '{'
         if (nPosLeft > nPosRight) break;
 
@@ -57,10 +56,9 @@ cc.splitWithForm = function(pStr, strs)
         var nPos1 = pointStr.indexOf('{');
         var nPos2 = pointStr.indexOf('}');
         // contain '{' or '}'
-        if(nPos1 != -1 || nPos2 != -1) break;
+        if (nPos1 != -1 || nPos2 != -1) break;
         strs = pointStr.split(",");
-        if (strs.length != 2 || strs[0] !=null || strs[1] != null)
-        {
+        if (strs.length != 2 || strs[0] != null || strs[1] != null) {
             break;
         }
     } while (0);
@@ -77,17 +75,16 @@ cc.splitWithForm = function(pStr, strs)
  The string is not localized, so items are always separated with a comma.
  @return A Core Graphics structure that represents a rectangle.
  If the string is not well-formed, the function returns CCRectZero.**/
-cc.RectFromString = function(pszContent)
-{
+cc.RectFromString = function (pszContent) {
     var result = cc.RectZero;
 
-    do{
-        if(!pszContent) break;
+    do {
+        if (!pszContent) break;
         var content = pszContent;
 
         // find the first '{' and the third '}'
-        var nPosLeft  = content.indexOf('{') + 1;
-        var nPosRight = content.lastIndexOf('}',content.length);
+        var nPosLeft = content.indexOf('{') + 1;
+        var nPosRight = content.lastIndexOf('}', content.length);
         if (nPosLeft == -1 || nPosRight == -1) break;
 
         content = content.substring(nPosLeft, nPosRight);
@@ -97,7 +94,7 @@ cc.RectFromString = function(pszContent)
         if (nPointEnd == -1) break;
         // get the point string and size string
         var pointStr = content.substr(0, nPointEnd);
-        var sizeStr  = content.substr(nPointEnd + 1, content.length - nPointEnd);
+        var sizeStr = content.substr(nPointEnd + 1, content.length - nPointEnd);
 
         // split the string with ','
         var pointInfo = cc.splitWithForm(pointStr.toString());
@@ -105,7 +102,7 @@ cc.RectFromString = function(pszContent)
 
         var x = parseFloat(pointInfo[0]);
         var y = parseFloat(pointInfo[1]);
-        var width  = parseFloat(sizeInfo[0]);
+        var width = parseFloat(sizeInfo[0]);
         var height = parseFloat(sizeInfo[1]);
 
         result = cc.RectMake(x, y, width, height);
@@ -122,8 +119,7 @@ cc.RectFromString = function(pszContent)
  @return A Core Graphics structure that represents a point.
  If the string is not well-formed, the function returns CCPointZero.
  */
-cc.PointFromString= function(pszContent)
-{
+cc.PointFromString = function (pszContent) {
     var ret = cc.PointZero;
 
     do {
@@ -146,14 +142,13 @@ cc.PointFromString= function(pszContent)
  @return A Core Graphics structure that represents a size.
  If the string is not well-formed, the function returns CCSizeZero.
  */
-cc.SizeFromString = function(pszContent)
-{
+cc.SizeFromString = function (pszContent) {
     var ret = cc.SizeZero;
 
     do {
-        var strs =  cc.splitWithForm(pszContent);
+        var strs = cc.splitWithForm(pszContent);
 
-        var width  = parseFloat(strs[0]);
+        var width = parseFloat(strs[0]);
         var height = parseFloat(strs[1]);
 
         ret = cc.SizeMake(width, height);

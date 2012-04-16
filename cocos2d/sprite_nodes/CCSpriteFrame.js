@@ -39,7 +39,7 @@ cc.SpriteFrame = cc.Class.extend({
     _m_obRectInPixels:new cc.Rect(),
     _m_bRotated:null,
     _m_obRect:new cc.Rect(),
-    _m_obOffsetInPixels:new  cc.Point(),
+    _m_obOffsetInPixels:new cc.Point(),
     _m_obOriginalSizeInPixels:new cc.Size(),
     _m_pobTexture:null,
     // attributes

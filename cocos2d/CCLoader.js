@@ -56,10 +56,10 @@ cc.Loader = cc.Class.extend({
         var resName = this.getResName(img.src);
         this.m_pImgList[resName] = new Image();
         var loaderCache = this;
-        this.m_pImgList[resName].addEventListener("load",function(){
+        this.m_pImgList[resName].addEventListener("load", function () {
             onload ? onload : loaderCache.onResLoaded()
         });
-        this.m_pImgList[resName].addEventListener("error",function(){
+        this.m_pImgList[resName].addEventListener("error", function () {
             onload ? onload : loaderCache.onResLoadingErr(img.src)
         });
         this.m_pImgList[resName].src = img.src;
@@ -85,7 +85,7 @@ cc.Loader = cc.Class.extend({
     onloading:undefined,
 
     preload:function (res) {
-        var sharedEngine = cc.AudioManager.sharedEngine(),shareParser = cc.SAXParser.shareParser();
+        var sharedEngine = cc.AudioManager.sharedEngine(), shareParser = cc.SAXParser.shareParser();
         for (var i = 0; i < res.length; i++) {
             switch (res[i].type) {
                 case "image":

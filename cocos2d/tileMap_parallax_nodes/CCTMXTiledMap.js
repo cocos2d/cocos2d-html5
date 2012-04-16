@@ -106,39 +106,39 @@ cc.TMXTiledMap = cc.Node.extend({
     setTileSize:function (Var) {
         this._m_tTileSize = Var;
     },
-    setAnchorPoint:function(point){
-        if(point == this.getAnchorPoint()){
+    setAnchorPoint:function (point) {
+        if (point == this.getAnchorPoint()) {
             return;
         }
         this._super(point);
-        for(var key in this._m_pTMXLayers ){
+        for (var key in this._m_pTMXLayers) {
             this._m_pTMXLayers[key].setAnchorPoint(point);
         }
     },
-    setScale:function(newScale){
-        if(newScale == this.getScaleX()&&newScale==this.getScaleY()){
+    setScale:function (newScale) {
+        if (newScale == this.getScaleX() && newScale == this.getScaleY()) {
             return;
         }
         this._super(newScale);
-        for(var key in this._m_pTMXLayers ){
+        for (var key in this._m_pTMXLayers) {
             this._m_pTMXLayers[key].setScale(newScale);
         }
     },
-    setScaleX:function(newScaleX){
-        if(newScaleX == this.getScaleX()){
+    setScaleX:function (newScaleX) {
+        if (newScaleX == this.getScaleX()) {
             return;
         }
         this._super(newScaleX);
-        for(var key in this._m_pTMXLayers ){
+        for (var key in this._m_pTMXLayers) {
             this._m_pTMXLayers[key].setScaleX(newScaleX);
         }
     },
-    setScaleY:function(newScaleY){
-        if(newScaleY == this.getScaleY()){
+    setScaleY:function (newScaleY) {
+        if (newScaleY == this.getScaleY()) {
             return;
         }
         this._super(newScaleY);
-        for(var key in this._m_pTMXLayers ){
+        for (var key in this._m_pTMXLayers) {
             this._m_pTMXLayers[key].setScaleY(newScaleY);
         }
     },
@@ -163,24 +163,24 @@ cc.TMXTiledMap = cc.Node.extend({
     setProperties:function (Var) {
         this._m_pProperties = Var;
     },
-    setPosition:function(position){
+    setPosition:function (position) {
         this._super(position);
-        for(var key in this._m_pTMXLayers){
+        for (var key in this._m_pTMXLayers) {
             this._m_pTMXLayers[key].setPosition(position);
         }
     },
     /*public:*/
     initWithTMXFile:function (tmxFile) {
-        cc.Assert(tmxFile != null && tmxFile.length>0, "TMXTiledMap: tmx file should not bi nil");
+        cc.Assert(tmxFile != null && tmxFile.length > 0, "TMXTiledMap: tmx file should not bi nil");
 
         this.setContentSize(cc.SizeZero());
 
         var mapInfo = cc.TMXMapInfo.formatWithTMXFile(tmxFile);
 
-        if (!mapInfo){
+        if (!mapInfo) {
             return false;
         }
-        cc.Assert( mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
+        cc.Assert(mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
 
         this._m_tMapSize = mapInfo.getMapSize();
         this._m_tTileSize = mapInfo.getTileSize();
@@ -192,14 +192,14 @@ cc.TMXTiledMap = cc.Node.extend({
         var idx = 0;
 
         var layers = mapInfo.getLayers();
-        if (layers){
+        if (layers) {
             if (this._m_pTMXLayers == null) {
                 this._m_pTMXLayers = new Object();
                 cc.Assert(this._m_pTMXLayers, "Allocate memory failed!");
             }
 
             var layerInfo = null;
-            for(var i = 0,len=layers.length;i<len;i++) {
+            for (var i = 0, len = layers.length; i < len; i++) {
                 layerInfo = layers[i];
                 if (layerInfo && layerInfo.m_bVisible) {
                     var child = this.parseLayer(layerInfo, mapInfo);
@@ -212,8 +212,8 @@ cc.TMXTiledMap = cc.Node.extend({
                     // update content size with the max size
                     var childSize = child.getContentSize();
                     var currentSize = this.getContentSize();
-                    currentSize.width = Math.max( currentSize.width, childSize.width );
-                    currentSize.height = Math.max( currentSize.height, childSize.height );
+                    currentSize.width = Math.max(currentSize.width, childSize.width);
+                    currentSize.height = Math.max(currentSize.height, childSize.height);
                     this.setContentSize(currentSize);
 
                     idx++;
@@ -238,11 +238,9 @@ cc.TMXTiledMap = cc.Node.extend({
         var sGroupName = groupName;
         if (this._m_pObjectGroups) {
             var objectGroup;
-            for (var i=0,len=this._m_pObjectGroups.length;i<len;i++)
-            {
+            for (var i = 0, len = this._m_pObjectGroups.length; i < len; i++) {
                 objectGroup = this._m_pObjectGroups[i];
-                if (objectGroup && objectGroup.getGroupName() == sGroupName)
-                {
+                if (objectGroup && objectGroup.getGroupName() == sGroupName) {
                     return objectGroup;
                 }
             }
@@ -276,11 +274,11 @@ cc.TMXTiledMap = cc.Node.extend({
         var tilesets = mapInfo.getTilesets();
         if (tilesets) {
             var tileset = null;
-            for (var i=0,len=tilesets.length;i<len;i++){
+            for (var i = 0, len = tilesets.length; i < len; i++) {
                 tileset = tilesets[i];
-                if (tileset){
-                    for( var y=0; y < size.height; y++ ){
-                        for( var x=0; x < size.width; x++ ){
+                if (tileset) {
+                    for (var y = 0; y < size.height; y++) {
+                        for (var x = 0; x < size.width; x++) {
                             var pos = (x + size.width * y).toString();
                             var gid = layerInfo._m_pTiles[pos];
                             // gid are stored in little endian.
@@ -292,8 +290,8 @@ cc.TMXTiledMap = cc.Node.extend({
                             // XXX: gid == 0 --> empty tile
                             // Optimization: quick return
                             // if the layer is invalid (more than 1 tileset per layer) an cc.Assert will be thrown later
-                           if( gid !== 0 && gid >= tileset.m_uFirstGid) {
-                                    return tileset;
+                            if (gid !== 0 && gid >= tileset.m_uFirstGid) {
+                                return tileset;
                             }
 
                         }
@@ -303,7 +301,7 @@ cc.TMXTiledMap = cc.Node.extend({
         }
 
         // If all the tiles are 0, return empty tileset
-        cc.LOG("cocos2d: Warning: TMX Layer "+layerInfo.m_sName+" has no tiles");
+        cc.LOG("cocos2d: Warning: TMX Layer " + layerInfo.m_sName + " has no tiles");
         return null;
     }
 
@@ -313,7 +311,7 @@ cc.TMXTiledMap = cc.Node.extend({
 // implementation cc.TMXTiledMap
 cc.TMXTiledMap.tiledMapWithTMXFile = function (tmxFile) {
     var pRet = new cc.TMXTiledMap();
-    if (pRet.initWithTMXFile(tmxFile)){
+    if (pRet.initWithTMXFile(tmxFile)) {
         return pRet;
     }
     return null;

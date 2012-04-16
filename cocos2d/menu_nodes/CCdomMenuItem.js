@@ -36,30 +36,27 @@ cc.MenuItem = cc.domNode.extend({
 
 cc.MenuItemImage = cc.MenuItem.extend({
     _image:null,
-    init: function(file){
+    init:function (file) {
         //create div containing an image - div created in ctor
         //craete image
         this._image = new Image();
         this._image.src = file;
-        this._image.id ="test";
+        this._image.id = "test";
         this._image.style.margin = "auto";
-        this._image.style.right="50%";
-        this._image.style.left="-50%";
-        this._image.style.top="-50%";
-        this._image.style.bottom="50%";
+        this._image.style.right = "50%";
+        this._image.style.left = "-50%";
+        this._image.style.top = "-50%";
+        this._image.style.bottom = "50%";
         this._image.style.position = "absolute";
         //add to the div
         this._domElement.appendChild(this._image);
     }
 });
-cc.MenuItemImage.itemFromNormalImage = function(normal, selected, target, callback)
-{
-    if(normal.src)
-    {
+cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callback) {
+    if (normal.src) {
         normal = normal.src;
     }
-    if(selected.src)
-    {
+    if (selected.src) {
         selected = selected.src;
     }
     //create div containing an image - should be done in menuitem
@@ -68,28 +65,31 @@ cc.MenuItemImage.itemFromNormalImage = function(normal, selected, target, callba
     //attach script to swapout image on hover
     var tmp = new Image();
     tmp.src = selected;
-    that._image.addEventListener("mouseover",function(){this.src = selected;});
-    that._image.addEventListener("mouseout",function(){this.src = normal;});
-    that._image.addEventListener("mousedown", function(e){
+    that._image.addEventListener("mouseover", function () {
+        this.src = selected;
+    });
+    that._image.addEventListener("mouseout", function () {
+        this.src = normal;
+    });
+    that._image.addEventListener("mousedown", function (e) {
         var evt = e || window.event;
         evt.preventDefault();
         return false;
     });
     that._image.addEventListener("click", callback);
     //attach callback to onclick
-    that.style.cursor = (callback)? "pointer" : "default";
+    that.style.cursor = (callback) ? "pointer" : "default";
     return that;
 };
 
 cc.MenuItemLabel = cc.MenuItem.extend({
-    _text: '',
+    _text:'',
     _fontSize:"14px",
     _fontName:'',
-    init:function(label)
-    {
+    init:function (label) {
         this._text = label.getString();
         this._fontName = label._m_pFontName;
-        this._fontSize = label._m_fFontSize+"px";
+        this._fontSize = label._m_fFontSize + "px";
         //create a div containing the text
         this._domElement.innerText = this._text;
         this.style.fontFamily = this._fontName;
@@ -98,34 +98,30 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this.style.position = "absolute";
         this.style.bottom = "0px";
         this.style.margin = "auto";
-        this.style.right="50%";
-        this.style.left="-50%";
-        this.style.top="-50%";
-        this.style.bottom="50%";
+        this.style.right = "50%";
+        this.style.left = "-50%";
+        this.style.top = "-50%";
+        this.style.bottom = "50%";
         this.style.textAlign = "center";
     }
 });
-cc.MenuItemLabel.itemWithLabel= function(label, dimension, target, selector)
-{
+cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
     var that = new this();
     that.init(label);
-    that._domElement.addEventListener("mousedown", function(e){
+    that._domElement.addEventListener("mousedown", function (e) {
         var evt = e || window.event;
         evt.preventDefault();
         return false;
     });
-    if(arguments.length == 4)
-    {
+    if (arguments.length == 4) {
         that._domElement.addEventListener("click", selector);
         that.style.cursor = "pointer";
     }
-    else if(arguments.length == 2)
-    {
+    else if (arguments.length == 2) {
         that._domElement.addEventListener("click", dimension);//the second argument is now the selector
         that.style.cursor = "pointer";
     }
-    else if(arguments.length == 3)
-    {
+    else if (arguments.length == 3) {
         that._domElement.addEventListener("click", target);
         that.style.cursor = "pointer";
     }

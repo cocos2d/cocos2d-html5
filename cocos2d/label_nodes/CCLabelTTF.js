@@ -39,16 +39,16 @@ cc.LabelTTF = cc.Sprite.extend({
     _m_fFontSize:0.0,
     _m_pString:null,
 
-    description:function(){
+    description:function () {
         return "<CCLabelTTF | FontName =" + this._m_pFontName + " FontSize = " + this._m_fFontSize.toFixed(1) + ">";
     },
 
     /** initializes the CCLabelTTF with a font name, alignment, dimension and font size */
-    initWithString:function(label,dimensions,alignment,fontName,fontSize){
+    initWithString:function (label, dimensions, alignment, fontName, fontSize) {
         cc.Assert(label != null, "cc.LabelTTF.initWithString() label is null");
-        if(arguments.length > 3){
-            if (this.init()){
-                this._m_tDimensions = cc.SizeMake( dimensions.width * cc.CONTENT_SCALE_FACTOR(), dimensions.height * cc.CONTENT_SCALE_FACTOR());
+        if (arguments.length > 3) {
+            if (this.init()) {
+                this._m_tDimensions = cc.SizeMake(dimensions.width * cc.CONTENT_SCALE_FACTOR(), dimensions.height * cc.CONTENT_SCALE_FACTOR());
                 this._m_eAlignment = alignment;
                 this._m_pFontName = fontName;
                 this._m_fFontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
@@ -56,11 +56,11 @@ cc.LabelTTF = cc.Sprite.extend({
                 return true;
             }
             return false;
-        }else{
+        } else {
             fontName = arguments[1];
             fontSize = arguments[2];
 
-            if (this.init()){
+            if (this.init()) {
                 this._m_tDimensions = cc.SizeZero();
                 this._m_pFontName = fontName;
                 this._m_fFontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
@@ -74,15 +74,15 @@ cc.LabelTTF = cc.Sprite.extend({
     /** changes the string to render
      * @warning Changing the string is as expensive as creating a new CCLabelTTF. To obtain better performance use CCLabelAtlas
      */
-    setString:function(label){
+    setString:function (label) {
         this._m_pString = label;
 
         return;
 
         var texture = new cc.Texture2D();
-        if( cc.Size.CCSizeEqualToSize( this._m_tDimensions, cc.SizeZero() ) ){
+        if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
             texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
-        }else{
+        } else {
             texture = new cc.Texture2D();
             texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
         }
@@ -94,49 +94,51 @@ cc.LabelTTF = cc.Sprite.extend({
     },
 
     //temp method
-    draw:function(){
+    draw:function () {
         //this is fillText for canvas
         cc.renderContext.save();
         var offsetPos = cc.PointZero();
-        if(this.getParent()){
+        if (this.getParent()) {
             offsetPos = this.getParent().getPosition();
         }
         var rapx = offsetPos.x + this.getPositionX();
         var rapy = offsetPos.x + this.getPositionY();
 
-        cc.renderContext.translate(rapx,-rapy);
-        if(this.getRotation() != 0){
+        cc.renderContext.translate(rapx, -rapy);
+        if (this.getRotation() != 0) {
             cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
         }
-        cc.renderContext.transform(this.getScaleX(),this.getSkewX(),this.getSkewY(),this.getScaleY(),0,0);
+        cc.renderContext.transform(this.getScaleX(), this.getSkewX(), this.getSkewY(), this.getScaleY(), 0, 0);
 
         var color = this.getColor();
-        cc.renderContext.fillStyle = "rgba("+color.r + "," + color.g + "," + color.b + "," + this.getOpacity()/255 +")";
-        cc.renderContext.font = this._m_fFontSize + "px '"+this._m_pFontName +"'";
+        cc.renderContext.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + "," + this.getOpacity() / 255 + ")";
+        cc.renderContext.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
         var dim = cc.renderContext.measureText(this._m_pString);
-        cc.drawingUtil.fillText(this._m_pString,0 - (dim.width * this.getAnchorPoint().x) ,
+        cc.drawingUtil.fillText(this._m_pString, 0 - (dim.width * this.getAnchorPoint().x),
             0 - (this._m_fFontSize * this.getAnchorPoint().y));
         cc.renderContext.restore();
     },
-    getString:function(){
+    getString:function () {
         return this._m_pString;
     },
 
-    convertToLabelProtocol:function(){return this;}
+    convertToLabelProtocol:function () {
+        return this;
+    }
 });
 
 /** creates a CCLabelTTF from a fontname, alignment, dimension and font size */
-cc.LabelTTF.labelWithString = function(label,dimensions,alignment,fontName,fontSize){
+cc.LabelTTF.labelWithString = function (label, dimensions, alignment, fontName, fontSize) {
     var pRet = new cc.LabelTTF();
-    if(arguments.length >3){
-        if((pRet!= null) && (pRet.initWithString(label, dimensions, alignment, fontName, fontSize))){
+    if (arguments.length > 3) {
+        if ((pRet != null) && (pRet.initWithString(label, dimensions, alignment, fontName, fontSize))) {
             return pRet;
         }
         return null;
-    }else{
+    } else {
         fontName = arguments[1];
         fontSize = arguments[2];
-        if((pRet!= null) &&(pRet.initWithString(label, fontName, fontSize))){
+        if ((pRet != null) && (pRet.initWithString(label, fontName, fontSize))) {
             return pRet;
         }
 

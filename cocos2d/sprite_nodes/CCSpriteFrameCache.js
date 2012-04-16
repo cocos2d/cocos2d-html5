@@ -109,7 +109,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var frameKey = key.toString();
                     for (var i in aliases) {
                         if (this._m_pSpriteFramesAliases[i]) {
-                            cc.LOG("cocos2d: WARNING: an alias with name "+i+" already exists");
+                            cc.LOG("cocos2d: WARNING: an alias with name " + i + " already exists");
                         }
                         this._m_pSpriteFramesAliases[i] = frameKey;
                     }
@@ -130,7 +130,7 @@ cc.SpriteFrameCache = cc.Class.extend({
     /** Adds multiple Sprite Frames from a json file
      * A texture will be loaded automatically.
      */
-    addSpriteFramesWithJson:function(jsonData){
+    addSpriteFramesWithJson:function (jsonData) {
         var dict = jsonData;
         var texturePath = "";
 
@@ -157,11 +157,11 @@ cc.SpriteFrameCache = cc.Class.extend({
     addSpriteFramesWithFile:function (pszPlist, pobTexture) {
         var argnum = arguments.length;
         var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(pszPlist);
-        var getIndex = pszPlist.lastIndexOf('/'),pszPath;
-        if(getIndex == -1){
+        var getIndex = pszPlist.lastIndexOf('/'), pszPath;
+        if (getIndex == -1) {
             pszPath = "";
-        }else{
-            pszPath = pszPlist.substring(0,getIndex+1);
+        } else {
+            pszPath = pszPlist.substring(0, getIndex + 1);
         }
         switch (argnum) {
             case 1:
@@ -178,7 +178,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     // build texture path relative to plist file
                     /* texturePath = cc.FileUtils.fullPathFromRelativeFile(texturePath.toString(), pszPath);*/
                     texturePath = pszPath + texturePath;
-                }else {
+                } else {
                     // build texture path by replacing file extension
                     texturePath = pszPath;
 
@@ -189,7 +189,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     // append .png
                     texturePath = texturePath + ".png";
 
-                    cc.LOG("cocos2d: cc.SpriteFrameCache: Trying to use file "+texturePath.toString()+ " as texture");
+                    cc.LOG("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
                 }
 
                 var pTexture = new cc.Texture2D();
@@ -253,12 +253,13 @@ cc.SpriteFrameCache = cc.Class.extend({
      */
     removeUnusedSpriteFrames:function () {
         for (var key in this._m_pSpriteFrames) {
-            var spriteFrame =  null;
+            var spriteFrame = null;
             if (spriteFrame == this._m_pSpriteFrames[key]) {
-                cc.LOG("cocos2d: cc.SpriteFrameCache: removing unused frame:"+key);
+                cc.LOG("cocos2d: cc.SpriteFrameCache: removing unused frame:" + key);
                 delete(this._m_pSpriteFrames[key]);
             }
-        };
+        }
+        ;
     },
 
     /** Deletes an sprite frame from the sprite frame cache. */
@@ -332,7 +333,7 @@ cc.SpriteFrameCache = cc.Class.extend({
             if (key) {
                 frame = this._m_pSpriteFrames[key.toString()];
                 if (!frame) {
-                    cc.LOG("cocos2d: cc.SpriteFrameCahce: Frame "+pszName+" not found");
+                    cc.LOG("cocos2d: cc.SpriteFrameCahce: Frame " + pszName + " not found");
                 }
             }
         }

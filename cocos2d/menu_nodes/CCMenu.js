@@ -44,135 +44,106 @@ cc.kDefaultPadding = 5;
  */
 cc.Menu = cc.Layer.extend({
     _m_tColor:new cc.Color3B(),
-    getColor:function()
-    {
+    getColor:function () {
         return this._m_tColor;
     },
-    setColor:function(color)
-    {
+    setColor:function (color) {
         this._m_tColor = color;
 
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(var i = 0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 this._m_pChildren[i].setColor(this._m_tColor);
             }
         }
     },
     _m_cOpacity:0,
-    getOpacity:function()
-    {
+    getOpacity:function () {
         return this._m_cOpacity;
     },
-    setOpacity:function(opa)
-    {
+    setOpacity:function (opa) {
         this._m_cOpacity = opa;
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(var i = 0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 this._m_pChildren[i].setOpacity(this._m_cOpacity);
             }
         }
     },
-    _m_pSelectedItem: null,
+    _m_pSelectedItem:null,
     /** initializes an empty CCMenu */
-    init:function()
-    {
-        if(this._super())
-        {
+    init:function () {
+        if (this._super()) {
             this._m_bIsTouchEnabled = true;
             var s = cc.Director.sharedDirector().getWinSize();
             this._m_bIsRelativeAnchorPoint = false;
-            this.setAnchorPoint(cc.ccp(0.5,0.5));
+            this.setAnchorPoint(cc.ccp(0.5, 0.5));
             this.setContentSize(s);
             var r = new cc.Rect();
             cc.Application.sharedApplication().statusBarFrame(r);
             var orientation = cc.Director.sharedDirector().getDeviceOrientation();
-            if(orientation == cc.DeviceOrientationLandscapeLeft || orientation == cc.DeviceOrientationLandscapeRight)
-            {
+            if (orientation == cc.DeviceOrientationLandscapeLeft || orientation == cc.DeviceOrientationLandscapeRight) {
                 s.height -= r.size.width;
             }
-            else
-            {
+            else {
                 s.height -= r.size.height;
             }
-            this.setPosition(cc.ccp(s.width/2, s.height/2));
+            this.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this._m_pSelectedItem = null;
             this._m_eState = cc.kCCMenuStateWaiting;
             return true;
         }
     },
     /** initializes a CCMenu with it's items */
-    initWithItems:function(/*Multiple Arguments*/)
-    {
-        if(this.init)
-        {
-            var z=0;
-            for(var i = 0; i < arguments.length; i++)
-            {
+    initWithItems:function (/*Multiple Arguments*/) {
+        if (this.init) {
+            var z = 0;
+            for (var i = 0; i < arguments.length; i++) {
                 this.addChild(arguments[i], z);
             }
             return true;
         }
         return false;
     },
-    alignItemsVertically:function()
-    {
+    alignItemsVertically:function () {
         this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
     },
-    alignItemsVerticallyWithPadding:function(padding)
-    {
+    alignItemsVerticallyWithPadding:function (padding) {
         var height = -padding;
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(var i = 0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 height += this._m_pChildren[i].height * this._m_pChildren[i].getScaleY() + padding;
             }
         }
 
         var y = height / 2.0;
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(i = 0; i< this._m_pChildren.length; i++)
-            {
-                this._m_pChildren[i].setPosition(cc.ccp(0, y- this._m_pChildren[i].getContentSize().height * this._m_pChildren[i].getScaleY() / 2));
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (i = 0; i < this._m_pChildren.length; i++) {
+                this._m_pChildren[i].setPosition(cc.ccp(0, y - this._m_pChildren[i].getContentSize().height * this._m_pChildren[i].getScaleY() / 2));
                 y -= this._m_pChildren[i].getContentSize().height * this._m_pChildren[i].getScaleY() + padding;
             }
         }
     },
-    alignItemsHorizontally:function()
-    {
+    alignItemsHorizontally:function () {
         this.alignItemsHorizontallyWithPadding(cc.kDefaultPadding);
     },
-    alignItemsHorizontallyWithPadding:function(padding)
-    {
+    alignItemsHorizontallyWithPadding:function (padding) {
         var width = -padding;
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(var i = 0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 width += this._m_pChildren[i].width * this._m_pChildren[i].getScaleX() + padding;
             }
         }
 
         var x = -width / 2.0;
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(i = 0; i< this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (i = 0; i < this._m_pChildren.length; i++) {
                 this._m_pChildren[i].setPosition(cc.ccp(x, this._m_pChildren[i].getContentSize().width * this._m_pChildren[i].getScaleX() / 2, 0));
                 x += this._m_pChildren[i].getContentSize().width * this._m_pChildren[i].getScaleX() + padding;
             }
         }
     },
-    alignItemsInColumns:function(/*Multiple Arguments*/)
-    {
+    alignItemsInColumns:function (/*Multiple Arguments*/) {
         var rows = [];
-        for(var i= 0; i< arguments.length; i++)
-        {
+        for (var i = 0; i < arguments.length; i++) {
             rows.push(arguments[i]);
         }
         var height = -5;
@@ -180,10 +151,8 @@ cc.Menu = cc.Layer.extend({
         var rowHeight = 0;
         var columnsOccupied = 0;
         var rowColumns;
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(i=0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (i = 0; i < this._m_pChildren.length; i++) {
                 cc.Assert(row < rows.length, "");
 
                 rowColumns = rows[row];
@@ -194,8 +163,7 @@ cc.Menu = cc.Layer.extend({
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
 
                 ++columnsOccupied;
-                if (columnsOccupied >= rowColumns)
-                {
+                if (columnsOccupied >= rowColumns) {
                     height += rowHeight + 5;
 
                     columnsOccupied = 0;
@@ -205,7 +173,7 @@ cc.Menu = cc.Layer.extend({
             }
         }
         // check if too many rows/columns for available menu items
-        cc.Assert(! columnsOccupied, "");
+        cc.Assert(!columnsOccupied, "");
         var winSize = cc.Director.sharedDirector().getWinSize();
 
         row = 0;
@@ -215,13 +183,10 @@ cc.Menu = cc.Layer.extend({
         var x = 0.0;
         var y = (height / 2);
 
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(i = 0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (i = 0; i < this._m_pChildren.length; i++) {
                 var pChild = this._m_pChildren[i];
-                if (rowColumns == 0)
-                {
+                if (rowColumns == 0) {
                     rowColumns = rows[row];
                     w = winSize.width / (1 + rowColumns);
                     x = w;
@@ -236,8 +201,7 @@ cc.Menu = cc.Layer.extend({
                 x += w;
                 ++columnsOccupied;
 
-                if (columnsOccupied >= rowColumns)
-                {
+                if (columnsOccupied >= rowColumns) {
                     y -= rowHeight + 5;
 
                     columnsOccupied = 0;
@@ -248,11 +212,9 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
-    alignItemsInRows:function(/*Multiple arguments*/)
-    {
+    alignItemsInRows:function (/*Multiple arguments*/) {
         var columns = [];
-        for(var i= 0; i< arguments.length; i++)
-        {
+        for (var i = 0; i < arguments.length; i++) {
             columns.push(arguments[i]);
         }
         var columnWidths = [];
@@ -265,10 +227,8 @@ cc.Menu = cc.Layer.extend({
         var rowsOccupied = 0;
         var columnRows;
 
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(var i= 0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pChild = this._m_pChildren[i];
                 // check if too many menu items for the amount of rows/columns
                 cc.Assert(column < columns.size(), "");
@@ -284,8 +244,7 @@ cc.Menu = cc.Layer.extend({
                 columnHeight += (pChild.getContentSize().height + 5);
                 ++rowsOccupied;
 
-                if (rowsOccupied >= columnRows)
-                {
+                if (rowsOccupied >= columnRows) {
                     columnWidths.push(columnWidth);
                     columnHeights.push(columnHeight);
                     width += columnWidth + 10;
@@ -298,7 +257,7 @@ cc.Menu = cc.Layer.extend({
             }
         }
         // check if too many rows/columns for available menu items.
-        cc.Assert(! rowsOccupied, "");
+        cc.Assert(!rowsOccupied, "");
 
         var winSize = cc.Director.sharedDirector().getWinSize();
 
@@ -308,13 +267,10 @@ cc.Menu = cc.Layer.extend({
         var x = -width / 2;
         var y = 0.0;
 
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(var i = 0; i < this._m_pChildren.length; i++)
-            {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pChild = this._m_pChildren[i];
-                if (columnRows == 0)
-                {
+                if (columnRows == 0) {
                     columnRows = columns[column];
                     y = columnHeights[column];
                 }
@@ -329,8 +285,7 @@ cc.Menu = cc.Layer.extend({
                 y -= pChild.getContentSize().height + 10;
                 ++rowsOccupied;
 
-                if (rowsOccupied >= columnRows)
-                {
+                if (rowsOccupied >= columnRows) {
                     x += columnWidth + 5;
                     rowsOccupied = 0;
                     columnRows = 0;
@@ -340,105 +295,85 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
-    addChild:function(child, zOrder, tag)
-    {
+    addChild:function (child, zOrder, tag) {
         this._super(child, zOrder, tag);
     },
-    registerWithTouchDispatcher:function()
-    {
+    registerWithTouchDispatcher:function () {
         cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.kCCMenuTouchPriority, true);
     },
-    ccTouchBegan:function(touch, e)
-    {
-        if (this._m_eState != cc.kCCMenuStateWaiting || ! this._m_bIsVisible)
-        {
+    ccTouchBegan:function (touch, e) {
+        if (this._m_eState != cc.kCCMenuStateWaiting || !this._m_bIsVisible) {
             return false;
         }
 
-        for (var c = this._m_pParent; c != null; c = c.getParent())
-        {
-            if (!c.getIsVisible())
-            {
+        for (var c = this._m_pParent; c != null; c = c.getParent()) {
+            if (!c.getIsVisible()) {
                 return false;
             }
         }
 
         this._m_pSelectedItem = this._itemForTouch(touch);
-        if (this._m_pSelectedItem)
-        {
+        if (this._m_pSelectedItem) {
             this._m_eState = cc.kCCMenuStateTrackingTouch;
             this._m_pSelectedItem.selected();
             return true;
         }
         return false;
     },
-    ccTouchEnded:function(touch, e)
-    {
+    ccTouchEnded:function (touch, e) {
         cc.Assert(this._m_eState == cc.kCCMenuStateTrackingTouch, "[Menu ccTouchEnded] -- invalid state");
-        if (this._m_pSelectedItem)
-        {
+        if (this._m_pSelectedItem) {
             this._m_pSelectedItem.unselected();
             this._m_pSelectedItem.activate();
         }
         this._m_eState = cc.kCCMenuStateWaiting;
     },
-    ccTouchCancelled:function(touch, e)
-    {
+    ccTouchCancelled:function (touch, e) {
         cc.Assert(this._m_eState == cc.kCCMenuStateTrackingTouch, "[Menu ccTouchCancelled] -- invalid state");
-        if (this._m_pSelectedItem)
-        {
+        if (this._m_pSelectedItem) {
             this._m_pSelectedItem.unselected();
         }
         this._m_eState = cc.kCCMenuStateWaiting;
     },
-    ccTouchMoved:function(touch, e)
-    {
+    ccTouchMoved:function (touch, e) {
         cc.Assert(this._m_eState == cc.kCCMenuStateTrackingTouch, "[Menu ccTouchMoved] -- invalid state");
         var currentItem = this._itemForTouch(touch);
-        if (currentItem != this._m_pSelectedItem)
-        {
-            if (this._m_pSelectedItem)
-            {
+        if (currentItem != this._m_pSelectedItem) {
+            if (this._m_pSelectedItem) {
                 this._m_pSelectedItem.unselected();
             }
             this._m_pSelectedItem = currentItem;
-            if (this._m_pSelectedItem)
-            {
+            if (this._m_pSelectedItem) {
                 this._m_pSelectedItem.selected();
             }
         }
     },
 
-    onExit:function()
-    {
-        if (this._m_eState == cc.kCCMenuStateTrackingTouch)
-        {
+    onExit:function () {
+        if (this._m_eState == cc.kCCMenuStateTrackingTouch) {
             this._m_pSelectedItem.unselected();
             this._m_eState = cc.kCCMenuStateWaiting;
             this._m_pSelectedItem = null;
         }
 
-       this._super();
+        this._super();
     },
 
-    setIsOpacityModifyRGB:function(bValue){},
-    getIsOpacityModifyRGB:function(){},
-    _itemForTouch:function(touch)
-    {
+    setIsOpacityModifyRGB:function (bValue) {
+    },
+    getIsOpacityModifyRGB:function () {
+    },
+    _itemForTouch:function (touch) {
         var touchLocation = touch.locationInView(touch.view());
         touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
 
-        if (this._m_pChildren && this._m_pChildren.length > 0)
-        {
-            for(var i = 0; i < this._m_pChildren.length; i++)
-            {
-                if (this._m_pChildren[i].getIsVisible() && this._m_pChildren[i].getIsEnabled())
-                {
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
+                if (this._m_pChildren[i].getIsVisible() && this._m_pChildren[i].getIsEnabled()) {
                     var local = this._m_pChildren[i].convertToNodeSpace(touchLocation);
                     var r = this._m_pChildren[i].rect();
                     r.origin = cc.PointZero();
-                    if (cc.Rect.CCRectContainsPoint(r, local))
-                    {
+                    if (cc.Rect.CCRectContainsPoint(r, local)) {
                         return this._m_pChildren[i];
                     }
                 }
@@ -451,11 +386,11 @@ cc.Menu = cc.Layer.extend({
     _m_eState:-1
 });
 /** creates an empty CCMenu */
-cc.Menu.node = function(){
+cc.Menu.node = function () {
     return cc.Menu.menuWithItems();
 };
 /** creates a CCMenu with it's items */
-cc.Menu.menuWithItems = function(/*Multiple Arguments*/){
+cc.Menu.menuWithItems = function (/*Multiple Arguments*/) {
     pRet = new cc.Menu();
     pRet.initWithItems(arguments);
     return pRet;
@@ -464,7 +399,6 @@ cc.Menu.menuWithItems = function(/*Multiple Arguments*/){
  * other items. It is used for script, it can't init with undetermined
  * number of variables.
  */
-cc.Menu.menuWithItem = function(item)
-{
+cc.Menu.menuWithItem = function (item) {
     return cc.Menu.menuWithItems(item);
 };

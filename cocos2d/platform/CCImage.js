@@ -42,13 +42,13 @@ cc.kAlignTopLeft = 0x11; ///< Horizontal left and vertical top.
 
 function cc.RGB_PREMULTIPLY_APLHA(vr, vg, vb, va) {
     return ((vr * (va + 1)) >> 8) | ((vg * (va + 1) >> 8) << 8) | ((vb * (va + 1) >> 8) << 16) | ((va) << 24)
-};
+}
 
 function tImageSource(data, size, offset) {
     this.data = data;
     this.size = size;
     this.offset = offset;
-};
+}
 
 cc.pngReadCallback = function (png_ptr, data, length) {
     var isource = new tImageSource();
@@ -138,13 +138,13 @@ cc.Image = cc.Class.extend({
     isPremultipliedAlpha:function () {
         return this._m_bPreMulti;
     },
-    getWidth:function(){
+    getWidth:function () {
         return this._m_nWidth;
     },
-    getHeight:function(){
+    getHeight:function () {
         return this._m_nHeight;
     },
-    getBitsPerComponent:function(){
+    getBitsPerComponent:function () {
         return this._m_nBitsPerComponent;
     },
     /**

@@ -37,29 +37,30 @@ var cc = cc = cc || {};
  keydown and keyup functions
  */
 cc.KeypadDelegate = cc.Class.extend({
-    keyDown:function(){},
-    keyUp:function(){}
+    keyDown:function () {
+    },
+    keyUp:function () {
+    }
 });
 
 
 cc.KeypadHandler = cc.Class.extend({
-    getDelegate: function(){return this._m_pDelegate;},
-    setDelegate: function(pdelegate)
-    {
+    getDelegate:function () {
+        return this._m_pDelegate;
+    },
+    setDelegate:function (pdelegate) {
         this._m_pDelegate = pdelegate;
     },
-    initWithDelegate: function(pDelegate)
-    {
+    initWithDelegate:function (pDelegate) {
         cc.Assert(pDelegate != null, "It's a wrong delegate!");
 
         this._m_pDelegate = pDelegate;
 
         return true;
     },
-    _m_pDelegate: null
+    _m_pDelegate:null
 });
-cc.KeypadHandler.handlerWithDelegate= function(pDelegate)
-{
+cc.KeypadHandler.handlerWithDelegate = function (pDelegate) {
     var pHandler = new cc.KeypadHandler;
     pHandler.initWithDelegate(pDelegate);
     return pHandler;

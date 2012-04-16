@@ -2,27 +2,34 @@ var kTagAnimationDance = 1;
 var MAX_TESTS = 8;
 var sceneIdx = -1;
 
-var createSchedulerTest = function(nIndex){
+var createSchedulerTest = function (nIndex) {
     var pLayer = null;
 
-    switch (nIndex)
-    {
+    switch (nIndex) {
         case 0:
-            pLayer = new SchedulerAutoremove(); break;
+            pLayer = new SchedulerAutoremove();
+            break;
         case 1:
-            pLayer = new SchedulerPauseResume(); break;
+            pLayer = new SchedulerPauseResume();
+            break;
         case 2:
-            pLayer = new SchedulerUnscheduleAll(); break;
+            pLayer = new SchedulerUnscheduleAll();
+            break;
         case 3:
-            pLayer = new SchedulerUnscheduleAllHard(); break;
+            pLayer = new SchedulerUnscheduleAllHard();
+            break;
         case 4:
-            pLayer = new SchedulerSchedulesAndRemove(); break;
+            pLayer = new SchedulerSchedulesAndRemove();
+            break;
         case 5:
-            pLayer = new SchedulerUpdate(); break;
+            pLayer = new SchedulerUpdate();
+            break;
         case 6:
-            pLayer = new SchedulerUpdateAndCustom(); break;
+            pLayer = new SchedulerUpdateAndCustom();
+            break;
         case 7:
-            pLayer = new SchedulerUpdateFromCustom(); break;
+            pLayer = new SchedulerUpdateFromCustom();
+            break;
         default:
             break;
     }
@@ -30,73 +37,76 @@ var createSchedulerTest = function(nIndex){
     return pLayer;
 };
 
-var nextSchedulerTest = function(){
-    sceneIdx ++;
+var nextSchedulerTest = function () {
+    sceneIdx++;
     sceneIdx = sceneIdx % MAX_TESTS;
 
     return createSchedulerTest(sceneIdx);
 };
 
-var backSchedulerTest = function(){
+var backSchedulerTest = function () {
     sceneIdx--;
-    if( sceneIdx < 0 )
+    if (sceneIdx < 0)
         sceneIdx += MAX_TESTS;
 
     return createSchedulerTest(sceneIdx);
 };
 
-var restartSchedulerTest = function(){
+var restartSchedulerTest = function () {
     return createSchedulerTest(sceneIdx);
 };
 
 var SchedulerTestLayer = cc.Layer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         var s = cc.Director.sharedDirector().getWinSize();
 
         var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 30);
         this.addChild(label);
-        label.setPosition(cc.ccp(s.width/2, s.height-50));
+        label.setPosition(cc.ccp(s.width / 2, s.height - 50));
 
         var subTitle = this.subtitle();
-        if( subTitle != "")
-        {
+        if (subTitle != "") {
             var subLabel = cc.LabelTTF.labelWithString(subTitle, "Thonburi", 13);
             this.addChild(subLabel, 1);
-            subLabel.setPosition(cc.ccp(s.width/2, s.height-80));
+            subLabel.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
 
         var item1 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/b1.png", "Resources/Images/b2.png", this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/r1.png","Resources/Images/r2.png", this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/f1.png", "Resources/Images/f2.png", this, this.nextCallback );
+        var item2 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/r1.png", "Resources/Images/r2.png", this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/f1.png", "Resources/Images/f2.png", this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp( s.width/2 - 100,30));
-        item2.setPosition(cc.ccp( s.width/2, 30));
-        item3.setPosition(cc.ccp( s.width/2 + 100,30));
+        item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
+        item2.setPosition(cc.ccp(s.width / 2, 30));
+        item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1)
     },
-    title:function(){return "No title";},
-    subtitle:function(){return "";},
+    title:function () {
+        return "No title";
+    },
+    subtitle:function () {
+        return "";
+    },
 
-    backCallback:function(pSender){
+    backCallback:function (pSender) {
         var pScene = new SchedulerTestScene();
         var pLayer = backSchedulerTest();
 
         pScene.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(pScene);
     },
-    nextCallback:function(pSender){
+    nextCallback:function (pSender) {
         var pScene = new SchedulerTestScene();
         var pLayer = nextSchedulerTest();
 
         pScene.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(pScene);
     },
-    restartCallback:function(pSender){
+    restartCallback:function (pSender) {
         var pScene = new SchedulerTestScene();
         var pLayer = restartSchedulerTest();
 
@@ -108,47 +118,62 @@ var SchedulerTestLayer = cc.Layer.extend({
 var SchedulerAutoremove = SchedulerTestLayer.extend({
     _accum:0,
 
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.schedule(this.autoremove, 0.5);
         this.schedule(this.tick, 0.5);
         this._accum = 0;
     },
-    title:function(){return "Self-remove an scheduler";},
-    subtitle:function(){return "1 scheduler will be autoremoved in 3 seconds. See console";},
+    title:function () {
+        return "Self-remove an scheduler";
+    },
+    subtitle:function () {
+        return "1 scheduler will be autoremoved in 3 seconds. See console";
+    },
 
-    autoremove:function(dt){
+    autoremove:function (dt) {
         this._accum += dt;
         cc.Log("Time: " + this._accum);
 
-        if( this._accum > 3 )
-        {
+        if (this._accum > 3) {
             this.unschedule(this.autoremove);
             cc.Log("scheduler removed");
         }
     },
-    tick:function(dt){cc.Log("This scheduler should not be removed");}
+    tick:function (dt) {
+        cc.Log("This scheduler should not be removed");
+    }
 });
 
 var SchedulerPauseResume = SchedulerTestLayer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.schedule(this.tick1, 0.5);
         this.schedule(this.tick2, 0.5);
         this.schedule(this.pause, 0.5);
     },
-    title:function(){return "Pause / Resume";},
-    subtitle:function(){return "Scheduler should be paused after 3 seconds. See console";},
+    title:function () {
+        return "Pause / Resume";
+    },
+    subtitle:function () {
+        return "Scheduler should be paused after 3 seconds. See console";
+    },
 
-    tick1:function(dt){cc.Log("tick1");},
-    tick2:function(dt){cc.Log("tick2");},
-    pause:function(dt){cc.Scheduler.sharedScheduler().pauseTarget(this);}
+    tick1:function (dt) {
+        cc.Log("tick1");
+    },
+    tick2:function (dt) {
+        cc.Log("tick2");
+    },
+    pause:function (dt) {
+        cc.Scheduler.sharedScheduler().pauseTarget(this);
+    }
 });
 
 var SchedulerUnscheduleAll = SchedulerTestLayer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.schedule(this.tick1, 0.5);
@@ -157,18 +182,32 @@ var SchedulerUnscheduleAll = SchedulerTestLayer.extend({
         this.schedule(this.tick4, 1.5);
         this.schedule(this.unscheduleAll, 4);
     },
-    title:function(){return "Unschedule All selectors";},
-    subtitle:function(){return "All scheduled selectors will be unscheduled in 4 seconds. See console";},
+    title:function () {
+        return "Unschedule All selectors";
+    },
+    subtitle:function () {
+        return "All scheduled selectors will be unscheduled in 4 seconds. See console";
+    },
 
-    tick1:function(dt){cc.Log("tick1");},
-    tick2:function(dt){cc.Log("tick2");},
-    tick3:function(dt){cc.Log("tick3");},
-    tick4:function(dt){cc.Log("tick4");},
-    unscheduleAll:function(dt){this.unscheduleAllSelectors();}
+    tick1:function (dt) {
+        cc.Log("tick1");
+    },
+    tick2:function (dt) {
+        cc.Log("tick2");
+    },
+    tick3:function (dt) {
+        cc.Log("tick3");
+    },
+    tick4:function (dt) {
+        cc.Log("tick4");
+    },
+    unscheduleAll:function (dt) {
+        this.unscheduleAllSelectors();
+    }
 });
 
 var SchedulerUnscheduleAllHard = SchedulerTestLayer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.schedule(this.tick1, 0.5);
@@ -177,32 +216,58 @@ var SchedulerUnscheduleAllHard = SchedulerTestLayer.extend({
         this.schedule(this.tick4, 1.5);
         this.schedule(this.unscheduleAll, 4);
     },
-    title:function(){return "Unschedule All selectors #2";},
-    subtitle:function(){return "Unschedules all selectors after 4s. Uses CCScheduler. See console";},
+    title:function () {
+        return "Unschedule All selectors #2";
+    },
+    subtitle:function () {
+        return "Unschedules all selectors after 4s. Uses CCScheduler. See console";
+    },
 
-    tick1:function(dt){cc.Log("tick1");},
-    tick2:function(dt){cc.Log("tick2");},
-    tick3:function(dt){cc.Log("tick3");},
-    tick4:function(dt){cc.Log("tick4");},
-    unscheduleAll:function(dt){cc.Scheduler.sharedScheduler().unscheduleAllSelectors();}
+    tick1:function (dt) {
+        cc.Log("tick1");
+    },
+    tick2:function (dt) {
+        cc.Log("tick2");
+    },
+    tick3:function (dt) {
+        cc.Log("tick3");
+    },
+    tick4:function (dt) {
+        cc.Log("tick4");
+    },
+    unscheduleAll:function (dt) {
+        cc.Scheduler.sharedScheduler().unscheduleAllSelectors();
+    }
 });
 
 var SchedulerSchedulesAndRemove = SchedulerTestLayer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.schedule(this.tick1, 0.5);
         this.schedule(this.tick2, 1.0);
         this.schedule(this.scheduleAndUnschedule, 4.0);
     },
-    title:function(){return "Schedule from Schedule";},
-    subtitle:function(){ return "Will unschedule and schedule selectors in 4s. See console";},
+    title:function () {
+        return "Schedule from Schedule";
+    },
+    subtitle:function () {
+        return "Will unschedule and schedule selectors in 4s. See console";
+    },
 
-    tick1:function(dt){cc.Log("tick1");},
-    tick2:function(dt){cc.Log("tick2");},
-    tick3:function(dt){cc.Log("tick3");},
-    tick4:function(dt){cc.Log("tick4");},
-    scheduleAndUnschedule:function(dt){
+    tick1:function (dt) {
+        cc.Log("tick1");
+    },
+    tick2:function (dt) {
+        cc.Log("tick2");
+    },
+    tick3:function (dt) {
+        cc.Log("tick3");
+    },
+    tick4:function (dt) {
+        cc.Log("tick4");
+    },
+    scheduleAndUnschedule:function (dt) {
         this.unschedule(this.tick1);
         this.unschedule(this.tick2);
         this.unschedule(this.scheduleAndUnschedule);
@@ -215,14 +280,14 @@ var SchedulerSchedulesAndRemove = SchedulerTestLayer.extend({
 var TestNode = cc.Node.extend({
     _pString:"",
 
-    initWithString:function(pStr,priority){
+    initWithString:function (pStr, priority) {
         this._pString = pStr;
         this.scheduleUpdateWithPriority(priority);
     }
 });
 
 var SchedulerUpdate = SchedulerTestLayer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         var d = new TestNode();
@@ -258,15 +323,19 @@ var SchedulerUpdate = SchedulerTestLayer.extend({
 
         this.schedule(this.removeUpdates, 4.0);
     },
-    title:function(){return "Schedule update with priority";},
-    subtitle:function(){return "3 scheduled updates. Priority should work. Stops in 4s. See console";},
+    title:function () {
+        return "Schedule update with priority";
+    },
+    subtitle:function () {
+        return "3 scheduled updates. Priority should work. Stops in 4s. See console";
+    },
 
-    removeUpdates:function(dt){
+    removeUpdates:function (dt) {
         var children = this.getChildren();
 
-        for(var i = 0 ; i< children.length;i++){
+        for (var i = 0; i < children.length; i++) {
             var pNode = children[i];
-            if(pNode){
+            if (pNode) {
                 pNode.unscheduleAllSelectors();
             }
         }
@@ -274,37 +343,53 @@ var SchedulerUpdate = SchedulerTestLayer.extend({
 });
 
 var SchedulerUpdateAndCustom = SchedulerTestLayer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.scheduleUpdate();
         this.schedule(this.tick);
         this.schedule(this.stopSelectors, 0.4);
     },
-    title:function(){return "Schedule Update + custom selector";},
-    subtitle:function(){return "Update + custom selector at the same time. Stops in 4s. See console";},
+    title:function () {
+        return "Schedule Update + custom selector";
+    },
+    subtitle:function () {
+        return "Update + custom selector at the same time. Stops in 4s. See console";
+    },
 
-    update:function(dt){cc.Log("update called:" + dt);},
-    tick:function(dt){cc.Log("custom selector called:" + dt);},
-    stopSelectors:function(dt){this.unscheduleAllSelectors();}
+    update:function (dt) {
+        cc.Log("update called:" + dt);
+    },
+    tick:function (dt) {
+        cc.Log("custom selector called:" + dt);
+    },
+    stopSelectors:function (dt) {
+        this.unscheduleAllSelectors();
+    }
 });
 
 var SchedulerUpdateFromCustom = SchedulerTestLayer.extend({
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
-        this.schedule(this.schedUpdate,2.0);
+        this.schedule(this.schedUpdate, 2.0);
     },
-    title:function(){return "Schedule Update in 2 sec";},
-    subtitle:function(){return "Update schedules in 2 secs. Stops 2 sec later. See console";},
+    title:function () {
+        return "Schedule Update in 2 sec";
+    },
+    subtitle:function () {
+        return "Update schedules in 2 secs. Stops 2 sec later. See console";
+    },
 
-    update:function(dt){cc.Log("update called:" + dt);},
-    schedUpdate:function(dt){
+    update:function (dt) {
+        cc.Log("update called:" + dt);
+    },
+    schedUpdate:function (dt) {
         this.unschedule(this.schedUpdate);
         this.scheduleUpdate();
         this.schedule(this.stopUpdate, 2.0);
     },
-    stopUpdate:function(dt){
+    stopUpdate:function (dt) {
         this.unscheduleUpdate();
         this.unschedule(this.stopUpdate);
     }
@@ -313,23 +398,27 @@ var SchedulerUpdateFromCustom = SchedulerTestLayer.extend({
 
 var RescheduleSelector = SchedulerTestLayer.extend({
     _interval:1.0,
-    _ticks :0,
+    _ticks:0,
 
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this._interval = 1.0;
-        this._ticks    = 0;
+        this._ticks = 0;
         this.schedule(this.schedUpdate, this._interval);
     },
-    title:function(){return "Reschedule Selector";},
-    subtitle:function(){return "Interval is 1 second, then 2, then 3...";},
+    title:function () {
+        return "Reschedule Selector";
+    },
+    subtitle:function () {
+        return "Interval is 1 second, then 2, then 3...";
+    },
 
-    schedUpdate:function(dt){
+    schedUpdate:function (dt) {
         this._ticks++;
 
-        cc.Log("schedUpdate: "+ dt.toFixed(2));
-        if ( this._ticks > 3 ){
+        cc.Log("schedUpdate: " + dt.toFixed(2));
+        if (this._ticks > 3) {
             this._interval += 1.0;
             this.schedule(this.schedUpdate, this._interval);
             this._ticks = 0;
@@ -338,7 +427,7 @@ var RescheduleSelector = SchedulerTestLayer.extend({
 });
 
 var SchedulerTestScene = TestScene.extend({
-    runThisTest:function(){
+    runThisTest:function () {
         var pLayer = nextSchedulerTest();
         this.addChild(pLayer);
 

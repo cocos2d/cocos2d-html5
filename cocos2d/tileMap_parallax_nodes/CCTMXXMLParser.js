@@ -351,7 +351,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 // nodes up into multiple nodes. So, we'll stitch them back
                 // together.
                 var nodeValue = ''
-                for (var j = 0,jen = data.childNodes.length; j < jen; j++) {
+                for (var j = 0, jen = data.childNodes.length; j < jen; j++) {
                     nodeValue += data.childNodes[j].nodeValue
                 }
 

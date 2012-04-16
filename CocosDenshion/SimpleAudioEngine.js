@@ -50,7 +50,7 @@ cc.AudioManager = cc.Class.extend({
     m_Callback:null,
     ctor:function () {
         if (this.m_initialized)
-        return;
+            return;
 
         // init audio
         var au = document.createElement('audio');
@@ -74,11 +74,11 @@ cc.AudioManager = cc.Class.extend({
      @param audioType
      */
     init:function (audioType) {
-        if (audioType){
+        if (audioType) {
             this.m_sRequestedFormat = new String(audioType)
         }
-        else{
-        // if no param is given to init we use mp3 by default
+        else {
+            // if no param is given to init we use mp3 by default
             this.m_sRequestedFormat = new String("mp3");
         }
 
@@ -121,7 +121,7 @@ cc.AudioManager = cc.Class.extend({
     preloadBackgroundMusic:function (obj) {
         if (this.m_bSound_enable) {
             if (this.m_activeAudioExt == -1) return;
-            var soundPath =  obj.src + "." + this.m_activeAudioExt;
+            var soundPath = obj.src + "." + this.m_activeAudioExt;
             var soundCache = new Audio(soundPath);
             soundCache.preload = 'auto';
 
@@ -278,7 +278,7 @@ cc.AudioManager = cc.Class.extend({
      @bLoop Whether to loop the effect playing, default value is false
      */
     playEffect:function (objName, bLoop) {
-        var soundPath =  objName + "." + this.m_activeAudioExt;
+        var soundPath = objName + "." + this.m_activeAudioExt;
         var soundCache = this.getEffectList(soundPath);
         if (soundCache) {
             soundCache.currentTime = 0;
@@ -363,7 +363,7 @@ cc.AudioManager = cc.Class.extend({
     preloadEffect:function (obj) {
         if (this.m_bSound_enable) {
             if (this.m_activeAudioExt == -1) return;
-            var soundPath =  obj.src + "." + this.m_activeAudioExt;
+            var soundPath = obj.src + "." + this.m_activeAudioExt;
             var soundCache = new Audio(soundPath);
             soundCache.preload = 'auto';
 
