@@ -47,7 +47,7 @@ cc.GL_SRC_ALPHA = 0x0302;
 cc.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 
 cc.SpriteBatchNode = cc.Node.extend({
-    _m_pobTextureAtlas:null,
+    _m_pobTextureAtlas:new cc.TextureAtlas(),
     _m_blendFunc:new cc.BlendFunc(0,0),
     // all descendants: chlidren, gran children, etc...
     _m_pobDescendants:[],
@@ -56,6 +56,10 @@ cc.SpriteBatchNode = cc.Node.extend({
         if(fileImage){
             this.initWithFile(fileImage, cc.defaultCapacity);
         }
+        /*if(!this._m_pobTextureAtlas){
+            this._m_pobTextureAtlas = new cc.TextureAtlas();
+            console.log("chs:",this._m_pobTextureAtlas)
+        }*/
     },
 
     _updateBlendFunc:function(){
@@ -76,25 +80,26 @@ cc.SpriteBatchNode = cc.Node.extend({
      */
     addQuadFromSprite:function(sprite,index){
         cc.Assert( sprite != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
-
         /// @todo CCAssert( [sprite isKindOfClass:[CCSprite class]], @"CCSpriteSheet only supports CCSprites as children");
 
-        while(index >= this._m_pobTextureAtlas.getCapacity() || this._m_pobTextureAtlas.getCapacity() == this._m_pobTextureAtlas.getTotalQuads()){
+        /*while(index >= this._m_pobTextureAtlas.getCapacity() || this._m_pobTextureAtlas.getCapacity() == this._m_pobTextureAtlas.getTotalQuads()){
             this.increaseAtlasCapacity();
-        }
+        }*/
+        //todo fixed
         //
         // update the quad directly. Don't add the sprite to the scene graph
         //
         sprite.useBatchNode(this);
         sprite.setAtlasIndex(index);
-
         var quad = sprite.getQuad();
-        this._m_pobTextureAtlas.insertQuad(quad, index);
 
+        this._m_pobTextureAtlas.insertQuad(quad, index);
         // XXX: updateTransform will update the textureAtlas too using updateQuad.
         // XXX: so, it should be AFTER the insertQuad
         sprite.setDirty(true);
         sprite.updateTransform();
+        this._m_pChildren.push(sprite);
+
     },
 
     /* This is the opposite of "addQuadFromSprite.
@@ -364,7 +369,7 @@ cc.SpriteBatchNode = cc.Node.extend({
     },
 
     // CCTextureProtocol
-    getTexture:function(){return this._m_pobTextureAtlas.getTexture();},
+    getTexture:function(){return this._m_pobTextureAtlas.getTexture(); },
     setTexture:function(texture){
         this._m_pobTextureAtlas.setTexture(texture);
         this._updateBlendFunc();
@@ -484,38 +489,27 @@ cc.SpriteBatchNode = cc.Node.extend({
         this._super();
 
         if(cc.renderContextType == cc.kCanvas){
-            cc.renderContext.save();
-            if(this.getOpacity() != 255){
-                cc.renderContext.globalAlpha = this.getOpacity()/255;
-            }
-            var offsetPos = cc.PointZero();
-            if(this.getParent()){
-                offsetPos = this.getParent().getPosition();
-            }
-            var rapx = offsetPos.x + this.getPositionX();
-            var rapy = offsetPos.y + this.getPositionY();
-
-            cc.renderContext.translate(rapx,-rapy);
-            if(this.getRotation() != 0){
-                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
-            }
-
-            cc.renderContext.transform(this.getScaleX(),this.getSkewX(),this.getSkewY(),this.getScaleY(),0,0);
-
-            var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
-            var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
-
             for(var index =0; index< this._m_pChildren.length;index++){
                 var sp = this._m_pChildren[index];
                 if((sp.getContentSize().width == 0)&&(sp.getContentSize().height == 0)){
-                    cc.drawingUtil.drawImage(sp.getTexture(),cc.ccp(lpx + sp.getPositionX(),lpy + sp.getPositionY()));
+                    cc.drawingUtil.drawImage(sp.getTexture(),cc.ccp(this.getPositionX() + sp.getPositionX(),this.getPositionY() + sp.getPositionY()));
                 }else{
+                    //xxx.push(sp.getPosition())
+                    //throw ""
+                    //cc.drawingUtil.drawImage(sp.getTexture(),new cc.Point(240,100),new cc.Size(32,32),new cc.Point(100+32*index,100+32*index),new cc.Size(32,32));
                     cc.drawingUtil.drawImage(sp.getTexture(),sp.getTextureRect().origin,sp.getTextureRect().size
-                        ,cc.ccp(lpx + sp.getPositionX(),lpy + sp.getPositionY()),sp.getContentSize());
+                        ,cc.ccp(this.getPositionX() + sp.getPositionX(),this.getPositionY() + sp.getPositionY()),sp.getContentSize());
+                   /*if(index <= 10) {
+                    //console.log(sp.getTexture())
+                       console.log(sp.getTexture(),sp.getTextureRect().origin,sp.getTextureRect().size
+                        ,cc.ccp(this.getPositionX() + sp.getPositionX(),this.getPositionY() + sp.getPositionY()),sp.getContentSize());
+                    }else{
+                        throw ""
+                    }*/
                 }
             }
-            cc.renderContext.restore();
         }else{
+
             // Optimization: Fast Dispatch
             if (this._m_pobTextureAtlas.getTotalQuads() == 0){
                 return;
@@ -586,5 +580,7 @@ cc.SpriteBatchNode.batchNodeWithFile = function(fileImage,capacity){
 
     return batchNode;
 };
-
-
+cc.share_pobTextureAtlas = function(){
+    var shareSpriteBatchNode = new cc.SpriteBatchNode();
+    return shareSpriteBatchNode._m_pobTextureAtlas;
+};

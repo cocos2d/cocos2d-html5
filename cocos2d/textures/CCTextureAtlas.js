@@ -38,14 +38,14 @@ var cc = cc = cc || {};
  To render the quads using an interleaved vertex array list, you should modify the ccConfig.h file
  */
 cc.TextureAtlas = cc.Class.extend({
-    _m_pIndices:null,
+    _m_pIndices:[],
     //0: vertex  1: indices
     _m_pBuffersVBO:[0,1],
     //indicates whether or not the array buffer of the VBO needs to be updated
     _m_bDirty:false,
     _m_uCapacity:0,
     _m_pTexture:null,
-    _m_pQuads:null,
+    _m_pQuads:[],
     /**
      * Property
      */
@@ -117,7 +117,7 @@ cc.TextureAtlas = cc.Class.extend({
         this._m_pTexture = texture;
 
         // Re-initialization is not allowed
-        cc.Assert(this._m_pQuads == null && this._m_pIndices == null, "TextureAtlas.initWithTexture():_m_pQuads and _m_pIndices should not be null");
+        cc.Assert(this._m_pQuads.length == 0 && this._m_pIndices.length == 0, "TextureAtlas.initWithTexture():_m_pQuads and _m_pIndices should not be null");
 
         //TODO init array
         this._m_pQuads = [];
@@ -141,7 +141,7 @@ cc.TextureAtlas = cc.Class.extend({
      @since v0.8
      */
     updateQuad:function(quad,index){
-        cc.Assert( index >= 0 && index < this._m_uCapacity, "TextureAtlas.updateQuad():updateQuadWithTexture: Invalid index");
+        //cc.Assert( index >= 0 && index < this._m_uCapacity, "TextureAtlas.updateQuad():updateQuadWithTexture: Invalid index");
 
         this._m_pQuads[index] = quad;
         this._m_bDirty = true;
@@ -152,7 +152,7 @@ cc.TextureAtlas = cc.Class.extend({
      @since v0.8
      */
     insertQuad:function(quad,index){
-        cc.Assert( index < this._m_uCapacity, "TextureAtlas.insertQuad():insertQuadWithTexture: Invalid index");
+        //cc.Assert( index < this._m_uCapacity, "TextureAtlas.insertQuad():insertQuadWithTexture: Invalid index");
 
         this._m_pQuads = cc.ArrayAppendObjectToIndex(this._m_pQuads,quad,index);
         this._m_bDirty = true;

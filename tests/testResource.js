@@ -35,7 +35,24 @@ var s_AtlasTest    = "Resources/Images/atlastest.png";
 var s_TilesPng     = "Resources/TileMaps/tiles.png";
 var s_LevelMapTga  = "Resources/TileMaps/levelmap.tga";
 
+var s_orthogonal_test1  = "Resources/TileMaps/orthogonal-test1.tmx";
+var s_orthogonal_test1_tsx  = "Resources/TileMaps/orthogonal-test1.tsx";
+var s_orthogonal_test2  = "Resources/TileMaps/orthogonal-test2.tmx";
+var s_orthogonal_test3  = "Resources/TileMaps/orthogonal-test3.tmx";
+var s_orthogonal_test4  = "Resources/TileMaps/orthogonal-test4.tmx";
+var s_orthogonal_test4_hd  = "Resources/TileMaps/orthogonal-test4-hd.tmx";
+var s_orthogonal_test5  = "Resources/TileMaps/orthogonal-test5.tmx";
+var s_orthogonal_test6  = "Resources/TileMaps/orthogonal-test6.tmx";
+var s_orthogonal_test6_hd  = "Resources/TileMaps/orthogonal-test6-hd.tmx";
+
+var s_hexa_test  = "Resources/TileMaps/hexa-test.tmx";
+var s_iso_test  = "Resources/TileMaps/iso-test.tmx";
+var s_iso_test1  = "Resources/TileMaps/iso-test1.tmx";
+var s_iso_test2  = "Resources/TileMaps/iso-test2.tmx";
+var s_iso_test2_uncompressed  = "Resources/TileMaps/iso-test2-uncompressed.tmx";
+
 var g_ressources= [
+    //image ressources
     {type:"image",	src: s_pPathGrossini},
     {type:"image",	src: s_pPathSister1},
     {type:"image",	src: s_pPathSister2},
@@ -69,7 +86,23 @@ var g_ressources= [
     {type:"image",	src: s_Power},
     {type:"image",	src: s_AtlasTest},
     {type:"image",	src: s_TilesPng},
-    {type:"image",	src: s_streak}
+    {type:"image",	src: s_streak},
+
+    //tmx ressources
+    {type:"tmx",	src: s_orthogonal_test1},
+    {type:"tmx",	src: s_orthogonal_test1_tsx},
+    {type:"tmx",	src: s_orthogonal_test2},
+    {type:"tmx",	src: s_orthogonal_test3},
+    {type:"tmx",	src: s_orthogonal_test4},
+    {type:"tmx",	src: s_orthogonal_test4_hd},
+    {type:"tmx",	src: s_orthogonal_test5},
+    {type:"tmx",	src: s_orthogonal_test6},
+    {type:"tmx",	src: s_orthogonal_test6_hd},
+    {type:"tmx",	src: s_hexa_test},
+    {type:"tmx",	src: s_iso_test},
+    {type:"tmx",	src: s_iso_test1},
+    {type:"tmx",	src: s_iso_test2},
+    {type:"tmx",	src: s_iso_test2_uncompressed}
 
     //tga ressources
     /* {type: "TGA",    src: s_LevelMapTga}*/

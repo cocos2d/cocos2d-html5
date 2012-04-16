@@ -30,32 +30,32 @@
 
 
 var actionTests = [
-    "ActionManual",
-    "ActionMove",
-    "ActionScale",
-    "ActionRotate",
-    "ActionSkew",
-    "ActionSkewRotateScale",
-    "ActionJump",
-    "ActionBezier",
-    "ActionBlink",
-    "ActionFade",
-    "ActionTint",
-    "ActionSequence",
-    "ActionSequence2",
-    "ActionSpawn",
-    "ActionDelayTime",
-    "ActionRepeat",
-    //"ActionRepeatForever",
-    "ActionRotateToRepeat",
-    "ActionRotateJerk",
-    "ActionCallFunc",
-    "ActionCallFuncND",
-    "ActionReverseSequence",
-    "ActionReverseSequence2",
-    "ActionOrbit",
-    "ActionFollow",
-    "ActionAnimate"
+    "ActionManual",//missing color tint
+    "ActionMove",//OK
+    "ActionScale",//OK
+    "ActionRotate",//OK
+    "ActionSkew",//OK, Not in cocos2d-js
+    "ActionSkewRotateScale",//Buggy not in cocos2d-js
+    "ActionJump",//OK
+    "ActionBezier",//Buggy?
+    "ActionBlink",//OK
+    "ActionFade",//OK
+    "ActionTint",//Missing color tint
+    "ActionSequence",//OK
+    "ActionSequence2",//OK
+    "ActionSpawn",//OK
+    "ActionDelayTime",//OK
+    "ActionRepeat",//OK
+    "ActionRepeatForever",//OK
+    "ActionRotateToRepeat",//Buggy
+    "ActionRotateJerk",//Buggy
+    "ActionCallFunc",//OK
+    "ActionCallFuncND",//OK (cocos2d-X c+ bug/incomplete)
+    "ActionReverseSequence",//OK
+    "ActionReverseSequence2",//OK, Bug in Cocos2d-X implementation of FiniteTimeAction.reverse()
+    //"ActionOrbit",//Not possible in canvas, requires sprite camera
+    "ActionFollow"//Buggy
+    //"ActionAnimate"//Require Texture2d Implementation
 ];
 var s_nActionIdx = -1;
 function NextAction()
@@ -312,14 +312,16 @@ var ActionSkew = ActionsDemo.extend({
         this.centerSprites(3);
         var actionTo = cc.SkewTo.actionWithDuration(2, 37.2, -37.2);
         var actionToBack = cc.SkewTo.actionWithDuration(2, 0, 0);
-        var actionBy = cc.SkewBy.actionWithDuration(2, 0.0, -90.0);
+        var actionBy = cc.SkewBy.actionWithDuration(2, 0, -90);
         var actionBy2 = cc.SkewBy.actionWithDuration(2, 45.0, 45.0);
         var actionByBack = actionBy.reverse();
+        var actionBy2Back = actionBy2.reverse();
+
 
         this._m_tamara.runAction(cc.Sequence.actions(actionTo, actionToBack, null));
         this._m_grossini.runAction(cc.Sequence.actions(actionBy, actionByBack, null));
 
-        this._m_kathia.runAction(cc.Sequence.actions(actionBy2, actionBy2.reverse(), null));
+        this._m_kathia.runAction(cc.Sequence.actions(actionBy2, actionBy2Back, null));
 
 
     },
@@ -340,8 +342,9 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         var boxSize = cc.SizeMake(100.0, 100.0);
         var box = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 0, 255));
         box.setAnchorPoint(cc.ccp(0, 0));
-        box.setPosition(cc.ccp(190, 110));
+        box.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width/2, cc.Director.sharedDirector().getWinSize().height/2));
         box.setContentSize(boxSize);
+
 
         var markrside = 10.0;
         var uL = cc.LayerColor.layerWithColor(cc.ccc4(255, 0, 0, 255));
@@ -355,8 +358,9 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         uR.setContentSize(cc.SizeMake(markrside, markrside));
         uR.setPosition(cc.ccp(boxSize.width - markrside, boxSize.height - markrside));
         uR.setAnchorPoint(cc.ccp(0, 0));
-        this.addChild(box);
 
+
+        this.addChild(box);
         var actionTo = cc.SkewTo.actionWithDuration(2, 0., 2.);
         var rotateTo = cc.RotateTo.actionWithDuration(2, 61.0);
         var actionScaleTo = cc.ScaleTo.actionWithDuration(2, -0.44, 0.47);
@@ -627,18 +631,15 @@ var ActionSequence2 = ActionsDemo.extend({
     {
         this._super();
         this.centerSprites(1);
-
         this._m_grossini.setIsVisible(false);
-
         var action = cc.Sequence.actions(
             cc.Place.actionWithPosition(cc.PointMake(200,200)),
             cc.Show.action(),
             cc.MoveBy.actionWithDuration(1, cc.PointMake(100,0)),
             cc.CallFunc.actionWithTarget(this, this.callback1),
             cc.CallFunc.actionWithTarget(this, this.callback2),
-            cc.CallFunc.actionWithTarget(this, this.callback3, 0xbebabeba),
+            cc.CallFunc.actionWithTarget(this, this.callback3),
         null);
-
         this._m_grossini.runAction(action);
 
     },
@@ -654,7 +655,7 @@ var ActionSequence2 = ActionsDemo.extend({
     {
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.labelWithString("callback 2 called", "Marker Felt", 16);
-        label.setPosition(c.PointMake( s.width/4*2,s.height/2));
+        label.setPosition(cc.PointMake( s.width/4*2,s.height/2));
 
         this.addChild(label);
     },
@@ -684,20 +685,20 @@ var ActionCallFunc = ActionsDemo.extend({
 
         var action = cc.Sequence.actions(
             cc.MoveBy.actionWithDuration(2, cc.PointMake(200,0)),
-            cc.CallFunc.actionWithTarget(this, this.callback1),
-            null);
+            cc.CallFunc.actionWithTarget(this, this.callback1)
+            );
 
         var action2 = cc.Sequence.actions(
             cc.ScaleBy.actionWithDuration(2 ,  2),
             cc.FadeOut.actionWithDuration(2),
-            cc.CallFunc.actionWithTarget(this, this.callback2),
-            null);
+            cc.CallFunc.actionWithTarget(this, this.callback2)
+            );
 
         var action3 = cc.Sequence.actions(
             cc.RotateBy.actionWithDuration(3 , 360),
             cc.FadeOut.actionWithDuration(2),
-            cc.CallFunc.actionWithTarget(this, this.callback3, 0xbebabeba),
-        null);
+            cc.CallFunc.actionWithTarget(this, this.callback3, 0xbebabeba)
+        );
 
         this._m_grossini.runAction(action);
         this._m_tamara.runAction(action2);
@@ -709,7 +710,6 @@ var ActionCallFunc = ActionsDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.labelWithString("callback 1 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake( s.width/4*1,s.height/2));
-
         this.addChild(label);
     },
     callback2:function()
@@ -744,7 +744,7 @@ var ActionCallFuncND = ActionsDemo.extend({
         this.centerSprites(1);
 
         var action = cc.Sequence.actions(cc.MoveBy.actionWithDuration(2.0, cc.ccp(200,0)),
-        //CCCallFuncND.actionWithTarget(this._m_grossini, callfuncND_selector(ActionCallFuncND.removeFromParentAndCleanup), (void*)true),
+        cc.CallFunc.actionWithTarget(this._m_grossini, this.removeFromParentAndCleanup, true),
         null);
 
         this._m_grossini.runAction(action);
@@ -804,7 +804,7 @@ var ActionRepeatForever = ActionsDemo.extend({
     },
     repeatForever:function(pSender)
     {
-        var repeat = cc.RepeatForever.actionsWithAction(cc.RotateBy.actionWithDuration(1.0,360));
+        var repeat = cc.RepeatForever.actionWithAction(cc.RotateBy.actionWithDuration(1.0,360));
         pSender.runAction(repeat)
     },
     subtitle:function()
@@ -944,12 +944,19 @@ var ActionReverseSequence2 = ActionsDemo.extend({
 
         // Test:
         //   Sequence should work both with IntervalAction and InstantActions
-        var move1 = cc.MoveBy.actionWithDuration(1, cc.PointMake(250,0));
-        var  move2 = cc.MoveBy.actionWithDuration(1, cc.PointMake(0,50));
+        var move1 = cc.MoveBy.actionWithDuration(3, cc.PointMake(250,0));
+        var  move2 = cc.MoveBy.actionWithDuration(3, cc.PointMake(0,50));
         var  tog1 = new cc.ToggleVisibility();
         var  tog2 = new cc.ToggleVisibility();
         var  seq = cc.Sequence.actions( move1, tog1, move2, tog2, move1.reverse(), null);
-        var  action = cc.Repeat.actionWithAction((cc.Sequence.actions( seq, seq.reverse(), null)), 3);
+        var  action = cc.Repeat.actionWithAction(
+            cc.Sequence.actions(
+                seq,
+                seq.reverse(),
+                null
+            ),
+            3
+        );
 
 
 
