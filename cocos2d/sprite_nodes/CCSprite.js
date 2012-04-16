@@ -287,6 +287,7 @@ cc.Sprite = cc.Node.extend({
         this._m_sQuad.br.colors = tmpColor;
         this._m_sQuad.tl.colors = tmpColor;
         this._m_sQuad.tr.colors = tmpColor;
+        this.setColor(tmpColor);
 
         // Atlas: Vertex
 
@@ -716,12 +717,10 @@ cc.Sprite = cc.Node.extend({
             if(this.getOpacity() != 255){
                 cc.renderContext.globalAlpha = this.getOpacity()/255;
             }
-            var offsetPos = cc.PointZero();
-            if(this.getParent()){
-                offsetPos = this.getParent().getPosition();
-            }
-            var rapx = offsetPos.x + this.getPositionX();
-            var rapy = offsetPos.y + this.getPositionY();
+            var offsetPos = this.convertToWorldSpace(this.getPosition());
+
+            var rapx = offsetPos.x; // + this.getPositionX();
+            var rapy = offsetPos.y; // + this.getPositionY();
 
             cc.renderContext.translate(rapx,-rapy);
             if(this.getRotation() != 0){
@@ -817,14 +816,14 @@ cc.Sprite = cc.Node.extend({
         var argnum = arguments.length;
         switch (argnum) {
             case 1:
-                cc.Node.addChild(pChild);
+                this._super(pChild);
                 break;
             case 2:
-                cc.Node.addChild(pChild, zOrder);
+                this._super(pChild, zOrder);
                 break;
             case 3:
                 cc.Assert(pChild != null, "");
-                cc.Node.addChild(pChild, zOrder, tag);
+                this._super(pChild, zOrder, tag);
 
                 if (this._m_bUsesBatchNode) {
                     cc.Assert(pChild.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "");
@@ -986,8 +985,7 @@ cc.Sprite = cc.Node.extend({
 //
 
     updateColor:function () {
-        var color4 = new cc.Color4B();
-        color4 = (this._m_sColor.r, this._m_sColor.g, this._m_sColor.b, this._m_nOpacity);
+        var color4 = new cc.Color4B(this._m_sColor.r, this._m_sColor.g, this._m_sColor.b, this._m_nOpacity);
 
         this._m_sQuad.bl.colors = color4;
         this._m_sQuad.br.colors = color4;

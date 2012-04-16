@@ -328,7 +328,8 @@ cc.Node = cc.Class.extend({
     setAnchorPoint:function (point) {
         if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
             this._m_tAnchorPoint = point;
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
             this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
             if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                 this._m_bIsTransformGLDirty = true;
@@ -348,7 +349,8 @@ cc.Node = cc.Class.extend({
             else {
                 this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
             this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
             if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                 this._m_bIsTransformGLDirty = true;
@@ -374,7 +376,8 @@ cc.Node = cc.Class.extend({
                 this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
             }
 
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
             this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
             if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                 this._m_bIsTransformGLDirty = true;
@@ -428,8 +431,7 @@ cc.Node = cc.Class.extend({
      @since v0.8.2
      */
     boundingBox:function () {
-        var ret = new cc.Rect();
-        ret = this.boundingBoxInPixels();
+        var ret = this.boundingBoxInPixels();
         return cc.RECT_PIXELS_TO_POINTS(ret);
     },
     /** returns a "local" axis aligned bounding box of the node in pixels.
@@ -439,8 +441,7 @@ cc.Node = cc.Class.extend({
      @since v0.99.5
      */
     boundingBoxInPixels:function () {
-        var rect = new cc.Rect();
-        rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
+        var rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
     /** Stops all running actions and schedulers
@@ -961,7 +962,6 @@ cc.Node = cc.Class.extend({
      */
     nodeToParentTransform:function () {
         if (this._m_bIsTransformDirty) {
-
             this._m_tTransform = cc.AffineTransformIdentity;
             if (!this._m_bIsRelativeAnchorPoint && !cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero())) {
                 this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, this._m_tAnchorPointInPixels.x, this._m_tAnchorPointInPixels.y);
@@ -1012,8 +1012,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     nodeToWorldTransform:function () {
-        var t = new cc.AffineTransform();
-        t = this.nodeToParentTransform();
+        var t = this.nodeToParentTransform();
         for (var p = this._m_pParent; p != null; p = p.getParent()){
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
         }

@@ -48,20 +48,22 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     // VBO id
     _m_uQuadsID:0,
 
-    ctor:function(){},
+    ctor:function () {
+        this._super();
+    },
 
     /** initialices the indices for the vertices*/
-    initIndices:function(){
-        for(var i = 0; i < this._m_uTotalParticles; ++i){
-            var i6 = i*6;
-            var i4 = i*4;
-            this._m_pIndices[i6+0] = i4+0;
-            this._m_pIndices[i6+1] = i4+1;
-            this._m_pIndices[i6+2] = i4+2;
+    initIndices:function () {
+        for (var i = 0; i < this._m_uTotalParticles; ++i) {
+            var i6 = i * 6;
+            var i4 = i * 4;
+            this._m_pIndices[i6 + 0] = i4 + 0;
+            this._m_pIndices[i6 + 1] = i4 + 1;
+            this._m_pIndices[i6 + 2] = i4 + 2;
 
-            this._m_pIndices[i6+5] = i4+1;
-            this._m_pIndices[i6+4] = i4+2;
-            this._m_pIndices[i6+3] = i4+3;
+            this._m_pIndices[i6 + 5] = i4 + 1;
+            this._m_pIndices[i6 + 4] = i4 + 2;
+            this._m_pIndices[i6 + 3] = i4 + 3;
         }
     },
 
@@ -69,7 +71,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
      * initilizes the texture with a rectangle measured Points
      * pointRect should be in Texture coordinates, not pixel coordinates
      * */
-    initTexCoordsWithRect:function(pointRect){
+    initTexCoordsWithRect:function (pointRect) {
         // convert to pixels coords
         var rect = cc.RectMake(
             pointRect.origin.x * cc.CONTENT_SCALE_FACTOR(),
@@ -80,18 +82,23 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         var wide = pointRect.size.width;
         var high = pointRect.size.height;
 
-        if (this._m_pTexture){
-            wide = this._m_pTexture.getPixelsWide();
-            high = this._m_pTexture.getPixelsHigh();
+        if (this._m_pTexture) {
+            if (this._m_pTexture instanceof HTMLImageElement){
+                wide = this._m_pTexture.width;
+                high = this._m_pTexture.height;
+            } else {
+                wide = this._m_pTexture.getPixelsWide();
+                high = this._m_pTexture.getPixelsHigh();
+            }
         }
 
-        var left,bottom,right,top;
-        if(cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL){
-            left = (rect.origin.x*2+1) / (wide*2);
-            bottom = (rect.origin.y*2+1) / (high*2);
-            right = left + (rect.size.width*2-2) / (wide*2);
-            top = bottom + (rect.size.height*2-2) / (high*2);
-        }else{
+        var left, bottom, right, top;
+        if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+            left = (rect.origin.x * 2 + 1) / (wide * 2);
+            bottom = (rect.origin.y * 2 + 1) / (high * 2);
+            right = left + (rect.size.width * 2 - 2) / (wide * 2);
+            top = bottom + (rect.size.height * 2 - 2) / (high * 2);
+        } else {
             left = rect.origin.x / wide;
             bottom = rect.origin.y / high;
             right = left + rect.size.width / wide;
@@ -103,7 +110,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         top = bottom;
         bottom = temp;
 
-        for(var i=0; i<this._m_uTotalParticles; i++){
+        this._m_pQuads = [];
+        for (var i = 0; i < this._m_uTotalParticles; i++) {
+            this._m_pQuads[i] = cc.V3F_C4B_T2F_QuadZero();
+        }
+
+        for (var i = 0; i < this._m_uTotalParticles; i++) {
             // bottom-left vertex:
             this._m_pQuads[i].bl.texCoords.u = left;
             this._m_pQuads[i].bl.texCoords.v = bottom;
@@ -123,11 +135,11 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
      WARNING: this method is experimental. Use setTexture:withRect instead.
      @since v0.99.4
      */
-    setDisplayFrame:function(spriteFrame){
-        cc.Assert( cc.Point.CCPointEqualToPoint( spriteFrame.getOffsetInPixels() , cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
+    setDisplayFrame:function (spriteFrame) {
+        cc.Assert(cc.Point.CCPointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
 
         // update texture before updating texture rect
-        if ( !this._m_pTexture || spriteFrame.getTexture().getName() != this._m_pTexture.getName()){
+        if (!this._m_pTexture || spriteFrame.getTexture().getName() != this._m_pTexture.getName()) {
             this.setTexture(spriteFrame.getTexture());
         }
     },
@@ -135,10 +147,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     /** Sets a new texture with a rect. The rect is in Points.
      @since v0.99.4
      */
-    setTextureWithRect:function(texture,rect){
+    setTextureWithRect:function (texture, rect) {
         // Only update the texture if is different from the current one
-        if( !this._m_pTexture || texture.getName() != this._m_pTexture.getName()){
-            this.setTexture(texture,true);
+        if (!this._m_pTexture || texture.getName() != this._m_pTexture.getName()) {
+            this.setTexture(texture, true);
         }
 
         this.initTexCoordsWithRect(rect);
@@ -146,49 +158,50 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
 
     // super methods
     // overriding the init method
-    initWithTotalParticles:function(numberOfParticles){
+    initWithTotalParticles:function (numberOfParticles) {
         // base initialization
-        if( this._super(numberOfParticles)){
+        if (this._super(numberOfParticles)) {
             // allocating data space
             this._m_pQuads = [];
-            for(var i = 0; i< this._m_uTotalParticles;i++){
-                this._m_pQuads[i] = new cc.V2F_C4F_T2F_Quad();
+            for (var i = 0; i < this._m_uTotalParticles; i++) {
+                this._m_pQuads[i] = cc.V3F_C4B_T2F_QuadZero();
             }
             this._m_pIndices = [];
-            for(i =0; i< this._m_uTotalParticles * 6; i++){
+            for (i = 0; i < this._m_uTotalParticles * 6; i++) {
                 this._m_pIndices[i] = 0;
             }
 
-            if( !this._m_pQuads || !this._m_pIndices){
+            if (!this._m_pQuads || !this._m_pIndices) {
                 cc.Log("cocos2d: Particle system: not enough memory");
-                if( this._m_pQuads )
+                if (this._m_pQuads)
                     this._m_pQuads = null;
-                if(this._m_pIndices)
+                if (this._m_pIndices)
                     this._m_pIndices = null;
 
                 return null;
             }
 
             // initialize only once the texCoords and the indices
-            if (this._m_pTexture){
+            if (this._m_pTexture) {
                 this.initTexCoordsWithRect(cc.RectMake(0, 0, this._m_pTexture.getPixelsWide(), this._m_pTexture.getPixelsHigh()));
-            }else{
+            } else {
                 this.initTexCoordsWithRect(cc.RectMake(0, 0, 1, 1));
             }
 
             this.initIndices();
 
-            if(cc.USES_VBO){
-                glEnable(GL_VERTEX_ARRAY);
+            if (cc.USES_VBO) {
+                //TODO
+                //glEnable(GL_VERTEX_ARRAY);
 
                 // create the VBO buffer
-                glGenBuffers(1, m_uQuadsID);
+                //glGenBuffers(1, m_uQuadsID);
 
-                //TODO
+
                 // initial binding
-                glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
+                //glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
                 //glBufferData(GL_ARRAY_BUFFER, sizeof(m_pQuads[0])*m_uTotalParticles, m_pQuads, GL_DYNAMIC_DRAW);
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                //glBindBuffer(GL_ARRAY_BUFFER, 0);
             }
 
             return true;
@@ -196,19 +209,24 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         return false;
     },
 
-    setTexture:function(texture,isCallSuper){
-        if(isCallSuper){
-            if(isCallSuper == true){
+    setTexture:function (texture, isCallSuper) {
+        if (isCallSuper) {
+            if (isCallSuper == true) {
                 this._super(texture);
                 return;
             }
         }
+        var s = null;
+        if ( texture instanceof HTMLImageElement) {
+            s = cc.SizeMake(texture.width,texture.height);
+        } else {
+            s = texture.getContentSize();
+        }
 
-        var s = texture.getContentSize();
         this.setTextureWithRect(texture, cc.RectMake(0, 0, s.width, s.height));
     },
 
-    updateQuadWithParticle:function(particle,newPosition){
+    updateQuadWithParticle:function (particle, newPosition) {
         // colors
         var quad = this._m_pQuads[this._m_uParticleIdx];
 
@@ -220,8 +238,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         quad.tr.colors = color;
 
 // vertices
-        var size_2 = particle.size/2;
-        if( particle.rotation ){
+        var size_2 = particle.size / 2;
+        if (particle.rotation) {
             var x1 = -size_2;
             var y1 = -size_2;
 
@@ -276,79 +294,122 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         }
     },
 
-    postStep:function(){
-        if(cc.USES_VBO){
-            //TODO
-            glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(m_pQuads[0])*m_uParticleCount, m_pQuads);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
+    postStep:function () {
+        if (cc.renderContextType == cc.kCanvas) {
+
+        } else {
+            if (cc.USES_VBO) {
+                //TODO
+                glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(m_pQuads[0]) * m_uParticleCount, m_pQuads);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+            }
         }
     },
 
-    draw:function(){
+    draw:function () {
         this._super();
+        if (cc.renderContextType == cc.kCanvas) {
+            cc.renderContext.save();
+            //if(this.getOpacity() != 255){
+            //    cc.renderContext.globalAlpha = this.getOpacity()/255;
+            //}
+            var offsetPos = cc.PointZero();
+            if(this.getParent()){
+                offsetPos = this.getParent().getPosition();
+            }
+            var rap = this.convertToWorldSpace(this.getPosition());
+            var rapx = rap.x; //offsetPos.x + this.getPositionX();
+            var rapy = rap.y; //offsetPos.y + this.getPositionY();
 
-        //TODO need fixed for webGL
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Unneeded states: -
-        glBindTexture(GL_TEXTURE_2D, this._m_pTexture.getName());
-
-        var kQuadSize = sizeof(this._m_pQuads[0].bl);
-
-        if(cc.USES_VBO){
-            glBindBuffer(GL_ARRAY_BUFFER, this._m_uQuadsID);
-
-            if(cc.ENABLE_CACHE_TEXTTURE_DATA){
-                glBufferData(GL_ARRAY_BUFFER, sizeof(this._m_pQuads[0])*this._m_uTotalParticles, this._m_pQuads, GL_DYNAMIC_DRAW);
+            cc.renderContext.translate(rapx,-rapy);
+            if(this.getRotation() != 0){
+                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
 
-            glVertexPointer(2,GL_FLOAT, kQuadSize, 0);
+            cc.renderContext.transform( this.getScaleX(),
+                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
+                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
+                this.getScaleY(),
+                0,
+                0);
 
-            glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, offsetof(ccV2F_C4B_T2F,colors));
+            var lpx = 0 - this.getTexture().width * this.getAnchorPoint().x;
+            var lpy = 0 - this.getTexture().height * this.getAnchorPoint().y;
+            var tWidth = this.getTexture().width;
+            var tHeight = this.getTexture().height;
 
-            glTexCoordPointer(2, GL_FLOAT, kQuadSize, offsetof(ccV2F_C4B_T2F,texCoords));
-        }else{
-            var offset =  this._m_pQuads;
+            if((this.getContentSize().width == 0)&&(this.getContentSize().height == 0)){
+                cc.drawingUtil.drawImage(this.getTexture(),cc.ccp(lpx,lpy));
+            }else{
+                cc.drawingUtil.drawImage(this.getTexture(),this.getTextureRect().origin,this.getTextureRect().size
+                    ,cc.ccp(lpx,lpy),cc.SizeMake(tWidth,tHeight));
+            }
 
-            // vertex
-            var diff = offsetof( cc.V2F_C4B_T2F, vertices);
-            glVertexPointer(2,GL_FLOAT, kQuadSize, (offset+diff) );
+            cc.renderContext.restore();
+        } else {
+            //TODO need fixed for webGL
+            // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Unneeded states: -
+            glBindTexture(GL_TEXTURE_2D, this._m_pTexture.getName());
 
-            // color
-            diff = offsetof( cc.V2F_C4B_T2F, colors);
-            glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
+            var kQuadSize = sizeof(this._m_pQuads[0].bl);
 
-            // tex coords
-            diff = offsetof( cc.V2F_C4B_T2F, texCoords);
-            glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+            if (cc.USES_VBO) {
+                glBindBuffer(GL_ARRAY_BUFFER, this._m_uQuadsID);
+
+                if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(this._m_pQuads[0]) * this._m_uTotalParticles, this._m_pQuads, GL_DYNAMIC_DRAW);
+                }
+
+                glVertexPointer(2, GL_FLOAT, kQuadSize, 0);
+
+                glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, offsetof(ccV2F_C4B_T2F, colors));
+
+                glTexCoordPointer(2, GL_FLOAT, kQuadSize, offsetof(ccV2F_C4B_T2F, texCoords));
+            } else {
+                var offset = this._m_pQuads;
+
+                // vertex
+                var diff = offsetof(cc.V2F_C4B_T2F, vertices);
+                glVertexPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+
+                // color
+                diff = offsetof(cc.V2F_C4B_T2F, colors);
+                glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
+
+                // tex coords
+                diff = offsetof(cc.V2F_C4B_T2F, texCoords);
+                glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+            }
+
+
+            var newBlend = (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) ? true : false;
+            if (newBlend) {
+                glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
+            }
+
+            cc.Assert(this._m_uParticleIdx == this._m_uParticleCount, "Abnormal error in particle quad");
+
+            glDrawElements(GL_TRIANGLES, (this._m_uParticleIdx * 6), GL_UNSIGNED_SHORT, this._m_pIndices);
+
+            // restore blend state
+            if (newBlend)
+                glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+
+            if (cc.USES_VBO)
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
-
-
-        var newBlend = (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) ? true : false;
-        if( newBlend ){
-            glBlendFunc( this._m_tBlendFunc.src, this._m_tBlendFunc.dst );
-        }
-
-        cc.Assert( this._m_uParticleIdx == this._m_uParticleCount, "Abnormal error in particle quad");
-
-        glDrawElements(GL_TRIANGLES, (this._m_uParticleIdx*6), GL_UNSIGNED_SHORT, this._m_pIndices);
-
-        // restore blend state
-        if( newBlend )
-            glBlendFunc( cc.BLEND_SRC, cc.BLEND_DST );
-
-        if(cc.USES_VBO)
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 });
 
 /** creates an initializes a CCParticleSystemQuad from a plist file.
  This plist files can be creted manually or with Particle Designer:
  */
-cc.ParticleSystemQuad.particleWithFile = function(pListFile){
+cc.ParticleSystemQuad.particleWithFile = function (pListFile) {
     var pRet = new cc.ParticleSystemQuad();
-    if (pRet && pRet.initWithFile(pListFile)){
+    if (pRet && pRet.initWithFile(pListFile)) {
         return pRet;
     }
     return null;
