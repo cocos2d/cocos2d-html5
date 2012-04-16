@@ -255,11 +255,12 @@ cc.TMXMapInfo = cc.SAXParser.extend({
             else if (orientationStr !== null)
                 cc.LOG("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
 
-            var s = new cc.Size;
+            var s = new cc.Size();
             s.width = parseFloat(map.getAttribute('width'));
             s.height = parseFloat(map.getAttribute('height'));
             this.setMapSize(s);
 
+            s = new cc.Size();
             s.width = parseFloat(map.getAttribute('tilewidth'));
             s.height = parseFloat(map.getAttribute('tileheight'));
             this.setTileSize(s)
@@ -401,11 +402,11 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         if (objects) {
             for (var i = 0, len = objects.length; i < len; i++) {
                 var o = objects[i]
-                var objectGroup = this.getObjectGroups()[0];
+                var objectGroup = this.getObjectGroups()[this.getObjectGroups().length-1];
 
                 // The value for "type" was blank or not a valid class name
                 // Create an instance of TMXObjectInfo to store the object and its properties
-                var dict = [];
+                var dict = new Object();
 
                 // Set the name of the object to the value for "name"
                 dict["name"] = o.getAttribute('name') || "";
@@ -416,9 +417,8 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 dict["x"] = parseInt(o.getAttribute('x') || 0) + objectGroup.getPositionOffset().x;
 
                 var y = parseInt(o.getAttribute('y') || 0) + objectGroup.getPositionOffset().y;
-
                 // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
-                y = this.getMapSize().height * this.getTileSize().height - y - parseInt(o.getAttribute('height'));
+                y = parseInt(this.getMapSize().height * this.getTileSize().height) - y - parseInt(o.getAttribute('height'));
                 dict["y"] = y;
 
                 dict["width"] = parseInt(o.getAttribute('width'));
@@ -427,7 +427,6 @@ cc.TMXMapInfo = cc.SAXParser.extend({
 
                 // Add the object to the objectGroup
                 objectGroup.getObjects().push(dict);
-
                 // The parent element is now "object"
                 this.setParentElement(cc.TMXPropertyObject);
             }

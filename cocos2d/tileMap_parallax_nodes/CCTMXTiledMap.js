@@ -274,7 +274,7 @@ cc.TMXTiledMap = cc.Node.extend({
         var tilesets = mapInfo.getTilesets();
         if (tilesets) {
             var tileset = null;
-            for (var i = 0, len = tilesets.length; i < len; i++) {
+            for (var i = tilesets.length - 1; i >= 0; i--) {
                 tileset = tilesets[i];
                 if (tileset) {
                     for (var y = 0; y < size.height; y++) {
