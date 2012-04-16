@@ -123,7 +123,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         var texture = null;
         if(tilesetInfo){
             texture = cc.TextureCache.sharedTextureCache().addImage(tilesetInfo.m_sSourceImage.toString());
-            console.log("texture",texture);
         }
         if (this.initWithTexture(texture, capacity)){
             // layerInfo
@@ -156,9 +155,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             this._m_bUseAutomaticVertexZ = false;
             this._m_nVertexZvalue = 0;
             this._m_fAlphaFuncValue = 0;
-            /*console.log(this._m_sLayerName,this._m_tLayerSize,this._m_pTiles,this._m_uMinGID,this._m_uMaxGID,this._m_cOpacity,this._m_pProperties,
-                this._m_fContentScaleFactor,this._m_pTileSet,this._m_tMapTileSize,"x",this._m_uLayerOrientation,layerInfo.m_tOffset,"a",this._m_pAtlasIndexArray,
-                this.getContentSizeInPixels(), this._m_bUseAutomaticVertexZ,this._m_nVertexZvalue,this._m_fAlphaFuncValue)*/
             return true;
         }
         return false;
