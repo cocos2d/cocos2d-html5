@@ -122,6 +122,10 @@ cc.loadjs('sprite_nodes/CCAnimation.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
+cc.loadjs('particle_nodes/CCParticleSystem.js');//11
+cc.loadjs('particle_nodes/CCParticleSystemQuad.js');//11
+cc.loadjs('particle_nodes/CCParticleSystemPoint.js');//11
+cc.loadjs('particle_nodes/CCParticleExamples.js');//11
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
 cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
 cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
@@ -152,3 +156,4 @@ cc.loadjs('../tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
 cc.loadjs('../tests/Classes/tests/MenuTest/MenuTest.js');
 cc.loadjs('../tests/Classes/tests/ActionsTest/ActionsTest.js');
 cc.loadjs('../tests/Classes/tests/DrawPrimitivesTest/DrawPrimitivesTest.js');
+cc.loadjs('../tests/Classes/tests/ParticleTest/ParticleTest.js');

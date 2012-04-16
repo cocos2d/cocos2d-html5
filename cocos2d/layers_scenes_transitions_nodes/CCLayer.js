@@ -339,11 +339,23 @@ cc.LayerColor = cc.Layer.extend({
         //TODO
         if(cc.renderContextType == cc.kCanvas){
             cc.renderContext.save();
+            var offsetPos = cc.PointZero();
+            if(this.getParent()){
+                offsetPos = this.getParent().getPosition();
+            }
+            var rapx = offsetPos.x + this.getPositionX();
+            var rapy = offsetPos.y + this.getPositionY();
+            cc.renderContext.translate(rapx,-rapy);
+            if(this.getRotation() != 0){
+                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+            }
+            cc.renderContext.transform(this.getScaleX(),this.getSkewX(),this.getSkewY(),this.getScaleY(),0,0);
             var opVal = this._m_cOpacity/255;
             if(opVal > 1)
                 opVal = 1;
             cc.renderContext.fillStyle = "rgba("+this._m_tColor.r +"," + this._m_tColor.g + "," + this._m_tColor.b + "," + opVal + ")";
-            cc.renderContext.fillRect(0,0,this.getContentSize().width, -this.getContentSize().height);
+            cc.renderContext.fillRect(0-(this.getContentSize().width * this.getAnchorPoint().x),
+                0-(this.getContentSize().height * this.getAnchorPoint().y),this.getContentSize().width, -this.getContentSize().height);
             cc.renderContext.restore();
             return;
         }

@@ -484,15 +484,37 @@ cc.SpriteBatchNode = cc.Node.extend({
         this._super();
 
         if(cc.renderContextType == cc.kCanvas){
+            cc.renderContext.save();
+            if(this.getOpacity() != 255){
+                cc.renderContext.globalAlpha = this.getOpacity()/255;
+            }
+            var offsetPos = cc.PointZero();
+            if(this.getParent()){
+                offsetPos = this.getParent().getPosition();
+            }
+            var rapx = offsetPos.x + this.getPositionX();
+            var rapy = offsetPos.y + this.getPositionY();
+
+            cc.renderContext.translate(rapx,-rapy);
+            if(this.getRotation() != 0){
+                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+            }
+
+            cc.renderContext.transform(this.getScaleX(),this.getSkewX(),this.getSkewY(),this.getScaleY(),0,0);
+
+            var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
+            var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
+
             for(var index =0; index< this._m_pChildren.length;index++){
                 var sp = this._m_pChildren[index];
                 if((sp.getContentSize().width == 0)&&(sp.getContentSize().height == 0)){
-                    cc.drawingUtil.drawImage(sp.getTexture(),cc.ccp(this.getPositionX() + sp.getPositionX(),this.getPositionY() + sp.getPositionY()));
+                    cc.drawingUtil.drawImage(sp.getTexture(),cc.ccp(lpx + sp.getPositionX(),lpy + sp.getPositionY()));
                 }else{
                     cc.drawingUtil.drawImage(sp.getTexture(),sp.getTextureRect().origin,sp.getTextureRect().size
-                        ,cc.ccp(this.getPositionX() + sp.getPositionX(),this.getPositionY() + sp.getPositionY()),sp.getContentSize());
+                        ,cc.ccp(lpx + sp.getPositionX(),lpy + sp.getPositionY()),sp.getContentSize());
                 }
             }
+            cc.renderContext.restore();
         }else{
             // Optimization: Fast Dispatch
             if (this._m_pobTextureAtlas.getTotalQuads() == 0){

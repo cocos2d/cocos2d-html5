@@ -716,8 +716,12 @@ cc.Sprite = cc.Node.extend({
             if(this.getOpacity() != 255){
                 cc.renderContext.globalAlpha = this.getOpacity()/255;
             }
-            var rapx = this.getPositionX();
-            var rapy = this.getPositionY();
+            var offsetPos = cc.PointZero();
+            if(this.getParent()){
+                offsetPos = this.getParent().getPosition();
+            }
+            var rapx = offsetPos.x + this.getPositionX();
+            var rapy = offsetPos.y + this.getPositionY();
 
             cc.renderContext.translate(rapx,-rapy);
             if(this.getRotation() != 0){
