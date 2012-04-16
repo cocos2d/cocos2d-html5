@@ -30,35 +30,34 @@
 
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
-    draw:function(){
+    draw:function () {
         cc.renderContext.fillStyle = "rgba(255,255,255,1)";
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
 
-        if(this._radians > 360)
+        if (this._radians > 360)
             this._radians = 0;
-        cc.drawingUtil.drawCircle(this.getPosition(),30,cc.DEGREES_TO_RADIANS(this._radians),60,true);
+        cc.drawingUtil.drawCircle(this.getPosition(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
     },
-    myUpdate:function(dt){
+    myUpdate:function (dt) {
         this._radians += 6;
     }
 });
 
 
 var Helloworld = cc.Layer.extend({
-    bIsMouseDown :false,
+    bIsMouseDown:false,
     helloImg:null,
     helloLb:null,
     circle:null,
     pSprite:null,
     // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
-    init: function(){
+    init:function () {
         var selfPointer = this;
         //////////////////////////////
         // 1. super init first
         var test = this._super();
         cc.LOG(test);
-        if ( !test )
-        {
+        if (!test) {
             return false;
         }
 
@@ -71,8 +70,10 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
-            function(){alert("Bye Bye");} );
-        pCloseItem.setPosition(cc.canvas.width-20,20);
+            function () {
+                alert("Bye Bye");
+            });
+        pCloseItem.setPosition(cc.canvas.width - 20, 20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
 
         /*
@@ -117,87 +118,86 @@ var Helloworld = cc.Layer.extend({
             //this.addChild(helloSprite,0);
 
         this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
-        this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width/2,0));
-        this.addChild(this.helloLb,5);
+        this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
+        this.addChild(this.helloLb, 5);
 
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width/2,cc.Director.sharedDirector().getWinSize().height/2));
+        this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
         this.pSprite.setIsVisible(true);
-        this.pSprite.setAnchorPoint(cc.ccp(0.5,0.5));
+        this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.pSprite.setScale(0.5);
         this.pSprite.setRotation(180);
-        this.addChild(this.pSprite,0);
+        this.addChild(this.pSprite, 0);
 
-        var rotateToA = cc.RotateTo.actionWithDuration(2,0);
-        var scaleToA = cc.ScaleTo.actionWithDuration(2,1,1);
+        var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
+        var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
 
-        this.pSprite.runAction(cc.Sequence.actions(rotateToA,scaleToA));
+        this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
 
         this.circle = new CircleSprite();
-        this.circle.setPosition(new cc.Point(40,280));
-        this.addChild(this.circle,2);
-        this.circle.schedule(this.circle.myUpdate,1/60);
+        this.circle.setPosition(new cc.Point(40, 280));
+        this.addChild(this.circle, 2);
+        this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5,cc.ccp(0,280)));
+        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
 
         this.setIsTouchEnabled(true);
         this.adjustSizeForWindow();
 
-        window.addEventListener("resize",function(event){
+        window.addEventListener("resize", function (event) {
             selfPointer.adjustSizeForWindow();
         });
         return true;
     },
 
-    adjustSizeForWindow:function(){
+    adjustSizeForWindow:function () {
         var margin = document.documentElement.clientWidth - document.body.clientWidth;
-        if(document.documentElement.clientWidth < 480){
+        if (document.documentElement.clientWidth < 480) {
             cc.canvas.width = 480;
-        }else{
+        } else {
             cc.canvas.width = document.documentElement.clientWidth - margin;
         }
 
-        if(document.documentElement.clientHeight < 320){
+        if (document.documentElement.clientHeight < 320) {
             cc.canvas.height = 320;
-        }else{
+        } else {
             cc.canvas.height = document.documentElement.clientHeight - margin;
         }
 
-        var xScale = cc.canvas.width /480;
-        var yScale = cc.canvas.height /320;
-        if(xScale > yScale){
+        var xScale = cc.canvas.width / 480;
+        var yScale = cc.canvas.height / 320;
+        if (xScale > yScale) {
             xScale = yScale;
         }
         cc.canvas.width = 480 * xScale;
         cc.canvas.height = 320 * xScale;
-        cc.renderContext.translate(0,cc.canvas.height);
-        cc.renderContext.scale(xScale,xScale);
+        cc.renderContext.translate(0, cc.canvas.height);
+        cc.renderContext.scale(xScale, xScale);
         cc.Director.sharedDirector().setContentScaleFactor(xScale);
     },
     // a selector callback
-    menuCloseCallback: function(pSender)
-    {
+    menuCloseCallback:function (pSender) {
         cc.Director.sharedDirector().end();
     },
-    ccTouchesBegan:function(pTouches,pEvent){
+    ccTouchesBegan:function (pTouches, pEvent) {
         this.bIsMouseDown = true;
     },
-    ccTouchesMoved:function(pTouches,pEvent){
-        if(this.bIsMouseDown){
-            if(pTouches){
-                this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x,pTouches[0].locationInView(0).y));
+    ccTouchesMoved:function (pTouches, pEvent) {
+        if (this.bIsMouseDown) {
+            if (pTouches) {
+                this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y));
             }
         }
     },
-    ccTouchesEnded:function(pTouches,pEvent){
+    ccTouchesEnded:function (pTouches, pEvent) {
         this.bIsMouseDown = false;
     },
-    ccTouchesCancelled:function(pTouches,pEvent){
+    ccTouchesCancelled:function (pTouches, pEvent) {
         console.log("ccTouchesCancelled");
     }
 });
 // there's no 'id' in cpp, so we recommand to return the exactly class pointer
-Helloworld.scene = function(){
+Helloworld.scene = function () {
     // 'scene' is an autorelease object
     var scene = cc.Scene.node();
 
@@ -207,14 +207,12 @@ Helloworld.scene = function(){
     return scene;
 };
 // implement the "static node()" method manually
-Helloworld.node = function(){
+Helloworld.node = function () {
     var pRet = new Helloworld();
-    if(pRet && pRet.init())
-    {
+    if (pRet && pRet.init()) {
         return pRet;
     }
-    else
-    {
+    else {
         pRet = null;
         return null;
     }

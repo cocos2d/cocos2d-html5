@@ -31,13 +31,13 @@ cc.kCCImageFormatJPG = 0;
 cc.kCCImageFormatPNG = 1;
 cc.kCCImageFormatRawData = 2;
 
-cc.NextPOT = function(x){
+cc.NextPOT = function (x) {
     x = x - 1;
     x = x | (x >> 1);
     x = x | (x >> 2);
     x = x | (x >> 4);
     x = x | (x >> 8);
-    x = x | (x >>16);
+    x = x | (x >> 16);
     return x + 1;
 }
 
@@ -58,22 +58,27 @@ cc.RenderTexture = cc.Node.extend({
     _m_pUITextureImage:null,
     _m_ePixelFormat:cc.kCCTexture2DPixelFormat_RGBA8888,
     _m_pSprite:null,
-    ctor:function(){},
+    ctor:function () {
+    },
 
     /** The CCSprite being used.
      The sprite, by default, will use the following blending function: GL_ONE, GL_ONE_MINUS_SRC_ALPHA.
      The blending function can be changed in runtime by calling:
      - [[renderTexture sprite] setBlendFunc:(ccBlendFunc){GL_ONE, GL_ONE_MINUS_SRC_ALPHA}];
      */
-    getSprite:function(){return this._m_pSprite;},
-    setSprite:function(sprite){this._m_pSprite = sprite;},
+    getSprite:function () {
+        return this._m_pSprite;
+    },
+    setSprite:function (sprite) {
+        this._m_pSprite = sprite;
+    },
 
     /** initializes a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
-    initWithWidthAndHeight:function(width,hegith,eFormat){
+    initWithWidthAndHeight:function (width, hegith, eFormat) {
         //TODO
         // If the gles version is lower than GLES_VER_1_0,
         // some extended gles functions can't be implemented, so return false directly.
-        if (cc.Configuration.sharedConfiguration().getGlesVersion() <= GLES_VER_1_0){
+        if (cc.Configuration.sharedConfiguration().getGlesVersion() <= GLES_VER_1_0) {
             return false;
         }
 
@@ -91,17 +96,17 @@ cc.RenderTexture = cc.Node.extend({
 
             //void *data = malloc(powW * powH * 4);
             var data = [];
-            cc.BREAK_IF(! data);
+            cc.BREAK_IF(!data);
 
             //memset(data, 0, (int)(powW * powH * 4));
-            for(var i = 0; i<powW * powH * 4 ; i++){
+            for (var i = 0; i < powW * powH * 4; i++) {
                 data[i] = 0;
             }
 
             this._m_ePixelFormat = eFormat;
 
             this._m_pTexture = new cc.Texture2D();
-            cc.BREAK_IF(! this._m_pTexture);
+            cc.BREAK_IF(!this._m_pTexture);
 
             this._m_pTexture.initWithData(data, this._m_ePixelFormat, powW, powH, cc.SizeMake(width, hegith));
             //free( data );
@@ -115,8 +120,7 @@ cc.RenderTexture = cc.Node.extend({
 
             // check if it worked (probably worth doing :) )
             var status = ccglCheckFramebufferStatus(cc.GL_FRAMEBUFFER);
-            if (status != cc.GL_FRAMEBUFFER_COMPLETE)
-            {
+            if (status != cc.GL_FRAMEBUFFER_COMPLETE) {
                 cc.Assert(0, "Render Texture : Could not attach texture to framebuffer");
                 break;
             }
@@ -128,7 +132,7 @@ cc.RenderTexture = cc.Node.extend({
             this._m_pSprite.setScaleY(-1);
             this.addChild(this._m_pSprite);
 
-            var tBlendFunc = new cc.BlendFunc(GL_ONE,GL_ONE_MINUS_SRC_ALPHA);
+            var tBlendFunc = new cc.BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
             this._m_pSprite.setBlendFunc(tBlendFunc);
 
             ccglBindFramebuffer(cc.GL_FRAMEBUFFER, this._m_nOldFBO);
@@ -138,7 +142,7 @@ cc.RenderTexture = cc.Node.extend({
     },
 
     /** starts grabbing */
-    begin:function(){
+    begin:function () {
         //TODO
         // Save the current matrix
         glPushMatrix();
@@ -151,7 +155,7 @@ cc.RenderTexture = cc.Node.extend({
         var heightRatio = size.height / texSize.height;
 
         // Adjust the orthographic propjection and viewport
-        ccglOrtho(-1.0 / widthRatio,  1.0 / widthRatio, -1.0 / heightRatio, 1.0 / heightRatio, -1,1);
+        ccglOrtho(-1.0 / widthRatio, 1.0 / widthRatio, -1.0 / heightRatio, 1.0 / heightRatio, -1, 1);
         glViewport(0, 0, texSize.width, texSize.height);
 //     CCDirector::sharedDirector()->getOpenGLView()->setViewPortInPoints(0, 0, texSize.width, texSize.height);
 
@@ -173,13 +177,13 @@ cc.RenderTexture = cc.Node.extend({
 
     /** starts rendering to the texture while clearing the texture first.
      This is more efficient then calling -clear first and then -begin */
-    beginWithClear:function(r,g,b,a){
+    beginWithClear:function (r, g, b, a) {
         //TODO
         this.begin();
 
         // save clear color
-        var	clearColor = [0,0,0,0];
-        glGetFloatv(GL_COLOR_CLEAR_VALUE,clearColor);
+        var clearColor = [0, 0, 0, 0];
+        glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
 
         glClearColor(r, g, b, a);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -190,8 +194,8 @@ cc.RenderTexture = cc.Node.extend({
 
     /** ends grabbing*/
     // para bIsTOCacheTexture       the parameter is only used for android to cache the texture
-    end:function(bIsTOCacheTexture){
-        if(bIsTOCacheTexture)
+    end:function (bIsTOCacheTexture) {
+        if (bIsTOCacheTexture)
             bIsTOCacheTexture = true;
 
         ccglBindFramebuffer(cc.GL_FRAMEBUFFER, this._m_nOldFBO);
@@ -201,16 +205,16 @@ cc.RenderTexture = cc.Node.extend({
         //	glViewport(0, 0, (GLsizei)size.width, (GLsizei)size.height);
         cc.Director.sharedDirector().getOpenGLView().setViewPortInPoints(0, 0, size.width, size.height);
 
-        if (cc.ENABLE_CACHE_TEXTTURE_DATA){
-            if (bIsTOCacheTexture){
+        if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
+            if (bIsTOCacheTexture) {
                 // to get the rendered texture data
                 var s = this._m_pTexture.getContentSizeInPixels();
                 var tx = s.width;
                 var ty = s.height;
                 this._m_pUITextureImage = new cc.Image();
-                if (true == this.getUIImageFromBuffer(this._m_pUITextureImage, 0, 0, tx, ty)){
+                if (true == this.getUIImageFromBuffer(this._m_pUITextureImage, 0, 0, tx, ty)) {
                     cc.VolatileTexture.addDataTexture(this._m_pTexture, this._m_pUITextureImage.getData(), cc.kTexture2DPixelFormat_RGBA8888, s);
-                }else{
+                } else {
                     cc.Log("Cache rendertexture failed!");
                 }
             }
@@ -218,7 +222,7 @@ cc.RenderTexture = cc.Node.extend({
     },
 
     /** clears the texture with a color */
-    clear:function(r,g,b,a){
+    clear:function (r, g, b, a) {
         this.beginWithClear(r, g, b, a);
         this.end();
     },
@@ -228,37 +232,37 @@ cc.RenderTexture = cc.Node.extend({
     // para x,y         the lower left corner coordinates of the buffer to save
     // pare nWidth,nHeight    the size of the buffer to save
     //                        when nWidth = 0 and nHeight = 0, the image size to save equals to buffer texture size
-    saveBuffer:function(format,filePath,x,y,nWidth,nHeight){
-        if(typeof(format) == "number"){
-            x = x?x:0;
-            y = y?y:0;
-            nWidth = nWidth?nWidth:0;
-            nHeight = nHeight?nHeight:0;
+    saveBuffer:function (format, filePath, x, y, nWidth, nHeight) {
+        if (typeof(format) == "number") {
+            x = x ? x : 0;
+            y = y ? y : 0;
+            nWidth = nWidth ? nWidth : 0;
+            nHeight = nHeight ? nHeight : 0;
 
             var bRet = false;
             cc.Assert(format == cc.kCCImageFormatJPG || format == cc.kCCImageFormatPNG,
                 "the image can only be saved as JPG or PNG format");
 
             var pImage = new cc.Image();
-            if (pImage != null && this.getUIImageFromBuffer(pImage, x, y, nWidth, nHeight)){
+            if (pImage != null && this.getUIImageFromBuffer(pImage, x, y, nWidth, nHeight)) {
                 var fullpath = cc.FileUtils.getWriteablePath() + filePath;
 
                 bRet = pImage.saveToFile(fullpath);
             }
 
             return bRet;
-        }else if(typeof(format) == "string"){
-            nHeight = nWidth?nWidth:0;
-            nWidth = y?y:0;
-            y = x?x:0;
-            x = filePath?filePath:0;
+        } else if (typeof(format) == "string") {
+            nHeight = nWidth ? nWidth : 0;
+            nWidth = y ? y : 0;
+            y = x ? x : 0;
+            x = filePath ? filePath : 0;
 
-            filePath = format ;
+            filePath = format;
 
             var bRet = false;
 
             var pImage = new cc.Image();
-            if (pImage != null && this.getUIImageFromBuffer(pImage, x, y, nWidth, nHeight)){
+            if (pImage != null && this.getUIImageFromBuffer(pImage, x, y, nWidth, nHeight)) {
                 bRet = pImage.saveToFile(filePath);
             }
             return bRet;
@@ -266,8 +270,8 @@ cc.RenderTexture = cc.Node.extend({
     },
 
     /* get buffer as UIImage, can only save a render buffer which has a RGBA8888 pixel format */
-    getUIImageAsDataFromBuffer:function(format){
-        var  pData     = null;
+    getUIImageAsDataFromBuffer:function (format) {
+        var pData = null;
         //@ todo CCRenderTexture::getUIImageAsDataFromBuffer
 
         // #include "Availability.h"
@@ -312,15 +316,15 @@ cc.RenderTexture = cc.Node.extend({
         //             break;
         //         }
 
-                //@ todo impliment save to jpg or png
-                /*
-                 CGImageCreate(size_t width, size_t height,
-                 size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow,
-                 CGColorSpaceRef space, CGBitmapInfo bitmapInfo, CGDataProviderRef provider,
-                 const CGFloat decode[], bool shouldInterpolate,
-                 CGColorRenderingIntent intent)
-                 */
-                // make data provider with data.
+        //@ todo impliment save to jpg or png
+        /*
+         CGImageCreate(size_t width, size_t height,
+         size_t bitsPerComponent, size_t bitsPerPixel, size_t bytesPerRow,
+         CGColorSpaceRef space, CGBitmapInfo bitmapInfo, CGDataProviderRef provider,
+         const CGFloat decode[], bool shouldInterpolate,
+         CGColorRenderingIntent intent)
+         */
+        // make data provider with data.
         //         CGBitmapInfo bitmapInfo = kCGImageAlphaPremultipliedLast | kCGBitmapByteOrderDefault;
         //         CGDataProviderRef provider		= CGDataProviderCreateWithData(NULL, pixels, myDataLength, NULL);
         //         CGColorSpaceRef colorSpaceRef	= CGColorSpaceCreateDeviceRGB();
@@ -356,9 +360,9 @@ cc.RenderTexture = cc.Node.extend({
     // para x,y         the lower left corner coordinates of the buffer to save
     // pare nWidth,nHeight    the size of the buffer to save
     //                        when nWidth = 0 and nHeight = 0, the image size to save equals to buffer texture size
-    getUIImageFromBuffer:function(pImage,x,y,nWidth,nHeight){
+    getUIImageFromBuffer:function (pImage, x, y, nWidth, nHeight) {
         //TODO
-        if (null == pImage || null == this._m_pTexture){
+        if (null == pImage || null == this._m_pTexture) {
             return false;
         }
 
@@ -382,24 +386,24 @@ cc.RenderTexture = cc.Node.extend({
         //		it should be cut
         var nSavedBufferWidth = nWidth;
         var nSavedBufferHeight = nHeight;
-        if (0 == nWidth){
+        if (0 == nWidth) {
             nSavedBufferWidth = tx;
         }
-        if (0 == nHeight){
+        if (0 == nHeight) {
             nSavedBufferHeight = ty;
         }
-        nSavedBufferWidth = x + nSavedBufferWidth > tx ? (tx - x): nSavedBufferWidth;
-        nSavedBufferHeight = y + nSavedBufferHeight > ty ? (ty - y): nSavedBufferHeight;
+        nSavedBufferWidth = x + nSavedBufferWidth > tx ? (tx - x) : nSavedBufferWidth;
+        nSavedBufferHeight = y + nSavedBufferHeight > ty ? (ty - y) : nSavedBufferHeight;
 
         var pBuffer = null;
         var pTempData = null;
         var bRet = false;
 
-        do{
+        do {
             cc.Assert(this._m_ePixelFormat == cc.kCCTexture2DPixelFormat_RGBA8888, "only RGBA8888 can be saved as image");
 
             pBuffer = [];
-            for(var i = 0; i<nSavedBufferWidth * nSavedBufferHeight * 4;i++){
+            for (var i = 0; i < nSavedBufferWidth * nSavedBufferHeight * 4; i++) {
                 pBuffer[i] = 0;
             }
             cc.BREAK_IF(!pBuffer);
@@ -417,21 +421,21 @@ cc.RenderTexture = cc.Node.extend({
             cc.BREAK_IF(0 == nReadBufferWidth || 0 == nReadBufferHeight);
             cc.BREAK_IF(nReadBufferWidth > nMaxTextureSize || nReadBufferHeight > nMaxTextureSize);
 
-            for(i = 0; i<nReadBufferWidth * nReadBufferHeight * 4;i++){
+            for (i = 0; i < nReadBufferWidth * nReadBufferHeight * 4; i++) {
                 pTempData[i] = 0;
             }
             cc.BREAK_IF(!pTempData);
 
             this.begin();
             glPixelStorei(GL_PACK_ALIGNMENT, 1);
-            glReadPixels(0,0,nReadBufferWidth,nReadBufferHeight,GL_RGBA,GL_UNSIGNED_BYTE, pTempData);
+            glReadPixels(0, 0, nReadBufferWidth, nReadBufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, pTempData);
             this.end(false);
 
             // to get the actual texture data
             // #640 the image read from rendertexture is upseted
-            for (i = 0; i < nSavedBufferHeight; ++i){
-                this._memcpy(pBuffer,i * nSavedBufferWidth * 4,
-                    pTempData,(y + nSavedBufferHeight - i - 1) * nReadBufferWidth * 4 + x * 4,
+            for (i = 0; i < nSavedBufferHeight; ++i) {
+                this._memcpy(pBuffer, i * nSavedBufferWidth * 4,
+                    pTempData, (y + nSavedBufferHeight - i - 1) * nReadBufferWidth * 4 + x * 4,
                     nSavedBufferWidth * 4);
             }
 
@@ -440,21 +444,21 @@ cc.RenderTexture = cc.Node.extend({
 
         return bRet;
     },
-    _memcpy:function(destArr,destIndex,srcArr,srcIndex,size){
-        for(var i = 0;i<size;i++){
+    _memcpy:function (destArr, destIndex, srcArr, srcIndex, size) {
+        for (var i = 0; i < size; i++) {
             destArr[destIndex + i] = srcArr[srcIndex + i];
         }
     }
 });
 
 /** creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
-cc.RenderTexture.renderTextureWithWidthAndHeight = function(width,height,eFormat){
-    if(!eFormat){
+cc.RenderTexture.renderTextureWithWidthAndHeight = function (width, height, eFormat) {
+    if (!eFormat) {
         eFormat = cc.kCCTexture2DPixelFormat_RGBA8888;
     }
 
     var pRet = new cc.RenderTexture();
-    if(pRet && pRet.initWithWidthAndHeight(w, h, eFormat)){
+    if (pRet && pRet.initWithWidthAndHeight(w, h, eFormat)) {
         return pRet;
     }
     return null;

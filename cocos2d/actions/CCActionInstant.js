@@ -35,14 +35,14 @@ var cc = cc = cc || {};
  the CCIntervalAction actions.
  */
 cc.ActionInstant = cc.FiniteTimeAction.extend({
-    isDone: function(){ return true;},
-    step: function(dt)
-    {
+    isDone:function () {
+        return true;
+    },
+    step:function (dt) {
         cc.UNUSED_PARAM(dt);
         this.update(1);
     },
-    update: function(time)
-    {
+    update:function (time) {
         //cc.UNUSED_PARAM(time);
     }
 });
@@ -50,18 +50,15 @@ cc.ActionInstant = cc.FiniteTimeAction.extend({
 /** @brief Show the node
  */
 cc.Show = cc.ActionInstant.extend({
-    startWithTarget:function(pTarget)
-    {
+    startWithTarget:function (pTarget) {
         this._super(pTarget);
         pTarget.setIsVisible(true);
     },
-    reverse:function()
-    {
+    reverse:function () {
         return cc.Hide.action.call(this);
     }
 });
-cc.Show.action = function()
-{
+cc.Show.action = function () {
     return new cc.Show();
 };
 
@@ -69,18 +66,15 @@ cc.Show.action = function()
  @brief Hide the node
  */
 cc.Hide = cc.ActionInstant.extend({
-    startWithTarget:function(pTarget)
-    {
+    startWithTarget:function (pTarget) {
         this._super(pTarget);
         pTarget.setIsVisible(false);
     },
-    reverse:function()
-    {
+    reverse:function () {
         return cc.Show.action.call(this);
     }
 });
-cc.Hide.action = function()
-{
+cc.Hide.action = function () {
     return (new cc.Hide());
 };
 
@@ -88,18 +82,15 @@ cc.Hide.action = function()
 /** @brief Toggles the visibility of a node
  */
 cc.ToggleVisibility = cc.ActionInstant.extend({
-    startWithTarget:function(pTarget)
-    {
+    startWithTarget:function (pTarget) {
         this._super();
         pTarget.setIsVisible(!pTarget.getIsVisible());
     },
-    reverse:function()
-    {
+    reverse:function () {
         return new cc.ToggleVisibility();
     }
 });
-cc.ActionInstant.action = function()
-{
+cc.ActionInstant.action = function () {
     return (new cc.ToggleVisibility());
 };
 
@@ -108,27 +99,23 @@ cc.ActionInstant.action = function()
  @since v0.99.0
  */
 cc.FlipX = cc.ActionInstant.extend({
-    initWithFlipX:function(x)
-    {
+    initWithFlipX:function (x) {
         this._m_bFlipX = x;
         return true;
     },
-    startWithTarget:function(pTarget)
-    {
+    startWithTarget:function (pTarget) {
         this._super();
         pTarget.setFlipX(this._m_bFlipX);
     },
-    reverse:function()
-    {
+    reverse:function () {
         return this.actionWithFlipX(!this._m_bFlipX);
     },
-    _m_bFlipX: false
+    _m_bFlipX:false
 });
-cc.FlipX.actionWithFlipX = function(x)
-{
+cc.FlipX.actionWithFlipX = function (x) {
     var pRet = new cc.FlipX();
-    if(pRet.initWithFlipX(x))
-    return pRet;
+    if (pRet.initWithFlipX(x))
+        return pRet;
 };
 
 /**
@@ -136,26 +123,22 @@ cc.FlipX.actionWithFlipX = function(x)
  @since v0.99.0
  */
 cc.FlipY = cc.ActionInstant.extend({
-    initWithFlipY:function(Y)
-    {
+    initWithFlipY:function (Y) {
         this._m_bFlipY = Y;
         return true;
     },
-    startWithTarget:function(pTarget)
-    {
+    startWithTarget:function (pTarget) {
         this._super();
         pTarget.setFlipY(this._m_bFlipY);
     },
-    reverse:function()
-    {
+    reverse:function () {
         return this.actionWithFlipY(!this._m_bFlipY);
     },
-    _m_bFlipY: false
+    _m_bFlipY:false
 });
-cc.FlipY.actionWithFlipY = function(y)
-{
+cc.FlipY.actionWithFlipY = function (y) {
     var pRet = new cc.FlipY();
-    if(pRet.initWithFlipY(y))
+    if (pRet.initWithFlipY(y))
         return pRet;
 };
 
@@ -164,20 +147,17 @@ cc.FlipY.actionWithFlipY = function(y)
  */
 cc.Place = cc.ActionInstant.extend({
     /** Initializes a Place action with a position */
-    initWithPosition: function(pos)
-    {
+    initWithPosition:function (pos) {
         this._m_tPosition = pos;
         return true;
     },
-    startWithTarget:function(pTarget)
-    {
+    startWithTarget:function (pTarget) {
         this._super(pTarget);
         this._m_pTarget.setPosition(this._m_tPosition);
     }
 });
 /** creates a Place action with a position */
-cc.Place.actionWithPosition= function(pos)
-{
+cc.Place.actionWithPosition = function (pos) {
     var ret = new cc.Place();
     ret.initWithPosition(pos);
     return ret;
@@ -187,49 +167,43 @@ cc.Place.actionWithPosition= function(pos)
 /** @brief Calls a 'callback'
  */
 cc.CallFunc = cc.ActionInstant.extend({
-    initWithTarget: function(pSelectorTarget, selector, d)
-    {
+    initWithTarget:function (pSelectorTarget, selector, d) {
         this._m_pData = d || null;
         this._m_pCallFunc = selector || null;
         this._m_pSelectorTarget = pSelectorTarget || null;
         return true;
     },
-    execute:function()
-    {
-        if(this._m_pCallFunc != null)//CallFunc, N, ND
+    execute:function () {
+        if (this._m_pCallFunc != null)//CallFunc, N, ND
         {
-            this._m_pCallFunc.call(this._m_pSelectorTarget,this._m_pTarget, this._m_pData);
+            this._m_pCallFunc.call(this._m_pSelectorTarget, this._m_pTarget, this._m_pData);
         }
     },
-    startWithTarget:function(pTarget)
-    {
+    startWithTarget:function (pTarget) {
         this._super(pTarget);
         this.execute();
     },
-    getTargetCallback: function(){return this._m_pSelectorTarget;},
-    setTargetCallback: function(pSel)
-    {
-        if(pSel != this._m_pSelectorTarget)
-        {
-            if(this._m_pSelectorTarget)
-            {
+    getTargetCallback:function () {
+        return this._m_pSelectorTarget;
+    },
+    setTargetCallback:function (pSel) {
+        if (pSel != this._m_pSelectorTarget) {
+            if (this._m_pSelectorTarget) {
                 this._m_pSelectorTarget = null;
             }
             this._m_pSelectorTarget = pSel;
         }
     },
-    _m_pSelectorTarget: null,
-    _m_pCallFunc: null
+    _m_pSelectorTarget:null,
+    _m_pCallFunc:null
 });
 /** creates the action with the callback
 
  typedef void (CCObject::*SEL_CallFunc)();
  */
-cc.CallFunc.actionWithTarget= function(pSelectorTarget, selector, d)
-{
+cc.CallFunc.actionWithTarget = function (pSelectorTarget, selector, d) {
     var pRet = new cc.CallFunc();
-    if(pRet && pRet.initWithTarget(pSelectorTarget, selector, d))
-    {
+    if (pRet && pRet.initWithTarget(pSelectorTarget, selector, d)) {
         pRet._m_pCallFunc = selector;
         return pRet;
     }

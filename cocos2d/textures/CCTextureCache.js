@@ -33,13 +33,13 @@ function _AsyncStruct(filename, target, selector) {
     this.filename = filename;
     this.target = target;
     this.selector = selector;
-};
+}
 
 function _ImageInfo(asyncStruct, image, imageType) {
     this.asyncStruct = asyncStruct;
     this.image = image;
     this.imageType = imageType;
-};
+}
 
 // TextureCache - Alloc, Init & Dealloc
 cc.g_sharedTextureCache = null;
@@ -53,8 +53,8 @@ cc.loadImage = function (imageUrl) {
     }
 
     var getImage = new Image();
-    getImage.onload = function(e){
-        cc.TextureCache.sharedTextureCache().cacheImage(imageUrl,getImage);
+    getImage.onload = function (e) {
+        cc.TextureCache.sharedTextureCache().cacheImage(imageUrl, getImage);
     };
 
     getImage.src = imageUrl;
@@ -63,7 +63,7 @@ cc.loadImage = function (imageUrl) {
 cc.computeImageFormatType = function (filename) {
     if (filename.toLowerCase().indexOf('.jpg') > 0 || filename.toLowerCase().indexOf('.jpeg') > 0) {
         return cc.kFmtJpg;
-    }else if (filename.indexOf('.png') > 0 || filename.indexOf('.PNG') > 0) {
+    } else if (filename.indexOf('.png') > 0 || filename.indexOf('.PNG') > 0) {
         return cc.kFmtPng;
     }
     return cc.kFmtUnKnown;
@@ -129,7 +129,7 @@ cc.TextureCache = cc.Class.extend({
         this._m_pImages = new Object();
     },
 
-    addPVRTCImage : function (path, bpp, hasAlpha, width) {
+    addPVRTCImage:function (path, bpp, hasAlpha, width) {
         cc.Assert(path != null, "TextureCache:addPVRTCImage fileimage MUST not be nill");
         cc.Assert(bpp == 2 || bpp == 4, "TextureCache:addPVRTCImage bpp must be either 2 or 4");
         var texture = new cc.Texture2D();
@@ -149,8 +149,8 @@ cc.TextureCache = cc.Class.extend({
         if (texture.initWithPVRTCData(data.bytes(), 0, bpp, hasAlpha, width,
             (bpp == 2 ? cc.kTexture2DPixelFormat_PVRTC2 : cc.kTexture2DPixelFormat_PVRTC4))) {
             this.m_pTextures.setObject(texture, temp);
-        }else {
-            cc.LOG("cocos2d: Couldn't add PVRTCImage:" +path+ " in TextureCache" );
+        } else {
+            cc.LOG("cocos2d: Couldn't add PVRTCImage:" + path + " in TextureCache");
         }
         return texture;
     },
@@ -166,27 +166,27 @@ cc.TextureCache = cc.Class.extend({
      * Otherwise it will return a reference of a previosly loaded image.
      * Supported image extensions: .png, .bmp, .tiff, .jpeg, .pvr, .gif
      */
-    addImage:function (path,loadCallback,errorCallback) {
+    addImage:function (path, loadCallback, errorCallback) {
         cc.Assert(path != null, "TextureCache: fileimage MUST not be null");
 
         var getImage = new Image();
         this._m_pImages[path] = getImage;
-        if(loadCallback)
-            getImage.onload = function(e){
+        if (loadCallback)
+            getImage.onload = function (e) {
                 loadCallback(e);
             };
-        if(errorCallback)
-            getImage.onerror = function(e){
+        if (errorCallback)
+            getImage.onerror = function (e) {
                 errorCallback(e);
             };
         getImage.src = path;
 
-        if(cc.renderContextType == cc.kCanvas){
+        if (cc.renderContextType == cc.kCanvas) {
             return getImage;
-        }else{
+        } else {
             var texture = this.m_pTextures[path];
 
-            if(texture != null){
+            if (texture != null) {
                 return texture;
             }
 
@@ -194,7 +194,7 @@ cc.TextureCache = cc.Class.extend({
 
             if (lowerCase.indexOf('.pvr') > 0) {
                 texture = this.addPVRImage(path);
-            }else if (lowerCase.indexOf('.jpg') > 0 || lowerCase.indexOf('.jpeg') > 0) {
+            } else if (lowerCase.indexOf('.jpg') > 0 || lowerCase.indexOf('.jpeg') > 0) {
                 var image = new cc.Image();
                 if (!image.initWithImageData(pBuffer, nSize, cc.kFmtJpg))return null;
 
@@ -205,7 +205,7 @@ cc.TextureCache = cc.Class.extend({
                     this.m_pTextures[path] = texture;
                 }
                 else {
-                    cc.LOG("cocos2d: Couldn't add image:"+path+" in TextureCache");
+                    cc.LOG("cocos2d: Couldn't add image:" + path + " in TextureCache");
                 }
             }
             else {
@@ -218,10 +218,10 @@ cc.TextureCache = cc.Class.extend({
                 texture.initWithImage(image);
 
                 if (texture) {
-                    this.m_pTextures[pathKey]= texture;
+                    this.m_pTextures[pathKey] = texture;
                 }
                 else {
-                    cc.LOG("cocos2d: Couldn't add image:"+path+" in TextureCache" );
+                    cc.LOG("cocos2d: Couldn't add image:" + path + " in TextureCache");
                 }
             }
 
@@ -230,12 +230,12 @@ cc.TextureCache = cc.Class.extend({
         }
     },
 
-    cacheImage:function(imageUrl,image){
-        if((imageUrl == null) ||(image == null))
+    cacheImage:function (imageUrl, image) {
+        if ((imageUrl == null) || (image == null))
             return;
 
         this._m_pImages[imageUrl] = image;
-        if(cc.renderContextType == cc.kWebGL){
+        if (cc.renderContextType == cc.kWebGL) {
             //webgl
         }
     },
@@ -259,10 +259,10 @@ cc.TextureCache = cc.Class.extend({
 
         var texture = null;
 
-        if (key!= null){
+        if (key != null) {
             texture = this.m_pTextures[key];
-            if(texture!= null){
-                 return texture;
+            if (texture != null) {
+                return texture;
             }
         }
 
@@ -270,8 +270,8 @@ cc.TextureCache = cc.Class.extend({
         texture = new cc.Texture2D();
         texture.initWithImage(image);
 
-        if ((key!= null) && (texture!= null)) {
-            this.m_pTextures[key] =texture;
+        if ((key != null) && (texture != null)) {
+            this.m_pTextures[key] = texture;
         } else {
             cc.LOG("cocos2d: Couldn't add UIImage in TextureCache");
         }
@@ -284,7 +284,7 @@ cc.TextureCache = cc.Class.extend({
      */
     textureForKey:function (key) {
         //var strKey = cc.FileUtils.fullPathFromRelativePath(key);
-        if(cc.renderContextType == cc.kCanvas)
+        if (cc.renderContextType == cc.kCanvas)
             return this._m_pImages[key];
         return this.m_pTextures[key];
     },
@@ -297,7 +297,7 @@ cc.TextureCache = cc.Class.extend({
      */
     removeAllTextures:function () {
         this._m_pImages = new Object();
-        this.m_pTextures=new Object();
+        this.m_pTextures = new Object();
     },
 
     /** Deletes a texture from the cache given a texture
@@ -306,15 +306,15 @@ cc.TextureCache = cc.Class.extend({
         if (!texture)
             return;
 
-        for (var key in this._m_pImages){
-            if(this._m_pImages[key] == texture){
+        for (var key in this._m_pImages) {
+            if (this._m_pImages[key] == texture) {
                 delete(this._m_pImages[key]);
                 return;
             }
         }
 
-        for (var key in this.m_pTextures){
-            if(this.m_pTextures[key] == texture){
+        for (var key in this.m_pTextures) {
+            if (this.m_pTextures[key] == texture) {
                 delete(this.m_pTextures[key]);
                 delete(this._m_pImages[key]);
                 return;
@@ -343,17 +343,17 @@ cc.TextureCache = cc.Class.extend({
     dumpCachedTextureInfo:function () {
         var count = 0;
         var totalBytes = 0;
-        for(var key in this.m_pTextures){
+        for (var key in this.m_pTextures) {
             var tex = this.m_pTextures[key];
             var bpp = tex.bitsPerPixelForFormat();
             // Each texture takes up width * height * bytesPerPixel bytes.
             var bytes = tex.getPixelsWide() * tex.getPixelsHigh() * bpp / 8;
             totalBytes += bytes;
             count++;
-            cc.LOG("cocos2d: '"+ tex.toString() +"' id="+tex.getName()+" " +tex.getPixelsWide()+" x "+tex.getPixelsHigh()+" @ "+bpp+" bpp => "+bytes / 1024+" KB");
+            cc.LOG("cocos2d: '" + tex.toString() + "' id=" + tex.getName() + " " + tex.getPixelsWide() + " x " + tex.getPixelsHigh() + " @ " + bpp + " bpp => " + bytes / 1024 + " KB");
         }
 
-        cc.LOG("cocos2d: TextureCache dumpDebugInfo: "+count+" textures, for "+(totalBytes / 1024)+" KB ("+ (totalBytes / (1024.0 * 1024.0)).toFixed(2)+" MB)");
+        cc.LOG("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, for " + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
     },
 
 
@@ -389,7 +389,7 @@ cc.TextureCache = cc.Class.extend({
         if (tex.initWithPVRFile(key)) {
             this.m_pTextures[key] = tex;
         } else {
-            cc.LOG("cocos2d: Couldn't add PVRImage:"+key+" in TextureCache");
+            cc.LOG("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
         }
 
         return tex;
@@ -412,7 +412,7 @@ cc.TextureCache.purgeSharedTextureCache = function () {
 };
 
 
-cc.kInvalid=0;
-cc.kImageFile=1;
-cc.kImageData=2;
-cc.kString=3;
+cc.kInvalid = 0;
+cc.kImageFile = 1;
+cc.kImageData = 2;
+cc.kString = 3;

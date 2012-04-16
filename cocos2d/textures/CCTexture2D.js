@@ -375,7 +375,7 @@ cc.Texture2D = cc.Class.extend({
      */
     /** Initializes a texture from a string with dimensions, alignment, font name and font size */
     initWithString:function (text, dimensions, alignment, fontName, fontSize) {
-        if(arguments.length == 3){
+        if (arguments.length == 3) {
             fontName = arguments[1];
             fontSize = arguments[2];
             dimensions = cc.SizeMake(0, 0);

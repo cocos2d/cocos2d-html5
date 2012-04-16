@@ -41,61 +41,61 @@ cc.drawingUtil = null;
 cc.renderContext = null;
 cc.canvas = null;
 cc.gameDiv = null;
-cc.renderContextType= cc.kCanvas;
+cc.renderContextType = cc.kCanvas;
 
-window.requestAnimFrame = (function(){
-    return  window.requestAnimationFrame       ||
+window.requestAnimFrame = (function () {
+    return  window.requestAnimationFrame ||
         window.webkitRequestAnimationFrame ||
-        window.mozRequestAnimationFrame    ||
-        window.oRequestAnimationFrame      ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
         window.msRequestAnimationFrame
 })();
 
 //setup game context
-cc.setup = function(){
+cc.setup = function () {
     //Browser Support Information
 
     //event register
-    switch(arguments.length){
+    switch (arguments.length) {
         case 0:
             //add canvas at document
-            var gameCanvas  = document.createElement("Canvas");
+            var gameCanvas = document.createElement("Canvas");
             gameCanvas.setAttribute("id", "gameCanvas");
-            gameCanvas.setAttribute("width",480);
-            gameCanvas.setAttribute("height",320);
+            gameCanvas.setAttribute("width", 480);
+            gameCanvas.setAttribute("height", 320);
             document.body.appendChild(gameCanvas);
             cc.canvas = gameCanvas;
             cc.renderContext = cc.canvas.getContext("2d");
             cc.gameDiv = document.body;
-            cc.renderContextType= cc.kCanvas;
+            cc.renderContextType = cc.kCanvas;
             //document
             break;
         case 1:
             var cName = arguments[0];
             var getElement = null;
-            if(typeof(cName) == "string"){
+            if (typeof(cName) == "string") {
                 getElement = document.getElementById(cName);
-            }else{
+            } else {
                 getElement = arguments[0];
             }
 
-            if(getElement instanceof HTMLCanvasElement){
+            if (getElement instanceof HTMLCanvasElement) {
                 //HTMLCanvasElement
                 cc.canvas = getElement;
                 cc.gameDiv = getElement.parentNode;
                 cc.renderContext = cc.canvas.getContext("2d");
-                cc.renderContextType= cc.kCanvas;
-            }else if(getElement instanceof HTMLDivElement){
+                cc.renderContextType = cc.kCanvas;
+            } else if (getElement instanceof HTMLDivElement) {
                 //HTMLDivElement
-                var gameCanvas  = document.createElement("Canvas");
+                var gameCanvas = document.createElement("Canvas");
                 gameCanvas.setAttribute("id", "gameCanvas");
-                gameCanvas.setAttribute("width",getElement.width);
-                gameCanvas.setAttribute("height",getElement.height);
+                gameCanvas.setAttribute("width", getElement.width);
+                gameCanvas.setAttribute("height", getElement.height);
                 getElement.appendChild(gameCanvas);
                 cc.canvas = gameCanvas;
                 cc.renderContext = cc.canvas.getContext("2d");
                 cc.gameDiv = getElement;
-                cc.renderContextType= cc.kCanvas;
+                cc.renderContextType = cc.kCanvas;
             }
 
             break;
@@ -105,8 +105,8 @@ cc.setup = function(){
             break;
     }
 
-    if(cc.renderContextType == cc.kCanvas){
-        cc.renderContext.translate(0,cc.canvas.height);
+    if (cc.renderContextType == cc.kCanvas) {
+        cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
 
@@ -115,90 +115,86 @@ cc.setup = function(){
 };
 
 
+cc.Application = cc.Class.extend({
+    ctor:function () {
+        this._m_nAnimationInterval = 0;
+        cc.Assert(!cc.sm_pSharedApplication, "CCApplication ctor");
+        cc.sm_pSharedApplication = this;
+    },
 
-cc.Application = cc.Class.extend(
-    {
-        ctor:function(){
-            this._m_nAnimationInterval = 0;
-            cc.Assert(!cc.sm_pSharedApplication,"CCApplication ctor");
-            cc.sm_pSharedApplication  = this;
-        },
+    /**
+     @brief    Callback by CCDirector for limit FPS.
+     @interval       The time, which expressed in second in second, between current frame and next.
+     */
+    setAnimationInterval:function (interval) {
+        this._m_nAnimationInterval = interval;
+    },
 
-        /**
-         @brief	Callback by CCDirector for limit FPS.
-         @interval       The time, which expressed in second in second, between current frame and next.
-         */
-        setAnimationInterval:function(interval){
-            this._m_nAnimationInterval = interval;
-        },
+    /**
+     @brief    Callback by CCDirector for change device orientation.
+     @orientation    The defination of orientation which CCDirector want change to.
+     @return         The actual orientation of the application.
+     */
+    setOrientation:function (orientation) {
+        // swap width and height
+        // TODO, need to be fixed.
+        /* var pView = cc.Director.sharedDirector().getOpenGLView();
+         if (pView)
+         {
+         return pView.setDeviceOrientation(orientation);
+         }
+         return cc.Director.sharedDirector().getDeviceOrientation(); */
 
-        /**
-         @brief	Callback by CCDirector for change device orientation.
-         @orientation    The defination of orientation which CCDirector want change to.
-         @return         The actual orientation of the application.
-         */
-        setOrientation:function(orientation){
-            // swap width and height
-            // TODO, need to be fixed.
-            /* var pView = cc.Director.sharedDirector().getOpenGLView();
-             if (pView)
-             {
-             return pView.setDeviceOrientation(orientation);
-             }
-             return cc.Director.sharedDirector().getDeviceOrientation(); */
+    },
 
-        },
+    /**
+     @brief    Get status bar rectangle in EGLView window.
+     */
+    statusBarFrame:function (rect) {
+        if (rect) {
+            // Windows doesn't have status bar.
+            rect = cc.RectMake(0, 0, 0, 0);
+        }
 
-        /**
-         @brief	Get status bar rectangle in EGLView window.
-         */
-        statusBarFrame:function(rect){
-            if (rect)
-            {
-                // Windows doesn't have status bar.
-                rect = cc.RectMake(0, 0, 0, 0);
-            }
+    },
 
-        },
+    /**
+     @brief    Run the message loop.
+     */
+    run:function () {
+        // Initialize instance and cocos2d.
 
-        /**
-         @brief	Run the message loop.
-         */
-        run:function(){
-            // Initialize instance and cocos2d.
-
-            if(! this.initInstance() || ! this.applicationDidFinishLaunching())
-            {
-                return 0;
-            }
-            // TODO, need to be fixed.
-            if(window.requestAnimFrame){
-                var callback = function(){
-                    cc.Director.sharedDirector().mainLoop();
-                    window.requestAnimFrame(callback);
-                };
-                cc.Log(window.requestAnimFrame);
+        if (!this.initInstance() || !this.applicationDidFinishLaunching()) {
+            return 0;
+        }
+        // TODO, need to be fixed.
+        if (window.requestAnimFrame) {
+            var callback = function () {
+                cc.Director.sharedDirector().mainLoop();
                 window.requestAnimFrame(callback);
-            }
-            else{
-                var callback = function(){
-                    cc.Director.sharedDirector().mainLoop();
-                };
-                setInterval(callback, this._m_nAnimationInterval * 1000);
-            }
+            };
+            cc.Log(window.requestAnimFrame);
+            window.requestAnimFrame(callback);
+        }
+        else {
+            var callback = function () {
+                cc.Director.sharedDirector().mainLoop();
+            };
+            setInterval(callback, this._m_nAnimationInterval * 1000);
+        }
 
-        },
-        _m_nAnimationInterval:null
+    },
+    _m_nAnimationInterval:null
 
-    });
+});
 
 /**
- @brief	Get current applicaiton instance.
+ @brief    Get current applicaiton instance.
  @return Current application instance pointer.
  */
-cc.Application.sharedApplication =  function(){
+cc.Application.sharedApplication = function () {
 
-    cc.Assert(cc.sm_pSharedApplication,"sharedApplication");
+    cc.Assert(cc.sm_pSharedApplication, "sharedApplication");
     return cc.sm_pSharedApplication;
 };
 
@@ -206,7 +202,7 @@ cc.Application.sharedApplication =  function(){
  @brief Get current language config
  @return Current language config
  */
-cc.Application.getCurrentLanguage = function(){
+cc.Application.getCurrentLanguage = function () {
     var ret = cc.kLanguageEnglish;
 
     // TODO, need to be fixed.
