@@ -284,10 +284,10 @@ cc.TMXMapInfo = cc.SAXParser.extend({
             }
             else {
                 var tileset = new cc.TMXTilesetInfo();
-                tileset.m_sName = t.getAttribute('name')
-                tileset.m_uFirstGid = parseInt(t.getAttribute('firstgid'));
-                tileset.m_uSpacing = parseInt(t.getAttribute('spacing'));
-                tileset.m_uMargin = parseInt(t.getAttribute('margin'));
+                tileset.m_sName = t.getAttribute('name') || "";
+                tileset.m_uFirstGid = parseInt(t.getAttribute('firstgid')) || 1;
+                tileset.m_uSpacing = parseInt(t.getAttribute('spacing')) || 0;
+                tileset.m_uMargin = parseInt(t.getAttribute('margin')) || 0;
 
                 var s = cc.Size;
                 s.width = parseFloat(t.getAttribute('tilewidth'));
@@ -300,7 +300,6 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                     imgSource = imgpath + imgSource;
                 }
                 tileset.m_sSourceImage = imgSource;
-
                 this.getTilesets().push(tileset);
             }
         }
@@ -321,8 +320,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         var layers = map.getElementsByTagName('layer');
         if (layers) {
             for (var i = 0, len = layers.length; i < len; i++) {
-                var l = layers[i]
-
+                var l = layers[i];
                 var data = l.getElementsByTagName('data')[0];
 
                 var layer = new cc.TMXLayerInfo();
@@ -336,7 +334,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 var visible = l.getAttribute('visible')
                 layer.m_bVisible = !(visible == "0");
 
-                var opacity = l.getAttribute('opacity')
+                var opacity = l.getAttribute('opacity') || 1;
 
                 if (opacity) {
                     layer._m_cOpacity = parseInt(255 * parseFloat(opacity));
@@ -353,16 +351,19 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 // nodes up into multiple nodes. So, we'll stitch them back
                 // together.
                 var nodeValue = ''
-                for (j = 0, jen = data.childNodes.length; j < jen; j++) {
+                for (var j = 0,jen = data.childNodes.length; j < jen; j++) {
                     nodeValue += data.childNodes[j].nodeValue
                 }
 
                 // Unpack the tilemap data
-                var compression = data.getAttribute('compression')
+                var compression = data.getAttribute('compression');
                 cc.Assert(compression == null || compression == "gzip" || compression == "zlib", "TMX: unsupported compression method");
                 switch (compression) {
                     case 'gzip':
                         layer._m_pTiles = cc.unzipBase64AsArray(nodeValue, 4);
+                        break;
+                    case 'zlib':
+                        //layer._m_pTiles = JXG.Util.Unzip(nodeValue);
                         break;
                     // Uncompressed
                     case null:
@@ -384,13 +385,12 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 var g = objectgroups[i];
                 var objectGroup = new cc.TMXObjectGroup();
                 objectGroup.setGroupName(g.getAttribute('name'));
-                var positionOffset = new cc.Point;
-                positionOffset.x = parseFloat(g.getAttribute('x')) * this.getTileSize().width;
-                positionOffset.y = parseFloat(g.getAttribute('y')) * this.getTileSize().height;
+                var positionOffset = new cc.Point();
+                positionOffset.x = parseFloat(g.getAttribute('x')) * this.getTileSize().width || 0;
+                positionOffset.y = parseFloat(g.getAttribute('y')) * this.getTileSize().height || 0;
                 objectGroup.setPositionOffset(positionOffset);
 
                 this.getObjectGroups().push(objectGroup);
-
                 // The parent element is now "objectgroup"
                 this.setParentElement(cc.TMXPropertyObjectGroup);
             }
@@ -408,21 +408,22 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 var dict = [];
 
                 // Set the name of the object to the value for "name"
-                dict["name"] = o.getAttribute('name');
+                dict["name"] = o.getAttribute('name') || "";
 
                 // Assign all the attributes as key/name pairs in the properties dictionary
-                dict["type"] = o.getAttribute('type');
+                dict["type"] = o.getAttribute('type') || "";
 
-                dict["x"] = parseInt(o.getAttribute('x')) + objectGroup.getPositionOffset().x;
+                dict["x"] = parseInt(o.getAttribute('x') || 0) + objectGroup.getPositionOffset().x;
 
-                var y = parseInt(o.getAttribute('y')) + objectGroup.getPositionOffset().y;
+                var y = parseInt(o.getAttribute('y') || 0) + objectGroup.getPositionOffset().y;
+
                 // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
                 y = this.getMapSize().height * this.getTileSize().height - y - parseInt(o.getAttribute('height'));
                 dict["y"] = y;
 
-                dict["width"] = new String(o.getAttribute('width'));
+                dict["width"] = parseInt(o.getAttribute('width'));
 
-                dict["height"] = new String(o.getAttribute('height'));
+                dict["height"] = parseInt(o.getAttribute('height'));
 
                 // Add the object to the objectGroup
                 objectGroup.getObjects().push(dict);

@@ -34,22 +34,15 @@ var s_AtlasTest    = "Resources/Images/atlastest.png";
 // tilemaps resource
 var s_TilesPng     = "Resources/TileMaps/tiles.png";
 var s_LevelMapTga  = "Resources/TileMaps/levelmap.tga";
-
-var s_orthogonal_test1  = "Resources/TileMaps/orthogonal-test1.tmx";
-var s_orthogonal_test1_tsx  = "Resources/TileMaps/orthogonal-test1.tsx";
-var s_orthogonal_test2  = "Resources/TileMaps/orthogonal-test2.tmx";
-var s_orthogonal_test3  = "Resources/TileMaps/orthogonal-test3.tmx";
-var s_orthogonal_test4  = "Resources/TileMaps/orthogonal-test4.tmx";
-var s_orthogonal_test4_hd  = "Resources/TileMaps/orthogonal-test4-hd.tmx";
-var s_orthogonal_test5  = "Resources/TileMaps/orthogonal-test5.tmx";
-var s_orthogonal_test6  = "Resources/TileMaps/orthogonal-test6.tmx";
-var s_orthogonal_test6_hd  = "Resources/TileMaps/orthogonal-test6-hd.tmx";
-
-var s_hexa_test  = "Resources/TileMaps/hexa-test.tmx";
-var s_iso_test  = "Resources/TileMaps/iso-test.tmx";
-var s_iso_test1  = "Resources/TileMaps/iso-test1.tmx";
-var s_iso_test2  = "Resources/TileMaps/iso-test2.tmx";
-var s_iso_test2_uncompressed  = "Resources/TileMaps/iso-test2-uncompressed.tmx";
+var s_fixedOrthoTest2Png = "Resources/TileMaps/fixed-ortho-test2.png";
+var s_hexaTilesPng = "Resources/TileMaps/hexa-tiles.png";
+var s_isoTestPng = "Resources/TileMaps/iso-test.png";
+var s_isoTest2Png = "Resources/TileMaps/iso-test2.png";
+var s_isoPng = "Resources/TileMaps/iso.png";
+var s_orthoTest1BwPng = "Resources/TileMaps/ortho-test1_bw.png";
+var s_tilesHdPng = "Resources/TileMaps/tiles-hd.png";
+var s_tmwDesertSpacingHdPng = "Resources/TileMaps/tmw_desert_spacing-hd.png";
+var s_tmwDesertSpacingPng = "Resources/TileMaps/tmw_desert_spacing.png";
 
 var g_ressources= [
     //image ressources
@@ -88,22 +81,42 @@ var g_ressources= [
     {type:"image",	src: s_TilesPng},
     {type:"image",	src: s_streak},
 
+    {type:"image",	src: s_fixedOrthoTest2Png},
+    {type:"image",	src: s_hexaTilesPng},
+    {type:"image",	src: s_isoTestPng},
+    {type:"image",	src: s_isoTest2Png},
+    {type:"image",	src: s_isoPng},
+    {type:"image",	src: s_orthoTest1BwPng},
+    {type:"image",	src: s_tilesHdPng},
+    {type:"image",	src: s_tmwDesertSpacingHdPng},
+    {type:"image",	src: s_tmwDesertSpacingPng},
+
     //tmx ressources
-    {type:"tmx",	src: s_orthogonal_test1},
-    {type:"tmx",	src: s_orthogonal_test1_tsx},
-    {type:"tmx",	src: s_orthogonal_test2},
-    {type:"tmx",	src: s_orthogonal_test3},
-    {type:"tmx",	src: s_orthogonal_test4},
-    {type:"tmx",	src: s_orthogonal_test4_hd},
-    {type:"tmx",	src: s_orthogonal_test5},
-    {type:"tmx",	src: s_orthogonal_test6},
-    {type:"tmx",	src: s_orthogonal_test6_hd},
-    {type:"tmx",	src: s_hexa_test},
-    {type:"tmx",	src: s_iso_test},
-    {type:"tmx",	src: s_iso_test1},
-    {type:"tmx",	src: s_iso_test2},
-    {type:"tmx",	src: s_iso_test2_uncompressed}
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test1.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test1.tsx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test2.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test3.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test4.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test4-hd.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test5.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test6.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test6-hd.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/hexa-test.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test1.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test2.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test2-uncompressed.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/ortho-objects.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test-objectgroup.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test-zorder.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test-zorder.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test-vertexz.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test-vertexz.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test-movelayer.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/orthogonal-test-movelayer.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/iso-test-bug787.tmx"},
+    {type:"tmx",	src: "Resources/TileMaps/test-object-layer.tmx"},
 
     //tga ressources
-    /* {type: "TGA",    src: s_LevelMapTga}*/
+     {type: "tga",    src: s_LevelMapTga}
 ];
