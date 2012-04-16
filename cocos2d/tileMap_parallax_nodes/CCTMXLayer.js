@@ -77,6 +77,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     setLayerSize:function (Var) {
         this._m_tLayerSize = Var;
     },
+
     /** size of the map's tile (could be differnt from the tile's size) */
     getMapTileSize:function () {
         return this._m_tMapTileSize;
@@ -122,6 +123,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         var texture = null;
         if(tilesetInfo){
             texture = cc.TextureCache.sharedTextureCache().addImage(tilesetInfo.m_sSourceImage.toString());
+            console.log("texture",texture);
         }
         if (this.initWithTexture(texture, capacity)){
             // layerInfo
@@ -193,17 +195,20 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         // if GID == 0, then no tile is present
         if(gid){
             var z = pos.x + pos.y * this._m_tLayerSize.width;
+
             tile = this.getChildByTag(z);
+
             // tile not created yet. create it
             if( ! tile ){
                 var rect = this._m_pTileSet.rectForGID(gid);
                 rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width/ this._m_fContentScaleFactor, rect.size.height/ this._m_fContentScaleFactor);
 
                 tile = new cc.Sprite();
+
                 tile.initWithBatchNode(this, rect);
                 tile.setPosition(this.positionAt(pos));
                 tile.setVertexZ(this._vertexZForPos(pos));
-                tile.setAnchorPoint(cc.PointZero);
+                tile.setAnchorPoint(cc.PointZero());
                 tile.setOpacity(this._m_cOpacity);
 
                 var indexForZ = this._atlasIndexForExistantZ(z);
@@ -232,12 +237,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     setTileGID:function (gid, pos) {
         cc.Assert( pos.x < this._m_tLayerSize.width && pos.y < this._m_tLayerSize.height && pos.x >=0 && pos.y >=0, "TMXLayer: invalid position");
         cc.Assert( this._m_pTiles && this._m_pAtlasIndexArray, "TMXLayer: the tiles map has been released");
-        cc.Assert( gid == 0 || gid >= this._m_pTileSet.m_uFirstGid, "TMXLayer: invalid gid" );
+        cc.Assert( gid !== 0 || !(gid >= this._m_pTileSet.m_uFirstGid) ,  "TMXLayer: invalid gid:"+gid );
 
         var currentGID = this.tileGIDAt(pos);
 
-        if( currentGID != gid )
-        {
+        if( currentGID != gid ){
             // setting gid=0 is equal to remove the tile
             if( gid == 0 ){
                 this.removeTileAt(pos);
@@ -288,7 +292,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             var sprite =this.getChildByTag(z);
 
             if(sprite){
-                cc.SpriteBatchNode.removeChild(sprite, true);
+                this.removeChild(sprite, true);
             }
             else{
                 this._m_pobTextureAtlas.removeQuadAtIndex(atlasIndex);
@@ -314,8 +318,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     /** returns the position in pixels of a given tile coordinate */
     positionAt:function (pos) {
         var ret = cc.PointZero();
-        switch( this._m_uLayerOrientation )
-        {
+        switch( this._m_uLayerOrientation ){
             case cc.TMXOrientationOrtho:
                 ret = this._positionForOrthoAt(pos);
                 break;
@@ -381,22 +384,23 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
      */
     addChild:function (child) {
         cc.Assert(0, "addChild: is not supported on cc.TMXLayer. Instead use setTileGID:at:/tileAt:");
-
     },
 // super method
     removeChild:function (child, cleanup) {
-        var sprite = cc.Sprite.node();
+        var sprite = child;
+
         // allows removing nil objects
         if(!sprite)
             return;
 
-        cc.Assert( this._m_pChildren.containsObject(sprite), "Tile does not belong to TMXLayer");
+        cc.Assert(cc.ArrayContainsObject(this._m_pChildren,sprite), "Tile does not belong to TMXLayer");
 
         var atlasIndex = sprite.getAtlasIndex();
         var zz = this._m_pAtlasIndexArray[atlasIndex];
         this._m_pTiles[zz] = 0;
         cc.ArrayRemoveObjectAtIndex(this._m_pAtlasIndexArray, atlasIndex);
-        cc.SpriteBatchNode.removeChild(sprite, cleanup);
+
+        this._super(sprite, cleanup);
     },
     draw:function () {
         //cc.Log("Start TMXLayer Draw()");
@@ -443,8 +447,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
     _calculateLayerOffset:function (pos) {
         var ret = cc.PointZero;
-        switch( this._m_uLayerOrientation )
-        {
+        switch( this._m_uLayerOrientation ){
             case cc.TMXOrientationOrtho:
                 ret = cc.ccp( pos.x * this._m_tMapTileSize.width, -pos.y *this._m_tMapTileSize.height);
                 break;
@@ -453,7 +456,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
                     (this._m_tMapTileSize.height /2 ) * (-pos.x - pos.y) );
                 break;
             case cc.TMXOrientationHex:
-                cc.Assert(cc.Point.CCPointEqualToPoint(pos, cc.PointZero), "offset for hexagonal map not implemented yet");
+                ret = cc.ccp(0,0);
+                cc.LOG("cocos2d:offset for hexagonal map not implemented yet");
                 break;
         }
         return ret;
@@ -472,6 +476,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
         this._m_pReusedTile.setAnchorPoint(cc.PointZero());
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
+        this._m_pReusedTile.setTag(z);
 
         // optimization:
         // The difference between _appendTileForGID and _insertTileForGID is that append is faster, since
