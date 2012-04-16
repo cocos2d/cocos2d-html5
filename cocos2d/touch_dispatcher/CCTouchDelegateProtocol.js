@@ -36,22 +36,27 @@ cc.Touch = cc.Class.extend({
     _m_prevPoint:cc.PointZero(),
     _m_iId:0,
 
-    ctor:function(nViewId,x,y){},
+    ctor:function (nViewId, x, y) {
+    },
 
-    locationInView:function(nViewId){
+    locationInView:function (nViewId) {
         return this._m_point;
     },
 
-    previousLocationInView:function(nViewId){
+    previousLocationInView:function (nViewId) {
         return this._m_prevPoint;
     },
 
-    view:function(){return this._m_nViewId;},
-    id:function(){return this._m_iId;},
+    view:function () {
+        return this._m_nViewId;
+    },
+    id:function () {
+        return this._m_iId;
+    },
 
-    SetTouchInfo:function(nViewId,x,y,iId){
-        if(!iId)
-            iId =0;
+    SetTouchInfo:function (nViewId, x, y, iId) {
+        if (!iId)
+            iId = 0;
 
         this._m_nViewId = nViewId;
         this._m_prevPoint = this._m_point;
@@ -64,18 +69,27 @@ cc.Touch = cc.Class.extend({
 cc.TouchDelegate = cc.Class.extend({
     _m_pEventTypeFuncMap:null,
 
-    ccTouchBegan:function(pTouch,pEvent){return false;},
+    ccTouchBegan:function (pTouch, pEvent) {
+        return false;
+    },
 
     // optional
-    ccTouchMoved:function(pTouch,pEvent){},
-    ccTouchEnded:function(pTouch,pEvent){},
-    ccTouchCancelled:function(pTouch,pEvent){},
+    ccTouchMoved:function (pTouch, pEvent) {
+    },
+    ccTouchEnded:function (pTouch, pEvent) {
+    },
+    ccTouchCancelled:function (pTouch, pEvent) {
+    },
 
     // optional
-    ccTouchesBegan:function(pTouches,pEvent){},
-    ccTouchesMoved:function(pTouches,pEvent){},
-    ccTouchesEnded:function(pTouches,pEvent){},
-    ccTouchesCancelled:function(pTouches,pEvent){},
+    ccTouchesBegan:function (pTouches, pEvent) {
+    },
+    ccTouchesMoved:function (pTouches, pEvent) {
+    },
+    ccTouchesEnded:function (pTouches, pEvent) {
+    },
+    ccTouchesCancelled:function (pTouches, pEvent) {
+    },
 
     /*
      * In TouchesTest, class Padle inherits from CCSprite and CCTargetedTouchDelegate.
@@ -85,8 +99,10 @@ cc.TouchDelegate = cc.Class.extend({
      * release().
      * More detain info please refer issue #926(cocos2d-x).
      */
-    touchDelegateRetain:function(){},
-    touchDelegateRelease:function(){}
+    touchDelegateRetain:function () {
+    },
+    touchDelegateRelease:function () {
+    }
 });
 
 /**
@@ -107,12 +123,17 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend({
     /** Return YES to claim the touch.
      @since v0
      */
-    ccTouchBegan:function(pTouch,pEvent){return false;},
+    ccTouchBegan:function (pTouch, pEvent) {
+        return false;
+    },
 
     // optional
-    ccTouchMoved:function(pTouch,pEvent){},
-    ccTouchEnded:function(pTouch,pEvent){},
-    ccTouchCancelled:function(pTouch,pEvent){}
+    ccTouchMoved:function (pTouch, pEvent) {
+    },
+    ccTouchEnded:function (pTouch, pEvent) {
+    },
+    ccTouchCancelled:function (pTouch, pEvent) {
+    }
 });
 
 /** @brief
@@ -121,9 +142,13 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend({
  */
 cc.StandardTouchDelegate = cc.TouchDelegate.extend({
     // optional
-    ccTouchesBegan:function(pTouches,pEvent){},
-    ccTouchesMoved:function(pTouches,pEvent){},
-    ccTouchesEnded:function(pTouches,pEvent){},
-    ccTouchesCancelled:function(pTouches,pEvent){}
+    ccTouchesBegan:function (pTouches, pEvent) {
+    },
+    ccTouchesMoved:function (pTouches, pEvent) {
+    },
+    ccTouchesEnded:function (pTouches, pEvent) {
+    },
+    ccTouchesCancelled:function (pTouches, pEvent) {
+    }
 });
 

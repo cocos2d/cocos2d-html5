@@ -32,42 +32,34 @@
 var cc = cc = cc || {};
 //browser detection, based on mootools
 cc.Browser = cc.Class.extend({
-    ctor:function()
-    {
+    ctor:function () {
         this.ua = navigator.userAgent.toLowerCase();
         this.platform = navigator.platform.toLowerCase();
         this.UA = this.ua.match(/(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/) || [null, 'unknown', 0];
         this.mode = this.UA[1] == 'ie' && document.documentMode;
     }
 });
-cc.Browser.init = function()
-{
-    if(!cc.Browser.ins)
-    {
+cc.Browser.init = function () {
+    if (!cc.Browser.ins) {
         cc.Browser.ins = new cc.Browser();
     }
     return cc.Browser.ins;
 };
 //type, version, platform are actual variables not functions
-cc.Browser.type = function()
-{
+cc.Browser.type = function () {
     var that = cc.Browser.init();
     return (that.UA[1] == 'version') ? that.UA[3] : that.UA[1];
 }();
-cc.Browser.version = function()
-{
+cc.Browser.version = function () {
     var that = cc.Browser.init();
     return parseFloat(that.mode || (that.UA[1] == 'opera' && that.UA[4]) ? that.UA[4] : that.UA[2]);
 }();
-cc.Browser.platform = function()
-{
+cc.Browser.platform = function () {
     var that = cc.Browser.init();
     return that.ua.match(/ip(?:ad|od|hone)/) ? 'ios' : (that.ua.match(/(?:webos|android)/) || that.platform.match(/mac|win|linux/) || ['other'])[0]
 }();
-cc.Browser.prefix = function()
-{
-    switch(cc.Browser.type)
-    {
+cc.Browser.prefix = function () {
+    switch (cc.Browser.type) {
         case "firefox":
             return "-moz-";
         case "chrome":
@@ -82,96 +74,81 @@ cc.Browser.prefix = function()
     }
 }();
 cc.domNode = cc.Class.extend({
-    _m_nZOrder:0,//z-index;
+    _m_nZOrder:0, //z-index;
     _m_fRotation:0.0,
     _m_fScaleX:1.0,
     _m_fScaleY:1.0,
-    _m_tPosition:{x:0,y:0},
-    _m_tPositionInPixels:{x:0,y:0},
+    _m_tPosition:{x:0, y:0},
+    _m_tPositionInPixels:{x:0, y:0},
     _m_fSkewX:0.0,
     _m_fSkewY:0.0,
     _m_pChildren:[],
     _m_tAnchorPoint:cc.PointZero(),
     _m_pParent:null,
     _domElement:null,
-    _m_tContentSize: cc.PointZero(),
-    getElement: function(){return this._domElement},
-    transform: function()
-    {
+    _m_tContentSize:cc.PointZero(),
+    getElement:function () {
+        return this._domElement
+    },
+    transform:function () {
 
     },
     _transform:{
-        skew:function(x,y)
-        {
-            return "skew("+x+"deg, "+y+"deg)";
+        skew:function (x, y) {
+            return "skew(" + x + "deg, " + y + "deg)";
         },
-        skewX:function(x)
-        {
-            return "skewX("+x+"deg)";
+        skewX:function (x) {
+            return "skewX(" + x + "deg)";
         },
-        skewY:function(Y)
-        {
-            return "skewY("+Y+"deg)";
+        skewY:function (Y) {
+            return "skewY(" + Y + "deg)";
         },
-        rotate:function(x)
-        {
-            return "rotate("+x+"deg)";
+        rotate:function (x) {
+            return "rotate(" + x + "deg)";
         },
-        translate:function(x,y)
-        {
-            return "translate("+x+"px, "+y+"px)";
+        translate:function (x, y) {
+            return "translate(" + x + "px, " + y + "px)";
         },
-        translateX:function(x)
-        {
-            return "translateX("+x+"px)";
+        translateX:function (x) {
+            return "translateX(" + x + "px)";
         },
-        translateY:function(y)
-        {
-            return "translateY("+y+"px)";
+        translateY:function (y) {
+            return "translateY(" + y + "px)";
         },
-        scale:function(x,y)
-        {
-            return "scale("+x+", "+y+")";
+        scale:function (x, y) {
+            return "scale(" + x + ", " + y + ")";
         },
-        scaleX:function(x)
-        {
-            return "scaleX("+x+")";
+        scaleX:function (x) {
+            return "scaleX(" + x + ")";
         },
-        scaleY:function(Y)
-        {
-            return "scaleY("+Y+")";
+        scaleY:function (Y) {
+            return "scaleY(" + Y + ")";
         }
     },
-    ctor:function()
-    {
+    ctor:function () {
         this._domElement = cc.$new('div');
         this.style = this._domElement.style;
-        this.style[cc.Browser.prefix+"transform-origin"] = "50% 50%";
+        this.style[cc.Browser.prefix + "transform-origin"] = "50% 50%";
         //this.style["float"] = "left";
-        this.style[cc.Browser.prefix+"user-select"] = "none";
+        this.style[cc.Browser.prefix + "user-select"] = "none";
     },
-    id:function(x)
-    {
-        if(x != null)
-        {
+    id:function (x) {
+        if (x != null) {
             this._domElement.id = x;
         }
-        else
-        {
+        else {
             return this._domElement.id;
         }
     },
-    test:function()
-    {
+    test:function () {
         this.style.background = "red";
         this.style.height = "200px";
         this.style.width = "200px";
-        this.style["float"] ="left";
+        this.style["float"] = "left";
 
         cc.$("body").appendChild(this._domElement);
     },
-    getZOrder: function()
-    {
+    getZOrder:function () {
         return this.style.zIndex;
     },
     getSkewX:function () {
@@ -181,28 +158,24 @@ cc.domNode = cc.Class.extend({
         this._m_fSkewX = newSkewX;
         //this._domElement.style.transform
     },
-    setPosition: function(x,y)
-    {
-        if(arguments.length == 1)//if only 1 param, then x is an object
+    setPosition:function (x, y) {
+        if (arguments.length == 1)//if only 1 param, then x is an object
         {
             this._m_tPosition = {x:x.x, y:-x.y};
         }
-        else{
+        else {
             this._m_tPosition = {x:x, y:-y};
         }
         //this.transform.translate;
-        this.style[cc.Browser.prefix+"transform"] = this._transform.translate(this._m_tPosition.x, this._m_tPosition.y);
+        this.style[cc.Browser.prefix + "transform"] = this._transform.translate(this._m_tPosition.x, this._m_tPosition.y);
     },
-    getPosition: function()
-    {
+    getPosition:function () {
         return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
     },
-    addChild: function(child)
-    {
+    addChild:function (child) {
         console.log(typeof child);
     },
-    _setZOrder: function(z)
-    {
+    _setZOrder:function (z) {
         this.style.zIndex = z;
     },
     setParent:function (Var) {
@@ -214,12 +187,12 @@ cc.domNode = cc.Class.extend({
         this._m_bIsRunning = true;
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
-        if(pArray && pArray.length > 0) {
-            for(var i=0;i < pArray.length;i++){
+        if (pArray && pArray.length > 0) {
+            for (var i = 0; i < pArray.length; i++) {
                 var pNode = pArray[i];
-                if(pNode && (typeof(func) == "string")){
+                if (pNode && (typeof(func) == "string")) {
                     pNode[func]();
-                }else if(pNode && (typeof(func) == "function")){
+                } else if (pNode && (typeof(func) == "function")) {
                     func.call(pNode);
                 }
             }
@@ -232,8 +205,7 @@ cc.domNode = cc.Class.extend({
     onEnterTransitionDidFinish:function () {
         this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnterTransitionDidFinish");
     },
-    visit: function()
-    {
+    visit:function () {
 
     },
     onExit:function () {

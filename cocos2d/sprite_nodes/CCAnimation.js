@@ -37,33 +37,44 @@ cc.Animation = cc.Class.extend({
     _name:"",
     _delay:0,
     _frames:null,
-    ctor: function()
-    {
+    ctor:function () {
         this._frames = [];
     },
     // attributes
     /** get name of the animation */
-    getName:function(){return this._name;},
+    getName:function () {
+        return this._name;
+    },
     /** set name of the animation */
-    setName:function(name){this._name = name;},
+    setName:function (name) {
+        this._name = name;
+    },
 
     /** get delay between frames in seconds */
-    getDelay:function(){return this._delay;},
+    getDelay:function () {
+        return this._delay;
+    },
     /** set delay between frames in seconds */
-    setDelay:function(delay){this._delay = delay;},
+    setDelay:function (delay) {
+        this._delay = delay;
+    },
 
     /** get array of frames */
-    getFrames:function(){return this._frames;},
+    getFrames:function () {
+        return this._frames;
+    },
     /** set array of frames, the Frames is retained */
-    setFrames:function(frames) {this._frames = frames;},
+    setFrames:function (frames) {
+        this._frames = frames;
+    },
 
     /** Initializes a CCAnimation with frames and a delay between frames
      @since v0.99.5
      */
 
-    initWithFrames:function(frames,delay){
+    initWithFrames:function (frames, delay) {
         this._delay = delay;
-        if(frames)
+        if (frames)
             this._frames = frames;
         else
             this._frames = [];
@@ -72,23 +83,23 @@ cc.Animation = cc.Class.extend({
     },
 
     /** adds a frame to a CCAnimation */
-    addFrame:function(frame){
+    addFrame:function (frame) {
         this._frames.push(frame);
     },
 
     /** Adds a frame with an image filename. Internally it will create a CCSpriteFrame and it will add it.
      Added to facilitate the migration from v0.8 to v0.9.
      */
-    addFrameWithFileName:function(fileName){
+    addFrameWithFileName:function (fileName) {
         var pTexture = cc.TextureCache.sharedTextureCache().addImage(fileName);
         var rect = cc.RectZero();
-        if(pTexture instanceof HTMLImageElement){
-            rect.size =  cc.SizeMake(pTexture.width,pTexture.height);
-        }else{
+        if (pTexture instanceof HTMLImageElement) {
+            rect.size = cc.SizeMake(pTexture.width, pTexture.height);
+        } else {
             rect.size = pTexture.getContentSize();
         }
 
-        var frame = cc.SpriteFrame.frameWithTexture(pTexture,rect);
+        var frame = cc.SpriteFrame.frameWithTexture(pTexture, rect);
 
         this._frames.push(frame);
     },
@@ -96,12 +107,12 @@ cc.Animation = cc.Class.extend({
     /** Adds a frame with a texture and a rect. Internally it will create a CCSpriteFrame and it will add it.
      Added to facilitate the migration from v0.8 to v0.9.
      */
-    addFrameWithTexture:function(texture,rect){
+    addFrameWithTexture:function (texture, rect) {
         var pFrame = cc.SpriteFrame.frameWithTexture(texture, rect);
         this._frames.push(pFrame);
     },
 
-    init:function(){
+    init:function () {
         return this.initWithFrames(null, 0);
     }
 });
@@ -109,7 +120,7 @@ cc.Animation = cc.Class.extend({
 /** Creates an animation
  @since v0.99.5
  */
-cc.Animation.animation = function(){
+cc.Animation.animation = function () {
     var pAnimation = new cc.Animation();
     pAnimation.init();
 
@@ -119,8 +130,8 @@ cc.Animation.animation = function(){
 /* Creates an animation with frames and a delay between frames.
  @since v0.99.5
  */
-cc.Animation.animationWithFrames = function(frames,delay){
-    if(!delay)
+cc.Animation.animationWithFrames = function (frames, delay) {
+    if (!delay)
         delay = 0;
 
     var pAnimation = new cc.Animation();

@@ -47,46 +47,42 @@ cc.MenuItem = cc.Node.extend({
     _m_pfnSelector:null,
     _m_nScriptHandler:0,
     _m_bIsSelected:false,
-    getIsSelected:function(){return this._m_bIsSelected;},
+    getIsSelected:function () {
+        return this._m_bIsSelected;
+    },
     _m_bIsEnabled:false,
-    getIsEnabled:function(){return this._m_bIsEnabled;},
-    setIsEnabled:function(enable)
-    {
+    getIsEnabled:function () {
+        return this._m_bIsEnabled;
+    },
+    setIsEnabled:function (enable) {
         this._m_bIsEnabled = enable;
     },
-    initWithTarget:function(rec, selector)
-    {
+    initWithTarget:function (rec, selector) {
         var pRet = new cc.MenuItem();
         pRet.initWithTarget(rec, selector);
         return pRet;
     },
-    rect: function()
-    {
-        return cc.RectMake( this._m_tPosition.x - this._m_tContentSize.width * this._m_tAnchorPoint.x,
+    rect:function () {
+        return cc.RectMake(this._m_tPosition.x - this._m_tContentSize.width * this._m_tAnchorPoint.x,
             this._m_tPosition.y - this._m_tContentSize.height * this._m_tAnchorPoint.y,
             this._m_tContentSize.width, this._m_tContentSize.height);
     },
-    selected:function()
-    {
+    selected:function () {
         this._m_bIsSelected = true;
     },
-    unselected:function()
-    {
+    unselected:function () {
         this._m_bIsSelected = false;
     },
-    setTarget:function(rec, selector)
-    {
+    setTarget:function (rec, selector) {
         this._m_pListener = rec;
         this._m_pfnSelector = selector;
     }
 });
-cc.MenuItem.itemWithTarget = function(rec, selector)
-{
+cc.MenuItem.itemWithTarget = function (rec, selector) {
     var pRet = new cc.MenuItem();
     pRet.initWithTarget(rec, selector);
     return pRet;
 };
-
 
 
 /** @brief An abstract class for "label" CCMenuItemLabel items
@@ -99,86 +95,81 @@ cc.MenuItem.itemWithTarget = function(rec, selector)
 cc.MenuItemLabel = cc.MenuItem.extend({
     RGBAProtocol:true,
     _m_tDisabledColor:new cc.Color3B(),
-    getDisabledColor:function(){return this._m_tDisabledColor;},
-    setDisabledColor:function(color){this._m_tDisabledColor = color;},
+    getDisabledColor:function () {
+        return this._m_tDisabledColor;
+    },
+    setDisabledColor:function (color) {
+        this._m_tDisabledColor = color;
+    },
     _m_pLabel:null,
-    getLabel:function(){return this._m_pLabel;},
-    setLabel:function(label)
-    {
-        if (label)
-        {
+    getLabel:function () {
+        return this._m_pLabel;
+    },
+    setLabel:function (label) {
+        if (label) {
             this.addChild(label);
             label.setAnchorPoint(ccp(0, 0));
             this.setContentSize(label.getContentSize());
         }
 
-        if (this._m_pLabel)
-        {
+        if (this._m_pLabel) {
             this.removeChild(this._m_pLabel, true);
         }
 
         this._m_pLabel = label;
     },
     _m_fOrginalScale:0,
-    setIsEnabled:function(enabled)
-    {
-        if( this._m_bIsEnabled != enabled )
-        {
-            if(!enabled)
-            {
+    setIsEnabled:function (enabled) {
+        if (this._m_bIsEnabled != enabled) {
+            if (!enabled) {
                 this._m_tColorBackup = this._m_pLabel.getColor();
                 this._m_pLabel.setColor(this._m_tDisabledColor);
             }
-            else
-            {
+            else {
                 this._m_pLabel.setColor(this._m_tColorBackup);
             }
         }
         cc.MenuItem.setIsEnabled(enabled);
     },
-    setOpacity:function(opacity)
-    {
+    setOpacity:function (opacity) {
         this._m_pLabel.setOpacity(opacity);
     },
-    getOpacity:function(){},
-    setColor:function(color)
-    {
+    getOpacity:function () {
+    },
+    setColor:function (color) {
         this._m_pLabel.setColor(color);
     },
-    getColor:function(){return this._m_pLabel.getColor},
-    setIsOpacityModifyRGB:function(bValue){},
-    getIsOpacityModifyRGB:function(){},
-    initWithLabel:function(label, target, selector)
-    {
+    getColor:function () {
+        return this._m_pLabel.getColor
+    },
+    setIsOpacityModifyRGB:function (bValue) {
+    },
+    getIsOpacityModifyRGB:function () {
+    },
+    initWithLabel:function (label, target, selector) {
         this._super(target, selector);
         this._m_fOriginalScale = 1.0;
         this._m_tColorBackup = cc.WHITE;
-        this._m_tDisabledColor = cc.ccc3(126,126,126);
+        this._m_tDisabledColor = cc.ccc3(126, 126, 126);
         this.setLabel(label);
         return true;
     },
-    activate:function()
-    {
-        if(this._m_bIsEnabled)
-        {
+    activate:function () {
+        if (this._m_bIsEnabled) {
             this.stopAllActions();
-            this.setScale( this._m_fOriginalScale );
+            this.setScale(this._m_fOriginalScale);
             this._super();
         }
     },
-    selected:function()
-    {
-        if(this._m_bIsEnabled)
-        {
+    selected:function () {
+        if (this._m_bIsEnabled) {
             this._super();
 
             var action = getActionByTag(cc.kZoomActionTag);
-            if (action)
-            {
+            if (action) {
                 this.stopAction(action);
             }
-            else
-            {
+            else {
                 this._m_fOriginalScale = this.getScale();
             }
 
@@ -187,10 +178,8 @@ cc.MenuItemLabel = cc.MenuItem.extend({
             this.runAction(zoomAction);
         }
     },
-    unselected:function()
-    {
-        if(this._m_bIsEnabled)
-        {
+    unselected:function () {
+        if (this._m_bIsEnabled) {
             this._super();
             this.stopActionByTag(cc.kZoomActionTag);
             var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._m_fOriginalScale);
@@ -200,77 +189,66 @@ cc.MenuItemLabel = cc.MenuItem.extend({
     }
 });
 /*
-cc.MenuItemLabel = function(label, target, selector)
-{
-    var pRet = new cc.MenuItemLabel();
-    pRet.initWithLabel(label, target, selector);
-    return pRet;
-};
-*/
+ cc.MenuItemLabel = function(label, target, selector)
+ {
+ var pRet = new cc.MenuItemLabel();
+ pRet.initWithLabel(label, target, selector);
+ return pRet;
+ };
+ */
 
 /** @brief A CCMenuItemAtlasFont
  Helper class that creates a MenuItemLabel class with a LabelAtlas
  */
 cc.MenuItemAtlasFont = cc.MenuItemLabel.extend({
-    initFromString:function(value, charMapFile, itemWidth, itemHeight, starCharMap, target, selector)
-    {
-        cc.Assert( value != null && value.length != 0, "value length must be greater than 0");
+    initFromString:function (value, charMapFile, itemWidth, itemHeight, starCharMap, target, selector) {
+        cc.Assert(value != null && value.length != 0, "value length must be greater than 0");
         var label = new cc.LabelAtlas();
         label.initWithString(value, charMapFile, itemWidth, itemHeight, starCharMap);
-        if (cc.MenuItemLabel.initWithLabel(label, target, selector))
-        {
+        if (cc.MenuItemLabel.initWithLabel(label, target, selector)) {
             // do something ?
         }
         return true;
     }
 });
-cc.MenuItemAtlasFont.itemFromString = function(value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector)
-{
+cc.MenuItemAtlasFont.itemFromString = function (value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector) {
     var pRet = new cc.MenuItemAtlasFont();
     pRet.initFromString(value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector);
     return pRet;
 };
 
 
-
 /** @brief A CCMenuItemFont
  Helper class that creates a CCMenuItemLabel class with a Label
  */
 cc.MenuItemFont = cc.MenuItemLabel.extend({
-    initFromString:function(value, target, selector)
-    {
-        cc.Assert( value != null && value.length != 0, "Value length must be greater than 0");
+    initFromString:function (value, target, selector) {
+        cc.Assert(value != null && value.length != 0, "Value length must be greater than 0");
 
         this._m_strFontName = cc._fontName;
         this._m_uFontSize = cc._fontSize;
 
         var label = cc.LabelTTF.labelWithString(value, this._m_strFontName, this._m_uFontSize);
-        if (cc.MenuItemLabel.initWithLabel(label, target, selector))
-        {
+        if (cc.MenuItemLabel.initWithLabel(label, target, selector)) {
             // do something ?
         }
         return true;
     },
-    setFontSizeObj:function(s)
-    {
+    setFontSizeObj:function (s) {
         this._m_uFontSize = s;
         this._recreateLabel();
     },
-    fontSizeObj:function()
-    {
+    fontSizeObj:function () {
         return this._m_uFontSize;
     },
-    setFontNameObj:function(name)
-    {
+    setFontNameObj:function (name) {
         this._m_strFontName = name;
         this._recreateLabel();
     },
-    fontNameObj:function()
-    {
+    fontNameObj:function () {
         return this._m_strFontName;
     },
-    _recreateLabel:function()
-    {
+    _recreateLabel:function () {
         var label = cc.LabelTTF.labelWithString(this._m_pLabel.getString(),
             this._m_strFontName, this._m_uFontSize);
         this.setLabel(label);
@@ -278,20 +256,23 @@ cc.MenuItemFont = cc.MenuItemLabel.extend({
     _m_uFontSize:0,
     _m_strFontName:''
 });
-cc.MenuItemFont.setFontSize = function(s){cc._fontSize = s;};
-cc.MenuItemFont.fontSize = function(){return cc._fontSize;};
-cc.MenuItemFont.setFontName = function(name)
-{
-    if( cc._fontNameRelease )
-    {
+cc.MenuItemFont.setFontSize = function (s) {
+    cc._fontSize = s;
+};
+cc.MenuItemFont.fontSize = function () {
+    return cc._fontSize;
+};
+cc.MenuItemFont.setFontName = function (name) {
+    if (cc._fontNameRelease) {
         cc._fontName = '';
     }
     cc._fontName = name;
     cc._fontNameRelease = true;
 };
-cc.MenuItemFont.fontName = function(){return cc._fontName};
-cc.MenuItemFont.itemFromString = function(value, target, selector)
-{
+cc.MenuItemFont.fontName = function () {
+    return cc._fontName
+};
+cc.MenuItemFont.itemFromString = function (value, target, selector) {
     var pRet = new cc.MenuItemFont();
     pRet.initFromString(value, target, selector);
     return pRet;
@@ -309,61 +290,57 @@ cc.MenuItemFont.itemFromString = function(value, target, selector)
 cc.MenuItemSprite = cc.MenuItem.extend({
     RGBAProtocol:true,
     _m_pNormalImage:null,
-    getNormalImage:function(){return this._m_pNormalImage;},
-    setNormalImage:function(NormalImage)
-    {
-        if (NormalImage)
-        {
+    getNormalImage:function () {
+        return this._m_pNormalImage;
+    },
+    setNormalImage:function (NormalImage) {
+        if (NormalImage) {
             this.addChild(NormalImage, 0, cc.kNormalTag);
             NormalImage.setAnchorPoint(cc.ccp(0, 0));
             NormalImage.setIsVisible(true);
         }
 
-        if (this._m_pNormalImage)
-        {
+        if (this._m_pNormalImage) {
             this.removeChild(this._m_pNormalImage, true);
         }
 
         this._m_pNormalImage = NormalImage;
     },
     _m_pSelectedImage:null,
-    getSelectedImage:function(){return this._m_pSelectedImage;},
-    setSelectedImage:function(SelectedImage)
-    {
-        if (SelectedImage)
-        {
+    getSelectedImage:function () {
+        return this._m_pSelectedImage;
+    },
+    setSelectedImage:function (SelectedImage) {
+        if (SelectedImage) {
             this.addChild(SelectedImage, 0, cc.kSelectedTag);
             SelectedImage.setAnchorPoint(cc.ccp(0, 0));
             SelectedImage.setIsVisible(false);
         }
 
-        if (this._m_pSelectedImage)
-        {
+        if (this._m_pSelectedImage) {
             this.removeChild(this._m_pSelectedImage, true);
         }
 
         this._m_pSelectedImage = SelectedImage;
     },
     _m_pDisabledImage:null,
-    getDisabledImage:function(){return this._m_pDisabledImage;},
-    setDisabledImage:function(DisabledImage)
-    {
-        if (DisabledImage)
-        {
+    getDisabledImage:function () {
+        return this._m_pDisabledImage;
+    },
+    setDisabledImage:function (DisabledImage) {
+        if (DisabledImage) {
             this.addChild(DisabledImage, 0, cc.kDisableTag);
             DisabledImage.setAnchorPoint(cc.ccp(0, 0));
             DisabledImage.setIsVisible(false);
         }
 
-        if (this._m_pDisabledImage)
-        {
+        if (this._m_pDisabledImage) {
             this.removeChild(this._m_pDisabledImage, true);
         }
 
         this._m_pDisabledImage = DisabledImage;
     },
-    initFromNormalSprite:function(normalSprite, selectedSprite, disabledSprite, target, selector)
-    {
+    initFromNormalSprite:function (normalSprite, selectedSprite, disabledSprite, target, selector) {
         cc.Assert(normalSprite != null, "");
         cc.MenuItem.initWithTarget(target, selector);
         this.setNormalImage(normalSprite);
@@ -373,127 +350,101 @@ cc.MenuItemSprite = cc.MenuItem.extend({
         this.setContentSize(this._m_pNormalImage.getContentSize());
         return true;
     },
-    setColor:function(color)
-    {
+    setColor:function (color) {
         this._m_pNormalImage.setColor(color);
 
-        if (this._m_pSelectedImage)
-        {
+        if (this._m_pSelectedImage) {
             this._m_pSelectedImage.setColor(color);
         }
 
-        if (this._m_pDisabledImage)
-        {
+        if (this._m_pDisabledImage) {
             this._m_pDisabledImage.setColor(color);
         }
     },
-    getColor:function()
-    {
+    getColor:function () {
         this._m_pNormalImage.getColor();
     },
-    setOpacity:function(opacity)
-    {
+    setOpacity:function (opacity) {
         this._m_pNormalImage.setOpacity(opacity);
 
-        if (this._m_pSelectedImage)
-        {
+        if (this._m_pSelectedImage) {
             this._m_pSelectedImage.setOpacity(opacity);
         }
 
-        if (this._m_pDisabledImage)
-        {
+        if (this._m_pDisabledImage) {
             this._m_pDisabledImage.setOpacity(opacity);
         }
     },
-    getOpacity:function()
-    {
+    getOpacity:function () {
         this._m_pNormalImage.getOpacity();
     },
-    selected:function()
-    {
+    selected:function () {
         this._super();
-        if (this._m_pDisabledImage)
-        {
+        if (this._m_pDisabledImage) {
             this._m_pDisabledImage.setIsVisible(false);
         }
 
-        if (this._m_pSelectedImage)
-        {
+        if (this._m_pSelectedImage) {
             this._m_pNormalImage.setIsVisible(false);
             this._m_pSelectedImage.setIsVisible(true);
         }
-        else
-        {
+        else {
             this._m_pNormalImage.setIsVisible(true);
         }
     },
-    unselected: function()
-    {
+    unselected:function () {
         this._super();
 
         this._m_pNormalImage.setIsVisible(true);
 
-        if (this._m_pSelectedImage)
-        {
+        if (this._m_pSelectedImage) {
             this._m_pSelectedImage.setIsVisible(false);
         }
 
-        if (this._m_pDisabledImage)
-        {
+        if (this._m_pDisabledImage) {
             this._m_pDisabledImage.setIsVisible(false);
         }
     },
-    setIsEnabled:function(bEnabled)
-    {
+    setIsEnabled:function (bEnabled) {
         this._super(bEnabled);
 
-        if (this._m_pSelectedImage)
-        {
+        if (this._m_pSelectedImage) {
             this._m_pSelectedImage.setIsVisible(false);
         }
 
-        if (bEnabled)
-        {
+        if (bEnabled) {
             this._m_pNormalImage.setIsVisible(true);
 
-            if (this._m_pDisabledImage)
-            {
+            if (this._m_pDisabledImage) {
                 this._m_pDisabledImage.setIsVisible(false);
             }
         }
-        else
-        {
-            if (this._m_pDisabledImage)
-            {
+        else {
+            if (this._m_pDisabledImage) {
                 this._m_pDisabledImage.setIsVisible(true);
                 this._m_pNormalImage.setIsVisible(false);
             }
-            else
-            {
+            else {
                 this._m_pNormalImage.setIsVisible(true);
             }
         }
     }
 });
-cc.MenuItemSprite.itemFromNormalSprite = function(normalSprite, selectedSprite, three, four, five)//overloaded function
+cc.MenuItemSprite.itemFromNormalSprite = function (normalSprite, selectedSprite, three, four, five)//overloaded function
 {
     var pRet = new cc.MenuItemSprite();
     //when you send 4 arguments, five is undefined
-    if(five)
-    {
+    if (five) {
         pRet.initFromNormalSprite(normalSprite, selectedSprite, three, four, five);
     }
-    else if(four)
-    {
+    else if (four) {
         return cc.MenuItemSprite.itemFromNormalSprite(normalSprite, selectedSprite, null, three, four);
     }
-    else
-    {
+    else {
         return cc.MenuItemSprite.itemFromNormalSprite(normalSprite, selectedSprite, three, null, null);
     }
     return pRet;
 };
-
 
 
 /** @brief CCMenuItemImage accepts images as items.
@@ -505,38 +456,31 @@ cc.MenuItemSprite.itemFromNormalSprite = function(normalSprite, selectedSprite, 
  For best results try that all images are of the same size
  */
 cc.MenuItemImage = cc.MenuItemSprite.extend({
-    initFromNormalImage:function(normalImage, selectedImage, disabledImage, target, selector)
-    {
+    initFromNormalImage:function (normalImage, selectedImage, disabledImage, target, selector) {
         var normalSprite = cc.Sprite.spriteWithFile(normalImage);
         var selectedSprite = null;
         var disabledSprite = null;
 
-        if (selectedImage)
-        {
+        if (selectedImage) {
             selectedSprite = cc.Sprite.spriteWithFile(selectedImage);
         }
 
-        if(disabledImage)
-        {
+        if (disabledImage) {
             disabledSprite = cc.Sprite.spriteWithFile(disabledImage);
         }
         return this.initFromNormalSprite(normalSprite, selectedSprite, disabledSprite, target, selector);
     }
 });
-cc.MenuItemImage.itemFromNormalImage = function(normalImage, selectedImage, three, four, five)
-{
+cc.MenuItemImage.itemFromNormalImage = function (normalImage, selectedImage, three, four, five) {
     pRet = new cc.MenuItemImage();
-    if(arguments.length == 4)
-    {
+    if (arguments.length == 4) {
         return cc.MenuItemImage.itemFromNormalImage(normalImage, selectedImage, null, three, four);
     }
-    if (pRet.initFromNormalImage(normalImage, selectedImage, three, four, five))
-    {
+    if (pRet.initFromNormalImage(normalImage, selectedImage, three, four, five)) {
         return pRet;
     }
     return null;
 };
-
 
 
 /** @brief A CCMenuItemToggle
@@ -546,56 +490,56 @@ cc.MenuItemImage.itemFromNormalImage = function(normalImage, selectedImage, thre
 cc.MenuItemToggle = cc.MenuItem.extend({
     RGBAProtocol:true,
     _m_cOpacity:0,
-    getOpacity:function(){return this._m_cOpacity;},
-    setOpacity:function(Opacity)
-    {
+    getOpacity:function () {
+        return this._m_cOpacity;
+    },
+    setOpacity:function (Opacity) {
         this._m_cOpacity = Opacity;
-        if(this._m_pSubItems && this._m_pSubItems.length > 0)
-        {
-            for(var it = 0; it < this._m_pSubItems.length; it++)
-            {
+        if (this._m_pSubItems && this._m_pSubItems.length > 0) {
+            for (var it = 0; it < this._m_pSubItems.length; it++) {
                 this._m_pSubItems[it].setOpacity(Opacity);
             }
         }
     },
     _m_tColor:new cc.Color3B(),
-    getColor:function(){return this._m_tColor;},
-    setColor:function(Color)
-    {
+    getColor:function () {
+        return this._m_tColor;
+    },
+    setColor:function (Color) {
         this._m_tColor = Color;
-        if(this._m_pSubItems && this._m_pSubItems.length > 0)
-        {
-            for(var it = 0; it < this._m_pSubItems.length; it++)
-            {
+        if (this._m_pSubItems && this._m_pSubItems.length > 0) {
+            for (var it = 0; it < this._m_pSubItems.length; it++) {
                 this._m_pSubItems[it].setColor(Color);
             }
         }
     },
     _m_uSelectedIndex:0,
-    getSelectedIndex:function(){return this._m_uSelectedIndex;},
-    setSelectedIndex:function(SelectedIndex)
-    {
-        if( SelectedIndex != this._m_uSelectedIndex )
-        {
+    getSelectedIndex:function () {
+        return this._m_uSelectedIndex;
+    },
+    setSelectedIndex:function (SelectedIndex) {
+        if (SelectedIndex != this._m_uSelectedIndex) {
             this._m_uSelectedIndex = SelectedIndex;
             this.removeChildByTag(cc.kCurrentItem, false);
             var item = this._m_pSubItems[this._m_uSelectedIndex];
             this.addChild(item, 0, cc.kCurrentItem);
             var s = item.getContentSize();
             this.setContentSize(s);
-            item.setPosition( cc.ccp( s.width/2, s.height/2 ) );
+            item.setPosition(cc.ccp(s.width / 2, s.height / 2));
         }
     },
     _m_pSubItems:[],
-    getSubItems:function(){return this._m_pSubItems;},
-    setSubItems:function(SubItems){this._m_pSubItems = SubItems;},
-    initWithTarget:function(args/*Multiple arguments follow*/)
-    {
+    getSubItems:function () {
+        return this._m_pSubItems;
+    },
+    setSubItems:function (SubItems) {
+        this._m_pSubItems = SubItems;
+    },
+    initWithTarget:function (args/*Multiple arguments follow*/) {
         this._super();
         this._m_pSubItems = [];
         var z = 0;
-        for(var pos = 2; pos<args.length; pos++)
-        {
+        for (var pos = 2; pos < args.length; pos++) {
             z++;
             this._m_pSubItems.push(args[pos]);
         }
@@ -603,8 +547,7 @@ cc.MenuItemToggle = cc.MenuItem.extend({
         this.setSelectedIndex(0);
         return true;
     },
-    initWithItem:function(item)
-    {
+    initWithItem:function (item) {
         cc.MenuItem.initWithTarget(null, null);
         this._m_pSubItems = [];
         this._m_pSubItems.push(item);
@@ -612,57 +555,48 @@ cc.MenuItemToggle = cc.MenuItem.extend({
         this.setSelectedIndex(0);
         return true;
     },
-    addSubItem:function(item)
-    {
+    addSubItem:function (item) {
         this._m_pSubItems.push(item);
     },
-    activate:function()
-    {
+    activate:function () {
         // update index
-        if( this._m_bIsEnabled )
-        {
+        if (this._m_bIsEnabled) {
             var newIndex = (this._m_uSelectedIndex + 1) % this._m_pSubItems.length;
             this.setSelectedIndex(newIndex);
         }
         this._super();
     },
-    selected:function()
-    {
+    selected:function () {
         this._super();
         this._m_pSubItems[this._m_uSelectedIndex].selected();
     },
-    unselected:function()
-    {
+    unselected:function () {
         this._super();
         this._m_pSubItems[this._m_uSelectedIndex].unselected();
     },
-    setIsEnabled:function(enabled)
-    {
+    setIsEnabled:function (enabled) {
         this._super(enabled);
 
-        if(this._m_pSubItems && this._m_pSubItems.length > 0)
-        {
-            for(var it = 0; it < this._m_pSubItems.length; it++)
-            {
+        if (this._m_pSubItems && this._m_pSubItems.length > 0) {
+            for (var it = 0; it < this._m_pSubItems.length; it++) {
                 this._m_pSubItems[it].setIsEnabled(enabled);
             }
         }
     },
-    selectedItem:function()
-    {
+    selectedItem:function () {
         return this._m_pSubItems[this._m_uSelectedIndex];
     },
-    setIsOpacityModifyRGB:function(bValue){},
-    getIsOpacityModifyRGB:function(){}
+    setIsOpacityModifyRGB:function (bValue) {
+    },
+    getIsOpacityModifyRGB:function () {
+    }
 });
-cc.MenuItemToggle.itemWithTarget = function(/*Multiple arguments follow*/)
-{
+cc.MenuItemToggle.itemWithTarget = function (/*Multiple arguments follow*/) {
     var pRet = new cc.MenuItemToggle();
     pRet.initWithTarget(arguments);
     return pRet;
 };
-cc.MenuItemToggle.itemWithItem= function(item)
-{
+cc.MenuItemToggle.itemWithItem = function (item) {
     var pRet = new cc.MenuItemToggle();
     pRet.initWithItem(item);
     return pRet;

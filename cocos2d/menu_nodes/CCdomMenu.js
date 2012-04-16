@@ -32,36 +32,31 @@
 var cc = cc = cc || {};
 cc.Menu = cc.domNode.extend({
     _container:null,
-    init: function()
-    {
-        if(!cc.$("#Cocos2dGameContainer"))
-        {
+    init:function () {
+        if (!cc.$("#Cocos2dGameContainer")) {
             this.setupHTML();
         }
-        else
-        {
+        else {
             this._container = cc.$("#Cocos2dGameContainer");
         }
     },
-    setupHTML: function()
-    {
+    setupHTML:function () {
         //set up html;
         //get the canvas
         var canvas = cc.canvas;
         this._container = cc.$new("div");
-        this._container.id ="Cocos2dGameContainer";
+        this._container.id = "Cocos2dGameContainer";
         this._container.style.position = "absolute";
         this._container.style.overflow = "hidden";
 
         cc.gameDiv.insertBefore(this._container, canvas);
         this._container.appendChild(canvas);
     },
-    initWithItems: function(args)
-    {
+    initWithItems:function (args) {
         this.init();
-        this._domElement.id = "Cocos2dMenuLayer"+Date.now();
+        this._domElement.id = "Cocos2dMenuLayer" + Date.now();
         this._domElement.className = "Cocos2dMenuLayer";
-        this.style.width = cc.Director.sharedDirector().getWinSize().width+"px";
+        this.style.width = cc.Director.sharedDirector().getWinSize().width + "px";
         this.style.height = 0;
         this.style.bottom = 0;
         this.style.position = "absolute";
@@ -70,42 +65,35 @@ cc.Menu = cc.domNode.extend({
         this.style.cursor = "crosshair";
 
 
-        for(var i = 0; i < args.length; i++)
-        {
-            if(args[i])
-            {
+        for (var i = 0; i < args.length; i++) {
+            if (args[i]) {
                 this._domElement.appendChild(args[i].getElement());
             }
         }
     },
-    onEnter:function(){
+    onEnter:function () {
         this.show();
     },
-    onExit:function(){
+    onExit:function () {
         this.hide();
     },
-    hide: function()//hide all children!
+    hide:function ()//hide all children!
     {
         this.style.visibility = "hidden";
     },
-    show: function()
-    {
+    show:function () {
         this.style.visibility = "visible";
     },
-    addChild: function(child, zindex)
-    {
-        if(zindex)
-        {
+    addChild:function (child, zindex) {
+        if (zindex) {
             child._setZOrder(zindex);
         }
-        if(child.getElement)
-        {
+        if (child.getElement) {
             this._domElement.appendChild(child.getElement());
         }
     }
 });
-cc.Menu.menuWithItems = function()
-{
+cc.Menu.menuWithItems = function () {
     pret = new cc.Menu();
     pret.initWithItems(arguments);
     return pret;
