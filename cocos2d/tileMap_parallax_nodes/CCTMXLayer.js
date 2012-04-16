@@ -465,9 +465,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
 
         var z = pos.x + pos.y * this._m_tLayerSize.width;
-
         this._m_pReusedTile = new cc.Sprite();
         this._m_pReusedTile.initWithBatchNode(this, rect);
+        //console.log(gid);
         this._m_pReusedTile.setPosition(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
         this._m_pReusedTile.setAnchorPoint(cc.PointZero());
