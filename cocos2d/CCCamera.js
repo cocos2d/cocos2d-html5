@@ -50,31 +50,35 @@ var cc = cc = cc || {};
  */
 cc.Camera = cc.Class.extend({
     /*protected:*/
-     _m_fEyeX:null,
+    _m_fEyeX:null,
     _m_fEyeY:null,
     _m_fEyeZ:null,
     _m_fCenterX:null,
-     _m_fCenterY:null,
+    _m_fCenterY:null,
     _m_fCenterZ:null,
-     _m_fUpX:null,
+    _m_fUpX:null,
     _m_fUpY:null,
     _m_fUpZ:null,
-     _m_bDirty:null,
+    _m_bDirty:null,
 
     /*public:*/
-    ctor:function(){
+    ctor:function () {
         this.restore();
     },
-    description:function(){
-        return "<CCCamera | center =("+this._m_fCenterX+","+this._m_fCenterY + "," +this._m_fCenterZ +")>";
+    description:function () {
+        return "<CCCamera | center =(" + this._m_fCenterX + "," + this._m_fCenterY + "," + this._m_fCenterZ + ")>";
     },
     /** sets the dirty value */
-    setDirty:function(bValue) { this._m_bDirty = bValue; },
+    setDirty:function (bValue) {
+        this._m_bDirty = bValue;
+    },
     /** get the dirty value */
-    getDirty:function() { return this._m_bDirty; },
+    getDirty:function () {
+        return this._m_bDirty;
+    },
 
     /** sets the camera in the default position */
-    restore:function(){
+    restore:function () {
         this._m_fEyeX = this._m_fEyeY = 0.0;
         this._m_fEyeZ = cc.Camera.getZEye();
 
@@ -87,15 +91,15 @@ cc.Camera = cc.Class.extend({
         this._m_bDirty = false;
     },
     /** Sets the camera using gluLookAt using its eye, center and up_vector */
-    locate:function(){
-        if (this._m_bDirty){
+    locate:function () {
+        if (this._m_bDirty) {
             //TODO gl
             //gluLookAt(this._m_fEyeX, this._m_fEyeY, this._m_fEyeZ,this._m_fCenterX, this._m_fCenterY, this._m_fCenterZ,this._m_fUpX, this._m_fUpY, this._m_fUpZ);
         }
 
     },
     /** sets the eye values in points */
-    setEyeXYZ:function( fEyeX,  fEyeY,  fEyeZ){
+    setEyeXYZ:function (fEyeX, fEyeY, fEyeZ) {
         this._m_fEyeX = fEyeX * cc.CONTENT_SCALE_FACTOR;
         this._m_fEyeY = fEyeY * cc.CONTENT_SCALE_FACTOR;
         this._m_fEyeZ = fEyeZ * cc.CONTENT_SCALE_FACTOR;
@@ -103,7 +107,7 @@ cc.Camera = cc.Class.extend({
         this._m_bDirty = true;
     },
     /** sets the center values in points */
-    setCenterXYZ:function( fCenterX,  fCenterY,  fCenterZ){
+    setCenterXYZ:function (fCenterX, fCenterY, fCenterZ) {
         this._m_fCenterX = fCenterX * cc.CONTENT_SCALE_FACTOR;
         this._m_fCenterY = fCenterY * cc.CONTENT_SCALE_FACTOR;
         this._m_fCenterZ = fCenterZ * cc.CONTENT_SCALE_FACTOR;
@@ -111,7 +115,7 @@ cc.Camera = cc.Class.extend({
         this._m_bDirty = true;
     },
     /** sets the up values */
-    setUpXYZ:function( fUpX,  fUpY,  fUpZ){
+    setUpXYZ:function (fUpX, fUpY, fUpZ) {
         this._m_fUpX = fUpX;
         this._m_fUpY = fUpY;
         this._m_fUpZ = fUpZ;
@@ -120,31 +124,31 @@ cc.Camera = cc.Class.extend({
     },
 
     /** get the eye vector values in points */
-    getEyeXYZ:function( pEyeX,  pEyeY,  pEyeZ){
+    getEyeXYZ:function (pEyeX, pEyeY, pEyeZ) {
         pEyeX = this._m_fEyeX / cc.CONTENT_SCALE_FACTOR;
         pEyeY = this._m_fEyeY / cc.CONTENT_SCALE_FACTOR;
         pEyeZ = this._m_fEyeZ / cc.CONTENT_SCALE_FACTOR;
     },
     /** get the center vector values int points */
-    getCenterXYZ:function(pCenterX, pCenterY, pCenterZ){
+    getCenterXYZ:function (pCenterX, pCenterY, pCenterZ) {
         pCenterX = this._m_fCenterX / cc.CONTENT_SCALE_FACTOR;
         pCenterY = this._m_fCenterY / cc.CONTENT_SCALE_FACTOR;
         pCenterZ = this._m_fCenterZ / cc.CONTENT_SCALE_FACTOR;
     },
     /** get the up vector values */
-    getUpXYZ:function(pUpX, pUpY, pUpZ){
+    getUpXYZ:function (pUpX, pUpY, pUpZ) {
         pUpX = this._m_fUpX;
         pUpY = this._m_fUpY;
         pUpZ = this._m_fUpZ;
     },
 
     /*private:*/
-     _DISALLOW_COPY_AND_ASSIGN:function(CCCamera){
+    _DISALLOW_COPY_AND_ASSIGN:function (CCCamera) {
 
-     }
+    }
 });
 /** returns the Z eye */
-cc.Camera.getZEye = function(){
+cc.Camera.getZEye = function () {
     return cc.FLT_EPSILON;
 };
 
