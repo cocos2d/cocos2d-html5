@@ -35,7 +35,7 @@ cc.SID_REMOVETILES = 102;
 var TileMapTests = [
     //"TileMapTest",
     //"TileMapEditTest",
-    "TMXOrthoTest",
+    /*"TMXOrthoTest",
     "TMXOrthoTest2",
     "TMXOrthoTest3",
     "TMXOrthoTest4",
@@ -46,7 +46,7 @@ var TileMapTests = [
     "TMXIsoTest2",
     "TMXUncompressedTest",
     "TMXTilesetTest",
-    "TMXOrthoObjectsTest",
+    "TMXOrthoObjectsTest",*/
     "TMXIsoObjectsTest",
     "TMXResizeTest",
     "TMXIsoZorder",
@@ -225,8 +225,7 @@ var TileMapEditTest = TileDemo.extend({
         // [tilemap releaseMap);
         // And if you are going to use, it you can access the data with:
 
-        //todo schedule
-        // this.schedule(schedule_selector(TileMapEditTest.updateMap), 0.2);//:@selector(updateMap:) interval:0.2f);
+        this.schedule(this.updateMap, 0.2);//:@selector(updateMap:) interval:0.2f);
 
         this.addChild(map, 0, cc.kTagTileMap);
 
@@ -650,7 +649,7 @@ var TMXTilesetTest = TileDemo.extend({
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test5.tmx");
         this.addChild(map, 0, cc.kTagTileMap);
-
+        console.log(map);
         var s = map.getContentSize();
 
         /*var layer;
@@ -691,9 +690,6 @@ var TMXOrthoObjectsTest = TileDemo.extend({
                 break;
         }
     },
-    title:function () {
-        return "TMX Ortho object test";
-    },
     draw:function () {
         var map = this.getChildByTag(cc.kTagTileMap);
         var group = map.objectGroupNamed("Object Group 1");
@@ -704,14 +700,11 @@ var TMXOrthoObjectsTest = TileDemo.extend({
             dict = objects[i];
             if (!dict)
                 break;
-            var key = "x";
-            var x = parseInt(dict[key]);
-            key = "y";
-            var y = parseInt(dict[key]);
-            key = "width";
-            var width = parseInt(dict[key]);
-            key = "height";
-            var height = parseInt(dict[key]);
+
+            var x = parseInt(dict["x"]);
+            var y = parseInt(dict["y"]);
+            var width = parseInt(dict["width"]);
+            var height = parseInt(dict["height"]);
 
             cc.renderContext.lineWidth = 3;
             cc.renderContext.strokeStyle = "#ffffff";
@@ -723,6 +716,9 @@ var TMXOrthoObjectsTest = TileDemo.extend({
 
             cc.renderContext.lineWidth = 1;
         }
+    },
+    title:function () {
+        return "TMX Ortho object test";
     },
     subtitle:function () {
         return "You should see a white box around the 3 platforms";
@@ -756,10 +752,12 @@ var TMXIsoObjectsTest = TileDemo.extend({
         return "TMX Iso object test";
     },
     draw:function () {
+        this._super();
         var map = this.getChildByTag(cc.kTagTileMap);
         var group = map.objectGroupNamed("Object Group 1");
 
         var objects = group.getObjects();
+
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
             dict = objects[i];
@@ -848,7 +846,7 @@ var TMXIsoZorder = TileDemo.extend({
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXIsoZorder.repositionSprite);
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Iso Zorder";
@@ -857,7 +855,7 @@ var TMXIsoZorder = TileDemo.extend({
         return "Sprite should hide behind the trees";
     },
     onExit:function () {
-        this.unschedule(TMXIsoZorder.repositionSprite);
+        this.unschedule(this.repositionSprite);
         this._super();
     },
     repositionSprite:function (dt) {
@@ -891,16 +889,15 @@ var TMXOrthoZorder = TileDemo.extend({
         var s = map.getContentSize();
 
         this.m_tamara = cc.Sprite.spriteWithFile(s_pPathSister1);
-        map.addChild(this.m_tamara, map.getChildren().length);
+        map.addChild(this.m_tamara, map.getChildren().length, cc.kTagTileMap);
         this.m_tamara.setAnchorPoint(cc.ccp(0.5, 0));
-
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXOrthoZorder.repositionSprite);
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Ortho Zorder";
@@ -918,7 +915,7 @@ var TMXOrthoZorder = TileDemo.extend({
         // if tamara < 243,z=2
 
         // -10: customization for this particular sample
-        var newZ = 4 - ( (p.y - 10) / 81);
+        var newZ = 4 - ((p.y - 10) / 81);
         newZ = Math.max(newZ, 0);
 
         map.reorderChild(this.m_tamara, newZ);
@@ -932,6 +929,7 @@ var TMXOrthoZorder = TileDemo.extend({
 //------------------------------------------------------------------
 var TMXIsoVertexZ = TileDemo.extend({
     m_tamara:null,
+    m_tamara1:null,
     ctor:function () {
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/iso-test-vertexz.tmx");
@@ -944,13 +942,17 @@ var TMXIsoVertexZ = TileDemo.extend({
         // can use any cc.Sprite and it will work OK.
         var layer = map.layerNamed("Trees");
         this.m_tamara = layer.tileAt(cc.ccp(29, 29));
+        this.m_tamara1 = cc.Sprite.spriteWithFile(s_pPathSister1);
+        //map.addChild(this.m_tamara1, map.getChildren().length)
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(300, 250), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
+        //this.m_tamara1.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXIsoVertexZ.repositionSprite);
+        console.log(this.m_tamara._m_nTag, map._m_nTag)
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Iso VertexZ";
@@ -960,7 +962,6 @@ var TMXIsoVertexZ = TileDemo.extend({
     },
     onEnter:function () {
         this._super();
-
         // TIP: 2d projection should be used
         cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection2D);
     },
@@ -995,14 +996,14 @@ var TMXOrthoVertexZ = TileDemo.extend({
         // can use any cc.Sprite and it will work OK.
         var layer = map.layerNamed("trees");
         this.m_tamara = layer.tileAt(cc.ccp(0, 11));
-        cc.LOG("%@ vertexZ: %f", this.m_tamara, this.m_tamara.getVertexZ());
+        cc.LOG("vertexZ: " + this.m_tamara.getVertexZ());
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXOrthoVertexZ.repositionSprite);
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Ortho vertexZ";
