@@ -96,11 +96,27 @@ cc.LabelTTF = cc.Sprite.extend({
     //temp method
     draw:function(){
         //this is fillText for canvas
-        cc.renderContext.fillStyle = "#ffffff";
+        cc.renderContext.save();
+        var offsetPos = cc.PointZero();
+        if(this.getParent()){
+            offsetPos = this.getParent().getPosition();
+        }
+        var rapx = offsetPos.x + this.getPositionX();
+        var rapy = offsetPos.x + this.getPositionY();
+
+        cc.renderContext.translate(rapx,-rapy);
+        if(this.getRotation() != 0){
+            cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+        }
+        cc.renderContext.transform(this.getScaleX(),this.getSkewX(),this.getSkewY(),this.getScaleY(),0,0);
+
+        var color = this.getColor();
+        cc.renderContext.fillStyle = "rgba("+color.r + "," + color.g + "," + color.b + "," + this.getOpacity()/255 +")";
         cc.renderContext.font = this._m_fFontSize + "px '"+this._m_pFontName +"'";
         var dim = cc.renderContext.measureText(this._m_pString);
-        cc.drawingUtil.fillText(this._m_pString,this.getPositionX() - (dim.width * this.getAnchorPoint().x) ,
-            this.getPositionY() - (this._m_fFontSize * this.getAnchorPoint().y));
+        cc.drawingUtil.fillText(this._m_pString,0 - (dim.width * this.getAnchorPoint().x) ,
+            0 - (this._m_fFontSize * this.getAnchorPoint().y));
+        cc.renderContext.restore();
     },
     getString:function(){
         return this._m_pString;
