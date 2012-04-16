@@ -245,7 +245,7 @@ cc.LayerColor = cc.Layer.extend({
 
     /// ColorLayer
     ctor:function () {
-        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.setAnchorPoint(cc.ccp(0, 1));
         this._m_bIsRelativeAnchorPoint = false;
     },
 

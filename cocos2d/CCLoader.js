@@ -102,13 +102,17 @@ cc.Loader = cc.Class.extend({
                     sharedEngine.preloadEffect(res[i]);
                     this.m_sResourceCount += 1;
                     break;
-                case "plist","tmx":
+                case "plist":
+                case "tmx":
                     shareParser.setCallback(this.onResLoaded());
                     shareParser.preloadPlist(res[i]);
                     this.m_sResourceCount += 1;
                     break;
+                case "tga":
+                    cc.LOG("cocos2d:not implemented yet")
+                    break;
                 default:
-                    throw "unknow type : " + res[i].type;
+                    throw "cocos2d:unknow type : " + res[i].type;
                     break;
             }
         }
