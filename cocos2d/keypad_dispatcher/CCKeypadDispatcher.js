@@ -36,9 +36,9 @@ cc.key = {
     backspace:8,
     tab:9,
     enter:13,
-    shift:16,//should use shiftkey instead
-    ctrl:17,//should use ctrlkey
-    alt:18,//should use altkey
+    shift:16, //should use shiftkey instead
+    ctrl:17, //should use ctrlkey
+    alt:18, //should use altkey
     pause:19,
     capslock:20,
     escape:27,
@@ -103,7 +103,7 @@ cc.key = {
     '-':109,
     'numdel':110,
     '/':111,
-    f1:112,//f1-f12 dont work on ie
+    f1:112, //f1-f12 dont work on ie
     f2:113,
     f3:114,
     f4:115,
@@ -137,10 +137,10 @@ cc.key = {
     space:32
 };
 /*keymap usage
-to mark a keydown, do cc.keyDown[65] = true; or cc.keyMap[cc.key.a]
-to mark a keyup, do cc.keyDown[65] = false; or = null,
-to find out if a key is down, check if(cc.keyDown[65]) or if,(cc.keyDown[cc.key.space])
-if its undefined or false or null, its not pressed
+ to mark a keydown, do cc.keyDown[65] = true; or cc.keyMap[cc.key.a]
+ to mark a keyup, do cc.keyDown[65] = false; or = null,
+ to find out if a key is down, check if(cc.keyDown[65]) or if,(cc.keyDown[cc.key.space])
+ if its undefined or false or null, its not pressed
  */
 
 cc.s_KeypadDispatcher = null;
@@ -154,18 +154,14 @@ cc.KeypadDispatcher = cc.Class.extend({
     /**
      @brief add delegate to concern keypad msg
      */
-    addDelegate: function(pDelegate)
-    {
-        if (!pDelegate)
-        {
+    addDelegate:function (pDelegate) {
+        if (!pDelegate) {
             return;
         }
-        if (! this._m_bLocked)
-        {
+        if (!this._m_bLocked) {
             this.forceAddDelegate(pDelegate);
         }
-        else
-        {
+        else {
             this._m_pHandlersToAdd.push(pDelegate);
             this._m_bToAdd = true;
         }
@@ -173,18 +169,14 @@ cc.KeypadDispatcher = cc.Class.extend({
     /**
      @brief remove the delegate from the delegates who concern keypad msg
      */
-    removeDelegate: function(pDelegate)
-    {
-        if (!pDelegate)
-        {
+    removeDelegate:function (pDelegate) {
+        if (!pDelegate) {
             return;
         }
-        if (! this._m_bLocked)
-        {
+        if (!this._m_bLocked) {
             this.forceRemoveDelegate(pDelegate);
         }
-        else
-        {
+        else {
             this._m_pHandlersToRemove.push(pDelegate);
             this._m_bToRemove = true;
         }
@@ -192,16 +184,12 @@ cc.KeypadDispatcher = cc.Class.extend({
     /**
      @brief force add the delegate
      */
-    forceAddDelegate: function(pDelegate)
-    {
+    forceAddDelegate:function (pDelegate) {
         var pHandler = cc.KeypadHandler.handlerWithDelegate(pDelegate);
-        if (pHandler)
-        {
+        if (pHandler) {
             //if handler already exist
-            for(var i = 0; i < this._m_pDelegates; i++)
-            {
-                if(this._m_pDelegates[i].getDelegate() == pHandler.getDelegate())
-                {
+            for (var i = 0; i < this._m_pDelegates; i++) {
+                if (this._m_pDelegates[i].getDelegate() == pHandler.getDelegate()) {
                     alert("ding!");
                 }
             }
@@ -211,23 +199,18 @@ cc.KeypadDispatcher = cc.Class.extend({
     /**
      @brief force remove the delegate
      */
-    forceRemoveDelegate: function(pDelegate)
-    {
+    forceRemoveDelegate:function (pDelegate) {
         var i = this._m_pDelegates.indexOf(pDelegate);
-        if(i != -1)
-        {
-            this._m_pDelegates.splice(this._m_pDelegates.indexOf(pDelegate),1);
+        if (i != -1) {
+            this._m_pDelegates.splice(this._m_pDelegates.indexOf(pDelegate), 1);
         }
     },
     /**
      @brief clear the keyup array just before mainloop finishes, to ensure the keydown is atleast executed once
      */
-    clearKeyUp: function()
-    {
-        for(var i = 0; i < this._delayedKeyUp.length; i++)
-        {
-            if(this._keydown[this._delayedKeyUp[i]])
-            {
+    clearKeyUp:function () {
+        for (var i = 0; i < this._delayedKeyUp.length; i++) {
+            if (this._keydown[this._delayedKeyUp[i]]) {
                 delete this._keydown[this._delayedKeyUp[i]];
             }
         }
@@ -236,47 +219,40 @@ cc.KeypadDispatcher = cc.Class.extend({
     /**
      @brief dispatch the key pad msg
      */
-    dispatchKeypadMSG: function(e, keydown)
-    {
+    dispatchKeypadMSG:function (e, keydown) {
         this._m_bLocked = true;
         e.stopPropagation();
         e.preventDefault();
         //update keymap
-        if(keydown && !this._keydown[e.keyCode])//if keydown and our keymap doesnt have it
+        if (keydown && !this._keydown[e.keyCode])//if keydown and our keymap doesnt have it
         {
             this._keydown[e.keyCode] = true;
             //execute all deletegate that registered a keyboard event
             var keys = this._keydown;
-            for(var i = 0; i < this._m_pDelegates.length; i++)
-            {
+            for (var i = 0; i < this._m_pDelegates.length; i++) {
                 this._m_pDelegates[i].getDelegate().keyDown(keys);
             }
         }
-        else if(!keydown && this._keydown[e.keyCode])//if keyup and our keymap have that key in it
+        else if (!keydown && this._keydown[e.keyCode])//if keyup and our keymap have that key in it
         {
             this._delayedKeyUp.push(e.keyCode);
-            for(var i = 0; i < this._m_pDelegates.length; i++)
-            {
+            for (var i = 0; i < this._m_pDelegates.length; i++) {
                 this._m_pDelegates[i].getDelegate().keyUp(e.keyCode);
             }
         }
         this._m_bLocked = false;
-        if (this._m_bToRemove)
-        {
+        if (this._m_bToRemove) {
             this._m_bToRemove = false;
-            for (var i = 0; i < this._m_pHandlersToRemove.length; ++i)
-            {
+            for (var i = 0; i < this._m_pHandlersToRemove.length; ++i) {
                 this.forceRemoveDelegate(this._m_pHandlersToRemove[i]);
             }
             delete this._m_pHandlersToRemove;
             this._m_pHandlersToRemove = [];
         }
 
-        if (this._m_bToAdd)
-        {
+        if (this._m_bToAdd) {
             this._m_bToAdd = false;
-            for (var i = 0; i < this._m_pHandlersToAdd.length; ++i)
-            {
+            for (var i = 0; i < this._m_pHandlersToAdd.length; ++i) {
                 this.forceAddDelegate(this._m_pHandlersToAdd[i]);
             }
             this._m_pHandlersToAdd = [];
@@ -285,33 +261,33 @@ cc.KeypadDispatcher = cc.Class.extend({
     },
 
     //private
-    _m_pDelegates: [],
-    _m_bLocked: false,
-    _m_bToAdd: false,
-    _m_bToRemove: false,
-    _m_pHandlersToAdd: [],
-    _m_pHandlersToRemove: []
+    _m_pDelegates:[],
+    _m_bLocked:false,
+    _m_bToAdd:false,
+    _m_bToRemove:false,
+    _m_pHandlersToAdd:[],
+    _m_pHandlersToRemove:[]
 });
 /**
  @brief Returns the shared CCKeypadDispatcher object for the system.
  */
-cc.KeypadDispatcher.sharedDispatcher = function()
-{
-    if(! cc.s_KeypadDispatcher)
-    {
+cc.KeypadDispatcher.sharedDispatcher = function () {
+    if (!cc.s_KeypadDispatcher) {
         cc.s_KeypadDispatcher = new cc.KeypadDispatcher();
-        window.addEventListener("keydown", function(e){cc.s_KeypadDispatcher.dispatchKeypadMSG(e, true);});
-        window.addEventListener("keyup", function(e){cc.s_KeypadDispatcher.dispatchKeypadMSG(e, false);});
+        window.addEventListener("keydown", function (e) {
+            cc.s_KeypadDispatcher.dispatchKeypadMSG(e, true);
+        });
+        window.addEventListener("keyup", function (e) {
+            cc.s_KeypadDispatcher.dispatchKeypadMSG(e, false);
+        });
     }
     return cc.s_KeypadDispatcher;
 };
 /**
  @brief Release the shared CCKeypadDispatcher object from the system.
  */
-cc.KeypadDispatcher.purgeSharedDispatcher = function()
-{
-    if (cc.s_KeypadDispatcher)
-    {
+cc.KeypadDispatcher.purgeSharedDispatcher = function () {
+    if (cc.s_KeypadDispatcher) {
         delete cc.s_KeypadDispatcher;
         cc.s_KeypadDispatcher = null;
     }

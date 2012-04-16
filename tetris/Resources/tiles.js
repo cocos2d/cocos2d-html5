@@ -1,4 +1,4 @@
-var tiles ={"frames":{
+var tiles = {"frames":{
     "blue.png":{
         "frame":"{{2,80},{24,24}}",
         "offset":"{0,0}",

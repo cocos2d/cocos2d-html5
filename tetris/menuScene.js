@@ -2,11 +2,10 @@
 //require("JS/block.js");
 
 var MainMenu = {};
-MainMenu.start = function()
-{
+MainMenu.start = function () {
     var menuScene = cc.Scene.node();
-    var label1 = cc.LabelTTF.labelWithString("Play","Chalkboard SE", 18.0);
-    var label2 = cc.LabelTTF.labelWithString("Options","Chalkboard SE", 18.0);
+    var label1 = cc.LabelTTF.labelWithString("Play", "Chalkboard SE", 18.0);
+    var label2 = cc.LabelTTF.labelWithString("Options", "Chalkboard SE", 18.0);
     var item1 = cc.MenuItemLabel.itemWithLabel(label1, function () {
         Game.start();
     });
@@ -18,12 +17,11 @@ MainMenu.start = function()
 
     var menu = cc.Menu.menuWithItems(item1, item2);
     menuScene.addChild(menu);
-    menuScene.onExit = function()//hide the dom menu
+    menuScene.onExit = function ()//hide the dom menu
     {
         menuScene.getChildren()[0].hide();
     };
-    menuScene.onEnter = function()
-    {
+    menuScene.onEnter = function () {
         menuScene.getChildren()[0].show();
     };
     // preload music

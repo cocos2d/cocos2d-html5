@@ -31,43 +31,37 @@
 
 var cc = cc = cc || {};
 cc.timeval = cc.Class.extend({
-    tv_sec:0,//seconds
+    tv_sec:0, //seconds
     tv_usec:0//microseconds
 });
 
 cc.Time = {};
-cc.Time.gettimeofdayCocos2d = function()
-{
+cc.Time.gettimeofdayCocos2d = function () {
     var timeval = new cc.timeval();
     var tmp = Date.now();
-    timeval.tv_usec = (tmp % 1000)*1000;
-    timeval.tv_sec = Math.floor(tmp/1000);
+    timeval.tv_usec = (tmp % 1000) * 1000;
+    timeval.tv_sec = Math.floor(tmp / 1000);
     return timeval;
 };
-cc.Time.now = function()//alias to Date.now()
+cc.Time.now = function ()//alias to Date.now()
 {
     return Date.now();
 };
-cc.Time.timersubCocos2d = function(start, end)
-{
-    if(! out || !start ||!end)
-    {
+cc.Time.timersubCocos2d = function (start, end) {
+    if (!out || !start || !end) {
         return;
     }
-    if(start instanceof cc.timeval && end instanceof cc.timeval)
-    {
+    if (start instanceof cc.timeval && end instanceof cc.timeval) {
         var out = new cc.timeval();
         out.tv_sec = end.tv_sec - start.tv_sec;
         out.tv_usec = end.tv_usec - start.tv_usec;
-        if(end.tv_usec < start.tv_usec)
-        {
+        if (end.tv_usec < start.tv_usec) {
             out.tv_usec += 1000000;
             out.tv_sec--;
         }
         return out;
     }
-    else if(!isNaN(start) && !isNaN(end))
-    {
-        return end-start;
+    else if (!isNaN(start) && !isNaN(end)) {
+        return end - start;
     }
 };

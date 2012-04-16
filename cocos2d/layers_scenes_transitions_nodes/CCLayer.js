@@ -47,8 +47,7 @@ cc.Layer = cc.Node.extend({
         do
         {
             var pDirector = new cc.Director();
-            if(!(pDirector = cc.Director.sharedDirector()))
-            {
+            if (!(pDirector = cc.Director.sharedDirector())) {
                 break;
             }
             this.setContentSize(pDirector.getWinSize());
@@ -93,7 +92,7 @@ cc.Layer = cc.Node.extend({
             if (this._m_bIsRunning) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
-                }else {
+                } else {
                     // have problems?
                     cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
                 }
@@ -138,7 +137,7 @@ cc.Layer = cc.Node.extend({
             if (this._m_bIsRunning) {
                 if (enabled) {
                     cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
-                }else {
+                } else {
                     cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
                 }
             }
@@ -203,12 +202,17 @@ cc.Layer = cc.Node.extend({
     },
 
     // default implements are used to call script callback if exist
-    ccTouchesBegan:function (pTouch, pEvent) {},
-    ccTouchesMoved:function (pTouch, pEvent) {},
-    ccTouchesEnded:function (pTouch, pEvent) {},
-    ccTouchesCancelled:function (pTouch, pEvent) {},
+    ccTouchesBegan:function (pTouch, pEvent) {
+    },
+    ccTouchesMoved:function (pTouch, pEvent) {
+    },
+    ccTouchesEnded:function (pTouch, pEvent) {
+    },
+    ccTouchesCancelled:function (pTouch, pEvent) {
+    },
 
-    didAccelerate:function(pAccelerationValue){},
+    didAccelerate:function (pAccelerationValue) {
+    },
 
     addLayer:function (layer) {
         cc.Assert(this.m_pLayers, "cc.Layer addLayer");
@@ -237,11 +241,11 @@ cc.Layer.node = function () {
  - RGB colors
  */
 cc.LayerColor = cc.Layer.extend({
-    _m_pSquareVertices:[new cc.Vertex2F(0,0),new cc.Vertex2F(0,0),new cc.Vertex2F(0,0),new cc.Vertex2F(0,0)],
-    _m_pSquareColors:[cc.ccc4(0,0,0,1),cc.ccc4(0,0,0,1),cc.ccc4(0,0,0,1),cc.ccc4(0,0,0,1)],
+    _m_pSquareVertices:[new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)],
+    _m_pSquareColors:[cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1)],
     _m_cOpacity:0,
     _m_tColor:cc.BLACK,
-    _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC,cc.BLEND_DST),
+    _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
 
     /// ColorLayer
     ctor:function () {
@@ -277,7 +281,7 @@ cc.LayerColor = cc.Layer.extend({
         this._m_tBlendFunc = Var;
     },
 
-    initWithColor: function(color){
+    initWithColor:function (color) {
         var s = cc.Director.sharedDirector().getWinSize();
         this.initWithColorWidthHeight(color, s.width, s.height);
         return true;
@@ -330,26 +334,29 @@ cc.LayerColor = cc.Layer.extend({
             this._m_pSquareColors[i].a = this._m_cOpacity;
         }
     },
-    setIsOpacityModifyRGB:function (bValue) {},
-    getIsOpacityModifyRGB:function(){return false;},
+    setIsOpacityModifyRGB:function (bValue) {
+    },
+    getIsOpacityModifyRGB:function () {
+        return false;
+    },
 
     draw:function () {
         //TODO
         //TODO need to fix child position in relation to parent
-        if(cc.renderContextType == cc.kCanvas){
+        if (cc.renderContextType == cc.kCanvas) {
             cc.renderContext.save();
-            if(this.getOpacity() != 255){
-                cc.renderContext.globalAlpha = this.getOpacity()/255;
+            if (this.getOpacity() != 255) {
+                cc.renderContext.globalAlpha = this.getOpacity() / 255;
             }
             var rapx = this.getPositionX();
             var rapy = this.getPositionY();
 
-            cc.renderContext.translate(rapx,-rapy);
-            if(this.getRotation() != 0){
+            cc.renderContext.translate(rapx, -rapy);
+            if (this.getRotation() != 0) {
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
 
-            cc.renderContext.transform( this.getScaleX(),
+            cc.renderContext.transform(this.getScaleX(),
                 Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
                 Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
                 this.getScaleY(),
@@ -361,8 +368,8 @@ cc.LayerColor = cc.Layer.extend({
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
 
-            cc.renderContext.fillStyle = "rgba("+this._m_tColor.r +"," + this._m_tColor.g + "," + this._m_tColor.b + ",255)";
-            cc.renderContext.fillRect(0-this.getContentSize().width * this.getAnchorPoint().x,0 - this.getContentSize().height * this.getAnchorPoint().y ,
+            cc.renderContext.fillStyle = "rgba(" + this._m_tColor.r + "," + this._m_tColor.g + "," + this._m_tColor.b + ",255)";
+            cc.renderContext.fillRect(0 - this.getContentSize().width * this.getAnchorPoint().x, 0 - this.getContentSize().height * this.getAnchorPoint().y,
                 this.getContentSize().width, this.getContentSize().height);
             cc.renderContext.restore();
             return;
@@ -662,8 +669,7 @@ cc.LayerMultiplex = cc.Layer.extend({
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
 cc.LayerMultiplex.layerWithLayers = function (/*Multiple Arguments*/) {
     var pMultiplexLayer = new cc.LayerMultiplex();
-    if(pMultiplexLayer.initWithLayers(arguments))
-    {
+    if (pMultiplexLayer.initWithLayers(arguments)) {
         return pMultiplexLayer;
     }
     return null;

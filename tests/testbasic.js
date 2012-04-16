@@ -33,30 +33,29 @@ var cc = cc = cc || {};
 
 var TestScene = cc.Scene.extend({
     _portrait:false,
-    ctor: function(bPortrait){
+    ctor:function (bPortrait) {
         this._portrait = bPortrait;
-        if (this._portrait)
-        {
+        if (this._portrait) {
             cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationLandscapeRight);
         }
         this.init();
     },
-    onEnter: function(){
+    onEnter:function () {
         this._super();
         var label = cc.LabelTTF.labelWithString("MainMenu", "Arial", 20);
         var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.MainMenuCallback);
 
-        var pMenu =cc.Menu.menuWithItems(pMenuItem, null);
+        var pMenu = cc.Menu.menuWithItems(pMenuItem, null);
         var s = cc.Director.sharedDirector().getWinSize();
-        pMenu.setPosition( cc.PointZero());
-        pMenuItem.setPosition( cc.PointMake( s.width - 50, 25) );
+        pMenu.setPosition(cc.PointZero());
+        pMenuItem.setPosition(cc.PointMake(s.width - 50, 25));
 
         this.addChild(pMenu, 1);
     },
-    runThisTest: function(){
+    runThisTest:function () {
 
     },
-    MainMenuCallback: function(){
+    MainMenuCallback:function () {
         var pScene = cc.Scene.node();
         var pLayer = new TestController();
         pScene.addChild(pLayer);
@@ -71,28 +70,26 @@ var TestController = cc.Layer.extend({
     _m_pItemMenu:null,
     _m_tBeginPos:cc.PointZero(),
     bIsMouseDown:false,
-    ctor:function(){
+    ctor:function () {
         // add close menu
-        if(!s_pPathClose)
-        {
+        if (!s_pPathClose) {
             s_pPathClose = cc.Loader.shareLoader().getImage("Resources/CloseNormal.png");
         }
         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(s_pPathClose, s_pPathClose, this, this.closeCallback);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);//pmenu is just a holder for the close button
         var s = cc.Director.sharedDirector().getWinSize();
         pMenu.setPosition(cc.PointZero());
-        pCloseItem.setPosition(cc.PointMake(s.width - 30, s.height -30));
+        pCloseItem.setPosition(cc.PointMake(s.width - 30, s.height - 30));
 
         // add menu items for tests
         this._m_pItemMenu = cc.Menu.menuWithItems(null);//item menu is where all the label goes, and the one gets scrolled
         var i = 0;
-        for(var text in g_aTestNames)
-        {
+        for (var text in g_aTestNames) {
             var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
             var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
             pMenuItem.id(text);
             this._m_pItemMenu.addChild(pMenuItem);
-            pMenuItem.setPosition(s.width/2, (s.height - (i+1)*LINE_SPACE));
+            pMenuItem.setPosition(s.width / 2, (s.height - (i + 1) * LINE_SPACE));
             i++;
         }
         //this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (g_aTestNames.length + 1) * LINE_SPACE));
@@ -101,57 +98,52 @@ var TestController = cc.Layer.extend({
         this.addChild(this._m_pItemMenu);
         this.addChild(pMenu, 1);
     },
-    menuCallback: function(pSender){
+    menuCallback:function (pSender) {
         // get the userdata, it's the index of the menu item clicked
         //var pMenuItem = pSender;
         var nIdx = pSender.target.id;
 
         // create the test scene and run it
         var pScene = new window[g_aTestNames[nIdx]]();
-        if (pScene)
-        {
+        if (pScene) {
             pScene.runThisTest();
         }
     },
-    closeCallback: function(){
+    closeCallback:function () {
         history.go(-1);
     },
-    ccTouchesBegan: function(pTouches, pEvent){
-        if(!this.bIsMouseDown)
-        {
+    ccTouchesBegan:function (pTouches, pEvent) {
+        if (!this.bIsMouseDown) {
             //this._m_tBeginPos = cc.ccp(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y);
             this._m_tBeginPos = pTouches[0].locationInView(0).y;
         }
         this.bIsMouseDown = true;
 
     },
-    ccTouchesMoved: function(pTouches, pEvent){
-        if(this.bIsMouseDown){
-        var touchLocation = pTouches[0].locationInView(0).y;
-        var nMoveY = touchLocation - this._m_tBeginPos;
-        var curPos  = cc.ccp(this._m_pItemMenu.getPosition().x,this._m_pItemMenu.getPosition().y);
+    ccTouchesMoved:function (pTouches, pEvent) {
+        if (this.bIsMouseDown) {
+            var touchLocation = pTouches[0].locationInView(0).y;
+            var nMoveY = touchLocation - this._m_tBeginPos;
+            var curPos = cc.ccp(this._m_pItemMenu.getPosition().x, this._m_pItemMenu.getPosition().y);
 
-        var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
-        var winSize = cc.Director.sharedDirector().getWinSize();
-        if (nextPos.y < 0.0)
-        {
-            this._m_pItemMenu.setPosition(cc.PointZero());
-            return;
-        }
+            var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
+            var winSize = cc.Director.sharedDirector().getWinSize();
+            if (nextPos.y < 0.0) {
+                this._m_pItemMenu.setPosition(cc.PointZero());
+                return;
+            }
 
-        if (nextPos.y > ((g_aTestNames.length + 1)* LINE_SPACE - winSize.height))
-        {
-            this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNames.length + 1)* LINE_SPACE - winSize.height)));
-            return;
-        }
-        this._m_pItemMenu.setPosition(nextPos);
-        this._m_tBeginPos = cc.ccp(0, touchLocation).y;
+            if (nextPos.y > ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)) {
+                this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)));
+                return;
+            }
+            this._m_pItemMenu.setPosition(nextPos);
+            this._m_tBeginPos = cc.ccp(0, touchLocation).y;
 
-        //s_tCurPos   = nextPos;
+            //s_tCurPos   = nextPos;
         }
     },
-    ccTouchesEnded: function()
-    {
+    ccTouchesEnded:function () {
         this.bIsMouseDown = false;
     }
 });

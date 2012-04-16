@@ -47,7 +47,7 @@ var cc = cc = cc || {};
  @since v0.99.5
  */
 
-cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL =  0;
+cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
 
 /** @def CC_FONT_LABEL_SUPPORT
  If enabled, FontLabel will be used to render .ttf files.

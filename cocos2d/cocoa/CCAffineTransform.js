@@ -25,7 +25,7 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.AffineTransform = function(a,b,c,d,tx,ty){
+cc.AffineTransform = function (a, b, c, d, tx, ty) {
     this.a = a;
     this.b = b;
     this.c = c;
@@ -34,43 +34,43 @@ cc.AffineTransform = function(a,b,c,d,tx,ty){
     this.ty = ty;
 };
 
-cc.__AffineTransformMake = function(a,b,c,d,tx,ty){
-    return new cc.AffineTransform(a,b,c,d,tx,ty);
+cc.__AffineTransformMake = function (a, b, c, d, tx, ty) {
+    return new cc.AffineTransform(a, b, c, d, tx, ty);
 };
 
-cc.AffineTransformMake = function(a,b,c,d,tx,ty){
-    return new cc.AffineTransform(a,b,c,d,tx,ty);
+cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
+    return new cc.AffineTransform(a, b, c, d, tx, ty);
 };
 
-cc.__PointApplyAffineTransform = function(point,t){
+cc.__PointApplyAffineTransform = function (point, t) {
     var p = new cc.Point();
     p.x = t.a * point.x + t.c * point.y + t.tx;
     p.y = t.b * point.x + t.d * point.y + t.ty;
     return p;
 };
 
-cc.PointApplyAffineTransform = function(point,t){
-    return cc.__PointApplyAffineTransform(point,t);
+cc.PointApplyAffineTransform = function (point, t) {
+    return cc.__PointApplyAffineTransform(point, t);
 };
 
-cc.__SizeApplyAffineTransform = function(size,t){
+cc.__SizeApplyAffineTransform = function (size, t) {
     var s = new cc.Size();
     s.width = t.a * size.width + t.c * size.height;
     s.height = t.b * size.width + t.d * size.height;
     return s;
 };
 
-cc.SizeApplyAffineTransform = function(size,t){
-    return cc.__SizeApplyAffineTransform(size,t);
+cc.SizeApplyAffineTransform = function (size, t) {
+    return cc.__SizeApplyAffineTransform(size, t);
 };
 
-cc.AffineTransformMakeIdentity = function(){
+cc.AffineTransformMakeIdentity = function () {
     return cc.__AffineTransformMake(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 };
 
 cc.AffineTransformIdentity = cc.AffineTransformMakeIdentity();
 
-cc.RectApplyAffineTransform = function(rect,anAffineTransform){
+cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
     var top = cc.Rect.CCRectGetMinY(rect);
     var left = cc.Rect.CCRectGetMinX(rect);
     var right = cc.Rect.CCRectGetMaxX(rect);
@@ -89,19 +89,19 @@ cc.RectApplyAffineTransform = function(rect,anAffineTransform){
     return cc.RectMake(minX, minY, (maxX - minX), (maxY - minY));
 };
 
-cc.AffineTransformTranslate = function(t,tx,ty){
+cc.AffineTransformTranslate = function (t, tx, ty) {
     return cc.__AffineTransformMake(t.a, t.b, t.c, t.d, t.tx + t.a * tx + t.c * ty, t.ty + t.b * tx + t.d * ty);
 };
 
-cc.AffineTransformScale = function(t,sx,sy){
+cc.AffineTransformScale = function (t, sx, sy) {
     return cc.__AffineTransformMake(t.a * sx, t.b * sx, t.c * sy, t.d * sy, t.tx, t.ty);
 };
 
-cc.AffineTransformRotate = function(aTransform,anAngle){
+cc.AffineTransformRotate = function (aTransform, anAngle) {
     var fSin = Math.sin(anAngle);
     var fCos = Math.cos(anAngle);
 
-    return cc.__AffineTransformMake(	aTransform.a * fCos + aTransform.c * fSin,
+    return cc.__AffineTransformMake(aTransform.a * fCos + aTransform.c * fSin,
         aTransform.b * fCos + aTransform.d * fSin,
         aTransform.c * fCos - aTransform.a * fSin,
         aTransform.d * fCos - aTransform.b * fSin,
@@ -111,21 +111,21 @@ cc.AffineTransformRotate = function(aTransform,anAngle){
 
 /* Concatenate `t2' to `t1' and return the result:
  t' = t1 * t2 */
-cc.AffineTransformConcat = function(t1,t2){
-    return cc.__AffineTransformMake(	t1.a * t2.a + t1.b * t2.c, t1.a * t2.b + t1.b * t2.d, //a,b
+cc.AffineTransformConcat = function (t1, t2) {
+    return cc.__AffineTransformMake(t1.a * t2.a + t1.b * t2.c, t1.a * t2.b + t1.b * t2.d, //a,b
         t1.c * t2.a + t1.d * t2.c, t1.c * t2.b + t1.d * t2.d, //c,d
-        t1.tx * t2.a + t1.ty * t2.c + t2.tx,				  //tx
+        t1.tx * t2.a + t1.ty * t2.c + t2.tx, //tx
         t1.tx * t2.b + t1.ty * t2.d + t2.ty);				  //ty
 };
 
 /* Return true if `t1' and `t2' are equal, false otherwise. */
-cc.AffineTransformEqualToTransform = function(t1,t2){
+cc.AffineTransformEqualToTransform = function (t1, t2) {
     return (t1.a == t2.a && t1.b == t2.b && t1.c == t2.c && t1.d == t2.d && t1.tx == t2.tx && t1.ty == t2.ty);
 };
 
-cc.AffineTransformInvert = function(t){
+cc.AffineTransformInvert = function (t) {
     var determinant = 1 / (t.a * t.d - t.b * t.c);
 
     return cc.__AffineTransformMake(determinant * t.d, -determinant * t.b, -determinant * t.c, determinant * t.a,
-        determinant * (t.c * t.ty - t.d * t.tx), determinant * (t.b * t.tx - t.a * t.ty) );
+        determinant * (t.c * t.ty - t.d * t.tx), determinant * (t.b * t.tx - t.a * t.ty));
 };
