@@ -115,33 +115,6 @@ cc.TMXTiledMap = cc.Node.extend({
             this._m_pTMXLayers[key].setAnchorPoint(point);
         }
     },
-    setScale:function (newScale) {
-        if (newScale == this.getScaleX() && newScale == this.getScaleY()) {
-            return;
-        }
-        this._super(newScale);
-        for (var key in this._m_pTMXLayers) {
-            this._m_pTMXLayers[key].setScale(newScale);
-        }
-    },
-    setScaleX:function (newScaleX) {
-        if (newScaleX == this.getScaleX()) {
-            return;
-        }
-        this._super(newScaleX);
-        for (var key in this._m_pTMXLayers) {
-            this._m_pTMXLayers[key].setScaleX(newScaleX);
-        }
-    },
-    setScaleY:function (newScaleY) {
-        if (newScaleY == this.getScaleY()) {
-            return;
-        }
-        this._super(newScaleY);
-        for (var key in this._m_pTMXLayers) {
-            this._m_pTMXLayers[key].setScaleY(newScaleY);
-        }
-    },
     /** map orientation */
     getMapOrientation:function () {
         return this._m_nMapOrientation;

@@ -29,9 +29,9 @@ cc.SID_REPAINTWITHGID = 101;
 cc.SID_REMOVETILES = 102;
 
 var TileMapTests = [
-    //"TileMapTest",
-    //"TileMapEditTest",
-    /**/"TMXOrthoTest", //okl
+    /*//"TileMapTest",
+    //"TileMapEditTest",*/
+    "TMXOrthoTest", //ok
     "TMXOrthoTest2",//camera bug
     "TMXOrthoTest3",//ok
     "TMXOrthoTest4",//ok
@@ -49,12 +49,12 @@ var TileMapTests = [
     "TMXOrthoZorder",//ok
     "TMXIsoVertexZ", //VertexZ bug
     "TMXOrthoVertexZ", //VertexZ bug
-    "TMXIsoMoveLayer",
-    "TMXOrthoMoveLayer",
-    "TMXBug987",
-    "TMXBug787",
-    "TMXGIDObjectsTest",
-    "TileMapTestScene"
+    "TMXIsoMoveLayer",//ok
+    "TMXOrthoMoveLayer",//ok
+    "TMXBug987",//ok
+    "TMXBug787",//ok
+    "TMXGIDObjectsTest",//ok
+    "TileMapTestScene" //zlib bug
 ];
 var s_nTileMapIdx = -1;
 function nextTileMapAction() {
@@ -448,15 +448,40 @@ var TMXReadWriteTest = TileDemo.extend({
         var fadein = cc.FadeIn.actionWithDuration(2);
         var scaleback = cc.ScaleTo.actionWithDuration(1, 1);
         var finish = cc.CallFunc.actionWithTarget(this, this.removeSprite);
-        var seq0 = cc.Sequence.actions(move, rotate, scale, opacity, fadein, scaleback, finish, null);
-        var seq1 = seq0;
-        var seq2 = seq0;
-        var seq3 = seq0;
 
-        tile0.runAction(seq0);
-        tile1.runAction(seq1);
-        tile2.runAction(seq2);
-        tile3.runAction(seq3);
+        var move1 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
+        var rotate1 = cc.RotateBy.actionWithDuration(2, 360);
+        var scale1 = cc.ScaleBy.actionWithDuration(2, 5);
+        var opacity1 = cc.FadeOut.actionWithDuration(2);
+        var fadein1 = cc.FadeIn.actionWithDuration(2);
+        var scaleback1 = cc.ScaleTo.actionWithDuration(1, 1);
+        var finish1 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
+
+        var move2 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
+        var rotate2 = cc.RotateBy.actionWithDuration(2, 360);
+        var scale2 = cc.ScaleBy.actionWithDuration(2, 5);
+        var opacity2 = cc.FadeOut.actionWithDuration(2);
+        var fadein2 = cc.FadeIn.actionWithDuration(2);
+        var scaleback2 = cc.ScaleTo.actionWithDuration(1, 1);
+        var finish2 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
+
+        var move3 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
+        var rotate3 = cc.RotateBy.actionWithDuration(2, 360);
+        var scale3 = cc.ScaleBy.actionWithDuration(2, 5);
+        var opacity3 = cc.FadeOut.actionWithDuration(2);
+        var fadein3 = cc.FadeIn.actionWithDuration(2);
+        var scaleback3 = cc.ScaleTo.actionWithDuration(1, 1);
+        var finish3 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
+
+        var seq0 = cc.Sequence.actions(move, rotate, scale, opacity, fadein, scaleback, finish, null);
+        var seq1 = cc.Sequence.actions(move1, rotate1, scale1, opacity1, fadein1, scaleback1, finish1, null);
+        var seq2 = cc.Sequence.actions(move2, rotate2, scale2, opacity2, fadein2, scaleback2, finish2, null);
+        var seq3 = cc.Sequence.actions(move3, rotate3, scale3, opacity3, fadein3, scaleback3, finish3, null);
+
+        /*tile0.runAction(seq0);
+        tile1.runAction(seq0.copy());
+        tile2.runAction(seq0.copy());*/
+        tile3.runAction(seq0.copy());
 
         this.m_gid = layer.tileGIDAt(cc.ccp(0, 63));
 
@@ -1030,7 +1055,6 @@ var TMXIsoMoveLayer = TileDemo.extend({
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/iso-test-movelayer.tmx");
         this.addChild(map, 0, cc.kTagTileMap);
-
         map.setPosition(cc.ccp(-700, -50));
 
         var s = map.getContentSize();
@@ -1127,7 +1151,6 @@ var TMXGIDObjectsTest = TileDemo.extend({
 
         var s = map.getContentSize();
         cc.LOG("ContentSize:" + s.width + "," + s.height);
-
         cc.LOG("---. Iterating over all the group objets");
     },
     title:function () {
