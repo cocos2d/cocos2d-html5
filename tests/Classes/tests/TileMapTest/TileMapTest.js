@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-4-10
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -35,24 +31,24 @@ cc.SID_REMOVETILES = 102;
 var TileMapTests = [
     //"TileMapTest",
     //"TileMapEditTest",
-    "TMXOrthoTest",
-    "TMXOrthoTest2",
-    "TMXOrthoTest3",
-    "TMXOrthoTest4",
-    "TMXReadWriteTest",
-    "TMXHexTest",
-    "TMXIsoTest",
-    "TMXIsoTest1",
-    "TMXIsoTest2",
+    /**/"TMXOrthoTest", //okl
+    "TMXOrthoTest2",//camera bug
+    "TMXOrthoTest3",//ok
+    "TMXOrthoTest4",//ok
+    "TMXReadWriteTest", //bug
+    "TMXHexTest",//ok
+    "TMXIsoTest",//ok
+    "TMXIsoTest1",//ok
+    "TMXIsoTest2",//ok
     "TMXUncompressedTest",
-    "TMXTilesetTest",
-    "TMXOrthoObjectsTest",
-    "TMXIsoObjectsTest",
-    "TMXResizeTest",
-    "TMXIsoZorder",
-    "TMXOrthoZorder",
-    "TMXIsoVertexZ",
-    "TMXOrthoVertexZ",
+    "TMXTilesetTest",//bug sometimes
+    "TMXOrthoObjectsTest",//bug
+    "TMXIsoObjectsTest",//bug
+    "TMXResizeTest",//ok
+    "TMXIsoZorder",//ok
+    "TMXOrthoZorder",//ok
+    "TMXIsoVertexZ", //VertexZ bug
+    "TMXOrthoVertexZ", //VertexZ bug
     "TMXIsoMoveLayer",
     "TMXOrthoMoveLayer",
     "TMXBug987",
@@ -225,8 +221,7 @@ var TileMapEditTest = TileDemo.extend({
         // [tilemap releaseMap);
         // And if you are going to use, it you can access the data with:
 
-        //todo schedule
-        // this.schedule(schedule_selector(TileMapEditTest.updateMap), 0.2);//:@selector(updateMap:) interval:0.2f);
+        this.schedule(this.updateMap, 0.2);//:@selector(updateMap:) interval:0.2f);
 
         this.addChild(map, 0, cc.kTagTileMap);
 
@@ -386,17 +381,17 @@ var TMXOrthoTest4 = TileDemo.extend({
         var sprite;
         sprite = layer.tileAt(cc.ccp(0, 0));
         sprite.setScale(2);
-        this.addChild(sprite)
+
         sprite = layer.tileAt(cc.ccp(s.width - 1, 0));
         sprite.setScale(2);
-        this.addChild(sprite)
+
         sprite = layer.tileAt(cc.ccp(0, s.height - 1));
         sprite.setScale(2);
-        this.addChild(sprite)
+
         sprite = layer.tileAt(cc.ccp(s.width - 1, s.height - 1));
         sprite.setScale(2);
-        this.addChild(sprite)
-        this.schedule(this.removeSprite, 0.1);
+
+        this.schedule(this.removeSprite, 2);
     },
     removeSprite:function (dt) {
         this.unschedule(this.removeSprite);
@@ -440,6 +435,7 @@ var TMXReadWriteTest = TileDemo.extend({
         var tile1 = layer.tileAt(cc.ccp(2, 63));
         var tile2 = layer.tileAt(cc.ccp(3, 62));//cc.ccp(1,62));
         var tile3 = layer.tileAt(cc.ccp(2, 62));
+
         tile0.setAnchorPoint(cc.ccp(0.5, 0.5));
         tile1.setAnchorPoint(cc.ccp(0.5, 0.5));
         tile2.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -453,8 +449,14 @@ var TMXReadWriteTest = TileDemo.extend({
         var scaleback = cc.ScaleTo.actionWithDuration(1, 1);
         var finish = cc.CallFunc.actionWithTarget(this, this.removeSprite);
         var seq0 = cc.Sequence.actions(move, rotate, scale, opacity, fadein, scaleback, finish, null);
+        var seq1 = seq0;
+        var seq2 = seq0;
+        var seq3 = seq0;
 
         tile0.runAction(seq0);
+        tile1.runAction(seq1);
+        tile2.runAction(seq2);
+        tile3.runAction(seq3);
 
         this.m_gid = layer.tileGIDAt(cc.ccp(0, 63));
 
@@ -650,7 +652,6 @@ var TMXTilesetTest = TileDemo.extend({
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test5.tmx");
         this.addChild(map, 0, cc.kTagTileMap);
-
         var s = map.getContentSize();
 
         /*var layer;
@@ -678,7 +679,6 @@ var TMXOrthoObjectsTest = TileDemo.extend({
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/ortho-objects.tmx");
         this.addChild(map, -1, cc.kTagTileMap);
-
         var s = map.getContentSize();
 
         var group = map.objectGroupNamed("Object Group 1");
@@ -691,27 +691,20 @@ var TMXOrthoObjectsTest = TileDemo.extend({
                 break;
         }
     },
-    title:function () {
-        return "TMX Ortho object test";
-    },
     draw:function () {
         var map = this.getChildByTag(cc.kTagTileMap);
         var group = map.objectGroupNamed("Object Group 1");
-
         var objects = group.getObjects();
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
             dict = objects[i];
             if (!dict)
                 break;
-            var key = "x";
-            var x = parseInt(dict[key]);
-            key = "y";
-            var y = parseInt(dict[key]);
-            key = "width";
-            var width = parseInt(dict[key]);
-            key = "height";
-            var height = parseInt(dict[key]);
+
+            var x = parseInt(dict["x"]);
+            var y = parseInt(dict["y"]);
+            var width = parseInt(dict["width"]);
+            var height = parseInt(dict["height"]);
 
             cc.renderContext.lineWidth = 3;
             cc.renderContext.strokeStyle = "#ffffff";
@@ -723,6 +716,9 @@ var TMXOrthoObjectsTest = TileDemo.extend({
 
             cc.renderContext.lineWidth = 1;
         }
+    },
+    title:function () {
+        return "TMX Ortho object test";
     },
     subtitle:function () {
         return "You should see a white box around the 3 platforms";
@@ -742,9 +738,9 @@ var TMXIsoObjectsTest = TileDemo.extend({
 
         var s = map.getContentSize();
 
-        var group = map.objectGroupNamed("Object Group 1");
-
+        var group = map.objectGroupNamed("Object Group 12");
         var objects = group.getObjects();
+
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
             dict = objects[i];
@@ -757,22 +753,18 @@ var TMXIsoObjectsTest = TileDemo.extend({
     },
     draw:function () {
         var map = this.getChildByTag(cc.kTagTileMap);
-        var group = map.objectGroupNamed("Object Group 1");
-
+        var group = map.objectGroupNamed("Object Group 12");
         var objects = group.getObjects();
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
             dict = objects[i];
             if (!dict)
                 break;
-            var key = "x";
-            var x = parseInt(dict[key]);
-            key = "y";
-            var y = parseInt(dict[key]);
-            key = "width";
-            var width = parseInt(dict[key]);
-            key = "height";
-            var height = parseInt(dict[key]);
+
+            var x = parseInt(dict["x"]);
+            var y = parseInt(dict["y"]);
+            var width = parseInt(dict["width"]);
+            var height = parseInt(dict["height"]);
 
             cc.renderContext.lineWidth = 3;
             cc.renderContext.strokeStyle = "#ffffff";
@@ -848,7 +840,7 @@ var TMXIsoZorder = TileDemo.extend({
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXIsoZorder.repositionSprite);
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Iso Zorder";
@@ -857,7 +849,7 @@ var TMXIsoZorder = TileDemo.extend({
         return "Sprite should hide behind the trees";
     },
     onExit:function () {
-        this.unschedule(TMXIsoZorder.repositionSprite);
+        this.unschedule(this.repositionSprite);
         this._super();
     },
     repositionSprite:function (dt) {
@@ -891,16 +883,15 @@ var TMXOrthoZorder = TileDemo.extend({
         var s = map.getContentSize();
 
         this.m_tamara = cc.Sprite.spriteWithFile(s_pPathSister1);
-        map.addChild(this.m_tamara, map.getChildren().length);
+        map.addChild(this.m_tamara, map.getChildren().length, cc.kTagTileMap);
         this.m_tamara.setAnchorPoint(cc.ccp(0.5, 0));
-
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXOrthoZorder.repositionSprite);
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Ortho Zorder";
@@ -918,7 +909,7 @@ var TMXOrthoZorder = TileDemo.extend({
         // if tamara < 243,z=2
 
         // -10: customization for this particular sample
-        var newZ = 4 - ( (p.y - 10) / 81);
+        var newZ = 4 - ((p.y - 10) / 81);
         newZ = Math.max(newZ, 0);
 
         map.reorderChild(this.m_tamara, newZ);
@@ -932,6 +923,7 @@ var TMXOrthoZorder = TileDemo.extend({
 //------------------------------------------------------------------
 var TMXIsoVertexZ = TileDemo.extend({
     m_tamara:null,
+    m_tamara1:null,
     ctor:function () {
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/iso-test-vertexz.tmx");
@@ -950,7 +942,7 @@ var TMXIsoVertexZ = TileDemo.extend({
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXIsoVertexZ.repositionSprite);
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Iso VertexZ";
@@ -960,7 +952,6 @@ var TMXIsoVertexZ = TileDemo.extend({
     },
     onEnter:function () {
         this._super();
-
         // TIP: 2d projection should be used
         cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection2D);
     },
@@ -995,14 +986,14 @@ var TMXOrthoVertexZ = TileDemo.extend({
         // can use any cc.Sprite and it will work OK.
         var layer = map.layerNamed("trees");
         this.m_tamara = layer.tileAt(cc.ccp(0, 11));
-        cc.LOG("%@ vertexZ: %f", this.m_tamara, this.m_tamara.getVertexZ());
+        cc.LOG("vertexZ: " + this.m_tamara.getVertexZ());
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
         this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
-        this.schedule(TMXOrthoVertexZ.repositionSprite);
+        this.schedule(this.repositionSprite);
     },
     title:function () {
         return "TMX Ortho vertexZ";
