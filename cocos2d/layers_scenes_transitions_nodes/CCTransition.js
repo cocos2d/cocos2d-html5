@@ -70,7 +70,7 @@ cc.TransitionScene = cc.Scene.extend({
         var director = cc.Director.sharedDirector();
         // Before replacing, save the "send cleanup to scene"
         this._m_bIsSendCleanupToScene = director.isSendCleanupToScene();
-        director.replaceScene(m_pInScene);
+        director.replaceScene(this._m_pInScene);
 
         // enable events while transitions
         cc.TouchDispatcher.sharedDispatcher().setDispatchEvents(true);
@@ -157,7 +157,7 @@ cc.TransitionScene = cc.Scene.extend({
 
         //[self schedule:@selector(setNewScene:) interval:0];
         //TODO
-        this.schedule(schschedule_selector(this._setNewScene), 0);
+        this.schedule(this._setNewScene, 0);
     },
 
     hideOutShowIn:function () {
@@ -207,8 +207,8 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend({
         this._m_pInScene.setScale(0.001);
         this._m_pOutScene.setScale(1.0);
 
-        this._m_pInScene.setAnchorPoint(ccp(0.5, 0.5));
-        this._m_pOutScene.setAnchorPoint(ccp(0.5, 0.5));
+        this._m_pInScene.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this._m_pOutScene.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         //TODO
         var rotozoom = cc.Sequence.actions(
@@ -219,7 +219,7 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend({
         this._m_pOutScene.runAction(rotozoom);
         this._m_pInScene.runAction(
             cc.Sequence.actions(rotozoom.reverse(),
-                cc.CallFunc.actionWithTarget(this, cc.callfunc_selector(this.finish)), null));
+                cc.CallFunc.actionWithTarget(this, this.finish), null));
     }
 });
 
@@ -241,9 +241,9 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         this._m_pInScene.setScale(0.5);
-        this._m_pInScene.setPosition(ccp(s.width, 0));
-        this._m_pInScene.setAnchorPoint(ccp(0.5, 0.5));
-        this._m_pOutScene.setAnchorPoint(ccp(0.5, 0.5));
+        this._m_pInScene.setPosition(cc.ccp(s.width, 0));
+        this._m_pInScene.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this._m_pOutScene.setAnchorPoint(cc.ccp(0.5, 0.5));
         //TODO
         var jump = cc.JumpBy.actionWithDuration(this._m_fDuration / 4, ccp(-s.width, 0), s.width / 4, 2);
         var scaleIn = cc.ScaleTo.actionWithDuration(this._m_fDuration / 4, 1.0);
@@ -256,7 +256,7 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend({
 
         this._m_pOutScene.runAction(jumpZoomOut);
         this._m_pInScene.runAction(cc.Sequence.actions(delay, jumpZoomIn,
-            cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+            cc.CallFunc.actionWithTarget(this, this.finish),
             null));
     }
 });
@@ -284,7 +284,7 @@ cc.TransitionMoveInL = cc.TransitionScene.extend({
             cc.Sequence.actions
                 (
                     this.easeActionWithAction(a),
-                    cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                    cc.CallFunc.actionWithTarget(this, this.finish),
                     null
                 )
         );
@@ -386,7 +386,7 @@ cc.TransitionSlideInL = cc.TransitionScene.extend({
         var outAction = cc.Sequence.actions
             (
                 this.easeActionWithAction(outA),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
         this._m_pInScene.runAction(inAction);
@@ -502,8 +502,8 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend({
         this._m_pInScene.setScale(0.001);
         this._m_pOutScene.setScale(1.0);
 
-        this._m_pInScene.setAnchorPoint(ccp(2 / 3.0, 0.5));
-        this._m_pOutScene.setAnchorPoint(ccp(1 / 3.0, 0.5));
+        this._m_pInScene.setAnchorPoint(cc.ccp(2 / 3.0, 0.5));
+        this._m_pOutScene.setAnchorPoint(cc.ccp(1 / 3.0, 0.5));
 
         var scaleOut = cc.ScaleTo.actionWithDuration(this._m_fDuration, 0.01);
         var scaleIn = cc.ScaleTo.actionWithDuration(this._m_fDuration, 1.0);
@@ -515,7 +515,7 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend({
                 cc.Sequence.actions
                     (
                         this.easeActionWithAction(scaleOut),
-                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.CallFunc.actionWithTarget(this, this.finish),
                         null
                     )
             );
@@ -564,7 +564,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend({
                 cc.DelayTime.actionWithDuration(this._m_fDuration / 2),
                 cc.Show.action(),
                 cc.OrbitCamera.actionWithDuration(this._m_fDuration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
 
@@ -622,7 +622,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend({
                 cc.DelayTime.actionWithDuration(this._m_fDuration / 2),
                 cc.Show.action(),
                 cc.OrbitCamera.actionWithDuration(this._m_fDuration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
         outA = cc.Sequence.actions
@@ -679,7 +679,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend({
                 cc.DelayTime.actionWithDuration(this._m_fDuration / 2),
                 cc.Show.action(),
                 cc.OrbitCamera.actionWithDuration(this._m_fDuration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
         outA = cc.Sequence.actions
@@ -740,7 +740,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend({
                         cc.Show.action(),
                         null
                     ),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
         outA = cc.Sequence.actions
@@ -808,7 +808,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend({
                         cc.Show.action(),
                         null
                     ),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
 
@@ -878,7 +878,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend({
                         null
                     ),
                 cc.Show.action(),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
         outA = cc.Sequence.actions
@@ -924,15 +924,15 @@ cc.TransitionFade = cc.TransitionScene.extend({
         this._m_pInScene.setIsVisible(false);
 
         this.addChild(l, 2, cc.kSceneFade);
-        var f = getChildByTag(cc.kSceneFade);
+        var f = this.getChildByTag(cc.kSceneFade);
 
         //TODO
         var a = cc.Sequence.actions
             (
                 cc.FadeIn.actionWithDuration(this._m_fDuration / 2),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)), //CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
+                cc.CallFunc.actionWithTarget(this, this.hideOutShowIn), //CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
                 cc.FadeOut.actionWithDuration(this._m_fDuration / 2),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)), //:self selector:@selector(finish)],
+                cc.CallFunc.actionWithTarget(this, this.finish), //:self selector:@selector(finish)],
                 null
             );
         f.runAction(a);
@@ -1029,8 +1029,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend({
         var layerAction = cc.Sequence.actions
             (
                 cc.FadeTo.actionWithDuration(this._m_fDuration, 0),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                cc.CallFunc.actionWithTarget(this, this.hideOutShowIn),
+                cc.CallFunc.actionWithTarget(this, this.finish),
                 null
             );
 
@@ -1050,7 +1050,7 @@ cc.TransitionCrossFade = cc.TransitionScene.extend({
 });
 cc.TransitionCrossFade.transitionWithDuration = function (t, scene) {
     var Transition = new cc.TransitionCrossFade();
-    Transition.initWithDuration(d, s);
+    Transition.initWithDuration(t, scene);
     return Transition;
 };
 
@@ -1076,7 +1076,7 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend({
                 cc.Sequence.actions
                     (
                         action,
-                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.CallFunc.actionWithTarget(this, this.finish),
                         cc.StopGrid.action(),
                         null
                     )
@@ -1107,7 +1107,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend({
         var seq = cc.Sequence.actions
             (
                 split,
-                cc.CallFunc.actionWithTarget(this, callfunc_selector(this.hideOutShowIn)),
+                cc.CallFunc.actionWithTarget(this, this.hideOutShowIn),
                 split.reverse(),
                 null
             );
@@ -1117,7 +1117,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend({
                 cc.Sequence.actions
                     (
                         this.easeActionWithAction(seq),
-                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.CallFunc.actionWithTarget(this, this.finish),
                         cc.StopGrid.action(),
                         null
                     )
@@ -1177,7 +1177,7 @@ cc.TransitionFadeTR = cc.TransitionScene.extend({
                 cc.Sequence.actions
                     (
                         this.easeActionWithAction(action),
-                        cc.CallFunc.actionWithTarget(this, callfunc_selector(this.finish)),
+                        cc.CallFunc.actionWithTarget(this, this.finish),
                         cc.StopGrid.action(),
                         null
                     )
@@ -1245,7 +1245,3 @@ cc.TransitionFadeDown.transitionWithDuration = function (t, scene) {
     }
     return null;
 };
-
-
-
-
