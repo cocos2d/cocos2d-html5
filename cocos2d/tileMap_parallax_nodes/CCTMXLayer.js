@@ -436,7 +436,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     },
 
     _calculateLayerOffset:function (pos) {
-        var ret = cc.PointZero;
+        var ret = cc.PointZero();
         switch (this._m_uLayerOrientation) {
             case cc.TMXOrientationOrtho:
                 ret = cc.ccp(pos.x * this._m_tMapTileSize.width, -pos.y * this._m_tMapTileSize.height);
@@ -461,7 +461,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         var z = pos.x + pos.y * this._m_tLayerSize.width;
         this._m_pReusedTile = new cc.Sprite();
         this._m_pReusedTile.initWithBatchNode(this, rect);
-        //console.log(gid);
         this._m_pReusedTile.setPosition(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
         this._m_pReusedTile.setAnchorPoint(cc.PointZero());
@@ -494,10 +493,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._m_pReusedTile.setAnchorPoint(cc.PointZero);
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
 
-
         // get atlas index
         var indexForZ = this._atlasIndexForNewZ(z);
-        console.log(indexForZ)
+
         // Optimization: add the quad without adding a child
         this.addQuadFromSprite(this._m_pReusedTile, indexForZ);
 
@@ -598,7 +596,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
                 }
             }
         }
-        cc.LOG(item, "TMX atlas index not found. Shall not happen");
+        cc.Assert(item, "TMX atlas index not found. Shall not happen");
         return i;
     },
     _atlasIndexForNewZ:function (z) {
@@ -623,4 +621,4 @@ cc.TMXLayer.layerWithTilesetInfo = function (tilesetInfo, layerInfo, mapInfo) {
 // cc.TMXLayer - atlasIndex and Z
 cc.compareInts = function (a, b) {
     return a - b;
-}
+};

@@ -56,10 +56,6 @@ cc.SpriteBatchNode = cc.Node.extend({
         if (fileImage) {
             this.initWithFile(fileImage, cc.defaultCapacity);
         }
-        /*if(!this._m_pobTextureAtlas){
-         this._m_pobTextureAtlas = new cc.TextureAtlas();
-         console.log("chs:",this._m_pobTextureAtlas)
-         }*/
     },
 
     _updateBlendFunc:function () {
@@ -98,7 +94,6 @@ cc.SpriteBatchNode = cc.Node.extend({
         sprite.setDirty(true);
         sprite.updateTransform();
         this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren,sprite,index);
-
     },
 
     /* This is the opposite of "addQuadFromSprite.
@@ -512,7 +507,7 @@ cc.SpriteBatchNode = cc.Node.extend({
                     cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x,0-sp.getAnchorPointInPixels().y));
                 } else {
                     cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
-                        , cc.ccp(0 - sp.getAnchorPointInPixels().x,0-sp.getAnchorPointInPixels().y), sp.getContentSize());
+                        , cc.ccp(lpx - sp.getAnchorPointInPixels().x,lpy - sp.getAnchorPointInPixels().y), sp.getContentSize());
                 }
                 cc.restoreContext();
             }
