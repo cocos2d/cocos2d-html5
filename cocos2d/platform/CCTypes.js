@@ -43,23 +43,23 @@ cc.ccc3 = function (r, g, b) {
 
 //ccColor3B predefined colors
 //! White color (255,255,255)
-cc.WHITE = new cc.Color3B(255, 255, 255);
+cc.WHITE = function(){return new cc.Color3B(255, 255, 255);};
 //! Yellow color (255,255,0)
-cc.YELLOW = new cc.Color3B(255, 255, 0);
+cc.YELLOW = function(){return new cc.Color3B(255, 255, 0);};
 //! Blue color (0,0,255)
-cc.BLUE = new cc.Color3B(0, 0, 255);
+cc.BLUE = function(){return new cc.Color3B(0, 0, 255);};
 //! Green Color (0,255,0)
-cc.GREEN = new cc.Color3B(0, 255, 0);
+cc.GREEN = function(){return new cc.Color3B(0, 255, 0);};
 //! Red Color (255,0,0,)
-cc.RED = new cc.Color3B(255, 0, 0);
+cc.RED = function(){return new cc.Color3B(255, 0, 0);};
 //! Magenta Color (255,0,255)
-cc.MAGENTA = new cc.Color3B(255, 0, 255);
+cc.MAGENTA = function(){return new cc.Color3B(255, 0, 255);};
 //! Black Color (0,0,0)
-cc.BLACK = new cc.Color3B(0, 0, 0);
+cc.BLACK = function(){return new cc.Color3B(0, 0, 0);};
 //! Orange Color (255,127,0)
-cc.ORANGE = new cc.Color3B(255, 127, 0);
+cc.ORANGE = function(){return new cc.Color3B(255, 127, 0);};
 //! Gray Color (166,166,166)
-cc.GRAY = new cc.Color3B(166, 166, 166);
+cc.GRAY = function(){return new cc.Color3B(166, 166, 166);};
 
 /** RGBA color composed of 4 bytes
  @since v0.8

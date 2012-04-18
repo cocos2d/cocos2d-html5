@@ -944,7 +944,7 @@ cc.TransitionFade = cc.TransitionScene.extend({
     /** initializes the transition with a duration and with an RGB color */
     initWithDuration:function (t, scene, color) {
         if ((color == 'undefined') || (color == null)) {
-            color = cc.BLACK;
+            color = cc.BLACK();
         }
 
         if (this._super(t, scene)) {

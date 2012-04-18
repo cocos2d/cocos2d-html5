@@ -49,6 +49,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     _m_uQuadsID:0,
 
     ctor:function () {
+        this._super();
     },
 
     /** initialices the indices for the vertices*/
@@ -82,8 +83,13 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         var high = pointRect.size.height;
 
         if (this._m_pTexture) {
-            wide = this._m_pTexture.getPixelsWide();
-            high = this._m_pTexture.getPixelsHigh();
+            if (this._m_pTexture instanceof HTMLImageElement){
+                wide = this._m_pTexture.width;
+                high = this._m_pTexture.height;
+            } else {
+                wide = this._m_pTexture.getPixelsWide();
+                high = this._m_pTexture.getPixelsHigh();
+            }
         }
 
         var left, bottom, right, top;
@@ -103,6 +109,11 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         var temp = top;
         top = bottom;
         bottom = temp;
+
+        this._m_pQuads = [];
+        for (var i = 0; i < this._m_uTotalParticles; i++) {
+            this._m_pQuads[i] = cc.V3F_C4B_T2F_QuadZero();
+        }
 
         for (var i = 0; i < this._m_uTotalParticles; i++) {
             // bottom-left vertex:
@@ -153,7 +164,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
             // allocating data space
             this._m_pQuads = [];
             for (var i = 0; i < this._m_uTotalParticles; i++) {
-                this._m_pQuads[i] = new cc.V2F_C4F_T2F_Quad();
+                this._m_pQuads[i] = cc.V3F_C4B_T2F_QuadZero();
             }
             this._m_pIndices = [];
             for (i = 0; i < this._m_uTotalParticles * 6; i++) {
@@ -180,16 +191,17 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
             this.initIndices();
 
             if (cc.USES_VBO) {
-                glEnable(GL_VERTEX_ARRAY);
+                //TODO
+                //glEnable(GL_VERTEX_ARRAY);
 
                 // create the VBO buffer
-                glGenBuffers(1, m_uQuadsID);
+                //glGenBuffers(1, m_uQuadsID);
 
-                //TODO
+
                 // initial binding
-                glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
+                //glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
                 //glBufferData(GL_ARRAY_BUFFER, sizeof(m_pQuads[0])*m_uTotalParticles, m_pQuads, GL_DYNAMIC_DRAW);
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
+                //glBindBuffer(GL_ARRAY_BUFFER, 0);
             }
 
             return true;
@@ -204,8 +216,13 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                 return;
             }
         }
+        var s = null;
+        if ( texture instanceof HTMLImageElement) {
+            s = cc.SizeMake(texture.width,texture.height);
+        } else {
+            s = texture.getContentSize();
+        }
 
-        var s = texture.getContentSize();
         this.setTextureWithRect(texture, cc.RectMake(0, 0, s.width, s.height));
     },
 
@@ -278,69 +295,112 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     },
 
     postStep:function () {
-        if (cc.USES_VBO) {
-            //TODO
-            glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(m_pQuads[0]) * m_uParticleCount, m_pQuads);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
+        if (cc.renderContextType == cc.kCanvas) {
+
+        } else {
+            if (cc.USES_VBO) {
+                //TODO
+                glBindBuffer(GL_ARRAY_BUFFER, m_uQuadsID);
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(m_pQuads[0]) * m_uParticleCount, m_pQuads);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+            }
         }
     },
 
     draw:function () {
         this._super();
+        if (cc.renderContextType == cc.kCanvas) {
+            cc.renderContext.save();
+            //if(this.getOpacity() != 255){
+            //    cc.renderContext.globalAlpha = this.getOpacity()/255;
+            //}
+            var offsetPos = cc.PointZero();
+            if(this.getParent()){
+                offsetPos = this.getParent().getPosition();
+            }
+            var rap = this.convertToWorldSpace(this.getPosition());
+            var rapx = rap.x; //offsetPos.x + this.getPositionX();
+            var rapy = rap.y; //offsetPos.y + this.getPositionY();
 
-        //TODO need fixed for webGL
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Unneeded states: -
-        glBindTexture(GL_TEXTURE_2D, this._m_pTexture.getName());
-
-        var kQuadSize = sizeof(this._m_pQuads[0].bl);
-
-        if (cc.USES_VBO) {
-            glBindBuffer(GL_ARRAY_BUFFER, this._m_uQuadsID);
-
-            if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
-                glBufferData(GL_ARRAY_BUFFER, sizeof(this._m_pQuads[0]) * this._m_uTotalParticles, this._m_pQuads, GL_DYNAMIC_DRAW);
+            cc.renderContext.translate(rapx,-rapy);
+            if(this.getRotation() != 0){
+                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
 
-            glVertexPointer(2, GL_FLOAT, kQuadSize, 0);
+            cc.renderContext.transform( this.getScaleX(),
+                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
+                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
+                this.getScaleY(),
+                0,
+                0);
 
-            glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, offsetof(ccV2F_C4B_T2F, colors));
+            var lpx = 0 - this.getTexture().width * this.getAnchorPoint().x;
+            var lpy = 0 - this.getTexture().height * this.getAnchorPoint().y;
+            var tWidth = this.getTexture().width;
+            var tHeight = this.getTexture().height;
 
-            glTexCoordPointer(2, GL_FLOAT, kQuadSize, offsetof(ccV2F_C4B_T2F, texCoords));
+            if((this.getContentSize().width == 0)&&(this.getContentSize().height == 0)){
+                cc.drawingUtil.drawImage(this.getTexture(),cc.ccp(lpx,lpy));
+            }else{
+                cc.drawingUtil.drawImage(this.getTexture(),this.getTextureRect().origin,this.getTextureRect().size
+                    ,cc.ccp(lpx,lpy),cc.SizeMake(tWidth,tHeight));
+            }
+
+            cc.renderContext.restore();
         } else {
-            var offset = this._m_pQuads;
+            //TODO need fixed for webGL
+            // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
+            // Unneeded states: -
+            glBindTexture(GL_TEXTURE_2D, this._m_pTexture.getName());
 
-            // vertex
-            var diff = offsetof(cc.V2F_C4B_T2F, vertices);
-            glVertexPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+            var kQuadSize = sizeof(this._m_pQuads[0].bl);
 
-            // color
-            diff = offsetof(cc.V2F_C4B_T2F, colors);
-            glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
+            if (cc.USES_VBO) {
+                glBindBuffer(GL_ARRAY_BUFFER, this._m_uQuadsID);
 
-            // tex coords
-            diff = offsetof(cc.V2F_C4B_T2F, texCoords);
-            glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+                if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
+                    glBufferData(GL_ARRAY_BUFFER, sizeof(this._m_pQuads[0]) * this._m_uTotalParticles, this._m_pQuads, GL_DYNAMIC_DRAW);
+                }
+
+                glVertexPointer(2, GL_FLOAT, kQuadSize, 0);
+
+                glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, offsetof(ccV2F_C4B_T2F, colors));
+
+                glTexCoordPointer(2, GL_FLOAT, kQuadSize, offsetof(ccV2F_C4B_T2F, texCoords));
+            } else {
+                var offset = this._m_pQuads;
+
+                // vertex
+                var diff = offsetof(cc.V2F_C4B_T2F, vertices);
+                glVertexPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+
+                // color
+                diff = offsetof(cc.V2F_C4B_T2F, colors);
+                glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
+
+                // tex coords
+                diff = offsetof(cc.V2F_C4B_T2F, texCoords);
+                glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+            }
+
+
+            var newBlend = (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) ? true : false;
+            if (newBlend) {
+                glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
+            }
+
+            cc.Assert(this._m_uParticleIdx == this._m_uParticleCount, "Abnormal error in particle quad");
+
+            glDrawElements(GL_TRIANGLES, (this._m_uParticleIdx * 6), GL_UNSIGNED_SHORT, this._m_pIndices);
+
+            // restore blend state
+            if (newBlend)
+                glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+
+            if (cc.USES_VBO)
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
         }
-
-
-        var newBlend = (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) ? true : false;
-        if (newBlend) {
-            glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
-        }
-
-        cc.Assert(this._m_uParticleIdx == this._m_uParticleCount, "Abnormal error in particle quad");
-
-        glDrawElements(GL_TRIANGLES, (this._m_uParticleIdx * 6), GL_UNSIGNED_SHORT, this._m_pIndices);
-
-        // restore blend state
-        if (newBlend)
-            glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-
-        if (cc.USES_VBO)
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 });
 

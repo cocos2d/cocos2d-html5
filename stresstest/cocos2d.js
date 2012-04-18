@@ -103,6 +103,7 @@ cc.loadjs('base_nodes/CCNode.js');//6
 cc.loadjs('base_nodes/CCdomNode.js');
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
+cc.loadjs('platform/CCSAXParser.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('actions/CCAction.js');//7
@@ -117,6 +118,7 @@ cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
 cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
+cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCLoader.js');//14

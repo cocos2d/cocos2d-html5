@@ -164,7 +164,6 @@ cc.ParticleSystem = cc.Node.extend({
     //! Array of particles
     _m_pParticles:null,
 
-
     // color modulate
     //	BOOL colorModulate;
 
@@ -501,16 +500,21 @@ cc.ParticleSystem = cc.Node.extend({
         //TODO
         this._m_pTexture = texture;
 
-        // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
-        if (this._m_pTexture && !this._m_pTexture.getHasPremultipliedAlpha() &&
-            ( this._m_tBlendFunc.src == cc.BLEND_SRC && this._m_tBlendFunc.dst == cc.BLEND_DST )) {
-            this._m_tBlendFunc.src = GL_SRC_ALPHA;
-            this._m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+        if (texture instanceof HTMLImageElement) {
+
+        } else {
+            // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
+            if (this._m_pTexture && !this._m_pTexture.getHasPremultipliedAlpha() &&
+                ( this._m_tBlendFunc.src == cc.BLEND_SRC && this._m_tBlendFunc.dst == cc.BLEND_DST )) {
+                this._m_tBlendFunc.src = GL_SRC_ALPHA;
+                this._m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+            }
         }
+
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _m_tBlendFunc:null,
+    _m_tBlendFunc: new cc.BlendFunc(0, 0),
     getBlendFunc:function () {
         return this._m_tBlendFunc;
     },
@@ -530,13 +534,14 @@ cc.ParticleSystem = cc.Node.extend({
         return( this._m_tBlendFunc.src == GL_SRC_ALPHA && this._m_tBlendFunc.dst == GL_ONE);
     },
     setIsBlendAdditive:function (isBlendAdditive) {
+        //TODO
         if (isBlendAdditive) {
-            this._m_tBlendFunc.src = GL_SRC_ALPHA;
-            this._m_tBlendFunc.dst = GL_ONE;
+            //this._m_tBlendFunc.src = GL_SRC_ALPHA;
+            //this._m_tBlendFunc.dst = GL_ONE;
         } else {
             if (this._m_pTexture && !this._m_pTexture.getHasPremultipliedAlpha()) {
-                this._m_tBlendFunc.src = GL_SRC_ALPHA;
-                this._m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+                //this._m_tBlendFunc.src = GL_SRC_ALPHA;
+                //this._m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
             } else {
                 this._m_tBlendFunc.src = cc.BLEND_SRC;
                 this._m_tBlendFunc.dst = cc.BLEND_DST;

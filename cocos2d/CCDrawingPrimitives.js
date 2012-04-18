@@ -182,6 +182,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         //this._renderContext.arc(center.x* cc.CONTENT_SCALE_FACTOR(), -center.y* cc.CONTENT_SCALE_FACTOR(),radius* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
         //this._renderContext.closePath();
         //this._renderContext.stroke();
+        angle = -angle;
 
         if ((segments == "undefined") || (segments == 0)) {
             return;
