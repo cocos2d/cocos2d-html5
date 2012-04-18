@@ -29,6 +29,21 @@ cc.kCCNodeTagInvalid = -1;
 cc.kCCNodeOnEnter = null;
 cc.kCCNodeOnExit = null;
 
+cc.saveContext = function(){
+    if (cc.renderContextType == cc.kCanvas){
+        cc.renderContext.save();
+    } else {
+        //glPushMatrix();
+    }
+};
+cc.restoreContext = function(){
+    if (cc.renderContextType == cc.kCanvas){
+        cc.renderContext.restore();
+    } else {
+        //glPopMatrix();
+    }
+};
+
 /** @brief cc.Node is the main element. Anything thats gets drawn or contains things that get drawn is a cc.Node.
  The most popular CCNodes are: CCScene, CCLayer, CCSprite, CCMenu.
 
@@ -661,14 +676,15 @@ cc.Node = cc.Class.extend({
         // Only use- this function to draw your staff.
         // DON'T draw your stuff outside this method
     },
+
     /** recursive method that visit its children and draw them */
     visit:function () {
         // quick return if not visible
         if (!this._m_bIsVisible) {
             return;
         }
-        //TODO
-        //glPushMatrix();
+
+        cc.saveContext();
 
         if (this._m_pGrid && this._m_pGrid.isActive()) {
             this._m_pGrid.beforeDraw();
@@ -677,17 +693,12 @@ cc.Node = cc.Class.extend({
 
         this.transform();
 
-
         if (this._m_pChildren != null) {
             // draw children zOrder < 0
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
-
                 if (pNode && pNode._m_nZOrder < 0) {
                     pNode.visit();
-                }
-                else {
-                    break;
                 }
             }
         }
@@ -699,7 +710,7 @@ cc.Node = cc.Class.extend({
         if (this._m_pChildren != null) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
-                if (pNode) {
+                if (pNode && pNode._m_nZOrder >= 0) {
                     pNode.visit();
                 }
             }
@@ -708,8 +719,7 @@ cc.Node = cc.Class.extend({
         if (this._m_pGrid && this._m_pGrid.isActive()) {
             this._m_pGrid.afterDraw(this);
         }
-        //TODO
-        //glPopMatrix();
+        cc.restoreContext();
     },
     /** performs OpenGL view-matrix transformation of it's ancestors.
      Generally the ancestors are already transformed, but in certain cases (eg: attaching a FBO)
@@ -727,90 +737,86 @@ cc.Node = cc.Class.extend({
     /** performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes. */
     transform:function () {
         // transformations
-
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            // BEGIN alternative -- using cached transform
+        if (cc.renderContextType == cc.kCanvas){
             //
-            if (this._m_bIsTransformGLDirty) {
-                var t = new cc.AffineTransform();
-                t = this.nodeToParentTransform();
-                //TODO Need to implement
-                //cc.CGAffineToGL(t, this._m_pTransformGL);
-                this._m_bIsTransformGLDirty = false;
-            }
-            //TODO
-            //glMultMatrixf(this._m_pTransformGL);
-            if (this._m_fVertexZ) {
-                //TODO
-                //glTranslatef(0, 0, this._m_fVertexZ);
-            }
+            //var ct = this.nodeToParentTransform();
+            cc.renderContext.translate(this.getPositionX(), -(this.getPositionY()));
 
-            // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-            if (this._m_pCamera && !(this._m_pGrid && this._m_pGrid.isActive())) {
-                var translate = (this._m_tAnchorPointInPixels.x != 0.0 || this._m_tAnchorPointInPixels.y != 0.0);
+            cc.renderContext.scale(this.getScaleX(),this.getScaleY());
+            cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())), 1.0, 0, 0);
 
-                if (translate) {
-                    //TODO
-                    //cc.glTranslate(RENDER_IN_SUBPIXEL(this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._m_tAnchorPointInPixels.y), 0);
-                }
-
-                this._m_pCamera.locate();
-
-                if (translate) {
-                    //TODO
-                    //cc.glTranslate(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
-                }
-            }
-
-
-            // END alternative
-
+            cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
         } else {
-            // BEGIN original implementation
-            //
-            // translate
-            if (this._m_bIsRelativeAnchorPoint && (this._m_tAnchorPointInPixels.x != 0 || this._m_tAnchorPointInPixels.y != 0 )) {
-                //TODO
-                //cc.glTranslatef(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
-            }
-            if (this._m_tAnchorPointInPixels.x != 0 || this._m_tAnchorPointInPixels.y != 0) {
-                //TODO
-                //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.x + this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.y + this._m_tAnchorPointInPixels.y), this._m_fVertexZ);
-            }
-            else if (this._m_tPositionInPixels.x != 0 || this._m_tPositionInPixels.y != 0 || this._m_fVertexZ != 0) {
-                //TODO
-                //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.x), RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.y), this._m_fVertexZ);
-            }
-            // rotate
-            if (this._m_fRotation != 0.0)
-            //TODO
-            //glRotatef(-this._m_fRotation, 0.0, 0.0, 1.0);
+            //Todo WebGL implement need fixed
+            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+                // BEGIN alternative -- using cached transform
+                //
+                if (this._m_bIsTransformGLDirty) {
+                    var t = this.nodeToParentTransform();
+                    //cc.CGAffineToGL(t, this._m_pTransformGL);
+                    this._m_bIsTransformGLDirty = false;
+                }
+                //glMultMatrixf(this._m_pTransformGL);
+                if (this._m_fVertexZ) {
+                    //glTranslatef(0, 0, this._m_fVertexZ);
+                }
 
-            // skew
-            //if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
-            //var skewMatrix = new cc.AffineTransform();
-            //skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(skewY_)), Math.tan(cc.DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
-            //TODO
-            // glMatrix = new GLfloat();
-            //cc.AffineToGL(skewMatrix, glMatrix);
-            //TODO
-            // glMultMatrixf(glMatrix);
-            // }
+                // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
+                if (this._m_pCamera && !(this._m_pGrid && this._m_pGrid.isActive())) {
+                    var translate = (this._m_tAnchorPointInPixels.x != 0.0 || this._m_tAnchorPointInPixels.y != 0.0);
 
-            // scale
+                    if (translate) {
+                        //cc.glTranslate(RENDER_IN_SUBPIXEL(this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._m_tAnchorPointInPixels.y), 0);
+                    }
+                    this._m_pCamera.locate();
+                    if (translate) {
+                        //cc.glTranslate(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
+                    }
+                }
+                // END alternative
+            } else {
+                // BEGIN original implementation
+                //
+                // translate
+                if (this._m_bIsRelativeAnchorPoint && (this._m_tAnchorPointInPixels.x != 0 || this._m_tAnchorPointInPixels.y != 0 )) {
+                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
+                }
+                if (this._m_tAnchorPointInPixels.x != 0 || this._m_tAnchorPointInPixels.y != 0) {
+                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.x + this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.y + this._m_tAnchorPointInPixels.y), this._m_fVertexZ);
+                }
+                else if (this._m_tPositionInPixels.x != 0 || this._m_tPositionInPixels.y != 0 || this._m_fVertexZ != 0) {
+                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.x), RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.y), this._m_fVertexZ);
+                }
+                // rotate
+                if (this._m_fRotation != 0.0) {
+                    //glRotatef(-this._m_fRotation, 0.0, 0.0, 1.0);
+                }
+
+                // skew
+                //if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
+                //var skewMatrix = new cc.AffineTransform();
+                //skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(skewY_)), Math.tan(cc.DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
+                //TODO
+                // glMatrix = new GLfloat();
+                //cc.AffineToGL(skewMatrix, glMatrix);
+                //TODO
+                // glMultMatrixf(glMatrix);
+                // }
+
+                // scale
                 if (this._m_fScaleX != 1.0 || this._m_fScaleY != 1.0) {
-                    //TODO
                     // glScalef(this._m_fScaleX, this._m_fScaleY, 1.0);
                 }
-            if (this._m_pCamera && !(this._m_pGrid && this._m_pGrid.isActive())) this._m_pCamera.locate();
+                if (this._m_pCamera && !(this._m_pGrid && this._m_pGrid.isActive()))
+                    this._m_pCamera.locate();
 
-            // restore and re-position point
-            if (this._m_tAnchorPointInPixels.x != 0.0 || this._m_tAnchorPointInPixels.y != 0.0) {
-                //TODO
-                // glTranslatef(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
+                // restore and re-position point
+                if (this._m_tAnchorPointInPixels.x != 0.0 || this._m_tAnchorPointInPixels.y != 0.0) {
+                    // glTranslatef(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
+                }
+                //
+                // END original implementation
             }
-            //
-            // END original implementation
         }
     },
     //scene managment
@@ -962,7 +968,7 @@ cc.Node = cc.Class.extend({
     nodeToParentTransform:function () {
         if (this._m_bIsTransformDirty) {
 
-            this._m_tTransform = cc.AffineTransformIdentity;
+            this._m_tTransform = cc.AffineTransformIdentity();
             if (!this._m_bIsRelativeAnchorPoint && !cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero())) {
                 this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, this._m_tAnchorPointInPixels.x, this._m_tAnchorPointInPixels.y);
             }
@@ -977,8 +983,7 @@ cc.Node = cc.Class.extend({
 
             if (this._m_fSkewX != 0 || this._m_fSkewY != 0) {
                 // create a skewed coordinate system
-                var skew = new cc.AffineTransform();
-                skew = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)), 1.0, 0.0, 0.0);
+                var skew = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)), 1.0, 0.0, 0.0);
                 // apply the skew to the transform
                 this._m_tTransform = cc.AffineTransformConcat(skew, this._m_tTransform);
             }
@@ -1012,8 +1017,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     nodeToWorldTransform:function () {
-        var t = new cc.AffineTransform();
-        t = this.nodeToParentTransform();
+        var t = this.nodeToParentTransform();
         for (var p = this._m_pParent; p != null; p = p.getParent()) {
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
         }

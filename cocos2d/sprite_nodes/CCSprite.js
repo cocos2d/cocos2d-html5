@@ -262,7 +262,8 @@ cc.Sprite = cc.Node.extend({
 
         this._m_bOpacityModifyRGB = true;
         this._m_nOpacity = 255;
-        this._m_sColor = this._m_sColorUnmodified = cc.WHITE;
+        this._m_sColor = cc.WHITE();
+        this._m_sColorUnmodified = cc.WHITE();
 
         this._m_sBlendFunc.src = cc.BLEND_SRC;
         this._m_sBlendFunc.dst = cc.BLEND_DST;
@@ -593,15 +594,14 @@ cc.Sprite = cc.Node.extend({
             matrix = cc.AffineTransformMake(c * this._m_fScaleX, s * this._m_fScaleX, -s * this._m_fScaleY, c * this._m_fScaleY,
                 this._m_tPositionInPixels.x, this._m_tPositionInPixels.y);
             if (this._m_fSkewX || this._m_fSkewY) {
-                var skewMatrix = new cc.AffineTransform();
-                skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)), 1.0, 0.0, 0.0);
+                var skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)), 1.0, 0.0, 0.0);
                 matrix = cc.AffineTransformConcat(skewMatrix, matrix);
             }
             matrix = cc.AffineTransformTranslate(matrix, -this._m_tAnchorPointInPixels.x, -this._m_tAnchorPointInPixels.y);
         } else // parent_ != batchNode_
         {
             // else do affine transformation according to the HonorParentTransform
-            matrix = cc.AffineTransformIdentity;
+            matrix = cc.AffineTransformIdentity();
             var prevHonor = cc.HONOR_PARENT_TRANSFORM_ALL;
 
             for (var p = this; p && p != this._m_pobBatchNode; p = p.getParent()) {
@@ -620,8 +620,7 @@ cc.Sprite = cc.Node.extend({
                     return;
                 }
 
-                var newMatrix = new cc.AffineTransform();
-                newMatrix = cc.AffineTransformIdentity;
+                var newMatrix = cc.AffineTransformIdentity();
 
                 // 2nd: Translate, Skew, Rotate, Scale
                 if (prevHonor & cc.HONOR_PARENT_TRANSFORM_TRANSLATE) {
@@ -711,44 +710,31 @@ cc.Sprite = cc.Node.extend({
 
         //TODO need to fixed
         if (cc.renderContextType == cc.kCanvas) {
+            cc.renderContext.globalAlpha = this.getOpacity()/255;
             //direct draw image by canvas drawImage
-            cc.renderContext.save();
-            if (this.getOpacity() != 255) {
-                cc.renderContext.globalAlpha = this.getOpacity() / 255;
-            }
-            var offsetPos = cc.PointZero();
-            if (this.getParent()) {
-                offsetPos = this.getParent().getPosition();
-            }
-            var rapx = offsetPos.x + this.getPositionX();
-            var rapy = offsetPos.y + this.getPositionY();
-
-            cc.renderContext.translate(rapx, -rapy);
-            if (this.getRotation() != 0) {
-                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
-            }
-
-            cc.renderContext.transform(this.getScaleX(),
-                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
-                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
-                this.getScaleY(),
-                0,
-                0);
-
-            var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
-            var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
-            var tWidth = this.getContentSize().width;
-            var tHeight = this.getContentSize().height;
-
             if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
-                cc.drawingUtil.drawImage(this._m_pobTexture, cc.ccp(lpx, lpy));
+                cc.drawingUtil.drawImage(this._m_pobTexture, cc.ccp(0 - this.getAnchorPointInPixels().x,0-this.getAnchorPointInPixels().y));//this._m_tAnchorPointInPixels.x,-this._m_tAnchorPointInPixels.y));
             } else {
-                cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size
-                    , cc.ccp(lpx, lpy), cc.SizeMake(tWidth, tHeight));
+                cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size,
+                    cc.ccp(0 - this.getAnchorPointInPixels().x,0-this.getAnchorPointInPixels().y), this.getContentSize());
             }
 
-            cc.renderContext.restore();
-            return;
+            if (cc.SPRITE_DEBUG_DRAW == 1) {
+                // draw bounding box
+                var s = new cc.Size();
+                s = this._m_tContentSize;
+                var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
+                cc.drawingUtil.drawPoly(vertices, 4, true);
+            } else if (cc.SPRITE_DEBUG_DRAW == 2) {
+                // draw texture box
+                var s = new cc.Size();
+                s = this._m_obRect.size;
+                var offsetPix = new cc.Point();
+                offsetPix = this.getOffsetPositionInPixels();
+                var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),
+                    cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
+                cc.drawingUtil.drawPoly(vertices, 4, true);
+            }
         } else {
             cc.Assert(!this._m_bUsesBatchNode, "");
 
@@ -807,7 +793,8 @@ cc.Sprite = cc.Node.extend({
                 s = this._m_obRect.size;
                 var offsetPix = new cc.Point();
                 offsetPix = this.getOffsetPositionInPixels();
-                var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
+                var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),
+                    cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
                 cc.drawingUtil.drawPoly(vertices, 4, true);
             } // CC_SPRITE_DEBUG_DRAW
         }
