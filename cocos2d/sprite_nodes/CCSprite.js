@@ -804,14 +804,14 @@ cc.Sprite = cc.Node.extend({
         var argnum = arguments.length;
         switch (argnum) {
             case 1:
-                cc.Node.addChild(pChild);
+                this._super(pChild);
                 break;
             case 2:
-                cc.Node.addChild(pChild, zOrder);
+                this._super(pChild, zOrder);
                 break;
             case 3:
                 cc.Assert(pChild != null, "");
-                cc.Node.addChild(pChild, zOrder, tag);
+                this._super(pChild, zOrder, tag);
 
                 if (this._m_bUsesBatchNode) {
                     cc.Assert(pChild.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "");
@@ -840,14 +840,14 @@ cc.Sprite = cc.Node.extend({
             this.addChild(pChild, zOrder);
         }
         else {
-            cc.Node.reorderChild(pChild, zOrder);
+            this._super(pChild, zOrder);
         }
     },
     removeChild:function (pChild, bCleanup) {
         if (this._m_bUsesBatchNode) {
             this._m_pobBatchNode.removeSpriteFromAtlas(pChild);
         }
-        cc.Node.removeChild(pChild, bCleanup);
+        this._super(pChild, bCleanup);
     },
     removeAllChildrenWithCleanup:function (bCleanup) {
         if (this._m_bUsesBatchNode) {
@@ -860,7 +860,7 @@ cc.Sprite = cc.Node.extend({
             }
         }
 
-        cc.Node.removeAllChildrenWithCleanup(bCleanup);
+        this._super(bCleanup);
         this._m_bHasChildren = false;
     },
 //

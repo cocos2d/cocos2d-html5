@@ -306,7 +306,6 @@ var DemoFlower = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
-        //this._m_emitter.setPosition(cc.ccp(1,1));
         this.setEmitterPosition();
     },
     title:function () {

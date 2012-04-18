@@ -740,7 +740,11 @@ cc.Node = cc.Class.extend({
         if (cc.renderContextType == cc.kCanvas){
             //
             //var ct = this.nodeToParentTransform();
-            cc.renderContext.translate(this.getPositionX(), -(this.getPositionY()));
+            var pAp = cc.PointZero();
+            if(this.getParent()){
+                pAp = this.getParent().getAnchorPointInPixels();
+            }
+            cc.renderContext.translate(this.getPositionX() - pAp.x , -(this.getPositionY() - pAp.y ));
 
             cc.renderContext.scale(this.getScaleX(),this.getScaleY());
             cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())), 1.0, 0, 0);

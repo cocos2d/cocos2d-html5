@@ -493,14 +493,17 @@ cc.SpriteBatchNode = cc.Node.extend({
         this._super();
 
         if (cc.renderContextType == cc.kCanvas) {
-            var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
-            var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
-
+            //var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
+            //var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
+            var pAp = cc.PointZero();
+            if(this.getParent()){
+                pAp = this.getParent().getAnchorPointInPixels();
+            }
             for (var index = 0; index < this._m_pChildren.length; index++) {
                 var sp = this._m_pChildren[index];
 
                 cc.saveContext();
-                cc.renderContext.translate(sp.getPositionX(), -(sp.getPositionY()));
+                cc.renderContext.translate(sp.getPositionX() - pAp.x , -(sp.getPositionY() - pAp.y ));
 
                 cc.renderContext.scale(sp.getScaleX(),sp.getScaleY());
                 cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewX())), 1.0, 0, 0);
