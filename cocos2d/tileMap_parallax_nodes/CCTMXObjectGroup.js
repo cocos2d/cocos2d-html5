@@ -46,7 +46,7 @@ cc.TMXObjectGroup = cc.Class.extend({
         return this._m_pProperties;
     },
     setProperties:function (properties) {
-        this._m_pProperties = properties;
+        this._m_pProperties.push(properties);
     },
     getGroupName:function () {
         return this._m_sGroupName.toString();
@@ -77,6 +77,6 @@ cc.TMXObjectGroup = cc.Class.extend({
         return this._m_pObjects;
     },
     setObjects:function (objects) {
-        this._m_pObjects = objects;
+        this._m_pObjects.push(objects);
     }
 });
