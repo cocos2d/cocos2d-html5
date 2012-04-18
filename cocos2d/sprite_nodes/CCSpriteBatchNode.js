@@ -506,6 +506,7 @@ cc.SpriteBatchNode = cc.Node.extend({
                 cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewX())), 1.0, 0, 0);
 
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(sp.getRotation()));
+                cc.renderContext.globalAlpha = sp.getOpacity()/255;
 
                 if ((sp.getContentSize().width == 0) && (sp.getContentSize().height == 0)) {
                     cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x,0-sp.getAnchorPointInPixels().y));
