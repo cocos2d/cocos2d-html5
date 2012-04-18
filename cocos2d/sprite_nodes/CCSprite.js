@@ -973,8 +973,7 @@ cc.Sprite = cc.Node.extend({
 //
 
     updateColor:function () {
-        var color4 = new cc.Color4B();
-        color4 = (this._m_sColor.r, this._m_sColor.g, this._m_sColor.b, this._m_nOpacity);
+        var color4 = new cc.Color4B(this._m_sColor.r, this._m_sColor.g, this._m_sColor.b, this._m_nOpacity);
 
         this._m_sQuad.bl.colors = color4;
         this._m_sQuad.br.colors = color4;
@@ -1073,7 +1072,6 @@ cc.Sprite = cc.Node.extend({
     },
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
-        console.log(this._m_pobTexture);
         var r = new cc.Rect();
         r = pFrame.getRect();
         return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
