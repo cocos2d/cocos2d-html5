@@ -244,12 +244,12 @@ cc.LayerColor = cc.Layer.extend({
     _m_pSquareVertices:[new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)],
     _m_pSquareColors:[cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1)],
     _m_cOpacity:0,
-    _m_tColor:cc.BLACK,
+    _m_tColor:cc.BLACK(),
     _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
 
     /// ColorLayer
     ctor:function () {
-        this.setAnchorPoint(cc.ccp(0, 1));
+        this.setAnchorPoint(cc.ccp(0, 0));
         this._m_bIsRelativeAnchorPoint = false;
     },
 
@@ -344,34 +344,11 @@ cc.LayerColor = cc.Layer.extend({
         //TODO
         //TODO need to fix child position in relation to parent
         if (cc.renderContextType == cc.kCanvas) {
-            cc.renderContext.save();
-            if (this.getOpacity() != 255) {
-                cc.renderContext.globalAlpha = this.getOpacity() / 255;
-            }
-            var rapx = this.getPositionX();
-            var rapy = this.getPositionY();
-
-            cc.renderContext.translate(rapx, -rapy);
-            if (this.getRotation() != 0) {
-                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
-            }
-
-            cc.renderContext.transform(this.getScaleX(),
-                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
-                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
-                this.getScaleY(),
-                0,
-                0);
-
-            var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
-            var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
+            cc.renderContext.globalAlpha = this.getOpacity()/255;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
-
             cc.renderContext.fillStyle = "rgba(" + this._m_tColor.r + "," + this._m_tColor.g + "," + this._m_tColor.b + ",255)";
-            cc.renderContext.fillRect(0 - this.getContentSize().width * this.getAnchorPoint().x, 0 - this.getContentSize().height * this.getAnchorPoint().y,
-                this.getContentSize().width, this.getContentSize().height);
-            cc.renderContext.restore();
+            cc.renderContext.fillRect(0 - this.getAnchorPointInPixels().x,this.getAnchorPointInPixels().y, tWidth, -tHeight);
             return;
         }
         this._super();

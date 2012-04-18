@@ -36,7 +36,7 @@ var CircleSprite = cc.Sprite.extend({
 
         if (this._radians > 360)
             this._radians = 0;
-        cc.drawingUtil.drawCircle(this.getPosition(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
+        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
     },
     myUpdate:function (dt) {
         this._radians += 6;

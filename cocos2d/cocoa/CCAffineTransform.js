@@ -68,7 +68,7 @@ cc.AffineTransformMakeIdentity = function () {
     return cc.__AffineTransformMake(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 };
 
-cc.AffineTransformIdentity = cc.AffineTransformMakeIdentity();
+cc.AffineTransformIdentity = function(){ return cc.AffineTransformMakeIdentity();};
 
 cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
     var top = cc.Rect.CCRectGetMinY(rect);

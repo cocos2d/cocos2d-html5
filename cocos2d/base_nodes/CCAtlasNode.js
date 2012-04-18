@@ -77,7 +77,7 @@ cc.AtlasNode = cc.Node.extend({
         this._m_uItemHeight = tileHeight * cc.CONTENT_SCALE_FACTOR();
 
         this._m_cOpacity = 255;
-        this._m_tColor = this._m_tColorUnmodified = cc.WHITE;
+        this._m_tColor = this._m_tColorUnmodified = cc.WHITE();
         this._m_bIsOpacityModifyRGB = true;
 
         this._m_tBlendFunc.src = cc.BLEND_SRC;
