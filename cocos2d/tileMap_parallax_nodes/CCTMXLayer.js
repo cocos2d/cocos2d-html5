@@ -55,7 +55,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     //! name of the layer
     _m_sLayerName:"",
     //! TMX Layer supports opacity
-    _m_cOpacity:null,
+    _m_cOpacity:255,
     _m_uMinGID:null,
     _m_uMaxGID:null,
     //! Only used when vertexZ is used
@@ -146,7 +146,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             var offset = this._calculateLayerOffset(layerInfo.m_tOffset);
             this.setPosition(offset);
 
-            this._m_pAtlasIndexArray = new Array(totalNumberOfTiles);
+            this._m_pAtlasIndexArray = [];
 
             this.setContentSizeInPixels(cc.SizeMake(this._m_tLayerSize.width * this._m_tMapTileSize.width, this._m_tLayerSize.height * this._m_tMapTileSize.height));
             this._m_tMapTileSize.width /= this._m_fContentScaleFactor;
@@ -200,7 +200,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
                 rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
 
                 tile = new cc.Sprite();
-
                 tile.initWithBatchNode(this, rect);
                 tile.setPosition(this.positionAt(pos));
                 tile.setVertexZ(this._vertexZForPos(pos));
@@ -251,12 +250,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             // modifying an existing tile with a non-empty tile
             else {
                 var z = pos.x + pos.y * this._m_tLayerSize.width;
-                var sprite = new cc.Sprite();
-                sprite.getChildByTag(z);
+                var sprite = this.getChildByTag(z);
                 if (sprite) {
                     var rect = this._m_pTileSet.rectForGID(gid);
                     rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
-
                     sprite.setTextureRectInPixels(rect, false, rect.size);
                     this._m_pTiles[z] = gid;
                 }
@@ -277,7 +274,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         if (gid) {
             var z = pos.x + pos.y * this._m_tLayerSize.width;
             var atlasIndex = this._atlasIndexForExistantZ(z);
-
             // remove tile from GID map
             this._m_pTiles[z] = 0;
 
@@ -304,8 +300,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
                             }
                         }
                     }
-
-
                 }
             }
         }
@@ -484,7 +478,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this.addQuadFromSprite(this._m_pReusedTile, indexForZ);
 
         // append should be after addQuadFromSprite since it modifies the quantity values
-        cc.ArrayAppendObjectToIndex(this._m_pAtlasIndexArray, z, indexForZ);
+        this._m_pAtlasIndexArray = cc.ArrayAppendObjectToIndex(this._m_pAtlasIndexArray, z, indexForZ);
         return this._m_pReusedTile;
     },
     _insertTileForGID:function (gid, pos) {
@@ -493,27 +487,22 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         var z = parseInt(pos.x + pos.y * this._m_tLayerSize.width);
 
-        if (!this._m_pReusedTile) {
-            this._m_pReusedTile = new cc.Sprite();
-            this._m_pReusedTile.initWithBatchNode(this, rect);
-        }
-        else {
-            this._m_pReusedTile.initWithBatchNode(this, rect);
-        }
+        this._m_pReusedTile = new cc.Sprite();
+        this._m_pReusedTile.initWithBatchNode(this, rect);
         this._m_pReusedTile.setPositionInPixels(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
         this._m_pReusedTile.setAnchorPoint(cc.PointZero);
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
 
+
         // get atlas index
         var indexForZ = this._atlasIndexForNewZ(z);
-
+        console.log(indexForZ)
         // Optimization: add the quad without adding a child
         this.addQuadFromSprite(this._m_pReusedTile, indexForZ);
 
         // insert it into the local atlasindex array
-        cc.ArrayAppendObjectToIndex(this._m_pAtlasIndexArray, z, indexForZ);
-
+        this._m_pAtlasIndexArray = cc.ArrayAppendObjectToIndex(this._m_pAtlasIndexArray, z, indexForZ);
         // update possible children
         if (this._m_pChildren) {
             for (var i = 0, len = this._m_pChildren.length; i < len; i++) {
@@ -534,13 +523,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
         var z = pos.x + pos.y * this._m_tLayerSize.width;
 
-        if (!this._m_pReusedTile) {
-            this._m_pReusedTile = new cc.Sprite();
-            this._m_pReusedTile.initWithBatchNode(this, rect);
-        }
-        else {
-            this._m_pReusedTile.initWithBatchNode(this, rect);
-        }
+
+        this._m_pReusedTile = new cc.Sprite();
+        this._m_pReusedTile.initWithBatchNode(this, rect);
 
         this._m_pReusedTile.setPositionInPixels(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
@@ -604,13 +589,17 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
 // index
     _atlasIndexForExistantZ:function (z) {
-        var item = this._m_pAtlasIndexArray[z];
-        if (item) {
-            return z;
+        var item;
+        if (this._m_pAtlasIndexArray) {
+            for (var i = 0; i < this._m_pAtlasIndexArray.length; i++) {
+                item = this._m_pAtlasIndexArray[i]
+                if (item == z) {
+                    break;
+                }
+            }
         }
-        else {
-            cc.LOG(item, "TMX atlas index not found. Shall not happen");
-        }
+        cc.LOG(item, "TMX atlas index not found. Shall not happen");
+        return i;
     },
     _atlasIndexForNewZ:function (z) {
         for (var i = 0; i < this._m_pAtlasIndexArray.length; i++) {
