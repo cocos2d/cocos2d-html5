@@ -162,14 +162,14 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         return this._m_pLayers;
     },
     setLayers:function (Var) {
-        this._m_pLayers = Var;
+        this._m_pLayers.push(Var);
     },
     /// tilesets
     getTilesets:function () {
         return this._m_pTileSets;
     },
     setTilesets:function (Var) {
-        this._m_pTileSets = Var;
+        this._m_pTileSets.push(Var);
     },
     /// ObjectGroups
     getObjectGroups:function () {
@@ -300,7 +300,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                     imgSource = imgpath + imgSource;
                 }
                 tileset.m_sSourceImage = imgSource;
-                this.getTilesets().push(tileset);
+                this.setTilesets(tileset);
             }
         }
 
@@ -311,7 +311,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 var info = this.getTilesets()[0];
                 var t = tiles[i];
                 this.setParentGID(info.m_uFirstGid + parseInt(t.getAttribute('id')));
-                this.getTileProperties()[this.getParentGID()] = {};
+                this.setTileProperties(this.getParentGID());
                 this.setParentElement(cc.TMXPropertyTile);
             }
         }
@@ -372,7 +372,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                     default:
                         cc.Assert(this.getLayerAttribs() != cc.TMXLayerAttribNone, "TMX tile map: Only base64 and/or gzip/zlib maps are supported");
                 }
-                this.getLayers().push(layer);
+                this.setLayers(layer);
                 // The parent element is now "layer"
                 this.setParentElement(cc.TMXPropertyLayer);
             }
@@ -427,40 +427,6 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 this.setParentElement(cc.TMXPropertyObjectGroup);
             }
         }
-
-        // PARSE <object>
-        /*var objects = map.getElementsByTagName('object')
-        if (objects) {
-            for (var i = 0, len = objects.length; i < len; i++) {
-                var o = objects[i]
-                var objectGroup = this.getObjectGroups()[this.getObjectGroups().length-1];
-                // The value for "type" was blank or not a valid class name
-                // Create an instance of TMXObjectInfo to store the object and its properties
-                var dict = new Object();
-
-                // Set the name of the object to the value for "name"
-                dict["name"] = o.getAttribute('name') || "";
-
-                // Assign all the attributes as key/name pairs in the properties dictionary
-                dict["type"] = o.getAttribute('type') || "";
-
-                dict["x"] = parseInt(o.getAttribute('x') || 0) + objectGroup.getPositionOffset().x;
-
-                var y = parseInt(o.getAttribute('y') || 0) + objectGroup.getPositionOffset().y;
-                // Correct y position. (Tiled uses Flipped, cocos2d uses Standard)
-                y = parseInt(this.getMapSize().height * this.getTileSize().height) - y - parseInt(o.getAttribute('height'));
-                dict["y"] = y;
-
-                dict["width"] = parseInt(o.getAttribute('width'));
-
-                dict["height"] = parseInt(o.getAttribute('height'));
-
-                // Add the object to the objectGroup
-                objectGroup.setObjects(dict);
-                // The parent element is now "object"
-                this.setParentElement(cc.TMXPropertyObject);
-            }
-        }*/
 
         // PARSE <map><property>
         var properties = mapXML.querySelectorAll('map > properties > property')
@@ -520,7 +486,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         return this._m_pTileProperties;
     },
     setTileProperties:function (tileProperties) {
-        this._m_pTileProperties = tileProperties;
+        this._m_pTileProperties[tileProperties] = {};
     },
 
     getCurrentString:function () {

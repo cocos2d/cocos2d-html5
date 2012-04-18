@@ -31,7 +31,7 @@ cc.SID_REMOVETILES = 102;
 var TileMapTests = [
     //"TileMapTest",
     //"TileMapEditTest",
-    /*"TMXOrthoTest", //okl
+    /**/"TMXOrthoTest", //okl
     "TMXOrthoTest2",//camera bug
     "TMXOrthoTest3",//ok
     "TMXOrthoTest4",//ok
@@ -43,7 +43,7 @@ var TileMapTests = [
     "TMXUncompressedTest",
     "TMXTilesetTest",//bug sometimes
     "TMXOrthoObjectsTest",//bug
-    "TMXIsoObjectsTest",//bug*/
+    "TMXIsoObjectsTest",//bug
     "TMXResizeTest",//ok
     "TMXIsoZorder",//ok
     "TMXOrthoZorder",//ok
