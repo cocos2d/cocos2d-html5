@@ -31,6 +31,9 @@ var s_SendScore = "Resources/Images/SendScoreButton.png";
 var s_PressSendScore = "Resources/Images/SendScoreButtonPressed.png";
 var s_Power = "Resources/Images/powered.png";
 var s_AtlasTest = "Resources/Images/atlastest.png";
+var s_stars2Grayscale = "Resources/Images/stars2-grayscale.png";
+var s_starsGrayscale = "Resources/Images/stars-grayscale.png";
+var s_BoilingFoamPlist = "Resources/Images/BoilingFoam.plist";
 // tilemaps resource
 var s_TilesPng = "Resources/TileMaps/tiles.png";
 var s_LevelMapTga = "Resources/TileMaps/levelmap.tga";
@@ -43,6 +46,7 @@ var s_orthoTest1BwPng = "Resources/TileMaps/ortho-test1_bw.png";
 var s_tilesHdPng = "Resources/TileMaps/tiles-hd.png";
 var s_tmwDesertSpacingHdPng = "Resources/TileMaps/tmw_desert_spacing-hd.png";
 var s_tmwDesertSpacingPng = "Resources/TileMaps/tmw_desert_spacing.png";
+
 
 var g_ressources = [
     //image ressources
@@ -90,6 +94,7 @@ var g_ressources = [
     {type:"image", src:s_tilesHdPng},
     {type:"image", src:s_tmwDesertSpacingHdPng},
     {type:"image", src:s_tmwDesertSpacingPng},
+    {type:"plist", src:s_BoilingFoamPlist},
 
     //tmx ressources
     {type:"tmx", src:"Resources/TileMaps/orthogonal-test1.tmx"},

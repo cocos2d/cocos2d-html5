@@ -536,6 +536,7 @@ cc.ParticleSystem = cc.Node.extend({
     },
     setIsBlendAdditive:function (isBlendAdditive) {
         //TODO
+        return;
         if (isBlendAdditive) {
             //this._m_tBlendFunc.src = GL_SRC_ALPHA;
             //this._m_tBlendFunc.dst = GL_ONE;
@@ -600,7 +601,7 @@ cc.ParticleSystem = cc.Node.extend({
     initWithFile:function (plistFile) {
         var bRet = false;
         //TODO
-        this._m_sPlistFile = cc.FileUtils.fullPathFromRelativePath(plistFile);
+        this._m_sPlistFile = plistFile;
         var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(this._m_sPlistFile);
 
         cc.Assert(dict != null, "Particles: file not found");
@@ -775,9 +776,6 @@ cc.ParticleSystem = cc.Node.extend({
         this._m_uTotalParticles = numberOfParticles;
 
         this._m_pParticles = [];
-        for (var i = 0; i < this._m_uTotalParticles; i++) {
-            this._m_pParticles[i] = new cc.tCCParticle();
-        }
 
         if (!this._m_pParticles) {
             cc.Log("Particle system: not enough memory");
@@ -800,7 +798,6 @@ cc.ParticleSystem = cc.Node.extend({
         // default: modulate
         // XXX: not used
         //	colorModulate = YES;
-
         this._m_bIsAutoRemoveOnFinish = false;
 
         // profiling
@@ -823,8 +820,9 @@ cc.ParticleSystem = cc.Node.extend({
             return false;
         }
 
-        var particle = this._m_pParticles[ this._m_uParticleCount];
+        var particle = new cc.tCCParticle();
         this.initParticle(particle);
+        this._m_pParticles.push(particle);
         ++this._m_uParticleCount;
 
         return true;
@@ -870,7 +868,6 @@ cc.ParticleSystem = cc.Node.extend({
         startS *= cc.CONTENT_SCALE_FACTOR();
 
         particle.size = startS;
-        cc.Log(startS);
 
         if (this._m_fEndSize == cc.kCCParticleStartSizeEqualToEndSize) {
             particle.deltaSize = 0;
@@ -891,6 +888,7 @@ cc.ParticleSystem = cc.Node.extend({
         if (this._m_ePositionType == cc.kCCPositionTypeFree) {
             var p = this.convertToWorldSpace(cc.PointZero());
             particle.startPos = cc.ccpMult(p, cc.CONTENT_SCALE_FACTOR());
+
         } else if (this._m_ePositionType == cc.kCCPositionTypeRelative) {
             particle.startPos = cc.ccpMult(this._m_tPosition, cc.CONTENT_SCALE_FACTOR());
         }
@@ -971,7 +969,7 @@ cc.ParticleSystem = cc.Node.extend({
         if (this._m_bIsActive && this._m_fEmissionRate) {
             var rate = 1.0 / this._m_fEmissionRate;
             this._m_fEmitCounter += dt;
-            while (this._m_uParticleCount < this._m_uTotalParticles && this._m_fEmitCounter > rate) {
+            while ((this._m_uParticleCount < this._m_uTotalParticles) && (this._m_fEmitCounter > rate)) {
                 this.addParticle();
                 this._m_fEmitCounter -= rate;
             }
@@ -991,7 +989,7 @@ cc.ParticleSystem = cc.Node.extend({
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
         } else if (this._m_ePositionType == cc.kCCPositionTypeRelative) {
-            currentPosition = this._m_tPosition;
+            currentPosition = cc.ccp(this._m_tPosition.x,this._m_tPosition.y);
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
         }
@@ -1069,9 +1067,8 @@ cc.ParticleSystem = cc.Node.extend({
                 ++this._m_uParticleIdx;
             } else {
                 // life < 0
-                if (this._m_uParticleIdx != this._m_uParticleCount - 1) {
-                    this._m_pParticles[this._m_uParticleIdx] = this._m_pParticles[this._m_uParticleCount - 1];
-                }
+                cc.ArrayRemoveObject(this._m_pParticles,p);
+
                 --this._m_uParticleCount;
 
                 if (this._m_uParticleCount == 0 && this._m_bIsAutoRemoveOnFinish) {
