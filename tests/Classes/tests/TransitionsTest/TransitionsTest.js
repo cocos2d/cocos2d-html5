@@ -26,13 +26,13 @@
 TRANSITION_DURATION  = 1.2;
 
 var TransitionsTests = [
-    "JumpZoomTransition",
-    "FadeTransition",
+   /* */"JumpZoomTransition", //ok
+    "FadeTransition",//ok
     "FadeWhiteTransition",
     "FlipXLeftOver",
     "FlipXRightOver",
     "FlipYUpOver",
-    "FlipYDownOver",
+    "FlipYDownOver",//ok
     "FlipAngularLeftOver",
     "FlipAngularRightOver",
     "ZoomFlipXLeftOver",
@@ -187,6 +187,7 @@ var TestLayer1 = cc.Layer.extend({
         var bg1 = cc.Sprite.spriteWithFile(s_back1);
         bg1.setPosition(cc.PointMake(size.width / 2, size.height / 2));
         this.addChild(bg1, -1);
+
         var title = cc.LabelTTF.labelWithString(TransitionsTests[s_nTransitionsIdx], "Thonburi", 32);
         this.addChild(title);
         title.setColor(cc.ccc3(255, 32, 32));
