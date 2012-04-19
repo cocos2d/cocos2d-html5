@@ -144,13 +144,13 @@ cc.TransitionScene = cc.Scene.extend({
     finish:function () {
         // clean up
         this._m_pInScene.setIsVisible(true);
-        this._m_pInScene.setPosition(ccp(0, 0));
+        this._m_pInScene.setPosition(cc.ccp(0, 0));
         this._m_pInScene.setScale(1.0);
         this._m_pInScene.setRotation(0.0);
         this._m_pInScene.getCamera().restore();
 
         this._m_pOutScene.setIsVisible(false);
-        this._m_pOutScene.setPosition(ccp(0, 0));
+        this._m_pOutScene.setPosition(cc.ccp(0, 0));
         this._m_pOutScene.setScale(1.0);
         this._m_pOutScene.setRotation(0.0);
         this._m_pOutScene.getCamera().restore();
@@ -210,6 +210,7 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend({
         this._m_pInScene.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_pOutScene.setAnchorPoint(cc.ccp(0.5, 0.5));
 
+
         //TODO
         var rotozoom = cc.Sequence.actions(
             cc.Spawn.actions(cc.ScaleBy.actionWithDuration(this._m_fDuration / 2, 0.001),
@@ -244,8 +245,9 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend({
         this._m_pInScene.setPosition(cc.ccp(s.width, 0));
         this._m_pInScene.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_pOutScene.setAnchorPoint(cc.ccp(0.5, 0.5));
+
         //TODO
-        var jump = cc.JumpBy.actionWithDuration(this._m_fDuration / 4, ccp(-s.width, 0), s.width / 4, 2);
+        var jump = cc.JumpBy.actionWithDuration(this._m_fDuration / 4, cc.ccp(-s.width, 0), s.width / 4, 2);
         var scaleIn = cc.ScaleTo.actionWithDuration(this._m_fDuration / 4, 1.0);
         var scaleOut = cc.ScaleTo.actionWithDuration(this._m_fDuration / 4, 0.5);
 
@@ -253,7 +255,6 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend({
         var jumpZoomIn = cc.Sequence.actions(jump, scaleIn, null);
 
         var delay = cc.DelayTime.actionWithDuration(this._m_fDuration / 2);
-
         this._m_pOutScene.runAction(jumpZoomOut);
         this._m_pInScene.runAction(cc.Sequence.actions(delay, jumpZoomIn,
             cc.CallFunc.actionWithTarget(this, this.finish),
@@ -913,7 +914,7 @@ cc.TransitionZoomFlipAngular.transitionWithDuration = function (t, scene, o) {
  Fade out the outgoing scene and then fade in the incoming scene.'''
  */
 cc.TransitionFade = cc.TransitionScene.extend({
-    _m_tColor:null,
+    _m_tColor:new cc.Color3B(),
 
     ctor:function () {
     },
@@ -956,6 +957,7 @@ cc.TransitionFade = cc.TransitionScene.extend({
         return true;
     }
 });
+
 /** creates the transition with a duration and with an RGB color
  * Example: FadeTransition::transitionWithDuration(2, scene, ccc3(255,0,0); // red color
  */
@@ -1244,4 +1246,4 @@ cc.TransitionFadeDown.transitionWithDuration = function (t, scene) {
         return pScene;
     }
     return null;
-};
+}
