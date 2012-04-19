@@ -213,7 +213,7 @@ var ActionManual = ActionsDemo.extend({
         this._m_grossini.setColor(cc.ccc3(255, 0, 0));
 
         this._m_kathia.setPosition(cc.PointMake(s.width - 100, s.height / 2));
-        this._m_kathia.setColor(cc.BLUE);
+        this._m_kathia.setColor(cc.BLUE());
     },
     subtitle:function () {
         return "Manual Transformation";

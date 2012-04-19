@@ -90,6 +90,7 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
     this.timeToLive = timeToLive ? timeToLive : 0;
     this.modeA = modeA ? modeA : new cc.tCCParticle.tModeA();
     this.modeB = modeB ? modeB : new cc.tCCParticle.tModeB();
+    this.isChangeColor = false;
 };
 
 //! Mode A: gravity, direction, radial accel, tangential accel
@@ -514,7 +515,7 @@ cc.ParticleSystem = cc.Node.extend({
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _m_tBlendFunc: new cc.BlendFunc(0, 0),
+    _m_tBlendFunc:new cc.BlendFunc(0, 0),
     getBlendFunc:function () {
         return this._m_tBlendFunc;
     },
@@ -869,6 +870,7 @@ cc.ParticleSystem = cc.Node.extend({
         startS *= cc.CONTENT_SCALE_FACTOR();
 
         particle.size = startS;
+        cc.Log(startS);
 
         if (this._m_fEndSize == cc.kCCParticleStartSizeEqualToEndSize) {
             particle.deltaSize = 0;
@@ -1040,6 +1042,7 @@ cc.ParticleSystem = cc.Node.extend({
                 p.color.g += (p.deltaColor.g * dt);
                 p.color.b += (p.deltaColor.b * dt);
                 p.color.a += (p.deltaColor.a * dt);
+                p.isChangeColor = true;
 
                 // size
                 p.size += (p.deltaSize * dt);

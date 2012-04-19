@@ -83,7 +83,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         var high = pointRect.size.height;
 
         if (this._m_pTexture) {
-            if (this._m_pTexture instanceof HTMLImageElement){
+            if (this._m_pTexture instanceof HTMLImageElement) {
                 wide = this._m_pTexture.width;
                 high = this._m_pTexture.height;
             } else {
@@ -217,8 +217,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
             }
         }
         var s = null;
-        if ( texture instanceof HTMLImageElement) {
-            s = cc.SizeMake(texture.width,texture.height);
+        if (texture instanceof HTMLImageElement) {
+            s = cc.SizeMake(texture.width, texture.height);
         } else {
             s = texture.getContentSize();
         }
@@ -310,43 +310,28 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     draw:function () {
         this._super();
         if (cc.renderContextType == cc.kCanvas) {
-            cc.renderContext.save();
-            //if(this.getOpacity() != 255){
-            //    cc.renderContext.globalAlpha = this.getOpacity()/255;
-            //}
-            var offsetPos = cc.PointZero();
-            if(this.getParent()){
-                offsetPos = this.getParent().getPosition();
-            }
-            var rap = this.convertToWorldSpace(this.getPosition());
-            var rapx = rap.x; //offsetPos.x + this.getPositionX();
-            var rapy = rap.y; //offsetPos.y + this.getPositionY();
+            for (var i = 0; i < this._m_uParticleCount; i++) {
+                var particle = this._m_pParticles[i];
+                var lpx = 0 - particle.size * 0.5;
 
-            cc.renderContext.translate(rapx,-rapy);
-            if(this.getRotation() != 0){
-                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
-            }
+                var drawTexture = this.getTexture();
+                if (particle.isChangeColor) {
+                    drawTexture = new Image();
+                    drawTexture.src = cc.ImageRGBAColor(this.getTexture(), particle.color);
+                }
 
-            cc.renderContext.transform( this.getScaleX(),
-                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewY)),
-                Math.tan(cc.DEGREES_TO_RADIANS(-this._m_fSkewX)),
-                this.getScaleY(),
-                0,
-                0);
-
-            var lpx = 0 - this.getTexture().width * this.getAnchorPoint().x;
-            var lpy = 0 - this.getTexture().height * this.getAnchorPoint().y;
-            var tWidth = this.getTexture().width;
-            var tHeight = this.getTexture().height;
-
-            if((this.getContentSize().width == 0)&&(this.getContentSize().height == 0)){
-                cc.drawingUtil.drawImage(this.getTexture(),cc.ccp(lpx,lpy));
-            }else{
-                cc.drawingUtil.drawImage(this.getTexture(),this.getTextureRect().origin,this.getTextureRect().size
-                    ,cc.ccp(lpx,lpy),cc.SizeMake(tWidth,tHeight));
+                cc.saveContext();
+                cc.renderContext.translate(particle.pos.x, -particle.pos.y);
+                if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
+                    cc.drawingUtil.drawImage(this.getTexture(), cc.ccp(lpx, lpx));
+                } else {
+                    cc.drawingUtil.drawImage(this.getTexture(), this.getTextureRect().origin, this.getTextureRect().size
+                        , cc.ccp(lpx, lpx), cc.SizeMake(particle.size, particle.size));
+                }
+                cc.restoreContext();
             }
 
-            cc.renderContext.restore();
+
         } else {
             //TODO need fixed for webGL
             // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
