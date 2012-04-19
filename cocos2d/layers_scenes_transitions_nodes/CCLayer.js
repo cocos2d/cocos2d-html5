@@ -42,6 +42,11 @@ cc.Layer = cc.Node.extend({
     _m_bIsAccelerometerEnabled:false,
     _m_bIsKeypadEnabled:false,
 
+    ctor:function () {
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this._m_bIsRelativeAnchorPoint = false;
+    },
+
     init:function () {
         var bRet = false;
         do
@@ -249,8 +254,6 @@ cc.LayerColor = cc.Layer.extend({
 
     /// ColorLayer
     ctor:function () {
-        this.setAnchorPoint(cc.ccp(0, 0));
-        this._m_bIsRelativeAnchorPoint = false;
     },
 
     // Opacity and RGB color protocol
@@ -344,11 +347,11 @@ cc.LayerColor = cc.Layer.extend({
         //TODO
         //TODO need to fix child position in relation to parent
         if (cc.renderContextType == cc.kCanvas) {
-            cc.renderContext.globalAlpha = this.getOpacity()/255;
+            cc.renderContext.globalAlpha = this.getOpacity() / 255;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
             cc.renderContext.fillStyle = "rgba(" + this._m_tColor.r + "," + this._m_tColor.g + "," + this._m_tColor.b + ",255)";
-            cc.renderContext.fillRect(0 - this.getAnchorPointInPixels().x,this.getAnchorPointInPixels().y, tWidth, -tHeight);
+            cc.renderContext.fillRect(0 - this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, tWidth, -tHeight);
             return;
         }
         this._super();
