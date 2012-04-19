@@ -488,8 +488,6 @@ cc.SpriteBatchNode = cc.Node.extend({
         this._super();
 
         if (cc.renderContextType == cc.kCanvas) {
-            //var lpx = 0 - this.getContentSize().width * this.getAnchorPoint().x;
-            //var lpy = 0 - this.getContentSize().height * this.getAnchorPoint().y;
             var pAp = cc.PointZero();
             if(this.getParent()){
                 pAp = this.getParent().getAnchorPointInPixels();
@@ -510,7 +508,7 @@ cc.SpriteBatchNode = cc.Node.extend({
                     cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x,0-sp.getAnchorPointInPixels().y));
                 } else {
                     cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
-                        , cc.ccp(lpx - sp.getAnchorPointInPixels().x,lpy - sp.getAnchorPointInPixels().y), sp.getContentSize());
+                        , cc.ccp(0 - sp.getAnchorPointInPixels().x,0 - sp.getAnchorPointInPixels().y), sp.getContentSize());
                 }
                 cc.restoreContext();
             }

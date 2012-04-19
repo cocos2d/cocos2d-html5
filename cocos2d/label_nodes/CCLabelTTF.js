@@ -35,7 +35,7 @@ var cc = cc = cc || {};
 cc.LabelTTF = cc.Sprite.extend({
     _m_tDimensions:null,
     _m_eAlignment:cc.TextAlignmentCenter,
-    _m_pFontName:null,
+    _m_pFontName:"Arial",
     _m_fFontSize:0.0,
     _m_pString:null,
 

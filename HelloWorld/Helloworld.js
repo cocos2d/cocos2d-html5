@@ -204,6 +204,7 @@ Helloworld.scene = function () {
     // 'layer' is an autorelease object
     var layer = this.node();
     scene.addChild(layer);
+
     return scene;
 };
 // implement the "static node()" method manually

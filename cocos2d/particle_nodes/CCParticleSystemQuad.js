@@ -83,7 +83,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         var high = pointRect.size.height;
 
         if (this._m_pTexture) {
-            if (this._m_pTexture instanceof HTMLImageElement){
+            if (this._m_pTexture instanceof HTMLImageElement) {
                 wide = this._m_pTexture.width;
                 high = this._m_pTexture.height;
             } else {
@@ -217,8 +217,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
             }
         }
         var s = null;
-        if ( texture instanceof HTMLImageElement) {
-            s = cc.SizeMake(texture.width,texture.height);
+        if (texture instanceof HTMLImageElement) {
+            s = cc.SizeMake(texture.width, texture.height);
         } else {
             s = texture.getContentSize();
         }
@@ -310,24 +310,23 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     draw:function () {
         this._super();
         if (cc.renderContextType == cc.kCanvas) {
-            //if(this.getOpacity() != 255){
-            //    cc.renderContext.globalAlpha = this.getOpacity()/255;
-            //}
-
-            for (var i = 0; i< this._m_uParticleCount;i++){
+            for (var i = 0; i < this._m_uParticleCount; i++) {
                 var particle = this._m_pParticles[i];
-                var lpx = 0 - this.getTexture().width * 0.5;
-                var lpy = 0 - this.getTexture().height * 0.5;
-                var tWidth = this.getTexture().width;
-                var tHeight = this.getTexture().height;
+                var lpx = 0 - particle.size * 0.5;
+
+                var drawTexture = this.getTexture();
+                if (particle.isChangeColor) {
+                    drawTexture = new Image();
+                    drawTexture.src = cc.ImageRGBAColor(this.getTexture(), particle.color);
+                }
 
                 cc.saveContext();
                 cc.renderContext.translate(particle.pos.x, -particle.pos.y);
-                if((this.getContentSize().width == 0)&&(this.getContentSize().height == 0)){
-                    cc.drawingUtil.drawImage(this.getTexture(),cc.ccp(lpx,lpy));
-                }else{
-                    cc.drawingUtil.drawImage(this.getTexture(),this.getTextureRect().origin,this.getTextureRect().size
-                        ,cc.ccp(lpx,lpy),cc.SizeMake(tWidth,tHeight));
+                if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
+                    cc.drawingUtil.drawImage(this.getTexture(), cc.ccp(lpx, lpx));
+                } else {
+                    cc.drawingUtil.drawImage(this.getTexture(), this.getTextureRect().origin, this.getTextureRect().size
+                        , cc.ccp(lpx, lpx), cc.SizeMake(particle.size, particle.size));
                 }
                 cc.restoreContext();
             }

@@ -151,9 +151,9 @@ var ParticleDemo = cc.LayerColor.extend({
 
         this.addChild(menu, 100);
         //TODO
-        //var labelAtlas = cc.LabelAtlas.labelWithString("0000", "fonts/fps_images.png", 16, 24, '.');
-        //this.addChild(labelAtlas, 100, kTagLabelAtlas);
-        //labelAtlas.setPosition( cc.PointMake(s.width-66,50) );
+        var labelAtlas = cc.LabelTTF.labelWithString("0000", "Arial", 24);
+        this.addChild(labelAtlas, 100, kTagLabelAtlas);
+        labelAtlas.setPosition(cc.PointMake(s.width - 66, 50));
 
         // moving background
         this._m_background = cc.Sprite.spriteWithFile(s_back3);
@@ -222,8 +222,8 @@ var ParticleDemo = cc.LayerColor.extend({
 
     step:function (dt) {
         if (this._m_emitter) {
-            //var atlas = this.getChildByTag(kTagLabelAtlas);
-            //atlas.setString(this._m_emitter.getParticleCount().toFixed(0));
+            var atlas = this.getChildByTag(kTagLabelAtlas);
+            atlas.setString(this._m_emitter.getParticleCount().toFixed(0));
         }
     },
     setEmitterPosition:function () {
@@ -298,7 +298,9 @@ var DemoGalaxy = ParticleDemo.extend({
 });
 
 var DemoFlower = ParticleDemo.extend({
-    ctor:function(){this._super();},
+    ctor:function () {
+        this._super();
+    },
     onEnter:function () {
         this._super();
 

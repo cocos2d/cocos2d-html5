@@ -39,7 +39,7 @@ var cc = cc = cc || {};
 cc.Scene = cc.Node.extend({
     ctor:function () {
         this._m_bIsRelativeAnchorPoint = false;
-        //this.setAnchorPoint(cc.ccp(0.5,0.5));
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
     },
     init:function () {
         var bret = false;

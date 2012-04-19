@@ -28,6 +28,30 @@ var cc = cc = cc || {};
 cc.SpriteIndexNotInitialized = "0xffffffff";
 /// CCSprite invalid index on the CCSpriteBatchode
 
+cc.ImageRGBAColor = function (img, color) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
+    var imgPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    if (color instanceof cc.Color3B) {
+        for (var i = 0; i < imgPixels.data.length / 4; i++) {
+            imgPixels.data[i * 4] = imgPixels.data[i * 4] * color.r / 255;
+            imgPixels.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * color.g / 255;
+            imgPixels.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * color.b / 255;
+        }
+    } else if (color instanceof cc.Color4F) {
+        for (var i = 0; i < imgPixels.data.length / 4; i++) {
+            imgPixels.data[i * 4] = imgPixels.data[i * 4] * color.r / 255;
+            imgPixels.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * color.g / 255;
+            imgPixels.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * color.b / 255;
+        }
+    }
+
+    ctx.putImageData(imgPixels, 0, 0, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL();
+}
 /**
  Whether or not an CCSprite will rotate, scale or translate with it's parent.
  Useful in health bars, when you want that the health bar translates with it's parent but you don't
@@ -705,18 +729,20 @@ cc.Sprite = cc.Node.extend({
         return tv
     },
 // draw
+
+
     draw:function () {
         this._super();
 
         //TODO need to fixed
         if (cc.renderContextType == cc.kCanvas) {
-            cc.renderContext.globalAlpha = this.getOpacity()/255;
+            cc.renderContext.globalAlpha = this.getOpacity() / 255;
             //direct draw image by canvas drawImage
             if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
-                cc.drawingUtil.drawImage(this._m_pobTexture, cc.ccp(0 - this.getAnchorPointInPixels().x,0-this.getAnchorPointInPixels().y));//this._m_tAnchorPointInPixels.x,-this._m_tAnchorPointInPixels.y));
+                cc.drawingUtil.drawImage(this._m_pobTexture, cc.ccp(0 - this.getAnchorPointInPixels().x, 0 - this.getAnchorPointInPixels().y));//this._m_tAnchorPointInPixels.x,-this._m_tAnchorPointInPixels.y));
             } else {
                 cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size,
-                    cc.ccp(0 - this.getAnchorPointInPixels().x,0-this.getAnchorPointInPixels().y), this.getContentSize());
+                    cc.ccp(0 - this.getAnchorPointInPixels().x, 0 - this.getAnchorPointInPixels().y), this.getContentSize());
             }
 
             if (cc.SPRITE_DEBUG_DRAW == 1) {
@@ -1017,12 +1043,19 @@ cc.Sprite = cc.Node.extend({
     setColor:function (color3) {
         this._m_sColor = this._m_sColorUnmodified = color3;
 
+        if (cc.renderContextType == cc.kCanvas) {
+            var tempTexture = this.getTexture();
+            if (tempTexture) {
+                tempTexture.src = cc.ImageRGBAColor(tempTexture, this._m_sColor);
+                this.setTexture(tempTexture);
+            }
+        }
+
         if (this._m_bOpacityModifyRGB) {
             this._m_sColor.r = color3.r * this._m_nOpacity / 255;
             this._m_sColor.g = color3.g * this._m_nOpacity / 255;
             this._m_sColor.b = color3.b * this._m_nOpacity / 255;
         }
-
         this.updateColor();
     },
     // RGBAProtocol
