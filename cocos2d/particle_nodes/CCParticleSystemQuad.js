@@ -315,23 +315,17 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                 var lpx = 0 - particle.size * 0.5;
 
                 var drawTexture = this.getTexture();
-                if (particle.isChangeColor) {
-                    drawTexture = new Image();
-                    drawTexture.src = cc.ImageRGBAColor(this.getTexture(), particle.color);
-                }
+                //if (particle.isChangeColor) {
+                //    drawTexture = new Image();
+                //    drawTexture.src = cc.ImageRGBAColor(this.getTexture(), particle.color);
+                //}
 
                 cc.saveContext();
+                cc.renderContext.globalAlpha = particle.color.a;
                 cc.renderContext.translate(particle.pos.x, -particle.pos.y);
-                if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
-                    cc.drawingUtil.drawImage(this.getTexture(), cc.ccp(lpx, lpx));
-                } else {
-                    cc.drawingUtil.drawImage(this.getTexture(), this.getTextureRect().origin, this.getTextureRect().size
-                        , cc.ccp(lpx, lpx), cc.SizeMake(particle.size, particle.size));
-                }
+                cc.drawingUtil.drawImage(drawTexture, cc.ccp(lpx, lpx), cc.SizeMake(particle.size, particle.size));
                 cc.restoreContext();
             }
-
-
         } else {
             //TODO need fixed for webGL
             // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY

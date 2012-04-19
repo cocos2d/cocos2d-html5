@@ -128,9 +128,16 @@ var ParticleDemo = cc.LayerColor.extend({
         var tapScreen = cc.LabelTTF.labelWithString("(Tap the Screen)", "Arial", 20);
         tapScreen.setPosition(cc.PointMake(s.width / 2, s.height - 80));
         this.addChild(tapScreen, 100);
-
+        var selfPoint = this;
         var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, function(){
+            if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeGrouped)
+                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeFree);
+            else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeFree)
+                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeRelative);
+            else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeRelative)
+                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeGrouped);
+        });
         var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
 
         //var item4 = cc.MenuItemToggle.itemWithTarget(	this,
@@ -214,9 +221,9 @@ var ParticleDemo = cc.LayerColor.extend({
         //CCPoint convertedLocation = CCDirector::sharedDirector().convertToGL(location);
 
         var pos = cc.PointZero();
-        //if (this._m_background){
-        //    pos = this._m_background.convertToWorldSpace(cc.PointZero());
-        //}
+        if (this._m_background){
+            pos = this._m_background.convertToWorldSpace(cc.PointZero());
+        }
         this._m_emitter.setPosition(cc.ccpSub(location, pos));
     },
 
@@ -238,8 +245,9 @@ var DemoFirework = ParticleDemo.extend({
 
         this._m_emitter = cc.ParticleFireworks.node();
         this._m_background.addChild(this._m_emitter, 10);
-
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
+        var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_stars1);
+        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color3B(125,125,255));
+        this._m_emitter.setTexture(myTexture);
 
         this.setEmitterPosition();
     },
@@ -272,8 +280,9 @@ var DemoSun = ParticleDemo.extend({
 
         this._m_emitter = cc.ParticleSun.node();
         this._m_background.addChild(this._m_emitter, 10);
-
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
+        var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_fire);
+        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color4F(0.76,0.25,0.12,1));
+        this._m_emitter.setTexture(myTexture);
         this.setEmitterPosition();
     },
     title:function () {
@@ -287,8 +296,9 @@ var DemoGalaxy = ParticleDemo.extend({
 
         this._m_emitter = cc.ParticleGalaxy.node();
         this._m_background.addChild(this._m_emitter, 10);
-
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
+        var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_fire);
+        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color3B(125,50,255));
+        this._m_emitter.setTexture(myTexture);
 
         this.setEmitterPosition();
     },
@@ -307,7 +317,9 @@ var DemoFlower = ParticleDemo.extend({
         this._m_emitter = cc.ParticleFlower.node();
         this._m_background.addChild(this._m_emitter, 10);
 
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
+        var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_stars1);
+        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color3B(255,98,200));
+        this._m_emitter.setTexture(myTexture);
         this.setEmitterPosition();
     },
     title:function () {
@@ -739,7 +751,9 @@ var ParallaxParticle = ParticleDemo.extend({
 
 var DemoParticleFromFile = ParticleDemo.extend({
     m_title:"",
-    ctor:function () {
+    ctor:function (filename) {
+        this._super();
+        this.m_title = filename;
     },
     onEnter:function () {
         this._super();
@@ -749,7 +763,7 @@ var DemoParticleFromFile = ParticleDemo.extend({
         this._m_background = null;
 
         this._m_emitter = new cc.ParticleSystemQuad();
-        var filename = "Images/" + this.m_title + ".plist";
+        var filename = "Resources/Images/" + this.m_title + ".plist";
         this._m_emitter.initWithFile(filename);
         this.addChild(this._m_emitter, 10);
 
@@ -771,7 +785,7 @@ var RadiusMode1 = ParticleDemo.extend({
         this._m_emitter = new cc.ParticleSystemQuad();
         this._m_emitter.initWithTotalParticles(200);
         this.addChild(this._m_emitter, 10);
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("Images/stars-grayscale.png"));
+        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_starsGrayscale));
 
         // duration
         this._m_emitter.setDuration(cc.kCCParticleDurationInfinity);
@@ -849,7 +863,7 @@ var RadiusMode2 = ParticleDemo.extend({
         this._m_emitter = new cc.ParticleSystemQuad();
         this._m_emitter.initWithTotalParticles(200);
         this.addChild(this._m_emitter, 10);
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("Images/stars-grayscale.png"));
+        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_starsGrayscale));
 
         // duration
         this._m_emitter.setDuration(cc.kCCParticleDurationInfinity);
