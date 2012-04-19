@@ -29,15 +29,15 @@ cc.kCCNodeTagInvalid = -1;
 cc.kCCNodeOnEnter = null;
 cc.kCCNodeOnExit = null;
 
-cc.saveContext = function(){
-    if (cc.renderContextType == cc.kCanvas){
+cc.saveContext = function () {
+    if (cc.renderContextType == cc.kCanvas) {
         cc.renderContext.save();
     } else {
         //glPushMatrix();
     }
 };
-cc.restoreContext = function(){
-    if (cc.renderContextType == cc.kCanvas){
+cc.restoreContext = function () {
+    if (cc.renderContextType == cc.kCanvas) {
         cc.renderContext.restore();
     } else {
         //glPopMatrix();
@@ -737,15 +737,33 @@ cc.Node = cc.Class.extend({
     /** performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes. */
     transform:function () {
         // transformations
-        if (cc.renderContextType == cc.kCanvas){
+        if (cc.renderContextType == cc.kCanvas) {
             //
             //var ct = this.nodeToParentTransform();
-            cc.renderContext.translate(this.getPositionX(), -(this.getPositionY()));
+            if (this._m_bIsRelativeAnchorPoint) {
+                var pAp = cc.PointZero();
+                if (this.getParent()) {
+                    pAp = this.getParent().getAnchorPointInPixels();
+                }
+                cc.renderContext.translate(this.getPositionX() - pAp.x, -(this.getPositionY() - pAp.y ));
 
-            cc.renderContext.scale(this.getScaleX(),this.getScaleY());
-            cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())), 1.0, 0, 0);
+                cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
+                    this.getScaleY(), 0, 0);
 
-            cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+            } else {
+                var pAp = cc.PointZero();
+                if (this.getParent()) {
+                    pAp = this.getParent().getAnchorPointInPixels();
+                }
+                var lAp = this.getAnchorPointInPixels();
+                cc.renderContext.translate(this.getPositionX() - pAp.x + lAp.x, -(this.getPositionY() - pAp.y + lAp.y));
+
+                cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
+                    this.getScaleY(), 0, 0);
+
+                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+            }
         } else {
             //Todo WebGL implement need fixed
             if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
