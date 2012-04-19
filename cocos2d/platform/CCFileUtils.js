@@ -106,8 +106,9 @@ cc.FileUtils.setResourcePath = function (pszResourcePath) {
  @return  The cc.Dictionary pointer generated from the file
  */
 cc.FileUtils.dictionaryWithContentsOfFile = function (pFileName) {
-    var ret = this.dictionaryWithContentsOfFileThreadSafe(pFileName);
-    return ret;
+    var parser = cc.SAXParser.shareParser();
+    this.m_pRootDict = parser.parse(pFileName);
+    return this.m_pRootDict;
 };
 
 /*

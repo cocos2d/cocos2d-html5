@@ -43,9 +43,10 @@ cc.ImageRGBAColor = function (img, color) {
         }
     } else if (color instanceof cc.Color4F) {
         for (var i = 0; i < imgPixels.data.length / 4; i++) {
-            imgPixels.data[i * 4] = imgPixels.data[i * 4] * color.r / 255;
-            imgPixels.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * color.g / 255;
-            imgPixels.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * color.b / 255;
+            imgPixels.data[i * 4] = imgPixels.data[i * 4] * color.r;
+            imgPixels.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * color.g;
+            imgPixels.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * color.b;
+            imgPixels.data[i * 4 + 3] = imgPixels.data[i * 4 + 3] * color.a;
         }
     }
 
@@ -728,9 +729,8 @@ cc.Sprite = cc.Node.extend({
         tv.visible = this._m_bIsVisible;
         return tv
     },
+
 // draw
-
-
     draw:function () {
         this._super();
 
@@ -747,14 +747,12 @@ cc.Sprite = cc.Node.extend({
 
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
-                var s = new cc.Size();
-                s = this._m_tContentSize;
+                var s = this._m_tContentSize;
                 var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
                 cc.drawingUtil.drawPoly(vertices, 4, true);
             } else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
-                var s = new cc.Size();
-                s = this._m_obRect.size;
+                var s = this._m_obRect.size;
                 var offsetPix = new cc.Point();
                 offsetPix = this.getOffsetPositionInPixels();
                 var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),
@@ -808,15 +806,13 @@ cc.Sprite = cc.Node.extend({
 
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
-                var s = new cc.Size();
-                s = this._m_tContentSize;
+                var s = this._m_tContentSize;
                 var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
                 cc.drawingUtil.drawPoly(vertices, 4, true);
             }
             else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
-                var s = new cc.Size();
-                s = this._m_obRect.size;
+                var s = this._m_obRect.size;
                 var offsetPix = new cc.Point();
                 offsetPix = this.getOffsetPositionInPixels();
                 var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),
@@ -1045,9 +1041,11 @@ cc.Sprite = cc.Node.extend({
 
         if (cc.renderContextType == cc.kCanvas) {
             var tempTexture = this.getTexture();
-            if (tempTexture) {
-                tempTexture.src = cc.ImageRGBAColor(tempTexture, this._m_sColor);
-                this.setTexture(tempTexture);
+            if (tempTexture instanceof HTMLImageElement) {
+                if (tempTexture) {
+                    tempTexture.src = cc.ImageRGBAColor(tempTexture, this._m_sColor);
+                    this.setTexture(tempTexture);
+                }
             }
         }
 

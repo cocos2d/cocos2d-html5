@@ -106,6 +106,7 @@ cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('textures/CCTextureAtlas.js');//12
 cc.loadjs('actions/CCAction.js');//7
+cc.loadjs('platform/CCFileUtils.js');//7
 cc.loadjs('actions/CCActionInterval.js');//7
 cc.loadjs('actions/CCActionInstant.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
