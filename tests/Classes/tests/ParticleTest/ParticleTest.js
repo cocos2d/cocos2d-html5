@@ -12,7 +12,7 @@ var IDC_BACK = 101;
 var IDC_RESTART = 102;
 var IDC_TOGGLE = 103;
 
-var sceneIdx = 27;
+var sceneIdx = -1;
 var MAX_LAYER = 33;
 
 var createParticleLayer = function (nIndex) {
