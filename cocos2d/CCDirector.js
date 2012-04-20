@@ -508,7 +508,7 @@ cc.Director = cc.Class.extend({
         var i = this._m_pobScenesStack.length;
 
         this._m_bSendCleanupToScene = true;
-        this._m_pobScenesStack[i] = pScene;
+        this._m_pobScenesStack[i-1] = pScene;
 
         this._m_pNextScene = pScene;
     },
