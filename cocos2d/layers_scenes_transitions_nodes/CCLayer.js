@@ -26,7 +26,9 @@
 
 var cc = cc = cc || {};
 
+/*cc.LayerRGBAColor = function(color) {
 
+}*/
 //
 // cc.Layer
 //
@@ -242,13 +244,14 @@ cc.Layer.node = function () {
  */
 cc.LayerColor = cc.Layer.extend({
     _m_pSquareVertices:[new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)],
-    _m_pSquareColors:[cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1), cc.ccc4(0, 0, 0, 1)],
+    _m_pSquareColors:new Array(new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)),
     _m_cOpacity:0,
-    _m_tColor:cc.BLACK(),
+    _m_tColor:null,
     _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
 
     /// ColorLayer
     ctor:function () {
+        this._super();
     },
 
     // Opacity and RGB color protocol
@@ -288,7 +291,6 @@ cc.LayerColor = cc.Layer.extend({
     initWithColorWidthHeight:function (color, width, height) {
         this._m_tBlendFunc.src = cc.BLEND_SRC;
         this._m_tBlendFunc.dst = cc.BLEND_DST;
-
         this._m_tColor = new cc.Color3B(color.r, color.g, color.b);
         this._m_cOpacity = color.a;
 
@@ -296,7 +298,6 @@ cc.LayerColor = cc.Layer.extend({
             this._m_pSquareVertices[i].x = 0.0;
             this._m_pSquareVertices[i].y = 0.0;
         }
-
         this._updateColor();
         this.setContentSize(cc.SizeMake(width, height));
         return true;
@@ -307,7 +308,6 @@ cc.LayerColor = cc.Layer.extend({
         this._m_pSquareVertices[2].y = size.height * cc.CONTENT_SCALE_FACTOR();
         this._m_pSquareVertices[3].x = size.width * cc.CONTENT_SCALE_FACTOR();
         this._m_pSquareVertices[3].y = size.height * cc.CONTENT_SCALE_FACTOR();
-
         this._super(size);
     },
     /** change width and height in Points
@@ -325,11 +325,9 @@ cc.LayerColor = cc.Layer.extend({
         this.setContentSize(cc.SizeMake(this._m_tContentSize.width, h));
     },
     _updateColor:function () {
+        this._m_pSquareColors = new Array();
         for (var i = 0; i < 4; i++) {
-            this._m_pSquareColors[i].r = this._m_tColor.r;
-            this._m_pSquareColors[i].g = this._m_tColor.g;
-            this._m_pSquareColors[i].b = this._m_tColor.b;
-            this._m_pSquareColors[i].a = this._m_cOpacity;
+            this._m_pSquareColors[i] = new cc.Color4B(this._m_tColor.r,this._m_tColor.g,this._m_tColor.b,this._m_cOpacity);
         }
     },
     setIsOpacityModifyRGB:function (bValue) {
@@ -345,7 +343,19 @@ cc.LayerColor = cc.Layer.extend({
             cc.renderContext.globalAlpha = this.getOpacity() / 255;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
-            cc.renderContext.fillStyle = "rgba(" + this._m_tColor.r + "," + this._m_tColor.g + "," + this._m_tColor.b + ",255)";
+            var tGradient  =  cc.renderContext.createLinearGradient(-this.getAnchorPointInPixels().x,this.getAnchorPointInPixels().y,this.getAnchorPointInPixels().x,-this.getAnchorPointInPixels().y)
+            tGradient.addColorStop(0,"rgba(" + this._m_pSquareColors[0].r + "," + this._m_pSquareColors[0].g + "," + this._m_pSquareColors[0].b + "," + this._m_pSquareColors[0].a +")");
+            tGradient.addColorStop(1,"rgba(" + this._m_pSquareColors[3].r + "," + this._m_pSquareColors[3].g + "," + this._m_pSquareColors[3].b + "," + this._m_pSquareColors[0].a +")");
+
+            /*var newBlend = false;
+            if (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) {
+                newBlend = true;
+                //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
+            }
+            if (newBlend) {
+                tGradient = cc.LayerRGBAColor(new cc.Color3B(231,21,231))
+            }*/
+            cc.renderContext.fillStyle = tGradient;
             cc.renderContext.fillRect(0 - this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, tWidth, -tHeight);
             return;
         }
@@ -380,6 +390,7 @@ cc.LayerColor = cc.Layer.extend({
         // restore default GL state
         // glEnableClientState(GL_TEXTURE_COORD_ARRAY);
         // glEnable(GL_TEXTURE_2D);
+
     }
 });
 
@@ -433,12 +444,15 @@ cc.LayerColor.node = function () {
  @since v0.99.5
  */
 cc.LayerGradient = cc.LayerColor.extend({
-    _m_startColor:null,
-    _m_endColor:null,
+    _m_startColor:new cc.Color3B(),
+    _m_endColor:new cc.Color3B(),
     _m_cStartOpacity:null,
     _m_cEndOpacity:null,
     _m_AlongVector:null,
     _m_bCompressedInterpolation:null,
+    ctor:function(){
+        this._super();
+    },
     getStartColor:function () {
         return this._m_tColor;
     },
@@ -482,33 +496,29 @@ cc.LayerGradient = cc.LayerColor.extend({
     },
     initWithColor:function (start, end, v) {
         var argnum = arguments.length;
-        switch (argnum) {
-            case 2:
+        if (argnum == 2) {
                 /** Initializes the CCLayer with a gradient between start and end. */
-                return this.initWithColor(start, end, cc.ccp(0, -1));
-                break;
-            case 3:
-                /** Initializes the CCLayer with a gradient between start and end in the direction of v. */
-                this._m_endColor.r = end.r;
-                this._m_endColor.g = end.g;
-                this._m_endColor.b = end.b;
-
-                this._m_cEndOpacity = end.a;
-                this._m_cStartOpacity = start.a;
-                this.m_AlongVector = v;
-
-                this._m_bCompressedInterpolation = true;
-
-                return cc.LayerColor.initWithColor(cc.cs4(start.r, start.g, start.b, 255));
-                break;
-            default:
-                throw "Argument must be non-nil ";
-                break;
+                v = cc.ccp(0, -1);
         }
+        /** Initializes the CCLayer with a gradient between start and end in the direction of v. */
+        this._m_startColor.r = start.r;
+        this._m_startColor.g = start.g;
+        this._m_startColor.b = start.b;
+        this._m_cStartOpacity = start.a;
 
+        this._m_endColor.r = end.r;
+        this._m_endColor.g = end.g;
+        this._m_endColor.b = end.b;
+        this._m_cEndOpacity = end.a;
+
+        this.m_AlongVector = v;
+
+        this._m_bCompressedInterpolation = true;
+
+        return this._super(cc.ccc4(start.r, start.g, start.b, 255));
     },
     _updateColor:function () {
-        cc.LayerColor._updateColor();
+        this._super();
 
         var h = cc.ccpLength(this.m_AlongVector);
         if (h == 0)
@@ -520,36 +530,36 @@ cc.LayerGradient = cc.LayerColor.extend({
 
         // Compressed Interpolation mode
         if (this._m_bCompressedInterpolation) {
-            var h2 = 1 / ( Math.floor(u.x) + Math.floor(u.y) );
+            var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
             u = cc.ccpMult(u, h2 * c);
         }
 
         var opacityf = this._m_cOpacity / 255.0;
 
-        var S = [ this._m_tColor.r, this._m_tColor.g, this._m_tColor.b, this._m_cStartOpacity * opacityf];
+        var S = new cc.Color4B(this._m_startColor.r, this._m_startColor.g, this._m_startColor.b, this._m_cStartOpacity * opacityf);
 
-        var E = [ this._m_endColor.r, this._m_endColor.g, this._m_endColor.b, this._m_cEndOpacity * opacityf]
+        var E =  new cc.Color4B(this._m_endColor.r, this._m_endColor.g, this._m_endColor.b, this._m_cEndOpacity * opacityf);
 
         // (-1, -1)
-        this._m_pSquareColors[0].r = (E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c)));
-        this._m_pSquareColors[0].g = (E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c)));
-        this._m_pSquareColors[0].b = (E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c)));
-        this._m_pSquareColors[0].a = (E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c)));
+        this._m_pSquareColors[0].r = parseInt((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
+        this._m_pSquareColors[0].g = parseInt((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
+        this._m_pSquareColors[0].b = parseInt((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
+        this._m_pSquareColors[0].a = parseInt((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
         // (1, -1)
-        this._m_pSquareColors[1].r = (E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c)));
-        this._m_pSquareColors[1].g = (E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c)));
-        this._m_pSquareColors[1].b = (E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c)));
-        this._m_pSquareColors[1].a = (E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c)));
+        this._m_pSquareColors[1].r = parseInt((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
+        this._m_pSquareColors[1].g = parseInt((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
+        this._m_pSquareColors[1].b = parseInt((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
+        this._m_pSquareColors[1].a = parseInt((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
         // (-1, 1)
-        this._m_pSquareColors[2].r = (E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c)));
-        this._m_pSquareColors[2].g = (E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c)));
-        this._m_pSquareColors[2].b = (E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c)));
-        this._m_pSquareColors[2].a = (E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c)));
+        this._m_pSquareColors[2].r = parseInt((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
+        this._m_pSquareColors[2].g = parseInt((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
+        this._m_pSquareColors[2].b = parseInt((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
+        this._m_pSquareColors[2].a = parseInt((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
         // (1, 1)
-        this._m_pSquareColors[3].r = (E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c)));
-        this._m_pSquareColors[3].g = (E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c)));
-        this._m_pSquareColors[3].b = (E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c)));
-        this._m_pSquareColors[3].a = (E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c)));
+        this._m_pSquareColors[3].r = parseInt((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
+        this._m_pSquareColors[3].g = parseInt((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
+        this._m_pSquareColors[3].b = parseInt((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
+        this._m_pSquareColors[3].a = parseInt((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
     }
 });
 
@@ -600,6 +610,9 @@ cc.LayerGradient.node = function () {
 cc.LayerMultiplex = cc.Layer.extend({
     m_nEnabledLayer:0,
     m_pLayers:null,
+    ctor:function(){
+        this._super();
+    },
     initWithLayer:function (layer) {
         this.m_pLayers = [];
         this.m_pLayers.addObject(layer);
@@ -617,13 +630,13 @@ cc.LayerMultiplex = cc.Layer.extend({
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      */
     switchTo:function (n) {
-        cc.Assert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
+        cc.Assert(n < this.m_pLayers.length, "Invalid index in MultiplexLayer switchTo message");
 
-        this.removeChild(this.m_pLayers.getObjectAtIndex(this.m_nEnabledLayer), true);
+        this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
 
         this.m_nEnabledLayer = n;
 
-        this.addChild(this.m_pLayers.getObjectAtIndex(n));
+        this.addChild(this.m_pLayers[n]);
     },
     /** release the current layer and switches to another layer indexed by n.
      The current (old) layer will be removed from it's parent with 'cleanup:YES'.
@@ -631,14 +644,14 @@ cc.LayerMultiplex = cc.Layer.extend({
     switchToAndReleaseMe:function (n) {
         cc.Assert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
 
-        this.removeChild(this.m_pLayers.getObjectAtIndex(this.m_nEnabledLayer), true);
+        this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
 
         //[layers replaceObjectAtIndex:enabledLayer withObject:[NSNull null]];
-        this.m_pLayers.replaceObjectAtIndex(this.m_nEnabledLayer, null);
+        this.m_pLayers[this.m_nEnabledLayer] = null;
 
         this.m_nEnabledLayer = n;
 
-        this.addChild(this.m_pLayers.getObjectAtIndex(n));
+        this.addChild(this.m_pLayers[n]);
     }
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
