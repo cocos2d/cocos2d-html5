@@ -306,7 +306,6 @@ var TestLayer2 = cc.Layer.extend({
         var s = new TransitionsTestScene();
 
         var pLayer = new TestLayer1();
-        pLayer.init();
         s.addChild(pLayer);
 
         var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);

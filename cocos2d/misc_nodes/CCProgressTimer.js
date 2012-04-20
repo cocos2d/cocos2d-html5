@@ -77,7 +77,6 @@ cc.ProgressTimer = cc.Node.extend({
         this._m_eType = cc.kCCProgressTimerTypeRadialCCW;
 
         return true;
-
     },
 
     setPercentage:function (fPercentage) {
@@ -113,48 +112,55 @@ cc.ProgressTimer = cc.Node.extend({
     },
 
     draw:function () {
+        if (cc.renderContextType == cc.kCanvas) {
+            if (this._m_eType > 1) {
+                cc.drawingUtil.drawImage(this._m_pSprite._m_pobTexture,
+                    this._origin, //cc.ccp(this._m_pSprite.getTextureRect().origin.x + this._origin.x ,this._m_pSprite.getTextureRect().origin.y + this._origin.y),
+                    this._drawSize,
+                    cc.ccp(0 - this.getAnchorPointInPixels().x + this._drawPosition.x, 0 - this.getAnchorPointInPixels().y + this._drawPosition.y),
+                    this._drawSize);
+            }
+        } else {
+            this._super();
 
-        this._super();
+            if (!this._m_pVertexData) {
+                return;
+            }
 
-        if (!this._m_pVertexData) {
-            return;
+            if (!this._m_pSprite) {
+                return;
+            }
+
+            var bf = this._m_pSprite.getBlendFunc();
+            var newBlend = (bf.src != cc.BLEND_SRC || bf.dst != cc.BLEND_DST) ? true : false;
+            if (newBlend) {
+                //glBlendFunc(bf.src, bf.dst);
+            }
+
+            ///	========================================================================
+            //	Replaced [texture_ drawAtPoint:CCPointZero] with my own vertexData
+            //	Everything above me and below me is copied from CCTextureNode's draw
+            //glBindTexture(GL_TEXTURE_2D, m_pSprite->getTexture()->getName());
+            //glVertexPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].vertices);
+            //glTexCoordPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].texCoords);
+            //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].colors);
+
+            if (this._m_eType == cc.kCCProgressTimerTypeRadialCCW || this._m_eType == cc.kCCProgressTimerTypeRadialCW) {
+                //glDrawArrays(GL_TRIANGLE_FAN, 0, m_nVertexDataCount);
+            } else if (this._m_eType == cc.kCCProgressTimerTypeHorizontalBarLR ||
+                this._m_eType == cc.kCCProgressTimerTypeHorizontalBarRL ||
+                this._m_eType == cc.kCCProgressTimerTypeVerticalBarBT ||
+                this._m_eType == cc.kCCProgressTimerTypeVerticalBarTB) {
+                //glDrawArrays(GL_TRIANGLE_STRIP, 0, m_nVertexDataCount);
+            }
+            //glDrawElements(GL_TRIANGLES, indicesCount_, GL_UNSIGNED_BYTE, indices_);
+            ///	========================================================================
+
+            if (newBlend) {
+                //glBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
+            }
         }
-
-        if (!this._m_pSprite) {
-            return;
-        }
-
-        var bf = this._m_pSprite.getBlendFunc();
-        var newBlend = (bf.src != cc.BLEND_SRC || bf.dst != cc.BLEND_DST) ? true : false;
-        if (newBlend) {
-            //glBlendFunc(bf.src, bf.dst);
-        }
-
-        ///	========================================================================
-        //	Replaced [texture_ drawAtPoint:CCPointZero] with my own vertexData
-        //	Everything above me and below me is copied from CCTextureNode's draw
-        //glBindTexture(GL_TEXTURE_2D, m_pSprite->getTexture()->getName());
-        //glVertexPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].vertices);
-        //glTexCoordPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].texCoords);
-        //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].colors);
-
-        if (this._m_eType == cc.kCCProgressTimerTypeRadialCCW || this._m_eType == cc.kCCProgressTimerTypeRadialCW) {
-            //glDrawArrays(GL_TRIANGLE_FAN, 0, m_nVertexDataCount);
-        } else if (this._m_eType == cc.kCCProgressTimerTypeHorizontalBarLR ||
-            this._m_eType == cc.kCCProgressTimerTypeHorizontalBarRL ||
-            this._m_eType == cc.kCCProgressTimerTypeVerticalBarBT ||
-            this._m_eType == cc.kCCProgressTimerTypeVerticalBarTB) {
-            //glDrawArrays(GL_TRIANGLE_STRIP, 0, m_nVertexDataCount);
-        }
-        //glDrawElements(GL_TRIANGLES, indicesCount_, GL_UNSIGNED_BYTE, indices_);
-        ///	========================================================================
-
-        if (newBlend) {
-            //glBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
-        }
-
     },
-
 
     _vertexFromTexCoord:function (texCoord) {
         var tmp;
@@ -183,22 +189,54 @@ cc.ProgressTimer = cc.Node.extend({
 
     },
 
+    _origin:cc.PointZero(),
+    _drawSize:cc.SizeZero(),
+    _drawPosition:cc.PointZero(),
     _updateProgress:function () {
-        switch (this._m_eType) {
-            case cc.kCCProgressTimerTypeRadialCW:
-            case cc.kCCProgressTimerTypeRadialCCW:
-                this._updateRadial();
-                break;
-            case cc.kCCProgressTimerTypeHorizontalBarLR:
-            case cc.kCCProgressTimerTypeHorizontalBarRL:
-            case cc.kCCProgressTimerTypeVerticalBarBT:
-            case cc.kCCProgressTimerTypeVerticalBarTB:
-                this._updateBar();
-                break;
-            default:
-                break;
+        if (cc.renderContextType == cc.kCanvas) {
+            var size = this.getContentSize();
+            switch (this._m_eType) {
+                case 2:
+                    //left to right
+                    this._origin = cc.PointZero();
+                    this._drawPosition = cc.PointZero();
+                    this._drawSize = cc.SizeMake((this._m_fPercentage / 100) * size.width, size.height);
+                    break;
+                case 3:
+                    //right to left
+                    this._drawSize = cc.SizeMake((this._m_fPercentage / 100) * size.width, size.height);
+                    this._origin = cc.ccp(size.width - this._drawSize.width, 0);
+                    this._drawPosition = cc.ccp(size.width - this._drawSize.width, 0);
+                    break;
+                case 4:
+                    //buttom to top
+                    this._drawSize = cc.SizeMake(size.width, (this._m_fPercentage / 100) * size.height);
+                    this._drawPosition = cc.PointZero();
+                    this._origin = cc.ccp(0, size.height - this._drawSize.height);
+                    break;
+                case 5:
+                    //top to buttom
+                    this._drawSize = cc.SizeMake(size.width, (this._m_fPercentage / 100) * size.height);
+                    this._drawPosition = cc.ccp(0, size.height - this._drawSize.height);
+                    this._origin = cc.ccp(0, 0);
+                    break;
+            }
+        } else {
+            switch (this._m_eType) {
+                case cc.kCCProgressTimerTypeRadialCW:
+                case cc.kCCProgressTimerTypeRadialCCW:
+                    this._updateRadial();
+                    break;
+                case cc.kCCProgressTimerTypeHorizontalBarLR:
+                case cc.kCCProgressTimerTypeHorizontalBarRL:
+                case cc.kCCProgressTimerTypeVerticalBarBT:
+                case cc.kCCProgressTimerTypeVerticalBarTB:
+                    this._updateBar();
+                    break;
+                default:
+                    break;
+            }
         }
-
     },
     _updateBar:function () {
         var alpha = this._m_fPercentage / 100;
@@ -395,15 +433,15 @@ cc.ProgressTimer = cc.Node.extend({
         //	the 3 is for the midpoint, 12 o'clock point and hitpoint position.
 
         var sameIndexCount = true;
-        if (_m_nVertexDataCount != index + 3) {
+        if (this._m_nVertexDataCount != index + 3) {
             sameIndexCount = false;
-            if (_m_pVertexData) {
-                _m_pVertexData = null;
-                _m_nVertexDataCount = 0;
+            if (this._m_pVertexData) {
+                this._m_pVertexData = null;
+                this._m_nVertexDataCount = 0;
             }
         }
 
-        if (!_m_pVertexData) {
+        if (!this._m_pVertexData) {
             this._m_nVertexDataCount = index + 3;
             this._m_pVertexData = [];
             for (var i = 0; i < this._m_nVertexDataCount; i++) {
@@ -464,10 +502,16 @@ cc.ProgressTimer = cc.Node.extend({
         var c3b = this._m_pSprite.getColor();
 
         var color = new cc.Color4B(c3b.r, c3b.g, c3b.b, op);
-        if (this._m_pSprite.getTexture().getHasPremultipliedAlpha()) {
+        if (this._m_pSprite.getTexture() instanceof HTMLImageElement) {
             color.r *= op / 255;
             color.g *= op / 255;
             color.b *= op / 255;
+        } else {
+            if (this._m_pSprite.getTexture().getHasPremultipliedAlpha()) {
+                color.r *= op / 255;
+                color.g *= op / 255;
+                color.b *= op / 255;
+            }
         }
 
         if (this._m_pVertexData) {
@@ -488,38 +532,28 @@ cc.ProgressTimer = cc.Node.extend({
                     break;
             }
         }
-
         return cc.PointZero();
-
     },
-
     _m_eType:null,
     _m_fPercentage:0.0,
     _m_pSprite:null,
     _m_nVertexDataCount:0,
     _m_pVertexData:null
-
 });
-
 
 cc.ProgressTimer.progressWithFile = function (pszFileName) {
     var pProgressTimer = new cc.ProgressTimer();
     if (pProgressTimer.initWithFile(pszFileName)) {
-        //pProgressTimer.autorelease();
+        return pProgressTimer;
     } else {
-        pProgressTimer = null;
+        return null;
     }
-
-    return pProgressTimer;
-
 };
 cc.ProgressTimer.progressWithTexture = function (pTexture) {
     var pProgressTimer = new cc.ProgressTimer();
     if (pProgressTimer.initWithTexture(pTexture)) {
-        //pProgressTimer->autorelease();
+        return pProgressTimer;
     } else {
-        pProgressTimer = null;
+        return null;
     }
-    return pProgressTimer;
-
 };
