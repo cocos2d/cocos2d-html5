@@ -42,16 +42,12 @@ cc.Scene = cc.Node.extend({
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
     },
     init:function () {
-        var bret = false;
-        do {
-            var pDirector;
-            if (!(pDirector = cc.Director.sharedDirector())) {
-                break;
-            }
-            this.setContentSize(pDirector.getWinSize());
-            bret = true;
-        } while (0);
-        return bret;
+        var pDirector = cc.Director.sharedDirector();
+        if (!pDirector) {
+            return false;
+        }
+        this.setContentSize(pDirector.getWinSize());
+        return true;
     }
 });
 cc.Scene.node = function () {

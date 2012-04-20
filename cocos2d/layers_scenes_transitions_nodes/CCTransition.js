@@ -59,14 +59,10 @@ cc.TransitionScene = cc.Scene.extend({
 
     //private
     _setNewScene:function (dt) {
-        //TODO
-        //cc.UNUSED_PARAM(dt);
         // [self unschedule:_cmd];
         // "_cmd" is a local variable automatically defined in a method
         // that contains the selector for the method
-
-        //TODO
-        //this.unschedule(schedule_selector(CCTransitionScene::setNewScene));
+        this.unschedule(this._setNewScene);
         var director = cc.Director.sharedDirector();
         // Before replacing, save the "send cleanup to scene"
         this._m_bIsSendCleanupToScene = director.isSendCleanupToScene();
@@ -123,7 +119,8 @@ cc.TransitionScene = cc.Scene.extend({
 
         if (this.init()) {
             this._m_fDuration = t;
-
+            this.setAnchorPoint(cc.ccp(0,0));
+            this.setPosition(cc.ccp(0,0));
             // retain
             this._m_pInScene = scene;
             this._m_pOutScene = cc.Director.sharedDirector().getRunningScene();
@@ -156,7 +153,6 @@ cc.TransitionScene = cc.Scene.extend({
         this._m_pOutScene.getCamera().restore();
 
         //[self schedule:@selector(setNewScene:) interval:0];
-        //TODO
         this.schedule(this._setNewScene, 0);
     },
 
@@ -210,8 +206,6 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend({
         this._m_pInScene.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_pOutScene.setAnchorPoint(cc.ccp(0.5, 0.5));
 
-
-        //TODO
         var rotozoom = cc.Sequence.actions(
             cc.Spawn.actions(cc.ScaleBy.actionWithDuration(this._m_fDuration / 2, 0.001),
                 cc.RotateBy.actionWithDuration(this._m_fDuration / 2, 360 * 2), null),
@@ -280,7 +274,6 @@ cc.TransitionMoveInL = cc.TransitionScene.extend({
 
         var a = this.action();
 
-        //TODO
         this._m_pInScene.runAction(
             cc.Sequence.actions
                 (
@@ -292,14 +285,14 @@ cc.TransitionMoveInL = cc.TransitionScene.extend({
     },
     /** initializes the scenes */
     initScenes:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
-        this._m_pInScene.setPosition(cc.ccp(-s.width, 0));
+        this._m_pInScene.setPosition(cc.ccp(-cc.Director.sharedDirector().getWinSize().width, 0));
     },
     /** returns the action that will be performed */
     action:function () {
         return cc.MoveTo.actionWithDuration(this._m_fDuration, cc.ccp(0, 0));
     },
     easeActionWithAction:function (action) {
+        //TODO need implement
         return cc.EaseOut.actionWithAction(action, 2.0);
     }
 });
@@ -509,19 +502,17 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend({
         var scaleOut = cc.ScaleTo.actionWithDuration(this._m_fDuration, 0.01);
         var scaleIn = cc.ScaleTo.actionWithDuration(this._m_fDuration, 1.0);
 
-        //TODO
         this._m_pInScene.runAction(this.easeActionWithAction(scaleIn));
-        this._m_pOutScene.runAction
-            (
-                cc.Sequence.actions
-                    (
-                        this.easeActionWithAction(scaleOut),
-                        cc.CallFunc.actionWithTarget(this, this.finish),
-                        null
-                    )
-            );
+        this._m_pOutScene.runAction(
+            cc.Sequence.actions(
+                this.easeActionWithAction(scaleOut),
+                cc.CallFunc.actionWithTarget(this, this.finish),
+                null
+            )
+        );
     },
     easeActionWithAction:function (action) {
+        //TODO
         return cc.EaseOut.actionWithAction(action, 2.0);
     }
 });
@@ -559,11 +550,11 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend({
             outAngleZ = 0;
         }
 
-        //TODO
         inA = cc.Sequence.actions
             (
                 cc.DelayTime.actionWithDuration(this._m_fDuration / 2),
                 cc.Show.action(),
+                //TODO
                 cc.OrbitCamera.actionWithDuration(this._m_fDuration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
                 cc.CallFunc.actionWithTarget(this, this.finish),
                 null
@@ -1126,9 +1117,11 @@ cc.TransitionSplitCols = cc.TransitionScene.extend({
             );
     },
     easeActionWithAction:function (action) {
+        //TODO
         return cc.EaseInOut.actionWithAction(action, 3.0);
     },
     action:function () {
+        //TODO
         return cc.SplitCols.actionWithCols(3, this._m_fDuration / 2.0);
     }
 });

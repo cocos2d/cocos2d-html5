@@ -48,20 +48,15 @@ cc.Layer = cc.Node.extend({
     },
 
     init:function () {
-        var bRet = false;
-        do
-        {
-            var pDirector = new cc.Director();
-            if (!(pDirector = cc.Director.sharedDirector())) {
-                break;
-            }
-            this.setContentSize(pDirector.getWinSize());
-            this._m_bIsTouchEnabled = false;
-            this._m_bIsAccelerometerEnabled = false;
-            // success
-            bRet = true;
-        } while (0);
-        return bRet;
+        var pDirector = cc.Director.sharedDirector();
+        if (!pDirector ) {
+            return false;
+        }
+        this.setContentSize(pDirector.getWinSize());
+        this._m_bIsTouchEnabled = false;
+        this._m_bIsAccelerometerEnabled = false;
+        // success
+        return true;
     },
 
     /// Touch and Accelerometer related
