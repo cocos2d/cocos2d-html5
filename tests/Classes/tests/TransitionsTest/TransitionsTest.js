@@ -84,7 +84,6 @@ function nextTransitionAction() {
 
 var createTransition = function (nIndex, t, s) {
     cc.Director.sharedDirector().setDepthTest(false);
-
     switch (nIndex) {
         case 0:
             return cc.TransitionJumpZoom.transitionWithDuration(t, s);
@@ -177,8 +176,11 @@ var TransitionsTestScene = TestScene.extend({
     }
 });
 
+
 var TestLayer1 = cc.Layer.extend({
     ctor:function () {
+        this._super();
+        this.init();
         var x, y;
         var size = cc.Director.sharedDirector().getWinSize();
         x = size.width;
@@ -213,13 +215,13 @@ var TestLayer1 = cc.Layer.extend({
         this.addChild(menu, 1);
 
         this.schedule(this.step, 1.0);
+
     },
     restartCallback:function (pSender) {
         var s = new TransitionsTestScene();
 
         var pLayer = new TestLayer2();
         s.addChild(pLayer);
-
         var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
         if (pScene) {
             cc.Director.sharedDirector().replaceScene(pScene);
@@ -263,8 +265,9 @@ var TestLayer1 = cc.Layer.extend({
 
 var TestLayer2 = cc.Layer.extend({
     ctor:function () {
+        this._super();
+        this.init();
         var x, y;
-
         var size = cc.Director.sharedDirector().getWinSize();
         x = size.width;
         y = size.height;
@@ -303,6 +306,7 @@ var TestLayer2 = cc.Layer.extend({
         var s = new TransitionsTestScene();
 
         var pLayer = new TestLayer1();
+        pLayer.init();
         s.addChild(pLayer);
 
         var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
