@@ -313,9 +313,8 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         var boxSize = cc.SizeMake(100.0, 100.0);
         var box = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 0, 255));
         box.setAnchorPoint(cc.ccp(0, 0));
-        box.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
+        box.setPosition(cc.ccp(190, 110));
         box.setContentSize(boxSize);
-
 
         var markrside = 10.0;
         var uL = cc.LayerColor.layerWithColor(cc.ccc4(255, 0, 0, 255));
