@@ -34,6 +34,7 @@ var cc = cc = cc || {};
 var TestScene = cc.Scene.extend({
     _portrait:false,
     ctor:function (bPortrait) {
+        this._super();
         this._portrait = bPortrait;
         if (this._portrait) {
             cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationLandscapeRight);

@@ -746,7 +746,6 @@ cc.Node = cc.Class.extend({
                     pAp = this.getParent().getAnchorPointInPixels();
                 }
                 cc.renderContext.translate(this.getPositionX() - pAp.x, -(this.getPositionY() - pAp.y ));
-
                 cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
                     this.getScaleY(), 0, 0);
 
@@ -757,8 +756,10 @@ cc.Node = cc.Class.extend({
                     pAp = this.getParent().getAnchorPointInPixels();
                 }
                 var lAp = this.getAnchorPointInPixels();
+                if (!lAp) {
+                    lAp = cc.PointZero();
+                }
                 cc.renderContext.translate(this.getPositionX() - pAp.x + lAp.x, -(this.getPositionY() - pAp.y + lAp.y));
-
                 cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
                     this.getScaleY(), 0, 0);
 
