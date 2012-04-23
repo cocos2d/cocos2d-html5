@@ -34,6 +34,22 @@ var s_AtlasTest = "Resources/Images/atlastest.png";
 var s_stars2Grayscale = "Resources/Images/stars2-grayscale.png";
 var s_starsGrayscale = "Resources/Images/stars-grayscale.png";
 var s_BoilingFoamPlist = "Resources/Images/BoilingFoam.plist";
+var s_HelloWorld = "Resources/Images/HelloWorld.png";
+/*var s_GrossiniDance01 = "Resources/Images/grossini_dance_01.png";
+var s_GrossiniDance02 = "Resources/Images/grossini_dance_02.png";
+var s_GrossiniDance03 = "Resources/Images/grossini_dance_03.png";
+var s_GrossiniDance04 = "Resources/Images/grossini_dance_04.png";
+var s_GrossiniDance05 = "Resources/Images/grossini_dance_05.png";
+var s_GrossiniDance06 = "Resources/Images/grossini_dance_06.png";
+var s_GrossiniDance07 = "Resources/Images/grossini_dance_07.png";
+var s_GrossiniDance08 = "Resources/Images/grossini_dance_08.png";
+var s_GrossiniDance09 = "Resources/Images/grossini_dance_09.png";
+var s_GrossiniDance10 = "Resources/Images/grossini_dance_10.png";
+var s_GrossiniDance11 = "Resources/Images/grossini_dance_01.png";
+var s_GrossiniDance12 = "Resources/Images/grossini_dance_12.png";
+var s_GrossiniDance13 = "Resources/Images/grossini_dance_03.png";
+var s_GrossiniDance14 = "Resources/Images/grossini_dance_14.png"*/;
+
 // tilemaps resource
 var s_TilesPng = "Resources/TileMaps/tiles.png";
 var s_LevelMapTga = "Resources/TileMaps/levelmap.tga";
@@ -46,7 +62,6 @@ var s_orthoTest1BwPng = "Resources/TileMaps/ortho-test1_bw.png";
 var s_tilesHdPng = "Resources/TileMaps/tiles-hd.png";
 var s_tmwDesertSpacingHdPng = "Resources/TileMaps/tmw_desert_spacing-hd.png";
 var s_tmwDesertSpacingPng = "Resources/TileMaps/tmw_desert_spacing.png";
-
 
 var g_ressources = [
     //image ressources
