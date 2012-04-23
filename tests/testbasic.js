@@ -154,6 +154,7 @@ var g_aTestNames = {
     "ActionsTest":"ActionsTestScene",
     "TransitionsTest":"TransitionsTestScene",
     "ProgressActionsTest":"ProgressActionsTestScene",
+    "SpriteTest":"SpriteTestScene",
     "EffectsTest":"EffectTestScene",
     "ClickAndMoveTest":"ClickAndMoveTestScene",
     "RotateWorldTest":"RotateWorldTestScene",
@@ -173,8 +174,8 @@ var g_aTestNames = {
     "ChipmunkTest":"ChipmunkTestScene",
     "LabelTest":"AtlasTestScene",
     "TextInputTest":"TextInputTestScene",
-    "SpriteTest":"SpriteTestScene",
-    "SchdulerTest":"SchedulerTestScene",
+
+    "SchedulerTest":"SchedulerTestScene",
     "RenderTextureTest":"RenderTextureScene",
     "Texture2DTest":"TextureTestScene",
     "Box2dTest":"Box2DTestScene",
