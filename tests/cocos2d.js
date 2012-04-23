@@ -163,3 +163,4 @@ cc.loadjs('../tests/Classes/tests/ParticleTest/ParticleTest.js');
 cc.loadjs('../tests/Classes/tests/ProgressActionsTest/ProgressActionsTest.js');
 cc.loadjs('../tests/Classes/tests/LayerTest/LayerTest.js');
 cc.loadjs('../tests/Classes/tests/SceneTest/SceneTest.js');
+cc.loadjs('../tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
