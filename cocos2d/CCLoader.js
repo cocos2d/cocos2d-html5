@@ -82,19 +82,16 @@ cc.Loader = cc.Class.extend({
                     this.m_sResourceCount += 1;
                     break;
                 case "bgm":
-                    sharedEngine.setCallback(this.onResLoaded());
-                    sharedEngine.preloadBackgroundMusic(res[i]);
+                    sharedEngine.preloadBackgroundMusic(res[i].src);
                     this.m_sResourceCount += 1;
                     break;
                 case "effect":
-                    sharedEngine.setCallback(this.onResLoaded());
-                    sharedEngine.preloadEffect(res[i]);
+                    sharedEngine.preloadEffect(res[i].src);
                     this.m_sResourceCount += 1;
                     break;
                 case "plist":
                 case "tmx":
-                    shareParser.setCallback(this.onResLoaded());
-                    shareParser.preloadPlist(res[i]);
+                    shareParser.preloadPlist(res[i].src);
                     this.m_sResourceCount += 1;
                     break;
                 case "tga":
