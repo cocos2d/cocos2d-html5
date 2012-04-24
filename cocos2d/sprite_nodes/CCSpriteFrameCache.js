@@ -157,30 +157,23 @@ cc.SpriteFrameCache = cc.Class.extend({
     addSpriteFramesWithFile:function (pszPlist, pobTexture) {
         var argnum = arguments.length;
         var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(pszPlist);
-        var getIndex = pszPlist.lastIndexOf('/'), pszPath;
-        if (getIndex == -1) {
-            pszPath = "";
-        } else {
-            pszPath = pszPlist.substring(0, getIndex + 1);
-        }
+
         switch (argnum) {
             case 1:
                 var texturePath = "";
-
                 var metadataDict = dict["metadata"];
                 if (metadataDict) {
                     // try to read  texture file name from meta data
-                    texturePath = this._valueForKey("textureFileName", metadataDict);
-                    texturePath = texturePath.toString();
+                    texturePath = this._valueForKey("textureFileName", metadataDict).toString();
                 }
-
                 if (texturePath != "") {
                     // build texture path relative to plist file
-                    /* texturePath = cc.FileUtils.fullPathFromRelativeFile(texturePath.toString(), pszPath);*/
+                    var getIndex = pszPlist.lastIndexOf('/'), pszPath;
+                    pszPath =getIndex ? pszPlist.substring(0, getIndex + 1) : "";
                     texturePath = pszPath + texturePath;
                 } else {
                     // build texture path by replacing file extension
-                    texturePath = pszPath;
+                    texturePath = pszPlist;
 
                     // remove .xxx
                     var startPos = texturePath.lastIndexOf(".", texturePath.length);
@@ -192,8 +185,8 @@ cc.SpriteFrameCache = cc.Class.extend({
                     cc.LOG("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
                 }
 
-                var pTexture = new cc.Texture2D();
-                pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
+                var pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
+                console.log(pTexture)
                 if (pTexture) {
                     this.addSpriteFramesWithDictionary(dict, pTexture);
                 }
@@ -213,8 +206,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var plist = arguments[0];
                     var textureFileName = arguments[1];
                     cc.Assert(textureFileName, "texture name should not be null");
-                    var texture = new cc.Texture2D();
-                    texture = cc.TextureCache.sharedTextureCache().addImage(textureFileName);
+                    var texture = cc.TextureCache.sharedTextureCache().addImage(textureFileName);
 
                     if (texture) {
                         this.addSpriteFramesWithFile(plist, texture);
