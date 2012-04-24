@@ -347,27 +347,25 @@ cc.Sprite = cc.Node.extend({
 
     initWithFile:function (pszFilename, rect) {
         var argnum = arguments.length;
+        cc.Assert(pszFilename != null, "");
+        var pTexture = cc.TextureCache.sharedTextureCache().textureForKey(pszFilename);
+        if (pTexture) {
+            pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
+        }
         switch (argnum) {
             case 1:
                 /** Initializes an sprite with an image filename.
                  The rect used will be the size of the image.
                  The offset will be (0,0).
                  */
-                cc.Assert(pszFilename != null, "");
-                var pTexture = cc.Loader.shareLoader().getImage(pszFilename);
-                if (pTexture) {
-                    pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
-                }
                 if (pTexture) {
                     rect = cc.RectZero();
                     if (cc.renderContextType == cc.kCanvas)
                         rect.size = cc.SizeMake(pTexture.width, pTexture.height);
                     else
                         rect.size = pTexture.getContentSize();
-
                     return this.initWithTexture(pTexture, rect);
                 }
-
                 // when load texture failed, it's better to get a "transparent" sprite then a crashed program
                 return false;
                 break;
@@ -375,13 +373,9 @@ cc.Sprite = cc.Node.extend({
                 /** Initializes an sprite with an image filename, and a rect.
                  The offset will be (0,0).
                  */
-                cc.Assert(pszFilename != null, "");
-                var pTexture = new cc.Texture2D();
-                pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
                 if (pTexture) {
                     return this.initWithTexture(pTexture, rect);
                 }
-
                 // when load texture failed, it's better to get a "transparent" sprite then a crashed program
                 return false;
                 break;

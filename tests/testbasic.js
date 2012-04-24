@@ -74,7 +74,7 @@ var TestController = cc.Layer.extend({
     ctor:function () {
         // add close menu
         if (!s_pPathClose) {
-            s_pPathClose = cc.Loader.shareLoader().getImage("Resources/CloseNormal.png");
+            s_pPathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");
         }
         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(s_pPathClose, s_pPathClose, this, this.closeCallback);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);//pmenu is just a holder for the close button
@@ -150,7 +150,6 @@ var TestController = cc.Layer.extend({
 });
 
 var g_aTestNames = {
-    "TileMapTest":"TileMapTestScene",
     "ActionsTest":"ActionsTestScene",
     "TransitionsTest":"TransitionsTestScene",
     "ProgressActionsTest":"ProgressActionsTestScene",
@@ -169,7 +168,7 @@ var g_aTestNames = {
     "LayerTest":"LayerTestScene",
     "SceneTest":"SceneTestScene",
     "ParallaxTest":"ParallaxTestScene",
-
+    "TileMapTest":"TileMapTestScene",
     "IntervalTest":"IntervalTestScene",
     "ChipmunkTest":"ChipmunkTestScene",
     "LabelTest":"AtlasTestScene",

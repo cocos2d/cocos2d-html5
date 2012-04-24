@@ -164,7 +164,7 @@ cc.SpriteBatchNode = cc.Node.extend({
      The file will be loaded using the TextureMgr.
      */
     initWithFile:function (fileImage, capacity) {
-        var pTexture2D = cc.Loader.shareLoader().getImage(fileImage);
+        var pTexture2D = cc.TextureCache.sharedTextureCache().textureForKey(fileImage);
         if (pTexture2D)
             pTexture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
         return this.initWithTexture(pTexture2D, capacity);
