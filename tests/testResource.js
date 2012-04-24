@@ -34,8 +34,17 @@ var s_AtlasTest = "Resources/Images/atlastest.png";
 var s_stars2Grayscale = "Resources/Images/stars2-grayscale.png";
 var s_starsGrayscale = "Resources/Images/stars-grayscale.png";
 var s_grossini_dance_atlas = "Resources/Images/grossini_dance_atlas.png";
+var s_grossini = "Resources/animations/grossini.png";
+var s_grossini_gray = "Resources/animations/grossini_gray.png";
+var s_grossini_blue = "Resources/animations/grossini_blue.png";
+var s_grossini_aliases = "Resources/animations/grossini-aliases.png";
 
 var s_BoilingFoamPlist = "Resources/Images/BoilingFoam.plist";
+var s_grossiniPlist = "Resources/animations/grossini.plist";
+var s_grossini_grayPlist = "Resources/animations/grossini_gray.plist";
+var s_grossini_bluePlist = "Resources/animations/grossini_blue.plist";
+var s_grossini_aliasesPlist = "Resources/animations/grossini-aliases.plist";
+
 var s_HelloWorld = "Resources/Images/HelloWorld.png";
 /*var s_GrossiniDance01 = "Resources/Images/grossini_dance_01.png";
 var s_GrossiniDance02 = "Resources/Images/grossini_dance_02.png";
@@ -111,7 +120,17 @@ var g_ressources = [
     {type:"image", src:s_tilesHdPng},
     {type:"image", src:s_tmwDesertSpacingHdPng},
     {type:"image", src:s_tmwDesertSpacingPng},
+    {type:"image", src:s_grossini},
+    {type:"image", src:s_grossini_gray},
+    {type:"image", src:s_grossini_blue},
+    {type:"image", src:s_grossini_dance_atlas},
+    {type:"image", src:s_grossini_aliases},
+
     {type:"plist", src:s_BoilingFoamPlist},
+    {type:"plist", src:s_grossiniPlist},
+    {type:"plist", src:s_grossini_grayPlist},
+    {type:"plist", src:s_grossini_bluePlist},
+    {type:"plist", src:s_grossini_aliasesPlist},
 
     //tmx ressources
     {type:"tmx", src:"Resources/TileMaps/orthogonal-test1.tmx"},

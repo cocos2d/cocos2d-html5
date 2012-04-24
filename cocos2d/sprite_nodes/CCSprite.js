@@ -33,13 +33,21 @@ cc.ImageRGBAColor = function (img, color) {
     var ctx = canvas.getContext('2d');
     canvas.width = img.width;
     canvas.height = img.height;
-    ctx.drawImage(img, 0, 0);
-    var imgPixels = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
+    try{
+        var imgPixels = ctx.getImageData(0, 0, img.width, img.height);
+    }catch(e) {
+        imgPixels = ctx.getImageData(0, 0, img.width-1, img.height-1);
+    }
+
     if (color instanceof cc.Color3B) {
+        var r = color.r / 255;
+        var g = color.g / 255;
+        var b = color.b / 255;
         for (var i = 0; i < imgPixels.data.length / 4; i++) {
-            imgPixels.data[i * 4] = imgPixels.data[i * 4] * color.r / 255;
-            imgPixels.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * color.g / 255;
-            imgPixels.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * color.b / 255;
+            imgPixels.data[i * 4] = imgPixels.data[i * 4] * r;
+            imgPixels.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * g;
+            imgPixels.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * b;
         }
     } else if (color instanceof cc.Color4F) {
         for (var i = 0; i < imgPixels.data.length / 4; i++) {
@@ -49,9 +57,53 @@ cc.ImageRGBAColor = function (img, color) {
             imgPixels.data[i * 4 + 3] = imgPixels.data[i * 4 + 3] * color.a;
         }
     }
-
     ctx.putImageData(imgPixels, 0, 0, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL();
+    return canvas.toDataURL();;
+};
+
+cc.PixelsDataRGBAColor = function(imgPixels,color){
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    var tempPixelsData = ctx.createImageData(imgPixels.width,imgPixels.height);
+    if (color instanceof cc.Color3B) {
+        var r = color.r / 255;
+        var g = color.g / 255;
+        var b = color.b / 255;
+        for (var i = 0; i < imgPixels.data.length / 4; i++) {
+            tempPixelsData.data[i * 4] = imgPixels.data[i * 4] * r;
+            tempPixelsData.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * g;
+            tempPixelsData.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * b;
+        }
+    } else if (color instanceof cc.Color4F) {
+        for (var i = 0; i < imgPixels.data.length / 4; i++) {
+            tempPixelsData.data[i * 4] = imgPixels.data[i * 4] * color.r;
+            tempPixelsData.data[i * 4 + 1] = imgPixels.data[i * 4 + 1] * color.g;
+            tempPixelsData.data[i * 4 + 2] = imgPixels.data[i * 4 + 2] * color.b;
+            tempPixelsData.data[i * 4 + 3] = imgPixels.data[i * 4 + 3] * color.a;
+        }
+    }
+
+    return tempPixelsData;
+};
+
+cc.getImagePixelsData = function (imageElement, orign, size) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = size.width;
+    canvas.height = size.height;
+    ctx.drawImage(imageElement, orign.x, orign.y, size.width, size.height);
+    return ctx.getImageData(0, 0, canvas.width, canvas.height);
+};
+
+cc.cutImageByCanvas = function (sourceImage, orign, size) {
+    var canvas = document.createElement('canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = size.width;
+    canvas.height = size.height;
+    ctx.drawImage(sourceImage, orign.x, orign.y, size.width, size.height, 0, 0, size.width, size.height);
+    var cuttedImage = new Image();
+    cuttedImage.src = canvas.toDataURL();
+    return cuttedImage;
 }
 /**
  Whether or not an CCSprite will rotate, scale or translate with it's parent.
@@ -127,7 +179,7 @@ cc.Sprite = cc.Node.extend({
     //
     _m_sBlendFunc:new cc.BlendFunc(),
     _m_pobTexture:new cc.Texture2D(),
-
+    _m_originalTexture:null,
     //
     // Shared data
     //
@@ -338,6 +390,11 @@ cc.Sprite = cc.Node.extend({
                 rect.size = cc.SizeMake(pTexture.width, pTexture.height);
         }
 
+        if (cc.renderContextType == cc.kCanvas) {
+            this._m_originalTexture = cc.cutImageByCanvas(pTexture, rect.origin, rect.size);
+            pTexture = cc.cutImageByCanvas(pTexture, rect.origin, rect.size);
+            rect.origin = cc.PointZero();
+        }
         // IMPORTANT: [self init] and not [super init];
         this.init();
         this.setTexture(pTexture);
@@ -349,7 +406,7 @@ cc.Sprite = cc.Node.extend({
         var argnum = arguments.length;
         cc.Assert(pszFilename != null, "");
         var pTexture = cc.TextureCache.sharedTextureCache().textureForKey(pszFilename);
-        if (pTexture) {
+        if (!pTexture) {
             pTexture = cc.TextureCache.sharedTextureCache().addImage(pszFilename);
         }
         switch (argnum) {
@@ -374,6 +431,8 @@ cc.Sprite = cc.Node.extend({
                  The offset will be (0,0).
                  */
                 if (pTexture) {
+
+
                     return this.initWithTexture(pTexture, rect);
                 }
                 // when load texture failed, it's better to get a "transparent" sprite then a crashed program
@@ -1000,8 +1059,7 @@ cc.Sprite = cc.Node.extend({
         if (this._m_bUsesBatchNode) {
             if (this._m_uAtlasIndex != cc.SpriteIndexNotInitialized) {
                 this._m_pobTextureAtlas.updateQuad(this._m_sQuad, this._m_uAtlasIndex)
-            }
-            else {
+            } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
                 this._m_bDirty = true;
@@ -1017,6 +1075,8 @@ cc.Sprite = cc.Node.extend({
     setOpacity:function (opacity) {
         this._m_nOpacity = opacity;
 
+        //TODO in canvas
+        return;
         // special opacity for premultiplied textures
         if (this._m_bOpacityModifyRGB) {
             this.setColor(this._m_sColorUnmodified);
@@ -1034,13 +1094,9 @@ cc.Sprite = cc.Node.extend({
         this._m_sColor = this._m_sColorUnmodified = color3;
 
         if (cc.renderContextType == cc.kCanvas) {
-            var tempTexture = this.getTexture();
-            if (tempTexture instanceof HTMLImageElement) {
-                if (tempTexture) {
-                    tempTexture.src = cc.ImageRGBAColor(tempTexture, this._m_sColor);
-                    this.setTexture(tempTexture);
-                }
-            }
+            var tempTexture = new Image();
+            tempTexture.src = cc.ImageRGBAColor(this._m_originalTexture, this._m_sColor);
+            this.setTexture(tempTexture);
         }
 
         if (this._m_bOpacityModifyRGB) {

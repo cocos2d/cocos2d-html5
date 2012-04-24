@@ -1064,19 +1064,19 @@ cc.TintBy = cc.ActionInterval.extend({
     },
     startWithTarget:function (pTarget) {
         this._super(pTarget);
-        if (pTarget.RGBAProtocol) {
+        //if (pTarget.RGBAProtocol) {
             var color = pTarget.getColor();
             this._m_fromR = color.r;
             this._m_fromG = color.g;
             this._m_fromB = color.b;
-        }
+        //}
     },
     update:function (time) {
-        if (this._m_pTarget.RGBAProtocol) {
+        //if (this._m_pTarget.RGBAProtocol) {
             this._m_pTarget.setColor(cc.ccc3((this._m_fromR + this._m_deltaR * time),
                 (this._m_fromG + this._m_deltaG * time),
                 (this._m_fromB + this._m_deltaB * time)));
-        }
+        //}
     },
     reverse:function () {
         return cc.TintBy.actionWithDuration(this._m_fDuration, -this._m_deltaR, -this._m_deltaG, -this._m_deltaB);

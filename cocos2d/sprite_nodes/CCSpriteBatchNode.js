@@ -165,7 +165,7 @@ cc.SpriteBatchNode = cc.Node.extend({
      */
     initWithFile:function (fileImage, capacity) {
         var pTexture2D = cc.TextureCache.sharedTextureCache().textureForKey(fileImage);
-        if (pTexture2D)
+        if (!pTexture2D)
             pTexture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
         return this.initWithTexture(pTexture2D, capacity);
     },
@@ -494,23 +494,24 @@ cc.SpriteBatchNode = cc.Node.extend({
             }
             for (var index = 0; index < this._m_pChildren.length; index++) {
                 var sp = this._m_pChildren[index];
+                if(sp.getIsVisible()){
+                    cc.saveContext();
+                    cc.renderContext.translate(sp.getPositionX() - pAp.x , -(sp.getPositionY() - pAp.y ));
 
-                cc.saveContext();
-                cc.renderContext.translate(sp.getPositionX() - pAp.x , -(sp.getPositionY() - pAp.y ));
+                    cc.renderContext.scale(sp.getScaleX(),sp.getScaleY());
+                    cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewX())), 1.0, 0, 0);
 
-                cc.renderContext.scale(sp.getScaleX(),sp.getScaleY());
-                cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewX())), 1.0, 0, 0);
+                    cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(sp.getRotation()));
+                    cc.renderContext.globalAlpha = sp.getOpacity()/255;
 
-                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(sp.getRotation()));
-                cc.renderContext.globalAlpha = sp.getOpacity()/255;
-
-                if ((sp.getContentSize().width == 0) && (sp.getContentSize().height == 0)) {
-                    cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x,0-sp.getAnchorPointInPixels().y));
-                } else {
-                    cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
-                        , cc.ccp(0 - sp.getAnchorPointInPixels().x,0 - sp.getAnchorPointInPixels().y), sp.getContentSize());
+                    if ((sp.getContentSize().width == 0) && (sp.getContentSize().height == 0)) {
+                        cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x,0-sp.getAnchorPointInPixels().y));
+                    } else {
+                        cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
+                            , cc.ccp(0 - sp.getAnchorPointInPixels().x,0 - sp.getAnchorPointInPixels().y), sp.getContentSize());
+                    }
+                    cc.restoreContext();
                 }
-                cc.restoreContext();
             }
         } else {
             // Optimization: Fast Dispatch
