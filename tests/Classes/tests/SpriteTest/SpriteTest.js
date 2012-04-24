@@ -174,7 +174,7 @@ var Sprite1 = SpriteTestDemo.extend({
         var x = (idx%5) * 85;
         var y = (idx/5) * 121;
 
-        var sprite = cc.Sprite.spriteWithFile("Images/grossini_dance_atlas.png", cc.RectMake(x,y,85,121) );
+        var sprite = cc.Sprite.spriteWithFile(s_grossini_dance_atlas, cc.RectMake(x,y,85,121) );
         this.addChild( sprite );
 
         sprite.setPosition( cc.ccp( p.x, p.y) );

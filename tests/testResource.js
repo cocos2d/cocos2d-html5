@@ -33,6 +33,8 @@ var s_Power = "Resources/Images/powered.png";
 var s_AtlasTest = "Resources/Images/atlastest.png";
 var s_stars2Grayscale = "Resources/Images/stars2-grayscale.png";
 var s_starsGrayscale = "Resources/Images/stars-grayscale.png";
+var s_grossini_dance_atlas = "Resources/Images/grossini_dance_atlas.png";
+
 var s_BoilingFoamPlist = "Resources/Images/BoilingFoam.plist";
 // tilemaps resource
 var s_TilesPng = "Resources/TileMaps/tiles.png";
