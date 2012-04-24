@@ -34,12 +34,12 @@ var CircleSprite = cc.Sprite.extend({
         cc.renderContext.fillStyle = "rgba(255,255,255,1)";
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
 
-        if (this._radians > 360)
-            this._radians = 0;
+        if (this._radians < 0)
+            this._radians = 360;
         cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
     },
     myUpdate:function (dt) {
-        this._radians += 6;
+        this._radians -= 6;
     }
 });
 
@@ -128,10 +128,10 @@ var Helloworld = cc.Layer.extend({
         this.pSprite.setScale(0.5);
         this.pSprite.setRotation(180);
         this.addChild(this.pSprite, 0);
+        //this.pSprite.setColor(new cc.Color3B(255,128,128));
 
         var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
         var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
-
         this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
 
         this.circle = new CircleSprite();
