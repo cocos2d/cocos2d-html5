@@ -23,16 +23,16 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-TRANSITION_DURATION  = 1.2;
+TRANSITION_DURATION = 1.2;
 
 var TransitionsTests = [
-   /* */"JumpZoomTransition", //ok
-    "FadeTransition",//ok
-    "FadeWhiteTransition",
+    /* "JumpZoomTransition", //ok
+    "FadeTransition", //ok
+    "FadeWhiteTransition",*/
     "FlipXLeftOver",
     "FlipXRightOver",
     "FlipYUpOver",
-    "FlipYDownOver",//ok
+    "FlipYDownOver", //ok
     "FlipAngularLeftOver",
     "FlipAngularRightOver",
     "ZoomFlipXLeftOver",
@@ -66,103 +66,20 @@ var TransitionsTests = [
     "SplitColsTransition"
 ];
 var s_nTransitionsIdx = 0;
-function nextTransitionAction() {
- ++s_nTransitionsIdx;
- s_nTransitionsIdx = s_nTransitionsIdx % TransitionsTests.length;
- return new window[TransitionsTests[s_nTransitionsIdx]];
- }
- function backTransitionAction() {
- --s_nTransitionsIdx;
- if (s_nTransitionsIdx < 0) {
- s_nTransitionsIdx += TransitionsTests.length;
- }
- return new window[TransitionsTests[s_nTransitionsIdx]];
- }
- function restartTransitionAction() {
- return new window[TransitionsTests[s_nTransitionsIdx]];
- }
-
-var createTransition = function (nIndex, t, s) {
-    cc.Director.sharedDirector().setDepthTest(false);
-    switch (nIndex) {
-        case 0:
-            return cc.TransitionJumpZoom.transitionWithDuration(t, s);
-        case 1:
-            return cc.TransitionFade.transitionWithDuration(t, s);
-        case 2:
-            return FadeWhiteTransition.transitionWithDuration(t, s);
-        case 3:
-            return FlipXLeftOver.transitionWithDuration(t, s);
-        case 4:
-            return FlipXRightOver.transitionWithDuration(t, s);
-        case 5:
-            return FlipYUpOver.transitionWithDuration(t, s);
-        case 6:
-            return FlipYDownOver.transitionWithDuration(t, s);
-        case 7:
-            return FlipAngularLeftOver.transitionWithDuration(t, s);
-        case 8:
-            return FlipAngularRightOver.transitionWithDuration(t, s);
-        case 9:
-            return ZoomFlipXLeftOver.transitionWithDuration(t, s);
-        case 10:
-            return ZoomFlipXRightOver.transitionWithDuration(t, s);
-        case 11:
-            return ZoomFlipYUpOver.transitionWithDuration(t, s);
-        case 12:
-            return ZoomFlipYDownOver.transitionWithDuration(t, s);
-        case 13:
-            return ZoomFlipAngularLeftOver.transitionWithDuration(t, s);
-        case 14:
-            return ZoomFlipAngularRightOver.transitionWithDuration(t, s);
-        case 15:
-            return cc.TransitionShrinkGrow.transitionWithDuration(t, s);
-        case 16:
-            return cc.TransitionRotoZoom.transitionWithDuration(t, s);
-        case 17:
-            return cc.TransitionMoveInL.transitionWithDuration(t, s);
-        case 18:
-            return cc.TransitionMoveInR.transitionWithDuration(t, s);
-        case 19:
-            return cc.TransitionMoveInT.transitionWithDuration(t, s);
-        case 20:
-            return cc.TransitionMoveInB.transitionWithDuration(t, s);
-        case 21:
-            return cc.TransitionSlideInL.transitionWithDuration(t, s);
-        case 22:
-            return cc.TransitionSlideInR.transitionWithDuration(t, s);
-        case 23:
-            return cc.TransitionSlideInT.transitionWithDuration(t, s);
-        case 24:
-            return cc.TransitionSlideInB.transitionWithDuration(t, s);
-        case 25:
-            return cc.TransitionCrossFade.transitionWithDuration(t, s);
-        case 26:
-            return cc.TransitionRadialCCW.transitionWithDuration(t, s);
-        case 27:
-            return cc.TransitionRadialCW.transitionWithDuration(t, s);
-        case 28:
-            return PageTransitionForward.transitionWithDuration(t, s);
-        case 29:
-            return PageTransitionBackward.transitionWithDuration(t, s);
-        case 30:
-            return cc.TransitionFadeTR.transitionWithDuration(t, s);
-        case 31:
-            return cc.TransitionFadeBL.transitionWithDuration(t, s);
-        case 32:
-            return cc.TransitionFadeUp.transitionWithDuration(t, s);
-        case 33:
-            return cc.TransitionFadeDown.transitionWithDuration(t, s);
-        case 34:
-            return cc.TransitionTurnOffTiles.transitionWithDuration(t, s);
-        case 35:
-            return cc.TransitionSplitRows.transitionWithDuration(t, s);
-        case 36:
-            return cc.TransitionSplitCols.transitionWithDuration(t, s);
-        default:
-            break;
+function nextTransitionAction(t,s) {
+    ++s_nTransitionsIdx;
+    s_nTransitionsIdx = s_nTransitionsIdx % TransitionsTests.length;
+    return new window[TransitionsTests[s_nTransitionsIdx]](t,s);
+}
+function backTransitionAction(t,s) {
+    --s_nTransitionsIdx;
+    if (s_nTransitionsIdx < 0) {
+        s_nTransitionsIdx += TransitionsTests.length;
     }
-    return null;
+    return new window[TransitionsTests[s_nTransitionsIdx]](t,s);
+}
+function restartTransitionAction(t,s) {
+    return new window[TransitionsTests[s_nTransitionsIdx]](t,s);
 }
 
 // the class inherit from TestScene
@@ -173,6 +90,10 @@ var TransitionsTestScene = TestScene.extend({
         var pLayer = new TestLayer1();
         this.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(this);
+
+        /*s_nTransitionsIdx = -1;
+        this.addChild(nextTransitionAction());
+        cc.Director.sharedDirector().replaceScene(this);*/
     }
 });
 
@@ -222,37 +143,30 @@ var TestLayer1 = cc.Layer.extend({
 
         var pLayer = new TestLayer2();
         s.addChild(pLayer);
-        var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
+        var pScene = restartTransitionAction(TRANSITION_DURATION,s)
+
         if (pScene) {
             cc.Director.sharedDirector().replaceScene(pScene);
         }
     },
     nextCallback:function (pSender) {
-        s_nTransitionsIdx++;
-        s_nTransitionsIdx = s_nTransitionsIdx % TransitionsTests.length;
-
         var s = new TransitionsTestScene();
 
         var pLayer = new TestLayer2();
         s.addChild(pLayer);
 
-        var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
+        var pScene = nextTransitionAction(TRANSITION_DURATION,s)
         if (pScene) {
             cc.Director.sharedDirector().replaceScene(pScene);
         }
     },
     backCallback:function (pSender) {
-        s_nTransitionsIdx--;
-        var total = TransitionsTests.length;
-        if (s_nTransitionsIdx < 0)
-            s_nTransitionsIdx += total;
-
         var s = new TransitionsTestScene();
 
         var pLayer = new TestLayer2();
         s.addChild(pLayer);
 
-        var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
+        var pScene = backTransitionAction(TRANSITION_DURATION,s)
         if (pScene) {
             cc.Director.sharedDirector().replaceScene(pScene);
         }
@@ -308,37 +222,29 @@ var TestLayer2 = cc.Layer.extend({
         var pLayer = new TestLayer1();
         s.addChild(pLayer);
 
-        var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
+        var pScene = restartTransitionAction(TRANSITION_DURATION,s)
         if (pScene) {
             cc.Director.sharedDirector().replaceScene(pScene);
         }
     },
     nextCallback:function (pSender) {
-        s_nTransitionsIdx++;
-        s_nTransitionsIdx = s_nTransitionsIdx % TransitionsTests.length;
-
         var s = new TransitionsTestScene();
 
         var pLayer = new TestLayer1();
         s.addChild(pLayer);
 
-        var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
+        var pScene = nextTransitionAction(TRANSITION_DURATION,s)
         if (pScene) {
             cc.Director.sharedDirector().replaceScene(pScene);
         }
     },
     backCallback:function (pSender) {
-        s_nTransitionsIdx--;
-        var total = TransitionsTests.length;
-        if (s_nTransitionsIdx < 0)
-            s_nTransitionsIdx += total;
-
         var s = new TransitionsTestScene();
 
         var pLayer = new TestLayer1();
         s.addChild(pLayer);
 
-        var pScene = createTransition(s_nTransitionsIdx, TRANSITION_DURATION, s);
+        var pScene = nextTransitionAction(TRANSITION_DURATION,s)
         if (pScene) {
             cc.Director.sharedDirector().replaceScene(pScene);
         }
@@ -349,94 +255,151 @@ var TestLayer2 = cc.Layer.extend({
     }
 });
 
-var FadeWhiteTransition = cc.TransitionFade.extend({});
+var JumpZoomTransition = function (t, s) {
+    return cc.TransitionJumpZoom.transitionWithDuration(t, s);
+}
+var FadeTransition = function(t,s){
+    return cc.TransitionFade.transitionWithDuration(t, s);
+}
 
-FadeWhiteTransition.transitionWithDuration = function (t, s) {
-    return cc.TransitionFade.transitionWithDuration(t, s, cc.WHITE);
+var FadeWhiteTransition = function (t, s) {
+    return cc.TransitionFade.transitionWithDuration(t, s, cc.WHITE());
 };
 
-var FlipXLeftOver = cc.TransitionFlipX.extend({});
-
-FlipXLeftOver.transitionWithDuration = function (t, s) {
+var FlipXLeftOver = function (t, s) {
     return cc.TransitionFlipX.transitionWithDuration(t, s, cc.kOrientationLeftOver);
 };
 
-var FlipXRightOver = cc.TransitionFlipX.extend({});
-
-FlipXRightOver.transitionWithDuration = function (t, s) {
+var FlipXRightOver = function (t, s) {
     return cc.TransitionFlipX.transitionWithDuration(t, s, cc.kOrientationRightOver);
 };
 
-var FlipYUpOver = cc.TransitionFlipY.extend({});
-
-FlipYUpOver.transitionWithDuration = function (t, s) {
+var FlipYUpOver = function (t, s) {
     return cc.TransitionFlipY.transitionWithDuration(t, s, cc.kOrientationUpOver);
 };
 
-var FlipYDownOver = cc.TransitionFlipY.extend({});
-
-FlipYDownOver.transitionWithDuration = function (t, s) {
+var FlipYDownOver = function (t, s) {
     return cc.TransitionFlipY.transitionWithDuration(t, s, cc.kOrientationDownOver);
 };
 
-var FlipAngularLeftOver = cc.TransitionFlipAngular.extend({});
-
-FlipAngularLeftOver.transitionWithDuration = function (t, s) {
+var FlipAngularLeftOver = function (t, s) {
     return cc.TransitionFlipAngular.transitionWithDuration(t, s, cc.kOrientationLeftOver);
 };
 
-var FlipAngularRightOver = cc.TransitionFlipAngular.extend({});
-
-FlipAngularRightOver.transitionWithDuration = function (t, s) {
+var FlipAngularRightOver = function (t, s) {
     return cc.TransitionFlipAngular.transitionWithDuration(t, s, cc.kOrientationRightOver);
 };
 
-var ZoomFlipXLeftOver = cc.TransitionZoomFlipX.extend({});
-
-ZoomFlipXLeftOver.transitionWithDuration = function (t, s) {
+var ZoomFlipXLeftOver = function (t, s) {
     return cc.TransitionZoomFlipX.transitionWithDuration(t, s, cc.kOrientationLeftOver);
 };
 
-var ZoomFlipXRightOver = cc.TransitionZoomFlipX.extend({});
-
-ZoomFlipXRightOver.transitionWithDuration = function (t, s) {
+var ZoomFlipXRightOver = function (t, s) {
     return cc.TransitionZoomFlipX.transitionWithDuration(t, s, cc.kOrientationRightOver);
 };
 
-var ZoomFlipYUpOver = cc.TransitionZoomFlipY.extend({});
-
-ZoomFlipYUpOver.transitionWithDuration = function (t, s) {
+var ZoomFlipYUpOver = function (t, s) {
     return cc.TransitionZoomFlipY.transitionWithDuration(t, s, cc.kOrientationUpOver);
 };
 
-var ZoomFlipYDownOver = cc.TransitionZoomFlipY.extend({});
-
-ZoomFlipYDownOver.transitionWithDuration = function (t, s) {
+var ZoomFlipYDownOver = function (t, s) {
     return cc.TransitionZoomFlipY.transitionWithDuration(t, s, cc.kOrientationDownOver);
 };
 
-var ZoomFlipAngularLeftOver = cc.TransitionZoomFlipAngular.extend({});
-
-ZoomFlipAngularLeftOver.transitionWithDuration = function (t, s) {
+var ZoomFlipAngularLeftOver = function (t, s) {
     return cc.TransitionZoomFlipAngular.transitionWithDuration(t, s, cc.kOrientationLeftOver);
 };
 
-var ZoomFlipAngularRightOver = cc.TransitionZoomFlipAngular.extend({});
-
-ZoomFlipAngularRightOver.transitionWithDuration = function (t, s) {
+var ZoomFlipAngularRightOver = function (t, s) {
     return cc.TransitionZoomFlipAngular.transitionWithDuration(t, s, cc.kOrientationRightOver);
 };
 
-var PageTransitionForward = cc.TransitionPageTurn.extend({});
+var ShrinkGrowTransition = function (t, s) {
+    return cc.TransitionShrinkGrow.transitionWithDuration(t, s);
+};
 
-PageTransitionForward.transitionWithDuration = function (t, s) {
+var RotoZoomTransition = function (t, s) {
+    return cc.TransitionRotoZoom.transitionWithDuration(t, s);
+};
+
+var MoveInLTransition = function (t, s) {
+    return cc.TransitionMoveInL.transitionWithDuration(t, s);
+};
+
+var MoveInRTransition = function (t, s) {
+    return cc.TransitionMoveInR.transitionWithDuration(t, s);
+};
+
+var MoveInTTransition = function (t, s) {
+    return cc.TransitionMoveInT.transitionWithDuration(t, s);
+};
+
+var MoveInBTransition = function (t, s) {
+    return cc.TransitionMoveInB.transitionWithDuration(t, s);
+};
+
+var SlideInLTransition = function (t, s) {
+    return cc.TransitionSlideInL.transitionWithDuration(t, s);
+};
+
+var SlideInRTransition = function (t, s) {
+    return cc.TransitionSlideInR.transitionWithDuration(t, s);
+};
+
+var SlideInTTransition = function (t, s) {
+    return cc.TransitionSlideInT.transitionWithDuration(t, s);
+};
+
+var SlideInBTransition = function (t, s) {
+    return cc.TransitionSlideInB.transitionWithDuration(t, s);
+};
+
+var CCTransitionCrossFade = function (t, s) {
+    return cc.TransitionCrossFade.transitionWithDuration(t, s);
+};
+
+var CCTransitionRadialCCW = function (t, s) {
+    return cc.TransitionRadialCCW.transitionWithDuration(t, s);
+};
+
+var CCTransitionRadialCW = function (t, s) {
+    return cc.TransitionRadialCW.transitionWithDuration(t, s);
+};
+
+var PageTransitionForward = function (t, s) {
     cc.Director.sharedDirector().setDepthTest(true);
     return cc.TransitionPageTurn.transitionWithDuration(t, s, false);
 };
 
-var PageTransitionBackward = cc.TransitionPageTurn.extend({});
-
-PageTransitionBackward.transitionWithDuration = function (t, s) {
+var PageTransitionBackward = function (t, s) {
     cc.Director.sharedDirector().setDepthTest(true);
     return cc.TransitionPageTurn.transitionWithDuration(t, s, true);
+};
+
+var FadeTRTransition = function (t, s) {
+    return cc.TransitionFadeTR.transitionWithDuration(t, s);
+};
+
+var FadeBLTransition = function (t, s) {
+    return cc.TransitionFadeBL.transitionWithDuration(t, s);
+};
+
+var FadeUpTransition = function (t, s) {
+    return cc.TransitionFadeUp.transitionWithDuration(t, s);
+};
+
+var FadeDownTransition = function (t, s) {
+    return cc.TransitionFadeDown.transitionWithDuration(t, s);
+};
+
+var TurnOffTilesTransition = function (t, s) {
+    return cc.TransitionTurnOffTiles.transitionWithDuration(t, s);
+};
+
+var SplitRowsTransition = function (t, s) {
+    return cc.TransitionSplitRows.transitionWithDuration(t, s);
+};
+
+var SplitColsTransition = function (t, s) {
+    return cc.TransitionSplitCols.transitionWithDuration(t, s);
 };
