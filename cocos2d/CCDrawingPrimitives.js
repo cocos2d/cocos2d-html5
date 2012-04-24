@@ -178,12 +178,6 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
     },
 
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
-        //this._renderContext.beginPath();
-        //this._renderContext.arc(center.x* cc.CONTENT_SCALE_FACTOR(), -center.y* cc.CONTENT_SCALE_FACTOR(),radius* cc.CONTENT_SCALE_FACTOR(),0,Math.PI*2,false);
-        //this._renderContext.closePath();
-        //this._renderContext.stroke();
-        angle = -angle;
-
         if ((segments == "undefined") || (segments == 0)) {
             return;
         }
@@ -210,16 +204,6 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         }
 
         this.drawPoly(vertices, segments + 2, true, false);
-
-        //if(drawLineToCenter){
-        //    this._renderContext.beginPath();
-        //    for(var i=0;i<vertices.length;i++){
-        //        this._renderContext.moveTo(vertices[i].x,-vertices[i].y);
-        //        this._renderContext.lineTo(center.x* cc.CONTENT_SCALE_FACTOR(),-center.y* cc.CONTENT_SCALE_FACTOR());
-        //    }
-        //    this._renderContext.closePath();
-        //    this._renderContext.stroke();
-        //}
     },
 
     drawQuadBezier:function (origin, control, destination, segments) {

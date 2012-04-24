@@ -120,6 +120,7 @@ cc.loadjs('layers_scenes_transitions_nodes/CCTransitionPageTurn.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
 cc.loadjs('sprite_nodes/CCAnimation.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
+cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('particle_nodes/CCParticleSystem.js');//11
@@ -165,3 +166,4 @@ cc.loadjs('../tests/Classes/tests/ProgressActionsTest/ProgressActionsTest.js');
 cc.loadjs('../tests/Classes/tests/LayerTest/LayerTest.js');
 cc.loadjs('../tests/Classes/tests/SceneTest/SceneTest.js');
 cc.loadjs('../tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
+cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
