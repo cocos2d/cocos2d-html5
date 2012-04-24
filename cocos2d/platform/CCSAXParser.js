@@ -31,7 +31,6 @@ cc.SAXParser = cc.Class.extend({
     parser:null,
     xmlList:[],
     m_pPlist:[],
-    m_Callback:null,
     // parse a xml from a string (xmlhttpObj.responseText)
     parse:function (textxml) {
         var textxml = this.getList(textxml)
@@ -140,8 +139,7 @@ cc.SAXParser = cc.Class.extend({
         }
         return data
     },
-    preloadPlist:function (res) {
-        var filePath = res.src;
+    preloadPlist:function (filePath) {
         if (window.XMLHttpRequest) {
             // for IE7+, Firefox, Chrome, Opera, Safari brower
             var xmlhttp = new XMLHttpRequest();
@@ -157,9 +155,7 @@ cc.SAXParser = cc.Class.extend({
             xmlhttp.open("GET", filePath, false);
             xmlhttp.send(null);
             this.xmlList[filePath] = xmlhttp.responseText;
-            if (this.m_Callback) {
-                this.m_Callback();
-            }
+            cc.Loader.shareLoader().onResLoaded();
         }
         else {
             alert("Your browser does not support XMLHTTP.");
@@ -181,9 +177,6 @@ cc.SAXParser = cc.Class.extend({
         else {
             return null;
         }
-    },
-    setCallback:function (callback) {
-        this.m_Callback = callback;
     }
 });
 

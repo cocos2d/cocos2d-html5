@@ -47,7 +47,6 @@ cc.AudioManager = cc.Class.extend({
     m_sBackground:null,
     m_bBackgroundPlaying:false,
     m_EffectsVolume:1,
-    m_Callback:null,
     ctor:function () {
         if (this.m_initialized)
             return;
@@ -121,7 +120,7 @@ cc.AudioManager = cc.Class.extend({
     preloadBackgroundMusic:function (obj) {
         if (this.m_bSound_enable) {
             if (this.m_activeAudioExt == -1) return;
-            var soundPath = obj.src + "." + this.m_activeAudioExt;
+            var soundPath = obj + "." + this.m_activeAudioExt;
             var soundCache = new Audio(soundPath);
             soundCache.preload = 'auto';
 
@@ -129,7 +128,7 @@ cc.AudioManager = cc.Class.extend({
                 this.removeEventListener('canplaythrough', arguments.callee, false);
             }, false);
             soundCache.addEventListener("error", function (e) {
-                //soundLoadError(sound.name);
+                cc.Loader.shareLoader().onResLoadingErr();
             }, false);
             soundCache.addEventListener("playing", function (e) {
                 cc.s_SharedEngine.m_bBackgroundPlaying = true;
@@ -143,9 +142,7 @@ cc.AudioManager = cc.Class.extend({
 
             this.m_sBackground = soundCache
         }
-        if (this.m_Callback) {
-            this.m_Callback();
-        }
+        cc.Loader.shareLoader().onResLoaded();
     },
 
     /**
@@ -363,7 +360,7 @@ cc.AudioManager = cc.Class.extend({
     preloadEffect:function (obj) {
         if (this.m_bSound_enable) {
             if (this.m_activeAudioExt == -1) return;
-            var soundPath = obj.src + "." + this.m_activeAudioExt;
+            var soundPath = obj + "." + this.m_activeAudioExt;
             var soundCache = new Audio(soundPath);
             soundCache.preload = 'auto';
 
@@ -371,9 +368,8 @@ cc.AudioManager = cc.Class.extend({
                 this.removeEventListener('canplaythrough', arguments.callee,
                     false);
             }, false);
-
             soundCache.addEventListener("error", function (e) {
-                //soundLoadError(sound.name);
+                cc.Loader.shareLoader().onResLoadingErr();
             }, false);
 
             // load it
@@ -381,9 +377,7 @@ cc.AudioManager = cc.Class.extend({
             var EffectName = this.getEffectName(soundPath);
             this.m_pAudioList[EffectName] = soundCache;
         }
-        if (this.m_Callback) {
-            this.m_Callback();
-        }
+        cc.Loader.shareLoader().onResLoaded();
     },
 
     /**
@@ -404,9 +398,6 @@ cc.AudioManager = cc.Class.extend({
         else {
             return null;
         }
-    },
-    setCallback:function (callback) {
-        this.m_Callback = callback;
     }
 });
 
