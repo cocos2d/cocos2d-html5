@@ -246,7 +246,7 @@ cc.LayerColor = cc.Layer.extend({
     _m_pSquareVertices:[new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)],
     _m_pSquareColors:new Array(new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)),
     _m_cOpacity:0,
-    _m_tColor:null,
+    _m_tColor:new cc.Color3B(255, 255, 255),
     _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
 
     /// ColorLayer
