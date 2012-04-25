@@ -1178,17 +1178,19 @@ cc.Animate = cc.ActionInterval.extend({
     initWithAnimation:function (pAnimation, bRestoreOriginalFrame) {
         cc.Assert(pAnimation != null, "");
 
-        if (this._super(pAnimation.getFrames().count() * pAnimation.getDelay())) {
+        if (this.initWithDuration(pAnimation.getFrames().length * pAnimation.getDelay(),null,null,true)) {
             this._m_bRestoreOriginalFrame = bRestoreOriginalFrame;
             this._m_pAnimation = pAnimation;
             this._m_pOrigFrame = null;
-
             return true;
         }
 
         return false;
     },
-    initWithDuration:function (duration, pAnimation, bRestoreOriginalFrame) {
+    initWithDuration:function (duration, pAnimation, bRestoreOriginalFrame,isDirectCall) {
+        if(isDirectCall){
+            return this._super(duration);
+        }
         cc.Assert(pAnimation != null, "");
 
         if (this._super(duration)) {

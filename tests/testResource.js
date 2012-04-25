@@ -38,6 +38,7 @@ var s_grossini = "Resources/animations/grossini.png";
 var s_grossini_gray = "Resources/animations/grossini_gray.png";
 var s_grossini_blue = "Resources/animations/grossini_blue.png";
 var s_grossini_aliases = "Resources/animations/grossini-aliases.png";
+var s_dragon_animation = "Resources/animations/dragon_animation.png";
 
 var s_BoilingFoamPlist = "Resources/Images/BoilingFoam.plist";
 var s_grossiniPlist = "Resources/animations/grossini.plist";
@@ -125,6 +126,7 @@ var g_ressources = [
     {type:"image", src:s_grossini_blue},
     {type:"image", src:s_grossini_dance_atlas},
     {type:"image", src:s_grossini_aliases},
+    {type:"image", src:s_dragon_animation},
 
     {type:"plist", src:s_BoilingFoamPlist},
     {type:"plist", src:s_grossiniPlist},

@@ -156,8 +156,7 @@ if (cc.IS_RETINA_DISPLAY_SUPPORTED) {
     cc.RECT_POINTS_TO_RECT = function (point) {
         return cc.RectMake(point.origin.x * cc.CONTENT_SCALE_FACTOR(), point.origin.y * cc.CONTENT_SCALE_FACTOR(), point.size.width * cc.CONTENT_SCALE_FACTOR(), point.size.height * cc.CONTENT_SCALE_FACTOR());
     };
-}
-else {
+} else {
     cc.CONTENT_SCALE_FACTOR = function () {
         return 1;
     };

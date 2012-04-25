@@ -460,8 +460,7 @@ cc.Sprite = cc.Node.extend({
      */
     initWithSpriteFrameName:function (pszSpriteFrameName) {
         cc.Assert(pszSpriteFrameName != null, "");
-        var pFrame = new cc.SpriteFrame();
-        pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
+        var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
         return this.initWithSpriteFrame(pFrame);
     },
     // XXX: deprecated
@@ -1139,23 +1138,21 @@ cc.Sprite = cc.Node.extend({
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
         cc.Assert(animationName, "");
-        var a = new cc.Animation();
-        a = cc.AnimationCache.sharedAnimationCache().animationByName(animationName);
-
+        var a = cc.AnimationCache.sharedAnimationCache().animationByName(animationName);
         cc.Assert(a, "");
-
-        var frame = new cc.SpriteFrame();
-        frame = a.getFrames().getObjectAtIndex(frameIndex);
-
+        var frame = a.getFrames()[frameIndex];
         cc.Assert(frame, "");
-
         this.setDisplayFrame(frame);
     },
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
-        var r = new cc.Rect();
-        r = pFrame.getRect();
-        return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
+        var r = pFrame.getRect();
+        console.log(pFrame,this._m_originalTexture);
+        if(cc.renderContextType == cc.kCanvas){
+            return (pFrame.getTexture() == this._m_pobTexture);
+        }else{
+            return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
+        }
     },
     /** returns the current displayed frame. */
     displayedFrame:function () {

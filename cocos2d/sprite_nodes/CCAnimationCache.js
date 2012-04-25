@@ -74,7 +74,7 @@ cc.AnimationCache.purgeSharedAnimationCache = function () {
 };
 
 /** Retruns ths shared instance of the Animation cache */
-cc.AnimationCache.shareAnimationCache = function () {
+cc.AnimationCache.sharedAnimationCache = function () {
     if (cc.s_pSharedAnimationCache == null) {
         cc.s_pSharedAnimationCache = new cc.AnimationCache();
         cc.s_pSharedAnimationCache.init();
