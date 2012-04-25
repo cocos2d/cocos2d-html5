@@ -117,7 +117,7 @@ cc.TextureCache = cc.Class.extend({
                 cc.Loader.shareLoader().onResLoaded();
             });
             texture.addEventListener("error", function () {
-                cc.Loader.shareLoader().onResLoadingErr(img);
+                cc.Loader.shareLoader().onResLoadingErr(path);
             });
             texture.src = path;
             this.m_pTextures[path.toString()] = texture;
