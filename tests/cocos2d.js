@@ -95,6 +95,7 @@ cc.loadjs('platform/base64.js');//4
 cc.loadjs('platform/gzip.js');//4
 cc.loadjs('cocoa/CCGeometry.js');//3
 cc.loadjs('cocoa/CCSet.js');//4
+cc.loadjs('cocoa/CCNS.js');//4
 cc.loadjs('platform/CCTypes.js');//5
 cc.loadjs('cocoa/CCAffineTransform.js');//5
 cc.loadjs('support/CCPointExtension.js');//12
@@ -119,6 +120,7 @@ cc.loadjs('layers_scenes_transitions_nodes/CCTransitionRadial.js');//9
 cc.loadjs('layers_scenes_transitions_nodes/CCTransitionPageTurn.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
 cc.loadjs('sprite_nodes/CCAnimation.js');
+cc.loadjs('sprite_nodes/CCAnimationCache.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
 cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10

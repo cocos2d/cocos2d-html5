@@ -76,7 +76,7 @@ cc.splitWithForm = function (pStr, strs) {
  @return A Core Graphics structure that represents a rectangle.
  If the string is not well-formed, the function returns CCRectZero.**/
 cc.RectFromString = function (pszContent) {
-    var result = cc.RectZero;
+    var result = cc.RectZero();
 
     do {
         if (!pszContent) break;
@@ -120,16 +120,17 @@ cc.RectFromString = function (pszContent) {
  If the string is not well-formed, the function returns CCPointZero.
  */
 cc.PointFromString = function (pszContent) {
-    var ret = cc.PointZero;
+    var ret = cc.PointZero();
 
-    do {
+    try{
+        if(pszContent == "")
+            return ret;
+
         var strs = cc.splitWithForm(pszContent);
-
         var x = parseFloat(strs[0]);
         var y = parseFloat(strs[1]);
-
         ret = cc.PointMake(x, y);
-    } while (0);
+    } catch(e){}
     return ret;
 }
 /**
@@ -143,16 +144,15 @@ cc.PointFromString = function (pszContent) {
  If the string is not well-formed, the function returns CCSizeZero.
  */
 cc.SizeFromString = function (pszContent) {
-    var ret = cc.SizeZero;
+    var ret = cc.SizeZero();
+    try{
+        if(pszContent == "")
+            return ret;
 
-    do {
         var strs = cc.splitWithForm(pszContent);
-
         var width = parseFloat(strs[0]);
         var height = parseFloat(strs[1]);
-
         ret = cc.SizeMake(width, height);
-    } while (0);
-
+    }catch(e){}
     return ret;
 }

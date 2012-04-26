@@ -93,7 +93,7 @@ cc.SpriteBatchNode = cc.Node.extend({
         // XXX: so, it should be AFTER the insertQuad
         sprite.setDirty(true);
         sprite.updateTransform();
-        this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren,sprite,index);
+        this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren, sprite, index);
     },
 
     /* This is the opposite of "addQuadFromSprite.
@@ -384,28 +384,72 @@ cc.SpriteBatchNode = cc.Node.extend({
     // override visit
     // don't call visit on it's children
     visit:function () {
-        // CAREFUL:
-        // This visit is almost identical to CocosNode#visit
-        // with the exception that it doesn't call visit on it's children
-        //
-        // The alternative is to have a void CCSprite#visit, but
-        // although this is less mantainable, is faster
-        //
-        if (!this._m_bIsVisible) {
-            return;
-        }
+        if(cc.renderContextType == cc.kCanvas){
+        // quick return if not visible
+            if (!this._m_bIsVisible) {
+                return;
+            }
 
-        cc.saveContext();
-        if (this._m_pGrid && this._m_pGrid.isActive()) {
-            this._m_pGrid.beforeDraw();
-            this.transformAncestors();
+            cc.saveContext();
+
+            if (this._m_pGrid && this._m_pGrid.isActive()) {
+                this._m_pGrid.beforeDraw();
+                this.transformAncestors();
+            }
+
+            this.transform();
+
+            if (this._m_pChildren != null) {
+                // draw children zOrder < 0
+                for (var i = 0; i < this._m_pChildren.length; i++) {
+                    var pNode = this._m_pChildren[i];
+                    if (pNode && pNode._m_nZOrder < 0) {
+                        pNode.visit();
+                    }
+                }
+            }
+
+            // self draw
+            //this.draw();
+
+            // draw children zOrder >= 0
+            if (this._m_pChildren != null) {
+                for (var i = 0; i < this._m_pChildren.length; i++) {
+                    var pNode = this._m_pChildren[i];
+                    if (pNode && pNode._m_nZOrder >= 0) {
+                        pNode.visit();
+                    }
+                }
+            }
+
+            if (this._m_pGrid && this._m_pGrid.isActive()) {
+                this._m_pGrid.afterDraw(this);
+            }
+            cc.restoreContext();
+        }else{
+            // CAREFUL:
+            // This visit is almost identical to CocosNode#visit
+            // with the exception that it doesn't call visit on it's children
+            //
+            // The alternative is to have a void CCSprite#visit, but
+            // although this is less mantainable, is faster
+            //
+            if (!this._m_bIsVisible) {
+                return;
+            }
+
+            cc.saveContext();
+            if (this._m_pGrid && this._m_pGrid.isActive()) {
+                this._m_pGrid.beforeDraw();
+                this.transformAncestors();
+            }
+            this.transform();
+            this.draw();
+            if (this._m_pGrid && this._m_pGrid.isActive()) {
+                this._m_pGrid.afterDraw(this);
+            }
+            cc.restoreContext();
         }
-        this.transform();
-        this.draw();
-        if (this._m_pGrid && this._m_pGrid.isActive()) {
-            this._m_pGrid.afterDraw(this);
-        }
-        cc.restoreContext();
     },
 
     addChild:function (child, zOrder, tag) {
@@ -421,7 +465,10 @@ cc.SpriteBatchNode = cc.Node.extend({
 
                 var pSprite = child;
                 // check CCSprite is using the same texture id
-                cc.Assert(pSprite.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "SpriteBatchNode.addChild():check CCSprite is using the same texture id");
+                if (cc.renderContextType != cc.kCanvas) {
+                    cc.Assert(pSprite.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(),
+                        "SpriteBatchNode.addChild():check CCSprite is using the same texture id");
+                }
 
                 this._super(child, zOrder, tag);
 
@@ -469,9 +516,8 @@ cc.SpriteBatchNode = cc.Node.extend({
     removeAllChildrenWithCleanup:function (cleanup) {
         // Invalidate atlas index. issue #569
         if (this._m_pChildren && this._m_pChildren.length > 0) {
-            var pObject = null;
-            for (var i in this._m_pChildren) {
-                pObject = this._m_pChildren[i];
+            for (var i = 0 ; i< this._m_pChildren.length; i++) {
+                var pObject = this._m_pChildren[i];
                 if (pObject) {
                     this.removeSpriteFromAtlas(pObject);
                 }
@@ -489,26 +535,32 @@ cc.SpriteBatchNode = cc.Node.extend({
 
         if (cc.renderContextType == cc.kCanvas) {
             var pAp = cc.PointZero();
-            if(this.getParent()){
+            if (this.getParent()) {
                 pAp = this.getParent().getAnchorPointInPixels();
             }
             for (var index = 0; index < this._m_pChildren.length; index++) {
                 var sp = this._m_pChildren[index];
-                if(sp.getIsVisible()){
+                if (sp.getIsVisible()) {
                     cc.saveContext();
-                    cc.renderContext.translate(sp.getPositionX() - pAp.x , -(sp.getPositionY() - pAp.y ));
+                    cc.renderContext.translate(sp.getPositionX() - pAp.x, -(sp.getPositionY() - pAp.y ));
 
-                    cc.renderContext.scale(sp.getScaleX(),sp.getScaleY());
+                    cc.renderContext.scale(sp.getScaleX(), sp.getScaleY());
                     cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewX())), 1.0, 0, 0);
 
                     cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(sp.getRotation()));
-                    cc.renderContext.globalAlpha = sp.getOpacity()/255;
+                    cc.renderContext.globalAlpha = sp.getOpacity() / 255;
+                    if (sp._m_bFlipX) {
+                        cc.renderContext.scale(-1, 1);
+                    }
+                    if (sp._m_bFlipY) {
+                        cc.renderContext.scale(1, -1);
+                    }
 
                     if ((sp.getContentSize().width == 0) && (sp.getContentSize().height == 0)) {
-                        cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x,0-sp.getAnchorPointInPixels().y));
+                        cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x, 0 - sp.getAnchorPointInPixels().y));
                     } else {
                         cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
-                            , cc.ccp(0 - sp.getAnchorPointInPixels().x,0 - sp.getAnchorPointInPixels().y), sp.getContentSize());
+                            , cc.ccp(0 - sp.getAnchorPointInPixels().x, 0 - sp.getAnchorPointInPixels().y), sp.getContentSize());
                     }
                     cc.restoreContext();
                 }

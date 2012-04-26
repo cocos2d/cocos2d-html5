@@ -109,11 +109,11 @@ cc.SpriteFrame = cc.Class.extend({
          The originalSize is the size in points of the frame before being trimmed.
          */
             case 5:
-                if(cc.renderContextType == cc.kCanvas){
-                    this._m_pobTexture = cc.cutImageByCanvas(pobTexture,rect);
+                if (cc.renderContextType == cc.kCanvas) {
+                    this._m_pobTexture = cc.cutImageByCanvas(pobTexture, rect.origin, rect.size);
                     rect.origin = cc.PointZero();
                     this._m_obRectInPixels = rect;
-                }else{
+                } else {
                     this._m_pobTexture = pobTexture;
                     this._m_obRectInPixels = rect;
                 }
@@ -152,5 +152,15 @@ cc.SpriteFrame.frameWithTexture = function (pobTexture, rect, rotated, offset, o
             throw "Argument must be non-nil ";
             break;
     }
+    return pSpriteFrame;
+};
+cc.SpriteFrame.frameWithTextureForCanvas = function (pobTexture, rect, rotated, offset, originalSize) {
+    var pSpriteFrame = new cc.SpriteFrame();
+    pSpriteFrame._m_pobTexture = pobTexture;
+    pSpriteFrame._m_obRectInPixels = rect;
+    pSpriteFrame._m_obRect = cc.RECT_PIXELS_TO_POINTS(rect);
+    pSpriteFrame._m_bRotated = rotated;
+    pSpriteFrame._m_obOffsetInPixels = offset;
+    pSpriteFrame._m_obOriginalSizeInPixels = originalSize;
     return pSpriteFrame;
 };

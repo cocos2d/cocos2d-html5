@@ -31,8 +31,8 @@ var cc = cc = cc || {};
  @since v0.9
  */
 cc.SpriteFrameCache = cc.Class.extend({
-    _m_pSpriteFrames:[],
-    _m_pSpriteFramesAliases:null,
+    _m_pSpriteFrames:new Object(),
+    _m_pSpriteFramesAliases:new Object(),
 
     init:function () {
         return true;
@@ -57,7 +57,7 @@ cc.SpriteFrameCache = cc.Class.extend({
             frameDict = framesDict[key];
             if (frameDict) {
                 var spriteFrame = this._m_pSpriteFrames[key];
-                if (spriteFrame == "undefined") {
+                if (spriteFrame) {
                     continue;
                 }
 
@@ -108,10 +108,10 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var aliases = frameDict["aliases"];
                     var frameKey = key.toString();
                     for (var i in aliases) {
-                        if (this._m_pSpriteFramesAliases[i]) {
+                        if (this._m_pSpriteFramesAliases.hasOwnProperty(aliases[i])) {
                             cc.LOG("cocos2d: WARNING: an alias with name " + i + " already exists");
                         }
-                        this._m_pSpriteFramesAliases[i] = frameKey;
+                        this._m_pSpriteFramesAliases[aliases[i]] = frameKey;
                     }
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
@@ -169,7 +169,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                 if (texturePath != "") {
                     // build texture path relative to plist file
                     var getIndex = pszPlist.lastIndexOf('/'), pszPath;
-                    pszPath =getIndex ? pszPlist.substring(0, getIndex + 1) : "";
+                    pszPath = getIndex ? pszPlist.substring(0, getIndex + 1) : "";
                     texturePath = pszPath + texturePath;
                 } else {
                     // build texture path by replacing file extension
@@ -181,12 +181,10 @@ cc.SpriteFrameCache = cc.Class.extend({
 
                     // append .png
                     texturePath = texturePath + ".png";
-
                     cc.LOG("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
                 }
 
                 var pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
-                console.log(pTexture)
                 if (pTexture) {
                     this.addSpriteFramesWithDictionary(dict, pTexture);
                 }
@@ -209,7 +207,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var texture = cc.TextureCache.sharedTextureCache().addImage(textureFileName);
 
                     if (texture) {
-                        this.addSpriteFramesWithFile(plist, texture);
+                        this.addSpriteFramesWithDictionary(dict, texture);
                     }
                     else {
                         cc.LOG("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found " + textureFileName);
@@ -318,12 +316,21 @@ cc.SpriteFrameCache = cc.Class.extend({
      You should retain the returned copy if you are going to use it.
      */
     spriteFrameByName:function (pszName) {
-        var frame = this._m_pSpriteFrames[pszName];
+        var frame;
+        if (this._m_pSpriteFrames.hasOwnProperty(pszName)) {
+            frame = this._m_pSpriteFrames[pszName];
+        }
+
         if (!frame) {
             // try alias dictionary
-            var key = this._m_pSpriteFramesAliases[pszName];
+            var key;
+            if (this._m_pSpriteFramesAliases.hasOwnProperty(pszName)) {
+                key = this._m_pSpriteFramesAliases[pszName];
+            }
             if (key) {
-                frame = this._m_pSpriteFrames[key.toString()];
+                if (this._m_pSpriteFrames.hasOwnProperty(key.toString())) {
+                    frame = this._m_pSpriteFrames[key.toString()];
+                }
                 if (!frame) {
                     cc.LOG("cocos2d: cc.SpriteFrameCahce: Frame " + pszName + " not found");
                 }
@@ -333,8 +340,9 @@ cc.SpriteFrameCache = cc.Class.extend({
     },
     _valueForKey:function (key, dict) {
         if (dict) {
-            var pString = dict[key];
-            return pString ? pString.toString() : "";
+            if (dict.hasOwnProperty(key)) {
+                return dict[key].toString();
+            }
         }
         return "";
     }
