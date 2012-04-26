@@ -59,6 +59,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend({
         // prevent division by 0
         // This comparison could be in step:, but it might decrease the performance
         // by 3% in heavy based action games.
+        this._m_elapsed = 0;
         this._m_bFirstTick = true;
         return true;
     },
@@ -1065,17 +1066,17 @@ cc.TintBy = cc.ActionInterval.extend({
     startWithTarget:function (pTarget) {
         this._super(pTarget);
         //if (pTarget.RGBAProtocol) {
-            var color = pTarget.getColor();
-            this._m_fromR = color.r;
-            this._m_fromG = color.g;
-            this._m_fromB = color.b;
+        var color = pTarget.getColor();
+        this._m_fromR = color.r;
+        this._m_fromG = color.g;
+        this._m_fromB = color.b;
         //}
     },
     update:function (time) {
         //if (this._m_pTarget.RGBAProtocol) {
-            this._m_pTarget.setColor(cc.ccc3((this._m_fromR + this._m_deltaR * time),
-                (this._m_fromG + this._m_deltaG * time),
-                (this._m_fromB + this._m_deltaB * time)));
+        this._m_pTarget.setColor(cc.ccc3((this._m_fromR + this._m_deltaR * time),
+            (this._m_fromG + this._m_deltaG * time),
+            (this._m_fromB + this._m_deltaB * time)));
         //}
     },
     reverse:function () {
@@ -1178,17 +1179,19 @@ cc.Animate = cc.ActionInterval.extend({
     initWithAnimation:function (pAnimation, bRestoreOriginalFrame) {
         cc.Assert(pAnimation != null, "");
 
-        if (this._super(pAnimation.getFrames().count() * pAnimation.getDelay())) {
+        if (this.initWithDuration(pAnimation.getFrames().length * pAnimation.getDelay(), null, null, true)) {
             this._m_bRestoreOriginalFrame = bRestoreOriginalFrame;
             this._m_pAnimation = pAnimation;
             this._m_pOrigFrame = null;
-
             return true;
         }
 
         return false;
     },
-    initWithDuration:function (duration, pAnimation, bRestoreOriginalFrame) {
+    initWithDuration:function (duration, pAnimation, bRestoreOriginalFrame, isDirectCall) {
+        if (isDirectCall) {
+            return this._super(duration);
+        }
         cc.Assert(pAnimation != null, "");
 
         if (this._super(duration)) {
@@ -1213,7 +1216,7 @@ cc.Animate = cc.ActionInterval.extend({
         var pFrames = this._m_pAnimation.getFrames();
         var numberOfFrames = pFrames.length;
 
-        var idx = time * numberOfFrames;
+        var idx = Math.round(time * numberOfFrames);
 
         if (idx >= numberOfFrames) {
             idx = numberOfFrames - 1;

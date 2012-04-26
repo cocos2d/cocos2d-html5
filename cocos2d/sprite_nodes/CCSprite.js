@@ -34,10 +34,10 @@ cc.ImageRGBAColor = function (img, color) {
     canvas.width = img.width;
     canvas.height = img.height;
     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, canvas.width, canvas.height);
-    try{
+    try {
         var imgPixels = ctx.getImageData(0, 0, img.width, img.height);
-    }catch(e) {
-        imgPixels = ctx.getImageData(0, 0, img.width-1, img.height-1);
+    } catch (e) {
+        imgPixels = ctx.getImageData(0, 0, img.width - 1, img.height - 1);
     }
 
     if (color instanceof cc.Color3B) {
@@ -58,13 +58,14 @@ cc.ImageRGBAColor = function (img, color) {
         }
     }
     ctx.putImageData(imgPixels, 0, 0, 0, 0, canvas.width, canvas.height);
-    return canvas.toDataURL();;
+    return canvas.toDataURL();
+    ;
 };
 
-cc.PixelsDataRGBAColor = function(imgPixels,color){
+cc.PixelsDataRGBAColor = function (imgPixels, color) {
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
-    var tempPixelsData = ctx.createImageData(imgPixels.width,imgPixels.height);
+    var tempPixelsData = ctx.createImageData(imgPixels.width, imgPixels.height);
     if (color instanceof cc.Color3B) {
         var r = color.r / 255;
         var g = color.g / 255;
@@ -460,8 +461,7 @@ cc.Sprite = cc.Node.extend({
      */
     initWithSpriteFrameName:function (pszSpriteFrameName) {
         cc.Assert(pszSpriteFrameName != null, "");
-        var pFrame = new cc.SpriteFrame();
-        pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
+        var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(pszSpriteFrameName);
         return this.initWithSpriteFrame(pFrame);
     },
     // XXX: deprecated
@@ -530,10 +530,10 @@ cc.Sprite = cc.Node.extend({
         this._m_bRectRotated = rotated;
 
         this.setContentSizeInPixels(size);
+        //this.setContentSizeInPixels(rect.size);
         this._updateTextureCoords(this._m_obRectInPixels);
 
-        var relativeOffsetInPixels = new cc.Point();
-        relativeOffsetInPixels = this._m_obUnflippedOffsetPositionFromCenter;
+        var relativeOffsetInPixels = this._m_obUnflippedOffsetPositionFromCenter;
 
         if (this._m_bFlipX) {
             relativeOffsetInPixels.x = -relativeOffsetInPixels.x;
@@ -790,12 +790,25 @@ cc.Sprite = cc.Node.extend({
         //TODO need to fixed
         if (cc.renderContextType == cc.kCanvas) {
             cc.renderContext.globalAlpha = this.getOpacity() / 255;
-            //direct draw image by canvas drawImage
-            if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
-                cc.drawingUtil.drawImage(this._m_pobTexture, cc.ccp(0 - this.getAnchorPointInPixels().x, 0 - this.getAnchorPointInPixels().y));//this._m_tAnchorPointInPixels.x,-this._m_tAnchorPointInPixels.y));
+            if (this._m_bFlipX) {
+                cc.renderContext.scale(-1, 1);
+            }
+            if (this._m_bFlipY) {
+                cc.renderContext.scale(1, -1);
+            }
+            var offsetPixels = this.getOffsetPositionInPixels();
+            var pos = cc.ccp(0 - this.getAnchorPointInPixels().x + offsetPixels.x , 0 - this.getAnchorPointInPixels().y + offsetPixels.y);
+            if(this._m_pobTexture){
+                //direct draw image by canvas drawImage
+                if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
+                    cc.drawingUtil.drawImage(this._m_pobTexture, pos);
+                } else {
+                    cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size,
+                        pos, this.getTextureRect().size);
+                }
             } else {
-                cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size,
-                    cc.ccp(0 - this.getAnchorPointInPixels().x, 0 - this.getAnchorPointInPixels().y), this.getContentSize());
+                cc.renderContext.fillStyle = "rgba(" + this._m_sColor.r + "," + this._m_sColor.g + "," + this._m_sColor.b + ",1)";
+                cc.renderContext.fillRect(pos.x,pos.y,this.getContentSize().width,this.getContentSize().height);
             }
 
             if (cc.SPRITE_DEBUG_DRAW == 1) {
@@ -806,8 +819,7 @@ cc.Sprite = cc.Node.extend({
             } else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
                 var s = this._m_obRect.size;
-                var offsetPix = new cc.Point();
-                offsetPix = this.getOffsetPositionInPixels();
+                var offsetPix = this.getOffsetPositionInPixels();
                 var vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),
                     cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
                 cc.drawingUtil.drawPoly(vertices, 4, true);
@@ -888,12 +900,14 @@ cc.Sprite = cc.Node.extend({
                 cc.Assert(pChild != null, "");
                 this._super(pChild, zOrder, tag);
 
-                if (this._m_bUsesBatchNode) {
-                    cc.Assert(pChild.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "");
-                    var index = this._m_pobBatchNode.atlasIndexForChild(pChild, zOrder);
-                    this._m_pobBatchNode._insertChild(pChild, index);
+                if(cc.renderContextType == cc.kWebGL){
+                    if (this._m_bUsesBatchNode) {
+                        cc.Assert(pChild.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "");
+                        var index = this._m_pobBatchNode.atlasIndexForChild(pChild, zOrder);
+                        this._m_pobBatchNode._insertChild(pChild, index);
+                    }
+                    this._m_bHasChildren = true;
                 }
-                this._m_bHasChildren = true;
                 break;
             default:
                 throw "Sprite.addChild():Argument must be non-nil ";
@@ -902,8 +916,8 @@ cc.Sprite = cc.Node.extend({
 
     },
     reorderChild:function (pChild, zOrder) {
-        cc.Assert(pChild != null, "");
-        cc.Assert(this._m_pChildren.containsObject(pChild), "");
+        cc.Assert(pChild != null, "pChild is null");
+        cc.Assert(this._m_pChildren.indexOf(pChild) > -1, "");
 
         if (zOrder == pChild.getZOrder()) {
             return;
@@ -1093,10 +1107,12 @@ cc.Sprite = cc.Node.extend({
     setColor:function (color3) {
         this._m_sColor = this._m_sColorUnmodified = color3;
 
-        if (cc.renderContextType == cc.kCanvas) {
-            var tempTexture = new Image();
-            tempTexture.src = cc.ImageRGBAColor(this._m_originalTexture, this._m_sColor);
-            this.setTexture(tempTexture);
+        if(this._m_originalTexture){
+            if (cc.renderContextType == cc.kCanvas) {
+                var tempTexture = new Image();
+                tempTexture.src = cc.ImageRGBAColor(this._m_originalTexture, this._m_sColor);
+                this.setTexture(tempTexture);
+            }
         }
 
         if (this._m_bOpacityModifyRGB) {
@@ -1139,38 +1155,42 @@ cc.Sprite = cc.Node.extend({
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
         cc.Assert(animationName, "");
-        var a = new cc.Animation();
-        a = cc.AnimationCache.sharedAnimationCache().animationByName(animationName);
-
+        var a = cc.AnimationCache.sharedAnimationCache().animationByName(animationName);
         cc.Assert(a, "");
-
-        var frame = new cc.SpriteFrame();
-        frame = a.getFrames().getObjectAtIndex(frameIndex);
-
+        var frame = a.getFrames()[frameIndex];
         cc.Assert(frame, "");
-
         this.setDisplayFrame(frame);
     },
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
-        var r = new cc.Rect();
-        r = pFrame.getRect();
-        return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
+        if (cc.renderContextType == cc.kCanvas) {
+            return (pFrame.getTexture() == this._m_pobTexture);
+        } else {
+            var r = pFrame.getRect();
+            return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
+        }
     },
     /** returns the current displayed frame. */
     displayedFrame:function () {
-        return cc.SpriteFrame.frameWithTexture(this._m_pobTexture,
-            this._m_obRectInPixels,
-            this._m_bRectRotated,
-            this._m_obUnflippedOffsetPositionFromCenter,
-            this._m_tContentSizeInPixels);
+        if (cc.renderContextType == cc.kCanvas) {
+            return cc.SpriteFrame.frameWithTextureForCanvas(this._m_pobTexture,
+                this._m_obRectInPixels,
+                this._m_bRectRotated,
+                this._m_obUnflippedOffsetPositionFromCenter,
+                this._m_tContentSizeInPixels);
+        } else {
+            return cc.SpriteFrame.frameWithTexture(this._m_pobTexture,
+                this._m_obRectInPixels,
+                this._m_bRectRotated,
+                this._m_obUnflippedOffsetPositionFromCenter,
+                this._m_tContentSizeInPixels);
+        }
     },
 // Texture protocol
 
     _updateBlendFunc:function () {
-        cc.Assert(!this._m_bUsesBatchNode, "CCSprite: _updateBlendFunc doesn't work when the sprite is rendered using a CCSpriteSheet");
-
         if (cc.renderContextType == cc.kWebGL) {
+            cc.Assert(!this._m_bUsesBatchNode, "CCSprite: _updateBlendFunc doesn't work when the sprite is rendered using a CCSpriteSheet");
             // it's possible to have an untextured sprite
             if (!this._m_pobTexture || !this._m_pobTexture.getHasPremultipliedAlpha()) {
                 this._m_sBlendFunc.src = cc.GL_SRC_ALPHA;
@@ -1186,12 +1206,13 @@ cc.Sprite = cc.Node.extend({
     // CCTextureProtocol
     setTexture:function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.Assert(!this._m_bUsesBatchNode, "setTexture doesn't work when the sprite is rendered using a CCSpriteSheet");
+        if(cc.renderContextType != cc.kCanvas){
+            cc.Assert(!this._m_bUsesBatchNode, "setTexture doesn't work when the sprite is rendered using a CCSpriteSheet");
+        }
 
         // we can not use RTTI, so we do not known the type of object
         // accept texture==nil as argument
         /*cc.Assert((! texture) || dynamic_cast<CCTexture2D*>(texture));*/
-
 
         this._m_pobTexture = texture;
         this._updateBlendFunc();
