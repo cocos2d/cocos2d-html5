@@ -118,6 +118,7 @@ cc.loadjs('textures/CCTextureAtlas.js');//12
 cc.loadjs('actions/CCAction.js');//7
 cc.loadjs('actions/CCActionInterval.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
+cc.loadjs('actions/CCActionEase.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10

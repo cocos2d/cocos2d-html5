@@ -113,6 +113,7 @@ cc.loadjs('actions/CCActionInstant.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('actions/CCActionProgressTimer.js');//7
 cc.loadjs('actions/CCActionCamera.js');//7
+cc.loadjs('actions/CCActionEase.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');//9
