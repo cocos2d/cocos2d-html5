@@ -126,13 +126,16 @@ var Helloworld = cc.Layer.extend({
         this.pSprite.setIsVisible(true);
         this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.pSprite.setScale(0.5);
-        this.pSprite.setRotation(180);
+        //this.pSprite.setRotation(180);
+        //this.pSprite.setFlipY(true);
         this.addChild(this.pSprite, 0);
         //this.pSprite.setColor(new cc.Color3B(255,128,128));
 
         var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
         var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
+        //this.pSprite.setTexture(this.waveImageByCanvas(this.pSprite._m_originalTexture,50));
         this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
+        //this.schedule(this.waveSprite,0.3);
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40, 280));
@@ -148,6 +151,28 @@ var Helloworld = cc.Layer.extend({
             selfPointer.adjustSizeForWindow();
         });
         return true;
+    },
+    waveDistance:0,
+    waveSprite:function (dt) {
+        this.waveDistance += 5;
+        this.pSprite.setTexture(this.waveImageByCanvas(this.pSprite._m_originalTexture, this.waveDistance));
+    },
+    waveImageByCanvas:function (sourceImage, t) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var destCanvas = document.createElement('canvas');
+        var destCtx = destCanvas.getContext('2d');
+        canvas.width = sourceImage.width;
+        canvas.height = sourceImage.height;
+        destCanvas.width = sourceImage.width + 50;
+        destCanvas.height = sourceImage.height;
+        ctx.drawImage(sourceImage, 0, 0);
+        for (var i = 0; i < sourceImage.height; i++) {
+            destCtx.putImageData(ctx.getImageData(20, i + Math.sin(t / 30 + i / 30) * i / 10, sourceImage.width, 1), Math.sin(t / 30 + i / 30) * i / 10, i);
+        }
+        var cuttedImage = new Image();
+        cuttedImage.src = destCanvas.toDataURL();
+        return cuttedImage;
     },
 
     adjustSizeForWindow:function () {

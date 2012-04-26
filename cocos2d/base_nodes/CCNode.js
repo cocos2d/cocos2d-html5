@@ -592,7 +592,7 @@ cc.Node = cc.Class.extend({
     removeAllChildrenWithCleanup:function (cleanup) {
         // not using detachChild improves speed here
         if (this._m_pChildren != null) {
-            for (var i = 0; i < this._m_pChildren; i++) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode) {
                     // IMPORTANT:
