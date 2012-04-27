@@ -48,7 +48,7 @@ cc.Action = cc.Class.extend({
         return this.copy();
     },
     copy:function () {
-        return Object.create(this);
+        return cc.clone(this);
     },
     //! return true if the action has finished
     isDone:function () {
