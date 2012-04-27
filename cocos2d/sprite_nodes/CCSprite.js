@@ -29,6 +29,8 @@ cc.SpriteIndexNotInitialized = "0xffffffff";
 /// CCSprite invalid index on the CCSpriteBatchode
 
 cc.ImageRGBAColor = function (img, color) {
+    if(!img)
+        return null;
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     canvas.width = img.width;

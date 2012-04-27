@@ -95,7 +95,7 @@ cc.TMXTilesetInfo = cc.Class.extend({
     //! size in pixels of the image
     m_tImageSize:cc.SizeZero(),
     rectForGID:function (gid) {
-        var rect = new cc.Rect;
+        var rect = cc.RectZero();
         rect.size = this._m_tTileSize;
         gid = gid - parseInt(this.m_uFirstGid);
         var max_x = parseInt((this.m_tImageSize.width - this.m_uMargin * 2 + this.m_uSpacing) / (this._m_tTileSize.width + this.m_uSpacing));

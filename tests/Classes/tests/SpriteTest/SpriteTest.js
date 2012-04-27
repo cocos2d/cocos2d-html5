@@ -1285,7 +1285,7 @@ var SpriteNewTexture = SpriteTestDemo.extend({
 
         var p = cc.ccp(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height);
 
-        var idx = cc.RANDOM_0_1() * 1400 / 100;
+        var idx = Math.round(cc.RANDOM_0_1() * 1400 / 100);
         var x = (idx % 5) * 85;
         var y = (idx / 5) * 121;
 
@@ -1360,7 +1360,7 @@ var SpriteBatchNodeNewTexture = SpriteTestDemo.extend({
         this.addChild(batch, 0, kTagSpriteBatchNode);
 
         this._m_texture1 = batch.getTexture();
-        this._m_texture2 = cc.TextureCache.sharedTextureCache().addImage("Images/grossini_dance_atlas-mono.png");
+        this._m_texture2 = cc.TextureCache.sharedTextureCache().addImage(s_grossini_dance_atlas_mono);
 
         for (var i = 0; i < 30; i++) {
             this.addNewSprite();
@@ -1376,7 +1376,7 @@ var SpriteBatchNodeNewTexture = SpriteTestDemo.extend({
 
         var batch = this.getChildByTag(kTagSpriteBatchNode);
 
-        var idx = cc.RANDOM_0_1() * 1400 / 100;
+        var idx = Math.round(cc.RANDOM_0_1() * 1400 / 100);
         var x = (idx % 5) * 85;
         var y = (idx / 5) * 121;
 
@@ -3443,6 +3443,7 @@ var AnimationCache = SpriteTestDemo.extend({
 var SpriteTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = -1;
+        MAX_LAYER = 48;
         var pLayer = nextSpriteTestAction();
         this.addChild(pLayer);
 

@@ -30,30 +30,30 @@ cc.SID_REMOVETILES = 102;
 
 var TileMapTests = [
     /*//"TileMapTest",
-    //"TileMapEditTest",*/
+     //"TileMapEditTest",*/
     "TMXOrthoTest", //ok
-    "TMXOrthoTest2",//camera bug
-    "TMXOrthoTest3",//ok
-    "TMXOrthoTest4",//ok
+    "TMXOrthoTest2", //camera bug
+    "TMXOrthoTest3", //ok
+    "TMXOrthoTest4", //ok
     "TMXReadWriteTest", //bug
-    "TMXHexTest",//ok
-    "TMXIsoTest",//ok
-    "TMXIsoTest1",//ok
-    "TMXIsoTest2",//ok
+    "TMXHexTest", //ok
+    "TMXIsoTest", //ok
+    "TMXIsoTest1", //ok
+    "TMXIsoTest2", //ok
     "TMXUncompressedTest",
-    "TMXTilesetTest",//bug sometimes
-    "TMXOrthoObjectsTest",//bug
-    "TMXIsoObjectsTest",//bug
-    "TMXResizeTest",//ok
-    "TMXIsoZorder",//ok
-    "TMXOrthoZorder",//ok
+    "TMXTilesetTest", //bug sometimes
+    "TMXOrthoObjectsTest", //bug
+    "TMXIsoObjectsTest", //bug
+    "TMXResizeTest", //ok
+    "TMXIsoZorder", //ok
+    "TMXOrthoZorder", //ok
     "TMXIsoVertexZ", //VertexZ bug
     "TMXOrthoVertexZ", //VertexZ bug
-    "TMXIsoMoveLayer",//ok
-    "TMXOrthoMoveLayer",//ok
-    "TMXBug987",//ok
-    "TMXBug787",//ok
-    "TMXGIDObjectsTest",//ok
+    "TMXIsoMoveLayer", //ok
+    "TMXOrthoMoveLayer", //ok
+    "TMXBug987", //ok
+    "TMXBug787", //ok
+    "TMXGIDObjectsTest", //ok
     "TileMapTestScene" //zlib bug
 ];
 var s_nTileMapIdx = -1;
@@ -164,16 +164,17 @@ var TileDemo = cc.Layer.extend({
     },
     prevLocation:null,
     ccTouchMoved:function (touch, event) {
-        if (!this.prevLocation) {
-            var p = touch.locationInView(touch.view());
-            this.prevLocation = cc.ccp(p.x, p.y);
-            return;
-        }
         var touchLocation = touch.locationInView(touch.view());
 
-        var diff = cc.ccpSub(touchLocation, this.prevLocation);
+        if (!this.prevLocation) {
+            this.prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
+            return;
+        }
         var node = this.getChildByTag(cc.kTagTileMap);
+        var diff = cc.ccpSub(touchLocation, this.prevLocation);
         var currentPos = node.getPosition();
+
+        //diff = cc.ccp(diff.x * node.getScaleX(),diff.y * node.getScaleY());
         var curPos = cc.ccpAdd(currentPos, diff);
         node.setPosition(curPos);
         this.prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
@@ -263,9 +264,8 @@ var TMXOrthoTest = TileDemo.extend({
         this.addChild(map, 0, cc.kTagTileMap);
 
         var pChildrenArray = map.getChildren();
-        var child = null;
-        for (var i = 0, len = pChildrenArray.length; i < len; i++) {
-            child = pChildrenArray[i];
+        for (var i = 0; i < pChildrenArray.length; i++) {
+            var child = pChildrenArray[i];
             if (!child)
                 break;
             //child.getTexture().setAntiAliasTexParameters();
@@ -479,8 +479,8 @@ var TMXReadWriteTest = TileDemo.extend({
         var seq3 = cc.Sequence.actions(move3, rotate3, scale3, opacity3, fadein3, scaleback3, finish3, null);
 
         /*tile0.runAction(seq0);
-        tile1.runAction(seq0.copy());
-        tile2.runAction(seq0.copy());*/
+         tile1.runAction(seq0.copy());
+         tile2.runAction(seq0.copy());*/
         tile3.runAction(seq0.copy());
 
         this.m_gid = layer.tileGIDAt(cc.ccp(0, 63));
