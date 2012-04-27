@@ -47,7 +47,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
         // XXX: needed before [super init]
         this._m_bBack = backwards;
 
-        if (cc.TransitionScene.initWithDuration(t, scene)) {
+        if (this._super(t, scene)) {
             // do something
         }
         return true;
@@ -56,17 +56,14 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
     actionWithSize:function (vector) {
         if (this._m_bBack) {
             // Get hold of the PageTurn3DAction
-            return cc.ReverseTime.actionWithAction
-                (
-                    cc.PageTurn3D.actionWithSize(vector, this._m_fDuration)
-                );
+            return cc.ReverseTime.actionWithAction(this._super(vector, this._m_fDuration));
         } else {
             // Get hold of the PageTurn3DAction
-            return cc.PageTurn3D.actionWithSize(vector, this._m_fDuration);
+            return this._super(vector, this._m_fDuration);
         }
     },
     onEnter:function () {
-        cc.TransitionScene.onEnter();
+        this._super();
         var s = cc.Director.sharedDirector().getWinSize();
         var x, y;
         if (s.width > s.height) {
