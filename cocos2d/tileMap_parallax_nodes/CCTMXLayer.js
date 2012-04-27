@@ -399,8 +399,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             //glEnable(GL_ALPHA_TEST);
             //glAlphaFunc(GL_GREATER, this._m_fAlphaFuncValue);
         }
-
-        this._super();
+        cc.drawingUtil.drawPoint(cc.PointZero(),3);
+        //this._super();
 
         if (this._m_bUseAutomaticVertexZ) {
             //glDisable(GL_ALPHA_TEST);

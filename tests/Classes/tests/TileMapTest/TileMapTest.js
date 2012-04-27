@@ -164,16 +164,17 @@ var TileDemo = cc.Layer.extend({
     },
     prevLocation:null,
     ccTouchMoved:function (touch, event) {
-        if (!this.prevLocation) {
-            var p = touch.locationInView(touch.view());
-            this.prevLocation = cc.ccp(p.x, p.y);
-            return;
-        }
         var touchLocation = touch.locationInView(touch.view());
 
-        var diff = cc.ccpSub(touchLocation, this.prevLocation);
+        if (!this.prevLocation) {
+            this.prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
+            return;
+        }
         var node = this.getChildByTag(cc.kTagTileMap);
+        var diff = cc.ccpSub(touchLocation, this.prevLocation);
         var currentPos = node.getPosition();
+
+        //diff = cc.ccp(diff.x * node.getScaleX(),diff.y * node.getScaleY());
         var curPos = cc.ccpAdd(currentPos, diff);
         node.setPosition(curPos);
         this.prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
@@ -263,9 +264,8 @@ var TMXOrthoTest = TileDemo.extend({
         this.addChild(map, 0, cc.kTagTileMap);
 
         var pChildrenArray = map.getChildren();
-        var child = null;
-        for (var i = 0, len = pChildrenArray.length; i < len; i++) {
-            child = pChildrenArray[i];
+        for (var i = 0; i < pChildrenArray.length; i++) {
+            var child = pChildrenArray[i];
             if (!child)
                 break;
             //child.getTexture().setAntiAliasTexParameters();

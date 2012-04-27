@@ -167,6 +167,7 @@ var SpriteProgressToVertical = SpriteDemo.extend({
 var ProgressActionsTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = 1;
+        MAX_LAYER = 3;
         this.addChild(nextAction());
         cc.Director.sharedDirector().replaceScene(this);
     }

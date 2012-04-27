@@ -1121,8 +1121,7 @@ cc.Node = cc.Class.extend({
      */
     // convenience methods which take a CCTouch instead of CCPoint
     convertTouchToNodeSpace:function (touch) {
-        var point = new cc.Point();
-        point = touch.locationInView(touch.view());
+        var point = touch.locationInView(touch.view());
         point = cc.Director.sharedDirector().convertToGL(point);
         return this.convertToNodeSpace(point);
     },

@@ -136,15 +136,9 @@ cc.TMXTiledMap = cc.Node.extend({
     setProperties:function (Var) {
         this._m_pProperties = Var;
     },
-    setPosition:function (position) {
-        this._super(position);
-        for (var key in this._m_pTMXLayers) {
-            this._m_pTMXLayers[key].setPosition(position);
-        }
-    },
     /*public:*/
     initWithTMXFile:function (tmxFile) {
-        cc.Assert(tmxFile != null && tmxFile.length > 0, "TMXTiledMap: tmx file should not bi nil");
+        cc.Assert(tmxFile != null && tmxFile.length > 0, "TMXTiledMap: tmx file should not be nil");
 
         this.setContentSize(cc.SizeZero());
 
@@ -192,8 +186,6 @@ cc.TMXTiledMap = cc.Node.extend({
                     idx++;
                 }
             }
-
-
         }
         return true;
     },
