@@ -26,6 +26,29 @@
 
 var cc = cc = cc || {};
 
+cc.clone = function(obj)
+{
+    var c = {};
+    for ( var i in obj )
+    {
+        //var v = this[i];
+        switch(typeof obj[i])
+        {
+            case 'object':
+                c[i] = cc.clone(obj[i]);
+                break;
+            case 'Array':
+                c[i] = obj[i].slice();
+                break;
+            default:
+                c[i] = obj[i];
+        }
+    }
+    return c;
+};
+
+
+
 /**
  @brief Output Debug message.
  */
