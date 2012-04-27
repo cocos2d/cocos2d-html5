@@ -30,30 +30,30 @@ cc.SID_REMOVETILES = 102;
 
 var TileMapTests = [
     /*//"TileMapTest",
-    //"TileMapEditTest",*/
+     //"TileMapEditTest",*/
     "TMXOrthoTest", //ok
-    "TMXOrthoTest2",//camera bug
-    "TMXOrthoTest3",//ok
-    "TMXOrthoTest4",//ok
+    "TMXOrthoTest2", //camera bug
+    "TMXOrthoTest3", //ok
+    "TMXOrthoTest4", //ok
     "TMXReadWriteTest", //bug
-    "TMXHexTest",//ok
-    "TMXIsoTest",//ok
-    "TMXIsoTest1",//ok
-    "TMXIsoTest2",//ok
+    "TMXHexTest", //ok
+    "TMXIsoTest", //ok
+    "TMXIsoTest1", //ok
+    "TMXIsoTest2", //ok
     "TMXUncompressedTest",
-    "TMXTilesetTest",//bug sometimes
-    "TMXOrthoObjectsTest",//bug
-    "TMXIsoObjectsTest",//bug
-    "TMXResizeTest",//ok
-    "TMXIsoZorder",//ok
-    "TMXOrthoZorder",//ok
+    "TMXTilesetTest", //bug sometimes
+    "TMXOrthoObjectsTest", //bug
+    "TMXIsoObjectsTest", //bug
+    "TMXResizeTest", //ok
+    "TMXIsoZorder", //ok
+    "TMXOrthoZorder", //ok
     "TMXIsoVertexZ", //VertexZ bug
     "TMXOrthoVertexZ", //VertexZ bug
-    "TMXIsoMoveLayer",//ok
-    "TMXOrthoMoveLayer",//ok
-    "TMXBug987",//ok
-    "TMXBug787",//ok
-    "TMXGIDObjectsTest",//ok
+    "TMXIsoMoveLayer", //ok
+    "TMXOrthoMoveLayer", //ok
+    "TMXBug987", //ok
+    "TMXBug787", //ok
+    "TMXGIDObjectsTest", //ok
     "TileMapTestScene" //zlib bug
 ];
 var s_nTileMapIdx = -1;
@@ -479,8 +479,8 @@ var TMXReadWriteTest = TileDemo.extend({
         var seq3 = cc.Sequence.actions(move3, rotate3, scale3, opacity3, fadein3, scaleback3, finish3, null);
 
         /*tile0.runAction(seq0);
-        tile1.runAction(seq0.copy());
-        tile2.runAction(seq0.copy());*/
+         tile1.runAction(seq0.copy());
+         tile2.runAction(seq0.copy());*/
         tile3.runAction(seq0.copy());
 
         this.m_gid = layer.tileGIDAt(cc.ccp(0, 63));
