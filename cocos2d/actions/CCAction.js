@@ -48,12 +48,7 @@ cc.Action = cc.Class.extend({
         return this.copy();
     },
     copy:function () {
-        var copy = {};
-        for ( var i in this ) {
-            var v = this[ i ];
-            copy[ i ] = typeof v === 'object' ? this.copy.call(v) : v;
-        }
-        return copy;
+        return cc.clone(this);
     },
     //! return true if the action has finished
     isDone:function () {
