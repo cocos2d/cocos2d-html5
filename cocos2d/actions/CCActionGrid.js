@@ -29,24 +29,8 @@ var cc = cc = cc || {};
 /** @brief Base class for Grid actions */
 cc.GridAction = cc.ActionInterval.extend({
     _m_sGridSize:null,
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
-            //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
-        }
-        else {
-            pCopy = new cc.GridAction();
-            pZone = pNewZone = new cc.Zone(pCopy);
-        }
-        cc.ActionInterval.copyWithZone(pZone);
-        pCopy.initWithSize(this._m_sGridSize, this._m_fDuration);
-        return pCopy;
-    },
-
     startWithTarget:function (pTarget) {
-        cc.ActionInterval.startWithTarget(pTarget);
+        this._super(pTarget);
         var newgrid = this.getGrid();
         var t = this._m_pTarget;
         var targetGrid = t.getGrid();
@@ -73,7 +57,7 @@ cc.GridAction = cc.ActionInterval.extend({
 
     /** initializes the action with size and duration */
     initWithSize:function (gridSize, duration) {
-        if (cc.ActionInterval.initWithDuration(duration)) {
+        if (this.initWithDuration(duration)) {
             this._m_sGridSize = gridSize;
             return true;
         }
@@ -91,6 +75,7 @@ cc.GridAction = cc.ActionInterval.extend({
 /** creates the action with size and duration */
 cc.GridAction.actionWithSize = function (gridSize, duration) {
     var pAction = new cc.GridAction();
+    pAction.initWithSize(gridSize, duration)
     return pAction;
 },
 
@@ -123,7 +108,7 @@ cc.GridAction.actionWithSize = function (gridSize, duration) {
         }
     });
 /** creates the action with size and duration */
-cc.Grid3DAction.actionWithSize = function (gridSize, duration) {
+cc.Grid3DAction.actionWithSize = function () {
 
 };
 /** @brief Base class for cc.TiledGrid3D actions */
@@ -306,8 +291,7 @@ cc.DeccelAmplitude.actionWithAction = function (pAction, duration) {
  */
 cc.StopGrid = cc.ActionInstant.extend({
     startWithTarget:function (pTarget) {
-        cc.ActionInstant.startWithTarget(pTarget);
-
+        this._super(pTarget);
         var pGrid = this._m_pTarget.getGrid();
         if (pGrid && pGrid.isActive()) {
             pGrid.setActive(false);
