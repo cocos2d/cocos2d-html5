@@ -154,6 +154,7 @@ cc.SpriteFrame.frameWithTexture = function (pobTexture, rect, rotated, offset, o
     }
     return pSpriteFrame;
 };
+
 cc.SpriteFrame.frameWithTextureForCanvas = function (pobTexture, rect, rotated, offset, originalSize) {
     var pSpriteFrame = new cc.SpriteFrame();
     pSpriteFrame._m_pobTexture = pobTexture;

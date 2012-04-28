@@ -83,7 +83,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         var high = pointRect.size.height;
 
         if (this._m_pTexture) {
-            if (this._m_pTexture instanceof HTMLImageElement) {
+            if ((this._m_pTexture instanceof HTMLImageElement) || (this._m_pTexture instanceof HTMLCanvasElement)) {
                 wide = this._m_pTexture.width;
                 high = this._m_pTexture.height;
             } else {
@@ -217,7 +217,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
             }
         }
         var s = null;
-        if (texture instanceof HTMLImageElement) {
+        if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
             s = cc.SizeMake(texture.width, texture.height);
         } else {
             s = texture.getContentSize();
@@ -310,15 +310,24 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     draw:function () {
         this._super();
         if (cc.renderContextType == cc.kCanvas) {
+            cc.saveContext();
+            if (this.getIsBlendAdditive()) {
+                cc.renderContext.globalCompositeOperation = 'lighter';
+            } else {
+                cc.renderContext.globalCompositeOperation = 'source-over';
+            }
+
             for (var i = 0; i < this._m_uParticleCount; i++) {
                 var particle = this._m_pParticles[i];
                 var lpx = 0 - particle.size * 0.5;
 
                 var drawTexture = this.getTexture();
-                //if (particle.isChangeColor) {
-                //    drawTexture = new Image();
-                //    drawTexture.src = cc.ImageRGBAColor(this.getTexture(), particle.color);
-                //}
+                if (particle.isChangeColor) {
+                    var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
+                    if (cacheTextureForColor) {
+                        drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color);
+                    }
+                }
 
                 cc.saveContext();
                 cc.renderContext.globalAlpha = particle.color.a;
@@ -326,6 +335,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                 cc.drawingUtil.drawImage(drawTexture, cc.ccp(lpx, lpx), cc.SizeMake(particle.size, particle.size));
                 cc.restoreContext();
             }
+            cc.restoreContext();
         } else {
             //TODO need fixed for webGL
             // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY

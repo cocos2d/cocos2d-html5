@@ -126,17 +126,16 @@ var Helloworld = cc.Layer.extend({
         this.pSprite.setIsVisible(true);
         this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.pSprite.setScale(0.5);
-        this.pSprite.setRotation(180);
+        //this.pSprite.setRotation(180);
         //this.pSprite.setFlipY(true);
         this.addChild(this.pSprite, 0);
         //this.pSprite.setColor(new cc.Color3B(255,128,128));
 
         var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
         var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
-        var action = cc.TintBy.actionWithDuration(4, 0, -255, -255);
-
-        this.pSprite.runAction(cc.Sequence.actions(rotateToA,action, scaleToA));
-
+        //this.pSprite.setTexture(this.waveImageByCanvas(this.pSprite._m_originalTexture,50));
+        this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
+        //this.schedule(this.waveSprite,0.3);
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40, 280));
@@ -146,12 +145,43 @@ var Helloworld = cc.Layer.extend({
         this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
 
         this.setIsTouchEnabled(true);
-        this.adjustSizeForWindow();
+        //this.adjustSizeForWindow();
 
         window.addEventListener("resize", function (event) {
-            selfPointer.adjustSizeForWindow();
+            //selfPointer.adjustSizeForWindow();
         });
+
+        //For cocos2dnacl
+        cocos2dnaclModule = null;  // Global application object.
+        statusText = 'NO-STATUS';
+
+        var listener = document.getElementById('listener');
+        listener.addEventListener('message', handleMessage, true);
+        pageDidLoad();
+        moduleDidLoad();
         return true;
+    },
+    waveDistance:0,
+    waveSprite:function (dt) {
+        this.waveDistance += 5;
+        this.pSprite.setTexture(this.waveImageByCanvas(this.pSprite._m_originalTexture, this.waveDistance));
+    },
+    waveImageByCanvas:function (sourceImage, t) {
+        var canvas = document.createElement('canvas');
+        var ctx = canvas.getContext('2d');
+        var destCanvas = document.createElement('canvas');
+        var destCtx = destCanvas.getContext('2d');
+        canvas.width = sourceImage.width;
+        canvas.height = sourceImage.height;
+        destCanvas.width = sourceImage.width + 50;
+        destCanvas.height = sourceImage.height;
+        ctx.drawImage(sourceImage, 0, 0);
+        for (var i = 0; i < sourceImage.height; i++) {
+            destCtx.putImageData(ctx.getImageData(20, i + Math.sin(t / 30 + i / 30) * i / 10, sourceImage.width, 1), Math.sin(t / 30 + i / 30) * i / 10, i);
+        }
+        var cuttedImage = new Image();
+        cuttedImage.src = destCanvas.toDataURL();
+        return cuttedImage;
     },
 
     adjustSizeForWindow:function () {
@@ -221,6 +251,52 @@ Helloworld.node = function () {
         return null;
     }
 };
+
+
+// Indicate load success.
+function moduleDidLoad() {
+    cocos2dnaclModule = document.getElementById('cocos2dnacl');
+    updateStatus('SUCCESS');
+    //Send a message to the NaCl module.
+    cocos2dnaclModule.postMessage('reverseText:' + "I am cocos2d.");
+}
+
+// The 'message' event handler.  This handler is fired when the NaCl module
+// posts a message to the browser by calling PPB_Messaging.PostMessage()
+// (in C) or pp::Instance.PostMessage() (in C++).  This implementation
+// simply displays the content of the message in an alert panel.
+function handleMessage(message_event) {
+    alert(message_event.data);
+}
+
+// If the page loads before the Native Client module loads, then set the
+// status message indicating that the module is still loading.  Otherwise,
+// do not change the status message.
+function pageDidLoad() {
+    if (cocos2dnaclModule == null) {
+        updateStatus('LOADING...');
+    } else {
+        // It's possible that the Native Client module onload event fired
+        // before the page's onload event.  In this case, the status message
+        // will reflect 'SUCCESS', but won't be displayed.  This call will
+        // display the current message.
+        updateStatus();
+    }
+}
+
+// Set the global status message.  If the element with id 'statusField'
+// exists, then set its HTML to the status message as well.
+// opt_message The message test.  If this is null or undefined, then
+// attempt to set the element with id 'statusField' to the value of
+// |statusText|.
+function updateStatus(opt_message) {
+    if (opt_message)
+        statusText = opt_message;
+    var statusField = document.getElementById('status_field');
+    if (statusField) {
+        statusField.innerHTML = statusText;
+    }
+}
 
 
 

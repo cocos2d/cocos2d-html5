@@ -501,7 +501,7 @@ cc.ParticleSystem = cc.Node.extend({
         //TODO
         this._m_pTexture = texture;
 
-        if (texture instanceof HTMLImageElement) {
+        if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
 
         } else {
             // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
@@ -532,10 +532,12 @@ cc.ParticleSystem = cc.Node.extend({
      */
     _m_bIsBlendAdditive:false,
     getIsBlendAdditive:function () {
-        return( this._m_tBlendFunc.src == GL_SRC_ALPHA && this._m_tBlendFunc.dst == GL_ONE);
+        return this._m_bIsBlendAdditive;
+        //return( this._m_tBlendFunc.src == GL_SRC_ALPHA && this._m_tBlendFunc.dst == GL_ONE);
     },
     setIsBlendAdditive:function (isBlendAdditive) {
         //TODO
+        this._m_bIsBlendAdditive = isBlendAdditive;
         return;
         if (isBlendAdditive) {
             //this._m_tBlendFunc.src = GL_SRC_ALPHA;
@@ -989,7 +991,7 @@ cc.ParticleSystem = cc.Node.extend({
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
         } else if (this._m_ePositionType == cc.kCCPositionTypeRelative) {
-            currentPosition = cc.ccp(this._m_tPosition.x,this._m_tPosition.y);
+            currentPosition = cc.ccp(this._m_tPosition.x, this._m_tPosition.y);
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
         }
@@ -1067,7 +1069,7 @@ cc.ParticleSystem = cc.Node.extend({
                 ++this._m_uParticleIdx;
             } else {
                 // life < 0
-                cc.ArrayRemoveObject(this._m_pParticles,p);
+                cc.ArrayRemoveObject(this._m_pParticles, p);
 
                 --this._m_uParticleCount;
 
