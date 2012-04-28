@@ -502,7 +502,7 @@ cc.ProgressTimer = cc.Node.extend({
         var c3b = this._m_pSprite.getColor();
 
         var color = new cc.Color4B(c3b.r, c3b.g, c3b.b, op);
-        if (this._m_pSprite.getTexture() instanceof HTMLImageElement) {
+        if ((this._m_pSprite.getTexture() instanceof HTMLImageElement) || (this._m_pSprite.getTexture() instanceof HTMLCanvasElement)) {
             color.r *= op / 255;
             color.g *= op / 255;
             color.b *= op / 255;

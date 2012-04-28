@@ -67,7 +67,7 @@ Ball.ballWithTexture = function (texture) {
     pBall.initWithTexture(texture);
     if (texture instanceof cc.Texture2D)
         pBall.setRadius(texture.getContentSize().width / 2);
-    else if (texture instanceof HTMLImageElement)
+    else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
         pBall.setRadius(texture.width / 2);
     return pBall;
 };
