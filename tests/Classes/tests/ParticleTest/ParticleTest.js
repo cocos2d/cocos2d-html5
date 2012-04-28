@@ -2,6 +2,8 @@ var kTagLabelAtlas = 1;
 
 var ParticleTestScene = TestScene.extend({
     runThisTest:function () {
+        sceneIdx = -1;
+        MAX_LAYER = 33;
         this.addChild(nextParticleAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
@@ -246,7 +248,6 @@ var DemoFirework = ParticleDemo.extend({
         this._m_emitter = cc.ParticleFireworks.node();
         this._m_background.addChild(this._m_emitter, 10);
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_stars1);
-        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color3B(125,125,255));
         this._m_emitter.setTexture(myTexture);
 
         this.setEmitterPosition();
@@ -281,7 +282,6 @@ var DemoSun = ParticleDemo.extend({
         this._m_emitter = cc.ParticleSun.node();
         this._m_background.addChild(this._m_emitter, 10);
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_fire);
-        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color4F(0.76,0.25,0.12,1));
         this._m_emitter.setTexture(myTexture);
         this.setEmitterPosition();
     },
@@ -297,7 +297,6 @@ var DemoGalaxy = ParticleDemo.extend({
         this._m_emitter = cc.ParticleGalaxy.node();
         this._m_background.addChild(this._m_emitter, 10);
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_fire);
-        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color3B(125,50,255));
         this._m_emitter.setTexture(myTexture);
 
         this.setEmitterPosition();
@@ -318,7 +317,6 @@ var DemoFlower = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
 
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_stars1);
-        myTexture.src = cc.ImageRGBAColor(myTexture,new cc.Color3B(255,98,200));
         this._m_emitter.setTexture(myTexture);
         this.setEmitterPosition();
     },
@@ -336,7 +334,6 @@ var DemoBigFlower = ParticleDemo.extend({
         //this._m_emitter.autorelease();
 
         this._m_background.addChild(this._m_emitter, 10);
-        ////this._m_emitter.release();	// win32 :  use this line or remove this line and use autorelease()
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
 
         this._m_emitter.setDuration(-1);
