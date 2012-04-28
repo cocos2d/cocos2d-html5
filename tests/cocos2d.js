@@ -174,3 +174,4 @@ cc.loadjs('../tests/Classes/tests/LayerTest/LayerTest.js');
 cc.loadjs('../tests/Classes/tests/SceneTest/SceneTest.js');
 cc.loadjs('../tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
 cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
+cc.loadjs('../tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
