@@ -242,8 +242,7 @@ var Sprite1 = SpriteTestDemo.extend({
         } else if (random < 0.60) {
             action = cc.Blink.actionWithDuration(1, 3);
         } else if (random < 0.8) {
-            //action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
-            action = cc.SkewBy.actionWithDuration(2, 45, 0);
+            action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         } else {
             action = cc.FadeOut.actionWithDuration(2);
         }
@@ -308,8 +307,7 @@ var SpriteBatchNode1 = SpriteTestDemo.extend({
         else if (random < 0.60)
             action = cc.Blink.actionWithDuration(1, 3);
         else if (random < 0.8)
-        //action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
-            action = cc.SkewBy.actionWithDuration(2, 45, 0);
+            action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         else
             action = cc.FadeOut.actionWithDuration(2);
 
@@ -363,15 +361,15 @@ var SpriteColorOpacity = SpriteTestDemo.extend({
         var action_back = action.reverse();
         var fade = cc.RepeatForever.actionWithAction(cc.Sequence.actions(action, action_back, null));
 
-        var tintred = cc.SkewBy.actionWithDuration(2, 45, 0);//cc.TintBy.actionWithDuration(2, 0, -255, -255);
+        var tintred = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         var tintred_back = tintred.reverse();
         var red = cc.RepeatForever.actionWithAction(cc.Sequence.actions(tintred, tintred_back, null));
 
-        var tintgreen = cc.SkewBy.actionWithDuration(2, 0, 45);//cc.TintBy.actionWithDuration(2, -255, 0, -255);
+        var tintgreen = cc.TintBy.actionWithDuration(2, -255, 0, -255);
         var tintgreen_back = tintgreen.reverse();
         var green = cc.RepeatForever.actionWithAction(cc.Sequence.actions(tintgreen, tintgreen_back, null));
 
-        var tintblue = cc.SkewBy.actionWithDuration(2, 45, 45);//cc.TintBy.actionWithDuration(2, -255, -255, 0);
+        var tintblue = cc.TintBy.actionWithDuration(2, -255, -255, 0);
         var tintblue_back = tintblue.reverse();
         var blue = cc.RepeatForever.actionWithAction(cc.Sequence.actions(tintblue, tintblue_back, null));
 
@@ -442,15 +440,15 @@ var SpriteBatchNodeColorOpacity = SpriteTestDemo.extend({
         var action_back = action.reverse();
         var fade = cc.RepeatForever.actionWithAction(cc.Sequence.actions(action, action_back, null));
 
-        var tintred = cc.SkewBy.actionWithDuration(2, 45, 0);//cc.TintBy.actionWithDuration(2, 0, -255, -255);
+        var tintred = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         var tintred_back = tintred.reverse();
         var red = cc.RepeatForever.actionWithAction(cc.Sequence.actions(tintred, tintred_back, null));
 
-        var tintgreen = cc.SkewBy.actionWithDuration(2, 0, 45);//cc.TintBy.actionWithDuration(2, -255, 0, -255);
+        var tintgreen = cc.TintBy.actionWithDuration(2, -255, 0, -255);
         var tintgreen_back = tintgreen.reverse();
         var green = cc.RepeatForever.actionWithAction(cc.Sequence.actions(tintgreen, tintgreen_back, null));
 
-        var tintblue = cc.SkewBy.actionWithDuration(2, 45, 45);//cc.TintBy.actionWithDuration(2, -255, -255, 0);
+        var tintblue = cc.TintBy.actionWithDuration(2, -255, -255, 0);
         var tintblue_back = tintblue.reverse();
         var blue = cc.RepeatForever.actionWithAction(cc.Sequence.actions(tintblue, tintblue_back, null));
 
@@ -1306,7 +1304,7 @@ var SpriteNewTexture = SpriteTestDemo.extend({
         else if (random < 0.60)
             action = cc.Blink.actionWithDuration(1, 3);
         else if (random < 0.8)
-            action = cc.SkewBy.actionWithDuration(2, 45, 0);//cc.TintBy.actionWithDuration(2, 0, -255, -255);
+            action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         else
             action = cc.FadeOut.actionWithDuration(2);
 
@@ -1395,7 +1393,7 @@ var SpriteBatchNodeNewTexture = SpriteTestDemo.extend({
         else if (random < 0.60)
             action = cc.Blink.actionWithDuration(1, 3);
         else if (random < 0.8)
-            action = cc.SkewBy.actionWithDuration(2, 45, 0); //cc.TintBy.actionWithDuration(2, 0, -255, -255);
+            action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         else
             action = cc.FadeOut.actionWithDuration(2);
         var action_back = action.reverse();

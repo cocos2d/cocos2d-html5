@@ -57,6 +57,7 @@ cc.computeImageFormatType = function (filename) {
 cc.TextureCache = cc.Class.extend({
     /*protected && private:*/
     m_pTextures:new Object(),
+    _m_TextureColorsCache:new Object(),
     ctor:function () {
         cc.Assert(cc.g_sharedTextureCache == null, "Attempted to allocate a second instance of a singleton.");
     },
@@ -149,10 +150,12 @@ cc.TextureCache = cc.Class.extend({
 
         var texture = null;
 
-        if (key != null) {
-            texture = this.m_pTextures[key];
-            if (texture != null) {
-                return texture;
+        if (key) {
+            if ( this.m_pTextures.hasOwnProperty(key)){
+                texture = this.m_pTextures[key];
+                if (texture) {
+                    return texture;
+                }
             }
         }
 
@@ -173,11 +176,36 @@ cc.TextureCache = cc.Class.extend({
      @since v0.99.5
      */
     textureForKey:function (key) {
-        if (this.m_pTextures[key] != null) {
+        if (this.m_pTextures.hasOwnProperty(key)) {
             return this.m_pTextures[key];
         } else {
             return null;
         }
+    },
+
+    getKeyByTexture:function(texture) {
+        for(var key in this.m_pTextures){
+            if(this.m_pTextures[key] == texture){
+                return key;
+            }
+        }
+        return null;
+    },
+
+    getTextureColors:function(texture){
+        var key = this.getKeyByTexture(texture);
+        if(key){
+            if(texture instanceof HTMLImageElement){
+                key = texture.src;
+            }else{
+                return null;
+            }
+        }
+
+        if(!this._m_TextureColorsCache.hasOwnProperty(key)){
+            this._m_TextureColorsCache[key] = cc.generateTextureCacheForColor(texture);
+        }
+        return this._m_TextureColorsCache[key];
     },
 
     /** Purges the dictionary of loaded textures.

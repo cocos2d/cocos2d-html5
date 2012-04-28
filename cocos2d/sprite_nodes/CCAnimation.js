@@ -93,7 +93,7 @@ cc.Animation = cc.Class.extend({
     addFrameWithFileName:function (fileName) {
         var pTexture = cc.TextureCache.sharedTextureCache().addImage(fileName);
         var rect = cc.RectZero();
-        if (pTexture instanceof HTMLImageElement) {
+        if ((pTexture instanceof HTMLImageElement) || (pTexture instanceof HTMLCanvasElement)) {
             rect.size = cc.SizeMake(pTexture.width, pTexture.height);
         } else {
             rect.size = pTexture.getContentSize();

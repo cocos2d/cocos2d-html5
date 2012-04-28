@@ -28,8 +28,8 @@ var cc = cc = cc || {};
 cc.SpriteIndexNotInitialized = "0xffffffff";
 /// CCSprite invalid index on the CCSpriteBatchode
 
-cc.ImageRGBAColor = function (img, color) {
-    if(!img)
+cc.imageRGBAColor = function (img, color) {
+    if (!img)
         return null;
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
@@ -61,10 +61,9 @@ cc.ImageRGBAColor = function (img, color) {
     }
     ctx.putImageData(imgPixels, 0, 0, 0, 0, canvas.width, canvas.height);
     return canvas.toDataURL();
-    ;
 };
 
-cc.PixelsDataRGBAColor = function (imgPixels, color) {
+cc.pixelsDataRGBAColor = function (imgPixels, color) {
     var canvas = document.createElement('canvas');
     var ctx = canvas.getContext('2d');
     var tempPixelsData = ctx.createImageData(imgPixels.width, imgPixels.height);
@@ -104,9 +103,82 @@ cc.cutImageByCanvas = function (sourceImage, orign, size) {
     canvas.width = size.width;
     canvas.height = size.height;
     ctx.drawImage(sourceImage, orign.x, orign.y, size.width, size.height, 0, 0, size.width, size.height);
-    var cuttedImage = new Image();
-    cuttedImage.src = canvas.toDataURL();
-    return cuttedImage;
+    //var cuttedImage = new Image();
+    //cuttedImage.src = canvas.toDataURL();
+    return canvas;
+};
+
+cc.generateTextureCacheForColor = function (texture) {
+    var w = texture.width;
+    var h = texture.height;
+    var rgbks = [];
+
+    var canvas = document.createElement("canvas");
+    canvas.width = w;
+    canvas.height = h;
+
+    var ctx = canvas.getContext("2d");
+    ctx.drawImage(texture, 0, 0);
+
+    var pixels = ctx.getImageData(0, 0, w, h).data;
+
+    for (var rgbI = 0; rgbI < 4; rgbI++) {
+        var tempCanvas = document.createElement("canvas");
+        tempCanvas.width = w;
+        tempCanvas.height = h;
+
+        var tempCtx = tempCanvas.getContext('2d');
+        tempCtx.drawImage(texture, 0, 0);
+        var to = tempCtx.getImageData(0, 0, w, h);
+        var toData = to.data;
+
+        for (var i = 0; i < pixels.length; i += 4) {
+            toData[i  ] = (rgbI === 0) ? pixels[i  ] : 0;
+            toData[i + 1] = (rgbI === 1) ? pixels[i + 1] : 0;
+            toData[i + 2] = (rgbI === 2) ? pixels[i + 2] : 0;
+            toData[i + 3] = pixels[i + 3];
+        }
+        ctx.putImageData(to, 0, 0);
+        var imgComp = new Image();
+        imgComp.src = canvas.toDataURL();
+        rgbks.push(imgComp);
+    }
+    return rgbks;
+};
+
+cc.generateTintImage = function (img, rgbks, color,rect) {
+    if(!rect){
+        rect = cc.RectZero();
+        rect.size = cc.SizeMake(img.width,img.height);
+    }
+    var selColor;
+    if(color instanceof cc.Color4F){
+        selColor = cc.ccc3(color.r * 255,color.g * 255, color.b * 255);
+    } else {
+        selColor = color;
+    }
+    var buff = document.createElement("canvas");
+    buff.width = rect.size.width;
+    buff.height = rect.size.height;
+    var ctx = buff.getContext("2d");
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'copy';
+    ctx.drawImage(rgbks[3], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+
+    ctx.globalCompositeOperation = 'lighter';
+    if (selColor.r > 0) {
+        ctx.globalAlpha = selColor.r / 255.0;
+        ctx.drawImage(rgbks[0], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+    }
+    if (selColor.g > 0) {
+        ctx.globalAlpha = selColor.g / 255.0;
+        ctx.drawImage(rgbks[1], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+    }
+    if (selColor.b > 0) {
+        ctx.globalAlpha = selColor.b / 255.0;
+        ctx.drawImage(rgbks[2], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+    }
+    return buff;
 }
 /**
  Whether or not an CCSprite will rotate, scale or translate with it's parent.
@@ -226,7 +298,7 @@ cc.Sprite = cc.Node.extend({
                             this.initWithBatchNode(fileName, rect);
                         }
                     }
-                } else if (fileName instanceof HTMLImageElement) {
+                } else if ((fileName instanceof HTMLImageElement) || (fileName instanceof HTMLCanvasElement)) {
                     this.initWithTexture(fileName)
                 } else if (fileName instanceof cc.Texture2D) {
                     this.initWithTexture(fileName)
@@ -389,14 +461,12 @@ cc.Sprite = cc.Node.extend({
             rect = new cc.Rect();
             if (pTexture instanceof cc.Texture2D)
                 rect.size = pTexture.getContentSize();
-            else if (pTexture instanceof HTMLImageElement)
+            else if ((pTexture instanceof HTMLImageElement) || (pTexture instanceof HTMLCanvasElement))
                 rect.size = cc.SizeMake(pTexture.width, pTexture.height);
         }
 
         if (cc.renderContextType == cc.kCanvas) {
-            this._m_originalTexture = cc.cutImageByCanvas(pTexture, rect.origin, rect.size);
-            pTexture = cc.cutImageByCanvas(pTexture, rect.origin, rect.size);
-            rect.origin = cc.PointZero();
+            this._m_originalTexture = pTexture;
         }
         // IMPORTANT: [self init] and not [super init];
         this.init();
@@ -799,18 +869,27 @@ cc.Sprite = cc.Node.extend({
                 cc.renderContext.scale(1, -1);
             }
             var offsetPixels = this.getOffsetPositionInPixels();
-            var pos = cc.ccp(0 - this.getAnchorPointInPixels().x + offsetPixels.x , 0 - this.getAnchorPointInPixels().y + offsetPixels.y);
-            if(this._m_pobTexture){
+            var pos = cc.ccp(0 - this.getAnchorPointInPixels().x + offsetPixels.x, 0 - this.getAnchorPointInPixels().y + offsetPixels.y);
+            if (this._m_pobTexture) {
                 //direct draw image by canvas drawImage
-                if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
-                    cc.drawingUtil.drawImage(this._m_pobTexture, pos);
+                if(this._m_pobTexture instanceof HTMLImageElement){
+                    if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
+                        cc.drawingUtil.drawImage(this._m_pobTexture, pos);
+                    } else {
+                        cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size,
+                            pos, this.getTextureRect().size);
+                    }
                 } else {
-                    cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size,
-                        pos, this.getTextureRect().size);
+                    if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
+                        cc.drawingUtil.drawImage(this._m_pobTexture, pos);
+                    } else {
+                        cc.drawingUtil.drawImage(this._m_pobTexture, cc.PointZero(), this.getTextureRect().size,
+                            pos, this.getTextureRect().size);
+                    }
                 }
             } else {
                 cc.renderContext.fillStyle = "rgba(" + this._m_sColor.r + "," + this._m_sColor.g + "," + this._m_sColor.b + ",1)";
-                cc.renderContext.fillRect(pos.x,pos.y,this.getContentSize().width,this.getContentSize().height);
+                cc.renderContext.fillRect(pos.x, pos.y, this.getContentSize().width, this.getContentSize().height);
             }
 
             if (cc.SPRITE_DEBUG_DRAW == 1) {
@@ -902,7 +981,7 @@ cc.Sprite = cc.Node.extend({
                 cc.Assert(pChild != null, "");
                 this._super(pChild, zOrder, tag);
 
-                if(cc.renderContextType == cc.kWebGL){
+                if (cc.renderContextType == cc.kWebGL) {
                     if (this._m_bUsesBatchNode) {
                         cc.Assert(pChild.getTexture().getName() == this._m_pobTextureAtlas.getTexture().getName(), "");
                         var index = this._m_pobBatchNode.atlasIndexForChild(pChild, zOrder);
@@ -1106,14 +1185,18 @@ cc.Sprite = cc.Node.extend({
         }
         return this._m_sColor;
     },
+
     setColor:function (color3) {
         this._m_sColor = this._m_sColorUnmodified = color3;
 
-        if(this._m_originalTexture){
+        if (this.getTexture()) {
             if (cc.renderContextType == cc.kCanvas) {
-                var tempTexture = new Image();
-                tempTexture.src = cc.ImageRGBAColor(this._m_originalTexture, this._m_sColor);
-                this.setTexture(tempTexture);
+                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._m_originalTexture);
+                if (cacheTextureForColor) {
+                    //generate color texture cache
+                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._m_sColor,this.getTextureRect());
+                    this.setTexture(colorTexture);
+                }
             }
         }
 
@@ -1208,7 +1291,7 @@ cc.Sprite = cc.Node.extend({
     // CCTextureProtocol
     setTexture:function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        if(cc.renderContextType != cc.kCanvas){
+        if (cc.renderContextType != cc.kCanvas) {
             cc.Assert(!this._m_bUsesBatchNode, "setTexture doesn't work when the sprite is rendered using a CCSpriteSheet");
         }
 

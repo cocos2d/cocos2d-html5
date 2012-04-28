@@ -15,7 +15,7 @@ var Paddle = cc.Sprite.extend({
         if (aTexture instanceof cc.Texture2D) {
             var s = aTexture.getContentSize();
             this._rect = cc.RectMake(0, 0, s.width, s.height);
-        } else if (aTexture instanceof HTMLImageElement) {
+        } else if ((aTexture instanceof HTMLImageElement) || (aTexture instanceof HTMLCanvasElement)) {
             this._rect = cc.RectMake(0, 0, aTexture.width, aTexture.height);
         }
         return true;
