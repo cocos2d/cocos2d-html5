@@ -166,41 +166,41 @@ cc.Texture2D = cc.Class.extend({
     getPixelFormat:function () {
         return this._m_ePixelFormat;
     },
-//** width in pixels *//
+    //** width in pixels *//
     getPixelsWide:function () {
         return this._m_uPixelsWide;
     },
-//** hight in pixels *//
+    //** hight in pixels *//
     getPixelsHigh:function () {
         return this._m_uPixelsHigh;
     },
-//** texture name *//
+    //** texture name *//
     getName:function () {
         return this._m_uName;
     },
-//** content size *//
-    getContentSize:function () {
+    //** content size *//
+    getContentSizeInPixels:function () {
         var ret = new cc.Size();
         ret.width = this._m_tContentSize.width / cc.CONTENT_SCALE_FACTOR();
         ret.height = this._m_tContentSize.height / cc.CONTENT_SCALE_FACTOR();
 
         return ret;
     },
-//** texture max S *//
+    //** texture max S *//
     getMaxS:function () {
         return this._m_fMaxS;
     },
     setMaxS:function (maxS) {
         this._m_fMaxS = maxS;
     },
-//** texture max T *//
+    //** texture max T *//
     getMaxT:function () {
         return this._m_fMaxT;
     },
     setMaxT:function (maxT) {
         this._m_fMaxT = maxT;
     },
-//** whether or not the texture has their Alpha premultiplied *//
+    //** whether or not the texture has their Alpha premultiplied *//
     getHasPremultipliedAlpha:function () {
         return this._m_bHasPremultipliedAlpha;
     },
@@ -220,7 +220,7 @@ cc.Texture2D = cc.Class.extend({
     },
 
     /** Intializes with a texture2d with data */
-    initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
+    initWithData:function (pixelFormat, pixelsWide, pixelsHigh, contentSize) {
         //TODO
         // glPixelStorei(cc.GL_UNPACK_ALIGNMENT,1);
         //TODO

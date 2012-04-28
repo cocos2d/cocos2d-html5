@@ -26,13 +26,14 @@
 TRANSITION_DURATION = 1.2;
 
 var TransitionsTests = [
-    /* "JumpZoomTransition", //ok
+    "JumpZoomTransition", //ok
     "FadeTransition", //ok
-    "FadeWhiteTransition",*/
-    "FlipXLeftOver",
+    "FadeWhiteTransition",//ok
+
+    /*"FlipXLeftOver",
     "FlipXRightOver",
     "FlipYUpOver",
-    "FlipYDownOver", //ok
+    "FlipYDownOver",
     "FlipAngularLeftOver",
     "FlipAngularRightOver",
     "ZoomFlipXLeftOver",
@@ -40,22 +41,24 @@ var TransitionsTests = [
     "ZoomFlipYUpOver",
     "ZoomFlipYDownOver",
     "ZoomFlipAngularLeftOver",
-    "ZoomFlipAngularRightOver",
-    "ShrinkGrowTransition",
-    "RotoZoomTransition",
-    "MoveInLTransition",
-    "MoveInRTransition",
-    "MoveInTTransition",
-    "MoveInBTransition",
-    "SlideInLTransition",
-    "SlideInRTransition",
-    "SlideInTTransition",
-    "SlideInBTransition",
+    "ZoomFlipAngularRightOver",*/
 
-    "CCTransitionCrossFade",
+    "ShrinkGrowTransition",//ok
+    "RotoZoomTransition",//ok
+    "MoveInLTransition",//ok
+    "MoveInRTransition",//ok
+    "MoveInTTransition",//ok
+    "MoveInBTransition",//ok
+    "SlideInLTransition",//ok
+    "SlideInRTransition",//ok
+    "SlideInTTransition",//ok
+    "SlideInBTransition"//ok
+
+   /* "CCTransitionCrossFade",
     "CCTransitionRadialCCW",
-    "CCTransitionRadialCW",
-    "PageTransitionForward",
+    "CCTransitionRadialCW",*/
+
+    /*"PageTransitionForward",
     "PageTransitionBackward",
     "FadeTRTransition",
     "FadeBLTransition",
@@ -63,7 +66,7 @@ var TransitionsTests = [
     "FadeDownTransition",
     "TurnOffTilesTransition",
     "SplitRowsTransition",
-    "SplitColsTransition"
+    "SplitColsTransition"*/
 ];
 var s_nTransitionsIdx = 0;
 function nextTransitionAction(t,s) {
