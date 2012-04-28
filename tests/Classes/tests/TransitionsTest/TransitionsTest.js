@@ -26,9 +26,9 @@
 TRANSITION_DURATION = 1.2;
 
 var TransitionsTests = [
-    /*"JumpZoomTransition", //ok
+    "JumpZoomTransition", //ok
     "FadeTransition", //ok
-    "FadeWhiteTransition",//ok*/
+    "FadeWhiteTransition",//ok
 
     /*"FlipXLeftOver",
     "FlipXRightOver",
@@ -43,7 +43,7 @@ var TransitionsTests = [
     "ZoomFlipAngularLeftOver",
     "ZoomFlipAngularRightOver",*/
 
-    /*"ShrinkGrowTransition",//ok
+    "ShrinkGrowTransition",//ok
     "RotoZoomTransition",//ok
     "MoveInLTransition",//ok
     "MoveInRTransition",//ok
@@ -52,13 +52,13 @@ var TransitionsTests = [
     "SlideInLTransition",//ok
     "SlideInRTransition",//ok
     "SlideInTTransition",//ok
-    "SlideInBTransition",//ok*/
+    "SlideInBTransition"//ok
 
    /* "CCTransitionCrossFade",
     "CCTransitionRadialCCW",
     "CCTransitionRadialCW",*/
 
-    "PageTransitionForward",
+    /*"PageTransitionForward",
     "PageTransitionBackward",
     "FadeTRTransition",
     "FadeBLTransition",
@@ -66,7 +66,7 @@ var TransitionsTests = [
     "FadeDownTransition",
     "TurnOffTilesTransition",
     "SplitRowsTransition",
-    "SplitColsTransition"
+    "SplitColsTransition"*/
 ];
 var s_nTransitionsIdx = 0;
 function nextTransitionAction(t,s) {

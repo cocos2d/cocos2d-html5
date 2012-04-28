@@ -107,12 +107,16 @@ cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('textures/CCTextureAtlas.js');//12
 cc.loadjs('actions/CCAction.js');//7
 cc.loadjs('platform/CCFileUtils.js');//7
+cc.loadjs('effects/CCGrid.js');//7
+cc.loadjs('effects/CCGrabber.js');//7
 cc.loadjs('actions/CCActionInterval.js');//7
 cc.loadjs('actions/CCActionInstant.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('actions/CCActionProgressTimer.js');//7
 cc.loadjs('actions/CCActionCamera.js');//7
 cc.loadjs('actions/CCActionEase.js');//7
+cc.loadjs('actions/CCActionGrid.js');//7
+cc.loadjs('actions/CCActionTiledGrid.js');//7
 cc.loadjs('actions/CCActionGrid.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
@@ -135,6 +139,7 @@ cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
 cc.loadjs('misc_nodes/CCProgressTimer.js');//11
+cc.loadjs('misc_nodes/CCRenderTexture.js');//11
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCCamera.js');//13
 cc.loadjs('CCScheduler.js');//14

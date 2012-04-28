@@ -1058,22 +1058,12 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend({
         this._super();
         var s = cc.Director.sharedDirector().getWinSize();
         var aspect = s.width / s.height;
-        var x = (12 * aspect);
+        var x = 12 * aspect;
         var y = 12;
-
         var toff = cc.TurnOffTiles.actionWithSize(cc.ccg(x, y), this._m_fDuration);
         var action = this.easeActionWithAction(toff);
         //TODO
-        this._m_pOutScene.runAction
-            (
-                cc.Sequence.actions
-                    (
-                        action,
-                        cc.CallFunc.actionWithTarget(this, this.finish),
-                        cc.StopGrid.action(),
-                        null
-                    )
-            );
+        this._m_pOutScene.runAction(cc.Sequence.actions(action,cc.CallFunc.actionWithTarget(this, this.finish),cc.StopGrid.action(),null));
     },
     easeActionWithAction:function (action) {
         return action;
