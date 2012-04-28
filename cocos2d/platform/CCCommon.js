@@ -28,20 +28,20 @@ var cc = cc = cc || {};
 
 cc.clone = function(obj)
 {
-    var c = {};
-    for ( var i in obj )
+    var c = (obj instanceof Array)?[]:{};
+    for(var key in obj)
     {
-        //var v = this[i];
-        switch(typeof obj[i])
+        var copy = obj[key];
+        if(copy instanceof Array)
         {
-            case 'object':
-                c[i] = cc.clone(obj[i]);
-                break;
-            case 'Array':
-                c[i] = obj[i].slice();
-                break;
-            default:
-                c[i] = obj[i];
+            c[key] = cc.clone(copy);
+        }
+        else if(((typeof copy) == "object") && !(copy instanceof cc.Node)){
+            c[key] = cc.clone(copy);
+        }
+        else
+        {
+            c[key] = copy;
         }
     }
     return c;
