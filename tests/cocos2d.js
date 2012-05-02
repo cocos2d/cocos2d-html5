@@ -176,3 +176,4 @@ cc.loadjs('../tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
 cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
 cc.loadjs('../tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
 cc.loadjs('../tests/Classes/tests/CocosNodeTest/CocosNodeTest.js');
+cc.loadjs('../tests/Classes/tests/RotateWorldTest/RotateWorldTest.js');
