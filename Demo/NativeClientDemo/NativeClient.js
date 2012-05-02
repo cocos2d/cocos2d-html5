@@ -240,9 +240,9 @@ var Helloworld = cc.Layer.extend({
         pageDidLoad();
         moduleDidLoad();
 
-        //naclCmdProcess(asyncCmd, "I am cocos2d.");
-        var testValue = naclCmdProcess(syncCmd, "I am cocos2d.");
-        alert(testValue);
+        naclCmdProcess(asyncCmd, "I am cocos2d.");
+        //var testValue = naclCmdProcess(syncCmd, "I am cocos2d.");
+        //alert(testValue);
 
         return true;
     },
