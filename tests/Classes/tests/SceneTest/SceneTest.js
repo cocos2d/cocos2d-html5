@@ -56,7 +56,6 @@ SceneTestLayer1 = cc.Layer.extend({
         sprite.runAction(repeat);
 
         //cc.schedule(this.testDealloc);
-
     },
 
 
@@ -148,7 +147,7 @@ SceneTestLayer2 = cc.Layer.extend({
         var pScene = new SceneTestScene();
         var pLayer = new SceneTestLayer3();
         pScene.addChild(pLayer, 0);
-        cc.Director.sharedDirector().replaceScene(cc.TransitionFlipX.transitionWithDuration(2, pScene));
+        cc.Director.sharedDirector().replaceScene(cc.TransitionSlideInT.transitionWithDuration(2, pScene));
 
     }
 
