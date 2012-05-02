@@ -2843,7 +2843,6 @@ var SpriteChildrenVisibilityIssue665 = SpriteTestDemo.extend({
 var SpriteChildrenAnchorPoint = SpriteTestDemo.extend({
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-
         cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
 
         var aParent = cc.Node.node();
@@ -3465,7 +3464,7 @@ var AnimationCache = SpriteTestDemo.extend({
 
 var SpriteTestScene = TestScene.extend({
     runThisTest:function () {
-        sceneIdx = -1;
+        sceneIdx = 33;
         MAX_LAYER = 48;
         var pLayer = nextSpriteTestAction();
         this.addChild(pLayer);
