@@ -115,7 +115,7 @@ cc.AudioManager = cc.Class.extend({
     },
     /**
      @brief Preload background music
-     @param fgpszFilePath The path of the background music file,or the FileName of T_SoundResInfo
+     @param pszFilePath The path of the background music file,or the FileName of T_SoundResInfo
      */
     preloadBackgroundMusic:function (obj) {
         if (this.m_bSound_enable) {
