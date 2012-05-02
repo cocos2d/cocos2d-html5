@@ -25,18 +25,23 @@
 
 namespace cocos2dnacl {
 /// Method name for ReverseText, as seen by JavaScript code.
-const char* const kReverseTextMethodId = "reverseText";
+const char* const kAsyncCmdId = "cocos2dNaclAsync";
 
 /// Method name for FortyTwo, as seen by Javascript code. @see FortyTwo()
-const char* const kFortyTwoMethodId = "fortyTwo";
+const char* const kSyncCmdId = "cocos2dNaclSync";
 
 /// Separator character for the reverseText method.
 static const char kMessageArgumentSeparator = ':';
 
+/// This is the module's function that post log message to javascript.
+void MarshallLog(const std::string& text) {
+   //cocos2dnaclInstance::PostMessage(pp::Var(text));
+}
+
 /// This is the module's function that invokes FortyTwo and converts the return
 /// value from an int32_t to a pp::Var for return.
-pp::Var MarshallFortyTwo() {
-  return pp::Var(FortyTwo());
+pp::Var MarshallAsyncCmdProcess(const std::string& text) {
+  return pp::Var(MessageText(text));
 }
 
 /// This function is passed the arg list from the JavaScript call to
@@ -45,7 +50,7 @@ pp::Var MarshallFortyTwo() {
 /// an error message if it is not.
 /// On good input, it calls ReverseText and returns the result. The result is
 /// then sent back via a call to PostMessage.
-pp::Var MarshallMessageText(const std::string& text) {
+pp::Var MarshallSyncCmdProcess(const std::string& text) {
   return pp::Var(MessageText(text));
 }
 
@@ -81,16 +86,17 @@ void cocos2dnaclInstance::HandleMessage(const pp::Var& var_message) {
   }
   std::string message = var_message.AsString();
   pp::Var return_var;
-  if (message == kFortyTwoMethodId) {
+  if (message.find(kAsyncCmdId) == 0) {
     // Note that no arguments are passed in to FortyTwo.
-    return_var = MarshallFortyTwo();
-  } else if (message.find(kReverseTextMethodId) == 0) {
+    return_var = MarshallAsyncCmdProcess(message);
+  } else if (message.find(kSyncCmdId) == 0) {
     // The argument to reverseText is everything after the first ':'.
-    size_t sep_pos = message.find_first_of(kMessageArgumentSeparator);
-    if (sep_pos != std::string::npos) {
-      std::string string_arg = message.substr(sep_pos + 1);
-      return_var = MarshallMessageText(string_arg);
-    }
+    //size_t sep_pos = message.find_first_of(kMessageArgumentSeparator);
+    //if (sep_pos != std::string::npos) {
+    //  std::string string_arg = message.substr(sep_pos + 1);
+    //  return_var = MarshallMessageText(string_arg);
+    //}
+    return_var = MarshallSyncCmdProcess(message);
   }
   // Post the return result back to the browser.  Note that HandleMessage() is
   // always called on the main thread, so it's OK to post the return message
