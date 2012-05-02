@@ -79,7 +79,7 @@ cc.domNode = cc.Node.extend({
     _m_fRotation:0.0,
     _m_fScaleX:1.0,
     _m_fScaleY:1.0,
-    _m_tPosition:{x:0, y:0},//canvas position
+    _m_tPosition:{x:0, y:0}, //canvas position
     _m_tPositionInPixels:{x:0, y:0},
     _m_fSkewX:0.0,
     _m_fSkewY:0.0,
@@ -89,7 +89,7 @@ cc.domNode = cc.Node.extend({
     _domElement:null,
     _m_tContentSize:cc.PointZero(),
 
-    _m_bIsRelativeAnchorPoint: true,
+    _m_bIsRelativeAnchorPoint:true,
     _previousParent:null,
     getElement:function () {
         return this._domElement
@@ -98,15 +98,13 @@ cc.domNode = cc.Node.extend({
         //if position is relative to parent
         if (this._m_bIsRelativeAnchorPoint) {
             //get parent position
-            if(this.getParent())
-            {
+            if (this.getParent()) {
                 //parent anchor point
                 var pap = this.getParent().getAnchorPointInPixels();
                 //parent position
                 var parentPos = this.getParent().convertToWorldSpace(cc.PointZero());
                 //if its not same position as last time
-                if(!cc.ccpSameAs(parentPos, this._previousParent.pos))
-                {
+                if (!cc.ccpSameAs(parentPos, this._previousParent.pos)) {
                     this._previousParent.pos.x = parentPos.x;
                     this._previousParent.pos.y = parentPos.y;
                     //change the position according to parent
@@ -183,31 +181,28 @@ cc.domNode = cc.Node.extend({
     },
     //set local position
     setPosition:function (x, y) {
-        if (arguments.length == 1)//if only 1 param, then x is an object
-        {
+        //if only 1 param, then x is an object
+        if (arguments.length == 1) {
             this._m_tPosition = {x:x.x, y:-x.y};
         }
         else {
             this._m_tPosition = {x:x, y:-y};
         }
         //this.transform.translate;
-        var parent,parentPos;
-        if(parent = this.getParent())
-        {
-            if(parent.isDomNode)
-            {
+        var parent, parentPos;
+        if (parent = this.getParent()) {
+            if (parent.isDomNode) {
                 //TODO need to implement convertToWorldSpace for domnode
                 parentPos = {x:0, y:0};
             }
-            else
-            {
+            else {
                 parentPos = parent.convertToWorldSpace(cc.PointZero());
             }
         }
-        else{
+        else {
             parentPos = {x:0, y:0};
         }
-        this.style[cc.Browser.prefix + "transform"] = this._transform.translate(this._m_tPosition.x+parentPos.x, this._m_tPosition.y-parentPos.y);
+        this.style[cc.Browser.prefix + "transform"] = this._transform.translate(this._m_tPosition.x + parentPos.x, this._m_tPosition.y - parentPos.y);
     },
     getPosition:function () {
         return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
@@ -255,8 +250,8 @@ cc.domNode = cc.Node.extend({
         this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onExit");
         this.hide();
     },
-    hide:function ()//hide all children!
-    {
+    //hide all children!
+    hide:function (){
         this.style.visibility = "hidden";
     },
     show:function () {
