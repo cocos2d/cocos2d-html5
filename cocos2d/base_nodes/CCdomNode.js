@@ -73,12 +73,13 @@ cc.Browser.prefix = function () {
             return "";
     }
 }();
-cc.domNode = cc.Class.extend({
+cc.domNode = cc.Node.extend({
+    isDomNode:true,
     _m_nZOrder:0, //z-index;
     _m_fRotation:0.0,
     _m_fScaleX:1.0,
     _m_fScaleY:1.0,
-    _m_tPosition:{x:0, y:0},
+    _m_tPosition:{x:0, y:0},//canvas position
     _m_tPositionInPixels:{x:0, y:0},
     _m_fSkewX:0.0,
     _m_fSkewY:0.0,
@@ -87,11 +88,39 @@ cc.domNode = cc.Class.extend({
     _m_pParent:null,
     _domElement:null,
     _m_tContentSize:cc.PointZero(),
+
+    _m_bIsRelativeAnchorPoint: true,
+    _previousParent:null,
     getElement:function () {
         return this._domElement
     },
     transform:function () {
+        //if position is relative to parent
+        if (this._m_bIsRelativeAnchorPoint) {
+            //get parent position
+            if(this.getParent())
+            {
+                //parent anchor point
+                var pap = this.getParent().getAnchorPointInPixels();
+                //parent position
+                var parentPos = this.getParent().convertToWorldSpace(cc.PointZero());
+                //if its not same position as last time
+                if(!cc.ccpSameAs(parentPos, this._previousParent.pos))
+                {
+                    this._previousParent.pos.x = parentPos.x;
+                    this._previousParent.pos.y = parentPos.y;
+                    //change the position according to parent
+                    this.setPosition(this._m_tPosition.x, -this._m_tPosition.y);
+                    //cc.renderContext.translate(this.getPositionX() - pAp.x, -(this.getPositionY() - pAp.y ));
+                    //console.log(this.getParent());
+                }
+            }
+            //
+            //cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),this.getScaleY(), 0, 0);
 
+            //cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+        }
+        //console.log(this.c++);
     },
     _transform:{
         skew:function (x, y) {
@@ -131,6 +160,8 @@ cc.domNode = cc.Class.extend({
         this.style[cc.Browser.prefix + "transform-origin"] = "50% 50%";
         //this.style["float"] = "left";
         this.style[cc.Browser.prefix + "user-select"] = "none";
+        this._previousParent = {};
+        this._previousParent.pos = cc.PointZero();
     },
     id:function (x) {
         if (x != null) {
@@ -139,14 +170,6 @@ cc.domNode = cc.Class.extend({
         else {
             return this._domElement.id;
         }
-    },
-    test:function () {
-        this.style.background = "red";
-        this.style.height = "200px";
-        this.style.width = "200px";
-        this.style["float"] = "left";
-
-        cc.$("body").appendChild(this._domElement);
     },
     getZOrder:function () {
         return this.style.zIndex;
@@ -158,6 +181,7 @@ cc.domNode = cc.Class.extend({
         this._m_fSkewX = newSkewX;
         //this._domElement.style.transform
     },
+    //set local position
     setPosition:function (x, y) {
         if (arguments.length == 1)//if only 1 param, then x is an object
         {
@@ -167,7 +191,23 @@ cc.domNode = cc.Class.extend({
             this._m_tPosition = {x:x, y:-y};
         }
         //this.transform.translate;
-        this.style[cc.Browser.prefix + "transform"] = this._transform.translate(this._m_tPosition.x, this._m_tPosition.y);
+        var parent,parentPos;
+        if(parent = this.getParent())
+        {
+            if(parent.isDomNode)
+            {
+                //TODO need to implement convertToWorldSpace for domnode
+                parentPos = {x:0, y:0};
+            }
+            else
+            {
+                parentPos = parent.convertToWorldSpace(cc.PointZero());
+            }
+        }
+        else{
+            parentPos = {x:0, y:0};
+        }
+        this.style[cc.Browser.prefix + "transform"] = this._transform.translate(this._m_tPosition.x+parentPos.x, this._m_tPosition.y-parentPos.y);
     },
     getPosition:function () {
         return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
@@ -177,14 +217,6 @@ cc.domNode = cc.Class.extend({
     },
     _setZOrder:function (z) {
         this.style.zIndex = z;
-    },
-    setParent:function (Var) {
-        this._m_pParent = Var;
-    },
-    onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
-        this.resumeSchedulerAndActions();
-        this._m_bIsRunning = true;
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if (pArray && pArray.length > 0) {
@@ -206,12 +238,29 @@ cc.domNode = cc.Class.extend({
         this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnterTransitionDidFinish");
     },
     visit:function () {
-
+        if (this.style.visibility == "hidden") {
+            return;
+        }
+        this.transform();
+    },
+    onEnter:function () {
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
+        this.resumeSchedulerAndActions();
+        this._m_bIsRunning = true;
+        this.show();
     },
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._m_bIsRunning = false;
         this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onExit");
+        this.hide();
+    },
+    hide:function ()//hide all children!
+    {
+        this.style.visibility = "hidden";
+    },
+    show:function () {
+        this.style.visibility = "visible";
     },
     pauseSchedulerAndActions:function () {
         cc.Scheduler.sharedScheduler().pauseTarget(this);
