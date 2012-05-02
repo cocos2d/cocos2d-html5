@@ -71,19 +71,6 @@ cc.Menu = cc.domNode.extend({
             }
         }
     },
-    onEnter:function () {
-        this.show();
-    },
-    onExit:function () {
-        this.hide();
-    },
-    hide:function ()//hide all children!
-    {
-        this.style.visibility = "hidden";
-    },
-    show:function () {
-        this.style.visibility = "visible";
-    },
     addChild:function (child, zindex) {
         if (zindex) {
             child._setZOrder(zindex);
