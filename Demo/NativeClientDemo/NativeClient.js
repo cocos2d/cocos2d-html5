@@ -28,6 +28,90 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
+//For cocos2dnacl
+var cocos2dnaclModule = null;  // Global application object.
+var statusText = 'NO-STATUS';
+
+var cocos2dNaclBlock = false;
+var naclResult = null;
+var asyncCmd = 'cocos2dNaclAsync';
+var syncCmd = 'cocos2dNaclSync';
+
+function tickLoop() {
+    if (cocos2dNaclBlock == true) {
+        cc.Log("Thread was blocked for nacl.");
+        setTimeout(tickLoop, 10);
+    } else {
+        cc.Log("Thread was unblock.")
+    }
+
+}
+function naclCmdProcess(cmdType, cmd) {
+    if (cmdType == asyncCmd) {
+        cc.Log("AsyncCmd result from nacl.");
+        cocos2dnaclModule.postMessage(asyncCmd + ": " + "I am cocos2d.");
+        return;
+    } else {
+        cocos2dNaclBlock = true;
+        cocos2dnaclModule.postMessage(syncCmd + ": " + "I am cocos2d.");
+        //tickLoop();
+        return naclResult;
+    }
+}
+
+// Indicate load success.
+function moduleDidLoad() {
+    cocos2dnaclModule = document.getElementById('cocos2dnacl');
+    updateStatus('SUCCESS');
+    //Send a message to the NaCl module.
+    //cocos2dnaclModule.postMessage(syncCmd + "I am cocos2d.");
+}
+
+// The 'message' event handler.  This handler is fired when the NaCl module
+// posts a message to the browser by calling PPB_Messaging.PostMessage()
+// (in C) or pp::Instance.PostMessage() (in C++).  This implementation
+// simply displays the content of the message in an alert panel.
+function handleMessage(message_event) {
+    if (message_event.data.search(syncCmd) >= 0) {
+        cocos2dNaclBlock = false;
+        naclResult = message_event.data;
+
+    } else {
+        alert(message_event.data + "handleMessage.");
+    }
+}
+
+// If the page loads before the Native Client module loads, then set the
+// status message indicating that the module is still loading.  Otherwise,
+// do not change the status message.
+function pageDidLoad() {
+    if (cocos2dnaclModule == null) {
+        updateStatus('LOADING...');
+    } else {
+        // It's possible that the Native Client module onload event fired
+        // before the page's onload event.  In this case, the status message
+        // will reflect 'SUCCESS', but won't be displayed.  This call will
+        // display the current message.
+        updateStatus();
+    }
+}
+
+// Set the global status message.  If the element with id 'statusField'
+// exists, then set its HTML to the status message as well.
+// opt_message The message test.  If this is null or undefined, then
+// attempt to set the element with id 'statusField' to the value of
+// |statusText|.
+function updateStatus(opt_message) {
+    if (opt_message)
+        statusText = opt_message;
+    var statusField = document.getElementById('status_field');
+    if (statusField) {
+        statusField.innerHTML = statusText;
+    }
+}
+
+
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
     draw:function () {
@@ -151,14 +235,15 @@ var Helloworld = cc.Layer.extend({
             //selfPointer.adjustSizeForWindow();
         });
 
-        //For cocos2dnacl
-        cocos2dnaclModule = null;  // Global application object.
-        statusText = 'NO-STATUS';
-
         var listener = document.getElementById('listener');
         listener.addEventListener('message', handleMessage, true);
         pageDidLoad();
         moduleDidLoad();
+
+        naclCmdProcess(asyncCmd, "I am cocos2d.");
+        //var testValue = naclCmdProcess(syncCmd, "I am cocos2d.");
+        //alert(testValue);
+
         return true;
     },
     waveDistance:0,
@@ -251,52 +336,6 @@ Helloworld.node = function () {
         return null;
     }
 };
-
-
-// Indicate load success.
-function moduleDidLoad() {
-    cocos2dnaclModule = document.getElementById('cocos2dnacl');
-    updateStatus('SUCCESS');
-    //Send a message to the NaCl module.
-    cocos2dnaclModule.postMessage('reverseText:' + "I am cocos2d.");
-}
-
-// The 'message' event handler.  This handler is fired when the NaCl module
-// posts a message to the browser by calling PPB_Messaging.PostMessage()
-// (in C) or pp::Instance.PostMessage() (in C++).  This implementation
-// simply displays the content of the message in an alert panel.
-function handleMessage(message_event) {
-    alert(message_event.data);
-}
-
-// If the page loads before the Native Client module loads, then set the
-// status message indicating that the module is still loading.  Otherwise,
-// do not change the status message.
-function pageDidLoad() {
-    if (cocos2dnaclModule == null) {
-        updateStatus('LOADING...');
-    } else {
-        // It's possible that the Native Client module onload event fired
-        // before the page's onload event.  In this case, the status message
-        // will reflect 'SUCCESS', but won't be displayed.  This call will
-        // display the current message.
-        updateStatus();
-    }
-}
-
-// Set the global status message.  If the element with id 'statusField'
-// exists, then set its HTML to the status message as well.
-// opt_message The message test.  If this is null or undefined, then
-// attempt to set the element with id 'statusField' to the value of
-// |statusText|.
-function updateStatus(opt_message) {
-    if (opt_message)
-        statusText = opt_message;
-    var statusField = document.getElementById('status_field');
-    if (statusField) {
-        statusField.innerHTML = statusText;
-    }
-}
 
 
 

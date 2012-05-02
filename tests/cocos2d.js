@@ -69,6 +69,8 @@ cc.loadjs = function (filename) {
         }
         else {
             cc.setup("gameCanvas");
+            //init audio
+            cc.AudioManager.sharedEngine().init("mp3,ogg");
             //we are ready to run the game
             cc.Loader.shareLoader().onloading = function () {
                 cc.LoaderScene.shareLoaderScene().draw();
@@ -176,3 +178,4 @@ cc.loadjs('../tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
 cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
 cc.loadjs('../tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
 cc.loadjs('../tests/Classes/tests/CocosNodeTest/CocosNodeTest.js');
+cc.loadjs('../tests/Classes/tests/RotateWorldTest/RotateWorldTest.js');

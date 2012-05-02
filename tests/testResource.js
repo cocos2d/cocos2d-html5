@@ -176,6 +176,10 @@ var g_ressources = [
     {type:"tmx", src:"Resources/TileMaps/iso-test-bug787.tmx"},
     {type:"tmx", src:"Resources/TileMaps/test-object-layer.tmx"},
 
+    //audio ressources
+    {type:"bgm", src:"Resources/background"},
+    {type:"effect", src:"Resources/effect2"},
+
     //tga ressources
     {type:"tga", src:s_LevelMapTga}
 ];

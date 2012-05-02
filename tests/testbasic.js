@@ -173,7 +173,6 @@ var g_aTestNames = {
     "ChipmunkTest":"ChipmunkTestScene",
     "LabelTest":"AtlasTestScene",
     "TextInputTest":"TextInputTestScene",
-
     "SchedulerTest":"SchedulerTestScene",
     "RenderTextureTest":"RenderTextureScene",
     "Texture2DTest":"TextureTestScene",

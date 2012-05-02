@@ -26,97 +26,98 @@
 var MUSIC_FILE = "Resources/background";
 var EFFECT_FILE = "Resources/effect2";
 
-var DenshionTests = [
-    "play background music",
-    "stop background music",
-    "pause background music",
-    "resume background music",
-    "rewind background music",
-    "is background music playing",
-    "play effect",
-    "play effect repeatly",
-    "stop effect",
-    "unload effect",
-    "add background music volume",
-    "sub background music volume",
-    "add effects volume",
-    "sub effects volume",
-    "pause effect",
-    "resume effect",
-    "pause all effects",
-    "resume all effects",
-    "stop all effects"
-];
+var DenshionTests = {
+    "playBackgroundMusic":"playBackgroundMusic",
+    "stopBackgroundMusic":"stopBackgroundMusic",
+    "pauseBackgroundMusic":"pauseBackgroundMusic",
+    "resumeBackgroundMusic":"resumeBackgroundMusic",
+    "rewindBackgroundMusic":"rewindBackgroundMusic",
+    "isBackgroundMusicPlaying":"isBackgroundMusicPlaying",
+    "playEffect":"playEffect",
+    "playEffectRepeatly":"playEffectRepeatly",
+    "stopEffect":"stopEffect",
+    "unloadEffect":"unloadEffect",
+    "addBackgroundMusicVolume":"addBackgroundMusicVolume",
+    "subBackgroundMusicVolume":"subBackgroundMusicVolume",
+    "addEffectsVolume":"addEffectsVolume",
+    "subEffectsVolume":"subEffectsVolume",
+    "pauseEffect":"pauseEffect",
+    "resumeEffect":"resumeEffect",
+    "pauseAllEffects":"pauseAllEffects",
+    "resumeAllEffects":"resumeAllEffects",
+    "stopAllEffects":"stopAllEffects"
+};
 
 CocosDenshionTest = cc.Layer.extend({
     _m_pItmeMenu:null,
     _m_tBeginPos:cc.PointZero(),
+    bIsMouseDown:false,
     _m_nTestCount:null,
-    _m_nSoundId:0,
-    ctor:function(){
+    ctor:function () {
         // add menu items for tests
         this._m_pItmeMenu = cc.Menu.menuWithItems(null);
         var s = cc.Director.sharedDirector().getWinSize();
         this._m_nTestCount = DenshionTests.length;
 
-        for (var i = 0; i < this._m_nTestCount; ++i){
-            var label = cc.LabelTTF.labelWithString(DenshionTests[i], "Arial", 24);
+        var i = 0;
+        for (var text in DenshionTests) {
+            var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
             var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-
+            pMenuItem.id(text);
             this._m_pItmeMenu.addChild(pMenuItem, i + 10000);
-            pMenuItem.setPosition( cc.PointMake( s.width / 2, (s.height - (i + 1) * LINE_SPACE) ));
+            pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
+            i++;
         }
 
         this._m_pItmeMenu.setContentSize(cc.SizeMake(s.width, (this._m_nTestCount + 1) * LINE_SPACE));
-        this._m_pItmeMenu.setPosition(cc.PointZero);
+        this._m_pItmeMenu.setPosition(cc.PointZero());
         this.addChild(this._m_pItmeMenu);
 
         this.setIsTouchEnabled(true);
-
-        // preload background music and effect
-        cc.AudioManager.sharedEngine().preloadBackgroundMusic( cc.FileUtils.fullPathFromRelativePath(MUSIC_FILE) );
-        cc.AudioManager.sharedEngine().preloadEffect( cc.FileUtils.fullPathFromRelativePath(EFFECT_FILE) );
 
         // set default volume
         cc.AudioManager.sharedEngine().setEffectsVolume(0.5);
         cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.5);
     },
     menuCallback:function (pSender) {
+        var nIdx = pSender.target.id;
+        // create the test scene and run it
+        var pScene = new window[DenshionTests[nIdx]]();
     },
     ccTouchesMoved:function (pTouches, pEvent) {
-        var touch = pTouches.begin()[0];
+        if (this.bIsMouseDown) {
+            var touchLocation = pTouches[0].locationInView(0);
+            var nMoveY = touchLocation.y - this._m_tBeginPos.y;
+            var curPos = this._m_pItmeMenu.getPosition();
 
-        var touchLocation = touch.locationInView(touch.view() );
-        touchLocation = cc.Director.sharedDirector().convertToGL( touchLocation );
-        var nMoveY = touchLocation.y - this._m_tBeginPos.y;
+            var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
+            var winSize = cc.Director.sharedDirector().getWinSize();
+            if (nextPos.y < 0.0) {
+                this._m_pItmeMenu.setPosition(cc.PointZero());
+                return;
+            }
 
-        var curPos  = this._m_pItmeMenu.getPosition();
-        var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
-        var winSize = cc.Director.sharedDirector().getWinSize();
-        if (nextPos.y < 0.0)
-        {
-            this._m_pItmeMenu.setPosition(cc.PointZero);
-            return;
+            if (nextPos.y > ((this._m_nTestCount + 1) * LINE_SPACE - winSize.height)) {
+                this._m_pItmeMenu.setPosition(cc.ccp(0, ((this._m_nTestCount + 1) * LINE_SPACE - winSize.height)));
+                return;
+            }
+
+            this._m_pItmeMenu.setPosition(nextPos);
+
+            this._m_tBeginPos = cc.ccp(0, touchLocation.y);
         }
-
-        if (nextPos.y > ((this._m_nTestCount + 1)* LINE_SPACE - winSize.height))
-        {
-            this._m_pItmeMenu.setPosition(cc.ccp(0, ((this._m_nTestCount + 1)* LINE_SPACE - winSize.height)));
-            return;
-        }
-
-        this._m_pItmeMenu.setPosition(nextPos);
-        this._m_tBeginPos = touchLocation;
     },
     ccTouchesBegan:function (pTouches, pEvent) {
-        var touch = pTouches.begin()[0];
-
-        this._m_tBeginPos = touch.locationInView( touch.view() );
-        this._m_tBeginPos = cc.Director.sharedDirector().convertToGL( this._m_tBeginPos );
+        if (!this.bIsMouseDown) {
+            this._m_tBeginPos = pTouches[0].locationInView(0);
+        }
+        this.bIsMouseDown = true;
+    },
+    ccTouchesEnded:function () {
+        this.bIsMouseDown = false;
     },
     onExit:function () {
-        cc.Layer.onExit();
-
+        this._super();
         cc.AudioManager.sharedEngine().end();
     }
 });
@@ -129,64 +130,102 @@ CocosDenshionTestScene = TestScene.extend({
     }
 });
 
-// play background music
-var playBackgroundMusic = function(){
-cc.AudioManager.sharedEngine().playBackgroundMusic(MUSIC_FILE, false);
+var m_nSoundId = null;
+
+var playBackgroundMusic = function () {
+    cc.LOG("play background music");
+    cc.AudioManager.sharedEngine().playBackgroundMusic(MUSIC_FILE, false);
 };
 
-// stop background music
-var stopBackgroundMusic = function(){
-cc.AudioManager.sharedEngine().stopBackgroundMusic();
-}
+var stopBackgroundMusic = function () {
+    cc.LOG("stop background music");
+    cc.AudioManager.sharedEngine().stopBackgroundMusic();
+};
 
-// pause background music
-cc.AudioManager.sharedEngine().pauseBackgroundMusic();
+var pauseBackgroundMusic = function () {
+    cc.LOG("pause background music");
+    cc.AudioManager.sharedEngine().pauseBackgroundMusic();
+};
 
-// resume background music
-cc.AudioManager.sharedEngine().resumeBackgroundMusic();
+var resumeBackgroundMusic = function () {
+    cc.LOG("resume background music");
+    cc.AudioManager.sharedEngine().resumeBackgroundMusic();
+};
 
-// rewind background music
-cc.AudioManager.sharedEngine().rewindBackgroundMusic();
+var rewindBackgroundMusic = function () {
+    cc.LOG("rewind background music");
+    cc.AudioManager.sharedEngine().rewindBackgroundMusic();
+};
 
 // is background music playing
-if (cc.AudioManager.sharedEngine().isBackgroundMusicPlaying()) {
-    cc.LOG("background music is playing");
-}
-else {
-    cc.LOG("background music is not playing");
-}
+var isBackgroundMusicPlaying = function () {
+    if (cc.AudioManager.sharedEngine().isBackgroundMusicPlaying()) {
+        cc.LOG("background music is playing");
+    }
+    else {
+        cc.LOG("background music is not playing");
+    }
+};
 
-// play effect
-m_nSoundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE);
+var playEffect = function () {
+    cc.LOG("play effect");
+    m_nSoundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE);
+};
 
-// play effect
-m_nSoundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE, true);
+var playEffectRepeatly = function () {
+    cc.LOG("play effect repeatly");
+    m_nSoundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE, true);
+};
 
-// stop effect
-cc.AudioManager.sharedEngine().stopEffect(m_nSoundId);
+var stopEffect = function () {
+    cc.LOG("stop effect");
+    cc.AudioManager.sharedEngine().stopEffect(m_nSoundId);
+};
 
-// unload effect
+var unloadEffect = function () {
+    cc.LOG("unload effect");
+    cc.AudioManager.sharedEngine().unloadEffect(EFFECT_FILE);
+};
 
-cc.AudioManager.sharedEngine().unloadEffect(EFFECT_FILE);
+var addBackgroundMusicVolume = function () {
+    cc.LOG("add bakcground music volume");
+    cc.AudioManager.sharedEngine().setBackgroundMusicVolume(cc.AudioManager.sharedEngine().getBackgroundMusicVolume() + 0.1);
+};
 
-// add bakcground music volume
-cc.AudioManager.sharedEngine().setBackgroundMusicVolume(cc.AudioManager.sharedEngine().getBackgroundMusicVolume() + 0.1);
+var subBackgroundMusicVolume = function () {
+    cc.LOG("sub backgroud music volume");
+    cc.AudioManager.sharedEngine().setBackgroundMusicVolume(cc.AudioManager.sharedEngine().getBackgroundMusicVolume() - 0.1);
+};
 
-// sub backgroud music volume
-cc.AudioManager.sharedEngine().setBackgroundMusicVolume(cc.AudioManager.sharedEngine().getBackgroundMusicVolume() - 0.1);
+var addEffectsVolume = function () {
+    cc.LOG("add effects volume");
+    cc.AudioManager.sharedEngine().setEffectsVolume(cc.AudioManager.sharedEngine().getEffectsVolume() + 0.1);
+};
 
-// add effects volume
-cc.AudioManager.sharedEngine().setEffectsVolume(cc.AudioManager.sharedEngine().getEffectsVolume() + 0.1);
+var subEffectsVolume = function () {
+    cc.LOG("sub effects volume");
+    cc.AudioManager.sharedEngine().setEffectsVolume(cc.AudioManager.sharedEngine().getEffectsVolume() - 0.1);
+};
 
-// sub effects volume
-cc.AudioManager.sharedEngine().setEffectsVolume(cc.AudioManager.sharedEngine().getEffectsVolume() - 0.1);
+var pauseEffect = function () {
+    cc.LOG("pause effect");
+    cc.AudioManager.sharedEngine().pauseEffect(m_nSoundId);
+};
 
-cc.AudioManager.sharedEngine().pauseEffect(m_nSoundId);
+var resumeEffect = function () {
+    cc.LOG("resume effect");
+    cc.AudioManager.sharedEngine().resumeEffect(m_nSoundId);
+};
 
-cc.AudioManager.sharedEngine().resumeEffect(m_nSoundId);
-
-cc.AudioManager.sharedEngine().pauseAllEffects();
-
-cc.AudioManager.sharedEngine().resumeAllEffects();
-
-cc.AudioManager.sharedEngine().stopAllEffects();
+var pauseAllEffects = function () {
+    cc.LOG("pause all effects");
+    cc.AudioManager.sharedEngine().pauseAllEffects();
+};
+var resumeAllEffects = function () {
+    cc.LOG("resume all effects");
+    cc.AudioManager.sharedEngine().resumeAllEffects();
+};
+var stopAllEffects = function () {
+    cc.LOG("stop all effects");
+    cc.AudioManager.sharedEngine().stopAllEffects();
+};
