@@ -82,10 +82,10 @@ cc.AudioManager = cc.Class.extend({
         }
 
         // detect the prefered audio format
-        this.m_activeAudioExt = this.getSupportedAudioFormat();
+        this.m_activeAudioExt = this._getSupportedAudioFormat();
         return this.m_bSound_enable;
     },
-    getSupportedAudioFormat:function () {
+    _getSupportedAudioFormat:function () {
         var extIdx = 0;
         // check for sound support by the browser
         if (!cc.sound) {
@@ -144,7 +144,6 @@ cc.AudioManager = cc.Class.extend({
         }
         cc.Loader.shareLoader().onResLoaded();
     },
-
     /**
      @brief Play background music
      @param pszFilePath The path of the background music file,or the FileName of T_SoundResInfo
@@ -275,8 +274,7 @@ cc.AudioManager = cc.Class.extend({
      @bLoop Whether to loop the effect playing, default value is false
      */
     playEffect:function (objName, bLoop) {
-        var soundPath = objName + "." + this.m_activeAudioExt;
-        var soundCache = this.getEffectList(soundPath);
+        var soundCache = this.getEffectList(objName);
         if (soundCache) {
             soundCache.currentTime = 0;
             soundCache.loop = bLoop || false;
@@ -374,7 +372,7 @@ cc.AudioManager = cc.Class.extend({
 
             // load it
             soundCache.load();
-            var EffectName = this.getEffectName(soundPath);
+            var EffectName = this.getEffectName(obj);
             this.m_pAudioList[EffectName] = soundCache;
         }
         cc.Loader.shareLoader().onResLoaded();
@@ -398,6 +396,10 @@ cc.AudioManager = cc.Class.extend({
         else {
             return null;
         }
+    },
+    end:function(){
+         this.stopBackgroundMusic();
+         this.stopAllEffects();
     }
 });
 
