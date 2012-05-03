@@ -30,6 +30,10 @@
 
 
 var cc = cc = cc || {};
+cc.kCCMenuStateWaiting = 0;
+cc.kCCMenuStateTrackingTouch = 1;
+cc.kCCMenuTouchPriority = -128;
+cc.kDefaultPadding = 5;
 cc.Menu = cc.domNode.extend({
     _container:null,
     init:function () {
@@ -64,19 +68,46 @@ cc.Menu = cc.domNode.extend({
         cc.TouchDispatcher.registerHtmlElementEvent(this._domElement);
         this.style.cursor = "crosshair";
 
-
         for (var i = 0; i < args.length; i++) {
             if (args[i]) {
                 this._domElement.appendChild(args[i].getElement());
+                this.addChild(args[i]);
             }
         }
     },
     addChild:function (child, zindex) {
+        this._super(child);
         if (zindex) {
             child._setZOrder(zindex);
         }
         if (child.getElement) {
             this._domElement.appendChild(child.getElement());
+        }
+    },
+    alignItemsVertically:function () {
+        this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
+    },
+    alignItemsVerticallyWithPadding:function (padding) {
+        var s = cc.Director.sharedDirector().getWinSize();
+        var height = -padding;
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
+                var childheight = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
+                    this._m_pChildren[i].style.fontSize,
+                    this._m_pChildren[i].style.fontFamily).height;
+                height += childheight + padding;//TODO * scale
+            }
+        }
+
+        var y = height / 2.0;
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (i = 0; i < this._m_pChildren.length; i++) {
+                var childheight = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
+                    this._m_pChildren[i].style.fontSize,
+                    this._m_pChildren[i].style.fontFamily).height;
+                this._m_pChildren[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._m_pChildren[i].getScaleY()*/ / 2));
+                y -= childheight /** this._m_pChildren[i].getScaleY()*/ + padding;
+            }
         }
     }
 });

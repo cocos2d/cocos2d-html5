@@ -34,18 +34,13 @@ var MID_GOBACK = 105;
 SceneTestLayer1 = cc.Layer.extend({
 
     ctor:function () {
-
         var s = cc.Director.sharedDirector().getWinSize();
+        var item1 = cc.MenuItemFont.itemFromString("Test pushScene", this, this.onPushScene);
+        var item2 = cc.MenuItemFont.itemFromString("Test pushScene w/transition", this, this.onPushSceneTran);
+        var item3 = cc.MenuItemFont.itemFromString("Quit", this, function(){alert("quit")});
 
-        var item1 = cc.MenuItemLabel.itemWithLabel(cc.LabelTTF.labelWithString("Test pushScene", "Arial", 24), this, this.onPushScene);
-        var item2 = cc.MenuItemLabel.itemWithLabel(cc.LabelTTF.labelWithString("Test pushScene w/transition", "Arial", 24), this, this.onPushSceneTran);
-        var item3 = cc.MenuItemLabel.itemWithLabel(cc.LabelTTF.labelWithString("Quit", "Arial", 24), this, this.onQuit);
-
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
-        item1.setPosition(s.width / 2, (s.height / 2 + 40));
-        item2.setPosition(s.width / 2, (s.height / 2));
-        item3.setPosition(s.width / 2, (s.height / 2 - 40));
-        //menu.alignItemsVertically();
+        var menu = cc.Menu.menuWithItems(item1, item2, item3);
+        menu.alignItemsVertically();
         this.addChild(menu);
 
         var sprite = cc.Sprite.spriteWithFile(s_pPathGrossini);
@@ -103,15 +98,12 @@ SceneTestLayer2 = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var item1 = cc.MenuItemLabel.itemWithLabel(cc.LabelTTF.labelWithString("replaceScene", "Arial", 24), this, this.onReplaceScene);
-        var item2 = cc.MenuItemLabel.itemWithLabel(cc.LabelTTF.labelWithString("replaceScene w/transition", "Arial", 24), this, this.onReplaceSceneTran);
-        var item3 = cc.MenuItemLabel.itemWithLabel(cc.LabelTTF.labelWithString("Go Back", "Arial", 24), this, this.onGoBack);
+        var item1 = cc.MenuItemFont.itemFromString("replaceScene", this, this.onReplaceScene);
+        var item2 = cc.MenuItemFont.itemFromString("replaceScene w/transition", this, this.onReplaceSceneTran);
+        var item3 = cc.MenuItemFont.itemFromString("Go Back", this, this.onGoBack);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
-        //menu.alignItemsVertically();
-        item1.setPosition(s.width / 2, (s.height / 2 + 40));
-        item2.setPosition(s.width / 2, (s.height / 2));
-        item3.setPosition(s.width / 2, (s.height / 2 - 40));
+        menu.alignItemsVertically();
         this.addChild(menu);
 
         var sprite = cc.Sprite.spriteWithFile(s_pPathGrossini);

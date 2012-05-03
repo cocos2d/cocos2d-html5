@@ -61,10 +61,10 @@ cc.Browser.platform = function () {
 cc.Browser.prefix = function () {
     switch (cc.Browser.type) {
         case "firefox":
-            return "-moz-";
+            return "Moz";
         case "chrome":
         case "safari":
-            return "-webkit-";
+            return "webkit";
         case "opera":
             return "-o-";
         case "ie":
@@ -83,7 +83,7 @@ cc.domNode = cc.Node.extend({
     _m_tPositionInPixels:{x:0, y:0},
     _m_fSkewX:0.0,
     _m_fSkewY:0.0,
-    _m_pChildren:[],
+    _m_pChildren:null,
     _m_tAnchorPoint:cc.PointZero(),
     _m_pParent:null,
     _domElement:null,
@@ -131,10 +131,10 @@ cc.domNode = cc.Node.extend({
             return "skewY(" + Y + "deg)";
         },
         rotate:function (x) {
-            return "rotate(" + x + "deg)";
+            return "rotateZ(" + x + "deg)";
         },
         translate:function (x, y) {
-            return "translate(" + x + "px, " + y + "px)";
+            return "translate3d(" + x + "px, " + y + "px,0px)";
         },
         translateX:function (x) {
             return "translateX(" + x + "px)";
@@ -153,6 +153,7 @@ cc.domNode = cc.Node.extend({
         }
     },
     ctor:function () {
+        this._m_pChildren = [];
         this._domElement = cc.$new('div');
         this.style = this._domElement.style;
         this.style[cc.Browser.prefix + "transform-origin"] = "50% 50%";
@@ -202,13 +203,14 @@ cc.domNode = cc.Node.extend({
         else {
             parentPos = {x:0, y:0};
         }
-        this.style[cc.Browser.prefix + "transform"] = this._transform.translate(this._m_tPosition.x + parentPos.x, this._m_tPosition.y - parentPos.y);
+        this.style[cc.Browser.prefix + "Transform"] = this._transform.translate(this._m_tPosition.x + parentPos.x, this._m_tPosition.y - parentPos.y)
+                                                    + " " + this._transform.rotate(this._m_fRotation);
     },
     getPosition:function () {
         return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
     },
     addChild:function (child) {
-        console.log(typeof child);
+        this._m_pChildren.push(child);
     },
     _setZOrder:function (z) {
         this.style.zIndex = z;
@@ -230,7 +232,7 @@ cc.domNode = cc.Node.extend({
         cc.ActionManager.sharedManager().resumeTarget(this);
     },
     onEnterTransitionDidFinish:function () {
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnterTransitionDidFinish");
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
     },
     visit:function () {
         if (this.style.visibility == "hidden") {
@@ -294,3 +296,28 @@ cc.domNode = cc.Node.extend({
         }
     }
 });
+cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
+    var lDiv = cc.$new('lDiv');
+
+    document.body.appendChild(lDiv);
+    lDiv.style.fontSize = (isNaN(pFontSize))?pFontSize:("" + pFontSize + "px");
+    lDiv.style.position = "absolute";
+    lDiv.style.left = -1000;
+    lDiv.style.top = -1000;
+    lDiv.style.fontFamily = fontfamily || "default";
+    if (pStyle != null) {
+        lDiv.style = pStyle;
+    }
+
+    lDiv.innerHTML = pText;
+
+    var lResult = {
+        width: lDiv.clientWidth,
+        height: lDiv.clientHeight
+    };
+
+    document.body.removeChild(lDiv);
+    lDiv = null;
+
+    return lResult;
+};
