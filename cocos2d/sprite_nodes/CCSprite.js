@@ -146,14 +146,14 @@ cc.generateTextureCacheForColor = function (texture) {
     return rgbks;
 };
 
-cc.generateTintImage = function (img, rgbks, color,rect) {
-    if(!rect){
+cc.generateTintImage = function (img, rgbks, color, rect) {
+    if (!rect) {
         rect = cc.RectZero();
-        rect.size = cc.SizeMake(img.width,img.height);
+        rect.size = cc.SizeMake(img.width, img.height);
     }
     var selColor;
-    if(color instanceof cc.Color4F){
-        selColor = cc.ccc3(color.r * 255,color.g * 255, color.b * 255);
+    if (color instanceof cc.Color4F) {
+        selColor = cc.ccc3(color.r * 255, color.g * 255, color.b * 255);
     } else {
         selColor = color;
     }
@@ -163,23 +163,23 @@ cc.generateTintImage = function (img, rgbks, color,rect) {
     var ctx = buff.getContext("2d");
     ctx.globalAlpha = 1;
     ctx.globalCompositeOperation = 'copy';
-    ctx.drawImage(rgbks[3], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+    ctx.drawImage(rgbks[3], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
 
     ctx.globalCompositeOperation = 'lighter';
     if (selColor.r > 0) {
         ctx.globalAlpha = selColor.r / 255.0;
-        ctx.drawImage(rgbks[0], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+        ctx.drawImage(rgbks[0], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
     }
     if (selColor.g > 0) {
         ctx.globalAlpha = selColor.g / 255.0;
-        ctx.drawImage(rgbks[1], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+        ctx.drawImage(rgbks[1], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
     }
     if (selColor.b > 0) {
         ctx.globalAlpha = selColor.b / 255.0;
-        ctx.drawImage(rgbks[2], rect.origin.x, rect.origin.y,rect.size.width,rect.size.height,0,0,rect.size.width,rect.size.height);
+        ctx.drawImage(rgbks[2], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
     }
     return buff;
-}
+};
 /**
  Whether or not an CCSprite will rotate, scale or translate with it's parent.
  Useful in health bars, when you want that the health bar translates with it's parent but you don't
@@ -236,7 +236,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
     else {
         return parseInt(A);
     }
-}
+};
 
 cc.Sprite = cc.Node.extend({
     //
@@ -590,8 +590,7 @@ cc.Sprite = cc.Node.extend({
     },
     /** updates the texture rect of the CCSprite in points. */
     setTextureRect:function (rect) {
-        var rectInPixels = new cc.Rect();
-        rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
+        var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
         this.setTextureRectInPixels(rectInPixels, false, rectInPixels.size);
     },
     /** updates the texture rect, rectRotated and untrimmed size of the CCSprite in pixels
@@ -602,7 +601,6 @@ cc.Sprite = cc.Node.extend({
         this._m_bRectRotated = rotated;
 
         this.setContentSizeInPixels(size);
-        //this.setContentSizeInPixels(rect.size);
         this._updateTextureCoords(this._m_obRectInPixels);
 
         var relativeOffsetInPixels = this._m_obUnflippedOffsetPositionFromCenter;
@@ -621,8 +619,7 @@ cc.Sprite = cc.Node.extend({
         if (this._m_bUsesBatchNode) {
             // update dirty_, don't update recursiveDirty_
             this._m_bDirty = true;
-        }
-        else {
+        } else {
             // self rendering
 
             // Atlas: Vertex
@@ -640,8 +637,7 @@ cc.Sprite = cc.Node.extend({
     },
     _updateTextureCoords:function (rect) {
         if (cc.renderContextType == cc.kWebGL) {
-            var tex = new cc.Texture2D();
-            tex = this._m_bUsesBatchNode ? this._m_pobTextureAtlas.getTexture() : this._m_pobTexture;
+            var tex = this._m_bUsesBatchNode ? this._m_pobTextureAtlas.getTexture() : this._m_pobTexture;
             if (!tex) {
                 return;
             }
@@ -869,10 +865,10 @@ cc.Sprite = cc.Node.extend({
                 cc.renderContext.scale(1, -1);
             }
             var offsetPixels = this.getOffsetPositionInPixels();
-            var pos = cc.ccp(0 - this.getAnchorPointInPixels().x + offsetPixels.x, 0 - this.getAnchorPointInPixels().y + offsetPixels.y);
+            var pos = cc.ccp(0|( - this.getAnchorPointInPixels().x + offsetPixels.x), 0|( - this.getAnchorPointInPixels().y + offsetPixels.y));
             if (this._m_pobTexture) {
                 //direct draw image by canvas drawImage
-                if(this._m_pobTexture instanceof HTMLImageElement){
+                if (this._m_pobTexture instanceof HTMLImageElement) {
                     if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
                         cc.drawingUtil.drawImage(this._m_pobTexture, pos);
                     } else {
@@ -1194,7 +1190,7 @@ cc.Sprite = cc.Node.extend({
                 var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._m_originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
-                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._m_sColor,this.getTextureRect());
+                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._m_sColor, this.getTextureRect());
                     this.setTexture(colorTexture);
                 }
             }

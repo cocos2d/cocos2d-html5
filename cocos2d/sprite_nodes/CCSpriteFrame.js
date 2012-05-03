@@ -109,14 +109,8 @@ cc.SpriteFrame = cc.Class.extend({
          The originalSize is the size in points of the frame before being trimmed.
          */
             case 5:
-                if (cc.renderContextType == cc.kCanvas) {
-                    this._m_pobTexture = cc.cutImageByCanvas(pobTexture, rect.origin, rect.size);
-                    rect.origin = cc.PointZero();
-                    this._m_obRectInPixels = rect;
-                } else {
-                    this._m_pobTexture = pobTexture;
-                    this._m_obRectInPixels = rect;
-                }
+                this._m_pobTexture = pobTexture;
+                this._m_obRectInPixels = rect;
 
                 this._m_obRect = cc.RECT_PIXELS_TO_POINTS(rect);
                 this._m_bRotated = rotated;
