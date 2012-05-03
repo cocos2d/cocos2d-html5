@@ -15,7 +15,7 @@ Documentation
 ------------------
    * Website: [www.cocos2d-x.org][3]
    * [Online API References][4]
-   
+
 Contact us
 ------------------
    * Forum: [http://forum.cocos2d-x.org][5]
