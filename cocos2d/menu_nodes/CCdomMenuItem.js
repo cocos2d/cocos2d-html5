@@ -79,9 +79,11 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
         return false;
     });
     that._image.addEventListener("click", callback);
+    that._image.addEventListener("touchstart", callback);
     //attach callback to onclick
     that.style.cursor = (callback) ? "pointer" : "default";
     return that;
+
 };
 
 cc.MenuItemLabel = cc.MenuItem.extend({
@@ -106,6 +108,9 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this.style.top = "-50%";
         this.style.bottom = "50%";
         this.style.textAlign = "center";
+        var tmp = cc.domNode.getTextSize(this._text,this._fontSize, this._fontName);
+        this.style.width = tmp.width+"px";
+        this.style.height = tmp.height+"px";
     }
 });
 cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
@@ -118,14 +123,17 @@ cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
     });
     if (arguments.length == 4) {
         that._domElement.addEventListener("click", selector);
+        that._domElement.addEventListener("touchstart", selector);
         that.style.cursor = "pointer";
     }
     else if (arguments.length == 2) {
         that._domElement.addEventListener("click", dimension);//the second argument is now the selector
+        that._domElement.addEventListener("touchstart", dimension);
         that.style.cursor = "pointer";
     }
     else if (arguments.length == 3) {
         that._domElement.addEventListener("click", target);
+        that._domElement.addEventListener("touchstart", target);
         that.style.cursor = "pointer";
     }
     return that;
@@ -135,7 +143,7 @@ cc.MenuItemFont = cc.MenuItem.extend({
     initFromString: function(value, target, selector){
         this._text = value;
         //create a div containing the text
-        this._domElement.innerText = this._text;
+        this._domElement.textContent = this._text;
         this.style.fontFamily = cc._fontName;
         this.style.fontSize = cc._fontSize+"px";
         this.style.color = "#FFF";
@@ -149,6 +157,7 @@ cc.MenuItemFont = cc.MenuItem.extend({
         this.style.textAlign = "center";
         if(selector != null){
             this._domElement.addEventListener("click",selector);
+            this._domElement.addEventListener("touchstart",selector);
             this.style.cursor = "pointer";
         }
 

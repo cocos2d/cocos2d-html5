@@ -48,6 +48,7 @@ cc.Menu = cc.domNode.extend({
         //set up html;
         //get the canvas
         var canvas = cc.canvas;
+        canvas.style.zIndex = 0;
         this._container = cc.$new("div");
         this._container.id = "Cocos2dGameContainer";
         this._container.style.position = "absolute";
@@ -60,6 +61,7 @@ cc.Menu = cc.domNode.extend({
         this.init();
         this._domElement.id = "Cocos2dMenuLayer" + Date.now();
         this._domElement.className = "Cocos2dMenuLayer";
+        this.style.zIndex = 100;
         this.style.width = cc.Director.sharedDirector().getWinSize().width + "px";
         this.style.height = 0;
         this.style.bottom = 0;
