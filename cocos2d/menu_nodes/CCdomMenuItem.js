@@ -29,6 +29,8 @@
  ****************************************************************************/
 
 var cc = cc = cc || {};
+cc._fontSize = 32;
+cc._fontName = '"Comic Sans MS", "cursive"';
 cc.MenuItem = cc.domNode.extend({
 
 });
@@ -91,7 +93,8 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this._fontName = label._m_pFontName;
         this._fontSize = label._m_fFontSize + "px";
         //create a div containing the text
-        this._domElement.innerText = this._text;
+        this._domElement.textContent = this._text;
+        //this._domElement.contentText = this._domElement.innerText;
         this.style.fontFamily = this._fontName;
         this.style.fontSize = this._fontSize;
         this.style.color = "#FFF";
@@ -126,4 +129,64 @@ cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
         that.style.cursor = "pointer";
     }
     return that;
+};
+
+cc.MenuItemFont = cc.MenuItem.extend({
+    initFromString: function(value, target, selector){
+        this._text = value;
+        //create a div containing the text
+        this._domElement.innerText = this._text;
+        this.style.fontFamily = cc._fontName;
+        this.style.fontSize = cc._fontSize+"px";
+        this.style.color = "#FFF";
+        this.style.position = "absolute";
+        this.style.bottom = "0px";
+        this.style.margin = "auto";
+        this.style.right = "50%";
+        this.style.left = "-50%";
+        this.style.top = "-50%";
+        this.style.bottom = "50%";
+        this.style.textAlign = "center";
+        if(selector != null){
+            this._domElement.addEventListener("click",selector);
+            this.style.cursor = "pointer";
+        }
+
+    },
+    setFontSizeObj:function(s){
+        this.style.fontSize = s;
+    },
+    fontSizeObj:function(){
+        return this.style.fontSize;
+    },
+    setFontName:function(s){
+        this.style.fontFamily = s;
+    },
+    fontNameObj:function(){
+        return this.style.fontFamily;
+    },
+    _recreateLabel:function(){},
+    _m_uFontSize:0,
+    _m_strFontName:''
+});
+cc.MenuItemFont.setFontSize = function(s){
+    cc._fontSize = s;
+};
+cc.MenuItemFont.fontSize = function(){
+    return cc._fontSize;
+};
+cc.MenuItemFont.setFontName = function (name) {
+    if (cc._fontNameRelease) {
+        cc._fontName = '';
+    }
+    cc._fontName = name;
+    cc._fontNameRelease = true;
+};
+cc.MenuItemFont.fontName = function () {
+    return cc._fontName
+};
+cc.MenuItemFont.itemFromString = function (value, target, selector) {
+    var pRet = new cc.MenuItemFont();
+    pRet.initFromString(value, target, selector);
+    return pRet;
 };
