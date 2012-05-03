@@ -3464,7 +3464,7 @@ var AnimationCache = SpriteTestDemo.extend({
 
 var SpriteTestScene = TestScene.extend({
     runThisTest:function () {
-        sceneIdx = 33;
+        sceneIdx = -1;
         MAX_LAYER = 48;
         var pLayer = nextSpriteTestAction();
         this.addChild(pLayer);
