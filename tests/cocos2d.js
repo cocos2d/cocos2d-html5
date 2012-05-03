@@ -179,4 +179,5 @@ cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
 cc.loadjs('../tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
 cc.loadjs('../tests/Classes/tests/CocosNodeTest/CocosNodeTest.js');
 cc.loadjs('../tests/Classes/tests/RotateWorldTest/RotateWorldTest.js');
+cc.loadjs('../tests/Classes/tests/IntervelTest/IntervelTest.js');
 cc.loadjs('../tests/Classes/tests/ActionManagerTest/ActionManagerTest.js');
