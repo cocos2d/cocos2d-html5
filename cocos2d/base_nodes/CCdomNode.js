@@ -213,7 +213,7 @@ cc.domNode = cc.Node.extend({
         this._m_pChildren.push(child);
     },
     _setZOrder:function (z) {
-        this.style.zIndex = z;
+        this.style.zIndex = z+100;
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if (pArray && pArray.length > 0) {
