@@ -683,7 +683,6 @@ cc.Node = cc.Class.extend({
         if (!this._m_bIsVisible) {
             return;
         }
-
         cc.saveContext();
 
         if (this._m_pGrid && this._m_pGrid.isActive()) {
@@ -738,17 +737,19 @@ cc.Node = cc.Class.extend({
     transform:function () {
         // transformations
         if (cc.renderContextType == cc.kCanvas) {
-            //
-            //var ct = this.nodeToParentTransform();
             if (this._m_bIsRelativeAnchorPoint) {
                 var pAp = cc.PointZero();
                 if (this.getParent()) {
                     pAp = this.getParent().getAnchorPointInPixels();
                 }
-                cc.renderContext.translate(this.getPositionX() - pAp.x, -(this.getPositionY() - pAp.y ));
-                cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
-                    this.getScaleY(), 0, 0);
-
+                cc.renderContext.translate(0|(this.getPositionX() - pAp.x), -(0|(this.getPositionY() - pAp.y)));
+                if ((this.getScaleX() != 1) || (this.getScaleY() != 1)) {
+                    cc.renderContext.scale(this.getScaleX(), this.getScaleY());
+                }
+                if ((this.getSkewX() != 0) || (this.getSkewY() != 0)) {
+                    cc.renderContext.transform(1, -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
+                        1, 0, 0);
+                }
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             } else {
                 var pAp = cc.PointZero();
@@ -759,9 +760,14 @@ cc.Node = cc.Class.extend({
                 if (!lAp) {
                     lAp = cc.PointZero();
                 }
-                cc.renderContext.translate(this.getPositionX() - pAp.x + lAp.x, -(this.getPositionY() - pAp.y + lAp.y));
-                cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
-                    this.getScaleY(), 0, 0);
+                cc.renderContext.translate(0|( this.getPositionX() - pAp.x + lAp.x), -(0|(this.getPositionY() - pAp.y + lAp.y)));
+                if ((this.getScaleX() != 1) || (this.getScaleY() != 1)) {
+                    cc.renderContext.scale(this.getScaleX(), this.getScaleY());
+                }
+                if ((this.getSkewX() != 0) || (this.getSkewY() != 0)) {
+                    cc.renderContext.transform(1, -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
+                        1, 0, 0);
+                }
 
                 cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
             }
