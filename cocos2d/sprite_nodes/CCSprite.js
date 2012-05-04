@@ -462,7 +462,7 @@ cc.Sprite = cc.Node.extend({
             if (pTexture instanceof cc.Texture2D)
                 rect.size = pTexture.getContentSize();
             else if ((pTexture instanceof HTMLImageElement) || (pTexture instanceof HTMLCanvasElement))
-                rect.size = cc.SizeMake(pTexture.width, pTexture.height);
+                rect.size = new cc.Size(pTexture.width, pTexture.height);
         }
 
         if (cc.renderContextType == cc.kCanvas) {
@@ -491,7 +491,7 @@ cc.Sprite = cc.Node.extend({
                 if (pTexture) {
                     rect = cc.RectZero();
                     if (cc.renderContextType == cc.kCanvas)
-                        rect.size = cc.SizeMake(pTexture.width, pTexture.height);
+                        rect.size = new cc.Size(pTexture.width, pTexture.height);
                     else
                         rect.size = pTexture.getContentSize();
                     return this.initWithTexture(pTexture, rect);
@@ -852,42 +852,49 @@ cc.Sprite = cc.Node.extend({
     },
 
 // draw
-    draw:function () {
+    draw:function (ctx) {
         this._super();
 
-        //TODO need to fixed
+        var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.kCanvas) {
-            cc.renderContext.globalAlpha = this.getOpacity() / 255;
+            context.globalAlpha = this._m_nOpacity / 255;
             if (this._m_bFlipX) {
-                cc.renderContext.scale(-1, 1);
+                context.scale(-1, 1);
             }
             if (this._m_bFlipY) {
-                cc.renderContext.scale(1, -1);
+                context.scale(1, -1);
             }
-            var offsetPixels = this.getOffsetPositionInPixels();
-            var pos = cc.ccp(0|( - this.getAnchorPointInPixels().x + offsetPixels.x), 0|( - this.getAnchorPointInPixels().y + offsetPixels.y));
+            var offsetPixels = this._m_obOffsetPositionInPixels;
+            var pos = new cc.Point(0 | ( -this._m_tAnchorPointInPixels.x + offsetPixels.x), 0 | ( -this._m_tAnchorPointInPixels.y + offsetPixels.y));
             if (this._m_pobTexture) {
                 //direct draw image by canvas drawImage
                 if (this._m_pobTexture instanceof HTMLImageElement) {
-                    if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
-                        cc.drawingUtil.drawImage(this._m_pobTexture, pos);
+                    if ((this._m_tContentSize.width == 0) && (this._m_tContentSize.height == 0)) {
+                        context.drawImage(this._m_pobTexture, pos.x, -(pos.y + this._m_pobTexture.height));
                     } else {
-                        cc.drawingUtil.drawImage(this._m_pobTexture, this.getTextureRect().origin, this.getTextureRect().size,
-                            pos, this.getTextureRect().size);
+                        context.drawImage(this._m_pobTexture,
+                            this._m_obRect.origin.x, this._m_obRect.origin.y,
+                            this._m_obRect.size.width, this._m_obRect.size.height,
+                            pos.x, -(pos.y + this._m_obRect.size.height),
+                            this._m_obRect.size.width, this._m_obRect.size.height);
                     }
                 } else {
-                    if ((this.getContentSize().width == 0) && (this.getContentSize().height == 0)) {
-                        cc.drawingUtil.drawImage(this._m_pobTexture, pos);
+                    if ((this._m_tContentSize.width == 0) && (this._m_tContentSize.height == 0)) {
+                        context.drawImage(this._m_pobTexture, pos.x, -(pos.y + this._m_pobTexture.height));
                     } else {
-                        cc.drawingUtil.drawImage(this._m_pobTexture, cc.PointZero(), this.getTextureRect().size,
-                            pos, this.getTextureRect().size);
+                        context.drawImage(this._m_pobTexture,
+                            0, 0,
+                            this._m_obRect.size.width, this._m_obRect.size.height,
+                            pos.x, -(pos.y + this._m_obRect.size.height),
+                            this._m_obRect.size.width, this._m_obRect.size.height);
                     }
                 }
             } else {
-                cc.renderContext.fillStyle = "rgba(" + this._m_sColor.r + "," + this._m_sColor.g + "," + this._m_sColor.b + ",1)";
-                cc.renderContext.fillRect(pos.x, pos.y, this.getContentSize().width, this.getContentSize().height);
+                context.fillStyle = "rgba(" + this._m_sColor.r + "," + this._m_sColor.g + "," + this._m_sColor.b + ",1)";
+                context.fillRect(pos.x, pos.y, this._m_tContentSize.width, this._m_tContentSize.height);
             }
 
+            //TODO need to fixed
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
                 var s = this._m_tContentSize;
@@ -990,7 +997,6 @@ cc.Sprite = cc.Node.extend({
                 throw "Sprite.addChild():Argument must be non-nil ";
                 break;
         }
-
     },
     reorderChild:function (pChild, zOrder) {
         cc.Assert(pChild != null, "pChild is null");

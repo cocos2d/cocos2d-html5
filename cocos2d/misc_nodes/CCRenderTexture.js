@@ -234,10 +234,10 @@ cc.RenderTexture = cc.Node.extend({
     //                        when nWidth = 0 and nHeight = 0, the image size to save equals to buffer texture size
     saveBuffer:function (format, filePath, x, y, nWidth, nHeight) {
         if (typeof(format) == "number") {
-            x = x ? x : 0;
-            y = y ? y : 0;
-            nWidth = nWidth ? nWidth : 0;
-            nHeight = nHeight ? nHeight : 0;
+            x = x || 0;
+            y = y || 0;
+            nWidth = nWidth || 0;
+            nHeight = nHeight || 0;
 
             var bRet = false;
             cc.Assert(format == cc.kCCImageFormatJPG || format == cc.kCCImageFormatPNG,
@@ -252,10 +252,10 @@ cc.RenderTexture = cc.Node.extend({
 
             return bRet;
         } else if (typeof(format) == "string") {
-            nHeight = nWidth ? nWidth : 0;
-            nWidth = y ? y : 0;
-            y = x ? x : 0;
-            x = filePath ? filePath : 0;
+            nHeight = nWidth || 0;
+            nWidth = y || 0;
+            y = x || 0;
+            x = filePath || 0;
 
             filePath = format;
 
