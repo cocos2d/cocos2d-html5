@@ -160,13 +160,12 @@ cc.Speed = cc.Action.extend({
     /** initializes the action */
     initWithAction:function (pAction, fRate) {
         cc.Assert(pAction != null, "");
-        pAction.retain();
         this._m_pInnerAction = pAction;
         this._m_fSpeed = fRate;
         return true;
     },
     startWithTarget:function (pTarget) {
-        cc.Action.startWithTarget(pTarget);
+        this._super(pTarget);
         this._m_pInnerAction.startWithTarget(pTarget);
     },
     stop:function () {
