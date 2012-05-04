@@ -29,9 +29,9 @@ cc.SID_REPAINTWITHGID = 101;
 cc.SID_REMOVETILES = 102;
 
 var TileMapTests = [
-    /*//"TileMapTest",
-     //"TileMapEditTest",*/
-    "TMXOrthoTest", //ok
+    //"TileMapTest", //not support TGA format yet
+     //"TileMapEditTest", //not support TGA format yet
+    /*"TMXOrthoTest", //ok
     "TMXOrthoTest2", //camera bug
     "TMXOrthoTest3", //ok
     "TMXOrthoTest4", //ok
@@ -40,21 +40,20 @@ var TileMapTests = [
     "TMXIsoTest", //ok
     "TMXIsoTest1", //ok
     "TMXIsoTest2", //ok
-    "TMXUncompressedTest",
-    "TMXTilesetTest", //bug sometimes
+    "TMXUncompressedTest",//ok
+    "TMXTilesetTest", //ok*/
     "TMXOrthoObjectsTest", //bug
     "TMXIsoObjectsTest", //bug
     "TMXResizeTest", //ok
     "TMXIsoZorder", //ok
     "TMXOrthoZorder", //ok
-    "TMXIsoVertexZ", //VertexZ bug
-    "TMXOrthoVertexZ", //VertexZ bug
+    //"TMXIsoVertexZ", //VertexZ bug, for webGL
+    //"TMXOrthoVertexZ", //VertexZ bug, for webGL
     "TMXIsoMoveLayer", //ok
     "TMXOrthoMoveLayer", //ok
     "TMXBug987", //ok
     "TMXBug787", //ok
-    "TMXGIDObjectsTest", //ok
-    "TileMapTestScene" //zlib bug
+    //"TMXGIDObjectsTest" //not support zlib uncompress yet
 ];
 var s_nTileMapIdx = -1;
 function nextTileMapAction() {
@@ -422,9 +421,7 @@ var TMXReadWriteTest = TileDemo.extend({
 
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test2.tmx");
         this.addChild(map, 0, cc.kTagTileMap);
-
         var s = map.getContentSize();
-
 
         var layer = map.layerNamed("Layer 0");
         //layer.getTexture().setAntiAliasTexParameters();
@@ -449,38 +446,11 @@ var TMXReadWriteTest = TileDemo.extend({
         var scaleback = cc.ScaleTo.actionWithDuration(1, 1);
         var finish = cc.CallFunc.actionWithTarget(this, this.removeSprite);
 
-        var move1 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
-        var rotate1 = cc.RotateBy.actionWithDuration(2, 360);
-        var scale1 = cc.ScaleBy.actionWithDuration(2, 5);
-        var opacity1 = cc.FadeOut.actionWithDuration(2);
-        var fadein1 = cc.FadeIn.actionWithDuration(2);
-        var scaleback1 = cc.ScaleTo.actionWithDuration(1, 1);
-        var finish1 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
-
-        var move2 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
-        var rotate2 = cc.RotateBy.actionWithDuration(2, 360);
-        var scale2 = cc.ScaleBy.actionWithDuration(2, 5);
-        var opacity2 = cc.FadeOut.actionWithDuration(2);
-        var fadein2 = cc.FadeIn.actionWithDuration(2);
-        var scaleback2 = cc.ScaleTo.actionWithDuration(1, 1);
-        var finish2 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
-
-        var move3 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
-        var rotate3 = cc.RotateBy.actionWithDuration(2, 360);
-        var scale3 = cc.ScaleBy.actionWithDuration(2, 5);
-        var opacity3 = cc.FadeOut.actionWithDuration(2);
-        var fadein3 = cc.FadeIn.actionWithDuration(2);
-        var scaleback3 = cc.ScaleTo.actionWithDuration(1, 1);
-        var finish3 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
-
         var seq0 = cc.Sequence.actions(move, rotate, scale, opacity, fadein, scaleback, finish, null);
-        var seq1 = cc.Sequence.actions(move1, rotate1, scale1, opacity1, fadein1, scaleback1, finish1, null);
-        var seq2 = cc.Sequence.actions(move2, rotate2, scale2, opacity2, fadein2, scaleback2, finish2, null);
-        var seq3 = cc.Sequence.actions(move3, rotate3, scale3, opacity3, fadein3, scaleback3, finish3, null);
 
-        /*tile0.runAction(seq0);
-         tile1.runAction(seq0.copy());
-         tile2.runAction(seq0.copy());*/
+        tile0.runAction(seq0);
+        tile1.runAction(seq0.copy());
+        tile2.runAction(seq0.copy());
         tile3.runAction(seq0.copy());
 
         this.m_gid = layer.tileGIDAt(cc.ccp(0, 63));
@@ -502,7 +472,6 @@ var TMXReadWriteTest = TileDemo.extend({
         var layer = map.getChildByTag(0);
 
         var s = layer.getLayerSize();
-
         for (var y = 0; y < s.height; y++) {
             layer.setTileGID(this.m_gid2, cc.ccp(3, y));
         }
@@ -708,7 +677,6 @@ var TMXOrthoObjectsTest = TileDemo.extend({
 
         var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
-
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
             dict = objects[i];
@@ -763,9 +731,8 @@ var TMXIsoObjectsTest = TileDemo.extend({
 
         var s = map.getContentSize();
 
-        var group = map.objectGroupNamed("Object Group 12");
+        var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
-
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
             dict = objects[i];
@@ -778,7 +745,7 @@ var TMXIsoObjectsTest = TileDemo.extend({
     },
     draw:function () {
         var map = this.getChildByTag(cc.kTagTileMap);
-        var group = map.objectGroupNamed("Object Group 12");
+        var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
@@ -981,15 +948,15 @@ var TMXIsoVertexZ = TileDemo.extend({
         cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection2D);
     },
     onExit:function () {
-// At exit use any other projection.
+        // At exit use any other projection.
         //	CCDirector.sharedDirector().setProjection:kCCDirectorProjection3D);
-        this._super();
+         this._super();
     },
     repositionSprite:function (dt) {
         // tile height is 64x32
         // map size: 30x30
         var p = this.m_tamara.getPositionInPixels();
-        this.m_tamara.setVertexZ(-( (p.y + 32) / 16));
+        this.m_tamara.setVertexZ(-Math.round( (p.y + 32) / 16));
     }
 });
 
@@ -1041,7 +1008,7 @@ var TMXOrthoVertexZ = TileDemo.extend({
         // tile height is 64x32
         // map size: 30x30
         var p = this.m_tamara.getPositionInPixels();
-        this.m_tamara.setVertexZ(-( (p.y + 32) / 16));
+        this.m_tamara.setVertexZ(-Math.round((p.y + 32) / 16));
     }
 });
 

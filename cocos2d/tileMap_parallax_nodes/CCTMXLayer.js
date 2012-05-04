@@ -279,10 +279,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
             // remove tile from atlas position array
             cc.ArrayRemoveObjectAtIndex(this._m_pAtlasIndexArray, atlasIndex);
-
             // remove it from sprites and/or texture atlas
             var sprite = this.getChildByTag(z);
-
             if (sprite) {
                 this.removeChild(sprite, true);
             }
@@ -466,6 +464,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._m_pReusedTile.setAnchorPoint(cc.PointZero());
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
         this._m_pReusedTile.setTag(z);
+        this._m_pReusedTile.setParent(this);
 
         // optimization:
         // The difference between _appendTileForGID and _insertTileForGID is that append is faster, since
@@ -490,8 +489,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._m_pReusedTile.initWithBatchNode(this, rect);
         this._m_pReusedTile.setPositionInPixels(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
-        this._m_pReusedTile.setAnchorPoint(cc.PointZero);
+        this._m_pReusedTile.setAnchorPoint(cc.PointZero());
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
+        this._m_pReusedTile.setTag(z);
+        this._m_pReusedTile.setParent(this);
 
         // get atlas index
         var indexForZ = this._atlasIndexForNewZ(z);
@@ -527,8 +528,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         this._m_pReusedTile.setPositionInPixels(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
-        this._m_pReusedTile.setAnchorPoint(cc.PointZero);
+        this._m_pReusedTile.setAnchorPoint(cc.PointZero());
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
+        this._m_pReusedTile.setTag(z);
 
         // get atlas index
         var indexForZ = this._atlasIndexForExistantZ(z);
@@ -592,20 +594,19 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             for (var i = 0; i < this._m_pAtlasIndexArray.length; i++) {
                 item = this._m_pAtlasIndexArray[i]
                 if (item == z) {
-                    break;
+                    return i;
                 }
             }
         }
         cc.Assert(item, "TMX atlas index not found. Shall not happen");
-        return i;
     },
     _atlasIndexForNewZ:function (z) {
         for (var i = 0; i < this._m_pAtlasIndexArray.length; i++) {
             var val = this._m_pAtlasIndexArray[i];
-            if (z < val)
-                break;
+            if (z < val){
+                return i;
+            }
         }
-        return i;
     }
 });
 
