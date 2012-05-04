@@ -29,14 +29,14 @@ kTagAction2 = 2;
 kTagSlider = 1;
 
 var EaseActionsTests = [
-   /* "SpriteEase",
+    "SpriteEase",
     "SpriteEaseInOut",
     "SpriteEaseExponential",
     "SpriteEaseExponentialInOut",
     "SpriteEaseSine",
     "SpriteEaseSineInOut",
-    "SpriteEaseElastic",*/
-    "SpriteEaseElasticInOut",//bug
+    "SpriteEaseElastic",
+    "SpriteEaseElasticInOut",//reverse bug
     "SpriteEaseBounce",
     "SpriteEaseBounceInOut",
     "SpriteEaseBack",
