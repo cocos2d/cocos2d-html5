@@ -79,13 +79,67 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
         return false;
     });
     that._image.addEventListener("click", callback);
-    that._image.addEventListener("touchstart", callback);
+    that._image.addEventListener("touchstart", function(){
+        this.src = selected;
+        callback();
+    });
+    that._image.addEventListener("touchend", function(){
+        this.src = normal;
+    });
     //attach callback to onclick
     that.style.cursor = (callback) ? "pointer" : "default";
     return that;
 
 };
+cc.MenuItemSprite = cc.MenuItemImage.extend({
 
+});
+cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four, five){
+    var that=  new this();
+    if(five){
+        //threee is disabled, four is target, five is selector
+        var callback = five;
+    }
+    else if(four){
+        //there is no disabled image
+        var callback = four;
+    }
+    else{
+        //there is 3 image, but no callback func
+        var callback = null;
+    }
+    if (normal.src) {
+        normal = normal.src;
+    }
+    if (selected.src) {
+        selected = selected.src;
+    }
+    that.init(normal);
+    var tmp = new Image();
+    tmp.src = selected;
+    that._image.addEventListener("mouseover", function () {
+        this.src = selected;
+    });
+    that._image.addEventListener("mouseout", function () {
+        this.src = normal;
+    });
+    that._image.addEventListener("mousedown", function (e) {
+        var evt = e || window.event;
+        evt.preventDefault();
+        return false;
+    });
+    that._image.addEventListener("click", callback);
+    that._image.addEventListener("touchstart", function(){
+        this.src = selected;
+        callback();
+    });
+    that._image.addEventListener("touchend", function(){
+        this.src = normal;
+    });
+    //attach callback to onclick
+    that.style.cursor = (callback) ? "pointer" : "default";
+    return that;
+};
 cc.MenuItemLabel = cc.MenuItem.extend({
     _text:'',
     _fontSize:"14px",

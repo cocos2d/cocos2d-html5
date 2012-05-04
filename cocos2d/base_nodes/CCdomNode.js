@@ -105,6 +105,8 @@ cc.domNode = cc.Node.extend({
                 var parentPos = this.getParent().convertToWorldSpace(cc.PointZero());
                 //if its not same position as last time
                 if (!cc.ccpSameAs(parentPos, this._previousParent.pos)) {
+                    this.setRotation(this.getParent().getRotation());
+                    this.setScale(this.getParent().getScale());
                     this._previousParent.pos.x = parentPos.x;
                     this._previousParent.pos.y = parentPos.y;
                     //change the position according to parent
@@ -204,7 +206,11 @@ cc.domNode = cc.Node.extend({
             parentPos = {x:0, y:0};
         }
         this.style[cc.Browser.prefix + "Transform"] = this._transform.translate(this._m_tPosition.x + parentPos.x, this._m_tPosition.y - parentPos.y)
-                                                    + " " + this._transform.rotate(this._m_fRotation);
+                                                    + " " + this._transform.rotate(this._m_fRotation)
+                                                    + " " + this._transform.scale(this._m_fScaleX, this._m_fScaleY);
+    },
+    setColor:function(c){
+        this.style.color = "rgb("+c.r+", "+c.g+", "+c.b+")";
     },
     getPosition:function () {
         return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
