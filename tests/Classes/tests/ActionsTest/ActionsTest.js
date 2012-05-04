@@ -205,6 +205,7 @@ var ActionManual = ActionsDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         this._m_tamara.setScaleX(2.5);
+        //window.tam = this._m_tamara;
         this._m_tamara.setScaleY(-1.0);
         this._m_tamara.setPosition(cc.PointMake(100, 70));
         this._m_tamara.setOpacity(128);
