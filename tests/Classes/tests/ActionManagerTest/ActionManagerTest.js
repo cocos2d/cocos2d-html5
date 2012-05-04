@@ -39,7 +39,7 @@ var nextActionManagerAction = function () {
 };
 var backActionManagerAction = function () {
     sceneIdx--;
-    if( sceneIdx < 0 )
+    if (sceneIdx < 0)
         sceneIdx += MAX_LAYER;
 
     return pLayer = createActionManagerLayer(sceneIdx);
@@ -87,18 +87,18 @@ var ActionManagerTest = cc.Layer.extend({
 
         var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 32);
         this.addChild(label, 1);
-        label.setPosition( cc.PointMake(s.width/2, s.height-50) );
+        label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback );
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback );
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback );
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3);
 
-        menu.setPosition( cc.PointZero() );
-        item1.setPosition( cc.PointMake( s.width/2 - 100,30) );
-        item2.setPosition( cc.PointMake( s.width/2, 30) );
-        item3.setPosition( cc.PointMake( s.width/2 + 100,30) );
+        menu.setPosition(cc.PointZero());
+        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
+        item2.setPosition(cc.PointMake(s.width / 2, 30));
+        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1);
     },
@@ -110,12 +110,12 @@ var ActionManagerTest = cc.Layer.extend({
     },
     nextCallback:function (pSender) {
         var s = new ActionManagerTestScene();
-        s.addChild( nextActionManagerAction() );
+        s.addChild(nextActionManagerAction());
         cc.Director.sharedDirector().replaceScene(s);
     },
     backCallback:function (pSender) {
         var s = new ActionManagerTestScene();
-        s.addChild( backActionManagerAction() );
+        s.addChild(backActionManagerAction());
         cc.Director.sharedDirector().replaceScene(s);
     }
 });
@@ -133,7 +133,7 @@ var CrashTest = ActionManagerTest.extend({
         this._super();
 
         var child = cc.Sprite.spriteWithFile(s_pPathGrossini);
-        child.setPosition( cc.PointMake(200,200) );
+        child.setPosition(cc.PointMake(200, 200));
         this.addChild(child, 1);
 
         //Sum of all action's duration is 1.5 second.
@@ -144,7 +144,7 @@ var CrashTest = ActionManagerTest.extend({
         );
 
         //After 1.5 second, self will be removed.
-        this.runAction( cc.Sequence.actions(
+        this.runAction(cc.Sequence.actions(
             cc.DelayTime.actionWithDuration(1.4),
             cc.CallFunc.actionWithTarget(this, this.removeThis))
         );
@@ -169,10 +169,10 @@ var LogicTest = ActionManagerTest.extend({
 
         var grossini = cc.Sprite.spriteWithFile(s_pPathGrossini);
         this.addChild(grossini, 0, 2);
-        grossini.setPosition(cc.PointMake(200,200));
+        grossini.setPosition(cc.PointMake(200, 200));
 
-        grossini.runAction( cc.Sequence.actions(
-            cc.MoveBy.actionWithDuration(1, cc.PointMake(150,0)),
+        grossini.runAction(cc.Sequence.actions(
+            cc.MoveBy.actionWithDuration(1, cc.PointMake(150, 0)),
             cc.CallFunc.actionWithTarget(this, this.bugMe))
         );
     },
@@ -201,24 +201,24 @@ var PauseTest = ActionManagerTest.extend({
         var s = cc.Director.sharedDirector().getWinSize();
         var l = cc.LabelTTF.labelWithString("After 5 seconds grossini should move", "Thonburi", 16);
         this.addChild(l);
-        l.setPosition( cc.PointMake(s.width/2, 245) );
+        l.setPosition(cc.PointMake(s.width / 2, 245));
 
         //
         // Also, this test MUST be done, after [super onEnter]
         //
         var grossini = cc.Sprite.spriteWithFile(s_pPathGrossini);
         this.addChild(grossini, 0, kTagGrossini);
-        grossini.setPosition( cc.PointMake(200,200) );
+        grossini.setPosition(cc.PointMake(200, 200));
 
-        var action = cc.MoveBy.actionWithDuration(1, cc.PointMake(150,0));
+        var action = cc.MoveBy.actionWithDuration(1, cc.PointMake(150, 0));
 
         cc.ActionManager.sharedManager().addAction(action, grossini, true);
 
-        this.schedule( this.unpause, 3);
+        this.schedule(this.unpause, 3);
     },
     unpause:function (dt) {
-        this.unschedule( this.unpause );
-        var node = this.getChildByTag( kTagGrossini );
+        this.unschedule(this.unpause);
+        var node = this.getChildByTag(kTagGrossini);
         cc.ActionManager.sharedManager().resumeTarget(node);
     }
 });
@@ -238,7 +238,7 @@ var RemoveTest = ActionManagerTest.extend({
         var s = cc.Director.sharedDirector().getWinSize();
         var l = cc.LabelTTF.labelWithString("Should not crash", "Thonburi", 16);
         this.addChild(l);
-        l.setPosition( cc.PointMake(s.width/2, 245) );
+        l.setPosition(cc.PointMake(s.width / 2, 245));
 
         var pMove = cc.MoveBy.actionWithDuration(2, cc.PointMake(200, 0));
         var pCallback = cc.CallFunc.actionWithTarget(this, this.stopAction);
@@ -272,7 +272,7 @@ var ResumeTest = ActionManagerTest.extend({
         var s = cc.Director.sharedDirector().getWinSize();
         var l = cc.LabelTTF.labelWithString("Grossini only rotate/scale in 3 seconds", "Thonburi", 16);
         this.addChild(l);
-        l.setPosition( cc.PointMake(s.width/2, 245));
+        l.setPosition(cc.PointMake(s.width / 2, 245));
 
         var pGrossini = cc.Sprite.spriteWithFile(s_pPathGrossini);
         this.addChild(pGrossini, 0, kTagGrossini);

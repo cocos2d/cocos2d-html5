@@ -307,19 +307,20 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         }
     },
 
-    draw:function () {
+    draw:function (ctx) {
         this._super();
         if (cc.renderContextType == cc.kCanvas) {
-            cc.saveContext();
-            if (this.getIsBlendAdditive()) {
-                cc.renderContext.globalCompositeOperation = 'lighter';
+            var context = ctx || cc.renderContext;
+            context.save();
+            if (this._m_bIsBlendAdditive) {
+                context.globalCompositeOperation = 'lighter';
             } else {
-                cc.renderContext.globalCompositeOperation = 'source-over';
+                context.globalCompositeOperation = 'source-over';
             }
 
             for (var i = 0; i < this._m_uParticleCount; i++) {
                 var particle = this._m_pParticles[i];
-                var lpx = 0 - particle.size * 0.5;
+                var lpx = -(0 | (particle.size * 0.5));
 
                 var drawTexture = this.getTexture();
                 if (particle.isChangeColor) {
@@ -329,13 +330,15 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                     }
                 }
 
-                cc.saveContext();
-                cc.renderContext.globalAlpha = particle.color.a;
-                cc.renderContext.translate(particle.pos.x, -particle.pos.y);
-                cc.drawingUtil.drawImage(drawTexture, cc.ccp(lpx, lpx), cc.SizeMake(particle.size, particle.size));
-                cc.restoreContext();
+                context.save();
+                context.globalAlpha = particle.color.a;
+                context.translate(0 | particle.pos.x, -(0 | particle.pos.y));
+                context.drawImage(drawTexture,
+                    lpx, -(lpx + particle.size),
+                    particle.size, particle.size);
+                context.restore();
             }
-            cc.restoreContext();
+            context.restore();
         } else {
             //TODO need fixed for webGL
             // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
