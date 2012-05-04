@@ -94,14 +94,16 @@ cc.LabelTTF = cc.Sprite.extend({
     },
 
     //temp method
-    draw:function () {
+    draw:function (ctx) {
+        var context = ctx || cc.renderContext;
         //this is fillText for canvas
         var color = this.getColor();
-        cc.renderContext.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity()/255 + ")";
-        cc.renderContext.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
-        var dim = cc.renderContext.measureText(this._m_pString);
-        cc.drawingUtil.fillText(this._m_pString,0 - (dim.width * this.getAnchorPoint().x),
-            0 - (this._m_fFontSize * this.getAnchorPoint().y));
+        context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity() / 255 + ")";
+        context.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
+        var dim = context.measureText(this._m_pString);
+        context.fillText(this._m_pString,
+            -(dim.width * this._m_tAnchorPoint.x),
+            (this._m_fFontSize * this._m_tAnchorPoint.y));
     },
     getString:function () {
         return this._m_pString;

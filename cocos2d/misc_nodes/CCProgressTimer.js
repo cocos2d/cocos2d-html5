@@ -111,14 +111,15 @@ cc.ProgressTimer = cc.Node.extend({
 
     },
 
-    draw:function () {
+    draw:function (ctx) {
         if (cc.renderContextType == cc.kCanvas) {
+            var context = ctx || cc.renderContext;
             if (this._m_eType > 1) {
-                cc.drawingUtil.drawImage(this._m_pSprite._m_pobTexture,
-                    this._origin, //cc.ccp(this._m_pSprite.getTextureRect().origin.x + this._origin.x ,this._m_pSprite.getTextureRect().origin.y + this._origin.y),
-                    this._drawSize,
-                    cc.ccp(0|(0 - this.getAnchorPointInPixels().x + this._drawPosition.x), 0|(0 - this.getAnchorPointInPixels().y + this._drawPosition.y)),
-                    this._drawSize);
+                var pos = new cc.Point(0 | ( -this._m_tAnchorPointInPixels.x + this._drawPosition.x),
+                    0 | ( -this._m_tAnchorPointInPixels.y + this._drawPosition.y));
+                context.drawImage(this._m_pSprite._m_pobTexture, this._origin.x, this._origin.y, this._drawSize.width, this._drawSize.height,
+                    pos.x, -(pos.y + this._drawSize.height),
+                    this._drawSize.width, this._drawSize.height);
             }
         } else {
             this._super();
@@ -200,24 +201,24 @@ cc.ProgressTimer = cc.Node.extend({
                     //left to right
                     this._origin = cc.PointZero();
                     this._drawPosition = cc.PointZero();
-                    this._drawSize = cc.SizeMake(0|((this._m_fPercentage / 100) * size.width), size.height);
+                    this._drawSize = cc.SizeMake(0 | ((this._m_fPercentage / 100) * size.width), size.height);
                     break;
                 case 3:
                     //right to left
-                    this._drawSize = cc.SizeMake(0|((this._m_fPercentage / 100) * size.width), size.height);
-                    this._origin = cc.ccp((size.width - this._drawSize.width)|0, 0);
+                    this._drawSize = cc.SizeMake(0 | ((this._m_fPercentage / 100) * size.width), size.height);
+                    this._origin = cc.ccp((size.width - this._drawSize.width) | 0, 0);
                     this._drawPosition = cc.ccp(size.width - this._drawSize.width, 0);
                     break;
                 case 4:
                     //buttom to top
-                    this._drawSize = cc.SizeMake(size.width, 0|((this._m_fPercentage / 100) * size.height));
+                    this._drawSize = cc.SizeMake(size.width, 0 | ((this._m_fPercentage / 100) * size.height));
                     this._drawPosition = cc.PointZero();
-                    this._origin = cc.ccp(0, 0|(size.height - this._drawSize.height));
+                    this._origin = cc.ccp(0, 0 | (size.height - this._drawSize.height));
                     break;
                 case 5:
                     //top to buttom
-                    this._drawSize = cc.SizeMake(size.width, 0|((this._m_fPercentage / 100) * size.height));
-                    this._drawPosition = cc.ccp(0, (size.height - this._drawSize.height)|0);
+                    this._drawSize = cc.SizeMake(size.width, 0 | ((this._m_fPercentage / 100) * size.height));
+                    this._drawPosition = cc.ccp(0, (size.height - this._drawSize.height) | 0);
                     this._origin = cc.ccp(0, 0);
                     break;
             }

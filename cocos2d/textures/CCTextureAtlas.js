@@ -155,7 +155,6 @@ cc.TextureAtlas = cc.Class.extend({
      */
     updateQuad:function (quad, index) {
         //cc.Assert( index >= 0 && index < this._m_uCapacity, "TextureAtlas.updateQuad():updateQuadWithTexture: Invalid index");
-
         this._m_pQuads[index] = quad;
         this._m_bDirty = true;
     },
@@ -244,20 +243,16 @@ cc.TextureAtlas = cc.Class.extend({
 
          glBindTexture(GL_TEXTURE_2D, m_pTexture->getName());
 
-
          glBindBuffer(GL_ARRAY_BUFFER, m_pBuffersVBO[0]);
 
-
          glBufferData(GL_ARRAY_BUFFER, sizeof(m_pQuads[0]) * m_uCapacity, m_pQuads, GL_DYNAMIC_DRAW);
-
 
          // XXX: update is done in draw... perhaps it should be done in a timer
          if (m_bDirty)
          {
-         glBufferSubData(GL_ARRAY_BUFFER, sizeof(m_pQuads[0]) * start, sizeof(m_pQuads[0]) * n, &m_pQuads[start]);
-         m_bDirty = false;
+             glBufferSubData(GL_ARRAY_BUFFER, sizeof(m_pQuads[0]) * start, sizeof(m_pQuads[0]) * n, &m_pQuads[start]);
+             m_bDirty = false;
          }
-
 
          // vertices
          glVertexPointer(3, GL_FLOAT, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, vertices));
@@ -270,20 +265,14 @@ cc.TextureAtlas = cc.Class.extend({
 
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_pBuffersVBO[1]);
 
-
          glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_pIndices[0]) * m_uCapacity * 6, m_pIndices, GL_STATIC_DRAW);
-
-
 
          glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)n*6, GL_UNSIGNED_SHORT, (GLvoid*)(start * 6 * sizeof(m_pIndices[0])));
 
          glDrawElements(GL_TRIANGLES, (GLsizei)n*6, GL_UNSIGNED_SHORT, (GLvoid*)(start * 6 * sizeof(m_pIndices[0])));
 
-
          glBindBuffer(GL_ARRAY_BUFFER, 0);
          glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-
 
          unsigned int offset = (unsigned int)m_pQuads;
 
@@ -298,7 +287,6 @@ cc.TextureAtlas = cc.Class.extend({
          // texture coords
          diff = offsetof( ccV3F_C4B_T2F, texCoords);
          glTexCoordPointer(2, GL_FLOAT, kQuadSize, (GLvoid*)(offset + diff));
-
 
          glDrawElements(GL_TRIANGLE_STRIP, n*6, GL_UNSIGNED_SHORT, m_pIndices + start * 6);
 

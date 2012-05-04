@@ -121,7 +121,6 @@ cc.SpriteBatchNode = cc.Node.extend({
 
         // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
         this.addChild(child, z, aTag, true);
-        //this._parent.addChild.call(this,child, z, aTag);
         //CCNode::addChild(child, z, aTag);
         return this;
     },

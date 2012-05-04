@@ -23,49 +23,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-
-cc.Point = cc.Class.extend({
-
-    x:0.0,
-    y:0.0,
-
-    ctor:function (x1, y1) {
-        if (x1 === undefined && y1 === undefined) {
-            this.x = 0;
-            this.y = 0;
-        }
-        else {
-            this.x = x1;
-            this.y = y1;
-        }
-
-    }
-
-});
-cc.Point.CCPointEqualToPoint = function (point1, point2) {
-    return ((point1.x == point2.x) && (point1.y == point2.y));
-
+cc.Point = function(_x,_y){
+    this.x = _x||0;
+    this.y = _y||0;
 };
 
-cc.Size = cc.Class.extend({
+cc.Point.CCPointEqualToPoint = function (point1, point2) {
+    return ((point1.x == point2.x) && (point1.y == point2.y));
+};
 
-    width:0.0,
-    height:0.0,
+cc.Size = function(_width,_height){
+    this.width = _width||0;
+    this.height = _height||0;
+};
 
-    ctor:function (width1, height1) {
-        if (width1 === undefined && height1 === undefined) {
-            this.width = 0;
-            this.height = 0;
-        }
-        else {
-            this.width = width1;
-            this.height = height1;
-        }
-
-    }
-
-});
 cc.Size.CCSizeEqualToSize = function (size1, size2) {
     return ((size1.width == size2.width) && (size1.height == size2.height));
 
