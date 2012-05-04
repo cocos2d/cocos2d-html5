@@ -111,6 +111,32 @@ cc.Menu = cc.domNode.extend({
                 y -= childheight /** this._m_pChildren[i].getScaleY()*/ + padding;
             }
         }
+    },
+    alignItemsHorizontally:function () {
+        this.alignItemsHorizontallyWithPadding(cc.kDefaultPadding);
+    },
+    alignItemsHorizontallyWithPadding:function (padding) {
+        var s = cc.Director.sharedDirector().getWinSize();
+        var width = -padding;
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
+                var childwidth = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
+                    this._m_pChildren[i].style.fontSize,
+                    this._m_pChildren[i].style.fontFamily).width;
+                width += childwidth + padding;//TODO * scale
+            }
+        }
+
+        var y = width / 2.0;
+        if (this._m_pChildren && this._m_pChildren.length > 0) {
+            for (i = 0; i < this._m_pChildren.length; i++) {
+                var childwidth = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
+                    this._m_pChildren[i].style.fontSize,
+                    this._m_pChildren[i].style.fontFamily).width;
+                this._m_pChildren[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childwidth/* * this._m_pChildren[i].getScaleY()*/ / 2));
+                y -= childwidth /** this._m_pChildren[i].getScaleY()*/ + padding;
+            }
+        }
     }
 });
 cc.Menu.menuWithItems = function () {
