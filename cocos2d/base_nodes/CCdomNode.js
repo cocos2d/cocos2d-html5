@@ -215,8 +215,18 @@ cc.domNode = cc.Node.extend({
     getPosition:function () {
         return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
     },
-    addChild:function (child) {
-        this._m_pChildren.push(child);
+    addChild:function (child, z, t) {
+        //check if child is dom, and handle accordingly
+        if(child.isDomNode){
+            child._m_nZOrder = child.style.zIndex = (z == null)? 0 : z;
+            var tag = (t == null)? cc.kCCNodeTagInvalid : t;
+            child.setTag(tag);
+            child.setParent(this);
+            this._m_pChildren.push(child);
+        }
+        else{
+            this._super(child, z, t);
+        }
     },
     _setZOrder:function (z) {
         this.style.zIndex = z+100;

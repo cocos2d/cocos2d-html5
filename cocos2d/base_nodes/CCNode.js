@@ -488,7 +488,7 @@ cc.Node = cc.Class.extend({
                     return pNode;
             }
         }
-
+        cc.Assert(false, "error getting child by the tag of "+ aTag);
         return null;
     },
     // composition: ADD
