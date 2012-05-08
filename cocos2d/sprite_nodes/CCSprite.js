@@ -1113,6 +1113,7 @@ cc.Sprite = cc.Node.extend({
             this._m_bFlipX = bFlipX;
             this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
         }
+        this.setNodeDirty();
     },
     /** whether or not the sprite is flipped horizontally.
      It only flips the texture of the sprite, and not the texture of the sprite's children.
@@ -1136,6 +1137,7 @@ cc.Sprite = cc.Node.extend({
             this._m_bFlipY = bFlipY;
             this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
         }
+        this.setNodeDirty();
     },
     isFlipY:function () {
         return this._m_bFlipY;
@@ -1208,6 +1210,7 @@ cc.Sprite = cc.Node.extend({
             this._m_sColor.b = color3.b * this._m_nOpacity / 255;
         }
         this.updateColor();
+        this.setNodeDirty();
     },
     // RGBAProtocol
     /** opacity: conforms to CCRGBAProtocol protocol */
@@ -1223,13 +1226,13 @@ cc.Sprite = cc.Node.extend({
     // Frames
     /** sets a new display frame to the CCSprite. */
     setDisplayFrame:function (pNewFrame) {
+        this.setNodeDirty();
         this._m_obUnflippedOffsetPositionFromCenter = pNewFrame.getOffsetInPixels();
         var pNewTexture = pNewFrame.getTexture();
         // update texture before updating texture rect
         if (pNewTexture != this._m_pobTexture) {
             this.setTexture(pNewTexture);
         }
-
         // update rect
         this._m_bRectRotated = pNewFrame.isRotated();
         this.setTextureRectInPixels(pNewFrame.getRectInPixels(), pNewFrame.isRotated(), pNewFrame.getOriginalSizeInPixels());

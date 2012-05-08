@@ -71,7 +71,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._super();
         this._m_pChildren = [];
         this._m_pobDescendants = [];
-
+        this._isUseCache = true;
     },
     getLayerSize:function () {
         return this._m_tLayerSize;
@@ -464,7 +464,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     /* optimization methos */
     _appendTileForGID:function (gid, pos) {
         var rect = this._m_pTileSet.rectForGID(gid);
-        rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
+        rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor,
+            rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
         this._m_bIsTransformDirty = true;
         var z = pos.x + pos.y * this._m_tLayerSize.width;
         this._m_pReusedTile = new cc.Sprite();
