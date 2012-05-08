@@ -52,13 +52,15 @@ cc.SpriteBatchNode = cc.Node.extend({
     // all descendants: chlidren, gran children, etc...
     _m_pobDescendants:[],
     _renderTexture:null,
+    _isUseCache:false,
 
     ctor:function (fileImage) {
         this._super();
         if (fileImage) {
             this.initWithFile(fileImage, cc.defaultCapacity);
         }
-        this._renderTexture = cc.RenderTexture.renderTextureWithWidthAndHeight(this.getContentSizeInPixels().width, this.getContentSizeInPixels().height);
+        this.setContentSize(new cc.Size(cc.canvas.width,cc.canvas.height));
+        this._renderTexture = cc.RenderTexture.renderTextureWithWidthAndHeight(cc.canvas.width, cc.canvas.height);
     },
 
     _updateBlendFunc:function () {
@@ -246,8 +248,8 @@ cc.SpriteBatchNode = cc.Node.extend({
         // add children recursively
         var pChildren = pobSprite.getChildren();
         if (pChildren && pChildren.length > 0) {
-            for (var index = 0; index < this._m_pobDescendants.length; index++) {
-                var pObject = this._m_pobDescendants[index];
+            for (index = 0; index < this._m_pobDescendants.length; index++) {
+                pObject = this._m_pobDescendants[index];
                 if (pObject) {
                     var getIndex = this.atlasIndexForChild(pObject, pObject.getZOrder());
                     this.insertChild(pObject, getIndex);
@@ -277,11 +279,9 @@ cc.SpriteBatchNode = cc.Node.extend({
         // remove children recursively
         var pChildren = pobSprite.getChildren();
         if (pChildren && pChildren.length > 0) {
-            var pObject = null;
-            for (var i in pChildren) {
-                pObject = pChildren[i];
-                if (pObject) {
-                    this.removeSpriteFromAtlas(pObject);
+            for (var i=0; i< pChildren.length; i++) {
+                if (pChildren[i]) {
+                    this.removeSpriteFromAtlas(pChildren[i]);
                 }
             }
         }
@@ -412,33 +412,57 @@ cc.SpriteBatchNode = cc.Node.extend({
                 this.transformAncestors();
             }
             this.transform();
-            if (this._m_bIsTransformDirty) {
-                //add dirty region
-                this._renderTexture.clear();
-                this._renderTexture.context.translate(this._m_tAnchorPointInPixels.x,-this._m_tAnchorPointInPixels.y);
-                if (this._m_pChildren != null) {
+
+            if(this._isUseCache){
+                if (this._m_bIsTransformDirty) {
+                    //add dirty region
+                    this._renderTexture.clear();
+                    this._renderTexture.context.translate(this._m_tAnchorPointInPixels.x,-this._m_tAnchorPointInPixels.y);
+                    if (this._m_pChildren != null) {
+                        // draw children zOrder < 0
+                        for (var i = 0; i < this._m_pChildren.length; i++) {
+                            var pNode = this._m_pChildren[i];
+                            if (pNode && pNode._m_nZOrder < 0) {
+                                pNode.visit(this._renderTexture.context);
+                            }
+                        }
+                    }
+                    // draw children zOrder >= 0
+                    if (this._m_pChildren != null) {
+                        for (i = 0; i < this._m_pChildren.length; i++) {
+                            pNode = this._m_pChildren[i];
+                            if (pNode && pNode._m_nZOrder >= 0) {
+                                pNode.visit(this._renderTexture.context);
+                            }
+                        }
+                    }
+                    this._m_bIsTransformDirty = false;
+                }
+
+                // draw RenderTexture
+                this.draw();
+            }else{
+                if (this._m_pChildren) {
                     // draw children zOrder < 0
                     for (var i = 0; i < this._m_pChildren.length; i++) {
                         var pNode = this._m_pChildren[i];
                         if (pNode && pNode._m_nZOrder < 0) {
-                            pNode.visit(this._renderTexture.context);
+                            pNode.visit(context);
                         }
                     }
                 }
+
                 // draw children zOrder >= 0
-                if (this._m_pChildren != null) {
-                    for (i = 0; i < this._m_pChildren.length; i++) {
-                        pNode = this._m_pChildren[i];
+                if (this._m_pChildren) {
+                    for (var i = 0; i < this._m_pChildren.length; i++) {
+                        var pNode = this._m_pChildren[i];
                         if (pNode && pNode._m_nZOrder >= 0) {
-                            pNode.visit(this._renderTexture.context);
+                            pNode.visit(context);
                         }
                     }
                 }
-                this._m_bIsTransformDirty = false;
             }
 
-            // draw RenderTexture
-            this.draw();
 
             if (this._m_pGrid && this._m_pGrid.isActive()) {
                 this._m_pGrid.afterDraw(this);
