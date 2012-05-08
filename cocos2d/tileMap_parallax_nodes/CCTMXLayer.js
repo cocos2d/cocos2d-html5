@@ -68,8 +68,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     // used for retina display
     _m_fContentScaleFactor:null,
     ctor:function () {
+        this._super();
         this._m_pChildren = [];
         this._m_pobDescendants = [];
+
     },
     getLayerSize:function () {
         return this._m_tLayerSize;
@@ -148,7 +150,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
             this._m_pAtlasIndexArray = [];
 
-            this.setContentSizeInPixels(cc.SizeMake(this._m_tLayerSize.width * this._m_tMapTileSize.width, this._m_tLayerSize.height * this._m_tMapTileSize.height));
+            this.setContentSizeInPixels(cc.SizeMake(this._m_tLayerSize.width * this._m_tMapTileSize.width,
+                this._m_tLayerSize.height * this._m_tMapTileSize.height));
             this._m_tMapTileSize.width /= this._m_fContentScaleFactor;
             this._m_tMapTileSize.height /= this._m_fContentScaleFactor;
 
@@ -197,7 +200,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             // tile not created yet. create it
             if (!tile) {
                 var rect = this._m_pTileSet.rectForGID(gid);
-                rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
+                rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor,
+                    rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
 
                 tile = new cc.Sprite();
                 tile.initWithBatchNode(this, rect);
@@ -234,6 +238,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         cc.Assert(this._m_pTiles && this._m_pAtlasIndexArray, "TMXLayer: the tiles map has been released");
         cc.Assert(gid !== 0 || !(gid >= this._m_pTileSet.m_uFirstGid), "TMXLayer: invalid gid:" + gid);
 
+        this._m_bIsTransformDirty = true;
+
         var currentGID = this.tileGIDAt(pos);
 
         if (currentGID != gid) {
@@ -268,6 +274,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     removeTileAt:function (pos) {
         cc.Assert(pos.x < this._m_tLayerSize.width && pos.y < this._m_tLayerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._m_pTiles && this._m_pAtlasIndexArray, "TMXLayer: the tiles map has been released");
+
+        this._m_bIsTransformDirty = true;
 
         var gid = this.tileGIDAt(pos);
 
@@ -344,7 +352,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         // Parse cocos2d properties
         this._parseInternalProperties();
-
+        this._m_bIsTransformDirty = true;
         for (var y = 0; y < this._m_tLayerSize.height; y++) {
             for (var x = 0; x < this._m_tLayerSize.width; x++) {
                 var pos = x + this._m_tLayerSize.width * y;
@@ -385,6 +393,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         cc.Assert(cc.ArrayContainsObject(this._m_pChildren, sprite), "Tile does not belong to TMXLayer");
 
+        this._m_bIsTransformDirty = true;
         var atlasIndex = sprite.getAtlasIndex();
         var zz = this._m_pAtlasIndexArray[atlasIndex];
         this._m_pTiles[zz] = 0;
@@ -393,7 +402,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._super(sprite, cleanup);
     },
     draw:function () {
-        //cc.Log("Start TMXLayer Draw()");
         if (this._m_bUseAutomaticVertexZ) {
             //TODO need to fix
             //glEnable(GL_ALPHA_TEST);
@@ -457,16 +465,16 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     _appendTileForGID:function (gid, pos) {
         var rect = this._m_pTileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
-
+        this._m_bIsTransformDirty = true;
         var z = pos.x + pos.y * this._m_tLayerSize.width;
         this._m_pReusedTile = new cc.Sprite();
+        this._m_pReusedTile.setParent(this);
         this._m_pReusedTile.initWithBatchNode(this, rect);
         this._m_pReusedTile.setPosition(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
         this._m_pReusedTile.setAnchorPoint(cc.PointZero());
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
         this._m_pReusedTile.setTag(z);
-
         // optimization:
         // The difference between _appendTileForGID and _insertTileForGID is that append is faster, since
         // it appends the tile at the end of the texture atlas
@@ -485,8 +493,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
 
         var z = parseInt(pos.x + pos.y * this._m_tLayerSize.width);
-
+        this._m_bIsTransformDirty = true;
         this._m_pReusedTile = new cc.Sprite();
+        this._m_pReusedTile.setParent(this);
         this._m_pReusedTile.initWithBatchNode(this, rect);
         this._m_pReusedTile.setPositionInPixels(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
@@ -521,7 +530,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
         var z = pos.x + pos.y * this._m_tLayerSize.width;
 
-
+        this._m_bIsTransformDirty = true;
         this._m_pReusedTile = new cc.Sprite();
         this._m_pReusedTile.initWithBatchNode(this, rect);
 

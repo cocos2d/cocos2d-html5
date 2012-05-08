@@ -52,6 +52,8 @@ cc.NextPOT = function (x) {
  @since v0.8.1
  */
 cc.RenderTexture = cc.Node.extend({
+    canvas:null,
+    context:null,
     _m_uFBO:0,
     _m_nOldFBO:0,
     _m_pTexture:null,
@@ -59,6 +61,9 @@ cc.RenderTexture = cc.Node.extend({
     _m_ePixelFormat:cc.kCCTexture2DPixelFormat_RGBA8888,
     _m_pSprite:null,
     ctor:function () {
+        this.canvas = document.createElement('canvas');
+        this.context = this.canvas.getContext('2d');
+        this.setAnchorPoint(new cc.Point(0,0));
     },
 
     /** The CCSprite being used.
@@ -73,8 +78,33 @@ cc.RenderTexture = cc.Node.extend({
         this._m_pSprite = sprite;
     },
 
+    getCanvas:function(){
+        return this.canvas;
+    },
+
+    setContentSize:function(size){
+        if(!size){
+            return ;
+        }
+
+        //if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
+            this._super(size);
+            this.canvas.width = size.width * 1.5;
+            this.canvas.height = size.height * 1.5;
+
+            this.context.translate(0,this.canvas.height);
+        //}
+    },
+
     /** initializes a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
-    initWithWidthAndHeight:function (width, hegith, eFormat) {
+    initWithWidthAndHeight:function (width, height, eFormat) {
+        if(cc.renderContextType == cc.kCanvas){
+            this.canvas.width = width||10;
+            this.canvas.height = height||10;
+
+            this.context.translate(0,this.canvas.height);
+            return true;
+        }
         //TODO
         // If the gles version is lower than GLES_VER_1_0,
         // some extended gles functions can't be implemented, so return false directly.
@@ -86,13 +116,13 @@ cc.RenderTexture = cc.Node.extend({
         do
         {
             width *= cc.CONTENT_SCALE_FACTOR();
-            hegith *= cc.CONTENT_SCALE_FACTOR();
+            height *= cc.CONTENT_SCALE_FACTOR();
 
             glGetIntegerv(cc.GL_FRAMEBUFFER_BINDING, this._m_nOldFBO);
 
             // textures must be power of two squared
             var powW = cc.NextPOT(width);
-            var powH = cc.NextPOT(hegith);
+            var powH = cc.NextPOT(height);
 
             //void *data = malloc(powW * powH * 4);
             var data = [];
@@ -108,7 +138,7 @@ cc.RenderTexture = cc.Node.extend({
             this._m_pTexture = new cc.Texture2D();
             cc.BREAK_IF(!this._m_pTexture);
 
-            this._m_pTexture.initWithData(data, this._m_ePixelFormat, powW, powH, cc.SizeMake(width, hegith));
+            this._m_pTexture.initWithData(data, this._m_ePixelFormat, powW, powH, cc.SizeMake(width, height));
             //free( data );
 
             // generate FBO
@@ -223,8 +253,17 @@ cc.RenderTexture = cc.Node.extend({
 
     /** clears the texture with a color */
     clear:function (r, g, b, a) {
-        this.beginWithClear(r, g, b, a);
-        this.end();
+        if(cc.renderContextType == cc.kCanvas){
+            var rect = r;
+            if (rect) {
+                this.context.clearRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+            } else {
+                this.context.clearRect(0, -this.canvas.height, this.canvas.width, this.canvas.height);
+            }
+        }else {
+            this.beginWithClear(r, g, b, a);
+            this.end();
+        }
     },
 
     /** saves the texture into a file */
@@ -458,7 +497,7 @@ cc.RenderTexture.renderTextureWithWidthAndHeight = function (width, height, eFor
     }
 
     var pRet = new cc.RenderTexture();
-    if (pRet && pRet.initWithWidthAndHeight(w, h, eFormat)) {
+    if (pRet && pRet.initWithWidthAndHeight(width, height, eFormat)) {
         return pRet;
     }
     return null;
