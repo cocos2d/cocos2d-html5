@@ -206,11 +206,11 @@ cc.domNode = cc.Node.extend({
             parentPos = {x:0, y:0};
         }
         this.style[cc.Browser.prefix + "Transform"] = this._transform.translate(this._m_tPosition.x + parentPos.x, this._m_tPosition.y - parentPos.y)
-                                                    + " " + this._transform.rotate(this._m_fRotation)
-                                                    + " " + this._transform.scale(this._m_fScaleX, this._m_fScaleY);
+            + " " + this._transform.rotate(this._m_fRotation)
+            + " " + this._transform.scale(this._m_fScaleX, this._m_fScaleY);
     },
-    setColor:function(c){
-        this.style.color = "rgb("+c.r+", "+c.g+", "+c.b+")";
+    setColor:function (c) {
+        this.style.color = "rgb(" + c.r + ", " + c.g + ", " + c.b + ")";
     },
     getPosition:function () {
         return cc.ccp(this._m_tPosition.x, -this._m_tPosition.y);
@@ -219,7 +219,7 @@ cc.domNode = cc.Node.extend({
         this._m_pChildren.push(child);
     },
     _setZOrder:function (z) {
-        this.style.zIndex = z+100;
+        this.style.zIndex = z;
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if (pArray && pArray.length > 0) {
@@ -259,7 +259,7 @@ cc.domNode = cc.Node.extend({
         this.hide();
     },
     //hide all children!
-    hide:function (){
+    hide:function () {
         this.style.visibility = "hidden";
     },
     show:function () {
@@ -306,7 +306,7 @@ cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
     var lDiv = cc.$new('lDiv');
 
     document.body.appendChild(lDiv);
-    lDiv.style.fontSize = (isNaN(pFontSize))?pFontSize:("" + pFontSize + "px");
+    lDiv.style.fontSize = (isNaN(pFontSize)) ? pFontSize : ("" + pFontSize + "px");
     lDiv.style.position = "absolute";
     lDiv.style.left = -1000;
     lDiv.style.top = -1000;
@@ -318,8 +318,8 @@ cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
     lDiv.innerHTML = pText;
 
     var lResult = {
-        width: lDiv.clientWidth,
-        height: lDiv.clientHeight
+        width:lDiv.clientWidth,
+        height:lDiv.clientHeight
     };
 
     document.body.removeChild(lDiv);

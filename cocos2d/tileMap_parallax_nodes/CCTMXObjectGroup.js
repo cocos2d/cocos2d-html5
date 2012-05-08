@@ -31,9 +31,13 @@ var cc = cc = cc || {};
 cc.TMXObjectGroup = cc.Class.extend({
     /** name of the group */
     _m_sGroupName:"",
-    _m_tPositionOffset:cc.PointZero,
-    _m_pProperties:[],
-    _m_pObjects:[],
+    _m_tPositionOffset:cc.PointZero(),
+    _m_pProperties:null,
+    _m_pObjects:null,
+    ctor:function(){
+        this._m_pProperties = [];
+        this._m_pObjects = [];
+    },
     /** offset position of child objects */
     getPositionOffset:function () {
         return this._m_tPositionOffset;

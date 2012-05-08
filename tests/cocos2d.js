@@ -107,6 +107,7 @@ cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('textures/CCTextureAtlas.js');//12
+cc.loadjs('misc_nodes/CCRenderTexture.js');//11
 cc.loadjs('actions/CCAction.js');//7
 cc.loadjs('platform/CCFileUtils.js');//7
 cc.loadjs('effects/CCGrid.js');//7
@@ -141,7 +142,6 @@ cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
 cc.loadjs('misc_nodes/CCProgressTimer.js');//11
-cc.loadjs('misc_nodes/CCRenderTexture.js');//11
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCCamera.js');//13
 cc.loadjs('CCScheduler.js');//14

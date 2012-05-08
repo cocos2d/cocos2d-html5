@@ -139,6 +139,8 @@ cc.Node = cc.Class.extend({
             this._m_bIsTransformGLDirty = true;
             this._m_pTransformGL = 0.0;
         }
+        this._m_tContentSize = cc.SizeZero();
+        this._m_tContentSizeInPixels = cc.SizeZero();
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if (pArray && pArray.length > 0) {
@@ -152,25 +154,29 @@ cc.Node = cc.Class.extend({
             }
         }
     },
+    setNodeDirty:function(){
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+            this._m_bIsTransformGLDirty = true;
+        }
+        if(this._m_pParent){
+
+            this._m_pParent.setNodeDirty();
+        }
+    },
     getSkewX:function () {
         return this._m_fSkewX;
     },
     setSkewX:function (newSkewX) {
         this._m_fSkewX = newSkewX;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     getSkewY:function () {
         return this._m_fSkewY;
     },
     setSkewY:function (newSkewY) {
         this._m_fSkewY = newSkewY;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
 
     // zOrder getter
@@ -197,10 +203,7 @@ cc.Node = cc.Class.extend({
     // rotation setter
     setRotation:function (newRotation) {
         this._m_fRotation = newRotation;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /** Get the scale factor of the node.
      @warning: Assert when _m_fScaleX != _m_fScaleY.
@@ -213,10 +216,7 @@ cc.Node = cc.Class.extend({
     setScale:function (scale) {
         this._m_fScaleX = scale;
         this._m_fScaleY = scale;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// scaleX getter
     getScaleX:function () {
@@ -225,10 +225,7 @@ cc.Node = cc.Class.extend({
     /// scaleX setter
     setScaleX:function (newScaleX) {
         this._m_fScaleX = newScaleX;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// scaleY getter
     getScaleY:function () {
@@ -237,10 +234,7 @@ cc.Node = cc.Class.extend({
     /// scaleY setter
     setScaleY:function (newScaleY) {
         this._m_fScaleY = newScaleY;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// position setter
     setPosition:function (newPosition) {
@@ -251,10 +245,7 @@ cc.Node = cc.Class.extend({
         else {
             this._m_tPositionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
         }
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     setPositionInPixels:function (newPosition) {
         this._m_tPositionInPixels = newPosition;
@@ -263,10 +254,7 @@ cc.Node = cc.Class.extend({
         } else {
             this._m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
         }
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
+        this.setNodeDirty();// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
     getPositionInPixels:function () {
         return this._m_tPositionInPixels;
@@ -345,10 +333,8 @@ cc.Node = cc.Class.extend({
             this._m_tAnchorPoint = point;
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
-            this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                this._m_bIsTransformGLDirty = true;
-            }
+
+            this.setNodeDirty();
         }
     },
     /// anchorPointInPixels getter
@@ -365,10 +351,7 @@ cc.Node = cc.Class.extend({
                 this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
-            this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                this._m_bIsTransformGLDirty = true;
-            } // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
+            this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
         }
     },
     /** The untransformed size of the node.
@@ -391,10 +374,7 @@ cc.Node = cc.Class.extend({
             }
 
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
-            this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                this._m_bIsTransformGLDirty = true;
-            }
+            this.setNodeDirty();
         }
     },
     getContentSizeInPixels:function () {
@@ -419,10 +399,7 @@ cc.Node = cc.Class.extend({
     /// isRelativeAnchorPoint setter
     setIsRelativeAnchorPoint:function (newValue) {
         this._m_bIsRelativeAnchorPoint = newValue;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// tag getter
     getTag:function () {
@@ -633,11 +610,10 @@ cc.Node = cc.Class.extend({
         var a = this._m_pChildren[this._m_pChildren.length - 1];
         if (!a || a.getZOrder() <= z) {
             this._m_pChildren.push(child);
-        }
-        else {
+        } else {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
-                if (pNode && (pNode._m_nZOrder > z )) {
+                if (pNode && (pNode.getZOrder() > z )) {
                     this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren, child, i);
                     break;
                 }
