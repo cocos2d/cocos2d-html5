@@ -402,7 +402,6 @@ var TMXOrthoTest4 = TileDemo.extend({
         var s = layer.getLayerSize();
 
         var sprite = layer.tileAt(cc.ccp(s.width - 1, 0));
-
         layer.removeChild(sprite, true);
     },
     title:function () {
@@ -449,6 +448,7 @@ var TMXReadWriteTest = TileDemo.extend({
         var scaleback = cc.ScaleTo.actionWithDuration(1, 1);
         var finish = cc.CallFunc.actionWithTarget(this, this.removeSprite);
 
+        /*
         var move1 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
         var rotate1 = cc.RotateBy.actionWithDuration(2, 360);
         var scale1 = cc.ScaleBy.actionWithDuration(2, 5);
@@ -472,15 +472,16 @@ var TMXReadWriteTest = TileDemo.extend({
         var fadein3 = cc.FadeIn.actionWithDuration(2);
         var scaleback3 = cc.ScaleTo.actionWithDuration(1, 1);
         var finish3 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
+        */
 
         var seq0 = cc.Sequence.actions(move, rotate, scale, opacity, fadein, scaleback, finish, null);
-        var seq1 = cc.Sequence.actions(move1, rotate1, scale1, opacity1, fadein1, scaleback1, finish1, null);
-        var seq2 = cc.Sequence.actions(move2, rotate2, scale2, opacity2, fadein2, scaleback2, finish2, null);
-        var seq3 = cc.Sequence.actions(move3, rotate3, scale3, opacity3, fadein3, scaleback3, finish3, null);
+        //var seq1 = cc.Sequence.actions(move1, rotate1, scale1, opacity1, fadein1, scaleback1, finish1, null);
+        //var seq2 = cc.Sequence.actions(move2, rotate2, scale2, opacity2, fadein2, scaleback2, finish2, null);
+        //var seq3 = cc.Sequence.actions(move3, rotate3, scale3, opacity3, fadein3, scaleback3, finish3, null);
 
-        /*tile0.runAction(seq0);
-         tile1.runAction(seq0.copy());
-         tile2.runAction(seq0.copy());*/
+        tile0.runAction(seq0);
+        tile1.runAction(seq0.copy());
+        tile2.runAction(seq0.copy());
         tile3.runAction(seq0.copy());
 
         this.m_gid = layer.tileGIDAt(cc.ccp(0, 63));
@@ -709,9 +710,8 @@ var TMXOrthoObjectsTest = TileDemo.extend({
         var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
 
-        var dict;
-        for (var i = 0, len = objects.length; i < len; i++) {
-            dict = objects[i];
+        for (var i = 0 ; i < objects.length; i++) {
+            var dict = objects[i];
             if (!dict)
                 break;
         }
@@ -720,9 +720,8 @@ var TMXOrthoObjectsTest = TileDemo.extend({
         var map = this.getChildByTag(cc.kTagTileMap);
         var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
-        var dict;
-        for (var i = 0, len = objects.length; i < len; i++) {
-            dict = objects[i];
+        for (var i = 0; i < objects.length; i++) {
+            var dict = objects[i];
             if (!dict)
                 break;
 
@@ -763,7 +762,7 @@ var TMXIsoObjectsTest = TileDemo.extend({
 
         var s = map.getContentSize();
 
-        var group = map.objectGroupNamed("Object Group 12");
+        var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
 
         var dict;
@@ -778,7 +777,7 @@ var TMXIsoObjectsTest = TileDemo.extend({
     },
     draw:function () {
         var map = this.getChildByTag(cc.kTagTileMap);
-        var group = map.objectGroupNamed("Object Group 12");
+        var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
