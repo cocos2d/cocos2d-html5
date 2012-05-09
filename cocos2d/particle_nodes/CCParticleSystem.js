@@ -83,11 +83,11 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
     this.startPos = startPos ? startPos : cc.PointZero();
     this.color = color ? color : new cc.Color4F(0, 0, 0, 1);
     this.deltaColor = deltaColor ? deltaColor : new cc.Color4F(0, 0, 0, 1);
-    this.size = size ? size : 0;
-    this.deltaSize = deltaSize ? deltaSize : 0;
-    this.rotation = rotation ? rotation : 0;
-    this.deltaRotation = deltaRotation ? deltaRotation : 0;
-    this.timeToLive = timeToLive ? timeToLive : 0;
+    this.size = size || 0;
+    this.deltaSize = deltaSize || 0;
+    this.rotation = rotation || 0;
+    this.deltaRotation = deltaRotation || 0;
+    this.timeToLive = timeToLive || 0;
     this.modeA = modeA ? modeA : new cc.tCCParticle.tModeA();
     this.modeB = modeB ? modeB : new cc.tCCParticle.tModeB();
     this.isChangeColor = false;
@@ -96,15 +96,15 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
 //! Mode A: gravity, direction, radial accel, tangential accel
 cc.tCCParticle.tModeA = function (dir, radialAccel, tangentialAccel) {
     this.dir = dir ? dir : cc.PointZero();
-    this.radialAccel = radialAccel ? radialAccel : 0;
-    this.tangentialAccel = tangentialAccel ? tangentialAccel : 0;
+    this.radialAccel = radialAccel || 0;
+    this.tangentialAccel = tangentialAccel || 0;
 };
 //! Mode B: radius mode
 cc.tCCParticle.tModeB = function (angle, degreesPerSecond, radius, deltaRadius) {
-    this.angle = angle ? angle : 0;
-    this.degreesPerSecond = degreesPerSecond ? degreesPerSecond : 0;
-    this.radius = radius ? radius : 0;
-    this.deltaRadius = deltaRadius ? deltaRadius : 0;
+    this.angle = angle || 0;
+    this.degreesPerSecond = degreesPerSecond || 0;
+    this.radius = radius || 0;
+    this.deltaRadius = deltaRadius || 0;
 };
 
 
@@ -1118,31 +1118,31 @@ cc.ParticleSystem.tModeA = function (gravity, speed, speedVar, tangentialAccel, 
     /** Gravity value. Only available in 'Gravity' mode. */
     this.gravity = gravity ? gravity : cc.PointZero();
     /** speed of each particle. Only available in 'Gravity' mode.  */
-    this.speed = speed ? speed : 0;
+    this.speed = speed || 0;
     /** speed variance of each particle. Only available in 'Gravity' mode. */
-    this.speedVar = speedVar ? speedVar : 0;
+    this.speedVar = speedVar || 0;
     /** tangential acceleration of each particle. Only available in 'Gravity' mode. */
-    this.tangentialAccel = tangentialAccel ? tangentialAccel : 0;
+    this.tangentialAccel = tangentialAccel || 0;
     /** tangential acceleration variance of each particle. Only available in 'Gravity' mode. */
-    this.tangentialAccelVar = tangentialAccelVar ? tangentialAccelVar : 0;
+    this.tangentialAccelVar = tangentialAccelVar || 0;
     /** radial acceleration of each particle. Only available in 'Gravity' mode. */
-    this.radialAccel = radialAccel ? radialAccel : 0;
+    this.radialAccel = radialAccel || 0;
     /** radial acceleration variance of each particle. Only available in 'Gravity' mode. */
-    this.radialAccelVar = radialAccelVar ? radialAccelVar : 0;
+    this.radialAccelVar = radialAccelVar || 0;
 };
 
 //! Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
 cc.ParticleSystem.tModeB = function (startRadius, startRadiusVar, endRadius, endRadiusVar, rotatePerSecond, rotatePerSecondVar) {
     /** The starting radius of the particles. Only available in 'Radius' mode. */
-    this.startRadius = startRadius ? startRadius : 0;
+    this.startRadius = startRadius || 0;
     /** The starting radius variance of the particles. Only available in 'Radius' mode. */
-    this.startRadiusVar = startRadiusVar ? startRadiusVar : 0;
+    this.startRadiusVar = startRadiusVar || 0;
     /** The ending radius of the particles. Only available in 'Radius' mode. */
-    this.endRadius = endRadius ? endRadius : 0;
+    this.endRadius = endRadius || 0;
     /** The ending radius variance of the particles. Only available in 'Radius' mode. */
-    this.endRadiusVar = endRadiusVar ? endRadiusVar : 0;
+    this.endRadiusVar = endRadiusVar || 0;
     /** Number of degress to rotate a particle around the source pos per second. Only available in 'Radius' mode. */
-    this.rotatePerSecond = rotatePerSecond ? rotatePerSecond : 0;
+    this.rotatePerSecond = rotatePerSecond || 0;
     /** Variance in degrees for rotatePerSecond. Only available in 'Radius' mode. */
-    this.rotatePerSecondVar = rotatePerSecondVar ? rotatePerSecondVar : 0;
+    this.rotatePerSecondVar = rotatePerSecondVar || 0;
 };

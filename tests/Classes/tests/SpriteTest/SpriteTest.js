@@ -2843,7 +2843,6 @@ var SpriteChildrenVisibilityIssue665 = SpriteTestDemo.extend({
 var SpriteChildrenAnchorPoint = SpriteTestDemo.extend({
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-
         cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
 
         var aParent = cc.Node.node();

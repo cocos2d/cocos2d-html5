@@ -351,7 +351,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 // nodes up into multiple nodes. So, we'll stitch them back
                 // together.
                 var nodeValue = ''
-                for (var j = 0, jen = data.childNodes.length; j < jen; j++) {
+                for (var j = 0; j < data.childNodes.length; j++) {
                     nodeValue += data.childNodes[j].nodeValue
                 }
 
@@ -381,7 +381,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         // PARSE <objectgroup>
         var objectgroups = map.getElementsByTagName('objectgroup');
         if (objectgroups) {
-            for (var i = 0, len = objectgroups.length; i < len; i++) {
+            for (var i = 0; i < objectgroups.length; i++) {
                 var g = objectgroups[i];
                 var objectGroup = new cc.TMXObjectGroup();
                 objectGroup.setGroupName(g.getAttribute('name'));
@@ -392,7 +392,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
 
                 var objects = g.querySelectorAll('object')
                 if (objects) {
-                    for (var j = 0, jen = objects.length; j < jen; j++) {
+                    for (var j = 0; j < objects.length; j++) {
                         var o = objects[j]
                         // The value for "type" was blank or not a valid class name
                         // Create an instance of TMXObjectInfo to store the object and its properties

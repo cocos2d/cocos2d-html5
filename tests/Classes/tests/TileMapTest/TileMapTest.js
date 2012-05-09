@@ -29,31 +29,31 @@ cc.SID_REPAINTWITHGID = 101;
 cc.SID_REMOVETILES = 102;
 
 var TileMapTests = [
-    //"TileMapTest", //not support TGA format yet
-     //"TileMapEditTest", //not support TGA format yet
-    /*"TMXOrthoTest", //ok
+    //"TileMapTest", //not support tga format
+     //"TileMapEditTest", //not support tga format
+    "TMXOrthoTest",
     "TMXOrthoTest2", //camera bug
-    "TMXOrthoTest3", //ok
-    "TMXOrthoTest4", //ok
-    "TMXReadWriteTest", //bug
-    "TMXHexTest", //ok
-    "TMXIsoTest", //ok
-    "TMXIsoTest1", //ok
-    "TMXIsoTest2", //ok
-    "TMXUncompressedTest",//ok
-    "TMXTilesetTest", //ok*/
-    "TMXOrthoObjectsTest", //bug
-    "TMXIsoObjectsTest", //bug
-    "TMXResizeTest", //ok
-    "TMXIsoZorder", //ok
-    "TMXOrthoZorder", //ok
-    //"TMXIsoVertexZ", //VertexZ bug, for webGL
-    //"TMXOrthoVertexZ", //VertexZ bug, for webGL
-    "TMXIsoMoveLayer", //ok
-    "TMXOrthoMoveLayer", //ok
-    "TMXBug987", //ok
-    "TMXBug787", //ok
-    //"TMXGIDObjectsTest" //not support zlib uncompress yet
+    "TMXOrthoTest3",
+    "TMXOrthoTest4",
+    "TMXReadWriteTest",
+    "TMXHexTest",
+    "TMXIsoTest",
+    "TMXIsoTest1",
+    "TMXIsoTest2",
+    "TMXUncompressedTest",
+    "TMXTilesetTest",
+    "TMXOrthoObjectsTest",
+    "TMXIsoObjectsTest",
+    "TMXResizeTest",
+    "TMXIsoZorder",
+    "TMXOrthoZorder",
+    //"TMXIsoVertexZ", //VertexZ bug
+    //"TMXOrthoVertexZ", //VertexZ bug
+    "TMXIsoMoveLayer",
+    "TMXOrthoMoveLayer",
+    "TMXBug987",
+    "TMXBug787"
+    //"TMXGIDObjectsTest", //zlib bug
 ];
 var s_nTileMapIdx = -1;
 function nextTileMapAction() {
@@ -401,7 +401,6 @@ var TMXOrthoTest4 = TileDemo.extend({
         var s = layer.getLayerSize();
 
         var sprite = layer.tileAt(cc.ccp(s.width - 1, 0));
-
         layer.removeChild(sprite, true);
     },
     title:function () {
@@ -421,7 +420,9 @@ var TMXReadWriteTest = TileDemo.extend({
 
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test2.tmx");
         this.addChild(map, 0, cc.kTagTileMap);
+
         var s = map.getContentSize();
+
 
         var layer = map.layerNamed("Layer 0");
         //layer.getTexture().setAntiAliasTexParameters();
@@ -472,6 +473,7 @@ var TMXReadWriteTest = TileDemo.extend({
         var layer = map.getChildByTag(0);
 
         var s = layer.getLayerSize();
+
         for (var y = 0; y < s.height; y++) {
             layer.setTileGID(this.m_gid2, cc.ccp(3, y));
         }
@@ -677,9 +679,9 @@ var TMXOrthoObjectsTest = TileDemo.extend({
 
         var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
-        var dict;
-        for (var i = 0, len = objects.length; i < len; i++) {
-            dict = objects[i];
+
+        for (var i = 0 ; i < objects.length; i++) {
+            var dict = objects[i];
             if (!dict)
                 break;
         }
@@ -688,9 +690,8 @@ var TMXOrthoObjectsTest = TileDemo.extend({
         var map = this.getChildByTag(cc.kTagTileMap);
         var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
-        var dict;
-        for (var i = 0, len = objects.length; i < len; i++) {
-            dict = objects[i];
+        for (var i = 0; i < objects.length; i++) {
+            var dict = objects[i];
             if (!dict)
                 break;
 
@@ -733,6 +734,7 @@ var TMXIsoObjectsTest = TileDemo.extend({
 
         var group = map.objectGroupNamed("Object Group 1");
         var objects = group.getObjects();
+
         var dict;
         for (var i = 0, len = objects.length; i < len; i++) {
             dict = objects[i];
@@ -948,15 +950,15 @@ var TMXIsoVertexZ = TileDemo.extend({
         cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection2D);
     },
     onExit:function () {
-        // At exit use any other projection.
+// At exit use any other projection.
         //	CCDirector.sharedDirector().setProjection:kCCDirectorProjection3D);
-         this._super();
+        this._super();
     },
     repositionSprite:function (dt) {
         // tile height is 64x32
         // map size: 30x30
         var p = this.m_tamara.getPositionInPixels();
-        this.m_tamara.setVertexZ(-Math.round( (p.y + 32) / 16));
+        this.m_tamara.setVertexZ(-( (p.y + 32) / 16));
     }
 });
 
@@ -1008,7 +1010,7 @@ var TMXOrthoVertexZ = TileDemo.extend({
         // tile height is 64x32
         // map size: 30x30
         var p = this.m_tamara.getPositionInPixels();
-        this.m_tamara.setVertexZ(-Math.round((p.y + 32) / 16));
+        this.m_tamara.setVertexZ(-( (p.y + 32) / 16));
     }
 });
 

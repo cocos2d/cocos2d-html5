@@ -130,7 +130,7 @@ cc.EaseRateAction.actionWithAction = function (pAction, fRate) {
 cc.EaseIn = cc.EaseRateAction.extend({
 
     update:function (time1) {
-        this._m_pOther.update(Math.pow(time1, m_fRate));
+        this._m_pOther.update(Math.pow(time1, this._m_fRate));
     },
     copyWithZone:function (pZone) {
 
@@ -503,7 +503,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
             newT = time1;
         } else {
             var s = this._m_fPeriod / 4;
-            newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * _2 / this._m_fPeriod) + 1;
+            newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI  * 2 / this._m_fPeriod) + 1;
         }
 
         this._m_pOther.update(newT);

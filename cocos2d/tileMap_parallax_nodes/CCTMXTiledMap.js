@@ -107,7 +107,7 @@ cc.TMXTiledMap = cc.Node.extend({
         this._m_tTileSize = Var;
     },
     setAnchorPoint:function (point) {
-        if (point == this.getAnchorPoint()) {
+        if (cc.Point.CCPointEqualToPoint(point , this.getAnchorPoint())) {
             return;
         }
         this._super(point);
@@ -160,10 +160,7 @@ cc.TMXTiledMap = cc.Node.extend({
 
         var layers = mapInfo.getLayers();
         if (layers) {
-            if (this._m_pTMXLayers == null) {
-                this._m_pTMXLayers = new Object();
-                cc.Assert(this._m_pTMXLayers, "Allocate memory failed!");
-            }
+            this._m_pTMXLayers = new Object();
 
             var layerInfo = null;
             for (var i = 0, len = layers.length; i < len; i++) {
@@ -192,25 +189,22 @@ cc.TMXTiledMap = cc.Node.extend({
 
     /** return the TMXLayer for the specific layer */
     layerNamed:function (layerName) {
-        var sLayerName = layerName;
-        var pRet = new cc.TMXLayer();
-        pRet = this._m_pTMXLayers[sLayerName];
-        return pRet;
+        if(this._m_pTMXLayers.hasOwnProperty(layerName)){
+            return this._m_pTMXLayers[layerName];
+        }
+        return null;
     },
 
     /** return the TMXObjectGroup for the secific group */
     objectGroupNamed:function (groupName) {
-        var sGroupName = groupName;
         if (this._m_pObjectGroups) {
-            var objectGroup;
-            for (var i = 0, len = this._m_pObjectGroups.length; i < len; i++) {
-                objectGroup = this._m_pObjectGroups[i];
-                if (objectGroup && objectGroup.getGroupName() == sGroupName) {
+            for (var i = 0; i < this._m_pObjectGroups.length; i++) {
+                var objectGroup = this._m_pObjectGroups[i];
+                if (objectGroup && objectGroup.getGroupName() == groupName) {
                     return objectGroup;
                 }
             }
         }
-
         // objectGroup not found
         return null;
     },

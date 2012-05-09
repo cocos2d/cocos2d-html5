@@ -29,6 +29,8 @@
  ****************************************************************************/
 
 var cc = cc = cc || {};
+cc._fontSize = 32;
+cc._fontName = '"Comic Sans MS", "cursive"';
 cc.MenuItem = cc.domNode.extend({
 
 });
@@ -76,12 +78,75 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
         evt.preventDefault();
         return false;
     });
-    that._image.addEventListener("click", callback);
+    that._image.addEventListener("click", _domMenuCallback);
+    that._image.addEventListener("touchstart", function(){
+        this.src = selected;
+        _domMenuCallback();
+    });
+
+    that._image.addEventListener("touchend", function(){
+        this.src = normal;
+    });
+    function _domMenuCallback(){
+        if (target && (typeof(callback) == "string")) {
+            target[callback]();
+        } else if (target && (typeof(callback) == "function")) {
+            callback.call(target);
+        }
+    }
     //attach callback to onclick
     that.style.cursor = (callback) ? "pointer" : "default";
     return that;
 };
+cc.MenuItemSprite = cc.MenuItemImage.extend({
 
+});
+cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four, five){
+    var that=  new this();
+    if(five){
+        //threee is disabled, four is target, five is selector
+        var callback = five;
+    }
+    else if(four){
+        //there is no disabled image
+        var callback = four;
+    }
+    else{
+        //there is 3 image, but no callback func
+        var callback = null;
+    }
+    if (normal.src) {
+        normal = normal.src;
+    }
+    if (selected.src) {
+        selected = selected.src;
+    }
+    that.init(normal);
+    var tmp = new Image();
+    tmp.src = selected;
+    that._image.addEventListener("mouseover", function () {
+        this.src = selected;
+    });
+    that._image.addEventListener("mouseout", function () {
+        this.src = normal;
+    });
+    that._image.addEventListener("mousedown", function (e) {
+        var evt = e || window.event;
+        evt.preventDefault();
+        return false;
+    });
+    that._image.addEventListener("click", callback);
+    that._image.addEventListener("touchstart", function(){
+        this.src = selected;
+        callback();
+    });
+    that._image.addEventListener("touchend", function(){
+        this.src = normal;
+    });
+    //attach callback to onclick
+    that.style.cursor = (callback) ? "pointer" : "default";
+    return that;
+};
 cc.MenuItemLabel = cc.MenuItem.extend({
     _text:'',
     _fontSize:"14px",
@@ -91,7 +156,8 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this._fontName = label._m_pFontName;
         this._fontSize = label._m_fFontSize + "px";
         //create a div containing the text
-        this._domElement.innerText = this._text;
+        this._domElement.textContent = this._text;
+        //this._domElement.contentText = this._domElement.innerText;
         this.style.fontFamily = this._fontName;
         this.style.fontSize = this._fontSize;
         this.style.color = "#FFF";
@@ -103,6 +169,9 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this.style.top = "-50%";
         this.style.bottom = "50%";
         this.style.textAlign = "center";
+        var tmp = cc.domNode.getTextSize(this._text,this._fontSize, this._fontName);
+        this.style.width = tmp.width+"px";
+        this.style.height = tmp.height+"px";
     }
 });
 cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
@@ -115,15 +184,91 @@ cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
     });
     if (arguments.length == 4) {
         that._domElement.addEventListener("click", selector);
+        that._domElement.addEventListener("touchstart", selector);
         that.style.cursor = "pointer";
     }
     else if (arguments.length == 2) {
         that._domElement.addEventListener("click", dimension);//the second argument is now the selector
+        that._domElement.addEventListener("touchstart", dimension);
         that.style.cursor = "pointer";
     }
     else if (arguments.length == 3) {
         that._domElement.addEventListener("click", target);
+        that._domElement.addEventListener("touchstart", target);
         that.style.cursor = "pointer";
     }
     return that;
+};
+
+cc.MenuItemFont = cc.MenuItem.extend({
+    initFromString: function(value, target, selector){
+        this._text = value;
+        //create a div containing the text
+        this._domElement.textContent = this._text;
+        this.style.fontFamily = cc._fontName;
+        this.style.fontSize = cc._fontSize+"px";
+        this.style.color = "#FFF";
+        this.style.position = "absolute";
+        this.style.bottom = "0px";
+        this.style.margin = "auto";
+        this.style.right = "50%";
+        this.style.left = "-50%";
+        this.style.top = "-50%";
+        this.style.bottom = "50%";
+        this.style.textAlign = "center";
+        if(selector != null){
+            //this._domElement.addEventListener("click",selector);
+            this._domElement.addEventListener("click",function(e){
+                _domMenuCallback(event);
+            });
+            this._domElement.addEventListener("touchstart",function(e){
+                _domMenuCallback(event);
+            });
+            this.style.cursor = "pointer";
+        }
+
+         function _domMenuCallback(e){
+            if (target && (typeof(selector) == "string")) {
+                target[selector](e);
+            } else if (target && (typeof(selector) == "function")) {
+                selector.call(target,e);
+            }
+        }
+    },
+    setFontSizeObj:function(s){
+        this.style.fontSize = s;
+    },
+    fontSizeObj:function(){
+        return this.style.fontSize;
+    },
+    setFontName:function(s){
+        this.style.fontFamily = s;
+    },
+    fontNameObj:function(){
+        return this.style.fontFamily;
+    },
+    _recreateLabel:function(){},
+    _m_uFontSize:0,
+    _m_strFontName:''
+});
+cc.MenuItemFont.setFontSize = function(s){
+    cc._fontSize = s;
+};
+cc.MenuItemFont.fontSize = function(){
+    return cc._fontSize;
+};
+cc.MenuItemFont.setFontName = function (name) {
+    if (cc._fontNameRelease) {
+        cc._fontName = '';
+    }
+    cc._fontName = name;
+    cc._fontNameRelease = true;
+};
+cc.MenuItemFont.fontName = function () {
+    return cc._fontName
+};
+cc.MenuItemFont.itemFromString = function (value, target, selector) {
+    var pRet = new cc.MenuItemFont();
+    pRet.initFromString(value, target, selector);
+    return pRet;
 };

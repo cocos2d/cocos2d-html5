@@ -93,11 +93,13 @@ cc.Menu = cc.Layer.extend({
         }
     },
     /** initializes a CCMenu with it's items */
-    initWithItems:function (/*Multiple Arguments*/) {
+    initWithItems:function (args) {
         if (this.init) {
             var z = 0;
-            for (var i = 0; i < arguments.length; i++) {
-                this.addChild(arguments[i], z);
+            for (var i = 0; i < args.length; i++) {
+                if(args[i]){
+                    this.addChild(args[i], z);
+                }
             }
             return true;
         }
@@ -391,7 +393,7 @@ cc.Menu.node = function () {
 };
 /** creates a CCMenu with it's items */
 cc.Menu.menuWithItems = function (/*Multiple Arguments*/) {
-    pRet = new cc.Menu();
+    var pRet = new cc.Menu();
     pRet.initWithItems(arguments);
     return pRet;
 };

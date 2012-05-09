@@ -139,6 +139,8 @@ cc.Node = cc.Class.extend({
             this._m_bIsTransformGLDirty = true;
             this._m_pTransformGL = 0.0;
         }
+        this._m_tContentSize = cc.SizeZero();
+        this._m_tContentSizeInPixels = cc.SizeZero();
     },
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if (pArray && pArray.length > 0) {
@@ -152,25 +154,29 @@ cc.Node = cc.Class.extend({
             }
         }
     },
+    setNodeDirty:function(){
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+            this._m_bIsTransformGLDirty = true;
+        }
+        if(this._m_pParent){
+
+            this._m_pParent.setNodeDirty();
+        }
+    },
     getSkewX:function () {
         return this._m_fSkewX;
     },
     setSkewX:function (newSkewX) {
         this._m_fSkewX = newSkewX;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     getSkewY:function () {
         return this._m_fSkewY;
     },
     setSkewY:function (newSkewY) {
         this._m_fSkewY = newSkewY;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
 
     // zOrder getter
@@ -197,10 +203,7 @@ cc.Node = cc.Class.extend({
     // rotation setter
     setRotation:function (newRotation) {
         this._m_fRotation = newRotation;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /** Get the scale factor of the node.
      @warning: Assert when _m_fScaleX != _m_fScaleY.
@@ -213,10 +216,7 @@ cc.Node = cc.Class.extend({
     setScale:function (scale) {
         this._m_fScaleX = scale;
         this._m_fScaleY = scale;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// scaleX getter
     getScaleX:function () {
@@ -225,10 +225,7 @@ cc.Node = cc.Class.extend({
     /// scaleX setter
     setScaleX:function (newScaleX) {
         this._m_fScaleX = newScaleX;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// scaleY getter
     getScaleY:function () {
@@ -237,10 +234,7 @@ cc.Node = cc.Class.extend({
     /// scaleY setter
     setScaleY:function (newScaleY) {
         this._m_fScaleY = newScaleY;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// position setter
     setPosition:function (newPosition) {
@@ -251,10 +245,7 @@ cc.Node = cc.Class.extend({
         else {
             this._m_tPositionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
         }
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     setPositionInPixels:function (newPosition) {
         this._m_tPositionInPixels = newPosition;
@@ -263,10 +254,7 @@ cc.Node = cc.Class.extend({
         } else {
             this._m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
         }
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
+        this.setNodeDirty();// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
     getPositionInPixels:function () {
         return this._m_tPositionInPixels;
@@ -343,11 +331,10 @@ cc.Node = cc.Class.extend({
     setAnchorPoint:function (point) {
         if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
             this._m_tAnchorPoint = point;
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
-            this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                this._m_bIsTransformGLDirty = true;
-            }
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+
+            this.setNodeDirty();
         }
     },
     /// anchorPointInPixels getter
@@ -364,10 +351,7 @@ cc.Node = cc.Class.extend({
                 this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
-            this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                this._m_bIsTransformGLDirty = true;
-            } // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
+            this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
         }
     },
     /** The untransformed size of the node.
@@ -390,10 +374,7 @@ cc.Node = cc.Class.extend({
             }
 
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
-            this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                this._m_bIsTransformGLDirty = true;
-            }
+            this.setNodeDirty();
         }
     },
     getContentSizeInPixels:function () {
@@ -418,10 +399,7 @@ cc.Node = cc.Class.extend({
     /// isRelativeAnchorPoint setter
     setIsRelativeAnchorPoint:function (newValue) {
         this._m_bIsRelativeAnchorPoint = newValue;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
+        this.setNodeDirty();
     },
     /// tag getter
     getTag:function () {
@@ -443,8 +421,7 @@ cc.Node = cc.Class.extend({
      @since v0.8.2
      */
     boundingBox:function () {
-        var ret = new cc.Rect();
-        ret = this.boundingBoxInPixels();
+        var ret = this.boundingBoxInPixels();
         return cc.RECT_PIXELS_TO_POINTS(ret);
     },
     /** returns a "local" axis aligned bounding box of the node in pixels.
@@ -454,8 +431,7 @@ cc.Node = cc.Class.extend({
      @since v0.99.5
      */
     boundingBoxInPixels:function () {
-        var rect = new cc.Rect();
-        rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
+        var rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
     /** Stops all running actions and schedulers
@@ -470,8 +446,7 @@ cc.Node = cc.Class.extend({
         this._arrayMakeObjectsPerformSelector(this._m_pChildren, "cleanup");
     },
     description:function () {
-        var ret = "<cc.Node | Tag =" + this._m_nTag + ">";
-        return ret;
+        return "<cc.Node | Tag =" + this._m_nTag + ">";
     },
     _childrenAlloc:function () {
         this._m_pChildren = [];
@@ -490,7 +465,6 @@ cc.Node = cc.Class.extend({
                     return pNode;
             }
         }
-
         return null;
     },
     // composition: ADD
@@ -635,11 +609,10 @@ cc.Node = cc.Class.extend({
         var a = this._m_pChildren[this._m_pChildren.length - 1];
         if (!a || a.getZOrder() <= z) {
             this._m_pChildren.push(child);
-        }
-        else {
+        } else {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
-                if (pNode && (pNode._m_nZOrder > z )) {
+                if (pNode && (pNode.getZOrder() > z )) {
                     this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren, child, i);
                     break;
                 }
@@ -670,7 +643,7 @@ cc.Node = cc.Class.extend({
 
      But if you enable any other GL state, you should disable it after drawing your node.
      */
-    draw:function () {
+    draw:function (ctx) {
         //CCAssert(0);
         // override me
         // Only use- this function to draw your staff.
@@ -678,40 +651,40 @@ cc.Node = cc.Class.extend({
     },
 
     /** recursive method that visit its children and draw them */
-    visit:function () {
+    visit:function (ctx) {
         // quick return if not visible
         if (!this._m_bIsVisible) {
             return;
         }
-
-        cc.saveContext();
+        var context = ctx || cc.renderContext;
+        context.save();
 
         if (this._m_pGrid && this._m_pGrid.isActive()) {
             this._m_pGrid.beforeDraw();
             this.transformAncestors();
         }
 
-        this.transform();
+        this.transform(context);
 
-        if (this._m_pChildren != null) {
+        if (this._m_pChildren) {
             // draw children zOrder < 0
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && pNode._m_nZOrder < 0) {
-                    pNode.visit();
+                    pNode.visit(context);
                 }
             }
         }
 
         // self draw
-        this.draw();
+        this.draw(context);
 
         // draw children zOrder >= 0
-        if (this._m_pChildren != null) {
+        if (this._m_pChildren) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
                 if (pNode && pNode._m_nZOrder >= 0) {
-                    pNode.visit();
+                    pNode.visit(context);
                 }
             }
         }
@@ -719,7 +692,7 @@ cc.Node = cc.Class.extend({
         if (this._m_pGrid && this._m_pGrid.isActive()) {
             this._m_pGrid.afterDraw(this);
         }
-        cc.restoreContext();
+        context.restore();
     },
     /** performs OpenGL view-matrix transformation of it's ancestors.
      Generally the ancestors are already transformed, but in certain cases (eg: attaching a FBO)
@@ -735,35 +708,36 @@ cc.Node = cc.Class.extend({
 
     // transformations
     /** performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes. */
-    transform:function () {
+    transform:function (ctx) {
+        var context = ctx || cc.renderContext;
         // transformations
         if (cc.renderContextType == cc.kCanvas) {
-            //
-            //var ct = this.nodeToParentTransform();
             if (this._m_bIsRelativeAnchorPoint) {
-                var pAp = cc.PointZero();
-                if (this.getParent()) {
-                    pAp = this.getParent().getAnchorPointInPixels();
+                var pAp = new cc.Point(0, 0);
+                if (this._m_pParent) {
+                    pAp = this._m_pParent._m_tAnchorPointInPixels;
                 }
-                cc.renderContext.translate(this.getPositionX() - pAp.x, -(this.getPositionY() - pAp.y ));
-                cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
-                    this.getScaleY(), 0, 0);
-
-                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+                context.translate(0 | (this._m_tPosition.x - pAp.x), -(0 | (this._m_tPosition.y - pAp.y)));
             } else {
-                var pAp = cc.PointZero();
-                if (this.getParent()) {
-                    pAp = this.getParent().getAnchorPointInPixels();
+                var pAp = new cc.Point(0, 0);
+                if (this._m_pParent) {
+                    pAp = this._m_pParent._m_tAnchorPointInPixels;
                 }
-                var lAp = this.getAnchorPointInPixels();
-                if (!lAp) {
-                    lAp = cc.PointZero();
-                }
-                cc.renderContext.translate(this.getPositionX() - pAp.x + lAp.x, -(this.getPositionY() - pAp.y + lAp.y));
-                cc.renderContext.transform(this.getScaleX(), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(this.getSkewX())),
-                    this.getScaleY(), 0, 0);
+                var lAp = this._m_tAnchorPointInPixels;
+                context.translate(0 | ( this._m_tPosition.x - pAp.x + lAp.x), -(0 | (this._m_tPosition.y - pAp.y + lAp.y)));
+            }
 
-                cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(this.getRotation()));
+            if ((this._m_fScaleX != 1) || (this._m_fScaleY != 1)) {
+                context.scale(this._m_fScaleX, this._m_fScaleY);
+            }
+            if ((this._m_fSkewX != 0) || (this._m_fSkewY != 0)) {
+                context.transform(1,
+                    -Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)),
+                    -Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)),
+                    1, 0, 0);
+            }
+            if (this._m_fRotation != 0) {
+                context.rotate(cc.DEGREES_TO_RADIANS(this._m_fRotation));
             }
         } else {
             //Todo WebGL implement need fixed

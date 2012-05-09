@@ -58,9 +58,12 @@ cc.MenuItem = cc.Node.extend({
         this._m_bIsEnabled = enable;
     },
     initWithTarget:function (rec, selector) {
-        var pRet = new cc.MenuItem();
-        pRet.initWithTarget(rec, selector);
-        return pRet;
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this._m_pListener = rec;
+        this._m_pfnSelector = selector;
+        this._m_bIsEnabled = true;
+        this._m_bIsSelected = false;
+        return true;
     },
     rect:function () {
         return cc.RectMake(this._m_tPosition.x - this._m_tContentSize.width * this._m_tAnchorPoint.x,
@@ -108,7 +111,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
     setLabel:function (label) {
         if (label) {
             this.addChild(label);
-            label.setAnchorPoint(ccp(0, 0));
+            label.setAnchorPoint(cc.ccp(0, 0));
             this.setContentSize(label.getContentSize());
         }
 
@@ -147,7 +150,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
     getIsOpacityModifyRGB:function () {
     },
     initWithLabel:function (label, target, selector) {
-        this._super(target, selector);
+        this.initWithTarget(target, selector);
         this._m_fOriginalScale = 1.0;
         this._m_tColorBackup = cc.WHITE();
         this._m_tDisabledColor = cc.ccc3(126, 126, 126);
@@ -188,14 +191,15 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         }
     }
 });
-/*
- cc.MenuItemLabel = function(label, target, selector)
- {
- var pRet = new cc.MenuItemLabel();
- pRet.initWithLabel(label, target, selector);
- return pRet;
- };
- */
+cc.MenuItemLabel.itemWithLabel = function (label, target, selector) {
+    var pRet = new cc.MenuItemLabel();
+     if (arguments.length == 3) {
+         pRet.initWithLabel(label, target, selector);
+    } else {
+         pRet.initWithLabel(label);
+     }
+    return pRet;
+};
 
 /** @brief A CCMenuItemAtlasFont
  Helper class that creates a MenuItemLabel class with a LabelAtlas
@@ -340,9 +344,10 @@ cc.MenuItemSprite = cc.MenuItem.extend({
 
         this._m_pDisabledImage = DisabledImage;
     },
+
     initFromNormalSprite:function (normalSprite, selectedSprite, disabledSprite, target, selector) {
         cc.Assert(normalSprite != null, "");
-        cc.MenuItem.initWithTarget(target, selector);
+        this.initWithTarget(target, selector);
         this.setNormalImage(normalSprite);
         this.setSelectedImage(selectedSprite);
         this.setDisabledImage(disabledSprite);

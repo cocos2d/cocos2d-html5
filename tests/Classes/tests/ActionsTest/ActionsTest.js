@@ -44,6 +44,7 @@ var actionTests = [
     "ActionSequence", //OK
     "ActionSequence2", //OK
     "ActionSpawn", //OK
+    "ActionReverse",
     "ActionDelayTime", //OK
     "ActionRepeat", //OK
     "ActionRepeatForever", //OK
@@ -54,8 +55,8 @@ var actionTests = [
     "ActionReverseSequence", //OK
     "ActionReverseSequence2", //OK, Bug in Cocos2d-X implementation of FiniteTimeAction.reverse()
     //"ActionOrbit",//Not possible in canvas, requires sprite camera
-    "ActionFollow"//Buggy
-    //"ActionAnimate"//Require Texture2d Implementation
+    "ActionFollow",//Buggy
+    "ActionAnimate"//Require Texture2d Implementation
 ];
 var s_nActionIdx = -1;
 function NextAction() {
@@ -204,6 +205,7 @@ var ActionManual = ActionsDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         this._m_tamara.setScaleX(2.5);
+        //window.tam = this._m_tamara;
         this._m_tamara.setScaleY(-1.0);
         this._m_tamara.setPosition(cc.PointMake(100, 70));
         this._m_tamara.setOpacity(128);

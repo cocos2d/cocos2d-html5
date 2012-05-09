@@ -102,11 +102,13 @@ cc.loadjs('cocoa/CCAffineTransform.js');//5
 cc.loadjs('support/CCPointExtension.js');//12
 cc.loadjs('base_nodes/CCNode.js');//6
 cc.loadjs('base_nodes/CCdomNode.js');
+cc.loadjs('base_nodes/CCAtlasNode.js');//6
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
 cc.loadjs('textures/CCTextureAtlas.js');//12
+cc.loadjs('misc_nodes/CCRenderTexture.js');//11
 cc.loadjs('actions/CCAction.js');//7
 cc.loadjs('platform/CCFileUtils.js');//7
 cc.loadjs('effects/CCGrid.js');//7
@@ -130,6 +132,7 @@ cc.loadjs('sprite_nodes/CCAnimation.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
 cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
+cc.loadjs('label_nodes/CCLabelAtlas.js');//11
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('particle_nodes/CCParticleSystem.js');//11
 cc.loadjs('particle_nodes/CCParticleSystemQuad.js');//11
@@ -141,7 +144,6 @@ cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
 cc.loadjs('misc_nodes/CCProgressTimer.js');//11
-cc.loadjs('misc_nodes/CCRenderTexture.js');//11
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCCamera.js');//13
 cc.loadjs('CCScheduler.js');//14
@@ -157,6 +159,7 @@ cc.loadjs('tileMap_parallax_nodes/CCTMXTiledMap.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXXMLParser.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXLayer.js');
+cc.loadjs('tileMap_parallax_nodes/CCParallaxNode.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('../tests/testbasic.js');
 cc.loadjs('../tests/testResource.js');
@@ -179,3 +182,14 @@ cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
 cc.loadjs('../tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
 cc.loadjs('../tests/Classes/tests/CocosNodeTest/CocosNodeTest.js');
 cc.loadjs('../tests/Classes/tests/RotateWorldTest/RotateWorldTest.js');
+cc.loadjs('../tests/Classes/tests/IntervelTest/IntervelTest.js');
+cc.loadjs('../tests/Classes/tests/ActionManagerTest/ActionManagerTest.js');
+cc.loadjs('../tests/Classes/tests/EaseActionsTest/EaseActionsTest.js');
+cc.loadjs('../tests/Classes/tests/ParallaxTest/ParallaxTest.js');
+cc.loadjs('../tests/Classes/tests/DirectorTest/DirectorTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceSpriteTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceParticleTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTextureTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');

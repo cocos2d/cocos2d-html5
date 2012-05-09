@@ -28,7 +28,7 @@ var cc = cc = cc || {};
 
 /*cc.LayerRGBAColor = function(color) {
 
-}*/
+ }*/
 //
 // cc.Layer
 //
@@ -51,7 +51,7 @@ cc.Layer = cc.Node.extend({
 
     init:function () {
         var pDirector = cc.Director.sharedDirector();
-        if (!pDirector ) {
+        if (!pDirector) {
             return false;
         }
         this.setContentSize(pDirector.getWinSize());
@@ -327,7 +327,7 @@ cc.LayerColor = cc.Layer.extend({
     _updateColor:function () {
         this._m_pSquareColors = new Array();
         for (var i = 0; i < 4; i++) {
-            this._m_pSquareColors[i] = new cc.Color4B(this._m_tColor.r,this._m_tColor.g,this._m_tColor.b,this._m_cOpacity);
+            this._m_pSquareColors[i] = new cc.Color4B(this._m_tColor.r, this._m_tColor.g, this._m_tColor.b, this._m_cOpacity);
         }
     },
     setIsOpacityModifyRGB:function (bValue) {
@@ -336,27 +336,28 @@ cc.LayerColor = cc.Layer.extend({
         return false;
     },
 
-    draw:function () {
+    draw:function (ctx) {
         //TODO
         //TODO need to fix child position in relation to parent
+        var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.kCanvas) {
-            cc.renderContext.globalAlpha = this.getOpacity() / 255;
+            context.globalAlpha = this.getOpacity() / 255;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
-            var tGradient  =  cc.renderContext.createLinearGradient(-this.getAnchorPointInPixels().x,this.getAnchorPointInPixels().y,this.getAnchorPointInPixels().x,-this.getAnchorPointInPixels().y)
-            tGradient.addColorStop(0,"rgba(" + this._m_pSquareColors[0].r + "," + this._m_pSquareColors[0].g + "," + this._m_pSquareColors[0].b + "," + this._m_pSquareColors[0].a +")");
-            tGradient.addColorStop(1,"rgba(" + this._m_pSquareColors[3].r + "," + this._m_pSquareColors[3].g + "," + this._m_pSquareColors[3].b + "," + this._m_pSquareColors[0].a +")");
+            var tGradient = context.createLinearGradient(-this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, this.getAnchorPointInPixels().x, -this.getAnchorPointInPixels().y)
+            tGradient.addColorStop(0, "rgba(" + this._m_pSquareColors[0].r + "," + this._m_pSquareColors[0].g + "," + this._m_pSquareColors[0].b + "," + this._m_pSquareColors[0].a + ")");
+            tGradient.addColorStop(1, "rgba(" + this._m_pSquareColors[3].r + "," + this._m_pSquareColors[3].g + "," + this._m_pSquareColors[3].b + "," + this._m_pSquareColors[0].a + ")");
 
             /*var newBlend = false;
-            if (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) {
-                newBlend = true;
-                //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
-            }
-            if (newBlend) {
-                tGradient = cc.LayerRGBAColor(new cc.Color3B(231,21,231))
-            }*/
-            cc.renderContext.fillStyle = tGradient;
-            cc.renderContext.fillRect(0 - this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, tWidth, -tHeight);
+             if (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) {
+             newBlend = true;
+             //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
+             }
+             if (newBlend) {
+             tGradient = cc.LayerRGBAColor(new cc.Color3B(231,21,231))
+             }*/
+            context.fillStyle = tGradient;
+            context.fillRect(0 - this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, tWidth, -tHeight);
             return;
         }
         this._super();
@@ -450,7 +451,7 @@ cc.LayerGradient = cc.LayerColor.extend({
     _m_cEndOpacity:null,
     _m_AlongVector:null,
     _m_bCompressedInterpolation:null,
-    ctor:function(){
+    ctor:function () {
         this._super();
     },
     getStartColor:function () {
@@ -497,8 +498,8 @@ cc.LayerGradient = cc.LayerColor.extend({
     initWithColor:function (start, end, v) {
         var argnum = arguments.length;
         if (argnum == 2) {
-                /** Initializes the CCLayer with a gradient between start and end. */
-                v = cc.ccp(0, -1);
+            /** Initializes the CCLayer with a gradient between start and end. */
+            v = cc.ccp(0, -1);
         }
         /** Initializes the CCLayer with a gradient between start and end in the direction of v. */
         this._m_startColor.r = start.r;
@@ -538,7 +539,7 @@ cc.LayerGradient = cc.LayerColor.extend({
 
         var S = new cc.Color4B(this._m_startColor.r, this._m_startColor.g, this._m_startColor.b, this._m_cStartOpacity * opacityf);
 
-        var E =  new cc.Color4B(this._m_endColor.r, this._m_endColor.g, this._m_endColor.b, this._m_cEndOpacity * opacityf);
+        var E = new cc.Color4B(this._m_endColor.r, this._m_endColor.g, this._m_endColor.b, this._m_cEndOpacity * opacityf);
 
         // (-1, -1)
         this._m_pSquareColors[0].r = parseInt((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
@@ -610,7 +611,7 @@ cc.LayerGradient.node = function () {
 cc.LayerMultiplex = cc.Layer.extend({
     m_nEnabledLayer:0,
     m_pLayers:null,
-    ctor:function(){
+    ctor:function () {
         this._super();
     },
     initWithLayer:function (layer) {
