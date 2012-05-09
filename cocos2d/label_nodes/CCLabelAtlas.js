@@ -59,6 +59,7 @@ cc.LabelAtlas = cc.AtlasNode.extend({
         var s = this._m_sString;
 
         var texture = this._m_pTextureAtlas.getTexture();
+        console.log(texture)
         var textureWide = texture.getPixelsWide();
         var textureHigh = texture.getPixelsHigh();
 
@@ -105,7 +106,7 @@ cc.LabelAtlas = cc.AtlasNode.extend({
         if (len > this._m_pTextureAtlas.getTotalQuads()) {
             this._m_pTextureAtlas.resizeCapacity(len);
         }
-        this._m_sString.clear();
+        //this._m_sString.clear();
         this._m_sString = label;
         this.updateAtlasValues();
 
