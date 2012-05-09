@@ -78,18 +78,25 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
         evt.preventDefault();
         return false;
     });
-    that._image.addEventListener("click", callback);
+    that._image.addEventListener("click", _domMenuCallback);
     that._image.addEventListener("touchstart", function(){
         this.src = selected;
-        callback();
+        _domMenuCallback();
     });
+
     that._image.addEventListener("touchend", function(){
         this.src = normal;
     });
+    function _domMenuCallback(){
+        if (target && (typeof(callback) == "string")) {
+            target[callback]();
+        } else if (target && (typeof(callback) == "function")) {
+            callback.call(target);
+        }
+    }
     //attach callback to onclick
     that.style.cursor = (callback) ? "pointer" : "default";
     return that;
-
 };
 cc.MenuItemSprite = cc.MenuItemImage.extend({
 
@@ -210,11 +217,23 @@ cc.MenuItemFont = cc.MenuItem.extend({
         this.style.bottom = "50%";
         this.style.textAlign = "center";
         if(selector != null){
-            this._domElement.addEventListener("click",selector);
-            this._domElement.addEventListener("touchstart",selector);
+            //this._domElement.addEventListener("click",selector);
+            this._domElement.addEventListener("click",function(e){
+                _domMenuCallback(event);
+            });
+            this._domElement.addEventListener("touchstart",function(e){
+                _domMenuCallback(event);
+            });
             this.style.cursor = "pointer";
         }
 
+         function _domMenuCallback(e){
+            if (target && (typeof(selector) == "string")) {
+                target[selector](e);
+            } else if (target && (typeof(selector) == "function")) {
+                selector.call(target,e);
+            }
+        }
     },
     setFontSizeObj:function(s){
         this.style.fontSize = s;

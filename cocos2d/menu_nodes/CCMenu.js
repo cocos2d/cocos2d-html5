@@ -393,7 +393,7 @@ cc.Menu.node = function () {
 };
 /** creates a CCMenu with it's items */
 cc.Menu.menuWithItems = function (/*Multiple Arguments*/) {
-    pRet = new cc.Menu();
+    var pRet = new cc.Menu();
     pRet.initWithItems(arguments);
     return pRet;
 };

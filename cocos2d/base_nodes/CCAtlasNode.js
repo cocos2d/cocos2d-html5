@@ -53,7 +53,7 @@ cc.AtlasNode = cc.Node.extend({
 
     // protocol variables
     _m_bIsOpacityModifyRGB:false,
-    _m_tBlendFunc:null,
+    _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
     _m_cOpacity:0,
     _m_tColor:null,
 
@@ -72,7 +72,7 @@ cc.AtlasNode = cc.Node.extend({
 
     /** initializes an CCAtlasNode  with an Atlas file the width and height of each item and the quantity of items to render*/
     initWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
-        cc.Assert(tile != NULL, "title should not be null");
+        cc.Assert(tile != null, "title should not be null");
         this._m_uItemWidth = tileWidth * cc.CONTENT_SCALE_FACTOR();
         this._m_uItemHeight = tileHeight * cc.CONTENT_SCALE_FACTOR();
 
@@ -231,23 +231,23 @@ cc.AtlasNode = cc.Node.extend({
 
 
     _calculateMaxItems:function () {
-        var s = this._m_pTextureAtlas.getTexture().getContentSizeInPixels();
+        /*var s = this._m_pTextureAtlas.getTexture().getContentSizeInPixels();
         this._m_uItemsPerColumn = s.height / this._m_uItemHeight;
-        this._m_uItemsPerRow = s.width / this._m_uItemWidth;
+        this._m_uItemsPerRow = s.width / this._m_uItemWidth;*/
 
 
     },
 
     _updateBlendFunc:function () {
-        if (!this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha()) {
+       /* if (!this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha()) {
             this._m_tBlendFunc.src = cc.GL_SRC_ALPHA;
             this._m_tBlendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
-        }
+        }*/
 
     },
 
     _updateOpacityModifyRGB:function () {
-        this._m_bIsOpacityModifyRGB = this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha();
+        //this._m_bIsOpacityModifyRGB = this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha();
 
     }
 
