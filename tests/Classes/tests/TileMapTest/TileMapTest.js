@@ -29,32 +29,31 @@ cc.SID_REPAINTWITHGID = 101;
 cc.SID_REMOVETILES = 102;
 
 var TileMapTests = [
-    /*//"TileMapTest",
-     //"TileMapEditTest",*/
-    "TMXOrthoTest", //ok
+    //"TileMapTest", //not support tga format
+     //"TileMapEditTest", //not support tga format
+    "TMXOrthoTest",
     "TMXOrthoTest2", //camera bug
-    "TMXOrthoTest3", //ok
-    "TMXOrthoTest4", //ok
-    "TMXReadWriteTest", //bug
-    "TMXHexTest", //ok
-    "TMXIsoTest", //ok
-    "TMXIsoTest1", //ok
-    "TMXIsoTest2", //ok
+    "TMXOrthoTest3",
+    "TMXOrthoTest4",
+    "TMXReadWriteTest",
+    "TMXHexTest",
+    "TMXIsoTest",
+    "TMXIsoTest1",
+    "TMXIsoTest2",
     "TMXUncompressedTest",
-    "TMXTilesetTest", //bug sometimes
-    "TMXOrthoObjectsTest", //bug
-    "TMXIsoObjectsTest", //bug
-    "TMXResizeTest", //ok
-    "TMXIsoZorder", //ok
-    "TMXOrthoZorder", //ok
-    "TMXIsoVertexZ", //VertexZ bug
-    "TMXOrthoVertexZ", //VertexZ bug
-    "TMXIsoMoveLayer", //ok
-    "TMXOrthoMoveLayer", //ok
-    "TMXBug987", //ok
-    "TMXBug787", //ok
-    "TMXGIDObjectsTest", //ok
-    "TileMapTestScene" //zlib bug
+    "TMXTilesetTest",
+    "TMXOrthoObjectsTest",
+    "TMXIsoObjectsTest",
+    "TMXResizeTest",
+    "TMXIsoZorder",
+    "TMXOrthoZorder",
+    //"TMXIsoVertexZ", //VertexZ bug
+    //"TMXOrthoVertexZ", //VertexZ bug
+    "TMXIsoMoveLayer",
+    "TMXOrthoMoveLayer",
+    "TMXBug987",
+    "TMXBug787"
+    //"TMXGIDObjectsTest", //zlib bug
 ];
 var s_nTileMapIdx = -1;
 function nextTileMapAction() {
@@ -448,36 +447,7 @@ var TMXReadWriteTest = TileDemo.extend({
         var scaleback = cc.ScaleTo.actionWithDuration(1, 1);
         var finish = cc.CallFunc.actionWithTarget(this, this.removeSprite);
 
-        /*
-        var move1 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
-        var rotate1 = cc.RotateBy.actionWithDuration(2, 360);
-        var scale1 = cc.ScaleBy.actionWithDuration(2, 5);
-        var opacity1 = cc.FadeOut.actionWithDuration(2);
-        var fadein1 = cc.FadeIn.actionWithDuration(2);
-        var scaleback1 = cc.ScaleTo.actionWithDuration(1, 1);
-        var finish1 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
-
-        var move2 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
-        var rotate2 = cc.RotateBy.actionWithDuration(2, 360);
-        var scale2 = cc.ScaleBy.actionWithDuration(2, 5);
-        var opacity2 = cc.FadeOut.actionWithDuration(2);
-        var fadein2 = cc.FadeIn.actionWithDuration(2);
-        var scaleback2 = cc.ScaleTo.actionWithDuration(1, 1);
-        var finish2 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
-
-        var move3 = cc.MoveBy.actionWithDuration(0.5, cc.ccp(0, 160));
-        var rotate3 = cc.RotateBy.actionWithDuration(2, 360);
-        var scale3 = cc.ScaleBy.actionWithDuration(2, 5);
-        var opacity3 = cc.FadeOut.actionWithDuration(2);
-        var fadein3 = cc.FadeIn.actionWithDuration(2);
-        var scaleback3 = cc.ScaleTo.actionWithDuration(1, 1);
-        var finish3 = cc.CallFunc.actionWithTarget(this, this.removeSprite);
-        */
-
         var seq0 = cc.Sequence.actions(move, rotate, scale, opacity, fadein, scaleback, finish, null);
-        //var seq1 = cc.Sequence.actions(move1, rotate1, scale1, opacity1, fadein1, scaleback1, finish1, null);
-        //var seq2 = cc.Sequence.actions(move2, rotate2, scale2, opacity2, fadein2, scaleback2, finish2, null);
-        //var seq3 = cc.Sequence.actions(move3, rotate3, scale3, opacity3, fadein3, scaleback3, finish3, null);
 
         tile0.runAction(seq0);
         tile1.runAction(seq0.copy());
