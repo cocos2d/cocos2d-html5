@@ -353,7 +353,8 @@ cc.ParticleGalaxy.node = function () {
 //! @brief A flower particle system
 cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(250);
+        //return this.initWithTotalParticles(250);
+        return this.initWithTotalParticles(150);
     },
     //
     // ParticleFlower

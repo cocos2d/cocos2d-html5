@@ -238,7 +238,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         cc.Assert(this._m_pTiles && this._m_pAtlasIndexArray, "TMXLayer: the tiles map has been released");
         cc.Assert(gid !== 0 || !(gid >= this._m_pTileSet.m_uFirstGid), "TMXLayer: invalid gid:" + gid);
 
-        this._m_bIsTransformDirty = true;
+        this._setNodeDirtyForCache();
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
         var currentGID = this.tileGIDAt(pos);
 
@@ -275,7 +276,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         cc.Assert(pos.x < this._m_tLayerSize.width && pos.y < this._m_tLayerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._m_pTiles && this._m_pAtlasIndexArray, "TMXLayer: the tiles map has been released");
 
-        this._m_bIsTransformDirty = true;
+        this._setNodeDirtyForCache();
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
         var gid = this.tileGIDAt(pos);
 
@@ -352,7 +354,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         // Parse cocos2d properties
         this._parseInternalProperties();
-        this._m_bIsTransformDirty = true;
+        this._setNodeDirtyForCache();
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         for (var y = 0; y < this._m_tLayerSize.height; y++) {
             for (var x = 0; x < this._m_tLayerSize.width; x++) {
                 var pos = x + this._m_tLayerSize.width * y;
@@ -393,7 +397,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         cc.Assert(cc.ArrayContainsObject(this._m_pChildren, sprite), "Tile does not belong to TMXLayer");
 
-        this._m_bIsTransformDirty = true;
+        this._setNodeDirtyForCache();
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         var atlasIndex = sprite.getAtlasIndex();
         var zz = this._m_pAtlasIndexArray[atlasIndex];
         this._m_pTiles[zz] = 0;
@@ -466,7 +471,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         var rect = this._m_pTileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor,
             rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
-        this._m_bIsTransformDirty = true;
+        this._setNodeDirtyForCache();
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         var z = pos.x + pos.y * this._m_tLayerSize.width;
         this._m_pReusedTile = new cc.Sprite();
         this._m_pReusedTile.setParent(this);
@@ -494,7 +500,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
 
         var z = parseInt(pos.x + pos.y * this._m_tLayerSize.width);
-        this._m_bIsTransformDirty = true;
+        this._setNodeDirtyForCache();
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this._m_pReusedTile = new cc.Sprite();
         this._m_pReusedTile.setParent(this);
         this._m_pReusedTile.initWithBatchNode(this, rect);
@@ -531,7 +538,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         rect = cc.RectMake(rect.origin.x / this._m_fContentScaleFactor, rect.origin.y / this._m_fContentScaleFactor, rect.size.width / this._m_fContentScaleFactor, rect.size.height / this._m_fContentScaleFactor);
         var z = pos.x + pos.y * this._m_tLayerSize.width;
 
-        this._m_bIsTransformDirty = true;
+        this._setNodeDirtyForCache();
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this._m_pReusedTile = new cc.Sprite();
         this._m_pReusedTile.initWithBatchNode(this, rect);
 
