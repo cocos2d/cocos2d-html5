@@ -59,7 +59,7 @@ cc.SpriteBatchNode = cc.Node.extend({
         if (fileImage) {
             this.initWithFile(fileImage, cc.defaultCapacity);
         }
-        this.setContentSize(new cc.Size(cc.canvas.width,cc.canvas.height));
+        this.setContentSize(new cc.Size(cc.canvas.width, cc.canvas.height));
         this._renderTexture = cc.RenderTexture.renderTextureWithWidthAndHeight(cc.canvas.width, cc.canvas.height);
     },
 
@@ -164,20 +164,25 @@ cc.SpriteBatchNode = cc.Node.extend({
     },
 
     setNodeDirty:function () {
+        this._setNodeDirtyForCache();
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
     },
 
-    setContentSizeInPixels:function(size){
-        if(!size){
-            return ;
+    _setNodeDirtyForCache:function () {
+        this._isCacheDirty = true;
+    },
+
+    setContentSizeInPixels:function (size) {
+        if (!size) {
+            return;
         }
 
         //if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
-            this._super(size);
-            this._renderTexture.setContentSize(size);
+        this._super(size);
+        this._renderTexture.setContentSize(size);
         //}
     },
 
@@ -279,7 +284,7 @@ cc.SpriteBatchNode = cc.Node.extend({
         // remove children recursively
         var pChildren = pobSprite.getChildren();
         if (pChildren && pChildren.length > 0) {
-            for (var i=0; i< pChildren.length; i++) {
+            for (var i = 0; i < pChildren.length; i++) {
                 if (pChildren[i]) {
                     this.removeSpriteFromAtlas(pChildren[i]);
                 }
@@ -413,12 +418,12 @@ cc.SpriteBatchNode = cc.Node.extend({
             }
             this.transform();
 
-            if(this._isUseCache){
-                if (this._m_bIsTransformDirty) {
+            if (this._isUseCache) {
+                if (this._isCacheDirty) {
                     //add dirty region
                     this._renderTexture.clear();
-                    this._renderTexture.context.translate(this._m_tAnchorPointInPixels.x,-this._m_tAnchorPointInPixels.y);
-                    if (this._m_pChildren != null) {
+                    this._renderTexture.context.translate(this._m_tAnchorPointInPixels.x, -this._m_tAnchorPointInPixels.y);
+                    if (this._m_pChildren) {
                         // draw children zOrder < 0
                         for (var i = 0; i < this._m_pChildren.length; i++) {
                             var pNode = this._m_pChildren[i];
@@ -428,7 +433,7 @@ cc.SpriteBatchNode = cc.Node.extend({
                         }
                     }
                     // draw children zOrder >= 0
-                    if (this._m_pChildren != null) {
+                    if (this._m_pChildren) {
                         for (i = 0; i < this._m_pChildren.length; i++) {
                             pNode = this._m_pChildren[i];
                             if (pNode && pNode._m_nZOrder >= 0) {
@@ -436,12 +441,11 @@ cc.SpriteBatchNode = cc.Node.extend({
                             }
                         }
                     }
-                    this._m_bIsTransformDirty = false;
+                    this._isCacheDirty = false;
                 }
-
                 // draw RenderTexture
                 this.draw();
-            }else{
+            } else {
                 if (this._m_pChildren) {
                     // draw children zOrder < 0
                     for (var i = 0; i < this._m_pChildren.length; i++) {
@@ -503,6 +507,9 @@ cc.SpriteBatchNode = cc.Node.extend({
                 throw "Argument must be non-nil ";
                 break;
         }
+
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
     },
 
     // override reorderChild
@@ -514,9 +521,16 @@ cc.SpriteBatchNode = cc.Node.extend({
             return;
         }
 
+        //save dirty region when before change
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         // xxx: instead of removing/adding, it is more efficient ot reorder manually
         this.removeChild(child, false);
         this.addChild(child, zOrder);
+
+        //save dirty region when after changed
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
     },
 
     // override remove child
@@ -558,42 +572,42 @@ cc.SpriteBatchNode = cc.Node.extend({
             var pos = new cc.Point(0 | ( -this._m_tAnchorPointInPixels.x), 0 | ( -this._m_tAnchorPointInPixels.y));
             if (this._renderTexture) {
                 //direct draw image by canvas drawImage
-                context.drawImage(this._renderTexture.getCanvas(), pos.x , -(pos.y + this._renderTexture.getCanvas().height));
+                context.drawImage(this._renderTexture.getCanvas(), pos.x, -(pos.y + this._renderTexture.getCanvas().height));
             }
 
             /*
-            var pAp = cc.PointZero();
-            if (this.getParent()) {
-                pAp = this.getParent().getAnchorPointInPixels();
-            }
-            for (var index = 0; index < this._m_pChildren.length; index++) {
-                var sp = this._m_pChildren[index];
-                if (sp.getIsVisible()) {
-                    cc.saveContext();
-                    cc.renderContext.translate(sp.getPositionX() - pAp.x, -(sp.getPositionY() - pAp.y ));
+             var pAp = cc.PointZero();
+             if (this.getParent()) {
+             pAp = this.getParent().getAnchorPointInPixels();
+             }
+             for (var index = 0; index < this._m_pChildren.length; index++) {
+             var sp = this._m_pChildren[index];
+             if (sp.getIsVisible()) {
+             cc.saveContext();
+             cc.renderContext.translate(sp.getPositionX() - pAp.x, -(sp.getPositionY() - pAp.y ));
 
-                    cc.renderContext.scale(sp.getScaleX(), sp.getScaleY());
-                    cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewX())), 1.0, 0, 0);
+             cc.renderContext.scale(sp.getScaleX(), sp.getScaleY());
+             cc.renderContext.transform(1.0, -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewY())), -Math.tan(cc.DEGREES_TO_RADIANS(sp.getSkewX())), 1.0, 0, 0);
 
-                    cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(sp.getRotation()));
-                    cc.renderContext.globalAlpha = sp.getOpacity() / 255;
-                    if (sp._m_bFlipX) {
-                        cc.renderContext.scale(-1, 1);
-                    }
-                    if (sp._m_bFlipY) {
-                        cc.renderContext.scale(1, -1);
-                    }
+             cc.renderContext.rotate(cc.DEGREES_TO_RADIANS(sp.getRotation()));
+             cc.renderContext.globalAlpha = sp.getOpacity() / 255;
+             if (sp._m_bFlipX) {
+             cc.renderContext.scale(-1, 1);
+             }
+             if (sp._m_bFlipY) {
+             cc.renderContext.scale(1, -1);
+             }
 
-                    if ((sp.getContentSize().width == 0) && (sp.getContentSize().height == 0)) {
-                        cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x, 0 - sp.getAnchorPointInPixels().y));
-                    } else {
-                        cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
-                            , cc.ccp(0 - sp.getAnchorPointInPixels().x, 0 - sp.getAnchorPointInPixels().y), sp.getContentSize());
-                    }
-                    cc.restoreContext();
-                }
-            }
-            */
+             if ((sp.getContentSize().width == 0) && (sp.getContentSize().height == 0)) {
+             cc.drawingUtil.drawImage(sp.getTexture(), cc.ccp(0 - sp.getAnchorPointInPixels().x, 0 - sp.getAnchorPointInPixels().y));
+             } else {
+             cc.drawingUtil.drawImage(sp.getTexture(), sp.getTextureRect().origin, sp.getTextureRect().size
+             , cc.ccp(0 - sp.getAnchorPointInPixels().x, 0 - sp.getAnchorPointInPixels().y), sp.getContentSize());
+             }
+             cc.restoreContext();
+             }
+             }
+             */
         } else {
             // Optimization: Fast Dispatch
             if (this._m_pobTextureAtlas.getTotalQuads() == 0) {

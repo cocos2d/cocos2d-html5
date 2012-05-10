@@ -30,6 +30,12 @@
 
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
+    ctor:function () {
+        this._super();
+        this.setContentSize(new cc.Size(60, 60));
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+    },
+
     draw:function () {
         cc.renderContext.fillStyle = "rgba(255,255,255,1)";
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
@@ -39,6 +45,7 @@ var CircleSprite = cc.Sprite.extend({
         cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
     },
     myUpdate:function (dt) {
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this._radians -= 6;
     }
 });
@@ -133,9 +140,9 @@ var Helloworld = cc.Layer.extend({
 
         var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
         var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
-        var action = cc.TintBy.actionWithDuration(4, 0, -255, -255);
+        var action = cc.TintBy.actionWithDuration(4, 0, 0, -255);
 
-        this.pSprite.runAction(cc.Sequence.actions(rotateToA,action, scaleToA));
+        this.pSprite.runAction(cc.Sequence.actions(rotateToA, action, scaleToA));
 
 
         this.circle = new CircleSprite();

@@ -39,6 +39,10 @@ cc.LabelTTF = cc.Sprite.extend({
     _m_fFontSize:0.0,
     _m_pString:null,
 
+    ctor:function () {
+        this._super();
+    },
+
     description:function () {
         return "<CCLabelTTF | FontName =" + this._m_pFontName + " FontSize = " + this._m_fFontSize.toFixed(1) + ">";
     },
@@ -76,21 +80,24 @@ cc.LabelTTF = cc.Sprite.extend({
      */
     setString:function (label) {
         this._m_pString = label;
+        var dim = cc.renderContext.measureText(this._m_pString);
+        this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //for WEBGL
+        /*
+         var texture = new cc.Texture2D();
+         if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
+         texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
+         } else {
+         texture = new cc.Texture2D();
+         texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
+         }
+         this.setTexture(texture);
 
-        return;
-
-        var texture = new cc.Texture2D();
-        if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
-            texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
-        } else {
-            texture = new cc.Texture2D();
-            texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
-        }
-        this.setTexture(texture);
-
-        var rect = cc.RectZero();
-        rect.size = this._m_pobTexture.getContentSize();
-        this.setTextureRect(rect);
+         var rect = cc.RectZero();
+         rect.size = this._m_pobTexture.getContentSize();
+         this.setTextureRect(rect);
+         */
     },
 
     //temp method
@@ -101,6 +108,7 @@ cc.LabelTTF = cc.Sprite.extend({
         context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity() / 255 + ")";
         context.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
         var dim = context.measureText(this._m_pString);
+
         context.fillText(this._m_pString,
             -(dim.width * this._m_tAnchorPoint.x),
             (this._m_fFontSize * this._m_tAnchorPoint.y));
