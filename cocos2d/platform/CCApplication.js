@@ -144,6 +144,7 @@ cc.Application = cc.Class.extend({
          return pView.setDeviceOrientation(orientation);
          }
          return cc.Director.sharedDirector().getDeviceOrientation(); */
+        return orientation;
 
     },
 

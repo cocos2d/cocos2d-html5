@@ -102,6 +102,7 @@ cc.loadjs('cocoa/CCAffineTransform.js');//5
 cc.loadjs('support/CCPointExtension.js');//12
 cc.loadjs('base_nodes/CCNode.js');//6
 cc.loadjs('base_nodes/CCdomNode.js');
+cc.loadjs('base_nodes/CCAtlasNode.js');//6
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
@@ -131,6 +132,7 @@ cc.loadjs('sprite_nodes/CCAnimation.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
 cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
+cc.loadjs('label_nodes/CCLabelAtlas.js');//11
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('particle_nodes/CCParticleSystem.js');//11
 cc.loadjs('particle_nodes/CCParticleSystemQuad.js');//11
@@ -185,3 +187,9 @@ cc.loadjs('../tests/Classes/tests/ActionManagerTest/ActionManagerTest.js');
 cc.loadjs('../tests/Classes/tests/EaseActionsTest/EaseActionsTest.js');
 cc.loadjs('../tests/Classes/tests/ParallaxTest/ParallaxTest.js');
 cc.loadjs('../tests/Classes/tests/DirectorTest/DirectorTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceSpriteTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceParticleTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTextureTest.js');
+cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');
