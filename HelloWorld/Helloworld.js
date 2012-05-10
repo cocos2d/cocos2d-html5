@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-8
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -50,7 +46,7 @@ var Helloworld = cc.Layer.extend({
     helloLb:null,
     circle:null,
     pSprite:null,
-    // Here's a difference. Method 'init' in cocos2d-x returns bool, instead of returning 'id' in cocos2d-iphone
+
     init:function () {
         var selfPointer = this;
         //////////////////////////////
@@ -75,68 +71,37 @@ var Helloworld = cc.Layer.extend({
             });
         pCloseItem.setPosition(cc.canvas.width - 20, 20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
+        //pMenu.setPosition( cc.PointZero() );
+        //this.addChild(pMenu, 1);
 
-        /*
-         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
-         "CloseNormal.png",
-         "CloseSelected.png",
-         this,
-         cc.menu_selector(Helloworld.menuCloseCallback) );
-         pCloseItem.setPosition( cc.ccp(cc.Director.sharedDirector().getWinSize().width - 20, 20) );
 
-         // create menu, it's an autorelease object
-         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
-         pMenu.setPosition( cc.PointZero() );
-         this.addChild(pMenu, 1);
-         */
         /////////////////////////////
         // 3. add your codes below...
-
-        // add a label shows "Hello World"
-        // create and initialize a label
-        //var pLabel = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         // ask director the window size
         var size = cc.Director.sharedDirector().getWinSize();
 
-        // position the label on the center of the screen
-        //pLabel.setPosition( cc.ccp(size.width / 2, size.height - 50) );
-
-        // add the label as a child to this layer
-        //this.addChild(pLabel, 1);
-
-        // add "HelloWorld" splash screen"
-        /*******************
-         var pSprite = cc.Sprite.spriteWithFile("HelloWorld.png");
-
-         // position the sprite on the center of the screen
-         pSprite.setPosition( cc.ccp(size.width/2, size.height/2) );
-
-         // add the sprite as a child to this layer
-         this.addChild(pSprite, 0);
-         *******************/
-            //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
-            //this.addChild(helloSprite,0);
-
+        // add a label shows "Hello World"
+        // create and initialize a label
         this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        // position the label on the center of the screen
         this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
+        // add the label as a child to this layer
         this.addChild(this.helloLb, 5);
 
+        // add "HelloWorld" splash screen"
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
         this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
         this.pSprite.setIsVisible(true);
         this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.pSprite.setScale(0.5);
         this.pSprite.setRotation(180);
-        //this.pSprite.setFlipY(true);
         this.addChild(this.pSprite, 0);
-        //this.pSprite.setColor(new cc.Color3B(255,128,128));
+
 
         var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
         var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
-        var action = cc.TintBy.actionWithDuration(4, 0, -255, -255);
 
-        this.pSprite.runAction(cc.Sequence.actions(rotateToA,action, scaleToA));
-
+        this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40, 280));
@@ -200,7 +165,7 @@ var Helloworld = cc.Layer.extend({
         console.log("ccTouchesCancelled");
     }
 });
-// there's no 'id' in cpp, so we recommand to return the exactly class pointer
+
 Helloworld.scene = function () {
     // 'scene' is an autorelease object
     var scene = cc.Scene.node();
@@ -213,6 +178,8 @@ Helloworld.scene = function () {
 // implement the "static node()" method manually
 Helloworld.node = function () {
     var pRet = new Helloworld();
+
+    // Init the helloworld display layer.
     if (pRet && pRet.init()) {
         return pRet;
     }
