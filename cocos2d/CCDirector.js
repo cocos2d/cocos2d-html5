@@ -613,28 +613,26 @@ cc.Director = cc.Class.extend({
     setDeviceOrientation:function (kDeviceOrientation) {
         var eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
-        if (cc.renderContextType == cc.kCanvas) {
-            var height = cc.canvas.height;
-            cc.canvas.height = cc.canvas.width;
-            cc.canvas.width = height;
-            cc.renderContext.translate(0, cc.canvas.height);
-        }
-
         if (this._m_eDeviceOrientation != eNewOrientation) {
             this._m_eDeviceOrientation = eNewOrientation;
+            if (cc.renderContextType == cc.kCanvas) {
+                var height = cc.canvas.height;
+                cc.canvas.height = cc.canvas.width;
+                cc.canvas.width = height;
+                cc.renderContext.translate(0, cc.canvas.height);
+            }
         }
         else {
             // this logic is only run on win32 now
             // On win32,the return value of CCApplication::setDeviceOrientation is always kCCDeviceOrientationPortrait
             // So,we should calculate the Projection and window size again.
-            this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
-            this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
-            this.setProjection(this._m_eProjection);
+            //this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
+            //this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
+            //this.setProjection(this._m_eProjection);
         }
 
     },
     setDirectorType:function (obDirectorType) {
-        cc.UNUSED_PARAM(obDirectorType);
         // we only support CCDisplayLinkDirector
         cc.Director.sharedDirector();
 
