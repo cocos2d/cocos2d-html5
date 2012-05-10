@@ -884,10 +884,6 @@ cc.DisplayLinkDirector = cc.Director.extend({
     m_bInvalid:false,
     startAnimation:function () {
         this._m_pLastUpdate = cc.Time.gettimeofdayCocos2d();
-        if (this._m_pLastUpdate != 0) {
-            cc.LOG("cocos2d: DisplayLinkDirector: Error on gettimeofday");
-        }
-
         this.m_bInvalid = false;
         cc.Application.sharedApplication().setAnimationInterval(this._m_dAnimationInterval);
     },
