@@ -589,6 +589,7 @@ cc.ParticleSystem = cc.Node.extend({
     },
 
     ctor:function () {
+        this._super();
         this._m_nEmitterMode = cc.kCCParticleModeGravity;
         this.modeA = new cc.ParticleSystem.tModeA();
         this.modeB = new cc.ParticleSystem.tModeB();
@@ -608,6 +609,11 @@ cc.ParticleSystem = cc.Node.extend({
 
         cc.Assert(dict != null, "Particles: file not found");
         return this.initWithDictionary(dict);
+    },
+
+
+    boundingBoxToWorld:function () {
+        return new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
     },
 
     /** initializes a CCQuadParticleSystem from a CCDictionary.
@@ -663,7 +669,7 @@ cc.ParticleSystem = cc.Node.extend({
             // position
             var x = parseFloat(this._valueForKey("sourcePositionx", dictionary));
             var y = parseFloat(this._valueForKey("sourcePositiony", dictionary));
-            this.setPosition(ccp(x, y));
+            this.setPosition(cc.ccp(x, y));
             this._m_tPosVar.x = parseFloat(this._valueForKey("sourcePositionVariancex", dictionary));
             this._m_tPosVar.y = parseFloat(this._valueForKey("sourcePositionVariancey", dictionary));
 
