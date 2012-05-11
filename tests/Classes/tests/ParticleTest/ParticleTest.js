@@ -120,8 +120,7 @@ var nextParticleAction = function () {
     sceneIdx++;
     sceneIdx = sceneIdx % MAX_LAYER;
 
-    var pLayer = createParticleLayer(sceneIdx);
-    return pLayer;
+    return createParticleLayer(sceneIdx);
 };
 
 var backParticleAction = function () {
@@ -130,19 +129,18 @@ var backParticleAction = function () {
     if (sceneIdx < 0)
         sceneIdx += total;
 
-    var pLayer = createParticleLayer(sceneIdx);
-    return pLayer;
+    return createParticleLayer(sceneIdx);
 };
 
 var restartParticleAction = function () {
-    var pLayer = createParticleLayer(sceneIdx);
-    return pLayer;
+    return createParticleLayer(sceneIdx);
 };
 
 var ParticleDemo = cc.LayerColor.extend({
     _m_emitter:null,
     _m_background:null,
     ctor:function () {
+        this._super();
         this.initWithColor(cc.ccc4(127, 127, 127, 255));
 
         this._m_emitter = null;

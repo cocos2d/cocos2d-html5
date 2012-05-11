@@ -241,6 +241,30 @@ cc.Application.getCurrentLanguage = function () {
      }
      */
 
+    var currentLang = navigator.language;
+    currentLang = currentLang.toLowerCase();
+    switch (currentLang)
+    {
+        case "zh-cn":
+            ret = cc.kLanguageChinese;
+            break;
+        case "fr":
+            ret = cc.kLanguageFrench;
+            break;
+        case "it":
+            ret = cc.kLanguageItalian;
+            break;
+        case "de":
+            ret = cc.kLanguageGerman;
+            break;
+        case "es":
+            ret = cc.kLanguageSpanish;
+            break;
+        case "ru":
+            ret = cc.kLanguageRussian;
+            break;
+    }
+
     return ret;
 };
 
