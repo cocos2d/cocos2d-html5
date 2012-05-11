@@ -1111,11 +1111,13 @@ cc.Sprite = cc.Node.extend({
     setFlipX:function (bFlipX) {
         if (this._m_bFlipX != bFlipX) {
             //save dirty region when before change
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
             this._m_bFlipX = bFlipX;
             this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
+
             //save dirty region when after changed
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
 
@@ -1140,11 +1142,13 @@ cc.Sprite = cc.Node.extend({
     setFlipY:function (bFlipY) {
         if (this._m_bFlipY != bFlipY) {
             //save dirty region when before change
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
             this._m_bFlipY = bFlipY;
             this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
+
             //save dirty region when after changed
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
 
@@ -1184,7 +1188,7 @@ cc.Sprite = cc.Node.extend({
     setOpacity:function (opacity) {
         this._m_nOpacity = opacity;
 
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
         //TODO in canvas
         return;
@@ -1223,7 +1227,8 @@ cc.Sprite = cc.Node.extend({
         }
         this.updateColor();
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this.setNodeDirty();
     },
     // RGBAProtocol
@@ -1251,7 +1256,7 @@ cc.Sprite = cc.Node.extend({
         this._m_bRectRotated = pNewFrame.isRotated();
         this.setTextureRectInPixels(pNewFrame.getRectInPixels(), pNewFrame.isRotated(), pNewFrame.getOriginalSizeInPixels());
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
     },
     // Animation
 

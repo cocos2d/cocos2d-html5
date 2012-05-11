@@ -107,15 +107,18 @@ cc.setup = function () {
 
     if (cc.renderContextType == cc.kCanvas) {
         cc.renderContext.translate(0, cc.canvas.height);
+        //cc.renderContext.scale(1,-1);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
 
     //binding window size
+    /*
     cc.canvas.addEventListener("resize", function () {
         if (!cc.s_bFirstRun) {
             cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
         }
     }, true);
+    */
 };
 
 

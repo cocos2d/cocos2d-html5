@@ -263,7 +263,7 @@ cc.LayerColor = cc.Layer.extend({
     setOpacity:function (Var) {
         this._m_cOpacity = Var;
         this._updateColor();
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// color getter
@@ -274,7 +274,7 @@ cc.LayerColor = cc.Layer.extend({
     setColor:function (Var) {
         this._m_tColor = Var;
         this._updateColor();
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// blendFunc getter
