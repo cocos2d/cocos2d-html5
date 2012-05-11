@@ -30,7 +30,7 @@ var kTagSprite3 = 3;
 var kTagSlider = 4;
 
 var sceneIdx = -1;
-var MAX_LAYER = 12;
+var MAX_LAYER = 9;
 
 var nextCocosNodeAction = function () {
     sceneIdx++;
@@ -52,28 +52,22 @@ var restartCocosNodeAction = function () {
 var createCocosNodeLayer = function (nIndex) {
     switch (nIndex) {
         case 0:
-            return new CameraCenterTest();
-        case 1:
             return new CCNodeTest2();
-        case 2:
+        case 1:
             return new CCNodeTest4();
-        case 3:
+        case 2:
             return new CCNodeTest5();
-        case 4:
+        case 3:
             return new CCNodeTest6();
-        case 5:
+        case 4:
             return new StressTest1();
-        case 6:
+        case 5:
             return new StressTest2();
-        case 7:
+        case 6:
             return new NodeToWorld();
-        case 8:
+        case 7:
             return new SchedulerTest1();
-        case 9:
-            return new CameraOrbitTest();
-        case 10:
-            return new CameraZoomTest();
-        case 11:
+        case 8:
             return new ConvertToNode();
     }
     return null;
@@ -654,7 +648,7 @@ var ConvertToNode = TestCocosNodeDemo.extend({
 var CocosNodeTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = -1;
-        MAX_LAYER = 12;
+        MAX_LAYER = 9;
         var pLayer = nextCocosNodeAction();
         this.addChild(pLayer);
 

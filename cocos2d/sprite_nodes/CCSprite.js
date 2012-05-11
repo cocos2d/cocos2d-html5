@@ -1277,8 +1277,7 @@ cc.Sprite = cc.Node.extend({
         if (cc.renderContextType == cc.kCanvas) {
             return (pFrame.getTexture() == this._m_pobTexture);
         } else {
-            var r = pFrame.getRect();
-            return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
+            return (cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
         }
     },
     /** returns the current displayed frame. */

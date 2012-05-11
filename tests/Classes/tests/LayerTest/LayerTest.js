@@ -130,7 +130,7 @@ var LayerTest1 = LayerTest.extend({
         this.setIsTouchEnabled(true);
 
         var s = cc.Director.sharedDirector().getWinSize();
-        var layer = cc.LayerColor.layerWithColorWidthHeight(cc.ccc4(0xFF, 0x00, 0x00, 0x80), 200, 200);
+        var layer = cc.LayerColor.layerWithColorWidthHeight(cc.ccc4(255, 0, 0, 128), 200, 200);
 
         layer.setIsRelativeAnchorPoint(true);
         layer.setPosition(cc.PointMake(s.width / 2, s.height / 2));
@@ -191,7 +191,7 @@ var LayerTest2 = LayerTest.extend({
         var actionTint = cc.TintBy.actionWithDuration(2, -255, -127, 0);
         var actionTintBack = actionTint.reverse();
         var seq1 = cc.Sequence.actions(actionTint, actionTintBack, null);
-       layer1.runAction(seq1);
+        layer1.runAction(seq1);
 
         var actionFade = cc.FadeOut.actionWithDuration(2.0);
         var actionFadeBack = actionFade.reverse();

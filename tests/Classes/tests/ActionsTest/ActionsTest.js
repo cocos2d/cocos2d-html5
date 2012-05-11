@@ -516,7 +516,7 @@ var ActionTint = ActionsDemo.extend({
         var action2Back = action2.reverse();
 
         this._m_tamara.runAction(action1);
-        this._m_kathia.runAction(cc.Sequence.actions(action2, action2Back, null));
+        this._m_kathia.runAction(cc.Sequence.actions(action2, action2Back));
 
     },
     subtitle:function () {

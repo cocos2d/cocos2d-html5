@@ -172,7 +172,7 @@ var g_aTestNames = {
     "FontTest":"FontTestScene",
     //"HiResTest":"HiResTestScene",
     "IntervalTest":"IntervalTestScene",
-    "KeypadTest":"KeypadTestScene",
+    //"KeypadTest":"KeypadTestScene",
     "LabelTest":"AtlasTestScene",
     "LayerTest":"LayerTestScene",
     "MenuTest":"MenuTestScene",
