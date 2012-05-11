@@ -29,7 +29,8 @@ var cc = cc = cc || {};
 //! @brief A fire particle system
 cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(250);
+        return this.initWithTotalParticles(150);
+        //return this.initWithTotalParticles(250);
     },
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
@@ -108,7 +109,8 @@ cc.ParticleFire.node = function () {
 //! @brief A fireworks particle system
 cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(1500);
+        //return this.initWithTotalParticles(1500);
+        return this.initWithTotalParticles(150);
     },
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
@@ -185,7 +187,8 @@ cc.ParticleFireworks.node = function () {
 //! @brief A sun particle system
 cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(350);
+        //return this.initWithTotalParticles(350);
+        return this.initWithTotalParticles(150);
     },
     //
     // ParticleSun
@@ -268,7 +271,8 @@ cc.ParticleSun.node = function () {
 //! @brief A galaxy particle system
 cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(200);
+        //return this.initWithTotalParticles(200);
+        return this.initWithTotalParticles(100);
     },
     //
     // ParticleGalaxy
@@ -354,7 +358,7 @@ cc.ParticleGalaxy.node = function () {
 cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
         //return this.initWithTotalParticles(250);
-        return this.initWithTotalParticles(150);
+        return this.initWithTotalParticles(90);
     },
     //
     // ParticleFlower
@@ -439,7 +443,8 @@ cc.ParticleFlower.node = function () {
 //! @brief A meteor particle system
 cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(150);
+        //return this.initWithTotalParticles(150);
+        return this.initWithTotalParticles(100);
     },
     //
     // ParticleMeteor
@@ -524,7 +529,8 @@ cc.ParticleMeteor.node = function () {
 //! @brief An spiral particle system
 cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(500);
+        //return this.initWithTotalParticles(500);
+        return this.initWithTotalParticles(100);
     },
     //
     // ParticleSpiral
@@ -609,7 +615,8 @@ cc.ParticleSpiral.node = function () {
 //! @brief An explosion particle system
 cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(700);
+        //return this.initWithTotalParticles(700);
+        return this.initWithTotalParticles(300);
     },
     //
     // ParticleExplosion
@@ -693,7 +700,8 @@ cc.ParticleExplosion.node = function () {
 //! @brief An smoke particle system
 cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(200);
+        //return this.initWithTotalParticles(200);
+        return this.initWithTotalParticles(100);
     },
     //
     // ParticleSmoke
@@ -774,7 +782,8 @@ cc.ParticleSmoke.node = function () {
 //! @brief An snow particle system
 cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(700);
+        return this.initWithTotalParticles(250);
+        //return this.initWithTotalParticles(700);
     },
     //
     // CCParticleSnow
@@ -859,7 +868,8 @@ cc.ParticleSnow.node = function () {
 //! @brief A rain particle system
 cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     init:function () {
-        return this.initWithTotalParticles(1000);
+        return this.initWithTotalParticles(300);
+        //return this.initWithTotalParticles(1000);
     },
     //
     // CCParticleRain
