@@ -202,6 +202,7 @@ Director1 = DirectorTest.extend({
 DirectorTestScene = TestScene.extend({
 
     runThisTest:function () {
+        MAX_LAYER = 1;
         s_currentOrientation = cc.DeviceOrientationPortrait;
         var pLayer = nextDirectorTestCase();
         this.addChild(pLayer);
