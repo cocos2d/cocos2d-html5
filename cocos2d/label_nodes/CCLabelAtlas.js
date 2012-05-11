@@ -54,27 +54,23 @@ cc.LabelAtlas = cc.AtlasNode.extend({
     updateAtlasValues:function () {
         var n = this._m_sString.length;
 
-        var quad;
-
         var s = this._m_sString;
-
         var texture = this._m_pTextureAtlas.getTexture();
-        console.log(texture)
-        var textureWide = texture.getPixelsWide();
-        var textureHigh = texture.getPixelsHigh();
+
+        var textureWide = texture.width;
+        var textureHigh = texture.height;
 
         for (var i = 0; i < n; i++) {
-            var a = s[i] - this._m_cMapStartChar;
-            var row = a % this._m_uItemsPerRow;
-            var col = a / this._m_uItemsPerRow;
-
+            var a = s.charCodeAt(i) - this._m_cMapStartChar.charCodeAt(0);
+            var row = parseInt(a % this._m_uItemsPerRow);
+            var col = parseInt(a / this._m_uItemsPerRow);
 
             var left = row * this._m_uItemWidth / textureWide;
             var right = left + this._m_uItemWidth / textureWide;
             var top = col * this._m_uItemHeight / textureHigh;
             var bottom = top + this._m_uItemHeight / textureHigh;
 
-
+            var quad = new cc.V2F_C4B_T2F_QuadZero();
             quad.tl.texCoords.u = left;
             quad.tl.texCoords.v = top;
             quad.tr.texCoords.u = right;
@@ -99,18 +95,15 @@ cc.LabelAtlas = cc.AtlasNode.extend({
 
             this._m_pTextureAtlas.updateQuad(quad, i);
         }
-
     },
     setString:function (label) {
         var len = label.length;
-        if (len > this._m_pTextureAtlas.getTotalQuads()) {
-            this._m_pTextureAtlas.resizeCapacity(len);
-        }
-        //this._m_sString.clear();
+        this._m_pTextureAtlas.resizeCapacity(len);
+
         this._m_sString = label;
         this.updateAtlasValues();
 
-        var s;
+        var s = new cc.Size();
         s.width = len * this._m_uItemWidth;
         s.height = this._m_uItemHeight;
         this.setContentSizeInPixels(s);
@@ -120,14 +113,14 @@ cc.LabelAtlas = cc.AtlasNode.extend({
     getString:function () {
         return this._m_sString;
     },
-
     draw:function () {
         this._super();
-
-        var s = this.getContentSize();
-        var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0),
-            cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
-        //cc.ccDrawPoly(vertices, 4, true);
+        if (cc.LABELATLAS_DEBUG_DRAW) {
+            var s = this.getContentSize();
+            var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0),
+                cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
+            cc.drawingUtil.drawPoly(vertices, 4, true);
+        }
     },
 
     convertToLabelProtocol:function () {
@@ -144,9 +137,7 @@ cc.LabelAtlas = cc.AtlasNode.extend({
 cc.LabelAtlas.labelWithString = function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
     var pRet = new cc.LabelAtlas();
     if (pRet && pRet.initWithString(label, charMapFile, itemWidth, itemHeight, startCharMap)) {
-
         return pRet;
     }
-
     return null;
 };

@@ -134,6 +134,7 @@ cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
 cc.loadjs('label_nodes/CCLabelAtlas.js');//11
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
+cc.loadjs('label_nodes/CCLabelBMFont.js');//11
 cc.loadjs('particle_nodes/CCParticleSystem.js');//11
 cc.loadjs('particle_nodes/CCParticleSystemQuad.js');//11
 cc.loadjs('particle_nodes/CCParticleSystemPoint.js');//11
@@ -193,3 +194,4 @@ cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceParticleTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTextureTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');
+cc.loadjs('../tests/Classes/tests/LabelTest/LabelTest.js');
