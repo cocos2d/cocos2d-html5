@@ -35,28 +35,22 @@ var cc = cc = cc || {};
  - opacity and RGB colors
  */
 cc.AtlasNode = cc.Node.extend({
-
     //! chars per row
     _m_uItemsPerRow:0,
     //! chars per column
     _m_uItemsPerColumn:0,
-
     //! width of each char
     _m_uItemWidth:0,
     //! height of each char
     _m_uItemHeight:0,
-
     _m_tColorUnmodified:new cc.Color3B(0, 0, 0),
-
     _m_pTextureAtlas:null,
-
-
     // protocol variables
     _m_bIsOpacityModifyRGB:false,
     _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
     _m_cOpacity:0,
     _m_tColor:null,
-
+    _m_originalTexture:null,
     // quads to draw
     _m_uQuadsToDraw:0,
 
@@ -67,7 +61,6 @@ cc.AtlasNode = cc.Node.extend({
             return pRet;
         }
         return null;
-
     },
 
     /** initializes an CCAtlasNode  with an Atlas file the width and height of each item and the quantity of items to render*/
@@ -87,7 +80,9 @@ cc.AtlasNode = cc.Node.extend({
         // also, using: self.textureAtlas supports re-initialization without leaking
         this._m_pTextureAtlas = new cc.TextureAtlas();
         this._m_pTextureAtlas.initWithFile(tile, itemsToRender);
-
+        if (cc.renderContextType == cc.kCanvas) {
+            this._m_originalTexture = this._m_pTextureAtlas.getTexture();
+        }
         if (!this._m_pTextureAtlas) {
             cc.LOG("cocos2d: Could not initialize CCAtlasNode. Invalid Texture.");
             return false;
@@ -111,9 +106,33 @@ cc.AtlasNode = cc.Node.extend({
         cc.Assert(false, "CCAtlasNode:Abstract updateAtlasValue not overriden");
     },
 
-    draw:function () {
+    draw:function (ctx) {
         this._super();
-
+        if (cc.renderContextType == cc.kCanvas) {
+            var context = ctx || cc.renderContext;
+            context.globalAlpha = this.getOpacity() / 255;
+            var tempAtlas = this._m_pTextureAtlas;
+            var tempTexture = this.getTexture();
+            var tempQuads = this._m_pTextureAtlas._m_pQuads;
+            var sx,sy,w,h,dx,dy;
+            var pos = new cc.Point(0 | ( -this._m_tAnchorPointInPixels.x), 0 | ( -this._m_tAnchorPointInPixels.y));
+            for(var i =0,len = this._m_pTextureAtlas.getCapacity();i<len;i++){
+                sx = parseFloat(tempQuads[i].tl.texCoords.u) * tempTexture.width;
+                sy = parseFloat(tempQuads[i].tl.texCoords.v) * tempTexture.height;
+                dx = tempQuads[i].tl.vertices.x;
+                dy = tempQuads[i].tl.vertices.y;
+                 /*dx = 0;
+                dy = 0;*/
+                w  = (parseFloat(tempQuads[i].br.texCoords.u) - parseFloat(tempQuads[i].tl.texCoords.u))  * tempTexture.width;
+                h  = (parseFloat(tempQuads[i].br.texCoords.v) - parseFloat(tempQuads[i].tl.texCoords.v))  * tempTexture.height;
+                //console.log(sx,sy,w,h,dx,dy,w,h);
+                if(i == 8){
+                    //throw "";
+                }
+                context.drawImage(tempTexture,sx,sy,w,h,dx+pos.x,-(dy+pos.y),w,h);
+            }
+        }
+        else{
         // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Unneeded states: GL_COLOR_ARRAY
@@ -129,7 +148,7 @@ cc.AtlasNode = cc.Node.extend({
             //glBlendFunc( m_tBlendFunc.src, m_tBlendFunc.dst );
         }
 
-        this._m_pTextureAtlas.drawNumberOfQuads(m_uQuadsToDraw, 0);
+        this._m_pTextureAtlas.drawNumberOfQuads(this._m_uQuadsToDraw, 0);
 
         if (newBlend) {
             //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
@@ -143,11 +162,10 @@ cc.AtlasNode = cc.Node.extend({
         // restore default GL state
         //TODO, need to be fixed.
         //glEnableClientState(GL_COLOR_ARRAY);
-
+         }
     },
 
     // CCAtlasNode - RGBA protocol
-
     getColor:function () {
         if (this._m_bIsOpacityModifyRGB) {
             return this._m_tColorUnmodified;
@@ -155,8 +173,20 @@ cc.AtlasNode = cc.Node.extend({
         return this._m_tColor;
     },
 
-    setColor:function (color3) {
-        this._m_tColor = this._m_tColorUnmodified = color3;
+     setColor:function (color3) {
+         this._m_tColor = this._m_sColorUnmodified = color3;
+
+       if (this.getTexture()) {
+            if (cc.renderContextType == cc.kCanvas) {
+                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._m_originalTexture);
+                if (cacheTextureForColor) {
+                    //generate color texture cache
+                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor,this._m_tColor);
+                    //console.log(colorTexture)
+                    this.setTexture(colorTexture);
+                }
+            }
+        }
 
         if (this._m_bIsOpacityModifyRGB) {
             this._m_tColor.r = color3.r * this._m_cOpacity / 255;
@@ -171,7 +201,7 @@ cc.AtlasNode = cc.Node.extend({
 
     setOpacity:function (opacity) {
         this._m_cOpacity = opacity;
-
+        return;
         // special opacity for premultiplied textures
         if (this._m_bIsOpacityModifyRGB) {
             this.setColor(this._m_tColorUnmodified);
@@ -197,7 +227,6 @@ cc.AtlasNode = cc.Node.extend({
     setBlendFunc:function (blendFunc) {
         this._m_tBlendFunc = blendFunc;
     },
-
 
     // CC Texture protocol
 
@@ -229,13 +258,10 @@ cc.AtlasNode = cc.Node.extend({
         this._m_uQuadsToDraw = uQuadsToDraw;
     },
 
-
     _calculateMaxItems:function () {
-        /*var s = this._m_pTextureAtlas.getTexture().getContentSizeInPixels();
-        this._m_uItemsPerColumn = s.height / this._m_uItemHeight;
-        this._m_uItemsPerRow = s.width / this._m_uItemWidth;*/
-
-
+        var s = this._m_pTextureAtlas.getTexture();
+        this._m_uItemsPerColumn = parseInt(s.height / this._m_uItemHeight);
+        this._m_uItemsPerRow = parseInt(s.width / this._m_uItemWidth);
     },
 
     _updateBlendFunc:function () {
@@ -243,12 +269,10 @@ cc.AtlasNode = cc.Node.extend({
             this._m_tBlendFunc.src = cc.GL_SRC_ALPHA;
             this._m_tBlendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
         }*/
-
     },
 
     _updateOpacityModifyRGB:function () {
         //this._m_bIsOpacityModifyRGB = this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha();
-
     }
 
 });

@@ -219,8 +219,12 @@ cc.TextureAtlas = cc.Class.extend({
      * no used for js
      */
     resizeCapacity:function (newCapacity) {
-        if (newCapacity == this._m_uCapacity)
+        if (newCapacity == this._m_uCapacity){
             return true;
+        }
+
+        this._m_uTotalQuads = Math.min(this._m_uTotalQuads, newCapacity);
+        this._m_uCapacity = newCapacity;
 
         return true;
     },
