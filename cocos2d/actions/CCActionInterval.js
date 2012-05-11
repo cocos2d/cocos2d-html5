@@ -1026,16 +1026,12 @@ cc.TintTo = cc.ActionInterval.extend({
     },
     startWithTarget:function (pTarget) {
         this._super(pTarget);
-        if (this._m_pTarget.RGBAProtocol) {
-            this._m_from = this._m_pTarget.getColor();
-        }
+        this._m_from = this._m_pTarget.getColor();
     },
     update:function (time) {
-        if (this._m_pTarget.RGBAProtocol) {
-            this._m_pTarget.setColor(cc.ccc3(this._m_from.r + (this._m_to.r - this._m_from.r) * time,
-                (this._m_from.g + (this._m_to.g - this._m_from.g) * time),
-                (this._m_from.b + (this._m_to.b - this._m_from.b) * time)));
-        }
+        this._m_pTarget.setColor(cc.ccc3(this._m_from.r + (this._m_to.r - this._m_from.r) * time,
+            (this._m_from.g + (this._m_to.g - this._m_from.g) * time),
+            (this._m_from.b + (this._m_to.b - this._m_from.b) * time)));
     },
     _m_to:new cc.Color3B(),
     _m_from:new cc.Color3B()
