@@ -26,6 +26,9 @@
 
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
+    ctor:function(){
+        this._super();
+    },
     draw:function () {
         cc.renderContext.fillStyle = "rgba(255,255,255,1)";
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
@@ -36,6 +39,7 @@ var CircleSprite = cc.Sprite.extend({
     },
     myUpdate:function (dt) {
         this._radians -= 6;
+        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
     }
 });
 
