@@ -93,19 +93,21 @@ cc.DirectorTypeDefault = cc.kCCDirectorTypeDefault;
 
 /// Device oriented vertically, home button on the bottom
 cc.kCCDeviceOrientationPortrait = 0; // UIDeviceOrientationPortrait,
-/// Device oriented vertically, home button on the top
-cc.kCCDeviceOrientationPortraitUpsideDown = 1; // UIDeviceOrientationPortraitUpsideDown,
 /// Device oriented horizontally, home button on the right
-cc.kCCDeviceOrientationLandscapeLeft = 2; // UIDeviceOrientationLandscapeLeft,
+cc.kCCDeviceOrientationLandscapeLeft = 1; // UIDeviceOrientationLandscapeLeft,
+/// Device oriented vertically, home button on the top
+cc.kCCDeviceOrientationPortraitUpsideDown = 2; // UIDeviceOrientationPortraitUpsideDown,
 /// Device oriented horizontally, home button on the left
 cc.kCCDeviceOrientationLandscapeRight = 3; // UIDeviceOrientationLandscapeRight,
+
+/// In browsers, we only support 2 orientations by change window size.
+cc.DeviceMaxOrientations = 2;
 
 // Backward compatibility stuff
 cc.DeviceOrientationPortrait = cc.kCCDeviceOrientationPortrait;
 cc.DeviceOrientationPortraitUpsideDown = cc.kCCDeviceOrientationPortraitUpsideDown;
 cc.DeviceOrientationLandscapeLeft = cc.kCCDeviceOrientationLandscapeLeft;
 cc.DeviceOrientationLandscapeRight = cc.kCCDeviceOrientationLandscapeRight;
-
 
 /**
  @brief Class that creates and handle the main Window and manages how
@@ -685,7 +687,7 @@ cc.Director = cc.Class.extend({
     setDeviceOrientation:function (kDeviceOrientation) {
         var eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
-        if (this._m_eDeviceOrientation != eNewOrientation) {
+        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) { 
             this._m_eDeviceOrientation = eNewOrientation;
             if (cc.renderContextType == cc.kCanvas) {
                 var height = cc.canvas.height;
