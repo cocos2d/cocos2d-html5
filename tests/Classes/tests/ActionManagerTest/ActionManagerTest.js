@@ -42,7 +42,7 @@ var backActionManagerAction = function () {
     if (sceneIdx < 0)
         sceneIdx += MAX_LAYER;
 
-    return pLayer = createActionManagerLayer(sceneIdx);
+    return createActionManagerLayer(sceneIdx);
 };
 var restartActionManagerAction = function () {
     return createActionManagerLayer(sceneIdx);
@@ -295,6 +295,8 @@ var ResumeTest = ActionManagerTest.extend({
 
 var ActionManagerTestScene = TestScene.extend({
     runThisTest:function () {
+        sceneIdx = -1;
+        MAX_LAYER = 5;
         var pLayer = nextActionManagerAction();
         this.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(this);

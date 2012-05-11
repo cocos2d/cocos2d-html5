@@ -39,7 +39,7 @@ var CircleSprite = cc.Sprite.extend({
     },
     myUpdate:function (dt) {
         this._radians -= 6;
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
     }
 });
 

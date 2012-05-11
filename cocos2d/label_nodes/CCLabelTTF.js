@@ -80,9 +80,11 @@ cc.LabelTTF = cc.Sprite.extend({
      */
     setString:function (label) {
         this._m_pString = label;
+        /*
         var dim = cc.renderContext.measureText(this._m_pString);
         this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
         this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        */
         //for WEBGL
         /*
          var texture = new cc.Texture2D();

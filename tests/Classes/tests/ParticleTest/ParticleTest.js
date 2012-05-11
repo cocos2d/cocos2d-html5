@@ -159,14 +159,16 @@ var ParticleDemo = cc.LayerColor.extend({
         this.addChild(tapScreen, 100);
         var selfPoint = this;
         var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, function(){
-            if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeGrouped)
-                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeFree);
-            else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeFree)
-                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeRelative);
-            else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeRelative)
-                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeGrouped);
-        });
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, function(){selfPoint._m_emitter.resetSystem();}
+            /*function () {
+                if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeGrouped)
+                    selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeFree);
+                else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeFree)
+                    selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeRelative);
+                else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeRelative)
+                    selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeGrouped);
+            }*/
+        );
         var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
 
         //var item4 = cc.MenuItemToggle.itemWithTarget(	this,
@@ -250,7 +252,7 @@ var ParticleDemo = cc.LayerColor.extend({
         //CCPoint convertedLocation = CCDirector::sharedDirector().convertToGL(location);
 
         var pos = cc.PointZero();
-        if (this._m_background){
+        if (this._m_background) {
             pos = this._m_background.convertToWorldSpace(cc.PointZero());
         }
         this._m_emitter.setPosition(cc.ccpSub(location, pos));
