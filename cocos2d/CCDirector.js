@@ -987,8 +987,4 @@ window.onfocus = function () {
         cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
     }
 };
-cc.canvas.addEventListener("resize", function () {
-    if (!cc.s_bFirstRun) {
-        cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
-    }
-}, true);
+

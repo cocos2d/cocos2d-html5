@@ -25,10 +25,14 @@
  ****************************************************************************/
 var kTagLabelAtlas = 1;
 
+var sceneIdx = -1;
+var MAX_LAYER = 33;
+
 var ParticleTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = -1;
-        MAX_LAYER = 33;
+        MAX_LAYER = 15;
+
         this.addChild(nextParticleAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
@@ -38,9 +42,6 @@ var IDC_NEXT = 100;
 var IDC_BACK = 101;
 var IDC_RESTART = 102;
 var IDC_TOGGLE = 103;
-
-var sceneIdx = -1;
-var MAX_LAYER = 33;
 
 var createParticleLayer = function (nIndex) {
     switch (nIndex) {
@@ -59,7 +60,8 @@ var createParticleLayer = function (nIndex) {
         case 6:
             return new DemoFire();
         case 7:
-            return new DemoSmoke();
+            //return new DemoSmoke();
+            return new Issue704();
         case 8:
             return new DemoExplosion();
         case 9:
@@ -432,7 +434,8 @@ var DemoRotFlower = ParticleDemo.extend({
         this._super();
 
         this._m_emitter = new cc.ParticleSystemQuad();
-        this._m_emitter.initWithTotalParticles(300);
+        //this._m_emitter.initWithTotalParticles(300);
+        this._m_emitter.initWithTotalParticles(150);
 
         this._m_background.addChild(this._m_emitter, 10);
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars2));
@@ -639,7 +642,8 @@ var DemoModernArt = ParticleDemo.extend({
         //  Crash place: CCParticleSystemPoint.cpp Line 149, function: glDrawArrays(GL_POINTS, 0, this._m_uParticleIdx);
         //  this._m_emitter = new CCParticleSystemPoint();
         this._m_emitter = new cc.ParticleSystemQuad();
-        this._m_emitter.initWithTotalParticles(1000);
+        //this._m_emitter.initWithTotalParticles(1000);
+        this._m_emitter.initWithTotalParticles(200);
         //this._m_emitter.autorelease();
 
         this._m_background.addChild(this._m_emitter, 10);
@@ -805,7 +809,8 @@ var RadiusMode1 = ParticleDemo.extend({
         this._m_background = null;
 
         this._m_emitter = new cc.ParticleSystemQuad();
-        this._m_emitter.initWithTotalParticles(200);
+        //this._m_emitter.initWithTotalParticles(200);
+        this._m_emitter.initWithTotalParticles(150);
         this.addChild(this._m_emitter, 10);
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_starsGrayscale));
 
@@ -963,13 +968,13 @@ var Issue704 = ParticleDemo.extend({
         this._m_emitter = new cc.ParticleSystemQuad();
         this._m_emitter.initWithTotalParticles(100);
         this.addChild(this._m_emitter, 10);
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("Images/fire.png"));
+        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
 
         // duration
         this._m_emitter.setDuration(cc.kCCParticleDurationInfinity);
 
         // radius mode
-        this._m_emitter.setEmitterMode(cc.kCCParticleModeRadius);
+        //this._m_emitter.setEmitterMode(cc.kCCParticleModeRadius);
 
         // radius mode: start and end radius in pixels
         this._m_emitter.setStartRadius(50);
