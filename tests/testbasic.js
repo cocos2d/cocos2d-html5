@@ -57,7 +57,7 @@ var TestScene = cc.Scene.extend({
 
     },
     MainMenuCallback:function () {
-        var pScene = cc.Scene.node();
+        window.pScene = cc.Scene.node();
         var pLayer = new TestController();
         pScene.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(pScene);
@@ -72,6 +72,7 @@ var TestController = cc.Layer.extend({
     _m_tBeginPos:cc.PointZero(),
     bIsMouseDown:false,
     ctor:function () {
+        this._super();
         // add close menu
         if (!s_pPathClose) {
             s_pPathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");

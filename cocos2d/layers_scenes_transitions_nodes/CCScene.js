@@ -39,23 +39,16 @@ var cc = cc = cc || {};
 cc.Scene = cc.Node.extend({
     ctor:function () {
         this._m_bIsRelativeAnchorPoint = false;
+        var pDirector = cc.Director.sharedDirector();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.setContentSize(pDirector.getWinSize());
     },
     init:function () {
         var pDirector = cc.Director.sharedDirector();
-        if (!pDirector) {
-            return false;
-        }
         this.setContentSize(pDirector.getWinSize());
-        return true;
     }
 });
 cc.Scene.node = function () {
     var pret = new cc.Scene();
-    if (pret.init()) {
-        return pret;
-    }
-    else {
-        return null;
-    }
+    return pret;
 };

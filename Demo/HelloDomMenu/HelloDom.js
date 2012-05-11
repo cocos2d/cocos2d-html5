@@ -79,11 +79,22 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.pSprite, 0);
 
 
-        var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
-        var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
+        var actionTo = cc.SkewTo.actionWithDuration(2, 0., 45);
+        var actionToBack = cc.SkewTo.actionWithDuration(2, 0, 0);
+        var rotateTo = cc.RotateTo.actionWithDuration(2, 300.0);
+        var rotateToBack = cc.RotateTo.actionWithDuration(2, 0);
+        var actionScaleTo = cc.ScaleTo.actionWithDuration(2, -0.44, 0.47);
+        var actionScaleToBack = cc.ScaleTo.actionWithDuration(2, 1.0, 1.0);
+        var actionBy = cc.MoveBy.actionWithDuration(2, cc.PointMake(80, 80));
+        var actionByBack = actionBy.reverse();
 
         //this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
-        this.pSprite.runAction(cc.Sequence.actions(rotateToA));
+
+
+        this.pSprite.runAction(cc.Sequence.actions(actionTo, actionToBack, null));
+        this.pSprite.runAction(cc.Sequence.actions(rotateTo, rotateToBack, null));
+        this.pSprite.runAction(cc.Sequence.actions(actionScaleTo, actionScaleToBack));
+        this.pSprite.runAction(cc.Sequence.actions(actionBy, actionByBack));
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40, 280));
@@ -104,8 +115,11 @@ var Helloworld = cc.Layer.extend({
             function () {
                 alert("Bye Bye");
             });
+        var text = cc.MenuItemFont.itemFromString("Hello Dom",this, function(){});
+        text.setColor({r:255,g:0,b:0});
+        text.setPosition(cc.ccp(cc.canvas.width/2,cc.canvas.height/2));
         pCloseItem.setPosition(cc.canvas.width - 20, 20);
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
+        var pMenu = cc.Menu.menuWithItems(pCloseItem, text);
         this.pSprite.addChild(pMenu);
         return true;
     },

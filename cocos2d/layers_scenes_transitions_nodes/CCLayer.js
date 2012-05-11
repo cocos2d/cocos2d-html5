@@ -47,16 +47,18 @@ cc.Layer = cc.Node.extend({
     ctor:function () {
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_bIsRelativeAnchorPoint = false;
-    },
-
-    init:function () {
         var pDirector = cc.Director.sharedDirector();
         if (!pDirector) {
             return false;
         }
         this.setContentSize(pDirector.getWinSize());
-        this._m_bIsTouchEnabled = false;
         this._m_bIsAccelerometerEnabled = false;
+    },
+
+    init:function () {
+
+        this._m_bIsTouchEnabled = false;
+
         // success
         return true;
     },
