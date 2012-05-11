@@ -86,16 +86,6 @@ DirectorTest = cc.Layer.extend({
                 l.setPosition(cc.ccp(s.width / 2, s.height - 80));
             }
 
-            var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-            var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-            var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
-
-            var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
-            menu.setPosition(cc.PointZero);
-            item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
-            item2.setPosition(cc.ccp(s.width / 2, 30));
-            item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
-
             bRet = true;
         } while (0);
 
@@ -212,6 +202,7 @@ Director1 = DirectorTest.extend({
 DirectorTestScene = TestScene.extend({
 
     runThisTest:function () {
+        MAX_LAYER = 1;
         s_currentOrientation = cc.DeviceOrientationPortrait;
         var pLayer = nextDirectorTestCase();
         this.addChild(pLayer);

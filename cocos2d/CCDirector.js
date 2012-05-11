@@ -28,7 +28,6 @@ if (cc.ENABLE_PROFILERS) {
     //TODO include support/CCProfiling
 }
 
-
 /** @typedef ccDirectorProjection
  Possible OpenGL projections used by director
  */
@@ -88,26 +87,27 @@ cc.DirectorTypeThreadMainLoop = cc.kCCDirectorTypeThreadMainLoop;
 cc.DirectorTypeDisplayLink = cc.kCCDirectorTypeDisplayLink;
 cc.DirectorTypeDefault = cc.kCCDirectorTypeDefault;
 
-
 /** @typedef ccDeviceOrientation
  Possible device orientations
  */
 
 /// Device oriented vertically, home button on the bottom
 cc.kCCDeviceOrientationPortrait = 0; // UIDeviceOrientationPortrait,
-/// Device oriented vertically, home button on the top
-cc.kCCDeviceOrientationPortraitUpsideDown = 1; // UIDeviceOrientationPortraitUpsideDown,
 /// Device oriented horizontally, home button on the right
-cc.kCCDeviceOrientationLandscapeLeft = 2; // UIDeviceOrientationLandscapeLeft,
+cc.kCCDeviceOrientationLandscapeLeft = 1; // UIDeviceOrientationLandscapeLeft,
+/// Device oriented vertically, home button on the top
+cc.kCCDeviceOrientationPortraitUpsideDown = 2; // UIDeviceOrientationPortraitUpsideDown,
 /// Device oriented horizontally, home button on the left
 cc.kCCDeviceOrientationLandscapeRight = 3; // UIDeviceOrientationLandscapeRight,
+
+/// In browsers, we only support 2 orientations by change window size.
+cc.DeviceMaxOrientations = 2;
 
 // Backward compatibility stuff
 cc.DeviceOrientationPortrait = cc.kCCDeviceOrientationPortrait;
 cc.DeviceOrientationPortraitUpsideDown = cc.kCCDeviceOrientationPortraitUpsideDown;
 cc.DeviceOrientationLandscapeLeft = cc.kCCDeviceOrientationLandscapeLeft;
 cc.DeviceOrientationLandscapeRight = cc.kCCDeviceOrientationLandscapeRight;
-
 
 /**
  @brief Class that creates and handle the main Window and manages how
@@ -150,7 +150,7 @@ cc.Director = cc.Class.extend({
     _m_fFrameRate:0.0,
     _m_obWinSizeInPixels:null,
     _m_obWinSizeInPoints:null,
-    _m_pFPSLabel:cc.LabelTTF.labelWithString("00.0", "Arial", 24),
+    _m_pFPSLabel:null,
     _m_pLastUpdate:null,
     _m_pNextScene:null,
     _m_pNotificationNode:null,
@@ -161,8 +161,14 @@ cc.Director = cc.Class.extend({
     _m_pszFPS:'',
     _m_uFrames:0,
     _m_uTotalFrames:0,
+
+    _dirtyRegion:null,
+
     init:function () {
         //cc.LOG("cocos2d: "+ cc.cocos2dVersion());
+        if (!this._m_pFPSLabel) {
+            this._m_pFPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
+        }
         this._m_pFPSLabel.setPosition(cc.ccp(0, 0));
         this._m_pFPSLabel.setAnchorPoint(cc.ccp(0, 0));
         // scenes
@@ -303,6 +309,8 @@ cc.Director = cc.Class.extend({
         return uiPoint;
 
     },
+
+    _fullRect:null,
     // Draw the SCene
     drawScene:function () {
         // calculate "global" dt
@@ -310,11 +318,38 @@ cc.Director = cc.Class.extend({
 
         //tick before glClear: issue #533
         if (!this._m_bPaused) {
-            cc.Scheduler.sharedScheduler().tick(this._m_fDeltaTime);//TODO this statement might not be correct
+            cc.Scheduler.sharedScheduler().tick(this._m_fDeltaTime);
         }
-        //TODO openGL stuff
-        //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        cc.renderContext.clearRect(0, -cc.canvas.height, cc.canvas.width, cc.canvas.height);
+        this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+        cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
+
+        /*
+         var isSaveContext = false;
+         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+         if (this._dirtyRegion) {
+         //cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
+
+         var fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+         this._dirtyRegion = cc.Rect.CCRectIntersection(this._dirtyRegion, fullRect);
+
+         if(cc.Rect.CCRectEqualToRect(cc.RectZero(), this._dirtyRegion)){
+         this._dirtyRegion = null;
+         }else{
+         cc.renderContext.clearRect(0 | this._dirtyRegion.origin.x, -(0 | this._dirtyRegion.origin.y),
+         0 | this._dirtyRegion.size.width, -(0 | this._dirtyRegion.size.height));
+
+         if(!cc.Rect.CCRectEqualToRect(fullRect, this._dirtyRegion)){
+         isSaveContext = true;
+         cc.renderContext.save();
+         cc.renderContext.beginPath();
+         cc.renderContext.rect(0 | this._dirtyRegion.origin.x - 1, -(0 | this._dirtyRegion.origin.y - 1),
+         0 | this._dirtyRegion.size.width + 2, -(0 | this._dirtyRegion.size.height + 2));
+         cc.renderContext.clip();
+         cc.renderContext.closePath();
+         }
+         }
+         }
+         */
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
@@ -322,9 +357,7 @@ cc.Director = cc.Class.extend({
             this.setNextScene();
         }
 
-        //TODO openGL
         //glPushMatrix();
-
         this.applyOrientation();
 
         // By default enable VertexArray, ColorArray, TextureCoordArray and Texture2D
@@ -332,8 +365,19 @@ cc.Director = cc.Class.extend({
 
         // draw the scene
         if (this._m_pRunningScene) {
+            //if (this._dirtyRegion) {
             this._m_pRunningScene.visit();
+            //}
         }
+
+        /*
+         if (this._dirtyRegion) {
+         this._dirtyRegion = null;
+         if(isSaveContext){
+         cc.renderContext.restore();
+         }
+         }
+         */
 
         // draw the notifications node
         if (this._m_pNotificationNode) {
@@ -359,6 +403,26 @@ cc.Director = cc.Class.extend({
             this._m_pobOpenGLView.swapBuffers();
         }
     },
+
+    addRegionToDirtyRegion:function (rect) {
+        if (!rect)
+            return;
+
+        if (!this._dirtyRegion) {
+            this._dirtyRegion = new cc.Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+            return;
+        }
+        this._dirtyRegion = cc.Rect.CCRectUnion(this._dirtyRegion,
+            new cc.Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
+    },
+
+    rectIsInDirtyRegion:function (rect) {
+        if (!rect || !this._fullRect)
+            return false;
+
+        return cc.Rect.CCRectIntersectsRect(this._fullRect, rect);
+    },
+
     enableRetinaDisplay:function (enabled) {
         // Already enabled?
         if (enabled && this._m_fContentScaleFactor == 2) {
@@ -390,7 +454,6 @@ cc.Director = cc.Class.extend({
         }
 
         this._m_bRetinaDisplay = !!(this._m_fContentScaleFactor == 2);
-
 
         return true;
     },
@@ -445,6 +508,8 @@ cc.Director = cc.Class.extend({
     popScene:function () {
         cc.Assert(this._m_pRunningScene != null, "running scene should not null");
 
+        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+
         this._m_pobScenesStack.pop();
         var c = this._m_pobScenesStack.length;
 
@@ -498,6 +563,8 @@ cc.Director = cc.Class.extend({
     pushScene:function (pScene) {
         cc.Assert(pScene, "the scene should not null");
 
+        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+
         this._m_bSendCleanupToScene = false;
 
         this._m_pobScenesStack.push(pScene);
@@ -505,6 +572,8 @@ cc.Director = cc.Class.extend({
     },
     replaceScene:function (pScene) {
         cc.Assert(pScene != null, "the scene should not be null");
+
+        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         var i = this._m_pobScenesStack.length;
 
@@ -517,6 +586,8 @@ cc.Director = cc.Class.extend({
         // don't release the event handlers
         // They are needed in case the director is run again
         cc.TouchDispatcher.sharedDispatcher().removeAllDelegates();
+
+        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         if (this._m_pRunningScene) {
             this._m_pRunningScene.onExit();
@@ -557,6 +628,7 @@ cc.Director = cc.Class.extend({
         if (!this._m_bPaused) {
             return;
         }
+        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.setAnimationInterval(this._m_dOldAnimationInterval);
         this._m_pLastUpdate = cc.Time.gettimeofdayCocos2d();
@@ -570,6 +642,8 @@ cc.Director = cc.Class.extend({
     runWithScene:function (pScene) {
         cc.Assert(pScene != null, "running scene should not be null");
         cc.Assert(this._m_pRunningScene == null, "_m_pRunningScene should be null");
+
+        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.pushScene(pScene);
         this.startAnimation();
@@ -613,28 +687,26 @@ cc.Director = cc.Class.extend({
     setDeviceOrientation:function (kDeviceOrientation) {
         var eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
-        if (cc.renderContextType == cc.kCanvas) {
-            var height = cc.canvas.height;
-            cc.canvas.height = cc.canvas.width;
-            cc.canvas.width = height;
-            cc.renderContext.translate(0, cc.canvas.height);
-        }
-
-        if (this._m_eDeviceOrientation != eNewOrientation) {
+        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) { 
             this._m_eDeviceOrientation = eNewOrientation;
+            if (cc.renderContextType == cc.kCanvas) {
+                var height = cc.canvas.height;
+                cc.canvas.height = cc.canvas.width;
+                cc.canvas.width = height;
+                cc.renderContext.translate(0, cc.canvas.height);
+            }
         }
         else {
             // this logic is only run on win32 now
             // On win32,the return value of CCApplication::setDeviceOrientation is always kCCDeviceOrientationPortrait
             // So,we should calculate the Projection and window size again.
-            this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
-            this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
-            this.setProjection(this._m_eProjection);
+            //this._m_obWinSizeInPoints = this._m_pobOpenGLView.getSize();
+            //this._m_obWinSizeInPixels = cc.SizeMake(this._m_obWinSizeInPoints.width * this._m_fContentScaleFactor, this._m_obWinSizeInPoints.height * this._m_fContentScaleFactor);
+            //this.setProjection(this._m_eProjection);
         }
 
     },
     setDirectorType:function (obDirectorType) {
-        cc.UNUSED_PARAM(obDirectorType);
         // we only support CCDisplayLinkDirector
         cc.Director.sharedDirector();
 
@@ -690,6 +762,7 @@ cc.Director = cc.Class.extend({
             if (this._m_bSendCleanupToScene && this._m_pRunningScene) {
                 this._m_pRunningScene.cleanup();
             }
+
         }
 
         if (this._m_pRunningScene) {
@@ -699,7 +772,6 @@ cc.Director = cc.Class.extend({
         //this._m_pNextScene.retain();
         this._m_pNextScene = null;
         if ((!runningIsTransition) && (this._m_pRunningScene != null)) {
-
             this._m_pRunningScene.onEnter();
             this._m_pRunningScene.onEnterTransitionDidFinish();
         }
@@ -789,7 +861,6 @@ cc.Director = cc.Class.extend({
             this._m_pszFPS = ('' + this._m_fFrameRate.toFixed(1));
             this._m_pFPSLabel.setString(this._m_pszFPS);
         }
-
         this._m_pFPSLabel.draw();
     },
     showProfilers:function () {
@@ -884,10 +955,6 @@ cc.DisplayLinkDirector = cc.Director.extend({
     m_bInvalid:false,
     startAnimation:function () {
         this._m_pLastUpdate = cc.Time.gettimeofdayCocos2d();
-        if (this._m_pLastUpdate != 0) {
-            cc.LOG("cocos2d: DisplayLinkDirector: Error on gettimeofday");
-        }
-
         this.m_bInvalid = false;
         cc.Application.sharedApplication().setAnimationInterval(this._m_dAnimationInterval);
     },
@@ -918,3 +985,12 @@ cc.DisplayLinkDirector = cc.Director.extend({
 cc.s_sharedDirector = new cc.DisplayLinkDirector();
 cc.s_bFirstRun = true;
 cc.kDefaultFPS = 60;//set default fps to 60
+
+/*
+ window.onfocus = function () {
+ if (!cc.s_bFirstRun) {
+ cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+ }
+ };
+ */
+

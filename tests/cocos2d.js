@@ -193,5 +193,7 @@ cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceSpriteTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceParticleTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTextureTest.js');
+cc.loadjs('../tests/Classes/tests/FontTest/FontTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');
 cc.loadjs('../tests/Classes/tests/LabelTest/LabelTest.js');
+cc.loadjs('../tests/Classes/tests/CurrentLanguageTest/CurrentLanguageTest.js');

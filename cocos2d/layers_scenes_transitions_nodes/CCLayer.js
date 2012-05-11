@@ -243,8 +243,8 @@ cc.Layer.node = function () {
  - RGB colors
  */
 cc.LayerColor = cc.Layer.extend({
-    _m_pSquareVertices:[new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)],
-    _m_pSquareColors:new Array(new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)),
+    _m_pSquareVertices:[],
+    _m_pSquareColors:[],
     _m_cOpacity:0,
     _m_tColor:new cc.Color3B(255, 255, 255),
     _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
@@ -252,6 +252,9 @@ cc.LayerColor = cc.Layer.extend({
     /// ColorLayer
     ctor:function () {
         this._super();
+        this._m_pSquareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
+        this._m_pSquareColors = [new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)];
+        this._m_tColor = new cc.Color3B(0, 0, 0);
     },
 
     // Opacity and RGB color protocol
@@ -259,10 +262,14 @@ cc.LayerColor = cc.Layer.extend({
     getOpacity:function () {
         return this._m_cOpacity;
     },
+
     /// opacity setter
     setOpacity:function (Var) {
         this._m_cOpacity = Var;
         this._updateColor();
+
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
     },
     /// color getter
     getColor:function () {
@@ -272,6 +279,9 @@ cc.LayerColor = cc.Layer.extend({
     setColor:function (Var) {
         this._m_tColor = Var;
         this._updateColor();
+
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
     },
     /// blendFunc getter
     getBlendFunc:function () {
@@ -325,9 +335,11 @@ cc.LayerColor = cc.Layer.extend({
         this.setContentSize(cc.SizeMake(this._m_tContentSize.width, h));
     },
     _updateColor:function () {
-        this._m_pSquareColors = new Array();
         for (var i = 0; i < 4; i++) {
-            this._m_pSquareColors[i] = new cc.Color4B(this._m_tColor.r, this._m_tColor.g, this._m_tColor.b, this._m_cOpacity);
+            this._m_pSquareColors[i].r = Math.round(this._m_tColor.r);
+            this._m_pSquareColors[i].g = Math.round(this._m_tColor.g);
+            this._m_pSquareColors[i].b = Math.round(this._m_tColor.b);
+            this._m_pSquareColors[i].a = Math.round(this._m_cOpacity);
         }
     },
     setIsOpacityModifyRGB:function (bValue) {
@@ -337,30 +349,26 @@ cc.LayerColor = cc.Layer.extend({
     },
 
     draw:function (ctx) {
-        //TODO
         //TODO need to fix child position in relation to parent
         var context = ctx || cc.renderContext;
+
         if (cc.renderContextType == cc.kCanvas) {
-            context.globalAlpha = this.getOpacity() / 255;
+            //context.globalAlpha = this.getOpacity() / 255;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
-            var tGradient = context.createLinearGradient(-this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, this.getAnchorPointInPixels().x, -this.getAnchorPointInPixels().y)
-            tGradient.addColorStop(0, "rgba(" + this._m_pSquareColors[0].r + "," + this._m_pSquareColors[0].g + "," + this._m_pSquareColors[0].b + "," + this._m_pSquareColors[0].a + ")");
-            tGradient.addColorStop(1, "rgba(" + this._m_pSquareColors[3].r + "," + this._m_pSquareColors[3].g + "," + this._m_pSquareColors[3].b + "," + this._m_pSquareColors[0].a + ")");
+            var tGradient = context.createLinearGradient(-this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y,
+                -this.getAnchorPointInPixels().x + tWidth, -(this.getAnchorPointInPixels().y + tHeight));
 
-            /*var newBlend = false;
-             if (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) {
-             newBlend = true;
-             //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
-             }
-             if (newBlend) {
-             tGradient = cc.LayerRGBAColor(new cc.Color3B(231,21,231))
-             }*/
+            tGradient.addColorStop(0, "rgba(" + this._m_pSquareColors[0].r + "," + this._m_pSquareColors[0].g + ","
+                + this._m_pSquareColors[0].b + "," + this._m_pSquareColors[0].a / 255 + ")");
+            tGradient.addColorStop(1, "rgba(" + this._m_pSquareColors[3].r + "," + this._m_pSquareColors[3].g + ","
+                + this._m_pSquareColors[3].b + "," + this._m_pSquareColors[3].a / 255 + ")");
+
             context.fillStyle = tGradient;
-            context.fillRect(0 - this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, tWidth, -tHeight);
-            return;
+            context.fillRect(-this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, tWidth, -tHeight);
         }
         this._super();
+        return;
         // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Needed states: GL_VERTEX_ARRAY, GL_COLOR_ARRAY
         // Unneeded states: GL_TEXTURE_2D, GL_TEXTURE_COORD_ARRAY
@@ -445,13 +453,15 @@ cc.LayerColor.node = function () {
  @since v0.99.5
  */
 cc.LayerGradient = cc.LayerColor.extend({
-    _m_startColor:new cc.Color3B(),
-    _m_endColor:new cc.Color3B(),
+    _m_startColor:new cc.Color3B(0, 0, 0),
+    _m_endColor:new cc.Color3B(0, 0, 0),
     _m_cStartOpacity:null,
     _m_cEndOpacity:null,
     _m_AlongVector:null,
-    _m_bCompressedInterpolation:null,
+    _m_bCompressedInterpolation:false,
     ctor:function () {
+        this._m_startColor = new cc.Color3B(0, 0, 0);
+        this._m_endColor = new cc.Color3B(0, 0, 0);
         this._super();
     },
     getStartColor:function () {
@@ -501,6 +511,7 @@ cc.LayerGradient = cc.LayerColor.extend({
             /** Initializes the CCLayer with a gradient between start and end. */
             v = cc.ccp(0, -1);
         }
+
         /** Initializes the CCLayer with a gradient between start and end in the direction of v. */
         this._m_startColor.r = start.r;
         this._m_startColor.g = start.g;
@@ -518,8 +529,23 @@ cc.LayerGradient = cc.LayerColor.extend({
 
         return this._super(cc.ccc4(start.r, start.g, start.b, 255));
     },
+
     _updateColor:function () {
+        //todo need fixed for webGL
         this._super();
+        /*
+         this._m_pSquareColors[0].r = Math.round(this._m_startColor.r);
+         this._m_pSquareColors[0].g = Math.round(this._m_startColor.g);
+         this._m_pSquareColors[0].b = Math.round(this._m_startColor.b);
+         this._m_pSquareColors[0].a = Math.round(this._m_startColor.a);
+
+         this._m_pSquareColors[3].r = Math.round(this._m_endColor.r);
+         this._m_pSquareColors[3].g = Math.round(this._m_endColor.g);
+         this._m_pSquareColors[3].b = Math.round(this._m_endColor.b);
+         this._m_pSquareColors[3].a = Math.round(this._m_endColor.a);
+         return;
+         */
+
 
         var h = cc.ccpLength(this.m_AlongVector);
         if (h == 0)
@@ -595,11 +621,7 @@ cc.LayerGradient.node = function () {
     if (pRet && pRet.init()) {
         return pRet;
     }
-    else {
-        delete pRet;
-        pRet = null;
-        return null;
-    }
+    return null;
 };
 
 /** @brief CCMultipleLayer is a CCLayer with the ability to multiplex it's children.
@@ -677,9 +699,5 @@ cc.LayerMultiplex.node = function () {
     if (pRet && pRet.init()) {
         return pRet;
     }
-    else {
-        delete pRet;
-        pRet = null;
-        return null;
-    }
+    return null;
 };

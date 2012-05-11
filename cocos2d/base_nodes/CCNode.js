@@ -115,8 +115,8 @@ cc.Node = cc.Class.extend({
     _m_pCamera:null,
     _m_pGrid:null,
     _m_bIsVisible:true,
-    _m_tAnchorPoint:cc.PointZero(),
-    _m_tAnchorPointInPixels:cc.PointZero(),
+    _m_tAnchorPoint:new cc.Point(0, 0),
+    _m_tAnchorPointInPixels:new cc.Point(0, 0),
     _m_tContentSize:cc.SizeZero(),
     _m_tContentSizeInPixels:cc.SizeZero(),
     _m_bIsRunning:false,
@@ -128,20 +128,23 @@ cc.Node = cc.Class.extend({
     _m_pUserData:null,
     _m_bIsTransformDirty:true,
     _m_bIsInverseDirty:true,
+    _isCacheDirty:true,
     _m_bIsTransformGLDirty:null,
     _m_tTransform:null,
     _m_tInverse:null,
     _m_pTransformGL:null,
-    _m_nScriptHandler:0,
 
     ctor:function () {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
             this._m_pTransformGL = 0.0;
         }
+        this._m_tAnchorPoint = new cc.Point(0, 0);
+        this._m_tAnchorPointInPixels = new cc.Point(0, 0);
         this._m_tContentSize = cc.SizeZero();
         this._m_tContentSizeInPixels = cc.SizeZero();
     },
+
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
         if (pArray && pArray.length > 0) {
             for (var i = 0; i < pArray.length; i++) {
@@ -154,28 +157,55 @@ cc.Node = cc.Class.extend({
             }
         }
     },
-    setNodeDirty:function(){
+    _addDirtyRegionToDirector:function (rect) {
+        if (!cc.s_bFirstRun) {
+            //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
+        }
+    },
+    _isInDirtyRegion:function () {
+        if (!cc.s_bFirstRun) {
+            return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
+        }
+    },
+
+    setNodeDirty:function () {
+        this._setNodeDirtyForCache();
         this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._m_bIsTransformGLDirty = true;
         }
-        if(this._m_pParent){
+    },
 
-            this._m_pParent.setNodeDirty();
+    _setNodeDirtyForCache:function () {
+        this._isCacheDirty = true;
+        if (this._m_pParent) {
+            this._m_pParent._setNodeDirtyForCache();
         }
     },
+
     getSkewX:function () {
         return this._m_fSkewX;
     },
     setSkewX:function (newSkewX) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fSkewX = newSkewX;
+
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     getSkewY:function () {
         return this._m_fSkewY;
     },
     setSkewY:function (newSkewY) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fSkewY = newSkewY;
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -202,7 +232,13 @@ cc.Node = cc.Class.extend({
     },
     // rotation setter
     setRotation:function (newRotation) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fRotation = newRotation;
+
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /** Get the scale factor of the node.
@@ -214,8 +250,14 @@ cc.Node = cc.Class.extend({
     },
     /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. */
     setScale:function (scale) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fScaleX = scale;
         this._m_fScaleY = scale;
+
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// scaleX getter
@@ -224,7 +266,13 @@ cc.Node = cc.Class.extend({
     },
     /// scaleX setter
     setScaleX:function (newScaleX) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fScaleX = newScaleX;
+
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// scaleY getter
@@ -233,27 +281,43 @@ cc.Node = cc.Class.extend({
     },
     /// scaleY setter
     setScaleY:function (newScaleY) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fScaleY = newScaleY;
+
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// position setter
     setPosition:function (newPosition) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_tPosition = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this._m_tPositionInPixels = this._m_tPosition;
-        }
-        else {
+        } else {
             this._m_tPositionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
         }
+
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     setPositionInPixels:function (newPosition) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_tPositionInPixels = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this._m_tPosition = this._m_tPositionInPixels;
         } else {
             this._m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
         }
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
     getPositionInPixels:function () {
@@ -316,6 +380,8 @@ cc.Node = cc.Class.extend({
     /// isVisible setter
     setIsVisible:function (Var) {
         this._m_bIsVisible = Var;
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
     },
 
     /** anchorPoint is the point around which all transformations and positioning manipulations take place.
@@ -329,11 +395,17 @@ cc.Node = cc.Class.extend({
         return this._m_tAnchorPoint;
     },
     setAnchorPoint:function (point) {
+
         if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
             this._m_tAnchorPoint = point;
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
 
+            //save dirty region when after changed
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -343,14 +415,19 @@ cc.Node = cc.Class.extend({
     },
     setContentSizeInPixels:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSizeInPixels)) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._m_tContentSizeInPixels = size;
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
                 this._m_tContentSize = this._m_tContentSizeInPixels;
-            }
-            else {
+            } else {
                 this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
         }
     },
@@ -364,6 +441,8 @@ cc.Node = cc.Class.extend({
     },
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._m_tContentSize = size;
 
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
@@ -373,7 +452,10 @@ cc.Node = cc.Class.extend({
                 this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
             }
 
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x, this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -398,7 +480,13 @@ cc.Node = cc.Class.extend({
     },
     /// isRelativeAnchorPoint setter
     setIsRelativeAnchorPoint:function (newValue) {
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_bIsRelativeAnchorPoint = newValue;
+
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// tag getter
@@ -433,6 +521,26 @@ cc.Node = cc.Class.extend({
     boundingBoxInPixels:function () {
         var rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
+    },
+
+    boundingBoxToWorld:function () {
+        var rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
+        rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
+        rect = new cc.Rect(0 | rect.origin.x - 4, 0 | rect.origin.y - 4, 0 | rect.size.width + 8, 0 | rect.size.height + 8);
+        //query child's boundingBox
+        if (!this._m_pChildren)
+            return rect;
+
+        for (var i = 0; i < this._m_pChildren.length; i++) {
+            var child = this._m_pChildren[i];
+            if (child && child._m_bIsVisible) {
+                var childRect = child.boundingBoxToWorld();
+                if (childRect) {
+                    rect = cc.Rect.CCRectUnion(rect, childRect);
+                }
+            }
+        }
+        return rect;
     },
     /** Stops all running actions and schedulers
      @since v0.8
@@ -545,6 +653,9 @@ cc.Node = cc.Class.extend({
         if (this._m_pChildren.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
+
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
     },
     /** Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter
      @since v0.7.1
@@ -626,9 +737,15 @@ cc.Node = cc.Class.extend({
     reorderChild:function (child, zOrder) {
         cc.Assert(child != null, "Child must be non-nil");
 
-        cc.ArrayRemoveObject(this._m_pChildren, child);
+        //save dirty region when before change
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
+        cc.ArrayRemoveObject(this._m_pChildren, child);
         this._insertChild(child, zOrder);
+
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
     },
     // draw
 
@@ -665,7 +782,6 @@ cc.Node = cc.Class.extend({
         }
 
         this.transform(context);
-
         if (this._m_pChildren) {
             // draw children zOrder < 0
             for (var i = 0; i < this._m_pChildren.length; i++) {
@@ -676,8 +792,10 @@ cc.Node = cc.Class.extend({
             }
         }
 
+        //if (this._isInDirtyRegion()) {
         // self draw
         this.draw(context);
+        //}
 
         // draw children zOrder >= 0
         if (this._m_pChildren) {
@@ -692,6 +810,7 @@ cc.Node = cc.Class.extend({
         if (this._m_pGrid && this._m_pGrid.isActive()) {
             this._m_pGrid.afterDraw(this);
         }
+
         context.restore();
     },
     /** performs OpenGL view-matrix transformation of it's ancestors.
@@ -727,6 +846,9 @@ cc.Node = cc.Class.extend({
                 context.translate(0 | ( this._m_tPosition.x - pAp.x + lAp.x), -(0 | (this._m_tPosition.y - pAp.y + lAp.y)));
             }
 
+            if (this._m_fRotation != 0) {
+                context.rotate(cc.DEGREES_TO_RADIANS(this._m_fRotation));
+            }
             if ((this._m_fScaleX != 1) || (this._m_fScaleY != 1)) {
                 context.scale(this._m_fScaleX, this._m_fScaleY);
             }
@@ -735,9 +857,6 @@ cc.Node = cc.Class.extend({
                     -Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)),
                     -Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)),
                     1, 0, 0);
-            }
-            if (this._m_fRotation != 0) {
-                context.rotate(cc.DEGREES_TO_RADIANS(this._m_fRotation));
             }
         } else {
             //Todo WebGL implement need fixed
@@ -960,7 +1079,6 @@ cc.Node = cc.Class.extend({
      */
     nodeToParentTransform:function () {
         if (this._m_bIsTransformDirty) {
-
             this._m_tTransform = cc.AffineTransformIdentity();
             if (!this._m_bIsRelativeAnchorPoint && !cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero())) {
                 this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, this._m_tAnchorPointInPixels.x, this._m_tAnchorPointInPixels.y);

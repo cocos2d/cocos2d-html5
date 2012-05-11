@@ -107,11 +107,18 @@ cc.setup = function () {
 
     if (cc.renderContextType == cc.kCanvas) {
         cc.renderContext.translate(0, cc.canvas.height);
+        //cc.renderContext.scale(1,-1);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
 
     //binding window size
-
+    /*
+    cc.canvas.addEventListener("resize", function () {
+        if (!cc.s_bFirstRun) {
+            cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        }
+    }, true);
+    */
 };
 
 
@@ -144,6 +151,7 @@ cc.Application = cc.Class.extend({
          return pView.setDeviceOrientation(orientation);
          }
          return cc.Director.sharedDirector().getDeviceOrientation(); */
+        return orientation;
 
     },
 
@@ -232,6 +240,30 @@ cc.Application.getCurrentLanguage = function () {
      break;
      }
      */
+
+    var currentLang = navigator.language;
+    currentLang = currentLang.toLowerCase();
+    switch (currentLang)
+    {
+        case "zh-cn":
+            ret = cc.kLanguageChinese;
+            break;
+        case "fr":
+            ret = cc.kLanguageFrench;
+            break;
+        case "it":
+            ret = cc.kLanguageItalian;
+            break;
+        case "de":
+            ret = cc.kLanguageGerman;
+            break;
+        case "es":
+            ret = cc.kLanguageSpanish;
+            break;
+        case "ru":
+            ret = cc.kLanguageRussian;
+            break;
+    }
 
     return ret;
 };

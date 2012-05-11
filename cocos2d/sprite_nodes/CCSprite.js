@@ -1110,10 +1110,17 @@ cc.Sprite = cc.Node.extend({
     },
     setFlipX:function (bFlipX) {
         if (this._m_bFlipX != bFlipX) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
             this._m_bFlipX = bFlipX;
             this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
+
+            //save dirty region when after changed
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this.setNodeDirty();
         }
-        this.setNodeDirty();
+
     },
     /** whether or not the sprite is flipped horizontally.
      It only flips the texture of the sprite, and not the texture of the sprite's children.
@@ -1134,10 +1141,17 @@ cc.Sprite = cc.Node.extend({
      */
     setFlipY:function (bFlipY) {
         if (this._m_bFlipY != bFlipY) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
             this._m_bFlipY = bFlipY;
             this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
+
+            //save dirty region when after changed
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this.setNodeDirty();
         }
-        this.setNodeDirty();
+
     },
     isFlipY:function () {
         return this._m_bFlipY;
@@ -1174,6 +1188,8 @@ cc.Sprite = cc.Node.extend({
     setOpacity:function (opacity) {
         this._m_nOpacity = opacity;
 
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
         //TODO in canvas
         return;
         // special opacity for premultiplied textures
@@ -1210,6 +1226,9 @@ cc.Sprite = cc.Node.extend({
             this._m_sColor.b = color3.b * this._m_nOpacity / 255;
         }
         this.updateColor();
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this.setNodeDirty();
     },
     // RGBAProtocol
@@ -1236,6 +1255,8 @@ cc.Sprite = cc.Node.extend({
         // update rect
         this._m_bRectRotated = pNewFrame.isRotated();
         this.setTextureRectInPixels(pNewFrame.getRectInPixels(), pNewFrame.isRotated(), pNewFrame.getOriginalSizeInPixels());
+        //save dirty region when after changed
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
     },
     // Animation
 
@@ -1256,8 +1277,7 @@ cc.Sprite = cc.Node.extend({
         if (cc.renderContextType == cc.kCanvas) {
             return (pFrame.getTexture() == this._m_pobTexture);
         } else {
-            var r = pFrame.getRect();
-            return (cc.Rect.CCRectEqualToRect(r, this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
+            return (cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
         }
     },
     /** returns the current displayed frame. */

@@ -25,10 +25,14 @@
  ****************************************************************************/
 var kTagLabelAtlas = 1;
 
+var sceneIdx = -1;
+var MAX_LAYER = 33;
+
 var ParticleTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = -1;
-        MAX_LAYER = 33;
+        MAX_LAYER = 15;
+
         this.addChild(nextParticleAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
@@ -38,9 +42,6 @@ var IDC_NEXT = 100;
 var IDC_BACK = 101;
 var IDC_RESTART = 102;
 var IDC_TOGGLE = 103;
-
-var sceneIdx = -1;
-var MAX_LAYER = 33;
 
 var createParticleLayer = function (nIndex) {
     switch (nIndex) {
@@ -59,7 +60,8 @@ var createParticleLayer = function (nIndex) {
         case 6:
             return new DemoFire();
         case 7:
-            return new DemoSmoke();
+            //return new DemoSmoke();
+            return new Issue704();
         case 8:
             return new DemoExplosion();
         case 9:
@@ -118,8 +120,7 @@ var nextParticleAction = function () {
     sceneIdx++;
     sceneIdx = sceneIdx % MAX_LAYER;
 
-    var pLayer = createParticleLayer(sceneIdx);
-    return pLayer;
+    return createParticleLayer(sceneIdx);
 };
 
 var backParticleAction = function () {
@@ -128,19 +129,18 @@ var backParticleAction = function () {
     if (sceneIdx < 0)
         sceneIdx += total;
 
-    var pLayer = createParticleLayer(sceneIdx);
-    return pLayer;
+    return createParticleLayer(sceneIdx);
 };
 
 var restartParticleAction = function () {
-    var pLayer = createParticleLayer(sceneIdx);
-    return pLayer;
+    return createParticleLayer(sceneIdx);
 };
 
 var ParticleDemo = cc.LayerColor.extend({
     _m_emitter:null,
     _m_background:null,
     ctor:function () {
+        this._super();
         this.initWithColor(cc.ccc4(127, 127, 127, 255));
 
         this._m_emitter = null;
@@ -157,14 +157,16 @@ var ParticleDemo = cc.LayerColor.extend({
         this.addChild(tapScreen, 100);
         var selfPoint = this;
         var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, function(){
-            if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeGrouped)
-                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeFree);
-            else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeFree)
-                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeRelative);
-            else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeRelative)
-                selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeGrouped);
-        });
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, function(){selfPoint._m_emitter.resetSystem();}
+            /*function () {
+                if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeGrouped)
+                    selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeFree);
+                else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeFree)
+                    selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeRelative);
+                else if (selfPoint._m_emitter.getPositionType() == cc.kCCPositionTypeRelative)
+                    selfPoint._m_emitter.setPositionType(cc.kCCPositionTypeGrouped);
+            }*/
+        );
         var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
 
         //var item4 = cc.MenuItemToggle.itemWithTarget(	this,
@@ -248,7 +250,7 @@ var ParticleDemo = cc.LayerColor.extend({
         //CCPoint convertedLocation = CCDirector::sharedDirector().convertToGL(location);
 
         var pos = cc.PointZero();
-        if (this._m_background){
+        if (this._m_background) {
             pos = this._m_background.convertToWorldSpace(cc.PointZero());
         }
         this._m_emitter.setPosition(cc.ccpSub(location, pos));
@@ -432,7 +434,8 @@ var DemoRotFlower = ParticleDemo.extend({
         this._super();
 
         this._m_emitter = new cc.ParticleSystemQuad();
-        this._m_emitter.initWithTotalParticles(300);
+        //this._m_emitter.initWithTotalParticles(300);
+        this._m_emitter.initWithTotalParticles(150);
 
         this._m_background.addChild(this._m_emitter, 10);
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars2));
@@ -639,7 +642,8 @@ var DemoModernArt = ParticleDemo.extend({
         //  Crash place: CCParticleSystemPoint.cpp Line 149, function: glDrawArrays(GL_POINTS, 0, this._m_uParticleIdx);
         //  this._m_emitter = new CCParticleSystemPoint();
         this._m_emitter = new cc.ParticleSystemQuad();
-        this._m_emitter.initWithTotalParticles(1000);
+        //this._m_emitter.initWithTotalParticles(1000);
+        this._m_emitter.initWithTotalParticles(200);
         //this._m_emitter.autorelease();
 
         this._m_background.addChild(this._m_emitter, 10);
@@ -805,7 +809,8 @@ var RadiusMode1 = ParticleDemo.extend({
         this._m_background = null;
 
         this._m_emitter = new cc.ParticleSystemQuad();
-        this._m_emitter.initWithTotalParticles(200);
+        //this._m_emitter.initWithTotalParticles(200);
+        this._m_emitter.initWithTotalParticles(150);
         this.addChild(this._m_emitter, 10);
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_starsGrayscale));
 
@@ -963,13 +968,13 @@ var Issue704 = ParticleDemo.extend({
         this._m_emitter = new cc.ParticleSystemQuad();
         this._m_emitter.initWithTotalParticles(100);
         this.addChild(this._m_emitter, 10);
-        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("Images/fire.png"));
+        this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
 
         // duration
         this._m_emitter.setDuration(cc.kCCParticleDurationInfinity);
 
         // radius mode
-        this._m_emitter.setEmitterMode(cc.kCCParticleModeRadius);
+        //this._m_emitter.setEmitterMode(cc.kCCParticleModeRadius);
 
         // radius mode: start and end radius in pixels
         this._m_emitter.setStartRadius(50);

@@ -23,18 +23,18 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-cc.Point = function(_x,_y){
-    this.x = _x||0;
-    this.y = _y||0;
+cc.Point = function (_x, _y) {
+    this.x = _x || 0;
+    this.y = _y || 0;
 };
 
 cc.Point.CCPointEqualToPoint = function (point1, point2) {
     return ((point1.x == point2.x) && (point1.y == point2.y));
 };
 
-cc.Size = function(_width,_height){
-    this.width = _width||0;
-    this.height = _height||0;
+cc.Size = function (_width, _height) {
+    this.width = _width || 0;
+    this.height = _height || 0;
 };
 
 cc.Size.CCSizeEqualToSize = function (size1, size2) {
@@ -115,6 +115,44 @@ cc.Rect.CCRectIntersectsRect = function (rectA, rectB) {
         cc.Rect.CCRectGetMaxX(rectB) < cc.Rect.CCRectGetMinX(rectA) ||
         cc.Rect.CCRectGetMaxY(rectA) < cc.Rect.CCRectGetMinY(rectB) ||
         cc.Rect.CCRectGetMaxY(rectB) < cc.Rect.CCRectGetMinY(rectA));
+};
+
+cc.Rect.CCRectOverlapsRect = function (rectA, rectB) {
+    if (rectA.origin.x + rectA.size.width < rectB.origin.x) {
+        return false;
+    }
+    if (rectB.origin.x + rectB.size.width < rectA.origin.x) {
+        return false;
+    }
+    if (rectA.origin.y + rectA.size.height < rectB.origin.y) {
+        return false;
+    }
+    if (rectB.origin.y + rectB.size.height < rectA.origin.y) {
+        return false;
+    }
+    return true;
+};
+
+//Returns the smallest rectangle that contains the two source rectangles.
+cc.Rect.CCRectUnion = function (rectA, rectB) {
+    var rect = new cc.Rect(0, 0, 0, 0);
+    rect.origin.x = Math.min(rectA.origin.x, rectB.origin.x);
+    rect.origin.y = Math.min(rectA.origin.y, rectB.origin.y);
+    rect.size.width = Math.max(rectA.origin.x + rectA.size.width, rectB.origin.x + rectB.size.width) - rect.origin.x;
+    rect.size.height = Math.max(rectA.origin.y + rectA.size.height, rectB.origin.y + rectB.size.height) - rect.origin.y;
+    return rect
+};
+
+//Returns the overlapping portion of 2 rectangles
+cc.Rect.CCRectIntersection = function (rectA, rectB) {
+    var intersection = new cc.Rect(
+        Math.max(cc.Rect.CCRectGetMinX(rectA), cc.Rect.CCRectGetMinX(rectB)),
+        Math.max(cc.Rect.CCRectGetMinY(rectA), cc.Rect.CCRectGetMinY(rectB)),
+        0, 0);
+
+    intersection.size.width = Math.min(cc.Rect.CCRectGetMaxX(rectA), cc.Rect.CCRectGetMaxX(rectB)) - cc.Rect.CCRectGetMinX(intersection);
+    intersection.size.height = Math.min(cc.Rect.CCRectGetMaxY(rectA), cc.Rect.CCRectGetMaxY(rectB)) - cc.Rect.CCRectGetMinY(intersection);
+    return intersection
 };
 
 
