@@ -792,10 +792,10 @@ cc.Node = cc.Class.extend({
             }
         }
 
-        if (this._isInDirtyRegion()) {
-            // self draw
-            this.draw(context);
-        }
+        //if (this._isInDirtyRegion()) {
+        // self draw
+        this.draw(context);
+        //}
 
         // draw children zOrder >= 0
         if (this._m_pChildren) {
