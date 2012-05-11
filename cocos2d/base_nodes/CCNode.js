@@ -159,7 +159,7 @@ cc.Node = cc.Class.extend({
     },
     _addDirtyRegionToDirector:function (rect) {
         if (!cc.s_bFirstRun) {
-            cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
+            //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
         }
     },
     _isInDirtyRegion:function () {
@@ -188,11 +188,12 @@ cc.Node = cc.Class.extend({
     },
     setSkewX:function (newSkewX) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fSkewX = newSkewX;
 
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     getSkewY:function () {
@@ -200,10 +201,11 @@ cc.Node = cc.Class.extend({
     },
     setSkewY:function (newSkewY) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fSkewY = newSkewY;
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -231,10 +233,12 @@ cc.Node = cc.Class.extend({
     // rotation setter
     setRotation:function (newRotation) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fRotation = newRotation;
+
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /** Get the scale factor of the node.
@@ -247,11 +251,13 @@ cc.Node = cc.Class.extend({
     /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. */
     setScale:function (scale) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fScaleX = scale;
         this._m_fScaleY = scale;
+
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// scaleX getter
@@ -261,10 +267,12 @@ cc.Node = cc.Class.extend({
     /// scaleX setter
     setScaleX:function (newScaleX) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fScaleX = newScaleX;
+
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// scaleY getter
@@ -274,30 +282,34 @@ cc.Node = cc.Class.extend({
     /// scaleY setter
     setScaleY:function (newScaleY) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_fScaleY = newScaleY;
+
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// position setter
     setPosition:function (newPosition) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_tPosition = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this._m_tPositionInPixels = this._m_tPosition;
-        }
-        else {
+        } else {
             this._m_tPositionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
         }
+
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     setPositionInPixels:function (newPosition) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_tPositionInPixels = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             this._m_tPosition = this._m_tPositionInPixels;
@@ -305,7 +317,7 @@ cc.Node = cc.Class.extend({
             this._m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
     getPositionInPixels:function () {
@@ -368,7 +380,7 @@ cc.Node = cc.Class.extend({
     /// isVisible setter
     setIsVisible:function (Var) {
         this._m_bIsVisible = Var;
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -386,13 +398,14 @@ cc.Node = cc.Class.extend({
 
         if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
             //save dirty region when before change
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
             this._m_tAnchorPoint = point;
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
 
             //save dirty region when after changed
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -403,7 +416,7 @@ cc.Node = cc.Class.extend({
     setContentSizeInPixels:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSizeInPixels)) {
             //save dirty region when before change
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._m_tContentSizeInPixels = size;
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
                 this._m_tContentSize = this._m_tContentSizeInPixels;
@@ -414,7 +427,7 @@ cc.Node = cc.Class.extend({
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
 
             //save dirty region when before change
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
         }
     },
@@ -429,7 +442,7 @@ cc.Node = cc.Class.extend({
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
             //save dirty region when before change
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._m_tContentSize = size;
 
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
@@ -442,7 +455,7 @@ cc.Node = cc.Class.extend({
             this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
             //save dirty region when before change
-            this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -468,10 +481,12 @@ cc.Node = cc.Class.extend({
     /// isRelativeAnchorPoint setter
     setIsRelativeAnchorPoint:function (newValue) {
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
         this._m_bIsRelativeAnchorPoint = newValue;
+
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /// tag getter
@@ -639,7 +654,7 @@ cc.Node = cc.Class.extend({
             this._detachChild(child, cleanup);
         }
 
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /** Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter
@@ -723,13 +738,13 @@ cc.Node = cc.Class.extend({
         cc.Assert(child != null, "Child must be non-nil");
 
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
         cc.ArrayRemoveObject(this._m_pChildren, child);
         this._insertChild(child, zOrder);
 
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     // draw

@@ -508,7 +508,7 @@ cc.SpriteBatchNode = cc.Node.extend({
                 break;
         }
 
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -522,14 +522,14 @@ cc.SpriteBatchNode = cc.Node.extend({
         }
 
         //save dirty region when before change
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
         // xxx: instead of removing/adding, it is more efficient ot reorder manually
         this.removeChild(child, false);
         this.addChild(child, zOrder);
 
         //save dirty region when after changed
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
 
