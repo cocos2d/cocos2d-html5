@@ -387,7 +387,7 @@ cc.domNode = cc.Class.extend({
         for (cur = this.dom; cur.parentNode; cur = cur.parentNode) {
             if (cur.parentNode.id == "Cocos2dGameContainer") {
                 break;
-            }
+            }console.log(cur);
         }
         if (cur.parentNode) {
             cur.parentNode.removeChild(cur);
