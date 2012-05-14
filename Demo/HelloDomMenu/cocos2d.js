@@ -30,7 +30,7 @@
 
 var cc = cc = cc || {};
 //Cocos2d directory
-cc.Dir = '../cocos2d/';//in relate to the html file or use absolute
+cc.Dir = '../../cocos2d/';//in relate to the html file or use absolute
 cc.loadQue = [];//the load que which js files are loaded
 cc.COCOS2D_DEBUG = 2;
 cc._DEBUG = 1;
@@ -60,6 +60,7 @@ cc.loadjs = function (filename) {
     script.order = cc.loadQue.length;
     cc.loadQue.push(script);
 
+
     script.onload = function () {
         //file have finished loading,
         //if there is more file to load, we should put the next file on the head
@@ -69,8 +70,6 @@ cc.loadjs = function (filename) {
         }
         else {
             cc.setup("gameCanvas");
-            //init audio
-            cc.AudioManager.sharedEngine().init("mp3,ogg");
             //we are ready to run the game
             cc.Loader.shareLoader().onloading = function () {
                 cc.LoaderScene.shareLoaderScene().draw();
@@ -79,7 +78,11 @@ cc.loadjs = function (filename) {
                 cc.AppController.shareAppController().didFinishLaunchingWithOptions();
             };
             //preload ressources
-            cc.Loader.shareLoader().preload(g_ressources);
+            cc.Loader.shareLoader().preload([
+                {type:"image", src:"Resources/HelloWorld.png"},
+                {type:"image", src:"Resources/grossini_dance_07.png"},
+                {type:"image", src:"Resources/cocos64.png"}
+            ]);
         }
     };
     if (script.order === 0)//if the first file to load, then we put it on the head
@@ -92,109 +95,39 @@ cc.loadjs = function (filename) {
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('platform/CCCommon.js');//1
 cc.loadjs('platform/platform.js');//2
-cc.loadjs('platform/JXGUtil.js');//4
-cc.loadjs('platform/base64.js');//4
-cc.loadjs('platform/gzip.js');//4
 cc.loadjs('cocoa/CCGeometry.js');//3
 cc.loadjs('cocoa/CCSet.js');//4
 cc.loadjs('platform/CCTypes.js');//5
 cc.loadjs('cocoa/CCAffineTransform.js');//5
 cc.loadjs('support/CCPointExtension.js');//12
 cc.loadjs('base_nodes/CCNode.js');//6
-cc.loadjs('base_nodes/CCAtlasNode.js');//6
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
 cc.loadjs('textures/CCTextureCache.js');//12
-cc.loadjs('textures/CCTextureAtlas.js');//12
-cc.loadjs('misc_nodes/CCRenderTexture.js');//11
 cc.loadjs('actions/CCAction.js');//7
-cc.loadjs('platform/CCFileUtils.js');//7
-cc.loadjs('effects/CCGrid.js');//7
-cc.loadjs('effects/CCGrabber.js');//7
 cc.loadjs('actions/CCActionInterval.js');//7
-cc.loadjs('actions/CCActionInstant.js');//7
 cc.loadjs('actions/CCActionManager.js');//7
-cc.loadjs('actions/CCActionProgressTimer.js');//7
-cc.loadjs('actions/CCActionCamera.js');//7
 cc.loadjs('actions/CCActionEase.js');//7
-cc.loadjs('actions/CCActionGrid.js');//7
-cc.loadjs('actions/CCActionTiledGrid.js');//7
-cc.loadjs('actions/CCActionGrid.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
-cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');//9
-cc.loadjs('layers_scenes_transitions_nodes/CCTransitionRadial.js');//9
-cc.loadjs('layers_scenes_transitions_nodes/CCTransitionPageTurn.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
-cc.loadjs('sprite_nodes/CCAnimation.js');
-cc.loadjs('sprite_nodes/CCAnimationCache.js');
-cc.loadjs('sprite_nodes/CCSpriteFrame.js');
-cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
-cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
-cc.loadjs('base_nodes/CCdomNode.js');
-cc.loadjs('label_nodes/CCLabelAtlas.js');//11
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
-cc.loadjs('label_nodes/CCLabelBMFont.js');//11
-cc.loadjs('particle_nodes/CCParticleSystem.js');//11
-cc.loadjs('particle_nodes/CCParticleSystemQuad.js');//11
-cc.loadjs('particle_nodes/CCParticleSystemPoint.js');//11
-cc.loadjs('particle_nodes/CCParticleExamples.js');//11
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
 cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
 cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
-cc.loadjs('misc_nodes/CCProgressTimer.js');//11
+cc.loadjs('base_nodes/CCdomNode.js');
 cc.loadjs('CCDirector.js');//13
-cc.loadjs('CCCamera.js');//13
 cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCLoader.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
+cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('platform/CCSAXParser.js');//16
-cc.loadjs('../tests/Classes/AppDelegate.js');//17
+cc.loadjs('../Demo/HelloDomMenu/Classes/AppDelegate.js');//17
 cc.loadjs('platform/AppControl.js');//18
+cc.loadjs('../Demo/HelloDomMenu/HelloDom.js');//19
 cc.loadjs('menu_nodes/CCdomMenuItem.js');
 cc.loadjs('menu_nodes/CCdomMenu.js');
-cc.loadjs('tileMap_parallax_nodes/CCTMXTiledMap.js');
-cc.loadjs('tileMap_parallax_nodes/CCTMXXMLParser.js');
-cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');
-cc.loadjs('tileMap_parallax_nodes/CCTMXLayer.js');
-cc.loadjs('tileMap_parallax_nodes/CCParallaxNode.js');
-cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-cc.loadjs('../tests/testbasic.js');
-cc.loadjs('../tests/testResource.js');
-cc.loadjs('../tests/Classes/tests/TouchesTest/Ball.js');
-cc.loadjs('../tests/Classes/tests/TouchesTest/Paddle.js');
-cc.loadjs('../tests/Classes/tests/TouchesTest/TouchesTest.js');
-cc.loadjs('../tests/Classes/tests/SchedulerTest/SchedulerTest.js');
-cc.loadjs('../tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
-cc.loadjs('../tests/Classes/tests/MenuTest/MenuTest.js');
-cc.loadjs('../tests/Classes/tests/ActionsTest/ActionsTest.js');
-cc.loadjs('../tests/Classes/tests/TileMapTest/TileMapTest.js');
-cc.loadjs('../tests/Classes/tests/TransitionsTest/TransitionsTest.js');
-cc.loadjs('../tests/Classes/tests/DrawPrimitivesTest/DrawPrimitivesTest.js');
-cc.loadjs('../tests/Classes/tests/ParticleTest/ParticleTest.js');
-cc.loadjs('../tests/Classes/tests/ProgressActionsTest/ProgressActionsTest.js');
-cc.loadjs('../tests/Classes/tests/LayerTest/LayerTest.js');
-cc.loadjs('../tests/Classes/tests/SceneTest/SceneTest.js');
-cc.loadjs('../tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
-cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
-cc.loadjs('../tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
-cc.loadjs('../tests/Classes/tests/CocosNodeTest/CocosNodeTest.js');
-cc.loadjs('../tests/Classes/tests/RotateWorldTest/RotateWorldTest.js');
-cc.loadjs('../tests/Classes/tests/IntervelTest/IntervelTest.js');
-cc.loadjs('../tests/Classes/tests/ActionManagerTest/ActionManagerTest.js');
-cc.loadjs('../tests/Classes/tests/EaseActionsTest/EaseActionsTest.js');
-cc.loadjs('../tests/Classes/tests/ParallaxTest/ParallaxTest.js');
-cc.loadjs('../tests/Classes/tests/DirectorTest/DirectorTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceSpriteTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceParticleTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTextureTest.js');
-cc.loadjs('../tests/Classes/tests/FontTest/FontTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');
-cc.loadjs('../tests/Classes/tests/LabelTest/LabelTest.js');
-cc.loadjs('../tests/Classes/tests/CurrentLanguageTest/CurrentLanguageTest.js');
