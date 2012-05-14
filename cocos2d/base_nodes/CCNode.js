@@ -590,8 +590,8 @@ cc.Node = cc.Class.extend({
          */
             case 1:
                 cc.Assert(child != null, "Argument must be non-nil");
-                zOrder = child._m_nZOrder;
-                tag = child._m_nTag;
+                zOrder = child.getZOrder();
+                tag = child.getTag();
                 //this.addChild(child, child._m_nZOrder, child._m_nTag);
                 break;
         /** Adds a child to the container with a z-order
@@ -600,7 +600,7 @@ cc.Node = cc.Class.extend({
          */
             case 2:
                 cc.Assert(child != null, "Argument must be non-nil");
-                tag = child._m_nTag;
+                tag = child.getTag();
                 //this.addChild(child, zOrder, child._m_nTag);
                 break;
         /** Adds a child to the container with z order and tag
@@ -609,7 +609,7 @@ cc.Node = cc.Class.extend({
          */
             case 3:
                 cc.Assert(child != null, "Argument must be non-nil");
-                cc.Assert(child._m_pParent == null, "child already added. It can't be added again");
+                cc.Assert(child.getParent() == null, "child already added. It can't be added again");
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -620,7 +620,7 @@ cc.Node = cc.Class.extend({
             this._childrenAlloc();
         }
         this._insertChild(child, zOrder);
-        child._m_nTag = tag;
+        child.setTag(tag);
         child.setParent(this);
         if (this._m_bIsRunning) {
             child.onEnter();

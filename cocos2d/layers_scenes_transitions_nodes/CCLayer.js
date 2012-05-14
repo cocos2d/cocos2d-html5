@@ -45,8 +45,11 @@ cc.Layer = cc.Node.extend({
     _m_bIsKeypadEnabled:false,
 
     ctor:function () {
+        this._super();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_bIsRelativeAnchorPoint = false;
+
+        this._m_bIsAccelerometerEnabled = false;
     },
 
     init:function () {
@@ -56,10 +59,11 @@ cc.Layer = cc.Node.extend({
         }
         this.setContentSize(pDirector.getWinSize());
         this._m_bIsTouchEnabled = false;
-        this._m_bIsAccelerometerEnabled = false;
+
         // success
         return true;
     },
+    type:"layer",
 
     /// Touch and Accelerometer related
     /** If isTouchEnabled, this method is called onEnter. Override it to change the
