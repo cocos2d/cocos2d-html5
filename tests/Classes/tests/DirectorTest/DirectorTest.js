@@ -144,10 +144,6 @@ Director1 = DirectorTest.extend({
         return bRet;
 
     },
-    onExit:function(){
-        console.log(this._m_pChildren);
-        this._super();
-    },
 
     newOrientation:function () {
         switch (s_currentOrientation) {

@@ -50,17 +50,7 @@ cc.Menu = cc.domNode.extend({
         //get the canvas
         var canvas = cc.canvas;
         canvas.style.zIndex = 0;
-
-
-        this._container = cc.$new("div");
-        this._container.id = "Cocos2dGameContainer";
-        this._container.style.position = "absolute";
-        this._container.style.overflow = "visible";//TODO make it hidden when finished debugging
-        //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
-        this._container.style.top = canvas.offsetTop+parseInt(canvas.style.borderTopWidth)+"px";
-        this._container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
-        this._container.style.height = canvas.clientHeight+"px";
-        this._container.style.width = canvas.clientWidth+"px";
+        this._container = cc.setupHTML();
         cc.TouchDispatcher.registerHtmlElementEvent(this.dom);
         cc.gameDiv.insertBefore(this._container, canvas);
         this._container.appendChild(canvas);
@@ -93,7 +83,7 @@ cc.Menu = cc.domNode.extend({
         var s = cc.Director.sharedDirector().getWinSize();//get window size
         var height = -padding;
         if (this.getChildren().length) {
-            for (var i = 0; i < this.getChildren.length; i++) {
+            for (var i = 0; i < this.getChildren().length; i++) {
                 var childheight = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].style.fontSize,
                     this.getChildren()[i].style.fontFamily).height;//loop through children, and get their individual height
@@ -103,8 +93,8 @@ cc.Menu = cc.domNode.extend({
 
         var y = height / 2.0;
         if (this.getChildren().length > 0) {
-            for (i = 0; i < this._m_pChildren.length; i++) {
-                var childheight = cc.domNode.getTextSize(this._m_pChildren[i].dom.textContent,
+            for (i = 0; i < this.getChildren().length; i++) {
+                var childheight = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].style.fontSize,
                     this.getChildren()[i].style.fontFamily).height;
                 this.getChildren()[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._m_pChildren[i].getScaleY()*/ / 2));

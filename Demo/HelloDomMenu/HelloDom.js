@@ -23,6 +23,11 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+cc.fullscreen = function()
+{
+    var container = cc.$("#Cocos2dGameContainer") || cc.canvas;
+
+};
 
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
@@ -113,7 +118,7 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseSelected.png",
             this,
             function () {
-                alert("Bye Bye");
+                cc.canvas.width = 500;
             });
         var text = cc.MenuItemFont.itemFromString("Hello Dom",this, function(){});
         text.setColor({r:255,g:0,b:0});
@@ -121,6 +126,7 @@ var Helloworld = cc.Layer.extend({
         pCloseItem.setPosition(cc.canvas.width - 20, 20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, text);
         this.pSprite.addChild(pMenu);
+        cc.fullscreen();
         return true;
     },
     // a selector callback
@@ -143,8 +149,22 @@ var Helloworld = cc.Layer.extend({
     ccTouchesCancelled:function (pTouches, pEvent) {
         console.log("ccTouchesCancelled");
     }
-});
 
+});
+var requestFullScreen=function(element) {
+    // Supports most browsers and their versions.
+    var el = document.documentElement;
+    var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+
+    if (requestMethod) { // Native full screen.
+        requestMethod.call(element);
+    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+            wscript.SendKeys("{F11}");
+        }
+    }
+};
 Helloworld.scene = function () {
     // 'scene' is an autorelease object
     var scene = cc.Scene.node();

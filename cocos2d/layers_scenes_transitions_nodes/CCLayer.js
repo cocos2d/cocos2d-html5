@@ -63,6 +63,7 @@ cc.Layer = cc.Node.extend({
         // success
         return true;
     },
+    type:"layer",
 
     /// Touch and Accelerometer related
     /** If isTouchEnabled, this method is called onEnter. Override it to change the

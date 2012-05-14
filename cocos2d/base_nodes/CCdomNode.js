@@ -117,7 +117,28 @@ cc.CSS3.Skew = function (x, y) {
     var deg = (isNaN(x) && isNaN(y)) ? "" : "deg";
     return "skew(" + x + deg + ", " + y + deg + ") ";
 };
-
+cc.makeDiv=function (p) {
+    p.dom = cc.$new("div");
+    var style = p.dom.style;
+    style.float = "left";
+    style.position = "absolute";
+    p.updateDom();
+    return p.dom;
+};
+cc.setupHTML= function(){
+    var canvas = cc.canvas;
+    canvas.style.zIndex = 0;
+    var _container = cc.$new("div");
+    _container.id = "Cocos2dGameContainer";
+    _container.style.position = "absolute";
+    _container.style.overflow = "visible";//TODO make it hidden when finished debugging
+    //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
+    _container.style.top = canvas.offsetTop+parseInt(canvas.style.borderTopWidth)+"px";
+    _container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
+    _container.style.height = canvas.clientHeight+"px";
+    _container.style.width = canvas.clientWidth+"px";
+    return _container;
+};
 cc.domNode = cc.Class.extend({
     isDomNode:true,
     _domID:0,
@@ -321,11 +342,10 @@ cc.domNode = cc.Class.extend({
         }
     },
     makeParentDivs:function (p) {
-        if (p.dom == null)this.makeDiv(p);
-        if (p.getParent() != null)//if the passed in obj have parent
-        {
+        if (p.dom == null)cc.makeDiv(p);
+        if (p.getParent() != null){//if the passed in obj have parent
             if (p.getParent().dom == null) {
-                this.makeDiv(p.getParent())
+                cc.makeDiv(p.getParent());
             }
             p.getParent().dom.appendChild(p.dom);
             this.makeParentDivs(p.getParent());
@@ -333,40 +353,6 @@ cc.domNode = cc.Class.extend({
         else {//the passed in obj dont have a parent
             cc.$("#Cocos2dGameContainer").appendChild(p.dom);
         }
-    },
-    makeDiv:function (p) {
-        /*        p.dom = cc.$new("div");
-         var size = p.getContentSize();
-         var rot = p.getRotation();
-         var pos = p.getPosition();
-         var skewX = p.getSkewX();
-         var skewY = p.getSkewY();
-         var scaleX = p.getScaleX();
-         var scaleY = p.getScaleY();
-         var style = p.dom.style;
-         style.width = size.width+"px";
-         style.float = "left";
-         style.position="absolute";
-         if(p._m_bIsRelativeAnchorPoint){
-         style.marginLeft = "-"+(size.width*p.getAnchorPoint().x*scaleX)+"px";
-         style.top = (size.height*p.getAnchorPoint().y*scaleY)+"px";
-         }
-         else{
-         style.marginLeft = 0;
-         style.top = 0;
-         }
-         style[cc.CSS3.origin] = (p.getAnchorPoint().x*100)+"% "+(-p.getAnchorPoint().y*size.height)+"px";
-         cc.CSS3.Transform(p.dom,cc.CSS3.Translate(pos.x*scaleX, pos.y*scaleY+size.height),
-         cc.CSS3.Rotate(rot),
-         cc.CSS3.Scale(scaleX,scaleY),
-         cc.CSS3.Skew(skewX,-skewY));
-         return p.dom;*/
-        p.dom = cc.$new("div");
-        var style = p.dom.style;
-        style.float = "left";
-        style.position = "absolute";
-        p.updateDom();
-        return p.dom;
     },
 
 
@@ -387,7 +373,7 @@ cc.domNode = cc.Class.extend({
         for (cur = this.dom; cur.parentNode; cur = cur.parentNode) {
             if (cur.parentNode.id == "Cocos2dGameContainer") {
                 break;
-            }console.log(cur);
+            }
         }
         if (cur.parentNode) {
             cur.parentNode.removeChild(cur);
@@ -475,7 +461,6 @@ cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
 
     return lResult;
 };
-
 cc.Node.implement({
     updateDom:function () {
         if (this.dom != null) {
@@ -588,6 +573,57 @@ cc.Node.implement({
             this._m_bIsTransformGLDirty = true;
         }
         this.updateDom();
+    },
+    makeDiv:function (p) {
+        p.dom = cc.$new("div");
+        var style = p.dom.style;
+        style.position = "absolute";
+        p.updateDom();
+        return p.dom;
+    },
+    setParent:function(p){
+/*        this._m_pParent = Var;
+        if(!this.dom)cc.makeDiv(this);
+        if(this._m_pParent){
+            if(!this._m_pParent.dom){//if parent dont have dom
+                cc.makeDiv(this._m_pParent);
+            }
+            //parent appendchild this node
+            this._m_pParent.dom.appendChild(this.dom);
+        }*/
+        var child = this;
+        this._m_pParent = p;
+        this.makeParentDivs(child);
+    },
+    makeParentDivs:function(p){
+        if(p.dom == null)cc.makeDiv(p);
+        if(p.getParent() != null){
+            if(p.getParent().dom == null){
+                cc.makeDiv(p.getParent());
+            }
+            p.getParent().dom.appendChild(p.dom);
+            this.makeParentDivs(p.getParent());
+        }
+        else{
+            var container = cc.$("#Cocos2dGameContainer") || cc.setupHTML();
+            container.appendChild(p.dom);
+        }
     }
 });
+cc.LayerColor.implement({
+    setOpacity:function(Var){
+        this._m_cOpacity = Var;
+        this._updateColor();
+
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        this.setNodeDirty();
+        this.dom.style.opacity = Var/255;
+    }
+});
+console.log(" _____                       _____      _        _     _             _ _____ ");
+console.log("/  __ \\                     / __  \\    | |      | |   | |           | |  ___|");
+console.log("| /  \\/ ___   ___  ___  ___ `' / /'  __| |______| |__ | |_ _ __ ___ | |___ \\ ");
+console.log("| |    / _ \\ / __|/ _ \\/ __|  / /   / _` |______| '_ \\| __| '_ ` _ \\| |   \\ \\");
+console.log("| \\__/\\ (_) | (__| (_) \\__ \\./ /___| (_| |      | | | | |_| | | | | | /\\__/ /");
+console.log(" \\____/\\___/ \\___|\\___/|___/\\_____/ \\__,_|      |_| |_|\\__|_| |_| |_|_\\____/ ");
 //TODO, change -1 to cc.kCCNodeTagInvalid

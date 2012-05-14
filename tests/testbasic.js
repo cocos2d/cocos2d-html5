@@ -61,7 +61,8 @@ var TestScene = cc.Scene.extend({
         var pLayer = new TestController();
         pScene.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(pScene);
-    }
+    },
+    type:"testscene"
 });
 //Controller stuff
 var LINE_SPACE = 40;

@@ -46,6 +46,7 @@ cc.Scene = cc.Node.extend({
     init:function () {
         var pDirector = cc.Director.sharedDirector();
         this.setContentSize(pDirector.getWinSize());
+        return true;
     }
 });
 cc.Scene.node = function () {
