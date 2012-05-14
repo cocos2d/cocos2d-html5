@@ -129,6 +129,7 @@ cc.loadjs('layers_scenes_transitions_nodes/CCTransitionRadial.js');//9
 cc.loadjs('layers_scenes_transitions_nodes/CCTransitionPageTurn.js');//9
 cc.loadjs('sprite_nodes/CCSprite.js');//10
 cc.loadjs('sprite_nodes/CCAnimation.js');
+cc.loadjs('sprite_nodes/CCAnimationCache.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
 cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
