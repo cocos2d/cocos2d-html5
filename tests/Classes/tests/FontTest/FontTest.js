@@ -42,13 +42,13 @@ var fontList = [
 ];
 
 
-function nextAction() {
+function nextFontTestAction() {
     fontIdx++;
     fontIdx = fontIdx % fontList.length;
     return fontList[fontIdx]
 }
 
-function backAction() {
+function backFontTestAction() {
     fontIdx--;
     if (fontIdx < 0) {
         fontIdx += fontList.length;
@@ -57,7 +57,7 @@ function backAction() {
     return fontList[fontIdx];
 }
 
-function restartAction() {
+function restartFontTestAction() {
     return fontList[fontIdx];
 }
 FontTestScene = TestScene.extend({
@@ -86,7 +86,7 @@ FontTest = cc.Layer.extend({
         item3.setPosition(cc.ccp(size.width / 2 + 100, 30));
         this.addChild(menu, 1);
 
-        this.showFont(restartAction());
+        this.showFont(restartFontTestAction());
 
     },
     showFont:function (pFont) {
@@ -115,13 +115,13 @@ FontTest = cc.Layer.extend({
     },
 
     restartCallback:function (pSender) {
-        this.showFont(restartAction());
+        this.showFont(restartFontTestAction());
     },
     nextCallback:function (pSender) {
-        this.showFont(nextAction());
+        this.showFont(nextFontTestAction());
     },
     backCallback:function (pSender) {
-        this.showFont(backAction());
+        this.showFont(backFontTestAction());
     },
     title:function () {
         return "Font test";
