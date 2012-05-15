@@ -53,7 +53,7 @@ cc.Menu = cc.domNode.extend({
         this._container = cc.setupHTML(this);
         cc.TouchDispatcher.registerHtmlElementEvent(this.dom);
         cc.gameDiv.insertBefore(this._container, canvas);
-        this._container.appendChild(canvas);
+        //this._container.appendChild(canvas);
     },
     initWithItems:function (args) {
         this.init();

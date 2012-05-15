@@ -124,6 +124,23 @@ var Helloworld = cc.Layer.extend({
     },
 
     adjustSizeForWindow:function () {
+        //first, make body margin go away
+        var body = document.body.style;
+        body.margin = "0";
+        body.padding = "0";
+        body.background="#000";
+        //find out browser aspect ratio
+        var aspect = window.innerWidth / window.innerHeight;
+        var container = cc.$("#Cocos2dGameContainer");
+/*        console.log(container.style.cssText);
+        if(aspect >= 1.5){//if aspect is bigger than 4:3 such as 16:9
+            //then the height is the limiting factor, we will set height and change the width in px
+            var dcssText = "width:"+(window.innerHeight*1.5)+"px; height:100%; overflow:hidden; position:absolute; left:"+(window.innerWidth/2 - (window.innerHeight*1.5)/2)+"px;";
+            container.style.cssText = dcssText;
+            console.log(container);
+        }*/
+
+
         var margin = document.documentElement.clientWidth - document.body.clientWidth;
         if (document.documentElement.clientWidth < 480) {
             cc.canvas.width = 480;
@@ -147,6 +164,10 @@ var Helloworld = cc.Layer.extend({
         cc.renderContext.translate(0, cc.canvas.height);
         cc.renderContext.scale(xScale, xScale);
         cc.Director.sharedDirector().setContentScaleFactor(xScale);
+        container.style[cc.CSS3.origin] = "0% 0%";
+        container.style[cc.CSS3._trans] = cc.CSS3.Scale(xScale,xScale);
+        container.style.top = cc.canvas.offsetTop+parseInt(cc.canvas.style.borderTopWidth)+"px";
+        container.style.left = cc.canvas.offsetLeft+parseInt(cc.canvas.style.borderLeftWidth)+"px";
     },
     // a selector callback
     menuCloseCallback:function (pSender) {

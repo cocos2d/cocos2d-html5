@@ -101,7 +101,6 @@ cc.loadjs('platform/CCTypes.js');//5
 cc.loadjs('cocoa/CCAffineTransform.js');//5
 cc.loadjs('support/CCPointExtension.js');//12
 cc.loadjs('base_nodes/CCNode.js');//6
-cc.loadjs('base_nodes/CCdomNode.js');
 cc.loadjs('platform/ccMacro.js');//7
 cc.loadjs('platform/ccConfig.js');//7
 cc.loadjs('textures/CCTexture2D.js');//12
@@ -112,6 +111,7 @@ cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('actions/CCActionEase.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
+cc.loadjs('base_nodes/CCdomNode.js');
 cc.loadjs('sprite_nodes/CCSprite.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12

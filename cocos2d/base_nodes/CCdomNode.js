@@ -72,7 +72,8 @@ cc.CSS3.Transform = function (ele, translate, rotate, scale, skew) {
         var scaleX = ele.getScaleX();
         var scaleY = ele.getScaleY();
         var style = ele.dom.style;
-
+        var contentScale = cc.Director.sharedDirector().getContentScaleFactor();
+        console.log(contentScale);
         if (ele._m_bIsRelativeAnchorPoint) {
             ele.style.left = "-" + (ele.getAnchorPoint().x * ele.getContentSize().width) + "px";
             ele.style.top = (ele.getAnchorPoint().y * ele.getContentSize().height) + "px";
