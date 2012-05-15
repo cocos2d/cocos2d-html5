@@ -67,7 +67,7 @@ var TestScene = cc.Scene.extend({
 //Controller stuff
 var LINE_SPACE = 40;
 var s_pPathClose = null;
-
+var s_tCurPos = cc.PointZero();
 var TestController = cc.Layer.extend({
     _m_pItemMenu:null,
     _m_tBeginPos:cc.PointZero(),
@@ -95,8 +95,8 @@ var TestController = cc.Layer.extend({
             pMenuItem.setPosition(s.width / 2, (s.height - (i + 1) * LINE_SPACE));
             i++;
         }
-        //this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (g_aTestNames.length + 1) * LINE_SPACE));
-        //this._m_pItemMenu.setPosition(s_tCurPos);
+        this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (i + 1) * LINE_SPACE));
+        this._m_pItemMenu.setPosition(s_tCurPos);
         this.setIsTouchEnabled(true);
         this.addChild(this._m_pItemMenu);
         this.addChild(pMenu, 1);
@@ -135,15 +135,16 @@ var TestController = cc.Layer.extend({
                 this._m_pItemMenu.setPosition(cc.PointZero());
                 return;
             }
-
-            if (nextPos.y > ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)) {
-                this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)));
+            var testlength = 0;
+            for(var k in g_aTestNames){testlength++}
+            if (nextPos.y > ((testlength + 1) * LINE_SPACE - winSize.height)) {
+                this._m_pItemMenu.setPosition(cc.ccp(0, ((testlength + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
             this._m_pItemMenu.setPosition(nextPos);
             this._m_tBeginPos = cc.ccp(0, touchLocation).y;
 
-            //s_tCurPos   = nextPos;
+            s_tCurPos   = nextPos;
         }
     },
     ccTouchesEnded:function () {
