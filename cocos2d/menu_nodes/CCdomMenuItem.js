@@ -174,8 +174,8 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         var tmp = cc.domNode.getTextSize(this._text,this._fontSize, this._fontName);
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
         var size = this.getContentSize();
-        this.style.marginLeft = "-"+(size.width*this.getAnchorPoint().x)+"px";
-        this.style.marginTop = "-"+(size.height*this.getAnchorPoint().y)+"px";
+        this.style.left = "-"+(size.width*this.getAnchorPoint().x)+"px";
+        this.style.top = "-"+(size.height*this.getAnchorPoint().y)+"px";
         this.setPosition(label.getPositionX(), label.getPositionY());
         cc.CSS3.Transform(this);
     }
@@ -221,8 +221,8 @@ cc.MenuItemFont = cc.MenuItem.extend({
         var tmp = cc.domNode.getTextSize(this._text,cc._fontSize, cc._fontName);
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
         var size = this.getContentSize();
-        this.style.marginLeft = "-"+(size.width*this.getAnchorPoint().x)+"px";
-        this.style.marginTop = "-"+(size.height*this.getAnchorPoint().y)+"px";
+        this.style.left = "-"+(size.width*this.getAnchorPoint().x)+"px";
+        this.style.top = "-"+(size.height*this.getAnchorPoint().y)+"px";
         this.style.width = this.offsetWidth+"px";
         this.style.height = this.offsetHeight+"px";
         cc.CSS3.Transform(this);

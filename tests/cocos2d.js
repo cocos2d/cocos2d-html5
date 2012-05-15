@@ -163,7 +163,7 @@ cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXLayer.js');
 cc.loadjs('tileMap_parallax_nodes/CCParallaxNode.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-cc.loadjs('../tests/testbasic.js');
+cc.loadjs('../tests/testbasicDom.js');
 cc.loadjs('../tests/testResource.js');
 cc.loadjs('../tests/Classes/tests/TouchesTest/Ball.js');
 cc.loadjs('../tests/Classes/tests/TouchesTest/Paddle.js');
