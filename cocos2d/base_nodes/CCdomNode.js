@@ -74,16 +74,16 @@ cc.CSS3.Transform = function (ele, translate, rotate, scale, skew) {
         var style = ele.dom.style;
 
         if (ele._m_bIsRelativeAnchorPoint) {
-            ele.style.marginLeft = "-" + (ele.getAnchorPoint().x * ele.getContentSize().width) + "px";
+            ele.style.left = "-" + (ele.getAnchorPoint().x * ele.getContentSize().width) + "px";
             ele.style.top = (ele.getAnchorPoint().y * ele.getContentSize().height) + "px";
         }
         else {
-            ele.style.marginLeft = 0;
+            ele.style.left = 0;
             ele.style.top = 0;
         }
         ele.style[cc.CSS3.origin] = (ele.getAnchorPoint().x * 100) + "% " + (ele.getAnchorPoint().y * ele.getContentSize().height) + "px";
 
-        style[cc.CSS3._trans] = cc.CSS3.Translate(pos.x, pos.y + size.height) +
+        style[cc.CSS3._trans] = cc.CSS3.Translate(pos.x, pos.y + size.height, ele.dom) +
             cc.CSS3.Rotate(rot) +
             cc.CSS3.Scale(scaleX, scaleY) +
             cc.CSS3.Skew(skewX, -skewY);
@@ -97,12 +97,17 @@ cc.CSS3.Transform = function (ele, translate, rotate, scale, skew) {
     return false;
 };
 //generate the translate string based on browser
-cc.CSS3.Translate = function (x, y) {
+cc.CSS3.Translate = function (x, y, ele) {
     if (typeof x == "object") {
         y = x.y;
         x = x.x;
     }
-    return "translate3d(" + parseInt(x) + "px" + ", " + ( cc.canvas.height - parseInt(y)) + "px" + ",0px) ";
+    var height = cc.canvas.height;
+    if(ele.parentNode)
+    {
+        height = parseInt(ele.parentNode.getAttribute("fheight")) || cc.canvas.height;
+    }
+    return "translate3d(" + parseInt(x) + "px" + ", " + ( height - parseInt(y)) + "px" + ",0px) ";
 };
 //rotate by degree
 cc.CSS3.Rotate = function (r) {
@@ -125,7 +130,7 @@ cc.makeDiv=function (p) {
     p.updateDom();
     return p.dom;
 };
-cc.setupHTML= function(){
+cc.setupHTML= function(obj){
     var canvas = cc.canvas;
     canvas.style.zIndex = 0;
     var _container = cc.$new("div");
@@ -137,6 +142,9 @@ cc.setupHTML= function(){
     _container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
     _container.style.height = canvas.clientHeight+"px";
     _container.style.width = canvas.clientWidth+"px";
+    if(obj){
+        _container.setAttribute("fheight", obj.getContentSize().height);
+    }
     return _container;
 };
 cc.domNode = cc.Class.extend({
@@ -267,6 +275,8 @@ cc.domNode = cc.Class.extend({
         this._contentSize.width = size.width;
         this._contentSize.height = size.height;
         this.update();
+        //tell child to update as well
+        this._arrayMakeObjectsPerformSelector(this.getChildren(),"update");
     },
     setAnchorPoint:function (s) {
         this._AnchorPoint = s;
@@ -285,10 +295,12 @@ cc.domNode = cc.Class.extend({
 
     //update Dom, its like draw, but you dont call it everyframe, only called when its changed
     update:function () {
-        /*cc.CSS3.Transform(this.dom, cc.CSS3.Translate(this.getPositionX(), this.getPositionY(),
-         cc.CSS3.Rotate(this.getRotation()),
-         cc.CSS3.Scale(this.getScaleX(),this.getScaleY()),
-         cc.CSS3.Skew(this.getSkewX(),-this.getSkewY())));*/
+        /*
+        Since you cant set the height of the element, because it will block mouse interaction for the layers below
+        but we still need to access the height of the element in html mode,therefore, we added a custom attribute
+        called fheight, to be used as storage of the actual height of the element.
+         */
+        this.dom.setAttribute("fheight", this.getContentSize().height);
         cc.CSS3.Transform(this);
     },
 
@@ -491,11 +503,12 @@ cc.Node.implement({
                 style.left = 0;
                 style.top = 0;
             }
-            cc.CSS3.Transform(this.dom, cc.CSS3.Translate(pos.x, pos.y + size.height),
+            cc.CSS3.Transform(this.dom, cc.CSS3.Translate(pos.x, pos.y + size.height, this.dom),
                 cc.CSS3.Rotate(rot),
                 cc.CSS3.Scale(scaleX, scaleY),
                 cc.CSS3.Skew(skewX, -skewY));
             style.visibility = "visible";
+            this.dom.setAttribute("fheight", this.getContentSize().height);
         }
     },
     setRotation:function (newRotation) {
@@ -605,7 +618,7 @@ cc.Node.implement({
             this.makeParentDivs(p.getParent());
         }
         else{
-            var container = cc.$("#Cocos2dGameContainer") || cc.setupHTML();
+            var container = cc.$("#Cocos2dGameContainer") || cc.setupHTML(this);
             container.appendChild(p.dom);
         }
     }

@@ -50,7 +50,7 @@ cc.Menu = cc.domNode.extend({
         //get the canvas
         var canvas = cc.canvas;
         canvas.style.zIndex = 0;
-        this._container = cc.setupHTML();
+        this._container = cc.setupHTML(this);
         cc.TouchDispatcher.registerHtmlElementEvent(this.dom);
         cc.gameDiv.insertBefore(this._container, canvas);
         this._container.appendChild(canvas);
