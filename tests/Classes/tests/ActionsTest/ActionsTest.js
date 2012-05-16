@@ -209,7 +209,7 @@ var ActionManual = ActionsDemo.extend({
         this._m_tamara.setScaleY(-1.0);
         this._m_tamara.setPosition(cc.PointMake(100, 70));
         this._m_tamara.setOpacity(128);
-        //TODO implement sprite setcolor
+
         this._m_grossini.setRotation(120);
         this._m_grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
         this._m_grossini.setColor(cc.ccc3(255, 0, 0));

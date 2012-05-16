@@ -115,6 +115,7 @@ cc.TextureCache = cc.Class.extend({
             texture = new Image();
             var that = this;
             texture.addEventListener("load", function () {
+
                 cc.Loader.shareLoader().onResLoaded();
             });
             texture.addEventListener("error", function () {
