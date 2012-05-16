@@ -120,6 +120,28 @@ cc.ProgressTimer = cc.Node.extend({
                 context.drawImage(this._m_pSprite._m_pobTexture, this._origin.x, this._origin.y, this._drawSize.width, this._drawSize.height,
                     pos.x, -(pos.y + this._drawSize.height),
                     this._drawSize.width, this._drawSize.height);
+            }else{
+                var tSize = this.getContentSize();
+                context.save();
+                context.beginPath();
+                var startAngle_1= (Math.PI/180)*this._startAngle;
+                var endAngle_1=(Math.PI/180)*this._endAngle;
+                var radius = tSize.width > tSize.height?tSize.width:tSize.height;
+                context.arc(0,0,radius,startAngle_1,endAngle_1,false);
+                context.lineTo(0,0);
+                context.clip();
+                context.closePath();
+
+                var offsetPixels = this._m_pSprite._m_obOffsetPositionInPixels;
+                var pos = new cc.Point(0 | ( -this._m_pSprite._m_tAnchorPointInPixels.x + offsetPixels.x),
+                    0 | ( -this._m_pSprite._m_tAnchorPointInPixels.y + offsetPixels.y));
+                context.drawImage(this._m_pSprite._m_pobTexture,
+                    this._m_pSprite._m_obRect.origin.x, this._m_pSprite._m_obRect.origin.y,
+                    this._m_pSprite._m_obRect.size.width, this._m_pSprite._m_obRect.size.height,
+                    pos.x, -(pos.y + this._m_pSprite._m_obRect.size.height),
+                    this._m_pSprite._m_obRect.size.width, this._m_pSprite._m_obRect.size.height);
+
+                context.restore();
             }
         } else {
             this._super();
@@ -193,29 +215,37 @@ cc.ProgressTimer = cc.Node.extend({
     _origin:cc.PointZero(),
     _drawSize:cc.SizeZero(),
     _drawPosition:cc.PointZero(),
+    _startAngle:270,
+    _endAngle:270,
     _updateProgress:function () {
         if (cc.renderContextType == cc.kCanvas) {
             var size = this.getContentSize();
             switch (this._m_eType) {
-                case 2:
+                case cc.kCCProgressTimerTypeRadialCW:
+                    this._endAngle = 270 + 3.6 * this._m_fPercentage;
+                    break;
+                case cc.kCCProgressTimerTypeRadialCCW:
+                    this._startAngle = 270 - 3.6 * this._m_fPercentage;
+                    break;
+                case cc.kCCProgressTimerTypeHorizontalBarLR:
                     //left to right
                     this._origin = cc.PointZero();
                     this._drawPosition = cc.PointZero();
                     this._drawSize = cc.SizeMake(0 | ((this._m_fPercentage / 100) * size.width), size.height);
                     break;
-                case 3:
+                case cc.kCCProgressTimerTypeHorizontalBarRL:
                     //right to left
                     this._drawSize = cc.SizeMake(0 | ((this._m_fPercentage / 100) * size.width), size.height);
                     this._origin = cc.ccp((size.width - this._drawSize.width) | 0, 0);
                     this._drawPosition = cc.ccp(size.width - this._drawSize.width, 0);
                     break;
-                case 4:
+                case cc.kCCProgressTimerTypeVerticalBarBT:
                     //buttom to top
                     this._drawSize = cc.SizeMake(size.width, 0 | ((this._m_fPercentage / 100) * size.height));
                     this._drawPosition = cc.PointZero();
                     this._origin = cc.ccp(0, 0 | (size.height - this._drawSize.height));
                     break;
-                case 5:
+                case cc.kCCProgressTimerTypeVerticalBarTB:
                     //top to buttom
                     this._drawSize = cc.SizeMake(size.width, 0 | ((this._m_fPercentage / 100) * size.height));
                     this._drawPosition = cc.ccp(0, (size.height - this._drawSize.height) | 0);
