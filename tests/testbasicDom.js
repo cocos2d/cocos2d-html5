@@ -154,6 +154,7 @@ var TestController = cc.Layer.extend({
 
 var g_aTestNames = {
     //"Accelerometer":"AccelerometerTestScene",
+
     "ActionManagerTest":"ActionManagerTestScene",
     "ActionsTest":"ActionsTestScene",
     //"Box2dTest":"Box2DTestScene",
