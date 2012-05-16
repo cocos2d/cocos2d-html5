@@ -135,9 +135,7 @@ var TestLayer1 = cc.Layer.extend({
         item1.setPosition(cc.PointMake(size.width / 2 - 100, 30));
         item2.setPosition(cc.PointMake(size.width / 2, 30));
         item3.setPosition(cc.PointMake(size.width / 2 + 100, 30));
-
         this.addChild(menu, 1);
-
         this.schedule(this.step, 1.0);
 
     },

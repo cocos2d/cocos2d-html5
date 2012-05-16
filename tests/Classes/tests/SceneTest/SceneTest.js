@@ -49,7 +49,7 @@ SceneTestLayer1 = cc.Layer.extend({
         var rotate = cc.RotateBy.actionWithDuration(2, 360);
         var repeat = cc.RepeatForever.actionWithAction(rotate);
         sprite.runAction(repeat);
-
+        this._super();
         //cc.schedule(this.testDealloc);
     },
 
@@ -115,6 +115,7 @@ SceneTestLayer2 = cc.Layer.extend({
         sprite.runAction(repeat);
 
         //cc.schedule(this.testDealloc);
+        this._super();
 
 
     },
@@ -163,8 +164,7 @@ SceneTestLayer3 = cc.LayerColor.extend({
         var rotate = cc.RotateBy.actionWithDuration(2, 360);
         var repeat = cc.RepeatForever.actionWithAction(rotate);
         sprite.runAction(repeat);
-
-
+        this._super();
     },
 
     testDealloc:function (dt) {

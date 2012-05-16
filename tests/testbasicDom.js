@@ -57,23 +57,23 @@ var TestScene = cc.Scene.extend({
 
     },
     MainMenuCallback:function () {
-        var pScene = cc.Scene.node();
+        window.pScene = cc.Scene.node();
         var pLayer = new TestController();
         pScene.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(pScene);
-    }
+    },
+    type:"testscene"
 });
 //Controller stuff
 var LINE_SPACE = 40;
 var s_pPathClose = null;
-var g_aTestNamesLength = 0;
 var s_tCurPos = cc.PointZero();
-
 var TestController = cc.Layer.extend({
     _m_pItemMenu:null,
     _m_tBeginPos:cc.PointZero(),
     bIsMouseDown:false,
     ctor:function () {
+        this._super();
         // add close menu
         if (!s_pPathClose) {
             s_pPathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");
@@ -90,12 +90,12 @@ var TestController = cc.Layer.extend({
         for (var text in g_aTestNames) {
             var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
             var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-            this._m_pItemMenu.addChild(pMenuItem,i  + 10000);
-            pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
+            pMenuItem.id(text);
+            this._m_pItemMenu.addChild(pMenuItem);
+            pMenuItem.setPosition(s.width / 2, (s.height - (i + 1) * LINE_SPACE));
             i++;
         }
-        g_aTestNamesLength = i;
-        this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (g_aTestNamesLength + 1) * LINE_SPACE));
+        this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (i + 1) * LINE_SPACE));
         this._m_pItemMenu.setPosition(s_tCurPos);
         this.setIsTouchEnabled(true);
         this.addChild(this._m_pItemMenu);
@@ -103,8 +103,9 @@ var TestController = cc.Layer.extend({
     },
     menuCallback:function (pSender) {
         // get the userdata, it's the index of the menu item clicked
-        var nIdx = pSender.getString();
-        console.log(pSender)
+        //var pMenuItem = pSender;
+        var nIdx = pSender.target.id;
+
         // create the test scene and run it
         var pScene = new window[g_aTestNames[nIdx]]();
         if (pScene) {
@@ -120,6 +121,7 @@ var TestController = cc.Layer.extend({
             this._m_tBeginPos = pTouches[0].locationInView(0).y;
         }
         this.bIsMouseDown = true;
+
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this.bIsMouseDown) {
@@ -133,9 +135,10 @@ var TestController = cc.Layer.extend({
                 this._m_pItemMenu.setPosition(cc.PointZero());
                 return;
             }
-
-            if (nextPos.y > ((g_aTestNamesLength + 1) * LINE_SPACE - winSize.height)) {
-                this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNamesLength + 1) * LINE_SPACE - winSize.height)));
+            var testlength = 0;
+            for(var k in g_aTestNames){testlength++}
+            if (nextPos.y > ((testlength + 1) * LINE_SPACE - winSize.height)) {
+                this._m_pItemMenu.setPosition(cc.ccp(0, ((testlength + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
             this._m_pItemMenu.setPosition(nextPos);

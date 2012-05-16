@@ -52,13 +52,11 @@ CocosDenshionTest = cc.Layer.extend({
     _m_pItmeMenu:null,
     _m_tBeginPos:cc.PointZero(),
     bIsMouseDown:false,
-    _m_nTestCount:null,
+    _m_nTestCount:0,
     ctor:function () {
         // add menu items for tests
         this._m_pItmeMenu = cc.Menu.menuWithItems(null);
         var s = cc.Director.sharedDirector().getWinSize();
-        this._m_nTestCount = DenshionTests.length;
-
         var i = 0;
         for (var text in DenshionTests) {
             var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
@@ -67,7 +65,7 @@ CocosDenshionTest = cc.Layer.extend({
             pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
             i++;
         }
-
+        this._m_nTestCount = i;
         this._m_pItmeMenu.setContentSize(cc.SizeMake(s.width, (this._m_nTestCount + 1) * LINE_SPACE));
         this._m_pItmeMenu.setPosition(cc.PointZero());
         this.addChild(this._m_pItmeMenu);

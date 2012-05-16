@@ -1,0 +1,192 @@
+/****************************************************************************
+ Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2008-2010 Ricardo Quesada
+ Copyright (c) 2011      Zynga Inc.
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+cc.fullscreen = function()
+{
+    var container = cc.$("#Cocos2dGameContainer") || cc.canvas;
+
+};
+
+var CircleSprite = cc.Sprite.extend({
+    _radians:0,
+    ctor:function(){
+        this._super();
+    },
+    draw:function () {
+        cc.renderContext.fillStyle = "rgba(255,255,255,1)";
+        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
+
+        if (this._radians < 0)
+            this._radians = 360;
+        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
+    },
+    myUpdate:function (dt) {
+        this._radians -= 6;
+        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+    }
+});
+
+
+var Helloworld = cc.Layer.extend({
+    bIsMouseDown:false,
+    helloImg:null,
+    helloLb:null,
+    circle:null,
+    pSprite:null,
+
+    init:function () {
+        var selfPointer = this;
+        //////////////////////////////
+        // 1. super init first
+        var test = this._super();
+        cc.LOG(test);
+        if (!test) {
+            return false;
+        }
+
+        var size = cc.Director.sharedDirector().getWinSize();
+
+        this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        // position the label on the center of the screen
+        this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
+        // add the label as a child to this layer
+        this.addChild(this.helloLb, 5);
+
+        // add "HelloWorld" splash screen"
+        this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
+        this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
+        this.pSprite.setIsVisible(true);
+        this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.pSprite.setScale(0.5);
+        this.pSprite.setRotation(180);
+        this.addChild(this.pSprite, 0);
+
+
+        var actionTo = cc.SkewTo.actionWithDuration(2, 0., 45);
+        var actionToBack = cc.SkewTo.actionWithDuration(2, 0, 0);
+        var rotateTo = cc.RotateTo.actionWithDuration(2, 300.0);
+        var rotateToBack = cc.RotateTo.actionWithDuration(2, 0);
+        var actionScaleTo = cc.ScaleTo.actionWithDuration(2, -0.44, 0.47);
+        var actionScaleToBack = cc.ScaleTo.actionWithDuration(2, 1.0, 1.0);
+        var actionBy = cc.MoveBy.actionWithDuration(2, cc.PointMake(80, 80));
+        var actionByBack = actionBy.reverse();
+
+        //this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
+
+
+        this.pSprite.runAction(cc.Sequence.actions(actionTo, actionToBack, null));
+        this.pSprite.runAction(cc.Sequence.actions(rotateTo, rotateToBack, null));
+        this.pSprite.runAction(cc.Sequence.actions(actionScaleTo, actionScaleToBack));
+        this.pSprite.runAction(cc.Sequence.actions(actionBy, actionByBack));
+
+        this.circle = new CircleSprite();
+        this.circle.setPosition(new cc.Point(40, 280));
+        this.addChild(this.circle, 2);
+        this.circle.schedule(this.circle.myUpdate, 1 / 60);
+
+        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
+
+        this.setIsTouchEnabled(true);
+
+
+
+
+        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
+            "Resources/CloseNormal.png",
+            "Resources/CloseSelected.png",
+            this,
+            function () {
+                cc.canvas.width = 500;
+            });
+        var text = cc.MenuItemFont.itemFromString("Hello Dom",this, function(){});
+        text.setColor({r:255,g:0,b:0});
+        text.setPosition(cc.ccp(cc.canvas.width/2,cc.canvas.height/2));
+        pCloseItem.setPosition(cc.canvas.width - 20, 20);
+        var pMenu = cc.Menu.menuWithItems(pCloseItem, text);
+        this.pSprite.addChild(pMenu);
+        cc.fullscreen();
+        return true;
+    },
+    // a selector callback
+    menuCloseCallback:function (pSender) {
+        cc.Director.sharedDirector().end();
+    },
+    ccTouchesBegan:function (pTouches, pEvent) {
+        this.bIsMouseDown = true;
+    },
+    ccTouchesMoved:function (pTouches, pEvent) {
+        if (this.bIsMouseDown) {
+            if (pTouches) {
+                this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y));
+            }
+        }
+    },
+    ccTouchesEnded:function (pTouches, pEvent) {
+        this.bIsMouseDown = false;
+    },
+    ccTouchesCancelled:function (pTouches, pEvent) {
+        console.log("ccTouchesCancelled");
+    }
+
+});
+var requestFullScreen=function(element) {
+    // Supports most browsers and their versions.
+    var el = document.documentElement;
+    var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
+
+    if (requestMethod) { // Native full screen.
+        requestMethod.call(element);
+    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+            wscript.SendKeys("{F11}");
+        }
+    }
+};
+Helloworld.scene = function () {
+    // 'scene' is an autorelease object
+    var scene = cc.Scene.node();
+
+    // 'layer' is an autorelease object
+    var layer = this.node();
+    scene.addChild(layer);
+    return scene;
+};
+// implement the "static node()" method manually
+Helloworld.node = function () {
+    var pRet = new Helloworld();
+
+    // Init the helloworld display layer.
+    if (pRet && pRet.init()) {
+        return pRet;
+    }
+    else {
+        pRet = null;
+        return null;
+    }
+};
+
+
+
