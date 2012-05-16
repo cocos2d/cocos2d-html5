@@ -154,7 +154,7 @@ var TestController = cc.Layer.extend({
 
 var g_aTestNames = {
     //"Accelerometer":"AccelerometerTestScene",
-    "TextInputTest":"TextInputTestScene",
+
     "ActionManagerTest":"ActionManagerTestScene",
     "ActionsTest":"ActionsTestScene",
     //"Box2dTest":"Box2DTestScene",
@@ -189,7 +189,7 @@ var g_aTestNames = {
     "SceneTest":"SceneTestScene",
     "SchedulerTest":"SchedulerTestScene",
     "SpriteTest":"SpriteTestScene",
-
+    "TextInputTest":"TextInputTestScene",
     "Texture2DTest":"TextureTestScene",
     "TextureCacheTest":"TextureCacheTestScene",
     "TileMapTest":"TileMapTestScene",

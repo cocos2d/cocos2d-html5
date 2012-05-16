@@ -87,8 +87,8 @@ cc.LabelTTF = cc.Sprite.extend({
         var dim = cc.renderContext.measureText(this._m_pString);
         this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
         /*
-        this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-        */
+         this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+         */
         //for WEBGL
         /*
          var texture = new cc.Texture2D();
@@ -100,20 +100,21 @@ cc.LabelTTF = cc.Sprite.extend({
          }
          this.setTexture(texture);
 
-        return;
+         return;
 
-        var texture = new cc.Texture2D();
-        if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
-            texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
-        } else {
-            texture = new cc.Texture2D();
-            texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
-        }
-        this.setTexture(texture);
+         var texture = new cc.Texture2D();
+         if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
+         texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
+         } else {
+         texture = new cc.Texture2D();
+         texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
+         }
+         this.setTexture(texture);
 
-        var rect = cc.RectZero();
-        rect.size = this._m_pobTexture.getContentSize();
-        this.setTextureRect(rect);
+         var rect = cc.RectZero();
+         rect.size = this._m_pobTexture.getContentSize();
+         this.setTextureRect(rect);
+         */
     },
 
     //temp method
@@ -172,7 +173,7 @@ cc.LabelTTF = cc.Sprite.extend({
                         offset = (maxWidth - temWidth) / 2;
                         break;
                 }
-                context.fillText(line, x + offset, y - lineHeight*(words.length/2 -2));
+                context.fillText(line, x + offset, y - lineHeight * (words.length / 2 - 2));
 
                 line = words[n] + " ";
                 y += lineHeight;
@@ -208,4 +209,4 @@ cc.LabelTTF.labelWithString = function (label, dimensions, alignment, fontName, 
 
         return null;
     }
-}
+};

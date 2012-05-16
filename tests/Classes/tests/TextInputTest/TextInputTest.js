@@ -69,7 +69,7 @@ var backTextInputTest = function () {
 };
 
 var textInputGetRect = function (pNode) {
-    var rc = new cc.Rect(pNode.getPosition().x,pNode.getPosition().y,pNode.getContentSize().width,pNode.getContentSize().height);
+    var rc = new cc.Rect(pNode.getPosition().x, pNode.getPosition().y, pNode.getContentSize().width, pNode.getContentSize().height);
     rc.origin.x -= rc.size.width / 2;
     rc.origin.y -= rc.size.height / 2;
     return rc;
@@ -300,7 +300,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
     onEnter:function () {
         this._super();
 
-        this._nCharLimit = 12;
+        this._nCharLimit = 20;
         this._pTextFieldAction = cc.RepeatForever.actionWithAction(
             cc.Sequence.actions(
                 cc.FadeOut.actionWithDuration(0.25),
@@ -315,7 +315,6 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
             textInput_FONT_SIZE);
         this.addChild(this._pTextField);
         this._pTextField.setDelegate(this);
-        //this._pTextField.setString("Google");
 
         this._pTextField.setPosition(new cc.Point(s.width / 2, s.height / 2));
         this._pTrackNode = this._pTextField;
@@ -358,7 +357,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         label.setColor(color);
 
         // move the sprite from top to position
-        var endPos = new cc.Point(pSender.getPositionX(),pSender.getPositionY());
+        var endPos = new cc.Point(pSender.getPositionX(), pSender.getPositionY());
         if (pSender.getCharCount()) {
             endPos.x += pSender.getContentSize().width / 2;
         }
@@ -385,7 +384,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         this.addChild(label);
 
         // move the sprite to fly out
-        var beginPos = new cc.Point(pSender.getPositionX(),pSender.getPositionY());
+        var beginPos = new cc.Point(pSender.getPositionX(), pSender.getPositionY());
         var textfieldSize = pSender.getContentSize();
         var labelSize = label.getContentSize();
         beginPos.x += (textfieldSize.width - labelSize.width) / 2.0;
