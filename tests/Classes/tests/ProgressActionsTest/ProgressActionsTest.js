@@ -26,20 +26,20 @@
 var sceneIdx = -1;
 var MAX_LAYER = 3;
 
-var nextAction = function () {
+var nextProgressAction = function () {
     sceneIdx++;
     sceneIdx = sceneIdx % MAX_LAYER;
 
     return createLayer(sceneIdx);
 };
-var backAction = function () {
+var backProgressAction = function () {
     sceneIdx--;
     if (sceneIdx < 0)
         sceneIdx += MAX_LAYER;
 
     return createLayer(sceneIdx);
 };
-var restartAction = function () {
+var restartProgressAction = function () {
     return createLayer(sceneIdx);
 };
 
@@ -96,17 +96,17 @@ var SpriteDemo = cc.Layer.extend({
     },
     restartCallback:function (pSender) {
         var scene = new ProgressActionsTestScene();
-        scene.addChild(restartAction());
+        scene.addChild(restartProgressAction());
         cc.Director.sharedDirector().replaceScene(scene);
     },
     nextCallback:function (pSender) {
         var scene = new ProgressActionsTestScene();
-        scene.addChild(nextAction());
+        scene.addChild(nextProgressAction());
         cc.Director.sharedDirector().replaceScene(scene);
     },
     backCallback:function (pSender) {
         var scene = new ProgressActionsTestScene();
-        scene.addChild(backAction());
+        scene.addChild(backProgressAction());
         cc.Director.sharedDirector().replaceScene(scene);
     }
 });
@@ -193,7 +193,7 @@ var ProgressActionsTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = 0;
         MAX_LAYER = 3;
-        this.addChild(nextAction());
+        this.addChild(nextProgressAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
 });
