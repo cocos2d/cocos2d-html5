@@ -41,6 +41,9 @@ cc.LabelTTF = cc.Sprite.extend({
 
     ctor:function () {
         this._super();
+        this._m_pString = "";
+        this._m_sColor = cc.WHITE();
+        this._m_bOpacityModifyRGB = false;
     },
 
     description:function () {
@@ -80,9 +83,10 @@ cc.LabelTTF = cc.Sprite.extend({
      */
     setString:function (label) {
         this._m_pString = label;
-        /*
+
         var dim = cc.renderContext.measureText(this._m_pString);
         this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
+        /*
         this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         */
         //for WEBGL

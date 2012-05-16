@@ -190,7 +190,6 @@ cc.KeypadDispatcher = cc.Class.extend({
             //if handler already exist
             for (var i = 0; i < this._m_pDelegates; i++) {
                 if (this._m_pDelegates[i].getDelegate() == pHandler.getDelegate()) {
-                    alert("ding!");
                 }
             }
             this._m_pDelegates.push(pHandler);
@@ -276,6 +275,7 @@ cc.KeypadDispatcher.sharedDispatcher = function () {
         cc.s_KeypadDispatcher = new cc.KeypadDispatcher();
         window.addEventListener("keydown", function (e) {
             cc.s_KeypadDispatcher.dispatchKeypadMSG(e, true);
+            cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
         });
         window.addEventListener("keyup", function (e) {
             cc.s_KeypadDispatcher.dispatchKeypadMSG(e, false);
