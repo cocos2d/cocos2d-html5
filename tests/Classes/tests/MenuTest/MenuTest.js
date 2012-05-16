@@ -49,9 +49,9 @@ var MenuLayer1 = cc.Layer.extend({
         var spriteNormal = cc.Sprite.spriteWithFile(s_MenuItem, cc.RectMake(0, 23 * 2, 115, 23));
         var spriteSelected = cc.Sprite.spriteWithFile(s_MenuItem, cc.RectMake(0, 23 * 1, 115, 23));
         var spriteDisabled = cc.Sprite.spriteWithFile(s_MenuItem, cc.RectMake(0, 23 * 0, 115, 23));
-        //dynamic_cast<CCNode*>(mgr).addChild(spriteNormal);
-        //dynamic_cast<CCNode*>(mgr).addChild(spriteSelected);
-        //dynamic_cast<CCNode*>(mgr).addChild(spriteDisabled);
+        this.addChild(spriteNormal);
+        this.addChild(spriteSelected);
+        this.addChild(spriteDisabled);
 
         var item1 = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback);
 
@@ -59,8 +59,9 @@ var MenuLayer1 = cc.Layer.extend({
         var item2 = cc.MenuItemImage.itemFromNormalImage(s_SendScore, s_PressSendScore, this, this.menuCallback2);
 
         // Label Item (LabelAtlas)
-        var labelAtlas = cc.LabelAtlas.labelWithString("0123456789", "fonts/fps_images.png", 16, 24, '.');
+        var labelAtlas = cc.LabelAtlas.labelWithString("0123456789", "Resources/fonts/fps_images.png", 16, 24, '.');
         var item3 = cc.MenuItemLabel.itemWithLabel(labelAtlas, this, this.menuCallbackDisabled);
+        console.log(item3)
         item3.setDisabledColor(cc.ccc3(32, 32, 64));
         item3.setColor(cc.ccc3(200, 200, 255));
 
@@ -71,7 +72,7 @@ var MenuLayer1 = cc.Layer.extend({
         item4.setFontName("Marker Felt");
 
         // Label Item (CCLabelBMFont)
-        var label = cc.LabelBMFont.labelWithString("configuration", "fonts/bitmapFontTest3.fnt");
+        var label = cc.LabelBMFont.labelWithString("configuration", "Resources/fonts/bitmapFontTest3.fnt");
         var item5 = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallbackConfig);
 
         // Testing issue #500
@@ -232,8 +233,8 @@ var MenuLayer3 = cc.Layer.extend({
     ctor:function () {
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(28);
-        var label = cc.LabelBMFont.labelWithString("Enable AtlasItem", "fonts/bitmapFontTest3.fnt");
-        var item1 = cc.MenuItemLabel.itemWithLabel(label, this, thia.menuCallback2);
+        var label = cc.LabelBMFont.labelWithString("Enable AtlasItem", "Resources/fonts/bitmapFontTest3.fnt");
+        var item1 = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback2);
         var item2 = cc.MenuItemFont.itemFromString("--- Go Back ---", this, this.menuCallback);
 
         var spriteNormal = cc.Sprite.spriteWithFile(s_MenuItem, cc.RectMake(0, 23 * 2, 115, 23));
@@ -345,7 +346,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
 
-        var label = cc.LabelBMFont.labelWithString("go back", "fonts/bitmapFontTest3.fnt");
+        var label = cc.LabelBMFont.labelWithString("go back", "Resources/fonts/bitmapFontTest3.fnt");
         var back = cc.MenuItemLabel.itemWithLabel(label, this, this.backCallback);
 
         var menu = cc.Menu.menuWithItems(

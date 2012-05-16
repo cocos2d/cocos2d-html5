@@ -154,8 +154,10 @@ cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('platform/CCSAXParser.js');//16
 cc.loadjs('../tests/Classes/AppDelegate.js');//17
 cc.loadjs('platform/AppControl.js');//18
-cc.loadjs('menu_nodes/CCdomMenuItem.js');
-cc.loadjs('menu_nodes/CCdomMenu.js');
+/*cc.loadjs('menu_nodes/CCdomMenuItem.js');
+cc.loadjs('menu_nodes/CCdomMenu.js');*/
+cc.loadjs('menu_nodes/CCMenuItem.js');
+cc.loadjs('menu_nodes/CCMenu.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXTiledMap.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXXMLParser.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');

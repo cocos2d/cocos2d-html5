@@ -66,6 +66,8 @@ var TestScene = cc.Scene.extend({
 //Controller stuff
 var LINE_SPACE = 40;
 var s_pPathClose = null;
+var g_aTestNamesLength = 0;
+var s_tCurPos = cc.PointZero();
 
 var TestController = cc.Layer.extend({
     _m_pItemMenu:null,
@@ -88,22 +90,21 @@ var TestController = cc.Layer.extend({
         for (var text in g_aTestNames) {
             var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
             var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-            pMenuItem.id(text);
-            this._m_pItemMenu.addChild(pMenuItem);
-            pMenuItem.setPosition(s.width / 2, (s.height - (i + 1) * LINE_SPACE));
+            this._m_pItemMenu.addChild(pMenuItem,i  + 10000);
+            pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
             i++;
         }
-        //this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (g_aTestNames.length + 1) * LINE_SPACE));
-        //this._m_pItemMenu.setPosition(s_tCurPos);
+        g_aTestNamesLength = i;
+        this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (g_aTestNamesLength + 1) * LINE_SPACE));
+        this._m_pItemMenu.setPosition(s_tCurPos);
         this.setIsTouchEnabled(true);
         this.addChild(this._m_pItemMenu);
         this.addChild(pMenu, 1);
     },
     menuCallback:function (pSender) {
         // get the userdata, it's the index of the menu item clicked
-        //var pMenuItem = pSender;
-        var nIdx = pSender.target.id;
-
+        var nIdx = pSender.getString();
+        console.log(pSender)
         // create the test scene and run it
         var pScene = new window[g_aTestNames[nIdx]]();
         if (pScene) {
@@ -119,7 +120,6 @@ var TestController = cc.Layer.extend({
             this._m_tBeginPos = pTouches[0].locationInView(0).y;
         }
         this.bIsMouseDown = true;
-
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this.bIsMouseDown) {
@@ -134,14 +134,14 @@ var TestController = cc.Layer.extend({
                 return;
             }
 
-            if (nextPos.y > ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)) {
-                this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)));
+            if (nextPos.y > ((g_aTestNamesLength + 1) * LINE_SPACE - winSize.height)) {
+                this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNamesLength + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
             this._m_pItemMenu.setPosition(nextPos);
             this._m_tBeginPos = cc.ccp(0, touchLocation).y;
 
-            //s_tCurPos   = nextPos;
+            s_tCurPos   = nextPos;
         }
     },
     ccTouchesEnded:function () {

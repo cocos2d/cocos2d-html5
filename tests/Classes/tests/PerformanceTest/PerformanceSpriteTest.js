@@ -321,7 +321,6 @@ var SpriteMainScene = cc.Scene.extend({
         for (var i = 1; i <= 9; ++i) {
             var text = i.toString();
             var itemFont = cc.MenuItemFont.itemFromString(text, this, this.testNCallback);
-            itemFont.id(text);
             pSubMenu.addChild(itemFont, 10);
 
             if (i <= 3)

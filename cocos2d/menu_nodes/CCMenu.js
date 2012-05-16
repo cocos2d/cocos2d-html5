@@ -43,6 +43,9 @@ cc.kDefaultPadding = 5;
  *  - But the only accecpted children are MenuItem objects
  */
 cc.Menu = cc.Layer.extend({
+    ctor:function(){
+        this._super();
+    },
     _m_tColor:new cc.Color3B(),
     getColor:function () {
         return this._m_tColor;
@@ -72,7 +75,8 @@ cc.Menu = cc.Layer.extend({
     /** initializes an empty CCMenu */
     init:function () {
         if (this._super()) {
-            this._m_bIsTouchEnabled = true;
+            this.setIsTouchEnabled(true);
+            //this._m_bIsTouchEnabled = true;
             var s = cc.Director.sharedDirector().getWinSize();
             this._m_bIsRelativeAnchorPoint = false;
             this.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -86,7 +90,6 @@ cc.Menu = cc.Layer.extend({
             else {
                 s.height -= r.size.height;
             }
-            this.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this._m_pSelectedItem = null;
             this._m_eState = cc.kCCMenuStateWaiting;
             return true;
@@ -94,7 +97,7 @@ cc.Menu = cc.Layer.extend({
     },
     /** initializes a CCMenu with it's items */
     initWithItems:function (args) {
-        if (this.init) {
+        if (this.init()) {
             var z = 0;
             for (var i = 0; i < args.length; i++) {
                 if(args[i]){
@@ -104,6 +107,12 @@ cc.Menu = cc.Layer.extend({
             return true;
         }
         return false;
+    },
+    addChild:function (child, zindex) {
+        if (zindex) {
+            child._setZOrder(zindex);
+        }
+        this._super(child);
     },
     alignItemsVertically:function () {
         this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
@@ -297,9 +306,6 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
-    addChild:function (child, zOrder, tag) {
-        this._super(child, zOrder, tag);
-    },
     registerWithTouchDispatcher:function () {
         cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.kCCMenuTouchPriority, true);
     },
@@ -315,6 +321,7 @@ cc.Menu = cc.Layer.extend({
         }
 
         this._m_pSelectedItem = this._itemForTouch(touch);
+
         if (this._m_pSelectedItem) {
             this._m_eState = cc.kCCMenuStateTrackingTouch;
             this._m_pSelectedItem.selected();
@@ -367,8 +374,6 @@ cc.Menu = cc.Layer.extend({
     },
     _itemForTouch:function (touch) {
         var touchLocation = touch.locationInView(touch.view());
-        touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
-
         if (this._m_pChildren && this._m_pChildren.length > 0) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 if (this._m_pChildren[i].getIsVisible() && this._m_pChildren[i].getIsEnabled()) {

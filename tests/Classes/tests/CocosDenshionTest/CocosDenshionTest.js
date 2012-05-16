@@ -63,7 +63,6 @@ CocosDenshionTest = cc.Layer.extend({
         for (var text in DenshionTests) {
             var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
             var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-            pMenuItem.id(text);
             this._m_pItmeMenu.addChild(pMenuItem, i + 10000);
             pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
             i++;
@@ -80,7 +79,7 @@ CocosDenshionTest = cc.Layer.extend({
         cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.5);
     },
     menuCallback:function (pSender) {
-        var nIdx = pSender.target.id;
+        var nIdx = pSender.getString();
         // create the test scene and run it
         var pScene = new window[DenshionTests[nIdx]]();
     },

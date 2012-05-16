@@ -76,7 +76,11 @@ cc.LabelTTF = cc.Sprite.extend({
      */
     setString:function (label) {
         this._m_pString = label;
-
+        cc.renderContext.save();
+        cc.renderContext.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
+        var dim = cc.renderContext.measureText(this._m_pString);
+        this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
+        cc.renderContext.restore();
         return;
 
         var texture = new cc.Texture2D();
@@ -96,26 +100,41 @@ cc.LabelTTF = cc.Sprite.extend({
     //temp method
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
+        context.globalAlpha = this._m_nOpacity / 255;
+        if (this._m_bFlipX) {
+            context.scale(-1, 1);
+        }
+        if (this._m_bFlipY) {
+            context.scale(1, -1);
+        }
         //this is fillText for canvas
         var color = this.getColor();
         context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity() / 255 + ")";
         context.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
-        var mea = context.measureText(this._m_pString);
+
         var dim = this._m_tDimensions;
-        var offset = (dim.width - mea.width) / 2;
+
+        var offset = 0;
         switch (this._m_eAlignment) {
             case cc.TextAlignmentLeft:
                 offset = -offset;
                 break;
             case cc.TextAlignmentRight:
+                offset = (this._m_tDimensions.width - this._m_tContentSize.width) / 2;
                 break;
-            case cc.TextAlignmentCenter:
             default:
-                offset = 0;
                 break;
         }
 
-        if (mea.width > dim.width && dim.width !== 0) {
+        /*var poffset = cc.SizeZero();
+        if (this._m_pParent) {
+            //if (this._m_pParent._m_bIsRelativeAnchorPoint) {
+                poffset.width = this._m_pParent._m_tContentSize.width * this._m_pParent._m_tAnchorPoint.x;
+                poffset.height = this._m_pParent._m_tContentSize.height * this._m_pParent._m_tAnchorPoint.y;
+            //}
+        }*/
+
+        if (this._m_tContentSize.width < dim.width && dim.width !== 0) {
             this._wrapText(context, this._m_pString,
                 -dim.width * this._m_tAnchorPoint.x,
                 dim.height * this._m_tAnchorPoint.y,
@@ -124,7 +143,9 @@ cc.LabelTTF = cc.Sprite.extend({
                 this._m_eAlignment);
         }
         else {
-            context.fillText(this._m_pString, -mea.width * this._m_tAnchorPoint.x + offset, this._m_fFontSize * this._m_tAnchorPoint.y);
+            context.fillText(this._m_pString,
+                -this._m_tContentSize.width * this._m_tAnchorPoint.x + offset,
+                this._m_tContentSize.height * this._m_tAnchorPoint.y);
         }
     },
     _wrapText:function (context, text, x, y, maxWidth, lineHeight, texAlign) {
@@ -149,7 +170,7 @@ cc.LabelTTF = cc.Sprite.extend({
                         offset = (maxWidth - temWidth) / 2;
                         break;
                 }
-                context.fillText(line, x + offset, y - lineHeight*(words.length/2 -2));
+                context.fillText(line, x + offset, y - lineHeight * (words.length / 2 - 2));
 
                 line = words[n] + " ";
                 y += lineHeight;

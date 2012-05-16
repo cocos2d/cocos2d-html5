@@ -45,13 +45,12 @@ var PerformanceMainLayer = cc.Layer.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         var pMenu = cc.Menu.menuWithItems(null);
-        pMenu.setPosition(cc.PointZero);
+        pMenu.setPosition(cc.PointZero());
         cc.MenuItemFont.setFontName("Arial");
         cc.MenuItemFont.setFontSize(24);
         var i =0;
         for (var text in PerformanceTests) {
             var pItem = cc.MenuItemFont.itemFromString(text, this, this.menuCallback);
-            pItem.id(text);
             pItem.setPosition(cc.ccp(s.width / 2, s.height - (i + 1) * LINE_SPACE));
             pMenu.addChild(pItem, kItemTagBasic + i);
             i++
@@ -60,7 +59,7 @@ var PerformanceMainLayer = cc.Layer.extend({
         this.addChild(pMenu);
     },
     menuCallback:function (pSender) {
-        var nIdx = pSender.target.id;
+        var nIdx = pSender.getString();
         //var nIdx = pSender;
         // create the test scene and run it
         var pScene = new window[PerformanceTests[nIdx]]();
@@ -89,7 +88,7 @@ var PerformBasicLayer = cc.Layer.extend({
         var pMainItem = cc.MenuItemFont.itemFromString("Back", this, this.toMainLayer);
         pMainItem.setPosition(cc.ccp(s.width - 50, 25));
         var pMenu = cc.Menu.menuWithItems(pMainItem, null);
-        pMenu.setPosition(cc.PointZero);
+        pMenu.setPosition(cc.PointZero());
 
         if (this._m_bControlMenuVisible) {
             var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);

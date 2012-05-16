@@ -79,6 +79,15 @@ cc.MenuItem = cc.Node.extend({
     setTarget:function (rec, selector) {
         this._m_pListener = rec;
         this._m_pfnSelector = selector;
+    },
+    activate:function () {
+        if (this._m_bIsEnabled) {
+            if (this._m_pListener && (typeof(this._m_pfnSelector) == "string")) {
+                this._m_pListener[this._m_pfnSelector](this._m_pLabel);
+            } else if (this._m_pListener && (typeof(this._m_pfnSelector) == "function")) {
+                this._m_pfnSelector.call(this._m_pListener,this._m_pLabel);
+            }
+        }
     }
 });
 cc.MenuItem.itemWithTarget = function (rec, selector) {
@@ -168,7 +177,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         if (this._m_bIsEnabled) {
             this._super();
 
-            var action = getActionByTag(cc.kZoomActionTag);
+            var action = this.getActionByTag(cc.kZoomActionTag);
             if (action) {
                 this.stopAction(action);
             }
@@ -193,11 +202,11 @@ cc.MenuItemLabel = cc.MenuItem.extend({
 });
 cc.MenuItemLabel.itemWithLabel = function (label, target, selector) {
     var pRet = new cc.MenuItemLabel();
-     if (arguments.length == 3) {
-         pRet.initWithLabel(label, target, selector);
+    if (arguments.length == 3) {
+        pRet.initWithLabel(label, target, selector);
     } else {
-         pRet.initWithLabel(label);
-     }
+        pRet.initWithLabel(label);
+    }
     return pRet;
 };
 
@@ -233,7 +242,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend({
         this._m_uFontSize = cc._fontSize;
 
         var label = cc.LabelTTF.labelWithString(value, this._m_strFontName, this._m_uFontSize);
-        if (cc.MenuItemLabel.initWithLabel(label, target, selector)) {
+        if (this.initWithLabel(label, target, selector)) {
             // do something ?
         }
         return true;
