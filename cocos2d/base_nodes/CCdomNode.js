@@ -72,8 +72,7 @@ cc.CSS3.Transform = function (ele, translate, rotate, scale, skew) {
         var scaleX = ele.getScaleX();
         var scaleY = ele.getScaleY();
         var style = ele.dom.style;
-        var contentScale = cc.Director.sharedDirector().getContentScaleFactor();
-        console.log(contentScale);
+
         if (ele._m_bIsRelativeAnchorPoint) {
             ele.style.left = "-" + (ele.getAnchorPoint().x * ele.getContentSize().width) + "px";
             ele.style.top = (ele.getAnchorPoint().y * ele.getContentSize().height) + "px";
@@ -137,7 +136,7 @@ cc.setupHTML= function(obj){
     var _container = cc.$new("div");
     _container.id = "Cocos2dGameContainer";
     _container.style.position = "absolute";
-    _container.style.overflow = "visible";//TODO make it hidden when finished debugging
+    _container.style.overflow = "hidden";//TODO make it hidden when finished debugging
     //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
     _container.style.top = canvas.offsetTop+parseInt(canvas.style.borderTopWidth)+"px";
     _container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
@@ -146,7 +145,12 @@ cc.setupHTML= function(obj){
     if(obj){
         _container.setAttribute("fheight", obj.getContentSize().height);
     }
-    return _container;
+    var domlayer = cc.$new("div");
+    domlayer.id = "domlayers";
+    _container.appendChild(domlayer);
+    document.body.insertBefore(_container, canvas);
+    _container.appendChild(canvas);
+    return domlayer;
 };
 cc.domNode = cc.Class.extend({
     isDomNode:true,
