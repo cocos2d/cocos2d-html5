@@ -112,14 +112,11 @@ var Helloworld = cc.Layer.extend({
 
 
 
-
         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
-            function () {
-                cc.canvas.width = 500;
-            });
+            this.menuCloseCallback);
         var text = cc.MenuItemFont.itemFromString("Hello Dom",this, function(){});
         text.setColor({r:255,g:0,b:0});
         text.setPosition(cc.ccp(cc.canvas.width/2,cc.canvas.height/2));
@@ -131,7 +128,7 @@ var Helloworld = cc.Layer.extend({
     },
     // a selector callback
     menuCloseCallback:function (pSender) {
-        cc.Director.sharedDirector().end();
+        history.go(-1);
     },
     ccTouchesBegan:function (pTouches, pEvent) {
         this.bIsMouseDown = true;

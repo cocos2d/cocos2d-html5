@@ -368,7 +368,7 @@ cc.domNode = cc.Class.extend({
             this.makeParentDivs(p.getParent());
         }
         else {//the passed in obj dont have a parent
-            cc.$("#Cocos2dGameContainer").appendChild(p.dom);
+            cc.$("#domlayers").appendChild(p.dom);
         }
     },
 
@@ -388,7 +388,7 @@ cc.domNode = cc.Class.extend({
         var that = cc.$("#" + this.id());
         var cur = this.dom;
         for (cur = this.dom; cur.parentNode; cur = cur.parentNode) {
-            if (cur.parentNode.id == "Cocos2dGameContainer") {
+            if (cur.parentNode.id == "domlayers") {
                 break;
             }
         }
@@ -623,7 +623,7 @@ cc.Node.implement({
             this.makeParentDivs(p.getParent());
         }
         else{
-            var container = cc.$("#Cocos2dGameContainer") || cc.setupHTML(this);
+            var container = cc.$("#domlayers") || cc.setupHTML(this);
             container.appendChild(p.dom);
         }
     }
