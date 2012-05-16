@@ -35,7 +35,7 @@ cc.kCCMenuStateTrackingTouch = 1;
 cc.kCCMenuTouchPriority = -128;
 cc.kDefaultPadding = 5;
 cc.Menu = cc.domNode.extend({
-    _container:null,
+    _container:null,//the container div that encloses all the menus
     init:function () {
         if (!cc.$("#Cocos2dGameContainer")) {
             this.setupHTML();
@@ -43,71 +43,61 @@ cc.Menu = cc.domNode.extend({
         else {
             this._container = cc.$("#Cocos2dGameContainer");
         }
+        this._m_bIsRelativeAnchorPoint = false;
     },
     setupHTML:function () {
         //set up html;
         //get the canvas
         var canvas = cc.canvas;
         canvas.style.zIndex = 0;
-        this._container = cc.$new("div");
-        this._container.id = "Cocos2dGameContainer";
-        this._container.style.position = "absolute";
-        this._container.style.overflow = "hidden";
-
-        cc.gameDiv.insertBefore(this._container, canvas);
-        this._container.appendChild(canvas);
+        this._container = cc.setupHTML(this);
+        cc.TouchDispatcher.registerHtmlElementEvent(this.dom);
+        //cc.gameDiv.insertBefore(this._container, canvas);
+        //this._container.appendChild(canvas);
     },
     initWithItems:function (args) {
         this.init();
-        this._domElement.id = "Cocos2dMenuLayer" + Date.now();
-        this._domElement.className = "Cocos2dMenuLayer";
+        this.dom.id = "Cocos2dMenuLayer" + Date.now();
+        this.dom.className = "Cocos2dMenuLayer";
         this.style.zIndex = 100;
         this.style.width = cc.Director.sharedDirector().getWinSize().width + "px";
         this.style.height = 0;
-        this.style.bottom = 0;
         this.style.position = "absolute";
-        this._container.appendChild(this._domElement);
-        cc.TouchDispatcher.registerHtmlElementEvent(this._domElement);
+        this._container.appendChild(this.dom);
+        this._m_bIsRelativeAnchorPoint= false;
+        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.setContentSize(cc.Director.sharedDirector().getWinSize());
         this.style.cursor = "crosshair";
 
         for (var i = 0; i < args.length; i++) {
             if (args[i]) {
-                this._domElement.appendChild(args[i].getElement());
+                this.dom.appendChild(args[i].dom);
                 this.addChild(args[i]);
             }
-        }
-    },
-    addChild:function (child, zindex) {
-        this._super(child);
-        if (zindex) {
-            child._setZOrder(zindex);
-        }
-        if (child.getElement) {
-            this._domElement.appendChild(child.getElement());
         }
     },
     alignItemsVertically:function () {
         this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
     },
     alignItemsVerticallyWithPadding:function (padding) {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.sharedDirector().getWinSize();//get window size
         var height = -padding;
-        if (this._m_pChildren && this._m_pChildren.length > 0) {
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var childheight = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
-                    this._m_pChildren[i].style.fontSize,
-                    this._m_pChildren[i].style.fontFamily).height;
+        if (this.getChildren().length) {
+            for (var i = 0; i < this.getChildren().length; i++) {
+                var childheight = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
+                    this.getChildren()[i].style.fontSize,
+                    this.getChildren()[i].style.fontFamily).height;//loop through children, and get their individual height
                 height += childheight + padding;//TODO * scale
             }
         }
 
         var y = height / 2.0;
-        if (this._m_pChildren && this._m_pChildren.length > 0) {
-            for (i = 0; i < this._m_pChildren.length; i++) {
-                var childheight = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
-                    this._m_pChildren[i].style.fontSize,
-                    this._m_pChildren[i].style.fontFamily).height;
-                this._m_pChildren[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._m_pChildren[i].getScaleY()*/ / 2));
+        if (this.getChildren().length > 0) {
+            for (i = 0; i < this.getChildren().length; i++) {
+                var childheight = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
+                    this.getChildren()[i].style.fontSize,
+                    this.getChildren()[i].style.fontFamily).height;
+                this.getChildren()[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._m_pChildren[i].getScaleY()*/ / 2));
                 y -= childheight /** this._m_pChildren[i].getScaleY()*/ + padding;
             }
         }
@@ -118,21 +108,21 @@ cc.Menu = cc.domNode.extend({
     alignItemsHorizontallyWithPadding:function (padding) {
         var s = cc.Director.sharedDirector().getWinSize();
         var width = -padding;
-        if (this._m_pChildren && this._m_pChildren.length > 0) {
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var childwidth = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
-                    this._m_pChildren[i].style.fontSize,
-                    this._m_pChildren[i].style.fontFamily).width;
+        if (this.getChildren().length > 0) {
+            for (var i = 0; i < this.getChildren().length; i++) {
+                var childwidth = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
+                    this.getChildren()[i].style.fontSize,
+                    this.getChildren()[i].style.fontFamily).width;
                 width += childwidth + padding;//TODO * scale
             }
         }
         var y = width / 2.0;
-        if (this._m_pChildren && this._m_pChildren.length > 0) {
-            for (i = 0; i < this._m_pChildren.length; i++) {
-                var childwidth = cc.domNode.getTextSize(this._m_pChildren[i]._domElement.innerText,
-                    this._m_pChildren[i].style.fontSize,
-                    this._m_pChildren[i].style.fontFamily).width;
-                this._m_pChildren[i].setPosition(cc.ccp( -y + childwidth,0/* * this._m_pChildren[i].getScaleY()*/));
+        if (this.getChildren().length > 0) {
+            for (i = 0; i < this.getChildren().length; i++) {
+                var childwidth = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
+                    this.getChildren()[i].style.fontSize,
+                    this.getChildren()[i].style.fontFamily).width;
+                this.getChildren()[i].setPosition(cc.ccp( -y + childwidth,0/* * this._m_pChildren[i].getScaleY()*/));
                 //console.log(cc.ccp(s.width / 2 + y - childwidth, -s.height / 2/* * this._m_pChildren[i].getScaleY()*/));
                 y -= childwidth /** this._m_pChildren[i].getScaleY()*/ + padding;
             }
@@ -140,6 +130,11 @@ cc.Menu = cc.domNode.extend({
     }
 });
 cc.Menu.menuWithItems = function () {
+    pret = new cc.Menu();
+    pret.initWithItems(arguments);
+    return pret;
+};
+cc.Menu.menuWithItem = function () {
     pret = new cc.Menu();
     pret.initWithItems(arguments);
     return pret;

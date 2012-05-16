@@ -71,7 +71,7 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseSelected.png",
             this,
             function () {
-                alert("Bye Bye");
+                history.go(-1);
             });
         pCloseItem.setPosition(cc.canvas.width - 20, 20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
@@ -124,6 +124,24 @@ var Helloworld = cc.Layer.extend({
     },
 
     adjustSizeForWindow:function () {
+        //first, make body margin go away
+        var body = document.body.style;
+        body.margin = "0";
+        body.padding = "0";
+        body.background="#000";
+        //find out browser aspect ratio
+        var aspect = window.innerWidth / window.innerHeight;
+        var container = cc.$("#Cocos2dGameContainer");
+        var domlayer = cc.$("#domlayers");
+/*        console.log(container.style.cssText);
+        if(aspect >= 1.5){//if aspect is bigger than 4:3 such as 16:9
+            //then the height is the limiting factor, we will set height and change the width in px
+            var dcssText = "width:"+(window.innerHeight*1.5)+"px; height:100%; overflow:hidden; position:absolute; left:"+(window.innerWidth/2 - (window.innerHeight*1.5)/2)+"px;";
+            container.style.cssText = dcssText;
+            console.log(container);
+        }*/
+
+
         var margin = document.documentElement.clientWidth - document.body.clientWidth;
         if (document.documentElement.clientWidth < 480) {
             cc.canvas.width = 480;
@@ -144,9 +162,18 @@ var Helloworld = cc.Layer.extend({
         }
         cc.canvas.width = 480 * xScale;
         cc.canvas.height = 320 * xScale;
+        container.style.width = 480 * xScale+"px";
+        container.style.height = 320 * xScale+"px";
         cc.renderContext.translate(0, cc.canvas.height);
         cc.renderContext.scale(xScale, xScale);
         cc.Director.sharedDirector().setContentScaleFactor(xScale);
+        domlayer.style[cc.CSS3.origin] = "0% 0%";
+        domlayer.style[cc.CSS3._trans] = cc.CSS3.Scale(xScale,xScale);
+        domlayer.style.width=480+"px";
+        //domlayer.style.height = 320+"px";
+        container.style.left = ((window.innerWidth - 480*xScale)/2)+"px";
+        container.style.top = 0;
+        console.log(((window.innerWidth - 480*xScale)/2));
     },
     // a selector callback
     menuCloseCallback:function (pSender) {

@@ -32,71 +32,75 @@ var cc = cc = cc || {};
 cc._fontSize = 32;
 cc._fontName = '"Comic Sans MS", "cursive"';
 cc.MenuItem = cc.domNode.extend({
-
+    ctor:function(){
+        this._super();
+        this.setAnchorPoint(cc.ccp(0.5,0.5));//this wont work as the div size is unknown at this point
+        this.style[cc.CSS3.origin] = (this._AnchorPoint*100)+"% "+(this._AnchorPoint*100)+"%";
+    }
 });
 
 
 cc.MenuItemImage = cc.MenuItem.extend({
-    _image:null,
     init:function (file) {
         //create div containing an image - div created in ctor
         //craete image
         this._image = new Image();
         this._image.src = file;
-        this._image.id = "test";
-        this._image.style.margin = "auto";
-        this._image.style.right = "50%";
-        this._image.style.left = "-50%";
-        this._image.style.top = "-50%";
-        this._image.style.bottom = "50%";
-        this._image.style.position = "absolute";
+        this._image.parent = this;
         //add to the div
-        this._domElement.appendChild(this._image);
+        this.dom.appendChild(this._image);
+        //when image is loaded, set the position and translation
+        this._image.parent.setAnchorPoint(cc.ccp(0.5, 0.5));
+        var onloadcallback = function(){
+            //this.parent.dom.style.width = this.width+"px";
+            //this.parent.dom.style.height = this.height+"px";
+            this.parent.setContentSize(cc.SizeMake(this.width, this.height));
+            //cc.CSS3.Transform(this.parent);
+            this.removeEventListener("load", onloadcallback);
+        };
+        this._image.addEventListener("load",onloadcallback);
     }
 });
 cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callback) {
-    if (normal.src) {
-        normal = normal.src;
-    }
-    if (selected.src) {
-        selected = selected.src;
-    }
+    if(normal != null)normal = normal.src || normal;
+    if(selected != null)selected = selected.src || selected;
     //create div containing an image - should be done in menuitem
     var that = new this();
     that.init(normal);
     //attach script to swapout image on hover
-    var tmp = new Image();
-    tmp.src = selected;
-    that._image.addEventListener("mouseover", function () {
-        this.src = selected;
-    });
-    that._image.addEventListener("mouseout", function () {
-        this.src = normal;
-    });
+    if(selected != null){
+        var tmp = new Image();
+        tmp.src = selected;
+        that._image.addEventListener("mouseover", function () {
+            this.src = selected;
+        });
+        that._image.addEventListener("mouseout", function () {
+            this.src = normal;
+        });
+    }
     that._image.addEventListener("mousedown", function (e) {
         var evt = e || window.event;
         evt.preventDefault();
         return false;
     });
-    that._image.addEventListener("click", _domMenuCallback);
-    that._image.addEventListener("touchstart", function(){
-        this.src = selected;
-        _domMenuCallback();
-    });
-
-    that._image.addEventListener("touchend", function(){
-        this.src = normal;
-    });
-    function _domMenuCallback(){
-        if (target && (typeof(callback) == "string")) {
-            target[callback]();
-        } else if (target && (typeof(callback) == "function")) {
-            callback.call(target);
-        }
+    if(callback!= null){
+        that._image.addEventListener("click", function(){
+            callback.call(target,arguments);
+        });
+/*        that._image.addEventListener("touchstart", function(){
+            if(selected!=null)this.src = selected;
+            callback.call(target,arguments);
+        });
+        if(selected!=null){
+            that._image.addEventListener("touchend", function(){
+                this.src = normal;
+            });
+        }*/
     }
     //attach callback to onclick
     that.style.cursor = (callback) ? "pointer" : "default";
     return that;
+
 };
 cc.MenuItemSprite = cc.MenuItemImage.extend({
 
@@ -115,12 +119,8 @@ cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four,
         //there is 3 image, but no callback func
         var callback = null;
     }
-    if (normal.src) {
-        normal = normal.src;
-    }
-    if (selected.src) {
-        selected = selected.src;
-    }
+    if(normal != null)normal = normal.src || normal;
+    if(selected != null)selected = selected.src || selected;
     that.init(normal);
     var tmp = new Image();
     tmp.src = selected;
@@ -156,84 +156,84 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this._fontName = label._m_pFontName;
         this._fontSize = label._m_fFontSize + "px";
         //create a div containing the text
-        this._domElement.textContent = this._text;
+        this.dom.textContent = this._text;
         //this._domElement.contentText = this._domElement.innerText;
         this.style.fontFamily = this._fontName;
         this.style.fontSize = this._fontSize;
         this.style.color = "#FFF";
-        this.style.position = "absolute";
+/*        this.style.position = "absolute";
         this.style.bottom = "0px";
         this.style.margin = "auto";
         this.style.right = "50%";
         this.style.left = "-50%";
         this.style.top = "-50%";
-        this.style.bottom = "50%";
+        this.style.bottom = "50%";*/
         this.style.textAlign = "center";
+        //console.log(cc.domNode.getTextSize(this._text, this._fontSize, this._fontName));
+        //console.log(this.dom.clientWidth);
         var tmp = cc.domNode.getTextSize(this._text,this._fontSize, this._fontName);
-        this.style.width = tmp.width+"px";
-        this.style.height = tmp.height+"px";
+        this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
+        var size = this.getContentSize();
+        this.style.left = "-"+(size.width*this.getAnchorPoint().x)+"px";
+        this.style.top = "-"+(size.height*this.getAnchorPoint().y)+"px";
+        this.setPosition(label.getPositionX(), label.getPositionY());
+        cc.CSS3.Transform(this);
     }
 });
 cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
     var that = new this();
     that.init(label);
-    that._domElement.addEventListener("mousedown", function (e) {
+    that.dom.addEventListener("mousedown", function (e) {
         var evt = e || window.event;
         evt.preventDefault();
         return false;
     });
     if (arguments.length == 4) {
-        that._domElement.addEventListener("click", selector);
-        that._domElement.addEventListener("touchstart", selector);
+        that.dom.addEventListener("click", selector);
+        that.dom.addEventListener("touchstart", selector);
         that.style.cursor = "pointer";
     }
     else if (arguments.length == 2) {
-        that._domElement.addEventListener("click", dimension);//the second argument is now the selector
-        that._domElement.addEventListener("touchstart", dimension);
+        that.dom.addEventListener("click", dimension);//the second argument is now the selector
+        that.dom.addEventListener("touchstart", dimension);
         that.style.cursor = "pointer";
     }
     else if (arguments.length == 3) {
-        that._domElement.addEventListener("click", target);
-        that._domElement.addEventListener("touchstart", target);
+        that.dom.addEventListener("click", target);
+        that.dom.addEventListener("touchstart", target);
         that.style.cursor = "pointer";
     }
     return that;
 };
 
 cc.MenuItemFont = cc.MenuItem.extend({
+    ctor:function(){
+        this._super();
+    },
     initFromString: function(value, target, selector){
         this._text = value;
         //create a div containing the text
-        this._domElement.textContent = this._text;
+        this.dom.textContent = this._text;
         this.style.fontFamily = cc._fontName;
         this.style.fontSize = cc._fontSize+"px";
         this.style.color = "#FFF";
-        this.style.position = "absolute";
-        this.style.bottom = "0px";
-        this.style.margin = "auto";
-        this.style.right = "50%";
-        this.style.left = "-50%";
-        this.style.top = "-50%";
-        this.style.bottom = "50%";
         this.style.textAlign = "center";
+        var tmp = cc.domNode.getTextSize(this._text,cc._fontSize, cc._fontName);
+        this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
+        var size = this.getContentSize();
+        this.style.left = "-"+(size.width*this.getAnchorPoint().x)+"px";
+        this.style.top = "-"+(size.height*this.getAnchorPoint().y)+"px";
+        this.style.width = this.offsetWidth+"px";
+        this.style.height = this.offsetHeight+"px";
+        cc.CSS3.Transform(this);
+
         if(selector != null){
-            //this._domElement.addEventListener("click",selector);
-            this._domElement.addEventListener("click",function(e){
-                _domMenuCallback(event);
-            });
-            this._domElement.addEventListener("touchstart",function(e){
-                _domMenuCallback(event);
-            });
+            this.dom.addEventListener("click",selector);
+            this.dom.addEventListener("touchstart",selector);
             this.style.cursor = "pointer";
         }
+        this.update();
 
-         function _domMenuCallback(e){
-            if (target && (typeof(selector) == "string")) {
-                target[selector](e);
-            } else if (target && (typeof(selector) == "function")) {
-                selector.call(target,e);
-            }
-        }
     },
     setFontSizeObj:function(s){
         this.style.fontSize = s;
