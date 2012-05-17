@@ -147,6 +147,8 @@ cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
 cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
 cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
+cc.loadjs('text_input_node/CCIMEDispatcher.js');//7
+cc.loadjs('text_input_node/CCTextFieldTTF.js');//7
 cc.loadjs('misc_nodes/CCProgressTimer.js');//11
 cc.loadjs('CCDirector.js');//13
 cc.loadjs('CCCamera.js');//13
@@ -206,3 +208,4 @@ cc.loadjs('../tests/Classes/tests/FontTest/FontTest.js');
 cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');
 cc.loadjs('../tests/Classes/tests/LabelTest/LabelTest.js');
 cc.loadjs('../tests/Classes/tests/CurrentLanguageTest/CurrentLanguageTest.js');
+cc.loadjs('../tests/Classes/tests/TextInputTest/TextInputTest.js');

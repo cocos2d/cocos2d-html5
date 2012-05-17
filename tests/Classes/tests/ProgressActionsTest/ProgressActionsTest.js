@@ -23,24 +23,24 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var sceneIdx = -1;
-var MAX_LAYER = 3;
+var sceneIdx_Progress = -1;
+var MAX_LAYER_Progress = 3;
 
-var nextAction = function () {
-    sceneIdx++;
-    sceneIdx = sceneIdx % MAX_LAYER;
+var nextProgressAction = function () {
+    sceneIdx_Progress++;
+    sceneIdx_Progress = sceneIdx_Progress % MAX_LAYER_Progress;
 
-    return createLayer(sceneIdx);
+    return createLayer(sceneIdx_Progress);
 };
-var backAction = function () {
-    sceneIdx--;
-    if (sceneIdx < 0)
-        sceneIdx += MAX_LAYER;
+var backProgressAction = function () {
+    sceneIdx_Progress--;
+    if (sceneIdx_Progress < 0)
+        sceneIdx_Progress += MAX_LAYER_Progress;
 
-    return createLayer(sceneIdx);
+    return createLayer(sceneIdx_Progress);
 };
-var restartAction = function () {
-    return createLayer(sceneIdx);
+var restartProgressAction = function () {
+    return createLayer(sceneIdx_Progress);
 };
 
 var createLayer = function (nIndex) {
@@ -96,17 +96,17 @@ var SpriteDemo = cc.Layer.extend({
     },
     restartCallback:function (pSender) {
         var scene = new ProgressActionsTestScene();
-        scene.addChild(restartAction());
+        scene.addChild(restartProgressAction());
         cc.Director.sharedDirector().replaceScene(scene);
     },
     nextCallback:function (pSender) {
         var scene = new ProgressActionsTestScene();
-        scene.addChild(nextAction());
+        scene.addChild(nextProgressAction());
         cc.Director.sharedDirector().replaceScene(scene);
     },
     backCallback:function (pSender) {
         var scene = new ProgressActionsTestScene();
-        scene.addChild(backAction());
+        scene.addChild(backProgressAction());
         cc.Director.sharedDirector().replaceScene(scene);
     }
 });
@@ -114,7 +114,6 @@ var SpriteDemo = cc.Layer.extend({
 var SpriteProgressToRadial = SpriteDemo.extend({
     onEnter:function () {
         this._super();
-
         var winSize = cc.Director.sharedDirector().getWinSize();
 
         var to1 = cc.ProgressTo.actionWithDuration(2, 100);
@@ -191,9 +190,9 @@ var SpriteProgressToVertical = SpriteDemo.extend({
 
 var ProgressActionsTestScene = TestScene.extend({
     runThisTest:function () {
-        sceneIdx = 0;
-        MAX_LAYER = 3;
-        this.addChild(nextAction());
+        sceneIdx_Progress = -1;
+        MAX_LAYER_Progress = 3;
+        this.addChild(nextProgressAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
 });

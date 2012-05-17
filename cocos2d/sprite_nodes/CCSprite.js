@@ -120,14 +120,19 @@ cc.generateTextureCacheForColor = function (texture) {
     var ctx = canvas.getContext("2d");
     ctx.drawImage(texture, 0, 0);
 
+    var tempCanvas = document.createElement("canvas");
+    tempCanvas.width = w;
+    tempCanvas.height = h;
+    var tempCtx = tempCanvas.getContext('2d');
+
     var pixels = ctx.getImageData(0, 0, w, h).data;
 
     for (var rgbI = 0; rgbI < 4; rgbI++) {
-        var tempCanvas = document.createElement("canvas");
-        tempCanvas.width = w;
-        tempCanvas.height = h;
+        var cacheCanvas = document.createElement("canvas");
+        cacheCanvas.width = w;
+        cacheCanvas.height = h;
+        var cacheCtx = cacheCanvas.getContext('2d');
 
-        var tempCtx = tempCanvas.getContext('2d');
         tempCtx.drawImage(texture, 0, 0);
         var to = tempCtx.getImageData(0, 0, w, h);
         var toData = to.data;
@@ -138,10 +143,12 @@ cc.generateTextureCacheForColor = function (texture) {
             toData[i + 2] = (rgbI === 2) ? pixels[i + 2] : 0;
             toData[i + 3] = pixels[i + 3];
         }
-        ctx.putImageData(to, 0, 0);
-        var imgComp = new Image();
-        imgComp.src = canvas.toDataURL();
-        rgbks.push(imgComp);
+        cacheCtx.putImageData(to, 0, 0);
+        //ctx.putImageData(to, 0, 0);
+        //var imgComp = new Image();
+        //imgComp.src = canvas.toDataURL();
+        //rgbks.push(imgComp);
+        rgbks.push(cacheCanvas);
     }
     return rgbks;
 };
@@ -605,12 +612,14 @@ cc.Sprite = cc.Node.extend({
 
         var relativeOffsetInPixels = this._m_obUnflippedOffsetPositionFromCenter;
 
-        if (this._m_bFlipX) {
-            relativeOffsetInPixels.x = -relativeOffsetInPixels.x;
-        }
-        if (this._m_bFlipY) {
-            relativeOffsetInPixels.y = -relativeOffsetInPixels.y;
-        }
+        /* WEBGL Code
+         if (this._m_bFlipX) {
+         //relativeOffsetInPixels.x = -relativeOffsetInPixels.x;
+         }
+         if (this._m_bFlipY) {
+         //relativeOffsetInPixels.y = -relativeOffsetInPixels.y;
+         }
+         */
 
         this._m_obOffsetPositionInPixels.x = relativeOffsetInPixels.x + (this._m_tContentSizeInPixels.width - this._m_obRectInPixels.size.width) / 2;
         this._m_obOffsetPositionInPixels.y = relativeOffsetInPixels.y + (this._m_tContentSizeInPixels.height - this._m_obRectInPixels.size.height) / 2;
@@ -1145,7 +1154,7 @@ cc.Sprite = cc.Node.extend({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._m_bFlipY = bFlipY;
-            this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
+            //this.setTextureRectInPixels(this._m_obRectInPixels, this._m_bRectRotated, this._m_tContentSizeInPixels);
 
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -1207,7 +1216,7 @@ cc.Sprite = cc.Node.extend({
     },
 
     setColor:function (color3) {
-        this._m_sColor = this._m_sColorUnmodified = color3;
+        this._m_sColor = this._m_sColorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
 
         if (this.getTexture()) {
             if (cc.renderContextType == cc.kCanvas) {
@@ -1220,11 +1229,13 @@ cc.Sprite = cc.Node.extend({
             }
         }
 
-        if (this._m_bOpacityModifyRGB) {
-            this._m_sColor.r = color3.r * this._m_nOpacity / 255;
-            this._m_sColor.g = color3.g * this._m_nOpacity / 255;
-            this._m_sColor.b = color3.b * this._m_nOpacity / 255;
-        }
+        /*
+         if (this._m_bOpacityModifyRGB) {
+         this._m_sColor.r = Math.round(color3.r * this._m_nOpacity / 255);
+         this._m_sColor.g = Math.round(color3.g * this._m_nOpacity / 255);
+         this._m_sColor.b = Math.round(color3.b * this._m_nOpacity / 255);
+         }
+         */
         this.updateColor();
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -1234,8 +1245,7 @@ cc.Sprite = cc.Node.extend({
     // RGBAProtocol
     /** opacity: conforms to CCRGBAProtocol protocol */
     setIsOpacityModifyRGB:function (bValue) {
-        var oldColor = new cc.Color3B();
-        oldColor = this._m_sColor;
+        var oldColor = this._m_sColor;
         this._m_bOpacityModifyRGB = bValue;
         this._m_sColor = oldColor;
     },
@@ -1275,7 +1285,9 @@ cc.Sprite = cc.Node.extend({
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
         if (cc.renderContextType == cc.kCanvas) {
-            return (pFrame.getTexture() == this._m_pobTexture);
+            if (pFrame.getTexture() != this._m_pobTexture)
+                return false;
+            return cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._m_obRect);
         } else {
             return (cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
         }

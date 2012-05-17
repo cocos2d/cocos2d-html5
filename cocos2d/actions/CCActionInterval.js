@@ -1174,7 +1174,6 @@ cc.Animate = cc.ActionInterval.extend({
     },
     initWithAnimation:function (pAnimation, bRestoreOriginalFrame) {
         cc.Assert(pAnimation != null, "");
-
         if (this.initWithDuration(pAnimation.getFrames().length * pAnimation.getDelay(), null, null, true)) {
             this._m_bRestoreOriginalFrame = bRestoreOriginalFrame;
             this._m_pAnimation = pAnimation;
@@ -1202,10 +1201,9 @@ cc.Animate = cc.ActionInterval.extend({
     },
     startWithTarget:function (pTarget) {
         this._super(pTarget);
-        var pSprite = pTarget;
 
         if (this._m_bRestoreOriginalFrame) {
-            this._m_pOrigFrame = pSprite.displayedFrame();
+            this._m_pOrigFrame = pTarget.displayedFrame();
         }
     },
     update:function (time) {
