@@ -1283,7 +1283,9 @@ cc.Sprite = cc.Node.extend({
     /** returns whether or not a CCSpriteFrame is being displayed */
     isFrameDisplayed:function (pFrame) {
         if (cc.renderContextType == cc.kCanvas) {
-            return (pFrame.getTexture() == this._m_pobTexture);
+            if (pFrame.getTexture() != this._m_pobTexture)
+                return false;
+            return cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._m_obRect);
         } else {
             return (cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._m_obRect) && pFrame.getTexture().getName() == this._m_pobTexture.getName());
         }
