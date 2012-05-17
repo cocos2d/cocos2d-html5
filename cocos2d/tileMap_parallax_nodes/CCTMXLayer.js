@@ -507,7 +507,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._m_pReusedTile.initWithBatchNode(this, rect);
         this._m_pReusedTile.setPositionInPixels(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
-        this._m_pReusedTile.setAnchorPoint(cc.PointZero);
+        this._m_pReusedTile.setAnchorPoint(cc.PointZero());
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
 
         // get atlas index
@@ -546,7 +546,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         this._m_pReusedTile.setPositionInPixels(this.positionAt(pos));
         this._m_pReusedTile.setVertexZ(this._vertexZForPos(pos));
-        this._m_pReusedTile.setAnchorPoint(cc.PointZero);
+        this._m_pReusedTile.setAnchorPoint(cc.PointZero());
         this._m_pReusedTile.setOpacity(this._m_cOpacity);
 
         // get atlas index

@@ -30,20 +30,20 @@ var kTagBitmapAtlas1 = 1;
 var kTagBitmapAtlas2 = 2;
 var kTagBitmapAtlas3 = 3;
 
-var kTagLabelSprite1 = 0;
-var kTagLabelSprite2 = 1;
-var kTagLabelSprite3 = 2;
-var kTagLabelSprite4 = 3;
-var kTagLabelSprite5 = 4;
-var kTagLabelSprite6 = 5;
-var kTagLabelSprite7 = 6;
-var kTagLabelSprite8 = 7;
+var kTagLabelSprite1 = 660;
+var kTagLabelSprite2 = 661;
+var kTagLabelSprite3 = 662;
+var kTagLabelSprite4 = 663;
+var kTagLabelSprite5 = 664;
+var kTagLabelSprite6 = 665;
+var kTagLabelSprite7 = 666;
+var kTagLabelSprite8 = 667;
 
 
 var AtlasTests = [
     "LabelAtlasTest", //ok
     "LabelAtlasColorTest", //ok
-    /*"Atlas3",
+   /* "Atlas3",
     "Atlas4",
     "Atlas5",
     "Atlas6",
@@ -210,7 +210,6 @@ var LabelAtlasTest = AtlasDemo.extend({
 
         var label1 = cc.LabelAtlas.labelWithString("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
         this.addChild(label1, 0, kTagLabelSprite1);
-        console.log(label1)
         label1.setPosition(cc.ccp(10, 100));
         label1.setOpacity(200);
 

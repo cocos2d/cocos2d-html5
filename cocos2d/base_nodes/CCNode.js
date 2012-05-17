@@ -569,10 +569,12 @@ cc.Node = cc.Class.extend({
         if (this._m_pChildren != null) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
-                if (pNode && pNode._m_nTag == aTag)
+                if (pNode && pNode._m_nTag == aTag){
                     return pNode;
+                }
             }
         }
+        //throw "not found";
         return null;
     },
     // composition: ADD

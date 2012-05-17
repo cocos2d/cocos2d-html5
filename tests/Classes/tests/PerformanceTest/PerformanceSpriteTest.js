@@ -349,7 +349,7 @@ var SpriteMainScene = cc.Scene.extend({
         }
     },
     testNCallback:function (pSender) {
-        this._subtestNumber = parseInt(pSender.target.id);
+        this._subtestNumber = parseInt(pSender.getString());
         var pMenu = this.getChildByTag(kTagSpriteMenuLayer);
         pMenu.restartCallback(pSender);
     },

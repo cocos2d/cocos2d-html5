@@ -216,7 +216,7 @@ var ParticleMainScene = cc.Scene.extend({
         this.createParticleSystem();
     },
     testNCallback:function (pSender) {
-        this._subtestNumber = parseInt(pSender.target.id);
+        this._subtestNumber = parseInt(pSender.getString());
         var pMenu = this.getChildByTag(kTagParticleMenuLayer);
         pMenu.restartCallback(pSender);
     },
