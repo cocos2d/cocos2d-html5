@@ -153,5 +153,3 @@ cc.Camera.getZEye = function () {
 };
 
 //cc.CONTENT_SCALE_FACTOR = cc.Director.sharedDirector().getContentScaleFactor();
-
-cc.FLT_EPSILON = 1.192092896;

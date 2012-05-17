@@ -122,7 +122,6 @@ cc.ProgressTimer = cc.Node.extend({
                     this._drawSize.width, this._drawSize.height);
             }else{
                 var tSize = this.getContentSize();
-                context.save();
                 context.beginPath();
                 var startAngle_1= (Math.PI/180)*this._startAngle;
                 var endAngle_1=(Math.PI/180)*this._endAngle;
@@ -140,8 +139,6 @@ cc.ProgressTimer = cc.Node.extend({
                     this._m_pSprite._m_obRect.size.width, this._m_pSprite._m_obRect.size.height,
                     pos.x, -(pos.y + this._m_pSprite._m_obRect.size.height),
                     this._m_pSprite._m_obRect.size.width, this._m_pSprite._m_obRect.size.height);
-
-                context.restore();
             }
         } else {
             this._super();

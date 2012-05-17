@@ -79,13 +79,16 @@ var s_isoTestPng = "Resources/TileMaps/iso-test.png";
 var s_isoTest2Png = "Resources/TileMaps/iso-test2.png";
 var s_isoPng = "Resources/TileMaps/iso.png";
 var s_orthoTest1BwPng = "Resources/TileMaps/ortho-test1_bw.png";
+var s_orthoTest1Png = "Resources/TileMaps/ortho-test1.png";
 var s_tilesHdPng = "Resources/TileMaps/tiles-hd.png";
 var s_tmwDesertSpacingHdPng = "Resources/TileMaps/tmw_desert_spacing-hd.png";
 var s_tmwDesertSpacingPng = "Resources/TileMaps/tmw_desert_spacing.png";
+var s_fnTuffyBoldItalicCharmapPng = "Resources/fonts/tuffy_bold_italic-charmap.png";
 
 var g_ressources = [
     //image ressources
     {type:"image", src:s_pPathGrossini},
+    {type:"image", src:s_fnTuffyBoldItalicCharmapPng},
     {type:"image", src:s_pPathSister1},
     {type:"image", src:s_pPathSister2},
     {type:"image", src:s_pPathB1},
@@ -130,6 +133,7 @@ var g_ressources = [
     {type:"image", src:s_isoTest2Png},
     {type:"image", src:s_isoPng},
     {type:"image", src:s_orthoTest1BwPng},
+    {type:"image", src:s_orthoTest1Png},
     {type:"image", src:s_tilesHdPng},
     {type:"image", src:s_tmwDesertSpacingHdPng},
     {type:"image", src:s_tmwDesertSpacingPng},
