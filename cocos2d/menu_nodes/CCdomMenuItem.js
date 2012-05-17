@@ -109,15 +109,18 @@ cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four,
     var that=  new this();
     if(five){
         //threee is disabled, four is target, five is selector
-        var callback = five;
+        var target = four;
+        var selector = five;
     }
     else if(four){
         //there is no disabled image
-        var callback = four;
+        var target = three;
+        var selector = four;
     }
     else{
         //there is 3 image, but no callback func
-        var callback = null;
+        var target = null;
+        var selector = null;
     }
     if(normal != null)normal = normal.src || normal;
     if(selected != null)selected = selected.src || selected;
@@ -135,10 +138,10 @@ cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four,
         evt.preventDefault();
         return false;
     });
-    that._image.addEventListener("click", callback);
-    that._image.addEventListener("touchstart", function(){
+    that._image.addEventListener("click", function(event){_domSpriteCallback(event, target, selector)});
+    that._image.addEventListener("touchstart", function(event){
         this.src = selected;
-        callback();
+        _domSpriteCallback(event, target, selector);
     });
     that._image.addEventListener("touchend", function(){
         this.src = normal;
@@ -146,6 +149,13 @@ cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four,
     //attach callback to onclick
     that.style.cursor = (callback) ? "pointer" : "default";
     return that;
+    function _domSpriteCallback(event, target, selector){
+        if (target && (typeof(selector) == "string")) {
+            target[selector](event);
+        } else if (target && (typeof(selector) == "function")) {
+            selector.call(target,event);
+        }
+    }
 };
 cc.MenuItemLabel = cc.MenuItem.extend({
     _text:'',
@@ -180,7 +190,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         cc.CSS3.Transform(this);
     }
 });
-cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
+cc.MenuItemLabel.itemWithLabel = function (label, two, three, four) {
     var that = new this();
     that.init(label);
     that.dom.addEventListener("mousedown", function (e) {
@@ -189,21 +199,29 @@ cc.MenuItemLabel.itemWithLabel = function (label, dimension, target, selector) {
         return false;
     });
     if (arguments.length == 4) {
-        that.dom.addEventListener("click", selector);
-        that.dom.addEventListener("touchstart", selector);
+        that.dom.addEventListener("click", function(event){_domLabelCallback(event, three, four)});
+        that.dom.addEventListener("touchstart", function(event){_domLabelCallback(event, three, four)});
         that.style.cursor = "pointer";
     }
-    else if (arguments.length == 2) {
-        that.dom.addEventListener("click", dimension);//the second argument is now the selector
-        that.dom.addEventListener("touchstart", dimension);
-        that.style.cursor = "pointer";
+    else if (arguments.length <= 2) {
+        cc.Assert(0,"Not enough parameters.");
+        //that.dom.addEventListener("click", two);//the second argument is now the selector
+        //that.dom.addEventListener("touchstart", two);
+        //that.style.cursor = "pointer";
     }
     else if (arguments.length == 3) {
-        that.dom.addEventListener("click", target);
-        that.dom.addEventListener("touchstart", target);
+        that.dom.addEventListener("click", function(event){_domLabelCallback(event, two, three)});
+        that.dom.addEventListener("touchstart", function(event){_domLabelCallback(event, two, three)});
         that.style.cursor = "pointer";
     }
     return that;
+    function _domLabelCallback(event, target, selector){
+        if (target && (typeof(selector) == "string")) {
+            target[selector](event);
+        } else if (target && (typeof(selector) == "function")) {
+            selector.call(target,event);
+        }
+    }
 };
 
 cc.MenuItemFont = cc.MenuItem.extend({
@@ -228,12 +246,19 @@ cc.MenuItemFont = cc.MenuItem.extend({
         cc.CSS3.Transform(this);
 
         if(selector != null){
-            this.dom.addEventListener("click",selector);
-            this.dom.addEventListener("touchstart",selector);
+            this.dom.addEventListener("click",function(event){_domFontCallback(event)});
+            this.dom.addEventListener("touchstart",function(event){_domFontCallback(event)});
             this.style.cursor = "pointer";
         }
         this.update();
 
+        function _domFontCallback(event){
+            if (target && (typeof(selector) == "string")) {
+                target[selector](event);
+            } else if (target && (typeof(selector) == "function")) {
+                selector.call(target,event);
+            }
+        }
     },
     setFontSizeObj:function(s){
         this.style.fontSize = s;
