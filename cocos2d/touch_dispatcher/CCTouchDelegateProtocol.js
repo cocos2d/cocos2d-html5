@@ -32,11 +32,13 @@ var cc = cc = cc || {};
 
 cc.Touch = cc.Class.extend({
     _m_nViewId:0,
-    _m_point:cc.PointZero(),
+    _m_point:null,
     _m_prevPoint:cc.PointZero(),
     _m_iId:0,
 
     ctor:function (nViewId, x, y) {
+        this._m_nViewId = nViewId;
+        this._m_point = new cc.Point(x || 0, y || 0);
     },
 
     locationInView:function (nViewId) {
@@ -54,15 +56,14 @@ cc.Touch = cc.Class.extend({
         return this._m_iId;
     },
 
-    SetTouchInfo:function (nViewId, x, y, iId) {
-        if (!iId)
-            iId = 0;
-
+    setTouchInfo:function (nViewId, x, y, iId) {
         this._m_nViewId = nViewId;
         this._m_prevPoint = this._m_point;
-        this._m_point.x = x;
-        this._m_point.y = y;
-        this._m_iId = iId;
+        this._m_point = new cc.Point(x || 0, y || 0);
+        this._m_iId = iId || 0;
+    },
+    _setPrevPoint:function (x, y) {
+        this._m_prevPoint = new cc.Point(x || 0, y || 0);
     }
 });
 

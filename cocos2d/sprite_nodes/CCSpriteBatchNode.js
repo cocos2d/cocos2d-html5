@@ -393,7 +393,10 @@ cc.SpriteBatchNode = cc.Node.extend({
     },
     setTexture:function (texture) {
         this._m_pobTextureAtlas.setTexture(texture);
-        this._updateBlendFunc();
+        for (var i = 0; i < this._m_pChildren.length; i++) {
+            this._m_pChildren[i].setTexture(texture);
+        }
+        //this._updateBlendFunc();
     },
     setBlendFunc:function (blendFunc) {
         this._m_blendFunc = blendFunc;

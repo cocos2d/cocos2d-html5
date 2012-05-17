@@ -250,16 +250,15 @@ var Sprite1 = SpriteTestDemo.extend({
     },
 
     addNewSpriteWithCoords:function (p) {
-        var idx = cc.RANDOM_0_1() * 1400.0 / 100.0;
-        var x = Math.round(idx % 5) * 85;
-        var y = Math.round(idx / 5) * 121;
+        var idx = 0 | (cc.RANDOM_0_1() * 14);
+        var x = (idx % 5) * 85;
+        var y = (0 | (idx / 5)) * 121;
         var sprite = cc.Sprite.spriteWithFile(s_grossini_dance_atlas, cc.RectMake(x, y, 85, 121));
         this.addChild(sprite);
         sprite.setPosition(cc.ccp(p.x, p.y));
 
         var action;
         var random = cc.RANDOM_0_1();
-
         if (random < 0.20) {
             action = cc.ScaleBy.actionWithDuration(3, 2);
         } else if (random < 0.40) {
@@ -313,9 +312,9 @@ var SpriteBatchNode1 = SpriteTestDemo.extend({
     addNewSpriteWithCoords:function (p) {
         var BatchNode = this.getChildByTag(kTagSpriteBatchNode);
 
-        var idx = cc.RANDOM_0_1() * 1400 / 100;
-        var x = Math.round(idx % 5) * 85;
-        var y = Math.round(idx / 5) * 121;
+        var idx = 0 | (cc.RANDOM_0_1() * 14);
+        var x = (idx % 5) * 85;
+        var y = (0 | (idx / 5)) * 121;
 
         var sprite = cc.Sprite.spriteWithTexture(BatchNode.getTexture(), cc.RectMake(x, y, 85, 121));
         BatchNode.addChild(sprite);
@@ -1308,9 +1307,9 @@ var SpriteNewTexture = SpriteTestDemo.extend({
 
         var p = cc.ccp(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height);
 
-        var idx = Math.round(cc.RANDOM_0_1() * 1400 / 100);
+        var idx = 0 | (cc.RANDOM_0_1() * 14);
         var x = (idx % 5) * 85;
-        var y = (idx / 5) * 121;
+        var y = (0 | (idx / 5)) * 121;
 
 
         var node = this.getChildByTag(kTagSpriteBatchNode);
@@ -1328,8 +1327,8 @@ var SpriteNewTexture = SpriteTestDemo.extend({
             action = cc.RotateBy.actionWithDuration(3, 360);
         else if (random < 0.60)
             action = cc.Blink.actionWithDuration(1, 3);
-        else if (random < 0.8)
-            action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
+        // else if (random < 0.8)
+        //     action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         else
             action = cc.FadeOut.actionWithDuration(2);
 
@@ -1349,20 +1348,16 @@ var SpriteNewTexture = SpriteTestDemo.extend({
                 sprite = children[i];
                 if (!sprite)
                     break;
-
                 sprite.setTexture(this._m_texture2);
             }
-
             this._m_usingTexture1 = false;
         } else {
             for (i = 0; i < children.length; i++) {
                 sprite = children[i];
                 if (!sprite)
                     break;
-
                 sprite.setTexture(this._m_texture1);
             }
-
             this._m_usingTexture1 = true;
         }
     }
@@ -1399,9 +1394,9 @@ var SpriteBatchNodeNewTexture = SpriteTestDemo.extend({
 
         var batch = this.getChildByTag(kTagSpriteBatchNode);
 
-        var idx = Math.round(cc.RANDOM_0_1() * 1400 / 100);
+        var idx = 0 | (cc.RANDOM_0_1() * 14);
         var x = (idx % 5) * 85;
-        var y = (idx / 5) * 121;
+        var y = (0 | (idx / 5)) * 121;
 
         var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(x, y, 85, 121));
         batch.addChild(sprite);
@@ -1417,8 +1412,8 @@ var SpriteBatchNodeNewTexture = SpriteTestDemo.extend({
             action = cc.RotateBy.actionWithDuration(3, 360);
         else if (random < 0.60)
             action = cc.Blink.actionWithDuration(1, 3);
-        else if (random < 0.8)
-            action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
+        //else if (random < 0.8)
+        //    action = cc.TintBy.actionWithDuration(2, 0, -255, -255);
         else
             action = cc.FadeOut.actionWithDuration(2);
         var action_back = action.reverse();
