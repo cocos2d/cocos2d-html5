@@ -36,7 +36,8 @@ cc.clone = function(obj)
         {
             c[key] = cc.clone(copy);
         }
-        else if(((typeof copy) == "object") && !(copy instanceof cc.Node)){
+        else if(((typeof copy) == "object") && !(copy instanceof cc.Node)
+            && !(copy instanceof HTMLElement)){
             c[key] = cc.clone(copy);
         }
         else
