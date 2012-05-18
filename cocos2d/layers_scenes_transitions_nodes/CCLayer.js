@@ -636,19 +636,19 @@ cc.LayerGradient.node = function () {
 /// MultiplexLayer
 cc.LayerMultiplex = cc.Layer.extend({
     m_nEnabledLayer:0,
-    m_pLayers:null,
+    m_pLayers:[],
     ctor:function () {
         this._super();
     },
     initWithLayer:function (layer) {
         this.m_pLayers = [];
-        this.m_pLayers.addObject(layer);
+        this.m_pLayers.push(layer);
         this.m_nEnabledLayer = 0;
         this.addChild(layer);
         return true;
     },
-    initWithLayers:function () {
-        this.m_pLayers = arguments;
+    initWithLayers:function (args) {
+        this.m_pLayers = args;
         this.m_nEnabledLayer = 0;
         this.addChild(this.m_pLayers[this.m_nEnabledLayer]);
         return true;
@@ -658,11 +658,8 @@ cc.LayerMultiplex = cc.Layer.extend({
      */
     switchTo:function (n) {
         cc.Assert(n < this.m_pLayers.length, "Invalid index in MultiplexLayer switchTo message");
-
         this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
-
         this.m_nEnabledLayer = n;
-
         this.addChild(this.m_pLayers[n]);
     },
     /** release the current layer and switches to another layer indexed by n.
@@ -670,14 +667,10 @@ cc.LayerMultiplex = cc.Layer.extend({
      */
     switchToAndReleaseMe:function (n) {
         cc.Assert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
-
         this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
-
         //[layers replaceObjectAtIndex:enabledLayer withObject:[NSNull null]];
         this.m_pLayers[this.m_nEnabledLayer] = null;
-
         this.m_nEnabledLayer = n;
-
         this.addChild(this.m_pLayers[n]);
     }
 });

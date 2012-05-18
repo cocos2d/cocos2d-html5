@@ -111,7 +111,6 @@ TestLayer.node = function () {
 var RotateWorldMainLayer = cc.Layer.extend({
     onEnter:function () {
         this._super();
-
         var x, y;
 
         var size = cc.Director.sharedDirector().getWinSize();

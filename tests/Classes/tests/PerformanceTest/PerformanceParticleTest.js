@@ -26,7 +26,7 @@
 var kTagParticleSystem = 3;
 var kTagLabelAtlas = 4;
 var kMaxParticles = 1000;
-var kParticleNodesIncrease = 100;
+var kParticleNodesIncrease = 50;
 var s_nParCurIdx = 0;
 var kTagParticleMenuLayer = 1000;
 
@@ -117,7 +117,7 @@ var ParticleMainScene = cc.Scene.extend({
         for (var i = 1; i <= 3; ++i) {
             var str = i.toString();
             var itemFont = cc.MenuItemFont.itemFromString(str, this, this.testNCallback);
-            itemFont.id(i);
+            itemFont.setTag(i);
             pSubMenu.addChild(itemFont, 10);
 
             if (i <= 1) {
@@ -217,7 +217,7 @@ var ParticleMainScene = cc.Scene.extend({
         this.createParticleSystem();
     },
     testNCallback:function (pSender) {
-        this._subtestNumber = parseInt(pSender.target.id);
+        this._subtestNumber = pSender.getTag();
         var pMenu = this.getChildByTag(kTagParticleMenuLayer);
         pMenu.restartCallback(pSender);
     },

@@ -675,7 +675,7 @@ var DemoModernArt = ParticleDemo.extend({
 
         // emitter position
         this._m_emitter.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-        this._m_emitter.setPosVar(cc.PointZero);
+        this._m_emitter.setPosVar(cc.PointZero());
 
         // life of particles
         this._m_emitter.setLife(2.0);

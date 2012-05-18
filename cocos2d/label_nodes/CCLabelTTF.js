@@ -38,14 +38,12 @@ cc.LabelTTF = cc.Sprite.extend({
     _m_pFontName:"Arial",
     _m_fFontSize:0.0,
     _m_pString:null,
-
     ctor:function () {
         this._super();
         this._m_pString = "";
         this._m_sColor = cc.WHITE();
         this._m_bOpacityModifyRGB = false;
     },
-
     description:function () {
         return "<CCLabelTTF | FontName =" + this._m_pFontName + " FontSize = " + this._m_fFontSize.toFixed(1) + ">";
     },
@@ -83,72 +81,67 @@ cc.LabelTTF = cc.Sprite.extend({
      */
     setString:function (label) {
         this._m_pString = label;
-
+        cc.renderContext.save();
+        cc.renderContext.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
         var dim = cc.renderContext.measureText(this._m_pString);
         this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
-        /*
-         this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-         */
-        //for WEBGL
-        /*
-         var texture = new cc.Texture2D();
-         if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
-         texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
-         } else {
-         texture = new cc.Texture2D();
-         texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
-         }
-         this.setTexture(texture);
+        cc.renderContext.restore();
+        return;
 
-         return;
+        var texture = new cc.Texture2D();
+        if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
+            texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
+        } else {
+            texture = new cc.Texture2D();
+            texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
+        }
+        this.setTexture(texture);
 
-         var texture = new cc.Texture2D();
-         if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
-         texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
-         } else {
-         texture = new cc.Texture2D();
-         texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
-         }
-         this.setTexture(texture);
-
-         var rect = cc.RectZero();
-         rect.size = this._m_pobTexture.getContentSize();
-         this.setTextureRect(rect);
-         */
+        var rect = cc.RectZero();
+        rect.size = this._m_pobTexture.getContentSize();
+        this.setTextureRect(rect);
     },
 
     //temp method
     draw:function (ctx) {
-        var context = ctx || cc.renderContext;
-        //this is fillText for canvas
-        var color = this.getColor();
-        context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity() / 255 + ")";
-        context.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
-        var mea = context.measureText(this._m_pString);
-        var dim = this._m_tDimensions;
-        var offset = (dim.width - mea.width) / 2;
-        switch (this._m_eAlignment) {
-            case cc.TextAlignmentLeft:
-                offset = -offset;
-                break;
-            case cc.TextAlignmentRight:
-                break;
-            case cc.TextAlignmentCenter:
-            default:
-                offset = 0;
-                break;
-        }
+        if (cc.renderContextType == cc.kCanvas) {
+            var context = ctx || cc.renderContext;
+            if (this._m_bFlipX) {
+                context.scale(-1, 1);
+            }
+            if (this._m_bFlipY) {
+                context.scale(1, -1);
+            }
+            //this is fillText for canvas
+            var color = this.getColor();
+            context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity() / 255 + ")";
+            context.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
 
-        if (mea.width > dim.width && dim.width !== 0) {
-            this._wrapText(context, this._m_pString,
-                -dim.width * this._m_tAnchorPoint.x,
-                dim.height * this._m_tAnchorPoint.y,
-                dim.width,
-                this._m_fFontSize,
-                this._m_eAlignment);
-        }
-        else {
-            context.fillText(this._m_pString, -mea.width * this._m_tAnchorPoint.x + offset, this._m_fFontSize * this._m_tAnchorPoint.y);
+            var offset = 0;
+            switch (this._m_eAlignment) {
+                case cc.TextAlignmentLeft:
+                    offset = -(this._m_tDimensions.width - this._m_tContentSize.width) / 2;
+                    break;
+                case cc.TextAlignmentRight:
+                    offset = (this._m_tDimensions.width - this._m_tContentSize.width) / 2;
+                    break;
+                default:
+                    break;
+            }
+
+            if (this._m_tContentSize.width > this._m_tDimensions.width && this._m_tDimensions.width !== 0) {
+                this._wrapText(context, this._m_pString,
+                    -this._m_tDimensions.width * this._m_tAnchorPoint.x,
+                    this._m_tDimensions.height * this._m_tAnchorPoint.y,
+                    this._m_tDimensions.width,
+                    this._m_fFontSize,
+                    this._m_eAlignment);
+            }
+            else {
+                context.fillText(this._m_pString,
+                    -this._m_tContentSize.width * this._m_tAnchorPoint.x + offset,
+                    this._m_tContentSize.height * this._m_tAnchorPoint.y);
+            }
         }
     },
     _wrapText:function (context, text, x, y, maxWidth, lineHeight, texAlign) {
@@ -209,4 +202,4 @@ cc.LabelTTF.labelWithString = function (label, dimensions, alignment, fontName, 
 
         return null;
     }
-};
+}

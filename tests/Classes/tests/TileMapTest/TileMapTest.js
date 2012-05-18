@@ -125,7 +125,7 @@ var TileDemo = cc.Layer.extend({
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
-        menu.setPosition(cc.PointZero);
+        menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
         item2.setPosition(cc.PointMake(s.width / 2, 30));
         item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));

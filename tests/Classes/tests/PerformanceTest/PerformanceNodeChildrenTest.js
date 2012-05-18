@@ -24,9 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var kTagBase = 20000;
-var kMaxNodes = 15000;
-var kNodesIncrease = 500;
+var kTagBase = 2000;
+var kMaxNodes = 1500;
+var kNodesIncrease = 50;
 var s_nCurCase = 0;
 
 ////////////////////////////////////////////////////////

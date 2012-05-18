@@ -60,7 +60,7 @@ cc.ActionManager = cc.Class.extend({
 
     _searchElementByTarget:function (arr, pTarget) {
         for (var k in arr) {
-            if (pTarget === arr[k].target) {
+            if (pTarget == arr[k].target) {
                 return arr[k];
             }
         }
@@ -186,14 +186,11 @@ cc.ActionManager = cc.Class.extend({
      */
     getActionByTag:function (tag, pTarget) {
         cc.Assert(tag != cc.kCCActionTagInvalid, "");
-
         var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
-
         if (pElement) {
             if (pElement.actions != null) {
                 for (var i = 0; i < pElement.actions.length; ++i) {
                     var pAction = pElement.actions[i];
-
                     if (pAction.getTag() == tag) {
                         return pAction;
                     }
