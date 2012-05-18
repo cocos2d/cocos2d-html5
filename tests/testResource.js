@@ -84,11 +84,13 @@ var s_tilesHdPng = "Resources/TileMaps/tiles-hd.png";
 var s_tmwDesertSpacingHdPng = "Resources/TileMaps/tmw_desert_spacing-hd.png";
 var s_tmwDesertSpacingPng = "Resources/TileMaps/tmw_desert_spacing.png";
 var s_fnTuffyBoldItalicCharmapPng = "Resources/fonts/tuffy_bold_italic-charmap.png";
+var s_fpsImages ="Resources/fonts/fps_images.png";
 
 var g_ressources = [
     //image ressources
     {type:"image", src:s_pPathGrossini},
     {type:"image", src:s_fnTuffyBoldItalicCharmapPng},
+    {type:"image", src:s_fpsImages},
     {type:"image", src:s_pPathSister1},
     {type:"image", src:s_pPathSister2},
     {type:"image", src:s_pPathB1},
