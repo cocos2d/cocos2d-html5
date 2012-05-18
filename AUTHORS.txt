@@ -1,0 +1,32 @@
+cocos2d-html5 authors 
+
+
+
+(ordered by the join in time)
+
+
+
+Core Developers:
+
+    Shun Lin (Sean Lin)
+
+    Hao Wu (WuHao)
+
+    Dingping Lv (David Lv)
+
+    Shengxiang Chen (Nero Chan)
+
+
+
+
+
+Developers:
+   
+
+
+
+Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
+
+Thanks to all developers who report & trace bugs, dicuss the engine usage in forum & QQ groups!
+
+Special thanks to Ricardo Quesada for giving us lots of guidances & suggestions.
