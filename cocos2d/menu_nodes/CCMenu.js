@@ -39,9 +39,6 @@ cc.kDefaultPadding = 5;
  *  - But the only accecpted children are MenuItem objects
  */
 cc.Menu = cc.Layer.extend({
-    ctor:function(){
-        this._super();
-    },
     _m_tColor:new cc.Color3B(),
     getColor:function () {
         return this._m_tColor;

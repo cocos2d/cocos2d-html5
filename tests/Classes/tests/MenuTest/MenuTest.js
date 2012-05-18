@@ -139,7 +139,7 @@ var MenuLayer1 = cc.Layer.extend({
         this._m_pParent.switchTo(2);
     },
     onQuit:function (sender) {
-        alert("Quit!")
+        cc.Assert("Quit!")
     }
 });
 
@@ -201,7 +201,6 @@ var MenuLayer2 = cc.Layer.extend({
         this._m_pParent.switchTo(0);
     },
     menuCallbackOpacity:function (sender) {
-        console.log(sender)
         var menu = sender.getParent();
         var opacity = menu.getOpacity();
         if (opacity == 128)

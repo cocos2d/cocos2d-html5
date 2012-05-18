@@ -40,9 +40,6 @@ cc.kDisableTag = 8803;
  *  Subclass CCMenuItem (or any subclass) to create your custom CCMenuItem objects.
  */
 cc.MenuItem = cc.Node.extend({
-    ctor:function(){
-        this._super();
-    },
     _m_pListener:null,
     _m_pfnSelector:null,
     _m_bIsSelected:false,
@@ -104,9 +101,6 @@ cc.MenuItem.itemWithTarget = function (rec, selector) {
  - CCLabelTTF
  */
 cc.MenuItemLabel = cc.MenuItem.extend({
-    ctor:function(){
-        this._super();
-    },
     RGBAProtocol:true,
     _m_tDisabledColor:new cc.Color3B(),
     getDisabledColor:function () {
@@ -216,9 +210,6 @@ cc.MenuItemLabel.itemWithLabel = function (label, target, selector) {
  Helper class that creates a MenuItemLabel class with a LabelAtlas
  */
 cc.MenuItemAtlasFont = cc.MenuItemLabel.extend({
-    ctor:function(){
-        this._super();
-    },
     initFromString:function (value, charMapFile, itemWidth, itemHeight, starCharMap, target, selector) {
         cc.Assert(value != null && value.length != 0, "value length must be greater than 0");
         var label = new cc.LabelAtlas();
@@ -240,9 +231,6 @@ cc.MenuItemAtlasFont.itemFromString = function (value, charMapFile, itemWidth, i
  Helper class that creates a CCMenuItemLabel class with a Label
  */
 cc.MenuItemFont = cc.MenuItemLabel.extend({
-    ctor:function(){
-        this._super();
-    },
     initFromString:function (value, target, selector) {
         cc.Assert(value != null && value.length != 0, "Value length must be greater than 0");
 
@@ -309,9 +297,6 @@ cc.MenuItemFont.itemFromString = function (value, target, selector) {
  @since v0.8.0
  */
 cc.MenuItemSprite = cc.MenuItem.extend({
-    ctor:function(){
-        this._super();
-    },
     RGBAProtocol:true,
     _m_pNormalImage:null,
     getNormalImage:function () {
@@ -481,9 +466,6 @@ cc.MenuItemSprite.itemFromNormalSprite = function (normalSprite, selectedSprite,
  For best results try that all images are of the same size
  */
 cc.MenuItemImage = cc.MenuItemSprite.extend({
-    ctor:function(){
-        this._super();
-    },
     initFromNormalImage:function (normalImage, selectedImage, disabledImage, target, selector) {
         var normalSprite = cc.Sprite.spriteWithFile(normalImage);
         var selectedSprite = null;
@@ -516,9 +498,6 @@ cc.MenuItemImage.itemFromNormalImage = function (normalImage, selectedImage, thr
  The inner itmes can be any MenuItem
  */
 cc.MenuItemToggle = cc.MenuItem.extend({
-    ctor:function(){
-        this._super();
-    },
     RGBAProtocol:true,
     _m_cOpacity:0,
     getOpacity:function () {
