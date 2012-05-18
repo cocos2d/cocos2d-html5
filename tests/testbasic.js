@@ -147,7 +147,6 @@ var TestController = cc.Layer.extend({
 });
 
 var g_aTestNames = [
-    "RotateWorldTest",
     "MenuTest",
     //"Accelerometer",
     "ActionManagerTest",
@@ -180,7 +179,7 @@ var g_aTestNames = [
     "PerformanceTest",
     "ProgressActionsTest",
     "RenderTextureTest",
-
+    "RotateWorldTest",
     "SceneTest",
     "SchedulerTest",
     "SpriteTest",
