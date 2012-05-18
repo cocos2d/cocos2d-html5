@@ -1,13 +1,22 @@
 
 cocos2d-html5-v0.5.0-alpha-1 @ May.16, 2012
+
 * supports canvas and Dom Menu.
+
 * part of test cases were added and tested in chrome.
+
 * porting from cocos2d-x is not finished.
+
 * files must load from http server.
 
+
+
 cocos2d-html5-v0.1.0 @ Jan.29, 2012
+
 * Build the directory structure of Engine
+
 * cocos2d-html5 first version
+
 * more details: 	http://www.cocos2d-x.org/
 
 
