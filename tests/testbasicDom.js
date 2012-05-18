@@ -157,7 +157,7 @@ var g_aTestNames = {
 
     "ActionManagerTest":"ActionManagerTestScene",
     "ActionsTest":"ActionsTestScene",
-    //"Box2dTest":"Box2DTestScene",
+    "Box2dTest":"Box2DTestScene",
     //"Box2dTestBed":"Box2dTestBedScene",
     //"BugsTest":"BugsTestScene",
     //"ChipmunkTest":"ChipmunkTestScene",
