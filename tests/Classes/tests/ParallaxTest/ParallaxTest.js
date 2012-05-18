@@ -23,8 +23,8 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagNode = 0;
-var kTagGrossini = 1;
+var kTagNode = 9960;
+var kTagGrossini = 9961;
 
 var sceneIdx = -1;
 

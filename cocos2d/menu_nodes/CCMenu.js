@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-14
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -72,7 +68,7 @@ cc.Menu = cc.Layer.extend({
     /** initializes an empty CCMenu */
     init:function () {
         if (this._super()) {
-            this._m_bIsTouchEnabled = true;
+            this.setIsTouchEnabled(true);
             var s = cc.Director.sharedDirector().getWinSize();
             this._m_bIsRelativeAnchorPoint = false;
             this.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -86,24 +82,30 @@ cc.Menu = cc.Layer.extend({
             else {
                 s.height -= r.size.height;
             }
-            this.setPosition(cc.ccp(s.width / 2, s.height / 2));
+            this.setPosition(cc.ccp(s.width/2, s.height/2));
             this._m_pSelectedItem = null;
             this._m_eState = cc.kCCMenuStateWaiting;
             return true;
         }
+        return false;
     },
     /** initializes a CCMenu with it's items */
     initWithItems:function (args) {
-        if (this.init) {
-            var z = 0;
-            for (var i = 0; i < args.length; i++) {
-                if(args[i]){
-                    this.addChild(args[i], z);
+        if (this.init()) {
+            if(args.length > 0){
+                for (var i = 0; i < args.length; i++) {
+                    if(args[i]){
+                        this.addChild(args[i], i);
+                    }
                 }
             }
             return true;
         }
         return false;
+    },
+    addChild:function (child, zOrder, tag) {
+        var tag = tag ? tag : child._m_nTag;
+        this._super(child, zOrder, tag);
     },
     alignItemsVertically:function () {
         this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
@@ -112,7 +114,7 @@ cc.Menu = cc.Layer.extend({
         var height = -padding;
         if (this._m_pChildren && this._m_pChildren.length > 0) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
-                height += this._m_pChildren[i].height * this._m_pChildren[i].getScaleY() + padding;
+                height += this._m_pChildren[i].getContentSize().height * this._m_pChildren[i].getScaleY() + padding;
             }
         }
 
@@ -131,14 +133,14 @@ cc.Menu = cc.Layer.extend({
         var width = -padding;
         if (this._m_pChildren && this._m_pChildren.length > 0) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
-                width += this._m_pChildren[i].width * this._m_pChildren[i].getScaleX() + padding;
+                width += this._m_pChildren[i].getContentSize().width * this._m_pChildren[i].getScaleX() + padding;
             }
         }
 
         var x = -width / 2.0;
         if (this._m_pChildren && this._m_pChildren.length > 0) {
             for (i = 0; i < this._m_pChildren.length; i++) {
-                this._m_pChildren[i].setPosition(cc.ccp(x, this._m_pChildren[i].getContentSize().width * this._m_pChildren[i].getScaleX() / 2, 0));
+                this._m_pChildren[i].setPosition(cc.ccp(x +  this._m_pChildren[i].getContentSize().width * this._m_pChildren[i].getScaleX() / 2, 0));
                 x += this._m_pChildren[i].getContentSize().width * this._m_pChildren[i].getScaleX() + padding;
             }
         }
@@ -297,9 +299,6 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
-    addChild:function (child, zOrder, tag) {
-        this._super(child, zOrder, tag);
-    },
     registerWithTouchDispatcher:function () {
         cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.kCCMenuTouchPriority, true);
     },
@@ -367,8 +366,7 @@ cc.Menu = cc.Layer.extend({
     },
     _itemForTouch:function (touch) {
         var touchLocation = touch.locationInView(touch.view());
-        touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
-
+        //console.log("touchLocation",touchLocation)
         if (this._m_pChildren && this._m_pChildren.length > 0) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 if (this._m_pChildren[i].getIsVisible() && this._m_pChildren[i].getIsEnabled()) {

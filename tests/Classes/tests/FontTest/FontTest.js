@@ -23,10 +23,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagLabel1 = 0;
-var kTagLabel2 = 1;
-var kTagLabel3 = 2;
-var kTagLabel4 = 3;
+var kTagLabel1 = 550;
+var kTagLabel2 = 551;
+var kTagLabel3 = 552;
+var kTagLabel4 = 553;
 
 var fontIdx = 0;
 
@@ -71,8 +71,6 @@ FontTestScene = TestScene.extend({
 });
 
 FontTest = cc.Layer.extend({
-
-
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
         var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);

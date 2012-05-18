@@ -321,7 +321,7 @@ var SpriteMainScene = cc.Scene.extend({
         for (var i = 1; i <= 9; ++i) {
             var text = i.toString();
             var itemFont = cc.MenuItemFont.itemFromString(text, this, this.testNCallback);
-            itemFont.id(text);
+            itemFont.setTag(i);
             pSubMenu.addChild(itemFont, 10);
 
             if (i <= 3)
@@ -350,7 +350,7 @@ var SpriteMainScene = cc.Scene.extend({
         }
     },
     testNCallback:function (pSender) {
-        this._subtestNumber = parseInt(pSender.target.id);
+        this._subtestNumber = pSender.getTag();
         var pMenu = this.getChildByTag(kTagSpriteMenuLayer);
         pMenu.restartCallback(pSender);
     },

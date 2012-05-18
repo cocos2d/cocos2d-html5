@@ -24,9 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var kTagNode = 0;
-var kTagGrossini = 1;
-var kTagSequence = 2;
+var kTagNode = 5560;
+var kTagGrossini = 5561;
+var kTagSequence = 5562;
 
 var sceneIdx = -1;
 var MAX_LAYER = 5;

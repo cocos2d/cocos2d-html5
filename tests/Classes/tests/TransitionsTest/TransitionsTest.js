@@ -181,7 +181,7 @@ var TestLayer1 = cc.Layer.extend({
 var TestLayer2 = cc.Layer.extend({
     ctor:function () {
         this._super();
-        this.init();
+        //this.init();
         var x, y;
         var size = cc.Director.sharedDirector().getWinSize();
         x = size.width;
