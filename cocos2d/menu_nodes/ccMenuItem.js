@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-15
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -35,9 +31,10 @@ cc._fontName = "Marker Felt";
 cc._fontNameRelease = false;
 cc.kCurrentItem = 0xc0c05001;
 cc.kZoomActionTag = 0xc0c05002;
-cc.kNormalTag = 0x1;
-cc.kSelectedTag = 0x2;
-cc.kDisableTag = 0x3;
+cc.kNormalTag = 8801;
+cc.kSelectedTag = 8802;
+cc.kDisableTag = 8803;
+
 /** @brief CCMenuItem base class
  *
  *  Subclass CCMenuItem (or any subclass) to create your custom CCMenuItem objects.
@@ -45,7 +42,6 @@ cc.kDisableTag = 0x3;
 cc.MenuItem = cc.Node.extend({
     _m_pListener:null,
     _m_pfnSelector:null,
-    _m_nScriptHandler:0,
     _m_bIsSelected:false,
     getIsSelected:function () {
         return this._m_bIsSelected;
@@ -79,6 +75,15 @@ cc.MenuItem = cc.Node.extend({
     setTarget:function (rec, selector) {
         this._m_pListener = rec;
         this._m_pfnSelector = selector;
+    },
+    activate:function () {
+        if (this._m_bIsEnabled) {
+            if (this._m_pListener && (typeof(this._m_pfnSelector) == "string")) {
+                this._m_pListener[this._m_pfnSelector](this);
+            } else if (this._m_pListener && (typeof(this._m_pfnSelector) == "function")) {
+                this._m_pfnSelector.call(this._m_pListener,this);
+            }
+        }
     }
 });
 cc.MenuItem.itemWithTarget = function (rec, selector) {
@@ -132,7 +137,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
                 this._m_pLabel.setColor(this._m_tColorBackup);
             }
         }
-        cc.MenuItem.setIsEnabled(enabled);
+        this._super(enabled);
     },
     setOpacity:function (opacity) {
         this._m_pLabel.setOpacity(opacity);
@@ -168,7 +173,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         if (this._m_bIsEnabled) {
             this._super();
 
-            var action = getActionByTag(cc.kZoomActionTag);
+            var action = this.getActionByTag(cc.kZoomActionTag);
             if (action) {
                 this.stopAction(action);
             }
@@ -193,11 +198,11 @@ cc.MenuItemLabel = cc.MenuItem.extend({
 });
 cc.MenuItemLabel.itemWithLabel = function (label, target, selector) {
     var pRet = new cc.MenuItemLabel();
-     if (arguments.length == 3) {
-         pRet.initWithLabel(label, target, selector);
+    if (arguments.length == 3) {
+        pRet.initWithLabel(label, target, selector);
     } else {
-         pRet.initWithLabel(label);
-     }
+        pRet.initWithLabel(label);
+    }
     return pRet;
 };
 
@@ -233,7 +238,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend({
         this._m_uFontSize = cc._fontSize;
 
         var label = cc.LabelTTF.labelWithString(value, this._m_strFontName, this._m_uFontSize);
-        if (cc.MenuItemLabel.initWithLabel(label, target, selector)) {
+        if (this.initWithLabel(label, target, selector)) {
             // do something ?
         }
         return true;
@@ -303,7 +308,6 @@ cc.MenuItemSprite = cc.MenuItem.extend({
             NormalImage.setAnchorPoint(cc.ccp(0, 0));
             NormalImage.setIsVisible(true);
         }
-
         if (this._m_pNormalImage) {
             this.removeChild(this._m_pNormalImage, true);
         }
@@ -437,6 +441,7 @@ cc.MenuItemSprite = cc.MenuItem.extend({
 });
 cc.MenuItemSprite.itemFromNormalSprite = function (normalSprite, selectedSprite, three, four, five)//overloaded function
 {
+    var a,b,c,e,d;
     var pRet = new cc.MenuItemSprite();
     //when you send 4 arguments, five is undefined
     if (five) {
@@ -477,7 +482,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend({
     }
 });
 cc.MenuItemImage.itemFromNormalImage = function (normalImage, selectedImage, three, four, five) {
-    pRet = new cc.MenuItemImage();
+    var pRet = new cc.MenuItemImage();
     if (arguments.length == 4) {
         return cc.MenuItemImage.itemFromNormalImage(normalImage, selectedImage, null, three, four);
     }
@@ -540,20 +545,24 @@ cc.MenuItemToggle = cc.MenuItem.extend({
     setSubItems:function (SubItems) {
         this._m_pSubItems = SubItems;
     },
-    initWithTarget:function (args/*Multiple arguments follow*/) {
-        this._super();
+    initWithTarget:function (args) {
+        var target = args[0],  selector = args[1];
+        this._super(target, selector);
+        if(args.length == 2){
+            return;
+        }
         this._m_pSubItems = [];
-        var z = 0;
-        for (var pos = 2; pos < args.length; pos++) {
-            z++;
-            this._m_pSubItems.push(args[pos]);
+        for (var i = 2; i < args.length; i++) {
+            if(args[i]){
+                this._m_pSubItems.push(args[i]);
+            }
         }
         this._m_uSelectedIndex = 0xffffffff;
         this.setSelectedIndex(0);
         return true;
     },
     initWithItem:function (item) {
-        cc.MenuItem.initWithTarget(null, null);
+        this.initWithTarget(null, null);
         this._m_pSubItems = [];
         this._m_pSubItems.push(item);
         this._m_uSelectedIndex = 0xffffffff;

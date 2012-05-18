@@ -23,27 +23,27 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-kTagLabel = 1;
-kTagSpriteManager = 1;
-kTagAnimation1 = 1;
-kTagBitmapAtlas1 = 1;
-kTagBitmapAtlas2 = 2;
-kTagBitmapAtlas3 = 3;
+var kTagLabel = 1;
+var kTagLabelSpriteManager = 1;
+var kTagAnimation1 = 1;
+var kTagBitmapAtlas1 = 1;
+var kTagBitmapAtlas2 = 2;
+var kTagBitmapAtlas3 = 3;
 
-kTagSprite1 = 0;
-kTagSprite2 = 1;
-kTagSprite3 = 2;
-kTagSprite4 = 3;
-kTagSprite5 = 4;
-kTagSprite6 = 5;
-kTagSprite7 = 6;
-kTagSprite8 = 7;
+var kTagLabelSprite1 = 660;
+var kTagLabelSprite2 = 661;
+var kTagLabelSprite3 = 662;
+var kTagLabelSprite4 = 663;
+var kTagLabelSprite5 = 664;
+var kTagLabelSprite6 = 665;
+var kTagLabelSprite7 = 666;
+var kTagLabelSprite8 = 667;
 
 
 var AtlasTests = [
     "LabelAtlasTest", //ok
     "LabelAtlasColorTest", //ok
-    /*"Atlas3",
+   /* "Atlas3",
     "Atlas4",
     "Atlas5",
     "Atlas6",
@@ -209,12 +209,12 @@ var LabelAtlasTest = AtlasDemo.extend({
         this.m_time = 0;
 
         var label1 = cc.LabelAtlas.labelWithString("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label1, 0, kTagSprite1);
+        this.addChild(label1, 0, kTagLabelSprite1);
         label1.setPosition(cc.ccp(10, 100));
         label1.setOpacity(200);
 
         var label2 = cc.LabelAtlas.labelWithString("0123456789", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label2, 0, kTagSprite2);
+        this.addChild(label2, 0, kTagLabelSprite2);
         label2.setPosition(cc.ccp(10, 200));
         label2.setOpacity(32);
 
@@ -223,11 +223,11 @@ var LabelAtlasTest = AtlasDemo.extend({
     step:function (dt) {
         this.m_time += dt;
 
-        var label1 = this.getChildByTag(kTagSprite1);
+        var label1 = this.getChildByTag(kTagLabelSprite1);
         var string1 = this.m_time.toFixed(2) + " Test";
         label1.setString(string1);
 
-        var label2 = this.getChildByTag(kTagSprite2);
+        var label2 = this.getChildByTag(kTagLabelSprite2);
         var string2 = parseInt(this.m_time).toString();
         label2.setString(string2);
     },
@@ -248,12 +248,12 @@ var LabelAtlasColorTest = AtlasDemo.extend({
     m_time:null,
     ctor:function () {
         var label1 = cc.LabelAtlas.labelWithString("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label1, 0, kTagSprite1);
+        this.addChild(label1, 0, kTagLabelSprite1);
         label1.setPosition(cc.ccp(10, 100));
         label1.setOpacity(200);
 
         var label2 = cc.LabelAtlas.labelWithString("0123456789", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label2, 0, kTagSprite2);
+        this.addChild(label2, 0, kTagLabelSprite2);
         label2.setPosition(cc.ccp(10, 200));
         label2.setColor(cc.RED());
 
@@ -270,10 +270,10 @@ var LabelAtlasColorTest = AtlasDemo.extend({
     step:function (dt) {
         this.m_time += dt;
         var string1 = this.m_time.toFixed(2) + " Test";
-        var label1 = this.getChildByTag(kTagSprite1);
+        var label1 = this.getChildByTag(kTagLabelSprite1);
         label1.setString(string1);
 
-        var label2 = this.getChildByTag(kTagSprite2);
+        var label2 = this.getChildByTag(kTagLabelSprite2);
         var string2 = parseInt(this.m_time).toString();
         label2.setString(string2);
     },

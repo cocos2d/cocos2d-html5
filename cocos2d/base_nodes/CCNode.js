@@ -569,10 +569,12 @@ cc.Node = cc.Class.extend({
         if (this._m_pChildren != null) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 var pNode = this._m_pChildren[i];
-                if (pNode && pNode._m_nTag == aTag)
+                if (pNode && pNode._m_nTag == aTag){
                     return pNode;
+                }
             }
         }
+        //throw "not found";
         return null;
     },
     // composition: ADD
@@ -583,44 +585,17 @@ cc.Node = cc.Class.extend({
      */
     addChild:function (child, zOrder, tag) {
         var argnum = arguments.length;
-        switch (argnum) {
-        /** Adds a child to the container with z-order as 0.
-         If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
-         @since v0.7.1
-         */
-            case 1:
-                cc.Assert(child != null, "Argument must be non-nil");
-                zOrder = child.getZOrder();
-                tag = child.getTag();
-                //this.addChild(child, child._m_nZOrder, child._m_nTag);
-                break;
-        /** Adds a child to the container with a z-order
-         If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
-         @since v0.7.1
-         */
-            case 2:
-                cc.Assert(child != null, "Argument must be non-nil");
-                tag = child.getTag();
-                //this.addChild(child, zOrder, child._m_nTag);
-                break;
-        /** Adds a child to the container with z order and tag
-         If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.
-         @since v0.7.1
-         */
-            case 3:
-                cc.Assert(child != null, "Argument must be non-nil");
-                cc.Assert(child.getParent() == null, "child already added. It can't be added again");
-                break;
-            default:
-                throw "Argument must be non-nil ";
-                break;
-        }
+        cc.Assert(child != null, "Argument must be non-nil");
+        cc.Assert(child._m_pParent == null, "child already added. It can't be added again");
+        var tempzOrder = zOrder ? zOrder : child._m_nZOrder;
+        child._m_nTag = tag ? tag : child._m_nTag;
 
         if (!this._m_pChildren) {
             this._childrenAlloc();
         }
-        this._insertChild(child, zOrder);
-        child.setTag(tag);
+
+        this._insertChild(child, tempzOrder);
+
         child.setParent(this);
         if (this._m_bIsRunning) {
             child.onEnter();

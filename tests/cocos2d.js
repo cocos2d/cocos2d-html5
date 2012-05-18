@@ -88,6 +88,8 @@ cc.loadjs = function (filename) {
     }
 };
 
+//Canvas or DOM
+var menuType = "Canvas";
 
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('platform/CCCommon.js');//1
@@ -158,15 +160,21 @@ cc.loadjs('platform/CCSAXParser.js');//16
 cc.loadjs('../box2d/box2d.js');//16
 cc.loadjs('../tests/Classes/AppDelegate.js');//17
 cc.loadjs('platform/AppControl.js');//18
-cc.loadjs('menu_nodes/CCdomMenuItem.js');
-cc.loadjs('menu_nodes/CCdomMenu.js');
+if (menuType == "DOM") {
+    cc.loadjs('menu_nodes/CCdomMenuItem.js');
+    cc.loadjs('menu_nodes/CCdomMenu.js');
+    cc.loadjs('../tests/testbasicDom.js');
+} else {
+    cc.loadjs('menu_nodes/CCMenuItem.js');
+    cc.loadjs('menu_nodes/CCMenu.js');
+    cc.loadjs('../tests/testbasic.js');
+}
 cc.loadjs('tileMap_parallax_nodes/CCTMXTiledMap.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXXMLParser.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXLayer.js');
 cc.loadjs('tileMap_parallax_nodes/CCParallaxNode.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-cc.loadjs('../tests/testbasicDom.js');
 cc.loadjs('../tests/testResource.js');
 cc.loadjs('../tests/Classes/tests/TouchesTest/Ball.js');
 cc.loadjs('../tests/Classes/tests/TouchesTest/Paddle.js');
