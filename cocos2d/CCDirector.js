@@ -310,7 +310,7 @@ cc.Director = cc.Class.extend({
 
     },
 
-    _fullRect:null,
+    //_fullRect:null,
     // Draw the SCene
     drawScene:function () {
         // calculate "global" dt
@@ -320,8 +320,9 @@ cc.Director = cc.Class.extend({
         if (!this._m_bPaused) {
             cc.Scheduler.sharedScheduler().tick(this._m_fDeltaTime);
         }
-        this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
-        cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
+        //this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+        //cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
+        cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
         /*
          var isSaveContext = false;
@@ -473,7 +474,7 @@ cc.Director = cc.Class.extend({
         return this._m_pNotificationNode;
     },
     getWinSize:function () {
-        var S = (this._m_obWinSizeInPoints);
+        var S = this._m_obWinSizeInPoints;
 
         if (this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeLeft || this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeRight) {
             // swap x,y in landspace mode

@@ -111,9 +111,9 @@ cc.TMXTiledMap = cc.Node.extend({
             return;
         }
         this._super(point);
-        for (var key in this._m_pTMXLayers) {
-            this._m_pTMXLayers[key].setAnchorPoint(point);
-        }
+        //for (var key in this._m_pTMXLayers) {
+        //    this._m_pTMXLayers[key].setAnchorPoint(point);
+        //}
     },
     /** map orientation */
     getMapOrientation:function () {

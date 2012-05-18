@@ -141,8 +141,8 @@ cc.Node = cc.Class.extend({
         }
         this._m_tAnchorPoint = new cc.Point(0, 0);
         this._m_tAnchorPointInPixels = new cc.Point(0, 0);
-        this._m_tContentSize = cc.SizeZero();
-        this._m_tContentSizeInPixels = cc.SizeZero();
+        this._m_tContentSize = new cc.Size(0,0);
+        this._m_tContentSizeInPixels = new cc.Size(0,0);
     },
 
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
@@ -158,14 +158,14 @@ cc.Node = cc.Class.extend({
         }
     },
     _addDirtyRegionToDirector:function (rect) {
-        if (!cc.s_bFirstRun) {
+        //if (!cc.s_bFirstRun) {
             //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
-        }
+        //}
     },
     _isInDirtyRegion:function () {
-        if (!cc.s_bFirstRun) {
-            return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
-        }
+        //if (!cc.s_bFirstRun) {
+        //    return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
+        //}
     },
 
     setNodeDirty:function () {
@@ -321,7 +321,7 @@ cc.Node = cc.Class.extend({
         this.setNodeDirty();// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
     getPositionInPixels:function () {
-        return this._m_tPositionInPixels;
+        return new cc.Point(this._m_tPositionInPixels.x, this._m_tPositionInPixels.y);
     },
     /** get/set Position for Lua (pass number faster than CCPoint object)
 
@@ -335,7 +335,7 @@ cc.Node = cc.Class.extend({
      node:setPositionInPixels(x, y)     -- pass x, y values to C++
      */
     getPosition:function () {
-        return this._m_tPosition;
+        return new cc.Point(this._m_tPosition.x, this._m_tPosition.y);
     },
     getPositionX:function () {
         return this._m_tPosition.x;
@@ -362,7 +362,6 @@ cc.Node = cc.Class.extend({
         if (!this._m_pCamera) {
             this._m_pCamera = new cc.Camera();
         }
-
         return this._m_pCamera;
     },
     /// grid getter
@@ -392,16 +391,15 @@ cc.Node = cc.Class.extend({
      @since v0.8
      */
     getAnchorPoint:function () {
-        return this._m_tAnchorPoint;
+        return new cc.Point(this._m_tAnchorPoint.x, this._m_tAnchorPoint.y);
     },
     setAnchorPoint:function (point) {
-
         if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._m_tAnchorPoint = point;
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
 
             //save dirty region when after changed
@@ -411,7 +409,7 @@ cc.Node = cc.Class.extend({
     },
     /// anchorPointInPixels getter
     getAnchorPointInPixels:function () {
-        return this._m_tAnchorPointInPixels;
+        return new cc.Point(this._m_tAnchorPointInPixels.x, this._m_tAnchorPointInPixels.y);
     },
     setContentSizeInPixels:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSizeInPixels)) {
@@ -421,9 +419,9 @@ cc.Node = cc.Class.extend({
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
                 this._m_tContentSize = this._m_tContentSizeInPixels;
             } else {
-                this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
+                this._m_tContentSize = new cc.Size(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
 
             //save dirty region when before change
@@ -437,7 +435,7 @@ cc.Node = cc.Class.extend({
      @since v0.8
      */
     getContentSize:function () {
-        return this._m_tContentSize;
+        return new cc.Size(this._m_tContentSize.width, this._m_tContentSize.height);
     },
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
@@ -449,10 +447,10 @@ cc.Node = cc.Class.extend({
                 this._m_tContentSizeInPixels = this._m_tContentSize;
             }
             else {
-                this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+                this._m_tContentSizeInPixels = new cc.Size(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
             }
 
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -460,7 +458,7 @@ cc.Node = cc.Class.extend({
         }
     },
     getContentSizeInPixels:function () {
-        return this._m_tContentSizeInPixels;
+        return new cc.Size(this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
     },
     // isRunning getter
     getIsRunning:function () {
@@ -1155,11 +1153,9 @@ cc.Node = cc.Class.extend({
         var anchorInPoints = new cc.Point();
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this._m_tAnchorPointInPixels;
-        }
-        else {
+        } else {
             anchorInPoints = cc.ccpMult(this._m_tAnchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
         }
-
         return cc.ccpSub(nodePoint, anchorInPoints);
     },
     /** Converts a local Point to world space coordinates.The result is in Points.
@@ -1170,8 +1166,7 @@ cc.Node = cc.Class.extend({
         var anchorInPoints = new cc.Point();
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
             anchorInPoints = this._m_tAnchorPointInPixels;
-        }
-        else {
+        } else {
             anchorInPoints = cc.ccpMult(this._m_tAnchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         var pt = new cc.Point();
@@ -1205,10 +1200,10 @@ cc.Node = cc.Class.extend({
     update:function (dt) {
     }
 });
+
 /** allocates and initializes a node.
  */
 cc.Node.node = function () {
-    var pRet = new cc.Node();
-    return pRet;
+    return new cc.Node();
 };
 
