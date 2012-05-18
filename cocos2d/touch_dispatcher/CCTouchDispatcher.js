@@ -166,13 +166,11 @@ cc.TouchDispatcher = cc.Class.extend({
                 }
                 if (h.getDelegate() == pHandler.getDelegate()) {
                     cc.Assert(0, "TouchDispatcher.forceAddHandler()");
-                    return;
+                    return pArray;
                 }
             }
         }
-
-        pArray = cc.ArrayAppendObjectToIndex(pArray, pHandler, u);
-        return pArray;
+        return cc.ArrayAppendObjectToIndex(pArray, pHandler, u);
     },
 
     forceRemoveAllDelegates:function () {

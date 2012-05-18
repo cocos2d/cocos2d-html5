@@ -155,8 +155,8 @@ cc.generateTextureCacheForColor = function (texture) {
 
 cc.generateTintImage = function (img, rgbks, color, rect) {
     if (!rect) {
-        rect = cc.RectZero();
-        rect.size = cc.SizeMake(img.width, img.height);
+        rect = new cc.Rect();
+        rect.size = new cc.Size(img.width, img.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
@@ -239,8 +239,7 @@ function transformValues_(pos, scale, rotation, skew, ap, visible) {
 cc.RENDER_IN_SUBPIXEL = function (A) {
     if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
         return A;
-    }
-    else {
+    } else {
         return parseInt(A);
     }
 };
@@ -342,7 +341,7 @@ cc.Sprite = cc.Node.extend({
     },
     /** returns the rect of the CCSprite in points */
     getTextureRect:function () {
-        return this._m_obRect;
+        return new cc.Rect(this._m_obRect);
     },
     /** whether or not the Sprite is rendered using a CCSpriteBatchNode */
     isUsesBatchNode:function () {
@@ -384,7 +383,7 @@ cc.Sprite = cc.Node.extend({
      @since v0.99.0
      */
     getOffsetPositionInPixels:function () {
-        return this._m_obOffsetPositionInPixels;
+        return new cc.Point(this._m_obOffsetPositionInPixels.x, this._m_obOffsetPositionInPixels.y);
     },
     /** conforms to CCTextureProtocol protocol */
     getBlendFunc:function () {
@@ -1210,9 +1209,9 @@ cc.Sprite = cc.Node.extend({
     },
     getColor:function () {
         if (this._m_bOpacityModifyRGB) {
-            return this._m_sColorUnmodified;
+            return new cc.Color3B(this._m_sColorUnmodified);
         }
-        return this._m_sColor;
+        return new cc.Color3B(this._m_sColor);
     },
 
     setColor:function (color3) {

@@ -30,9 +30,31 @@ var cc = cc = cc || {};
  @since v0.8
  */
 cc.Color3B = function (r1, g1, b1) {
-    this.r = r1;
-    this.g = g1;
-    this.b = b1;
+    switch(arguments.length){
+        case 0:
+            this.r = 0;
+            this.g = 0;
+            this.b = 0;
+        case 1:
+            if(r1){
+                this.r = r1.r||0;
+                this.g = r1.g||0;
+                this.b = r1.b||0;
+            }else{
+                this.r = 0;
+                this.g = 0;
+                this.b = 0;
+            }
+            break;
+        case 3:
+            this.r = r1||0;
+            this.g = g1||0;
+            this.b = b1||0;
+            break;
+        default:
+            throw "unknown argument type";
+            break;
+    }
 };
 
 //! helper macro that creates an ccColor3B type

@@ -91,7 +91,7 @@ cc.loadjs = function (filename) {
     }
 };
 
-
+/*
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('platform/CCCommon.js');//1
 cc.loadjs('platform/platform.js');//2
@@ -114,6 +114,7 @@ cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
 cc.loadjs('base_nodes/CCdomNode.js');
 cc.loadjs('sprite_nodes/CCSprite.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
+cc.loadjs('text_input_node/CCIMEDispatcher.js');//12
 cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
 cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
 cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
@@ -124,10 +125,12 @@ cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCLoader.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
+*/
+cc.loadjs('../HelloWorld/cocos2dhtml5.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-cc.loadjs('platform/CCSAXParser.js');//16
+//cc.loadjs('platform/CCSAXParser.js');//16
 cc.loadjs('../HelloWorld/Classes/AppDelegate.js');//17
-cc.loadjs('platform/AppControl.js');//18
+//cc.loadjs('platform/AppControl.js');//18
 cc.loadjs('../HelloWorld/Helloworld.js');//19
-cc.loadjs('menu_nodes/CCdomMenuItem.js');
-cc.loadjs('menu_nodes/CCdomMenu.js');
+//cc.loadjs('menu_nodes/CCdomMenuItem.js');
+//cc.loadjs('menu_nodes/CCdomMenu.js');
