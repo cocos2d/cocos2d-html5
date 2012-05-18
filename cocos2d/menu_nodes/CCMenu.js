@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-14
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -94,25 +90,25 @@ cc.Menu = cc.Layer.extend({
             this._m_eState = cc.kCCMenuStateWaiting;
             return true;
         }
+        return false;
     },
     /** initializes a CCMenu with it's items */
     initWithItems:function (args) {
         if (this.init()) {
-            var z = 0;
-            for (var i = 0; i < args.length; i++) {
-                if(args[i]){
-                    this.addChild(args[i], z);
+            if(args.length > 0){
+                for (var i = 0; i < args.length; i++) {
+                    if(args[i]){
+                        this.addChild(args[i], i);
+                    }
                 }
             }
             return true;
         }
         return false;
     },
-    addChild:function (child, zindex) {
-        if (zindex) {
-            child._setZOrder(zindex);
-        }
-        this._super(child);
+    addChild:function (child, zOrder, tag) {
+        var tag = tag ? tag : child._m_nTag;
+        this._super(child, zOrder, tag);
     },
     alignItemsVertically:function () {
         this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
@@ -373,14 +369,13 @@ cc.Menu = cc.Layer.extend({
     },
     _itemForTouch:function (touch) {
         var touchLocation = touch.locationInView(touch.view());
-        console.log("touchLocation",touchLocation)
+        //console.log("touchLocation",touchLocation)
         if (this._m_pChildren && this._m_pChildren.length > 0) {
             for (var i = 0; i < this._m_pChildren.length; i++) {
                 if (this._m_pChildren[i].getIsVisible() && this._m_pChildren[i].getIsEnabled()) {
                     var local = this._m_pChildren[i].convertToNodeSpace(touchLocation);
                     var r = this._m_pChildren[i].rect();
                     r.origin = cc.PointZero();
-                    //console.log(r.size,local)
                     if (cc.Rect.CCRectContainsPoint(r, local)) {
                         return this._m_pChildren[i];
                     }

@@ -647,8 +647,8 @@ cc.LayerMultiplex = cc.Layer.extend({
         this.addChild(layer);
         return true;
     },
-    initWithLayers:function () {
-        this.m_pLayers = arguments[0];
+    initWithLayers:function (args) {
+        this.m_pLayers = args;
         this.m_nEnabledLayer = 0;
         this.addChild(this.m_pLayers[this.m_nEnabledLayer]);
         return true;

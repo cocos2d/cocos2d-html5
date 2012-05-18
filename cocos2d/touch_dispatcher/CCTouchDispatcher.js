@@ -171,7 +171,8 @@ cc.TouchDispatcher = cc.Class.extend({
             }
         }
 
-        return cc.ArrayAppendObjectToIndex(pArray, pHandler, u);
+        pArray = cc.ArrayAppendObjectToIndex(pArray, pHandler, u);
+        return pArray;
     },
 
     forceRemoveAllDelegates:function () {
@@ -352,9 +353,9 @@ cc.TouchDispatcher = cc.Class.extend({
                 }
 
                 if (pHandler  instanceof cc.TargetedTouchHandler) {
-                    this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
+                    this._m_pTargetedHandlers = this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
                 } else {
-                    this.forceAddHandler(pHandler, this._m_pStandardHandlers);
+                    this._m_pStandardHandlers = this.forceAddHandler(pHandler, this._m_pStandardHandlers);
                 }
             }
             this._m_pHandlersToAdd.length = 0;

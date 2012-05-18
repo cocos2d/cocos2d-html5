@@ -102,8 +102,8 @@ var ParticleMainScene = cc.Scene.extend({
         this.addChild(infoLabel, 1, kTagInfoLayer);
 
         // particles on stage
-        var labelAtlas = cc.LabelAtlas.labelWithString("0000", "Resources/Images/fps_images.png", 16, 24, '.');
-       // var labelAtlas = cc.LabelTTF.labelWithString("0000", "Marker Felt", 30);
+        //var labelAtlas = cc.LabelAtlas.labelWithString("0000", "Resources/Images/fps_images.png", 16, 24, '.');
+        var labelAtlas = cc.LabelTTF.labelWithString("0000", "Marker Felt", 30);
         this.addChild(labelAtlas, 0, kTagLabelAtlas);
         labelAtlas.setPosition(cc.ccp(s.width - 66, 50));
 
@@ -117,6 +117,7 @@ var ParticleMainScene = cc.Scene.extend({
         for (var i = 1; i <= 3; ++i) {
             var str = i.toString();
             var itemFont = cc.MenuItemFont.itemFromString(str, this, this.testNCallback);
+            itemFont.setTag(i);
             pSubMenu.addChild(itemFont, 10);
 
             if (i <= 1) {
@@ -216,7 +217,7 @@ var ParticleMainScene = cc.Scene.extend({
         this.createParticleSystem();
     },
     testNCallback:function (pSender) {
-        this._subtestNumber = parseInt(pSender.getString());
+        this._subtestNumber = pSender.getTag();
         var pMenu = this.getChildByTag(kTagParticleMenuLayer);
         pMenu.restartCallback(pSender);
     },

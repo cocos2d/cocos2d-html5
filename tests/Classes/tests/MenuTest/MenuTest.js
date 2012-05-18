@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-4-9
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -29,9 +25,9 @@
  ****************************************************************************/
 
 
-var kTagMenu = 771;
-var kTagMenu0 = 770;
-var kTagMenu1 = 771;
+var kTagMenu = 77771;
+var kTagMenu0 = 77770;
+var kTagMenu1 = 77771;
 
 
 //------------------------------------------------------------------
@@ -205,6 +201,7 @@ var MenuLayer2 = cc.Layer.extend({
         this._m_pParent.switchTo(0);
     },
     menuCallbackOpacity:function (sender) {
+        console.log(sender)
         var menu = sender.getParent();
         var opacity = menu.getOpacity();
         if (opacity == 128)
@@ -245,7 +242,7 @@ var MenuLayer3 = cc.Layer.extend({
         this._m_disabledItem = item3;
         this._m_disabledItem.setIsEnabled(false);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
+        var menu = cc.Menu.menuWithItems(item1, item2, item3);
         menu.setPosition(cc.PointMake(0, 0));
 
         var s = cc.Director.sharedDirector().getWinSize();
@@ -256,7 +253,7 @@ var MenuLayer3 = cc.Layer.extend({
 
         var jump = cc.JumpBy.actionWithDuration(3, cc.PointMake(400, 0), 50, 4);
         item2.runAction(cc.RepeatForever.actionWithAction(
-            (cc.Sequence.actions(jump, jump.reverse(), null))
+            (cc.Sequence.actions(jump, jump.reverse()))
         )
         );
         var spin1 = cc.RotateBy.actionWithDuration(3, 360);
@@ -277,6 +274,7 @@ var MenuLayer3 = cc.Layer.extend({
         this._m_disabledItem.stopAllActions();
     },
     menuCallback3:function () {
+        cc.LOG("do something")
     }
 });
 
@@ -284,6 +282,7 @@ var MenuLayer4 = cc.Layer.extend({
     ctor:function () {
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
+
         var title1 = cc.MenuItemFont.itemFromString("Sound");
         title1.setIsEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
@@ -291,8 +290,7 @@ var MenuLayer4 = cc.Layer.extend({
         var item1 = cc.MenuItemToggle.itemWithTarget(this,
             this.menuCallback,
             cc.MenuItemFont.itemFromString("On"),
-            cc.MenuItemFont.itemFromString("Off"),
-            null);
+            cc.MenuItemFont.itemFromString("Off"));
 
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
@@ -303,8 +301,7 @@ var MenuLayer4 = cc.Layer.extend({
         var item2 = cc.MenuItemToggle.itemWithTarget(this,
             this.menuCallback,
             cc.MenuItemFont.itemFromString("On"),
-            cc.MenuItemFont.itemFromString("Off"),
-            null);
+            cc.MenuItemFont.itemFromString("Off"));
 
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
@@ -315,8 +312,7 @@ var MenuLayer4 = cc.Layer.extend({
         var item3 = cc.MenuItemToggle.itemWithTarget(this,
             this.menuCallback,
             cc.MenuItemFont.itemFromString("High"),
-            cc.MenuItemFont.itemFromString("Low"),
-            null);
+            cc.MenuItemFont.itemFromString("Low"));
 
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
@@ -326,8 +322,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontSize(34);
         var item4 = cc.MenuItemToggle.itemWithTarget(this,
             this.menuCallback,
-            cc.MenuItemFont.itemFromString("Off"),
-            null);
+            cc.MenuItemFont.itemFromString("Off"));
 
         item4.getSubItems().push(cc.MenuItemFont.itemFromString("33%"));
         item4.getSubItems().push(cc.MenuItemFont.itemFromString("66%"));
@@ -348,7 +343,7 @@ var MenuLayer4 = cc.Layer.extend({
             item1, item2,
             title3, title4,
             item3, item4,
-            back, null); // 9 items.
+            back); // 9 items.
 
         menu.alignItemsInColumns(2, 2, 2, 2, 1, null);
 

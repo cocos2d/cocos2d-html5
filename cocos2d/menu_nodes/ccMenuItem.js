@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-15
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -86,9 +82,9 @@ cc.MenuItem = cc.Node.extend({
     activate:function () {
         if (this._m_bIsEnabled) {
             if (this._m_pListener && (typeof(this._m_pfnSelector) == "string")) {
-                this._m_pListener[this._m_pfnSelector](this._m_pLabel);
+                this._m_pListener[this._m_pfnSelector](this);
             } else if (this._m_pListener && (typeof(this._m_pfnSelector) == "function")) {
-                this._m_pfnSelector.call(this._m_pListener,this._m_pLabel);
+                this._m_pfnSelector.call(this._m_pListener,this);
             }
         }
     }
@@ -504,7 +500,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend({
     }
 });
 cc.MenuItemImage.itemFromNormalImage = function (normalImage, selectedImage, three, four, five) {
-    pRet = new cc.MenuItemImage();
+    var pRet = new cc.MenuItemImage();
     if (arguments.length == 4) {
         return cc.MenuItemImage.itemFromNormalImage(normalImage, selectedImage, null, three, four);
     }

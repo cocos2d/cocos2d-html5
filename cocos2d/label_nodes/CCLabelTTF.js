@@ -38,7 +38,12 @@ cc.LabelTTF = cc.Sprite.extend({
     _m_pFontName:"Arial",
     _m_fFontSize:0.0,
     _m_pString:null,
-
+    ctor:function () {
+        this._super();
+        this._m_pString = "";
+        this._m_sColor = cc.WHITE();
+        this._m_bOpacityModifyRGB = false;
+    },
     description:function () {
         return "<CCLabelTTF | FontName =" + this._m_pFontName + " FontSize = " + this._m_fFontSize.toFixed(1) + ">";
     },

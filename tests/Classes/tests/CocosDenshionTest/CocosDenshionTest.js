@@ -26,27 +26,27 @@
 var MUSIC_FILE = "Resources/background";
 var EFFECT_FILE = "Resources/effect2";
 
-var DenshionTests = {
-    "playBackgroundMusic":"playBackgroundMusic",
-    "stopBackgroundMusic":"stopBackgroundMusic",
-    "pauseBackgroundMusic":"pauseBackgroundMusic",
-    "resumeBackgroundMusic":"resumeBackgroundMusic",
-    "rewindBackgroundMusic":"rewindBackgroundMusic",
-    "isBackgroundMusicPlaying":"isBackgroundMusicPlaying",
-    "playEffect":"playEffect",
-    "playEffectRepeatly":"playEffectRepeatly",
-    "stopEffect":"stopEffect",
-    "unloadEffect":"unloadEffect",
-    "addBackgroundMusicVolume":"addBackgroundMusicVolume",
-    "subBackgroundMusicVolume":"subBackgroundMusicVolume",
-    "addEffectsVolume":"addEffectsVolume",
-    "subEffectsVolume":"subEffectsVolume",
-    "pauseEffect":"pauseEffect",
-    "resumeEffect":"resumeEffect",
-    "pauseAllEffects":"pauseAllEffects",
-    "resumeAllEffects":"resumeAllEffects",
-    "stopAllEffects":"stopAllEffects"
-};
+var DenshionTests = [
+    "playBackgroundMusic",
+    "stopBackgroundMusic",
+    "pauseBackgroundMusic",
+    "resumeBackgroundMusic",
+    "rewindBackgroundMusic",
+    "isBackgroundMusicPlaying",
+    "playEffect",
+    "playEffectRepeatly",
+    "stopEffect",
+    "unloadEffect",
+    "addBackgroundMusicVolume",
+    "subBackgroundMusicVolume",
+    "addEffectsVolume",
+    "subEffectsVolume",
+    "pauseEffect",
+    "resumeEffect",
+    "pauseAllEffects",
+    "resumeAllEffects",
+    "stopAllEffects"
+];
 
 CocosDenshionTest = cc.Layer.extend({
     _m_pItmeMenu:null,
@@ -57,13 +57,11 @@ CocosDenshionTest = cc.Layer.extend({
         // add menu items for tests
         this._m_pItmeMenu = cc.Menu.menuWithItems(null);
         var s = cc.Director.sharedDirector().getWinSize();
-        var i = 0;
-        for (var text in DenshionTests) {
-            var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
+        for (var i = 0;i < DenshionTests.length;i++) {
+            var label = cc.LabelTTF.labelWithString(DenshionTests[i], "Arial", 24);
             var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
             this._m_pItmeMenu.addChild(pMenuItem, i + 10000);
             pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
-            i++;
         }
         this._m_nTestCount = i;
         this._m_pItmeMenu.setContentSize(cc.SizeMake(s.width, (this._m_nTestCount + 1) * LINE_SPACE));
@@ -77,7 +75,7 @@ CocosDenshionTest = cc.Layer.extend({
         cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.5);
     },
     menuCallback:function (pSender) {
-        var nIdx = pSender.getString();
+        var nIdx = pSender.getZOrder() - 10000;
         // create the test scene and run it
         var pScene = new window[DenshionTests[nIdx]]();
     },
