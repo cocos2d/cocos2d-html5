@@ -155,8 +155,8 @@ cc.generateTextureCacheForColor = function (texture) {
 
 cc.generateTintImage = function (img, rgbks, color, rect) {
     if (!rect) {
-        rect = cc.RectZero();
-        rect.size = cc.SizeMake(img.width, img.height);
+        rect = new cc.Rect();
+        rect.size = new cc.Size(img.width, img.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
@@ -239,8 +239,7 @@ function transformValues_(pos, scale, rotation, skew, ap, visible) {
 cc.RENDER_IN_SUBPIXEL = function (A) {
     if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
         return A;
-    }
-    else {
+    } else {
         return parseInt(A);
     }
 };

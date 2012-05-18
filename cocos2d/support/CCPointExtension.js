@@ -48,7 +48,7 @@ cc.kCCPointEpsilon = parseFloat('1.192092896e-07F');
  @since v0.7.2
  */
 cc.ccp = function (x, y) {
-    return cc.PointMake(x, y);
+    return new cc.Point(x, y);
 };
 
 /** Returns opposite of point.
@@ -56,7 +56,7 @@ cc.ccp = function (x, y) {
  @since v0.7.2
  */
 cc.ccpNeg = function (vPoint) {
-    return cc.ccp(-vPoint.x, -vPoint.y);
+    return new cc.Point(-vPoint.x, -vPoint.y);
 };
 
 /** Calculates sum of two points.
@@ -64,7 +64,7 @@ cc.ccpNeg = function (vPoint) {
  @since v0.7.2
  */
 cc.ccpAdd = function (v1, v2) {
-    return cc.ccp(v1.x + v2.x, v1.y + v2.y);
+    return new cc.Point(v1.x + v2.x, v1.y + v2.y);
 };
 
 /** Calculates difference of two points.
@@ -72,7 +72,7 @@ cc.ccpAdd = function (v1, v2) {
  @since v0.7.2
  */
 cc.ccpSub = function (v1, v2) {
-    return cc.ccp(v1.x - v2.x, v1.y - v2.y);
+    return new cc.Point(v1.x - v2.x, v1.y - v2.y);
 };
 
 /** Returns point multiplied by given factor.
@@ -80,7 +80,7 @@ cc.ccpSub = function (v1, v2) {
  @since v0.7.2
  */
 cc.ccpMult = function (vPoint, sFloat) {
-    return cc.ccp(vPoint.x * sFloat, vPoint.y * sFloat);
+    return new cc.Point(vPoint.x * sFloat, vPoint.y * sFloat);
 };
 
 /** Calculates midpoint between two points.
@@ -112,7 +112,7 @@ cc.ccpCross = function (v1, v2) {
  @since v0.7.2
  */
 cc.ccpPerp = function (vPoint) {
-    return cc.ccp(-vPoint.y, vPoint.x);
+    return new cc.Point(-vPoint.y, vPoint.x);
 };
 
 /** Calculates perpendicular of v, rotated 90 degrees clockwise -- cross(v, rperp(v)) <= 0
@@ -120,7 +120,7 @@ cc.ccpPerp = function (vPoint) {
  @since v0.7.2
  */
 cc.ccpRPerp = function (vPoint) {
-    return cc.ccp(vPoint.y, -vPoint.x);
+    return new cc.Point(vPoint.y, -vPoint.x);
 };
 
 /** Calculates the projection of v1 over v2.
@@ -136,7 +136,7 @@ cc.ccpProject = function (v1, v2) {
  @since v0.7.2
  */
 cc.ccpRotate = function (v1, v2) {
-    return cc.ccp(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x);
+    return new cc.Point(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x);
 };
 
 /** Unrotates two points.
@@ -144,7 +144,7 @@ cc.ccpRotate = function (v1, v2) {
  @since v0.7.2
  */
 cc.ccpUnrotate = function (v1, v2) {
-    return cc.ccp(v1.x * v2.x + v1.y * v2.y, v1.y * v2.x - v1.x * v2.y);
+    return new cc.Point(v1.x * v2.x + v1.y * v2.y, v1.y * v2.x - v1.x * v2.y);
 };
 
 /** Calculates the square length of a CCPoint (not calling sqrt() )
@@ -184,7 +184,7 @@ cc.ccpNormalize = function (v) {
  @since v0.7.2
  */
 cc.ccpForAngle = function (a) {
-    return cc.ccp(Math.cos(a), Math.sin(a));
+    return new cc.Point(Math.cos(a), Math.sin(a));
 };
 
 /** Converts a vector to radians.
@@ -212,14 +212,14 @@ cc.clampf = function (value, min_inclusive, max_inclusive) {
  @since v0.99.1
  */
 cc.ccpClamp = function (p, min_inclusive, max_inclusive) {
-    return cc.ccp(cc.clampf(p.x, min_inclusive.x, max_inclusive.x), cc.clampf(p.y, min_inclusive.y, max_inclusive.y));
+    return new cc.Point(cc.clampf(p.x, min_inclusive.x, max_inclusive.x), cc.clampf(p.y, min_inclusive.y, max_inclusive.y));
 };
 
 /** Quickly convert CCSize to a CCPoint
  @since v0.99.1
  */
 cc.ccpFromSize = function (s) {
-    return cc.ccp(s.width, s.height);
+    return new cc.Point(s.width, s.height);
 };
 
 /** Run a math operation function on each point component
@@ -230,7 +230,7 @@ cc.ccpFromSize = function (s) {
  @since v0.99.1
  */
 cc.ccpCompOp = function (p, opFunc) {
-    return cc.ccp(opFunc(p.x), opFunc(p.y));
+    return new cc.Point(opFunc(p.x), opFunc(p.y));
 };
 
 /** Linear Interpolation between two points a and b
@@ -261,7 +261,7 @@ cc.ccpFuzzyEqual = function (a, b, variance) {
  @since v0.99.1
  */
 cc.ccpCompMult = function (a, b) {
-    return cc.ccp(a.x * b.x, a.y * b.y);
+    return new cc.Point(a.x * b.x, a.y * b.y);
 };
 
 /** @returns the signed angle in radians between two vector directions

@@ -36,9 +36,15 @@ cc.Color3B = function (r1, g1, b1) {
             this.g = 0;
             this.b = 0;
         case 1:
-            this.r = r1.r||0;
-            this.g = r1.g||0;
-            this.b = r1.b||0;
+            if(r1){
+                this.r = r1.r||0;
+                this.g = r1.g||0;
+                this.b = r1.b||0;
+            }else{
+                this.r = 0;
+                this.g = 0;
+                this.b = 0;
+            }
             break;
         case 3:
             this.r = r1||0;

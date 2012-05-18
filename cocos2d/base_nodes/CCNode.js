@@ -141,8 +141,8 @@ cc.Node = cc.Class.extend({
         }
         this._m_tAnchorPoint = new cc.Point(0, 0);
         this._m_tAnchorPointInPixels = new cc.Point(0, 0);
-        this._m_tContentSize = cc.SizeZero();
-        this._m_tContentSizeInPixels = cc.SizeZero();
+        this._m_tContentSize = new cc.Size(0,0);
+        this._m_tContentSizeInPixels = new cc.Size(0,0);
     },
 
     _arrayMakeObjectsPerformSelector:function (pArray, func) {
@@ -399,7 +399,7 @@ cc.Node = cc.Class.extend({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._m_tAnchorPoint = point;
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
 
             //save dirty region when after changed
@@ -419,9 +419,9 @@ cc.Node = cc.Class.extend({
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
                 this._m_tContentSize = this._m_tContentSizeInPixels;
             } else {
-                this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
+                this._m_tContentSize = new cc.Size(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
 
             //save dirty region when before change
@@ -447,10 +447,10 @@ cc.Node = cc.Class.extend({
                 this._m_tContentSizeInPixels = this._m_tContentSize;
             }
             else {
-                this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+                this._m_tContentSizeInPixels = new cc.Size(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
             }
 
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
                 this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());

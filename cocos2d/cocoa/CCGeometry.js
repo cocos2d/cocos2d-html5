@@ -56,7 +56,7 @@ cc.Rect = function (x1, y1, width1, height1) {
             } else {
                 if (oldRect instanceof cc.Rect) {
                     this.origin = new cc.Point(oldRect.origin.x, oldRect.origin.y);
-                    this.size = new cc.Point(oldRect.size.width, oldRect.size.height);
+                    this.size = new cc.Size(oldRect.size.width, oldRect.size.height);
                 } else {
                     throw "unknown argument type";
                 }
@@ -68,7 +68,7 @@ cc.Rect = function (x1, y1, width1, height1) {
             break;
         case 4:
             this.origin = new cc.Point(x1||0, y1||0);
-            this.size = new cc.Point(width1||0, height1||0);
+            this.size = new cc.Size(width1||0, height1||0);
             break;
         default:
             throw "unknown argument type";
