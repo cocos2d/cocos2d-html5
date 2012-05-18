@@ -139,7 +139,7 @@ var MenuLayer1 = cc.Layer.extend({
         this._m_pParent.switchTo(2);
     },
     onQuit:function (sender) {
-        cc.Assert("Quit!")
+        cc.Assert(0,"Quit!");
     }
 });
 
