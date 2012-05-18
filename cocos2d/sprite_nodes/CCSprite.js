@@ -342,7 +342,7 @@ cc.Sprite = cc.Node.extend({
     },
     /** returns the rect of the CCSprite in points */
     getTextureRect:function () {
-        return this._m_obRect;
+        return new cc.Rect(this._m_obRect);
     },
     /** whether or not the Sprite is rendered using a CCSpriteBatchNode */
     isUsesBatchNode:function () {
@@ -384,7 +384,7 @@ cc.Sprite = cc.Node.extend({
      @since v0.99.0
      */
     getOffsetPositionInPixels:function () {
-        return this._m_obOffsetPositionInPixels;
+        return new cc.Point(this._m_obOffsetPositionInPixels.x, this._m_obOffsetPositionInPixels.y);
     },
     /** conforms to CCTextureProtocol protocol */
     getBlendFunc:function () {
@@ -1210,9 +1210,9 @@ cc.Sprite = cc.Node.extend({
     },
     getColor:function () {
         if (this._m_bOpacityModifyRGB) {
-            return this._m_sColorUnmodified;
+            return new cc.Color3B(this._m_sColorUnmodified);
         }
-        return this._m_sColor;
+        return new cc.Color3B(this._m_sColor);
     },
 
     setColor:function (color3) {

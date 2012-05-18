@@ -42,34 +42,43 @@ cc.Size.CCSizeEqualToSize = function (size1, size2) {
 
 };
 
-cc.Rect = cc.Class.extend({
-
-    origin:null,
-    size:null,
-
-    ctor:function (x1, y1, width1, height1) {
-        this.origin = new cc.Point();
-        this.size = new cc.Size();
-        if (width1 > 0 && height1 > 0) {
-            this.origin.x = x1;
-            this.origin.y = y1;
-            this.size.width = width1;
-            this.size.height = height1;
-        }
-        else {
-            this.origin.x = 0;
-            this.origin.y = 0;
-            this.size.width = 0;
-            this.size.height = 0;
-        }
-
+cc.Rect = function (x1, y1, width1, height1) {
+    switch (arguments.length) {
+        case 0:
+            this.origin = new cc.Point(0, 0);
+            this.size = new cc.Size(0, 0);
+            break;
+        case 1:
+            var oldRect = x1;
+            if (!oldRect) {
+                this.origin = new cc.Point(0, 0);
+                this.size = new cc.Size(0, 0);
+            } else {
+                if (oldRect instanceof cc.Rect) {
+                    this.origin = new cc.Point(oldRect.origin.x, oldRect.origin.y);
+                    this.size = new cc.Point(oldRect.size.width, oldRect.size.height);
+                } else {
+                    throw "unknown argument type";
+                }
+            }
+            break;
+        case 2:
+            this.origin = x1?new cc.Point(x1.x,x1.y):new cc.Point(0, 0);
+            this.size = y1?new cc.Size(y1.width,y1.height):new cc.Size(0, 0);
+            break;
+        case 4:
+            this.origin = new cc.Point(x1||0, y1||0);
+            this.size = new cc.Point(width1||0, height1||0);
+            break;
+        default:
+            throw "unknown argument type";
+            break;
     }
+};
 
-});
 cc.Rect.CCRectEqualToRect = function (rect1, rect2) {
     return ((cc.Point.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
         (cc.Size.CCSizeEqualToSize(rect1.size, rect2.size)));
-
 };
 
 //! return the rightmost x-value of 'rect'

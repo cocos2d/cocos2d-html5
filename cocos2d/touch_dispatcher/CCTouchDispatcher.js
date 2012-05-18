@@ -166,11 +166,10 @@ cc.TouchDispatcher = cc.Class.extend({
                 }
                 if (h.getDelegate() == pHandler.getDelegate()) {
                     cc.Assert(0, "TouchDispatcher.forceAddHandler()");
-                    return;
+                    return pArray;
                 }
             }
         }
-
         return cc.ArrayAppendObjectToIndex(pArray, pHandler, u);
     },
 
@@ -352,9 +351,9 @@ cc.TouchDispatcher = cc.Class.extend({
                 }
 
                 if (pHandler  instanceof cc.TargetedTouchHandler) {
-                    this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
+                    this._m_pTargetedHandlers = this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
                 } else {
-                    this.forceAddHandler(pHandler, this._m_pStandardHandlers);
+                    this._m_pStandardHandlers = this.forceAddHandler(pHandler, this._m_pStandardHandlers);
                 }
             }
             this._m_pHandlersToAdd.length = 0;
