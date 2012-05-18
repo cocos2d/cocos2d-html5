@@ -125,8 +125,8 @@ cc.CSS3.Skew = function (x, y) {
 cc.makeDiv=function (p) {
     p.dom = cc.$new("div");
     var style = p.dom.style;
-    style.float = "left";
-    style.position = "absolute";
+    style["float"] = "left";
+    style["position"] = "absolute";
     p.updateDom();
     return p.dom;
 };

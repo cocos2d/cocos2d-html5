@@ -158,14 +158,14 @@ cc.Node = cc.Class.extend({
         }
     },
     _addDirtyRegionToDirector:function (rect) {
-        if (!cc.s_bFirstRun) {
+        //if (!cc.s_bFirstRun) {
             //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
-        }
+        //}
     },
     _isInDirtyRegion:function () {
-        if (!cc.s_bFirstRun) {
-            return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
-        }
+        //if (!cc.s_bFirstRun) {
+        //    return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
+        //}
     },
 
     setNodeDirty:function () {
