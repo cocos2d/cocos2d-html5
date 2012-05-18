@@ -5721,6 +5721,7 @@ Box2D.postDefs = [];
         b2World.m_warmStarting = true;
         b2World.m_continuousPhysics = true;
         this.m_allowSleep = doSleep;
+        gravity.y = -gravity.y; // Sean Lin, Set the gravity to OpenGL coordinate.
         this.m_gravity = gravity;
         this.m_inv_dt0 = 0.0;
         this.m_contactManager.m_world = this;
