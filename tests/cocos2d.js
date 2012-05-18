@@ -134,7 +134,6 @@ cc.loadjs('sprite_nodes/CCAnimationCache.js');
 cc.loadjs('sprite_nodes/CCSpriteFrame.js');
 cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
 cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');//10
-cc.loadjs('base_nodes/CCdomNode.js');
 cc.loadjs('label_nodes/CCLabelAtlas.js');//11
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('label_nodes/CCLabelBMFont.js');//11
@@ -161,6 +160,7 @@ cc.loadjs('../box2d/box2d.js');//16
 cc.loadjs('../tests/Classes/AppDelegate.js');//17
 cc.loadjs('platform/AppControl.js');//18
 if (menuType == "DOM") {
+    cc.loadjs('base_nodes/CCdomNode.js');
     cc.loadjs('menu_nodes/CCdomMenuItem.js');
     cc.loadjs('menu_nodes/CCdomMenu.js');
     cc.loadjs('../tests/testbasicDom.js');
