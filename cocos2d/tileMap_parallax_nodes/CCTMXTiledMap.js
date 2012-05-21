@@ -106,6 +106,7 @@ cc.TMXTiledMap = cc.Node.extend({
     setTileSize:function (Var) {
         this._m_tTileSize = Var;
     },
+    /*
     setAnchorPoint:function (point) {
         if (cc.Point.CCPointEqualToPoint(point , this.getAnchorPoint())) {
             return;
@@ -115,6 +116,7 @@ cc.TMXTiledMap = cc.Node.extend({
         //    this._m_pTMXLayers[key].setAnchorPoint(point);
         //}
     },
+    */
     /** map orientation */
     getMapOrientation:function () {
         return this._m_nMapOrientation;

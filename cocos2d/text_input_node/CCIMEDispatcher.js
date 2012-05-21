@@ -312,16 +312,16 @@ cc.IMEDispatcher = cc.Class.extend({
                 this.dispatchDeleteBackward();
             } else if (keyCode == cc.key.enter) {
                 this.dispatchInsertText("\n", 1);
-            } else if (keyCode == cc.key.tab) {
+            } /*else if (keyCode == cc.key.tab) {
                 //tab input
             } else if (keyCode == cc.key.escape) {
                 //ESC input
-            }
+            }*/
         } else if (keyCode < 255) {
             this.dispatchInsertText(String.fromCharCode(keyCode), 1);
-        } else {
+        } //else {
             //
-        }
+        //}
     }
 });
 

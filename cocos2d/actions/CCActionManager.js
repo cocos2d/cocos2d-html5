@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-6
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -59,7 +55,7 @@ cc.ActionManager = cc.Class.extend({
     _m_bCurrentTargetSalvaged:false,
 
     _searchElementByTarget:function (arr, pTarget) {
-        for (var k in arr) {
+        for (var k = 0; k < arr.length; k++) {
             if (pTarget == arr[k].target) {
                 return arr[k];
             }
@@ -173,10 +169,11 @@ cc.ActionManager = cc.Class.extend({
             var limit = pElement.actions.length;
             for (var i = 0; i < limit; ++i) {
                 var pAction = pElement.actions[i];
-
-                if (pAction.getTag() == tag && pAction.getOriginalTarget() == pTarget) {
-                    this._removeActionAtIndex(i, pElement);
-                    break;
+                if(pAction){
+                    if (pAction.getTag() == tag && pAction.getOriginalTarget() == pTarget) {
+                        this._removeActionAtIndex(i, pElement);
+                        break;
+                    }
                 }
             }
         }
@@ -191,8 +188,10 @@ cc.ActionManager = cc.Class.extend({
             if (pElement.actions != null) {
                 for (var i = 0; i < pElement.actions.length; ++i) {
                     var pAction = pElement.actions[i];
-                    if (pAction.getTag() == tag) {
-                        return pAction;
+                    if(pAction){
+                        if (pAction.getTag() == tag) {
+                            return pAction;
+                        }
                     }
                 }
             }

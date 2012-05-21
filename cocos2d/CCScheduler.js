@@ -338,7 +338,7 @@ cc.Scheduler = cc.Class.extend({
     _removeUpdateFromHash:function (entry) {
         var element = this._findElementFromArray(this._m_pHashForUpdates, entry.target);
 
-        if (element != null) {
+        if (element) {
             //list entry
             cc.ArrayRemoveObject(element.list, element.entry);
             element.entry = null;
@@ -346,7 +346,6 @@ cc.Scheduler = cc.Class.extend({
             //hash entry
             element.target = null;
             cc.ArrayRemoveObject(this._m_pHashForUpdates, element);
-            element == null;
         }
     },
 
