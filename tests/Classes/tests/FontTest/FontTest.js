@@ -31,14 +31,16 @@ var kTagLabel4 = 553;
 var fontIdx = 0;
 
 var fontList = [
-    "American Typewriter",
-    "Marker Felt",
-    "Corbel",
-    "Curlz MT",
+    "Verdana",
+    "Lucida Sans Unicode",
+    "Bookman Old Style",
     "Symbol",
+    "Georgia",
+    "Trebuchet MS",
+    "Comic Sans MS",
     "Arial Black",
-    "Arial Narrow",
-    "Calisto MT"
+    "Tahoma",
+    "Impact"
 ];
 
 
