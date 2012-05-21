@@ -26,28 +26,21 @@
 
 var cc = cc = cc || {};
 
-cc.clone = function(obj)
-{
-    var c = (obj instanceof Array)?[]:{};
-    for(var key in obj)
-    {
+cc.clone = function (obj) {
+    var c = (obj instanceof Array) ? [] : {};
+    for (var key in obj) {
         var copy = obj[key];
-        if(copy instanceof Array)
-        {
+        if (copy instanceof Array) {
             c[key] = cc.clone(copy);
-        }
-        else if(((typeof copy) == "object") && !(copy instanceof cc.Node)
-            && !(copy instanceof HTMLElement)){
+        } else if (((typeof copy) == "object") && !(copy instanceof cc.Node)
+            && !(copy instanceof HTMLElement)) {
             c[key] = cc.clone(copy);
-        }
-        else
-        {
+        } else {
             c[key] = copy;
         }
     }
     return c;
 };
-
 
 
 /**
@@ -87,13 +80,14 @@ else if (cc.COCOS2D_DEBUG > 1) {
 
 if (cc._DEBUG) {
     cc.Assert = function (cond, message) {
-        if (!cond) {
-            if (message) {
-                alert(message);
+        if ((typeof console.assert) == "function") {
+            console.assert(cond, message);
+        } else {
+            if (!cond) {
+                if (message) {
+                    alert(message);
+                }
             }
-            /*else{
-             alert("No message!");
-             }*/
         }
     }
 }
