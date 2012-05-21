@@ -146,34 +146,32 @@ cc.HASH_FIND_INT = function (arr, findInt) {
 };
 
 cc.HASH_ADD_INT = function (head, intfield, add) {
-    //TODO
     cc.Log("HASH_ADD_INT no implemetion!");
 };
 
 cc.HASH_DEL = function (head, delptr) {
-    //TODO
     cc.Log("HASH_DEL no implemetion!");
 };
 
 //data structures
-function tListEntry(prev, next, target, priority, paused, markedForDeletion) {
+cc.tListEntry = function(prev, next, target, priority, paused, markedForDeletion) {
     this.prev = prev;
     this.next = next;
     this.target = target;                           // not retained (retained by hashUpdateEntry)
     this.priority = priority;
     this.paused = paused;
     this.makedForDeletion = markedForDeletion;      // selector will no longer be called and entry will be removed at end of the next tick
-}
+};
 
-function tHashUpdateEntry(list, entry, target, hh) {
+cc.tHashUpdateEntry = function(list, entry, target, hh) {
     this.list = list;                                   // Which list does it belong to ?
     this.entry = entry;                                 // entry in the list
     this.target = target;                               // hash key (retained)
     this.hh = hh;
-}
+};
 
 // Hash Element used for "selectors with interval"
-function tHashSelectorEntry(timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
+cc.tHashSelectorEntry = function(timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
     this.timers = timers;
     this.target = target;                                // hash key (retained)
     this.timerIndex = timerIndex;
@@ -181,7 +179,7 @@ function tHashSelectorEntry(timers, target, timerIndex, currentTimer, currentTim
     this.currentTimerSalvaged = currentTimerSalvaged;
     this.paused = paused;
     this.hh = hh;
-}
+};
 
 
 /** @brief Light weight timer */
@@ -213,15 +211,10 @@ cc.Timer = cc.Class.extend({
      * * */
     initWithTarget:function (pTarget, pfnSelector, fSeconds) {
         try {
-            if (fSeconds == undefined) {
-                fSeconds = 0;
-            }
-
             this._m_pTarget = pTarget;
             this._m_pfnSelector = pfnSelector;
             this._m_fElapsed = -1;
-            this._m_fInterval = fSeconds;
-
+            this._m_fInterval = fSeconds || 0;
             return true;
         } catch (e) {
             return false;
@@ -239,8 +232,7 @@ cc.Timer = cc.Class.extend({
         }
 
         if (this._m_fElapsed >= this._m_fInterval) {
-            if (this._m_pfnSelector != null) {
-                //TODO NEED TEST
+            if (this._m_pfnSelector) {
                 if (typeof(this._m_pfnSelector) == "string") {
                     this._m_pTarget[this._m_pfnSelector](this._m_fElapsed);
                 } else if (typeof(this._m_pfnSelector) == "function") {
@@ -264,16 +256,14 @@ cc.Timer.timerWithTarget = function (pTarget, pfnSelector, fSeconds) {
     if (arguments < 2)
         throw new Error("timerWithTarget'argument can't is null");
 
-    if (arguments.length > 2) {
-        var pTimer = new cc.Timer();
-        pTimer.initWithTarget(pTarget, pfnSelector);
-        return pTimer;
+    var pTimer = new cc.Timer();
+    if (arguments.length == 2) {
+        pTimer.initWithTarget(pTarget, pfnSelector, 0);
     } else {
-        var pTimer = new cc.Timer();
         pTimer.initWithTarget(pTarget, pfnSelector, fSeconds);
-        return pTimer;
     }
-}
+    return pTimer;
+};
 
 cc._pSharedScheduler = null;
 /** @brief Scheduler is responsible of triggering the scheduled callbacks.
@@ -309,11 +299,8 @@ cc.Scheduler = cc.Class.extend({
      */
     _removeHashElement:function (pElement) {
         pElement.Timer = null;
-
         pElement.target = null;
-
         cc.ArrayRemoveObject(this._m_pHashForSelectors, pElement);
-
         pElement = null;
     },
 
@@ -337,8 +324,7 @@ cc.Scheduler = cc.Class.extend({
      */
     _removeUpdateFromHash:function (entry) {
         var element = this._findElementFromArray(this._m_pHashForUpdates, entry.target);
-
-        if (element != null) {
+        if (element) {
             //list entry
             cc.ArrayRemoveObject(element.list, element.entry);
             element.entry = null;
@@ -346,7 +332,6 @@ cc.Scheduler = cc.Class.extend({
             //hash entry
             element.target = null;
             cc.ArrayRemoveObject(this._m_pHashForUpdates, element);
-            element == null;
         }
     },
 
@@ -374,7 +359,7 @@ cc.Scheduler = cc.Class.extend({
      * @private
      */
     _priorityIn:function (ppList, pTarget, nPriority, bPaused) {
-        var pListElement = new tListEntry(null, null, pTarget, nPriority, bPaused, false);
+        var pListElement = new cc.tListEntry(null, null, pTarget, nPriority, bPaused, false);
 
         // empey list ?
         if (!ppList) {
@@ -397,8 +382,7 @@ cc.Scheduler = cc.Class.extend({
         }
 
         //update hash entry for quick access
-        var pHashElement = new tHashUpdateEntry(ppList, pListElement, pTarget, null);
-        //cc.HASH_ADD_INT(this._m_pHashForUpdates, pTarget, pHashElement);
+        var pHashElement = new cc.tHashUpdateEntry(ppList, pListElement, pTarget, null);
         this._m_pHashForUpdates.push(pHashElement);
     },
 
@@ -406,14 +390,12 @@ cc.Scheduler = cc.Class.extend({
      * @private
      */
     _appendIn:function (ppList, pTarget, bPaused) {
-        var pListElement = new tListEntry(null, null, pTarget, 0, bPaused, false);
-        //cc.DL_APPEND(ppList, pListElement);
+        var pListElement = new cc.tListEntry(null, null, pTarget, 0, bPaused, false);
         ppList.push(pListElement);
 
         //update hash entry for quicker access
-        var pHashElement = new tHashUpdateEntry(ppList, pListElement, pTarget, null);
+        var pHashElement = new cc.tHashUpdateEntry(ppList, pListElement, pTarget, null);
         this._m_pHashForUpdates.push(pHashElement);
-        //cc.HASH_ADD_INT(this._m_pHashForUpdates, pTarget, pHashElement);
     },
 
     //-----------------------public method-------------------------
@@ -424,11 +406,11 @@ cc.Scheduler = cc.Class.extend({
      @warning It will affect EVERY scheduled selector / action.
      */
     setTimeScale:function (fTimeScale) {
-        this.__m_fTimeScale = fTimeScale;
+        this._m_fTimeScale = fTimeScale;
     },
 
     getTimeScale:function () {
-        return this.__m_fTimeScale;
+        return this._m_fTimeScale;
     },
 
     /** 'tick' the scheduler. main loop
@@ -442,7 +424,7 @@ cc.Scheduler = cc.Class.extend({
         }
 
         //Iterate all over the Updates selectors
-        var pEntry, pTmp;
+        var pEntry;
         var i = 0;
         for (i = 0; i < this._m_pUpdatesNegList.length; i++) {
             pEntry = this._m_pUpdatesNegList[i];
@@ -531,9 +513,8 @@ cc.Scheduler = cc.Class.extend({
 
         if (!pElement) {
             // Is this the 1st element ? Then set the pause level to all the selectors of this target
-            pElement = new tHashSelectorEntry(null, pTarget, 0, null, null, bPaused, null);
+            pElement = new cc.tHashSelectorEntry(null, pTarget, 0, null, null, bPaused, null);
             this._m_pHashForSelectors.push(pElement);
-            //cc.HASH_ADD_INT(this._m_pHashForSelectors, pTarget, pElement);
         } else {
             cc.Assert(pElement.paused == bPaused, "Sheduler.scheduleSelector()");
         }
@@ -569,7 +550,6 @@ cc.Scheduler = cc.Class.extend({
                 cc.Assert(pHashElement.entry.markedForDeletion, "");
             }
             // TODO: check if priority has changed!
-
             pHashElement.entry.markedForDeletion = false;
             return;
         }
@@ -635,7 +615,6 @@ cc.Scheduler = cc.Class.extend({
         }
 
         var pElement = cc.HASH_FIND_INT(this._m_pHashForUpdates, pTarget);
-
         if (pElement != null) {
             if (this._m_bUpdateHashLocked) {
                 pElement.entry.markedForDeletion = true;
@@ -656,8 +635,7 @@ cc.Scheduler = cc.Class.extend({
         }
 
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors, pTarget);
-
-        if (pElement != null) {
+        if (pElement) {
             if ((!pElement.currentTimerSalvaged) && (cc.ArrayContainsObject(pElement.timers, pElement.currentTimer))) {
                 pElement.currentTimerSalvaged = true;
             }
@@ -687,7 +665,6 @@ cc.Scheduler = cc.Class.extend({
         }
 
         //updates selectors
-        var pEntry = null, pTmp = null;
         for (i = 0; i < this._m_pUpdates0List.length; i++) {
             this.unscheduleUpdateForTarget(this._m_pUpdates0List[i].target);
         }
@@ -709,13 +686,13 @@ cc.Scheduler = cc.Class.extend({
 
         //customer selectors
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors, pTarget);
-        if (pElement != null) {
+        if (pElement) {
             pElement.paused = true;
         }
 
         //update selector
         var pElementUpdate = cc.HASH_FIND_INT(this._m_pHashForUpdates, pTarget);
-        if (pElementUpdate != null) {
+        if (pElementUpdate) {
             cc.Assert(pElementUpdate.entry != null, "Scheduler.pauseTarget():entry must be non nil");
             pElementUpdate.entry.paused = true;
         }
@@ -732,14 +709,14 @@ cc.Scheduler = cc.Class.extend({
         // custom selectors
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors, pTarget);
 
-        if (pElement != null) {
+        if (pElement) {
             pElement.paused = false;
         }
 
         //update selector
         var pElementUpdate = cc.HASH_FIND_INT(this._m_pHashForUpdates, pTarget);
 
-        if (pElementUpdate != null) {
+        if (pElementUpdate) {
             cc.Assert(pElementUpdate.entry != null, "Scheduler.resumeTarget():entry must be non nil");
             pElementUpdate.entry.paused = false;
         }
@@ -753,7 +730,7 @@ cc.Scheduler = cc.Class.extend({
 
         // Custom selectors
         var pElement = cc.HASH_FIND_INT(this._m_pHashForSelectors, pTarget);
-        if (pElement != null) {
+        if (pElement) {
             return pElement.paused;
         }
         return false;
@@ -766,10 +743,10 @@ cc.Scheduler.sharedScheduler = function () {
         cc._pSharedScheduler._init();
     }
     return cc._pSharedScheduler;
-}
+};
 
 cc.Scheduler.purgeSharedScheduler = function () {
     cc._pSharedScheduler = null;
-}
+};
 
 
