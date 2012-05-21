@@ -91,7 +91,6 @@ cc.loadjs = function (filename) {
     }
 };
 
-/*
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('platform/CCCommon.js');//1
 cc.loadjs('platform/platform.js');//2
@@ -125,12 +124,10 @@ cc.loadjs('CCScheduler.js');//14
 cc.loadjs('CCLoader.js');//14
 cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
-*/
-cc.loadjs('../HelloWorld/cocos2dhtml5.js');
+cc.loadjs('platform/CCSAXParser.js');//16
+cc.loadjs('platform/AppControl.js');//18
+cc.loadjs('menu_nodes/CCdomMenuItem.js');
+cc.loadjs('menu_nodes/CCdomMenu.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-//cc.loadjs('platform/CCSAXParser.js');//16
 cc.loadjs('../HelloWorld/Classes/AppDelegate.js');//17
-//cc.loadjs('platform/AppControl.js');//18
 cc.loadjs('../HelloWorld/Helloworld.js');//19
-//cc.loadjs('menu_nodes/CCdomMenuItem.js');
-//cc.loadjs('menu_nodes/CCdomMenu.js');
