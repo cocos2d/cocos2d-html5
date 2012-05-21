@@ -59,7 +59,7 @@ cc.ActionManager = cc.Class.extend({
     _m_bCurrentTargetSalvaged:false,
 
     _searchElementByTarget:function (arr, pTarget) {
-        for (var k in arr) {
+        for (var k = 0; k < arr.length; k++) {
             if (pTarget == arr[k].target) {
                 return arr[k];
             }
@@ -74,7 +74,6 @@ cc.ActionManager = cc.Class.extend({
 
     init:function () {
         cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, 0, false);
-
         return true;
     },
     /** Adds an action with a target.
@@ -95,7 +94,6 @@ cc.ActionManager = cc.Class.extend({
             pElement.target = pTarget;
             pElement.id = pTarget.id || "no id";
             this.selTarget = pElement;
-            //this._m_pTargets = [];
             this._m_pTargets.push(pElement);
         }
         //creates a array for that eleemnt to hold the actions
@@ -108,9 +106,11 @@ cc.ActionManager = cc.Class.extend({
     /** Removes all actions from all the targets.
      */
     removeAllActions:function () {
-        for (var pElement in this._m_pTargets) {
-            var pTarget = pElement.target;
-            this.removeAllActionsFromTarget(pTarget);
+        for (var i = 0; i < this._m_pTargets.length; i++) {
+            var pElement = this._m_pTargets[i];
+            if (pElement) {
+                this.removeAllActionsFromTarget(pElement.target);
+            }
         }
     },
     /** Removes all actions from a certain target.
@@ -136,8 +136,7 @@ cc.ActionManager = cc.Class.extend({
             else {
                 this._deleteHashElement(pElement);
             }
-        }
-        else {
+        } else {
             //cc.Log("cocos2d: removeAllActionsFromTarget: Target not found");
         }
     },
@@ -173,10 +172,11 @@ cc.ActionManager = cc.Class.extend({
             var limit = pElement.actions.length;
             for (var i = 0; i < limit; ++i) {
                 var pAction = pElement.actions[i];
-
-                if (pAction.getTag() == tag && pAction.getOriginalTarget() == pTarget) {
-                    this._removeActionAtIndex(i, pElement);
-                    break;
+                if (pAction) {
+                    if (pAction.getTag() == tag && pAction.getOriginalTarget() == pTarget) {
+                        this._removeActionAtIndex(i, pElement);
+                        break;
+                    }
                 }
             }
         }
@@ -191,8 +191,10 @@ cc.ActionManager = cc.Class.extend({
             if (pElement.actions != null) {
                 for (var i = 0; i < pElement.actions.length; ++i) {
                     var pAction = pElement.actions[i];
-                    if (pAction.getTag() == tag) {
-                        return pAction;
+                    if (pAction) {
+                        if (pAction.getTag() == tag) {
+                            return pAction;
+                        }
                     }
                 }
             }
@@ -213,7 +215,6 @@ cc.ActionManager = cc.Class.extend({
      */
     numberOfRunningActionsInTarget:function (pTarget) {
         var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
-
         if (pElement) {
             return (pElement.actions) ? pElement.actions.length : 0;
         }
@@ -268,8 +269,15 @@ cc.ActionManager = cc.Class.extend({
             }
         }
     },
+
     _deleteHashElement:function (pElement) {
+        cc.ArrayRemoveObject(this._m_pTargets, pElement);
+        if (pElement) {
+            pElement.actions = null;
+            pElement.target = null;
+        }
     },
+
     _actionAllocWithHashElement:function (pElement) {
         // 4 actions per Node by default
         if (pElement.actions == null) {
