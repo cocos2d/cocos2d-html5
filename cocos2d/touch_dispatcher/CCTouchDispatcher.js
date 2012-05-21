@@ -43,7 +43,7 @@ cc.TOUCHCANCELLED = 3;
 cc.TouchMax = 4;
 
 cc.less = function (p1, p2) {
-    return p1.getPriority() < p2.getPriority();
+    return p1.getPriority() > p2.getPriority();
 };
 
 cc.TouchHandlerHelperData = function (mType) {
