@@ -266,13 +266,13 @@ cc.Director = cc.Class.extend({
         var newY = s.height - obPoint.y;
         var newX = s.width - obPoint.x;
 
-        var ret = cc.PointZero();
+        var ret = new cc.Point(0, 0);
         switch (this._m_eDeviceOrientation) {
             case cc.DeviceOrientationPortrait:
-                ret = cc.ccp(obPoint.x, newY);
+                ret = cc.Point(obPoint.x, newY);
                 break;
             case cc.DeviceOrientationPortraitUpsideDown:
-                ret = cc.ccp(newX, obPoint.y);
+                ret = cc.Point(newX, obPoint.y);
                 break;
             case cc.DeviceOrientationLandscapeLeft:
                 ret.x = obPoint.y;
@@ -289,21 +289,21 @@ cc.Director = cc.Class.extend({
         var winSize = this._m_obWinSizeInPoints;
         var oppositeX = winSize.width - obPoint.x;
         var oppositeY = winSize.height - obPoint.y;
-        var uiPoint = cc.PointZero();
+        var uiPoint = cc.Point(0, 0);
 
         switch (this._m_eDeviceOrientation) {
             case cc.DeviceOrientationPortrait:
-                uiPoint = cc.ccp(obPoint.x, oppositeY);
+                uiPoint = cc.Point(obPoint.x, oppositeY);
                 break;
             case cc.DeviceOrientationPortraitUpsideDown:
-                uiPoint = cc.ccp(oppositeX, obPoint.y);
+                uiPoint = cc.Point(oppositeX, obPoint.y);
                 break;
             case cc.DeviceOrientationLandscapeLeft:
-                uiPoint = cc.ccp(obPoint.y, obPoint.x);
+                uiPoint = cc.Point(obPoint.y, obPoint.x);
                 break;
             case cc.DeviceOrientationLandscapeRight:
                 // Can't use oppositeX/Y because x/y are flipped
-                uiPoint = cc.ccp(winSize.width - obPoint.y, winSize.height - obPoint.x);
+                uiPoint = cc.Point(winSize.width - obPoint.y, winSize.height - obPoint.x);
                 break;
         }
         return uiPoint;
@@ -418,7 +418,8 @@ cc.Director = cc.Class.extend({
     },
 
     rectIsInDirtyRegion:function (rect) {
-        if (!rect || !this._fullRect)
+        //if (!rect || !this._fullRect)
+        if (!rect)
             return false;
 
         return cc.Rect.CCRectIntersectsRect(this._fullRect, rect);
@@ -468,19 +469,19 @@ cc.Director = cc.Class.extend({
         return this._m_eDeviceOrientation;
     },
     getDisplaySizeInPixels:function () {
-        return this._m_obWinSizeInPixels;
+        return new cc.Size(this._m_obWinSizeInPixels.width, this._m_obWinSizeInPixels.height);
     },
     getNotificationNode:function () {
         return this._m_pNotificationNode;
     },
     getWinSize:function () {
-        var S = this._m_obWinSizeInPoints;
+        var S = new cc.Size(this._m_obWinSizeInPoints.width, this._m_obWinSizeInPoints.height);
 
         if (this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeLeft || this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeRight) {
             // swap x,y in landspace mode
-            var tmp = S;
-            S.width = tmp.height;
-            S.height = tmp.width;
+            var tmp = S.width;
+            S.width = S.height;
+            S.height = tmp;
         }
         return S;
     },
@@ -650,14 +651,16 @@ cc.Director = cc.Class.extend({
         this.startAnimation();
     },
     setAlphaBlending:function (bOn) {
-        if (bOn) {
-            //TODO OpenGL
-            //glEnable(GL_BLEND);
-            //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        }
-        else {
-            //glDisable(GL_BLEND);
-        }
+        /*
+         if (bOn) {
+         //TODO OpenGL
+         //glEnable(GL_BLEND);
+         //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+         }
+         else {
+         //glDisable(GL_BLEND);
+         }
+         */
     },
     setContentScaleFactor:function (scaleFactor) {
         if (scaleFactor != this._m_fContentScaleFactor) {
@@ -673,22 +676,24 @@ cc.Director = cc.Class.extend({
         }
     },
     setDepthTest:function (bOn) {
-        if (bOn) {
-            /*TODO OpenGL Stuff
-             ccglClearDepth(1.0f);
-             glEnable(GL_DEPTH_TEST);
-             glDepthFunc(GL_LEQUAL);
-             //        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-             }
-             else
-             {
-             glDisable(GL_DEPTH_TEST);*/
-        }
+        /*
+         if (bOn) {
+         TODO OpenGL Stuff
+         ccglClearDepth(1.0f);
+         glEnable(GL_DEPTH_TEST);
+         glDepthFunc(GL_LEQUAL);
+         //        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
+         }
+         else
+         {
+         glDisable(GL_DEPTH_TEST);
+         }
+         */
     },
     setDeviceOrientation:function (kDeviceOrientation) {
         var eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
-        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) { 
+        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) {
             this._m_eDeviceOrientation = eNewOrientation;
             if (cc.renderContextType == cc.kCanvas) {
                 var height = cc.canvas.height;
