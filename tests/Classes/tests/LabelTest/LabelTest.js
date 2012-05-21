@@ -77,7 +77,7 @@ function restartAtlasAction() {
     return new window[AtlasTests[s_nAtlasIdx]];
 }
 
-var AtlasTestScene = TestScene.extend({
+var LabelTestScene = TestScene.extend({
     runThisTest:function () {
         s_nAtlasIdx = -1;
         this.addChild(nextAtlasAction());
@@ -122,20 +122,20 @@ var AtlasDemo = cc.Layer.extend({
         this.addChild(menu, 1);
     },
     restartCallback:function (pSender) {
-        var s = new AtlasTestScene();
+        var s = new LabelTestScene();
         s.addChild(restartAtlasAction());
 
         cc.Director.sharedDirector().replaceScene(s);
 
     },
     nextCallback:function (pSender) {
-        var s = new AtlasTestScene();
+        var s = new LabelTestScene();
         s.addChild(nextAtlasAction());
         cc.Director.sharedDirector().replaceScene(s);
 
     },
     backCallback:function (pSender) {
-        var s = new AtlasTestScene();
+        var s = new LabelTestScene();
         s.addChild(backAtlasAction());
         cc.Director.sharedDirector().replaceScene(s);
 
