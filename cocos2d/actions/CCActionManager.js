@@ -196,10 +196,7 @@ cc.ActionManager = cc.Class.extend({
                     }
                 }
             }
-            cc.LOG("cocos2d : getActionByTag: Action not found");
-        }
-        else {
-            cc.LOG("cocos2d : getActionByTag: Target not found");
+            console.log("cocos2d : getActionByTag: Action not found");
         }
 
         return null;
