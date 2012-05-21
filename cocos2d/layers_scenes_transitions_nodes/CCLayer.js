@@ -48,7 +48,6 @@ cc.Layer = cc.Node.extend({
         this._super();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_bIsRelativeAnchorPoint = false;
-
         this._m_bIsAccelerometerEnabled = false;
     },
 
@@ -59,7 +58,6 @@ cc.Layer = cc.Node.extend({
         }
         this.setContentSize(pDirector.getWinSize());
         this._m_bIsTouchEnabled = false;
-
         // success
         return true;
     },
