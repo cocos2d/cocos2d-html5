@@ -474,11 +474,10 @@ cc.Director = cc.Class.extend({
         return this._m_pNotificationNode;
     },
     getWinSize:function () {
-        var tmp = new cc.Size(this._m_obWinSizeInPoints.width,this._m_obWinSizeInPoints.height);
-        var s = new cc.SizeZero();
-
+        var tmp = this._m_obWinSizeInPoints;
         if (this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeLeft || this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeRight) {
             // swap x,y in landspace mode
+            var s = new cc.SizeZero();
             s.width = tmp.height;
             s.height = tmp.width;
             return s;
