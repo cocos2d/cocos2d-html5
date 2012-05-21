@@ -474,15 +474,16 @@ cc.Director = cc.Class.extend({
         return this._m_pNotificationNode;
     },
     getWinSize:function () {
-        var S = this._m_obWinSizeInPoints;
-
+        var tmp = this._m_obWinSizeInPoints;
         if (this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeLeft || this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeRight) {
             // swap x,y in landspace mode
-            var tmp = S;
-            S.width = tmp.height;
-            S.height = tmp.width;
+            var s = new cc.SizeZero();
+            s.width = tmp.height;
+            s.height = tmp.width;
+            return s;
         }
-        return S;
+
+        return tmp;
     },
     getWinSizeInPixels:function () {
         var s = this.getWinSize();
@@ -688,7 +689,7 @@ cc.Director = cc.Class.extend({
     setDeviceOrientation:function (kDeviceOrientation) {
         var eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
-        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) { 
+        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) {
             this._m_eDeviceOrientation = eNewOrientation;
             if (cc.renderContextType == cc.kCanvas) {
                 var height = cc.canvas.height;

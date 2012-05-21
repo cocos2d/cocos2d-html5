@@ -68,11 +68,8 @@ DirectorTest = cc.Layer.extend({
 
     init:function () {
         var bRet = false;
-        do
-        {
-            if (!this._super()) {
-                break;
-            }
+
+        if (this._super()) {
             var s = cc.Director.sharedDirector().getWinSize();
 
             var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 26);
@@ -85,12 +82,9 @@ DirectorTest = cc.Layer.extend({
                 this.addChild(l, 1);
                 l.setPosition(cc.ccp(s.width / 2, s.height - 80));
             }
-
             bRet = true;
-        } while (0);
-
+        }
         return bRet;
-
     },
 
     restartCallback:function (pSender) {
@@ -118,31 +112,21 @@ DirectorTest = cc.Layer.extend({
 });
 
 Director1 = DirectorTest.extend({
-
     init:function () {
         var bRet = false;
 
-        do
-        {
-            if (!this._super()) {
-                break;
-            }
-
+        if (this._super()) {
             this.setIsTouchEnabled(true);
             var s = cc.Director.sharedDirector().getWinSize();
-            var that = this;
-            var item = cc.MenuItemFont.itemFromString("Rotate Device", this, function () {
-                that.rotateDevice()
-            });
+            var item = cc.MenuItemFont.itemFromString("Rotate Device", this, this.rotateDevice);
             var menu = cc.Menu.menuWithItems(item, null);
             menu.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this.addChild(menu);
 
             bRet = true;
-        } while (0);
+        }
 
         return bRet;
-
     },
 
     newOrientation:function () {
@@ -164,7 +148,6 @@ Director1 = DirectorTest.extend({
 
     },
     rotateDevice:function (pSender) {
-        //console.log(this);
         this.newOrientation();
         this.restartCallback(null);
     },
@@ -178,7 +161,7 @@ Director1 = DirectorTest.extend({
         for (var i = 0; i < touches.length; i++) {
             touch = touches[i];
 
-            if (!touch){
+            if (!touch) {
                 break;
             }
             var a = touch.locationInView(touch.view());

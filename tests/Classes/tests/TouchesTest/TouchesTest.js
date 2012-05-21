@@ -28,7 +28,7 @@ var kLowPlayer = 1;
 var kStatusBarHeight = 20.0;
 var kSpriteTag = 0;
 
-var PongScene = TestScene.extend({
+var TouchesTestScene = TestScene.extend({
     ctor:function () {
         this._super(true);
         var pongLayer = new PongLayer();
