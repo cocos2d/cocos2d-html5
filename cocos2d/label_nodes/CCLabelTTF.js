@@ -86,6 +86,7 @@ cc.LabelTTF = cc.Sprite.extend({
         var dim = cc.renderContext.measureText(this._m_pString);
         this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
         cc.renderContext.restore();
+        this.setNodeDirty();
         return;
 
         var texture = new cc.Texture2D();
