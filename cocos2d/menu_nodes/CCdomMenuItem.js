@@ -31,13 +31,7 @@
 var cc = cc = cc || {};
 cc._fontSize = 32;
 cc._fontName = '"Comic Sans MS", "cursive"';
-cc.MenuItem = cc.domNode.extend({
-    ctor:function(){
-        this._super();
-        this.setAnchorPoint(cc.ccp(0.5,0.5));//this wont work as the div size is unknown at this point
-        this.style[cc.CSS3.origin] = (this._AnchorPoint*100)+"% "+(this._AnchorPoint*100)+"%";
-    }
-});
+cc.MenuItem = cc.domNode;
 
 
 cc.MenuItemImage = cc.MenuItem.extend({
@@ -50,7 +44,6 @@ cc.MenuItemImage = cc.MenuItem.extend({
         //add to the div
         this.dom.appendChild(this._image);
         //when image is loaded, set the position and translation
-        this._image.parent.setAnchorPoint(cc.ccp(0.5, 0.5));
         var onloadcallback = function(){
             //this.parent.dom.style.width = this.width+"px";
             //this.parent.dom.style.height = this.height+"px";
@@ -98,7 +91,7 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
         }*/
     }
     //attach callback to onclick
-    that.style.cursor = (callback) ? "pointer" : "default";
+    that.dom.style.cursor = (callback) ? "pointer" : "default";
     return that;
 
 };
@@ -168,26 +161,17 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         //create a div containing the text
         this.dom.textContent = this._text;
         //this._domElement.contentText = this._domElement.innerText;
-        this.style.fontFamily = this._fontName;
-        this.style.fontSize = this._fontSize;
-        this.style.color = "#FFF";
-/*        this.style.position = "absolute";
-        this.style.bottom = "0px";
-        this.style.margin = "auto";
-        this.style.right = "50%";
-        this.style.left = "-50%";
-        this.style.top = "-50%";
-        this.style.bottom = "50%";*/
-        this.style.textAlign = "center";
+        this.dom.style.fontFamily = this._fontName;
+        this.dom.style.fontSize = this._fontSize;
+        var color = label.getColor();
+        this.dom.style.color = "rgb("+color.r+", "+color.g+", "+color.b+")";
+        this.dom.style.textAlign = "center";
         //console.log(cc.domNode.getTextSize(this._text, this._fontSize, this._fontName));
         //console.log(this.dom.clientWidth);
         var tmp = cc.domNode.getTextSize(this._text,this._fontSize, this._fontName);
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
-        var size = this.getContentSize();
-        this.style.left = "-"+(size.width*this.getAnchorPoint().x)+"px";
-        this.style.top = "-"+(size.height*this.getAnchorPoint().y)+"px";
         this.setPosition(label.getPositionX(), label.getPositionY());
-        cc.CSS3.Transform(this);
+        this._updateTransform();
     }
 });
 cc.MenuItemLabel.itemWithLabel = function (label, two, three, four) {
@@ -201,7 +185,7 @@ cc.MenuItemLabel.itemWithLabel = function (label, two, three, four) {
     if (arguments.length == 4) {
         that.dom.addEventListener("click", function(event){_domLabelCallback(event, three, four)});
         that.dom.addEventListener("touchstart", function(event){_domLabelCallback(event, three, four)});
-        that.style.cursor = "pointer";
+        that.dom.style.cursor = "pointer";
     }
     else if (arguments.length <= 2) {
         cc.Assert(0,"Not enough parameters.");
@@ -212,7 +196,7 @@ cc.MenuItemLabel.itemWithLabel = function (label, two, three, four) {
     else if (arguments.length == 3) {
         that.dom.addEventListener("click", function(event){_domLabelCallback(event, two, three)});
         that.dom.addEventListener("touchstart", function(event){_domLabelCallback(event, two, three)});
-        that.style.cursor = "pointer";
+        that.dom.style.cursor = "pointer";
     }
     return that;
     function _domLabelCallback(event, target, selector){
@@ -232,25 +216,19 @@ cc.MenuItemFont = cc.MenuItem.extend({
         this._text = value;
         //create a div containing the text
         this.dom.textContent = this._text;
-        this.style.fontFamily = cc._fontName;
-        this.style.fontSize = cc._fontSize+"px";
-        this.style.color = "#FFF";
-        this.style.textAlign = "center";
+        this.dom.style.fontFamily = cc._fontName;
+        this.dom.style.fontSize = cc._fontSize+"px";
+        this.dom.style.color = "#FFF";
+        this.dom.style.textAlign = "center";
         var tmp = cc.domNode.getTextSize(this._text,cc._fontSize, cc._fontName);
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
-        var size = this.getContentSize();
-        this.style.left = "-"+(size.width*this.getAnchorPoint().x)+"px";
-        this.style.top = "-"+(size.height*this.getAnchorPoint().y)+"px";
-        this.style.width = this.offsetWidth+"px";
-        this.style.height = this.offsetHeight+"px";
-        cc.CSS3.Transform(this);
 
         if(selector != null){
             this.dom.addEventListener("click",function(event){_domFontCallback(event)});
             this.dom.addEventListener("touchstart",function(event){_domFontCallback(event)});
-            this.style.cursor = "pointer";
+            this.dom.style.cursor = "pointer";
         }
-        this.update();
+        //this.update();
 
         function _domFontCallback(event){
             if (target && (typeof(selector) == "string")) {
@@ -261,7 +239,9 @@ cc.MenuItemFont = cc.MenuItem.extend({
         }
     },
     setFontSizeObj:function(s){
-        this.style.fontSize = s;
+        this.style.fontSize = s+px;
+        var tmp = cc.domNode.getTextSize(this._text,cc._fontSize, cc._fontName);
+        this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
     },
     fontSizeObj:function(){
         return this.style.fontSize;

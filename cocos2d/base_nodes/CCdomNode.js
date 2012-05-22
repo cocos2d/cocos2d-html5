@@ -30,6 +30,13 @@
 
 
 var cc = cc = cc || {};
+//this is the element that will be created for all dom nodes
+//incase of conflicting with existing css declaration
+//you can change it to anything you want, such as "cocos"
+//which will produce a tag of <cocos></cocos>, and will fully
+//work in all html5 compatible browsers
+cc.TAG = "div";
+
 //browser detection, based on mootools
 cc.Browser = {};
 (function () {
@@ -41,120 +48,155 @@ cc.Browser = {};
 })();
 cc.CSS3 = {};
 (function () {
-    var res = "";
+    var res;
+    var translate;
     switch (cc.Browser.type) {
         case "firefox":
             res = "Moz";
+            translate = "translate3d(";
             break;
         case "chrome":
         case "safari":
             res = "webkit";
+            translate = "translate3d(";
             break;
         case "opera":
-            res = "o";
+            res = "O";
+            translate = "translate3d(";
             break;
         case "ie":
             res = "ms";
+            translate = "translate(";
     }
     //TODO these works for firefox and webkit, havnt test in other browsers yet
-    cc.CSS3._trans = res + "Transform";
+    cc.CSS3.transform = res + "Transform";
     cc.CSS3.origin = res + "TransformOrigin";
     cc.CSS3.userSelect = res + "UserSelect";
 })();
-//transform the element by the passed in array which contains transformation commands
-cc.CSS3.Transform = function (ele, translate, rotate, scale, skew) {
-    if (arguments.length == 1 && ele.isDomNode) {
-        var size = ele.getContentSize();
-        var rot = ele.getRotation();
-        var pos = ele.getPosition();
-        var skewX = ele.getSkewX();
-        var skewY = ele.getSkewY();
-        var scaleX = ele.getScaleX();
-        var scaleY = ele.getScaleY();
-        var style = ele.dom.style;
-
-        if (ele._m_bIsRelativeAnchorPoint) {
-            ele.style.left = "-" + (ele.getAnchorPoint().x * ele.getContentSize().width) + "px";
-            ele.style.top = (ele.getAnchorPoint().y * ele.getContentSize().height) + "px";
+//this is the dom node methods, that is exactly the same for ccnode and ccdomnode
+//this object will be part of the prototype for ccnode and domnode
+cc.domNodeMethods = {
+    //update the transform css, including translate, rotation, skew, scale
+    _updateTransform:function () {
+        //var height = (this.dom.node.getParent()) ? this.dom.node.getParent().getContentSize().height : cc.Director.sharedDirector().getWinSize().height;
+        var css = "translate3d(";
+        css += this.getPositionX();
+        css += "px, ";
+        //css += (height - this.getContentSize().height-this.getPositionY());
+        css += -this.getPositionY();
+        css += "px, 0) rotateZ(";
+        css += this.getRotation();
+        css += "deg) scale(";
+        css += this.getScaleX();
+        css += ", ";
+        css += this.getScaleY();
+        css += ") skew(";
+        css += this.getSkewX();
+        css += "deg, ";
+        css += -this.getSkewY();
+        css += "deg)";
+        this.dom.style[cc.CSS3.transform] = css;
+    },
+    setNodeDirty:function () {
+        this._setNodeDirtyForCache();
+        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
+        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
+            this._m_bIsTransformGLDirty = true;
         }
-        else {
-            ele.style.left = 0;
-            ele.style.top = 0;
+        if(this.dom)
+        {
+            this._updateTransform();
         }
-        ele.style[cc.CSS3.origin] = (ele.getAnchorPoint().x * 100) + "% " + (ele.getAnchorPoint().y * ele.getContentSize().height) + "px";
+    },
+    //this will update the anchorpoint of the object's dom, when ever something changed that will affect the anchorpoint such as contentsize and anchorpoint itself.
+    //as well as when you change a node's relative anchorpoint attribute, you should call this function
+    _updateAnchorPoint:function(){
+        this.setAnchorPoint(this.getAnchorPoint());
+    },
+    initDom:function () {
+        this.dom = cc.$new(cc.TAG);
+        //reset the css as possible
+        var css = "position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:block; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff";
+        if (cc.Browser.type == "chrome" || cc.Browser.type == "safari") css += " -webkit-perspective: 1000;";
+        this.dom.style.cssText = css;
+        this.dom.node = this;
+        this.hide();
+    },
+    setParentDiv:function(p){
+        if(this.dom){//if self doesnt have a dom, then its a CCnode, no point in adding dom to the parent
+            if(!p.dom){//if the dom node parent is a ccnode, and it do not have its dom, we make one
+                p.initDom();
+                var type = " CCNode";
+                if(p instanceof cc.Scene)
+                {
+                    type = " Scene";
+                }
+                else if(p instanceof cc.Layer)
+                {
+                    type = " Layer";
+                }
+                else if (p instanceof cc.Sprite)
+                {
+                    type = " Sprite";
+                }
+                else{
+                    console.log(p);
+                }
+                p.dom.id = type + Date.now();
+                p.dom.className += type;
+            }
+            p.dom.appendChild(this.dom);
+        }
 
-        style[cc.CSS3._trans] = cc.CSS3.Translate(pos.x, pos.y + size.height, ele.dom) +
-            cc.CSS3.Rotate(rot) +
-            cc.CSS3.Scale(scaleX, scaleY) +
-            cc.CSS3.Skew(skewX, -skewY);
+        //if the parent also have a parent
+        if (p.getParent()) {
+            //run this function again for the parent
+            p.setParentDiv(p.getParent());
+        }
+        //else, the parent doesnt have anymore parent
+        //we dont know if the parent is the top most level, as it could be not run yet.
+        //but if a domnode is added after the scene ran, then, getisRunning will return true, and so in this case,
+        //if parent have no more parent, but it is running, we add the parent to the domContainer
+        else if(p.getIsRunning){
+            if(!p.dom){
+                p.initDom();
+                var type = " CCNode";
+                if(p instanceof cc.Scene)
+                {
+                    type = " Scene";
+                }
+                else if(p instanceof cc.Layer)
+                {
+                    type = " Layer";
+                }
+                else if (p instanceof cc.Sprite)
+                {
+                    type = " Sprite";
+                }
+                else{
+                    console.log(p);
+                }
+                p.dom.id = (p instanceof cc.Scene)?"Scene" + Date.now():"CCNode" + Date.now();
+                p.dom.className += type;
+            }
+            cc.domNode.DomContainer().appendChild(p.dom);
+            p.show();
+        }
+        if(p.dom){
+            p._updateTransform();
+            p._updateAnchorPoint();
+        }
+    },
+    hide:function () {
+        this.dom.style.visibility = "hidden";
+    },
+    show:function () {
+        this.dom.style.visibility = "visible";
     }
-    //if domMenu
-    else if (arguments.length == 5) {
-        ele.style[cc.CSS3._trans] = translate + rotate + scale + skew;
-        //return translate + rotate + scale + skew;
-    }
-
-    return false;
-};
-//generate the translate string based on browser
-cc.CSS3.Translate = function (x, y, ele) {
-    if (typeof x == "object") {
-        y = x.y;
-        x = x.x;
-    }
-    var height = cc.canvas.height;
-    if(ele.parentNode)
-    {
-        height = parseInt(ele.parentNode.getAttribute("fheight")) || cc.canvas.height;
-    }
-    return "translate3d(" + parseInt(x) + "px" + ", " + ( height - parseInt(y)) + "px" + ",0px) ";
-};
-//rotate by degree
-cc.CSS3.Rotate = function (r) {
-    var deg = (isNaN(r)) ? "" : "deg";
-    return "rotateZ(" + r + deg + ") ";
-};
-cc.CSS3.Scale = function (x, y) {
-
-    return "scale(" + x + ", " + y + ") ";
-};
-cc.CSS3.Skew = function (x, y) {
-    var deg = (isNaN(x) && isNaN(y)) ? "" : "deg";
-    return "skew(" + x + deg + ", " + y + deg + ") ";
-};
-cc.makeDiv=function (p) {
-    p.dom = cc.$new("div");
-    var style = p.dom.style;
-    style.float = "left";
-    style.position = "absolute";
-    p.updateDom();
-    return p.dom;
-};
-cc.setupHTML= function(obj){
-    var canvas = cc.canvas;
-    canvas.style.zIndex = 0;
-    var _container = cc.$new("div");
-    _container.id = "Cocos2dGameContainer";
-    _container.style.position = "absolute";
-    _container.style.overflow = "hidden";//TODO make it hidden when finished debugging
-    //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
-    _container.style.top = canvas.offsetTop+parseInt(canvas.style.borderTopWidth)+"px";
-    _container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
-    _container.style.height = canvas.clientHeight+"px";
-    _container.style.width = canvas.clientWidth+"px";
-    if(obj){
-        _container.setAttribute("fheight", obj.getContentSize().height);
-    }
-    var domlayer = cc.$new("div");
-    domlayer.id = "domlayers";
-    _container.appendChild(domlayer);
-    document.body.insertBefore(_container, canvas);
-    _container.appendChild(canvas);
-    return domlayer;
 };
 cc.domNode = cc.Class.extend({
-    isDomNode:true,
-    _domID:0,
+    isDom:true,
+    dom:null,
     _rotation:0,
     _scaleX:1,
     _scaleY:1,
@@ -165,28 +207,33 @@ cc.domNode = cc.Class.extend({
     _AnchorPoint:null,
     _children:null, //array
     _parent:null, //parent obj
-    dom:null, //dom element
-    style:null, //an alias of this._dom.style
     _tag:-1,
     _m_bIsRelativeAnchorPoint:true,
     _m_bIsRunning:false,
     _IsVisible:true,
     ctor:function () {
-        //init member variables
-        this._pos = new cc.Point();
+        this.initDom();
         this._children = [];
-        this._contentSize = cc.SizeZero();
-        this._AnchorPoint = cc.PointZero();
-
-        this.dom = cc.$new("div");
-        this._domID = "M" + Date.now();
-        this.dom.id = this._domID;
-        this.style = this.dom.style;
-        this.style.position = "absolute";
+        this._pos = {x:0,y:0};
+        this._contentSize = {};
+        this._AnchorPoint = {x:0.5, y:0.5};
+        this.dom.id = "DomNode" + Date.now();
+        this.dom.className = " DomNode";
+        this.setContentSize(cc.Director.sharedDirector().getWinSize());
+        this._updateTransform();
+    },
+    id:function(id){
+        if(id)
+        {
+            this.dom.id = id;
+        }
+        else{
+            return this.dom.id;
+        }
     },
     //Gets
     getZOrder:function () {
-        return this.style.zIndex;
+        return this.dom.style.zIndex;
     },
     getSkewX:function () {
         return this._skewX;
@@ -224,43 +271,46 @@ cc.domNode = cc.Class.extend({
         return this._tag;
     },
     getAnchorPoint:function () {
-        return this._AnchorPoint;
+        return new cc.Point(this._AnchorPoint.x, this._AnchorPoint.y);
     },
     getContentSize:function () {
-        return this._contentSize;
+        return new cc.Size(this._contentSize.width, this._contentSize.height);
+    },
+    getIsRunning:function(){
+        return this._m_bIsRunning;
     },
 
     //Sets
     _setZOrder:function (z) {
-        this.style.zIndex = z;
+        this.dom.style.zIndex = z;
     },
     setColor:function (c) {
-        this.style.color = "rgb(" + c.r + ", " + c.g + ", " + c.b + ")";
+        this.dom.style.color = "rgb(" + c.r + ", " + c.g + ", " + c.b + ")";
     },
     setSkewX:function (x) {
         this._skewX = -x;
-        this.update();
+        this._updateTransform();
     },
     setSkewY:function (y) {
         this._skewY = -y;
-        this.update();
+        this._updateTransform();
     },
     setRotation:function (r) {
         this._rotation = r;
-        this.update();
+        this._updateTransform();
     },
     setScale:function (s) {
         this._scaleX = s;
         this._scaleY = s;
-        this.update();
+        this._updateTransform();
     },
     setScaleX:function (x) {
         this._scaleX = x;
-        this.update();
+        this._updateTransform();
     },
     setScaleY:function (y) {
         this._scaleY = y;
-        this.update();
+        this._updateTransform();
     },
     setPosition:function (x, y) {
         if (arguments.length == 2) {
@@ -271,7 +321,7 @@ cc.domNode = cc.Class.extend({
             this._pos.x = x.x;
             this._pos.y = x.y;
         }
-        this.update();
+        this._updateTransform();
     },
     setTag:function (t) {
         this._tag = t;
@@ -279,36 +329,30 @@ cc.domNode = cc.Class.extend({
     setContentSize:function (size) {
         this._contentSize.width = size.width;
         this._contentSize.height = size.height;
-        this.update();
-        //tell child to update as well
-        this._arrayMakeObjectsPerformSelector(this.getChildren(),"update");
+        this.dom.style.width = size.width+"px";
+        this.dom.style.maxHeight = size.height+"px";
+        //when an element size is changed, we need to fix its origin, so that say 50% y origin will still be at center
+        this.dom.style[cc.CSS3.origin] = (this.getAnchorPoint().x * 100) + "% " + (this.getAnchorPoint().y * size.height)+"px";
+        //then we need to tell its child to update its position, because the child position also depend on the parent height
+        this._arrayMakeObjectsPerformSelector(this.getChildren(), "_updateTransform");
+        this._updateAnchorPoint();
     },
     setAnchorPoint:function (s) {
         this._AnchorPoint = s;
+        var size = this.getContentSize();
         if (this._m_bIsRelativeAnchorPoint) {
-            this.style.left = "-" + (s.x * this.getContentSize().width) + "px";
-            this.style.top = "-" + (s.y * this.getContentSize().height) + "px";
-            this.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * 100) + "%";
+            this.dom.style.left = "-" + (s.x * size.width) + "px";
+            this.dom.style.top = "-" + (s.y * size.height) + "px";
+            this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";
         }
         else {
-            this.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * this.getContentSize().height) + "px";
-            this.style.top = 0;
-            this.style.left = 0;
+            this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";
+            this.dom.style.top = 0;
+            this.dom.style.left = 0;
         }
-        this.update();
+        this.dom.style.width = size.width + "px";
+        this.dom.style.maxHeight = size.height + "px";
     },
-
-    //update Dom, its like draw, but you dont call it everyframe, only called when its changed
-    update:function () {
-        /*
-        Since you cant set the height of the element, because it will block mouse interaction for the layers below
-        but we still need to access the height of the element in html mode,therefore, we added a custom attribute
-        called fheight, to be used as storage of the actual height of the element.
-         */
-        this.dom.setAttribute("fheight", this.getContentSize().height);
-        cc.CSS3.Transform(this);
-    },
-
 
     //parent and children
     getParent:function () {
@@ -347,31 +391,21 @@ cc.domNode = cc.Class.extend({
             child.onEnterTransitionDidFinish();
         }
     },
-    setParent:function (p, child) {
-        child = child || this;
-        this._parent = p;
-        //check to see if dom
-        if (p.isDomNode) {
-            p.dom.appendChild(child.dom);
-        }
-        else {//a CC Node
-            this.makeParentDivs(child);
-        }
-    },
-    makeParentDivs:function (p) {
-        if (p.dom == null)cc.makeDiv(p);
-        if (p.getParent() != null){//if the passed in obj have parent
-            if (p.getParent().dom == null) {
-                cc.makeDiv(p.getParent());
+    setParent:function (p) {
+        if(!p)
+        {
+            //try to remove parent
+            if(this._parent.dom){
+                this._parent.dom.removeChild(this.dom);
             }
-            p.getParent().dom.appendChild(p.dom);
-            this.makeParentDivs(p.getParent());
+            this._parent = p;
         }
-        else {//the passed in obj dont have a parent
-            cc.$("#domlayers").appendChild(p.dom);
+        else{
+            this._parent = p;
+            this.setParentDiv(p);
         }
+        //this._updateAnchorPoint();
     },
-
 
     //on enter and exit
     onEnter:function () {
@@ -383,28 +417,23 @@ cc.domNode = cc.Class.extend({
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._m_bIsRunning = false;
-        this._arrayMakeObjectsPerformSelector(this.getChildren(), "onExit");
+        //this._arrayMakeObjectsPerformSelector(this.getChildren(), "onExit");//dont need to tell children, as if the parent is destroyed the child is gone too?
         this.hide();
-        var that = cc.$("#" + this.id());
+        /*var that = cc.$("#" + this.id());
         var cur = this.dom;
-        for (cur = this.dom; cur.parentNode; cur = cur.parentNode) {
-            if (cur.parentNode.id == "domlayers") {
-                break;
-            }
-        }
         if (cur.parentNode) {
             cur.parentNode.removeChild(cur);
         }
-        that = null;
+        that = null;*/
     },
     onEnterTransitionDidFinish:function () {
         this._arrayMakeObjectsPerformSelector(this.getChildren(), "onEnter");
     },
     hide:function () {
-        this.style.visibility = "hidden";
+        this.dom.style.display = "none";
     },
     show:function () {
-        this.style.visibility = "visible";
+        this.dom.style.display = "block";
     },
     pauseSchedulerAndActions:function () {
         cc.Scheduler.sharedScheduler().pauseTarget(this);
@@ -426,15 +455,6 @@ cc.domNode = cc.Class.extend({
             }
         }
     },
-    id:function (x) {
-        if (x != null) {
-            this.dom.id = x;
-        }
-        else {
-            return this.dom.id;
-        }
-    },
-
 
     //CCNODE stuff
     cleanup:function () {
@@ -451,11 +471,29 @@ cc.domNode = cc.Class.extend({
     unscheduleAllSelectors:function () {
         cc.Scheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
     }
-
 });
+cc.domNode.DomContainer = function () {
+    if (!cc.domNode._domContainer) {
+        var canvas = cc.canvas;
+        canvas.style.zIndex = 0;
+        cc.domNode._container = cc.$new(cc.TAG);
+        cc.domNode._container.id = "Cocos2dGameContainer";
+        cc.domNode._container.style.width = canvas.offsetWidth + "px";
+        cc.domNode._container.style.height = canvas.offsetHeight + "px";
+        cc.domNode._container.style.overflow = "hidden";
+        //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
+        cc.domNode._domContainer = cc.$new(cc.TAG);
+        cc.domNode._domContainer.id = "DOMContainer";
+        cc.domNode._domContainer.style.position="relative";
+        cc.domNode._domContainer.style.top = "100%";
+        cc.domNode._container.appendChild(cc.domNode._domContainer);
+        document.body.insertBefore(cc.domNode._container, canvas);
+        cc.domNode._container.appendChild(canvas);
+    }
+    return cc.domNode._domContainer;
+};
 cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
     var lDiv = cc.$new('lDiv');
-
     document.body.appendChild(lDiv);
     lDiv.style.fontSize = (isNaN(pFontSize)) ? pFontSize : ("" + pFontSize + "px");
     lDiv.style.position = "absolute";
@@ -478,165 +516,126 @@ cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
 
     return lResult;
 };
+
+cc.domNode.implement(cc.domNodeMethods);
+cc.Node.implement(cc.domNodeMethods);
 cc.Node.implement({
-    updateDom:function () {
-        if (this.dom != null) {
-            var size = this.getContentSize();
-            if (!size.height) {//TODO, this is because some scene/layer dont set their content size in constructor
-                size.height = cc.canvas.height;
-                size.width = cc.canvas.width;
+    setParent:function (p) {
+        if(!p)
+        {
+            //try to remove parent
+            if(this._m_pParent.dom && this.dom && this.dom.parentNode == this._m_pParent.dom){
+                this._m_pParent.dom.removeChild(this.dom);
             }
-            var rot = this.getRotation();
-            var pos = this.getPosition();
-            var skewX = this.getSkewX();
-            var skewY = this.getSkewY();
-            var scaleX = this.getScaleX();
-            var scaleY = this.getScaleY();
-            var style = this.dom.style;
-            style.visibility = "hidden";
-            style.width = size.width + "px";
-            //style.height = size.height+"px";
-            //style.border = "1px red solid";
-            //style.pointerEvents="none";
-            style[cc.CSS3.origin] = (this.getAnchorPoint().x * 100) + "% " + (this.getAnchorPoint().y * size.height) + "px";
-            //style[cc.CSS3.origin]=(this.getAnchorPoint().x*100)+"% "+(this.getAnchorPoint().y*100)+"%";
-            if (this._m_bIsRelativeAnchorPoint) {
-                style.left = "-" + (size.width * this.getAnchorPoint().x) + "px";
-                style.top = (size.height * this.getAnchorPoint().y) + "px";
-            }
-            else {
-                style.left = 0;
-                style.top = 0;
-            }
-            cc.CSS3.Transform(this.dom, cc.CSS3.Translate(pos.x, pos.y + size.height, this.dom),
-                cc.CSS3.Rotate(rot),
-                cc.CSS3.Scale(scaleX, scaleY),
-                cc.CSS3.Skew(skewX, -skewY));
-            style.visibility = "visible";
-            this.dom.setAttribute("fheight", this.getContentSize().height);
-        }
-    },
-    setRotation:function (newRotation) {
-        this._m_fRotation = newRotation;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
-        this.updateDom();
-    },
-    setScale:function (scale) {
-        this._m_fScaleX = scale;
-        this._m_fScaleY = scale;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
-        this.updateDom();
-    },
-    setScaleX:function (newScaleX) {
-        this._m_fScaleX = newScaleX;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
-        this.updateDom();
-    },
-    setScaleY:function (newScaleY) {
-        this._m_fScaleY = newScaleY;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
-        this.updateDom();
-    },
-    setPosition:function (newPosition) {
-        this._m_tPosition = newPosition;
-        if (cc.CONTENT_SCALE_FACTOR() == 1) {
-            this._m_tPositionInPixels = this._m_tPosition;
-        }
-        else {
-            this._m_tPositionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
-        }
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
-        this.updateDom();
-    },
-    setPositionInPixels:function (newPosition) {
-        this._m_tPositionInPixels = newPosition;
-        if (cc.CONTENT_SCALE_FACTOR() == 1) {
-            this._m_tPosition = this._m_tPositionInPixels;
-        } else {
-            this._m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
-        }
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
-        this.updateDom();
-    },
-    setSkewX:function (newSkewX) {
-        this._m_fSkewX = newSkewX;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
-        this.updateDom();
-    },
-    setSkewY:function (newSkewY) {
-        this._m_fSkewY = newSkewY;
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-        }
-        this.updateDom();
-    },
-    makeDiv:function (p) {
-        p.dom = cc.$new("div");
-        var style = p.dom.style;
-        style.position = "absolute";
-        p.updateDom();
-        return p.dom;
-    },
-    setParent:function(p){
-/*        this._m_pParent = Var;
-        if(!this.dom)cc.makeDiv(this);
-        if(this._m_pParent){
-            if(!this._m_pParent.dom){//if parent dont have dom
-                cc.makeDiv(this._m_pParent);
-            }
-            //parent appendchild this node
-            this._m_pParent.dom.appendChild(this.dom);
-        }*/
-        var child = this;
-        this._m_pParent = p;
-        this.makeParentDivs(child);
-    },
-    makeParentDivs:function(p){
-        if(p.dom == null)cc.makeDiv(p);
-        if(p.getParent() != null){
-            if(p.getParent().dom == null){
-                cc.makeDiv(p.getParent());
-            }
-            p.getParent().dom.appendChild(p.dom);
-            this.makeParentDivs(p.getParent());
+            this._m_pParent = p;
         }
         else{
-            var container = cc.$("#domlayers") || cc.setupHTML(this);
-            container.appendChild(p.dom);
+            this._m_pParent = p;
+            if(this.dom){
+                this.setParentDiv(p);
+            }
         }
+        //this._updateAnchorPoint();
+    },
+    onEnter:function(){
+        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
+        this.resumeSchedulerAndActions();
+        this._m_bIsRunning = true;
+        //if this node has a dom element attached, and it is the current running scene, we finally attach it to the dom container :)
+        if(this.dom && this == cc.Director.sharedDirector().getRunningScene()){
+            cc.domNode.DomContainer().appendChild(this.dom);
+            this.show();
+        }
+    },
+    setContentSizeInPixels:function (size) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSizeInPixels)) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this._m_tContentSizeInPixels = size;
+            if (cc.CONTENT_SCALE_FACTOR() == 1) {
+                this._m_tContentSize = this._m_tContentSizeInPixels;
+            } else {
+                this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
+            }
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
+            this._updateAnchorPoint();
+        }
+        if(this.dom)
+        this.dom.style.maxHeight = size.height+"px";
+    },
+    setContentSize:function (size) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this._m_tContentSize = size;
+
+            if (cc.CONTENT_SCALE_FACTOR() == 1) {
+                this._m_tContentSizeInPixels = this._m_tContentSize;
+            }
+            else {
+                this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+            }
+
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this.setNodeDirty();
+            this._updateAnchorPoint();
+        }
+        if(this.dom)
+            this.dom.style.maxHeight = size.height+"px";
+    },
+    setAnchorPoint:function (point) {
+
+        if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
+            //save dirty region when before change
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+
+            this._m_tAnchorPoint = point;
+            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
+                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+
+            //save dirty region when after changed
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this.setNodeDirty();
+        }
+        if(this.dom){
+            var size = this.getContentSize();
+            var s = point;
+            if (this._m_bIsRelativeAnchorPoint) {
+                this.dom.style.left = "-" + (s.x * size.width) + "px";
+                this.dom.style.top = (s.y * size.height) + "px";
+                this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";
+            }
+            else {
+                this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";
+                this.dom.style.top = 0;
+                this.dom.style.left = 0;
+            }
+            this.dom.style.width = size.width + "px";
+            this.dom.style.maxHeight = size.height + "px";
+        }
+
     }
 });
-cc.LayerColor.implement({
-    setOpacity:function(Var){
-        this._m_cOpacity = Var;
-        this._updateColor();
+if (cc.LayerColor != null) {
+    cc.LayerColor.implement({
+        setOpacity:function(Var){
+            this._m_cOpacity = Var;
+            this._updateColor();
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-        this.setNodeDirty();
-        this.dom.style.opacity = Var/255;
-    }
-});
+            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            this.setNodeDirty();
+            if(this.dom){
+                this.dom.style.opacity = Var/255;
+            }
 
-//TODO, change -1 to cc.kCCNodeTagInvalid
+        }
+    });
+}

@@ -168,7 +168,7 @@ var Helloworld = cc.Layer.extend({
         cc.renderContext.scale(xScale, xScale);
         cc.Director.sharedDirector().setContentScaleFactor(xScale);
         domlayer.style[cc.CSS3.origin] = "0% 0%";
-        domlayer.style[cc.CSS3._trans] = cc.CSS3.Scale(xScale,xScale);
+        domlayer.style[cc.CSS3.transform] = cc.CSS3.Scale(xScale,xScale);
         domlayer.style.width=480+"px";
         //domlayer.style.height = 320+"px";
         container.style.left = ((window.innerWidth - 480*xScale)/2)+"px";

@@ -48,17 +48,23 @@ cc.Layer = cc.Node.extend({
         this._super();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_bIsRelativeAnchorPoint = false;
-
-        this._m_bIsAccelerometerEnabled = false;
-    },
-
-    init:function () {
+        //this.initLayer();
         var pDirector = cc.Director.sharedDirector();
         if (!pDirector) {
             return false;
         }
         this.setContentSize(pDirector.getWinSize());
         this._m_bIsTouchEnabled = false;
+        this._m_bIsAccelerometerEnabled = false;
+    },
+
+    init:function () {
+        /*var pDirector = cc.Director.sharedDirector();
+        if (!pDirector) {
+            return false;
+        }
+        this.setContentSize(pDirector.getWinSize());
+        this._m_bIsTouchEnabled = false;*/
 
         // success
         return true;
@@ -255,10 +261,10 @@ cc.LayerColor = cc.Layer.extend({
 
     /// ColorLayer
     ctor:function () {
-        this._super();
         this._m_pSquareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
         this._m_pSquareColors = [new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)];
         this._m_tColor = new cc.Color3B(0, 0, 0);
+        this._super();
     },
 
     // Opacity and RGB color protocol

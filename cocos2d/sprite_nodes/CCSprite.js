@@ -1206,7 +1206,7 @@ cc.Sprite = cc.Node.extend({
 
         this.updateColor();
     },
-    getColor:function () {
+     getColor:function () {
         if (this._m_bOpacityModifyRGB) {
             return this._m_sColorUnmodified;
         }
