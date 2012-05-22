@@ -696,3 +696,115 @@ cc.LayerMultiplex.node = function () {
     }
     return null;
 };
+
+
+cc.LazyLayer = cc.Layer.extend({
+    _layerCanvas:null,
+    _layerContext:null,
+    _isNeedUpdate:false,
+    _canvasZOrder: -10,
+
+    ctor:function(){
+        this._super();
+
+        //setup html
+        this._setupHtml();
+    },
+
+    setLayerZOrder:function(zOrder){
+        if(zOrder >= 0){
+            throw "LazyLayer zOrder must Less than Zero.Because LazyLayer is a background Layer!";
+        }
+        this._canvasZOrder = zOrder;
+        this._layerCanvas.style.zIndex = this._canvasZOrder;
+    },
+
+    getLayerZOrder:function(){
+        return this._canvasZOrder;
+    },
+
+    _setupHtml:function(){
+        var gameContainer = cc.canvas.parentNode;
+        this._layerCanvas = document.createElement("canvas");
+        this._layerCanvas.width = cc.canvas.width;
+        this._layerCanvas.height = cc.canvas.height;
+        this._layerCanvas.id = "lazyCanvas" +  Date.now();
+        this._layerCanvas.style.zIndex = this._canvasZOrder;
+        this._layerCanvas.style.position = "absolute";
+        this._layerCanvas.style.top = "0";
+        this._layerCanvas.style.left = "0";
+        this._layerContext = this._layerCanvas.getContext("2d");
+        this._layerContext.fillStyle = "rgba(0,0,0,1)";
+        this._layerContext.translate(0, this._layerCanvas.height);
+        gameContainer.appendChild(this._layerCanvas);
+        var selfPointer = this;
+        window.addEventListener("resize", function (event) {
+            selfPointer.adjustSizeForCanvas();
+        });
+    },
+
+    adjustSizeForCanvas:function(){
+        this._isNeedUpdate = true;
+        this._layerCanvas.width = cc.canvas.width;
+        this._layerCanvas.height = cc.canvas.height;
+        var xScale = cc.canvas.width / cc.originalCanvasSize.width ;
+        var yScale = cc.canvas.height / cc.originalCanvasSize.height;
+        if (xScale > yScale) {
+            xScale = yScale;
+        }
+        this._layerContext.translate(0, this._layerCanvas.height);
+        this._layerContext.scale(xScale, xScale);
+    },
+
+    visit:function(){
+        // quick return if not visible
+        if (!this._m_bIsVisible) {
+            return;
+        }
+        if(!this._isNeedUpdate){
+            return;
+        }
+
+        this._isNeedUpdate = false;
+        var context = this._layerContext;
+        context.save();
+
+        context.clearRect(0, 0, this._layerCanvas.width, -this._layerCanvas.height);
+
+        if (this._m_pGrid && this._m_pGrid.isActive()) {
+            this._m_pGrid.beforeDraw();
+            this.transformAncestors();
+        }
+
+        //this.transform(context);
+        if (this._m_pChildren) {
+            // draw children zOrder < 0
+            for (var i = 0; i < this._m_pChildren.length; i++) {
+                var pNode = this._m_pChildren[i];
+                if (pNode && pNode._m_nZOrder < 0) {
+                    pNode.visit(context);
+                }
+            }
+        }
+
+        // draw children zOrder >= 0
+        if (this._m_pChildren) {
+            for (var i = 0; i < this._m_pChildren.length; i++) {
+                var pNode = this._m_pChildren[i];
+                if (pNode && pNode._m_nZOrder >= 0) {
+                    pNode.visit(context);
+                }
+            }
+        }
+
+        if (this._m_pGrid && this._m_pGrid.isActive()) {
+            this._m_pGrid.afterDraw(this);
+        }
+        context.restore();
+    },
+
+    _setNodeDirtyForCache:function () {
+        this._isCacheDirty = true;
+        this._isNeedUpdate = true;
+    }
+});
