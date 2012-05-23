@@ -47,12 +47,14 @@ var PongLayer = cc.Layer.extend({
     _ball:null,
     _paddles:[],
     _ballStartingVelocity:cc.PointZero(),
+    _winSize:null,
 
     ctor:function () {
         this._ballStartingVelocity = cc.PointMake(20.0, -100.0);
+        this._winSize = cc.Director.sharedDirector().getWinSize();
 
         this._ball = Ball.ballWithTexture(cc.TextureCache.sharedTextureCache().addImage(s_Ball));
-        this._ball.setPosition(cc.PointMake(160.0, 240.0));
+        this._ball.setPosition(cc.PointMake(this._winSize.width /2, this._winSize.height /2));
         this._ball.setVelocity(this._ballStartingVelocity);
         this.addChild(this._ball);
 
@@ -61,19 +63,19 @@ var PongLayer = cc.Layer.extend({
         this._paddles = [];
 
         var paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(160, 15));
+        paddle.setPosition(cc.PointMake(this._winSize.width/2, 15));
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(160, 480 - kStatusBarHeight - 15));
+        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - kStatusBarHeight - 15));
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(160, 100));
+        paddle.setPosition(cc.PointMake(this._winSize.width/2, 100));
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(160, 480 - kStatusBarHeight - 100));
+        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - kStatusBarHeight - 100));
         this._paddles.push(paddle);
 
         for (var i = 0; i < this._paddles.length; i++) {
@@ -92,7 +94,7 @@ var PongLayer = cc.Layer.extend({
             this._ballStartingVelocity = cc.ccpMult(this._ballStartingVelocity, -1);
         }
         this._ball.setVelocity(this._ballStartingVelocity);
-        this._ball.setPosition(cc.PointMake(160.0, 240.0));
+        this._ball.setPosition(cc.PointMake(this._winSize.width /2, this._winSize.height /2));
 
         // TODO -- scoring
     },
@@ -106,7 +108,7 @@ var PongLayer = cc.Layer.extend({
             this._ball.collideWithPaddle(this._paddles[i]);
         }
 
-        if (this._ball.getPosition().y > 480 - kStatusBarHeight + this._ball.radius())
+        if (this._ball.getPosition().y > this._winSize.height - kStatusBarHeight + this._ball.radius())
             this.resetAndScoreBallForPlayer(kLowPlayer);
         else if (this._ball.getPosition().y < -this._ball.radius())
             this.resetAndScoreBallForPlayer(kHighPlayer);
