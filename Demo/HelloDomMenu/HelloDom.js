@@ -60,19 +60,19 @@ var Helloworld = cc.Layer.extend({
         var selfPointer = this;
         //////////////////////////////
         // 1. super init first
-        var test = this._super();
+        /*var test = this._super();
         cc.LOG(test);
         if (!test) {
             return false;
-        }
+        }*/
 
         var size = cc.Director.sharedDirector().getWinSize();
 
-        this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        //this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         // position the label on the center of the screen
-        this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
+        //this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
         // add the label as a child to this layer
-        this.addChild(this.helloLb, 5);
+        //this.addChild(this.helloLb, 5);
 
         // add "HelloWorld" splash screen"
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
@@ -84,13 +84,13 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.pSprite, 0);
 
 
-        var actionTo = cc.SkewTo.actionWithDuration(2, 0., 45);
-        var actionToBack = cc.SkewTo.actionWithDuration(2, 0, 0);
-        var rotateTo = cc.RotateTo.actionWithDuration(2, 300.0);
-        var rotateToBack = cc.RotateTo.actionWithDuration(2, 0);
-        var actionScaleTo = cc.ScaleTo.actionWithDuration(2, -0.44, 0.47);
-        var actionScaleToBack = cc.ScaleTo.actionWithDuration(2, 1.0, 1.0);
-        var actionBy = cc.MoveBy.actionWithDuration(2, cc.PointMake(80, 80));
+        var actionTo = cc.SkewTo.actionWithDuration(5, 0., 45);
+        var actionToBack = cc.SkewTo.actionWithDuration(5, 0, 0);
+        var rotateTo = cc.RotateTo.actionWithDuration(5, 300.0);
+        var rotateToBack = cc.RotateTo.actionWithDuration(5, 0);
+        var actionScaleTo = cc.ScaleTo.actionWithDuration(5, -0.44, 0.47);
+        var actionScaleToBack = cc.ScaleTo.actionWithDuration(5, 1.0, 1.0);
+        var actionBy = cc.MoveBy.actionWithDuration(5, cc.PointMake(80, 80));
         var actionByBack = actionBy.reverse();
 
         //this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
@@ -101,15 +101,14 @@ var Helloworld = cc.Layer.extend({
         this.pSprite.runAction(cc.Sequence.actions(actionScaleTo, actionScaleToBack));
         this.pSprite.runAction(cc.Sequence.actions(actionBy, actionByBack));
 
-        this.circle = new CircleSprite();
+/*        this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40, 280));
         this.addChild(this.circle, 2);
-        this.circle.schedule(this.circle.myUpdate, 1 / 60);
+        this.circle.schedule(this.circle.myUpdate, 1 / 60);*/
 
-        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
+        //this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
 
         this.setIsTouchEnabled(true);
-
 
 
 
@@ -117,37 +116,19 @@ var Helloworld = cc.Layer.extend({
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
-            function () {
-                cc.canvas.width = 500;
-            });
+            this.menuCloseCallback);
         var text = cc.MenuItemFont.itemFromString("Hello Dom",this, function(){});
         text.setColor({r:255,g:0,b:0});
         text.setPosition(cc.ccp(cc.canvas.width/2,cc.canvas.height/2));
         pCloseItem.setPosition(cc.canvas.width - 20, 20);
         var pMenu = cc.Menu.menuWithItems(pCloseItem, text);
         this.pSprite.addChild(pMenu);
-        cc.fullscreen();
+        //cc.fullscreen();
         return true;
     },
     // a selector callback
     menuCloseCallback:function (pSender) {
-        cc.Director.sharedDirector().end();
-    },
-    ccTouchesBegan:function (pTouches, pEvent) {
-        this.bIsMouseDown = true;
-    },
-    ccTouchesMoved:function (pTouches, pEvent) {
-        if (this.bIsMouseDown) {
-            if (pTouches) {
-                this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y));
-            }
-        }
-    },
-    ccTouchesEnded:function (pTouches, pEvent) {
-        this.bIsMouseDown = false;
-    },
-    ccTouchesCancelled:function (pTouches, pEvent) {
-        console.log("ccTouchesCancelled");
+        history.go(-1);
     }
 
 });

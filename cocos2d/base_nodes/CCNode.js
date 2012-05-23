@@ -585,8 +585,9 @@ cc.Node = cc.Class.extend({
         var argnum = arguments.length;
         cc.Assert(child != null, "Argument must be non-nil");
         cc.Assert(child._m_pParent == null, "child already added. It can't be added again");
-        var tempzOrder = zOrder ? zOrder : child._m_nZOrder;
-        child._m_nTag = tag ? tag : child._m_nTag;
+        var tempzOrder = (zOrder!=null) ? zOrder : child.getZOrder();
+        var tmptag =  (tag!=null) ? tag : child.getTag();
+        child.setTag(tmptag);
 
         if (!this._m_pChildren) {
             this._childrenAlloc();
@@ -913,7 +914,6 @@ cc.Node = cc.Class.extend({
     onEnter:function () {
         this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
         this.resumeSchedulerAndActions();
-        this._m_bIsRunning = true;
     },
 
     /** callback that is called when the cc.Node enters in the 'stage'.

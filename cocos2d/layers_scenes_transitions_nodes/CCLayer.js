@@ -48,16 +48,24 @@ cc.Layer = cc.Node.extend({
         this._super();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
         this._m_bIsRelativeAnchorPoint = false;
-        this._m_bIsAccelerometerEnabled = false;
-    },
-
-    init:function () {
+        //this.initLayer();
         var pDirector = cc.Director.sharedDirector();
         if (!pDirector) {
             return false;
         }
         this.setContentSize(pDirector.getWinSize());
         this._m_bIsTouchEnabled = false;
+        this._m_bIsAccelerometerEnabled = false;
+    },
+
+    init:function () {
+        /*var pDirector = cc.Director.sharedDirector();
+        if (!pDirector) {
+            return false;
+        }
+        this.setContentSize(pDirector.getWinSize());
+        this._m_bIsTouchEnabled = false;*/
+
         // success
         return true;
     },
@@ -253,10 +261,10 @@ cc.LayerColor = cc.Layer.extend({
 
     /// ColorLayer
     ctor:function () {
-        this._super();
         this._m_pSquareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
         this._m_pSquareColors = [new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)];
         this._m_tColor = new cc.Color3B(0, 0, 0);
+        this._super();
     },
 
     // Opacity and RGB color protocol
@@ -634,19 +642,19 @@ cc.LayerGradient.node = function () {
 /// MultiplexLayer
 cc.LayerMultiplex = cc.Layer.extend({
     m_nEnabledLayer:0,
-    m_pLayers:[],
+    m_pLayers:null,
     ctor:function () {
         this._super();
     },
     initWithLayer:function (layer) {
         this.m_pLayers = [];
-        this.m_pLayers.push(layer);
+        this.m_pLayers.addObject(layer);
         this.m_nEnabledLayer = 0;
         this.addChild(layer);
         return true;
     },
-    initWithLayers:function (args) {
-        this.m_pLayers = args;
+    initWithLayers:function () {
+        this.m_pLayers = arguments;
         this.m_nEnabledLayer = 0;
         this.addChild(this.m_pLayers[this.m_nEnabledLayer]);
         return true;
@@ -656,8 +664,11 @@ cc.LayerMultiplex = cc.Layer.extend({
      */
     switchTo:function (n) {
         cc.Assert(n < this.m_pLayers.length, "Invalid index in MultiplexLayer switchTo message");
+
         this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
+
         this.m_nEnabledLayer = n;
+
         this.addChild(this.m_pLayers[n]);
     },
     /** release the current layer and switches to another layer indexed by n.
@@ -665,10 +676,14 @@ cc.LayerMultiplex = cc.Layer.extend({
      */
     switchToAndReleaseMe:function (n) {
         cc.Assert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
+
         this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
+
         //[layers replaceObjectAtIndex:enabledLayer withObject:[NSNull null]];
         this.m_pLayers[this.m_nEnabledLayer] = null;
+
         this.m_nEnabledLayer = n;
+
         this.addChild(this.m_pLayers[n]);
     }
 });

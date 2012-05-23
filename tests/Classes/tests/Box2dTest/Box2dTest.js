@@ -162,6 +162,7 @@ Box2DTestLayer = cc.Layer.extend({
                 var myActor = b.GetUserData();
                 myActor.setPosition(cc.PointMake(b.GetPosition().x * PTM_RATIO, b.GetPosition().y * PTM_RATIO));
                 myActor.setRotation(-1 * cc.RADIANS_TO_DEGREES(b.GetAngle()));
+                //console.log(b.GetAngle());
             }
         }
 

@@ -5,9 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-8
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -89,7 +86,7 @@ cc.loadjs = function (filename) {
 };
 
 //Canvas or DOM
-var menuType = "Canvas";
+var menuType = "DOM";
 
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('platform/CCCommon.js');//1
@@ -163,12 +160,11 @@ if (menuType == "DOM") {
     cc.loadjs('base_nodes/CCdomNode.js');
     cc.loadjs('menu_nodes/CCdomMenuItem.js');
     cc.loadjs('menu_nodes/CCdomMenu.js');
-    cc.loadjs('../tests/testbasicDom.js');
 } else {
     cc.loadjs('menu_nodes/CCMenuItem.js');
     cc.loadjs('menu_nodes/CCMenu.js');
-    cc.loadjs('../tests/testbasic.js');
 }
+cc.loadjs('../tests/testbasic.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXTiledMap.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXXMLParser.js');
 cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');
