@@ -79,9 +79,9 @@ cc.loadjs = function (filename) {
             };
             //preload ressources
             cc.Loader.shareLoader().preload([
-                {type:"image", src:"Resources/HelloWorld.png"}
-                //{type:"image", src:"Resources/CloseNormal.png"},
-                //{type:"image", src:"Resources/CloseSelected.png"}
+                {type:"image", src:"Resources/HelloWorld.png"},
+                {type:"image", src:"Resources/CloseNormal.png"},
+                {type:"image", src:"Resources/CloseSelected.png"}
             ]);
         }
     };
