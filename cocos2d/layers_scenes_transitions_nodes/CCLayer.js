@@ -724,7 +724,12 @@ cc.LazyLayer = cc.Layer.extend({
     },
 
     _setupHtml:function(){
-        var gameContainer = cc.canvas.parentNode;
+        var gameContainer = document.getElementById("Cocos2dGameContainer");
+        if(!gameContainer){
+            cc.setupHTML();
+            gameContainer = document.getElementById("Cocos2dGameContainer");
+        }
+
         this._layerCanvas = document.createElement("canvas");
         this._layerCanvas.width = cc.canvas.width;
         this._layerCanvas.height = cc.canvas.height;

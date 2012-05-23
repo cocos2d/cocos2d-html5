@@ -130,28 +130,7 @@ cc.makeDiv=function (p) {
     p.updateDom();
     return p.dom;
 };
-cc.setupHTML= function(obj){
-    var canvas = cc.canvas;
-    canvas.style.zIndex = 0;
-    var _container = cc.$new("div");
-    _container.id = "Cocos2dGameContainer";
-    _container.style.position = "absolute";
-    _container.style.overflow = "hidden";//TODO make it hidden when finished debugging
-    //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
-    _container.style.top = canvas.offsetTop+parseInt(canvas.style.borderTopWidth)+"px";
-    _container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
-    _container.style.height = canvas.clientHeight+"px";
-    _container.style.width = canvas.clientWidth+"px";
-    if(obj){
-        _container.setAttribute("fheight", obj.getContentSize().height);
-    }
-    var domlayer = cc.$new("div");
-    domlayer.id = "domlayers";
-    _container.appendChild(domlayer);
-    document.body.insertBefore(_container, canvas);
-    _container.appendChild(canvas);
-    return domlayer;
-};
+
 cc.domNode = cc.Class.extend({
     isDomNode:true,
     _domID:0,
