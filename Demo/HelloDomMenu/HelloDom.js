@@ -84,13 +84,13 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.pSprite, 0);
 
 
-        var actionTo = cc.SkewTo.actionWithDuration(20, 0., 45);
-        var actionToBack = cc.SkewTo.actionWithDuration(20, 0, 0);
-        var rotateTo = cc.RotateTo.actionWithDuration(20, 300.0);
-        var rotateToBack = cc.RotateTo.actionWithDuration(20, 0);
-        var actionScaleTo = cc.ScaleTo.actionWithDuration(20, -0.44, 0.47);
-        var actionScaleToBack = cc.ScaleTo.actionWithDuration(20, 1.0, 1.0);
-        var actionBy = cc.MoveBy.actionWithDuration(20, cc.PointMake(80, 80));
+        var actionTo = cc.SkewTo.actionWithDuration(5, 0., 45);
+        var actionToBack = cc.SkewTo.actionWithDuration(5, 0, 0);
+        var rotateTo = cc.RotateTo.actionWithDuration(5, 300.0);
+        var rotateToBack = cc.RotateTo.actionWithDuration(5, 0);
+        var actionScaleTo = cc.ScaleTo.actionWithDuration(5, -0.44, 0.47);
+        var actionScaleToBack = cc.ScaleTo.actionWithDuration(5, 1.0, 1.0);
+        var actionBy = cc.MoveBy.actionWithDuration(5, cc.PointMake(80, 80));
         var actionByBack = actionBy.reverse();
 
         //this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
@@ -129,22 +129,6 @@ var Helloworld = cc.Layer.extend({
     // a selector callback
     menuCloseCallback:function (pSender) {
         history.go(-1);
-    },
-    ccTouchesBegan:function (pTouches, pEvent) {
-        this.bIsMouseDown = true;
-    },
-    ccTouchesMoved:function (pTouches, pEvent) {
-        if (this.bIsMouseDown) {
-            if (pTouches) {
-                this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y));
-            }
-        }
-    },
-    ccTouchesEnded:function (pTouches, pEvent) {
-        this.bIsMouseDown = false;
-    },
-    ccTouchesCancelled:function (pTouches, pEvent) {
-        console.log("ccTouchesCancelled");
     }
 
 });

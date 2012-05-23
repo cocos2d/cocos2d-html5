@@ -258,7 +258,7 @@ cc.RenderTexture = cc.Node.extend({
             if (rect) {
                 this.context.clearRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
             } else {
-                this.context.clearRect(0, -this.canvas.height, this.canvas.width, this.canvas.height);
+                this.context.clearRect(0, 0, this.canvas.width, -this.canvas.height);
             }
         }else {
             this.beginWithClear(r, g, b, a);

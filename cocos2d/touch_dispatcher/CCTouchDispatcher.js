@@ -43,7 +43,7 @@ cc.TOUCHCANCELLED = 3;
 cc.TouchMax = 4;
 
 cc.less = function (p1, p2) {
-    return p1.getPriority() < p2.getPriority();
+    return p1.getPriority() > p2.getPriority();
 };
 
 cc.TouchHandlerHelperData = function (mType) {
@@ -166,11 +166,10 @@ cc.TouchDispatcher = cc.Class.extend({
                 }
                 if (h.getDelegate() == pHandler.getDelegate()) {
                     cc.Assert(0, "TouchDispatcher.forceAddHandler()");
-                    return;
+                    return pArray;
                 }
             }
         }
-
         return cc.ArrayAppendObjectToIndex(pArray, pHandler, u);
     },
 
@@ -352,9 +351,9 @@ cc.TouchDispatcher = cc.Class.extend({
                 }
 
                 if (pHandler  instanceof cc.TargetedTouchHandler) {
-                    this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
+                    this._m_pTargetedHandlers = this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
                 } else {
-                    this.forceAddHandler(pHandler, this._m_pStandardHandlers);
+                    this._m_pStandardHandlers = this.forceAddHandler(pHandler, this._m_pStandardHandlers);
                 }
             }
             this._m_pHandlersToAdd.length = 0;
@@ -378,7 +377,6 @@ cc.TouchDispatcher = cc.Class.extend({
     },
     touchesEnded:function (touches, pEvent) {
         if (this._m_bDispatchEvents) {
-            //cc.Log("touchesEnded: touches.Length is " + touches.length);
             this.touches(touches, pEvent, cc.TOUCHENDED);
         }
     },
@@ -446,7 +444,7 @@ cc.TouchDispatcher = cc.Class.extend({
         pArray.sort(cc.less);
     }
 });
-
+cc.TouchDispatcher.preTouchPoint = new cc.Point(0, 0);
 cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
     //register canvas mouse event
     element.addEventListener("mousedown", function (event) {
@@ -469,8 +467,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
         var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-        var touch = new cc.Touch();
-        touch.SetTouchInfo(0, mouseX, mouseY);
+        var touch = new cc.Touch(0, mouseX, mouseY);
+        touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+        cc.TouchDispatcher.preTouchPoint.x = mouseX;
+        cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
         var pSet = [];
         pSet.push(touch);
         cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet, null);
@@ -494,9 +495,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
         var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
+        var touch = new cc.Touch(0, mouseX, mouseY);
+        touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+        cc.TouchDispatcher.preTouchPoint.x = mouseX;
+        cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-        var touch = new cc.Touch();
-        touch.SetTouchInfo(0, mouseX, mouseY);
         var pSet = [];
         pSet.push(touch);
         cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet, null);
@@ -519,8 +522,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
         var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
         var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
-        var touch = new cc.Touch();
-        touch.SetTouchInfo(0, mouseX, mouseY);
+
+        var touch = new cc.Touch(0, mouseX, mouseY);
+        touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+        cc.TouchDispatcher.preTouchPoint.x = mouseX;
+        cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
         var pSet = [];
         pSet.push(touch);
 
@@ -559,8 +566,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             }
             var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
-            var touch = new cc.Touch();
-            touch.SetTouchInfo(0, mouseX, mouseY);
+
+            var touch = new cc.Touch(0, mouseX, mouseY);
+            touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+            cc.TouchDispatcher.preTouchPoint.x = mouseX;
+            cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
             pSet.push(touch);
         }
         cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet, null);
@@ -594,8 +605,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             }
             var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
-            var touch = new cc.Touch();
-            touch.SetTouchInfo(0, mouseX, mouseY);
+
+            var touch = new cc.Touch(0, mouseX, mouseY);
+            touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+            cc.TouchDispatcher.preTouchPoint.x = mouseX;
+            cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
             pSet.push(touch);
         }
         cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet, null);
@@ -629,8 +644,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             }
             var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
-            var touch = new cc.Touch();
-            touch.SetTouchInfo(0, mouseX, mouseY);
+
+            var touch = new cc.Touch(0, mouseX, mouseY);
+            touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+            cc.TouchDispatcher.preTouchPoint.x = mouseX;
+            cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
             pSet.push(touch);
         }
         cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet, null);
@@ -664,8 +683,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             }
             var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
-            var touch = new cc.Touch();
-            touch.SetTouchInfo(0, mouseX, mouseY);
+
+            var touch = new cc.Touch(0, mouseX, mouseY);
+            touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+            cc.TouchDispatcher.preTouchPoint.x = mouseX;
+            cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
             pSet.push(touch);
         }
         cc.TouchDispatcher.sharedDispatcher().touchesCancelled(pSet, null);

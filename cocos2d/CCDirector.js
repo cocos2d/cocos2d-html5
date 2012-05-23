@@ -310,7 +310,7 @@ cc.Director = cc.Class.extend({
 
     },
 
-    _fullRect:null,
+    //_fullRect:null,
     // Draw the SCene
     drawScene:function () {
         // calculate "global" dt
@@ -320,8 +320,9 @@ cc.Director = cc.Class.extend({
         if (!this._m_bPaused) {
             cc.Scheduler.sharedScheduler().tick(this._m_fDeltaTime);
         }
-        this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
-        cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
+        //this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+        //cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
+        cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
         /*
          var isSaveContext = false;
@@ -473,15 +474,16 @@ cc.Director = cc.Class.extend({
         return this._m_pNotificationNode;
     },
     getWinSize:function () {
-        var S = (this._m_obWinSizeInPoints);
-
+        var tmp = this._m_obWinSizeInPoints;
         if (this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeLeft || this._m_eDeviceOrientation == cc.DeviceOrientationLandscapeRight) {
             // swap x,y in landspace mode
-            var tmp = S;
-            S.width = tmp.height;
-            S.height = tmp.width;
+            var s = new cc.SizeZero();
+            s.width = tmp.height;
+            s.height = tmp.width;
+            return s;
         }
-        return S;
+
+        return tmp;
     },
     getWinSizeInPixels:function () {
         var s = this.getWinSize();
@@ -687,13 +689,20 @@ cc.Director = cc.Class.extend({
     setDeviceOrientation:function (kDeviceOrientation) {
         var eNewOrientation = cc.Application.sharedApplication().setOrientation(kDeviceOrientation);
 
-        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) { 
+        if ((this._m_eDeviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) {
             this._m_eDeviceOrientation = eNewOrientation;
             if (cc.renderContextType == cc.kCanvas) {
                 var height = cc.canvas.height;
                 cc.canvas.height = cc.canvas.width;
                 cc.canvas.width = height;
                 cc.renderContext.translate(0, cc.canvas.height);
+                if(cc.domNode){
+                    var cont = cc.$("#Cocos2dGameContainer");
+                    if(cont){
+                        cont.style.width = cc.canvas.width+"px";
+                        cont.style.height = cc.canvas.height+"px";
+                    }
+                }
             }
         }
         else {

@@ -5,9 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-22
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -99,7 +96,7 @@ cc.Menu = cc.domNode.extend({
             }
         }
     },
-    onExit:function(){
+    cleanup:function(){
         this._super();
         //everytime a dom menu exits, do the clean up
         //first, kill all its children

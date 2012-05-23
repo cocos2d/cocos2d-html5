@@ -33,11 +33,11 @@ cc.Loader = cc.Class.extend({
     isLoadedComplete:function () {
         var loaderCache = cc.Loader.shareLoader();
         if (loaderCache.m_sLoadedResourceCount == loaderCache.m_sResourceCount) {
-            cc.LOG("Load Complete!");
+            cc.LOG("cocos2d:Load Complete!");
             if (loaderCache.onload) {
                 loaderCache.m_Timer = setTimeout(loaderCache.onload, 16);
             } else {
-                cc.Assert("no load callback defined");
+                cc.Assert("cocos2d:no load callback defined");
             }
         }
         else {
@@ -91,11 +91,12 @@ cc.Loader = cc.Class.extend({
                     break;
                 case "plist":
                 case "tmx":
+                case "fnt":
                     shareParser.preloadPlist(res[i].src);
                     this.m_sResourceCount += 1;
                     break;
                 case "tga":
-                    cc.LOG("cocos2d:not implemented yet")
+                    //cc.LOG("cocos2d:not implemented yet")
                     break;
                 default:
                     throw "cocos2d:unknow type : " + res[i].type;

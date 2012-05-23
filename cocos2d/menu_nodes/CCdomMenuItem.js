@@ -5,9 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-22
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -78,7 +75,7 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
     });
     if(callback!= null){
         that._image.addEventListener("click", function(){
-            callback.call(target,arguments);
+            _domLabelCallback(that, target, callback);
         });
 /*        that._image.addEventListener("touchstart", function(){
             if(selected!=null)this.src = selected;
@@ -92,6 +89,13 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
     }
     //attach callback to onclick
     that.dom.style.cursor = (callback) ? "pointer" : "default";
+    function _domLabelCallback(event, target, selector){
+        if (target && (typeof(selector) == "string")) {
+            target[selector](event);
+        } else if (target && (typeof(selector) == "function")) {
+            selector.call(target,event);
+        }
+    }
     return that;
 
 };
@@ -131,7 +135,7 @@ cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four,
         evt.preventDefault();
         return false;
     });
-    that._image.addEventListener("click", function(event){_domSpriteCallback(event, target, selector)});
+    that._image.addEventListener("click", function(event){_domSpriteCallback(that, target, selector)});
     that._image.addEventListener("touchstart", function(event){
         this.src = selected;
         _domSpriteCallback(event, target, selector);
@@ -140,7 +144,7 @@ cc.MenuItemSprite.itemFromNormalSprite = function(normal, selected, three, four,
         this.src = normal;
     });
     //attach callback to onclick
-    that.style.cursor = (callback) ? "pointer" : "default";
+    that.dom.style.cursor = (selector) ? "pointer" : "default";
     return that;
     function _domSpriteCallback(event, target, selector){
         if (target && (typeof(selector) == "string")) {
@@ -172,6 +176,12 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
         this.setPosition(label.getPositionX(), label.getPositionY());
         this._updateTransform();
+    },
+    getDisabledColor:function () {
+        return this._m_tDisabledColor;
+    },
+    setDisabledColor:function (color) {
+        this._m_tDisabledColor = color;
     }
 });
 cc.MenuItemLabel.itemWithLabel = function (label, two, three, four) {
@@ -194,8 +204,8 @@ cc.MenuItemLabel.itemWithLabel = function (label, two, three, four) {
         //that.style.cursor = "pointer";
     }
     else if (arguments.length == 3) {
-        that.dom.addEventListener("click", function(event){_domLabelCallback(event, two, three)});
-        that.dom.addEventListener("touchstart", function(event){_domLabelCallback(event, two, three)});
+        that.dom.addEventListener("click", function(event){_domLabelCallback(that, two, three)});
+        that.dom.addEventListener("touchstart", function(event){_domLabelCallback(that, two, three)});
         that.dom.style.cursor = "pointer";
     }
     return that;
@@ -222,10 +232,10 @@ cc.MenuItemFont = cc.MenuItem.extend({
         this.dom.style.textAlign = "center";
         var tmp = cc.domNode.getTextSize(this._text,cc._fontSize, cc._fontName);
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
-
+        var that = this;
         if(selector != null){
-            this.dom.addEventListener("click",function(event){_domFontCallback(event)});
-            this.dom.addEventListener("touchstart",function(event){_domFontCallback(event)});
+            this.dom.addEventListener("click",function(event){_domFontCallback(that)});
+            this.dom.addEventListener("touchstart",function(event){_domFontCallback(that)});
             this.dom.style.cursor = "pointer";
         }
         //this.update();
@@ -239,7 +249,7 @@ cc.MenuItemFont = cc.MenuItem.extend({
         }
     },
     setFontSizeObj:function(s){
-        this.style.fontSize = s+px;
+        this.dom.style.fontSize = s+"px";
         var tmp = cc.domNode.getTextSize(this._text,cc._fontSize, cc._fontName);
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
     },

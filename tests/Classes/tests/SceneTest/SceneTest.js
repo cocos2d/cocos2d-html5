@@ -151,6 +151,7 @@ SceneTestLayer3 = cc.LayerColor.extend({
 
 
     ctor:function () {
+        this._super();
         this.setIsTouchEnabled(true);
         var label = cc.LabelTTF.labelWithString("Touch to popScene", "Arial", 28);
         this.addChild(label);
@@ -164,7 +165,6 @@ SceneTestLayer3 = cc.LayerColor.extend({
         var rotate = cc.RotateBy.actionWithDuration(2, 360);
         var repeat = cc.RepeatForever.actionWithAction(rotate);
         sprite.runAction(repeat);
-        this._super();
     },
 
     testDealloc:function (dt) {

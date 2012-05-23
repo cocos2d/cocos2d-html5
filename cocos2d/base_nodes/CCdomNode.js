@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-22
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -49,24 +45,23 @@ cc.Browser = {};
 cc.CSS3 = {};
 (function () {
     var res;
-    var translate;
     switch (cc.Browser.type) {
         case "firefox":
             res = "Moz";
-            translate = "translate3d(";
+            cc.CSS3.hd = true;
             break;
         case "chrome":
         case "safari":
             res = "webkit";
-            translate = "translate3d(";
+            cc.CSS3.hd = true;
             break;
         case "opera":
             res = "O";
-            translate = "translate3d(";
+            cc.CSS3.hd = false;
             break;
         case "ie":
             res = "ms";
-            translate = "translate(";
+            cc.CSS3.hd = false;
     }
     //TODO these works for firefox and webkit, havnt test in other browsers yet
     cc.CSS3.transform = res + "Transform";
@@ -79,12 +74,12 @@ cc.domNodeMethods = {
     //update the transform css, including translate, rotation, skew, scale
     _updateTransform:function () {
         //var height = (this.dom.node.getParent()) ? this.dom.node.getParent().getContentSize().height : cc.Director.sharedDirector().getWinSize().height;
-        var css = "translate3d(";
+        var css = (cc.CSS3.hd)? "translate3d(": "translate(";
         css += this.getPositionX();
         css += "px, ";
         //css += (height - this.getContentSize().height-this.getPositionY());
         css += -this.getPositionY();
-        css += "px, 0) rotateZ(";
+        css += (cc.CSS3.hd)? "px, 0) rotateZ(":"px) rotate(" ;
         css += this.getRotation();
         css += "deg) scale(";
         css += this.getScaleX();
@@ -116,7 +111,7 @@ cc.domNodeMethods = {
     initDom:function () {
         this.dom = cc.$new(cc.TAG);
         //reset the css as possible
-        var css = "position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:block; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff";
+        var css = "position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:none; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff; z-index:0;";
         if (cc.Browser.type == "chrome" || cc.Browser.type == "safari") css += " -webkit-perspective: 1000;";
         this.dom.style.cssText = css;
         this.dom.node = this;
@@ -146,6 +141,9 @@ cc.domNodeMethods = {
                 p.dom.className += type;
             }
             p.dom.appendChild(this.dom);
+            if(p.getIsRunning()){
+                p.show();
+            }
         }
 
         //if the parent also have a parent
@@ -188,10 +186,10 @@ cc.domNodeMethods = {
         }
     },
     hide:function () {
-        this.dom.style.visibility = "hidden";
+        this.dom.style.display = "none";
     },
     show:function () {
-        this.dom.style.visibility = "visible";
+        this.dom.style.display = "block";
     }
 };
 cc.domNode = cc.Class.extend({
@@ -233,7 +231,7 @@ cc.domNode = cc.Class.extend({
     },
     //Gets
     getZOrder:function () {
-        return this.dom.style.zIndex;
+        return parseInt(this.dom.style.zIndex);
     },
     getSkewX:function () {
         return this._skewX;
@@ -417,7 +415,7 @@ cc.domNode = cc.Class.extend({
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._m_bIsRunning = false;
-        //this._arrayMakeObjectsPerformSelector(this.getChildren(), "onExit");//dont need to tell children, as if the parent is destroyed the child is gone too?
+        this._arrayMakeObjectsPerformSelector(this.getChildren(), "onExit");
         this.hide();
         /*var that = cc.$("#" + this.id());
         var cur = this.dom;
@@ -542,9 +540,11 @@ cc.Node.implement({
         this.resumeSchedulerAndActions();
         this._m_bIsRunning = true;
         //if this node has a dom element attached, and it is the current running scene, we finally attach it to the dom container :)
-        if(this.dom && this == cc.Director.sharedDirector().getRunningScene()){
-            cc.domNode.DomContainer().appendChild(this.dom);
+        if(this.dom){
             this.show();
+            if(this == cc.Director.sharedDirector().getRunningScene()){
+                cc.domNode.DomContainer().appendChild(this.dom);
+            }
         }
     },
     setContentSizeInPixels:function (size) {

@@ -5,9 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-4-5
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -57,24 +54,22 @@ var TestScene = cc.Scene.extend({
 
     },
     MainMenuCallback:function () {
-        window.pScene = cc.Scene.node();
+        var pScene = cc.Scene.node();
         var pLayer = new TestController();
         pScene.addChild(pLayer);
         cc.Director.sharedDirector().replaceScene(pScene);
-    },
-    type:"testscene"
+    }
 });
 //Controller stuff
 var LINE_SPACE = 40;
 var s_pPathClose = null;
 var s_tCurPos = cc.PointZero();
+
 var TestController = cc.Layer.extend({
     _m_pItemMenu:null,
     _m_tBeginPos:cc.PointZero(),
     bIsMouseDown:false,
-    id:"test Controller",
     ctor:function () {
-        this._super();
         // add close menu
         if (!s_pPathClose) {
             s_pPathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");
@@ -87,28 +82,25 @@ var TestController = cc.Layer.extend({
 
         // add menu items for tests
         this._m_pItemMenu = cc.Menu.menuWithItems(null);//item menu is where all the label goes, and the one gets scrolled
-        var i = 0;
-        for (var text in g_aTestNames) {
-            var label = cc.LabelTTF.labelWithString(text, "Arial", 24);
+
+        for (var i =0,len = g_aTestNames.length;i < len;i++) {
+            var label = cc.LabelTTF.labelWithString(g_aTestNames[i], "Arial", 24);
             var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-            pMenuItem.id(text);
-            this._m_pItemMenu.addChild(pMenuItem);
-            pMenuItem.setPosition(s.width / 2, (s.height - (i + 1) * LINE_SPACE));
-            i++;
+            this._m_pItemMenu.addChild(pMenuItem,i  + 10000);
+            pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }
-        this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (i + 1) * LINE_SPACE));
+
+        this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (g_aTestNames.length + 1) * LINE_SPACE));
         this._m_pItemMenu.setPosition(s_tCurPos);
         this.setIsTouchEnabled(true);
         this.addChild(this._m_pItemMenu);
         this.addChild(pMenu, 1);
     },
     menuCallback:function (pSender) {
+        var nIdx = pSender.getZOrder() - 10000;
         // get the userdata, it's the index of the menu item clicked
-        //var pMenuItem = pSender;
-        var nIdx = pSender.target.id;
-
         // create the test scene and run it
-        var pScene = new window[g_aTestNames[nIdx]]();
+        var pScene = new window[g_aTestNames[nIdx]+"Scene"]();
         if (pScene) {
             pScene.runThisTest();
         }
@@ -122,7 +114,6 @@ var TestController = cc.Layer.extend({
             this._m_tBeginPos = pTouches[0].locationInView(0).y;
         }
         this.bIsMouseDown = true;
-
     },
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this.bIsMouseDown) {
@@ -136,10 +127,9 @@ var TestController = cc.Layer.extend({
                 this._m_pItemMenu.setPosition(cc.PointZero());
                 return;
             }
-            var testlength = 0;
-            for(var k in g_aTestNames){testlength++}
-            if (nextPos.y > ((testlength + 1) * LINE_SPACE - winSize.height)) {
-                this._m_pItemMenu.setPosition(cc.ccp(0, ((testlength + 1) * LINE_SPACE - winSize.height)));
+
+            if (nextPos.y > ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)) {
+                this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
             this._m_pItemMenu.setPosition(nextPos);
@@ -153,50 +143,49 @@ var TestController = cc.Layer.extend({
     }
 });
 
-var g_aTestNames = {
-    //"Accelerometer":"AccelerometerTestScene",
+var g_aTestNames = [
+    //"Accelerometer",
+    "ActionManagerTest",
+    "ActionsTest",
+    "Box2DTest",
+    //"Box2dTestBed",
+    //"BugsTest",
+    //"ChipmunkTest",
+    "ClickAndMoveTest",
+    "CocosDenshionTest",
+    "CocosNodeTest",
+    //"CurlTest",
+    "CurrentLanguageTest",
+    "DirectorTest",
+    "DrawPrimitivesTest",
+    "EaseActionsTest",
+    //"EffectsTest",
+    //"EffectAdvancedTest",
+    //"ExtensionsTest",
+    "FontTest",
+    //"HiResTest",
+    "IntervalTest",
+    //"KeypadTest",
+    "LabelTest",
+    "LayerTest",
+    "MenuTest",
+    //"MotionStreakTest",
+    "ParallaxTest",
+    "ParticleTest",
+    "PerformanceTest",
+    "ProgressActionsTest",
+    //"RenderTextureTest",
+    "RotateWorldTest",
+    "SceneTest",
+    "SchedulerTest",
+    "SpriteTest",
+    "TextInputTest",
+    //"Texture2DTest",
+    "TextureCacheTest",
+    "TileMapTest",
+    "TouchesTest",
+    "TransitionsTest"
+    //"UserDefaultTest",
+    //"ZwoptexTest",
 
-    "ActionManagerTest":"ActionManagerTestScene",
-    "ActionsTest":"ActionsTestScene",
-    "Box2dTest":"Box2DTestScene",
-    //"Box2dTestBed":"Box2dTestBedScene",
-    //"BugsTest":"BugsTestScene",
-    //"ChipmunkTest":"ChipmunkTestScene",
-    "ClickAndMoveTest":"ClickAndMoveTestScene",
-    "CocosDenshionTest":"CocosDenshionTestScene",
-    "CocosNodeTest":"CocosNodeTestScene",
-    //"CurlTest":"CurlTestScene",
-    "CurrentLanguageTest":"CurrentLanguageTestScene",
-    "DirectorTest":"DirectorTestScene",
-    "DrawPrimitivesTest":"DrawPrimitivesTestScene",
-    "EaseActionsTest":"EaseActionsTestScene",
-    //"EffectsTest":"EffectTestScene",
-    //"EffectAdvancedTest":"EffectAdvanceScene",
-    //"ExtensionsTest":"ExtensionsTestScene"
-    "FontTest":"FontTestScene",
-    //"HiResTest":"HiResTestScene",
-    "IntervalTest":"IntervalTestScene",
-    //"KeypadTest":"KeypadTestScene",
-    "LabelTest":"LabelTestScene",
-    "LayerTest":"LayerTestScene",
-    "MenuTest":"MenuTestScene",
-    //"MotionStreakTest":"MotionStreakTestScene",
-    "ParallaxTest":"ParallaxTestScene",
-    "ParticleTest":"ParticleTestScene",
-    "PerformanceTest":"PerformanceTestScene",
-    "ProgressActionsTest":"ProgressActionsTestScene",
-    //"RenderTextureTest":"RenderTextureScene",
-    "RotateWorldTest":"RotateWorldTestScene",
-    "SceneTest":"SceneTestScene",
-    "SchedulerTest":"SchedulerTestScene",
-    "SpriteTest":"SpriteTestScene",
-    "TextInputTest":"TextInputTestScene",
-    //"Texture2DTest":"TextureTestScene",
-    "TextureCacheTest":"TextureCacheTestScene",
-    "TileMapTest":"TileMapTestScene",
-    "TouchesTest":"PongScene",
-    "TransitionsTest":"TransitionsTestScene"
-    //"UserDefaultTest":"UserDefaultTestScene",
-    //"ZwoptexTest":"ZwoptexTestScene",
-
-};
+];
