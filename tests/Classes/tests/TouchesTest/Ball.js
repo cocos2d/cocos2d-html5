@@ -34,9 +34,9 @@ var Ball = cc.Sprite.extend({
     },
     move:function (delta) {
         this.setPosition(cc.ccpAdd(this.getPosition(), cc.ccpMult(this._velocity, delta)));
-
-        if (this.getPosition().x > 320 - this.radius()) {
-            this.setPosition(cc.ccp(320 - this.radius(), this.getPosition().y));
+        var winSize = cc.Director.sharedDirector().getWinSize();
+        if (this.getPosition().x > winSize.width - this.radius()) {
+            this.setPosition(cc.ccp(winSize.width - this.radius(), this.getPosition().y));
             this._velocity.x *= -1;
         } else if (this.getPosition().x < this.radius()) {
             this.setPosition(cc.ccp(this.radius(), this.getPosition().y));
@@ -76,7 +76,6 @@ var Ball = cc.Sprite.extend({
                 var velocityAngle = -cc.ccpToAngle(this._velocity) + 0.00000005 * hitAngle;
                 //this._velocity = -this._velocity.y;
                 this._velocity = cc.ccpMult(cc.ccpForAngle(velocityAngle), scalarVelocity);
-                //cc.Log("Velocity:" + this._velocity.x + "     " + this._velocity.y);
             }
         }
     },
