@@ -713,7 +713,7 @@ cc.LayerMultiplex.node = function () {
 };
 
 
-cc.LazyLayer = cc.Layer.extend({
+cc.LazyLayer = cc.Node.extend({
     _layerCanvas:null,
     _layerContext:null,
     _isNeedUpdate:false,
@@ -721,7 +721,7 @@ cc.LazyLayer = cc.Layer.extend({
 
     ctor:function(){
         this._super();
-
+        this.setAnchorPoint(new cc.Point(0,0));
         //setup html
         this._setupHtml();
     },
