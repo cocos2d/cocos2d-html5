@@ -38,7 +38,7 @@ var CircleSprite = cc.Sprite.extend({
         cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
     },
     myUpdate:function (dt) {
-        this._radians -= 6;
+        this._radians += 6;
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
     }
 });
@@ -92,8 +92,6 @@ var Helloworld = cc.Layer.extend({
         // add "HelloWorld" splash screen"
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
         this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
-        this.pSprite.setIsVisible(true);
-        this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.pSprite.setScale(0.5);
         this.pSprite.setRotation(180);
 
