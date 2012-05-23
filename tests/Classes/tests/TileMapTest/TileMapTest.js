@@ -494,7 +494,6 @@ var TMXReadWriteTest = TileDemo.extend({
         this.unschedule(this.removeTiles);
 
         var map = this.getChildByTag(kTagTileMap);
-        console.log(map)
 
         var layer = map.getChildByTag(0);
         var s = layer.getLayerSize();
