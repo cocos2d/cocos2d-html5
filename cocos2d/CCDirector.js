@@ -696,6 +696,13 @@ cc.Director = cc.Class.extend({
                 cc.canvas.height = cc.canvas.width;
                 cc.canvas.width = height;
                 cc.renderContext.translate(0, cc.canvas.height);
+                if(cc.domNode){
+                    var cont = cc.$("#Cocos2dGameContainer");
+                    if(cont){
+                        cont.style.width = cc.canvas.width+"px";
+                        cont.style.height = cc.canvas.height+"px";
+                    }
+                }
             }
         }
         else {

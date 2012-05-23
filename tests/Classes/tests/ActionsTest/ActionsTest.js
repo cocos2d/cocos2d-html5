@@ -30,17 +30,17 @@
 
 
 var actionTests = [
-    "ActionManual", //missing color tint
+    "ActionManual", //ok
     "ActionMove", //OK
     "ActionScale", //OK
     "ActionRotate", //OK
     "ActionSkew", //OK, Not in cocos2d-js
-    "ActionSkewRotateScale", //Buggy not in cocos2d-js
+    "ActionSkewRotateScale", //ok
     "ActionJump", //OK
     "ActionBezier", //Buggy?
     "ActionBlink", //OK
     "ActionFade", //OK
-    "ActionTint", //Missing color tint
+    "ActionTint", //ok
     "ActionSequence", //OK
     "ActionSequence2", //OK
     "ActionSpawn", //OK
@@ -48,14 +48,14 @@ var actionTests = [
     "ActionDelayTime", //OK
     "ActionRepeat", //OK
     "ActionRepeatForever", //OK
-    "ActionRotateToRepeat", //Buggy
-    "ActionRotateJerk", //Buggy
+    "ActionRotateToRepeat", //ok
+    "ActionRotateJerk", //ok
     "ActionCallFunc", //OK
     "ActionCallFuncND", //OK (cocos2d-X c+ bug/incomplete)
     "ActionReverseSequence", //OK
     "ActionReverseSequence2", //OK, Bug in Cocos2d-X implementation of FiniteTimeAction.reverse()
     //"ActionOrbit",//Not possible in canvas, requires sprite camera
-    "ActionFollow",//Buggy
+    //"ActionFollow",//Buggy
     "ActionAnimate"//Require Texture2d Implementation
 ];
 var s_nActionIdx = -1;

@@ -72,6 +72,7 @@ var TestController = cc.Layer.extend({
     _m_pItemMenu:null,
     _m_tBeginPos:cc.PointZero(),
     bIsMouseDown:false,
+    id:"test Controller",
     ctor:function () {
         this._super();
         // add close menu
