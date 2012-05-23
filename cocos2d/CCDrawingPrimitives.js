@@ -205,10 +205,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
 
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
         this._renderContext.beginPath();
-        var endAngle = angle + Math.PI * 2;
-        this._renderContext.arc(0|center.x,0|center.y,radius,angle,endAngle,false);
+        var endAngle = angle - Math.PI * 2;
+        this._renderContext.arc(0|center.x,0|-(center.y),radius,-angle,-endAngle,false);
         if(drawLineToCenter){
-            this._renderContext.lineTo(0|center.x,0|center.y);
+            this._renderContext.lineTo(0|center.x,0|-(center.y));
         }
         this._renderContext.stroke();
     },

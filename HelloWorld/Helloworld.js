@@ -38,7 +38,7 @@ var CircleSprite = cc.Sprite.extend({
         cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
     },
     myUpdate:function (dt) {
-        this._radians += 6;
+        this._radians -= 6;
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
     }
 });
