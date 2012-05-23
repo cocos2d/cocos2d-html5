@@ -42,6 +42,7 @@ cc.renderContext = null;
 cc.canvas = null;
 cc.gameDiv = null;
 cc.renderContextType = cc.kCanvas;
+cc.originalCanvasSize = new cc.Size(0,0);
 
 window.requestAnimFrame = (function () {
     return  window.requestAnimationFrame ||
@@ -97,7 +98,6 @@ cc.setup = function () {
                 cc.gameDiv = getElement;
                 cc.renderContextType = cc.kCanvas;
             }
-
             break;
         case 2:
             break;
@@ -107,20 +107,43 @@ cc.setup = function () {
 
     if (cc.renderContextType == cc.kCanvas) {
         cc.renderContext.translate(0, cc.canvas.height);
-        //cc.renderContext.scale(1,-1);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
+    cc.originalCanvasSize = new cc.Size(cc.canvas.width,cc.canvas.height);
 
     //binding window size
     /*
-    cc.canvas.addEventListener("resize", function () {
-        if (!cc.s_bFirstRun) {
-            cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
-        }
-    }, true);
-    */
+     cc.canvas.addEventListener("resize", function () {
+     if (!cc.s_bFirstRun) {
+     cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+     }
+     }, true);
+     */
 };
 
+cc.setupHTML= function(obj){
+    var canvas = cc.canvas;
+    canvas.style.position ="absolute";
+    canvas.style.top = 0;
+    canvas.style.left = 0;
+    canvas.style.zIndex = 0;
+    var _container = cc.$new("div");
+    _container.id = "Cocos2dGameContainer";
+    _container.style.position = "relative";
+    //_container.style.width = cc.canvas.width;
+    //_container.style.height = cc.canvas.height;
+    //_container.style.overflow = "hidden";//TODO make it hidden when finished debugging
+    //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
+    //_container.style.top = canvas.offsetTop+parseInt(canvas.style.borderTopWidth)+"px";
+    //_container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
+    //_container.style.height = canvas.clientHeight+"px";
+    //_container.style.width = canvas.clientWidth+"px";
+    if(obj){
+        _container.setAttribute("fheight", obj.getContentSize().height);
+    }
+    document.body.insertBefore(_container, canvas);
+    _container.appendChild(canvas);
+};
 
 cc.Application = cc.Class.extend({
     ctor:function () {

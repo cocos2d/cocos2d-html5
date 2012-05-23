@@ -47,7 +47,7 @@ var CircleSprite = cc.Sprite.extend({
 var Helloworld = cc.Layer.extend({
     bIsMouseDown:false,
     helloImg:null,
-    helloLb:null,
+    helloLabel:null,
     circle:null,
     pSprite:null,
 
@@ -55,15 +55,11 @@ var Helloworld = cc.Layer.extend({
         var selfPointer = this;
         //////////////////////////////
         // 1. super init first
-        var test = this._super();
-        cc.LOG(test);
-        if (!test) {
-            return false;
-        }
-
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
         //    you may modify it.
+        // ask director the window size
+        var size = cc.Director.sharedDirector().getWinSize();
 
         // add a "close" icon to exit the progress. it's an autorelease object
         var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
@@ -73,34 +69,33 @@ var Helloworld = cc.Layer.extend({
             function () {
                 history.go(-1);
             });
-        pCloseItem.setPosition(cc.canvas.width - 20, 20);
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
-        //pMenu.setPosition( cc.PointZero() );
-        //this.addChild(pMenu, 1);
+        pCloseItem.setAnchorPoint(new cc.Point(0.5,0.5));
 
+        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
+        pMenu.setPosition( cc.PointZero() );
+        this.addChild(pMenu, 1);
+        pCloseItem.setPosition(new cc.Point(size.width -20 , 20));
 
         /////////////////////////////
         // 3. add your codes below...
-        // ask director the window size
-        var size = cc.Director.sharedDirector().getWinSize();
-
         // add a label shows "Hello World"
         // create and initialize a label
-        this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        this.helloLabel = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
         // position the label on the center of the screen
-        this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
+        this.helloLabel.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
         // add the label as a child to this layer
-        this.addChild(this.helloLb, 5);
+        this.addChild(this.helloLabel, 5);
+
+        var lazyLayer = new cc.LazyLayer();
+        this.addChild(lazyLayer);
 
         // add "HelloWorld" splash screen"
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
         this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
-        this.pSprite.setIsVisible(true);
-        this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.pSprite.setScale(0.5);
         this.pSprite.setRotation(180);
-        this.addChild(this.pSprite, 0);
 
+        lazyLayer.addChild(this.pSprite, 0);
 
         var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
         var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
@@ -112,10 +107,11 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
+        this.helloLabel.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
 
         this.setIsTouchEnabled(true);
         this.adjustSizeForWindow();
+        lazyLayer.adjustSizeForCanvas();
 
         window.addEventListener("resize", function (event) {
             selfPointer.adjustSizeForWindow();
@@ -124,56 +120,28 @@ var Helloworld = cc.Layer.extend({
     },
 
     adjustSizeForWindow:function () {
-        //first, make body margin go away
-        var body = document.body.style;
-        body.margin = "0";
-        body.padding = "0";
-        body.background="#000";
-        //find out browser aspect ratio
-        var aspect = window.innerWidth / window.innerHeight;
-        var container = cc.$("#Cocos2dGameContainer");
-        var domlayer = cc.$("#domlayers");
-/*        console.log(container.style.cssText);
-        if(aspect >= 1.5){//if aspect is bigger than 4:3 such as 16:9
-            //then the height is the limiting factor, we will set height and change the width in px
-            var dcssText = "width:"+(window.innerHeight*1.5)+"px; height:100%; overflow:hidden; position:absolute; left:"+(window.innerWidth/2 - (window.innerHeight*1.5)/2)+"px;";
-            container.style.cssText = dcssText;
-            console.log(container);
-        }*/
-
-
         var margin = document.documentElement.clientWidth - document.body.clientWidth;
-        if (document.documentElement.clientWidth < 480) {
-            cc.canvas.width = 480;
+        if (document.documentElement.clientWidth < cc.originalCanvasSize.width) {
+            cc.canvas.width = cc.originalCanvasSize.width;
         } else {
             cc.canvas.width = document.documentElement.clientWidth - margin;
         }
-
-        if (document.documentElement.clientHeight < 320) {
-            cc.canvas.height = 320;
+        if (document.documentElement.clientHeight < cc.originalCanvasSize.height) {
+            cc.canvas.height = cc.originalCanvasSize.height;
         } else {
             cc.canvas.height = document.documentElement.clientHeight - margin;
         }
 
-        var xScale = cc.canvas.width / 480;
-        var yScale = cc.canvas.height / 320;
+        var xScale = cc.canvas.width / cc.originalCanvasSize.width;
+        var yScale = cc.canvas.height / cc.originalCanvasSize.height;
         if (xScale > yScale) {
             xScale = yScale;
         }
-        cc.canvas.width = 480 * xScale;
-        cc.canvas.height = 320 * xScale;
-        container.style.width = 480 * xScale+"px";
-        container.style.height = 320 * xScale+"px";
+        cc.canvas.width = cc.originalCanvasSize.width * xScale;
+        cc.canvas.height = cc.originalCanvasSize.height * xScale;
         cc.renderContext.translate(0, cc.canvas.height);
         cc.renderContext.scale(xScale, xScale);
         cc.Director.sharedDirector().setContentScaleFactor(xScale);
-        domlayer.style[cc.CSS3.origin] = "0% 0%";
-        domlayer.style[cc.CSS3.transform] = cc.CSS3.Scale(xScale,xScale);
-        domlayer.style.width=480+"px";
-        //domlayer.style.height = 320+"px";
-        container.style.left = ((window.innerWidth - 480*xScale)/2)+"px";
-        container.style.top = 0;
-        console.log(((window.innerWidth - 480*xScale)/2));
     },
     // a selector callback
     menuCloseCallback:function (pSender) {
@@ -185,7 +153,7 @@ var Helloworld = cc.Layer.extend({
     ccTouchesMoved:function (pTouches, pEvent) {
         if (this.bIsMouseDown) {
             if (pTouches) {
-                this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y));
+                //this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y));
             }
         }
     },
@@ -214,10 +182,8 @@ Helloworld.node = function () {
     if (pRet && pRet.init()) {
         return pRet;
     }
-    else {
-        pRet = null;
-        return null;
-    }
+
+    return null;
 };
 
 

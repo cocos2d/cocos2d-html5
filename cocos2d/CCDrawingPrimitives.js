@@ -82,7 +82,33 @@ cc.DrawingPrimitive = cc.Class.extend({
 
     /** draws a circle given the center, radius and number of segments. */
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
-        cc.log("DrawingPrimitive.drawCircle() not implement!");
+        //WEBGL version
+        if ((segments == "undefined") || (segments == 0)) {
+            return;
+        }
+        var additionalSegment = 1;
+        if (drawLineToCenter) {
+            ++additionalSegment;
+        }
+
+        var coef = 2.0 * Math.PI / segments;
+
+        var vertices = [];
+
+        for (var i = 0; i <= segments; i++) {
+            var rads = i * coef;
+            var j = radius * Math.cos(rads + angle) + center.x;
+            var k = radius * Math.sin(rads + angle) + center.y;
+            var addPoint = new cc.Point(j * cc.CONTENT_SCALE_FACTOR(), k * cc.CONTENT_SCALE_FACTOR());
+            vertices.push(addPoint);
+        }
+
+        if (drawLineToCenter) {
+            var lastPoint = new cc.Point(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
+            vertices.push(lastPoint);
+        }
+
+        this.drawPoly(vertices, segments + 2, true, false);
     },
 
     /** draws a quad bezier path
@@ -178,32 +204,13 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
     },
 
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
-        if ((segments == "undefined") || (segments == 0)) {
-            return;
+        this._renderContext.beginPath();
+        var endAngle = angle - Math.PI * 2;
+        this._renderContext.arc(0|center.x,0|-(center.y),radius,-angle,-endAngle,false);
+        if(drawLineToCenter){
+            this._renderContext.lineTo(0|center.x,0|-(center.y));
         }
-        var additionalSegment = 1;
-        if (drawLineToCenter) {
-            ++additionalSegment;
-        }
-
-        var coef = 2.0 * Math.PI / segments;
-
-        var vertices = [];
-
-        for (var i = 0; i <= segments; i++) {
-            var rads = i * coef;
-            var j = radius * Math.cos(rads + angle) + center.x;
-            var k = radius * Math.sin(rads + angle) + center.y;
-            var addPoint = new cc.Point(j * cc.CONTENT_SCALE_FACTOR(), k * cc.CONTENT_SCALE_FACTOR());
-            vertices.push(addPoint);
-        }
-
-        if (drawLineToCenter) {
-            var lastPoint = new cc.Point(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
-            vertices.push(lastPoint);
-        }
-
-        this.drawPoly(vertices, segments + 2, true, false);
+        this._renderContext.stroke();
     },
 
     drawQuadBezier:function (origin, control, destination, segments) {

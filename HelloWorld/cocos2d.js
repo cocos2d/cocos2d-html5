@@ -80,8 +80,8 @@ cc.loadjs = function (filename) {
             //preload ressources
             cc.Loader.shareLoader().preload([
                 {type:"image", src:"Resources/HelloWorld.png"},
-                {type:"image", src:"Resources/grossini_dance_07.png"},
-                {type:"image", src:"Resources/cocos64.png"}
+                {type:"image", src:"Resources/CloseNormal.png"},
+                {type:"image", src:"Resources/CloseSelected.png"}
             ]);
         }
     };
@@ -110,7 +110,7 @@ cc.loadjs('actions/CCActionManager.js');//7
 cc.loadjs('actions/CCActionEase.js');//7
 cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
 cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
-cc.loadjs('base_nodes/CCdomNode.js');
+cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');
 cc.loadjs('sprite_nodes/CCSprite.js');//10
 cc.loadjs('label_nodes/CCLabelTTF.js');//11
 cc.loadjs('text_input_node/CCIMEDispatcher.js');//12
@@ -126,8 +126,8 @@ cc.loadjs('CCDrawingPrimitives.js');//15
 cc.loadjs('platform/CCApplication.js');//16
 cc.loadjs('platform/CCSAXParser.js');//16
 cc.loadjs('platform/AppControl.js');//18
-cc.loadjs('menu_nodes/CCdomMenuItem.js');
-cc.loadjs('menu_nodes/CCdomMenu.js');
+cc.loadjs('menu_nodes/CCMenuItem.js');
+cc.loadjs('menu_nodes/CCMenu.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 cc.loadjs('../HelloWorld/Classes/AppDelegate.js');//17
 cc.loadjs('../HelloWorld/Helloworld.js');//19
