@@ -31,7 +31,7 @@
 var cc = cc = cc || {};
 cc.PI = Math.PI;
 cc.RAD = cc.PI / 180;
-cc.DEG = cc.PI * 180;
+cc.DEG = 180 / cc.PI;
 /** @def CC_SWAP
  simple macro that swaps 2 variables
  */
