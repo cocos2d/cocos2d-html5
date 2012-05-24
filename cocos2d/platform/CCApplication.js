@@ -123,13 +123,14 @@ cc.setup = function () {
 
 cc.setupHTML = function (obj) {
     var canvas = cc.canvas;
-    canvas.style.position = "absolute";
-    canvas.style.top = 0;
-    canvas.style.left = 0;
+    /*canvas.style.position = "absolute";
+     canvas.style.top = 0;
+     canvas.style.left = 0;*/
     canvas.style.zIndex = 0;
     var _container = cc.$new("div");
     _container.id = "Cocos2dGameContainer";
     _container.style.position = "relative";
+    _container.style.display = "inline-block";
     //_container.style.width = cc.canvas.width;
     //_container.style.height = cc.canvas.height;
     //_container.style.overflow = "hidden";//TODO make it hidden when finished debugging
