@@ -312,10 +312,12 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         this._m_grossini.removeFromParentAndCleanup(true);
         this._m_kathia.removeFromParentAndCleanup(true);
 
+        var winSize = cc.Director.sharedDirector().getWinSize();
+
         var boxSize = cc.SizeMake(100.0, 100.0);
         var box = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 0, 255));
         box.setAnchorPoint(cc.ccp(0, 0));
-        box.setPosition(cc.ccp(190, 110));
+        box.setPosition(new cc.Point((winSize.width - boxSize.width) /2, (winSize.height - boxSize.height) /2));
         box.setContentSize(boxSize);
 
         var markrside = 10.0;
