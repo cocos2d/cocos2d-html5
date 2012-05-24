@@ -112,6 +112,7 @@ var TestLayer1 = cc.Layer.extend({
 
         var bg1 = cc.Sprite.spriteWithFile(s_back1);
         bg1.setPosition(cc.PointMake(size.width / 2, size.height / 2));
+        bg1.setScale(1.7);
         this.addChild(bg1, -1);
 
         var title = cc.LabelTTF.labelWithString(TransitionsTests[s_nTransitionsIdx], "Thonburi", 32);
@@ -189,6 +190,7 @@ var TestLayer2 = cc.Layer.extend({
 
         var bg1 = cc.Sprite.spriteWithFile(s_back2);
         bg1.setPosition(cc.PointMake(size.width / 2, size.height / 2));
+        bg1.setScale(1.7);
         this.addChild(bg1, -1);
 
         var title = cc.LabelTTF.labelWithString(TransitionsTests[s_nTransitionsIdx], "Thonburi", 32);
