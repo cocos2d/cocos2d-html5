@@ -120,7 +120,6 @@ Director1 = DirectorTest.extend({
             var s = cc.Director.sharedDirector().getWinSize();
             var item = cc.MenuItemFont.itemFromString("Rotate Device", this, this.rotateDevice);
             var menu = cc.Menu.menuWithItems(item, null);
-            console.log(s);
             menu.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this.addChild(menu);
 

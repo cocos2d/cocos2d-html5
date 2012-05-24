@@ -86,7 +86,7 @@ cc.loadjs = function (filename) {
 };
 
 //Canvas or DOM
-var menuType = "DOM";
+var menuType = menuType || "DOM";
 
 cc.loadjs('platform/CCClass.js');//0
 cc.loadjs('platform/CCCommon.js');//1
