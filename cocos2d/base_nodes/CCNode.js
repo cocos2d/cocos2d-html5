@@ -914,6 +914,7 @@ cc.Node = cc.Class.extend({
     onEnter:function () {
         this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
         this.resumeSchedulerAndActions();
+        this._m_bIsRunning = true;
     },
 
     /** callback that is called when the cc.Node enters in the 'stage'.
