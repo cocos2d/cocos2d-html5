@@ -264,6 +264,76 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
                 break;
         }
     },
+
+    drawStar:function(ctx,center,radius,color){
+        var context = ctx || this._renderContext;
+        context.save();
+        context.translate(center.x,-center.y);
+        context.rotate(cc.DEGREES_TO_RADIANS(45));
+        if(color instanceof cc.Color4F){
+            color = new cc.Color3B(0|(color.r * 255),0|(color.g * 255),0|(color.b * 255));
+        }
+        var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
+        context.fillStyle = colorStr +",1)";
+
+        var subRadius = radius / 10;
+
+        context.beginPath();
+        context.moveTo( - radius, 0);
+        context.lineTo(0, - subRadius);
+        context.lineTo(radius, 0);
+        context.lineTo(0, subRadius);
+        context.lineTo(-radius, 0);
+        context.closePath();
+        context.fill();
+
+        context.beginPath();
+        context.moveTo(0, -radius);
+        context.lineTo(-subRadius, 0);
+        context.lineTo(0, radius);
+        context.lineTo(subRadius, 0);
+        context.lineTo(0, -radius);
+        context.closePath();
+        context.fill();
+
+        var g1 = context.createRadialGradient(0, 0, subRadius, 0, 0, radius);
+        g1.addColorStop(0, colorStr + ", 1)");
+        g1.addColorStop(0.3, colorStr + ", 0.8)");
+        g1.addColorStop(0.6, colorStr + ", 0.4)");
+        g1.addColorStop(1.0, colorStr + ", 0.0)");
+        context.fillStyle = g1;
+        context.beginPath();
+        var startAngle_1 = 0;
+        var endAngle_1 = Math.PI * 2;
+        context.arc(0, 0, radius, startAngle_1, endAngle_1, false);
+        context.closePath();
+        context.fill();
+
+        context.restore();
+    },
+
+    drawColorBall:function(ctx, center,radius,color){
+        var context = ctx || this._renderContext;
+        if(color instanceof cc.Color4F){
+            color = new cc.Color3B(0|(color.r * 255),0|(color.g * 255),0|(color.b * 255));
+        }
+        var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
+        var subRadius = radius / 10;
+
+        var g1 = context.createRadialGradient(center.x,-center.y, subRadius, center.x,-center.y, radius);
+        g1.addColorStop(0, colorStr + ", 1)");
+        g1.addColorStop(0.3, colorStr + ", 0.8)");
+        g1.addColorStop(0.6, colorStr + ", 0.4)");
+        g1.addColorStop(1.0, colorStr + ", 0.0)");
+        context.fillStyle = g1;
+        context.beginPath();
+        var startAngle_1 = 0;
+        var endAngle_1 = Math.PI * 2;
+        context.arc(center.x,-center.y, radius, startAngle_1, endAngle_1, false);
+        context.closePath();
+        context.fill();
+    },
+
     fillText:function (strText, x, y) {
         this._renderContext.fillText(strText, x, -y);
     }
