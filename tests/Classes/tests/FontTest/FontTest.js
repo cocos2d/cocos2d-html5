@@ -102,10 +102,10 @@ FontTest = cc.Layer.extend({
         var center = cc.LabelTTF.labelWithString("alignment center", cc.SizeMake(s.width, 50), cc.TextAlignmentCenter, pFont, 32);
         var right = cc.LabelTTF.labelWithString("alignment right", cc.SizeMake(s.width, 50), cc.TextAlignmentRight, pFont, 32);
 
-        top.setPosition(cc.ccp(s.width / 2, 250));
-        left.setPosition(cc.ccp(s.width / 2, 200));
-        center.setPosition(cc.ccp(s.width / 2, 150));
-        right.setPosition(cc.ccp(s.width / 2, 100));
+        top.setPosition(cc.ccp(s.width / 2, s.height *3 /4));
+        left.setPosition(cc.ccp(s.width / 2, s.height/2));
+        center.setPosition(cc.ccp(s.width / 2, s.height *3 /8));
+        right.setPosition(cc.ccp(s.width / 2, s.height/4));
 
         this.addChild(left, 0, kTagLabel1);
         this.addChild(right, 0, kTagLabel2);
