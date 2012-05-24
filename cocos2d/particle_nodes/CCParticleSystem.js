@@ -42,6 +42,14 @@
 //
 var cc = cc = cc || {};
 
+//Particle Draw Mode
+cc.kParticleShapeMode = 0;
+cc.kParticleTextureMode = 1;
+
+//Particle Shape Type for ShapeMode
+cc.kParticleStarShape = 0;
+cc.kParticleBallShape = 1;
+
 /** The Particle emitter lives forever */
 cc.kCCParticleDurationInfinity = -1;
 /** The starting size of the particle is equal to the ending size */
@@ -175,6 +183,24 @@ cc.ParticleSystem = cc.Node.extend({
 
     // profiling
     _m_pProfilingTimer:null,
+
+    //drawMode
+    _drawMode: cc.kParticleShapeMode,
+    getDrawMode:function(){
+        return this._drawMode;
+    },
+    setDrawMode:function(drawMode){
+        this._drawMode = drawMode;
+    },
+
+    //shape type
+    _shapeType:cc.kParticleBallShape,
+    getShapeType:function(){
+        return this._shapeType;
+    },
+    setShapeType:function(shapeType){
+        this._shapeType = shapeType;
+    },
 
     /** Is the emitter active */
     _m_bIsActive:false,

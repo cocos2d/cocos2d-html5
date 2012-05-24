@@ -27,6 +27,8 @@ var s_Ball = "Resources/Images/ball.png";
 var s_Paddle = "Resources/Images/paddle.png";
 var s_pPathClose = "Resources/Images/close.png";
 var s_MenuItem = "Resources/Images/menuitemsprite.png";
+var s_ShapeModeMenuItem = "Resources/Images/shapemode.png";
+var s_TextureModeMenuItem = "Resources/Images/texturemode.png";
 var s_SendScore = "Resources/Images/SendScoreButton.png";
 var s_PressSendScore = "Resources/Images/SendScoreButtonPressed.png";
 var s_Power = "Resources/Images/powered.png";
@@ -118,6 +120,8 @@ var g_ressources = [
     {type:"image", src:s_Paddle},
     {type:"image", src:s_pPathClose},
     {type:"image", src:s_MenuItem},
+    {type:"image", src:s_ShapeModeMenuItem},
+    {type:"image", src:s_TextureModeMenuItem},
     {type:"image", src:s_SendScore},
     {type:"image", src:s_PressSendScore},
     {type:"image", src:s_Power},
