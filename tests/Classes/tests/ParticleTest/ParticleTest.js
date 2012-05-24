@@ -176,14 +176,36 @@ var ParticleDemo = cc.LayerColor.extend({
         //    cc.MenuItemFont.itemFromString("Grouped Movement"),
         //    null);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3);//, item4, null);
+        var spriteNormal = cc.Sprite.spriteWithFile(s_ShapeModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
+        var spriteSelected = cc.Sprite.spriteWithFile(s_ShapeModeMenuItem, cc.RectMake(0, 23, 115, 23));
+        var spriteDisabled = cc.Sprite.spriteWithFile(s_ShapeModeMenuItem, cc.RectMake(0, 0, 115, 23));
+
+        var item4_shape = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal, spriteSelected, spriteDisabled, this,
+            function(){});
+
+        var spriteNormal_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
+        var spriteSelected_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 23, 115, 23));
+        var spriteDisabled_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 0, 115, 23));
+
+        var item4_texture = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal_t, spriteSelected_t, spriteDisabled_t, this,
+            function(){});
+
+        var item4 = cc.MenuItemToggle.itemWithTarget(	this,function(){
+                if(selfPoint._m_emitter.getDrawMode() == cc.kParticleTextureMode)
+                    selfPoint._m_emitter.setDrawMode(cc.kParticleShapeMode);
+                else
+                    selfPoint._m_emitter.setDrawMode(cc.kParticleTextureMode);
+            },
+            item4_shape,item4_texture);
+
+        var menu = cc.Menu.menuWithItems(item1, item2, item3, item4);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
         item2.setPosition(cc.PointMake(s.width / 2, 30));
         item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
-        //item4.setPosition( cc.PointMake( 0, 100) );
-        //item4.setAnchorPoint( cc.PointMake(0,0) );
+        item4.setPosition( cc.PointMake( 10, 100) );
+        item4.setAnchorPoint( cc.PointMake(0,0) );
 
         this.addChild(menu, 100);
         //TODO
@@ -276,7 +298,7 @@ var DemoFirework = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_stars1);
         this._m_emitter.setTexture(myTexture);
-
+        this._m_emitter.setShapeType(cc.kParticleStarShape);
         this.setEmitterPosition();
     },
     title:function () {
@@ -292,6 +314,7 @@ var DemoFire = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));//.pvr"];
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         var p = this._m_emitter.getPosition();
         this._m_emitter.setPosition(cc.PointMake(p.x, 100));
 
@@ -310,6 +333,7 @@ var DemoSun = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_fire);
         this._m_emitter.setTexture(myTexture);
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         this.setEmitterPosition();
     },
     title:function () {
@@ -325,7 +349,7 @@ var DemoGalaxy = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_fire);
         this._m_emitter.setTexture(myTexture);
-
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         this.setEmitterPosition();
     },
     title:function () {
@@ -345,6 +369,7 @@ var DemoFlower = ParticleDemo.extend({
 
         var myTexture = cc.TextureCache.sharedTextureCache().addImage(s_stars1);
         this._m_emitter.setTexture(myTexture);
+        this._m_emitter.setShapeType(cc.kParticleStarShape);
         this.setEmitterPosition();
     },
     title:function () {
@@ -362,7 +387,7 @@ var DemoBigFlower = ParticleDemo.extend({
 
         this._m_background.addChild(this._m_emitter, 10);
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
-
+        this._m_emitter.setShapeType(cc.kParticleStarShape);
         this._m_emitter.setDuration(-1);
 
         // gravity
@@ -439,7 +464,7 @@ var DemoRotFlower = ParticleDemo.extend({
 
         this._m_background.addChild(this._m_emitter, 10);
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars2));
-
+        this._m_emitter.setShapeType(cc.kParticleStarShape);
         // duration
         this._m_emitter.setDuration(-1);
 
@@ -514,7 +539,7 @@ var DemoMeteor = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
-
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         this.setEmitterPosition();
     },
     title:function () {
@@ -530,7 +555,7 @@ var DemoSpiral = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
-
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         this.setEmitterPosition();
     },
     title:function () {
@@ -546,6 +571,7 @@ var DemoExplosion = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
+        this._m_emitter.setShapeType(cc.kParticleStarShape);
         this._m_emitter.setIsAutoRemoveOnFinish(true);
 
         this.setEmitterPosition();
@@ -606,6 +632,7 @@ var DemoSnow = ParticleDemo.extend({
         this._m_emitter.setEmissionRate(this._m_emitter.getTotalParticles() / this._m_emitter.getLife());
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_snow));
+        this._m_emitter.setShapeType(cc.kParticleStarShape);
 
         this.setEmitterPosition();
     },
@@ -626,7 +653,7 @@ var DemoRain = ParticleDemo.extend({
         this._m_emitter.setLife(4);
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
-
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         this.setEmitterPosition();
     },
     title:function () {
@@ -705,7 +732,7 @@ var DemoModernArt = ParticleDemo.extend({
 
         // texture
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
-
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         // additive
         this._m_emitter.setIsBlendAdditive(false);
 
@@ -725,6 +752,8 @@ var DemoRing = ParticleDemo.extend({
         this._m_background.addChild(this._m_emitter, 10);
 
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
+        this._m_emitter.setShapeType(cc.kParticleStarShape);
+
         this._m_emitter.setLifeVar(0);
         this._m_emitter.setLife(10);
         this._m_emitter.setSpeed(100);
@@ -969,7 +998,7 @@ var Issue704 = ParticleDemo.extend({
         this._m_emitter.initWithTotalParticles(100);
         this.addChild(this._m_emitter, 10);
         this._m_emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
-
+        this._m_emitter.setShapeType(cc.kParticleBallShape);
         // duration
         this._m_emitter.setDuration(cc.kCCParticleDurationInfinity);
 
