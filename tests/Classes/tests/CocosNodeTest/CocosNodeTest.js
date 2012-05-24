@@ -140,8 +140,8 @@ var CCNodeTest2 = TestCocosNodeDemo.extend({
         var sp3 = cc.Sprite.spriteWithFile(s_pPathSister1);
         var sp4 = cc.Sprite.spriteWithFile(s_pPathSister2);
 
-        sp1.setPosition(cc.PointMake(100, s.height / 2));
-        sp2.setPosition(cc.PointMake(380, s.height / 2));
+        sp1.setPosition(cc.PointMake(150, s.height / 2));
+        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
         this.addChild(sp1);
         this.addChild(sp2);
 
@@ -174,9 +174,9 @@ var CCNodeTest4 = TestCocosNodeDemo.extend({
     ctor:function () {
         var sp1 = cc.Sprite.spriteWithFile(s_pPathSister1);
         var sp2 = cc.Sprite.spriteWithFile(s_pPathSister2);
-
-        sp1.setPosition(cc.PointMake(100, 160));
-        sp2.setPosition(cc.PointMake(380, 160));
+        var s = cc.Director.sharedDirector().getWinSize();
+        sp1.setPosition(cc.PointMake(150, s.height / 2));
+        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
 
         this.addChild(sp1, 0, 2);
         this.addChild(sp2, 0, 3);
@@ -202,9 +202,9 @@ var CCNodeTest5 = TestCocosNodeDemo.extend({
     ctor:function () {
         var sp1 = cc.Sprite.spriteWithFile(s_pPathSister1);
         var sp2 = cc.Sprite.spriteWithFile(s_pPathSister2);
-
-        sp1.setPosition(cc.PointMake(100, 160));
-        sp2.setPosition(cc.PointMake(380, 160));
+        var s = cc.Director.sharedDirector().getWinSize();
+        sp1.setPosition(cc.PointMake(150, s.height / 2));
+        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
 
         var rot = cc.RotateBy.actionWithDuration(2, 360);
         var rot_back = rot.reverse();
@@ -244,8 +244,9 @@ var CCNodeTest6 = TestCocosNodeDemo.extend({
         var sp2 = cc.Sprite.spriteWithFile(s_pPathSister2);
         var sp21 = cc.Sprite.spriteWithFile(s_pPathSister2);
 
-        sp1.setPosition(cc.PointMake(100, 160));
-        sp2.setPosition(cc.PointMake(380, 160));
+        var s = cc.Director.sharedDirector().getWinSize();
+        sp1.setPosition(cc.PointMake(150, s.height / 2));
+        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
 
         var rot = cc.RotateBy.actionWithDuration(2, 360);
         var rot_back = rot.reverse();
@@ -391,16 +392,15 @@ var NodeToWorld = TestCocosNodeDemo.extend({
         back.setAnchorPoint(cc.PointMake(0, 0));
         var backSize = back.getContentSize();
 
-        //TODO
         var item = cc.MenuItemImage.itemFromNormalImage(s_PlayNormal, s_PlaySelect);
         var menu = cc.Menu.menuWithItems(item, null);
-        //menu.alignItemsVertically();
+        menu.alignItemsVertically();
         menu.setPosition(cc.PointMake(backSize.width / 2, backSize.height / 2));
         back.addChild(menu);
 
         var rot = cc.RotateBy.actionWithDuration(5, 360);
         var fe = cc.RepeatForever.actionWithAction(rot);
-        //item.runAction(fe);
+        item.runAction(fe);
 
         var move = cc.MoveBy.actionWithDuration(3, cc.PointMake(200, 0));
         var move_back = move.reverse();

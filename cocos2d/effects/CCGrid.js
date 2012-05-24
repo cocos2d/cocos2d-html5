@@ -101,7 +101,6 @@ cc.GridBase = cc.Class.extend({
             pTextureTemp.initWithData(format, POTWide, POTHigh, s);
             if (!pTextureTemp) {
                 cc.LOG("cocos2d: CCGrid: error creating texture");
-                delete this;
                 return false;
             }
             pTexture = pTextureTemp;
