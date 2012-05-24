@@ -71,15 +71,19 @@ Box2DTestLayer = cc.Layer.extend({
         bodyDef.type = b2Body.b2_staticBody;
         fixDef.shape = new b2PolygonShape;
         fixDef.shape.SetAsBox(20, 2);
+        // upper
         bodyDef.position.Set(10, screenSize.height / PTM_RATIO + 1.8);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
+        // bottom
         bodyDef.position.Set(10, -1.8);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
         fixDef.shape.SetAsBox(2, 14);
+        // left
         bodyDef.position.Set(-1.8, 13);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
-        bodyDef.position.Set(21.8, 13);
+        // right
+        bodyDef.position.Set(26.8, 13);
         this.world.CreateBody(bodyDef).CreateFixture(fixDef);
 
         //Set up sprite
