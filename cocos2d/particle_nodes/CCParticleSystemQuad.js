@@ -320,23 +320,36 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
 
             for (var i = 0; i < this._m_uParticleCount; i++) {
                 var particle = this._m_pParticles[i];
-                var lpx = -(0 | (particle.size * 0.5));
+                var lpx = (0 | (particle.size * 0.5));
 
-                var drawTexture = this.getTexture();
-                if (particle.isChangeColor) {
-                    var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
-                    if (cacheTextureForColor) {
-                        drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color);
+                //TODO these are temporary code, need modifier
+                if (this._drawMode == cc.kParticleTextureMode) {
+                    var drawTexture = this.getTexture();
+                    if (particle.isChangeColor) {
+                        var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
+                        if (cacheTextureForColor) {
+                            drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color);
+                        }
                     }
-                }
 
-                context.save();
-                context.globalAlpha = particle.color.a;
-                context.translate(0 | particle.pos.x, -(0 | particle.pos.y));
-                context.drawImage(drawTexture,
-                    lpx, -(lpx + particle.size),
-                    particle.size, particle.size);
-                context.restore();
+                    context.save();
+                    context.globalAlpha = particle.color.a;
+                    context.translate(0 | particle.pos.x, -(0 | particle.pos.y));
+                    context.drawImage(drawTexture,
+                        lpx, -(lpx + particle.size),
+                        particle.size, particle.size);
+                    context.restore();
+                } else {
+                    context.save();
+                    context.globalAlpha = particle.color.a;
+                    context.translate(0 | particle.pos.x, -(0 | particle.pos.y));
+                    if(this._shapeType == cc.kParticleStarShape){
+                        cc.drawingUtil.drawStar(context, new cc.Point(0, 0), lpx, particle.color);
+                    }else{
+                        cc.drawingUtil.drawColorBall(context, new cc.Point(0, 0), lpx, particle.color);
+                    }
+                    context.restore()
+                }
             }
             context.restore();
         } else {

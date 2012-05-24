@@ -299,7 +299,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         var g1 = context.createRadialGradient(0, 0, subRadius, 0, 0, radius);
         g1.addColorStop(0, colorStr + ", 1)");
         g1.addColorStop(0.3, colorStr + ", 0.8)");
-        g1.addColorStop(0.6, colorStr + ", 0.4)");
+        //g1.addColorStop(0.6, colorStr + ", 0.4)");
         g1.addColorStop(1.0, colorStr + ", 0.0)");
         context.fillStyle = g1;
         context.beginPath();
