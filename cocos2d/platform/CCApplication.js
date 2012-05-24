@@ -42,7 +42,7 @@ cc.renderContext = null;
 cc.canvas = null;
 cc.gameDiv = null;
 cc.renderContextType = cc.kCanvas;
-cc.originalCanvasSize = new cc.Size(0,0);
+cc.originalCanvasSize = new cc.Size(0, 0);
 
 window.requestAnimFrame = (function () {
     return  window.requestAnimationFrame ||
@@ -109,7 +109,7 @@ cc.setup = function () {
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
-    cc.originalCanvasSize = new cc.Size(cc.canvas.width,cc.canvas.height);
+    cc.originalCanvasSize = new cc.Size(cc.canvas.width, cc.canvas.height);
 
     //binding window size
     /*
@@ -121,15 +121,16 @@ cc.setup = function () {
      */
 };
 
-cc.setupHTML= function(obj){
+cc.setupHTML = function (obj) {
     var canvas = cc.canvas;
-    canvas.style.position ="absolute";
-    canvas.style.top = 0;
-    canvas.style.left = 0;
+    /*canvas.style.position = "absolute";
+     canvas.style.top = 0;
+     canvas.style.left = 0;*/
     canvas.style.zIndex = 0;
     var _container = cc.$new("div");
     _container.id = "Cocos2dGameContainer";
     _container.style.position = "relative";
+    _container.style.display = "inline-block";
     //_container.style.width = cc.canvas.width;
     //_container.style.height = cc.canvas.height;
     //_container.style.overflow = "hidden";//TODO make it hidden when finished debugging
@@ -138,10 +139,10 @@ cc.setupHTML= function(obj){
     //_container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
     //_container.style.height = canvas.clientHeight+"px";
     //_container.style.width = canvas.clientWidth+"px";
-    if(obj){
+    if (obj) {
         _container.setAttribute("fheight", obj.getContentSize().height);
     }
-    document.body.insertBefore(_container, canvas);
+    canvas.parentNode.insertBefore(_container, canvas);
     _container.appendChild(canvas);
 };
 
@@ -266,8 +267,7 @@ cc.Application.getCurrentLanguage = function () {
 
     var currentLang = navigator.language;
     currentLang = currentLang.toLowerCase();
-    switch (currentLang)
-    {
+    switch (currentLang) {
         case "zh-cn":
             ret = cc.kLanguageChinese;
             break;

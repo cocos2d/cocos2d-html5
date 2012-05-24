@@ -485,7 +485,7 @@ cc.domNode.DomContainer = function () {
         cc.domNode._domContainer.style.position="relative";
         cc.domNode._domContainer.style.top = "100%";
         cc.domNode._container.appendChild(cc.domNode._domContainer);
-        document.body.insertBefore(cc.domNode._container, canvas);
+        canvas.parentNode.insertBefore(cc.domNode._container, canvas);
         cc.domNode._container.appendChild(canvas);
     }
     return cc.domNode._domContainer;
