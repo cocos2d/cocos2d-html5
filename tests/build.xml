@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<project name="Javascript compress project" basedir="." default="compile_test">
+
+    <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
+             classpath="${basedir}/compiler.jar"/>
+
+    <target name="compile_test">
+        <jscomp compilationLevel="simple" warning="quiet"
+                debug="false" output="cocos2d-html5-testcases.js">
+            <sources dir="${basedir}">
+                <file name="Classes/AppDelegate.js"/>
+                <file name="testbasic.js"/>
+                <file name="testResource.js"/>
+                <file name="Classes/tests/TouchesTest/Ball.js"/>
+                <file name="Classes/tests/TouchesTest/Paddle.js"/>
+                <file name="Classes/tests/TouchesTest/TouchesTest.js"/>
+                <file name="Classes/tests/SchedulerTest/SchedulerTest.js"/>
+                <file name="Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js"/>
+                <file name="Classes/tests/MenuTest/MenuTest.js"/>
+                <file name="Classes/tests/ActionsTest/ActionsTest.js"/>
+                <file name="Classes/tests/TileMapTest/TileMapTest.js"/>
+                <file name="Classes/tests/TransitionsTest/TransitionsTest.js"/>
+                <file name="Classes/tests/DrawPrimitivesTest/DrawPrimitivesTest.js"/>
+                <file name="Classes/tests/ParticleTest/ParticleTest.js"/>
+                <file name="Classes/tests/ProgressActionsTest/ProgressActionsTest.js"/>
+                <file name="Classes/tests/LayerTest/LayerTest.js"/>
+                <file name="Classes/tests/SceneTest/SceneTest.js"/>
+                <file name="Classes/tests/TextureCacheTest/TextureCacheTest.js"/>
+                <file name="Classes/tests/SpriteTest/SpriteTest.js"/>
+                <file name="Classes/tests/CocosDenshionTest/CocosDenshionTest.js"/>
+                <file name="Classes/tests/CocosNodeTest/CocosNodeTest.js"/>
+                <file name="Classes/tests/RotateWorldTest/RotateWorldTest.js"/>
+                <file name="Classes/tests/IntervelTest/IntervelTest.js"/>
+                <file name="Classes/tests/ActionManagerTest/ActionManagerTest.js"/>
+                <file name="Classes/tests/EaseActionsTest/EaseActionsTest.js"/>
+                <file name="Classes/tests/ParallaxTest/ParallaxTest.js"/>
+                <file name="Classes/tests/DirectorTest/DirectorTest.js"/>
+                <file name="Classes/tests/PerformanceTest/PerformanceTest.js"/>
+                <file name="Classes/tests/PerformanceTest/PerformanceSpriteTest.js"/>
+                <file name="Classes/tests/PerformanceTest/PerformanceParticleTest.js"/>
+                <file name="Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js"/>
+                <file name="Classes/tests/PerformanceTest/PerformanceTextureTest.js"/>
+                <file name="Classes/tests/FontTest/FontTest.js"/>
+                <file name="Classes/tests/PerformanceTest/PerformanceTouchesTest.js"/>
+                <file name="Classes/tests/LabelTest/LabelTest.js"/>
+                <file name="Classes/tests/CurrentLanguageTest/CurrentLanguageTest.js"/>
+                <file name="Classes/tests/TextInputTest/TextInputTest.js"/>
+                <file name="Classes/tests/Box2dTest/Box2dTest.js"/>
+            </sources>
+        </jscomp>
+    </target>
+</project>
