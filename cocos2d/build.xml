@@ -2,7 +2,7 @@
 <project name="Javascript compress project" basedir="." default="compile_Canvas">
 
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
-             classpath="${basedir}/compiler.jar"/>
+             classpath="${basedir}/../tools/compiler.jar"/>
 
     <target name="compile_Canvas">
         <jscomp compilationLevel="simple" warning="quiet"

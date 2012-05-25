@@ -2,7 +2,7 @@
 <project name="Javascript compress project" basedir="." default="compile">
 
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
-             classpath="${basedir}/compiler.jar"/>
+             classpath="${basedir}/../tools/compiler.jar"/>
 
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
@@ -27,7 +27,7 @@
                 <file name="actions/CCActionEase.js"/>
                 <file name="layers_scenes_transitions_nodes/CCScene.js"/>
                 <file name="layers_scenes_transitions_nodes/CCLayer.js"/>
-                <file name="base_nodes/CCdomNode.js"/>
+                <file name="layers_scenes_transitions_nodes/CCTransition.js"/>
                 <file name="sprite_nodes/CCSprite.js"/>
                 <file name="label_nodes/CCLabelTTF.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
@@ -43,8 +43,8 @@
                 <file name="platform/CCApplication.js"/>
                 <file name="platform/CCSAXParser.js"/>
                 <file name="platform/AppControl.js"/>
-                <file name="menu_nodes/CCdomMenuItem.js"/>
-                <file name="menu_nodes/CCdomMenu.js"/>
+                <file name="menu_nodes/CCMenuItem.js"/>
+                <file name="menu_nodes/CCMenu.js"/>
             </sources>
             <sources dir="${basedir}/../CocosDenshion">
                 <file name="SimpleAudioEngine.js"/>
