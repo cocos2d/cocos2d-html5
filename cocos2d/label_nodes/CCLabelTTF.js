@@ -133,9 +133,9 @@ cc.LabelTTF = cc.Sprite.extend({
             if (this._m_tContentSize.width > this._m_tDimensions.width && this._m_tDimensions.width !== 0) {
                 this._wrapText(context, this._m_pString,
                     -this._m_tDimensions.width * this._m_tAnchorPoint.x,
-                    this._m_tDimensions.height * this._m_tAnchorPoint.y,
+                    -this._m_tDimensions.height * this._m_tAnchorPoint.y,
                     this._m_tDimensions.width,
-                    this._m_fFontSize,
+                    this._m_fFontSize * 1.2,
                     this._m_eAlignment);
             }
             else {
@@ -148,13 +148,11 @@ cc.LabelTTF = cc.Sprite.extend({
     _wrapText:function (context, text, x, y, maxWidth, lineHeight, texAlign) {
         var words = text.split(" ");
         var line = "";
-
         for (var n = 0; n < words.length; n++) {
             var testLine = line + words[n] + " ";
-            var testWidth = context.measureText(testLine).width;
+            var testWidth = context.measureText(testLine).width - context.measureText(" ").width;
             if (testWidth >= maxWidth) {
                 var temWidth = testWidth - context.measureText(words[n]).width - 2 * context.measureText(" ").width;
-                //console.log(testWidth)
                 var offset;
                 switch (texAlign) {
                     case cc.TextAlignmentLeft:
@@ -167,14 +165,17 @@ cc.LabelTTF = cc.Sprite.extend({
                         offset = (maxWidth - temWidth) / 2;
                         break;
                 }
-                context.fillText(line, x + offset, y - lineHeight * (words.length / 2 - 2));
-
+                context.fillText(line, x + offset, y );
+                y+=lineHeight;
                 line = words[n] + " ";
-                y += lineHeight;
             }
             else {
                 line = testLine;
+                if(n == words.length-1){
+                context.fillText(line, x + offset, y );
+                }
             }
+
         }
     },
     getString:function () {
