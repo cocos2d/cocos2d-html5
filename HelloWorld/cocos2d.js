@@ -30,7 +30,7 @@
 
 var cc = cc = cc || {};
 //Cocos2d directory
-cc.Dir = '../cocos2d/';//in relate to the html file or use absolute
+cc.Dir = './';//in relate to the html file or use absolute
 cc.loadQue = [];//the load que which js files are loaded
 cc.COCOS2D_DEBUG = 2;
 cc._DEBUG = 1;
@@ -91,43 +91,48 @@ cc.loadjs = function (filename) {
     }
 };
 
-cc.loadjs('platform/CCClass.js');//0
-cc.loadjs('platform/CCCommon.js');//1
-cc.loadjs('platform/platform.js');//2
-cc.loadjs('cocoa/CCGeometry.js');//3
-cc.loadjs('cocoa/CCSet.js');//4
-cc.loadjs('platform/CCTypes.js');//5
-cc.loadjs('cocoa/CCAffineTransform.js');//5
-cc.loadjs('support/CCPointExtension.js');//12
-cc.loadjs('base_nodes/CCNode.js');//6
-cc.loadjs('platform/ccMacro.js');//7
-cc.loadjs('platform/ccConfig.js');//7
-cc.loadjs('textures/CCTexture2D.js');//12
-cc.loadjs('textures/CCTextureCache.js');//12
-cc.loadjs('actions/CCAction.js');//7
-cc.loadjs('actions/CCActionInterval.js');//7
-cc.loadjs('actions/CCActionManager.js');//7
-cc.loadjs('actions/CCActionEase.js');//7
-cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
-cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
-cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');
-cc.loadjs('sprite_nodes/CCSprite.js');//10
-cc.loadjs('label_nodes/CCLabelTTF.js');//11
-cc.loadjs('text_input_node/CCIMEDispatcher.js');//12
-cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
-cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
-cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
-cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
-cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
-cc.loadjs('CCDirector.js');//13
-cc.loadjs('CCScheduler.js');//14
-cc.loadjs('CCLoader.js');//14
-cc.loadjs('CCDrawingPrimitives.js');//15
-cc.loadjs('platform/CCApplication.js');//16
-cc.loadjs('platform/CCSAXParser.js');//16
-cc.loadjs('platform/AppControl.js');//18
-cc.loadjs('menu_nodes/CCMenuItem.js');
-cc.loadjs('menu_nodes/CCMenu.js');
+// Engine files,
+// They can be packeted to a single file using the Ant tool.
+// The shell files and Closure Compiler which Ant needs are provided in tools folder and cocos2d folder.
+cc.loadjs('../cocos2d/platform/CCClass.js');//0
+cc.loadjs('../cocos2d/platform/CCCommon.js');//1
+cc.loadjs('../cocos2d/platform/platform.js');//2
+cc.loadjs('../cocos2d/cocoa/CCGeometry.js');//3
+cc.loadjs('../cocos2d/cocoa/CCSet.js');//4
+cc.loadjs('../cocos2d/platform/CCTypes.js');//5
+cc.loadjs('../cocos2d/cocoa/CCAffineTransform.js');//5
+cc.loadjs('../cocos2d/support/CCPointExtension.js');//12
+cc.loadjs('../cocos2d/base_nodes/CCNode.js');//6
+cc.loadjs('../cocos2d/platform/ccMacro.js');//7
+cc.loadjs('../cocos2d/platform/ccConfig.js');//7
+cc.loadjs('../cocos2d/textures/CCTexture2D.js');//12
+cc.loadjs('../cocos2d/textures/CCTextureCache.js');//12
+cc.loadjs('../cocos2d/actions/CCAction.js');//7
+cc.loadjs('../cocos2d/actions/CCActionInterval.js');//7
+cc.loadjs('../cocos2d/actions/CCActionManager.js');//7
+cc.loadjs('../cocos2d/actions/CCActionEase.js');//7
+cc.loadjs('../cocos2d/layers_scenes_transitions_nodes/CCScene.js');//8
+cc.loadjs('../cocos2d/layers_scenes_transitions_nodes/CCLayer.js');//9
+cc.loadjs('../cocos2d/layers_scenes_transitions_nodes/CCTransition.js');
+cc.loadjs('../cocos2d/sprite_nodes/CCSprite.js');//10
+cc.loadjs('../cocos2d/label_nodes/CCLabelTTF.js');//11
+cc.loadjs('../cocos2d/text_input_node/CCIMEDispatcher.js');//12
+cc.loadjs('../cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js');//12
+cc.loadjs('../cocos2d/touch_dispatcher/CCTouchHandler.js');//12
+cc.loadjs('../cocos2d/touch_dispatcher/CCTouchDispatcher.js');//12
+cc.loadjs('../cocos2d/keypad_dispatcher/CCKeypadDelegate.js');//12
+cc.loadjs('../cocos2d/keypad_dispatcher/CCKeypadDispatcher.js');//12
+cc.loadjs('../cocos2d/CCDirector.js');//13
+cc.loadjs('../cocos2d/CCScheduler.js');//14
+cc.loadjs('../cocos2d/CCLoader.js');//14
+cc.loadjs('../cocos2d/CCDrawingPrimitives.js');//15
+cc.loadjs('../cocos2d/platform/CCApplication.js');//16
+cc.loadjs('../cocos2d/platform/CCSAXParser.js');//16
+cc.loadjs('../cocos2d/platform/AppControl.js');//18
+cc.loadjs('../cocos2d/menu_nodes/CCMenuItem.js');
+cc.loadjs('../cocos2d/menu_nodes/CCMenu.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-cc.loadjs('../HelloWorld/Classes/AppDelegate.js');//17
-cc.loadjs('../HelloWorld/Helloworld.js');//19
+
+// User files
+cc.loadjs('Classes/AppDelegate.js');//17
+cc.loadjs('Helloworld.js');//19
