@@ -189,8 +189,8 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._textureModeButton.setIsVisible(true);
                 selfPoint._shapeModeButton.setIsVisible(false);
             });
-        this._textureModeButton.setPosition( new cc.Point(10,100));
-        this.addChild(this._shapeModeButton);
+        this._shapeModeButton.setPosition( new cc.Point(10,100));
+        this._shapeModeButton.setAnchorPoint( cc.PointMake(0,0) );
 
         var spriteNormal_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
         var spriteSelected_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 23, 115, 23));
@@ -204,9 +204,9 @@ var ParticleDemo = cc.LayerColor.extend({
             });
         this._textureModeButton.setIsVisible(false);
         this._textureModeButton.setPosition( new cc.Point(10,100));
-        this.addChild(this._textureModeButton);
+        this._textureModeButton.setAnchorPoint( cc.PointMake(0,0) );
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3);
+        var menu = cc.Menu.menuWithItems(item1, item2, item3,this._shapeModeButton, this._textureModeButton);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
