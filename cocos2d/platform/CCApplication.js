@@ -52,10 +52,17 @@ window.requestAnimFrame = (function () {
         window.msRequestAnimationFrame
 })();
 
+if (!window.console) {
+    window.console = {};
+    window.console.log = function () {
+    };
+    window.console.assert = function () {
+    };
+}
+
 //setup game context
 cc.setup = function () {
     //Browser Support Information
-
     //event register
     switch (arguments.length) {
         case 0:

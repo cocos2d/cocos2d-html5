@@ -39,8 +39,8 @@ cc.Loader = cc.Class.extend({
             } else {
                 cc.Assert("cocos2d:no load callback defined");
             }
-        }
-        else {
+        } else {
+
             if (loaderCache.onloading) {
                 loaderCache.m_Timer = setTimeout(loaderCache.onloading, 16);
             }
@@ -72,9 +72,10 @@ cc.Loader = cc.Class.extend({
     onloading:undefined,
 
     preload:function (res) {
-        var sharedTextureCache = cc.TextureCache.sharedTextureCache(),
-               sharedEngine = cc.AudioManager.sharedEngine(),
-               shareParser = cc.SAXParser.shareParser();
+        var sharedTextureCache = cc.TextureCache.sharedTextureCache();
+        var sharedEngine = cc.AudioManager.sharedEngine();
+        var shareParser = cc.SAXParser.shareParser();
+
         for (var i = 0; i < res.length; i++) {
             switch (res[i].type) {
                 case "image":
@@ -103,7 +104,7 @@ cc.Loader = cc.Class.extend({
                     break;
             }
         }
-        this.isLoadedComplete()
+        this.isLoadedComplete();
     },
     loadAD:function (url, w, h, x, y) {
 

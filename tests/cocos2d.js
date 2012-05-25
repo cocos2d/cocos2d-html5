@@ -63,11 +63,12 @@ cc.loadjs = function (filename) {
         if (this.order + 1 < cc.loadQue.length) {
             cc.$('head').appendChild(cc.loadQue[this.order + 1]);
             //console.log(this.order);
-        }
-        else {
+        } else {
             cc.setup("gameCanvas");
+
             //init audio
             cc.AudioManager.sharedEngine().init("mp3,ogg");
+
             //we are ready to run the game
             cc.Loader.shareLoader().onloading = function () {
                 cc.LoaderScene.shareLoaderScene().draw();
@@ -79,8 +80,7 @@ cc.loadjs = function (filename) {
             cc.Loader.shareLoader().preload(g_ressources);
         }
     };
-    if (script.order === 0)//if the first file to load, then we put it on the head
-    {
+    if (script.order === 0) {        //if the first file to load, then we put it on the head
         cc.$('head').appendChild(script);
     }
 };
@@ -171,7 +171,6 @@ cc.loadjs('tileMap_parallax_nodes/CCParallaxNode.js');
 cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
 
 cc.loadjs('../box2d/box2d.js');
-
 
 cc.loadjs('../tests/Classes/AppDelegate.js');
 cc.loadjs('../tests/testbasic.js');
