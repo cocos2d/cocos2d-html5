@@ -139,6 +139,9 @@ var restartParticleAction = function () {
 var ParticleDemo = cc.LayerColor.extend({
     _m_emitter:null,
     _m_background:null,
+    _shapeModeButton:null,
+    _textureModeButton:null,
+
     ctor:function () {
         this._super();
         this.initWithColor(cc.ccc4(127, 127, 127, 255));
@@ -180,32 +183,37 @@ var ParticleDemo = cc.LayerColor.extend({
         var spriteSelected = cc.Sprite.spriteWithFile(s_ShapeModeMenuItem, cc.RectMake(0, 23, 115, 23));
         var spriteDisabled = cc.Sprite.spriteWithFile(s_ShapeModeMenuItem, cc.RectMake(0, 0, 115, 23));
 
-        var item4_shape = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal, spriteSelected, spriteDisabled, this,
-            function(){});
+        this._shapeModeButton = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal, spriteSelected, spriteDisabled, this,
+            function(){
+                selfPoint._m_emitter.setDrawMode(cc.kParticleTextureMode);
+                selfPoint._textureModeButton.setIsVisible(true);
+                selfPoint._shapeModeButton.setIsVisible(false);
+            });
+        this._textureModeButton.setPosition( new cc.Point(10,100));
+        this.addChild(this._shapeModeButton);
 
         var spriteNormal_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
         var spriteSelected_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 23, 115, 23));
         var spriteDisabled_t = cc.Sprite.spriteWithFile(s_TextureModeMenuItem, cc.RectMake(0, 0, 115, 23));
 
-        var item4_texture = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal_t, spriteSelected_t, spriteDisabled_t, this,
-            function(){});
+        this._textureModeButton = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal_t, spriteSelected_t, spriteDisabled_t, this,
+            function(){
+                selfPoint._m_emitter.setDrawMode(cc.kParticleShapeMode);
+                selfPoint._textureModeButton.setIsVisible(false);
+                selfPoint._shapeModeButton.setIsVisible(true);
+            });
+        this._textureModeButton.setIsVisible(false);
+        this._textureModeButton.setPosition( new cc.Point(10,100));
+        this.addChild(this._textureModeButton);
 
-        var item4 = cc.MenuItemToggle.itemWithTarget(	this,function(){
-                if(selfPoint._m_emitter.getDrawMode() == cc.kParticleTextureMode)
-                    selfPoint._m_emitter.setDrawMode(cc.kParticleShapeMode);
-                else
-                    selfPoint._m_emitter.setDrawMode(cc.kParticleTextureMode);
-            },
-            item4_shape,item4_texture);
-
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, item4);
+        var menu = cc.Menu.menuWithItems(item1, item2, item3);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
         item2.setPosition(cc.PointMake(s.width / 2, 30));
         item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
-        item4.setPosition( cc.PointMake( 10, 100) );
-        item4.setAnchorPoint( cc.PointMake(0,0) );
+        //item4.setPosition( cc.PointMake( 10, 100) );
+        //item4.setAnchorPoint( cc.PointMake(0,0) );
 
         this.addChild(menu, 100);
         //TODO
