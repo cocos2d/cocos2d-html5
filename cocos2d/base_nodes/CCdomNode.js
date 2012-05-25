@@ -427,6 +427,20 @@ cc.domNode = cc.Class.extend({
     onEnterTransitionDidFinish:function () {
         this._arrayMakeObjectsPerformSelector(this.getChildren(), "onEnter");
     },
+    setIsVisible:function(isVisible){
+        if(isVisible){
+           this.show();
+        }else{
+            this.hide();
+        }
+    },
+    getIsVisible:function(){
+        if(this.dom.style.display == "none"){
+            return false;
+        }else{
+            return true;
+        }
+    },
     hide:function () {
         this.dom.style.display = "none";
     },
