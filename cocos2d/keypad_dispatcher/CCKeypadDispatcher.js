@@ -149,8 +149,6 @@ cc.s_KeypadDispatcher = null;
  @brief Dispatch the keypad message from the phone
  */
 cc.KeypadDispatcher = cc.Class.extend({
-    _keydown:{},
-    _delayedKeyUp:[],
     /**
      @brief add delegate to concern keypad msg
      */
@@ -205,17 +203,6 @@ cc.KeypadDispatcher = cc.Class.extend({
         }
     },
     /**
-     @brief clear the keyup array just before mainloop finishes, to ensure the keydown is atleast executed once
-     */
-    clearKeyUp:function () {
-        for (var i = 0; i < this._delayedKeyUp.length; i++) {
-            if (this._keydown[this._delayedKeyUp[i]]) {
-                delete this._keydown[this._delayedKeyUp[i]];
-            }
-        }
-        this._delayedKeyUp = [];
-    },
-    /**
      @brief dispatch the key pad msg
      */
     dispatchKeypadMSG:function (e, keydown) {
@@ -223,18 +210,15 @@ cc.KeypadDispatcher = cc.Class.extend({
         e.stopPropagation();
         e.preventDefault();
         //update keymap
-        if (keydown && !this._keydown[e.keyCode])//if keydown and our keymap doesnt have it
+        if (keydown && e)//if keydown and our keymap doesnt have it
         {
-            this._keydown[e.keyCode] = true;
             //execute all deletegate that registered a keyboard event
-            var keys = this._keydown;
             for (var i = 0; i < this._m_pDelegates.length; i++) {
-                this._m_pDelegates[i].getDelegate().keyDown(keys);
+                this._m_pDelegates[i].getDelegate().keyDown(e.keyCode);
             }
         }
-        else if (!keydown && this._keydown[e.keyCode])//if keyup and our keymap have that key in it
+        else if (!keydown && e)//if keyup and our keymap have that key in it
         {
-            this._delayedKeyUp.push(e.keyCode);
             for (var i = 0; i < this._m_pDelegates.length; i++) {
                 this._m_pDelegates[i].getDelegate().keyUp(e.keyCode);
             }
@@ -273,11 +257,11 @@ cc.KeypadDispatcher = cc.Class.extend({
 cc.KeypadDispatcher.sharedDispatcher = function () {
     if (!cc.s_KeypadDispatcher) {
         cc.s_KeypadDispatcher = new cc.KeypadDispatcher();
-        window.addEventListener("keydown", function (e) {
+        document.addEventListener("keydown", function (e) {
             cc.s_KeypadDispatcher.dispatchKeypadMSG(e, true);
             cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
         });
-        window.addEventListener("keyup", function (e) {
+        document.addEventListener("keyup", function (e) {
             cc.s_KeypadDispatcher.dispatchKeypadMSG(e, false);
         });
     }
