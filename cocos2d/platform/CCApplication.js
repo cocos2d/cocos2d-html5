@@ -126,6 +126,7 @@ cc.setup = function () {
      }
      }, true);
      */
+    cc.KeypadDispatcher.sharedDispatcher();
 };
 
 cc.setupHTML = function (obj) {
