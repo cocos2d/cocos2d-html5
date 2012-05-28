@@ -776,6 +776,16 @@ cc.LazyLayer = cc.Node.extend({
         this._layerContext.scale(xScale, xScale);
     },
 
+    addChild:function(child, zOrder, tag){
+        this._isNeedUpdate = true;
+        this._super(child, zOrder, tag);
+    },
+
+    removeChild:function (child, cleanup) {
+        this._isNeedUpdate = true;
+        this._super(child, cleanup);
+    },
+
     visit:function(){
         // quick return if not visible
         if (!this._m_bIsVisible) {
