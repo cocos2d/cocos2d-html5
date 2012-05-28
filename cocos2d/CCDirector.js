@@ -974,10 +974,6 @@ cc.DisplayLinkDirector = cc.Director.extend({
         }
         else if (!this.m_bInvalid) {
             this.drawScene();
-
-            // release the objects
-            //cc.PoolManager::getInstance()->pop();
-            cc.KeypadDispatcher.sharedDispatcher().clearKeyUp();
         }
     },
     stopAnimation:function () {
