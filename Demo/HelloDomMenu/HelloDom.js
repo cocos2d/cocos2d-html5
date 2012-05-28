@@ -60,11 +60,7 @@ var Helloworld = cc.Layer.extend({
         var selfPointer = this;
         //////////////////////////////
         // 1. super init first
-        /*var test = this._super();
-        cc.LOG(test);
-        if (!test) {
-            return false;
-        }*/
+        this._super();
 
         var size = cc.Director.sharedDirector().getWinSize();
 
@@ -76,7 +72,7 @@ var Helloworld = cc.Layer.extend({
 
         // add "HelloWorld" splash screen"
         this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
+        this.pSprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
         this.pSprite.setIsVisible(true);
         this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.pSprite.setScale(0.5);
