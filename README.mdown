@@ -14,7 +14,6 @@ Cross Platform
 Documentation
 ------------------
    * Website: [www.cocos2d-x.org][3]
-   * [Online API References][4]
 
 Contact us
 ------------------
