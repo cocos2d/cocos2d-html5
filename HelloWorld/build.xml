@@ -6,7 +6,7 @@
 
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="cocos2d-html5-alpha.js">
+                debug="false" output="cocos2d-html5-alpha-min.js">
             <sources dir="${basedir}/../cocos2d">
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>

@@ -6,7 +6,7 @@
 
     <target name="compile_Canvas">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="cocos2d-html5-alpha-canvasmenu.js">
+                debug="false" output="cocos2d-html5-alpha-canvasmenu-min.js">
             <sources dir="${basedir}">
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
@@ -90,7 +90,7 @@
 
     <target name="compile_Dom">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="cocos2d-html5-alpha-dommenu.js">
+                debug="false" output="cocos2d-html5-alpha-dommenu-min.js">
             <sources dir="${basedir}">
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
