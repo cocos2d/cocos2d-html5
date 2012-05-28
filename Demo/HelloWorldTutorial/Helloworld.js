@@ -107,7 +107,7 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLabel.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
+        this.helloLabel.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, size.height - 40)));
 
         this.setIsTouchEnabled(true);
         this.adjustSizeForWindow();
