@@ -1,5 +1,5 @@
 
-cocos2d-html5-v0.5.0-alpha-1 @ May.16, 2012
+cocos2d-html5-v0.5.0-alpha @ May.28, 2012
 
 * supports canvas and Dom Menu.
 
