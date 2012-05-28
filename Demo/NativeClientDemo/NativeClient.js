@@ -139,11 +139,7 @@ var Helloworld = cc.Layer.extend({
         var selfPointer = this;
         //////////////////////////////
         // 1. super init first
-        var test = this._super();
-        cc.LOG(test);
-        if (!test) {
-            return false;
-        }
+        this._super();
 
         /////////////////////////////
         // 2. add a menu item with "X" image, which is clicked to quit the program
