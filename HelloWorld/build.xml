@@ -13,6 +13,7 @@
                 <file name="platform/platform.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="cocoa/CCSet.js"/>
+                <file name="cocoa/CCNS.js"/>
                 <file name="platform/CCTypes.js"/>
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>

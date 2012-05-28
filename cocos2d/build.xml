@@ -20,6 +20,7 @@
                 <file name="platform/CCTypes.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="cocoa/CCSet.js"/>
+                <file name="cocoa/CCNS.js"/>
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
                 <file name="base_nodes/CCNode.js"/>
@@ -103,6 +104,7 @@
                 <file name="platform/CCTypes.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="cocoa/CCSet.js"/>
+                <file name="cocoa/CCNS.js"/>
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
                 <file name="base_nodes/CCNode.js"/>
