@@ -649,8 +649,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 ty = fireTouches[i].clientY;
             }
 
-            var mouseX = (tx - pos.left);
-            var mouseY = (pos.height - (ty - pos.top));
+            var mouseX = (tx - pos.left)/ cc.Director.sharedDirector().getContentScaleFactor();
+            var mouseY = (pos.height - (ty - pos.top))/ cc.Director.sharedDirector().getContentScaleFactor();
 
             var touch = new cc.Touch(0, mouseX, mouseY);
             touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
