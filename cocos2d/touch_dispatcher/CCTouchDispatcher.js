@@ -533,10 +533,6 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
         cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet, null);
     });
-    element.addEventListener("contextmenu", function (event) {
-        event.stopPropagation();
-        event.preventDefault();
-    });
 
     //register canvas touch event
     element.addEventListener("touchstart", function (event) {
@@ -556,6 +552,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             pos.top += el.offsetTop;
             el = el.offsetParent;
         }
+        pos.left -= document.body.scrollLeft;
+        pos.top -= document.body.scrollTop;
 
         for (var i = 0; i < event.touches.length; i++) {
             var tx = event.touches[i].pageX;
@@ -595,6 +593,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             pos.top += el.offsetTop;
             el = el.offsetParent;
         }
+        pos.left -= document.body.scrollLeft;
+        pos.top -= document.body.scrollTop;
 
         for (var i = 0; i < event.touches.length; i++) {
             var tx = event.touches[i].pageX;
@@ -634,16 +634,23 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             pos.top += el.offsetTop;
             el = el.offsetParent;
         }
+        pos.left -= document.body.scrollLeft;
+        pos.top -= document.body.scrollTop;
 
-        for (var i = 0; i < event.touches.length; i++) {
-            var tx = event.touches[i].pageX;
-            var ty = event.touches[i].pageY;
-            if (event.touches[i]) {
-                tx = event.touches[i].clientX;
-                ty = event.touches[i].clientY;
+        var fireTouches = event.touches;
+        if(!fireTouches ||(fireTouches.length == 0)){
+            fireTouches = event.changedTouches;
+        }
+        for (var i = 0; i < fireTouches.length; i++) {
+            var tx = fireTouches[i].pageX;
+            var ty = fireTouches[i].pageY;
+            if (fireTouches[i]) {
+                tx = fireTouches[i].clientX;
+                ty = fireTouches[i].clientY;
             }
-            var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
-            var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
+
+            var mouseX = (tx - pos.left)/ cc.Director.sharedDirector().getContentScaleFactor();
+            var mouseY = (pos.height - (ty - pos.top))/ cc.Director.sharedDirector().getContentScaleFactor();
 
             var touch = new cc.Touch(0, mouseX, mouseY);
             touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
@@ -673,6 +680,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             pos.top += el.offsetTop;
             el = el.offsetParent;
         }
+        pos.left -= document.body.scrollLeft;
+        pos.top -= document.body.scrollTop;
 
         for (var i = 0; i < event.touches.length; i++) {
             var tx = event.touches[i].pageX;
