@@ -2,7 +2,7 @@
 <project name="Javascript compress project" basedir="." default="compile_test">
 
     <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
-             classpath="${basedir}../tools/compiler/compiler.jar"/>
+             classpath="${basedir}/../tools/compiler/compiler.jar"/>
 
     <target name="compile_test">
         <jscomp compilationLevel="simple" warning="quiet"
