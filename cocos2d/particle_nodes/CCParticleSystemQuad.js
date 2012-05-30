@@ -334,7 +334,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
 
                     context.save();
                     context.globalAlpha = particle.color.a;
-                    context.translate(0 | particle.pos.x, -(0 | particle.pos.y));
+                    context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
                     context.drawImage(drawTexture,
                         lpx, -(lpx + particle.size),
                         particle.size, particle.size);
@@ -342,7 +342,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                 } else {
                     context.save();
                     context.globalAlpha = particle.color.a;
-                    context.translate(0 | particle.pos.x, -(0 | particle.pos.y));
+                    context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
                     if(this._shapeType == cc.kParticleStarShape){
                         cc.drawingUtil.drawStar(context, new cc.Point(0, 0), lpx, particle.color);
                     }else{
