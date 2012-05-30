@@ -69,7 +69,7 @@ var TextureCacheTest = cc.Layer.extend({
         // create sprites
         var bg = cc.Sprite.spriteWithFile("Resources/Images/HelloWorld.png");
         bg.setPosition(cc.PointMake(size.width / 2, size.height / 2));
-        bg.setScale(1.7);
+        //bg.setScale(1.7);
 
         var s1 = cc.Sprite.spriteWithFile("Resources/Images/grossini.png");
         var s2 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_01.png");
