@@ -35,29 +35,29 @@ var s_nCurCase = 0;
 //
 ////////////////////////////////////////////////////////
 var NodeChildrenMenuLayer = PerformBasicLayer.extend({
-    _m_nMaxCases:4,
+    _maxCases:4,
     showCurrentTest:function () {
-        var nNodes = (this.getParent()).getQuantityOfNodes();
-        var pScene = null;
-        switch (this._m_nCurCase) {
+        var nodes = (this.getParent()).getQuantityOfNodes();
+        var scene = null;
+        switch (this._curCase) {
             case 0:
-                pScene = new IterateSpriteSheetCArray();
+                scene = new IterateSpriteSheetCArray();
                 break;
             case 1:
-                pScene = new AddSpriteSheet();
+                scene = new AddSpriteSheet();
                 break;
             case 2:
-                pScene = new RemoveSpriteSheet();
+                scene = new RemoveSpriteSheet();
                 break;
             case 3:
-                pScene = new ReorderSpriteSheet();
+                scene = new ReorderSpriteSheet();
                 break;
         }
-        s_nCurCase = this._m_nCurCase;
+        s_nCurCase = this._curCase;
 
-        if (pScene) {
-            pScene.initWithQuantityOfNodes(nNodes);
-            cc.Director.sharedDirector().replaceScene(pScene);
+        if (scene) {
+            scene.initWithQuantityOfNodes(nodes);
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     }
 });
@@ -71,7 +71,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
     _lastRenderedCount:null,
     _quantityOfNodes:null,
     _currentQuantityOfNodes:null,
-    initWithQuantityOfNodes:function (nNodes) {
+    initWithQuantityOfNodes:function (nodes) {
         //srand(time());
         var s = cc.Director.sharedDirector().getWinSize();
 
@@ -91,7 +91,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
 
         this._lastRenderedCount = 0;
         this._currentQuantityOfNodes = 0;
-        this._quantityOfNodes = nNodes;
+        this._quantityOfNodes = nodes;
 
         cc.MenuItemFont.setFontSize(65);
         var that =this;
@@ -110,8 +110,8 @@ var NodeChildrenMainScene = cc.Scene.extend({
         infoLabel.setPosition(cc.ccp(s.width / 2, s.height / 2 - 15));
         this.addChild(infoLabel, 1, kTagInfoLayer);
 
-        var pMenu = new NodeChildrenMenuLayer(true, 4, s_nCurCase);
-        this.addChild(pMenu);
+        var menu = new NodeChildrenMenuLayer(true, 4, s_nCurCase);
+        this.addChild(menu);
 
         this.updateQuantityLabel();
         this.updateQuantityOfNodes();
@@ -125,7 +125,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
     updateQuantityOfNodes:function () {
 
     },
-    onDecrease:function (pSender) {
+    onDecrease:function (sender) {
         this._quantityOfNodes -= kNodesIncrease;
         if (this._quantityOfNodes < 0) {
             this._quantityOfNodes = 0;
@@ -134,7 +134,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
         this.updateQuantityLabel();
         this.updateQuantityOfNodes();
     },
-    onIncrease:function (pSender) {
+    onIncrease:function (sender) {
         this._quantityOfNodes += kNodesIncrease;
         if (this._quantityOfNodes > kMaxNodes) {
             this._quantityOfNodes = kMaxNodes
@@ -192,11 +192,11 @@ var IterateSpriteSheet = NodeChildrenMainScene.extend({
 
         this._currentQuantityOfNodes = this._quantityOfNodes;
     },
-    initWithQuantityOfNodes:function (nNodes) {
+    initWithQuantityOfNodes:function (nodes) {
         this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png");
         this.addChild(this._batchNode);
 
-        this._super(nNodes);
+        this._super(nodes);
 
         if (cc.ENABLE_PROFILERS) {
             this._profilingTimer = cc.Profiler.timerWithName(this.profilerName(), this);
@@ -218,15 +218,15 @@ var IterateSpriteSheet = NodeChildrenMainScene.extend({
 var IterateSpriteSheetFastEnum = IterateSpriteSheet.extend({
     update:function (dt) {
         // iterate using fast enumeration protocol
-        var pChildren = this._batchNode.getChildren();
+        var children = this._batchNode.getChildren();
 
         if (cc.ENABLE_PROFILERS) {
             cc.ProfilingBeginTimingBlock(this._profilingTimer);
         }
 
-        for (var i = 0; i < pChildren.length; i++) {
-            var pSprite = pChildren[i];
-            pSprite.setIsVisible(false);
+        for (var i = 0; i < children.length; i++) {
+            var sprite = children[i];
+            sprite.setIsVisible(false);
         }
 
         if (cc.ENABLE_PROFILERS) {
@@ -253,14 +253,14 @@ var IterateSpriteSheetFastEnum = IterateSpriteSheet.extend({
 var IterateSpriteSheetCArray = IterateSpriteSheet.extend({
     update:function (dt) {
         // iterate using fast enumeration protocol
-        var pChildren = this._batchNode.getChildren();
+        var children = this._batchNode.getChildren();
 
         if (cc.ENABLE_PROFILERS) {
             cc.ProfilingBeginTimingBlock(this._profilingTimer);
         }
-        for (var i = 0; i < pChildren.length; i++) {
-            var pSprite = pChildren[i];
-            pSprite.setIsVisible(false);
+        for (var i = 0; i < children.length; i++) {
+            var sprite = children[i];
+            sprite.setIsVisible(false);
         }
 
         if (cc.ENABLE_PROFILERS) {
@@ -313,11 +313,11 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
 
         this._currentQuantityOfNodes = this._quantityOfNodes;
     },
-    initWithQuantityOfNodes:function (nNodes) {
+    initWithQuantityOfNodes:function (nodes) {
         this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png");
         this.addChild(this._batchNode);
 
-        this._super(nNodes);
+        this._super(nodes);
 
         if (cc.ENABLE_PROFILERS) {
             this._profilingTimer = cc.Profiler.timerWithName(this.profilerName(), this);
@@ -351,8 +351,8 @@ var AddSpriteSheet = AddRemoveSpriteSheet.extend({
 
             // Don't include the sprite creation time and random as part of the profiling
             for (var i = 0; i < totalToAdd; i++) {
-                var pSprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
-                sprites.push(pSprite);
+                var sprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                sprites.push(sprite);
                 zs[i] = cc.RANDOM_MINUS1_1() * 50;
             }
 
@@ -406,8 +406,8 @@ var RemoveSpriteSheet = AddRemoveSpriteSheet.extend({
 
             // Don't include the sprite creation time as part of the profiling
             for (var i = 0; i < totalToAdd; i++) {
-                var pSprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
-                sprites.push(pSprite);
+                var sprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                sprites.push(sprite);
             }
 
             // add them with random Z (very important!)
@@ -458,8 +458,8 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 
             // Don't include the sprite creation time as part of the profiling
             for (var i = 0; i < totalToAdd; i++) {
-                var pSprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
-                sprites.push(pSprite);
+                var sprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                sprites.push(sprite);
             }
 
             // add them with random Z (very important!)
@@ -475,8 +475,8 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
             }
 
             for (var i = 0; i < totalToAdd; i++) {
-                var pNode = this._batchNode.getChildren()[i];;
-                this._batchNode.reorderChild(pNode, cc.RANDOM_MINUS1_1() * 50);
+                var node = this._batchNode.getChildren()[i];;
+                this._batchNode.reorderChild(node, cc.RANDOM_MINUS1_1() * 50);
             }
             if (cc.ENABLE_PROFILERS) {
                 cc.ProfilingEndTimingBlock(this._profilingTimer);
@@ -503,7 +503,7 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 });
 
 function runNodeChildrenTest() {
-    var pScene = new IterateSpriteSheetCArray();
-    pScene.initWithQuantityOfNodes(kNodesIncrease);
-    cc.Director.sharedDirector().replaceScene(pScene);
+    var scene = new IterateSpriteSheetCArray();
+    scene.initWithQuantityOfNodes(kNodesIncrease);
+    cc.Director.sharedDirector().replaceScene(scene);
 }

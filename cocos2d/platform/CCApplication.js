@@ -79,10 +79,10 @@ cc.setup = function () {
             //document
             break;
         case 1:
-            var cName = arguments[0];
+            var name = arguments[0];
             var getElement = null;
-            if (typeof(cName) == "string") {
-                getElement = document.getElementById(cName);
+            if (typeof(name) == "string") {
+                getElement = document.getElementById(name);
             } else {
                 getElement = arguments[0];
             }
@@ -121,7 +121,7 @@ cc.setup = function () {
     //binding window size
     /*
      cc.canvas.addEventListener("resize", function () {
-     if (!cc.s_bFirstRun) {
+     if (!cc.firstRun) {
      cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
      }
      }, true);
@@ -155,9 +155,9 @@ cc.setupHTML = function (obj) {
 
 cc.Application = cc.Class.extend({
     ctor:function () {
-        this._m_nAnimationInterval = 0;
-        cc.Assert(!cc.sm_pSharedApplication, "CCApplication ctor");
-        cc.sm_pSharedApplication = this;
+        this._animationInterval = 0;
+        cc.Assert(!cc._sharedApplication, "CCApplication ctor");
+        cc._sharedApplication = this;
     },
 
     /**
@@ -165,7 +165,7 @@ cc.Application = cc.Class.extend({
      @interval       The time, which expressed in second in second, between current frame and next.
      */
     setAnimationInterval:function (interval) {
-        this._m_nAnimationInterval = interval;
+        this._animationInterval = interval;
     },
 
     /**
@@ -219,11 +219,11 @@ cc.Application = cc.Class.extend({
             var callback = function () {
                 cc.Director.sharedDirector().mainLoop();
             };
-            setInterval(callback, this._m_nAnimationInterval * 1000);
+            setInterval(callback, this._animationInterval * 1000);
         }
 
     },
-    _m_nAnimationInterval:null
+    _animationInterval:null
 
 });
 
@@ -233,8 +233,8 @@ cc.Application = cc.Class.extend({
  */
 cc.Application.sharedApplication = function () {
 
-    cc.Assert(cc.sm_pSharedApplication, "sharedApplication");
-    return cc.sm_pSharedApplication;
+    cc.Assert(cc._sharedApplication, "sharedApplication");
+    return cc._sharedApplication;
 };
 
 /**
@@ -298,4 +298,4 @@ cc.Application.getCurrentLanguage = function () {
     return ret;
 };
 
-cc.sm_pSharedApplication = null;
+cc._sharedApplication = null;

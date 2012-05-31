@@ -62,7 +62,7 @@ var LayerTestScene = TestScene.extend({
 //
 //------------------------------------------------------------------
 var LayerTest = cc.Layer.extend({
-    m_strTitle:null,
+    title:null,
     title:function () {
         return "No title";
     },
@@ -84,9 +84,9 @@ var LayerTest = cc.Layer.extend({
             l.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
@@ -98,20 +98,20 @@ var LayerTest = cc.Layer.extend({
         this.addChild(menu, 1);
     },
 
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(restartLayerTestAction());
 
         cc.Director.sharedDirector().replaceScene(s);
 
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(nextLayerTestAction());
         cc.Director.sharedDirector().replaceScene(s);
 
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(backLayerTestAction());
         cc.Director.sharedDirector().replaceScene(s);
@@ -213,8 +213,8 @@ var LayerTestBlend = LayerTest.extend({
         var s = cc.Director.sharedDirector().getWinSize();
         var layer1 = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 255, 80));
 
-        var sister1 = cc.Sprite.spriteWithFile(s_pPathSister1);
-        var sister2 = cc.Sprite.spriteWithFile(s_pPathSister2);
+        var sister1 = cc.Sprite.spriteWithFile(s_pathSister1);
+        var sister2 = cc.Sprite.spriteWithFile(s_pathSister2);
 
         this.addChild(sister1);
         this.addChild(sister2);

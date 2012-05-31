@@ -75,11 +75,11 @@ cc.AppController = cc.Class.extend({
 });
 
 cc.AppController.shareAppController = function () {
-    if (cc.s_sharedAppController == null) {
-        cc.s_sharedAppController = new cc.AppController();
+    if (cc.sharedAppController == null) {
+        cc.sharedAppController = new cc.AppController();
     }
-    cc.Assert(cc.s_sharedAppController, "shareAppController");
-    return cc.s_sharedAppController;
+    cc.Assert(cc.sharedAppController, "shareAppController");
+    return cc.sharedAppController;
 };
 // cocos2d application instance
-cc.s_sharedAppController = null;
+cc.sharedAppController = null;

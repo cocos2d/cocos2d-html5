@@ -88,7 +88,7 @@ Box2DTestLayer = cc.Layer.extend({
 
         //Set up sprite
 
-        var mgr = cc.SpriteBatchNode.batchNodeWithFile(s_pPathBlock, 150);
+        var mgr = cc.SpriteBatchNode.batchNodeWithFile(s_pathBlock, 150);
         this.addChild(mgr, 0, kTagSpriteManager);
 
         this.addNewSpriteWithCoords(cc.PointMake(screenSize.width / 2, screenSize.height / 2));
@@ -192,8 +192,8 @@ Box2DTestScene = TestScene.extend({
 
 
     runThisTest:function () {
-        var pLayer = new Box2DTestLayer();
-        this.addChild(pLayer);
+        var layer = new Box2DTestLayer();
+        this.addChild(layer);
 
         cc.Director.sharedDirector().replaceScene(this);
     }

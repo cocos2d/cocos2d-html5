@@ -37,9 +37,9 @@ var TouchesTestScene = TestScene.extend({
     runThisTest:function () {
         cc.Director.sharedDirector().replaceScene(this);
     },
-    MainMenuCallback:function (pSender) {
+    MainMenuCallback:function (sender) {
         cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationPortrait);
-        this._super(pSender);
+        this._super(sender);
     }
 });
 
@@ -53,12 +53,12 @@ var PongLayer = cc.Layer.extend({
         this._ballStartingVelocity = cc.PointMake(20.0, -100.0);
         this._winSize = cc.Director.sharedDirector().getWinSize();
 
-        this._ball = Ball.ballWithTexture(cc.TextureCache.sharedTextureCache().addImage(s_Ball));
+        this._ball = Ball.ballWithTexture(cc.TextureCache.sharedTextureCache().addImage(s_ball));
         this._ball.setPosition(cc.PointMake(this._winSize.width /2, this._winSize.height /2));
         this._ball.setVelocity(this._ballStartingVelocity);
         this.addChild(this._ball);
 
-        var paddleTexture = cc.TextureCache.sharedTextureCache().addImage(s_Paddle);
+        var paddleTexture = cc.TextureCache.sharedTextureCache().addImage(s_paddle);
 
         this._paddles = [];
 

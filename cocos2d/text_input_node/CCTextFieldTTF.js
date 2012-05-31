@@ -44,14 +44,14 @@ cc.TextFieldDelegate = cc.Class.extend({
     /**
      @brief    If the sender doesn't want to insert the text, return true;
      */
-    onTextFieldInsertText:function (sender, text, nLen) {
+    onTextFieldInsertText:function (sender, text, len) {
         return false
     },
 
     /**
      @brief    If the sender doesn't want to delete the delText, return true;
      */
-    onTextFieldDeleteBackward:function (sender, delText, nLen) {
+    onTextFieldDeleteBackward:function (sender, delText, len) {
         return false;
     },
 
@@ -67,24 +67,24 @@ cc.TextFieldDelegate = cc.Class.extend({
  @brief    A simple text input field with TTF font.
  */
 cc.TextFieldTTF = cc.LabelTTF.extend({
-    _pLens:null,
-    _pInputText:"",
-    _pPlaceHolder:"",
+    _lens:null,
+    _inputText:"",
+    _placeHolder:"",
 
     //////////////////////////////////////////////////////////////////////////
     // properties
     //////////////////////////////////////////////////////////////////////////
-    _pDelegate:null,
+    _delegate:null,
     getDelegate:function () {
-        return this._pDelegate;
+        return this._delegate;
     },
     setDelegate:function (value) {
-        this._pDelegate = value;
+        this._delegate = value;
     },
 
-    _nCharCount:0,
+    _charCount:0,
     getCharCount:function () {
-        return this._nCharCount;
+        return this._charCount;
     },
 
     _ColorSpaceHolder:null,
@@ -106,17 +106,17 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         switch (arguments.length) {
             case 5:
                 if (placeholder) {
-                    this._pPlaceHolder = placeholder;
+                    this._placeHolder = placeholder;
                 }
-                return this.initWithString(this._pPlaceHolder, dimensions, alignment, fontName, fontSize);
+                return this.initWithString(this._placeHolder, dimensions, alignment, fontName, fontSize);
                 break;
             case 3:
                 if (placeholder) {
-                    this._pPlaceHolder = placeholder;
+                    this._placeHolder = placeholder;
                 }
                 fontName = arguments[1];
                 fontSize = arguments[2];
-                return this.initWithString(this._pPlaceHolder, fontName, fontSize);
+                return this.initWithString(this._placeHolder, fontName, fontSize);
                 break;
             default:
                 throw "Argument must be non-nil ";
@@ -131,39 +131,39 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
             return;
         }
         if (text) {
-            this._pInputText = text;
+            this._inputText = text;
         } else {
-            this._pInputText = "";
+            this._inputText = "";
         }
 
         // if there is no input text, display placeholder instead
-        if (!this._pInputText.length) {
-            this._super(this._pPlaceHolder);
+        if (!this._inputText.length) {
+            this._super(this._placeHolder);
         } else {
-            this._super(this._pInputText);
+            this._super(this._inputText);
         }
-        this._nCharCount = this._pInputText.length;
+        this._charCount = this._inputText.length;
     },
     getString:function () {
-        return this._pInputText;
+        return this._inputText;
     },
 
     setPlaceHolder:function (text) {
-        this._pPlaceHolder = text || "";
-        if (!this._pInputText.length) {
-            this.setString(this._pPlaceHolder, true);
+        this._placeHolder = text || "";
+        if (!this._inputText.length) {
+            this.setString(this._placeHolder, true);
         }
     },
     getPlaceHolder:function () {
-        return this._pPlaceHolder;
+        return this._placeHolder;
     },
 
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
-        if (this._pDelegate && this._pDelegate.onDraw(this)) {
+        if (this._delegate && this._delegate.onDraw(this)) {
             return;
         }
-        if (this._pInputText) {
+        if (this._inputText) {
             this._super(context);
             return;
         }
@@ -183,8 +183,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
      */
     attachWithIME:function () {
         //c++ code
-        var bRet = cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
-        if (bRet) {
+        var ret = cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
+        if (ret) {
             // open keyboard
             /*
              var pGlView = cc.Director.sharedDirector().getOpenGLView();
@@ -193,7 +193,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
              }
              */
         }
-        return bRet;
+        return ret;
     },
 
     /**
@@ -201,8 +201,8 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
      */
     detachWithIME:function () {
         // C++ code
-        var bRet = cc.IMEDispatcher.sharedDispatcher().detachDelegateWithIME(this);
-        if (bRet) {
+        var ret = cc.IMEDispatcher.sharedDispatcher().detachDelegateWithIME(this);
+        if (ret) {
             // close keyboard
             /*
              var pGlView = cc.Director.sharedDirector().getOpenGLView();
@@ -211,11 +211,11 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
              }
              */
         }
-        return bRet;
+        return ret;
     },
 
     canAttachWithIME:function () {
-        return (this._pDelegate) ? (!this._pDelegate.onTextFieldAttachWithIME(this)) : true;
+        return (this._delegate) ? (!this._delegate.onTextFieldAttachWithIME(this)) : true;
     },
 
     /**
@@ -225,7 +225,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
     },
 
     canDetachWithIME:function () {
-        return (this._pDelegate) ? (!this._pDelegate.onTextFieldDetachWithIME(this)) : true;
+        return (this._delegate) ? (!this._delegate.onTextFieldDetachWithIME(this)) : true;
     },
 
     /**
@@ -235,7 +235,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
     },
 
     deleteBackward:function () {
-        var nStrLen = this._pInputText.length;
+        var nStrLen = this._inputText.length;
         if (nStrLen == 0) {
             // there is no string
             return;
@@ -244,21 +244,21 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         // get the delete byte number
         var nDeleteLen = 1;    // default, erase 1 byte
 
-        if (this._pDelegate && this._pDelegate.onTextFieldDeleteBackward(this, this._pInputText[nStrLen - nDeleteLen], nDeleteLen)) {
+        if (this._delegate && this._delegate.onTextFieldDeleteBackward(this, this._inputText[nStrLen - nDeleteLen], nDeleteLen)) {
             // delegate don't wan't delete backward
             return;
         }
 
         // if delete all text, show space holder string
         if (nStrLen <= nDeleteLen) {
-            this._pInputText = "";
-            this._nCharCount = 0;
-            this.setString(this._pPlaceHolder, true);
+            this._inputText = "";
+            this._charCount = 0;
+            this.setString(this._placeHolder, true);
             return;
         }
 
         // set new input text
-        var sText = this._pInputText.substring(0, nStrLen - nDeleteLen);
+        var sText = this._inputText.substring(0, nStrLen - nDeleteLen);
         this.setString(sText);
     },
 
@@ -276,13 +276,13 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         }
 
         if (sInsert.length > 0) {
-            if (this._pDelegate && this._pDelegate.onTextFieldInsertText(this, sInsert, sInsert.length)) {
+            if (this._delegate && this._delegate.onTextFieldInsertText(this, sInsert, sInsert.length)) {
                 // delegate doesn't want insert text
                 return;
             }
 
-            var sText = this._pInputText + sInsert;
-            this._nCharCount = sText.length;
+            var sText = this._inputText + sInsert;
+            this._charCount = sText.length;
             this.setString(sText);
         }
 
@@ -291,7 +291,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         }
 
         // '\n' has inserted,  let delegate process first
-        if (this._pDelegate && this._pDelegate.onTextFieldInsertText(this, "\n", 1)) {
+        if (this._delegate && this._delegate.onTextFieldInsertText(this, "\n", 1)) {
             return;
         }
 
@@ -300,7 +300,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
     },
 
     getContentText:function () {
-        return this._pInputText;
+        return this._inputText;
     },
 
     //////////////////////////////////////////////////////////////////////////
@@ -320,24 +320,24 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
 cc.TextFieldTTF.textFieldWithPlaceHolder = function (placeholder, dimensions, alignment, fontName, fontSize) {
     switch (arguments.length) {
         case 5:
-            var pRet = new cc.TextFieldTTF();
-            if (pRet && pRet.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize)) {
+            var ret = new cc.TextFieldTTF();
+            if (ret && ret.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize)) {
                 if (placeholder) {
-                    pRet.setPlaceHolder(placeholder);
+                    ret.setPlaceHolder(placeholder);
                 }
-                return pRet;
+                return ret;
             }
             return null;
             break;
         case 3:
-            var pRet = new cc.TextFieldTTF();
+            var ret = new cc.TextFieldTTF();
             fontName = arguments[1];
             fontSize = arguments[2];
-            if (pRet && pRet.initWithString("", fontName, fontSize)) {
+            if (ret && ret.initWithString("", fontName, fontSize)) {
                 if (placeholder) {
-                    pRet.setPlaceHolder(placeholder);
+                    ret.setPlaceHolder(placeholder);
                 }
-                return pRet;
+                return ret;
             }
             return null;
             break;

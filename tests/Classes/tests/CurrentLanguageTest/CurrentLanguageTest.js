@@ -67,8 +67,8 @@ var CurrentLanguageTest = cc.Layer.extend({
 
 var CurrentLanguageTestScene = TestScene.extend({
     runThisTest:function(){
-        var pLayer = new CurrentLanguageTest();
-        this.addChild(pLayer);
+        var layer = new CurrentLanguageTest();
+        this.addChild(layer);
 
         cc.Director.sharedDirector().replaceScene(this);
     }

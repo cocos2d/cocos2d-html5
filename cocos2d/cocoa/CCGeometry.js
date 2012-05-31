@@ -111,12 +111,12 @@ cc.Rect.CCRectGetMinY = function (rect) {
 };
 
 cc.Rect.CCRectContainsPoint = function (rect, point) {
-    var bRet = false;
+    var ret = false;
     if (point.x >= cc.Rect.CCRectGetMinX(rect) && point.x <= cc.Rect.CCRectGetMaxX(rect)
         && point.y >= cc.Rect.CCRectGetMinY(rect) && point.y <= cc.Rect.CCRectGetMaxY(rect)) {
-        bRet = true;
+        ret = true;
     }
-    return bRet;
+    return ret;
 };
 
 cc.Rect.CCRectIntersectsRect = function (rectA, rectB) {

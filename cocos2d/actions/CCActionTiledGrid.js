@@ -31,27 +31,27 @@ var cc = cc = cc || {};
  Turn off the files in random order
  */
 cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
-    _m_nSeed:null,
-    _m_nTilesCount:0,
-    _m_pTilesOrder:[],
+    _seed:null,
+    _tilesCount:0,
+    _tilesOrder:[],
     /** initializes the action with a random seed, the grid size and the duration */
     initWithSeed:function (s, gridSize, duration) {
         if (this.initWithSize(gridSize, duration)) {
-            this._m_nSeed = s;
-            this._m_pTilesOrder = null;
+            this._seed = s;
+            this._tilesOrder = null;
 
             return true;
         }
 
         return false;
     },
-    shuffle:function (pArray, nLen) {
+    shuffle:function (array, len) {
         var i;
-        for (i = nLen - 1; i >= 0; i--) {
+        for (i = len - 1; i >= 0; i--) {
             var j = parseInt(Math.random()*(i + 1));
-            var v = pArray[i];
-            pArray[i] = pArray[j];
-            pArray[j] = v;
+            var v = array[i];
+            array[i] = array[j];
+            array[j] = v;
         }
     },
     turnOnTile:function (pos) {
@@ -61,31 +61,31 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
         var coords = new cc.Quad3();
         this.setTile(pos, coords);
     },
-    startWithTarget:function (pTarget) {
+    startWithTarget:function (target) {
         var i;
 
-        this._super(pTarget);
+        this._super(target);
 
-        if (this._m_nSeed != -1) {
-            parseInt(Math.random() * this._m_nSeed);
+        if (this._seed != -1) {
+            parseInt(Math.random() * this._seed);
         }
-        this._m_nTilesCount = this._m_sGridSize.x * this._m_sGridSize.y;
-        this._m_pTilesOrder = [];
+        this._tilesCount = this._gridSize.x * this._gridSize.y;
+        this._tilesOrder = [];
 
-        for (i = 0; i < this._m_nTilesCount; ++i) {
-            this._m_pTilesOrder[i] = i;
+        for (i = 0; i < this._tilesCount; ++i) {
+            this._tilesOrder[i] = i;
         }
 
-        this.shuffle(this._m_pTilesOrder, this._m_nTilesCount);
+        this.shuffle(this._tilesOrder, this._tilesCount);
     },
     update:function (time) {
         var i, l, t;
 
-        l = time * this._m_nTilesCount;
+        l = time * this._tilesCount;
 
-        for (i = 0; i < this._m_nTilesCount; i++) {
-            t = this._m_pTilesOrder[i];
-            var tilePos = cc.ccg(t / this._m_sGridSize.y, t % this._m_sGridSize.y);
+        for (i = 0; i < this._tilesCount; i++) {
+            t = this._tilesOrder[i];
+            var tilePos = cc.ccg(t / this._gridSize.y, t % this._gridSize.y);
 
             if (i < l) {
                 this.turnOffTile(tilePos);
@@ -99,13 +99,13 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
 });
 /** creates the action with the grid size and the duration */
 cc.TurnOffTiles.actionWithSize = function (size, d) {
-    var pAction = new cc.TurnOffTiles();
-    pAction.initWithSize(size, d)
-    return pAction;
+    var action = new cc.TurnOffTiles();
+    action.initWithSize(size, d)
+    return action;
 };
 /** creates the action with a random seed, the grid size and the duration */
 cc.TurnOffTiles.actionWithSeed = function (s, gridSize, duration) {
-    var pAction = new cc.TurnOffTiles();
-    pAction.initWithSeed(s, gridSize, duration)
-    return pAction;
+    var action = new cc.TurnOffTiles();
+    action.initWithSeed(s, gridSize, duration)
+    return action;
 };

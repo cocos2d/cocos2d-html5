@@ -50,7 +50,7 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
         // render outScene to its texturebuffer
         outTexture.clear(0,0,0,1);
         outTexture.begin();
-        this._m_pOutScene.visit();
+        this._outScene.visit();
         outTexture.end();
 
         //	Since we've passed the outScene to the texture we don't need it.
@@ -69,7 +69,7 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
         // create the blend action
         var layerAction = cc.Sequence.actions
             (
-                cc.ProgressFromTo.actionWithDuration(this._m_fDuration, 100.0, 0.0),
+                cc.ProgressFromTo.actionWithDuration(this._duration, 100.0, 0.0),
                 cc.CallFunc.actionWithTarget(this, cc.TransitionScene.finish),
                 null
             );
@@ -85,7 +85,7 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
         this._super();
     },
     _sceneOrder:function () {
-        this._m_bIsInSceneOnTop = false;
+        this._isInSceneOnTop = false;
     },
     _radialType:function () {
         return cc.kCCProgressTimerTypeRadialCCW;
@@ -103,13 +103,13 @@ cc.TransitionRadialCW = cc.TransitionRadialCCW.extend({
 });
 
 cc.TransitionRadialCCW.transitionWithDuration = function (t, scene) {
-    var pScene = new cc.TransitionRadialCCW();
-    pScene.initWithDuration(t, scene);
-    return pScene;
+    var tmpScene = new cc.TransitionRadialCCW();
+    tmpScene.initWithDuration(t, scene);
+    return tmpScene;
 };
 
 cc.TransitionRadialCW.transitionWithDuration = function (t, scene) {
-    var pScene = new cc.TransitionRadialCW();
-    pScene.initWithDuration(t, scene);
-    return pScene;
+    var tmpScene = new cc.TransitionRadialCW();
+    tmpScene.initWithDuration(t, scene);
+    return tmpScene;
 };

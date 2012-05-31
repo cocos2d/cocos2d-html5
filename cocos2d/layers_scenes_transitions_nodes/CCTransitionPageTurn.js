@@ -37,7 +37,7 @@ var cc = cc = cc || {};
  @since v0.8.2
  */
 cc.TransitionPageTurn = cc.TransitionScene.extend({
-    _m_bBack:null,
+    _back:null,
     /**
      * Creates a base transition with duration and incoming scene.
      * If back is true then the effect is reversed to appear as if the incoming
@@ -45,7 +45,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
      */
     initWithDuration:function (t, scene, backwards) {
         // XXX: needed before [super init]
-        this._m_bBack = backwards;
+        this._back = backwards;
 
         if (this._super(t, scene)) {
             // do something
@@ -54,12 +54,12 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
     },
 
     actionWithSize:function (vector) {
-        if (this._m_bBack) {
+        if (this._back) {
             // Get hold of the PageTurn3DAction
-            return cc.ReverseTime.actionWithAction(this._super(vector, this._m_fDuration));
+            return cc.ReverseTime.actionWithAction(this._super(vector, this._duration));
         } else {
             // Get hold of the PageTurn3DAction
-            return this._super(vector, this._m_fDuration);
+            return this._super(vector, this._duration);
         }
     },
     onEnter:function () {
@@ -76,8 +76,8 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
 
         var action = this.actionWithSize(cc.ccg(x, y));
 
-        if (!this._m_bBack) {
-            this._m_pOutScene.runAction
+        if (!this._back) {
+            this._outScene.runAction
                 (
                     cc.Sequence.actions
                         (
@@ -89,8 +89,8 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
                 );
         } else {
             // to prevent initial flicker
-            this._m_pInScene.setIsVisible(false);
-            this._m_pInScene.runAction
+            this._inScene.setIsVisible(false);
+            this._inScene.runAction
                 (
                     cc.Sequence.actions(
                         cc.Show.action(),
@@ -102,7 +102,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
         }
     },
     _sceneOrder:function () {
-        this.m_bIsInSceneOnTop = this._m_bBack;
+        this.isInSceneOnTop = this._back;
     }
 });
 
@@ -112,7 +112,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
  * scene is being turned from left over the outgoing scene.
  */
 cc.TransitionPageTurn.transitionWithDuration = function (t, scene, backwards) {
-    var pTransition = new cc.TransitionPageTurn();
-    pTransition.initWithDuration(t, scene, backwards);
-    return pTransition;
+    var transition = new cc.TransitionPageTurn();
+    transition.initWithDuration(t, scene, backwards);
+    return transition;
 };

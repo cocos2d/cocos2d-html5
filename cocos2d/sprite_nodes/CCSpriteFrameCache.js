@@ -31,8 +31,8 @@ var cc = cc = cc || {};
  @since v0.9
  */
 cc.SpriteFrameCache = cc.Class.extend({
-    _m_pSpriteFrames:new Object(),
-    _m_pSpriteFramesAliases:new Object(),
+    _spriteFrames:new Object(),
+    _spriteFramesAliases:new Object(),
 
     init:function () {
         return true;
@@ -40,7 +40,7 @@ cc.SpriteFrameCache = cc.Class.extend({
 
     /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
      */
-    addSpriteFramesWithDictionary:function (dictionary, pobTexture) {
+    addSpriteFramesWithDictionary:function (dictionary, texture) {
         var metadataDict = dictionary["metadata"];
         var framesDict = dictionary["frames"];
         var format = 0;
@@ -56,7 +56,7 @@ cc.SpriteFrameCache = cc.Class.extend({
         for (var key in framesDict) {
             frameDict = framesDict[key];
             if (frameDict) {
-                var spriteFrame = this._m_pSpriteFrames[key];
+                var spriteFrame = this._spriteFrames[key];
                 if (spriteFrame) {
                     continue;
                 }
@@ -79,7 +79,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     oh = Math.abs(oh);
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(pobTexture, cc.RectMake(x, y, w, h), false, cc.PointMake(ox, oy), cc.SizeMake(ow, oh));
+                    spriteFrame.initWithTexture(texture, cc.RectMake(x, y, w, h), false, cc.PointMake(ox, oy), cc.SizeMake(ow, oh));
                 }
                 else if (format == 1 || format == 2) {
                     var frame = cc.RectFromString(this._valueForKey("frame", frameDict));
@@ -93,7 +93,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var sourceSize = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(pobTexture, frame, rotated, offset, sourceSize);
+                    spriteFrame.initWithTexture(texture, frame, rotated, offset, sourceSize);
                 }
                 else if (format == 3) {
                     // get values
@@ -108,14 +108,14 @@ cc.SpriteFrameCache = cc.Class.extend({
                     var aliases = frameDict["aliases"];
                     var frameKey = key.toString();
                     for (var i in aliases) {
-                        if (this._m_pSpriteFramesAliases.hasOwnProperty(aliases[i])) {
+                        if (this._spriteFramesAliases.hasOwnProperty(aliases[i])) {
                             cc.LOG("cocos2d: WARNING: an alias with name " + i + " already exists");
                         }
-                        this._m_pSpriteFramesAliases[aliases[i]] = frameKey;
+                        this._spriteFramesAliases[aliases[i]] = frameKey;
                     }
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(pobTexture,
+                    spriteFrame.initWithTexture(texture,
                         cc.RectMake(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
                         textureRotated,
                         spriteOffset,
@@ -123,7 +123,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                 }
 
                 // add sprite frame
-                this._m_pSpriteFrames[key] = spriteFrame;
+                this._spriteFrames[key] = spriteFrame;
             }
         }
     },
@@ -141,10 +141,10 @@ cc.SpriteFrameCache = cc.Class.extend({
             texturePath = texturePath.toString();
         }
 
-        var pTexture = new cc.Texture2D();
-        pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
-        if (pTexture) {
-            this.addSpriteFramesWithDictionary(dict, pTexture);
+        var texture = new cc.Texture2D();
+        texture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
+        if (texture) {
+            this.addSpriteFramesWithDictionary(dict, texture);
         }
         else {
             cc.LOG("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
@@ -154,9 +154,9 @@ cc.SpriteFrameCache = cc.Class.extend({
      * A texture will be loaded automatically. The texture name will composed by replacing the .plist suffix with .png
      * If you want to use another texture, you should use the addSpriteFramesWithFile:texture method.
      */
-    addSpriteFramesWithFile:function (pszPlist, pobTexture) {
+    addSpriteFramesWithFile:function (plist, texture) {
         var argnum = arguments.length;
-        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(pszPlist);
+        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(plist);
 
         switch (argnum) {
             case 1:
@@ -168,12 +168,12 @@ cc.SpriteFrameCache = cc.Class.extend({
                 }
                 if (texturePath != "") {
                     // build texture path relative to plist file
-                    var getIndex = pszPlist.lastIndexOf('/'), pszPath;
-                    pszPath = getIndex ? pszPlist.substring(0, getIndex + 1) : "";
+                    var getIndex = plist.lastIndexOf('/'), pszPath;
+                    pszPath = getIndex ? plist.substring(0, getIndex + 1) : "";
                     texturePath = pszPath + texturePath;
                 } else {
                     // build texture path by replacing file extension
-                    texturePath = pszPlist;
+                    texturePath = plist;
 
                     // remove .xxx
                     var startPos = texturePath.lastIndexOf(".", texturePath.length);
@@ -184,9 +184,9 @@ cc.SpriteFrameCache = cc.Class.extend({
                     cc.LOG("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
                 }
 
-                var pTexture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
-                if (pTexture) {
-                    this.addSpriteFramesWithDictionary(dict, pTexture);
+                var texture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
+                if (texture) {
+                    this.addSpriteFramesWithDictionary(dict, texture);
                 }
                 else {
                     cc.LOG("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
@@ -196,7 +196,7 @@ cc.SpriteFrameCache = cc.Class.extend({
             case 2:
                 if (arguments[1] instanceof cc.Texture2D) {
                     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames. */
-                    this.addSpriteFramesWithDictionary(dict, pobTexture);
+                    this.addSpriteFramesWithDictionary(dict, texture);
                 } else {
                     /** Adds multiple Sprite Frames from a plist file. The texture will be associated with the created sprite frames.
                      @since v0.99.5
@@ -222,8 +222,8 @@ cc.SpriteFrameCache = cc.Class.extend({
     /** Adds an sprite frame with a given name.
      If the name already exists, then the contents of the old name will be replaced with the new one.
      */
-    addSpriteFrame:function (pobFrame, pszFrameName) {
-        this._m_pSpriteFrames[pszFrameName] = pobFrame;
+    addSpriteFrame:function (frame, frameName) {
+        this._spriteFrames[frameName] = frame;
     },
 
     /** Purges the dictionary of loaded sprite frames.
@@ -233,8 +233,8 @@ cc.SpriteFrameCache = cc.Class.extend({
      * In the long term: it will be the same.
      */
     removeSpriteFrames:function () {
-        this._m_pSpriteFrames = [];
-        this._m_pSpriteFramesAliases = [];
+        this._spriteFrames = [];
+        this._spriteFramesAliases = [];
     },
 
     /** Removes unused sprite frames.
@@ -242,32 +242,32 @@ cc.SpriteFrameCache = cc.Class.extend({
      * It is convenient to call this method after when starting a new Scene.
      */
     removeUnusedSpriteFrames:function () {
-        for (var key in this._m_pSpriteFrames) {
+        for (var key in this._spriteFrames) {
             var spriteFrame = null;
-            if (spriteFrame == this._m_pSpriteFrames[key]) {
+            if (spriteFrame == this._spriteFrames[key]) {
                 cc.LOG("cocos2d: cc.SpriteFrameCache: removing unused frame:" + key);
-                delete(this._m_pSpriteFrames[key]);
+                delete(this._spriteFrames[key]);
             }
         }
         ;
     },
 
     /** Deletes an sprite frame from the sprite frame cache. */
-    removeSpriteFrameByName:function (pszName) {
+    removeSpriteFrameByName:function (name) {
         // explicit nil handling
-        if (!pszName) {
+        if (!name) {
             return;
         }
 
         // Is this an alias ?
-        var key = this._m_pSpriteFramesAliases[pszName];
+        var key = this._spriteFramesAliases[name];
 
         if (key) {
-            delete(this._m_pSpriteFrames[key]);
-            delete(this._m_pSpriteFramesAliases[key]);
+            delete(this._spriteFrames[key]);
+            delete(this._spriteFramesAliases[key]);
         }
         else {
-            delete(this._m_pSpriteFrames[pszName]);
+            delete(this._spriteFrames[name]);
         }
     },
 
@@ -291,8 +291,8 @@ cc.SpriteFrameCache = cc.Class.extend({
         var frameDict = null;
 
         for (var key in frameDict) {
-            if (frameDict == framesDict[key] && this._m_pSpriteFrames[key]) {
-                delete(this._m_pSpriteFrames[key]);
+            if (frameDict == framesDict[key] && this._spriteFrames[key]) {
+                delete(this._spriteFrames[key]);
             }
         }
     },
@@ -304,9 +304,9 @@ cc.SpriteFrameCache = cc.Class.extend({
     removeSpriteFramesFromTexture:function (texture) {
         var frameDict = null;
         for (var key in frameDict) {
-            var frame = this._m_pSpriteFrames[key];
+            var frame = this._spriteFrames[key];
             if (frame && (frame.getTexture() == texture)) {
-                delete(this._m_pSpriteFrames[key]);
+                delete(this._spriteFrames[key]);
             }
         }
     },
@@ -315,24 +315,24 @@ cc.SpriteFrameCache = cc.Class.extend({
      If the name is not found it will return nil.
      You should retain the returned copy if you are going to use it.
      */
-    spriteFrameByName:function (pszName) {
+    spriteFrameByName:function (name) {
         var frame;
-        if (this._m_pSpriteFrames.hasOwnProperty(pszName)) {
-            frame = this._m_pSpriteFrames[pszName];
+        if (this._spriteFrames.hasOwnProperty(name)) {
+            frame = this._spriteFrames[name];
         }
 
         if (!frame) {
             // try alias dictionary
             var key;
-            if (this._m_pSpriteFramesAliases.hasOwnProperty(pszName)) {
-                key = this._m_pSpriteFramesAliases[pszName];
+            if (this._spriteFramesAliases.hasOwnProperty(name)) {
+                key = this._spriteFramesAliases[name];
             }
             if (key) {
-                if (this._m_pSpriteFrames.hasOwnProperty(key.toString())) {
-                    frame = this._m_pSpriteFrames[key.toString()];
+                if (this._spriteFrames.hasOwnProperty(key.toString())) {
+                    frame = this._spriteFrames[key.toString()];
                 }
                 if (!frame) {
-                    cc.LOG("cocos2d: cc.SpriteFrameCahce: Frame " + pszName + " not found");
+                    cc.LOG("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
                 }
             }
         }
@@ -348,18 +348,18 @@ cc.SpriteFrameCache = cc.Class.extend({
     }
 });
 
-cc.pSharedSpriteFrameCache = null;
+cc.sharedSpriteFrameCache = null;
 
 /** Returns the shared instance of the Sprite Frame cache */
 cc.SpriteFrameCache.sharedSpriteFrameCache = function () {
-    if (!cc.pSharedSpriteFrameCache) {
-        cc.pSharedSpriteFrameCache = new cc.SpriteFrameCache();
-        cc.pSharedSpriteFrameCache.init();
+    if (!cc.sharedSpriteFrameCache) {
+        cc.sharedSpriteFrameCache = new cc.SpriteFrameCache();
+        cc.sharedSpriteFrameCache.init();
     }
-    return cc.pSharedSpriteFrameCache;
+    return cc.sharedSpriteFrameCache;
 };
 
 /** Purges the cache. It releases all the Sprite Frames and the retained instance. */
 cc.SpriteFrameCache.purgeSharedSpriteFrameCache = function () {
-    cc.pSharedSpriteFrameCache = null;
+    cc.sharedSpriteFrameCache = null;
 };

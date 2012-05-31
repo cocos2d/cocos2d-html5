@@ -52,8 +52,8 @@ cc.PageTurn3D = cc.Grid3DAction.extend({
         var sinTheta = Math.sin(theta);
         var cosTheta = Math.cos(theta);
 
-        for (var i = 0; i <= this._m_sGridSize.x; ++i) {
-            for (var j = 0; j <= this._m_sGridSize.y; ++j) {
+        for (var i = 0; i <= this._gridSize.x; ++i) {
+            for (var j = 0; j <= this._gridSize.y; ++j) {
                 // Get original vertex
                 var p = this.originalVertex(cc.ccg(i, j));
 
@@ -96,6 +96,6 @@ cc.PageTurn3D = cc.Grid3DAction.extend({
 
 /** create the action */
 cc.PageTurn3D.actionWithSize = function (gridSize, time) {
-    var pAction = new cc.PageTurn3D();
-    return pAction;
+    var action = new cc.PageTurn3D();
+    return action;
 };

@@ -160,8 +160,8 @@ cc.MenuItemLabel = cc.MenuItem.extend({
     _fontName:'',
     init:function (label) {
         this._text = label.getString();
-        this._fontName = label._m_pFontName;
-        this._fontSize = label._m_fFontSize + "px";
+        this._fontName = label._fontName;
+        this._fontSize = label._fontSize + "px";
         //create a div containing the text
         this.dom.textContent = this._text;
         //this._domElement.contentText = this._domElement.innerText;
@@ -178,10 +178,10 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this._updateTransform();
     },
     getDisabledColor:function () {
-        return this._m_tDisabledColor;
+        return this._disabledColor;
     },
     setDisabledColor:function (color) {
-        this._m_tDisabledColor = color;
+        this._disabledColor = color;
     }
 });
 cc.MenuItemLabel.itemWithLabel = function (label, two, three, four) {
@@ -263,8 +263,8 @@ cc.MenuItemFont = cc.MenuItem.extend({
         return this.style.fontFamily;
     },
     _recreateLabel:function(){},
-    _m_uFontSize:0,
-    _m_strFontName:''
+    _fontSize:0,
+    _fontName:''
 });
 cc.MenuItemFont.setFontSize = function(s){
     cc._fontSize = s;
@@ -283,7 +283,7 @@ cc.MenuItemFont.fontName = function () {
     return cc._fontName
 };
 cc.MenuItemFont.itemFromString = function (value, target, selector) {
-    var pRet = new cc.MenuItemFont();
-    pRet.initFromString(value, target, selector);
-    return pRet;
+    var ret = new cc.MenuItemFont();
+    ret.initFromString(value, target, selector);
+    return ret;
 };

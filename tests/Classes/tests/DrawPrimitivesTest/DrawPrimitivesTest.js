@@ -123,8 +123,8 @@ var DrawPrimitivesTest = cc.Layer.extend({
 
 var DrawPrimitivesTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = new DrawPrimitivesTest();
-        this.addChild(pLayer);
+        var layer = new DrawPrimitivesTest();
+        this.addChild(layer);
 
         cc.Director.sharedDirector().replaceScene(this);
     }

@@ -46,9 +46,9 @@ cc.less = function (p1, p2) {
     return p1.getPriority() > p2.getPriority();
 };
 
-cc.TouchHandlerHelperData = function (mType) {
+cc.TouchHandlerHelperData = function (type) {
     // we only use the type
-    this.m_type = mType;
+    this.type = type;
 };
 /** @brief CCTouchDispatcher.
  Singleton that handles all the touch events.
@@ -67,17 +67,17 @@ cc.TouchHandlerHelperData = function (mType) {
  @since v0.8.0
  */
 cc.TouchDispatcher = cc.Class.extend({
-    _m_pTargetedHandlers:null,
-    _m_pStandardHandlers:null,
-    _m_bLocked:false,
-    _m_bToAdd:false,
-    _m_bToRemove:false,
-    _m_pHandlersToAdd:null,
-    _m_pHandlersToRemove:null,
-    _m_bToQuit:false,
-    _m_bDispatchEvents:false,
+    _targetedHandlers:null,
+    _standardHandlers:null,
+    _locked:false,
+    _toAdd:false,
+    _toRemove:false,
+    _handlersToAdd:null,
+    _handlersToRemove:null,
+    _toQuit:false,
+    _dispatchEvents:false,
 
-    _m_sHandlerHelperData:[new cc.TouchHandlerHelperData(cc.TOUCHBEGAN), new cc.TouchHandlerHelperData(cc.TOUCHMOVED),
+    _handlerHelperData:[new cc.TouchHandlerHelperData(cc.TOUCHBEGAN), new cc.TouchHandlerHelperData(cc.TOUCHMOVED),
         new cc.TouchHandlerHelperData(cc.TOUCHENDED), new cc.TouchHandlerHelperData(cc.TOUCHCANCELLED)],
 
     /*
@@ -91,200 +91,200 @@ cc.TouchDispatcher = cc.Class.extend({
      }
      */
     init:function () {
-        this._m_bDispatchEvents = true;
-        this._m_pTargetedHandlers = new Array();
-        this._m_pStandardHandlers = new Array();
+        this._dispatchEvents = true;
+        this._targetedHandlers = new Array();
+        this._standardHandlers = new Array();
 
-        this._m_pHandlersToAdd = new Array();
-        this._m_pHandlersToRemove = new Array();
+        this._handlersToAdd = new Array();
+        this._handlersToRemove = new Array();
 
-        this._m_bToRemove = false;
-        this._m_bToAdd = false;
-        this._m_bToQuit = false;
-        this._m_bLocked = false;
+        this._toRemove = false;
+        this._toAdd = false;
+        this._toQuit = false;
+        this._locked = false;
 
         return true;
     },
 
     /** Whether or not the events are going to be dispatched. Default: true */
     isDispatchEvents:function () {
-        return this._m_bDispatchEvents;
+        return this._dispatchEvents;
     },
     setDispatchEvents:function (bDispatchEvents) {
-        this._m_bDispatchEvents = bDispatchEvents;
+        this._dispatchEvents = bDispatchEvents;
     },
 
     /** Adds a standard touch delegate to the dispatcher's list.
      See StandardTouchDelegate description.
      IMPORTANT: The delegate will be retained.
      */
-    addStandardDelegate:function (pDelegate, nPriority) {
-        var pHandler = cc.StandardTouchHandler.handlerWithDelegate(pDelegate, nPriority);
+    addStandardDelegate:function (delegate, priority) {
+        var handler = cc.StandardTouchHandler.handlerWithDelegate(delegate, priority);
 
-        if (!this._m_bLocked) {
-            this._m_pStandardHandlers = this.forceAddHandler(pHandler, this._m_pStandardHandlers);
+        if (!this._locked) {
+            this._standardHandlers = this.forceAddHandler(handler, this._standardHandlers);
         } else {
-            /* If pHandler is contained in m_pHandlersToRemove, if so remove it from m_pHandlersToRemove and retrun.
+            /* If handler is contained in m_pHandlersToRemove, if so remove it from m_pHandlersToRemove and retrun.
              * Refer issue #752(cocos2d-x)
              */
-            if (this._m_pHandlersToRemove.indexOf(pDelegate) != -1) {
-                cc.ArrayRemoveObject(this._m_pHandlersToRemove, pDelegate);
+            if (this._handlersToRemove.indexOf(delegate) != -1) {
+                cc.ArrayRemoveObject(this._handlersToRemove, delegate);
                 return;
             }
 
-            this._m_pHandlersToAdd.push(pHandler);
-            this._m_bToAdd = true;
+            this._handlersToAdd.push(handler);
+            this._toAdd = true;
         }
     },
 
-    addTargetedDelegate:function (pDelegate, nPriority, bSwallowsTouches) {
-        var pHandler = cc.TargetedTouchHandler.handlerWithDelegate(pDelegate, nPriority, bSwallowsTouches);
-        if (!this._m_bLocked) {
-            this._m_pTargetedHandlers = this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
+    addTargetedDelegate:function (delegate, priority, swallowsTouches) {
+        var handler = cc.TargetedTouchHandler.handlerWithDelegate(delegate, priority, swallowsTouches);
+        if (!this._locked) {
+            this._targetedHandlers = this.forceAddHandler(handler, this._targetedHandlers);
         } else {
-            /* If pHandler is contained in m_pHandlersToRemove, if so remove it from m_pHandlersToRemove and retrun.
+            /* If handler is contained in m_pHandlersToRemove, if so remove it from m_pHandlersToRemove and retrun.
              * Refer issue #752(cocos2d-x)
              */
-            if (this._m_pHandlersToRemove.indexOf(pDelegate) != -1) {
-                cc.ArrayRemoveObject(this._m_pHandlersToRemove, pDelegate);
+            if (this._handlersToRemove.indexOf(delegate) != -1) {
+                cc.ArrayRemoveObject(this._handlersToRemove, delegate);
                 return;
             }
 
-            this._m_pHandlersToAdd.push(pHandler);
-            this._m_bToAdd = true;
+            this._handlersToAdd.push(handler);
+            this._toAdd = true;
         }
     },
 
-    forceAddHandler:function (pHandler, pArray) {
+    forceAddHandler:function (handler, array) {
         var u = 0;
 
-        for (var i = 0; i < pArray.length; i++) {
-            var h = pArray[i];
+        for (var i = 0; i < array.length; i++) {
+            var h = array[i];
             if (h) {
-                if (h.getPriority() < pHandler.getPriority()) {
+                if (h.getPriority() < handler.getPriority()) {
                     ++u;
                 }
-                if (h.getDelegate() == pHandler.getDelegate()) {
+                if (h.getDelegate() == handler.getDelegate()) {
                     cc.Assert(0, "TouchDispatcher.forceAddHandler()");
-                    return pArray;
+                    return array;
                 }
             }
         }
-        return cc.ArrayAppendObjectToIndex(pArray, pHandler, u);
+        return cc.ArrayAppendObjectToIndex(array, handler, u);
     },
 
     forceRemoveAllDelegates:function () {
-        this._m_pStandardHandlers.length = 0;
-        this._m_pTargetedHandlers.length = 0;
+        this._standardHandlers.length = 0;
+        this._targetedHandlers.length = 0;
     },
     /** Removes a touch delegate.
      The delegate will be released
      */
-    removeDelegate:function (pDelegate) {
-        if (pDelegate == null) {
+    removeDelegate:function (delegate) {
+        if (delegate == null) {
             return;
         }
 
-        if (!this._m_bLocked) {
-            this.forceRemoveDelegate(pDelegate);
+        if (!this._locked) {
+            this.forceRemoveDelegate(delegate);
         } else {
-            /* If pHandler is contained in m_pHandlersToAdd, if so remove it from m_pHandlersToAdd and retrun.
+            /* If handler is contained in m_pHandlersToAdd, if so remove it from m_pHandlersToAdd and retrun.
              * Refer issue #752(cocos2d-x)
              */
-            var pHandler = this.findHandler(this._m_pHandlersToAdd, pDelegate);
-            if (pHandler) {
-                cc.ArrayRemoveObject(this._m_pHandlersToAdd, pHandler);
+            var handler = this.findHandler(this._handlersToAdd, delegate);
+            if (handler) {
+                cc.ArrayRemoveObject(this._handlersToAdd, handler);
                 return;
             }
 
-            this._m_pHandlersToRemove.push(pDelegate);
-            this._m_bToRemove = true;
+            this._handlersToRemove.push(delegate);
+            this._toRemove = true;
         }
     },
 
     /** Removes all touch delegates, releasing all the delegates */
     removeAllDelegates:function () {
-        if (!this._m_bLocked) {
+        if (!this._locked) {
             this.forceRemoveAllDelegates();
         } else {
-            this._m_bToQuit = true;
+            this._toQuit = true;
         }
     },
 
     /** Changes the priority of a previously added delegate. The lower the number,
      the higher the priority */
-    setPriority:function (nPriority, pDelegate) {
-        cc.Assert(pDelegate != null, "TouchDispatcher.setPriority():Arguments is null");
+    setPriority:function (priority, delegate) {
+        cc.Assert(delegate != null, "TouchDispatcher.setPriority():Arguments is null");
 
-        var handler = this.findHandler(pDelegate);
+        var handler = this.findHandler(delegate);
 
         cc.Assert(handler != null, "TouchDispatcher.setPriority():Cant find TouchHandler");
 
-        handler.setPriority(nPriority);
+        handler.setPriority(priority);
 
-        this.rearrangeHandlers(this._m_pTargetedHandlers);
-        this.rearrangeHandlers(this._m_pStandardHandlers);
+        this.rearrangeHandlers(this._targetedHandlers);
+        this.rearrangeHandlers(this._standardHandlers);
     },
 
-    touches:function (pTouches, pEvent, uIndex) {
-        cc.Assert(uIndex >= 0 && uIndex < 4, "TouchDispatcher.touches()");
+    touches:function (touches, event, index) {
+        cc.Assert(index >= 0 && index < 4, "TouchDispatcher.touches()");
 
-        this._m_bLocked = true;
+        this._locked = true;
 
         // optimization to prevent a mutable copy when it is not necessary
-        var uTargetedHandlersCount = this._m_pTargetedHandlers.length;
-        var uStandardHandlersCount = this._m_pStandardHandlers.length;
+        var uTargetedHandlersCount = this._targetedHandlers.length;
+        var uStandardHandlersCount = this._standardHandlers.length;
         var bNeedsMutableSet = (uTargetedHandlersCount && uStandardHandlersCount);
 
-        var pMutableTouches = (bNeedsMutableSet ? pTouches.slice() : pTouches);
-        var sHelper = this._m_sHandlerHelperData[uIndex];
+        var pMutableTouches = (bNeedsMutableSet ? touches.slice() : touches);
+        var sHelper = this._handlerHelperData[index];
         //
         // process the target handlers 1st
         //
         if (uTargetedHandlersCount > 0) {
-            var pTouch;
-            for (var i = 0; i < pTouches.length; i++) {
-                pTouch = pTouches[i];
-                var pHandler;
+            var touch;
+            for (var i = 0; i < touches.length; i++) {
+                touch = touches[i];
+                var handler;
 
-                for (var j = 0; j < this._m_pTargetedHandlers.length; j++) {
-                    pHandler = this._m_pTargetedHandlers[j];
+                for (var j = 0; j < this._targetedHandlers.length; j++) {
+                    handler = this._targetedHandlers[j];
 
-                    if (!pHandler) {
+                    if (!handler) {
                         break;
                     }
 
                     var bClaimed = false;
-                    if (uIndex == cc.TOUCHBEGAN) {
-                        bClaimed = pHandler.getDelegate().ccTouchBegan(pTouch, pEvent);
+                    if (index == cc.TOUCHBEGAN) {
+                        bClaimed = handler.getDelegate().ccTouchBegan(touch, event);
 
                         if (bClaimed) {
-                            pHandler.getClaimedTouches().push(pTouch);
+                            handler.getClaimedTouches().push(touch);
                         }
-                        //} else if (pHandler.getClaimedTouches().indexOf(pTouch)> -1){
-                    } else if (pHandler.getClaimedTouches().length > 0) {
+                        //} else if (handler.getClaimedTouches().indexOf(touch)> -1){
+                    } else if (handler.getClaimedTouches().length > 0) {
                         // moved ended cancelled
                         bClaimed = true;
-                        switch (sHelper.m_type) {
+                        switch (sHelper.type) {
                             case cc.TOUCHMOVED:
-                                pHandler.getDelegate().ccTouchMoved(pTouch, pEvent);
+                                handler.getDelegate().ccTouchMoved(touch, event);
                                 break;
                             case cc.TOUCHENDED:
-                                pHandler.getDelegate().ccTouchEnded(pTouch, pEvent);
-                                pHandler.getClaimedTouches().length = 0;
-                                //cc.ArrayRemoveObject(pHandler.getClaimedTouches(),pTouch);
+                                handler.getDelegate().ccTouchEnded(touch, event);
+                                handler.getClaimedTouches().length = 0;
+                                //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
                                 break;
                             case cc.TOUCHCANCELLED:
-                                pHandler.getDelegate().ccTouchCancelled(pTouch, pEvent);
-                                pHandler.getClaimedTouches().length = 0;
-                                //cc.ArrayRemoveObject(pHandler.getClaimedTouches(),pTouch);
+                                handler.getDelegate().ccTouchCancelled(touch, event);
+                                handler.getClaimedTouches().length = 0;
+                                //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
                                 break;
                         }
                     }
 
-                    if (bClaimed && pHandler.isSwallowsTouches()) {
+                    if (bClaimed && handler.isSwallowsTouches()) {
                         if (bNeedsMutableSet) {
-                            cc.ArrayRemoveObject(pMutableTouches, pTouch);
+                            cc.ArrayRemoveObject(pMutableTouches, touch);
                         }
                         break;
                     }
@@ -296,29 +296,29 @@ cc.TouchDispatcher = cc.Class.extend({
         // process standard handlers 2nd
         //
         if (uStandardHandlersCount > 0) {
-            for (i = 0; i < this._m_pStandardHandlers.length; i++) {
-                pHandler = this._m_pStandardHandlers[i];
+            for (i = 0; i < this._standardHandlers.length; i++) {
+                handler = this._standardHandlers[i];
 
-                if (!pHandler) {
+                if (!handler) {
                     break;
                 }
 
-                switch (sHelper.m_type) {
+                switch (sHelper.type) {
                     case cc.TOUCHBEGAN:
                         if (pMutableTouches.length > 0) {
-                            pHandler.getDelegate().ccTouchesBegan(pMutableTouches, pEvent);
+                            handler.getDelegate().ccTouchesBegan(pMutableTouches, event);
                         }
                         break;
                     case cc.TOUCHMOVED:
                         if (pMutableTouches.length > 0) {
-                            pHandler.getDelegate().ccTouchesMoved(pMutableTouches, pEvent);
+                            handler.getDelegate().ccTouchesMoved(pMutableTouches, event);
                         }
                         break;
                     case cc.TOUCHENDED:
-                        pHandler.getDelegate().ccTouchesEnded(pMutableTouches, pEvent);
+                        handler.getDelegate().ccTouchesEnded(pMutableTouches, event);
                         break;
                     case cc.TOUCHCANCELLED:
-                        pHandler.getDelegate().ccTouchesCancelled(pMutableTouches, pEvent);
+                        handler.getDelegate().ccTouchesCancelled(pMutableTouches, event);
                         break;
                 }
             }
@@ -332,82 +332,82 @@ cc.TouchDispatcher = cc.Class.extend({
         // Optimization. To prevent a [handlers copy] which is expensive
         // the add/removes/quit is done after the iterations
         //
-        this._m_bLocked = false;
-        if (this._m_bToRemove) {
-            this._m_bToRemove = false;
-            for (i = 0; i < this._m_pHandlersToRemove.length; i++) {
-                this.forceRemoveDelegate(this._m_pHandlersToRemove[i]);
+        this._locked = false;
+        if (this._toRemove) {
+            this._toRemove = false;
+            for (i = 0; i < this._handlersToRemove.length; i++) {
+                this.forceRemoveDelegate(this._handlersToRemove[i]);
             }
-            this._m_pHandlersToRemove.length = 0;
+            this._handlersToRemove.length = 0;
         }
 
-        if (this._m_bToAdd) {
-            this._m_bToAdd = false;
+        if (this._toAdd) {
+            this._toAdd = false;
 
-            for (i = 0; i < this._m_pHandlersToAdd.length; i++) {
-                pHandler = this._m_pHandlersToAdd[i];
-                if (!pHandler) {
+            for (i = 0; i < this._handlersToAdd.length; i++) {
+                handler = this._handlersToAdd[i];
+                if (!handler) {
                     break;
                 }
 
-                if (pHandler  instanceof cc.TargetedTouchHandler) {
-                    this._m_pTargetedHandlers = this.forceAddHandler(pHandler, this._m_pTargetedHandlers);
+                if (handler  instanceof cc.TargetedTouchHandler) {
+                    this._targetedHandlers = this.forceAddHandler(handler, this._targetedHandlers);
                 } else {
-                    this._m_pStandardHandlers = this.forceAddHandler(pHandler, this._m_pStandardHandlers);
+                    this._standardHandlers = this.forceAddHandler(handler, this._standardHandlers);
                 }
             }
-            this._m_pHandlersToAdd.length = 0;
+            this._handlersToAdd.length = 0;
         }
 
-        if (this._m_bToQuit) {
-            this._m_bToQuit = false;
+        if (this._toQuit) {
+            this._toQuit = false;
             this.forceRemoveAllDelegates();
         }
     },
 
-    touchesBegan:function (touches, pEvent) {
-        if (this._m_bDispatchEvents) {
-            this.touches(touches, pEvent, cc.TOUCHBEGAN);
+    touchesBegan:function (touches, event) {
+        if (this._dispatchEvents) {
+            this.touches(touches, event, cc.TOUCHBEGAN);
         }
     },
-    touchesMoved:function (touches, pEvent) {
-        if (this._m_bDispatchEvents) {
-            this.touches(touches, pEvent, cc.TOUCHMOVED);
+    touchesMoved:function (touches, event) {
+        if (this._dispatchEvents) {
+            this.touches(touches, event, cc.TOUCHMOVED);
         }
     },
-    touchesEnded:function (touches, pEvent) {
-        if (this._m_bDispatchEvents) {
-            this.touches(touches, pEvent, cc.TOUCHENDED);
+    touchesEnded:function (touches, event) {
+        if (this._dispatchEvents) {
+            this.touches(touches, event, cc.TOUCHENDED);
         }
     },
-    touchesCancelled:function (touches, pEvent) {
-        if (this._m_bDispatchEvents) {
-            this.touches(touches, pEvent, cc.TOUCHCANCELLED);
+    touchesCancelled:function (touches, event) {
+        if (this._dispatchEvents) {
+            this.touches(touches, event, cc.TOUCHCANCELLED);
         }
     },
 
-    findHandler:function (pArray, pDelegate) {
+    findHandler:function (array, delegate) {
         switch (arguments.length) {
             case 1:
-                pDelegate = arguments[0];
-                for (var i = 0; i < this._m_pTargetedHandlers.length; i++) {
-                    if (this._m_pTargetedHandlers[i].getDelegate() == pDelegate) {
-                        return this._m_pTargetedHandlers[i];
+                delegate = arguments[0];
+                for (var i = 0; i < this._targetedHandlers.length; i++) {
+                    if (this._targetedHandlers[i].getDelegate() == delegate) {
+                        return this._targetedHandlers[i];
                     }
                 }
-                for (i = 0; i < this._m_pStandardHandlers.length; i++) {
-                    if (this._m_pStandardHandlers[i].getDelegate() == pDelegate) {
-                        return this._m_pStandardHandlers[i];
+                for (i = 0; i < this._standardHandlers.length; i++) {
+                    if (this._standardHandlers[i].getDelegate() == delegate) {
+                        return this._standardHandlers[i];
                     }
                 }
                 return null;
                 break;
             case 2:
-                cc.Assert(pArray != null && pDelegate != null, "TouchDispatcher.findHandler():Arguments is null");
+                cc.Assert(array != null && delegate != null, "TouchDispatcher.findHandler():Arguments is null");
 
-                for (i = 0; i < pArray.length; i++) {
-                    if (pArray[i].getDelegate() == pDelegate) {
-                        return pArray[i];
+                for (i = 0; i < array.length; i++) {
+                    if (array[i].getDelegate() == delegate) {
+                        return array[i];
                     }
                 }
 
@@ -419,29 +419,29 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
-    forceRemoveDelegate:function (pDelegate) {
-        var pHandler;
+    forceRemoveDelegate:function (delegate) {
+        var handler;
         // XXX: remove it from both handlers ???
         // remove handler from m_pStandardHandlers
-        for (var i = 0; i < this._m_pStandardHandlers.length; i++) {
-            pHandler = this._m_pStandardHandlers[i];
-            if (pHandler && pHandler.getDelegate() == pDelegate) {
-                cc.ArrayRemoveObject(this._m_pStandardHandlers, pHandler);
+        for (var i = 0; i < this._standardHandlers.length; i++) {
+            handler = this._standardHandlers[i];
+            if (handler && handler.getDelegate() == delegate) {
+                cc.ArrayRemoveObject(this._standardHandlers, handler);
                 break;
             }
         }
 
-        for (i = 0; i < this._m_pTargetedHandlers.length; i++) {
-            pHandler = this._m_pTargetedHandlers[i];
-            if (pHandler && pHandler.getDelegate() == pDelegate) {
-                cc.ArrayRemoveObject(this._m_pTargetedHandlers, pHandler);
+        for (i = 0; i < this._targetedHandlers.length; i++) {
+            handler = this._targetedHandlers[i];
+            if (handler && handler.getDelegate() == delegate) {
+                cc.ArrayRemoveObject(this._targetedHandlers, handler);
                 break;
             }
         }
     },
 
-    rearrangeHandlers:function (pArray) {
-        pArray.sort(cc.less);
+    rearrangeHandlers:function (array) {
+        array.sort(cc.less);
     }
 });
 cc.TouchDispatcher.preTouchPoint = new cc.Point(0, 0);

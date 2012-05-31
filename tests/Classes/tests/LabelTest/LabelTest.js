@@ -60,26 +60,26 @@ var AtlasTests = [
     "LabelTTFChinese"//ok
 ];
 
-var s_nAtlasIdx = -1;
+var atlasIdx = -1;
 function nextAtlasAction() {
-    ++s_nAtlasIdx;
-    s_nAtlasIdx = s_nAtlasIdx % AtlasTests.length;
-    return new window[AtlasTests[s_nAtlasIdx]];
+    ++atlasIdx;
+    atlasIdx = atlasIdx % AtlasTests.length;
+    return new window[AtlasTests[atlasIdx]];
 }
 function backAtlasAction() {
-    --s_nAtlasIdx;
-    if (s_nAtlasIdx < 0) {
-        s_nAtlasIdx += AtlasTests.length;
+    --atlasIdx;
+    if (atlasIdx < 0) {
+        atlasIdx += AtlasTests.length;
     }
-    return new window[AtlasTests[s_nAtlasIdx]];
+    return new window[AtlasTests[atlasIdx]];
 }
 function restartAtlasAction() {
-    return new window[AtlasTests[s_nAtlasIdx]];
+    return new window[AtlasTests[atlasIdx]];
 }
 
 var LabelTestScene = TestScene.extend({
     runThisTest:function () {
-        s_nAtlasIdx = -1;
+        atlasIdx = -1;
         this.addChild(nextAtlasAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
@@ -108,9 +108,9 @@ var AtlasDemo = cc.Layer.extend({
             l.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
@@ -121,20 +121,20 @@ var AtlasDemo = cc.Layer.extend({
 
         this.addChild(menu, 1);
     },
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new LabelTestScene();
         s.addChild(restartAtlasAction());
 
         cc.Director.sharedDirector().replaceScene(s);
 
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new LabelTestScene();
         s.addChild(nextAtlasAction());
         cc.Director.sharedDirector().replaceScene(s);
 
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new LabelTestScene();
         s.addChild(backAtlasAction());
         cc.Director.sharedDirector().replaceScene(s);
@@ -148,9 +148,9 @@ var AtlasDemo = cc.Layer.extend({
 //
 //------------------------------------------------------------------
 var Atlas1 = AtlasDemo.extend({
-    m_textureAtlas:null,
+    textureAtlas:null,
     ctor:function () {
-        this.m_textureAtlas = cc.TextureAtlas.textureAtlasWithFile(s_AtlasTest, 3);
+        this.textureAtlas = cc.TextureAtlas.textureAtlasWithFile(s_atlasTest, 3);
 
         var s = cc.Director.sharedDirector().getWinSize();
 
@@ -183,7 +183,7 @@ var Atlas1 = AtlasDemo.extend({
 
 
         for (var i = 0; i < 3; i++) {
-            this.m_textureAtlas.updateQuad(quads[i], i);
+            this.textureAtlas.updateQuad(quads[i], i);
         }
     },
     title:function () {
@@ -194,7 +194,7 @@ var Atlas1 = AtlasDemo.extend({
     },
     draw:function () {
         this._super();
-        this.m_textureAtlas.drawQuads();
+        this.textureAtlas.drawQuads();
     }
 });
 
@@ -204,9 +204,9 @@ var Atlas1 = AtlasDemo.extend({
 //
 //------------------------------------------------------------------
 var LabelAtlasTest = AtlasDemo.extend({
-    m_time:null,
+    time:null,
     ctor:function () {
-        this.m_time = 0;
+        this.time = 0;
 
         var label1 = cc.LabelAtlas.labelWithString("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
         this.addChild(label1, 0, kTagLabelSprite1);
@@ -221,14 +221,14 @@ var LabelAtlasTest = AtlasDemo.extend({
         this.schedule(this.step);
     },
     step:function (dt) {
-        this.m_time += dt;
+        this.time += dt;
 
         var label1 = this.getChildByTag(kTagLabelSprite1);
-        var string1 = this.m_time.toFixed(2) + " Test";
+        var string1 = this.time.toFixed(2) + " Test";
         label1.setString(string1);
 
         var label2 = this.getChildByTag(kTagLabelSprite2);
-        var string2 = parseInt(this.m_time).toString();
+        var string2 = parseInt(this.time).toString();
         label2.setString(string2);
     },
     title:function () {
@@ -245,7 +245,7 @@ var LabelAtlasTest = AtlasDemo.extend({
 //
 //------------------------------------------------------------------
 var LabelAtlasColorTest = AtlasDemo.extend({
-    m_time:null,
+    time:null,
     ctor:function () {
         var label1 = cc.LabelAtlas.labelWithString("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
         this.addChild(label1, 0, kTagLabelSprite1);
@@ -263,18 +263,18 @@ var LabelAtlasColorTest = AtlasDemo.extend({
         var repeat = cc.RepeatForever.actionWithAction(seq);
         label2.runAction(repeat);
 
-        this.m_time = 0;
+        this.time = 0;
 
         this.schedule(this.step);
     },
     step:function (dt) {
-        this.m_time += dt;
-        var string1 = this.m_time.toFixed(2) + " Test";
+        this.time += dt;
+        var string1 = this.time.toFixed(2) + " Test";
         var label1 = this.getChildByTag(kTagLabelSprite1);
         label1.setString(string1);
 
         var label2 = this.getChildByTag(kTagLabelSprite2);
-        var string2 = parseInt(this.m_time).toString();
+        var string2 = parseInt(this.time).toString();
         label2.setString(string2);
     },
     title:function () {
@@ -293,9 +293,9 @@ var LabelAtlasColorTest = AtlasDemo.extend({
 //
 //------------------------------------------------------------------
 var Atlas3 = AtlasDemo.extend({
-    m_time:null,
+    time:null,
     ctor:function () {
-        this.m_time = 0;
+        this.time = 0;
 
         var col = cc.LayerColor.layerWithColor(cc.ccc4(128, 128, 128, 255));
         this.addChild(col, -10);
@@ -337,9 +337,9 @@ var Atlas3 = AtlasDemo.extend({
         this.schedule(this.step);
     },
     step:function (dt) {
-        this.m_time += dt;
+        this.time += dt;
         //var string;
-        var string = this.m_time + "Test j";
+        var string = this.time + "Test j";
 
         var label1 = this.getChildByTag(kTagBitmapAtlas1);
         label1.setString(string);
@@ -367,9 +367,9 @@ var Atlas3 = AtlasDemo.extend({
 //
 //------------------------------------------------------------------
 var Atlas4 = AtlasDemo.extend({
-    m_time:null,
+    time:null,
     ctor:function () {
-        this.m_time = 0;
+        this.time = 0;
 
         // Upper Label
         var label = cc.LabelBMFont.labelWithString("Bitmap Font Atlas", "Resources/fonts/bitmapFontTest.fnt");
@@ -416,8 +416,8 @@ var Atlas4 = AtlasDemo.extend({
         this.schedule(this.step, 0.1);
     },
     step:function (dt) {
-        this.m_time += dt;
-        var string = this.m_time;
+        this.time += dt;
+        var string = this.time;
 
         var label1 = this.getChildByTag(kTagBitmapAtlas2);
         label1.setString(string);
@@ -793,9 +793,9 @@ var LabelTTFMultiline = AtlasDemo.extend({
 var LabelTTFChinese = AtlasDemo.extend({
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
-        var pLable = cc.LabelTTF.labelWithString("中国", "Marker Felt", 30);
-        pLable.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        this.addChild(pLable);
+        var lable = cc.LabelTTF.labelWithString("中国", "Marker Felt", 30);
+        lable.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this.addChild(lable);
     },
     title:function () {
         return "Testing cc.LabelTTF with Chinese character";

@@ -35,7 +35,7 @@ cc.Menu = cc.domNode.extend({
     initWithItems:function (args) {
         this.dom.id = "DomMenu" + Date.now();
         this.dom.className += " domMenu";
-        this._m_bIsRelativeAnchorPoint= false;
+        this._isRelativeAnchorPoint= false;
         this.setContentSize(cc.Director.sharedDirector().getWinSize());
         for (var i = 0; i < args.length; i++) {
             if (args[i]) {
@@ -65,8 +65,8 @@ cc.Menu = cc.domNode.extend({
                 var childheight = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].dom.style.fontSize,
                     this.getChildren()[i].dom.style.fontFamily).height;
-                this.getChildren()[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._m_pChildren[i].getScaleY()*/ / 2));
-                y -= childheight /** this._m_pChildren[i].getScaleY()*/ + padding;
+                this.getChildren()[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._children[i].getScaleY()*/ / 2));
+                y -= childheight /** this._children[i].getScaleY()*/ + padding;
             }
         }
     },
@@ -90,9 +90,9 @@ cc.Menu = cc.domNode.extend({
                 var childwidth = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].dom.style.fontSize,
                     this.getChildren()[i].dom.style.fontFamily).width;
-                this.getChildren()[i].setPosition(cc.ccp( -y + childwidth,0/* * this._m_pChildren[i].getScaleY()*/));
-                //console.log(cc.ccp(s.width / 2 + y - childwidth, -s.height / 2/* * this._m_pChildren[i].getScaleY()*/));
-                y -= childwidth /** this._m_pChildren[i].getScaleY()*/ + padding;
+                this.getChildren()[i].setPosition(cc.ccp( -y + childwidth,0/* * this._children[i].getScaleY()*/));
+                //console.log(cc.ccp(s.width / 2 + y - childwidth, -s.height / 2/* * this._children[i].getScaleY()*/));
+                y -= childwidth /** this._children[i].getScaleY()*/ + padding;
             }
         }
     },
@@ -135,17 +135,17 @@ cc.Menu = cc.domNode.extend({
     }
 });
 cc.Menu.menuWithItems = function () {
-    var pret = new cc.Menu();
-    pret.initWithItems(arguments);
-    return pret;
+    var ret = new cc.Menu();
+    ret.initWithItems(arguments);
+    return ret;
 };
 cc.Menu.menuWithItem = function () {
-    var pret = new cc.Menu();
-    pret.initWithItems(arguments);
-    return pret;
+    var ret = new cc.Menu();
+    ret.initWithItems(arguments);
+    return ret;
 };
 cc.Menu.node = function() {
-    var pret = new cc.Menu();
-    pret.initWithItems();
-    return pret;
+    var ret = new cc.Menu();
+    ret.initWithItems();
+    return ret;
 };

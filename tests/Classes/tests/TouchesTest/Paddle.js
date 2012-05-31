@@ -93,8 +93,8 @@ var Paddle = cc.Sprite.extend({
     }
 });
 Paddle.paddleWithTexture = function (aTexture) {
-    var pPaddle = new Paddle();
-    pPaddle.initWithTexture(aTexture);
+    var paddle = new Paddle();
+    paddle.initWithTexture(aTexture);
 
-    return pPaddle;
+    return paddle;
 };

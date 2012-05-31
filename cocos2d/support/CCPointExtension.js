@@ -55,8 +55,8 @@ cc.ccp = function (x, y) {
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpNeg = function (vPoint) {
-    return new cc.Point(-vPoint.x, -vPoint.y);
+cc.ccpNeg = function (point) {
+    return new cc.Point(-point.x, -point.y);
 };
 
 /** Calculates sum of two points.
@@ -79,8 +79,8 @@ cc.ccpSub = function (v1, v2) {
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpMult = function (vPoint, sFloat) {
-    return new cc.Point(vPoint.x * sFloat, vPoint.y * sFloat);
+cc.ccpMult = function (point, float) {
+    return new cc.Point(point.x * float, point.y * float);
 };
 
 /** Calculates midpoint between two points.
@@ -111,16 +111,16 @@ cc.ccpCross = function (v1, v2) {
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpPerp = function (vPoint) {
-    return new cc.Point(-vPoint.y, vPoint.x);
+cc.ccpPerp = function (point) {
+    return new cc.Point(-point.y, point.x);
 };
 
 /** Calculates perpendicular of v, rotated 90 degrees clockwise -- cross(v, rperp(v)) <= 0
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpRPerp = function (vPoint) {
-    return new cc.Point(vPoint.y, -vPoint.x);
+cc.ccpRPerp = function (point) {
+    return new cc.Point(point.y, -point.x);
 };
 
 /** Calculates the projection of v1 over v2.

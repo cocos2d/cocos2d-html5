@@ -31,51 +31,51 @@
  */
 cc.PointObject = cc.Class.extend({
 
-    _m_tRatio:null,
-    _m_tOffset:null,
-    _m_pChild:null,
+    _ratio:null,
+    _offset:null,
+    _child:null,
 
     getRatio:function () {
-        return this._m_tRatio;
+        return this._ratio;
     },
     setRatio:function (value) {
-        this._m_tRatio = value;
+        this._ratio = value;
     },
     getOffset:function () {
-        return this._m_tOffset;
+        return this._offset;
     },
     setOffset:function (value) {
-        this._m_tOffset = value;
+        this._offset = value;
     },
     getChild:function () {
-        return this._m_pChild;
+        return this._child;
     },
     setChild:function (value) {
-        this._m_pChild = value;
+        this._child = value;
     },
 
     initWithCCPoint:function (ratio, offset) {
-        this._m_tRatio = ratio;
-        this._m_tOffset = offset;
-        this._m_pChild = null;
+        this._ratio = ratio;
+        this._offset = offset;
+        this._child = null;
         return true;
     }
 });
 cc.PointObject.pointWithCCPoint = function (ratio, offset) {
-    var pRet = new cc.PointObject();
-    pRet.initWithCCPoint(ratio, offset);
-    return pRet;
+    var ret = new cc.PointObject();
+    ret.initWithCCPoint(ratio, offset);
+    return ret;
 }
 cc.ParallaxNode = cc.Node.extend({
 
     /** array that holds the offset / ratio of the children */
-    _m_pParallaxArray:[],
+    _parallaxArray:[],
 
     getParallaxArray:function () {
-        return this._m_pParallaxArray;
+        return this._parallaxArray;
     },
     setParallaxArray:function (value) {
-        this._m_pParallaxArray = value;
+        this._parallaxArray = value;
     },
 
     /** Adds a child to the container with a z-order, a parallax ratio and a position offset
@@ -83,8 +83,8 @@ cc.ParallaxNode = cc.Node.extend({
      @since v0.8
      */
     ctor:function () {
-        this._m_pParallaxArray = [];
-        this._m_tLastPosition = cc.PointMake(-100, -100);
+        this._parallaxArray = [];
+        this._lastPosition = cc.PointMake(-100, -100);
     },
 
     addChild:function (child, z, ratio, offset) {
@@ -95,9 +95,9 @@ cc.ParallaxNode = cc.Node.extend({
         cc.Assert(child != null, "Argument must be non-nil");
         var obj = cc.PointObject.pointWithCCPoint(ratio, offset);
         obj.setChild(child);
-        this._m_pParallaxArray.push(obj);
+        this._parallaxArray.push(obj);
 
-        var pos = this._m_tPosition;
+        var pos = this._position;
         pos.x = pos.x * ratio.x + offset.x;
         pos.y = pos.y * ratio.y + offset.y;
         child.setPosition(pos);
@@ -107,37 +107,37 @@ cc.ParallaxNode = cc.Node.extend({
     },
     // super methods
     removeChild:function (child, cleanup) {
-        for (var i = 0; i < this._m_pParallaxArray.length; i++) {
-            var point = this._m_pParallaxArray[i];
+        for (var i = 0; i < this._parallaxArray.length; i++) {
+            var point = this._parallaxArray[i];
             if (point.getChild().isEqual(child)) {
                 //ccArrayRemoveObjectAtIndex(m_pParallaxArray, i);
-                this._m_pParallaxArray.splice(i, 1);
+                this._parallaxArray.splice(i, 1);
                 break;
             }
         }
         this._super(child, cleanup);
     },
     removeAllChildrenWithCleanup:function (cleanup) {
-        this._m_pParallaxArray = [];
+        this._parallaxArray = [];
         this._super(cleanup);
     },
     visit:function () {
         //	CCPoint pos = position_;
         //	CCPoint	pos = [self convertToWorldSpace:CCPointZero];
         var pos = this._absolutePosition();
-        if (!cc.Point.CCPointEqualToPoint(pos, this._m_tLastPosition)) {
-            for (var i = 0; i < this._m_pParallaxArray.length; i++) {
-                var point = this._m_pParallaxArray[i];
+        if (!cc.Point.CCPointEqualToPoint(pos, this._lastPosition)) {
+            for (var i = 0; i < this._parallaxArray.length; i++) {
+                var point = this._parallaxArray[i];
                 var x = -pos.x + pos.x * point.getRatio().x + point.getOffset().x;
                 var y = -pos.y + pos.y * point.getRatio().y + point.getOffset().y;
                 point.getChild().setPosition(cc.ccp(x, y));
             }
-            m_tLastPosition = pos;
+            lastPosition = pos;
         }
         this._super();
     },
     _absolutePosition:function () {
-        var ret = this._m_tPosition;
+        var ret = this._position;
         var cn = this;
         while (cn.getParent() != null) {
             cn = cn.getParent();
@@ -146,10 +146,10 @@ cc.ParallaxNode = cc.Node.extend({
         return ret;
     },
 
-    _m_tLastPosition:null
+    _lastPosition:null
 });
 
 cc.ParallaxNode.node = function () {
-    var pRet = new cc.ParallaxNode();
-    return pRet;
+    var ret = new cc.ParallaxNode();
+    return ret;
 }

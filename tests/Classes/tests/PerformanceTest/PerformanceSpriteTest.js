@@ -142,8 +142,8 @@ var SubTest = cc.Class.extend({
 
         return sprite;
     },
-    initWithSubTest:function (nSubTest, p) {
-        this._subtestNumber = nSubTest;
+    initWithSubTest:function (subTest, p) {
+        this._subtestNumber = subTest;
         this._parent = p;
         this._batchNode = null;
         /*
@@ -226,41 +226,41 @@ var SubTest = cc.Class.extend({
 //
 ////////////////////////////////////////////////////////
 var SpriteMenuLayer = PerformBasicLayer.extend({
-    _m_nMaxCases:7,
+    _maxCases:7,
     showCurrentTest:function () {
-        var pScene = null;
-        var pPreScene = this.getParent();
-        var nSubTest = pPreScene.getSubTestNum();
-        var nNodes = pPreScene.getNodesNum();
+        var scene = null;
+        var preScene = this.getParent();
+        var subTest = preScene.getSubTestNum();
+        var nodes = preScene.getNodesNum();
 
-        switch (this._m_nCurCase) {
+        switch (this._curCase) {
             case 0:
-                pScene = new SpritePerformTest1();
+                scene = new SpritePerformTest1();
                 break;
             case 1:
-                pScene = new SpritePerformTest2();
+                scene = new SpritePerformTest2();
                 break;
             case 2:
-                pScene = new SpritePerformTest3();
+                scene = new SpritePerformTest3();
                 break;
             case 3:
-                pScene = new SpritePerformTest4();
+                scene = new SpritePerformTest4();
                 break;
             case 4:
-                pScene = new SpritePerformTest5();
+                scene = new SpritePerformTest5();
                 break;
             case 5:
-                pScene = new SpritePerformTest6();
+                scene = new SpritePerformTest6();
                 break;
             case 6:
-                pScene = new SpritePerformTest7();
+                scene = new SpritePerformTest7();
                 break;
         }
-        s_nSpriteCurCase = this._m_nCurCase;
+        s_nSpriteCurCase = this._curCase;
 
-        if (pScene) {
-            pScene.initWithSubTest(nSubTest, nNodes);
-            cc.Director.sharedDirector().replaceScene(pScene);
+        if (scene) {
+            scene.initWithSubTest(subTest, nodes);
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     }
 });
@@ -273,15 +273,15 @@ var SpriteMenuLayer = PerformBasicLayer.extend({
 var SpriteMainScene = cc.Scene.extend({
     _lastRenderedCount:null,
     _quantityNodes:null,
-    _m_pSubTest:null,
+    _subTest:null,
     _subtestNumber:1,
     title:function () {
         return "No title";
     },
-    initWithSubTest:function (asubtest, nNodes) {
+    initWithSubTest:function (asubtest, nodes) {
         this._subtestNumber = asubtest;
-        this._m_pSubTest = new SubTest();
-        this._m_pSubTest.initWithSubTest(asubtest, this);
+        this._subTest = new SubTest();
+        this._subTest.initWithSubTest(asubtest, this);
 
         var s = cc.Director.sharedDirector().getWinSize();
 
@@ -312,17 +312,17 @@ var SpriteMainScene = cc.Scene.extend({
         this.addChild(infoLabel, 1, kTagInfoLayer);
 
         // add menu
-        var pMenu = new SpriteMenuLayer(true, 7, s_nSpriteCurCase);
-        this.addChild(pMenu, 1, kTagSpriteMenuLayer);
+        var menu = new SpriteMenuLayer(true, 7, s_nSpriteCurCase);
+        this.addChild(menu, 1, kTagSpriteMenuLayer);
 
         // Sub Tests
         cc.MenuItemFont.setFontSize(32);
-        var pSubMenu = cc.Menu.menuWithItems(null);
+        var subMenu = cc.Menu.menuWithItems(null);
         for (var i = 1; i <= 9; ++i) {
             var text = i.toString();
             var itemFont = cc.MenuItemFont.itemFromString(text, this, this.testNCallback);
             itemFont.setTag(i);
-            pSubMenu.addChild(itemFont, 10);
+            subMenu.addChild(itemFont, 10);
 
             if (i <= 3)
                 itemFont.setColor(cc.ccc3(200, 20, 20));
@@ -332,11 +332,11 @@ var SpriteMainScene = cc.Scene.extend({
                 itemFont.setColor(cc.ccc3(0, 20, 200));
         }
 
-        pSubMenu.alignItemsHorizontally();
-        pSubMenu.setPosition(cc.ccp(s.width / 2, 80));
-        this.addChild(pSubMenu, 2);
+        subMenu.alignItemsHorizontally();
+        subMenu.setPosition(cc.ccp(s.width / 2, 80));
+        this.addChild(subMenu, 2);
 
-        while (this._quantityNodes < nNodes) {
+        while (this._quantityNodes < nodes) {
             this.onIncrease(this);
         }
     },
@@ -349,30 +349,30 @@ var SpriteMainScene = cc.Scene.extend({
             this._lastRenderedCount = this._quantityNodes;
         }
     },
-    testNCallback:function (pSender) {
-        this._subtestNumber = pSender.getTag();
-        var pMenu = this.getChildByTag(kTagSpriteMenuLayer);
-        pMenu.restartCallback(pSender);
+    testNCallback:function (sender) {
+        this._subtestNumber = sender.getTag();
+        var menu = this.getChildByTag(kTagSpriteMenuLayer);
+        menu.restartCallback(sender);
     },
-    onIncrease:function (pSender) {
+    onIncrease:function (sender) {
         if (this._quantityNodes >= kMaxSprites)
             return;
 
         for (var i = 0; i < kSpritesIncrease; i++) {
-            var sprite = this._m_pSubTest.createSpriteWithTag(this._quantityNodes);
+            var sprite = this._subTest.createSpriteWithTag(this._quantityNodes);
             this.doTest(sprite);
             this._quantityNodes++;
         }
 
         this.updateNodes();
     },
-    onDecrease:function (pSender) {
+    onDecrease:function (sender) {
         if (this._quantityNodes <= 0)
             return;
 
         for (var i = 0; i < kSpritesIncrease; i++) {
             this._quantityNodes--;
-            this._m_pSubTest.removeByTag(this._quantityNodes);
+            this._subTest.removeByTag(this._quantityNodes);
         }
 
         this.updateNodes();
@@ -396,70 +396,70 @@ var SpriteMainScene = cc.Scene.extend({
 // For test functions
 //
 ////////////////////////////////////////////////////////
-function performanceActions(pSprite) {
+function performanceActions(sprite) {
     var size = cc.Director.sharedDirector().getWinSize();
-    pSprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
+    sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
 
     var period = 0.5 + (Math.random() * 1000) / 500.0;
     var rot = cc.RotateBy.actionWithDuration(period, 360.0 * cc.RANDOM_0_1());
     var rot_back = rot.reverse();
     var permanentRotation = cc.RepeatForever.actionWithAction(cc.Sequence.actions(rot, rot_back, null));
-    pSprite.runAction(permanentRotation);
+    sprite.runAction(permanentRotation);
 
     var growDuration = 0.5 + (Math.random() * 1000) / 500.0;
     var grow = cc.ScaleBy.actionWithDuration(growDuration, 0.5, 0.5);
     var permanentScaleLoop = cc.RepeatForever.actionWithAction(cc.Sequence.actionOneTwo(grow, grow.reverse()));
-    pSprite.runAction(permanentScaleLoop);
+    sprite.runAction(permanentScaleLoop);
 }
 
-function performanceActions20(pSprite) {
+function performanceActions20(sprite) {
     var size = cc.Director.sharedDirector().getWinSize();
     if (cc.RANDOM_0_1() < 0.2)
-        pSprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
+        sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
     else
-        pSprite.setPosition(cc.ccp(-1000, -1000));
+        sprite.setPosition(cc.ccp(-1000, -1000));
 
     var period = 0.5 + (Math.random() * 1000) / 500.0;
     var rot = cc.RotateBy.actionWithDuration(period, 360.0 * cc.RANDOM_0_1());
     var rot_back = rot.reverse();
     var permanentRotation = cc.RepeatForever.actionWithAction(cc.Sequence.actions(rot, rot_back, null));
-    pSprite.runAction(permanentRotation);
+    sprite.runAction(permanentRotation);
 
     var growDuration = 0.5 + (Math.random() * 1000) / 500.0;
     var grow = cc.ScaleBy.actionWithDuration(growDuration, 0.5, 0.5);
     var permanentScaleLoop = cc.RepeatForever.actionWithAction(cc.Sequence.actionOneTwo(grow, grow.reverse()));
-    pSprite.runAction(permanentScaleLoop);
+    sprite.runAction(permanentScaleLoop);
 }
 
-function performanceRotationScale(pSprite) {
+function performanceRotationScale(sprite) {
     var size = cc.Director.sharedDirector().getWinSize();
-    pSprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
-    pSprite.setRotation(cc.RANDOM_0_1() * 360);
-    pSprite.setScale(cc.RANDOM_0_1() * 2);
+    sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
+    sprite.setRotation(cc.RANDOM_0_1() * 360);
+    sprite.setScale(cc.RANDOM_0_1() * 2);
 }
 
-function performancePosition(pSprite) {
+function performancePosition(sprite) {
     var size = cc.Director.sharedDirector().getWinSize();
-    pSprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
+    sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
 }
 
-function performanceout20(pSprite) {
+function performanceout20(sprite) {
     var size = cc.Director.sharedDirector().getWinSize();
 
     if (cc.RANDOM_0_1() < 0.2)
-        pSprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
+        sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
     else
-        pSprite.setPosition(cc.ccp(-1000, -1000));
+        sprite.setPosition(cc.ccp(-1000, -1000));
 }
 
-function performanceOut100(pSprite) {
-    pSprite.setPosition(cc.ccp(-1000, -1000));
+function performanceOut100(sprite) {
+    sprite.setPosition(cc.ccp(-1000, -1000));
 }
 
-function performanceScale(pSprite) {
+function performanceScale(sprite) {
     var size = cc.Director.sharedDirector().getWinSize();
-    pSprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
-    pSprite.setScale(cc.RANDOM_0_1() * 100 / 50);
+    sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
+    sprite.setScale(cc.RANDOM_0_1() * 100 / 50);
 }
 
 
@@ -562,7 +562,7 @@ var SpritePerformTest7 = SpriteMainScene.extend({
 });
 
 function runSpriteTest() {
-    var pScene = new SpritePerformTest1;
-    pScene.initWithSubTest(1, 50);
-    cc.Director.sharedDirector().replaceScene(pScene);
+    var scene = new SpritePerformTest1;
+    scene.initWithSubTest(1, 50);
+    cc.Director.sharedDirector().replaceScene(scene);
 }

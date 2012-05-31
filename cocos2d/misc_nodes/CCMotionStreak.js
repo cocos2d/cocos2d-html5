@@ -55,20 +55,20 @@ var cc = cc = cc || {};
  * @since v0.8.1
  */
 cc.MotionStreak = cc.Node.extend({
-    _m_fSegThreshold:0,
-    _m_fWidth:0,
-    _m_tLastLocation:cc.PointZero(),
+    _segThreshold:0,
+    _width:0,
+    _lastLocation:cc.PointZero(),
 
-    _m_pRibbon:null,
+    _ribbon:null,
     /** Ribbon used by MotionStreak (weak reference) */
-    getRibbon:function(){return this._m_pRibbon;},
+    getRibbon:function(){return this._ribbon;},
 
     //CCTextureProtocol methods
-    getTexture:function(){return this._m_pRibbon.getTexture();},
-    getTexture:function(texture){this._m_pRibbon.setTexture(texture);},
+    getTexture:function(){return this._ribbon.getTexture();},
+    getTexture:function(texture){this._ribbon.setTexture(texture);},
 
-    getBlendFunc:function(){ return this._m_pRibbon.getBlendFunc();},
-    setBlendFunc:function(blendFunc){this._m_pRibbon.setBlendFunc(blendFunc);},
+    getBlendFunc:function(){ return this._ribbon.getBlendFunc();},
+    setBlendFunc:function(blendFunc){this._ribbon.setBlendFunc(blendFunc);},
 
     ctor:function(){
         this._super();
@@ -76,11 +76,11 @@ cc.MotionStreak = cc.Node.extend({
 
     /** initializes a MotionStreak. The file will be loaded using the TextureMgr. */
     initWithFade:function(fade,seg,imagePath,width,length,color){
-        this._m_fSegThreshold = seg;
-        this._m_fWidth = width;
-        this._m_tLastLocation = cc.PointZero();
-        this._m_pRibbon = cc.Ribbon.ribbonWithWidth(this._m_fWidth, imagePath, length, color, fade);
-        this.addChild(this._m_pRibbon);
+        this._segThreshold = seg;
+        this._width = width;
+        this._lastLocation = cc.PointZero();
+        this._ribbon = cc.Ribbon.ribbonWithWidth(this._width, imagePath, length, color, fade);
+        this.addChild(this._ribbon);
 
         // update ribbon position. Use schedule:interval and not scheduleUpdated. (cocos2d-iphone)issue #1075
         this.schedule(this.update, 0);
@@ -90,21 +90,21 @@ cc.MotionStreak = cc.Node.extend({
     /** polling function */
     update:function(delta){
         var location = this.convertToWorldSpace(cc.PointZero());
-        this._m_pRibbon.setPosition(cc.ccp(-1*location.x, -1*location.y));
-        var len = cc.ccpLength(cc.ccpSub(this._m_tLastLocation, location));
-        if (len > this._m_fSegThreshold) {
-            this._m_pRibbon.addPointAt(location, this._m_fWidth);
-            this._m_tLastLocation = location;
+        this._ribbon.setPosition(cc.ccp(-1*location.x, -1*location.y));
+        var len = cc.ccpLength(cc.ccpSub(this._lastLocation, location));
+        if (len > this._segThreshold) {
+            this._ribbon.addPointAt(location, this._width);
+            this._lastLocation = location;
         }
-        this._m_pRibbon.update(delta);
+        this._ribbon.update(delta);
     }
 });
 
 /** creates the a MotionStreak. The image will be loaded using the TextureMgr. */
 cc.MotionStreak.streakWithFade = function(fade,seg,imagePath,width,length,color){
-    var pRet = new cc.MotionStreak();
-    if(pRet && pRet.initWithFade(fade, seg, imagePath, width, length, color)){
-        return pRet;
+    var ret = new cc.MotionStreak();
+    if(ret && ret.initWithFade(fade, seg, imagePath, width, length, color)){
+        return ret;
     }
     return null;
 };

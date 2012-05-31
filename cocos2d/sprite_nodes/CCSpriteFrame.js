@@ -36,65 +36,65 @@ var cc = cc = cc || {};
  sprite.setDisplayFrame(frame);
  */
 cc.SpriteFrame = cc.Class.extend({
-    _m_obRectInPixels:new cc.Rect(),
-    _m_bRotated:null,
-    _m_obRect:new cc.Rect(),
-    _m_obOffsetInPixels:new cc.Point(),
-    _m_obOriginalSizeInPixels:new cc.Size(),
-    _m_pobTexture:null,
+    _rectInPixels:new cc.Rect(),
+    _rotated:null,
+    _rect:new cc.Rect(),
+    _offsetInPixels:new cc.Point(),
+    _originalSizeInPixels:new cc.Size(),
+    _texture:null,
     // attributes
     getRectInPixels:function () {
-        return this._m_obRectInPixels;
+        return this._rectInPixels;
     },
     setRectInPixels:function (rectInPixels) {
-        this._m_obRectInPixels = rectInPixels;
-        this._m_obRect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
+        this._rectInPixels = rectInPixels;
+        this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
     },
     isRotated:function () {
-        return this._m_bRotated;
+        return this._rotated;
     },
     setRotated:function (bRotated) {
-        this._m_bRotated = bRotated;
+        this._rotated = bRotated;
     },
     /** get rect of the frame */
     getRect:function () {
-        return this._m_obRect;
+        return this._rect;
     },
     /** set rect of the frame */
     setRect:function (rect) {
-        this._m_obRect = rect;
-        this._m_obRectInPixels = cc.RECT_POINTS_TO_PIXELS(this._m_obRect);
+        this._rect = rect;
+        this._rectInPixels = cc.RECT_POINTS_TO_PIXELS(this._rect);
     },
     /** get offset of the frame */
     getOffsetInPixels:function () {
-        return this._m_obOffsetInPixels;
+        return this._offsetInPixels;
     },
     /** set offset of the frame */
     setOffsetInPixels:function (offsetInPixels) {
-        this._m_obOffsetInPixels = offsetInPixels;
+        this._offsetInPixels = offsetInPixels;
     },
     /** get original size of the trimmed image */
     getOriginalSizeInPixels:function () {
-        return this._m_obOriginalSizeInPixels;
+        return this._originalSizeInPixels;
     },
     /** set original size of the trimmed image */
     setOriginalSizeInPixels:function (sizeInPixels) {
-        this._m_obOriginalSizeInPixels = sizeInPixels;
+        this._originalSizeInPixels = sizeInPixels;
     },
     /** get texture of the frame */
     getTexture:function () {
-        return this._m_pobTexture;
+        return this._texture;
     },
     /** set texture of the frame, the texture is retained */
-    setTexture:function (pobTexture) {
-        this._m_pobTexture = pobTexture;
+    setTexture:function (texture) {
+        this._texture = texture;
     },
     copyWithZone:function () {
-        var pCopy = new cc.SpriteFrame();
-        pCopy.initWithTexture(this._m_pobTexture, this._m_obRectInPixels, this._m_bRotated, this._m_obOffsetInPixels, this._m_obOriginalSizeInPixels);
-        return pCopy;
+        var copy = new cc.SpriteFrame();
+        copy.initWithTexture(this._texture, this._rectInPixels, this._rotated, this._offsetInPixels, this._originalSizeInPixels);
+        return copy;
     },
-    initWithTexture:function (pobTexture, rect, rotated, offset, originalSize) {
+    initWithTexture:function (texture, rect, rotated, offset, originalSize) {
         var argnum = arguments.length;
         switch (argnum) {
         /** Initializes a cc.SpriteFrame with a texture, rect in points.
@@ -102,20 +102,20 @@ cc.SpriteFrame = cc.Class.extend({
          */
             case 2:
                 var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
-                return this.initWithTexture(pobTexture, rectInPixels, false, cc.PointZero(), rectInPixels.size);
+                return this.initWithTexture(texture, rectInPixels, false, cc.PointZero(), rectInPixels.size);
                 break;
 
         /** Initializes a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
          The originalSize is the size in points of the frame before being trimmed.
          */
             case 5:
-                this._m_pobTexture = pobTexture;
-                this._m_obRectInPixels = rect;
+                this._texture = texture;
+                this._rectInPixels = rect;
 
-                this._m_obRect = cc.RECT_PIXELS_TO_POINTS(rect);
-                this._m_bRotated = rotated;
-                this._m_obOffsetInPixels = offset;
-                this._m_obOriginalSizeInPixels = originalSize;
+                this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
+                this._rotated = rotated;
+                this._offsetInPixels = offset;
+                this._originalSizeInPixels = originalSize;
                 return true;
                 break;
 
@@ -126,36 +126,36 @@ cc.SpriteFrame = cc.Class.extend({
     }
 });
 
-cc.SpriteFrame.frameWithTexture = function (pobTexture, rect, rotated, offset, originalSize) {
+cc.SpriteFrame.frameWithTexture = function (texture, rect, rotated, offset, originalSize) {
     var argnum = arguments.length;
-    var pSpriteFrame = new cc.SpriteFrame();
+    var spriteFrame = new cc.SpriteFrame();
     switch (argnum) {
     /** Create a cc.SpriteFrame with a texture, rect in points.
      It is assumed that the frame was not trimmed.
      */
         case 2:
-            pSpriteFrame.initWithTexture(pobTexture, rect);
+            spriteFrame.initWithTexture(texture, rect);
             break;
     /** Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
      The originalSize is the size in points of the frame before being trimmed.
      */
         case 5:
-            pSpriteFrame.initWithTexture(pobTexture, rect, rotated, offset, originalSize);
+            spriteFrame.initWithTexture(texture, rect, rotated, offset, originalSize);
             break;
         default:
             throw "Argument must be non-nil ";
             break;
     }
-    return pSpriteFrame;
+    return spriteFrame;
 };
 
-cc.SpriteFrame.frameWithTextureForCanvas = function (pobTexture, rect, rotated, offset, originalSize) {
-    var pSpriteFrame = new cc.SpriteFrame();
-    pSpriteFrame._m_pobTexture = pobTexture;
-    pSpriteFrame._m_obRectInPixels = rect;
-    pSpriteFrame._m_obRect = cc.RECT_PIXELS_TO_POINTS(rect);
-    pSpriteFrame._m_bRotated = rotated;
-    pSpriteFrame._m_obOffsetInPixels = offset;
-    pSpriteFrame._m_obOriginalSizeInPixels = originalSize;
-    return pSpriteFrame;
+cc.SpriteFrame.frameWithTextureForCanvas = function (texture, rect, rotated, offset, originalSize) {
+    var spriteFrame = new cc.SpriteFrame();
+    spriteFrame._texture = texture;
+    spriteFrame._rectInPixels = rect;
+    spriteFrame._rect = cc.RECT_PIXELS_TO_POINTS(rect);
+    spriteFrame._rotated = rotated;
+    spriteFrame._offsetInPixels = offset;
+    spriteFrame._originalSizeInPixels = originalSize;
+    return spriteFrame;
 };

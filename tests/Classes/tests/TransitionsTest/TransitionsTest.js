@@ -90,8 +90,8 @@ function restartTransitionAction(t,s) {
 // make sure the test have the menu item for back to main menu
 var TransitionsTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = new TestLayer1();
-        this.addChild(pLayer);
+        var layer = new TestLayer1();
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
 
         /*s_nTransitionsIdx = -1;
@@ -126,9 +126,9 @@ var TestLayer1 = cc.Layer.extend({
         this.addChild(label);
 
         // menu
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
@@ -140,37 +140,37 @@ var TestLayer1 = cc.Layer.extend({
         this.schedule(this.step, 1.0);
 
     },
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new TransitionsTestScene();
 
-        var pLayer = new TestLayer2();
-        s.addChild(pLayer);
-        var pScene = restartTransitionAction(TRANSITION_DURATION,s)
+        var layer = new TestLayer2();
+        s.addChild(layer);
+        var scene = restartTransitionAction(TRANSITION_DURATION,s)
 
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new TransitionsTestScene();
 
-        var pLayer = new TestLayer2();
-        s.addChild(pLayer);
+        var layer = new TestLayer2();
+        s.addChild(layer);
 
-        var pScene = nextTransitionAction(TRANSITION_DURATION,s)
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        var scene = nextTransitionAction(TRANSITION_DURATION,s)
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new TransitionsTestScene();
 
-        var pLayer = new TestLayer2();
-        s.addChild(pLayer);
+        var layer = new TestLayer2();
+        s.addChild(layer);
 
-        var pScene = backTransitionAction(TRANSITION_DURATION,s)
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        var scene = backTransitionAction(TRANSITION_DURATION,s)
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
 
@@ -204,9 +204,9 @@ var TestLayer2 = cc.Layer.extend({
         this.addChild(label);
 
         // menu
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
@@ -219,37 +219,37 @@ var TestLayer2 = cc.Layer.extend({
 
         this.schedule(this.step, 1.0);
     },
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new TransitionsTestScene();
 
-        var pLayer = new TestLayer1();
-        s.addChild(pLayer);
+        var layer = new TestLayer1();
+        s.addChild(layer);
 
-        var pScene = restartTransitionAction(TRANSITION_DURATION,s)
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        var scene = restartTransitionAction(TRANSITION_DURATION,s)
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new TransitionsTestScene();
 
-        var pLayer = new TestLayer1();
-        s.addChild(pLayer);
+        var layer = new TestLayer1();
+        s.addChild(layer);
 
-        var pScene = nextTransitionAction(TRANSITION_DURATION,s)
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        var scene = nextTransitionAction(TRANSITION_DURATION,s)
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new TransitionsTestScene();
 
-        var pLayer = new TestLayer1();
-        s.addChild(pLayer);
+        var layer = new TestLayer1();
+        s.addChild(layer);
 
-        var pScene = nextTransitionAction(TRANSITION_DURATION,s)
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        var scene = nextTransitionAction(TRANSITION_DURATION,s)
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
 

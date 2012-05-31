@@ -43,7 +43,7 @@ cc.LabelAtlas = cc.AtlasNode.extend({
     initWithString:function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
         cc.Assert(label != null, "");
         if (this.initWithTileFile(charMapFile, itemWidth, itemHeight, label.length)) {
-            this._m_cMapStartChar = startCharMap;
+            this._mapStartChar = startCharMap;
             this.setString(label);
             return true;
         }
@@ -52,23 +52,23 @@ cc.LabelAtlas = cc.AtlasNode.extend({
 
     // super methods
     updateAtlasValues:function () {
-        var n = this._m_sString.length;
+        var n = this._string.length;
 
-        var s = this._m_sString;
-        var texture = this._m_pTextureAtlas.getTexture();
+        var s = this._string;
+        var texture = this._textureAtlas.getTexture();
 
         var textureWide = texture.width;
         var textureHigh = texture.height;
 
         for (var i = 0; i < n; i++) {
-            var a = s.charCodeAt(i) - this._m_cMapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._m_uItemsPerRow);
-            var col = parseInt(a / this._m_uItemsPerRow);
+            var a = s.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
+            var row = parseInt(a % this._itemsPerRow);
+            var col = parseInt(a / this._itemsPerRow);
 
-            var left = row * this._m_uItemWidth / textureWide;
-            var right = left + this._m_uItemWidth / textureWide;
-            var top = col * this._m_uItemHeight / textureHigh;
-            var bottom = top + this._m_uItemHeight / textureHigh;
+            var left = row * this._itemWidth / textureWide;
+            var right = left + this._itemWidth / textureWide;
+            var top = col * this._itemHeight / textureHigh;
+            var bottom = top + this._itemHeight / textureHigh;
 
             var quad = new cc.V2F_C4B_T2F_QuadZero();
             quad.tl.texCoords.u = left;
@@ -80,38 +80,38 @@ cc.LabelAtlas = cc.AtlasNode.extend({
             quad.br.texCoords.u = right;
             quad.br.texCoords.v = bottom;
 
-            quad.bl.vertices.x = i * this._m_uItemWidth;
+            quad.bl.vertices.x = i * this._itemWidth;
             quad.bl.vertices.y = 0;
             quad.bl.vertices.z = 0.0;
-            quad.br.vertices.x = i * this._m_uItemWidth + this._m_uItemWidth;
+            quad.br.vertices.x = i * this._itemWidth + this._itemWidth;
             quad.br.vertices.y = 0;
             quad.br.vertices.z = 0.0;
-            quad.tl.vertices.x = i * this._m_uItemWidth;
-            quad.tl.vertices.y = this._m_uItemHeight;
+            quad.tl.vertices.x = i * this._itemWidth;
+            quad.tl.vertices.y = this._itemHeight;
             quad.tl.vertices.z = 0.0;
-            quad.tr.vertices.x = i * this._m_uItemWidth + this._m_uItemWidth;
-            quad.tr.vertices.y = this._m_uItemHeight;
+            quad.tr.vertices.x = i * this._itemWidth + this._itemWidth;
+            quad.tr.vertices.y = this._itemHeight;
             quad.tr.vertices.z = 0.0;
 
-            this._m_pTextureAtlas.updateQuad(quad, i);
+            this._textureAtlas.updateQuad(quad, i);
         }
     },
     setString:function (label) {
         var len = label.length;
-        this._m_pTextureAtlas.resizeCapacity(len);
+        this._textureAtlas.resizeCapacity(len);
 
-        this._m_sString = label;
+        this._string = label;
         this.updateAtlasValues();
 
         var s = new cc.Size();
-        s.width = len * this._m_uItemWidth;
-        s.height = this._m_uItemHeight;
+        s.width = len * this._itemWidth;
+        s.height = this._itemHeight;
         this.setContentSizeInPixels(s);
 
-        this._m_uQuadsToDraw = len;
+        this._quadsToDraw = len;
     },
     getString:function () {
-        return this._m_sString;
+        return this._string;
     },
     draw:function () {
         this._super();
@@ -128,16 +128,16 @@ cc.LabelAtlas = cc.AtlasNode.extend({
     },
 
     // string to render
-    _m_sString:null,
+    _string:null,
     // the first char in the charmap
-    _m_cMapStartChar:null
+    _mapStartChar:null
 });
 
 /** creates the CCLabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas */
 cc.LabelAtlas.labelWithString = function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
-    var pRet = new cc.LabelAtlas();
-    if (pRet && pRet.initWithString(label, charMapFile, itemWidth, itemHeight, startCharMap)) {
-        return pRet;
+    var ret = new cc.LabelAtlas();
+    if (ret && ret.initWithString(label, charMapFile, itemWidth, itemHeight, startCharMap)) {
+        return ret;
     }
     return null;
 };

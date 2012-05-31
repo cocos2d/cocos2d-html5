@@ -52,21 +52,21 @@ var TileMapTests = [
     "TMXBug787"
     //"TMXGIDObjectsTest", //zlib bug
 ];
-var s_nTileMapIdx = -1;
+var tileMapIdx = -1;
 function nextTileMapAction() {
-    ++s_nTileMapIdx;
-    s_nTileMapIdx = s_nTileMapIdx % TileMapTests.length;
-    return new window[TileMapTests[s_nTileMapIdx]];
+    ++tileMapIdx;
+    tileMapIdx = tileMapIdx % TileMapTests.length;
+    return new window[TileMapTests[tileMapIdx]];
 }
 function backTileMapAction() {
-    --s_nTileMapIdx;
-    if (s_nTileMapIdx < 0) {
-        s_nTileMapIdx += TileMapTests.length;
+    --tileMapIdx;
+    if (tileMapIdx < 0) {
+        tileMapIdx += TileMapTests.length;
     }
-    return new window[TileMapTests[s_nTileMapIdx]];
+    return new window[TileMapTests[tileMapIdx]];
 }
 function restartTileMapAction() {
-    return new window[TileMapTests[s_nTileMapIdx]];
+    return new window[TileMapTests[tileMapIdx]];
 }
 
 // the class inherit from TestScene
@@ -74,7 +74,7 @@ function restartTileMapAction() {
 // make sure the test have the menu item for back to main menu
 var TileMapTestScene = TestScene.extend({
     runThisTest:function () {
-        s_nTileMapIdx = -1;
+        tileMapIdx = -1;
         this.addChild(nextTileMapAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
@@ -103,8 +103,8 @@ var TileDemo = cc.Layer.extend({
         this._super();
         var s = cc.Director.sharedDirector().getWinSize();
         // add title and subtitle
-        var pTitle = this.title();
-        var label = cc.LabelTTF.labelWithString(pTitle, "Arial", 28);
+        var title = this.title();
+        var label = cc.LabelTTF.labelWithString(title, "Arial", 28);
         this.addChild(label, 1);
         label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
 
@@ -116,9 +116,9 @@ var TileDemo = cc.Layer.extend({
         }
 
         // add menu
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
@@ -130,18 +130,18 @@ var TileDemo = cc.Layer.extend({
         this.addChild(menu, 1);
     },
 
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new TileMapTestScene();
         s.addChild(restartTileMapAction());
 
         cc.Director.sharedDirector().replaceScene(s);
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new TileMapTestScene();
         s.addChild(nextTileMapAction());
         cc.Director.sharedDirector().replaceScene(s);
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new TileMapTestScene();
         s.addChild(backTileMapAction());
         cc.Director.sharedDirector().replaceScene(s);
@@ -180,7 +180,7 @@ var TileDemo = cc.Layer.extend({
 var TileMapTest = TileDemo.extend({
     ctor:function () {
         this._super();
-        var map = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_TilesPng, s_LevelMapTga, 16, 16);
+        var map = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_tilesPng, s_levelMapTga, 16, 16);
         map.getTexture().setAntiAliasTexParameters();
 
         var s = map.getContentSize();
@@ -208,7 +208,7 @@ var TileMapTest = TileDemo.extend({
 var TileMapEditTest = TileDemo.extend({
     ctor:function () {
         this._super();
-        var map = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_TilesPng, s_LevelMapTga, 16, 16);
+        var map = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_tilesPng, s_levelMapTga, 16, 16);
         // Create an Aliased Atlas
         map.getTexture().setAliasTexParameters();
 
@@ -259,9 +259,9 @@ var TMXOrthoTest = TileDemo.extend({
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test1.tmx");
         this.addChild(map, 0, kTagTileMap);
 
-        var pChildrenArray = map.getChildren();
-        for (var i = 0; i < pChildrenArray.length; i++) {
-            var child = pChildrenArray[i];
+        var childrenArray = map.getChildren();
+        for (var i = 0; i < childrenArray.length; i++) {
+            var child = childrenArray[i];
             if (!child)
                 break;
             //child.getTexture().setAntiAliasTexParameters();
@@ -290,10 +290,10 @@ var TMXOrthoTest2 = TileDemo.extend({
         this.addChild(map, 0, kTagTileMap);
 
         var s = map.getContentSize();
-        var pChildrenArray = map.getChildren();
+        var childrenArray = map.getChildren();
         var child = null;
-        for (var i = 0, len = pChildrenArray.length; i < len; i++) {
-            child = pChildrenArray[i];
+        for (var i = 0, len = childrenArray.length; i < len; i++) {
+            child = childrenArray[i];
             if (!child) break;
 
             //child.getTexture().setAntiAliasTexParameters();
@@ -329,10 +329,10 @@ var TMXOrthoTest3 = TileDemo.extend({
         this.addChild(map, 0, kTagTileMap);
 
         var s = map.getContentSize();
-        var pChildrenArray = map.getChildren();
+        var childrenArray = map.getChildren();
         var child = null;
-        for (var i = 0, len = pChildrenArray.length; i < len; i++) {
-            child = pChildrenArray[i];
+        for (var i = 0, len = childrenArray.length; i < len; i++) {
+            child = childrenArray[i];
 
             if (!child)
                 break;
@@ -359,10 +359,10 @@ var TMXOrthoTest4 = TileDemo.extend({
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test4.tmx");
         this.addChild(map, 0, kTagTileMap);
 
-        var pChildrenArray = map.getChildren();
+        var childrenArray = map.getChildren();
         var child = null;
-        for (var i = 0, len = pChildrenArray.length; i < len; i++) {
-            child = pChildrenArray[i];
+        for (var i = 0, len = childrenArray.length; i < len; i++) {
+            child = childrenArray[i];
             if (!child)
                 break;
 
@@ -411,7 +411,7 @@ var TMXOrthoTest4 = TileDemo.extend({
 //
 //------------------------------------------------------------------
 var TMXReadWriteTest = TileDemo.extend({
-    m_gid:0,
+    gid:0,
     ctor:function () {
         this._super();
 
@@ -451,13 +451,13 @@ var TMXReadWriteTest = TileDemo.extend({
         tile2.runAction(seq0.copy());
         tile3.runAction(seq0.copy());
 
-        this.m_gid = layer.tileGIDAt(cc.ccp(0, 63));
+        this.gid = layer.tileGIDAt(cc.ccp(0, 63));
 
         this.schedule(this.updateCol, 2.0);
         this.schedule(this.repaintWithGID, 2.0);
         this.schedule(this.removeTiles, 1.0);
 
-        this.m_gid2 = 0;
+        this.gid2 = 0;
     },
     removeSprite:function (sender) {
         var p = sender.getParent();
@@ -472,10 +472,10 @@ var TMXReadWriteTest = TileDemo.extend({
         var s = layer.getLayerSize();
 
         for (var y = 0; y < s.height; y++) {
-            layer.setTileGID(this.m_gid2, cc.ccp(3, y));
+            layer.setTileGID(this.gid2, cc.ccp(3, y));
         }
 
-        this.m_gid2 = (this.m_gid2 + 1) % 80;
+        this.gid2 = (this.gid2 + 1) % 80;
     },
     repaintWithGID:function (dt) {
         //	[self unschedule:_cmd);
@@ -621,10 +621,10 @@ var TMXUncompressedTest = TileDemo.extend({
         map.runAction(cc.MoveTo.actionWithDuration(1.0, cc.ccp(-ms.width * ts.width / 2, -ms.height * ts.height / 2)));
 
         // testing release map
-        var pChildrenArray = map.getChildren();
+        var childrenArray = map.getChildren();
         var layer = null;
-        for (var i = 0, len = pChildrenArray.length; i < len; i++) {
-            layer = pChildrenArray[i];
+        for (var i = 0, len = childrenArray.length; i < len; i++) {
+            layer = childrenArray[i];
             if (!layer)
                 break;
 
@@ -811,7 +811,7 @@ var TMXResizeTest = TileDemo.extend({
 //
 //------------------------------------------------------------------
 var TMXIsoZorder = TileDemo.extend({
-    m_tamara:null,
+    tamara:null,
     ctor:function () {
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/iso-test-zorder.tmx");
@@ -820,17 +820,17 @@ var TMXIsoZorder = TileDemo.extend({
         var s = map.getContentSize();
         map.setPosition(cc.ccp(-s.width / 2, 0));
 
-        this.m_tamara = cc.Sprite.spriteWithFile(s_pPathSister1);
-        map.addChild(this.m_tamara, map.getChildren().length);
+        this.tamara = cc.Sprite.spriteWithFile(s_pathSister1);
+        map.addChild(this.tamara, map.getChildren().length);
         var mapWidth = map.getMapSize().width * map.getTileSize().width;
-        this.m_tamara.setPositionInPixels(cc.ccp(mapWidth / 2, 0));
-        this.m_tamara.setAnchorPoint(cc.ccp(0.5, 0));
+        this.tamara.setPositionInPixels(cc.ccp(mapWidth / 2, 0));
+        this.tamara.setAnchorPoint(cc.ccp(0.5, 0));
 
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(300, 250), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
-        this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
+        this.tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
         this.schedule(this.repositionSprite);
     },
@@ -845,7 +845,7 @@ var TMXIsoZorder = TileDemo.extend({
         this._super();
     },
     repositionSprite:function (dt) {
-        var p = this.m_tamara.getPositionInPixels();
+        var p = this.tamara.getPositionInPixels();
         var map = this.getChildByTag(kTagTileMap);
 
         // there are only 4 layers. (grass and 3 trees layers)
@@ -856,7 +856,7 @@ var TMXIsoZorder = TileDemo.extend({
         var newZ = 4 - (p.y / 48);
         newZ = Math.max(newZ, 0);
 
-        map.reorderChild(this.m_tamara, newZ);
+        map.reorderChild(this.tamara, newZ);
     }
 });
 
@@ -866,7 +866,7 @@ var TMXIsoZorder = TileDemo.extend({
 //
 //------------------------------------------------------------------
 var TMXOrthoZorder = TileDemo.extend({
-    m_tamara:null,
+    tamara:null,
     ctor:function () {
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test-zorder.tmx");
@@ -874,14 +874,14 @@ var TMXOrthoZorder = TileDemo.extend({
 
         var s = map.getContentSize();
 
-        this.m_tamara = cc.Sprite.spriteWithFile(s_pPathSister1);
-        map.addChild(this.m_tamara, map.getChildren().length, kTagTileMap);
-        this.m_tamara.setAnchorPoint(cc.ccp(0.5, 0));
+        this.tamara = cc.Sprite.spriteWithFile(s_pathSister1);
+        map.addChild(this.tamara, map.getChildren().length, kTagTileMap);
+        this.tamara.setAnchorPoint(cc.ccp(0.5, 0));
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
-        this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
+        this.tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
         this.schedule(this.repositionSprite);
     },
@@ -892,7 +892,7 @@ var TMXOrthoZorder = TileDemo.extend({
         return "Sprite should hide behind the trees";
     },
     repositionSprite:function (dt) {
-        var p = this.m_tamara.getPositionInPixels();
+        var p = this.tamara.getPositionInPixels();
         var map = this.getChildByTag(kTagTileMap);
 
         // there are only 4 layers. (grass and 3 trees layers)
@@ -904,7 +904,7 @@ var TMXOrthoZorder = TileDemo.extend({
         var newZ = 4 - ((p.y - 10) / 81);
         newZ = Math.max(newZ, 0);
 
-        map.reorderChild(this.m_tamara, newZ);
+        map.reorderChild(this.tamara, newZ);
     }
 });
 
@@ -914,8 +914,8 @@ var TMXOrthoZorder = TileDemo.extend({
 //
 //------------------------------------------------------------------
 var TMXIsoVertexZ = TileDemo.extend({
-    m_tamara:null,
-    m_tamara1:null,
+    tamara:null,
+    tamara1:null,
     ctor:function () {
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/iso-test-vertexz.tmx");
@@ -927,12 +927,12 @@ var TMXIsoVertexZ = TileDemo.extend({
         // because I'm lazy, I'm reusing a tile as an sprite, but since this method uses vertexZ, you
         // can use any cc.Sprite and it will work OK.
         var layer = map.layerNamed("Trees");
-        this.m_tamara = layer.tileAt(cc.ccp(29, 29));
+        this.tamara = layer.tileAt(cc.ccp(29, 29));
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(300, 250), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
-        this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
+        this.tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
         this.schedule(this.repositionSprite);
     },
@@ -955,8 +955,8 @@ var TMXIsoVertexZ = TileDemo.extend({
     repositionSprite:function (dt) {
         // tile height is 64x32
         // map size: 30x30
-        var p = this.m_tamara.getPositionInPixels();
-        this.m_tamara.setVertexZ(-( (p.y + 32) / 16));
+        var p = this.tamara.getPositionInPixels();
+        this.tamara.setVertexZ(-( (p.y + 32) / 16));
     }
 });
 
@@ -966,7 +966,7 @@ var TMXIsoVertexZ = TileDemo.extend({
 //
 //------------------------------------------------------------------
 var TMXOrthoVertexZ = TileDemo.extend({
-    m_tamara:null,
+    tamara:null,
     ctor:function () {
         this._super();
         var map = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test-vertexz.tmx");
@@ -977,13 +977,13 @@ var TMXOrthoVertexZ = TileDemo.extend({
         // because I'm lazy, I'm reusing a tile as an sprite, but since this method uses vertexZ, you
         // can use any cc.Sprite and it will work OK.
         var layer = map.layerNamed("trees");
-        this.m_tamara = layer.tileAt(cc.ccp(0, 11));
-        cc.LOG("vertexZ: " + this.m_tamara.getVertexZ());
+        this.tamara = layer.tileAt(cc.ccp(0, 11));
+        cc.LOG("vertexZ: " + this.tamara.getVertexZ());
 
         var move = cc.MoveBy.actionWithDuration(10, cc.ccpMult(cc.ccp(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
         var seq = cc.Sequence.actions(move, back, null);
-        this.m_tamara.runAction(cc.RepeatForever.actionWithAction(seq));
+        this.tamara.runAction(cc.RepeatForever.actionWithAction(seq));
 
         this.schedule(this.repositionSprite);
     },
@@ -1007,8 +1007,8 @@ var TMXOrthoVertexZ = TileDemo.extend({
     repositionSprite:function (dt) {
         // tile height is 64x32
         // map size: 30x30
-        var p = this.m_tamara.getPositionInPixels();
-        this.m_tamara.setVertexZ(-( (p.y + 32) / 16));
+        var p = this.tamara.getPositionInPixels();
+        this.tamara.setVertexZ(-( (p.y + 32) / 16));
     }
 });
 
@@ -1070,11 +1070,11 @@ var TMXBug987 = TileDemo.extend({
         cc.LOG("ContentSize:" + s1.width + "," + s1.height);
 
         var childs = map.getChildren();
-        var pNode = null;
+        var node = null;
         for (var i = 0, len = childs.length; i < len; i++) {
-            pNode = childs[i];
-            if (!pNode) break;
-            //pNode.getTexture().setAntiAliasTexParameters();
+            node = childs[i];
+            if (!node) break;
+            //node.getTexture().setAntiAliasTexParameters();
         }
 
         map.setAnchorPoint(cc.ccp(0, 0));

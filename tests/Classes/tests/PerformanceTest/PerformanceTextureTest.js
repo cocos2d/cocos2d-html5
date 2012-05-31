@@ -32,16 +32,16 @@ var s_nTexCurCase = 0;
 ////////////////////////////////////////////////////////
 var TextureMenuLayer = PerformBasicLayer.extend({
     showCurrentTest:function () {
-        var pScene = null;
-        switch (this._m_nCurCase) {
+        var scene = null;
+        switch (this._curCase) {
             case 0:
-                pScene = TextureTest.scene();
+                scene = TextureTest.scene();
                 break;
         }
-        s_nTexCurCase = this._m_nCurCase;
+        s_nTexCurCase = this._curCase;
 
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
 
@@ -153,15 +153,15 @@ var TextureTest = TextureMenuLayer.extend({
 });
 
 TextureTest.scene = function () {
-    var pScene = cc.Scene.node();
+    var scene = cc.Scene.node();
     var layer = new TextureTest(false, 1, s_nTexCurCase);
-    pScene.addChild(layer);
-    return pScene;
+    scene.addChild(layer);
+    return scene;
 };
 function runTextureTest() {
     s_nTexCurCase = 0;
-    var pScene = TextureTest.scene();
-    cc.Director.sharedDirector().replaceScene(pScene);
+    var scene = TextureTest.scene();
+    cc.Director.sharedDirector().replaceScene(scene);
 }
 
 function calculateDeltaTime(lastUpdate) {

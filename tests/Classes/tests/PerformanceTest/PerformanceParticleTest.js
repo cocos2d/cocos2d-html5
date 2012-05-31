@@ -36,33 +36,33 @@ var kTagParticleMenuLayer = 1000;
 //
 ////////////////////////////////////////////////////////
 var ParticleMenuLayer = PerformBasicLayer.extend({
-    _m_nMaxCases:4,
+    _maxCases:4,
     showCurrentTest:function () {
-        var pScene = this.getParent();
-        var subTest = pScene.getSubTestNum();
-        var parNum = pScene.getParticlesNum();
+        var scene = this.getParent();
+        var subTest = scene.getSubTestNum();
+        var parNum = scene.getParticlesNum();
 
-        var pNewScene = null;
+        var newScene = null;
 
-        switch (this._m_nCurCase) {
+        switch (this._curCase) {
             case 0:
-                pNewScene = new ParticlePerformTest1;
+                newScene = new ParticlePerformTest1;
                 break;
             case 1:
-                pNewScene = new ParticlePerformTest2;
+                newScene = new ParticlePerformTest2;
                 break;
             case 2:
-                pNewScene = new ParticlePerformTest3;
+                newScene = new ParticlePerformTest3;
                 break;
             case 3:
-                pNewScene = new ParticlePerformTest4;
+                newScene = new ParticlePerformTest4;
                 break;
         }
 
-        s_nParCurIdx = this._m_nCurCase;
-        if (pNewScene) {
-            pNewScene.initWithSubTest(subTest, parNum);
-            cc.Director.sharedDirector().replaceScene(pNewScene);
+        s_nParCurIdx = this._curCase;
+        if (newScene) {
+            newScene.initWithSubTest(subTest, parNum);
+            cc.Director.sharedDirector().replaceScene(newScene);
         }
     }
 });
@@ -108,17 +108,17 @@ var ParticleMainScene = cc.Scene.extend({
         labelAtlas.setPosition(cc.ccp(s.width - 66, 50));
 
         // Next Prev Test
-        var pMenu = new ParticleMenuLayer(true, 4, s_nParCurIdx);
-        this.addChild(pMenu, 1, kTagParticleMenuLayer);
+        var menu = new ParticleMenuLayer(true, 4, s_nParCurIdx);
+        this.addChild(menu, 1, kTagParticleMenuLayer);
 
         // Sub Tests
         cc.MenuItemFont.setFontSize(40);
-        var pSubMenu = cc.Menu.menuWithItems(null);
+        var subMenu = cc.Menu.menuWithItems(null);
         for (var i = 1; i <= 3; ++i) {
             var str = i.toString();
             var itemFont = cc.MenuItemFont.itemFromString(str, this, this.testNCallback);
             itemFont.setTag(i);
-            pSubMenu.addChild(itemFont, 10);
+            subMenu.addChild(itemFont, 10);
 
             if (i <= 1) {
                 itemFont.setColor(cc.ccc3(200, 20, 20));
@@ -127,9 +127,9 @@ var ParticleMainScene = cc.Scene.extend({
                 itemFont.setColor(cc.ccc3(0, 200, 20));
             }
         }
-        pSubMenu.alignItemsHorizontally();
-        pSubMenu.setPosition(cc.ccp(s.width / 2, 80));
-        this.addChild(pSubMenu, 2);
+        subMenu.alignItemsHorizontally();
+        subMenu.setPosition(cc.ccp(s.width / 2, 80));
+        this.addChild(subMenu, 2);
 
         var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 40);
         this.addChild(label, 1);
@@ -200,7 +200,7 @@ var ParticleMainScene = cc.Scene.extend({
         // restore the default pixel format
         cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
     },
-    onDecrease:function (pSender) {
+    onDecrease:function (sender) {
         this._quantityParticles -= kParticleNodesIncrease;
         if (this._quantityParticles < 0)
             this._quantityParticles = 0;
@@ -208,7 +208,7 @@ var ParticleMainScene = cc.Scene.extend({
         this.updateQuantityLabel();
         this.createParticleSystem();
     },
-    onIncrease:function (pSender) {
+    onIncrease:function (sender) {
         this._quantityParticles += kParticleNodesIncrease;
         if (this._quantityParticles > kMaxParticles){
             this._quantityParticles = kMaxParticles;
@@ -216,10 +216,10 @@ var ParticleMainScene = cc.Scene.extend({
         this.updateQuantityLabel();
         this.createParticleSystem();
     },
-    testNCallback:function (pSender) {
-        this._subtestNumber = pSender.getTag();
-        var pMenu = this.getChildByTag(kTagParticleMenuLayer);
-        pMenu.restartCallback(pSender);
+    testNCallback:function (sender) {
+        this._subtestNumber = sender.getTag();
+        var menu = this.getChildByTag(kTagParticleMenuLayer);
+        menu.restartCallback(sender);
     },
     updateQuantityLabel:function () {
         if (this._quantityParticles != this._lastRenderedCount) {
@@ -509,7 +509,7 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
 });
 
 function runParticleTest() {
-    var pScene = new ParticlePerformTest1;
-    pScene.initWithSubTest(1, kParticleNodesIncrease);
-    cc.Director.sharedDirector().replaceScene(pScene);
+    var scene = new ParticlePerformTest1;
+    scene.initWithSubTest(1, kParticleNodesIncrease);
+    cc.Director.sharedDirector().replaceScene(scene);
 }
