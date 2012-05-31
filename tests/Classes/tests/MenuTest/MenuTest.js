@@ -25,9 +25,9 @@
  ****************************************************************************/
 
 
-var kTagMenu = 77771;
-var kTagMenu0 = 77770;
-var kTagMenu1 = 77771;
+var TAG_MENU = 77771;
+var TAG_MENU0 = 77770;
+var TAG_MENU1 = 77771;
 
 
 //------------------------------------------------------------------
@@ -110,7 +110,7 @@ var MenuLayer1 = cc.Layer.extend({
         this.addChild(menu);
     },
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.kCCMenuTouchPriority + 1, true);
+        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
     },
     ccTouchBegan:function () {
         return true;
@@ -122,13 +122,13 @@ var MenuLayer1 = cc.Layer.extend({
         this._parent.switchTo(3);
     },
     allowTouches:function (dt) {
-        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.kCCMenuTouchPriority + 1, this);
+        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY + 1, this);
         this.unscheduleAllSelectors();
         cc.LOG("Touches allowed again!");
     },
     menuCallbackDisabled:function (sender) {
         // hijack all touch events for 5 seconds
-        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.kCCMenuTouchPriority - 1, this);
+        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY - 1, this);
         this.schedule(this.allowTouches, 5.0);
         cc.Log("TOUCHES DISABLED FOR 5 SECONDS");
     },
@@ -158,7 +158,7 @@ var MenuLayer2 = cc.Layer.extend({
             item2.setScaleX(0.5);
             item3.setScaleX(0.5);
             var menu = cc.Menu.menuWithItems(item1, item2, item3);
-            menu.setTag(kTagMenu);
+            menu.setTag(TAG_MENU);
             this.addChild(menu, 0, 100 + i);
             this._centeredMenu = menu.getPosition();
         }

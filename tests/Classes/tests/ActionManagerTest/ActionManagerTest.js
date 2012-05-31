@@ -24,9 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var kTagNode = 5560;
-var kTagGrossini = 5561;
-var kTagSequence = 5562;
+var TAG_NODE = 5560;
+var TAG_GROSSINI = 5561;
+var TAG_SEQUENCE = 5562;
 
 var sceneIdx = -1;
 var MAX_LAYER = 5;
@@ -48,8 +48,8 @@ var restartActionManagerAction = function () {
     return createActionManagerLayer(sceneIdx);
 };
 
-var createActionManagerLayer = function (nIndex) {
-    switch (nIndex) {
+var createActionManagerLayer = function (index) {
+    switch (index) {
         case 0:
             return new CrashTest();
         case 1:
@@ -207,7 +207,7 @@ var PauseTest = ActionManagerTest.extend({
         // Also, this test MUST be done, after [super onEnter]
         //
         var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
-        this.addChild(grossini, 0, kTagGrossini);
+        this.addChild(grossini, 0, TAG_GROSSINI);
         grossini.setPosition(cc.PointMake(200, 200));
 
         var action = cc.MoveBy.actionWithDuration(1, cc.PointMake(150, 0));
@@ -218,7 +218,7 @@ var PauseTest = ActionManagerTest.extend({
     },
     unpause:function (dt) {
         this.unschedule(this.unpause);
-        var node = this.getChildByTag(kTagGrossini);
+        var node = this.getChildByTag(TAG_GROSSINI);
         cc.ActionManager.sharedManager().resumeTarget(node);
     }
 });
@@ -243,17 +243,17 @@ var RemoveTest = ActionManagerTest.extend({
         var move = cc.MoveBy.actionWithDuration(2, cc.PointMake(200, 0));
         var callback = cc.CallFunc.actionWithTarget(this, this.stopAction);
         var sequence = cc.Sequence.actions(move, callback);
-        sequence.setTag(kTagSequence);
+        sequence.setTag(TAG_SEQUENCE);
 
         var child = cc.Sprite.spriteWithFile(s_pathGrossini);
         child.setPosition(cc.PointMake(200, 200));
 
-        this.addChild(child, 1, kTagGrossini);
+        this.addChild(child, 1, TAG_GROSSINI);
         child.runAction(sequence);
     },
     stopAction:function () {
-        var sprite = this.getChildByTag(kTagGrossini);
-        sprite.stopActionByTag(kTagSequence);
+        var sprite = this.getChildByTag(TAG_GROSSINI);
+        sprite.stopActionByTag(TAG_SEQUENCE);
     }
 });
 
@@ -275,7 +275,7 @@ var ResumeTest = ActionManagerTest.extend({
         l.setPosition(cc.PointMake(s.width / 2, 245));
 
         var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
-        this.addChild(grossini, 0, kTagGrossini);
+        this.addChild(grossini, 0, TAG_GROSSINI);
         grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
 
         grossini.runAction(cc.ScaleBy.actionWithDuration(2, 2));
@@ -288,7 +288,7 @@ var ResumeTest = ActionManagerTest.extend({
     resumeGrossini:function (time) {
         this.unschedule(this.resumeGrossini);
 
-        var grossini = this.getChildByTag(kTagGrossini);
+        var grossini = this.getChildByTag(TAG_GROSSINI);
         cc.ActionManager.sharedManager().resumeTarget(grossini);
     }
 });

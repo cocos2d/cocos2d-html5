@@ -26,7 +26,7 @@
 
 var MAX_LAYER = 1;
 var sceneIdx = -1;
-var currentOrientation = cc.DeviceOrientationPortrait;
+var currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
 
 function createTestCaseLayer(index) {
     switch (index) {
@@ -131,17 +131,17 @@ Director1 = DirectorTest.extend({
 
     newOrientation:function () {
         switch (currentOrientation) {
-            case cc.DeviceOrientationLandscapeLeft:
-                currentOrientation = cc.DeviceOrientationPortrait;
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
+                currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
                 break;
-            case cc.DeviceOrientationPortrait:
-                currentOrientation = cc.DeviceOrientationLandscapeRight;
+            case cc.DEVICE_ORIENTATION_PORTRAIT:
+                currentOrientation = cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT;
                 break;
-            case cc.DeviceOrientationLandscapeRight:
-                currentOrientation = cc.DeviceOrientationPortraitUpsideDown;
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
+                currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN;
                 break;
-            case cc.DeviceOrientationPortraitUpsideDown:
-                currentOrientation = cc.DeviceOrientationLandscapeLeft;
+            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
+                currentOrientation = cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT;
                 break;
         }
         cc.Director.sharedDirector().setDeviceOrientation(currentOrientation);
@@ -186,7 +186,7 @@ DirectorTestScene = TestScene.extend({
 
     runThisTest:function () {
         MAX_LAYER = 1;
-        currentOrientation = cc.DeviceOrientationPortrait;
+        currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
         var layer = nextDirectorTestCase();
         this.addChild(layer);
 
@@ -195,7 +195,7 @@ DirectorTestScene = TestScene.extend({
     },
 
     MainMenuCallback:function (sender) {
-        cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationPortrait);
+        cc.Director.sharedDirector().setDeviceOrientation(cc.DEVICE_ORIENTATION_PORTRAIT);
         this._super(sender);
     }
 });

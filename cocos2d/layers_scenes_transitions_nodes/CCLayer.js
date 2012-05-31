@@ -362,7 +362,7 @@ cc.LayerColor = cc.Layer.extend({
         //TODO need to fix child position in relation to parent
         var context = ctx || cc.renderContext;
 
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             //context.globalAlpha = this.getOpacity() / 255;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;

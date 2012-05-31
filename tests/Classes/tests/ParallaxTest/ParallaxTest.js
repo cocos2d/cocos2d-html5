@@ -23,16 +23,16 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagNode = 9960;
-var kTagGrossini = 9961;
+var TAG_NODE = 9960;
+var TAG_GROSSINI = 9961;
 
 var sceneIdx = -1;
 
 var MAX_LAYER = 2;
 
 
-function createParallaxTestLayer(nIndex) {
-    switch (nIndex) {
+function createParallaxTestLayer(index) {
+    switch (index) {
         case 0:
             return new Parallax1();
         case 1:
@@ -239,7 +239,7 @@ Parallax2 = ParallaxDemo.extend({
 
         // top image is moved at a ratio of 3.0x, 2.5y
         voidNode.addChild(cocosImage, 2, cc.ccp(3.0, 2.5), cc.ccp(0, 0));
-        this.addChild(voidNode, 0, kTagNode);
+        this.addChild(voidNode, 0, TAG_NODE);
 
     },
 
@@ -276,7 +276,7 @@ Parallax2 = ParallaxDemo.extend({
         this._prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
 
 
-        var node = this.getChildByTag(kTagNode);
+        var node = this.getChildByTag(TAG_NODE);
         var currentPos = node.getPosition();
         node.setPosition(cc.ccpAdd(currentPos, diff));
     },

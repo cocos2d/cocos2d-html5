@@ -132,7 +132,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
     _storingCharacters:false,
     _properties:null,
     //! tmx filename
-    _tMXFileName:null,
+    _TMXFileName:null,
 //! current string
     _currentString:null,
 //! tile properties
@@ -217,7 +217,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
     initWithTMXFile:function (tmxFile) {
         this._tileSets = [];
         this._layers = [];
-        this._tMXFileName = tmxFile;
+        this._TMXFileName = tmxFile;
         this._objectGroups = [];
         this._properties = [];
         this._tileProperties = [];
@@ -228,7 +228,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         this._layerAttribs = cc.TMXLayerAttribNone;
         this._parentElement = cc.TMXPropertyNone;
 
-        return this.parseXMLFile(this._tMXFileName);
+        return this.parseXMLFile(this._TMXFileName);
     },
     /** initalises parsing of an XML file, either a tmx (Map) file or tsx (Tileset) file */
     parseXMLFile:function (xmlFilename) {
@@ -496,10 +496,10 @@ cc.TMXMapInfo = cc.SAXParser.extend({
         this._currentString = currentString;
     },
     getTMXFileName:function () {
-        return this._tMXFileName;
+        return this._TMXFileName;
     },
     setTMXFileName:function (fileName) {
-        this._tMXFileName = fileName;
+        this._TMXFileName = fileName;
     }
 });
 

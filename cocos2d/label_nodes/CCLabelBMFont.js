@@ -69,7 +69,7 @@ function _BMFontPadding(left, top, right, bottom) {
 
 
 // how many characters are supported
-cc.kCCBMFontMaxChars = 2048; //256,
+cc.CCBMFONT_MAX_CHARS = 2048; //256,
 
 /** @brief cc.BMFontConfiguration has parsed configuration of the the .fnt file
  @since v0.8
@@ -188,7 +188,7 @@ cc.BMFontConfiguration = cc.Class.extend({
         var value = line.substr(index, index2-index);
         characterDefinition.charID = "id=" + value.toString();
 
-        cc.Assert(characterDefinition.charID < cc.kCCBMFontMaxChars, "BitmpaFontAtlas: CharID bigger than supported");
+        cc.Assert(characterDefinition.charID < cc.CCBMFONT_MAX_CHARS, "BitmpaFontAtlas: CharID bigger than supported");
         // Character x
         index = line.indexOf("x=");
         index2 = line.indexOf(' ', index);
@@ -461,7 +461,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
         if (cc.SpriteBatchNode.initWithFile(this.configuration.atlasName.toString(), theString.length))
         {
             this.opacity = 255;
-            this.color = cc.WHITE;
+            this.color = cc.WHITE();
             this.contentSize = cc.SizeZero();
             this.isOpacityModifyRGB = this._textureAtlas.getTexture().getHasPremultipliedAlpha();
             this.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -506,7 +506,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
         for (var i= 0; i < stringLen; i++)
         {
             var c = this.string[i];
-            cc.Assert( c < cc.kCCBMFontMaxChars, "LabelBMFont: character outside bounds");
+            cc.Assert( c < cc.CCBMFONT_MAX_CHARS, "LabelBMFont: character outside bounds");
 
             if (c == '\n')
             {

@@ -27,10 +27,10 @@
 
 var cc = cc = cc || {};
 
-cc.kCCMenuStateWaiting = 0;
-cc.kCCMenuStateTrackingTouch = 1;
-cc.kCCMenuTouchPriority = -128;
-cc.kDefaultPadding = 5;
+cc.CCMENU_STATE_WAITING = 0;
+cc.CCMENU_STATE_TRACKING_TOUCH = 1;
+cc.CCMENU_TOUCH_PRIORITY = -128;
+cc.DEFAULT_PADDING = 5;
 
 /** @brief A CCMenu
  *
@@ -76,7 +76,7 @@ cc.Menu = cc.Layer.extend({
             var r = new cc.Rect();
             cc.Application.sharedApplication().statusBarFrame(r);
             var orientation = cc.Director.sharedDirector().getDeviceOrientation();
-            if (orientation == cc.DeviceOrientationLandscapeLeft || orientation == cc.DeviceOrientationLandscapeRight) {
+            if (orientation == cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT || orientation == cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT) {
                 s.height -= r.size.width;
             }
             else {
@@ -84,7 +84,7 @@ cc.Menu = cc.Layer.extend({
             }
             this.setPosition(cc.ccp(s.width/2, s.height/2));
             this._selectedItem = null;
-            this._state = cc.kCCMenuStateWaiting;
+            this._state = cc.CCMENU_STATE_WAITING;
             return true;
         }
         return false;
@@ -108,7 +108,7 @@ cc.Menu = cc.Layer.extend({
         this._super(child, zOrder, tag);
     },
     alignItemsVertically:function () {
-        this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
+        this.alignItemsVerticallyWithPadding(cc.DEFAULT_PADDING);
     },
     alignItemsVerticallyWithPadding:function (padding) {
         var height = -padding;
@@ -127,7 +127,7 @@ cc.Menu = cc.Layer.extend({
         }
     },
     alignItemsHorizontally:function () {
-        this.alignItemsHorizontallyWithPadding(cc.kDefaultPadding);
+        this.alignItemsHorizontallyWithPadding(cc.DEFAULT_PADDING);
     },
     alignItemsHorizontallyWithPadding:function (padding) {
         var width = -padding;
@@ -300,10 +300,10 @@ cc.Menu = cc.Layer.extend({
         }
     },
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.kCCMenuTouchPriority, true);
+        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY, true);
     },
     ccTouchBegan:function (touch, e) {
-        if (this._state != cc.kCCMenuStateWaiting || !this._isVisible) {
+        if (this._state != cc.CCMENU_STATE_WAITING || !this._isVisible) {
             return false;
         }
 
@@ -315,29 +315,29 @@ cc.Menu = cc.Layer.extend({
 
         this._selectedItem = this._itemForTouch(touch);
         if (this._selectedItem) {
-            this._state = cc.kCCMenuStateTrackingTouch;
+            this._state = cc.CCMENU_STATE_TRACKING_TOUCH;
             this._selectedItem.selected();
             return true;
         }
         return false;
     },
     ccTouchEnded:function (touch, e) {
-        cc.Assert(this._state == cc.kCCMenuStateTrackingTouch, "[Menu ccTouchEnded] -- invalid state");
+        cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchEnded] -- invalid state");
         if (this._selectedItem) {
             this._selectedItem.unselected();
             this._selectedItem.activate();
         }
-        this._state = cc.kCCMenuStateWaiting;
+        this._state = cc.CCMENU_STATE_WAITING;
     },
     ccTouchCancelled:function (touch, e) {
-        cc.Assert(this._state == cc.kCCMenuStateTrackingTouch, "[Menu ccTouchCancelled] -- invalid state");
+        cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchCancelled] -- invalid state");
         if (this._selectedItem) {
             this._selectedItem.unselected();
         }
-        this._state = cc.kCCMenuStateWaiting;
+        this._state = cc.CCMENU_STATE_WAITING;
     },
     ccTouchMoved:function (touch, e) {
-        cc.Assert(this._state == cc.kCCMenuStateTrackingTouch, "[Menu ccTouchMoved] -- invalid state");
+        cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchMoved] -- invalid state");
         var currentItem = this._itemForTouch(touch);
         if (currentItem != this._selectedItem) {
             if (this._selectedItem) {
@@ -351,9 +351,9 @@ cc.Menu = cc.Layer.extend({
     },
 
     onExit:function () {
-        if (this._state == cc.kCCMenuStateTrackingTouch) {
+        if (this._state == cc.CCMENU_STATE_TRACKING_TOUCH) {
             this._selectedItem.unselected();
-            this._state = cc.kCCMenuStateWaiting;
+            this._state = cc.CCMENU_STATE_WAITING;
             this._selectedItem = null;
         }
 

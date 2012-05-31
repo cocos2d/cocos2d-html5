@@ -143,7 +143,7 @@ cc.Ribbon = cc.Node.extend({
     },
     setTexture:function (texture) {
         this._texture = texture;
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
         } else {
             this.setContentSize(this._texture.getContentSizeInPixels());
         }

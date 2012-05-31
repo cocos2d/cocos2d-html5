@@ -36,10 +36,10 @@ cc.TouchSelectorEndedBit = 1 << 2;
 cc.TouchSelectorCancelledBit = 1 << 3;
 cc.TouchSelectorAllBits = ( cc.TouchSelectorBeganBit | cc.TouchSelectorMovedBit | cc.TouchSelectorEndedBit | cc.TouchSelectorCancelledBit);
 
-cc.TOUCHBEGAN = 0;
-cc.TOUCHMOVED = 1;
-cc.TOUCHENDED = 2;
-cc.TOUCHCANCELLED = 3;
+cc.TOUCH_BEGAN = 0;
+cc.TOUCH_MOVED = 1;
+cc.TOUCH_ENDED = 2;
+cc.TOUCH_CANCELLED = 3;
 cc.TouchMax = 4;
 
 cc.less = function (p1, p2) {
@@ -77,8 +77,8 @@ cc.TouchDispatcher = cc.Class.extend({
     _toQuit:false,
     _dispatchEvents:false,
 
-    _handlerHelperData:[new cc.TouchHandlerHelperData(cc.TOUCHBEGAN), new cc.TouchHandlerHelperData(cc.TOUCHMOVED),
-        new cc.TouchHandlerHelperData(cc.TOUCHENDED), new cc.TouchHandlerHelperData(cc.TOUCHCANCELLED)],
+    _handlerHelperData:[new cc.TouchHandlerHelperData(cc.TOUCH_BEGAN), new cc.TouchHandlerHelperData(cc.TOUCH_MOVED),
+        new cc.TouchHandlerHelperData(cc.TOUCH_ENDED), new cc.TouchHandlerHelperData(cc.TOUCH_CANCELLED)],
 
     /*
      +(id) allocWithZone:(CCZone *)zone
@@ -232,16 +232,16 @@ cc.TouchDispatcher = cc.Class.extend({
         this._locked = true;
 
         // optimization to prevent a mutable copy when it is not necessary
-        var uTargetedHandlersCount = this._targetedHandlers.length;
-        var uStandardHandlersCount = this._standardHandlers.length;
-        var bNeedsMutableSet = (uTargetedHandlersCount && uStandardHandlersCount);
+        var targetedHandlersCount = this._targetedHandlers.length;
+        var standardHandlersCount = this._standardHandlers.length;
+        var needsMutableSet = (targetedHandlersCount && standardHandlersCount);
 
-        var pMutableTouches = (bNeedsMutableSet ? touches.slice() : touches);
-        var sHelper = this._handlerHelperData[index];
+        var mutableTouches = (needsMutableSet ? touches.slice() : touches);
+        var helper = this._handlerHelperData[index];
         //
         // process the target handlers 1st
         //
-        if (uTargetedHandlersCount > 0) {
+        if (targetedHandlersCount > 0) {
             var touch;
             for (var i = 0; i < touches.length; i++) {
                 touch = touches[i];
@@ -254,27 +254,27 @@ cc.TouchDispatcher = cc.Class.extend({
                         break;
                     }
 
-                    var bClaimed = false;
-                    if (index == cc.TOUCHBEGAN) {
-                        bClaimed = handler.getDelegate().ccTouchBegan(touch, event);
+                    var claimed = false;
+                    if (index == cc.TOUCH_BEGAN) {
+                        claimed = handler.getDelegate().ccTouchBegan(touch, event);
 
-                        if (bClaimed) {
+                        if (claimed) {
                             handler.getClaimedTouches().push(touch);
                         }
                         //} else if (handler.getClaimedTouches().indexOf(touch)> -1){
                     } else if (handler.getClaimedTouches().length > 0) {
                         // moved ended cancelled
-                        bClaimed = true;
-                        switch (sHelper.type) {
-                            case cc.TOUCHMOVED:
+                        claimed = true;
+                        switch (helper.type) {
+                            case cc.TOUCH_MOVED:
                                 handler.getDelegate().ccTouchMoved(touch, event);
                                 break;
-                            case cc.TOUCHENDED:
+                            case cc.TOUCH_ENDED:
                                 handler.getDelegate().ccTouchEnded(touch, event);
                                 handler.getClaimedTouches().length = 0;
                                 //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
                                 break;
-                            case cc.TOUCHCANCELLED:
+                            case cc.TOUCH_CANCELLED:
                                 handler.getDelegate().ccTouchCancelled(touch, event);
                                 handler.getClaimedTouches().length = 0;
                                 //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
@@ -282,9 +282,9 @@ cc.TouchDispatcher = cc.Class.extend({
                         }
                     }
 
-                    if (bClaimed && handler.isSwallowsTouches()) {
-                        if (bNeedsMutableSet) {
-                            cc.ArrayRemoveObject(pMutableTouches, touch);
+                    if (claimed && handler.isSwallowsTouches()) {
+                        if (needsMutableSet) {
+                            cc.ArrayRemoveObject(mutableTouches, touch);
                         }
                         break;
                     }
@@ -295,7 +295,7 @@ cc.TouchDispatcher = cc.Class.extend({
         //
         // process standard handlers 2nd
         //
-        if (uStandardHandlersCount > 0) {
+        if (standardHandlersCount > 0) {
             for (i = 0; i < this._standardHandlers.length; i++) {
                 handler = this._standardHandlers[i];
 
@@ -303,29 +303,29 @@ cc.TouchDispatcher = cc.Class.extend({
                     break;
                 }
 
-                switch (sHelper.type) {
-                    case cc.TOUCHBEGAN:
-                        if (pMutableTouches.length > 0) {
-                            handler.getDelegate().ccTouchesBegan(pMutableTouches, event);
+                switch (helper.type) {
+                    case cc.TOUCH_BEGAN:
+                        if (mutableTouches.length > 0) {
+                            handler.getDelegate().ccTouchesBegan(mutableTouches, event);
                         }
                         break;
-                    case cc.TOUCHMOVED:
-                        if (pMutableTouches.length > 0) {
-                            handler.getDelegate().ccTouchesMoved(pMutableTouches, event);
+                    case cc.TOUCH_MOVED:
+                        if (mutableTouches.length > 0) {
+                            handler.getDelegate().ccTouchesMoved(mutableTouches, event);
                         }
                         break;
-                    case cc.TOUCHENDED:
-                        handler.getDelegate().ccTouchesEnded(pMutableTouches, event);
+                    case cc.TOUCH_ENDED:
+                        handler.getDelegate().ccTouchesEnded(mutableTouches, event);
                         break;
-                    case cc.TOUCHCANCELLED:
-                        handler.getDelegate().ccTouchesCancelled(pMutableTouches, event);
+                    case cc.TOUCH_CANCELLED:
+                        handler.getDelegate().ccTouchesCancelled(mutableTouches, event);
                         break;
                 }
             }
         }
 
-        if (bNeedsMutableSet) {
-            pMutableTouches = null;
+        if (needsMutableSet) {
+            mutableTouches = null;
         }
 
         //
@@ -367,22 +367,22 @@ cc.TouchDispatcher = cc.Class.extend({
 
     touchesBegan:function (touches, event) {
         if (this._dispatchEvents) {
-            this.touches(touches, event, cc.TOUCHBEGAN);
+            this.touches(touches, event, cc.TOUCH_BEGAN);
         }
     },
     touchesMoved:function (touches, event) {
         if (this._dispatchEvents) {
-            this.touches(touches, event, cc.TOUCHMOVED);
+            this.touches(touches, event, cc.TOUCH_MOVED);
         }
     },
     touchesEnded:function (touches, event) {
         if (this._dispatchEvents) {
-            this.touches(touches, event, cc.TOUCHENDED);
+            this.touches(touches, event, cc.TOUCH_ENDED);
         }
     },
     touchesCancelled:function (touches, event) {
         if (this._dispatchEvents) {
-            this.touches(touches, event, cc.TOUCHCANCELLED);
+            this.touches(touches, event, cc.TOUCH_CANCELLED);
         }
     },
 
@@ -472,9 +472,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         cc.TouchDispatcher.preTouchPoint.x = mouseX;
         cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-        var pSet = [];
-        pSet.push(touch);
-        cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet, null);
+        var set = [];
+        set.push(touch);
+        cc.TouchDispatcher.sharedDispatcher().touchesBegan(set, null);
     });
     element.addEventListener("mouseup", function (event) {
         var el = element;
@@ -500,9 +500,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         cc.TouchDispatcher.preTouchPoint.x = mouseX;
         cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-        var pSet = [];
-        pSet.push(touch);
-        cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet, null);
+        var set = [];
+        set.push(touch);
+        cc.TouchDispatcher.sharedDispatcher().touchesEnded(set, null);
     });
     element.addEventListener("mousemove", function (event) {
         var el = element;
@@ -528,10 +528,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         cc.TouchDispatcher.preTouchPoint.x = mouseX;
         cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-        var pSet = [];
-        pSet.push(touch);
+        var set = [];
+        set.push(touch);
 
-        cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet, null);
+        cc.TouchDispatcher.sharedDispatcher().touchesMoved(set, null);
     });
 
     //register canvas touch event
@@ -539,7 +539,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         if (!event.touches)
             return;
 
-        var pSet = [];
+        var set = [];
         var el = element;
         var pos = null;
         if (element instanceof HTMLCanvasElement) {
@@ -570,9 +570,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            pSet.push(touch);
+            set.push(touch);
         }
-        cc.TouchDispatcher.sharedDispatcher().touchesBegan(pSet, null);
+        cc.TouchDispatcher.sharedDispatcher().touchesBegan(set, null);
         event.stopPropagation();
         event.preventDefault();
     }, false);
@@ -580,7 +580,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         if (!event.touches)
             return;
 
-        var pSet = [];
+        var set = [];
         var el = element;
         var pos = null;
         if (element instanceof HTMLCanvasElement) {
@@ -611,9 +611,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            pSet.push(touch);
+            set.push(touch);
         }
-        cc.TouchDispatcher.sharedDispatcher().touchesMoved(pSet, null);
+        cc.TouchDispatcher.sharedDispatcher().touchesMoved(set, null);
         event.stopPropagation();
         event.preventDefault();
     }, false);
@@ -621,7 +621,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         if (!event.touches)
             return;
 
-        var pSet = [];
+        var set = [];
         var el = element;
         var pos = null;
         if (element instanceof HTMLCanvasElement) {
@@ -657,9 +657,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            pSet.push(touch);
+            set.push(touch);
         }
-        cc.TouchDispatcher.sharedDispatcher().touchesEnded(pSet, null);
+        cc.TouchDispatcher.sharedDispatcher().touchesEnded(set, null);
         event.stopPropagation();
         event.preventDefault();
     }, false);
@@ -667,7 +667,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         if (!event.touches)
             return;
 
-        var pSet = [];
+        var set = [];
         var el = element;
         var pos = null;
         if (element instanceof HTMLCanvasElement) {
@@ -698,9 +698,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            pSet.push(touch);
+            set.push(touch);
         }
-        cc.TouchDispatcher.sharedDispatcher().touchesCancelled(pSet, null);
+        cc.TouchDispatcher.sharedDispatcher().touchesCancelled(set, null);
         event.stopPropagation();
         event.preventDefault();
     }, false);

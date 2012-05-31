@@ -30,9 +30,9 @@
 
 var cc = cc = cc || {};
 
-cc.kTypeBackClicked = 1;
-cc.kTypeMenuClicked = 2;
-cc.key = {
+cc.TYPE_BACK_CLICKED = 1;
+cc.TYPE_MENU_CLICKED = 2;
+cc.KEY = {
     backspace:8,
     tab:9,
     enter:13,
@@ -137,9 +137,9 @@ cc.key = {
     space:32
 };
 /*keymap usage
- to mark a keydown, do cc.keyDown[65] = true; or cc.keyMap[cc.key.a]
+ to mark a keydown, do cc.keyDown[65] = true; or cc.keyMap[cc.KEY.a]
  to mark a keyup, do cc.keyDown[65] = false; or = null,
- to find out if a key is down, check if(cc.keyDown[65]) or if,(cc.keyDown[cc.key.space])
+ to find out if a key is down, check if(cc.keyDown[65]) or if,(cc.keyDown[cc.KEY.space])
  if its undefined or false or null, its not pressed
  */
 

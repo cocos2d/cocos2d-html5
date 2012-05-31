@@ -26,22 +26,22 @@
 
 
 /// Device oriented vertically, home button on the bottom
-cc.kOrientationPortrait = 0;
+cc.ORIENTATION_PORTRAIT = 0;
 /// Device oriented vertically, home button on the top
-cc.kOrientationPortraitUpsideDown = 1;
+cc.ORIENTATION_PORTRAIT_UPSIDE_DOWN = 1;
 /// Device oriented horizontally, home button on the right
-cc.kOrientationLandscapeLeft = 2;
+cc.ORIENTATION_LANDSCAPE_LEFT = 2;
 /// Device oriented horizontally, home button on the left
-cc.kOrientationLandscapeRight = 3;
+cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
 
-cc.kCanvas = 0;
-cc.kWebGL = 1;
+cc.CANVAS = 0;
+cc.WEBGL = 1;
 
 cc.drawingUtil = null;
 cc.renderContext = null;
 cc.canvas = null;
 cc.gameDiv = null;
-cc.renderContextType = cc.kCanvas;
+cc.renderContextType = cc.CANVAS;
 cc.originalCanvasSize = new cc.Size(0, 0);
 
 window.requestAnimFrame = (function () {
@@ -75,7 +75,7 @@ cc.setup = function () {
             cc.canvas = gameCanvas;
             cc.renderContext = cc.canvas.getContext("2d");
             cc.gameDiv = document.body;
-            cc.renderContextType = cc.kCanvas;
+            cc.renderContextType = cc.CANVAS;
             //document
             break;
         case 1:
@@ -92,7 +92,7 @@ cc.setup = function () {
                 cc.canvas = getElement;
                 cc.gameDiv = getElement.parentNode;
                 cc.renderContext = cc.canvas.getContext("2d");
-                cc.renderContextType = cc.kCanvas;
+                cc.renderContextType = cc.CANVAS;
             } else if (getElement instanceof HTMLDivElement) {
                 //HTMLDivElement
                 var gameCanvas = document.createElement("Canvas");
@@ -103,7 +103,7 @@ cc.setup = function () {
                 cc.canvas = gameCanvas;
                 cc.renderContext = cc.canvas.getContext("2d");
                 cc.gameDiv = getElement;
-                cc.renderContextType = cc.kCanvas;
+                cc.renderContextType = cc.CANVAS;
             }
             break;
         case 2:
@@ -112,7 +112,7 @@ cc.setup = function () {
             break;
     }
 
-    if (cc.renderContextType == cc.kCanvas) {
+    if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
@@ -242,7 +242,7 @@ cc.Application.sharedApplication = function () {
  @return Current language config
  */
 cc.Application.getCurrentLanguage = function () {
-    var ret = cc.kLanguageEnglish;
+    var ret = cc.LANGUAGE_ENGLISH;
 
     // TODO, need to be fixed.
     /*
@@ -252,22 +252,22 @@ cc.Application.getCurrentLanguage = function () {
      switch (primaryLanguageID)
      {
      case LANG_CHINESE:
-     ret = cc.kLanguageChinese;
+     ret = cc.LANGUAGE_CHINESE;
      break;
      case LANG_FRENCH:
-     ret = cc.kLanguageFrench;
+     ret = cc.LANGUAGE_FRENCH;
      break;
      case LANG_ITALIAN:
-     ret = cc.kLanguageItalian;
+     ret = cc.LANGUAGE_ITALIAN;
      break;
      case LANG_GERMAN:
-     ret = cc.kLanguageGerman;
+     ret = cc.LANGUAGE_GERMAN;
      break;
      case LANG_SPANISH:
-     ret = cc.kLanguageSpanish;
+     ret = cc.LANGUAGE_SPANISH;
      break;
      case LANG_RUSSIAN:
-     ret = cc.kLanguageRussian;
+     ret = cc.LANGUAGE_RUSSIAN;
      break;
      }
      */
@@ -276,22 +276,22 @@ cc.Application.getCurrentLanguage = function () {
     currentLang = currentLang.toLowerCase();
     switch (currentLang) {
         case "zh-cn":
-            ret = cc.kLanguageChinese;
+            ret = cc.LANGUAGE_CHINESE;
             break;
         case "fr":
-            ret = cc.kLanguageFrench;
+            ret = cc.LANGUAGE_FRENCH;
             break;
         case "it":
-            ret = cc.kLanguageItalian;
+            ret = cc.LANGUAGE_ITALIAN;
             break;
         case "de":
-            ret = cc.kLanguageGerman;
+            ret = cc.LANGUAGE_GERMAN;
             break;
         case "es":
-            ret = cc.kLanguageSpanish;
+            ret = cc.LANGUAGE_SPANISH;
             break;
         case "ru":
-            ret = cc.kLanguageRussian;
+            ret = cc.LANGUAGE_RUSSIAN;
             break;
     }
 

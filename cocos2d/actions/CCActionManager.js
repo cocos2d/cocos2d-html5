@@ -159,7 +159,7 @@ cc.ActionManager = cc.Class.extend({
     },
     /** Removes an action given its tag and the target */
     removeActionByTag:function (tag, target) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "");
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
         cc.Assert(target != null, "");
 
         var element = this._searchElementByTarget(this._targets, target);
@@ -181,7 +181,7 @@ cc.ActionManager = cc.Class.extend({
      @return the Action the with the given tag
      */
     getActionByTag:function (tag, target) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "");
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
         var element = this._searchElementByTarget(this._targets, target);
         if (element) {
             if (element.actions != null) {

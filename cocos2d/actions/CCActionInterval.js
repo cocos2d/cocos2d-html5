@@ -913,9 +913,9 @@ cc.ScaleBy.actionWithDuration = function (duration, sx, sy) {
 /** @brief Blinks a CCNode object by modifying it's visible attribute
  */
 cc.Blink = cc.ActionInterval.extend({
-    initWithDuration:function (duration, uBlinks) {
+    initWithDuration:function (duration, blinks) {
         if (this._super(duration)) {
-            this._times = uBlinks;
+            this._times = blinks;
             return true;
         }
 
@@ -933,9 +933,9 @@ cc.Blink = cc.ActionInterval.extend({
     },
     _times:0
 });
-cc.Blink.actionWithDuration = function (duration, uBlinks) {
+cc.Blink.actionWithDuration = function (duration, blinks) {
     var blink = new cc.Blink();
-    blink.initWithDuration(duration, uBlinks);
+    blink.initWithDuration(duration, blinks);
 
     return blink;
 };
@@ -1207,8 +1207,8 @@ cc.Animate = cc.ActionInterval.extend({
         }
     },
     update:function (time) {
-        var pFrames = this._animation.getFrames();
-        var numberOfFrames = pFrames.length;
+        var frames = this._animation.getFrames();
+        var numberOfFrames = frames.length;
 
         var idx = Math.round(time * numberOfFrames);
 
@@ -1217,13 +1217,13 @@ cc.Animate = cc.ActionInterval.extend({
         }
 
         var sprite = this._target;
-        if (!sprite.isFrameDisplayed(pFrames[idx])) {
-            sprite.setDisplayFrame(pFrames[idx]);
+        if (!sprite.isFrameDisplayed(frames[idx])) {
+            sprite.setDisplayFrame(frames[idx]);
         }
     },
     reverse:function () {
-        var pNewAnim = cc.Animation.animationWithFrames(this._animation.getFrames().reverse(), this._animation.getDelay());
-        return cc.Animate.actionWithDuration(this._duration, pNewAnim, this._restoreOriginalFrame);
+        var newAnim = cc.Animation.animationWithFrames(this._animation.getFrames().reverse(), this._animation.getDelay());
+        return cc.Animate.actionWithDuration(this._duration, newAnim, this._restoreOriginalFrame);
     },
     stop:function () {
         if (this._restoreOriginalFrame && this._target) {
@@ -1234,15 +1234,15 @@ cc.Animate = cc.ActionInterval.extend({
     }
 });
 cc.Animate.actionWithAnimation = function (animation, restoreOriginalFrame) {
-    var pAnimate = new cc.Animate();
+    var animate = new cc.Animate();
     var go = (restoreOriginalFrame) ? restoreOriginalFrame : true;
-    pAnimate.initWithAnimation(animation, go);
+    animate.initWithAnimation(animation, go);
 
-    return pAnimate;
+    return animate;
 };
 cc.Animate.actionWithDuration = function (duration, animation, restoreOriginalFrame) {
-    var pAnimate = new cc.Animate();
-    pAnimate.initWithDuration(duration, animation, restoreOriginalFrame);
+    var animate = new cc.Animate();
+    animate.initWithDuration(duration, animation, restoreOriginalFrame);
 
-    return pAnimate;
+    return animate;
 };

@@ -43,8 +43,8 @@ var restartProgressAction = function () {
     return createLayer(sceneIdx_Progress);
 };
 
-var createLayer = function (nIndex) {
-    switch (nIndex) {
+var createLayer = function (index) {
+    switch (index) {
         case 0:
             return new SpriteProgressToRadial();
         case 1:
@@ -120,13 +120,13 @@ var SpriteProgressToRadial = SpriteDemo.extend({
         var to2 = cc.ProgressTo.actionWithDuration(2, 100);
 
         var left = cc.ProgressTimer.progressWithFile(s_pathSister1);
-        left.setType(cc.kCCProgressTimerTypeRadialCW);
+        left.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW);
         this.addChild(left);
         left.setPosition(cc.PointMake(100, winSize.height / 2));
         left.runAction(cc.RepeatForever.actionWithAction(to1));
 
         var right = cc.ProgressTimer.progressWithFile(s_pathBlock);
-        right.setType(cc.kCCProgressTimerTypeRadialCCW);
+        right.setType(cc.CCPROGRESS_TIMER_RADIAL_CCW);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 100, winSize.height / 2));
         right.runAction(cc.RepeatForever.actionWithAction(to2));
@@ -146,13 +146,13 @@ var SpriteProgressToHorizontal = SpriteDemo.extend({
         var to2 = cc.ProgressTo.actionWithDuration(2, 100);
 
         var left = cc.ProgressTimer.progressWithFile(s_pathSister1);
-        left.setType(cc.kCCProgressTimerTypeHorizontalBarLR);
+        left.setType(cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR);
         this.addChild(left);
         left.setPosition(cc.PointMake(100, winSize.height / 2));
         left.runAction(cc.RepeatForever.actionWithAction(to1));
 
         var right = cc.ProgressTimer.progressWithFile(s_pathSister2);
-        right.setType(cc.kCCProgressTimerTypeHorizontalBarRL);
+        right.setType(cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 100, winSize.height / 2));
         right.runAction(cc.RepeatForever.actionWithAction(to2));
@@ -172,13 +172,13 @@ var SpriteProgressToVertical = SpriteDemo.extend({
         var to2 = cc.ProgressTo.actionWithDuration(2, 100);
 
         var left = cc.ProgressTimer.progressWithFile(s_pathSister1);
-        left.setType(cc.kCCProgressTimerTypeVerticalBarBT);
+        left.setType(cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT);
         this.addChild(left);
         left.setPosition(cc.PointMake(100, winSize.height / 2));
         left.runAction(cc.RepeatForever.actionWithAction(to1));
 
         var right = cc.ProgressTimer.progressWithFile(s_pathSister2);
-        right.setType(cc.kCCProgressTimerTypeVerticalBarTB);
+        right.setType(cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 100, winSize.height / 2));
         right.runAction(cc.RepeatForever.actionWithAction(to2));

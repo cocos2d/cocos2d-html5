@@ -34,7 +34,7 @@ var TestScene = cc.Scene.extend({
         this._super();
         this._portrait = bPortrait;
         if (this._portrait) {
-            cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationLandscapeRight);
+            cc.Director.sharedDirector().setDeviceOrientation(cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT);
         }
         this.init();
     },
@@ -63,7 +63,7 @@ var TestScene = cc.Scene.extend({
 //Controller stuff
 var LINE_SPACE = 40;
 var s_pathClose = null;
-var s_tCurPos = cc.PointZero();
+var curPos = cc.PointZero();
 
 var TestController = cc.Layer.extend({
     _itemMenu:null,
@@ -91,7 +91,7 @@ var TestController = cc.Layer.extend({
         }
 
         this._itemMenu.setContentSize(cc.SizeMake(s.width, (testNames.length + 1) * LINE_SPACE));
-        this._itemMenu.setPosition(s_tCurPos);
+        this._itemMenu.setPosition(curPos);
         this.setIsTouchEnabled(true);
         this.addChild(this._itemMenu);
         this.addChild(menu, 1);
@@ -135,7 +135,7 @@ var TestController = cc.Layer.extend({
             this._itemMenu.setPosition(nextPos);
             this._beginPos = cc.ccp(0, touchLocation).y;
 
-            s_tCurPos   = nextPos;
+            curPos   = nextPos;
         }
     },
     ccTouchesEnded:function () {

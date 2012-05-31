@@ -31,14 +31,14 @@ if (cc.ENABLE_PROFILERS) {
 /** @typedef ccDirectorProjection
  Possible OpenGL projections used by director
  */
-cc.kCCDirectorProjection2D = 0;//sets a 2D projection (orthogonal projection)
-cc.kCCDirectorProjection3D = 1;//sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
-cc.kCCDirectorProjectionCustom = 3;//it calls "updateProjection" on the projection delegate.
-cc.kCCDirectorProjectionDefault = cc.kCCDirectorProjection3D;// Detault projection is 3D projection
+cc.CCDIRECTOR_PROJECTION_2D = 0;//sets a 2D projection (orthogonal projection)
+cc.CCDIRECTOR_PROJECTION_3D = 1;//sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
+cc.CCDIRECTOR_PROJECTION_CUSTOM = 3;//it calls "updateProjection" on the projection delegate.
+cc.CCDIRECTOR_PROJECTION_DEFAULT = cc.CCDIRECTOR_PROJECTION_3D;// Detault projection is 3D projection
 // backward compatibility stuff
-cc.DirectorProjection2D = cc.kCCDirectorProjection2D;
-cc.DirectorProjection3D = cc.kCCDirectorProjection3D;
-cc.DirectorProjectionCustom = cc.kCCDirectorProjectionCustom;
+cc.DIRECTOR_PROJECTION_2D = cc.CCDIRECTOR_PROJECTION_2D;
+cc.DIRECTOR_PROJECTION_3D = cc.CCDIRECTOR_PROJECTION_3D;
+cc.DIRECTOR_PROJECTION_CUSTOM = cc.CCDIRECTOR_PROJECTION_CUSTOM;
 
 /** @typedef ccDirectorType
  Possible Director Types.
@@ -51,7 +51,7 @@ cc.DirectorProjectionCustom = cc.kCCDirectorProjectionCustom;
  * - It the slowest director
  * - The interval update is customizable from 1 to 60
  */
-cc.kCCDirectorTypeNSTimer = 0;
+cc.CCDIRECTOR_TYPE_NS_TIMER = 0;
 /** will use a Director that triggers the main loop from a custom main loop.
  *
  * Features and Limitations:
@@ -59,7 +59,7 @@ cc.kCCDirectorTypeNSTimer = 0;
  * - It doesn't integrate well with UIKit objects
  * - The interval update can't be customizable
  */
-cc.kCCDirectorTypeMainLoop = 1;
+cc.CCDIRECTOR_TYPE_MAIN_LOOP = 1;
 /** Will use a Director that triggers the main loop from a thread, but the main loop will be executed on the main thread.
  *
  * Features and Limitations:
@@ -67,7 +67,7 @@ cc.kCCDirectorTypeMainLoop = 1;
  * - It doesn't integrate well with UIKit objects
  * - The interval update can't be customizable
  */
-cc.kCCDirectorTypeThreadMainLoop = 2;
+cc.CCDIRECTOR_TYPE_THREAD_MAIN_LOOP = 2;
 /** Will use a Director that synchronizes timers with the refresh rate of the display.
  *
  * Features and Limitations:
@@ -77,37 +77,37 @@ cc.kCCDirectorTypeThreadMainLoop = 2;
  * - Integrates OK with UIKit objects
  * - The interval update can be 1/60, 1/30, 1/15
  */
-cc.kCCDirectorTypeDisplayLink = 3;
+cc.CCDIRECTOR_TYPE_DISPLAY_LINK = 3;
 /** Default director is the NSTimer directory */
-cc.kCCDirectorTypeDefault = cc.kCCDirectorTypeNSTimer;
+cc.CCDIRECTOR_TYPE_DEFAULT = cc.CCDIRECTOR_TYPE_NS_TIMER;
 // backward compatibility stuff
-cc.DirectorTypeNSTimer = cc.kCCDirectorTypeNSTimer;
-cc.DirectorTypeMainLoop = cc.kCCDirectorTypeMainLoop;
-cc.DirectorTypeThreadMainLoop = cc.kCCDirectorTypeThreadMainLoop;
-cc.DirectorTypeDisplayLink = cc.kCCDirectorTypeDisplayLink;
-cc.DirectorTypeDefault = cc.kCCDirectorTypeDefault;
+cc.DIRECTOR_TYPE_NS_TIMER = cc.CCDIRECTOR_TYPE_NS_TIMER;
+cc.DIRECTOR_TYPE_MAIN_LOOP = cc.CCDIRECTOR_TYPE_MAIN_LOOP;
+cc.DIRECTOR_TYPE_THREAD_MAIN_LOOP = cc.CCDIRECTOR_TYPE_THREAD_MAIN_LOOP;
+cc.DIRECTOR_TYPE_DISPLAY_LINK = cc.CCDIRECTOR_TYPE_DISPLAY_LINK;
+cc.DIRECTOR_TYPE_DEFAULT = cc.CCDIRECTOR_TYPE_DEFAULT;
 
 /** @typedef ccDeviceOrientation
  Possible device orientations
  */
 
 /// Device oriented vertically, home button on the bottom
-cc.kCCDeviceOrientationPortrait = 0; // UIDeviceOrientationPortrait,
+cc.CCDEVICE_ORIENTATION_PORTRAIT = 0; // UIDeviceOrientationPortrait,
 /// Device oriented horizontally, home button on the right
-cc.kCCDeviceOrientationLandscapeLeft = 1; // UIDeviceOrientationLandscapeLeft,
+cc.CCDEVICE_ORIENTATION_LANDSCAPE_LEFT = 1; // UIDeviceOrientationLandscapeLeft,
 /// Device oriented vertically, home button on the top
-cc.kCCDeviceOrientationPortraitUpsideDown = 2; // UIDeviceOrientationPortraitUpsideDown,
+cc.CCDEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = 2; // UIDeviceOrientationPortraitUpsideDown,
 /// Device oriented horizontally, home button on the left
-cc.kCCDeviceOrientationLandscapeRight = 3; // UIDeviceOrientationLandscapeRight,
+cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3; // UIDeviceOrientationLandscapeRight,
 
 /// In browsers, we only support 2 orientations by change window size.
-cc.DeviceMaxOrientations = 2;
+cc.DEVICE_MAX_ORIENTATIONS = 2;
 
 // Backward compatibility stuff
-cc.DeviceOrientationPortrait = cc.kCCDeviceOrientationPortrait;
-cc.DeviceOrientationPortraitUpsideDown = cc.kCCDeviceOrientationPortraitUpsideDown;
-cc.DeviceOrientationLandscapeLeft = cc.kCCDeviceOrientationLandscapeLeft;
-cc.DeviceOrientationLandscapeRight = cc.kCCDeviceOrientationLandscapeRight;
+cc.DEVICE_ORIENTATION_PORTRAIT = cc.CCDEVICE_ORIENTATION_PORTRAIT;
+cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = cc.CCDEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN;
+cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_LEFT;
+cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT;
 
 /**
  @brief Class that creates and handle the main Window and manages how
@@ -181,7 +181,7 @@ cc.Director = cc.Class.extend({
         this._oldAnimationInterval = this._animationInterval = 1.0 / cc.defaultFPS;
         this._scenesStack = [];
         // Set default projection (3D)
-        this._projection = cc.kCCDirectorProjectionDefault;
+        this._projection = cc.CCDIRECTOR_PROJECTION_DEFAULT;
         // projection delegate if "Custom" projection is used
         this._projectionDelegate = null;
 
@@ -199,7 +199,7 @@ cc.Director = cc.Class.extend({
         this._winSizeInPixels = this._winSizeInPoints = cc.SizeMake(cc.canvas.width, cc.canvas.height);
 
         //portrait mode default
-        this._deviceOrientation = cc.DeviceOrientationPortrait;
+        this._deviceOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
         this._openGLView = null;
         this._retinaDisplay = false;
         this._contentScaleFactor = 1.0;
@@ -213,22 +213,22 @@ cc.Director = cc.Class.extend({
         // XXX it's using hardcoded values.
         // What if the the screen size changes in the future?
         switch (this._deviceOrientation) {
-            case cc.DeviceOrientationPortrait:
+            case cc.DEVICE_ORIENTATION_PORTRAIT:
                 // nothing
                 break;
-            case cc.DeviceOrientationPortraitUpsideDown:
+            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
                 // upside down
                 //TODO OpenGL stuff
                 /*glTranslatef(w,h,0);
                  glRotatef(180,0,0,1);
                  glTranslatef(-w,-h,0);*/
                 break;
-            case cc.DeviceOrientationLandscapeRight:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
                 /*glTranslatef(w,h,0);
                  glRotatef(90,0,0,1);
                  glTranslatef(-h,-w,0);*/
                 break;
-            case cc.DeviceOrientationLandscapeLeft:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
                 /*glTranslatef(w,h,0);
                  glRotatef(-90,0,0,1);
                  glTranslatef(-h,-w,0);*/
@@ -268,17 +268,17 @@ cc.Director = cc.Class.extend({
 
         var ret = cc.PointZero();
         switch (this._deviceOrientation) {
-            case cc.DeviceOrientationPortrait:
+            case cc.DEVICE_ORIENTATION_PORTRAIT:
                 ret = cc.ccp(point.x, newY);
                 break;
-            case cc.DeviceOrientationPortraitUpsideDown:
+            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
                 ret = cc.ccp(newX, point.y);
                 break;
-            case cc.DeviceOrientationLandscapeLeft:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
                 ret.x = point.y;
                 ret.y = point.x;
                 break;
-            case cc.DeviceOrientationLandscapeRight:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
                 ret.x = newY;
                 ret.y = newX;
                 break;
@@ -292,16 +292,16 @@ cc.Director = cc.Class.extend({
         var uiPoint = cc.PointZero();
 
         switch (this._deviceOrientation) {
-            case cc.DeviceOrientationPortrait:
+            case cc.DEVICE_ORIENTATION_PORTRAIT:
                 uiPoint = cc.ccp(point.x, oppositeY);
                 break;
-            case cc.DeviceOrientationPortraitUpsideDown:
+            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
                 uiPoint = cc.ccp(oppositeX, point.y);
                 break;
-            case cc.DeviceOrientationLandscapeLeft:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
                 uiPoint = cc.ccp(point.y, point.x);
                 break;
-            case cc.DeviceOrientationLandscapeRight:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
                 // Can't use oppositeX/Y because x/y are flipped
                 uiPoint = cc.ccp(winSize.width - point.y, winSize.height - point.x);
                 break;
@@ -475,7 +475,7 @@ cc.Director = cc.Class.extend({
     },
     getWinSize:function () {
         var tmp = this._winSizeInPoints;
-        if (this._deviceOrientation == cc.DeviceOrientationLandscapeLeft || this._deviceOrientation == cc.DeviceOrientationLandscapeRight) {
+        if (this._deviceOrientation == cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT || this._deviceOrientation == cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT) {
             // swap x,y in landspace mode
             var s = new cc.SizeZero();
             s.width = tmp.height;
@@ -687,9 +687,9 @@ cc.Director = cc.Class.extend({
     setDeviceOrientation:function (deviceOrientation) {
         var eNewOrientation = cc.Application.sharedApplication().setOrientation(deviceOrientation);
 
-        if ((this._deviceOrientation % cc.DeviceMaxOrientations) != (eNewOrientation % cc.DeviceMaxOrientations)) {
+        if ((this._deviceOrientation % cc.DEVICE_MAX_ORIENTATIONS) != (eNewOrientation % cc.DEVICE_MAX_ORIENTATIONS)) {
             this._deviceOrientation = eNewOrientation;
-            if (cc.renderContextType == cc.kCanvas) {
+            if (cc.renderContextType == cc.CANVAS) {
                 var height = cc.canvas.height;
                 cc.canvas.height = cc.canvas.width;
                 cc.canvas.width = height;
@@ -705,7 +705,7 @@ cc.Director = cc.Class.extend({
         }
         else {
             // this logic is only run on win32 now
-            // On win32,the return value of CCApplication::setDeviceOrientation is always kCCDeviceOrientationPortrait
+            // On win32,the return value of CCApplication::setDeviceOrientation is always CCDEVICE_ORIENTATION_PORTRAIT
             // So,we should calculate the Projection and window size again.
             //this._winSizeInPoints = this._openGLView.getSize();
             //this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
@@ -812,7 +812,7 @@ cc.Director = cc.Class.extend({
         var size = this._winSizeInPixels;
         var zeye = this.getZEye();
         switch (projection) {
-            case cc.kCCDirectorProjection2D:
+            case cc.CCDIRECTOR_PROJECTION_2D:
                 if (this._openGLView) {
                     this._openGLView.setViewPortInPoints(0, 0, size.width, size.height);
                 }
@@ -824,7 +824,7 @@ cc.Director = cc.Class.extend({
                 //glLoadIdentity();
                 break;
 
-            case cc.kCCDirectorProjection3D:
+            case cc.CCDIRECTOR_PROJECTION_3D:
                 if (this._openGLView) {
                     this._openGLView.setViewPortInPoints(0, 0, size.width, size.height);
                 }
@@ -841,7 +841,7 @@ cc.Director = cc.Class.extend({
                  0.0f, 1.0f, 0.0f);*/
                 break;
 
-            case cc.kCCDirectorProjectionCustom:
+            case cc.CCDIRECTOR_PROJECTION_CUSTOM:
                 if (this._projectionDelegate) {
                     this._projectionDelegate.updateProjection();
                 }

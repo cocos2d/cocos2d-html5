@@ -295,7 +295,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     },
 
     postStep:function () {
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
 
         } else {
             if (cc.USES_VBO) {
@@ -309,7 +309,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
 
     draw:function (ctx) {
         this._super();
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             context.save();
             if (this._isBlendAdditive) {
@@ -323,7 +323,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                 var lpx = (0 | (particle.size * 0.5));
 
                 //TODO these are temporary code, need modifier
-                if (this._drawMode == cc.kParticleTextureMode) {
+                if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
                     var drawTexture = this.getTexture();
                     if (particle.isChangeColor) {
                         var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
@@ -343,7 +343,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                     context.save();
                     context.globalAlpha = particle.color.a;
                     context.translate(0 | particle.pos.x, -(0 | particle.pos.y));
-                    if(this._shapeType == cc.kParticleStarShape){
+                    if(this._shapeType == cc.PARTICLE_STAR_SHAPE){
                         cc.drawingUtil.drawStar(context, new cc.Point(0, 0), lpx, particle.color);
                     }else{
                         cc.drawingUtil.drawColorBall(context, new cc.Point(0, 0), lpx, particle.color);
@@ -359,7 +359,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
             // Unneeded states: -
             glBindTexture(GL_TEXTURE_2D, this._texture.getName());
 
-            var kQuadSize = sizeof(this._quads[0].bl);
+            var quadSize = sizeof(this._quads[0].bl);
 
             if (cc.USES_VBO) {
                 glBindBuffer(GL_ARRAY_BUFFER, this._quadsID);
@@ -368,25 +368,25 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                     glBufferData(GL_ARRAY_BUFFER, sizeof(this._quads[0]) * this._totalParticles, this._quads, GL_DYNAMIC_DRAW);
                 }
 
-                glVertexPointer(2, GL_FLOAT, kQuadSize, 0);
+                glVertexPointer(2, GL_FLOAT, quadSize, 0);
 
-                glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, offsetof(ccV2F_C4B_T2F, colors));
+                glColorPointer(4, GL_UNSIGNED_BYTE, quadSize, offsetof(ccV2F_C4B_T2F, colors));
 
-                glTexCoordPointer(2, GL_FLOAT, kQuadSize, offsetof(ccV2F_C4B_T2F, texCoords));
+                glTexCoordPointer(2, GL_FLOAT, quadSize, offsetof(ccV2F_C4B_T2F, texCoords));
             } else {
                 var offset = this._quads;
 
                 // vertex
                 var diff = offsetof(cc.V2F_C4B_T2F, vertices);
-                glVertexPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+                glVertexPointer(2, GL_FLOAT, quadSize, (offset + diff));
 
                 // color
                 diff = offsetof(cc.V2F_C4B_T2F, colors);
-                glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (offset + diff));
+                glColorPointer(4, GL_UNSIGNED_BYTE, quadSize, (offset + diff));
 
                 // tex coords
                 diff = offsetof(cc.V2F_C4B_T2F, texCoords);
-                glTexCoordPointer(2, GL_FLOAT, kQuadSize, (offset + diff));
+                glTexCoordPointer(2, GL_FLOAT, quadSize, (offset + diff));
             }
 
 

@@ -25,7 +25,7 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.kSceneFade = parseInt("0xFADEFADE");
+cc.SCENE_FADE = parseInt("0xFADEFADE");
 
 /** @brief CCTransitionEaseScene can ease the actions of the scene protocol.
  @since v0.8.2
@@ -42,13 +42,13 @@ cc.TransitionEaseScene = cc.Class.extend({
  * Orientation Type used by some transitions
  */
 /// An horizontal orientation where the Left is nearer
-cc.kOrientationLeftOver = 0;
+cc.ORIENTATION_LEFT_OVER = 0;
 /// An horizontal orientation where the Right is nearer
-cc.kOrientationRightOver = 1;
+cc.ORIENTATION_RIGHT_OVER = 1;
 /// A vertical orientation where the Up is nearer
-cc.kOrientationUpOver = 0;
+cc.ORIENTATION_UP_OVER = 0;
 /// A vertical orientation where the Bottom is nearer
-cc.kOrientationDownOver = 1;
+cc.ORIENTATION_DOWN_OVER = 1;
 
 cc.TransitionScene = cc.Scene.extend({
     _inScene:null,
@@ -538,7 +538,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.kOrientationRightOver) {
+        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -574,7 +574,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend({
 });
 cc.TransitionFlipX.transitionWithDuration = function (t, scene, o) {
     if (o == null)
-        o = cc.kOrientationRightOver;
+        o = cc.ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionFlipX();
     tempScene.initWithDuration(t, scene, o);
@@ -596,7 +596,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.kOrientationUpOver) {
+        if (this._orientation == cc.ORIENTATION_UP_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -631,7 +631,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend({
 });
 cc.TransitionFlipY.transitionWithDuration = function (t, scene, o) {
     if (o == null)
-        o = cc.kOrientationUpOver;
+        o = cc.ORIENTATION_UP_OVER;
 
     var tempScene = new cc.TransitionFlipY();
     tempScene.initWithDuration(t, scene, o);
@@ -653,7 +653,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.kOrientationRightOver) {
+        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -688,7 +688,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend({
 });
 cc.TransitionFlipAngular.transitionWithDuration = function (t, scene, o) {
     if (o == null)
-        o = cc.kOrientationRightOver;
+        o = cc.ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionFlipAngular();
     tempScene.initWithDuration(t, scene, o);
@@ -710,7 +710,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.kOrientationRightOver) {
+        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -755,7 +755,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend({
 });
 cc.TransitionZoomFlipX.transitionWithDuration = function (t, scene, o) {
     if (o == null)
-        o = cc.kOrientationRightOver;
+        o = cc.ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionZoomFlipX();
     tempScene.initWithDuration(t, scene, o);
@@ -777,7 +777,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.kOrientationUpOver) {
+        if (this._orientation == cc.ORIENTATION_UP_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -824,7 +824,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend({
 });
 cc.TransitionZoomFlipY.transitionWithDuration = function (t, scene, o) {
     if (o == null)
-        o = cc.kOrientationUpOver;
+        o = cc.ORIENTATION_UP_OVER;
 
     var tempScene = new cc.TransitionZoomFlipY();
     tempScene.initWithDuration(t, scene, o);
@@ -846,7 +846,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend({
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.kOrientationRightOver) {
+        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -893,7 +893,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend({
 });
 cc.TransitionZoomFlipAngular.transitionWithDuration = function (t, scene, o) {
     if (o == null)
-        o = cc.kOrientationRightOver;
+        o = cc.ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionZoomFlipAngular();
     tempScene.initWithDuration(t, scene, o);
@@ -915,8 +915,8 @@ cc.TransitionFade = cc.TransitionScene.extend({
         var l = cc.LayerColor.layerWithColor(this._color);
         this._inScene.setIsVisible(false);
 
-        this.addChild(l, 2, cc.kSceneFade);
-        var f = this.getChildByTag(cc.kSceneFade);
+        this.addChild(l, 2, cc.SCENE_FADE);
+        var f = this.getChildByTag(cc.SCENE_FADE);
 
         //TODO
         var a = cc.Sequence.actions
@@ -931,7 +931,7 @@ cc.TransitionFade = cc.TransitionScene.extend({
     },
     onExit:function () {
         this._super();
-        this.removeChildByTag(cc.kSceneFade, false);
+        this.removeChildByTag(cc.SCENE_FADE, false);
     },
     /** initializes the transition with a duration and with an RGB color */
     initWithDuration:function (t, scene, color) {
@@ -1031,10 +1031,10 @@ cc.TransitionCrossFade = cc.TransitionScene.extend({
         outTexture.getSprite().runAction(layerAction);
 
         // add the layer (which contains our two rendertextures) to the scene
-        this.addChild(layer, 2, cc.kSceneFade);
+        this.addChild(layer, 2, cc.SCENE_FADE);
     },
     onExit:function () {
-        this.removeChildByTag(cc.kSceneFade, false);
+        this.removeChildByTag(cc.SCENE_FADE, false);
         this._super();
     },
     draw:function () {

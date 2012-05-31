@@ -36,15 +36,15 @@ cc.Waves3D = cc.Grid3DAction.extend({
     getAmplitude:function () {
         return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._amplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
         return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._amplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** init the action */
@@ -306,8 +306,8 @@ cc.Lens3D = cc.Grid3DAction.extend({
         return this._lensEffect;
     },
     /** Set lens center position */
-    setLensEffect:function (fLensEffect) {
-        this._lensEffect = fLensEffect;
+    setLensEffect:function (lensEffect) {
+        this._lensEffect = lensEffect;
     },
 
     getPosition:function () {
@@ -422,15 +422,15 @@ cc.Ripple3D = cc.Grid3DAction.extend({
     getAmplitude:function () {
         return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._amplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
         return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._amplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with radius, number of waves, amplitude, a grid size and duration */
@@ -557,15 +557,15 @@ cc.Liquid = cc.Grid3DAction.extend({
     getAmplitude:function () {
         return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._amplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
         return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._amplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with amplitude, a grid and duration */
@@ -628,15 +628,15 @@ cc.Waves = cc.Grid3DAction.extend({
     getAmplitude:function () {
         return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._amplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
         return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._amplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with amplitude, horizontal sin, vertical sin, a grid and duration */
@@ -721,15 +721,15 @@ cc.Twirl = cc.Grid3DAction.extend({
     getAmplitude:function () {
         return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._amplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
         return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._amplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with center position, number of twirls, amplitude, a grid size and duration */

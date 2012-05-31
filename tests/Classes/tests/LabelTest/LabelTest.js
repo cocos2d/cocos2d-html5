@@ -23,21 +23,21 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagLabel = 1;
-var kTagLabelSpriteManager = 1;
-var kTagAnimation1 = 1;
-var kTagBitmapAtlas1 = 1;
-var kTagBitmapAtlas2 = 2;
-var kTagBitmapAtlas3 = 3;
+var TAG_LABEL = 1;
+var TAG_LABEL_SPRITE_MANAGER = 1;
+var TAG_ANIMATION1 = 1;
+var TAG_BITMAP_ATLAS1 = 1;
+var TAG_BITMAP_ATLAS2 = 2;
+var TAG_BITMAP_ATLAS3 = 3;
 
-var kTagLabelSprite1 = 660;
-var kTagLabelSprite2 = 661;
-var kTagLabelSprite3 = 662;
-var kTagLabelSprite4 = 663;
-var kTagLabelSprite5 = 664;
-var kTagLabelSprite6 = 665;
-var kTagLabelSprite7 = 666;
-var kTagLabelSprite8 = 667;
+var TAG_LABEL_SPRITE1 = 660;
+var TAG_LABEL_SPRITE12 = 661;
+var TAG_LABEL_SPRITE13 = 662;
+var TAG_LABEL_SPRITE14 = 663;
+var TAG_LABEL_SPRITE15 = 664;
+var TAG_LABEL_SPRITE16 = 665;
+var TAG_LABEL_SPRITE17 = 666;
+var TAG_LABEL_SPRITE18 = 667;
 
 
 var AtlasTests = [
@@ -209,12 +209,12 @@ var LabelAtlasTest = AtlasDemo.extend({
         this.time = 0;
 
         var label1 = cc.LabelAtlas.labelWithString("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label1, 0, kTagLabelSprite1);
+        this.addChild(label1, 0, TAG_LABEL_SPRITE1);
         label1.setPosition(cc.ccp(10, 100));
         label1.setOpacity(200);
 
         var label2 = cc.LabelAtlas.labelWithString("0123456789", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label2, 0, kTagLabelSprite2);
+        this.addChild(label2, 0, TAG_LABEL_SPRITE12);
         label2.setPosition(cc.ccp(10, 200));
         label2.setOpacity(32);
 
@@ -223,11 +223,11 @@ var LabelAtlasTest = AtlasDemo.extend({
     step:function (dt) {
         this.time += dt;
 
-        var label1 = this.getChildByTag(kTagLabelSprite1);
+        var label1 = this.getChildByTag(TAG_LABEL_SPRITE1);
         var string1 = this.time.toFixed(2) + " Test";
         label1.setString(string1);
 
-        var label2 = this.getChildByTag(kTagLabelSprite2);
+        var label2 = this.getChildByTag(TAG_LABEL_SPRITE12);
         var string2 = parseInt(this.time).toString();
         label2.setString(string2);
     },
@@ -248,12 +248,12 @@ var LabelAtlasColorTest = AtlasDemo.extend({
     time:null,
     ctor:function () {
         var label1 = cc.LabelAtlas.labelWithString("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label1, 0, kTagLabelSprite1);
+        this.addChild(label1, 0, TAG_LABEL_SPRITE1);
         label1.setPosition(cc.ccp(10, 100));
         label1.setOpacity(200);
 
         var label2 = cc.LabelAtlas.labelWithString("0123456789", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label2, 0, kTagLabelSprite2);
+        this.addChild(label2, 0, TAG_LABEL_SPRITE12);
         label2.setPosition(cc.ccp(10, 200));
         label2.setColor(cc.RED());
 
@@ -270,10 +270,10 @@ var LabelAtlasColorTest = AtlasDemo.extend({
     step:function (dt) {
         this.time += dt;
         var string1 = this.time.toFixed(2) + " Test";
-        var label1 = this.getChildByTag(kTagLabelSprite1);
+        var label1 = this.getChildByTag(TAG_LABEL_SPRITE1);
         label1.setString(string1);
 
-        var label2 = this.getChildByTag(kTagLabelSprite2);
+        var label2 = this.getChildByTag(TAG_LABEL_SPRITE12);
         var string2 = parseInt(this.time).toString();
         label2.setString(string2);
     },
@@ -304,7 +304,7 @@ var Atlas3 = AtlasDemo.extend({
 
         // testing anchors
         label1.setAnchorPoint(cc.ccp(0, 0));
-        this.addChild(label1, 0, kTagBitmapAtlas1);
+        this.addChild(label1, 0, TAG_BITMAP_ATLAS1);
         var fade = cc.FadeOut.actionWithDuration(1.0);
         var fade_in = fade.reverse();
         var seq = cc.Sequence.actions(fade, fade_in, null);
@@ -320,13 +320,13 @@ var Atlas3 = AtlasDemo.extend({
         // testing anchors
         label2.setAnchorPoint(cc.ccp(0.5, 0.5));
         label2.setColor(cc.RED());
-        this.addChild(label2, 0, kTagBitmapAtlas2);
+        this.addChild(label2, 0, TAG_BITMAP_ATLAS2);
         label2.runAction(repeat.copy());
 
         var label3 = cc.LabelBMFont.labelWithString("Test", "Resources/fonts/bitmapFontTest2.fnt");
         // testing anchors
         label3.setAnchorPoint(cc.ccp(1, 1));
-        this.addChild(label3, 0, kTagBitmapAtlas3);
+        this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
 
 
         var s = cc.Director.sharedDirector().getWinSize();
@@ -341,13 +341,13 @@ var Atlas3 = AtlasDemo.extend({
         //var string;
         var string = this.time + "Test j";
 
-        var label1 = this.getChildByTag(kTagBitmapAtlas1);
+        var label1 = this.getChildByTag(TAG_BITMAP_ATLAS1);
         label1.setString(string);
 
-        var label2 = this.getChildByTag(kTagBitmapAtlas2);
+        var label2 = this.getChildByTag(TAG_BITMAP_ATLAS2);
         label2.setString(string);
 
-        var label3 = this.getChildByTag(kTagBitmapAtlas3);
+        var label3 = this.getChildByTag(TAG_BITMAP_ATLAS3);
         label3.setString(string);
     },
 
@@ -407,7 +407,7 @@ var Atlas4 = AtlasDemo.extend({
 
         // Bottom Label
         var label2 = cc.LabelBMFont.labelWithString("00.0", "Resources/fonts/bitmapFontTest.fnt");
-        this.addChild(label2, 0, kTagBitmapAtlas2);
+        this.addChild(label2, 0, TAG_BITMAP_ATLAS2);
         label2.setPosition(cc.ccp(s.width / 2.0, 80));
 
         var lastChar = label2.getChildByTag(3);
@@ -419,7 +419,7 @@ var Atlas4 = AtlasDemo.extend({
         this.time += dt;
         var string = this.time;
 
-        var label1 = this.getChildByTag(kTagBitmapAtlas2);
+        var label1 = this.getChildByTag(TAG_BITMAP_ATLAS2);
         label1.setString(string);
     },
     draw:function () {
@@ -578,7 +578,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         // Left
         var label1 = cc.LabelBMFont.labelWithString("Multi line\nLeft", "Resources/fonts/bitmapFontTest3.fnt");
         label1.setAnchorPoint(cc.ccp(0, 0));
-        this.addChild(label1, 0, kTagBitmapAtlas1);
+        this.addChild(label1, 0, TAG_BITMAP_ATLAS1);
 
         s = label1.getContentSize();
         cc.LOG("content size: %.2x%.2", s.width, s.height);
@@ -587,7 +587,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         // Center
         var label2 = cc.LabelBMFont.labelWithString("Multi line\nCenter", "Resources/fonts/bitmapFontTest3.fnt");
         label2.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this.addChild(label2, 0, kTagBitmapAtlas2);
+        this.addChild(label2, 0, TAG_BITMAP_ATLAS2);
 
         s = label2.getContentSize();
         cc.LOG("content size: %.2x%.2", s.width, s.height);
@@ -595,7 +595,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         // right
         var label3 = cc.LabelBMFont.labelWithString("Multi line\nRight\nThree lines Three", "Resources/fonts/bitmapFontTest3.fnt");
         label3.setAnchorPoint(cc.ccp(1, 1));
-        this.addChild(label3, 0, kTagBitmapAtlas3);
+        this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
 
         s = label3.getContentSize();
         cc.LOG("content size: %.2x%.2", s.width, s.height);
@@ -625,17 +625,17 @@ var LabelsEmpty = AtlasDemo.extend({
 
         // cc.LabelBMFont
         var label1 = cc.LabelBMFont.labelWithString("", "Resources/fonts/bitmapFontTest3.fnt");
-        this.addChild(label1, 0, kTagBitmapAtlas1);
+        this.addChild(label1, 0, TAG_BITMAP_ATLAS1);
         label1.setPosition(cc.ccp(s.width / 2, s.height - 100));
 
         // cc.LabelTTF
         var label2 = cc.LabelTTF.labelWithString("", "Arial", 24);
-        this.addChild(label2, 0, kTagBitmapAtlas2);
+        this.addChild(label2, 0, TAG_BITMAP_ATLAS2);
         label2.setPosition(cc.ccp(s.width / 2, s.height / 2));
 
         // cc.LabelAtlas
         var label3 = cc.LabelAtlas.labelWithString("", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
-        this.addChild(label3, 0, kTagBitmapAtlas3);
+        this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
         label3.setPosition(cc.ccp(s.width / 2, 0 + 100));
 
         this.schedule(this.updateStrings, 1.0);
@@ -643,9 +643,9 @@ var LabelsEmpty = AtlasDemo.extend({
         this.setEmpty = false;
     },
     updateStrings:function (dt) {
-        var label1 = this.getChildByTag(kTagBitmapAtlas1);
-        var label2 = this.getChildByTag(kTagBitmapAtlas2);
-        var label3 = this.getChildByTag(kTagBitmapAtlas3);
+        var label1 = this.getChildByTag(TAG_BITMAP_ATLAS1);
+        var label2 = this.getChildByTag(TAG_BITMAP_ATLAS2);
+        var label3 = this.getChildByTag(TAG_BITMAP_ATLAS3);
 
         if (!this.setEmpty) {
             label1.setString("not empty");

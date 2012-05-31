@@ -24,10 +24,10 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var kTagSprite1 = 1;
-var kTagSprite2 = 2;
-var kTagSprite3 = 3;
-var kTagSlider = 4;
+var TAG_SPRITE1 = 1;
+var TAG_SPRITE2 = 2;
+var TAG_SPRITE3 = 3;
+var TAG_SLIDER = 4;
 
 var sceneIdx = -1;
 var MAX_LAYER = 9;
@@ -49,8 +49,8 @@ var restartCocosNodeAction = function () {
     return createCocosNodeLayer(sceneIdx);
 };
 
-var createCocosNodeLayer = function (nIndex) {
-    switch (nIndex) {
+var createCocosNodeLayer = function (index) {
+    switch (index) {
         case 0:
             return new CCNodeTest2();
         case 1:
@@ -213,8 +213,8 @@ var CCNodeTest5 = TestCocosNodeDemo.extend({
         forever.setTag(101);
         forever2.setTag(102);
 
-        this.addChild(sp1, 0, kTagSprite1);
-        this.addChild(sp2, 0, kTagSprite2);
+        this.addChild(sp1, 0, TAG_SPRITE1);
+        this.addChild(sp2, 0, TAG_SPRITE2);
 
         sp1.runAction(forever);
         sp2.runAction(forever2);
@@ -222,14 +222,14 @@ var CCNodeTest5 = TestCocosNodeDemo.extend({
         this.schedule(this.addAndRemove, 2.0);
     },
     addAndRemove:function (dt) {
-        var sp1 = this.getChildByTag(kTagSprite1);
-        var sp2 = this.getChildByTag(kTagSprite2);
+        var sp1 = this.getChildByTag(TAG_SPRITE1);
+        var sp2 = this.getChildByTag(TAG_SPRITE2);
 
         this.removeChild(sp1, false);
         this.removeChild(sp2, true);
 
-        this.addChild(sp1, 0, kTagSprite1);
-        this.addChild(sp2, 0, kTagSprite2);
+        this.addChild(sp1, 0, TAG_SPRITE1);
+        this.addChild(sp2, 0, TAG_SPRITE2);
     },
     title:function () {
         return "remove and cleanup";
@@ -256,9 +256,9 @@ var CCNodeTest6 = TestCocosNodeDemo.extend({
         var forever2 = forever1.copy();
         var forever21 = forever1.copy();
 
-        this.addChild(sp1, 0, kTagSprite1);
+        this.addChild(sp1, 0, TAG_SPRITE1);
         sp1.addChild(sp11);
-        this.addChild(sp2, 0, kTagSprite2);
+        this.addChild(sp2, 0, TAG_SPRITE2);
         sp2.addChild(sp21);
 
         sp1.runAction(forever1);
@@ -269,14 +269,14 @@ var CCNodeTest6 = TestCocosNodeDemo.extend({
         this.schedule(this.addAndRemove, 2.0);
     },
     addAndRemove:function (dt) {
-        var sp1 = this.getChildByTag(kTagSprite1);
-        var sp2 = this.getChildByTag(kTagSprite2);
+        var sp1 = this.getChildByTag(TAG_SPRITE1);
+        var sp2 = this.getChildByTag(TAG_SPRITE2);
 
         this.removeChild(sp1, false);
         this.removeChild(sp2, true);
 
-        this.addChild(sp1, 0, kTagSprite1);
-        this.addChild(sp2, 0, kTagSprite2);
+        this.addChild(sp1, 0, TAG_SPRITE1);
+        this.addChild(sp2, 0, TAG_SPRITE2);
     },
     title:function () {
         return "remove/cleanup with children";
@@ -288,7 +288,7 @@ var StressTest1 = TestCocosNodeDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         var sp1 = cc.Sprite.spriteWithFile(s_pathSister1);
-        this.addChild(sp1, 0, kTagSprite1);
+        this.addChild(sp1, 0, TAG_SPRITE1);
 
         sp1.setPosition(cc.PointMake(s.width / 2, s.height / 2));
 
@@ -347,11 +347,11 @@ var StressTest2 = TestCocosNodeDemo.extend({
 
         this.schedule(this.shouldNotLeak, 6.0);
 
-        this.addChild(sublayer, 0, kTagSprite1);
+        this.addChild(sublayer, 0, TAG_SPRITE1);
     },
     shouldNotLeak:function (dt) {
         this.unschedule(this.shouldNotLeak);
-        var sublayer = this.getChildByTag(kTagSprite1);
+        var sublayer = this.getChildByTag(TAG_SPRITE1);
         sublayer.removeAllChildrenWithCleanup(true);
     },
     title:function () {
@@ -457,10 +457,10 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
     },
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection3D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection2D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {
@@ -512,10 +512,10 @@ var CameraZoomTest = TestCocosNodeDemo.extend({
 
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection3D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.sharedDirector().setProjection(cc.kCCDirectorProjection2D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {

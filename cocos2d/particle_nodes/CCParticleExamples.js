@@ -35,10 +35,10 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -68,7 +68,7 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 54.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per frame
             this._emissionRate = this._totalParticles / this._life;
@@ -115,10 +115,10 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, -90);
@@ -167,7 +167,7 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 8.0;
             this._startSizeVar = 2.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // additive
             this.setIsBlendAdditive(false);
@@ -199,10 +199,10 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.setIsBlendAdditive(true);
 
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -232,7 +232,7 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 30.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per seconds
             this._emissionRate = this._totalParticles / this._life;
@@ -280,10 +280,10 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -316,7 +316,7 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 37.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -366,10 +366,10 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -402,7 +402,7 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 30.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -452,10 +452,10 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(-200, 200);
@@ -488,7 +488,7 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 60.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -538,10 +538,10 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -574,7 +574,7 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 20.0;
             this._startSizeVar = 0.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -626,7 +626,7 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // duration
             this._duration = 0.1;
 
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -659,7 +659,7 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 15.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._duration;
@@ -709,10 +709,10 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Emitter mode: Gravity Mode
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -741,7 +741,7 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 60.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per frame
             this._emissionRate = this._totalParticles / this._life;
@@ -791,10 +791,10 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // set gravity mode.
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, -1);
@@ -827,7 +827,7 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 10.0;
             this._startSizeVar = 5.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = 10;
@@ -877,9 +877,9 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
-            this._emitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(10, -10);
@@ -913,7 +913,7 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // size, in pixels
             this._startSize = 4.0;
             this._startSizeVar = 2.0;
-            this._endSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = 20;

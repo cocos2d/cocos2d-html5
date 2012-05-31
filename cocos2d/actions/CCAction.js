@@ -25,7 +25,7 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 //! Default tag
-cc.kCCActionTagInvalid = -1;
+cc.CCACTION_TAG_INVALID = -1;
 
 /**
  @brief Base class for CCAction objects.
@@ -39,7 +39,7 @@ cc.Action = cc.Class.extend({
      The target is 'assigned', it is not 'retained'.
      */
     _target:null,
-    _tag:cc.kCCActionTagInvalid,
+    _tag:cc.CCACTION_TAG_INVALID,
     //**************Public Functions***********
     description:function () {
         return "<CCAction | Tag = " + this._tag + ">";

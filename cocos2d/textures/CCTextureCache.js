@@ -31,7 +31,7 @@ cc.g_sharedTextureCache = null;
 cc.loadImage = function (imageUrl) {
     // compute image type
     var imageType = cc.computeImageFormatType(imageUrl);
-    if (imageType == cc.kFmtUnKnown) {
+    if (imageType == cc.FMT_UNKNOWN) {
         cc.LOG("unsupportted format" + imageUrl);
         return;
     }
@@ -46,11 +46,11 @@ cc.loadImage = function (imageUrl) {
 
 cc.computeImageFormatType = function (filename) {
     if (filename.toLowerCase().indexOf('.jpg') > 0 || filename.toLowerCase().indexOf('.jpeg') > 0) {
-        return cc.kFmtJpg;
+        return cc.FMT_JPG;
     } else if (filename.indexOf('.png') > 0 || filename.indexOf('.PNG') > 0) {
-        return cc.kFmtPng;
+        return cc.FMT_PNG;
     }
-    return cc.kFmtUnKnown;
+    return cc.FMT_UNKNOWN;
 };
 
 // implementation TextureCache
@@ -78,7 +78,7 @@ cc.TextureCache = cc.Class.extend({
             this.textures[path.toString()] = texture;
         }
 
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             return this.textures[path.toString()];
         } else {
             //todo texure for gl
@@ -125,7 +125,7 @@ cc.TextureCache = cc.Class.extend({
             this.textures[path.toString()] = texture;
         }
 
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             return this.textures[path.toString()];
         } else {
             //todo texure for gl
@@ -321,7 +321,7 @@ cc.TextureCache.purgeSharedTextureCache = function () {
 };
 
 
-cc.kInvalid = 0;
-cc.kImageFile = 1;
-cc.kImageData = 2;
-cc.kString = 3;
+cc.INVALID = 0;
+cc.IMAGE_FILE = 1;
+cc.IMAGE_DATA = 2;
+cc.STRING = 3;

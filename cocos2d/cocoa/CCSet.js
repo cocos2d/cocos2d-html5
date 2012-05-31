@@ -26,9 +26,9 @@
 
 cc.Set = cc.Class.extend({
 
-    ctor:function (rSetObject) {
-        if (rSetObject) {
-            this._set = Object.create(rSetObject._set);
+    ctor:function (setObject) {
+        if (setObject) {
+            this._set = Object.create(setObject._set);
         }
         else {
             this._set = new Array();

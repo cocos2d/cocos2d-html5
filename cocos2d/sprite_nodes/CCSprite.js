@@ -292,8 +292,8 @@ cc.Sprite = cc.Node.extend({
         this._super();
         if (fileName) {
             if (typeof(fileName) == "string") {
-                var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(fileName);
-                this.initWithSpriteFrame(pFrame);
+                var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(fileName);
+                this.initWithSpriteFrame(frame);
             } else if (typeof(fileName) == "object") {
                 if (fileName instanceof cc.SpriteFrame) {
                     this.initWithSpriteFrame(fileName);
@@ -336,8 +336,8 @@ cc.Sprite = cc.Node.extend({
     /** Set the index used on the TextureAtlas.
      @warning Don't modify this value unless you know what you are doing
      */
-    setAtlasIndex:function (uAtlasIndex) {
-        this._atlasIndex = uAtlasIndex;
+    setAtlasIndex:function (atlasIndex) {
+        this._atlasIndex = atlasIndex;
     },
     /** returns the rect of the CCSprite in points */
     getTextureRect:function () {
@@ -354,14 +354,14 @@ cc.Sprite = cc.Node.extend({
     getTextureAtlas:function (pobTextureAtlas) {
         return this._textureAtlas;
     },
-    setTextureAtlas:function (pobTextureAtlas) {
-        this._textureAtlas = pobTextureAtlas;
+    setTextureAtlas:function (textureAtlas) {
+        this._textureAtlas = textureAtlas;
     },
     getSpriteBatchNode:function () {
         return this._batchNode;
     },
-    setSpriteBatchNode:function (pobSpriteBatchNode) {
-        this._batchNode = pobSpriteBatchNode;
+    setSpriteBatchNode:function (spriteBatchNode) {
+        this._batchNode = spriteBatchNode;
     },
     /** whether or not to transform according to its parent transformations.
      Useful for health bars. eg: Don't rotate the health bar, even if the parent rotates.
@@ -471,7 +471,7 @@ cc.Sprite = cc.Node.extend({
                 rect.size = new cc.Size(texture.width, texture.height);
         }
 
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             this._originalTexture = texture;
         }
         // IMPORTANT: [self init] and not [super init];
@@ -496,7 +496,7 @@ cc.Sprite = cc.Node.extend({
                  */
                 if (texture) {
                     rect = cc.RectZero();
-                    if (cc.renderContextType == cc.kCanvas)
+                    if (cc.renderContextType == cc.CANVAS)
                         rect.size = new cc.Size(texture.width, texture.height);
                     else
                         rect.size = texture.getContentSize();
@@ -539,8 +539,8 @@ cc.Sprite = cc.Node.extend({
      */
     initWithSpriteFrameName:function (spriteFrameName) {
         cc.Assert(spriteFrameName != null, "");
-        var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(spriteFrameName);
-        return this.initWithSpriteFrame(pFrame);
+        var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(spriteFrameName);
+        return this.initWithSpriteFrame(frame);
     },
     // XXX: deprecated
     /* initWithCGImage:function(pImage, pszKey){
@@ -644,7 +644,7 @@ cc.Sprite = cc.Node.extend({
         }
     },
     _updateTextureCoords:function (rect) {
-        if (cc.renderContextType == cc.kWebGL) {
+        if (cc.renderContextType == cc.WEBGL) {
             var tex = this._usesBatchNode ? this._textureAtlas.getTexture() : this._texture;
             if (!tex) {
                 return;
@@ -864,7 +864,7 @@ cc.Sprite = cc.Node.extend({
         this._super();
 
         var context = ctx || cc.renderContext;
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             context.globalAlpha = this._opacity / 255;
             if (this._flipX) {
                 context.scale(-1, 1);
@@ -998,7 +998,7 @@ cc.Sprite = cc.Node.extend({
                 cc.Assert(child != null, "");
                 this._super(child, zOrder, tag);
 
-                if (cc.renderContextType == cc.kWebGL) {
+                if (cc.renderContextType == cc.WEBGL) {
                     if (this._usesBatchNode) {
                         cc.Assert(child.getTexture().getName() == this._textureAtlas.getTexture().getName(), "");
                         var index = this._batchNode.atlasIndexForChild(child, zOrder);
@@ -1094,20 +1094,20 @@ cc.Sprite = cc.Node.extend({
         this._super(sy);
         this.SET_DIRTY_RECURSIVELY();
     },
-    setScaleX:function (fScaleX) {
-        this._super(fScaleX);
+    setScaleX:function (scaleX) {
+        this._super(scaleX);
         this.SET_DIRTY_RECURSIVELY();
     },
-    setScaleY:function (fScaleY) {
-        this._super(fScaleY);
+    setScaleY:function (scaleY) {
+        this._super(scaleY);
         this.SET_DIRTY_RECURSIVELY();
     },
-    setScale:function (fScale) {
-        this._super(fScale);
+    setScale:function (scale) {
+        this._super(scale);
         this.SET_DIRTY_RECURSIVELY();
     },
-    setVertexZ:function (fVertexZ) {
-        this._super(fVertexZ);
+    setVertexZ:function (vertexZ) {
+        this._super(vertexZ);
         this.SET_DIRTY_RECURSIVELY();
     },
     setAnchorPoint:function (anchor) {
@@ -1224,7 +1224,7 @@ cc.Sprite = cc.Node.extend({
         this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
 
         if (this.getTexture()) {
-            if (cc.renderContextType == cc.kCanvas) {
+            if (cc.renderContextType == cc.CANVAS) {
                 var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
@@ -1288,18 +1288,18 @@ cc.Sprite = cc.Node.extend({
         this.setDisplayFrame(frame);
     },
     /** returns whether or not a CCSpriteFrame is being displayed */
-    isFrameDisplayed:function (pFrame) {
-        if (cc.renderContextType == cc.kCanvas) {
-            if (pFrame.getTexture() != this._texture)
+    isFrameDisplayed:function (frame) {
+        if (cc.renderContextType == cc.CANVAS) {
+            if (frame.getTexture() != this._texture)
                 return false;
-            return cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._rect);
+            return cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect);
         } else {
-            return (cc.Rect.CCRectEqualToRect(pFrame.getRect(), this._rect) && pFrame.getTexture().getName() == this._texture.getName());
+            return (cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName());
         }
     },
     /** returns the current displayed frame. */
     displayedFrame:function () {
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             return cc.SpriteFrame.frameWithTextureForCanvas(this._texture,
                 this._rectInPixels,
                 this._rectRotated,
@@ -1316,7 +1316,7 @@ cc.Sprite = cc.Node.extend({
 // Texture protocol
 
     _updateBlendFunc:function () {
-        if (cc.renderContextType == cc.kWebGL) {
+        if (cc.renderContextType == cc.WEBGL) {
             cc.Assert(!this._usesBatchNode, "CCSprite: _updateBlendFunc doesn't work when the sprite is rendered using a CCSpriteSheet");
             // it's possible to have an untextured sprite
             if (!this._texture || !this._texture.getHasPremultipliedAlpha()) {
@@ -1333,7 +1333,7 @@ cc.Sprite = cc.Node.extend({
     // CCTextureProtocol
     setTexture:function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        if (cc.renderContextType != cc.kCanvas) {
+        if (cc.renderContextType != cc.CANVAS) {
             cc.Assert(!this._usesBatchNode, "setTexture doesn't work when the sprite is rendered using a CCSpriteSheet");
         }
 
@@ -1399,10 +1399,10 @@ cc.Sprite.spriteWithSpriteFrame = function (spriteFrame) {
  @since v0.9
  */
 cc.Sprite.spriteWithSpriteFrameName = function (spriteFrameName) {
-    var pFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(spriteFrameName);
+    var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(spriteFrameName);
     var msg = "Invalid spriteFrameName:" + spriteFrameName;
-    cc.Assert(pFrame != null, msg);
-    return cc.Sprite.spriteWithSpriteFrame(pFrame);
+    cc.Assert(frame != null, msg);
+    return cc.Sprite.spriteWithSpriteFrame(frame);
 };
 
 cc.Sprite.spriteWithFile = function (fileName, rect) {

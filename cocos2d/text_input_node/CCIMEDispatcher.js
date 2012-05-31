@@ -308,13 +308,13 @@ cc.IMEDispatcher = cc.Class.extend({
     //process keydown's keycode
     processKeycode:function (keyCode) {
         if (keyCode < 32) {
-            if (keyCode == cc.key.backspace) {
+            if (keyCode == cc.KEY.backspace) {
                 this.dispatchDeleteBackward();
-            } else if (keyCode == cc.key.enter) {
+            } else if (keyCode == cc.KEY.enter) {
                 this.dispatchInsertText("\n", 1);
-            } else if (keyCode == cc.key.tab) {
+            } else if (keyCode == cc.KEY.tab) {
                 //tab input
-            } else if (keyCode == cc.key.escape) {
+            } else if (keyCode == cc.KEY.escape) {
                 //ESC input
             }
         } else if (keyCode < 255) {

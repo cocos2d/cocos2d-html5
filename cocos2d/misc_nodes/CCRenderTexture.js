@@ -27,9 +27,9 @@
 
 var cc = cc = cc || {};
 
-cc.kCCImageFormatJPG = 0;
-cc.kCCImageFormatPNG = 1;
-cc.kCCImageFormatRawData = 2;
+cc.CCIMAGE_FORMAT_JPG = 0;
+cc.CCIMAGE_FORMAT_PNG = 1;
+cc.CCIMAGE_FORMAT_RAWDATA = 2;
 
 cc.NextPOT = function (x) {
     x = x - 1;
@@ -58,7 +58,7 @@ cc.RenderTexture = cc.Node.extend({
     _oldFBO:0,
     _texture:null,
     _uITextureImage:null,
-    _pixelFormat:cc.kCCTexture2DPixelFormat_RGBA8888,
+    _pixelFormat:cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888,
     _sprite:null,
     ctor:function () {
         this.canvas = document.createElement('canvas');
@@ -98,7 +98,7 @@ cc.RenderTexture = cc.Node.extend({
 
     /** initializes a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
     initWithWidthAndHeight:function (width, height, format) {
-        if(cc.renderContextType == cc.kCanvas){
+        if(cc.renderContextType == cc.CANVAS){
             this.canvas.width = width||10;
             this.canvas.height = height||10;
 
@@ -243,7 +243,7 @@ cc.RenderTexture = cc.Node.extend({
                 var ty = s.height;
                 this._uITextureImage = new cc.Image();
                 if (true == this.getUIImageFromBuffer(this._uITextureImage, 0, 0, tx, ty)) {
-                    cc.VolatileTexture.addDataTexture(this._texture, this._uITextureImage.getData(), cc.kTexture2DPixelFormat_RGBA8888, s);
+                    cc.VolatileTexture.addDataTexture(this._texture, this._uITextureImage.getData(), cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, s);
                 } else {
                     cc.Log("Cache rendertexture failed!");
                 }
@@ -253,7 +253,7 @@ cc.RenderTexture = cc.Node.extend({
 
     /** clears the texture with a color */
     clear:function (r, g, b, a) {
-        if(cc.renderContextType == cc.kCanvas){
+        if(cc.renderContextType == cc.CANVAS){
             var rect = r;
             if (rect) {
                 this.context.clearRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
@@ -279,14 +279,14 @@ cc.RenderTexture = cc.Node.extend({
             height = height || 0;
 
             var ret = false;
-            cc.Assert(format == cc.kCCImageFormatJPG || format == cc.kCCImageFormatPNG,
+            cc.Assert(format == cc.CCIMAGE_FORMAT_JPG || format == cc.CCIMAGE_FORMAT_PNG,
                 "the image can only be saved as JPG or PNG format");
 
-            var pImage = new cc.Image();
-            if (pImage != null && this.getUIImageFromBuffer(pImage, x, y, width, height)) {
+            var image = new cc.Image();
+            if (image != null && this.getUIImageFromBuffer(image, x, y, width, height)) {
                 var fullpath = cc.FileUtils.getWriteablePath() + filePath;
 
-                ret = pImage.saveToFile(fullpath);
+                ret = image.saveToFile(fullpath);
             }
 
             return ret;
@@ -300,9 +300,9 @@ cc.RenderTexture = cc.Node.extend({
 
             var ret = false;
 
-            var pImage = new cc.Image();
-            if (pImage != null && this.getUIImageFromBuffer(pImage, x, y, width, height)) {
-                ret = pImage.saveToFile(filePath);
+            var image = new cc.Image();
+            if (image != null && this.getUIImageFromBuffer(image, x, y, width, height)) {
+                ret = image.saveToFile(filePath);
             }
             return ret;
         }
@@ -322,7 +322,7 @@ cc.RenderTexture = cc.Node.extend({
         //     {
         //         CC_BREAK_IF(! texture);
         //
-        //         CCAssert(pixelFormat == kCCTexture2DPixelFormat_RGBA8888, "only RGBA8888 can be saved as image");
+        //         CCAssert(pixelFormat == CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
         //
         //         const CCSize& s = texture->getContentSizeInPixels();
         //         int tx = s.width;
@@ -349,7 +349,7 @@ cc.RenderTexture = cc.Node.extend({
         //             }
         //         }
         //
-        //         if (format == kCCImageFormatRawData)
+        //         if (format == CCIMAGE_FORMAT_RAWDATA)
         //         {
         //             pData = CCData::dataWithBytesNoCopy(pPixels, myDataLength);
         //             break;
@@ -381,7 +381,7 @@ cc.RenderTexture = cc.Node.extend({
         //
         //
         //
-        //         if (format == kCCImageFormatPNG)
+        //         if (format == CCIMAGE_FORMAT_PNG)
         //             data = UIImagePNGRepresentation(image);
         //         else
         //             data = UIImageJPEGRepresentation(image, 1.0f);
@@ -395,13 +395,13 @@ cc.RenderTexture = cc.Node.extend({
     },
 
     /** save the buffer data to a CCImage */
-    // para pImage      the CCImage to save
+    // para image      the CCImage to save
     // para x,y         the lower left corner coordinates of the buffer to save
     // pare width,height    the size of the buffer to save
     //                        when width = 0 and height = 0, the image size to save equals to buffer texture size
-    getUIImageFromBuffer:function (pImage, x, y, width, height) {
+    getUIImageFromBuffer:function (image, x, y, width, height) {
         //TODO
-        if (null == pImage || null == this._texture) {
+        if (null == image || null == this._texture) {
             return false;
         }
 
@@ -423,62 +423,62 @@ cc.RenderTexture = cc.Node.extend({
         // to get the image size to save
         //		if the saving image domain exeeds the buffer texture domain,
         //		it should be cut
-        var nSavedBufferWidth = width;
-        var nSavedBufferHeight = height;
+        var savedBufferWidth = width;
+        var savedBufferHeight = height;
         if (0 == width) {
-            nSavedBufferWidth = tx;
+            savedBufferWidth = tx;
         }
         if (0 == height) {
-            nSavedBufferHeight = ty;
+            savedBufferHeight = ty;
         }
-        nSavedBufferWidth = x + nSavedBufferWidth > tx ? (tx - x) : nSavedBufferWidth;
-        nSavedBufferHeight = y + nSavedBufferHeight > ty ? (ty - y) : nSavedBufferHeight;
+        savedBufferWidth = x + savedBufferWidth > tx ? (tx - x) : savedBufferWidth;
+        savedBufferHeight = y + savedBufferHeight > ty ? (ty - y) : savedBufferHeight;
 
-        var pBuffer = null;
-        var pTempData = null;
+        var buffer = null;
+        var tempData = null;
         var ret = false;
 
         do {
-            cc.Assert(this._pixelFormat == cc.kCCTexture2DPixelFormat_RGBA8888, "only RGBA8888 can be saved as image");
+            cc.Assert(this._pixelFormat == cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
 
-            pBuffer = [];
-            for (var i = 0; i < nSavedBufferWidth * nSavedBufferHeight * 4; i++) {
-                pBuffer[i] = 0;
+            buffer = [];
+            for (var i = 0; i < savedBufferWidth * savedBufferHeight * 4; i++) {
+                buffer[i] = 0;
             }
-            cc.BREAK_IF(!pBuffer);
+            cc.BREAK_IF(!buffer);
 
             // On some machines, like Samsung i9000, Motorola Defy,
             // the dimension need to be a power of 2
-            var nReadBufferWidth = 0;
-            var nReadBufferHeight = 0;
-            var nMaxTextureSize = 0;
-            glGetIntegerv(GL_MAX_TEXTURE_SIZE, nMaxTextureSize);
+            var readBufferWidth = 0;
+            var readBufferHeight = 0;
+            var maxTextureSize = 0;
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, maxTextureSize);
 
-            nReadBufferWidth = cc.NextPOT(tx);
-            nReadBufferHeight = cc.NextPOT(ty);
+            readBufferWidth = cc.NextPOT(tx);
+            readBufferHeight = cc.NextPOT(ty);
 
-            cc.BREAK_IF(0 == nReadBufferWidth || 0 == nReadBufferHeight);
-            cc.BREAK_IF(nReadBufferWidth > nMaxTextureSize || nReadBufferHeight > nMaxTextureSize);
+            cc.BREAK_IF(0 == readBufferWidth || 0 == readBufferHeight);
+            cc.BREAK_IF(readBufferWidth > maxTextureSize || readBufferHeight > maxTextureSize);
 
-            for (i = 0; i < nReadBufferWidth * nReadBufferHeight * 4; i++) {
-                pTempData[i] = 0;
+            for (i = 0; i < readBufferWidth * readBufferHeight * 4; i++) {
+                tempData[i] = 0;
             }
-            cc.BREAK_IF(!pTempData);
+            cc.BREAK_IF(!tempData);
 
             this.begin();
             glPixelStorei(GL_PACK_ALIGNMENT, 1);
-            glReadPixels(0, 0, nReadBufferWidth, nReadBufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, pTempData);
+            glReadPixels(0, 0, readBufferWidth, readBufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, tempData);
             this.end(false);
 
             // to get the actual texture data
             // #640 the image read from rendertexture is upseted
-            for (i = 0; i < nSavedBufferHeight; ++i) {
-                this._memcpy(pBuffer, i * nSavedBufferWidth * 4,
-                    pTempData, (y + nSavedBufferHeight - i - 1) * nReadBufferWidth * 4 + x * 4,
-                    nSavedBufferWidth * 4);
+            for (i = 0; i < savedBufferHeight; ++i) {
+                this._memcpy(buffer, i * savedBufferWidth * 4,
+                    tempData, (y + savedBufferHeight - i - 1) * readBufferWidth * 4 + x * 4,
+                    savedBufferWidth * 4);
             }
 
-            ret = pImage.initWithImageData(pBuffer, nSavedBufferWidth * nSavedBufferHeight * 4, cc.kFmtRawData, nSavedBufferWidth, nSavedBufferHeight, 8);
+            ret = image.initWithImageData(buffer, savedBufferWidth * savedBufferHeight * 4, cc.FMT_RAWDATA, savedBufferWidth, savedBufferHeight, 8);
         } while (0);
 
         return ret;
@@ -493,7 +493,7 @@ cc.RenderTexture = cc.Node.extend({
 /** creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
 cc.RenderTexture.renderTextureWithWidthAndHeight = function (width, height, format) {
     if (!format) {
-        format = cc.kCCTexture2DPixelFormat_RGBA8888;
+        format = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888;
     }
 
     var ret = new cc.RenderTexture();

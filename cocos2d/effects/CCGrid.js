@@ -95,7 +95,7 @@ cc.GridBase = cc.Class.extend({
             var POTHigh = cc.NextPOT(s.height);
 
             // we only use rgba8888
-            var format = cc.kCCTexture2DPixelFormat_RGBA8888;
+            var format = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888;
 
             var pTextureTemp = new cc.Texture2D();
             pTextureTemp.initWithData(format, POTWide, POTHigh, s);
@@ -213,17 +213,17 @@ cc.GridBase = cc.Class.extend({
 
         switch (orientation) {
             //todo gl
-            case cc.DeviceOrientationLandscapeLeft:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
                 /*glTranslatef(w,h,0);
                  glRotatef(-90,0,0,1);
                  glTranslatef(-h,-w,0);*/
                 break;
-            case cc.DeviceOrientationLandscapeRight:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
                 /*glTranslatef(w,h,0);
                  glRotatef(90,0,0,1);
                  glTranslatef(-h,-w,0);*/
                 break;
-            case cc.DeviceOrientationPortraitUpsideDown:
+            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
                 /*glTranslatef(w,h,0);
                  glRotatef(180,0,0,1);
                  glTranslatef(-w,-h,0);*/

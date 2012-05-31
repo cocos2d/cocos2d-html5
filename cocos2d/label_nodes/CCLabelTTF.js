@@ -105,7 +105,7 @@ cc.LabelTTF = cc.Sprite.extend({
 
     //temp method
     draw:function (ctx) {
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             if (this._flipX) {
                 context.scale(-1, 1);

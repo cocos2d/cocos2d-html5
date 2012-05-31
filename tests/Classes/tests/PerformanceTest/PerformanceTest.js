@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kItemTagBasic = 1000;
+var ITEM_TAG_BASIC = 1000;
 var nCurCase = 0;
 
 var PerformanceTests = [
@@ -52,15 +52,15 @@ var PerformanceMainLayer = cc.Layer.extend({
         for (var i = 0; i < PerformanceTests.length; i++) {
             var pItem = cc.MenuItemFont.itemFromString(PerformanceTests[i], this, this.menuCallback);
             pItem.setPosition(cc.ccp(s.width / 2, s.height - (i + 1) * LINE_SPACE));
-            menu.addChild(pItem, kItemTagBasic + i);
+            menu.addChild(pItem, ITEM_TAG_BASIC + i);
         }
 
         this.addChild(menu);
     },
     menuCallback:function (sender) {
-        var nIndex = sender.getZOrder() - kItemTagBasic;
+        var index = sender.getZOrder() - ITEM_TAG_BASIC;
         // create the test scene and run it
-        switch (nIndex) {
+        switch (index) {
             case 0:
                 runNodeChildrenTest();
                 break;
@@ -114,9 +114,9 @@ var PerformBasicLayer = cc.Layer.extend({
             item2.setPosition(cc.ccp(s.width / 2, 30));
             item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
 
-            menu.addChild(item1, kItemTagBasic);
-            menu.addChild(item2, kItemTagBasic);
-            menu.addChild(item3, kItemTagBasic);
+            menu.addChild(item1, ITEM_TAG_BASIC);
+            menu.addChild(item2, ITEM_TAG_BASIC);
+            menu.addChild(item3, ITEM_TAG_BASIC);
         }
         this.addChild(menu);
     },

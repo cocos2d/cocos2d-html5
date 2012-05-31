@@ -25,7 +25,7 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.kSceneRadial = 0xc001;
+cc.SCENE_RADIAL = 0xc001;
 /**
  @brief A counter colock-wise radial transition to the next scene
  */
@@ -77,18 +77,18 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
         outNode.runAction(layerAction);
 
         // add the layer (which contains our two rendertextures) to the scene
-        this.addChild(outNode, 2, cc.kSceneRadial);
+        this.addChild(outNode, 2, cc.SCENE_RADIAL);
     },
     onExit:function () {
 // remove our layer and release all containing objects
-        this.removeChildByTag(cc.kSceneRadial, false);
+        this.removeChildByTag(cc.SCENE_RADIAL, false);
         this._super();
     },
     _sceneOrder:function () {
         this._isInSceneOnTop = false;
     },
     _radialType:function () {
-        return cc.kCCProgressTimerTypeRadialCCW;
+        return cc.CCPROGRESS_TIMER_RADIAL_CCW;
     }
 });
 
@@ -98,7 +98,7 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
 
 cc.TransitionRadialCW = cc.TransitionRadialCCW.extend({
     _radialType:function () {
-        return cc.kCCProgressTimerTypeRadialCW;
+        return cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW;
     }
 });
 

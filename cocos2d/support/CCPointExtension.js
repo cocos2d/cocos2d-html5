@@ -41,7 +41,7 @@ var cc = cc = cc || {};
  - cpvadd( CCPointMake(1,1), CCPointMake(2,2) ); // mixing chipmunk and CG (avoid)
  */
 
-cc.kCCPointEpsilon = parseFloat('1.192092896e-07F');
+cc.CCPOINT_EPSILON = parseFloat('1.192092896e-07F');
 
 /** Helper macro that creates a CCPoint
  @return CCPoint
@@ -271,7 +271,7 @@ cc.ccpAngleSigned = function (a, b) {
     var a2 = cc.ccpNormalize(a);
     var b2 = cc.ccpNormalize(b);
     var angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, cc.ccpDot(a2, b2));
-    if (Math.abs(angle) < cc.kCCPointEpsilon) {
+    if (Math.abs(angle) < cc.CCPOINT_EPSILON) {
         return 0.0;
     }
     return angle;
@@ -282,7 +282,7 @@ cc.ccpAngleSigned = function (a, b) {
  */
 cc.ccpAngle = function (a, b) {
     var angle = Math.acos(cc.ccpDot(cc.ccpNormalize(a), cc.ccpNormalize(b)));
-    if (Math.abs(angle) < cc.kCCPointEpsilon) return 0.0;
+    if (Math.abs(angle) < cc.CCPOINT_EPSILON) return 0.0;
     return angle;
 };
 

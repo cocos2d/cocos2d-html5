@@ -25,19 +25,19 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.kCCNodeTagInvalid = -1;
-cc.kCCNodeOnEnter = null;
-cc.kCCNodeOnExit = null;
+cc.CCNODE_TAG_INVALID = -1;
+cc.CCNODE_ON_ENTER = null;
+cc.CCNODE_ON_EXIT = null;
 
 cc.saveContext = function () {
-    if (cc.renderContextType == cc.kCanvas) {
+    if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.save();
     } else {
         //glPushMatrix();
     }
 };
 cc.restoreContext = function () {
-    if (cc.renderContextType == cc.kCanvas) {
+    if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.restore();
     } else {
         //glPopMatrix();
@@ -123,7 +123,7 @@ cc.Node = cc.Class.extend({
     _parent:null,
     // "whole screen" objects. like Scenes and Layers, should set isRelativeAnchorPoint to false
     _isRelativeAnchorPoint:true,
-    _tag:cc.kCCNodeTagInvalid,
+    _tag:cc.CCNODE_TAG_INVALID,
     // userData is always inited as nil
     _userData:null,
     _isTransformDirty:true,
@@ -563,7 +563,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     getChildByTag:function (aTag) {
-        cc.Assert(aTag != cc.kCCNodeTagInvalid, "Invalid tag");
+        cc.Assert(aTag != cc.CCNODE_TAG_INVALID, "Invalid tag");
         if (this._children != null) {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
@@ -635,7 +635,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     removeChildByTag:function (tag, cleanup) {
-        cc.Assert(tag != cc.kCCNodeTagInvalid, "Invalid tag");
+        cc.Assert(tag != cc.CCNODE_TAG_INVALID, "Invalid tag");
 
         var child = this.getChildByTag(tag);
         if (child == null) {
@@ -804,7 +804,7 @@ cc.Node = cc.Class.extend({
     transform:function (ctx) {
         var context = ctx || cc.renderContext;
         // transformations
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             if (this._isRelativeAnchorPoint) {
                 var pAp = new cc.Point(0, 0);
                 if (this._parent) {
@@ -958,7 +958,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     stopActionByTag:function (tag) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "Invalid tag");
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
         cc.ActionManager.sharedManager().removeActionByTag(tag, this);
     },
     /** Gets an action from the running action list given its tag
@@ -966,7 +966,7 @@ cc.Node = cc.Class.extend({
      @return the Action the with the given tag
      */
     getActionByTag:function (tag) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "Invalid tag");
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
         return cc.ActionManager.sharedManager().getActionByTag(tag, this);
     },
     /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).

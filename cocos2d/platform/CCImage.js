@@ -25,20 +25,20 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.kFmtJpg = 0;
-cc.kFmtPng = 1;
-cc.kFmtRawData = 2;
-cc.kFmtUnKnown = 3;
+cc.FMT_JPG = 0;
+cc.FMT_PNG = 1;
+cc.FMT_RAWDATA = 2;
+cc.FMT_UNKNOWN = 3;
 
-cc.kAlignCenter = 0x33; ///< Horizontal center and vertical center.
-cc.kAlignTop = 0x13; ///< Horizontal center and vertical top.
-cc.kAlignTopRight = 0x12; ///< Horizontal right and vertical top.
-cc.kAlignRight = 0x32; ///< Horizontal right and vertical center.
-cc.kAlignBottomRight = 0x22; ///< Horizontal right and vertical bottom.
-cc.kAlignBottom = 0x23; ///< Horizontal center and vertical bottom.
-cc.kAlignBottomLeft = 0x21; ///< Horizontal left and vertical bottom.
-cc.kAlignLeft = 0x31; ///< Horizontal left and vertical center.
-cc.kAlignTopLeft = 0x11; ///< Horizontal left and vertical top.
+cc.ALIGN_CENTER = 0x33; ///< Horizontal center and vertical center.
+cc.ALIGN_TOP = 0x13; ///< Horizontal center and vertical top.
+cc.ALIGN_TOP_RIGHT = 0x12; ///< Horizontal right and vertical top.
+cc.ALIGN_RIGHT = 0x32; ///< Horizontal right and vertical center.
+cc.ALIGN_BOTTOM_RIGHT = 0x22; ///< Horizontal right and vertical bottom.
+cc.ALIGN_BOTTOM = 0x23; ///< Horizontal center and vertical bottom.
+cc.ALIGN_BOTTOM_LEFT = 0x21; ///< Horizontal left and vertical bottom.
+cc.ALIGN_LEFT = 0x31; ///< Horizontal left and vertical center.
+cc.ALIGN_TOP_LEFT = 0x11; ///< Horizontal left and vertical top.
 
 function cc.RGB_PREMULTIPLY_APLHA(vr, vg, vb, va) {
     return ((vr * (va + 1)) >> 8) | ((vg * (va + 1) >> 8) << 8) | ((vb * (va + 1) >> 8) << 16) | ((va) << 24)
@@ -97,10 +97,10 @@ cc.Image = cc.Class.extend({
     /**
      @brief  Load image from stream buffer.
 
-     @warning kFmtRawData only support RGBA8888
+     @warning FMT_RAWDATA only support RGBA8888
      @param pBuffer  stream buffer that hold the image data
      @param nLength  the length of data(managed in byte)
-     @param width, height, nBitsPerComponent are used for kFmtRawData
+     @param width, height, nBitsPerComponent are used for FMT_RAWDATA
      @return true if load correctly
      */
     initWithImageData:function (pData, nDataLen, eFmt, width, height, nBitsPerComponent) {
@@ -109,15 +109,15 @@ cc.Image = cc.Class.extend({
         {
             if (!pData || nDataLen <= 0) break;
 
-            if (cc.kFmtPng == eFmt) {
+            if (cc.FMT_PNG == eFmt) {
                 ret = this._initWithPngData(pData, nDataLen);
                 break;
             }
-            else if (cc.kFmtJpg == eFmt) {
+            else if (cc.FMT_JPG == eFmt) {
                 ret = this._initWithJpgData(pData, nDataLen);
                 break;
             }
-            else if (cc.kFmtRawData == eFmt) {
+            else if (cc.FMT_RAWDATA == eFmt) {
                 ret = this._initWithRawData(pData, nDataLen, width, height, nBitsPerComponent);
                 break;
             }
@@ -147,16 +147,16 @@ cc.Image = cc.Class.extend({
     },
     /**
      @brief    Save the CCImage data to specified file with specified format.
-     @param    pszFilePath        the file's absolute path, including file subfix
-     @param    bIsToRGB        if the image is saved as RGB format
+     @param    filePath        the file's absolute path, including file subfix
+     @param    isToRGB        if the image is saved as RGB format
      */
-    saveToFile:function (pszFilePath, bIsToRGB) {
+    saveToFile:function (filePath, isToRGB) {
         var ret = false;
         do
         {
-            if (null == pszFilePath) break;
+            if (null == filePath) break;
 
-            var strFilePath = pszFilePath;
+            var strFilePath = filePath;
             if (strFilePath.size() <= 4) break;
             var strLowerCasePath = strFilePath;
             for (var i = 0; i < strLowerCasePath.length(); ++i) {
@@ -164,10 +164,10 @@ cc.Image = cc.Class.extend({
             }
 
             if (std.string.npos != strLowerCasePath.find(".png")) {
-                if (!this._saveImageToPNG(pszFilePath, bIsToRGB)) break;
+                if (!this._saveImageToPNG(filePath, isToRGB)) break;
             }
             else if (std.string.npos != strLowerCasePath.find(".jpg")) {
-                if (!this._saveImageToJPG(pszFilePath)) break;
+                if (!this._saveImageToJPG(filePath)) break;
             }
             else {
                 break;
@@ -180,7 +180,7 @@ cc.Image = cc.Class.extend({
     },
 
     /*protected:*/
-    _initWithJpgData:function (data, nSize) {
+    _initWithJpgData:function (data, size) {
         /* these are standard libjpeg structures for reading(decompression) */
         var cinfo = new cc.jpeg_decompress_struct();
         var jerr = new cc.jpeg_error_mgr();
@@ -198,7 +198,7 @@ cc.Image = cc.Class.extend({
             /* setup decompression process and source, then read JPEG header */
             cc.jpeg_create_decompress(cinfo);
 
-            cc.jpeg_mem_src(cinfo, data, nSize);
+            cc.jpeg_mem_src(cinfo, data, size);
 
             /* reading the image header which contains image information */
             cc.jpeg_read_header(cinfo, true);
@@ -244,7 +244,7 @@ cc.Image = cc.Class.extend({
         return ret;
     },
     _initWithPngData:function (pData, nDatalen) {
-        var ret = false, header = [0], png_ptr = 0, info_ptr = 0, pImateData = 0;
+        var ret = false, header = [0], png_ptr = 0, info_ptr = 0, imateData = 0;
 
         do
         {
@@ -291,15 +291,15 @@ cc.Image = cc.Class.extend({
             if (this._hasAlpha) {
                 bytesPerComponent = 4;
             }
-            pImateData = new [height * width * bytesPerComponent];
-            if (!pImateData) break;
+            imateData = new [height * width * bytesPerComponent];
+            if (!imateData) break;
             var rowPointers = new cc.png_bytep();
             rowPointers = cc.png_get_rows(png_ptr, info_ptr);
 
             // copy data to image info
             var bytesPerRow = width * bytesPerComponent;
             if (this._hasAlpha) {
-                var tmp = pImateData;
+                var tmp = imateData;
                 for (var i = 0; i < height; i++) {
                     for (var j = 0; j < bytesPerRow; j += 4) {
                         tmp++;
@@ -310,15 +310,15 @@ cc.Image = cc.Class.extend({
             }
             else {
                 for (var j = 0; j < height; ++j) {
-                    cc.memcpy(pImateData + j * bytesPerRow, rowPointers[j], bytesPerRow);
+                    cc.memcpy(imateData + j * bytesPerRow, rowPointers[j], bytesPerRow);
                 }
             }
 
             this._bitsPerComponent = nBitsPerComponent;
             this._height = height;
             this._width = width;
-            this._data = pImateData;
-            pImateData = 0;
+            this._data = imateData;
+            imateData = 0;
             ret = true;
         } while (0);
 
@@ -328,14 +328,14 @@ cc.Image = cc.Class.extend({
         return ret;
     },
 
-// @warning kFmtRawData only support RGBA8888
-    _initWithRawData:function (pData, nDatalen, width, height, nBitsPerComponent) {
+// @warning FMT_RAWDATA only support RGBA8888
+    _initWithRawData:function (data, datalen, width, height, bitsPerComponent) {
         var ret = false;
         do
         {
             if (0 == width || 0 == height) break;
 
-            this._bitsPerComponent = nBitsPerComponent;
+            this._bitsPerComponent = bitsPerComponent;
             this._height = height;
             this._width = width;
             this._hasAlpha = true;
@@ -345,22 +345,22 @@ cc.Image = cc.Class.extend({
             var nSize = height * width * nBytesPerComponent;
             this._data = new [nSize];
             if (!this._data) break;
-            cc.memcpy(this._data, pData, nSize);
+            cc.memcpy(this._data, data, nSize);
 
             ret = true;
         } while (0);
         return ret;
     },
 
-    _saveImageToPNG:function (pszFilePath, bIsToRGB) {
+    _saveImageToPNG:function (filePath, isToRGB) {
         var ret = false;
         do
         {
-            if (null == pszFilePath) break;
+            if (null == filePath) break;
 
             var fp = new cc.FILE(), png_ptr = new cc.png_structp(), info_ptr = new cc.png_infop(), palette = new cc.png_colorp(), row_pointers = new cc.png_bytep();
 
-            fp = cc.fopen(pszFilePath, "wb");
+            fp = cc.fopen(filePath, "wb");
             if (null == fp) break;
 
             png_ptr = cc.png_create_write_struct(cc.PNG_LIBPNG_VER_STRING, null, null, null);
@@ -385,7 +385,7 @@ cc.Image = cc.Class.extend({
             }
             cc.png_init_io(png_ptr, fp);
 
-            if (!bIsToRGB && this._hasAlpha) {
+            if (!isToRGB && this._hasAlpha) {
                 cc.png_set_IHDR(png_ptr, info_ptr, this._width, this._height, 8, cc.PNG_COLOR_TYPE_RGB_ALPHA,
                     cc.PNG_INTERLACE_NONE, cc.PNG_COMPRESSION_TYPE_BASE, cc.PNG_FILTER_TYPE_BASE);
             }
@@ -419,9 +419,9 @@ cc.Image = cc.Class.extend({
                 row_pointers = null;
             }
             else {
-                if (bIsToRGB) {
-                    var pTempData = new [this._width * this._height * 3];
-                    if (null == pTempData) {
+                if (isToRGB) {
+                    var tempData = new [this._width * this._height * 3];
+                    if (null == tempData) {
                         cc.fclose(fp);
                         cc.png_destroy_write_struct(png_ptr, info_ptr);
                         break;
@@ -429,14 +429,14 @@ cc.Image = cc.Class.extend({
 
                     for (var i = 0; i < this._height; ++i) {
                         for (var j = 0; j < this._width; ++j) {
-                            pTempData[(i * this._width + j) * 3] = this._data[(i * __width + j) * 4];
-                            pTempData[(i * this._width + j) * 3 + 1] = this._data[(i * __width + j) * 4 + 1];
-                            pTempData[(i * this._width + j) * 3 + 2] = this._data[(i * __width + j) * 4 + 2];
+                            tempData[(i * this._width + j) * 3] = this._data[(i * __width + j) * 4];
+                            tempData[(i * this._width + j) * 3 + 1] = this._data[(i * __width + j) * 4 + 1];
+                            tempData[(i * this._width + j) * 3 + 2] = this._data[(i * __width + j) * 4 + 2];
                         }
                     }
 
                     for (var i = 0; i < this._height; i++) {
-                        row_pointers[i] = pTempData + i * this._width * 3;
+                        row_pointers[i] = tempData + i * this._width * 3;
                     }
 
                     cc.png_write_image(png_ptr, row_pointers);
@@ -506,8 +506,8 @@ cc.Image = cc.Class.extend({
             /* JSAMPLEs per row in image_buffer */
 
             if (this._hasAlpha) {
-                var pTempData = new [this._width * this._height * 3];
-                if (null == pTempData) {
+                var tempData = new [this._width * this._height * 3];
+                if (null == tempData) {
                     cc.jpeg_finish_compress(cinfo);
                     cc.jpeg_destroy_compress(cinfo);
                     cc.fclose(outfile);
@@ -516,14 +516,14 @@ cc.Image = cc.Class.extend({
 
                 for (var i = 0; i < this._height; ++i) {
                     for (var j = 0; j < this._width; ++j) {
-                        pTempData[(i * this._width + j) * 3] = this._data[(i * this._width + j) * 4];
-                        pTempData[(i * this._width + j) * 3 + 1] = this._data[(i * this._width + j) * 4 + 1];
-                        pTempData[(i * this._width + j) * 3 + 2] = this._data[(i * this._width + j) * 4 + 2];
+                        tempData[(i * this._width + j) * 3] = this._data[(i * this._width + j) * 4];
+                        tempData[(i * this._width + j) * 3 + 1] = this._data[(i * this._width + j) * 4 + 1];
+                        tempData[(i * this._width + j) * 3 + 2] = this._data[(i * this._width + j) * 4 + 2];
                     }
                 }
 
                 while (cinfo.next_scanline < cinfo.image_height) {
-                    row_pointer[0] = pTempData[cinfo.next_scanline * row_stride];
+                    row_pointer[0] = tempData[cinfo.next_scanline * row_stride];
                     cc.jpeg_write_scanlines(cinfo, row_pointer, 1);
                 }
 

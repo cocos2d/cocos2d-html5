@@ -23,12 +23,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kMaxSprites = 1000;
-var kSpritesIncrease = 50;
+var MAX_SPRITES = 1000;
+var SPRITES_INCREASE = 50;
 
-var kTagInfoLayer = 1;
-var kTagMainLayer = 2;
-var kTagSpriteMenuLayer = (kMaxSprites + 1000);
+var TAG_INFO_LAYER = 1;
+var TAG_MAIN_LAYER = 2;
+var TAG_SPRITE_MENU_LAYER = (MAX_SPRITES + 1000);
 
 var s_nSpriteCurCase = 0;
 
@@ -62,7 +62,7 @@ var SubTest = cc.Class.extend({
     },
     createSpriteWithTag:function (tag) {
 // create
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
 
         var sprite = null;
         switch (this._subtestNumber) {
@@ -138,7 +138,7 @@ var SubTest = cc.Class.extend({
                 break;
         }
 
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_Default);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_DEFAULT);
 
         return sprite;
     },
@@ -178,36 +178,36 @@ var SubTest = cc.Class.extend({
                 break;
             ///
             case 2:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
                 this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossinis_sister1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 3:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA4444);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
                 this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossinis_sister1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
             ///
             case 5:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
                 this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossini_dance_atlas.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 6:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA4444);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
                 this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossini_dance_atlas.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
             ///
             case 8:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
                 this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 9:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA4444);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
                 this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
@@ -216,7 +216,7 @@ var SubTest = cc.Class.extend({
                 break;
         }
 
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_Default);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_DEFAULT);
     }
 });
 
@@ -309,11 +309,11 @@ var SpriteMainScene = cc.Scene.extend({
         var infoLabel = cc.LabelTTF.labelWithString("0 nodes", "Marker Felt", 30);
         infoLabel.setColor(cc.ccc3(0, 200, 20));
         infoLabel.setPosition(cc.ccp(s.width / 2, s.height - 90));
-        this.addChild(infoLabel, 1, kTagInfoLayer);
+        this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
         // add menu
         var menu = new SpriteMenuLayer(true, 7, s_nSpriteCurCase);
-        this.addChild(menu, 1, kTagSpriteMenuLayer);
+        this.addChild(menu, 1, TAG_SPRITE_MENU_LAYER);
 
         // Sub Tests
         cc.MenuItemFont.setFontSize(32);
@@ -342,7 +342,7 @@ var SpriteMainScene = cc.Scene.extend({
     },
     updateNodes:function () {
         if (this._quantityNodes != this._lastRenderedCount) {
-            var infoLabel = this.getChildByTag(kTagInfoLayer);
+            var infoLabel = this.getChildByTag(TAG_INFO_LAYER);
             var str = this._quantityNodes + " nodes";
             infoLabel.setString(str);
 
@@ -351,14 +351,14 @@ var SpriteMainScene = cc.Scene.extend({
     },
     testNCallback:function (sender) {
         this._subtestNumber = sender.getTag();
-        var menu = this.getChildByTag(kTagSpriteMenuLayer);
+        var menu = this.getChildByTag(TAG_SPRITE_MENU_LAYER);
         menu.restartCallback(sender);
     },
     onIncrease:function (sender) {
-        if (this._quantityNodes >= kMaxSprites)
+        if (this._quantityNodes >= MAX_SPRITES)
             return;
 
-        for (var i = 0; i < kSpritesIncrease; i++) {
+        for (var i = 0; i < SPRITES_INCREASE; i++) {
             var sprite = this._subTest.createSpriteWithTag(this._quantityNodes);
             this.doTest(sprite);
             this._quantityNodes++;
@@ -370,7 +370,7 @@ var SpriteMainScene = cc.Scene.extend({
         if (this._quantityNodes <= 0)
             return;
 
-        for (var i = 0; i < kSpritesIncrease; i++) {
+        for (var i = 0; i < SPRITES_INCREASE; i++) {
             this._quantityNodes--;
             this._subTest.removeByTag(this._quantityNodes);
         }

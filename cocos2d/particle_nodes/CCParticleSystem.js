@@ -43,45 +43,45 @@
 var cc = cc = cc || {};
 
 //Particle Draw Mode
-cc.kParticleShapeMode = 0;
-cc.kParticleTextureMode = 1;
+cc.PARTICLE_SHAPE_MODE = 0;
+cc.PARTICLE_TEXTURE_MODE = 1;
 
 //Particle Shape Type for ShapeMode
-cc.kParticleStarShape = 0;
-cc.kParticleBallShape = 1;
+cc.PARTICLE_STAR_SHAPE = 0;
+cc.PARTICLE_BALL_SHAPE = 1;
 
 /** The Particle emitter lives forever */
-cc.kCCParticleDurationInfinity = -1;
+cc.CCPARTICLE_DURATION_INFINITY = -1;
 /** The starting size of the particle is equal to the ending size */
-cc.kCCParticleStartSizeEqualToEndSize = -1;
+cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE = -1;
 /** The starting radius of the particle is equal to the ending radius */
-cc.kCCParticleStartRadiusEqualToEndRadius = -1;
+cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS = -1;
 // backward compatible
-cc.kParticleStartSizeEqualToEndSize = cc.kCCParticleStartSizeEqualToEndSize;
-cc.kParticleDurationInfinity = cc.kCCParticleDurationInfinity;
+cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+cc.PARTICLE_DURATION_INFINITY = cc.CCPARTICLE_DURATION_INFINITY;
 
 
 /** Gravity mode (A mode) */
-cc.kCCParticleModeGravity = 0;
+cc.CCPARTICLE_MODE_GRAVITY = 0;
 /** Radius mode (B mode) */
-cc.kCCParticleModeRadius = 1;
+cc.CCPARTICLE_MODE_RADIUS = 1;
 
 
 /** @typedef tCCPositionType
  possible types of particle positions
  */
 /** Living particles are attached to the world and are unaffected by emitter repositioning. */
-cc.kCCPositionTypeFree = 0;
+cc.CCPARTICLE_TYPE_FREE = 0;
 /** Living particles are attached to the world but will follow the emitter repositioning.
  Use case: Attach an emitter to an sprite, and you want that the emitter follows the sprite.
  */
-cc.kCCPositionTypeRelative = 1;
+cc.CCPARTICLE_TYPE_RELATIVE = 1;
 /** Living particles are attached to the emitter and are translated along with it. */
-cc.kCCPositionTypeGrouped = 2;
+cc.CCPARTICLE_TYPE_GROUPED = 2;
 
 // backward compatible
-cc.kPositionTypeFree = cc.kCCPositionTypeFree;
-cc.kPositionTypeGrouped = cc.kCCPositionTypeGrouped;
+cc.PARTICLE_TYPE_FREE = cc.CCPARTICLE_TYPE_FREE;
+cc.PARTICLE_TYPE_GROUPED = cc.CCPARTICLE_TYPE_GROUPED;
 
 /**
  Structure that contains the values of each particle
@@ -185,7 +185,7 @@ cc.ParticleSystem = cc.Node.extend({
     _profilingTimer:null,
 
     //drawMode
-    _drawMode: cc.kParticleShapeMode,
+    _drawMode: cc.PARTICLE_SHAPE_MODE,
     getDrawMode:function(){
         return this._drawMode;
     },
@@ -194,7 +194,7 @@ cc.ParticleSystem = cc.Node.extend({
     },
 
     //shape type
-    _shapeType:cc.kParticleBallShape,
+    _shapeType:cc.PARTICLE_BALL_SHAPE,
     getShapeType:function(){
         return this._shapeType;
     },
@@ -285,109 +285,109 @@ cc.ParticleSystem = cc.Node.extend({
 
     // mode A
     getGravity:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.gravity;
     },
     setGravity:function (gravity) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.gravity = gravity;
     },
     getSpeed:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.speed;
     },
     setSpeed:function (speed) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.speed = speed;
     },
     getSpeedVar:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.speedVar;
     },
     setSpeedVar:function (speedVar) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.speedVar = speedVar;
     },
     getTangentialAccel:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.tangentialAccel;
     },
     setTangentialAccel:function (tangentialAccel) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.tangentialAccel = tangentialAccel;
     },
     getTangentialAccelVar:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.tangentialAccelVar;
     },
     setTangentialAccelVar:function (tangentialAccelVar) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.tangentialAccelVar = tangentialAccelVar;
     },
     getRadialAccel:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.radialAccel;
     },
     setRadialAccel:function (radialAccel) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.radialAccel = radialAccel;
     },
     getRadialAccelVar:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.radialAccelVar;
     },
     setRadialAccelVar:function (radialAccelVar) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.radialAccelVar = radialAccelVar;
     },
 
     // mode B
     getStartRadius:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.startRadius;
     },
     setStartRadius:function (startRadius) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.startRadius = startRadius;
     },
     getStartRadiusVar:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.startRadiusVar;
     },
     setStartRadiusVar:function (startRadiusVar) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.startRadiusVar = startRadiusVar;
     },
     getEndRadius:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.endRadius;
     },
     setEndRadius:function (endRadius) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.endRadius = endRadius;
     },
     getEndRadiusVar:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.endRadiusVar;
     },
     setEndRadiusVar:function (endRadiusVar) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.endRadiusVar = endRadiusVar;
     },
     getRotatePerSecond:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.rotatePerSecond;
     },
     setRotatePerSecond:function (degrees) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.rotatePerSecond = degrees;
     },
     getRotatePerSecondVar:function () {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.rotatePerSecondVar;
     },
     setRotatePerSecondVar:function (degrees) {
-        cc.Assert(this._emitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.rotatePerSecondVar = degrees;
     },
     //////////////////////////////////////////////////////////////////////////
@@ -582,7 +582,7 @@ cc.ParticleSystem = cc.Node.extend({
     /** particles movement type: Free or Grouped
      @since v0.8
      */
-    _positionType:cc.kCCPositionTypeFree,
+    _positionType:cc.CCPARTICLE_TYPE_FREE,
     getPositionType:function () {
         return this._positionType;
     },
@@ -603,8 +603,8 @@ cc.ParticleSystem = cc.Node.extend({
     },
 
     /** Switch between different kind of emitter modes:
-     - kCCParticleModeGravity: uses gravity, speed, radial and tangential acceleration
-     - kCCParticleModeRadius: uses radius movement + rotation
+     - CCPARTICLE_MODE_GRAVITY: uses gravity, speed, radial and tangential acceleration
+     - CCPARTICLE_MODE_RADIUS: uses radius movement + rotation
      */
     _emitterMode:0,
     getEmitterMode:function () {
@@ -616,7 +616,7 @@ cc.ParticleSystem = cc.Node.extend({
 
     ctor:function () {
         this._super();
-        this._emitterMode = cc.kCCParticleModeGravity;
+        this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
         this.modeA = new cc.ParticleSystem.tModeA();
         this.modeB = new cc.ParticleSystem.tModeB();
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
@@ -708,7 +708,7 @@ cc.ParticleSystem = cc.Node.extend({
             this._emitterMode = parseInt(this._valueForKey("emitterType", dictionary));
 
             // Mode A: Gravity + tangential accel + radial accel
-            if (this._emitterMode == cc.kCCParticleModeGravity) {
+            if (this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY) {
                 // gravity
                 this.modeA.gravity.x = parseFloat(this._valueForKey("gravityx", dictionary));
                 this.modeA.gravity.y = parseFloat(this._valueForKey("gravityy", dictionary));
@@ -730,7 +730,7 @@ cc.ParticleSystem = cc.Node.extend({
 
                 pszTmp = this._valueForKey("tangentialAccelVariance", dictionary);
                 this.modeA.tangentialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
-            } else if (this._emitterMode == cc.kCCParticleModeRadius) {
+            } else if (this._emitterMode == cc.CCPARTICLE_MODE_RADIUS) {
                 // or Mode B: radius movement
                 this.modeB.startRadius = parseFloat(this._valueForKey("maxRadius", dictionary));
                 this.modeB.startRadiusVar = parseFloat(this._valueForKey("maxRadiusVariance", dictionary));
@@ -824,10 +824,10 @@ cc.ParticleSystem = cc.Node.extend({
         this._blendFunc.dst = cc.BLEND_DST;
 
         // default movement type;
-        this._positionType = cc.kCCPositionTypeFree;
+        this._positionType = cc.CCPARTICLE_TYPE_FREE;
 
         // by default be in mode A:
-        this._emitterMode = cc.kCCParticleModeGravity;
+        this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
         // default: modulate
         // XXX: not used
@@ -903,7 +903,7 @@ cc.ParticleSystem = cc.Node.extend({
 
         particle.size = startS;
 
-        if (this._endSize == cc.kCCParticleStartSizeEqualToEndSize) {
+        if (this._endSize == cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE) {
             particle.deltaSize = 0;
         } else {
             var endS = this._endSize + this._endSizeVar * cc.RANDOM_MINUS1_1();
@@ -919,11 +919,11 @@ cc.ParticleSystem = cc.Node.extend({
         particle.deltaRotation = (endA - startA) / particle.timeToLive;
 
         // position
-        if (this._positionType == cc.kCCPositionTypeFree) {
+        if (this._positionType == cc.CCPARTICLE_TYPE_FREE) {
             var p = this.convertToWorldSpace(cc.PointZero());
             particle.startPos = cc.ccpMult(p, cc.CONTENT_SCALE_FACTOR());
 
-        } else if (this._positionType == cc.kCCPositionTypeRelative) {
+        } else if (this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
             particle.startPos = cc.ccpMult(this._position, cc.CONTENT_SCALE_FACTOR());
         }
 
@@ -931,7 +931,7 @@ cc.ParticleSystem = cc.Node.extend({
         var a = cc.DEGREES_TO_RADIANS(this._angle + this._angleVar * cc.RANDOM_MINUS1_1());
 
         // Mode Gravity: A
-        if (this._emitterMode == cc.kCCParticleModeGravity) {
+        if (this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY) {
             var v = cc.ccp(Math.cos(a), Math.sin(a));
             var s = this.modeA.speed + this.modeA.speedVar * cc.RANDOM_MINUS1_1();
             s *= cc.CONTENT_SCALE_FACTOR();
@@ -957,7 +957,7 @@ cc.ParticleSystem = cc.Node.extend({
 
             particle.modeB.radius = startRadius;
 
-            if (this.modeB.endRadius == cc.kCCParticleStartRadiusEqualToEndRadius)
+            if (this.modeB.endRadius == cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS)
                 particle.modeB.deltaRadius = 0;
             else
                 particle.modeB.deltaRadius = (endRadius - startRadius) / particle.timeToLive;
@@ -1018,11 +1018,11 @@ cc.ParticleSystem = cc.Node.extend({
         /// @todo CCProfilingBeginTimingBlock(_profilingTimer);
 
         var currentPosition = cc.PointZero();
-        if (this._positionType == cc.kCCPositionTypeFree) {
+        if (this._positionType == cc.CCPARTICLE_TYPE_FREE) {
             currentPosition = this.convertToWorldSpace(cc.PointZero());
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
-        } else if (this._positionType == cc.kCCPositionTypeRelative) {
+        } else if (this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
             currentPosition = cc.ccp(this._position.x, this._position.y);
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
@@ -1036,7 +1036,7 @@ cc.ParticleSystem = cc.Node.extend({
 
             if (p.timeToLive > 0) {
                 // Mode A: gravity, direction, tangential accel & radial accel
-                if (this._emitterMode == cc.kCCParticleModeGravity) {
+                if (this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY) {
                     var tmp, radial, tangential;
 
                     radial = cc.PointZero();
@@ -1087,7 +1087,7 @@ cc.ParticleSystem = cc.Node.extend({
                 // update values in quad
                 //
                 var newPos;
-                if (cc._positionType == cc.kCCPositionTypeFree || this._positionType == cc.kCCPositionTypeRelative) {
+                if (cc._positionType == cc.CCPARTICLE_TYPE_FREE || this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
                     var diff = cc.ccpSub(currentPosition, p.startPos);
                     newPos = cc.ccpSub(p.pos, diff);
                 } else {

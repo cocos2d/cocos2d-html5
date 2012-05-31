@@ -111,7 +111,7 @@ var TextureTest = TextureMenuLayer.extend({
         var cache = cc.TextureCache.sharedTextureCache();
 
         cc.Log("RGBA 8888");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
@@ -121,7 +121,7 @@ var TextureTest = TextureMenuLayer.extend({
         cache.removeTexture(texture);
 
         cc.Log("RGBA 4444");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA4444);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
@@ -131,7 +131,7 @@ var TextureTest = TextureMenuLayer.extend({
         cache.removeTexture(texture);
 
         cc.Log("RGBA 5551");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGB5A1);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGB5A1);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
@@ -141,7 +141,7 @@ var TextureTest = TextureMenuLayer.extend({
         cache.removeTexture(texture);
 
         cc.Log("RGB 565");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGB565);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGB565);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)

@@ -24,20 +24,20 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var kTextFieldTTFDefaultTest = 0;
-var kTextFieldTTFActionTest = 1;
-var kTextInputTestsCount = 2;
+var TEXT_FIELD_TTF_DEFAULT_TEST = 0;
+var TEXT_FIELD_TTF_ACTION_TEST = 1;
+var TEXT_INPUT_TESTS_COUNT = 2;
 
-var textInput_FONT_NAME = "Thonburi";
-var textInput_FONT_SIZE = 36;
+var TEXT_INPUT_FONT_NAME = "Thonburi";
+var TEXT_INPUT_FONT_SIZE = 36;
 
 var inputTestIdx = -1;
 
-var createTextInputTest = function (nIndex) {
-    switch (nIndex) {
-        case kTextFieldTTFDefaultTest:
+var createTextInputTest = function (index) {
+    switch (index) {
+        case TEXT_FIELD_TTF_DEFAULT_TEST:
             return new TextFieldTTFDefaultTest();
-        case kTextFieldTTFActionTest:
+        case TEXT_FIELD_TTF_ACTION_TEST:
             return new TextFieldTTFActionTest();
         default:
             return 0;
@@ -55,7 +55,7 @@ var restartTextInputTest = function () {
 
 var nextTextInputTest = function () {
     inputTestIdx++;
-    inputTestIdx = inputTestIdx % kTextInputTestsCount;
+    inputTestIdx = inputTestIdx % TEXT_INPUT_TESTS_COUNT;
 
     return restartTextInputTest();
 };
@@ -63,7 +63,7 @@ var nextTextInputTest = function () {
 var backTextInputTest = function () {
     inputTestIdx--;
     if (inputTestIdx < 0)
-        inputTestIdx += kTextInputTestsCount;
+        inputTestIdx += TEXT_INPUT_TESTS_COUNT;
 
     return restartTextInputTest();
 };
@@ -253,8 +253,8 @@ var TextFieldTTFDefaultTest = KeyboardNotificationLayer.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         var textField = cc.TextFieldTTF.textFieldWithPlaceHolder("<click here for input>",
-            textInput_FONT_NAME,
-            textInput_FONT_SIZE);
+            TEXT_INPUT_FONT_NAME,
+            TEXT_INPUT_FONT_SIZE);
         this.addChild(textField);
         textField.setPosition(new cc.Point(s.width / 2, s.height / 2));
 
@@ -311,8 +311,8 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         this._pTextField = cc.TextFieldTTF.textFieldWithPlaceHolder("<click here for input>",
-            textInput_FONT_NAME,
-            textInput_FONT_SIZE);
+            TEXT_INPUT_FONT_NAME,
+            TEXT_INPUT_FONT_SIZE);
         this.addChild(this._pTextField);
         this._pTextField.setDelegate(this);
 
@@ -351,7 +351,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         }
 
         // create a insert text sprite and do some action
-        var label = cc.LabelTTF.labelWithString(text, textInput_FONT_NAME, textInput_FONT_SIZE);
+        var label = cc.LabelTTF.labelWithString(text, TEXT_INPUT_FONT_NAME, TEXT_INPUT_FONT_SIZE);
         this.addChild(label);
         var color = new cc.Color3B(226, 121, 7);
         label.setColor(color);
@@ -380,7 +380,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
 
     onTextFieldDeleteBackward:function (sender, delText, len) {
         // create a delete text sprite and do some action
-        var label = cc.LabelTTF.labelWithString(delText, textInput_FONT_NAME, textInput_FONT_SIZE);
+        var label = cc.LabelTTF.labelWithString(delText, TEXT_INPUT_FONT_NAME, TEXT_INPUT_FONT_SIZE);
         this.addChild(label);
 
         // move the sprite to fly out

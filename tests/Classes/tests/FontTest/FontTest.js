@@ -23,10 +23,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagLabel1 = 550;
-var kTagLabel2 = 551;
-var kTagLabel3 = 552;
-var kTagLabel4 = 553;
+var TAG_LABEL1 = 550;
+var TAG_LABEL2 = 551;
+var TAG_LABEL3 = 552;
+var TAG_LABEL4 = 553;
 
 var fontIdx = 0;
 
@@ -90,10 +90,10 @@ FontTest = cc.Layer.extend({
 
     },
     showFont:function (pFont) {
-        this.removeChildByTag(kTagLabel1, true);
-        this.removeChildByTag(kTagLabel2, true);
-        this.removeChildByTag(kTagLabel3, true);
-        this.removeChildByTag(kTagLabel4, true);
+        this.removeChildByTag(TAG_LABEL1, true);
+        this.removeChildByTag(TAG_LABEL2, true);
+        this.removeChildByTag(TAG_LABEL3, true);
+        this.removeChildByTag(TAG_LABEL4, true);
 
         var s = cc.Director.sharedDirector().getWinSize();
 
@@ -107,10 +107,10 @@ FontTest = cc.Layer.extend({
         center.setPosition(cc.ccp(s.width / 2, s.height *3 /8));
         right.setPosition(cc.ccp(s.width / 2, s.height/4));
 
-        this.addChild(left, 0, kTagLabel1);
-        this.addChild(right, 0, kTagLabel2);
-        this.addChild(center, 0, kTagLabel3);
-        this.addChild(top, 0, kTagLabel4);
+        this.addChild(left, 0, TAG_LABEL1);
+        this.addChild(right, 0, TAG_LABEL2);
+        this.addChild(center, 0, TAG_LABEL3);
+        this.addChild(top, 0, TAG_LABEL4);
 
     },
 

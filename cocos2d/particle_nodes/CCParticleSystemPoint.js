@@ -106,7 +106,7 @@ cc.ParticleSystemPoint = cc.ParticleSystem.extend({
         glEnable(GL_POINT_SPRITE_OES);
         glTexEnvi(GL_POINT_SPRITE_OES, GL_COORD_REPLACE_OES, GL_TRUE);
 
-        var kPointSize = sizeof(this._vertices[0]);
+        var pointSize = sizeof(this._vertices[0]);
 
         if (cc.USES_VBO) {
             glBindBuffer(GL_ARRAY_BUFFER, verticesID);
@@ -114,23 +114,23 @@ cc.ParticleSystemPoint = cc.ParticleSystem.extend({
             if (cc.ENABLE_CACHE_TEXTTURE_DATA)
                 glBufferData(GL_ARRAY_BUFFER, sizeof(cc.PointSprite) * this._totalParticles, this._vertices, GL_DYNAMIC_DRAW);
 
-            glVertexPointer(2, GL_FLOAT, kPointSize, 0);
+            glVertexPointer(2, GL_FLOAT, pointSize, 0);
 
-            glColorPointer(4, GL_UNSIGNED_BYTE, kPointSize, offsetof(cc.PointSprite, color));
+            glColorPointer(4, GL_UNSIGNED_BYTE, pointSize, offsetof(cc.PointSprite, color));
 
             glEnableClientState(GL_POINT_SIZE_ARRAY_OES);
 
-            glPointSizePointerOES(GL_FLOAT, kPointSize, offsetof(cc.PointSprite, size));
+            glPointSizePointerOES(GL_FLOAT, pointSize, offsetof(cc.PointSprite, size));
         } else {
             var offset = this._vertices.length;
-            glVertexPointer(2, GL_FLOAT, kPointSize, offset);
+            glVertexPointer(2, GL_FLOAT, pointSize, offset);
 
             var diff = offsetof(cc.PointSprite, color);
-            glColorPointer(4, GL_UNSIGNED_BYTE, kPointSize, (offset + diff));
+            glColorPointer(4, GL_UNSIGNED_BYTE, pointSize, (offset + diff));
 
             glEnableClientState(GL_POINT_SIZE_ARRAY_OES);
             diff = offsetof(cc.PointSprite, size);
-            glPointSizePointerOES(GL_FLOAT, kPointSize, (offset + diff));
+            glPointSizePointerOES(GL_FLOAT, pointSize, (offset + diff));
         }
 
         var newBlend = (this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST) ? true : false;
@@ -178,7 +178,7 @@ cc.ParticleSystemPoint = cc.ParticleSystem.extend({
         this._super(varValue);
     },
     setEndSize:function (varValue) {
-        cc.Assert(((varValue == cc.kCCParticleStartSizeEqualToEndSize) ||
+        cc.Assert(((varValue == cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE) ||
             ( varValue >= 0 && varValue <= cc.MAX_PARTICLE_SIZE)), "PointParticleSystem only supports 0 <= size <= 64");
         this._super(varValue);
     }

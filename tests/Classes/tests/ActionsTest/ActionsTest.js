@@ -58,22 +58,22 @@ var actionTests = [
     //"ActionFollow",//Buggy
     "ActionAnimate"//Require Texture2d Implementation
 ];
-var s_nActionIdx = -1;
+var actionIdx = -1;
 function NextAction() {
-    ++s_nActionIdx;
-    s_nActionIdx = s_nActionIdx % actionTests.length;
-    console.log(actionTests[s_nActionIdx]);
-    return new window[actionTests[s_nActionIdx]];
+    ++actionIdx;
+    actionIdx = actionIdx % actionTests.length;
+    console.log(actionTests[actionIdx]);
+    return new window[actionTests[actionIdx]];
 }
 function BackAction() {
-    --s_nActionIdx;
-    if (s_nActionIdx < 0) {
-        s_nActionIdx += actionTests.length;
+    --actionIdx;
+    if (actionIdx < 0) {
+        actionIdx += actionTests.length;
     }
-    return new window[actionTests[s_nActionIdx]];
+    return new window[actionTests[actionIdx]];
 }
 function RestartAction() {
-    return new window[actionTests[s_nActionIdx]];
+    return new window[actionTests[actionIdx]];
 }
 
 // the class inherit from TestScene
@@ -81,7 +81,7 @@ function RestartAction() {
 // make sure the test have the menu item for back to main menu
 var ActionsTestScene = TestScene.extend({
     runThisTest:function () {
-        s_nActionIdx = -1;
+        actionIdx = -1;
         this.addChild(NextAction());
         cc.Director.sharedDirector().replaceScene(this);
     }

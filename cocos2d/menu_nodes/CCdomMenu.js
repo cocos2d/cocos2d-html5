@@ -27,10 +27,10 @@
 
 
 var cc = cc = cc || {};
-cc.kCCMenuStateWaiting = 0;
-cc.kCCMenuStateTrackingTouch = 1;
-cc.kCCMenuTouchPriority = -128;
-cc.kDefaultPadding = 5;
+cc.CCMENU_STATE_WAITING = 0;
+cc.CCMENU_STATE_TRACKING_TOUCH = 1;
+cc.CCMENU_TOUCH_PRIORITY = -128;
+cc.DEFAULT_PADDING = 5;
 cc.Menu = cc.domNode.extend({
     initWithItems:function (args) {
         this.dom.id = "DomMenu" + Date.now();
@@ -45,7 +45,7 @@ cc.Menu = cc.domNode.extend({
         }
     },
     alignItemsVertically:function () {
-        this.alignItemsVerticallyWithPadding(cc.kDefaultPadding);
+        this.alignItemsVerticallyWithPadding(cc.DEFAULT_PADDING);
     },
     alignItemsVerticallyWithPadding:function (padding) {
         var s = cc.Director.sharedDirector().getWinSize();//get window size
@@ -71,7 +71,7 @@ cc.Menu = cc.domNode.extend({
         }
     },
     alignItemsHorizontally:function () {
-        this.alignItemsHorizontallyWithPadding(cc.kDefaultPadding);
+        this.alignItemsHorizontallyWithPadding(cc.DEFAULT_PADDING);
     },
     alignItemsHorizontallyWithPadding:function (padding) {
         var s = cc.Director.sharedDirector().getWinSize();

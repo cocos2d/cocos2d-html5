@@ -24,9 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var kTagBase = 2000;
-var kMaxNodes = 1500;
-var kNodesIncrease = 50;
+var TAG_BASE = 2000;
+var MAX_NODES = 1500;
+var NODES_INCREASE = 50;
 var s_nCurCase = 0;
 
 ////////////////////////////////////////////////////////
@@ -108,7 +108,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
         var infoLabel = cc.LabelTTF.labelWithString("0 nodes", "Marker Felt", 30);
         infoLabel.setColor(cc.ccc3(0, 200, 20));
         infoLabel.setPosition(cc.ccp(s.width / 2, s.height / 2 - 15));
-        this.addChild(infoLabel, 1, kTagInfoLayer);
+        this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
         var menu = new NodeChildrenMenuLayer(true, 4, s_nCurCase);
         this.addChild(menu);
@@ -126,7 +126,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
 
     },
     onDecrease:function (sender) {
-        this._quantityOfNodes -= kNodesIncrease;
+        this._quantityOfNodes -= NODES_INCREASE;
         if (this._quantityOfNodes < 0) {
             this._quantityOfNodes = 0;
         }
@@ -135,9 +135,9 @@ var NodeChildrenMainScene = cc.Scene.extend({
         this.updateQuantityOfNodes();
     },
     onIncrease:function (sender) {
-        this._quantityOfNodes += kNodesIncrease;
-        if (this._quantityOfNodes > kMaxNodes) {
-            this._quantityOfNodes = kMaxNodes
+        this._quantityOfNodes += NODES_INCREASE;
+        if (this._quantityOfNodes > MAX_NODES) {
+            this._quantityOfNodes = MAX_NODES
         }
 
         this.updateQuantityLabel();
@@ -145,7 +145,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
     },
     updateQuantityLabel:function () {
         if (this._quantityOfNodes != this._lastRenderedCount) {
-            var infoLabel = this.getChildByTag(kTagInfoLayer);
+            var infoLabel = this.getChildByTag(TAG_INFO_LAYER);
             var str = this._quantityOfNodes + " nodes";
             infoLabel.setString(str);
 
@@ -362,7 +362,7 @@ var AddSpriteSheet = AddRemoveSpriteSheet.extend({
         }
 
         for (var i = 0; i < totalToAdd; i++) {
-            this._batchNode.addChild(sprites[i], zs[i], kTagBase + i);
+            this._batchNode.addChild(sprites[i], zs[i], TAG_BASE + i);
         }
 
         if (cc.ENABLE_PROFILERS) {
@@ -371,7 +371,7 @@ var AddSpriteSheet = AddRemoveSpriteSheet.extend({
 
         // remove them
         for (var i = 0; i < totalToAdd; i++) {
-            this._batchNode.removeChildByTag(kTagBase + i, true);
+            this._batchNode.removeChildByTag(TAG_BASE + i, true);
         }
 
         delete zs;
@@ -412,7 +412,7 @@ var RemoveSpriteSheet = AddRemoveSpriteSheet.extend({
 
             // add them with random Z (very important!)
             for (var i = 0; i < totalToAdd; i++) {
-                this._batchNode.addChild(sprites[i], cc.RANDOM_MINUS1_1() * 50, kTagBase + i);
+                this._batchNode.addChild(sprites[i], cc.RANDOM_MINUS1_1() * 50, TAG_BASE + i);
             }
 
             // remove them
@@ -421,7 +421,7 @@ var RemoveSpriteSheet = AddRemoveSpriteSheet.extend({
             }
 
             for (var i = 0; i < totalToAdd; i++) {
-                this._batchNode.removeChildByTag(kTagBase + i, true);
+                this._batchNode.removeChildByTag(TAG_BASE + i, true);
             }
 
             if (cc.ENABLE_PROFILERS) {
@@ -464,7 +464,7 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 
             // add them with random Z (very important!)
             for (var i = 0; i < totalToAdd; i++) {
-                this._batchNode.addChild(sprites[i], cc.RANDOM_MINUS1_1() * 50, kTagBase + i);
+                this._batchNode.addChild(sprites[i], cc.RANDOM_MINUS1_1() * 50, TAG_BASE + i);
             }
 
             //		[this._batchNode sortAllChildren];
@@ -486,7 +486,7 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 
         // remove them
         for (var i = 0; i < totalToAdd; i++) {
-            this._batchNode.removeChildByTag(kTagBase + i, true);
+            this._batchNode.removeChildByTag(TAG_BASE + i, true);
         }
 
     },
@@ -504,6 +504,6 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 
 function runNodeChildrenTest() {
     var scene = new IterateSpriteSheetCArray();
-    scene.initWithQuantityOfNodes(kNodesIncrease);
+    scene.initWithQuantityOfNodes(NODES_INCREASE);
     cc.Director.sharedDirector().replaceScene(scene);
 }

@@ -23,10 +23,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kHighPlayer = 0;
-var kLowPlayer = 1;
-var kStatusBarHeight = 20.0;
-var kSpriteTag = 0;
+var HIGH_PLAYER = 0;
+var LOW_PLAYER = 1;
+var STATUS_BAR_HEIGHT = 20.0;
+var SPRITE_TAG = 0;
 
 var TouchesTestScene = TestScene.extend({
     ctor:function () {
@@ -38,7 +38,7 @@ var TouchesTestScene = TestScene.extend({
         cc.Director.sharedDirector().replaceScene(this);
     },
     MainMenuCallback:function (sender) {
-        cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationPortrait);
+        cc.Director.sharedDirector().setDeviceOrientation(cc.DEVICE_ORIENTATION_PORTRAIT);
         this._super(sender);
     }
 });
@@ -67,7 +67,7 @@ var PongLayer = cc.Layer.extend({
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - kStatusBarHeight - 15));
+        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - STATUS_BAR_HEIGHT - 15));
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
@@ -75,7 +75,7 @@ var PongLayer = cc.Layer.extend({
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - kStatusBarHeight - 100));
+        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - STATUS_BAR_HEIGHT - 100));
         this._paddles.push(paddle);
 
         for (var i = 0; i < this._paddles.length; i++) {
@@ -108,10 +108,10 @@ var PongLayer = cc.Layer.extend({
             this._ball.collideWithPaddle(this._paddles[i]);
         }
 
-        if (this._ball.getPosition().y > this._winSize.height - kStatusBarHeight + this._ball.radius())
-            this.resetAndScoreBallForPlayer(kLowPlayer);
+        if (this._ball.getPosition().y > this._winSize.height - STATUS_BAR_HEIGHT + this._ball.radius())
+            this.resetAndScoreBallForPlayer(LOW_PLAYER);
         else if (this._ball.getPosition().y < -this._ball.radius())
-            this.resetAndScoreBallForPlayer(kHighPlayer);
+            this.resetAndScoreBallForPlayer(HIGH_PLAYER);
         this._ball.draw();
     }
 });

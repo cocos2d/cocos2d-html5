@@ -80,7 +80,7 @@ cc.AtlasNode = cc.Node.extend({
         // also, using: self.textureAtlas supports re-initialization without leaking
         this._textureAtlas = new cc.TextureAtlas();
         this._textureAtlas.initWithFile(tile, itemsToRender);
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             this._originalTexture = this._textureAtlas.getTexture();
         }
         if (!this._textureAtlas) {
@@ -108,7 +108,7 @@ cc.AtlasNode = cc.Node.extend({
 
     draw:function (ctx) {
         this._super();
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             context.globalAlpha = this.getOpacity() / 255;
             var tempAtlas = this._textureAtlas;
@@ -177,7 +177,7 @@ cc.AtlasNode = cc.Node.extend({
          this._color = this._colorUnmodified = color3;
 
        if (this.getTexture()) {
-            if (cc.renderContextType == cc.kCanvas) {
+            if (cc.renderContextType == cc.CANVAS) {
                 var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache

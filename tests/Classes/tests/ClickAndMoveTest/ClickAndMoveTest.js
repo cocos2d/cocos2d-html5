@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagSprite = 1;
+var TAG_SPRITE = 1;
 
 var ClickAndMoveTestScene = TestScene.extend({
     runThisTest:function () {
@@ -42,7 +42,7 @@ var MainLayer = cc.Layer.extend({
         var layer = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 0, 100));
         this.addChild(layer, -1);
 
-        this.addChild(sprite, 0, kTagSprite);
+        this.addChild(sprite, 0, TAG_SPRITE);
         sprite.setPosition(cc.PointMake(20, 150));
 
         sprite.runAction(cc.JumpTo.actionWithDuration(4, cc.PointMake(300, 48), 100, 4));
@@ -62,7 +62,7 @@ var MainLayer = cc.Layer.extend({
         var location = touch.locationInView(touch.view());
         //var convertedLocation = cc.Director.sharedDirector().convertToGL(location);
 
-        var sprite = this.getChildByTag(kTagSprite);
+        var sprite = this.getChildByTag(TAG_SPRITE);
         sprite.stopAllActions();
         sprite.runAction(cc.MoveTo.actionWithDuration(1, cc.PointMake(location.x, location.y)));
         var o = location.x - sprite.getPositionX();

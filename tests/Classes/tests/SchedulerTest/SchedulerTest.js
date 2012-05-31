@@ -23,14 +23,14 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagAnimationDance = 1;
+var TAG_ANIMATION_DANCE = 1;
 var MAX_TESTS = 8;
 var sceneIdx = -1;
 
-var createSchedulerTest = function (nIndex) {
+var createSchedulerTest = function (index) {
     var layer = null;
 
-    switch (nIndex) {
+    switch (index) {
         case 0:
             layer = new SchedulerAutoremove();
             break;

@@ -26,14 +26,14 @@
 
 
 var cc = cc = cc || {};
-cc.kCCItemSize = cc._fontSize = 32;
+cc.CCITEM_SIZE = cc._fontSize = 32;
 cc._fontName = "Marker Felt";
 cc._fontNameRelease = false;
-cc.kCurrentItem = 0xc0c05001;
-cc.kZoomActionTag = 0xc0c05002;
-cc.kNormalTag = 8801;
-cc.kSelectedTag = 8802;
-cc.kDisableTag = 8803;
+cc.CURRENT_ITEM = 0xc0c05001;
+cc.ZOOM_ACTION_TAG = 0xc0c05002;
+cc.NORMAL_TAG = 8801;
+cc.SELECTED_TAG = 8802;
+cc.DISABLE_TAG = 8803;
 
 /** @brief CCMenuItem base class
  *
@@ -173,7 +173,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         if (this._isEnabled) {
             this._super();
 
-            var action = this.getActionByTag(cc.kZoomActionTag);
+            var action = this.getActionByTag(cc.ZOOM_ACTION_TAG);
             if (action) {
                 this.stopAction(action);
             }
@@ -182,16 +182,16 @@ cc.MenuItemLabel = cc.MenuItem.extend({
             }
 
             var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._originalScale * 1.2);
-            zoomAction.setTag(cc.kZoomActionTag);
+            zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
     },
     unselected:function () {
         if (this._isEnabled) {
             this._super();
-            this.stopActionByTag(cc.kZoomActionTag);
+            this.stopActionByTag(cc.ZOOM_ACTION_TAG);
             var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._originalScale);
-            zoomAction.setTag(cc.kZoomActionTag);
+            zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
     }
@@ -304,7 +304,7 @@ cc.MenuItemSprite = cc.MenuItem.extend({
     },
     setNormalImage:function (NormalImage) {
         if (NormalImage) {
-            this.addChild(NormalImage, 0, cc.kNormalTag);
+            this.addChild(NormalImage, 0, cc.NORMAL_TAG);
             NormalImage.setAnchorPoint(cc.ccp(0, 0));
             NormalImage.setIsVisible(true);
         }
@@ -320,7 +320,7 @@ cc.MenuItemSprite = cc.MenuItem.extend({
     },
     setSelectedImage:function (SelectedImage) {
         if (SelectedImage) {
-            this.addChild(SelectedImage, 0, cc.kSelectedTag);
+            this.addChild(SelectedImage, 0, cc.SELECTED_TAG);
             SelectedImage.setAnchorPoint(cc.ccp(0, 0));
             SelectedImage.setIsVisible(false);
         }
@@ -337,7 +337,7 @@ cc.MenuItemSprite = cc.MenuItem.extend({
     },
     setDisabledImage:function (DisabledImage) {
         if (DisabledImage) {
-            this.addChild(DisabledImage, 0, cc.kDisableTag);
+            this.addChild(DisabledImage, 0, cc.DISABLE_TAG);
             DisabledImage.setAnchorPoint(cc.ccp(0, 0));
             DisabledImage.setIsVisible(false);
         }
@@ -530,9 +530,9 @@ cc.MenuItemToggle = cc.MenuItem.extend({
     setSelectedIndex:function (SelectedIndex) {
         if (SelectedIndex != this._selectedIndex) {
             this._selectedIndex = SelectedIndex;
-            this.removeChildByTag(cc.kCurrentItem, false);
+            this.removeChildByTag(cc.CURRENT_ITEM, false);
             var item = this._subItems[this._selectedIndex];
-            this.addChild(item, 0, cc.kCurrentItem);
+            this.addChild(item, 0, cc.CURRENT_ITEM);
             var s = item.getContentSize();
             this.setContentSize(s);
             item.setPosition(cc.ccp(s.width / 2, s.height / 2));

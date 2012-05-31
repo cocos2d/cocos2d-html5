@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-cc.kTagLayer = 1;
+cc.TAG_LAYER = 1;
 
 var LayerTests = [
     "LayerTest1", //ok
@@ -134,14 +134,14 @@ var LayerTest1 = LayerTest.extend({
 
         layer.setIsRelativeAnchorPoint(true);
         layer.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-        this.addChild(layer, 1, cc.kTagLayer);
+        this.addChild(layer, 1, cc.TAG_LAYER);
     },
     title:function () {
         return "ColorLayer resize (tap & move)";
     },
 
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.kCCMenuTouchPriority + 1, true);
+        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
     },
     updateSize:function (touch) {
         var touchLocation = touch.locationInView(touch.view());
@@ -151,7 +151,7 @@ var LayerTest1 = LayerTest.extend({
 
         var newSize = cc.SizeMake(Math.abs(touchLocation.x - s.width / 2) * 2, Math.abs(touchLocation.y - s.height / 2) * 2);
 
-        var l = this.getChildByTag(cc.kTagLayer);
+        var l = this.getChildByTag(cc.TAG_LAYER);
 
         l.setContentSize(newSize);
     },
@@ -218,7 +218,7 @@ var LayerTestBlend = LayerTest.extend({
 
         this.addChild(sister1);
         this.addChild(sister2);
-        this.addChild(layer1, 100, cc.kTagLayer);
+        this.addChild(layer1, 100, cc.TAG_LAYER);
 
         sister1.setPosition(cc.PointMake(160, s.height / 2));
         sister2.setPosition(cc.PointMake(320, s.height / 2));
@@ -226,7 +226,7 @@ var LayerTestBlend = LayerTest.extend({
         this.schedule(this.newBlend, 1.0);
     },
     newBlend:function (dt) {
-        var layer = this.getChildByTag(cc.kTagLayer);
+        var layer = this.getChildByTag(cc.TAG_LAYER);
 
         var src;
         var dst;
@@ -255,7 +255,7 @@ var LayerTestBlend = LayerTest.extend({
 var LayerGradient = LayerTest.extend({
     ctor:function () {
         var layer1 = cc.LayerGradient.layerWithColor(cc.ccc4(255, 0, 0, 255), cc.ccc4(0, 255, 0, 255), cc.ccp(0.9, 0.9));
-        this.addChild(layer1, 0, cc.kTagLayer);
+        this.addChild(layer1, 0, cc.TAG_LAYER);
 
         this.setIsTouchEnabled(true);
 
@@ -299,7 +299,7 @@ var LayerGradient = LayerTest.extend({
         return "Touch the screen and move your finger";
     },
     toggleItem:function (sender) {
-        var gradient = this.getChildByTag(cc.kTagLayer);
+        var gradient = this.getChildByTag(cc.TAG_LAYER);
         gradient.setIsCompressedInterpolation(!gradient.getIsCompressedInterpolation());
     }
 });

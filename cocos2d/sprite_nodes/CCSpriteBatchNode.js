@@ -156,7 +156,7 @@ cc.SpriteBatchNode = cc.Node.extend({
         this._textureAtlas = new cc.TextureAtlas();
         this._textureAtlas.initWithTexture(tex, capacity);
 
-        if (cc.renderContextType == cc.kWebGL) {
+        if (cc.renderContextType == cc.WEBGL) {
             this._updateBlendFunc();
         }
         // no lazy alloc in this node
@@ -191,10 +191,10 @@ cc.SpriteBatchNode = cc.Node.extend({
      The file will be loaded using the TextureMgr.
      */
     initWithFile:function (fileImage, capacity) {
-        var pTexture2D = cc.TextureCache.sharedTextureCache().textureForKey(fileImage);
-        if (!pTexture2D)
-            pTexture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
-        return this.initWithTexture(pTexture2D, capacity);
+        var texture2D = cc.TextureCache.sharedTextureCache().textureForKey(fileImage);
+        if (!texture2D)
+            texture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
+        return this.initWithTexture(texture2D, capacity);
     },
 
     increaseAtlasCapacity:function () {
@@ -342,27 +342,27 @@ cc.SpriteBatchNode = cc.Node.extend({
     },
 
     atlasIndexForChild:function (sprite, nZ) {
-        var pBrothers = sprite.getParent().getChildren();
-        var uChildIndex = cc.ArrayGetIndexOfObject(pBrothers, sprite);
+        var brothers = sprite.getParent().getChildren();
+        var childIndex = cc.ArrayGetIndexOfObject(brothers, sprite);
 
         // ignore parent Z if parent is spriteSheet
-        var bIgnoreParent = sprite.getParent() == this;
-        var pPrevious = null;
-        if (uChildIndex > 0 && uChildIndex < cc.UINT_MAX) {
-            pPrevious = pBrothers[uChildIndex - 1];
+        var ignoreParent = sprite.getParent() == this;
+        var previous = null;
+        if (childIndex > 0 && childIndex < cc.UINT_MAX) {
+            previous = brothers[childIndex - 1];
         }
 
         // first child of the sprite sheet
-        if (bIgnoreParent) {
-            if (uChildIndex == 0) {
+        if (ignoreParent) {
+            if (childIndex == 0) {
                 return 0;
             }
-            return this.highestAtlasIndexInChild(pPrevious) + 1;
+            return this.highestAtlasIndexInChild(previous) + 1;
         }
 
         // parent is a CCSprite, so, it must be taken into account
         // first child of an CCSprite ?
-        if (uChildIndex == 0) {
+        if (childIndex == 0) {
             var p = sprite.getParent();
 
             // less than parent and brothers
@@ -373,8 +373,8 @@ cc.SpriteBatchNode = cc.Node.extend({
             }
         } else {
             // previous & sprite belong to the same branch
-            if ((pPrevious.getZOrder() < 0 && nZ < 0) || (pPrevious.getZOrder() >= 0 && nZ >= 0)) {
-                return this.highestAtlasIndexInChild(pPrevious) + 1;
+            if ((previous.getZOrder() < 0 && nZ < 0) || (previous.getZOrder() >= 0 && nZ >= 0)) {
+                return this.highestAtlasIndexInChild(previous) + 1;
             }
 
             // else (previous < 0 and sprite >= 0 )
@@ -408,7 +408,7 @@ cc.SpriteBatchNode = cc.Node.extend({
     // override visit
     // don't call visit on it's children
     visit:function (ctx) {
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             // quick return if not visible
             if (!this._isVisible) {
@@ -491,7 +491,7 @@ cc.SpriteBatchNode = cc.Node.extend({
 
                 var sprite = child;
                 // check CCSprite is using the same texture id
-                if (cc.renderContextType != cc.kCanvas) {
+                if (cc.renderContextType != cc.CANVAS) {
                     cc.Assert(sprite.getTexture().getName() == this._textureAtlas.getTexture().getName(),
                         "SpriteBatchNode.addChild():check CCSprite is using the same texture id");
                 }
@@ -569,7 +569,7 @@ cc.SpriteBatchNode = cc.Node.extend({
     draw:function (ctx) {
         this._super();
 
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             //context.globalAlpha = this._opacity / 255;
             var pos = new cc.Point(0 | ( -this._anchorPointInPixels.x), 0 | ( -this._anchorPointInPixels.y));

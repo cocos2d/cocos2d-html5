@@ -24,9 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-kTagAction1 = 1;
-kTagAction2 = 2;
-kTagSlider = 1;
+TAG_ACTION1_EASE_ACTIONS = 1;
+TAG_ACTION2_EASE_ACTIONS = 2;
+TAG_SLIDER_EASE_ACTIONS = 1;
 
 var EaseActionsTests = [
     "SpriteEase",
@@ -546,13 +546,13 @@ var SpeedTest = EaseSpriteDemo.extend({
         var seq3_2 = cc.Sequence.actions(rot1, rot2, null);
         var spawn = cc.Spawn.actions(seq3_1, seq3_2, null);
         var action = cc.Speed.actionWithAction(cc.RepeatForever.actionWithAction(spawn), 1.0);
-        action.setTag(kTagAction1);
+        action.setTag(TAG_ACTION1_EASE_ACTIONS);
 
         var action2 = action.copy();
         var action3 = action.copy();
 
-        action2.setTag(kTagAction1);
-        action3.setTag(kTagAction1);
+        action2.setTag(TAG_ACTION1_EASE_ACTIONS);
+        action3.setTag(TAG_ACTION1_EASE_ACTIONS);
 
         this._grossini.runAction(action2);
         this._tamara.runAction(action3);
@@ -565,9 +565,9 @@ var SpeedTest = EaseSpriteDemo.extend({
     },
 
     altertime:function (dt) {
-        var action1 = this._grossini.getActionByTag(kTagAction1);
-        var action2 = this._tamara.getActionByTag(kTagAction1);
-        var action3 = this._kathia.getActionByTag(kTagAction1);
+        var action1 = this._grossini.getActionByTag(TAG_ACTION1_EASE_ACTIONS);
+        var action2 = this._tamara.getActionByTag(TAG_ACTION1_EASE_ACTIONS);
+        var action3 = this._kathia.getActionByTag(TAG_ACTION1_EASE_ACTIONS);
 
         action1.setSpeed(cc.RANDOM_0_1() * 2);
         action2.setSpeed(cc.RANDOM_0_1() * 2);
