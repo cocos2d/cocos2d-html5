@@ -25,20 +25,20 @@
 
 
 /// Radial Counter-Clockwise
-cc.kCCProgressTimerTypeRadialCCW = 0;
+cc.CCPROGRESS_TIMER_RADIAL_CCW = 0;
 /// Radial ClockWise
-cc.kCCProgressTimerTypeRadialCW = 1;
+cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW = 1;
 /// Horizontal Left-Right
-cc.kCCProgressTimerTypeHorizontalBarLR = 2;
+cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR = 2;
 /// Horizontal Right-Left
-cc.kCCProgressTimerTypeHorizontalBarRL = 3;
+cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL = 3;
 /// Vertical Bottom-top
-cc.kCCProgressTimerTypeVerticalBarBT = 4;
+cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT = 4;
 /// Vertical Top-Bottom
-cc.kCCProgressTimerTypeVerticalBarTB = 5;
+cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB = 5;
 
-cc.kProgressTextureCoordsCount = 4;
-cc.kProgressTextureCoords = 0x1e;
+cc.PROGRESS_TEXTURE_COORDS_COUNT = 4;
+cc.PROGRESS_TEXTURE_COORDS = 0x1e;
 /**
  @brief CCProgresstimer is a subclass of CCNode.
  It renders the inner sprite according to the percentage.
@@ -49,109 +49,109 @@ cc.ProgressTimer = cc.Node.extend({
 
     /**    Change the percentage to change progress. */
     getType:function () {
-        return this._m_eType;
+        return this._type;
     },
 
     /** Percentages are from 0 to 100 */
     getPercentage:function () {
-        return this._m_fPercentage;
+        return this._percentage;
     },
 
     /** The image to show the progress percentage, retain */
     getSprite:function () {
-        return this._m_pSprite;
+        return this._sprite;
     },
 
-    initWithFile:function (pszFileName) {
-        return this.initWithTexture(cc.TextureCache.sharedTextureCache().addImage(pszFileName));
+    initWithFile:function (fileName) {
+        return this.initWithTexture(cc.TextureCache.sharedTextureCache().addImage(fileName));
     },
 
-    initWithTexture:function (pTexture) {
-        this._m_pSprite = cc.Sprite.spriteWithTexture(pTexture);
+    initWithTexture:function (texture) {
+        this._sprite = cc.Sprite.spriteWithTexture(texture);
 
-        this._m_fPercentage = 0.0;
-        this._m_pVertexData = null;
-        this._m_nVertexDataCount = 0;
+        this._percentage = 0.0;
+        this._vertexData = null;
+        this._vertexDataCount = 0;
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this.setContentSize(this._m_pSprite.getContentSize());
-        this._m_eType = cc.kCCProgressTimerTypeRadialCCW;
+        this.setContentSize(this._sprite.getContentSize());
+        this._type = cc.CCPROGRESS_TIMER_RADIAL_CCW;
 
         return true;
     },
 
-    setPercentage:function (fPercentage) {
-        if (this._m_fPercentage != fPercentage) {
-            this._m_fPercentage = cc.clampf(fPercentage, 0, 100);
+    setPercentage:function (percentage) {
+        if (this._percentage != percentage) {
+            this._percentage = cc.clampf(percentage, 0, 100);
             this._updateProgress();
         }
     },
-    setSprite:function (pSprite) {
-        if (this._m_pSprite != pSprite) {
-            this._m_pSprite = pSprite;
-            this.setContentSize(this._m_pSprite.getContentSize());
+    setSprite:function (sprite) {
+        if (this._sprite != sprite) {
+            this._sprite = sprite;
+            this.setContentSize(this._sprite.getContentSize());
 
             //	Everytime we set a new sprite, we free the current vertex data
-            if (this._m_pVertexData) {
-                this._m_pVertexData = null;
-                this._m_nVertexDataCount = 0;
+            if (this._vertexData) {
+                this._vertexData = null;
+                this._vertexDataCount = 0;
             }
         }
     },
 
     setType:function (type) {
-        if (type != this._m_eType) {
+        if (type != this._type) {
             //	release all previous information
-            if (this._m_pVertexData) {
-                this._m_pVertexData = null;
-                this._m_nVertexDataCount = 0;
+            if (this._vertexData) {
+                this._vertexData = null;
+                this._vertexDataCount = 0;
             }
 
-            this._m_eType = type;
+            this._type = type;
         }
 
     },
 
     draw:function (ctx) {
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
-            if (this._m_eType > 1) {
-                var pos = new cc.Point(0 | ( -this._m_tAnchorPointInPixels.x + this._drawPosition.x),
-                    0 | ( -this._m_tAnchorPointInPixels.y + this._drawPosition.y));
-                context.drawImage(this._m_pSprite._m_pobTexture, this._origin.x, this._origin.y, this._drawSize.width, this._drawSize.height,
+            if (this._type > 1) {
+                var pos = new cc.Point(0 | ( -this._anchorPointInPixels.x + this._drawPosition.x),
+                    0 | ( -this._anchorPointInPixels.y + this._drawPosition.y));
+                context.drawImage(this._sprite._texture, this._origin.x, this._origin.y, this._drawSize.width, this._drawSize.height,
                     pos.x, -(pos.y + this._drawSize.height),
                     this._drawSize.width, this._drawSize.height);
             }else{
-                var tSize = this.getContentSize();
+                var size = this.getContentSize();
                 context.beginPath();
                 var startAngle_1= (Math.PI/180)*this._startAngle;
                 var endAngle_1=(Math.PI/180)*this._endAngle;
-                var radius = tSize.width > tSize.height?tSize.width:tSize.height;
+                var radius = size.width > size.height?size.width:size.height;
                 context.arc(0,0,radius,startAngle_1,endAngle_1,false);
                 context.lineTo(0,0);
                 context.clip();
                 context.closePath();
 
-                var offsetPixels = this._m_pSprite._m_obOffsetPositionInPixels;
-                var pos = new cc.Point(0 | ( -this._m_pSprite._m_tAnchorPointInPixels.x + offsetPixels.x),
-                    0 | ( -this._m_pSprite._m_tAnchorPointInPixels.y + offsetPixels.y));
-                context.drawImage(this._m_pSprite._m_pobTexture,
-                    this._m_pSprite._m_obRect.origin.x, this._m_pSprite._m_obRect.origin.y,
-                    this._m_pSprite._m_obRect.size.width, this._m_pSprite._m_obRect.size.height,
-                    pos.x, -(pos.y + this._m_pSprite._m_obRect.size.height),
-                    this._m_pSprite._m_obRect.size.width, this._m_pSprite._m_obRect.size.height);
+                var offsetPixels = this._sprite._offsetPositionInPixels;
+                var pos = new cc.Point(0 | ( -this._sprite._anchorPointInPixels.x + offsetPixels.x),
+                    0 | ( -this._sprite._anchorPointInPixels.y + offsetPixels.y));
+                context.drawImage(this._sprite._texture,
+                    this._sprite._rect.origin.x, this._sprite._rect.origin.y,
+                    this._sprite._rect.size.width, this._sprite._rect.size.height,
+                    pos.x, -(pos.y + this._sprite._rect.size.height),
+                    this._sprite._rect.size.width, this._sprite._rect.size.height);
             }
         } else {
             this._super();
 
-            if (!this._m_pVertexData) {
+            if (!this._vertexData) {
                 return;
             }
 
-            if (!this._m_pSprite) {
+            if (!this._sprite) {
                 return;
             }
 
-            var bf = this._m_pSprite.getBlendFunc();
+            var bf = this._sprite.getBlendFunc();
             var newBlend = (bf.src != cc.BLEND_SRC || bf.dst != cc.BLEND_DST) ? true : false;
             if (newBlend) {
                 //glBlendFunc(bf.src, bf.dst);
@@ -160,18 +160,18 @@ cc.ProgressTimer = cc.Node.extend({
             ///	========================================================================
             //	Replaced [texture_ drawAtPoint:CCPointZero] with my own vertexData
             //	Everything above me and below me is copied from CCTextureNode's draw
-            //glBindTexture(GL_TEXTURE_2D, m_pSprite->getTexture()->getName());
-            //glVertexPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].vertices);
-            //glTexCoordPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].texCoords);
-            //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ccV2F_C4B_T2F), &m_pVertexData[0].colors);
+            //glBindTexture(GL_TEXTURE_2D, sprite->getTexture()->getName());
+            //glVertexPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &vertexData[0].vertices);
+            //glTexCoordPointer(2, GL_FLOAT, sizeof(ccV2F_C4B_T2F), &vertexData[0].texCoords);
+            //glColorPointer(4, GL_UNSIGNED_BYTE, sizeof(ccV2F_C4B_T2F), &vertexData[0].colors);
 
-            if (this._m_eType == cc.kCCProgressTimerTypeRadialCCW || this._m_eType == cc.kCCProgressTimerTypeRadialCW) {
-                //glDrawArrays(GL_TRIANGLE_FAN, 0, m_nVertexDataCount);
-            } else if (this._m_eType == cc.kCCProgressTimerTypeHorizontalBarLR ||
-                this._m_eType == cc.kCCProgressTimerTypeHorizontalBarRL ||
-                this._m_eType == cc.kCCProgressTimerTypeVerticalBarBT ||
-                this._m_eType == cc.kCCProgressTimerTypeVerticalBarTB) {
-                //glDrawArrays(GL_TRIANGLE_STRIP, 0, m_nVertexDataCount);
+            if (this._type == cc.CCPROGRESS_TIMER_RADIAL_CCW || this._type == cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW) {
+                //glDrawArrays(GL_TRIANGLE_FAN, 0, vertexDataCount);
+            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR ||
+                this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL ||
+                this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT ||
+                this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB) {
+                //glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexDataCount);
             }
             //glDrawElements(GL_TRIANGLES, indicesCount_, GL_UNSIGNED_BYTE, indices_);
             ///	========================================================================
@@ -186,17 +186,17 @@ cc.ProgressTimer = cc.Node.extend({
         var tmp;
         var ret = new cc.Vertex2F(0, 0);
 
-        var pTexture = this._m_pSprite.getTexture();
-        if (pTexture) {
-            var fXMax = Math.max(this._m_pSprite.getQuad().br.texCoords.u, this._m_pSprite.getQuad().bl.texCoords.u);
-            var fXMin = Math.min(this._m_pSprite.getQuad().br.texCoords.u, this._m_pSprite.getQuad().bl.texCoords.u);
-            var fYMax = Math.max(this._m_pSprite.getQuad().tl.texCoords.v, this._m_pSprite.getQuad().bl.texCoords.v);
-            var fYMin = Math.min(this._m_pSprite.getQuad().tl.texCoords.v, this._m_pSprite.getQuad().bl.texCoords.v);
+        var texture = this._sprite.getTexture();
+        if (texture) {
+            var fXMax = Math.max(this._sprite.getQuad().br.texCoords.u, this._sprite.getQuad().bl.texCoords.u);
+            var fXMin = Math.min(this._sprite.getQuad().br.texCoords.u, this._sprite.getQuad().bl.texCoords.u);
+            var fYMax = Math.max(this._sprite.getQuad().tl.texCoords.v, this._sprite.getQuad().bl.texCoords.v);
+            var fYMin = Math.min(this._sprite.getQuad().tl.texCoords.v, this._sprite.getQuad().bl.texCoords.v);
             var tMax = cc.ccp(fXMax, fYMax);
             var tMin = cc.ccp(fXMin, fYMin);
 
-            var texSize = cc.SizeMake(this._m_pSprite.getQuad().br.vertices.x - this._m_pSprite.getQuad().bl.vertices.x,
-                this._m_pSprite.getQuad().tl.vertices.y - this._m_pSprite.getQuad().bl.vertices.y);
+            var texSize = cc.SizeMake(this._sprite.getQuad().br.vertices.x - this._sprite.getQuad().bl.vertices.x,
+                this._sprite.getQuad().tl.vertices.y - this._sprite.getQuad().bl.vertices.y);
             tmp = cc.ccp(texSize.width * (texCoord.x - tMin.x) / (tMax.x - tMin.x),
                 texSize.height * (1 - (texCoord.y - tMin.y) / (tMax.y - tMin.y)));
         } else {
@@ -215,50 +215,50 @@ cc.ProgressTimer = cc.Node.extend({
     _startAngle:270,
     _endAngle:270,
     _updateProgress:function () {
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var size = this.getContentSize();
-            switch (this._m_eType) {
-                case cc.kCCProgressTimerTypeRadialCW:
-                    this._endAngle = 270 + 3.6 * this._m_fPercentage;
+            switch (this._type) {
+                case cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW:
+                    this._endAngle = 270 + 3.6 * this._percentage;
                     break;
-                case cc.kCCProgressTimerTypeRadialCCW:
-                    this._startAngle = 270 - 3.6 * this._m_fPercentage;
+                case cc.CCPROGRESS_TIMER_RADIAL_CCW:
+                    this._startAngle = 270 - 3.6 * this._percentage;
                     break;
-                case cc.kCCProgressTimerTypeHorizontalBarLR:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR:
                     //left to right
                     this._origin = cc.PointZero();
                     this._drawPosition = cc.PointZero();
-                    this._drawSize = cc.SizeMake(0 | ((this._m_fPercentage / 100) * size.width), size.height);
+                    this._drawSize = cc.SizeMake(0 | ((this._percentage / 100) * size.width), size.height);
                     break;
-                case cc.kCCProgressTimerTypeHorizontalBarRL:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL:
                     //right to left
-                    this._drawSize = cc.SizeMake(0 | ((this._m_fPercentage / 100) * size.width), size.height);
+                    this._drawSize = cc.SizeMake(0 | ((this._percentage / 100) * size.width), size.height);
                     this._origin = cc.ccp((size.width - this._drawSize.width) | 0, 0);
                     this._drawPosition = cc.ccp(size.width - this._drawSize.width, 0);
                     break;
-                case cc.kCCProgressTimerTypeVerticalBarBT:
+                case cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT:
                     //buttom to top
-                    this._drawSize = cc.SizeMake(size.width, 0 | ((this._m_fPercentage / 100) * size.height));
+                    this._drawSize = cc.SizeMake(size.width, 0 | ((this._percentage / 100) * size.height));
                     this._drawPosition = cc.PointZero();
                     this._origin = cc.ccp(0, 0 | (size.height - this._drawSize.height));
                     break;
-                case cc.kCCProgressTimerTypeVerticalBarTB:
+                case cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB:
                     //top to buttom
-                    this._drawSize = cc.SizeMake(size.width, 0 | ((this._m_fPercentage / 100) * size.height));
+                    this._drawSize = cc.SizeMake(size.width, 0 | ((this._percentage / 100) * size.height));
                     this._drawPosition = cc.ccp(0, (size.height - this._drawSize.height) | 0);
                     this._origin = cc.ccp(0, 0);
                     break;
             }
         } else {
-            switch (this._m_eType) {
-                case cc.kCCProgressTimerTypeRadialCW:
-                case cc.kCCProgressTimerTypeRadialCCW:
+            switch (this._type) {
+                case cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW:
+                case cc.CCPROGRESS_TIMER_RADIAL_CCW:
                     this._updateRadial();
                     break;
-                case cc.kCCProgressTimerTypeHorizontalBarLR:
-                case cc.kCCProgressTimerTypeHorizontalBarRL:
-                case cc.kCCProgressTimerTypeVerticalBarBT:
-                case cc.kCCProgressTimerTypeVerticalBarTB:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL:
+                case cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT:
+                case cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB:
                     this._updateBar();
                     break;
                 default:
@@ -267,129 +267,129 @@ cc.ProgressTimer = cc.Node.extend({
         }
     },
     _updateBar:function () {
-        var alpha = this._m_fPercentage / 100;
+        var alpha = this._percentage / 100;
 
-        var fXMax = Math.max(this._m_pSprite.getQuad().br.texCoords.u, this._m_pSprite.getQuad().bl.texCoords.u);
-        var fXMin = Math.min(this._m_pSprite.getQuad().br.texCoords.u, this._m_pSprite.getQuad().bl.texCoords.u);
-        var fYMax = Math.max(this._m_pSprite.getQuad().tl.texCoords.v, this._m_pSprite.getQuad().bl.texCoords.v);
-        var fYMin = Math.min(this._m_pSprite.getQuad().tl.texCoords.v, this._m_pSprite.getQuad().bl.texCoords.v);
+        var fXMax = Math.max(this._sprite.getQuad().br.texCoords.u, this._sprite.getQuad().bl.texCoords.u);
+        var fXMin = Math.min(this._sprite.getQuad().br.texCoords.u, this._sprite.getQuad().bl.texCoords.u);
+        var fYMax = Math.max(this._sprite.getQuad().tl.texCoords.v, this._sprite.getQuad().bl.texCoords.v);
+        var fYMin = Math.min(this._sprite.getQuad().tl.texCoords.v, this._sprite.getQuad().bl.texCoords.v);
         var tMax = cc.ccp(fXMax, fYMax);
         var tMin = cc.ccp(fXMin, fYMin);
 
-        var vIndexes = [];
+        var indexes = [];
         var index = 0;
 
         //	We know vertex data is always equal to the 4 corners
         //	If we don't have vertex data then we create it here and populate
         //	the side of the bar vertices that won't ever change.
-        if (!this._m_pVertexData) {
-            this._m_nVertexDataCount = cc.kProgressTextureCoordsCount;
-            this._m_pVertexData = [];
-            for (var i = 0; i < this._m_nVertexDataCount; i++) {
-                this._m_pVertexData[i] = cc.V2F_C4B_T2F_QuadZero();
+        if (!this._vertexData) {
+            this._vertexDataCount = cc.PROGRESS_TEXTURE_COORDS_COUNT;
+            this._vertexData = [];
+            for (var i = 0; i < this._vertexDataCount; i++) {
+                this._vertexData[i] = cc.V2F_C4B_T2F_QuadZero();
             }
-            cc.Assert(this._m_pVertexData, "");
+            cc.Assert(this._vertexData, "");
 
-            if (this._m_eType == cc.kCCProgressTimerTypeHorizontalBarLR) {
-                this._m_pVertexData[vIndexes[0] = 0].texCoords = cc.tex2(tMin.x, tMin.y);
-                this._m_pVertexData[vIndexes[1] = 1].texCoords = cc.tex2(tMin.x, tMax.y);
-            } else if (this._m_eType == cc.kCCProgressTimerTypeHorizontalBarRL) {
-                this._m_pVertexData[vIndexes[0] = 2].texCoords = cc.tex2(tMax.x, tMax.y);
-                this._m_pVertexData[vIndexes[1] = 3].texCoords = cc.tex2(tMax.x, tMin.y);
-            } else if (this._m_eType == cc.kCCProgressTimerTypeVerticalBarBT) {
-                this._m_pVertexData[vIndexes[0] = 1].texCoords = cc.tex2(tMin.x, tMax.y);
-                this._m_pVertexData[vIndexes[1] = 3].texCoords = cc.tex2(tMax.x, tMax.y);
-            } else if (this._m_eType == cc.kCCProgressTimerTypeVerticalBarTB) {
-                this._m_pVertexData[vIndexes[0] = 0].texCoords = cc.tex2(tMin.x, tMin.y);
-                this._m_pVertexData[vIndexes[1] = 2].texCoords = cc.tex2(tMax.x, tMin.y);
+            if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR) {
+                this._vertexData[indexes[0] = 0].texCoords = cc.tex2(tMin.x, tMin.y);
+                this._vertexData[indexes[1] = 1].texCoords = cc.tex2(tMin.x, tMax.y);
+            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL) {
+                this._vertexData[indexes[0] = 2].texCoords = cc.tex2(tMax.x, tMax.y);
+                this._vertexData[indexes[1] = 3].texCoords = cc.tex2(tMax.x, tMin.y);
+            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT) {
+                this._vertexData[indexes[0] = 1].texCoords = cc.tex2(tMin.x, tMax.y);
+                this._vertexData[indexes[1] = 3].texCoords = cc.tex2(tMax.x, tMax.y);
+            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB) {
+                this._vertexData[indexes[0] = 0].texCoords = cc.tex2(tMin.x, tMin.y);
+                this._vertexData[indexes[1] = 2].texCoords = cc.tex2(tMax.x, tMin.y);
             }
 
-            index = vIndexes[0];
-            this._m_pVertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._m_pVertexData[index].texCoords.u,
-                this._m_pVertexData[index].texCoords.v));
+            index = indexes[0];
+            this._vertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._vertexData[index].texCoords.u,
+                this._vertexData[index].texCoords.v));
 
-            index = vIndexes[1];
-            this._m_pVertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._m_pVertexData[index].texCoords.u,
-                this._m_pVertexData[index].texCoords.v));
+            index = indexes[1];
+            this._vertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._vertexData[index].texCoords.u,
+                this._vertexData[index].texCoords.v));
 
-            if (this._m_pSprite.isFlipY() || this._m_pSprite.isFlipX()) {
-                if (this._m_pSprite.isFlipX()) {
-                    index = vIndexes[0];
-                    this._m_pVertexData[index].texCoords.u = tMin.x + tMax.x - this._m_pVertexData[index].texCoords.u;
-                    index = vIndexes[1];
-                    this._m_pVertexData[index].texCoords.u = tMin.x + tMax.x - this._m_pVertexData[index].texCoords.u;
+            if (this._sprite.isFlipY() || this._sprite.isFlipX()) {
+                if (this._sprite.isFlipX()) {
+                    index = indexes[0];
+                    this._vertexData[index].texCoords.u = tMin.x + tMax.x - this._vertexData[index].texCoords.u;
+                    index = indexes[1];
+                    this._vertexData[index].texCoords.u = tMin.x + tMax.x - this._vertexData[index].texCoords.u;
                 }
 
-                if (this._m_pSprite.isFlipY()) {
-                    index = vIndexes[0];
-                    this._m_pVertexData[index].texCoords.v = tMin.y + tMax.y - this._m_pVertexData[index].texCoords.v;
-                    index = vIndexes[1];
-                    this._m_pVertexData[index].texCoords.v = tMin.y + tMax.y - this._m_pVertexData[index].texCoords.v;
+                if (this._sprite.isFlipY()) {
+                    index = indexes[0];
+                    this._vertexData[index].texCoords.v = tMin.y + tMax.y - this._vertexData[index].texCoords.v;
+                    index = indexes[1];
+                    this._vertexData[index].texCoords.v = tMin.y + tMax.y - this._vertexData[index].texCoords.v;
                 }
             }
 
             this._updateColor();
         }
 
-        if (this._m_eType == cc.kCCProgressTimerTypeHorizontalBarLR) {
-            this._m_pVertexData[vIndexes[0] = 3].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * alpha, tMax.y);
-            this._m_pVertexData[vIndexes[1] = 2].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * alpha, tMin.y);
-        } else if (this._m_eType == cc.kCCProgressTimerTypeHorizontalBarRL) {
-            this._m_pVertexData[vIndexes[0] = 1].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * (1.0 - alpha), tMin.y);
-            this._m_pVertexData[vIndexes[1] = 0].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * (1.0 - alpha), tMax.y);
-        } else if (this._m_eType == cc.kCCProgressTimerTypeVerticalBarBT) {
-            this._m_pVertexData[vIndexes[0] = 0].texCoords = cc.tex2(tMin.x, tMin.y + (tMax.y - tMin.y) * (1.0 - alpha));
-            this._m_pVertexData[vIndexes[1] = 2].texCoords = cc.tex2(tMax.x, tMin.y + (tMax.y - tMin.y) * (1.0 - alpha));
-        } else if (this._m_eType == cc.kCCProgressTimerTypeVerticalBarTB) {
-            this._m_pVertexData[vIndexes[0] = 1].texCoords = cc.tex2(tMin.x, tMin.y + (tMax.y - tMin.y) * alpha);
-            this._m_pVertexData[vIndexes[1] = 3].texCoords = cc.tex2(tMax.x, tMin.y + (tMax.y - tMin.y) * alpha);
+        if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR) {
+            this._vertexData[indexes[0] = 3].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * alpha, tMax.y);
+            this._vertexData[indexes[1] = 2].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * alpha, tMin.y);
+        } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL) {
+            this._vertexData[indexes[0] = 1].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * (1.0 - alpha), tMin.y);
+            this._vertexData[indexes[1] = 0].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * (1.0 - alpha), tMax.y);
+        } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT) {
+            this._vertexData[indexes[0] = 0].texCoords = cc.tex2(tMin.x, tMin.y + (tMax.y - tMin.y) * (1.0 - alpha));
+            this._vertexData[indexes[1] = 2].texCoords = cc.tex2(tMax.x, tMin.y + (tMax.y - tMin.y) * (1.0 - alpha));
+        } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB) {
+            this._vertexData[indexes[0] = 1].texCoords = cc.tex2(tMin.x, tMin.y + (tMax.y - tMin.y) * alpha);
+            this._vertexData[indexes[1] = 3].texCoords = cc.tex2(tMax.x, tMin.y + (tMax.y - tMin.y) * alpha);
         }
 
-        index = vIndexes[0];
-        this._m_pVertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._m_pVertexData[index].texCoords.u,
-            this._m_pVertexData[index].texCoords.v));
-        index = vIndexes[1];
-        this._m_pVertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._m_pVertexData[index].texCoords.u,
-            this._m_pVertexData[index].texCoords.v));
+        index = indexes[0];
+        this._vertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._vertexData[index].texCoords.u,
+            this._vertexData[index].texCoords.v));
+        index = indexes[1];
+        this._vertexData[index].vertices = this._vertexFromTexCoord(cc.ccp(this._vertexData[index].texCoords.u,
+            this._vertexData[index].texCoords.v));
 
-        if (this._m_pSprite.isFlipY() || this._m_pSprite.isFlipX()) {
-            if (this._m_pSprite.isFlipX()) {
-                index = vIndexes[0];
-                this._m_pVertexData[index].texCoords.u = tMin.x + tMax.x - this._m_pVertexData[index].texCoords.u;
-                index = vIndexes[1];
-                this._m_pVertexData[index].texCoords.u = tMin.x + tMax.x - this._m_pVertexData[index].texCoords.u;
+        if (this._sprite.isFlipY() || this._sprite.isFlipX()) {
+            if (this._sprite.isFlipX()) {
+                index = indexes[0];
+                this._vertexData[index].texCoords.u = tMin.x + tMax.x - this._vertexData[index].texCoords.u;
+                index = indexes[1];
+                this._vertexData[index].texCoords.u = tMin.x + tMax.x - this._vertexData[index].texCoords.u;
             }
 
-            if (this._m_pSprite.isFlipY()) {
-                index = vIndexes[0];
-                this._m_pVertexData[index].texCoords.v = tMin.y + tMax.y - this._m_pVertexData[index].texCoords.v;
-                index = vIndexes[1];
-                this._m_pVertexData[index].texCoords.v = tMin.y + tMax.y - this._m_pVertexData[index].texCoords.v;
+            if (this._sprite.isFlipY()) {
+                index = indexes[0];
+                this._vertexData[index].texCoords.v = tMin.y + tMax.y - this._vertexData[index].texCoords.v;
+                index = indexes[1];
+                this._vertexData[index].texCoords.v = tMin.y + tMax.y - this._vertexData[index].texCoords.v;
             }
         }
 
     },
     _updateRadial:function () {
         //	Texture Max is the actual max coordinates to deal with non-power of 2 textures
-        var fXMax = Math.max(this._m_pSprite.getQuad().br.texCoords.u, this._m_pSprite.getQuad().bl.texCoords.u);
-        var fXMin = Math.min(this._m_pSprite.getQuad().br.texCoords.u, this._m_pSprite.getQuad().bl.texCoords.u);
-        var fYMax = Math.max(this._m_pSprite.getQuad().tl.texCoords.v, this._m_pSprite.getQuad().bl.texCoords.v);
-        var fYMin = Math.min(this._m_pSprite.getQuad().tl.texCoords.v, this._m_pSprite.getQuad().bl.texCoords.v);
-        var tMax = cc.ccp(fXMax, fYMax);
-        var tMin = cc.ccp(fXMin, fYMin);
+        var xMax = Math.max(this._sprite.getQuad().br.texCoords.u, this._sprite.getQuad().bl.texCoords.u);
+        var xMin = Math.min(this._sprite.getQuad().br.texCoords.u, this._sprite.getQuad().bl.texCoords.u);
+        var yMax = Math.max(this._sprite.getQuad().tl.texCoords.v, this._sprite.getQuad().bl.texCoords.v);
+        var yMin = Math.min(this._sprite.getQuad().tl.texCoords.v, this._sprite.getQuad().bl.texCoords.v);
+        var max = cc.ccp(xMax, yMax);
+        var min = cc.ccp(xMin, yMin);
 
         //	Grab the midpoint
-        var midpoint = cc.ccpAdd(tMin, cc.ccpCompMult(this._m_tAnchorPoint, cc.ccpSub(tMax, tMin)));  //??? m_tAnchorPoint
+        var midpoint = cc.ccpAdd(min, cc.ccpCompMult(this._anchorPoint, cc.ccpSub(max, min)));  //??? anchorPoint
 
-        var alpha = this._m_fPercentage / 100;
+        var alpha = this._percentage / 100;
 
         //	Otherwise we can get the angle from the alpha
-        var angle = 2.0 * (Math.PI) * (this._m_eType == cc.kCCProgressTimerTypeRadialCW ? alpha : 1.0 - alpha);
+        var angle = 2.0 * (Math.PI) * (this._type == cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW ? alpha : 1.0 - alpha);
 
         //	We find the vector to do a hit detection based on the percentage
         //	We know the first vector is the one @ 12 o'clock (top,mid) so we rotate
         //	from that by the progress angle around the midpoint pivot
-        var topMid = cc.ccp(midpoint.x, tMin.y);
+        var topMid = cc.ccp(midpoint.x, min.y);
         var percentagePt = cc.ccpRotateByAngle(topMid, midpoint, angle);
 
         var index = 0;
@@ -412,11 +412,11 @@ cc.ProgressTimer = cc.Node.extend({
 
             var min_t = Infinity;
 
-            for (var i = 0; i <= cc.kProgressTextureCoordsCount; ++i) {
-                var pIndex = (i + (cc.kProgressTextureCoordsCount - 1)) % cc.kProgressTextureCoordsCount;
+            for (var i = 0; i <= cc.PROGRESS_TEXTURE_COORDS_COUNT; ++i) {
+                var pIndex = (i + (cc.PROGRESS_TEXTURE_COORDS_COUNT - 1)) % cc.PROGRESS_TEXTURE_COORDS_COUNT;
 
-                var edgePtA = cc.ccpAdd(tMin, cc.ccpCompMult(this._boundaryTexCoord(i % cc.kProgressTextureCoordsCount), cc.ccpSub(tMax, tMin)));
-                var edgePtB = cc.ccpAdd(tMin, cc.ccpCompMult(this._boundaryTexCoord(pIndex), cc.ccpSub(tMax, tMin)));
+                var edgePtA = cc.ccpAdd(min, cc.ccpCompMult(this._boundaryTexCoord(i % cc.PROGRESS_TEXTURE_COORDS_COUNT), cc.ccpSub(max, min)));
+                var edgePtB = cc.ccpAdd(min, cc.ccpCompMult(this._boundaryTexCoord(pIndex), cc.ccpSub(max, min)));
 
                 //	Remember that the top edge is split in half for the 12 o'clock position
                 //	Let's deal with that here by finding the correct endpoints
@@ -461,21 +461,21 @@ cc.ProgressTimer = cc.Node.extend({
         //	the 3 is for the midpoint, 12 o'clock point and hitpoint position.
 
         var sameIndexCount = true;
-        if (this._m_nVertexDataCount != index + 3) {
+        if (this._vertexDataCount != index + 3) {
             sameIndexCount = false;
-            if (this._m_pVertexData) {
-                this._m_pVertexData = null;
-                this._m_nVertexDataCount = 0;
+            if (this._vertexData) {
+                this._vertexData = null;
+                this._vertexDataCount = 0;
             }
         }
 
-        if (!this._m_pVertexData) {
-            this._m_nVertexDataCount = index + 3;
-            this._m_pVertexData = [];
-            for (var i = 0; i < this._m_nVertexDataCount; i++) {
-                this._m_pVertexData[i] = cc.V2F_C4B_T2F_QuadZero();
+        if (!this._vertexData) {
+            this._vertexDataCount = index + 3;
+            this._vertexData = [];
+            for (var i = 0; i < this._vertexDataCount; i++) {
+                this._vertexData[i] = cc.V2F_C4B_T2F_QuadZero();
             }
-            cc.Assert(this._m_pVertexData, "");
+            cc.Assert(this._vertexData, "");
 
             this._updateColor();
         }
@@ -483,104 +483,104 @@ cc.ProgressTimer = cc.Node.extend({
         if (!sameIndexCount) {
             //	First we populate the array with the midpoint, then all
             //	vertices/texcoords/colors of the 12 'o clock start and edges and the hitpoint
-            this._m_pVertexData[0].texCoords = cc.tex2(midpoint.x, midpoint.y);
-            this._m_pVertexData[0].vertices = this._vertexFromTexCoord(midpoint);
+            this._vertexData[0].texCoords = cc.tex2(midpoint.x, midpoint.y);
+            this._vertexData[0].vertices = this._vertexFromTexCoord(midpoint);
 
-            this._m_pVertexData[1].texCoords = cc.tex2(midpoint.x, tMin.y);
-            this._m_pVertexData[1].vertices = this._vertexFromTexCoord(cc.ccp(midpoint.x, tMin.y));
+            this._vertexData[1].texCoords = cc.tex2(midpoint.x, min.y);
+            this._vertexData[1].vertices = this._vertexFromTexCoord(cc.ccp(midpoint.x, min.y));
 
             for (var i = 0; i < index; ++i) {
-                var texCoords = cc.ccpAdd(tMin, cc.ccpCompMult(this._boundaryTexCoord(i), cc.ccpSub(tMax, tMin)));
+                var texCoords = cc.ccpAdd(min, cc.ccpCompMult(this._boundaryTexCoord(i), cc.ccpSub(max, min)));
 
-                this._m_pVertexData[i + 2].texCoords = cc.tex2(texCoords.x, texCoords.y);
-                this._m_pVertexData[i + 2].vertices = this._vertexFromTexCoord(texCoords);
+                this._vertexData[i + 2].texCoords = cc.tex2(texCoords.x, texCoords.y);
+                this._vertexData[i + 2].vertices = this._vertexFromTexCoord(texCoords);
             }
 
             //	Flip the texture coordinates if set
-            if (this._m_pSprite.isFlipX() || this._m_pSprite.isFlipY()) {
-                for (var i = 0; i < this._m_nVertexDataCount - 1; ++i) {
-                    if (this._m_pSprite.isFlipX()) {
-                        this._m_pVertexData[i].texCoords.u = tMin.x + tMax.x - this._m_pVertexData[i].texCoords.u;
+            if (this._sprite.isFlipX() || this._sprite.isFlipY()) {
+                for (var i = 0; i < this._vertexDataCount - 1; ++i) {
+                    if (this._sprite.isFlipX()) {
+                        this._vertexData[i].texCoords.u = min.x + max.x - this._vertexData[i].texCoords.u;
                     }
 
-                    if (this._m_pSprite.isFlipY()) {
-                        this._m_pVertexData[i].texCoords.v = tMin.y + tMax.y - this._m_pVertexData[i].texCoords.v;
+                    if (this._sprite.isFlipY()) {
+                        this._vertexData[i].texCoords.v = min.y + max.y - this._vertexData[i].texCoords.v;
                     }
                 }
             }
         }
 
         //	hitpoint will go last
-        this._m_pVertexData[this._m_nVertexDataCount - 1].texCoords = cc.tex2(hit.x, hit.y);
-        this._m_pVertexData[this._m_nVertexDataCount - 1].vertices = this._vertexFromTexCoord(hit);
+        this._vertexData[this._vertexDataCount - 1].texCoords = cc.tex2(hit.x, hit.y);
+        this._vertexData[this._vertexDataCount - 1].vertices = this._vertexFromTexCoord(hit);
 
-        if (this._m_pSprite.isFlipX() || this._m_pSprite.isFlipY()) {
-            if (this._m_pSprite.isFlipX()) {
-                this._m_pVertexData[this._m_nVertexDataCount - 1].texCoords.u = tMin.x + tMax.x - this._m_pVertexData[this._m_nVertexDataCount - 1].texCoords.u;
+        if (this._sprite.isFlipX() || this._sprite.isFlipY()) {
+            if (this._sprite.isFlipX()) {
+                this._vertexData[this._vertexDataCount - 1].texCoords.u = min.x + max.x - this._vertexData[this._vertexDataCount - 1].texCoords.u;
             }
 
-            if (this._m_pSprite.isFlipY()) {
-                this._m_pVertexData[this._m_nVertexDataCount - 1].texCoords.v = tMin.y + tMax.y - this._m_pVertexData[this._m_nVertexDataCount - 1].texCoords.v;
+            if (this._sprite.isFlipY()) {
+                this._vertexData[this._vertexDataCount - 1].texCoords.v = min.y + max.y - this._vertexData[this._vertexDataCount - 1].texCoords.v;
             }
         }
 
     },
     _updateColor:function () {
-        var op = this._m_pSprite.getOpacity();
-        var c3b = this._m_pSprite.getColor();
+        var op = this._sprite.getOpacity();
+        var c3b = this._sprite.getColor();
 
         var color = new cc.Color4B(c3b.r, c3b.g, c3b.b, op);
-        if ((this._m_pSprite.getTexture() instanceof HTMLImageElement) || (this._m_pSprite.getTexture() instanceof HTMLCanvasElement)) {
+        if ((this._sprite.getTexture() instanceof HTMLImageElement) || (this._sprite.getTexture() instanceof HTMLCanvasElement)) {
             color.r *= op / 255;
             color.g *= op / 255;
             color.b *= op / 255;
         } else {
-            if (this._m_pSprite.getTexture().getHasPremultipliedAlpha()) {
+            if (this._sprite.getTexture().getHasPremultipliedAlpha()) {
                 color.r *= op / 255;
                 color.g *= op / 255;
                 color.b *= op / 255;
             }
         }
 
-        if (this._m_pVertexData) {
-            for (var i = 0; i < this._m_nVertexDataCount; ++i) {
-                this._m_pVertexData[i].colors = color;
+        if (this._vertexData) {
+            for (var i = 0; i < this._vertexDataCount; ++i) {
+                this._vertexData[i].colors = color;
             }
         }
 
     },
     _boundaryTexCoord:function (index) {
-        if (index < cc.kProgressTextureCoordsCount) {
-            switch (this._m_eType) {
-                case cc.kCCProgressTimerTypeRadialCW:
-                    return cc.ccp(((cc.kProgressTextureCoords >> ((index << 1) + 1)) & 1), ((cc.kProgressTextureCoords >> (index << 1)) & 1));
-                case cc.kCCProgressTimerTypeRadialCCW:
-                    return cc.ccp(((cc.kProgressTextureCoords >> (7 - (index << 1))) & 1), ((cc.kProgressTextureCoords >> (7 - ((index << 1) + 1))) & 1));
+        if (index < cc.PROGRESS_TEXTURE_COORDS_COUNT) {
+            switch (this._type) {
+                case cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW:
+                    return cc.ccp(((cc.PROGRESS_TEXTURE_COORDS >> ((index << 1) + 1)) & 1), ((cc.PROGRESS_TEXTURE_COORDS >> (index << 1)) & 1));
+                case cc.CCPROGRESS_TIMER_RADIAL_CCW:
+                    return cc.ccp(((cc.PROGRESS_TEXTURE_COORDS >> (7 - (index << 1))) & 1), ((cc.PROGRESS_TEXTURE_COORDS >> (7 - ((index << 1) + 1))) & 1));
                 default:
                     break;
             }
         }
         return cc.PointZero();
     },
-    _m_eType:null,
-    _m_fPercentage:0.0,
-    _m_pSprite:null,
-    _m_nVertexDataCount:0,
-    _m_pVertexData:null
+    _type:null,
+    _percentage:0.0,
+    _sprite:null,
+    _vertexDataCount:0,
+    _vertexData:null
 });
 
-cc.ProgressTimer.progressWithFile = function (pszFileName) {
-    var pProgressTimer = new cc.ProgressTimer();
-    if (pProgressTimer.initWithFile(pszFileName)) {
-        return pProgressTimer;
+cc.ProgressTimer.progressWithFile = function (fileName) {
+    var progressTimer = new cc.ProgressTimer();
+    if (progressTimer.initWithFile(fileName)) {
+        return progressTimer;
     } else {
         return null;
     }
 };
-cc.ProgressTimer.progressWithTexture = function (pTexture) {
-    var pProgressTimer = new cc.ProgressTimer();
-    if (pProgressTimer.initWithTexture(pTexture)) {
-        return pProgressTimer;
+cc.ProgressTimer.progressWithTexture = function (texture) {
+    var progressTimer = new cc.ProgressTimer();
+    if (progressTimer.initWithTexture(texture)) {
+        return progressTimer;
     } else {
         return null;
     }

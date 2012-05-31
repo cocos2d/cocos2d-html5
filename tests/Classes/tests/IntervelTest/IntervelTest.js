@@ -29,20 +29,20 @@
 
 IntervalLayer = cc.Layer.extend({
 
-    m_label0:null,
-    m_label1:null,
-    m_label2:null,
-    m_label3:null,
-    m_label4:null,
+    label0:null,
+    label1:null,
+    label2:null,
+    label3:null,
+    label4:null,
 
-    m_time0:null,
-    m_time1:null,
-    m_time2:null,
-    m_time3:null,
-    m_time4:null,
+    time0:null,
+    time1:null,
+    time2:null,
+    time3:null,
+    time4:null,
 
     ctor:function () {
-        this.m_time0 = this.m_time1 = this.m_time2 = this.m_time3 = this.m_time4 = 0.0;
+        this.time0 = this.time1 = this.time2 = this.time3 = this.time4 = 0.0;
 
         var s = cc.Director.sharedDirector().getWinSize();
         // sun
@@ -55,11 +55,11 @@ IntervalLayer = cc.Layer.extend({
         this.addChild(sun);
 
         // timers
-        this.m_label0 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.m_label1 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.m_label2 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.m_label3 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.m_label4 = cc.LabelTTF.labelWithString("0", "Arial", 24);
+        this.label0 = cc.LabelTTF.labelWithString("0", "Arial", 24);
+        this.label1 = cc.LabelTTF.labelWithString("0", "Arial", 24);
+        this.label2 = cc.LabelTTF.labelWithString("0", "Arial", 24);
+        this.label3 = cc.LabelTTF.labelWithString("0", "Arial", 24);
+        this.label4 = cc.LabelTTF.labelWithString("0", "Arial", 24);
 
         this.scheduleUpdate();
         this.schedule(this.step1);
@@ -67,20 +67,20 @@ IntervalLayer = cc.Layer.extend({
         this.schedule(this.step3, 1.0);
         this.schedule(this.step4, 2.0);
 
-        this.m_label0.setPosition(cc.PointMake(s.width * 1 / 6, s.height / 2));
-        this.m_label1.setPosition(cc.PointMake(s.width * 2 / 6, s.height / 2));
-        this.m_label2.setPosition(cc.PointMake(s.width * 3 / 6, s.height / 2));
-        this.m_label3.setPosition(cc.PointMake(s.width * 4 / 6, s.height / 2));
-        this.m_label4.setPosition(cc.PointMake(s.width * 5 / 6, s.height / 2));
+        this.label0.setPosition(cc.PointMake(s.width * 1 / 6, s.height / 2));
+        this.label1.setPosition(cc.PointMake(s.width * 2 / 6, s.height / 2));
+        this.label2.setPosition(cc.PointMake(s.width * 3 / 6, s.height / 2));
+        this.label3.setPosition(cc.PointMake(s.width * 4 / 6, s.height / 2));
+        this.label4.setPosition(cc.PointMake(s.width * 5 / 6, s.height / 2));
 
-        this.addChild(this.m_label0);
-        this.addChild(this.m_label1);
-        this.addChild(this.m_label2);
-        this.addChild(this.m_label3);
-        this.addChild(this.m_label4);
+        this.addChild(this.label0);
+        this.addChild(this.label1);
+        this.addChild(this.label2);
+        this.addChild(this.label3);
+        this.addChild(this.label4);
 
         // Sprite
-        var sprite = cc.Sprite.spriteWithFile(s_pPathGrossini);
+        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
         sprite.setPosition(cc.PointMake(40, 50));
 
         var jump = cc.JumpBy.actionWithDuration(3, cc.PointMake(s.width - 80, 0), 50, 4);
@@ -97,7 +97,7 @@ IntervalLayer = cc.Layer.extend({
 
     },
 
-    onPause:function (pSender) {
+    onPause:function (sender) {
         if (cc.Director.sharedDirector().isPaused()) {
             cc.Director.sharedDirector().resume();
         } else {
@@ -113,25 +113,25 @@ IntervalLayer = cc.Layer.extend({
     },
 
     step1:function (dt) {
-        this.m_time1 += dt;
-        this.m_label1.setString(this.m_time1.toFixed(1));
+        this.time1 += dt;
+        this.label1.setString(this.time1.toFixed(1));
     },
     step2:function (dt) {
-        this.m_time2 += dt;
-        this.m_label2.setString(this.m_time2.toFixed(1));
+        this.time2 += dt;
+        this.label2.setString(this.time2.toFixed(1));
     },
     step3:function (dt) {
-        this.m_time3 += dt;
-        this.m_label3.setString(this.m_time3.toFixed(1));
+        this.time3 += dt;
+        this.label3.setString(this.time3.toFixed(1));
     },
     step4:function (dt) {
-        this.m_time4 += dt;
-        this.m_label4.setString(this.m_time4.toFixed(1));
+        this.time4 += dt;
+        this.label4.setString(this.time4.toFixed(1));
     },
     update:function (dt) {
-        this.m_time0 += dt;
+        this.time0 += dt;
 
-        this.m_label0.setString(this.m_time0.toFixed(1));
+        this.label0.setString(this.time0.toFixed(1));
     }
 
     //CREATE_NODE(IntervalLayer);
@@ -140,8 +140,8 @@ IntervalLayer = cc.Layer.extend({
 IntervalTestScene = TestScene.extend({
 
     runThisTest:function () {
-        var pLayer = new IntervalLayer();
-        this.addChild(pLayer);
+        var layer = new IntervalLayer();
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
     }
 });

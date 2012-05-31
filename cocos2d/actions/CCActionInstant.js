@@ -39,7 +39,6 @@ cc.ActionInstant = cc.FiniteTimeAction.extend({
         return true;
     },
     step:function (dt) {
-        cc.UNUSED_PARAM(dt);
         this.update(1);
     },
     update:function (time) {
@@ -50,9 +49,9 @@ cc.ActionInstant = cc.FiniteTimeAction.extend({
 /** @brief Show the node
  */
 cc.Show = cc.ActionInstant.extend({
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        pTarget.setIsVisible(true);
+    startWithTarget:function (target) {
+        this._super(target);
+        target.setIsVisible(true);
     },
     reverse:function () {
         return cc.Hide.action.call(this);
@@ -66,9 +65,9 @@ cc.Show.action = function () {
  @brief Hide the node
  */
 cc.Hide = cc.ActionInstant.extend({
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        pTarget.setIsVisible(false);
+    startWithTarget:function (target) {
+        this._super(target);
+        target.setIsVisible(false);
     },
     reverse:function () {
         return cc.Show.action.call(this);
@@ -82,9 +81,9 @@ cc.Hide.action = function () {
 /** @brief Toggles the visibility of a node
  */
 cc.ToggleVisibility = cc.ActionInstant.extend({
-    startWithTarget:function (pTarget) {
+    startWithTarget:function (target) {
         this._super();
-        pTarget.setIsVisible(!pTarget.getIsVisible());
+        target.setIsVisible(!target.getIsVisible());
     },
     reverse:function () {
         return new cc.ToggleVisibility();
@@ -100,22 +99,22 @@ cc.ActionInstant.action = function () {
  */
 cc.FlipX = cc.ActionInstant.extend({
     initWithFlipX:function (x) {
-        this._m_bFlipX = x;
+        this._flipX = x;
         return true;
     },
-    startWithTarget:function (pTarget) {
+    startWithTarget:function (target) {
         this._super();
-        pTarget.setFlipX(this._m_bFlipX);
+        target.setFlipX(this._flipX);
     },
     reverse:function () {
-        return this.actionWithFlipX(!this._m_bFlipX);
+        return this.actionWithFlipX(!this._flipX);
     },
-    _m_bFlipX:false
+    _flipX:false
 });
 cc.FlipX.actionWithFlipX = function (x) {
-    var pRet = new cc.FlipX();
-    if (pRet.initWithFlipX(x))
-        return pRet;
+    var ret = new cc.FlipX();
+    if (ret.initWithFlipX(x))
+        return ret;
 };
 
 /**
@@ -124,22 +123,22 @@ cc.FlipX.actionWithFlipX = function (x) {
  */
 cc.FlipY = cc.ActionInstant.extend({
     initWithFlipY:function (Y) {
-        this._m_bFlipY = Y;
+        this._flipY = Y;
         return true;
     },
-    startWithTarget:function (pTarget) {
+    startWithTarget:function (target) {
         this._super();
-        pTarget.setFlipY(this._m_bFlipY);
+        target.setFlipY(this._flipY);
     },
     reverse:function () {
-        return this.actionWithFlipY(!this._m_bFlipY);
+        return this.actionWithFlipY(!this._flipY);
     },
-    _m_bFlipY:false
+    _flipY:false
 });
 cc.FlipY.actionWithFlipY = function (y) {
-    var pRet = new cc.FlipY();
-    if (pRet.initWithFlipY(y))
-        return pRet;
+    var ret = new cc.FlipY();
+    if (ret.initWithFlipY(y))
+        return ret;
 };
 
 
@@ -148,12 +147,12 @@ cc.FlipY.actionWithFlipY = function (y) {
 cc.Place = cc.ActionInstant.extend({
     /** Initializes a Place action with a position */
     initWithPosition:function (pos) {
-        this._m_tPosition = pos;
+        this._position = pos;
         return true;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_pTarget.setPosition(this._m_tPosition);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._target.setPosition(this._position);
     }
 });
 /** creates a Place action with a position */
@@ -167,45 +166,45 @@ cc.Place.actionWithPosition = function (pos) {
 /** @brief Calls a 'callback'
  */
 cc.CallFunc = cc.ActionInstant.extend({
-    initWithTarget:function (pSelectorTarget, selector, d) {
-        this._m_pData = d || null;
-        this._m_pCallFunc = selector || null;
-        this._m_pSelectorTarget = pSelectorTarget || null;
+    initWithTarget:function (selectorTarget, selector, d) {
+        this._data = d || null;
+        this._callFunc = selector || null;
+        this._selectorTarget = selectorTarget || null;
         return true;
     },
     execute:function () {
-        if (this._m_pCallFunc != null)//CallFunc, N, ND
+        if (this._callFunc != null)//CallFunc, N, ND
         {
-            this._m_pCallFunc.call(this._m_pSelectorTarget, this._m_pTarget, this._m_pData);
+            this._callFunc.call(this._selectorTarget, this._target, this._data);
         }
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
         this.execute();
     },
     getTargetCallback:function () {
-        return this._m_pSelectorTarget;
+        return this._selectorTarget;
     },
     setTargetCallback:function (pSel) {
-        if (pSel != this._m_pSelectorTarget) {
-            if (this._m_pSelectorTarget) {
-                this._m_pSelectorTarget = null;
+        if (pSel != this._selectorTarget) {
+            if (this._selectorTarget) {
+                this._selectorTarget = null;
             }
-            this._m_pSelectorTarget = pSel;
+            this._selectorTarget = pSel;
         }
     },
-    _m_pSelectorTarget:null,
-    _m_pCallFunc:null
+    _selectorTarget:null,
+    _callFunc:null
 });
 /** creates the action with the callback
 
  typedef void (CCObject::*SEL_CallFunc)();
  */
-cc.CallFunc.actionWithTarget = function (pSelectorTarget, selector, d) {
-    var pRet = new cc.CallFunc();
-    if (pRet && pRet.initWithTarget(pSelectorTarget, selector, d)) {
-        pRet._m_pCallFunc = selector;
-        return pRet;
+cc.CallFunc.actionWithTarget = function (selectorTarget, selector, d) {
+    var ret = new cc.CallFunc();
+    if (ret && ret.initWithTarget(selectorTarget, selector, d)) {
+        ret._callFunc = selector;
+        return ret;
     }
     return null;
 };

@@ -30,25 +30,25 @@ var cc = cc = cc || {};
 
 /** @brief object to hold ribbon segment data */
 cc.RibbonSegment = cc.Class.extend({
-    m_pVerts:[],
-    m_pCoords:[],
-    m_pColors:[],
-    m_pCreationTime:[],
-    m_bFinished:false,
-    m_uEnd:0,
-    m_uBegin:0,
+    verts:[],
+    coords:[],
+    colors:[],
+    creationTime:[],
+    finished:false,
+    end:0,
+    begin:0,
 
     description:function () {
-        return "<cc.RibbonSegment | end = " + this.m_uEnd + ", begin = " + this.m_uBegin + ">";
+        return "<cc.RibbonSegment | end = " + this.end + ", begin = " + this.begin + ">";
     },
     init:function () {
         this.reset();
         return true;
     },
     reset:function () {
-        this.m_uEnd = 0;
-        this.m_uBegin = 0;
-        this.m_bFinished = false;
+        this.end = 0;
+        this.begin = 0;
+        this.finished = false;
     },
     draw:function (curTime, fadeTime, color) {
         var r = color.r;
@@ -57,7 +57,7 @@ cc.RibbonSegment = cc.Class.extend({
         var a = color.a;
 
         //TODO
-        if (this.m_uBegin < 50) {
+        if (this.begin < 50) {
             // the motion streak class will call update and cause time to change, thus, if curTime_ != 0
             // we have to generate alpha for the ribbon each frame.
             if (curTime == 0) {
@@ -68,32 +68,32 @@ cc.RibbonSegment = cc.Class.extend({
             } else {
                 // generate alpha/color for each point
                 glEnableClientState(GL_COLOR_ARRAY);
-                var i = this.m_uBegin;
-                for (; i < this.m_uEnd; ++i) {
+                var i = this.begin;
+                for (; i < this.end; ++i) {
                     var idx = i * 8;
-                    this.m_pColors[idx] = r;
-                    this.m_pColors[idx + 1] = g;
-                    this.m_pColors[idx + 2] = b;
-                    this.m_pColors[idx + 4] = r;
-                    this.m_pColors[idx + 5] = g;
-                    this.m_pColors[idx + 6] = b;
-                    var alive = ((curTime - this.m_pCreationTime[i]) / fadeTime);
+                    this.colors[idx] = r;
+                    this.colors[idx + 1] = g;
+                    this.colors[idx + 2] = b;
+                    this.colors[idx + 4] = r;
+                    this.colors[idx + 5] = g;
+                    this.colors[idx + 6] = b;
+                    var alive = ((curTime - this.creationTime[i]) / fadeTime);
                     if (alive > 1) {
-                        this.m_uBegin++;
-                        this.m_pColors[idx + 3] = 0;
-                        this.m_pColors[idx + 7] = 0;
+                        this.begin++;
+                        this.colors[idx + 3] = 0;
+                        this.colors[idx + 7] = 0;
                     } else {
-                        this.m_pColors[idx + 3] = 255 - (alive * 255);
-                        this.m_pColors[idx + 7] = this.m_pColors[idx + 3];
+                        this.colors[idx + 3] = 255 - (alive * 255);
+                        this.colors[idx + 7] = this.colors[idx + 3];
                     }
                 }
-                glColorPointer(4, GL_UNSIGNED_BYTE, 0, this.m_pColors[this.m_uBegin * 8]);
+                glColorPointer(4, GL_UNSIGNED_BYTE, 0, this.colors[this.begin * 8]);
             }
-            glVertexPointer(3, GL_FLOAT, 0, this.m_pVerts[this.m_uBegin * 6]);
-            glTexCoordPointer(2, GL_FLOAT, 0, this.m_pCoords[this.m_uBegin * 4]);
-            glDrawArrays(GL_TRIANGLE_STRIP, 0, (this.m_uEnd - this.m_uBegin) * 2);
+            glVertexPointer(3, GL_FLOAT, 0, this.verts[this.begin * 6]);
+            glTexCoordPointer(2, GL_FLOAT, 0, this.coords[this.begin * 4]);
+            glDrawArrays(GL_TRIANGLE_STRIP, 0, (this.end - this.begin) * 2);
         } else {
-            this.m_bFinished = true;
+            this.finished = true;
         }
     }
 });
@@ -115,18 +115,18 @@ cc.RibbonSegment = cc.Class.extend({
  */
 
 cc.Ribbon = cc.Node.extend({
-    _m_pSegments:null,
-    _m_pDeletedSegments:null,
-    _m_tLastPoint1:cc.PointZero(),
-    _m_tLastPoint2:cc.PointZero(),
-    _m_tLastLocation:null,
-    _m_fTexVPos:0,
-    _m_fCurTime:0,
-    _m_fFadeTime:0,
-    _m_fDelta:0,
-    _m_fLastWidth:0,
-    _m_fLastSign:0,
-    _m_bPastFirstPoint:false,
+    _segments:null,
+    _deletedSegments:null,
+    _lastPoint1:cc.PointZero(),
+    _lastPoint2:cc.PointZero(),
+    _lastLocation:null,
+    _texVPos:0,
+    _curTime:0,
+    _fadeTime:0,
+    _delta:0,
+    _lastWidth:0,
+    _lastSign:0,
+    _pastFirstPoint:false,
 
     /** rotates a point around 0, 0 */
     _rotatePoint:function (vec, rotation) {
@@ -137,43 +137,43 @@ cc.Ribbon = cc.Node.extend({
     },
 
     /** Texture used by the ribbon. Conforms to CCTextureProtocol protocol */
-    _m_pTexture:null,
+    _texture:null,
     getTexture:function () {
-        return this._m_pTexture;
+        return this._texture;
     },
     setTexture:function (texture) {
-        this._m_pTexture = texture;
-        if (cc.renderContextType == cc.kCanvas) {
+        this._texture = texture;
+        if (cc.renderContextType == cc.CANVAS) {
         } else {
-            this.setContentSize(this._m_pTexture.getContentSizeInPixels());
+            this.setContentSize(this._texture.getContentSizeInPixels());
         }
     },
 
     /** Texture lengths in pixels */
-    _m_fTextureLength:0,
+    _textureLength:0,
     getTextureLength:function () {
-        return this._m_fTextureLength;
+        return this._textureLength;
     },
     setTextureLength:function (length) {
-        this._m_fTextureLength = length;
+        this._textureLength = length;
     },
 
     /** GL blendind function */
-    _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
     getBlendFunc:function () {
-        return this._m_tBlendFunc;
+        return this._blendFunc;
     },
     setBlendFunc:function (blendFunc) {
-        this._m_tBlendFunc = blendFunc;
+        this._blendFunc = blendFunc;
     },
 
     /** color used by the Ribbon (RGBA) */
-    _m_tColor:null,
+    _color:null,
     getColor:function () {
-        return this._m_tColor;
+        return this._color;
     },
     setColor:function (color) {
-        this._m_tColor = color;
+        this._color = color;
     },
 
     ctor:function () {
@@ -182,24 +182,24 @@ cc.Ribbon = cc.Node.extend({
 
     /** init the ribbon */
     initWithWidth:function (width, path, length, color, fade) {
-        this._m_pSegments = [];
-        this._m_pDeletedSegments = [];
+        this._segments = [];
+        this._deletedSegments = [];
 
         /* 1 initial segment */
         var seg = new cc.RibbonSegment();
         seg.init();
-        this._m_pSegments.push(seg);
+        this._segments.push(seg);
 
-        this._m_fTextureLength = length;
+        this._textureLength = length;
 
-        this._m_tColor = color;
-        this._m_fFadeTime = fade;
-        this._m_tLastLocation = cc.PointZero();
-        this._m_fLastWidth = w / 2;
-        this._m_fTexVPos = 0.0;
+        this._color = color;
+        this._fadeTime = fade;
+        this._lastLocation = cc.PointZero();
+        this._lastWidth = w / 2;
+        this._texVPos = 0.0;
 
-        this._m_fCurTime = 0;
-        this._m_bPastFirstPoint = false;
+        this._curTime = 0;
+        this._pastFirstPoint = false;
 
         /* XXX:
          Ribbon, by default uses this blend function, which might not be correct
@@ -207,14 +207,14 @@ cc.Ribbon = cc.Node.extend({
          but 99% you might want to use this blending function regarding of the texture
          */
         //TODO
-        //m_tBlendFunc.src = GL_SRC_ALPHA;
-        //m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+        //blendFunc.src = GL_SRC_ALPHA;
+        //blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
 
-        this._m_pTexture = cc.TextureCache.sharedTextureCache().addImage(path);
+        this._texture = cc.TextureCache.sharedTextureCache().addImage(path);
 
         /* default texture parameter */
         //var params = { GL_LINEAR, GL_LINEAR, GL_REPEAT, GL_REPEAT };
-        //m_pTexture.setTexParameters(&params);
+        //texture.setTexParameters(&params);
         return true;
     },
 
@@ -225,114 +225,114 @@ cc.Ribbon = cc.Node.extend({
 
         width = width * 0.5;
         // if this is the first point added, cache it and return
-        if (!this._m_bPastFirstPoint) {
-            this._m_fLastWidth = width;
-            this._m_tLastLocation = location;
-            this._m_bPastFirstPoint = true;
+        if (!this._pastFirstPoint) {
+            this._lastWidth = width;
+            this._lastLocation = location;
+            this._pastFirstPoint = true;
             return;
         }
 
-        var sub = cc.ccpSub(this._m_tLastLocation, location);
+        var sub = cc.ccpSub(this._lastLocation, location);
         var r = cc.ccpToAngle(sub) + Math.PI / 2;
         var p1 = cc.ccpAdd(this._rotatePoint(cc.ccp(-width, 0), r), location);
         var p2 = cc.ccpAdd(this._rotatePoint(cc.ccp(+width, 0), r), location);
-        var len = Math.sqrt(Math.pow(this._m_tLastLocation.x - location.x, 2) + Math.pow(this._m_tLastLocation.y - location.y, 2));
-        var tend = this._m_fTexVPos + len / this._m_fTextureLength;
+        var len = Math.sqrt(Math.pow(this._lastLocation.x - location.x, 2) + Math.pow(this._lastLocation.y - location.y, 2));
+        var tend = this._texVPos + len / this._textureLength;
         // grab last segment
-        var seg = this._m_pSegments.length > 0 ? this._m_pSegments[this._m_pSegments.length - 1] : null;
+        var seg = this._segments.length > 0 ? this._segments[this._segments.length - 1] : null;
         // lets kill old segments
-        if (this._m_pSegments && this._m_pSegments.length > 0) {
-            for (var i = 0; i < this._m_pSegments.length; i++) {
-                if (this._m_pSegments[i] != seg && this._m_pSegments[i].m_bFinished) {
-                    this._m_pDeletedSegments.push(this._m_pSegments[i]);
+        if (this._segments && this._segments.length > 0) {
+            for (var i = 0; i < this._segments.length; i++) {
+                if (this._segments[i] != seg && this._segments[i].finished) {
+                    this._deletedSegments.push(this._segments[i]);
                 }
             }
         }
 
-        cc.ArrayRemoveArray(this._m_pSegments, this._m_pDeletedSegments);
+        cc.ArrayRemoveArray(this._segments, this._deletedSegments);
         // is the segment full?
-        if (seg.m_uEnd >= 50) {
-            cc.ArrayRemoveArray(this._m_pSegments, this._m_pDeletedSegments);
+        if (seg.end >= 50) {
+            cc.ArrayRemoveArray(this._segments, this._deletedSegments);
         }
         // grab last segment and append to it if it's not full
-        seg = this._m_pSegments.length > 0 ? this._m_pSegments[this._m_pSegments.length - 1] : null;
+        seg = this._segments.length > 0 ? this._segments[this._segments.length - 1] : null;
         // is the segment full?
-        if (seg.m_uEnd >= 50) {
+        if (seg.end >= 50) {
             var newSeg;
             // grab it from the cache if we can
-            if (this._m_pDeletedSegments.length > 0) {
-                newSeg = this._m_pDeletedSegments[0];						// will be released later
-                cc.ArrayRemoveObject(this._m_pDeletedSegments, newSeg);
+            if (this._deletedSegments.length > 0) {
+                newSeg = this._deletedSegments[0];						// will be released later
+                cc.ArrayRemoveObject(this._deletedSegments, newSeg);
             } else {
                 newSeg = new cc.RibbonSegment(); // will be released later
                 newSeg.init();
             }
 
-            newSeg.m_pCreationTime[0] = seg.m_pCreationTime[seg.m_uEnd - 1];
-            var v = (seg.m_uEnd - 1) * 6;
-            var c = (seg.m_uEnd - 1) * 4;
-            newSeg.m_pVerts[0] = seg.m_pVerts[v];
-            newSeg.m_pVerts[1] = seg.m_pVerts[v + 1];
-            newSeg.m_pVerts[2] = seg.m_pVerts[v + 2];
-            newSeg.m_pVerts[3] = seg.m_pVerts[v + 3];
-            newSeg.m_pVerts[4] = seg.m_pVerts[v + 4];
-            newSeg.m_pVerts[5] = seg.m_pVerts[v + 5];
+            newSeg.creationTime[0] = seg.creationTime[seg.end - 1];
+            var v = (seg.end - 1) * 6;
+            var c = (seg.end - 1) * 4;
+            newSeg.verts[0] = seg.verts[v];
+            newSeg.verts[1] = seg.verts[v + 1];
+            newSeg.verts[2] = seg.verts[v + 2];
+            newSeg.verts[3] = seg.verts[v + 3];
+            newSeg.verts[4] = seg.verts[v + 4];
+            newSeg.verts[5] = seg.verts[v + 5];
 
-            newSeg.m_pCoords[0] = seg.m_pCoords[c];
-            newSeg.m_pCoords[1] = seg.m_pCoords[c + 1];
-            newSeg.m_pCoords[2] = seg.m_pCoords[c + 2];
-            newSeg.m_pCoords[3] = seg.m_pCoords[c + 3];
-            newSeg.m_uEnd++;
+            newSeg.coords[0] = seg.coords[c];
+            newSeg.coords[1] = seg.coords[c + 1];
+            newSeg.coords[2] = seg.coords[c + 2];
+            newSeg.coords[3] = seg.coords[c + 3];
+            newSeg.end++;
             seg = newSeg;
-            this._m_pSegments.push(seg);
+            this._segments.push(seg);
         }
-        if (seg.m_uEnd == 0) {
+        if (seg.end == 0) {
             // first edge has to get rotation from the first real polygon
-            var lp1 = cc.ccpAdd(this._rotatePoint(cc.ccp(-m_fLastWidth, 0), r), m_tLastLocation);
-            var lp2 = cc.ccpAdd(this._rotatePoint(cc.ccp(+m_fLastWidth, 0), r), m_tLastLocation);
-            seg.m_pCreationTime[0] = this._m_fCurTime - this._m_fDelta;
-            seg.m_pVerts[0] = lp1.x;
-            seg.m_pVerts[1] = lp1.y;
-            seg.m_pVerts[2] = 0.0;
-            seg.m_pVerts[3] = lp2.x;
-            seg.m_pVerts[4] = lp2.y;
-            seg.m_pVerts[5] = 0.0;
-            seg.m_pCoords[0] = 0.0;
-            seg.m_pCoords[1] = this._m_fTexVPos;
-            seg.m_pCoords[2] = 1.0;
-            seg.m_pCoords[3] = this._m_fTexVPos;
-            seg.m_uEnd++;
+            var lp1 = cc.ccpAdd(this._rotatePoint(cc.ccp(-lastWidth, 0), r), lastLocation);
+            var lp2 = cc.ccpAdd(this._rotatePoint(cc.ccp(+lastWidth, 0), r), lastLocation);
+            seg.creationTime[0] = this._curTime - this._delta;
+            seg.verts[0] = lp1.x;
+            seg.verts[1] = lp1.y;
+            seg.verts[2] = 0.0;
+            seg.verts[3] = lp2.x;
+            seg.verts[4] = lp2.y;
+            seg.verts[5] = 0.0;
+            seg.coords[0] = 0.0;
+            seg.coords[1] = this._texVPos;
+            seg.coords[2] = 1.0;
+            seg.coords[3] = this._texVPos;
+            seg.end++;
         }
 
-        v = seg.m_uEnd * 6;
-        c = seg.m_uEnd * 4;
+        v = seg.end * 6;
+        c = seg.end * 4;
         // add new vertex
-        seg.m_pCreationTime[seg.m_uEnd] = this._m_fCurTime;
-        seg.m_pVerts[v] = p1.x;
-        seg.m_pVerts[v + 1] = p1.y;
-        seg.m_pVerts[v + 2] = 0.0;
-        seg.m_pVerts[v + 3] = p2.x;
-        seg.m_pVerts[v + 4] = p2.y;
-        seg.m_pVerts[v + 5] = 0.0;
+        seg.creationTime[seg.end] = this._curTime;
+        seg.verts[v] = p1.x;
+        seg.verts[v + 1] = p1.y;
+        seg.verts[v + 2] = 0.0;
+        seg.verts[v + 3] = p2.x;
+        seg.verts[v + 4] = p2.y;
+        seg.verts[v + 5] = 0.0;
 
 
-        seg.m_pCoords[c] = 0.0;
-        seg.m_pCoords[c + 1] = tend;
-        seg.m_pCoords[c + 2] = 1.0;
-        seg.m_pCoords[c + 3] = tend;
+        seg.coords[c] = 0.0;
+        seg.coords[c + 1] = tend;
+        seg.coords[c + 2] = 1.0;
+        seg.coords[c + 3] = tend;
 
-        this._m_fTexVPos = tend;
-        this._m_tLastLocation = location;
-        this._m_tLastPoint1 = p1;
-        this._m_tLastPoint2 = p2;
-        this._m_fLastWidth = width;
-        seg.m_uEnd++;
+        this._texVPos = tend;
+        this._lastLocation = location;
+        this._lastPoint1 = p1;
+        this._lastPoint2 = p2;
+        this._lastWidth = width;
+        seg.end++;
     },
 
     /** polling function */
     update:function (delta) {
-        this._m_fCurTime += delta;
-        this._m_fDelta = delta;
+        this._curTime += delta;
+        this._delta = delta;
     },
 
     /** determine side of line */
@@ -346,22 +346,22 @@ cc.Ribbon = cc.Node.extend({
         this._super();
 
         //TODO
-        if (this._m_pSegments.length > 0) {
+        if (this._segments.length > 0) {
             // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
             // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_TEXTURE_COORD_ARRAY
             // Unneeded states: GL_COLOR_ARRAY
             glDisableClientState(GL_COLOR_ARRAY);
 
-            glBindTexture(GL_TEXTURE_2D, this._m_pTexture.getName());
+            glBindTexture(GL_TEXTURE_2D, this._texture.getName());
 
-            var newBlend = ( this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST ) ? true : false;
+            var newBlend = ( this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST ) ? true : false;
             if (newBlend) {
-                glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
+                glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             }
 
-            if (this._m_pSegments && this._m_pSegments.length > 0) {
-                for (var i = 0; i < this._m_pSegments.length; i++) {
-                    this._m_pSegments[i].draw(this._m_fCurTime, this._m_fFadeTime, this._m_tColor);
+            if (this._segments && this._segments.length > 0) {
+                for (var i = 0; i < this._segments.length; i++) {
+                    this._segments[i].draw(this._curTime, this._fadeTime, this._color);
                 }
             }
 
@@ -376,9 +376,9 @@ cc.Ribbon = cc.Node.extend({
 });
 
 cc.Ribbon.ribbonWithWidth = function (width, path, length, color, fade) {
-    var pRet = new cc.Ribbon();
-    if (pRet && pRet.initWithWidth(w, path, length, color, fade)) {
-        return pRet;
+    var ret = new cc.Ribbon();
+    if (ret && ret.initWithWidth(w, path, length, color, fade)) {
+        return ret;
     }
     return null;
 };

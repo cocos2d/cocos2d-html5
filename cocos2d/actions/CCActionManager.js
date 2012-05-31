@@ -50,13 +50,13 @@ cc.tHashElement = cc.Class.extend({
     }
 });
 cc.ActionManager = cc.Class.extend({
-    _m_pTargets:null,
-    _m_pCurrentTarget:null,
-    _m_bCurrentTargetSalvaged:false,
+    _targets:null,
+    _currentTarget:null,
+    _currentTargetSalvaged:false,
 
-    _searchElementByTarget:function (arr, pTarget) {
+    _searchElementByTarget:function (arr, target) {
         for (var k = 0; k < arr.length; k++) {
-            if (pTarget == arr[k].target) {
+            if (target == arr[k].target) {
                 return arr[k];
             }
         }
@@ -65,7 +65,7 @@ cc.ActionManager = cc.Class.extend({
 
     ctor:function () {
         cc.Assert(cc.gSharedManager == null, "");
-        this._m_pTargets = [];
+        this._targets = [];
     },
 
     init:function () {
@@ -78,59 +78,59 @@ cc.ActionManager = cc.Class.extend({
      When the target is paused, the queued actions won't be 'ticked'.
      */
     selTarget:null,
-    addAction:function (pAction, pTarget, paused) {
-        cc.Assert(pAction != null, "no action");
-        cc.Assert(pTarget != null, "");
+    addAction:function (action, target, paused) {
+        cc.Assert(action != null, "no action");
+        cc.Assert(target != null, "");
         //check if the action target already exists
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
+        var element = this._searchElementByTarget(this._targets, target);
         //if doesnt exists, create a hashelement and push in mpTargets
-        if (!pElement) {
-            pElement = new cc.tHashElement();
-            pElement.paused = paused;
-            pElement.target = pTarget;
-            pElement.id = pTarget.id || "no id";
-            this.selTarget = pElement;
-            this._m_pTargets.push(pElement);
+        if (!element) {
+            element = new cc.tHashElement();
+            element.paused = paused;
+            element.target = target;
+            element.id = target.id || "no id";
+            this.selTarget = element;
+            this._targets.push(element);
         }
         //creates a array for that eleemnt to hold the actions
-        this._actionAllocWithHashElement(pElement);
-        cc.Assert((pElement.actions.indexOf(pAction) == -1), "ActionManager.addAction(),");
+        this._actionAllocWithHashElement(element);
+        cc.Assert((element.actions.indexOf(action) == -1), "ActionManager.addAction(),");
 
-        pElement.actions.push(pAction);
-        pAction.startWithTarget(pTarget);
+        element.actions.push(action);
+        action.startWithTarget(target);
     },
     /** Removes all actions from all the targets.
      */
     removeAllActions:function () {
-        for (var i = 0; i < this._m_pTargets.length; i++) {
-            var pElement = this._m_pTargets[i];
-            if (pElement) {
-                this.removeAllActionsFromTarget(pElement.target);
+        for (var i = 0; i < this._targets.length; i++) {
+            var element = this._targets[i];
+            if (element) {
+                this.removeAllActionsFromTarget(element.target);
             }
         }
     },
     /** Removes all actions from a certain target.
      All the actions that belongs to the target will be removed.
      */
-    removeAllActionsFromTarget:function (pTarget) {
+    removeAllActionsFromTarget:function (target) {
         // explicit null handling
-        if (pTarget == null) {
+        if (target == null) {
             return;
         }
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
+        var element = this._searchElementByTarget(this._targets, target);
 
-        //var pElement = (pTarget in this._m_pTargets)? this._m_pTargets[ptarget]: null;
-        if (pElement) {
-            if (pElement.currentAction in pElement.actions && !(pElement.currentActionSalvaged)) {
-                pElement.currentActionSalvaged = true;
+        //var element = (target in this._targets)? this._targets[ptarget]: null;
+        if (element) {
+            if (element.currentAction in element.actions && !(element.currentActionSalvaged)) {
+                element.currentActionSalvaged = true;
             }
 
-            pElement.actions = [];
-            if (this._m_pCurrentTarget == pElement) {
-                this._m_bCurrentTargetSalvaged = true;
+            element.actions = [];
+            if (this._currentTarget == element) {
+                this._currentTargetSalvaged = true;
             }
             else {
-                this._deleteHashElement(pElement);
+                this._deleteHashElement(element);
             }
         } else {
             //cc.Log("cocos2d: removeAllActionsFromTarget: Target not found");
@@ -138,18 +138,18 @@ cc.ActionManager = cc.Class.extend({
     },
     /** Removes an action given an action reference.
      */
-    removeAction:function (pAction) {
+    removeAction:function (action) {
         // explicit null handling
-        if (pAction == null) {
+        if (action == null) {
             return;
         }
-        var pTarget = pAction.getOriginalTarget();
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
+        var target = action.getOriginalTarget();
+        var element = this._searchElementByTarget(this._targets, target);
 
-        if (pElement) {
-            for (var i = 0; i < pElement.actions.length; i++) {
-                if (pElement.actions[i] == pAction) {
-                    pElement.actions.splice(i, 1);
+        if (element) {
+            for (var i = 0; i < element.actions.length; i++) {
+                if (element.actions[i] == action) {
+                    element.actions.splice(i, 1);
                     break;
                 }
             }
@@ -158,19 +158,19 @@ cc.ActionManager = cc.Class.extend({
         }
     },
     /** Removes an action given its tag and the target */
-    removeActionByTag:function (tag, pTarget) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "");
-        cc.Assert(pTarget != null, "");
+    removeActionByTag:function (tag, target) {
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
+        cc.Assert(target != null, "");
 
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
+        var element = this._searchElementByTarget(this._targets, target);
 
-        if (pElement) {
-            var limit = pElement.actions.length;
+        if (element) {
+            var limit = element.actions.length;
             for (var i = 0; i < limit; ++i) {
-                var pAction = pElement.actions[i];
-                if (pAction) {
-                    if (pAction.getTag() == tag && pAction.getOriginalTarget() == pTarget) {
-                        this._removeActionAtIndex(i, pElement);
+                var action = element.actions[i];
+                if (action) {
+                    if (action.getTag() == tag && action.getOriginalTarget() == target) {
+                        this._removeActionAtIndex(i, element);
                         break;
                     }
                 }
@@ -180,16 +180,16 @@ cc.ActionManager = cc.Class.extend({
     /** Gets an action given its tag an a target
      @return the Action the with the given tag
      */
-    getActionByTag:function (tag, pTarget) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "");
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
-        if (pElement) {
-            if (pElement.actions != null) {
-                for (var i = 0; i < pElement.actions.length; ++i) {
-                    var pAction = pElement.actions[i];
-                    if (pAction) {
-                        if (pAction.getTag() == tag) {
-                            return pAction;
+    getActionByTag:function (tag, target) {
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
+        var element = this._searchElementByTarget(this._targets, target);
+        if (element) {
+            if (element.actions != null) {
+                for (var i = 0; i < element.actions.length; ++i) {
+                    var action = element.actions[i];
+                    if (action) {
+                        if (action.getTag() == tag) {
+                            return action;
                         }
                     }
                 }
@@ -205,28 +205,28 @@ cc.ActionManager = cc.Class.extend({
      * - If you are running 1 Sequence of 7 actions, it will return 1.
      * - If you are running 7 Sequences of 2 actions, it will return 7.
      */
-    numberOfRunningActionsInTarget:function (pTarget) {
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
-        if (pElement) {
-            return (pElement.actions) ? pElement.actions.length : 0;
+    numberOfRunningActionsInTarget:function (target) {
+        var element = this._searchElementByTarget(this._targets, target);
+        if (element) {
+            return (element.actions) ? element.actions.length : 0;
         }
 
         return 0;
     },
     /** Pauses the target: all running actions and newly added actions will be paused.
      */
-    pauseTarget:function (pTarget) {
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
-        if (pElement) {
-            pElement.paused = true;
+    pauseTarget:function (target) {
+        var element = this._searchElementByTarget(this._targets, target);
+        if (element) {
+            element.paused = true;
         }
     },
     /** Resumes the target. All queued actions will be resumed.
      */
-    resumeTarget:function (pTarget) {
-        var pElement = this._searchElementByTarget(this._m_pTargets, pTarget);
-        if (pElement) {
-            pElement.paused = false;
+    resumeTarget:function (target) {
+        var element = this._searchElementByTarget(this._targets, target);
+        if (element) {
+            element.paused = false;
         }
     },
     /** purges the shared action manager. It releases the retained instance.
@@ -238,77 +238,77 @@ cc.ActionManager = cc.Class.extend({
     },
 
     //protected
-    _removeActionAtIndex:function (uIndex, pElement) {
-        var pAction = pElement.actions[uIndex];
+    _removeActionAtIndex:function (index, element) {
+        var action = element.actions[index];
 
-        if ((pAction == pElement.currentAction) && (!pElement.currentActionSalvaged)) {
-            pElement.currentActionSalvaged = true;
+        if ((action == element.currentAction) && (!element.currentActionSalvaged)) {
+            element.currentActionSalvaged = true;
         }
 
-        pElement.actions[uIndex] = null;
+        element.actions[index] = null;
 
         // update actionIndex in case we are in tick. looping over the actions
-        if (pElement.actionIndex >= uIndex) {
-            pElement.actionIndex--;
+        if (element.actionIndex >= index) {
+            element.actionIndex--;
         }
 
-        if (pElement.actions.length == 0) {
-            if (this._m_pCurrentTarget == pElement) {
-                this._m_bCurrentTargetSalvaged = true;
+        if (element.actions.length == 0) {
+            if (this._currentTarget == element) {
+                this._currentTargetSalvaged = true;
             }
             else {
-                this._deleteHashElement(pElement);
+                this._deleteHashElement(element);
             }
         }
     },
 
-    _deleteHashElement:function (pElement) {
-        cc.ArrayRemoveObject(this._m_pTargets, pElement);
-        if (pElement) {
-            pElement.actions = null;
-            pElement.target = null;
+    _deleteHashElement:function (element) {
+        cc.ArrayRemoveObject(this._targets, element);
+        if (element) {
+            element.actions = null;
+            element.target = null;
         }
     },
 
-    _actionAllocWithHashElement:function (pElement) {
+    _actionAllocWithHashElement:function (element) {
         // 4 actions per Node by default
-        if (pElement.actions == null) {
-            pElement.actions = [];
+        if (element.actions == null) {
+            element.actions = [];
         }
     },
 
     update:function (dt) {
-        for (var elt = 0; elt < this._m_pTargets.length; elt++) {
-            this._m_pCurrentTarget = this._m_pTargets[elt];
-            this._m_bCurrentTargetSalvaged = false;
-            if (!this._m_pCurrentTarget.paused) {
+        for (var elt = 0; elt < this._targets.length; elt++) {
+            this._currentTarget = this._targets[elt];
+            this._currentTargetSalvaged = false;
+            if (!this._currentTarget.paused) {
                 // The 'actions' CCMutableArray may change while inside this loop.
-                for (this._m_pCurrentTarget.actionIndex = 0; this._m_pCurrentTarget.actionIndex < this._m_pCurrentTarget.actions.length;
-                     this._m_pCurrentTarget.actionIndex++) {
-                    this._m_pCurrentTarget.currentAction = this._m_pCurrentTarget.actions[this._m_pCurrentTarget.actionIndex];
-                    if (this._m_pCurrentTarget.currentAction == null) {
+                for (this._currentTarget.actionIndex = 0; this._currentTarget.actionIndex < this._currentTarget.actions.length;
+                     this._currentTarget.actionIndex++) {
+                    this._currentTarget.currentAction = this._currentTarget.actions[this._currentTarget.actionIndex];
+                    if (this._currentTarget.currentAction == null) {
                         continue;
                     }
 
-                    this._m_pCurrentTarget.currentActionSalvaged = false;
+                    this._currentTarget.currentActionSalvaged = false;
 
-                    this._m_pCurrentTarget.currentAction.step(dt);
+                    this._currentTarget.currentAction.step(dt);
 
-                    if (this._m_pCurrentTarget.currentActionSalvaged) {
+                    if (this._currentTarget.currentActionSalvaged) {
                         // The currentAction told the node to remove it. To prevent the action from
                         // accidentally deallocating itself before finishing its step, we retained
                         // it. Now that step is done, it's safe to release it.
-                        this._m_pCurrentTarget.currentAction = null;//release
-                    } else if (this._m_pCurrentTarget.currentAction.isDone()) {
-                        this._m_pCurrentTarget.currentAction.stop();
+                        this._currentTarget.currentAction = null;//release
+                    } else if (this._currentTarget.currentAction.isDone()) {
+                        this._currentTarget.currentAction.stop();
 
-                        var pAction = this._m_pCurrentTarget.currentAction;
+                        var action = this._currentTarget.currentAction;
                         // Make currentAction nil to prevent removeAction from salvaging it.
-                        this._m_pCurrentTarget.currentAction = null;
-                        this.removeAction(pAction);
+                        this._currentTarget.currentAction = null;
+                        this.removeAction(action);
                     }
 
-                    this._m_pCurrentTarget.currentAction = null;
+                    this._currentTarget.currentAction = null;
                 }
             }
 
@@ -316,8 +316,8 @@ cc.ActionManager = cc.Class.extend({
             // so it is safe to ask this here (issue #490)
 
             // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
-            if (this._m_bCurrentTargetSalvaged && this._m_pCurrentTarget.actions.length == 0) {
-                this._deleteHashElement(this._m_pCurrentTarget);
+            if (this._currentTargetSalvaged && this._currentTarget.actions.length == 0) {
+                this._deleteHashElement(this._currentTarget);
             }
         }
     }

@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kItemTagBasic = 1000;
+var ITEM_TAG_BASIC = 1000;
 var nCurCase = 0;
 
 var PerformanceTests = [
@@ -44,23 +44,23 @@ var PerformanceMainLayer = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var pMenu = cc.Menu.menuWithItems(null);
-        pMenu.setPosition(cc.PointZero());
+        var menu = cc.Menu.menuWithItems(null);
+        menu.setPosition(cc.PointZero());
         cc.MenuItemFont.setFontName("Arial");
         cc.MenuItemFont.setFontSize(24);
 
         for (var i = 0; i < PerformanceTests.length; i++) {
             var pItem = cc.MenuItemFont.itemFromString(PerformanceTests[i], this, this.menuCallback);
             pItem.setPosition(cc.ccp(s.width / 2, s.height - (i + 1) * LINE_SPACE));
-            pMenu.addChild(pItem, kItemTagBasic + i);
+            menu.addChild(pItem, ITEM_TAG_BASIC + i);
         }
 
-        this.addChild(pMenu);
+        this.addChild(menu);
     },
-    menuCallback:function (pSender) {
-        var nIndex = pSender.getZOrder() - kItemTagBasic;
+    menuCallback:function (sender) {
+        var index = sender.getZOrder() - ITEM_TAG_BASIC;
         // create the test scene and run it
-        switch (nIndex) {
+        switch (index) {
             case 0:
                 runNodeChildrenTest();
                 break;
@@ -88,11 +88,11 @@ var PerformanceMainLayer = cc.Layer.extend({
 //
 ////////////////////////////////////////////////////////
 var PerformBasicLayer = cc.Layer.extend({
-    _m_bControlMenuVisible:true,
-    _m_nMaxCases:1,
-    _m_nCurCase:0,
+    _controlMenuVisible:true,
+    _maxCases:1,
+    _curCase:0,
     ctor:function () {
-        this._m_nCurCase = nCurCase;
+        this._curCase = nCurCase;
     },
     onEnter:function () {
         this._super();
@@ -101,47 +101,47 @@ var PerformBasicLayer = cc.Layer.extend({
 
         cc.MenuItemFont.setFontName("Arial");
         cc.MenuItemFont.setFontSize(24);
-        var pMainItem = cc.MenuItemFont.itemFromString("Back", this, this.toMainLayer);
-        pMainItem.setPosition(cc.ccp(s.width - 50, 25));
-        var pMenu = cc.Menu.menuWithItems(pMainItem, null);
-        pMenu.setPosition(cc.PointZero());
+        var mainItem = cc.MenuItemFont.itemFromString("Back", this, this.toMainLayer);
+        mainItem.setPosition(cc.ccp(s.width - 50, 25));
+        var menu = cc.Menu.menuWithItems(mainItem, null);
+        menu.setPosition(cc.PointZero());
 
-        if (this._m_bControlMenuVisible) {
-            var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-            var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-            var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        if (this._controlMenuVisible) {
+            var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+            var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+            var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
             item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
             item2.setPosition(cc.ccp(s.width / 2, 30));
             item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
 
-            pMenu.addChild(item1, kItemTagBasic);
-            pMenu.addChild(item2, kItemTagBasic);
-            pMenu.addChild(item3, kItemTagBasic);
+            menu.addChild(item1, ITEM_TAG_BASIC);
+            menu.addChild(item2, ITEM_TAG_BASIC);
+            menu.addChild(item3, ITEM_TAG_BASIC);
         }
-        this.addChild(pMenu);
+        this.addChild(menu);
     },
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         this.showCurrentTest();
     },
-    nextCallback:function (pSender) {
-        this._m_nCurCase++;
-        this._m_nCurCase = this._m_nCurCase % this._m_nMaxCases;
-        nCurCase = this._m_nCurCase;
+    nextCallback:function (sender) {
+        this._curCase++;
+        this._curCase = this._curCase % this._maxCases;
+        nCurCase = this._curCase;
         this.showCurrentTest();
     },
-    backCallback:function (pSender) {
-        this._m_nCurCase--;
-        if (this._m_nCurCase < 0) {
-            this._m_nCurCase += this._m_nMaxCases;
+    backCallback:function (sender) {
+        this._curCase--;
+        if (this._curCase < 0) {
+            this._curCase += this._maxCases;
         }
-        nCurCase = this._m_nCurCase;
+        nCurCase = this._curCase;
         this.showCurrentTest();
     },
-    showCurrentTest:function (pSender) {
+    showCurrentTest:function (sender) {
     },
-    toMainLayer:function (pSender) {
-        var pScene = new PerformanceTestScene();
-        pScene.runThisTest();
+    toMainLayer:function (sender) {
+        var scene = new PerformanceTestScene();
+        scene.runThisTest();
     }
 });
 
@@ -152,8 +152,8 @@ var PerformBasicLayer = cc.Layer.extend({
 ////////////////////////////////////////////////////////
 var PerformanceTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = new PerformanceMainLayer();
-        this.addChild(pLayer);
+        var layer = new PerformanceMainLayer();
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
     }
 });

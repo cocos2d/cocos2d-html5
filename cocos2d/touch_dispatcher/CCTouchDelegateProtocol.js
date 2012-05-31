@@ -31,65 +31,65 @@
 var cc = cc = cc || {};
 
 cc.Touch = cc.Class.extend({
-    _m_nViewId:0,
-    _m_point:null,
-    _m_prevPoint:cc.PointZero(),
-    _m_iId:0,
+    _viewId:0,
+    _point:null,
+    _prevPoint:cc.PointZero(),
+    _id:0,
 
-    ctor:function (nViewId, x, y) {
-        this._m_nViewId = nViewId;
-        this._m_point = new cc.Point(x || 0, y || 0);
+    ctor:function (viewId, x, y) {
+        this._viewId = viewId;
+        this._point = new cc.Point(x || 0, y || 0);
     },
 
-    locationInView:function (nViewId) {
-        return this._m_point;
+    locationInView:function (viewId) {
+        return this._point;
     },
 
-    previousLocationInView:function (nViewId) {
-        return this._m_prevPoint;
+    previousLocationInView:function (viewId) {
+        return this._prevPoint;
     },
 
     view:function () {
-        return this._m_nViewId;
+        return this._viewId;
     },
     id:function () {
-        return this._m_iId;
+        return this._id;
     },
 
-    setTouchInfo:function (nViewId, x, y, iId) {
-        this._m_nViewId = nViewId;
-        this._m_prevPoint = this._m_point;
-        this._m_point = new cc.Point(x || 0, y || 0);
-        this._m_iId = iId || 0;
+    setTouchInfo:function (viewId, x, y, iId) {
+        this._viewId = viewId;
+        this._prevPoint = this._point;
+        this._point = new cc.Point(x || 0, y || 0);
+        this._id = iId || 0;
     },
     _setPrevPoint:function (x, y) {
-        this._m_prevPoint = new cc.Point(x || 0, y || 0);
+        this._prevPoint = new cc.Point(x || 0, y || 0);
     }
 });
 
 cc.TouchDelegate = cc.Class.extend({
-    _m_pEventTypeFuncMap:null,
+    _eventTypeFuncMap:null,
 
-    ccTouchBegan:function (pTouch, pEvent) {
+    ccTouchBegan:function (touch, event) {
         return false;
     },
 
     // optional
-    ccTouchMoved:function (pTouch, pEvent) {
+    ccTouchMoved:function (touch, event) {
     },
-    ccTouchEnded:function (pTouch, pEvent) {
+    ccTouchEnded:function (touch, event) {
     },
-    ccTouchCancelled:function (pTouch, pEvent) {
+    ccTouchCancelled:function (touch, event) {
     },
 
     // optional
-    ccTouchesBegan:function (pTouches, pEvent) {
+    ccTouchesBegan:function (touches, event) {
     },
-    ccTouchesMoved:function (pTouches, pEvent) {
+    ccTouchesMoved:function (touches, event) {
     },
-    ccTouchesEnded:function (pTouches, pEvent) {
+    ccTouchesEnded:function (touches, event) {
     },
-    ccTouchesCancelled:function (pTouches, pEvent) {
+    ccTouchesCancelled:function (touches, event) {
     },
 
     /*
@@ -124,16 +124,16 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend({
     /** Return YES to claim the touch.
      @since v0
      */
-    ccTouchBegan:function (pTouch, pEvent) {
+    ccTouchBegan:function (touch, event) {
         return false;
     },
 
     // optional
-    ccTouchMoved:function (pTouch, pEvent) {
+    ccTouchMoved:function (touch, event) {
     },
-    ccTouchEnded:function (pTouch, pEvent) {
+    ccTouchEnded:function (touch, event) {
     },
-    ccTouchCancelled:function (pTouch, pEvent) {
+    ccTouchCancelled:function (touch, event) {
     }
 });
 
@@ -143,13 +143,13 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend({
  */
 cc.StandardTouchDelegate = cc.TouchDelegate.extend({
     // optional
-    ccTouchesBegan:function (pTouches, pEvent) {
+    ccTouchesBegan:function (touches, event) {
     },
-    ccTouchesMoved:function (pTouches, pEvent) {
+    ccTouchesMoved:function (touches, event) {
     },
-    ccTouchesEnded:function (pTouches, pEvent) {
+    ccTouchesEnded:function (touches, event) {
     },
-    ccTouchesCancelled:function (pTouches, pEvent) {
+    ccTouchesCancelled:function (touches, event) {
     }
 });
 

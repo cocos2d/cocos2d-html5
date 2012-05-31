@@ -26,22 +26,22 @@
 
 
 /// Device oriented vertically, home button on the bottom
-cc.kOrientationPortrait = 0;
+cc.ORIENTATION_PORTRAIT = 0;
 /// Device oriented vertically, home button on the top
-cc.kOrientationPortraitUpsideDown = 1;
+cc.ORIENTATION_PORTRAIT_UPSIDE_DOWN = 1;
 /// Device oriented horizontally, home button on the right
-cc.kOrientationLandscapeLeft = 2;
+cc.ORIENTATION_LANDSCAPE_LEFT = 2;
 /// Device oriented horizontally, home button on the left
-cc.kOrientationLandscapeRight = 3;
+cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
 
-cc.kCanvas = 0;
-cc.kWebGL = 1;
+cc.CANVAS = 0;
+cc.WEBGL = 1;
 
 cc.drawingUtil = null;
 cc.renderContext = null;
 cc.canvas = null;
 cc.gameDiv = null;
-cc.renderContextType = cc.kCanvas;
+cc.renderContextType = cc.CANVAS;
 cc.originalCanvasSize = new cc.Size(0, 0);
 
 window.requestAnimFrame = (function () {
@@ -75,14 +75,14 @@ cc.setup = function () {
             cc.canvas = gameCanvas;
             cc.renderContext = cc.canvas.getContext("2d");
             cc.gameDiv = document.body;
-            cc.renderContextType = cc.kCanvas;
+            cc.renderContextType = cc.CANVAS;
             //document
             break;
         case 1:
-            var cName = arguments[0];
+            var name = arguments[0];
             var getElement = null;
-            if (typeof(cName) == "string") {
-                getElement = document.getElementById(cName);
+            if (typeof(name) == "string") {
+                getElement = document.getElementById(name);
             } else {
                 getElement = arguments[0];
             }
@@ -92,7 +92,7 @@ cc.setup = function () {
                 cc.canvas = getElement;
                 cc.gameDiv = getElement.parentNode;
                 cc.renderContext = cc.canvas.getContext("2d");
-                cc.renderContextType = cc.kCanvas;
+                cc.renderContextType = cc.CANVAS;
             } else if (getElement instanceof HTMLDivElement) {
                 //HTMLDivElement
                 var gameCanvas = document.createElement("Canvas");
@@ -103,7 +103,7 @@ cc.setup = function () {
                 cc.canvas = gameCanvas;
                 cc.renderContext = cc.canvas.getContext("2d");
                 cc.gameDiv = getElement;
-                cc.renderContextType = cc.kCanvas;
+                cc.renderContextType = cc.CANVAS;
             }
             break;
         case 2:
@@ -112,7 +112,7 @@ cc.setup = function () {
             break;
     }
 
-    if (cc.renderContextType == cc.kCanvas) {
+    if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
@@ -121,7 +121,7 @@ cc.setup = function () {
     //binding window size
     /*
      cc.canvas.addEventListener("resize", function () {
-     if (!cc.s_bFirstRun) {
+     if (!cc.firstRun) {
      cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
      }
      }, true);
@@ -155,9 +155,9 @@ cc.setupHTML = function (obj) {
 
 cc.Application = cc.Class.extend({
     ctor:function () {
-        this._m_nAnimationInterval = 0;
-        cc.Assert(!cc.sm_pSharedApplication, "CCApplication ctor");
-        cc.sm_pSharedApplication = this;
+        this._animationInterval = 0;
+        cc.Assert(!cc._sharedApplication, "CCApplication ctor");
+        cc._sharedApplication = this;
     },
 
     /**
@@ -165,7 +165,7 @@ cc.Application = cc.Class.extend({
      @interval       The time, which expressed in second in second, between current frame and next.
      */
     setAnimationInterval:function (interval) {
-        this._m_nAnimationInterval = interval;
+        this._animationInterval = interval;
     },
 
     /**
@@ -219,11 +219,11 @@ cc.Application = cc.Class.extend({
             var callback = function () {
                 cc.Director.sharedDirector().mainLoop();
             };
-            setInterval(callback, this._m_nAnimationInterval * 1000);
+            setInterval(callback, this._animationInterval * 1000);
         }
 
     },
-    _m_nAnimationInterval:null
+    _animationInterval:null
 
 });
 
@@ -233,8 +233,8 @@ cc.Application = cc.Class.extend({
  */
 cc.Application.sharedApplication = function () {
 
-    cc.Assert(cc.sm_pSharedApplication, "sharedApplication");
-    return cc.sm_pSharedApplication;
+    cc.Assert(cc._sharedApplication, "sharedApplication");
+    return cc._sharedApplication;
 };
 
 /**
@@ -242,7 +242,7 @@ cc.Application.sharedApplication = function () {
  @return Current language config
  */
 cc.Application.getCurrentLanguage = function () {
-    var ret = cc.kLanguageEnglish;
+    var ret = cc.LANGUAGE_ENGLISH;
 
     // TODO, need to be fixed.
     /*
@@ -252,22 +252,22 @@ cc.Application.getCurrentLanguage = function () {
      switch (primaryLanguageID)
      {
      case LANG_CHINESE:
-     ret = cc.kLanguageChinese;
+     ret = cc.LANGUAGE_CHINESE;
      break;
      case LANG_FRENCH:
-     ret = cc.kLanguageFrench;
+     ret = cc.LANGUAGE_FRENCH;
      break;
      case LANG_ITALIAN:
-     ret = cc.kLanguageItalian;
+     ret = cc.LANGUAGE_ITALIAN;
      break;
      case LANG_GERMAN:
-     ret = cc.kLanguageGerman;
+     ret = cc.LANGUAGE_GERMAN;
      break;
      case LANG_SPANISH:
-     ret = cc.kLanguageSpanish;
+     ret = cc.LANGUAGE_SPANISH;
      break;
      case LANG_RUSSIAN:
-     ret = cc.kLanguageRussian;
+     ret = cc.LANGUAGE_RUSSIAN;
      break;
      }
      */
@@ -276,26 +276,26 @@ cc.Application.getCurrentLanguage = function () {
     currentLang = currentLang.toLowerCase();
     switch (currentLang) {
         case "zh-cn":
-            ret = cc.kLanguageChinese;
+            ret = cc.LANGUAGE_CHINESE;
             break;
         case "fr":
-            ret = cc.kLanguageFrench;
+            ret = cc.LANGUAGE_FRENCH;
             break;
         case "it":
-            ret = cc.kLanguageItalian;
+            ret = cc.LANGUAGE_ITALIAN;
             break;
         case "de":
-            ret = cc.kLanguageGerman;
+            ret = cc.LANGUAGE_GERMAN;
             break;
         case "es":
-            ret = cc.kLanguageSpanish;
+            ret = cc.LANGUAGE_SPANISH;
             break;
         case "ru":
-            ret = cc.kLanguageRussian;
+            ret = cc.LANGUAGE_RUSSIAN;
             break;
     }
 
     return ret;
 };
 
-cc.sm_pSharedApplication = null;
+cc._sharedApplication = null;

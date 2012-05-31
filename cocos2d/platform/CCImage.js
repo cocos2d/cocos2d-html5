@@ -25,20 +25,20 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.kFmtJpg = 0;
-cc.kFmtPng = 1;
-cc.kFmtRawData = 2;
-cc.kFmtUnKnown = 3;
+cc.FMT_JPG = 0;
+cc.FMT_PNG = 1;
+cc.FMT_RAWDATA = 2;
+cc.FMT_UNKNOWN = 3;
 
-cc.kAlignCenter = 0x33; ///< Horizontal center and vertical center.
-cc.kAlignTop = 0x13; ///< Horizontal center and vertical top.
-cc.kAlignTopRight = 0x12; ///< Horizontal right and vertical top.
-cc.kAlignRight = 0x32; ///< Horizontal right and vertical center.
-cc.kAlignBottomRight = 0x22; ///< Horizontal right and vertical bottom.
-cc.kAlignBottom = 0x23; ///< Horizontal center and vertical bottom.
-cc.kAlignBottomLeft = 0x21; ///< Horizontal left and vertical bottom.
-cc.kAlignLeft = 0x31; ///< Horizontal left and vertical center.
-cc.kAlignTopLeft = 0x11; ///< Horizontal left and vertical top.
+cc.ALIGN_CENTER = 0x33; ///< Horizontal center and vertical center.
+cc.ALIGN_TOP = 0x13; ///< Horizontal center and vertical top.
+cc.ALIGN_TOP_RIGHT = 0x12; ///< Horizontal right and vertical top.
+cc.ALIGN_RIGHT = 0x32; ///< Horizontal right and vertical center.
+cc.ALIGN_BOTTOM_RIGHT = 0x22; ///< Horizontal right and vertical bottom.
+cc.ALIGN_BOTTOM = 0x23; ///< Horizontal center and vertical bottom.
+cc.ALIGN_BOTTOM_LEFT = 0x21; ///< Horizontal left and vertical bottom.
+cc.ALIGN_LEFT = 0x31; ///< Horizontal left and vertical center.
+cc.ALIGN_TOP_LEFT = 0x11; ///< Horizontal left and vertical top.
 
 function cc.RGB_PREMULTIPLY_APLHA(vr, vg, vb, va) {
     return ((vr * (va + 1)) >> 8) | ((vg * (va + 1) >> 8) << 8) | ((vb * (va + 1) >> 8) << 16) | ((va) << 24)
@@ -64,12 +64,12 @@ cc.pngReadCallback = function (png_ptr, data, length) {
 };
 
 cc.Image = cc.Class.extend({
-    _m_nWidth:0,
-    _m_nHeight:0,
-    _m_nBitsPerComponent:0,
-    _m_pData:0,
-    _m_bHasAlpha:false,
-    _m_bPreMulti:false,
+    _width:0,
+    _height:0,
+    _bitsPerComponent:0,
+    _data:0,
+    _hasAlpha:false,
+    _preMulti:false,
 
     /**
      @brief  Load the image from the specified path.
@@ -78,7 +78,6 @@ cc.Image = cc.Class.extend({
      @return  true if load correctly
      */
     initWithImageFile:function (strPath, eImgFmt) {
-        cc.UNUSED_PARAM(eImgFmt);
         var data = new cc.FileData(cc.FileUtils.fullPathFromRelativePath(strPath), "rb");
         return this.initWithImageData(data.getBuffer(), data.getSize(), eImgFmt);
     },
@@ -91,7 +90,6 @@ cc.Image = cc.Class.extend({
      @return  true if load correctly
      */
     initWithImageFileThreadSafe:function (fullpath, imageType) {
-        cc.UNUSED_PARAM(imageType);
         var data = new cc.FileData(fullpath, "rb");
         return this.initWithImageData(data.getBuffer(), data.getSize(), imageType);
     },
@@ -99,66 +97,66 @@ cc.Image = cc.Class.extend({
     /**
      @brief  Load image from stream buffer.
 
-     @warning kFmtRawData only support RGBA8888
+     @warning FMT_RAWDATA only support RGBA8888
      @param pBuffer  stream buffer that hold the image data
      @param nLength  the length of data(managed in byte)
-     @param nWidth, nHeight, nBitsPerComponent are used for kFmtRawData
+     @param width, height, nBitsPerComponent are used for FMT_RAWDATA
      @return true if load correctly
      */
-    initWithImageData:function (pData, nDataLen, eFmt, nWidth, nHeight, nBitsPerComponent) {
-        var bRet = false;
+    initWithImageData:function (pData, nDataLen, eFmt, width, height, nBitsPerComponent) {
+        var ret = false;
         do
         {
             if (!pData || nDataLen <= 0) break;
 
-            if (cc.kFmtPng == eFmt) {
-                bRet = this._initWithPngData(pData, nDataLen);
+            if (cc.FMT_PNG == eFmt) {
+                ret = this._initWithPngData(pData, nDataLen);
                 break;
             }
-            else if (cc.kFmtJpg == eFmt) {
-                bRet = this._initWithJpgData(pData, nDataLen);
+            else if (cc.FMT_JPG == eFmt) {
+                ret = this._initWithJpgData(pData, nDataLen);
                 break;
             }
-            else if (cc.kFmtRawData == eFmt) {
-                bRet = this._initWithRawData(pData, nDataLen, nWidth, nHeight, nBitsPerComponent);
+            else if (cc.FMT_RAWDATA == eFmt) {
+                ret = this._initWithRawData(pData, nDataLen, width, height, nBitsPerComponent);
                 break;
             }
         } while (0);
-        return bRet;
+        return ret;
     },
     getData:function () {
-        return this._m_pData;
+        return this._data;
     },
     getDataLen:function () {
-        return this._m_nWidth * this._m_nHeight;
+        return this._width * this._height;
     },
     hasAlpha:function () {
-        return this._m_bHasAlpha;
+        return this._hasAlpha;
     },
     isPremultipliedAlpha:function () {
-        return this._m_bPreMulti;
+        return this._preMulti;
     },
     getWidth:function () {
-        return this._m_nWidth;
+        return this._width;
     },
     getHeight:function () {
-        return this._m_nHeight;
+        return this._height;
     },
     getBitsPerComponent:function () {
-        return this._m_nBitsPerComponent;
+        return this._bitsPerComponent;
     },
     /**
      @brief    Save the CCImage data to specified file with specified format.
-     @param    pszFilePath        the file's absolute path, including file subfix
-     @param    bIsToRGB        if the image is saved as RGB format
+     @param    filePath        the file's absolute path, including file subfix
+     @param    isToRGB        if the image is saved as RGB format
      */
-    saveToFile:function (pszFilePath, bIsToRGB) {
-        var bRet = false;
+    saveToFile:function (filePath, isToRGB) {
+        var ret = false;
         do
         {
-            if (null == pszFilePath) break;
+            if (null == filePath) break;
 
-            var strFilePath = pszFilePath;
+            var strFilePath = filePath;
             if (strFilePath.size() <= 4) break;
             var strLowerCasePath = strFilePath;
             for (var i = 0; i < strLowerCasePath.length(); ++i) {
@@ -166,23 +164,23 @@ cc.Image = cc.Class.extend({
             }
 
             if (std.string.npos != strLowerCasePath.find(".png")) {
-                if (!this._saveImageToPNG(pszFilePath, bIsToRGB)) break;
+                if (!this._saveImageToPNG(filePath, isToRGB)) break;
             }
             else if (std.string.npos != strLowerCasePath.find(".jpg")) {
-                if (!this._saveImageToJPG(pszFilePath)) break;
+                if (!this._saveImageToJPG(filePath)) break;
             }
             else {
                 break;
             }
 
-            bRet = true;
+            ret = true;
         } while (0);
 
-        return bRet;
+        return ret;
     },
 
     /*protected:*/
-    _initWithJpgData:function (data, nSize) {
+    _initWithJpgData:function (data, size) {
         /* these are standard libjpeg structures for reading(decompression) */
         var cinfo = new cc.jpeg_decompress_struct();
         var jerr = new cc.jpeg_error_mgr();
@@ -191,7 +189,7 @@ cc.Image = cc.Class.extend({
         var location = 0;
         var i = 0;
 
-        var bRet = false;
+        var ret = false;
         do
         {
             /* here we set up the standard libjpeg error handler */
@@ -200,7 +198,7 @@ cc.Image = cc.Class.extend({
             /* setup decompression process and source, then read JPEG header */
             cc.jpeg_create_decompress(cinfo);
 
-            cc.jpeg_mem_src(cinfo, data, nSize);
+            cc.jpeg_mem_src(cinfo, data, size);
 
             /* reading the image header which contains image information */
             cc.jpeg_read_header(cinfo, true);
@@ -219,34 +217,34 @@ cc.Image = cc.Class.extend({
             cc.jpeg_start_decompress(cinfo);
 
             /* init image info */
-            this._m_nWidth = cinfo.image_width;
-            this._m_nHeight = cinfo.image_height;
-            this._m_bHasAlpha = false;
-            this._m_bPreMulti = false;
-            this._m_nBitsPerComponent = 8;
+            this._width = cinfo.image_width;
+            this._height = cinfo.image_height;
+            this._hasAlpha = false;
+            this._preMulti = false;
+            this._bitsPerComponent = 8;
             row_pointer[0] = new [cinfo.output_width * cinfo.output_components];
             if (!row_pointer[0]) break;
-            this._m_pData = new [cinfo.output_width * cinfo.output_height * cinfo.output_components];
-            if (!this._m_pData) break;
+            this._data = new [cinfo.output_width * cinfo.output_height * cinfo.output_components];
+            if (!this._data) break;
 
             /* now actually read the jpeg into the raw buffer */
             /* read one scan line at a time */
             while (cinfo.output_scanline < cinfo.image_height) {
                 cc.jpeg_read_scanlines(cinfo, row_pointer, 1);
                 for (i = 0; i < cinfo.image_width * cinfo.num_components; i++)
-                    this._m_pData[location++] = row_pointer[0][i];
+                    this._data[location++] = row_pointer[0][i];
             }
 
             cc.jpeg_finish_decompress(cinfo);
             cc.jpeg_destroy_decompress(cinfo);
             /* wrap up decompression, destroy objects, free pointers and close open files */
-            bRet = true;
+            ret = true;
         } while (0);
 
-        return bRet;
+        return ret;
     },
     _initWithPngData:function (pData, nDatalen) {
-        var bRet = false, header = [0], png_ptr = 0, info_ptr = 0, pImateData = 0;
+        var ret = false, header = [0], png_ptr = 0, info_ptr = 0, imateData = 0;
 
         do
         {
@@ -279,30 +277,30 @@ cc.Image = cc.Class.extend({
                 | cc.PNG_TRANSFORM_STRIP_16 | cc.PNG_TRANSFORM_GRAY_TO_RGB, 0);
 
             var color_type = 0;
-            var nWidth = 0;
-            var nHeight = 0;
+            var width = 0;
+            var height = 0;
             var nBitsPerComponent = 0;
-            cc.png_get_IHDR(png_ptr, info_ptr, nWidth, nHeight, nBitsPerComponent, color_type, 0, 0, 0);
+            cc.png_get_IHDR(png_ptr, info_ptr, width, height, nBitsPerComponent, color_type, 0, 0, 0);
 
             // init image info
-            this._m_bPreMulti = true;
-            this._m_bHasAlpha = ( info_ptr.color_type & cc.PNG_COLOR_MASK_ALPHA ) ? true : false;
+            this._preMulti = true;
+            this._hasAlpha = ( info_ptr.color_type & cc.PNG_COLOR_MASK_ALPHA ) ? true : false;
 
             // allocate memory and read data
             var bytesPerComponent = 3;
-            if (this._m_bHasAlpha) {
+            if (this._hasAlpha) {
                 bytesPerComponent = 4;
             }
-            pImateData = new [nHeight * nWidth * bytesPerComponent];
-            if (!pImateData) break;
+            imateData = new [height * width * bytesPerComponent];
+            if (!imateData) break;
             var rowPointers = new cc.png_bytep();
             rowPointers = cc.png_get_rows(png_ptr, info_ptr);
 
             // copy data to image info
-            var bytesPerRow = nWidth * bytesPerComponent;
-            if (this._m_bHasAlpha) {
-                var tmp = pImateData;
-                for (var i = 0; i < nHeight; i++) {
+            var bytesPerRow = width * bytesPerComponent;
+            if (this._hasAlpha) {
+                var tmp = imateData;
+                for (var i = 0; i < height; i++) {
                     for (var j = 0; j < bytesPerRow; j += 4) {
                         tmp++;
                         tmp = cc.RGB_PREMULTIPLY_APLHA(rowPointers[i][j], rowPointers[i][j + 1],
@@ -311,58 +309,58 @@ cc.Image = cc.Class.extend({
                 }
             }
             else {
-                for (var j = 0; j < nHeight; ++j) {
-                    cc.memcpy(pImateData + j * bytesPerRow, rowPointers[j], bytesPerRow);
+                for (var j = 0; j < height; ++j) {
+                    cc.memcpy(imateData + j * bytesPerRow, rowPointers[j], bytesPerRow);
                 }
             }
 
-            this._m_nBitsPerComponent = nBitsPerComponent;
-            this._m_nHeight = nHeight;
-            this._m_nWidth = nWidth;
-            this._m_pData = pImateData;
-            pImateData = 0;
-            bRet = true;
+            this._bitsPerComponent = nBitsPerComponent;
+            this._height = height;
+            this._width = width;
+            this._data = imateData;
+            imateData = 0;
+            ret = true;
         } while (0);
 
         if (png_ptr) {
             cc.png_destroy_read_struct(png_ptr, info_ptr ? info_ptr : 0, 0);
         }
-        return bRet;
+        return ret;
     },
 
-// @warning kFmtRawData only support RGBA8888
-    _initWithRawData:function (pData, nDatalen, nWidth, nHeight, nBitsPerComponent) {
-        var bRet = false;
+// @warning FMT_RAWDATA only support RGBA8888
+    _initWithRawData:function (data, datalen, width, height, bitsPerComponent) {
+        var ret = false;
         do
         {
-            if (0 == nWidth || 0 == nHeight) break;
+            if (0 == width || 0 == height) break;
 
-            this._m_nBitsPerComponent = nBitsPerComponent;
-            this._m_nHeight = nHeight;
-            this._m_nWidth = nWidth;
-            this._m_bHasAlpha = true;
+            this._bitsPerComponent = bitsPerComponent;
+            this._height = height;
+            this._width = width;
+            this._hasAlpha = true;
 
             // only RGBA8888 surported
             var nBytesPerComponent = 4;
-            var nSize = nHeight * nWidth * nBytesPerComponent;
-            this._m_pData = new [nSize];
-            if (!this._m_pData) break;
-            cc.memcpy(this._m_pData, pData, nSize);
+            var nSize = height * width * nBytesPerComponent;
+            this._data = new [nSize];
+            if (!this._data) break;
+            cc.memcpy(this._data, data, nSize);
 
-            bRet = true;
+            ret = true;
         } while (0);
-        return bRet;
+        return ret;
     },
 
-    _saveImageToPNG:function (pszFilePath, bIsToRGB) {
-        var bRet = false;
+    _saveImageToPNG:function (filePath, isToRGB) {
+        var ret = false;
         do
         {
-            if (null == pszFilePath) break;
+            if (null == filePath) break;
 
             var fp = new cc.FILE(), png_ptr = new cc.png_structp(), info_ptr = new cc.png_infop(), palette = new cc.png_colorp(), row_pointers = new cc.png_bytep();
 
-            fp = cc.fopen(pszFilePath, "wb");
+            fp = cc.fopen(filePath, "wb");
             if (null == fp) break;
 
             png_ptr = cc.png_create_write_struct(cc.PNG_LIBPNG_VER_STRING, null, null, null);
@@ -387,12 +385,12 @@ cc.Image = cc.Class.extend({
             }
             cc.png_init_io(png_ptr, fp);
 
-            if (!bIsToRGB && this._m_bHasAlpha) {
-                cc.png_set_IHDR(png_ptr, info_ptr, this._m_nWidth, this._m_nHeight, 8, cc.PNG_COLOR_TYPE_RGB_ALPHA,
+            if (!isToRGB && this._hasAlpha) {
+                cc.png_set_IHDR(png_ptr, info_ptr, this._width, this._height, 8, cc.PNG_COLOR_TYPE_RGB_ALPHA,
                     cc.PNG_INTERLACE_NONE, cc.PNG_COMPRESSION_TYPE_BASE, cc.PNG_FILTER_TYPE_BASE);
             }
             else {
-                cc.png_set_IHDR(png_ptr, info_ptr, this._m_nWidth, this._m_nHeight, 8, cc.PNG_COLOR_TYPE_RGB,
+                cc.png_set_IHDR(png_ptr, info_ptr, this._width, this._height, 8, cc.PNG_COLOR_TYPE_RGB,
                     cc.PNG_INTERLACE_NONE, cc.PNG_COMPRESSION_TYPE_BASE, cc.PNG_FILTER_TYPE_BASE);
             }
 
@@ -403,16 +401,16 @@ cc.Image = cc.Class.extend({
 
             cc.png_set_packing(png_ptr);
 
-            row_pointers = cc.malloc(this._m_nHeight * sizeof(cc.png_bytep));
+            row_pointers = cc.malloc(this._height * sizeof(cc.png_bytep));
             if (row_pointers == null) {
                 cc.fclose(fp);
                 cc.png_destroy_write_struct(png_ptr, info_ptr);
                 break;
             }
 
-            if (!this._m_bHasAlpha) {
-                for (var i = 0; i < this._m_nHeight; i++) {
-                    row_pointers[i] = this._m_pData + i * this._m_nWidth * 3;
+            if (!this._hasAlpha) {
+                for (var i = 0; i < this._height; i++) {
+                    row_pointers[i] = this._data + i * this._width * 3;
                 }
 
                 cc.png_write_image(png_ptr, row_pointers);
@@ -421,24 +419,24 @@ cc.Image = cc.Class.extend({
                 row_pointers = null;
             }
             else {
-                if (bIsToRGB) {
-                    var pTempData = new [this._m_nWidth * this._m_nHeight * 3];
-                    if (null == pTempData) {
+                if (isToRGB) {
+                    var tempData = new [this._width * this._height * 3];
+                    if (null == tempData) {
                         cc.fclose(fp);
                         cc.png_destroy_write_struct(png_ptr, info_ptr);
                         break;
                     }
 
-                    for (var i = 0; i < this._m_nHeight; ++i) {
-                        for (var j = 0; j < this._m_nWidth; ++j) {
-                            pTempData[(i * this._m_nWidth + j) * 3] = this._m_pData[(i * __m_nWidth + j) * 4];
-                            pTempData[(i * this._m_nWidth + j) * 3 + 1] = this._m_pData[(i * __m_nWidth + j) * 4 + 1];
-                            pTempData[(i * this._m_nWidth + j) * 3 + 2] = this._m_pData[(i * __m_nWidth + j) * 4 + 2];
+                    for (var i = 0; i < this._height; ++i) {
+                        for (var j = 0; j < this._width; ++j) {
+                            tempData[(i * this._width + j) * 3] = this._data[(i * __width + j) * 4];
+                            tempData[(i * this._width + j) * 3 + 1] = this._data[(i * __width + j) * 4 + 1];
+                            tempData[(i * this._width + j) * 3 + 2] = this._data[(i * __width + j) * 4 + 2];
                         }
                     }
 
-                    for (var i = 0; i < this._m_nHeight; i++) {
-                        row_pointers[i] = pTempData + i * this._m_nWidth * 3;
+                    for (var i = 0; i < this._height; i++) {
+                        row_pointers[i] = tempData + i * this._width * 3;
                     }
 
                     cc.png_write_image(png_ptr, row_pointers);
@@ -448,8 +446,8 @@ cc.Image = cc.Class.extend({
 
                 }
                 else {
-                    for (var i = 0; i < this._m_nHeight; i++) {
-                        row_pointers[i] = this._m_pData + i * this._m_nWidth * 4;
+                    for (var i = 0; i < this._height; i++) {
+                        row_pointers[i] = this._data + i * this._width * 4;
                     }
 
                     cc.png_write_image(png_ptr, row_pointers);
@@ -468,12 +466,12 @@ cc.Image = cc.Class.extend({
 
             cc.fclose(fp);
 
-            bRet = true;
+            ret = true;
         } while (0);
-        return bRet;
+        return ret;
     },
     _saveImageToJPG:function (pszFilePath) {
-        var bRet = false;
+        var ret = false;
         do
         {
             if (null == pszFilePath) break;
@@ -492,9 +490,9 @@ cc.Image = cc.Class.extend({
 
             cc.jpeg_stdio_dest(cinfo, outfile);
 
-            cinfo.image_width = this._m_nWidth;
+            cinfo.image_width = this._width;
             /* image width and height, in pixels */
-            cinfo.image_height = this._m_nHeight;
+            cinfo.image_height = this._height;
             cinfo.input_components = 3;
             /* # of color components per pixel */
             cinfo.in_color_space = cc.JCS_RGB;
@@ -504,35 +502,35 @@ cc.Image = cc.Class.extend({
 
             cc.jpeg_start_compress(cinfo, true);
 
-            row_stride = this._m_nWidth * 3;
+            row_stride = this._width * 3;
             /* JSAMPLEs per row in image_buffer */
 
-            if (this._m_bHasAlpha) {
-                var pTempData = new [this._m_nWidth * this._m_nHeight * 3];
-                if (null == pTempData) {
+            if (this._hasAlpha) {
+                var tempData = new [this._width * this._height * 3];
+                if (null == tempData) {
                     cc.jpeg_finish_compress(cinfo);
                     cc.jpeg_destroy_compress(cinfo);
                     cc.fclose(outfile);
                     break;
                 }
 
-                for (var i = 0; i < this._m_nHeight; ++i) {
-                    for (var j = 0; j < this._m_nWidth; ++j) {
-                        pTempData[(i * this._m_nWidth + j) * 3] = this._m_pData[(i * this._m_nWidth + j) * 4];
-                        pTempData[(i * this._m_nWidth + j) * 3 + 1] = this._m_pData[(i * this._m_nWidth + j) * 4 + 1];
-                        pTempData[(i * this._m_nWidth + j) * 3 + 2] = this._m_pData[(i * this._m_nWidth + j) * 4 + 2];
+                for (var i = 0; i < this._height; ++i) {
+                    for (var j = 0; j < this._width; ++j) {
+                        tempData[(i * this._width + j) * 3] = this._data[(i * this._width + j) * 4];
+                        tempData[(i * this._width + j) * 3 + 1] = this._data[(i * this._width + j) * 4 + 1];
+                        tempData[(i * this._width + j) * 3 + 2] = this._data[(i * this._width + j) * 4 + 2];
                     }
                 }
 
                 while (cinfo.next_scanline < cinfo.image_height) {
-                    row_pointer[0] = pTempData[cinfo.next_scanline * row_stride];
+                    row_pointer[0] = tempData[cinfo.next_scanline * row_stride];
                     cc.jpeg_write_scanlines(cinfo, row_pointer, 1);
                 }
 
             }
             else {
                 while (cinfo.next_scanline < cinfo.image_height) {
-                    row_pointer[0] = this._m_pData[cinfo.next_scanline * row_stride];
+                    row_pointer[0] = this._data[cinfo.next_scanline * row_stride];
                     cc.jpeg_write_scanlines(cinfo, row_pointer, 1);
                 }
             }
@@ -541,21 +539,21 @@ cc.Image = cc.Class.extend({
             cc.fclose(outfile);
             cc.jpeg_destroy_compress(cinfo);
 
-            bRet = true;
+            ret = true;
         } while (0);
-        return bRet;
+        return ret;
     },
 
     /**
      @brief    Create image with specified string.
-     @param  pText       the text which the image show, nil cause init fail
-     @param  nWidth      the image width, if 0, the width match the text's width
-     @param  nHeight     the image height, if 0, the height match the text's height
+     @param  text       the text which the image show, nil cause init fail
+     @param  width      the image width, if 0, the width match the text's width
+     @param  height     the image height, if 0, the height match the text's height
      @param  eAlignMask  the test Alignment
      @param  pFontName   the name of the font which use to draw the text. If nil, use the default system font.
      @param  nSize       the font size, if 0, use the system default size.
      */
-    initWithString:function (pText, nWidth, nHeight, eAlignMask, pFontName, nSize) {
+    initWithString:function (text, width, height, eAlignMask, pFontName, nSize) {
 
     }
 });

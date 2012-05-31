@@ -32,16 +32,16 @@ var s_nTexCurCase = 0;
 ////////////////////////////////////////////////////////
 var TextureMenuLayer = PerformBasicLayer.extend({
     showCurrentTest:function () {
-        var pScene = null;
-        switch (this._m_nCurCase) {
+        var scene = null;
+        switch (this._curCase) {
             case 0:
-                pScene = TextureTest.scene();
+                scene = TextureTest.scene();
                 break;
         }
-        s_nTexCurCase = this._m_nCurCase;
+        s_nTexCurCase = this._curCase;
 
-        if (pScene) {
-            cc.Director.sharedDirector().replaceScene(pScene);
+        if (scene) {
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
 
@@ -111,7 +111,7 @@ var TextureTest = TextureMenuLayer.extend({
         var cache = cc.TextureCache.sharedTextureCache();
 
         cc.Log("RGBA 8888");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
@@ -121,7 +121,7 @@ var TextureTest = TextureMenuLayer.extend({
         cache.removeTexture(texture);
 
         cc.Log("RGBA 4444");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA4444);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
@@ -131,7 +131,7 @@ var TextureTest = TextureMenuLayer.extend({
         cache.removeTexture(texture);
 
         cc.Log("RGBA 5551");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGB5A1);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGB5A1);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
@@ -141,7 +141,7 @@ var TextureTest = TextureMenuLayer.extend({
         cache.removeTexture(texture);
 
         cc.Log("RGB 565");
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGB565);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGB565);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
@@ -153,15 +153,15 @@ var TextureTest = TextureMenuLayer.extend({
 });
 
 TextureTest.scene = function () {
-    var pScene = cc.Scene.node();
+    var scene = cc.Scene.node();
     var layer = new TextureTest(false, 1, s_nTexCurCase);
-    pScene.addChild(layer);
-    return pScene;
+    scene.addChild(layer);
+    return scene;
 };
 function runTextureTest() {
     s_nTexCurCase = 0;
-    var pScene = TextureTest.scene();
-    cc.Director.sharedDirector().replaceScene(pScene);
+    var scene = TextureTest.scene();
+    cc.Director.sharedDirector().replaceScene(scene);
 }
 
 function calculateDeltaTime(lastUpdate) {

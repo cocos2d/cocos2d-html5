@@ -94,9 +94,9 @@ cc.domNodeMethods = {
     },
     setNodeDirty:function () {
         this._setNodeDirtyForCache();
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
+        this._isTransformDirty = this._isInverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
+            this._isTransformGLDirty = true;
         }
         if(this.dom)
         {
@@ -206,8 +206,8 @@ cc.domNode = cc.Class.extend({
     _children:null, //array
     _parent:null, //parent obj
     _tag:-1,
-    _m_bIsRelativeAnchorPoint:true,
-    _m_bIsRunning:false,
+    _isRelativeAnchorPoint:true,
+    _isRunning:false,
     _IsVisible:true,
     ctor:function () {
         this.initDom();
@@ -275,7 +275,7 @@ cc.domNode = cc.Class.extend({
         return new cc.Size(this._contentSize.width, this._contentSize.height);
     },
     getIsRunning:function(){
-        return this._m_bIsRunning;
+        return this._isRunning;
     },
 
     //Sets
@@ -338,7 +338,7 @@ cc.domNode = cc.Class.extend({
     setAnchorPoint:function (s) {
         this._AnchorPoint = s;
         var size = this.getContentSize();
-        if (this._m_bIsRelativeAnchorPoint) {
+        if (this._isRelativeAnchorPoint) {
             this.dom.style.left = "-" + (s.x * size.width) + "px";
             this.dom.style.top = "-" + (s.y * size.height) + "px";
             this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";
@@ -363,9 +363,9 @@ cc.domNode = cc.Class.extend({
         cc.Assert(t != -1, "Invalid tag");
         if (this._children != null) {
             for (var i = 0; i < this._children.length; i++) {
-                var pNode = this._children[i];
-                if (pNode && pNode._tag == t)
-                    return pNode;
+                var node = this._children[i];
+                if (node && node._tag == t)
+                    return node;
             }
         }
     },
@@ -384,7 +384,7 @@ cc.domNode = cc.Class.extend({
         child.setParent(this);
         child.setTag(tag);
         this._children.push(child);
-        if (this._m_bIsRunning) {
+        if (this._isRunning) {
             child.onEnter();
             child.onEnterTransitionDidFinish();
         }
@@ -409,12 +409,12 @@ cc.domNode = cc.Class.extend({
     onEnter:function () {
         this._arrayMakeObjectsPerformSelector(this.getChildren(), "onEnter");
         this.resumeSchedulerAndActions();
-        this._m_bIsRunning = true;
+        this._isRunning = true;
         this.show();
     },
     onExit:function () {
         this.pauseSchedulerAndActions();
-        this._m_bIsRunning = false;
+        this._isRunning = false;
         this._arrayMakeObjectsPerformSelector(this.getChildren(), "onExit");
         this.hide();
         /*var that = cc.$("#" + this.id());
@@ -455,14 +455,14 @@ cc.domNode = cc.Class.extend({
         cc.Scheduler.sharedScheduler().resumeTarget(this);
         cc.ActionManager.sharedManager().resumeTarget(this);
     },
-    _arrayMakeObjectsPerformSelector:function (pArray, func) {
-        if (pArray && pArray.length > 0) {
-            for (var i = 0; i < pArray.length; i++) {
-                var pNode = pArray[i];
-                if (pNode && (typeof(func) == "string")) {
-                    pNode[func]();
-                } else if (pNode && (typeof(func) == "function")) {
-                    func.call(pNode);
+    _arrayMakeObjectsPerformSelector:function (array, func) {
+        if (array && array.length > 0) {
+            for (var i = 0; i < array.length; i++) {
+                var node = array[i];
+                if (node && (typeof(func) == "string")) {
+                    node[func]();
+                } else if (node && (typeof(func) == "function")) {
+                    func.call(node);
                 }
             }
         }
@@ -504,10 +504,10 @@ cc.domNode.DomContainer = function () {
     }
     return cc.domNode._domContainer;
 };
-cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
+cc.domNode.getTextSize = function (text, fontSize, fontfamily, pStyle) {
     var lDiv = cc.$new('lDiv');
     document.body.appendChild(lDiv);
-    lDiv.style.fontSize = (isNaN(pFontSize)) ? pFontSize : ("" + pFontSize + "px");
+    lDiv.style.fontSize = (isNaN(fontSize)) ? fontSize : ("" + fontSize + "px");
     lDiv.style.position = "absolute";
     lDiv.style.left = -1000 + "px";
     lDiv.style.top = -1000 + "px";
@@ -516,7 +516,7 @@ cc.domNode.getTextSize = function (pText, pFontSize, fontfamily, pStyle) {
         lDiv.style = pStyle;
     }
 
-    lDiv.textContent = pText;
+    lDiv.textContent = text;
 
     var lResult = {
         width:lDiv.clientWidth,
@@ -536,13 +536,13 @@ cc.Node.implement({
         if(!p)
         {
             //try to remove parent
-            if(this._m_pParent.dom && this.dom && this.dom.parentNode == this._m_pParent.dom){
-                this._m_pParent.dom.removeChild(this.dom);
+            if(this._parent.dom && this.dom && this.dom.parentNode == this._parent.dom){
+                this._parent.dom.removeChild(this.dom);
             }
-            this._m_pParent = p;
+            this._parent = p;
         }
         else{
-            this._m_pParent = p;
+            this._parent = p;
             if(this.dom){
                 this.setParentDiv(p);
             }
@@ -550,9 +550,9 @@ cc.Node.implement({
         //this._updateAnchorPoint();
     },
     onEnter:function(){
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
+        this._arrayMakeObjectsPerformSelector(this._children, "onEnter");
         this.resumeSchedulerAndActions();
-        this._m_bIsRunning = true;
+        this._isRunning = true;
         //if this node has a dom element attached, and it is the current running scene, we finally attach it to the dom container :)
         if(this.dom){
             this.show();
@@ -562,17 +562,17 @@ cc.Node.implement({
         }
     },
     setContentSizeInPixels:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSizeInPixels)) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._contentSizeInPixels)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-            this._m_tContentSizeInPixels = size;
+            this._contentSizeInPixels = size;
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
-                this._m_tContentSize = this._m_tContentSizeInPixels;
+                this._contentSize = this._contentSizeInPixels;
             } else {
-                this._m_tContentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
+                this._contentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
-                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._anchorPointInPixels = cc.ccp(this._contentSizeInPixels.width * this._anchorPoint.x,
+                this._contentSizeInPixels.height * this._anchorPoint.y);
 
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -583,20 +583,20 @@ cc.Node.implement({
         this.dom.style.maxHeight = size.height+"px";
     },
     setContentSize:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-            this._m_tContentSize = size;
+            this._contentSize = size;
 
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
-                this._m_tContentSizeInPixels = this._m_tContentSize;
+                this._contentSizeInPixels = this._contentSize;
             }
             else {
-                this._m_tContentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+                this._contentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
             }
 
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
-                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._anchorPointInPixels = cc.ccp(this._contentSizeInPixels.width * this._anchorPoint.x,
+                this._contentSizeInPixels.height * this._anchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
@@ -607,13 +607,13 @@ cc.Node.implement({
     },
     setAnchorPoint:function (point) {
 
-        if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
+        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-            this._m_tAnchorPoint = point;
-            this._m_tAnchorPointInPixels = cc.ccp(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
-                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._anchorPoint = point;
+            this._anchorPointInPixels = cc.ccp(this._contentSizeInPixels.width * this._anchorPoint.x,
+                this._contentSizeInPixels.height * this._anchorPoint.y);
 
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -622,7 +622,7 @@ cc.Node.implement({
         if(this.dom){
             var size = this.getContentSize();
             var s = point;
-            if (this._m_bIsRelativeAnchorPoint) {
+            if (this._isRelativeAnchorPoint) {
                 this.dom.style.left = "-" + (s.x * size.width) + "px";
                 this.dom.style.top = (s.y * size.height) + "px";
                 this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";
@@ -641,7 +641,7 @@ cc.Node.implement({
 if (cc.LayerColor != null) {
     cc.LayerColor.implement({
         setOpacity:function(Var){
-            this._m_cOpacity = Var;
+            this._opacity = Var;
             this._updateColor();
 
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());

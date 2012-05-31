@@ -23,12 +23,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagParticleSystem = 3;
-var kTagLabelAtlas = 4;
-var kMaxParticles = 1000;
-var kParticleNodesIncrease = 50;
+var TAG_PARTICLE_SYSTEM = 3;
+var TAG_LABEL_ATLAS = 4;
+var MAX_PARTICLES = 1000;
+var PARTICLE_NODES_INCREASE = 50;
 var s_nParCurIdx = 0;
-var kTagParticleMenuLayer = 1000;
+var TAG_PARTICLE_MENU_LAYER = 1000;
 
 ////////////////////////////////////////////////////////
 //
@@ -36,33 +36,33 @@ var kTagParticleMenuLayer = 1000;
 //
 ////////////////////////////////////////////////////////
 var ParticleMenuLayer = PerformBasicLayer.extend({
-    _m_nMaxCases:4,
+    _maxCases:4,
     showCurrentTest:function () {
-        var pScene = this.getParent();
-        var subTest = pScene.getSubTestNum();
-        var parNum = pScene.getParticlesNum();
+        var scene = this.getParent();
+        var subTest = scene.getSubTestNum();
+        var parNum = scene.getParticlesNum();
 
-        var pNewScene = null;
+        var newScene = null;
 
-        switch (this._m_nCurCase) {
+        switch (this._curCase) {
             case 0:
-                pNewScene = new ParticlePerformTest1;
+                newScene = new ParticlePerformTest1;
                 break;
             case 1:
-                pNewScene = new ParticlePerformTest2;
+                newScene = new ParticlePerformTest2;
                 break;
             case 2:
-                pNewScene = new ParticlePerformTest3;
+                newScene = new ParticlePerformTest3;
                 break;
             case 3:
-                pNewScene = new ParticlePerformTest4;
+                newScene = new ParticlePerformTest4;
                 break;
         }
 
-        s_nParCurIdx = this._m_nCurCase;
-        if (pNewScene) {
-            pNewScene.initWithSubTest(subTest, parNum);
-            cc.Director.sharedDirector().replaceScene(pNewScene);
+        s_nParCurIdx = this._curCase;
+        if (newScene) {
+            newScene.initWithSubTest(subTest, parNum);
+            cc.Director.sharedDirector().replaceScene(newScene);
         }
     }
 });
@@ -99,26 +99,26 @@ var ParticleMainScene = cc.Scene.extend({
         var infoLabel = cc.LabelTTF.labelWithString("0 nodes", "Marker Felt", 30);
         infoLabel.setColor(cc.ccc3(0, 200, 20));
         infoLabel.setPosition(cc.ccp(s.width / 2, s.height - 90));
-        this.addChild(infoLabel, 1, kTagInfoLayer);
+        this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
         // particles on stage
         //var labelAtlas = cc.LabelAtlas.labelWithString("0000", "Resources/Images/fps_images.png", 16, 24, '.');
         var labelAtlas = cc.LabelTTF.labelWithString("0000", "Marker Felt", 30);
-        this.addChild(labelAtlas, 0, kTagLabelAtlas);
+        this.addChild(labelAtlas, 0, TAG_LABEL_ATLAS);
         labelAtlas.setPosition(cc.ccp(s.width - 66, 50));
 
         // Next Prev Test
-        var pMenu = new ParticleMenuLayer(true, 4, s_nParCurIdx);
-        this.addChild(pMenu, 1, kTagParticleMenuLayer);
+        var menu = new ParticleMenuLayer(true, 4, s_nParCurIdx);
+        this.addChild(menu, 1, TAG_PARTICLE_MENU_LAYER);
 
         // Sub Tests
         cc.MenuItemFont.setFontSize(40);
-        var pSubMenu = cc.Menu.menuWithItems(null);
+        var subMenu = cc.Menu.menuWithItems(null);
         for (var i = 1; i <= 3; ++i) {
             var str = i.toString();
             var itemFont = cc.MenuItemFont.itemFromString(str, this, this.testNCallback);
             itemFont.setTag(i);
-            pSubMenu.addChild(itemFont, 10);
+            subMenu.addChild(itemFont, 10);
 
             if (i <= 1) {
                 itemFont.setColor(cc.ccc3(200, 20, 20));
@@ -127,9 +127,9 @@ var ParticleMainScene = cc.Scene.extend({
                 itemFont.setColor(cc.ccc3(0, 200, 20));
             }
         }
-        pSubMenu.alignItemsHorizontally();
-        pSubMenu.setPosition(cc.ccp(s.width / 2, 80));
-        this.addChild(pSubMenu, 2);
+        subMenu.alignItemsHorizontally();
+        subMenu.setPosition(cc.ccp(s.width / 2, 80));
+        this.addChild(subMenu, 2);
 
         var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 40);
         this.addChild(label, 1);
@@ -146,8 +146,8 @@ var ParticleMainScene = cc.Scene.extend({
     },
 
     step:function (dt) {
-        var atlas = this.getChildByTag(kTagLabelAtlas);
-        var emitter = this.getChildByTag(kTagParticleSystem);
+        var atlas = this.getChildByTag(TAG_LABEL_ATLAS);
+        var emitter = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         var str = emitter.getParticleCount();
         atlas.setString(str);
@@ -163,7 +163,7 @@ var ParticleMainScene = cc.Scene.extend({
          * 4: Quad Particle System using 4-bit textures (PVRTC)
          */
 
-        this.removeChildByTag(kTagParticleSystem, true);
+        this.removeChildByTag(TAG_PARTICLE_SYSTEM, true);
 
         //todo
         // remove the "fire.png" from the TextureCache cache.
@@ -174,17 +174,17 @@ var ParticleMainScene = cc.Scene.extend({
 
         switch (this._subtestNumber) {
             case 1:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
                 particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png"));
                 break;
             case 2:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA4444);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
                 particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png"));
                 break;
             case 3:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_A8);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_A8);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
                 particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png"));
                 break;
@@ -193,37 +193,37 @@ var ParticleMainScene = cc.Scene.extend({
                 cc.LOG("Shall not happen!");
                 break;
         }
-        this.addChild(particleSystem, 0, kTagParticleSystem);
+        this.addChild(particleSystem, 0, TAG_PARTICLE_SYSTEM);
 
         this.doTest();
 
         // restore the default pixel format
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.kCCTexture2DPixelFormat_RGBA8888);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
     },
-    onDecrease:function (pSender) {
-        this._quantityParticles -= kParticleNodesIncrease;
+    onDecrease:function (sender) {
+        this._quantityParticles -= PARTICLE_NODES_INCREASE;
         if (this._quantityParticles < 0)
             this._quantityParticles = 0;
 
         this.updateQuantityLabel();
         this.createParticleSystem();
     },
-    onIncrease:function (pSender) {
-        this._quantityParticles += kParticleNodesIncrease;
-        if (this._quantityParticles > kMaxParticles){
-            this._quantityParticles = kMaxParticles;
+    onIncrease:function (sender) {
+        this._quantityParticles += PARTICLE_NODES_INCREASE;
+        if (this._quantityParticles > MAX_PARTICLES){
+            this._quantityParticles = MAX_PARTICLES;
         }
         this.updateQuantityLabel();
         this.createParticleSystem();
     },
-    testNCallback:function (pSender) {
-        this._subtestNumber = pSender.getTag();
-        var pMenu = this.getChildByTag(kTagParticleMenuLayer);
-        pMenu.restartCallback(pSender);
+    testNCallback:function (sender) {
+        this._subtestNumber = sender.getTag();
+        var menu = this.getChildByTag(TAG_PARTICLE_MENU_LAYER);
+        menu.restartCallback(sender);
     },
     updateQuantityLabel:function () {
         if (this._quantityParticles != this._lastRenderedCount) {
-            var infoLabel = this.getChildByTag(kTagInfoLayer);
+            var infoLabel = this.getChildByTag(TAG_INFO_LAYER);
             var str = this._quantityParticles + " particles";
             infoLabel.setString(str);
 
@@ -252,7 +252,7 @@ var ParticlePerformTest1 = ParticleMainScene.extend({
     },
     doTest:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var particleSystem = this.getChildByTag(kTagParticleSystem);
+        var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
         particleSystem.setDuration(-1);
@@ -319,7 +319,7 @@ var ParticlePerformTest2 = ParticleMainScene.extend({
     },
     doTest:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var particleSystem = this.getChildByTag(kTagParticleSystem);
+        var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
         particleSystem.setDuration(-1);
@@ -386,7 +386,7 @@ var ParticlePerformTest3 = ParticleMainScene.extend({
     },
     doTest:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var particleSystem = this.getChildByTag(kTagParticleSystem);
+        var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
         particleSystem.setDuration(-1);
@@ -453,7 +453,7 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
     },
     doTest:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var particleSystem = this.getChildByTag(kTagParticleSystem);
+        var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
         particleSystem.setDuration(-1);
@@ -509,7 +509,7 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
 });
 
 function runParticleTest() {
-    var pScene = new ParticlePerformTest1;
-    pScene.initWithSubTest(1, kParticleNodesIncrease);
-    cc.Director.sharedDirector().replaceScene(pScene);
+    var scene = new ParticlePerformTest1;
+    scene.initWithSubTest(1, PARTICLE_NODES_INCREASE);
+    cc.Director.sharedDirector().replaceScene(scene);
 }

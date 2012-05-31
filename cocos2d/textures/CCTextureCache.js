@@ -31,7 +31,7 @@ cc.g_sharedTextureCache = null;
 cc.loadImage = function (imageUrl) {
     // compute image type
     var imageType = cc.computeImageFormatType(imageUrl);
-    if (imageType == cc.kFmtUnKnown) {
+    if (imageType == cc.FMT_UNKNOWN) {
         cc.LOG("unsupportted format" + imageUrl);
         return;
     }
@@ -46,24 +46,24 @@ cc.loadImage = function (imageUrl) {
 
 cc.computeImageFormatType = function (filename) {
     if (filename.toLowerCase().indexOf('.jpg') > 0 || filename.toLowerCase().indexOf('.jpeg') > 0) {
-        return cc.kFmtJpg;
+        return cc.FMT_JPG;
     } else if (filename.indexOf('.png') > 0 || filename.indexOf('.PNG') > 0) {
-        return cc.kFmtPng;
+        return cc.FMT_PNG;
     }
-    return cc.kFmtUnKnown;
+    return cc.FMT_UNKNOWN;
 };
 
 // implementation TextureCache
 cc.TextureCache = cc.Class.extend({
     /*protected && private:*/
-    m_pTextures:new Object(),
-    _m_TextureColorsCache:new Object(),
+    textures:new Object(),
+    _textureColorsCache:new Object(),
     ctor:function () {
         cc.Assert(cc.g_sharedTextureCache == null, "Attempted to allocate a second instance of a singleton.");
     },
     addImageAsync:function (path, target, selector) {
         cc.Assert(path != null, "TextureCache: fileimage MUST not be null");
-        var texture = this.m_pTextures[path.toString()];
+        var texture = this.textures[path.toString()];
 
         if (texture) {
             this._addImageAsyncCallBack(target, selector);
@@ -75,11 +75,11 @@ cc.TextureCache = cc.Class.extend({
                 that._addImageAsyncCallBack(target, selector);
             });
             texture.src = path;
-            this.m_pTextures[path.toString()] = texture;
+            this.textures[path.toString()] = texture;
         }
 
-        if (cc.renderContextType == cc.kCanvas) {
-            return this.m_pTextures[path.toString()];
+        if (cc.renderContextType == cc.CANVAS) {
+            return this.textures[path.toString()];
         } else {
             //todo texure for gl
         }
@@ -96,7 +96,7 @@ cc.TextureCache = cc.Class.extend({
     },
     /*public:*/
     description:function () {
-        return "<TextureCache | Number of textures = " + this.m_pTextures.length + ">";
+        return "<TextureCache | Number of textures = " + this.textures.length + ">";
     },
 
     /** Returns a Texture2D object given an file image
@@ -107,7 +107,7 @@ cc.TextureCache = cc.Class.extend({
      */
     addImage:function (path) {
         cc.Assert(path != null, "TextureCache: fileimage MUST not be null");
-        var texture = this.m_pTextures[path.toString()];
+        var texture = this.textures[path.toString()];
         if (texture) {
             cc.Loader.shareLoader().onResLoaded();
         }
@@ -122,11 +122,11 @@ cc.TextureCache = cc.Class.extend({
                 cc.Loader.shareLoader().onResLoadingErr(path);
             });
             texture.src = path;
-            this.m_pTextures[path.toString()] = texture;
+            this.textures[path.toString()] = texture;
         }
 
-        if (cc.renderContextType == cc.kCanvas) {
-            return this.m_pTextures[path.toString()];
+        if (cc.renderContextType == cc.CANVAS) {
+            return this.textures[path.toString()];
         } else {
             //todo texure for gl
         }
@@ -152,8 +152,8 @@ cc.TextureCache = cc.Class.extend({
         var texture = null;
 
         if (key) {
-            if ( this.m_pTextures.hasOwnProperty(key)){
-                texture = this.m_pTextures[key];
+            if ( this.textures.hasOwnProperty(key)){
+                texture = this.textures[key];
                 if (texture) {
                     return texture;
                 }
@@ -165,7 +165,7 @@ cc.TextureCache = cc.Class.extend({
         texture.initWithImage(image);
 
         if ((key != null) && (texture != null)) {
-            this.m_pTextures[key] = texture;
+            this.textures[key] = texture;
         } else {
             cc.LOG("cocos2d: Couldn't add UIImage in TextureCache");
         }
@@ -177,16 +177,16 @@ cc.TextureCache = cc.Class.extend({
      @since v0.99.5
      */
     textureForKey:function (key) {
-        if (this.m_pTextures.hasOwnProperty(key)) {
-            return this.m_pTextures[key];
+        if (this.textures.hasOwnProperty(key)) {
+            return this.textures[key];
         } else {
             return null;
         }
     },
 
     getKeyByTexture:function(texture) {
-        for(var key in this.m_pTextures){
-            if(this.m_pTextures[key] == texture){
+        for(var key in this.textures){
+            if(this.textures[key] == texture){
                 return key;
             }
         }
@@ -203,10 +203,10 @@ cc.TextureCache = cc.Class.extend({
             }
         }
 
-        if(!this._m_TextureColorsCache.hasOwnProperty(key)){
-            this._m_TextureColorsCache[key] = cc.generateTextureCacheForColor(texture);
+        if(!this._textureColorsCache.hasOwnProperty(key)){
+            this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
         }
-        return this._m_TextureColorsCache[key];
+        return this._textureColorsCache[key];
     },
 
     /** Purges the dictionary of loaded textures.
@@ -216,7 +216,7 @@ cc.TextureCache = cc.Class.extend({
      * In the long term: it will be the same
      */
     removeAllTextures:function () {
-        this.m_pTextures = new Object();
+        this.textures = new Object();
     },
 
     /** Deletes a texture from the cache given a texture
@@ -225,9 +225,9 @@ cc.TextureCache = cc.Class.extend({
         if (!texture)
             return;
 
-        for (var key in this.m_pTextures) {
-            if (this.m_pTextures[key] == texture) {
-                delete(this.m_pTextures[key]);
+        for (var key in this.textures) {
+            if (this.textures[key] == texture) {
+                delete(this.textures[key]);
                 return;
             }
         }
@@ -241,7 +241,7 @@ cc.TextureCache = cc.Class.extend({
             return;
         }
 
-        delete(this.m_pTextures[textureKeyName]);
+        delete(this.textures[textureKeyName]);
     },
 
     /** Output to cc.LOG the current contents of this TextureCache
@@ -252,8 +252,8 @@ cc.TextureCache = cc.Class.extend({
     dumpCachedTextureInfo:function () {
         var count = 0;
         var totalBytes = 0;
-        for (var key in this.m_pTextures) {
-            var tex = this.m_pTextures[key];
+        for (var key in this.textures) {
+            var tex = this.textures[key];
             var bpp = tex.bitsPerPixelForFormat();
             // Each texture takes up width * height * bytesPerPixel bytes.
             var bytes = tex.getPixelsWide() * tex.getPixelsHigh() * bpp / 8;
@@ -288,15 +288,15 @@ cc.TextureCache = cc.Class.extend({
         // remove possible -HD suffix to prevent caching the same image twice (issue #1040)
         //cc.FileUtils.RemoveHDSuffixFromFile(key);
 
-        if (this.m_pTextures[key] != null) {
-            return this.m_pTextures[key];
+        if (this.textures[key] != null) {
+            return this.textures[key];
         }
 
         // Split up directory and filename
         //var fullpath = cc.FileUtils.fullPathFromRelativePath(key.c_str());
         var tex = new cc.Texture2D();
         if (tex.initWithPVRFile(key)) {
-            this.m_pTextures[key] = tex;
+            this.textures[key] = tex;
         } else {
             cc.LOG("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
         }
@@ -321,7 +321,7 @@ cc.TextureCache.purgeSharedTextureCache = function () {
 };
 
 
-cc.kInvalid = 0;
-cc.kImageFile = 1;
-cc.kImageData = 2;
-cc.kString = 3;
+cc.INVALID = 0;
+cc.IMAGE_FILE = 1;
+cc.IMAGE_DATA = 2;
+cc.STRING = 3;

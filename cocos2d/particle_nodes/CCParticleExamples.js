@@ -35,10 +35,10 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -52,44 +52,44 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.speedVar = 20;
 
             // starting angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 10;
+            this._angle = 90;
+            this._angleVar = 10;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, 60));
-            this._m_tPosVar = cc.ccp(40, 20);
+            this._posVar = cc.ccp(40, 20);
 
             // life of particles
-            this._m_fLife = 3;
-            this._m_fLifeVar = 0.25;
+            this._life = 3;
+            this._lifeVar = 0.25;
 
 
             // size, in pixels
-            this._m_fStartSize = 54.0;
-            this._m_fStartSizeVar = 10.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 54.0;
+            this._startSizeVar = 10.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per frame
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.76;
-            this._m_tStartColor.g = 0.25;
-            this._m_tStartColor.b = 0.12;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.0;
-            this._m_tStartColorVar.g = 0.0;
-            this._m_tStartColorVar.b = 0.0;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 0.0;
-            this._m_tEndColor.g = 0.0;
-            this._m_tEndColor.b = 0.0;
-            this._m_tEndColor.a = 1.0;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.76;
+            this._startColor.g = 0.25;
+            this._startColor.b = 0.12;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.0;
+            this._startColorVar.g = 0.0;
+            this._startColorVar.b = 0.0;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 0.0;
+            this._endColor.g = 0.0;
+            this._endColor.b = 0.0;
+            this._endColor.a = 1.0;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(true);
@@ -99,9 +99,9 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleFire.node = function () {
-    var pRet = new cc.ParticleFire();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleFire();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -115,10 +115,10 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, -90);
@@ -136,38 +136,38 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 20;
+            this._angle = 90;
+            this._angleVar = 20;
 
             // life of particles
-            this._m_fLife = 3.5;
-            this._m_fLifeVar = 1;
+            this._life = 3.5;
+            this._lifeVar = 1;
 
             // emits per frame
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.5;
-            this._m_tStartColor.g = 0.5;
-            this._m_tStartColor.b = 0.5;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.5;
-            this._m_tStartColorVar.g = 0.5;
-            this._m_tStartColorVar.b = 0.5;
-            this._m_tStartColorVar.a = 0.1;
-            this._m_tEndColor.r = 0.1;
-            this._m_tEndColor.g = 0.1;
-            this._m_tEndColor.b = 0.1;
-            this._m_tEndColor.a = 0.2;
-            this._m_tEndColorVar.r = 0.1;
-            this._m_tEndColorVar.g = 0.1;
-            this._m_tEndColorVar.b = 0.1;
-            this._m_tEndColorVar.a = 0.2;
+            this._startColor.r = 0.5;
+            this._startColor.g = 0.5;
+            this._startColor.b = 0.5;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.5;
+            this._startColorVar.g = 0.5;
+            this._startColorVar.b = 0.5;
+            this._startColorVar.a = 0.1;
+            this._endColor.r = 0.1;
+            this._endColor.g = 0.1;
+            this._endColor.b = 0.1;
+            this._endColor.a = 0.2;
+            this._endColorVar.r = 0.1;
+            this._endColorVar.g = 0.1;
+            this._endColorVar.b = 0.1;
+            this._endColorVar.a = 0.2;
 
             // size, in pixels
-            this._m_fStartSize = 8.0;
-            this._m_fStartSizeVar = 2.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 8.0;
+            this._startSizeVar = 2.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // additive
             this.setIsBlendAdditive(false);
@@ -177,9 +177,9 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleFireworks.node = function () {
-    var pRet = new cc.ParticleFireworks();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleFireworks();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -199,10 +199,10 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.setIsBlendAdditive(true);
 
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -217,43 +217,43 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
 
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 360;
+            this._angle = 90;
+            this._angleVar = 360;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
-            this._m_tPosVar = cc.PointZero();
+            this._posVar = cc.PointZero();
 
             // life of particles
-            this._m_fLife = 1;
-            this._m_fLifeVar = 0.5;
+            this._life = 1;
+            this._lifeVar = 0.5;
 
             // size, in pixels
-            this._m_fStartSize = 30.0;
-            this._m_fStartSizeVar = 10.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 30.0;
+            this._startSizeVar = 10.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per seconds
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.76;
-            this._m_tStartColor.g = 0.25;
-            this._m_tStartColor.b = 0.12;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.0;
-            this._m_tStartColorVar.g = 0.0;
-            this._m_tStartColorVar.b = 0.0;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 0.0;
-            this._m_tEndColor.g = 0.0;
-            this._m_tEndColor.b = 0.0;
-            this._m_tEndColor.a = 1.0;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.76;
+            this._startColor.g = 0.25;
+            this._startColor.b = 0.12;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.0;
+            this._startColorVar.g = 0.0;
+            this._startColorVar.b = 0.0;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 0.0;
+            this._endColor.g = 0.0;
+            this._endColor.b = 0.0;
+            this._endColor.a = 1.0;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             return true;
         }
@@ -261,9 +261,9 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleSun.node = function () {
-    var pRet = new cc.ParticleSun();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleSun();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -280,10 +280,10 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -301,43 +301,43 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.tangentialAccelVar = 0;
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 360;
+            this._angle = 90;
+            this._angleVar = 360;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
-            this._m_tPosVar = cc.PointZero();
+            this._posVar = cc.PointZero();
 
             // life of particles
-            this._m_fLife = 4;
-            this._m_fLifeVar = 1;
+            this._life = 4;
+            this._lifeVar = 1;
 
             // size, in pixels
-            this._m_fStartSize = 37.0;
-            this._m_fStartSizeVar = 10.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 37.0;
+            this._startSizeVar = 10.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.12;
-            this._m_tStartColor.g = 0.25;
-            this._m_tStartColor.b = 0.76;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.0;
-            this._m_tStartColorVar.g = 0.0;
-            this._m_tStartColorVar.b = 0.0;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 0.0;
-            this._m_tEndColor.g = 0.0;
-            this._m_tEndColor.b = 0.0;
-            this._m_tEndColor.a = 1.0;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.12;
+            this._startColor.g = 0.25;
+            this._startColor.b = 0.76;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.0;
+            this._startColorVar.g = 0.0;
+            this._startColorVar.b = 0.0;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 0.0;
+            this._endColor.g = 0.0;
+            this._endColor.b = 0.0;
+            this._endColor.a = 1.0;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(true);
@@ -347,9 +347,9 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleGalaxy.node = function () {
-    var pRet = new cc.ParticleGalaxy();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleGalaxy();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -366,10 +366,10 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -387,43 +387,43 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.tangentialAccelVar = 0;
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 360;
+            this._angle = 90;
+            this._angleVar = 360;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
-            this._m_tPosVar = cc.PointZero();
+            this._posVar = cc.PointZero();
 
             // life of particles
-            this._m_fLife = 4;
-            this._m_fLifeVar = 1;
+            this._life = 4;
+            this._lifeVar = 1;
 
             // size, in pixels
-            this._m_fStartSize = 30.0;
-            this._m_fStartSizeVar = 10.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 30.0;
+            this._startSizeVar = 10.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.50;
-            this._m_tStartColor.g = 0.50;
-            this._m_tStartColor.b = 0.50;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.5;
-            this._m_tStartColorVar.g = 0.5;
-            this._m_tStartColorVar.b = 0.5;
-            this._m_tStartColorVar.a = 0.5;
-            this._m_tEndColor.r = 0.0;
-            this._m_tEndColor.g = 0.0;
-            this._m_tEndColor.b = 0.0;
-            this._m_tEndColor.a = 1.0;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.50;
+            this._startColor.g = 0.50;
+            this._startColor.b = 0.50;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.5;
+            this._startColorVar.g = 0.5;
+            this._startColorVar.b = 0.5;
+            this._startColorVar.a = 0.5;
+            this._endColor.r = 0.0;
+            this._endColor.g = 0.0;
+            this._endColor.b = 0.0;
+            this._endColor.a = 1.0;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(true);
@@ -433,9 +433,9 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleFlower.node = function () {
-    var pRet = new cc.ParticleFlower();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleFlower();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -452,10 +452,10 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(-200, 200);
@@ -473,43 +473,43 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.tangentialAccelVar = 0;
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 360;
+            this._angle = 90;
+            this._angleVar = 360;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
-            this._m_tPosVar = cc.PointZero();
+            this._posVar = cc.PointZero();
 
             // life of particles
-            this._m_fLife = 2;
-            this._m_fLifeVar = 1;
+            this._life = 2;
+            this._lifeVar = 1;
 
             // size, in pixels
-            this._m_fStartSize = 60.0;
-            this._m_fStartSizeVar = 10.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 60.0;
+            this._startSizeVar = 10.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.2;
-            this._m_tStartColor.g = 0.4;
-            this._m_tStartColor.b = 0.7;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.0;
-            this._m_tStartColorVar.g = 0.0;
-            this._m_tStartColorVar.b = 0.2;
-            this._m_tStartColorVar.a = 0.1;
-            this._m_tEndColor.r = 0.0;
-            this._m_tEndColor.g = 0.0;
-            this._m_tEndColor.b = 0.0;
-            this._m_tEndColor.a = 1.0;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.2;
+            this._startColor.g = 0.4;
+            this._startColor.b = 0.7;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.0;
+            this._startColorVar.g = 0.0;
+            this._startColorVar.b = 0.2;
+            this._startColorVar.a = 0.1;
+            this._endColor.r = 0.0;
+            this._endColor.g = 0.0;
+            this._endColor.b = 0.0;
+            this._endColor.a = 1.0;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(true);
@@ -519,9 +519,9 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleMeteor.node = function () {
-    var pRet = new cc.ParticleMeteor();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleMeteor();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -538,10 +538,10 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -559,43 +559,43 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.tangentialAccelVar = 0;
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 0;
+            this._angle = 90;
+            this._angleVar = 0;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
-            this._m_tPosVar = cc.PointZero();
+            this._posVar = cc.PointZero();
 
             // life of particles
-            this._m_fLife = 12;
-            this._m_fLifeVar = 0;
+            this._life = 12;
+            this._lifeVar = 0;
 
             // size, in pixels
-            this._m_fStartSize = 20.0;
-            this._m_fStartSizeVar = 0.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 20.0;
+            this._startSizeVar = 0.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.5;
-            this._m_tStartColor.g = 0.5;
-            this._m_tStartColor.b = 0.5;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.5;
-            this._m_tStartColorVar.g = 0.5;
-            this._m_tStartColorVar.b = 0.5;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 0.5;
-            this._m_tEndColor.g = 0.5;
-            this._m_tEndColor.b = 0.5;
-            this._m_tEndColor.a = 1.0;
-            this._m_tEndColorVar.r = 0.5;
-            this._m_tEndColorVar.g = 0.5;
-            this._m_tEndColorVar.b = 0.5;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.5;
+            this._startColor.g = 0.5;
+            this._startColor.b = 0.5;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.5;
+            this._startColorVar.g = 0.5;
+            this._startColorVar.b = 0.5;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 0.5;
+            this._endColor.g = 0.5;
+            this._endColor.b = 0.5;
+            this._endColor.a = 1.0;
+            this._endColorVar.r = 0.5;
+            this._endColorVar.g = 0.5;
+            this._endColorVar.b = 0.5;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(false);
@@ -605,9 +605,9 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleSpiral.node = function () {
-    var pRet = new cc.ParticleSpiral();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleSpiral();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -624,9 +624,9 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = 0.1;
+            this._duration = 0.1;
 
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -644,43 +644,43 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.tangentialAccelVar = 0;
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 360;
+            this._angle = 90;
+            this._angleVar = 360;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
-            this._m_tPosVar = cc.PointZero();
+            this._posVar = cc.PointZero();
 
             // life of particles
-            this._m_fLife = 5.0;
-            this._m_fLifeVar = 2;
+            this._life = 5.0;
+            this._lifeVar = 2;
 
             // size, in pixels
-            this._m_fStartSize = 15.0;
-            this._m_fStartSizeVar = 10.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 15.0;
+            this._startSizeVar = 10.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fDuration;
+            this._emissionRate = this._totalParticles / this._duration;
 
             // color of particles
-            this._m_tStartColor.r = 0.7;
-            this._m_tStartColor.g = 0.1;
-            this._m_tStartColor.b = 0.2;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.5;
-            this._m_tStartColorVar.g = 0.5;
-            this._m_tStartColorVar.b = 0.5;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 0.5;
-            this._m_tEndColor.g = 0.5;
-            this._m_tEndColor.b = 0.5;
-            this._m_tEndColor.a = 0.0;
-            this._m_tEndColorVar.r = 0.5;
-            this._m_tEndColorVar.g = 0.5;
-            this._m_tEndColorVar.b = 0.5;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.7;
+            this._startColor.g = 0.1;
+            this._startColor.b = 0.2;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.5;
+            this._startColorVar.g = 0.5;
+            this._startColorVar.b = 0.5;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 0.5;
+            this._endColor.g = 0.5;
+            this._endColor.b = 0.5;
+            this._endColor.a = 0.0;
+            this._endColorVar.r = 0.5;
+            this._endColorVar.g = 0.5;
+            this._endColorVar.b = 0.5;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(false);
@@ -690,9 +690,9 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleExplosion.node = function () {
-    var pRet = new cc.ParticleExplosion();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleExplosion();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -709,10 +709,10 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // Emitter mode: Gravity Mode
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, 0);
@@ -726,43 +726,43 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.speedVar = 10;
 
             // angle
-            this._m_fAngle = 90;
-            this._m_fAngleVar = 5;
+            this._angle = 90;
+            this._angleVar = 5;
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, 0));
-            this._m_tPosVar = cc.ccp(20, 0);
+            this._posVar = cc.ccp(20, 0);
 
             // life of particles
-            this._m_fLife = 4;
-            this._m_fLifeVar = 1;
+            this._life = 4;
+            this._lifeVar = 1;
 
             // size, in pixels
-            this._m_fStartSize = 60.0;
-            this._m_fStartSizeVar = 10.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 60.0;
+            this._startSizeVar = 10.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per frame
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // color of particles
-            this._m_tStartColor.r = 0.8;
-            this._m_tStartColor.g = 0.8;
-            this._m_tStartColor.b = 0.8;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.02;
-            this._m_tStartColorVar.g = 0.02;
-            this._m_tStartColorVar.b = 0.02;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 0.0;
-            this._m_tEndColor.g = 0.0;
-            this._m_tEndColor.b = 0.0;
-            this._m_tEndColor.a = 1.0;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.8;
+            this._startColor.g = 0.8;
+            this._startColor.b = 0.8;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.02;
+            this._startColorVar.g = 0.02;
+            this._startColorVar.b = 0.02;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 0.0;
+            this._endColor.g = 0.0;
+            this._endColor.b = 0.0;
+            this._endColor.a = 1.0;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(false);
@@ -772,9 +772,9 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleSmoke.node = function () {
-    var pRet = new cc.ParticleSmoke();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleSmoke();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -791,10 +791,10 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
             // set gravity mode.
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(0, -1);
@@ -814,41 +814,41 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height + 10));
-            this._m_tPosVar = cc.ccp(winSize.width / 2, 0);
+            this._posVar = cc.ccp(winSize.width / 2, 0);
 
             // angle
-            this._m_fAngle = -90;
-            this._m_fAngleVar = 5;
+            this._angle = -90;
+            this._angleVar = 5;
 
             // life of particles
-            this._m_fLife = 45;
-            this._m_fLifeVar = 15;
+            this._life = 45;
+            this._lifeVar = 15;
 
             // size, in pixels
-            this._m_fStartSize = 10.0;
-            this._m_fStartSizeVar = 5.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 10.0;
+            this._startSizeVar = 5.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
-            this._m_fEmissionRate = 10;
+            this._emissionRate = 10;
 
             // color of particles
-            this._m_tStartColor.r = 1.0;
-            this._m_tStartColor.g = 1.0;
-            this._m_tStartColor.b = 1.0;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.0;
-            this._m_tStartColorVar.g = 0.0;
-            this._m_tStartColorVar.b = 0.0;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 1.0;
-            this._m_tEndColor.g = 1.0;
-            this._m_tEndColor.b = 1.0;
-            this._m_tEndColor.a = 0.0;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 1.0;
+            this._startColor.g = 1.0;
+            this._startColor.b = 1.0;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.0;
+            this._startColorVar.g = 0.0;
+            this._startColorVar.b = 0.0;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 1.0;
+            this._endColor.g = 1.0;
+            this._endColor.b = 1.0;
+            this._endColor.a = 0.0;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(false);
@@ -858,9 +858,9 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleSnow.node = function () {
-    var pRet = new cc.ParticleSnow();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleSnow();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -877,9 +877,9 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._m_fDuration = cc.kCCParticleDurationInfinity;
+            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
 
-            this._m_nEmitterMode = cc.kCCParticleModeGravity;
+            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
             this.modeA.gravity = cc.ccp(10, -10);
@@ -897,44 +897,44 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
             this.modeA.speedVar = 30;
 
             // angle
-            this._m_fAngle = -90;
-            this._m_fAngleVar = 5;
+            this._angle = -90;
+            this._angleVar = 5;
 
 
             // emitter position
             var winSize = cc.Director.sharedDirector().getWinSize();
             this.setPosition(cc.ccp(winSize.width / 2, winSize.height));
-            this._m_tPosVar = cc.ccp(winSize.width / 2, 0);
+            this._posVar = cc.ccp(winSize.width / 2, 0);
 
             // life of particles
-            this._m_fLife = 4.5;
-            this._m_fLifeVar = 0;
+            this._life = 4.5;
+            this._lifeVar = 0;
 
             // size, in pixels
-            this._m_fStartSize = 4.0;
-            this._m_fStartSizeVar = 2.0;
-            this._m_fEndSize = cc.kCCParticleStartSizeEqualToEndSize;
+            this._startSize = 4.0;
+            this._startSizeVar = 2.0;
+            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
-            this._m_fEmissionRate = 20;
+            this._emissionRate = 20;
 
             // color of particles
-            this._m_tStartColor.r = 0.7;
-            this._m_tStartColor.g = 0.8;
-            this._m_tStartColor.b = 1.0;
-            this._m_tStartColor.a = 1.0;
-            this._m_tStartColorVar.r = 0.0;
-            this._m_tStartColorVar.g = 0.0;
-            this._m_tStartColorVar.b = 0.0;
-            this._m_tStartColorVar.a = 0.0;
-            this._m_tEndColor.r = 0.7;
-            this._m_tEndColor.g = 0.8;
-            this._m_tEndColor.b = 1.0;
-            this._m_tEndColor.a = 0.5;
-            this._m_tEndColorVar.r = 0.0;
-            this._m_tEndColorVar.g = 0.0;
-            this._m_tEndColorVar.b = 0.0;
-            this._m_tEndColorVar.a = 0.0;
+            this._startColor.r = 0.7;
+            this._startColor.g = 0.8;
+            this._startColor.b = 1.0;
+            this._startColor.a = 1.0;
+            this._startColorVar.r = 0.0;
+            this._startColorVar.g = 0.0;
+            this._startColorVar.b = 0.0;
+            this._startColorVar.a = 0.0;
+            this._endColor.r = 0.7;
+            this._endColor.g = 0.8;
+            this._endColor.b = 1.0;
+            this._endColor.a = 0.5;
+            this._endColorVar.r = 0.0;
+            this._endColorVar.g = 0.0;
+            this._endColorVar.b = 0.0;
+            this._endColorVar.a = 0.0;
 
             // additive
             this.setIsBlendAdditive(false);
@@ -944,9 +944,9 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
     }
 });
 cc.ParticleRain.node = function () {
-    var pRet = new cc.ParticleRain();
-    if (pRet.init()) {
-        return pRet;
+    var ret = new cc.ParticleRain();
+    if (ret.init()) {
+        return ret;
     }
     return null;
 };

@@ -32,50 +32,50 @@ var cc = cc = cc || {};
 cc.ActionEase = cc.ActionInterval.extend({
 
     /** initializes the action */
-    initWithAction:function (pAction) {
-        cc.Assert(pAction != null, "");
+    initWithAction:function (action) {
+        cc.Assert(action != null, "");
 
-        if (this.initWithDuration(pAction.getDuration())) {
-            this._m_pOther = pAction;
+        if (this.initWithDuration(action.getDuration())) {
+            this._other = action;
             return true;
         }
         return false;
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     },
 
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_pOther.startWithTarget(this._m_pTarget);   //TODO, need to be checked
+    startWithTarget:function (target) {
+        this._super(target);
+        this._other.startWithTarget(this._target);   //TODO, need to be checked
     },
 
     stop:function () {
-        this._m_pOther.stop();
+        this._other.stop();
         this._super();
     },
 
     update:function (time1) {
-        this._m_pOther.update(time1);
+        this._other.update(time1);
 
     },
 
     reverse:function () {
-        return cc.ActionEase.actionWithAction(this._m_pOther.reverse());
+        return cc.ActionEase.actionWithAction(this._other.reverse());
     },
 
-    _m_pOther:null
+    _other:null
 });
 
 /** creates the action */
-cc.ActionEase.actionWithAction = function (pAction) {
-    var pRet = new cc.ActionEase();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.ActionEase.actionWithAction = function (action) {
+    var ret = new cc.ActionEase();
+    if (ret) {
+        ret.initWithAction(action);
 
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -85,42 +85,42 @@ cc.EaseRateAction = cc.ActionEase.extend({
 
     /** set rate value for the actions */
     setRate:function (rate) {
-        this._m_fRate = rate;
+        this._rate = rate;
     },
     /** get rate value for the actions */
     getRate:function () {
-        return this._m_fRate;
+        return this._rate;
     },
 
     /** Initializes the action with the inner action and the rate parameter */
-    initWithAction:function (pAction, fRate) {
-        if (this._super(pAction)) {
-            this._m_fRate = fRate;
+    initWithAction:function (action, rate) {
+        if (this._super(action)) {
+            this._rate = rate;
             return true;
         }
 
         return false;
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     },
 
     reverse:function () {
-        return cc.EaseRateAction.actionWithAction(this._m_pOther.reverse(), 1 / this._m_fRate);
+        return cc.EaseRateAction.actionWithAction(this._other.reverse(), 1 / this._rate);
     },
 
-    _m_fRate:null
+    _rate:null
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseRateAction.actionWithAction = function (pAction, fRate) {
-    var pRet = new cc.EaseRateAction();
-    if (pRet) {
-        pRet.initWithAction(pAction, fRate);
+cc.EaseRateAction.actionWithAction = function (action, rate) {
+    var ret = new cc.EaseRateAction();
+    if (ret) {
+        ret.initWithAction(action, rate);
 
     }
-    return pRet;
+    return ret;
 
 };
 
@@ -130,22 +130,22 @@ cc.EaseRateAction.actionWithAction = function (pAction, fRate) {
 cc.EaseIn = cc.EaseRateAction.extend({
 
     update:function (time1) {
-        this._m_pOther.update(Math.pow(time1, this._m_fRate));
+        this._other.update(Math.pow(time1, this._rate));
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseIn.actionWithAction = function (pAction, fRate) {
-    var pRet = new cc.EaseIn();
-    if (pRet) {
-        pRet.initWithAction(pAction, fRate);
+cc.EaseIn.actionWithAction = function (action, rate) {
+    var ret = new cc.EaseIn();
+    if (ret) {
+        ret.initWithAction(action, rate);
 
     }
-    return pRet;
+    return ret;
 };
 /**
  @brief CCEaseOut action with a rate
@@ -153,9 +153,9 @@ cc.EaseIn.actionWithAction = function (pAction, fRate) {
 cc.EaseOut = cc.EaseRateAction.extend({
 
     update:function (time1) {
-        this._m_pOther.update(Math.pow(time1, 1 / this._m_fRate));
+        this._other.update(Math.pow(time1, 1 / this._rate));
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -163,13 +163,13 @@ cc.EaseOut = cc.EaseRateAction.extend({
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseOut.actionWithAction = function (pAction, fRate) {
-    var pRet = new cc.EaseOut();
-    if (pRet) {
-        pRet.initWithAction(pAction, fRate);
+cc.EaseOut.actionWithAction = function (action, rate) {
+    var ret = new cc.EaseOut();
+    if (ret) {
+        ret.initWithAction(action, rate);
 
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -180,7 +180,7 @@ cc.EaseInOut = cc.EaseRateAction.extend({
     update:function (time1) {
 
         var sign = 1;
-        var r = this._m_fRate;
+        var r = this._rate;
 
         if (r % 2 == 0) {
             sign = -1;
@@ -188,19 +188,19 @@ cc.EaseInOut = cc.EaseRateAction.extend({
 
         time1 *= 2;
         if (time1 < 1) {
-            this._m_pOther.update(0.5 * Math.pow(time1, this._m_fRate));
+            this._other.update(0.5 * Math.pow(time1, this._rate));
         } else {
-            this._m_pOther.update(sign * 0.5 * (Math.pow(time1 - 2, this._m_fRate) + sign * 2));
+            this._other.update(sign * 0.5 * (Math.pow(time1 - 2, this._rate) + sign * 2));
         }
 
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     },
 
     reverse:function () {
-        return cc.EaseInOut.actionWithAction(this._m_pOther.reverse(), this._m_fRate);
+        return cc.EaseInOut.actionWithAction(this._other.reverse(), this._rate);
 
     }
 
@@ -208,13 +208,13 @@ cc.EaseInOut = cc.EaseRateAction.extend({
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseInOut.actionWithAction = function (pAction, fRate) {
-    var pRet = new cc.EaseInOut();
-    if (pRet) {
-        pRet.initWithAction(pAction, fRate);
+cc.EaseInOut.actionWithAction = function (action, rate) {
+    var ret = new cc.EaseInOut();
+    if (ret) {
+        ret.initWithAction(action, rate);
 
     }
-    return pRet;
+    return ret;
 };
 /**
  @brief CCEase Exponential In
@@ -222,15 +222,15 @@ cc.EaseInOut.actionWithAction = function (pAction, fRate) {
 cc.EaseExponentialIn = cc.ActionEase.extend({
 
     update:function (time1) {
-        this._m_pOther.update(time1 == 0 ? 0 : Math.pow(2, 10 * (time1 / 1 - 1)) - 1 * 0.001);
+        this._other.update(time1 == 0 ? 0 : Math.pow(2, 10 * (time1 / 1 - 1)) - 1 * 0.001);
 
     },
 
     reverse:function () {
-        return cc.EaseExponentialOut.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseExponentialOut.actionWithAction(this._other.reverse());
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -238,13 +238,13 @@ cc.EaseExponentialIn = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseExponentialIn.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseExponentialIn();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseExponentialIn.actionWithAction = function (action) {
+    var ret = new cc.EaseExponentialIn();
+    if (ret) {
+        ret.initWithAction(action);
 
     }
-    return pRet;
+    return ret;
 };
 /**
  @brief Ease Exponential Out
@@ -252,14 +252,14 @@ cc.EaseExponentialIn.actionWithAction = function (pAction) {
 cc.EaseExponentialOut = cc.ActionEase.extend({
 
     update:function (time1) {
-        this._m_pOther.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1 / 1)) + 1));
+        this._other.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1 / 1)) + 1));
     },
 
     reverse:function () {
-        return cc.EaseExponentialIn.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseExponentialIn.actionWithAction(this._other.reverse());
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -268,13 +268,13 @@ cc.EaseExponentialOut = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseExponentialOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseExponentialOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseExponentialOut.actionWithAction = function (action) {
+    var ret = new cc.EaseExponentialOut();
+    if (ret) {
+        ret.initWithAction(action);
 
     }
-    return pRet;
+    return ret;
 };
 /**
  @brief Ease Exponential InOut
@@ -290,10 +290,10 @@ cc.EaseExponentialInOut = cc.ActionEase.extend({
             time1 = 0.5 * (-Math.pow(2, 10 * (time1 - 1)) + 2);
         }
 
-        this._m_pOther.update(time1);
+        this._other.update(time1);
 
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -301,13 +301,13 @@ cc.EaseExponentialInOut = cc.ActionEase.extend({
 
 
 /** creates the action */
-cc.EaseExponentialInOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseExponentialInOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseExponentialInOut.actionWithAction = function (action) {
+    var ret = new cc.EaseExponentialInOut();
+    if (ret) {
+        ret.initWithAction(action);
 
     }
-    return pRet;
+    return ret;
 };
 
 
@@ -317,26 +317,26 @@ cc.EaseExponentialInOut.actionWithAction = function (pAction) {
 cc.EaseSineIn = cc.ActionEase.extend({
 
     update:function (time1) {
-        this._m_pOther.update(-1 * Math.cos(time1 * Math.PI / 2) + 1);
+        this._other.update(-1 * Math.cos(time1 * Math.PI / 2) + 1);
     },
 
     reverse:function () {
-        return cc.EaseSineOut.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseSineOut.actionWithAction(this._other.reverse());
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 });
 
 /** creates the action */
-cc.EaseSineIn.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseSineIn();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseSineIn.actionWithAction = function (action) {
+    var ret = new cc.EaseSineIn();
+    if (ret) {
+        ret.initWithAction(action);
 
     }
-    return pRet;
+    return ret;
 };
 /**
  @brief Ease Sine Out
@@ -344,27 +344,27 @@ cc.EaseSineIn.actionWithAction = function (pAction) {
 cc.EaseSineOut = cc.ActionEase.extend({
 
     update:function (time1) {
-        this._m_pOther.update(Math.sin(time1 * Math.PI / 2));
+        this._other.update(Math.sin(time1 * Math.PI / 2));
     },
 
     reverse:function () {
-        return cc.EaseSineIn.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseSineIn.actionWithAction(this._other.reverse());
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 });
 
 
 /** creates the action */
-cc.EaseSineOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseSineOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseSineOut.actionWithAction = function (action) {
+    var ret = new cc.EaseSineOut();
+    if (ret) {
+        ret.initWithAction(action);
 
     }
-    return pRet;
+    return ret;
 };
 
 
@@ -374,24 +374,24 @@ cc.EaseSineOut.actionWithAction = function (pAction) {
 cc.EaseSineInOut = cc.ActionEase.extend({
 
     update:function (time1) {
-        this._m_pOther.update(-0.5 * (Math.cos(Math.PI * time1) - 1));
+        this._other.update(-0.5 * (Math.cos(Math.PI * time1) - 1));
 
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
 });
 
 /** creates the action */
-cc.EaseSineInOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseSineInOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseSineInOut.actionWithAction = function (action) {
+    var ret = new cc.EaseSineInOut();
+    if (ret) {
+        ret.initWithAction(action);
 
     }
-    return pRet;
+    return ret;
 };
 //noinspection JSDuplicatedDeclaration
 /**
@@ -402,17 +402,17 @@ cc.EaseElastic = cc.ActionEase.extend({
 
     /** get period of the wave in radians. default is 0.3 */
     getPeriod:function () {
-        return this._m_fPeriod;
+        return this._period;
     },
     /** set period of the wave in radians. */
-    setPeriod:function (fPeriod) {
-        this._m_fPeriod = fPeriod;
+    setPeriod:function (period) {
+        this._period = period;
     },
 
     /** Initializes the action with the inner action and the period in radians (default is 0.3) */
-    initWithAction:function (pAction, fPeriod) {
-        this._super(pAction);
-        this._m_fPeriod = (fPeriod == null) ? 3.0 : fPeriod;
+    initWithAction:function (action, period) {
+        this._super(action);
+        this._period = (period == null) ? 3.0 : period;
         return true;
     },
 
@@ -422,25 +422,25 @@ cc.EaseElastic = cc.ActionEase.extend({
         return null;
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     },
 
-    _m_fPeriod:null
+    _period:null
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElastic.actionWithAction = function (pAction, fPeriod) {
-    var pRet = new cc.EaseElastic();
-    if (pRet) {
-        if (fPeriod == null) {
-            pRet.initWithAction(pAction);
+cc.EaseElastic.actionWithAction = function (action, period) {
+    var ret = new cc.EaseElastic();
+    if (ret) {
+        if (period == null) {
+            ret.initWithAction(action);
         } else {
-            pRet.initWithAction(pAction, fPeriod);
+            ret.initWithAction(action, period);
         }
 
     }
-    return pRet;
+    return ret;
 };
 
 
@@ -456,19 +456,19 @@ cc.EaseElasticIn = cc.EaseElastic.extend({
         if (time1 == 0 || time1 == 1) {
             newT = time1;
         } else {
-            var s = this._m_fPeriod / 4;
+            var s = this._period / 4;
             time1 = time1 - 1;
-            newT = -Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._m_fPeriod);
+            newT = -Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
         }
 
-        this._m_pOther.update(newT);
+        this._other.update(newT);
     },
 
     reverse:function () {
-        return cc.EaseElasticOut.actionWithAction(this._m_pOther.reverse(), this._m_fPeriod);
+        return cc.EaseElasticOut.actionWithAction(this._other.reverse(), this._period);
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -477,17 +477,17 @@ cc.EaseElasticIn = cc.EaseElastic.extend({
 
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElasticIn.actionWithAction = function (pAction, fPeriod) {
-    var pRet = new cc.EaseElasticIn();
-    if (pRet) {
-        if (fPeriod == null) {
-            pRet.initWithAction(pAction);
+cc.EaseElasticIn.actionWithAction = function (action, period) {
+    var ret = new cc.EaseElasticIn();
+    if (ret) {
+        if (period == null) {
+            ret.initWithAction(action);
         } else {
-            pRet.initWithAction(pAction, fPeriod);
+            ret.initWithAction(action, period);
         }
 
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -502,19 +502,19 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
         if (time1 == 0 || time1 == 1) {
             newT = time1;
         } else {
-            var s = this._m_fPeriod / 4;
-            newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI  * 2 / this._m_fPeriod) + 1;
+            var s = this._period / 4;
+            newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI  * 2 / this._period) + 1;
         }
 
-        this._m_pOther.update(newT);
+        this._other.update(newT);
 
     },
 
     reverse:function () {
-        return cc.EaseElasticIn.actionWithAction(this._m_pOther.reverse(), this._m_fPeriod);
+        return cc.EaseElasticIn.actionWithAction(this._other.reverse(), this._period);
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -523,17 +523,17 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
 
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElasticOut.actionWithAction = function (pAction, fPeriod) {
-    var pRet = new cc.EaseElasticOut();
-    if (pRet) {
-        if (fPeriod == null) {
-            pRet.initWithAction(pAction);
+cc.EaseElasticOut.actionWithAction = function (action, period) {
+    var ret = new cc.EaseElasticOut();
+    if (ret) {
+        if (period == null) {
+            ret.initWithAction(action);
         } else {
-            pRet.initWithAction(pAction, fPeriod);
+            ret.initWithAction(action, period);
         }
 
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -549,45 +549,45 @@ cc.EaseElasticInOut = cc.EaseElastic.extend({
             newT = time1;
         } else {
             time1 = time1 * 2;
-            if (!this._m_fPeriod) {
-                this._m_fPeriod = 0.3 * 1.5;
+            if (!this._period) {
+                this._period = 0.3 * 1.5;
             }
 
-            var s = this._m_fPeriod / 4;
+            var s = this._period / 4;
 
             time1 = time1 - 1;
             if (time1 < 0) {
-                newT = -0.5 * Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._m_fPeriod);
+                newT = -0.5 * Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
             } else {
-                newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._m_fPeriod) * 0.5 + 1;
+                newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period) * 0.5 + 1;
             }
         }
 
-        this._m_pOther.update(newT);
+        this._other.update(newT);
 
     },
     reverse:function () {
-        return cc.EaseInOut.actionWithAction(this._m_pOther.reverse(), this._m_fPeriod);
+        return cc.EaseInOut.actionWithAction(this._other.reverse(), this._period);
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElasticInOut.actionWithAction = function (pAction, fPeriod) {
-    var pRet = new cc.EaseElasticInOut();
-    if (pRet) {
-        if (fPeriod == null) {
-            pRet.initWithAction(pAction);
+cc.EaseElasticInOut.actionWithAction = function (action, period) {
+    var ret = new cc.EaseElasticInOut();
+    if (ret) {
+        if (period == null) {
+            ret.initWithAction(action);
         } else {
-            pRet.initWithAction(pAction, fPeriod);
+            ret.initWithAction(action, period);
         }
 
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -611,7 +611,7 @@ cc.EaseBounce = cc.ActionEase.extend({
         return 7.5625 * time1 * time1 + 0.984375;
     },
 
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -619,12 +619,12 @@ cc.EaseBounce = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseBounce.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseBounce();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseBounce.actionWithAction = function (action) {
+    var ret = new cc.EaseBounce();
+    if (ret) {
+        ret.initWithAction(action);
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -636,12 +636,12 @@ cc.EaseBounceIn = cc.EaseBounce.extend({
 
     update:function (time1) {
         var newT = 1 - this.bounceTime(1 - time1);
-        this._m_pOther.update(newT);
+        this._other.update(newT);
     },
     reverse:function () {
-        return cc.EaseBounceOut.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseBounceOut.actionWithAction(this._other.reverse());
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -649,12 +649,12 @@ cc.EaseBounceIn = cc.EaseBounce.extend({
 });
 
 /** creates the action */
-cc.EaseBounceIn.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseBounceIn();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseBounceIn.actionWithAction = function (action) {
+    var ret = new cc.EaseBounceIn();
+    if (ret) {
+        ret.initWithAction(action);
     }
-    return pRet;
+    return ret;
 };
 /**
  @brief EaseBounceOut action.
@@ -666,12 +666,12 @@ cc.EaseBounceOut = cc.EaseBounce.extend({
 
     update:function (time1) {
         var newT = this.bounceTime(time1);
-        this._m_pOther.update(newT);
+        this._other.update(newT);
     },
     reverse:function () {
-        return cc.EaseBounceIn.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseBounceIn.actionWithAction(this._other.reverse());
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -679,12 +679,12 @@ cc.EaseBounceOut = cc.EaseBounce.extend({
 });
 
 /** creates the action */
-cc.EaseBounceOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseBounceOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseBounceOut.actionWithAction = function (action) {
+    var ret = new cc.EaseBounceOut();
+    if (ret) {
+        ret.initWithAction(action);
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -704,22 +704,22 @@ cc.EaseBounceInOut = cc.EaseBounce.extend({
             newT = this.bounceTime(time1 * 2 - 1) * 0.5 + 0.5;
         }
 
-        this._m_pOther.update(newT);
+        this._other.update(newT);
 
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
 });
 
 /** creates the action */
-cc.EaseBounceInOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseBounceInOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseBounceInOut.actionWithAction = function (action) {
+    var ret = new cc.EaseBounceInOut();
+    if (ret) {
+        ret.initWithAction(action);
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -732,14 +732,14 @@ cc.EaseBackIn = cc.ActionEase.extend({
 
     update:function (time1) {
         var overshoot = 1.70158;
-        this._m_pOther.update(time1 * time1 * ((overshoot + 1) * time1 - overshoot));
+        this._other.update(time1 * time1 * ((overshoot + 1) * time1 - overshoot));
 
     },
     reverse:function () {
-        return cc.EaseBackOut.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseBackOut.actionWithAction(this._other.reverse());
 
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -747,12 +747,12 @@ cc.EaseBackIn = cc.ActionEase.extend({
 
 
 /** creates the action */
-cc.EaseBackIn.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseBackIn();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseBackIn.actionWithAction = function (action) {
+    var ret = new cc.EaseBackIn();
+    if (ret) {
+        ret.initWithAction(action);
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -766,23 +766,23 @@ cc.EaseBackOut = cc.ActionEase.extend({
         var overshoot = 1.70158;
 
         time1 = time1 - 1;
-        this._m_pOther.update(time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1);
+        this._other.update(time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1);
     },
     reverse:function () {
-        return cc.EaseBackIn.actionWithAction(this._m_pOther.reverse());
+        return cc.EaseBackIn.actionWithAction(this._other.reverse());
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 });
 
 /** creates the action */
-cc.EaseBackOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseBackOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseBackOut.actionWithAction = function (action) {
+    var ret = new cc.EaseBackOut();
+    if (ret) {
+        ret.initWithAction(action);
     }
-    return pRet;
+    return ret;
 };
 
 /**
@@ -797,13 +797,13 @@ cc.EaseBackInOut = cc.ActionEase.extend({
 
         time1 = time1 * 2;
         if (time1 < 1) {
-            this._m_pOther.update((time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2);
+            this._other.update((time1 * time1 * ((overshoot + 1) * time1 - overshoot)) / 2);
         } else {
             time1 = time1 - 2;
-            this._m_pOther.update((time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1);
+            this._other.update((time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1);
         }
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
 
     }
 
@@ -811,11 +811,11 @@ cc.EaseBackInOut = cc.ActionEase.extend({
 
 
 /** creates the action */
-cc.EaseBackInOut.actionWithAction = function (pAction) {
-    var pRet = new cc.EaseBackInOut();
-    if (pRet) {
-        pRet.initWithAction(pAction);
+cc.EaseBackInOut.actionWithAction = function (action) {
+    var ret = new cc.EaseBackInOut();
+    if (ret) {
+        ret.initWithAction(action);
     }
-    return pRet;
+    return ret;
 };
 

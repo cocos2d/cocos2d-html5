@@ -43,45 +43,45 @@
 var cc = cc = cc || {};
 
 //Particle Draw Mode
-cc.kParticleShapeMode = 0;
-cc.kParticleTextureMode = 1;
+cc.PARTICLE_SHAPE_MODE = 0;
+cc.PARTICLE_TEXTURE_MODE = 1;
 
 //Particle Shape Type for ShapeMode
-cc.kParticleStarShape = 0;
-cc.kParticleBallShape = 1;
+cc.PARTICLE_STAR_SHAPE = 0;
+cc.PARTICLE_BALL_SHAPE = 1;
 
 /** The Particle emitter lives forever */
-cc.kCCParticleDurationInfinity = -1;
+cc.CCPARTICLE_DURATION_INFINITY = -1;
 /** The starting size of the particle is equal to the ending size */
-cc.kCCParticleStartSizeEqualToEndSize = -1;
+cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE = -1;
 /** The starting radius of the particle is equal to the ending radius */
-cc.kCCParticleStartRadiusEqualToEndRadius = -1;
+cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS = -1;
 // backward compatible
-cc.kParticleStartSizeEqualToEndSize = cc.kCCParticleStartSizeEqualToEndSize;
-cc.kParticleDurationInfinity = cc.kCCParticleDurationInfinity;
+cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+cc.PARTICLE_DURATION_INFINITY = cc.CCPARTICLE_DURATION_INFINITY;
 
 
 /** Gravity mode (A mode) */
-cc.kCCParticleModeGravity = 0;
+cc.CCPARTICLE_MODE_GRAVITY = 0;
 /** Radius mode (B mode) */
-cc.kCCParticleModeRadius = 1;
+cc.CCPARTICLE_MODE_RADIUS = 1;
 
 
 /** @typedef tCCPositionType
  possible types of particle positions
  */
 /** Living particles are attached to the world and are unaffected by emitter repositioning. */
-cc.kCCPositionTypeFree = 0;
+cc.CCPARTICLE_TYPE_FREE = 0;
 /** Living particles are attached to the world but will follow the emitter repositioning.
  Use case: Attach an emitter to an sprite, and you want that the emitter follows the sprite.
  */
-cc.kCCPositionTypeRelative = 1;
+cc.CCPARTICLE_TYPE_RELATIVE = 1;
 /** Living particles are attached to the emitter and are translated along with it. */
-cc.kCCPositionTypeGrouped = 2;
+cc.CCPARTICLE_TYPE_GROUPED = 2;
 
 // backward compatible
-cc.kPositionTypeFree = cc.kCCPositionTypeFree;
-cc.kPositionTypeGrouped = cc.kCCPositionTypeGrouped;
+cc.PARTICLE_TYPE_FREE = cc.CCPARTICLE_TYPE_FREE;
+cc.PARTICLE_TYPE_GROUPED = cc.CCPARTICLE_TYPE_GROUPED;
 
 /**
  Structure that contains the values of each particle
@@ -160,9 +160,9 @@ cc.tCCParticle.tModeB = function (angle, degreesPerSecond, radius, deltaRadius) 
 
  */
 cc.ParticleSystem = cc.Node.extend({
-    _m_sPlistFile:"",
+    _plistFile:"",
     //! time elapsed since the start of the system (in seconds)
-    _m_fElapsed:0,
+    _elapsed:0,
 
     // Different modes
     //! Mode A:Gravity + Tangential Accel + Radial Accel
@@ -171,21 +171,21 @@ cc.ParticleSystem = cc.Node.extend({
     modeB:null,
 
     //! Array of particles
-    _m_pParticles:null,
+    _particles:null,
 
     // color modulate
     //	BOOL colorModulate;
 
     //! How many particles can be emitted per second
-    _m_fEmitCounter:0,
+    _emitCounter:0,
     //!  particle idx
-    _m_uParticleIdx:0,
+    _particleIdx:0,
 
     // profiling
-    _m_pProfilingTimer:null,
+    _profilingTimer:null,
 
     //drawMode
-    _drawMode: cc.kParticleShapeMode,
+    _drawMode: cc.PARTICLE_SHAPE_MODE,
     getDrawMode:function(){
         return this._drawMode;
     },
@@ -194,7 +194,7 @@ cc.ParticleSystem = cc.Node.extend({
     },
 
     //shape type
-    _shapeType:cc.kParticleBallShape,
+    _shapeType:cc.PARTICLE_BALL_SHAPE,
     getShapeType:function(){
         return this._shapeType;
     },
@@ -203,350 +203,350 @@ cc.ParticleSystem = cc.Node.extend({
     },
 
     /** Is the emitter active */
-    _m_bIsActive:false,
+    _isActive:false,
     getIsActive:function () {
-        return this._m_bIsActive;
+        return this._isActive;
     },
     setIsActive:function (isActive) {
-        this._m_bIsActive = isActive;
+        this._isActive = isActive;
     },
 
     /** Quantity of particles that are being simulated at the moment */
-    _m_uParticleCount:0,
+    _particleCount:0,
     getParticleCount:function () {
-        return this._m_uParticleCount;
+        return this._particleCount;
     },
     setParticleCount:function (particleCount) {
-        this._m_uParticleCount = particleCount;
+        this._particleCount = particleCount;
     },
 
     /** How many seconds the emitter wil run. -1 means 'forever' */
-    _m_fDuration:0,
+    _duration:0,
     getDuration:function () {
-        return this._m_fDuration;
+        return this._duration;
     },
     setDuration:function (duration) {
-        this._m_fDuration = duration;
+        this._duration = duration;
     },
 
     /** sourcePosition of the emitter */
-    _m_tSourcePosition:cc.PointZero(),
+    _sourcePosition:cc.PointZero(),
     getSourcePosition:function () {
-        return this._m_tSourcePosition;
+        return this._sourcePosition;
     },
     setSourcePosition:function (sourcePosition) {
-        this._m_tSourcePosition = sourcePosition;
+        this._sourcePosition = sourcePosition;
     },
 
     /** Position variance of the emitter */
-    _m_tPosVar:cc.PointZero(),
+    _posVar:cc.PointZero(),
     getPosVar:function () {
-        return this._m_tPosVar;
+        return this._posVar;
     },
     setPosVar:function (posVar) {
-        this._m_tPosVar = posVar;
+        this._posVar = posVar;
     },
 
     /** life, and life variation of each particle */
-    _m_fLife:0,
+    _life:0,
     getLife:function () {
-        return this._m_fLife;
+        return this._life;
     },
     setLife:function (life) {
-        this._m_fLife = life;
+        this._life = life;
     },
 
     /** life variance of each particle */
-    _m_fLifeVar:0,
+    _lifeVar:0,
     getLifeVar:function () {
-        return this._m_fLifeVar;
+        return this._lifeVar;
     },
     setLifeVar:function (lifeVar) {
-        this._m_fLifeVar = lifeVar;
+        this._lifeVar = lifeVar;
     },
 
     /** angle and angle variation of each particle */
-    _m_fAngle:0,
+    _angle:0,
     getAngle:function () {
-        return this._m_fAngle;
+        return this._angle;
     },
     setAngle:function (angle) {
-        this._m_fAngle = angle;
+        this._angle = angle;
     },
 
     /** angle variance of each particle */
-    _m_fAngleVar:0,
+    _angleVar:0,
     getAngleVar:function () {
-        return this._m_fAngleVar;
+        return this._angleVar;
     },
     setAngleVar:function (angleVar) {
-        this._m_fAngleVar = angleVar;
+        this._angleVar = angleVar;
     },
 
     // mode A
     getGravity:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.gravity;
     },
     setGravity:function (gravity) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.gravity = gravity;
     },
     getSpeed:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.speed;
     },
     setSpeed:function (speed) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.speed = speed;
     },
     getSpeedVar:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.speedVar;
     },
     setSpeedVar:function (speedVar) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.speedVar = speedVar;
     },
     getTangentialAccel:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.tangentialAccel;
     },
     setTangentialAccel:function (tangentialAccel) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.tangentialAccel = tangentialAccel;
     },
     getTangentialAccelVar:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.tangentialAccelVar;
     },
     setTangentialAccelVar:function (tangentialAccelVar) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.tangentialAccelVar = tangentialAccelVar;
     },
     getRadialAccel:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.radialAccel;
     },
     setRadialAccel:function (radialAccel) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.radialAccel = radialAccel;
     },
     getRadialAccelVar:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.radialAccelVar;
     },
     setRadialAccelVar:function (radialAccelVar) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.radialAccelVar = radialAccelVar;
     },
 
     // mode B
     getStartRadius:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.startRadius;
     },
     setStartRadius:function (startRadius) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.startRadius = startRadius;
     },
     getStartRadiusVar:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.startRadiusVar;
     },
     setStartRadiusVar:function (startRadiusVar) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.startRadiusVar = startRadiusVar;
     },
     getEndRadius:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.endRadius;
     },
     setEndRadius:function (endRadius) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.endRadius = endRadius;
     },
     getEndRadiusVar:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.endRadiusVar;
     },
     setEndRadiusVar:function (endRadiusVar) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.endRadiusVar = endRadiusVar;
     },
     getRotatePerSecond:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.rotatePerSecond;
     },
     setRotatePerSecond:function (degrees) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.rotatePerSecond = degrees;
     },
     getRotatePerSecondVar:function () {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.rotatePerSecondVar;
     },
     setRotatePerSecondVar:function (degrees) {
-        cc.Assert(this._m_nEmitterMode == cc.kCCParticleModeGravity, "Particle Mode should be Gravity");
+        cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.rotatePerSecondVar = degrees;
     },
     //////////////////////////////////////////////////////////////////////////
 
     /** start size in pixels of each particle */
-    _m_fStartSize:0,
+    _startSize:0,
     getStartSize:function () {
-        return this._m_fStartSize;
+        return this._startSize;
     },
     setStartSize:function (startSize) {
-        this._m_fStartSize = startSize;
+        this._startSize = startSize;
     },
 
     /** size variance in pixels of each particle */
-    _m_fStartSizeVar:0,
+    _startSizeVar:0,
     getStartSizeVar:function () {
-        return this._m_fStartSizeVar;
+        return this._startSizeVar;
     },
     setStartSizeVar:function (startSizeVar) {
-        this._m_fStartSizeVar = startSizeVar;
+        this._startSizeVar = startSizeVar;
     },
 
     /** end size in pixels of each particle */
-    _m_fEndSize:0,
+    _endSize:0,
     getEndSize:function () {
-        return this._m_fEndSize;
+        return this._endSize;
     },
     setEndSize:function (endSize) {
-        this._m_fEndSize = endSize;
+        this._endSize = endSize;
     },
 
     /** end size variance in pixels of each particle */
-    _m_fEndSizeVar:0,
+    _endSizeVar:0,
     getEndSizeVar:function () {
-        return this._m_fEndSizeVar;
+        return this._endSizeVar;
     },
     setEndSizeVar:function (endSizeVar) {
-        this._m_fEndSizeVar = endSizeVar;
+        this._endSizeVar = endSizeVar;
     },
 
     /** start color of each particle */
-    _m_tStartColor:new cc.Color4F(0, 0, 0, 1),
+    _startColor:new cc.Color4F(0, 0, 0, 1),
     getStartColor:function () {
-        return this._m_tStartColor;
+        return this._startColor;
     },
     setStartColor:function (startColor) {
-        this._m_tStartColor = startColor;
+        this._startColor = startColor;
     },
 
     /** start color variance of each particle */
-    _m_tStartColorVar:new cc.Color4F(0, 0, 0, 1),
+    _startColorVar:new cc.Color4F(0, 0, 0, 1),
     getStartColorVar:function () {
-        return this._m_tStartColorVar;
+        return this._startColorVar;
     },
     setStartColorVar:function (startColorVar) {
-        this._m_tStartColorVar = startColorVar;
+        this._startColorVar = startColorVar;
     },
 
     /** end color and end color variation of each particle */
-    _m_tEndColor:new cc.Color4F(0, 0, 0, 1),
+    _endColor:new cc.Color4F(0, 0, 0, 1),
     getEndColor:function () {
-        return this._m_tEndColor;
+        return this._endColor;
     },
     setEndColor:function (endColor) {
-        this._m_tEndColor = endColor;
+        this._endColor = endColor;
     },
 
     /** end color variance of each particle */
-    _m_tEndColorVar:new cc.Color4F(0, 0, 0, 1),
+    _endColorVar:new cc.Color4F(0, 0, 0, 1),
     getEndColorVar:function () {
-        return this._m_tEndColorVar;
+        return this._endColorVar;
     },
     setEndColorVar:function (endColorVar) {
-        this._m_tEndColorVar = endColorVar;
+        this._endColorVar = endColorVar;
     },
 
     //* initial angle of each particle
-    _m_fStartSpin:0,
+    _startSpin:0,
     getStartSpin:function () {
-        return this._m_fStartSpin;
+        return this._startSpin;
     },
     setStartSpin:function (startSpin) {
-        this._m_fStartSpin = startSpin;
+        this._startSpin = startSpin;
     },
 
     //* initial angle of each particle
-    _m_fStartSpinVar:0,
+    _startSpinVar:0,
     getStartSpinVar:function () {
-        return this._m_fStartSpinVar;
+        return this._startSpinVar;
     },
     setStartSpinVar:function (startSpinVar) {
-        this._m_fStartSpinVar = startSpinVar;
+        this._startSpinVar = startSpinVar;
     },
 
     //* initial angle of each particle
-    _m_fEndSpin:0,
+    _endSpin:0,
     getEndSpin:function () {
-        return this._m_fEndSpin;
+        return this._endSpin;
     },
     setEndSpin:function (endSpin) {
-        this._m_fEndSpin = endSpin;
+        this._endSpin = endSpin;
     },
 
     //* initial angle of each particle
-    _m_fEndSpinVar:0,
+    _endSpinVar:0,
     getEndSpinVar:function () {
-        return this._m_fEndSpinVar;
+        return this._endSpinVar;
     },
     setEndSpinVar:function (endSpinVar) {
-        this._m_fEndSpinVar = endSpinVar;
+        this._endSpinVar = endSpinVar;
     },
 
     /** emission rate of the particles */
-    _m_fEmissionRate:0,
+    _emissionRate:0,
     getEmissionRate:function () {
-        return this._m_fEmissionRate;
+        return this._emissionRate;
     },
     setEmissionRate:function (emissionRate) {
-        this._m_fEmissionRate = emissionRate;
+        this._emissionRate = emissionRate;
     },
 
     /** maximum particles of the system */
-    _m_uTotalParticles:0,
+    _totalParticles:0,
     getTotalParticles:function () {
-        return this._m_uTotalParticles;
+        return this._totalParticles;
     },
     setTotalParticles:function (totalParticles) {
-        this._m_uTotalParticles = totalParticles;
+        this._totalParticles = totalParticles;
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _m_pTexture:null,
+    _texture:null,
     getTexture:function () {
-        return this._m_pTexture;
+        return this._texture;
     },
     setTexture:function (texture) {
         //TODO
-        this._m_pTexture = texture;
+        this._texture = texture;
 
         if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
 
         } else {
             // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
-            if (this._m_pTexture && !this._m_pTexture.getHasPremultipliedAlpha() &&
-                ( this._m_tBlendFunc.src == cc.BLEND_SRC && this._m_tBlendFunc.dst == cc.BLEND_DST )) {
-                this._m_tBlendFunc.src = GL_SRC_ALPHA;
-                this._m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+            if (this._texture && !this._texture.getHasPremultipliedAlpha() &&
+                ( this._blendFunc.src == cc.BLEND_SRC && this._blendFunc.dst == cc.BLEND_DST )) {
+                this._blendFunc.src = GL_SRC_ALPHA;
+                this._blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
             }
         }
 
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _m_tBlendFunc:new cc.BlendFunc(0, 0),
+    _blendFunc:new cc.BlendFunc(0, 0),
     getBlendFunc:function () {
-        return this._m_tBlendFunc;
+        return this._blendFunc;
     },
     setBlendFunc:function (blendFunc) {
-        this._m_tBlendFunc = blendFunc;
+        this._blendFunc = blendFunc;
     },
 
     /** whether or not the particles are using blend additive.
@@ -556,25 +556,25 @@ cc.ParticleSystem = cc.Node.extend({
      dest blend function = GL_ONE;
      @endcode
      */
-    _m_bIsBlendAdditive:false,
+    _isBlendAdditive:false,
     getIsBlendAdditive:function () {
-        return this._m_bIsBlendAdditive;
-        //return( this._m_tBlendFunc.src == GL_SRC_ALPHA && this._m_tBlendFunc.dst == GL_ONE);
+        return this._isBlendAdditive;
+        //return( this._blendFunc.src == GL_SRC_ALPHA && this._blendFunc.dst == GL_ONE);
     },
     setIsBlendAdditive:function (isBlendAdditive) {
         //TODO
-        this._m_bIsBlendAdditive = isBlendAdditive;
+        this._isBlendAdditive = isBlendAdditive;
         return;
         if (isBlendAdditive) {
-            //this._m_tBlendFunc.src = GL_SRC_ALPHA;
-            //this._m_tBlendFunc.dst = GL_ONE;
+            //this._blendFunc.src = GL_SRC_ALPHA;
+            //this._blendFunc.dst = GL_ONE;
         } else {
-            if (this._m_pTexture && !this._m_pTexture.getHasPremultipliedAlpha()) {
-                //this._m_tBlendFunc.src = GL_SRC_ALPHA;
-                //this._m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+            if (this._texture && !this._texture.getHasPremultipliedAlpha()) {
+                //this._blendFunc.src = GL_SRC_ALPHA;
+                //this._blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
             } else {
-                this._m_tBlendFunc.src = cc.BLEND_SRC;
-                this._m_tBlendFunc.dst = cc.BLEND_DST;
+                this._blendFunc.src = cc.BLEND_SRC;
+                this._blendFunc.dst = cc.BLEND_DST;
             }
         }
     },
@@ -582,44 +582,44 @@ cc.ParticleSystem = cc.Node.extend({
     /** particles movement type: Free or Grouped
      @since v0.8
      */
-    _m_ePositionType:cc.kCCPositionTypeFree,
+    _positionType:cc.CCPARTICLE_TYPE_FREE,
     getPositionType:function () {
-        return this._m_ePositionType;
+        return this._positionType;
     },
     setPositionType:function (positionType) {
-        this._m_ePositionType = positionType;
+        this._positionType = positionType;
     },
 
     /** whether or not the node will be auto-removed when it has no particles left.
      By default it is false.
      @since v0.8
      */
-    _m_bIsAutoRemoveOnFinish:false,
+    _isAutoRemoveOnFinish:false,
     getIsAutoRemoveOnFinish:function () {
-        return this._m_bIsAutoRemoveOnFinish;
+        return this._isAutoRemoveOnFinish;
     },
     setIsAutoRemoveOnFinish:function (isAutoRemoveOnFinish) {
-        this._m_bIsAutoRemoveOnFinish = isAutoRemoveOnFinish;
+        this._isAutoRemoveOnFinish = isAutoRemoveOnFinish;
     },
 
     /** Switch between different kind of emitter modes:
-     - kCCParticleModeGravity: uses gravity, speed, radial and tangential acceleration
-     - kCCParticleModeRadius: uses radius movement + rotation
+     - CCPARTICLE_MODE_GRAVITY: uses gravity, speed, radial and tangential acceleration
+     - CCPARTICLE_MODE_RADIUS: uses radius movement + rotation
      */
-    _m_nEmitterMode:0,
+    _emitterMode:0,
     getEmitterMode:function () {
-        return this._m_nEmitterMode;
+        return this._emitterMode;
     },
     setEmitterMode:function (emitterMode) {
-        this._m_nEmitterMode = emitterMode;
+        this._emitterMode = emitterMode;
     },
 
     ctor:function () {
         this._super();
-        this._m_nEmitterMode = cc.kCCParticleModeGravity;
+        this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
         this.modeA = new cc.ParticleSystem.tModeA();
         this.modeB = new cc.ParticleSystem.tModeB();
-        this._m_tBlendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
 
     /** initializes a CCParticleSystem from a plist file.
@@ -628,10 +628,10 @@ cc.ParticleSystem = cc.Node.extend({
      @since v0.99.3
      */
     initWithFile:function (plistFile) {
-        var bRet = false;
+        var ret = false;
         //TODO
-        this._m_sPlistFile = plistFile;
-        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(this._m_sPlistFile);
+        this._plistFile = plistFile;
+        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(this._plistFile);
 
         cc.Assert(dict != null, "Particles: file not found");
         return this.initWithDictionary(dict);
@@ -646,7 +646,7 @@ cc.ParticleSystem = cc.Node.extend({
      @since v0.99.3
      */
     initWithDictionary:function (dictionary) {
-        var bRet = false;
+        var ret = false;
         var buffer = null;
         var deflated = null;
         var image = null;
@@ -655,60 +655,60 @@ cc.ParticleSystem = cc.Node.extend({
         // self, not super
         if (this.initWithTotalParticles(maxParticles)) {
             // angle
-            this._m_fAngle = parseFloat(this._valueForKey("angle", dictionary));
-            this._m_fAngleVar = parseFloat(this._valueForKey("angleVariance", dictionary));
+            this._angle = parseFloat(this._valueForKey("angle", dictionary));
+            this._angleVar = parseFloat(this._valueForKey("angleVariance", dictionary));
 
             // duration
-            this._m_fDuration = parseFloat(this._valueForKey("duration", dictionary));
+            this._duration = parseFloat(this._valueForKey("duration", dictionary));
 
             // blend function
-            this._m_tBlendFunc.src = parseInt(this._valueForKey("blendFuncSource", dictionary));
-            this._m_tBlendFunc.dst = parseInt(this._valueForKey("blendFuncDestination", dictionary));
+            this._blendFunc.src = parseInt(this._valueForKey("blendFuncSource", dictionary));
+            this._blendFunc.dst = parseInt(this._valueForKey("blendFuncDestination", dictionary));
 
             // color
-            this._m_tStartColor.r = parseFloat(this._valueForKey("startColorRed", dictionary));
-            this._m_tStartColor.g = parseFloat(this._valueForKey("startColorGreen", dictionary));
-            this._m_tStartColor.b = parseFloat(this._valueForKey("startColorBlue", dictionary));
-            this._m_tStartColor.a = parseFloat(this._valueForKey("startColorAlpha", dictionary));
+            this._startColor.r = parseFloat(this._valueForKey("startColorRed", dictionary));
+            this._startColor.g = parseFloat(this._valueForKey("startColorGreen", dictionary));
+            this._startColor.b = parseFloat(this._valueForKey("startColorBlue", dictionary));
+            this._startColor.a = parseFloat(this._valueForKey("startColorAlpha", dictionary));
 
-            this._m_tStartColorVar.r = parseFloat(this._valueForKey("startColorVarianceRed", dictionary));
-            this._m_tStartColorVar.g = parseFloat(this._valueForKey("startColorVarianceGreen", dictionary));
-            this._m_tStartColorVar.b = parseFloat(this._valueForKey("startColorVarianceBlue", dictionary));
-            this._m_tStartColorVar.a = parseFloat(this._valueForKey("startColorVarianceAlpha", dictionary));
+            this._startColorVar.r = parseFloat(this._valueForKey("startColorVarianceRed", dictionary));
+            this._startColorVar.g = parseFloat(this._valueForKey("startColorVarianceGreen", dictionary));
+            this._startColorVar.b = parseFloat(this._valueForKey("startColorVarianceBlue", dictionary));
+            this._startColorVar.a = parseFloat(this._valueForKey("startColorVarianceAlpha", dictionary));
 
-            this._m_tEndColor.r = parseFloat(this._valueForKey("finishColorRed", dictionary));
-            this._m_tEndColor.g = parseFloat(this._valueForKey("finishColorGreen", dictionary));
-            this._m_tEndColor.b = parseFloat(this._valueForKey("finishColorBlue", dictionary));
-            this._m_tEndColor.a = parseFloat(this._valueForKey("finishColorAlpha", dictionary));
+            this._endColor.r = parseFloat(this._valueForKey("finishColorRed", dictionary));
+            this._endColor.g = parseFloat(this._valueForKey("finishColorGreen", dictionary));
+            this._endColor.b = parseFloat(this._valueForKey("finishColorBlue", dictionary));
+            this._endColor.a = parseFloat(this._valueForKey("finishColorAlpha", dictionary));
 
-            this._m_tEndColorVar.r = parseFloat(this._valueForKey("finishColorVarianceRed", dictionary));
-            this._m_tEndColorVar.g = parseFloat(this._valueForKey("finishColorVarianceGreen", dictionary));
-            this._m_tEndColorVar.b = parseFloat(this._valueForKey("finishColorVarianceBlue", dictionary));
-            this._m_tEndColorVar.a = parseFloat(this._valueForKey("finishColorVarianceAlpha", dictionary));
+            this._endColorVar.r = parseFloat(this._valueForKey("finishColorVarianceRed", dictionary));
+            this._endColorVar.g = parseFloat(this._valueForKey("finishColorVarianceGreen", dictionary));
+            this._endColorVar.b = parseFloat(this._valueForKey("finishColorVarianceBlue", dictionary));
+            this._endColorVar.a = parseFloat(this._valueForKey("finishColorVarianceAlpha", dictionary));
 
             // particle size
-            this._m_fStartSize = parseFloat(this._valueForKey("startParticleSize", dictionary));
-            this._m_fStartSizeVar = parseFloat(this._valueForKey("startParticleSizeVariance", dictionary));
-            this._m_fEndSize = parseFloat(this._valueForKey("finishParticleSize", dictionary));
-            this._m_fEndSizeVar = parseFloat(this._valueForKey("finishParticleSizeVariance", dictionary));
+            this._startSize = parseFloat(this._valueForKey("startParticleSize", dictionary));
+            this._startSizeVar = parseFloat(this._valueForKey("startParticleSizeVariance", dictionary));
+            this._endSize = parseFloat(this._valueForKey("finishParticleSize", dictionary));
+            this._endSizeVar = parseFloat(this._valueForKey("finishParticleSizeVariance", dictionary));
 
             // position
             var x = parseFloat(this._valueForKey("sourcePositionx", dictionary));
             var y = parseFloat(this._valueForKey("sourcePositiony", dictionary));
             this.setPosition(cc.ccp(x, y));
-            this._m_tPosVar.x = parseFloat(this._valueForKey("sourcePositionVariancex", dictionary));
-            this._m_tPosVar.y = parseFloat(this._valueForKey("sourcePositionVariancey", dictionary));
+            this._posVar.x = parseFloat(this._valueForKey("sourcePositionVariancex", dictionary));
+            this._posVar.y = parseFloat(this._valueForKey("sourcePositionVariancey", dictionary));
 
             // Spinning
-            this._m_fStartSpin = parseFloat(this._valueForKey("rotationStart", dictionary));
-            this._m_fStartSpinVar = parseFloat(this._valueForKey("rotationStartVariance", dictionary));
-            this._m_fEndSpin = parseFloat(this._valueForKey("rotationEnd", dictionary));
-            this._m_fEndSpinVar = parseFloat(this._valueForKey("rotationEndVariance", dictionary));
+            this._startSpin = parseFloat(this._valueForKey("rotationStart", dictionary));
+            this._startSpinVar = parseFloat(this._valueForKey("rotationStartVariance", dictionary));
+            this._endSpin = parseFloat(this._valueForKey("rotationEnd", dictionary));
+            this._endSpinVar = parseFloat(this._valueForKey("rotationEndVariance", dictionary));
 
-            this._m_nEmitterMode = parseInt(this._valueForKey("emitterType", dictionary));
+            this._emitterMode = parseInt(this._valueForKey("emitterType", dictionary));
 
             // Mode A: Gravity + tangential accel + radial accel
-            if (this._m_nEmitterMode == cc.kCCParticleModeGravity) {
+            if (this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY) {
                 // gravity
                 this.modeA.gravity.x = parseFloat(this._valueForKey("gravityx", dictionary));
                 this.modeA.gravity.y = parseFloat(this._valueForKey("gravityy", dictionary));
@@ -730,7 +730,7 @@ cc.ParticleSystem = cc.Node.extend({
 
                 pszTmp = this._valueForKey("tangentialAccelVariance", dictionary);
                 this.modeA.tangentialAccelVar = (pszTmp) ? parseFloat(pszTmp) : 0;
-            } else if (this._m_nEmitterMode == cc.kCCParticleModeRadius) {
+            } else if (this._emitterMode == cc.CCPARTICLE_MODE_RADIUS) {
                 // or Mode B: radius movement
                 this.modeB.startRadius = parseFloat(this._valueForKey("maxRadius", dictionary));
                 this.modeB.startRadiusVar = parseFloat(this._valueForKey("maxRadiusVariance", dictionary));
@@ -744,31 +744,31 @@ cc.ParticleSystem = cc.Node.extend({
             }
 
             // life span
-            this._m_fLife = parseFloat(this._valueForKey("particleLifespan", dictionary));
-            this._m_fLifeVar = parseFloat(this._valueForKey("particleLifespanVariance", dictionary));
+            this._life = parseFloat(this._valueForKey("particleLifespan", dictionary));
+            this._lifeVar = parseFloat(this._valueForKey("particleLifespanVariance", dictionary));
 
             // emission Rate
-            this._m_fEmissionRate = this._m_uTotalParticles / this._m_fLife;
+            this._emissionRate = this._totalParticles / this._life;
 
             // texture
             // Try to get the texture from the cache
             var textureName = this._valueForKey("textureFileName", dictionary);
-            var fullpath = cc.FileUtils.fullPathFromRelativeFile(textureName, this._m_sPlistFile);
+            var fullpath = cc.FileUtils.fullPathFromRelativeFile(textureName, this._plistFile);
 
             var tex = null;
 
             if (textureName.length > 0) {
                 // set not pop-up message box when load image failed
-                var bNotify = cc.FileUtils.getIsPopupNotify();
+                var notify = cc.FileUtils.getIsPopupNotify();
                 cc.FileUtils.setIsPopupNotify(false);
                 tex = cc.TextureCache.sharedTextureCache().addImage(fullpath);
 
                 // reset the value of UIImage notify
-                cc.FileUtils.setIsPopupNotify(bNotify);
+                cc.FileUtils.setIsPopupNotify(notify);
             }
 
             if (tex) {
-                this._m_pTexture = tex;
+                this._texture = tex;
             } else {
                 var textureData = this._valueForKey("textureImageData", dictionary);
                 cc.Assert(textureData, "cc.ParticleSystem.initWithDictory:textureImageData is null");
@@ -792,47 +792,47 @@ cc.ParticleSystem = cc.Node.extend({
                     if (!isOK)
                         return false
 
-                    this._m_pTexture = cc.TextureCache.sharedTextureCache().addUIImage(image, fullpath);
+                    this._texture = cc.TextureCache.sharedTextureCache().addUIImage(image, fullpath);
                 }
             }
-            cc.Assert(this._m_pTexture != null, "CCParticleSystem: error loading the texture");
+            cc.Assert(this._texture != null, "CCParticleSystem: error loading the texture");
 
-            if (!this._m_pTexture)
+            if (!this._texture)
                 return false
-            bRet = true;
+            ret = true;
         }
 
-        return bRet;
+        return ret;
     },
 
     //! Initializes a system with a fixed number of particles
     initWithTotalParticles:function (numberOfParticles) {
-        this._m_uTotalParticles = numberOfParticles;
+        this._totalParticles = numberOfParticles;
 
-        this._m_pParticles = [];
+        this._particles = [];
 
-        if (!this._m_pParticles) {
+        if (!this._particles) {
             cc.Log("Particle system: not enough memory");
             return false;
         }
 
         // default, active
-        this._m_bIsActive = true;
+        this._isActive = true;
 
         // default blend function
-        this._m_tBlendFunc.src = cc.BLEND_SRC;
-        this._m_tBlendFunc.dst = cc.BLEND_DST;
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
 
         // default movement type;
-        this._m_ePositionType = cc.kCCPositionTypeFree;
+        this._positionType = cc.CCPARTICLE_TYPE_FREE;
 
         // by default be in mode A:
-        this._m_nEmitterMode = cc.kCCParticleModeGravity;
+        this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
 
         // default: modulate
         // XXX: not used
         //	colorModulate = YES;
-        this._m_bIsAutoRemoveOnFinish = false;
+        this._isAutoRemoveOnFinish = false;
 
         // profiling
         /// @todo _profilingTimer = [[CCProfiler timerWithName:@"particle system" andInstance:self] retain];
@@ -856,8 +856,8 @@ cc.ParticleSystem = cc.Node.extend({
 
         var particle = new cc.tCCParticle();
         this.initParticle(particle);
-        this._m_pParticles.push(particle);
-        ++this._m_uParticleCount;
+        this._particles.push(particle);
+        ++this._particleCount;
 
         return true;
     },
@@ -866,28 +866,28 @@ cc.ParticleSystem = cc.Node.extend({
     initParticle:function (particle) {
         // timeToLive
         // no negative life. prevent division by 0
-        particle.timeToLive = this._m_fLife + this._m_fLifeVar * cc.RANDOM_MINUS1_1();
+        particle.timeToLive = this._life + this._lifeVar * cc.RANDOM_MINUS1_1();
         particle.timeToLive = Math.max(0, particle.timeToLive);
 
         // position
-        particle.pos.x = this._m_tSourcePosition.x + this._m_tPosVar.x * cc.RANDOM_MINUS1_1();
+        particle.pos.x = this._sourcePosition.x + this._posVar.x * cc.RANDOM_MINUS1_1();
         particle.pos.x *= cc.CONTENT_SCALE_FACTOR();
-        particle.pos.y = this._m_tSourcePosition.y + this._m_tPosVar.y * cc.RANDOM_MINUS1_1();
+        particle.pos.y = this._sourcePosition.y + this._posVar.y * cc.RANDOM_MINUS1_1();
         particle.pos.y *= cc.CONTENT_SCALE_FACTOR();
 
         // Color
         var start = new cc.Color4F(
-            cc.clampf(this._m_tStartColor.r + this._m_tStartColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._m_tStartColor.g + this._m_tStartColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._m_tStartColor.b + this._m_tStartColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._m_tStartColor.a + this._m_tStartColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+            cc.clampf(this._startColor.r + this._startColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
+            cc.clampf(this._startColor.g + this._startColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
+            cc.clampf(this._startColor.b + this._startColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
+            cc.clampf(this._startColor.a + this._startColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
         );
 
         var end = new cc.Color4F(
-            cc.clampf(this._m_tEndColor.r + this._m_tEndColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._m_tEndColor.g + this._m_tEndColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._m_tEndColor.b + this._m_tEndColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._m_tEndColor.a + this._m_tEndColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+            cc.clampf(this._endColor.r + this._endColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
+            cc.clampf(this._endColor.g + this._endColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
+            cc.clampf(this._endColor.b + this._endColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
+            cc.clampf(this._endColor.a + this._endColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
         );
 
         particle.color = start;
@@ -897,41 +897,41 @@ cc.ParticleSystem = cc.Node.extend({
         particle.deltaColor.a = (end.a - start.a) / particle.timeToLive;
 
         // size
-        var startS = this._m_fStartSize + this._m_fStartSizeVar * cc.RANDOM_MINUS1_1();
+        var startS = this._startSize + this._startSizeVar * cc.RANDOM_MINUS1_1();
         startS = Math.max(0, startS); // No negative value
         startS *= cc.CONTENT_SCALE_FACTOR();
 
         particle.size = startS;
 
-        if (this._m_fEndSize == cc.kCCParticleStartSizeEqualToEndSize) {
+        if (this._endSize == cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE) {
             particle.deltaSize = 0;
         } else {
-            var endS = this._m_fEndSize + this._m_fEndSizeVar * cc.RANDOM_MINUS1_1();
+            var endS = this._endSize + this._endSizeVar * cc.RANDOM_MINUS1_1();
             endS = Math.max(0, endS); // No negative values
             endS *= cc.CONTENT_SCALE_FACTOR();
             particle.deltaSize = (endS - startS) / particle.timeToLive;
         }
 
         // rotation
-        var startA = this._m_fStartSpin + this._m_fStartSpinVar * cc.RANDOM_MINUS1_1();
-        var endA = this._m_fEndSpin + this._m_fEndSpinVar * cc.RANDOM_MINUS1_1();
+        var startA = this._startSpin + this._startSpinVar * cc.RANDOM_MINUS1_1();
+        var endA = this._endSpin + this._endSpinVar * cc.RANDOM_MINUS1_1();
         particle.rotation = startA;
         particle.deltaRotation = (endA - startA) / particle.timeToLive;
 
         // position
-        if (this._m_ePositionType == cc.kCCPositionTypeFree) {
+        if (this._positionType == cc.CCPARTICLE_TYPE_FREE) {
             var p = this.convertToWorldSpace(cc.PointZero());
             particle.startPos = cc.ccpMult(p, cc.CONTENT_SCALE_FACTOR());
 
-        } else if (this._m_ePositionType == cc.kCCPositionTypeRelative) {
-            particle.startPos = cc.ccpMult(this._m_tPosition, cc.CONTENT_SCALE_FACTOR());
+        } else if (this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
+            particle.startPos = cc.ccpMult(this._position, cc.CONTENT_SCALE_FACTOR());
         }
 
         // direction
-        var a = cc.DEGREES_TO_RADIANS(this._m_fAngle + this._m_fAngleVar * cc.RANDOM_MINUS1_1());
+        var a = cc.DEGREES_TO_RADIANS(this._angle + this._angleVar * cc.RANDOM_MINUS1_1());
 
         // Mode Gravity: A
-        if (this._m_nEmitterMode == cc.kCCParticleModeGravity) {
+        if (this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY) {
             var v = cc.ccp(Math.cos(a), Math.sin(a));
             var s = this.modeA.speed + this.modeA.speedVar * cc.RANDOM_MINUS1_1();
             s *= cc.CONTENT_SCALE_FACTOR();
@@ -957,7 +957,7 @@ cc.ParticleSystem = cc.Node.extend({
 
             particle.modeB.radius = startRadius;
 
-            if (this.modeB.endRadius == cc.kCCParticleStartRadiusEqualToEndRadius)
+            if (this.modeB.endRadius == cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS)
                 particle.modeB.deltaRadius = 0;
             else
                 particle.modeB.deltaRadius = (endRadius - startRadius) / particle.timeToLive;
@@ -969,24 +969,24 @@ cc.ParticleSystem = cc.Node.extend({
 
     //! stop emitting particles. Running particles will continue to run until they die
     stopSystem:function () {
-        this._m_bIsActive = false;
-        this._m_fElapsed = this._m_fDuration;
-        this._m_fEmitCounter = 0;
+        this._isActive = false;
+        this._elapsed = this._duration;
+        this._emitCounter = 0;
     },
 
     //! Kill all living particles.
     resetSystem:function () {
-        this._m_bIsActive = true;
-        this._m_fElapsed = 0;
-        for (this._m_uParticleIdx = 0; this._m_uParticleIdx < this._m_uParticleCount; ++this._m_uParticleIdx) {
-            var p = this._m_pParticles[this._m_uParticleIdx];
+        this._isActive = true;
+        this._elapsed = 0;
+        for (this._particleIdx = 0; this._particleIdx < this._particleCount; ++this._particleIdx) {
+            var p = this._particles[this._particleIdx];
             p.timeToLive = 0;
         }
     },
 
     //! whether or not the system is full
     isFull:function () {
-        return (this._m_uParticleCount >= this._m_uTotalParticles);
+        return (this._particleCount >= this._totalParticles);
     },
 
     //! should be overriden by subclasses
@@ -1000,43 +1000,43 @@ cc.ParticleSystem = cc.Node.extend({
     },
 
     update:function (dt) {
-        if (this._m_bIsActive && this._m_fEmissionRate) {
-            var rate = 1.0 / this._m_fEmissionRate;
-            this._m_fEmitCounter += dt;
-            while ((this._m_uParticleCount < this._m_uTotalParticles) && (this._m_fEmitCounter > rate)) {
+        if (this._isActive && this._emissionRate) {
+            var rate = 1.0 / this._emissionRate;
+            this._emitCounter += dt;
+            while ((this._particleCount < this._totalParticles) && (this._emitCounter > rate)) {
                 this.addParticle();
-                this._m_fEmitCounter -= rate;
+                this._emitCounter -= rate;
             }
 
-            this._m_fElapsed += dt;
-            if (this._m_fDuration != -1 && this._m_fDuration < this._m_fElapsed) {
+            this._elapsed += dt;
+            if (this._duration != -1 && this._duration < this._elapsed) {
                 this.stopSystem();
             }
         }
-        this._m_uParticleIdx = 0;
+        this._particleIdx = 0;
 
         /// @todo CCProfilingBeginTimingBlock(_profilingTimer);
 
         var currentPosition = cc.PointZero();
-        if (this._m_ePositionType == cc.kCCPositionTypeFree) {
+        if (this._positionType == cc.CCPARTICLE_TYPE_FREE) {
             currentPosition = this.convertToWorldSpace(cc.PointZero());
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
-        } else if (this._m_ePositionType == cc.kCCPositionTypeRelative) {
-            currentPosition = cc.ccp(this._m_tPosition.x, this._m_tPosition.y);
+        } else if (this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
+            currentPosition = cc.ccp(this._position.x, this._position.y);
             currentPosition.x *= cc.CONTENT_SCALE_FACTOR();
             currentPosition.y *= cc.CONTENT_SCALE_FACTOR();
         }
 
-        while (this._m_uParticleIdx < this._m_uParticleCount) {
-            var p = this._m_pParticles[this._m_uParticleIdx];
+        while (this._particleIdx < this._particleCount) {
+            var p = this._particles[this._particleIdx];
 
             // life
             p.timeToLive -= dt;
 
             if (p.timeToLive > 0) {
                 // Mode A: gravity, direction, tangential accel & radial accel
-                if (this._m_nEmitterMode == cc.kCCParticleModeGravity) {
+                if (this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY) {
                     var tmp, radial, tangential;
 
                     radial = cc.PointZero();
@@ -1087,7 +1087,7 @@ cc.ParticleSystem = cc.Node.extend({
                 // update values in quad
                 //
                 var newPos;
-                if (cc._m_ePositionType == cc.kCCPositionTypeFree || this._m_ePositionType == cc.kCCPositionTypeRelative) {
+                if (cc._positionType == cc.CCPARTICLE_TYPE_FREE || this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
                     var diff = cc.ccpSub(currentPosition, p.startPos);
                     newPos = cc.ccpSub(p.pos, diff);
                 } else {
@@ -1098,16 +1098,16 @@ cc.ParticleSystem = cc.Node.extend({
                 //updateParticleImp(self, updateParticleSel, p, newPos);
 
                 // update particle counter
-                ++this._m_uParticleIdx;
+                ++this._particleIdx;
             } else {
                 // life < 0
-                cc.ArrayRemoveObject(this._m_pParticles, p);
+                cc.ArrayRemoveObject(this._particles, p);
 
-                --this._m_uParticleCount;
+                --this._particleCount;
 
-                if (this._m_uParticleCount == 0 && this._m_bIsAutoRemoveOnFinish) {
+                if (this._particleCount == 0 && this._isAutoRemoveOnFinish) {
                     this.unscheduleUpdate();
-                    this._m_pParent.removeChild(this, true);
+                    this._parent.removeChild(this, true);
                     return;
                 }
             }
@@ -1137,9 +1137,9 @@ cc.ParticleSystem = cc.Node.extend({
  @since v0.99.3
  */
 cc.ParticleSystem.particleWithFile = function (plistFile) {
-    var pRet = new cc.ParticleSystem();
-    if (pRet && pRet.initWithFile(plistFile)) {
-        return pRet;
+    var ret = new cc.ParticleSystem();
+    if (ret && ret.initWithFile(plistFile)) {
+        return ret;
     }
     return null;
 };

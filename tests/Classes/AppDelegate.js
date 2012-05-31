@@ -49,24 +49,24 @@ cc.AppDelegate = cc.Application.extend({
      */
     applicationDidFinishLaunching:function () {
         // initialize director
-        var pDirector = cc.Director.sharedDirector();
+        var director = cc.Director.sharedDirector();
 
         // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
-//     pDirector->enableRetinaDisplay(true);
+//     director->enableRetinaDisplay(true);
 
         // turn on display FPS
-        pDirector.setDisplayFPS(true);
+        director.setDisplayFPS(true);
 
-        // pDirector->setDeviceOrientation(kCCDeviceOrientationLandscapeLeft);
+        // director->setDeviceOrientation(CCDEVICE_ORIENTATION_LANDSCAPE_LEFT);
 
         // set FPS. the default value is 1.0/60 if you don't call this
-        pDirector.setAnimationInterval(1.0 / 60);
+        director.setAnimationInterval(1.0 / 60);
 
         // create a scene. it's an autorelease object
-        var pScene = new TestController();
+        var scene = new TestController();
 
         // run
-        pDirector.runWithScene(pScene);
+        director.runWithScene(scene);
 
         return true;
     },

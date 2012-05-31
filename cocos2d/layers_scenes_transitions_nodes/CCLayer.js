@@ -40,31 +40,31 @@ var cc = cc = cc || {};
  */
 
 cc.Layer = cc.Node.extend({
-    _m_bIsTouchEnabled:false,
-    _m_bIsAccelerometerEnabled:false,
-    _m_bIsKeypadEnabled:false,
+    _isTouchEnabled:false,
+    _isAccelerometerEnabled:false,
+    _isKeypadEnabled:false,
 
     ctor:function () {
         this._super();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this._m_bIsRelativeAnchorPoint = false;
+        this._isRelativeAnchorPoint = false;
         //this.initLayer();
-        var pDirector = cc.Director.sharedDirector();
-        if (!pDirector) {
+        var director = cc.Director.sharedDirector();
+        if (!director) {
             return false;
         }
-        this.setContentSize(pDirector.getWinSize());
-        this._m_bIsTouchEnabled = false;
-        this._m_bIsAccelerometerEnabled = false;
+        this.setContentSize(director.getWinSize());
+        this._isTouchEnabled = false;
+        this._isAccelerometerEnabled = false;
     },
 
     init:function () {
-        /*var pDirector = cc.Director.sharedDirector();
-        if (!pDirector) {
+        /*var director = cc.Director.sharedDirector();
+        if (!director) {
             return false;
         }
-        this.setContentSize(pDirector.getWinSize());
-        this._m_bIsTouchEnabled = false;*/
+        this.setContentSize(director.getWinSize());
+        this._isTouchEnabled = false;*/
 
         // success
         return true;
@@ -93,15 +93,15 @@ cc.Layer = cc.Node.extend({
      */
     /// isTouchEnabled getter
     getIsTouchEnabled:function () {
-        return this._m_bIsTouchEnabled;
+        return this._isTouchEnabled;
     },
     /// isTouchEnabled setter
     setIsTouchEnabled:function (enabled) {
-        if (this._m_bIsTouchEnabled != enabled) {
-            this._m_bIsTouchEnabled = enabled;
+        if (this._isTouchEnabled != enabled) {
+            this._isTouchEnabled = enabled;
 
 
-            if (this._m_bIsRunning) {
+            if (this._isRunning) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
                 } else {
@@ -117,14 +117,14 @@ cc.Layer = cc.Node.extend({
      */
     /// isAccelerometerEnabled getter
     getIsAccelerometerEnabled:function () {
-        return this._m_bIsAccelerometerEnabled;
+        return this._isAccelerometerEnabled;
     },
     /// isAccelerometerEnabled setter
     setIsAccelerometerEnabled:function (enabled) {
-        if (enabled != this._m_bIsAccelerometerEnabled) {
-            this._m_bIsAccelerometerEnabled = enabled;
+        if (enabled != this._isAccelerometerEnabled) {
+            this._isAccelerometerEnabled = enabled;
 
-            if (this._m_bIsRunning) {
+            if (this._isRunning) {
                 if (enabled) {
                     cc.Accelerometer.sharedAccelerometer().setDelegate(this);
                 }
@@ -140,13 +140,13 @@ cc.Layer = cc.Node.extend({
      */
     /// isKeypadEnabled getter
     getIsKeypadEnabled:function () {
-        return this._m_bIsKeypadEnabled;
+        return this._isKeypadEnabled;
     },
     /// isKeypadEnabled setter
     setIsKeypadEnabled:function (enabled) {
-        if (enabled != this._m_bIsKeypadEnabled) {
-            this._m_bIsKeypadEnabled = enabled;
-            if (this._m_bIsRunning) {
+        if (enabled != this._isKeypadEnabled) {
+            this._isKeypadEnabled = enabled;
+            if (this._isRunning) {
                 if (enabled) {
                     cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
                 } else {
@@ -160,7 +160,7 @@ cc.Layer = cc.Node.extend({
     onEnter:function () {
         // register 'parent' nodes first
         // since events are propagated in reverse order
-        if (this._m_bIsTouchEnabled) {
+        if (this._isTouchEnabled) {
             this.registerWithTouchDispatcher();
         }
 
@@ -169,73 +169,73 @@ cc.Layer = cc.Node.extend({
         this._super();
 
         // add this layer to concern the Accelerometer Sensor
-        if (this._m_bIsAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled) {
             cc.Accelerometer.sharedAccelerometer().setDelegate(this);
         }
 
         // add this layer to concern the kaypad msg
-        if (this._m_bIsKeypadEnabled) {
+        if (this._isKeypadEnabled) {
             cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
         }
     },
     onExit:function () {
-        if (this._m_bIsTouchEnabled) {
+        if (this._isTouchEnabled) {
             cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
         }
 
         // remove this layer from the delegates who concern Accelerometer Sensor
-        if (this._m_bIsAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled) {
             cc.Accelerometer.sharedAccelerometer().setDelegate(null);
         }
 
         // remove this layer from the delegates who concern the kaypad msg
-        if (this._m_bIsKeypadEnabled) {
+        if (this._isKeypadEnabled) {
             cc.KeypadDispatcher.sharedDispatcher().removeDelegate(this);
         }
 
         this._super();
     },
     onEnterTransitionDidFinish:function () {
-        if (this._m_bIsAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled) {
             cc.Accelerometer.sharedAccelerometer().setDelegate(this);
         }
         this._super();
     },
     // default implements are used to call script callback if exist
-    ccTouchBegan:function (pTouch, pEvent) {
+    ccTouchBegan:function (touch, event) {
         cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
-    ccTouchMoved:function (pTouch, pEvent) {
+    ccTouchMoved:function (touch, event) {
     },
-    ccTouchEnded:function (pTouch, pEvent) {
+    ccTouchEnded:function (touch, event) {
     },
-    ccTouchCancelled:function (pTouch, pEvent) {
+    ccTouchCancelled:function (touch, event) {
     },
 
     // default implements are used to call script callback if exist
-    ccTouchesBegan:function (pTouch, pEvent) {
+    ccTouchesBegan:function (touch, event) {
     },
-    ccTouchesMoved:function (pTouch, pEvent) {
+    ccTouchesMoved:function (touch, event) {
     },
-    ccTouchesEnded:function (pTouch, pEvent) {
+    ccTouchesEnded:function (touch, event) {
     },
-    ccTouchesCancelled:function (pTouch, pEvent) {
+    ccTouchesCancelled:function (touch, event) {
     },
 
     didAccelerate:function (pAccelerationValue) {
     },
 
     addLayer:function (layer) {
-        cc.Assert(this.m_pLayers, "cc.Layer addLayer");
-        this.m_pLayers.addObject(layer);
+        cc.Assert(this.layers, "cc.Layer addLayer");
+        this.layers.addObject(layer);
     }
 });
 
 cc.Layer.node = function () {
-    var pRet = new cc.Layer();
-    if (pRet && pRet.init()) {
-        return pRet;
+    var ret = new cc.Layer();
+    if (ret && ret.init()) {
+        return ret;
     }
     else {
         return null;
@@ -253,29 +253,29 @@ cc.Layer.node = function () {
  - RGB colors
  */
 cc.LayerColor = cc.Layer.extend({
-    _m_pSquareVertices:[],
-    _m_pSquareColors:[],
-    _m_cOpacity:0,
-    _m_tColor:new cc.Color3B(255, 255, 255),
-    _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _squareVertices:[],
+    _squareColors:[],
+    _opacity:0,
+    _color:new cc.Color3B(255, 255, 255),
+    _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
 
     /// ColorLayer
     ctor:function () {
-        this._m_pSquareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
-        this._m_pSquareColors = [new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)];
-        this._m_tColor = new cc.Color3B(0, 0, 0);
+        this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
+        this._squareColors = [new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)];
+        this._color = new cc.Color3B(0, 0, 0);
         this._super();
     },
 
     // Opacity and RGB color protocol
     /// opacity getter
     getOpacity:function () {
-        return this._m_cOpacity;
+        return this._opacity;
     },
 
     /// opacity setter
     setOpacity:function (Var) {
-        this._m_cOpacity = Var;
+        this._opacity = Var;
         this._updateColor();
 
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -283,11 +283,11 @@ cc.LayerColor = cc.Layer.extend({
     },
     /// color getter
     getColor:function () {
-        return this._m_tColor;
+        return this._color;
     },
     /// color setter
     setColor:function (Var) {
-        this._m_tColor = Var;
+        this._color = Var;
         this._updateColor();
 
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -295,11 +295,11 @@ cc.LayerColor = cc.Layer.extend({
     },
     /// blendFunc getter
     getBlendFunc:function () {
-        return this._m_tBlendFunc;
+        return this._blendFunc;
     },
     /// blendFunc setter
     setBlendFunc:function (Var) {
-        this._m_tBlendFunc = Var;
+        this._blendFunc = Var;
     },
 
     initWithColor:function (color) {
@@ -309,14 +309,14 @@ cc.LayerColor = cc.Layer.extend({
     },
 
     initWithColorWidthHeight:function (color, width, height) {
-        this._m_tBlendFunc.src = cc.BLEND_SRC;
-        this._m_tBlendFunc.dst = cc.BLEND_DST;
-        this._m_tColor = new cc.Color3B(color.r, color.g, color.b);
-        this._m_cOpacity = color.a;
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
+        this._color = new cc.Color3B(color.r, color.g, color.b);
+        this._opacity = color.a;
 
-        for (var i = 0; i < this._m_pSquareVertices.length; i++) {
-            this._m_pSquareVertices[i].x = 0.0;
-            this._m_pSquareVertices[i].y = 0.0;
+        for (var i = 0; i < this._squareVertices.length; i++) {
+            this._squareVertices[i].x = 0.0;
+            this._squareVertices[i].y = 0.0;
         }
         this._updateColor();
         this.setContentSize(cc.SizeMake(width, height));
@@ -324,10 +324,10 @@ cc.LayerColor = cc.Layer.extend({
     },
     /// override contentSize
     setContentSize:function (size) {
-        this._m_pSquareVertices[1].x = size.width * cc.CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[2].y = size.height * cc.CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[3].x = size.width * cc.CONTENT_SCALE_FACTOR();
-        this._m_pSquareVertices[3].y = size.height * cc.CONTENT_SCALE_FACTOR();
+        this._squareVertices[1].x = size.width * cc.CONTENT_SCALE_FACTOR();
+        this._squareVertices[2].y = size.height * cc.CONTENT_SCALE_FACTOR();
+        this._squareVertices[3].x = size.width * cc.CONTENT_SCALE_FACTOR();
+        this._squareVertices[3].y = size.height * cc.CONTENT_SCALE_FACTOR();
         this._super(size);
     },
     /** change width and height in Points
@@ -338,21 +338,21 @@ cc.LayerColor = cc.Layer.extend({
     },
     /** change width in Points*/
     changeWidth:function (w) {
-        this.setContentSize(cc.SizeMake(w, this._m_tContentSize.height));
+        this.setContentSize(cc.SizeMake(w, this._contentSize.height));
     },
     /** change height in Points*/
     changeHeight:function (h) {
-        this.setContentSize(cc.SizeMake(this._m_tContentSize.width, h));
+        this.setContentSize(cc.SizeMake(this._contentSize.width, h));
     },
     _updateColor:function () {
         for (var i = 0; i < 4; i++) {
-            this._m_pSquareColors[i].r = Math.round(this._m_tColor.r);
-            this._m_pSquareColors[i].g = Math.round(this._m_tColor.g);
-            this._m_pSquareColors[i].b = Math.round(this._m_tColor.b);
-            this._m_pSquareColors[i].a = Math.round(this._m_cOpacity);
+            this._squareColors[i].r = Math.round(this._color.r);
+            this._squareColors[i].g = Math.round(this._color.g);
+            this._squareColors[i].b = Math.round(this._color.b);
+            this._squareColors[i].a = Math.round(this._opacity);
         }
     },
-    setIsOpacityModifyRGB:function (bValue) {
+    setIsOpacityModifyRGB:function (value) {
     },
     getIsOpacityModifyRGB:function () {
         return false;
@@ -362,17 +362,17 @@ cc.LayerColor = cc.Layer.extend({
         //TODO need to fix child position in relation to parent
         var context = ctx || cc.renderContext;
 
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             //context.globalAlpha = this.getOpacity() / 255;
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
             var tGradient = context.createLinearGradient(-this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y,
                 -this.getAnchorPointInPixels().x + tWidth, -(this.getAnchorPointInPixels().y + tHeight));
 
-            tGradient.addColorStop(0, "rgba(" + this._m_pSquareColors[0].r + "," + this._m_pSquareColors[0].g + ","
-                + this._m_pSquareColors[0].b + "," + this._m_pSquareColors[0].a / 255 + ")");
-            tGradient.addColorStop(1, "rgba(" + this._m_pSquareColors[3].r + "," + this._m_pSquareColors[3].g + ","
-                + this._m_pSquareColors[3].b + "," + this._m_pSquareColors[3].a / 255 + ")");
+            tGradient.addColorStop(0, "rgba(" + this._squareColors[0].r + "," + this._squareColors[0].g + ","
+                + this._squareColors[0].b + "," + this._squareColors[0].a / 255 + ")");
+            tGradient.addColorStop(1, "rgba(" + this._squareColors[3].r + "," + this._squareColors[3].g + ","
+                + this._squareColors[3].b + "," + this._squareColors[3].a / 255 + ")");
 
             context.fillStyle = tGradient;
             context.fillRect(-this.getAnchorPointInPixels().x, this.getAnchorPointInPixels().y, tWidth, -tHeight);
@@ -387,16 +387,16 @@ cc.LayerColor = cc.Layer.extend({
 
         // glDisable(GL_TEXTURE_2D);
 
-        // glVertexPointer(2, GL_FLOAT, 0, this._m_pSquareVertices);
+        // glVertexPointer(2, GL_FLOAT, 0, this._squareVertices);
 
-        // glColorPointer(4, GL_UNSIGNED_BYTE, 0, this._m_pSquareColors);
+        // glColorPointer(4, GL_UNSIGNED_BYTE, 0, this._squareColors);
 
         var newBlend = false;
-        if (this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST) {
+        if (this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST) {
             newBlend = true;
-            //glBlendFunc(this._m_tBlendFunc.src, this._m_tBlendFunc.dst);
+            //glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         }
-        else if (this._m_cOpacity != 255) {
+        else if (this._opacity != 255) {
             newBlend = true;
             // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
@@ -415,26 +415,26 @@ cc.LayerColor = cc.Layer.extend({
 
 /** creates a CCLayer with color, width and height in Points */
 cc.LayerColor.layerWithColorWidthHeight = function (color, width, height) {
-    var pLayer = new cc.LayerColor();
-    if (pLayer && pLayer.initWithColorWidthHeight(color, width, height)) {
-        return pLayer;
+    var layer = new cc.LayerColor();
+    if (layer && layer.initWithColorWidthHeight(color, width, height)) {
+        return layer;
     }
     return null;
 };
 
 /** creates a CCLayer with color. Width and height are the window size. */
 cc.LayerColor.layerWithColor = function (color) {
-    var pLayer = new cc.LayerColor();
-    if (pLayer && pLayer.initWithColor(color)) {
-        return pLayer;
+    var layer = new cc.LayerColor();
+    if (layer && layer.initWithColor(color)) {
+        return layer;
     }
     return null;
 };
 
 cc.LayerColor.node = function () {
-    var pRet = new cc.LayerColor();
-    if (pRet && pRet.init()) {
-        return pRet;
+    var ret = new cc.LayerColor();
+    if (ret && ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -463,56 +463,56 @@ cc.LayerColor.node = function () {
  @since v0.99.5
  */
 cc.LayerGradient = cc.LayerColor.extend({
-    _m_startColor:new cc.Color3B(0, 0, 0),
-    _m_endColor:new cc.Color3B(0, 0, 0),
-    _m_cStartOpacity:null,
-    _m_cEndOpacity:null,
-    _m_AlongVector:null,
-    _m_bCompressedInterpolation:false,
+    _startColor:new cc.Color3B(0, 0, 0),
+    _endColor:new cc.Color3B(0, 0, 0),
+    _startOpacity:null,
+    _endOpacity:null,
+    _alongVector:null,
+    _compressedInterpolation:false,
     ctor:function () {
-        this._m_startColor = new cc.Color3B(0, 0, 0);
-        this._m_endColor = new cc.Color3B(0, 0, 0);
+        this._startColor = new cc.Color3B(0, 0, 0);
+        this._endColor = new cc.Color3B(0, 0, 0);
         this._super();
     },
     getStartColor:function () {
-        return this._m_tColor;
+        return this._color;
     },
     setStartColor:function (color) {
         this.setColor(color);
     },
     setEndColor:function (color) {
-        this._m_endColor = color;
+        this._endColor = color;
         this._updateColor();
     },
     getEndColor:function () {
-        return this._m_endColor;
+        return this._endColor;
     },
     setStartOpacity:function (o) {
-        this._m_cStartOpacity = o;
+        this._startOpacity = o;
         this._updateColor();
     },
     getStartOpacity:function () {
-        return this._m_cStartOpacity;
+        return this._startOpacity;
     },
     setEndOpacity:function (o) {
-        this._m_cEndOpacity = o;
+        this._endOpacity = o;
         this._updateColor();
     },
     getEndOpacity:function () {
-        return this._m_cEndOpacity;
+        return this._endOpacity;
     },
     setVector:function (Var) {
-        this.m_AlongVector = Var;
+        this.alongVector = Var;
         this._updateColor();
     },
     getVector:function () {
-        return this.m_AlongVector;
+        return this.alongVector;
     },
     getIsCompressedInterpolation:function () {
-        return this._m_bCompressedInterpolation;
+        return this._compressedInterpolation;
     },
     setIsCompressedInterpolation:function (compress) {
-        this._m_bCompressedInterpolation = compress;
+        this._compressedInterpolation = compress;
         this._updateColor();
     },
     initWithColor:function (start, end, v) {
@@ -523,19 +523,19 @@ cc.LayerGradient = cc.LayerColor.extend({
         }
 
         /** Initializes the CCLayer with a gradient between start and end in the direction of v. */
-        this._m_startColor.r = start.r;
-        this._m_startColor.g = start.g;
-        this._m_startColor.b = start.b;
-        this._m_cStartOpacity = start.a;
+        this._startColor.r = start.r;
+        this._startColor.g = start.g;
+        this._startColor.b = start.b;
+        this._startOpacity = start.a;
 
-        this._m_endColor.r = end.r;
-        this._m_endColor.g = end.g;
-        this._m_endColor.b = end.b;
-        this._m_cEndOpacity = end.a;
+        this._endColor.r = end.r;
+        this._endColor.g = end.g;
+        this._endColor.b = end.b;
+        this._endOpacity = end.a;
 
-        this.m_AlongVector = v;
+        this.alongVector = v;
 
-        this._m_bCompressedInterpolation = true;
+        this._compressedInterpolation = true;
 
         return this._super(cc.ccc4(start.r, start.g, start.b, 255));
     },
@@ -544,59 +544,59 @@ cc.LayerGradient = cc.LayerColor.extend({
         //todo need fixed for webGL
         this._super();
         /*
-         this._m_pSquareColors[0].r = Math.round(this._m_startColor.r);
-         this._m_pSquareColors[0].g = Math.round(this._m_startColor.g);
-         this._m_pSquareColors[0].b = Math.round(this._m_startColor.b);
-         this._m_pSquareColors[0].a = Math.round(this._m_startColor.a);
+         this._squareColors[0].r = Math.round(this._startColor.r);
+         this._squareColors[0].g = Math.round(this._startColor.g);
+         this._squareColors[0].b = Math.round(this._startColor.b);
+         this._squareColors[0].a = Math.round(this._startColor.a);
 
-         this._m_pSquareColors[3].r = Math.round(this._m_endColor.r);
-         this._m_pSquareColors[3].g = Math.round(this._m_endColor.g);
-         this._m_pSquareColors[3].b = Math.round(this._m_endColor.b);
-         this._m_pSquareColors[3].a = Math.round(this._m_endColor.a);
+         this._squareColors[3].r = Math.round(this._endColor.r);
+         this._squareColors[3].g = Math.round(this._endColor.g);
+         this._squareColors[3].b = Math.round(this._endColor.b);
+         this._squareColors[3].a = Math.round(this._endColor.a);
          return;
          */
 
 
-        var h = cc.ccpLength(this.m_AlongVector);
+        var h = cc.ccpLength(this.alongVector);
         if (h == 0)
             return;
 
         var c = Math.sqrt(2.0);
         var u = new cc.Point();
-        u = cc.ccp(this.m_AlongVector.x / h, this.m_AlongVector.y / h);
+        u = cc.ccp(this.alongVector.x / h, this.alongVector.y / h);
 
         // Compressed Interpolation mode
-        if (this._m_bCompressedInterpolation) {
+        if (this._compressedInterpolation) {
             var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
             u = cc.ccpMult(u, h2 * c);
         }
 
-        var opacityf = this._m_cOpacity / 255.0;
+        var opacityf = this._opacity / 255.0;
 
-        var S = new cc.Color4B(this._m_startColor.r, this._m_startColor.g, this._m_startColor.b, this._m_cStartOpacity * opacityf);
+        var S = new cc.Color4B(this._startColor.r, this._startColor.g, this._startColor.b, this._startOpacity * opacityf);
 
-        var E = new cc.Color4B(this._m_endColor.r, this._m_endColor.g, this._m_endColor.b, this._m_cEndOpacity * opacityf);
+        var E = new cc.Color4B(this._endColor.r, this._endColor.g, this._endColor.b, this._endOpacity * opacityf);
 
         // (-1, -1)
-        this._m_pSquareColors[0].r = parseInt((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
-        this._m_pSquareColors[0].g = parseInt((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
-        this._m_pSquareColors[0].b = parseInt((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
-        this._m_pSquareColors[0].a = parseInt((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].r = parseInt((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].g = parseInt((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].b = parseInt((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].a = parseInt((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
         // (1, -1)
-        this._m_pSquareColors[1].r = parseInt((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
-        this._m_pSquareColors[1].g = parseInt((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
-        this._m_pSquareColors[1].b = parseInt((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
-        this._m_pSquareColors[1].a = parseInt((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].r = parseInt((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].g = parseInt((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].b = parseInt((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].a = parseInt((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
         // (-1, 1)
-        this._m_pSquareColors[2].r = parseInt((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
-        this._m_pSquareColors[2].g = parseInt((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
-        this._m_pSquareColors[2].b = parseInt((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
-        this._m_pSquareColors[2].a = parseInt((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].r = parseInt((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].g = parseInt((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].b = parseInt((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].a = parseInt((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
         // (1, 1)
-        this._m_pSquareColors[3].r = parseInt((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
-        this._m_pSquareColors[3].g = parseInt((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
-        this._m_pSquareColors[3].b = parseInt((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
-        this._m_pSquareColors[3].a = parseInt((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].r = parseInt((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].g = parseInt((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].b = parseInt((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].a = parseInt((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
     }
 });
 
@@ -605,19 +605,19 @@ cc.LayerGradient = cc.LayerColor.extend({
 //
 cc.LayerGradient.layerWithColor = function (start, end, v) {
     var argnum = arguments.length;
-    var pLayer = new cc.LayerGradient();
+    var layer = new cc.LayerGradient();
     switch (argnum) {
         case 2:
             /** Creates a full-screen CCLayer with a gradient between start and end. */
-            if (pLayer && pLayer.initWithColor(start, end)) {
-                return pLayer;
+            if (layer && layer.initWithColor(start, end)) {
+                return layer;
             }
             return null;
             break;
         case 3:
             /** Creates a full-screen CCLayer with a gradient between start and end in the direction of v. */
-            if (pLayer && pLayer.initWithColor(start, end, v)) {
-                return pLayer;
+            if (layer && layer.initWithColor(start, end, v)) {
+                return layer;
             }
             return null;
             break;
@@ -627,9 +627,9 @@ cc.LayerGradient.layerWithColor = function (start, end, v) {
     }
 };
 cc.LayerGradient.node = function () {
-    var pRet = new cc.LayerGradient();
-    if (pRet && pRet.init()) {
-        return pRet;
+    var ret = new cc.LayerGradient();
+    if (ret && ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -641,57 +641,57 @@ cc.LayerGradient.node = function () {
  */
 /// MultiplexLayer
 cc.LayerMultiplex = cc.Layer.extend({
-    m_nEnabledLayer:0,
-    m_pLayers:null,
+    enabledLayer:0,
+    layers:null,
     ctor:function () {
         this._super();
     },
     initWithLayer:function (layer) {
-        this.m_pLayers = [];
-        this.m_pLayers.push(layer);
-        this.m_nEnabledLayer = 0;
+        this.layers = [];
+        this.layers.push(layer);
+        this.enabledLayer = 0;
         this.addChild(layer);
         return true;
     },
     initWithLayers:function (args) {
-        this.m_pLayers = args;
-        this.m_nEnabledLayer = 0;
-        this.addChild(this.m_pLayers[this.m_nEnabledLayer]);
+        this.layers = args;
+        this.enabledLayer = 0;
+        this.addChild(this.layers[this.enabledLayer]);
         return true;
     },
     /** switches to a certain layer indexed by n.
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      */
     switchTo:function (n) {
-        cc.Assert(n < this.m_pLayers.length, "Invalid index in MultiplexLayer switchTo message");
+        cc.Assert(n < this.layers.length, "Invalid index in MultiplexLayer switchTo message");
 
-        this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
+        this.removeChild(this.layers[this.enabledLayer], true);
 
-        this.m_nEnabledLayer = n;
+        this.enabledLayer = n;
 
-        this.addChild(this.m_pLayers[n]);
+        this.addChild(this.layers[n]);
     },
     /** release the current layer and switches to another layer indexed by n.
      The current (old) layer will be removed from it's parent with 'cleanup:YES'.
      */
     switchToAndReleaseMe:function (n) {
-        cc.Assert(n < this.m_pLayers.count(), "Invalid index in MultiplexLayer switchTo message");
+        cc.Assert(n < this.layers.count(), "Invalid index in MultiplexLayer switchTo message");
 
-        this.removeChild(this.m_pLayers[this.m_nEnabledLayer], true);
+        this.removeChild(this.layers[this.enabledLayer], true);
 
         //[layers replaceObjectAtIndex:enabledLayer withObject:[NSNull null]];
-        this.m_pLayers[this.m_nEnabledLayer] = null;
+        this.layers[this.enabledLayer] = null;
 
-        this.m_nEnabledLayer = n;
+        this.enabledLayer = n;
 
-        this.addChild(this.m_pLayers[n]);
+        this.addChild(this.layers[n]);
     }
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
 cc.LayerMultiplex.layerWithLayers = function (/*Multiple Arguments*/) {
-    var pMultiplexLayer = new cc.LayerMultiplex();
-    if (pMultiplexLayer.initWithLayers(arguments)) {
-        return pMultiplexLayer;
+    var multiplexLayer = new cc.LayerMultiplex();
+    if (multiplexLayer.initWithLayers(arguments)) {
+        return multiplexLayer;
     }
     return null;
 };
@@ -700,14 +700,14 @@ cc.LayerMultiplex.layerWithLayers = function (/*Multiple Arguments*/) {
  * so add these functinons to be used with lua.
  */
 cc.LayerMultiplex.layerWithLayer = function (layer) {
-    var pMultiplexLayer = new cc.LayerMultiplex();
-    pMultiplexLayer.initWithLayer(layer);
-    return pMultiplexLayer;
+    var multiplexLayer = new cc.LayerMultiplex();
+    multiplexLayer.initWithLayer(layer);
+    return multiplexLayer;
 };
 cc.LayerMultiplex.node = function () {
-    var pRet = new cc.LayerMultiplex();
-    if (pRet && pRet.init()) {
-        return pRet;
+    var ret = new cc.LayerMultiplex();
+    if (ret && ret.init()) {
+        return ret;
     }
     return null;
 };
@@ -788,7 +788,7 @@ cc.LazyLayer = cc.Node.extend({
 
     visit:function(){
         // quick return if not visible
-        if (!this._m_bIsVisible) {
+        if (!this._isVisible) {
             return;
         }
         if(!this._isNeedUpdate){
@@ -801,34 +801,34 @@ cc.LazyLayer = cc.Node.extend({
 
         context.clearRect(0, 0, this._layerCanvas.width, -this._layerCanvas.height);
 
-        if (this._m_pGrid && this._m_pGrid.isActive()) {
-            this._m_pGrid.beforeDraw();
+        if (this._grid && this._grid.isActive()) {
+            this._grid.beforeDraw();
             this.transformAncestors();
         }
 
         //this.transform(context);
-        if (this._m_pChildren) {
+        if (this._children) {
             // draw children zOrder < 0
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var pNode = this._m_pChildren[i];
-                if (pNode && pNode._m_nZOrder < 0) {
-                    pNode.visit(context);
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node && node._zOrder < 0) {
+                    node.visit(context);
                 }
             }
         }
 
         // draw children zOrder >= 0
-        if (this._m_pChildren) {
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var pNode = this._m_pChildren[i];
-                if (pNode && pNode._m_nZOrder >= 0) {
-                    pNode.visit(context);
+        if (this._children) {
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node && node._zOrder >= 0) {
+                    node.visit(context);
                 }
             }
         }
 
-        if (this._m_pGrid && this._m_pGrid.isActive()) {
-            this._m_pGrid.afterDraw(this);
+        if (this._grid && this._grid.isActive()) {
+            this._grid.afterDraw(this);
         }
         context.restore();
     },

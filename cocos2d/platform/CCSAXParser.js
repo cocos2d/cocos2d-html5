@@ -30,7 +30,7 @@ cc.SAXParser = cc.Class.extend({
     xmlDoc:null,
     parser:null,
     xmlList:[],
-    m_pPlist:[],
+    plist:[],
     // parse a xml from a string (xmlhttpObj.responseText)
     parse:function (textxml) {
         var textxml = this.getList(textxml)
@@ -59,8 +59,8 @@ cc.SAXParser = cc.Class.extend({
                 break
             }
         }
-        this.m_pPlist = this._parseNode(node)
-        return this.m_pPlist;
+        this.plist = this._parseNode(node)
+        return this.plist;
     },
     tmxParse:function (textxml) {
         var textxml = this.getList(textxml)
@@ -181,8 +181,8 @@ cc.SAXParser = cc.Class.extend({
 });
 
 cc.SAXParser.shareParser = function () {
-    if (!cc.s_shareParser) {
-        cc.s_shareParser = new cc.SAXParser();
+    if (!cc.shareParser) {
+        cc.shareParser = new cc.SAXParser();
     }
-    return cc.s_shareParser;
+    return cc.shareParser;
 };

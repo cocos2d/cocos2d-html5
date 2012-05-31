@@ -28,14 +28,14 @@ var cc = cc = cc || {};
 
 /** @brief Base class for Grid actions */
 cc.GridAction = cc.ActionInterval.extend({
-    _m_sGridSize:null,
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    _gridSize:null,
+    startWithTarget:function (target) {
+        this._super(target);
         var newgrid = this.getGrid();
-        var t = this._m_pTarget;
+        var t = this._target;
         var targetGrid = t.getGrid();
         if (targetGrid && targetGrid.getReuseGrid() > 0) {
-            if (targetGrid.isActive() && targetGrid.getGridSize().x == this._m_sGridSize.x && targetGrid.getGridSize().y == this._m_sGridSize.y) {
+            if (targetGrid.isActive() && targetGrid.getGridSize().x == this._gridSize.x && targetGrid.getGridSize().y == this._gridSize.y) {
                 targetGrid.reuse();
             }
             else {
@@ -58,7 +58,7 @@ cc.GridAction = cc.ActionInterval.extend({
     /** initializes the action with size and duration */
     initWithSize:function (gridSize, duration) {
         if (this.initWithDuration(duration)) {
-            this._m_sGridSize = gridSize;
+            this._gridSize = gridSize;
             return true;
         }
         return false;
@@ -74,9 +74,9 @@ cc.GridAction = cc.ActionInterval.extend({
 
 /** creates the action with size and duration */
 cc.GridAction.actionWithSize = function (gridSize, duration) {
-    var pAction = new cc.GridAction();
-    pAction.initWithSize(gridSize, duration)
-    return pAction;
+    var action = new cc.GridAction();
+    action.initWithSize(gridSize, duration)
+    return action;
 },
 
 /**
@@ -86,24 +86,24 @@ cc.GridAction.actionWithSize = function (gridSize, duration) {
     cc.Grid3DAction = cc.GridAction.extend({
         /** returns the grid */
         getGrid:function () {
-            return cc.Grid3D.gridWithSize(this._m_sGridSize);
+            return cc.Grid3D.gridWithSize(this._gridSize);
         },
 
         /** returns the vertex than belongs to certain position in the grid */
         vertex:function (pos) {
-            var g = this._m_pTarget.getGrid();
+            var g = this._target.getGrid();
             return g.vertex(pos);
         },
 
         /** returns the non-transformed vertex than belongs to certain position in the grid */
         originalVertex:function (pos) {
-            var g = this._m_pTarget.getGrid();
+            var g = this._target.getGrid();
             return g.originalVertex(pos);
         },
 
         /** sets a new vertex to a certain position of the grid */
         setVertex:function (pos, vertex) {
-            var g = this._m_pTarget.getGrid();
+            var g = this._target.getGrid();
             g.setVertex(pos, vertex);
         }
     });
@@ -115,25 +115,25 @@ cc.Grid3DAction.actionWithSize = function () {
 cc.TiledGrid3DAction = cc.GridAction.extend({
     /** returns the tile that belongs to a certain position of the grid */
     tile:function (pos) {
-        var g = this._m_pTarget.getGrid();
+        var g = this._target.getGrid();
         return g.tile(pos);
     },
 
     /** returns the non-transformed tile that belongs to a certain position of the grid */
     originalTile:function (pos) {
-        var g = this._m_pTarget.getGrid();
+        var g = this._target.getGrid();
         return g.originalTile(pos);
     },
 
     /** sets a new tile to a certain position of the grid */
     setTile:function (pos, coords) {
-        var g = this._m_pTarget.getGrid();
+        var g = this._target.getGrid();
         return g.setTile(pos, coords);
     },
 
     /** returns the grid */
     getGrid:function () {
-        return cc.TiledGrid3D.gridWithSize(this._m_sGridSize);
+        return cc.TiledGrid3D.gridWithSize(this._gridSize);
     }
 });
 
@@ -144,21 +144,21 @@ cc.TiledGrid3DAction.actionWithSize = function (gridSize, duration) {
 
 /** @brief cc.AccelDeccelAmplitude action */
 cc.AccelDeccelAmplitude = cc.ActionInterval.extend({
-    _m_fRate:null,
-    _m_pOther:null,
+    _rate:null,
+    _other:null,
     /** initializes the action with an inner action that has the amplitude property, and a duration time */
-    initWithAction:function (pAction, duration) {
+    initWithAction:function (action, duration) {
         if (cc.ActionInterval.initWithDuration(duration)) {
-            this._m_fRate = 1.0;
-            this._m_pOther = pAction;
+            this._rate = 1.0;
+            this._other = action;
             return true;
         }
         return false;
     },
 
-    startWithTarget:function (pTarget) {
-        cc.ActionInterval.startWithTarget(pTarget);
-        this._m_pOther.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        cc.ActionInterval.startWithTarget(target);
+        this._other.startWithTarget(target);
     },
 
     update:function (time) {
@@ -167,39 +167,39 @@ cc.AccelDeccelAmplitude = cc.ActionInterval.extend({
             f -= 1;
             f = 1 - f;
         }
-        this._m_pOther.setAmplitudeRate(Math.pow(f, this._m_fRate));
+        this._other.setAmplitudeRate(Math.pow(f, this._rate));
     },
 
     reverse:function () {
-        return cc.AccelDeccelAmplitude.actionWithAction(this._m_pOther.reverse(), this._m_fDuration);
+        return cc.AccelDeccelAmplitude.actionWithAction(this._other.reverse(), this._duration);
     },
 
     /** get amplitude rate */
     getRate:function () {
-        return this._m_fRate;
+        return this._rate;
     },
 
     /** set amplitude rate */
-    setRate:function (fRate) {
-        this._m_fRate = fRate;
+    setRate:function (rate) {
+        this._rate = rate;
     }
 });
 
 /** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.AccelDeccelAmplitude.actionWithAction = function (pAction, duration) {
-    var pRet = new cc.AccelDeccelAmplitude();
-    return pRet;
+cc.AccelDeccelAmplitude.actionWithAction = function (action, duration) {
+    var ret = new cc.AccelDeccelAmplitude();
+    return ret;
 };
 
 /** @brief cc.AccelAmplitude action */
 cc.AccelAmplitude = cc.ActionInterval.extend({
-    _m_fRate:null,
-    _m_pOther:null,
+    _rate:null,
+    _other:null,
     /** initializes the action with an inner action that has the amplitude property, and a duration time */
-    initWithAction:function (pAction, duration) {
+    initWithAction:function (action, duration) {
         if (cc.ActionInterval.initWithDuration(duration)) {
-            this._m_fRate = 1.0;
-            this._m_pOther = pAction;
+            this._rate = 1.0;
+            this._other = action;
 
             return true;
         }
@@ -208,45 +208,45 @@ cc.AccelAmplitude = cc.ActionInterval.extend({
 
     /** get amplitude rate */
     getRate:function () {
-        return this._m_fRate;
+        return this._rate;
     },
 
     /** set amplitude rate */
-    setRate:function (fRate) {
-        this._m_fRate = fRate;
+    setRate:function (rate) {
+        this._rate = rate;
     },
 
-    startWithTarget:function (pTarget) {
-        cc.ActionInterval.startWithTarget(pTarget);
-        this._m_pOther.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        cc.ActionInterval.startWithTarget(target);
+        this._other.startWithTarget(target);
     },
 
     update:function (time) {
 
-        this._m_pOther.setAmplitudeRate(Math.pow(time, this._m_fRate));
-        this._m_pOther.update(time);
+        this._other.setAmplitudeRate(Math.pow(time, this._rate));
+        this._other.update(time);
     },
 
     reverse:function () {
-        return cc.AccelAmplitude.actionWithAction(this._m_pOther.reverse(), this._m_fDuration);
+        return cc.AccelAmplitude.actionWithAction(this._other.reverse(), this._duration);
     }
 });
 
 /** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.AccelAmplitude.actionWithAction = function (pAction, duration) {
-    var pRet = new cc.AccelAmplitude();
-    return pRet;
+cc.AccelAmplitude.actionWithAction = function (action, duration) {
+    var ret = new cc.AccelAmplitude();
+    return ret;
 };
 
 /** @brief cc.DeccelAmplitude action */
 cc.DeccelAmplitude = cc.ActionInterval.extend({
-    _m_fRate:null,
-    _m_pOther:null,
+    _rate:null,
+    _other:null,
     /** initializes the action with an inner action that has the amplitude property, and a duration time */
-    initWithAction:function (pAction, duration) {
+    initWithAction:function (action, duration) {
         if (cc.ActionInterval.initWithDuration(duration)) {
-            this._m_fRate = 1.0;
-            this._m_pOther = pAction;
+            this._rate = 1.0;
+            this._other = action;
             return true;
         }
 
@@ -255,33 +255,33 @@ cc.DeccelAmplitude = cc.ActionInterval.extend({
 
     /** get amplitude rate */
     getRate:function () {
-        return this._m_fRate;
+        return this._rate;
     },
 
     /** set amplitude rate */
-    setRate:function (fRate) {
-        this._m_fRate = fRate;
+    setRate:function (rate) {
+        this._rate = rate;
     },
 
-    startWithTarget:function (pTarget) {
-        cc.ActionInterval.startWithTarget(pTarget);
-        this._m_pOther.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        cc.ActionInterval.startWithTarget(target);
+        this._other.startWithTarget(target);
     },
 
     update:function (time) {
-        this._m_pOther.setAmplitudeRate(Math.pow((1 - time), this._m_fRate));
-        this._m_pOther.update(time);
+        this._other.setAmplitudeRate(Math.pow((1 - time), this._rate));
+        this._other.update(time);
     },
 
     reverse:function () {
-        return cc.DeccelAmplitude.actionWithAction(this._m_pOther.reverse(), this._m_fDuration);
+        return cc.DeccelAmplitude.actionWithAction(this._other.reverse(), this._duration);
     }
 });
 
 /** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.DeccelAmplitude.actionWithAction = function (pAction, duration) {
-    var pRet = new cc.DeccelAmplitude();
-    return pRet;
+cc.DeccelAmplitude.actionWithAction = function (action, duration) {
+    var ret = new cc.DeccelAmplitude();
+    return ret;
 };
 
 /** @brief cc.StopGrid action.
@@ -290,36 +290,36 @@ cc.DeccelAmplitude.actionWithAction = function (pAction, duration) {
  cc.Sequence.actions(Lens.action(...), cc.StopGrid.action(...), null);
  */
 cc.StopGrid = cc.ActionInstant.extend({
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        var pGrid = this._m_pTarget.getGrid();
-        if (pGrid && pGrid.isActive()) {
-            pGrid.setActive(false);
+    startWithTarget:function (target) {
+        this._super(target);
+        var grid = this._target.getGrid();
+        if (grid && grid.isActive()) {
+            grid.setActive(false);
         }
     }
 });
 
 /** Allocates and initializes the action */
 cc.StopGrid.action = function () {
-    var pAction = new cc.StopGrid();
-    return pAction;
+    var action = new cc.StopGrid();
+    return action;
 };
 
 /** @brief cc.ReuseGrid action */
 cc.ReuseGrid = cc.ActionInstant.extend({
-    _m_nTimes:null,
+    _times:null,
     /** initializes an action with the number of times that the current grid will be reused */
     initWithTimes:function (times) {
-        this._m_nTimes = times;
+        this._times = times;
 
         return true;
     },
 
-    startWithTarget:function (pTarget) {
-        cc.ActionInstant.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        cc.ActionInstant.startWithTarget(target);
 
-        if (this._m_pTarget.getGrid() && this.__m_pTarget.getGrid().isActive()) {
-            this._m_pTarget.getGrid().setReuseGrid(this.__m_pTarget.getGrid().getReuseGrid() + this._m_nTimes);
+        if (this._target.getGrid() && this._target.getGrid().isActive()) {
+            this._target.getGrid().setReuseGrid(this._target.getGrid().getReuseGrid() + this._times);
         }
     }
 
@@ -327,6 +327,6 @@ cc.ReuseGrid = cc.ActionInstant.extend({
 
 /** creates an action with the number of times that the current grid will be reused */
 cc.ReuseGrid.actionWithTimes = function (times) {
-    var pAction = new cc.ReuseGrid();
-    return pAction;
+    var action = new cc.ReuseGrid();
+    return action;
 };

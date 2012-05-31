@@ -30,23 +30,23 @@ var cc = cc = cc || {};
  @brief Base class for cc.Camera actions
  */
 cc.ActionCamera = cc.ActionInterval.extend({
-    m_fCenterXOrig:0,
-    m_fCenterYOrig:0,
-    m_fCenterZOrig:0,
-    m_fEyeXOrig:0,
-    m_fEyeYOrig:0,
-    m_fEyeZOrig:0,
-    m_fUpXOrig:0,
-    m_fUpYOrig:0,
-    m_fUpZOrig:0,
+    centerXOrig:0,
+    centerYOrig:0,
+    centerZOrig:0,
+    eyeXOrig:0,
+    eyeYOrig:0,
+    eyeZOrig:0,
+    upXOrig:0,
+    upYOrig:0,
+    upZOrig:0,
     // super methods
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
 
-        var camera = pTarget.getCamera();
-        camera.getCenterXYZ(this.m_fCenterXOrig, this.m_fCenterYOrig, this.m_fCenterZOrig);
-        camera.getEyeXYZ(this.m_fEyeXOrig, this.m_fEyeYOrig, this.m_fEyeZOrig);
-        camera.getUpXYZ(this.m_fUpXOrig, this.m_fUpYOrig, this.m_fUpZOrig);
+        var camera = target.getCamera();
+        camera.getCenterXYZ(this.centerXOrig, this.centerYOrig, this.centerZOrig);
+        camera.getEyeXYZ(this.eyeXOrig, this.eyeYOrig, this.eyeZOrig);
+        camera.getUpXYZ(this.upXOrig, this.upYOrig, this.upZOrig);
     },
     reverse:function () {
         return cc.ReverseTime.actionWithAction(this);
@@ -58,29 +58,29 @@ cc.ActionCamera = cc.ActionInterval.extend({
  Orbits the camera around the center of the screen using spherical coordinates
  */
 cc.OrbitCamera = cc.ActionCamera.extend({
-    m_fRadius:0.0,
-    m_fDeltaRadius:0.0,
-    m_fAngleZ:0.0,
-    m_fDeltaAngleZ:0.0,
-    m_fAngleX:0.0,
-    m_fDeltaAngleX:0.0,
-    m_fRadZ:0.0,
-    m_fRadDeltaZ:0.0,
-    m_fRadX:0.0,
-    m_fRadDeltaX:0.0,
+    radius:0.0,
+    deltaRadius:0.0,
+    angleZ:0.0,
+    deltaAngleZ:0.0,
+    angleX:0.0,
+    deltaAngleX:0.0,
+    radZ:0.0,
+    radDeltaZ:0.0,
+    radX:0.0,
+    radDeltaX:0.0,
 
     /** initializes a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX */
     initWithDuration:function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
         if (this._super(t)) {
-            this.m_fRadius = radius;
-            this.m_fDeltaRadius = deltaRadius;
-            this.m_fAngleZ = angleZ;
-            this.m_fDeltaAngleZ = deltaAngleZ;
-            this.m_fAngleX = angleX;
-            this.m_fDeltaAngleX = deltaAngleX;
+            this.radius = radius;
+            this.deltaRadius = deltaRadius;
+            this.angleZ = angleZ;
+            this.deltaAngleZ = deltaAngleZ;
+            this.angleX = angleX;
+            this.deltaAngleX = deltaAngleX;
 
-            this.m_fRadDeltaZ = cc.DEGREES_TO_RADIANS(deltaAngleZ);
-            this.m_fRadDeltaX = cc.DEGREES_TO_RADIANS(deltaAngleX);
+            this.radDeltaZ = cc.DEGREES_TO_RADIANS(deltaAngleZ);
+            this.radDeltaX = cc.DEGREES_TO_RADIANS(deltaAngleX);
             return true;
         }
         return false;
@@ -91,9 +91,9 @@ cc.OrbitCamera = cc.ActionCamera.extend({
         var r; // radius
         var s;
 
-        var pCamera = this._m_pTarget.getCamera();
-        pCamera.getEyeXYZ(ex, ey, ez);
-        pCamera.getCenterXYZ(cx, cy, cz);
+        var camera = this._target.getCamera();
+        camera.getEyeXYZ(ex, ey, ez);
+        camera.getCenterXYZ(cx, cy, cz);
 
         x = ex - cx;
         y = ey - cy;
@@ -115,57 +115,57 @@ cc.OrbitCamera = cc.ActionCamera.extend({
         newRadius = r / cc.Camera.getZEye();
     },
     // super methods
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pRet = null;
-        if (pZone && pZone.m_pCopyObject) //in case of being called at sub class
-            pRet = pZone.m_pCopyObject;
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var ret = null;
+        if (zone && zone.copyObject) //in case of being called at sub class
+            ret = zone.copyObject;
         else {
-            pRet = new cc.OrbitCamera();
-            pZone = pNewZone = new cc.Zone(pRet);
+            ret = new cc.OrbitCamera();
+            zone = newZone = new cc.Zone(ret);
         }
 
-        cc.ActionInterval.copyWithZone(pZone);
+        cc.ActionInterval.copyWithZone(zone);
 
-        pRet.initWithDuration(this._m_fDuration, this.m_fRadius, this.m_fDeltaRadius, this.m_fAngleZ, this.m_fDeltaAngleZ, this.m_fAngleX, this.m_fDeltaAngleX);
+        ret.initWithDuration(this._duration, this.radius, this.deltaRadius, this.angleZ, this.deltaAngleZ, this.angleX, this.deltaAngleX);
 
-        return pRet;
+        return ret;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
         var r, zenith, azimuth;
         this.sphericalRadius(r, zenith, azimuth);
-        if (isNaN(this.m_fRadius)) {
-            this.m_fRadius = r;
+        if (isNaN(this.radius)) {
+            this.radius = r;
         }
-        if (isNaN(this.m_fAngleZ)) {
-            this.m_fAngleZ = cc.RADIANS_TO_DEGREES(zenith);
+        if (isNaN(this.angleZ)) {
+            this.angleZ = cc.RADIANS_TO_DEGREES(zenith);
         }
-        if (isNaN(this.m_fAngleX)) {
-            this.m_fAngleX = cc.RADIANS_TO_DEGREES(azimuth);
+        if (isNaN(this.angleX)) {
+            this.angleX = cc.RADIANS_TO_DEGREES(azimuth);
         }
 
-        this.m_fRadZ = cc.DEGREES_TO_RADIANS(this.m_fAngleZ);
-        this.m_fRadX = cc.DEGREES_TO_RADIANS(this.m_fAngleX);
+        this.radZ = cc.DEGREES_TO_RADIANS(this.angleZ);
+        this.radX = cc.DEGREES_TO_RADIANS(this.angleX);
     },
     update:function (dt) {
-        var r = (this.m_fRadius + this.m_fDeltaRadius * dt) * cc.Camera.getZEye();
-        var za = this.m_fRadZ + this.m_fRadDeltaZ * dt;
-        var xa = this.m_fRadX + this.m_fRadDeltaX * dt;
+        var r = (this.radius + this.deltaRadius * dt) * cc.Camera.getZEye();
+        var za = this.radZ + this.radDeltaZ * dt;
+        var xa = this.radX + this.radDeltaX * dt;
 
-        var i = Math.sin(za) * Math.cos(xa) * r + this.m_fCenterXOrig;
-        var j = Math.sin(za) * Math.sin(xa) * r + this.m_fCenterYOrig;
-        var k = Math.cos(za) * r + this.m_fCenterZOrig;
+        var i = Math.sin(za) * Math.cos(xa) * r + this.centerXOrig;
+        var j = Math.sin(za) * Math.sin(xa) * r + this.centerYOrig;
+        var k = Math.cos(za) * r + this.centerZOrig;
 
-        this._m_pTarget.getCamera().setEyeXYZ(i, j, k);
+        this._target.getCamera().setEyeXYZ(i, j, k);
     }
 });
 
 /** creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX */
 cc.OrbitCamera.actionWithDuration = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
-    var pRet = new cc.OrbitCamera();
-    if (pRet.initWithDuration(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX)) {
-        return pRet;
+    var ret = new cc.OrbitCamera();
+    if (ret.initWithDuration(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX)) {
+        return ret;
     }
     return null;
 };

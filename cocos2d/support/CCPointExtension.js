@@ -41,7 +41,7 @@ var cc = cc = cc || {};
  - cpvadd( CCPointMake(1,1), CCPointMake(2,2) ); // mixing chipmunk and CG (avoid)
  */
 
-cc.kCCPointEpsilon = parseFloat('1.192092896e-07F');
+cc.CCPOINT_EPSILON = parseFloat('1.192092896e-07F');
 
 /** Helper macro that creates a CCPoint
  @return CCPoint
@@ -55,8 +55,8 @@ cc.ccp = function (x, y) {
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpNeg = function (vPoint) {
-    return new cc.Point(-vPoint.x, -vPoint.y);
+cc.ccpNeg = function (point) {
+    return new cc.Point(-point.x, -point.y);
 };
 
 /** Calculates sum of two points.
@@ -79,8 +79,8 @@ cc.ccpSub = function (v1, v2) {
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpMult = function (vPoint, sFloat) {
-    return new cc.Point(vPoint.x * sFloat, vPoint.y * sFloat);
+cc.ccpMult = function (point, float) {
+    return new cc.Point(point.x * float, point.y * float);
 };
 
 /** Calculates midpoint between two points.
@@ -111,16 +111,16 @@ cc.ccpCross = function (v1, v2) {
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpPerp = function (vPoint) {
-    return new cc.Point(-vPoint.y, vPoint.x);
+cc.ccpPerp = function (point) {
+    return new cc.Point(-point.y, point.x);
 };
 
 /** Calculates perpendicular of v, rotated 90 degrees clockwise -- cross(v, rperp(v)) <= 0
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpRPerp = function (vPoint) {
-    return new cc.Point(vPoint.y, -vPoint.x);
+cc.ccpRPerp = function (point) {
+    return new cc.Point(point.y, -point.x);
 };
 
 /** Calculates the projection of v1 over v2.
@@ -271,7 +271,7 @@ cc.ccpAngleSigned = function (a, b) {
     var a2 = cc.ccpNormalize(a);
     var b2 = cc.ccpNormalize(b);
     var angle = Math.atan2(a2.x * b2.y - a2.y * b2.x, cc.ccpDot(a2, b2));
-    if (Math.abs(angle) < cc.kCCPointEpsilon) {
+    if (Math.abs(angle) < cc.CCPOINT_EPSILON) {
         return 0.0;
     }
     return angle;
@@ -282,7 +282,7 @@ cc.ccpAngleSigned = function (a, b) {
  */
 cc.ccpAngle = function (a, b) {
     var angle = Math.acos(cc.ccpDot(cc.ccpNormalize(a), cc.ccpNormalize(b)));
-    if (Math.abs(angle) < cc.kCCPointEpsilon) return 0.0;
+    if (Math.abs(angle) < cc.CCPOINT_EPSILON) return 0.0;
     return angle;
 };
 

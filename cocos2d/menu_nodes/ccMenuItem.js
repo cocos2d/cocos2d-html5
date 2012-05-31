@@ -26,70 +26,70 @@
 
 
 var cc = cc = cc || {};
-cc.kCCItemSize = cc._fontSize = 32;
+cc.CCITEM_SIZE = cc._fontSize = 32;
 cc._fontName = "Marker Felt";
 cc._fontNameRelease = false;
-cc.kCurrentItem = 0xc0c05001;
-cc.kZoomActionTag = 0xc0c05002;
-cc.kNormalTag = 8801;
-cc.kSelectedTag = 8802;
-cc.kDisableTag = 8803;
+cc.CURRENT_ITEM = 0xc0c05001;
+cc.ZOOM_ACTION_TAG = 0xc0c05002;
+cc.NORMAL_TAG = 8801;
+cc.SELECTED_TAG = 8802;
+cc.DISABLE_TAG = 8803;
 
 /** @brief CCMenuItem base class
  *
  *  Subclass CCMenuItem (or any subclass) to create your custom CCMenuItem objects.
  */
 cc.MenuItem = cc.Node.extend({
-    _m_pListener:null,
-    _m_pfnSelector:null,
-    _m_bIsSelected:false,
+    _listener:null,
+    _selector:null,
+    _isSelected:false,
     getIsSelected:function () {
-        return this._m_bIsSelected;
+        return this._isSelected;
     },
-    _m_bIsEnabled:false,
+    _isEnabled:false,
     getIsEnabled:function () {
-        return this._m_bIsEnabled;
+        return this._isEnabled;
     },
     setIsEnabled:function (enable) {
-        this._m_bIsEnabled = enable;
+        this._isEnabled = enable;
     },
     initWithTarget:function (rec, selector) {
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this._m_pListener = rec;
-        this._m_pfnSelector = selector;
-        this._m_bIsEnabled = true;
-        this._m_bIsSelected = false;
+        this._listener = rec;
+        this._selector = selector;
+        this._isEnabled = true;
+        this._isSelected = false;
         return true;
     },
     rect:function () {
-        return cc.RectMake(this._m_tPosition.x - this._m_tContentSize.width * this._m_tAnchorPoint.x,
-            this._m_tPosition.y - this._m_tContentSize.height * this._m_tAnchorPoint.y,
-            this._m_tContentSize.width, this._m_tContentSize.height);
+        return cc.RectMake(this._position.x - this._contentSize.width * this._anchorPoint.x,
+            this._position.y - this._contentSize.height * this._anchorPoint.y,
+            this._contentSize.width, this._contentSize.height);
     },
     selected:function () {
-        this._m_bIsSelected = true;
+        this._isSelected = true;
     },
     unselected:function () {
-        this._m_bIsSelected = false;
+        this._isSelected = false;
     },
     setTarget:function (rec, selector) {
-        this._m_pListener = rec;
-        this._m_pfnSelector = selector;
+        this._listener = rec;
+        this._selector = selector;
     },
     activate:function () {
-        if (this._m_bIsEnabled) {
-            if (this._m_pListener && (typeof(this._m_pfnSelector) == "string")) {
-                this._m_pListener[this._m_pfnSelector](this);
-            } else if (this._m_pListener && (typeof(this._m_pfnSelector) == "function")) {
-                this._m_pfnSelector.call(this._m_pListener,this);
+        if (this._isEnabled) {
+            if (this._listener && (typeof(this._selector) == "string")) {
+                this._listener[this._selector](this);
+            } else if (this._listener && (typeof(this._selector) == "function")) {
+                this._selector.call(this._listener,this);
             }
         }
     }
 });
 cc.MenuItem.itemWithTarget = function (rec, selector) {
-    var pRet = new cc.MenuItem();
-    pRet.initWithTarget(rec, selector);
-    return pRet;
+    var ret = new cc.MenuItem();
+    ret.initWithTarget(rec, selector);
+    return ret;
 };
 
 
@@ -102,16 +102,16 @@ cc.MenuItem.itemWithTarget = function (rec, selector) {
  */
 cc.MenuItemLabel = cc.MenuItem.extend({
     RGBAProtocol:true,
-    _m_tDisabledColor:new cc.Color3B(),
+    _disabledColor:new cc.Color3B(),
     getDisabledColor:function () {
-        return this._m_tDisabledColor;
+        return this._disabledColor;
     },
     setDisabledColor:function (color) {
-        this._m_tDisabledColor = color;
+        this._disabledColor = color;
     },
-    _m_pLabel:null,
+    _label:null,
     getLabel:function () {
-        return this._m_pLabel;
+        return this._label;
     },
     setLabel:function (label) {
         if (label) {
@@ -120,90 +120,90 @@ cc.MenuItemLabel = cc.MenuItem.extend({
             this.setContentSize(label.getContentSize());
         }
 
-        if (this._m_pLabel) {
-            this.removeChild(this._m_pLabel, true);
+        if (this._label) {
+            this.removeChild(this._label, true);
         }
 
-        this._m_pLabel = label;
+        this._label = label;
     },
-    _m_fOrginalScale:0,
+    _orginalScale:0,
     setIsEnabled:function (enabled) {
-        if (this._m_bIsEnabled != enabled) {
+        if (this._isEnabled != enabled) {
             if (!enabled) {
-                this._m_tColorBackup = this._m_pLabel.getColor();
-                this._m_pLabel.setColor(this._m_tDisabledColor);
+                this._colorBackup = this._label.getColor();
+                this._label.setColor(this._disabledColor);
             }
             else {
-                this._m_pLabel.setColor(this._m_tColorBackup);
+                this._label.setColor(this._colorBackup);
             }
         }
         this._super(enabled);
     },
     setOpacity:function (opacity) {
-        this._m_pLabel.setOpacity(opacity);
+        this._label.setOpacity(opacity);
     },
     getOpacity:function () {
     },
     setColor:function (color) {
-        this._m_pLabel.setColor(color);
+        this._label.setColor(color);
     },
     getColor:function () {
-        return this._m_pLabel.getColor
+        return this._label.getColor
     },
-    setIsOpacityModifyRGB:function (bValue) {
+    setIsOpacityModifyRGB:function (value) {
     },
     getIsOpacityModifyRGB:function () {
     },
     initWithLabel:function (label, target, selector) {
         this.initWithTarget(target, selector);
-        this._m_fOriginalScale = 1.0;
-        this._m_tColorBackup = cc.WHITE();
-        this._m_tDisabledColor = cc.ccc3(126, 126, 126);
+        this._originalScale = 1.0;
+        this._colorBackup = cc.WHITE();
+        this._disabledColor = cc.ccc3(126, 126, 126);
         this.setLabel(label);
         return true;
     },
     activate:function () {
-        if (this._m_bIsEnabled) {
+        if (this._isEnabled) {
             this.stopAllActions();
-            this.setScale(this._m_fOriginalScale);
+            this.setScale(this._originalScale);
             this._super();
         }
     },
     selected:function () {
-        if (this._m_bIsEnabled) {
+        if (this._isEnabled) {
             this._super();
 
-            var action = this.getActionByTag(cc.kZoomActionTag);
+            var action = this.getActionByTag(cc.ZOOM_ACTION_TAG);
             if (action) {
                 this.stopAction(action);
             }
             else {
-                this._m_fOriginalScale = this.getScale();
+                this._originalScale = this.getScale();
             }
 
-            var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._m_fOriginalScale * 1.2);
-            zoomAction.setTag(cc.kZoomActionTag);
+            var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._originalScale * 1.2);
+            zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
     },
     unselected:function () {
-        if (this._m_bIsEnabled) {
+        if (this._isEnabled) {
             this._super();
-            this.stopActionByTag(cc.kZoomActionTag);
-            var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._m_fOriginalScale);
-            zoomAction.setTag(cc.kZoomActionTag);
+            this.stopActionByTag(cc.ZOOM_ACTION_TAG);
+            var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._originalScale);
+            zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
     }
 });
 cc.MenuItemLabel.itemWithLabel = function (label, target, selector) {
-    var pRet = new cc.MenuItemLabel();
+    var ret = new cc.MenuItemLabel();
     if (arguments.length == 3) {
-        pRet.initWithLabel(label, target, selector);
+        ret.initWithLabel(label, target, selector);
     } else {
-        pRet.initWithLabel(label);
+        ret.initWithLabel(label);
     }
-    return pRet;
+    return ret;
 };
 
 /** @brief A CCMenuItemAtlasFont
@@ -221,9 +221,9 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend({
     }
 });
 cc.MenuItemAtlasFont.itemFromString = function (value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector) {
-    var pRet = new cc.MenuItemAtlasFont();
-    pRet.initFromString(value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector);
-    return pRet;
+    var ret = new cc.MenuItemAtlasFont();
+    ret.initFromString(value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector);
+    return ret;
 };
 
 
@@ -234,36 +234,36 @@ cc.MenuItemFont = cc.MenuItemLabel.extend({
     initFromString:function (value, target, selector) {
         cc.Assert(value != null && value.length != 0, "Value length must be greater than 0");
 
-        this._m_strFontName = cc._fontName;
-        this._m_uFontSize = cc._fontSize;
+        this._fontName = cc._fontName;
+        this._fontSize = cc._fontSize;
 
-        var label = cc.LabelTTF.labelWithString(value, this._m_strFontName, this._m_uFontSize);
+        var label = cc.LabelTTF.labelWithString(value, this._fontName, this._fontSize);
         if (this.initWithLabel(label, target, selector)) {
             // do something ?
         }
         return true;
     },
     setFontSizeObj:function (s) {
-        this._m_uFontSize = s;
+        this._fontSize = s;
         this._recreateLabel();
     },
     fontSizeObj:function () {
-        return this._m_uFontSize;
+        return this._fontSize;
     },
     setFontNameObj:function (name) {
-        this._m_strFontName = name;
+        this._fontName = name;
         this._recreateLabel();
     },
     fontNameObj:function () {
-        return this._m_strFontName;
+        return this._fontName;
     },
     _recreateLabel:function () {
-        var label = cc.LabelTTF.labelWithString(this._m_pLabel.getString(),
-            this._m_strFontName, this._m_uFontSize);
+        var label = cc.LabelTTF.labelWithString(this._label.getString(),
+            this._fontName, this._fontSize);
         this.setLabel(label);
     },
-    _m_uFontSize:0,
-    _m_strFontName:''
+    _fontSize:0,
+    _fontName:''
 });
 cc.MenuItemFont.setFontSize = function (s) {
     cc._fontSize = s;
@@ -282,9 +282,9 @@ cc.MenuItemFont.fontName = function () {
     return cc._fontName
 };
 cc.MenuItemFont.itemFromString = function (value, target, selector) {
-    var pRet = new cc.MenuItemFont();
-    pRet.initFromString(value, target, selector);
-    return pRet;
+    var ret = new cc.MenuItemFont();
+    ret.initFromString(value, target, selector);
+    return ret;
 };
 
 
@@ -298,55 +298,55 @@ cc.MenuItemFont.itemFromString = function (value, target, selector) {
  */
 cc.MenuItemSprite = cc.MenuItem.extend({
     RGBAProtocol:true,
-    _m_pNormalImage:null,
+    _normalImage:null,
     getNormalImage:function () {
-        return this._m_pNormalImage;
+        return this._normalImage;
     },
     setNormalImage:function (NormalImage) {
         if (NormalImage) {
-            this.addChild(NormalImage, 0, cc.kNormalTag);
+            this.addChild(NormalImage, 0, cc.NORMAL_TAG);
             NormalImage.setAnchorPoint(cc.ccp(0, 0));
             NormalImage.setIsVisible(true);
         }
-        if (this._m_pNormalImage) {
-            this.removeChild(this._m_pNormalImage, true);
+        if (this._normalImage) {
+            this.removeChild(this._normalImage, true);
         }
 
-        this._m_pNormalImage = NormalImage;
+        this._normalImage = NormalImage;
     },
-    _m_pSelectedImage:null,
+    _selectedImage:null,
     getSelectedImage:function () {
-        return this._m_pSelectedImage;
+        return this._selectedImage;
     },
     setSelectedImage:function (SelectedImage) {
         if (SelectedImage) {
-            this.addChild(SelectedImage, 0, cc.kSelectedTag);
+            this.addChild(SelectedImage, 0, cc.SELECTED_TAG);
             SelectedImage.setAnchorPoint(cc.ccp(0, 0));
             SelectedImage.setIsVisible(false);
         }
 
-        if (this._m_pSelectedImage) {
-            this.removeChild(this._m_pSelectedImage, true);
+        if (this._selectedImage) {
+            this.removeChild(this._selectedImage, true);
         }
 
-        this._m_pSelectedImage = SelectedImage;
+        this._selectedImage = SelectedImage;
     },
-    _m_pDisabledImage:null,
+    _disabledImage:null,
     getDisabledImage:function () {
-        return this._m_pDisabledImage;
+        return this._disabledImage;
     },
     setDisabledImage:function (DisabledImage) {
         if (DisabledImage) {
-            this.addChild(DisabledImage, 0, cc.kDisableTag);
+            this.addChild(DisabledImage, 0, cc.DISABLE_TAG);
             DisabledImage.setAnchorPoint(cc.ccp(0, 0));
             DisabledImage.setIsVisible(false);
         }
 
-        if (this._m_pDisabledImage) {
-            this.removeChild(this._m_pDisabledImage, true);
+        if (this._disabledImage) {
+            this.removeChild(this._disabledImage, true);
         }
 
-        this._m_pDisabledImage = DisabledImage;
+        this._disabledImage = DisabledImage;
     },
 
     initFromNormalSprite:function (normalSprite, selectedSprite, disabledSprite, target, selector) {
@@ -356,85 +356,85 @@ cc.MenuItemSprite = cc.MenuItem.extend({
         this.setSelectedImage(selectedSprite);
         this.setDisabledImage(disabledSprite);
 
-        this.setContentSize(this._m_pNormalImage.getContentSize());
+        this.setContentSize(this._normalImage.getContentSize());
         return true;
     },
     setColor:function (color) {
-        this._m_pNormalImage.setColor(color);
+        this._normalImage.setColor(color);
 
-        if (this._m_pSelectedImage) {
-            this._m_pSelectedImage.setColor(color);
+        if (this._selectedImage) {
+            this._selectedImage.setColor(color);
         }
 
-        if (this._m_pDisabledImage) {
-            this._m_pDisabledImage.setColor(color);
+        if (this._disabledImage) {
+            this._disabledImage.setColor(color);
         }
     },
     getColor:function () {
-        this._m_pNormalImage.getColor();
+        this._normalImage.getColor();
     },
     setOpacity:function (opacity) {
-        this._m_pNormalImage.setOpacity(opacity);
+        this._normalImage.setOpacity(opacity);
 
-        if (this._m_pSelectedImage) {
-            this._m_pSelectedImage.setOpacity(opacity);
+        if (this._selectedImage) {
+            this._selectedImage.setOpacity(opacity);
         }
 
-        if (this._m_pDisabledImage) {
-            this._m_pDisabledImage.setOpacity(opacity);
+        if (this._disabledImage) {
+            this._disabledImage.setOpacity(opacity);
         }
     },
     getOpacity:function () {
-        this._m_pNormalImage.getOpacity();
+        this._normalImage.getOpacity();
     },
     selected:function () {
         this._super();
-        if (this._m_pDisabledImage) {
-            this._m_pDisabledImage.setIsVisible(false);
+        if (this._disabledImage) {
+            this._disabledImage.setIsVisible(false);
         }
 
-        if (this._m_pSelectedImage) {
-            this._m_pNormalImage.setIsVisible(false);
-            this._m_pSelectedImage.setIsVisible(true);
+        if (this._selectedImage) {
+            this._normalImage.setIsVisible(false);
+            this._selectedImage.setIsVisible(true);
         }
         else {
-            this._m_pNormalImage.setIsVisible(true);
+            this._normalImage.setIsVisible(true);
         }
     },
     unselected:function () {
         this._super();
 
-        this._m_pNormalImage.setIsVisible(true);
+        this._normalImage.setIsVisible(true);
 
-        if (this._m_pSelectedImage) {
-            this._m_pSelectedImage.setIsVisible(false);
+        if (this._selectedImage) {
+            this._selectedImage.setIsVisible(false);
         }
 
-        if (this._m_pDisabledImage) {
-            this._m_pDisabledImage.setIsVisible(false);
+        if (this._disabledImage) {
+            this._disabledImage.setIsVisible(false);
         }
     },
     setIsEnabled:function (bEnabled) {
         this._super(bEnabled);
 
-        if (this._m_pSelectedImage) {
-            this._m_pSelectedImage.setIsVisible(false);
+        if (this._selectedImage) {
+            this._selectedImage.setIsVisible(false);
         }
 
         if (bEnabled) {
-            this._m_pNormalImage.setIsVisible(true);
+            this._normalImage.setIsVisible(true);
 
-            if (this._m_pDisabledImage) {
-                this._m_pDisabledImage.setIsVisible(false);
+            if (this._disabledImage) {
+                this._disabledImage.setIsVisible(false);
             }
         }
         else {
-            if (this._m_pDisabledImage) {
-                this._m_pDisabledImage.setIsVisible(true);
-                this._m_pNormalImage.setIsVisible(false);
+            if (this._disabledImage) {
+                this._disabledImage.setIsVisible(true);
+                this._normalImage.setIsVisible(false);
             }
             else {
-                this._m_pNormalImage.setIsVisible(true);
+                this._normalImage.setIsVisible(true);
             }
         }
     }
@@ -442,10 +442,10 @@ cc.MenuItemSprite = cc.MenuItem.extend({
 cc.MenuItemSprite.itemFromNormalSprite = function (normalSprite, selectedSprite, three, four, five)//overloaded function
 {
     var a,b,c,e,d;
-    var pRet = new cc.MenuItemSprite();
+    var ret = new cc.MenuItemSprite();
     //when you send 4 arguments, five is undefined
     if (five) {
-        pRet.initFromNormalSprite(normalSprite, selectedSprite, three, four, five);
+        ret.initFromNormalSprite(normalSprite, selectedSprite, three, four, five);
     }
     else if (four) {
         return cc.MenuItemSprite.itemFromNormalSprite(normalSprite, selectedSprite, null, three, four);
@@ -453,7 +453,7 @@ cc.MenuItemSprite.itemFromNormalSprite = function (normalSprite, selectedSprite,
     else {
         return cc.MenuItemSprite.itemFromNormalSprite(normalSprite, selectedSprite, three, null, null);
     }
-    return pRet;
+    return ret;
 };
 
 
@@ -482,12 +482,12 @@ cc.MenuItemImage = cc.MenuItemSprite.extend({
     }
 });
 cc.MenuItemImage.itemFromNormalImage = function (normalImage, selectedImage, three, four, five) {
-    var pRet = new cc.MenuItemImage();
+    var ret = new cc.MenuItemImage();
     if (arguments.length == 4) {
         return cc.MenuItemImage.itemFromNormalImage(normalImage, selectedImage, null, three, four);
     }
-    if (pRet.initFromNormalImage(normalImage, selectedImage, three, four, five)) {
-        return pRet;
+    if (ret.initFromNormalImage(normalImage, selectedImage, three, four, five)) {
+        return ret;
     }
     return null;
 };
@@ -499,51 +499,51 @@ cc.MenuItemImage.itemFromNormalImage = function (normalImage, selectedImage, thr
  */
 cc.MenuItemToggle = cc.MenuItem.extend({
     RGBAProtocol:true,
-    _m_cOpacity:0,
+    _opacity:0,
     getOpacity:function () {
-        return this._m_cOpacity;
+        return this._opacity;
     },
     setOpacity:function (Opacity) {
-        this._m_cOpacity = Opacity;
-        if (this._m_pSubItems && this._m_pSubItems.length > 0) {
-            for (var it = 0; it < this._m_pSubItems.length; it++) {
-                this._m_pSubItems[it].setOpacity(Opacity);
+        this._opacity = Opacity;
+        if (this._subItems && this._subItems.length > 0) {
+            for (var it = 0; it < this._subItems.length; it++) {
+                this._subItems[it].setOpacity(Opacity);
             }
         }
     },
-    _m_tColor:new cc.Color3B(),
+    _color:new cc.Color3B(),
     getColor:function () {
-        return this._m_tColor;
+        return this._color;
     },
     setColor:function (Color) {
-        this._m_tColor = Color;
-        if (this._m_pSubItems && this._m_pSubItems.length > 0) {
-            for (var it = 0; it < this._m_pSubItems.length; it++) {
-                this._m_pSubItems[it].setColor(Color);
+        this._color = Color;
+        if (this._subItems && this._subItems.length > 0) {
+            for (var it = 0; it < this._subItems.length; it++) {
+                this._subItems[it].setColor(Color);
             }
         }
     },
-    _m_uSelectedIndex:0,
+    _selectedIndex:0,
     getSelectedIndex:function () {
-        return this._m_uSelectedIndex;
+        return this._selectedIndex;
     },
     setSelectedIndex:function (SelectedIndex) {
-        if (SelectedIndex != this._m_uSelectedIndex) {
-            this._m_uSelectedIndex = SelectedIndex;
-            this.removeChildByTag(cc.kCurrentItem, false);
-            var item = this._m_pSubItems[this._m_uSelectedIndex];
-            this.addChild(item, 0, cc.kCurrentItem);
+        if (SelectedIndex != this._selectedIndex) {
+            this._selectedIndex = SelectedIndex;
+            this.removeChildByTag(cc.CURRENT_ITEM, false);
+            var item = this._subItems[this._selectedIndex];
+            this.addChild(item, 0, cc.CURRENT_ITEM);
             var s = item.getContentSize();
             this.setContentSize(s);
             item.setPosition(cc.ccp(s.width / 2, s.height / 2));
         }
     },
-    _m_pSubItems:[],
+    _subItems:[],
     getSubItems:function () {
-        return this._m_pSubItems;
+        return this._subItems;
     },
     setSubItems:function (SubItems) {
-        this._m_pSubItems = SubItems;
+        this._subItems = SubItems;
     },
     initWithTarget:function (args) {
         var target = args[0],  selector = args[1];
@@ -551,67 +551,67 @@ cc.MenuItemToggle = cc.MenuItem.extend({
         if(args.length == 2){
             return;
         }
-        this._m_pSubItems = [];
+        this._subItems = [];
         for (var i = 2; i < args.length; i++) {
             if(args[i]){
-                this._m_pSubItems.push(args[i]);
+                this._subItems.push(args[i]);
             }
         }
-        this._m_uSelectedIndex = 0xffffffff;
+        this._selectedIndex = 0xffffffff;
         this.setSelectedIndex(0);
         return true;
     },
     initWithItem:function (item) {
         this.initWithTarget(null, null);
-        this._m_pSubItems = [];
-        this._m_pSubItems.push(item);
-        this._m_uSelectedIndex = 0xffffffff;
+        this._subItems = [];
+        this._subItems.push(item);
+        this._selectedIndex = 0xffffffff;
         this.setSelectedIndex(0);
         return true;
     },
     addSubItem:function (item) {
-        this._m_pSubItems.push(item);
+        this._subItems.push(item);
     },
     activate:function () {
         // update index
-        if (this._m_bIsEnabled) {
-            var newIndex = (this._m_uSelectedIndex + 1) % this._m_pSubItems.length;
+        if (this._isEnabled) {
+            var newIndex = (this._selectedIndex + 1) % this._subItems.length;
             this.setSelectedIndex(newIndex);
         }
         this._super();
     },
     selected:function () {
         this._super();
-        this._m_pSubItems[this._m_uSelectedIndex].selected();
+        this._subItems[this._selectedIndex].selected();
     },
     unselected:function () {
         this._super();
-        this._m_pSubItems[this._m_uSelectedIndex].unselected();
+        this._subItems[this._selectedIndex].unselected();
     },
     setIsEnabled:function (enabled) {
         this._super(enabled);
 
-        if (this._m_pSubItems && this._m_pSubItems.length > 0) {
-            for (var it = 0; it < this._m_pSubItems.length; it++) {
-                this._m_pSubItems[it].setIsEnabled(enabled);
+        if (this._subItems && this._subItems.length > 0) {
+            for (var it = 0; it < this._subItems.length; it++) {
+                this._subItems[it].setIsEnabled(enabled);
             }
         }
     },
     selectedItem:function () {
-        return this._m_pSubItems[this._m_uSelectedIndex];
+        return this._subItems[this._selectedIndex];
     },
-    setIsOpacityModifyRGB:function (bValue) {
+    setIsOpacityModifyRGB:function (value) {
     },
     getIsOpacityModifyRGB:function () {
     }
 });
 cc.MenuItemToggle.itemWithTarget = function (/*Multiple arguments follow*/) {
-    var pRet = new cc.MenuItemToggle();
-    pRet.initWithTarget(arguments);
-    return pRet;
+    var ret = new cc.MenuItemToggle();
+    ret.initWithTarget(arguments);
+    return ret;
 };
 cc.MenuItemToggle.itemWithItem = function (item) {
-    var pRet = new cc.MenuItemToggle();
-    pRet.initWithItem(item);
-    return pRet;
+    var ret = new cc.MenuItemToggle();
+    ret.initWithItem(item);
+    return ret;
 };

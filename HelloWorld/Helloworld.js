@@ -25,11 +25,11 @@
  ****************************************************************************/
 
 var Helloworld = cc.Layer.extend({
-    bIsMouseDown:false,
+    isMouseDown:false,
     helloImg:null,
     helloLabel:null,
     circle:null,
-    pSprite:null,
+    sprite:null,
 
     init:function () {
 
@@ -44,19 +44,19 @@ var Helloworld = cc.Layer.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // add a "close" icon to exit the progress. it's an autorelease object
-        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
+        var closeItem = cc.MenuItemImage.itemFromNormalImage(
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
             function () {
                 history.go(-1);
             });
-        pCloseItem.setAnchorPoint(new cc.Point(0.5,0.5));
+        closeItem.setAnchorPoint(new cc.Point(0.5,0.5));
 
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
-        pMenu.setPosition( cc.PointZero() );
-        this.addChild(pMenu, 1);
-        pCloseItem.setPosition(new cc.Point(size.width -20 , 20));
+        var menu = cc.Menu.menuWithItems(closeItem, null);
+        menu.setPosition( cc.PointZero() );
+        this.addChild(menu, 1);
+        closeItem.setPosition(new cc.Point(size.width -20 , 20));
 
         /////////////////////////////
         // 3. add your codes below...
@@ -72,11 +72,11 @@ var Helloworld = cc.Layer.extend({
         this.addChild(lazyLayer);
 
         // add "HelloWorld" splash screen"
-        this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this.pSprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this.sprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
+        this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
 
-        lazyLayer.addChild(this.pSprite, 0);
+        lazyLayer.addChild(this.sprite, 0);
 
         return true;
     }
@@ -94,11 +94,11 @@ Helloworld.scene = function () {
 };
 // implement the "static node()" method manually
 Helloworld.node = function () {
-    var pRet = new Helloworld();
+    var ret = new Helloworld();
 
     // Init the helloworld display layer.
-    if (pRet && pRet.init()) {
-        return pRet;
+    if (ret && ret.init()) {
+        return ret;
     }
 
     return null;

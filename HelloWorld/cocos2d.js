@@ -103,8 +103,8 @@ cc.loadjs('../cocos2d/platform/CCTypes.js');//5
 cc.loadjs('../cocos2d/cocoa/CCAffineTransform.js');//5
 cc.loadjs('../cocos2d/support/CCPointExtension.js');//12
 cc.loadjs('../cocos2d/base_nodes/CCNode.js');//6
-cc.loadjs('../cocos2d/platform/ccMacro.js');//7
-cc.loadjs('../cocos2d/platform/ccConfig.js');//7
+cc.loadjs('../cocos2d/platform/CCMacro.js');//7
+cc.loadjs('../cocos2d/platform/CCConfig.js');//7
 cc.loadjs('../cocos2d/textures/CCTexture2D.js');//12
 cc.loadjs('../cocos2d/textures/CCTextureCache.js');//12
 cc.loadjs('../cocos2d/actions/CCAction.js');//7

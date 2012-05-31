@@ -30,26 +30,26 @@ var cc = cc = cc || {};
 // if the form is right,the string will be splited into the parameter strs;
 // or the parameter strs will be empty.
 // if the form is right return true,else return false.
-cc.splitWithForm = function (pStr, strs) {
-    var bRet = false;
+cc.splitWithForm = function (str, strs) {
+    var ret = false;
 
     do
     {
-        if (!pStr) break;
+        if (!str) break;
 
         // string is empty
-        var content = pStr;
+        var content = str;
         if (content.length == 0) break;
 
-        var nPosLeft = content.indexOf('{');
-        var nPosRight = content.indexOf('}');
+        var posLeft = content.indexOf('{');
+        var posRight = content.indexOf('}');
 
         // don't have '{' and '}'
-        if (nPosLeft == -1 || nPosRight == -1) break;
+        if (posLeft == -1 || posRight == -1) break;
         // '}' is before '{'
-        if (nPosLeft > nPosRight) break;
+        if (posLeft > posRight) break;
 
-        var pointStr = content.substr(nPosLeft + 1, nPosRight - nPosLeft - 1);
+        var pointStr = content.substr(posLeft + 1, posRight - posLeft - 1);
         // nothing between '{' and '}'
         if (pointStr.length == 0) break;
 
@@ -68,26 +68,26 @@ cc.splitWithForm = function (pStr, strs) {
 
 /**
  @brief Returns a Core Graphics rectangle structure corresponding to the data in a given string.
- @param pszContent   A string object whose contents are of the form "{{x,y},{w, h}}",
+ @param content   A string object whose contents are of the form "{{x,y},{w, h}}",
  where x is the x coordinate, y is the y coordinate, w is the width, and h is the height.
  These components can represent integer or float values.
  An example of a valid string is "{{3,2},{4,5}}".
  The string is not localized, so items are always separated with a comma.
  @return A Core Graphics structure that represents a rectangle.
  If the string is not well-formed, the function returns CCRectZero.**/
-cc.RectFromString = function (pszContent) {
+cc.RectFromString = function (content) {
     var result = cc.RectZero();
 
     do {
-        if (!pszContent) break;
-        var content = pszContent;
+        if (!content) break;
+        var content = content;
 
         // find the first '{' and the third '}'
-        var nPosLeft = content.indexOf('{') + 1;
-        var nPosRight = content.lastIndexOf('}', content.length);
-        if (nPosLeft == -1 || nPosRight == -1) break;
+        var posLeft = content.indexOf('{') + 1;
+        var posRight = content.lastIndexOf('}', content.length);
+        if (posLeft == -1 || posRight == -1) break;
 
-        content = content.substring(nPosLeft, nPosRight);
+        content = content.substring(posLeft, posRight);
         var nPointEnd = content.indexOf('}');
         if (nPointEnd == -1) break;
         nPointEnd = content.indexOf(',', nPointEnd);
@@ -111,7 +111,7 @@ cc.RectFromString = function (pszContent) {
 }
 /**
  @brief Returns a Core Graphics point structure corresponding to the data in a given string.
- @param pszContent   A string object whose contents are of the form "{x,y}",
+ @param content   A string object whose contents are of the form "{x,y}",
  where x is the x coordinate and y is the y coordinate.
  The x and y values can represent integer or float values.
  An example of a valid string is "{3.0,2.5}".
@@ -119,14 +119,14 @@ cc.RectFromString = function (pszContent) {
  @return A Core Graphics structure that represents a point.
  If the string is not well-formed, the function returns CCPointZero.
  */
-cc.PointFromString = function (pszContent) {
+cc.PointFromString = function (content) {
     var ret = cc.PointZero();
 
     try{
-        if(pszContent == "")
+        if(content == "")
             return ret;
 
-        var strs = cc.splitWithForm(pszContent);
+        var strs = cc.splitWithForm(content);
         var x = parseFloat(strs[0]);
         var y = parseFloat(strs[1]);
         ret = cc.PointMake(x, y);
@@ -135,7 +135,7 @@ cc.PointFromString = function (pszContent) {
 }
 /**
  @brief Returns a Core Graphics size structure corresponding to the data in a given string.
- @param pszContent   A string object whose contents are of the form "{w, h}",
+ @param content   A string object whose contents are of the form "{w, h}",
  where w is the width and h is the height.
  The w and h values can be integer or float values.
  An example of a valid string is "{3.0,2.5}".
@@ -143,13 +143,13 @@ cc.PointFromString = function (pszContent) {
  @return A Core Graphics structure that represents a size.
  If the string is not well-formed, the function returns CCSizeZero.
  */
-cc.SizeFromString = function (pszContent) {
+cc.SizeFromString = function (content) {
     var ret = cc.SizeZero();
     try{
-        if(pszContent == "")
+        if(content == "")
             return ret;
 
-        var strs = cc.splitWithForm(pszContent);
+        var strs = cc.splitWithForm(content);
         var width = parseFloat(strs[0]);
         var height = parseFloat(strs[1]);
         ret = cc.SizeMake(width, height);

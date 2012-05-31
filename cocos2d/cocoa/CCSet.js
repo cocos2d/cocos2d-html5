@@ -26,12 +26,12 @@
 
 cc.Set = cc.Class.extend({
 
-    ctor:function (rSetObject) {
-        if (rSetObject) {
-            this._m_pSet = Object.create(rSetObject._m_pSet);
+    ctor:function (setObject) {
+        if (setObject) {
+            this._set = Object.create(setObject._set);
         }
         else {
-            this._m_pSet = new Array();
+            this._set = new Array();
         }
 
     },
@@ -55,30 +55,30 @@ cc.Set = cc.Class.extend({
      *@brief Return the number of elements the CCSet contains.
      */
     count:function () {
-        return this._m_pSet.length;
+        return this._set.length;
 
     },
 
     /**
      *@brief Add a element into CCSet, it will retain the element.
      */
-    addObject:function (pObject) {
-        this._m_pSet.push(pObject);
+    addObject:function (obj) {
+        this._set.push(obj);
 
     },
 
     /**
-     *@brief Remove the given element, nothing todo if no element equals pObject.
+     *@brief Remove the given element, nothing todo if no element equals obj.
      */
-    removeObject:function (pObject) {
-        /* if(pObject in this._m_pSet)
+    removeObject:function (obj) {
+        /* if(obj in this._set)
          {
-         delete this._m_pSet[pObject]
+         delete this._set[obj]
          } */
         var k = 0;
-        for (var i = 0, n = 0; i < this._m_pSet.length; i++) {
-            if (this._m_pSet[i] != pObject) {
-                this._m_pSet[n++] = this._m_pSet[i];
+        for (var i = 0, n = 0; i < this._set.length; i++) {
+            if (this._set[i] != obj) {
+                this._set[n++] = this._set[i];
                 k++;
             }
         }
@@ -87,11 +87,11 @@ cc.Set = cc.Class.extend({
     },
 
     /**
-     *@brief Check if CCSet contains a element equals pObject.
+     *@brief Check if CCSet contains a element equals obj.
      */
-    containsObject:function (pObject) {
+    containsObject:function (obj) {
 
-        if ((pObject in this._m_pSet) == true) {
+        if ((obj in this._set) == true) {
             return true;
         }
         else {
@@ -106,7 +106,7 @@ cc.Set = cc.Class.extend({
      */
     /* begin:function()
      {
-     if(this._m_pSet.length > 0){
+     if(this._set.length > 0){
      return 0;        // We only return the index of first element.
      }
      else{
@@ -120,8 +120,8 @@ cc.Set = cc.Class.extend({
      */
     /* end:function()
      {
-     if(this._m_pSet.length >= 0){
-     return this._m_pSet.length;
+     if(this._set.length >= 0){
+     return this._set.length;
      }
 
      },*/
@@ -130,8 +130,8 @@ cc.Set = cc.Class.extend({
      *@brief Return the first element if it contains elements, or null if it doesn't contain any element.
      */
     anyObject:function () {
-        if (this._m_pSet.length > 0) {
-            return this._m_pSet[0];
+        if (this._set.length > 0) {
+            return this._set[0];
         }
         else {
             return null;
@@ -139,7 +139,7 @@ cc.Set = cc.Class.extend({
 
     },
 
-    _m_pSet:null
+    _set:null
 
 });
 

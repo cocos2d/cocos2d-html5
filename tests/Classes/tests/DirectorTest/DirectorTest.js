@@ -26,15 +26,15 @@
 
 var MAX_LAYER = 1;
 var sceneIdx = -1;
-var s_currentOrientation = cc.DeviceOrientationPortrait;
+var currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
 
 function createTestCaseLayer(index) {
     switch (index) {
         case 0:
         {
-            var pRet = new Director1();
-            pRet.init();
-            return pRet;
+            var ret = new Director1();
+            ret.init();
+            return ret;
         }
         default:
             return null;
@@ -67,7 +67,7 @@ function restartDirectorTestCase() {
 DirectorTest = cc.Layer.extend({
 
     init:function () {
-        var bRet = false;
+        var ret = false;
 
         if (this._super()) {
             var s = cc.Director.sharedDirector().getWinSize();
@@ -82,22 +82,22 @@ DirectorTest = cc.Layer.extend({
                 this.addChild(l, 1);
                 l.setPosition(cc.ccp(s.width / 2, s.height - 80));
             }
-            bRet = true;
+            ret = true;
         }
-        return bRet;
+        return ret;
     },
 
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new DirectorTestScene();
         s.addChild(restartDirectorTestCase());
         cc.Director.sharedDirector().replaceScene(s);
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new DirectorTestScene();
         s.addChild(nextDirectorTestCase());
         cc.Director.sharedDirector().replaceScene(s);
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new DirectorTestScene();
         s.addChild(backDirectorTestCase());
         cc.Director.sharedDirector().replaceScene(s);
@@ -113,7 +113,7 @@ DirectorTest = cc.Layer.extend({
 
 Director1 = DirectorTest.extend({
     init:function () {
-        var bRet = false;
+        var ret = false;
 
         if (this._super()) {
             this.setIsTouchEnabled(true);
@@ -123,31 +123,31 @@ Director1 = DirectorTest.extend({
             menu.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this.addChild(menu);
 
-            bRet = true;
+            ret = true;
         }
 
-        return bRet;
+        return ret;
     },
 
     newOrientation:function () {
-        switch (s_currentOrientation) {
-            case cc.DeviceOrientationLandscapeLeft:
-                s_currentOrientation = cc.DeviceOrientationPortrait;
+        switch (currentOrientation) {
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
+                currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
                 break;
-            case cc.DeviceOrientationPortrait:
-                s_currentOrientation = cc.DeviceOrientationLandscapeRight;
+            case cc.DEVICE_ORIENTATION_PORTRAIT:
+                currentOrientation = cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT;
                 break;
-            case cc.DeviceOrientationLandscapeRight:
-                s_currentOrientation = cc.DeviceOrientationPortraitUpsideDown;
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
+                currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN;
                 break;
-            case cc.DeviceOrientationPortraitUpsideDown:
-                s_currentOrientation = cc.DeviceOrientationLandscapeLeft;
+            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
+                currentOrientation = cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT;
                 break;
         }
-        cc.Director.sharedDirector().setDeviceOrientation(s_currentOrientation);
+        cc.Director.sharedDirector().setDeviceOrientation(currentOrientation);
 
     },
-    rotateDevice:function (pSender) {
+    rotateDevice:function (sender) {
         this.newOrientation();
         this.restartCallback(null);
     },
@@ -186,17 +186,17 @@ DirectorTestScene = TestScene.extend({
 
     runThisTest:function () {
         MAX_LAYER = 1;
-        s_currentOrientation = cc.DeviceOrientationPortrait;
-        var pLayer = nextDirectorTestCase();
-        this.addChild(pLayer);
+        currentOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
+        var layer = nextDirectorTestCase();
+        this.addChild(layer);
 
         cc.Director.sharedDirector().replaceScene(this);
 
     },
 
-    MainMenuCallback:function (pSender) {
-        cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationPortrait);
-        this._super(pSender);
+    MainMenuCallback:function (sender) {
+        cc.Director.sharedDirector().setDeviceOrientation(cc.DEVICE_ORIENTATION_PORTRAIT);
+        this._super(sender);
     }
 });
 

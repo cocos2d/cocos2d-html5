@@ -38,7 +38,7 @@ cc.AnimationCache = cc.Class.extend({
     /** Adds a CCAnimation with a name.
      */
     addAnimation:function (animation, name) {
-        this._m_pAnimations[name] = animation;
+        this._animations[name] = animation;
     },
 
     /** Deletes a CCAnimation from the cache.
@@ -47,7 +47,7 @@ cc.AnimationCache = cc.Class.extend({
         if (!name) {
             return;
         }
-        delete this._m_pAnimations[name];
+        delete this._animations[name];
     },
 
     /** Returns a CCAnimation that was previously added.
@@ -55,31 +55,31 @@ cc.AnimationCache = cc.Class.extend({
      You should retain the returned copy if you are going to use it.
      */
     animationByName:function (name) {
-        return this._m_pAnimations[name];
+        return this._animations[name];
     },
 
     init:function () {
-        this._m_pAnimations = new Object();
+        this._animations = new Object();
         return true;
     },
 
-    _m_pAnimations:null
+    _animations:null
 
 });
 
 /** Purges the cache. It releases all the CCAnimation objects and the shared instance.
  */
 cc.AnimationCache.purgeSharedAnimationCache = function () {
-    cc.s_pSharedAnimationCache = null;
+    cc.sharedAnimationCache = null;
 };
 
 /** Retruns ths shared instance of the Animation cache */
 cc.AnimationCache.sharedAnimationCache = function () {
-    if (cc.s_pSharedAnimationCache == null) {
-        cc.s_pSharedAnimationCache = new cc.AnimationCache();
-        cc.s_pSharedAnimationCache.init();
+    if (cc.sharedAnimationCache == null) {
+        cc.sharedAnimationCache = new cc.AnimationCache();
+        cc.sharedAnimationCache.init();
     }
-    return cc.s_pSharedAnimationCache;
+    return cc.sharedAnimationCache;
 };
 
-cc.s_pSharedAnimationCache = null;
+cc.sharedAnimationCache = null;

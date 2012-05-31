@@ -36,29 +36,29 @@ var cc = cc = cc || {};
  */
 cc.AtlasNode = cc.Node.extend({
     //! chars per row
-    _m_uItemsPerRow:0,
+    _itemsPerRow:0,
     //! chars per column
-    _m_uItemsPerColumn:0,
+    _itemsPerColumn:0,
     //! width of each char
-    _m_uItemWidth:0,
+    _itemWidth:0,
     //! height of each char
-    _m_uItemHeight:0,
-    _m_tColorUnmodified:new cc.Color3B(0, 0, 0),
-    _m_pTextureAtlas:null,
+    _itemHeight:0,
+    _colorUnmodified:new cc.Color3B(0, 0, 0),
+    _textureAtlas:null,
     // protocol variables
-    _m_bIsOpacityModifyRGB:false,
-    _m_tBlendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
-    _m_cOpacity:0,
-    _m_tColor:null,
-    _m_originalTexture:null,
+    _isOpacityModifyRGB:false,
+    _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _opacity:0,
+    _color:null,
+    _originalTexture:null,
     // quads to draw
-    _m_uQuadsToDraw:0,
+    _quadsToDraw:0,
 
     /** creates a CCAtlasNode  with an Atlas file the width and height of each item and the quantity of items to render*/
     atlasWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
-        var pRet = new cc.AtlasNode();
-        if (pRet.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender)) {
-            return pRet;
+        var ret = new cc.AtlasNode();
+        if (ret.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender)) {
+            return ret;
         }
         return null;
     },
@@ -66,24 +66,24 @@ cc.AtlasNode = cc.Node.extend({
     /** initializes an CCAtlasNode  with an Atlas file the width and height of each item and the quantity of items to render*/
     initWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
         cc.Assert(tile != null, "title should not be null");
-        this._m_uItemWidth = tileWidth * cc.CONTENT_SCALE_FACTOR();
-        this._m_uItemHeight = tileHeight * cc.CONTENT_SCALE_FACTOR();
+        this._itemWidth = tileWidth * cc.CONTENT_SCALE_FACTOR();
+        this._itemHeight = tileHeight * cc.CONTENT_SCALE_FACTOR();
 
-        this._m_cOpacity = 255;
-        this._m_tColor = this._m_tColorUnmodified = cc.WHITE();
-        this._m_bIsOpacityModifyRGB = true;
+        this._opacity = 255;
+        this._color = this._colorUnmodified = cc.WHITE();
+        this._isOpacityModifyRGB = true;
 
-        this._m_tBlendFunc.src = cc.BLEND_SRC;
-        this._m_tBlendFunc.dst = cc.BLEND_DST;
+        this._blendFunc.src = cc.BLEND_SRC;
+        this._blendFunc.dst = cc.BLEND_DST;
 
         // double retain to avoid the autorelease pool
         // also, using: self.textureAtlas supports re-initialization without leaking
-        this._m_pTextureAtlas = new cc.TextureAtlas();
-        this._m_pTextureAtlas.initWithFile(tile, itemsToRender);
-        if (cc.renderContextType == cc.kCanvas) {
-            this._m_originalTexture = this._m_pTextureAtlas.getTexture();
+        this._textureAtlas = new cc.TextureAtlas();
+        this._textureAtlas.initWithFile(tile, itemsToRender);
+        if (cc.renderContextType == cc.CANVAS) {
+            this._originalTexture = this._textureAtlas.getTexture();
         }
-        if (!this._m_pTextureAtlas) {
+        if (!this._textureAtlas) {
             cc.LOG("cocos2d: Could not initialize CCAtlasNode. Invalid Texture.");
             return false;
         }
@@ -93,7 +93,7 @@ cc.AtlasNode = cc.Node.extend({
 
         this._calculateMaxItems();
 
-        this._m_uQuadsToDraw = itemsToRender;
+        this._quadsToDraw = itemsToRender;
 
         return true;
 
@@ -108,15 +108,15 @@ cc.AtlasNode = cc.Node.extend({
 
     draw:function (ctx) {
         this._super();
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             context.globalAlpha = this.getOpacity() / 255;
-            var tempAtlas = this._m_pTextureAtlas;
+            var tempAtlas = this._textureAtlas;
             var tempTexture = this.getTexture();
-            var tempQuads = this._m_pTextureAtlas._m_pQuads;
+            var tempQuads = this._textureAtlas._quads;
             var sx,sy,w,h,dx,dy;
-            var pos = new cc.Point(0 | ( -this._m_tAnchorPointInPixels.x), 0 | ( -this._m_tAnchorPointInPixels.y));
-            for(var i =0,len = this._m_pTextureAtlas.getCapacity();i<len;i++){
+            var pos = new cc.Point(0 | ( -this._anchorPointInPixels.x), 0 | ( -this._anchorPointInPixels.y));
+            for(var i =0,len = this._textureAtlas.getCapacity();i<len;i++){
                 sx = parseFloat(tempQuads[i].tl.texCoords.u) * tempTexture.width;
                 sy = parseFloat(tempQuads[i].tl.texCoords.v) * tempTexture.height;
                 dx = tempQuads[i].tl.vertices.x;
@@ -140,15 +140,15 @@ cc.AtlasNode = cc.Node.extend({
         //glDisableClientState(GL_COLOR_ARRAY);
 
         // glColor4ub isn't implement on some android devices
-        // glColor4ub( m_tColor.r, m_tColor.g, m_tColor.b, m_cOpacity);
-        //glColor4f(((GLfloat)m_tColor.r) / 255, ((GLfloat)m_tColor.g) / 255, ((GLfloat)m_tColor.b) / 255, ((GLfloat)m_cOpacity) / 255);
-        var newBlend = this._m_tBlendFunc.src != cc.BLEND_SRC || this._m_tBlendFunc.dst != cc.BLEND_DST;
+        // glColor4ub( color.r, color.g, color.b, opacity);
+        //glColor4f(((GLfloat)color.r) / 255, ((GLfloat)color.g) / 255, ((GLfloat)color.b) / 255, ((GLfloat)opacity) / 255);
+        var newBlend = this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST;
         if (newBlend) {
             // TODO, need to be fixed
-            //glBlendFunc( m_tBlendFunc.src, m_tBlendFunc.dst );
+            //glBlendFunc( blendFunc.src, blendFunc.dst );
         }
 
-        this._m_pTextureAtlas.drawNumberOfQuads(this._m_uQuadsToDraw, 0);
+        this._textureAtlas.drawNumberOfQuads(this._quadsToDraw, 0);
 
         if (newBlend) {
             //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
@@ -167,112 +167,112 @@ cc.AtlasNode = cc.Node.extend({
 
     // CCAtlasNode - RGBA protocol
     getColor:function () {
-        if (this._m_bIsOpacityModifyRGB) {
-            return this._m_tColorUnmodified;
+        if (this._isOpacityModifyRGB) {
+            return this._colorUnmodified;
         }
-        return this._m_tColor;
+        return this._color;
     },
 
      setColor:function (color3) {
-         this._m_tColor = this._m_sColorUnmodified = color3;
+         this._color = this._colorUnmodified = color3;
 
        if (this.getTexture()) {
-            if (cc.renderContextType == cc.kCanvas) {
-                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._m_originalTexture);
+            if (cc.renderContextType == cc.CANVAS) {
+                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
-                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor,this._m_tColor);
+                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor,this._color);
                     //console.log(colorTexture)
                     this.setTexture(colorTexture);
                 }
             }
         }
 
-        if (this._m_bIsOpacityModifyRGB) {
-            this._m_tColor.r = color3.r * this._m_cOpacity / 255;
-            this._m_tColor.g = color3.g * this._m_cOpacity / 255;
-            this._m_tColor.b = color3.b * this._m_cOpacity / 255;
+        if (this._isOpacityModifyRGB) {
+            this._color.r = color3.r * this._opacity / 255;
+            this._color.g = color3.g * this._opacity / 255;
+            this._color.b = color3.b * this._opacity / 255;
         }
     },
 
     getOpacity:function () {
-        return this._m_cOpacity;
+        return this._opacity;
     },
 
     setOpacity:function (opacity) {
-        this._m_cOpacity = opacity;
+        this._opacity = opacity;
         return;
         // special opacity for premultiplied textures
-        if (this._m_bIsOpacityModifyRGB) {
-            this.setColor(this._m_tColorUnmodified);
+        if (this._isOpacityModifyRGB) {
+            this.setColor(this._colorUnmodified);
         }
     },
 
-    setIsOpacityModifyRGB:function (bValue) {
-        var oldColor = this._m_tColor;
-        this._m_bIsOpacityModifyRGB = bValue;
-        this._m_tColor = oldColor;
+    setIsOpacityModifyRGB:function (value) {
+        var oldColor = this._color;
+        this._isOpacityModifyRGB = value;
+        this._color = oldColor;
     },
 
     getIsOpacityModifyRGB:function () {
-        return this._m_bIsOpacityModifyRGB;
+        return this._isOpacityModifyRGB;
     },
 
     // CCAtlasNode - CocosNodeTexture protocol
 
     getBlendFunc:function () {
-        return this._m_tBlendFunc;
+        return this._blendFunc;
     },
 
     setBlendFunc:function (blendFunc) {
-        this._m_tBlendFunc = blendFunc;
+        this._blendFunc = blendFunc;
     },
 
     // CC Texture protocol
 
     /** returns the used texture*/
     getTexture:function () {
-        return this._m_pTextureAtlas.getTexture();
+        return this._textureAtlas.getTexture();
     },
 
     /** sets a new texture. it will be retained*/
     setTexture:function (texture) {
-        this._m_pTextureAtlas.setTexture(texture);
+        this._textureAtlas.setTexture(texture);
         this._updateBlendFunc();
         this._updateOpacityModifyRGB();
     },
 
     setTextureAtlas:function (value) {
-        this._m_pTextureAtlas = value;
+        this._textureAtlas = value;
     },
 
     getTextureAtlas:function () {
-        return this._m_pTextureAtlas;
+        return this._textureAtlas;
     },
 
     getQuadsToDraw:function () {
-        return this._m_uQuadsToDraw;
+        return this._quadsToDraw;
     },
 
-    setQuadsToDraw:function (uQuadsToDraw) {
-        this._m_uQuadsToDraw = uQuadsToDraw;
+    setQuadsToDraw:function (quadsToDraw) {
+        this._quadsToDraw = quadsToDraw;
     },
 
     _calculateMaxItems:function () {
-        var s = this._m_pTextureAtlas.getTexture();
-        this._m_uItemsPerColumn = parseInt(s.height / this._m_uItemHeight);
-        this._m_uItemsPerRow = parseInt(s.width / this._m_uItemWidth);
+        var s = this._textureAtlas.getTexture();
+        this._itemsPerColumn = parseInt(s.height / this._itemHeight);
+        this._itemsPerRow = parseInt(s.width / this._itemWidth);
     },
 
     _updateBlendFunc:function () {
-       /* if (!this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha()) {
-            this._m_tBlendFunc.src = cc.GL_SRC_ALPHA;
-            this._m_tBlendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+       /* if (!this._textureAtlas.getTexture().getHasPremultipliedAlpha()) {
+            this._blendFunc.src = cc.GL_SRC_ALPHA;
+            this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
         }*/
     },
 
     _updateOpacityModifyRGB:function () {
-        //this._m_bIsOpacityModifyRGB = this._m_pTextureAtlas.getTexture().getHasPremultipliedAlpha();
+        //this._isOpacityModifyRGB = this._textureAtlas.getTexture().getHasPremultipliedAlpha();
     }
 
 });
