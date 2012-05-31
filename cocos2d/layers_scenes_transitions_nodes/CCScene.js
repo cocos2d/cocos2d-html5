@@ -38,18 +38,18 @@ var cc = cc = cc || {};
  */
 cc.Scene = cc.Node.extend({
     ctor:function () {
-        this._m_bIsRelativeAnchorPoint = false;
-        var pDirector = cc.Director.sharedDirector();
+        this._isRelativeAnchorPoint = false;
+        var director = cc.Director.sharedDirector();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this.setContentSize(pDirector.getWinSize());
+        this.setContentSize(director.getWinSize());
     },
     init:function () {
-        var pDirector = cc.Director.sharedDirector();
-        this.setContentSize(pDirector.getWinSize());
+        var director = cc.Director.sharedDirector();
+        this.setContentSize(director.getWinSize());
         return true;
     }
 });
 cc.Scene.node = function () {
-    var pret = new cc.Scene();
-    return pret;
+    var ret = new cc.Scene();
+    return ret;
 };

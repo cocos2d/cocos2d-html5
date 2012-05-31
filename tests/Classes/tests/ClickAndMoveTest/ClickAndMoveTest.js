@@ -23,13 +23,13 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagSprite = 1;
+var TAG_SPRITE = 1;
 
 var ClickAndMoveTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = new MainLayer();
+        var layer = new MainLayer();
 
-        this.addChild(pLayer);
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
     }
 });
@@ -37,12 +37,12 @@ var ClickAndMoveTestScene = TestScene.extend({
 var MainLayer = cc.Layer.extend({
     ctor:function () {
         this.setIsTouchEnabled(true);
-        var sprite = cc.Sprite.spriteWithFile(s_pPathGrossini);
+        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
 
         var layer = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 0, 100));
         this.addChild(layer, -1);
 
-        this.addChild(sprite, 0, kTagSprite);
+        this.addChild(sprite, 0, TAG_SPRITE);
         sprite.setPosition(cc.PointMake(20, 150));
 
         sprite.runAction(cc.JumpTo.actionWithDuration(4, cc.PointMake(300, 48), 100, 4));
@@ -53,16 +53,16 @@ var MainLayer = cc.Layer.extend({
         layer.runAction(forever);
     },
 
-    ccTouchesEnded:function (pTouches, pEvent) {
-        if (pTouches.length <= 0)
+    ccTouchesEnded:function (touches, event) {
+        if (touches.length <= 0)
             return;
 
-        var touch = pTouches[0];
+        var touch = touches[0];
 
         var location = touch.locationInView(touch.view());
         //var convertedLocation = cc.Director.sharedDirector().convertToGL(location);
 
-        var sprite = this.getChildByTag(kTagSprite);
+        var sprite = this.getChildByTag(TAG_SPRITE);
         sprite.stopAllActions();
         sprite.runAction(cc.MoveTo.actionWithDuration(1, cc.PointMake(location.x, location.y)));
         var o = location.x - sprite.getPositionX();

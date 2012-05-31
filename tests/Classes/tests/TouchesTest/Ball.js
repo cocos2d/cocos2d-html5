@@ -87,11 +87,11 @@ var Ball = cc.Sprite.extend({
     }
 });
 Ball.ballWithTexture = function (texture) {
-    var pBall = new Ball();
-    pBall.initWithTexture(texture);
+    var ball = new Ball();
+    ball.initWithTexture(texture);
     if (texture instanceof cc.Texture2D)
-        pBall.setRadius(texture.getContentSize().width / 2);
+        ball.setRadius(texture.getContentSize().width / 2);
     else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
-        pBall.setRadius(texture.width / 2);
-    return pBall;
+        ball.setRadius(texture.width / 2);
+    return ball;
 };

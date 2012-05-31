@@ -24,9 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var kTagNode = 5560;
-var kTagGrossini = 5561;
-var kTagSequence = 5562;
+var TAG_NODE = 5560;
+var TAG_GROSSINI = 5561;
+var TAG_SEQUENCE = 5562;
 
 var sceneIdx = -1;
 var MAX_LAYER = 5;
@@ -48,8 +48,8 @@ var restartActionManagerAction = function () {
     return createActionManagerLayer(sceneIdx);
 };
 
-var createActionManagerLayer = function (nIndex) {
-    switch (nIndex) {
+var createActionManagerLayer = function (index) {
+    switch (index) {
         case 0:
             return new CrashTest();
         case 1:
@@ -71,8 +71,8 @@ var createActionManagerLayer = function (nIndex) {
 //
 //------------------------------------------------------------------
 var ActionManagerTest = cc.Layer.extend({
-    _m_atlas:null,
-    _m_strTitle:"",
+    _atlas:null,
+    _title:"",
 
     ctor:function () {
         this._super();
@@ -89,9 +89,9 @@ var ActionManagerTest = cc.Layer.extend({
         this.addChild(label, 1);
         label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3);
 
@@ -103,17 +103,17 @@ var ActionManagerTest = cc.Layer.extend({
         this.addChild(menu, 1);
     },
 
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new ActionManagerTestScene();
         s.addChild(restartActionManagerAction());
         cc.Director.sharedDirector().replaceScene(s);
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new ActionManagerTestScene();
         s.addChild(nextActionManagerAction());
         cc.Director.sharedDirector().replaceScene(s);
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new ActionManagerTestScene();
         s.addChild(backActionManagerAction());
         cc.Director.sharedDirector().replaceScene(s);
@@ -132,7 +132,7 @@ var CrashTest = ActionManagerTest.extend({
     onEnter:function () {
         this._super();
 
-        var child = cc.Sprite.spriteWithFile(s_pPathGrossini);
+        var child = cc.Sprite.spriteWithFile(s_pathGrossini);
         child.setPosition(cc.PointMake(200, 200));
         this.addChild(child, 1);
 
@@ -150,7 +150,7 @@ var CrashTest = ActionManagerTest.extend({
         );
     },
     removeThis:function () {
-        this._m_pParent.removeChild(this, true);
+        this._parent.removeChild(this, true);
         this.nextCallback(this);
     }
 });
@@ -167,7 +167,7 @@ var LogicTest = ActionManagerTest.extend({
     onEnter:function () {
         this._super();
 
-        var grossini = cc.Sprite.spriteWithFile(s_pPathGrossini);
+        var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
         this.addChild(grossini, 0, 2);
         grossini.setPosition(cc.PointMake(200, 200));
 
@@ -206,8 +206,8 @@ var PauseTest = ActionManagerTest.extend({
         //
         // Also, this test MUST be done, after [super onEnter]
         //
-        var grossini = cc.Sprite.spriteWithFile(s_pPathGrossini);
-        this.addChild(grossini, 0, kTagGrossini);
+        var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
+        this.addChild(grossini, 0, TAG_GROSSINI);
         grossini.setPosition(cc.PointMake(200, 200));
 
         var action = cc.MoveBy.actionWithDuration(1, cc.PointMake(150, 0));
@@ -218,7 +218,7 @@ var PauseTest = ActionManagerTest.extend({
     },
     unpause:function (dt) {
         this.unschedule(this.unpause);
-        var node = this.getChildByTag(kTagGrossini);
+        var node = this.getChildByTag(TAG_GROSSINI);
         cc.ActionManager.sharedManager().resumeTarget(node);
     }
 });
@@ -240,20 +240,20 @@ var RemoveTest = ActionManagerTest.extend({
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
 
-        var pMove = cc.MoveBy.actionWithDuration(2, cc.PointMake(200, 0));
-        var pCallback = cc.CallFunc.actionWithTarget(this, this.stopAction);
-        var pSequence = cc.Sequence.actions(pMove, pCallback);
-        pSequence.setTag(kTagSequence);
+        var move = cc.MoveBy.actionWithDuration(2, cc.PointMake(200, 0));
+        var callback = cc.CallFunc.actionWithTarget(this, this.stopAction);
+        var sequence = cc.Sequence.actions(move, callback);
+        sequence.setTag(TAG_SEQUENCE);
 
-        var pChild = cc.Sprite.spriteWithFile(s_pPathGrossini);
-        pChild.setPosition(cc.PointMake(200, 200));
+        var child = cc.Sprite.spriteWithFile(s_pathGrossini);
+        child.setPosition(cc.PointMake(200, 200));
 
-        this.addChild(pChild, 1, kTagGrossini);
-        pChild.runAction(pSequence);
+        this.addChild(child, 1, TAG_GROSSINI);
+        child.runAction(sequence);
     },
     stopAction:function () {
-        var pSprite = this.getChildByTag(kTagGrossini);
-        pSprite.stopActionByTag(kTagSequence);
+        var sprite = this.getChildByTag(TAG_GROSSINI);
+        sprite.stopActionByTag(TAG_SEQUENCE);
     }
 });
 
@@ -274,22 +274,22 @@ var ResumeTest = ActionManagerTest.extend({
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
 
-        var pGrossini = cc.Sprite.spriteWithFile(s_pPathGrossini);
-        this.addChild(pGrossini, 0, kTagGrossini);
-        pGrossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
+        this.addChild(grossini, 0, TAG_GROSSINI);
+        grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
 
-        pGrossini.runAction(cc.ScaleBy.actionWithDuration(2, 2));
+        grossini.runAction(cc.ScaleBy.actionWithDuration(2, 2));
 
-        cc.ActionManager.sharedManager().pauseTarget(pGrossini);
-        pGrossini.runAction(cc.RotateBy.actionWithDuration(2, 360));
+        cc.ActionManager.sharedManager().pauseTarget(grossini);
+        grossini.runAction(cc.RotateBy.actionWithDuration(2, 360));
 
         this.schedule(this.resumeGrossini, 3.0);
     },
     resumeGrossini:function (time) {
         this.unschedule(this.resumeGrossini);
 
-        var pGrossini = this.getChildByTag(kTagGrossini);
-        cc.ActionManager.sharedManager().resumeTarget(pGrossini);
+        var grossini = this.getChildByTag(TAG_GROSSINI);
+        cc.ActionManager.sharedManager().resumeTarget(grossini);
     }
 });
 
@@ -297,8 +297,8 @@ var ActionManagerTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = -1;
         MAX_LAYER = 5;
-        var pLayer = nextActionManagerAction();
-        this.addChild(pLayer);
+        var layer = nextActionManagerAction();
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
     }
 });

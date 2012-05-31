@@ -29,73 +29,73 @@ var cc = cc = cc || {};
 /** Base class for other
  */
 cc.GridBase = cc.Class.extend({
-    _m_bActive:null,
-    _m_nReuseGrid:null,
-    _m_sGridSize:null,
-    _m_pTexture:null,
-    _m_obStep:new cc.Point(),
-    _m_pGrabber:null,
-    _m_bIsTextureFlipped:null,
+    _active:null,
+    _reuseGrid:null,
+    _gridSize:null,
+    _texture:null,
+    _step:new cc.Point(),
+    _grabber:null,
+    _isTextureFlipped:null,
     /** wheter or not the grid is active */
     isActive:function () {
-        return this._m_bActive;
+        return this._active;
     },
-    setActive:function (bActive) {
-        this._m_bActive = bActive;
-        if (!bActive) {
-            var pDirector = cc.Director.sharedDirector();
-            var proj = pDirector.getProjection();
-            pDirector.setProjection(proj);
+    setActive:function (active) {
+        this._active = active;
+        if (!active) {
+            var director = cc.Director.sharedDirector();
+            var proj = director.getProjection();
+            director.setProjection(proj);
         }
     },
 
     /** number of times that the grid will be reused */
     getReuseGrid:function () {
-        return this._m_nReuseGrid;
+        return this._reuseGrid;
     },
-    setReuseGrid:function (nReuseGrid) {
-        this._m_nReuseGrid = nReuseGrid;
+    setReuseGrid:function (reuseGrid) {
+        this._reuseGrid = reuseGrid;
     },
 
     /** size of the grid */
     getGridSize:function () {
-        return this._m_sGridSize;
+        return this._gridSize;
     },
     setGridSize:function (gridSize) {
-        this._m_sGridSize.x = parseInt(gridSize.x);
-        this._m_sGridSize.y = parseInt(gridSize.y);
+        this._gridSize.x = parseInt(gridSize.x);
+        this._gridSize.y = parseInt(gridSize.y);
     },
 
     /** pixels between the grids */
     getStep:function () {
-        return this._m_obStep;
+        return this._step;
     },
     setStep:function (step) {
-        this._m_obStep = step;
+        this._step = step;
     },
 
     /** is texture flipped */
     isTextureFlipped:function () {
-        return this._m_bIsTextureFlipped;
+        return this._isTextureFlipped;
     },
-    setIsTextureFlipped:function (bFlipped) {
-        if (this._m_bIsTextureFlipped != bFlipped) {
-            this._m_bIsTextureFlipped = bFlipped;
+    setIsTextureFlipped:function (flipped) {
+        if (this._isTextureFlipped != flipped) {
+            this._isTextureFlipped = flipped;
             this.calculateVertexPoints();
         }
     },
 
-    initWithSize:function (gridSize, pTexture, bFlipped) {
+    initWithSize:function (gridSize, texture, flipped) {
         var argnum = arguments.length;
         if (argnum = 1) {
-            var pDirector = cc.Director.sharedDirector();
-            var s = pDirector.getWinSizeInPixels();
+            var director = cc.Director.sharedDirector();
+            var s = director.getWinSizeInPixels();
 
             var POTWide = cc.NextPOT(s.width);
             var POTHigh = cc.NextPOT(s.height);
 
             // we only use rgba8888
-            var format = cc.kCCTexture2DPixelFormat_RGBA8888;
+            var format = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888;
 
             var pTextureTemp = new cc.Texture2D();
             pTextureTemp.initWithData(format, POTWide, POTHigh, s);
@@ -103,62 +103,62 @@ cc.GridBase = cc.Class.extend({
                 cc.LOG("cocos2d: CCGrid: error creating texture");
                 return false;
             }
-            pTexture = pTextureTemp;
+            texture = pTextureTemp;
 
-            bFlipped = false;
+            flipped = false;
         }
 
 
-        var bRet = true;
+        var ret = true;
 
-        this._m_bActive = false;
-        this._m_nReuseGrid = 0;
-        this._m_sGridSize = gridSize;
-        this._m_pTexture = pTexture;
-        this._m_bIsTextureFlipped = bFlipped;
+        this._active = false;
+        this._reuseGrid = 0;
+        this._gridSize = gridSize;
+        this._texture = texture;
+        this._isTextureFlipped = flipped;
 
-        var texSize = this._m_pTexture.getContentSizeInPixels();
-        this._m_obStep.x = texSize.width / this._m_sGridSize.x;
-        this._m_obStep.y = texSize.height / this._m_sGridSize.y;
+        var texSize = this._texture.getContentSizeInPixels();
+        this._step.x = texSize.width / this._gridSize.x;
+        this._step.y = texSize.height / this._gridSize.y;
 
-        this._m_pGrabber = new cc.Grabber();
-        if (this._m_pGrabber) {
-            this._m_pGrabber.grab(this._m_pTexture);
+        this._grabber = new cc.Grabber();
+        if (this._grabber) {
+            this._grabber.grab(this._texture);
         }
         else {
-            bRet = false;
+            ret = false;
         }
 
 
         this.calculateVertexPoints();
 
-        return bRet;
+        return ret;
 
     },
 
     beforeDraw:function () {
         this.set2DProjection();
-        this._m_pGrabber.beforeRender(this._m_pTexture);
+        this._grabber.beforeRender(this._texture);
     },
-    afterDraw:function (pTarget) {
-        this._m_pGrabber.afterRender(this._m_pTexture);
+    afterDraw:function (target) {
+        this._grabber.afterRender(this._texture);
 
         this.set3DProjection();
         this._applyLandscape();
 
-        if (pTarget.getCamera().getDirty()) {
-            var offset = pTarget.getAnchorPointInPixels();
+        if (target.getCamera().getDirty()) {
+            var offset = target.getAnchorPointInPixels();
 
             //
             // XXX: Camera should be applied in the AnchorPoint
             //
             //todo gl
             //ccglTranslate(offset.x, offset.y, 0);
-            pTarget.getCamera().locate();
+            target.getCamera().locate();
             //ccglTranslate(-offset.x, -offset.y, 0);
         }
 //todo gl
-        //glBindTexture(GL_TEXTURE_2D, this._m_pTexture.getName());
+        //glBindTexture(GL_TEXTURE_2D, this._texture.getName());
 
         // restore projection for default FBO .fixed bug #543 #544
         cc.Director.sharedDirector().setProjection(cc.Director.sharedDirector().getProjection());
@@ -203,27 +203,27 @@ cc.GridBase = cc.Class.extend({
          );*/
     },
     _applyLandscape:function () {
-        var pDirector = cc.Director.sharedDirector();
+        var director = cc.Director.sharedDirector();
 
-        var winSize = pDirector.getDisplaySizeInPixels();
+        var winSize = director.getDisplaySizeInPixels();
         var w = winSize.width / 2;
         var h = winSize.height / 2;
 
-        var orientation = pDirector.getDeviceOrientation();
+        var orientation = director.getDeviceOrientation();
 
         switch (orientation) {
             //todo gl
-            case cc.DeviceOrientationLandscapeLeft:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
                 /*glTranslatef(w,h,0);
                  glRotatef(-90,0,0,1);
                  glTranslatef(-h,-w,0);*/
                 break;
-            case cc.DeviceOrientationLandscapeRight:
+            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
                 /*glTranslatef(w,h,0);
                  glRotatef(90,0,0,1);
                  glTranslatef(-h,-w,0);*/
                 break;
-            case cc.DeviceOrientationPortraitUpsideDown:
+            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
                 /*glTranslatef(w,h,0);
                  glRotatef(180,0,0,1);
                  glTranslatef(-w,-h,0);*/
@@ -242,14 +242,14 @@ cc.GridBase.gridWithSize = function () {
  cc.Grid3D is a 3D grid implementation. Each vertex has 3 dimensions: x,y,z
  */
 cc.Grid3D = cc.GridBase.extend({
-    _m_pTexCoordinates:null,
-    _m_pVertices:null,
-    _m_pOriginalVertices:null,
-    _m_pIndices:null,
+    _texCoordinates:null,
+    _vertices:null,
+    _originalVertices:null,
+    _indices:null,
     /** returns the vertex at a given position */
     vertex:function (pos) {
-        var index = (pos.x * (this._m_sGridSize.y + 1) + pos.y) * 3;
-        var vertArray = this._m_pVertices;
+        var index = (pos.x * (this._gridSize.y + 1) + pos.y) * 3;
+        var vertArray = this._vertices;
 
         var vert = new cc.Vertex3F(vertArray[index], vertArray[index + 1], vertArray[index + 2]);
 
@@ -257,8 +257,8 @@ cc.Grid3D = cc.GridBase.extend({
     },
     /** returns the original (non-transformed) vertex at a given position */
     originalVertex:function (pos) {
-        var index = (pos.x * (this._m_sGridSize.y + 1) + pos.y) * 3;
-        var vertArray = this._m_pOriginalVertices;
+        var index = (pos.x * (this._gridSize.y + 1) + pos.y) * 3;
+        var vertArray = this._originalVertices;
 
         var vert = new cc.Vertex3F(vertArray[index], vertArray[index + 1], vertArray[index + 2]);
 
@@ -266,15 +266,15 @@ cc.Grid3D = cc.GridBase.extend({
     },
     /** sets a new vertex at a given position */
     setVertex:function (pos, vertex) {
-        var index = (pos.x * (this._m_sGridSize.y + 1) + pos.y) * 3;
-        var vertArray = this._m_pVertices;
+        var index = (pos.x * (this._gridSize.y + 1) + pos.y) * 3;
+        var vertArray = this._vertices;
         vertArray[index] = vertex.x;
         vertArray[index + 1] = vertex.y;
         vertArray[index + 2] = vertex.z;
     },
 
     blit:function () {
-        var n = this._m_sGridSize.x * this._m_sGridSize.y;
+        var n = this._gridSize.x * this._gridSize.y;
 
         // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_TEXTURE_COORD_ARRAY
@@ -282,42 +282,42 @@ cc.Grid3D = cc.GridBase.extend({
         //todo gl
         /*glDisableClientState(GL_COLOR_ARRAY);
 
-         glVertexPointer(3, GL_FLOAT, 0, this._m_pVertices);
-         glTexCoordPointer(2, GL_FLOAT, 0, this._m_pTexCoordinates);
-         glDrawElements(GL_TRIANGLES, n*6, GL_UNSIGNED_SHORT, this._m_pIndices);
+         glVertexPointer(3, GL_FLOAT, 0, this._vertices);
+         glTexCoordPointer(2, GL_FLOAT, 0, this._texCoordinates);
+         glDrawElements(GL_TRIANGLES, n*6, GL_UNSIGNED_SHORT, this._indices);
 
          // restore default GL state
          glEnableClientState(GL_COLOR_ARRAY);*/
     },
     reuse:function () {
-        if (this._m_nReuseGrid > 0) {
-            --this._m_nReuseGrid;
+        if (this._reuseGrid > 0) {
+            --this._reuseGrid;
         }
     },
     calculateVertexPoints:function () {
-        var width = this._m_pTexture.getPixelsWide();
-        var height = this._m_pTexture.getPixelsHigh();
-        var imageH = this._m_pTexture.getContentSizeInPixels().height;
+        var width = this._texture.getPixelsWide();
+        var height = this._texture.getPixelsHigh();
+        var imageH = this._texture.getContentSizeInPixels().height;
 
-        var numQuads = this._m_sGridSize.x * this._m_sGridSize.y;
+        var numQuads = this._gridSize.x * this._gridSize.y;
 
-        this._m_pVertices = [];
-        this._m_pOriginalVertices = [];
-        this._m_pTexCoordinates = [];
-        this._m_pIndices = [];
+        this._vertices = [];
+        this._originalVertices = [];
+        this._texCoordinates = [];
+        this._indices = [];
 
-        var vertArray = this._m_pVertices;
-        var texArray = this._m_pTexCoordinates;
-        var idxArray = this._m_pIndices;
+        var vertArray = this._vertices;
+        var texArray = this._texCoordinates;
+        var idxArray = this._indices;
 
         var x, y;
 
-        for (x = 0; x < this._m_sGridSize.x; x++) {
-            for (y = 0; y < this._m_sGridSize.y; y++) {
-                var x1 = x * this._m_obStep.x;
-                var x2 = x1 + this._m_obStep.x;
-                var y1 = y * this._m_obStep.y;
-                var y2 = y1 + this._m_obStep.y;
+        for (x = 0; x < this._gridSize.x; x++) {
+            for (y = 0; y < this._gridSize.y; y++) {
+                var x1 = x * this._step.x;
+                var x2 = x1 + this._step.x;
+                var y1 = y * this._step.y;
+                var y2 = y1 + this._step.y;
 
                 vertArray[x * y] = x1;
                 vertArray[x * y + 1] = y1;
@@ -335,7 +335,7 @@ cc.Grid3D = cc.GridBase.extend({
                 var newY1 = y1;
                 var newY2 = y2;
 
-                if (this._m_bIsTextureFlipped) {
+                if (this._isTextureFlipped) {
                     newY1 = imageH - y1;
                     newY2 = imageH - y2;
                 }
@@ -364,7 +364,7 @@ cc.Grid3D = cc.GridBase.extend({
     }
 });
 
-cc.Grid3D.gridWithSize = function (gridSize, pTexture, bFlipped) {
+cc.Grid3D.gridWithSize = function (gridSize, texture, flipped) {
 
 };
 cc.Grid3D.gridWithSize = function (gridSize) {
@@ -376,21 +376,21 @@ cc.Grid3D.gridWithSize = function (gridSize) {
  the tiles can be separated from the grid.
  */
 cc.TiledGrid3D = cc.GridBase.extend({
-    _m_pTexCoordinates:null,
-    _m_pVertices:null,
-    _m_pOriginalVertices:null,
-    _m_pIndices:null,
+    _texCoordinates:null,
+    _vertices:null,
+    _originalVertices:null,
+    _indices:null,
     /** returns the tile at the given position */
     tile:function (pos) {
-        var idx = (this._m_sGridSize.y * pos.x + pos.y) * 4 * 3;
-        var vertArray = this._m_pVertices;
+        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
+        var vertArray = this._vertices;
         var ret = new cc.Quad3();
         return ret;
     },
     /** returns the original tile (untransformed) at the given position */
     originalTile:function (pos) {
-        var idx = (this._m_sGridSize.y * pos.x + pos.y) * 4 * 3;
-        var vertArray = this._m_pOriginalVertices;
+        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
+        var vertArray = this._originalVertices;
 
         var ret = new cc.Quad3(vertArray[idx], vertArray[idx + 1], vertArray[idx + 2], vertArray[idx + 3]);
 
@@ -398,13 +398,13 @@ cc.TiledGrid3D = cc.GridBase.extend({
     },
     /** sets a new tile */
     setTile:function (pos, coords) {
-        var idx = (this._m_sGridSize.y * pos.x + pos.y) * 4 * 3;
-        var vertArray = this._m_pVertices;
+        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
+        var vertArray = this._vertices;
         vertArray[idx] = coords;
     },
 
     blit:function () {
-        var n = this._m_sGridSize.x * this._m_sGridSize.y;
+        var n = this._gridSize.x * this._gridSize.y;
 
         // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
         // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_TEXTURE_COORD_ARRAY
@@ -412,48 +412,48 @@ cc.TiledGrid3D = cc.GridBase.extend({
         //todo gl
         /*glDisableClientState(GL_COLOR_ARRAY);
 
-         glVertexPointer(3, GL_FLOAT, 0, this._m_pVertices);
-         glTexCoordPointer(2, GL_FLOAT, 0, this._m_pTexCoordinates);
-         glDrawElements(GL_TRIANGLES, (GLsizei)n*6, GL_UNSIGNED_SHORT, this._m_pIndices);
+         glVertexPointer(3, GL_FLOAT, 0, this._vertices);
+         glTexCoordPointer(2, GL_FLOAT, 0, this._texCoordinates);
+         glDrawElements(GL_TRIANGLES, (GLsizei)n*6, GL_UNSIGNED_SHORT, this._indices);
 
          // restore default GL state
          glEnableClientState(GL_COLOR_ARRAY);*/
     },
     reuse:function () {
-        if (this._m_nReuseGrid > 0) {
-            var numQuads = this._m_sGridSize.x * this._m_sGridSize.y;
+        if (this._reuseGrid > 0) {
+            var numQuads = this._gridSize.x * this._gridSize.y;
             for (var i = 0, len = numQuads.length * 12; i < len; i++) {
-                this._m_pOriginalVertices.push(this._m_pVertices[i])
+                this._originalVertices.push(this._vertices[i])
             }
             //todo fix
-            //memcpy(this._m_pOriginalVertices, this._m_pVertices, numQuads * 12 * sizeof(GLfloat));
-            --this._m_nReuseGrid;
+            //memcpy(this._originalVertices, this._vertices, numQuads * 12 * sizeof(GLfloat));
+            --this._reuseGrid;
         }
     },
     calculateVertexPoints:function () {
-        var width = this._m_pTexture.getPixelsWide();
-        var height = this._m_pTexture.getPixelsHigh();
-        var imageH = this._m_pTexture.getContentSizeInPixels().height;
+        var width = this._texture.getPixelsWide();
+        var height = this._texture.getPixelsHigh();
+        var imageH = this._texture.getContentSizeInPixels().height;
 
-        var numQuads = this._m_sGridSize.x * this._m_sGridSize.y;
+        var numQuads = this._gridSize.x * this._gridSize.y;
 
-        this._m_pVertices = [];
-        this._m_pOriginalVertices = [];
-        this._m_pTexCoordinates = [];
-        this._m_pIndices = [];
+        this._vertices = [];
+        this._originalVertices = [];
+        this._texCoordinates = [];
+        this._indices = [];
 
-        var vertArray = this._m_pVertices;
-        var texArray = this._m_pTexCoordinates;
-        var idxArray = this._m_pIndices;
+        var vertArray = this._vertices;
+        var texArray = this._texCoordinates;
+        var idxArray = this._indices;
 
         var x, y;
 
-        for (x = 0; x < this._m_sGridSize.x; x++) {
-            for (y = 0; y < this._m_sGridSize.y; y++) {
-                var x1 = x * this._m_obStep.x;
-                var x2 = x1 + this._m_obStep.x;
-                var y1 = y * this._m_obStep.y;
-                var y2 = y1 + this._m_obStep.y;
+        for (x = 0; x < this._gridSize.x; x++) {
+            for (y = 0; y < this._gridSize.y; y++) {
+                var x1 = x * this._step.x;
+                var x2 = x1 + this._step.x;
+                var y1 = y * this._step.y;
+                var y2 = y1 + this._step.y;
 
                 vertArray[x * y] = x1;
                 vertArray[x * y + 1] = y1;
@@ -470,7 +470,7 @@ cc.TiledGrid3D = cc.GridBase.extend({
                 var newY1 = y1;
                 var newY2 = y2;
 
-                if (this._m_bIsTextureFlipped) {
+                if (this._isTextureFlipped) {
                     newY1 = imageH - y1;
                     newY2 = imageH - y2;
                 }
@@ -496,15 +496,15 @@ cc.TiledGrid3D = cc.GridBase.extend({
             idxArray[x * 6 + 5] = x * 4 + 3;
         }
         for (var i = 0, len = numQuads.length * 12; i < len; i++) {
-            this._m_pOriginalVertices.push(this._m_pVertices[i])
+            this._originalVertices.push(this._vertices[i])
         }
         //todo fix
-        //memcpy(this._m_pOriginalVertices, this._m_pVertices, numQuads * 12 * sizeof(GLfloat));
+        //memcpy(this._originalVertices, this._vertices, numQuads * 12 * sizeof(GLfloat));
     }
 });
 
-cc.TiledGrid3D.gridWithSize = function (gridSize, pTexture, bFlipped) {
-    var pRet = new cc.TiledGrid3D();
-    pRet.initWithSize(gridSize, pTexture, bFlipped)
-    return pRet;
+cc.TiledGrid3D.gridWithSize = function (gridSize, texture, flipped) {
+    var ret = new cc.TiledGrid3D();
+    ret.initWithSize(gridSize, texture, flipped)
+    return ret;
 };

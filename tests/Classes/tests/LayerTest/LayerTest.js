@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-cc.kTagLayer = 1;
+cc.TAG_LAYER = 1;
 
 var LayerTests = [
     "LayerTest1", //ok
@@ -62,7 +62,7 @@ var LayerTestScene = TestScene.extend({
 //
 //------------------------------------------------------------------
 var LayerTest = cc.Layer.extend({
-    m_strTitle:null,
+    title:null,
     title:function () {
         return "No title";
     },
@@ -84,9 +84,9 @@ var LayerTest = cc.Layer.extend({
             l.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
@@ -98,20 +98,20 @@ var LayerTest = cc.Layer.extend({
         this.addChild(menu, 1);
     },
 
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(restartLayerTestAction());
 
         cc.Director.sharedDirector().replaceScene(s);
 
     },
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(nextLayerTestAction());
         cc.Director.sharedDirector().replaceScene(s);
 
     },
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(backLayerTestAction());
         cc.Director.sharedDirector().replaceScene(s);
@@ -134,14 +134,14 @@ var LayerTest1 = LayerTest.extend({
 
         layer.setIsRelativeAnchorPoint(true);
         layer.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-        this.addChild(layer, 1, cc.kTagLayer);
+        this.addChild(layer, 1, cc.TAG_LAYER);
     },
     title:function () {
         return "ColorLayer resize (tap & move)";
     },
 
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.kCCMenuTouchPriority + 1, true);
+        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
     },
     updateSize:function (touch) {
         var touchLocation = touch.locationInView(touch.view());
@@ -151,7 +151,7 @@ var LayerTest1 = LayerTest.extend({
 
         var newSize = cc.SizeMake(Math.abs(touchLocation.x - s.width / 2) * 2, Math.abs(touchLocation.y - s.height / 2) * 2);
 
-        var l = this.getChildByTag(cc.kTagLayer);
+        var l = this.getChildByTag(cc.TAG_LAYER);
 
         l.setContentSize(newSize);
     },
@@ -213,12 +213,12 @@ var LayerTestBlend = LayerTest.extend({
         var s = cc.Director.sharedDirector().getWinSize();
         var layer1 = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 255, 80));
 
-        var sister1 = cc.Sprite.spriteWithFile(s_pPathSister1);
-        var sister2 = cc.Sprite.spriteWithFile(s_pPathSister2);
+        var sister1 = cc.Sprite.spriteWithFile(s_pathSister1);
+        var sister2 = cc.Sprite.spriteWithFile(s_pathSister2);
 
         this.addChild(sister1);
         this.addChild(sister2);
-        this.addChild(layer1, 100, cc.kTagLayer);
+        this.addChild(layer1, 100, cc.TAG_LAYER);
 
         sister1.setPosition(cc.PointMake(160, s.height / 2));
         sister2.setPosition(cc.PointMake(320, s.height / 2));
@@ -226,7 +226,7 @@ var LayerTestBlend = LayerTest.extend({
         this.schedule(this.newBlend, 1.0);
     },
     newBlend:function (dt) {
-        var layer = this.getChildByTag(cc.kTagLayer);
+        var layer = this.getChildByTag(cc.TAG_LAYER);
 
         var src;
         var dst;
@@ -255,7 +255,7 @@ var LayerTestBlend = LayerTest.extend({
 var LayerGradient = LayerTest.extend({
     ctor:function () {
         var layer1 = cc.LayerGradient.layerWithColor(cc.ccc4(255, 0, 0, 255), cc.ccc4(0, 255, 0, 255), cc.ccp(0.9, 0.9));
-        this.addChild(layer1, 0, cc.kTagLayer);
+        this.addChild(layer1, 0, cc.TAG_LAYER);
 
         this.setIsTouchEnabled(true);
 
@@ -299,7 +299,7 @@ var LayerGradient = LayerTest.extend({
         return "Touch the screen and move your finger";
     },
     toggleItem:function (sender) {
-        var gradient = this.getChildByTag(cc.kTagLayer);
+        var gradient = this.getChildByTag(cc.TAG_LAYER);
         gradient.setIsCompressedInterpolation(!gradient.getIsCompressedInterpolation());
     }
 });

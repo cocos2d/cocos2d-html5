@@ -23,43 +23,43 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagAnimationDance = 1;
+var TAG_ANIMATION_DANCE = 1;
 var MAX_TESTS = 8;
 var sceneIdx = -1;
 
-var createSchedulerTest = function (nIndex) {
-    var pLayer = null;
+var createSchedulerTest = function (index) {
+    var layer = null;
 
-    switch (nIndex) {
+    switch (index) {
         case 0:
-            pLayer = new SchedulerAutoremove();
+            layer = new SchedulerAutoremove();
             break;
         case 1:
-            pLayer = new SchedulerPauseResume();
+            layer = new SchedulerPauseResume();
             break;
         case 2:
-            pLayer = new SchedulerUnscheduleAll();
+            layer = new SchedulerUnscheduleAll();
             break;
         case 3:
-            pLayer = new SchedulerUnscheduleAllHard();
+            layer = new SchedulerUnscheduleAllHard();
             break;
         case 4:
-            pLayer = new SchedulerSchedulesAndRemove();
+            layer = new SchedulerSchedulesAndRemove();
             break;
         case 5:
-            pLayer = new SchedulerUpdate();
+            layer = new SchedulerUpdate();
             break;
         case 6:
-            pLayer = new SchedulerUpdateAndCustom();
+            layer = new SchedulerUpdateAndCustom();
             break;
         case 7:
-            pLayer = new SchedulerUpdateFromCustom();
+            layer = new SchedulerUpdateFromCustom();
             break;
         default:
             break;
     }
 
-    return pLayer;
+    return layer;
 };
 
 var nextSchedulerTest = function () {
@@ -117,26 +117,26 @@ var SchedulerTestLayer = cc.Layer.extend({
         return "";
     },
 
-    backCallback:function (pSender) {
-        var pScene = new SchedulerTestScene();
-        var pLayer = backSchedulerTest();
+    backCallback:function (sender) {
+        var scene = new SchedulerTestScene();
+        var layer = backSchedulerTest();
 
-        pScene.addChild(pLayer);
-        cc.Director.sharedDirector().replaceScene(pScene);
+        scene.addChild(layer);
+        cc.Director.sharedDirector().replaceScene(scene);
     },
-    nextCallback:function (pSender) {
-        var pScene = new SchedulerTestScene();
-        var pLayer = nextSchedulerTest();
+    nextCallback:function (sender) {
+        var scene = new SchedulerTestScene();
+        var layer = nextSchedulerTest();
 
-        pScene.addChild(pLayer);
-        cc.Director.sharedDirector().replaceScene(pScene);
+        scene.addChild(layer);
+        cc.Director.sharedDirector().replaceScene(scene);
     },
-    restartCallback:function (pSender) {
-        var pScene = new SchedulerTestScene();
-        var pLayer = restartSchedulerTest();
+    restartCallback:function (sender) {
+        var scene = new SchedulerTestScene();
+        var layer = restartSchedulerTest();
 
-        pScene.addChild(pLayer);
-        cc.Director.sharedDirector().replaceScene(pScene);
+        scene.addChild(layer);
+        cc.Director.sharedDirector().replaceScene(scene);
     }
 });
 
@@ -305,8 +305,8 @@ var SchedulerSchedulesAndRemove = SchedulerTestLayer.extend({
 var TestNode = cc.Node.extend({
     _pString:"",
 
-    initWithString:function (pStr, priority) {
-        this._pString = pStr;
+    initWithString:function (str, priority) {
+        this._pString = str;
         this.scheduleUpdateWithPriority(priority);
     }
 });
@@ -316,34 +316,34 @@ var SchedulerUpdate = SchedulerTestLayer.extend({
         this._super();
 
         var d = new TestNode();
-        var pStr = "---";
-        d.initWithString(pStr, 50);
+        var str = "---";
+        d.initWithString(str, 50);
         this.addChild(d);
 
 
         var b = new TestNode();
-        pStr = "3rd";
-        b.initWithString(pStr, 0);
+        str = "3rd";
+        b.initWithString(str, 0);
         this.addChild(b);
 
         var a = new TestNode();
-        pStr = "1st";
-        a.initWithString(pStr, -10);
+        str = "1st";
+        a.initWithString(str, -10);
         this.addChild(a);
 
         var c = new TestNode();
-        pStr = "4th";
-        c.initWithString(pStr, 10);
+        str = "4th";
+        c.initWithString(str, 10);
         this.addChild(c);
 
         var e = new TestNode();
-        pStr = "5th";
-        e.initWithString(pStr, 20);
+        str = "5th";
+        e.initWithString(str, 20);
         this.addChild(e);
 
         var f = new TestNode();
-        pStr = "2nd";
-        f.initWithString(pStr, -5);
+        str = "2nd";
+        f.initWithString(str, -5);
         this.addChild(f);
 
         this.schedule(this.removeUpdates, 4.0);
@@ -359,9 +359,9 @@ var SchedulerUpdate = SchedulerTestLayer.extend({
         var children = this.getChildren();
 
         for (var i = 0; i < children.length; i++) {
-            var pNode = children[i];
-            if (pNode) {
-                pNode.unscheduleAllSelectors();
+            var node = children[i];
+            if (node) {
+                node.unscheduleAllSelectors();
             }
         }
     }
@@ -453,8 +453,8 @@ var RescheduleSelector = SchedulerTestLayer.extend({
 
 var SchedulerTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = nextSchedulerTest();
-        this.addChild(pLayer);
+        var layer = nextSchedulerTest();
+        this.addChild(layer);
 
         cc.Director.sharedDirector().replaceScene(this);
     }

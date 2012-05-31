@@ -23,16 +23,16 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagNode = 9960;
-var kTagGrossini = 9961;
+var TAG_NODE = 9960;
+var TAG_GROSSINI = 9961;
 
 var sceneIdx = -1;
 
 var MAX_LAYER = 2;
 
 
-function createParallaxTestLayer(nIndex) {
-    switch (nIndex) {
+function createParallaxTestLayer(index) {
+    switch (index) {
         case 0:
             return new Parallax1();
         case 1:
@@ -46,8 +46,8 @@ function nextParallaxAction() {
     sceneIdx++;
     sceneIdx = sceneIdx % MAX_LAYER;
 
-    var pLayer = createParallaxTestLayer(sceneIdx);
-    return pLayer;
+    var layer = createParallaxTestLayer(sceneIdx);
+    return layer;
 }
 
 function backParallaxAction() {
@@ -56,17 +56,17 @@ function backParallaxAction() {
     if (sceneIdx < 0)
         sceneIdx += total;
 
-    var pLayer = createParallaxTestLayer(sceneIdx);
-    return pLayer;
+    var layer = createParallaxTestLayer(sceneIdx);
+    return layer;
 }
 
 function restartParallaxAction() {
-    var pLayer = createParallaxTestLayer(sceneIdx);
-    return pLayer;
+    var layer = createParallaxTestLayer(sceneIdx);
+    return layer;
 }
 ParallaxDemo = cc.Layer.extend({
 
-    _m_atlas:null,
+    _atlas:null,
 
     ctor:function () {
     },
@@ -84,9 +84,9 @@ ParallaxDemo = cc.Layer.extend({
         this.addChild(label, 1);
         label.setPosition(cc.ccp(s.width / 2, s.height - 50));
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pPathB1, s_pPathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pPathR1, s_pPathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pPathF1, s_pPathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
 
@@ -99,21 +99,21 @@ ParallaxDemo = cc.Layer.extend({
 
     },
 
-    restartCallback:function (pSender) {
+    restartCallback:function (sender) {
         var s = new ParallaxTestScene();
         s.addChild(restartParallaxAction());
 
         cc.Director.sharedDirector().replaceScene(s);
     },
 
-    nextCallback:function (pSender) {
+    nextCallback:function (sender) {
         var s = new ParallaxTestScene();
         s.addChild(nextParallaxAction());
         cc.Director.sharedDirector().replaceScene(s);
 
     },
 
-    backCallback:function (pSender) {
+    backCallback:function (sender) {
         var s = new ParallaxTestScene();
         s.addChild(backParallaxAction());
         cc.Director.sharedDirector().replaceScene(s);
@@ -122,14 +122,14 @@ ParallaxDemo = cc.Layer.extend({
 
 Parallax1 = ParallaxDemo.extend({
 
-    _m_root:null,
-    _m_target:null,
-    _m_streak:null,
+    _root:null,
+    _target:null,
+    _streak:null,
 
 
     ctor:function () {
         // Top Layer, a simple image
-        var cocosImage = cc.Sprite.spriteWithFile(s_Power);
+        var cocosImage = cc.Sprite.spriteWithFile(s_power);
         // scale the image (optional)
         cocosImage.setScale(0.5);
         // change the transform anchor point to 0,0 (optional)
@@ -137,7 +137,7 @@ Parallax1 = ParallaxDemo.extend({
 
 
         // Middle layer: a Tile map atlas
-        //var tilemap = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_TilesPng, s_LevelMapTga, 16, 16);
+        //var tilemap = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_tilesPng, s_levelMapTga, 16, 16);
         var tilemap = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test2.tmx");
 
 
@@ -191,16 +191,16 @@ Parallax1 = ParallaxDemo.extend({
 
 Parallax2 = ParallaxDemo.extend({
 
-    _m_root:null,
-    _m_target:null,
-    _m_streak:null,
+    _root:null,
+    _target:null,
+    _streak:null,
 
 
     ctor:function () {
         this.setIsTouchEnabled(true);
 
         // Top Layer, a simple image
-        var cocosImage = cc.Sprite.spriteWithFile(s_Power);
+        var cocosImage = cc.Sprite.spriteWithFile(s_power);
         // scale the image (optional)
         cocosImage.setScale(0.5);
         // change the transform anchor point to 0,0 (optional)
@@ -208,7 +208,7 @@ Parallax2 = ParallaxDemo.extend({
 
 
         // Middle layer: a Tile map atlas
-        //var tilemap = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_TilesPng, s_LevelMapTga, 16, 16);
+        //var tilemap = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_tilesPng, s_levelMapTga, 16, 16);
         var tilemap = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test2.tmx");
 
         // change the transform anchor to 0,0 (optional)
@@ -239,7 +239,7 @@ Parallax2 = ParallaxDemo.extend({
 
         // top image is moved at a ratio of 3.0x, 2.5y
         voidNode.addChild(cocosImage, 2, cc.ccp(3.0, 2.5), cc.ccp(0, 0));
-        this.addChild(voidNode, 0, kTagNode);
+        this.addChild(voidNode, 0, TAG_NODE);
 
     },
 
@@ -276,7 +276,7 @@ Parallax2 = ParallaxDemo.extend({
         this._prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
 
 
-        var node = this.getChildByTag(kTagNode);
+        var node = this.getChildByTag(TAG_NODE);
         var currentPos = node.getPosition();
         node.setPosition(cc.ccpAdd(currentPos, diff));
     },
@@ -291,9 +291,9 @@ ParallaxTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = -1;
         MAX_LAYER = 2;
-        var pLayer = nextParallaxAction();
+        var layer = nextParallaxAction();
 
-        this.addChild(pLayer);
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
     }
 });

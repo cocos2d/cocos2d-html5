@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kTagSpriteManager = 1;
+var TAG_SPRITE_MANAGER = 1;
 var PTM_RATIO = 32;
 
 Box2DTestLayer = cc.Layer.extend({
@@ -88,8 +88,8 @@ Box2DTestLayer = cc.Layer.extend({
 
         //Set up sprite
 
-        var mgr = cc.SpriteBatchNode.batchNodeWithFile(s_pPathBlock, 150);
-        this.addChild(mgr, 0, kTagSpriteManager);
+        var mgr = cc.SpriteBatchNode.batchNodeWithFile(s_pathBlock, 150);
+        this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
 
         this.addNewSpriteWithCoords(cc.PointMake(screenSize.width / 2, screenSize.height / 2));
 
@@ -110,7 +110,7 @@ Box2DTestLayer = cc.Layer.extend({
 
     addNewSpriteWithCoords:function (p) {
         //UXLOG(L"Add sprite %0.2f x %02.f",p.x,p.y);
-        var batch = this.getChildByTag(kTagSpriteManager);
+        var batch = this.getChildByTag(TAG_SPRITE_MANAGER);
 
         //We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is
         //just randomly picking one of the images
@@ -192,8 +192,8 @@ Box2DTestScene = TestScene.extend({
 
 
     runThisTest:function () {
-        var pLayer = new Box2DTestLayer();
-        this.addChild(pLayer);
+        var layer = new Box2DTestLayer();
+        this.addChild(layer);
 
         cc.Director.sharedDirector().replaceScene(this);
     }

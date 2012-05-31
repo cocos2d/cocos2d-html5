@@ -121,46 +121,46 @@ cc.IMEDelegate = cc.Class.extend({
  @brief    Input Method Edit Message Dispatcher.
  */
 cc.IMEDispatcher = cc.Class.extend({
-    _pImpl:null,
+    impl:null,
     //private construction method
     ctor:function () {
-        this._pImpl = new cc.IMEDispatcher.Impl();
+        this.impl = new cc.IMEDispatcher.Impl();
     },
     /**
      @brief dispatch the input text from ime
      */
-    dispatchInsertText:function (pText, nLen) {
-        if (!this._pImpl || !pText || nLen <= 0)
+    dispatchInsertText:function (text, len) {
+        if (!this.impl || !text || len <= 0)
             return;
 
         // there is no delegate attach with ime
-        if (!this._pImpl._delegateWithIme)
+        if (!this.impl._delegateWithIme)
             return;
 
-        this._pImpl._delegateWithIme.insertText(pText, nLen);
+        this.impl._delegateWithIme.insertText(text, len);
     },
 
     /**
      @brief    dispatch the delete backward operation
      */
     dispatchDeleteBackward:function () {
-        if (!this._pImpl) {
+        if (!this.impl) {
             return;
         }
 
         // there is no delegate attach with ime
-        if (!this._pImpl._delegateWithIme)
+        if (!this.impl._delegateWithIme)
             return;
 
-        this._pImpl._delegateWithIme.deleteBackward();
+        this.impl._delegateWithIme.deleteBackward();
     },
 
     /**
      @brief    get the content text, which current CCIMEDelegate which attached with IME has.
      */
     getContentText:function () {
-        if (this._pImpl && this._pImpl._delegateWithIme) {
-            var pszContentText = this._pImpl._delegateWithIme.getContentText();
+        if (this.impl && this.impl._delegateWithIme) {
+            var pszContentText = this.impl._delegateWithIme.getContentText();
             return (pszContentText) ? pszContentText : "";
         }
         return "";
@@ -170,41 +170,41 @@ cc.IMEDispatcher = cc.Class.extend({
     // dispatch keyboard notification
     //////////////////////////////////////////////////////////////////////////
     dispatchKeyboardWillShow:function (info) {
-        if (this._pImpl) {
-            for (var i = 0; i < this._pImpl._delegateList.length; i++) {
-                var pDelegate = this._pImpl._delegateList[i];
-                if (pDelegate) {
-                    pDelegate.keyboardWillShow(info);
+        if (this.impl) {
+            for (var i = 0; i < this.impl._delegateList.length; i++) {
+                var delegate = this.impl._delegateList[i];
+                if (delegate) {
+                    delegate.keyboardWillShow(info);
                 }
             }
         }
     },
     dispatchKeyboardDidShow:function (info) {
-        if (this._pImpl) {
-            for (var i = 0; i < this._pImpl._delegateList.length; i++) {
-                var pDelegate = this._pImpl._delegateList[i];
-                if (pDelegate) {
-                    pDelegate.keyboardDidShow(info);
+        if (this.impl) {
+            for (var i = 0; i < this.impl._delegateList.length; i++) {
+                var delegate = this.impl._delegateList[i];
+                if (delegate) {
+                    delegate.keyboardDidShow(info);
                 }
             }
         }
     },
     dispatchKeyboardWillHide:function (info) {
-        if (this._pImpl) {
-            for (var i = 0; i < this._pImpl._delegateList.length; i++) {
-                var pDelegate = this._pImpl._delegateList[i];
-                if (pDelegate) {
-                    pDelegate.keyboardWillHide(info);
+        if (this.impl) {
+            for (var i = 0; i < this.impl._delegateList.length; i++) {
+                var delegate = this.impl._delegateList[i];
+                if (delegate) {
+                    delegate.keyboardWillHide(info);
                 }
             }
         }
     },
     dispatchKeyboardDidHide:function (info) {
-        if (this._pImpl) {
-            for (var i = 0; i < this._pImpl._delegateList.length; i++) {
-                var pDelegate = this._pImpl._delegateList[i];
-                if (pDelegate) {
-                    pDelegate.keyboardDidHide(info);
+        if (this.impl) {
+            for (var i = 0; i < this.impl._delegateList.length; i++) {
+                var delegate = this.impl._delegateList[i];
+                if (delegate) {
+                    delegate.keyboardDidHide(info);
                 }
             }
         }
@@ -213,15 +213,15 @@ cc.IMEDispatcher = cc.Class.extend({
     /**
      @brief add delegate to concern ime msg
      */
-    addDelegate:function (pDelegate) {
-        if (!pDelegate || !this._pImpl) {
+    addDelegate:function (delegate) {
+        if (!delegate || !this.impl) {
             return;
         }
-        if (this._pImpl._delegateList.indexOf(pDelegate) > -1) {
-            // pDelegate already in list
+        if (this.impl._delegateList.indexOf(delegate) > -1) {
+            // delegate already in list
             return;
         }
-        this._pImpl._delegateList = cc.ArrayAppendObjectToIndex(this._pImpl._delegateList, pDelegate, 0);
+        this.impl._delegateList = cc.ArrayAppendObjectToIndex(this.impl._delegateList, delegate, 0);
     },
 
     /**
@@ -229,92 +229,92 @@ cc.IMEDispatcher = cc.Class.extend({
      @return If the old delegate can detattach with ime and the new delegate
      can attach with ime, return true, otherwise return false.
      */
-    attachDelegateWithIME:function (pDelegate) {
-        if (!this._pImpl || !pDelegate) {
+    attachDelegateWithIME:function (delegate) {
+        if (!this.impl || !delegate) {
             return false;
         }
 
-        // if pDelegate is not in delegate list, return
-        if (this._pImpl._delegateList.indexOf(pDelegate) == -1) {
+        // if delegate is not in delegate list, return
+        if (this.impl._delegateList.indexOf(delegate) == -1) {
             return false;
         }
 
-        if (this._pImpl._delegateWithIme) {
+        if (this.impl._delegateWithIme) {
             // if old delegate canDetachWithIME return false
-            // or pDelegate canAttachWithIME return false,
+            // or delegate canAttachWithIME return false,
             // do nothing.
-            if (!this._pImpl._delegateWithIme.canDetachWithIME()
-                || !pDelegate.canAttachWithIME())
+            if (!this.impl._delegateWithIme.canDetachWithIME()
+                || !delegate.canAttachWithIME())
                 return false;
 
             // detach first
-            var pOldDelegate = this._pImpl._delegateWithIme;
-            this._pImpl._delegateWithIme = null;
+            var pOldDelegate = this.impl._delegateWithIme;
+            this.impl._delegateWithIme = null;
             pOldDelegate.didDetachWithIME();
 
-            this._pImpl._delegateWithIme = pDelegate;
-            pDelegate.didAttachWithIME();
+            this.impl._delegateWithIme = delegate;
+            delegate.didAttachWithIME();
             return true;
         }
 
         // havn't delegate attached with IME yet
-        if (!pDelegate.canAttachWithIME())
+        if (!delegate.canAttachWithIME())
             return false;
 
-        this._pImpl._delegateWithIme = pDelegate;
-        pDelegate.didAttachWithIME();
+        this.impl._delegateWithIme = delegate;
+        delegate.didAttachWithIME();
         return true;
     },
-    detachDelegateWithIME:function (pDelegate) {
-        if (!this._pImpl || !pDelegate) {
+    detachDelegateWithIME:function (delegate) {
+        if (!this.impl || !delegate) {
             return false;
         }
 
-        // if pDelegate is not the current delegate attached with ime, return
-        if (this._pImpl._delegateWithIme != pDelegate) {
+        // if delegate is not the current delegate attached with ime, return
+        if (this.impl._delegateWithIme != delegate) {
             return false;
         }
 
-        if (!pDelegate.canDetachWithIME()) {
+        if (!delegate.canDetachWithIME()) {
             return false;
         }
 
-        this._pImpl._delegateWithIme = 0;
-        pDelegate.didDetachWithIME();
+        this.impl._delegateWithIme = 0;
+        delegate.didDetachWithIME();
         return true;
     },
 
     /**
      @brief remove the delegate from the delegates who concern ime msg
      */
-    removeDelegate:function (pDelegate) {
-        if (!this._pImpl || !pDelegate) {
+    removeDelegate:function (delegate) {
+        if (!this.impl || !delegate) {
             return;
         }
 
-        // if pDelegate is not in delegate list, return
-        if (this._pImpl._delegateList.indexOf(pDelegate) == -1) {
+        // if delegate is not in delegate list, return
+        if (this.impl._delegateList.indexOf(delegate) == -1) {
             return;
         }
 
-        if (this._pImpl._delegateWithIme) {
-            if (pDelegate == this._pImpl._delegateWithIme) {
-                this._pImpl._delegateWithIme = null;
+        if (this.impl._delegateWithIme) {
+            if (delegate == this.impl._delegateWithIme) {
+                this.impl._delegateWithIme = null;
             }
         }
-        cc.ArrayRemoveObject(this._pImpl._delegateList, pDelegate);
+        cc.ArrayRemoveObject(this.impl._delegateList, delegate);
     },
 
     //process keydown's keycode
     processKeycode:function (keyCode) {
         if (keyCode < 32) {
-            if (keyCode == cc.key.backspace) {
+            if (keyCode == cc.KEY.backspace) {
                 this.dispatchDeleteBackward();
-            } else if (keyCode == cc.key.enter) {
+            } else if (keyCode == cc.KEY.enter) {
                 this.dispatchInsertText("\n", 1);
-            } else if (keyCode == cc.key.tab) {
+            } else if (keyCode == cc.KEY.tab) {
                 //tab input
-            } else if (keyCode == cc.key.escape) {
+            } else if (keyCode == cc.KEY.escape) {
                 //ESC input
             }
         } else if (keyCode < 255) {
@@ -332,9 +332,9 @@ cc.IMEDispatcher.Impl = cc.Class.extend({
         this._delegateList = [];
     },
 
-    findDelegate:function (pDelegate) {
+    findDelegate:function (delegate) {
         for (var i = 0; i < this._delegateList.length; i++) {
-            if (this._delegateList[i] == pDelegate) {
+            if (this._delegateList[i] == delegate) {
                 return i;
             }
         }
@@ -346,10 +346,10 @@ cc.IMEDispatcher.Impl = cc.Class.extend({
  @brief Returns the shared CCIMEDispatcher object for the system.
  */
 cc.IMEDispatcher.sharedDispatcher = function () {
-    if (!cc.IMEDispatcher.s_instance) {
-        cc.IMEDispatcher.s_instance = new cc.IMEDispatcher();
+    if (!cc.IMEDispatcher.instance) {
+        cc.IMEDispatcher.instance = new cc.IMEDispatcher();
         cc.KeypadDispatcher.sharedDispatcher();
     }
-    return cc.IMEDispatcher.s_instance;
+    return cc.IMEDispatcher.instance;
 };
-cc.IMEDispatcher.s_instance = null;
+cc.IMEDispatcher.instance = null;

@@ -50,11 +50,11 @@ var CircleSprite = cc.Sprite.extend({
 
 
 var Helloworld = cc.Layer.extend({
-    bIsMouseDown:false,
+    isMouseDown:false,
     helloImg:null,
     helloLb:null,
     circle:null,
-    pSprite:null,
+    sprite:null,
 
     init:function () {
         var selfPointer = this;
@@ -71,13 +71,13 @@ var Helloworld = cc.Layer.extend({
         //this.addChild(this.helloLb, 5);
 
         // add "HelloWorld" splash screen"
-        this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        this.pSprite.setIsVisible(true);
-        this.pSprite.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this.pSprite.setScale(0.5);
-        this.pSprite.setRotation(180);
-        this.addChild(this.pSprite, 0);
+        this.sprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
+        this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this.sprite.setIsVisible(true);
+        this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.sprite.setScale(0.5);
+        this.sprite.setRotation(180);
+        this.addChild(this.sprite, 0);
 
 
         var actionTo = cc.SkewTo.actionWithDuration(5, 0., 45);
@@ -89,13 +89,13 @@ var Helloworld = cc.Layer.extend({
         var actionBy = cc.MoveBy.actionWithDuration(5, cc.PointMake(80, 80));
         var actionByBack = actionBy.reverse();
 
-        //this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
+        //this.sprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
 
 
-        this.pSprite.runAction(cc.Sequence.actions(actionTo, actionToBack, null));
-        this.pSprite.runAction(cc.Sequence.actions(rotateTo, rotateToBack, null));
-        this.pSprite.runAction(cc.Sequence.actions(actionScaleTo, actionScaleToBack));
-        this.pSprite.runAction(cc.Sequence.actions(actionBy, actionByBack));
+        this.sprite.runAction(cc.Sequence.actions(actionTo, actionToBack, null));
+        this.sprite.runAction(cc.Sequence.actions(rotateTo, rotateToBack, null));
+        this.sprite.runAction(cc.Sequence.actions(actionScaleTo, actionScaleToBack));
+        this.sprite.runAction(cc.Sequence.actions(actionBy, actionByBack));
 
 /*        this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40, 280));
@@ -108,7 +108,7 @@ var Helloworld = cc.Layer.extend({
 
 
 
-        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
+        var closeItem = cc.MenuItemImage.itemFromNormalImage(
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
@@ -116,14 +116,14 @@ var Helloworld = cc.Layer.extend({
         var text = cc.MenuItemFont.itemFromString("Hello Dom",this, function(){});
         text.setColor({r:255,g:0,b:0});
         text.setPosition(cc.ccp(cc.canvas.width/2,cc.canvas.height/2));
-        pCloseItem.setPosition(cc.canvas.width - 20, 20);
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, text);
-        this.pSprite.addChild(pMenu);
+        closeItem.setPosition(cc.canvas.width - 20, 20);
+        var menu = cc.Menu.menuWithItems(closeItem, text);
+        this.sprite.addChild(menu);
         //cc.fullscreen();
         return true;
     },
     // a selector callback
-    menuCloseCallback:function (pSender) {
+    menuCloseCallback:function (sender) {
         history.go(-1);
     }
 
@@ -153,14 +153,14 @@ Helloworld.scene = function () {
 };
 // implement the "static node()" method manually
 Helloworld.node = function () {
-    var pRet = new Helloworld();
+    var ret = new Helloworld();
 
     // Init the helloworld display layer.
-    if (pRet && pRet.init()) {
-        return pRet;
+    if (ret && ret.init()) {
+        return ret;
     }
     else {
-        pRet = null;
+        ret = null;
         return null;
     }
 };

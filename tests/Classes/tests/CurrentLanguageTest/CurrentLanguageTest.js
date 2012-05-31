@@ -38,25 +38,25 @@ var CurrentLanguageTest = cc.Layer.extend({
 
         var currentLanguageType = cc.Application.getCurrentLanguage();
         switch (currentLanguageType) {
-            case cc.kLanguageEnglish:
+            case cc.LANGUAGE_ENGLISH:
                 labelLanguage.setString("current language is English");
                 break;
-            case cc.kLanguageChinese:
+            case cc.LANGUAGE_CHINESE:
                 labelLanguage.setString("current language is Chinese");
                 break;
-            case cc.kLanguageFrench:
+            case cc.LANGUAGE_FRENCH:
                 labelLanguage.setString("current language is French");
                 break;
-            case cc.kLanguageGerman:
+            case cc.LANGUAGE_GERMAN:
                 labelLanguage.setString("current language is German");
                 break;
-            case cc.kLanguageItalian:
+            case cc.LANGUAGE_ITALIAN:
                 labelLanguage.setString("current language is Italian");
                 break;
-            case cc.kLanguageRussian:
+            case cc.LANGUAGE_RUSSIAN:
                 labelLanguage.setString("current language is Russian");
                 break;
-            case cc.kLanguageSpanish:
+            case cc.LANGUAGE_SPANISH:
                 labelLanguage.setString("current language is Spanish");
                 break;
         }
@@ -67,8 +67,8 @@ var CurrentLanguageTest = cc.Layer.extend({
 
 var CurrentLanguageTestScene = TestScene.extend({
     runThisTest:function(){
-        var pLayer = new CurrentLanguageTest();
-        this.addChild(pLayer);
+        var layer = new CurrentLanguageTest();
+        this.addChild(layer);
 
         cc.Director.sharedDirector().replaceScene(this);
     }

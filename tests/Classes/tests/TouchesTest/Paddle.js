@@ -23,11 +23,11 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var kPaddleStateGrabbed = 0;
-var kPaddleStateUngrabbed = 1;
+var PADDLE_STATE_GRABBED = 0;
+var PADDLE_STATE_UNGRABBED = 1;
 
 var Paddle = cc.Sprite.extend({
-    _state:kPaddleStateUngrabbed,
+    _state:PADDLE_STATE_UNGRABBED,
     _rect:null,
 
     rect:function () {
@@ -35,7 +35,7 @@ var Paddle = cc.Sprite.extend({
     },
     initWithTexture:function (aTexture) {
         if (this._super(aTexture)) {
-            this._state = kPaddleStateUngrabbed;
+            this._state = PADDLE_STATE_UNGRABBED;
         }
         if (aTexture instanceof cc.Texture2D) {
             var s = aTexture.getContentSize();
@@ -63,10 +63,10 @@ var Paddle = cc.Sprite.extend({
     },
 
     ccTouchBegan:function (touch, event) {
-        if (this._state != kPaddleStateUngrabbed) return false;
+        if (this._state != PADDLE_STATE_UNGRABBED) return false;
         if (!this.containsTouchLocation(touch)) return false;
 
-        this._state = kPaddleStateGrabbed;
+        this._state = PADDLE_STATE_GRABBED;
         return true;
     },
     ccTouchMoved:function (touch, event) {
@@ -76,7 +76,7 @@ var Paddle = cc.Sprite.extend({
         // Actually, it would be even more complicated since in the Cocos dispatcher
         // you get CCSets instead of 1 UITouch, so you'd need to loop through the set
         // in each touchXXX method.
-        cc.Assert(this._state == kPaddleStateGrabbed, "Paddle - Unexpected state!");
+        cc.Assert(this._state == PADDLE_STATE_GRABBED, "Paddle - Unexpected state!");
 
         var touchPoint = touch.locationInView(touch.view());
         //touchPoint = cc.Director.sharedDirector().convertToGL( touchPoint );
@@ -84,8 +84,8 @@ var Paddle = cc.Sprite.extend({
         this.setPosition(cc.PointMake(touchPoint.x, this.getPosition().y));
     },
     ccTouchEnded:function (touch, event) {
-        cc.Assert(this._state == kPaddleStateGrabbed, "Paddle - Unexpected state!");
-        this._state = kPaddleStateUngrabbed;
+        cc.Assert(this._state == PADDLE_STATE_GRABBED, "Paddle - Unexpected state!");
+        this._state = PADDLE_STATE_UNGRABBED;
     },
     touchDelegateRetain:function () {
     },
@@ -93,8 +93,8 @@ var Paddle = cc.Sprite.extend({
     }
 });
 Paddle.paddleWithTexture = function (aTexture) {
-    var pPaddle = new Paddle();
-    pPaddle.initWithTexture(aTexture);
+    var paddle = new Paddle();
+    paddle.initWithTexture(aTexture);
 
-    return pPaddle;
+    return paddle;
 };

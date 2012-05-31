@@ -50,96 +50,96 @@ var cc = cc = cc || {};
  */
 cc.Camera = cc.Class.extend({
     /*protected:*/
-    _m_fEyeX:null,
-    _m_fEyeY:null,
-    _m_fEyeZ:null,
-    _m_fCenterX:null,
-    _m_fCenterY:null,
-    _m_fCenterZ:null,
-    _m_fUpX:null,
-    _m_fUpY:null,
-    _m_fUpZ:null,
-    _m_bDirty:null,
+    _eyeX:null,
+    _eyeY:null,
+    _eyeZ:null,
+    _centerX:null,
+    _centerY:null,
+    _centerZ:null,
+    _upX:null,
+    _upY:null,
+    _upZ:null,
+    _dirty:null,
 
     /*public:*/
     ctor:function () {
         this.restore();
     },
     description:function () {
-        return "<CCCamera | center =(" + this._m_fCenterX + "," + this._m_fCenterY + "," + this._m_fCenterZ + ")>";
+        return "<CCCamera | center =(" + this._centerX + "," + this._centerY + "," + this._centerZ + ")>";
     },
     /** sets the dirty value */
-    setDirty:function (bValue) {
-        this._m_bDirty = bValue;
+    setDirty:function (value) {
+        this._dirty = value;
     },
     /** get the dirty value */
     getDirty:function () {
-        return this._m_bDirty;
+        return this._dirty;
     },
 
     /** sets the camera in the default position */
     restore:function () {
-        this._m_fEyeX = this._m_fEyeY = 0.0;
-        this._m_fEyeZ = cc.Camera.getZEye();
+        this._eyeX = this._eyeY = 0.0;
+        this._eyeZ = cc.Camera.getZEye();
 
-        this._m_fCenterX = this._m_fCenterY = this._m_fCenterZ = 0.0;
+        this._centerX = this._centerY = this._centerZ = 0.0;
 
-        this._m_fUpX = 0.0;
-        this._m_fUpY = 1.0;
-        this._m_fUpZ = 0.0;
+        this._upX = 0.0;
+        this._upY = 1.0;
+        this._upZ = 0.0;
 
-        this._m_bDirty = false;
+        this._dirty = false;
     },
     /** Sets the camera using gluLookAt using its eye, center and up_vector */
     locate:function () {
-        if (this._m_bDirty) {
+        if (this._dirty) {
             //TODO gl
-            //gluLookAt(this._m_fEyeX, this._m_fEyeY, this._m_fEyeZ,this._m_fCenterX, this._m_fCenterY, this._m_fCenterZ,this._m_fUpX, this._m_fUpY, this._m_fUpZ);
+            //gluLookAt(this._eyeX, this._eyeY, this._eyeZ,this._centerX, this._centerY, this._centerZ,this._upX, this._upY, this._upZ);
         }
 
     },
     /** sets the eye values in points */
-    setEyeXYZ:function (fEyeX, fEyeY, fEyeZ) {
-        this._m_fEyeX = fEyeX * cc.CONTENT_SCALE_FACTOR;
-        this._m_fEyeY = fEyeY * cc.CONTENT_SCALE_FACTOR;
-        this._m_fEyeZ = fEyeZ * cc.CONTENT_SCALE_FACTOR;
+    setEyeXYZ:function (eyeX, eyeY, eyeZ) {
+        this._eyeX = eyeX * cc.CONTENT_SCALE_FACTOR;
+        this._eyeY = eyeY * cc.CONTENT_SCALE_FACTOR;
+        this._eyeZ = eyeZ * cc.CONTENT_SCALE_FACTOR;
 
-        this._m_bDirty = true;
+        this._dirty = true;
     },
     /** sets the center values in points */
-    setCenterXYZ:function (fCenterX, fCenterY, fCenterZ) {
-        this._m_fCenterX = fCenterX * cc.CONTENT_SCALE_FACTOR;
-        this._m_fCenterY = fCenterY * cc.CONTENT_SCALE_FACTOR;
-        this._m_fCenterZ = fCenterZ * cc.CONTENT_SCALE_FACTOR;
+    setCenterXYZ:function (centerX, centerY, fenterZ) {
+        this._centerX = centerX * cc.CONTENT_SCALE_FACTOR;
+        this._centerY = centerY * cc.CONTENT_SCALE_FACTOR;
+        this._centerZ = fenterZ * cc.CONTENT_SCALE_FACTOR;
 
-        this._m_bDirty = true;
+        this._dirty = true;
     },
     /** sets the up values */
-    setUpXYZ:function (fUpX, fUpY, fUpZ) {
-        this._m_fUpX = fUpX;
-        this._m_fUpY = fUpY;
-        this._m_fUpZ = fUpZ;
+    setUpXYZ:function (upX, upY, upZ) {
+        this._upX = upX;
+        this._upY = upY;
+        this._upZ = upZ;
 
-        this._m_bDirty = true;
+        this._dirty = true;
     },
 
     /** get the eye vector values in points */
-    getEyeXYZ:function (pEyeX, pEyeY, pEyeZ) {
-        pEyeX = this._m_fEyeX / cc.CONTENT_SCALE_FACTOR;
-        pEyeY = this._m_fEyeY / cc.CONTENT_SCALE_FACTOR;
-        pEyeZ = this._m_fEyeZ / cc.CONTENT_SCALE_FACTOR;
+    getEyeXYZ:function (eyeX, eyeY, eyeZ) {
+        eyeX = this._eyeX / cc.CONTENT_SCALE_FACTOR;
+        eyeY = this._eyeY / cc.CONTENT_SCALE_FACTOR;
+        eyeZ = this._eyeZ / cc.CONTENT_SCALE_FACTOR;
     },
     /** get the center vector values int points */
-    getCenterXYZ:function (pCenterX, pCenterY, pCenterZ) {
-        pCenterX = this._m_fCenterX / cc.CONTENT_SCALE_FACTOR;
-        pCenterY = this._m_fCenterY / cc.CONTENT_SCALE_FACTOR;
-        pCenterZ = this._m_fCenterZ / cc.CONTENT_SCALE_FACTOR;
+    getCenterXYZ:function (centerX, centerY, centerZ) {
+        centerX = this._centerX / cc.CONTENT_SCALE_FACTOR;
+        centerY = this._centerY / cc.CONTENT_SCALE_FACTOR;
+        centerZ = this._centerZ / cc.CONTENT_SCALE_FACTOR;
     },
     /** get the up vector values */
-    getUpXYZ:function (pUpX, pUpY, pUpZ) {
-        pUpX = this._m_fUpX;
-        pUpY = this._m_fUpY;
-        pUpZ = this._m_fUpZ;
+    getUpXYZ:function (upX, upY, upZ) {
+        upX = this._upX;
+        upY = this._upY;
+        upZ = this._upZ;
     },
 
     /*private:*/

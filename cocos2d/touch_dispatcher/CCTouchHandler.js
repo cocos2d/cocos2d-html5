@@ -35,56 +35,56 @@ var cc = cc = cc || {};
  Object than contains the delegate and priority of the event handler.
  */
 cc.TouchHandler = cc.Class.extend({
-    _m_pDelegate:null,
-    _m_nPriority:0,
-    _m_nEnabledSelectors:0,
+    _delegate:null,
+    _priority:0,
+    _enabledSelectors:0,
 
     /** delegate */
     getDelegate:function () {
-        return this._m_pDelegate;
+        return this._delegate;
     },
-    setDelegate:function (pDelegate) {
-        this._m_pDelegate = pDelegate;
+    setDelegate:function (delegate) {
+        this._delegate = delegate;
     },
 
     /** priority */
     getPriority:function () {
-        return this._m_nPriority;
+        return this._priority;
     },
-    setPriority:function (nPriority) {
-        this._m_nPriority = nPriority;
+    setPriority:function (priority) {
+        this._priority = priority;
     },
 
     /** enabled selectors */
     getEnabledSelectors:function () {
-        return this._m_nEnabledSelectors;
+        return this._enabledSelectors;
     },
     setEnalbedSelectors:function (nValue) {
-        this._m_nEnabledSelectors = nValue;
+        this._enabledSelectors = nValue;
     },
 
     /** initializes a TouchHandler with a delegate and a priority */
-    initWithDelegate:function (pDelegate, nPriority) {
-        cc.Assert(pDelegate != null, "TouchHandler.initWithDelegate():touch delegate should not be null");
+    initWithDelegate:function (delegate, priority) {
+        cc.Assert(delegate != null, "TouchHandler.initWithDelegate():touch delegate should not be null");
 
-        this._m_pDelegate = pDelegate;
+        this._delegate = delegate;
 
-        this._m_nPriority = nPriority;
-        this._m_nEnabledSelectors = 0;
+        this._priority = priority;
+        this._enabledSelectors = 0;
 
         return true;
     }
 });
 
 /** allocates a TouchHandler with a delegate and a priority */
-cc.TouchHandler.handlerWithDelegate = function (pDelegate, nPriority) {
-    var pHandler = new cc.TouchHandler();
+cc.TouchHandler.handlerWithDelegate = function (delegate, priority) {
+    var handler = new cc.TouchHandler();
 
-    if (pHandler) {
-        pHandler.initWithDelegate(pDelegate, nPriority);
+    if (handler) {
+        handler.initWithDelegate(delegate, priority);
     }
 
-    return pHandler;
+    return handler;
 };
 
 /**
@@ -93,8 +93,8 @@ cc.TouchHandler.handlerWithDelegate = function (pDelegate, nPriority) {
  */
 cc.StandardTouchHandler = cc.TouchHandler.extend({
     /** initializes a TouchHandler with a delegate and a priority */
-    initWithDelegate:function (pDelegate, nPriority) {
-        if (this._super(pDelegate, nPriority)) {
+    initWithDelegate:function (delegate, priority) {
+        if (this._super(delegate, priority)) {
             return true;
         }
         return false;
@@ -102,38 +102,38 @@ cc.StandardTouchHandler = cc.TouchHandler.extend({
 });
 
 /** allocates a TouchHandler with a delegate and a priority */
-cc.StandardTouchHandler.handlerWithDelegate = function (pDelegate, nPriority) {
-    var pHandler = new cc.StandardTouchHandler();
+cc.StandardTouchHandler.handlerWithDelegate = function (delegate, priority) {
+    var handler = new cc.StandardTouchHandler();
 
-    if (pHandler) {
-        pHandler.initWithDelegate(pDelegate, nPriority);
+    if (handler) {
+        handler.initWithDelegate(delegate, priority);
     }
 
-    return pHandler;
+    return handler;
 };
 
 cc.TargetedTouchHandler = cc.TouchHandler.extend({
-    _m_bSwallowsTouches:false,
-    _m_pClaimedTouches:null,
+    _swallowsTouches:false,
+    _claimedTouches:null,
 
     /** whether or not the touches are swallowed */
     isSwallowsTouches:function () {
-        return this._m_bSwallowsTouches;
+        return this._swallowsTouches;
     },
-    setSwallowsTouches:function (bSwallowsTouches) {
-        this._m_bSwallowsTouches = bSwallowsTouches;
+    setSwallowsTouches:function (swallowsTouches) {
+        this._swallowsTouches = swallowsTouches;
     },
 
     /** MutableSet that contains the claimed touches */
     getClaimedTouches:function () {
-        return this._m_pClaimedTouches;
+        return this._claimedTouches;
     },
 
     /** initializes a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not */
-    initWithDelegate:function (pDelegate, nPriority, bSwallow) {
-        if (this._super(pDelegate, nPriority)) {
-            this._m_pClaimedTouches = [];
-            this._m_bSwallowsTouches = bSwallow;
+    initWithDelegate:function (delegate, priority, bSwallow) {
+        if (this._super(delegate, priority)) {
+            this._claimedTouches = [];
+            this._swallowsTouches = bSwallow;
 
             return true;
         }
@@ -142,12 +142,12 @@ cc.TargetedTouchHandler = cc.TouchHandler.extend({
 });
 
 /** allocates a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not */
-cc.TargetedTouchHandler.handlerWithDelegate = function (pDelegate, nPriority, bSwallow) {
-    var pHandler = new cc.TargetedTouchHandler();
+cc.TargetedTouchHandler.handlerWithDelegate = function (delegate, priority, bSwallow) {
+    var handler = new cc.TargetedTouchHandler();
 
-    if (pHandler) {
-        pHandler.initWithDelegate(pDelegate, nPriority, bSwallow);
+    if (handler) {
+        handler.initWithDelegate(delegate, priority, bSwallow);
     }
 
-    return pHandler;
+    return handler;
 };

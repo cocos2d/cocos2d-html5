@@ -26,30 +26,30 @@
 var s_nTouchCurCase = 0;
 
 var TouchesMainScene = PerformBasicLayer.extend({
-    _m_nMaxCases:2,
-    _m_plabel:null,
+    _maxCases:2,
+    _plabel:null,
     _numberOfTouchesB:0,
     _numberOfTouchesM:0,
     _numberOfTouchesE:0,
     _numberOfTouchesC:0,
     _elapsedTime:null,
     showCurrentTest:function () {
-        var pLayer = null;
-        switch (this._m_nCurCase) {
+        var layer = null;
+        switch (this._curCase) {
             case 0:
-                pLayer = new TouchesPerformTest1(true, 2, this._m_nCurCase);
+                layer = new TouchesPerformTest1(true, 2, this._curCase);
                 break;
             case 1:
-                pLayer = new TouchesPerformTest2(true, 2, this._m_nCurCase);
+                layer = new TouchesPerformTest2(true, 2, this._curCase);
                 break;
         }
-        s_nTouchCurCase = this._m_nCurCase;
+        s_nTouchCurCase = this._curCase;
 
-        if (pLayer) {
-            var pScene = cc.Scene.node();
-            pScene.addChild(pLayer);
+        if (layer) {
+            var scene = cc.Scene.node();
+            scene.addChild(layer);
 
-            cc.Director.sharedDirector().replaceScene(pScene);
+            cc.Director.sharedDirector().replaceScene(scene);
         }
     },
     onEnter:function () {
@@ -64,9 +64,9 @@ var TouchesMainScene = PerformBasicLayer.extend({
 
         this.scheduleUpdate();
 
-        this._m_plabel = cc.LabelTTF.labelWithString("00.0", "Arial", 16);
-        this._m_plabel.setPosition(cc.ccp(s.width / 2, s.height / 2));
-        this.addChild(this._m_plabel);
+        this._plabel = cc.LabelTTF.labelWithString("00.0", "Arial", 16);
+        this._plabel.setPosition(cc.ccp(s.width / 2, s.height / 2));
+        this.addChild(this._plabel);
 
         this._elapsedTime = 0;
         this._numberOfTouchesB = this._numberOfTouchesM = this._numberOfTouchesE = this._numberOfTouchesC = 0;
@@ -86,7 +86,7 @@ var TouchesMainScene = PerformBasicLayer.extend({
             this._numberOfTouchesB = this._numberOfTouchesM = this._numberOfTouchesE = this._numberOfTouchesC = 0;
 
             var str = frameRateB + " " + frameRateM + " " + frameRateE + " " + frameRateC;
-            this._m_plabel.setString(str);
+            this._plabel.setString(str);
         }
     }
 });
@@ -155,8 +155,8 @@ var TouchesPerformTest2 = TouchesMainScene.extend({
 
 function runTouchesTest() {
     s_nTouchCurCase = 0;
-    var pScene = cc.Scene.node();
-    var pLayer = new TouchesPerformTest1(true, 2, s_nTouchCurCase);
-    pScene.addChild(pLayer);
-    cc.Director.sharedDirector().replaceScene(pScene);
+    var scene = cc.Scene.node();
+    var layer = new TouchesPerformTest1(true, 2, s_nTouchCurCase);
+    scene.addChild(layer);
+    cc.Director.sharedDirector().replaceScene(scene);
 }

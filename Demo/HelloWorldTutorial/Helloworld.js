@@ -45,11 +45,11 @@ var CircleSprite = cc.Sprite.extend({
 
 
 var Helloworld = cc.Layer.extend({
-    bIsMouseDown:false,
+    isMouseDown:false,
     helloImg:null,
     helloLabel:null,
     circle:null,
-    pSprite:null,
+    sprite:null,
 
     init:function () {
         var selfPointer = this;
@@ -64,19 +64,19 @@ var Helloworld = cc.Layer.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // add a "close" icon to exit the progress. it's an autorelease object
-        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(
+        var closeItem = cc.MenuItemImage.itemFromNormalImage(
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
             function () {
                 history.go(-1);
             });
-        pCloseItem.setAnchorPoint(new cc.Point(0.5,0.5));
+        closeItem.setAnchorPoint(new cc.Point(0.5,0.5));
 
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);
-        pMenu.setPosition( cc.PointZero() );
-        this.addChild(pMenu, 1);
-        pCloseItem.setPosition(new cc.Point(size.width -20 , 20));
+        var menu = cc.Menu.menuWithItems(closeItem, null);
+        menu.setPosition( cc.PointZero() );
+        this.addChild(menu, 1);
+        closeItem.setPosition(new cc.Point(size.width -20 , 20));
 
         /////////////////////////////
         // 3. add your codes below...
@@ -92,17 +92,17 @@ var Helloworld = cc.Layer.extend({
         this.addChild(lazyLayer);
 
         // add "HelloWorld" splash screen"
-        this.pSprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
-        this.pSprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        this.pSprite.setScale(0.5);
-        this.pSprite.setRotation(180);
+        this.sprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
+        this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this.sprite.setScale(0.5);
+        this.sprite.setRotation(180);
 
-        lazyLayer.addChild(this.pSprite, 0);
+        lazyLayer.addChild(this.sprite, 0);
 
         var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
         var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
 
-        this.pSprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
+        this.sprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
 
         this.circle = new CircleSprite();
         this.circle.setPosition(new cc.Point(40, size.height - 60));
@@ -146,23 +146,23 @@ var Helloworld = cc.Layer.extend({
         cc.Director.sharedDirector().setContentScaleFactor(xScale);
     },
     // a selector callback
-    menuCloseCallback:function (pSender) {
+    menuCloseCallback:function (sender) {
         cc.Director.sharedDirector().end();
     },
-    ccTouchesBegan:function (pTouches, pEvent) {
-        this.bIsMouseDown = true;
+    ccTouchesBegan:function (touches, event) {
+        this.isMouseDown = true;
     },
-    ccTouchesMoved:function (pTouches, pEvent) {
-        if (this.bIsMouseDown) {
-            if (pTouches) {
-                //this.circle.setPosition(new cc.Point(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y));
+    ccTouchesMoved:function (touches, event) {
+        if (this.isMouseDown) {
+            if (touches) {
+                //this.circle.setPosition(new cc.Point(touches[0].locationInView(0).x, touches[0].locationInView(0).y));
             }
         }
     },
-    ccTouchesEnded:function (pTouches, pEvent) {
-        this.bIsMouseDown = false;
+    ccTouchesEnded:function (touches, event) {
+        this.isMouseDown = false;
     },
-    ccTouchesCancelled:function (pTouches, pEvent) {
+    ccTouchesCancelled:function (touches, event) {
         console.log("ccTouchesCancelled");
     }
 });
@@ -178,11 +178,11 @@ Helloworld.scene = function () {
 };
 // implement the "static node()" method manually
 Helloworld.node = function () {
-    var pRet = new Helloworld();
+    var ret = new Helloworld();
 
     // Init the helloworld display layer.
-    if (pRet && pRet.init()) {
-        return pRet;
+    if (ret && ret.init()) {
+        return ret;
     }
 
     return null;

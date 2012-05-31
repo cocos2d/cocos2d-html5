@@ -34,116 +34,116 @@ var TestScene = cc.Scene.extend({
         this._super();
         this._portrait = bPortrait;
         if (this._portrait) {
-            cc.Director.sharedDirector().setDeviceOrientation(cc.DeviceOrientationLandscapeRight);
+            cc.Director.sharedDirector().setDeviceOrientation(cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT);
         }
         this.init();
     },
     onEnter:function () {
         this._super();
         var label = cc.LabelTTF.labelWithString("MainMenu", "Arial", 20);
-        var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.MainMenuCallback);
+        var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.MainMenuCallback);
 
-        var pMenu = cc.Menu.menuWithItems(pMenuItem, null);
+        var menu = cc.Menu.menuWithItems(menuItem, null);
         var s = cc.Director.sharedDirector().getWinSize();
-        pMenu.setPosition(cc.PointZero());
-        pMenuItem.setPosition(cc.PointMake(s.width - 50, 25));
+        menu.setPosition(cc.PointZero());
+        menuItem.setPosition(cc.PointMake(s.width - 50, 25));
 
-        this.addChild(pMenu, 1);
+        this.addChild(menu, 1);
     },
     runThisTest:function () {
 
     },
     MainMenuCallback:function () {
-        var pScene = cc.Scene.node();
-        var pLayer = new TestController();
-        pScene.addChild(pLayer);
-        cc.Director.sharedDirector().replaceScene(pScene);
+        var scene = cc.Scene.node();
+        var layer = new TestController();
+        scene.addChild(layer);
+        cc.Director.sharedDirector().replaceScene(scene);
     }
 });
 //Controller stuff
 var LINE_SPACE = 40;
-var s_pPathClose = null;
-var s_tCurPos = cc.PointZero();
+var s_pathClose = null;
+var curPos = cc.PointZero();
 
 var TestController = cc.Layer.extend({
-    _m_pItemMenu:null,
-    _m_tBeginPos:cc.PointZero(),
-    bIsMouseDown:false,
+    _itemMenu:null,
+    _beginPos:cc.PointZero(),
+    isMouseDown:false,
     ctor:function () {
         // add close menu
-        if (!s_pPathClose) {
-            s_pPathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");
+        if (!s_pathClose) {
+            s_pathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");
         }
-        var pCloseItem = cc.MenuItemImage.itemFromNormalImage(s_pPathClose, s_pPathClose, this, this.closeCallback);
-        var pMenu = cc.Menu.menuWithItems(pCloseItem, null);//pmenu is just a holder for the close button
+        var closeItem = cc.MenuItemImage.itemFromNormalImage(s_pathClose, s_pathClose, this, this.closeCallback);
+        var menu = cc.Menu.menuWithItems(closeItem, null);//pmenu is just a holder for the close button
         var s = cc.Director.sharedDirector().getWinSize();
-        pMenu.setPosition(cc.PointZero());
-        pCloseItem.setPosition(cc.PointMake(s.width - 30, s.height - 30));
+        menu.setPosition(cc.PointZero());
+        closeItem.setPosition(cc.PointMake(s.width - 30, s.height - 30));
 
         // add menu items for tests
-        this._m_pItemMenu = cc.Menu.menuWithItems(null);//item menu is where all the label goes, and the one gets scrolled
+        this._itemMenu = cc.Menu.menuWithItems(null);//item menu is where all the label goes, and the one gets scrolled
 
-        for (var i =0,len = g_aTestNames.length;i < len;i++) {
-            var label = cc.LabelTTF.labelWithString(g_aTestNames[i], "Arial", 24);
-            var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-            this._m_pItemMenu.addChild(pMenuItem,i  + 10000);
-            pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
+        for (var i =0,len = testNames.length;i < len;i++) {
+            var label = cc.LabelTTF.labelWithString(testNames[i], "Arial", 24);
+            var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
+            this._itemMenu.addChild(menuItem,i  + 10000);
+            menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }
 
-        this._m_pItemMenu.setContentSize(cc.SizeMake(s.width, (g_aTestNames.length + 1) * LINE_SPACE));
-        this._m_pItemMenu.setPosition(s_tCurPos);
+        this._itemMenu.setContentSize(cc.SizeMake(s.width, (testNames.length + 1) * LINE_SPACE));
+        this._itemMenu.setPosition(curPos);
         this.setIsTouchEnabled(true);
-        this.addChild(this._m_pItemMenu);
-        this.addChild(pMenu, 1);
+        this.addChild(this._itemMenu);
+        this.addChild(menu, 1);
     },
-    menuCallback:function (pSender) {
-        var nIdx = pSender.getZOrder() - 10000;
+    menuCallback:function (sender) {
+        var idx = sender.getZOrder() - 10000;
         // get the userdata, it's the index of the menu item clicked
         // create the test scene and run it
-        var pScene = new window[g_aTestNames[nIdx]+"Scene"]();
-        if (pScene) {
-            pScene.runThisTest();
+        var scene = new window[testNames[idx]+"Scene"]();
+        if (scene) {
+            scene.runThisTest();
         }
     },
     closeCallback:function () {
         history.go(-1);
     },
-    ccTouchesBegan:function (pTouches, pEvent) {
-        if (!this.bIsMouseDown) {
-            //this._m_tBeginPos = cc.ccp(pTouches[0].locationInView(0).x, pTouches[0].locationInView(0).y);
-            this._m_tBeginPos = pTouches[0].locationInView(0).y;
+    ccTouchesBegan:function (touches, event) {
+        if (!this.isMouseDown) {
+            //this._beginPos = cc.ccp(touches[0].locationInView(0).x, touches[0].locationInView(0).y);
+            this._beginPos = touches[0].locationInView(0).y;
         }
-        this.bIsMouseDown = true;
+        this.isMouseDown = true;
     },
-    ccTouchesMoved:function (pTouches, pEvent) {
-        if (this.bIsMouseDown) {
-            var touchLocation = pTouches[0].locationInView(0).y;
-            var nMoveY = touchLocation - this._m_tBeginPos;
-            var curPos = cc.ccp(this._m_pItemMenu.getPosition().x, this._m_pItemMenu.getPosition().y);
+    ccTouchesMoved:function (touches, event) {
+        if (this.isMouseDown) {
+            var touchLocation = touches[0].locationInView(0).y;
+            var nMoveY = touchLocation - this._beginPos;
+            var curPos = cc.ccp(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
 
             var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
             var winSize = cc.Director.sharedDirector().getWinSize();
             if (nextPos.y < 0.0) {
-                this._m_pItemMenu.setPosition(cc.PointZero());
+                this._itemMenu.setPosition(cc.PointZero());
                 return;
             }
 
-            if (nextPos.y > ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)) {
-                this._m_pItemMenu.setPosition(cc.ccp(0, ((g_aTestNames.length + 1) * LINE_SPACE - winSize.height)));
+            if (nextPos.y > ((testNames.length + 1) * LINE_SPACE - winSize.height)) {
+                this._itemMenu.setPosition(cc.ccp(0, ((testNames.length + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
-            this._m_pItemMenu.setPosition(nextPos);
-            this._m_tBeginPos = cc.ccp(0, touchLocation).y;
+            this._itemMenu.setPosition(nextPos);
+            this._beginPos = cc.ccp(0, touchLocation).y;
 
-            s_tCurPos   = nextPos;
+            curPos   = nextPos;
         }
     },
     ccTouchesEnded:function () {
-        this.bIsMouseDown = false;
+        this.isMouseDown = false;
     }
 });
 
-var g_aTestNames = [
+var testNames = [
     //"Accelerometer",
     "ActionManagerTest",
     "ActionsTest",

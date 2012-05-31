@@ -47,40 +47,40 @@ var cc = cc = cc || {};
  CCAction *pingPongAction = CCSequence::actions(action, action->reverse(), NULL);
  */
 cc.ActionInterval = cc.FiniteTimeAction.extend({
-    _m_elapsed:0,
-    _m_bFirstTick:false,
+    _elapsed:0,
+    _firstTick:false,
     /** how many seconds had elapsed since the actions started to run. */
     getElapsed:function () {
-        return this._m_elapsed;
+        return this._elapsed;
     },
     /** initializes the action */
     initWithDuration:function (d) {
-        this._m_fDuration = (d == 0) ? cc.FLT_EPSILON : d;
+        this._duration = (d == 0) ? cc.FLT_EPSILON : d;
         // prevent division by 0
         // This comparison could be in step:, but it might decrease the performance
         // by 3% in heavy based action games.
-        this._m_elapsed = 0;
-        this._m_bFirstTick = true;
+        this._elapsed = 0;
+        this._firstTick = true;
         return true;
     },
     /** returns true if the action has finished */
     isDone:function () {
-        return (this._m_elapsed >= this._m_fDuration);
+        return (this._elapsed >= this._duration);
     },
     step:function (dt) {
-        if (this._m_bFirstTick) {
-            this._m_bFirstTick = false;
-            this._m_elapsed = 0;
+        if (this._firstTick) {
+            this._firstTick = false;
+            this._elapsed = 0;
         }
         else {
-            this._m_elapsed += dt;
+            this._elapsed += dt;
         }
-        this.update((1 > (this._m_elapsed / this._m_fDuration)) ? this._m_elapsed / this._m_fDuration : 1);
+        this.update((1 > (this._elapsed / this._duration)) ? this._elapsed / this._duration : 1);
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_elapsed = 0;
-        this._m_bFirstTick = true;
+    startWithTarget:function (target) {
+        this._super(target);
+        this._elapsed = 0;
+        this._firstTick = true;
     },
     reverse:function () {
         /*
@@ -101,93 +101,93 @@ cc.ActionInterval = cc.FiniteTimeAction.extend({
     }
 });
 cc.ActionInterval.actionWithDuration = function (d) {
-    var pAction = new cc.ActionInterval();
-    pAction.initWithDuration(d);
-    return pAction;
+    var action = new cc.ActionInterval();
+    action.initWithDuration(d);
+    return action;
 };
 
 
 /** @brief Runs actions sequentially, one after another
  */
 cc.Sequence = cc.ActionInterval.extend({
-    _m_pActions:null,
-    _m_split:null,
-    _m_last:0,
+    _actions:null,
+    _split:null,
+    _last:0,
 
     ctor:function () {
-        this._m_pActions = [];
+        this._actions = [];
     },
 
     /** initializes the action */
-    // bool initOneTwo(CCFiniteTimeAction *pActionOne, CCFiniteTimeAction *pActionTwo);
-    initOneTwo:function (pActionOne, pActionTwo) {
-        cc.Assert(pActionOne != null, "Sequence.initOneTwo");
-        cc.Assert(pActionTwo != null, "Sequence.initOneTwo");
+    // bool initOneTwo(CCFiniteTimeAction *actionOne, CCFiniteTimeAction *actionTwo);
+    initOneTwo:function (actionOne, actionTwo) {
+        cc.Assert(actionOne != null, "Sequence.initOneTwo");
+        cc.Assert(actionTwo != null, "Sequence.initOneTwo");
 
-        var one = pActionOne.getDuration();
-        var two = pActionTwo.getDuration();
+        var one = actionOne.getDuration();
+        var two = actionTwo.getDuration();
         if (isNaN(one) || isNaN(two)) {
-            console.log(pActionOne);
-            console.log(pActionTwo);
+            console.log(actionOne);
+            console.log(actionTwo);
         }
-        var d = pActionOne.getDuration() + pActionTwo.getDuration();
+        var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
 
-        this._m_pActions[0] = pActionOne;
-        this._m_pActions[1] = pActionTwo;
+        this._actions[0] = actionOne;
+        this._actions[1] = actionTwo;
 
         return true;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_split = this._m_pActions[0].getDuration() / this._m_fDuration;
-        this._m_last = -1;
+    startWithTarget:function (target) {
+        this._super(target);
+        this._split = this._actions[0].getDuration() / this._duration;
+        this._last = -1;
     },
     stop:function () {
-        this._m_pActions[0].stop();
-        this._m_pActions[1].stop();
+        this._actions[0].stop();
+        this._actions[1].stop();
         this._super();
     },
     update:function (time) {
         var found = 0;
         var new_t = 0;
-        if (time >= this._m_split) {
+        if (time >= this._split) {
             found = 1;
-            new_t = (this._m_split == 1) ? 1 : (time - this._m_split) / (1 - this._m_split);
+            new_t = (this._split == 1) ? 1 : (time - this._split) / (1 - this._split);
         }
         else {
             found = 0;
-            new_t = (this._m_split != 0) ? time / this._m_split : 1;
+            new_t = (this._split != 0) ? time / this._split : 1;
         }
-        if (this._m_last == -1 && found == 1) {
-            this._m_pActions[0].startWithTarget(this._m_pTarget);
-            this._m_pActions[0].update(1);
-            this._m_pActions[0].stop();
+        if (this._last == -1 && found == 1) {
+            this._actions[0].startWithTarget(this._target);
+            this._actions[0].update(1);
+            this._actions[0].stop();
         }
-        if (this._m_last != found) {
-            if (this._m_last != -1) {
-                this._m_pActions[this._m_last].update(1);
-                this._m_pActions[this._m_last].stop();
+        if (this._last != found) {
+            if (this._last != -1) {
+                this._actions[this._last].update(1);
+                this._actions[this._last].stop();
             }
 
-            this._m_pActions[found].startWithTarget(this._m_pTarget);
+            this._actions[found].startWithTarget(this._target);
         }
-        this._m_pActions[found].update(new_t);
-        this._m_last = found;
+        this._actions[found].update(new_t);
+        this._last = found;
     },
     reverse:function () {
-        return cc.Sequence.actionOneTwo(this._m_pActions[1].reverse(), this._m_pActions[0].reverse());
+        return cc.Sequence.actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
     }
 });
 /** helper constructor to create an array of sequenceable actions */
 cc.Sequence.actions = function (/*Multiple Arguments*/) {
-    var pPrev = arguments[0];
+    var prev = arguments[0];
     for (var i = 1; i < arguments.length; i++) {
         if (arguments[i] != null) {
-            pPrev = cc.Sequence.actionOneTwo(pPrev, arguments[i]);
+            prev = cc.Sequence.actionOneTwo(prev, arguments[i]);
         }
     }
-    return pPrev;
+    return prev;
 
 };
 /** helper contructor to create an array of sequenceable actions given an array */
@@ -199,10 +199,10 @@ cc.Sequence.actionsWithArray = function (actions) {
     return prev;
 };
 /** creates the action */
-cc.Sequence.actionOneTwo = function (pActionOne, pActionTwo) {
-    var pSequence = new cc.Sequence();
-    pSequence.initOneTwo(pActionOne, pActionTwo);
-    return pSequence;
+cc.Sequence.actionOneTwo = function (actionOne, actionTwo) {
+    var sequence = new cc.Sequence();
+    sequence.initOneTwo(actionOne, actionTwo);
+    return sequence;
 };
 
 
@@ -210,46 +210,46 @@ cc.Sequence.actionOneTwo = function (pActionOne, pActionTwo) {
  * To repeat an action forever use the CCRepeatForever action.
  */
 cc.Repeat = cc.ActionInterval.extend({
-    _m_uTimes:0,
-    _m_uTotal:0,
-    _m_pInnerAction:null, //CCFiniteTimeAction
-    initWithAction:function (pAction, times) {
-        var d = pAction.getDuration() * times;
+    _times:0,
+    _total:0,
+    _innerAction:null, //CCFiniteTimeAction
+    initWithAction:function (action, times) {
+        var d = action.getDuration() * times;
 
         if (this.initWithDuration(d)) {
-            this._m_uTimes = times;
-            this._m_pInnerAction = pAction;
-            this._m_uTotal = 0;
+            this._times = times;
+            this._innerAction = action;
+            this._total = 0;
             return true;
         }
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._m_uTotal = 0;
-        this._super(pTarget);
-        this._m_pInnerAction.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        this._total = 0;
+        this._super(target);
+        this._innerAction.startWithTarget(target);
     },
     stop:function () {
-        this._m_pInnerAction.stop();
+        this._innerAction.stop();
         this._super();
     },
     update:function (time) {
-        var t = time * this._m_uTimes;
-        if (t > this._m_uTotal + 1) {
-            this._m_pInnerAction.update(1);
-            this._m_uTotal++;
-            this._m_pInnerAction.stop();
-            this._m_pInnerAction.startWithTarget(this._m_pTarget);
+        var t = time * this._times;
+        if (t > this._total + 1) {
+            this._innerAction.update(1);
+            this._total++;
+            this._innerAction.stop();
+            this._innerAction.startWithTarget(this._target);
 
             // repeat is over?
-            if (this._m_uTotal == this._m_uTimes) {
+            if (this._total == this._times) {
                 // so, set it in the original position
-                this._m_pInnerAction.update(0);
+                this._innerAction.update(0);
             }
             else {
                 // no ? start next repeat with the right update
                 // to prevent jerk (issue #390)
-                this._m_pInnerAction.update(t - this._m_uTotal);
+                this._innerAction.update(t - this._total);
             }
         }
         else {
@@ -259,33 +259,33 @@ cc.Repeat = cc.ActionInterval.extend({
             // else it could be 0.
             if (time == 1) {
                 r = 1;
-                this._m_uTotal++; // this is the added line
+                this._total++; // this is the added line
             }
 
-            //		m_pOther->update(min(r, 1));
-            this._m_pInnerAction.update((r > 1) ? 1 : r);
+            //		other->update(min(r, 1));
+            this._innerAction.update((r > 1) ? 1 : r);
         }
     },
     isDone:function () {
-        return this._m_uTotal == this._m_uTimes;
+        return this._total == this._times;
     },
     reverse:function () {
-        return cc.Repeat.actionWithAction(this._m_pInnerAction.reverse(), this._m_uTimes);
+        return cc.Repeat.actionWithAction(this._innerAction.reverse(), this._times);
     },
-    setInnerAction:function (pAction) {
-        if (this._m_pInnerAction != pAction) {
-            this._m_pInnerAction = pAction;
+    setInnerAction:function (action) {
+        if (this._innerAction != action) {
+            this._innerAction = action;
         }
     },
     getInnerAction:function () {
-        return this._m_pInnerAction;
+        return this._innerAction;
     }
 });
 /** creates a CCRepeat action. Times is an unsigned integer between 1 and pow(2,30) */
-cc.Repeat.actionWithAction = function (pAction, times) {
-    var pRepeat = new cc.Repeat();
-    pRepeat.initWithAction(pAction, times);
-    return pRepeat;
+cc.Repeat.actionWithAction = function (action, times) {
+    var repeat = new cc.Repeat();
+    repeat.initWithAction(action, times);
+    return repeat;
 };
 
 
@@ -294,45 +294,45 @@ cc.Repeat.actionWithAction = function (pAction, times) {
  @warning This action can't be Sequenceable because it is not an IntervalAction
  */
 cc.RepeatForever = cc.ActionInterval.extend({
-    _m_pInnerAction:null, //CCActionInterval
-    initWithAction:function (pAction) {
-        cc.Assert(pAction != null, "");
+    _innerAction:null, //CCActionInterval
+    initWithAction:function (action) {
+        cc.Assert(action != null, "");
 
-        this._m_pInnerAction = pAction;
+        this._innerAction = action;
         return true;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_pInnerAction.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._innerAction.startWithTarget(target);
     },
     step:function (dt) {
-        this._m_pInnerAction.step(dt);
-        if (this._m_pInnerAction.isDone()) {
-            var diff = dt + this._m_pInnerAction.getDuration() - this._m_pInnerAction.getElapsed();
-            this._m_pInnerAction.startWithTarget(this._m_pTarget);
+        this._innerAction.step(dt);
+        if (this._innerAction.isDone()) {
+            var diff = dt + this._innerAction.getDuration() - this._innerAction.getElapsed();
+            this._innerAction.startWithTarget(this._target);
             // to prevent jerk. issue #390
-            this._m_pInnerAction.step(diff);
+            this._innerAction.step(diff);
         }
     },
     isDone:function () {
         return false;
     },
     reverse:function () {
-        return (cc.RepeatForever.actionWithAction(this._m_pInnerAction.reverse()));
+        return (cc.RepeatForever.actionWithAction(this._innerAction.reverse()));
     },
-    setInnerAction:function (pAction) {
-        if (this._m_pInnerAction != pAction) {
-            this._m_pInnerAction = pAction;
+    setInnerAction:function (action) {
+        if (this._innerAction != action) {
+            this._innerAction = action;
         }
     },
     getInnerAction:function () {
-        return this._m_pInnerAction;
+        return this._innerAction;
     }
 });
-cc.RepeatForever.actionWithAction = function (pAction) {
-    var pRet = new cc.RepeatForever();
-    if (pRet && pRet.initWithAction(pAction)) {
-        return pRet;
+cc.RepeatForever.actionWithAction = function (action) {
+    var ret = new cc.RepeatForever();
+    if (ret && ret.initWithAction(action)) {
+        return ret;
     }
     return null;
 };
@@ -342,62 +342,62 @@ cc.RepeatForever.actionWithAction = function (pAction) {
  */
 cc.Spawn = cc.ActionInterval.extend({
     /** initializes the Spawn action with the 2 actions to spawn */
-    initOneTwo:function (pAction1, pAction2) {
-        cc.Assert(pAction1 != null, "no action1");
-        cc.Assert(pAction2 != null, "no action2");
+    initOneTwo:function (action1, action2) {
+        cc.Assert(action1 != null, "no action1");
+        cc.Assert(action2 != null, "no action2");
 
-        var bRet = false;
+        var ret = false;
 
-        var d1 = pAction1.getDuration();
-        var d2 = pAction2.getDuration();
+        var d1 = action1.getDuration();
+        var d2 = action2.getDuration();
 
         if (this.initWithDuration(Math.max(d1, d2))) {
-            this._m_pOne = pAction1;
-            this._m_pTwo = pAction2;
+            this._one = action1;
+            this._two = action2;
 
             if (d1 > d2) {
-                this._m_pTwo = cc.Sequence.actionOneTwo(pAction2, cc.DelayTime.actionWithDuration(d1 - d2));
+                this._two = cc.Sequence.actionOneTwo(action2, cc.DelayTime.actionWithDuration(d1 - d2));
             } else
             if (d1 < d2) {
-                this._m_pOne = cc.Sequence.actionOneTwo(pAction1, cc.DelayTime.actionWithDuration(d2 - d1));
+                this._one = cc.Sequence.actionOneTwo(action1, cc.DelayTime.actionWithDuration(d2 - d1));
             }
 
-            bRet = true;
+            ret = true;
         }
-        return bRet;
+        return ret;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_pOne.startWithTarget(pTarget);
-        this._m_pTwo.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._one.startWithTarget(target);
+        this._two.startWithTarget(target);
     },
     stop:function () {
-        this._m_pOne.stop();
-        this._m_pTwo.stop();
+        this._one.stop();
+        this._two.stop();
         this._super();
     },
     update:function (time) {
-        if (this._m_pOne) {
-            this._m_pOne.update(time);
+        if (this._one) {
+            this._one.update(time);
         }
-        if (this._m_pTwo) {
-            this._m_pTwo.update(time);
+        if (this._two) {
+            this._two.update(time);
         }
     },
     reverse:function () {
-        return cc.Spawn.actionOneTwo(this._m_pOne.reverse(), this._m_pTwo.reverse());
+        return cc.Spawn.actionOneTwo(this._one.reverse(), this._two.reverse());
     },
-    _m_pOne:null,
-    _m_pTwo:null
+    _one:null,
+    _two:null
 });
 cc.Spawn.actions = function (/*Multiple Arguments*/) {
-    var pPrev = arguments[0];
+    var prev = arguments[0];
     for (var i = 1; i < arguments.length; i++) {
         if (arguments[i] != null) {
-            pPrev = this.actionOneTwo(pPrev, arguments[i]);
+            prev = this.actionOneTwo(prev, arguments[i]);
         }
     }
-    return pPrev;
+    return prev;
 };
 cc.Spawn.actionsWithArray = function (actions) {
     var prev = actions[0];
@@ -408,9 +408,9 @@ cc.Spawn.actionsWithArray = function (actions) {
 
     return prev;
 };
-cc.Spawn.actionOneTwo = function (pAction1, pAction2) {
+cc.Spawn.actionOneTwo = function (action1, action2) {
     var pSpawn = new cc.Spawn();
-    pSpawn.initOneTwo(pAction1, pAction2);
+    pSpawn.initOneTwo(action1, action2);
 
     return pSpawn;
 };
@@ -421,86 +421,86 @@ cc.Spawn.actionOneTwo = function (pAction1, pAction2) {
  The direction will be decided by the shortest angle.
  */
 cc.RotateTo = cc.ActionInterval.extend({
-    _m_fDstAngle:0,
-    _m_fStartAngle:0,
-    _m_fDiffAngle:0,
-    initWithDuration:function (duration, fDeltaAngle) {
+    _dstAngle:0,
+    _startAngle:0,
+    _diffAngle:0,
+    initWithDuration:function (duration, deltaAngle) {
         if (this._super(duration)) {
-            this._m_fDstAngle = fDeltaAngle;
+            this._dstAngle = deltaAngle;
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
 
-        this._m_fStartAngle = pTarget.getRotation();
+        this._startAngle = target.getRotation();
 
-        if (this._m_fStartAngle > 0) {
-            this._m_fStartAngle = this._m_fStartAngle % 360.0;
+        if (this._startAngle > 0) {
+            this._startAngle = this._startAngle % 360.0;
         }
         else {
-            this._m_fStartAngle = this._m_fStartAngle % 360.0;
+            this._startAngle = this._startAngle % 360.0;
         }
 
-        this._m_fDiffAngle = this._m_fDstAngle - this._m_fStartAngle;
-        if (this._m_fDiffAngle > 180) {
-            this._m_fDiffAngle -= 360;
+        this._diffAngle = this._dstAngle - this._startAngle;
+        if (this._diffAngle > 180) {
+            this._diffAngle -= 360;
         }
 
-        if (this._m_fDiffAngle < -180) {
-            this._m_fDiffAngle += 360;
+        if (this._diffAngle < -180) {
+            this._diffAngle += 360;
         }
     },
     reverse:function () {
         cc.Assert(0, "RotateTo reverse not implemented");
     },
     update:function (time) {
-        if (this._m_pTarget) {
-            this._m_pTarget.setRotation(this._m_fStartAngle + this._m_fDiffAngle * time);
+        if (this._target) {
+            this._target.setRotation(this._startAngle + this._diffAngle * time);
         }
     }
 });
-cc.RotateTo.actionWithDuration = function (duration, fDeltaAngle) {
-    var pRotateTo = new cc.RotateTo();
-    pRotateTo.initWithDuration(duration, fDeltaAngle);
+cc.RotateTo.actionWithDuration = function (duration, deltaAngle) {
+    var rotateTo = new cc.RotateTo();
+    rotateTo.initWithDuration(duration, deltaAngle);
 
-    return pRotateTo;
+    return rotateTo;
 };
 
 
 /** @brief Rotates a CCNode object clockwise a number of degrees by modifying it's rotation attribute.
  */
 cc.RotateBy = cc.ActionInterval.extend({
-    _m_fAngle:0,
-    _m_fStartAngle:0,
-    initWithDuration:function (duration, fDeltaAngle) {
+    _angle:0,
+    _startAngle:0,
+    initWithDuration:function (duration, deltaAngle) {
         if (this._super(duration)) {
-            this._m_fAngle = fDeltaAngle;
+            this._angle = deltaAngle;
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_fStartAngle = pTarget.getRotation();
+    startWithTarget:function (target) {
+        this._super(target);
+        this._startAngle = target.getRotation();
     },
     update:function (time) {
-        if (this._m_pTarget) {
-            this._m_pTarget.setRotation(this._m_fStartAngle + this._m_fAngle * time);
+        if (this._target) {
+            this._target.setRotation(this._startAngle + this._angle * time);
         }
     },
     reverse:function () {
-        return cc.RotateBy.actionWithDuration(this._m_fDuration, -this._m_fAngle);
+        return cc.RotateBy.actionWithDuration(this._duration, -this._angle);
     }
 });
-cc.RotateBy.actionWithDuration = function (duration, fDeltaAngle) {
-    var pRotateBy = new cc.RotateBy();
-    pRotateBy.initWithDuration(duration, fDeltaAngle);
+cc.RotateBy.actionWithDuration = function (duration, deltaAngle) {
+    var rotateBy = new cc.RotateBy();
+    rotateBy.initWithDuration(duration, deltaAngle);
 
-    return pRotateBy;
+    return rotateBy;
 };
 
 
@@ -509,35 +509,35 @@ cc.RotateBy.actionWithDuration = function (duration, fDeltaAngle) {
 cc.MoveTo = cc.ActionInterval.extend({
     initWithDuration:function (duration, position) {
         if (this._super(duration)) {
-            this._m_endPosition = position;
+            this._endPosition = position;
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_startPosition = pTarget.getPosition();
-        this._m_delta = cc.ccpSub(this._m_endPosition, this._m_startPosition);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._startPosition = target.getPosition();
+        this._delta = cc.ccpSub(this._endPosition, this._startPosition);
     },
     update:function (time) {
-        if (this._m_pTarget) {
-            this._m_pTarget.setPosition(cc.ccp(this._m_startPosition.x + this._m_delta.x * time,
-                this._m_startPosition.y + this._m_delta.y * time));
+        if (this._target) {
+            this._target.setPosition(cc.ccp(this._startPosition.x + this._delta.x * time,
+                this._startPosition.y + this._delta.y * time));
         }
     },
     reverse:function () {
         cc.Assert(0, "moveto implement reverse");
     },
-    _m_endPosition:new cc.Point(),
-    _m_startPosition:new cc.Point(),
-    _m_delta:new cc.Point()
+    _endPosition:new cc.Point(),
+    _startPosition:new cc.Point(),
+    _delta:new cc.Point()
 });
 cc.MoveTo.actionWithDuration = function (duration, position) {
-    var pMoveTo = new cc.MoveTo();
-    pMoveTo.initWithDuration(duration, position);
+    var moveTo = new cc.MoveTo();
+    moveTo.initWithDuration(duration, position);
 
-    return pMoveTo;
+    return moveTo;
 };
 
 
@@ -548,26 +548,26 @@ cc.MoveTo.actionWithDuration = function (duration, position) {
 cc.MoveBy = cc.MoveTo.extend({
     initWithDuration:function (duration, position) {
         if (this._super(duration, position)) {
-            this._m_delta = position;
+            this._delta = position;
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        var dTmp = this._m_delta;
-        this._super(pTarget);
-        this._m_delta = dTmp;
+    startWithTarget:function (target) {
+        var temp = this._delta;
+        this._super(target);
+        this._delta = temp;
     },
     reverse:function () {
-        return cc.MoveBy.actionWithDuration(this._m_fDuration, cc.ccp(-this._m_delta.x, -this._m_delta.y));
+        return cc.MoveBy.actionWithDuration(this._duration, cc.ccp(-this._delta.x, -this._delta.y));
     }
 });
 cc.MoveBy.actionWithDuration = function (duration, position) {
-    var pMoveBy = new cc.MoveBy();
-    pMoveBy.initWithDuration(duration, position);
+    var moveBy = new cc.MoveBy();
+    moveBy.initWithDuration(duration, position);
 
-    return pMoveBy;
+    return moveBy;
 };
 
 
@@ -576,77 +576,77 @@ cc.MoveBy.actionWithDuration = function (duration, position) {
  */
 cc.SkewTo = cc.ActionInterval.extend({
     initWithDuration:function (t, sx, sy) {
-        var bRet = false;
+        var ret = false;
 
         if (this._super(t)) {
-            this._m_fEndSkewX = sx;
-            this._m_fEndSkewY = sy;
+            this._endSkewX = sx;
+            this._endSkewY = sy;
 
-            bRet = true;
+            ret = true;
         }
 
-        return bRet;
+        return ret;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
 
-        this._m_fStartSkewX = pTarget.getSkewX();
+        this._startSkewX = target.getSkewX();
 
 
-        if (this._m_fStartSkewX > 0) {
-            this._m_fStartSkewX = this._m_fStartSkewX % 180;
+        if (this._startSkewX > 0) {
+            this._startSkewX = this._startSkewX % 180;
         }
         else {
-            this._m_fStartSkewX = this._m_fStartSkewX % -180;
+            this._startSkewX = this._startSkewX % -180;
         }
 
-        this._m_fDeltaX = this._m_fEndSkewX - this._m_fStartSkewX;
+        this._deltaX = this._endSkewX - this._startSkewX;
 
-        if (this._m_fDeltaX > 180) {
-            this._m_fDeltaX -= 360;
+        if (this._deltaX > 180) {
+            this._deltaX -= 360;
         }
-        if (this._m_fDeltaX < -180) {
-            this._m_fDeltaX += 360;
+        if (this._deltaX < -180) {
+            this._deltaX += 360;
         }
 
 
-        this._m_fStartSkewY = pTarget.getSkewY();
-        if (this._m_fStartSkewY > 0) {
-            this._m_fStartSkewY = this._m_fStartSkewY % 360;
+        this._startSkewY = target.getSkewY();
+        if (this._startSkewY > 0) {
+            this._startSkewY = this._startSkewY % 360;
         }
         else {
-            this._m_fStartSkewY = this._m_fStartSkewY % -360;
+            this._startSkewY = this._startSkewY % -360;
         }
 
-        this._m_fDeltaY = this._m_fEndSkewY - this._m_fStartSkewY;
+        this._deltaY = this._endSkewY - this._startSkewY;
 
-        if (this._m_fDeltaY > 180) {
-            this._m_fDeltaY -= 360;
+        if (this._deltaY > 180) {
+            this._deltaY -= 360;
         }
-        if (this._m_fDeltaY < -180) {
-            this._m_fDeltaY += 360;
+        if (this._deltaY < -180) {
+            this._deltaY += 360;
         }
     },
     update:function (t) {
-        this._m_pTarget.setSkewX(this._m_fStartSkewX + this._m_fDeltaX * t);
+        this._target.setSkewX(this._startSkewX + this._deltaX * t);
 
-        this._m_pTarget.setSkewY(this._m_fStartSkewY + this._m_fDeltaY * t);
+        this._target.setSkewY(this._startSkewY + this._deltaY * t);
     },
-    _m_fSkewX:0,
-    _m_fSkewY:0,
-    _m_fStartSkewX:0,
-    _m_fStartSkewY:0,
-    _m_fEndSkewX:0,
-    _m_fEndSkewY:0,
-    _m_fDeltaX:0,
-    _m_fDeltaY:0
+    _skewX:0,
+    _skewY:0,
+    _startSkewX:0,
+    _startSkewY:0,
+    _endSkewX:0,
+    _endSkewY:0,
+    _deltaX:0,
+    _deltaY:0
 });
 cc.SkewTo.actionWithDuration = function (t, sx, sy) {
-    var pSkewTo = new cc.SkewTo();
-    if (pSkewTo) {
-        pSkewTo.initWithDuration(t, sx, sy)
+    var skewTo = new cc.SkewTo();
+    if (skewTo) {
+        skewTo.initWithDuration(t, sx, sy)
     }
-    return pSkewTo;
+    return skewTo;
 };
 
 
@@ -655,35 +655,35 @@ cc.SkewTo.actionWithDuration = function (t, sx, sy) {
  */
 cc.SkewBy = cc.SkewTo.extend({
     initWithDuration:function (t, deltaSkewX, deltaSkewY) {
-        var bRet = false;
+        var ret = false;
 
         if (this._super(t, deltaSkewX, deltaSkewY)) {
-            this._m_fSkewX = deltaSkewX;
-            this._m_fSkewY = deltaSkewY;
+            this._skewX = deltaSkewX;
+            this._skewY = deltaSkewY;
 
-            bRet = true;
+            ret = true;
         }
 
-        return bRet;
+        return ret;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_fDeltaX = this._m_fSkewX;
-        this._m_fDeltaY = this._m_fSkewY;
-        this._m_fEndSkewX = this._m_fStartSkewX + this._m_fDeltaX;
-        this._m_fEndSkewY = this._m_fStartSkewY + this._m_fDeltaY;
+    startWithTarget:function (target) {
+        this._super(target);
+        this._deltaX = this._skewX;
+        this._deltaY = this._skewY;
+        this._endSkewX = this._startSkewX + this._deltaX;
+        this._endSkewY = this._startSkewY + this._deltaY;
     },
     reverse:function () {
-        return cc.SkewBy.actionWithDuration(this._m_fDuration, -this._m_fSkewX, -this._m_fSkewY);
+        return cc.SkewBy.actionWithDuration(this._duration, -this._skewX, -this._skewY);
     }
 });
 cc.SkewBy.actionWithDuration = function (t, sx, sy) {
-    var pSkewBy = new cc.SkewBy();
-    if (pSkewBy) {
-        pSkewBy.initWithDuration(t, sx, sy);
+    var skewBy = new cc.SkewBy();
+    if (skewBy) {
+        skewBy.initWithDuration(t, sx, sy);
     }
 
-    return pSkewBy;
+    return skewBy;
 };
 
 
@@ -692,57 +692,57 @@ cc.SkewBy.actionWithDuration = function (t, sx, sy) {
 cc.JumpBy = cc.ActionInterval.extend({
     initWithDuration:function (duration, position, height, jumps) {
         if (this._super(duration)) {
-            this._m_delta = position;
-            this._m_height = height;
-            this._m_nJumps = jumps;
+            this._delta = position;
+            this._height = height;
+            this._jumps = jumps;
 
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_startPosition = pTarget.getPosition();
+    startWithTarget:function (target) {
+        this._super(target);
+        this._startPosition = target.getPosition();
     },
     update:function (time) {
-        if (this._m_pTarget) {
-            var frac = time * this._m_nJumps % 1.0;
-            var y = this._m_height * 4 * frac * (1 - frac);
-            y += this._m_delta.y * time;
-            var x = this._m_delta.x * time;
-            this._m_pTarget.setPosition(cc.ccp(this._m_startPosition.x + x, this._m_startPosition.y + y));
+        if (this._target) {
+            var frac = time * this._jumps % 1.0;
+            var y = this._height * 4 * frac * (1 - frac);
+            y += this._delta.y * time;
+            var x = this._delta.x * time;
+            this._target.setPosition(cc.ccp(this._startPosition.x + x, this._startPosition.y + y));
         }
     },
     reverse:function () {
-        return cc.JumpBy.actionWithDuration(this._m_fDuration, cc.ccp(-this._m_delta.x, -this._m_delta.y), this._m_height, this._m_nJumps);
+        return cc.JumpBy.actionWithDuration(this._duration, cc.ccp(-this._delta.x, -this._delta.y), this._height, this._jumps);
     },
-    _m_startPosition:new cc.Point(),
-    _m_delta:new cc.Point(),
-    _m_height:0,
-    _m_nJumps:0
+    _startPosition:new cc.Point(),
+    _delta:new cc.Point(),
+    _height:0,
+    _jumps:0
 });
 cc.JumpBy.actionWithDuration = function (duration, position, height, jumps) {
-    var pJumpBy = new cc.JumpBy();
-    pJumpBy.initWithDuration(duration, position, height, jumps);
+    var jumpBy = new cc.JumpBy();
+    jumpBy.initWithDuration(duration, position, height, jumps);
 
-    return pJumpBy;
+    return jumpBy;
 };
 
 
 /** @brief Moves a CCNode object to a parabolic position simulating a jump movement by modifying it's position attribute.
  */
 cc.JumpTo = cc.JumpBy.extend({
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_delta = cc.ccp(this._m_delta.x - this._m_startPosition.x, this._m_delta.y - this._m_startPosition.y);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._delta = cc.ccp(this._delta.x - this._startPosition.x, this._delta.y - this._startPosition.y);
     }
 });
 cc.JumpTo.actionWithDuration = function (duration, position, height, jumps) {
-    var pJumpTo = new cc.JumpTo();
-    pJumpTo.initWithDuration(duration, position, height, jumps);
+    var jumpTo = new cc.JumpTo();
+    jumpTo.initWithDuration(duration, position, height, jumps);
 
-    return pJumpTo;
+    return jumpTo;
 };
 
 /** @typedef bezier configuration structure
@@ -766,53 +766,53 @@ cc.bezierat = function (a, b, c, d, t) {
 cc.BezierBy = cc.ActionInterval.extend({
     initWithDuration:function (t, c) {
         if (this._super(t)) {
-            this._m_sConfig = c;
+            this._config = c;
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_startPosition = pTarget.getPosition();
+    startWithTarget:function (target) {
+        this._super(target);
+        this._startPosition = target.getPosition();
     },
     update:function (time) {
-        if (this._m_pTarget) {
+        if (this._target) {
             var xa = 0;
-            var xb = this._m_sConfig.controlPoint_1.x;
-            var xc = this._m_sConfig.controlPoint_2.x;
-            var xd = this._m_sConfig.endPosition.x;
+            var xb = this._config.controlPoint_1.x;
+            var xc = this._config.controlPoint_2.x;
+            var xd = this._config.endPosition.x;
 
             var ya = 0;
-            var yb = this._m_sConfig.controlPoint_1.y;
-            var yc = this._m_sConfig.controlPoint_2.y;
-            var yd = this._m_sConfig.endPosition.y;
+            var yb = this._config.controlPoint_1.y;
+            var yc = this._config.controlPoint_2.y;
+            var yd = this._config.endPosition.y;
 
             var x = cc.bezierat(xa, xb, xc, xd, time);
             var y = cc.bezierat(ya, yb, yc, yd, time);
-            this._m_pTarget.setPosition(cc.ccpAdd(this._m_startPosition, cc.ccp(x, y)));
+            this._target.setPosition(cc.ccpAdd(this._startPosition, cc.ccp(x, y)));
         }
     },
     reverse:function () {
         var r = new cc.BezierConfig();
 
-        r.endPosition = cc.ccpNeg(this._m_sConfig.endPosition);
-        r.controlPoint_1 = cc.ccpAdd(this._m_sConfig.controlPoint_2, cc.ccpNeg(this._m_sConfig.endPosition));
-        r.controlPoint_2 = cc.ccpAdd(this._m_sConfig.controlPoint_1, cc.ccpNeg(this._m_sConfig.endPosition));
+        r.endPosition = cc.ccpNeg(this._config.endPosition);
+        r.controlPoint_1 = cc.ccpAdd(this._config.controlPoint_2, cc.ccpNeg(this._config.endPosition));
+        r.controlPoint_2 = cc.ccpAdd(this._config.controlPoint_1, cc.ccpNeg(this._config.endPosition));
 
-        var pAction = cc.BezierBy.actionWithDuration(this._m_fDuration, r);
-        return pAction;
+        var action = cc.BezierBy.actionWithDuration(this._duration, r);
+        return action;
     },
     ctor:function () {
-        this._m_sConfig = new cc.BezierConfig();
-        this._m_startPosition = new cc.Point();
+        this._config = new cc.BezierConfig();
+        this._startPosition = new cc.Point();
     }
 });
 cc.BezierBy.actionWithDuration = function (t, c) {
-    var pBezierBy = new cc.BezierBy();
-    pBezierBy.initWithDuration(t, c);
+    var bezierBy = new cc.BezierBy();
+    bezierBy.initWithDuration(t, c);
 
-    return pBezierBy;
+    return bezierBy;
 };
 
 
@@ -820,18 +820,18 @@ cc.BezierBy.actionWithDuration = function (t, c) {
  @since v0.8.2
  */
 cc.BezierTo = cc.BezierBy.extend({
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_sConfig.controlPoint_1 = cc.ccpSub(this._m_sConfig.controlPoint_1, this._m_startPosition);
-        this._m_sConfig.controlPoint_2 = cc.ccpSub(this._m_sConfig.controlPoint_2, this._m_startPosition);
-        this._m_sConfig.endPosition = cc.ccpSub(this._m_sConfig.endPosition, this._m_startPosition);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._config.controlPoint_1 = cc.ccpSub(this._config.controlPoint_1, this._startPosition);
+        this._config.controlPoint_2 = cc.ccpSub(this._config.controlPoint_2, this._startPosition);
+        this._config.endPosition = cc.ccpSub(this._config.endPosition, this._startPosition);
     }
 });
 cc.BezierTo.actionWithDuration = function (t, c) {
-    var pBezierTo = new cc.BezierTo();
-    pBezierTo.initWithDuration(t, c);
+    var bezierTo = new cc.BezierTo();
+    bezierTo.initWithDuration(t, c);
 
-    return pBezierTo;
+    return bezierTo;
 };
 
 
@@ -842,102 +842,102 @@ cc.ScaleTo = cc.ActionInterval.extend({
     initWithDuration:function (duration, sx, sy)//function overload here
     {
         if (this._super(duration)) {
-            this._m_fEndScaleX = sx;
-            this._m_fEndScaleY = (sy != null) ? sy : sx;
+            this._endScaleX = sx;
+            this._endScaleY = (sy != null) ? sy : sx;
 
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_fStartScaleX = pTarget.getScaleX();
-        this._m_fStartScaleY = pTarget.getScaleY();
-        this._m_fDeltaX = this._m_fEndScaleX - this._m_fStartScaleX;
-        this._m_fDeltaY = this._m_fEndScaleY - this._m_fStartScaleY;
+    startWithTarget:function (target) {
+        this._super(target);
+        this._startScaleX = target.getScaleX();
+        this._startScaleY = target.getScaleY();
+        this._deltaX = this._endScaleX - this._startScaleX;
+        this._deltaY = this._endScaleY - this._startScaleY;
     },
     update:function (time) {
-        if (this._m_pTarget) {
-            this._m_pTarget.setScaleX(this._m_fStartScaleX + this._m_fDeltaX * time);
-            this._m_pTarget.setScaleY(this._m_fStartScaleY + this._m_fDeltaY * time);
+        if (this._target) {
+            this._target.setScaleX(this._startScaleX + this._deltaX * time);
+            this._target.setScaleY(this._startScaleY + this._deltaY * time);
         }
     },
-    _m_fScaleX:1,
-    _m_fScaleY:1,
-    _m_fStartScaleX:1,
-    _m_fStartScaleY:1,
-    _m_fEndScaleX:0,
-    _m_fEndScaleY:0,
-    _m_fDeltaX:0,
-    _m_fDeltaY:0
+    _scaleX:1,
+    _scaleY:1,
+    _startScaleX:1,
+    _startScaleY:1,
+    _endScaleX:0,
+    _endScaleY:0,
+    _deltaX:0,
+    _deltaY:0
 });
 cc.ScaleTo.actionWithDuration = function (duration, sx, sy)//function overload
 {
-    var pScaleTo = new cc.ScaleTo();
+    var scaleTo = new cc.ScaleTo();
     if (sy) {
-        pScaleTo.initWithDuration(duration, sx, sy);
+        scaleTo.initWithDuration(duration, sx, sy);
     }
     else {
-        pScaleTo.initWithDuration(duration, sx);
+        scaleTo.initWithDuration(duration, sx);
     }
 
-    return pScaleTo;
+    return scaleTo;
 };
 
 
 /** @brief Scales a CCNode object a zoom factor by modifying it's scale attribute.
  */
 cc.ScaleBy = cc.ScaleTo.extend({
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_fDeltaX = this._m_fStartScaleX * this._m_fEndScaleX - this._m_fStartScaleX;
-        this._m_fDeltaY = this._m_fStartScaleY * this._m_fEndScaleY - this._m_fStartScaleY;
+    startWithTarget:function (target) {
+        this._super(target);
+        this._deltaX = this._startScaleX * this._endScaleX - this._startScaleX;
+        this._deltaY = this._startScaleY * this._endScaleY - this._startScaleY;
     },
     reverse:function () {
-        return cc.ScaleBy.actionWithDuration(this._m_fDuration, 1 / this._m_fEndScaleX, 1 / this._m_fEndScaleY);
+        return cc.ScaleBy.actionWithDuration(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
     }
 });
 cc.ScaleBy.actionWithDuration = function (duration, sx, sy) {
-    var pScaleBy = new cc.ScaleBy();
+    var scaleBy = new cc.ScaleBy();
     if (arguments.length == 3) {
-        pScaleBy.initWithDuration(duration, sx, sy);
+        scaleBy.initWithDuration(duration, sx, sy);
     }
     else {
-        pScaleBy.initWithDuration(duration, sx);
+        scaleBy.initWithDuration(duration, sx);
     }
 
-    return pScaleBy;
+    return scaleBy;
 };
 
 /** @brief Blinks a CCNode object by modifying it's visible attribute
  */
 cc.Blink = cc.ActionInterval.extend({
-    initWithDuration:function (duration, uBlinks) {
+    initWithDuration:function (duration, blinks) {
         if (this._super(duration)) {
-            this._m_nTimes = uBlinks;
+            this._times = blinks;
             return true;
         }
 
         return false;
     },
     update:function (time) {
-        if (this._m_pTarget && !this.isDone()) {
-            var slice = 1.0 / this._m_nTimes;
+        if (this._target && !this.isDone()) {
+            var slice = 1.0 / this._times;
             var m = time % slice;
-            this._m_pTarget.setIsVisible(m > slice / 2 ? true : false);
+            this._target.setIsVisible(m > slice / 2 ? true : false);
         }
     },
     reverse:function () {
-        return cc.Blink.actionWithDuration(this._m_fDuration, this._m_nTimes);
+        return cc.Blink.actionWithDuration(this._duration, this._times);
     },
-    _m_nTimes:0
+    _times:0
 });
-cc.Blink.actionWithDuration = function (duration, uBlinks) {
-    var pBlink = new cc.Blink();
-    pBlink.initWithDuration(duration, uBlinks);
+cc.Blink.actionWithDuration = function (duration, blinks) {
+    var blink = new cc.Blink();
+    blink.initWithDuration(duration, blinks);
 
-    return pBlink;
+    return blink;
 };
 
 
@@ -946,18 +946,18 @@ cc.Blink.actionWithDuration = function (duration, uBlinks) {
  */
 cc.FadeIn = cc.ActionInterval.extend({
     update:function (time) {
-        this._m_pTarget.setOpacity(255 * time);
+        this._target.setOpacity(255 * time);
     },
     reverse:function () {
-        return cc.FadeOut.actionWithDuration(this._m_fDuration);
+        return cc.FadeOut.actionWithDuration(this._duration);
     }
 });
 cc.FadeIn.actionWithDuration = function (d) {
-    var pAction = new cc.FadeIn();
+    var action = new cc.FadeIn();
 
-    pAction.initWithDuration(d);
+    action.initWithDuration(d);
 
-    return pAction;
+    return action;
 };
 
 
@@ -966,18 +966,18 @@ cc.FadeIn.actionWithDuration = function (d) {
  */
 cc.FadeOut = cc.ActionInterval.extend({
     update:function (time) {
-        this._m_pTarget.setOpacity(255 * (1 - time));
+        this._target.setOpacity(255 * (1 - time));
     },
     reverse:function () {
-        return cc.FadeIn.actionWithDuration(this._m_fDuration);
+        return cc.FadeIn.actionWithDuration(this._duration);
     }
 });
 cc.FadeOut.actionWithDuration = function (d) {
-    var pAction = new cc.FadeOut();
+    var action = new cc.FadeOut();
 
-    pAction.initWithDuration(d);
+    action.initWithDuration(d);
 
-    return pAction;
+    return action;
 };
 
 
@@ -987,27 +987,27 @@ cc.FadeOut.actionWithDuration = function (d) {
 cc.FadeTo = cc.ActionInterval.extend({
     initWithDuration:function (duration, opacity) {
         if (this._super(duration)) {
-            this._m_toOpacity = opacity;
+            this._toOpacity = opacity;
             return true;
         }
 
         return false;
     },
     update:function (time) {
-        this._m_pTarget.setOpacity((this._m_fromOpacity + (this._m_toOpacity - this._m_fromOpacity) * time));
+        this._target.setOpacity((this._fromOpacity + (this._toOpacity - this._fromOpacity) * time));
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_fromOpacity = pTarget.getOpacity();
+    startWithTarget:function (target) {
+        this._super(target);
+        this._fromOpacity = target.getOpacity();
     },
-    _m_toOpacity:'',
-    _m_fromOpacity:''
+    _toOpacity:'',
+    _fromOpacity:''
 });
 cc.FadeTo.actionWithDuration = function (duration, opacity) {
-    var pFadeTo = new cc.FadeTo();
-    pFadeTo.initWithDuration(duration, opacity);
+    var fadeTo = new cc.FadeTo();
+    fadeTo.initWithDuration(duration, opacity);
 
-    return pFadeTo;
+    return fadeTo;
 };
 
 
@@ -1018,29 +1018,29 @@ cc.FadeTo.actionWithDuration = function (duration, opacity) {
 cc.TintTo = cc.ActionInterval.extend({
     initWithDuration:function (duration, red, green, blue) {
         if (this._super(duration)) {
-            this._m_to = cc.ccc3(red, green, blue);
+            this._to = cc.ccc3(red, green, blue);
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_from = this._m_pTarget.getColor();
+    startWithTarget:function (target) {
+        this._super(target);
+        this._from = this._target.getColor();
     },
     update:function (time) {
-        this._m_pTarget.setColor(cc.ccc3(this._m_from.r + (this._m_to.r - this._m_from.r) * time,
-            (this._m_from.g + (this._m_to.g - this._m_from.g) * time),
-            (this._m_from.b + (this._m_to.b - this._m_from.b) * time)));
+        this._target.setColor(cc.ccc3(this._from.r + (this._to.r - this._from.r) * time,
+            (this._from.g + (this._to.g - this._from.g) * time),
+            (this._from.b + (this._to.b - this._from.b) * time)));
     },
-    _m_to:new cc.Color3B(),
-    _m_from:new cc.Color3B()
+    _to:new cc.Color3B(),
+    _from:new cc.Color3B()
 });
 cc.TintTo.actionWithDuration = function (duration, red, green, blue) {
-    var pTintTo = new cc.TintTo();
-    pTintTo.initWithDuration(duration, red, green, blue);
+    var tintTo = new cc.TintTo();
+    tintTo.initWithDuration(duration, red, green, blue);
 
-    return pTintTo;
+    return tintTo;
 };
 
 
@@ -1050,47 +1050,47 @@ cc.TintTo.actionWithDuration = function (duration, red, green, blue) {
 cc.TintBy = cc.ActionInterval.extend({
     initWithDuration:function (duration, deltaRed, deltaGreen, deltaBlue) {
         if (this._super(duration)) {
-            this._m_deltaR = deltaRed;
-            this._m_deltaG = deltaGreen;
-            this._m_deltaB = deltaBlue;
+            this._deltaR = deltaRed;
+            this._deltaG = deltaGreen;
+            this._deltaB = deltaBlue;
 
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        //if (pTarget.RGBAProtocol) {
-        var color = pTarget.getColor();
-        this._m_fromR = color.r;
-        this._m_fromG = color.g;
-        this._m_fromB = color.b;
+    startWithTarget:function (target) {
+        this._super(target);
+        //if (target.RGBAProtocol) {
+        var color = target.getColor();
+        this._fromR = color.r;
+        this._fromG = color.g;
+        this._fromB = color.b;
         //}
     },
     update:function (time) {
-        //if (this._m_pTarget.RGBAProtocol) {
-        this._m_pTarget.setColor(cc.ccc3((this._m_fromR + this._m_deltaR * time),
-            (this._m_fromG + this._m_deltaG * time),
-            (this._m_fromB + this._m_deltaB * time)));
+        //if (this._target.RGBAProtocol) {
+        this._target.setColor(cc.ccc3((this._fromR + this._deltaR * time),
+            (this._fromG + this._deltaG * time),
+            (this._fromB + this._deltaB * time)));
         //}
     },
     reverse:function () {
-        return cc.TintBy.actionWithDuration(this._m_fDuration, -this._m_deltaR, -this._m_deltaG, -this._m_deltaB);
+        return cc.TintBy.actionWithDuration(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
     },
-    _m_deltaR:0,
-    _m_deltaG:0,
-    _m_deltaB:0,
+    _deltaR:0,
+    _deltaG:0,
+    _deltaB:0,
 
-    _m_fromR:0,
-    _m_fromG:0,
-    _m_fromB:0
+    _fromR:0,
+    _fromG:0,
+    _fromB:0
 });
 cc.TintBy.actionWithDuration = function (duration, deltaRed, deltaGreen, deltaBlue) {
-    var pTintBy = new cc.TintBy();
-    pTintBy.initWithDuration(duration, deltaRed, deltaGreen, deltaBlue);
+    var tintBy = new cc.TintBy();
+    tintBy.initWithDuration(duration, deltaRed, deltaGreen, deltaBlue);
 
-    return pTintBy;
+    return tintBy;
 };
 
 
@@ -1101,15 +1101,15 @@ cc.DelayTime = cc.ActionInterval.extend({
 
     },
     reverse:function () {
-        return cc.DelayTime.actionWithDuration(this._m_fDuration);
+        return cc.DelayTime.actionWithDuration(this._duration);
     }
 });
 cc.DelayTime.actionWithDuration = function (d) {
-    var pAction = new cc.DelayTime();
+    var action = new cc.DelayTime();
 
-    pAction.initWithDuration(d);
+    action.initWithDuration(d);
 
-    return pAction;
+    return action;
 };
 
 
@@ -1121,94 +1121,94 @@ cc.DelayTime.actionWithDuration = function (d) {
  scope is not recommended.
  */
 cc.ReverseTime = cc.ActionInterval.extend({
-    initWithAction:function (pAction) {
-        cc.Assert(pAction != null, "");
-        cc.Assert(pAction != this._m_pOther, "");
+    initWithAction:function (action) {
+        cc.Assert(action != null, "");
+        cc.Assert(action != this._other, "");
 
-        if (this._super(pAction.getDuration())) {
+        if (this._super(action.getDuration())) {
             // Don't leak if action is reused
 
-            this._m_pOther = pAction;
+            this._other = action;
 
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_pOther.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._other.startWithTarget(target);
     },
     update:function (time) {
-        if (this._m_pOther) {
-            this._m_pOther.update(1 - time);
+        if (this._other) {
+            this._other.update(1 - time);
         }
     },
     reverse:function () {
-        return this._m_pOther.copy();
+        return this._other.copy();
     },
     stop:function () {
-        this._m_pOther.stop();
+        this._other.stop();
         this._super();
     },
-    _m_pOther:null
+    _other:null
 });
-cc.ReverseTime.actionsWithAction = function (pAction) {
-    var pReverseTime = new cc.ReverseTime();
-    pReverseTime.initWithAction(pAction);
+cc.ReverseTime.actionsWithAction = function (action) {
+    var reverseTime = new cc.ReverseTime();
+    reverseTime.initWithAction(action);
 
-    return pReverseTime;
+    return reverseTime;
 };
 
 
 /** @brief Animates a sprite given the name of an Animation */
 cc.Animate = cc.ActionInterval.extend({
-    _m_pAnimation:null,
-    _m_pOrigFrame:null,
-    _m_bRestoreOriginalFrame:false,
+    _animation:null,
+    _origFrame:null,
+    _restoreOriginalFrame:false,
     getAnimation:function () {
-        return this._m_pAnimation;
+        return this._animation;
     },
-    setAnimation:function (pAnimation) {
-        this._m_pAnimation = pAnimation;
+    setAnimation:function (animation) {
+        this._animation = animation;
     },
-    initWithAnimation:function (pAnimation, bRestoreOriginalFrame) {
-        cc.Assert(pAnimation != null, "");
-        if (this.initWithDuration(pAnimation.getFrames().length * pAnimation.getDelay(), null, null, true)) {
-            this._m_bRestoreOriginalFrame = bRestoreOriginalFrame;
-            this._m_pAnimation = pAnimation;
-            this._m_pOrigFrame = null;
+    initWithAnimation:function (animation, restoreOriginalFrame) {
+        cc.Assert(animation != null, "");
+        if (this.initWithDuration(animation.getFrames().length * animation.getDelay(), null, null, true)) {
+            this._restoreOriginalFrame = restoreOriginalFrame;
+            this._animation = animation;
+            this._origFrame = null;
             return true;
         }
 
         return false;
     },
-    initWithDuration:function (duration, pAnimation, bRestoreOriginalFrame, isDirectCall) {
+    initWithDuration:function (duration, animation, restoreOriginalFrame, isDirectCall) {
         if (isDirectCall) {
             return this._super(duration);
         }
-        cc.Assert(pAnimation != null, "");
+        cc.Assert(animation != null, "");
 
         if (this._super(duration)) {
-            this._m_bRestoreOriginalFrame = bRestoreOriginalFrame;
-            this._m_pAnimation = pAnimation;
-            this._m_pOrigFrame = null;
+            this._restoreOriginalFrame = restoreOriginalFrame;
+            this._animation = animation;
+            this._origFrame = null;
 
             return true;
         }
 
         return false;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
 
-        if (this._m_bRestoreOriginalFrame) {
-            this._m_pOrigFrame = pTarget.displayedFrame();
+        if (this._restoreOriginalFrame) {
+            this._origFrame = target.displayedFrame();
         }
     },
     update:function (time) {
-        var pFrames = this._m_pAnimation.getFrames();
-        var numberOfFrames = pFrames.length;
+        var frames = this._animation.getFrames();
+        var numberOfFrames = frames.length;
 
         var idx = Math.round(time * numberOfFrames);
 
@@ -1216,33 +1216,33 @@ cc.Animate = cc.ActionInterval.extend({
             idx = numberOfFrames - 1;
         }
 
-        var pSprite = this._m_pTarget;
-        if (!pSprite.isFrameDisplayed(pFrames[idx])) {
-            pSprite.setDisplayFrame(pFrames[idx]);
+        var sprite = this._target;
+        if (!sprite.isFrameDisplayed(frames[idx])) {
+            sprite.setDisplayFrame(frames[idx]);
         }
     },
     reverse:function () {
-        var pNewAnim = cc.Animation.animationWithFrames(this._m_pAnimation.getFrames().reverse(), this._m_pAnimation.getDelay());
-        return cc.Animate.actionWithDuration(this._m_fDuration, pNewAnim, this._m_bRestoreOriginalFrame);
+        var newAnim = cc.Animation.animationWithFrames(this._animation.getFrames().reverse(), this._animation.getDelay());
+        return cc.Animate.actionWithDuration(this._duration, newAnim, this._restoreOriginalFrame);
     },
     stop:function () {
-        if (this._m_bRestoreOriginalFrame && this._m_pTarget) {
-            this._m_pTarget.setDisplayFrame(this._m_pOrigFrame);
+        if (this._restoreOriginalFrame && this._target) {
+            this._target.setDisplayFrame(this._origFrame);
         }
 
         this._super();
     }
 });
-cc.Animate.actionWithAnimation = function (pAnimation, bRestoreOriginalFrame) {
-    var pAnimate = new cc.Animate();
-    var go = (bRestoreOriginalFrame) ? bRestoreOriginalFrame : true;
-    pAnimate.initWithAnimation(pAnimation, go);
+cc.Animate.actionWithAnimation = function (animation, restoreOriginalFrame) {
+    var animate = new cc.Animate();
+    var go = (restoreOriginalFrame) ? restoreOriginalFrame : true;
+    animate.initWithAnimation(animation, go);
 
-    return pAnimate;
+    return animate;
 };
-cc.Animate.actionWithDuration = function (duration, pAnimation, bRestoreOriginalFrame) {
-    var pAnimate = new cc.Animate();
-    pAnimate.initWithDuration(duration, pAnimation, bRestoreOriginalFrame);
+cc.Animate.actionWithDuration = function (duration, animation, restoreOriginalFrame) {
+    var animate = new cc.Animate();
+    animate.initWithDuration(duration, animation, restoreOriginalFrame);
 
-    return pAnimate;
+    return animate;
 };

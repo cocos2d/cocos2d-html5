@@ -25,29 +25,29 @@
  ****************************************************************************/
 
 cc.Loader = cc.Class.extend({
-    m_sResourceCount:0,
-    m_sLoadedResourceCount:0,
-    m_pImgList:[],
-    m_Timer:0,
+    resourceCount:0,
+    loadedResourceCount:0,
+    imgList:[],
+    timer:0,
 
     isLoadedComplete:function () {
         var loaderCache = cc.Loader.shareLoader();
-        if (loaderCache.m_sLoadedResourceCount == loaderCache.m_sResourceCount) {
+        if (loaderCache.loadedResourceCount == loaderCache.resourceCount) {
             cc.LOG("cocos2d:Load Complete!");
             if (loaderCache.onload) {
-                loaderCache.m_Timer = setTimeout(loaderCache.onload, 16);
+                loaderCache.timer = setTimeout(loaderCache.onload, 16);
             } else {
                 cc.Assert("cocos2d:no load callback defined");
             }
         } else {
 
             if (loaderCache.onloading) {
-                loaderCache.m_Timer = setTimeout(loaderCache.onloading, 16);
+                loaderCache.timer = setTimeout(loaderCache.onloading, 16);
             }
             else {
                 cc.LoaderScene.shareLoaderScene().draw();
             }
-            loaderCache.m_Timer = setTimeout(loaderCache.isLoadedComplete, 16);
+            loaderCache.timer = setTimeout(loaderCache.isLoadedComplete, 16);
         }
 
     },
@@ -57,12 +57,12 @@ cc.Loader = cc.Class.extend({
     },
 
     onResLoaded:function (e) {
-        this.m_sLoadedResourceCount++;
+        this.loadedResourceCount++;
         //cc.LOG("Loading:" + cc.Loader.shareLoader().getProgressBar() + "%");
     },
 
     getProgressBar:function () {
-        var per = this.m_sLoadedResourceCount / this.m_sResourceCount;
+        var per = this.loadedResourceCount / this.resourceCount;
         per = parseInt(per * 100);
         return per;
     },
@@ -80,21 +80,21 @@ cc.Loader = cc.Class.extend({
             switch (res[i].type) {
                 case "image":
                     sharedTextureCache.addImage(res[i].src);
-                    this.m_sResourceCount += 1;
+                    this.resourceCount += 1;
                     break;
                 case "bgm":
                     sharedEngine.preloadBackgroundMusic(res[i].src);
-                    this.m_sResourceCount += 1;
+                    this.resourceCount += 1;
                     break;
                 case "effect":
                     sharedEngine.preloadEffect(res[i].src);
-                    this.m_sResourceCount += 1;
+                    this.resourceCount += 1;
                     break;
                 case "plist":
                 case "tmx":
                 case "fnt":
                     shareParser.preloadPlist(res[i].src);
-                    this.m_sResourceCount += 1;
+                    this.resourceCount += 1;
                     break;
                 case "tga":
                     //cc.LOG("cocos2d:not implemented yet")
@@ -114,10 +114,10 @@ cc.Loader = cc.Class.extend({
     }
 });
 cc.Loader.shareLoader = function () {
-    if (!cc.s_ShareLoader) {
-        cc.s_ShareLoader = new cc.Loader();
+    if (!cc.shareLoader) {
+        cc.shareLoader = new cc.Loader();
     }
-    return cc.s_ShareLoader;
+    return cc.shareLoader;
 };
 
 cc.LoaderScene = cc.Class.extend({
@@ -147,8 +147,8 @@ cc.LoaderScene = cc.Class.extend({
     }
 });
 cc.LoaderScene.shareLoaderScene = function () {
-    if (!cc.s_ShareLoaderScene) {
-        cc.s_ShareLoaderScene = new cc.LoaderScene();
+    if (!cc.shareLoaderScene) {
+        cc.shareLoaderScene = new cc.LoaderScene();
     }
-    return cc.s_ShareLoaderScene;
+    return cc.shareLoaderScene;
 };

@@ -26,8 +26,8 @@
 
 var RotateWorldTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = RotateWorldMainLayer.node();
-        this.addChild(pLayer);
+        var layer = RotateWorldMainLayer.node();
+        this.addChild(layer);
         this.runAction(cc.RotateBy.actionWithDuration(4, -360));
         cc.Director.sharedDirector().replaceScene(this);
     }
@@ -43,9 +43,9 @@ var SpriteLayer = cc.Layer.extend({
         x = size.width;
         y = size.height;
 
-        var sprite = cc.Sprite.spriteWithFile(s_pPathGrossini);
-        var spriteSister1 = cc.Sprite.spriteWithFile(s_pPathSister1);
-        var spriteSister2 = cc.Sprite.spriteWithFile(s_pPathSister2);
+        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var spriteSister1 = cc.Sprite.spriteWithFile(s_pathSister1);
+        var spriteSister2 = cc.Sprite.spriteWithFile(s_pathSister2);
 
         sprite.setScale(1.5);
         spriteSister1.setScale(1.5);
@@ -78,8 +78,8 @@ var SpriteLayer = cc.Layer.extend({
 });
 
 SpriteLayer.node = function () {
-    var pNode = new SpriteLayer();
-    return pNode;
+    var node = new SpriteLayer();
+    return node;
 };
 
 var TestLayer = cc.Layer.extend({
@@ -104,8 +104,8 @@ var TestLayer = cc.Layer.extend({
 });
 
 TestLayer.node = function () {
-    var pNode = new TestLayer();
-    return pNode;
+    var node = new TestLayer();
+    return node;
 };
 
 var RotateWorldMainLayer = cc.Layer.extend({
@@ -151,6 +151,6 @@ var RotateWorldMainLayer = cc.Layer.extend({
 });
 
 RotateWorldMainLayer.node = function () {
-    var pNode = new RotateWorldMainLayer();
-    return pNode;
+    var node = new RotateWorldMainLayer();
+    return node;
 };

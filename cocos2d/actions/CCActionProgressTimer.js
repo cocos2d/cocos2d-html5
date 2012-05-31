@@ -29,56 +29,56 @@ var cc = cc = cc || {};
  @since v0.99.1
  */
 cc.ProgressTo = cc.ActionInterval.extend({
-    _m_fTo:0,
-    _m_fFrom:0,
+    _to:0,
+    _from:0,
     /** Initializes with a duration and a percent */
-    initWithDuration:function (duration, fPercent) {
+    initWithDuration:function (duration, percent) {
         if (this._super(duration)) {
-            this._m_fTo = fPercent;
+            this._to = percent;
             return true;
         }
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone._m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone._copyObject) {
             //in case of being called at sub class
-            pCopy = pZone._m_pCopyObject;
+            copy = zone._copyObject;
         } else {
-            pCopy = new cc.ProgressTo();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.ProgressTo();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        this._super(pZone);
+        this._super(zone);
 
-        pCopy.initWithDuration(this._m_fDuration, this._m_fTo);
+        copy.initWithDuration(this._duration, this._to);
 
-        return pCopy;
+        return copy;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_fFrom = pTarget.getPercentage();
+    startWithTarget:function (target) {
+        this._super(target);
+        this._from = target.getPercentage();
 
         // XXX: Is this correct ?
         // Adding it to support CCRepeat
-        if (this._m_fFrom == 100) {
-            this._m_fFrom = 0;
+        if (this._from == 100) {
+            this._from = 0;
         }
     },
     update:function (time) {
-        if (this._m_pTarget  instanceof cc.ProgressTimer) {
-            this._m_pTarget.setPercentage(this._m_fFrom + (this._m_fTo - this._m_fFrom) * time);
+        if (this._target  instanceof cc.ProgressTimer) {
+            this._target.setPercentage(this._from + (this._to - this._from) * time);
         }
     }
 });
 
 /** Creates and initializes with a duration and a percent */
-cc.ProgressTo.actionWithDuration = function (duration, fPercent) {
-    var pProgressTo = new cc.ProgressTo();
-    pProgressTo.initWithDuration(duration, fPercent);
+cc.ProgressTo.actionWithDuration = function (duration, percent) {
+    var progressTo = new cc.ProgressTo();
+    progressTo.initWithDuration(duration, percent);
 
-    return pProgressTo;
+    return progressTo;
 };
 
 /**
@@ -86,48 +86,48 @@ cc.ProgressTo.actionWithDuration = function (duration, fPercent) {
  @since v0.99.1
  */
 cc.ProgressFromTo = cc.ActionInterval.extend({
-    _m_fTo:0,
-    _m_fFrom:0,
+    _to:0,
+    _from:0,
     /** Initializes the action with a duration, a "from" percentage and a "to" percentage */
-    initWithDuration:function (duration, fFromPercentage, fToPercentage) {
+    initWithDuration:function (duration, fromPercentage, toPercentage) {
         if (this._super(duration)) {
-            this._m_fTo = fToPercentage;
-            this._m_fFrom = fFromPercentage;
+            this._to = toPercentage;
+            this._from = fromPercentage;
             return true;
         }
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone._m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone._copyObject) {
             //in case of being called at sub class
-            pCopy = pZone._m_pCopyObject;
+            copy = zone._copyObject;
         } else {
-            pCopy = new cc.ProgressFromTo();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.ProgressFromTo();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        this._super(pZone);
-        pCopy.initWithDuration(this._m_fDuration, this._m_fFrom, this._m_fTo);
-        return pCopy;
+        this._super(zone);
+        copy.initWithDuration(this._duration, this._from, this._to);
+        return copy;
     },
     reverse:function () {
-        return cc.ProgressFromTo.actionWithDuration(this._m_fDuration, this._m_fTo, this._m_fFrom);
+        return cc.ProgressFromTo.actionWithDuration(this._duration, this._to, this._from);
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
     },
     update:function (time) {
-        if (this._m_pTarget  instanceof cc.ProgressTimer) {
-            this._m_pTarget.setPercentage(this._m_fFrom + (this._m_fTo - this._m_fFrom) * time);
+        if (this._target  instanceof cc.ProgressTimer) {
+            this._target.setPercentage(this._from + (this._to - this._from) * time);
         }
     }
 });
 
 /** Creates and initializes the action with a duration, a "from" percentage and a "to" percentage */
-cc.ProgressFromTo.actionWithDuration = function (duration, fFromPercentage, fToPercentage) {
-    var pProgressFromTo = new cc.ProgressFromTo();
-    pProgressFromTo.initWithDuration(duration, fFromPercentage, fToPercentage);
-    return pProgressFromTo;
+cc.ProgressFromTo.actionWithDuration = function (duration, fromPercentage, toPercentage) {
+    var progressFromTo = new cc.ProgressFromTo();
+    progressFromTo.initWithDuration(duration, fromPercentage, toPercentage);
+    return progressFromTo;
 };

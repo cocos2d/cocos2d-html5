@@ -25,21 +25,21 @@
  ****************************************************************************/
 
 var TextureCacheTest = cc.Layer.extend({
-    _m_pLabelLoading:null,
-    _m_pLabelPercent:null,
-    _m_nNumberOfSprites:20,
-    _m_nNumberOfLoadedSprites:0,
+    _labelLoading:null,
+    _labelPercent:null,
+    _numberOfSprites:20,
+    _numberOfLoadedSprites:0,
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
 
-        this._m_pLabelLoading = cc.LabelTTF.labelWithString("loading...", "Arial", 15);
-        this._m_pLabelPercent = cc.LabelTTF.labelWithString("%0", "Arial", 15);
+        this._labelLoading = cc.LabelTTF.labelWithString("loading...", "Arial", 15);
+        this._labelPercent = cc.LabelTTF.labelWithString("%0", "Arial", 15);
 
-        this._m_pLabelLoading.setPosition(cc.PointMake(size.width / 2, size.height / 2 - 20));
-        this._m_pLabelPercent.setPosition(cc.PointMake(size.width / 2, size.height / 2 + 20));
+        this._labelLoading.setPosition(cc.PointMake(size.width / 2, size.height / 2 - 20));
+        this._labelPercent.setPosition(cc.PointMake(size.width / 2, size.height / 2 + 20));
 
-        this.addChild(this._m_pLabelLoading);
-        this.addChild(this._m_pLabelPercent);
+        this.addChild(this._labelLoading);
+        this.addChild(this._labelPercent);
 
         // load textrues
         cc.TextureCache.sharedTextureCache().addImageAsync("Resources/Images/HelloWorld.png", this, this.loadingCallBack);
@@ -130,11 +130,11 @@ var TextureCacheTest = cc.Layer.extend({
         this.addChild(s15);
     },
     loadingCallBack:function (obj) {
-        ++this._m_nNumberOfLoadedSprites;
-        this._m_pLabelPercent = (this._m_nNumberOfLoadedSprites / this._m_nNumberOfSprites) * 100;
-        if (this._m_nNumberOfLoadedSprites == this._m_nNumberOfSprites) {
-            this.removeChild(this._m_pLabelLoading, true);
-            this.removeChild(this._m_pLabelPercent, true);
+        ++this._numberOfLoadedSprites;
+        this._labelPercent = (this._numberOfLoadedSprites / this._numberOfSprites) * 100;
+        if (this._numberOfLoadedSprites == this._numberOfSprites) {
+            this.removeChild(this._labelLoading, true);
+            this.removeChild(this._labelPercent, true);
             this.addSprite();
         }
     }
@@ -142,8 +142,8 @@ var TextureCacheTest = cc.Layer.extend({
 
 var TextureCacheTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = new TextureCacheTest();
-        this.addChild(pLayer);
+        var layer = new TextureCacheTest();
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
     }
 });

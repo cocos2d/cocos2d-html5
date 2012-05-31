@@ -25,19 +25,19 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 
-cc.kCCNodeTagInvalid = -1;
-cc.kCCNodeOnEnter = null;
-cc.kCCNodeOnExit = null;
+cc.CCNODE_TAG_INVALID = -1;
+cc.CCNODE_ON_ENTER = null;
+cc.CCNODE_ON_EXIT = null;
 
 cc.saveContext = function () {
-    if (cc.renderContextType == cc.kCanvas) {
+    if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.save();
     } else {
         //glPushMatrix();
     }
 };
 cc.restoreContext = function () {
-    if (cc.renderContextType == cc.kCanvas) {
+    if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.restore();
     } else {
         //glPopMatrix();
@@ -100,110 +100,110 @@ cc.restoreContext = function () {
  */
 
 cc.Node = cc.Class.extend({
-    _m_nZOrder:0,
-    _m_fVertexZ:0.0,
-    _m_fRotation:0.0,
-    _m_fScaleX:1.0,
-    _m_fScaleY:1.0,
-    _m_tPosition:cc.PointZero(),
-    _m_tPositionInPixels:cc.PointZero(),
-    _m_fSkewX:0.0,
-    _m_fSkewY:0.0,
+    _zOrder:0,
+    _vertexZ:0.0,
+    _rotation:0.0,
+    _scaleX:1.0,
+    _scaleY:1.0,
+    _position:cc.PointZero(),
+    _positionInPixels:cc.PointZero(),
+    _skewX:0.0,
+    _skewY:0.0,
     // children (lazy allocs),
-    _m_pChildren:null,
+    _children:null,
     // lazy alloc,
-    _m_pCamera:null,
-    _m_pGrid:null,
-    _m_bIsVisible:true,
-    _m_tAnchorPoint:new cc.Point(0, 0),
-    _m_tAnchorPointInPixels:new cc.Point(0, 0),
-    _m_tContentSize:cc.SizeZero(),
-    _m_tContentSizeInPixels:cc.SizeZero(),
-    _m_bIsRunning:false,
-    _m_pParent:null,
+    _camera:null,
+    _grid:null,
+    _isVisible:true,
+    _anchorPoint:new cc.Point(0, 0),
+    _anchorPointInPixels:new cc.Point(0, 0),
+    _contentSize:cc.SizeZero(),
+    _contentSizeInPixels:cc.SizeZero(),
+    _isRunning:false,
+    _parent:null,
     // "whole screen" objects. like Scenes and Layers, should set isRelativeAnchorPoint to false
-    _m_bIsRelativeAnchorPoint:true,
-    _m_nTag:cc.kCCNodeTagInvalid,
+    _isRelativeAnchorPoint:true,
+    _tag:cc.CCNODE_TAG_INVALID,
     // userData is always inited as nil
-    _m_pUserData:null,
-    _m_bIsTransformDirty:true,
-    _m_bIsInverseDirty:true,
+    _userData:null,
+    _isTransformDirty:true,
+    _isInverseDirty:true,
     _isCacheDirty:true,
-    _m_bIsTransformGLDirty:null,
-    _m_tTransform:null,
-    _m_tInverse:null,
-    _m_pTransformGL:null,
+    _isTransformGLDirty:null,
+    _transform:null,
+    _inverse:null,
+    _transformGL:null,
 
     ctor:function () {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
-            this._m_pTransformGL = 0.0;
+            this._isTransformGLDirty = true;
+            this._transformGL = 0.0;
         }
-        this._m_tAnchorPoint = new cc.Point(0, 0);
-        this._m_tAnchorPointInPixels = new cc.Point(0, 0);
-        this._m_tContentSize = new cc.Size(0,0);
-        this._m_tContentSizeInPixels = new cc.Size(0,0);
+        this._anchorPoint = new cc.Point(0, 0);
+        this._anchorPointInPixels = new cc.Point(0, 0);
+        this._contentSize = new cc.Size(0,0);
+        this._contentSizeInPixels = new cc.Size(0,0);
     },
 
-    _arrayMakeObjectsPerformSelector:function (pArray, func) {
-        if (pArray && pArray.length > 0) {
-            for (var i = 0; i < pArray.length; i++) {
-                var pNode = pArray[i];
-                if (pNode && (typeof(func) == "string")) {
-                    pNode[func]();
-                } else if (pNode && (typeof(func) == "function")) {
-                    func.call(pNode);
+    _arrayMakeObjectsPerformSelector:function (array, func) {
+        if (array && array.length > 0) {
+            for (var i = 0; i < array.length; i++) {
+                var node = array[i];
+                if (node && (typeof(func) == "string")) {
+                    node[func]();
+                } else if (node && (typeof(func) == "function")) {
+                    func.call(node);
                 }
             }
         }
     },
     _addDirtyRegionToDirector:function (rect) {
-        //if (!cc.s_bFirstRun) {
+        //if (!cc.firstRun) {
             //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
         //}
     },
     _isInDirtyRegion:function () {
-        //if (!cc.s_bFirstRun) {
+        //if (!cc.firstRun) {
         //    return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
         //}
     },
 
     setNodeDirty:function () {
         this._setNodeDirtyForCache();
-        this._m_bIsTransformDirty = this._m_bIsInverseDirty = true;
+        this._isTransformDirty = this._isInverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._m_bIsTransformGLDirty = true;
+            this._isTransformGLDirty = true;
         }
     },
 
     _setNodeDirtyForCache:function () {
         this._isCacheDirty = true;
-        if (this._m_pParent) {
-            this._m_pParent._setNodeDirtyForCache();
+        if (this._parent) {
+            this._parent._setNodeDirtyForCache();
         }
     },
 
     getSkewX:function () {
-        return this._m_fSkewX;
+        return this._skewX;
     },
     setSkewX:function (newSkewX) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_fSkewX = newSkewX;
+        this._skewX = newSkewX;
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     getSkewY:function () {
-        return this._m_fSkewY;
+        return this._skewY;
     },
     setSkewY:function (newSkewY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_fSkewY = newSkewY;
+        this._skewY = newSkewY;
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
@@ -211,50 +211,50 @@ cc.Node = cc.Class.extend({
 
     // zOrder getter
     getZOrder:function () {
-        return this._m_nZOrder;
+        return this._zOrder;
     },
     // zOrder setter : private method
     // used internally to alter the zOrder variable. DON'T call this method manually
     _setZOrder:function (z) {
-        this._m_nZOrder = z
+        this._zOrder = z
     },
     // ertexZ getter
     getVertexZ:function () {
-        return this._m_fVertexZ / cc.CONTENT_SCALE_FACTOR();
+        return this._vertexZ / cc.CONTENT_SCALE_FACTOR();
     },
     // vertexZ setter
     setVertexZ:function (Var) {
-        this._m_fVertexZ = Var * cc.CONTENT_SCALE_FACTOR();
+        this._vertexZ = Var * cc.CONTENT_SCALE_FACTOR();
     },
     // rotation getter
     getRotation:function () {
-        return this._m_fRotation;
+        return this._rotation;
     },
     // rotation setter
     setRotation:function (newRotation) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_fRotation = newRotation;
+        this._rotation = newRotation;
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
     /** Get the scale factor of the node.
-     @warning: Assert when _m_fScaleX != _m_fScaleY.
+     @warning: Assert when _scaleX != _scaleY.
      */
     getScale:function () {
-        cc.Assert(this._m_fScaleX == this._m_fScaleY, "cc.Node#scale. ScaleX != ScaleY. Don't know which one to return");
-        return this._m_fScaleX;
+        cc.Assert(this._scaleX == this._scaleY, "cc.Node#scale. ScaleX != ScaleY. Don't know which one to return");
+        return this._scaleX;
     },
     /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. */
     setScale:function (scale) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_fScaleX = scale;
-        this._m_fScaleY = scale;
+        this._scaleX = scale;
+        this._scaleY = scale;
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -262,14 +262,14 @@ cc.Node = cc.Class.extend({
     },
     /// scaleX getter
     getScaleX:function () {
-        return this._m_fScaleX;
+        return this._scaleX;
     },
     /// scaleX setter
     setScaleX:function (newScaleX) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_fScaleX = newScaleX;
+        this._scaleX = newScaleX;
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -277,14 +277,14 @@ cc.Node = cc.Class.extend({
     },
     /// scaleY getter
     getScaleY:function () {
-        return this._m_fScaleY;
+        return this._scaleY;
     },
     /// scaleY setter
     setScaleY:function (newScaleY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_fScaleY = newScaleY;
+        this._scaleY = newScaleY;
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -295,11 +295,11 @@ cc.Node = cc.Class.extend({
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_tPosition = newPosition;
+        this._position = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
-            this._m_tPositionInPixels = this._m_tPosition;
+            this._positionInPixels = this._position;
         } else {
-            this._m_tPositionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
+            this._positionInPixels = cc.ccpMult(newPosition, cc.CONTENT_SCALE_FACTOR());
         }
 
         //save dirty region when after changed
@@ -310,18 +310,18 @@ cc.Node = cc.Class.extend({
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_tPositionInPixels = newPosition;
+        this._positionInPixels = newPosition;
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
-            this._m_tPosition = this._m_tPositionInPixels;
+            this._position = this._positionInPixels;
         } else {
-            this._m_tPosition = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
+            this._position = cc.ccpMult(newPosition, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
     getPositionInPixels:function () {
-        return new cc.Point(this._m_tPositionInPixels.x, this._m_tPositionInPixels.y);
+        return new cc.Point(this._positionInPixels.x, this._positionInPixels.y);
     },
     /** get/set Position for Lua (pass number faster than CCPoint object)
 
@@ -335,50 +335,50 @@ cc.Node = cc.Class.extend({
      node:setPositionInPixels(x, y)     -- pass x, y values to C++
      */
     getPosition:function () {
-        return new cc.Point(this._m_tPosition.x, this._m_tPosition.y);
+        return new cc.Point(this._position.x, this._position.y);
     },
     getPositionX:function () {
-        return this._m_tPosition.x;
+        return this._position.x;
     },
     setPositionX:function (x) {
-        this.setPosition(cc.ccp(x, this._m_tPosition.y));
+        this.setPosition(cc.ccp(x, this._position.y));
     },
     getPositionY:function () {
-        return  this._m_tPosition.y;
+        return  this._position.y;
     },
     setPositionY:function (y) {
-        this.setPosition(cc.ccp(this._m_tPosition.x, y));
+        this.setPosition(cc.ccp(this._position.x, y));
     },
     /** Get children count */
     getChildrenCount:function () {
-        return this._m_pChildren ? this._m_pChildren.length : 0;
+        return this._children ? this._children.length : 0;
     },
     /// children getter
     getChildren:function () {
-        return this._m_pChildren;
+        return this._children;
     },
     /// camera getter: lazy alloc
     getCamera:function () {
-        if (!this._m_pCamera) {
-            this._m_pCamera = new cc.Camera();
+        if (!this._camera) {
+            this._camera = new cc.Camera();
         }
-        return this._m_pCamera;
+        return this._camera;
     },
     /// grid getter
     getGrid:function () {
-        return this._m_pGrid;
+        return this._grid;
     },
     /// grid setter
-    setGrid:function (pGrid) {
-        this._m_pGrid = pGrid;
+    setGrid:function (grid) {
+        this._grid = grid;
     },
     /// isVisible getter
     getIsVisible:function () {
-        return this._m_bIsVisible;
+        return this._isVisible;
     },
     /// isVisible setter
     setIsVisible:function (Var) {
-        this._m_bIsVisible = Var;
+        this._isVisible = Var;
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
@@ -391,16 +391,16 @@ cc.Node = cc.Class.extend({
      @since v0.8
      */
     getAnchorPoint:function () {
-        return new cc.Point(this._m_tAnchorPoint.x, this._m_tAnchorPoint.y);
+        return new cc.Point(this._anchorPoint.x, this._anchorPoint.y);
     },
     setAnchorPoint:function (point) {
-        if (!cc.Point.CCPointEqualToPoint(point, this._m_tAnchorPoint)) {
+        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-            this._m_tAnchorPoint = point;
-            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
-                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._anchorPoint = point;
+            this._anchorPointInPixels = new cc.Point(this._contentSizeInPixels.width * this._anchorPoint.x,
+                this._contentSizeInPixels.height * this._anchorPoint.y);
 
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -409,20 +409,20 @@ cc.Node = cc.Class.extend({
     },
     /// anchorPointInPixels getter
     getAnchorPointInPixels:function () {
-        return new cc.Point(this._m_tAnchorPointInPixels.x, this._m_tAnchorPointInPixels.y);
+        return new cc.Point(this._anchorPointInPixels.x, this._anchorPointInPixels.y);
     },
     setContentSizeInPixels:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSizeInPixels)) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._contentSizeInPixels)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-            this._m_tContentSizeInPixels = size;
+            this._contentSizeInPixels = size;
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
-                this._m_tContentSize = this._m_tContentSizeInPixels;
+                this._contentSize = this._contentSizeInPixels;
             } else {
-                this._m_tContentSize = new cc.Size(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
+                this._contentSize = new cc.Size(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
             }
-            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
-                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._anchorPointInPixels = new cc.Point(this._contentSizeInPixels.width * this._anchorPoint.x,
+                this._contentSizeInPixels.height * this._anchorPoint.y);
 
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -435,53 +435,53 @@ cc.Node = cc.Class.extend({
      @since v0.8
      */
     getContentSize:function () {
-        return new cc.Size(this._m_tContentSize.width, this._m_tContentSize.height);
+        return new cc.Size(this._contentSize.width, this._contentSize.height);
     },
     setContentSize:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._m_tContentSize)) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-            this._m_tContentSize = size;
+            this._contentSize = size;
 
             if (cc.CONTENT_SCALE_FACTOR() == 1) {
-                this._m_tContentSizeInPixels = this._m_tContentSize;
+                this._contentSizeInPixels = this._contentSize;
             }
             else {
-                this._m_tContentSizeInPixels = new cc.Size(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
+                this._contentSizeInPixels = new cc.Size(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
             }
 
-            this._m_tAnchorPointInPixels = new cc.Point(this._m_tContentSizeInPixels.width * this._m_tAnchorPoint.x,
-                this._m_tContentSizeInPixels.height * this._m_tAnchorPoint.y);
+            this._anchorPointInPixels = new cc.Point(this._contentSizeInPixels.width * this._anchorPoint.x,
+                this._contentSizeInPixels.height * this._anchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
     },
     getContentSizeInPixels:function () {
-        return new cc.Size(this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
+        return new cc.Size(this._contentSizeInPixels.width, this._contentSizeInPixels.height);
     },
     // isRunning getter
     getIsRunning:function () {
-        return this._m_bIsRunning;
+        return this._isRunning;
     },
     /// parent getter
     getParent:function () {
-        return this._m_pParent;
+        return this._parent;
     },
     /// parent setter
     setParent:function (Var) {
-        this._m_pParent = Var;
+        this._parent = Var;
     },
     /// isRelativeAnchorPoint getter
     getIsRelativeAnchorPoint:function () {
-        return this._m_bIsRelativeAnchorPoint;
+        return this._isRelativeAnchorPoint;
     },
     /// isRelativeAnchorPoint setter
     setIsRelativeAnchorPoint:function (newValue) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        this._m_bIsRelativeAnchorPoint = newValue;
+        this._isRelativeAnchorPoint = newValue;
 
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -489,17 +489,17 @@ cc.Node = cc.Class.extend({
     },
     /// tag getter
     getTag:function () {
-        return this._m_nTag;
+        return this._tag;
     },
     /// tag setter
     setTag:function (Var) {
-        this._m_nTag = Var;
+        this._tag = Var;
     },
     getUserData:function () {
-        return this._m_pUserData;
+        return this._userData;
     },
     setUserData:function (Var) {
-        this._m_pUserData = Var;
+        this._userData = Var;
     },
     /** returns a "local" axis aligned bounding box of the node.
      The returned box is relative only to its parent.
@@ -517,21 +517,21 @@ cc.Node = cc.Class.extend({
      @since v0.99.5
      */
     boundingBoxInPixels:function () {
-        var rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
+        var rect = cc.RectMake(0, 0, this._contentSizeInPixels.width, this._contentSizeInPixels.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
 
     boundingBoxToWorld:function () {
-        var rect = cc.RectMake(0, 0, this._m_tContentSizeInPixels.width, this._m_tContentSizeInPixels.height);
+        var rect = cc.RectMake(0, 0, this._contentSizeInPixels.width, this._contentSizeInPixels.height);
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         rect = new cc.Rect(0 | rect.origin.x - 4, 0 | rect.origin.y - 4, 0 | rect.size.width + 8, 0 | rect.size.height + 8);
         //query child's boundingBox
-        if (!this._m_pChildren)
+        if (!this._children)
             return rect;
 
-        for (var i = 0; i < this._m_pChildren.length; i++) {
-            var child = this._m_pChildren[i];
-            if (child && child._m_bIsVisible) {
+        for (var i = 0; i < this._children.length; i++) {
+            var child = this._children[i];
+            if (child && child._isVisible) {
                 var childRect = child.boundingBoxToWorld();
                 if (childRect) {
                     rect = cc.Rect.CCRectUnion(rect, childRect);
@@ -549,13 +549,13 @@ cc.Node = cc.Class.extend({
         this.unscheduleAllSelectors();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "cleanup");
+        this._arrayMakeObjectsPerformSelector(this._children, "cleanup");
     },
     description:function () {
-        return "<cc.Node | Tag =" + this._m_nTag + ">";
+        return "<cc.Node | Tag =" + this._tag + ">";
     },
     _childrenAlloc:function () {
-        this._m_pChildren = [];
+        this._children = [];
     },
     // composition: GET
     /** Gets a child from the container given its tag
@@ -563,12 +563,12 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     getChildByTag:function (aTag) {
-        cc.Assert(aTag != cc.kCCNodeTagInvalid, "Invalid tag");
-        if (this._m_pChildren != null) {
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var pNode = this._m_pChildren[i];
-                if (pNode && pNode._m_nTag == aTag){
-                    return pNode;
+        cc.Assert(aTag != cc.CCNODE_TAG_INVALID, "Invalid tag");
+        if (this._children != null) {
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node && node._tag == aTag){
+                    return node;
                 }
             }
         }
@@ -584,19 +584,19 @@ cc.Node = cc.Class.extend({
     addChild:function (child, zOrder, tag) {
         var argnum = arguments.length;
         cc.Assert(child != null, "Argument must be non-nil");
-        cc.Assert(child._m_pParent == null, "child already added. It can't be added again");
+        cc.Assert(child._parent == null, "child already added. It can't be added again");
         var tempzOrder = (zOrder!=null) ? zOrder : child.getZOrder();
         var tmptag =  (tag!=null) ? tag : child.getTag();
         child.setTag(tmptag);
 
-        if (!this._m_pChildren) {
+        if (!this._children) {
             this._childrenAlloc();
         }
 
         this._insertChild(child, tempzOrder);
 
         child.setParent(this);
-        if (this._m_bIsRunning) {
+        if (this._isRunning) {
             child.onEnter();
             child.onEnterTransitionDidFinish();
         }
@@ -609,7 +609,7 @@ cc.Node = cc.Class.extend({
      @since v0.99.3
      */
     removeFromParentAndCleanup:function (cleanup) {
-        this._m_pParent.removeChild(this, cleanup);
+        this._parent.removeChild(this, cleanup);
     },
     /** Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter.
      @since v0.7.1
@@ -620,11 +620,11 @@ cc.Node = cc.Class.extend({
      */
     removeChild:function (child, cleanup) {
         // explicit nil handling
-        if (this._m_pChildren == null) {
+        if (this._children == null) {
             return;
         }
 
-        if (this._m_pChildren.indexOf(child) > -1) {
+        if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
 
@@ -635,7 +635,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     removeChildByTag:function (tag, cleanup) {
-        cc.Assert(tag != cc.kCCNodeTagInvalid, "Invalid tag");
+        cc.Assert(tag != cc.CCNODE_TAG_INVALID, "Invalid tag");
 
         var child = this.getChildByTag(tag);
         if (child == null) {
@@ -650,31 +650,31 @@ cc.Node = cc.Class.extend({
      */
     removeAllChildrenWithCleanup:function (cleanup) {
         // not using detachChild improves speed here
-        if (this._m_pChildren != null) {
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var pNode = this._m_pChildren[i];
-                if (pNode) {
+        if (this._children != null) {
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node) {
                     // IMPORTANT:
                     //  -1st do onExit
                     //  -2nd cleanup
-                    if (this._m_bIsRunning) {
-                        pNode.onExit();
+                    if (this._isRunning) {
+                        node.onExit();
                     }
                     if (cleanup) {
-                        pNode.cleanup();
+                        node.cleanup();
                     }
                     // set parent nil at the end
-                    pNode.setParent(null);
+                    node.setParent(null);
                 }
             }
-            this._m_pChildren = [];
+            this._children = [];
         }
     },
     _detachChild:function (child, doCleanup) {
         // IMPORTANT:
         //  -1st do onExit
         //  -2nd cleanup
-        if (this._m_bIsRunning) {
+        if (this._isRunning) {
             child.onExit();
         }
 
@@ -687,18 +687,18 @@ cc.Node = cc.Class.extend({
         // set parent nil at the end
         child.setParent(null);
 
-        cc.ArrayRemoveObject(this._m_pChildren, child);
+        cc.ArrayRemoveObject(this._children, child);
     },
     // helper used by reorderChild & add
     _insertChild:function (child, z) {
-        var a = this._m_pChildren[this._m_pChildren.length - 1];
+        var a = this._children[this._children.length - 1];
         if (!a || a.getZOrder() <= z) {
-            this._m_pChildren.push(child);
+            this._children.push(child);
         } else {
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var pNode = this._m_pChildren[i];
-                if (pNode && (pNode.getZOrder() > z )) {
-                    this._m_pChildren = cc.ArrayAppendObjectToIndex(this._m_pChildren, child, i);
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node && (node.getZOrder() > z )) {
+                    this._children = cc.ArrayAppendObjectToIndex(this._children, child, i);
                     break;
                 }
             }
@@ -714,7 +714,7 @@ cc.Node = cc.Class.extend({
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        cc.ArrayRemoveObject(this._m_pChildren, child);
+        cc.ArrayRemoveObject(this._children, child);
         this._insertChild(child, zOrder);
 
         //save dirty region when after changed
@@ -744,24 +744,24 @@ cc.Node = cc.Class.extend({
     /** recursive method that visit its children and draw them */
     visit:function (ctx) {
         // quick return if not visible
-        if (!this._m_bIsVisible) {
+        if (!this._isVisible) {
             return;
         }
         var context = ctx || cc.renderContext;
         context.save();
 
-        if (this._m_pGrid && this._m_pGrid.isActive()) {
-            this._m_pGrid.beforeDraw();
+        if (this._grid && this._grid.isActive()) {
+            this._grid.beforeDraw();
             this.transformAncestors();
         }
 
         this.transform(context);
-        if (this._m_pChildren) {
+        if (this._children) {
             // draw children zOrder < 0
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var pNode = this._m_pChildren[i];
-                if (pNode && pNode._m_nZOrder < 0) {
-                    pNode.visit(context);
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node && node._zOrder < 0) {
+                    node.visit(context);
                 }
             }
         }
@@ -772,17 +772,17 @@ cc.Node = cc.Class.extend({
         //}
 
         // draw children zOrder >= 0
-        if (this._m_pChildren) {
-            for (var i = 0; i < this._m_pChildren.length; i++) {
-                var pNode = this._m_pChildren[i];
-                if (pNode && pNode._m_nZOrder >= 0) {
-                    pNode.visit(context);
+        if (this._children) {
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node && node._zOrder >= 0) {
+                    node.visit(context);
                 }
             }
         }
 
-        if (this._m_pGrid && this._m_pGrid.isActive()) {
-            this._m_pGrid.afterDraw(this);
+        if (this._grid && this._grid.isActive()) {
+            this._grid.afterDraw(this);
         }
 
         context.restore();
@@ -793,9 +793,9 @@ cc.Node = cc.Class.extend({
      @since v0.7.2
      */
     transformAncestors:function () {
-        if (this._m_pParent != null) {
-            this._m_pParent.transformAncestors();
-            this._m_pParent.transform();
+        if (this._parent != null) {
+            this._parent.transformAncestors();
+            this._parent.transform();
         }
     },
 
@@ -804,32 +804,32 @@ cc.Node = cc.Class.extend({
     transform:function (ctx) {
         var context = ctx || cc.renderContext;
         // transformations
-        if (cc.renderContextType == cc.kCanvas) {
-            if (this._m_bIsRelativeAnchorPoint) {
+        if (cc.renderContextType == cc.CANVAS) {
+            if (this._isRelativeAnchorPoint) {
                 var pAp = new cc.Point(0, 0);
-                if (this._m_pParent) {
-                    pAp = this._m_pParent._m_tAnchorPointInPixels;
+                if (this._parent) {
+                    pAp = this._parent._anchorPointInPixels;
                 }
-                context.translate(0 | (this._m_tPosition.x - pAp.x), -(0 | (this._m_tPosition.y - pAp.y)));
+                context.translate(0 | (this._position.x - pAp.x), -(0 | (this._position.y - pAp.y)));
             } else {
                 var pAp = new cc.Point(0, 0);
-                if (this._m_pParent) {
-                    pAp = this._m_pParent._m_tAnchorPointInPixels;
+                if (this._parent) {
+                    pAp = this._parent._anchorPointInPixels;
                 }
-                var lAp = this._m_tAnchorPointInPixels;
-                context.translate(0 | ( this._m_tPosition.x - pAp.x + lAp.x), -(0 | (this._m_tPosition.y - pAp.y + lAp.y)));
+                var lAp = this._anchorPointInPixels;
+                context.translate(0 | ( this._position.x - pAp.x + lAp.x), -(0 | (this._position.y - pAp.y + lAp.y)));
             }
 
-            if (this._m_fRotation != 0) {
-                context.rotate(cc.DEGREES_TO_RADIANS(this._m_fRotation));
+            if (this._rotation != 0) {
+                context.rotate(cc.DEGREES_TO_RADIANS(this._rotation));
             }
-            if ((this._m_fScaleX != 1) || (this._m_fScaleY != 1)) {
-                context.scale(this._m_fScaleX, this._m_fScaleY);
+            if ((this._scaleX != 1) || (this._scaleY != 1)) {
+                context.scale(this._scaleX, this._scaleY);
             }
-            if ((this._m_fSkewX != 0) || (this._m_fSkewY != 0)) {
+            if ((this._skewX != 0) || (this._skewY != 0)) {
                 context.transform(1,
-                    -Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)),
-                    -Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)),
+                    -Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
+                    -Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)),
                     1, 0, 0);
             }
         } else {
@@ -837,26 +837,26 @@ cc.Node = cc.Class.extend({
             if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
                 // BEGIN alternative -- using cached transform
                 //
-                if (this._m_bIsTransformGLDirty) {
+                if (this._isTransformGLDirty) {
                     var t = this.nodeToParentTransform();
-                    //cc.CGAffineToGL(t, this._m_pTransformGL);
-                    this._m_bIsTransformGLDirty = false;
+                    //cc.CGAffineToGL(t, this._transformGL);
+                    this._isTransformGLDirty = false;
                 }
-                //glMultMatrixf(this._m_pTransformGL);
-                if (this._m_fVertexZ) {
-                    //glTranslatef(0, 0, this._m_fVertexZ);
+                //glMultMatrixf(this._transformGL);
+                if (this._vertexZ) {
+                    //glTranslatef(0, 0, this._vertexZ);
                 }
 
                 // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-                if (this._m_pCamera && !(this._m_pGrid && this._m_pGrid.isActive())) {
-                    var translate = (this._m_tAnchorPointInPixels.x != 0.0 || this._m_tAnchorPointInPixels.y != 0.0);
+                if (this._camera && !(this._grid && this._grid.isActive())) {
+                    var translate = (this._anchorPointInPixels.x != 0.0 || this._anchorPointInPixels.y != 0.0);
 
                     if (translate) {
-                        //cc.glTranslate(RENDER_IN_SUBPIXEL(this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._m_tAnchorPointInPixels.y), 0);
+                        //cc.glTranslate(RENDER_IN_SUBPIXEL(this._anchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._anchorPointInPixels.y), 0);
                     }
-                    this._m_pCamera.locate();
+                    this._camera.locate();
                     if (translate) {
-                        //cc.glTranslate(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
+                        //cc.glTranslate(RENDER_IN_SUBPIXEL(-this._anchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._anchorPointInPixels.y), 0);
                     }
                 }
                 // END alternative
@@ -864,18 +864,18 @@ cc.Node = cc.Class.extend({
                 // BEGIN original implementation
                 //
                 // translate
-                if (this._m_bIsRelativeAnchorPoint && (this._m_tAnchorPointInPixels.x != 0 || this._m_tAnchorPointInPixels.y != 0 )) {
-                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
+                if (this._isRelativeAnchorPoint && (this._anchorPointInPixels.x != 0 || this._anchorPointInPixels.y != 0 )) {
+                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(-this._anchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._anchorPointInPixels.y), 0);
                 }
-                if (this._m_tAnchorPointInPixels.x != 0 || this._m_tAnchorPointInPixels.y != 0) {
-                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.x + this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.y + this._m_tAnchorPointInPixels.y), this._m_fVertexZ);
+                if (this._anchorPointInPixels.x != 0 || this._anchorPointInPixels.y != 0) {
+                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._positionInPixels.x + this._anchorPointInPixels.x), RENDER_IN_SUBPIXEL(this._positionInPixels.y + this._anchorPointInPixels.y), this._vertexZ);
                 }
-                else if (this._m_tPositionInPixels.x != 0 || this._m_tPositionInPixels.y != 0 || this._m_fVertexZ != 0) {
-                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.x), RENDER_IN_SUBPIXEL(this._m_tPositionInPixels.y), this._m_fVertexZ);
+                else if (this._positionInPixels.x != 0 || this._positionInPixels.y != 0 || this._vertexZ != 0) {
+                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._positionInPixels.x), RENDER_IN_SUBPIXEL(this._positionInPixels.y), this._vertexZ);
                 }
                 // rotate
-                if (this._m_fRotation != 0.0) {
-                    //glRotatef(-this._m_fRotation, 0.0, 0.0, 1.0);
+                if (this._rotation != 0.0) {
+                    //glRotatef(-this._rotation, 0.0, 0.0, 1.0);
                 }
 
                 // skew
@@ -890,15 +890,15 @@ cc.Node = cc.Class.extend({
                 // }
 
                 // scale
-                if (this._m_fScaleX != 1.0 || this._m_fScaleY != 1.0) {
-                    // glScalef(this._m_fScaleX, this._m_fScaleY, 1.0);
+                if (this._scaleX != 1.0 || this._scaleY != 1.0) {
+                    // glScalef(this._scaleX, this._scaleY, 1.0);
                 }
-                if (this._m_pCamera && !(this._m_pGrid && this._m_pGrid.isActive()))
-                    this._m_pCamera.locate();
+                if (this._camera && !(this._grid && this._grid.isActive()))
+                    this._camera.locate();
 
                 // restore and re-position point
-                if (this._m_tAnchorPointInPixels.x != 0.0 || this._m_tAnchorPointInPixels.y != 0.0) {
-                    // glTranslatef(RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._m_tAnchorPointInPixels.y), 0);
+                if (this._anchorPointInPixels.x != 0.0 || this._anchorPointInPixels.y != 0.0) {
+                    // glTranslatef(RENDER_IN_SUBPIXEL(-this._anchorPointInPixels.x), RENDER_IN_SUBPIXEL(-this._anchorPointInPixels.y), 0);
                 }
                 //
                 // END original implementation
@@ -912,9 +912,9 @@ cc.Node = cc.Class.extend({
      During onEnter you can't a "sister/brother" node.
      */
     onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnter");
+        this._arrayMakeObjectsPerformSelector(this._children, "onEnter");
         this.resumeSchedulerAndActions();
-        this._m_bIsRunning = true;
+        this._isRunning = true;
     },
 
     /** callback that is called when the cc.Node enters in the 'stage'.
@@ -922,7 +922,7 @@ cc.Node = cc.Class.extend({
      @since v0.8
      */
     onEnterTransitionDidFinish:function () {
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onEnterTransitionDidFinish");
+        this._arrayMakeObjectsPerformSelector(this._children, "onEnterTransitionDidFinish");
     },
     /** callback that is called every time the cc.Node leaves the 'stage'.
      If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes.
@@ -930,8 +930,8 @@ cc.Node = cc.Class.extend({
      */
     onExit:function () {
         this.pauseSchedulerAndActions();
-        this._m_bIsRunning = false;
-        this._arrayMakeObjectsPerformSelector(this._m_pChildren, "onExit");
+        this._isRunning = false;
+        this._arrayMakeObjectsPerformSelector(this._children, "onExit");
     },
     // actions
 
@@ -943,7 +943,7 @@ cc.Node = cc.Class.extend({
      */
     runAction:function (action) {
         cc.Assert(action != null, "Argument must be non-nil");
-        cc.ActionManager.sharedManager().addAction(action, this, !this._m_bIsRunning);
+        cc.ActionManager.sharedManager().addAction(action, this, !this._isRunning);
         return action;
     },
     /** Removes all actions from the running action list */
@@ -958,7 +958,7 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     stopActionByTag:function (tag) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "Invalid tag");
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
         cc.ActionManager.sharedManager().removeActionByTag(tag, this);
     },
     /** Gets an action from the running action list given its tag
@@ -966,7 +966,7 @@ cc.Node = cc.Class.extend({
      @return the Action the with the given tag
      */
     getActionByTag:function (tag) {
-        cc.Assert(tag != cc.kCCActionTagInvalid, "Invalid tag");
+        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
         return cc.ActionManager.sharedManager().getActionByTag(tag, this);
     },
     /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).
@@ -1001,7 +1001,7 @@ cc.Node = cc.Class.extend({
      @since v0.99.3
      */
     scheduleUpdateWithPriority:function (priority) {
-        cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, priority, !this._m_bIsRunning);
+        cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
     },
     /* unschedules the "update" method.
 
@@ -1016,7 +1016,7 @@ cc.Node = cc.Class.extend({
 
         cc.Assert(selector, "Argument must be non-nil");
         cc.Assert(interval >= 0, "Argument must be positive");
-        cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._m_bIsRunning);
+        cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
     },
     /** unschedules a custom selector.*/
     unschedule:function (selector) {
@@ -1052,58 +1052,58 @@ cc.Node = cc.Class.extend({
      @since v0.7.1
      */
     nodeToParentTransform:function () {
-        if (this._m_bIsTransformDirty) {
-            this._m_tTransform = cc.AffineTransformIdentity();
-            if (!this._m_bIsRelativeAnchorPoint && !cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero())) {
-                this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, this._m_tAnchorPointInPixels.x, this._m_tAnchorPointInPixels.y);
+        if (this._isTransformDirty) {
+            this._transform = cc.AffineTransformIdentity();
+            if (!this._isRelativeAnchorPoint && !cc.Point.CCPointEqualToPoint(this._anchorPointInPixels, cc.PointZero())) {
+                this._transform = cc.AffineTransformTranslate(this._transform, this._anchorPointInPixels.x, this._anchorPointInPixels.y);
             }
 
-            if (!cc.Point.CCPointEqualToPoint(this._m_tPositionInPixels, cc.PointZero())) {
-                this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, this._m_tPositionInPixels.x, this._m_tPositionInPixels.y);
+            if (!cc.Point.CCPointEqualToPoint(this._positionInPixels, cc.PointZero())) {
+                this._transform = cc.AffineTransformTranslate(this._transform, this._positionInPixels.x, this._positionInPixels.y);
             }
 
-            if (this._m_fRotation != 0) {
-                this._m_tTransform = cc.AffineTransformRotate(this._m_tTransform, -cc.DEGREES_TO_RADIANS(this._m_fRotation));
+            if (this._rotation != 0) {
+                this._transform = cc.AffineTransformRotate(this._transform, -cc.DEGREES_TO_RADIANS(this._rotation));
             }
 
-            if (this._m_fSkewX != 0 || this._m_fSkewY != 0) {
+            if (this._skewX != 0 || this._skewY != 0) {
                 // create a skewed coordinate system
-                var skew = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._m_fSkewX)), 1.0, 0.0, 0.0);
+                var skew = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), 1.0, 0.0, 0.0);
                 // apply the skew to the transform
-                this._m_tTransform = cc.AffineTransformConcat(skew, this._m_tTransform);
+                this._transform = cc.AffineTransformConcat(skew, this._transform);
             }
 
-            if (!(this._m_fScaleX == 1 && this._m_fScaleY == 1)) {
-                this._m_tTransform = cc.AffineTransformScale(this._m_tTransform, this._m_fScaleX, this._m_fScaleY);
+            if (!(this._scaleX == 1 && this._scaleY == 1)) {
+                this._transform = cc.AffineTransformScale(this._transform, this._scaleX, this._scaleY);
             }
 
-            if (!cc.Point.CCPointEqualToPoint(this._m_tAnchorPointInPixels, cc.PointZero())) {
-                this._m_tTransform = cc.AffineTransformTranslate(this._m_tTransform, -this._m_tAnchorPointInPixels.x, -this._m_tAnchorPointInPixels.y);
+            if (!cc.Point.CCPointEqualToPoint(this._anchorPointInPixels, cc.PointZero())) {
+                this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPixels.x, -this._anchorPointInPixels.y);
             }
 
-            this._m_bIsTransformDirty = false;
+            this._isTransformDirty = false;
         }
 
-        return this._m_tTransform;
+        return this._transform;
     },
     /** Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.
      The matrix is in Pixels.
      @since v0.7.1
      */
     parentToNodeTransform:function () {
-        if (this._m_bIsInverseDirty) {
-            this._m_tInverse = cc.AffineTransformInvert(this.nodeToParentTransform());
-            this._m_bIsInverseDirty = false;
+        if (this._isInverseDirty) {
+            this._inverse = cc.AffineTransformInvert(this.nodeToParentTransform());
+            this._isInverseDirty = false;
         }
 
-        return this._m_tInverse;
+        return this._inverse;
     },
     /** Retrusn the world affine transform matrix. The matrix is in Pixels.
      @since v0.7.1
      */
     nodeToWorldTransform:function () {
         var t = this.nodeToParentTransform();
-        for (var p = this._m_pParent; p != null; p = p.getParent()) {
+        for (var p = this._parent; p != null; p = p.getParent()) {
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
         }
         return t;
@@ -1153,9 +1153,9 @@ cc.Node = cc.Class.extend({
         var nodePoint = this.convertToNodeSpace(worldPoint);
         var anchorInPoints = new cc.Point();
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
-            anchorInPoints = this._m_tAnchorPointInPixels;
+            anchorInPoints = this._anchorPointInPixels;
         } else {
-            anchorInPoints = cc.ccpMult(this._m_tAnchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
+            anchorInPoints = cc.ccpMult(this._anchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         return cc.ccpSub(nodePoint, anchorInPoints);
     },
@@ -1166,9 +1166,9 @@ cc.Node = cc.Class.extend({
     convertToWorldSpaceAR:function (nodePoint) {
         var anchorInPoints = new cc.Point();
         if (cc.CONTENT_SCALE_FACTOR() == 1) {
-            anchorInPoints = this._m_tAnchorPointInPixels;
+            anchorInPoints = this._anchorPointInPixels;
         } else {
-            anchorInPoints = cc.ccpMult(this._m_tAnchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
+            anchorInPoints = cc.ccpMult(this._anchorPointInPixels, 1 / cc.CONTENT_SCALE_FACTOR());
         }
         var pt = new cc.Point();
         pt = cc.ccpAdd(nodePoint, anchorInPoints);

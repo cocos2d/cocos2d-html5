@@ -30,29 +30,29 @@ var cc = cc = cc || {};
  @brief cc.Waves3D action
  */
 cc.Waves3D = cc.Grid3DAction.extend({
-    _m_nWaves:null,
-    _m_fAmplitude:null,
-    _m_fAmplitudeRate:null,
+    _waves:null,
+    _amplitude:null,
+    _amplitudeRate:null,
     getAmplitude:function () {
-        return this._m_fAmplitude;
+        return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._m_fAmplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
-        return this._m_fAmplitudeRate;
+        return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._m_fAmplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** init the action */
     initWithWaves:function (wav, amp, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
-            this._m_nWaves = wav;
-            this._m_fAmplitude = amp;
-            this._m_fAmplitudeRate = 1.0;
+            this._waves = wav;
+            this._amplitude = amp;
+            this._amplitudeRate = 1.0;
 
             return true;
         }
@@ -60,32 +60,32 @@ cc.Waves3D = cc.Grid3DAction.extend({
         return false;
     },
 
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.Waves3D();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.Waves3D();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
 
-        pCopy.initWithWaves(this._m_nWaves, this._m_fAmplitude, this._m_sGridSize, this.m_fDuration);
+        copy.initWithWaves(this._waves, this._amplitude, this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
         var i, j;
-        for (i = 0; i < this._m_sGridSize.x + 1; ++i) {
-            for (j = 0; j < this._m_sGridSize.y + 1; ++j) {
+        for (i = 0; i < this._gridSize.x + 1; ++i) {
+            for (j = 0; j < this._gridSize.y + 1; ++j) {
                 var v = this.originalVertex(cc.ccg(i, j));
-                v.z += (Math.sin(Math.PI * time * this._m_nWaves * 2 + (v.y + v.x) * .01) * this._m_fAmplitude * this._m_fAmplitudeRate);
-                cc.Log("v.z offset is" + (Math.sin(Math.PI * time * this._m_nWaves * 2 + (v.y + v.x) * .01) * this._m_fAmplitude * this._m_fAmplitudeRate));
+                v.z += (Math.sin(Math.PI * time * this._waves * 2 + (v.y + v.x) * .01) * this._amplitude * this._amplitudeRate);
+                cc.Log("v.z offset is" + (Math.sin(Math.PI * time * this._waves * 2 + (v.y + v.x) * .01) * this._amplitude * this._amplitudeRate));
                 this.setVertex(cc.ccg(i, j), v);
             }
         }
@@ -94,8 +94,8 @@ cc.Waves3D = cc.Grid3DAction.extend({
 
 /** create the action */
 cc.Waves3D.actionWithWaves = function (wav, amp, gridSize, duration) {
-    var pAction = new cc.Waves3D();
-    return pAction;
+    var action = new cc.Waves3D();
+    return action;
 };
 
 /** @brief cc.FlipX3D action */
@@ -114,23 +114,23 @@ cc.FlipX3D = cc.Grid3DAction({
 
         return cc.Grid3DAction.initWithSize(gridSize, duration);
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.FlipX3D();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.FlipX3D();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
-        pCopy.initWithSize(this._m_sGridSize, this.m_fDuration);
+        copy.initWithSize(this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
         var angle = Math.PI * time; // 180 degrees
@@ -197,8 +197,8 @@ cc.FlipX3D = cc.Grid3DAction({
 
 /** creates the action with duration */
 cc.FlipX3D.actionWithDuration = function (duration) {
-    var pAction = new cc.FlipX3D();
-    return pAction;
+    var action = new cc.FlipX3D();
+    return action;
 };
 
 /** @brief cc.FlipY3D action */
@@ -263,122 +263,122 @@ cc.FlipY3D = cc.FlipX3D.extend({
         v.z -= diff.z;
         this.setVertex(d, v);
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.FlipY3D();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.FlipY3D();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.FlipX3D.copyWithZone(pZone);
+        cc.FlipX3D.copyWithZone(zone);
 
-        pCopy.initWithSize(this._m_sGridSize, this.m_fDuration);
+        copy.initWithSize(this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     }
 });
 
 /** creates the action with duration */
 cc.FlipY3D.actionWithDuration = function (duration) {
-    var pAction = new cc.FlipY3D();
-    return pAction;
+    var action = new cc.FlipY3D();
+    return action;
 };
 
 /** @brief cc.Lens3D action */
 cc.Lens3D = cc.Grid3DAction.extend({
     /* lens center position */
-    _m_position:null,
-    _m_fRadius:null,
+    _position:null,
+    _radius:null,
     /** lens effect. Defaults to 0.7 - 0 means no effect, 1 is very strong effect */
-    _m_fLensEffect:null,
+    _lensEffect:null,
 
     /* @since v0.99.5 */
-// cc.Point this.m_lastPosition;
-    _m_positionInPixels:null,
-    _m_bDirty:null,
+// cc.Point this.lastPosition;
+    _positionInPixels:null,
+    _dirty:null,
     /** Get lens center position */
     getLensEffect:function () {
-        return this._m_fLensEffect;
+        return this._lensEffect;
     },
     /** Set lens center position */
-    setLensEffect:function (fLensEffect) {
-        this._m_fLensEffect = fLensEffect;
+    setLensEffect:function (lensEffect) {
+        this._lensEffect = lensEffect;
     },
 
     getPosition:function () {
-        return this._m_position;
+        return this._position;
     },
     setPosition:function (pos) {
-        if (!cc.Point.CCPointEqualToPoint(pos, this._m_position)) {
-            this._m_position = pos;
-            this._m_positionInPixels.x = pos.x * cc.CONTENT_SCALE_FACTOR();
-            this._m_positionInPixels.y = pos.y * cc.CONTENT_SCALE_FACTOR();
+        if (!cc.Point.CCPointEqualToPoint(pos, this._position)) {
+            this._position = pos;
+            this._positionInPixels.x = pos.x * cc.CONTENT_SCALE_FACTOR();
+            this._positionInPixels.y = pos.y * cc.CONTENT_SCALE_FACTOR();
 
-            this._m_bDirty = true;
+            this._dirty = true;
         }
     },
 
     /** initializes the action with center position, radius, a grid size and duration */
     initWithPosition:function (pos, r, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
-            this._m_position = cc.ccp(-1, -1);
+            this._position = cc.ccp(-1, -1);
             this.setPosition(pos);
-            this._m_fRadius = r;
-            this._m_fLensEffect = 0.7;
-            this._m_bDirty = true;
+            this._radius = r;
+            this._lensEffect = 0.7;
+            this._dirty = true;
 
             return true;
         }
 
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.Lens3D();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.Lens3D();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
-        pCopy.initWithPosition(this._m_position, this._m_fRadius, this._m_sGridSize, this.m_fDuration);
+        copy.initWithPosition(this._position, this._radius, this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
-        if (this._m_bDirty) {
+        if (this._dirty) {
             var i, j;
 
-            for (i = 0; i < this._m_sGridSize.x + 1; ++i) {
-                for (j = 0; j < this._m_sGridSize.y + 1; ++j) {
+            for (i = 0; i < this._gridSize.x + 1; ++i) {
+                for (j = 0; j < this._gridSize.y + 1; ++j) {
                     var v = this.originalVertex(cc.ccg(i, j));
-                    var vect = cc.ccpSub(this._m_positionInPixels, ccp(v.x, v.y));
+                    var vect = cc.ccpSub(this._positionInPixels, ccp(v.x, v.y));
                     var r = cc.ccpLength(vect);
 
-                    if (r < this._m_fRadius) {
-                        r = this._m_fRadius - r;
-                        var pre_log = r / this._m_fRadius;
+                    if (r < this._radius) {
+                        r = this._radius - r;
+                        var pre_log = r / this._radius;
                         if (pre_log == 0) {
                             pre_log = 0.001;
                         }
 
-                        var l = Math.log(pre_log) * this._m_fLensEffect;
-                        var new_r = Math.exp(l) * this._m_fRadius;
+                        var l = Math.log(pre_log) * this._lensEffect;
+                        var new_r = Math.exp(l) * this._radius;
 
                         if (cc.ccpLength(vect) > 0) {
                             vect = cc.ccpNormalize(vect);
                             var new_vect = cc.ccpMult(vect, new_r);
-                            v.z += cc.ccpLength(new_vect) * this._m_fLensEffect;
+                            v.z += cc.ccpLength(new_vect) * this._lensEffect;
                         }
                     }
 
@@ -386,98 +386,98 @@ cc.Lens3D = cc.Grid3DAction.extend({
                 }
             }
 
-            this._m_bDirty = false;
+            this._dirty = false;
         }
     }
 });
 
 /** creates the action with center position, radius, a grid size and duration */
 cc.Lens3D.actionWithPosition = function (pos, r, gridSize, duration) {
-    var pAction = new cc.Lens3D();
-    return pAction;
+    var action = new cc.Lens3D();
+    return action;
 };
 
 /** @brief cc.Ripple3D action */
 cc.Ripple3D = cc.Grid3DAction.extend({
     /* center position */
-    _m_position:null,
-    _m_fRadius:null,
-    _m_nWaves:null,
-    _m_fAmplitude:null,
-    _m_fAmplitudeRate:null,
+    _position:null,
+    _radius:null,
+    _waves:null,
+    _amplitude:null,
+    _amplitudeRate:null,
 
     /*@since v0.99.5*/
-    _m_positionInPixels:null,
+    _positionInPixels:null,
     /** get center position */
     getPosition:function () {
-        return this._m_position;
+        return this._position;
     },
     /** set center position */
     setPosition:function (position) {
-        this._m_position = position;
-        this._m_positionInPixels.x = position.x * cc.CONTENT_SCALE_FACTOR();
-        this._m_positionInPixels.y = position.y * cc.CONTENT_SCALE_FACTOR();
+        this._position = position;
+        this._positionInPixels.x = position.x * cc.CONTENT_SCALE_FACTOR();
+        this._positionInPixels.y = position.y * cc.CONTENT_SCALE_FACTOR();
     },
 
     getAmplitude:function () {
-        return this._m_fAmplitude;
+        return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._m_fAmplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
-        return this._m_fAmplitudeRate;
+        return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._m_fAmplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with radius, number of waves, amplitude, a grid size and duration */
     initWithPosition:function (pos, r, wav, amp, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
             this.setPosition(pos);
-            this._m_fRadius = r;
-            this._m_nWaves = wav;
-            this._m_fAmplitude = amp;
-            this._m_fAmplitudeRate = 1.0;
+            this._radius = r;
+            this._waves = wav;
+            this._amplitude = amp;
+            this._amplitudeRate = 1.0;
 
             return true;
         }
 
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        varcopy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.Ripple3D();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.Ripple3D();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
-        pCopy.initWithPosition(this._m_position, this._m_fRadius, this._m_nWaves, this._m_fAmplitude, this._m_sGridSize, this.m_fDuration);
+        copy.initWithPosition(this._position, this._radius, this._waves, this._amplitude, this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
         var i, j;
 
-        for (i = 0; i < (this._m_sGridSize.x + 1); ++i) {
-            for (j = 0; j < (this._m_sGridSize.y + 1); ++j) {
+        for (i = 0; i < (this._gridSize.x + 1); ++i) {
+            for (j = 0; j < (this._gridSize.y + 1); ++j) {
                 var v = this.originalVertex(cc.ccg(i, j));
-                var vect = cc.ccpSub(this._m_positionInPixels, ccp(v.x, v.y));
+                var vect = cc.ccpSub(this._positionInPixels, ccp(v.x, v.y));
                 var r = cc.ccpLength(vect);
 
-                if (r < this._m_fRadius) {
-                    r = this._m_fRadius - r;
-                    var rate = Math.pow(r / this._m_fRadius, 2);
-                    v.z += (Math.sin(time * Math.PI * this._m_nWaves * 2 + r * 0.1) * this._m_fAmplitude * this._m_fAmplitudeRate * rate);
+                if (r < this._radius) {
+                    r = this._radius - r;
+                    var rate = Math.pow(r / this._radius, 2);
+                    v.z += (Math.sin(time * Math.PI * this._waves * 2 + r * 0.1) * this._amplitude * this._amplitudeRate * rate);
                 }
 
                 this.setVertex(cc.ccg(i, j), v);
@@ -487,54 +487,54 @@ cc.Ripple3D = cc.Grid3DAction.extend({
 });
 /** creates the action with radius, number of waves, amplitude, a grid size and duration */
 cc.Ripple3D.actionWithPosition = function (pos, r, wav, amp, gridSize, duration) {
-    var pAction = new cc.Ripple3D();
-    return pAction;
+    var action = new cc.Ripple3D();
+    return action;
 };
 
 
 /** @brief cc.Shaky3D action */
 cc.Shaky3D = cc.Grid3DAction.extend({
-    _m_nRandrange:null,
-    _m_bShakeZ:null,
+    _randrange:null,
+    _shakeZ:null,
     /** initializes the action with a range, shake Z vertices, a grid and duration */
     initWithRange:function (range, shakeZ, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
-            this._m_nRandrange = range;
-            this._m_bShakeZ = shakeZ;
+            this._randrange = range;
+            this._shakeZ = shakeZ;
 
             return true;
         }
 
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.Shaky3D();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.Shaky3D();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
-        pCopy.initWithRange(this._m_nRandrange, this._m_bShakeZ, this._m_sGridSize, this.m_fDuration);
+        copy.initWithRange(this._randrange, this._shakeZ, this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
         var i, j;
 
-        for (i = 0; i < (this._m_sGridSize.x + 1); ++i) {
-            for (j = 0; j < (this._m_sGridSize.y + 1); ++j) {
+        for (i = 0; i < (this._gridSize.x + 1); ++i) {
+            for (j = 0; j < (this._gridSize.y + 1); ++j) {
                 var v = this.originalVertex(cc.ccg(i, j));
-                v.x += (Math.random() % (this._m_nRandrange * 2)) - this._m_nRandrange;
-                v.y += (Math.random() % (this._m_nRandrange * 2)) - this._m_nRandrange;
-                if (this._m_bShakeZ) {
-                    v.z += (Math.random() % (this._m_nRandrange * 2)) - this._m_nRandrange;
+                v.x += (Math.random() % (this._randrange * 2)) - this._randrange;
+                v.y += (Math.random() % (this._randrange * 2)) - this._randrange;
+                if (this._shakeZ) {
+                    v.z += (Math.random() % (this._randrange * 2)) - this._randrange;
                 }
 
                 this.setVertex(cc.ccg(i, j), v);
@@ -545,67 +545,67 @@ cc.Shaky3D = cc.Grid3DAction.extend({
 
 /** creates the action with a range, shake Z vertices, a grid and duration */
 cc.Shaky3D.actionWithRange = function (range, shakeZ, gridSize, duration) {
-    var pAction = new cc.Shaky3D();
-    return pAction;
+    var action = new cc.Shaky3D();
+    return action;
 };
 
 /** @brief cc.Liquid action */
 cc.Liquid = cc.Grid3DAction.extend({
-    _m_nWaves:null,
-    _m_fAmplitude:null,
-    _m_fAmplitudeRate:null,
+    _waves:null,
+    _amplitude:null,
+    _amplitudeRate:null,
     getAmplitude:function () {
-        return this._m_fAmplitude;
+        return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._m_fAmplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
-        return this._m_fAmplitudeRate;
+        return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._m_fAmplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with amplitude, a grid and duration */
     initWithWaves:function (wav, amp, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
-            this._m_nWaves = wav;
-            this._m_fAmplitude = amp;
-            this._m_fAmplitudeRate = 1.0;
+            this._waves = wav;
+            this._amplitude = amp;
+            this._amplitudeRate = 1.0;
 
             return true;
         }
 
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.Liquid();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.Liquid();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
-        pCopy.initWithWaves(this._m_nWaves, this._m_fAmplitude, this._m_sGridSize, this.m_fDuration);
+        copy.initWithWaves(this._waves, this._amplitude, this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
         var i, j;
 
-        for (i = 1; i < this._m_sGridSize.x; ++i) {
-            for (j = 1; j < this._m_sGridSize.y; ++j) {
+        for (i = 1; i < this._gridSize.x; ++i) {
+            for (j = 1; j < this._gridSize.y; ++j) {
                 var v = this.originalVertex(cc.ccg(i, j));
-                v.x = (v.x + (Math.sin(time * Math.PI * this._m_nWaves * 2 + v.x * .01) * this._m_fAmplitude * this._m_fAmplitudeRate));
-                v.y = (v.y + (Math.sin(time * Math.PI * this._m_nWaves * 2 + v.y * .01) * this._m_fAmplitude * this._m_fAmplitudeRate));
+                v.x = (v.x + (Math.sin(time * Math.PI * this._waves * 2 + v.x * .01) * this._amplitude * this._amplitudeRate));
+                v.y = (v.y + (Math.sin(time * Math.PI * this._waves * 2 + v.y * .01) * this._amplitude * this._amplitudeRate));
                 this.setVertex(cc.ccg(i, j), v);
             }
         }
@@ -614,76 +614,76 @@ cc.Liquid = cc.Grid3DAction.extend({
 
 /** creates the action with amplitude, a grid and duration */
 cc.Liquid.actionWithWaves = function (wav, amp, gridSize, duration) {
-    var pAction = new cc.Liquid();
-    return pAction;
+    var action = new cc.Liquid();
+    return action;
 };
 
 /** @brief cc.Waves action */
 cc.Waves = cc.Grid3DAction.extend({
-    _m_nWaves:null,
-    _m_fAmplitude:null,
-    _m_fAmplitudeRate:null,
-    _m_bVertical:null,
-    _m_bHorizontal:null,
+    _waves:null,
+    _amplitude:null,
+    _amplitudeRate:null,
+    _vertical:null,
+    _horizontal:null,
     getAmplitude:function () {
-        return this._m_fAmplitude;
+        return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._m_fAmplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
-        return this._m_fAmplitudeRate;
+        return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._m_fAmplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with amplitude, horizontal sin, vertical sin, a grid and duration */
     initWithWaves:function (wav, amp, h, v, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
-            this._m_nWaves = wav;
-            this._m_fAmplitude = amp;
-            this._m_fAmplitudeRate = 1.0;
-            this._m_bHorizontal = h;
-            this._m_bVertical = v;
+            this._waves = wav;
+            this._amplitude = amp;
+            this._amplitudeRate = 1.0;
+            this._horizontal = h;
+            this._vertical = v;
 
             return true;
         }
 
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.Waves();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.Waves();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
-        pCopy.initWithWaves(this._m_nWaves, this._m_fAmplitude, this._m_bHorizontal, this._m_bVertical, this._m_sGridSize, this.m_fDuration);
+        copy.initWithWaves(this._waves, this._amplitude, this._horizontal, this._vertical, this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
         var i, j;
 
-        for (i = 0; i < this._m_sGridSize.x + 1; ++i) {
-            for (j = 0; j < this._m_sGridSize.y + 1; ++j) {
+        for (i = 0; i < this._gridSize.x + 1; ++i) {
+            for (j = 0; j < this._gridSize.y + 1; ++j) {
                 var v = this.originalVertex(cc.ccg(i, j));
 
-                if (this._m_bVertical) {
-                    v.x = (v.x + (Math.sin(time * Math.PI * this._m_nWaves * 2 + v.y * .01) * this._m_fAmplitude * this._m_fAmplitudeRate));
+                if (this._vertical) {
+                    v.x = (v.x + (Math.sin(time * Math.PI * this._waves * 2 + v.y * .01) * this._amplitude * this._amplitudeRate));
                 }
 
-                if (this._m_bHorizontal) {
-                    v.y = (v.y + (Math.sin(time * Math.PI * this._m_nWaves * 2 + v.x * .01) * this._m_fAmplitude * this._m_fAmplitudeRate));
+                if (this._horizontal) {
+                    v.y = (v.y + (Math.sin(time * Math.PI * this._waves * 2 + v.x * .01) * this._amplitude * this._amplitudeRate));
                 }
 
                 this.setVertex(cc.ccg(i, j), v);
@@ -694,89 +694,89 @@ cc.Waves = cc.Grid3DAction.extend({
 
 /** initializes the action with amplitude, horizontal sin, vertical sin, a grid and duration */
 cc.Waves.actionWithWaves = function (wav, amp, h, v, gridSize, duration) {
-    var pAction = new cc.Waves();
-    return pAction;
+    var action = new cc.Waves();
+    return action;
 };
 
 /** @brief cc.Twirl action */
 cc.Twirl = cc.Grid3DAction.extend({
     /* twirl center */
-    _m_position:null,
-    _m_nTwirls:null,
-    _m_fAmplitude:null,
-    _m_fAmplitudeRate:null,
+    _position:null,
+    _twirls:null,
+    _amplitude:null,
+    _amplitudeRate:null,
     /*@since v0.99.5 */
-    _m_positionInPixels:null,
+    _positionInPixels:null,
     /** get twirl center */
     getPosition:function () {
-        return this._m_position;
+        return this._position;
     },
     /** set twirl center */
     setPosition:function (position) {
-        this._m_position = position;
-        this._m_positionInPixels.x = position.x * cc.CONTENT_SCALE_FACTOR();
-        this._m_positionInPixels.y = position.y * cc.CONTENT_SCALE_FACTOR();
+        this._position = position;
+        this._positionInPixels.x = position.x * cc.CONTENT_SCALE_FACTOR();
+        this._positionInPixels.y = position.y * cc.CONTENT_SCALE_FACTOR();
     },
 
     getAmplitude:function () {
-        return this._m_fAmplitude;
+        return this._amplitude;
     },
-    setAmplitude:function (fAmplitude) {
-        this._m_fAmplitude = fAmplitude;
+    setAmplitude:function (amplitude) {
+        this._amplitude = amplitude;
     },
 
     getAmplitudeRate:function () {
-        return this._m_fAmplitudeRate;
+        return this._amplitudeRate;
     },
-    setAmplitudeRate:function (fAmplitudeRate) {
-        this._m_fAmplitudeRate = fAmplitudeRate;
+    setAmplitudeRate:function (amplitudeRate) {
+        this._amplitudeRate = amplitudeRate;
     },
 
     /** initializes the action with center position, number of twirls, amplitude, a grid size and duration */
     initWithPosition:function (pos, t, amp, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
             this.setPosition(pos);
-            this._m_nTwirls = t;
-            this._m_fAmplitude = amp;
-            this._m_fAmplitudeRate = 1.0;
+            this._twirls = t;
+            this._amplitude = amp;
+            this._amplitudeRate = 1.0;
 
             return true;
         }
 
         return false;
     },
-    copyWithZone:function (pZone) {
-        var pNewZone = null;
-        var pCopy = null;
-        if (pZone && pZone.m_pCopyObject) {
+    copyWithZone:function (zone) {
+        var newZone = null;
+        var copy = null;
+        if (zone && zone.copyObject) {
             //in case of being called at sub class
-            pCopy = pZone.m_pCopyObject;
+            copy = zone.copyObject;
         }
         else {
-            pCopy = new cc.Twirl();
-            pZone = pNewZone = new cc.Zone(pCopy);
+            copy = new cc.Twirl();
+            zone = newZone = new cc.Zone(copy);
         }
 
-        cc.Grid3DAction.copyWithZone(pZone);
+        cc.Grid3DAction.copyWithZone(zone);
 
 
-        pCopy.initWithPosition(this._m_position, this._m_nTwirls, this._m_fAmplitude, this._m_sGridSize, this.m_fDuration);
+        copy.initWithPosition(this._position, this._twirls, this._amplitude, this._gridSize, this.duration);
 
-        return pCopy;
+        return copy;
     },
     update:function (time) {
         var i, j;
-        var c = this._m_positionInPixels;
+        var c = this._positionInPixels;
 
-        for (i = 0; i < (this._m_sGridSize.x + 1); ++i) {
-            for (j = 0; j < (this._m_sGridSize.y + 1); ++j) {
+        for (i = 0; i < (this._gridSize.x + 1); ++i) {
+            for (j = 0; j < (this._gridSize.y + 1); ++j) {
                 var v = this.originalVertex(cc.ccg(i, j));
 
-                var avg = cc.ccp(i - (this._m_sGridSize.x / 2.0), j - (this._m_sGridSize.y / 2.0));
+                var avg = cc.ccp(i - (this._gridSize.x / 2.0), j - (this._gridSize.y / 2.0));
                 var r = cc.ccpLength(avg);
 
-                var amp = 0.1 * this._m_fAmplitude * this._m_fAmplitudeRate;
-                var a = r * Math.cos(Math.PI / 2.0 + time * Math.PI * this._m_nTwirls * 2) * amp;
+                var amp = 0.1 * this._amplitude * this._amplitudeRate;
+                var a = r * Math.cos(Math.PI / 2.0 + time * Math.PI * this._twirls * 2) * amp;
 
                 var d = new cc.Point();
 
@@ -795,6 +795,6 @@ cc.Twirl = cc.Grid3DAction.extend({
 
 /** creates the action with center position, number of twirls, amplitude, a grid size and duration */
 cc.Twirl.actionWithPosition = function (pos, t, amp, gridSize, duration) {
-    var pAction = new cc.Twirl();
-    return pAction;
+    var action = new cc.Twirl();
+    return action;
 };

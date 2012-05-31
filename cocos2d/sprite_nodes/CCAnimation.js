@@ -91,15 +91,15 @@ cc.Animation = cc.Class.extend({
      Added to facilitate the migration from v0.8 to v0.9.
      */
     addFrameWithFileName:function (fileName) {
-        var pTexture = cc.TextureCache.sharedTextureCache().addImage(fileName);
+        var texture = cc.TextureCache.sharedTextureCache().addImage(fileName);
         var rect = cc.RectZero();
-        if ((pTexture instanceof HTMLImageElement) || (pTexture instanceof HTMLCanvasElement)) {
-            rect.size = cc.SizeMake(pTexture.width, pTexture.height);
+        if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
+            rect.size = cc.SizeMake(texture.width, texture.height);
         } else {
-            rect.size = pTexture.getContentSize();
+            rect.size = texture.getContentSize();
         }
 
-        var frame = cc.SpriteFrame.frameWithTexture(pTexture, rect);
+        var frame = cc.SpriteFrame.frameWithTexture(texture, rect);
 
         this._frames.push(frame);
     },
@@ -121,10 +121,10 @@ cc.Animation = cc.Class.extend({
  @since v0.99.5
  */
 cc.Animation.animation = function () {
-    var pAnimation = new cc.Animation();
-    pAnimation.init();
+    var animation = new cc.Animation();
+    animation.init();
 
-    return pAnimation;
+    return animation;
 };
 
 /* Creates an animation with frames and a delay between frames.
@@ -134,8 +134,8 @@ cc.Animation.animationWithFrames = function (frames, delay) {
     if (!delay)
         delay = 0;
 
-    var pAnimation = new cc.Animation();
-    pAnimation.initWithFrames(frames, delay);
+    var animation = new cc.Animation();
+    animation.initWithFrames(frames, delay);
 
-    return pAnimation;
+    return animation;
 };

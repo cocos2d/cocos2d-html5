@@ -98,10 +98,10 @@ else {
 /**
  @brief Enum the language type supportted now
  */
-cc.kLanguageEnglish = 0;
-cc.kLanguageChinese = 1;
-cc.kLanguageFrench = 2;
-cc.kLanguageItalian = 3;
-cc.kLanguageGerman = 4;
-cc.kLanguageSpanish = 5;
-cc.kLanguageRussian = 6;
+cc.LANGUAGE_ENGLISH = 0;
+cc.LANGUAGE_CHINESE = 1;
+cc.LANGUAGE_FRENCH = 2;
+cc.LANGUAGE_ITALIAN = 3;
+cc.LANGUAGE_GERMAN = 4;
+cc.LANGUAGE_SPANISH = 5;
+cc.LANGUAGE_RUSSIAN = 6;

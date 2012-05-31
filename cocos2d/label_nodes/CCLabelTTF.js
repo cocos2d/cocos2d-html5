@@ -33,19 +33,19 @@ var cc = cc = cc || {};
  * CCLabelTTF objects are slow. Consider using CCLabelAtlas or CCLabelBMFont instead.
  */
 cc.LabelTTF = cc.Sprite.extend({
-    _m_tDimensions:null,
-    _m_eAlignment:cc.TextAlignmentCenter,
-    _m_pFontName:"Arial",
-    _m_fFontSize:0.0,
-    _m_pString:null,
+    _dimensions:null,
+    _alignment:cc.TextAlignmentCenter,
+    _fontName:"Arial",
+    _fontSize:0.0,
+    _string:null,
     ctor:function () {
         this._super();
-        this._m_pString = "";
-        this._m_sColor = cc.WHITE();
-        this._m_bOpacityModifyRGB = false;
+        this._string = "";
+        this._color = cc.WHITE();
+        this._opacityModifyRGB = false;
     },
     description:function () {
-        return "<CCLabelTTF | FontName =" + this._m_pFontName + " FontSize = " + this._m_fFontSize.toFixed(1) + ">";
+        return "<CCLabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
 
     /** initializes the CCLabelTTF with a font name, alignment, dimension and font size */
@@ -53,10 +53,10 @@ cc.LabelTTF = cc.Sprite.extend({
         cc.Assert(label != null, "cc.LabelTTF.initWithString() label is null");
         if (arguments.length > 3) {
             if (this.init()) {
-                this._m_tDimensions = cc.SizeMake(dimensions.width * cc.CONTENT_SCALE_FACTOR(), dimensions.height * cc.CONTENT_SCALE_FACTOR());
-                this._m_eAlignment = alignment;
-                this._m_pFontName = fontName;
-                this._m_fFontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
+                this._dimensions = cc.SizeMake(dimensions.width * cc.CONTENT_SCALE_FACTOR(), dimensions.height * cc.CONTENT_SCALE_FACTOR());
+                this._alignment = alignment;
+                this._fontName = fontName;
+                this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
                 this.setString(label);
                 return true;
             }
@@ -66,9 +66,9 @@ cc.LabelTTF = cc.Sprite.extend({
             fontSize = arguments[2];
 
             if (this.init()) {
-                this._m_tDimensions = cc.SizeZero();
-                this._m_pFontName = fontName;
-                this._m_fFontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
+                this._dimensions = cc.SizeZero();
+                this._fontName = fontName;
+                this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
                 this.setString(label);
                 return true;
             }
@@ -80,68 +80,68 @@ cc.LabelTTF = cc.Sprite.extend({
      * @warning Changing the string is as expensive as creating a new CCLabelTTF. To obtain better performance use CCLabelAtlas
      */
     setString:function (label) {
-        this._m_pString = label;
+        this._string = label;
         cc.renderContext.save();
-        cc.renderContext.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
-        var dim = cc.renderContext.measureText(this._m_pString);
-        this.setContentSize(new cc.Size(dim.width, this._m_fFontSize));
+        cc.renderContext.font = this._fontSize + "px '" + this._fontName + "'";
+        var dim = cc.renderContext.measureText(this._string);
+        this.setContentSize(new cc.Size(dim.width, this._fontSize));
         cc.renderContext.restore();
         this.setNodeDirty();
         return;
 
         var texture = new cc.Texture2D();
-        if (cc.Size.CCSizeEqualToSize(this._m_tDimensions, cc.SizeZero())) {
-            texture.initWithString(label, this._m_pFontName, this._m_fFontSize);
+        if (cc.Size.CCSizeEqualToSize(this._dimensions, cc.SizeZero())) {
+            texture.initWithString(label, this._fontName, this._fontSize);
         } else {
             texture = new cc.Texture2D();
-            texture.initWithString(label, this._m_tDimensions, this._m_eAlignment, this._m_pFontName, this._m_fFontSize);
+            texture.initWithString(label, this._dimensions, this._alignment, this._fontName, this._fontSize);
         }
         this.setTexture(texture);
 
         var rect = cc.RectZero();
-        rect.size = this._m_pobTexture.getContentSize();
+        rect.size = this._texture.getContentSize();
         this.setTextureRect(rect);
     },
 
     //temp method
     draw:function (ctx) {
-        if (cc.renderContextType == cc.kCanvas) {
+        if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
-            if (this._m_bFlipX) {
+            if (this._flipX) {
                 context.scale(-1, 1);
             }
-            if (this._m_bFlipY) {
+            if (this._flipY) {
                 context.scale(1, -1);
             }
             //this is fillText for canvas
             var color = this.getColor();
             context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity() / 255 + ")";
-            context.font = this._m_fFontSize + "px '" + this._m_pFontName + "'";
+            context.font = this._fontSize + "px '" + this._fontName + "'";
 
             var offset = 0;
-            switch (this._m_eAlignment) {
+            switch (this._alignment) {
                 case cc.TextAlignmentLeft:
-                    offset = -(this._m_tDimensions.width - this._m_tContentSize.width) / 2;
+                    offset = -(this._dimensions.width - this._contentSize.width) / 2;
                     break;
                 case cc.TextAlignmentRight:
-                    offset = (this._m_tDimensions.width - this._m_tContentSize.width) / 2;
+                    offset = (this._dimensions.width - this._contentSize.width) / 2;
                     break;
                 default:
                     break;
             }
 
-            if (this._m_tContentSize.width > this._m_tDimensions.width && this._m_tDimensions.width !== 0) {
-                this._wrapText(context, this._m_pString,
-                    -this._m_tDimensions.width * this._m_tAnchorPoint.x,
-                    -this._m_tDimensions.height * this._m_tAnchorPoint.y,
-                    this._m_tDimensions.width,
-                    this._m_fFontSize * 1.2,
-                    this._m_eAlignment);
+            if (this._contentSize.width > this._dimensions.width && this._dimensions.width !== 0) {
+                this._wrapText(context, this._string,
+                    -this._dimensions.width * this._anchorPoint.x,
+                    -this._dimensions.height * this._anchorPoint.y,
+                    this._dimensions.width,
+                    this._fontSize * 1.2,
+                    this._alignment);
             }
             else {
-                context.fillText(this._m_pString,
-                    -this._m_tContentSize.width * this._m_tAnchorPoint.x + offset,
-                    this._m_tContentSize.height * this._m_tAnchorPoint.y);
+                context.fillText(this._string,
+                    -this._contentSize.width * this._anchorPoint.x + offset,
+                    this._contentSize.height * this._anchorPoint.y);
             }
         }
     },
@@ -179,7 +179,7 @@ cc.LabelTTF = cc.Sprite.extend({
         }
     },
     getString:function () {
-        return this._m_pString;
+        return this._string;
     },
 
     convertToLabelProtocol:function () {
@@ -189,17 +189,17 @@ cc.LabelTTF = cc.Sprite.extend({
 
 /** creates a CCLabelTTF from a fontname, alignment, dimension and font size */
 cc.LabelTTF.labelWithString = function (label, dimensions, alignment, fontName, fontSize) {
-    var pRet = new cc.LabelTTF();
+    var ret = new cc.LabelTTF();
     if (arguments.length > 3) {
-        if ((pRet != null) && (pRet.initWithString(label, dimensions, alignment, fontName, fontSize))) {
-            return pRet;
+        if ((ret != null) && (ret.initWithString(label, dimensions, alignment, fontName, fontSize))) {
+            return ret;
         }
         return null;
     } else {
         fontName = arguments[1];
         fontSize = arguments[2];
-        if ((pRet != null) && (pRet.initWithString(label, fontName, fontSize))) {
-            return pRet;
+        if ((ret != null) && (ret.initWithString(label, fontName, fontSize))) {
+            return ret;
         }
 
         return null;

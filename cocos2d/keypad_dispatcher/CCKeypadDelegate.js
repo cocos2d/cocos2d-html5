@@ -46,22 +46,22 @@ cc.KeypadDelegate = cc.Class.extend({
 
 cc.KeypadHandler = cc.Class.extend({
     getDelegate:function () {
-        return this._m_pDelegate;
+        return this._delegate;
     },
-    setDelegate:function (pdelegate) {
-        this._m_pDelegate = pdelegate;
+    setDelegate:function (delegate) {
+        this._delegate = delegate;
     },
-    initWithDelegate:function (pDelegate) {
-        cc.Assert(pDelegate != null, "It's a wrong delegate!");
+    initWithDelegate:function (delegate) {
+        cc.Assert(delegate != null, "It's a wrong delegate!");
 
-        this._m_pDelegate = pDelegate;
+        this._delegate = delegate;
 
         return true;
     },
-    _m_pDelegate:null
+    _delegate:null
 });
-cc.KeypadHandler.handlerWithDelegate = function (pDelegate) {
-    var pHandler = new cc.KeypadHandler;
-    pHandler.initWithDelegate(pDelegate);
-    return pHandler;
+cc.KeypadHandler.handlerWithDelegate = function (delegate) {
+    var handler = new cc.KeypadHandler();
+    handler.initWithDelegate(delegate);
+    return handler;
 };

@@ -25,26 +25,26 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 //! Default tag
-cc.kCCActionTagInvalid = -1;
+cc.CCACTION_TAG_INVALID = -1;
 
 /**
  @brief Base class for CCAction objects.
  */
 cc.Action = cc.Class.extend({
     //***********variables*************
-    _m_pOriginalTarget:null,
+    _originalTarget:null,
     /** The "target".
      The target will be set with the 'startWithTarget' method.
      When the 'stop' method is called, target will be set to nil.
      The target is 'assigned', it is not 'retained'.
      */
-    _m_pTarget:null,
-    _m_nTag:cc.kCCActionTagInvalid,
+    _target:null,
+    _tag:cc.CCACTION_TAG_INVALID,
     //**************Public Functions***********
     description:function () {
-        return "<CCAction | Tag = " + this._m_nTag + ">";
+        return "<CCAction | Tag = " + this._tag + ">";
     },
-    copyWithZone:function (pZone) {
+    copyWithZone:function (zone) {
         return this.copy();
     },
     copy:function () {
@@ -55,16 +55,16 @@ cc.Action = cc.Class.extend({
         return true;
     },
     //! called before the action start. It will also set the target.
-    startWithTarget:function (aTarget) {
-        this._m_pOriginalTarget = aTarget;
-        this._m_pTarget = aTarget;
+    startWithTarget:function (target) {
+        this._originalTarget = target;
+        this._target = target;
     },
     /**
      called after the action has finished. It will set the 'target' to nil.
      IMPORTANT: You should never call "[action stop]" manually. Instead, use: "target->stopAction(action);"
      */
     stop:function () {
-        this._m_pTarget = null;
+        this._target = null;
     },
     //! called every frame with it's delta time. DON'T override unless you know what you are doing.
     step:function (dt) {
@@ -82,34 +82,34 @@ cc.Action = cc.Class.extend({
         cc.LOG("[Action update]. override me");
     },
     getTarget:function () {
-        return this._m_pTarget;
+        return this._target;
     },
     /** The action will modify the target properties. */
-    setTarget:function (pTarget) {
-        this._m_pTarget = pTarget;
+    setTarget:function (target) {
+        this._target = target;
     },
     getOriginalTarget:function () {
-        return this._m_pOriginalTarget;
+        return this._originalTarget;
     },
     /** Set the original target, since target can be nil.
      Is the target that were used to run the action. Unless you are doing something complex, like CCActionManager, you should NOT call this method.
      The target is 'assigned', it is not 'retained'.
      @since v0.8.2
      */
-    setOriginalTarget:function (pOriginalTarget) {
-        this._m_pOriginalTarget = pOriginalTarget;
+    setOriginalTarget:function (originalTarget) {
+        this._originalTarget = originalTarget;
     },
     getTag:function () {
-        return this._m_nTag;
+        return this._tag;
     },
-    setTag:function (nTag) {
-        this._m_nTag = nTag;
+    setTag:function (tag) {
+        this._tag = tag;
     }
 });
 /** Allocates and initializes the action */
 cc.Action.action = function () {
-    var pRet = new cc.Action();
-    return pRet;
+    var ret = new cc.Action();
+    return ret;
 };
 
 
@@ -124,14 +124,14 @@ cc.Action.action = function () {
  */
 cc.FiniteTimeAction = cc.Action.extend({
     //! duration in seconds
-    _m_fDuration:0,
+    _duration:0,
     //! get duration in seconds of the action
     getDuration:function () {
-        return this._m_fDuration;
+        return this._duration;
     },
     //! set duration in seconds of the action
     setDuration:function (duration) {
-        this._m_fDuration = duration;
+        this._duration = duration;
     },
     /** returns a reversed action */
     reverse:function () {
@@ -148,53 +148,53 @@ cc.FiniteTimeAction = cc.Action.extend({
  @warning This action can't be Sequenceable because it is not an CCIntervalAction
  */
 cc.Speed = cc.Action.extend({
-    _m_fSpeed:0.0,
-    _m_pInnerAction:null,
+    _speed:0.0,
+    _innerAction:null,
     getSpeed:function () {
-        return this._m_fSpeed;
+        return this._speed;
     },
     /** alter the speed of the inner function in runtime */
-    setSpeed:function (fSpeed) {
-        this._m_fSpeed = fSpeed;
+    setSpeed:function (speed) {
+        this._speed = speed;
     },
     /** initializes the action */
-    initWithAction:function (pAction, fRate) {
-        cc.Assert(pAction != null, "");
-        this._m_pInnerAction = pAction;
-        this._m_fSpeed = fRate;
+    initWithAction:function (action, rate) {
+        cc.Assert(action != null, "");
+        this._innerAction = action;
+        this._speed = rate;
         return true;
     },
-    startWithTarget:function (pTarget) {
-        this._super(pTarget);
-        this._m_pInnerAction.startWithTarget(pTarget);
+    startWithTarget:function (target) {
+        this._super(target);
+        this._innerAction.startWithTarget(target);
     },
     stop:function () {
-        this._m_pInnerAction.stop();
+        this._innerAction.stop();
         cc.Action.stop();
     },
     step:function (dt) {
-        this._m_pInnerAction.step(dt * this._m_fSpeed);
+        this._innerAction.step(dt * this._speed);
     },
     isDone:function () {
-        return this._m_pInnerAction.isDone();
+        return this._innerAction.isDone();
     },
     reverse:function () {
-        return (cc.Speed.actionWithAction(this._m_pInnerAction.reverse(), this._m_fSpeed));
+        return (cc.Speed.actionWithAction(this._innerAction.reverse(), this._speed));
     },
-    setInnerAction:function (pAction) {
-        if (this._m_pInnerAction != pAction) {
-            this._m_pInnerAction = pAction;
+    setInnerAction:function (action) {
+        if (this._innerAction != action) {
+            this._innerAction = action;
         }
     },
     getInnerAction:function () {
-        return this._m_pInnerAction;
+        return this._innerAction;
     }
 });
 /** creates the action */
-cc.Speed.actionWithAction = function (pAction, fRate) {
-    var pRet = new cc.Speed();
-    if (pRet && pRet.initWithAction(pAction, fRate)) {
-        return pRet;
+cc.Speed.actionWithAction = function (action, rate) {
+    var ret = new cc.Speed();
+    if (ret && ret.initWithAction(action, rate)) {
+        return ret;
     }
     return null;
 };
@@ -210,93 +210,93 @@ cc.Speed.actionWithAction = function (pAction, fRate) {
  */
 cc.Follow = cc.Action.extend({
     isBoundarySet:function () {
-        return this._m_bBoundarySet;
+        return this._boundarySet;
     },
     /** alter behavior - turn on/off boundary */
-    setBoudarySet:function (bValue) {
-        this._m_bBoundarySet = bValue;
+    setBoudarySet:function (value) {
+        this._boundarySet = value;
     },
     /** initializes the action */
     /** initializes the action with a set boundary */
-    initWithTarget:function (pFollowedNode, rect) {
-        cc.Assert(pFollowedNode != null, "");
-        this._m_pobFollowedNode = pFollowedNode;
-        this._m_bBoundarySet = false;
-        this._m_bBoundaryFullyCovered = false;
+    initWithTarget:function (followedNode, rect) {
+        cc.Assert(followedNode != null, "");
+        this._followedNode = followedNode;
+        this._boundarySet = false;
+        this._boundaryFullyCovered = false;
 
         var winSize = cc.Director.sharedDirector().getWinSize();
-        this._m_obFullScreenSize = cc.PointMake(winSize.width, winSize.height);
-        this._m_obHalfScreenSize = cc.ccpMult(this._m_obFullScreenSize, 0.5);
+        this._fullScreenSize = cc.PointMake(winSize.width, winSize.height);
+        this._halfScreenSize = cc.ccpMult(this._fullScreenSize, 0.5);
 
         if (rect) {
-            this.m_fLeftBoundary = -((rect.origin.x + rect.size.width) - this._m_obFullScreenSize.x);
-            this.m_fRightBoundary = -rect.origin.x;
-            this.m_fTopBoundary = -rect.origin.y;
-            this.m_fBottomBoundary = -((rect.origin.y + rect.size.height) - this._m_obFullScreenSize.y);
+            this.leftBoundary = -((rect.origin.x + rect.size.width) - this._fullScreenSize.x);
+            this.rightBoundary = -rect.origin.x;
+            this.topBoundary = -rect.origin.y;
+            this.bottomBoundary = -((rect.origin.y + rect.size.height) - this._fullScreenSize.y);
 
-            if (this.m_fRightBoundary < this.m_fLeftBoundary) {
+            if (this.rightBoundary < this.leftBoundary) {
                 // screen width is larger than world's boundary width
                 //set both in the middle of the world
-                this.m_fRightBoundary = this.m_fLeftBoundary = (this.m_fLeftBoundary + this.m_fRightBoundary) / 2;
+                this.rightBoundary = this.leftBoundary = (this.leftBoundary + this.rightBoundary) / 2;
             }
-            if (this.m_fTopBoundary < this.m_fBottomBoundary) {
+            if (this.topBoundary < this.bottomBoundary) {
                 // screen width is larger than world's boundary width
                 //set both in the middle of the world
-                this.m_fTopBoundary = this.m_fBottomBoundary = (this.m_fTopBoundary + this.m_fBottomBoundary) / 2;
+                this.topBoundary = this.bottomBoundary = (this.topBoundary + this.bottomBoundary) / 2;
             }
 
-            if ((this.m_fTopBoundary == this.m_fBottomBoundary) && (this.m_fLeftBoundary == this.m_fRightBoundary)) {
-                this._m_bBoundaryFullyCovered = true;
+            if ((this.topBoundary == this.bottomBoundary) && (this.leftBoundary == this.rightBoundary)) {
+                this._boundaryFullyCovered = true;
             }
         }
         return true;
     }, //this is a function overload
     step:function (dt) {
-        if (this._m_bBoundarySet) {
+        if (this._boundarySet) {
             // whole map fits inside a single screen, no need to modify the position - unless map boundaries are increased
-            if (this._m_bBoundaryFullyCovered)
+            if (this._boundaryFullyCovered)
                 return;
 
-            var tempPos = cc.ccpSub(this._m_obHalfScreenSize, this._m_pobFollowedNode.getPosition());
+            var tempPos = cc.ccpSub(this._halfScreenSize, this._followedNode.getPosition());
 
-            this._m_pTarget.setPosition(cc.ccp(cc.clampf(tempPos.x, this.m_fLeftBoundary, this.m_fRightBoundary),
-                cc.clampf(tempPos.y, this.m_fBottomBoundary, this.m_fTopBoundary)));
+            this._target.setPosition(cc.ccp(cc.clampf(tempPos.x, this.leftBoundary, this.rightBoundary),
+                cc.clampf(tempPos.y, this.bottomBoundary, this.topBoundary)));
         }
         else {
-            this._m_pTarget.setPosition(cc.ccpSub(this._m_obHalfScreenSize, this._m_pobFollowedNode.getPosition()));
+            this._target.setPosition(cc.ccpSub(this._halfScreenSize, this._followedNode.getPosition()));
         }
     },
     isDone:function () {
-        return ( !this._m_pobFollowedNode.getIsRunning() );
+        return ( !this._followedNode.getIsRunning() );
     },
     stop:function () {
-        this._m_pTarget = null;
+        this._target = null;
         cc.Action.stop();
     },
     // node to follow
-    _m_pobFollowedNode:null,
+    _followedNode:null,
     // whether camera should be limited to certain area
-    _m_bBoundarySet:false,
+    _boundarySet:false,
     // if screen size is bigger than the boundary - update not needed
-    _m_bBoundaryFullyCovered:false,
+    _boundaryFullyCovered:false,
     // fast access to the screen dimensions
-    _m_obHalfScreenSize:null,
-    _m_obFullScreenSize:null,
+    _halfScreenSize:null,
+    _fullScreenSize:null,
     // world boundaries
-    m_fLeftBoundary:0.0,
-    m_fRightBoundary:0.0,
-    m_fTopBoundary:0.0,
-    m_fBottomBoundary:0.0
+    leftBoundary:0.0,
+    rightBoundary:0.0,
+    topBoundary:0.0,
+    bottomBoundary:0.0
 });
 /** creates the action with a set boundary */
 /** creates the action with no boundary set */
-cc.Follow.actionWithTarget = function (pFollowedNode, rect) {
-    var pRet = new cc.Follow();
-    if (rect != null && pRet && pRet.initWithTarget(pFollowedNode, rect)) {
-        return pRet;
+cc.Follow.actionWithTarget = function (followedNode, rect) {
+    var ret = new cc.Follow();
+    if (rect != null && ret && ret.initWithTarget(followedNode, rect)) {
+        return ret;
     }
-    else if (pRet && pRet.initWithTarget(pFollowedNode)) {
-        return pRet;
+    else if (ret && ret.initWithTarget(followedNode)) {
+        return ret;
     }
     return null;
 };

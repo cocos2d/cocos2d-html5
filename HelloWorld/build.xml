@@ -18,8 +18,8 @@
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
                 <file name="base_nodes/CCNode.js"/>
-                <file name="platform/ccMacro.js"/>
-                <file name="platform/ccConfig.js"/>
+                <file name="platform/CCMacro.js"/>
+                <file name="platform/CCConfig.js"/>
                 <file name="textures/CCTexture2D.js"/>
                 <file name="textures/CCTextureCache.js"/>
                 <file name="actions/CCAction.js"/>

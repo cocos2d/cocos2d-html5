@@ -30,47 +30,47 @@ var cc = cc = cc || {};
  */
 cc.TMXObjectGroup = cc.Class.extend({
     /** name of the group */
-    _m_sGroupName:"",
-    _m_tPositionOffset:cc.PointZero(),
-    _m_pProperties:null,
-    _m_pObjects:null,
+    _groupName:"",
+    _positionOffset:cc.PointZero(),
+    _properties:null,
+    _objects:null,
     ctor:function(){
-        this._m_pProperties = [];
-        this._m_pObjects = [];
+        this._properties = [];
+        this._objects = [];
     },
     /** offset position of child objects */
     getPositionOffset:function () {
-        return this._m_tPositionOffset;
+        return this._positionOffset;
     },
     setPositionOffset:function (Var) {
-        this._m_tPositionOffset = Var;
+        this._positionOffset = Var;
     },
     /** list of properties stored in a dictionary */
     getProperties:function () {
-        return this._m_pProperties;
+        return this._properties;
     },
     setProperties:function (properties) {
-        this._m_pProperties.push(properties);
+        this._properties.push(properties);
     },
     getGroupName:function () {
-        return this._m_sGroupName.toString();
+        return this._groupName.toString();
     },
     setGroupName:function (groupName) {
-        this._m_sGroupName = groupName;
+        this._groupName = groupName;
     },
     /** return the value for the specific property name */
     propertyNamed:function (propertyName) {
-        return this._m_pProperties[propertyName];
+        return this._properties[propertyName];
     },
     /** return the dictionary for the specific object name.
      It will return the 1st object found on the array for the given name.
      */
     objectNamed:function (objectName) {
-        if (this._m_pObjects && this._m_pObjects.length > 0) {
-            for (var i = 0, len = this._m_pObjects.length; i < len; i++) {
-                var name = this._m_pObjects[i]["name"];
+        if (this._objects && this._objects.length > 0) {
+            for (var i = 0, len = this._objects.length; i < len; i++) {
+                var name = this._objects[i]["name"];
                 if (name && name == objectName) {
-                    return this._m_pObjects[i];
+                    return this._objects[i];
                 }
             }
         }
@@ -78,9 +78,9 @@ cc.TMXObjectGroup = cc.Class.extend({
         return null;
     },
     getObjects:function () {
-        return this._m_pObjects;
+        return this._objects;
     },
     setObjects:function (objects) {
-        this._m_pObjects.push(objects);
+        this._objects.push(objects);
     }
 });

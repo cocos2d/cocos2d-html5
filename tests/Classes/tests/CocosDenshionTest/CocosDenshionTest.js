@@ -49,24 +49,24 @@ var DenshionTests = [
 ];
 
 CocosDenshionTest = cc.Layer.extend({
-    _m_pItmeMenu:null,
-    _m_tBeginPos:cc.PointZero(),
-    bIsMouseDown:false,
-    _m_nTestCount:0,
+    _itmeMenu:null,
+    _beginPos:cc.PointZero(),
+    isMouseDown:false,
+    _testCount:0,
     ctor:function () {
         // add menu items for tests
-        this._m_pItmeMenu = cc.Menu.menuWithItems(null);
+        this._itmeMenu = cc.Menu.menuWithItems(null);
         var s = cc.Director.sharedDirector().getWinSize();
         for (var i = 0;i < DenshionTests.length;i++) {
             var label = cc.LabelTTF.labelWithString(DenshionTests[i], "Arial", 24);
-            var pMenuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-            this._m_pItmeMenu.addChild(pMenuItem, i + 10000);
-            pMenuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
+            var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
+            this._itmeMenu.addChild(menuItem, i + 10000);
+            menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }
-        this._m_nTestCount = i;
-        this._m_pItmeMenu.setContentSize(cc.SizeMake(s.width, (this._m_nTestCount + 1) * LINE_SPACE));
-        this._m_pItmeMenu.setPosition(cc.PointZero());
-        this.addChild(this._m_pItmeMenu);
+        this._testCount = i;
+        this._itmeMenu.setContentSize(cc.SizeMake(s.width, (this._testCount + 1) * LINE_SPACE));
+        this._itmeMenu.setPosition(cc.PointZero());
+        this.addChild(this._itmeMenu);
 
         this.setIsTouchEnabled(true);
 
@@ -74,42 +74,42 @@ CocosDenshionTest = cc.Layer.extend({
         cc.AudioManager.sharedEngine().setEffectsVolume(0.5);
         cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.5);
     },
-    menuCallback:function (pSender) {
-        var nIdx = pSender.getZOrder() - 10000;
+    menuCallback:function (sender) {
+        var idx = sender.getZOrder() - 10000;
         // create the test scene and run it
-        var pScene = new window[DenshionTests[nIdx]]();
+        var scene = new window[DenshionTests[idx]]();
     },
-    ccTouchesMoved:function (pTouches, pEvent) {
-        if (this.bIsMouseDown) {
-            var touchLocation = pTouches[0].locationInView(0);
-            var nMoveY = touchLocation.y - this._m_tBeginPos.y;
-            var curPos = this._m_pItmeMenu.getPosition();
+    ccTouchesMoved:function (touches, event) {
+        if (this.isMouseDown) {
+            var touchLocation = touches[0].locationInView(0);
+            var nMoveY = touchLocation.y - this._beginPos.y;
+            var curPos = this._itmeMenu.getPosition();
 
             var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
             var winSize = cc.Director.sharedDirector().getWinSize();
             if (nextPos.y < 0.0) {
-                this._m_pItmeMenu.setPosition(cc.PointZero());
+                this._itmeMenu.setPosition(cc.PointZero());
                 return;
             }
 
-            if (nextPos.y > ((this._m_nTestCount + 1) * LINE_SPACE - winSize.height)) {
-                this._m_pItmeMenu.setPosition(cc.ccp(0, ((this._m_nTestCount + 1) * LINE_SPACE - winSize.height)));
+            if (nextPos.y > ((this._testCount + 1) * LINE_SPACE - winSize.height)) {
+                this._itmeMenu.setPosition(cc.ccp(0, ((this._testCount + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
 
-            this._m_pItmeMenu.setPosition(nextPos);
+            this._itmeMenu.setPosition(nextPos);
 
-            this._m_tBeginPos = cc.ccp(0, touchLocation.y);
+            this._beginPos = cc.ccp(0, touchLocation.y);
         }
     },
-    ccTouchesBegan:function (pTouches, pEvent) {
-        if (!this.bIsMouseDown) {
-            this._m_tBeginPos = pTouches[0].locationInView(0);
+    ccTouchesBegan:function (touches, event) {
+        if (!this.isMouseDown) {
+            this._beginPos = touches[0].locationInView(0);
         }
-        this.bIsMouseDown = true;
+        this.isMouseDown = true;
     },
     ccTouchesEnded:function () {
-        this.bIsMouseDown = false;
+        this.isMouseDown = false;
     },
     onExit:function () {
         this._super();
@@ -119,13 +119,13 @@ CocosDenshionTest = cc.Layer.extend({
 
 CocosDenshionTestScene = TestScene.extend({
     runThisTest:function () {
-        var pLayer = new CocosDenshionTest();
-        this.addChild(pLayer);
+        var layer = new CocosDenshionTest();
+        this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
     }
 });
 
-var m_nSoundId = null;
+var soundId = null;
 
 var playBackgroundMusic = function () {
     cc.LOG("play background music");
@@ -164,17 +164,17 @@ var isBackgroundMusicPlaying = function () {
 
 var playEffect = function () {
     cc.LOG("play effect");
-    m_nSoundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE);
+    soundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE);
 };
 
 var playEffectRepeatly = function () {
     cc.LOG("play effect repeatly");
-    m_nSoundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE, true);
+    soundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE, true);
 };
 
 var stopEffect = function () {
     cc.LOG("stop effect");
-    cc.AudioManager.sharedEngine().stopEffect(m_nSoundId);
+    cc.AudioManager.sharedEngine().stopEffect(soundId);
 };
 
 var unloadEffect = function () {
@@ -204,12 +204,12 @@ var subEffectsVolume = function () {
 
 var pauseEffect = function () {
     cc.LOG("pause effect");
-    cc.AudioManager.sharedEngine().pauseEffect(m_nSoundId);
+    cc.AudioManager.sharedEngine().pauseEffect(soundId);
 };
 
 var resumeEffect = function () {
     cc.LOG("resume effect");
-    cc.AudioManager.sharedEngine().resumeEffect(m_nSoundId);
+    cc.AudioManager.sharedEngine().resumeEffect(soundId);
 };
 
 var pauseAllEffects = function () {
