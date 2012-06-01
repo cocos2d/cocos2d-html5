@@ -141,8 +141,8 @@ cc.Node = cc.Class.extend({
         }
         this._anchorPoint = new cc.Point(0, 0);
         this._anchorPointInPixels = new cc.Point(0, 0);
-        this._contentSize = new cc.Size(0,0);
-        this._contentSizeInPixels = new cc.Size(0,0);
+        this._contentSize = new cc.Size(0, 0);
+        this._contentSizeInPixels = new cc.Size(0, 0);
     },
 
     _arrayMakeObjectsPerformSelector:function (array, func) {
@@ -159,7 +159,7 @@ cc.Node = cc.Class.extend({
     },
     _addDirtyRegionToDirector:function (rect) {
         //if (!cc.firstRun) {
-            //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
+        //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
         //}
     },
     _isInDirtyRegion:function () {
@@ -567,7 +567,7 @@ cc.Node = cc.Class.extend({
         if (this._children != null) {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
-                if (node && node._tag == aTag){
+                if (node && node._tag == aTag) {
                     return node;
                 }
             }
@@ -585,8 +585,8 @@ cc.Node = cc.Class.extend({
         var argnum = arguments.length;
         cc.Assert(child != null, "Argument must be non-nil");
         cc.Assert(child._parent == null, "child already added. It can't be added again");
-        var tempzOrder = (zOrder!=null) ? zOrder : child.getZOrder();
-        var tmptag =  (tag!=null) ? tag : child.getTag();
+        var tempzOrder = (zOrder != null) ? zOrder : child.getZOrder();
+        var tmptag = (tag != null) ? tag : child.getTag();
         child.setTag(tmptag);
 
         if (!this._children) {
@@ -756,12 +756,15 @@ cc.Node = cc.Class.extend({
         }
 
         this.transform(context);
+        var i, node;
         if (this._children) {
             // draw children zOrder < 0
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+            for (i = 0; i < this._children.length; i++) {
+                node = this._children[i];
                 if (node && node._zOrder < 0) {
                     node.visit(context);
+                } else {
+                    break;
                 }
             }
         }
@@ -773,8 +776,8 @@ cc.Node = cc.Class.extend({
 
         // draw children zOrder >= 0
         if (this._children) {
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+            for (0; i < this._children.length; i++) {
+                node = this._children[i];
                 if (node && node._zOrder >= 0) {
                     node.visit(context);
                 }
@@ -805,16 +808,19 @@ cc.Node = cc.Class.extend({
         var context = ctx || cc.renderContext;
         // transformations
         if (cc.renderContextType == cc.CANVAS) {
+            var pAp;
             if (this._isRelativeAnchorPoint) {
-                var pAp = new cc.Point(0, 0);
                 if (this._parent) {
                     pAp = this._parent._anchorPointInPixels;
+                } else {
+                    pAp = new cc.Point(0, 0);
                 }
                 context.translate(0 | (this._position.x - pAp.x), -(0 | (this._position.y - pAp.y)));
             } else {
-                var pAp = new cc.Point(0, 0);
                 if (this._parent) {
                     pAp = this._parent._anchorPointInPixels;
+                } else {
+                    pAp = new cc.Point(0, 0);
                 }
                 var lAp = this._anchorPointInPixels;
                 context.translate(0 | ( this._position.x - pAp.x + lAp.x), -(0 | (this._position.y - pAp.y + lAp.y)));
