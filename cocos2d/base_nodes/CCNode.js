@@ -776,7 +776,7 @@ cc.Node = cc.Class.extend({
 
         // draw children zOrder >= 0
         if (this._children) {
-            for (0; i < this._children.length; i++) {
+            for (; i < this._children.length; i++) {
                 node = this._children[i];
                 if (node && node._zOrder >= 0) {
                     node.visit(context);
