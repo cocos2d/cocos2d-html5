@@ -79,8 +79,8 @@ cc.ccpSub = function (v1, v2) {
  @return CCPoint
  @since v0.7.2
  */
-cc.ccpMult = function (point, float) {
-    return new cc.Point(point.x * float, point.y * float);
+cc.ccpMult = function (point, floatVar) {
+    return new cc.Point(point.x * floatVar, point.y * floatVar);
 };
 
 /** Calculates midpoint between two points.
