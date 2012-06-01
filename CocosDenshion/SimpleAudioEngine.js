@@ -44,8 +44,9 @@ cc.AudioManager = cc.Class.extend({
     sound_enable:true,
     audioList:[],
     activeAudioExt:-1,
-    background:null,
+    background:[],
     backgroundPlaying:false,
+    playingBgmName:null,
     effectsVolume:1,
     ctor:function () {
         if (this._initialized)
@@ -140,7 +141,7 @@ cc.AudioManager = cc.Class.extend({
             // load it
             soundCache.load();
 
-            this.background = soundCache
+            this.background[obj] = soundCache
         }
         cc.Loader.shareLoader().onResLoaded();
     },
@@ -150,9 +151,13 @@ cc.AudioManager = cc.Class.extend({
      @param bLoop Whether the background music loop or not
      */
     playBackgroundMusic:function (pszFilePath, bLoop) {
-        if (this.background) {
-            this.background.loop = bLoop || false;
-            this.background.play();
+        if (this.background[this.playingBgmName]) {
+            this.background[this.playingBgmName].pause();
+        }
+        this.playingBgmName = pszFilePath;
+        if (this.background[this.playingBgmName]) {
+            this.background[this.playingBgmName].loop = bLoop || false;
+            this.background[this.playingBgmName].play();
         }
     },
 
@@ -161,10 +166,12 @@ cc.AudioManager = cc.Class.extend({
      @param bReleaseData If release the background music data or not.As default value is false
      */
     stopBackgroundMusic:function (bReleaseData) {
-        if (this.background) {
-            this.background.pause();
-            this.background.currentTime = 0;
-            if (bReleaseData) this.background = null;
+        if (this.background[this.playingBgmName]) {
+            this.background[this.playingBgmName].pause();
+            this.background[this.playingBgmName].currentTime = 0;
+            if (bReleaseData) {
+                delete this.background[this.playingBgmName];
+            }
         }
     },
 
@@ -172,8 +179,8 @@ cc.AudioManager = cc.Class.extend({
      @brief Pause playing background music
      */
     pauseBackgroundMusic:function () {
-        if (this.background) {
-            this.background.pause();
+        if (this.background[this.playingBgmName]) {
+            this.background[this.playingBgmName].pause();
         }
     },
 
@@ -181,8 +188,8 @@ cc.AudioManager = cc.Class.extend({
      @brief Resume playing background music
      */
     resumeBackgroundMusic:function () {
-        if (this.background) {
-            this.background.play();
+        if (this.background[this.playingBgmName]) {
+            this.background[this.playingBgmName].play();
         }
     },
 
@@ -190,9 +197,9 @@ cc.AudioManager = cc.Class.extend({
      @brief Rewind playing background music
      */
     rewindBackgroundMusic:function () {
-        if (this.background) {
-            this.background.currentTime = 0;
-            this.background.play();
+        if (this.background[this.playingBgmName]) {
+            this.background[this.playingBgmName].currentTime = 0;
+            this.background[this.playingBgmName].play();
         }
     },
 
@@ -213,8 +220,8 @@ cc.AudioManager = cc.Class.extend({
      @brief The volume of the background music max value is 1.0,the min value is 0.0
      */
     getBackgroundMusicVolume:function () {
-        if (this.background) {
-            return this.background.volume;
+        if (this.background[this.playingBgmName]) {
+            return this.background[this.playingBgmName].volume;
         }
         else {
             return 0;
@@ -226,15 +233,17 @@ cc.AudioManager = cc.Class.extend({
      @param volume must be in 0.0~1.0
      */
     setBackgroundMusicVolume:function (volume) {
-        if (this.background) {
-            if (volume > 1) {
-                this.background.volume = 1;
-            }
-            else if (volume < 0) {
-                this.background.volume = 0;
-            }
-            else {
-                this.background.volume = volume;
+        if (this.background[this.playingBgmName]) {
+            if (this.background) {
+                if (volume > 1) {
+                    this.background[this.playingBgmName].volume = 1;
+                }
+                else if (volume < 0) {
+                    this.background[this.playingBgmName].volume = 0;
+                }
+                else {
+                    this.background[this.playingBgmName].volume = volume;
+                }
             }
         }
     },
@@ -397,9 +406,9 @@ cc.AudioManager = cc.Class.extend({
             return null;
         }
     },
-    end:function(){
-         this.stopBackgroundMusic();
-         this.stopAllEffects();
+    end:function () {
+        this.stopBackgroundMusic();
+        this.stopAllEffects();
     }
 });
 
