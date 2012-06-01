@@ -427,49 +427,26 @@ cc.SpriteBatchNode = cc.Node.extend({
                     this._renderTexture.clear();
                     this._renderTexture.context.translate(this._anchorPointInPixels.x, -this._anchorPointInPixels.y);
                     if (this._children) {
-                        // draw children zOrder < 0
                         for (var i = 0; i < this._children.length; i++) {
-                            var node = this._children[i];
-                            if (node && node._zOrder < 0) {
-                                node.visit(this._renderTexture.context);
+                            if (this._children[i]) {
+                                this._children[i].visit(context);
                             }
                         }
                     }
-                    // draw children zOrder >= 0
-                    if (this._children) {
-                        for (i = 0; i < this._children.length; i++) {
-                            node = this._children[i];
-                            if (node && node._zOrder >= 0) {
-                                node.visit(this._renderTexture.context);
-                            }
-                        }
-                    }
+
                     this._isCacheDirty = false;
                 }
                 // draw RenderTexture
                 this.draw();
             } else {
                 if (this._children) {
-                    // draw children zOrder < 0
                     for (var i = 0; i < this._children.length; i++) {
-                        var node = this._children[i];
-                        if (node && node._zOrder < 0) {
-                            node.visit(context);
-                        }
-                    }
-                }
-
-                // draw children zOrder >= 0
-                if (this._children) {
-                    for (var i = 0; i < this._children.length; i++) {
-                        var node = this._children[i];
-                        if (node && node._zOrder >= 0) {
-                            node.visit(context);
+                        if (this._children[i]) {
+                            this._children[i].visit(context);
                         }
                     }
                 }
             }
-
 
             if (this._grid && this._grid.isActive()) {
                 this._grid.afterDraw(this);
