@@ -81,7 +81,7 @@ var SubTest = cc.Class.extend({
             }
             case 4:
             {
-                var idx = parseInt(cc.RANDOM_0_1() * 1400 / 100) + 1;
+                var idx = parseInt(cc.RANDOM_0_1() * 14) + 1;
                 idx = idx < 10 ? "0" + idx : idx.toString();
                 var str = "Resources/Images/grossini_dance_" + idx + ".png";
                 sprite = cc.Sprite.spriteWithFile(str);
@@ -91,14 +91,9 @@ var SubTest = cc.Class.extend({
             case 5:
             case 6:
             {
-                var y, x;
-                var r = (cc.RANDOM_0_1() * 1400 / 100);
-
-                y = r / 5;
-                x = r % 5;
-
-                x *= 85;
-                y *= 121;
+                var idx = 0 | (cc.RANDOM_0_1() * 14);
+                var x = (idx % 5) * 85;
+                var y = (0 | (idx / 5)) * 121;
                 sprite = cc.Sprite.spriteWithBatchNode(this._batchNode, cc.RectMake(x, y, 85, 121));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
@@ -107,7 +102,7 @@ var SubTest = cc.Class.extend({
             case 7:
             {
                 var y, x;
-                var r = (cc.RANDOM_0_1() * 6400 / 100);
+                var r = 0 | (cc.RANDOM_0_1() * 64);
 
                 y = parseInt(r / 8);
                 x = parseInt(r % 8);
@@ -122,13 +117,10 @@ var SubTest = cc.Class.extend({
             case 9:
             {
                 var y, x;
-                var r = (cc.RANDOM_0_1() * 6400 / 100);
+                var r = 0 | (cc.RANDOM_0_1() * 64);
 
-                y = r / 8;
-                x = r % 8;
-
-                x *= 32;
-                y *= 32;
+                y = (0|(r / 8)) *32;
+                x = (r % 8)*32;
                 sprite = cc.Sprite.spriteWithBatchNode(this._batchNode, cc.RectMake(x, y, 32, 32));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
