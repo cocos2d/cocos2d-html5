@@ -87,7 +87,7 @@ cc.SpriteFrameCache = cc.Class.extend({
 
                     // rotation
                     if (format == 2) {
-                        rotated = (parseInt(this._valueForKey("rotated", frameDict)) == 0);
+                        rotated = this._valueForKey("rotated", frameDict) == "true";
                     }
                     var offset = cc.PointFromString(this._valueForKey("offset", frameDict));
                     var sourceSize = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
@@ -102,7 +102,7 @@ cc.SpriteFrameCache = cc.Class.extend({
                     spriteOffset = cc.PointFromString(this._valueForKey("spriteOffset", frameDict));
                     spriteSourceSize = cc.SizeFromString(this._valueForKey("spriteSourceSize", frameDict));
                     textureRect = cc.RectFromString(this._valueForKey("textureRect", frameDict));
-                    var textureRotated = (parseInt(this._valueForKey("textureRotated", frameDict)) == 0);
+                    var textureRotated = this._valueForKey("textureRotated", frameDict) == "true";
 
                     // get aliases
                     var aliases = frameDict["aliases"];
@@ -120,6 +120,11 @@ cc.SpriteFrameCache = cc.Class.extend({
                         textureRotated,
                         spriteOffset,
                         spriteSourceSize);
+                }
+
+                if(spriteFrame.isRotated()){
+                    var rect = spriteFrame.getRect();
+                    spriteFrame.setRect(new cc.Rect(rect.origin.x,rect.origin.y,rect.size.height,rect.size.width));
                 }
 
                 // add sprite frame
@@ -141,8 +146,7 @@ cc.SpriteFrameCache = cc.Class.extend({
             texturePath = texturePath.toString();
         }
 
-        var texture = new cc.Texture2D();
-        texture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
+        var texture = cc.TextureCache.sharedTextureCache().addImage(texturePath);
         if (texture) {
             this.addSpriteFramesWithDictionary(dict, texture);
         }
