@@ -169,7 +169,7 @@ cc.AudioManager = cc.Class.extend({
         if (this.background[this.playingBgmName]) {
             this.background[this.playingBgmName].pause();
             this.background[this.playingBgmName].currentTime = 0;
-            if (bReleaseData) {
+            if (bReleaseData && this.background.hasOwnProperty(this.playingBgmName)) {
                 delete this.background[this.playingBgmName];
             }
         }
@@ -234,7 +234,6 @@ cc.AudioManager = cc.Class.extend({
      */
     setBackgroundMusicVolume:function (volume) {
         if (this.background[this.playingBgmName]) {
-            if (this.background) {
                 if (volume > 1) {
                     this.background[this.playingBgmName].volume = 1;
                 }
@@ -244,7 +243,6 @@ cc.AudioManager = cc.Class.extend({
                 else {
                     this.background[this.playingBgmName].volume = volume;
                 }
-            }
         }
     },
 
@@ -393,7 +391,9 @@ cc.AudioManager = cc.Class.extend({
      */
     unloadEffect:function (pszFilePath) {
         var nRet = this.getEffectName(pszFilePath);
-        delete(this.audioList[nRet]);
+        if (this.audioList.hasOwnProperty(nRet)) {
+            delete this.audioList[nRet];
+        }
     },
     getEffectName:function (Effect) {
         return Effect;
