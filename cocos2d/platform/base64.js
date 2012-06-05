@@ -23,20 +23,69 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+var cc = cc = cc || {};
 /**
- * Thin wrapper around JXG's Base64 utils
+ *  Base64 decoding
+ *  @see <a href="http://www.webtoolkit.info/">http://www.webtoolkit.info/</A>
  */
-cc.base64 = {};
+cc.Base64 = {
+    // private property
+    _keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",
+    // public method for decoding
+    decode:function (input) {
+        var output = [],
+            chr1, chr2, chr3,
+            enc1, enc2, enc3, enc4,
+            i = 0;
+
+        input = input.replace(/[^A-Za-z0-9\+\/\=]/g, "");
+
+        while (i < input.length) {
+
+            enc1 = this._keyStr.indexOf(input.charAt(i++));
+            enc2 = this._keyStr.indexOf(input.charAt(i++));
+            enc3 = this._keyStr.indexOf(input.charAt(i++));
+            enc4 = this._keyStr.indexOf(input.charAt(i++));
+
+            chr1 = (enc1 << 2) | (enc2 >> 4);
+            chr2 = ((enc2 & 15) << 4) | (enc3 >> 2);
+            chr3 = ((enc3 & 3) << 6) | enc4;
+
+            output.push(String.fromCharCode(chr1));
+
+            if (enc3 != 64) {
+                output.push(String.fromCharCode(chr2));
+            }
+            if (enc4 != 64) {
+                output.push(String.fromCharCode(chr3));
+            }
+        }
+
+        output = output.join('');
+        return output;
+    },
+
+    decodeAsArray:function (input) {
+        var dec = this.decode(input),
+            ar = [], i;
+        for (i = 0; i < dec.length; i++) {
+            ar[i] = dec.charCodeAt(i);
+        }
+        return ar;
+    }
+};
+
+
 /**
  * Decode a base64 encoded string into a binary string
  *
  * @param {String} input Base64 encoded data
  * @returns {String} Binary string
  */
-cc.base64.decode = function (input) {
-    return JXG.Util.Base64.decode(input);
+cc.Base64decode = function (input) {
+    return cc.Base64.decode(input);
 };
+
 
 /**
  * Decode a base64 encoded string into a byte array
@@ -44,10 +93,10 @@ cc.base64.decode = function (input) {
  * @param {String} input Base64 encoded data
  * @returns {Integer[]} Array of bytes
  */
-cc.base64.decodeAsArray = function (input, bytes) {
+cc.Base64decodeAsArray = function (input, bytes) {
     bytes = bytes || 1;
 
-    var dec = JXG.Util.Base64.decode(input),
+    var dec = cc.Base64.decode(input),
         ar = [], i, j, len;
 
     for (i = 0, len = dec.length / bytes; i < len; i++) {
@@ -57,14 +106,4 @@ cc.base64.decodeAsArray = function (input, bytes) {
         }
     }
     return ar;
-};
-
-/**
- * Encode a binary string into base64
- *
- * @param {String} input Binary string
- * @returns {String} Base64 encoded data
- */
-cc.base64.encode = function (input) {
-    return JXG.Util.Base64.encode(input);
 };
