@@ -32,7 +32,7 @@ var cc = cc = cc || {};
  * @returns {String} Unpacked byte string
  */
 cc.unzip = function (input) {
-    return (new JXG.Util.Unzip(input)).unzip()[0][0];
+    return (new cc.UnzipUtil(input)).unzip()[0][0];
 };
 
 /**
@@ -42,8 +42,8 @@ cc.unzip = function (input) {
  * @returns {String} Unpacked byte string
  */
 cc.unzipBase64 = function (input) {
-    return (new JXG.Util.Unzip(JXG.Util.Base64.decodeAsArray(input))).unzip()[0][0];
-},
+    return (new cc.UnzipUtil(cc.Base64decodeAsArray(input))).unzip()[0][0];
+};
 
 /**
  * Unpack a gzipped byte string encoded as base64
@@ -52,19 +52,19 @@ cc.unzipBase64 = function (input) {
  * @param {Integer} bytes Bytes per array item
  * @returns {Integer[]} Unpacked byte array
  */
-    cc.unzipBase64AsArray = function (input, bytes) {
-        bytes = bytes || 1;
+cc.unzipBase64AsArray = function (input, bytes) {
+    bytes = bytes || 1;
 
-        var dec = this.unzipBase64(input),
-            ar = [], i, j, len;
-        for (i = 0, len = dec.length / bytes; i < len; i++) {
-            ar[i] = 0;
-            for (j = bytes - 1; j >= 0; --j) {
-                ar[i] += dec.charCodeAt((i * bytes) + j) << (j * 8);
-            }
+    var dec = this.unzipBase64(input),
+        ar = [], i, j, len;
+    for (i = 0, len = dec.length / bytes; i < len; i++) {
+        ar[i] = 0;
+        for (j = bytes - 1; j >= 0; --j) {
+            ar[i] += dec.charCodeAt((i * bytes) + j) << (j * 8);
         }
-        return ar;
-    };
+    }
+    return ar;
+};
 
 /**
  * Unpack a gzipped byte array

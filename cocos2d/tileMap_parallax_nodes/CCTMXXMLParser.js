@@ -363,11 +363,12 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                         layer._tiles = cc.unzipBase64AsArray(nodeValue, 4);
                         break;
                     case 'zlib':
-                        //layer._tiles = JXG.Util.Unzip(nodeValue);
+                        //Not Implemented
                         break;
                     // Uncompressed
                     case null:
-                        layer._tiles = cc.base64.decodeAsArray(nodeValue, 4);
+                    case '':
+                        layer._tiles = cc.Base64decodeAsArray(nodeValue, 4);
                         break;
                     default:
                         cc.Assert(this.getLayerAttribs() != cc.TMXLayerAttribNone, "TMX tile map: Only base64 and/or gzip/zlib maps are supported");
