@@ -1,29 +1,12 @@
-/****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+/*--
+ Copyright 2009-2010 by Stefan Rusterholz.
+ All rights reserved.
+ You can choose between MIT and BSD-3-Clause license. License file will be added later.
+ --*/
 
- http://www.cocos2d-x.org
+var cc  = cc  = cc || {};
 
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- ****************************************************************************/
-var cc = cc = cc || {};
+cc.Codec = {name: 'Jacob__Codec'};
 
 /**
  * Unpack a gzipped byte array
@@ -31,8 +14,8 @@ var cc = cc = cc || {};
  * @param {Integer[]} input Byte array
  * @returns {String} Unpacked byte string
  */
-cc.unzip = function (input) {
-    return (new cc.UnzipUtil(input)).unzip()[0][0];
+cc.unzip = function () {
+    return cc.Codec.GZip.gunzip.apply(cc.Codec.GZip, arguments);
 };
 
 /**
@@ -41,8 +24,9 @@ cc.unzip = function (input) {
  * @param {String} input Byte string encoded as base64
  * @returns {String} Unpacked byte string
  */
-cc.unzipBase64 = function (input) {
-    return (new cc.UnzipUtil(cc.Base64decodeAsArray(input))).unzip()[0][0];
+cc.unzipBase64 = function () {
+    var tmpInput = cc.Codec.Base64.decode.apply(cc.Codec.Base64, arguments);
+    return   cc.Codec.GZip.gunzip.apply(cc.Codec.GZip, [tmpInput]);
 };
 
 /**

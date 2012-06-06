@@ -368,7 +368,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                     // Uncompressed
                     case null:
                     case '':
-                        layer._tiles = cc.Base64decodeAsArray(nodeValue, 4);
+                        layer._tiles = cc.Codec.Base64.decodeAsArray(nodeValue, 4);
                         break;
                     default:
                         cc.Assert(this.getLayerAttribs() != cc.TMXLayerAttribNone, "TMX tile map: Only base64 and/or gzip/zlib maps are supported");
