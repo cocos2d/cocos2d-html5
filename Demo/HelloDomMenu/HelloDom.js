@@ -116,8 +116,9 @@ var Helloworld = cc.Layer.extend({
         var text = cc.MenuItemFont.itemFromString("Hello Dom",this, function(){});
         text.setColor({r:255,g:0,b:0});
         text.setPosition(cc.ccp(cc.canvas.width/2,cc.canvas.height/2));
-        closeItem.setPosition(cc.canvas.width - 20, 20);
+        closeItem.setPosition(cc.ccp(cc.canvas.width - 20, 20));
         var menu = cc.Menu.menuWithItems(closeItem, text);
+        menu.setPosition(cc.ccp(0, 0));
         this.sprite.addChild(menu);
         //cc.fullscreen();
         return true;
