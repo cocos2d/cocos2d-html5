@@ -111,8 +111,9 @@ cc.domNodeMethods = {
     initDom:function () {
         this.dom = cc.$new(cc.TAG);
         //reset the css as possible
-        var css = "position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:none; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff; z-index:0;";
-        if (cc.Browser.type == "chrome" || cc.Browser.type == "safari") css += " -webkit-perspective: 1000;";
+/*        var css = "position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:none; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff; z-index:0;";
+        if (cc.Browser.type == "chrome" || cc.Browser.type == "safari") css += " -webkit-perspective: 1000;";*/
+        var css = "z-index:0;";
         this.dom.style.cssText = css;
         this.dom.node = this;
         this.hide();
@@ -144,6 +145,11 @@ cc.domNodeMethods = {
             if(p.getIsRunning()){
                 p.show();
             }
+/*            if(p.getIsRelativeAnchorPoint())
+            {
+                this.dom.style.marginLeft = (-this.getParent().getContentSize().width/2) + "px";
+                this.dom.style.marginTop = (this.getParent().getContentSize().height/2) + "px";
+            }*/
         }
 
         //if the parent also have a parent
@@ -277,8 +283,15 @@ cc.domNode = cc.Class.extend({
     getIsRunning:function(){
         return this._isRunning;
     },
+    getIsRelativeAnchorPoint:function () {
+        return this._isRelativeAnchorPoint;
+    },
 
     //Sets
+    /// isRelativeAnchorPoint setter
+    setIsRelativeAnchorPoint:function (newValue) {
+        this._isRelativeAnchorPoint = newValue;
+    },
     _setZOrder:function (z) {
         this.dom.style.zIndex = z;
     },
@@ -435,7 +448,7 @@ cc.domNode = cc.Class.extend({
         }
     },
     getIsVisible:function(){
-        if(this.dom.style.display == "none"){
+        if(this.dom.style.display != "block"){
             return false;
         }else{
             return true;
@@ -501,6 +514,11 @@ cc.domNode.DomContainer = function () {
         cc.domNode._container.appendChild(cc.domNode._domContainer);
         canvas.parentNode.insertBefore(cc.domNode._container, canvas);
         cc.domNode._container.appendChild(canvas);
+
+        var styles = cc.$new("style");
+        styles.textContent = "#DOMContainer div{position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:none; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff; z-index:0;}";
+
+        cc.domNode._container.appendChild(styles);
     }
     return cc.domNode._domContainer;
 };
