@@ -27,25 +27,129 @@ var MUSIC_FILE = "Resources/background";
 var EFFECT_FILE = "Resources/effect2";
 
 var DenshionTests = [
-    "playBackgroundMusic",
-    "stopBackgroundMusic",
-    "pauseBackgroundMusic",
-    "resumeBackgroundMusic",
-    "rewindBackgroundMusic",
-    "isBackgroundMusicPlaying",
-    "playEffect",
-    "playEffectRepeatly",
-    "stopEffect",
-    "unloadEffect",
-    "addBackgroundMusicVolume",
-    "subBackgroundMusicVolume",
-    "addEffectsVolume",
-    "subEffectsVolume",
-    "pauseEffect",
-    "resumeEffect",
-    "pauseAllEffects",
-    "resumeAllEffects",
-    "stopAllEffects"
+    {
+        title:"playBackgroundMusic",
+        playFunc:function () {
+            return new playBackgroundMusic();
+        }
+    },
+    {
+        title:"stopBackgroundMusic",
+        playFunc:function () {
+            return new stopBackgroundMusic();
+        }
+    },
+    {
+        title:"pauseBackgroundMusic",
+        playFunc:function () {
+            return new pauseBackgroundMusic();
+        }
+    },
+    {
+        title:"resumeBackgroundMusic",
+        playFunc:function () {
+            return new resumeBackgroundMusic();
+        }
+    },
+    {
+        title:"rewindBackgroundMusic",
+        playFunc:function () {
+            return new rewindBackgroundMusic();
+        }
+    },
+    {
+        title:"isBackgroundMusicPlaying",
+        playFunc:function () {
+            return new isBackgroundMusicPlaying();
+        }
+    },
+    {
+        title:"playEffect",
+        playFunc:function () {
+            return new playEffect();
+        }
+    },
+    {
+        title:"playEffectRepeatly",
+        playFunc:function () {
+            return new playEffectRepeatly();
+        }
+    },
+    {
+        title:"stopEffect",
+        playFunc:function () {
+            return new stopEffect();
+        }
+    },
+    {
+        title:"unloadEffect",
+        playFunc:function () {
+            return new unloadEffect();
+        }
+    },
+    {
+        title:"addBackgroundMusicVolume",
+        playFunc:function () {
+            return new addBackgroundMusicVolume();
+        }
+    },
+
+    {
+        title:"subBackgroundMusicVolume",
+        playFunc:function () {
+            return new subBackgroundMusicVolume();
+        }
+    },
+
+    {
+        title:"addEffectsVolume",
+        playFunc:function () {
+            return new addEffectsVolume();
+        }
+    },
+
+    {
+        title:"subEffectsVolume",
+        playFunc:function () {
+            return new subEffectsVolume();
+        }
+    },
+
+    {
+        title:"pauseEffect",
+        playFunc:function () {
+            return new pauseEffect();
+        }
+    },
+
+    {
+        title:"resumeEffect",
+        playFunc:function () {
+            return new resumeEffect();
+        }
+    },
+
+    {
+        title:"pauseAllEffects",
+        playFunc:function () {
+            return new pauseAllEffects();
+        }
+    },
+
+    {
+        title:"resumeAllEffects",
+        playFunc:function () {
+            return new resumeAllEffects();
+        }
+    },
+
+    {
+        title:"stopAllEffects",
+        playFunc:function () {
+            return new stopAllEffects();
+        }
+    }
+
 ];
 
 CocosDenshionTest = cc.Layer.extend({
@@ -58,7 +162,7 @@ CocosDenshionTest = cc.Layer.extend({
         this._itmeMenu = cc.Menu.menuWithItems(null);
         var s = cc.Director.sharedDirector().getWinSize();
         for (var i = 0;i < DenshionTests.length;i++) {
-            var label = cc.LabelTTF.labelWithString(DenshionTests[i], "Arial", 24);
+            var label = cc.LabelTTF.labelWithString(DenshionTests[i].title, "Arial", 24);
             var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
             this._itmeMenu.addChild(menuItem, i + 10000);
             menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
@@ -77,7 +181,7 @@ CocosDenshionTest = cc.Layer.extend({
     menuCallback:function (sender) {
         var idx = sender.getZOrder() - 10000;
         // create the test scene and run it
-        var scene = new window[DenshionTests[idx]]();
+        var scene = DenshionTests[idx].playFunc();
     },
     ccTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {

@@ -26,47 +26,87 @@
 var TAG_TILE_MAP = 1;
 
 var TileMapTests = [
-    //"TileMapTest", //not support tga format
-     //"TileMapEditTest", //not support tga format
-    "TMXOrthoTest",
-    "TMXOrthoTest2", //camera bug
-    "TMXOrthoTest3",
-    "TMXOrthoTest4",
-    "TMXReadWriteTest",
-    "TMXHexTest",
-    "TMXIsoTest",
-    "TMXIsoTest1",
-    "TMXIsoTest2",
-    "TMXUncompressedTest",
-    "TMXTilesetTest",
-    "TMXOrthoObjectsTest",
-    "TMXIsoObjectsTest",
-    "TMXResizeTest",
-    "TMXIsoZorder",
-    "TMXOrthoZorder",
-    //"TMXIsoVertexZ", //VertexZ bug
-    //"TMXOrthoVertexZ", //VertexZ bug
-    "TMXIsoMoveLayer",
-    "TMXOrthoMoveLayer",
-    "TMXBug987",
-    "TMXBug787"
-    //"TMXGIDObjectsTest", //zlib bug
+    //function(){ return new TileMapTest();}, //not support tga format
+    // function(){ return new TileMapEditTest();}, //not support tga format
+    function () {
+        return new TMXOrthoTest();
+    },
+    function () {
+        return new TMXOrthoTest2();
+    }, //camera bug
+    function () {
+        return new TMXOrthoTest3();
+    },
+    function () {
+        return new TMXOrthoTest4();
+    },
+    function () {
+        return new TMXReadWriteTest();
+    },
+    function () {
+        return new TMXHexTest();
+    },
+    function () {
+        return new TMXIsoTest();
+    },
+    function () {
+        return new TMXIsoTest1();
+    },
+    function () {
+        return new TMXIsoTest2();
+    },
+    function () {
+        return new TMXUncompressedTest();
+    },
+    function () {
+        return new TMXTilesetTest();
+    },
+    function () {
+        return new TMXOrthoObjectsTest();
+    },
+    function () {
+        return new TMXIsoObjectsTest();
+    },
+    function () {
+        return new TMXResizeTest();
+    },
+    function () {
+        return new TMXIsoZorder();
+    },
+    function () {
+        return new TMXOrthoZorder();
+    },
+    //function(){ return new TMXIsoVertexZ();}, //VertexZ bug
+    //function(){ return new TMXOrthoVertexZ();}, //VertexZ bug
+    function () {
+        return new TMXIsoMoveLayer();
+    },
+    function () {
+        return new TMXOrthoMoveLayer();
+    },
+    function () {
+        return new TMXBug987();
+    },
+    function () {
+        return new TMXBug787();
+    }
+    //function(){ return new TMXGIDObjectsTest();}, //zlib bug
 ];
 var tileMapIdx = -1;
 function nextTileMapAction() {
     ++tileMapIdx;
     tileMapIdx = tileMapIdx % TileMapTests.length;
-    return new window[TileMapTests[tileMapIdx]];
+    return TileMapTests[tileMapIdx]();
 }
 function backTileMapAction() {
     --tileMapIdx;
     if (tileMapIdx < 0) {
         tileMapIdx += TileMapTests.length;
     }
-    return new window[TileMapTests[tileMapIdx]];
+    return TileMapTests[tileMapIdx]();
 }
 function restartTileMapAction() {
-    return new window[TileMapTests[tileMapIdx]];
+    return TileMapTests[tileMapIdx]();
 }
 
 // the class inherit from TestScene

@@ -84,7 +84,7 @@ var TestController = cc.Layer.extend({
         this._itemMenu = cc.Menu.menuWithItems(null);//item menu is where all the label goes, and the one gets scrolled
 
         for (var i =0,len = testNames.length;i < len;i++) {
-            var label = cc.LabelTTF.labelWithString(testNames[i], "Arial", 24);
+            var label = cc.LabelTTF.labelWithString(testNames[i].title, "Arial", 24);
             var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
             this._itemMenu.addChild(menuItem,i  + 10000);
             menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
@@ -100,7 +100,7 @@ var TestController = cc.Layer.extend({
         var idx = sender.getZOrder() - 10000;
         // get the userdata, it's the index of the menu item clicked
         // create the test scene and run it
-        var scene = new window[testNames[idx]+"Scene"]();
+        var scene = testNames[idx].testScene();
         if (scene) {
             scene.runThisTest();
         }
@@ -145,47 +145,186 @@ var TestController = cc.Layer.extend({
 
 var testNames = [
     //"Accelerometer",
-    "ActionManagerTest",
-    "ActionsTest",
-    "Box2DTest",
+    {
+        title:"ActionManagerTest",
+        testScene:function () {
+            return new ActionManagerTestScene();
+        }
+    },
+    {
+        title:"ActionsTest",
+        testScene:function () {
+            return new ActionsTestScene();
+        }
+    },
+    {
+        title:"Box2DTest",
+        testScene:function () {
+            return new Box2DTestScene();
+        }
+    },
     //"Box2dTestBed",
     //"BugsTest",
     //"ChipmunkTest",
-    "ClickAndMoveTest",
-    "CocosDenshionTest",
-    "CocosNodeTest",
+    {
+        title:"ClickAndMoveTest",
+        testScene:function () {
+            return new ClickAndMoveTestScene();
+        }
+    },
+    {
+        title:"CocosDenshionTest",
+        testScene:function () {
+            return new CocosDenshionTestScene();
+        }
+    },
+    {
+        title:"CocosNodeTest",
+        testScene:function () {
+            return new CocosNodeTestScene();
+        }
+    },
+    {
+        title:"CurrentLanguageTest",
+        testScene:function () {
+            return new CurrentLanguageTestScene();
+        }
+    },
     //"CurlTest",
-    "CurrentLanguageTest",
-    "DirectorTest",
-    "DrawPrimitivesTest",
-    "EaseActionsTest",
+    {
+        title:"DirectorTest",
+        testScene:function () {
+            return new DirectorTestScene();
+        }
+    },
+    {
+        title:"DrawPrimitivesTest",
+        testScene:function () {
+            return new DrawPrimitivesTestScene();
+        }
+    },
+    {
+        title:"EaseActionsTest",
+        testScene:function () {
+            return new EaseActionsTestScene();
+        }
+    },
     //"EffectsTest",
     //"EffectAdvancedTest",
     //"ExtensionsTest",
-    "FontTest",
+    {
+        title:"FontTest",
+        testScene:function () {
+            return new FontTestScene();
+        }
+    },
     //"HiResTest",
-    "IntervalTest",
+    {
+        title:"IntervalTest",
+        testScene:function () {
+            return new IntervalTestScene();
+        }
+    },
     //"KeypadTest",
-    "LabelTest",
-    "LayerTest",
-    "MenuTest",
+    {
+        title:"LabelTest",
+        testScene:function () {
+            return new LabelTestScene();
+        }
+    },
+    {
+        title:"LayerTest",
+        testScene:function () {
+            return new LayerTestScene();
+        }
+    },
+    {
+        title:"MenuTest",
+        testScene:function () {
+            return new MenuTestScene();
+        }
+    },
     //"MotionStreakTest",
-    "ParallaxTest",
-    "ParticleTest",
-    "PerformanceTest",
-    "ProgressActionsTest",
+    {
+        title:"ParallaxTest",
+        testScene:function () {
+            return new ParallaxTestScene();
+        }
+    },
+    {
+        title:"ParticleTest",
+        testScene:function () {
+            return new ParticleTestScene();
+        }
+    },
+    {
+        title:"PerformanceTest",
+        testScene:function () {
+            return new PerformanceTestScene();
+        }
+    },
+    {
+        title:"ProgressActionsTest",
+        testScene:function () {
+            return new ProgressActionsTestScene();
+        }
+    },
     //"RenderTextureTest",
-    "RotateWorldTest",
-    "SceneTest",
-    "SchedulerTest",
-    "SpriteTest",
-    "TextInputTest",
+    {
+        title:"RotateWorldTest",
+        testScene:function () {
+            return new RotateWorldTestScene();
+        }
+    },
+    {
+        title:"SceneTest",
+        testScene:function () {
+            return new SceneTestScene();
+        }
+    },
+    {
+        title:"SchedulerTest",
+        testScene:function () {
+            return new SchedulerTestScene();
+        }
+    },
+    {
+        title:"SpriteTest",
+        testScene:function () {
+            return new SpriteTestScene();
+        }
+    },
+    {
+        title:"TextInputTest",
+        testScene:function () {
+            return new TextInputTestScene();
+        }
+    },
     //"Texture2DTest",
-    "TextureCacheTest",
-    "TileMapTest",
-    "TouchesTest",
-    "TransitionsTest"
+    {
+        title:"TextureCacheTest",
+        testScene:function () {
+            return new TextureCacheTestScene();
+        }
+    },
+    {
+        title:"TileMapTest",
+        testScene:function () {
+            return new TileMapTestScene();
+        }
+    },
+    {
+        title:"TouchesTest",
+        testScene:function () {
+            return new TouchesTestScene();
+        }
+    },
+    {
+        title:"TransitionsTest",
+        testScene:function () {
+            return new TransitionsTestScene();
+        }
+    }
     //"UserDefaultTest",
     //"ZwoptexTest",
-
 ];
