@@ -41,40 +41,52 @@ var TAG_LABEL_SPRITE18 = 667;
 
 
 var AtlasTests = [
-    "LabelAtlasTest", //ok
-    "LabelAtlasColorTest", //ok
-   /* "Atlas3",
-    "Atlas4",
-    "Atlas5",
-    "Atlas6",
-    "AtlasBitmapColor",
-    "AtlasFastBitmap",
-    "BitmapFontMultiLine",
-    "LabelsEmpty",
-    "LabelBMFontHD",*/
-    "LabelAtlasHD",//ok
-    //"LabelGlyphDesigner",
-    //"Atlas1",
-    "LabelTTFTest",//ok
-    "LabelTTFMultiline",//ok
-    "LabelTTFChinese"//ok
+    function () {
+        return new LabelAtlasTest();
+    }, //ok
+    function () {
+        return new LabelAtlasColorTest();
+    }, //ok
+    /* function(){ return new Atlas3();},
+     function(){ return new Atlas4();},
+     function(){ return new Atlas5();},
+     function(){ return new Atlas6();},
+     function(){ return new AtlasBitmapColor();},
+     function(){ return new AtlasFastBitmap();},
+     function(){ return new BitmapFontMultiLine();},
+     function(){ return new LabelsEmpty();},
+     function(){ return new LabelBMFontHD();},*/
+    function () {
+        return new LabelAtlasHD();
+    }, //ok
+    //function(){ return new LabelGlyphDesigner();},
+    //function(){ return new Atlas1();},
+    function () {
+        return new LabelTTFTest();
+    }, //ok
+    function () {
+        return new LabelTTFMultiline();
+    }, //ok
+    function () {
+        return new LabelTTFChinese();
+    }//ok
 ];
 
 var atlasIdx = -1;
 function nextAtlasAction() {
     ++atlasIdx;
     atlasIdx = atlasIdx % AtlasTests.length;
-    return new window[AtlasTests[atlasIdx]];
+    return AtlasTests[atlasIdx]();
 }
 function backAtlasAction() {
     --atlasIdx;
     if (atlasIdx < 0) {
         atlasIdx += AtlasTests.length;
     }
-    return new window[AtlasTests[atlasIdx]];
+    return AtlasTests[atlasIdx]();
 }
 function restartAtlasAction() {
-    return new window[AtlasTests[atlasIdx]];
+    return AtlasTests[atlasIdx]();
 }
 
 var LabelTestScene = TestScene.extend({
