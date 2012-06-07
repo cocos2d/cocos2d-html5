@@ -18,7 +18,7 @@
 
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ FITNESS FOR A PARTICULAR PURPOSE AND NON INFRINGEMENT. IN NO EVENT SHALL THE
  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
@@ -33,30 +33,40 @@ cc.MenuItem = cc.domNode;
 
 cc.MenuItemImage = cc.MenuItem.extend({
     init:function (file) {
+        var texture = cc.TextureCache.sharedTextureCache().textureForKey(file);
+        if (!texture) {
+            texture = cc.TextureCache.sharedTextureCache().addImage(file);
+        }
         //create div containing an image - div created in ctor
-        //craete image
-        this._image = new Image();
-        this._image.src = file;
-        this._image.parent = this;
-        //add to the div
-        this.dom.appendChild(this._image);
-        //when image is loaded, set the position and translation
-        var onloadcallback = function(){
-            //this.parent.dom.style.width = this.width+"px";
-            //this.parent.dom.style.height = this.height+"px";
-            this.parent.setContentSize(cc.SizeMake(this.width, this.height));
-            //cc.CSS3.Transform(this.parent);
-            this.removeEventListener("load", onloadcallback);
-        };
-        this._image.addEventListener("load",onloadcallback);
+        if(texture.width){//image already loaded
+            this._image = texture.cloneNode(true);
+            this.setContentSize(cc.SizeMake(texture.width, texture.height));
+            this.dom.appendChild(this._image);
+        }
+        else{
+            this._image = texture.cloneNode(true);
+            this._image.parent = this;
+            //when image is loaded, set the position and translation
+            var onloadcallback = function(){
+                //this.parent.dom.style.width = this.width+"px";
+                //this.parent.dom.style.height = this.height+"px";
+                this.parent.setContentSize(cc.SizeMake(this.width, this.height));
+                //cc.CSS3.Transform(this.parent);
+                this.removeEventListener("load", onloadcallback);
+                //add to the div
+                this.parent.dom.appendChild(this);
+            };
+            this._image.addEventListener("load",onloadcallback);
+        }
     }
 });
 cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callback) {
-    if(normal != null)normal = normal.src || normal;
-    if(selected != null)selected = selected.src || selected;
-    //create div containing an image - should be done in menuitem
     var that = new this();
     that.init(normal);
+    if(selected instanceof HTMLImageElement){
+        selected = selected.cloneNode(true);
+    }
+    //create div containing an image - should be done in menuitem
     //attach script to swapout image on hover
     if(selected != null){
         var tmp = new Image();
@@ -77,15 +87,15 @@ cc.MenuItemImage.itemFromNormalImage = function (normal, selected, target, callb
         that._image.addEventListener("click", function(){
             _domLabelCallback(that, target, callback);
         });
-/*        that._image.addEventListener("touchstart", function(){
-            if(selected!=null)this.src = selected;
-            callback.call(target,arguments);
-        });
-        if(selected!=null){
-            that._image.addEventListener("touchend", function(){
-                this.src = normal;
-            });
-        }*/
+        /*        that._image.addEventListener("touchstart", function(){
+         if(selected!=null)this.src = selected;
+         callback.call(target,arguments);
+         });
+         if(selected!=null){
+         that._image.addEventListener("touchend", function(){
+         this.src = normal;
+         });
+         }*/
     }
     //attach callback to onclick
     that.dom.style.cursor = (callback) ? "pointer" : "default";
