@@ -38,11 +38,13 @@ cc.LabelTTF = cc.Sprite.extend({
     _fontName:"Arial",
     _fontSize:0.0,
     _string:null,
+    _fontStyleStr:null,
     ctor:function () {
         this._super();
         this._string = "";
         this._color = cc.WHITE();
         this._opacityModifyRGB = false;
+        this._fontStyleStr = "";
     },
     description:function () {
         return "<CCLabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
@@ -58,6 +60,7 @@ cc.LabelTTF = cc.Sprite.extend({
                 this._fontName = fontName;
                 this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
                 this.setString(label);
+                this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
                 return true;
             }
             return false;
@@ -70,6 +73,7 @@ cc.LabelTTF = cc.Sprite.extend({
                 this._fontName = fontName;
                 this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
                 this.setString(label);
+                this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
                 return true;
             }
             return false;
@@ -114,9 +118,11 @@ cc.LabelTTF = cc.Sprite.extend({
                 context.scale(1, -1);
             }
             //this is fillText for canvas
-            var color = this.getColor();
-            context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this.getOpacity() / 255 + ")";
-            context.font = this._fontSize + "px '" + this._fontName + "'";
+            var color = this._color;
+            context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this._opacity / 255 + ")";
+
+            if(context.font != this._fontStyleStr)
+                context.font = this._fontStyleStr;
 
             var offset = 0;
             switch (this._alignment) {
