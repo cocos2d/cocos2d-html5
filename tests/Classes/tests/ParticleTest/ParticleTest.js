@@ -119,15 +119,13 @@ var createParticleLayer = function (index) {
 var nextParticleAction = function () {
     sceneIdx++;
     sceneIdx = sceneIdx % MAX_LAYER;
-
     return createParticleLayer(sceneIdx);
 };
 
 var backParticleAction = function () {
     sceneIdx--;
-    var total = MAX_LAYER;
     if (sceneIdx < 0)
-        sceneIdx += total;
+        sceneIdx += MAX_LAYER;
 
     return createParticleLayer(sceneIdx);
 };
@@ -160,60 +158,89 @@ var ParticleDemo = cc.LayerColor.extend({
         this.addChild(tapScreen, 100);
         var selfPoint = this;
         var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, function(){selfPoint._emitter.resetSystem();}
-            /*function () {
-                if (selfPoint._emitter.getPositionType() == cc.CCPARTICLE_TYPE_GROUPED)
-                    selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_FREE);
-                else if (selfPoint._emitter.getPositionType() == cc.CCPARTICLE_TYPE_FREE)
-                    selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_RELATIVE);
-                else if (selfPoint._emitter.getPositionType() == cc.CCPARTICLE_TYPE_RELATIVE)
-                    selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_GROUPED);
-            }*/
-        );
+        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, function () {
+            selfPoint._emitter.resetSystem();
+        });
         var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        //var item4 = cc.MenuItemToggle.itemWithTarget(	this,
-        //    this.toggleCallback,
-        //    cc.MenuItemFont.itemFromString("Free Movement"),
-        //    cc.MenuItemFont.itemFromString("Relative Movement"),
-        //    cc.MenuItemFont.itemFromString("Grouped Movement"),
-        //    null);
+        var freeBtnNormal = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(0, 23 * 2, 123, 23));
+        var freeBtnSelected = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(0, 23, 123, 23));
+        var freeBtnDisabled = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(0, 0, 123, 23));
+
+        var relativeBtnNormal = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(123 , 23 * 2, 138 , 23));
+        var relativeBtnSelected = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(123 , 23, 138 , 23));
+        var relativeBtnDisabled = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(123 , 0, 138 , 23));
+
+        var groupBtnNormal = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(261, 23 * 2, 136 , 23));
+        var groupBtnSelected = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(261, 23, 136 , 23));
+        var groupBtnDisabled = cc.Sprite.spriteWithFile(s_MovementMenuItem, cc.RectMake(261, 0, 136 , 23));
+
+        this._freeMovementButton = cc.MenuItemSprite.itemFromNormalSprite(freeBtnNormal, freeBtnSelected, freeBtnDisabled, this,
+            function () {
+                selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_RELATIVE);
+                selfPoint._relativeMovementButton.setIsVisible(true);
+                selfPoint._freeMovementButton.setIsVisible(false);
+                selfPoint._groupMovementButton.setIsVisible(false);
+            });
+        this._freeMovementButton.setPosition(new cc.Point(10, 150));
+        this._freeMovementButton.setAnchorPoint(cc.PointMake(0, 0));
+
+        this._relativeMovementButton = cc.MenuItemSprite.itemFromNormalSprite(relativeBtnNormal, relativeBtnSelected, relativeBtnDisabled, this,
+            function () {
+                selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_GROUPED);
+                selfPoint._relativeMovementButton.setIsVisible(false);
+                selfPoint._freeMovementButton.setIsVisible(false);
+                selfPoint._groupMovementButton.setIsVisible(true);
+            });
+        this._relativeMovementButton.setIsVisible(false);
+        this._relativeMovementButton.setPosition(new cc.Point(10, 150));
+        this._relativeMovementButton.setAnchorPoint(cc.PointMake(0, 0));
+
+        this._groupMovementButton = cc.MenuItemSprite.itemFromNormalSprite(groupBtnNormal, groupBtnSelected, groupBtnDisabled, this,
+            function () {
+                selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_FREE);
+                selfPoint._relativeMovementButton.setIsVisible(false);
+                selfPoint._freeMovementButton.setIsVisible(true);
+                selfPoint._groupMovementButton.setIsVisible(false);
+            });
+        this._groupMovementButton.setIsVisible(false);
+        this._groupMovementButton.setPosition(new cc.Point(10, 150));
+        this._groupMovementButton.setAnchorPoint(cc.PointMake(0, 0));
 
         var spriteNormal = cc.Sprite.spriteWithFile(s_shapeModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
         var spriteSelected = cc.Sprite.spriteWithFile(s_shapeModeMenuItem, cc.RectMake(0, 23, 115, 23));
         var spriteDisabled = cc.Sprite.spriteWithFile(s_shapeModeMenuItem, cc.RectMake(0, 0, 115, 23));
 
         this._shapeModeButton = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal, spriteSelected, spriteDisabled, this,
-            function(){
+            function () {
                 selfPoint._emitter.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
                 selfPoint._textureModeButton.setIsVisible(true);
                 selfPoint._shapeModeButton.setIsVisible(false);
             });
-        this._shapeModeButton.setPosition( new cc.Point(10,100));
-        this._shapeModeButton.setAnchorPoint( cc.PointMake(0,0) );
+        this._shapeModeButton.setPosition(new cc.Point(10, 100));
+        this._shapeModeButton.setAnchorPoint(cc.PointMake(0, 0));
 
         var spriteNormal_t = cc.Sprite.spriteWithFile(s_textureModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
         var spriteSelected_t = cc.Sprite.spriteWithFile(s_textureModeMenuItem, cc.RectMake(0, 23, 115, 23));
         var spriteDisabled_t = cc.Sprite.spriteWithFile(s_textureModeMenuItem, cc.RectMake(0, 0, 115, 23));
 
         this._textureModeButton = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal_t, spriteSelected_t, spriteDisabled_t, this,
-            function(){
+            function () {
                 selfPoint._emitter.setDrawMode(cc.PARTICLE_SHAPE_MODE);
                 selfPoint._textureModeButton.setIsVisible(false);
                 selfPoint._shapeModeButton.setIsVisible(true);
             });
         this._textureModeButton.setIsVisible(false);
-        this._textureModeButton.setPosition( new cc.Point(10,100));
-        this._textureModeButton.setAnchorPoint( cc.PointMake(0,0) );
+        this._textureModeButton.setPosition(new cc.Point(10, 100));
+        this._textureModeButton.setAnchorPoint(cc.PointMake(0, 0));
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3,this._shapeModeButton, this._textureModeButton);
+        var menu = cc.Menu.menuWithItems(item1, item2, item3, this._shapeModeButton, this._textureModeButton,
+            this._freeMovementButton, this._relativeMovementButton, this._groupMovementButton);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
         item2.setPosition(cc.PointMake(s.width / 2, 30));
         item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
-        //item4.setPosition( cc.PointMake( 10, 100) );
-        //item4.setAnchorPoint( cc.PointMake(0,0) );
 
         this.addChild(menu, 100);
         //TODO
