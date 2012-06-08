@@ -154,7 +154,7 @@ cc.HASH_DEL = function (head, delptr) {
 };
 
 //data structures
-cc.tListEntry = function(prev, next, target, priority, paused, markedForDeletion) {
+cc.tListEntry = function (prev, next, target, priority, paused, markedForDeletion) {
     this.prev = prev;
     this.next = next;
     this.target = target;                           // not retained (retained by hashUpdateEntry)
@@ -163,7 +163,7 @@ cc.tListEntry = function(prev, next, target, priority, paused, markedForDeletion
     this.makedForDeletion = markedForDeletion;      // selector will no longer be called and entry will be removed at end of the next tick
 };
 
-cc.tHashUpdateEntry = function(list, entry, target, hh) {
+cc.tHashUpdateEntry = function (list, entry, target, hh) {
     this.list = list;                                   // Which list does it belong to ?
     this.entry = entry;                                 // entry in the list
     this.target = target;                               // hash key (retained)
@@ -171,7 +171,7 @@ cc.tHashUpdateEntry = function(list, entry, target, hh) {
 };
 
 // Hash Element used for "selectors with interval"
-cc.tHashSelectorEntry = function(timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
+cc.tHashSelectorEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
     this.timers = timers;
     this.target = target;                                // hash key (retained)
     this.timerIndex = timerIndex;

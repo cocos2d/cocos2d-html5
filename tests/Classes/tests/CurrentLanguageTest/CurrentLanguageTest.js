@@ -25,16 +25,16 @@
  ****************************************************************************/
 
 var CurrentLanguageTest = cc.Layer.extend({
-    ctor:function(){
+    ctor:function () {
         this._super();
 
         var s = cc.Director.sharedDirector().getWinSize();
-        var label = cc.LabelTTF.labelWithString("Current language Test", "Arial", 28);
+        var label = cc.LabelTTF.create("Current language Test", "Arial", 28);
         this.addChild(label, 0);
-        label.setPosition( new cc.Point(s.width/2, s.height-50) );
+        label.setPosition(new cc.Point(s.width / 2, s.height - 50));
 
-        var labelLanguage = cc.LabelTTF.labelWithString("", "Arial", 20);
-        labelLanguage.setPosition(new cc.Point(s.width/2, s.height/2));
+        var labelLanguage = cc.LabelTTF.create("", "Arial", 20);
+        labelLanguage.setPosition(new cc.Point(s.width / 2, s.height / 2));
 
         var currentLanguageType = cc.Application.getCurrentLanguage();
         switch (currentLanguageType) {
@@ -66,7 +66,7 @@ var CurrentLanguageTest = cc.Layer.extend({
 });
 
 var CurrentLanguageTestScene = TestScene.extend({
-    runThisTest:function(){
+    runThisTest:function () {
         var layer = new CurrentLanguageTest();
         this.addChild(layer);
 

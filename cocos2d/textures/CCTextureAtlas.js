@@ -219,7 +219,7 @@ cc.TextureAtlas = cc.Class.extend({
      * no used for js
      */
     resizeCapacity:function (newCapacity) {
-        if (newCapacity == this._capacity){
+        if (newCapacity == this._capacity) {
             return true;
         }
 
@@ -254,8 +254,8 @@ cc.TextureAtlas = cc.Class.extend({
          // XXX: update is done in draw... perhaps it should be done in a timer
          if (m_bDirty)
          {
-             glBufferSubData(GL_ARRAY_BUFFER, sizeof(quads[0]) * start, sizeof(quads[0]) * n, &quads[start]);
-             m_bDirty = false;
+         glBufferSubData(GL_ARRAY_BUFFER, sizeof(quads[0]) * start, sizeof(quads[0]) * n, &quads[start]);
+         m_bDirty = false;
          }
 
          // vertices
@@ -308,7 +308,7 @@ cc.TextureAtlas = cc.Class.extend({
 /** creates a TextureAtlas with an filename and with an initial capacity for Quads.
  * The TextureAtlas capacity can be increased in runtime.
  */
-cc.TextureAtlas.textureAtlasWithFile = function (file, capacity) {
+cc.TextureAtlas.create = function (file, capacity) {
     var textureAtlas = new cc.TextureAtlas();
     if (textureAtlas && textureAtlas.initWithFile(file, capacity)) {
         return textureAtlas;
@@ -320,7 +320,7 @@ cc.TextureAtlas.textureAtlasWithFile = function (file, capacity) {
  * with an initial capacity for n Quads.
  * The TextureAtlas capacity can be increased in runtime.
  */
-cc.TextureAtlas.textureAtlasWithTexture = function (texture, capacity) {
+cc.TextureAtlas.createWithTexture = function (texture, capacity) {
     var textureAtlas = new cc.TextureAtlas();
     if (textureAtlas && textureAtlas.initWithTexture(texture, capacity)) {
         return textureAtlas;

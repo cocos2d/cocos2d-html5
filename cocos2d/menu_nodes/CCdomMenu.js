@@ -35,7 +35,7 @@ cc.Menu = cc.domNode.extend({
     initWithItems:function (args) {
         this.dom.id = "DomMenu" + Date.now();
         this.dom.className += " domMenu";
-        this._isRelativeAnchorPoint= false;
+        this._isRelativeAnchorPoint = false;
         this.setContentSize(cc.Director.sharedDirector().getWinSize());
         for (var i = 0; i < args.length; i++) {
             if (args[i]) {
@@ -90,62 +90,50 @@ cc.Menu = cc.domNode.extend({
                 var childwidth = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].dom.style.fontSize,
                     this.getChildren()[i].dom.style.fontFamily).width;
-                this.getChildren()[i].setPosition(cc.ccp( -y + childwidth,0/* * this._children[i].getScaleY()*/));
+                this.getChildren()[i].setPosition(cc.ccp(-y + childwidth, 0/* * this._children[i].getScaleY()*/));
                 //console.log(cc.ccp(s.width / 2 + y - childwidth, -s.height / 2/* * this._children[i].getScaleY()*/));
                 y -= childwidth /** this._children[i].getScaleY()*/ + padding;
             }
         }
     },
-    cleanup:function(){
+    cleanup:function () {
         this._super();
         //everytime a dom menu exits, do the clean up
         //first, kill all its children
         var mychildren = this.getChildren();
-        for(var i =0; i < mychildren.count; i++)
-        {
+        for (var i = 0; i < mychildren.count; i++) {
             this.dom.removeChild(mychildren[i].dom);
         }
         //then kill it self, but store its parent temporarily
         var grandparent = this.dom.parentNode;
-/*        if(this.dom.parentNode)
-        {
-            this.dom.parentNode.removeChild(this.dom);
-        }*/
+        /*        if(this.dom.parentNode)
+         {
+         this.dom.parentNode.removeChild(this.dom);
+         }*/
         //then go up a level to the parent,(probably ccnode, if it still have some child, ignore it, other wise, go up again
         var cur = this.dom;
         var parent = cur.parentNode;
         var domlayer = cc.domNode.DomContainer();
-        for(cur.parentNode.removeChild(cur); parent.childElementCount == 0;)
-        {
+        for (cur.parentNode.removeChild(cur); parent.childElementCount == 0;) {
             cur = parent;
             parent = cur.parentNode;
-            if(cur == domlayer){break;}
+            if (cur == domlayer) {
+                break;
+            }
             cur.parentNode.removeChild(cur);
         }
         //repeat above step
         //kill stragglers
         var children = cc.domNode.DomContainer().childNodes;
-        for(var k = 0; k < children.length; k++)
-        {
-            if(children[k].childElementCount == 0)
-            {
+        for (var k = 0; k < children.length; k++) {
+            if (children[k].childElementCount == 0) {
                 cc.domNode.DomContainer().removeChild(children[k]);
             }
         }
     }
 });
-cc.Menu.menuWithItems = function () {
+cc.Menu.create = function () {
     var ret = new cc.Menu();
     ret.initWithItems(arguments);
-    return ret;
-};
-cc.Menu.menuWithItem = function () {
-    var ret = new cc.Menu();
-    ret.initWithItems(arguments);
-    return ret;
-};
-cc.Menu.node = function() {
-    var ret = new cc.Menu();
-    ret.initWithItems();
     return ret;
 };

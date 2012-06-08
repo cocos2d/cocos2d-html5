@@ -152,7 +152,7 @@ cc.TextureCache = cc.Class.extend({
         var texture = null;
 
         if (key) {
-            if ( this.textures.hasOwnProperty(key)){
+            if (this.textures.hasOwnProperty(key)) {
                 texture = this.textures[key];
                 if (texture) {
                     return texture;
@@ -184,26 +184,26 @@ cc.TextureCache = cc.Class.extend({
         }
     },
 
-    getKeyByTexture:function(texture) {
-        for(var key in this.textures){
-            if(this.textures[key] == texture){
+    getKeyByTexture:function (texture) {
+        for (var key in this.textures) {
+            if (this.textures[key] == texture) {
                 return key;
             }
         }
         return null;
     },
 
-    getTextureColors:function(texture){
+    getTextureColors:function (texture) {
         var key = this.getKeyByTexture(texture);
-        if(key){
-            if(texture instanceof HTMLImageElement){
+        if (key) {
+            if (texture instanceof HTMLImageElement) {
                 key = texture.src;
-            }else{
+            } else {
                 return null;
             }
         }
 
-        if(!this._textureColorsCache.hasOwnProperty(key)){
+        if (!this._textureColorsCache.hasOwnProperty(key)) {
             this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
         }
         return this._textureColorsCache[key];

@@ -112,22 +112,22 @@ var TextInputTest = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 24);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 24);
         this.addChild(label);
         label.setPosition(new cc.Point(s.width / 2, s.height - 50));
 
         var subTitle = this.notificationLayer.subtitle();
         if (subTitle && subTitle != "") {
-            var l = cc.LabelTTF.labelWithString(subTitle, "Thonburi", 16);
+            var l = cc.LabelTTF.create(subTitle, "Thonburi", 16);
             this.addChild(l, 1);
             l.setPosition(new cc.Point(s.width / 2, s.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3);
+        var menu = cc.Menu.create(item1, item2, item3);
         menu.setPosition(cc.PointZero());
         item1.setPosition(new cc.Point(s.width / 2 - 100, 30));
         item2.setPosition(new cc.Point(s.width / 2, 30));
@@ -252,7 +252,7 @@ var TextFieldTTFDefaultTest = KeyboardNotificationLayer.extend({
         // add CCTextFieldTTF
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var textField = cc.TextFieldTTF.textFieldWithPlaceHolder("<click here for input>",
+        var textField = cc.TextFieldTTF.create("<click here for input>",
             TEXT_INPUT_FONT_NAME,
             TEXT_INPUT_FONT_SIZE);
         this.addChild(textField);
@@ -301,16 +301,16 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         this._super();
 
         this._nCharLimit = 20;
-        this._pTextFieldAction = cc.RepeatForever.actionWithAction(
-            cc.Sequence.actions(
-                cc.FadeOut.actionWithDuration(0.25),
-                cc.FadeIn.actionWithDuration(0.25)));
+        this._pTextFieldAction = cc.RepeatForever.create(
+            cc.Sequence.create(
+                cc.FadeOut.create(0.25),
+                cc.FadeIn.create(0.25)));
         this._bAction = false;
 
         // add CCTextFieldTTF
         var s = cc.Director.sharedDirector().getWinSize();
 
-        this._pTextField = cc.TextFieldTTF.textFieldWithPlaceHolder("<click here for input>",
+        this._pTextField = cc.TextFieldTTF.create("<click here for input>",
             TEXT_INPUT_FONT_NAME,
             TEXT_INPUT_FONT_SIZE);
         this.addChild(this._pTextField);
@@ -351,7 +351,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         }
 
         // create a insert text sprite and do some action
-        var label = cc.LabelTTF.labelWithString(text, TEXT_INPUT_FONT_NAME, TEXT_INPUT_FONT_SIZE);
+        var label = cc.LabelTTF.create(text, TEXT_INPUT_FONT_NAME, TEXT_INPUT_FONT_SIZE);
         this.addChild(label);
         var color = new cc.Color3B(226, 121, 7);
         label.setColor(color);
@@ -368,19 +368,19 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         label.setPosition(beginPos);
         label.setScale(8);
 
-        var seq = cc.Sequence.actions(
-            cc.Spawn.actions(
-                cc.MoveTo.actionWithDuration(duration, endPos),
-                cc.ScaleTo.actionWithDuration(duration, 1),
-                cc.FadeOut.actionWithDuration(duration)),
-            cc.CallFunc.actionWithTarget(this, this.callbackRemoveNodeWhenDidAction));
+        var seq = cc.Sequence.create(
+            cc.Spawn.create(
+                cc.MoveTo.create(duration, endPos),
+                cc.ScaleTo.create(duration, 1),
+                cc.FadeOut.create(duration)),
+            cc.CallFunc.create(this, this.callbackRemoveNodeWhenDidAction));
         label.runAction(seq);
         return false;
     },
 
     onTextFieldDeleteBackward:function (sender, delText, len) {
         // create a delete text sprite and do some action
-        var label = cc.LabelTTF.labelWithString(delText, TEXT_INPUT_FONT_NAME, TEXT_INPUT_FONT_SIZE);
+        var label = cc.LabelTTF.create(delText, TEXT_INPUT_FONT_NAME, TEXT_INPUT_FONT_SIZE);
         this.addChild(label);
 
         // move the sprite to fly out
@@ -397,14 +397,14 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         var repeatTime = 5;
         label.setPosition(beginPos);
 
-        var seq = cc.Sequence.actions(
-            cc.Spawn.actions(
-                cc.MoveTo.actionWithDuration(duration, endPos),
-                cc.Repeat.actionWithAction(
-                    cc.RotateBy.actionWithDuration(rotateDuration, (Math.random() % 2) ? 360 : -360),
+        var seq = cc.Sequence.create(
+            cc.Spawn.create(
+                cc.MoveTo.create(duration, endPos),
+                cc.Repeat.create(
+                    cc.RotateBy.create(rotateDuration, (Math.random() % 2) ? 360 : -360),
                     repeatTime),
-                cc.FadeOut.actionWithDuration(duration)),
-            cc.CallFunc.actionWithTarget(this, this.callbackRemoveNodeWhenDidAction));
+                cc.FadeOut.create(duration)),
+            cc.CallFunc.create(this, this.callbackRemoveNodeWhenDidAction));
         label.runAction(seq);
         return false;
     },

@@ -34,7 +34,7 @@ cc.TMXObjectGroup = cc.Class.extend({
     _positionOffset:cc.PointZero(),
     _properties:null,
     _objects:null,
-    ctor:function(){
+    ctor:function () {
         this._properties = [];
         this._objects = [];
     },

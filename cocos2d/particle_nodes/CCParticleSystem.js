@@ -99,6 +99,7 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
     this.modeA = modeA ? modeA : new cc.tCCParticle.tModeA();
     this.modeB = modeB ? modeB : new cc.tCCParticle.tModeB();
     this.isChangeColor = false;
+    this.drawPos = new cc.Point(0, 0);
 };
 
 //! Mode A: gravity, direction, radial accel, tangential accel
@@ -185,20 +186,20 @@ cc.ParticleSystem = cc.Node.extend({
     _profilingTimer:null,
 
     //drawMode
-    _drawMode: cc.PARTICLE_SHAPE_MODE,
-    getDrawMode:function(){
+    _drawMode:cc.PARTICLE_SHAPE_MODE,
+    getDrawMode:function () {
         return this._drawMode;
     },
-    setDrawMode:function(drawMode){
+    setDrawMode:function (drawMode) {
         this._drawMode = drawMode;
     },
 
     //shape type
     _shapeType:cc.PARTICLE_BALL_SHAPE,
-    getShapeType:function(){
+    getShapeType:function () {
         return this._shapeType;
     },
-    setShapeType:function(shapeType){
+    setShapeType:function (shapeType) {
         this._shapeType = shapeType;
     },
 
@@ -1029,79 +1030,83 @@ cc.ParticleSystem = cc.Node.extend({
         }
 
         while (this._particleIdx < this._particleCount) {
-            var p = this._particles[this._particleIdx];
+            var selParticle = this._particles[this._particleIdx];
 
             // life
-            p.timeToLive -= dt;
+            selParticle.timeToLive -= dt;
 
-            if (p.timeToLive > 0) {
+            if (selParticle.timeToLive > 0) {
                 // Mode A: gravity, direction, tangential accel & radial accel
                 if (this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY) {
                     var tmp, radial, tangential;
 
                     radial = cc.PointZero();
                     // radial acceleration
-                    if (p.pos.x || p.pos.y)
-                        radial = cc.ccpNormalize(p.pos);
+                    if (selParticle.pos.x || selParticle.pos.y)
+                        radial = cc.ccpNormalize(selParticle.pos);
                     tangential = radial;
-                    radial = cc.ccpMult(radial, p.modeA.radialAccel);
+                    radial = cc.ccpMult(radial, selParticle.modeA.radialAccel);
 
                     // tangential acceleration
                     var newy = tangential.x;
                     tangential.x = -tangential.y;
                     tangential.y = newy;
-                    tangential = cc.ccpMult(tangential, p.modeA.tangentialAccel);
+                    tangential = cc.ccpMult(tangential, selParticle.modeA.tangentialAccel);
 
                     // (gravity + radial + tangential) * dt
                     tmp = cc.ccpAdd(cc.ccpAdd(radial, tangential), this.modeA.gravity);
                     tmp = cc.ccpMult(tmp, dt);
-                    p.modeA.dir = cc.ccpAdd(p.modeA.dir, tmp);
-                    tmp = cc.ccpMult(p.modeA.dir, dt);
-                    p.pos = cc.ccpAdd(p.pos, tmp);
+                    selParticle.modeA.dir = cc.ccpAdd(selParticle.modeA.dir, tmp);
+                    tmp = cc.ccpMult(selParticle.modeA.dir, dt);
+                    selParticle.pos = cc.ccpAdd(selParticle.pos, tmp);
                 } else {
                     // Mode B: radius movement
 
                     // Update the angle and radius of the particle.
-                    p.modeB.angle += p.modeB.degreesPerSecond * dt;
-                    p.modeB.radius += p.modeB.deltaRadius * dt;
+                    selParticle.modeB.angle += selParticle.modeB.degreesPerSecond * dt;
+                    selParticle.modeB.radius += selParticle.modeB.deltaRadius * dt;
 
-                    p.pos.x = -Math.cos(p.modeB.angle) * p.modeB.radius;
-                    p.pos.y = -Math.sin(p.modeB.angle) * p.modeB.radius;
+                    selParticle.pos.x = -Math.cos(selParticle.modeB.angle) * selParticle.modeB.radius;
+                    selParticle.pos.y = -Math.sin(selParticle.modeB.angle) * selParticle.modeB.radius;
                 }
 
                 // color
-                p.color.r += (p.deltaColor.r * dt);
-                p.color.g += (p.deltaColor.g * dt);
-                p.color.b += (p.deltaColor.b * dt);
-                p.color.a += (p.deltaColor.a * dt);
-                p.isChangeColor = true;
+                selParticle.color.r += (selParticle.deltaColor.r * dt);
+                selParticle.color.g += (selParticle.deltaColor.g * dt);
+                selParticle.color.b += (selParticle.deltaColor.b * dt);
+                selParticle.color.a += (selParticle.deltaColor.a * dt);
+                selParticle.isChangeColor = true;
 
                 // size
-                p.size += (p.deltaSize * dt);
-                p.size = Math.max(0, p.size);
+                selParticle.size += (selParticle.deltaSize * dt);
+                selParticle.size = Math.max(0, selParticle.size);
 
                 // angle
-                p.rotation += (p.deltaRotation * dt);
+                selParticle.rotation += (selParticle.deltaRotation * dt);
 
                 //
                 // update values in quad
                 //
                 var newPos;
-                if (cc._positionType == cc.CCPARTICLE_TYPE_FREE || this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
-                    var diff = cc.ccpSub(currentPosition, p.startPos);
-                    newPos = cc.ccpSub(p.pos, diff);
+                if (this._positionType == cc.CCPARTICLE_TYPE_FREE || this._positionType == cc.CCPARTICLE_TYPE_RELATIVE) {
+                    var diff = cc.ccpSub(currentPosition, selParticle.startPos);
+                    newPos = cc.ccpSub(selParticle.pos, diff);
                 } else {
-                    newPos = p.pos;
+                    newPos = selParticle.pos;
                 }
 
-                this.updateQuadWithParticle(p, newPos);
+                if (cc.renderContextType == cc.WEBGL) {
+                    this.updateQuadWithParticle(selParticle, newPos);
+                } else {
+                    selParticle.drawPos = newPos;
+                }
                 //updateParticleImp(self, updateParticleSel, p, newPos);
 
                 // update particle counter
                 ++this._particleIdx;
             } else {
                 // life < 0
-                cc.ArrayRemoveObject(this._particles, p);
+                cc.ArrayRemoveObject(this._particles, selParticle);
 
                 --this._particleCount;
 
@@ -1136,7 +1141,7 @@ cc.ParticleSystem = cc.Node.extend({
  http://particledesigner.71squared.com/
  @since v0.99.3
  */
-cc.ParticleSystem.particleWithFile = function (plistFile) {
+cc.ParticleSystem.create = function (plistFile) {
     var ret = new cc.ParticleSystem();
     if (ret && ret.initWithFile(plistFile)) {
         return ret;

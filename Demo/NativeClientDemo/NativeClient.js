@@ -146,7 +146,7 @@ var Helloworld = cc.Layer.extend({
         //    you may modify it.
 
         // add a "close" icon to exit the progress. it's an autorelease object
-        var closeItem = cc.MenuItemImage.itemFromNormalImage(
+        var closeItem = cc.MenuItemImage.create(
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
@@ -154,10 +154,10 @@ var Helloworld = cc.Layer.extend({
                 alert("Bye Bye");
             });
         closeItem.setPosition(cc.canvas.width - 20, 20);
-        var menu = cc.Menu.menuWithItems(closeItem, null);
+        var menu = cc.Menu.create(closeItem, null);
 
         /*
-         var closeItem = cc.MenuItemImage.itemFromNormalImage(
+         var closeItem = cc.MenuItemImage.create(
          "CloseNormal.png",
          "CloseSelected.png",
          this,
@@ -165,7 +165,7 @@ var Helloworld = cc.Layer.extend({
          closeItem.setPosition( cc.ccp(cc.Director.sharedDirector().getWinSize().width - 20, 20) );
 
          // create menu, it's an autorelease object
-         var menu = cc.Menu.menuWithItems(closeItem, null);
+         var menu = cc.Menu.create(closeItem, null);
          menu.setPosition( cc.PointZero() );
          this.addChild(menu, 1);
          */
@@ -174,7 +174,7 @@ var Helloworld = cc.Layer.extend({
 
         // add a label shows "Hello World"
         // create and initialize a label
-        //var pLabel = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        //var pLabel = cc.LabelTTF.create("Hello World", "Arial", 24);
         // ask director the window size
         var size = cc.Director.sharedDirector().getWinSize();
 
@@ -186,7 +186,7 @@ var Helloworld = cc.Layer.extend({
 
         // add "HelloWorld" splash screen"
         /*******************
-         var sprite = cc.Sprite.spriteWithFile("HelloWorld.png");
+         var sprite = cc.Sprite.create("HelloWorld.png");
 
          // position the sprite on the center of the screen
          sprite.setPosition( cc.ccp(size.width/2, size.height/2) );
@@ -194,14 +194,14 @@ var Helloworld = cc.Layer.extend({
          // add the sprite as a child to this layer
          this.addChild(sprite, 0);
          *******************/
-            //var helloSprite = cc.Sprite.spriteWithFile("helloworld.png");
+            //var helloSprite = cc.Sprite.create("helloworld.png");
             //this.addChild(helloSprite,0);
 
-        this.helloLb = cc.LabelTTF.labelWithString("Hello World", "Arial", 24);
+        this.helloLb = cc.LabelTTF.create("Hello World", "Arial", 24);
         this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
         this.addChild(this.helloLb, 5);
 
-        this.sprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
+        this.sprite = cc.Sprite.create("Resources/HelloWorld.png");
         this.sprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
         this.sprite.setIsVisible(true);
         this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -211,10 +211,10 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.sprite, 0);
         //this.sprite.setColor(new cc.Color3B(255,128,128));
 
-        var rotateToA = cc.RotateTo.actionWithDuration(2, 0);
-        var scaleToA = cc.ScaleTo.actionWithDuration(2, 1, 1);
+        var rotateToA = cc.RotateTo.create(2, 0);
+        var scaleToA = cc.ScaleTo.create(2, 1, 1);
         //this.sprite.setTexture(this.waveImageByCanvas(this.sprite._originalTexture,50));
-        this.sprite.runAction(cc.Sequence.actions(rotateToA, scaleToA));
+        this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
         //this.schedule(this.waveSprite,0.3);
 
         this.circle = new CircleSprite();
@@ -222,7 +222,7 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLb.runAction(cc.MoveBy.actionWithDuration(2.5, cc.ccp(0, 280)));
+        this.helloLb.runAction(cc.MoveBy.create(2.5, cc.ccp(0, 280)));
 
         this.setIsTouchEnabled(true);
         //this.adjustSizeForWindow();
@@ -314,7 +314,7 @@ var Helloworld = cc.Layer.extend({
 // there's no 'id' in cpp, so we recommand to return the exactly class pointer
 Helloworld.scene = function () {
     // 'scene' is an autorelease object
-    var scene = cc.Scene.node();
+    var scene = cc.Scene.create();
 
     // 'layer' is an autorelease object
     var layer = this.node();

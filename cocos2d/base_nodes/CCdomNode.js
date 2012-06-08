@@ -74,12 +74,12 @@ cc.domNodeMethods = {
     //update the transform css, including translate, rotation, skew, scale
     _updateTransform:function () {
         //var height = (this.dom.node.getParent()) ? this.dom.node.getParent().getContentSize().height : cc.Director.sharedDirector().getWinSize().height;
-        var css = (cc.CSS3.hd)? "translate3d(": "translate(";
+        var css = (cc.CSS3.hd) ? "translate3d(" : "translate(";
         css += this.getPositionX();
         css += "px, ";
         //css += (height - this.getContentSize().height-this.getPositionY());
         css += -this.getPositionY();
-        css += (cc.CSS3.hd)? "px, 0) rotateZ(":"px) rotate(" ;
+        css += (cc.CSS3.hd) ? "px, 0) rotateZ(" : "px) rotate(";
         css += this.getRotation();
         css += "deg) scale(";
         css += this.getScaleX();
@@ -98,52 +98,54 @@ cc.domNodeMethods = {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._isTransformGLDirty = true;
         }
-        if(this.dom)
-        {
+        if (this.dom) {
             this._updateTransform();
         }
     },
     //this will update the anchorpoint of the object's dom, when ever something changed that will affect the anchorpoint such as contentsize and anchorpoint itself.
     //as well as when you change a node's relative anchorpoint attribute, you should call this function
-    _updateAnchorPoint:function(){
+    _updateAnchorPoint:function () {
         this.setAnchorPoint(this.getAnchorPoint());
     },
     initDom:function () {
         this.dom = cc.$new(cc.TAG);
         //reset the css as possible
-        var css = "position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:none; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff; z-index:0;";
-        if (cc.Browser.type == "chrome" || cc.Browser.type == "safari") css += " -webkit-perspective: 1000;";
+        /*        var css = "position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:none; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff; z-index:0;";
+         if (cc.Browser.type == "chrome" || cc.Browser.type == "safari") css += " -webkit-perspective: 1000;";*/
+        var css = "z-index:0;";
         this.dom.style.cssText = css;
         this.dom.node = this;
         this.hide();
     },
-    setParentDiv:function(p){
-        if(this.dom){//if self doesnt have a dom, then its a CCnode, no point in adding dom to the parent
-            if(!p.dom){//if the dom node parent is a ccnode, and it do not have its dom, we make one
+    setParentDiv:function (p) {
+        if (this.dom) {//if self doesnt have a dom, then its a CCnode, no point in adding dom to the parent
+            if (!p.dom) {//if the dom node parent is a ccnode, and it do not have its dom, we make one
                 p.initDom();
                 var type = " CCNode";
-                if(p instanceof cc.Scene)
-                {
+                if (p instanceof cc.Scene) {
                     type = " Scene";
                 }
-                else if(p instanceof cc.Layer)
-                {
+                else if (p instanceof cc.Layer) {
                     type = " Layer";
                 }
-                else if (p instanceof cc.Sprite)
-                {
+                else if (p instanceof cc.Sprite) {
                     type = " Sprite";
                 }
-                else{
+                else {
                     console.log(p);
                 }
                 p.dom.id = type + Date.now();
                 p.dom.className += type;
             }
             p.dom.appendChild(this.dom);
-            if(p.getIsRunning()){
+            if (p.getIsRunning()) {
                 p.show();
             }
+            /*            if(p.getIsRelativeAnchorPoint())
+             {
+             this.dom.style.marginLeft = (-this.getParent().getContentSize().width/2) + "px";
+             this.dom.style.marginTop = (this.getParent().getContentSize().height/2) + "px";
+             }*/
         }
 
         //if the parent also have a parent
@@ -155,32 +157,29 @@ cc.domNodeMethods = {
         //we dont know if the parent is the top most level, as it could be not run yet.
         //but if a domnode is added after the scene ran, then, getisRunning will return true, and so in this case,
         //if parent have no more parent, but it is running, we add the parent to the domContainer
-        else if(p.getIsRunning){
-            if(!p.dom){
+        else if (p.getIsRunning) {
+            if (!p.dom) {
                 p.initDom();
                 var type = " CCNode";
-                if(p instanceof cc.Scene)
-                {
+                if (p instanceof cc.Scene) {
                     type = " Scene";
                 }
-                else if(p instanceof cc.Layer)
-                {
+                else if (p instanceof cc.Layer) {
                     type = " Layer";
                 }
-                else if (p instanceof cc.Sprite)
-                {
+                else if (p instanceof cc.Sprite) {
                     type = " Sprite";
                 }
-                else{
+                else {
                     console.log(p);
                 }
-                p.dom.id = (p instanceof cc.Scene)?"Scene" + Date.now():"CCNode" + Date.now();
+                p.dom.id = (p instanceof cc.Scene) ? "Scene" + Date.now() : "CCNode" + Date.now();
                 p.dom.className += type;
             }
             cc.domNode.DomContainer().appendChild(p.dom);
             p.show();
         }
-        if(p.dom){
+        if (p.dom) {
             p._updateTransform();
             p._updateAnchorPoint();
         }
@@ -212,7 +211,7 @@ cc.domNode = cc.Class.extend({
     ctor:function () {
         this.initDom();
         this._children = [];
-        this._pos = {x:0,y:0};
+        this._pos = {x:0, y:0};
         this._contentSize = {};
         this._AnchorPoint = {x:0.5, y:0.5};
         this.dom.id = "DomNode" + Date.now();
@@ -220,12 +219,11 @@ cc.domNode = cc.Class.extend({
         this.setContentSize(cc.Director.sharedDirector().getWinSize());
         this._updateTransform();
     },
-    id:function(id){
-        if(id)
-        {
+    id:function (id) {
+        if (id) {
             this.dom.id = id;
         }
-        else{
+        else {
             return this.dom.id;
         }
     },
@@ -274,11 +272,18 @@ cc.domNode = cc.Class.extend({
     getContentSize:function () {
         return new cc.Size(this._contentSize.width, this._contentSize.height);
     },
-    getIsRunning:function(){
+    getIsRunning:function () {
         return this._isRunning;
+    },
+    getIsRelativeAnchorPoint:function () {
+        return this._isRelativeAnchorPoint;
     },
 
     //Sets
+    /// isRelativeAnchorPoint setter
+    setIsRelativeAnchorPoint:function (newValue) {
+        this._isRelativeAnchorPoint = newValue;
+    },
     _setZOrder:function (z) {
         this.dom.style.zIndex = z;
     },
@@ -327,10 +332,10 @@ cc.domNode = cc.Class.extend({
     setContentSize:function (size) {
         this._contentSize.width = size.width;
         this._contentSize.height = size.height;
-        this.dom.style.width = size.width+"px";
-        this.dom.style.maxHeight = size.height+"px";
+        this.dom.style.width = size.width + "px";
+        this.dom.style.maxHeight = size.height + "px";
         //when an element size is changed, we need to fix its origin, so that say 50% y origin will still be at center
-        this.dom.style[cc.CSS3.origin] = (this.getAnchorPoint().x * 100) + "% " + (this.getAnchorPoint().y * size.height)+"px";
+        this.dom.style[cc.CSS3.origin] = (this.getAnchorPoint().x * 100) + "% " + (this.getAnchorPoint().y * size.height) + "px";
         //then we need to tell its child to update its position, because the child position also depend on the parent height
         this._arrayMakeObjectsPerformSelector(this.getChildren(), "_updateTransform");
         this._updateAnchorPoint();
@@ -390,15 +395,14 @@ cc.domNode = cc.Class.extend({
         }
     },
     setParent:function (p) {
-        if(!p)
-        {
+        if (!p) {
             //try to remove parent
-            if(this._parent.dom){
+            if (this._parent.dom) {
                 this._parent.dom.removeChild(this.dom);
             }
             this._parent = p;
         }
-        else{
+        else {
             this._parent = p;
             this.setParentDiv(p);
         }
@@ -418,26 +422,26 @@ cc.domNode = cc.Class.extend({
         this._arrayMakeObjectsPerformSelector(this.getChildren(), "onExit");
         this.hide();
         /*var that = cc.$("#" + this.id());
-        var cur = this.dom;
-        if (cur.parentNode) {
-            cur.parentNode.removeChild(cur);
-        }
-        that = null;*/
+         var cur = this.dom;
+         if (cur.parentNode) {
+         cur.parentNode.removeChild(cur);
+         }
+         that = null;*/
     },
     onEnterTransitionDidFinish:function () {
         this._arrayMakeObjectsPerformSelector(this.getChildren(), "onEnter");
     },
-    setIsVisible:function(isVisible){
-        if(isVisible){
-           this.show();
-        }else{
+    setIsVisible:function (isVisible) {
+        if (isVisible) {
+            this.show();
+        } else {
             this.hide();
         }
     },
-    getIsVisible:function(){
-        if(this.dom.style.display == "none"){
+    getIsVisible:function () {
+        if (this.dom.style.display != "block") {
             return false;
-        }else{
+        } else {
             return true;
         }
     },
@@ -496,11 +500,16 @@ cc.domNode.DomContainer = function () {
         //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
         cc.domNode._domContainer = cc.$new(cc.TAG);
         cc.domNode._domContainer.id = "DOMContainer";
-        cc.domNode._domContainer.style.position="relative";
+        cc.domNode._domContainer.style.position = "relative";
         cc.domNode._domContainer.style.top = "100%";
         cc.domNode._container.appendChild(cc.domNode._domContainer);
         canvas.parentNode.insertBefore(cc.domNode._container, canvas);
         cc.domNode._container.appendChild(canvas);
+
+        var styles = cc.$new("style");
+        styles.textContent = "#DOMContainer div{position: absolute; font-style:normal; margin: 0; padding: 0; border: none; float: none; display:none; top:0; bottom:auto; right:auto; left:0; height:0; color:#fff; z-index:0;}";
+
+        cc.domNode._container.appendChild(styles);
     }
     return cc.domNode._domContainer;
 };
@@ -533,30 +542,29 @@ cc.domNode.implement(cc.domNodeMethods);
 cc.Node.implement(cc.domNodeMethods);
 cc.Node.implement({
     setParent:function (p) {
-        if(!p)
-        {
+        if (!p) {
             //try to remove parent
-            if(this._parent.dom && this.dom && this.dom.parentNode == this._parent.dom){
+            if (this._parent.dom && this.dom && this.dom.parentNode == this._parent.dom) {
                 this._parent.dom.removeChild(this.dom);
             }
             this._parent = p;
         }
-        else{
+        else {
             this._parent = p;
-            if(this.dom){
+            if (this.dom) {
                 this.setParentDiv(p);
             }
         }
         //this._updateAnchorPoint();
     },
-    onEnter:function(){
+    onEnter:function () {
         this._arrayMakeObjectsPerformSelector(this._children, "onEnter");
         this.resumeSchedulerAndActions();
         this._isRunning = true;
         //if this node has a dom element attached, and it is the current running scene, we finally attach it to the dom container :)
-        if(this.dom){
+        if (this.dom) {
             this.show();
-            if(this == cc.Director.sharedDirector().getRunningScene()){
+            if (this == cc.Director.sharedDirector().getRunningScene()) {
                 cc.domNode.DomContainer().appendChild(this.dom);
             }
         }
@@ -579,8 +587,8 @@ cc.Node.implement({
             this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
             this._updateAnchorPoint();
         }
-        if(this.dom)
-        this.dom.style.maxHeight = size.height+"px";
+        if (this.dom)
+            this.dom.style.maxHeight = size.height + "px";
     },
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
@@ -602,8 +610,8 @@ cc.Node.implement({
             this.setNodeDirty();
             this._updateAnchorPoint();
         }
-        if(this.dom)
-            this.dom.style.maxHeight = size.height+"px";
+        if (this.dom)
+            this.dom.style.maxHeight = size.height + "px";
     },
     setAnchorPoint:function (point) {
 
@@ -619,7 +627,7 @@ cc.Node.implement({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
         }
-        if(this.dom){
+        if (this.dom) {
             var size = this.getContentSize();
             var s = point;
             if (this._isRelativeAnchorPoint) {
@@ -640,14 +648,14 @@ cc.Node.implement({
 });
 if (cc.LayerColor != null) {
     cc.LayerColor.implement({
-        setOpacity:function(Var){
+        setOpacity:function (Var) {
             this._opacity = Var;
             this._updateColor();
 
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
-            if(this.dom){
-                this.dom.style.opacity = Var/255;
+            if (this.dom) {
+                this.dom.style.opacity = Var / 255;
             }
 
         }

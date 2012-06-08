@@ -49,7 +49,7 @@ cc.ActionCamera = cc.ActionInterval.extend({
         camera.getUpXYZ(this.upXOrig, this.upYOrig, this.upZOrig);
     },
     reverse:function () {
-        return cc.ReverseTime.actionWithAction(this);
+        return cc.ReverseTime.create(this);
     }
 });
 
@@ -162,7 +162,7 @@ cc.OrbitCamera = cc.ActionCamera.extend({
 });
 
 /** creates a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX */
-cc.OrbitCamera.actionWithDuration = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
+cc.OrbitCamera.create = function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
     var ret = new cc.OrbitCamera();
     if (ret.initWithDuration(t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX)) {
         return ret;

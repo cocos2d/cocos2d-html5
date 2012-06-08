@@ -100,7 +100,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend({
         return 0;
     }
 });
-cc.ActionInterval.actionWithDuration = function (d) {
+cc.ActionInterval.create = function (d) {
     var action = new cc.ActionInterval();
     action.initWithDuration(d);
     return action;
@@ -176,30 +176,24 @@ cc.Sequence = cc.ActionInterval.extend({
         this._last = found;
     },
     reverse:function () {
-        return cc.Sequence.actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
+        return cc.Sequence._actionOneTwo(this._actions[1].reverse(), this._actions[0].reverse());
     }
 });
 /** helper constructor to create an array of sequenceable actions */
-cc.Sequence.actions = function (/*Multiple Arguments*/) {
-    var prev = arguments[0];
-    for (var i = 1; i < arguments.length; i++) {
-        if (arguments[i] != null) {
-            prev = cc.Sequence.actionOneTwo(prev, arguments[i]);
+cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
+    var paraArray = (typeof tempArray == "Array") ? tempArray : arguments;
+    var prev = paraArray[0];
+    for (var i = 1; i < paraArray.length; i++) {
+        if (paraArray[i] != null) {
+            prev = cc.Sequence._actionOneTwo(prev, paraArray[i]);
         }
     }
     return prev;
 
 };
-/** helper contructor to create an array of sequenceable actions given an array */
-cc.Sequence.actionsWithArray = function (actions) {
-    var prev = this.actions[0];
-    for (var i = 1; i < this.actions.length; ++i) {
-        prev = this.actionOneTwo(prev, this.actions[i]);
-    }
-    return prev;
-};
+
 /** creates the action */
-cc.Sequence.actionOneTwo = function (actionOne, actionTwo) {
+cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
     var sequence = new cc.Sequence();
     sequence.initOneTwo(actionOne, actionTwo);
     return sequence;
@@ -270,7 +264,7 @@ cc.Repeat = cc.ActionInterval.extend({
         return this._total == this._times;
     },
     reverse:function () {
-        return cc.Repeat.actionWithAction(this._innerAction.reverse(), this._times);
+        return cc.Repeat.create(this._innerAction.reverse(), this._times);
     },
     setInnerAction:function (action) {
         if (this._innerAction != action) {
@@ -282,7 +276,7 @@ cc.Repeat = cc.ActionInterval.extend({
     }
 });
 /** creates a CCRepeat action. Times is an unsigned integer between 1 and pow(2,30) */
-cc.Repeat.actionWithAction = function (action, times) {
+cc.Repeat.create = function (action, times) {
     var repeat = new cc.Repeat();
     repeat.initWithAction(action, times);
     return repeat;
@@ -318,7 +312,7 @@ cc.RepeatForever = cc.ActionInterval.extend({
         return false;
     },
     reverse:function () {
-        return (cc.RepeatForever.actionWithAction(this._innerAction.reverse()));
+        return (cc.RepeatForever.create(this._innerAction.reverse()));
     },
     setInnerAction:function (action) {
         if (this._innerAction != action) {
@@ -329,7 +323,7 @@ cc.RepeatForever = cc.ActionInterval.extend({
         return this._innerAction;
     }
 });
-cc.RepeatForever.actionWithAction = function (action) {
+cc.RepeatForever.create = function (action) {
     var ret = new cc.RepeatForever();
     if (ret && ret.initWithAction(action)) {
         return ret;
@@ -356,10 +350,9 @@ cc.Spawn = cc.ActionInterval.extend({
             this._two = action2;
 
             if (d1 > d2) {
-                this._two = cc.Sequence.actionOneTwo(action2, cc.DelayTime.actionWithDuration(d1 - d2));
-            } else
-            if (d1 < d2) {
-                this._one = cc.Sequence.actionOneTwo(action1, cc.DelayTime.actionWithDuration(d2 - d1));
+                this._two = cc.Sequence._actionOneTwo(action2, cc.DelayTime.create(d1 - d2));
+            } else if (d1 < d2) {
+                this._one = cc.Sequence._actionOneTwo(action1, cc.DelayTime.create(d2 - d1));
             }
 
             ret = true;
@@ -385,30 +378,23 @@ cc.Spawn = cc.ActionInterval.extend({
         }
     },
     reverse:function () {
-        return cc.Spawn.actionOneTwo(this._one.reverse(), this._two.reverse());
+        return cc.Spawn._actionOneTwo(this._one.reverse(), this._two.reverse());
     },
     _one:null,
     _two:null
 });
-cc.Spawn.actions = function (/*Multiple Arguments*/) {
-    var prev = arguments[0];
-    for (var i = 1; i < arguments.length; i++) {
-        if (arguments[i] != null) {
-            prev = this.actionOneTwo(prev, arguments[i]);
+cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
+    var paramArray = (typeof tempArray == "Array") ? tempArray : arguments;
+    var prev = paramArray[0];
+    for (var i = 1; i < paramArray.length; i++) {
+        if (paramArray[i] != null) {
+            prev = this._actionOneTwo(prev, paramArray[i]);
         }
     }
     return prev;
 };
-cc.Spawn.actionsWithArray = function (actions) {
-    var prev = actions[0];
 
-    for (var i = 1; i < actions.length; ++i) {
-        prev = this.actionOneTwo(prev, actions[i]);
-    }
-
-    return prev;
-};
-cc.Spawn.actionOneTwo = function (action1, action2) {
+cc.Spawn._actionOneTwo = function (action1, action2) {
     var pSpawn = new cc.Spawn();
     pSpawn.initOneTwo(action1, action2);
 
@@ -462,7 +448,7 @@ cc.RotateTo = cc.ActionInterval.extend({
         }
     }
 });
-cc.RotateTo.actionWithDuration = function (duration, deltaAngle) {
+cc.RotateTo.create = function (duration, deltaAngle) {
     var rotateTo = new cc.RotateTo();
     rotateTo.initWithDuration(duration, deltaAngle);
 
@@ -493,10 +479,10 @@ cc.RotateBy = cc.ActionInterval.extend({
         }
     },
     reverse:function () {
-        return cc.RotateBy.actionWithDuration(this._duration, -this._angle);
+        return cc.RotateBy.create(this._duration, -this._angle);
     }
 });
-cc.RotateBy.actionWithDuration = function (duration, deltaAngle) {
+cc.RotateBy.create = function (duration, deltaAngle) {
     var rotateBy = new cc.RotateBy();
     rotateBy.initWithDuration(duration, deltaAngle);
 
@@ -533,7 +519,7 @@ cc.MoveTo = cc.ActionInterval.extend({
     _startPosition:new cc.Point(),
     _delta:new cc.Point()
 });
-cc.MoveTo.actionWithDuration = function (duration, position) {
+cc.MoveTo.create = function (duration, position) {
     var moveTo = new cc.MoveTo();
     moveTo.initWithDuration(duration, position);
 
@@ -560,10 +546,10 @@ cc.MoveBy = cc.MoveTo.extend({
         this._delta = temp;
     },
     reverse:function () {
-        return cc.MoveBy.actionWithDuration(this._duration, cc.ccp(-this._delta.x, -this._delta.y));
+        return cc.MoveBy.create(this._duration, cc.ccp(-this._delta.x, -this._delta.y));
     }
 });
-cc.MoveBy.actionWithDuration = function (duration, position) {
+cc.MoveBy.create = function (duration, position) {
     var moveBy = new cc.MoveBy();
     moveBy.initWithDuration(duration, position);
 
@@ -641,7 +627,7 @@ cc.SkewTo = cc.ActionInterval.extend({
     _deltaX:0,
     _deltaY:0
 });
-cc.SkewTo.actionWithDuration = function (t, sx, sy) {
+cc.SkewTo.create = function (t, sx, sy) {
     var skewTo = new cc.SkewTo();
     if (skewTo) {
         skewTo.initWithDuration(t, sx, sy)
@@ -674,10 +660,10 @@ cc.SkewBy = cc.SkewTo.extend({
         this._endSkewY = this._startSkewY + this._deltaY;
     },
     reverse:function () {
-        return cc.SkewBy.actionWithDuration(this._duration, -this._skewX, -this._skewY);
+        return cc.SkewBy.create(this._duration, -this._skewX, -this._skewY);
     }
 });
-cc.SkewBy.actionWithDuration = function (t, sx, sy) {
+cc.SkewBy.create = function (t, sx, sy) {
     var skewBy = new cc.SkewBy();
     if (skewBy) {
         skewBy.initWithDuration(t, sx, sy);
@@ -715,14 +701,14 @@ cc.JumpBy = cc.ActionInterval.extend({
         }
     },
     reverse:function () {
-        return cc.JumpBy.actionWithDuration(this._duration, cc.ccp(-this._delta.x, -this._delta.y), this._height, this._jumps);
+        return cc.JumpBy.create(this._duration, cc.ccp(-this._delta.x, -this._delta.y), this._height, this._jumps);
     },
     _startPosition:new cc.Point(),
     _delta:new cc.Point(),
     _height:0,
     _jumps:0
 });
-cc.JumpBy.actionWithDuration = function (duration, position, height, jumps) {
+cc.JumpBy.create = function (duration, position, height, jumps) {
     var jumpBy = new cc.JumpBy();
     jumpBy.initWithDuration(duration, position, height, jumps);
 
@@ -738,7 +724,7 @@ cc.JumpTo = cc.JumpBy.extend({
         this._delta = cc.ccp(this._delta.x - this._startPosition.x, this._delta.y - this._startPosition.y);
     }
 });
-cc.JumpTo.actionWithDuration = function (duration, position, height, jumps) {
+cc.JumpTo.create = function (duration, position, height, jumps) {
     var jumpTo = new cc.JumpTo();
     jumpTo.initWithDuration(duration, position, height, jumps);
 
@@ -800,7 +786,7 @@ cc.BezierBy = cc.ActionInterval.extend({
         r.controlPoint_1 = cc.ccpAdd(this._config.controlPoint_2, cc.ccpNeg(this._config.endPosition));
         r.controlPoint_2 = cc.ccpAdd(this._config.controlPoint_1, cc.ccpNeg(this._config.endPosition));
 
-        var action = cc.BezierBy.actionWithDuration(this._duration, r);
+        var action = cc.BezierBy.create(this._duration, r);
         return action;
     },
     ctor:function () {
@@ -808,7 +794,7 @@ cc.BezierBy = cc.ActionInterval.extend({
         this._startPosition = new cc.Point();
     }
 });
-cc.BezierBy.actionWithDuration = function (t, c) {
+cc.BezierBy.create = function (t, c) {
     var bezierBy = new cc.BezierBy();
     bezierBy.initWithDuration(t, c);
 
@@ -827,7 +813,7 @@ cc.BezierTo = cc.BezierBy.extend({
         this._config.endPosition = cc.ccpSub(this._config.endPosition, this._startPosition);
     }
 });
-cc.BezierTo.actionWithDuration = function (t, c) {
+cc.BezierTo.create = function (t, c) {
     var bezierTo = new cc.BezierTo();
     bezierTo.initWithDuration(t, c);
 
@@ -872,7 +858,7 @@ cc.ScaleTo = cc.ActionInterval.extend({
     _deltaX:0,
     _deltaY:0
 });
-cc.ScaleTo.actionWithDuration = function (duration, sx, sy)//function overload
+cc.ScaleTo.create = function (duration, sx, sy)//function overload
 {
     var scaleTo = new cc.ScaleTo();
     if (sy) {
@@ -895,10 +881,10 @@ cc.ScaleBy = cc.ScaleTo.extend({
         this._deltaY = this._startScaleY * this._endScaleY - this._startScaleY;
     },
     reverse:function () {
-        return cc.ScaleBy.actionWithDuration(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
+        return cc.ScaleBy.create(this._duration, 1 / this._endScaleX, 1 / this._endScaleY);
     }
 });
-cc.ScaleBy.actionWithDuration = function (duration, sx, sy) {
+cc.ScaleBy.create = function (duration, sx, sy) {
     var scaleBy = new cc.ScaleBy();
     if (arguments.length == 3) {
         scaleBy.initWithDuration(duration, sx, sy);
@@ -929,11 +915,11 @@ cc.Blink = cc.ActionInterval.extend({
         }
     },
     reverse:function () {
-        return cc.Blink.actionWithDuration(this._duration, this._times);
+        return cc.Blink.create(this._duration, this._times);
     },
     _times:0
 });
-cc.Blink.actionWithDuration = function (duration, blinks) {
+cc.Blink.create = function (duration, blinks) {
     var blink = new cc.Blink();
     blink.initWithDuration(duration, blinks);
 
@@ -949,10 +935,10 @@ cc.FadeIn = cc.ActionInterval.extend({
         this._target.setOpacity(255 * time);
     },
     reverse:function () {
-        return cc.FadeOut.actionWithDuration(this._duration);
+        return cc.FadeOut.create(this._duration);
     }
 });
-cc.FadeIn.actionWithDuration = function (d) {
+cc.FadeIn.create = function (d) {
     var action = new cc.FadeIn();
 
     action.initWithDuration(d);
@@ -969,10 +955,10 @@ cc.FadeOut = cc.ActionInterval.extend({
         this._target.setOpacity(255 * (1 - time));
     },
     reverse:function () {
-        return cc.FadeIn.actionWithDuration(this._duration);
+        return cc.FadeIn.create(this._duration);
     }
 });
-cc.FadeOut.actionWithDuration = function (d) {
+cc.FadeOut.create = function (d) {
     var action = new cc.FadeOut();
 
     action.initWithDuration(d);
@@ -1003,7 +989,7 @@ cc.FadeTo = cc.ActionInterval.extend({
     _toOpacity:'',
     _fromOpacity:''
 });
-cc.FadeTo.actionWithDuration = function (duration, opacity) {
+cc.FadeTo.create = function (duration, opacity) {
     var fadeTo = new cc.FadeTo();
     fadeTo.initWithDuration(duration, opacity);
 
@@ -1036,7 +1022,7 @@ cc.TintTo = cc.ActionInterval.extend({
     _to:new cc.Color3B(),
     _from:new cc.Color3B()
 });
-cc.TintTo.actionWithDuration = function (duration, red, green, blue) {
+cc.TintTo.create = function (duration, red, green, blue) {
     var tintTo = new cc.TintTo();
     tintTo.initWithDuration(duration, red, green, blue);
 
@@ -1076,7 +1062,7 @@ cc.TintBy = cc.ActionInterval.extend({
         //}
     },
     reverse:function () {
-        return cc.TintBy.actionWithDuration(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
+        return cc.TintBy.create(this._duration, -this._deltaR, -this._deltaG, -this._deltaB);
     },
     _deltaR:0,
     _deltaG:0,
@@ -1086,7 +1072,7 @@ cc.TintBy = cc.ActionInterval.extend({
     _fromG:0,
     _fromB:0
 });
-cc.TintBy.actionWithDuration = function (duration, deltaRed, deltaGreen, deltaBlue) {
+cc.TintBy.create = function (duration, deltaRed, deltaGreen, deltaBlue) {
     var tintBy = new cc.TintBy();
     tintBy.initWithDuration(duration, deltaRed, deltaGreen, deltaBlue);
 
@@ -1101,10 +1087,10 @@ cc.DelayTime = cc.ActionInterval.extend({
 
     },
     reverse:function () {
-        return cc.DelayTime.actionWithDuration(this._duration);
+        return cc.DelayTime.create(this._duration);
     }
 });
-cc.DelayTime.actionWithDuration = function (d) {
+cc.DelayTime.create = function (d) {
     var action = new cc.DelayTime();
 
     action.initWithDuration(d);
@@ -1153,7 +1139,7 @@ cc.ReverseTime = cc.ActionInterval.extend({
     },
     _other:null
 });
-cc.ReverseTime.actionsWithAction = function (action) {
+cc.ReverseTime.create = function (action) {
     var reverseTime = new cc.ReverseTime();
     reverseTime.initWithAction(action);
 
@@ -1222,8 +1208,8 @@ cc.Animate = cc.ActionInterval.extend({
         }
     },
     reverse:function () {
-        var newAnim = cc.Animation.animationWithFrames(this._animation.getFrames().reverse(), this._animation.getDelay());
-        return cc.Animate.actionWithDuration(this._duration, newAnim, this._restoreOriginalFrame);
+        var newAnim = cc.Animation.create(this._animation.getFrames().reverse(), this._animation.getDelay());
+        return cc.Animate.create(this._duration, newAnim, this._restoreOriginalFrame);
     },
     stop:function () {
         if (this._restoreOriginalFrame && this._target) {
@@ -1240,9 +1226,13 @@ cc.Animate.actionWithAnimation = function (animation, restoreOriginalFrame) {
 
     return animate;
 };
-cc.Animate.actionWithDuration = function (duration, animation, restoreOriginalFrame) {
+cc.Animate.create = function (duration, animation, restoreOriginalFrame) {
     var animate = new cc.Animate();
-    animate.initWithDuration(duration, animation, restoreOriginalFrame);
-
+    if (arguments.length == 3) {
+        animate.initWithDuration(duration, animation, restoreOriginalFrame);
+    } else {
+        var go = (restoreOriginalFrame) ? restoreOriginalFrame : true;
+        animate.initWithAnimation(animation, go);
+    }
     return animate;
 };

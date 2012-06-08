@@ -29,6 +29,7 @@ var s_pathClose = "Resources/Images/close.png";
 var s_menuItem = "Resources/Images/menuitemsprite.png";
 var s_shapeModeMenuItem = "Resources/Images/shapemode.png";
 var s_textureModeMenuItem = "Resources/Images/texturemode.png";
+var s_MovementMenuItem = "Resources/Images/movement.png";
 var s_sendScore = "Resources/Images/SendScoreButton.png";
 var s_pressSendScore = "Resources/Images/SendScoreButtonPressed.png";
 var s_power = "Resources/Images/powered.png";
@@ -145,6 +146,7 @@ var g_ressources = [
     {type:"image", src:s_menuItem},
     {type:"image", src:s_shapeModeMenuItem},
     {type:"image", src:s_textureModeMenuItem},
+    {type:"image", src:s_MovementMenuItem},
     {type:"image", src:s_sendScore},
     {type:"image", src:s_pressSendScore},
     {type:"image", src:s_power},

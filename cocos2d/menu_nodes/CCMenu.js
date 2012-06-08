@@ -82,7 +82,7 @@ cc.Menu = cc.Layer.extend({
             else {
                 s.height -= r.size.height;
             }
-            this.setPosition(cc.ccp(s.width/2, s.height/2));
+            this.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this._selectedItem = null;
             this._state = cc.CCMENU_STATE_WAITING;
             return true;
@@ -92,9 +92,9 @@ cc.Menu = cc.Layer.extend({
     /** initializes a CCMenu with it's items */
     initWithItems:function (args) {
         if (this.init()) {
-            if(args.length > 0){
+            if (args.length > 0) {
                 for (var i = 0; i < args.length; i++) {
-                    if(args[i]){
+                    if (args[i]) {
                         this.addChild(args[i], i);
                     }
                 }
@@ -140,7 +140,7 @@ cc.Menu = cc.Layer.extend({
         var x = -width / 2.0;
         if (this._children && this._children.length > 0) {
             for (i = 0; i < this._children.length; i++) {
-                this._children[i].setPosition(cc.ccp(x +  this._children[i].getContentSize().width * this._children[i].getScaleX() / 2, 0));
+                this._children[i].setPosition(cc.ccp(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2, 0));
                 x += this._children[i].getContentSize().width * this._children[i].getScaleX() + padding;
             }
         }
@@ -385,20 +385,10 @@ cc.Menu = cc.Layer.extend({
     },
     _state:-1
 });
-/** creates an empty CCMenu */
-cc.Menu.node = function () {
-    return cc.Menu.menuWithItems();
-};
+
 /** creates a CCMenu with it's items */
-cc.Menu.menuWithItems = function (/*Multiple Arguments*/) {
+cc.Menu.create = function (/*Multiple Arguments*/) {
     var ret = new cc.Menu();
     ret.initWithItems(arguments);
     return ret;
-};
-/** creates a CCMenu with it's item, then use addChild() to add
- * other items. It is used for script, it can't init with undetermined
- * number of variables.
- */
-cc.Menu.menuWithItem = function (item) {
-    return cc.Menu.menuWithItems(item);
 };

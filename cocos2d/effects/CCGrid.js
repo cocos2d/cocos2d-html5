@@ -233,7 +233,7 @@ cc.GridBase = cc.Class.extend({
         }
     }
 });
-cc.GridBase.gridWithSize = function () {
+cc.GridBase.create = function () {
     var pGridBase = new cc.GridBase();
     return pGridBase;
 };
@@ -364,10 +364,7 @@ cc.Grid3D = cc.GridBase.extend({
     }
 });
 
-cc.Grid3D.gridWithSize = function (gridSize, texture, flipped) {
-
-};
-cc.Grid3D.gridWithSize = function (gridSize) {
+cc.Grid3D.create = function (gridSize, texture, flipped) {
 
 };
 
@@ -503,7 +500,7 @@ cc.TiledGrid3D = cc.GridBase.extend({
     }
 });
 
-cc.TiledGrid3D.gridWithSize = function (gridSize, texture, flipped) {
+cc.TiledGrid3D.create = function (gridSize, texture, flipped) {
     var ret = new cc.TiledGrid3D();
     ret.initWithSize(gridSize, texture, flipped)
     return ret;

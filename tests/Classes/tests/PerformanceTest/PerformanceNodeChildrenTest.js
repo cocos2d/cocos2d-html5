@@ -76,7 +76,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         // Title
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 40);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
         label.setPosition(cc.ccp(s.width / 2, s.height - 32));
         label.setColor(cc.ccc3(255, 255, 40));
@@ -84,7 +84,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
         // Subtitle
         var strSubTitle = this.subtitle();
         if (strSubTitle.length) {
-            var l = cc.LabelTTF.labelWithString(strSubTitle, "Thonburi", 16);
+            var l = cc.LabelTTF.create(strSubTitle, "Thonburi", 16);
             this.addChild(l, 1);
             l.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
@@ -94,18 +94,18 @@ var NodeChildrenMainScene = cc.Scene.extend({
         this._quantityOfNodes = nodes;
 
         cc.MenuItemFont.setFontSize(65);
-        var that =this;
-        var decrease = cc.MenuItemFont.itemFromString(" - ", this, this.onDecrease);
+        var that = this;
+        var decrease = cc.MenuItemFont.create(" - ", this, this.onDecrease);
         decrease.setColor(cc.ccc3(0, 200, 20));
-        var increase = cc.MenuItemFont.itemFromString(" + ", this, this.onIncrease);
+        var increase = cc.MenuItemFont.create(" + ", this, this.onIncrease);
         increase.setColor(cc.ccc3(0, 200, 20));
 
-        var menu = cc.Menu.menuWithItems(decrease, increase, null);
+        var menu = cc.Menu.create(decrease, increase, null);
         menu.alignItemsHorizontally();
         menu.setPosition(cc.ccp(s.width / 2, s.height / 2 + 15));
         this.addChild(menu, 1);
 
-        var infoLabel = cc.LabelTTF.labelWithString("0 nodes", "Marker Felt", 30);
+        var infoLabel = cc.LabelTTF.create("0 nodes", "Marker Felt", 30);
         infoLabel.setColor(cc.ccc3(0, 200, 20));
         infoLabel.setPosition(cc.ccp(s.width / 2, s.height / 2 - 15));
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
@@ -193,7 +193,7 @@ var IterateSpriteSheet = NodeChildrenMainScene.extend({
         this._currentQuantityOfNodes = this._quantityOfNodes;
     },
     initWithQuantityOfNodes:function (nodes) {
-        this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png");
+        this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png");
         this.addChild(this._batchNode);
 
         this._super(nodes);
@@ -314,7 +314,7 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
         this._currentQuantityOfNodes = this._quantityOfNodes;
     },
     initWithQuantityOfNodes:function (nodes) {
-        this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png");
+        this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png");
         this.addChild(this._batchNode);
 
         this._super(nodes);
@@ -338,55 +338,55 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
 //
 ////////////////////////////////////////////////////////
 var AddSpriteSheet = AddRemoveSpriteSheet.extend({
-    update:function (dt) {
-        // reset seed
-        //srandom(0);
+        update:function (dt) {
+            // reset seed
+            //srandom(0);
 
-        // 15 percent
-        var totalToAdd = this._currentQuantityOfNodes * 0.15;
+            // 15 percent
+            var totalToAdd = this._currentQuantityOfNodes * 0.15;
 
-        if (totalToAdd > 0) {
-            var sprites = [];
-            var zs = [];
+            if (totalToAdd > 0) {
+                var sprites = [];
+                var zs = [];
 
-            // Don't include the sprite creation time and random as part of the profiling
-            for (var i = 0; i < totalToAdd; i++) {
-                var sprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
-                sprites.push(sprite);
-                zs[i] = cc.RANDOM_MINUS1_1() * 50;
+                // Don't include the sprite creation time and random as part of the profiling
+                for (var i = 0; i < totalToAdd; i++) {
+                    var sprite = cc.Sprite.spriteWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                    sprites.push(sprite);
+                    zs[i] = cc.RANDOM_MINUS1_1() * 50;
+                }
+
+                // add them with random Z (very important!)
+                if (cc.ENABLE_PROFILERS)
+                    cc.ProfilingBeginTimingBlock(this._profilingTimer);
             }
 
-            // add them with random Z (very important!)
-            if (cc.ENABLE_PROFILERS)
-                cc.ProfilingBeginTimingBlock(this._profilingTimer);
+            for (var i = 0; i < totalToAdd; i++) {
+                this._batchNode.addChild(sprites[i], zs[i], TAG_BASE + i);
+            }
+
+            if (cc.ENABLE_PROFILERS) {
+                cc.ProfilingEndTimingBlock(this._profilingTimer);
+            }
+
+            // remove them
+            for (var i = 0; i < totalToAdd; i++) {
+                this._batchNode.removeChildByTag(TAG_BASE + i, true);
+            }
+
+            delete zs;
+
+        },
+        title:function () {
+            return "C - Add to spritesheet";
+        },
+        subtitle:function () {
+            return "Adds %10 of total sprites with random z. See console";
+        },
+        profilerName:function () {
+            return "add sprites";
         }
-
-        for (var i = 0; i < totalToAdd; i++) {
-            this._batchNode.addChild(sprites[i], zs[i], TAG_BASE + i);
-        }
-
-        if (cc.ENABLE_PROFILERS) {
-            cc.ProfilingEndTimingBlock(this._profilingTimer);
-        }
-
-        // remove them
-        for (var i = 0; i < totalToAdd; i++) {
-            this._batchNode.removeChildByTag(TAG_BASE + i, true);
-        }
-
-        delete zs;
-
-    },
-    title:function () {
-        return "C - Add to spritesheet";
-    },
-    subtitle:function () {
-        return "Adds %10 of total sprites with random z. See console";
-    },
-    profilerName:function () {
-        return "add sprites";
-    }
-})
+    })
     ;
 
 ////////////////////////////////////////////////////////
@@ -475,7 +475,8 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
             }
 
             for (var i = 0; i < totalToAdd; i++) {
-                var node = this._batchNode.getChildren()[i];;
+                var node = this._batchNode.getChildren()[i];
+                ;
                 this._batchNode.reorderChild(node, cc.RANDOM_MINUS1_1() * 50);
             }
             if (cc.ENABLE_PROFILERS) {
