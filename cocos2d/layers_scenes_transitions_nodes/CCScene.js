@@ -49,7 +49,7 @@ cc.Scene = cc.Node.extend({
         return true;
     }
 });
-cc.Scene.node = function () {
+cc.Scene.create = function () {
     var ret = new cc.Scene();
     return ret;
 };

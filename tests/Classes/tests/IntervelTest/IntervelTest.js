@@ -46,7 +46,7 @@ IntervalLayer = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
         // sun
-        var sun = cc.ParticleSun.node();
+        var sun = cc.ParticleSun.create();
         sun.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
         sun.setPosition(cc.PointMake(s.width - 32, s.height - 32));
 
@@ -55,11 +55,11 @@ IntervalLayer = cc.Layer.extend({
         this.addChild(sun);
 
         // timers
-        this.label0 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.label1 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.label2 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.label3 = cc.LabelTTF.labelWithString("0", "Arial", 24);
-        this.label4 = cc.LabelTTF.labelWithString("0", "Arial", 24);
+        this.label0 = cc.LabelTTF.create("0", "Arial", 24);
+        this.label1 = cc.LabelTTF.create("0", "Arial", 24);
+        this.label2 = cc.LabelTTF.create("0", "Arial", 24);
+        this.label3 = cc.LabelTTF.create("0", "Arial", 24);
+        this.label4 = cc.LabelTTF.create("0", "Arial", 24);
 
         this.scheduleUpdate();
         this.schedule(this.step1);
@@ -80,17 +80,17 @@ IntervalLayer = cc.Layer.extend({
         this.addChild(this.label4);
 
         // Sprite
-        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var sprite = cc.Sprite.create(s_pathGrossini);
         sprite.setPosition(cc.PointMake(40, 50));
 
-        var jump = cc.JumpBy.actionWithDuration(3, cc.PointMake(s.width - 80, 0), 50, 4);
+        var jump = cc.JumpBy.create(3, cc.PointMake(s.width - 80, 0), 50, 4);
 
         this.addChild(sprite);
-        sprite.runAction(cc.RepeatForever.actionWithAction(cc.Sequence.actions(jump, jump.reverse(), null)));
+        sprite.runAction(cc.RepeatForever.create(cc.Sequence.create(jump, jump.reverse(), null)));
 
         // pause button
-        var item1 = cc.MenuItemFont.itemFromString("Pause", this, this.onPause);
-        var menu = cc.Menu.menuWithItems(item1, null);
+        var item1 = cc.MenuItemFont.create("Pause", this, this.onPause);
+        var menu = cc.Menu.create(item1, null);
         menu.setPosition(cc.PointMake(s.width / 2, s.height - 50));
 
         this.addChild(menu);

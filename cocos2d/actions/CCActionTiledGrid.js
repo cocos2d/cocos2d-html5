@@ -48,7 +48,7 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
     shuffle:function (array, len) {
         var i;
         for (i = len - 1; i >= 0; i--) {
-            var j = parseInt(Math.random()*(i + 1));
+            var j = parseInt(Math.random() * (i + 1));
             var v = array[i];
             array[i] = array[j];
             array[j] = v;
@@ -97,15 +97,15 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
     }
 
 });
-/** creates the action with the grid size and the duration */
-cc.TurnOffTiles.actionWithSize = function (size, d) {
+
+cc.TurnOffTiles.create = function (gridSize, duration, seed) {
     var action = new cc.TurnOffTiles();
-    action.initWithSize(size, d)
-    return action;
-};
-/** creates the action with a random seed, the grid size and the duration */
-cc.TurnOffTiles.actionWithSeed = function (s, gridSize, duration) {
-    var action = new cc.TurnOffTiles();
-    action.initWithSeed(s, gridSize, duration)
+    if(arguments.length == 2) {
+        /** creates the action with the grid size and the duration */
+        action.initWithSize(gridSize, duration);
+    } else if (arguments.length == 3) {
+        /** creates the action with the grid size, the duration and a random seed */
+        action.initWithSeed(gridSize, duration, seed);
+    }
     return action;
 };

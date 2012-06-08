@@ -52,7 +52,7 @@ cc.GridAction = cc.ActionInterval.extend({
     },
 
     reverse:function () {
-        return cc.ReverseTime.actionWithAction(this);
+        return cc.ReverseTime.create(this);
     },
 
     /** initializes the action with size and duration */
@@ -73,7 +73,7 @@ cc.GridAction = cc.ActionInterval.extend({
 });
 
 /** creates the action with size and duration */
-cc.GridAction.actionWithSize = function (gridSize, duration) {
+cc.GridAction.create = function (gridSize, duration) {
     var action = new cc.GridAction();
     action.initWithSize(gridSize, duration)
     return action;
@@ -86,7 +86,7 @@ cc.GridAction.actionWithSize = function (gridSize, duration) {
     cc.Grid3DAction = cc.GridAction.extend({
         /** returns the grid */
         getGrid:function () {
-            return cc.Grid3D.gridWithSize(this._gridSize);
+            return cc.Grid3D.create(this._gridSize);
         },
 
         /** returns the vertex than belongs to certain position in the grid */
@@ -108,7 +108,7 @@ cc.GridAction.actionWithSize = function (gridSize, duration) {
         }
     });
 /** creates the action with size and duration */
-cc.Grid3DAction.actionWithSize = function () {
+cc.Grid3DAction.create = function () {
 
 };
 /** @brief Base class for cc.TiledGrid3D actions */
@@ -133,12 +133,12 @@ cc.TiledGrid3DAction = cc.GridAction.extend({
 
     /** returns the grid */
     getGrid:function () {
-        return cc.TiledGrid3D.gridWithSize(this._gridSize);
+        return cc.TiledGrid3D.create(this._gridSize);
     }
 });
 
 /** creates the action with size and duration */
-cc.TiledGrid3DAction.actionWithSize = function (gridSize, duration) {
+cc.TiledGrid3DAction.create = function (gridSize, duration) {
 
 };
 
@@ -171,7 +171,7 @@ cc.AccelDeccelAmplitude = cc.ActionInterval.extend({
     },
 
     reverse:function () {
-        return cc.AccelDeccelAmplitude.actionWithAction(this._other.reverse(), this._duration);
+        return cc.AccelDeccelAmplitude.create(this._other.reverse(), this._duration);
     },
 
     /** get amplitude rate */
@@ -186,7 +186,7 @@ cc.AccelDeccelAmplitude = cc.ActionInterval.extend({
 });
 
 /** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.AccelDeccelAmplitude.actionWithAction = function (action, duration) {
+cc.AccelDeccelAmplitude.create = function (action, duration) {
     var ret = new cc.AccelDeccelAmplitude();
     return ret;
 };
@@ -228,12 +228,12 @@ cc.AccelAmplitude = cc.ActionInterval.extend({
     },
 
     reverse:function () {
-        return cc.AccelAmplitude.actionWithAction(this._other.reverse(), this._duration);
+        return cc.AccelAmplitude.create(this._other.reverse(), this._duration);
     }
 });
 
 /** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.AccelAmplitude.actionWithAction = function (action, duration) {
+cc.AccelAmplitude.create = function (action, duration) {
     var ret = new cc.AccelAmplitude();
     return ret;
 };
@@ -274,12 +274,12 @@ cc.DeccelAmplitude = cc.ActionInterval.extend({
     },
 
     reverse:function () {
-        return cc.DeccelAmplitude.actionWithAction(this._other.reverse(), this._duration);
+        return cc.DeccelAmplitude.create(this._other.reverse(), this._duration);
     }
 });
 
 /** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.DeccelAmplitude.actionWithAction = function (action, duration) {
+cc.DeccelAmplitude.create = function (action, duration) {
     var ret = new cc.DeccelAmplitude();
     return ret;
 };
@@ -287,7 +287,7 @@ cc.DeccelAmplitude.actionWithAction = function (action, duration) {
 /** @brief cc.StopGrid action.
  @warning Don't call this action if another grid action is active.
  Call if you want to remove the the grid effect. Example:
- cc.Sequence.actions(Lens.action(...), cc.StopGrid.action(...), null);
+ cc.Sequence.create(Lens.action(...), cc.StopGrid.create(...), null);
  */
 cc.StopGrid = cc.ActionInstant.extend({
     startWithTarget:function (target) {
@@ -300,7 +300,7 @@ cc.StopGrid = cc.ActionInstant.extend({
 });
 
 /** Allocates and initializes the action */
-cc.StopGrid.action = function () {
+cc.StopGrid.create = function () {
     var action = new cc.StopGrid();
     return action;
 };
@@ -326,7 +326,7 @@ cc.ReuseGrid = cc.ActionInstant.extend({
 });
 
 /** creates an action with the number of times that the current grid will be reused */
-cc.ReuseGrid.actionWithTimes = function (times) {
+cc.ReuseGrid.create = function (times) {
     var action = new cc.ReuseGrid();
     return action;
 };

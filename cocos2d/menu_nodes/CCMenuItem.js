@@ -81,12 +81,12 @@ cc.MenuItem = cc.Node.extend({
             if (this._listener && (typeof(this._selector) == "string")) {
                 this._listener[this._selector](this);
             } else if (this._listener && (typeof(this._selector) == "function")) {
-                this._selector.call(this._listener,this);
+                this._selector.call(this._listener, this);
             }
         }
     }
 });
-cc.MenuItem.itemWithTarget = function (rec, selector) {
+cc.MenuItem.create = function (rec, selector) {
     var ret = new cc.MenuItem();
     ret.initWithTarget(rec, selector);
     return ret;
@@ -181,7 +181,7 @@ cc.MenuItemLabel = cc.MenuItem.extend({
                 this._originalScale = this.getScale();
             }
 
-            var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._originalScale * 1.2);
+            var zoomAction = cc.ScaleTo.create(0.1, this._originalScale * 1.2);
             zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
@@ -190,13 +190,13 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         if (this._isEnabled) {
             this._super();
             this.stopActionByTag(cc.ZOOM_ACTION_TAG);
-            var zoomAction = cc.ScaleTo.actionWithDuration(0.1, this._originalScale);
+            var zoomAction = cc.ScaleTo.create(0.1, this._originalScale);
             zoomAction.setTag(cc.ZOOM_ACTION_TAG);
             this.runAction(zoomAction);
         }
     }
 });
-cc.MenuItemLabel.itemWithLabel = function (label, target, selector) {
+cc.MenuItemLabel.create = function (label, target, selector) {
     var ret = new cc.MenuItemLabel();
     if (arguments.length == 3) {
         ret.initWithLabel(label, target, selector);
@@ -220,7 +220,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend({
         return true;
     }
 });
-cc.MenuItemAtlasFont.itemFromString = function (value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector) {
+cc.MenuItemAtlasFont.create = function (value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector) {
     var ret = new cc.MenuItemAtlasFont();
     ret.initFromString(value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector);
     return ret;
@@ -237,7 +237,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend({
         this._fontName = cc._fontName;
         this._fontSize = cc._fontSize;
 
-        var label = cc.LabelTTF.labelWithString(value, this._fontName, this._fontSize);
+        var label = cc.LabelTTF.create(value, this._fontName, this._fontSize);
         if (this.initWithLabel(label, target, selector)) {
             // do something ?
         }
@@ -258,7 +258,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend({
         return this._fontName;
     },
     _recreateLabel:function () {
-        var label = cc.LabelTTF.labelWithString(this._label.getString(),
+        var label = cc.LabelTTF.create(this._label.getString(),
             this._fontName, this._fontSize);
         this.setLabel(label);
     },
@@ -281,7 +281,7 @@ cc.MenuItemFont.setFontName = function (name) {
 cc.MenuItemFont.fontName = function () {
     return cc._fontName
 };
-cc.MenuItemFont.itemFromString = function (value, target, selector) {
+cc.MenuItemFont.create = function (value, target, selector) {
     var ret = new cc.MenuItemFont();
     ret.initFromString(value, target, selector);
     return ret;
@@ -439,19 +439,19 @@ cc.MenuItemSprite = cc.MenuItem.extend({
         }
     }
 });
-cc.MenuItemSprite.itemFromNormalSprite = function (normalSprite, selectedSprite, three, four, five)//overloaded function
+cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five)//overloaded function
 {
-    var a,b,c,e,d;
+    var a, b, c, e, d;
     var ret = new cc.MenuItemSprite();
     //when you send 4 arguments, five is undefined
     if (five) {
         ret.initFromNormalSprite(normalSprite, selectedSprite, three, four, five);
     }
     else if (four) {
-        return cc.MenuItemSprite.itemFromNormalSprite(normalSprite, selectedSprite, null, three, four);
+        return cc.MenuItemSprite.create(normalSprite, selectedSprite, null, three, four);
     }
     else {
-        return cc.MenuItemSprite.itemFromNormalSprite(normalSprite, selectedSprite, three, null, null);
+        return cc.MenuItemSprite.create(normalSprite, selectedSprite, three, null, null);
     }
     return ret;
 };
@@ -467,25 +467,25 @@ cc.MenuItemSprite.itemFromNormalSprite = function (normalSprite, selectedSprite,
  */
 cc.MenuItemImage = cc.MenuItemSprite.extend({
     initFromNormalImage:function (normalImage, selectedImage, disabledImage, target, selector) {
-        var normalSprite = cc.Sprite.spriteWithFile(normalImage);
+        var normalSprite = cc.Sprite.create(normalImage);
         var selectedSprite = null;
         var disabledSprite = null;
 
         if (selectedImage) {
-            selectedSprite = cc.Sprite.spriteWithFile(selectedImage);
+            selectedSprite = cc.Sprite.create(selectedImage);
         }
 
         if (disabledImage) {
-            disabledSprite = cc.Sprite.spriteWithFile(disabledImage);
+            disabledSprite = cc.Sprite.create(disabledImage);
         }
         return this.initFromNormalSprite(normalSprite, selectedSprite, disabledSprite, target, selector);
     }
 });
-cc.MenuItemImage.itemFromNormalImage = function (normalImage, selectedImage, three, four, five) {
-    var ret = new cc.MenuItemImage();
+cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
     if (arguments.length == 4) {
-        return cc.MenuItemImage.itemFromNormalImage(normalImage, selectedImage, null, three, four);
+        return cc.MenuItemImage.create(normalImage, selectedImage, null, three, four);
     }
+    var ret = new cc.MenuItemImage();
     if (ret.initFromNormalImage(normalImage, selectedImage, three, four, five)) {
         return ret;
     }
@@ -546,14 +546,14 @@ cc.MenuItemToggle = cc.MenuItem.extend({
         this._subItems = SubItems;
     },
     initWithTarget:function (args) {
-        var target = args[0],  selector = args[1];
+        var target = args[0], selector = args[1];
         this._super(target, selector);
-        if(args.length == 2){
+        if (args.length == 2) {
             return;
         }
         this._subItems = [];
         for (var i = 2; i < args.length; i++) {
-            if(args[i]){
+            if (args[i]) {
                 this._subItems.push(args[i]);
             }
         }
@@ -605,13 +605,12 @@ cc.MenuItemToggle = cc.MenuItem.extend({
     getIsOpacityModifyRGB:function () {
     }
 });
-cc.MenuItemToggle.itemWithTarget = function (/*Multiple arguments follow*/) {
+cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     var ret = new cc.MenuItemToggle();
-    ret.initWithTarget(arguments);
-    return ret;
-};
-cc.MenuItemToggle.itemWithItem = function (item) {
-    var ret = new cc.MenuItemToggle();
-    ret.initWithItem(item);
+    if (arguments.length == 1) {
+        ret.initWithItem(arguments);
+    } else {
+        ret.initWithTarget(arguments);
+    }
     return ret;
 };

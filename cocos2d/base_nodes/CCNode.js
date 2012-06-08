@@ -981,7 +981,7 @@ cc.Node = cc.Class.extend({
      *    If you are running 7 Sequences of 2 actions, it will return 7.
      */
     numberOfRunningActions:function () {
-        return cc.ActionManager.sharedManager.numberOfRunningActionsInTarget(this);
+        return cc.ActionManager.sharedManager().numberOfRunningActionsInTarget(this);
     },
 
     // cc.Node - Callbacks
@@ -1210,7 +1210,7 @@ cc.Node = cc.Class.extend({
 
 /** allocates and initializes a node.
  */
-cc.Node.node = function () {
+cc.Node.create = function () {
     return new cc.Node();
 };
 

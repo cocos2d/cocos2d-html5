@@ -98,7 +98,7 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleFire.node = function () {
+cc.ParticleFire.create = function () {
     var ret = new cc.ParticleFire();
     if (ret.init()) {
         return ret;
@@ -176,7 +176,7 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleFireworks.node = function () {
+cc.ParticleFireworks.create = function () {
     var ret = new cc.ParticleFireworks();
     if (ret.init()) {
         return ret;
@@ -260,7 +260,7 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleSun.node = function () {
+cc.ParticleSun.create = function () {
     var ret = new cc.ParticleSun();
     if (ret.init()) {
         return ret;
@@ -346,7 +346,7 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleGalaxy.node = function () {
+cc.ParticleGalaxy.create = function () {
     var ret = new cc.ParticleGalaxy();
     if (ret.init()) {
         return ret;
@@ -432,7 +432,7 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleFlower.node = function () {
+cc.ParticleFlower.create = function () {
     var ret = new cc.ParticleFlower();
     if (ret.init()) {
         return ret;
@@ -518,7 +518,7 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleMeteor.node = function () {
+cc.ParticleMeteor.create = function () {
     var ret = new cc.ParticleMeteor();
     if (ret.init()) {
         return ret;
@@ -604,7 +604,7 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleSpiral.node = function () {
+cc.ParticleSpiral.create = function () {
     var ret = new cc.ParticleSpiral();
     if (ret.init()) {
         return ret;
@@ -689,7 +689,7 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleExplosion.node = function () {
+cc.ParticleExplosion.create = function () {
     var ret = new cc.ParticleExplosion();
     if (ret.init()) {
         return ret;
@@ -771,7 +771,7 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleSmoke.node = function () {
+cc.ParticleSmoke.create = function () {
     var ret = new cc.ParticleSmoke();
     if (ret.init()) {
         return ret;
@@ -857,7 +857,7 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleSnow.node = function () {
+cc.ParticleSnow.create = function () {
     var ret = new cc.ParticleSnow();
     if (ret.init()) {
         return ret;
@@ -943,7 +943,7 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
-cc.ParticleRain.node = function () {
+cc.ParticleRain.create = function () {
     var ret = new cc.ParticleRain();
     if (ret.init()) {
         return ret;

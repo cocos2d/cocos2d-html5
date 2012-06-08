@@ -46,7 +46,7 @@ var TouchesMainScene = PerformBasicLayer.extend({
         s_nTouchCurCase = this._curCase;
 
         if (layer) {
-            var scene = cc.Scene.node();
+            var scene = cc.Scene.create();
             scene.addChild(layer);
 
             cc.Director.sharedDirector().replaceScene(scene);
@@ -58,13 +58,13 @@ var TouchesMainScene = PerformBasicLayer.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         // add title
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 32);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
         label.setPosition(cc.ccp(s.width / 2, s.height - 50));
 
         this.scheduleUpdate();
 
-        this._plabel = cc.LabelTTF.labelWithString("00.0", "Arial", 16);
+        this._plabel = cc.LabelTTF.create("00.0", "Arial", 16);
         this._plabel.setPosition(cc.ccp(s.width / 2, s.height / 2));
         this.addChild(this._plabel);
 
@@ -155,7 +155,7 @@ var TouchesPerformTest2 = TouchesMainScene.extend({
 
 function runTouchesTest() {
     s_nTouchCurCase = 0;
-    var scene = cc.Scene.node();
+    var scene = cc.Scene.create();
     var layer = new TouchesPerformTest1(true, 2, s_nTouchCurCase);
     scene.addChild(layer);
     cc.Director.sharedDirector().replaceScene(scene);

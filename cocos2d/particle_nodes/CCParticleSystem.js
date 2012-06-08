@@ -99,7 +99,7 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
     this.modeA = modeA ? modeA : new cc.tCCParticle.tModeA();
     this.modeB = modeB ? modeB : new cc.tCCParticle.tModeB();
     this.isChangeColor = false;
-    this.drawPos = new cc.Point(0,0);
+    this.drawPos = new cc.Point(0, 0);
 };
 
 //! Mode A: gravity, direction, radial accel, tangential accel
@@ -186,20 +186,20 @@ cc.ParticleSystem = cc.Node.extend({
     _profilingTimer:null,
 
     //drawMode
-    _drawMode: cc.PARTICLE_SHAPE_MODE,
-    getDrawMode:function(){
+    _drawMode:cc.PARTICLE_SHAPE_MODE,
+    getDrawMode:function () {
         return this._drawMode;
     },
-    setDrawMode:function(drawMode){
+    setDrawMode:function (drawMode) {
         this._drawMode = drawMode;
     },
 
     //shape type
     _shapeType:cc.PARTICLE_BALL_SHAPE,
-    getShapeType:function(){
+    getShapeType:function () {
         return this._shapeType;
     },
-    setShapeType:function(shapeType){
+    setShapeType:function (shapeType) {
         this._shapeType = shapeType;
     },
 
@@ -1095,9 +1095,9 @@ cc.ParticleSystem = cc.Node.extend({
                     newPos = selParticle.pos;
                 }
 
-                if(cc.renderContextType == cc.WEBGL){
+                if (cc.renderContextType == cc.WEBGL) {
                     this.updateQuadWithParticle(selParticle, newPos);
-                }else{
+                } else {
                     selParticle.drawPos = newPos;
                 }
                 //updateParticleImp(self, updateParticleSel, p, newPos);
@@ -1141,7 +1141,7 @@ cc.ParticleSystem = cc.Node.extend({
  http://particledesigner.71squared.com/
  @since v0.99.3
  */
-cc.ParticleSystem.particleWithFile = function (plistFile) {
+cc.ParticleSystem.create = function (plistFile) {
     var ret = new cc.ParticleSystem();
     if (ret && ret.initWithFile(plistFile)) {
         return ret;

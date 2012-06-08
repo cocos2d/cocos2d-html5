@@ -107,7 +107,7 @@ cc.Action = cc.Class.extend({
     }
 });
 /** Allocates and initializes the action */
-cc.Action.action = function () {
+cc.Action.create = function () {
     var ret = new cc.Action();
     return ret;
 };
@@ -179,7 +179,7 @@ cc.Speed = cc.Action.extend({
         return this._innerAction.isDone();
     },
     reverse:function () {
-        return (cc.Speed.actionWithAction(this._innerAction.reverse(), this._speed));
+        return (cc.Speed.create(this._innerAction.reverse(), this._speed));
     },
     setInnerAction:function (action) {
         if (this._innerAction != action) {
@@ -191,7 +191,7 @@ cc.Speed = cc.Action.extend({
     }
 });
 /** creates the action */
-cc.Speed.actionWithAction = function (action, rate) {
+cc.Speed.create = function (action, rate) {
     var ret = new cc.Speed();
     if (ret && ret.initWithAction(action, rate)) {
         return ret;
@@ -290,7 +290,7 @@ cc.Follow = cc.Action.extend({
 });
 /** creates the action with a set boundary */
 /** creates the action with no boundary set */
-cc.Follow.actionWithTarget = function (followedNode, rect) {
+cc.Follow.create = function (followedNode, rect) {
     var ret = new cc.Follow();
     if (rect != null && ret && ret.initWithTarget(followedNode, rect)) {
         return ret;

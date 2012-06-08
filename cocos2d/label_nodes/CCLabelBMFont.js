@@ -268,7 +268,7 @@ cc.BMFontConfiguration = cc.Class.extend({
     }
 });
 
-cc.BMFontConfiguration.configurationWithFNTFile = function (FNTfile) {
+cc.BMFontConfiguration.create = function (FNTfile) {
     var ret = new cc.BMFontConfiguration();
     if (ret.initWithFNTfile(FNTfile)) {
         return ret;
@@ -536,7 +536,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
 });
 
 /** creates a bitmap font altas with an initial string and the FNT file */
-cc.LabelBMFont.labelWithString = function (str, fntFile) {
+cc.LabelBMFont.create = function (str, fntFile) {
     var ret = new cc.LabelBMFont();
     if (ret && ret.initWithString(str, fntFile)) {
         return ret;
@@ -553,7 +553,7 @@ cc.FNTConfigLoadFile = function (fntFile) {
     }
     var ret = cc.configurations[fntFile];
     if (!ret) {
-        ret = cc.BMFontConfiguration.configurationWithFNTFile(fntFile);
+        ret = cc.BMFontConfiguration.create(fntFile);
     }
     return ret;
 }

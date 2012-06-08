@@ -60,11 +60,11 @@ cc.Layer = cc.Node.extend({
 
     init:function () {
         /*var director = cc.Director.sharedDirector();
-        if (!director) {
-            return false;
-        }
-        this.setContentSize(director.getWinSize());
-        this._isTouchEnabled = false;*/
+         if (!director) {
+         return false;
+         }
+         this.setContentSize(director.getWinSize());
+         this._isTouchEnabled = false;*/
 
         // success
         return true;
@@ -232,7 +232,7 @@ cc.Layer = cc.Node.extend({
     }
 });
 
-cc.Layer.node = function () {
+cc.Layer.create = function () {
     var ret = new cc.Layer();
     if (ret && ret.init()) {
         return ret;
@@ -303,12 +303,6 @@ cc.LayerColor = cc.Layer.extend({
     },
 
     initWithColor:function (color) {
-        var s = cc.Director.sharedDirector().getWinSize();
-        this.initWithColorWidthHeight(color, s.width, s.height);
-        return true;
-    },
-
-    initWithColorWidthHeight:function (color, width, height) {
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
         this._color = new cc.Color3B(color.r, color.g, color.b);
@@ -319,7 +313,7 @@ cc.LayerColor = cc.Layer.extend({
             this._squareVertices[i].y = 0.0;
         }
         this._updateColor();
-        this.setContentSize(cc.SizeMake(width, height));
+        ;
         return true;
     },
     /// override contentSize
@@ -414,31 +408,19 @@ cc.LayerColor = cc.Layer.extend({
 });
 
 /** creates a CCLayer with color, width and height in Points */
-cc.LayerColor.layerWithColorWidthHeight = function (color, width, height) {
-    var layer = new cc.LayerColor();
-    if (layer && layer.initWithColorWidthHeight(color, width, height)) {
-        return layer;
-    }
-    return null;
-};
-
-/** creates a CCLayer with color. Width and height are the window size. */
-cc.LayerColor.layerWithColor = function (color) {
-    var layer = new cc.LayerColor();
-    if (layer && layer.initWithColor(color)) {
-        return layer;
-    }
-    return null;
-};
-
-cc.LayerColor.node = function () {
+cc.LayerColor.create = function (color, width, height) {
     var ret = new cc.LayerColor();
-    if (ret && ret.init()) {
-        return ret;
+    if (color) {
+        ret.initWithColor(color);
+    } else {
+        ret.init();
     }
-    return null;
+    // If it has width and height, set it.
+    if (width && height) {
+        ret.setContentSize(cc.SizeMake(width, height));
+    }
+    return ret;
 };
-
 //
 // CCLayerGradient
 //
@@ -603,7 +585,7 @@ cc.LayerGradient = cc.LayerColor.extend({
 
 // cc.LayerGradient
 //
-cc.LayerGradient.layerWithColor = function (start, end, v) {
+cc.LayerGradient.create = function (start, end, v) {
     var argnum = arguments.length;
     var layer = new cc.LayerGradient();
     switch (argnum) {
@@ -621,18 +603,15 @@ cc.LayerGradient.layerWithColor = function (start, end, v) {
             }
             return null;
             break;
+        case 0:
+            layer.init();
+            break;
         default:
-            throw "Argument must be non-nil ";
+            throw "Arguments error ";
             break;
     }
 };
-cc.LayerGradient.node = function () {
-    var ret = new cc.LayerGradient();
-    if (ret && ret.init()) {
-        return ret;
-    }
-    return null;
-};
+
 
 /** @brief CCMultipleLayer is a CCLayer with the ability to multiplex it's children.
  Features:
@@ -688,59 +667,42 @@ cc.LayerMultiplex = cc.Layer.extend({
     }
 });
 /** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
-cc.LayerMultiplex.layerWithLayers = function (/*Multiple Arguments*/) {
+cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
     var multiplexLayer = new cc.LayerMultiplex();
     if (multiplexLayer.initWithLayers(arguments)) {
         return multiplexLayer;
     }
     return null;
 };
-/**
- * lua script can not init with undetermined number of variables
- * so add these functinons to be used with lua.
- */
-cc.LayerMultiplex.layerWithLayer = function (layer) {
-    var multiplexLayer = new cc.LayerMultiplex();
-    multiplexLayer.initWithLayer(layer);
-    return multiplexLayer;
-};
-cc.LayerMultiplex.node = function () {
-    var ret = new cc.LayerMultiplex();
-    if (ret && ret.init()) {
-        return ret;
-    }
-    return null;
-};
-
 
 cc.LazyLayer = cc.Node.extend({
     _layerCanvas:null,
     _layerContext:null,
     _isNeedUpdate:false,
-    _canvasZOrder: -10,
+    _canvasZOrder:-10,
 
-    ctor:function(){
+    ctor:function () {
         this._super();
-        this.setAnchorPoint(new cc.Point(0,0));
+        this.setAnchorPoint(new cc.Point(0, 0));
         //setup html
         this._setupHtml();
     },
 
-    setLayerZOrder:function(zOrder){
-        if(zOrder >= 0){
+    setLayerZOrder:function (zOrder) {
+        if (zOrder >= 0) {
             throw "LazyLayer zOrder must Less than Zero.Because LazyLayer is a background Layer!";
         }
         this._canvasZOrder = zOrder;
         this._layerCanvas.style.zIndex = this._canvasZOrder;
     },
 
-    getLayerZOrder:function(){
+    getLayerZOrder:function () {
         return this._canvasZOrder;
     },
 
-    _setupHtml:function(){
+    _setupHtml:function () {
         var gameContainer = document.getElementById("Cocos2dGameContainer");
-        if(!gameContainer){
+        if (!gameContainer) {
             cc.setupHTML();
             gameContainer = document.getElementById("Cocos2dGameContainer");
         }
@@ -748,7 +710,7 @@ cc.LazyLayer = cc.Node.extend({
         this._layerCanvas = document.createElement("canvas");
         this._layerCanvas.width = cc.canvas.width;
         this._layerCanvas.height = cc.canvas.height;
-        this._layerCanvas.id = "lazyCanvas" +  Date.now();
+        this._layerCanvas.id = "lazyCanvas" + Date.now();
         this._layerCanvas.style.zIndex = this._canvasZOrder;
         this._layerCanvas.style.position = "absolute";
         this._layerCanvas.style.top = "0";
@@ -763,11 +725,11 @@ cc.LazyLayer = cc.Node.extend({
         });
     },
 
-    adjustSizeForCanvas:function(){
+    adjustSizeForCanvas:function () {
         this._isNeedUpdate = true;
         this._layerCanvas.width = cc.canvas.width;
         this._layerCanvas.height = cc.canvas.height;
-        var xScale = cc.canvas.width / cc.originalCanvasSize.width ;
+        var xScale = cc.canvas.width / cc.originalCanvasSize.width;
         var yScale = cc.canvas.height / cc.originalCanvasSize.height;
         if (xScale > yScale) {
             xScale = yScale;
@@ -776,7 +738,7 @@ cc.LazyLayer = cc.Node.extend({
         this._layerContext.scale(xScale, xScale);
     },
 
-    addChild:function(child, zOrder, tag){
+    addChild:function (child, zOrder, tag) {
         this._isNeedUpdate = true;
         this._super(child, zOrder, tag);
     },
@@ -786,12 +748,12 @@ cc.LazyLayer = cc.Node.extend({
         this._super(child, cleanup);
     },
 
-    visit:function(){
+    visit:function () {
         // quick return if not visible
         if (!this._isVisible) {
             return;
         }
-        if(!this._isNeedUpdate){
+        if (!this._isNeedUpdate) {
             return;
         }
 
