@@ -63,9 +63,9 @@ var MenuLayer1 = cc.Layer.extend({
         item4.setFontSizeObj(20);
         cc.MenuItemFont.setFontName("Marker Felt");
 
-        // Label Item (CCLabelBMFont)
-        //var label = cc.LabelBMFont.labelWithString("configuration", "Resources/fonts/bitmapFontTest3.fnt");
-        var label = cc.LabelTTF.labelWithString("configuration","Arial",28);
+        // Label Item (cc.LabelBMFont)
+        var label = cc.LabelBMFont.labelWithString("configuration", "Resources/fonts/bitmapFontTest3.fnt");
+        //var label = cc.LabelTTF.labelWithString("configuration","Arial",28);
         var item5 = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallbackConfig);
 
         // Testing issue #500
@@ -227,8 +227,8 @@ var MenuLayer3 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(28);
 
-        //var label = cc.LabelBMFont.labelWithString("Enable AtlasItem", "Resources/fonts/bitmapFontTest3.fnt");
-        var label = cc.LabelTTF.labelWithString("Enable AtlasItem","Arial",28);
+        var label = cc.LabelBMFont.labelWithString("Enable AtlasItem", "Resources/fonts/bitmapFontTest3.fnt");
+        //var label = cc.LabelTTF.labelWithString("Enable AtlasItem","Arial",28);
         var item1 = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback2);
         var item2 = cc.MenuItemFont.itemFromString("--- Go Back ---", this, this.menuCallback);
 
@@ -333,8 +333,8 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
 
-        //var label = cc.LabelBMFont.labelWithString("go back", "Resources/fonts/bitmapFontTest3.fnt");
-        var label = cc.LabelTTF.labelWithString("go back","Arial",28);
+        var label = cc.LabelBMFont.labelWithString("go back", "Resources/fonts/bitmapFontTest3.fnt");
+        //var label = cc.LabelTTF.labelWithString("go back","Arial",28);
         var back = cc.MenuItemLabel.itemWithLabel(label, this, this.backCallback);
 
         var menu = cc.Menu.menuWithItems(
