@@ -64,8 +64,7 @@ var MenuLayer1 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
 
         // Label Item (CCLabelBMFont)
-        //var label = cc.LabelBMFont.create("configuration", "Resources/fonts/bitmapFontTest3.fnt");
-        var label = cc.LabelTTF.create("configuration", "Arial", 28);
+        var label = cc.LabelBMFont.create("configuration", "Resources/fonts/bitmapFontTest3.fnt");
         var item5 = cc.MenuItemLabel.create(label, this, this.menuCallbackConfig);
 
         // Testing issue #500
@@ -227,8 +226,7 @@ var MenuLayer3 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(28);
 
-        //var label = cc.LabelBMFont.create("Enable AtlasItem", "Resources/fonts/bitmapFontTest3.fnt");
-        var label = cc.LabelTTF.create("Enable AtlasItem", "Arial", 28);
+        var label = cc.LabelBMFont.create("Enable AtlasItem", "Resources/fonts/bitmapFontTest3.fnt");
         var item1 = cc.MenuItemLabel.create(label, this, this.menuCallback2);
         var item2 = cc.MenuItemFont.create("--- Go Back ---", this, this.menuCallback);
 
@@ -333,8 +331,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
 
-        //var label = cc.LabelBMFont.create("go back", "Resources/fonts/bitmapFontTest3.fnt");
-        var label = cc.LabelTTF.create("go back", "Arial", 28);
+        var label = cc.LabelBMFont.create("go back", "Resources/fonts/bitmapFontTest3.fnt");
         var back = cc.MenuItemLabel.create(label, this, this.backCallback);
 
         var menu = cc.Menu.create(
