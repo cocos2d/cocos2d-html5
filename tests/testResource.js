@@ -87,6 +87,30 @@ var s_tmwDesertSpacingPng = "Resources/TileMaps/tmw_desert_spacing.png";
 var s_fnTuffyBoldItalicCharmapPng = "Resources/fonts/tuffy_bold_italic-charmap.png";
 var s_fpsImages = "Resources/fonts/fps_images.png";
 
+var s_bitmapFontTest = "Resources/fonts/bitmapFontTest.png";
+var s_bitmapFontTest2 = "Resources/fonts/bitmapFontTest2.png";
+var s_bitmapFontTest3 = "Resources/fonts/bitmapFontTest3.png";
+var s_bitmapFontTest4 = "Resources/fonts/bitmapFontTest4.png";
+var s_bitmapFontTest5 = "Resources/fonts/bitmapFontTest5.png";
+var s_konqa32 = "Resources/fonts/konqa32.png";
+var s_konqa32_hd = "Resources/fonts/konqa32-hd.png";
+var s_bitmapFontChinese = "Resources/fonts/bitmapFontChinese.png";
+var s_arial16 = "Resources/fonts/arial16.png";
+var s_larabie_16 = "Resources/fonts/larabie-16.png";
+var s_larabie_16_hd= "Resources/fonts/larabie-16-hd.png";
+var s_futura48 = "Resources/fonts/futura-48.png";
+
+var s_bitmapFontTest_fnt = "Resources/fonts/bitmapFontTest.fnt";
+var s_bitmapFontTest2_fnt = "Resources/fonts/bitmapFontTest2.fnt";
+var s_bitmapFontTest3_fnt = "Resources/fonts/bitmapFontTest3.fnt";
+var s_bitmapFontTest4_fnt = "Resources/fonts/bitmapFontTest4.fnt";
+var s_bitmapFontTest5_fnt = "Resources/fonts/bitmapFontTest5.fnt";
+var s_konqa32_fnt = "Resources/fonts/konqa32.fnt";
+var s_konqa32_hd_fnt = "Resources/fonts/konqa32-hd.fnt";
+var s_bitmapFontChinese_fnt = "Resources/fonts/bitmapFontChinese.fnt";
+var s_arial16_fnt = "Resources/fonts/arial16.fnt";
+var s_futura48_fnt = "Resources/fonts/futura-48.fnt";
+
 var g_ressources = [
     //image ressources
     {type:"image", src:s_pathGrossini},
@@ -167,6 +191,19 @@ var g_ressources = [
     {type:"image", src:s_grossiniDance13},
     {type:"image", src:s_grossiniDance14},
 
+    {type:"image", src:s_bitmapFontTest},
+    {type:"image", src:s_bitmapFontTest2},
+    {type:"image", src:s_bitmapFontTest3},
+    {type:"image", src:s_bitmapFontTest4},
+    {type:"image", src:s_bitmapFontTest5},
+    {type:"image", src:s_konqa32},
+    {type:"image", src:s_konqa32_hd},
+    {type:"image", src:s_bitmapFontChinese},
+    {type:"image", src:s_arial16},
+    {type:"image", src:s_larabie_16},
+    {type:"image", src:s_larabie_16_hd},
+    {type:"image", src:s_futura48},
+
     {type:"plist", src:s_boilingFoamPlist},
     {type:"plist", src:s_grossiniPlist},
     {type:"plist", src:s_grossini_grayPlist},
@@ -206,5 +243,17 @@ var g_ressources = [
     {type:"effect", src:"Resources/effect2"},
 
     //tga ressources
-    {type:"tga", src:s_levelMapTga}
+    {type:"tga", src:s_levelMapTga},
+
+    //fnt ressources
+    {type:"fnt", src:s_bitmapFontTest_fnt},
+    {type:"fnt", src:s_bitmapFontTest2_fnt},
+    {type:"fnt", src:s_bitmapFontTest3_fnt},
+    {type:"fnt", src:s_bitmapFontTest4_fnt},
+    {type:"fnt", src:s_bitmapFontTest5_fnt},
+    {type:"fnt", src:s_konqa32_fnt},
+    {type:"fnt", src:s_konqa32_hd_fnt},
+    {type:"fnt", src:s_bitmapFontChinese_fnt},
+    {type:"fnt", src:s_arial16_fnt},
+    {type:"fnt", src:s_futura48_fnt}
 ];

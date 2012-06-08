@@ -85,7 +85,16 @@ cc.FileUtils.fullPathFromRelativePath = function (pszRelativePath) {
 
 /// @cond
 cc.FileUtils.fullPathFromRelativeFile = function (filename, relativeFile) {
-
+    var tmpPath;
+    if (filename) {
+        tmpPath = relativeFile.substring(0, relativeFile.lastIndexOf("/") + 1);
+        return tmpPath + filename;
+    }
+    else{
+        tmpPath = relativeFile.substring(0, relativeFile.lastIndexOf("."));
+        tmpPath = tmpPath + ".png";
+        return tmpPath;
+    }
 };
 /// @endcond
 
@@ -156,34 +165,8 @@ cc.FileUtils.ccLoadFileIntoMemory = function (filename, out) {
 
 };
 
-cc.FileData = cc.Class.extend({
-    _buffer:0,
-    _size:0,
-    ctor:function (fileName, mode) {
-        this._buffer = cc.FileUtils.getFileData(fileName, mode, this._size);
-    },
-    reset:function (fileName, mode) {
-        this._size = 0;
-        this._buffer = cc.FileUtils.getFileData(fileName, mode, this._size);
-        return (this._buffer) ? true : false;
-    },
-    getBuffer:function () {
-        return this._buffer;
-    },
-    getSize:function () {
-        return this._size;
-    }
-});
-
 cc.DictMaker = cc.Class.extend({
     rootDict:[],
-    /*curDict:null,
-     dictStack:null,
-     curKey:null,
-     state:cc.SAX_NONE,
-     array:null,
-     arrayStack:null,
-     stateStack:null,*/
     dictionaryWithContentsOfFile:function (fileName) {
         var parser = cc.SAXParser.shareParser();
         this.rootDict = parser.parse(fileName);
