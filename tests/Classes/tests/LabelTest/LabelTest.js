@@ -41,23 +41,24 @@ var TAG_LABEL_SPRITE18 = 667;
 
 
 var AtlasTests = [
-    "LabelAtlasTest", //ok
-    "LabelAtlasColorTest", //ok
-    /* "Atlas3",
-     "Atlas4",
-     "Atlas5",
-     "Atlas6",
-     "AtlasBitmapColor",
-     "AtlasFastBitmap",
-     "BitmapFontMultiLine",
-     "LabelsEmpty",
-     "LabelBMFontHD",*/
-    "LabelAtlasHD", //ok
-    //"LabelGlyphDesigner",
+    "LabelAtlasTest",
+    "LabelAtlasColorTest",
+    "Atlas3",
+    "Atlas4",
+    "Atlas5",
+    "Atlas6",
+    "AtlasBitmapColor",
+    "AtlasFastBitmap",
+    "BitmapFontMultiLine",
+    "LabelsEmpty",
+    "LabelBMFontHD",
+    "LabelAtlasHD",
+    "LabelGlyphDesigner",
     //"Atlas1",
-    "LabelTTFTest", //ok
-    "LabelTTFMultiline", //ok
-    "LabelTTFChinese"//ok
+    "LabelTTFTest",
+    "LabelTTFMultiline",
+    "LabelTTFChinese",
+    "LabelBMFontChinese"
 ];
 
 var atlasIdx = -1;
@@ -293,10 +294,8 @@ var LabelAtlasColorTest = AtlasDemo.extend({
 //
 //------------------------------------------------------------------
 var Atlas3 = AtlasDemo.extend({
-    time:null,
+    time:0,
     ctor:function () {
-        this.time = 0;
-
         var col = cc.LayerColor.create(cc.ccc4(128, 128, 128, 255));
         this.addChild(col, -10);
 
@@ -310,7 +309,6 @@ var Atlas3 = AtlasDemo.extend({
         var seq = cc.Sequence.create(fade, fade_in, null);
         var repeat = cc.RepeatForever.create(seq);
         label1.runAction(repeat);
-
 
         // VERY IMPORTANT
         // color and opacity work OK because bitmapFontAltas2 loads a BMP image (not a PNG image)
@@ -328,7 +326,6 @@ var Atlas3 = AtlasDemo.extend({
         label3.setAnchorPoint(cc.ccp(1, 1));
         this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
 
-
         var s = cc.Director.sharedDirector().getWinSize();
         label1.setPosition(cc.ccp(0, 0));
         label2.setPosition(cc.ccp(s.width / 2, s.height / 2));
@@ -339,7 +336,7 @@ var Atlas3 = AtlasDemo.extend({
     step:function (dt) {
         this.time += dt;
         //var string;
-        var string = this.time + "Test j";
+        var string = this.time.toFixed(2) + "Test j";
 
         var label1 = this.getChildByTag(TAG_BITMAP_ATLAS1);
         label1.setString(string);
@@ -417,15 +414,17 @@ var Atlas4 = AtlasDemo.extend({
     },
     step:function (dt) {
         this.time += dt;
-        var string = this.time;
-
+        var string = this.time.toFixed(1);
+        string = (string < 10) ? "0" + string : string;
         var label1 = this.getChildByTag(TAG_BITMAP_ATLAS2);
         label1.setString(string);
     },
     draw:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        cc.drawLine(cc.ccp(0, s.height / 2), cc.ccp(s.width, s.height / 2));
-        cc.drawLine(cc.ccp(s.width / 2, 0), cc.ccp(s.width / 2, s.height));
+        var c = cc.RED();
+        cc.renderContext.strokeStyle = "rgba(" +c.r + "," + c.g + "," + c.b + ",1)";
+        cc.drawingUtil.drawLine(cc.ccp(0, s.height / 2), cc.ccp(s.width, s.height / 2));
+        cc.drawingUtil.drawLine(cc.ccp(s.width / 2, 0), cc.ccp(s.width / 2, s.height));
     },
     title:function () {
         return "cc.LabelBMFont";
@@ -444,7 +443,7 @@ var Atlas4 = AtlasDemo.extend({
 //
 //------------------------------------------------------------------
 var Atlas5 = AtlasDemo.extend({
-    cotr:function () {
+    ctor:function () {
         var label = cc.LabelBMFont.create("abcdefg", "Resources/fonts/bitmapFontTest4.fnt");
         this.addChild(label);
 
@@ -524,7 +523,7 @@ var AtlasBitmapColor = AtlasDemo.extend({
         this.addChild(label);
         label.setPosition(cc.ccp(s.width / 2, 3 * s.height / 4));
         label.setAnchorPoint(cc.ccp(0.5, 0.5));
-        label.setColor(ccGREEN);
+        label.setColor(cc.GREEN());
         label.setString("Green");
     },
     title:function () {
@@ -581,7 +580,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         this.addChild(label1, 0, TAG_BITMAP_ATLAS1);
 
         s = label1.getContentSize();
-        cc.LOG("content size: %.2x%.2", s.width, s.height);
+        cc.LOG("content size:"+ s.width+ "," + s.height);
 
 
         // Center
@@ -590,7 +589,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         this.addChild(label2, 0, TAG_BITMAP_ATLAS2);
 
         s = label2.getContentSize();
-        cc.LOG("content size: %.2x%.2", s.width, s.height);
+        cc.LOG("content size:"+ s.width+ "," + s.height);
 
         // right
         var label3 = cc.LabelBMFont.create("Multi line\nRight\nThree lines Three", "Resources/fonts/bitmapFontTest3.fnt");
@@ -598,7 +597,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
 
         s = label3.getContentSize();
-        cc.LOG("content size: %.2x%.2", s.width, s.height);
+        cc.LOG("content size:"+ s.width+ "," + s.height);
 
         s = cc.Director.sharedDirector().getWinSize();
         label1.setPosition(cc.ccp(0, 0));
@@ -799,5 +798,17 @@ var LabelTTFChinese = AtlasDemo.extend({
     },
     title:function () {
         return "Testing cc.LabelTTF with Chinese character";
+    }
+});
+
+var LabelBMFontChinese = AtlasDemo.extend({
+    ctor:function () {
+        var size = cc.Director.sharedDirector().getWinSize();
+        var lable = cc.LabelBMFont.create("中国", "Resources/fonts/bitmapFontChinese.fnt");
+        lable.setPosition(cc.ccp(size.width / 2, size.height /2));
+        this.addChild(lable);
+    },
+    title:function () {
+        return "Testing CCLabelBMFont with Chinese character";
     }
 });
