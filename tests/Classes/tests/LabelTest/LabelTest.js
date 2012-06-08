@@ -41,23 +41,6 @@ var TAG_LABEL_SPRITE18 = 667;
 
 
 var AtlasTests = [
-    "LabelAtlasTest", //ok
-    "LabelAtlasColorTest", //ok
-    /* "Atlas3",
-     "Atlas4",
-     "Atlas5",
-     "Atlas6",
-     "AtlasBitmapColor",
-     "AtlasFastBitmap",
-     "BitmapFontMultiLine",
-     "LabelsEmpty",
-     "LabelBMFontHD",*/
-    "LabelAtlasHD", //ok
-    //"LabelGlyphDesigner",
-    //"Atlas1",
-    "LabelTTFTest", //ok
-    "LabelTTFMultiline", //ok
-    "LabelTTFChinese"//ok
     "LabelAtlasTest",
     "LabelAtlasColorTest",
     "Atlas3",
@@ -821,7 +804,7 @@ var LabelTTFChinese = AtlasDemo.extend({
 var LabelBMFontChinese = AtlasDemo.extend({
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
-        var lable = cc.LabelBMFont.labelWithString("中国", "Resources/fonts/bitmapFontChinese.fnt");
+        var lable = cc.LabelBMFont.create("中国", "Resources/fonts/bitmapFontChinese.fnt");
         lable.setPosition(cc.ccp(size.width / 2, size.height /2));
         this.addChild(lable);
     },
