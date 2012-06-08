@@ -29,7 +29,7 @@ var cc = cc = cc || {};
 //Hash Element
 //
 // Equal function for targetSet.
-function _KerningHashElement(key, amount, hh) {
+function _KerningHashElement(key, amount) {
     this.key = key;	// key for the hash. 16-bit for 1st element, 16-bit for 2nd element
     this.amount = amount;
 }
