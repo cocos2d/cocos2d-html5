@@ -629,7 +629,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 });
 
 /** creates a cc.TMXLayer with an tileset info, a layer info and a map info */
-cc.TMXLayer.layerWithTilesetInfo = function (tilesetInfo, layerInfo, mapInfo) {
+cc.TMXLayer.create = function (tilesetInfo, layerInfo, mapInfo) {
     var ret = new cc.TMXLayer();
     if (ret.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo)) {
         return ret;

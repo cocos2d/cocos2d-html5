@@ -1213,7 +1213,7 @@ cc.Sprite = cc.Node.extend({
 
         this.updateColor();
     },
-     getColor:function () {
+    getColor:function () {
         if (this._opacityModifyRGB) {
             return new cc.Color3B(this._colorUnmodified);
         }
@@ -1269,7 +1269,7 @@ cc.Sprite = cc.Node.extend({
         }
         // update rect
         this._rectRotated = newFrame.isRotated();
-        if(this._rectRotated)
+        if (this._rectRotated)
             this.setRotation(-90);
         this.setTextureRectInPixels(newFrame.getRectInPixels(), newFrame.isRotated(), newFrame.getOriginalSizeInPixels());
         //save dirty region when after changed
@@ -1302,13 +1302,13 @@ cc.Sprite = cc.Node.extend({
     /** returns the current displayed frame. */
     displayedFrame:function () {
         if (cc.renderContextType == cc.CANVAS) {
-            return cc.SpriteFrame.frameWithTextureForCanvas(this._texture,
+            return cc.SpriteFrame._frameWithTextureForCanvas(this._texture,
                 this._rectInPixels,
                 this._rectRotated,
                 this._unflippedOffsetPositionFromCenter,
                 this._contentSizeInPixels);
         } else {
-            return cc.SpriteFrame.frameWithTexture(this._texture,
+            return cc.SpriteFrame.create(this._texture,
                 this._rectInPixels,
                 this._rectRotated,
                 this._unflippedOffsetPositionFromCenter,
@@ -1387,27 +1387,8 @@ cc.Sprite.spriteWithTexture = function (texture, rect, offset) {
             break;
     }
 };
-/** Creates an sprite with an sprite frame. */
-cc.Sprite.spriteWithSpriteFrame = function (spriteFrame) {
-    var sprite = new cc.Sprite();
-    if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
-        return sprite;
-    }
-    return null;
-};
-/** Creates an sprite with an sprite frame name.
- An CCSpriteFrame will be fetched from the CCSpriteFrameCache by name.
- If the CCSpriteFrame doesn't exist it will raise an exception.
- @since v0.9
- */
-cc.Sprite.spriteWithSpriteFrameName = function (spriteFrameName) {
-    var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(spriteFrameName);
-    var msg = "Invalid spriteFrameName:" + spriteFrameName;
-    cc.Assert(frame != null, msg);
-    return cc.Sprite.spriteWithSpriteFrame(frame);
-};
 
-cc.Sprite.spriteWithFile = function (fileName, rect) {
+cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
     var sprite = new cc.Sprite();
     if (argnum < 2) {
@@ -1430,7 +1411,17 @@ cc.Sprite.spriteWithFile = function (fileName, rect) {
     }
 };
 
-cc.Sprite.spriteWithBatchNode = function (batchNode, rect) {
+/** Creates an sprite with an sprite frame. */
+cc.Sprite.createWithSpriteFrame = function (spriteFrame) {
+    var sprite = new cc.Sprite();
+    if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
+        return sprite;
+    }
+    return null;
+};
+
+
+cc.Sprite.createWithBatchNode = function (batchNode, rect) {
     var sprite = new cc.Sprite();
     if (sprite && sprite.initWithBatchNode(batchNode, rect)) {
         return sprite;

@@ -86,24 +86,24 @@ var ParticleMainScene = cc.Scene.extend({
         this._quantityParticles = particles;
 
         cc.MenuItemFont.setFontSize(65);
-        var decrease = cc.MenuItemFont.itemFromString(" - ", this, this.onDecrease);
+        var decrease = cc.MenuItemFont.create(" - ", this, this.onDecrease);
         decrease.setColor(cc.ccc3(0, 200, 20));
-        var increase = cc.MenuItemFont.itemFromString(" + ", this, this.onIncrease);
+        var increase = cc.MenuItemFont.create(" + ", this, this.onIncrease);
         increase.setColor(cc.ccc3(0, 200, 20));
 
-        var menu = cc.Menu.menuWithItems(decrease, increase, null);
+        var menu = cc.Menu.create(decrease, increase, null);
         menu.alignItemsHorizontally();
         menu.setPosition(cc.ccp(s.width / 2, s.height / 2 + 15));
         this.addChild(menu, 1);
 
-        var infoLabel = cc.LabelTTF.labelWithString("0 nodes", "Marker Felt", 30);
+        var infoLabel = cc.LabelTTF.create("0 nodes", "Marker Felt", 30);
         infoLabel.setColor(cc.ccc3(0, 200, 20));
         infoLabel.setPosition(cc.ccp(s.width / 2, s.height - 90));
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
         // particles on stage
-        //var labelAtlas = cc.LabelAtlas.labelWithString("0000", "Resources/Images/fps_images.png", 16, 24, '.');
-        var labelAtlas = cc.LabelTTF.labelWithString("0000", "Marker Felt", 30);
+        //var labelAtlas = cc.LabelAtlas.create("0000", "Resources/Images/fps_images.png", 16, 24, '.');
+        var labelAtlas = cc.LabelTTF.create("0000", "Marker Felt", 30);
         this.addChild(labelAtlas, 0, TAG_LABEL_ATLAS);
         labelAtlas.setPosition(cc.ccp(s.width - 66, 50));
 
@@ -113,10 +113,10 @@ var ParticleMainScene = cc.Scene.extend({
 
         // Sub Tests
         cc.MenuItemFont.setFontSize(40);
-        var subMenu = cc.Menu.menuWithItems(null);
+        var subMenu = cc.Menu.create(null);
         for (var i = 1; i <= 3; ++i) {
             var str = i.toString();
-            var itemFont = cc.MenuItemFont.itemFromString(str, this, this.testNCallback);
+            var itemFont = cc.MenuItemFont.create(str, this, this.testNCallback);
             itemFont.setTag(i);
             subMenu.addChild(itemFont, 10);
 
@@ -131,7 +131,7 @@ var ParticleMainScene = cc.Scene.extend({
         subMenu.setPosition(cc.ccp(s.width / 2, 80));
         this.addChild(subMenu, 2);
 
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 40);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
         label.setPosition(cc.ccp(s.width / 2, s.height - 32));
         label.setColor(cc.ccc3(255, 255, 40));
@@ -210,7 +210,7 @@ var ParticleMainScene = cc.Scene.extend({
     },
     onIncrease:function (sender) {
         this._quantityParticles += PARTICLE_NODES_INCREASE;
-        if (this._quantityParticles > MAX_PARTICLES){
+        if (this._quantityParticles > MAX_PARTICLES) {
             this._quantityParticles = MAX_PARTICLES;
         }
         this.updateQuantityLabel();

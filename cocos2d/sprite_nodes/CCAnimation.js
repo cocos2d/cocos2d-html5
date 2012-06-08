@@ -99,7 +99,7 @@ cc.Animation = cc.Class.extend({
             rect.size = texture.getContentSize();
         }
 
-        var frame = cc.SpriteFrame.frameWithTexture(texture, rect);
+        var frame = cc.SpriteFrame.create(texture, rect);
 
         this._frames.push(frame);
     },
@@ -108,7 +108,7 @@ cc.Animation = cc.Class.extend({
      Added to facilitate the migration from v0.8 to v0.9.
      */
     addFrameWithTexture:function (texture, rect) {
-        var pFrame = cc.SpriteFrame.frameWithTexture(texture, rect);
+        var pFrame = cc.SpriteFrame.create(texture, rect);
         this._frames.push(pFrame);
     },
 
@@ -117,25 +117,20 @@ cc.Animation = cc.Class.extend({
     }
 });
 
-/** Creates an animation
- @since v0.99.5
+
+/* Creates an animation .
  */
-cc.Animation.animation = function () {
+cc.Animation.create = function (frames, delay) {
     var animation = new cc.Animation();
-    animation.init();
-
-    return animation;
-};
-
-/* Creates an animation with frames and a delay between frames.
- @since v0.99.5
- */
-cc.Animation.animationWithFrames = function (frames, delay) {
-    if (!delay)
-        delay = 0;
-
-    var animation = new cc.Animation();
-    animation.initWithFrames(frames, delay);
+    if (frames == null) {
+        animation.init();
+    } else {
+        /** with frames and a delay between frames */
+        if (!delay) {
+            delay = 0;
+        }
+        animation.initWithFrames(frames, delay);
+    }
 
     return animation;
 };

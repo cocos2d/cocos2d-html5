@@ -55,11 +55,11 @@ CocosDenshionTest = cc.Layer.extend({
     _testCount:0,
     ctor:function () {
         // add menu items for tests
-        this._itmeMenu = cc.Menu.menuWithItems(null);
+        this._itmeMenu = cc.Menu.create(null);
         var s = cc.Director.sharedDirector().getWinSize();
-        for (var i = 0;i < DenshionTests.length;i++) {
-            var label = cc.LabelTTF.labelWithString(DenshionTests[i], "Arial", 24);
-            var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
+        for (var i = 0; i < DenshionTests.length; i++) {
+            var label = cc.LabelTTF.create(DenshionTests[i], "Arial", 24);
+            var menuItem = cc.MenuItemLabel.create(label, this, this.menuCallback);
             this._itmeMenu.addChild(menuItem, i + 10000);
             menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }

@@ -317,7 +317,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
 });
 
 /** creates a CCTextFieldTTF from a fontname, alignment, dimension and font size */
-cc.TextFieldTTF.textFieldWithPlaceHolder = function (placeholder, dimensions, alignment, fontName, fontSize) {
+cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName, fontSize) {
     switch (arguments.length) {
         case 5:
             var ret = new cc.TextFieldTTF();

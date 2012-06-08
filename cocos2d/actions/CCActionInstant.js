@@ -54,10 +54,10 @@ cc.Show = cc.ActionInstant.extend({
         target.setIsVisible(true);
     },
     reverse:function () {
-        return cc.Hide.action.call(this);
+        return cc.Hide.create.call(this);
     }
 });
-cc.Show.action = function () {
+cc.Show.create = function () {
     return new cc.Show();
 };
 
@@ -70,10 +70,10 @@ cc.Hide = cc.ActionInstant.extend({
         target.setIsVisible(false);
     },
     reverse:function () {
-        return cc.Show.action.call(this);
+        return cc.Show.create.call(this);
     }
 });
-cc.Hide.action = function () {
+cc.Hide.create = function () {
     return (new cc.Hide());
 };
 
@@ -89,7 +89,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend({
         return new cc.ToggleVisibility();
     }
 });
-cc.ActionInstant.action = function () {
+cc.ToggleVisibility.create = function () {
     return (new cc.ToggleVisibility());
 };
 
@@ -111,7 +111,7 @@ cc.FlipX = cc.ActionInstant.extend({
     },
     _flipX:false
 });
-cc.FlipX.actionWithFlipX = function (x) {
+cc.FlipX.create = function (x) {
     var ret = new cc.FlipX();
     if (ret.initWithFlipX(x))
         return ret;
@@ -135,7 +135,7 @@ cc.FlipY = cc.ActionInstant.extend({
     },
     _flipY:false
 });
-cc.FlipY.actionWithFlipY = function (y) {
+cc.FlipY.create = function (y) {
     var ret = new cc.FlipY();
     if (ret.initWithFlipY(y))
         return ret;
@@ -156,7 +156,7 @@ cc.Place = cc.ActionInstant.extend({
     }
 });
 /** creates a Place action with a position */
-cc.Place.actionWithPosition = function (pos) {
+cc.Place.create = function (pos) {
     var ret = new cc.Place();
     ret.initWithPosition(pos);
     return ret;
@@ -200,7 +200,7 @@ cc.CallFunc = cc.ActionInstant.extend({
 
  typedef void (CCObject::*SEL_CallFunc)();
  */
-cc.CallFunc.actionWithTarget = function (selectorTarget, selector, d) {
+cc.CallFunc.create = function (selectorTarget, selector, d) {
     var ret = new cc.CallFunc();
     if (ret && ret.initWithTarget(selectorTarget, selector, d)) {
         ret._callFunc = selector;

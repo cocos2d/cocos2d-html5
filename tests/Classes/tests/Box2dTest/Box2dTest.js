@@ -88,12 +88,12 @@ Box2DTestLayer = cc.Layer.extend({
 
         //Set up sprite
 
-        var mgr = cc.SpriteBatchNode.batchNodeWithFile(s_pathBlock, 150);
+        var mgr = cc.SpriteBatchNode.create(s_pathBlock, 150);
         this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
 
         this.addNewSpriteWithCoords(cc.PointMake(screenSize.width / 2, screenSize.height / 2));
 
-        var label = cc.LabelTTF.labelWithString("Tap screen", "Marker Felt", 32);
+        var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
         this.addChild(label, 0);
         label.setColor(cc.ccc3(0, 0, 255));
         label.setPosition(cc.PointMake(screenSize.width / 2, screenSize.height - 50));

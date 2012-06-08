@@ -30,26 +30,26 @@ var cc = cc = cc || {};
  @since v0.8
  */
 cc.Color3B = function (r1, g1, b1) {
-    switch(arguments.length){
+    switch (arguments.length) {
         case 0:
             this.r = 0;
             this.g = 0;
             this.b = 0;
         case 1:
-            if(r1){
-                this.r = r1.r||0;
-                this.g = r1.g||0;
-                this.b = r1.b||0;
-            }else{
+            if (r1) {
+                this.r = r1.r || 0;
+                this.g = r1.g || 0;
+                this.b = r1.b || 0;
+            } else {
                 this.r = 0;
                 this.g = 0;
                 this.b = 0;
             }
             break;
         case 3:
-            this.r = r1||0;
-            this.g = g1||0;
-            this.b = b1||0;
+            this.r = r1 || 0;
+            this.g = g1 || 0;
+            this.b = b1 || 0;
             break;
         default:
             throw "unknown argument type";
@@ -65,23 +65,41 @@ cc.ccc3 = function (r, g, b) {
 
 //ccColor3B predefined colors
 //! White color (255,255,255)
-cc.WHITE = function(){return new cc.Color3B(255, 255, 255);};
+cc.WHITE = function () {
+    return new cc.Color3B(255, 255, 255);
+};
 //! Yellow color (255,255,0)
-cc.YELLOW = function(){return new cc.Color3B(255, 255, 0);};
+cc.YELLOW = function () {
+    return new cc.Color3B(255, 255, 0);
+};
 //! Blue color (0,0,255)
-cc.BLUE = function(){return new cc.Color3B(0, 0, 255);};
+cc.BLUE = function () {
+    return new cc.Color3B(0, 0, 255);
+};
 //! Green Color (0,255,0)
-cc.GREEN = function(){return new cc.Color3B(0, 255, 0);};
+cc.GREEN = function () {
+    return new cc.Color3B(0, 255, 0);
+};
 //! Red Color (255,0,0,)
-cc.RED = function(){return new cc.Color3B(255, 0, 0);};
+cc.RED = function () {
+    return new cc.Color3B(255, 0, 0);
+};
 //! Magenta Color (255,0,255)
-cc.MAGENTA = function(){return new cc.Color3B(255, 0, 255);};
+cc.MAGENTA = function () {
+    return new cc.Color3B(255, 0, 255);
+};
 //! Black Color (0,0,0)
-cc.BLACK = function(){return new cc.Color3B(0, 0, 0);};
+cc.BLACK = function () {
+    return new cc.Color3B(0, 0, 0);
+};
 //! Orange Color (255,127,0)
-cc.ORANGE = function(){return new cc.Color3B(255, 127, 0);};
+cc.ORANGE = function () {
+    return new cc.Color3B(255, 127, 0);
+};
 //! Gray Color (166,166,166)
-cc.GRAY = function(){return new cc.Color3B(166, 166, 166);};
+cc.GRAY = function () {
+    return new cc.Color3B(166, 166, 166);
+};
 
 /** RGBA color composed of 4 bytes
  @since v0.8

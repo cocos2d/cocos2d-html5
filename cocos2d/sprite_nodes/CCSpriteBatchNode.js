@@ -60,7 +60,7 @@ cc.SpriteBatchNode = cc.Node.extend({
             this.initWithFile(fileImage, cc.defaultCapacity);
         }
         this.setContentSize(new cc.Size(cc.canvas.width, cc.canvas.height));
-        this._renderTexture = cc.RenderTexture.renderTextureWithWidthAndHeight(cc.canvas.width, cc.canvas.height);
+        this._renderTexture = cc.RenderTexture.create(cc.canvas.width, cc.canvas.height);
     },
 
     _updateBlendFunc:function () {
@@ -632,25 +632,12 @@ cc.SpriteBatchNode = cc.Node.extend({
     }
 });
 
-/** creates a CCSpriteBatchNode with a texture2d and a default capacity of 29 children.
- The capacity will be increased in 33% in runtime if it run out of space.
- */
-cc.SpriteBatchNode.batchNodeWithTexture = function (tex, capacity) {
-    if (!capacity) {
-        capacity = cc.defaultCapacity;
-    }
-
-    var batchNode = new cc.SpriteBatchNode();
-    batchNode.initWithTexture(tex, capacity);
-
-    return batchNode;
-};
 
 /** creates a CCSpriteBatchNode with a file image (.png, .jpeg, .pvr, etc) with a default capacity of 29 children.
  The capacity will be increased in 33% in runtime if it run out of space.
  The file will be loaded using the TextureMgr.
  */
-cc.SpriteBatchNode.batchNodeWithFile = function (fileImage, capacity) {
+cc.SpriteBatchNode.create = function (fileImage, capacity) {
     if (!capacity) {
         capacity = cc.defaultCapacity;
     }
@@ -660,6 +647,21 @@ cc.SpriteBatchNode.batchNodeWithFile = function (fileImage, capacity) {
 
     return batchNode;
 };
+
+/** creates a CCSpriteBatchNode with a texture2d and a default capacity of 29 children.
+ The capacity will be increased in 33% in runtime if it run out of space.
+ */
+cc.SpriteBatchNode.createWithTexture = function (texture, capacity) {
+    if (!capacity) {
+        capacity = cc.defaultCapacity;
+    }
+
+    var batchNode = new cc.SpriteBatchNode();
+    batchNode.initWithTexture(texture, capacity);
+
+    return batchNode;
+};
+
 cc.share_pobTextureAtlas = function () {
     var shareSpriteBatchNode = new cc.SpriteBatchNode();
     return shareSpriteBatchNode._textureAtlas;

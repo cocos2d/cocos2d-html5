@@ -120,14 +120,14 @@ cc.ProgressTimer = cc.Node.extend({
                 context.drawImage(this._sprite._texture, this._origin.x, this._origin.y, this._drawSize.width, this._drawSize.height,
                     pos.x, -(pos.y + this._drawSize.height),
                     this._drawSize.width, this._drawSize.height);
-            }else{
+            } else {
                 var size = this.getContentSize();
                 context.beginPath();
-                var startAngle_1= (Math.PI/180)*this._startAngle;
-                var endAngle_1=(Math.PI/180)*this._endAngle;
-                var radius = size.width > size.height?size.width:size.height;
-                context.arc(0,0,radius,startAngle_1,endAngle_1,false);
-                context.lineTo(0,0);
+                var startAngle_1 = (Math.PI / 180) * this._startAngle;
+                var endAngle_1 = (Math.PI / 180) * this._endAngle;
+                var radius = size.width > size.height ? size.width : size.height;
+                context.arc(0, 0, radius, startAngle_1, endAngle_1, false);
+                context.lineTo(0, 0);
                 context.clip();
                 context.closePath();
 
@@ -569,7 +569,7 @@ cc.ProgressTimer = cc.Node.extend({
     _vertexData:null
 });
 
-cc.ProgressTimer.progressWithFile = function (fileName) {
+cc.ProgressTimer.create = function (fileName) {
     var progressTimer = new cc.ProgressTimer();
     if (progressTimer.initWithFile(fileName)) {
         return progressTimer;
@@ -577,7 +577,7 @@ cc.ProgressTimer.progressWithFile = function (fileName) {
         return null;
     }
 };
-cc.ProgressTimer.progressWithTexture = function (texture) {
+cc.ProgressTimer.createWithTexture = function (texture) {
     var progressTimer = new cc.ProgressTimer();
     if (progressTimer.initWithTexture(texture)) {
         return progressTimer;
@@ -585,3 +585,4 @@ cc.ProgressTimer.progressWithTexture = function (texture) {
         return null;
     }
 };
+

@@ -60,7 +60,7 @@ cc.KeypadHandler = cc.Class.extend({
     },
     _delegate:null
 });
-cc.KeypadHandler.handlerWithDelegate = function (delegate) {
+cc.KeypadHandler.create = function (delegate) {
     var handler = new cc.KeypadHandler();
     handler.initWithDelegate(delegate);
     return handler;

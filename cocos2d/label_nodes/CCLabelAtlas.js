@@ -134,7 +134,7 @@ cc.LabelAtlas = cc.AtlasNode.extend({
 });
 
 /** creates the CCLabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas */
-cc.LabelAtlas.labelWithString = function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
+cc.LabelAtlas.create = function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
     var ret = new cc.LabelAtlas();
     if (ret && ret.initWithString(label, charMapFile, itemWidth, itemHeight, startCharMap)) {
         return ret;

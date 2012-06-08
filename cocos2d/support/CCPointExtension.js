@@ -395,8 +395,8 @@ cc.ccpIntersectPoint = function (A, B, C, D) {
  @param B ccp b to be compared
  @returns the true if both ccp are same
  */
-cc.ccpSameAs = function(A,B){
-    if(A.x && B.x){
+cc.ccpSameAs = function (A, B) {
+    if (A.x && B.x) {
         return (A.x == B.x && A.y == B.y);
     }
     return false;

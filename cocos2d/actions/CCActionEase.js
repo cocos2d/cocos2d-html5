@@ -62,14 +62,14 @@ cc.ActionEase = cc.ActionInterval.extend({
     },
 
     reverse:function () {
-        return cc.ActionEase.actionWithAction(this._other.reverse());
+        return cc.ActionEase.create(this._other.reverse());
     },
 
     _other:null
 });
 
 /** creates the action */
-cc.ActionEase.actionWithAction = function (action) {
+cc.ActionEase.create = function (action) {
     var ret = new cc.ActionEase();
     if (ret) {
         ret.initWithAction(action);
@@ -107,14 +107,14 @@ cc.EaseRateAction = cc.ActionEase.extend({
     },
 
     reverse:function () {
-        return cc.EaseRateAction.actionWithAction(this._other.reverse(), 1 / this._rate);
+        return cc.EaseRateAction.create(this._other.reverse(), 1 / this._rate);
     },
 
     _rate:null
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseRateAction.actionWithAction = function (action, rate) {
+cc.EaseRateAction.create = function (action, rate) {
     var ret = new cc.EaseRateAction();
     if (ret) {
         ret.initWithAction(action, rate);
@@ -139,7 +139,7 @@ cc.EaseIn = cc.EaseRateAction.extend({
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseIn.actionWithAction = function (action, rate) {
+cc.EaseIn.create = function (action, rate) {
     var ret = new cc.EaseIn();
     if (ret) {
         ret.initWithAction(action, rate);
@@ -163,7 +163,7 @@ cc.EaseOut = cc.EaseRateAction.extend({
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseOut.actionWithAction = function (action, rate) {
+cc.EaseOut.create = function (action, rate) {
     var ret = new cc.EaseOut();
     if (ret) {
         ret.initWithAction(action, rate);
@@ -200,7 +200,7 @@ cc.EaseInOut = cc.EaseRateAction.extend({
     },
 
     reverse:function () {
-        return cc.EaseInOut.actionWithAction(this._other.reverse(), this._rate);
+        return cc.EaseInOut.create(this._other.reverse(), this._rate);
 
     }
 
@@ -208,7 +208,7 @@ cc.EaseInOut = cc.EaseRateAction.extend({
 });
 
 /** Creates the action with the inner action and the rate parameter */
-cc.EaseInOut.actionWithAction = function (action, rate) {
+cc.EaseInOut.create = function (action, rate) {
     var ret = new cc.EaseInOut();
     if (ret) {
         ret.initWithAction(action, rate);
@@ -227,7 +227,7 @@ cc.EaseExponentialIn = cc.ActionEase.extend({
     },
 
     reverse:function () {
-        return cc.EaseExponentialOut.actionWithAction(this._other.reverse());
+        return cc.EaseExponentialOut.create(this._other.reverse());
     },
 
     copyWithZone:function (zone) {
@@ -238,7 +238,7 @@ cc.EaseExponentialIn = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseExponentialIn.actionWithAction = function (action) {
+cc.EaseExponentialIn.create = function (action) {
     var ret = new cc.EaseExponentialIn();
     if (ret) {
         ret.initWithAction(action);
@@ -256,7 +256,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend({
     },
 
     reverse:function () {
-        return cc.EaseExponentialIn.actionWithAction(this._other.reverse());
+        return cc.EaseExponentialIn.create(this._other.reverse());
     },
 
     copyWithZone:function (zone) {
@@ -268,7 +268,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseExponentialOut.actionWithAction = function (action) {
+cc.EaseExponentialOut.create = function (action) {
     var ret = new cc.EaseExponentialOut();
     if (ret) {
         ret.initWithAction(action);
@@ -301,7 +301,7 @@ cc.EaseExponentialInOut = cc.ActionEase.extend({
 
 
 /** creates the action */
-cc.EaseExponentialInOut.actionWithAction = function (action) {
+cc.EaseExponentialInOut.create = function (action) {
     var ret = new cc.EaseExponentialInOut();
     if (ret) {
         ret.initWithAction(action);
@@ -321,7 +321,7 @@ cc.EaseSineIn = cc.ActionEase.extend({
     },
 
     reverse:function () {
-        return cc.EaseSineOut.actionWithAction(this._other.reverse());
+        return cc.EaseSineOut.create(this._other.reverse());
     },
 
     copyWithZone:function (zone) {
@@ -330,7 +330,7 @@ cc.EaseSineIn = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseSineIn.actionWithAction = function (action) {
+cc.EaseSineIn.create = function (action) {
     var ret = new cc.EaseSineIn();
     if (ret) {
         ret.initWithAction(action);
@@ -348,7 +348,7 @@ cc.EaseSineOut = cc.ActionEase.extend({
     },
 
     reverse:function () {
-        return cc.EaseSineIn.actionWithAction(this._other.reverse());
+        return cc.EaseSineIn.create(this._other.reverse());
     },
 
     copyWithZone:function (zone) {
@@ -358,7 +358,7 @@ cc.EaseSineOut = cc.ActionEase.extend({
 
 
 /** creates the action */
-cc.EaseSineOut.actionWithAction = function (action) {
+cc.EaseSineOut.create = function (action) {
     var ret = new cc.EaseSineOut();
     if (ret) {
         ret.initWithAction(action);
@@ -385,7 +385,7 @@ cc.EaseSineInOut = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseSineInOut.actionWithAction = function (action) {
+cc.EaseSineInOut.create = function (action) {
     var ret = new cc.EaseSineInOut();
     if (ret) {
         ret.initWithAction(action);
@@ -430,7 +430,7 @@ cc.EaseElastic = cc.ActionEase.extend({
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElastic.actionWithAction = function (action, period) {
+cc.EaseElastic.create = function (action, period) {
     var ret = new cc.EaseElastic();
     if (ret) {
         if (period == null) {
@@ -465,7 +465,7 @@ cc.EaseElasticIn = cc.EaseElastic.extend({
     },
 
     reverse:function () {
-        return cc.EaseElasticOut.actionWithAction(this._other.reverse(), this._period);
+        return cc.EaseElasticOut.create(this._other.reverse(), this._period);
     },
 
     copyWithZone:function (zone) {
@@ -477,7 +477,7 @@ cc.EaseElasticIn = cc.EaseElastic.extend({
 
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElasticIn.actionWithAction = function (action, period) {
+cc.EaseElasticIn.create = function (action, period) {
     var ret = new cc.EaseElasticIn();
     if (ret) {
         if (period == null) {
@@ -503,7 +503,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
             newT = time1;
         } else {
             var s = this._period / 4;
-            newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI  * 2 / this._period) + 1;
+            newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period) + 1;
         }
 
         this._other.update(newT);
@@ -511,7 +511,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
     },
 
     reverse:function () {
-        return cc.EaseElasticIn.actionWithAction(this._other.reverse(), this._period);
+        return cc.EaseElasticIn.create(this._other.reverse(), this._period);
     },
 
     copyWithZone:function (zone) {
@@ -523,7 +523,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
 
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElasticOut.actionWithAction = function (action, period) {
+cc.EaseElasticOut.create = function (action, period) {
     var ret = new cc.EaseElasticOut();
     if (ret) {
         if (period == null) {
@@ -567,7 +567,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend({
 
     },
     reverse:function () {
-        return cc.EaseInOut.actionWithAction(this._other.reverse(), this._period);
+        return cc.EaseInOut.create(this._other.reverse(), this._period);
     },
 
     copyWithZone:function (zone) {
@@ -577,7 +577,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend({
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3) */
-cc.EaseElasticInOut.actionWithAction = function (action, period) {
+cc.EaseElasticInOut.create = function (action, period) {
     var ret = new cc.EaseElasticInOut();
     if (ret) {
         if (period == null) {
@@ -619,7 +619,7 @@ cc.EaseBounce = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseBounce.actionWithAction = function (action) {
+cc.EaseBounce.create = function (action) {
     var ret = new cc.EaseBounce();
     if (ret) {
         ret.initWithAction(action);
@@ -639,7 +639,7 @@ cc.EaseBounceIn = cc.EaseBounce.extend({
         this._other.update(newT);
     },
     reverse:function () {
-        return cc.EaseBounceOut.actionWithAction(this._other.reverse());
+        return cc.EaseBounceOut.create(this._other.reverse());
     },
     copyWithZone:function (zone) {
 
@@ -649,7 +649,7 @@ cc.EaseBounceIn = cc.EaseBounce.extend({
 });
 
 /** creates the action */
-cc.EaseBounceIn.actionWithAction = function (action) {
+cc.EaseBounceIn.create = function (action) {
     var ret = new cc.EaseBounceIn();
     if (ret) {
         ret.initWithAction(action);
@@ -669,7 +669,7 @@ cc.EaseBounceOut = cc.EaseBounce.extend({
         this._other.update(newT);
     },
     reverse:function () {
-        return cc.EaseBounceIn.actionWithAction(this._other.reverse());
+        return cc.EaseBounceIn.create(this._other.reverse());
     },
     copyWithZone:function (zone) {
 
@@ -679,7 +679,7 @@ cc.EaseBounceOut = cc.EaseBounce.extend({
 });
 
 /** creates the action */
-cc.EaseBounceOut.actionWithAction = function (action) {
+cc.EaseBounceOut.create = function (action) {
     var ret = new cc.EaseBounceOut();
     if (ret) {
         ret.initWithAction(action);
@@ -714,7 +714,7 @@ cc.EaseBounceInOut = cc.EaseBounce.extend({
 });
 
 /** creates the action */
-cc.EaseBounceInOut.actionWithAction = function (action) {
+cc.EaseBounceInOut.create = function (action) {
     var ret = new cc.EaseBounceInOut();
     if (ret) {
         ret.initWithAction(action);
@@ -736,7 +736,7 @@ cc.EaseBackIn = cc.ActionEase.extend({
 
     },
     reverse:function () {
-        return cc.EaseBackOut.actionWithAction(this._other.reverse());
+        return cc.EaseBackOut.create(this._other.reverse());
 
     },
     copyWithZone:function (zone) {
@@ -747,7 +747,7 @@ cc.EaseBackIn = cc.ActionEase.extend({
 
 
 /** creates the action */
-cc.EaseBackIn.actionWithAction = function (action) {
+cc.EaseBackIn.create = function (action) {
     var ret = new cc.EaseBackIn();
     if (ret) {
         ret.initWithAction(action);
@@ -769,7 +769,7 @@ cc.EaseBackOut = cc.ActionEase.extend({
         this._other.update(time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1);
     },
     reverse:function () {
-        return cc.EaseBackIn.actionWithAction(this._other.reverse());
+        return cc.EaseBackIn.create(this._other.reverse());
     },
     copyWithZone:function (zone) {
 
@@ -777,7 +777,7 @@ cc.EaseBackOut = cc.ActionEase.extend({
 });
 
 /** creates the action */
-cc.EaseBackOut.actionWithAction = function (action) {
+cc.EaseBackOut.create = function (action) {
     var ret = new cc.EaseBackOut();
     if (ret) {
         ret.initWithAction(action);
@@ -811,7 +811,7 @@ cc.EaseBackInOut = cc.ActionEase.extend({
 
 
 /** creates the action */
-cc.EaseBackInOut.actionWithAction = function (action) {
+cc.EaseBackInOut.create = function (action) {
     var ret = new cc.EaseBackInOut();
     if (ret) {
         ret.initWithAction(action);
