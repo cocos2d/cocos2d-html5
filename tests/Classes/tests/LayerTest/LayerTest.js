@@ -73,22 +73,22 @@ var LayerTest = cc.Layer.extend({
         this._super();
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 32);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
         label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
 
         var subtitle_ = this.subtitle();
         if (subtitle_) {
-            var l = cc.LabelTTF.labelWithString(subtitle_, "Thonburi", 16);
+            var l = cc.LabelTTF.create(subtitle_, "Thonburi", 16);
             this.addChild(l, 1);
             l.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
+        var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
@@ -130,7 +130,7 @@ var LayerTest1 = LayerTest.extend({
         this.setIsTouchEnabled(true);
 
         var s = cc.Director.sharedDirector().getWinSize();
-        var layer = cc.LayerColor.layerWithColorWidthHeight(cc.ccc4(255, 0, 0, 128), 200, 200);
+        var layer = cc.LayerColor.create(cc.ccc4(255, 0, 0, 128), 200, 200);
 
         layer.setIsRelativeAnchorPoint(true);
         layer.setPosition(cc.PointMake(s.width / 2, s.height / 2));
@@ -178,24 +178,24 @@ var LayerTest2 = LayerTest.extend({
         this._super();
 
         var s = cc.Director.sharedDirector().getWinSize();
-        var layer1 = cc.LayerColor.layerWithColorWidthHeight(cc.ccc4(255, 255, 0, 80), 100, 300);
+        var layer1 = cc.LayerColor.create(cc.ccc4(255, 255, 0, 80), 100, 300);
         layer1.setPosition(cc.PointMake(s.width / 3, s.height / 2));
         layer1.setIsRelativeAnchorPoint(true);
         this.addChild(layer1, 1);
 
-        var layer2 = cc.LayerColor.layerWithColorWidthHeight(cc.ccc4(0, 0, 255, 255), 100, 300);
+        var layer2 = cc.LayerColor.create(cc.ccc4(0, 0, 255, 255), 100, 300);
         layer2.setPosition(cc.PointMake((s.width / 3) * 2, s.height / 2));
         layer2.setIsRelativeAnchorPoint(true);
         this.addChild(layer2, 1);
 
-        var actionTint = cc.TintBy.actionWithDuration(2, -255, -127, 0);
+        var actionTint = cc.TintBy.create(2, -255, -127, 0);
         var actionTintBack = actionTint.reverse();
-        var seq1 = cc.Sequence.actions(actionTint, actionTintBack, null);
+        var seq1 = cc.Sequence.create(actionTint, actionTintBack, null);
         layer1.runAction(seq1);
 
-        var actionFade = cc.FadeOut.actionWithDuration(2.0);
+        var actionFade = cc.FadeOut.create(2.0);
         var actionFadeBack = actionFade.reverse();
-        var seq2 = cc.Sequence.actions(actionFade, actionFadeBack, null);
+        var seq2 = cc.Sequence.create(actionFade, actionFadeBack, null);
         layer2.runAction(seq2);
     },
     title:function () {
@@ -211,10 +211,10 @@ var LayerTest2 = LayerTest.extend({
 var LayerTestBlend = LayerTest.extend({
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var layer1 = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 255, 80));
+        var layer1 = cc.LayerColor.create(cc.ccc4(255, 255, 255, 80));
 
-        var sister1 = cc.Sprite.spriteWithFile(s_pathSister1);
-        var sister2 = cc.Sprite.spriteWithFile(s_pathSister2);
+        var sister1 = cc.Sprite.create(s_pathSister1);
+        var sister2 = cc.Sprite.create(s_pathSister2);
 
         this.addChild(sister1);
         this.addChild(sister2);
@@ -254,21 +254,21 @@ var LayerTestBlend = LayerTest.extend({
 //------------------------------------------------------------------
 var LayerGradient = LayerTest.extend({
     ctor:function () {
-        var layer1 = cc.LayerGradient.layerWithColor(cc.ccc4(255, 0, 0, 255), cc.ccc4(0, 255, 0, 255), cc.ccp(0.9, 0.9));
+        var layer1 = cc.LayerGradient.create(cc.ccc4(255, 0, 0, 255), cc.ccc4(0, 255, 0, 255), cc.ccp(0.9, 0.9));
         this.addChild(layer1, 0, cc.TAG_LAYER);
 
         this.setIsTouchEnabled(true);
 
-        /*var label1 = cc.LabelTTF.labelWithString("Compressed Interpolation: Enabled", "Marker Felt", 26);
-        var label2 = cc.LabelTTF.labelWithString("Compressed Interpolation: Disabled", "Marker Felt", 26);
-        var item1 = cc.MenuItemLabel.itemWithLabel(label1);
-        var item2 = cc.MenuItemLabel.itemWithLabel(label2);
-        var item = cc.MenuItemToggle.itemWithTarget(this, this.toggleItem, item1, item2, null);
+        /*var label1 = cc.LabelTTF.create("Compressed Interpolation: Enabled", "Marker Felt", 26);
+         var label2 = cc.LabelTTF.create("Compressed Interpolation: Disabled", "Marker Felt", 26);
+         var item1 = cc.MenuItemLabel.create(label1);
+         var item2 = cc.MenuItemLabel.create(label2);
+         var item = cc.MenuItemToggle.create(this, this.toggleItem, item1, item2, null);
 
-        var menu = cc.Menu.menuWithItems(item, null);
-        this.addChild(menu);
-        var s = cc.Director.sharedDirector().getWinSize();
-        menu.setPosition(cc.ccp(s.width / 2, 100));*/
+         var menu = cc.Menu.create(item, null);
+         this.addChild(menu);
+         var s = cc.Director.sharedDirector().getWinSize();
+         menu.setPosition(cc.ccp(s.width / 2, 100));*/
     },
     prevLocation:null,
     registerWithTouchDispatcher:function () {
@@ -284,7 +284,7 @@ var LayerGradient = LayerTest.extend({
     },
     ccTouchMoved:function (touch, event) {
         var s = cc.Director.sharedDirector().getWinSize();
-       var start = touch.locationInView(touch.view());
+        var start = touch.locationInView(touch.view());
 
         var diff = cc.ccpSub(cc.ccp(s.width / 2, s.height / 2), start);
         diff = cc.ccpNormalize(diff);

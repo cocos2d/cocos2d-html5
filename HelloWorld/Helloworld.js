@@ -44,7 +44,7 @@ var Helloworld = cc.Layer.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // add a "close" icon to exit the progress. it's an autorelease object
-        var closeItem = cc.MenuItemImage.itemFromNormalImage(
+        var closeItem = cc.MenuItemImage.create(
             "Resources/CloseNormal.png",
             "Resources/CloseSelected.png",
             this,
@@ -53,7 +53,7 @@ var Helloworld = cc.Layer.extend({
             });
         closeItem.setAnchorPoint(new cc.Point(0.5,0.5));
 
-        var menu = cc.Menu.menuWithItems(closeItem, null);
+        var menu = cc.Menu.create(closeItem, null);
         menu.setPosition( cc.PointZero() );
         this.addChild(menu, 1);
         closeItem.setPosition(new cc.Point(size.width -20 , 20));
@@ -62,7 +62,7 @@ var Helloworld = cc.Layer.extend({
         // 3. add your codes below...
         // add a label shows "Hello World"
         // create and initialize a label
-        this.helloLabel = cc.LabelTTF.labelWithString("Hello World", "Arial", 38);
+        this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
         // position the label on the center of the screen
         this.helloLabel.setPosition(cc.ccp(size.width / 2, size.height - 40));
         // add the label as a child to this layer
@@ -72,7 +72,7 @@ var Helloworld = cc.Layer.extend({
         this.addChild(lazyLayer);
 
         // add "HelloWorld" splash screen"
-        this.sprite = cc.Sprite.spriteWithFile("Resources/HelloWorld.png");
+        this.sprite = cc.Sprite.create("Resources/HelloWorld.png");
         this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
 
@@ -85,7 +85,7 @@ var Helloworld = cc.Layer.extend({
 
 Helloworld.scene = function () {
     // 'scene' is an autorelease object
-    var scene = cc.Scene.node();
+    var scene = cc.Scene.create();
 
     // 'layer' is an autorelease object
     var layer = this.node();

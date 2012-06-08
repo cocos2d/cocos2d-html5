@@ -85,15 +85,15 @@ var ActionManagerTest = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 32);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
         label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3);
+        var menu = cc.Menu.create(item1, item2, item3);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
@@ -132,21 +132,21 @@ var CrashTest = ActionManagerTest.extend({
     onEnter:function () {
         this._super();
 
-        var child = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var child = cc.Sprite.create(s_pathGrossini);
         child.setPosition(cc.PointMake(200, 200));
         this.addChild(child, 1);
 
         //Sum of all action's duration is 1.5 second.
-        child.runAction(cc.RotateBy.actionWithDuration(1.5, 90));
-        child.runAction(cc.Sequence.actions(
-            cc.DelayTime.actionWithDuration(1.4),
-            cc.FadeOut.actionWithDuration(1.1))
+        child.runAction(cc.RotateBy.create(1.5, 90));
+        child.runAction(cc.Sequence.create(
+            cc.DelayTime.create(1.4),
+            cc.FadeOut.create(1.1))
         );
 
         //After 1.5 second, self will be removed.
-        this.runAction(cc.Sequence.actions(
-            cc.DelayTime.actionWithDuration(1.4),
-            cc.CallFunc.actionWithTarget(this, this.removeThis))
+        this.runAction(cc.Sequence.create(
+            cc.DelayTime.create(1.4),
+            cc.CallFunc.create(this, this.removeThis))
         );
     },
     removeThis:function () {
@@ -167,18 +167,18 @@ var LogicTest = ActionManagerTest.extend({
     onEnter:function () {
         this._super();
 
-        var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var grossini = cc.Sprite.create(s_pathGrossini);
         this.addChild(grossini, 0, 2);
         grossini.setPosition(cc.PointMake(200, 200));
 
-        grossini.runAction(cc.Sequence.actions(
-            cc.MoveBy.actionWithDuration(1, cc.PointMake(150, 0)),
-            cc.CallFunc.actionWithTarget(this, this.bugMe))
+        grossini.runAction(cc.Sequence.create(
+            cc.MoveBy.create(1, cc.PointMake(150, 0)),
+            cc.CallFunc.create(this, this.bugMe))
         );
     },
     bugMe:function (node) {
         node.stopAllActions(); //After this stop next action not working, if remove this stop everything is working
-        node.runAction(cc.ScaleTo.actionWithDuration(2, 2));
+        node.runAction(cc.ScaleTo.create(2, 2));
     }
 });
 
@@ -199,18 +199,18 @@ var PauseTest = ActionManagerTest.extend({
         this._super();
 
         var s = cc.Director.sharedDirector().getWinSize();
-        var l = cc.LabelTTF.labelWithString("After 5 seconds grossini should move", "Thonburi", 16);
+        var l = cc.LabelTTF.create("After 5 seconds grossini should move", "Thonburi", 16);
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
 
         //
         // Also, this test MUST be done, after [super onEnter]
         //
-        var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var grossini = cc.Sprite.create(s_pathGrossini);
         this.addChild(grossini, 0, TAG_GROSSINI);
         grossini.setPosition(cc.PointMake(200, 200));
 
-        var action = cc.MoveBy.actionWithDuration(1, cc.PointMake(150, 0));
+        var action = cc.MoveBy.create(1, cc.PointMake(150, 0));
 
         cc.ActionManager.sharedManager().addAction(action, grossini, true);
 
@@ -236,16 +236,16 @@ var RemoveTest = ActionManagerTest.extend({
         this._super();
 
         var s = cc.Director.sharedDirector().getWinSize();
-        var l = cc.LabelTTF.labelWithString("Should not crash", "Thonburi", 16);
+        var l = cc.LabelTTF.create("Should not crash", "Thonburi", 16);
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
 
-        var move = cc.MoveBy.actionWithDuration(2, cc.PointMake(200, 0));
-        var callback = cc.CallFunc.actionWithTarget(this, this.stopAction);
-        var sequence = cc.Sequence.actions(move, callback);
+        var move = cc.MoveBy.create(2, cc.PointMake(200, 0));
+        var callback = cc.CallFunc.create(this, this.stopAction);
+        var sequence = cc.Sequence.create(move, callback);
         sequence.setTag(TAG_SEQUENCE);
 
-        var child = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var child = cc.Sprite.create(s_pathGrossini);
         child.setPosition(cc.PointMake(200, 200));
 
         this.addChild(child, 1, TAG_GROSSINI);
@@ -270,18 +270,18 @@ var ResumeTest = ActionManagerTest.extend({
         this._super();
 
         var s = cc.Director.sharedDirector().getWinSize();
-        var l = cc.LabelTTF.labelWithString("Grossini only rotate/scale in 3 seconds", "Thonburi", 16);
+        var l = cc.LabelTTF.create("Grossini only rotate/scale in 3 seconds", "Thonburi", 16);
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
 
-        var grossini = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var grossini = cc.Sprite.create(s_pathGrossini);
         this.addChild(grossini, 0, TAG_GROSSINI);
         grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
 
-        grossini.runAction(cc.ScaleBy.actionWithDuration(2, 2));
+        grossini.runAction(cc.ScaleBy.create(2, 2));
 
         cc.ActionManager.sharedManager().pauseTarget(grossini);
-        grossini.runAction(cc.RotateBy.actionWithDuration(2, 360));
+        grossini.runAction(cc.RotateBy.create(2, 360));
 
         this.schedule(this.resumeGrossini, 3.0);
     },

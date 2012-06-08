@@ -32,7 +32,7 @@ var cc = cc = cc || {};
 
  You can modify the frame of a cc.Sprite by doing:
 
- var frame = cc.SpriteFrame.frameWithTexture(texture, rect, offset);
+ var frame = cc.SpriteFrame.create(texture, rect, offset);
  sprite.setDisplayFrame(frame);
  */
 cc.SpriteFrame = cc.Class.extend({
@@ -126,7 +126,7 @@ cc.SpriteFrame = cc.Class.extend({
     }
 });
 
-cc.SpriteFrame.frameWithTexture = function (texture, rect, rotated, offset, originalSize) {
+cc.SpriteFrame.create = function (texture, rect, rotated, offset, originalSize) {
     var argnum = arguments.length;
     var spriteFrame = new cc.SpriteFrame();
     switch (argnum) {
@@ -149,7 +149,7 @@ cc.SpriteFrame.frameWithTexture = function (texture, rect, rotated, offset, orig
     return spriteFrame;
 };
 
-cc.SpriteFrame.frameWithTextureForCanvas = function (texture, rect, rotated, offset, originalSize) {
+cc.SpriteFrame._frameWithTextureForCanvas = function (texture, rect, rotated, offset, originalSize) {
     var spriteFrame = new cc.SpriteFrame();
     spriteFrame._texture = texture;
     spriteFrame._rectInPixels = rect;

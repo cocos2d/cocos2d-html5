@@ -28,61 +28,61 @@ TRANSITION_DURATION = 1.2;
 var TransitionsTests = [
     "JumpZoomTransition", //ok
     "FadeTransition", //ok
-    "FadeWhiteTransition",//ok
+    "FadeWhiteTransition", //ok
 
     /*"FlipXLeftOver",
-    "FlipXRightOver",
-    "FlipYUpOver",
-    "FlipYDownOver",
-    "FlipAngularLeftOver",
-    "FlipAngularRightOver",
-    "ZoomFlipXLeftOver",
-    "ZoomFlipXRightOver",
-    "ZoomFlipYUpOver",
-    "ZoomFlipYDownOver",
-    "ZoomFlipAngularLeftOver",
-    "ZoomFlipAngularRightOver",*/
+     "FlipXRightOver",
+     "FlipYUpOver",
+     "FlipYDownOver",
+     "FlipAngularLeftOver",
+     "FlipAngularRightOver",
+     "ZoomFlipXLeftOver",
+     "ZoomFlipXRightOver",
+     "ZoomFlipYUpOver",
+     "ZoomFlipYDownOver",
+     "ZoomFlipAngularLeftOver",
+     "ZoomFlipAngularRightOver",*/
 
-    "ShrinkGrowTransition",//ok
-    "RotoZoomTransition",//ok
-    "MoveInLTransition",//ok
-    "MoveInRTransition",//ok
-    "MoveInTTransition",//ok
-    "MoveInBTransition",//ok
-    "SlideInLTransition",//ok
-    "SlideInRTransition",//ok
-    "SlideInTTransition",//ok
+    "ShrinkGrowTransition", //ok
+    "RotoZoomTransition", //ok
+    "MoveInLTransition", //ok
+    "MoveInRTransition", //ok
+    "MoveInTTransition", //ok
+    "MoveInBTransition", //ok
+    "SlideInLTransition", //ok
+    "SlideInRTransition", //ok
+    "SlideInTTransition", //ok
     "SlideInBTransition"//ok
 
-   /* "CCTransitionCrossFade",
-    "CCTransitionRadialCCW",
-    "CCTransitionRadialCW",*/
+    /* "CCTransitionCrossFade",
+     "CCTransitionRadialCCW",
+     "CCTransitionRadialCW",*/
 
     /*"PageTransitionForward",
-    "PageTransitionBackward",
-    "FadeTRTransition",
-    "FadeBLTransition",
-    "FadeUpTransition",
-    "FadeDownTransition",
-    "TurnOffTilesTransition",
-    "SplitRowsTransition",
-    "SplitColsTransition"*/
+     "PageTransitionBackward",
+     "FadeTRTransition",
+     "FadeBLTransition",
+     "FadeUpTransition",
+     "FadeDownTransition",
+     "TurnOffTilesTransition",
+     "SplitRowsTransition",
+     "SplitColsTransition"*/
 ];
 var transitionsIdx = 0;
-function nextTransitionAction(t,s) {
+function nextTransitionAction(t, s) {
     ++transitionsIdx;
     transitionsIdx = transitionsIdx % TransitionsTests.length;
-    return new window[TransitionsTests[transitionsIdx]](t,s);
+    return new window[TransitionsTests[transitionsIdx]](t, s);
 }
-function backTransitionAction(t,s) {
+function backTransitionAction(t, s) {
     --transitionsIdx;
     if (transitionsIdx < 0) {
         transitionsIdx += TransitionsTests.length;
     }
-    return new window[TransitionsTests[transitionsIdx]](t,s);
+    return new window[TransitionsTests[transitionsIdx]](t, s);
 }
-function restartTransitionAction(t,s) {
-    return new window[TransitionsTests[transitionsIdx]](t,s);
+function restartTransitionAction(t, s) {
+    return new window[TransitionsTests[transitionsIdx]](t, s);
 }
 
 // the class inherit from TestScene
@@ -95,8 +95,8 @@ var TransitionsTestScene = TestScene.extend({
         cc.Director.sharedDirector().replaceScene(this);
 
         /*s_nTransitionsIdx = -1;
-        this.addChild(nextTransitionAction());
-        cc.Director.sharedDirector().replaceScene(this);*/
+         this.addChild(nextTransitionAction());
+         cc.Director.sharedDirector().replaceScene(this);*/
     }
 });
 
@@ -110,27 +110,27 @@ var TestLayer1 = cc.Layer.extend({
         x = size.width;
         y = size.height;
 
-        var bg1 = cc.Sprite.spriteWithFile(s_back1);
+        var bg1 = cc.Sprite.create(s_back1);
         bg1.setPosition(cc.PointMake(size.width / 2, size.height / 2));
         bg1.setScale(1.7);
         this.addChild(bg1, -1);
 
-        var title = cc.LabelTTF.labelWithString(TransitionsTests[transitionsIdx], "Thonburi", 32);
+        var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx], "Thonburi", 32);
         this.addChild(title);
         title.setColor(cc.ccc3(255, 32, 32));
         title.setPosition(cc.PointMake(x / 2, y - 100));
 
-        var label = cc.LabelTTF.labelWithString("SCENE 1", "Marker Felt", 38);
+        var label = cc.LabelTTF.create("SCENE 1", "Marker Felt", 38);
         label.setColor(cc.ccc3(16, 16, 255));
         label.setPosition(cc.PointMake(x / 2, y / 2));
         this.addChild(label);
 
         // menu
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
+        var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(size.width / 2 - 100, 30));
@@ -145,7 +145,7 @@ var TestLayer1 = cc.Layer.extend({
 
         var layer = new TestLayer2();
         s.addChild(layer);
-        var scene = restartTransitionAction(TRANSITION_DURATION,s)
+        var scene = restartTransitionAction(TRANSITION_DURATION, s)
 
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
@@ -157,7 +157,7 @@ var TestLayer1 = cc.Layer.extend({
         var layer = new TestLayer2();
         s.addChild(layer);
 
-        var scene = nextTransitionAction(TRANSITION_DURATION,s)
+        var scene = nextTransitionAction(TRANSITION_DURATION, s)
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
@@ -168,7 +168,7 @@ var TestLayer1 = cc.Layer.extend({
         var layer = new TestLayer2();
         s.addChild(layer);
 
-        var scene = backTransitionAction(TRANSITION_DURATION,s)
+        var scene = backTransitionAction(TRANSITION_DURATION, s)
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
@@ -188,27 +188,27 @@ var TestLayer2 = cc.Layer.extend({
         x = size.width;
         y = size.height;
 
-        var bg1 = cc.Sprite.spriteWithFile(s_back2);
+        var bg1 = cc.Sprite.create(s_back2);
         bg1.setPosition(cc.PointMake(size.width / 2, size.height / 2));
         bg1.setScale(1.7);
         this.addChild(bg1, -1);
 
-        var title = cc.LabelTTF.labelWithString(TransitionsTests[transitionsIdx], "Thonburi", 32);
+        var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx], "Thonburi", 32);
         this.addChild(title);
         title.setColor(cc.ccc3(255, 32, 32));
         title.setPosition(cc.PointMake(x / 2, y - 100));
 
-        var label = cc.LabelTTF.labelWithString("SCENE 2", "Marker Felt", 38);
+        var label = cc.LabelTTF.create("SCENE 2", "Marker Felt", 38);
         label.setColor(cc.ccc3(16, 16, 255));
         label.setPosition(cc.PointMake(x / 2, y / 2));
         this.addChild(label);
 
         // menu
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
+        var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(x / 2 - 100, 30));
@@ -225,7 +225,7 @@ var TestLayer2 = cc.Layer.extend({
         var layer = new TestLayer1();
         s.addChild(layer);
 
-        var scene = restartTransitionAction(TRANSITION_DURATION,s)
+        var scene = restartTransitionAction(TRANSITION_DURATION, s)
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
@@ -236,7 +236,7 @@ var TestLayer2 = cc.Layer.extend({
         var layer = new TestLayer1();
         s.addChild(layer);
 
-        var scene = nextTransitionAction(TRANSITION_DURATION,s)
+        var scene = nextTransitionAction(TRANSITION_DURATION, s)
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
@@ -247,7 +247,7 @@ var TestLayer2 = cc.Layer.extend({
         var layer = new TestLayer1();
         s.addChild(layer);
 
-        var scene = nextTransitionAction(TRANSITION_DURATION,s)
+        var scene = nextTransitionAction(TRANSITION_DURATION, s)
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
@@ -259,150 +259,150 @@ var TestLayer2 = cc.Layer.extend({
 });
 
 var JumpZoomTransition = function (t, s) {
-    return cc.TransitionJumpZoom.transitionWithDuration(t, s);
+    return cc.TransitionJumpZoom.create(t, s);
 }
-var FadeTransition = function(t,s){
-    return cc.TransitionFade.transitionWithDuration(t, s);
+var FadeTransition = function (t, s) {
+    return cc.TransitionFade.create(t, s);
 }
 
 var FadeWhiteTransition = function (t, s) {
-    return cc.TransitionFade.transitionWithDuration(t, s, cc.WHITE());
+    return cc.TransitionFade.create(t, s, cc.WHITE());
 };
 
 var FlipXLeftOver = function (t, s) {
-    return cc.TransitionFlipX.transitionWithDuration(t, s, cc.ORIENTATION_LEFT_OVER);
+    return cc.TransitionFlipX.create(t, s, cc.ORIENTATION_LEFT_OVER);
 };
 
 var FlipXRightOver = function (t, s) {
-    return cc.TransitionFlipX.transitionWithDuration(t, s, cc.ORIENTATION_RIGHT_OVER);
+    return cc.TransitionFlipX.create(t, s, cc.ORIENTATION_RIGHT_OVER);
 };
 
 var FlipYUpOver = function (t, s) {
-    return cc.TransitionFlipY.transitionWithDuration(t, s, cc.ORIENTATION_UP_OVER);
+    return cc.TransitionFlipY.create(t, s, cc.ORIENTATION_UP_OVER);
 };
 
 var FlipYDownOver = function (t, s) {
-    return cc.TransitionFlipY.transitionWithDuration(t, s, cc.ORIENTATION_DOWN_OVER);
+    return cc.TransitionFlipY.create(t, s, cc.ORIENTATION_DOWN_OVER);
 };
 
 var FlipAngularLeftOver = function (t, s) {
-    return cc.TransitionFlipAngular.transitionWithDuration(t, s, cc.ORIENTATION_LEFT_OVER);
+    return cc.TransitionFlipAngular.create(t, s, cc.ORIENTATION_LEFT_OVER);
 };
 
 var FlipAngularRightOver = function (t, s) {
-    return cc.TransitionFlipAngular.transitionWithDuration(t, s, cc.ORIENTATION_RIGHT_OVER);
+    return cc.TransitionFlipAngular.create(t, s, cc.ORIENTATION_RIGHT_OVER);
 };
 
 var ZoomFlipXLeftOver = function (t, s) {
-    return cc.TransitionZoomFlipX.transitionWithDuration(t, s, cc.ORIENTATION_LEFT_OVER);
+    return cc.TransitionZoomFlipX.create(t, s, cc.ORIENTATION_LEFT_OVER);
 };
 
 var ZoomFlipXRightOver = function (t, s) {
-    return cc.TransitionZoomFlipX.transitionWithDuration(t, s, cc.ORIENTATION_RIGHT_OVER);
+    return cc.TransitionZoomFlipX.create(t, s, cc.ORIENTATION_RIGHT_OVER);
 };
 
 var ZoomFlipYUpOver = function (t, s) {
-    return cc.TransitionZoomFlipY.transitionWithDuration(t, s, cc.ORIENTATION_UP_OVER);
+    return cc.TransitionZoomFlipY.create(t, s, cc.ORIENTATION_UP_OVER);
 };
 
 var ZoomFlipYDownOver = function (t, s) {
-    return cc.TransitionZoomFlipY.transitionWithDuration(t, s, cc.ORIENTATION_DOWN_OVER);
+    return cc.TransitionZoomFlipY.create(t, s, cc.ORIENTATION_DOWN_OVER);
 };
 
 var ZoomFlipAngularLeftOver = function (t, s) {
-    return cc.TransitionZoomFlipAngular.transitionWithDuration(t, s, cc.ORIENTATION_LEFT_OVER);
+    return cc.TransitionZoomFlipAngular.create(t, s, cc.ORIENTATION_LEFT_OVER);
 };
 
 var ZoomFlipAngularRightOver = function (t, s) {
-    return cc.TransitionZoomFlipAngular.transitionWithDuration(t, s, cc.ORIENTATION_RIGHT_OVER);
+    return cc.TransitionZoomFlipAngular.create(t, s, cc.ORIENTATION_RIGHT_OVER);
 };
 
 var ShrinkGrowTransition = function (t, s) {
-    return cc.TransitionShrinkGrow.transitionWithDuration(t, s);
+    return cc.TransitionShrinkGrow.create(t, s);
 };
 
 var RotoZoomTransition = function (t, s) {
-    return cc.TransitionRotoZoom.transitionWithDuration(t, s);
+    return cc.TransitionRotoZoom.create(t, s);
 };
 
 var MoveInLTransition = function (t, s) {
-    return cc.TransitionMoveInL.transitionWithDuration(t, s);
+    return cc.TransitionMoveInL.create(t, s);
 };
 
 var MoveInRTransition = function (t, s) {
-    return cc.TransitionMoveInR.transitionWithDuration(t, s);
+    return cc.TransitionMoveInR.create(t, s);
 };
 
 var MoveInTTransition = function (t, s) {
-    return cc.TransitionMoveInT.transitionWithDuration(t, s);
+    return cc.TransitionMoveInT.create(t, s);
 };
 
 var MoveInBTransition = function (t, s) {
-    return cc.TransitionMoveInB.transitionWithDuration(t, s);
+    return cc.TransitionMoveInB.create(t, s);
 };
 
 var SlideInLTransition = function (t, s) {
-    return cc.TransitionSlideInL.transitionWithDuration(t, s);
+    return cc.TransitionSlideInL.create(t, s);
 };
 
 var SlideInRTransition = function (t, s) {
-    return cc.TransitionSlideInR.transitionWithDuration(t, s);
+    return cc.TransitionSlideInR.create(t, s);
 };
 
 var SlideInTTransition = function (t, s) {
-    return cc.TransitionSlideInT.transitionWithDuration(t, s);
+    return cc.TransitionSlideInT.create(t, s);
 };
 
 var SlideInBTransition = function (t, s) {
-    return cc.TransitionSlideInB.transitionWithDuration(t, s);
+    return cc.TransitionSlideInB.create(t, s);
 };
 
 var CCTransitionCrossFade = function (t, s) {
-    return cc.TransitionCrossFade.transitionWithDuration(t, s);
+    return cc.TransitionCrossFade.create(t, s);
 };
 
 var CCTransitionRadialCCW = function (t, s) {
-    return cc.TransitionRadialCCW.transitionWithDuration(t, s);
+    return cc.TransitionRadialCCW.create(t, s);
 };
 
 var CCTransitionRadialCW = function (t, s) {
-    return cc.TransitionRadialCW.transitionWithDuration(t, s);
+    return cc.TransitionRadialCW.create(t, s);
 };
 
 var PageTransitionForward = function (t, s) {
     cc.Director.sharedDirector().setDepthTest(true);
-    return cc.TransitionPageTurn.transitionWithDuration(t, s, false);
+    return cc.TransitionPageTurn.create(t, s, false);
 };
 
 var PageTransitionBackward = function (t, s) {
     cc.Director.sharedDirector().setDepthTest(true);
-    return cc.TransitionPageTurn.transitionWithDuration(t, s, true);
+    return cc.TransitionPageTurn.create(t, s, true);
 };
 
 var FadeTRTransition = function (t, s) {
-    return cc.TransitionFadeTR.transitionWithDuration(t, s);
+    return cc.TransitionFadeTR.create(t, s);
 };
 
 var FadeBLTransition = function (t, s) {
-    return cc.TransitionFadeBL.transitionWithDuration(t, s);
+    return cc.TransitionFadeBL.create(t, s);
 };
 
 var FadeUpTransition = function (t, s) {
-    return cc.TransitionFadeUp.transitionWithDuration(t, s);
+    return cc.TransitionFadeUp.create(t, s);
 };
 
 var FadeDownTransition = function (t, s) {
-    return cc.TransitionFadeDown.transitionWithDuration(t, s);
+    return cc.TransitionFadeDown.create(t, s);
 };
 
 var TurnOffTilesTransition = function (t, s) {
-    return cc.TransitionTurnOffTiles.transitionWithDuration(t, s);
+    return cc.TransitionTurnOffTiles.create(t, s);
 };
 
 var SplitRowsTransition = function (t, s) {
-    return cc.TransitionSplitRows.transitionWithDuration(t, s);
+    return cc.TransitionSplitRows.create(t, s);
 };
 
 var SplitColsTransition = function (t, s) {
-    return cc.TransitionSplitCols.transitionWithDuration(t, s);
+    return cc.TransitionSplitCols.create(t, s);
 };

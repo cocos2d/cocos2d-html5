@@ -343,9 +343,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                     context.save();
                     context.globalAlpha = particle.color.a;
                     context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-                    if(this._shapeType == cc.PARTICLE_STAR_SHAPE){
+                    if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
                         cc.drawingUtil.drawStar(context, new cc.Point(0, 0), lpx, particle.color);
-                    }else{
+                    } else {
                         cc.drawingUtil.drawColorBall(context, new cc.Point(0, 0), lpx, particle.color);
                     }
                     context.restore()
@@ -412,7 +412,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
 /** creates an initializes a CCParticleSystemQuad from a plist file.
  This plist files can be creted manually or with Particle Designer:
  */
-cc.ParticleSystemQuad.particleWithFile = function (pListFile) {
+cc.ParticleSystemQuad.create = function (pListFile) {
     var ret = new cc.ParticleSystemQuad();
     if (ret && ret.initWithFile(pListFile)) {
         return ret;

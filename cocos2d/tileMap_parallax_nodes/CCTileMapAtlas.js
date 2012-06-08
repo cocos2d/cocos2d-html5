@@ -257,7 +257,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
 /** creates a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.
  The tile file will be loaded using the TextureMgr.
  */
-cc.TileMapAtlas.tileMapAtlasWithTileFile = function (tile, mapFile, tileWidth, tileHeight) {
+cc.TileMapAtlas.create = function (tile, mapFile, tileWidth, tileHeight) {
     var ret = new cc.TileMapAtlas();
     if (ret.initWithTileFile(tile, mapFile, tileWidth, tileHeight)) {
         return ret;
