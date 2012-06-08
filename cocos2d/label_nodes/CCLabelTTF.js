@@ -121,7 +121,7 @@ cc.LabelTTF = cc.Sprite.extend({
             var color = this._color;
             context.fillStyle = "rgba(" + color.r + "," + color.g + "," + color.b + ", " + this._opacity / 255 + ")";
 
-            if(context.font != this._fontStyleStr)
+            if (context.font != this._fontStyleStr)
                 context.font = this._fontStyleStr;
 
             var offset = 0;
@@ -171,14 +171,14 @@ cc.LabelTTF = cc.Sprite.extend({
                         offset = (maxWidth - temWidth) / 2;
                         break;
                 }
-                context.fillText(line, x + offset, y );
-                y+=lineHeight;
+                context.fillText(line, x + offset, y);
+                y += lineHeight;
                 line = words[n] + " ";
             }
             else {
                 line = testLine;
-                if(n == words.length-1){
-                context.fillText(line, x + offset, y );
+                if (n == words.length - 1) {
+                    context.fillText(line, x + offset, y);
                 }
             }
 
@@ -194,7 +194,7 @@ cc.LabelTTF = cc.Sprite.extend({
 });
 
 /** creates a CCLabelTTF from a fontname, alignment, dimension and font size */
-cc.LabelTTF.labelWithString = function (label, dimensions, alignment, fontName, fontSize) {
+cc.LabelTTF.create = function (label, dimensions, alignment, fontName, fontSize) {
     var ret = new cc.LabelTTF();
     if (arguments.length > 3) {
         if ((ret != null) && (ret.initWithString(label, dimensions, alignment, fontName, fontSize))) {

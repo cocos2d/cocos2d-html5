@@ -54,7 +54,7 @@ var PongLayer = cc.Layer.extend({
         this._winSize = cc.Director.sharedDirector().getWinSize();
 
         this._ball = Ball.ballWithTexture(cc.TextureCache.sharedTextureCache().addImage(s_ball));
-        this._ball.setPosition(cc.PointMake(this._winSize.width /2, this._winSize.height /2));
+        this._ball.setPosition(cc.PointMake(this._winSize.width / 2, this._winSize.height / 2));
         this._ball.setVelocity(this._ballStartingVelocity);
         this.addChild(this._ball);
 
@@ -63,19 +63,19 @@ var PongLayer = cc.Layer.extend({
         this._paddles = [];
 
         var paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(this._winSize.width/2, 15));
+        paddle.setPosition(cc.PointMake(this._winSize.width / 2, 15));
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - STATUS_BAR_HEIGHT - 15));
+        paddle.setPosition(cc.PointMake(this._winSize.width / 2, this._winSize.height - STATUS_BAR_HEIGHT - 15));
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(this._winSize.width/2, 100));
+        paddle.setPosition(cc.PointMake(this._winSize.width / 2, 100));
         this._paddles.push(paddle);
 
         paddle = Paddle.paddleWithTexture(paddleTexture);
-        paddle.setPosition(cc.PointMake(this._winSize.width/2, this._winSize.height - STATUS_BAR_HEIGHT - 100));
+        paddle.setPosition(cc.PointMake(this._winSize.width / 2, this._winSize.height - STATUS_BAR_HEIGHT - 100));
         this._paddles.push(paddle);
 
         for (var i = 0; i < this._paddles.length; i++) {
@@ -94,7 +94,7 @@ var PongLayer = cc.Layer.extend({
             this._ballStartingVelocity = cc.ccpMult(this._ballStartingVelocity, -1);
         }
         this._ball.setVelocity(this._ballStartingVelocity);
-        this._ball.setPosition(cc.PointMake(this._winSize.width /2, this._winSize.height /2));
+        this._ball.setPosition(cc.PointMake(this._winSize.width / 2, this._winSize.height / 2));
 
         // TODO -- scoring
     },

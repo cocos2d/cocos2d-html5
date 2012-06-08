@@ -122,15 +122,16 @@ cc.RectFromString = function (content) {
 cc.PointFromString = function (content) {
     var ret = cc.PointZero();
 
-    try{
-        if(content == "")
+    try {
+        if (content == "")
             return ret;
 
         var strs = cc.splitWithForm(content);
         var x = parseFloat(strs[0]);
         var y = parseFloat(strs[1]);
         ret = cc.PointMake(x, y);
-    } catch(e){}
+    } catch (e) {
+    }
     return ret;
 }
 /**
@@ -145,14 +146,15 @@ cc.PointFromString = function (content) {
  */
 cc.SizeFromString = function (content) {
     var ret = cc.SizeZero();
-    try{
-        if(content == "")
+    try {
+        if (content == "")
             return ret;
 
         var strs = cc.splitWithForm(content);
         var width = parseFloat(strs[0]);
         var height = parseFloat(strs[1]);
         ret = cc.SizeMake(width, height);
-    }catch(e){}
+    } catch (e) {
+    }
     return ret;
 }

@@ -70,22 +70,22 @@ var SpriteDemo = cc.Layer.extend({
 
         var winSize = cc.Director.sharedDirector().getWinSize();
 
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 18);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 18);
         this.addChild(label, 1);
         label.setPosition(cc.PointMake(winSize.width / 2, winSize.height - 50));
 
         var strSubtitle = this.subtitle();
         if (strSubtitle != "") {
-            var l = cc.LabelTTF.labelWithString(strSubtitle, "Thonburi", 22);
+            var l = cc.LabelTTF.create(strSubtitle, "Thonburi", 22);
             this.addChild(l, 1);
             l.setPosition(cc.PointMake(winSize.width / 2, winSize.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3);
+        var menu = cc.Menu.create(item1, item2, item3);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.PointMake(winSize.width / 2 - 100, 30));
@@ -116,20 +116,20 @@ var SpriteProgressToRadial = SpriteDemo.extend({
         this._super();
         var winSize = cc.Director.sharedDirector().getWinSize();
 
-        var to1 = cc.ProgressTo.actionWithDuration(2, 100);
-        var to2 = cc.ProgressTo.actionWithDuration(2, 100);
+        var to1 = cc.ProgressTo.create(2, 100);
+        var to2 = cc.ProgressTo.create(2, 100);
 
-        var left = cc.ProgressTimer.progressWithFile(s_pathSister1);
+        var left = cc.ProgressTimer.create(s_pathSister1);
         left.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW);
         this.addChild(left);
         left.setPosition(cc.PointMake(100, winSize.height / 2));
-        left.runAction(cc.RepeatForever.actionWithAction(to1));
+        left.runAction(cc.RepeatForever.create(to1));
 
-        var right = cc.ProgressTimer.progressWithFile(s_pathBlock);
+        var right = cc.ProgressTimer.create(s_pathBlock);
         right.setType(cc.CCPROGRESS_TIMER_RADIAL_CCW);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 100, winSize.height / 2));
-        right.runAction(cc.RepeatForever.actionWithAction(to2));
+        right.runAction(cc.RepeatForever.create(to2));
     },
     subtitle:function () {
         return "ProgressTo Radial";
@@ -142,20 +142,20 @@ var SpriteProgressToHorizontal = SpriteDemo.extend({
 
         var winSize = cc.Director.sharedDirector().getWinSize();
 
-        var to1 = cc.ProgressTo.actionWithDuration(2, 100);
-        var to2 = cc.ProgressTo.actionWithDuration(2, 100);
+        var to1 = cc.ProgressTo.create(2, 100);
+        var to2 = cc.ProgressTo.create(2, 100);
 
-        var left = cc.ProgressTimer.progressWithFile(s_pathSister1);
+        var left = cc.ProgressTimer.create(s_pathSister1);
         left.setType(cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR);
         this.addChild(left);
         left.setPosition(cc.PointMake(100, winSize.height / 2));
-        left.runAction(cc.RepeatForever.actionWithAction(to1));
+        left.runAction(cc.RepeatForever.create(to1));
 
-        var right = cc.ProgressTimer.progressWithFile(s_pathSister2);
+        var right = cc.ProgressTimer.create(s_pathSister2);
         right.setType(cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 100, winSize.height / 2));
-        right.runAction(cc.RepeatForever.actionWithAction(to2));
+        right.runAction(cc.RepeatForever.create(to2));
     },
     subtitle:function () {
         return "ProgressTo Horizontal";
@@ -168,20 +168,20 @@ var SpriteProgressToVertical = SpriteDemo.extend({
 
         var winSize = cc.Director.sharedDirector().getWinSize();
 
-        var to1 = cc.ProgressTo.actionWithDuration(2, 100);
-        var to2 = cc.ProgressTo.actionWithDuration(2, 100);
+        var to1 = cc.ProgressTo.create(2, 100);
+        var to2 = cc.ProgressTo.create(2, 100);
 
-        var left = cc.ProgressTimer.progressWithFile(s_pathSister1);
+        var left = cc.ProgressTimer.create(s_pathSister1);
         left.setType(cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT);
         this.addChild(left);
         left.setPosition(cc.PointMake(100, winSize.height / 2));
-        left.runAction(cc.RepeatForever.actionWithAction(to1));
+        left.runAction(cc.RepeatForever.create(to1));
 
-        var right = cc.ProgressTimer.progressWithFile(s_pathSister2);
+        var right = cc.ProgressTimer.create(s_pathSister2);
         right.setType(cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 100, winSize.height / 2));
-        right.runAction(cc.RepeatForever.actionWithAction(to2));
+        right.runAction(cc.RepeatForever.create(to2));
     },
     subtitle:function () {
         return "ProgressTo Vertical";

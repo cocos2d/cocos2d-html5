@@ -40,10 +40,10 @@ var TestScene = cc.Scene.extend({
     },
     onEnter:function () {
         this._super();
-        var label = cc.LabelTTF.labelWithString("MainMenu", "Arial", 20);
-        var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.MainMenuCallback);
+        var label = cc.LabelTTF.create("MainMenu", "Arial", 20);
+        var menuItem = cc.MenuItemLabel.create(label, this, this.MainMenuCallback);
 
-        var menu = cc.Menu.menuWithItems(menuItem, null);
+        var menu = cc.Menu.create(menuItem, null);
         var s = cc.Director.sharedDirector().getWinSize();
         menu.setPosition(cc.PointZero());
         menuItem.setPosition(cc.PointMake(s.width - 50, 25));
@@ -54,7 +54,7 @@ var TestScene = cc.Scene.extend({
 
     },
     MainMenuCallback:function () {
-        var scene = cc.Scene.node();
+        var scene = cc.Scene.create();
         var layer = new TestController();
         scene.addChild(layer);
         cc.Director.sharedDirector().replaceScene(scene);
@@ -74,19 +74,19 @@ var TestController = cc.Layer.extend({
         if (!s_pathClose) {
             s_pathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");
         }
-        var closeItem = cc.MenuItemImage.itemFromNormalImage(s_pathClose, s_pathClose, this, this.closeCallback);
-        var menu = cc.Menu.menuWithItems(closeItem, null);//pmenu is just a holder for the close button
+        var closeItem = cc.MenuItemImage.create(s_pathClose, s_pathClose, this, this.closeCallback);
+        var menu = cc.Menu.create(closeItem, null);//pmenu is just a holder for the close button
         var s = cc.Director.sharedDirector().getWinSize();
         menu.setPosition(cc.PointZero());
         closeItem.setPosition(cc.PointMake(s.width - 30, s.height - 30));
 
         // add menu items for tests
-        this._itemMenu = cc.Menu.menuWithItems(null);//item menu is where all the label goes, and the one gets scrolled
+        this._itemMenu = cc.Menu.create(null);//item menu is where all the label goes, and the one gets scrolled
 
-        for (var i =0,len = testNames.length;i < len;i++) {
-            var label = cc.LabelTTF.labelWithString(testNames[i], "Arial", 24);
-            var menuItem = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback);
-            this._itemMenu.addChild(menuItem,i  + 10000);
+        for (var i = 0, len = testNames.length; i < len; i++) {
+            var label = cc.LabelTTF.create(testNames[i], "Arial", 24);
+            var menuItem = cc.MenuItemLabel.create(label, this, this.menuCallback);
+            this._itemMenu.addChild(menuItem, i + 10000);
             menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }
 
@@ -100,7 +100,7 @@ var TestController = cc.Layer.extend({
         var idx = sender.getZOrder() - 10000;
         // get the userdata, it's the index of the menu item clicked
         // create the test scene and run it
-        var scene = new window[testNames[idx]+"Scene"]();
+        var scene = new window[testNames[idx] + "Scene"]();
         if (scene) {
             scene.runThisTest();
         }
@@ -135,7 +135,7 @@ var TestController = cc.Layer.extend({
             this._itemMenu.setPosition(nextPos);
             this._beginPos = cc.ccp(0, touchLocation).y;
 
-            curPos   = nextPos;
+            curPos = nextPos;
         }
     },
     ccTouchesEnded:function () {

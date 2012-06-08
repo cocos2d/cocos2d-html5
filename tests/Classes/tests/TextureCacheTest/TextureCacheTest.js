@@ -32,8 +32,8 @@ var TextureCacheTest = cc.Layer.extend({
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
 
-        this._labelLoading = cc.LabelTTF.labelWithString("loading...", "Arial", 15);
-        this._labelPercent = cc.LabelTTF.labelWithString("%0", "Arial", 15);
+        this._labelLoading = cc.LabelTTF.create("loading...", "Arial", 15);
+        this._labelPercent = cc.LabelTTF.create("%0", "Arial", 15);
 
         this._labelLoading.setPosition(cc.PointMake(size.width / 2, size.height / 2 - 20));
         this._labelPercent.setPosition(cc.PointMake(size.width / 2, size.height / 2 + 20));
@@ -67,31 +67,31 @@ var TextureCacheTest = cc.Layer.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // create sprites
-        var bg = cc.Sprite.spriteWithFile("Resources/Images/HelloWorld.png");
+        var bg = cc.Sprite.create("Resources/Images/HelloWorld.png");
         bg.setPosition(cc.PointMake(size.width / 2, size.height / 2));
         //bg.setScale(1.7);
 
-        var s1 = cc.Sprite.spriteWithFile("Resources/Images/grossini.png");
-        var s2 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_01.png");
-        var s3 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_02.png");
-        var s4 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_03.png");
-        var s5 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_04.png");
-        var s6 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_05.png");
-        var s7 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_06.png");
-        var s8 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_07.png");
-        var s9 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_08.png");
-        var s10 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_09.png");
-        var s11 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_10.png");
-        var s12 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_11.png");
-        var s13 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_12.png");
-        var s14 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_13.png");
-        var s15 = cc.Sprite.spriteWithFile("Resources/Images/grossini_dance_14.png");
+        var s1 = cc.Sprite.create("Resources/Images/grossini.png");
+        var s2 = cc.Sprite.create("Resources/Images/grossini_dance_01.png");
+        var s3 = cc.Sprite.create("Resources/Images/grossini_dance_02.png");
+        var s4 = cc.Sprite.create("Resources/Images/grossini_dance_03.png");
+        var s5 = cc.Sprite.create("Resources/Images/grossini_dance_04.png");
+        var s6 = cc.Sprite.create("Resources/Images/grossini_dance_05.png");
+        var s7 = cc.Sprite.create("Resources/Images/grossini_dance_06.png");
+        var s8 = cc.Sprite.create("Resources/Images/grossini_dance_07.png");
+        var s9 = cc.Sprite.create("Resources/Images/grossini_dance_08.png");
+        var s10 = cc.Sprite.create("Resources/Images/grossini_dance_09.png");
+        var s11 = cc.Sprite.create("Resources/Images/grossini_dance_10.png");
+        var s12 = cc.Sprite.create("Resources/Images/grossini_dance_11.png");
+        var s13 = cc.Sprite.create("Resources/Images/grossini_dance_12.png");
+        var s14 = cc.Sprite.create("Resources/Images/grossini_dance_13.png");
+        var s15 = cc.Sprite.create("Resources/Images/grossini_dance_14.png");
 
         // just loading textures to slow down
-        var s16 = cc.Sprite.spriteWithFile("Resources/Images/background1.png");
-        var s17 = cc.Sprite.spriteWithFile("Resources/Images/background2.png");
-        var s18 = cc.Sprite.spriteWithFile("Resources/Images/background3.png");
-        var s19 = cc.Sprite.spriteWithFile("Resources/Images/blocks.png");
+        var s16 = cc.Sprite.create("Resources/Images/background1.png");
+        var s17 = cc.Sprite.create("Resources/Images/background2.png");
+        var s18 = cc.Sprite.create("Resources/Images/background3.png");
+        var s19 = cc.Sprite.create("Resources/Images/blocks.png");
 
         s1.setPosition(cc.PointMake(50, 50));
         s2.setPosition(cc.PointMake(60, 50));

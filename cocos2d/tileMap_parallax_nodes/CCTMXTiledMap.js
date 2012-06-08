@@ -133,7 +133,7 @@ cc.TMXTiledMap = cc.Node.extend({
 
         this.setContentSize(cc.SizeZero());
 
-        var mapInfo = cc.TMXMapInfo.formatWithTMXFile(tmxFile);
+        var mapInfo = cc.TMXMapInfo.create(tmxFile);
 
         if (!mapInfo) {
             return false;
@@ -180,7 +180,7 @@ cc.TMXTiledMap = cc.Node.extend({
 
     /** return the TMXLayer for the specific layer */
     layerNamed:function (layerName) {
-        if(this._tMXLayers.hasOwnProperty(layerName)){
+        if (this._tMXLayers.hasOwnProperty(layerName)) {
             return this._tMXLayers[layerName];
         }
         return null;
@@ -212,7 +212,7 @@ cc.TMXTiledMap = cc.Node.extend({
     /*private:*/
     parseLayer:function (layerInfo, mapInfo) {
         var tileset = this.tilesetForLayer(layerInfo, mapInfo);
-        var layer = cc.TMXLayer.layerWithTilesetInfo(tileset, layerInfo, mapInfo);
+        var layer = cc.TMXLayer.create(tileset, layerInfo, mapInfo);
         // tell the layerinfo to release the ownership of the tiles map.
         layerInfo.ownTiles = false;
         layer.setupTiles();
@@ -259,7 +259,7 @@ cc.TMXTiledMap = cc.Node.extend({
 
 /** creates a TMX Tiled Map with a TMX file.*/
 // implementation cc.TMXTiledMap
-cc.TMXTiledMap.tiledMapWithTMXFile = function (tmxFile) {
+cc.TMXTiledMap.create = function (tmxFile) {
     var ret = new cc.TMXTiledMap();
     if (ret.initWithTMXFile(tmxFile)) {
         return ret;

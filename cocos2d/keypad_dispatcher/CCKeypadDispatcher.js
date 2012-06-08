@@ -183,7 +183,7 @@ cc.KeypadDispatcher = cc.Class.extend({
      @brief force add the delegate
      */
     forceAddDelegate:function (delegate) {
-        var handler = cc.KeypadHandler.handlerWithDelegate(delegate);
+        var handler = cc.KeypadHandler.create(delegate);
         if (handler) {
             //if handler already exist
             for (var i = 0; i < this._delegates; i++) {

@@ -4,9 +4,9 @@
  You can choose between MIT and BSD-3-Clause license. License file will be added later.
  --*/
 
-var cc  = cc  = cc || {};
+var cc = cc = cc || {};
 
-cc.Codec = {name: 'Jacob__Codec'};
+cc.Codec = {name:'Jacob__Codec'};
 
 /**
  * Unpack a gzipped byte array

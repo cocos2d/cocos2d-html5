@@ -74,7 +74,7 @@ cc.ProgressTo = cc.ActionInterval.extend({
 });
 
 /** Creates and initializes with a duration and a percent */
-cc.ProgressTo.actionWithDuration = function (duration, percent) {
+cc.ProgressTo.create = function (duration, percent) {
     var progressTo = new cc.ProgressTo();
     progressTo.initWithDuration(duration, percent);
 
@@ -113,7 +113,7 @@ cc.ProgressFromTo = cc.ActionInterval.extend({
         return copy;
     },
     reverse:function () {
-        return cc.ProgressFromTo.actionWithDuration(this._duration, this._to, this._from);
+        return cc.ProgressFromTo.create(this._duration, this._to, this._from);
     },
     startWithTarget:function (target) {
         this._super(target);
@@ -126,7 +126,7 @@ cc.ProgressFromTo = cc.ActionInterval.extend({
 });
 
 /** Creates and initializes the action with a duration, a "from" percentage and a "to" percentage */
-cc.ProgressFromTo.actionWithDuration = function (duration, fromPercentage, toPercentage) {
+cc.ProgressFromTo.create = function (duration, fromPercentage, toPercentage) {
     var progressFromTo = new cc.ProgressFromTo();
     progressFromTo.initWithDuration(duration, fromPercentage, toPercentage);
     return progressFromTo;

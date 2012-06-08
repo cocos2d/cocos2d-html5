@@ -95,7 +95,7 @@ cc.PageTurn3D = cc.Grid3DAction.extend({
 });
 
 /** create the action */
-cc.PageTurn3D.actionWithSize = function (gridSize, time) {
+cc.PageTurn3D.create = function (gridSize, time) {
     var action = new cc.PageTurn3D();
     return action;
 };

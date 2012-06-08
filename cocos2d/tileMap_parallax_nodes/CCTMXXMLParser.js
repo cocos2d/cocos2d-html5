@@ -505,7 +505,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
 });
 
 /** creates a TMX Format with a tmx file */
-cc.TMXMapInfo.formatWithTMXFile = function (tmxFile) {
+cc.TMXMapInfo.create = function (tmxFile) {
     var ret = new cc.TMXMapInfo();
     if (ret.initWithTMXFile(tmxFile)) {
         return ret;
