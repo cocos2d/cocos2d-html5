@@ -804,9 +804,9 @@ var LabelTTFChinese = AtlasDemo.extend({
 var LabelBMFontChinese = AtlasDemo.extend({
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
-        var Lable = cc.LabelBMFont.labelWithString("中国", "Resources/fonts/bitmapFontChinese.fnt");
-        Lable.setPosition(cc.ccp(size.width / 2, size.height /2));
-        this.addChild(Lable);
+        var lable = cc.LabelBMFont.labelWithString("中国", "Resources/fonts/bitmapFontChinese.fnt");
+        lable.setPosition(cc.ccp(size.width / 2, size.height /2));
+        this.addChild(lable);
     },
     title:function () {
         return "Testing CCLabelBMFont with Chinese character";
