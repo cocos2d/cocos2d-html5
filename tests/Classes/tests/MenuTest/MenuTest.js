@@ -42,44 +42,43 @@ var MenuLayer1 = cc.Layer.extend({
         this.setIsTouchEnabled(true);
         // Font Item
 
-        var spriteNormal = cc.Sprite.spriteWithFile(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
-        var spriteSelected = cc.Sprite.spriteWithFile(s_menuItem, cc.RectMake(0, 23, 115, 23));
-        var spriteDisabled = cc.Sprite.spriteWithFile(s_menuItem, cc.RectMake(0, 0, 115, 23));
+        var spriteNormal = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
+        var spriteSelected = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23, 115, 23));
+        var spriteDisabled = cc.Sprite.create(s_menuItem, cc.RectMake(0, 0, 115, 23));
 
-        var item1 = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback);
+        var item1 = cc.MenuItemSprite.create(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback);
 
         // Image Item
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_sendScore, s_pressSendScore, this, this.menuCallback2);
+        var item2 = cc.MenuItemImage.create(s_sendScore, s_pressSendScore, this, this.menuCallback2);
 
         // Label Item (LabelAtlas)
-        var labelAtlas = cc.LabelAtlas.labelWithString("0123456789", "Resources/fonts/fps_images.png", 16, 24, '.');
-        var item3 = cc.MenuItemLabel.itemWithLabel(labelAtlas, this, this.menuCallbackDisabled);
+        var labelAtlas = cc.LabelAtlas.create("0123456789", "Resources/fonts/fps_images.png", 16, 24, '.');
+        var item3 = cc.MenuItemLabel.create(labelAtlas, this, this.menuCallbackDisabled);
         item3.setDisabledColor(cc.ccc3(32, 32, 64));
         item3.setColor(cc.ccc3(200, 200, 255));
 
         // Font Item
-        var item4 = cc.MenuItemFont.itemFromString("I toggle enable items", this, this.menuCallbackEnabled);
+        var item4 = cc.MenuItemFont.create("I toggle enable items", this, this.menuCallbackEnabled);
 
         item4.setFontSizeObj(20);
         cc.MenuItemFont.setFontName("Marker Felt");
 
-        // Label Item (cc.LabelBMFont)
-        var label = cc.LabelBMFont.labelWithString("configuration", "Resources/fonts/bitmapFontTest3.fnt");
-        //var label = cc.LabelTTF.labelWithString("configuration","Arial",28);
-        var item5 = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallbackConfig);
+        // Label Item (CCLabelBMFont)
+        var label = cc.LabelBMFont.create("configuration", "Resources/fonts/bitmapFontTest3.fnt");
+        var item5 = cc.MenuItemLabel.create(label, this, this.menuCallbackConfig);
 
         // Testing issue #500
         item5.setScale(0.8);
 
         // Font Item
-        var item6 = cc.MenuItemFont.itemFromString("Quit", this, this.onQuit);
+        var item6 = cc.MenuItemFont.create("Quit", this, this.onQuit);
 
-        var color_action = cc.TintBy.actionWithDuration(0.5, 0, -255, -255);
+        var color_action = cc.TintBy.create(0.5, 0, -255, -255);
         var color_back = color_action.reverse();
-        var seq = cc.Sequence.actions(color_action, color_back, null);
-        item6.runAction(cc.RepeatForever.actionWithAction(seq));
+        var seq = cc.Sequence.create(color_action, color_back, null);
+        item6.runAction(cc.RepeatForever.create(seq));
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, item4, item5, item6, null);
+        var menu = cc.Menu.create(item1, item2, item3, item4, item5, item6, null);
         menu.alignItemsVertically();
 
 
@@ -101,7 +100,7 @@ var MenuLayer1 = cc.Layer.extend({
 
             child.setPosition(cc.PointMake(dstPoint.x + offset, dstPoint.y));
             child.runAction(
-                cc.EaseElasticOut.actionWithAction(cc.MoveBy.actionWithDuration(2, cc.PointMake(dstPoint.x - offset, 0)), 0.35)
+                cc.EaseElasticOut.create(cc.MoveBy.create(2, cc.PointMake(dstPoint.x - offset, 0)), 0.35)
             );
         }
         this._disabledItem = item3;
@@ -139,7 +138,7 @@ var MenuLayer1 = cc.Layer.extend({
         this._parent.switchTo(2);
     },
     onQuit:function (sender) {
-        cc.Assert(0,"Quit!");
+        cc.Assert(0, "Quit!");
     }
 });
 
@@ -151,13 +150,13 @@ var MenuLayer1 = cc.Layer.extend({
 var MenuLayer2 = cc.Layer.extend({
     ctor:function () {
         for (var i = 0; i < 2; i++) {
-            var item1 = cc.MenuItemImage.itemFromNormalImage(s_playNormal, s_playSelect, this, this.menuCallback);
-            var item2 = cc.MenuItemImage.itemFromNormalImage(s_highNormal, s_highSelect, this, this.menuCallbackOpacity);
-            var item3 = cc.MenuItemImage.itemFromNormalImage(s_aboutNormal, s_aboutSelect, this, this.menuCallbackAlign);
+            var item1 = cc.MenuItemImage.create(s_playNormal, s_playSelect, this, this.menuCallback);
+            var item2 = cc.MenuItemImage.create(s_highNormal, s_highSelect, this, this.menuCallbackOpacity);
+            var item3 = cc.MenuItemImage.create(s_aboutNormal, s_aboutSelect, this, this.menuCallbackAlign);
             item1.setScaleX(1.5);
             item2.setScaleX(0.5);
             item3.setScaleX(0.5);
-            var menu = cc.Menu.menuWithItems(item1, item2, item3);
+            var menu = cc.Menu.create(item1, item2, item3);
             menu.setTag(TAG_MENU);
             this.addChild(menu, 0, 100 + i);
             this._centeredMenu = menu.getPosition();
@@ -227,21 +226,20 @@ var MenuLayer3 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(28);
 
-        var label = cc.LabelBMFont.labelWithString("Enable AtlasItem", "Resources/fonts/bitmapFontTest3.fnt");
-        //var label = cc.LabelTTF.labelWithString("Enable AtlasItem","Arial",28);
-        var item1 = cc.MenuItemLabel.itemWithLabel(label, this, this.menuCallback2);
-        var item2 = cc.MenuItemFont.itemFromString("--- Go Back ---", this, this.menuCallback);
+        var label = cc.LabelBMFont.create("Enable AtlasItem", "Resources/fonts/bitmapFontTest3.fnt");
+        var item1 = cc.MenuItemLabel.create(label, this, this.menuCallback2);
+        var item2 = cc.MenuItemFont.create("--- Go Back ---", this, this.menuCallback);
 
-        var spriteNormal = cc.Sprite.spriteWithFile(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
-        var spriteSelected = cc.Sprite.spriteWithFile(s_menuItem, cc.RectMake(0, 23, 115, 23));
-        var spriteDisabled = cc.Sprite.spriteWithFile(s_menuItem, cc.RectMake(0, 0, 115, 23));
+        var spriteNormal = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
+        var spriteSelected = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23, 115, 23));
+        var spriteDisabled = cc.Sprite.create(s_menuItem, cc.RectMake(0, 0, 115, 23));
 
 
-        var item3 = cc.MenuItemSprite.itemFromNormalSprite(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback3);
+        var item3 = cc.MenuItemSprite.create(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback3);
         this._disabledItem = item3;
         this._disabledItem.setIsEnabled(false);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3);
+        var menu = cc.Menu.create(item1, item2, item3);
         menu.setPosition(cc.PointMake(0, 0));
 
         var s = cc.Director.sharedDirector().getWinSize();
@@ -250,18 +248,18 @@ var MenuLayer3 = cc.Layer.extend({
         item2.setPosition(cc.PointMake(s.width / 2 - 200, s.height / 2));
         item3.setPosition(cc.PointMake(s.width / 2, s.height / 2 - 100));
 
-        var jump = cc.JumpBy.actionWithDuration(3, cc.PointMake(400, 0), 50, 4);
-        item2.runAction(cc.RepeatForever.actionWithAction(
-            (cc.Sequence.actions(jump, jump.reverse()))
+        var jump = cc.JumpBy.create(3, cc.PointMake(400, 0), 50, 4);
+        item2.runAction(cc.RepeatForever.create(
+            (cc.Sequence.create(jump, jump.reverse()))
         )
         );
-        var spin1 = cc.RotateBy.actionWithDuration(3, 360);
+        var spin1 = cc.RotateBy.create(3, 360);
         var spin2 = spin1.copy();
         var spin3 = spin1.copy();
 
-        item1.runAction(cc.RepeatForever.actionWithAction(spin1));
-        item2.runAction(cc.RepeatForever.actionWithAction(spin2));
-        item3.runAction(cc.RepeatForever.actionWithAction(spin3));
+        item1.runAction(cc.RepeatForever.create(spin1));
+        item2.runAction(cc.RepeatForever.create(spin2));
+        item3.runAction(cc.RepeatForever.create(spin3));
 
         this.addChild(menu);
     },
@@ -282,50 +280,50 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
 
-        var title1 = cc.MenuItemFont.itemFromString("Sound");
+        var title1 = cc.MenuItemFont.create("Sound");
         title1.setIsEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
-        var item1 = cc.MenuItemToggle.itemWithTarget(this,
+        var item1 = cc.MenuItemToggle.create(this,
             this.menuCallback,
-            cc.MenuItemFont.itemFromString("On"),
-            cc.MenuItemFont.itemFromString("Off"));
+            cc.MenuItemFont.create("On"),
+            cc.MenuItemFont.create("Off"));
 
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
-        var title2 = cc.MenuItemFont.itemFromString("Music");
+        var title2 = cc.MenuItemFont.create("Music");
         title2.setIsEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
-        var item2 = cc.MenuItemToggle.itemWithTarget(this,
+        var item2 = cc.MenuItemToggle.create(this,
             this.menuCallback,
-            cc.MenuItemFont.itemFromString("On"),
-            cc.MenuItemFont.itemFromString("Off"));
+            cc.MenuItemFont.create("On"),
+            cc.MenuItemFont.create("Off"));
 
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
-        var title3 = cc.MenuItemFont.itemFromString("Quality");
+        var title3 = cc.MenuItemFont.create("Quality");
         title3.setIsEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
-        var item3 = cc.MenuItemToggle.itemWithTarget(this,
+        var item3 = cc.MenuItemToggle.create(this,
             this.menuCallback,
-            cc.MenuItemFont.itemFromString("High"),
-            cc.MenuItemFont.itemFromString("Low"));
+            cc.MenuItemFont.create("High"),
+            cc.MenuItemFont.create("Low"));
 
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
-        var title4 = cc.MenuItemFont.itemFromString("Orientation");
+        var title4 = cc.MenuItemFont.create("Orientation");
         title4.setIsEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
-        var item4 = cc.MenuItemToggle.itemWithTarget(this,
+        var item4 = cc.MenuItemToggle.create(this,
             this.menuCallback,
-            cc.MenuItemFont.itemFromString("Off"));
+            cc.MenuItemFont.create("Off"));
 
-        item4.getSubItems().push(cc.MenuItemFont.itemFromString("33%"));
-        item4.getSubItems().push(cc.MenuItemFont.itemFromString("66%"));
-        item4.getSubItems().push(cc.MenuItemFont.itemFromString("100%"));
+        item4.getSubItems().push(cc.MenuItemFont.create("33%"));
+        item4.getSubItems().push(cc.MenuItemFont.create("66%"));
+        item4.getSubItems().push(cc.MenuItemFont.create("100%"));
 
         // you can change the one of the items by doing this
         item4.setSelectedIndex(2);
@@ -333,11 +331,10 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
 
-        var label = cc.LabelBMFont.labelWithString("go back", "Resources/fonts/bitmapFontTest3.fnt");
-        //var label = cc.LabelTTF.labelWithString("go back","Arial",28);
-        var back = cc.MenuItemLabel.itemWithLabel(label, this, this.backCallback);
+        var label = cc.LabelBMFont.create("go back", "Resources/fonts/bitmapFontTest3.fnt");
+        var back = cc.MenuItemLabel.create(label, this, this.backCallback);
 
-        var menu = cc.Menu.menuWithItems(
+        var menu = cc.Menu.create(
             title1, title2,
             item1, item2,
             title3, title4,
@@ -362,7 +359,7 @@ var MenuTestScene = TestScene.extend({
         var Layer3 = new MenuLayer3();
         var Layer4 = new MenuLayer4();
 
-        var layer = cc.LayerMultiplex.layerWithLayers(Layer1, Layer2, Layer3, Layer4, null);
+        var layer = cc.LayerMultiplex.create(Layer1, Layer2, Layer3, Layer4, null);
         this.addChild(layer, 0);
         cc.Director.sharedDirector().replaceScene(this);
     }

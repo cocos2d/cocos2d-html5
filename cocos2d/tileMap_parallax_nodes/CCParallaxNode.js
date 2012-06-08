@@ -61,7 +61,7 @@ cc.PointObject = cc.Class.extend({
         return true;
     }
 });
-cc.PointObject.pointWithCCPoint = function (ratio, offset) {
+cc.PointObject.create = function (ratio, offset) {
     var ret = new cc.PointObject();
     ret.initWithCCPoint(ratio, offset);
     return ret;
@@ -93,7 +93,7 @@ cc.ParallaxNode = cc.Node.extend({
             return;
         }
         cc.Assert(child != null, "Argument must be non-nil");
-        var obj = cc.PointObject.pointWithCCPoint(ratio, offset);
+        var obj = cc.PointObject.create(ratio, offset);
         obj.setChild(child);
         this._parallaxArray.push(obj);
 
@@ -149,7 +149,7 @@ cc.ParallaxNode = cc.Node.extend({
     _lastPosition:null
 });
 
-cc.ParallaxNode.node = function () {
+cc.ParallaxNode.create = function () {
     var ret = new cc.ParallaxNode();
     return ret;
 }

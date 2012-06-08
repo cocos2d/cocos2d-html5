@@ -61,25 +61,35 @@ cc.MotionStreak = cc.Node.extend({
 
     _ribbon:null,
     /** Ribbon used by MotionStreak (weak reference) */
-    getRibbon:function(){return this._ribbon;},
+    getRibbon:function () {
+        return this._ribbon;
+    },
 
     //CCTextureProtocol methods
-    getTexture:function(){return this._ribbon.getTexture();},
-    getTexture:function(texture){this._ribbon.setTexture(texture);},
+    getTexture:function () {
+        return this._ribbon.getTexture();
+    },
+    getTexture:function (texture) {
+        this._ribbon.setTexture(texture);
+    },
 
-    getBlendFunc:function(){ return this._ribbon.getBlendFunc();},
-    setBlendFunc:function(blendFunc){this._ribbon.setBlendFunc(blendFunc);},
+    getBlendFunc:function () {
+        return this._ribbon.getBlendFunc();
+    },
+    setBlendFunc:function (blendFunc) {
+        this._ribbon.setBlendFunc(blendFunc);
+    },
 
-    ctor:function(){
+    ctor:function () {
         this._super();
     },
 
     /** initializes a MotionStreak. The file will be loaded using the TextureMgr. */
-    initWithFade:function(fade,seg,imagePath,width,length,color){
+    initWithFade:function (fade, seg, imagePath, width, length, color) {
         this._segThreshold = seg;
         this._width = width;
         this._lastLocation = cc.PointZero();
-        this._ribbon = cc.Ribbon.ribbonWithWidth(this._width, imagePath, length, color, fade);
+        this._ribbon = cc.Ribbon.create(this._width, imagePath, length, color, fade);
         this.addChild(this._ribbon);
 
         // update ribbon position. Use schedule:interval and not scheduleUpdated. (cocos2d-iphone)issue #1075
@@ -88,9 +98,9 @@ cc.MotionStreak = cc.Node.extend({
     },
 
     /** polling function */
-    update:function(delta){
+    update:function (delta) {
         var location = this.convertToWorldSpace(cc.PointZero());
-        this._ribbon.setPosition(cc.ccp(-1*location.x, -1*location.y));
+        this._ribbon.setPosition(cc.ccp(-1 * location.x, -1 * location.y));
         var len = cc.ccpLength(cc.ccpSub(this._lastLocation, location));
         if (len > this._segThreshold) {
             this._ribbon.addPointAt(location, this._width);
@@ -101,9 +111,9 @@ cc.MotionStreak = cc.Node.extend({
 });
 
 /** creates the a MotionStreak. The image will be loaded using the TextureMgr. */
-cc.MotionStreak.streakWithFade = function(fade,seg,imagePath,width,length,color){
+cc.MotionStreak.create = function (fade, seg, imagePath, width, length, color) {
     var ret = new cc.MotionStreak();
-    if(ret && ret.initWithFade(fade, seg, imagePath, width, length, color)){
+    if (ret && ret.initWithFade(fade, seg, imagePath, width, length, color)) {
         return ret;
     }
     return null;

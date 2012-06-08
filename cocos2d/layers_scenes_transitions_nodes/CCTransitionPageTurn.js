@@ -56,7 +56,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
     actionWithSize:function (vector) {
         if (this._back) {
             // Get hold of the PageTurn3DAction
-            return cc.ReverseTime.actionWithAction(this._super(vector, this._duration));
+            return cc.ReverseTime.create(this._super(vector, this._duration));
         } else {
             // Get hold of the PageTurn3DAction
             return this._super(vector, this._duration);
@@ -77,28 +77,18 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
         var action = this.actionWithSize(cc.ccg(x, y));
 
         if (!this._back) {
-            this._outScene.runAction
-                (
-                    cc.Sequence.actions
-                        (
-                            action,
-                            cc.CallFunc.actionWithTarget(this, cc.TransitionScene.finish),
-                            cc.StopGrid.action(),
-                            null
-                        )
-                );
+            this._outScene.runAction(cc.Sequence.create(action,
+                cc.CallFunc.create(this, cc.TransitionScene.finish),
+                cc.StopGrid.create(),
+                null));
         } else {
             // to prevent initial flicker
             this._inScene.setIsVisible(false);
-            this._inScene.runAction
-                (
-                    cc.Sequence.actions(
-                        cc.Show.action(),
-                        action,
-                        cc.CallFunc.actionWithTarget(this, cc.TransitionScene.finish),
-                        cc.StopGrid.action(),
-                        null)
-                );
+            this._inScene.runAction(cc.Sequence.create(cc.Show.create(),
+                action,
+                cc.CallFunc.create(this, cc.TransitionScene.finish),
+                cc.StopGrid.create(),
+                null));
         }
     },
     _sceneOrder:function () {
@@ -111,7 +101,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
  * If back is true then the effect is reversed to appear as if the incoming
  * scene is being turned from left over the outgoing scene.
  */
-cc.TransitionPageTurn.transitionWithDuration = function (t, scene, backwards) {
+cc.TransitionPageTurn.create = function (t, scene, backwards) {
     var transition = new cc.TransitionPageTurn();
     transition.initWithDuration(t, scene, backwards);
     return transition;

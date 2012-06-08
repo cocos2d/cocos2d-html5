@@ -167,7 +167,7 @@ cc.Director = cc.Class.extend({
     init:function () {
         //cc.LOG("cocos2d: "+ cc.cocos2dVersion());
         if (!this._FPSLabel) {
-            this._FPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
+            this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 24);
         }
         this._FPSLabel.setPosition(cc.ccp(0, 0));
         this._FPSLabel.setAnchorPoint(cc.ccp(0, 0));
@@ -448,7 +448,7 @@ cc.Director = cc.Class.extend({
 
         if (cc.DIRECTOR_FAST_FPS) {
             if (!this._FPSLabel) {
-                this._FPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
+                this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 24);
                 this._FPSLabel.setPosition(cc.ccp(0, 0));
                 this._FPSLabel.setAnchorPoint(cc.ccp(0, 0));
             }
@@ -694,11 +694,11 @@ cc.Director = cc.Class.extend({
                 cc.canvas.height = cc.canvas.width;
                 cc.canvas.width = height;
                 cc.renderContext.translate(0, cc.canvas.height);
-                if(cc.domNode){
+                if (cc.domNode) {
                     var cont = cc.$("#Cocos2dGameContainer");
-                    if(cont){
-                        cont.style.width = cc.canvas.width+"px";
-                        cont.style.height = cc.canvas.height+"px";
+                    if (cont) {
+                        cont.style.width = cc.canvas.width + "px";
+                        cont.style.height = cc.canvas.height + "px";
                     }
                 }
             }
@@ -733,7 +733,7 @@ cc.Director = cc.Class.extend({
 
         if (cc.DIRECTOR_FAST_FPS) {
             if (!this._FPSLabel) {
-                this._FPSLabel = cc.LabelTTF.labelWithString("00.0", "Arial", 24);
+                this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 24);
                 this._FPSLabel.setPosition(cc.ccp(0, 0));
                 this._FPSLabel.setAnchorPoint(cc.ccp(0, 0));
                 //this._FPSLabel.retain();

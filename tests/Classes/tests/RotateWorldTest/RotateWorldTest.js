@@ -28,7 +28,7 @@ var RotateWorldTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = RotateWorldMainLayer.node();
         this.addChild(layer);
-        this.runAction(cc.RotateBy.actionWithDuration(4, -360));
+        this.runAction(cc.RotateBy.create(4, -360));
         cc.Director.sharedDirector().replaceScene(this);
     }
 });
@@ -43,9 +43,9 @@ var SpriteLayer = cc.Layer.extend({
         x = size.width;
         y = size.height;
 
-        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
-        var spriteSister1 = cc.Sprite.spriteWithFile(s_pathSister1);
-        var spriteSister2 = cc.Sprite.spriteWithFile(s_pathSister2);
+        var sprite = cc.Sprite.create(s_pathGrossini);
+        var spriteSister1 = cc.Sprite.create(s_pathSister1);
+        var spriteSister2 = cc.Sprite.create(s_pathSister2);
 
         sprite.setScale(1.5);
         spriteSister1.setScale(1.5);
@@ -55,7 +55,7 @@ var SpriteLayer = cc.Layer.extend({
         spriteSister1.setPosition(cc.PointMake(40, y / 2));
         spriteSister2.setPosition(cc.PointMake(x - 40, y / 2));
 
-        var rot = cc.RotateBy.actionWithDuration(16, -3600);
+        var rot = cc.RotateBy.create(16, -3600);
 
         this.addChild(sprite);
         this.addChild(spriteSister1);
@@ -63,17 +63,17 @@ var SpriteLayer = cc.Layer.extend({
 
         sprite.runAction(rot);
 
-        var jump1 = cc.JumpBy.actionWithDuration(4, cc.PointMake(-400, 0), 100, 4);
+        var jump1 = cc.JumpBy.create(4, cc.PointMake(-400, 0), 100, 4);
         var jump2 = jump1.reverse();
 
-        var rot1 = cc.RotateBy.actionWithDuration(4, 360 * 2);
+        var rot1 = cc.RotateBy.create(4, 360 * 2);
         var rot2 = rot1.reverse();
 
-        spriteSister1.runAction(cc.Repeat.actionWithAction(cc.Sequence.actions(jump2, jump1, null), 5));
-        spriteSister2.runAction(cc.Repeat.actionWithAction(cc.Sequence.actions(jump1.copy(), jump2.copy(), null), 5));
+        spriteSister1.runAction(cc.Repeat.create(cc.Sequence.create(jump2, jump1, null), 5));
+        spriteSister2.runAction(cc.Repeat.create(cc.Sequence.create(jump1.copy(), jump2.copy(), null), 5));
 
-        spriteSister1.runAction(cc.Repeat.actionWithAction(cc.Sequence.actions(rot1, rot2, null), 5));
-        spriteSister2.runAction(cc.Repeat.actionWithAction(cc.Sequence.actions(rot2.copy(), rot1.copy(), null), 5));
+        spriteSister1.runAction(cc.Repeat.create(cc.Sequence.create(rot1, rot2, null), 5));
+        spriteSister2.runAction(cc.Repeat.create(cc.Sequence.create(rot2.copy(), rot1.copy(), null), 5));
     }
 });
 
@@ -95,7 +95,7 @@ var TestLayer = cc.Layer.extend({
         //cc.MutableArray *array = [UIFont familyNames];
         //for( cc.String *s in array )
         //	NSLog( s );
-        var label = cc.LabelTTF.labelWithString("cocos2d", "Tahoma", 64);
+        var label = cc.LabelTTF.create("cocos2d", "Tahoma", 64);
 
         label.setPosition(cc.PointMake(x / 2, y / 2));
 
@@ -117,10 +117,10 @@ var RotateWorldMainLayer = cc.Layer.extend({
         x = size.width;
         y = size.height;
 
-        var blue = cc.LayerColor.layerWithColor(cc.ccc4(0, 0, 255, 255));
-        var red = cc.LayerColor.layerWithColor(cc.ccc4(255, 0, 0, 255));
-        var green = cc.LayerColor.layerWithColor(cc.ccc4(0, 255, 0, 255));
-        var white = cc.LayerColor.layerWithColor(cc.ccc4(255, 255, 255, 255));
+        var blue = cc.LayerColor.create(cc.ccc4(0, 0, 255, 255));
+        var red = cc.LayerColor.create(cc.ccc4(255, 0, 0, 255));
+        var green = cc.LayerColor.create(cc.ccc4(0, 255, 0, 255));
+        var white = cc.LayerColor.create(cc.ccc4(255, 255, 255, 255));
 
         blue.setScale(0.5);
         blue.setPosition(cc.PointMake(-x / 4, -y / 4));
@@ -141,7 +141,7 @@ var RotateWorldMainLayer = cc.Layer.extend({
         this.addChild(green);
         this.addChild(red);
 
-        var rot = cc.RotateBy.actionWithDuration(8, 720);
+        var rot = cc.RotateBy.create(8, 720);
 
         blue.runAction(rot);
         red.runAction(rot.copy());

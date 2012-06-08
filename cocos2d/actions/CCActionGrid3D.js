@@ -93,7 +93,7 @@ cc.Waves3D = cc.Grid3DAction.extend({
 });
 
 /** create the action */
-cc.Waves3D.actionWithWaves = function (wav, amp, gridSize, duration) {
+cc.Waves3D.create = function (wav, amp, gridSize, duration) {
     var action = new cc.Waves3D();
     return action;
 };
@@ -196,7 +196,7 @@ cc.FlipX3D = cc.Grid3DAction({
 });
 
 /** creates the action with duration */
-cc.FlipX3D.actionWithDuration = function (duration) {
+cc.FlipX3D.create = function (duration) {
     var action = new cc.FlipX3D();
     return action;
 };
@@ -284,7 +284,7 @@ cc.FlipY3D = cc.FlipX3D.extend({
 });
 
 /** creates the action with duration */
-cc.FlipY3D.actionWithDuration = function (duration) {
+cc.FlipY3D.create = function (duration) {
     var action = new cc.FlipY3D();
     return action;
 };
@@ -392,7 +392,7 @@ cc.Lens3D = cc.Grid3DAction.extend({
 });
 
 /** creates the action with center position, radius, a grid size and duration */
-cc.Lens3D.actionWithPosition = function (pos, r, gridSize, duration) {
+cc.Lens3D.create = function (pos, r, gridSize, duration) {
     var action = new cc.Lens3D();
     return action;
 };
@@ -486,7 +486,7 @@ cc.Ripple3D = cc.Grid3DAction.extend({
     }
 });
 /** creates the action with radius, number of waves, amplitude, a grid size and duration */
-cc.Ripple3D.actionWithPosition = function (pos, r, wav, amp, gridSize, duration) {
+cc.Ripple3D.create = function (pos, r, wav, amp, gridSize, duration) {
     var action = new cc.Ripple3D();
     return action;
 };
@@ -544,7 +544,7 @@ cc.Shaky3D = cc.Grid3DAction.extend({
 });
 
 /** creates the action with a range, shake Z vertices, a grid and duration */
-cc.Shaky3D.actionWithRange = function (range, shakeZ, gridSize, duration) {
+cc.Shaky3D.create = function (range, shakeZ, gridSize, duration) {
     var action = new cc.Shaky3D();
     return action;
 };
@@ -613,7 +613,7 @@ cc.Liquid = cc.Grid3DAction.extend({
 });
 
 /** creates the action with amplitude, a grid and duration */
-cc.Liquid.actionWithWaves = function (wav, amp, gridSize, duration) {
+cc.Liquid.create = function (wav, amp, gridSize, duration) {
     var action = new cc.Liquid();
     return action;
 };
@@ -693,7 +693,7 @@ cc.Waves = cc.Grid3DAction.extend({
 });
 
 /** initializes the action with amplitude, horizontal sin, vertical sin, a grid and duration */
-cc.Waves.actionWithWaves = function (wav, amp, h, v, gridSize, duration) {
+cc.Waves.create = function (wav, amp, h, v, gridSize, duration) {
     var action = new cc.Waves();
     return action;
 };
@@ -794,7 +794,7 @@ cc.Twirl = cc.Grid3DAction.extend({
 
 
 /** creates the action with center position, number of twirls, amplitude, a grid size and duration */
-cc.Twirl.actionWithPosition = function (pos, t, amp, gridSize, duration) {
+cc.Twirl.create = function (pos, t, amp, gridSize, duration) {
     var action = new cc.Twirl();
     return action;
 };

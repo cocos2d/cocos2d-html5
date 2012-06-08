@@ -72,13 +72,13 @@ DirectorTest = cc.Layer.extend({
         if (this._super()) {
             var s = cc.Director.sharedDirector().getWinSize();
 
-            var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 26);
+            var label = cc.LabelTTF.create(this.title(), "Arial", 26);
             this.addChild(label, 1);
             label.setPosition(cc.ccp(s.width / 2, s.height - 50));
 
             var sSubtitle = this.subtitle();
             if (sSubtitle.length) {
-                var l = cc.LabelTTF.labelWithString(sSubtitle, "Thonburi", 16);
+                var l = cc.LabelTTF.create(sSubtitle, "Thonburi", 16);
                 this.addChild(l, 1);
                 l.setPosition(cc.ccp(s.width / 2, s.height - 80));
             }
@@ -118,8 +118,8 @@ Director1 = DirectorTest.extend({
         if (this._super()) {
             this.setIsTouchEnabled(true);
             var s = cc.Director.sharedDirector().getWinSize();
-            var item = cc.MenuItemFont.itemFromString("Rotate Device", this, this.rotateDevice);
-            var menu = cc.Menu.menuWithItems(item, null);
+            var item = cc.MenuItemFont.create("Rotate Device", this, this.rotateDevice);
+            var menu = cc.Menu.create(item, null);
             menu.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this.addChild(menu);
 

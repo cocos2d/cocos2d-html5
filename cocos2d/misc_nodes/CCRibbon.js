@@ -375,7 +375,7 @@ cc.Ribbon = cc.Node.extend({
     }
 });
 
-cc.Ribbon.ribbonWithWidth = function (width, path, length, color, fade) {
+cc.Ribbon.create = function (width, path, length, color, fade) {
     var ret = new cc.Ribbon();
     if (ret && ret.initWithWidth(w, path, length, color, fade)) {
         return ret;

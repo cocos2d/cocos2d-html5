@@ -206,9 +206,9 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
         this._renderContext.beginPath();
         var endAngle = angle - Math.PI * 2;
-        this._renderContext.arc(0|center.x,0|-(center.y),radius,-angle,-endAngle,false);
-        if(drawLineToCenter){
-            this._renderContext.lineTo(0|center.x,0|-(center.y));
+        this._renderContext.arc(0 | center.x, 0 | -(center.y), radius, -angle, -endAngle, false);
+        if (drawLineToCenter) {
+            this._renderContext.lineTo(0 | center.x, 0 | -(center.y));
         }
         this._renderContext.stroke();
     },
@@ -265,22 +265,22 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         }
     },
 
-    drawStar:function(ctx,center,radius,color){
+    drawStar:function (ctx, center, radius, color) {
         var context = ctx || this._renderContext;
         context.save();
-        context.translate(center.x,-center.y);
+        context.translate(center.x, -center.y);
         context.rotate(cc.DEGREES_TO_RADIANS(45));
-        if(color instanceof cc.Color4F){
-            color = new cc.Color3B(0|(color.r * 255),0|(color.g * 255),0|(color.b * 255));
+        if (color instanceof cc.Color4F) {
+            color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
         }
         var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
-        context.fillStyle = colorStr +",1)";
+        context.fillStyle = colorStr + ",1)";
 
         var subRadius = radius / 10;
 
         context.beginPath();
-        context.moveTo( - radius, 0);
-        context.lineTo(0, - subRadius);
+        context.moveTo(-radius, 0);
+        context.lineTo(0, -subRadius);
         context.lineTo(radius, 0);
         context.lineTo(0, subRadius);
         context.lineTo(-radius, 0);
@@ -312,15 +312,15 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         context.restore();
     },
 
-    drawColorBall:function(ctx, center,radius,color){
+    drawColorBall:function (ctx, center, radius, color) {
         var context = ctx || this._renderContext;
-        if(color instanceof cc.Color4F){
-            color = new cc.Color3B(0|(color.r * 255),0|(color.g * 255),0|(color.b * 255));
+        if (color instanceof cc.Color4F) {
+            color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
         }
         var colorStr = "rgba(" + color.r + "," + color.g + "," + color.b;
         var subRadius = radius / 10;
 
-        var g1 = context.createRadialGradient(center.x,-center.y, subRadius, center.x,-center.y, radius);
+        var g1 = context.createRadialGradient(center.x, -center.y, subRadius, center.x, -center.y, radius);
         g1.addColorStop(0, colorStr + ", 1)");
         g1.addColorStop(0.3, colorStr + ", 0.8)");
         g1.addColorStop(0.6, colorStr + ", 0.4)");
@@ -329,7 +329,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         context.beginPath();
         var startAngle_1 = 0;
         var endAngle_1 = Math.PI * 2;
-        context.arc(center.x,-center.y, radius, startAngle_1, endAngle_1, false);
+        context.arc(center.x, -center.y, radius, startAngle_1, endAngle_1, false);
         context.closePath();
         context.fill();
     },

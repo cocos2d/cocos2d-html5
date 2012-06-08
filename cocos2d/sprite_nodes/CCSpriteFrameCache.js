@@ -122,9 +122,9 @@ cc.SpriteFrameCache = cc.Class.extend({
                         spriteSourceSize);
                 }
 
-                if(spriteFrame.isRotated()){
+                if (spriteFrame.isRotated()) {
                     var rect = spriteFrame.getRect();
-                    spriteFrame.setRect(new cc.Rect(rect.origin.x,rect.origin.y,rect.size.height,rect.size.width));
+                    spriteFrame.setRect(new cc.Rect(rect.origin.x, rect.origin.y, rect.size.height, rect.size.width));
                 }
 
                 // add sprite frame

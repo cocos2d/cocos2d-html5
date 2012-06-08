@@ -80,15 +80,15 @@ ParallaxDemo = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 28);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 28);
         this.addChild(label, 1);
         label.setPosition(cc.ccp(s.width / 2, s.height - 50));
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage(s_pathF1, s_pathF2, this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
+        var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
@@ -129,7 +129,7 @@ Parallax1 = ParallaxDemo.extend({
 
     ctor:function () {
         // Top Layer, a simple image
-        var cocosImage = cc.Sprite.spriteWithFile(s_power);
+        var cocosImage = cc.Sprite.create(s_power);
         // scale the image (optional)
         cocosImage.setScale(0.5);
         // change the transform anchor point to 0,0 (optional)
@@ -137,8 +137,8 @@ Parallax1 = ParallaxDemo.extend({
 
 
         // Middle layer: a Tile map atlas
-        //var tilemap = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_tilesPng, s_levelMapTga, 16, 16);
-        var tilemap = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test2.tmx");
+        //var tilemap = cc.TileMapAtlas.create(s_tilesPng, s_levelMapTga, 16, 16);
+        var tilemap = cc.TMXTiledMap.create("Resources/TileMaps/orthogonal-test2.tmx");
 
 
         // change the transform anchor to 0,0 (optional)
@@ -149,7 +149,7 @@ Parallax1 = ParallaxDemo.extend({
 
 
         // background layer: another image
-        var background = cc.Sprite.spriteWithFile(s_back);
+        var background = cc.Sprite.create(s_back);
         // scale the image (optional)
         //background.setScale(1.5);
         // change the transform anchor point (optional)
@@ -157,7 +157,7 @@ Parallax1 = ParallaxDemo.extend({
 
 
         // create a void node, a parent node
-        var voidNode = cc.ParallaxNode.node();
+        var voidNode = cc.ParallaxNode.create();
 
         // NOW add the 3 layers to the 'void' node
 
@@ -174,12 +174,12 @@ Parallax1 = ParallaxDemo.extend({
         // now create some actions that will move the 'void' node
         // and the children of the 'void' node will move at different
         // speed, thus, simulation the 3D environment
-        var goUp = cc.MoveBy.actionWithDuration(4, cc.ccp(0, 100));
+        var goUp = cc.MoveBy.create(4, cc.ccp(0, 100));
         var goDown = goUp.reverse();
-        var go = cc.MoveBy.actionWithDuration(8, cc.ccp(200, 0));
+        var go = cc.MoveBy.create(8, cc.ccp(200, 0));
         var goBack = go.reverse();
-        var seq = cc.Sequence.actions(goUp, go, goDown, goBack, null);
-        voidNode.runAction((cc.RepeatForever.actionWithAction(seq) ));
+        var seq = cc.Sequence.create(goUp, go, goDown, goBack, null);
+        voidNode.runAction((cc.RepeatForever.create(seq) ));
 
         this.addChild(voidNode);
     },
@@ -200,7 +200,7 @@ Parallax2 = ParallaxDemo.extend({
         this.setIsTouchEnabled(true);
 
         // Top Layer, a simple image
-        var cocosImage = cc.Sprite.spriteWithFile(s_power);
+        var cocosImage = cc.Sprite.create(s_power);
         // scale the image (optional)
         cocosImage.setScale(0.5);
         // change the transform anchor point to 0,0 (optional)
@@ -208,8 +208,8 @@ Parallax2 = ParallaxDemo.extend({
 
 
         // Middle layer: a Tile map atlas
-        //var tilemap = cc.TileMapAtlas.tileMapAtlasWithTileFile(s_tilesPng, s_levelMapTga, 16, 16);
-        var tilemap = cc.TMXTiledMap.tiledMapWithTMXFile("Resources/TileMaps/orthogonal-test2.tmx");
+        //var tilemap = cc.TileMapAtlas.create(s_tilesPng, s_levelMapTga, 16, 16);
+        var tilemap = cc.TMXTiledMap.create("Resources/TileMaps/orthogonal-test2.tmx");
 
         // change the transform anchor to 0,0 (optional)
         tilemap.setAnchorPoint(cc.ccp(0, 0));
@@ -219,7 +219,7 @@ Parallax2 = ParallaxDemo.extend({
 
 
         // background layer: another image
-        var background = cc.Sprite.spriteWithFile(s_back);
+        var background = cc.Sprite.create(s_back);
         // scale the image (optional)
         //background.setScale(1.5);
         // change the transform anchor point (optional)
@@ -227,7 +227,7 @@ Parallax2 = ParallaxDemo.extend({
 
 
         // create a void node, a parent node
-        var voidNode = cc.ParallaxNode.node();
+        var voidNode = cc.ParallaxNode.create();
 
         // NOW add the 3 layers to the 'void' node
 

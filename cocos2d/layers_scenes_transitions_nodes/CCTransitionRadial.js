@@ -37,18 +37,18 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // create the second render texture for outScene
-        var outTexture = cc.RenderTexture.renderTextureWithWidthAndHeight(size.width, size.height);
+        var outTexture = cc.RenderTexture.create(size.width, size.height);
 
-        if (null == outTexture){
+        if (null == outTexture) {
             return;
         }
 
-        outTexture.getSprite().setAnchorPoint(cc.ccp(0.5,0.5));
-        outTexture.setPosition(cc.ccp(size.width/2, size.height/2));
-        outTexture.setAnchorPoint(cc.ccp(0.5,0.5));
+        outTexture.getSprite().setAnchorPoint(cc.ccp(0.5, 0.5));
+        outTexture.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        outTexture.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         // render outScene to its texturebuffer
-        outTexture.clear(0,0,0,1);
+        outTexture.clear(0, 0, 0, 1);
         outTexture.begin();
         this._outScene.visit();
         outTexture.end();
@@ -57,20 +57,20 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
         this.hideOutShowIn();
 
         //	We need the texture in RenderTexture.
-        var outNode = cc.ProgressTimer.progressWithTexture(outTexture.getSprite().getTexture());
+        var outNode = cc.ProgressTimer.createWithTexture(outTexture.getSprite().getTexture());
         // but it's flipped upside down so we flip the sprite
         outNode.getSprite().setFlipY(true);
         //	Return the radial type that we want to use
         outNode.setType(_radialType());
         outNode.setPercentage(100);
-        outNode.setPosition(cc.ccp(size.width/2, size.height/2));
-        outNode.setAnchorPoint(cc.ccp(0.5,0.5));
+        outNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        outNode.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         // create the blend action
-        var layerAction = cc.Sequence.actions
+        var layerAction = cc.Sequence.create
             (
-                cc.ProgressFromTo.actionWithDuration(this._duration, 100.0, 0.0),
-                cc.CallFunc.actionWithTarget(this, cc.TransitionScene.finish),
+                cc.ProgressFromTo.create(this._duration, 100.0, 0.0),
+                cc.CallFunc.create(this, cc.TransitionScene.finish),
                 null
             );
         // run the blend action
@@ -102,13 +102,13 @@ cc.TransitionRadialCW = cc.TransitionRadialCCW.extend({
     }
 });
 
-cc.TransitionRadialCCW.transitionWithDuration = function (t, scene) {
+cc.TransitionRadialCCW.create = function (t, scene) {
     var tmpScene = new cc.TransitionRadialCCW();
     tmpScene.initWithDuration(t, scene);
     return tmpScene;
 };
 
-cc.TransitionRadialCW.transitionWithDuration = function (t, scene) {
+cc.TransitionRadialCW.create = function (t, scene) {
     var tmpScene = new cc.TransitionRadialCW();
     tmpScene.initWithDuration(t, scene);
     return tmpScene;

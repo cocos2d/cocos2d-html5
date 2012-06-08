@@ -68,14 +68,14 @@ var SubTest = cc.Class.extend({
         switch (this._subtestNumber) {
             case 1:
             {
-                sprite = cc.Sprite.spriteWithFile("Resources/Images/grossinis_sister1.png");
+                sprite = cc.Sprite.create("Resources/Images/grossinis_sister1.png");
                 this._parent.addChild(sprite, 0, tag + 100);
                 break;
             }
             case 2:
             case 3:
             {
-                sprite = cc.Sprite.spriteWithBatchNode(this._batchNode, cc.RectMake(0, 0, 52, 139));
+                sprite = cc.Sprite.createWithBatchNode(this._batchNode, cc.RectMake(0, 0, 52, 139));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -84,7 +84,7 @@ var SubTest = cc.Class.extend({
                 var idx = parseInt(cc.RANDOM_0_1() * 14) + 1;
                 idx = idx < 10 ? "0" + idx : idx.toString();
                 var str = "Resources/Images/grossini_dance_" + idx + ".png";
-                sprite = cc.Sprite.spriteWithFile(str);
+                sprite = cc.Sprite.create(str);
                 this._parent.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -94,7 +94,7 @@ var SubTest = cc.Class.extend({
                 var idx = 0 | (cc.RANDOM_0_1() * 14);
                 var x = (idx % 5) * 85;
                 var y = (0 | (idx / 5)) * 121;
-                sprite = cc.Sprite.spriteWithBatchNode(this._batchNode, cc.RectMake(x, y, 85, 121));
+                sprite = cc.Sprite.createWithBatchNode(this._batchNode, cc.RectMake(x, y, 85, 121));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -108,7 +108,7 @@ var SubTest = cc.Class.extend({
                 x = parseInt(r % 8);
 
                 var str = "Resources/Images/sprites_test/sprite-" + x + "-" + y + ".png";
-                sprite = cc.Sprite.spriteWithFile(str);
+                sprite = cc.Sprite.create(str);
                 this._parent.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -119,9 +119,9 @@ var SubTest = cc.Class.extend({
                 var y, x;
                 var r = 0 | (cc.RANDOM_0_1() * 64);
 
-                y = (0|(r / 8)) *32;
-                x = (r % 8)*32;
-                sprite = cc.Sprite.spriteWithBatchNode(this._batchNode, cc.RectMake(x, y, 32, 32));
+                y = (0 | (r / 8)) * 32;
+                x = (r % 8) * 32;
+                sprite = cc.Sprite.createWithBatchNode(this._batchNode, cc.RectMake(x, y, 32, 32));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -171,36 +171,36 @@ var SubTest = cc.Class.extend({
             ///
             case 2:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
-                this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossinis_sister1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossinis_sister1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 3:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
-                this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossinis_sister1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossinis_sister1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
             ///
             case 5:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
-                this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossini_dance_atlas.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossini_dance_atlas.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 6:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
-                this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/grossini_dance_atlas.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossini_dance_atlas.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
             ///
             case 8:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
-                this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 9:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
-                this._batchNode = cc.SpriteBatchNode.batchNodeWithFile("Resources/Images/spritesheet1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
@@ -281,24 +281,24 @@ var SpriteMainScene = cc.Scene.extend({
         this._quantityNodes = 0;
 
         // add title label
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 40);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
         label.setPosition(cc.ccp(s.width / 2, s.height - 32));
         label.setColor(cc.ccc3(255, 255, 40));
 
         cc.MenuItemFont.setFontSize(65);
-        var decrease = cc.MenuItemFont.itemFromString(" - ", this, this.onDecrease);
+        var decrease = cc.MenuItemFont.create(" - ", this, this.onDecrease);
         decrease.setColor(cc.ccc3(0, 200, 20));
-        var increase = cc.MenuItemFont.itemFromString(" + ", this, this.onIncrease);
+        var increase = cc.MenuItemFont.create(" + ", this, this.onIncrease);
         increase.setColor(cc.ccc3(0, 200, 20));
 
-        var menu = cc.Menu.menuWithItems(decrease, increase, null);
+        var menu = cc.Menu.create(decrease, increase, null);
         menu.alignItemsHorizontally();
 
         menu.setPosition(cc.ccp(s.width / 2, s.height - 65));
         this.addChild(menu, 1);
 
-        var infoLabel = cc.LabelTTF.labelWithString("0 nodes", "Marker Felt", 30);
+        var infoLabel = cc.LabelTTF.create("0 nodes", "Marker Felt", 30);
         infoLabel.setColor(cc.ccc3(0, 200, 20));
         infoLabel.setPosition(cc.ccp(s.width / 2, s.height - 90));
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
@@ -309,10 +309,10 @@ var SpriteMainScene = cc.Scene.extend({
 
         // Sub Tests
         cc.MenuItemFont.setFontSize(32);
-        var subMenu = cc.Menu.menuWithItems(null);
+        var subMenu = cc.Menu.create(null);
         for (var i = 1; i <= 9; ++i) {
             var text = i.toString();
-            var itemFont = cc.MenuItemFont.itemFromString(text, this, this.testNCallback);
+            var itemFont = cc.MenuItemFont.create(text, this, this.testNCallback);
             itemFont.setTag(i);
             subMenu.addChild(itemFont, 10);
 
@@ -393,14 +393,14 @@ function performanceActions(sprite) {
     sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
 
     var period = 0.5 + (Math.random() * 1000) / 500.0;
-    var rot = cc.RotateBy.actionWithDuration(period, 360.0 * cc.RANDOM_0_1());
+    var rot = cc.RotateBy.create(period, 360.0 * cc.RANDOM_0_1());
     var rot_back = rot.reverse();
-    var permanentRotation = cc.RepeatForever.actionWithAction(cc.Sequence.actions(rot, rot_back, null));
+    var permanentRotation = cc.RepeatForever.create(cc.Sequence.create(rot, rot_back, null));
     sprite.runAction(permanentRotation);
 
     var growDuration = 0.5 + (Math.random() * 1000) / 500.0;
-    var grow = cc.ScaleBy.actionWithDuration(growDuration, 0.5, 0.5);
-    var permanentScaleLoop = cc.RepeatForever.actionWithAction(cc.Sequence.actionOneTwo(grow, grow.reverse()));
+    var grow = cc.ScaleBy.create(growDuration, 0.5, 0.5);
+    var permanentScaleLoop = cc.RepeatForever.create(cc.Sequence._actionOneTwo(grow, grow.reverse()));
     sprite.runAction(permanentScaleLoop);
 }
 
@@ -412,14 +412,14 @@ function performanceActions20(sprite) {
         sprite.setPosition(cc.ccp(-1000, -1000));
 
     var period = 0.5 + (Math.random() * 1000) / 500.0;
-    var rot = cc.RotateBy.actionWithDuration(period, 360.0 * cc.RANDOM_0_1());
+    var rot = cc.RotateBy.create(period, 360.0 * cc.RANDOM_0_1());
     var rot_back = rot.reverse();
-    var permanentRotation = cc.RepeatForever.actionWithAction(cc.Sequence.actions(rot, rot_back, null));
+    var permanentRotation = cc.RepeatForever.create(cc.Sequence.create(rot, rot_back, null));
     sprite.runAction(permanentRotation);
 
     var growDuration = 0.5 + (Math.random() * 1000) / 500.0;
-    var grow = cc.ScaleBy.actionWithDuration(growDuration, 0.5, 0.5);
-    var permanentScaleLoop = cc.RepeatForever.actionWithAction(cc.Sequence.actionOneTwo(grow, grow.reverse()));
+    var grow = cc.ScaleBy.create(growDuration, 0.5, 0.5);
+    var permanentScaleLoop = cc.RepeatForever.create(cc.Sequence._actionOneTwo(grow, grow.reverse()));
     sprite.runAction(permanentScaleLoop);
 }
 

@@ -87,22 +87,22 @@ var SchedulerTestLayer = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var label = cc.LabelTTF.labelWithString(this.title(), "Arial", 30);
+        var label = cc.LabelTTF.create(this.title(), "Arial", 30);
         this.addChild(label);
         label.setPosition(cc.ccp(s.width / 2, s.height - 50));
 
         var subTitle = this.subtitle();
         if (subTitle != "") {
-            var subLabel = cc.LabelTTF.labelWithString(subTitle, "Thonburi", 13);
+            var subLabel = cc.LabelTTF.create(subTitle, "Thonburi", 13);
             this.addChild(subLabel, 1);
             subLabel.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/b1.png", "Resources/Images/b2.png", this, this.backCallback);
-        var item2 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/r1.png", "Resources/Images/r2.png", this, this.restartCallback);
-        var item3 = cc.MenuItemImage.itemFromNormalImage("Resources/Images/f1.png", "Resources/Images/f2.png", this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create("Resources/Images/b1.png", "Resources/Images/b2.png", this, this.backCallback);
+        var item2 = cc.MenuItemImage.create("Resources/Images/r1.png", "Resources/Images/r2.png", this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create("Resources/Images/f1.png", "Resources/Images/f2.png", this, this.nextCallback);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
+        var menu = cc.Menu.create(item1, item2, item3, null);
         menu.setPosition(cc.PointZero());
         item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
         item2.setPosition(cc.ccp(s.width / 2, 30));

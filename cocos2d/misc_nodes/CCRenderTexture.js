@@ -63,7 +63,7 @@ cc.RenderTexture = cc.Node.extend({
     ctor:function () {
         this.canvas = document.createElement('canvas');
         this.context = this.canvas.getContext('2d');
-        this.setAnchorPoint(new cc.Point(0,0));
+        this.setAnchorPoint(new cc.Point(0, 0));
     },
 
     /** The CCSprite being used.
@@ -78,31 +78,31 @@ cc.RenderTexture = cc.Node.extend({
         this._sprite = sprite;
     },
 
-    getCanvas:function(){
+    getCanvas:function () {
         return this.canvas;
     },
 
-    setContentSize:function(size){
-        if(!size){
-            return ;
+    setContentSize:function (size) {
+        if (!size) {
+            return;
         }
 
         //if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
-            this._super(size);
-            this.canvas.width = size.width * 1.5;
-            this.canvas.height = size.height * 1.5;
+        this._super(size);
+        this.canvas.width = size.width * 1.5;
+        this.canvas.height = size.height * 1.5;
 
-            this.context.translate(0,this.canvas.height);
+        this.context.translate(0, this.canvas.height);
         //}
     },
 
     /** initializes a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
     initWithWidthAndHeight:function (width, height, format) {
-        if(cc.renderContextType == cc.CANVAS){
-            this.canvas.width = width||10;
-            this.canvas.height = height||10;
+        if (cc.renderContextType == cc.CANVAS) {
+            this.canvas.width = width || 10;
+            this.canvas.height = height || 10;
 
-            this.context.translate(0,this.canvas.height);
+            this.context.translate(0, this.canvas.height);
             return true;
         }
         //TODO
@@ -253,14 +253,14 @@ cc.RenderTexture = cc.Node.extend({
 
     /** clears the texture with a color */
     clear:function (r, g, b, a) {
-        if(cc.renderContextType == cc.CANVAS){
+        if (cc.renderContextType == cc.CANVAS) {
             var rect = r;
             if (rect) {
                 this.context.clearRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
             } else {
                 this.context.clearRect(0, 0, this.canvas.width, -this.canvas.height);
             }
-        }else {
+        } else {
             this.beginWithClear(r, g, b, a);
             this.end();
         }
@@ -491,7 +491,7 @@ cc.RenderTexture = cc.Node.extend({
 });
 
 /** creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
-cc.RenderTexture.renderTextureWithWidthAndHeight = function (width, height, format) {
+cc.RenderTexture.create = function (width, height, format) {
     if (!format) {
         format = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888;
     }

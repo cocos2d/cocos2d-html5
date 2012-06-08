@@ -35,19 +35,21 @@ SceneTestLayer1 = cc.Layer.extend({
 
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var item1 = cc.MenuItemFont.itemFromString("Test pushScene", this, this.onPushScene);
-        var item2 = cc.MenuItemFont.itemFromString("Test pushScene w/transition", this, this.onPushSceneTran);
-        var item3 = cc.MenuItemFont.itemFromString("Quit", this, function(){alert("quit")});
+        var item1 = cc.MenuItemFont.create("Test pushScene", this, this.onPushScene);
+        var item2 = cc.MenuItemFont.create("Test pushScene w/transition", this, this.onPushSceneTran);
+        var item3 = cc.MenuItemFont.create("Quit", this, function () {
+            alert("quit")
+        });
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3);
+        var menu = cc.Menu.create(item1, item2, item3);
         menu.alignItemsVertically();
         this.addChild(menu);
 
-        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite);
         sprite.setPosition(cc.PointMake(s.width - 40, s.height / 2));
-        var rotate = cc.RotateBy.actionWithDuration(2, 360);
-        var repeat = cc.RepeatForever.actionWithAction(rotate);
+        var rotate = cc.RotateBy.create(2, 360);
+        var repeat = cc.RepeatForever.create(rotate);
         sprite.runAction(repeat);
         this._super();
         //cc.schedule(this.testDealloc);
@@ -80,7 +82,7 @@ SceneTestLayer1 = cc.Layer.extend({
         var layer = new SceneTestLayer2();
         scene.addChild(layer, 0);
 
-        cc.Director.sharedDirector().pushScene(cc.TransitionSlideInT.transitionWithDuration(1, scene));
+        cc.Director.sharedDirector().pushScene(cc.TransitionSlideInT.create(1, scene));
     },
     onQuit:function (sender) {
 
@@ -98,20 +100,20 @@ SceneTestLayer2 = cc.Layer.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var item1 = cc.MenuItemFont.itemFromString("replaceScene", this, this.onReplaceScene);
-        var item2 = cc.MenuItemFont.itemFromString("replaceScene w/transition", this, this.onReplaceSceneTran);
-        var item3 = cc.MenuItemFont.itemFromString("Go Back", this, this.onGoBack);
+        var item1 = cc.MenuItemFont.create("replaceScene", this, this.onReplaceScene);
+        var item2 = cc.MenuItemFont.create("replaceScene w/transition", this, this.onReplaceSceneTran);
+        var item3 = cc.MenuItemFont.create("Go Back", this, this.onGoBack);
 
-        var menu = cc.Menu.menuWithItems(item1, item2, item3, null);
+        var menu = cc.Menu.create(item1, item2, item3, null);
         menu.alignItemsVertically();
         this.addChild(menu);
 
-        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite);
 
         sprite.setPosition(cc.PointMake(s.width - 40, s.height / 2));
-        var rotate = cc.RotateBy.actionWithDuration(2, 360);
-        var repeat = cc.RepeatForever.actionWithAction(rotate);
+        var rotate = cc.RotateBy.create(2, 360);
+        var repeat = cc.RepeatForever.create(rotate);
         sprite.runAction(repeat);
 
         //cc.schedule(this.testDealloc);
@@ -140,7 +142,7 @@ SceneTestLayer2 = cc.Layer.extend({
         var scene = new SceneTestScene();
         var layer = new SceneTestLayer3();
         scene.addChild(layer, 0);
-        cc.Director.sharedDirector().replaceScene(cc.TransitionSlideInT.transitionWithDuration(2, scene));
+        cc.Director.sharedDirector().replaceScene(cc.TransitionSlideInT.create(2, scene));
 
     }
 
@@ -153,17 +155,17 @@ SceneTestLayer3 = cc.LayerColor.extend({
     ctor:function () {
         this._super();
         this.setIsTouchEnabled(true);
-        var label = cc.LabelTTF.labelWithString("Touch to popScene", "Arial", 28);
+        var label = cc.LabelTTF.create("Touch to popScene", "Arial", 28);
         this.addChild(label);
         var s = cc.Director.sharedDirector().getWinSize();
         label.setPosition(cc.PointMake(s.width / 2, s.height / 2));
 
-        var sprite = cc.Sprite.spriteWithFile(s_pathGrossini);
+        var sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite);
 
         sprite.setPosition(cc.PointMake(s.width - 40, s.height / 2));
-        var rotate = cc.RotateBy.actionWithDuration(2, 360);
-        var repeat = cc.RepeatForever.actionWithAction(rotate);
+        var rotate = cc.RotateBy.create(2, 360);
+        var repeat = cc.RepeatForever.create(rotate);
         sprite.runAction(repeat);
     },
 
