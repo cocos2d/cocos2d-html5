@@ -57,7 +57,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     },
 
     /**
-     * It uses to copy object with deep copy.
+     * to copy object with deep copy.
      * @param {object} zone
      * @return {object}
      */
@@ -66,7 +66,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     },
 
     /**
-     * It uses to copy object with deep copy.
+     * to copy object with deep copy.
      * @return {object}
      */
     copy:function () {
