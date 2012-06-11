@@ -173,7 +173,7 @@
                 <file name="Classes/tests/CurrentLanguageTest/CurrentLanguageTest.js"/>
                 <file name="Classes/tests/TextInputTest/TextInputTest.js"/>
                 <file name="Classes/tests/Box2dTest/Box2dTest.js"/>
-                <file name="cocos2d_simple.js"/>
+                <file name="cocos2d_single.js"/>
             </sources>
         </jscomp>
     </target>
