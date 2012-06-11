@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/** Default tag
+/** Default Action tag
  * @constant
  * @type {Number}
  */
@@ -142,6 +142,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     getOriginalTarget:function () {
         return this._originalTarget;
     },
+
     /** Set the original target, since target can be nil. <br/>
      * Is the target that were used to run the action.  <br/>
      * Unless you are doing something complex, like CCActionManager, you should NOT call this method. <br/>
@@ -439,7 +440,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
     _fullScreenSize:null,
 
     /** world leftBoundary
-     * @Type Number
+     * @Type {Number}
      */
     leftBoundary:0.0,
     /** world rightBoundary
@@ -451,7 +452,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      */
     topBoundary:0.0,
     /** world bottomBoundary
-     * @Type Number
+     * @Type {Number}
      */
     bottomBoundary:0.0
 });
