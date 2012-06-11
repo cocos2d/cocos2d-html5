@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-5
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -28,10 +24,40 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
+/**
+ * android back button
+ * @deprecated These were for android devices, but does not work in html5 environment
+ * @constant
+ * @type {Number}
+ */
 cc.TYPE_BACK_CLICKED = 1;
+/**
+ * android menu button
+ * @deprecated for android devices, does not work in html5 environment
+ * @constant
+ * @type {Number}
+ */
 cc.TYPE_MENU_CLICKED = 2;
+/**
+ * keymap
+ * @example
+ * //Example
+ * //to mark a keydown
+ * cc.keyDown[65] = true;
+ * //or
+ * cc.keyMap[cc.KEY.a]
+ *
+ * //to mark a keyup
+ * do cc.keyDown[65] = false;
+ *
+ * //to find out if a key is down, check
+ * if(cc.keyDown[65])
+ * //or
+ * if,(cc.keyDown[cc.KEY.space])
+ * //if its undefined or false or null, its not pressed
+ * @constant
+ * @type {Object}
+ */
 cc.KEY = {
     backspace:8,
     tab:9,
@@ -136,21 +162,15 @@ cc.KEY = {
     quote:222,
     space:32
 };
-/*keymap usage
- to mark a keydown, do cc.keyDown[65] = true; or cc.keyMap[cc.KEY.a]
- to mark a keyup, do cc.keyDown[65] = false; or = null,
- to find out if a key is down, check if(cc.keyDown[65]) or if,(cc.keyDown[cc.KEY.space])
- if its undefined or false or null, its not pressed
- */
 
-cc.keypadDispatcher = null;
 /**
- @class CCKeypadDispatcher
- @brief Dispatch the keypad message from the phone
+ * Dispatch the keypad message
+ * @class
  */
-cc.KeypadDispatcher = cc.Class.extend({
+cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
     /**
-     @brief add delegate to concern keypad msg
+     * add delegate to concern keypad msg
+     * @param {cc.KeypadDelegate} delegate keypad delegate object
      */
     addDelegate:function (delegate) {
         if (!delegate) {
@@ -165,7 +185,8 @@ cc.KeypadDispatcher = cc.Class.extend({
         }
     },
     /**
-     @brief remove the delegate from the delegates who concern keypad msg
+     * remove the delegate from the delegates who concern keypad msg
+     * @param {cc.KeypadDelegate} delegate
      */
     removeDelegate:function (delegate) {
         if (!delegate) {
@@ -180,7 +201,8 @@ cc.KeypadDispatcher = cc.Class.extend({
         }
     },
     /**
-     @brief force add the delegate
+     * force add the delegate
+     * @param {cc.KeypadDelegate} delegate
      */
     forceAddDelegate:function (delegate) {
         var handler = cc.KeypadHandler.create(delegate);
@@ -194,7 +216,8 @@ cc.KeypadDispatcher = cc.Class.extend({
         }
     },
     /**
-     @brief force remove the delegate
+     * force remove the delegate
+     * @param {cc.KeypadDelegate} delegate
      */
     forceRemoveDelegate:function (delegate) {
         var i = this._delegates.indexOf(delegate);
@@ -203,7 +226,10 @@ cc.KeypadDispatcher = cc.Class.extend({
         }
     },
     /**
-     @brief dispatch the key pad msg
+     * dispatch the keypad message to the delegates
+     * @param {event} e
+     * @param {boolean} keydown whether this is a keydown or keyup
+     * @return {Boolean}
      */
     dispatchKeypadMSG:function (e, keydown) {
         this._locked = true;
@@ -252,7 +278,8 @@ cc.KeypadDispatcher = cc.Class.extend({
     _handlersToRemove:[]
 });
 /**
- @brief Returns the shared CCKeypadDispatcher object for the system.
+ * Returns the shared cc.KeypadDispatcher object for the system.
+ * @return {cc.keypadDispatcher}
  */
 cc.KeypadDispatcher.sharedDispatcher = function () {
     if (!cc.keypadDispatcher) {
@@ -268,7 +295,7 @@ cc.KeypadDispatcher.sharedDispatcher = function () {
     return cc.keypadDispatcher;
 };
 /**
- @brief Release the shared CCKeypadDispatcher object from the system.
+ * Release the shared cc.KeypadDispatcher object from the system.
  */
 cc.KeypadDispatcher.purgeSharedDispatcher = function () {
     if (cc.keypadDispatcher) {
