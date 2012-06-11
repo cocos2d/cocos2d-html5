@@ -213,7 +213,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
 
     /** returns a reversed action
      *
-     * @return {null}
+     * @return {Null}
      */
     reverse:function () {
         cc.Log("cocos2d: FiniteTimeAction#reverse: Implement me");
@@ -334,7 +334,7 @@ cc.Speed.create = function (action, rate) {
 
  * @example
  * //example
- * //Instead of using CCCamera as a "follower", use this action instead.
+ * //Instead of using cc.Camera as a "follower", use this action instead.
  * layer.runAction(cc.Follow.actionWithTarget(hero));
 
  * @class
@@ -460,7 +460,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * creates the action with no boundary set
  * @param {cc.Node} followedNode
  * @param {cc.Rect} rect
- * @return {cc.Follow}
+ * @return {cc.Follow|Null} returns the cc.Follow object on success
  * @example
  * // example
  * // creates the action with a set boundary
