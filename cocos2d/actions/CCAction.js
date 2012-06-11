@@ -23,16 +23,23 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
-//! Default tag
+
+/** Default tag
+ * @constant
+ * @type {Number}
+ */
+
 cc.CCACTION_TAG_INVALID = -1;
 
 /**
- @brief Base class for CCAction objects.
+ * Base class for cc.Action objects.
+ * @class
+ * @extends cc.Class
  */
-cc.Action = cc.Class.extend({
+cc.Action = cc.Class.extend(/** @lends cc.Action# */{
     //***********variables*************
     _originalTarget:null,
+
     /** The "target".
      The target will be set with the 'startWithTarget' method.
      When the 'stop' method is called, target will be set to nil.
@@ -40,73 +47,133 @@ cc.Action = cc.Class.extend({
      */
     _target:null,
     _tag:cc.CCACTION_TAG_INVALID,
+
     //**************Public Functions***********
+    /**
+     * @return {String}
+     */
     description:function () {
         return "<CCAction | Tag = " + this._tag + ">";
     },
+
+    /**
+     * It uses to copy object with deep copy.
+     * @param {object} zone
+     * @return {object}
+     */
     copyWithZone:function (zone) {
         return this.copy();
     },
+
+    /**
+     * It uses to copy object with deep copy.
+     * @return {object}
+     */
     copy:function () {
         return cc.clone(this);
     },
-    //! return true if the action has finished
+
+    /**
+     * return true if the action has finished
+     * @return {Boolean}
+     */
     isDone:function () {
         return true;
     },
-    //! called before the action start. It will also set the target.
+
+    /**
+     * called before the action start. It will also set the target.
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._originalTarget = target;
         this._target = target;
     },
+
     /**
-     called after the action has finished. It will set the 'target' to nil.
-     IMPORTANT: You should never call "[action stop]" manually. Instead, use: "target->stopAction(action);"
+     * called after the action has finished. It will set the 'target' to nil.
+     * IMPORTANT: You should never call "action stop" manually. Instead, use: "target.stopAction(action);"
      */
     stop:function () {
         this._target = null;
     },
-    //! called every frame with it's delta time. DON'T override unless you know what you are doing.
+    /** called every frame with it's delta time. DON'T override unless you know what you are doing.
+     *
+     * @param {Number} dt
+     */
+
     step:function (dt) {
         cc.Log("[Action step]. override me");
     },
-    /**
-     called once per frame. time a value between 0 and 1
 
-     For example:
-     - 0 means that the action just started
-     - 0.5 means that the action is in the middle
-     - 1 means that the action is over
+    /**
+     <p>called once per frame. time a value between 0 and 1  </P>
+
+     <p>For example:  <br/>
+     - 0 means that the action just started <br/>
+     - 0.5 means that the action is in the middle<br/>
+     - 1 means that the action is over </P>
+     * @param {Number}  time
      */
     update:function (time) {
         cc.Log("[Action update]. override me");
     },
+
+    /**
+     *
+     * @return {cc.Node}
+     */
     getTarget:function () {
         return this._target;
     },
-    /** The action will modify the target properties. */
+
+    /** The action will modify the target properties.
+     *
+     * @param {cc.Node} target
+     */
     setTarget:function (target) {
         this._target = target;
     },
+
+    /**
+     *
+     * @return {cc.Node}
+     */
     getOriginalTarget:function () {
         return this._originalTarget;
     },
-    /** Set the original target, since target can be nil.
-     Is the target that were used to run the action. Unless you are doing something complex, like CCActionManager, you should NOT call this method.
-     The target is 'assigned', it is not 'retained'.
-     @since v0.8.2
+    /** Set the original target, since target can be nil. <br/>
+     * Is the target that were used to run the action.  <br/>
+     * Unless you are doing something complex, like CCActionManager, you should NOT call this method. <br/>
+     * The target is 'assigned', it is not 'retained'. <br/>
+     * @param {cc.Node} originalTarget
      */
     setOriginalTarget:function (originalTarget) {
         this._originalTarget = originalTarget;
     },
+
+    /**
+     *
+     * @return {Number}
+     */
     getTag:function () {
         return this._tag;
     },
+
+    /**
+     *
+     * @param {Number} tag
+     */
     setTag:function (tag) {
         this._tag = tag;
     }
 });
-/** Allocates and initializes the action */
+/** Allocates and initializes the action
+ * @returns {cc.Action}
+ * @example
+ * // example
+ * var action = cc.Action.create();
+ */
 cc.Action.create = function () {
     var ret = new cc.Action();
     return ret;
@@ -114,26 +181,39 @@ cc.Action.create = function () {
 
 
 /**
- @brief
- Base class actions that do have a finite time duration.
- Possible actions:
- - An action with a duration of 0 seconds
- - An action with a duration of 35.5 seconds
+ * <p>Base class actions that do have a finite time duration.<br/>
+ * Possible actions: <br/>
+ * - An action with a duration of 0 seconds<br/>
+ * - An action with a duration of 35.5 seconds  </p>
 
- Infinite time actions are valid
+ * Infinite time actions are valid
+ * @class
+ * @extends cc.Action
  */
-cc.FiniteTimeAction = cc.Action.extend({
+cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
     //! duration in seconds
     _duration:0,
-    //! get duration in seconds of the action
+
+    /** get duration in seconds of the action
+     *
+     * @return {Number}
+     */
     getDuration:function () {
         return this._duration;
     },
-    //! set duration in seconds of the action
+
+    /** set duration in seconds of the action
+     *
+     * @param {Number} duration
+     */
     setDuration:function (duration) {
         this._duration = duration;
     },
-    /** returns a reversed action */
+
+    /** returns a reversed action
+     *
+     * @return {null}
+     */
     reverse:function () {
         cc.Log("cocos2d: FiniteTimeAction#reverse: Implement me");
         return null;
@@ -142,55 +222,104 @@ cc.FiniteTimeAction = cc.Action.extend({
 
 
 /**
- @brief Changes the speed of an action, making it take longer (speed>1)
- or less (speed<1) time.
- Useful to simulate 'slow motion' or 'fast forward' effect.
- @warning This action can't be Sequenceable because it is not an CCIntervalAction
+ * Changes the speed of an action, making it take longer (speed>1)
+ * or less (speed<1) time. <br/>
+ * Useful to simulate 'slow motion' or 'fast forward' effect.
+ * @warning This action can't be Sequenceable because it is not an CCIntervalAction
+ * @class
+ * @extends cc.Action
  */
-cc.Speed = cc.Action.extend({
+cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
     _speed:0.0,
     _innerAction:null,
+
+    /**
+     * @return {Number}
+     */
     getSpeed:function () {
         return this._speed;
     },
-    /** alter the speed of the inner function in runtime */
+
+    /** alter the speed of the inner function in runtime
+     * @param {Number} speed
+     */
     setSpeed:function (speed) {
         this._speed = speed;
     },
-    /** initializes the action */
+
+    /** initializes the action
+     * @param {cc.ActionInterval} action
+     * @param {Number} rate
+     * @return {Boolean}
+     */
     initWithAction:function (action, rate) {
         cc.Assert(action != null, "");
         this._innerAction = action;
         this._speed = rate;
         return true;
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
         this._innerAction.startWithTarget(target);
     },
+
+    /**
+     *  Stop the action
+     */
     stop:function () {
         this._innerAction.stop();
         cc.Action.stop();
     },
+
+    /**
+     * @param {Number} dt
+     */
     step:function (dt) {
         this._innerAction.step(dt * this._speed);
     },
+
+    /**
+     * @return {Boolean}
+     */
     isDone:function () {
         return this._innerAction.isDone();
     },
+
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return (cc.Speed.create(this._innerAction.reverse(), this._speed));
     },
+
+    /**
+     *
+     * @param {cc.ActionInterval} action
+     */
     setInnerAction:function (action) {
         if (this._innerAction != action) {
             this._innerAction = action;
         }
     },
+
+    /**
+     *
+     * @return {cc.ActionInterval}
+     */
     getInnerAction:function () {
         return this._innerAction;
     }
 });
-/** creates the action */
+/** creates the action
+ *
+ * @param {cc.ActionInterval} action
+ * @param {Number} rate
+ * @return {cc.Speed}
+ */
 cc.Speed.create = function (action, rate) {
     var ret = new cc.Speed();
     if (ret && ret.initWithAction(action, rate)) {
@@ -200,24 +329,37 @@ cc.Speed.create = function (action, rate) {
 };
 
 /**
- @brief CCFollow is an action that "follows" a node.
+ * cc.Follow is an action that "follows" a node.
 
- Eg:
- layer->runAction(CCFollow::actionWithTarget(hero));
+ * @example
+ * //example
+ * //Instead of using CCCamera as a "follower", use this action instead.
+ * layer.runAction(cc.Follow.actionWithTarget(hero));
 
- Instead of using CCCamera as a "follower", use this action instead.
- @since v0.99.2
+ * @class
+ * @extends cc.Action
  */
-cc.Follow = cc.Action.extend({
+cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
+    /**
+     * @return {Boolean}
+     */
     isBoundarySet:function () {
         return this._boundarySet;
     },
-    /** alter behavior - turn on/off boundary */
+
+    /** alter behavior - turn on/off boundary
+     * @param {Boolean} value
+     */
     setBoudarySet:function (value) {
         this._boundarySet = value;
     },
-    /** initializes the action */
-    /** initializes the action with a set boundary */
+
+    /** initializes the action
+     * initializes the action with a set boundary
+     * @param {cc.Node} followedNode
+     * @param {cc.Rect} rect
+     * @return {Boolean}
+     */
     initWithTarget:function (followedNode, rect) {
         cc.Assert(followedNode != null, "");
         this._followedNode = followedNode;
@@ -250,7 +392,11 @@ cc.Follow = cc.Action.extend({
             }
         }
         return true;
-    }, //this is a function overload
+    },
+
+    /**
+     * @param {Number} dt
+     */
     step:function (dt) {
         if (this._boundarySet) {
             // whole map fits inside a single screen, no need to modify the position - unless map boundaries are increased
@@ -266,13 +412,22 @@ cc.Follow = cc.Action.extend({
             this._target.setPosition(cc.ccpSub(this._halfScreenSize, this._followedNode.getPosition()));
         }
     },
+
+    /**
+     * @return {Boolean}
+     */
     isDone:function () {
         return ( !this._followedNode.getIsRunning() );
     },
+
+    /**
+     * Stop the action.
+     */
     stop:function () {
         this._target = null;
         cc.Action.stop();
     },
+
     // node to follow
     _followedNode:null,
     // whether camera should be limited to certain area
@@ -282,14 +437,41 @@ cc.Follow = cc.Action.extend({
     // fast access to the screen dimensions
     _halfScreenSize:null,
     _fullScreenSize:null,
-    // world boundaries
+
+    /** world leftBoundary
+     * @Type Number
+     */
     leftBoundary:0.0,
+    /** world rightBoundary
+     * @Type Number
+     */
     rightBoundary:0.0,
+    /** world topBoundary
+     * @Type Number
+     */
     topBoundary:0.0,
+    /** world bottomBoundary
+     * @Type Number
+     */
     bottomBoundary:0.0
 });
-/** creates the action with a set boundary */
-/** creates the action with no boundary set */
+/** creates the action with a set boundary <br/>
+ * creates the action with no boundary set
+ * @param {cc.Node} followedNode
+ * @param {cc.Rect} rect
+ * @return {cc.Follow}
+ * @example
+ * // example
+ * // creates the action with a set boundary
+ * var sprite = cc.Sprite.create("spriteFileName");
+ * var followAction = cc.Follow.create(sprite, cc.RectMake(0, 0, s.width * 2 - 100, s.height));
+ * this.runAction(followAction);
+ *
+ * // creates the action with no boundary set
+ * var sprite = cc.Sprite.create("spriteFileName");
+ * var followAction = cc.Follow.create(sprite);
+ * this.runAction(followAction);
+ */
 cc.Follow.create = function (followedNode, rect) {
     var ret = new cc.Follow();
     if (rect != null && ret && ret.initWithTarget(followedNode, rect)) {
