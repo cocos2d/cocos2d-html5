@@ -29,37 +29,65 @@ TAG_ACTION2_EASE_ACTIONS = 2;
 TAG_SLIDER_EASE_ACTIONS = 1;
 
 var EaseActionsTests = [
-    "SpriteEase",
-    "SpriteEaseInOut",
-    "SpriteEaseExponential",
-    "SpriteEaseExponentialInOut",
-    "SpriteEaseSine",
-    "SpriteEaseSineInOut",
-    "SpriteEaseElastic",
-    "SpriteEaseElasticInOut", //reverse bug
-    "SpriteEaseBounce",
-    "SpriteEaseBounceInOut",
-    "SpriteEaseBack",
-    "SpriteEaseBackInOut",
-    "SpeedTest",
-    "SchedulerTest"
+    function () {
+        return new SpriteEase();
+    },
+    function () {
+        return new SpriteEaseInOut();
+    },
+    function () {
+        return new SpriteEaseExponential();
+    },
+    function () {
+        return new SpriteEaseExponentialInOut();
+    },
+    function () {
+        return new SpriteEaseSine();
+    },
+    function () {
+        return new SpriteEaseSineInOut();
+    },
+    function () {
+        return new SpriteEaseElastic();
+    },
+    function () {
+        return new SpriteEaseElasticInOut();
+    }, //reverse bug
+    function () {
+        return new SpriteEaseBounce();
+    },
+    function () {
+        return new SpriteEaseBounceInOut();
+    },
+    function () {
+        return new SpriteEaseBack();
+    },
+    function () {
+        return new SpriteEaseBackInOut();
+    },
+    function () {
+        return new SpeedTest();
+    },
+    function () {
+        return new SchedulerTest();
+    }
 ];
 
 var s_nEaseActionIdx = -1;
 function nextEaseAction() {
     ++s_nEaseActionIdx;
     s_nEaseActionIdx = s_nEaseActionIdx % EaseActionsTests.length;
-    return new window[EaseActionsTests[s_nEaseActionIdx]];
+    return EaseActionsTests[s_nEaseActionIdx]();
 }
 function backEaseAction() {
     --s_nEaseActionIdx;
     if (s_nEaseActionIdx < 0) {
         s_nEaseActionIdx += EaseActionsTests.length;
     }
-    return new window[EaseActionsTests[s_nEaseActionIdx]];
+    return EaseActionsTests[s_nEaseActionIdx]();
 }
 function restartEaseAction() {
-    return new window[EaseActionsTests[s_nEaseActionIdx]];
+    return EaseActionsTests[s_nEaseActionIdx]();
 }
 
 // the class inherit from TestScene

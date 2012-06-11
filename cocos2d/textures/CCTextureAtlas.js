@@ -111,7 +111,7 @@ cc.TextureAtlas = cc.Class.extend({
         if (texture) {
             return this.initWithTexture(texture, capacity);
         } else {
-            cc.LOG("cocos2d: Could not open file: " + file);
+            cc.Log("cocos2d: Could not open file: " + file);
             return null;
         }
     },

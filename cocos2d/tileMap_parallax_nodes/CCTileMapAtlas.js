@@ -114,7 +114,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
         var ptr = this._GAInfo.imageData;
         var value = ptr[position.x + position.y * this._GAInfo.width];
         if (value.r == 0) {
-            cc.LOG("cocos2d: Value.r must be non 0.");
+            cc.Log("cocos2d: Value.r must be non 0.");
         } else {
             ptr[position.x + position.y * this._GAInfo.width] = tile;
 
@@ -122,11 +122,11 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
             // XXX: a tree of something like that shall be impolemented
             var buffer;
 
-            cc.LOG(buffer, position.x)
+            cc.Log(buffer, position.x)
             var key = buffer;
 
             key += ",";
-            cc.LOG(buffer, position.y)
+            cc.Log(buffer, position.y)
             key += buffer;
 
             var num = this._posToAtlasIndex[key];
@@ -237,11 +237,11 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
 
                         var buffer;
 
-                        cc.LOG(buffer, x)
+                        cc.Log(buffer, x)
                         var key = buffer;
 
                         key += ",";
-                        cc.LOG(buffer, y)
+                        cc.Log(buffer, y)
                         key += buffer;
 
                         this._posToAtlasIndex[key] = total;

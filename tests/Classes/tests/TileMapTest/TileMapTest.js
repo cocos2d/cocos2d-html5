@@ -26,47 +26,87 @@
 var TAG_TILE_MAP = 1;
 
 var TileMapTests = [
-    //"TileMapTest", //not support tga format
-    //"TileMapEditTest", //not support tga format
-    "TMXOrthoTest",
-    "TMXOrthoTest2", //camera bug
-    "TMXOrthoTest3",
-    "TMXOrthoTest4",
-    "TMXReadWriteTest",
-    "TMXHexTest",
-    "TMXIsoTest",
-    "TMXIsoTest1",
-    "TMXIsoTest2",
-    "TMXUncompressedTest",
-    "TMXTilesetTest",
-    "TMXOrthoObjectsTest",
-    "TMXIsoObjectsTest",
-    "TMXResizeTest",
-    "TMXIsoZorder",
-    "TMXOrthoZorder",
-    //"TMXIsoVertexZ", //VertexZ bug
-    //"TMXOrthoVertexZ", //VertexZ bug
-    "TMXIsoMoveLayer",
-    "TMXOrthoMoveLayer",
-    "TMXBug987",
-    "TMXBug787"
-    //"TMXGIDObjectsTest", //zlib bug
+    //function(){ return new TileMapTest();}, //not support tga format
+    // function(){ return new TileMapEditTest();}, //not support tga format
+    function () {
+        return new TMXOrthoTest();
+    },
+    function () {
+        return new TMXOrthoTest2();
+    }, //camera bug
+    function () {
+        return new TMXOrthoTest3();
+    },
+    function () {
+        return new TMXOrthoTest4();
+    },
+    function () {
+        return new TMXReadWriteTest();
+    },
+    function () {
+        return new TMXHexTest();
+    },
+    function () {
+        return new TMXIsoTest();
+    },
+    function () {
+        return new TMXIsoTest1();
+    },
+    function () {
+        return new TMXIsoTest2();
+    },
+    function () {
+        return new TMXUncompressedTest();
+    },
+    function () {
+        return new TMXTilesetTest();
+    },
+    function () {
+        return new TMXOrthoObjectsTest();
+    },
+    function () {
+        return new TMXIsoObjectsTest();
+    },
+    function () {
+        return new TMXResizeTest();
+    },
+    function () {
+        return new TMXIsoZorder();
+    },
+    function () {
+        return new TMXOrthoZorder();
+    },
+    //function(){ return new TMXIsoVertexZ();}, //VertexZ bug
+    //function(){ return new TMXOrthoVertexZ();}, //VertexZ bug
+    function () {
+        return new TMXIsoMoveLayer();
+    },
+    function () {
+        return new TMXOrthoMoveLayer();
+    },
+    function () {
+        return new TMXBug987();
+    },
+    function () {
+        return new TMXBug787();
+    }
+    //function(){ return new TMXGIDObjectsTest();}, //zlib bug
 ];
 var tileMapIdx = -1;
 function nextTileMapAction() {
     ++tileMapIdx;
     tileMapIdx = tileMapIdx % TileMapTests.length;
-    return new window[TileMapTests[tileMapIdx]];
+    return TileMapTests[tileMapIdx]();
 }
 function backTileMapAction() {
     --tileMapIdx;
     if (tileMapIdx < 0) {
         tileMapIdx += TileMapTests.length;
     }
-    return new window[TileMapTests[tileMapIdx]];
+    return TileMapTests[tileMapIdx]();
 }
 function restartTileMapAction() {
-    return new window[TileMapTests[tileMapIdx]];
+    return TileMapTests[tileMapIdx]();
 }
 
 // the class inherit from TestScene
@@ -978,7 +1018,7 @@ var TMXOrthoVertexZ = TileDemo.extend({
         // can use any cc.Sprite and it will work OK.
         var layer = map.layerNamed("trees");
         this.tamara = layer.tileAt(cc.ccp(0, 11));
-        cc.LOG("vertexZ: " + this.tamara.getVertexZ());
+        cc.Log("vertexZ: " + this.tamara.getVertexZ());
 
         var move = cc.MoveBy.create(10, cc.ccpMult(cc.ccp(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
@@ -1067,7 +1107,7 @@ var TMXBug987 = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         var s1 = map.getContentSize();
-        cc.LOG("ContentSize:" + s1.width + "," + s1.height);
+        cc.Log("ContentSize:" + s1.width + "," + s1.height);
 
         var childs = map.getChildren();
         var node = null;
@@ -1117,8 +1157,8 @@ var TMXGIDObjectsTest = TileDemo.extend({
         this.addChild(map, -1, TAG_TILE_MAP);
 
         var s = map.getContentSize();
-        cc.LOG("ContentSize:" + s.width + "," + s.height);
-        cc.LOG("---. Iterating over all the group objets");
+        cc.Log("ContentSize:" + s.width + "," + s.height);
+        cc.Log("---. Iterating over all the group objets");
     },
     title:function () {
         return "TMX GID objects";

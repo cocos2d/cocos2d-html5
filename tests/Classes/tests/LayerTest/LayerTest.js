@@ -26,26 +26,34 @@
 cc.TAG_LAYER = 1;
 
 var LayerTests = [
-    "LayerTest1", //ok
-    "LayerTest2", //ok
-    "LayerTestBlend", //todo fix Inverse color
-    "LayerGradient" //todo fix ccMenuItem
+    function () {
+        return new LayerTest1();
+    }, //ok
+    function () {
+        return new LayerTest2();
+    }, //ok
+    function () {
+        return new LayerTestBlend();
+    }, //todo fix Inverse color
+    function () {
+        return new LayerGradient();
+    } //todo fix ccMenuItem
 ];
 var s_nLayerTestsIdx = -1;
 function nextLayerTestAction() {
     ++s_nLayerTestsIdx;
     s_nLayerTestsIdx = s_nLayerTestsIdx % LayerTests.length;
-    return new window[LayerTests[s_nLayerTestsIdx]];
+    return LayerTests[s_nLayerTestsIdx]();
 }
 function backLayerTestAction() {
     --s_nLayerTestsIdx;
     if (s_nLayerTestsIdx < 0) {
         s_nLayerTestsIdx += LayerTests.length;
     }
-    return new window[LayerTests[s_nLayerTestsIdx]];
+    return LayerTests[s_nLayerTestsIdx]();
 }
 function restartLayerTestAction() {
-    return new window[LayerTests[s_nLayerTestsIdx]];
+    return LayerTests[s_nLayerTestsIdx]();
 }
 
 var LayerTestScene = TestScene.extend({

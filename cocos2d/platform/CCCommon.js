@@ -59,23 +59,21 @@ cc.MessageBox = function (message) {
 
 // cocos2d debug
 if (cc.COCOS2D_DEBUG == 0) {
-    cc.LOG = function () {
+    cc.Log = function () {
     };
-    cc.LOGINFO = function () {
+    cc.LogINFO = function () {
     };
-    cc.LOGERROR = function () {
+    cc.LogERROR = function () {
     };
 }
 else if (cc.COCOS2D_DEBUG == 1) {
-    cc.LOG = cc.Log;
-    cc.LOGINFO = cc.Log;
-    cc.LOGERROR = function () {
+    cc.LogINFO = cc.Log;
+    cc.LogERROR = function () {
     };
 }
 else if (cc.COCOS2D_DEBUG > 1) {
-    cc.LOG = cc.Log;
-    cc.LOGINFO = cc.Log;
-    cc.LOGERROR = cc.Log;
+    cc.LogINFO = cc.Log;
+    cc.LogERROR = cc.Log;
 }// COCOS2D_DEBUG
 
 if (cc._DEBUG) {

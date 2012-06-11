@@ -68,7 +68,7 @@ cc.Action = cc.Class.extend({
     },
     //! called every frame with it's delta time. DON'T override unless you know what you are doing.
     step:function (dt) {
-        cc.LOG("[Action step]. override me");
+        cc.Log("[Action step]. override me");
     },
     /**
      called once per frame. time a value between 0 and 1
@@ -79,7 +79,7 @@ cc.Action = cc.Class.extend({
      - 1 means that the action is over
      */
     update:function (time) {
-        cc.LOG("[Action update]. override me");
+        cc.Log("[Action update]. override me");
     },
     getTarget:function () {
         return this._target;
@@ -135,7 +135,7 @@ cc.FiniteTimeAction = cc.Action.extend({
     },
     /** returns a reversed action */
     reverse:function () {
-        cc.LOG("cocos2d: FiniteTimeAction#reverse: Implement me");
+        cc.Log("cocos2d: FiniteTimeAction#reverse: Implement me");
         return null;
     }
 });

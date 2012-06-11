@@ -84,7 +84,7 @@ cc.AtlasNode = cc.Node.extend({
             this._originalTexture = this._textureAtlas.getTexture();
         }
         if (!this._textureAtlas) {
-            cc.LOG("cocos2d: Could not initialize CCAtlasNode. Invalid Texture.");
+            cc.Log("cocos2d: Could not initialize CCAtlasNode. Invalid Texture.");
             return false;
         }
 
