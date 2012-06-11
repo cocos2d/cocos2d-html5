@@ -30,6 +30,7 @@
  * implement your own game logic in
  * keydown and keyup functions
  * @class
+ * @extends cc.Class
  */
 cc.KeypadDelegate = cc.Class.extend(/** @lends cc.KeypadDelegate# */{
     /**
@@ -37,6 +38,7 @@ cc.KeypadDelegate = cc.Class.extend(/** @lends cc.KeypadDelegate# */{
      */
     keyDown:function () {
     },
+
     /**
      * Call back when a key is released
      */
@@ -47,6 +49,7 @@ cc.KeypadDelegate = cc.Class.extend(/** @lends cc.KeypadDelegate# */{
 /**
  * KeypadHandler is an object that contains KeypadDelegate
  * @class
+ * @extends cc.Class
  */
 cc.KeypadHandler = cc.Class.extend(/** @lends cc.KeypadHandler# */{
     /**
@@ -56,6 +59,7 @@ cc.KeypadHandler = cc.Class.extend(/** @lends cc.KeypadHandler# */{
     getDelegate:function () {
         return this._delegate;
     },
+
     /**
      * set the keypad delegate
      * @param {cc.KeypadDelegate} delegate
@@ -64,7 +68,7 @@ cc.KeypadHandler = cc.Class.extend(/** @lends cc.KeypadHandler# */{
         this._delegate = delegate;
     },
     /**
-     * initializes a CCKeypadHandler with a delegate
+     * initializes a cc.KeypadHandler with a delegate
      * @param {cc.KeypadDelegate} delegate
      * @return {Boolean}
      */

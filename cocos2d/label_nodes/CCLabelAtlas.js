@@ -24,22 +24,21 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/** @brief CCLabelAtlas is a subclass of CCAtlasNode.
-
- It can be as a replacement of CCLabel since it is MUCH faster.
-
- CCLabelAtlas versus CCLabel:
- - CCLabelAtlas is MUCH faster than CCLabel
- - CCLabelAtlas "characters" have a fixed height and width
- - CCLabelAtlas "characters" can be anything you want since they are taken from an image file
-
- A more flexible class is CCLabelBMFont. It supports variable width characters and it also has a nice editor.
+/**
+ * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont
+ * @class
+ * @extends cc.AtlasNode
  */
-cc.LabelAtlas = cc.AtlasNode.extend({
-
-    /** initializes the CCLabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas */
+cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
+    /**
+     * initializes the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
+     * @param {String} label
+     * @param {String} charMapFile
+     * @param {Number} itemWidth
+     * @param {Number} itemHeight
+     * @param {String} startCharMap
+     * @return {Boolean} returns true on success
+     */
     initWithString:function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
         cc.Assert(label != null, "");
         if (this.initWithTileFile(charMapFile, itemWidth, itemHeight, label.length)) {
@@ -50,7 +49,9 @@ cc.LabelAtlas = cc.AtlasNode.extend({
         return false;
     },
 
-    // super methods
+    /**
+     *  Atlas generation
+     */
     updateAtlasValues:function () {
         var n = this._string.length;
 
@@ -96,6 +97,11 @@ cc.LabelAtlas = cc.AtlasNode.extend({
             this._textureAtlas.updateQuad(quad, i);
         }
     },
+
+    /**
+     * set the display string
+     * @param {String} label
+     */
     setString:function (label) {
         var len = label.length;
         this._textureAtlas.resizeCapacity(len);
@@ -110,9 +116,18 @@ cc.LabelAtlas = cc.AtlasNode.extend({
 
         this._quadsToDraw = len;
     },
+
+    /**
+     * return the text of this label
+     * @return {String}
+     */
     getString:function () {
         return this._string;
     },
+
+    /**
+     * draw the label
+     */
     draw:function () {
         this._super();
         if (cc.LABELATLAS_DEBUG_DRAW) {
@@ -133,7 +148,19 @@ cc.LabelAtlas = cc.AtlasNode.extend({
     _mapStartChar:null
 });
 
-/** creates the CCLabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas */
+/**
+ * creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the
+ * starting char of the atlas
+ * @param {String} label Text to display
+ * @param {String} charMapFile the character map file
+ * @param {Number} itemWidth the width of individual letter
+ * @param {Number} itemHeight the height of individual letter
+ * @param {String} startCharMap starting character on the character map file
+ * @return {cc.LabelAtlas|null} returns the LabelAtlas object on success
+ * @example
+ * //Example
+ * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
+ */
 cc.LabelAtlas.create = function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
     var ret = new cc.LabelAtlas();
     if (ret && ret.initWithString(label, charMapFile, itemWidth, itemHeight, startCharMap)) {

@@ -166,6 +166,7 @@ cc.KEY = {
 /**
  * Dispatch the keypad message
  * @class
+ * @extends cc.Class
  */
 cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
     /**
@@ -184,6 +185,7 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
             this._toAdd = true;
         }
     },
+
     /**
      * remove the delegate from the delegates who concern keypad msg
      * @param {cc.KeypadDelegate} delegate
@@ -200,6 +202,7 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
             this._toRemove = true;
         }
     },
+
     /**
      * force add the delegate
      * @param {cc.KeypadDelegate} delegate
@@ -215,6 +218,7 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
             this._delegates.push(handler);
         }
     },
+
     /**
      * force remove the delegate
      * @param {cc.KeypadDelegate} delegate
@@ -225,10 +229,11 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
             this._delegates.splice(this._delegates.indexOf(delegate), 1);
         }
     },
+
     /**
      * dispatch the keypad message to the delegates
      * @param {event} e
-     * @param {boolean} keydown whether this is a keydown or keyup
+     * @param {Boolean} keydown whether this is a keydown or keyup
      * @return {Boolean}
      */
     dispatchKeypadMSG:function (e, keydown) {
@@ -277,6 +282,7 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
     _handlersToAdd:[],
     _handlersToRemove:[]
 });
+
 /**
  * Returns the shared cc.KeypadDispatcher object for the system.
  * @return {cc.keypadDispatcher}
@@ -294,6 +300,7 @@ cc.KeypadDispatcher.sharedDispatcher = function () {
     }
     return cc.keypadDispatcher;
 };
+
 /**
  * Release the shared cc.KeypadDispatcher object from the system.
  */
