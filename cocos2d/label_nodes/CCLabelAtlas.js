@@ -156,7 +156,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
  * @param {Number} itemWidth the width of individual letter
  * @param {Number} itemHeight the height of individual letter
  * @param {String} startCharMap starting character on the character map file
- * @return {cc.LabelAtlas|null} returns the LabelAtlas object on success
+ * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
  * @example
  * //Example
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
