@@ -42,11 +42,10 @@ cc.capabilities = {
 
 /**
  * Offer a VERY simple interface to play background music & sound effect.
- @class       SimpleAudioEngine
+ @class       cc.AudioManager
  @extend   cc.Class
  */
 cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
-    // supported Audio Format
     _initialized:false,
     _supportedFormat:[ "mp3", "ogg", "wav" ],
     _requestedFormat:null,
@@ -82,6 +81,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
      * Initialize sound type
      * @param {String} audioType
      * @return {Boolean}
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().init("mp3,ogg");
      */
     init:function (audioType) {
         if (audioType) {
@@ -125,7 +127,8 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
         return -1;
     },
     /**
-     * Preload background music resource.
+     * Preload background music resource.<br />
+     * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the background music file without filename extension.
      */
     preloadBackgroundMusic:function (path) {
@@ -159,6 +162,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
      * Play background music.
      * @param {String} path The path of the background music file without filename extension.
      * @param {Boolean} loop Whether the background music loop or not.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().playBackgroundMusic(path, false);
      */
     playBackgroundMusic:function (path, loop) {
         if (this._bgmList[this._playingBgm]) {
@@ -173,6 +179,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     /**
      * Stop playing background music.
      * @param {Boolean} releaseData If release the background music data or not.As default value is false.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().stopBackgroundMusic();
      */
     stopBackgroundMusic:function (releaseData) {
         if (this._bgmList[this._playingBgm]) {
@@ -185,6 +194,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     },
     /**
      * Pause playing background music.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().pauseBackgroundMusic();
      */
     pauseBackgroundMusic:function () {
         if (this._bgmList[this._playingBgm]) {
@@ -193,6 +205,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     },
     /**
      * Resume playing background music.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().resumeBackgroundMusic();
      */
     resumeBackgroundMusic:function () {
         if (this._bgmList[this._playingBgm]) {
@@ -202,6 +217,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Rewind playing background music.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().rewindBackgroundMusic();
      */
     rewindBackgroundMusic:function () {
         if (this._bgmList[this._playingBgm]) {
@@ -214,8 +232,16 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     },
 
     /**
-     * Whether the background music is playing. <br />
-     @return {Boolean} If is playing return true,or return false.
+     * Whether the background music is playing.
+     * @return {Boolean} If is playing return true,or return false.
+     * @example
+     * //example
+     *  if (cc.AudioManager.sharedEngine().isBackgroundMusicPlaying()) {
+     *      cc.Log("background music is playing");
+     *  }
+     *  else {
+     *      cc.Log("background music is not playing");
+     *  }
      */
     isBackgroundMusicPlaying:function () {
         return cc.sharedEngine._isBgmPlaying;
@@ -224,6 +250,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     /**
      * The volume of the background music max value is 1.0,the min value is 0.0 .
      * @return {Number}
+     * @example
+     * //example
+     * var volume = cc.AudioManager.sharedEngine().getBackgroundMusicVolume();
      */
     getBackgroundMusicVolume:function () {
         if (this._bgmList[this._playingBgm]) {
@@ -236,7 +265,10 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Set the volume of background music.
-     @param {Number} volume Volume must be in 0.0~1.0 .
+     * @param {Number} volume Volume must be in 0.0~1.0 .
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().setBackgroundMusicVolume(0.5);
      */
     setBackgroundMusicVolume:function (volume) {
         if (this._bgmList[this._playingBgm]) {
@@ -255,6 +287,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     /**
      *The volume of the effects max value is 1.0,the min value is 0.0 .
      * @return {Number}
+     * @example
+     * //example
+     * var effectVolume = cc.AudioManager.sharedEngine().getEffectsVolume();
      */
     getEffectsVolume:function () {
         return this._effectsVolume;
@@ -263,6 +298,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     /**
      * Set the volume of sound effecs.
      * @param {Number} volume Volume must be in 0.0~1.0 .
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().setEffectsVolume(0.5);
      */
     setEffectsVolume:function (volume) {
         if (volume > 1) {
@@ -283,8 +321,11 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Play sound effect.
-     @param {String} path The path of the sound effect  without filename extension.
-     @param {Boolean} loop Whether to loop the effect playing, default value is false
+     * @param {String} path The path of the sound effect  without filename extension.
+     * @param {Boolean} loop Whether to loop the effect playing, default value is false
+     * @example
+     * //example
+     * var soundId = cc.AudioManager.sharedEngine().playEffect(path);
      */
     playEffect:function (path, loop) {
         var soundCache = this._getEffectList(path);
@@ -299,6 +340,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     /**
      * Pause playing sound effect.
      * @param {String} path The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().pauseEffect(path);
      */
     pauseEffect:function (path) {
         if (this._audioList[path]) {
@@ -308,6 +352,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Pause all playing sound effect.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().pauseAllEffects();
      */
     pauseAllEffects:function () {
         if (this._audioList) {
@@ -319,7 +366,10 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Resume playing sound effect.
-     @param {String} path The return value of function playEffect
+     * @param {String} path The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().resumeEffect(path);
      */
     resumeEffect:function (path) {
         if (this._audioList[path]) {
@@ -329,6 +379,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Resume all playing sound effect
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().resumeAllEffects();
      */
     resumeAllEffects:function () {
         if (this._audioList) {
@@ -341,6 +394,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     /**
      * Stop playing sound effect.
      * @param {String} path The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().stopEffect(path);
      */
     stopEffect:function (path) {
         if (this._audioList[path]) {
@@ -351,6 +407,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Stop all playing sound effects.
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().stopAllEffects();
      */
     stopAllEffects:function () {
         if (this._audioList) {
@@ -363,6 +422,7 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Preload sound effect resource.
+     * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the sound effect file without filename extension.
      */
     preloadEffect:function (path) {
@@ -389,7 +449,10 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
 
     /**
      * Unload the preloaded effect from internal buffer
-     @param {String} path
+     * @param {String} path
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().unloadEffect(EFFECT_FILE);
      */
     unloadEffect:function (path) {
         if (this._audioList.hasOwnProperty(path)) {
@@ -406,6 +469,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     },
     /**
      *  Stop all background music and sound effects
+     * @example
+     * //example
+     * cc.AudioManager.sharedEngine().end();
      */
     end:function () {
         this.stopBackgroundMusic();

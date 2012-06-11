@@ -23,12 +23,30 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+/**
+ * @namespace
+ */
 var cc = cc = cc || {};
 
+/**
+ * Default Node tag
+ * @constant
+ */
 cc.CCNODE_TAG_INVALID = -1;
+/**
+ * Node on enter
+ * @constant
+ */
 cc.CCNODE_ON_ENTER = null;
+/**
+ * Node on exit
+ * @constant
+ */
 cc.CCNODE_ON_EXIT = null;
 
+/**
+ * @function
+ */
 cc.saveContext = function () {
     if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.save();
@@ -36,6 +54,9 @@ cc.saveContext = function () {
         //glPushMatrix();
     }
 };
+/**
+ * @function
+ */
 cc.restoreContext = function () {
     if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.restore();
@@ -44,96 +65,215 @@ cc.restoreContext = function () {
     }
 };
 
-/** @brief cc.Node is the main element. Anything thats gets drawn or contains things that get drawn is a cc.Node.
- The most popular CCNodes are: CCScene, CCLayer, CCSprite, CCMenu.
+/** <p>cc.Node is the main element. Anything thats gets drawn or contains things that get drawn is a cc.Node.<br/>
+ The most popular CCNodes are: CCScene, CCLayer, CCSprite, CCMenu.<br/></p>
 
- The main features of a cc.Node are:
- - They can contain other cc.Node nodes (addChild, getChildByTag, removeChild, etc)
- - They can schedule periodic callback (schedule, unschedule, etc)
- - They can execute actions (runAction, stopAction, etc)
+ <p>The main features of a cc.Node are: <br/>
+ - They can contain other cc.Node nodes (addChild, getChildByTag, removeChild, etc) <br/>
+ - They can schedule periodic callback (schedule, unschedule, etc) <br/>
+ - They can execute actions (runAction, stopAction, etc) <br/></p>
 
- Some cc.Node nodes provide extra functionality for them or their children.
+ <p>Some cc.Node nodes provide extra functionality for them or their children.</p>
 
- Subclassing a cc.Node usually means (one/all) of:
- - overriding init to initialize resources and schedule callbacks
- - create callbacks to handle the advancement of time
- - overriding draw to render the node
+ <p>Subclassing a cc.Node usually means (one/all) of: <br/>
+ - overriding init to initialize resources and schedule callbacks  <br/>
+ - create callbacks to handle the advancement of time <br/>
+ - overriding draw to render the node   <br/></p>
 
- Features of cc.Node:
- - position
- - scale (x, y)
- - rotation (in degrees, clockwise)
- - CCCamera (an interface to gluLookAt )
- - CCGridBase (to do mesh transformations)
- - anchor point
- - size
- - visible
- - z-order
- - openGL z position
+ <p>Features of cc.Node: <br/>
+ - position  <br/>
+ - scale (x, y) <br/>
+ - rotation (in degrees, clockwise) <br/>
+ - CCCamera (an interface to gluLookAt ) <br/>
+ - CCGridBase (to do mesh transformations)  <br/>
+ - anchor point<br/>
+ - size <br/>
+ - visible<br/>
+ - z-order <br/>
+ - openGL z position <br/></P>
 
- Default values:
- - rotation: 0
- - position: (x=0,y=0)
- - scale: (x=1,y=1)
- - contentSize: (x=0,y=0)
- - anchorPoint: (x=0,y=0)
+ <p> Default values: <br/>
+ - rotation: 0 <br/>
+ - position: (x=0,y=0) <br/>
+ - scale: (x=1,y=1) <br/>
+ - contentSize: (x=0,y=0)<br/>
+ - anchorPoint: (x=0,y=0)<br/></p>
 
- Limitations:
- - A cc.Node is a "void" object. It doesn't have a texture
+ <p> Limitations:<br/>
+ - A cc.Node is a "void" object. It doesn't have a texture <br/></P>
 
- Order in transformations with grid disabled
- -# The node will be translated (position)
- -# The node will be rotated (rotation)
- -# The node will be scaled (scale)
- -# The node will be moved according to the camera values (camera)
+ <p>Order in transformations with grid disabled <br/>
+ -# The node will be translated (position)  <br/>
+ -# The node will be rotated (rotation)<br/>
+ -# The node will be scaled (scale)  <br/>
+ -# The node will be moved according to the camera values (camera) <br/></p>
 
- Order in transformations with grid enabled
- -# The node will be translated (position)
- -# The node will be rotated (rotation)
- -# The node will be scaled (scale)
- -# The grid will capture the screen
- -# The node will be moved according to the camera values (camera)
- -# The grid will render the captured screen
+ <p>Order in transformations with grid enabled<br/>
+ -# The node will be translated (position)<br/>
+ -# The node will be rotated (rotation) <br/>
+ -# The node will be scaled (scale) <br/>
+ -# The grid will capture the screen <br/>
+ -# The node will be moved according to the camera values (camera) <br/>
+ -# The grid will render the captured screen <br/></P>
 
- Camera:
- - Each node has a camera. By default it points to the center of the cc.Node.
+ <p>Camera:  <br/>
+ - Each node has a camera. By default it points to the center of the cc.Node.</P>
+ * @class
+ * @extends cc.Class
  */
-
-cc.Node = cc.Class.extend({
+cc.Node = cc.Class.extend(/** @lends cc.Node# */{
+    /**
+     * zOrder
+     * @type Number
+     */
     _zOrder:0,
+    /**
+     * vertexZ
+     * @type Number
+     */
     _vertexZ:0.0,
+    /**
+     * rotation
+     * @type Number
+     */
     _rotation:0.0,
+    /**
+     * scaleX
+     * @type Number
+     */
     _scaleX:1.0,
+    /**
+     * scaleY
+     * @type Number
+     */
     _scaleY:1.0,
+    /**
+     * position
+     * @type cc.Point
+     */
     _position:cc.PointZero(),
+    /**
+     * positionInPixels
+     * @type cc.Point
+     */
     _positionInPixels:cc.PointZero(),
+    /**
+     * skewX
+     * @type Number
+     */
     _skewX:0.0,
+    /**
+     * skewY
+     * @type Number
+     */
     _skewY:0.0,
-    // children (lazy allocs),
+    /**
+     * children (lazy allocs)
+     * children
+     * @type Array
+     */
     _children:null,
-    // lazy alloc,
+    /**
+     * lazy alloc,
+     * camera
+     * @type cc.Camera
+     */
     _camera:null,
+    /**
+     * grid
+     * @type cc.GridBase
+     */
     _grid:null,
+    /**
+     * isVisible
+     * @type Boolean
+     */
     _isVisible:true,
+    /**
+     * anchorPoint
+     * @type cc.Point
+     */
     _anchorPoint:new cc.Point(0, 0),
+    /**
+     * anchorPointInPixels
+     * @type cc.Point
+     */
     _anchorPointInPixels:new cc.Point(0, 0),
+    /**
+     * contentSize
+     * @type cc.Size
+     */
     _contentSize:cc.SizeZero(),
+    /**
+     * contentSizeInPixels
+     * @type cc.Size
+     */
     _contentSizeInPixels:cc.SizeZero(),
+    /**
+     * isRunning
+     * @type Boolean
+     */
     _isRunning:false,
+    /**
+     * parent
+     * @type cc.Node
+     */
     _parent:null,
+    /**
+     * isRelativeAnchorPoint
+     * @type Boolean
+     */
     // "whole screen" objects. like Scenes and Layers, should set isRelativeAnchorPoint to false
     _isRelativeAnchorPoint:true,
+    /**
+     * tag
+     * @type Number
+     */
     _tag:cc.CCNODE_TAG_INVALID,
-    // userData is always inited as nil
+    /**
+     * userData is always inited as nil
+     * userData
+     * @type Number
+     */
     _userData:null,
+    /**
+     * isTransformDirty
+     * @type Boolean
+     */
     _isTransformDirty:true,
+    /**
+     * isInverseDirty
+     * @type Boolean
+     */
     _isInverseDirty:true,
+    /**
+     * isCacheDirty
+     * @type Boolean
+     */
     _isCacheDirty:true,
+    /**
+     * isTransformGLDirty
+     * @type Boolean
+     */
     _isTransformGLDirty:null,
+    /**
+     * transform
+     * @type cc.AffineTransform
+     */
     _transform:null,
+    /**
+     * inverse
+     * @type cc.AffineTransform
+     */
     _inverse:null,
+    /**
+     * transformGL
+     * @type Number
+     */
     _transformGL:null,
-
+    /**
+     * @Constructor
+     */
     ctor:function () {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._isTransformGLDirty = true;
@@ -144,47 +284,38 @@ cc.Node = cc.Class.extend({
         this._contentSize = new cc.Size(0, 0);
         this._contentSizeInPixels = new cc.Size(0, 0);
     },
-
-    _arrayMakeObjectsPerformSelector:function (array, callbackType) {
-        if (!array || array.length == 0)
-            return;
-
-        var i;
-        switch (callbackType) {
-            case cc.Node.StateCallbackType.onEnter:
-                for (i = 0; i < array.length; i++) {
-                    if (array[i])
-                        array[i].onEnter();
+    /**
+     * /**
+     * @param {Array} array
+     * @param {function} func
+     * @private
+     */
+    _arrayMakeObjectsPerformSelector:function (array, func) {
+        if (array && array.length > 0) {
+            for (var i = 0; i < array.length; i++) {
+                var node = array[i];
+                if (node && (typeof(func) == "string")) {
+                    node[func]();
+                } else if (node && (typeof(func) == "function")) {
+                    func.call(node);
                 }
-                break;
-            case cc.Node.StateCallbackType.onExit:
-                for (i = 0; i < array.length; i++) {
-                    if (array[i])
-                        array[i].onExit();
-                }
-                break;
-            case cc.Node.StateCallbackType.onEnterTransitionDidFinish:
-                for (i = 0; i < array.length; i++) {
-                    if (array[i])
-                        array[i].onEnterTransitionDidFinish();
-                }
-                break;
-            case cc.Node.StateCallbackType.cleanup:
-                for (i = 0; i < array.length; i++) {
-                    if (array[i])
-                        array[i].cleanup();
-                }
-                break;
-            default :
-                throw "Unknown callback function";
-                break;
+            }
         }
     },
+    /**
+     *
+     * @param {cc.Rect} rect
+     * @private
+     */
     _addDirtyRegionToDirector:function (rect) {
         //if (!cc.firstRun) {
         //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
         //}
     },
+    /**
+     *
+     * @private
+     */
     _isInDirtyRegion:function () {
         //if (!cc.firstRun) {
         //    return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
@@ -209,6 +340,10 @@ cc.Node = cc.Class.extend({
     getSkewX:function () {
         return this._skewX;
     },
+    /**
+     *
+     * @param {Number} newSkewX
+     */
     setSkewX:function (newSkewX) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -219,9 +354,17 @@ cc.Node = cc.Class.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
+    /**
+     *
+     * @return {Number}
+     */
     getSkewY:function () {
         return this._skewY;
     },
+    /**
+     *
+     * @param {Number} newSkewY
+     */
     setSkewY:function (newSkewY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -232,28 +375,47 @@ cc.Node = cc.Class.extend({
         this.setNodeDirty();
     },
 
-    // zOrder getter
+    /** zOrder getter
+     *
+     * @return {Number}
+     */
     getZOrder:function () {
         return this._zOrder;
     },
-    // zOrder setter : private method
-    // used internally to alter the zOrder variable. DON'T call this method manually
+    /** zOrder setter : private method
+     * used internally to alter the zOrder variable. DON'T call this method manually
+     * @param {Number} z
+     * @private
+     */
+
     _setZOrder:function (z) {
         this._zOrder = z
     },
-    // ertexZ getter
+    /** ertexZ getter
+     *
+     * @return {Number}
+     */
     getVertexZ:function () {
         return this._vertexZ / cc.CONTENT_SCALE_FACTOR();
     },
-    // vertexZ setter
+    /** vertexZ setter
+     *
+     * @param {Number} Var
+     */
     setVertexZ:function (Var) {
         this._vertexZ = Var * cc.CONTENT_SCALE_FACTOR();
     },
-    // rotation getter
+    /** rotation getter
+     *
+     * @return {Number}
+     */
     getRotation:function () {
         return this._rotation;
     },
-    // rotation setter
+    /** rotation setter
+     *
+     * @param {Number} newRotation
+     */
     setRotation:function (newRotation) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -265,13 +427,17 @@ cc.Node = cc.Class.extend({
         this.setNodeDirty();
     },
     /** Get the scale factor of the node.
-     @warning: Assert when _scaleX != _scaleY.
+     * @warning: Assert when _scaleX != _scaleY.
+     * @return {Number}
      */
     getScale:function () {
         cc.Assert(this._scaleX == this._scaleY, "cc.Node#scale. ScaleX != ScaleY. Don't know which one to return");
         return this._scaleX;
     },
-    /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. */
+    /** The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time.
+     *
+     * @param {Number} scale
+     */
     setScale:function (scale) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -283,11 +449,17 @@ cc.Node = cc.Class.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
-    /// scaleX getter
+    /** scaleX getter
+     *
+     * @return {Number}
+     */
     getScaleX:function () {
         return this._scaleX;
     },
-    /// scaleX setter
+    /** scaleX setter
+     *
+     * @param {Number} newScaleX
+     */
     setScaleX:function (newScaleX) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -298,11 +470,17 @@ cc.Node = cc.Class.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
-    /// scaleY getter
+    /** scaleY getter
+     *
+     * @return {Number}
+     */
     getScaleY:function () {
         return this._scaleY;
     },
-    /// scaleY setter
+    /** scaleY setter
+     *
+     * @param {Number} newScaleY
+     */
     setScaleY:function (newScaleY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -313,7 +491,10 @@ cc.Node = cc.Class.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
-    /// position setter
+    /** position setter
+     *
+     * @param {cc.Point} newPosition
+     */
     setPosition:function (newPosition) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -329,6 +510,10 @@ cc.Node = cc.Class.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
+    /**
+     *
+     * @param {cc.Point} newPosition
+     */
     setPositionInPixels:function (newPosition) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -343,79 +528,124 @@ cc.Node = cc.Class.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();// CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
     },
+    /**
+     *
+     * @return {cc.Point}
+     */
     getPositionInPixels:function () {
         return new cc.Point(this._positionInPixels.x, this._positionInPixels.y);
     },
-    /** get/set Position for Lua (pass number faster than CCPoint object)
+    /** <p>get/set Position for Lua (pass number faster than CCPoint object)</p>
 
-     lua code:
-     local x, y = node:getPosition()    -- return x, y values from C++
-     local x    = node:getPositionX()
-     local y    = node:getPositionY()
-     node:setPosition(x, y)             -- pass x, y values to C++
-     node:setPositionX(x)
-     node:setPositionY(y)
-     node:setPositionInPixels(x, y)     -- pass x, y values to C++
+     <p>lua code:<br/>
+     local x, y = node:getPosition()    -- return x, y values from C++ <br/>
+     local x    = node:getPositionX()<br/>
+     local y    = node:getPositionY()<br/>
+     node:setPosition(x, y)             -- pass x, y values to C++ <br/>
+     node:setPositionX(x) <br/>
+     node:setPositionY(y)<br/>
+     node:setPositionInPixels(x, y)     -- pass x, y values to C++ <br/></P>
+     * @return {cc.Point}
      */
     getPosition:function () {
         return new cc.Point(this._position.x, this._position.y);
     },
+    /**
+     *
+     * @return {Number}
+     */
     getPositionX:function () {
         return this._position.x;
     },
+    /**
+     *
+     * @param {Number} x
+     */
     setPositionX:function (x) {
         this.setPosition(cc.ccp(x, this._position.y));
     },
+    /**
+     *
+     * @return {Number}
+     */
     getPositionY:function () {
         return  this._position.y;
     },
+    /**
+     *
+     * @param {Number} y
+     */
     setPositionY:function (y) {
         this.setPosition(cc.ccp(this._position.x, y));
     },
-    /** Get children count */
+    /** Get children count
+     *
+     * @return {Number}
+     */
+
     getChildrenCount:function () {
         return this._children ? this._children.length : 0;
     },
-    /// children getter
+    /** children getter
+     *
+     * @return {object}
+     */
     getChildren:function () {
         return this._children;
     },
-    /// camera getter: lazy alloc
+    /** camera getter: lazy alloc
+     *
+     * @return {cc.Camera}
+     */
     getCamera:function () {
         if (!this._camera) {
             this._camera = new cc.Camera();
         }
         return this._camera;
     },
-    /// grid getter
+    /** grid getter
+     *
+     * @return {cc.GridBase}
+     */
     getGrid:function () {
         return this._grid;
     },
-    /// grid setter
+    /** grid setter
+     *
+     * @param {cc.GridBase} grid
+     */
     setGrid:function (grid) {
         this._grid = grid;
     },
-    /// isVisible getter
+    /** isVisible getter
+     *
+     * @return {Boolean}
+     */
     getIsVisible:function () {
         return this._isVisible;
     },
-    /// isVisible setter
+    /** isVisible setter
+     *
+     * @param {Boolean} Var
+     */
     setIsVisible:function (Var) {
         this._isVisible = Var;
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
 
-    /** anchorPoint is the point around which all transformations and positioning manipulations take place.
-     It's like a pin in the node where it is "attached" to its parent.
-     The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner.
-     But you can use values higher than (1,1) and lower than (0,0) too.
-     The default anchorPoint is (0.5,0.5), so it starts in the center of the node.
-     @since v0.8
+    /** <p>anchorPoint is the point around which all transformations and positioning manipulations take place.<br/>
+     It's like a pin in the node where it is "attached" to its parent. <br/>
+     The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
+     But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
+     The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
      */
     getAnchorPoint:function () {
         return new cc.Point(this._anchorPoint.x, this._anchorPoint.y);
     },
+    /**
+     * @param {cc.Point} point
+     */
     setAnchorPoint:function (point) {
         if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
             //save dirty region when before change
@@ -430,10 +660,15 @@ cc.Node = cc.Class.extend({
             this.setNodeDirty();
         }
     },
-    /// anchorPointInPixels getter
+    /** anchorPointInPixels getter
+     * @return {cc.Point}
+     */
     getAnchorPointInPixels:function () {
         return new cc.Point(this._anchorPointInPixels.x, this._anchorPointInPixels.y);
     },
+    /**
+     * @param {ss.Size} size
+     */
     setContentSizeInPixels:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._contentSizeInPixels)) {
             //save dirty region when before change
@@ -452,14 +687,17 @@ cc.Node = cc.Class.extend({
             this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
         }
     },
-    /** The untransformed size of the node.
-     The contentSize remains the same no matter the node is scaled or rotated.
-     All nodes has a size. Layer and Scene has the same size of the screen.
-     @since v0.8
+    /** <p>The untransformed size of the node. <br/>
+     The contentSize remains the same no matter the node is scaled or rotated.<br/>
+     All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
+     * @return {cc.Size}
      */
     getContentSize:function () {
         return new cc.Size(this._contentSize.width, this._contentSize.height);
     },
+    /**
+     * @param {cc.Size} size
+     */
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
             //save dirty region when before change
@@ -480,26 +718,40 @@ cc.Node = cc.Class.extend({
             this.setNodeDirty();
         }
     },
+    /**
+     * @return {cc.Size}
+     */
     getContentSizeInPixels:function () {
         return new cc.Size(this._contentSizeInPixels.width, this._contentSizeInPixels.height);
     },
-    // isRunning getter
+    /** isRunning getter
+     *
+     * @return {Boolean}
+     */
     getIsRunning:function () {
         return this._isRunning;
     },
-    /// parent getter
+    /** parent getter
+     * @return {cc.Node}
+     */
     getParent:function () {
         return this._parent;
     },
-    /// parent setter
+    /** parent setter
+     * @param {cc.Node} Var
+     */
     setParent:function (Var) {
         this._parent = Var;
     },
-    /// isRelativeAnchorPoint getter
+    /** isRelativeAnchorPoint getter
+     * @return {Boolean}
+     */
     getIsRelativeAnchorPoint:function () {
         return this._isRelativeAnchorPoint;
     },
-    /// isRelativeAnchorPoint setter
+    /** isRelativeAnchorPoint setter
+     * @param {Boolean} newValue
+     */
     setIsRelativeAnchorPoint:function (newValue) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -510,40 +762,57 @@ cc.Node = cc.Class.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
-    /// tag getter
+    /** tag getter
+     *
+     * @return {Number}
+     */
     getTag:function () {
         return this._tag;
     },
-    /// tag setter
+    /** tag setter
+     * @param {Number} Var
+     */
     setTag:function (Var) {
         this._tag = Var;
     },
+    /**
+     *
+     * @return {object}
+     */
     getUserData:function () {
         return this._userData;
     },
+    /**
+     *
+     * @param {object} Var
+     */
     setUserData:function (Var) {
         this._userData = Var;
     },
     /** returns a "local" axis aligned bounding box of the node.
      The returned box is relative only to its parent.
 
-     @since v0.8.2
+     * @return {Number}
      */
     boundingBox:function () {
         var ret = this.boundingBoxInPixels();
         return cc.RECT_PIXELS_TO_POINTS(ret);
     },
-    /** returns a "local" axis aligned bounding box of the node in pixels.
-     The returned box is relative only to its parent.
+    /** returns a "local" axis aligned bounding box of the node in pixels.<br/>
+     The returned box is relative only to its parent.<br/>
      The returned box is in Points.
-
-     @since v0.99.5
+     *
+     * @return {cc.Rect}
      */
     boundingBoxInPixels:function () {
         var rect = cc.RectMake(0, 0, this._contentSizeInPixels.width, this._contentSizeInPixels.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
 
+    /**
+     *
+     * @return {cc.Rect}
+     */
     boundingBoxToWorld:function () {
         var rect = cc.RectMake(0, 0, this._contentSizeInPixels.width, this._contentSizeInPixels.height);
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
@@ -564,7 +833,6 @@ cc.Node = cc.Class.extend({
         return rect;
     },
     /** Stops all running actions and schedulers
-     @since v0.8
      */
     cleanup:function () {
         // actions
@@ -572,18 +840,23 @@ cc.Node = cc.Class.extend({
         this.unscheduleAllSelectors();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
+        this._arrayMakeObjectsPerformSelector(this._children, "cleanup");
     },
+    /**
+     *
+     * @return {String}
+     */
     description:function () {
         return "<cc.Node | Tag =" + this._tag + ">";
     },
+
     _childrenAlloc:function () {
         this._children = [];
     },
     // composition: GET
     /** Gets a child from the container given its tag
-     @return returns a cc.Node object
-     @since v0.7.1
+     * @param {Number} aTag
+     * @return {cc.Node}
      */
     getChildByTag:function (aTag) {
         cc.Assert(aTag != cc.CCNODE_TAG_INVALID, "Invalid tag");
@@ -600,10 +873,17 @@ cc.Node = cc.Class.extend({
     },
     // composition: ADD
 
-    /* "add" logic MUST only be on this method
-     * If a class want's to extend the 'addChild' behaviour it only needs
-     * to override this method
+    /** <p>"add" logic MUST only be on this method <br/> </p>
+     *
+     * <p>If a class want's to extend the 'addChild' behaviour it only needs  <br/>
+     * to override this method </p>
+
+     * @param {cc.Node} child
+     * @param {Number} zOrder
+     * @param {Number} tag
      */
+
+
     addChild:function (child, zOrder, tag) {
         var argnum = arguments.length;
         cc.Assert(child != null, "Argument must be non-nil");
@@ -627,20 +907,23 @@ cc.Node = cc.Class.extend({
     },
     // composition: REMOVE
 
-    /** Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks.
-     If the node orphan, then nothing happens.
-     @since v0.99.3
+    /** Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks. <br/>
+     *  If the node orphan, then nothing happens.
+     * @param {Boolean} cleanup
      */
     removeFromParentAndCleanup:function (cleanup) {
         this._parent.removeChild(this, cleanup);
     },
-    /** Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter.
-     @since v0.7.1
+    /** <p>Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter. </p>
+
+     *<p> "remove" logic MUST only be on this method  <br/>
+     * If a class want's to extend the 'removeChild' behavior it only needs <br/>
+     * to override this method </p>
+
+     * @param {cc.Node} child
+     * @param {Boolean} cleanup
      */
-    /* "remove" logic MUST only be on this method
-     * If a class want's to extend the 'removeChild' behavior it only needs
-     * to override this method
-     */
+
     removeChild:function (child, cleanup) {
         // explicit nil handling
         if (this._children == null) {
@@ -655,21 +938,25 @@ cc.Node = cc.Class.extend({
         this.setNodeDirty();
     },
     /** Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter
-     @since v0.7.1
+     *
+     * @param {Number} tag
+     * @param {Boolean} cleanup
      */
+
     removeChildByTag:function (tag, cleanup) {
         cc.Assert(tag != cc.CCNODE_TAG_INVALID, "Invalid tag");
 
         var child = this.getChildByTag(tag);
         if (child == null) {
-            cc.Log("cocos2d: removeChildByTag: child not found!");
+            cc.LOG("cocos2d: removeChildByTag: child not found!");
         }
         else {
             this.removeChild(child, cleanup);
         }
     },
     /** Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
-     @since v0.7.1
+     *
+     * @param {Boolean} cleanup
      */
     removeAllChildrenWithCleanup:function (cleanup) {
         // not using detachChild improves speed here
@@ -693,6 +980,12 @@ cc.Node = cc.Class.extend({
             this._children = [];
         }
     },
+    /**
+     *
+     * @param {cc.Node} child
+     * @param {Boolean} doCleanup
+     * @private
+     */
     _detachChild:function (child, doCleanup) {
         // IMPORTANT:
         //  -1st do onExit
@@ -712,7 +1005,12 @@ cc.Node = cc.Class.extend({
 
         cc.ArrayRemoveObject(this._children, child);
     },
-    // helper used by reorderChild & add
+    /** helper used by reorderChild & add
+     *
+     * @param {cc.Node} child
+     * @param {Number} z
+     * @private
+     */
     _insertChild:function (child, z) {
         var a = this._children[this._children.length - 1];
         if (!a || a.getZOrder() <= z) {
@@ -728,8 +1026,10 @@ cc.Node = cc.Class.extend({
         }
         child._setZOrder(z);
     },
-    /** Reorders a child according to a new z value.
+    /** Reorders a child according to a new z value. <br/>
      * The child MUST be already added.
+     * @param {cc.Node} child
+     * @param {Number} zOrder
      */
     reorderChild:function (child, zOrder) {
         cc.Assert(child != null, "Child must be non-nil");
@@ -746,17 +1046,20 @@ cc.Node = cc.Class.extend({
     },
     // draw
 
-    /** Override this method to draw your own node.
-     The following GL states will be enabled by default:
-     - glEnableClientState(GL_VERTEX_ARRAY);
-     - glEnableClientState(GL_COLOR_ARRAY);
-     - glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-     - glEnable(GL_TEXTURE_2D);
+    /** <p>Override this method to draw your own node. <br/>
+     * The following GL states will be enabled by default: <br/>
+     - glEnableClientState(GL_VERTEX_ARRAY);  <br/>
+     - glEnableClientState(GL_COLOR_ARRAY); <br/>
+     - glEnableClientState(GL_TEXTURE_COORD_ARRAY); <br/>
+     - glEnable(GL_TEXTURE_2D); </p>
 
-     AND YOU SHOULD NOT DISABLE THEM AFTER DRAWING YOUR NODE
+     <p>AND YOU SHOULD NOT DISABLE THEM AFTER DRAWING YOUR NODE</p>
 
-     But if you enable any other GL state, you should disable it after drawing your node.
+     <p>But if you enable any other GL state, you should disable it after drawing your node. </p>
+     * @param {object} ctx
      */
+
+
     draw:function (ctx) {
         //CCAssert(0);
         // override me
@@ -764,7 +1067,10 @@ cc.Node = cc.Class.extend({
         // DON'T draw your stuff outside this method
     },
 
-    /** recursive method that visit its children and draw them */
+    /** recursive method that visit its children and draw them
+     *
+     * @param {object} ctx
+     */
     visit:function (ctx) {
         // quick return if not visible
         if (!this._isVisible) {
@@ -813,10 +1119,9 @@ cc.Node = cc.Class.extend({
 
         context.restore();
     },
-    /** performs OpenGL view-matrix transformation of it's ancestors.
-     Generally the ancestors are already transformed, but in certain cases (eg: attaching a FBO)
+    /** performs OpenGL view-matrix transformation of it's ancestors.<br/>
+     Generally the ancestors are already transformed, but in certain cases (eg: attaching a FBO) <br/>
      it's necessary to transform the ancestors again.
-     @since v0.7.2
      */
     transformAncestors:function () {
         if (this._parent != null) {
@@ -825,8 +1130,11 @@ cc.Node = cc.Class.extend({
         }
     },
 
-    // transformations
-    /** performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes. */
+    /** transformations
+     * performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes.
+     * @param {object} ctx
+     */
+
     transform:function (ctx) {
         var context = ctx || cc.renderContext;
         // transformations
@@ -936,109 +1244,121 @@ cc.Node = cc.Class.extend({
     },
     //scene managment
 
-    /** callback that is called every time the cc.Node enters the 'stage'.
+    /** callback that is called every time the cc.Node enters the 'stage'.<br/>
      If the cc.Node enters the 'stage' with a transition, this callback is called when the transition starts.
      During onEnter you can't a "sister/brother" node.
      */
     onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
+        this._arrayMakeObjectsPerformSelector(this._children, "onEnter");
         this.resumeSchedulerAndActions();
         this._isRunning = true;
     },
 
-    /** callback that is called when the cc.Node enters in the 'stage'.
+    /** callback that is called when the cc.Node enters in the 'stage'.  <br/>
      If the cc.Node enters the 'stage' with a transition, this callback is called when the transition finishes.
-     @since v0.8
      */
     onEnterTransitionDidFinish:function () {
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
+        this._arrayMakeObjectsPerformSelector(this._children, "onEnterTransitionDidFinish");
     },
-    /** callback that is called every time the cc.Node leaves the 'stage'.
-     If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes.
+    /** callback that is called every time the cc.Node leaves the 'stage'.<br/>
+     If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes. <br/>
      During onExit you can't access a sibling node.
      */
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._isRunning = false;
-        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
+        this._arrayMakeObjectsPerformSelector(this._children, "onExit");
     },
     // actions
 
     /** Executes an action, and returns the action that is executed.
      The node becomes the action's target.
      @warning Starting from v0.8 actions don't retain their target anymore.
-     @since v0.7.1
-     @return An Action pointer
+     * @param {cc.Action} action
+     * @return {cc.Action}
      */
     runAction:function (action) {
         cc.Assert(action != null, "Argument must be non-nil");
         cc.ActionManager.sharedManager().addAction(action, this, !this._isRunning);
         return action;
     },
-    /** Removes all actions from the running action list */
+    /** Removes all actions from the running action list
+     *
+     */
     stopAllActions:function () {
         cc.ActionManager.sharedManager().removeAllActionsFromTarget(this);
     },
-    /** Removes an action from the running action list */
+    /** Removes an action from the running action list
+     *
+     * @param {cc.Action} action
+     */
     stopAction:function (action) {
         cc.ActionManager.sharedManager().removeAction(action);
     },
     /** Removes an action from the running action list given its tag
-     @since v0.7.1
+     *
+     * @param {Number} tag
      */
     stopActionByTag:function (tag) {
         cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
         cc.ActionManager.sharedManager().removeActionByTag(tag, this);
     },
     /** Gets an action from the running action list given its tag
-     @since v0.7.1
-     @return the Action the with the given tag
+     *
+     * @param {Number} tag
+     * @return {cc.Action}
      */
     getActionByTag:function (tag) {
         cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
         return cc.ActionManager.sharedManager().getActionByTag(tag, this);
     },
-    /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).
-     * Composable actions are counted as 1 action. Example:
-     *    If you are running 1 Sequence of 7 actions, it will return 1.
+    /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).<br/>
+     *    Composable actions are counted as 1 action. Example:<br/>
+     *    If you are running 1 Sequence of 7 actions, it will return 1. <br/>
      *    If you are running 7 Sequences of 2 actions, it will return 7.
+     * @return {Number}
      */
     numberOfRunningActions:function () {
-        return cc.ActionManager.sharedManager().numberOfRunningActionsInTarget(this);
+        return cc.ActionManager.sharedManager.numberOfRunningActionsInTarget(this);
     },
 
     // cc.Node - Callbacks
     // timers
 
-    /** check whether a selector is scheduled. */
+    /** check whether a selector is scheduled.
+     *
+     * @param {function} selector
+     */
     isScheduled:function (selector) {
         //can't find this function in the cc.Node.cpp file
     },
-    /** schedules the "update" method. It will use the order number 0. This method will be called every frame.
-     Scheduled methods with a lower order value will be called before the ones that have a higher order value.
+    /** schedules the "update" method. It will use the order number 0. This method will be called every frame.<br/>
+     Scheduled methods with a lower order value will be called before the ones that have a higher order value.<br/>
      Only one "update" method could be scheduled per node.
-
-     @since v0.99.3
      */
     scheduleUpdate:function () {
         this.scheduleUpdateWithPriority(0);
     },
-    /** schedules the "update" selector with a custom priority. This selector will be called every frame.
-     Scheduled selectors with a lower priority will be called before the ones that have a higher value.
-     Only one "update" selector could be scheduled per node (You can't have 2 'update' selectors).
+    /** schedules the "update" selector with a custom priority. This selector will be called every frame.<br/>
+     Scheduled selectors with a lower priority will be called before the ones that have a higher value.<br/>
+     Only one "update" selector could be scheduled per node (You can't have 2 'update' selectors).<br/>
 
-     @since v0.99.3
+     * @param {Number} priority
      */
+
     scheduleUpdateWithPriority:function (priority) {
         cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
     },
     /* unschedules the "update" method.
-
-     @since v0.99.3
      */
     unscheduleUpdate:function () {
         cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
     },
+    /**
+     * schedule
+     * @param {function} selector
+     * @param {Number} interval
+     */
     schedule:function (selector, interval) {
         if (!interval)
             interval = 0;
@@ -1047,7 +1367,10 @@ cc.Node = cc.Class.extend({
         cc.Assert(interval >= 0, "Argument must be positive");
         cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
     },
-    /** unschedules a custom selector.*/
+    /** unschedules a custom selector.
+     *
+     * @param {function} selector
+     */
     unschedule:function (selector) {
         // explicit nil handling
         if (!selector)
@@ -1055,9 +1378,8 @@ cc.Node = cc.Class.extend({
 
         cc.Scheduler.sharedScheduler().unscheduleSelector(selector, this);
     },
-    /** unschedule all scheduled selectors: custom selectors, and the 'update' selector.
+    /** unschedule all scheduled selectors: custom selectors, and the 'update' selector.<br/>
      Actions are not affected by this method.
-     @since v0.99.3
      */
     unscheduleAllSelectors:function () {
         cc.Scheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
@@ -1076,9 +1398,10 @@ cc.Node = cc.Class.extend({
         cc.Scheduler.sharedScheduler().pauseTarget(this);
         cc.ActionManager.sharedManager().pauseTarget(this);
     },
-    /** Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.
+    /** Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
      The matrix is in Pixels.
-     @since v0.7.1
+     *
+     * @return {cc.AffineTransform}
      */
     nodeToParentTransform:function () {
         if (this._isTransformDirty) {
@@ -1115,9 +1438,9 @@ cc.Node = cc.Class.extend({
 
         return this._transform;
     },
-    /** Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.
+    /** Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.<br/>
      The matrix is in Pixels.
-     @since v0.7.1
+     * @return {Number}
      */
     parentToNodeTransform:function () {
         if (this._isInverseDirty) {
@@ -1128,7 +1451,8 @@ cc.Node = cc.Class.extend({
         return this._inverse;
     },
     /** Retrusn the world affine transform matrix. The matrix is in Pixels.
-     @since v0.7.1
+     *
+     * @return {cc.AffineTransform}
      */
     nodeToWorldTransform:function () {
         var t = this.nodeToParentTransform();
@@ -1138,13 +1462,17 @@ cc.Node = cc.Class.extend({
         return t;
     },
     /** Returns the inverse world affine transform matrix. The matrix is in Pixels.
-     @since v0.7.1
+     *
+     * @return {cc.AffineTransform}
      */
+
     worldToNodeTransform:function () {
         return cc.AffineTransformInvert(this.nodeToWorldTransform());
     },
     /** Converts a Point to node (local) space coordinates. The result is in Points.
-     @since v0.7.1
+     *
+     * @param {cc.Point} worldPoint
+     * @return {cc.Point}
      */
     convertToNodeSpace:function (worldPoint) {
         var ret = new cc.Point();
@@ -1159,7 +1487,9 @@ cc.Node = cc.Class.extend({
         return ret;
     },
     /** Converts a Point to world space coordinates. The result is in Points.
-     @since v0.7.1
+     *
+     * @param {cc.Point} nodePoint
+     * @return {cc.Point}
      */
     convertToWorldSpace:function (nodePoint) {
         var ret = new cc.Point();
@@ -1174,9 +1504,10 @@ cc.Node = cc.Class.extend({
 
         return ret;
     },
-    /** Converts a Point to node (local) space coordinates. The result is in Points.
+    /** Converts a Point to node (local) space coordinates. The result is in Points.<br/>
      treating the returned/received node point as anchor relative.
-     @since v0.7.1
+     * @param {cc.Point} worldPoint
+     * @return {cc.Point}
      */
     convertToNodeSpaceAR:function (worldPoint) {
         var nodePoint = this.convertToNodeSpace(worldPoint);
@@ -1188,9 +1519,10 @@ cc.Node = cc.Class.extend({
         }
         return cc.ccpSub(nodePoint, anchorInPoints);
     },
-    /** Converts a local Point to world space coordinates.The result is in Points.
+    /** Converts a local Point to world space coordinates.The result is in Points.<br/>
      treating the returned/received node point as anchor relative.
-     @since v0.7.1
+     * @param {cc.Point} nodePoint
+     * @return {cc.Point}
      */
     convertToWorldSpaceAR:function (nodePoint) {
         var anchorInPoints = new cc.Point();
@@ -1203,42 +1535,53 @@ cc.Node = cc.Class.extend({
         pt = cc.ccpAdd(nodePoint, anchorInPoints);
         return this.convertToWorldSpace(pt);
     },
+    /**
+     *
+     * @param nodePoint
+     * @return {cc.Point}
+     * @private
+     */
     _convertToWindowSpace:function (nodePoint) {
         var worldPoint = new cc.Point();
         worldPoint = this.convertToWorldSpace(nodePoint);
         return cc.Director.sharedDirector().convertToUI(worldPoint);
     },
     /** convenience methods which take a CCTouch instead of CCPoint
-     @since v0.7.1
      */
-    // convenience methods which take a CCTouch instead of CCPoint
+    /** convenience methods which take a CCTouch instead of CCPoint
+     *
+     * @param {cc.Touch} touch
+     * @return {cc.Point}
+     */
     convertTouchToNodeSpace:function (touch) {
         var point = touch.locationInView(touch.view());
         point = cc.Director.sharedDirector().convertToGL(point);
         return this.convertToNodeSpace(point);
     },
     /** converts a CCTouch (world coordinates) into a local coordiante. This method is AR (Anchor Relative).
-     @since v0.7.1
+     *
+     * @param {cc.Touch}touch
+     * @return {cc.Point}
      */
+
     convertTouchToNodeSpaceAR:function (touch) {
         var point = touch.locationInView(touch.view());
         point = cc.Director.sharedDirector().convertToGL(point);
         return this.convertToNodeSpaceAR(point);
     },
 
-    //implement CCObject's method
+    /** implement CCObject's method
+     *
+     * @param {Number} dt
+     */
     update:function (dt) {
     }
 });
 
-/**
- * cc.Node's state callback type
- */
-cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5};
-
 /** allocates and initializes a node.
+ *
+ * @return {cc.Node}
  */
-cc.Node.create = function () {
-    return new cc.Node();
+cc.Node.node = function () {
+    return new this();
 };
-
