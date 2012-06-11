@@ -525,7 +525,7 @@ cc.Scheduler = cc.Class.extend({
             for (var i = 0; i < element.timers.length; i++) {
                 var timer = element.timers[i];
                 if (selector == timer._selector) {
-                    cc.LOG("CCSheduler#scheduleSelector. Selector already scheduled.");
+                    cc.Log("CCSheduler#scheduleSelector. Selector already scheduled.");
                     timer._interval = interval;
                     return;
                 }

@@ -44,7 +44,7 @@ Box2DTestLayer = cc.Layer.extend({
             , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
 
         var screenSize = cc.Director.sharedDirector().getWinSize();
-        //UXLOG(L"Screen width %0.2f screen height %0.2f",screenSize.width,screenSize.height);
+        //UXLog(L"Screen width %0.2f screen height %0.2f",screenSize.width,screenSize.height);
 
 
         // Construct a world object, which will hold and simulate the rigid bodies.
@@ -109,7 +109,7 @@ Box2DTestLayer = cc.Layer.extend({
     //},
 
     addNewSpriteWithCoords:function (p) {
-        //UXLOG(L"Add sprite %0.2f x %02.f",p.x,p.y);
+        //UXLog(L"Add sprite %0.2f x %02.f",p.x,p.y);
         var batch = this.getChildByTag(TAG_SPRITE_MANAGER);
 
         //We have a 64x64 sprite sheet with 4 different 32x32 images.  The following code is

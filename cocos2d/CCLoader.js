@@ -33,7 +33,6 @@ cc.Loader = cc.Class.extend({
     isLoadedComplete:function () {
         var loaderCache = cc.Loader.shareLoader();
         if (loaderCache.loadedResourceCount == loaderCache.resourceCount) {
-            cc.LOG("cocos2d:Load Complete!");
             if (loaderCache.onload) {
                 loaderCache.timer = setTimeout(loaderCache.onload, 16);
             } else {
@@ -53,12 +52,12 @@ cc.Loader = cc.Class.extend({
     },
 
     onResLoadingErr:function (e) {
-        cc.LOG("cocos2d:Failed loading resource: " + e);
+        cc.Log("cocos2d:Failed loading resource: " + e);
     },
 
     onResLoaded:function (e) {
         this.loadedResourceCount++;
-        //cc.LOG("Loading:" + cc.Loader.shareLoader().getProgressBar() + "%");
+        //cc.Log("Loading:" + cc.Loader.shareLoader().getProgressBar() + "%");
     },
 
     getProgressBar:function () {
@@ -97,7 +96,7 @@ cc.Loader = cc.Class.extend({
                     this.resourceCount += 1;
                     break;
                 case "tga":
-                    //cc.LOG("cocos2d:not implemented yet")
+                    //cc.Log("cocos2d:not implemented yet")
                     break;
                 default:
                     throw "cocos2d:unknow type : " + res[i].type;

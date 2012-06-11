@@ -242,7 +242,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
 
         if (map.nodeName == "map") {
             if (version != "1.0" && version !== null) {
-                cc.LOG("cocos2d: TMXFormat: Unsupported TMX version:" + version);
+                cc.Log("cocos2d: TMXFormat: Unsupported TMX version:" + version);
             }
 
             if (orientationStr == "orthogonal")
@@ -252,7 +252,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
             else if (orientationStr == "hexagonal")
                 this.setOrientation(cc.TMXOrientationHex);
             else if (orientationStr !== null)
-                cc.LOG("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
+                cc.Log("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
 
             var s = new cc.Size();
             s.width = parseFloat(map.getAttribute('width'));
@@ -436,7 +436,7 @@ cc.TMXMapInfo = cc.SAXParser.extend({
                 var property = properties[i]
 
                 if (this.getParentElement() == cc.TMXPropertyNone) {
-                    cc.LOG("TMX tile map: Parent element is unsupported. Cannot add property named " + property.getAttribute('name') + " with value " + property.getAttribute('value'));
+                    cc.Log("TMX tile map: Parent element is unsupported. Cannot add property named " + property.getAttribute('name') + " with value " + property.getAttribute('value'));
                 }
                 else if (this.getParentElement() == cc.TMXPropertyMap) {
                     // The parent element is the map

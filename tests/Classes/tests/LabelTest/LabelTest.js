@@ -39,43 +39,76 @@ var TAG_LABEL_SPRITE16 = 665;
 var TAG_LABEL_SPRITE17 = 666;
 var TAG_LABEL_SPRITE18 = 667;
 
-
 var AtlasTests = [
-    "LabelAtlasTest",
-    "LabelAtlasColorTest",
-    "Atlas3",
-    "Atlas4",
-    "Atlas5",
-    "Atlas6",
-    "AtlasBitmapColor",
-    "AtlasFastBitmap",
-    "BitmapFontMultiLine",
-    "LabelsEmpty",
-    "LabelBMFontHD",
-    "LabelAtlasHD",
-    "LabelGlyphDesigner",
-    //"Atlas1",
-    "LabelTTFTest",
-    "LabelTTFMultiline",
-    "LabelTTFChinese",
-    "LabelBMFontChinese"
+    function () {
+        return new LabelAtlasTest();
+    }, //ok
+    function () {
+        return new LabelAtlasColorTest();
+    }, //ok
+    function () {
+        return new Atlas3();
+    },
+    function () {
+        return new Atlas4();
+    },
+    function () {
+        return new Atlas5();
+    },
+    function () {
+        return new Atlas6();
+    },
+    function () {
+        return new AtlasBitmapColor();
+    },
+    function () {
+        return new AtlasFastBitmap();
+    },
+    function () {
+        return new BitmapFontMultiLine();
+    },
+    function () {
+        return new LabelsEmpty();
+    },
+    function () {
+        return new LabelBMFontHD();
+    },
+    function () {
+        return new LabelAtlasHD();
+    }, //ok
+    function () {
+        return new LabelGlyphDesigner();
+    },
+    //function(){ return new Atlas1();},
+    function () {
+        return new LabelTTFTest();
+    }, //ok
+    function () {
+        return new LabelTTFMultiline();
+    }, //ok
+    function () {
+        return new LabelTTFChinese();
+    },//ok
+    function () {
+        return new LabelBMFontChinese();
+    }
 ];
 
 var atlasIdx = -1;
 function nextAtlasAction() {
     ++atlasIdx;
     atlasIdx = atlasIdx % AtlasTests.length;
-    return new window[AtlasTests[atlasIdx]];
+    return AtlasTests[atlasIdx]();
 }
 function backAtlasAction() {
     --atlasIdx;
     if (atlasIdx < 0) {
         atlasIdx += AtlasTests.length;
     }
-    return new window[AtlasTests[atlasIdx]];
+    return AtlasTests[atlasIdx]();
 }
 function restartAtlasAction() {
-    return new window[AtlasTests[atlasIdx]];
+    return AtlasTests[atlasIdx]();
 }
 
 var LabelTestScene = TestScene.extend({
@@ -422,7 +455,7 @@ var Atlas4 = AtlasDemo.extend({
     draw:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         var c = cc.RED();
-        cc.renderContext.strokeStyle = "rgba(" +c.r + "," + c.g + "," + c.b + ",1)";
+        cc.renderContext.strokeStyle = "rgba(" + c.r + "," + c.g + "," + c.b + ",1)";
         cc.drawingUtil.drawLine(cc.ccp(0, s.height / 2), cc.ccp(s.width, s.height / 2));
         cc.drawingUtil.drawLine(cc.ccp(s.width / 2, 0), cc.ccp(s.width / 2, s.height));
     },
@@ -580,7 +613,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         this.addChild(label1, 0, TAG_BITMAP_ATLAS1);
 
         s = label1.getContentSize();
-        cc.LOG("content size:"+ s.width+ "," + s.height);
+        cc.Log("content size:" + s.width + "," + s.height);
 
 
         // Center
@@ -589,7 +622,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         this.addChild(label2, 0, TAG_BITMAP_ATLAS2);
 
         s = label2.getContentSize();
-        cc.LOG("content size:"+ s.width+ "," + s.height);
+        cc.Log("content size:" + s.width + "," + s.height);
 
         // right
         var label3 = cc.LabelBMFont.create("Multi line\nRight\nThree lines Three", "Resources/fonts/bitmapFontTest3.fnt");
@@ -597,7 +630,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
 
         s = label3.getContentSize();
-        cc.LOG("content size:"+ s.width+ "," + s.height);
+        cc.Log("content size:" + s.width + "," + s.height);
 
         s = cc.Director.sharedDirector().getWinSize();
         label1.setPosition(cc.ccp(0, 0));
@@ -805,7 +838,7 @@ var LabelBMFontChinese = AtlasDemo.extend({
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
         var lable = cc.LabelBMFont.create("中国", "Resources/fonts/bitmapFontChinese.fnt");
-        lable.setPosition(cc.ccp(size.width / 2, size.height /2));
+        lable.setPosition(cc.ccp(size.width / 2, size.height / 2));
         this.addChild(lable);
     },
     title:function () {

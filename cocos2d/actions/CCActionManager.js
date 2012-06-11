@@ -154,7 +154,7 @@ cc.ActionManager = cc.Class.extend({
                 }
             }
         } else {
-            cc.LOG("cocos2d: removeAction: Target not found");
+            cc.Log("cocos2d: removeAction: Target not found");
         }
     },
     /** Removes an action given its tag and the target */

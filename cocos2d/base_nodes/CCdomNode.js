@@ -337,7 +337,7 @@ cc.domNode = cc.Class.extend({
         //when an element size is changed, we need to fix its origin, so that say 50% y origin will still be at center
         this.dom.style[cc.CSS3.origin] = (this.getAnchorPoint().x * 100) + "% " + (this.getAnchorPoint().y * size.height) + "px";
         //then we need to tell its child to update its position, because the child position also depend on the parent height
-        this._arrayMakeObjectsPerformSelector(this.getChildren(), "_updateTransform");
+        this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.updateTransform);
         this._updateAnchorPoint();
     },
     setAnchorPoint:function (s) {
@@ -411,7 +411,7 @@ cc.domNode = cc.Class.extend({
 
     //on enter and exit
     onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this.getChildren(), "onEnter");
+        this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.onEnter);
         this.resumeSchedulerAndActions();
         this._isRunning = true;
         this.show();
@@ -419,7 +419,7 @@ cc.domNode = cc.Class.extend({
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._isRunning = false;
-        this._arrayMakeObjectsPerformSelector(this.getChildren(), "onExit");
+        this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.onExit);
         this.hide();
         /*var that = cc.$("#" + this.id());
          var cur = this.dom;
@@ -429,7 +429,7 @@ cc.domNode = cc.Class.extend({
          that = null;*/
     },
     onEnterTransitionDidFinish:function () {
-        this._arrayMakeObjectsPerformSelector(this.getChildren(), "onEnter");
+        this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.onEnter);
     },
     setIsVisible:function (isVisible) {
         if (isVisible) {
@@ -459,16 +459,45 @@ cc.domNode = cc.Class.extend({
         cc.Scheduler.sharedScheduler().resumeTarget(this);
         cc.ActionManager.sharedManager().resumeTarget(this);
     },
-    _arrayMakeObjectsPerformSelector:function (array, func) {
-        if (array && array.length > 0) {
-            for (var i = 0; i < array.length; i++) {
-                var node = array[i];
-                if (node && (typeof(func) == "string")) {
-                    node[func]();
-                } else if (node && (typeof(func) == "function")) {
-                    func.call(node);
+    _arrayMakeObjectsPerformSelector:function (array, callbackType) {
+        if (!array || array.length == 0)
+            return;
+
+        var i;
+        switch (callbackType) {
+            case cc.Node.StateCallbackType.onEnter:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onEnter();
                 }
-            }
+                break;
+            case cc.Node.StateCallbackType.onExit:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onExit();
+                }
+                break;
+            case cc.Node.StateCallbackType.onEnterTransitionDidFinish:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onEnterTransitionDidFinish();
+                }
+                break;
+            case cc.Node.StateCallbackType.cleanup:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].cleanup();
+                }
+                break;
+            case cc.Node.StateCallbackType.updateTransform:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i]._updateTransform();
+                }
+                break;
+            default :
+                throw "Unknown callback function";
+                break;
         }
     },
 
@@ -479,7 +508,7 @@ cc.domNode = cc.Class.extend({
         this.unscheduleAllSelectors();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this.getChildren(), "cleanup");
+        this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.cleanup);
     },
     stopAllActions:function () {
         cc.ActionManager.sharedManager().removeAllActionsFromTarget(this);
@@ -558,7 +587,7 @@ cc.Node.implement({
         //this._updateAnchorPoint();
     },
     onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this._children, "onEnter");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
         this.resumeSchedulerAndActions();
         this._isRunning = true;
         //if this node has a dom element attached, and it is the current running scene, we finally attach it to the dom container :)

@@ -147,7 +147,7 @@ cc.setupHTML = function (obj) {
     //_container.style.height = canvas.clientHeight+"px";
     //_container.style.width = canvas.clientWidth+"px";
     if (obj) {
-        _container.setAttribute("fheight", obj.getContentSize().height);
+        _container.setAttribute("height", obj.getContentSize().height);
     }
     canvas.parentNode.insertBefore(_container, canvas);
     _container.appendChild(canvas);

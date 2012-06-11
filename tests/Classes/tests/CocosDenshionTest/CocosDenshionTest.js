@@ -27,25 +27,129 @@ var MUSIC_FILE = "Resources/background";
 var EFFECT_FILE = "Resources/effect2";
 
 var DenshionTests = [
-    "playBackgroundMusic",
-    "stopBackgroundMusic",
-    "pauseBackgroundMusic",
-    "resumeBackgroundMusic",
-    "rewindBackgroundMusic",
-    "isBackgroundMusicPlaying",
-    "playEffect",
-    "playEffectRepeatly",
-    "stopEffect",
-    "unloadEffect",
-    "addBackgroundMusicVolume",
-    "subBackgroundMusicVolume",
-    "addEffectsVolume",
-    "subEffectsVolume",
-    "pauseEffect",
-    "resumeEffect",
-    "pauseAllEffects",
-    "resumeAllEffects",
-    "stopAllEffects"
+    {
+        title:"playBackgroundMusic",
+        playFunc:function () {
+            return new playBackgroundMusic();
+        }
+    },
+    {
+        title:"stopBackgroundMusic",
+        playFunc:function () {
+            return new stopBackgroundMusic();
+        }
+    },
+    {
+        title:"pauseBackgroundMusic",
+        playFunc:function () {
+            return new pauseBackgroundMusic();
+        }
+    },
+    {
+        title:"resumeBackgroundMusic",
+        playFunc:function () {
+            return new resumeBackgroundMusic();
+        }
+    },
+    {
+        title:"rewindBackgroundMusic",
+        playFunc:function () {
+            return new rewindBackgroundMusic();
+        }
+    },
+    {
+        title:"isBackgroundMusicPlaying",
+        playFunc:function () {
+            return new isBackgroundMusicPlaying();
+        }
+    },
+    {
+        title:"playEffect",
+        playFunc:function () {
+            return new playEffect();
+        }
+    },
+    {
+        title:"playEffectRepeatly",
+        playFunc:function () {
+            return new playEffectRepeatly();
+        }
+    },
+    {
+        title:"stopEffect",
+        playFunc:function () {
+            return new stopEffect();
+        }
+    },
+    {
+        title:"unloadEffect",
+        playFunc:function () {
+            return new unloadEffect();
+        }
+    },
+    {
+        title:"addBackgroundMusicVolume",
+        playFunc:function () {
+            return new addBackgroundMusicVolume();
+        }
+    },
+
+    {
+        title:"subBackgroundMusicVolume",
+        playFunc:function () {
+            return new subBackgroundMusicVolume();
+        }
+    },
+
+    {
+        title:"addEffectsVolume",
+        playFunc:function () {
+            return new addEffectsVolume();
+        }
+    },
+
+    {
+        title:"subEffectsVolume",
+        playFunc:function () {
+            return new subEffectsVolume();
+        }
+    },
+
+    {
+        title:"pauseEffect",
+        playFunc:function () {
+            return new pauseEffect();
+        }
+    },
+
+    {
+        title:"resumeEffect",
+        playFunc:function () {
+            return new resumeEffect();
+        }
+    },
+
+    {
+        title:"pauseAllEffects",
+        playFunc:function () {
+            return new pauseAllEffects();
+        }
+    },
+
+    {
+        title:"resumeAllEffects",
+        playFunc:function () {
+            return new resumeAllEffects();
+        }
+    },
+
+    {
+        title:"stopAllEffects",
+        playFunc:function () {
+            return new stopAllEffects();
+        }
+    }
+
 ];
 
 CocosDenshionTest = cc.Layer.extend({
@@ -58,7 +162,7 @@ CocosDenshionTest = cc.Layer.extend({
         this._itmeMenu = cc.Menu.create(null);
         var s = cc.Director.sharedDirector().getWinSize();
         for (var i = 0; i < DenshionTests.length; i++) {
-            var label = cc.LabelTTF.create(DenshionTests[i], "Arial", 24);
+            var label = cc.LabelTTF.create(DenshionTests[i].title, "Arial", 24);
             var menuItem = cc.MenuItemLabel.create(label, this, this.menuCallback);
             this._itmeMenu.addChild(menuItem, i + 10000);
             menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
@@ -77,7 +181,7 @@ CocosDenshionTest = cc.Layer.extend({
     menuCallback:function (sender) {
         var idx = sender.getZOrder() - 10000;
         // create the test scene and run it
-        var scene = new window[DenshionTests[idx]]();
+        var scene = DenshionTests[idx].playFunc();
     },
     ccTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
@@ -128,99 +232,99 @@ CocosDenshionTestScene = TestScene.extend({
 var soundId = null;
 
 var playBackgroundMusic = function () {
-    cc.LOG("play background music");
+    cc.Log("play background music");
     cc.AudioManager.sharedEngine().playBackgroundMusic(MUSIC_FILE, false);
 };
 
 var stopBackgroundMusic = function () {
-    cc.LOG("stop background music");
+    cc.Log("stop background music");
     cc.AudioManager.sharedEngine().stopBackgroundMusic();
 };
 
 var pauseBackgroundMusic = function () {
-    cc.LOG("pause background music");
+    cc.Log("pause background music");
     cc.AudioManager.sharedEngine().pauseBackgroundMusic();
 };
 
 var resumeBackgroundMusic = function () {
-    cc.LOG("resume background music");
+    cc.Log("resume background music");
     cc.AudioManager.sharedEngine().resumeBackgroundMusic();
 };
 
 var rewindBackgroundMusic = function () {
-    cc.LOG("rewind background music");
+    cc.Log("rewind background music");
     cc.AudioManager.sharedEngine().rewindBackgroundMusic();
 };
 
 // is background music playing
 var isBackgroundMusicPlaying = function () {
     if (cc.AudioManager.sharedEngine().isBackgroundMusicPlaying()) {
-        cc.LOG("background music is playing");
+        cc.Log("background music is playing");
     }
     else {
-        cc.LOG("background music is not playing");
+        cc.Log("background music is not playing");
     }
 };
 
 var playEffect = function () {
-    cc.LOG("play effect");
+    cc.Log("play effect");
     soundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE);
 };
 
 var playEffectRepeatly = function () {
-    cc.LOG("play effect repeatly");
+    cc.Log("play effect repeatly");
     soundId = cc.AudioManager.sharedEngine().playEffect(EFFECT_FILE, true);
 };
 
 var stopEffect = function () {
-    cc.LOG("stop effect");
+    cc.Log("stop effect");
     cc.AudioManager.sharedEngine().stopEffect(soundId);
 };
 
 var unloadEffect = function () {
-    cc.LOG("unload effect");
+    cc.Log("unload effect");
     cc.AudioManager.sharedEngine().unloadEffect(EFFECT_FILE);
 };
 
 var addBackgroundMusicVolume = function () {
-    cc.LOG("add bakcground music volume");
+    cc.Log("add bakcground music volume");
     cc.AudioManager.sharedEngine().setBackgroundMusicVolume(cc.AudioManager.sharedEngine().getBackgroundMusicVolume() + 0.1);
 };
 
 var subBackgroundMusicVolume = function () {
-    cc.LOG("sub backgroud music volume");
+    cc.Log("sub backgroud music volume");
     cc.AudioManager.sharedEngine().setBackgroundMusicVolume(cc.AudioManager.sharedEngine().getBackgroundMusicVolume() - 0.1);
 };
 
 var addEffectsVolume = function () {
-    cc.LOG("add effects volume");
+    cc.Log("add effects volume");
     cc.AudioManager.sharedEngine().setEffectsVolume(cc.AudioManager.sharedEngine().getEffectsVolume() + 0.1);
 };
 
 var subEffectsVolume = function () {
-    cc.LOG("sub effects volume");
+    cc.Log("sub effects volume");
     cc.AudioManager.sharedEngine().setEffectsVolume(cc.AudioManager.sharedEngine().getEffectsVolume() - 0.1);
 };
 
 var pauseEffect = function () {
-    cc.LOG("pause effect");
+    cc.Log("pause effect");
     cc.AudioManager.sharedEngine().pauseEffect(soundId);
 };
 
 var resumeEffect = function () {
-    cc.LOG("resume effect");
+    cc.Log("resume effect");
     cc.AudioManager.sharedEngine().resumeEffect(soundId);
 };
 
 var pauseAllEffects = function () {
-    cc.LOG("pause all effects");
+    cc.Log("pause all effects");
     cc.AudioManager.sharedEngine().pauseAllEffects();
 };
 var resumeAllEffects = function () {
-    cc.LOG("resume all effects");
+    cc.Log("resume all effects");
     cc.AudioManager.sharedEngine().resumeAllEffects();
 };
 var stopAllEffects = function () {
-    cc.LOG("stop all effects");
+    cc.Log("stop all effects");
     cc.AudioManager.sharedEngine().stopAllEffects();
 };
