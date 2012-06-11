@@ -45,7 +45,7 @@ cc.SAXParser = cc.Class.extend({
             this.xmlDoc.loadXML(textxml);
         }
         if (this.xmlDoc == null) {
-            cc.LOG("xml " + this.xmlDoc + " not found!");
+            cc.Log("xml " + this.xmlDoc + " not found!");
         }
         var plist = this.xmlDoc.documentElement;
         if (plist.tagName != 'plist') {
@@ -75,7 +75,7 @@ cc.SAXParser = cc.Class.extend({
             this.xmlDoc.loadXML(textxml);
         }
         if (this.xmlDoc == null) {
-            cc.LOG("xml " + this.xmlDoc + " not found!");
+            cc.Log("xml " + this.xmlDoc + " not found!");
         }
         return this.xmlDoc;
     },

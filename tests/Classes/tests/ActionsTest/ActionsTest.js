@@ -30,50 +30,99 @@
 
 
 var actionTests = [
-    "ActionManual", //ok
-    "ActionMove", //OK
-    "ActionScale", //OK
-    "ActionRotate", //OK
-    "ActionSkew", //OK, Not in cocos2d-js
-    "ActionSkewRotateScale", //ok
-    "ActionJump", //OK
-    "ActionBezier", //Buggy?
-    "ActionBlink", //OK
-    "ActionFade", //OK
-    "ActionTint", //ok
-    "ActionSequence", //OK
-    "ActionSequence2", //OK
-    "ActionSpawn", //OK
-    "ActionReverse",
-    "ActionDelayTime", //OK
-    "ActionRepeat", //OK
-    "ActionRepeatForever", //OK
-    "ActionRotateToRepeat", //ok
-    "ActionRotateJerk", //ok
-    "ActionCallFunc", //OK
-    "ActionCallFuncND", //OK (cocos2d-X c+ bug/incomplete)
-    "ActionReverseSequence", //OK
-    "ActionReverseSequence2", //OK, Bug in Cocos2d-X implementation of FiniteTimeAction.reverse()
+    function () {
+        return new ActionManual()
+    }, //ok
+    function () {
+        return new ActionMove()
+    }, //OK
+    function () {
+        return new ActionScale()
+    }, //OK
+    function () {
+        return new ActionRotate()
+    }, //OK
+    function () {
+        return new ActionSkew()
+    }, //OK, Not in cocos2d-js
+    function () {
+        return new ActionSkewRotateScale()
+    }, //ok
+    function () {
+        return new ActionJump()
+    }, //OK
+    function () {
+        return new ActionBezier()
+    }, //Buggy?
+    function () {
+        return new ActionBlink()
+    }, //OK
+    function () {
+        return new ActionFade()
+    }, //OK
+    function () {
+        return new ActionTint()
+    }, //ok
+    function () {
+        return new ActionSequence()
+    }, //OK
+    function () {
+        return new ActionSequence2()
+    }, //OK
+    function () {
+        return new ActionSpawn()
+    }, //OK
+    function () {
+        return new ActionReverse()
+    },
+    function () {
+        return new ActionDelayTime()
+    }, //OK
+    function () {
+        return new ActionRepeat()
+    }, //OK
+    function () {
+        return new ActionRepeatForever()
+    }, //OK
+    function () {
+        return new ActionRotateToRepeat()
+    }, //ok
+    function () {
+        return new ActionRotateJerk()
+    }, //ok
+    function () {
+        return new ActionCallFunc()
+    }, //OK
+    function () {
+        return new ActionCallFuncND()
+    }, //OK (cocos2d-X c+ bug/incomplete)
+    function () {
+        return new ActionReverseSequence()
+    }, //OK
+    function () {
+        return new ActionReverseSequence2()
+    }, //OK, Bug in Cocos2d-X implementation of FiniteTimeAction.reverse()
     //"ActionOrbit",//Not possible in canvas, requires sprite camera
     //"ActionFollow",//Buggy
-    "ActionAnimate"//Require Texture2d Implementation
+    function () {
+        return new ActionAnimate()
+    }//Require Texture2d Implementation
 ];
 var actionIdx = -1;
 function NextAction() {
     ++actionIdx;
     actionIdx = actionIdx % actionTests.length;
-    console.log(actionTests[actionIdx]);
-    return new window[actionTests[actionIdx]];
+    return actionTests[actionIdx]();
 }
 function BackAction() {
     --actionIdx;
     if (actionIdx < 0) {
         actionIdx += actionTests.length;
     }
-    return new window[actionTests[actionIdx]];
+    return actionTests[actionIdx]();
 }
 function RestartAction() {
-    return new window[actionTests[actionIdx]];
+    return actionTests[actionIdx]();
 }
 
 // the class inherit from TestScene

@@ -362,16 +362,16 @@ var StressTest2 = TestCocosNodeDemo.extend({
 var SchedulerTest1 = TestCocosNodeDemo.extend({
     ctor:function () {
         var layer = cc.Layer.create();
-        //UXLOG("retain count after init is %d", layer.retainCount());                // 1
+        //UXLog("retain count after init is %d", layer.retainCount());                // 1
 
         this.addChild(layer, 0);
-        //UXLOG("retain count after addChild is %d", layer.retainCount());      // 2
+        //UXLog("retain count after addChild is %d", layer.retainCount());      // 2
 
         layer.schedule(this.doSomething);
-        //UXLOG("retain count after schedule is %d", layer.retainCount());      // 3 : (object-c viersion), but win32 version is still 2, because CCTimer class don't save target.
+        //UXLog("retain count after schedule is %d", layer.retainCount());      // 3 : (object-c viersion), but win32 version is still 2, because CCTimer class don't save target.
 
         layer.unschedule(this.doSomething);
-        //UXLOG("retain count after unschedule is %d", layer.retainCount());		// STILL 3!  (win32 is '2')
+        //UXLog("retain count after unschedule is %d", layer.retainCount());		// STILL 3!  (win32 is '2')
     },
     doSomething:function (dt) {
     },
@@ -633,7 +633,7 @@ var ConvertToNode = TestCocosNodeDemo.extend({
                 var p1 = node.convertToNodeSpaceAR(location);
                 var p2 = node.convertToNodeSpace(location);
 
-                cc.LOG("AR: x=" + p1.x.toFixed(2) + ", y=" + p1.y.toFixed(2) + " -- Not AR: x=" + p2.x.toFixed(2) + ", y=" + p2.y.toFixed(2));
+                cc.Log("AR: x=" + p1.x.toFixed(2) + ", y=" + p1.y.toFixed(2) + " -- Not AR: x=" + p2.x.toFixed(2) + ", y=" + p2.y.toFixed(2));
             }
         }
     },

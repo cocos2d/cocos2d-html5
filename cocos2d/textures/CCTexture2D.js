@@ -125,7 +125,7 @@ cc.Texture2D = cc.Class.extend({
             /** Initializes a texture from a PVRTC buffer */
             this.initWithPVRTCData = function (data, level, bpp, hasAlpha, length, pixelFormat) {
                 if (!(cc.Configuration.sharedConfiguration().isSupportsPVRTC())) {
-                    cc.LOG("cocos2d: WARNING: PVRTC images is not supported.");
+                    cc.Log("cocos2d: WARNING: PVRTC images is not supported.");
                     return false;
                 }
 
@@ -340,7 +340,7 @@ cc.Texture2D = cc.Class.extend({
         var POTWide, POTHigh;
 
         if (uiImage == null) {
-            cc.LOG("cocos2d: cc.Texture2D. Can't create Texture. UIImage is nil");
+            cc.Log("cocos2d: cc.Texture2D. Can't create Texture. UIImage is nil");
             return false;
         }
 
@@ -359,7 +359,7 @@ cc.Texture2D = cc.Class.extend({
 
         var maxTextureSize = conf.getMaxTextureSize();
         if (POTHigh > maxTextureSize || POTWide > maxTextureSize) {
-            cc.LOG("cocos2d: WARNING: Image (%u x %u) is bigger than the supported %u x %u", POTWide, POTHigh, maxTextureSize, maxTextureSize);
+            cc.Log("cocos2d: WARNING: Image (%u x %u) is bigger than the supported %u x %u", POTWide, POTHigh, maxTextureSize, maxTextureSize);
             return null;
         }
 
@@ -416,7 +416,7 @@ cc.Texture2D = cc.Class.extend({
             this.setAntiAliasTexParameters();
         }
         else {
-            cc.LOG("cocos2d: Couldn't load PVR image %s", file);
+            cc.Log("cocos2d: Couldn't load PVR image %s", file);
         }
 
         return ret;
@@ -516,7 +516,7 @@ cc.Texture2D = cc.Class.extend({
             default:
                 ret = -1;
                 cc.Assert(false, "illegal pixel format");
-                cc.LOG("bitsPerPixelForFormat: %d, cannot give useful result", this._pixelFormat);
+                cc.Log("bitsPerPixelForFormat: %d, cannot give useful result", this._pixelFormat);
                 break;
         }
         return ret;
@@ -545,7 +545,7 @@ cc.Texture2D = cc.Class.extend({
                 pixelFormat = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGB888;
             }
             else {
-                cc.LOG("cocos2d: cc.Texture2D: Using RGB565 texture since image has no alpha");
+                cc.Log("cocos2d: cc.Texture2D: Using RGB565 texture since image has no alpha");
                 pixelFormat = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGB565;
             }
         }

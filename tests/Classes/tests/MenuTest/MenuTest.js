@@ -123,7 +123,7 @@ var MenuLayer1 = cc.Layer.extend({
     allowTouches:function (dt) {
         cc.TouchDispatcher.sharedDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY + 1, this);
         this.unscheduleAllSelectors();
-        cc.LOG("Touches allowed again!");
+        cc.Log("Touches allowed again!");
     },
     menuCallbackDisabled:function (sender) {
         // hijack all touch events for 5 seconds
@@ -271,7 +271,7 @@ var MenuLayer3 = cc.Layer.extend({
         this._disabledItem.stopAllActions();
     },
     menuCallback3:function () {
-        cc.LOG("do something")
+        cc.Log("do something")
     }
 });
 

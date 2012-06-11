@@ -145,16 +145,39 @@ cc.Node = cc.Class.extend({
         this._contentSizeInPixels = new cc.Size(0, 0);
     },
 
-    _arrayMakeObjectsPerformSelector:function (array, func) {
-        if (array && array.length > 0) {
-            for (var i = 0; i < array.length; i++) {
-                var node = array[i];
-                if (node && (typeof(func) == "string")) {
-                    node[func]();
-                } else if (node && (typeof(func) == "function")) {
-                    func.call(node);
+    _arrayMakeObjectsPerformSelector:function (array, callbackType) {
+        if (!array || array.length == 0)
+            return;
+
+        var i;
+        switch (callbackType) {
+            case cc.Node.StateCallbackType.onEnter:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onEnter();
                 }
-            }
+                break;
+            case cc.Node.StateCallbackType.onExit:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onExit();
+                }
+                break;
+            case cc.Node.StateCallbackType.onEnterTransitionDidFinish:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onEnterTransitionDidFinish();
+                }
+                break;
+            case cc.Node.StateCallbackType.cleanup:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].cleanup();
+                }
+                break;
+            default :
+                throw "Unknown callback function";
+                break;
         }
     },
     _addDirtyRegionToDirector:function (rect) {
@@ -549,7 +572,7 @@ cc.Node = cc.Class.extend({
         this.unscheduleAllSelectors();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, "cleanup");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },
     description:function () {
         return "<cc.Node | Tag =" + this._tag + ">";
@@ -639,7 +662,7 @@ cc.Node = cc.Class.extend({
 
         var child = this.getChildByTag(tag);
         if (child == null) {
-            cc.LOG("cocos2d: removeChildByTag: child not found!");
+            cc.Log("cocos2d: removeChildByTag: child not found!");
         }
         else {
             this.removeChild(child, cleanup);
@@ -918,7 +941,7 @@ cc.Node = cc.Class.extend({
      During onEnter you can't a "sister/brother" node.
      */
     onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this._children, "onEnter");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
         this.resumeSchedulerAndActions();
         this._isRunning = true;
     },
@@ -928,7 +951,7 @@ cc.Node = cc.Class.extend({
      @since v0.8
      */
     onEnterTransitionDidFinish:function () {
-        this._arrayMakeObjectsPerformSelector(this._children, "onEnterTransitionDidFinish");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
     },
     /** callback that is called every time the cc.Node leaves the 'stage'.
      If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes.
@@ -937,7 +960,7 @@ cc.Node = cc.Class.extend({
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._isRunning = false;
-        this._arrayMakeObjectsPerformSelector(this._children, "onExit");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
     },
     // actions
 
@@ -1207,6 +1230,11 @@ cc.Node = cc.Class.extend({
     update:function (dt) {
     }
 });
+
+/**
+ * cc.Node's state callback type
+ */
+cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5};
 
 /** allocates and initializes a node.
  */

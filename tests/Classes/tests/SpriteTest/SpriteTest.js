@@ -649,7 +649,7 @@ var SpriteBatchNodeReorder = SpriteTestDemo.extend({
             //TODO need fixed
             var currentIndex = child.getAtlasIndex();
             //cc.Assert(prev == currentIndex - 1, "Child order failed");
-            ////----UXLOG("children %x - atlasIndex:%d", child, currentIndex);
+            ////----UXLog("children %x - atlasIndex:%d", child, currentIndex);
             prev = currentIndex;
         }
 
@@ -662,7 +662,7 @@ var SpriteBatchNodeReorder = SpriteTestDemo.extend({
 
             var currentIndex = child.getAtlasIndex();
             //cc.Assert(prev == currentIndex - 1, "Child order failed");
-            ////----UXLOG("descendant %x - atlasIndex:%d", child, currentIndex);
+            ////----UXLog("descendant %x - atlasIndex:%d", child, currentIndex);
             prev = currentIndex;
         }
     },
@@ -1131,10 +1131,10 @@ var SpriteFlip = SpriteTestDemo.extend({
         var sprite1 = this.getChildByTag(TAG_SPRITE1);
         var sprite2 = this.getChildByTag(TAG_SPRITE2);
 
-        cc.LOG("Pre: " + sprite1.getContentSize().height);
+        cc.Log("Pre: " + sprite1.getContentSize().height);
         sprite1.setFlipX(!sprite1.isFlipX());
         sprite2.setFlipY(!sprite2.isFlipY());
-        cc.LOG("Post: " + sprite1.getContentSize().height);
+        cc.Log("Post: " + sprite1.getContentSize().height);
     }
 });
 
@@ -1168,10 +1168,10 @@ var SpriteBatchNodeFlip = SpriteTestDemo.extend({
         var sprite1 = batch.getChildByTag(TAG_SPRITE1);
         var sprite2 = batch.getChildByTag(TAG_SPRITE2);
 
-        cc.LOG("Pre: " + sprite1.getContentSize().height);
+        cc.Log("Pre: " + sprite1.getContentSize().height);
         sprite1.setFlipX(!sprite1.isFlipX());
         sprite2.setFlipY(!sprite2.isFlipY());
-        cc.LOG("Post: " + sprite1.getContentSize().height);
+        cc.Log("Post: " + sprite1.getContentSize().height);
     }
 });
 
@@ -2438,7 +2438,7 @@ var SpriteHybrid = SpriteTestDemo.extend({
             p2 = p1;
             p1 = tempNode;
         }
-        ////----UXLOG("New parent is: %x", p2);
+        ////----UXLog("New parent is: %x", p2);
 
         var children = p1.getChildren();
         for (var i = 0; i < children.length; i++) {

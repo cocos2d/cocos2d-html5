@@ -57,17 +57,17 @@ SceneTestLayer1 = cc.Layer.extend({
 
 
     onEnter:function () {
-        cc.LOG("SceneTestLayer1#onEnter");
+        cc.Log("SceneTestLayer1#onEnter");
         this._super();
     },
 
     onEnterTransitionDidFinish:function () {
-        cc.LOG("SceneTestLayer1#onEnterTransitionDidFinish");
+        cc.Log("SceneTestLayer1#onEnterTransitionDidFinish");
         this._super();
     },
 
     testDealloc:function (dt) {
-        //cc.LOG("SceneTestLayer1:testDealloc");
+        //cc.Log("SceneTestLayer1:testDealloc");
     },
 
     onPushScene:function (sender) {

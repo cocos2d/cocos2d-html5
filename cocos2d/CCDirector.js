@@ -165,7 +165,7 @@ cc.Director = cc.Class.extend({
     _dirtyRegion:null,
 
     init:function () {
-        //cc.LOG("cocos2d: "+ cc.cocos2dVersion());
+        //cc.Log("cocos2d: "+ cc.cocos2dVersion());
         if (!this._FPSLabel) {
             this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 24);
         }
@@ -239,7 +239,7 @@ cc.Director = cc.Class.extend({
         var now = new cc.timeval();
         now = cc.Time.gettimeofdayCocos2d();
         if (!now) {
-            cc.LOG("error in gettimeofday");
+            cc.Log("error in gettimeofday");
             this._deltaTime = 0;
             return;
         }
@@ -633,7 +633,7 @@ cc.Director = cc.Class.extend({
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = cc.Time.gettimeofdayCocos2d();
         if (!this._lastUpdate) {
-            cc.LOG("cocos2d: Director: Error in gettimeofday");
+            cc.Log("cocos2d: Director: Error in gettimeofday");
         }
 
         this._paused = false;
@@ -848,7 +848,7 @@ cc.Director = cc.Class.extend({
                 break;
 
             default:
-                cc.LOG("cocos2d: Director: unrecognized projecgtion");
+                cc.Log("cocos2d: Director: unrecognized projecgtion");
                 break;
         }
 
@@ -884,7 +884,7 @@ cc.Director = cc.Class.extend({
             this._isContentScaleSupported = true;
         }
         else {
-            cc.LOG("cocos2d: setContentScaleFactor:'is not supported on this device");
+            cc.Log("cocos2d: setContentScaleFactor:'is not supported on this device");
         }
     },
     isRetinaDisplay:function () {
