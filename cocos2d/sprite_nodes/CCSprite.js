@@ -25,11 +25,11 @@
  ****************************************************************************/
 
 /**
- * CCSprite invalid index on the CCSpriteBatchode
+ * cc.Sprite invalid index on the cc.SpriteBatchode
  * @constant
- * @type Number
+ * @type {Number}
  */
-cc.SpriteIndexNotInitialized = "0xffffffff";
+cc.SPRITE_INDEX_NOT_INITIALIZED = "0xffffffff";
 
 /**
  * generate texture's cache for texture tint
@@ -131,35 +131,35 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
 /**
  * Translate with it's parent
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.HONOR_PARENT_TRANSFORM_TRANSLATE = 1 << 0;
 
 /**
  * Rotate with it's parent
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.HONOR_PARENT_TRANSFORM_ROTATE = 1 << 1;
 
 /**
  * Scale with it's parent
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.HONOR_PARENT_TRANSFORM_SCALE = 1 << 2;
 
 /**
  * Skew with it's parent
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.HONOR_PARENT_TRANSFORM_SKEW = 1 << 3;
 
 /**
  * All possible transformation enabled. Default value.
  * @constant
- * @type Number
+ * @type {Number}
  */
 cc.HONOR_PARENT_TRANSFORM_ALL = cc.HONOR_PARENT_TRANSFORM_TRANSLATE | cc.HONOR_PARENT_TRANSFORM_ROTATE | cc.HONOR_PARENT_TRANSFORM_SCALE | cc.HONOR_PARENT_TRANSFORM_SKEW;
 
@@ -638,7 +638,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * tell the sprite to use self-render.
      */
     useSelfRender:function () {
-        this._atlasIndex = cc.SpriteIndexNotInitialized;
+        this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
         this._usesBatchNode = false;
         this._textureAtlas = null;
         this._batchNode = null;
@@ -1396,7 +1396,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         // renders using Sprite Manager
         if (this._usesBatchNode) {
-            if (this._atlasIndex != cc.SpriteIndexNotInitialized) {
+            if (this._atlasIndex != cc.SPRITE_INDEX_NOT_INITIALIZED) {
                 this._textureAtlas.updateQuad(this._quad, this._atlasIndex)
             } else {
                 // no need to set it recursively
