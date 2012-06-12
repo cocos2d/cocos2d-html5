@@ -49,7 +49,6 @@ cc.ActionInstant = cc.FiniteTimeAction.extend(/** @lends cc.ActionInstant# */{
      * @param {Number} time
      */
     update:function (time) {
-        //cc.UNUSED_PARAM(time);
     }
 });
 
@@ -277,12 +276,12 @@ cc.Place.create = function (pos) {
 cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     /**
      * @param {object} selectorTarget
-     * @param {function} selector
-     * @param {*} d data for function, it accepts all data types.
+     * @param {function|Null} selector
+     * @param {*|Null} data data for function, it accepts all data types.
      * @return {Boolean}
      */
-    initWithTarget:function (selectorTarget, selector, d) {
-        this._data = d || null;
+    initWithTarget:function (selectorTarget, selector, data) {
+        this._data = data || null;
         this._callFunc = selector || null;
         this._selectorTarget = selectorTarget || null;
         return true;
@@ -314,14 +313,14 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     },
 
     /**
-     * @param {object} pSel
+     * @param {object} sel
      */
-    setTargetCallback:function (pSel) {
-        if (pSel != this._selectorTarget) {
+    setTargetCallback:function (sel) {
+        if (sel != this._selectorTarget) {
             if (this._selectorTarget) {
                 this._selectorTarget = null;
             }
-            this._selectorTarget = pSel;
+            this._selectorTarget = sel;
         }
     },
     _selectorTarget:null,
@@ -329,8 +328,8 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
 });
 /** creates the action with the callback
  * @param {object} selectorTarget
- * @param {function|NULL} selector
- * @param {*|Null} d
+ * @param {function|Null} selector
+ * @param {*|Null} data data for function, it accepts all data types.
  * @return {cc.CallFunc}
  * @example
  * // example
@@ -341,9 +340,9 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
  * var finish = cc.CallFunc.create(this._grossini, this.removeFromParentAndCleanup, true),
  */
 
-cc.CallFunc.create = function (selectorTarget, selector, d) {
+cc.CallFunc.create = function (selectorTarget, selector, data) {
     var ret = new cc.CallFunc();
-    if (ret && ret.initWithTarget(selectorTarget, selector, d)) {
+    if (ret && ret.initWithTarget(selectorTarget, selector, data)) {
         ret._callFunc = selector;
         return ret;
     }
