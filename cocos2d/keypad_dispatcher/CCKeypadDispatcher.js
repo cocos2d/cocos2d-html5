@@ -56,7 +56,7 @@ cc.TYPE_MENU_CLICKED = 2;
  * if,(cc.keyDown[cc.KEY.space])
  * //if its undefined or false or null, its not pressed
  * @constant
- * @type {Object}
+ * @type {object}
  */
 cc.KEY = {
     backspace:8,
