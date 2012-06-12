@@ -452,9 +452,6 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 });
 
 /**
-
- */
-/**
  * <p>
  *   creates an initializes a CCParticleSystemQuad from a plist file.<br/>
  *   This plist files can be creted manually or with Particle Designer:<br/>
