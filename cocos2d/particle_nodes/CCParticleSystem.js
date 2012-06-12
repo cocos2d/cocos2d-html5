@@ -111,11 +111,8 @@ cc.CCPARTICLE_MODE_GRAVITY = 0;
  */
 cc.CCPARTICLE_MODE_RADIUS = 1;
 
-
-/**
- * @typedef tCCPositionType
- * possible types of particle positions
- */
+ // tCCPositionType
+ // possible types of particle positions
 
 /**
  * Living particles are attached to the world and are unaffected by emitter repositioning.
@@ -279,6 +276,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     //drawMode
     _drawMode:cc.PARTICLE_SHAPE_MODE,
+
     /**
      * Return DrawMode of ParticleSystem
      * @return {Number}
@@ -297,6 +295,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     //shape type
     _shapeType:cc.PARTICLE_BALL_SHAPE,
+
     /**
      * Return ShapeType of ParticleSystem
      * @return {Number}
@@ -304,6 +303,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     getShapeType:function () {
         return this._shapeType;
     },
+
     /**
      * ShapeType of ParticleSystem setter
      * @param {Number} shapeType
@@ -312,8 +312,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._shapeType = shapeType;
     },
 
-    /** Is the emitter active */
     _isActive:false,
+
     /**
      * Return ParticleSystem is active
      * @return {Boolean}
@@ -331,6 +331,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _particleCount:0,
+
     /**
      * Quantity of particles that are being simulated at the moment
      * @return {Number}
@@ -372,6 +373,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     getSourcePosition:function () {
         return this._sourcePosition;
     },
+
     /**
      * sourcePosition of the emitter setter
      * @param sourcePosition
@@ -456,6 +458,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     getAngleVar:function () {
         return this._angleVar;
     },
+
     /**
      * angle variance of each particle setter
      * @param angleVar
@@ -473,6 +476,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.gravity;
     },
+
     /**
      * Gravity of emitter setter
      * @param {cc.Point} gravity
@@ -508,6 +512,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.speedVar;
     },
+
     /**
      * speed variance of each particle setter. Only available in 'Gravity' mode.
      * @param {Number} speedVar
