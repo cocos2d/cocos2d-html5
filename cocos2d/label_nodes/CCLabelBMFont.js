@@ -333,7 +333,7 @@ cc.BMFontConfiguration.create = function (FNTfile) {
  * @class
  * @extends cc.
  */
-cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont */{
+cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _opacity:0,
     _color:null,
     _isOpacityModifyRGB:false,

@@ -32,7 +32,7 @@
  * @class
  * @extends cc.Sprite
  */
-cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF */{
+cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _dimensions:null,
     _alignment:cc.TextAlignmentCenter,
     _fontName:"Arial",
@@ -127,7 +127,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF */{
 
     /**
      * renders the label
-     * @param {CanvasContext} ctx
+     * @param {CanvasContext|Null} ctx
      */
     draw:function (ctx) {
         if (cc.renderContextType == cc.CANVAS) {

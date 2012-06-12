@@ -24,26 +24,22 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/*cc.LayerRGBAColor = function(color) {
-
- }*/
-//
-// cc.Layer
-//
-/** @brief cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.
-
- All features from cc.Node are valid, plus the following new features:
- - It can receive iPhone Touches
- - It can receive Accelerometer input
+/** cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.<br/>
+ * All features from cc.Node are valid, plus the following new features:<br/>
+ * It can receive iPhone Touches<br/>
+ * It can receive Accelerometer input
+ * @class
+ * @extends cc.Node
  */
-
-cc.Layer = cc.Node.extend({
+cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isTouchEnabled:false,
     _isAccelerometerEnabled:false,
     _isKeypadEnabled:false,
 
+    /**
+     * @constuctor
+     * @return {Boolean} return false if director fails
+     */
     ctor:function () {
         this._super();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -58,6 +54,10 @@ cc.Layer = cc.Node.extend({
         this._isAccelerometerEnabled = false;
     },
 
+    /**
+     *
+     * @return {Boolean}
+     */
     init:function () {
         /*var director = cc.Director.sharedDirector();
          if (!director) {
@@ -69,33 +69,29 @@ cc.Layer = cc.Node.extend({
         // success
         return true;
     },
-    type:"layer",
 
-    /// Touch and Accelerometer related
-    /** If isTouchEnabled, this method is called onEnter. Override it to change the
-     way CCLayer receives touch events.
-     ( Default: CCTouchDispatcher.sharedDispatcher().addStandardDelegate(this,0); )
-     Example:
-     CCLayer.registerWithTouchDispatcher()
-     {
-     CCTouchDispatcher.sharedDispatcher().addTargetedDelegate(this,INT_MIN+1,true);
-     }
-     @since v0.8.0
+    /**
+     * If isTouchEnabled, this method is called onEnter. Override it to change the<br/>
+     * way CCLayer receives touch events.<br/>
      */
     registerWithTouchDispatcher:function () {
         cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
     },
 
-    /** whether or not it will receive Touch events.
-     You can enable / disable touch events with this property.
-     Only the touches of this node will be affected. This "method" is not propagated to it's children.
-     @since v0.8.1
+    /**
+     * whether or not it will receive Touch events.<br/>
+     * You can enable / disable touch events with this property.<br/>
+     * Only the touches of this node will be affected. This "method" is not propagated to it's children.<br/>
+     * @return {Boolean}
      */
-    /// isTouchEnabled getter
     getIsTouchEnabled:function () {
         return this._isTouchEnabled;
     },
-    /// isTouchEnabled setter
+
+    /**
+     * Enable touch events
+     * @param {Boolean} enabled
+     */
     setIsTouchEnabled:function (enabled) {
         if (this._isTouchEnabled != enabled) {
             this._isTouchEnabled = enabled;
@@ -111,15 +107,20 @@ cc.Layer = cc.Node.extend({
             }
         }
     },
-    /** whether or not it will receive Accelerometer events
-     You can enable / disable accelerometer events with this property.
-     @since v0.8.1
+
+    /**
+     * whether or not it will receive Accelerometer events<br/>
+     * You can enable / disable accelerometer events with this property.
+     * @return {Boolean}
      */
-    /// isAccelerometerEnabled getter
     getIsAccelerometerEnabled:function () {
         return this._isAccelerometerEnabled;
     },
-    /// isAccelerometerEnabled setter
+
+    /**
+     * isAccelerometerEnabled setter
+     * @param enabled
+     */
     setIsAccelerometerEnabled:function (enabled) {
         if (enabled != this._isAccelerometerEnabled) {
             this._isAccelerometerEnabled = enabled;
@@ -134,15 +135,21 @@ cc.Layer = cc.Node.extend({
             }
         }
     },
-    /** whether or not it will receive keypad events
-     You can enable / disable accelerometer events with this property.
-     it's new in cocos2d-x
+
+    /**
+     * whether or not it will receive keypad events<br/>
+     * You can enable / disable accelerometer events with this property.<br/>
+     * it's new in cocos2d-x
+     * @return {Boolean}
      */
-    /// isKeypadEnabled getter
     getIsKeypadEnabled:function () {
         return this._isKeypadEnabled;
     },
-    /// isKeypadEnabled setter
+
+    /**
+     * Enable Keyboard interaction
+     * @param {Boolean} enabled
+     */
     setIsKeypadEnabled:function (enabled) {
         if (enabled != this._isKeypadEnabled) {
             this._isKeypadEnabled = enabled;
@@ -156,7 +163,9 @@ cc.Layer = cc.Node.extend({
         }
     },
 
-/// Callbacks
+    /**
+     * This is run when ever a layer just become visible
+     */
     onEnter:function () {
         // register 'parent' nodes first
         // since events are propagated in reverse order
@@ -178,6 +187,10 @@ cc.Layer = cc.Node.extend({
             cc.KeypadDispatcher.sharedDispatcher().addDelegate(this);
         }
     },
+
+    /**
+     * @function
+     */
     onExit:function () {
         if (this._isTouchEnabled) {
             cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
@@ -195,43 +208,103 @@ cc.Layer = cc.Node.extend({
 
         this._super();
     },
+
+    /**
+     * this is called when ever a layer is a child of a scene that just finished a transition
+     */
     onEnterTransitionDidFinish:function () {
         if (this._isAccelerometerEnabled) {
             cc.Accelerometer.sharedAccelerometer().setDelegate(this);
         }
         this._super();
     },
-    // default implements are used to call script callback if exist
+
+    /**
+     * default implements are used to call script callback if exist<br/>
+     * you must override these touch functions if you wish to utilize them
+      * @param {cc.Touch} touch
+     * @param {event} event
+     * @return {Boolean}
+     */
     ccTouchBegan:function (touch, event) {
         cc.Assert(false, "Layer#ccTouchBegan override me");
         return true;
     },
+
+    /**
+     * callback when a touch event moved
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchMoved:function (touch, event) {
     },
+
+    /**
+     * callback when a touch event finished
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchEnded:function (touch, event) {
     },
+
+    /**
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchCancelled:function (touch, event) {
     },
 
-    // default implements are used to call script callback if exist
+    /**
+     * Touches is the same as Touch, except this one can handle multi-touch
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchesBegan:function (touch, event) {
     },
+
+    /**
+     * when a touch moved
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchesMoved:function (touch, event) {
     },
+
+    /**
+     * when a touch finished
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchesEnded:function (touch, event) {
     },
+
+    /**
+     * @param touch
+     * @param event
+     */
     ccTouchesCancelled:function (touch, event) {
     },
 
     didAccelerate:function (pAccelerationValue) {
     },
 
+    /**
+     * @param {cc.Layer} layer
+     */
     addLayer:function (layer) {
         cc.Assert(this.layers, "cc.Layer addLayer");
         this.layers.addObject(layer);
     }
 });
 
+/**
+ * creates a layer
+ * @example
+ * // Example
+ * var myLayer = cc.Layer.create();
+ * //Yes! it's that simple
+ * @return {cc.Layer|Null}
+ */
 cc.Layer.create = function () {
     var ret = new cc.Layer();
     if (ret && ret.init()) {
@@ -243,23 +316,24 @@ cc.Layer.create = function () {
 };
 
 
-//
-// CCLayerColor
-//
-/** @brief CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.
-
- All features from CCLayer are valid, plus the following new features:
- - opacity
- - RGB colors
+/**
+ * CCLayerColor is a subclass of CCLayer that implements the CCRGBAProtocol protocol.<br/>
+ *  All features from CCLayer are valid, plus the following new features:<br/>
+ * <ul><li>opacity</li>
+ * <li>RGB colors</li></ul>
+ * @class
+ * @extends cc.Layer
  */
-cc.LayerColor = cc.Layer.extend({
+cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _squareVertices:[],
     _squareColors:[],
     _opacity:0,
     _color:new cc.Color3B(255, 255, 255),
     _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
 
-    /// ColorLayer
+    /**
+     * @function
+     */
     ctor:function () {
         this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
         this._squareColors = [new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1), new cc.Color4B(0, 0, 0, 1)];
@@ -267,13 +341,18 @@ cc.LayerColor = cc.Layer.extend({
         this._super();
     },
 
-    // Opacity and RGB color protocol
-    /// opacity getter
+    /**
+     * opacity getter
+      * @return {Number}
+     */
     getOpacity:function () {
         return this._opacity;
     },
 
-    /// opacity setter
+    /**
+     * opacity setter
+      * @param {Number} Var a number between 0 and 255, 0 is totally transparent
+     */
     setOpacity:function (Var) {
         this._opacity = Var;
         this._updateColor();
@@ -281,11 +360,19 @@ cc.LayerColor = cc.Layer.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
-    /// color getter
+
+    /**
+     * color getter
+      * @return {cc.Color3B}
+     */
     getColor:function () {
         return this._color;
     },
-    /// color setter
+
+    /**
+     * color setter
+      * @param {cc.Color3B} Var
+     */
     setColor:function (Var) {
         this._color = Var;
         this._updateColor();
@@ -293,15 +380,27 @@ cc.LayerColor = cc.Layer.extend({
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
     },
-    /// blendFunc getter
+
+    /**
+     * blendFunc getter
+      * @return {cc.BlendFunc}
+     */
     getBlendFunc:function () {
         return this._blendFunc;
     },
-    /// blendFunc setter
+
+    /**
+     * blendFunc setter
+      * @param {cc.BlendFunc} Var
+     */
     setBlendFunc:function (Var) {
         this._blendFunc = Var;
     },
 
+    /**
+     * @param color
+     * @return {Boolean}
+     */
     initWithColor:function (color) {
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
@@ -313,10 +412,13 @@ cc.LayerColor = cc.Layer.extend({
             this._squareVertices[i].y = 0.0;
         }
         this._updateColor();
-        ;
         return true;
     },
-    /// override contentSize
+
+    /**
+     * override contentSize
+      * @param {cc.Size} size
+     */
     setContentSize:function (size) {
         this._squareVertices[1].x = size.width * cc.CONTENT_SCALE_FACTOR();
         this._squareVertices[2].y = size.height * cc.CONTENT_SCALE_FACTOR();
@@ -324,17 +426,28 @@ cc.LayerColor = cc.Layer.extend({
         this._squareVertices[3].y = size.height * cc.CONTENT_SCALE_FACTOR();
         this._super(size);
     },
-    /** change width and height in Points
-     @since v0.8
+
+    /**
+     * change width and height in Points
+     * @param {Number} w width
+     * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
         this.setContentSize(cc.SizeMake(w, h));
     },
-    /** change width in Points*/
+
+    /**
+     * change width in Points
+      * @param {Number} w width
+     */
     changeWidth:function (w) {
         this.setContentSize(cc.SizeMake(w, this._contentSize.height));
     },
-    /** change height in Points*/
+
+    /**
+     * change height in Points
+      * @param {Number} h height
+     */
     changeHeight:function (h) {
         this.setContentSize(cc.SizeMake(this._contentSize.width, h));
     },
@@ -346,12 +459,17 @@ cc.LayerColor = cc.Layer.extend({
             this._squareColors[i].a = Math.round(this._opacity);
         }
     },
+
     setIsOpacityModifyRGB:function (value) {
     },
     getIsOpacityModifyRGB:function () {
         return false;
     },
 
+    /**
+     * renders the layer
+     * @param {CanvasContext|Null} ctx
+     */
     draw:function (ctx) {
         //TODO need to fix child position in relation to parent
         var context = ctx || cc.renderContext;
@@ -407,7 +525,21 @@ cc.LayerColor = cc.Layer.extend({
     }
 });
 
-/** creates a CCLayer with color, width and height in Points */
+/**
+ * creates a cc.Layer with color, width and height in Points
+ * @param {cc.Color3B} color
+ * @param {Number|Null} width
+ * @param {Number|Null} height
+ * @return {cc.LayerColor}
+ * @example
+ * // Example
+ * //Create a yellow color layer as background
+ * var yellowBackground = cc.LayerColor.create(cc.ccc3(255,255,0));
+ * //If you didnt pass in width and height, it defaults to the same size as the canvas
+ *
+ * //create a yellow box, 200 by 200 in size
+ * var yellowBox = cc.LayerColor.create(cc.ccc3(255,255,0), 200, 200);
+ */
 cc.LayerColor.create = function (color, width, height) {
     var ret = new cc.LayerColor();
     if (color) {
@@ -421,82 +553,159 @@ cc.LayerColor.create = function (color, width, height) {
     }
     return ret;
 };
-//
-// CCLayerGradient
-//
-/** CCLayerGradient is a subclass of CCLayerColor that draws gradients across
- the background.
 
- All features from CCLayerColor are valid, plus the following new features:
- - direction
- - final color
- - interpolation mode
 
- Color is interpolated between the startColor and endColor along the given
- vector (starting at the origin, ending at the terminus).  If no vector is
- supplied, it defaults to (0, -1) -- a fade from top to bottom.
-
- If 'compressedInterpolation' is disabled, you will not see either the start or end color for
- non-cardinal vectors; a smooth gradient implying both end points will be still
- be drawn, however.
-
- If ' compressedInterpolation' is enabled (default mode) you will see both the start and end colors of the gradient.
-
- @since v0.99.5
+/**
+ * CCLayerGradient is a subclass of cc.LayerColor that draws gradients across<br/>
+ * the background.<br/>
+ *<br/>
+ * All features from cc.LayerColor are valid, plus the following new features:<br/>
+ * <ul><li>direction</li>
+ * <li>final color</li>
+ * <li>interpolation mode</li></ul>
+ * <br/>
+ * Color is interpolated between the startColor and endColor along the given<br/>
+ * vector (starting at the origin, ending at the terminus).  If no vector is<br/>
+ * supplied, it defaults to (0, -1) -- a fade from top to bottom.<br/>
+ * <br/>
+ * If 'compressedInterpolation' is disabled, you will not see either the start or end color for<br/>
+ * non-cardinal vectors; a smooth gradient implying both end points will be still<br/>
+ * be drawn, however.<br/>
+ *<br/>
+ * If ' compressedInterpolation' is enabled (default mode) you will see both the start and end colors of the gradient.
+ * @class
+ * @extends cc.LayerColor
  */
-cc.LayerGradient = cc.LayerColor.extend({
+cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _startColor:new cc.Color3B(0, 0, 0),
     _endColor:new cc.Color3B(0, 0, 0),
     _startOpacity:null,
     _endOpacity:null,
     _alongVector:null,
     _compressedInterpolation:false,
+
+    /**
+     * @constuctor
+     * @function
+     */
     ctor:function () {
         this._startColor = new cc.Color3B(0, 0, 0);
         this._endColor = new cc.Color3B(0, 0, 0);
         this._super();
     },
+
+    /**
+     * get the starting color
+     * @return {cc.Color3B}
+     */
     getStartColor:function () {
         return this._color;
     },
+
+    /**
+     * set the starting color
+     * @param {cc.Color3B} color
+     * @example
+     * // Example
+     * myGradientLayer.setStartColor(cc.ccc3(255,0,0));
+     * //set the starting gradient to red
+     */
     setStartColor:function (color) {
         this.setColor(color);
     },
+
+    /**
+     * set the end gradient color
+     * @param {cc.Color3B} color
+     * @example
+     * // Example
+     * myGradientLayer.setEndColor(cc.ccc3(255,0,0));
+     * //set the ending gradient to red
+     */
     setEndColor:function (color) {
         this._endColor = color;
         this._updateColor();
     },
+
+    /**
+     * get the end color
+     * @return {cc.Color3B}
+     */
     getEndColor:function () {
         return this._endColor;
     },
+
+    /**
+     * set starting gradient opacity
+     * @param {Number} o from 0 to 255, 0 is transparent
+     */
     setStartOpacity:function (o) {
         this._startOpacity = o;
         this._updateColor();
     },
+
+    /**
+     * get the starting gradient opacity
+     * @return {Number}
+     */
     getStartOpacity:function () {
         return this._startOpacity;
     },
+
+    /**
+     * set the end gradient opacity
+     * @param {Number} o
+     */
     setEndOpacity:function (o) {
         this._endOpacity = o;
         this._updateColor();
     },
+
+    /**
+     * get the end gradient opacity
+     * @return {Number}
+     */
     getEndOpacity:function () {
         return this._endOpacity;
     },
+
+    /**
+     * set vector
+     * @param {cc.Point} Var
+     */
     setVector:function (Var) {
         this.alongVector = Var;
         this._updateColor();
     },
+
+    /**
+     * @return {cc.Point}
+     */
     getVector:function () {
         return this.alongVector;
     },
+
+    /**
+     * @return {Boolean}
+     */
     getIsCompressedInterpolation:function () {
         return this._compressedInterpolation;
     },
+
+    /**
+     * @param {Boolean} compress
+     */
     setIsCompressedInterpolation:function (compress) {
         this._compressedInterpolation = compress;
         this._updateColor();
     },
+
+    /**
+     * @param {cc.Color3B} start starting color
+     * @param {cc.Color3B} end
+     * @param {cc.Point|Null} v
+     * @return {Boolean}
+     */
     initWithColor:function (start, end, v) {
         var argnum = arguments.length;
         if (argnum == 2) {
@@ -583,8 +792,13 @@ cc.LayerGradient = cc.LayerColor.extend({
 });
 
 
-// cc.LayerGradient
-//
+/**
+ * creates a gradient layer
+ * @param {cc.Color3B} start starting color
+ * @param {cc.Color3B} end ending color
+ * @param {cc.Point|Null} v
+ * @return {cc.LayerGradient}
+ */
 cc.LayerGradient.create = function (start, end, v) {
     var argnum = arguments.length;
     var layer = new cc.LayerGradient();
@@ -613,18 +827,36 @@ cc.LayerGradient.create = function (start, end, v) {
 };
 
 
-/** @brief CCMultipleLayer is a CCLayer with the ability to multiplex it's children.
- Features:
- - It supports one or more children
- - Only one children will be active a time
+/**
+ * CCMultipleLayer is a CCLayer with the ability to multiplex it's children.<br/>
+ * Features:<br/>
+ *  <ul><li>- It supports one or more children</li>
+ *  <li>- Only one children will be active a time</li></ul>
+ *  @class
+ *  @extends cc.Layer
  */
-/// MultiplexLayer
-cc.LayerMultiplex = cc.Layer.extend({
+cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
+    /**
+     * @private
+     */
     enabledLayer:0,
+    /**
+     * @private
+     */
     layers:null,
+
+    /**
+     * @constuctor
+     */
     ctor:function () {
         this._super();
     },
+
+    /**
+     * @param {cc.Layer} layer
+     * @deprecated merged with initWithLayer
+     * @return {Boolean}
+     */
     initWithLayer:function (layer) {
         this.layers = [];
         this.layers.push(layer);
@@ -632,14 +864,22 @@ cc.LayerMultiplex = cc.Layer.extend({
         this.addChild(layer);
         return true;
     },
+
+    /**
+     * @param {Array} args an array of cc.Layer
+     * @return {Boolean}
+     */
     initWithLayers:function (args) {
         this.layers = args;
         this.enabledLayer = 0;
         this.addChild(this.layers[this.enabledLayer]);
         return true;
     },
-    /** switches to a certain layer indexed by n.
+
+    /**
+     * switches to a certain layer indexed by n.<br/>
      * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
+     * @param {Number} n the layer index to switch to
      */
     switchTo:function (n) {
         cc.Assert(n < this.layers.length, "Invalid index in MultiplexLayer switchTo message");
@@ -650,8 +890,10 @@ cc.LayerMultiplex = cc.Layer.extend({
 
         this.addChild(this.layers[n]);
     },
-    /** release the current layer and switches to another layer indexed by n.
-     The current (old) layer will be removed from it's parent with 'cleanup:YES'.
+
+    /** release the current layer and switches to another layer indexed by n.<br/>
+     * The current (old) layer will be removed from it's parent with 'cleanup:YES'.
+     * @param {Number} n the layer index to switch to
      */
     switchToAndReleaseMe:function (n) {
         cc.Assert(n < this.layers.count(), "Invalid index in MultiplexLayer switchTo message");
@@ -666,7 +908,15 @@ cc.LayerMultiplex = cc.Layer.extend({
         this.addChild(this.layers[n]);
     }
 });
-/** creates a CCLayerMultiplex with one or more layers using a variable argument list. */
+
+
+/**
+ * creates a cc.LayerMultiplex with one or more layers using a variable argument list.
+ * @return {cc.LayerMultiplex|Null}
+ * @example
+ * // Example
+ * var multiLayer = cc.LayerMultiple.create(layer1, layer2, layer3);//any number of layers
+ */
 cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
     var multiplexLayer = new cc.LayerMultiplex();
     if (multiplexLayer.initWithLayers(arguments)) {
@@ -675,12 +925,25 @@ cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
     return null;
 };
 
-cc.LazyLayer = cc.Node.extend({
+
+/**
+ * a layer that does not get redraw if not needed, and its always gets placed on the button layer
+ * @class
+ * @extends cc.Node
+ * @example
+ * // Example
+ * var veryLazy = new cc.LazyLayer();
+ * veryLazy.addChild(mySprite);
+ */
+cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
     _layerCanvas:null,
     _layerContext:null,
     _isNeedUpdate:false,
     _canvasZOrder:-10,
 
+    /**
+     * @constuctor
+     */
     ctor:function () {
         this._super();
         this.setAnchorPoint(new cc.Point(0, 0));
@@ -688,6 +951,9 @@ cc.LazyLayer = cc.Node.extend({
         this._setupHtml();
     },
 
+    /**
+     * @param {Number} zOrder
+     */
     setLayerZOrder:function (zOrder) {
         if (zOrder >= 0) {
             throw "LazyLayer zOrder must Less than Zero.Because LazyLayer is a background Layer!";
@@ -696,6 +962,10 @@ cc.LazyLayer = cc.Node.extend({
         this._layerCanvas.style.zIndex = this._canvasZOrder;
     },
 
+    /**
+     *
+     * @return {Number}
+     */
     getLayerZOrder:function () {
         return this._canvasZOrder;
     },
@@ -725,6 +995,9 @@ cc.LazyLayer = cc.Node.extend({
         });
     },
 
+    /**
+     * make it the same size as canvas, in case canvas resized
+     */
     adjustSizeForCanvas:function () {
         this._isNeedUpdate = true;
         this._layerCanvas.width = cc.canvas.width;
@@ -738,16 +1011,29 @@ cc.LazyLayer = cc.Node.extend({
         this._layerContext.scale(xScale, xScale);
     },
 
+    /**
+     * same as cc.Node
+     * @param {cc.Node} child
+     * @param {Number|Null} zOrder
+     * @param {Number|Null} tag
+     */
     addChild:function (child, zOrder, tag) {
         this._isNeedUpdate = true;
         this._super(child, zOrder, tag);
     },
 
+    /**
+     * @param {cc.Node} child
+     * @param {Boolean} cleanup
+     */
     removeChild:function (child, cleanup) {
         this._isNeedUpdate = true;
         this._super(child, cleanup);
     },
 
+    /**
+     * stuff gets drawn in here
+     */
     visit:function () {
         // quick return if not visible
         if (!this._isVisible) {
