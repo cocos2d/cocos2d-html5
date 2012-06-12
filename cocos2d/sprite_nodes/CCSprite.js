@@ -165,6 +165,8 @@ cc.HONOR_PARENT_TRANSFORM_ALL = cc.HONOR_PARENT_TRANSFORM_TRANSLATE | cc.HONOR_P
 
 /**
  * a Values object for transform
+ * @Class
+ * @Construct
  * @param {cc.Point} pos position x and y
  * @param {cc.Point} scale scale x and y
  * @param {Number} rotation
@@ -211,7 +213,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  *    - But the rendering will be slower: 1 draw per children.   <br/>
  *
  * The default anchorPoint in cc.Sprite is (0.5, 0.5). </p>
- * @class cc.Sprite
+ * @class
  * @extends cc.Node
  *
  * @example
