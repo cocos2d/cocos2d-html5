@@ -55,7 +55,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF */{
      * @return {String}
      */
     description:function () {
-        return "<CCLabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
+        return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
 
     /**
