@@ -27,12 +27,14 @@
 /**
  * Whether the sound on or not
  * @constant
+ * @type Boolean
  */
 cc.sound = true;
 
 /**
  * Support audio format
  * @constant
+ * @type Boolean
  */
 cc.capabilities = {
     mp3:false,
@@ -42,8 +44,8 @@ cc.capabilities = {
 
 /**
  * Offer a VERY simple interface to play background music & sound effect.
- @class       cc.AudioManager
- @extend   cc.Class
+ * @class       cc.AudioManager
+ * @extends   cc.Class
  */
 cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     _initialized:false,
@@ -56,6 +58,9 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     _isBgmPlaying:false,
     _playingBgm:null,
     _effectsVolume:1,
+    /**
+    * @Constructor
+    */
     ctor:function () {
         if (this._initialized)
             return;
