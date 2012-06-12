@@ -23,22 +23,25 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
 /**
- * @brief CCLabelTTF is a subclass of CCTextureNode that knows how to render text labels
- *
- * All features from CCTextureNode are valid in CCLabelTTF
- *
- * CCLabelTTF objects are slow. Consider using CCLabelAtlas or CCLabelBMFont instead.
+ * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels<br/>
+ * All features from cc.TextureNode are valid in cc.LabelTTF<br/>
+ * cc.LabelTTF objects are slow for js-binding on mobile devices.<br/>
+ * Consider using cc.LabelAtlas or cc.LabelBMFont instead.<br/>
+ * @class
+ * @extends cc.Sprite
  */
-cc.LabelTTF = cc.Sprite.extend({
+cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF */{
     _dimensions:null,
     _alignment:cc.TextAlignmentCenter,
     _fontName:"Arial",
     _fontSize:0.0,
     _string:null,
     _fontStyleStr:null,
+    /**
+     * @constuctor
+     */
     ctor:function () {
         this._super();
         this._string = "";
@@ -46,11 +49,24 @@ cc.LabelTTF = cc.Sprite.extend({
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
     },
+
+    /**
+     * Prints out a description of this class
+     * @return {String}
+     */
     description:function () {
-        return "<CCLabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
+        return "<cc.LabelTTF | FontName =" + this._fontName + " FontSize = " + this._fontSize.toFixed(1) + ">";
     },
 
-    /** initializes the CCLabelTTF with a font name, alignment, dimension and font size */
+    /**
+     * initializes the cc.LabelTTF with a font name, alignment, dimension and font size
+      * @param {String} label
+     * @param {cc.Size} dimensions
+     * @param {cc.TextAlignmentLeft|cc.TextAlignmentCenter|cc.TextAlignmentRight} alignment
+     * @param {String} fontName
+     * @param {Number} fontSize
+     * @return {Boolean} return false on error
+     */
     initWithString:function (label, dimensions, alignment, fontName, fontSize) {
         cc.Assert(label != null, "cc.LabelTTF.initWithString() label is null");
         if (arguments.length > 3) {
@@ -80,8 +96,10 @@ cc.LabelTTF = cc.Sprite.extend({
         }
     },
 
-    /** changes the string to render
-     * @warning Changing the string is as expensive as creating a new CCLabelTTF. To obtain better performance use CCLabelAtlas
+    /**
+     * changes the string to render
+     * @warning Changing the string is as expensive as creating a new cc.LabelTTF. To obtain better performance use cc.LabelAtlas
+     * @param {String} label text for the label
      */
     setString:function (label) {
         this._string = label;
@@ -107,7 +125,10 @@ cc.LabelTTF = cc.Sprite.extend({
         this.setTextureRect(rect);
     },
 
-    //temp method
+    /**
+     * renders the label
+     * @param {CanvasContext} ctx
+     */
     draw:function (ctx) {
         if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
@@ -184,16 +205,36 @@ cc.LabelTTF = cc.Sprite.extend({
 
         }
     },
+
+    /**
+     * returns the text of the label
+     * @return {String}
+     */
     getString:function () {
         return this._string;
     },
 
+    /**
+     *
+     * @return {cc.LabelTTF}
+     */
     convertToLabelProtocol:function () {
         return this;
     }
 });
 
-/** creates a CCLabelTTF from a fontname, alignment, dimension and font size */
+/**
+ * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
+ * @param {String} label
+ * @param {cc.Size} dimensions
+ * @param {cc.TextAlignmentLeft|cc.TextAlignmentCenter|cc.TextAlignmentRight} alignment
+ * @param {String} fontName
+ * @param {Number} fontSize
+ * @return {cc.LabelTTF|Null}
+ * @example
+ * // Example
+ * var myLabel = cc.LabelTTF.create('label text', cc.SizeMake(32,16), cc.TextAlignmentLeft, 'Times New Roman', 32);
+ */
 cc.LabelTTF.create = function (label, dimensions, alignment, fontName, fontSize) {
     var ret = new cc.LabelTTF();
     if (arguments.length > 3) {
@@ -210,4 +251,4 @@ cc.LabelTTF.create = function (label, dimensions, alignment, fontName, fontSize)
 
         return null;
     }
-}
+};
