@@ -24,35 +24,45 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/** @brief CCParticleSystemQuad is a subclass of CCParticleSystem
-
- It includes all the features of ParticleSystem.
-
- Special features and Limitations:
- - Particle size can be any float number.
- - The system can be scaled
- - The particles can be rotated
- - On 1st and 2nd gen iPhones: It is only a bit slower that CCParticleSystemPoint
- - On 3rd gen iPhone and iPads: It is MUCH faster than CCParticleSystemPoint
- - It consumes more RAM and more GPU memory than CCParticleSystemPoint
- - It supports subrects
- @since v0.8
+/**
+ * <p>
+ *     CCParticleSystemQuad is a subclass of CCParticleSystem<br/>
+ *     <br/>
+ *     It includes all the features of ParticleSystem.<br/>
+ *     <br/>
+ *     Special features and Limitations:<br/>
+ *      - Particle size can be any float number. <br/>
+ *      - The system can be scaled <br/>
+ *      - The particles can be rotated     <br/>
+ *      - On 1st and 2nd gen iPhones: It is only a bit slower that CCParticleSystemPoint <br/>
+ *      - On 3rd gen iPhone and iPads: It is MUCH faster than CCParticleSystemPoint  <br/>
+ *      - It consumes more RAM and more GPU memory than CCParticleSystemPoint  <br/>
+ *      - It supports subrects   <br/>
+ * </p>
+ * @class
+ * @extends cc.ParticleSystem
+ * @example
+ * //create a particle system
+ *   this._emitter = new cc.ParticleSystemQuad();
+ *   this._emitter.initWithTotalParticles(150);
  */
-cc.ParticleSystemQuad = cc.ParticleSystem.extend({
+cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQuad# */{
     // quads to be rendered
     _quads:null,
     // indices
     _indices:null,
     // VBO id
     _quadsID:0,
-
+    /**
+     * @Constructor
+     */
     ctor:function () {
         this._super();
     },
 
-    /** initialices the indices for the vertices*/
+    /**
+     * initialices the indices for the vertices
+     */
     initIndices:function () {
         for (var i = 0; i < this._totalParticles; ++i) {
             var i6 = i * 6;
@@ -68,9 +78,11 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     },
 
     /**
-     * initilizes the texture with a rectangle measured Points
+     * <p> initilizes the texture with a rectangle measured Points<br/>
      * pointRect should be in Texture coordinates, not pixel coordinates
-     * */
+     * </p>
+     * @param {cc.Rect} pointRect
+     */
     initTexCoordsWithRect:function (pointRect) {
         // convert to pixels coords
         var rect = cc.RectMake(
@@ -131,9 +143,11 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         }
     },
 
-    /** Sets a new CCSpriteFrame as particle.
-     WARNING: this method is experimental. Use setTexture:withRect instead.
-     @since v0.99.4
+    /**
+     * <p> Sets a new CCSpriteFrame as particle.</br>
+     * WARNING: this method is experimental. Use setTexture:withRect instead.
+     * </p>
+     * @param {cc.SpriteFrame} spriteFrame
      */
     setDisplayFrame:function (spriteFrame) {
         cc.Assert(cc.Point.CCPointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
@@ -144,8 +158,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         }
     },
 
-    /** Sets a new texture with a rect. The rect is in Points.
-     @since v0.99.4
+    /**
+     *  Sets a new texture with a rect. The rect is in Points.
+     * @param {cc.Texture2D} texture
+     * @param {cc.Rect} rect
      */
     setTextureWithRect:function (texture, rect) {
         // Only update the texture if is different from the current one
@@ -158,6 +174,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
 
     // super methods
     // overriding the init method
+    /**
+     * Initializes a system with a fixed number of particles
+     * @override
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         // base initialization
         if (this._super(numberOfParticles)) {
@@ -209,6 +231,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         return false;
     },
 
+    /**
+     * set Texture of Particle System
+     * @override
+     * @param {HTMLImageElement|HTMLCanvasElement|cc.Texture2D} texture
+     * @param {Boolean} isCallSuper is direct call super method
+     */
     setTexture:function (texture, isCallSuper) {
         if (isCallSuper) {
             if (isCallSuper == true) {
@@ -216,16 +244,22 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
                 return;
             }
         }
-        var s = null;
+        var size = null;
         if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
-            s = cc.SizeMake(texture.width, texture.height);
+            size = cc.SizeMake(texture.width, texture.height);
         } else {
-            s = texture.getContentSize();
+            size = texture.getContentSize();
         }
 
-        this.setTextureWithRect(texture, cc.RectMake(0, 0, s.width, s.height));
+        this.setTextureWithRect(texture, cc.RectMake(0, 0, size.width, size.height));
     },
 
+    /**
+     * update particle's quad
+     * @override
+     * @param {cc.tCCParticle} particle
+     * @param {cc.Point} newPosition
+     */
     updateQuadWithParticle:function (particle, newPosition) {
         // colors
         var quad = this._quads[this._particleIdx];
@@ -237,7 +271,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         quad.tl.colors = color;
         quad.tr.colors = color;
 
-// vertices
+        // vertices
         var size_2 = particle.size / 2;
         if (particle.rotation) {
             var x1 = -size_2;
@@ -294,6 +328,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         }
     },
 
+    /**
+     * override cc.ParticleSystem
+     * @override
+     */
     postStep:function () {
         if (cc.renderContextType == cc.CANVAS) {
 
@@ -307,6 +345,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
         }
     },
 
+    /**
+     * draw particle
+     * @param {CanvasContext} ctx CanvasContext
+     */
     draw:function (ctx) {
         this._super();
         if (cc.renderContextType == cc.CANVAS) {
@@ -390,7 +432,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
             }
 
 
-            var newBlend = (this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST) ? true : false;
+            var newBlend = !!(this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST);
             if (newBlend) {
                 glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             }
@@ -409,8 +451,20 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend({
     }
 });
 
-/** creates an initializes a CCParticleSystemQuad from a plist file.
- This plist files can be creted manually or with Particle Designer:
+/**
+
+ */
+/**
+ * <p>
+ *   creates an initializes a CCParticleSystemQuad from a plist file.<br/>
+ *   This plist files can be creted manually or with Particle Designer:<br/>
+ *   http://particledesigner.71squared.com/<br/>
+ * </p>
+ * @param {String} pListFile
+ * @return {cc.ParticleSystem}
+ * @example
+ *  //creates an initializes a CCParticleSystemQuad from a plist file.
+ *  var system = cc.ParticleSystemQuad.create("Images/SpinningPeas.plist");
  */
 cc.ParticleSystemQuad.create = function (pListFile) {
     var ret = new cc.ParticleSystemQuad();
