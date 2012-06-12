@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-16
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -29,28 +25,53 @@
  ****************************************************************************/
 
 
-var cc = cc = cc || {};
 /**
- @brief
- you must extend the keypadDelegate and
- implement your own game logic in
- keydown and keyup functions
+ * you must extend the keypadDelegate and
+ * implement your own game logic in
+ * keydown and keyup functions
+ * @class
+ * @extends cc.Class
  */
-cc.KeypadDelegate = cc.Class.extend({
+cc.KeypadDelegate = cc.Class.extend(/** @lends cc.KeypadDelegate# */{
+    /**
+     * Call back when a key is pressed down
+     */
     keyDown:function () {
     },
+
+    /**
+     * Call back when a key is released
+     */
     keyUp:function () {
     }
 });
 
-
-cc.KeypadHandler = cc.Class.extend({
+/**
+ * KeypadHandler is an object that contains KeypadDelegate
+ * @class
+ * @extends cc.Class
+ */
+cc.KeypadHandler = cc.Class.extend(/** @lends cc.KeypadHandler# */{
+    /**
+     * returns the keypad delegate
+     * @return {cc.KeypadDelegate}
+     */
     getDelegate:function () {
         return this._delegate;
     },
+
+    /**
+     * set the keypad delegate
+     * @param {cc.KeypadDelegate} delegate
+     */
     setDelegate:function (delegate) {
         this._delegate = delegate;
     },
+    /**
+     * initializes a cc.KeypadHandler with a delegate
+     * @param {cc.KeypadDelegate} delegate
+     * @return {Boolean}
+     */
     initWithDelegate:function (delegate) {
         cc.Assert(delegate != null, "It's a wrong delegate!");
 
@@ -60,6 +81,11 @@ cc.KeypadHandler = cc.Class.extend({
     },
     _delegate:null
 });
+/**
+ * Create a KeypadHandler with KeypadDelegate
+ * @param delegate
+ * @return {cc.KeypadHandler}
+ */
 cc.KeypadHandler.create = function (delegate) {
     var handler = new cc.KeypadHandler();
     handler.initWithDelegate(delegate);
