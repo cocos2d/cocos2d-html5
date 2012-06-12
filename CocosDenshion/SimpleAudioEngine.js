@@ -44,7 +44,7 @@ cc.capabilities = {
 
 /**
  * Offer a VERY simple interface to play background music & sound effect.
- * @class       cc.AudioManager
+ * @class
  * @extends   cc.Class
  */
 cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
