@@ -88,7 +88,6 @@ cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
 });
 
 /** creates the action of ActionEase
- *
  * @param {cc.ActionInterval} action
  * @return {cc.ActionEase}
  * @example
@@ -112,7 +111,6 @@ cc.ActionEase.create = function (action) {
 cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
 
     /** set rate value for the actions
-     *
      * @param {Number} rate
      */
     setRate:function (rate) {
@@ -120,7 +118,6 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
     },
 
     /** get rate value for the actions
-     *
      * @return {Number}
      */
     getRate:function () {
@@ -182,7 +179,6 @@ cc.EaseRateAction.create = function (action, rate) {
  * cc.EaseIn action with a rate
  * @class
  * @extends cc.EaseRateAction
- *
  */
 cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
 
@@ -204,7 +200,6 @@ cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
 });
 
 /** Creates the action with the inner action and the rate parameter
- *
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseIn}
@@ -246,7 +241,6 @@ cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
 });
 
 /** Creates the action with the inner action and the rate parameter
- *
  * @param {cc.ActionInterval} action
  * @param {Number} rate
  * @return {cc.EaseOut}
@@ -610,7 +604,6 @@ cc.EaseSineInOut.create = function (action) {
 cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
 
     /** get period of the wave in radians. default is 0.3
-     *
      * @return {Number}
      */
     getPeriod:function () {
