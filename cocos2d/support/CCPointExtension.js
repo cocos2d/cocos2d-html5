@@ -25,19 +25,19 @@
  ****************************************************************************/
 
 /**
- cc.Point extensions based on Chipmunk's cpVect file.
- These extensions work both with cc.Point
-
- The "ccp" prefix means: "CoCos2d Point"
-
- //Examples:
- - cc.ccpAdd( cc.ccp(1,1), cc.ccp(2,2) ); // preferred cocos2d way
- - cc.ccpAdd( cc.PointMake(1,1), cc.PointMake(2,2) ); // also ok but more verbose
- - cc.ccpAdd( cc.cpv(1,1), cc.cpv(2,2) ); // mixing chipmunk and cocos2d (avoid)
+ * <p>cc.Point extensions based on Chipmunk's cpVect file.<br />
+ * These extensions work both with cc.Point</p>
+ *
+ * <p>The "ccp" prefix means: "CoCos2d Point"</p>
+ *
+ * <p> //Examples:<br />
+ * - cc.ccpAdd( cc.ccp(1,1), cc.ccp(2,2) ); // preferred cocos2d way<br />
+ * - cc.ccpAdd( cc.PointMake(1,1), cc.PointMake(2,2) ); // also ok but more verbose<br />
+ * - cc.ccpAdd( cc.cpv(1,1), cc.cpv(2,2) ); // mixing chipmunk and cocos2d (avoid)</p>
  */
 
 /**
- smallest such that 1.0+FLT_EPSILON != 1.0
+ * smallest such that 1.0+FLT_EPSILON != 1.0
  * @constant
  * @type {Number}
  */
