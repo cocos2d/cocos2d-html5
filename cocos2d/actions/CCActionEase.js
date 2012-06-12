@@ -24,14 +24,18 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
 /**
- @brief Base class for Easing actions
+ * Base class for Easing actions
+ * @class
+ * @extends cc.ActionInterval
  */
-cc.ActionEase = cc.ActionInterval.extend({
 
-    /** initializes the action */
+cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
+
+    /** initializes the action
+     * @param {cc.ActionInterval} action
+     * @return {Boolean}
+     */
     initWithAction:function (action) {
         cc.Assert(action != null, "");
 
@@ -41,26 +45,41 @@ cc.ActionEase = cc.ActionInterval.extend({
         }
         return false;
     },
-
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     },
 
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
         this._other.startWithTarget(this._target);   //TODO, need to be checked
     },
 
+    /**
+     * Stop the action.
+     */
     stop:function () {
         this._other.stop();
         this._super();
     },
 
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(time1);
 
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.ActionEase.create(this._other.reverse());
     },
@@ -68,7 +87,14 @@ cc.ActionEase = cc.ActionInterval.extend({
     _other:null
 });
 
-/** creates the action */
+/** creates the action of ActionEase
+ *
+ * @param {cc.ActionInterval} action
+ * @return {cc.ActionEase}
+ * @example
+ * // example
+ * var moveEase = cc.ActionEase.create(action);
+ */
 cc.ActionEase.create = function (action) {
     var ret = new cc.ActionEase();
     if (ret) {
@@ -79,20 +105,34 @@ cc.ActionEase.create = function (action) {
 };
 
 /**
- @brief Base class for Easing actions with rate parameters
+ * Base class for Easing actions with rate parameters
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseRateAction = cc.ActionEase.extend({
+cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
 
-    /** set rate value for the actions */
+    /** set rate value for the actions
+     *
+     * @param {Number} rate
+     */
     setRate:function (rate) {
         this._rate = rate;
     },
-    /** get rate value for the actions */
+
+    /** get rate value for the actions
+     *
+     * @return {Number}
+     */
     getRate:function () {
         return this._rate;
     },
 
-    /** Initializes the action with the inner action and the rate parameter */
+    /** Initializes the action with the inner action and the rate parameter
+     *
+     * @param {cc.ActionInterval} action
+     * @param {Number} rate
+     * @return {Boolean}
+     */
     initWithAction:function (action, rate) {
         if (this._super(action)) {
             this._rate = rate;
@@ -102,10 +142,17 @@ cc.EaseRateAction = cc.ActionEase.extend({
         return false;
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseRateAction.create(this._other.reverse(), 1 / this._rate);
     },
@@ -113,7 +160,14 @@ cc.EaseRateAction = cc.ActionEase.extend({
     _rate:null
 });
 
-/** Creates the action with the inner action and the rate parameter */
+/** Creates the action with the inner action and the rate parameter
+ * @param {cc.ActionInterval} action
+ * @param {Number} rate
+ * @return {cc.EaseRateAction}
+ * @example
+ * // example
+ * var moveEaseRateAction = cc.EaseRateAction.create(action, 3.0);
+ */
 cc.EaseRateAction.create = function (action, rate) {
     var ret = new cc.EaseRateAction();
     if (ret) {
@@ -125,20 +179,39 @@ cc.EaseRateAction.create = function (action, rate) {
 };
 
 /**
- @brief CCEaseIn action with a rate
+ * cc.EaseIn action with a rate
+ * @class
+ * @extends cc.EaseRateAction
+ *
  */
-cc.EaseIn = cc.EaseRateAction.extend({
+cc.EaseIn = cc.EaseRateAction.extend(/** @lends cc.EaseIn# */{
 
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(Math.pow(time1, this._rate));
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
 
 });
 
-/** Creates the action with the inner action and the rate parameter */
+/** Creates the action with the inner action and the rate parameter
+ *
+ * @param {cc.ActionInterval} action
+ * @param {Number} rate
+ * @return {cc.EaseIn}
+ * @example
+ * // example
+ * var moveEaseIn = cc.EaseIn.create(action, 3.0);
+ */
 cc.EaseIn.create = function (action, rate) {
     var ret = new cc.EaseIn();
     if (ret) {
@@ -148,13 +221,23 @@ cc.EaseIn.create = function (action, rate) {
     return ret;
 };
 /**
- @brief CCEaseOut action with a rate
+ * cc.EaseOut action with a rate
+ * @class
+ * @extends cc.EaseRateAction
  */
-cc.EaseOut = cc.EaseRateAction.extend({
+cc.EaseOut = cc.EaseRateAction.extend(/** @lends cc.EaseOut# */{
 
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(Math.pow(time1, 1 / this._rate));
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -162,7 +245,15 @@ cc.EaseOut = cc.EaseRateAction.extend({
 
 });
 
-/** Creates the action with the inner action and the rate parameter */
+/** Creates the action with the inner action and the rate parameter
+ *
+ * @param {cc.ActionInterval} action
+ * @param {Number} rate
+ * @return {cc.EaseOut}
+ * @example
+ * // example
+ * var moveEaseOut = cc.EaseOut.create(action, 3.0);
+ */
 cc.EaseOut.create = function (action, rate) {
     var ret = new cc.EaseOut();
     if (ret) {
@@ -173,10 +264,15 @@ cc.EaseOut.create = function (action, rate) {
 };
 
 /**
- @brief CCEaseInOut action with a rate
+ * cc.EaseInOut action with a rate
+ * @class
+ * @extends cc.EaseRateAction
  */
-cc.EaseInOut = cc.EaseRateAction.extend({
+cc.EaseInOut = cc.EaseRateAction.extend(/** @lends cc.EaseInOut# */{
 
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
 
         var sign = 1;
@@ -195,10 +291,17 @@ cc.EaseInOut = cc.EaseRateAction.extend({
 
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseInOut.create(this._other.reverse(), this._rate);
 
@@ -207,7 +310,14 @@ cc.EaseInOut = cc.EaseRateAction.extend({
 
 });
 
-/** Creates the action with the inner action and the rate parameter */
+/** Creates the action with the inner action and the rate parameter
+ * @param {cc.ActionInterval} action
+ * @param {Number} rate
+ * @return {cc.EaseInOut}
+ * @example
+ * // example
+ * var moveEaseInOut = cc.EaseInOut.create(action, 3.0);
+ */
 cc.EaseInOut.create = function (action, rate) {
     var ret = new cc.EaseInOut();
     if (ret) {
@@ -217,19 +327,30 @@ cc.EaseInOut.create = function (action, rate) {
     return ret;
 };
 /**
- @brief CCEase Exponential In
+ * cc.Ease Exponential In
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseExponentialIn = cc.ActionEase.extend({
+cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
 
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(time1 == 0 ? 0 : Math.pow(2, 10 * (time1 / 1 - 1)) - 1 * 0.001);
 
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseExponentialOut.create(this._other.reverse());
     },
-
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -237,7 +358,13 @@ cc.EaseExponentialIn = cc.ActionEase.extend({
 
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseExponentialIn}
+ * @example
+ * // example
+ * var moveEaseExponentialIn = cc.EaseExponentialIn.create(action);
+ */
 cc.EaseExponentialIn.create = function (action) {
     var ret = new cc.EaseExponentialIn();
     if (ret) {
@@ -247,18 +374,29 @@ cc.EaseExponentialIn.create = function (action) {
     return ret;
 };
 /**
- @brief Ease Exponential Out
+ * Ease Exponential Out
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseExponentialOut = cc.ActionEase.extend({
+cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# */{
 
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1 / 1)) + 1));
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseExponentialIn.create(this._other.reverse());
     },
-
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -267,7 +405,13 @@ cc.EaseExponentialOut = cc.ActionEase.extend({
 
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseExponentialOut}
+ * @example
+ * // example
+ * var moveEaseExponentialOut = cc.EaseExponentialOut.create(action);
+ */
 cc.EaseExponentialOut.create = function (action) {
     var ret = new cc.EaseExponentialOut();
     if (ret) {
@@ -277,11 +421,15 @@ cc.EaseExponentialOut.create = function (action) {
     return ret;
 };
 /**
- @brief Ease Exponential InOut
+ * Ease Exponential InOut
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseExponentialInOut = cc.ActionEase.extend({
+cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOut# */{
 
-
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         time1 /= 0.5;
         if (time1 < 1) {
@@ -293,6 +441,11 @@ cc.EaseExponentialInOut = cc.ActionEase.extend({
         this._other.update(time1);
 
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -300,7 +453,13 @@ cc.EaseExponentialInOut = cc.ActionEase.extend({
 });
 
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseExponentialInOut}
+ * @example
+ * // example
+ * var moveEaseExponentialInOut = cc.EaseExponentialInOut.create(action);
+ */
 cc.EaseExponentialInOut.create = function (action) {
     var ret = new cc.EaseExponentialInOut();
     if (ret) {
@@ -312,24 +471,41 @@ cc.EaseExponentialInOut.create = function (action) {
 
 
 /**
- @brief Ease Sine In
+ * Ease Sine In
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseSineIn = cc.ActionEase.extend({
-
+cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(-1 * Math.cos(time1 * Math.PI / 2) + 1);
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseSineOut.create(this._other.reverse());
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseSineIn}
+ * @example
+ * // example
+ * var moveSineIn = cc.EaseSineIn.create(action);
+ */
 cc.EaseSineIn.create = function (action) {
     var ret = new cc.EaseSineIn();
     if (ret) {
@@ -339,25 +515,42 @@ cc.EaseSineIn.create = function (action) {
     return ret;
 };
 /**
- @brief Ease Sine Out
+ * Ease Sine Out
+ * @class
+ * @extends cc.ActionEase
  */
 cc.EaseSineOut = cc.ActionEase.extend({
-
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(Math.sin(time1 * Math.PI / 2));
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseSineIn.create(this._other.reverse());
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
 });
 
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseSineOut}
+ * @example
+ * // example
+ * var moveEaseOut = cc.EaseSineOut.create(action);
+ */
 cc.EaseSineOut.create = function (action) {
     var ret = new cc.EaseSineOut();
     if (ret) {
@@ -369,22 +562,37 @@ cc.EaseSineOut.create = function (action) {
 
 
 /**
- @brief Ease Sine InOut
+ * Ease Sine InOut
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseSineInOut = cc.ActionEase.extend({
+cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
 
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         this._other.update(-0.5 * (Math.cos(Math.PI * time1) - 1));
 
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
 
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseSineInOut}
+ * @example
+ * // example
+ * var moveEaseSineInOut = cc.EaseSineInOut.create(action);
+ */
 cc.EaseSineInOut.create = function (action) {
     var ret = new cc.EaseSineInOut();
     if (ret) {
@@ -393,35 +601,53 @@ cc.EaseSineInOut.create = function (action) {
     }
     return ret;
 };
-//noinspection JSDuplicatedDeclaration
-/**
- @brief Ease Elastic abstract class
- @since v0.8.2
- */
-cc.EaseElastic = cc.ActionEase.extend({
 
-    /** get period of the wave in radians. default is 0.3 */
+/**
+ * Ease Elastic abstract class
+ * @class
+ * @extends cc.ActionEase
+ */
+cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
+
+    /** get period of the wave in radians. default is 0.3
+     *
+     * @return {Number}
+     */
     getPeriod:function () {
         return this._period;
     },
-    /** set period of the wave in radians. */
+
+    /** set period of the wave in radians.
+     * @param {Number} period
+     */
     setPeriod:function (period) {
         this._period = period;
     },
 
-    /** Initializes the action with the inner action and the period in radians (default is 0.3) */
+    /** Initializes the action with the inner action and the period in radians (default is 0.3)
+     * @param {cc.ActionInterval} action
+     * @param {Number} period
+     * @return {Boolean}
+     */
     initWithAction:function (action, period) {
         this._super(action);
         this._period = (period == null) ? 3.0 : period;
         return true;
     },
 
+    /**
+     * @return {Null}
+     */
     reverse:function () {
         cc.Assert(0, "");
 
         return null;
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     },
@@ -429,7 +655,14 @@ cc.EaseElastic = cc.ActionEase.extend({
     _period:null
 });
 
-/** Creates the action with the inner action and the period in radians (default is 0.3) */
+/** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @param {cc.ActionInterval} action
+ * @param {Number} period
+ * @return {cc.EaseElastic}
+ * @example
+ * // example
+ * var moveEaseElastic = cc.EaseElastic.create(action, 3.0);
+ */
 cc.EaseElastic.create = function (action, period) {
     var ret = new cc.EaseElastic();
     if (ret) {
@@ -445,12 +678,15 @@ cc.EaseElastic.create = function (action, period) {
 
 
 /**
- @brief Ease Elastic In action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * Ease Elastic In action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.EaseElastic
  */
-cc.EaseElasticIn = cc.EaseElastic.extend({
-
+cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var newT = 0;
         if (time1 == 0 || time1 == 1) {
@@ -464,10 +700,17 @@ cc.EaseElasticIn = cc.EaseElastic.extend({
         this._other.update(newT);
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseElasticOut.create(this._other.reverse(), this._period);
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -476,7 +719,14 @@ cc.EaseElasticIn = cc.EaseElastic.extend({
 });
 
 
-/** Creates the action with the inner action and the period in radians (default is 0.3) */
+/** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @param {cc.ActionInterval} action
+ * @param {Number} period
+ * @return {cc.EaseElasticIn}
+ * @example
+ * // example
+ * var moveEaseElasticIn = cc.EaseElasticIn.create(action, 3.0);
+ */
 cc.EaseElasticIn.create = function (action, period) {
     var ret = new cc.EaseElasticIn();
     if (ret) {
@@ -491,12 +741,15 @@ cc.EaseElasticIn.create = function (action, period) {
 };
 
 /**
- @brief Ease Elastic Out action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * Ease Elastic Out action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.EaseElastic
  */
-cc.EaseElasticOut = cc.EaseElastic.extend({
-
+cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var newT = 0;
         if (time1 == 0 || time1 == 1) {
@@ -510,10 +763,17 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
 
     },
 
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseElasticIn.create(this._other.reverse(), this._period);
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -522,7 +782,14 @@ cc.EaseElasticOut = cc.EaseElastic.extend({
 });
 
 
-/** Creates the action with the inner action and the period in radians (default is 0.3) */
+/** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @param {cc.ActionInterval} action
+ * @param {Number} period
+ * @return {cc.EaseElasticOut}
+ * @example
+ * // example
+ * var moveEaseElasticOut = cc.EaseElasticOut.create(action, 3.0);
+ */
 cc.EaseElasticOut.create = function (action, period) {
     var ret = new cc.EaseElasticOut();
     if (ret) {
@@ -537,12 +804,15 @@ cc.EaseElasticOut.create = function (action, period) {
 };
 
 /**
- @brief Ease Elastic InOut action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * Ease Elastic InOut action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.EaseElastic
  */
-cc.EaseElasticInOut = cc.EaseElastic.extend({
-
+cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var newT = 0;
         if (time1 == 0 || time1 == 1) {
@@ -566,17 +836,32 @@ cc.EaseElasticInOut = cc.EaseElastic.extend({
         this._other.update(newT);
 
     },
+
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseInOut.create(this._other.reverse(), this._period);
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
 
 });
 
-/** Creates the action with the inner action and the period in radians (default is 0.3) */
+/** Creates the action with the inner action and the period in radians (default is 0.3)
+ * @param {cc.ActionInterval} action
+ * @param {Number} period
+ * @return {cc.EaseElasticInOut}
+ * @example
+ * // example
+ * var moveEaseElasticInOut = cc.EaseElasticInOut.create(action, 3.0);
+ */
 cc.EaseElasticInOut.create = function (action, period) {
     var ret = new cc.EaseElasticInOut();
     if (ret) {
@@ -591,11 +876,15 @@ cc.EaseElasticInOut.create = function (action, period) {
 };
 
 /**
- @brief CCEaseBounce abstract class.
- @since v0.8.2
+ * cc.EaseBounce abstract class.
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseBounce = cc.ActionEase.extend({
-
+cc.EaseBounce = cc.ActionEase.extend(/** @lends cc.EaseBounce# */{
+    /**
+     * @param {Number} time1
+     * @return {Number}
+     */
     bounceTime:function (time1) {
         if (time1 < 1 / 2.75) {
             return 7.5625 * time1 * time1;
@@ -611,6 +900,10 @@ cc.EaseBounce = cc.ActionEase.extend({
         return 7.5625 * time1 * time1 + 0.984375;
     },
 
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -618,7 +911,13 @@ cc.EaseBounce = cc.ActionEase.extend({
 
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseBounce}
+ * @example
+ * // example
+ * var moveEaseBounce = cc.EaseBounce.create(action);
+ */
 cc.EaseBounce.create = function (action) {
     var ret = new cc.EaseBounce();
     if (ret) {
@@ -628,19 +927,31 @@ cc.EaseBounce.create = function (action) {
 };
 
 /**
- @brief CCEaseBounceIn action.
- @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * cc.EaseBounceIn action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.EaseBounce
  */
-cc.EaseBounceIn = cc.EaseBounce.extend({
-
+cc.EaseBounceIn = cc.EaseBounce.extend(/** cc.EaseBounceIn# */{
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var newT = 1 - this.bounceTime(1 - time1);
         this._other.update(newT);
     },
+
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseBounceOut.create(this._other.reverse());
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -648,7 +959,13 @@ cc.EaseBounceIn = cc.EaseBounce.extend({
 
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseBounceIn}
+ * @example
+ * // example
+ * var moveEaseBounceIn = cc.EaseBounceIn.create(action);
+ */
 cc.EaseBounceIn.create = function (action) {
     var ret = new cc.EaseBounceIn();
     if (ret) {
@@ -657,20 +974,32 @@ cc.EaseBounceIn.create = function (action) {
     return ret;
 };
 /**
- @brief EaseBounceOut action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * cc.EaseBounceOut action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.EaseBounce
  */
-cc.EaseBounceOut = cc.EaseBounce.extend({
+cc.EaseBounceOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceOut# */{
 
-
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var newT = this.bounceTime(time1);
         this._other.update(newT);
     },
+
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseBounceIn.create(this._other.reverse());
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -678,7 +1007,13 @@ cc.EaseBounceOut = cc.EaseBounce.extend({
 
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseBounceOut}
+ * @example
+ * // example
+ * var moveEaseBounceOut = cc.EaseBounceOut.create(action);
+ */
 cc.EaseBounceOut.create = function (action) {
     var ret = new cc.EaseBounceOut();
     if (ret) {
@@ -688,13 +1023,16 @@ cc.EaseBounceOut.create = function (action) {
 };
 
 /**
- @brief CCEaseBounceInOut action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * cc.EaseBounceInOut action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.EaseBounce
  */
-cc.EaseBounceInOut = cc.EaseBounce.extend({
+cc.EaseBounceInOut = cc.EaseBounce.extend(/** @lends cc.EaseBounceInOut# */{
 
-
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var newT = 0;
         if (time1 < 0.5) {
@@ -707,13 +1045,24 @@ cc.EaseBounceInOut = cc.EaseBounce.extend({
         this._other.update(newT);
 
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
 
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseBounceInOut}
+ * @example
+ * // example
+ * var moveEaseBounceInOut = cc.EaseBounceInOut.create(action);
+ */
 cc.EaseBounceInOut.create = function (action) {
     var ret = new cc.EaseBounceInOut();
     if (ret) {
@@ -723,22 +1072,34 @@ cc.EaseBounceInOut.create = function (action) {
 };
 
 /**
- @brief CCEaseBackIn action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * cc.EaseBackIn action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseBackIn = cc.ActionEase.extend({
+cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
 
-
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var overshoot = 1.70158;
         this._other.update(time1 * time1 * ((overshoot + 1) * time1 - overshoot));
 
     },
+
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseBackOut.create(this._other.reverse());
 
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -746,7 +1107,13 @@ cc.EaseBackIn = cc.ActionEase.extend({
 });
 
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseBackIn}
+ * @example
+ * // example
+ * var moveEaseBackIn = cc.EaseBackIn.create(action);
+ */
 cc.EaseBackIn.create = function (action) {
     var ret = new cc.EaseBackIn();
     if (ret) {
@@ -756,27 +1123,45 @@ cc.EaseBackIn.create = function (action) {
 };
 
 /**
- @brief CCEaseBackOut action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * cc.EaseBackOut action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseBackOut = cc.ActionEase.extend({
-
+cc.EaseBackOut = cc.ActionEase.extend(/** @lends cc.EaseBackOut# */{
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var overshoot = 1.70158;
 
         time1 = time1 - 1;
         this._other.update(time1 * time1 * ((overshoot + 1) * time1 + overshoot) + 1);
     },
+
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.EaseBackIn.create(this._other.reverse());
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
 });
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseBackOut}
+ * @example
+ * // example
+ * var moveEaseBackOut = cc.EaseBackOut.create(action);
+ */
 cc.EaseBackOut.create = function (action) {
     var ret = new cc.EaseBackOut();
     if (ret) {
@@ -786,12 +1171,15 @@ cc.EaseBackOut.create = function (action) {
 };
 
 /**
- @brief CCEaseBackInOut action.
- @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
- @since v0.8.2
+ * cc.EaseBackInOut action.
+ * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @class
+ * @extends cc.ActionEase
  */
-cc.EaseBackInOut = cc.ActionEase.extend({
-
+cc.EaseBackInOut = cc.ActionEase.extend(/** @lends cc.EaseBackInOut# */{
+    /**
+     * @param {Number} time1
+     */
     update:function (time1) {
         var overshoot = 1.70158 * 1.525;
 
@@ -803,6 +1191,11 @@ cc.EaseBackInOut = cc.ActionEase.extend({
             this._other.update((time1 * time1 * ((overshoot + 1) * time1 + overshoot)) / 2 + 1);
         }
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
 
     }
@@ -810,7 +1203,13 @@ cc.EaseBackInOut = cc.ActionEase.extend({
 });
 
 
-/** creates the action */
+/** creates the action
+ * @param {cc.ActionInterval} action
+ * @return {cc.EaseBackInOut}
+ * @example
+ * // example
+ * var moveEaseBackInOut = cc.EaseBackInOut.create(action);
+ */
 cc.EaseBackInOut.create = function (action) {
     var ret = new cc.EaseBackInOut();
     if (ret) {
