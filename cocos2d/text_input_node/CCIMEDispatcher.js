@@ -428,7 +428,6 @@ cc.IMEDispatcher.sharedDispatcher = function () {
 };
 
 /**
- * @constant
- * @type {Null}
+ * @type {object}
  */
 cc.IMEDispatcher.instance = null;
