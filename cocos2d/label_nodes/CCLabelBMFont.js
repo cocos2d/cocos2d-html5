@@ -22,23 +22,21 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
+
+ Use any of these editors to generate BMFonts:
+ http://glyphdesigner.71squared.com/ (Commercial, Mac OS X)
+ http://www.n4te.com/hiero/hiero.jnlp (Free, Java)
+ http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)
+ http://www.angelcode.com/products/bmfont/ (Free, Windows only)
  ****************************************************************************/
 
-var cc = cc = cc || {};
-//
-//Hash Element
-//
-// Equal function for targetSet.
-function _KerningHashElement(key, amount) {
+cc._KerningHashElement = function(key, amount) {
     this.key = key;	// key for the hash. 16-bit for 1st element, 16-bit for 2nd element
     this.amount = amount;
-}
+};
 
-/**
- @struct cc.BMFontDef
- BMFont definition
- */
-function _BMFontDef(charID, rect, xOffset, yOffset, xAdvance) {
+
+cc._BMFontDef = function(charID, rect, xOffset, yOffset, xAdvance) {
     //! ID of the character
     this.charID = charID || 0;
     //! origin and size of the font
@@ -49,13 +47,9 @@ function _BMFontDef(charID, rect, xOffset, yOffset, xAdvance) {
     this.yOffset = yOffset || 0;
     //! The amount to move the current position after drawing the character (in pixels)
     this.xAdvance = xAdvance || 0;
-}
+};
 
-/** @struct cc.BMFontPadding
- BMFont padding
- @since v0.8.2
- */
-function _BMFontPadding(left, top, right, bottom) {
+cc._BMFontPadding = function(left, top, right, bottom) {
     /// padding left
     this.left = left || 0;
     /// padding top
@@ -64,37 +58,62 @@ function _BMFontPadding(left, top, right, bottom) {
     this.right = right || 0;
     /// padding bottom
     this.bottom = bottom || 0;
-}
+};
 
-/** @brief cc.BMFontConfiguration has parsed _configuration of the the .fnt file
- @since v0.8
+/**
+ * cc.BMFontConfiguration has parsed _configuration of the the .fnt file
+ * @class
+ * @extends cc.Class
  */
-cc.BMFontConfiguration = cc.Class.extend({
+cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     // XXX: Creating a public interface so that the bitmapFontArray[] is acc.esible
     //@public
-    //! The characters building up the font
-    bitmapFontArray:new Object(),
-    //! FNTConfig: Common Height
+    /**
+     *  The characters building up the font
+     *  @type {object}
+     */
+    bitmapFontArray:{},
+    /**
+     * FNTConfig: Common Height
+     * @type {Number}
+     */
     commonHeight:0,
-    //! Padding
-    padding:new _BMFontPadding(),
-    //! atlas name
+    /**
+     *  Padding
+     *  @type {cc._BMFontPadding}
+     */
+    padding:new cc._BMFontPadding(),
+    /**
+     * atlas name
+     * @type {String}
+     */
     atlasName:"",
-    //! values for kerning
-    kerningDictionary:new Object(),
+    /**
+     * values for kerning
+     * @type {cc._KerningHashElement}
+     */
+    kerningDictionary:{},
 
+    /**
+     * Description of BMFontConfiguration
+     * @return {String}
+     */
     description:function () {
         var ret = "<cc.BMFontConfiguration | Kernings:" + this.kerningDictionary + " | Image = " + this.atlasName.toString() + ">";
         return ret;
     },
-    /** allocates a cc.BMFontConfiguration with a FNT file */
 
-    /** initializes a BitmapFontConfiguration with a FNT file */
+    /**
+     * initializes a BitmapFontConfiguration with a FNT file
+     * @param {String} FNTfile
+     * @return {Boolean}
+     */
     initWithFNTfile:function (FNTfile) {
         cc.Assert(FNTfile != null && FNTfile.length != 0, "");
         this._parseConfigFile(FNTfile);
         return true;
     },
+
     _parseConfigFile:function (controlFile) {
         var data = cc.SAXParser.shareParser().getList(controlFile);
         cc.Assert(data, "cc.BMFontConfiguration._parseConfigFile | Open file error.");
@@ -131,7 +150,7 @@ cc.BMFontConfiguration = cc.Class.extend({
         if (line) {
             // Parse the current line and create a new CharDef
             for (var i = 0; i < line.length; i++) {
-                var characterDefinition = new _BMFontDef();
+                var characterDefinition = new cc._BMFontDef();
                 this._parseCharacterDefinition(line[i], characterDefinition);
                 //Add the CharDef returned to the charArray
                 this.bitmapFontArray[characterDefinition.charID] = characterDefinition;
@@ -256,7 +275,7 @@ cc.BMFontConfiguration = cc.Class.extend({
         value = /amount=([\-\d]+)/gi.exec(line)[1];
         var amount = parseInt(value);
 
-        var element = new _KerningHashElement();
+        var element = new cc._KerningHashElement();
         element.amount = amount;
         element.key = (first << 16) | (second & 0xffff);
 
@@ -264,10 +283,18 @@ cc.BMFontConfiguration = cc.Class.extend({
 
     },
     _purgeKerningDictionary:function () {
-        this.kerningDictionary = new Object();
+        this.kerningDictionary = {};
     }
 });
 
+/**
+ * Create a cc.BMFontConfiguration
+ * @param {String} FNTfile
+ * @return {cc.BMFontConfiguration|Null} returns the configuration or null if error
+ * @example
+ * // Example
+ * var conf = cc.BMFontConfiguration.create('myfont.fnt');
+ */
 cc.BMFontConfiguration.create = function (FNTfile) {
     var ret = new cc.BMFontConfiguration();
     if (ret.initWithFNTfile(FNTfile)) {
@@ -276,42 +303,45 @@ cc.BMFontConfiguration.create = function (FNTfile) {
     return null;
 };
 
-/** @brief cc.LabelBMFont is a subclass of cc.SpriteSheet.
+/**
+ * <p>cc.LabelBMFont is a subclass of cc.SpriteSheet.</p>
 
- Features:
- - Treats each character like a cc.Sprite. This means that each individual character can be:
- - rotated
- - scaled
- - translated
- - tinted
- - chage the opacity
- - It can be used as part of a menu item.
- - anchorPoint can be used to align the "label"
- - Supports AngelCode text format
+ <p>Features:<br/>
+ <ul><li>- Treats each character like a cc.Sprite. This means that each individual character can be:</li>
+ <li>- rotated</li>
+ <li>- scaled</li>
+ <li>- translated</li>
+ <li>- tinted</li>
+ <li>- chage the opacity</li>
+ <li>- It can be used as part of a menu item.</li>
+ <li>- anchorPoint can be used to align the "label"</li>
+ <li>- Supports AngelCode text format</li></ul></p>
 
- Limitations:
+ <p>Limitations:<br/>
  - All inner characters are using an anchorPoint of (0.5, 0.5) and it is not recommend to change it
- because it might affect the rendering
+ because it might affect the rendering</p>
 
- cc.LabelBMFont implements the protocol cc.LabelProtocol, like cc.Label and cc.LabelAtlas.
- cc.LabelBMFont has the flexibility of cc.Label, the speed of cc.LabelAtlas and all the features of cc.Sprite.
- If in doubt, use cc.LabelBMFont instead of cc.LabelAtlas / cc.Label.
+ <p>cc.LabelBMFont implements the protocol cc.LabelProtocol, like cc.Label and cc.LabelAtlas.<br/>
+ cc.LabelBMFont has the flexibility of cc.Label, the speed of cc.LabelAtlas and all the features of cc.Sprite.<br/>
+ If in doubt, use cc.LabelBMFont instead of cc.LabelAtlas / cc.Label.</p>
 
- Supported editors:
- http://glyphdesigner.71squared.com/ (Commercial, Mac OS X)
- http://www.n4te.com/hiero/hiero.jnlp (Free, Java)
- http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)
- http://www.angelcode.com/products/bmfont/ (Free, Windows only)
-
- @since v0.8
+ <p>Supported editors:<br/>
+ http://glyphdesigner.71squared.com/ (Commercial, Mac OS X)<br/>
+ http://www.n4te.com/hiero/hiero.jnlp (Free, Java)<br/>
+ http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)<br/>
+ http://www.angelcode.com/products/bmfont/ (Free, Windows only)</p>
+ * @class
+ * @extends cc.
  */
-
-cc.LabelBMFont = cc.SpriteBatchNode.extend({
+cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont */{
     _opacity:0,
     _color:null,
     _isOpacityModifyRGB:false,
     _string:"",
     _configuration:null,
+    /**
+     * @constructor
+     */
     ctor:function () {
         this._super();
         //LabelBMFont - Debug draw
@@ -324,10 +354,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
         }
 
     },
-    /** conforms to cc.RGBAProtocol protocol */
+
+    /**
+     * conforms to cc.RGBAProtocol protocol
+      * @return {Number}
+     */
     getOpacity:function () {
         return this._opacity;
     },
+
+    /**
+     * set the opacity of this label
+     * @param {Number} Var
+     */
     setOpacity:function (Var) {
         this._opacity = Var;
         if (this._children) {
@@ -339,10 +378,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
             }
         }
     },
-    /** conforms to cc.RGBAProtocol protocol */
+
+    /**
+     * conforms to cc.RGBAProtocol protocol
+      * @return {cc.Color3B}
+     */
     getColor:function () {
         return this._color;
     },
+
+    /**
+     * tint this label
+     * @param {cc.Color3B} Var
+     */
     setColor:function (Var) {
         if (this._color == Var) {
             return;
@@ -357,10 +405,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
             }
         }
     },
-    /** conforms to cc.RGBAProtocol protocol */
+
+    /**
+     * conforms to cc.RGBAProtocol protocol
+      * @return {Boolean}
+     */
     getIsOpacityModifyRGB:function () {
         return this._isOpacityModifyRGB;
     },
+
+    /**
+     *
+     * @param {Boolean} Var
+     */
     setIsOpacityModifyRGB:function (Var) {
         this._isOpacityModifyRGB = Var;
         if (this._children && this._children.length != 0) {
@@ -377,7 +434,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
     },
 
 
-    /** init a bitmap font altas with an initial string and the FNT file */
+    /**
+     * init a bitmap font altas with an initial string and the FNT file
+      * @param {String} theString
+     * @param {String} fntFile
+     * @return {Boolean}
+     */
     initWithString:function (theString, fntFile) {
         cc.Assert(theString != null, "");
         this._configuration = cc.FNTConfigLoadFile(fntFile);
@@ -393,7 +455,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
         }
         return false;
     },
-    /** updates the font chars based on the string to render */
+
+    /**
+     * updates the font chars based on the string to render
+      */
     createFontChars:function () {
         var nextFontPositionX = 0;
         var nextFontPositionY = 0;
@@ -492,10 +557,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
         tmpSize.height = totalHeight;
         this.setContentSizeInPixels(tmpSize);
     },
-    // super method
+
+    /**
+     * get the text of this label
+     * @return {String}
+     */
     getString:function () {
         return this._string;
     },
+
+    /**
+     * set the text
+     * @param newString
+     */
     setString:function (newString) {
         this._string = newString;
 
@@ -509,9 +583,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
         }
         this.createFontChars();
     },
+
+    /**
+     * @deprecated
+     * @param label
+     */
     setCString:function (label) {
         this.setString(label);
     },
+
+    /**
+     * set the anchorpoint of the label
+     * @param {cc.Point} point
+     */
     setAnchorPoint:function (point) {
         if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
             this._super(point);
@@ -535,41 +619,58 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend({
 
 });
 
-/** creates a bitmap font altas with an initial string and the FNT file */
+/**
+ * creates a bitmap font altas with an initial string and the FNT file
+ * @param {String} str
+ * @param {String} fntFile
+ * @return {cc.LabelBMFont}
+ * @example
+ * // Example
+ * var label = cc.LabelBMFont.create('label text', 'fontfile.fnt')
+ */
 cc.LabelBMFont.create = function (str, fntFile) {
     var ret = new cc.LabelBMFont();
     if (ret && ret.initWithString(str, fntFile)) {
         return ret;
     }
     return null;
-}
+};
 
-/** Free function that parses a FNT file a place it on the cache
+/**
+ * shared instance of configuration
+ * @type {cc.BMFontConfiguration}
  */
 cc.configurations = null;
+
+/**
+ * Load the .fnt file
+ * @param {String} fntFile
+ * @return {cc.BMFontConfiguration}
+ * @constructor
+ */
 cc.FNTConfigLoadFile = function (fntFile) {
     if (!cc.configurations) {
-        cc.configurations = new Object();
+        cc.configurations = {};
     }
     var ret = cc.configurations[fntFile];
     if (!ret) {
         ret = cc.BMFontConfiguration.create(fntFile);
     }
     return ret;
-}
+};
 
-/** Purges the cached data.
- Removes from memory the cached cc.configurations and the atlas name dictionary.
- @since v0.99.3
+/**
+ * Purges the cached .fnt data
  */
 cc.purgeCachedData = function () {
     cc.FNTConfigRemoveCache();
-}
+};
 
-/** Purges the FNT config cache
+/**
+ * Purges the FNT config cache
  */
 cc.FNTConfigRemoveCache = function () {
     if (cc.configurations) {
-        cc.configurations = new Object();
+        cc.configurations = {};
     }
-}
+};
