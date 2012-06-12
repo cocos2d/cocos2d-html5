@@ -123,9 +123,9 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
 };
 
 /**
- Whether or not an CCSprite will rotate, scale or translate with it's parent.
- Useful in health bars, when you want that the health bar translates with it's parent but you don't
- want it to rotate with its parent.
+ * <p>Whether or not an cc.Sprite will rotate, scale or translate with it's parent.  <br/>
+ * Useful in health bars, when you want that the health bar translates with it's parent but you don't <br/>
+ * want it to rotate with its parent.</p>
  */
 
 /**
@@ -190,7 +190,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
 };
 
 /**
- * cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) <br/>
+ * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) <br/>
  *
  * cc.Sprite can be created with an image, or with a sub-rectangle of an image.  <br/>
  *
@@ -210,7 +210,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  *    - It supports aliasing / antialiasing    <br/>
  *    - But the rendering will be slower: 1 draw per children.   <br/>
  *
- * The default anchorPoint in cc.Sprite is (0.5, 0.5). <br/>
+ * The default anchorPoint in cc.Sprite is (0.5, 0.5). </p>
  * @class cc.Sprite
  * @extends cc.Node
  *
@@ -398,9 +398,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * return whether or not to transform according to its parent transformations. <br/>
+     * <p>Return whether or not to transform according to its parent transformations. <br/>
      * Useful for health bars. eg: Don't rotate the health bar, even if the parent rotates.  <br/>
-     * IMPORTANT: Only valid if it is rendered using an cc.SpriteSheet.    <br/>
+     * IMPORTANT: Only valid if it is rendered using an cc.SpriteSheet.    <p/>
      * @return {Number}
      */
     getHonorParentTransform:function () {
@@ -408,9 +408,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * set whether or not to transform according to its parent transformations.  <br/>
+     * <p>Set whether or not to transform according to its parent transformations.  <br/>
      * Useful for health bars. eg: Don't rotate the health bar, even if the parent rotates.  <br/>
-     * IMPORTANT: Only valid if it is rendered using an cc.SpriteSheet.     <br/>
+     * IMPORTANT: Only valid if it is rendered using an cc.SpriteSheet.     <p/>
      * @param {Number} honorParentTransform
      */
     setHonorParentTransform:function (honorParentTransform) {
@@ -929,8 +929,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * Optimization: instead of calling 5 times the parent sprite to obtain: position, scale.x, scale.y, anchorpoint and rotation,<br/>
-     * this fuction return the 5 values in 1 single call
+     * <p>Optimization: instead of calling 5 times the parent sprite to obtain: position, scale.x, scale.y, anchorpoint and rotation,<br/>
+     * this fuction return the 5 values in 1 single call <p/>
      * @param {transformValues_} tv
      * @return {transformValues_}
      * @private
@@ -1156,7 +1156,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     removeAllChildrenWithCleanup:function (cleanup) {
         if (this._usesBatchNode) {
             if (this._children != null) {
-                for (var i = 0 ; i < this._children.length; i++ ) {
+                for (var i = 0; i < this._children.length; i++) {
                     if (this._children[i] instanceof cc.Sprite) {
                         this._batchNode.removeSpriteFromAtlas(this._children[i]);
                     }
@@ -1270,7 +1270,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time. (override cc.Node )
+     * <p>The scale factor of the node. 1.0 is the default scale factor. <br/>
+     * It modifies the X and Y scale at the same time. (override cc.Node ) <p/>
      * @param {Number} scale
      * @override
      */
@@ -1356,11 +1357,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * whether or not the sprite is flipped horizontally.<br/>
+     * <p>whether or not the sprite is flipped horizontally.<br/>
      * It only flips the texture of the sprite, and not the texture of the sprite's children. <br/>
      * Also, flipping the texture doesn't alter the anchorPoint.<br/>
      * If you want to flip the anchorPoint too, and/or to flip the children too use:<br/>
-     *      sprite->setScaleX(sprite->getScaleX() * -1);
+     *      sprite->setScaleX(sprite->getScaleX() * -1);  <p/>
      * @return {Boolean}
      */
     isFlipX:function () {
@@ -1368,11 +1369,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * whether or not the sprite is flipped vertically.<br/>
+     * <p>whether or not the sprite is flipped vertically.<br/>
      * It only flips the texture of the sprite, and not the texture of the sprite's children.<br/>
      * Also, flipping the texture doesn't alter the anchorPoint.<br/>
      * If you want to flip the anchorPoint too, and/or to flip the children too use:<br/>
-     *         sprite->setScaleY(sprite->getScaleY() * -1);
+     *         sprite->setScaleY(sprite->getScaleY() * -1); <p/>
      * @return {Boolean}
      */
     isFlipY:function () {
@@ -1713,6 +1714,7 @@ cc.Sprite.create = function (fileName, rect) {
  * @example
  * //get a sprite frame
  * var spriteFrame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName("grossini_dance_01.png");
+ *
  * //create a sprite with a sprite frame
  * var sprite = cc.Sprite.createWithSpriteFrame(spriteFrame);
  */
@@ -1732,6 +1734,7 @@ cc.Sprite.createWithSpriteFrame = function (spriteFrame) {
  * @example
  * //create a sprite batch node
  * var asmtest = cc.SpriteBatchNode.create(s_ghosts);
+ *
  * //create a sprite with a sprite batch node
  * var sprite1 = cc.Sprite.createWithBatchNode(asmtest, cc.RectMake(0, 0, 50, 50));
  */
