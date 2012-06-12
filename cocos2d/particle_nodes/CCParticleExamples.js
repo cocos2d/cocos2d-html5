@@ -24,14 +24,29 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-//! @brief A fire particle system
-cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A fire particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleFire.create();
+ */
+cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleFire# */{
+    /**
+     * initialize a fire particle system
+     * @return {Boolean}
+     */
     init:function () {
         return this.initWithTotalParticles(150);
         //return this.initWithTotalParticles(250);
     },
+
+    /**
+     * initialize a fire particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -98,6 +113,14 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a fire particle system
+ * @return {cc.ParticleFire}
+ *
+ * @example
+ * var emitter = cc.ParticleFire.create();
+ */
 cc.ParticleFire.create = function () {
     var ret = new cc.ParticleFire();
     if (ret.init()) {
@@ -106,12 +129,29 @@ cc.ParticleFire.create = function () {
     return null;
 };
 
-//! @brief A fireworks particle system
-cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A fireworks particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleFireworks.create();
+ */
+cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleFireworks# */{
+    /**
+     * initialize a fireworks particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(1500);
         return this.initWithTotalParticles(150);
     },
+
+    /**
+     * initialize a fireworks particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -176,6 +216,14 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a fireworks particle system
+ * @return {cc.ParticleFireworks}
+ *
+ * @example
+ * var emitter = cc.ParticleFireworks.create();
+ */
 cc.ParticleFireworks.create = function () {
     var ret = new cc.ParticleFireworks();
     if (ret.init()) {
@@ -184,15 +232,29 @@ cc.ParticleFireworks.create = function () {
     return null;
 };
 
-//! @brief A sun particle system
-cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A sun particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleSun.create();
+ */
+cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSun# */{
+    /**
+     * initialize a sun particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(350);
         return this.initWithTotalParticles(150);
     },
-    //
-    // ParticleSun
-    //
+
+    /**
+     * initialize a sun particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // additive
@@ -260,6 +322,14 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a sun particle system
+ * @return {cc.ParticleSun}
+ *
+ * @example
+ * var emitter = cc.ParticleSun.create();
+ */
 cc.ParticleSun.create = function () {
     var ret = new cc.ParticleSun();
     if (ret.init()) {
@@ -268,15 +338,30 @@ cc.ParticleSun.create = function () {
     return null;
 };
 
-//! @brief A galaxy particle system
-cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+//! @brief A  particle system
+/**
+ * A galaxy particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleGalaxy.create();
+ */
+cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleGalaxy# */{
+    /**
+     * initialize a galaxy particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(200);
         return this.initWithTotalParticles(100);
     },
-    //
-    // ParticleGalaxy
-    //
+
+    /**
+     * initialize a galaxy particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -346,6 +431,13 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+/**
+ * Create a galaxy particle system
+ * @return {cc.ParticleGalaxy}
+ *
+ * @example
+ * var emitter = cc.ParticleGalaxy.create();
+ */
 cc.ParticleGalaxy.create = function () {
     var ret = new cc.ParticleGalaxy();
     if (ret.init()) {
@@ -354,15 +446,29 @@ cc.ParticleGalaxy.create = function () {
     return null;
 };
 
-//! @brief A flower particle system
-cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A flower particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleFlower.create();
+ */
+cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleFlower# */{
+    /**
+     * initialize a flower particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(250);
         return this.initWithTotalParticles(100);
     },
-    //
-    // ParticleFlower
-    //
+
+    /**
+     * initialize a flower particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -432,6 +538,14 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a flower particle system
+ * @return {cc.ParticleFlower}
+ *
+ * @example
+ * var emitter = cc.ParticleFlower.create();
+ */
 cc.ParticleFlower.create = function () {
     var ret = new cc.ParticleFlower();
     if (ret.init()) {
@@ -441,14 +555,29 @@ cc.ParticleFlower.create = function () {
 };
 
 //! @brief A meteor particle system
-cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A meteor particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleMeteor.create();
+ */
+cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleMeteor# */{
+    /**
+     * initialize a meteor particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(150);
         return this.initWithTotalParticles(100);
     },
-    //
-    // ParticleMeteor
-    //
+
+    /**
+     * initialize a meteor particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -518,6 +647,14 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a meteor particle system
+ * @return {cc.ParticleFireworks}
+ *
+ * @example
+ * var emitter = cc.ParticleMeteor.create();
+ */
 cc.ParticleMeteor.create = function () {
     var ret = new cc.ParticleMeteor();
     if (ret.init()) {
@@ -526,15 +663,29 @@ cc.ParticleMeteor.create = function () {
     return null;
 };
 
-//! @brief An spiral particle system
-cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A spiral particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleSpiral.create();
+ */
+cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSpiral# */{
+    /**
+     * initialize a spiral particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(500);
         return this.initWithTotalParticles(100);
     },
-    //
-    // ParticleSpiral
-    //
+
+    /**
+     * initialize a spiral particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -604,6 +755,14 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a spiral particle system
+ * @return {cc.ParticleSpiral}
+ *
+ * @example
+ * var emitter = cc.ParticleSpiral.create();
+ */
 cc.ParticleSpiral.create = function () {
     var ret = new cc.ParticleSpiral();
     if (ret.init()) {
@@ -612,15 +771,29 @@ cc.ParticleSpiral.create = function () {
     return null;
 };
 
-//! @brief An explosion particle system
-cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * An explosion particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleExplosion.create();
+ */
+cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleExplosion# */{
+    /**
+     * initialize an explosion particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(700);
         return this.initWithTotalParticles(300);
     },
-    //
-    // ParticleExplosion
-    //
+
+    /**
+     * initialize an explosion particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -689,6 +862,14 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create an explosion particle system
+ * @return {cc.ParticleExplosion}
+ *
+ * @example
+ * var emitter = cc.ParticleExplosion.create();
+ */
 cc.ParticleExplosion.create = function () {
     var ret = new cc.ParticleExplosion();
     if (ret.init()) {
@@ -697,15 +878,29 @@ cc.ParticleExplosion.create = function () {
     return null;
 };
 
-//! @brief An smoke particle system
-cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A smoke particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleSmoke.create();
+ */
+cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSmoke# */{
+    /**
+     * initialize a smoke particle system
+     * @return {Boolean}
+     */
     init:function () {
         //return this.initWithTotalParticles(200);
         return this.initWithTotalParticles(100);
     },
-    //
-    // ParticleSmoke
-    //
+
+    /**
+     * initialize a smoke particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -771,6 +966,14 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a smoke particle system
+ * @return {cc.ParticleFireworks}
+ *
+ * @example
+ * var emitter = cc.ParticleFireworks.create();
+ */
 cc.ParticleSmoke.create = function () {
     var ret = new cc.ParticleSmoke();
     if (ret.init()) {
@@ -779,15 +982,29 @@ cc.ParticleSmoke.create = function () {
     return null;
 };
 
-//! @brief An snow particle system
-cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A snow particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleSnow.create();
+ */
+cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSnow# */{
+    /**
+     * initialize a snow particle system
+     * @return {Boolean}
+     */
     init:function () {
         return this.initWithTotalParticles(250);
         //return this.initWithTotalParticles(700);
     },
-    //
-    // CCParticleSnow
-    //
+
+    /**
+     * initialize a snow particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -857,6 +1074,14 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a snow particle system
+ * @return {cc.ParticleSnow}
+ *
+ * @example
+ * var emitter = cc.ParticleSnow.create();
+ */
 cc.ParticleSnow.create = function () {
     var ret = new cc.ParticleSnow();
     if (ret.init()) {
@@ -866,14 +1091,29 @@ cc.ParticleSnow.create = function () {
 };
 
 //! @brief A rain particle system
-cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
+/**
+ * A rain particle system
+ * @class
+ * @extends cc.ParticleSystemQuad
+ *
+ * @example
+ * var emitter = cc.ParticleRain.create();
+ */
+cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleRain# */{
+    /**
+     * initialize a rain particle system
+     * @return {Boolean}
+     */
     init:function () {
         return this.initWithTotalParticles(300);
         //return this.initWithTotalParticles(1000);
     },
-    //
-    // CCParticleRain
-    //
+
+    /**
+     * initialize a rain particle system with number Of Particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
@@ -943,6 +1183,14 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend({
         return false;
     }
 });
+
+/**
+ * Create a rain particle system
+ * @return {cc.ParticleRain}
+ *
+ * @example
+ * var emitter = cc.ParticleRain.create();
+ */
 cc.ParticleRain.create = function () {
     var ret = new cc.ParticleRain();
     if (ret.init()) {
