@@ -23,8 +23,16 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
+/**
+ * @function
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} c
+ * @param {Number} d
+ * @param {Number} tx
+ * @param {Number} ty
+ */
 cc.AffineTransform = function (a, b, c, d, tx, ty) {
     this.a = a;
     this.b = b;
@@ -38,6 +46,17 @@ cc.__AffineTransformMake = function (a, b, c, d, tx, ty) {
     return new cc.AffineTransform(a, b, c, d, tx, ty);
 };
 
+/**
+ * @function
+ * @param {Number} a
+ * @param {Number} b
+ * @param {Number} c
+ * @param {Number} d
+ * @param {Number} tx
+ * @param {Number} ty
+ * @return {cc.AffineTransform}
+ * @constructor
+ */
 cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
     return new cc.AffineTransform(a, b, c, d, tx, ty);
 };
@@ -49,6 +68,13 @@ cc.__PointApplyAffineTransform = function (point, t) {
     return p;
 };
 
+/**
+ * @function
+ * @param {cc.Point} point
+ * @param {cc.AffineTransform} t
+ * @return {cc.Point}
+ * @constructor
+ */
 cc.PointApplyAffineTransform = function (point, t) {
     return cc.__PointApplyAffineTransform(point, t);
 };
@@ -60,18 +86,42 @@ cc.__SizeApplyAffineTransform = function (size, t) {
     return s;
 };
 
+/**
+ * @function
+ * @param {cc.Size} size
+ * @param {cc.AffineTransform} t
+ * @return {cc.Size}
+ * @constructor
+ */
 cc.SizeApplyAffineTransform = function (size, t) {
     return cc.__SizeApplyAffineTransform(size, t);
 };
 
+/**
+ * @function
+ * @return {cc.AffineTransform}
+ * @constructor
+ */
 cc.AffineTransformMakeIdentity = function () {
     return cc.__AffineTransformMake(1.0, 0.0, 0.0, 1.0, 0.0, 0.0);
 };
 
+/**
+ * @function
+ * @return {cc.AffineTransform}
+ * @constructor
+ */
 cc.AffineTransformIdentity = function () {
     return cc.AffineTransformMakeIdentity();
 };
 
+/**
+ * @function
+ * @param {cc.Rect} rect
+ * @param {cc.AffineTransform} anAffineTransform
+ * @return {cc.Rect}
+ * @constructor
+ */
 cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
     var top = cc.Rect.CCRectGetMinY(rect);
     var left = cc.Rect.CCRectGetMinX(rect);
@@ -91,14 +141,37 @@ cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
     return cc.RectMake(minX, minY, (maxX - minX), (maxY - minY));
 };
 
+/**
+ * @function
+ * @param {cc.AffineTransform} t
+ * @param {Number} tx
+ * @param {Number}ty
+ * @return {cc.AffineTransform}
+ * @constructor
+ */
 cc.AffineTransformTranslate = function (t, tx, ty) {
     return cc.__AffineTransformMake(t.a, t.b, t.c, t.d, t.tx + t.a * tx + t.c * ty, t.ty + t.b * tx + t.d * ty);
 };
 
+/**
+ * @function
+ * @param {cc.AffineTransform} t
+ * @param {Number} sx
+ * @param {Number} sy
+ * @return {{cc.AffineTransform}}
+ * @constructor
+ */
 cc.AffineTransformScale = function (t, sx, sy) {
     return cc.__AffineTransformMake(t.a * sx, t.b * sx, t.c * sy, t.d * sy, t.tx, t.ty);
 };
 
+/**
+ * @function
+ * @param {cc.AffineTransform} aTransform
+ * @param {Number} anAngle
+ * @return {cc.AffineTransform}
+ * @constructor
+ */
 cc.AffineTransformRotate = function (aTransform, anAngle) {
     var fSin = Math.sin(anAngle);
     var fCos = Math.cos(anAngle);
@@ -111,8 +184,13 @@ cc.AffineTransformRotate = function (aTransform, anAngle) {
         aTransform.ty);
 };
 
-/* Concatenate `t2' to `t1' and return the result:
- t' = t1 * t2 */
+/* Concatenate `t2' to `t1' and return the result:<br/>
+ * t' = t1 * t2
+ * @param {cc.AffineTransform} t1
+ * @param {cc.AffineTransform} t2
+ * @return {cc.AffineTransform}
+ * @constructor
+ */
 cc.AffineTransformConcat = function (t1, t2) {
     return cc.__AffineTransformMake(t1.a * t2.a + t1.b * t2.c, t1.a * t2.b + t1.b * t2.d, //a,b
         t1.c * t2.a + t1.d * t2.c, t1.c * t2.b + t1.d * t2.d, //c,d
@@ -120,11 +198,24 @@ cc.AffineTransformConcat = function (t1, t2) {
         t1.tx * t2.b + t1.ty * t2.d + t2.ty);				  //ty
 };
 
-/* Return true if `t1' and `t2' are equal, false otherwise. */
+/**
+ * Return true if `t1' and `t2' are equal, false otherwise.
+ * @function
+ * @param {cc.AffineTransform} t1
+ * @param {cc.AffineTransform} t2
+ * @return {Boolean}
+ * @constructor
+ */
 cc.AffineTransformEqualToTransform = function (t1, t2) {
     return (t1.a == t2.a && t1.b == t2.b && t1.c == t2.c && t1.d == t2.d && t1.tx == t2.tx && t1.ty == t2.ty);
 };
 
+/**
+ * @function
+ * @param {cc.AffineTransform} t
+ * @return {cc.AffineTransform}
+ * @constructor
+ */
 cc.AffineTransformInvert = function (t) {
     var determinant = 1 / (t.a * t.d - t.b * t.c);
 
