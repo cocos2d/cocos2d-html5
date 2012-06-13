@@ -41,7 +41,7 @@
  * @extends cc.FiniteTimeAction
  * @Example
  * // example
- * var pingPongAction = cc.Sequence.create(action, action.reverse(), null);
+ * var pingPongAction = cc.Sequence.create(action, action.reverse());
  */
 cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
     _elapsed:0,
@@ -244,7 +244,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
  * @example
  * // example
  * // create sequence with actions
- * var seq = cc.Sequence.create(act1, act2, null);
+ * var seq = cc.Sequence.create(act1, act2);
  *
  * // create sequence with array
  * var seq = cc.Sequence.create(actArray);
@@ -391,7 +391,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
  * @return {cc.Repeat}
  * @example
  * // example
- * var rep = cc.Repeat.create(cc.Sequence.create(jump2, jump1, null), 5);
+ * var rep = cc.Repeat.create(cc.Sequence.create(jump2, jump1), 5);
  */
 cc.Repeat.create = function (action, times) {
     var repeat = new cc.Repeat();
@@ -569,7 +569,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
  * @return {cc.FiniteTimeAction}
  * @example
  * // example
- * var action = cc.Spawn.create(cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4), cc.RotateBy.create(2, 720), null);
+ * var action = cc.Spawn.create(cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4), cc.RotateBy.create(2, 720));
  */
 cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
     var paramArray = (typeof tempArray == "Array") ? tempArray : arguments;
@@ -796,7 +796,7 @@ cc.MoveTo = cc.ActionInterval.extend(/** @lends cc.MoveTo# */{
  * @return {cc.MoveTo}
  * @example
  * // example
- * var actionTo = cc.MoveTo.create(2, cc.PointMake(s.width - 40, s.height - 40));
+ * var actionTo = cc.MoveTo.create(2, cc.PointMake(windowSize.width - 40, windowSize.height - 40));
  */
 cc.MoveTo.create = function (duration, position) {
     var moveTo = new cc.MoveTo();
@@ -808,14 +808,13 @@ cc.MoveTo.create = function (duration, position) {
 
 /** Moves a cc.Node object x,y pixels by modifying it's position attribute. <br/>
  * x and y are relative to the position of the object. <br/>
- * Duration is is seconds.
  * @class
  * @extends cc.MoveTo
  */
 cc.MoveBy = cc.MoveTo.extend(/** @lends cc.MoveBy# */{
 
     /**
-     * @param {Number} duration
+     * @param {Number} duration  duration in seconds
      * @param {cc.Point} position
      * @return {Boolean}
      */
@@ -971,8 +970,8 @@ cc.SkewTo.create = function (t, sx, sy) {
 cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
     /**
      * @param {Number} t time in seconds
-     * @param {Number} deltaSkewX
-     * @param {Number} deltaSkewY
+     * @param {Number} deltaSkewX  skew in degrees for X axis
+     * @param {Number} deltaSkewY  skew in degrees for Y axis
      * @return {Boolean}
      */
     initWithDuration:function (t, deltaSkewX, deltaSkewY) {
@@ -1007,9 +1006,9 @@ cc.SkewBy = cc.SkewTo.extend(/** @lends cc.SkewBy# */{
     }
 });
 /**
- * @param {Number} t
- * @param {Number} sx
- * @param {Number} sy
+ * @param {Number} t time in seconds
+ * @param {Number} sx sx skew in degrees for X axis
+ * @param {Number} sy sy skew in degrees for Y axis
  * @return {cc.SkewBy}
  * @example
  * // example
@@ -1168,7 +1167,7 @@ cc.bezierat = function (a, b, c, d, t) {
  */
 cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     /**
-     * @param {Number} t
+     * @param {Number} t time in seconds
      * @param {cc.BezierConfig} c
      * @return {Boolean}
      */
@@ -1234,14 +1233,14 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 });
 
 /**
- * @param {Number} t
+ * @param {Number} t time in seconds
  * @param {cc.BezierConfig} c
  * @return {cc.BezierBy}
  * @example
  * // example
  * var bezier = new cc.BezierConfig();
- * bezier.controlPoint_1 = cc.PointMake(0, s.height / 2);
- * bezier.controlPoint_2 = cc.PointMake(300, -s.height / 2);
+ * bezier.controlPoint_1 = cc.PointMake(0, windowSize.height / 2);
+ * bezier.controlPoint_2 = cc.PointMake(300, -windowSize.height / 2);
  * bezier.endPosition = cc.PointMake(300, 100);
  *
  * var bezierForward = cc.BezierBy.create(3, bezier);
@@ -1277,8 +1276,8 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
  * @example
  * // example
  *  var bezier = new cc.BezierConfig();
- * bezier.controlPoint_1 = cc.PointMake(100, s.height / 2);
- * bezier.controlPoint_2 = cc.PointMake(200, -s.height / 2);
+ * bezier.controlPoint_1 = cc.PointMake(100, windowSize.height / 2);
+ * bezier.controlPoint_2 = cc.PointMake(200, -windowSize.height / 2);
  * bezier.endPosition = cc.PointMake(240, 160);
  *
  * var bezierTo = cc.BezierTo.create(2, bezier);
@@ -1346,12 +1345,16 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
 });
 /**
  * @param {Number} duration
- * @param {Number} sx
- * @param {Number} sy
+ * @param {Number} sx  scale parameter in X
+ * @param {Number|Null} sy scale parameter in Y, if Null equal to sx
  * @return {cc.ScaleTo}
  * @example
  * // example
+ * // It scales to 0.5 in both X and Y.
  * var actionTo = cc.ScaleTo.create(2, 0.5);
+ *
+ * // It scales to 0.5 in x and 2 in Y
+ * var actionTo = cc.ScaleTo.create(2, 0.5, 2);
  */
 cc.ScaleTo.create = function (duration, sx, sy)//function overload
 {
@@ -1390,14 +1393,14 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
 });
 /**
  * @param {Number} duration duration in seconds
- * @param {Number} sx
- * @param {Number|Null} sy
+ * @param {Number} sx sx  scale parameter in X
+ * @param {Number|Null} sy sy scale parameter in Y, if Null equal to sx
  * @return {cc.ScaleBy}
  * @example
- * // example without sy
+ * // example without sy, it scales by 2 both in X and Y
  * var actionBy = cc.ScaleBy.create(2, 2);
  *
- * //example with sy
+ * //example with sy, it scales by 0.25 in X and 4.5 in Y
  * var actionBy2 = cc.ScaleBy.create(2, 0.25, 4.5);
  */
 cc.ScaleBy.create = function (duration, sx, sy) {
