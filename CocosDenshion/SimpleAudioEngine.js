@@ -26,13 +26,13 @@
 
 /**
  * Whether the sound on or not
- * @type {Boolean}
+ * @type Boolean
  */
 cc.sound = true;
 
 /**
  * Support audio format
- * @type {Boolean}
+ * @type Boolean
  */
 cc.capabilities = {
     mp3:false,
