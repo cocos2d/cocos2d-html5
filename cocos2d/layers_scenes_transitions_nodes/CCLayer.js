@@ -222,7 +222,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /**
      * default implements are used to call script callback if exist<br/>
      * you must override these touch functions if you wish to utilize them
-      * @param {cc.Touch} touch
+     * @param {cc.Touch} touch
      * @param {event} event
      * @return {Boolean}
      */
@@ -343,7 +343,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * opacity getter
-      * @return {Number}
+     * @return {Number}
      */
     getOpacity:function () {
         return this._opacity;
@@ -351,7 +351,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * opacity setter
-      * @param {Number} Var a number between 0 and 255, 0 is totally transparent
+     * @param {Number} Var a number between 0 and 255, 0 is totally transparent
      */
     setOpacity:function (Var) {
         this._opacity = Var;
@@ -363,7 +363,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * color getter
-      * @return {cc.Color3B}
+     * @return {cc.Color3B}
      */
     getColor:function () {
         return this._color;
@@ -371,7 +371,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * color setter
-      * @param {cc.Color3B} Var
+     * @param {cc.Color3B} Var
      */
     setColor:function (Var) {
         this._color = Var;
@@ -383,7 +383,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * blendFunc getter
-      * @return {cc.BlendFunc}
+     * @return {cc.BlendFunc}
      */
     getBlendFunc:function () {
         return this._blendFunc;
@@ -391,7 +391,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * blendFunc setter
-      * @param {cc.BlendFunc} Var
+     * @param {cc.BlendFunc} Var
      */
     setBlendFunc:function (Var) {
         this._blendFunc = Var;
@@ -417,7 +417,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * override contentSize
-      * @param {cc.Size} size
+     * @param {cc.Size} size
      */
     setContentSize:function (size) {
         this._squareVertices[1].x = size.width * cc.CONTENT_SCALE_FACTOR();
@@ -438,7 +438,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * change width in Points
-      * @param {Number} w width
+     * @param {Number} w width
      */
     changeWidth:function (w) {
         this.setContentSize(cc.SizeMake(w, this._contentSize.height));
@@ -446,7 +446,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * change height in Points
-      * @param {Number} h height
+     * @param {Number} h height
      */
     changeHeight:function (h) {
         this.setContentSize(cc.SizeMake(this._contentSize.width, h));

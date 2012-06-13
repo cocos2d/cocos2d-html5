@@ -118,7 +118,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
     /**
      * custom onEnter
-      */
+     */
     onEnter:function () {
         this._super();
         this._inScene.onEnter();
@@ -126,7 +126,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
     /**
      * custom onExit
-      */
+     */
     onExit:function () {
         this._super();
         this._outScene.onExit();
@@ -138,7 +138,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
     /**
      * custom cleanup
-      */
+     */
     cleanup:function () {
         this._super();
 
@@ -177,7 +177,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
     /**
      * called after the transition finishes
-      */
+     */
     finish:function () {
         // clean up
         this._inScene.setIsVisible(true);
@@ -636,7 +636,7 @@ cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
     },
     /**
      *  returns the action that will be performed by the incomming and outgoing scene
-      * @return {cc.MoveBy}
+     * @return {cc.MoveBy}
      */
     action:function () {
         var s = cc.Director.sharedDirector().getWinSize();
@@ -673,7 +673,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
 
     /**
      * initializes the scenes
-      */
+     */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(0, s.height - cc.ADJUST_FACTOR));
@@ -681,7 +681,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
 
     /**
      * returns the action that will be performed by the incomming and outgoing scene
-      * @return {cc.MoveBy}
+     * @return {cc.MoveBy}
      */
     action:function () {
         var s = cc.Director.sharedDirector().getWinSize();
@@ -718,7 +718,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
 
     /**
      * initializes the scenes
-      */
+     */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(0, -(s.height - cc.ADJUST_FACTOR)));
@@ -726,7 +726,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
 
     /**
      * returns the action that will be performed by the incomming and outgoing scene
-      * @return {cc.MoveBy}
+     * @return {cc.MoveBy}
      */
     action:function () {
         var s = cc.Director.sharedDirector().getWinSize();
@@ -1360,7 +1360,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
 
     /**
      * initializes the transition with a duration and with an RGB color
-      * @param {Number} t time in seconds
+     * @param {Number} t time in seconds
      * @param {cc.Scene} scene
      * @param {cc.Color3B} color
      * @return {Boolean}
