@@ -24,20 +24,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-var cc = cc = cc || {};
 /**
- @brief CCActionManager is a singleton that manages all the actions.
- Normally you won't need to use this singleton directly. 99% of the cases you will use the CCNode interface,
- which uses this singleton.
- But there are some cases where you might need to use this singleton.
- Examples:
- - When you want to run an action where the target is different from a CCNode.
- - When you want to pause / resume the actions
-
- @since v0.8
+ * @class
+ * @extends cc.Class
  */
-cc.tHashElement = cc.Class.extend({
+
+cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
     actions:null,
     target:null, //ccobject
     actionIndex:0,
@@ -45,10 +37,25 @@ cc.tHashElement = cc.Class.extend({
     currentActionSalvaged:false,
     paused:false,
     hh:null, //ut hash handle
+    /**
+     * @constructor
+     */
     ctor:function () {
         this.actions = [];
     }
 });
+
+/**
+ * cc.ActionManager is a singleton that manages all the actions.<br/>
+ * Normally you won't need to use this singleton directly. 99% of the cases you will use the CCNode interface,
+ * which uses this singleton.
+ * But there are some cases where you might need to use this singleton. <br/>
+ * Examples:<br/>
+ * - When you want to run an action where the target is different from a CCNode.<br/>
+ * - When you want to pause / resume the actions<br/>
+ * @class
+ * @extends cc.Class
+ */
 cc.ActionManager = cc.Class.extend({
     _targets:null,
     _currentTarget:null,
@@ -63,21 +70,31 @@ cc.ActionManager = cc.Class.extend({
         return null;
     },
 
+    /**
+     * @constructor
+     */
     ctor:function () {
-        cc.Assert(cc.gSharedManager == null, "");
+        cc.Assert(cc.sharedManager == null, "");
         this._targets = [];
     },
 
+    /**
+     * @return {Boolean}
+     */
     init:function () {
         cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, 0, false);
         return true;
     },
-    /** Adds an action with a target.
-     If the target is already present, then the action will be added to the existing target.
-     If the target is not present, a new instance of this target will be created either paused or not, and the action will be added to the newly created target.
-     When the target is paused, the queued actions won't be 'ticked'.
-     */
+
     selTarget:null,
+    /** Adds an action with a target.
+     * If the target is already present, then the action will be added to the existing target.
+     * If the target is not present, a new instance of this target will be created either paused or not, and the action will be added to the newly created target.
+     * When the target is paused, the queued actions won't be 'ticked'.
+     * @param {cc.Action} action
+     * @param {cc.Node} target
+     * @param {Boolean} paused
+     */
     addAction:function (action, target, paused) {
         cc.Assert(action != null, "no action");
         cc.Assert(target != null, "");
@@ -85,7 +102,7 @@ cc.ActionManager = cc.Class.extend({
         var element = this._searchElementByTarget(this._targets, target);
         //if doesnt exists, create a hashelement and push in mpTargets
         if (!element) {
-            element = new cc.tHashElement();
+            element = new cc.HashElement();
             element.paused = paused;
             element.target = target;
             element.id = target.id || "no id";
@@ -99,7 +116,9 @@ cc.ActionManager = cc.Class.extend({
         element.actions.push(action);
         action.startWithTarget(target);
     },
-    /** Removes all actions from all the targets.
+
+    /**
+     * Removes all actions from all the targets.
      */
     removeAllActions:function () {
         for (var i = 0; i < this._targets.length; i++) {
@@ -109,8 +128,9 @@ cc.ActionManager = cc.Class.extend({
             }
         }
     },
-    /** Removes all actions from a certain target.
-     All the actions that belongs to the target will be removed.
+    /** Removes all actions from a certain target. <br/>
+     * All the actions that belongs to the target will be removed.
+     * @param {object} target
      */
     removeAllActionsFromTarget:function (target) {
         // explicit null handling
@@ -137,6 +157,7 @@ cc.ActionManager = cc.Class.extend({
         }
     },
     /** Removes an action given an action reference.
+     * @param {cc.Action} action
      */
     removeAction:function (action) {
         // explicit null handling
@@ -157,7 +178,11 @@ cc.ActionManager = cc.Class.extend({
             cc.Log("cocos2d: removeAction: Target not found");
         }
     },
-    /** Removes an action given its tag and the target */
+
+    /** Removes an action given its tag and the target
+     * @param {Number} tag
+     * @param {object} target
+     */
     removeActionByTag:function (tag, target) {
         cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
         cc.Assert(target != null, "");
@@ -177,8 +202,11 @@ cc.ActionManager = cc.Class.extend({
             }
         }
     },
+
     /** Gets an action given its tag an a target
-     @return the Action the with the given tag
+     * @param {Number} tag
+     * @param {object} target
+     * @return {cc.Action|Null}  return the Action with the given tag on success
      */
     getActionByTag:function (tag, target) {
         cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
@@ -200,10 +228,13 @@ cc.ActionManager = cc.Class.extend({
     },
 
 
-    /** Returns the numbers of actions that are running in a certain target.
-     * Composable actions are counted as 1 action. Example:
-     * - If you are running 1 Sequence of 7 actions, it will return 1.
+    /** Returns the numbers of actions that are running in a certain target. <br/>
+     * Composable actions are counted as 1 action. <br/>
+     * Example: <br/>
+     * - If you are running 1 Sequence of 7 actions, it will return 1. <br/>
      * - If you are running 7 Sequences of 2 actions, it will return 7.
+     * @param {object} target
+     * @return {Number}
      */
     numberOfRunningActionsInTarget:function (target) {
         var element = this._searchElementByTarget(this._targets, target);
@@ -214,6 +245,7 @@ cc.ActionManager = cc.Class.extend({
         return 0;
     },
     /** Pauses the target: all running actions and newly added actions will be paused.
+     * @param {object} target
      */
     pauseTarget:function (target) {
         var element = this._searchElementByTarget(this._targets, target);
@@ -222,6 +254,7 @@ cc.ActionManager = cc.Class.extend({
         }
     },
     /** Resumes the target. All queued actions will be resumed.
+     * @param {object} target
      */
     resumeTarget:function (target) {
         var element = this._searchElementByTarget(this._targets, target);
@@ -229,9 +262,8 @@ cc.ActionManager = cc.Class.extend({
             element.paused = false;
         }
     },
-    /** purges the shared action manager. It releases the retained instance.
+    /** purges the shared action manager. It releases the retained instance. <br/>
      * because it uses this, so it can not be static
-     @since v0.99.0
      */
     purgeSharedManager:function () {
         cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
@@ -277,6 +309,9 @@ cc.ActionManager = cc.Class.extend({
         }
     },
 
+    /**
+     * @param {Number} dt delta time in seconds
+     */
     update:function (dt) {
         for (var elt = 0; elt < this._targets.length; elt++) {
             this._currentTarget = this._targets[elt];
@@ -322,19 +357,22 @@ cc.ActionManager = cc.Class.extend({
         }
     }
 });
-/** purges the shared action manager. It releases the retained instance.
+/** purges the shared action manager. It releases the retained instance. <br/>
  * because it uses this, so it can not be static
- @since v0.99.0
+ * @return {cc.ActionManager}
  */
 cc.ActionManager.sharedManager = function () {
-    if (!cc.gSharedManager) {
-        cc.gSharedManager = new cc.ActionManager();
-        if (!cc.gSharedManager.init()) {
+    if (!cc.sharedManager) {
+        cc.sharedManager = new cc.ActionManager();
+        if (!cc.sharedManager.init()) {
             //delete CCActionManager if init error
-            delete cc.gSharedManager;
+            delete cc.sharedManager;
         }
     }
-    return cc.gSharedManager;
+    return cc.sharedManager;
 };
 
-cc.gSharedManager = null;
+/**
+ * @type {cc.ActionManager}
+ */
+cc.sharedManager = null;
