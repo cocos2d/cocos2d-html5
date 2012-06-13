@@ -26,14 +26,14 @@
 
 
 /**
- * A class that implements a Texture Atlas.
- * Supported features:
- * The atlas file can be a PNG, JPG.
- * Quads can be updated in runtime
- * Quads can be added in runtime
- * Quads can be removed in runtime
- * Quads can be re-ordered in runtime
- * The TextureAtlas capacity can be increased or decreased in runtime.
+ * <p>A class that implements a Texture Atlas. <br />
+ * Supported features: <br />
+ * The atlas file can be a PNG, JPG. <br />
+ * Quads can be updated in runtime <br />
+ * Quads can be added in runtime <br />
+ * Quads can be removed in runtime <br />
+ * Quads can be re-ordered in runtime <br />
+ * The TextureAtlas capacity can be increased or decreased in runtime.</p>
  * @class
  * @extends cc.Class
  */
@@ -114,9 +114,9 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * initializes a TextureAtlas with a filename and with a certain capacity for Quads.
-     * The TextureAtlas capacity can be increased in runtime
-     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory
+     * <p>Initializes a TextureAtlas with a filename and with a certain capacity for Quads.<br />
+     * The TextureAtlas capacity can be increased in runtime.<br />
+     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory. </p>
      * @param {String} file
      * @param {Number} capacity
      * @return {Boolean|Null}
@@ -138,10 +138,10 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * Initializes a TextureAtlas with a previously initialized Texture2D object, and
-     * with an initial capacity for Quads.
-     * The TextureAtlas capacity can be increased in runtime.
-     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory
+     * <p>Initializes a TextureAtlas with a previously initialized Texture2D object, and<br />
+     * with an initial capacity for Quads.<br />
+     * The TextureAtlas capacity can be increased in runtime.<br />
+     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory</p>
      * @param {Image} texture
      * @param {Number} capacity
      * @return {Boolean}
@@ -175,8 +175,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * Updates a Quad (texture, vertex and color) at a certain index
-     * index must be between 0 and the atlas capacity - 1
+     * <p>Updates a Quad (texture, vertex and color) at a certain index <br />
+     * index must be between 0 and the atlas capacity - 1 </p>
      * @param {cc.V2F_C4B_T2F_Quad} quad
      * @param {Number} index
      */
@@ -186,8 +186,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * Inserts a Quad (texture, vertex and color) at a certain index
-     * index must be between 0 and the atlas capacity - 1
+     * <p>Inserts a Quad (texture, vertex and color) at a certain index<br />
+     * index must be between 0 and the atlas capacity - 1 </p>
      * @param {cc.V2F_C4B_T2F_Quad} quad
      * @param {Number} index
      */
@@ -197,8 +197,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * Removes the quad that is located at a certain index and inserts it at a new index
-     * This operation is faster than removing and inserting in a quad in 2 different steps
+     * <p>Removes the quad that is located at a certain index and inserts it at a new index <br />
+     * This operation is faster than removing and inserting in a quad in 2 different steps</p>
      * @param {Number} fromIndex
      * @param {Number} newIndex
      */
@@ -218,8 +218,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * Removes a quad at a given index number.
-     * The capacity remains the same, but the total number of quads to be drawn is reduced in 1
+     * <p>Removes a quad at a given index number.<br />
+     * The capacity remains the same, but the total number of quads to be drawn is reduced in 1 </p>
      * @param {Number} index
      */
     removeQuadAtIndex:function (index) {
@@ -229,20 +229,20 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * Removes all Quads.
-     * The TextureAtlas capacity remains untouched. No memory is freed.
-     * The total number of quads to be drawn will be 0
+     * <p>Removes all Quads. <br />
+     * The TextureAtlas capacity remains untouched. No memory is freed.<br />
+     * The total number of quads to be drawn will be 0</p>
      */
     removeAllQuads:function () {
         this._quads.length = 0;
     },
 
     /**
-     * Resize the capacity of the CCTextureAtlas.
-     * The new capacity can be lower or higher than the current one
-     * It returns YES if the resize was successful.
-     * If it fails to resize the capacity it will return NO with a new capacity of 0.
-     * no used for js
+     * <p>Resize the capacity of the CCTextureAtlas.<br />
+     * The new capacity can be lower or higher than the current one<br />
+     * It returns YES if the resize was successful. <br />
+     * If it fails to resize the capacity it will return NO with a new capacity of 0. <br />
+     * no used for js</p>
      * @param {Number} newCapacity
      * @return {Boolean}
      */
@@ -258,8 +258,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     /**
-     * Draws n quads from an index (offset).
-     * n + start can't be greater than the capacity of the atlas
+     * <p>Draws n quads from an index (offset). <br />
+     * n + start can't be greater than the capacity of the atlas</p>
      * @param {Number} n
      * @param {Number} start
      */
@@ -276,8 +276,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 });
 
 /**
- * Creates a TextureAtlas with an filename and with an initial capacity for Quads.
- * The TextureAtlas capacity can be increased in runtime.
+ * <p>Creates a TextureAtlas with an filename and with an initial capacity for Quads. <br />
+ * The TextureAtlas capacity can be increased in runtime. </p>
  * @param {String} file
  * @param {Number} capacity
  * @return {cc.TextureAtlas|Null}
@@ -294,9 +294,8 @@ cc.TextureAtlas.create = function (file, capacity) {
 };
 
 /**
- * Creates a TextureAtlas with a previously initialized Texture2D object, and
- * with an initial capacity for n Quads.
- * The TextureAtlas capacity can be increased in runtime.
+ * <p>Creates a TextureAtlas with a previously initialized Texture2D object, and with an initial capacity for n Quads.
+ * The TextureAtlas capacity can be increased in runtime.</p>
  * @param {Image} texture
  * @param {Number} capacity
  * @return {cc.TextureAtlas}

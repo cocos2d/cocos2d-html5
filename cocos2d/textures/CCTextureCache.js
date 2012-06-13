@@ -131,11 +131,11 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     /**
-     * Returns a Texture2D object given an file image
-     * If the file image was not previously loaded, it will create a new Texture2D
-     *  object and it will return it. It will use the filename as a key.
-     * Otherwise it will return a reference of a previously loaded image.
-     * Supported image extensions: .png, .jpg, .gif
+     * <p>Returns a Texture2D object given an file image <br />
+     * If the file image was not previously loaded, it will create a new Texture2D <br />
+     *  object and it will return it. It will use the filename as a key.<br />
+     * Otherwise it will return a reference of a previously loaded image. <br />
+     * Supported image extensions: .png, .jpg, .gif</p>
      * @param {String} path
      * @return {Image}
      * @example
@@ -178,11 +178,12 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             this.textures[path.toString()] = texture;
         }
     },
-    /** Returns a Texture2D object given an UIImage image
-     * If the image was not previously loaded, it will create a new Texture2D object and it will return it.
-     * Otherwise it will return a reference of a previously loaded image
-     * The "key" parameter will be used as the "key" for the cache.
-     * If "key" is null, then a new texture will be created each time.
+    /**
+     * <p>Returns a Texture2D object given an UIImage image<br />
+     * If the image was not previously loaded, it will create a new Texture2D object and it will return it.<br />
+     * Otherwise it will return a reference of a previously loaded image<br />
+     * The "key" parameter will be used as the "key" for the cache.<br />
+     * If "key" is null, then a new texture will be created each time.</p>
      * @param {Image} image
      * @param {String} key
      * @return {cc.Texture2D}
@@ -268,11 +269,11 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     /**
-     * Purges the dictionary of loaded textures.
-     * Call this method if you receive the "Memory Warning"
-     * In the short term: it will free some resources preventing your app from being killed
-     * In the medium term: it will allocate more resources
-     * In the long term: it will be the same
+     * <p>Purges the dictionary of loaded textures. <br />
+     * Call this method if you receive the "Memory Warning"  <br />
+     * In the short term: it will free some resources preventing your app from being killed  <br />
+     * In the medium term: it will allocate more resources <br />
+     * In the long term: it will be the same</p>
      * @example
      * //example
      * cc.TextureCache.sharedTextureCache().removeAllTextures();
@@ -317,8 +318,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     /**
-     * Output to cc.Log the current contents of this TextureCache
-     * This will attempt to calculate the size of each texture, and the total texture memory in use.
+     * <p>Output to cc.Log the current contents of this TextureCache <br />
+     * This will attempt to calculate the size of each texture, and the total texture memory in use. </p>
      */
     dumpCachedTextureInfo:function () {
         var count = 0;
@@ -337,9 +338,9 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     /**
-     * Returns a Texture2D object given an PVR filename
-     * If the file image was not previously loaded, it will create a new Texture2D
-     *  object and it will return it. Otherwise it will return a reference of a previously loaded image
+     * <p>Returns a Texture2D object given an PVR filename<br />
+     * If the file image was not previously loaded, it will create a new Texture2D<br />
+     *  object and it will return it. Otherwise it will return a reference of a previously loaded image </p>
      * @param {String} path
      * @return {cc.Texture2D}
      */
