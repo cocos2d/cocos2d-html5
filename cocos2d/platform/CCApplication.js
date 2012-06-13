@@ -277,7 +277,8 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
 
     /**
      *  Get status bar rectangle in EGLView window.
-      * @param {cc.Rect} rect
+     * @param {cc.Rect} rect
+     * @deprecated
      */
     statusBarFrame:function (rect) {
         if (rect) {
