@@ -127,7 +127,7 @@ cc.Rect.CCRectEqualToRect = function (rect1, rect2) {
  * return the rightmost x-value of 'rect'
  * @function
  * @param {cc.Rect} rect
- * @return {*}
+ * @return {Number}
  * @constructor
  */
 cc.Rect.CCRectGetMaxX = function (rect) {
