@@ -37,7 +37,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isKeypadEnabled:false,
 
     /**
-     * @constuctor
+     * @constructor
      * @return {Boolean} return false if director fails
      */
     ctor:function () {
@@ -585,7 +585,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _compressedInterpolation:false,
 
     /**
-     * @constuctor
+     * @constructor
      * @function
      */
     ctor:function () {
@@ -846,7 +846,7 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
     layers:null,
 
     /**
-     * @constuctor
+     * @constructor
      */
     ctor:function () {
         this._super();
@@ -942,7 +942,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
     _canvasZOrder:-10,
 
     /**
-     * @constuctor
+     * @constructor
      */
     ctor:function () {
         this._super();

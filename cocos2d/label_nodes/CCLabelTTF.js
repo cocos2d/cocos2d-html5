@@ -40,7 +40,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _string:null,
     _fontStyleStr:null,
     /**
-     * @constuctor
+     * @constructor
      */
     ctor:function () {
         this._super();
