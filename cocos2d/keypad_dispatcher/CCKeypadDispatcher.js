@@ -293,6 +293,7 @@ cc.KeypadDispatcher.sharedDispatcher = function () {
         //make canvas focusable
         cc.canvas.setAttribute('contentEditable', true);
         cc.canvas.style.outline='none';
+        cc.canvas.style.cursor = 'default';
         cc.canvas.addEventListener("keydown", function (e) {
             console.log(e);
             cc.keypadDispatcher.dispatchKeypadMSG(e, true);
