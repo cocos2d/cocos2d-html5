@@ -25,13 +25,38 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-var cc = cc = cc || {};
+/**
+ * @constant
+ * @type Number
+ */
 cc.CCMENU_STATE_WAITING = 0;
+/**
+ * @constant
+ * @type Number
+ */
 cc.CCMENU_STATE_TRACKING_TOUCH = 1;
+/**
+ * @constant
+ * @type Number
+ */
 cc.CCMENU_TOUCH_PRIORITY = -128;
+/**
+ * @constant
+ * @type Number
+ */
 cc.DEFAULT_PADDING = 5;
-cc.Menu = cc.domNode.extend({
+
+/**
+ * Menu layer based on DOM html
+ * @class
+ * @extends cc.domNode
+ */
+cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
+
+    /**
+     * init a layer with items
+     * @param {Array} args array of menu items
+     */
     initWithItems:function (args) {
         this.dom.id = "DomMenu" + Date.now();
         this.dom.className += " domMenu";
@@ -44,9 +69,19 @@ cc.Menu = cc.domNode.extend({
             }
         }
     },
+
+    /**
+     * align vertically with default padding
+     * @function
+     */
     alignItemsVertically:function () {
         this.alignItemsVerticallyWithPadding(cc.DEFAULT_PADDING);
     },
+
+    /**
+     * align vertically with specified padding
+     * @param {Number} padding
+     */
     alignItemsVerticallyWithPadding:function (padding) {
         var s = cc.Director.sharedDirector().getWinSize();//get window size
         var height = -padding;
@@ -70,9 +105,18 @@ cc.Menu = cc.domNode.extend({
             }
         }
     },
+
+    /**
+     * align horizontally with default padding
+     */
     alignItemsHorizontally:function () {
         this.alignItemsHorizontallyWithPadding(cc.DEFAULT_PADDING);
     },
+
+    /**
+     * align horizontally with specified padding
+     * @param {Number} padding
+     */
     alignItemsHorizontallyWithPadding:function (padding) {
         var s = cc.Director.sharedDirector().getWinSize();
         var width = -padding;
@@ -96,6 +140,10 @@ cc.Menu = cc.domNode.extend({
             }
         }
     },
+
+    /**
+     * @function
+     */
     cleanup:function () {
         this._super();
         //everytime a dom menu exits, do the clean up
@@ -132,7 +180,15 @@ cc.Menu = cc.domNode.extend({
         }
     }
 });
-cc.Menu.create = function () {
+
+/**
+ * create a new dom menu
+ * @return {cc.Menu}
+ * @example
+ * // Example
+ * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3)//there is no limit on how many menu item you can pass in
+ */
+cc.Menu.create = function (/* Multiple arguments */) {
     var ret = new cc.Menu();
     ret.initWithItems(arguments);
     return ret;
