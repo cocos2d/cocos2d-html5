@@ -1968,32 +1968,29 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 });
 
 /**
- * @param animation
- * @param restoreOriginalFrame
+ * It accepts three groups of parameters:
+ * a) animation
+ * b) animation, restoreOriginalFrame
+ * c) duration, animation, restoreOriginalFrame
  * @return {cc.Animate}
- */
-cc.Animate.actionWithAnimation = function (animation, restoreOriginalFrame) {
-    var animate = new cc.Animate();
-    var go = (restoreOriginalFrame) ? restoreOriginalFrame : true;
-    animate.initWithAnimation(animation, go);
-
-    return animate;
-};
-
-/**
+ * @example
+ * // example
+ * // create the animation with animation
+ * var anim = cc.Animate.create(dance_grey);
  *
- * @param duration
- * @param animation
- * @param restoreOriginalFrame
- * @return {cc.Animate}
+ * // create the animation with animation and restoreOriginalFrame
+ * var anim = cc.Animate.create(dance_grey, false);
+ *
+ * // create the animation with duration, animation and restoreOriginalFrame
+ * var anim = cc.Animate.create(10, dance_grey, false);  // duration in seconds
  */
-cc.Animate.create = function (duration, animation, restoreOriginalFrame) {
+cc.Animate.create = function (/* Multi arguments */) {
     var animate = new cc.Animate();
     if (arguments.length == 3) {
-        animate.initWithDuration(duration, animation, restoreOriginalFrame);
+        animate.initWithDuration(arguments[0], arguments[1], arguments[2]);
     } else {
-        var go = (restoreOriginalFrame) ? restoreOriginalFrame : true;
-        animate.initWithAnimation(animation, go);
+        animate.initWithAnimation(arguments[0], arguments[1]);
     }
+
     return animate;
 };
