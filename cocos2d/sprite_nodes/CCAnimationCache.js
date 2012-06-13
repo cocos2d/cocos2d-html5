@@ -23,25 +23,32 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-
-/** Singleton that manages the Animations.
- It saves in a cache the animations. You should use this class if you want to save your animations in a cache.
-
- Before v0.99.5, the recommend way was to save them on the CCSprite. Since v0.99.5, you should use this class instead.
-
- @since v0.99.5
+/**
+ * <p>
+ *     Singleton that manages the Animations.<br/>
+ *     It saves in a cache the animations. You should use this class if you want to save your animations in a cache.<br/>
+ * </p>
+ * @class
+ * @extends cc.Class
+ *
+ * @example
+ * cc.AnimationCache.sharedAnimationCache().addAnimation(animation,"animation1");
  */
-cc.AnimationCache = cc.Class.extend({
+cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
 
-    /** Adds a CCAnimation with a name.
+    /**
+     * Adds a cc.Animation with a name.
+     * @param {cc.Animation} animation
+     * @param {String} name
      */
     addAnimation:function (animation, name) {
         this._animations[name] = animation;
     },
 
-    /** Deletes a CCAnimation from the cache.
+    /**
+     *  Deletes a cc.Animation from the cache.
+      * @param  {String} name
      */
     removeAnimationByName:function (name) {
         if (!name) {
@@ -50,30 +57,42 @@ cc.AnimationCache = cc.Class.extend({
         delete this._animations[name];
     },
 
-    /** Returns a CCAnimation that was previously added.
-     If the name is not found it will return nil.
-     You should retain the returned copy if you are going to use it.
+    /**
+     * <p>
+     *     Returns a cc.Animation that was previously added.<br/>
+     *      If the name is not found it will return nil.<br/>
+     *      You should retain the returned copy if you are going to use it.</br>
+     * </p>
+     * @param {String} name
+     * @return {cc.Animation}
      */
     animationByName:function (name) {
         return this._animations[name];
     },
 
+    /**
+     * initialize cc.AnimationCache
+     * @return {Boolean}
+     */
     init:function () {
-        this._animations = new Object();
+        this._animations = {};
         return true;
     },
 
     _animations:null
-
 });
 
-/** Purges the cache. It releases all the CCAnimation objects and the shared instance.
+/**
+ * Purges the cache. It releases all the cc.Animation objects and the shared instance.
  */
 cc.AnimationCache.purgeSharedAnimationCache = function () {
     cc.sharedAnimationCache = null;
 };
 
-/** Retruns ths shared instance of the Animation cache */
+/**
+ * Retruns ths shared instance of the Animation cache
+ * @return {cc.AnimationCache}
+ */
 cc.AnimationCache.sharedAnimationCache = function () {
     if (cc.sharedAnimationCache == null) {
         cc.sharedAnimationCache = new cc.AnimationCache();
