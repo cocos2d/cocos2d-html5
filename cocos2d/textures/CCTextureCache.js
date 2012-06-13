@@ -26,7 +26,7 @@
 
 /**
  * TextureCache - Alloc, Init & Dealloc
- * @type {object}
+ * @type object
  */
 cc.g_sharedTextureCache = null;
 
