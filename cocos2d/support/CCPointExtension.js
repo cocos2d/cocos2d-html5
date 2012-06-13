@@ -39,7 +39,7 @@
 /**
  * smallest such that 1.0+FLT_EPSILON != 1.0
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPOINT_EPSILON = parseFloat('1.192092896e-07F');
 
