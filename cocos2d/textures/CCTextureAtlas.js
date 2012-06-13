@@ -268,7 +268,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             return;
     },
     /**
-     * Draw quads
+     * Draws all the Atlas's Quads
      */
     drawQuads:function () {
         this.drawNumberOfQuads(this._quads.length, 0);
