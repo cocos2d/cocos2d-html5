@@ -24,39 +24,56 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-cc.TextFieldDelegate = cc.Class.extend({
+/**
+ * Text field delegate
+ * @class
+ * @extends cc.Class
+ */
+cc.TextFieldDelegate = cc.Class.extend(/** @lends cc.TextFieldDelegate# */{
     /**
-     @brief    If the sender doesn't want to attach with IME, return true;
+     * If the sender doesn't want to attach with IME, return true;
+     * @param {cc.TextFieldTTF} sender
+     * @return {Boolean}
      */
     onTextFieldAttachWithIME:function (sender) {
         return false;
     },
 
     /**
-     @brief    If the sender doesn't want to detach with IME, return true;
+     * If the sender doesn't want to detach with IME, return true;
+     * @param {cc.TextFieldTTF} sender
+     * @return {Boolean}
      */
     onTextFieldDetachWithIME:function (sender) {
         return false;
     },
 
     /**
-     @brief    If the sender doesn't want to insert the text, return true;
+     * If the sender doesn't want to insert the text, return true;
+     * @param {cc.TextFieldTTF} sender
+     * @param {String} text
+     * @param {Number} len
+     * @return {Boolean}
      */
     onTextFieldInsertText:function (sender, text, len) {
         return false
     },
 
     /**
-     @brief    If the sender doesn't want to delete the delText, return true;
+     * f the sender doesn't want to delete the delText, return true;
+     * @param {cc.TextFieldTTF} sender
+     * @param {String} delText
+     * @param {Number} len
+     * @return {Boolean}
      */
     onTextFieldDeleteBackward:function (sender, delText, len) {
         return false;
     },
 
     /**
-     @brief    If doesn't want draw sender as default, return true.
+     * If doesn't want draw sender as default, return true.
+     * @param {cc.TextFieldTTF} sender
+     * @return {Boolean}
      */
     onDraw:function (sender) {
         return false;
@@ -64,44 +81,71 @@ cc.TextFieldDelegate = cc.Class.extend({
 });
 
 /**
- @brief    A simple text input field with TTF font.
+ * A simple text input field with TTF font.
+ * @class
+ * @extends cc.LabelTTF
  */
-cc.TextFieldTTF = cc.LabelTTF.extend({
+cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _lens:null,
     _inputText:"",
     _placeHolder:"",
-
-    //////////////////////////////////////////////////////////////////////////
-    // properties
-    //////////////////////////////////////////////////////////////////////////
-    _delegate:null,
-    getDelegate:function () {
-        return this._delegate;
-    },
-    setDelegate:function (value) {
-        this._delegate = value;
-    },
-
     _charCount:0,
-    getCharCount:function () {
-        return this._charCount;
-    },
-
+    _delegate:null,
     _ColorSpaceHolder:null,
-    getColorSpaceHolder:function () {
-        return this._ColorSpaceHolder;
-    },
-    setColorSpaceHolder:function (value) {
-        this._ColorSpaceHolder = value;
-    },
-
+    /**
+     * @Constructor
+     */
     ctor:function () {
         this._ColorSpaceHolder = new cc.Color3B(127, 127, 127);
         cc.IMEDispatcher.sharedDispatcher().addDelegate(this);
         this._super();
     },
-
-    /** initializes the CCTextFieldTTF with a font name, alignment, dimension and font size */
+    /**
+     * @return {cc.Node}
+     */
+    getDelegate:function () {
+        return this._delegate;
+    },
+    /**
+     * @param {cc.Node} value
+     */
+    setDelegate:function (value) {
+        this._delegate = value;
+    },
+    /**
+     * @return {Number}
+     */
+    getCharCount:function () {
+        return this._charCount;
+    },
+    /**
+     * @return {cc.Color3B}
+     */
+    getColorSpaceHolder:function () {
+        return this._ColorSpaceHolder;
+    },
+    /**
+     * @param {cc.Color3B} value
+     */
+    setColorSpaceHolder:function (value) {
+        this._ColorSpaceHolder = value;
+    },
+    /**
+     * Initializes the cc.TextFieldTTF with a font name, alignment, dimension and font size
+     * @param {String} placeholder
+     * @param {cc.Size} dimensions
+     * @param {Number} alignment
+     * @param {String} fontName
+     * @param {Number} fontSize
+     * @return {Boolean}
+     * @example
+     * //example
+     * var  textField = new cc.TextFieldTTF();
+     * // When five parameters
+     * textField.initWithPlaceHolder("<click here for input>", new cc.Size(100,50), cc.TextAlignmentLeft,"Arial", 32);
+     * // When three parameters
+     * textField.initWithPlaceHolder("<click here for input>", "Arial", 32);
+     */
     initWithPlaceHolder:function (placeholder, dimensions, alignment, fontName, fontSize) {
         switch (arguments.length) {
             case 5:
@@ -123,8 +167,11 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
                 break;
         }
     },
-
-    // input text property
+    /**
+     * Input text property
+     * @param {String} text
+     * @param {Boolean} isCallParent
+     */
     setString:function (text, isCallParent) {
         if (isCallParent && isCallParent == true) {
             this._super(text);
@@ -144,20 +191,30 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         }
         this._charCount = this._inputText.length;
     },
+    /**
+     * @return {String}
+     */
     getString:function () {
         return this._inputText;
     },
-
+    /**
+     * @param {String} text
+     */
     setPlaceHolder:function (text) {
         this._placeHolder = text || "";
         if (!this._inputText.length) {
             this.setString(this._placeHolder, true);
         }
     },
+    /**
+     * @return {String}
+     */
     getPlaceHolder:function () {
         return this._placeHolder;
     },
-
+    /**
+     * @param {CanvasRenderingContext2D} ctx
+     */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
         if (this._delegate && this._delegate.onDraw(this)) {
@@ -179,61 +236,48 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
     // CCIMEDelegate interface
     //////////////////////////////////////////////////////////////////////////
     /**
-     @brief    Open keyboard and receive input text.
+     * Open keyboard and receive input text.
+     * @return {Boolean}
      */
     attachWithIME:function () {
-        //c++ code
         var ret = cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
-        if (ret) {
-            // open keyboard
-            /*
-             var pGlView = cc.Director.sharedDirector().getOpenGLView();
-             if (pGlView) {
-             pGlView.setIMEKeyboardState(true);
-             }
-             */
-        }
         return ret;
     },
-
     /**
-     @brief    End text input  and close keyboard.
+     * End text input  and close keyboard.
+     * @return {Boolean}
      */
     detachWithIME:function () {
-        // C++ code
         var ret = cc.IMEDispatcher.sharedDispatcher().detachDelegateWithIME(this);
-        if (ret) {
-            // close keyboard
-            /*
-             var pGlView = cc.Director.sharedDirector().getOpenGLView();
-             if (pGlView) {
-             pGlView.setIMEKeyboardState(false);
-             }
-             */
-        }
         return ret;
     },
-
+    /**
+     * @return {Boolean}
+     */
     canAttachWithIME:function () {
         return (this._delegate) ? (!this._delegate.onTextFieldAttachWithIME(this)) : true;
     },
 
     /**
-     @brief    When the delegate detach with IME, this method call by CCIMEDispatcher.
+     * When the delegate detach with IME, this method call by CCIMEDispatcher.
      */
     didAttachWithIME:function () {
     },
-
+    /**
+     * @return {Boolean}
+     */
     canDetachWithIME:function () {
         return (this._delegate) ? (!this._delegate.onTextFieldDetachWithIME(this)) : true;
     },
 
     /**
-     @brief    When the delegate detach with IME, this method call by CCIMEDispatcher.
+     * When the delegate detach with IME, this method call by CCIMEDispatcher.
      */
     didDetachWithIME:function () {
     },
-
+    /**
+     *  Delete backward
+     */
     deleteBackward:function () {
         var nStrLen = this._inputText.length;
         if (nStrLen == 0) {
@@ -245,7 +289,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         var nDeleteLen = 1;    // default, erase 1 byte
 
         if (this._delegate && this._delegate.onTextFieldDeleteBackward(this, this._inputText[nStrLen - nDeleteLen], nDeleteLen)) {
-            // delegate don't wan't delete backward
+            // delegate don't want delete backward
             return;
         }
 
@@ -261,11 +305,16 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         var sText = this._inputText.substring(0, nStrLen - nDeleteLen);
         this.setString(sText);
     },
-
+    /**
+     *  Remove delegate
+     */
     removeDelegate:function () {
         cc.IMEDispatcher.sharedDispatcher().removeDelegate(this);
     },
-
+    /**
+     * @param {String} text
+     * @param {Number} len
+     */
     insertText:function (text, len) {
         var sInsert = text;
 
@@ -298,7 +347,9 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
         // if delegate hasn't process, detach with ime as default
         this.detachWithIME();
     },
-
+    /**
+     * @return {String}
+     */
     getContentText:function () {
         return this._inputText;
     },
@@ -316,7 +367,21 @@ cc.TextFieldTTF = cc.LabelTTF.extend({
     }
 });
 
-/** creates a CCTextFieldTTF from a fontname, alignment, dimension and font size */
+/**
+ *  creates a cc.TextFieldTTF from a fontName, alignment, dimension and font size
+ * @param {String} placeholder
+ * @param {cc.Size} dimensions
+ * @param {Number} alignment
+ * @param {String} fontName
+ * @param {Number} fontSize
+ * @return {cc.TextFieldTTF|Null}
+ * @example
+ * //example
+ * // When five parameters
+ * var textField = cc.TextFieldTTF.create("<click here for input>", new cc.Size(100,50), cc.TextAlignmentLeft,"Arial", 32);
+ * // When three parameters
+ * var textField = cc.TextFieldTTF.create("<click here for input>", "Arial", 32);
+ */
 cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName, fontSize) {
     switch (arguments.length) {
         case 5:
@@ -345,6 +410,5 @@ cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName,
             throw "Argument must be non-nil ";
             break;
     }
-
 };
 
