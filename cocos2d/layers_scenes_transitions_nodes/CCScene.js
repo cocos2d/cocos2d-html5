@@ -26,15 +26,14 @@
 
 
 /**
- * cc.Scene is a subclass of cc.Node that is used only as an abstract concept.
-
- *  cc.Scene an cc.Node are almost identical with the difference that cc.Scene has it's
- * anchor point (by default) at the center of the screen.
+ * <p>cc.Scene is a subclass of cc.Node that is used only as an abstract concept.</p>
+ *  <p>cc.Scene an cc.Node are almost identical with the difference that cc.Scene has it's
+ * anchor point (by default) at the center of the screen.</p>
  *
- * For the moment cc.Scene has no other logic than that, but in future releases it might have
- * additional logic.
+ * <p>For the moment cc.Scene has no other logic than that, but in future releases it might have
+ * additional logic.</p>
  *
- * It is a good practice to use and cc.Scene as the parent of all your nodes.
+ * <p>It is a good practice to use and cc.Scene as the parent of all your nodes.</p>
  * @class
  * @extends cc.Node
  */

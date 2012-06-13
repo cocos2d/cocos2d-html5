@@ -292,8 +292,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Layer} layer
      */
     addLayer:function (layer) {
-        cc.Assert(this.layers, "cc.Layer addLayer");
-        this.layers.addObject(layer);
+        cc.Assert(this._layers, "cc.Layer addLayer");
+        this._layers.addObject(layer);
     }
 });
 
@@ -836,14 +836,8 @@ cc.LayerGradient.create = function (start, end, v) {
  *  @extends cc.Layer
  */
 cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
-    /**
-     * @private
-     */
-    enabledLayer:0,
-    /**
-     * @private
-     */
-    layers:null,
+    _enabledLayer:0,
+    _layers:null,
 
     /**
      * @constructor
@@ -854,13 +848,13 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
 
     /**
      * @param {cc.Layer} layer
-     * @deprecated merged with initWithLayer
+     * @deprecated merged with initWithLayers
      * @return {Boolean}
      */
     initWithLayer:function (layer) {
-        this.layers = [];
-        this.layers.push(layer);
-        this.enabledLayer = 0;
+        this._layers = [];
+        this._layers.push(layer);
+        this._enabledLayer = 0;
         this.addChild(layer);
         return true;
     },
@@ -870,9 +864,9 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @return {Boolean}
      */
     initWithLayers:function (args) {
-        this.layers = args;
-        this.enabledLayer = 0;
-        this.addChild(this.layers[this.enabledLayer]);
+        this._layers = args;
+        this._enabledLayer = 0;
+        this.addChild(this._layers[this._enabledLayer]);
         return true;
     },
 
@@ -882,13 +876,13 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @param {Number} n the layer index to switch to
      */
     switchTo:function (n) {
-        cc.Assert(n < this.layers.length, "Invalid index in MultiplexLayer switchTo message");
+        cc.Assert(n < this._layers.length, "Invalid index in MultiplexLayer switchTo message");
 
-        this.removeChild(this.layers[this.enabledLayer], true);
+        this.removeChild(this._layers[this._enabledLayer], true);
 
-        this.enabledLayer = n;
+        this._enabledLayer = n;
 
-        this.addChild(this.layers[n]);
+        this.addChild(this._layers[n]);
     },
 
     /** release the current layer and switches to another layer indexed by n.<br/>
@@ -896,16 +890,16 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
      * @param {Number} n the layer index to switch to
      */
     switchToAndReleaseMe:function (n) {
-        cc.Assert(n < this.layers.count(), "Invalid index in MultiplexLayer switchTo message");
+        cc.Assert(n < this._layers.count(), "Invalid index in MultiplexLayer switchTo message");
 
-        this.removeChild(this.layers[this.enabledLayer], true);
+        this.removeChild(this._layers[this._enabledLayer], true);
 
-        //[layers replaceObjectAtIndex:enabledLayer withObject:[NSNull null]];
-        this.layers[this.enabledLayer] = null;
+        //[layers replaceObjectAtIndex:_enabledLayer withObject:[NSNull null]];
+        this._layers[this._enabledLayer] = null;
 
-        this.enabledLayer = n;
+        this._enabledLayer = n;
 
-        this.addChild(this.layers[n]);
+        this.addChild(this._layers[n]);
     }
 });
 

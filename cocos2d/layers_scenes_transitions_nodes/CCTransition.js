@@ -23,34 +23,56 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
-
-cc.SCENE_FADE = parseInt("0xFADEFADE");
-
-/** @brief CCTransitionEaseScene can ease the actions of the scene protocol.
- @since v0.8.2
+/**
+ * A tag constant for identifying fade scenes
+ * @constant
+ * @type {Number}
  */
-cc.TransitionEaseScene = cc.Class.extend({
-    /** returns the Ease action that will be performed on a linear action.
-     @since v0.8.2
+cc.SCENE_FADE = 4208917214;
+
+/**
+ * cc.TransitionEaseScene can ease the actions of the scene protocol.
+ * @class
+ * @extends cc.Class
+ */
+cc.TransitionEaseScene = cc.Class.extend(/** @lends cc.TransitionEaseScene# */{
+    /**
+     * returns the Ease action that will be performed on a linear action.
      */
     easeActionWithAction:function () {
     }
 });
 
 /**
- * Orientation Type used by some transitions
+ * horizontal orientation Type where the Left is nearer
+ * @constant
+ * @type {Number}
  */
-/// An horizontal orientation where the Left is nearer
 cc.ORIENTATION_LEFT_OVER = 0;
-/// An horizontal orientation where the Right is nearer
+/**
+ * horizontal orientation type where the Right is nearer
+ * @constant
+ * @type {Number}
+ */
 cc.ORIENTATION_RIGHT_OVER = 1;
-/// A vertical orientation where the Up is nearer
+/**
+ * vertical orientation type where the Up is nearer
+ * @constant
+ * @type {Number}
+ */
 cc.ORIENTATION_UP_OVER = 0;
-/// A vertical orientation where the Bottom is nearer
+/**
+ * vertical orientation type where the Bottom is nearer
+ * @constant
+ * @type {Number}
+ */
 cc.ORIENTATION_DOWN_OVER = 1;
 
-cc.TransitionScene = cc.Scene.extend({
+/**
+ * @class
+ * @extends cc.Scene
+ */
+cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
     _inScene:null,
     _outScene:null,
     _duration:null,
@@ -79,6 +101,9 @@ cc.TransitionScene = cc.Scene.extend({
         this._isInSceneOnTop = true;
     },
 
+    /**
+     * stuff gets drawn here
+     */
     draw:function () {
         this._super();
 
@@ -91,12 +116,17 @@ cc.TransitionScene = cc.Scene.extend({
         }
     },
 
-    // custom onEnter
+    /**
+     * custom onEnter
+      */
     onEnter:function () {
         this._super();
         this._inScene.onEnter();
     },
-    // custom onExit
+
+    /**
+     * custom onExit
+      */
     onExit:function () {
         this._super();
         this._outScene.onExit();
@@ -105,7 +135,10 @@ cc.TransitionScene = cc.Scene.extend({
         // only the onEnterTransitionDidFinish
         this._inScene.onEnterTransitionDidFinish();
     },
-    // custom cleanup
+
+    /**
+     * custom cleanup
+      */
     cleanup:function () {
         this._super();
 
@@ -113,7 +146,12 @@ cc.TransitionScene = cc.Scene.extend({
             this._outScene.cleanup();
     },
 
-    /** initializes a transition with duration and incoming scene */
+    /**
+     * initializes a transition with duration and incoming scene
+     * @param {Number} t time in seconds
+     * @param {cc.Scene} scene a scene to transit to
+     * @return {Boolean} return false if error
+     */
     initWithDuration:function (t, scene) {
         cc.Assert(scene != null, "CCTransitionScene.initWithDuration() Argument scene must be non-nil");
 
@@ -137,7 +175,9 @@ cc.TransitionScene = cc.Scene.extend({
         }
     },
 
-    /** called after the transition finishes */
+    /**
+     * called after the transition finishes
+      */
     finish:function () {
         // clean up
         this._inScene.setIsVisible(true);
@@ -156,12 +196,20 @@ cc.TransitionScene = cc.Scene.extend({
         this.schedule(this._setNewScene, 0);
     },
 
+    /**
+     * set hide the out scene and show in scene
+     */
     hideOutShowIn:function () {
         this._inScene.setIsVisible(true);
         this._outScene.setIsVisible(false);
     }
 });
-/** creates a base transition with duration and incoming scene */
+/**
+ * creates a base transition with duration and incoming scene
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene the scene to transit with
+ * @return {cc.TransitionScene|Null}
+ */
 cc.TransitionScene.create = function (t, scene) {
     var tempScene = new cc.TransitionScene();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -170,12 +218,23 @@ cc.TransitionScene.create = function (t, scene) {
     return null;
 };
 
-/** @brief A CCTransition that supports orientation like.
- * Possible orientation: LeftOver, RightOver, UpOver, DownOver
+/**
+ * A cc.Transition that supports orientation like.<br/>
+ * Possible orientation: LeftOver, RightOver, UpOver, DownOver<br/>
+ * useful for when you want to make a transition happen between 2 orientations
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionSceneOriented = cc.TransitionScene.extend({
+cc.TransitionSceneOriented = cc.TransitionScene.extend(/** @lends cc.TransitionSceneOriented# */{
     _orientation:0,
 
+    /**
+     * initialize the transition
+     * @param {Number} t time in seconds
+     * @param {cc.Scene} scene
+     * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} orientation
+     * @return {Boolean}
+     */
     initWithDuration:function (t, scene, orientation) {
         if (this._super(t, scene)) {
             this._orientation = orientation;
@@ -183,7 +242,17 @@ cc.TransitionSceneOriented = cc.TransitionScene.extend({
         return true;
     }
 });
-/** creates a base transition with duration and incoming scene */
+
+/**
+ * creates a base transition with duration and incoming scene
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} orientation
+ * @return {cc.TransitionSceneOriented}
+ * @example
+ * // Example
+ * var goHorizontal = cc.TransitionSceneOriented.create(0.5, thisScene, cc.ORIENTATION_LEFT_OVER)
+ */
 cc.TransitionSceneOriented.create = function (t, scene, orientation) {
     var tempScene = new cc.TransitionSceneOriented();
     tempScene.initWithDuration(t, scene, orientation);
@@ -191,12 +260,21 @@ cc.TransitionSceneOriented.create = function (t, scene, orientation) {
     return tempScene;
 };
 
-/** @brief CCTransitionRotoZoom:
- Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming
+/**
+ *  Rotate and zoom out the outgoing scene, and then rotate and zoom in the incoming
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionRotoZoom = cc.TransitionScene.extend({
+cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZoom# */{
+    /**
+     * @constructor
+     */
     ctor:function () {
     },
+
+    /**
+     * Custom On Enter callback
+     */
     onEnter:function () {
         this._super();
 
@@ -218,6 +296,15 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend({
     }
 });
 
+/**
+ * Creates a Transtion rotation and zoom
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene the scene to work with
+ * @return {cc.TransitionRotoZoom}
+ * @example
+ * // Example
+ * var RotoZoomTrans = cc.TransitionRotoZoom.create(2, nextScene);
+ */
 cc.TransitionRotoZoom.create = function (t, scene) {
     var tempScene = new cc.TransitionRotoZoom();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -226,10 +313,15 @@ cc.TransitionRotoZoom.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionJumpZoom:
- Zoom out and jump the outgoing scene, and then jump and zoom in the incoming
+/**
+ * Zoom out and jump the outgoing scene, and then jump and zoom in the incoming
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionJumpZoom = cc.TransitionScene.extend({
+cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZoom# */{
+    /**
+     * Custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -256,6 +348,12 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend({
     }
 });
 
+/**
+ * creates a scene transition that zooms then jump across the screen, the same for the incoming scene
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionJumpZoom}
+ */
 cc.TransitionJumpZoom.create = function (t, scene) {
     var tempScene = new cc.TransitionJumpZoom();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -264,10 +362,16 @@ cc.TransitionJumpZoom.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionMoveInL:
- Move in from to the left the incoming scene.
+/**
+ * Move in from to the left the incoming scene.
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionMoveInL = cc.TransitionScene.extend({
+cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL# */{
+
+    /**
+     * Custom on enter
+     */
     onEnter:function () {
         this._super();
         this.initScenes();
@@ -283,19 +387,41 @@ cc.TransitionMoveInL = cc.TransitionScene.extend({
                 )
         );
     },
-    /** initializes the scenes */
+
+    /**
+     * initializes the scenes
+     */
     initScenes:function () {
         this._inScene.setPosition(cc.ccp(-cc.Director.sharedDirector().getWinSize().width, 0));
     },
-    /** returns the action that will be performed */
+
+    /**
+     * returns the action that will be performed
+     */
     action:function () {
         return cc.MoveTo.create(this._duration, cc.ccp(0, 0));
     },
+
+    /**
+     * creates an ease action from action
+     * @param {cc.ActionInterval} action
+     * @return {cc.EaseOut}
+     */
     easeActionWithAction:function (action) {
         //TODO need implement
         return cc.EaseOut.create(action, 2.0);
     }
 });
+
+/**
+ * creates an action that  Move in from to the left the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionMoveInL}
+ * @example
+ * // Example
+ * var MoveInLeft = cc.TransitionMoveInL.create(1, nextScene)
+ */
 cc.TransitionMoveInL.create = function (t, scene) {
     var tempScene = new cc.TransitionMoveInL();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -304,15 +430,31 @@ cc.TransitionMoveInL.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionMoveInR:
- Move in from to the right the incoming scene.
+/**
+ * Move in from to the right the incoming scene.
+ * @class
+ * @extends cc.TransitionMoveInL
  */
-cc.TransitionMoveInR = cc.TransitionMoveInL.extend({
+cc.TransitionMoveInR = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveInR# */{
+
+    /**
+     * Init
+     */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(s.width, 0));
     }
 });
+
+/**
+ * create a scene transition that Move in from to the right the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionMoveInR}
+ * @example
+ * // Example
+ * var MoveInRight = cc.TransitionMoveInR.create(1, nextScene)
+ */
 cc.TransitionMoveInR.create = function (t, scene) {
     var tempScene = new cc.TransitionMoveInR();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -321,15 +463,31 @@ cc.TransitionMoveInR.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionMoveInT:
- Move in from to the top the incoming scene.
+/**
+ * Move in from to the top the incoming scene.
+ * @class
+ * @extends cc.TransitionMoveInL
  */
-cc.TransitionMoveInT = cc.TransitionMoveInL.extend({
+cc.TransitionMoveInT = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveInT# */{
+
+    /**
+     * init
+     */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(s.height, 0));
     }
 });
+
+/**
+ * Move in from to the top the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionMoveInT}
+ * @example
+ * // Example
+ * var MoveInTop = cc.TransitionMoveInT.create(1, nextScene)
+ */
 cc.TransitionMoveInT.create = function (t, scene) {
     var tempScene = new cc.TransitionMoveInT();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -338,15 +496,31 @@ cc.TransitionMoveInT.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionMoveInB:
- Move in from to the bottom the incoming scene.
+/**
+ *  Move in from to the bottom the incoming scene.
+ * @class
+ * @extends cc.TransitionMoveInL
  */
-cc.TransitionMoveInB = cc.TransitionMoveInL.extend({
+cc.TransitionMoveInB = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveInB# */{
+
+    /**
+     * init
+     */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(0, -s.height));
     }
 });
+
+/**
+ * create a scene transition that Move in from to the bottom the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionMoveInB}
+ * @example
+ * // Example
+ * var MoveinB = cc.TransitionMoveInB.create(1, nextScene)
+ */
 cc.TransitionMoveInB.create = function (t, scene) {
     var tempScene = new cc.TransitionMoveInB();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -355,20 +529,35 @@ cc.TransitionMoveInB.create = function (t, scene) {
     return null;
 };
 
-cc.ADJUST_FACTOR = 0.5;
-/** @brief CCTransitionSlideInL:
- Slide in the incoming scene from the left border.
+/**
+ * The adjust factor is needed to prevent issue #442<br/>
+ * One solution is to use DONT_RENDER_IN_SUBPIXELS images, but NO<br/>
+ * The other issue is that in some transitions (and I don't know why)<br/>
+ * the order should be reversed (In in top of Out or vice-versa).
+ * @constant
+ * @type {Number}
  */
-// The adjust factor is needed to prevent issue #442
-// One solution is to use DONT_RENDER_IN_SUBPIXELS images, but NO
-// The other issue is that in some transitions (and I don't know why)
-// the order should be reversed (In in top of Out or vice-versa).
-cc.TransitionSlideInL = cc.TransitionScene.extend({
+cc.ADJUST_FACTOR = 0.5;
+
+/**
+ * a transition that a new scene is slided from left
+ * @class
+ * @extends cc.TransitionScene
+ */
+cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideInL# */{
     _sceneOrder:function () {
         this._isInSceneOnTop = false;
     },
+
+    /**
+     * @constructor
+     */
     ctor:function () {
     },
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
         this.initScenes();
@@ -386,20 +575,41 @@ cc.TransitionSlideInL = cc.TransitionScene.extend({
         this._inScene.runAction(inAction);
         this._outScene.runAction(outAction);
     },
-    /** initializes the scenes */
+
+    /**
+     * initializes the scenes
+     */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(-(s.width - cc.ADJUST_FACTOR), 0));
     },
-    /** returns the action that will be performed by the incomming and outgoing scene */
+    /**
+     * returns the action that will be performed by the incomming and outgoing scene
+     * @return {cc.MoveBy}
+     */
     action:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         return cc.MoveBy.create(this._duration, cc.ccp(s.width - cc.ADJUST_FACTOR, 0));
     },
+
+    /**
+     * @param {cc.ActionInterval} action
+     * @return {*}
+     */
     easeActionWithAction:function (action) {
         return cc.EaseOut.create(action, 2.0);
     }
 });
+
+/**
+ * create a transition that a new scene is slided from left
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionSlideInL}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionSlideInL.create(1.5, nextScene)
+ */
 cc.TransitionSlideInL.create = function (t, scene) {
     var tempScene = new cc.TransitionSlideInL();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -408,24 +618,41 @@ cc.TransitionSlideInL.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionSlideInR:
- Slide in the incoming scene from the right border.
+/**
+ *  Slide in the incoming scene from the right border.
+ * @class
+ * @extends cc.TransitionSlideInL
  */
-cc.TransitionSlideInR = cc.TransitionSlideInL.extend({
+cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSlideInR# */{
     _sceneOrder:function () {
         this._isInSceneOnTop = true;
     },
-    /** initializes the scenes */
+    /**
+     * initializes the scenes
+     */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(s.width - cc.ADJUST_FACTOR, 0));
     },
-    /** returns the action that will be performed by the incomming and outgoing scene */
+    /**
+     *  returns the action that will be performed by the incomming and outgoing scene
+      * @return {cc.MoveBy}
+     */
     action:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         return cc.MoveBy.create(this._duration, cc.ccp(-(s.width - cc.ADJUST_FACTOR), 0));
     }
 });
+
+/**
+ * create Slide in the incoming scene from the right border.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionSlideInR}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionSlideInR.create(1.5, nextScene)
+ */
 cc.TransitionSlideInR.create = function (t, scene) {
     var tempScene = new cc.TransitionSlideInR();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -434,24 +661,43 @@ cc.TransitionSlideInR.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionSlideInB:
- Slide in the incoming scene from the bottom border.
+/**
+ * Slide in the incoming scene from the bottom border.
+ * @class
+ * @extends cc.TransitionSlideInL
  */
-cc.TransitionSlideInB = cc.TransitionSlideInL.extend({
+cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSlideInB# */{
     _sceneOrder:function () {
         this._isInSceneOnTop = false;
     },
-    /** initializes the scenes */
+
+    /**
+     * initializes the scenes
+      */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(0, s.height - cc.ADJUST_FACTOR));
     },
-    /** returns the action that will be performed by the incomming and outgoing scene */
+
+    /**
+     * returns the action that will be performed by the incomming and outgoing scene
+      * @return {cc.MoveBy}
+     */
     action:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         return cc.MoveBy.create(this._duration, cc.ccp(0, -(s.height - cc.ADJUST_FACTOR)));
     }
 });
+
+/**
+ * create a Slide in the incoming scene from the bottom border.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionSlideInB}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionSlideInB.create(1.5, nextScene)
+ */
 cc.TransitionSlideInB.create = function (t, scene) {
     var tempScene = new cc.TransitionSlideInB();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -460,24 +706,43 @@ cc.TransitionSlideInB.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionSlideInT:
- Slide in the incoming scene from the top border.
+/**
+ *  Slide in the incoming scene from the top border.
+ *  @class
+ *  @extends cc.TransitionSlideInL
  */
-cc.TransitionSlideInT = cc.TransitionSlideInL.extend({
+cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSlideInT# */{
     _sceneOrder:function () {
         this._isInSceneOnTop = true;
     },
-    /** initializes the scenes */
+
+    /**
+     * initializes the scenes
+      */
     initScenes:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         this._inScene.setPosition(cc.ccp(0, -(s.height - cc.ADJUST_FACTOR)));
     },
-    /** returns the action that will be performed by the incomming and outgoing scene */
+
+    /**
+     * returns the action that will be performed by the incomming and outgoing scene
+      * @return {cc.MoveBy}
+     */
     action:function () {
         var s = cc.Director.sharedDirector().getWinSize();
         return cc.MoveBy.create(this._duration, cc.ccp(0, s.height - cc.ADJUST_FACTOR));
     }
 });
+
+/**
+ * create a Slide in the incoming scene from the top border.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionSlideInT}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionSlideInT.create(1.5, nextScene)
+ */
 cc.TransitionSlideInT.create = function (t, scene) {
     var tempScene = new cc.TransitionSlideInT();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -487,9 +752,15 @@ cc.TransitionSlideInT.create = function (t, scene) {
 };
 
 /**
- @brief Shrink the outgoing scene while grow the incoming scene
+ * Shrink the outgoing scene while grow the incoming scene
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionShrinkGrow = cc.TransitionScene.extend({
+cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShrinkGrow# */{
+
+    /**
+     * Custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -511,11 +782,26 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend({
             )
         );
     },
+
+    /**
+     * @param action
+     * @return {cc.EaseOut}
+     */
     easeActionWithAction:function (action) {
         //TODO
         return cc.EaseOut.create(action, 2.0);
     }
 });
+
+/**
+ * Shrink the outgoing scene while grow the incoming scene
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionShrinkGrow}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionShrinkGrow.create(1.5, nextScene)
+ */
 cc.TransitionShrinkGrow.create = function (t, scene) {
     var tempScene = new cc.TransitionShrinkGrow();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -524,11 +810,17 @@ cc.TransitionShrinkGrow.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionFlipX:
- Flips the screen horizontally.
- The front face is the outgoing scene and the back face is the incoming scene.
+/**
+ *  Flips the screen horizontally.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @class
+ * @extends cc.TransitionSceneOriented
  */
-cc.TransitionFlipX = cc.TransitionSceneOriented.extend({
+cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionFlipX# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -572,6 +864,21 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend({
         this._outScene.runAction(outA);
     }
 });
+
+/**
+ * Flips the screen horizontally.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @return {cc.TransitionFlipX}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFlipX.create(1.5, nextScene) //default is cc.ORIENTATION_RIGHT_OVER
+ *
+ * //OR
+ * var myTransition = cc.TransitionFlipX.create(1.5, nextScene, cc.ORIENTATION_UP_OVER)
+ */
 cc.TransitionFlipX.create = function (t, scene, o) {
     if (o == null)
         o = cc.ORIENTATION_RIGHT_OVER;
@@ -582,11 +889,17 @@ cc.TransitionFlipX.create = function (t, scene, o) {
     return tempScene;
 };
 
-/** @brief CCTransitionFlipY:
- Flips the screen vertically.
- The front face is the outgoing scene and the back face is the incoming scene.
+/**
+ * Flips the screen vertically.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @class
+ * @extends cc.TransitionSceneOriented
  */
-cc.TransitionFlipY = cc.TransitionSceneOriented.extend({
+cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionFlipY# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -629,6 +942,21 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend({
         this._outScene.runAction(outA);
     }
 });
+
+/**
+ * Flips the screen vertically.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @return {cc.TransitionFlipY}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFlipY.create(1.5, nextScene)//default is cc.ORIENTATION_UP_OVER
+ *
+ * //OR
+ * var myTransition = cc.TransitionFlipY.create(1.5, nextScene, cc.ORIENTATION_RIGHT_OVER)
+ */
 cc.TransitionFlipY.create = function (t, scene, o) {
     if (o == null)
         o = cc.ORIENTATION_UP_OVER;
@@ -639,11 +967,16 @@ cc.TransitionFlipY.create = function (t, scene, o) {
     return tempScene;
 };
 
-/** @brief CCTransitionFlipAngular:
- Flips the screen half horizontally and half vertically.
- The front face is the outgoing scene and the back face is the incoming scene.
+/**
+ * Flips the screen half horizontally and half vertically.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @class
+ * @extends cc.TransitionSceneOriented
  */
-cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend({
+cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionFlipAngular# */{
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -686,6 +1019,21 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend({
         this._outScene.runAction(outA);
     }
 });
+
+/**
+ * Flips the screen half horizontally and half vertically.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @return {cc.TransitionFlipAngular}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFlipAngular.create(1.5, nextScene)//default is cc.ORIENTATION_RIGHT_OVER
+ *
+ * //or
+ * var myTransition = cc.TransitionFlipAngular.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ */
 cc.TransitionFlipAngular.create = function (t, scene, o) {
     if (o == null)
         o = cc.ORIENTATION_RIGHT_OVER;
@@ -696,11 +1044,17 @@ cc.TransitionFlipAngular.create = function (t, scene, o) {
     return tempScene;
 };
 
-/** @brief CCTransitionZoomFlipX:
- Flips the screen horizontally doing a zoom out/in
- The front face is the outgoing scene and the back face is the incoming scene.
+/**
+ *  Flips the screen horizontally doing a zoom out/in<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @class
+ * @extends cc.TransitionSceneOriented
  */
-cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend({
+cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionZoomFlipX# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -753,6 +1107,21 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend({
         this._outScene.runAction(outA);
     }
 });
+
+/**
+ * Flips the screen horizontally doing a zoom out/in<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @return {cc.TransitionZoomFlipX}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionZoomFlipX.create(1.5, nextScene)//default is cc.ORIENTATION_RIGHT_OVER
+ *
+ * //OR
+ * var myTransition = cc.TransitionZoomFlipX.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ */
 cc.TransitionZoomFlipX.create = function (t, scene, o) {
     if (o == null)
         o = cc.ORIENTATION_RIGHT_OVER;
@@ -763,11 +1132,17 @@ cc.TransitionZoomFlipX.create = function (t, scene, o) {
     return tempScene;
 };
 
-/** @brief CCTransitionZoomFlipY:
- Flips the screen vertically doing a little zooming out/in
- The front face is the outgoing scene and the back face is the incoming scene.
+/**
+ * Flips the screen vertically doing a little zooming out/in<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @class
+ * @extends cc.TransitionSceneOriented
  */
-cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend({
+cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionZoomFlipY# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -822,6 +1197,21 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend({
         this._outScene.runAction(outA);
     }
 });
+
+/**
+ * Flips the screen vertically doing a little zooming out/in<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @return {cc.TransitionZoomFlipY}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionZoomFlipY.create(1.5, nextScene)//default is cc.ORIENTATION_UP_OVER
+ *
+ * //OR
+ * var myTransition = cc.TransitionZoomFlipY.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ */
 cc.TransitionZoomFlipY.create = function (t, scene, o) {
     if (o == null)
         o = cc.ORIENTATION_UP_OVER;
@@ -832,11 +1222,17 @@ cc.TransitionZoomFlipY.create = function (t, scene, o) {
     return tempScene;
 };
 
-/** @brief CCTransitionZoomFlipAngular:
- Flips the screen half horizontally and half vertically doing a little zooming out/in.
- The front face is the outgoing scene and the back face is the incoming scene.
+/**
+ *  Flips the screen half horizontally and half vertically doing a little zooming out/in.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @class
+ * @extends cc.TransitionSceneOriented
  */
-cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend({
+cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionZoomFlipAngular# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -891,6 +1287,21 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend({
         this._outScene.runAction(outA);
     }
 });
+
+/**
+ *  Flips the screen half horizontally and half vertically doing a little zooming out/in.<br/>
+ * The front face is the outgoing scene and the back face is the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @return {cc.TransitionZoomFlipAngular}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionZoomFlipAngular.create(1.5, nextScene)//default is cc.ORIENTATION_RIGHT_OVER
+ *
+ * //OR
+ * var myTransition = cc.TransitionZoomFlipAngular.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ */
 cc.TransitionZoomFlipAngular.create = function (t, scene, o) {
     if (o == null)
         o = cc.ORIENTATION_RIGHT_OVER;
@@ -901,14 +1312,23 @@ cc.TransitionZoomFlipAngular.create = function (t, scene, o) {
     return tempScene;
 };
 
-/** @brief CCTransitionFade:
- Fade out the outgoing scene and then fade in the incoming scene.'''
+/**
+ * Fade out the outgoing scene and then fade in the incoming scene.
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionFade = cc.TransitionScene.extend({
+cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
     _color:new cc.Color3B(),
 
+    /**
+     * @constructor
+     */
     ctor:function () {
     },
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -929,11 +1349,22 @@ cc.TransitionFade = cc.TransitionScene.extend({
             );
         f.runAction(a);
     },
+
+    /**
+     * custom on exit
+     */
     onExit:function () {
         this._super();
         this.removeChildByTag(cc.SCENE_FADE, false);
     },
-    /** initializes the transition with a duration and with an RGB color */
+
+    /**
+     * initializes the transition with a duration and with an RGB color
+      * @param {Number} t time in seconds
+     * @param {cc.Scene} scene
+     * @param {cc.Color3B} color
+     * @return {Boolean}
+     */
     initWithDuration:function (t, scene, color) {
         if ((color == 'undefined') || (color == null)) {
             color = cc.BLACK();
@@ -949,8 +1380,16 @@ cc.TransitionFade = cc.TransitionScene.extend({
     }
 });
 
-/** creates the transition with a duration and with an RGB color
- * Example: FadeTransition::transitionWithDuration(2, scene, ccc3(255,0,0); // red color
+
+/**
+ * Fade out the outgoing scene and then fade in the incoming scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {cc.Color3B} color
+ * @return {cc.TransitionFade}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.ccc3(255,0,0))//fade to red
  */
 cc.TransitionFade.create = function (t, scene, color) {
     var transition = new cc.TransitionFade();
@@ -960,10 +1399,15 @@ cc.TransitionFade.create = function (t, scene, color) {
 };
 
 /**
- @brief CCTransitionCrossFade:
- Cross fades two scenes using the CCRenderTexture object.
+ * Cross fades two scenes using the cc.RenderTexture object.
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionCrossFade = cc.TransitionScene.extend({
+cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCrossFade# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -1033,27 +1477,51 @@ cc.TransitionCrossFade = cc.TransitionScene.extend({
         // add the layer (which contains our two rendertextures) to the scene
         this.addChild(layer, 2, cc.SCENE_FADE);
     },
+
+    /**
+     * custom on exit
+     */
     onExit:function () {
         this.removeChildByTag(cc.SCENE_FADE, false);
         this._super();
     },
+
+    /**
+     * overide draw
+     */
     draw:function () {
         // override draw since both scenes (textures) are rendered in 1 scene
     }
 });
+
+/**
+ * Cross fades two scenes using the cc.RenderTexture object.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionCrossFade}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionCrossFade.create(1.5, nextScene)
+ */
 cc.TransitionCrossFade.create = function (t, scene) {
     var Transition = new cc.TransitionCrossFade();
     Transition.initWithDuration(t, scene);
     return Transition;
 };
 
-/** @brief CCTransitionTurnOffTiles:
- Turn off the tiles of the outgoing scene in random order
+/**
+ *  Turn off the tiles of the outgoing scene in random order
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionTurnOffTiles = cc.TransitionScene.extend({
+cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTurnOffTiles# */{
     _sceneOrder:function () {
         this._isInSceneOnTop = false;
     },
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
         var s = cc.Director.sharedDirector().getWinSize();
@@ -1065,10 +1533,25 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend({
         //TODO
         this._outScene.runAction(cc.Sequence.create(action, cc.CallFunc.create(this, this.finish), cc.StopGrid.create(), null));
     },
+
+    /**
+     * @param {cc.ActionInterval} action
+     * @return {cc.ActionInterval}
+     */
     easeActionWithAction:function (action) {
         return action;
     }
 });
+
+/**
+ *  Turn off the tiles of the outgoing scene in random order
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionTurnOffTiles}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionTurnOffTiles.create(1.5, nextScene)
+ */
 cc.TransitionTurnOffTiles.create = function (t, scene) {
     var tempScene = new cc.TransitionTurnOffTiles();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -1077,10 +1560,16 @@ cc.TransitionTurnOffTiles.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionSplitCols:
- The odd columns goes upwards while the even columns goes downwards.
+/**
+ *  The odd columns goes upwards while the even columns goes downwards.
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionSplitCols = cc.TransitionScene.extend({
+cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplitCols# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
         this._inScene.setIsVisible(false);
@@ -1106,15 +1595,34 @@ cc.TransitionSplitCols = cc.TransitionScene.extend({
                     )
             );
     },
+
+    /**
+     * @param {cc.ActionInterval} action
+     * @return {cc.EaseInOut}
+     */
     easeActionWithAction:function (action) {
         //TODO
         return cc.EaseInOut.create(action, 3.0);
     },
+
+    /**
+     * @return {*}
+     */
     action:function () {
         //TODO
         return cc.SplitCols.actionWithCols(3, this._duration / 2.0);
     }
 });
+
+/**
+ * The odd columns goes upwards while the even columns goes downwards.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionSplitCols}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionSplitCols.create(1.5, nextScene)
+ */
 cc.TransitionSplitCols.create = function (t, scene) {
     var tempScene = new cc.TransitionSplitCols();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -1123,14 +1631,30 @@ cc.TransitionSplitCols.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionSplitRows:
- The odd rows goes to the left while the even rows goes to the right.
+/**
+ *  The odd rows goes to the left while the even rows goes to the right.
+ * @class
+ * @extends cc.TransitionSplitCols
  */
-cc.TransitionSplitRows = cc.TransitionSplitCols.extend({
+cc.TransitionSplitRows = cc.TransitionSplitCols.extend(/** @lends cc.TransitionSplitRows# */{
+
+    /**
+     * @return {*}
+     */
     action:function () {
         return cc.SplitRows.actionWithRows(3, this._duration / 2.0);
     }
 });
+
+/**
+ * The odd rows goes to the left while the even rows goes to the right.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionSplitRows}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionSplitRows.create(1.5, nextScene)
+ */
 cc.TransitionSplitRows.create = function (t, scene) {
     var tempScene = new cc.TransitionSplitRows();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -1139,14 +1663,19 @@ cc.TransitionSplitRows.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionFadeTR:
- Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
+/**
+ *  Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionFadeTR = cc.TransitionScene.extend({
+cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# */{
     _sceneOrder:function () {
         this._isInSceneOnTop = false;
     },
 
+    /**
+     * Custom on enter
+     */
     onEnter:function () {
         this._super();
 
@@ -1168,13 +1697,33 @@ cc.TransitionFadeTR = cc.TransitionScene.extend({
                     )
             );
     },
+
+    /**
+     * @param {cc.ActionInterval} action
+     * @return {cc.ActionInterval}
+     */
     easeActionWithAction:function (action) {
         return action;
     },
+
+    /**
+     * @param {cc.Size} size
+     * @return {*}
+     */
     actionWithSize:function (size) {
         return cc.FadeOutTRTiles.create(size, this._duration);
     }
 });
+
+/**
+ *  Fade the tiles of the outgoing scene from the left-bottom corner the to top-right corner.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionFadeTR}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFadeTR.create(1.5, nextScene)
+ */
 cc.TransitionFadeTR.create = function (t, scene) {
     var tempScene = new cc.TransitionFadeTR();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -1183,14 +1732,31 @@ cc.TransitionFadeTR.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionFadeBL:
- Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+/**
+ *  Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+ * @class
+ * @extends cc.TransitionFadeTR
  */
-cc.TransitionFadeBL = cc.TransitionFadeTR.extend({
-    creat:function (size) {
+cc.TransitionFadeBL = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeBL# */{
+
+    /**
+     * @param {cc.Size} size
+     * @return {*}
+     */
+    actionWithSize:function (size) {
         return cc.FadeOutBLTiles.create(size, this._duration);
     }
 });
+
+/**
+ * Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionFadeBL}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFadeBL.create(1.5, nextScene)
+ */
 cc.TransitionFadeBL.create = function (t, scene) {
     var tempScene = new cc.TransitionFadeBL();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -1199,14 +1765,31 @@ cc.TransitionFadeBL.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionFadeUp:
- * Fade the tiles of the outgoing scene from the bottom to the top.
+/**
+ * Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+ * @class
+ * @extends cc.TransitionFadeTR
  */
-cc.TransitionFadeUp = cc.TransitionFadeTR.extend({
-    creat:function (size) {
+cc.TransitionFadeUp = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeUp# */{
+
+    /**
+     * @param {cc.Size} size
+     * @return {*}
+     */
+    actionWithSize:function (size) {
         return cc.FadeOutUpTiles.create(size, this._duration);
     }
 });
+
+/**
+ * Fade the tiles of the outgoing scene from the top-right corner to the bottom-left corner.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionFadeUp}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFadeUp.create(1.5, nextScene)
+ */
 cc.TransitionFadeUp.create = function (t, scene) {
     var tempScene = new cc.TransitionFadeUp();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
@@ -1215,18 +1798,35 @@ cc.TransitionFadeUp.create = function (t, scene) {
     return null;
 };
 
-/** @brief CCTransitionFadeDown:
+/**
  * Fade the tiles of the outgoing scene from the top to the bottom.
+ * @class
+ * @extends cc.TransitionFadeTR
  */
-cc.TransitionFadeDown = cc.TransitionFadeTR.extend({
-    creat:function (size) {
+cc.TransitionFadeDown = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeDown# */{
+
+    /**
+     * @param {cc.Size} size
+     * @return {*}
+     */
+    actionWithSize:function (size) {
         return cc.FadeOutDownTiles.create(size, this._duration);
     }
 });
+
+/**
+ * Fade the tiles of the outgoing scene from the top to the bottom.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionFadeDown}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionFadeDown.create(1.5, nextScene)
+ */
 cc.TransitionFadeDown.create = function (t, scene) {
     var tempScene = new cc.TransitionFadeDown();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
     }
     return null;
-}
+};
