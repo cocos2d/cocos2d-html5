@@ -62,7 +62,7 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
         return cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
     },
     /**
-     * Detach wtih IME
+     * Detach with IME
      * @return {Boolean}
      */
     detachWithIME:function () {
