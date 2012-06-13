@@ -23,21 +23,21 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-/** @brief A class that implements a Texture Atlas.
- Supported features:
- * The atlas file can be a PVRTC, PNG or any other fomrat supported by Texture2D
- * Quads can be udpated in runtime
+
+/**
+ * A class that implements a Texture Atlas.
+ * Supported features:
+ * The atlas file can be a PNG, JPG.
+ * Quads can be updated in runtime
  * Quads can be added in runtime
  * Quads can be removed in runtime
  * Quads can be re-ordered in runtime
- * The TextureAtlas capacity can be increased or decreased in runtime
- * OpenGL component: V3F, C4B, T2F.
- The quads are rendered using an OpenGL ES VBO.
- To render the quads using an interleaved vertex array list, you should modify the ccConfig.h file
+ * The TextureAtlas capacity can be increased or decreased in runtime.
+ * @class
+ * @extends cc.Class
  */
-cc.TextureAtlas = cc.Class.extend({
+cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     _indices:[],
     //0: vertex  1: indices
     _buffersVBO:[0, 1],
@@ -47,35 +47,58 @@ cc.TextureAtlas = cc.Class.extend({
     _texture:null,
     _quads:[],
     /**
-     * Property
+     * Quantity of quads that are going to be drawn.
+     * @return {Number}
      */
-    /** quantity of quads that are going to be drawn */
     getTotalQuads:function () {
         return this._quads.length;
     },
-    /** quantity of quads that can be stored with the current texture atlas size */
+
+    /**
+     * Quantity of quads that can be stored with the current texture atlas size
+     * @return {Number}
+     */
     getCapacity:function () {
         return this._capacity;
     },
-    /** Texture of the texture atlas */
+
+    /**
+     * Texture of the texture atlas
+     * @return {Image}
+     */
     getTexture:function () {
         return this._texture;
     },
+
+    /**
+     * @param {Image} texture
+     */
     setTexture:function (texture) {
         this._texture = texture;
     },
-    /** Quads that are going to be rendered */
+
+    /**
+     * Quads that are going to be rendered
+     * @return {Array}
+     */
     getQuads:function () {
         return this._quads;
     },
+
+    /**
+     * @param {Array} quads
+     */
     setQuads:function (quads) {
         this._quads = quads;
     },
 
+    /**
+     * Description
+     * @return {String}
+     */
     description:function () {
         return '<CCTextureAtlas | totalQuads =' + this._totalQuads + '>';
     },
-
     _initIndices:function () {
         if (this._capacity == 0)
             return;
@@ -88,21 +111,19 @@ cc.TextureAtlas = cc.Class.extend({
             this._indices[i * 6 + 4] = i * 4 + 3;
             this._indices[i * 6 + 5] = i * 4 + 3;
         }
-
-        //TODO GL
-        //glBindBuffer(GL_ARRAY_BUFFER, m_pBuffersVBO[0]);
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(quads[0]) * m_uCapacity, quads, GL_DYNAMIC_DRAW);
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_pBuffersVBO[1]);
-        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * m_uCapacity * 6, indices, GL_STATIC_DRAW);
-        //glBindBuffer(GL_ARRAY_BUFFER, 0);
-        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     },
 
-
-    /** initializes a TextureAtlas with a filename and with a certain capacity for Quads.
-     * The TextureAtlas capacity can be increased in runtime.
-     *
-     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory (issue #706)
+    /**
+     * initializes a TextureAtlas with a filename and with a certain capacity for Quads.
+     * The TextureAtlas capacity can be increased in runtime
+     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory
+     * @param {String} file
+     * @param {Number} capacity
+     * @return {Boolean|Null}
+     * @example
+     * //example
+     * var textureAtlas = new cc.TextureAtlas();
+     * textureAtlas.initWithTexture("hello.png", 3);
      */
     initWithFile:function (file, capacity) {
         // retained in property
@@ -116,11 +137,19 @@ cc.TextureAtlas = cc.Class.extend({
         }
     },
 
-    /** initializes a TextureAtlas with a previously initialized Texture2D object, and
+    /**
+     * Initializes a TextureAtlas with a previously initialized Texture2D object, and
      * with an initial capacity for Quads.
      * The TextureAtlas capacity can be increased in runtime.
-     *
-     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory (issue #706)
+     * WARNING: Do not reinitialize the TextureAtlas because it will leak memory
+     * @param {Image} texture
+     * @param {Number} capacity
+     * @return {Boolean}
+     * @example
+     * //example
+     * var texture = cc.TextureCache.sharedTextureCache().addImage("hello.png");
+     * var textureAtlas = new cc.TextureAtlas();
+     * textureAtlas.initWithTexture(texture, 3);
      */
     initWithTexture:function (texture, capacity) {
         cc.Assert(texture != null, "TextureAtlas.initWithTexture():texture should not be null");
@@ -139,45 +168,41 @@ cc.TextureAtlas = cc.Class.extend({
         if (!( this._quads && this._indices) && this._capacity > 0) {
             return false;
         }
-        // initial binding
-        //TODO GL
-        //glGenBuffers(2, &m_pBuffersVBO[0]);
+
         this._dirty = true;
-
         this._initIndices();
-
         return true;
     },
 
-    /** updates a Quad (texture, vertex and color) at a certain index
+    /**
+     * Updates a Quad (texture, vertex and color) at a certain index
      * index must be between 0 and the atlas capacity - 1
-     @since v0.8
+     * @param {cc.V2F_C4B_T2F_Quad} quad
+     * @param {Number} index
      */
     updateQuad:function (quad, index) {
-        //cc.Assert( index >= 0 && index < this._capacity, "TextureAtlas.updateQuad():updateQuadWithTexture: Invalid index");
         this._quads[index] = quad;
         this._dirty = true;
     },
 
-    /** Inserts a Quad (texture, vertex and color) at a certain index
-     index must be between 0 and the atlas capacity - 1
-     @since v0.8
+    /**
+     * Inserts a Quad (texture, vertex and color) at a certain index
+     * index must be between 0 and the atlas capacity - 1
+     * @param {cc.V2F_C4B_T2F_Quad} quad
+     * @param {Number} index
      */
     insertQuad:function (quad, index) {
-        //cc.Assert( index < this._capacity, "TextureAtlas.insertQuad():insertQuadWithTexture: Invalid index");
-
         this._quads = cc.ArrayAppendObjectToIndex(this._quads, quad, index);
         this._dirty = true;
     },
 
-    /** Removes the quad that is located at a certain index and inserts it at a new index
-     This operation is faster than removing and inserting in a quad in 2 different steps
-     @since v0.7.2
+    /**
+     * Removes the quad that is located at a certain index and inserts it at a new index
+     * This operation is faster than removing and inserting in a quad in 2 different steps
+     * @param {Number} fromIndex
+     * @param {Number} newIndex
      */
     insertQuadFromIndex:function (fromIndex, newIndex) {
-        //cc.Assert( newIndex >= 0 && newIndex < this._quads.length, "TextureAtlas.insertQuadFromIndex():atIndex: Invalid index");
-        //cc.Assert( fromIndex >= 0 && fromIndex < this._quads.length, "TextureAtlas.insertQuadFromIndex():atIndex: Invalid index");
-
         if (fromIndex == newIndex)
             return;
 
@@ -192,31 +217,34 @@ cc.TextureAtlas = cc.Class.extend({
         this._dirty = true;
     },
 
-    /** removes a quad at a given index number.
-     The capacity remains the same, but the total number of quads to be drawn is reduced in 1
-     @since v0.7.2
+    /**
+     * Removes a quad at a given index number.
+     * The capacity remains the same, but the total number of quads to be drawn is reduced in 1
+     * @param {Number} index
      */
     removeQuadAtIndex:function (index) {
-        //cc.Assert( index < this._quads.length, "TextureAtlas.insertQuadFromIndex():removeQuadAtIndex: Invalid index");
         cc.ArrayRemoveObjectAtIndex(this._quads, index);
 
         this._dirty = true;
     },
 
-    /** removes all Quads.
-     The TextureAtlas capacity remains untouched. No memory is freed.
-     The total number of quads to be drawn will be 0
-     @since v0.7.2
+    /**
+     * Removes all Quads.
+     * The TextureAtlas capacity remains untouched. No memory is freed.
+     * The total number of quads to be drawn will be 0
      */
     removeAllQuads:function () {
         this._quads.length = 0;
     },
 
-    /** resize the capacity of the CCTextureAtlas.
+    /**
+     * Resize the capacity of the CCTextureAtlas.
      * The new capacity can be lower or higher than the current one
      * It returns YES if the resize was successful.
      * If it fails to resize the capacity it will return NO with a new capacity of 0.
      * no used for js
+     * @param {Number} newCapacity
+     * @return {Boolean}
      */
     resizeCapacity:function (newCapacity) {
         if (newCapacity == this._capacity) {
@@ -229,84 +257,33 @@ cc.TextureAtlas = cc.Class.extend({
         return true;
     },
 
-    /** draws n quads from an index (offset).
-     n + start can't be greater than the capacity of the atlas
-
-     @since v1.0
+    /**
+     * Draws n quads from an index (offset).
+     * n + start can't be greater than the capacity of the atlas
+     * @param {Number} n
+     * @param {Number} start
      */
     drawNumberOfQuads:function (n, start) {
-        // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-        // Unneeded states: -
         if (0 == n)
             return;
-
-        //TODO Code for OpenGL
-        /****
-         *
-
-         glBindTexture(GL_TEXTURE_2D, texture->getName());
-
-         glBindBuffer(GL_ARRAY_BUFFER, m_pBuffersVBO[0]);
-
-         glBufferData(GL_ARRAY_BUFFER, sizeof(quads[0]) * m_uCapacity, quads, GL_DYNAMIC_DRAW);
-
-         // XXX: update is done in draw... perhaps it should be done in a timer
-         if (m_bDirty)
-         {
-         glBufferSubData(GL_ARRAY_BUFFER, sizeof(quads[0]) * start, sizeof(quads[0]) * n, &quads[start]);
-         m_bDirty = false;
-         }
-
-         // vertices
-         glVertexPointer(3, GL_FLOAT, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, vertices));
-
-         // colors
-         glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, colors));
-
-         // texture coords
-         glTexCoordPointer(2, GL_FLOAT, kQuadSize, (GLvoid*) offsetof( ccV3F_C4B_T2F, texCoords));
-
-         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_pBuffersVBO[1]);
-
-         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices[0]) * m_uCapacity * 6, indices, GL_STATIC_DRAW);
-
-         glDrawElements(GL_TRIANGLE_STRIP, (GLsizei)n*6, GL_UNSIGNED_SHORT, (GLvoid*)(start * 6 * sizeof(indices[0])));
-
-         glDrawElements(GL_TRIANGLES, (GLsizei)n*6, GL_UNSIGNED_SHORT, (GLvoid*)(start * 6 * sizeof(indices[0])));
-
-         glBindBuffer(GL_ARRAY_BUFFER, 0);
-         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-         unsigned int offset = (unsigned int)quads;
-
-         // vertex
-         unsigned int diff = offsetof( ccV3F_C4B_T2F, vertices);
-         glVertexPointer(3, GL_FLOAT, kQuadSize, (GLvoid*) (offset + diff) );
-
-         // color
-         diff = offsetof( ccV3F_C4B_T2F, colors);
-         glColorPointer(4, GL_UNSIGNED_BYTE, kQuadSize, (GLvoid*)(offset + diff));
-
-         // texture coords
-         diff = offsetof( ccV3F_C4B_T2F, texCoords);
-         glTexCoordPointer(2, GL_FLOAT, kQuadSize, (GLvoid*)(offset + diff));
-
-         glDrawElements(GL_TRIANGLE_STRIP, n*6, GL_UNSIGNED_SHORT, indices + start * 6);
-
-         glDrawElements(GL_TRIANGLES, n*6, GL_UNSIGNED_SHORT, indices + start * 6);
-         */
     },
-
-    /** draws all the Atlas's Quads
+    /**
+     * Draw quads
      */
     drawQuads:function () {
         this.drawNumberOfQuads(this._quads.length, 0);
     }
 });
 
-/** creates a TextureAtlas with an filename and with an initial capacity for Quads.
+/**
+ * Creates a TextureAtlas with an filename and with an initial capacity for Quads.
  * The TextureAtlas capacity can be increased in runtime.
+ * @param {String} file
+ * @param {Number} capacity
+ * @return {cc.TextureAtlas|Null}
+ * @example
+ * //example
+ * var textureAtlas = cc.TextureAtlas.create("hello.png", 3);
  */
 cc.TextureAtlas.create = function (file, capacity) {
     var textureAtlas = new cc.TextureAtlas();
@@ -316,9 +293,17 @@ cc.TextureAtlas.create = function (file, capacity) {
     return null;
 };
 
-/** creates a TextureAtlas with a previously initialized Texture2D object, and
+/**
+ * Creates a TextureAtlas with a previously initialized Texture2D object, and
  * with an initial capacity for n Quads.
  * The TextureAtlas capacity can be increased in runtime.
+ * @param {Image} texture
+ * @param {Number} capacity
+ * @return {cc.TextureAtlas}
+ * @example
+ * //example
+ * var texture = cc.TextureCache.sharedTextureCache().addImage("hello.png");
+ * var textureAtlas = cc.TextureAtlas.createWithTexture(texture, 3);
  */
 cc.TextureAtlas.createWithTexture = function (texture, capacity) {
     var textureAtlas = new cc.TextureAtlas();

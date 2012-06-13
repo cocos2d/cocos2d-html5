@@ -23,27 +23,36 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-// TextureCache - Alloc, Init & Dealloc
+/**
+ * TextureCache - Alloc, Init & Dealloc
+ * @type {object}
+ */
 cc.g_sharedTextureCache = null;
 
+/**
+ * Load the images to the cache
+ * @param imageUrl
+ */
 cc.loadImage = function (imageUrl) {
     // compute image type
     var imageType = cc.computeImageFormatType(imageUrl);
     if (imageType == cc.FMT_UNKNOWN) {
-        cc.Log("unsupportted format" + imageUrl);
+        cc.Log("unsupported format" + imageUrl);
         return;
     }
-
-    var getImage = new Image();
-    getImage.onload = function (e) {
-        cc.TextureCache.sharedTextureCache().cacheImage(imageUrl, getImage);
+    var image = new Image();
+    image.src = imageUrl;
+    image.onLoad = function (e) {
+        cc.TextureCache.sharedTextureCache().cacheImage(imageUrl, image);
     };
-
-    getImage.src = imageUrl;
 };
 
+/**
+ *  Support image format type
+ * @param filename
+ * @return {Number}
+ */
 cc.computeImageFormatType = function (filename) {
     if (filename.toLowerCase().indexOf('.jpg') > 0 || filename.toLowerCase().indexOf('.jpeg') > 0) {
         return cc.FMT_JPG;
@@ -53,16 +62,32 @@ cc.computeImageFormatType = function (filename) {
     return cc.FMT_UNKNOWN;
 };
 
-// implementation TextureCache
-cc.TextureCache = cc.Class.extend({
-    /*protected && private:*/
-    textures:new Object(),
-    _textureColorsCache:new Object(),
+/**
+ *  Implementation TextureCache
+ * @class
+ * @extends cc.TextureCache
+ */
+cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
+    textures:{},
+    _textureColorsCache:{},
+    /**
+     * @Constructor
+     */
     ctor:function () {
         cc.Assert(cc.g_sharedTextureCache == null, "Attempted to allocate a second instance of a singleton.");
     },
+    /**
+     *  Loading the images asynchronously
+     * @param {String} path
+     * @param {cc.Node} target
+     * @param {Function} selector
+     * @return {Image}
+     * @example
+     * //example
+     * cc.TextureCache.sharedTextureCache().addImageAsync("hello.png", this, this.loadingCallBack);
+     */
     addImageAsync:function (path, target, selector) {
-        cc.Assert(path != null, "TextureCache: fileimage MUST not be null");
+        cc.Assert(path != null, "TextureCache: path MUST not be null");
         var texture = this.textures[path.toString()];
 
         if (texture) {
@@ -91,22 +116,34 @@ cc.TextureCache = cc.Class.extend({
             selector.call(target);
         }
     },
-    addPVRTCImage:function (path, bpp, hasAlpha, width) {
+    /**
+     * AddPVRTCImage does not support
+     */
+    addPVRTCImage:function () {
         cc.Assert(0, "TextureCache:addPVRTCImage does not support");
     },
-    /*public:*/
+    /**
+     * Description
+     * @return {String}
+     */
     description:function () {
         return "<TextureCache | Number of textures = " + this.textures.length + ">";
     },
 
-    /** Returns a Texture2D object given an file image
+    /**
+     * Returns a Texture2D object given an file image
      * If the file image was not previously loaded, it will create a new Texture2D
      *  object and it will return it. It will use the filename as a key.
-     * Otherwise it will return a reference of a previosly loaded image.
-     * Supported image extensions: .png, .jpeg, .gif
+     * Otherwise it will return a reference of a previously loaded image.
+     * Supported image extensions: .png, .jpg, .gif
+     * @param {String} path
+     * @return {Image}
+     * @example
+     * //example
+     * cc.TextureCache.sharedTextureCache().addImage("hello.png");
      */
     addImage:function (path) {
-        cc.Assert(path != null, "TextureCache: fileimage MUST not be null");
+        cc.Assert(path != null, "TextureCache: path MUST not be null");
         var texture = this.textures[path.toString()];
         if (texture) {
             cc.Loader.shareLoader().onResLoaded();
@@ -128,26 +165,30 @@ cc.TextureCache = cc.Class.extend({
         if (cc.renderContextType == cc.CANVAS) {
             return this.textures[path.toString()];
         } else {
-            //todo texure for gl
+            //todo texture for gl
         }
     },
-
-    /* Returns a Texture2D object given an CGImageRef image
-     * If the image was not previously loaded, it will create a new Texture2D object and it will return it.
-     * Otherwise it will return a reference of a previously loaded image
-     * The "key" parameter will be used as the "key" for the cache.
-     * If "key" is nil, then a new texture will be created each time.
-     * @since v0.8
+    /**
+     *  Cache the image data
+     * @param {String} path
+     * @param {Image} texture
      */
-// @todo CGImageRef Texture2D* addCGImage(CGImageRef image, string &  key);
+    cacheImage:function (path, texture) {
+        if (!this.textures[path.toString()]) {
+            this.textures[path.toString()] = texture;
+        }
+    },
     /** Returns a Texture2D object given an UIImage image
      * If the image was not previously loaded, it will create a new Texture2D object and it will return it.
      * Otherwise it will return a reference of a previously loaded image
      * The "key" parameter will be used as the "key" for the cache.
-     * If "key" is nil, then a new texture will be created each time.
+     * If "key" is null, then a new texture will be created each time.
+     * @param {Image} image
+     * @param {String} key
+     * @return {cc.Texture2D}
      */
     addUIImage:function (image, key) {
-        cc.Assert(image != null, "TextureCache: image MUST not be nill");
+        cc.Assert(image != null, "TextureCache: image MUST not be nulll");
 
         var texture = null;
 
@@ -173,8 +214,13 @@ cc.TextureCache = cc.Class.extend({
         return texture;
     },
 
-    /** Returns an already created texture. Returns nil if the texture doesn't exist.
-     @since v0.99.5
+    /**
+     * Returns an already created texture. Returns null if the texture doesn't exist.
+     * @param {String} key
+     * @return {Image|Null}
+     * @example
+     * //example
+     * var key = cc.TextureCache.sharedTextureCache().textureForKey("hello.png");
      */
     textureForKey:function (key) {
         if (this.textures.hasOwnProperty(key)) {
@@ -183,7 +229,13 @@ cc.TextureCache = cc.Class.extend({
             return null;
         }
     },
-
+    /**
+     * @param {Image} texture
+     * @return {String|Null}
+     * @example
+     * //example
+     * var key = cc.TextureCache.sharedTextureCache().getKeyByTexture(texture);
+     */
     getKeyByTexture:function (texture) {
         for (var key in this.textures) {
             if (this.textures[key] == texture) {
@@ -192,7 +244,13 @@ cc.TextureCache = cc.Class.extend({
         }
         return null;
     },
-
+    /**
+     * @param {Image} texture
+     * @return {Array}
+     * @example
+     * //example
+     * var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(texture);
+     */
     getTextureColors:function (texture) {
         var key = this.getKeyByTexture(texture);
         if (key) {
@@ -209,17 +267,26 @@ cc.TextureCache = cc.Class.extend({
         return this._textureColorsCache[key];
     },
 
-    /** Purges the dictionary of loaded textures.
+    /**
+     * Purges the dictionary of loaded textures.
      * Call this method if you receive the "Memory Warning"
      * In the short term: it will free some resources preventing your app from being killed
      * In the medium term: it will allocate more resources
      * In the long term: it will be the same
+     * @example
+     * //example
+     * cc.TextureCache.sharedTextureCache().removeAllTextures();
      */
     removeAllTextures:function () {
-        this.textures = new Object();
+        this.textures = {};
     },
 
-    /** Deletes a texture from the cache given a texture
+    /**
+     * Deletes a texture from the cache given a texture
+     * @param {Image} texture
+     * @example
+     * //example
+     * cc.TextureCache.sharedTextureCache().removeTexture(texture);
      */
     removeTexture:function (texture) {
         if (!texture)
@@ -233,21 +300,25 @@ cc.TextureCache = cc.Class.extend({
         }
     },
 
-    /** Deletes a texture from the cache given a its key name
-     @since v0.99.4
+    /**
+     * Deletes a texture from the cache given a its key name
+     * @param {String} textureKeyName
+     * @example
+     * //example
+     * cc.TextureCache.sharedTextureCache().removeTexture("hello.png");
      */
     removeTextureForKey:function (textureKeyName) {
         if (textureKeyName == null) {
             return;
         }
-
-        delete(this.textures[textureKeyName]);
+        if (this.textures[textureKeyName]) {
+            delete(this.textures[textureKeyName]);
+        }
     },
 
-    /** Output to cc.Log the current contents of this TextureCache
-     * This will attempt to calculate the size of each texture, and the total texture memory in use
-     *
-     * @since v1.0
+    /**
+     * Output to cc.Log the current contents of this TextureCache
+     * This will attempt to calculate the size of each texture, and the total texture memory in use.
      */
     dumpCachedTextureInfo:function () {
         var count = 0;
@@ -265,35 +336,23 @@ cc.TextureCache = cc.Class.extend({
         cc.Log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, for " + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
     },
 
-
-    /** Returns a Texture2D object given an PVRTC RAW filename
+    /**
+     * Returns a Texture2D object given an PVR filename
      * If the file image was not previously loaded, it will create a new Texture2D
-     *  object and it will return it. Otherwise it will return a reference of a previosly loaded image
-     *
-     * It can only load square images: width == height, and it must be a power of 2 (128,256,512...)
-     * bpp can only be 2 or 4. 2 means more compression but lower quality.
-     * hasAlpha: whether or not the image contains alpha channel
-     */
-
-    // cc.SUPPORT_PVRTC
-
-    /** Returns a Texture2D object given an PVR filename
-     * If the file image was not previously loaded, it will create a new Texture2D
-     *  object and it will return it. Otherwise it will return a reference of a previosly loaded image
+     *  object and it will return it. Otherwise it will return a reference of a previously loaded image
+     * @param {String} path
+     * @return {cc.Texture2D}
      */
     addPVRImage:function (path) {
-        cc.Assert(path != null, "TextureCache: fileimage MUST not be nill");
+        cc.Assert(path != null, "TextureCache: file image MUST not be null");
 
         var key = path;
-        // remove possible -HD suffix to prevent caching the same image twice (issue #1040)
-        //cc.FileUtils.RemoveHDSuffixFromFile(key);
 
         if (this.textures[key] != null) {
             return this.textures[key];
         }
 
         // Split up directory and filename
-        //var fullpath = cc.FileUtils.fullPathFromRelativePath(key.c_str());
         var tex = new cc.Texture2D();
         if (tex.initWithPVRFile(key)) {
             this.textures[key] = tex;
@@ -305,23 +364,19 @@ cc.TextureCache = cc.Class.extend({
     }
 });
 
-/** Retruns ths shared instance of the cache */
+/**
+ * Return ths shared instance of the cache
+ * @return {cc.TextureCache}
+ */
 cc.TextureCache.sharedTextureCache = function () {
     if (!cc.g_sharedTextureCache)
         cc.g_sharedTextureCache = new cc.TextureCache();
-
     return cc.g_sharedTextureCache;
 };
 
-/** purges the cache. It releases the retained instance.
- @since v0.99.0
+/**
+ * Purges the cache. It releases the retained instance.
  */
 cc.TextureCache.purgeSharedTextureCache = function () {
     cc.g_sharedTextureCache = null;
 };
-
-
-cc.INVALID = 0;
-cc.IMAGE_FILE = 1;
-cc.IMAGE_DATA = 2;
-cc.STRING = 3;
