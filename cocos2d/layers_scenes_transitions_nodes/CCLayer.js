@@ -332,7 +332,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
 
     /**
-     * @function
+     * @constructor
      */
     ctor:function () {
         this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
