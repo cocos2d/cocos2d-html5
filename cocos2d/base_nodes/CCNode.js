@@ -1206,7 +1206,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     // actions
     /**
-     * Executes an action, and returns the action that is executed.
+     * Executes an action, and returns the action that is executed.<br/>
      * The node becomes the action's target.
      * @warning Starting from v0.8 actions don't retain their target anymore.
      * @param {cc.Action} action
