@@ -23,25 +23,32 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
 /**
- @brief A transition which peels back the bottom right hand corner of a scene
- to transition to the scene beneath it simulating a page turn.
-
- This uses a 3DAction so it's strongly recommended that depth buffering
- is turned on in cc.Director using:
-
- cc.Director.sharedDirector().setDepthBufferFormat(kDepthBuffer16);
-
- @since v0.8.2
+ *<p> A transition which peels back the bottom right hand corner of a scene<br/>
+  * to transition to the scene beneath it simulating a page turn.<br/></p>
+ *
+  * <p>This uses a 3DAction so it's strongly recommended that depth buffering<br/>
+  * is turned on in cc.Director using:</p>
+ *
+  * <p>cc.Director.sharedDirector().setDepthBufferFormat(kDepthBuffer16);</p>
+ * @class
+ * @extends cc.TransitionScene
  */
-cc.TransitionPageTurn = cc.TransitionScene.extend({
-    _back:null,
+cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTurn# */{
     /**
-     * Creates a base transition with duration and incoming scene.
-     * If back is true then the effect is reversed to appear as if the incoming
+     * @type Boolean
+     */
+    _back:true,
+
+    /**
+     * Creates a base transition with duration and incoming scene.<br/>
+     * If back is true then the effect is reversed to appear as if the incoming<br/>
      * scene is being turned from left over the outgoing scene.
+     * @param {Number} t time in seconds
+     * @param {cc.Scene} scene
+     * @param {Boolean} backwards
+     * @return {Boolean}
      */
     initWithDuration:function (t, scene, backwards) {
         // XXX: needed before [super init]
@@ -53,6 +60,10 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
         return true;
     },
 
+    /**
+     * @param {cc.GridSiz} vector
+     * @return {cc.ReverseTime|cc.TransitionScene}
+     */
     actionWithSize:function (vector) {
         if (this._back) {
             // Get hold of the PageTurn3DAction
@@ -62,6 +73,10 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
             return this._super(vector, this._duration);
         }
     },
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
         var s = cc.Director.sharedDirector().getWinSize();
@@ -100,6 +115,13 @@ cc.TransitionPageTurn = cc.TransitionScene.extend({
  * Creates a base transition with duration and incoming scene.
  * If back is true then the effect is reversed to appear as if the incoming
  * scene is being turned from left over the outgoing scene.
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @param {Boolean} backwards
+ * @return {cc.TransitionPageTurn}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionPageTurn.create(1.5, nextScene, true)//true means backwards
  */
 cc.TransitionPageTurn.create = function (t, scene, backwards) {
     var transition = new cc.TransitionPageTurn();
