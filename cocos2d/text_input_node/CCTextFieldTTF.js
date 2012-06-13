@@ -312,7 +312,6 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         cc.IMEDispatcher.sharedDispatcher().removeDelegate(this);
     },
     /**
-     *
      * @param {String} text
      * @param {Number} len
      */
@@ -349,7 +348,6 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         this.detachWithIME();
     },
     /**
-     *
      * @return {String}
      */
     getContentText:function () {
