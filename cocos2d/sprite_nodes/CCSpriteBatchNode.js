@@ -68,6 +68,8 @@ cc.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
  * @class
  * @extends cc.Node
  * @example
+ * //create a SpriteBatchNode
+ * var parent2 = cc.SpriteBatchNode.create("Resources/animations/grossini.png", 50);
  */
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _textureAtlas:new cc.TextureAtlas(),
@@ -256,7 +258,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      *    The capacity will be increased in 33% in runtime if it run out of space.<br/>
      *    The file will be loaded using the TextureMgr.
      * </p>
-      * @param {String} fileImage
+     * @param {String} fileImage
      * @param {Number} capacity
      * @return {Boolean}
      */
