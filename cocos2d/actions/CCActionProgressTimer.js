@@ -22,16 +22,21 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
 /**
- @brief Progress to percentage
- @since v0.99.1
+ * Progress to percentage
+ * @class
+ * @extends cc.ActionInterval
  */
-cc.ProgressTo = cc.ActionInterval.extend({
+cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     _to:0,
     _from:0,
-    /** Initializes with a duration and a percent */
+
+    /** Initializes with a duration and a percent
+     * @param {Number} duration duration in seconds
+     * @param {Number} percent
+     * @return {Boolean}
+     */
     initWithDuration:function (duration, percent) {
         if (this._super(duration)) {
             this._to = percent;
@@ -39,6 +44,11 @@ cc.ProgressTo = cc.ActionInterval.extend({
         }
         return false;
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
         var newZone = null;
         var copy = null;
@@ -56,6 +66,10 @@ cc.ProgressTo = cc.ActionInterval.extend({
 
         return copy;
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
         this._from = target.getPercentage();
@@ -66,6 +80,10 @@ cc.ProgressTo = cc.ActionInterval.extend({
             this._from = 0;
         }
     },
+
+    /**
+     * @param {Number} time time in seconds
+     */
     update:function (time) {
         if (this._target  instanceof cc.ProgressTimer) {
             this._target.setPercentage(this._from + (this._to - this._from) * time);
@@ -73,7 +91,15 @@ cc.ProgressTo = cc.ActionInterval.extend({
     }
 });
 
-/** Creates and initializes with a duration and a percent */
+/** Creates and initializes with a duration and a percent
+ * @param {Number} duration duration in seconds
+ * @param {Number} percent
+ * @return {cc.ProgressTo}
+ * @example
+ * // example
+ * var to = cc.ProgressTo.create(2, 100);
+ *
+ */
 cc.ProgressTo.create = function (duration, percent) {
     var progressTo = new cc.ProgressTo();
     progressTo.initWithDuration(duration, percent);
@@ -82,13 +108,19 @@ cc.ProgressTo.create = function (duration, percent) {
 };
 
 /**
- @brief Progress from a percentage to another percentage
- @since v0.99.1
+ * Progress from a percentage to another percentage
+ * @class
+ * @extends cc.ActionInterval
  */
-cc.ProgressFromTo = cc.ActionInterval.extend({
+cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
     _to:0,
     _from:0,
-    /** Initializes the action with a duration, a "from" percentage and a "to" percentage */
+    /** Initializes the action with a duration, a "from" percentage and a "to" percentage
+     * @param {Number} duration duration in seconds
+     * @param {Number} fromPercentage
+     * @param {Number} toPercentage
+     * @return {Boolean}
+     */
     initWithDuration:function (duration, fromPercentage, toPercentage) {
         if (this._super(duration)) {
             this._to = toPercentage;
@@ -97,6 +129,11 @@ cc.ProgressFromTo = cc.ActionInterval.extend({
         }
         return false;
     },
+
+    /**
+     * @deprecated It is not needed anymore.
+     * @param zone
+     */
     copyWithZone:function (zone) {
         var newZone = null;
         var copy = null;
@@ -112,12 +149,24 @@ cc.ProgressFromTo = cc.ActionInterval.extend({
         copy.initWithDuration(this._duration, this._from, this._to);
         return copy;
     },
+
+    /**
+     * @return {cc.ActionInterval}
+     */
     reverse:function () {
         return cc.ProgressFromTo.create(this._duration, this._to, this._from);
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
     },
+
+    /**
+     * @param {Number} time time in seconds
+     */
     update:function (time) {
         if (this._target  instanceof cc.ProgressTimer) {
             this._target.setPercentage(this._from + (this._to - this._from) * time);
@@ -125,7 +174,15 @@ cc.ProgressFromTo = cc.ActionInterval.extend({
     }
 });
 
-/** Creates and initializes the action with a duration, a "from" percentage and a "to" percentage */
+/** Creates and initializes the action with a duration, a "from" percentage and a "to" percentage
+ * @param {Number} duration duration in seconds
+ * @param {Number} fromPercentage
+ * @param {Number} toPercentage
+ * @return {cc.ProgressFromTo}
+ * @example
+ * // example
+ *  var fromTO = cc.ProgressFromTo.create(2, 100.0, 0.0);
+ */
 cc.ProgressFromTo.create = function (duration, fromPercentage, toPercentage) {
     var progressFromTo = new cc.ProgressFromTo();
     progressFromTo.initWithDuration(duration, fromPercentage, toPercentage);
