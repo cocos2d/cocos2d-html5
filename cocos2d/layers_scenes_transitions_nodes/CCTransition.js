@@ -26,7 +26,7 @@
 /**
  * A tag constant for identifying fade scenes
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.SCENE_FADE = 4208917214;
 
@@ -46,25 +46,25 @@ cc.TransitionEaseScene = cc.Class.extend(/** @lends cc.TransitionEaseScene# */{
 /**
  * horizontal orientation Type where the Left is nearer
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.ORIENTATION_LEFT_OVER = 0;
 /**
  * horizontal orientation type where the Right is nearer
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.ORIENTATION_RIGHT_OVER = 1;
 /**
  * vertical orientation type where the Up is nearer
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.ORIENTATION_UP_OVER = 0;
 /**
  * vertical orientation type where the Bottom is nearer
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.ORIENTATION_DOWN_OVER = 1;
 
@@ -535,7 +535,7 @@ cc.TransitionMoveInB.create = function (t, scene) {
  * The other issue is that in some transitions (and I don't know why)<br/>
  * the order should be reversed (In in top of Out or vice-versa).
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.ADJUST_FACTOR = 0.5;
 

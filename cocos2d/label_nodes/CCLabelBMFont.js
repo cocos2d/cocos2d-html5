@@ -70,27 +70,27 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     //@public
     /**
      *  The characters building up the font
-     *  @type {object}
+     *  @type object
      */
     bitmapFontArray:{},
     /**
      * FNTConfig: Common Height
-     * @type {Number}
+     * @type Number
      */
     commonHeight:0,
     /**
      *  Padding
-     *  @type {cc._BMFontPadding}
+     *  @type cc._BMFontPadding
      */
     padding:new cc._BMFontPadding(),
     /**
      * atlas name
-     * @type {String}
+     * @type String
      */
     atlasName:"",
     /**
      * values for kerning
-     * @type {cc._KerningHashElement}
+     * @type cc._KerningHashElement
      */
     kerningDictionary:{},
 
@@ -638,7 +638,7 @@ cc.LabelBMFont.create = function (str, fntFile) {
 
 /**
  * shared instance of configuration
- * @type {cc.BMFontConfiguration}
+ * @type cc.BMFontConfiguration
  */
 cc.configurations = null;
 

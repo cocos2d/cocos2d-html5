@@ -28,14 +28,14 @@
  * android back button
  * @deprecated These were for android devices, but does not work in html5 environment
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.TYPE_BACK_CLICKED = 1;
 /**
  * android menu button
  * @deprecated for android devices, does not work in html5 environment
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.TYPE_MENU_CLICKED = 2;
 /**
@@ -56,7 +56,7 @@ cc.TYPE_MENU_CLICKED = 2;
  * if,(cc.keyDown[cc.KEY.space])
  * //if its undefined or false or null, its not pressed
  * @constant
- * @type {object}
+ * @type object
  */
 cc.KEY = {
     backspace:8,
