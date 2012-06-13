@@ -23,25 +23,60 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+/**
+ * @class
+ * @param {Number} _x
+ * @param {Number} _y
+ * @constructor
+ */
 cc.Point = function (_x, _y) {
     this.x = _x || 0;
     this.y = _y || 0;
 };
 
+/**
+ * @function
+ * @param {cc.Point} point1
+ * @param {cc.Point} point2
+ * @return {Boolean}
+ * @constructor
+ */
 cc.Point.CCPointEqualToPoint = function (point1, point2) {
     return ((point1.x == point2.x) && (point1.y == point2.y));
 };
 
+/**
+ * @class
+ * @param {Number} _width
+ * @param {Number} _height
+ * @constructor
+ */
 cc.Size = function (_width, _height) {
     this.width = _width || 0;
     this.height = _height || 0;
 };
 
+/**
+ * @function
+ * @param {cc.Size} size1
+ * @param {cc.Size} size2
+ * @return {Boolean}
+ * @constructor
+ */
 cc.Size.CCSizeEqualToSize = function (size1, size2) {
     return ((size1.width == size2.width) && (size1.height == size2.height));
 
 };
 
+/**
+ * @class
+ * @param {Number} x1
+ * @param {Number} y1
+ * @param {Number} width1
+ * @param {Number} height1
+ * @constructor
+ */
 cc.Rect = function (x1, y1, width1, height1) {
     switch (arguments.length) {
         case 0:
@@ -76,40 +111,90 @@ cc.Rect = function (x1, y1, width1, height1) {
     }
 };
 
+/**
+ * @function
+ * @param {cc.Rect} rect1
+ * @param {cc.Rect} rect2
+ * @return {Boolean}
+ * @constructor
+ */
 cc.Rect.CCRectEqualToRect = function (rect1, rect2) {
     return ((cc.Point.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
         (cc.Size.CCSizeEqualToSize(rect1.size, rect2.size)));
 };
 
-//! return the rightmost x-value of 'rect'
+/**
+ * return the rightmost x-value of 'rect'
+ * @function
+ * @param {cc.Rect} rect
+ * @return {Number}
+ * @constructor
+ */
 cc.Rect.CCRectGetMaxX = function (rect) {
     return (rect.origin.x + rect.size.width);
 };
 
-//! return the midpoint x-value of 'rect'
+/**
+ * return the midpoint x-value of 'rect'
+ * @function
+ * @param {cc.Rect} rect
+ * @return {Number}
+ * @constructor
+ */
 cc.Rect.CCRectGetMidX = function (rect) {
     return ((rect.origin.x + rect.size.width) / 2.0);
 };
-//! return the leftmost x-value of 'rect'
+/**
+ * return the leftmost x-value of 'rect'
+ * @function
+ * @param {cc.Rect} rect
+ * @return {Number}
+ * @constructor
+ */
 cc.Rect.CCRectGetMinX = function (rect) {
     return rect.origin.x;
 };
 
-//! Return the topmost y-value of `rect'
+/**
+ * Return the topmost y-value of `rect'
+ * @function
+ * @param {cc.Rect} rect
+ * @return {Number}
+ * @constructor
+ */
 cc.Rect.CCRectGetMaxY = function (rect) {
     return(rect.origin.y + rect.size.height);
 };
 
-//! Return the midpoint y-value of `rect'
+/**
+ * Return the midpoint y-value of `rect'
+ * @function
+ * @param {cc.Rect} rect
+ * @return {Number}
+ * @constructor
+ */
 cc.Rect.CCRectGetMidY = function (rect) {
     return rect.origin.y + rect.size.height / 2.0;
 };
 
-//! Return the bottommost y-value of `rect'
+/**
+ * Return the bottommost y-value of `rect'
+ * @function
+ * @param {cc.Rect} rect
+ * @return {Number}
+ * @constructor
+ */
 cc.Rect.CCRectGetMinY = function (rect) {
     return rect.origin.y;
 };
 
+/**
+ * @function
+ * @param {cc.Rect} rect
+ * @param {cc.Point} point
+ * @return {Boolean}
+ * @constructor
+ */
 cc.Rect.CCRectContainsPoint = function (rect, point) {
     var ret = false;
     if (point.x >= cc.Rect.CCRectGetMinX(rect) && point.x <= cc.Rect.CCRectGetMaxX(rect)
@@ -119,6 +204,13 @@ cc.Rect.CCRectContainsPoint = function (rect, point) {
     return ret;
 };
 
+/**
+ * @function
+ * @param {cc.Rect} rectA
+ * @param {cc.Rect} rectB
+ * @return {Boolean}
+ * @constructor
+ */
 cc.Rect.CCRectIntersectsRect = function (rectA, rectB) {
     return !(cc.Rect.CCRectGetMaxX(rectA) < cc.Rect.CCRectGetMinX(rectB) ||
         cc.Rect.CCRectGetMaxX(rectB) < cc.Rect.CCRectGetMinX(rectA) ||
@@ -126,6 +218,13 @@ cc.Rect.CCRectIntersectsRect = function (rectA, rectB) {
         cc.Rect.CCRectGetMaxY(rectB) < cc.Rect.CCRectGetMinY(rectA));
 };
 
+/**
+ * @function
+ * @param {cc.Rect} rectA
+ * @param {cc.Rect} rectB
+ * @return {Boolean}
+ * @constructor
+ */
 cc.Rect.CCRectOverlapsRect = function (rectA, rectB) {
     if (rectA.origin.x + rectA.size.width < rectB.origin.x) {
         return false;
@@ -142,7 +241,14 @@ cc.Rect.CCRectOverlapsRect = function (rectA, rectB) {
     return true;
 };
 
-//Returns the smallest rectangle that contains the two source rectangles.
+/**
+ * Returns the smallest rectangle that contains the two source rectangles.
+ * @function
+ * @param {cc.Rect}　rectA
+ * @param {cc.Rect}　rectB
+ * @return {cc.Rect}
+ * @constructor
+ */
 cc.Rect.CCRectUnion = function (rectA, rectB) {
     var rect = new cc.Rect(0, 0, 0, 0);
     rect.origin.x = Math.min(rectA.origin.x, rectB.origin.x);
@@ -152,7 +258,14 @@ cc.Rect.CCRectUnion = function (rectA, rectB) {
     return rect
 };
 
-//Returns the overlapping portion of 2 rectangles
+/**
+ * Returns the overlapping portion of 2 rectangles
+ * @function
+ * @param {cc.Rect} rectA
+ * @param {cc.Rect} rectB
+ * @return {cc.Rect}
+ * @constructor
+ */
 cc.Rect.CCRectIntersection = function (rectA, rectB) {
     var intersection = new cc.Rect(
         Math.max(cc.Rect.CCRectGetMinX(rectA), cc.Rect.CCRectGetMinX(rectB)),
@@ -164,30 +277,67 @@ cc.Rect.CCRectIntersection = function (rectA, rectB) {
     return intersection
 };
 
-
+/**
+ * @function
+ * @param {Number} x
+ * @param {Number} y
+ * @return {cc.Point}
+ * @constructor
+ */
 cc.PointMake = function (x, y) {
     return new cc.Point(x, y);
 };
 
+/**
+ * @function
+ * @param {Number} width
+ * @param {Number} height
+ * @return {cc.Size}
+ * @constructor
+ */
 cc.SizeMake = function (width, height) {
     return new cc.Size(width, height);
 };
 
+/**
+ * @function
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} width
+ * @param {Number} height
+ * @return {cc.Rect}
+ * @constructor
+ */
 cc.RectMake = function (x, y, width, height) {
     return new cc.Rect(x, y, width, height);
 };
 
-/* The "left bottom" point -- equivalent to CCPointMake(0, 0). */
+/**
+ * The "left bottom" point -- equivalent to cc.PointMake(0, 0).
+ * @function
+ * @return {cc.Point}
+ * @constructor
+ */
 cc.PointZero = function () {
     return new cc.Point(0, 0)
 };
 
-/* The "zero" size -- equivalent to CCSizeMake(0, 0). */
+/**
+ * The "zero" size -- equivalent to cc.SizeMake(0, 0).
+ * @function
+ * @return {cc.Size}
+ * @constructor
+ */
 cc.SizeZero = function () {
     return new cc.Size(0, 0)
 };
 
-/* The "zero" rectangle -- equivalent to CCRectMake(0, 0, 0, 0). */
+/**
+ * The "zero" rectangle -- equivalent to cc.RectMake(0, 0, 0, 0).
+ * @function
+ * @return {cc.Rect}
+ * @constructor
+ */
 cc.RectZero = function () {
     return new cc.Rect(0, 0, 0, 0)
 };
