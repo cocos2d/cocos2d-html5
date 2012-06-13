@@ -24,21 +24,30 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/** @brief Singleton that handles the loading of the sprite frames.
- It saves in a cache the sprite frames.
- @since v0.9
+/**
+ * Singleton that handles the loading of the sprite frames. It saves in a cache the sprite frames.
+ * @class
+ * @extends cc.Class
+ * @example
+ * // add SpriteFrames to SpriteFrameCache With File
+ * cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
  */
-cc.SpriteFrameCache = cc.Class.extend({
-    _spriteFrames:new Object(),
-    _spriteFramesAliases:new Object(),
+cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
+    _spriteFrames:null,
+    _spriteFramesAliases:null,
 
-    init:function () {
-        return true;
+    /**
+     * @Constructor
+     */
+    ctor:function () {
+        this._spriteFrames = {};
+        this._spriteFramesAliases = {};
     },
 
-    /*Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
+    /**
+     * Adds multiple Sprite Frames with a dictionary. The texture will be associated with the created sprite frames.
+     * @param {object} dictionary
+     * @param {HTMLImageElement|cc.Texture2D} texture
      */
     addSpriteFramesWithDictionary:function (dictionary, texture) {
         var metadataDict = dictionary["metadata"];
@@ -132,8 +141,10 @@ cc.SpriteFrameCache = cc.Class.extend({
             }
         }
     },
-    /** Adds multiple Sprite Frames from a json file
-     * A texture will be loaded automatically.
+
+    /**
+     * Adds multiple Sprite Frames from a json file. A texture will be loaded automatically.
+     * @param {object} jsonData
      */
     addSpriteFramesWithJson:function (jsonData) {
         var dict = jsonData;
@@ -154,9 +165,18 @@ cc.SpriteFrameCache = cc.Class.extend({
             cc.Log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
         }
     },
-    /** Adds multiple Sprite Frames from a plist file.
-     * A texture will be loaded automatically. The texture name will composed by replacing the .plist suffix with .png
-     * If you want to use another texture, you should use the addSpriteFramesWithFile:texture method.
+
+    /**
+     * <p>
+     *   Adds multiple Sprite Frames from a plist file.<br/>
+     *   A texture will be loaded automatically. The texture name will composed by replacing the .plist suffix with .png<br/>
+     *   If you want to use another texture, you should use the addSpriteFramesWithFile:texture method.<br/>
+     * </p>
+     * @param {String} plist plist filename
+     * @param {HTMLImageElement|cc.Texture2D} texture
+     * @example
+     * // add SpriteFrames to SpriteFrameCache With File
+     * cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
      */
     addSpriteFramesWithFile:function (plist, texture) {
         var argnum = arguments.length;
@@ -223,40 +243,36 @@ cc.SpriteFrameCache = cc.Class.extend({
         }
     },
 
-    /** Adds an sprite frame with a given name.
-     If the name already exists, then the contents of the old name will be replaced with the new one.
+    /**
+     * <p>
+     *  Adds an sprite frame with a given name.<br/>
+     *  If the name already exists, then the contents of the old name will be replaced with the new one.
+     * </p>
+     * @param {cc.SpriteFrame} frame
+     * @param {String} frameName
      */
     addSpriteFrame:function (frame, frameName) {
         this._spriteFrames[frameName] = frame;
     },
 
-    /** Purges the dictionary of loaded sprite frames.
-     * Call this method if you receive the "Memory Warning".
-     * In the short term: it will free some resources preventing your app from being killed.
-     * In the medium term: it will allocate more resources.
-     * In the long term: it will be the same.
+    /**
+     * <p>
+     *   Purges the dictionary of loaded sprite frames.<br/>
+     *   Call this method if you receive the "Memory Warning".<br/>
+     *   In the short term: it will free some resources preventing your app from being killed.<br/>
+     *   In the medium term: it will allocate more resources.<br/>
+     *   In the long term: it will be the same.<br/>
+     * </p>
      */
     removeSpriteFrames:function () {
         this._spriteFrames = [];
         this._spriteFramesAliases = [];
     },
 
-    /** Removes unused sprite frames.
-     * Sprite Frames that have a retain count of 1 will be deleted.
-     * It is convenient to call this method after when starting a new Scene.
+    /**
+     * Deletes an sprite frame from the sprite frame cache.
+     * @param {String} name
      */
-    removeUnusedSpriteFrames:function () {
-        for (var key in this._spriteFrames) {
-            var spriteFrame = null;
-            if (spriteFrame == this._spriteFrames[key]) {
-                cc.Log("cocos2d: cc.SpriteFrameCache: removing unused frame:" + key);
-                delete(this._spriteFrames[key]);
-            }
-        }
-        ;
-    },
-
-    /** Deletes an sprite frame from the sprite frame cache. */
     removeSpriteFrameByName:function (name) {
         // explicit nil handling
         if (!name) {
@@ -264,21 +280,22 @@ cc.SpriteFrameCache = cc.Class.extend({
         }
 
         // Is this an alias ?
-        var key = this._spriteFramesAliases[name];
-
-        if (key) {
-            delete(this._spriteFrames[key]);
-            delete(this._spriteFramesAliases[key]);
+        if(this._spriteFramesAliases.hasOwnProperty(name)){
+            delete(this._spriteFramesAliases[name]);
         }
-        else {
+
+        if(this._spriteFrames.hasOwnProperty(name)){
             delete(this._spriteFrames[name]);
         }
     },
 
-    /** Removes multiple Sprite Frames from a plist file.
-     * Sprite Frames stored in this file will be removed.
-     * It is convinient to call this method when a specific texture needs to be removed.
-     * @since v0.99.5
+    /**
+     * <p>
+     *     Removes multiple Sprite Frames from a plist file.<br/>
+     *     Sprite Frames stored in this file will be removed.<br/>
+     *     It is convinient to call this method when a specific texture needs to be removed.<br/>
+     * </p>
+     * @param {String} plist plist filename
      */
     removeSpriteFramesFromFile:function (plist) {
         var path = cc.FileUtils.fullPathFromRelativePath(plist);
@@ -287,27 +304,30 @@ cc.SpriteFrameCache = cc.Class.extend({
         this.removeSpriteFramesFromDictionary(dict);
     },
 
-    /** Removes multiple Sprite Frames from cc.Dictionary.
-     * @since v0.99.5
+    /**
+     * Removes multiple Sprite Frames from Dictionary.
+     * @param {object} dictionary SpriteFrame of Dictionary
      */
     removeSpriteFramesFromDictionary:function (dictionary) {
         var framesDict = dictionary["frames"];
-        var frameDict = null;
 
-        for (var key in frameDict) {
-            if (frameDict == framesDict[key] && this._spriteFrames[key]) {
+        for (var key in framesDict) {
+            if (this._spriteFrames.hasOwnProperty(key)) {
                 delete(this._spriteFrames[key]);
             }
         }
     },
 
-    /** Removes all Sprite Frames associated with the specified textures.
-     * It is convinient to call this method when a specific texture needs to be removed.
-     * @since v0.995.
+    /**
+     * <p>
+     *    Removes all Sprite Frames associated with the specified textures.<br/>
+     *    It is convinient to call this method when a specific texture needs to be removed.
+     * </p>
+     * @param {HTMLImageElement|cc.Texture2D} texture
      */
     removeSpriteFramesFromTexture:function (texture) {
         var frameDict = null;
-        for (var key in frameDict) {
+        for (var key in this._spriteFrames) {
             var frame = this._spriteFrames[key];
             if (frame && (frame.getTexture() == texture)) {
                 delete(this._spriteFrames[key]);
@@ -315,9 +335,17 @@ cc.SpriteFrameCache = cc.Class.extend({
         }
     },
 
-    /** Returns an Sprite Frame that was previously added.
-     If the name is not found it will return nil.
-     You should retain the returned copy if you are going to use it.
+    /**
+     * <p>
+     *   Returns an Sprite Frame that was previously added.<br/>
+     *   If the name is not found it will return nil.<br/>
+     *   You should retain the returned copy if you are going to use it.<br/>
+     * </p>
+     * @param {String} name name of SpriteFrame
+     * @return {cc.SpriteFrame}
+     * @example
+     * //get a SpriteFrame by name
+     * var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName("grossini_dance_01.png");
      */
     spriteFrameByName:function (name) {
         var frame;
@@ -342,6 +370,7 @@ cc.SpriteFrameCache = cc.Class.extend({
         }
         return frame;
     },
+
     _valueForKey:function (key, dict) {
         if (dict) {
             if (dict.hasOwnProperty(key)) {
@@ -354,7 +383,10 @@ cc.SpriteFrameCache = cc.Class.extend({
 
 cc.sharedSpriteFrameCache = null;
 
-/** Returns the shared instance of the Sprite Frame cache */
+/**
+ * Returns the shared instance of the Sprite Frame cache
+ * @return {cc.SpriteFrameCache}
+ */
 cc.SpriteFrameCache.sharedSpriteFrameCache = function () {
     if (!cc.sharedSpriteFrameCache) {
         cc.sharedSpriteFrameCache = new cc.SpriteFrameCache();
@@ -363,7 +395,9 @@ cc.SpriteFrameCache.sharedSpriteFrameCache = function () {
     return cc.sharedSpriteFrameCache;
 };
 
-/** Purges the cache. It releases all the Sprite Frames and the retained instance. */
+/**
+ * Purges the cache. It releases all the Sprite Frames and the retained instance.
+ */
 cc.SpriteFrameCache.purgeSharedSpriteFrameCache = function () {
     cc.sharedSpriteFrameCache = null;
 };
