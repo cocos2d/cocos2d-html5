@@ -23,18 +23,20 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-/** @brief CCAtlasNode is a subclass of CCNode that implements the CCRGBAProtocol and
- CCTextureProtocol protocol
 
- It knows how to render a TextureAtlas object.
- If you are going to render a TextureAtlas consider subclassing CCAtlasNode (or a subclass of CCAtlasNode)
-
- All features from CCNode are valid, plus the following features:
- - opacity and RGB colors
+/** <p> cc.AtlasNode is a subclass of cc.Node that implements the cc.RGBAProtocol and<br/>
+ * cc.TextureProtocol protocol</p>
+ *
+ * <p> It knows how to render a TextureAtlas object.  <br/>
+ * If you are going to render a TextureAtlas consider subclassing cc.AtlasNode (or a subclass of cc.AtlasNode)</p>
+ *
+ * <p> All features from cc.Node are valid, plus the following features:  <br/>
+ * - opacity and RGB colors </p>
+ * @class
+ * @extends cc.Node
  */
-cc.AtlasNode = cc.Node.extend({
+cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     //! chars per row
     _itemsPerRow:0,
     //! chars per column
@@ -54,16 +56,13 @@ cc.AtlasNode = cc.Node.extend({
     // quads to draw
     _quadsToDraw:0,
 
-    /** creates a CCAtlasNode  with an Atlas file the width and height of each item and the quantity of items to render*/
-    atlasWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
-        var ret = new cc.AtlasNode();
-        if (ret.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender)) {
-            return ret;
-        }
-        return null;
-    },
-
-    /** initializes an CCAtlasNode  with an Atlas file the width and height of each item and the quantity of items to render*/
+    /** initializes an cc.AtlasNode  with an Atlas file the width and height of each item and the quantity of items to render
+     * @param {String} tile
+     * @param {Number} tileWidth
+     * @param {Number} tileHeight
+     * @param {Number} itemsToRender
+     * @return {Boolean}
+     */
     initWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
         cc.Assert(tile != null, "title should not be null");
         this._itemWidth = tileWidth * cc.CONTENT_SCALE_FACTOR();
@@ -84,7 +83,7 @@ cc.AtlasNode = cc.Node.extend({
             this._originalTexture = this._textureAtlas.getTexture();
         }
         if (!this._textureAtlas) {
-            cc.Log("cocos2d: Could not initialize CCAtlasNode. Invalid Texture.");
+            cc.Log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
             return false;
         }
 
@@ -103,9 +102,12 @@ cc.AtlasNode = cc.Node.extend({
      * Shall be overriden in subclasses
      */
     updateAtlasValues:function () {
-        cc.Assert(false, "CCAtlasNode:Abstract updateAtlasValue not overriden");
+        cc.Assert(false, "cc.AtlasNode:Abstract updateAtlasValue not overriden");
     },
 
+    /**
+     * @param {CanvasContext} ctx   CanvasContext
+     */
     draw:function (ctx) {
         this._super();
         if (cc.renderContextType == cc.CANVAS) {
@@ -165,7 +167,9 @@ cc.AtlasNode = cc.Node.extend({
         }
     },
 
-    // CCAtlasNode - RGBA protocol
+    /** cc.AtlasNode - RGBA protocol
+     * @return {cc.Color3B}
+     */
     getColor:function () {
         if (this._isOpacityModifyRGB) {
             return this._colorUnmodified;
@@ -173,6 +177,9 @@ cc.AtlasNode = cc.Node.extend({
         return this._color;
     },
 
+    /**
+     * @param {cc.Color3B} color3
+     */
     setColor:function (color3) {
         this._color = this._colorUnmodified = color3;
 
@@ -195,10 +202,16 @@ cc.AtlasNode = cc.Node.extend({
         }
     },
 
+    /**
+     * @return {Number}
+     */
     getOpacity:function () {
         return this._opacity;
     },
 
+    /**
+     * @param {Number} opacity
+     */
     setOpacity:function (opacity) {
         this._opacity = opacity;
         return;
@@ -208,52 +221,79 @@ cc.AtlasNode = cc.Node.extend({
         }
     },
 
+    /**
+     * @param {Boolean} value
+     */
     setIsOpacityModifyRGB:function (value) {
         var oldColor = this._color;
         this._isOpacityModifyRGB = value;
         this._color = oldColor;
     },
 
+    /**
+     * @return {Boolean}
+     */
     getIsOpacityModifyRGB:function () {
         return this._isOpacityModifyRGB;
     },
 
-    // CCAtlasNode - CocosNodeTexture protocol
+    /** cc.AtlasNode - CocosNodeTexture protocol
+     * @return {cc.BlendFunc}
+     */
 
     getBlendFunc:function () {
         return this._blendFunc;
     },
 
+    /**
+     * @param {cc.BlendFunc} blendFunc
+     */
     setBlendFunc:function (blendFunc) {
         this._blendFunc = blendFunc;
     },
 
-    // CC Texture protocol
+    // cc.Texture protocol
 
-    /** returns the used texture*/
+    /** returns the used texture
+     * @return {cc.Texture2D}
+     */
     getTexture:function () {
         return this._textureAtlas.getTexture();
     },
 
-    /** sets a new texture. it will be retained*/
+    /** sets a new texture. it will be retained
+     * @param {cc.Texture2D} texture
+     */
     setTexture:function (texture) {
         this._textureAtlas.setTexture(texture);
         this._updateBlendFunc();
         this._updateOpacityModifyRGB();
     },
 
+    /**
+     * @param {cc.TextureAtlas} value
+     */
     setTextureAtlas:function (value) {
         this._textureAtlas = value;
     },
 
+    /**
+     * @return {cc.TextureAtlas}
+     */
     getTextureAtlas:function () {
         return this._textureAtlas;
     },
 
+    /**
+     * @return {Number}
+     */
     getQuadsToDraw:function () {
         return this._quadsToDraw;
     },
 
+    /**
+     * @param {Number} quadsToDraw
+     */
     setQuadsToDraw:function (quadsToDraw) {
         this._quadsToDraw = quadsToDraw;
     },
@@ -276,3 +316,21 @@ cc.AtlasNode = cc.Node.extend({
     }
 
 });
+
+/** creates a cc.AtlasNode  with an Atlas file the width and height of each item and the quantity of items to render
+ * @param {String} tile
+ * @param {Number} tileWidth
+ * @param {Number} tileHeight
+ * @param {Number} itemsToRender
+ * @return {cc.AtlasNode}
+ * @example
+ * // example
+ * var node = cc.AtlasNode.create("pathOfTile", 16, 16, 1);
+ */
+cc.AtlasNode.create = function (tile, tileWidth, tileHeight, itemsToRender) {
+    var ret = new cc.AtlasNode();
+    if (ret.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender)) {
+        return ret;
+    }
+    return null;
+};
