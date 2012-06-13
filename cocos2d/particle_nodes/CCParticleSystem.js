@@ -44,54 +44,54 @@
 /**
  * Shape Mode of Particle Draw
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.PARTICLE_SHAPE_MODE = 0;
 /**
  * Texture Mode of Particle Draw
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.PARTICLE_TEXTURE_MODE = 1;
 
 /**
  * Star Shape for ShapeMode of Particle
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.PARTICLE_STAR_SHAPE = 0;
 /**
  * Ball Shape for ShapeMode of Particle
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.PARTICLE_BALL_SHAPE = 1;
 
 /**
  * The Particle emitter lives forever
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_DURATION_INFINITY = -1;
 
 /**
  * The starting size of the particle is equal to the ending size
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE = -1;
 
 /**
  * The starting radius of the particle is equal to the ending radius
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS = -1;
 
 /**
  * backward compatible
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 cc.PARTICLE_DURATION_INFINITY = cc.CCPARTICLE_DURATION_INFINITY;
@@ -100,14 +100,14 @@ cc.PARTICLE_DURATION_INFINITY = cc.CCPARTICLE_DURATION_INFINITY;
 /**
  * Gravity mode (A mode)
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_MODE_GRAVITY = 0;
 
 /**
  * Radius mode (B mode)
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_MODE_RADIUS = 1;
 
@@ -117,7 +117,7 @@ cc.CCPARTICLE_MODE_RADIUS = 1;
 /**
  * Living particles are attached to the world and are unaffected by emitter repositioning.
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_TYPE_FREE = 0;
 
@@ -125,14 +125,14 @@ cc.CCPARTICLE_TYPE_FREE = 0;
  * Living particles are attached to the world but will follow the emitter repositioning.<br/>
  * Use case: Attach an emitter to an sprite, and you want that the emitter follows the sprite.
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_TYPE_RELATIVE = 1;
 
 /**
  * Living particles are attached to the emitter and are translated along with it.
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.CCPARTICLE_TYPE_GROUPED = 2;
 
