@@ -26,7 +26,7 @@
 
 /**
  * Text field delegate
- *@class
+ * @class
  * @extends cc.Class
  */
 cc.TextFieldDelegate = cc.Class.extend(/** @lends cc.TextFieldDelegate# */{
