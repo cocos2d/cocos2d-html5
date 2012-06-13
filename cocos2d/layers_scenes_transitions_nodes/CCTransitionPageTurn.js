@@ -26,12 +26,12 @@
 
 /**
  *<p> A transition which peels back the bottom right hand corner of a scene<br/>
-  * to transition to the scene beneath it simulating a page turn.<br/></p>
+ * to transition to the scene beneath it simulating a page turn.<br/></p>
  *
-  * <p>This uses a 3DAction so it's strongly recommended that depth buffering<br/>
-  * is turned on in cc.Director using:</p>
+ * <p>This uses a 3DAction so it's strongly recommended that depth buffering<br/>
+ * is turned on in cc.Director using:</p>
  *
-  * <p>cc.Director.sharedDirector().setDepthBufferFormat(kDepthBuffer16);</p>
+ * <p>cc.Director.sharedDirector().setDepthBufferFormat(kDepthBuffer16);</p>
  * @class
  * @extends cc.TransitionScene
  */
@@ -112,8 +112,8 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
 });
 
 /**
- * Creates a base transition with duration and incoming scene.
- * If back is true then the effect is reversed to appear as if the incoming
+ * Creates a base transition with duration and incoming scene.<br/>
+ * If back is true then the effect is reversed to appear as if the incoming<br/>
  * scene is being turned from left over the outgoing scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
