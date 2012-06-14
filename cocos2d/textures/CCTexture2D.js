@@ -377,7 +377,7 @@ cc.Texture2D = cc.Class.extend({
             fontName = arguments[1];
             fontSize = arguments[2];
             dimensions = cc.SizeMake(0, 0);
-            alignment = cc.TextAlignmentCenter;
+            alignment = cc.TEXT_ALIGNMENT_CENTER;
         }
         if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
             // cache the texture data
@@ -385,7 +385,7 @@ cc.Texture2D = cc.Class.extend({
         }
         var image = new cc.Image();
         eAlign = new cc.Image.ETextAlign();
-        eAlign = (cc.TextAlignmentCenter == alignment) ? cc.Image.ALIGN_CENTER : (cc.TextAlignmentLeft == alignment) ? cc.Image.ALIGN_LEFT : cc.Image.ALIGN_RIGHT;
+        eAlign = (cc.TEXT_ALIGNMENT_CENTER == alignment) ? cc.Image.ALIGN_CENTER : (cc.TEXT_ALIGNMENT_LEFT == alignment) ? cc.Image.ALIGN_LEFT : cc.Image.ALIGN_RIGHT;
 
         if (!image.initWithString(text, dimensions.width, dimensions.height, eAlign, fontName, fontSize)) {
             return false;
