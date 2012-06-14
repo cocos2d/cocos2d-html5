@@ -68,6 +68,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _atlasIndexArray:null,
     //used for retina display
     _contentScaleFactor:null,
+
     /**
      *  @Constructor
      */
@@ -77,19 +78,21 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._descendants = [];
         this._isUseCache = true;
     },
+
     /**
      * @return {cc.Size}
      */
     getLayerSize:function () {
         return this._layerSize;
     },
+
     /**
-     *
      * @param {cc.Size} Var
      */
     setLayerSize:function (Var) {
         this._layerSize = Var;
     },
+
     /**
      * Size of the map's tile (could be different from the tile's size)
      * @return {cc.Size}
@@ -97,12 +100,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     getMapTileSize:function () {
         return this._mapTileSize;
     },
+
     /**
      * @param {cc.Size} Var
      */
     setMapTileSize:function (Var) {
         this._mapTileSize = Var;
     },
+
     /**
      * Pointer to the map of tiles
      * @return {Array}
@@ -110,12 +115,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     getTiles:function () {
         return this._tiles;
     },
+
     /**
      * @param {Array} Var
      */
     setTiles:function (Var) {
         this._tiles = Var;
     },
+
     /**
      * Tile set information for the layer
      * @return {cc.TMXTilesetInfo}
@@ -123,12 +130,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     getTileSet:function () {
         return this._tileSet;
     },
+
     /**
      * @param {cc.TMXTilesetInfo} Var
      */
     setTileSet:function (Var) {
         this._tileSet = Var;
     },
+
     /**
      * Layer orientation, which is the same as the map orientation
      * @return {Number}
@@ -136,13 +145,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     getLayerOrientation:function () {
         return this._layerOrientation;
     },
+
     /**
-     *
      * @param {Number} Var
      */
     setLayerOrientation:function (Var) {
         this._layerOrientation = Var;
     },
+
     /**
      * properties from the layer. They can be added using Tiled
      * @return {Array}
@@ -150,12 +160,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     getProperties:function () {
         return this._properties;
     },
+
     /**
      * @param {Array} Var
      */
     setProperties:function (Var) {
         this._properties = Var;
     },
+
     /**
      * Initializes a cc.TMXLayer with a tileset info, a layer info and a map info
      * @param {cc.TMXTilesetInfo} tilesetInfo
@@ -421,8 +433,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         //  - difficult to scale / rotate / etc.
         //this._textureAtlas.getTexture().setAliasTexParameters();
 
-        //CFByteOrder o = CFByteOrderGetCurrent();
-
         // Parse cocos2d properties
         this._parseInternalProperties();
         this._setNodeDirtyForCache();
@@ -432,11 +442,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             for (var x = 0; x < this._layerSize.width; x++) {
                 var pos = x + this._layerSize.width * y;
                 var gid = this._tiles[pos];
-                // gid are stored in little endian.
-                // if host is big endian, then swap
-                //if( o == CFByteOrderBigEndian )
-                //	gid = CFSwapInt32( gid );
-                /* We support little endian.*/
 
                 // XXX: gid == 0 -. empty tile
                 if (gid != 0) {
@@ -460,6 +465,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     addChild:function (child) {
         cc.Assert(0, "addChild: is not supported on cc.TMXLayer. Instead use setTileGID:at:/tileAt:");
     },
+
     /**
      * Remove child
      * @param  {cc.Node} child
@@ -476,12 +482,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         this._setNodeDirtyForCache();
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-        var atlasIndex = sprite.getAtlasIndex();
+        var atlasIndex = cc.ArrayGetIndexOfObject(this._children,sprite);
         var zz = this._atlasIndexArray[atlasIndex];
         this._tiles[zz] = 0;
         cc.ArrayRemoveObjectAtIndex(this._atlasIndexArray, atlasIndex);
         this._super(sprite, cleanup);
     },
+
     /**
      *  Draw
      */
@@ -498,28 +505,33 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             //glDisable(GL_ALPHA_TEST);
         }
     },
+
     /**
      * @return {String}
      */
     getLayerName:function () {
         return this._layerName.toString();
     },
+
     /**
      * @param {String} layerName
      */
     setLayerName:function (layerName) {
         this._layerName = layerName;
     },
+
     _positionForIsoAt:function (pos) {
         var xy = cc.PointMake(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
             this._mapTileSize.height / 2 * (( this._layerSize.height * 2 - pos.x - pos.y) - 2));
         return xy;
     },
+
     _positionForOrthoAt:function (pos) {
         var xy = cc.PointMake(pos.x * this._mapTileSize.width,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height);
         return xy;
     },
+
     _positionForHexAt:function (pos) {
         var diffY = 0;
         if (pos.x % 2 == 1) {
@@ -530,6 +542,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height + diffY);
         return xy;
     },
+
     _calculateLayerOffset:function (pos) {
         var ret = cc.PointZero();
         switch (this._layerOrientation) {
@@ -547,6 +560,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         }
         return ret;
     },
+
     _appendTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor,
@@ -575,6 +589,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._atlasIndexArray = cc.ArrayAppendObjectToIndex(this._atlasIndexArray, z, indexForZ);
         return this._reusedTile;
     },
+
     _insertTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor, rect.size.width / this._contentScaleFactor, rect.size.height / this._contentScaleFactor);
@@ -613,6 +628,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._tiles[z] = gid;
         return this._reusedTile;
     },
+
     _updateTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor,
@@ -658,6 +674,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._alphaFuncValue = parseInt(alphaFuncVal);
         }
     },
+
     _vertexZForPos:function (pos) {
         var ret = 0;
         var maxVal = 0;
@@ -683,6 +700,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         }
         return ret;
     },
+
     _atlasIndexForExistantZ:function (z) {
         var item;
         if (this._atlasIndexArray) {
@@ -696,6 +714,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(item, "TMX atlas index not found. Shall not happen");
         return i;
     },
+
     _atlasIndexForNewZ:function (z) {
         for (var i = 0; i < this._atlasIndexArray.length; i++) {
             var val = this._atlasIndexArray[i];

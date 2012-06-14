@@ -30,11 +30,13 @@
  * @type Number
  */
 cc.TMXOrientationOrtho = 0;
+
 /**
  * Hexagonal orientation
  * @constant
  * @type Number
  */
+
 cc.TMXOrientationHex = 1;
 
 /**
@@ -45,7 +47,6 @@ cc.TMXOrientationHex = 1;
 cc.TMXOrientationIso = 2;
 
 /**
- *
  * <p>cc.TMXTiledMap knows how to parse and render a TMX map.</p>
  *
  * <p>It adds support for the TMX tiled map format used by http://www.mapeditor.org <br />
@@ -107,69 +108,80 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     //tile properties
     _TMXLayers:null,
     _tileProperties:[],
+
     /**
      * @return {cc.Size}
      */
     getMapSize:function () {
         return this._mapSize;
     },
+
     /**
      * @param {cc.Size} Var
      */
     setMapSize:function (Var) {
         this._mapSize = Var;
     },
+
     /**
      * @return {cc.Size}
      */
     getTileSize:function () {
         return this._tileSize;
     },
+
     /**
      * @param {cc.Size} Var
      */
     setTileSize:function (Var) {
         this._tileSize = Var;
     },
+
     /**
      * map orientation
-     * @return {*}
+     * @return {Number}
      */
     getMapOrientation:function () {
         return this._mapOrientation;
     },
+
     /**
-     * @param Var
+     * @param {Number} Var
      */
     setMapOrientation:function (Var) {
         this._mapOrientation = Var;
     },
+
     /**
      * object groups
-     * @return {*}
+     * @return {Array}
      */
     getObjectGroups:function () {
         return this._objectGroups;
     },
+
     /**
-     * @param Var
+     * @param {Array} Var
      */
     setObjectGroups:function (Var) {
         this._objectGroups = Var;
     },
+
     /**
      * properties
-     * @return {*}
+     * @return {object}
      */
     getProperties:function () {
         return this._properties;
     },
+
     /**
-     * @param Var
+     * @param {object} Var
      */
     setProperties:function (Var) {
         this._properties = Var;
     },
+
     /**
      * @param tmxFile
      * @return {Boolean}
@@ -229,8 +241,8 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     },
 
     /** return the TMXLayer for the specific layer
-     * @param layerName
-     * @return {*}
+     * @param {String} layerName
+     * @return {cc.TMXLayer}
      */
     layerNamed:function (layerName) {
         if (this._TMXLayers.hasOwnProperty(layerName)) {
@@ -238,10 +250,11 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         }
         return null;
     },
+
     /**
      *return the TMXObjectGroup for the secific group
-     * @param groupName
-     * @return {*}
+     * @param {String} groupName
+     * @return {cc.TMXObjectGroup}
      */
     objectGroupNamed:function (groupName) {
         if (this._objectGroups) {
@@ -258,8 +271,8 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
 
     /**
      * Return the value for the specific property name
-     * @param propertyName
-     * @return {*}
+     * @param {String} propertyName
+     * @return {String}
      */
     propertyNamed:function (propertyName) {
         return this._properties[propertyName.toString()];
@@ -273,6 +286,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     propertiesForGID:function (GID) {
         return this._tileProperties[GID];
     },
+
     _parseLayer:function (layerInfo, mapInfo) {
         var tileset = this._tilesetForLayer(layerInfo, mapInfo);
         var layer = cc.TMXLayer.create(tileset, layerInfo, mapInfo);
@@ -282,6 +296,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
 
         return layer;
     },
+
     _tilesetForLayer:function (layerInfo, mapInfo) {
         var size = layerInfo._layerSize;
         var tilesets = mapInfo.getTilesets();

@@ -35,6 +35,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     _positionOffset:cc.PointZero(),
     _properties:null,
     _objects:null,
+
     /**
      *  @Constructor
      */
@@ -42,6 +43,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
         this._properties = [];
         this._objects = [];
     },
+
     /**
      * Offset position of child objects
      * @return {cc.Point}
@@ -49,12 +51,14 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     getPositionOffset:function () {
         return this._positionOffset;
     },
+
     /**
      * @param {cc.Point} Var
      */
     setPositionOffset:function (Var) {
         this._positionOffset = Var;
     },
+
     /**
      * List of properties stored in a dictionary
      * @return {Array}
@@ -62,24 +66,28 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     getProperties:function () {
         return this._properties;
     },
+
     /**
      * @param properties
      */
     setProperties:function (properties) {
         this._properties.push(properties);
     },
+
     /**
      * @return {String}
      */
     getGroupName:function () {
         return this._groupName.toString();
     },
+
     /**
      * @param {String} groupName
      */
     setGroupName:function (groupName) {
         this._groupName = groupName;
     },
+
     /**
      * Return the value for the specific property name
      * @param {String} propertyName
@@ -88,6 +96,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     propertyNamed:function (propertyName) {
         return this._properties[propertyName];
     },
+
     /**
      * <p>Return the dictionary for the specific object name. <br />
      * It will return the 1st object found on the array for the given name.</p>
@@ -106,12 +115,14 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
         // object not found
         return null;
     },
+
     /**
      * @return {Array}
      */
     getObjects:function () {
         return this._objects;
     },
+
     /**
      * @param {object} objects
      */

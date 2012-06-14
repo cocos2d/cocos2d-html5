@@ -32,42 +32,49 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     _ratio:null,
     _offset:null,
     _child:null,
+
     /**
      * @return  {cc.Point}
      */
     getRatio:function () {
         return this._ratio;
     },
+
     /**
      * @param  {cc.Point} value
      */
     setRatio:function (value) {
         this._ratio = value;
     },
+
     /**
      * @return  {cc.Point}
      */
     getOffset:function () {
         return this._offset;
     },
+
     /**
      * @param {cc.Point} value
      */
     setOffset:function (value) {
         this._offset = value;
     },
+
     /**
      * @return {cc.Node}
      */
     getChild:function () {
         return this._child;
     },
+
     /**
      * @param  {cc.Node} value
      */
     setChild:function (value) {
         this._child = value;
     },
+
     /**
      * @param  {cc.Point} ratio
      * @param  {cc.Point} offset
@@ -80,6 +87,7 @@ cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
         return true;
     }
 });
+
 /**
  * @param {cc.Point} ratio
  * @param {cc.Point} offset
@@ -100,18 +108,22 @@ cc.PointObject.create = function (ratio, offset) {
 cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
     _lastPosition:null,
     _parallaxArray:[],
+
     /**
      * @return {Array}
      */
+
     getParallaxArray:function () {
         return this._parallaxArray;
     },
+
     /**
      * @param {Array} value
      */
     setParallaxArray:function (value) {
         this._parallaxArray = value;
     },
+
     /**
      * @Constructor
      */
@@ -119,6 +131,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         this._parallaxArray = [];
         this._lastPosition = cc.PointMake(-100, -100);
     },
+
     /**
      * Adds a child to the container with a z-order, a parallax ratio and a position offset
      * It returns self, so you can chain several addChilds.
@@ -147,6 +160,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
 
         this._super(child, z, child.getTag());
     },
+
     /**
      *  Remove Child
      * @param {cc.Node} child
@@ -165,6 +179,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         }
         this._super(child, cleanup);
     },
+
     /**
      *  Remove all children with cleanup
      * @param {Boolean} cleanup
@@ -173,6 +188,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         this._parallaxArray = [];
         this._super(cleanup);
     },
+
     /**
      * Visit
      */
@@ -189,6 +205,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         }
         this._super();
     },
+
     _absolutePosition:function () {
         var ret = this._position;
         var cn = this;

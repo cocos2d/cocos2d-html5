@@ -24,29 +24,40 @@
  THE SOFTWARE.
  ****************************************************************************/
 /**
- * @type object
+ * @constant
+ * @type Number
  */
-cc.TGA_OK = null;
+cc.TGA_OK = 0;
+
 /**
- * @type object
+ * @constant
+ * @type Number
  */
-cc.TGA_ERROR_FILE_OPEN = null;
+cc.TGA_ERROR_FILE_OPEN = 1;
+
 /**
- * @type object
+ * @constant
+ * @type Number
  */
-cc.TGA_ERROR_READING_FILE = null;
+cc.TGA_ERROR_READING_FILE = 2;
+
 /**
- * @type object
+ * @constant
+ * @type Number
  */
-cc.TGA_ERROR_INDEXED_COLOR = null;
+cc.TGA_ERROR_INDEXED_COLOR = 3;
+
 /**
- * @type object
+ * @constant
+ * @type Number
  */
-cc.TGA_ERROR_MEMORY = null;
+cc.TGA_ERROR_MEMORY = 4;
+
 /**
- * @type object
+ * @constant
+ * @type Number
  */
-cc.TGA_ERROR_COMPRESSED_FILE = null;
+cc.TGA_ERROR_COMPRESSED_FILE = 5;
 
 function cc.ImageTGA(status, type, pixelDepth, width, height, imageData, flipped) {
     this.status = status;
@@ -86,18 +97,21 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     _itemsToRender:0,
     //x,y to altas dictionary
     _posToAtlasIndex:null,
+
     /**
      * @return {cc.ImageTGA}
      */
     getTGAInfo:function () {
         return this._GAInfo;
     },
+
     /**
      * @param  {cc.ImageTGA} Var
      */
     setTGAInfo:function (Var) {
         this._GAInfo = Var;
     },
+
     /**
      * Initializes a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.<br />
      * The file will be loaded using the TextureMgr.
@@ -123,6 +137,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         }
         return false;
     },
+
     /**
      * <p>Returns a tile from position x,y.<br />
      * For the moment only channel R is used. </p>
@@ -139,6 +154,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
         return value;
     },
+
     /**
      * Sets a tile at position x,y.
      * For the moment only channel R is used
@@ -174,6 +190,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             this._updateAtlasValueAt(position, tile, num);
         }
     },
+
     /**
      * Dealloc the map from memory
      */
@@ -189,6 +206,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             this._posToAtlasIndex = null;
         }
     },
+
     _loadTGAfile:function (file) {
         cc.Assert(file != null, "file must be non-nil");
 
@@ -202,6 +220,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             cc.Assert(0, "TileMapAtlasLoadTGA : TileMapAtas cannot load TGA file");
         }
     },
+
     _calculateItemsToRender:function () {
         cc.Assert(this._GAInfo != null, "tgaInfo must be non-nil");
 
@@ -216,6 +235,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             }
         }
     },
+
     _updateAtlasValueAt:function (pos, value, index) {
         var quad = new cc.V3F_C4B_T2F_Quad();
 
@@ -263,6 +283,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
         this._textureAtlas.updateQuad(quad, index);
     },
+
     _updateAtlasValues:function () {
         cc.Assert(this._GAInfo != null, "tgaInfo must be non-nil");
 
