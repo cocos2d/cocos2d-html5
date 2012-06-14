@@ -79,7 +79,7 @@ cc.MenuItemImage = cc.MenuItem.extend(/** @lends cc.MenuItemImage# */{
  * creates a new DOM menu item image
  * @param {String} normal file name for normal state
  * @param {String|Null} selected image for selected state
- * @param {cc.Node|Null} target ccNode target to run callback when clicked
+ * @param {cc.Node|Null} target cc.Node target to run callback when clicked
  * @param {String|function|Null} callback callback function, either name in string, or pass the whole function
  * @return {cc.MenuItemImage}
  * @example
