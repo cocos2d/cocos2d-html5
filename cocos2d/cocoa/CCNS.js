@@ -72,7 +72,7 @@ cc.splitWithForm = function (str, strs) {
 /**
  * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
  * The string is not localized, so items are always separated with a comma. <br/>
- * If the string is not well-formed, the function returns CCRectZero.
+ * If the string is not well-formed, the function returns cc.RectZero.
  * @function
  * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
  * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
@@ -125,7 +125,7 @@ cc.RectFromString = function (content) {
  * The x and y values can represent integer or float values. <br/>
  * The string is not localized, so items are always separated with a comma.<br/>
  * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
- * If the string is not well-formed, the function returns CCPointZero.
+ * If the string is not well-formed, the function returns cc.PointZero.
  * @constructor
  * @example
  * //example
@@ -154,7 +154,7 @@ cc.PointFromString = function (content) {
  * The w and h values can be integer or float values. <br/>
  * The string is not localized, so items are always separated with a comma.<br/>
  * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
- * If the string is not well-formed, the function returns CCSizeZero.
+ * If the string is not well-formed, the function returns cc.SizeZero.
  * @example
  * // example
  * var size = cc.SizeFromString("{3.0,2.5}");

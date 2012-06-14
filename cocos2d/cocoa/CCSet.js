@@ -45,7 +45,7 @@ cc.Set = cc.Class.extend(/** @lends cc.Set# */{
     },
 
     /**
-     * Return a copy of the CCSet, it will copy all the elelments.
+     * Return a copy of the cc.Set, it will copy all the elelments.
      * @return {cc.Set}
      */
     copy:function () {
@@ -62,7 +62,7 @@ cc.Set = cc.Class.extend(/** @lends cc.Set# */{
     },
 
     /**
-     * Return the number of elements the CCSet contains.
+     * Return the number of elements the cc.Set contains.
      * @return {Number}
      */
     count:function () {
@@ -71,7 +71,7 @@ cc.Set = cc.Class.extend(/** @lends cc.Set# */{
     },
 
     /**
-     * Add a element into CCSet, it will retain the element.
+     * Add a element into cc.Set, it will retain the element.
      * @param {object} obj
      */
     addObject:function (obj) {
@@ -100,7 +100,7 @@ cc.Set = cc.Class.extend(/** @lends cc.Set# */{
     },
 
     /**
-     * Check if CCSet contains a element equals obj.
+     * Check if cc.Set contains a element equals obj.
      * @param {object} obj
      * @return {Boolean}
      */
