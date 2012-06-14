@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-8
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -28,75 +24,108 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-cc.PI = Math.PI;
-cc.RAD = cc.PI / 180;
-cc.DEG = 180 / cc.PI;
-/** @def CC_SWAP
- simple macro that swaps 2 variables
+/**
+ * PI is the ratio of a circle's circumference to its diameter.
+ * @constant
+ * @type Number
  */
-//modified from c++ macro, you need to pass in the x and y variables names in string,
-// and then a reference to the whole object as third variable
+cc.PI = Math.PI;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.RAD = cc.PI / 180;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.DEG = 180 / cc.PI;
+
+/**
+ * <p>
+ * simple macro that swaps 2 variables<br/>
+ *  modified from c++ macro, you need to pass in the x and y variables names in string, <br/>
+ *  and then a reference to the whole object as third variable
+ * </p>
+ * @param x
+ * @param y
+ * @param ref
+ * @function
+ * @deprecated
+ */
 cc.SWAP = function (x, y, ref) {
     if ((typeof ref) == 'object' && (typeof ref.x) != 'undefined' && (typeof ref.y) != 'undefined') {
         var tmp = ref[x];
         ref[x] = ref[y];
         ref[y] = tmp;
-    }
-    else {
+    } else {
         cc.Assert(false, "CC_SWAP is being modified from original macro, please check usage");
     }
 };
 
-/** @def CCRANDOM_MINUS1_1
- returns a random float between -1 and 1
+/**
+ * returns a random float between -1 and 1
+ * @return {Number}
+ * @function
  */
 cc.RANDOM_MINUS1_1 = function () {
     return (Math.random() - 0.5) * 2;
 };
 
-/** @def CCRANDOM_0_1
- returns a random float between 0 and 1
+/**
+ * returns a random float between 0 and 1
+ * @return {Number}
+ * @function
  */
 cc.RANDOM_0_1 = function () {
     return Math.random();
 };
 
-/** @def CC_DEGREES_TO_RADIANS
- converts degrees to radians
+/**
+ * converts degrees to radians
+ * @param {Number} angle
+ * @return {Number}
+ * @function
  */
 cc.DEGREES_TO_RADIANS = function (angle) {
     return angle * cc.RAD;
 };
-/** @def CC_RADIANS_TO_DEGREES
- converts radians to degrees
+
+/**
+ * converts radians to degrees
+ * @param {Number} angle
+ * @return {Number}
+ * @function
  */
 cc.RADIANS_TO_DEGREES = function (angle) {
     return angle * cc.DEG;
 };
 
-/** @def CC_BLEND_SRC
- default gl blend src function. Compatible with premultiplied alpha images.
+/**
+ * default gl blend src function. Compatible with premultiplied alpha images.
+ * @constant
+ * @type Number
  */
-if (cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA) {
-    cc.BLEND_SRC = 1;
-    cc.BLEND_DST = 0x0303;
-}
-else {
-    cc.BLEND_SRC = 0x0302;
-    cc.BLEND_DST = 0x0303
-}
-/** @def CC_BLEND_DST
- default gl blend dst function. Compatible with premultiplied alpha images.
+cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
+
+/**
+ * default gl blend dst function. Compatible with premultiplied alpha images.
+ * @constant
+ * @type Number
  */
 cc.BLEND_DST = 0x0303;
 
-/** @def CC_ENABLE_DEFAULT_GL_STATES
- GL states that are enabled:
- - GL_TEXTURE_2D
- - GL_VERTEX_ARRAY
- - GL_TEXTURE_COORD_ARRAY
- - GL_COLOR_ARRAY
+/**
+ * <p>
+ *     GL states that are enabled:<br/>
+ *       - GL_TEXTURE_2D<br/>
+ *       - GL_VERTEX_ARRAY<br/>
+ *       - GL_TEXTURE_COORD_ARRAY<br/>
+ *       - GL_COLOR_ARRAY<br/>
+ * </p>
+ * @function
  */
 cc.ENABLE_DEFAULT_GL_STATES = function () {
     //TODO OPENGL STUFF
@@ -107,12 +136,14 @@ cc.ENABLE_DEFAULT_GL_STATES = function () {
      glEnable(GL_TEXTURE_2D);*/
 };
 
-/** @def CC_DISABLE_DEFAULT_GL_STATES
- Disable default GL states:
- - GL_TEXTURE_2D
- - GL_VERTEX_ARRAY
- - GL_TEXTURE_COORD_ARRAY
- - GL_COLOR_ARRAY
+/**
+ * <p>
+ *   Disable default GL states:<br/>
+ *     - GL_TEXTURE_2D<br/>
+ *     - GL_TEXTURE_COORD_ARRAY<br/>
+ *     - GL_COLOR_ARRAY<br/>
+ * </p>
+ * @function
  */
 cc.DISABLE_DEFAULT_GL_STATES = function () {
     //TODO OPENGL
@@ -124,55 +155,45 @@ cc.DISABLE_DEFAULT_GL_STATES = function () {
      */
 };
 
-
+/**
+ * @constant
+ * @type Number
+ */
 cc.FLT_EPSILON = 0.0000001192092896;
 
-/*
- #define DISALLOW_COPY_AND_ASSIGN(TypeName) \
- TypeName(const TypeName&);\
- void operator=(const TypeName&)
+/**
+ * <p>
+ *     On Mac it returns 1;<br/>
+ *     On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
+ * </p>
+ * @function
  */
+cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
+    return cc.Director.sharedDirector().getContentScaleFactor();
+} : function () {
+    return 1;
+};
 
 /**
- @since v0.99.5
- @todo upto-0.99.5 check the code  for retina
+ * Converts a rect in pixels to points
+ * @param {cc.Rect} pixel
+ * @function
  */
-if (cc.IS_RETINA_DISPLAY_SUPPORTED) {
-    /** @def CC_CONTENT_SCALE_FACTOR
-     On Mac it returns 1;
-     On iPhone it returns 2 if RetinaDisplay is On. Otherwise it returns 1
-     */
-    cc.CONTENT_SCALE_FACTOR = function () {
-        return cc.Director.sharedDirector().getContentScaleFactor();
-    };
-
-    /** @def CC_RECT_PIXELS_TO_POINTS
-     Converts a rect in pixels to points
-     */
-    cc.RECT_PIXELS_TO_POINTS = function (pixel) {
-        return cc.RectMake(pixel.origin.x / cc.CONTENT_SCALE_FACTOR(), pixel.origin.y / cc.CONTENT_SCALE_FACTOR(), pixel.size.width / cc.CONTENT_SCALE_FACTOR(), pixel.size.height / cc.CONTENT_SCALE_FACTOR());
-    };
-
-    cc.RECT_POINTS_TO_RECT = function (point) {
-        return cc.RectMake(point.origin.x * cc.CONTENT_SCALE_FACTOR(), point.origin.y * cc.CONTENT_SCALE_FACTOR(), point.size.width * cc.CONTENT_SCALE_FACTOR(), point.size.height * cc.CONTENT_SCALE_FACTOR());
-    };
-} else {
-    cc.CONTENT_SCALE_FACTOR = function () {
-        return 1;
-    };
-    cc.RECT_PIXELS_TO_POINTS = function (p) {
-        return p
-    };
-    cc.RECT_POINTS_TO_PIXELS = function (p) {
-        return p
-    };
-}
+cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
+    return cc.RectMake(pixel.origin.x / cc.CONTENT_SCALE_FACTOR(), pixel.origin.y / cc.CONTENT_SCALE_FACTOR(),
+        pixel.size.width / cc.CONTENT_SCALE_FACTOR(), pixel.size.height / cc.CONTENT_SCALE_FACTOR());
+} : function (p) {
+    return p;
+};
 
 /**
- Helper marcos which converts 4-byte little/big endian
- integral number to the machine native number representation
-
- It should work same as apples CFSwapInt32LittleToHost(..)
+ * Converts a rect in points to pixels
+ * @param {cc.Rect} point
+ * @function
  */
-/// when define returns true it means that our architecture uses big endian
-//dont think this needs for javascript html5
+cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
+    return cc.RectMake(point.origin.x * cc.CONTENT_SCALE_FACTOR(), point.origin.y * cc.CONTENT_SCALE_FACTOR(),
+        point.size.width * cc.CONTENT_SCALE_FACTOR(), point.size.height * cc.CONTENT_SCALE_FACTOR());
+} : function (p) {
+    return p;
+};
