@@ -23,16 +23,19 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-
-// first, judge whether the form of the string like this: {x,y}
-// if the form is right,the string will be splited into the parameter strs;
-// or the parameter strs will be empty.
-// if the form is right return true,else return false.
+/**
+ * first, judge whether the form of the string like this: {x,y}  <br/>
+ * if the form is right,the string will be splited into the parameter strs;<br/>
+ * or the parameter strs will be empty. <br/>
+ * if the form is right return true,else return false.<br/>
+ * @function
+ * @param {String} str
+ * @param {String} strs
+ * @return {String}
+ */
 cc.splitWithForm = function (str, strs) {
     var ret = false;
-
     do
     {
         if (!str) break;
@@ -67,14 +70,19 @@ cc.splitWithForm = function (str, strs) {
 };
 
 /**
- @brief Returns a Core Graphics rectangle structure corresponding to the data in a given string.
- @param content   A string object whose contents are of the form "{{x,y},{w, h}}",
- where x is the x coordinate, y is the y coordinate, w is the width, and h is the height.
- These components can represent integer or float values.
- An example of a valid string is "{{3,2},{4,5}}".
- The string is not localized, so items are always separated with a comma.
- @return A Core Graphics structure that represents a rectangle.
- If the string is not well-formed, the function returns CCRectZero.**/
+ * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
+ * The string is not localized, so items are always separated with a comma. <br/>
+ * If the string is not well-formed, the function returns cc.RectZero.
+ * @function
+ * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
+ * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
+ * These components can represent integer or float values.
+ * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
+ * @constructor
+ * @example
+ * // example
+ * var rect = cc.RectFromString("{{3,2},{4,5}}");
+ */
 cc.RectFromString = function (content) {
     var result = cc.RectZero();
 
@@ -110,14 +118,18 @@ cc.RectFromString = function (content) {
     return result;
 }
 /**
- @brief Returns a Core Graphics point structure corresponding to the data in a given string.
- @param content   A string object whose contents are of the form "{x,y}",
- where x is the x coordinate and y is the y coordinate.
- The x and y values can represent integer or float values.
- An example of a valid string is "{3.0,2.5}".
- The string is not localized, so items are always separated with a comma.
- @return A Core Graphics structure that represents a point.
- If the string is not well-formed, the function returns CCPointZero.
+ * Returns a Core Graphics point structure corresponding to the data in a given string.
+ * @function
+ * @param {String} content   A string object whose contents are of the form "{x,y}",
+ * where x is the x coordinate and y is the y coordinate.<br/>
+ * The x and y values can represent integer or float values. <br/>
+ * The string is not localized, so items are always separated with a comma.<br/>
+ * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
+ * If the string is not well-formed, the function returns cc.PointZero.
+ * @constructor
+ * @example
+ * //example
+ * var point = cc.PointFromString("{3.0,2.5}");
  */
 cc.PointFromString = function (content) {
     var ret = cc.PointZero();
@@ -135,14 +147,17 @@ cc.PointFromString = function (content) {
     return ret;
 }
 /**
- @brief Returns a Core Graphics size structure corresponding to the data in a given string.
- @param content   A string object whose contents are of the form "{w, h}",
- where w is the width and h is the height.
- The w and h values can be integer or float values.
- An example of a valid string is "{3.0,2.5}".
- The string is not localized, so items are always separated with a comma.
- @return A Core Graphics structure that represents a size.
- If the string is not well-formed, the function returns CCSizeZero.
+ * Returns a Core Graphics size structure corresponding to the data in a given string.
+ * @function
+ * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
+ * where w is the width and h is the height.<br/>
+ * The w and h values can be integer or float values. <br/>
+ * The string is not localized, so items are always separated with a comma.<br/>
+ * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
+ * If the string is not well-formed, the function returns cc.SizeZero.
+ * @example
+ * // example
+ * var size = cc.SizeFromString("{3.0,2.5}");
  */
 cc.SizeFromString = function (content) {
     var ret = cc.SizeZero();
