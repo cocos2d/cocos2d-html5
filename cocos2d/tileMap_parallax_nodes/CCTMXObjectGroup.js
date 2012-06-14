@@ -23,47 +23,76 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-/** @brief CCTMXObjectGroup represents the TMX object group.
- @since v0.99.0
+/**
+ * cc.TMXObjectGroup represents the TMX object group.
+ * @class
+ * @extends cc.Class
  */
-cc.TMXObjectGroup = cc.Class.extend({
-    /** name of the group */
+cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
+    //name of the group
     _groupName:"",
     _positionOffset:cc.PointZero(),
     _properties:null,
     _objects:null,
+    /**
+     *  @Constructor
+     */
     ctor:function () {
         this._properties = [];
         this._objects = [];
     },
-    /** offset position of child objects */
+    /**
+     * Offset position of child objects
+     * @return {cc.Point}
+     */
     getPositionOffset:function () {
         return this._positionOffset;
     },
+    /**
+     * @param {cc.Point} Var
+     */
     setPositionOffset:function (Var) {
         this._positionOffset = Var;
     },
-    /** list of properties stored in a dictionary */
+    /**
+     * List of properties stored in a dictionary
+     * @return {Array}
+     */
     getProperties:function () {
         return this._properties;
     },
+    /**
+     * @param properties
+     */
     setProperties:function (properties) {
         this._properties.push(properties);
     },
+    /**
+     * @return {String}
+     */
     getGroupName:function () {
         return this._groupName.toString();
     },
+    /**
+     * @param {String} groupName
+     */
     setGroupName:function (groupName) {
         this._groupName = groupName;
     },
-    /** return the value for the specific property name */
+    /**
+     * Return the value for the specific property name
+     * @param {String} propertyName
+     * @return {object}
+     */
     propertyNamed:function (propertyName) {
         return this._properties[propertyName];
     },
-    /** return the dictionary for the specific object name.
-     It will return the 1st object found on the array for the given name.
+    /**
+     * <p>Return the dictionary for the specific object name. <br />
+     * It will return the 1st object found on the array for the given name.</p>
+     * @param {String} objectName
+     * @return {object|Null}
      */
     objectNamed:function (objectName) {
         if (this._objects && this._objects.length > 0) {
@@ -77,9 +106,15 @@ cc.TMXObjectGroup = cc.Class.extend({
         // object not found
         return null;
     },
+    /**
+     * @return {Array}
+     */
     getObjects:function () {
         return this._objects;
     },
+    /**
+     * @param {object} objects
+     */
     setObjects:function (objects) {
         this._objects.push(objects);
     }

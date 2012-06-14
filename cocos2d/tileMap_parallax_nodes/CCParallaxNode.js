@@ -24,36 +24,55 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/** @brief CCParallaxNode: A node that simulates a parallax scroller
-
- The children will be moved faster / slower than the parent according the the parallax ratio.
-
+/**
+ * @class
+ * @extends cc.Class
  */
-cc.PointObject = cc.Class.extend({
-
+cc.PointObject = cc.Class.extend(/** @lends cc.PointObject# */{
     _ratio:null,
     _offset:null,
     _child:null,
-
+    /**
+     * @return  {cc.Point}
+     */
     getRatio:function () {
         return this._ratio;
     },
+    /**
+     * @param  {cc.Point} value
+     */
     setRatio:function (value) {
         this._ratio = value;
     },
+    /**
+     * @return  {cc.Point}
+     */
     getOffset:function () {
         return this._offset;
     },
+    /**
+     * @param {cc.Point} value
+     */
     setOffset:function (value) {
         this._offset = value;
     },
+    /**
+     * @return {cc.Node}
+     */
     getChild:function () {
         return this._child;
     },
+    /**
+     * @param  {cc.Node} value
+     */
     setChild:function (value) {
         this._child = value;
     },
-
+    /**
+     * @param  {cc.Point} ratio
+     * @param  {cc.Point} offset
+     * @return {Boolean}
+     */
     initWithCCPoint:function (ratio, offset) {
         this._ratio = ratio;
         this._offset = offset;
@@ -61,32 +80,56 @@ cc.PointObject = cc.Class.extend({
         return true;
     }
 });
+/**
+ * @param {cc.Point} ratio
+ * @param {cc.Point} offset
+ * @return {cc.PointObject}
+ */
 cc.PointObject.create = function (ratio, offset) {
     var ret = new cc.PointObject();
     ret.initWithCCPoint(ratio, offset);
     return ret;
 }
-cc.ParallaxNode = cc.Node.extend({
 
-    /** array that holds the offset / ratio of the children */
+/**
+ * <p>cc.ParallaxNode: A node that simulates a parallax scroller<br />
+ * The children will be moved faster / slower than the parent according the the parallax ratio. </p>
+ * @class
+ * @extends cc.Node
+ */
+cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
+    _lastPosition:null,
     _parallaxArray:[],
-
+    /**
+     * @return {Array}
+     */
     getParallaxArray:function () {
         return this._parallaxArray;
     },
+    /**
+     * @param {Array} value
+     */
     setParallaxArray:function (value) {
         this._parallaxArray = value;
     },
-
-    /** Adds a child to the container with a z-order, a parallax ratio and a position offset
-     It returns self, so you can chain several addChilds.
-     @since v0.8
+    /**
+     * @Constructor
      */
     ctor:function () {
         this._parallaxArray = [];
         this._lastPosition = cc.PointMake(-100, -100);
     },
-
+    /**
+     * Adds a child to the container with a z-order, a parallax ratio and a position offset
+     * It returns self, so you can chain several addChilds.
+     * @param {cc.Node} child
+     * @param {Number} z
+     * @param {cc.Point} ratio
+     * @param {cc.Point} offset
+     * @example
+     * //example
+     * voidNode.addChild(background, -1, cc.ccp(0.4, 0.5), cc.PointZero());
+     */
     addChild:function (child, z, ratio, offset) {
         if (arguments.length == 3) {
             cc.Assert(0, "ParallaxNode: use addChild:z:parallaxRatio:positionOffset instead");
@@ -103,27 +146,37 @@ cc.ParallaxNode = cc.Node.extend({
         child.setPosition(pos);
 
         this._super(child, z, child.getTag());
-
     },
-    // super methods
+    /**
+     *  Remove Child
+     * @param {cc.Node} child
+     * @param {Boolean} cleanup
+     * @example
+     * //example
+     * voidNode.removeChild(background,true);
+     */
     removeChild:function (child, cleanup) {
         for (var i = 0; i < this._parallaxArray.length; i++) {
             var point = this._parallaxArray[i];
             if (point.getChild().isEqual(child)) {
-                //ccArrayRemoveObjectAtIndex(m_pParallaxArray, i);
                 this._parallaxArray.splice(i, 1);
                 break;
             }
         }
         this._super(child, cleanup);
     },
+    /**
+     *  Remove all children with cleanup
+     * @param {Boolean} cleanup
+     */
     removeAllChildrenWithCleanup:function (cleanup) {
         this._parallaxArray = [];
         this._super(cleanup);
     },
+    /**
+     * Visit
+     */
     visit:function () {
-        //	CCPoint pos = position_;
-        //	CCPoint	pos = [self convertToWorldSpace:CCPointZero];
         var pos = this._absolutePosition();
         if (!cc.Point.CCPointEqualToPoint(pos, this._lastPosition)) {
             for (var i = 0; i < this._parallaxArray.length; i++) {
@@ -132,7 +185,7 @@ cc.ParallaxNode = cc.Node.extend({
                 var y = -pos.y + pos.y * point.getRatio().y + point.getOffset().y;
                 point.getChild().setPosition(cc.ccp(x, y));
             }
-            lastPosition = pos;
+            this._lastPosition = pos;
         }
         this._super();
     },
@@ -144,11 +197,15 @@ cc.ParallaxNode = cc.Node.extend({
             ret = cc.ccpAdd(ret, cn.getPosition());
         }
         return ret;
-    },
-
-    _lastPosition:null
+    }
 });
 
+/**
+ * @return {cc.ParallaxNode}
+ * @example
+ * //example
+ * var voidNode = cc.ParallaxNode.create();
+ */
 cc.ParallaxNode.create = function () {
     var ret = new cc.ParallaxNode();
     return ret;
