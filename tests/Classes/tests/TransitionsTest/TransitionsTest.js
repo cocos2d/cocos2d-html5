@@ -221,7 +221,7 @@ var TestLayer2 = cc.Layer.extend({
         bg1.setScale(1.7);
         this.addChild(bg1, -1);
 
-        var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx], "Thonburi", 32);
+        var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx].title, "Thonburi", 32);
         this.addChild(title);
         title.setColor(cc.ccc3(255, 32, 32));
         title.setPosition(cc.PointMake(x / 2, y - 100));
