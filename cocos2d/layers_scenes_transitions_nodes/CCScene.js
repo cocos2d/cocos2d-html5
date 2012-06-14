@@ -25,30 +25,48 @@
  ****************************************************************************/
 
 
-var cc = cc = cc || {};
-/** @brief CCScene is a subclass of CCNode that is used only as an abstract concept.
-
- CCScene an CCNode are almost identical with the difference that CCScene has it's
- anchor point (by default) at the center of the screen.
-
- For the moment CCScene has no other logic than that, but in future releases it might have
- additional logic.
-
- It is a good practice to use and CCScene as the parent of all your nodes.
+/**
+ * <p>cc.Scene is a subclass of cc.Node that is used only as an abstract concept.</p>
+ *  <p>cc.Scene an cc.Node are almost identical with the difference that cc.Scene has it's
+ * anchor point (by default) at the center of the screen.</p>
+ *
+ * <p>For the moment cc.Scene has no other logic than that, but in future releases it might have
+ * additional logic.</p>
+ *
+ * <p>It is a good practice to use and cc.Scene as the parent of all your nodes.</p>
+ * @class
+ * @extends cc.Node
  */
-cc.Scene = cc.Node.extend({
+cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
+    /**
+     * @constructor
+     */
     ctor:function () {
         this._isRelativeAnchorPoint = false;
         var director = cc.Director.sharedDirector();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.setContentSize(director.getWinSize());
     },
+
+    /**
+     * Initialize
+     * @return {Boolean}
+     */
     init:function () {
         var director = cc.Director.sharedDirector();
         this.setContentSize(director.getWinSize());
         return true;
     }
 });
+/**
+ * creates a scene
+ * @return {cc.Scene}
+ * @example
+ * // Example
+ * var aScene = cc.Scene.create();
+ * //OR
+ * var aScene = new cc.Scene();
+ */
 cc.Scene.create = function () {
     var ret = new cc.Scene();
     return ret;

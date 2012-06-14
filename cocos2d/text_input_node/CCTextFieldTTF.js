@@ -213,7 +213,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         return this._placeHolder;
     },
     /**
-     * @param {CanvasRenderingContext2D} ctx
+     * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
