@@ -25,7 +25,12 @@
  ****************************************************************************/
 
 
-cc.CCITEM_SIZE = cc._fontSize = 32;
+/**
+ * default size for font size
+ * @type Number
+ */
+cc.CCITEM_SIZE = 32;
+cc._fontSize = cc.CCITEM_SIZE;
 cc._fontName = "Marker Felt";
 cc._fontNameRelease = false;
 
