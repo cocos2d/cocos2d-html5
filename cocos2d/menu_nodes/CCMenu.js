@@ -24,25 +24,47 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-var cc = cc = cc || {};
-
+/**
+ * @constant
+ * @type Number
+ */
 cc.CCMENU_STATE_WAITING = 0;
+/**
+ * @constant
+ * @type Number
+ */
 cc.CCMENU_STATE_TRACKING_TOUCH = 1;
+/**
+ * @constant
+ * @type Number
+ */
 cc.CCMENU_TOUCH_PRIORITY = -128;
+/**
+ * @constant
+ * @type Number
+ */
 cc.DEFAULT_PADDING = 5;
 
-/** @brief A CCMenu
- *
- * Features and Limitation:
- *  - You can add MenuItem objects in runtime using addChild:
- *  - But the only accecpted children are MenuItem objects
+/**
+ * <p> Features and Limitation:<br/>
+ *  - You can add MenuItem objects in runtime using addChild:<br/>
+ *  - But the only accecpted children are MenuItem objects</p>
+ * @class
+ * @extends cc.Layer
  */
-cc.Menu = cc.Layer.extend({
+cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     _color:new cc.Color3B(),
+
+    /**
+     * @return {cc.Color3B}
+     */
     getColor:function () {
         return this._color;
     },
+
+    /**
+     * @param {cc.Color3B} color
+     */
     setColor:function (color) {
         this._color = color;
 
@@ -53,9 +75,17 @@ cc.Menu = cc.Layer.extend({
         }
     },
     _opacity:0,
+
+    /**
+     * @return {Number}
+     */
     getOpacity:function () {
         return this._opacity;
     },
+
+    /**
+     * @param {Number} opa
+     */
     setOpacity:function (opa) {
         this._opacity = opa;
         if (this._children && this._children.length > 0) {
@@ -65,7 +95,10 @@ cc.Menu = cc.Layer.extend({
         }
     },
     _selectedItem:null,
-    /** initializes an empty CCMenu */
+    /**
+     * initializes an empty cc.Menu
+     * @return {Boolean}
+     */
     init:function () {
         if (this._super()) {
             this.setIsTouchEnabled(true);
@@ -89,7 +122,12 @@ cc.Menu = cc.Layer.extend({
         }
         return false;
     },
-    /** initializes a CCMenu with it's items */
+
+    /**
+     * initializes a cc.Menu with it's items
+     * @param {Array} args
+     * @return {Boolean}
+     */
     initWithItems:function (args) {
         if (this.init()) {
             if (args.length > 0) {
@@ -103,13 +141,28 @@ cc.Menu = cc.Layer.extend({
         }
         return false;
     },
+
+    /**
+     * @param {cc.Node} child
+     * @param {Number|Null} zOrder
+     * @param {Number|Null} tag
+     */
     addChild:function (child, zOrder, tag) {
         tag = tag || child._tag;
         this._super(child, zOrder, tag);
     },
+
+    /**
+     * align items vertically with default padding
+     */
     alignItemsVertically:function () {
         this.alignItemsVerticallyWithPadding(cc.DEFAULT_PADDING);
     },
+
+    /**
+     * align items vertically with specified padding
+     * @param {Number} padding
+     */
     alignItemsVerticallyWithPadding:function (padding) {
         var height = -padding;
         if (this._children && this._children.length > 0) {
@@ -126,9 +179,18 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
+
+    /**
+     * align items horizontally with default padding
+     */
     alignItemsHorizontally:function () {
         this.alignItemsHorizontallyWithPadding(cc.DEFAULT_PADDING);
     },
+
+    /**
+     * align items horizontally with specified padding
+     * @param {Number} padding
+     */
     alignItemsHorizontallyWithPadding:function (padding) {
         var width = -padding;
         if (this._children && this._children.length > 0) {
@@ -145,6 +207,15 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
+
+    /**
+     * align items in columns
+     * @example
+     * // Example
+     * menu.alignItemsInColumns(3,2,3)// this will create 3 columns, with 3 items for first column, 2 items for second and 3 for third
+     *
+     * menu.alignItemsInColumns(3,3)//this creates 2 columns, each have 3 items
+     */
     alignItemsInColumns:function (/*Multiple Arguments*/) {
         var rows = [];
         for (var i = 0; i < arguments.length; i++) {
@@ -216,6 +287,14 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
+    /**
+     * align menu items in rows
+     * @example
+     * // Example
+     * menu.alignItemsInRows(5,3)//this will align items to 2 rows, first row with 5 items, second row with 3
+     *
+     * menu.alignItemsInRows(4,4,4,4)//this creates 4 rows each have 4 items
+     */
     alignItemsInRows:function (/*Multiple arguments*/) {
         var columns = [];
         for (var i = 0; i < arguments.length; i++) {
@@ -299,9 +378,18 @@ cc.Menu = cc.Layer.extend({
             }
         }
     },
+
+    /**
+     * make the menu clickable
+     */
     registerWithTouchDispatcher:function () {
         cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY, true);
     },
+
+    /**
+     * @param {cc.Touch} touch
+     * @return {Boolean}
+     */
     ccTouchBegan:function (touch, e) {
         if (this._state != cc.CCMENU_STATE_WAITING || !this._isVisible) {
             return false;
@@ -321,6 +409,10 @@ cc.Menu = cc.Layer.extend({
         }
         return false;
     },
+
+    /**
+     * when a touch ended
+     */
     ccTouchEnded:function (touch, e) {
         cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchEnded] -- invalid state");
         if (this._selectedItem) {
@@ -329,6 +421,10 @@ cc.Menu = cc.Layer.extend({
         }
         this._state = cc.CCMENU_STATE_WAITING;
     },
+
+    /**
+     * touch cancelled
+     */
     ccTouchCancelled:function (touch, e) {
         cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchCancelled] -- invalid state");
         if (this._selectedItem) {
@@ -336,6 +432,11 @@ cc.Menu = cc.Layer.extend({
         }
         this._state = cc.CCMENU_STATE_WAITING;
     },
+
+    /**
+     * touch moved
+     * @param {cc.Touch} touch
+     */
     ccTouchMoved:function (touch, e) {
         cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchMoved] -- invalid state");
         var currentItem = this._itemForTouch(touch);
@@ -350,6 +451,9 @@ cc.Menu = cc.Layer.extend({
         }
     },
 
+    /**
+     * custom on exit
+     */
     onExit:function () {
         if (this._state == cc.CCMENU_STATE_TRACKING_TOUCH) {
             this._selectedItem.unselected();
@@ -386,7 +490,13 @@ cc.Menu = cc.Layer.extend({
     _state:-1
 });
 
-/** creates a CCMenu with it's items */
+/**
+ * create a new menu
+ * @return {cc.Menu}
+ * @example
+ * // Example
+ * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3)//there is no limit on how many menu item you can pass in
+ */
 cc.Menu.create = function (/*Multiple Arguments*/) {
     var ret = new cc.Menu();
     ret.initWithItems(arguments);
