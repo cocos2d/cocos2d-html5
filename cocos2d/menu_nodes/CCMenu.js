@@ -97,7 +97,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     _selectedItem:null,
     /**
      * initializes an empty cc.Menu
-      * @return {Boolean}
+     * @return {Boolean}
      */
     init:function () {
         if (this._super()) {
@@ -125,7 +125,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     /**
      * initializes a cc.Menu with it's items
-      * @param {Array} args
+     * @param {Array} args
      * @return {Boolean}
      */
     initWithItems:function (args) {
