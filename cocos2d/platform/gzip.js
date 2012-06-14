@@ -4,6 +4,11 @@
  You can choose between MIT and BSD-3-Clause license. License file will be added later.
  --*/
 
+/**
+ * See cc.Codec.GZip.gunzip.
+ * @param {Array | String} data The bytestream to decompress
+ * @constructor
+ */
 cc.Codec.GZip = function Jacob__GZip(data) {
     this.data = data;
 
@@ -28,25 +33,20 @@ cc.Codec.GZip = function Jacob__GZip(data) {
     this.fpos[0] = 0;
     this.flens = undefined;
     this.fmax = undefined;
-}
-
+};
 
 /**
- *  cc.Codec.GZip.gunzip(data) -> String
- *  - data (Array | String): The bytestream to decompress. Either an array of
- *    Integers between 0 and 255, or a String.
- *
- *  ## Summary
- *
- *  Unzips the gzipped data of the 'data' argument.
- **/
+ * Unzips the gzipped data of the 'data' argument.
+ * @param string  The bytestream to decompress. Either an array of Integers between 0 and 255, or a String.
+ * @return {String}
+ */
 cc.Codec.GZip.gunzip = function (string) {
     if (string.constructor === Array) {
     } else if (string.constructor === String) {
     }
     var gzip = new cc.Codec.GZip(string);
     return gzip.gunzip()[0][0];
-}
+};
 
 cc.Codec.GZip.HufNode = function () {
     this.b0 = 0;
@@ -55,8 +55,15 @@ cc.Codec.GZip.HufNode = function () {
     this.jumppos = -1;
 };
 
-/* Constants */
+/**
+ * @constant
+ * @type Number
+ */
 cc.Codec.GZip.LITERALS = 288;
+/**
+ * @constant
+ * @type Number
+ */
 cc.Codec.GZip.NAMEMAX = 256;
 
 cc.Codec.GZip.bitReverse = [
@@ -117,7 +124,10 @@ cc.Codec.GZip.cpdext = [
 cc.Codec.GZip.border = [16, 17, 18, 0, 8, 7, 9, 6, 10, 5, 11, 4, 12, 3, 13, 2, 14, 1, 15];
 
 
-/* Instance methods */
+/**
+ * gunzip
+ * @return {Array}
+ */
 cc.Codec.GZip.prototype.gunzip = function () {
     this.outputArr = [];
 
@@ -126,7 +136,7 @@ cc.Codec.GZip.prototype.gunzip = function () {
 
     this.nextFile();
     return this.unzipped;
-}
+};
 
 cc.Codec.GZip.prototype.readByte = function () {
     this.bits += 8;
@@ -222,7 +232,7 @@ cc.Codec.GZip.prototype.Rec = function () {
     }
     this.len--;
     return 0;
-}
+};
 
 cc.Codec.GZip.prototype.CreateTree = function (currentTree, numval, lengths, show) {
     var i;
@@ -294,23 +304,6 @@ cc.Codec.GZip.prototype.DeflateLoop = function () {
     do {
         last = this.readBit();
         type = this.readBits(2);
-        // switch(type) {
-        //   case 0:
-        //     // if (this.debug) alert("Stored\n");
-        //     break;
-        //   case 1:
-        //     // if (this.debug) alert("Fixed Huffman codes\n");
-        //     break;
-        //   case 2:
-        //     // if (this.debug) alert("Dynamic Huffman codes\n");
-        //     break;
-        //   case 3:
-        //     // if (this.debug) alert("Reserved block type!!\n");
-        //     break;
-        //   default:
-        //     // if (this.debug) alert("Unexpected value %d!\n", type);
-        //     break;
-        // }
 
         if (type == 0) {
             var blockLen, cSum;
