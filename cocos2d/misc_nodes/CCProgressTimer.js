@@ -177,7 +177,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      * stuff gets drawn here
-     * @param ctx
+     * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
         if (cc.renderContextType == cc.CANVAS) {
