@@ -73,6 +73,7 @@ cc.FileUtils = {};
 
 /**
  * Get resource file data
+ * @function
  * @param {String} fileName The resource file name which contain the path
  * @param {Number} mode mode The read mode of the file
  * @param {Number} size If get the file data succeed the it will be the data size,or it will be 0
@@ -84,6 +85,7 @@ cc.FileUtils.getFileData = function (fileName, mode, size) {
 
 /**
  * Get resource file data from zip file
+ * @function
  * @param {String} pszZipFilePath
  * @param {String} fileName fileName The resource file name which contain the relative path of zip file
  * @param {Number} size size If get the file data succeed the it will be the data size,or it will be 0
@@ -95,6 +97,7 @@ cc.FileUtils.getFileDataFromZip = function (pszZipFilePath, fileName, size) {
 
 /**
  * removes the HD suffix from a path
+ * @function
  * @param {String} path
  * @deprecated
  */
@@ -106,12 +109,14 @@ cc.FileUtils.ccRemoveHDSuffixFromFile = function (path) {
 //////////////////////////////////////////////////////////////////////////
 /**
  * Notification support when getFileData from invalid file path.
+ * @function
  * @type {Boolean}
  */
 cc.popupNotify = true;
 
 /**
  * Generate the absolute path of the file.
+ * @function
  * @param {String} pszRelativePath
  * @return {String} The absolute path of the file.
  * @warning We only add the ResourcePath before the relative path of the file. <br/>
@@ -124,6 +129,7 @@ cc.FileUtils.fullPathFromRelativePath = function (pszRelativePath) {
 
 /**
  * Generate the relative path of the file.
+ * @function
  * @param {String} filename
  * @param {String} relativeFile
  * @return {String}
@@ -143,6 +149,7 @@ cc.FileUtils.fullPathFromRelativeFile = function (filename, relativeFile) {
 
 /**
  * Set the ResourcePath,we will find resource in this path
+ * @function
  * @param {String} resourcePath The absolute resource path
  * @warning Don't call this function in android and iOS, it has not effect.<br/>
  * In android, if you want to read file other than apk, you shoud use invoke getFileData(), and pass the<br/>
@@ -154,6 +161,7 @@ cc.FileUtils.setResourcePath = function (resourcePath) {
 
 /**
  * Generate an Dictionary of object by file
+ * @function
  * @param fileName The file name of *.plist file
  * @return {object} The Dictionary of object generated from the file
  */
@@ -165,6 +173,7 @@ cc.FileUtils.dictionaryWithContentsOfFile = function (fileName) {
 
 /**
  * The same meaning as dictionaryWithContentsOfFile(), but it doesn't call autorelease, so the invoker should call release().
+ * @function
  * @param {String} fileName
  * @return {object} The Dictionary of object generated from the file
  */
@@ -175,6 +184,7 @@ cc.FileUtils.dictionaryWithContentsOfFileThreadSafe = function (fileName) {
 
 /**
  * Get the writeable path
+ * @function
  * @return  The path that can write/read file
  * @deprecated
  */
@@ -183,6 +193,7 @@ cc.FileUtils.getWriteablePath = function () {
 
 /**
  * Set whether pop-up a message box when the image load failed
+ * @function
  * @param {Boolean} notify
  */
 cc.FileUtils.setIsPopupNotify = function (notify) {
@@ -191,6 +202,7 @@ cc.FileUtils.setIsPopupNotify = function (notify) {
 
 /**
  * Get whether pop-up a message box when the image load failed
+ * @function
  * @return {Boolean}
  */
 cc.FileUtils.getIsPopupNotify = function () {

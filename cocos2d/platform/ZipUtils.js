@@ -4,14 +4,14 @@
  You can choose between MIT and BSD-3-Clause license. License file will be added later.
  --*/
 
-var cc = cc = cc || {};
-
+/**
+ * mixin cc.Codec
+ */
 cc.Codec = {name:'Jacob__Codec'};
 
 /**
  * Unpack a gzipped byte array
- *
- * @param {Integer[]} input Byte array
+ * @param {Array} input Byte array
  * @returns {String} Unpacked byte string
  */
 cc.unzip = function () {
@@ -20,7 +20,6 @@ cc.unzip = function () {
 
 /**
  * Unpack a gzipped byte string encoded as base64
- *
  * @param {String} input Byte string encoded as base64
  * @returns {String} Unpacked byte string
  */
@@ -31,10 +30,9 @@ cc.unzipBase64 = function () {
 
 /**
  * Unpack a gzipped byte string encoded as base64
- *
  * @param {String} input Byte string encoded as base64
- * @param {Integer} bytes Bytes per array item
- * @returns {Integer[]} Unpacked byte array
+ * @param {Number} bytes Bytes per array item
+ * @returns {Array} Unpacked byte array
  */
 cc.unzipBase64AsArray = function (input, bytes) {
     bytes = bytes || 1;
@@ -52,10 +50,9 @@ cc.unzipBase64AsArray = function (input, bytes) {
 
 /**
  * Unpack a gzipped byte array
- *
- * @param {Integer[]} input Byte array
- * @param {Integer} bytes Bytes per array item
- * @returns {Integer[]} Unpacked byte array
+ * @param {Array} input Byte array
+ * @param {Number} bytes Bytes per array item
+ * @returns {Array} Unpacked byte array
  */
 cc.unzipAsArray = function (input, bytes) {
     bytes = bytes || 1;
