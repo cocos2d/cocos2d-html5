@@ -26,26 +26,26 @@
 
 /**
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.DEFAULT_CAPACITY = 29;
 
 /**
  * maximum unsigned int value
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.UINT_MAX = 0xffffffff;
 
 /**
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.GL_SRC_ALPHA = 0x0302;
 
 /**
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 

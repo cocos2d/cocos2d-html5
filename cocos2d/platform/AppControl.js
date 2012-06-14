@@ -107,6 +107,6 @@ cc.AppController.shareAppController = function () {
 
 /**
  * cocos2d application instance
- * @type {cc.AppController}
+ * @type cc.AppController
  */
 cc.sharedAppController = null;

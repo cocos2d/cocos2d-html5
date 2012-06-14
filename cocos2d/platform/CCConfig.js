@@ -24,251 +24,316 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/** @def CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
- If enabled, the texture coordinates will be calculated by using this formula:
- - texCoord.left = (rect.origin.x*2+1) / (texture.wide*2);
- - texCoord.right = texCoord.left + (rect.size.width*2-2)/(texture.wide*2);
-
- The same for bottom and top.
-
- This formula prevents artifacts by using 99% of the texture.
- The "correct" way to prevent artifacts is by using the spritesheet-artifact-fixer.py or a similar tool.
-
- Affected nodes:
- - CCSprite / CCSpriteBatchNode and subclasses: CCLabelBMFont, CCTMXTiledMap
- - CCLabelAtlas
- - CCQuadParticleSystem
- - CCTileMap
-
- To enabled set it to 1. Disabled by default.
-
- @since v0.99.5
+/**
+ * <p>
+ *   If enabled, the texture coordinates will be calculated by using this formula: <br/>
+ *      - texCoord.left = (rect.origin.x*2+1) / (texture.wide*2);                  <br/>
+ *      - texCoord.right = texCoord.left + (rect.size.width*2-2)/(texture.wide*2); <br/>
+ *                                                                                 <br/>
+ *  The same for bottom and top.                                                   <br/>
+ *                                                                                 <br/>
+ *  This formula prevents artifacts by using 99% of the texture.                   <br/>
+ *  The "correct" way to prevent artifacts is by using the spritesheet-artifact-fixer.py or a similar tool.<br/>
+ *                                                                                  <br/>
+ *  Affected nodes:                                                                 <br/>
+ *      - cc.Sprite / cc.SpriteBatchNode and subclasses: cc.LabelBMFont, cc.TMXTiledMap <br/>
+ *      - cc.LabelAtlas                                                              <br/>
+ *      - cc.QuadParticleSystem                                                      <br/>
+ *      - cc.TileMap                                                                 <br/>
+ *                                                                                  <br/>
+ *  To enabled set it to 1. Disabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
-
 cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
 
-/** @def CC_FONT_LABEL_SUPPORT
- If enabled, FontLabel will be used to render .ttf files.
- If the .ttf file is not found, then it will use the standard UIFont class
- If disabled, the standard UIFont class will be used.
-
- To disable set it to 0. Enabled by default.
-
- Only valid for cocos2d-ios. Not supported on cocos2d-mac
+/**
+ * <p>
+ *    If enabled, FontLabel will be used to render .ttf files.<br/>
+ *    If the .ttf file is not found, then it will use the standard UIFont class<br/>
+ *    If disabled, the standard UIFont class will be used.<br/>
+ *    <br/>
+ *    To disable set it to 0. Enabled by default.<br/>
+ *    Only valid for cocos2d-ios. Not supported on cocos2d-mac<br/>
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.FONT_LABEL_SUPPORT = 1;
 
-/** @def CC_DIRECTOR_FAST_FPS
- If enabled, then the FPS will be drawn using CCLabelAtlas (fast rendering).
- You will need to add the fps_images.png to your project.
- If disabled, the FPS will be rendered using CCLabel (slow rendering)
-
- To enable set it to a value different than 0. Enabled by default.
+/**
+ * <p>
+ *     If enabled, then the FPS will be drawn using cc.LabelAtlas (fast rendering).<br/>
+ *     You will need to add the fps_images.png to your project.<br/>
+ *     If disabled, the FPS will be rendered using cc.Label (slow rendering)<br/>
+ *     <br/>
+ *     To enable set it to a value different than 0. Enabled by default.<br/>
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.DIRECTOR_FAST_FPS = 1;
 
-/** @def CC_DIRECTOR_FPS_INTERVAL
- Senconds between FPS updates.
- 0.5 seconds, means that the FPS number will be updated every 0.5 seconds.
- Having a bigger number means a more reliable FPS
-
- Default value: 0.1f
+/**
+ * <p>
+ *   Senconds between FPS updates.<br/>
+ *   0.5 seconds, means that the FPS number will be updated every 0.5 seconds.<br/>
+ *   Having a bigger number means a more reliable FPS<br/>
+ *   <br/>
+ *   Default value: 0.1f<br/>
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.DIRECTOR_FPS_INTERVAL = 0.5;
 
-/** @def CC_DIRECTOR_DISPATCH_FAST_EVENTS
- If enabled, and only when it is used with CCFastDirector, the main loop will wait 0.04 seconds to
- dispatch all the events, even if there are not events to dispatch.
- If your game uses lot's of events (eg: touches) it might be a good idea to enable this feature.
- Otherwise, it is safe to leave it disabled.
-
- To enable set it to 1. Disabled by default.
-
- @warning This feature is experimental
+/**
+ * <p>
+ *    If enabled, and only when it is used with cc.FastDirector, the main loop will wait 0.04 seconds to<br/>
+ *    dispatch all the events, even if there are not events to dispatch.<br/>
+ *    If your game uses lot's of events (eg: touches) it might be a good idea to enable this feature.<br/>
+ *    Otherwise, it is safe to leave it disabled.<br/>
+ *    <br/>
+ *    To enable set it to 1. Disabled by default.<br/>
+ * </p>
+ * @warning This feature is experimental
+ * @constant
+ * @type Number
  */
 cc.DIRECTOR_DISPATCH_FAST_EVENTS = 0;
 
-/** @def CC_DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD
- If enabled, cocos2d-mac will run on the Display Link thread. If disabled cocos2d-mac will run in its own thread.
-
- If enabled, the images will be drawn at the "correct" time, but the events might not be very responsive.
- If disabled, some frames might be skipped, but the events will be dispatched as they arrived.
-
- To enable set it to a 1, to disable it set to 0. Enabled by default.
-
- Only valid for cocos2d-mac. Not supported on cocos2d-ios.
-
+/**
+ * <p>
+ *    If enabled, cocos2d-mac will run on the Display Link thread. If disabled cocos2d-mac will run in its own thread.<br/>
+ *    <br/>
+ *    If enabled, the images will be drawn at the "correct" time, but the events might not be very responsive.<br/>
+ *    If disabled, some frames might be skipped, but the events will be dispatched as they arrived.<br/>
+ *    To enable set it to a 1, to disable it set to 0. Enabled by default.<br/>
+ *    <br/>
+ *    Only valid for cocos2d-mac. Not supported on cocos2d-ios.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD = 1;
 
-/** @def CC_COCOSNODE_RENDER_SUBPIXEL
- If enabled, the CCNode objects (CCSprite, CCLabel,etc) will be able to render in subpixels.
- If disabled, integer pixels will be used.
-
- To enable set it to 1. Enabled by default.
+/**
+ * <p>
+ *    If enabled, the cc.Node objects (cc.Sprite, cc.Label,etc) will be able to render in subpixels.<br/>
+ *    If disabled, integer pixels will be used.<br/>
+ *    <br/>
+ *    To enable set it to 1. Enabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.COCOSNODE_RENDER_SUBPIXEL = 1;
 
-/** @def CC_SPRITEBATCHNODE_RENDER_SUBPIXEL
- If enabled, the CCSprite objects rendered with CCSpriteBatchNode will be able to render in subpixels.
- If disabled, integer pixels will be used.
-
- To enable set it to 1. Enabled by default.
+/**
+ * <p>
+ *   If enabled, the cc.Sprite objects rendered with cc.SpriteBatchNode will be able to render in subpixels.<br/>
+ *   If disabled, integer pixels will be used.<br/>
+ *   <br/>
+ *   To enable set it to 1. Enabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
 
-/** @def CC_USES_VBO
- If enabled, batch nodes (texture atlas and particle system) will use VBO instead of vertex list (VBO is recommended by Apple)
-
- To enable set it to 1.
- Enabled by default on iPhone with ARMv7 processors, iPhone Simulator and Mac
- Disabled by default on iPhone with ARMv6 processors.
-
- @since v0.99.5
+/**
+ * <p>
+ *    If enabled, batch nodes (texture atlas and particle system) will use VBO instead of vertex list (VBO is recommended by Apple)<br/>
+ *    <br/>
+ *    To enable set it to 1.<br/>
+ *    Enabled by default on iPhone with ARMv7 processors, iPhone Simulator and Mac<br/>
+ *    Disabled by default on iPhone with ARMv6 processors.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.USES_VBO = 1;
 
-/** @def CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
- If enabled, CCNode will transform the nodes using a cached Affine matrix.
- If disabled, the node will be transformed using glTranslate,glRotate,glScale.
- Using the affine matrix only requires 2 GL calls.
- Using the translate/rotate/scale requires 5 GL calls.
- But computing the Affine matrix is relative expensive.
- But according to performance tests, Affine matrix performs better.
- This parameter doesn't affect CCSpriteBatchNode nodes.
-
- To enable set it to a value different than 0. Enabled by default.
-
+/**
+ * <p>
+ *   If enabled, cc.Node will transform the nodes using a cached Affine matrix.<br/>
+ *   If disabled, the node will be transformed using glTranslate,glRotate,glScale.<br/>
+ *   Using the affine matrix only requires 2 GL calls.<br/>
+ *   Using the translate/rotate/scale requires 5 GL calls.<br/>
+ *   But computing the Affine matrix is relative expensive.<br/>
+ *   But according to performance tests, Affine matrix performs better.<br/>
+ *   This parameter doesn't affect cc.SpriteBatchNode nodes.<br/>
+ *   <br/>
+ *   To enable set it to a value different than 0. Enabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.NODE_TRANSFORM_USING_AFFINE_MATRIX = 1;
 
-/** @def CC_OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA
- If most of your imamges have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).
- Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)
-
- To enable set it to a value different than 0. Enabled by default.
-
- @since v0.99.5
+/**
+ * <p>
+ *     If most of your imamges have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).<br/>
+ *     Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)<br/>
+ *     <br/>
+ *     To enable set it to a value different than 0. Enabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 1;
 
-/** @def CC_TEXTURE_ATLAS_USE_TRIANGLE_STRIP
- Use GL_TRIANGLE_STRIP instead of GL_TRIANGLES when rendering the texture atlas.
- It seems it is the recommend way, but it is much slower, so, enable it at your own risk
-
- To enable set it to a value different than 0. Disabled by default.
-
+/**
+ * <p>
+ *   Use GL_TRIANGLE_STRIP instead of GL_TRIANGLES when rendering the texture atlas.<br/>
+ *   It seems it is the recommend way, but it is much slower, so, enable it at your own risk<br/>
+ *   <br/>
+ *   To enable set it to a value different than 0. Disabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
 
-/** @def CC_TEXTURE_NPOT_SUPPORT
- If enabled, NPOT textures will be used where available. Only 3rd gen (and newer) devices support NPOT textures.
- NPOT textures have the following limitations:
- - They can't have mipmaps
- - They only accept GL_CLAMP_TO_EDGE in GL_TEXTURE_WRAP_{S,T}
-
- To enable set it to a value different than 0. Disabled by default.
-
- This value governs only the PNG, GIF, BMP, images.
- This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.
-
- @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
-
- @since v0.99.2
+/**
+ * <p>
+ *  If enabled, NPOT textures will be used where available. Only 3rd gen (and newer) devices support NPOT textures.<br/>
+ *  NPOT textures have the following limitations:<br/>
+ *     - They can't have mipmaps<br/>
+ *     - They only accept GL_CLAMP_TO_EDGE in GL_TEXTURE_WRAP_{S,T}<br/>
+ *  <br/>
+ *  To enable set it to a value different than 0. Disabled by default. <br/>
+ *  <br/>
+ *  This value governs only the PNG, GIF, BMP, images.<br/>
+ *  This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.
+ * </p>
+ * @constant
+ * @type Number
+ * @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
  */
 cc.TEXTURE_NPOT_SUPPORT = 0;
 
-/** @def CC_RETINA_DISPLAY_SUPPORT
- If enabled, cocos2d supports retina display.
- For performance reasons, it's recommended disable it in games without retina display support, like iPad only games.
-
- To enable set it to 1. Use 0 to disable it. Enabled by default.
-
- This value governs only the PNG, GIF, BMP, images.
- This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.
-
- @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
-
- @since v0.99.5
+/**
+ * <p>
+ *    If enabled, cocos2d supports retina display.<br/>
+ *    For performance reasons, it's recommended disable it in games without retina display support, like iPad only games.<br/>
+ *    <br/>
+ *    To enable set it to 1. Use 0 to disable it. Enabled by default.<br/>
+ *    <br/>
+ *    This value governs only the PNG, GIF, BMP, images.<br/>
+ *    This value DOES NOT govern the PVR (PVR.GZ, PVR.CCZ) files. If NPOT PVR is loaded, then it will create an NPOT texture ignoring this value.
+ * </p>
+ * @constant
+ * @type Number
+ * @deprecated This value will be removed in 1.1 and NPOT textures will be loaded by default if the device supports it.
  */
 cc.RETINA_DISPLAY_SUPPORT = 1;
 
-/** @def CC_RETINA_DISPLAY_FILENAME_SUFFIX
- It's the suffix that will be appended to the files in order to load "retina display" images.
-
- On an iPhone4 with Retina Display support enabled, the file @"sprite-hd.png" will be loaded instead of @"sprite.png".
- If the file doesn't exist it will use the non-retina display image.
-
- Platforms: Only used on Retina Display devices like iPhone 4.
-
- @since v0.99.5
+/**
+ * <p>
+ *    It's the suffix that will be appended to the files in order to load "retina display" images.<br/>
+ *    <br/>
+ *    On an iPhone4 with Retina Display support enabled, the file @"sprite-hd.png" will be loaded instead of @"sprite.png".<br/>
+ *    If the file doesn't exist it will use the non-retina display image.<br/>
+ *    <br/>
+ *    Platforms: Only used on Retina Display devices like iPhone 4.
+ * </p>
+ * @constant
+ * @type String
  */
 cc.RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
 
-/** @def CC_USE_LA88_LABELS_ON_NEON_ARCH
- If enabled, it will use LA88 (16-bit textures) on Neon devices for CCLabelTTF objects.
- If it is disabled, or if it is used on another architecture it will use A8 (8-bit textures).
- On Neon devices, LA88 textures are 6% faster than A8 textures, but then will consume 2x memory.
-
- This feature is disabled by default.
-
- Platforms: Only used on ARM Neon architectures like iPhone 3GS or newer and iPad.
-
- @since v0.99.5
+/**
+ * <p>
+ *   If enabled, it will use LA88 (16-bit textures) on Neon devices for cc.LabelTTF objects.<br/>
+ *   If it is disabled, or if it is used on another architecture it will use A8 (8-bit textures).<br/>
+ *   On Neon devices, LA88 textures are 6% faster than A8 textures, but then will consume 2x memory.<br/>
+ *   <br/>
+ *   This feature is disabled by default.<br/>
+ *   <br/>
+ *   Platforms: Only used on ARM Neon architectures like iPhone 3GS or newer and iPad.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.USE_LA88_LABELS_ON_NEON_ARCH = 0;
 
-/** @def CC_SPRITE_DEBUG_DRAW
- If enabled, all subclasses of CCSprite will draw a bounding box
- Useful for debugging purposes only. It is recommened to leave it disabled.
-
- To enable set it to a value different than 0. Disabled by default:
- 0 -- disabled
- 1 -- draw bounding box
- 2 -- draw texture box
- 0 -- disabled
- 1 -- draw bounding box
- 2 -- draw texture box
+/**
+ * <p>
+ *   If enabled, all subclasses of cc.Sprite will draw a bounding box<br/>
+ *   Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *   <br/>
+ *   To enable set it to a value different than 0. Disabled by default:<br/>
+ *      0 -- disabled<br/>
+ *      1 -- draw bounding box<br/>
+ *      2 -- draw texture box
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.SPRITE_DEBUG_DRAW = 0;
 
-/** @def CC_SPRITEBATCHNODE_DEBUG_DRAW
- If enabled, all subclasses of CCSprite that are rendered using an CCSpriteBatchNode draw a bounding box.
- Useful for debugging purposes only. It is recommened to leave it disabled.
-
- To enable set it to a value different than 0. Disabled by default.
+/**
+ * <p>
+ *    If enabled, all subclasses of cc.Sprite that are rendered using an cc.SpriteBatchNode draw a bounding box.<br/>
+ *    Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *    <br/>
+ *    To enable set it to a value different than 0. Disabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.SPRITEBATCHNODE_DEBUG_DRAW = 0;
 
-/** @def CC_LABELBMFONT_DEBUG_DRAW
- If enabled, all subclasses of CCLabelBMFont will draw a bounding box
- Useful for debugging purposes only. It is recommened to leave it disabled.
-
- To enable set it to a value different than 0. Disabled by default.
+/**
+ * <p>
+ *   If enabled, all subclasses of cc.LabelBMFont will draw a bounding box <br/>
+ *   Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *   <br/>
+ *   To enable set it to a value different than 0. Disabled by default.<br/>
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.LABELBMFONT_DEBUG_DRAW = 0;
 
-/** @def CC_LABELATLAS_DEBUG_DRAW
- If enabled, all subclasses of LabeltAtlas will draw a bounding box
- Useful for debugging purposes only. It is recommened to leave it disabled.
-
- To enable set it to a value different than 0. Disabled by default.
+/**
+ * <p>
+ *    If enabled, all subclasses of cc.LabeltAtlas will draw a bounding box<br/>
+ *    Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *    <br/>
+ *    To enable set it to a value different than 0. Disabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.LABELATLAS_DEBUG_DRAW = 0;
 
-/** @def CC_ENABLE_PROFILERS
- If enabled, will activate various profilers withing cocos2d. This statistical data will be output to the console
- once per second showing average time (in milliseconds) required to execute the specific routine(s).
- Useful for debugging purposes only. It is recommened to leave it disabled.
-
- To enable set it to a value different than 0. Disabled by default.
+/**
+ * <p>
+ *     If enabled, will activate various profilers withing cocos2d. This statistical data will be output to the console<br/>
+ *     once per second showing average time (in milliseconds) required to execute the specific routine(s).<br/>
+ *     Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
+ *     <br/>
+ *     To enable set it to a value different than 0. Disabled by default.
+ * </p>
+ * @constant
+ * @type Number
  */
 cc.ENABLE_PROFILERS = 0;
 
+/**
+ * whether or not support retina display
+ * @constant
+ * @type Number
+ */
 cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
 
-/** Enable Lua engine debug log */
+/**
+ * Enable Lua engine debug log
+ * @constant
+ * @type Number
+ */
 cc.LUA_ENGINE_DEBUG = 0;
 

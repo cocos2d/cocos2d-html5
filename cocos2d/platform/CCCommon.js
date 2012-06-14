@@ -24,34 +24,41 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
+/**
+ * copy an new object
+ * @function
+ * @param {object|Array} obj source object
+ * @return {Array|object}
+ */
 cc.clone = function (obj) {
-    var c = (obj instanceof Array) ? [] : {};
+    var newObj = (obj instanceof Array) ? [] : {};
     for (var key in obj) {
         var copy = obj[key];
         if (copy instanceof Array) {
-            c[key] = cc.clone(copy);
+            newObj[key] = cc.clone(copy);
         } else if (((typeof copy) == "object") && !(copy instanceof cc.Node)
             && !(copy instanceof HTMLElement)) {
-            c[key] = cc.clone(copy);
+            newObj[key] = cc.clone(copy);
         } else {
-            c[key] = copy;
+            newObj[key] = copy;
         }
     }
-    return c;
+    return newObj;
 };
 
-
 /**
- @brief Output Debug message.
+ * Output Debug message.
+ * @function
+ * @param {String} message
  */
 cc.Log = function (message) {
     console.log(message);
 };
 
 /**
- @brief Pop out a message box
+ * Pop out a message box
+ * @param {String} message
+ * @function
  */
 cc.MessageBox = function (message) {
     console.log(message);
@@ -88,18 +95,50 @@ if (cc._DEBUG) {
             }
         }
     }
-}
-else {
+} else {
     cc.Assert = function () {
     };
 }
+
+// Enum the language type supportted now
 /**
- @brief Enum the language type supportted now
+ * English language code
+ * @type Number
  */
 cc.LANGUAGE_ENGLISH = 0;
+
+/**
+ * Chinese language code
+ * @type Number
+ */
 cc.LANGUAGE_CHINESE = 1;
+
+/**
+ * French language code
+ * @type Number
+ */
 cc.LANGUAGE_FRENCH = 2;
+
+/**
+ * Italian language code
+ * @type Number
+ */
 cc.LANGUAGE_ITALIAN = 3;
+
+/**
+ * German language code
+ * @type Number
+ */
 cc.LANGUAGE_GERMAN = 4;
+
+/**
+ * Spanish language code
+ * @type Number
+ */
 cc.LANGUAGE_SPANISH = 5;
+
+/**
+ * Russian language code
+ * @type Number
+ */
 cc.LANGUAGE_RUSSIAN = 6;

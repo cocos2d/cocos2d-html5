@@ -28,17 +28,26 @@
  * MIT Licensed.
  */
 // Inspired by base2 and Prototype
-var cc = cc = cc || {};
-(function () {
-    var initializing = false, fnTest = /xyz/.test(function () {
-        xyz;
-    }) ? /\b_super\b/ : /.*/;
 
-    // The base Class implementation (does nothing)
+/**
+ * @namespace
+ */
+var cc = cc = cc || {};
+
+(function () {
+    var initializing = false, fnTest = /\b_super\b/;
+
+    /**
+     * The base Class implementation (does nothing)
+     */
     cc.Class = function () {
     };
 
-    // Create a new Class that inherits from this Class
+    /**
+     * Create a new Class that inherits from this Class
+     * @param {Array} prop
+     * @return {function}
+     */
     cc.Class.extend = function (prop) {
         var _super = this.prototype;
 

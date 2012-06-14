@@ -23,13 +23,24 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-cc.SCENE_RADIAL = 0xc001;
 /**
- @brief A counter colock-wise radial transition to the next scene
+ * tag for scene redial
+ * @constant
+ * @type Number
  */
-cc.TransitionRadialCCW = cc.TransitionScene.extend({
+cc.SCENE_RADIAL = 0xc001;
+
+/**
+ * A counter colock-wise radial transition to the next scene
+ * @class
+ * @extends cc.TransitionScene
+ */
+cc.TransitionRadialCCW = cc.TransitionScene.extend(/** @lends cc.TransitionRadialCCW# */{
+
+    /**
+     * custom on enter
+     */
     onEnter:function () {
         this._super();
         // create a transparent color layer
@@ -79,6 +90,10 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
         // add the layer (which contains our two rendertextures) to the scene
         this.addChild(outNode, 2, cc.SCENE_RADIAL);
     },
+
+    /**
+     * custom on exit
+     */
     onExit:function () {
 // remove our layer and release all containing objects
         this.removeChildByTag(cc.SCENE_RADIAL, false);
@@ -93,21 +108,40 @@ cc.TransitionRadialCCW = cc.TransitionScene.extend({
 });
 
 /**
- @brief A counter colock-wise radial transition to the next scene
+ * A counter colock-wise radial transition to the next scene
+ * @class
+ * @extends cc.TransitionRadialCCW
  */
-
-cc.TransitionRadialCW = cc.TransitionRadialCCW.extend({
+cc.TransitionRadialCW = cc.TransitionRadialCCW.extend(/** @lends cc.TransitionRadialCW# */{
     _radialType:function () {
         return cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW;
     }
 });
 
+/**
+ * create a counter colock-wise radial transition to the next scene
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionRadialCCW}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionRadialCCW.create(1.5, nextScene)//Redial that turns counter clock wise (left)
+ */
 cc.TransitionRadialCCW.create = function (t, scene) {
     var tmpScene = new cc.TransitionRadialCCW();
     tmpScene.initWithDuration(t, scene);
     return tmpScene;
 };
 
+/**
+ * create a colock-wise radial transition to the next scene
+ * @param {Number} t time in seconds
+ * @param {cc.Scene} scene
+ * @return {cc.TransitionRadialCW}
+ * @example
+ * // Example
+ * var myTransition = cc.TransitionRadialCW.create(1.5, nextScene)//Redial that turns clock wise (right)
+ */
 cc.TransitionRadialCW.create = function (t, scene) {
     var tmpScene = new cc.TransitionRadialCW();
     tmpScene.initWithDuration(t, scene);
