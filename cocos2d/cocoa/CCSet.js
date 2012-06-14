@@ -24,8 +24,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.Set = cc.Class.extend({
+/**
+ * @class
+ * @extends cc.Class
+ */
 
+cc.Set = cc.Class.extend(/** @lends cc.Set# */{
+    /**
+     * @constructor
+     * @param {cc.Set} setObject
+     */
     ctor:function (setObject) {
         if (setObject) {
             this._set = Object.create(setObject._set);
@@ -37,14 +45,16 @@ cc.Set = cc.Class.extend({
     },
 
     /**
-     *@brief Return a copy of the CCSet, it will copy all the elelments.
+     * Return a copy of the CCSet, it will copy all the elelments.
+     * @return {cc.Set}
      */
     copy:function () {
         return new this.Set(this);
     },
 
     /**
-     *@brief It is the same as copy().
+     * It is the same as copy().
+     * @return {cc.Set}
      */
     mutableCopy:function () {
         return this.copy();
@@ -52,7 +62,8 @@ cc.Set = cc.Class.extend({
     },
 
     /**
-     *@brief Return the number of elements the CCSet contains.
+     * Return the number of elements the CCSet contains.
+     * @return {Number}
      */
     count:function () {
         return this._set.length;
@@ -60,7 +71,8 @@ cc.Set = cc.Class.extend({
     },
 
     /**
-     *@brief Add a element into CCSet, it will retain the element.
+     * Add a element into CCSet, it will retain the element.
+     * @param {object} obj
      */
     addObject:function (obj) {
         this._set.push(obj);
@@ -68,7 +80,8 @@ cc.Set = cc.Class.extend({
     },
 
     /**
-     *@brief Remove the given element, nothing todo if no element equals obj.
+     * Remove the given element, nothing todo if no element equals obj.
+     * @param {object} obj
      */
     removeObject:function (obj) {
         /* if(obj in this._set)
@@ -87,7 +100,9 @@ cc.Set = cc.Class.extend({
     },
 
     /**
-     *@brief Check if CCSet contains a element equals obj.
+     * Check if CCSet contains a element equals obj.
+     * @param {object} obj
+     * @return {Boolean}
      */
     containsObject:function (obj) {
 
@@ -101,33 +116,10 @@ cc.Set = cc.Class.extend({
 
     },
 
-    /**
-     *@brief Return the iterator that points to the first element.
-     */
-    /* begin:function()
-     {
-     if(this._set.length > 0){
-     return 0;        // We only return the index of first element.
-     }
-     else{
-     return null;
-     }
-
-     },*/
 
     /**
-     *@brief Return the iterator that points to the poisition after the last element.
-     */
-    /* end:function()
-     {
-     if(this._set.length >= 0){
-     return this._set.length;
-     }
-
-     },*/
-
-    /**
-     *@brief Return the first element if it contains elements, or null if it doesn't contain any element.
+     * Return the first element if it contains elements, or null if it doesn't contain any element.
+     * @return {object|Null}
      */
     anyObject:function () {
         if (this._set.length > 0) {
@@ -143,4 +135,9 @@ cc.Set = cc.Class.extend({
 
 });
 
+/**
+ * cc.NSMutableSet is the same as cc.Set
+ * @class
+ * @extends cc.Set
+ */
 cc.NSMutableSet = cc.Set;
