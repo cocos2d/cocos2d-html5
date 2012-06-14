@@ -878,7 +878,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         var child = this.getChildByTag(tag);
         if (child == null) {
-            cc.LOG("cocos2d: removeChildByTag: child not found!");
+            cc.Log("cocos2d: removeChildByTag: child not found!");
         }
         else {
             this.removeChild(child, cleanup);
