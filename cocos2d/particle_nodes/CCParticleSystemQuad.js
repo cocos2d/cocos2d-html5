@@ -471,4 +471,9 @@ cc.ParticleSystemQuad.create = function (pListFile) {
     return null;
 };
 
+/**
+ * ParticleSystem is the same as cc.ParticleSystemQuad
+ * @class
+ * @extends cc.ParticleSystemQuad
+ */
 cc.ARCH_OPTIMAL_PARTICLE_SYSTEM = cc.ParticleSystemQuad;
