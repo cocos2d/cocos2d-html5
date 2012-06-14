@@ -25,13 +25,27 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
+
 cc._fontSize = 32;
 cc._fontName = '"Comic Sans MS", "cursive"';
+
+/**
+ * DomMenuitem base class is the same as domnode
+ * @class
+ * @extends cc.domNode
+ */
 cc.MenuItem = cc.domNode;
 
+/**
+ * Menuitem image
+ * @class
+ * @extends cc.MenuItem
+ */
+cc.MenuItemImage = cc.MenuItem.extend(/** @lends cc.MenuItemImage# */{
 
-cc.MenuItemImage = cc.MenuItem.extend({
+    /**
+     * @param {String} file
+     */
     init:function (file) {
         var texture = cc.TextureCache.sharedTextureCache().textureForKey(file);
         if (!texture) {
@@ -60,6 +74,25 @@ cc.MenuItemImage = cc.MenuItem.extend({
         }
     }
 });
+
+/**
+ * creates a new DOM menu item image
+ * @param {String} normal file name for normal state
+ * @param {String|Null} selected image for selected state
+ * @param {cc.Node|Null} target ccNode target to run callback when clicked
+ * @param {String|function|Null} callback callback function, either name in string, or pass the whole function
+ * @return {cc.MenuItemImage}
+ * @example
+ * // Example
+ * var item = cc.MenuItemImage.create('normal.png', 'selected.png')
+ * //create a dom menu item with normal state and selected, but nothing will happen when you click on it
+ *
+ * var item = cc.MenuItemImage.create('normal.png', 'selected.png', gameScene, 'run')
+ * //create a dom menu item with normal and selected state, when clicked it will run the run function from gameScene object
+ *
+ * var item = cc.MenuItemImage.create('normal.png', 'selected.png', gameScene, gameScene.run)
+ * //same as above, but pass in the actual function
+ */
 cc.MenuItemImage.create = function (normal, selected, target, callback) {
     var that = new this();
     that.init(normal);
@@ -110,9 +143,37 @@ cc.MenuItemImage.create = function (normal, selected, target, callback) {
     return that;
 
 };
-cc.MenuItemSprite = cc.MenuItemImage.extend({
+
+/**
+ * dom menu item sprite
+ * @class
+ * @extends cc.MenuItemImage
+ */
+cc.MenuItemSprite = cc.MenuItemImage.extend(/** @lends cc.MenuItemSprite# */{
 
 });
+
+/**
+ * create a dom menu item from sprite
+ * @param {Image} normal normal state image
+ * @param {Image|Null} selected selected state image
+ * @param {Image|cc.Node|Null} three disabled state image OR target node
+ * @param {String|function|cc.Node|Null} four callback function name in string or actual function, OR target Node
+ * @param {String|function|Null} five callback function name in string or actual function
+ * @return {cc.MenuItemSprite}
+ * @example
+ * // Example
+ * var item = cc.MenuItemSprite.create(normalImage)//create a dom menu item from a sprite with no functionality
+ *
+ * var item = cc.MenuItemSprite.create(normalImage, selectedImage)//create a dom menu Item, nothing will happen when clicked
+ *
+ * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, disabledImage)//same above, but with disabled state image
+ *
+ * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, targetNode, 'callback')//create a dom menu item, when clicked runs targetNode.callback()
+ *
+ * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, disabledImage, targetNode, targetNode.callback)
+ * //same as above, but with disabled image, and passing in callback function
+ */
 cc.MenuItemSprite.create = function (normal, selected, three, four, five) {
     var that = new this();
     if (five) {
@@ -167,10 +228,20 @@ cc.MenuItemSprite.create = function (normal, selected, three, four, five) {
         }
     }
 };
-cc.MenuItemLabel = cc.MenuItem.extend({
+
+/**
+ * dom Menu item label
+ * @class
+ * @extends cc.MenuItem
+ */
+cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _text:'',
     _fontSize:"14px",
     _fontName:'',
+
+    /**
+     * @param {cc.LabelTTF} label
+     */
     init:function (label) {
         this._text = label.getString();
         this._fontName = label._fontName;
@@ -190,13 +261,33 @@ cc.MenuItemLabel = cc.MenuItem.extend({
         this.setPosition(label.getPositionX(), label.getPositionY());
         this._updateTransform();
     },
+
+    /**
+     * @return {cc.Color3B}
+     */
     getDisabledColor:function () {
         return this._disabledColor;
     },
+
+    /**
+     * @param {cc.Color3B} color
+     */
     setDisabledColor:function (color) {
         this._disabledColor = color;
     }
 });
+
+/**
+ * create a dom menu item from label
+ * @return {cc.MenuItemLabel}
+ * @example
+ * // Example
+ * var item = cc.MenuItemLabel.create(label)//creates a dom menu item from a label, (not really recommended)
+ *
+ * var item = cc.MenuItemLabel.create(label, target, 'callback')//create an item, when clicked wil run target.callback
+ *
+ * var item = cc.MenuItemLabel.create(label, target, target.run)//same as above, but passing in the whole function instead of function name
+ */
 cc.MenuItemLabel.create = function (label, two, three, four) {
     var that = new this();
     that.init(label);
@@ -239,10 +330,25 @@ cc.MenuItemLabel.create = function (label, two, three, four) {
     }
 };
 
-cc.MenuItemFont = cc.MenuItem.extend({
+/**
+ * create a dom menu item from string
+ * @class
+ * @extends cc.MenuItem
+ */
+cc.MenuItemFont = cc.MenuItem.extend(/** @lends cc.MenuItemFont# */{
+
+    /**
+     * @constructor
+     */
     ctor:function () {
         this._super();
     },
+
+    /**
+     * @param {String} value
+     * @param {cc.Node} target
+     * @param {String|function} selector
+     */
     initFromString:function (value, target, selector) {
         this._text = value;
         //create a div containing the text
@@ -273,17 +379,33 @@ cc.MenuItemFont = cc.MenuItem.extend({
             }
         }
     },
+
+    /**
+     * @param {Number} s
+     */
     setFontSizeObj:function (s) {
         this.dom.style.fontSize = s + "px";
         var tmp = cc.domNode.getTextSize(this._text, cc._fontSize, cc._fontName);
         this.setContentSize(cc.SizeMake(tmp.width, tmp.height));
     },
+
+    /**
+     * @return {Number}
+     */
     fontSizeObj:function () {
         return this.style.fontSize;
     },
+
+    /**
+     * @param {String} s
+     */
     setFontName:function (s) {
         this.style.fontFamily = s;
     },
+
+    /**
+     * @return {Number}
+     */
     fontNameObj:function () {
         return this.style.fontFamily;
     },
@@ -292,12 +414,27 @@ cc.MenuItemFont = cc.MenuItem.extend({
     _fontSize:0,
     _fontName:''
 });
+
+/**
+ * a shared function to set the fontSize for menuitem font
+ * @param {Number} s
+ */
 cc.MenuItemFont.setFontSize = function (s) {
     cc._fontSize = s;
 };
+
+/**
+ * a shared function to get the font size for menuitem font
+ * @return {Number}
+ */
 cc.MenuItemFont.fontSize = function () {
     return cc._fontSize;
 };
+
+/**
+ * a shared function to set the fontsize for menuitem font
+ * @param name
+ */
 cc.MenuItemFont.setFontName = function (name) {
     if (cc._fontNameRelease) {
         cc._fontName = '';
@@ -305,9 +442,34 @@ cc.MenuItemFont.setFontName = function (name) {
     cc._fontName = name;
     cc._fontNameRelease = true;
 };
+
+/**
+ * a shared function to get the font name for menuitem font
+ * @return {String}
+ */
 cc.MenuItemFont.fontName = function () {
     return cc._fontName
 };
+
+/**
+ * create a dom menu item from string
+ * @param {String} value the text to display
+ * @param {cc.Node|Null} target the target to run callback
+ * @param {String|function|Null} selector the callback to run, either in function name or pass in the actual function
+ * @return {cc.MenuItemFont}
+ * @example
+ * // Example
+ * var item = cc.MenuItemFont.create("Game start", Game, 'start')
+ * //creates a menu item from string "Game start", and when clicked, it will run Game.start()
+ *
+ * var item = cc.MenuItemFont.create("Game start", Game, game.start)//same as above
+ *
+ * var item = cc.MenuItemFont.create("i do nothing")//create a text menu item that does nothing
+ *
+ * //you can set font size and name before or after
+ * cc.MenuItemFont.setFontName('my Fancy Font');
+ * cc.MenuItemFont.setFontSize(62);
+ */
 cc.MenuItemFont.create = function (value, target, selector) {
     var ret = new cc.MenuItemFont();
     ret.initFromString(value, target, selector);
