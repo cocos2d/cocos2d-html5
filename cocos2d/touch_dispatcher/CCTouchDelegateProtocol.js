@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-5
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -28,127 +24,248 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-cc.Touch = cc.Class.extend({
+/**
+ * @class
+ * @extends cc.Class
+ */
+cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     _viewId:0,
     _point:null,
     _prevPoint:cc.PointZero(),
     _id:0,
 
+    /**
+     * @Constructor
+     */
     ctor:function (viewId, x, y) {
         this._viewId = viewId;
         this._point = new cc.Point(x || 0, y || 0);
     },
 
+    /**
+     * @param {Number} viewId
+     * @return {cc.Point}
+     */
     locationInView:function (viewId) {
         return this._point;
     },
 
+    /**
+     * @param {Number} viewId
+     * @return {cc.Point}
+     */
     previousLocationInView:function (viewId) {
         return this._prevPoint;
     },
 
+    /**
+     * @return {Number}
+     */
     view:function () {
         return this._viewId;
     },
+
+    /**
+     * @return {Number}
+     */
     id:function () {
         return this._id;
     },
 
-    setTouchInfo:function (viewId, x, y, iId) {
+    /**
+     * @param {Number} viewId
+     * @param  {Number} x
+     * @param  {Number} y
+     * @param  {Number} id
+     */
+    setTouchInfo:function (viewId, x, y, id) {
         this._viewId = viewId;
         this._prevPoint = this._point;
         this._point = new cc.Point(x || 0, y || 0);
-        this._id = iId || 0;
+        this._id = id || 0;
     },
     _setPrevPoint:function (x, y) {
         this._prevPoint = new cc.Point(x || 0, y || 0);
     }
 });
 
-cc.TouchDelegate = cc.Class.extend({
+/**
+ * @class
+ * @extends cc.Class
+ */
+cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
     _eventTypeFuncMap:null,
 
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     * @return {Boolean}
+     */
     ccTouchBegan:function (touch, event) {
         return false;
     },
 
-    // optional
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchMoved:function (touch, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchEnded:function (touch, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchCancelled:function (touch, event) {
     },
 
-    // optional
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchesBegan:function (touches, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchesMoved:function (touches, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchesEnded:function (touches, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchesCancelled:function (touches, event) {
     },
 
     /*
-     * In TouchesTest, class Padle inherits from CCSprite and CCTargetedTouchDelegate.
-     * When it invoke  CCTouchDispatcher::sharedDispatcher()->addTargetedDelegate(this, 0, true),
-     * it will crash in CCTouchHandler::initWithDelegate() because of dynamic_cast() on android.
-     * I don't know why, so add these functions for the subclass to invoke it's own retain() and
-     * release().
-     * More detain info please refer issue #926(cocos2d-x).
+     * In TouchesTest, class Padle inherits from cc.Sprite and cc.TargetedTouchDelegate.
+     * When it invoke  cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, true),
+     * it will crash in cc.TouchHandler.initWithDelegate() because of dynamic_cast() on android.
+     * I don't know why, so add these functions for the subclass to invoke it's own retain() and  release
+     *Virtual function
      */
     touchDelegateRetain:function () {
     },
+
+    /**
+     * Virtual function
+    */
     touchDelegateRelease:function () {
     }
 });
 
 /**
- @brief
- Using this type of delegate results in two benefits:
- - 1. You don't need to deal with CCSets, the dispatcher does the job of splitting
- them. You get exactly one UITouch per call.
- - 2. You can *claim* a UITouch by returning YES in ccTouchBegan. Updates of claimed
- touches are sent only to the delegate(s) that claimed them. So if you get a move/
- ended/cancelled update you're sure it's your touch. This frees you from doing a
- lot of checks when doing multi-touch.
-
- (The name TargetedTouchDelegate relates to updates "targeting" their specific
- handler, without bothering the other handlers.)
- @since v0.8
+ * Using this type of delegate results in two benefits:
+ * - 1. You don't need to deal with cc.Sets, the dispatcher does the job of splitting
+ * them. You get exactly one UITouch per call.
+ * - 2. You can *claim* a UITouch by returning YES in ccTouchBegan. Updates of claimed
+ * touches are sent only to the delegate(s) that claimed them. So if you get a move/
+ * ended/cancelled update you're sure it's your touch. This frees you from doing a
+ * lot of checks when doing multi-touch.
+ *
+ * (The name TargetedTouchDelegate relates to updates "targeting" their specific
+ * handler, without bothering the other handlers.)
+ * @class
+ * @extends cc.Class
  */
-cc.TargetedTouchDelegate = cc.TouchDelegate.extend({
-    /** Return YES to claim the touch.
-     @since v0
+cc.TargetedTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.TargetedTouchDelegate# */{
+
+    /**
+     * Return YES to claim the touch.
+     * @param {cc.Touch} touch
+     * @param {event} event
+     * @return {Boolean}
      */
     ccTouchBegan:function (touch, event) {
         return false;
     },
 
-    // optional
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchMoved:function (touch, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchEnded:function (touch, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {cc.Touch} touch
+     * @param {event} event
+     */
     ccTouchCancelled:function (touch, event) {
     }
 });
 
-/** @brief
- This type of delegate is the same one used by CocoaTouch. You will receive all the events (Began,Moved,Ended,Cancelled).
- @since v0.8
+/**
+ * This type of delegate is the same one used by CocoaTouch. You will receive all the events (Began,Moved,Ended,Cancelled).
+ * @class
+ * @extends cc.Class
  */
-cc.StandardTouchDelegate = cc.TouchDelegate.extend({
-    // optional
+cc.StandardTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.StandardTouchDelegate# */{
+
+    /**
+     * Virtual function
+     * @param {Array} touches
+     * @param {event} event
+     */
     ccTouchesBegan:function (touches, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {Array} touches
+     * @param {event} event
+     */
     ccTouchesMoved:function (touches, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {Array} touches
+     * @param {event} event
+     */
     ccTouchesEnded:function (touches, event) {
     },
+
+    /**
+     * Virtual function
+     * @param {Array} touches
+     * @param {event} event
+     */
     ccTouchesCancelled:function (touches, event) {
     }
 });

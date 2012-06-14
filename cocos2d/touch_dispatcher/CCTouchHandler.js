@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-5
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -28,71 +24,102 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
 /**
- CCTouchHandler
- Object than contains the delegate and priority of the event handler.
+ * cc.TouchHandler
+ * Object than contains the delegate and priority of the event handler.
+ * @class
+ * @extends cc.Class
  */
-cc.TouchHandler = cc.Class.extend({
+cc.TouchHandler = cc.Class.extend(/** @lends cc.TouchHandler# */{
     _delegate:null,
     _priority:0,
     _enabledSelectors:0,
 
-    /** delegate */
+    /**
+     * @return {cc.TouchDelegate}
+     */
     getDelegate:function () {
         return this._delegate;
     },
+
+    /**
+     * @param {cc.TouchDelegate} delegate
+     */
     setDelegate:function (delegate) {
         this._delegate = delegate;
     },
 
-    /** priority */
+    /**
+     * @return {Number}
+     */
     getPriority:function () {
         return this._priority;
     },
+
+    /**
+     * @param {Number} priority
+     */
     setPriority:function (priority) {
         this._priority = priority;
     },
 
-    /** enabled selectors */
+    /**
+     *  Enabled selectors
+     * @return {Number}
+     */
     getEnabledSelectors:function () {
         return this._enabledSelectors;
     },
-    setEnalbedSelectors:function (nValue) {
-        this._enabledSelectors = nValue;
+
+    /**
+     * @param {Number} value
+     */
+    setEnalbedSelectors:function (value) {
+        this._enabledSelectors = value;
     },
 
-    /** initializes a TouchHandler with a delegate and a priority */
+    /**
+     * initializes a TouchHandler with a delegate and a priority
+     * @param {cc.TouchDelegate} delegate
+     * @param {Number} priority
+     * @return {Boolean}
+     */
     initWithDelegate:function (delegate, priority) {
         cc.Assert(delegate != null, "TouchHandler.initWithDelegate():touch delegate should not be null");
-
         this._delegate = delegate;
-
         this._priority = priority;
         this._enabledSelectors = 0;
-
         return true;
     }
 });
 
-/** allocates a TouchHandler with a delegate and a priority */
+/**
+ *  Allocates a TouchHandler with a delegate and a priority
+ * @param {cc.TouchDelegate} delegate
+ * @param {Number} priority
+ * @return {cc.TouchHandler}
+ */
 cc.TouchHandler.handlerWithDelegate = function (delegate, priority) {
     var handler = new cc.TouchHandler();
-
     if (handler) {
         handler.initWithDelegate(delegate, priority);
     }
-
     return handler;
 };
 
 /**
- * CCStandardTouchHandler
- It forwardes each event to the delegate.
+ * cc.StandardTouchHandler
+ * It forwardes each event to the delegate.
+ * @class
+ * @extends cc.TouchHandler
  */
-cc.StandardTouchHandler = cc.TouchHandler.extend({
-    /** initializes a TouchHandler with a delegate and a priority */
+cc.StandardTouchHandler = cc.TouchHandler.extend(/** @lends cc.StandardTouchHandler# */{
+    /**
+     * Initializes a TouchHandler with a delegate and a priority
+     * @param {cc.TouchDelegate} delegate
+     * @param {Number} priority
+     * @return {Boolean}
+     */
     initWithDelegate:function (delegate, priority) {
         if (this._super(delegate, priority)) {
             return true;
@@ -101,53 +128,79 @@ cc.StandardTouchHandler = cc.TouchHandler.extend({
     }
 });
 
-/** allocates a TouchHandler with a delegate and a priority */
+/**
+ * Allocates a TouchHandler with a delegate and a priority
+ * @param {cc.TouchDelegate} delegate
+ * @param {Number} priority
+ * @return {cc.StandardTouchHandler}
+ */
 cc.StandardTouchHandler.handlerWithDelegate = function (delegate, priority) {
     var handler = new cc.StandardTouchHandler();
-
     if (handler) {
         handler.initWithDelegate(delegate, priority);
     }
-
     return handler;
 };
 
-cc.TargetedTouchHandler = cc.TouchHandler.extend({
+/**
+ * @class
+ * @extends cc.TouchHandler
+ */
+cc.TargetedTouchHandler = cc.TouchHandler.extend(/** @lends cc.TargetedTouchHandler# */{
     _swallowsTouches:false,
     _claimedTouches:null,
 
-    /** whether or not the touches are swallowed */
+    /**
+     * Whether or not the touches are swallowed
+     * @return {Boolean}
+     */
     isSwallowsTouches:function () {
         return this._swallowsTouches;
     },
+
+    /**
+     * @param {Boolean} swallowsTouches
+     */
     setSwallowsTouches:function (swallowsTouches) {
         this._swallowsTouches = swallowsTouches;
     },
 
-    /** MutableSet that contains the claimed touches */
+    /**
+     * MutableSet that contains the claimed touches
+     * @return {Array}
+     */
     getClaimedTouches:function () {
         return this._claimedTouches;
     },
 
-    /** initializes a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not */
-    initWithDelegate:function (delegate, priority, bSwallow) {
+    /**
+     * Initializes a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not
+     * @param {cc.TouchDelegate} delegate
+     * @param {Number} priority
+     * @param {Boolean} swallow
+     * @return {Boolean}
+     */
+    initWithDelegate:function (delegate, priority, swallow) {
         if (this._super(delegate, priority)) {
             this._claimedTouches = [];
-            this._swallowsTouches = bSwallow;
-
+            this._swallowsTouches = swallow;
             return true;
         }
         return false;
     }
 });
 
-/** allocates a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not */
-cc.TargetedTouchHandler.handlerWithDelegate = function (delegate, priority, bSwallow) {
+/**
+ * Allocates a TargetedTouchHandler with a delegate, a priority and whether or not it swallows touches or not
+ * @param {cc.TouchDelegate} delegate
+ * @param {Number} priority
+ * @param {Boolean} swallow
+ * @return {cc.TargetedTouchHandler}
+ */
+cc.TargetedTouchHandler.handlerWithDelegate = function (delegate, priority, swallow) {
     var handler = new cc.TargetedTouchHandler();
-
     if (handler) {
-        handler.initWithDelegate(delegate, priority, bSwallow);
+        handler.initWithDelegate(delegate, priority, swallow);
     }
-
     return handler;
 };
