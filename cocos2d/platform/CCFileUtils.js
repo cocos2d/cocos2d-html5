@@ -24,66 +24,116 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
+/**
+ * @constant
+ * @type Number
+ */
 cc.SAX_NONE = 0;
-cc.SAX_KEY = 1;
-cc.SAX_DICT = 2;
-cc.SAX_INT = 3;
-cc.SAX_REAL = 4;
-cc.SAX_STRING = 5;
-cc.SAX_ARRAY = 6;
-cc.resourcePath = [];
-
-cc.FileUtils = cc.Class.extend({});
 
 /**
- @brief Get resource file data
- @param in]  fileName The resource file name which contain the path
- @param in]  mode The read mode of the file
- @param out] size If get the file data succeed the it will be the data size,or it will be 0
- @return if success,the pointer of data will be returned,or null is returned
- @warning If you get the file data succeed,you must delete it after used.
+ * @constant
+ * @type Number
+ */
+cc.SAX_KEY = 1;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.SAX_DICT = 2;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.SAX_INT = 3;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.SAX_REAL = 4;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.SAX_STRING = 5;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.SAX_ARRAY = 6;
+
+/**
+ * @namespace
+ */
+cc.FileUtils = {};
+
+/**
+ * Get resource file data
+ * @function
+ * @param {String} fileName The resource file name which contain the path
+ * @param {Number} mode mode The read mode of the file
+ * @param {Number} size If get the file data succeed the it will be the data size,or it will be 0
+ * @warning If you get the file data succeed,you must delete it after used.
+ * @deprecated
  */
 cc.FileUtils.getFileData = function (fileName, mode, size) {
-
 };
 
 /**
- @brief Get resource file data from zip file
- @param in]  fileName The resource file name which contain the relative path of zip file
- @param out] size If get the file data succeed the it will be the data size,or it will be 0
- @return if success,the pointer of data will be returned,or null is returned
- @warning If you get the file data succeed,you must delete it after used.
+ * Get resource file data from zip file
+ * @function
+ * @param {String} pszZipFilePath
+ * @param {String} fileName fileName The resource file name which contain the relative path of zip file
+ * @param {Number} size size If get the file data succeed the it will be the data size,or it will be 0
+ * @warning If you get the file data succeed,you must delete it after used.
+ * @deprecated
  */
 cc.FileUtils.getFileDataFromZip = function (pszZipFilePath, fileName, size) {
-
 };
 
-/** removes the HD suffix from a path
- @returns const char * without the HD suffix
- @since v0.99.5
+/**
+ * removes the HD suffix from a path
+ * @function
+ * @param {String} path
+ * @deprecated
  */
 cc.FileUtils.ccRemoveHDSuffixFromFile = function (path) {
-
 };
+
 //////////////////////////////////////////////////////////////////////////
 // Notification support when getFileData from invalid file path.
 //////////////////////////////////////////////////////////////////////////
-cc.popupNotify = true;
 /**
- @brief   Generate the absolute path of the file.
- @param   pszRelativePath     The relative path of the file.
- @return  The absolute path of the file.
- @warning We only add the ResourcePath before the relative path of the file.
- If you have not set the ResourcePath,the function add "/NEWPLUS/TDA_DATA/UserData/" as default.
- You can set ResourcePath by function void setResourcePath(const char *resourcePath);
+ * Notification support when getFileData from invalid file path.
+ * @function
+ * @type {Boolean}
+ */
+cc.popupNotify = true;
+
+/**
+ * Generate the absolute path of the file.
+ * @function
+ * @param {String} pszRelativePath
+ * @return {String} The absolute path of the file.
+ * @warning We only add the ResourcePath before the relative path of the file. <br/>
+ * If you have not set the ResourcePath,the function add "/NEWPLUS/TDA_DATA/UserData/" as default.<br/>
+ * You can set ResourcePath by function void setResourcePath(const char *resourcePath);
  */
 cc.FileUtils.fullPathFromRelativePath = function (pszRelativePath) {
     return pszRelativePath;
 };
 
-/// @cond
+/**
+ * Generate the relative path of the file.
+ * @function
+ * @param {String} filename
+ * @param {String} relativeFile
+ * @return {String}
+ */
 cc.FileUtils.fullPathFromRelativeFile = function (filename, relativeFile) {
     var tmpPath;
     if (filename) {
@@ -96,23 +146,24 @@ cc.FileUtils.fullPathFromRelativeFile = function (filename, relativeFile) {
         return tmpPath;
     }
 };
-/// @endcond
 
 /**
- @brief  Set the ResourcePath,we will find resource in this path
- @param resourcePath  The absolute resource path
- @warning Don't call this function in android and iOS, it has not effect.
- In android, if you want to read file other than apk, you shoud use invoke getFileData(), and pass the
- absolute path.
+ * Set the ResourcePath,we will find resource in this path
+ * @function
+ * @param {String} resourcePath The absolute resource path
+ * @warning Don't call this function in android and iOS, it has not effect.<br/>
+ * In android, if you want to read file other than apk, you shoud use invoke getFileData(), and pass the<br/>
+ * absolute path.
+ * @deprecated
  */
 cc.FileUtils.setResourcePath = function (resourcePath) {
-
 };
 
 /**
- @brief   Generate a cc.Dictionary pointer by file
- @param   fileName  The file name of *.plist file
- @return  The cc.Dictionary pointer generated from the file
+ * Generate an Dictionary of object by file
+ * @function
+ * @param fileName The file name of *.plist file
+ * @return {object} The Dictionary of object generated from the file
  */
 cc.FileUtils.dictionaryWithContentsOfFile = function (fileName) {
     var parser = cc.SAXParser.shareParser();
@@ -120,9 +171,11 @@ cc.FileUtils.dictionaryWithContentsOfFile = function (fileName) {
     return this.rootDict;
 };
 
-/*
- @brief The same meaning as dictionaryWithContentsOfFile(), but it doesn't call autorelease, so the
- invoker should call release().
+/**
+ * The same meaning as dictionaryWithContentsOfFile(), but it doesn't call autorelease, so the invoker should call release().
+ * @function
+ * @param {String} fileName
+ * @return {object} The Dictionary of object generated from the file
  */
 cc.FileUtils.dictionaryWithContentsOfFileThreadSafe = function (fileName) {
     var tMaker = new cc.DictMaker();
@@ -130,43 +183,48 @@ cc.FileUtils.dictionaryWithContentsOfFileThreadSafe = function (fileName) {
 };
 
 /**
- @brief   Get the writeable path
- @return  The path that can write/read file
+ * Get the writeable path
+ * @function
+ * @return  The path that can write/read file
+ * @deprecated
  */
 cc.FileUtils.getWriteablePath = function () {
-
 };
 
 /**
- @brief Set/Get whether pop-up a message box when the image load failed
+ * Set whether pop-up a message box when the image load failed
+ * @function
+ * @param {Boolean} notify
  */
 cc.FileUtils.setIsPopupNotify = function (notify) {
     cc.popupNotify = notify;
 };
+
+/**
+ * Get whether pop-up a message box when the image load failed
+ * @function
+ * @return {Boolean}
+ */
 cc.FileUtils.getIsPopupNotify = function () {
     return cc.popupNotify;
 };
 
-///////////////////////////////////////////////////
-// interfaces on wophone
-///////////////////////////////////////////////////
 /**
- @brief  Set the resource zip file name
- @param pszZipFileName The relative path of the .zip file
+ * plist Dictionary Maker
+ * @class
+ * @extends cc.Class
+ * @example
+ * //create a DictMaker
+ * var tMaker = new cc.DictMaker();
+ * tMaker.dictionaryWithContentsOfFile(fileName);
  */
-cc.FileUtils.setResource = function (pszZipFileName) {
-
-};
-
-///////////////////////////////////////////////////
-// interfaces on ios
-///////////////////////////////////////////////////
-cc.FileUtils.ccLoadFileIntoMemory = function (filename, out) {
-
-};
-
-cc.DictMaker = cc.Class.extend({
+cc.DictMaker = cc.Class.extend(/** @lends cc.DictMaker# */{
     rootDict:[],
+    /**
+     * Generate dictionary with contents of file
+     * @param {String} fileName
+     * @return {Array}
+     */
     dictionaryWithContentsOfFile:function (fileName) {
         var parser = cc.SAXParser.shareParser();
         this.rootDict = parser.parse(fileName);
