@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-8
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -28,14 +24,33 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-var cc = cc = cc || {};
-cc.timeval = cc.Class.extend({
-    tv_sec:0, //seconds
-    tv_usec:0//microseconds
+/**
+ * time value
+ * @Class
+ * @extends cc.Class
+ */
+cc.timeval = cc.Class.extend(/** @lends cc.timeval# */{
+    /**
+     * seconds
+     * @type Number
+     */
+    tv_sec:0,
+    /**
+     * microseconds
+     * @type Number
+     */
+    tv_usec:0//
 });
 
+/**
+ * @namespace
+ */
 cc.Time = {};
+
+/**
+ * get time of day
+ * @return {cc.timeval}
+ */
 cc.Time.gettimeofdayCocos2d = function () {
     var timeval = new cc.timeval();
     var tmp = Date.now();
@@ -43,13 +58,24 @@ cc.Time.gettimeofdayCocos2d = function () {
     timeval.tv_sec = Math.floor(tmp / 1000);
     return timeval;
 };
-cc.Time.now = function ()//alias to Date.now()
-{
+
+/**
+ * get system date (alias to Date.now())
+ * @return {Date}
+ */
+cc.Time.now = function (){
     return Date.now();
 };
+
+/**
+ * timer sub
+ * @param {cc.timeval | Number} start start value
+ * @param {cc.timeval | Number} end end value
+ * @return {cc.timeval | Number}
+ */
 cc.Time.timersubCocos2d = function (start, end) {
     if (!out || !start || !end) {
-        return;
+        return -1;
     }
     if (start instanceof cc.timeval && end instanceof cc.timeval) {
         var out = new cc.timeval();
