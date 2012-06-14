@@ -25,12 +25,30 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
+/**
+ * enum for jpg
+ * @constant
+ * @type Number
+ */
 cc.CCIMAGE_FORMAT_JPG = 0;
+/**
+ * enum for png
+ * @constant
+ * @type Number
+ */
 cc.CCIMAGE_FORMAT_PNG = 1;
+/**
+ * enum for raw
+ * @constant
+ * @type Number
+ */
 cc.CCIMAGE_FORMAT_RAWDATA = 2;
 
+/**
+ * @param {Number} x
+ * @return {Number}
+ * @constructor
+ */
 cc.NextPOT = function (x) {
     x = x - 1;
     x = x | (x >> 1);
@@ -39,20 +57,28 @@ cc.NextPOT = function (x) {
     x = x | (x >> 8);
     x = x | (x >> 16);
     return x + 1;
-}
+};
 
 /**
- @brief CCRenderTexture is a generic rendering target. To render things into it,
- simply construct a render target, call begin on it, call visit on any cocos
- scenes or objects to render them, and call end. For convienience, render texture
- adds a sprite as it's display child with the results, so you can simply add
- the render texture to your scene and treat it like any other CocosNode.
- There are also functions for saving the render texture to disk in PNG or JPG format.
-
- @since v0.8.1
+ * cc.RenderTexture is a generic rendering target. To render things into it,<br/>
+ * simply construct a render target, call begin on it, call visit on any cocos<br/>
+ * scenes or objects to render them, and call end. For convienience, render texture<br/>
+ * adds a sprite as it's display child with the results, so you can simply add<br/>
+ * the render texture to your scene and treat it like any other CocosNode.<br/>
+ * There are also functions for saving the render texture to disk in PNG or JPG format.
+ * @class
+ * @extends cc.Node
  */
-cc.RenderTexture = cc.Node.extend({
+cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
+    /**
+     * the offscreen canvas for rendering and storing the texture
+     * @type HTMLCanvasElement
+     */
     canvas:null,
+    /**
+     * stores a reference to the canvas context object
+     * @type CanvasContext
+     */
     context:null,
     _fBO:0,
     _oldFBO:0,
@@ -60,28 +86,41 @@ cc.RenderTexture = cc.Node.extend({
     _uITextureImage:null,
     _pixelFormat:cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888,
     _sprite:null,
+
+    /**
+     * @constructor
+     */
     ctor:function () {
         this.canvas = document.createElement('canvas');
         this.context = this.canvas.getContext('2d');
         this.setAnchorPoint(new cc.Point(0, 0));
     },
 
-    /** The CCSprite being used.
-     The sprite, by default, will use the following blending function: GL_ONE, GL_ONE_MINUS_SRC_ALPHA.
-     The blending function can be changed in runtime by calling:
-     - [[renderTexture sprite] setBlendFunc:(ccBlendFunc){GL_ONE, GL_ONE_MINUS_SRC_ALPHA}];
+    /**
+     * The sprite
+     * @return {cc.Sprite}
      */
     getSprite:function () {
         return this._sprite;
     },
+
+    /**
+     * @param {cc.Sprite} sprite
+     */
     setSprite:function (sprite) {
         this._sprite = sprite;
     },
 
+    /**
+     * @return {HTMLCanvasElement}
+     */
     getCanvas:function () {
         return this.canvas;
     },
 
+    /**
+     * @param {cc.Size} size
+     */
     setContentSize:function (size) {
         if (!size) {
             return;
@@ -96,7 +135,12 @@ cc.RenderTexture = cc.Node.extend({
         //}
     },
 
-    /** initializes a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
+    /**
+     * @param {Number} width
+     * @param {Number} height
+     * @param {cc.CCIMAGE_FORMAT_JPG|cc.CCIMAGE_FORMAT_PNG|cc.CCIMAGE_FORMAT_RAWDATA} format
+     * @return {Boolean}
+     */
     initWithWidthAndHeight:function (width, height, format) {
         if (cc.renderContextType == cc.CANVAS) {
             this.canvas.width = width || 10;
@@ -171,7 +215,9 @@ cc.RenderTexture = cc.Node.extend({
         return ret;
     },
 
-    /** starts grabbing */
+    /**
+     * starts grabbing
+     */
     begin:function () {
         //TODO
         // Save the current matrix
@@ -205,8 +251,14 @@ cc.RenderTexture = cc.Node.extend({
         cc.ENABLE_DEFAULT_GL_STATES();
     },
 
-    /** starts rendering to the texture while clearing the texture first.
-     This is more efficient then calling -clear first and then -begin */
+    /**
+     * starts rendering to the texture while clearing the texture first.<br/>
+     * This is more efficient then calling -clear first and then -begin
+     * @param {Number} r red 0-255
+     * @param {Number} g green 0-255
+     * @param {Number} b blue 0-255
+     * @param {Number} a alpha 0-255 0 is transparent
+     */
     beginWithClear:function (r, g, b, a) {
         //TODO
         this.begin();
@@ -222,12 +274,11 @@ cc.RenderTexture = cc.Node.extend({
         glClearColor(clearColor[0], clearColor[1], clearColor[2], clearColor[3]);
     },
 
-    /** ends grabbing*/
-    // para isTOCacheTexture       the parameter is only used for android to cache the texture
+    /**
+     * ends grabbing
+     * @param {Boolean} isTOCacheTexture the parameter is only used for android to cache the texture
+     */
     end:function (isTOCacheTexture) {
-        if (isTOCacheTexture)
-            isTOCacheTexture = true;
-
         ccglBindFramebuffer(cc.GL_FRAMEBUFFER, this._oldFBO);
         // Restore the original matrix and viewport
         glPopMatrix();
@@ -251,7 +302,13 @@ cc.RenderTexture = cc.Node.extend({
         }
     },
 
-    /** clears the texture with a color */
+    /**
+     * clears the texture with a color
+     * @param {Number} r red 0-255
+     * @param {Number} g green 0-255
+     * @param {Number} b blue 0-255
+     * @param {Number} a alpha 0-255
+     */
     clear:function (r, g, b, a) {
         if (cc.renderContextType == cc.CANVAS) {
             var rect = r;
@@ -266,11 +323,17 @@ cc.RenderTexture = cc.Node.extend({
         }
     },
 
-    /** saves the texture into a file */
-    // para szFilePath      the absolute path to save
-    // para x,y         the lower left corner coordinates of the buffer to save
-    // pare width,height    the size of the buffer to save
-    //                        when width = 0 and height = 0, the image size to save equals to buffer texture size
+    /**
+     * saves the texture into a file<br/>
+     * when width = 0 and height = 0, the image size to save equals to buffer texture size
+     * @param {cc.CCIMAGE_FORMAT_JPG|cc.CCIMAGE_FORMAT_PNG|cc.CCIMAGE_FORMAT_RAWDATA} format
+     * @param {String} filePath the absolute path to save
+     * @param {Number} x the lower left corner coordinates of the buffer to save
+     * @param {Number} y the lower left corner coordinates of the buffer to save
+     * @param {Number} width
+     * @param {Number} height
+     * @return {Boolean}
+     */
     saveBuffer:function (format, filePath, x, y, width, height) {
         if (typeof(format) == "number") {
             x = x || 0;
@@ -394,11 +457,16 @@ cc.RenderTexture = cc.Node.extend({
         return pData;
     },
 
-    /** save the buffer data to a CCImage */
-    // para image      the CCImage to save
-    // para x,y         the lower left corner coordinates of the buffer to save
-    // pare width,height    the size of the buffer to save
-    //                        when width = 0 and height = 0, the image size to save equals to buffer texture size
+    /**
+     * read the buffer data<br/>
+     * when width = 0 and height = 0, the image size to save equals to buffer texture size
+     * @param {Image} image the CCImage to save
+     * @param {Number} x the lower left corner coordinates of the buffer to save
+     * @param {Number} y the lower left corner coordinates of the buffer to save
+     * @param {Number} width
+     * @param {Number} height
+     * @return {Boolean}
+     */
     getUIImageFromBuffer:function (image, x, y, width, height) {
         //TODO
         if (null == image || null == this._texture) {
@@ -490,7 +558,16 @@ cc.RenderTexture = cc.Node.extend({
     }
 });
 
-/** creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid */
+/**
+ * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
+ * @param {Number} width
+ * @param {Number} height
+ * @param {cc.CCIMAGE_FORMAT_JPG|cc.CCIMAGE_FORMAT_PNG|cc.CCIMAGE_FORMAT_RAWDATA} format
+ * @return {cc.RenderTexture}
+ * @example
+ * // Example
+ * var rt = cc.RenderTexture.create()
+ */
 cc.RenderTexture.create = function (width, height, format) {
     if (!format) {
         format = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888;
