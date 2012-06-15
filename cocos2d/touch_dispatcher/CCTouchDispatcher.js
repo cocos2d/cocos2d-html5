@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-5
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -28,45 +24,103 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
+/**
+ * @constant
+ * @type Number
+ */
 cc.TouchSelectorBeganBit = 1 << 0;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TouchSelectorMovedBit = 1 << 1;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TouchSelectorEndedBit = 1 << 2;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TouchSelectorCancelledBit = 1 << 3;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TouchSelectorAllBits = ( cc.TouchSelectorBeganBit | cc.TouchSelectorMovedBit | cc.TouchSelectorEndedBit | cc.TouchSelectorCancelledBit);
 
+/**
+ * @constant
+ * @type Number
+ */
 cc.TOUCH_BEGAN = 0;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TOUCH_MOVED = 1;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TOUCH_ENDED = 2;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TOUCH_CANCELLED = 3;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.TouchMax = 4;
 
+/**
+ * @function
+ * @param {cc.TouchHandler} p1
+ * @param {cc.TouchHandler} p2
+ * @return {Boolean}
+ */
 cc.less = function (p1, p2) {
     return p1.getPriority() > p2.getPriority();
 };
 
+/**
+ * @param {Number} type
+ * @constructor
+ */
 cc.TouchHandlerHelperData = function (type) {
     // we only use the type
     this.type = type;
 };
-/** @brief CCTouchDispatcher.
- Singleton that handles all the touch events.
- The dispatcher dispatches events to the registered TouchHandlers.
- There are 2 different type of touch handlers:
- - Standard Touch Handlers
- - Targeted Touch Handlers
 
- The Standard Touch Handlers work like the CocoaTouch touch handler: a set of touches is passed to the delegate.
- On the other hand, the Targeted Touch Handlers only receive 1 touch at the time, and they can "swallow" touches (avoid the propagation of the event).
-
- Firstly, the dispatcher sends the received touches to the targeted touches.
- These touches can be swallowed by the Targeted Touch Handlers. If there are still remaining touches, then the remaining touches will be sent
- to the Standard Touch Handlers.
-
- @since v0.8.0
+/**
+ * cc.TouchDispatcher.
+ * Singleton that handles all the touch events.
+ * The dispatcher dispatches events to the registered TouchHandlers.
+ * There are 2 different type of touch handlers:
+ * - Standard Touch Handlers
+ * - Targeted Touch Handlers
+ *
+ * The Standard Touch Handlers work like the CocoaTouch touch handler: a set of touches is passed to the delegate.
+ * On the other hand, the Targeted Touch Handlers only receive 1 touch at the time, and they can "swallow" touches (avoid the propagation of the event).
+ *
+ * Firstly, the dispatcher sends the received touches to the targeted touches.
+ * These touches can be swallowed by the Targeted Touch Handlers. If there are still remaining touches, then the remaining touches will be sent
+ * to the Standard Touch Handlers.
+ * @class
+ * @extends cc.Class
  */
-cc.TouchDispatcher = cc.Class.extend({
+cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
     _targetedHandlers:null,
     _standardHandlers:null,
     _locked:false,
@@ -76,47 +130,46 @@ cc.TouchDispatcher = cc.Class.extend({
     _handlersToRemove:null,
     _toQuit:false,
     _dispatchEvents:false,
-
     _handlerHelperData:[new cc.TouchHandlerHelperData(cc.TOUCH_BEGAN), new cc.TouchHandlerHelperData(cc.TOUCH_MOVED),
         new cc.TouchHandlerHelperData(cc.TOUCH_ENDED), new cc.TouchHandlerHelperData(cc.TOUCH_CANCELLED)],
 
-    /*
-     +(id) allocWithZone:(CCZone *)zone
-     {
-     @synchronized(self) {
-     CCAssert(sharedDispatcher == nil, @"Attempted to allocate a second instance of a singleton.");
-     return [super allocWithZone:zone];
-     }
-     return nil; // on subsequent allocation attempts return nil
-     }
+    /**
+     * @return {Boolean}
      */
     init:function () {
         this._dispatchEvents = true;
         this._targetedHandlers = new Array();
         this._standardHandlers = new Array();
-
         this._handlersToAdd = new Array();
         this._handlersToRemove = new Array();
-
         this._toRemove = false;
         this._toAdd = false;
         this._toQuit = false;
         this._locked = false;
-
         return true;
     },
 
-    /** Whether or not the events are going to be dispatched. Default: true */
+    /**
+     * Whether or not the events are going to be dispatched. Default: true
+     * @return {Boolean}
+     */
     isDispatchEvents:function () {
         return this._dispatchEvents;
     },
-    setDispatchEvents:function (bDispatchEvents) {
-        this._dispatchEvents = bDispatchEvents;
+
+    /**
+     * @param {Boolean} dispatchEvents
+     */
+    setDispatchEvents:function (dispatchEvents) {
+        this._dispatchEvents = dispatchEvents;
     },
 
-    /** Adds a standard touch delegate to the dispatcher's list.
-     See StandardTouchDelegate description.
-     IMPORTANT: The delegate will be retained.
+    /**
+     * Adds a standard touch delegate to the dispatcher's list.
+     * See StandardTouchDelegate description.
+     * IMPORTANT: The delegate will be retained.
+     * @param {cc.TouchDelegate} delegate
+     * @param {Number} priority
      */
     addStandardDelegate:function (delegate, priority) {
         var handler = cc.StandardTouchHandler.handlerWithDelegate(delegate, priority);
@@ -137,6 +190,11 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
+    /**
+     * @param {cc.TouchDelegate} delegate
+     * @param {Number} priority
+     * @param {Boolean} swallowsTouches
+     */
     addTargetedDelegate:function (delegate, priority, swallowsTouches) {
         var handler = cc.TargetedTouchHandler.handlerWithDelegate(delegate, priority, swallowsTouches);
         if (!this._locked) {
@@ -155,6 +213,12 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
+    /**
+     *  Force add handler
+     * @param {cc.TouchHandler} handler
+     * @param {Array} array
+     * @return {Array}
+     */
     forceAddHandler:function (handler, array) {
         var u = 0;
 
@@ -173,12 +237,18 @@ cc.TouchDispatcher = cc.Class.extend({
         return cc.ArrayAppendObjectToIndex(array, handler, u);
     },
 
+    /**
+     *  Force remove all delegates
+     */
     forceRemoveAllDelegates:function () {
         this._standardHandlers.length = 0;
         this._targetedHandlers.length = 0;
     },
-    /** Removes a touch delegate.
-     The delegate will be released
+
+    /**
+     * Removes a touch delegate.
+     * The delegate will be released
+     * @param {cc.TouchDelegate} delegate
      */
     removeDelegate:function (delegate) {
         if (delegate == null) {
@@ -188,8 +258,8 @@ cc.TouchDispatcher = cc.Class.extend({
         if (!this._locked) {
             this.forceRemoveDelegate(delegate);
         } else {
-            /* If handler is contained in m_pHandlersToAdd, if so remove it from m_pHandlersToAdd and retrun.
-             * Refer issue #752(cocos2d-x)
+            /*
+             * If handler is contained in m_pHandlersToAdd, if so remove it from m_pHandlersToAdd and return.
              */
             var handler = this.findHandler(this._handlersToAdd, delegate);
             if (handler) {
@@ -202,7 +272,9 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
-    /** Removes all touch delegates, releasing all the delegates */
+    /**
+     * Removes all touch delegates, releasing all the delegates
+     */
     removeAllDelegates:function () {
         if (!this._locked) {
             this.forceRemoveAllDelegates();
@@ -211,8 +283,11 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
-    /** Changes the priority of a previously added delegate. The lower the number,
-     the higher the priority */
+    /**
+     * Changes the priority of a previously added delegate. The lower the number,  the higher the priority
+     * @param {Number} priority
+     * @param {cc.TouchDelegate} delegate
+     */
     setPriority:function (priority, delegate) {
         cc.Assert(delegate != null, "TouchDispatcher.setPriority():Arguments is null");
 
@@ -226,6 +301,11 @@ cc.TouchDispatcher = cc.Class.extend({
         this.rearrangeHandlers(this._standardHandlers);
     },
 
+    /**
+     * @param {Array} touches
+     * @param {event} event
+     * @param {Number} index
+     */
     touches:function (touches, event, index) {
         cc.Assert(index >= 0 && index < 4, "TouchDispatcher.touches()");
 
@@ -365,27 +445,51 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
+    /**
+     * @param {Array} touches
+     * @param {event} event
+     */
     touchesBegan:function (touches, event) {
         if (this._dispatchEvents) {
             this.touches(touches, event, cc.TOUCH_BEGAN);
         }
     },
+
+    /**
+     * @param {Array} touches
+     * @param {event} event
+     */
     touchesMoved:function (touches, event) {
         if (this._dispatchEvents) {
             this.touches(touches, event, cc.TOUCH_MOVED);
         }
     },
+
+    /**
+     * @param {Array} touches
+     * @param {event} event
+     */
     touchesEnded:function (touches, event) {
         if (this._dispatchEvents) {
             this.touches(touches, event, cc.TOUCH_ENDED);
         }
     },
+
+    /**
+     * @param {Array} touches
+     * @param {event} event
+     */
     touchesCancelled:function (touches, event) {
         if (this._dispatchEvents) {
             this.touches(touches, event, cc.TOUCH_CANCELLED);
         }
     },
 
+    /**
+     * @param {Array} array
+     * @param {cc.TouchDelegate} delegate
+     * @return {cc.TargetedTouchHandler|cc.StandardTouchHandler|Null}
+     */
     findHandler:function (array, delegate) {
         switch (arguments.length) {
             case 1:
@@ -419,6 +523,9 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
+    /**
+     * @param {cc.TouchDelegate} delegate
+     */
     forceRemoveDelegate:function (delegate) {
         var handler;
         // XXX: remove it from both handlers ???
@@ -440,11 +547,22 @@ cc.TouchDispatcher = cc.Class.extend({
         }
     },
 
+    /**
+     * @param {Array} array
+     */
     rearrangeHandlers:function (array) {
         array.sort(cc.less);
     }
 });
+
+/**
+ * @type {cc.Point}
+ */
 cc.TouchDispatcher.preTouchPoint = new cc.Point(0, 0);
+
+/**
+ * @param {HTMLCanvasElement|HTMLDivElement} element
+ */
 cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
     //register canvas mouse event
     element.addEventListener("mousedown", function (event) {
@@ -476,6 +594,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         set.push(touch);
         cc.TouchDispatcher.sharedDispatcher().touchesBegan(set, null);
     });
+
     element.addEventListener("mouseup", function (event) {
         var el = element;
         var pos = null;
@@ -504,6 +623,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         set.push(touch);
         cc.TouchDispatcher.sharedDispatcher().touchesEnded(set, null);
     });
+
     element.addEventListener("mousemove", function (event) {
         var el = element;
         var pos = null;
@@ -576,6 +696,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         event.stopPropagation();
         event.preventDefault();
     }, false);
+
     element.addEventListener("touchmove", function (event) {
         if (!event.touches)
             return;
@@ -617,6 +738,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         event.stopPropagation();
         event.preventDefault();
     }, false);
+
     element.addEventListener("touchend", function (event) {
         if (!event.touches)
             return;
@@ -663,6 +785,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         event.stopPropagation();
         event.preventDefault();
     }, false);
+
     element.addEventListener("touchcancel", function (event) {
         if (!event.touches)
             return;
@@ -707,14 +830,15 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 };
 
 cc._pSharedDispatcher = null;
+
+/**
+ * @return {cc.TouchDispatcher}
+ */
 cc.TouchDispatcher.sharedDispatcher = function () {
     if (cc._pSharedDispatcher == null) {
-        //console.log("TouchDispatcher.sharedDispatcher()");
         cc._pSharedDispatcher = new cc.TouchDispatcher();
         cc._pSharedDispatcher.init();
-
         cc.TouchDispatcher.registerHtmlElementEvent(cc.canvas);
     }
-
     return cc._pSharedDispatcher;
 };
