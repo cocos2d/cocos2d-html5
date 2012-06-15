@@ -53,7 +53,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      * @return {String}
      */
     description:function () {
-        return "<CCAction | Tag = " + this._tag + ">";
+        return "<cc.Action | Tag = " + this._tag + ">";
     },
 
     /**
@@ -145,7 +145,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
 
     /** Set the original target, since target can be nil. <br/>
      * Is the target that were used to run the action.  <br/>
-     * Unless you are doing something complex, like CCActionManager, you should NOT call this method. <br/>
+     * Unless you are doing something complex, like cc.ActionManager, you should NOT call this method. <br/>
      * The target is 'assigned', it is not 'retained'. <br/>
      * @param {cc.Node} originalTarget
      */
@@ -213,7 +213,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
 
     /** returns a reversed action
      *
-     * @return {null}
+     * @return {Null}
      */
     reverse:function () {
         cc.Log("cocos2d: FiniteTimeAction#reverse: Implement me");
@@ -226,7 +226,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
  * Changes the speed of an action, making it take longer (speed>1)
  * or less (speed<1) time. <br/>
  * Useful to simulate 'slow motion' or 'fast forward' effect.
- * @warning This action can't be Sequenceable because it is not an CCIntervalAction
+ * @warning This action can't be Sequenceable because it is not an cc.IntervalAction
  * @class
  * @extends cc.Action
  */
@@ -334,7 +334,7 @@ cc.Speed.create = function (action, rate) {
 
  * @example
  * //example
- * //Instead of using CCCamera as a "follower", use this action instead.
+ * //Instead of using cc.Camera as a "follower", use this action instead.
  * layer.runAction(cc.Follow.actionWithTarget(hero));
 
  * @class
@@ -460,7 +460,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * creates the action with no boundary set
  * @param {cc.Node} followedNode
  * @param {cc.Rect} rect
- * @return {cc.Follow}
+ * @return {cc.Follow|Null} returns the cc.Follow object on success
  * @example
  * // example
  * // creates the action with a set boundary

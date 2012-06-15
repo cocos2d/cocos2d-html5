@@ -24,20 +24,25 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-
-/** @brief cc.TurnOffTiles action.
- Turn off the files in random order
+/** cc.TurnOffTiles action.<br/>
+ * Turn off the files in random order
+ * @class
+ * @extends cc.TiledGrid3DAction
  */
-cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
+cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
     _seed:null,
     _tilesCount:0,
     _tilesOrder:[],
-    /** initializes the action with a random seed, the grid size and the duration */
-    initWithSeed:function (s, gridSize, duration) {
+
+    /** initializes the action with a random seed, the grid size and the duration
+     * @param {cc.GridSize} gridSize
+     * @param {Number} duration
+     * @param {Number} seed
+     * @return {Boolean}
+     */
+    initWithSeed:function ( gridSize, duration, seed) {
         if (this.initWithSize(gridSize, duration)) {
-            this._seed = s;
+            this._seed = seed;
             this._tilesOrder = null;
 
             return true;
@@ -45,6 +50,11 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
 
         return false;
     },
+
+    /**
+     * @param {Array} array
+     * @param {Number} len
+     */
     shuffle:function (array, len) {
         var i;
         for (i = len - 1; i >= 0; i--) {
@@ -54,13 +64,25 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
             array[j] = v;
         }
     },
+
+    /**
+     * @param {cc.GridSize} pos
+     */
     turnOnTile:function (pos) {
         this.setTile(pos, this.originalTile(pos));
     },
+
+    /**
+     * @param {cc.GridSize}pos
+     */
     turnOffTile:function (pos) {
         var coords = new cc.Quad3();
         this.setTile(pos, coords);
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         var i;
 
@@ -78,6 +100,10 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
 
         this.shuffle(this._tilesOrder, this._tilesCount);
     },
+
+    /**
+     * @param {Number} time
+     */
     update:function (time) {
         var i, l, t;
 
@@ -98,6 +124,19 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend({
 
 });
 
+/**
+ * @param {cc.GridSize}gridSize
+ * @param {Number} duration
+ * @param {Number|Null} seed
+ * @return {cc.TurnOffTiles}
+ * @example
+ * // example
+ * // turnOffTiles without seed
+ * var toff = cc.TurnOffTiles.create(cc.ccg(x, y), this._duration);
+ *
+ * // turnOffTiles with seed
+ * var toff = cc.TurnOffTiles.create(cc.ccg(x, y), this._duration, 0);
+ */
 cc.TurnOffTiles.create = function (gridSize, duration, seed) {
     var action = new cc.TurnOffTiles();
     if(arguments.length == 2) {

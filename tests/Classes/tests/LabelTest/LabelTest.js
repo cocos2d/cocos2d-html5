@@ -783,9 +783,9 @@ var LabelTTFTest = AtlasDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         // cc.LabelBMFont
-        var left = cc.LabelTTF.create("align left", cc.SizeMake(s.width, 50), cc.TextAlignmentLeft, "Marker Felt", 32);
-        var center = cc.LabelTTF.create("align center", cc.SizeMake(s.width, 50), cc.TextAlignmentCenter, "Marker Felt", 32);
-        var right = cc.LabelTTF.create("align right", cc.SizeMake(s.width, 50), cc.TextAlignmentRight, "Marker Felt", 32);
+        var left = cc.LabelTTF.create("align left", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_LEFT, "Marker Felt", 32);
+        var center = cc.LabelTTF.create("align center", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_CENTER, "Marker Felt", 32);
+        var right = cc.LabelTTF.create("align right", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_RIGHT, "Marker Felt", 32);
 
         left.setPosition(cc.ccp(s.width / 2, 200));
         center.setPosition(cc.ccp(s.width / 2, 150));
@@ -809,7 +809,7 @@ var LabelTTFMultiline = AtlasDemo.extend({
 
         // cc.LabelBMFont
         var center = cc.LabelTTF.create("word wrap \"testing\" (bla0) bla1 'bla2' [bla3] (bla4) {bla5} {bla6} [bla7] (bla8) [bla9] 'bla0' \"bla1\"",
-            cc.SizeMake(s.width / 2, 200), cc.TextAlignmentCenter, "Marker Felt", 32);
+            cc.SizeMake(s.width / 2, 200), cc.TEXT_ALIGNMENT_CENTER, "Marker Felt", 32);
         center.setPosition(cc.ccp(s.width / 2, 150));
 
         this.addChild(center);

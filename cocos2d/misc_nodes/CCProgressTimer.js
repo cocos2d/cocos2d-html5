@@ -24,48 +24,101 @@
  ****************************************************************************/
 
 
-/// Radial Counter-Clockwise
+/**
+ * Radial Counter-Clockwise
+ * @type Number
+ * @constant
+ */
 cc.CCPROGRESS_TIMER_RADIAL_CCW = 0;
-/// Radial ClockWise
+/**
+ * Radial ClockWise
+ * @type Number
+ * @constant
+ */
 cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW = 1;
-/// Horizontal Left-Right
+/**
+ * Horizontal Left-Right
+ * @type Number
+ * @constant
+ */
 cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR = 2;
-/// Horizontal Right-Left
+/**
+ * Horizontal Right-Left
+ * @type Number
+ * @constant
+ */
 cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL = 3;
-/// Vertical Bottom-top
+/**
+ * Vertical Bottom-top
+ * @type Number
+ * @constant
+ */
 cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT = 4;
-/// Vertical Top-Bottom
+/**
+ * Vertical Top-Bottom
+ * @type Number
+ * @constant
+ */
 cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB = 5;
 
-cc.PROGRESS_TEXTURE_COORDS_COUNT = 4;
-cc.PROGRESS_TEXTURE_COORDS = 0x1e;
 /**
- @brief CCProgresstimer is a subclass of CCNode.
- It renders the inner sprite according to the percentage.
- The progress can be Radial, Horizontal or vertical.
- @since v0.99.1
+ * @constant
+ * @type Number
  */
-cc.ProgressTimer = cc.Node.extend({
+cc.PROGRESS_TEXTURE_COORDS_COUNT = 4;
 
-    /**    Change the percentage to change progress. */
+/**
+ * @constant
+ * @type Number
+ */
+cc.PROGRESS_TEXTURE_COORDS = 0x1e;
+
+
+/**
+ * cc.Progresstimer is a subclass of cc.Node.<br/>
+ * It renders the inner sprite according to the percentage.<br/>
+ * The progress can be Radial, Horizontal or vertical.
+ * @class
+ * @extends cc.Node
+ */
+cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
+
+    /**
+     *  Change the percentage to change progress
+     * @return {cc.CCPROGRESS_TIMER_RADIAL_CCW|cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB}
+     */
     getType:function () {
         return this._type;
     },
 
-    /** Percentages are from 0 to 100 */
+    /**
+     * Percentages are from 0 to 100
+     * @return {Number}
+     */
     getPercentage:function () {
         return this._percentage;
     },
 
-    /** The image to show the progress percentage, retain */
+    /**
+     * The image to show the progress percentage, retain
+     * @return {cc.Sprite}
+     */
     getSprite:function () {
         return this._sprite;
     },
 
+    /**
+     * @param {String} fileName
+     * @return {Boolean}
+     */
     initWithFile:function (fileName) {
         return this.initWithTexture(cc.TextureCache.sharedTextureCache().addImage(fileName));
     },
 
+    /**
+     * @param {Image} texture
+     * @return {Boolean}
+     */
     initWithTexture:function (texture) {
         this._sprite = cc.Sprite.spriteWithTexture(texture);
 
@@ -79,12 +132,20 @@ cc.ProgressTimer = cc.Node.extend({
         return true;
     },
 
+    /**
+     * from 0-100
+     * @param {Number} percentage
+     */
     setPercentage:function (percentage) {
         if (this._percentage != percentage) {
             this._percentage = cc.clampf(percentage, 0, 100);
             this._updateProgress();
         }
     },
+
+    /**
+     * @param {cc.Sprite} sprite
+     */
     setSprite:function (sprite) {
         if (this._sprite != sprite) {
             this._sprite = sprite;
@@ -98,6 +159,9 @@ cc.ProgressTimer = cc.Node.extend({
         }
     },
 
+    /**
+     * @param {cc.CCPROGRESS_TIMER_RADIAL_CCW|cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB} type
+     */
     setType:function (type) {
         if (type != this._type) {
             //	release all previous information
@@ -111,6 +175,10 @@ cc.ProgressTimer = cc.Node.extend({
 
     },
 
+    /**
+     * stuff gets drawn here
+     * @param {CanvasContext} ctx
+     */
     draw:function (ctx) {
         if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
@@ -569,6 +637,14 @@ cc.ProgressTimer = cc.Node.extend({
     _vertexData:null
 });
 
+/**
+ * create a progress timer object with image file name that renders the inner sprite according to the percentage
+ * @param {String} fileName
+ * @return {cc.ProgressTimer}
+ * @example
+ * // Example
+ * var progress = cc.ProgressTimer.create('progress.png')
+ */
 cc.ProgressTimer.create = function (fileName) {
     var progressTimer = new cc.ProgressTimer();
     if (progressTimer.initWithFile(fileName)) {
@@ -577,6 +653,18 @@ cc.ProgressTimer.create = function (fileName) {
         return null;
     }
 };
+
+/**
+ * create a progress timer object with texture that renders the inner sprite according to the percentage
+ * @param {Image} texture
+ * @return {cc.ProgressTimer}
+ * @example
+ * // Example
+ * var progress = cc.ProgressTimer.create(progressTexture)
+ *
+ * //OR
+ * var progress = cc.ProgressTimer.create(cc.TextureCache.sharedTextureCache().addImage('progress.png'))
+ */
 cc.ProgressTimer.createWithTexture = function (texture) {
     var progressTimer = new cc.ProgressTimer();
     if (progressTimer.initWithTexture(texture)) {

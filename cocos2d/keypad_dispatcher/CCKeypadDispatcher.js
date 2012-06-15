@@ -28,14 +28,14 @@
  * android back button
  * @deprecated These were for android devices, but does not work in html5 environment
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.TYPE_BACK_CLICKED = 1;
 /**
  * android menu button
  * @deprecated for android devices, does not work in html5 environment
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.TYPE_MENU_CLICKED = 2;
 /**
@@ -56,7 +56,7 @@ cc.TYPE_MENU_CLICKED = 2;
  * if,(cc.keyDown[cc.KEY.space])
  * //if its undefined or false or null, its not pressed
  * @constant
- * @type {object}
+ * @type object
  */
 cc.KEY = {
     backspace:8,
@@ -290,11 +290,16 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
 cc.KeypadDispatcher.sharedDispatcher = function () {
     if (!cc.keypadDispatcher) {
         cc.keypadDispatcher = new cc.KeypadDispatcher();
-        document.addEventListener("keydown", function (e) {
+        //make canvas focusable
+        cc.canvas.setAttribute('contentEditable', true);
+        cc.canvas.style.outline='none';
+        cc.canvas.style.cursor = 'default';
+        cc.canvas.addEventListener("keydown", function (e) {
+            console.log(e);
             cc.keypadDispatcher.dispatchKeypadMSG(e, true);
             cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
         });
-        document.addEventListener("keyup", function (e) {
+        cc.canvas.addEventListener("keyup", function (e) {
             cc.keypadDispatcher.dispatchKeypadMSG(e, false);
         });
     }

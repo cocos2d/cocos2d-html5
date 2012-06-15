@@ -25,66 +25,80 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/*
- * Motion Streak manages a Ribbon based on it's motion in absolute space.
- * You construct it with a fadeTime, minimum segment size, texture path, texture
- * length and color. The fadeTime controls how long it takes each vertex in
- * the streak to fade out, the minimum segment size it how many pixels the
- * streak will move before adding a new ribbon segement, and the texture
- * length is the how many pixels the texture is stretched across. The texture
- * is vertically aligned along the streak segemnts.
- */
-
 /**
- * @brief CCMotionStreak manages a Ribbon based on it's motion in absolute space.
- * You construct it with a fadeTime, minimum segment size, texture path, texture
- * length and color. The fadeTime controls how long it takes each vertex in
- * the streak to fade out, the minimum segment size it how many pixels the
- * streak will move before adding a new ribbon segement, and the texture
- * length is the how many pixels the texture is stretched across. The texture
- * is vertically aligned along the streak segemnts.
- *
- * Limitations:
- *   CCMotionStreak, by default, will use the GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA blending function.
- *   This blending function might not be the correct one for certain textures.
- *   But you can change it by using:
- *     [obj setBlendFunc: (ccBlendfunc) {new_src_blend_func, new_dst_blend_func}];
- *
- * @since v0.8.1
+ * cc.MotionStreak manages a Ribbon based on it's motion in absolute space.<br/>
+ * You construct it with a fadeTime, minimum segment size, texture path, texture<br/>
+ * length and color. The fadeTime controls how long it takes each vertex in<br/>
+ * the streak to fade out, the minimum segment size it how many pixels the<br/>
+ * streak will move before adding a new ribbon segment, and the texture<br/>
+ * length is the how many pixels the texture is stretched across. The texture<br/>
+ * is vertically aligned along the streak segment.
+ * @class
+ * @extends cc.Node
  */
-cc.MotionStreak = cc.Node.extend({
+cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     _segThreshold:0,
     _width:0,
     _lastLocation:cc.PointZero(),
 
+    /**
+     * @type cc.Ribbon
+     */
     _ribbon:null,
-    /** Ribbon used by MotionStreak (weak reference) */
+
+    /**
+     * Ribbon used by MotionStreak (weak reference)
+     * @return {cc.Ribbon}
+     */
     getRibbon:function () {
         return this._ribbon;
     },
 
-    //CCTextureProtocol methods
+    /**
+     * @return {cc.Texture2D}
+     */
     getTexture:function () {
         return this._ribbon.getTexture();
     },
-    getTexture:function (texture) {
+
+    /**
+     * @param {cc.Texture2D} texture
+     */
+    setTexture:function (texture) {
         this._ribbon.setTexture(texture);
     },
 
+    /**
+     * @return {cc.BlendFunc}
+     */
     getBlendFunc:function () {
         return this._ribbon.getBlendFunc();
     },
+
+    /**
+     * @param {cc.BlendFunc} blendFunc
+     */
     setBlendFunc:function (blendFunc) {
         this._ribbon.setBlendFunc(blendFunc);
     },
 
+    /**
+     * @constructor
+     */
     ctor:function () {
         this._super();
     },
 
-    /** initializes a MotionStreak. The file will be loaded using the TextureMgr. */
+    /**
+     * initializes a MotionStreak. The file will be loaded using the TextureMgr.
+     * @param {Number} fade
+     * @param {Number} seg
+     * @param {String} imagePath
+     * @param {Number} width
+     * @param {Number} length
+     * @param {cc.Color4B} color
+     * @return {Boolean}
+     */
     initWithFade:function (fade, seg, imagePath, width, length, color) {
         this._segThreshold = seg;
         this._width = width;
@@ -97,7 +111,9 @@ cc.MotionStreak = cc.Node.extend({
         return true;
     },
 
-    /** polling function */
+    /**
+     * polling function
+     */
     update:function (delta) {
         var location = this.convertToWorldSpace(cc.PointZero());
         this._ribbon.setPosition(cc.ccp(-1 * location.x, -1 * location.y));
@@ -110,7 +126,16 @@ cc.MotionStreak = cc.Node.extend({
     }
 });
 
-/** creates the a MotionStreak. The image will be loaded using the TextureMgr. */
+/**
+ * creates the a MotionStreak. The image will be loaded using the TextureMgr.
+ * @param {Number} fade time to fade
+ * @param {Number} seg minimum segment size
+ * @param {String} imagePath texture path
+ * @param {Number} width texture width
+ * @param {Number} length texture length
+ * @param {cc.Color4B} color color
+ * @return {cc.MotionStreak}
+ */
 cc.MotionStreak.create = function (fade, seg, imagePath, width, length, color) {
     var ret = new cc.MotionStreak();
     if (ret && ret.initWithFade(fade, seg, imagePath, width, length, color)) {

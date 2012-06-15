@@ -40,51 +40,122 @@
 // 'Radius Mode' in Particle Designer uses a fixed emit rate of 30 hz. Since that can't be guarateed in cocos2d,
 //  cocos2d uses a another approach, but the results are almost identical.
 //
-var cc = cc = cc || {};
 
-//Particle Draw Mode
+/**
+ * Shape Mode of Particle Draw
+ * @constant
+ * @type Number
+ */
 cc.PARTICLE_SHAPE_MODE = 0;
+/**
+ * Texture Mode of Particle Draw
+ * @constant
+ * @type Number
+ */
 cc.PARTICLE_TEXTURE_MODE = 1;
 
-//Particle Shape Type for ShapeMode
+/**
+ * Star Shape for ShapeMode of Particle
+ * @constant
+ * @type Number
+ */
 cc.PARTICLE_STAR_SHAPE = 0;
+/**
+ * Ball Shape for ShapeMode of Particle
+ * @constant
+ * @type Number
+ */
 cc.PARTICLE_BALL_SHAPE = 1;
 
-/** The Particle emitter lives forever */
+/**
+ * The Particle emitter lives forever
+ * @constant
+ * @type Number
+ */
 cc.CCPARTICLE_DURATION_INFINITY = -1;
-/** The starting size of the particle is equal to the ending size */
+
+/**
+ * The starting size of the particle is equal to the ending size
+ * @constant
+ * @type Number
+ */
 cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE = -1;
-/** The starting radius of the particle is equal to the ending radius */
+
+/**
+ * The starting radius of the particle is equal to the ending radius
+ * @constant
+ * @type Number
+ */
 cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS = -1;
-// backward compatible
+
+/**
+ * backward compatible
+ * @constant
+ * @type Number
+ */
 cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 cc.PARTICLE_DURATION_INFINITY = cc.CCPARTICLE_DURATION_INFINITY;
 
 
-/** Gravity mode (A mode) */
+/**
+ * Gravity mode (A mode)
+ * @constant
+ * @type Number
+ */
 cc.CCPARTICLE_MODE_GRAVITY = 0;
-/** Radius mode (B mode) */
+
+/**
+ * Radius mode (B mode)
+ * @constant
+ * @type Number
+ */
 cc.CCPARTICLE_MODE_RADIUS = 1;
 
+ // tCCPositionType
+ // possible types of particle positions
 
-/** @typedef tCCPositionType
- possible types of particle positions
+/**
+ * Living particles are attached to the world and are unaffected by emitter repositioning.
+ * @constant
+ * @type Number
  */
-/** Living particles are attached to the world and are unaffected by emitter repositioning. */
 cc.CCPARTICLE_TYPE_FREE = 0;
-/** Living particles are attached to the world but will follow the emitter repositioning.
- Use case: Attach an emitter to an sprite, and you want that the emitter follows the sprite.
+
+/**
+ * Living particles are attached to the world but will follow the emitter repositioning.<br/>
+ * Use case: Attach an emitter to an sprite, and you want that the emitter follows the sprite.
+ * @constant
+ * @type Number
  */
 cc.CCPARTICLE_TYPE_RELATIVE = 1;
-/** Living particles are attached to the emitter and are translated along with it. */
+
+/**
+ * Living particles are attached to the emitter and are translated along with it.
+ * @constant
+ * @type Number
+ */
 cc.CCPARTICLE_TYPE_GROUPED = 2;
 
 // backward compatible
 cc.PARTICLE_TYPE_FREE = cc.CCPARTICLE_TYPE_FREE;
 cc.PARTICLE_TYPE_GROUPED = cc.CCPARTICLE_TYPE_GROUPED;
 
+
 /**
- Structure that contains the values of each particle
+ * Structure that contains the values of each particle
+ * @Class
+ * @Construct
+ * @param {cc.Point} pos Position of particle
+ * @param {cc.Point} startPos
+ * @param {cc.Color4F} color
+ * @param {cc.Color4F} deltaColor
+ * @param {cc.Size} size
+ * @param {cc.Size} deltaSize
+ * @param {Number} rotation
+ * @param {Number} deltaRotation
+ * @param {Number} timeToLive
+ * @param {cc.tCCParticle.tModeA} modeA
+ * @param {cc.tCCParticle.tModeB} modeB
  */
 cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, modeA, modeB) {
     this.pos = pos ? pos : cc.PointZero();
@@ -102,13 +173,29 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
     this.drawPos = new cc.Point(0, 0);
 };
 
-//! Mode A: gravity, direction, radial accel, tangential accel
+/**
+ * Mode A: gravity, direction, radial accel, tangential accel
+ * @Class
+ * @Construct
+ * @param {cc.Point} dir direction of particle
+ * @param {Number} radialAccel
+ * @param {Number} tangentialAccel
+ */
 cc.tCCParticle.tModeA = function (dir, radialAccel, tangentialAccel) {
     this.dir = dir ? dir : cc.PointZero();
     this.radialAccel = radialAccel || 0;
     this.tangentialAccel = tangentialAccel || 0;
 };
-//! Mode B: radius mode
+
+/**
+ * Mode B: radius mode
+ * @Class
+ * @Construct
+ * @param {Number} angle
+ * @param {Number} degreesPerSecond
+ * @param {Number} radius
+ * @param {Number} deltaRadius
+ */
 cc.tCCParticle.tModeB = function (angle, degreesPerSecond, radius, deltaRadius) {
     this.angle = angle || 0;
     this.degreesPerSecond = degreesPerSecond || 0;
@@ -117,50 +204,52 @@ cc.tCCParticle.tModeB = function (angle, degreesPerSecond, radius, deltaRadius) 
 };
 
 
-/** @brief Particle System base class.
- Attributes of a Particle System:
- - emmision rate of the particles
- - Gravity Mode (Mode A):
- - gravity
- - direction
- - speed +-  variance
- - tangential acceleration +- variance
- - radial acceleration +- variance
- - Radius Mode (Mode B):
- - startRadius +- variance
- - endRadius +- variance
- - rotate +- variance
- - Properties common to all modes:
- - life +- life variance
- - start spin +- variance
- - end spin +- variance
- - start size +- variance
- - end size +- variance
- - start color +- variance
- - end color +- variance
- - life +- variance
- - blending function
- - texture
-
- cocos2d also supports particles generated by Particle Designer (http://particledesigner.71squared.com/).
- 'Radius Mode' in Particle Designer uses a fixed emit rate of 30 hz. Since that can't be guarateed in cocos2d,
- cocos2d uses a another approach, but the results are almost identical.
-
- cocos2d supports all the variables used by Particle Designer plus a bit more:
- - spinning particles (supported when using CCParticleSystemQuad)
- - tangential acceleration (Gravity mode)
- - radial acceleration (Gravity mode)
- - radius direction (Radius mode) (Particle Designer supports outwards to inwards direction only)
-
- It is possible to customize any of the above mentioned properties in runtime. Example:
-
- @code
- emitter.radialAccel = 15;
- emitter.startSpin = 0;
- @endcode
-
+/**
+ * <p>
+ *     Particle System base class. <br/>
+ *     Attributes of a Particle System:<br/>
+ *     - emmision rate of the particles<br/>
+ *     - Gravity Mode (Mode A): <br/>
+ *     - gravity <br/>
+ *     - direction <br/>
+ *     - speed +-  variance <br/>
+ *     - tangential acceleration +- variance<br/>
+ *     - radial acceleration +- variance<br/>
+ *     - Radius Mode (Mode B):      <br/>
+ *     - startRadius +- variance    <br/>
+ *     - endRadius +- variance      <br/>
+ *     - rotate +- variance         <br/>
+ *     - Properties common to all modes: <br/>
+ *     - life +- life variance      <br/>
+ *     - start spin +- variance     <br/>
+ *     - end spin +- variance       <br/>
+ *     - start size +- variance     <br/>
+ *     - end size +- variance       <br/>
+ *     - start color +- variance    <br/>
+ *     - end color +- variance      <br/>
+ *     - life +- variance           <br/>
+ *     - blending function          <br/>
+ *     - texture                    <br/>
+ *                                  <br/>
+ *     cocos2d also supports particles generated by Particle Designer (http://particledesigner.71squared.com/).<br/>
+ *     'Radius Mode' in Particle Designer uses a fixed emit rate of 30 hz. Since that can't be guarateed in cocos2d,  <br/>
+ *     cocos2d uses a another approach, but the results are almost identical.<br/>
+ *     cocos2d supports all the variables used by Particle Designer plus a bit more:  <br/>
+ *     - spinning particles (supported when using CCParticleSystemQuad)       <br/>
+ *     - tangential acceleration (Gravity mode)                               <br/>
+ *     - radial acceleration (Gravity mode)                                   <br/>
+ *     - radius direction (Radius mode) (Particle Designer supports outwards to inwards direction only) <br/>
+ *     It is possible to customize any of the above mentioned properties in runtime. Example:   <br/>
+ * </p>
+ * @class
+ * @extends cc.Node
+ *
+ * @example
+ *  emitter.radialAccel = 15;
+ *  emitter.startSpin = 0;
  */
-cc.ParticleSystem = cc.Node.extend({
+cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
+    //***********variables*************
     _plistFile:"",
     //! time elapsed since the start of the system (in seconds)
     _elapsed:0,
@@ -187,343 +276,689 @@ cc.ParticleSystem = cc.Node.extend({
 
     //drawMode
     _drawMode:cc.PARTICLE_SHAPE_MODE,
+
+    /**
+     * Return DrawMode of ParticleSystem
+     * @return {Number}
+     */
     getDrawMode:function () {
         return this._drawMode;
     },
+
+    /**
+     * DrawMode of ParticleSystem setter
+     * @param {Number} drawMode
+     */
     setDrawMode:function (drawMode) {
         this._drawMode = drawMode;
     },
 
     //shape type
     _shapeType:cc.PARTICLE_BALL_SHAPE,
+
+    /**
+     * Return ShapeType of ParticleSystem
+     * @return {Number}
+     */
     getShapeType:function () {
         return this._shapeType;
     },
+
+    /**
+     * ShapeType of ParticleSystem setter
+     * @param {Number} shapeType
+     */
     setShapeType:function (shapeType) {
         this._shapeType = shapeType;
     },
 
-    /** Is the emitter active */
     _isActive:false,
+
+    /**
+     * Return ParticleSystem is active
+     * @return {Boolean}
+     */
     getIsActive:function () {
         return this._isActive;
     },
+
+    /**
+     * Whether or not ParticleSystem is active
+     * @param isActive
+     */
     setIsActive:function (isActive) {
         this._isActive = isActive;
     },
 
-    /** Quantity of particles that are being simulated at the moment */
     _particleCount:0,
+
+    /**
+     * Quantity of particles that are being simulated at the moment
+     * @return {Number}
+     */
     getParticleCount:function () {
         return this._particleCount;
     },
+
+    /**
+     * Quantity of particles setter
+     * @param {Number} particleCount
+     */
     setParticleCount:function (particleCount) {
         this._particleCount = particleCount;
     },
 
-    /** How many seconds the emitter wil run. -1 means 'forever' */
     _duration:0,
+    /**
+     * How many seconds the emitter wil run. -1 means 'forever'
+     * @return {Number}
+     */
     getDuration:function () {
         return this._duration;
     },
+
+    /**
+     * set run seconds of the emitter
+     * @param {Number} duration
+     */
     setDuration:function (duration) {
         this._duration = duration;
     },
 
-    /** sourcePosition of the emitter */
     _sourcePosition:cc.PointZero(),
+    /**
+     * Return sourcePosition of the emitter
+     * @return {cc.Point}
+     */
     getSourcePosition:function () {
         return this._sourcePosition;
     },
+
+    /**
+     * sourcePosition of the emitter setter
+     * @param sourcePosition
+     */
     setSourcePosition:function (sourcePosition) {
         this._sourcePosition = sourcePosition;
     },
 
-    /** Position variance of the emitter */
     _posVar:cc.PointZero(),
+    /**
+     * Return Position variance of the emitter
+     * @return {cc.Point}
+     */
     getPosVar:function () {
         return this._posVar;
     },
+
+    /**
+     * Position variance of the emitter setter
+     * @param {cc.Point} posVar
+     */
     setPosVar:function (posVar) {
         this._posVar = posVar;
     },
 
-    /** life, and life variation of each particle */
     _life:0,
+    /**
+     * Return life of each particle
+     * @return {Number}
+     */
     getLife:function () {
         return this._life;
     },
+
+    /**
+     * life of each particle setter
+     * @param {Number} life
+     */
     setLife:function (life) {
         this._life = life;
     },
 
-    /** life variance of each particle */
     _lifeVar:0,
+    /**
+     * Return life variance of each particle
+     * @return {Number}
+     */
     getLifeVar:function () {
         return this._lifeVar;
     },
+
+    /**
+     * life variance of each particle setter
+     * @param {Number} lifeVar
+     */
     setLifeVar:function (lifeVar) {
         this._lifeVar = lifeVar;
     },
 
-    /** angle and angle variation of each particle */
     _angle:0,
+    /**
+     * Return angle of each particle
+     * @return {Number}
+     */
     getAngle:function () {
         return this._angle;
     },
+
+    /**
+     * angle of each particle setter
+     * @param {Number} angle
+     */
     setAngle:function (angle) {
         this._angle = angle;
     },
 
-    /** angle variance of each particle */
     _angleVar:0,
+    /**
+     * Return angle variance of each particle
+     * @return {Number}
+     */
     getAngleVar:function () {
         return this._angleVar;
     },
+
+    /**
+     * angle variance of each particle setter
+     * @param angleVar
+     */
     setAngleVar:function (angleVar) {
         this._angleVar = angleVar;
     },
 
     // mode A
+    /**
+     * Return Gravity of emitter
+     * @return {cc.Point}
+     */
     getGravity:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.gravity;
     },
+
+    /**
+     * Gravity of emitter setter
+     * @param {cc.Point} gravity
+     */
     setGravity:function (gravity) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.gravity = gravity;
     },
+
+    /**
+     * Return Speed of each particle
+     * @return {Number}
+     */
     getSpeed:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.speed;
     },
+
+    /**
+     * Speed of each particle setter
+     * @param {Number} speed
+     */
     setSpeed:function (speed) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.speed = speed;
     },
+
+    /**
+     * return speed variance of each particle. Only available in 'Gravity' mode.
+     * @return {Number}
+     */
     getSpeedVar:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.speedVar;
     },
+
+    /**
+     * speed variance of each particle setter. Only available in 'Gravity' mode.
+     * @param {Number} speedVar
+     */
     setSpeedVar:function (speedVar) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.speedVar = speedVar;
     },
+
+    /**
+     * Return tangential acceleration of each particle. Only available in 'Gravity' mode.
+     * @return {Number}
+     */
     getTangentialAccel:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.tangentialAccel;
     },
+
+    /**
+     * Tangential acceleration of each particle setter. Only available in 'Gravity' mode.
+     * @param {Number} tangentialAccel
+     */
     setTangentialAccel:function (tangentialAccel) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.tangentialAccel = tangentialAccel;
     },
+
+    /**
+     * Return tangential acceleration variance of each particle. Only available in 'Gravity' mode.
+     * @return {Number}
+     */
     getTangentialAccelVar:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.tangentialAccelVar;
     },
+
+    /**
+     * tangential acceleration variance of each particle setter. Only available in 'Gravity' mode.
+     * @param {Number} tangentialAccelVar
+     */
     setTangentialAccelVar:function (tangentialAccelVar) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.tangentialAccelVar = tangentialAccelVar;
     },
+
+    /**
+     * Return radial acceleration of each particle. Only available in 'Gravity' mode.
+     * @return {Number}
+     */
     getRadialAccel:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.radialAccel;
     },
+
+    /**
+     * radial acceleration of each particle setter. Only available in 'Gravity' mode.
+     * @param {Number} radialAccel
+     */
     setRadialAccel:function (radialAccel) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.radialAccel = radialAccel;
     },
+
+    /**
+     * Return radial acceleration variance of each particle. Only available in 'Gravity' mode.
+     * @return {Number}
+     */
     getRadialAccelVar:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeA.radialAccelVar;
     },
+
+    /**
+     * radial acceleration variance of each particle setter. Only available in 'Gravity' mode.
+     * @param radialAccelVar
+     */
     setRadialAccelVar:function (radialAccelVar) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeA.radialAccelVar = radialAccelVar;
     },
 
     // mode B
+    /**
+     * Return starting radius of the particles. Only available in 'Radius' mode.
+     * @return {Number}
+     */
     getStartRadius:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.startRadius;
     },
+
+    /**
+     * starting radius of the particles setter. Only available in 'Radius' mode.
+     * @param {Number} startRadius
+     */
     setStartRadius:function (startRadius) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.startRadius = startRadius;
     },
+
+    /**
+     * Return starting radius variance of the particles. Only available in 'Radius' mode.
+     * @return {Number}
+     */
     getStartRadiusVar:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.startRadiusVar;
     },
+
+    /**
+     * starting radius variance of the particles setter. Only available in 'Radius' mode.
+     * @param {Number} startRadiusVar
+     */
     setStartRadiusVar:function (startRadiusVar) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.startRadiusVar = startRadiusVar;
     },
+
+    /**
+     * Return ending radius of the particles. Only available in 'Radius' mode.
+     * @return {Number}
+     */
     getEndRadius:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.endRadius;
     },
+
+    /**
+     * ending radius of the particles setter. Only available in 'Radius' mode.
+     * @param {Number} endRadius
+     */
     setEndRadius:function (endRadius) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.endRadius = endRadius;
     },
+
+    /**
+     * Return ending radius variance of the particles. Only available in 'Radius' mode.
+     * @return {Number}
+     */
     getEndRadiusVar:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.endRadiusVar;
     },
+
+    /**
+     * ending radius variance of the particles setter. Only available in 'Radius' mode.
+     * @param endRadiusVar
+     */
     setEndRadiusVar:function (endRadiusVar) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.endRadiusVar = endRadiusVar;
     },
+
+    /**
+     * get Number of degress to rotate a particle around the source pos per second. Only available in 'Radius' mode.
+     * @return {Number}
+     */
     getRotatePerSecond:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.rotatePerSecond;
     },
+
+    /**
+     * set Number of degress to rotate a particle around the source pos per second. Only available in 'Radius' mode.
+     * @param {Number} degrees
+     */
     setRotatePerSecond:function (degrees) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.rotatePerSecond = degrees;
     },
+
+    /**
+     * Return Variance in degrees for rotatePerSecond. Only available in 'Radius' mode.
+     * @return {Number}
+     */
     getRotatePerSecondVar:function () {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         return this.modeB.rotatePerSecondVar;
     },
+
+    /**
+     * Variance in degrees for rotatePerSecond setter. Only available in 'Radius' mode.
+     * @param degrees
+     */
     setRotatePerSecondVar:function (degrees) {
         cc.Assert(this._emitterMode == cc.CCPARTICLE_MODE_GRAVITY, "Particle Mode should be Gravity");
         this.modeB.rotatePerSecondVar = degrees;
     },
     //////////////////////////////////////////////////////////////////////////
 
-    /** start size in pixels of each particle */
     _startSize:0,
+    /**
+     * get start size in pixels of each particle
+     * @return {Number}
+     */
     getStartSize:function () {
         return this._startSize;
     },
+
+    /**
+     * set start size in pixels of each particle
+     * @param {Number} startSize
+     */
     setStartSize:function (startSize) {
         this._startSize = startSize;
     },
 
-    /** size variance in pixels of each particle */
+
     _startSizeVar:0,
+    /**
+     * get size variance in pixels of each particle
+     * @return {Number}
+     */
     getStartSizeVar:function () {
         return this._startSizeVar;
     },
+
+    /**
+     * set size variance in pixels of each particle
+     * @param {Number} startSizeVar
+     */
     setStartSizeVar:function (startSizeVar) {
         this._startSizeVar = startSizeVar;
     },
 
-    /** end size in pixels of each particle */
+
     _endSize:0,
+    /**
+     * get end size in pixels of each particle
+     * @return {Number}
+     */
     getEndSize:function () {
         return this._endSize;
     },
+
+    /**
+     * set end size in pixels of each particle
+     * @param endSize
+     */
     setEndSize:function (endSize) {
         this._endSize = endSize;
     },
 
-    /** end size variance in pixels of each particle */
     _endSizeVar:0,
+    /**
+     * get end size variance in pixels of each particle
+     * @return {Number}
+     */
     getEndSizeVar:function () {
         return this._endSizeVar;
     },
+
+    /**
+     * set end size variance in pixels of each particle
+     * @param {Number} endSizeVar
+     */
     setEndSizeVar:function (endSizeVar) {
         this._endSizeVar = endSizeVar;
     },
 
-    /** start color of each particle */
+
     _startColor:new cc.Color4F(0, 0, 0, 1),
+    /**
+     * set start color of each particle
+     * @return {cc.Color4F}
+     */
     getStartColor:function () {
         return this._startColor;
     },
+
+    /**
+     * get start color of each particle
+     * @param {cc.Color4F} startColor
+     */
     setStartColor:function (startColor) {
         this._startColor = startColor;
     },
 
-    /** start color variance of each particle */
     _startColorVar:new cc.Color4F(0, 0, 0, 1),
+    /**
+     * get start color variance of each particle
+     * @return {cc.Color4F}
+     */
     getStartColorVar:function () {
         return this._startColorVar;
     },
+
+    /**
+     * set start color variance of each particle
+     * @param {cc.Color4F} startColorVar
+     */
     setStartColorVar:function (startColorVar) {
         this._startColorVar = startColorVar;
     },
 
-    /** end color and end color variation of each particle */
+
     _endColor:new cc.Color4F(0, 0, 0, 1),
+    /**
+     * get end color and end color variation of each particle
+     * @return {cc.Color4F}
+     */
     getEndColor:function () {
         return this._endColor;
     },
+
+    /**
+     * set end color and end color variation of each particle
+     * @param {cc.Color4F} endColor
+     */
     setEndColor:function (endColor) {
         this._endColor = endColor;
     },
 
-    /** end color variance of each particle */
     _endColorVar:new cc.Color4F(0, 0, 0, 1),
+    /**
+     * get end color variance of each particle
+     * @return {cc.Color4F}
+     */
     getEndColorVar:function () {
         return this._endColorVar;
     },
+
+    /**
+     * set end color variance of each particle
+     * @param {cc.Color4F} endColorVar
+     */
     setEndColorVar:function (endColorVar) {
         this._endColorVar = endColorVar;
     },
 
-    //* initial angle of each particle
     _startSpin:0,
+    /**
+     * get initial angle of each particle
+     * @return {Number}
+     */
     getStartSpin:function () {
         return this._startSpin;
     },
+
+    /**
+     * set initial angle of each particle
+     * @param {Number} startSpin
+     */
     setStartSpin:function (startSpin) {
         this._startSpin = startSpin;
     },
 
-    //* initial angle of each particle
     _startSpinVar:0,
+    /**
+     * get initial angle variance of each particle
+     * @return {Number}
+     */
     getStartSpinVar:function () {
         return this._startSpinVar;
     },
+
+    /**
+     * set initial angle variance of each particle
+     * @param {Number} startSpinVar
+     */
     setStartSpinVar:function (startSpinVar) {
         this._startSpinVar = startSpinVar;
     },
 
-    //* initial angle of each particle
     _endSpin:0,
+    /**
+     * get end angle of each particle
+     * @return {Number}
+     */
     getEndSpin:function () {
         return this._endSpin;
     },
+
+    /**
+     * set end angle of each particle
+     * @param {Number} endSpin
+     */
     setEndSpin:function (endSpin) {
         this._endSpin = endSpin;
     },
 
-    //* initial angle of each particle
     _endSpinVar:0,
+    /**
+     * get end angle variance of each particle
+     * @return {Number}
+     */
     getEndSpinVar:function () {
         return this._endSpinVar;
     },
+
+    /**
+     * set end angle variance of each particle
+     * @param {Number} endSpinVar
+     */
     setEndSpinVar:function (endSpinVar) {
         this._endSpinVar = endSpinVar;
     },
 
-    /** emission rate of the particles */
     _emissionRate:0,
+    /**
+     * get emission rate of the particles
+     * @return {Number}
+     */
     getEmissionRate:function () {
         return this._emissionRate;
     },
+
+    /**
+     * set emission rate of the particles
+     * @param {Number} emissionRate
+     */
     setEmissionRate:function (emissionRate) {
         this._emissionRate = emissionRate;
     },
 
-    /** maximum particles of the system */
     _totalParticles:0,
+    /**
+     * get maximum particles of the system
+     * @return {Number}
+     */
     getTotalParticles:function () {
         return this._totalParticles;
     },
+
+    /**
+     * set maximum particles of the system
+     * @param {Number} totalParticles
+     */
     setTotalParticles:function (totalParticles) {
         this._totalParticles = totalParticles;
     },
 
-    /** conforms to CocosNodeTexture protocol */
     _texture:null,
+    /**
+     * get Texture of Particle System
+     * @return {cc.Texture2D}
+     */
     getTexture:function () {
         return this._texture;
     },
+
+    /**
+     * set Texture of Particle System
+     * @param {cc.Texture2D} texture
+     */
     setTexture:function (texture) {
         //TODO
         this._texture = texture;
@@ -538,30 +973,47 @@ cc.ParticleSystem = cc.Node.extend({
                 this._blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
             }
         }
-
     },
 
     /** conforms to CocosNodeTexture protocol */
     _blendFunc:new cc.BlendFunc(0, 0),
+    /**
+     * get BlendFunc of Particle System
+     * @return {cc.BlendFunc}
+     */
     getBlendFunc:function () {
         return this._blendFunc;
     },
+
+    /**
+     * set BlendFunc of Particle System
+     * @param {cc.BlendFunc} blendFunc
+     */
     setBlendFunc:function (blendFunc) {
         this._blendFunc = blendFunc;
     },
 
-    /** whether or not the particles are using blend additive.
-     If enabled, the following blending function will be used.
-     @code
-     source blend function = GL_SRC_ALPHA;
-     dest blend function = GL_ONE;
-     @endcode
-     */
     _isBlendAdditive:false,
+    /**
+     * <p>whether or not the particles are using blend additive.<br/>
+     *     If enabled, the following blending function will be used.<br/>
+     * </p>
+     * @return {Boolean}
+     * @example
+     *    source blend function = GL_SRC_ALPHA;
+     *    dest blend function = GL_ONE;
+     */
     getIsBlendAdditive:function () {
         return this._isBlendAdditive;
         //return( this._blendFunc.src == GL_SRC_ALPHA && this._blendFunc.dst == GL_ONE);
     },
+
+    /**
+     * <p>whether or not the particles are using blend additive.<br/>
+     *     If enabled, the following blending function will be used.<br/>
+     * </p>
+     * @param {Boolean} isBlendAdditive
+     */
     setIsBlendAdditive:function (isBlendAdditive) {
         //TODO
         this._isBlendAdditive = isBlendAdditive;
@@ -580,41 +1032,67 @@ cc.ParticleSystem = cc.Node.extend({
         }
     },
 
-    /** particles movement type: Free or Grouped
-     @since v0.8
-     */
     _positionType:cc.CCPARTICLE_TYPE_FREE,
+    /**
+     * get particles movement type: Free or Grouped
+     * @return {Number}
+     */
     getPositionType:function () {
         return this._positionType;
     },
+
+    /**
+     * set particles movement type: Free or Grouped
+     * @param {Number} positionType
+     */
     setPositionType:function (positionType) {
         this._positionType = positionType;
     },
 
-    /** whether or not the node will be auto-removed when it has no particles left.
-     By default it is false.
-     @since v0.8
-     */
     _isAutoRemoveOnFinish:false,
+    /**
+     *  <p> return whether or not the node will be auto-removed when it has no particles left.<br/>
+     *      By default it is false.<br/>
+     *  </p>
+     * @return {Boolean}
+     */
     getIsAutoRemoveOnFinish:function () {
         return this._isAutoRemoveOnFinish;
     },
+
+    /**
+     *  <p> set whether or not the node will be auto-removed when it has no particles left.<br/>
+     *      By default it is false.<br/>
+     *  </p>
+     * @param {Boolean} isAutoRemoveOnFinish
+     */
     setIsAutoRemoveOnFinish:function (isAutoRemoveOnFinish) {
         this._isAutoRemoveOnFinish = isAutoRemoveOnFinish;
     },
 
-    /** Switch between different kind of emitter modes:
-     - CCPARTICLE_MODE_GRAVITY: uses gravity, speed, radial and tangential acceleration
-     - CCPARTICLE_MODE_RADIUS: uses radius movement + rotation
-     */
     _emitterMode:0,
+    /**
+     * return kind of emitter modes
+     * @return {Number}
+     */
     getEmitterMode:function () {
         return this._emitterMode;
     },
+
+    /**
+     * <p>Switch between different kind of emitter modes:<br/>
+     *  - CCPARTICLE_MODE_GRAVITY: uses gravity, speed, radial and tangential acceleration<br/>
+     *  - CCPARTICLE_MODE_RADIUS: uses radius movement + rotation <br/>
+     *  </p>
+     * @param {Number} emitterMode
+     */
     setEmitterMode:function (emitterMode) {
         this._emitterMode = emitterMode;
     },
 
+    /**
+     * @Constructor
+     */
     ctor:function () {
         this._super();
         this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
@@ -623,10 +1101,12 @@ cc.ParticleSystem = cc.Node.extend({
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
 
-    /** initializes a CCParticleSystem from a plist file.
-     This plist files can be creted manually or with Particle Designer:
-     http://particledesigner.71squared.com/
-     @since v0.99.3
+    /**
+     * <p> initializes a CCParticleSystem from a plist file. <br/>
+     *      This plist files can be creted manually or with Particle Designer:<br/>
+     *      http://particledesigner.71squared.com/<br/></p>
+     * @param {String} plistFile
+     * @return {cc.ParticleSystem}
      */
     initWithFile:function (plistFile) {
         var ret = false;
@@ -638,13 +1118,18 @@ cc.ParticleSystem = cc.Node.extend({
         return this.initWithDictionary(dict);
     },
 
-
+    /**
+     * return bounding box of particle system in world space
+     * @return {cc.Rect}
+     */
     boundingBoxToWorld:function () {
         return new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
     },
 
-    /** initializes a CCQuadParticleSystem from a CCDictionary.
-     @since v0.99.3
+    /**
+     * initializes a CCQuadParticleSystem from a CCDictionary.
+     * @param {object} dictionary
+     * @return {Boolean}
      */
     initWithDictionary:function (dictionary) {
         var ret = false;
@@ -806,7 +1291,11 @@ cc.ParticleSystem = cc.Node.extend({
         return ret;
     },
 
-    //! Initializes a system with a fixed number of particles
+    /**
+     * Initializes a system with a fixed number of particles
+     * @param {Number} numberOfParticles
+     * @return {Boolean}
+     */
     initWithTotalParticles:function (numberOfParticles) {
         this._totalParticles = numberOfParticles;
 
@@ -849,7 +1338,10 @@ cc.ParticleSystem = cc.Node.extend({
         return true;
     },
 
-    //! Add a particle to the emitter
+    /**
+     * Add a particle to the emitter
+     * @return {Boolean}
+     */
     addParticle:function () {
         if (this.isFull()) {
             return false;
@@ -863,7 +1355,10 @@ cc.ParticleSystem = cc.Node.extend({
         return true;
     },
 
-    //! Initializes a particle
+    /**
+     * Initializes a particle
+     * @param {cc.tCCParticle} particle
+     */
     initParticle:function (particle) {
         // timeToLive
         // no negative life. prevent division by 0
@@ -968,14 +1463,18 @@ cc.ParticleSystem = cc.Node.extend({
         }
     },
 
-    //! stop emitting particles. Running particles will continue to run until they die
+    /**
+     * stop emitting particles. Running particles will continue to run until they die
+     */
     stopSystem:function () {
         this._isActive = false;
         this._elapsed = this._duration;
         this._emitCounter = 0;
     },
 
-    //! Kill all living particles.
+    /**
+     * Kill all living particles.
+     */
     resetSystem:function () {
         this._isActive = true;
         this._elapsed = 0;
@@ -985,21 +1484,34 @@ cc.ParticleSystem = cc.Node.extend({
         }
     },
 
-    //! whether or not the system is full
+    /**
+     * whether or not the system is full
+     * @return {Boolean}
+     */
     isFull:function () {
         return (this._particleCount >= this._totalParticles);
     },
 
-    //! should be overriden by subclasses
+    /**
+     * should be overriden by subclasses
+     * @param {cc.tCCParticle} particle
+     * @param {cc.Point} newPosition
+     */
     updateQuadWithParticle:function (particle, newPosition) {
         // should be overriden
     },
 
-    //! should be overriden by subclasses
+    /**
+     * should be overriden by subclasses
+     */
     postStep:function () {
         // should be overriden
     },
 
+    /**
+     * update emitter's status
+     * @param {Number} dt delta time
+     */
     update:function (dt) {
         if (this._isActive && this._emissionRate) {
             var rate = 1.0 / this._emissionRate;
@@ -1124,8 +1636,12 @@ cc.ParticleSystem = cc.Node.extend({
             this.postStep();
     },
 
-    /** Private method, return the string found by key in dict.
-     @return "" if not found; return the string if found.
+    /**
+     * return the string found by key in dict.
+     * @param {string} key
+     * @param {object} dict
+     * @return {String} "" if not found; return the string if found.
+     * @private
      */
     _valueForKey:function (key, dict) {
         if (dict) {
@@ -1136,10 +1652,13 @@ cc.ParticleSystem = cc.Node.extend({
     }
 });
 
-/** creates an initializes a CCParticleSystem from a plist file.
- This plist files can be creted manually or with Particle Designer:
- http://particledesigner.71squared.com/
- @since v0.99.3
+/**
+ * <p> return the string found by key in dict. <br/>
+ *    This plist files can be creted manually or with Particle Designer:<br/>
+ *    http://particledesigner.71squared.com/<br/>
+ * </p>
+ * @param {String} plistFile
+ * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
     var ret = new cc.ParticleSystem();
@@ -1150,7 +1669,18 @@ cc.ParticleSystem.create = function (plistFile) {
 };
 
 // Different modes
-//! Mode A:Gravity + Tangential Accel + Radial Accel
+/**
+ * Mode A:Gravity + Tangential Accel + Radial Accel
+ * @Class
+ * @Construct
+ * @param {cc.Point} gravity Gravity value.
+ * @param {Number} speed speed of each particle.
+ * @param {Number} speedVar speed variance of each particle.
+ * @param {Number} tangentialAccel tangential acceleration of each particle.
+ * @param {Number} tangentialAccelVar tangential acceleration variance of each particle.
+ * @param {Number} radialAccel radial acceleration of each particle.
+ * @param {Number} radialAccelVar radial acceleration variance of each particle.
+ */
 cc.ParticleSystem.tModeA = function (gravity, speed, speedVar, tangentialAccel, tangentialAccelVar, radialAccel, radialAccelVar) {
     /** Gravity value. Only available in 'Gravity' mode. */
     this.gravity = gravity ? gravity : cc.PointZero();
@@ -1168,7 +1698,17 @@ cc.ParticleSystem.tModeA = function (gravity, speed, speedVar, tangentialAccel, 
     this.radialAccelVar = radialAccelVar || 0;
 };
 
-//! Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
+/**
+ * Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
+ * @Class
+ * @Construct
+ * @param {Number} startRadius The starting radius of the particles.
+ * @param {Number} startRadiusVar The starting radius variance of the particles.
+ * @param {Number} endRadius The ending radius of the particles.
+ * @param {Number} endRadiusVar The ending radius variance of the particles.
+ * @param {Number} rotatePerSecond Number of degress to rotate a particle around the source pos per second.
+ * @param {Number} rotatePerSecondVar Variance in degrees for rotatePerSecond.
+ */
 cc.ParticleSystem.tModeB = function (startRadius, startRadiusVar, endRadius, endRadiusVar, rotatePerSecond, rotatePerSecondVar) {
     /** The starting radius of the particles. Only available in 'Radius' mode. */
     this.startRadius = startRadius || 0;
