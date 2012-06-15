@@ -32,7 +32,7 @@ cc.g_sharedTextureCache = null;
 
 /**
  * Load the images to the cache
- * @param imageUrl
+ * @param {String} imageUrl
  */
 cc.loadImage = function (imageUrl) {
     // compute image type
@@ -50,7 +50,7 @@ cc.loadImage = function (imageUrl) {
 
 /**
  *  Support image format type
- * @param filename
+ * @param {String} filename
  * @return {Number}
  */
 cc.computeImageFormatType = function (filename) {
@@ -65,17 +65,19 @@ cc.computeImageFormatType = function (filename) {
 /**
  *  Implementation TextureCache
  * @class
- * @extends cc.TextureCache
+ * @extends cc.Class
  */
 cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     textures:{},
     _textureColorsCache:{},
+
     /**
      * @Constructor
      */
     ctor:function () {
         cc.Assert(cc.g_sharedTextureCache == null, "Attempted to allocate a second instance of a singleton.");
     },
+
     /**
      *  Loading the images asynchronously
      * @param {String} path
@@ -116,12 +118,14 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             selector.call(target);
         }
     },
+
     /**
      * AddPVRTCImage does not support
      */
     addPVRTCImage:function () {
         cc.Assert(0, "TextureCache:addPVRTCImage does not support");
     },
+
     /**
      * Description
      * @return {String}
@@ -168,6 +172,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             //todo texture for gl
         }
     },
+
     /**
      *  Cache the image data
      * @param {String} path
@@ -178,6 +183,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             this.textures[path.toString()] = texture;
         }
     },
+
     /**
      * <p>Returns a Texture2D object given an UIImage image<br />
      * If the image was not previously loaded, it will create a new Texture2D object and it will return it.<br />
@@ -230,6 +236,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             return null;
         }
     },
+
     /**
      * @param {Image} texture
      * @return {String|Null}
@@ -245,6 +252,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         }
         return null;
     },
+
     /**
      * @param {Image} texture
      * @return {Array}
