@@ -1,100 +1,101 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="Test-JsDoc" default="jsdoc" basedir=".">
 
-    <property name="src.dir" location="${basedir}/../../../cocos2d" />
+    <property name="src.dir" location="${basedir}/../../../cocos2d"/>
 
-    <property name="jsdoc.dir" location="${basedir}" />
-    <property name="rhino.dir" location="${basedir}/java/classes" />
-    <property name="out.dir" location="${basedir}/out/jsdoc" />
+    <property name="jsdoc.dir" location="${basedir}"/>
+    <property name="rhino.dir" location="${basedir}/java/classes"/>
+    <property name="out.dir" location="${basedir}/out/jsdoc"/>
 
     <!-- Define the classpath for the Apache Ant task - needs Rhino as well. -->
     <path id="jsdoc.classpath">
-        <pathelement path="${rhino.dir}/js.jar" />
-        <pathelement path="${rhino.dir}/jsdoc-toolkit-ant-task-1.1.2.jar" />
+        <pathelement path="${rhino.dir}/js.jar"/>
+        <pathelement path="${rhino.dir}/jsdoc-toolkit-ant-task-1.1.2.jar"/>
     </path>
 
     <!-- Define the Ant Task -->
-    <taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit" classpathref="jsdoc.classpath" />
+    <taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit" classpathref="jsdoc.classpath"/>
 
     <!-- This is the default target - it generates the JsDoc documents -->
     <target name="jsdoc" depends="" description="Generate JsDoc.">
         <jsdoctoolkit jsdochome="${jsdoc.dir}/" template="jsdoc" outputdir="${out.dir}" includeprivate="false">
-								<source file="${src.dir}/platform/CCClass.js"/>
-                <source file="${src.dir}/platform/CCCommon.js"/>
-                <source file="${src.dir}/platform/platform.js"/>
-                <source file="${src.dir}/platform/ZipUtils.js"/>
-                <source file="${src.dir}/platform/base64.js"/>
-                <source file="${src.dir}/platform/gzip.js"/>
-                <source file="${src.dir}/platform/CCMacro.js"/>
-                <source file="${src.dir}/platform/CCConfig.js"/>
-                <source file="${src.dir}/platform/CCFileUtils.js"/>
-                <source file="${src.dir}/platform/CCTypes.js"/>
-                <source file="${src.dir}/cocoa/CCGeometry.js"/>
-                <source file="${src.dir}/cocoa/CCSet.js"/>
-                <source file="${src.dir}/cocoa/CCNS.js"/>
-                <source file="${src.dir}/cocoa/CCAffineTransform.js"/>
-                <source file="${src.dir}/support/CCPointExtension.js"/>
-                <source file="${src.dir}/base_nodes/CCNode.js"/>
-                <source file="${src.dir}/base_nodes/CCAtlasNode.js"/>
-                <source file="${src.dir}/textures/CCTexture2D.js"/>
-                <source file="${src.dir}/textures/CCTextureCache.js"/>
-                <source file="${src.dir}/textures/CCTextureAtlas.js"/>
-                <source file="${src.dir}/misc_nodes/CCRenderTexture.js"/>
-                <source file="${src.dir}/misc_nodes/CCProgressTimer.js"/>
-                <source file="${src.dir}/actions/CCAction.js"/>
-                <source file="${src.dir}/actions/CCActionInterval.js"/>
-                <source file="${src.dir}/actions/CCActionInstant.js"/>
-                <source file="${src.dir}/actions/CCActionManager.js"/>
-                <source file="${src.dir}/actions/CCActionProgressTimer.js"/>
-                <source file="${src.dir}/actions/CCActionCamera.js"/>
-                <source file="${src.dir}/actions/CCActionEase.js"/>
-                <source file="${src.dir}/actions/CCActionGrid.js"/>
-                <source file="${src.dir}/actions/CCActionTiledGrid.js"/>
-                <source file="${src.dir}/layers_scenes_transitions_nodes/CCScene.js"/>
-                <source file="${src.dir}/layers_scenes_transitions_nodes/CCLayer.js"/>
-                <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransition.js"/>
-                <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionRadial.js"/>
-                <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionPageTurn.js"/>
-                <source file="${src.dir}/sprite_nodes/CCSprite.js"/>
-                <source file="${src.dir}/sprite_nodes/CCAnimation.js"/>
-                <source file="${src.dir}/sprite_nodes/CCAnimationCache.js"/>
-                <source file="${src.dir}/sprite_nodes/CCSpriteFrame.js"/>
-                <source file="${src.dir}/sprite_nodes/CCSpriteFrameCache.js"/>
-                <source file="${src.dir}/sprite_nodes/CCSpriteBatchNode.js"/>
-                <source file="${src.dir}/label_nodes/CCLabelAtlas.js"/>
-                <source file="${src.dir}/label_nodes/CCLabelTTF.js"/>
-                <source file="${src.dir}/label_nodes/CCLabelBMFont.js"/>
-                <source file="${src.dir}/particle_nodes/CCParticleSystem.js"/>
-                <source file="${src.dir}/particle_nodes/CCParticleSystemQuad.js"/>
-                <source file="${src.dir}/particle_nodes/CCParticleSystemPoint.js"/>
-                <source file="${src.dir}/particle_nodes/CCParticleExamples.js"/>
-                <source file="${src.dir}/touch_dispatcher/CCTouchDelegateProtocol.js"/>
-                <source file="${src.dir}/touch_dispatcher/CCTouchHandler.js"/>
-                <source file="${src.dir}/touch_dispatcher/CCTouchDispatcher.js"/>
-                <source file="${src.dir}/keypad_dispatcher/CCKeypadDelegate.js"/>
-                <source file="${src.dir}/keypad_dispatcher/CCKeypadDispatcher.js"/>
-                <source file="${src.dir}/text_input_node/CCIMEDispatcher.js"/>
-                <source file="${src.dir}/text_input_node/CCTextFieldTTF.js"/>
-                <source file="${src.dir}/CCDirector.js"/>
-                <source file="${src.dir}/CCCamera.js"/>
-                <source file="${src.dir}/CCScheduler.js"/>
-                <source file="${src.dir}/CCLoader.js"/>
-                <source file="${src.dir}/CCDrawingPrimitives.js"/>
-                <source file="${src.dir}/platform/CCApplication.js"/>
-                <source file="${src.dir}/platform/CCSAXParser.js"/>
-                <source file="${src.dir}/platform/AppControl.js"/>
-                <source file="${src.dir}/menu_nodes/CCMenuItem.js"/>
-                <source file="${src.dir}/menu_nodes/CCMenu.js"/>
-                <source file="${src.dir}/tileMap_parallax_nodes/CCTMXTiledMap.js"/>
-                <source file="${src.dir}/tileMap_parallax_nodes/CCTMXXMLParser.js"/>
-                <source file="${src.dir}/tileMap_parallax_nodes/CCTMXObjectGroup.js"/>
-                <source file="${src.dir}/tileMap_parallax_nodes/CCTMXLayer.js"/>
-                <source file="${src.dir}/tileMap_parallax_nodes/CCParallaxNode.js"/>
+            <source file="${src.dir}/platform/CCClass.js"/>
+            <source file="${src.dir}/platform/CCCommon.js"/>
+            <source file="${src.dir}/platform/platform.js"/>
+            <source file="${src.dir}/platform/ZipUtils.js"/>
+            <source file="${src.dir}/platform/base64.js"/>
+            <source file="${src.dir}/platform/gzip.js"/>
+            <source file="${src.dir}/platform/CCMacro.js"/>
+            <source file="${src.dir}/platform/CCConfig.js"/>
+            <source file="${src.dir}/platform/CCFileUtils.js"/>
+            <source file="${src.dir}/platform/CCTypes.js"/>
+            <source file="${src.dir}/cocoa/CCGeometry.js"/>
+            <source file="${src.dir}/cocoa/CCSet.js"/>
+            <source file="${src.dir}/cocoa/CCNS.js"/>
+            <source file="${src.dir}/cocoa/CCAffineTransform.js"/>
+            <source file="${src.dir}/support/CCPointExtension.js"/>
+            <source file="${src.dir}/base_nodes/CCNode.js"/>
+            <source file="${src.dir}/base_nodes/CCAtlasNode.js"/>
+            <source file="${src.dir}/textures/CCTexture2D.js"/>
+            <source file="${src.dir}/textures/CCTextureCache.js"/>
+            <source file="${src.dir}/textures/CCTextureAtlas.js"/>
+            <source file="${src.dir}/misc_nodes/CCRenderTexture.js"/>
+            <source file="${src.dir}/misc_nodes/CCProgressTimer.js"/>
+            <source file="${src.dir}/actions/CCAction.js"/>
+            <source file="${src.dir}/actions/CCActionInterval.js"/>
+            <source file="${src.dir}/actions/CCActionInstant.js"/>
+            <source file="${src.dir}/actions/CCActionManager.js"/>
+            <source file="${src.dir}/actions/CCActionProgressTimer.js"/>
+            <source file="${src.dir}/actions/CCActionCamera.js"/>
+            <source file="${src.dir}/actions/CCActionEase.js"/>
+            <source file="${src.dir}/actions/CCActionGrid.js"/>
+            <source file="${src.dir}/actions/CCActionTiledGrid.js"/>
+            <source file="${src.dir}/layers_scenes_transitions_nodes/CCScene.js"/>
+            <source file="${src.dir}/layers_scenes_transitions_nodes/CCLayer.js"/>
+            <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransition.js"/>
+            <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionRadial.js"/>
+            <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionPageTurn.js"/>
+            <source file="${src.dir}/sprite_nodes/CCSprite.js"/>
+            <source file="${src.dir}/sprite_nodes/CCAnimation.js"/>
+            <source file="${src.dir}/sprite_nodes/CCAnimationCache.js"/>
+            <source file="${src.dir}/sprite_nodes/CCSpriteFrame.js"/>
+            <source file="${src.dir}/sprite_nodes/CCSpriteFrameCache.js"/>
+            <source file="${src.dir}/sprite_nodes/CCSpriteBatchNode.js"/>
+            <source file="${src.dir}/label_nodes/CCLabelAtlas.js"/>
+            <source file="${src.dir}/label_nodes/CCLabelTTF.js"/>
+            <source file="${src.dir}/label_nodes/CCLabelBMFont.js"/>
+            <source file="${src.dir}/particle_nodes/CCParticleSystem.js"/>
+            <source file="${src.dir}/particle_nodes/CCParticleSystemQuad.js"/>
+            <source file="${src.dir}/particle_nodes/CCParticleSystemPoint.js"/>
+            <source file="${src.dir}/particle_nodes/CCParticleExamples.js"/>
+            <source file="${src.dir}/touch_dispatcher/CCTouchDelegateProtocol.js"/>
+            <source file="${src.dir}/touch_dispatcher/CCTouchHandler.js"/>
+            <source file="${src.dir}/touch_dispatcher/CCTouchDispatcher.js"/>
+            <source file="${src.dir}/keypad_dispatcher/CCKeypadDelegate.js"/>
+            <source file="${src.dir}/keypad_dispatcher/CCKeypadDispatcher.js"/>
+            <source file="${src.dir}/text_input_node/CCIMEDispatcher.js"/>
+            <source file="${src.dir}/text_input_node/CCTextFieldTTF.js"/>
+            <source file="${src.dir}/CCDirector.js"/>
+            <source file="${src.dir}/CCCamera.js"/>
+            <source file="${src.dir}/CCScheduler.js"/>
+            <source file="${src.dir}/CCLoader.js"/>
+            <source file="${src.dir}/CCDrawingPrimitives.js"/>
+            <source file="${src.dir}/platform/CCApplication.js"/>
+            <source file="${src.dir}/platform/CCSAXParser.js"/>
+            <source file="${src.dir}/platform/AppControl.js"/>
+            <source file="${src.dir}/menu_nodes/CCMenuItem.js"/>
+            <source file="${src.dir}/menu_nodes/CCMenu.js"/>
+            <source file="${src.dir}/tileMap_parallax_nodes/CCTMXTiledMap.js"/>
+            <source file="${src.dir}/tileMap_parallax_nodes/CCTMXXMLParser.js"/>
+            <source file="${src.dir}/tileMap_parallax_nodes/CCTMXObjectGroup.js"/>
+            <source file="${src.dir}/tileMap_parallax_nodes/CCTMXLayer.js"/>
+            <source file="${src.dir}/tileMap_parallax_nodes/CCParallaxNode.js"/>
+            <source file="${src.dir}/../CocosDenshion/SimpleAudioEngine.js"/>
         </jsdoctoolkit>
     </target>
 
     <!-- Neat and Tidy, Tidy and Neat - best to clean up afterwards... -->
     <target name="clean" description="Cleanup everything this build script creates.">
-        <delete dir="${out.dir}" />
+        <delete dir="${out.dir}"/>
     </target>
 </project>
