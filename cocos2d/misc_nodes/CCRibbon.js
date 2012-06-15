@@ -25,31 +25,79 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
+/**
+ * object to hold ribbon segment data
+ * @class
+ * @extends cc.Class
+ */
+cc.RibbonSegment = cc.Class.extend(/** @lends cc.RibbonSegment# */{
 
-
-/** @brief object to hold ribbon segment data */
-cc.RibbonSegment = cc.Class.extend({
+    /**
+     * @type Array array of numbers
+     */
     verts:[],
+
+    /**
+     * @type Array array of numbers
+     */
     coords:[],
+
+    /**
+     * @type Array array of numbers
+     */
     colors:[],
+
+    /**
+     * @type Array array of numbers
+     */
     creationTime:[],
+
+    /**
+     * @type Boolean
+     */
     finished:false,
+
+    /**
+     * @type Number
+     */
     end:0,
+
+    /**
+     * @type Number
+     */
     begin:0,
 
+    /**
+     * description of this class
+     * @return {String}
+     */
     description:function () {
         return "<cc.RibbonSegment | end = " + this.end + ", begin = " + this.begin + ">";
     },
+
+    /**
+     * @return {Boolean}
+     */
     init:function () {
         this.reset();
         return true;
     },
+
+    /**
+     * reset
+     */
     reset:function () {
         this.end = 0;
         this.begin = 0;
         this.finished = false;
     },
+
+    /**
+     *
+     * @param {Number} curTime
+     * @param {Number} fadeTime
+     * @param {cc.Color4B} color
+     */
     draw:function (curTime, fadeTime, color) {
         var r = color.r;
         var g = color.g;
@@ -99,22 +147,20 @@ cc.RibbonSegment = cc.Class.extend({
 });
 
 /**
- * @brief A CCRibbon is a dynamically generated list of polygons drawn as a single or series
- * of triangle strips. The primary use of CCRibbon is as the drawing class of Motion Streak,
- * but it is quite useful on it's own. When manually drawing a ribbon, you can call addPointAt
- * and pass in the parameters for the next location in the ribbon. The system will automatically
- * generate new polygons, texture them accourding to your texture width, etc, etc.
- *
- * CCRibbon data is stored in a CCRibbonSegment class. This class statically allocates enough verticies and
- * texture coordinates for 50 locations (100 verts or 48 triangles). The ribbon class will allocate
- * new segments when they are needed, and reuse old ones if available. The idea is to avoid constantly
- * allocating new memory and prefer a more static method. However, since there is no way to determine
- * the maximum size of some ribbons (motion streaks), a truely static allocation is not possible.
- *
- * @since v0.8.1
+ * <p>A cc.Ribbon is a dynamically generated list of polygons drawn as a single or series<br/>
+ * of triangle strips. The primary use of cc.Ribbon is as the drawing class of Motion Streak,<br/>
+ * but it is quite useful on it's own. When manually drawing a ribbon, you can call addPointAt<br/>
+ * and pass in the parameters for the next location in the ribbon. The system will automatically<br/>
+ * generate new polygons, texture them according to your texture width, etc, etc.</p>
+ * <p>cc.Ribbon data is stored in a cc.RibbonSegment class. This class statically allocates enough vertices and<br/>
+ * texture coordinates for 50 locations (100 verts or 48 triangles). The ribbon class will allocate<br/>
+ * new segments when they are needed, and reuse old ones if available. The idea is to avoid constantly<br/>
+ * allocating new memory and prefer a more static method. However, since there is no way to determine<br/>
+ * the maximum size of some ribbons (motion streaks), a truly static allocation is not possible.</p>
+ * @class
+ * @extends cc.Node
  */
-
-cc.Ribbon = cc.Node.extend({
+cc.Ribbon = cc.Node.extend(/** @lends cc.Ribbon# */{
     _segments:null,
     _deletedSegments:null,
     _lastPoint1:cc.PointZero(),
@@ -136,11 +182,19 @@ cc.Ribbon = cc.Node.extend({
         return ret;
     },
 
-    /** Texture used by the ribbon. Conforms to CCTextureProtocol protocol */
+    /** Texture used by the ribbon. Conforms to cc.TextureProtocol protocol */
     _texture:null,
+
+    /**
+     * @return {Image}
+     */
     getTexture:function () {
         return this._texture;
     },
+
+    /**
+     * @param {Image} texture
+     */
     setTexture:function (texture) {
         this._texture = texture;
         if (cc.renderContextType == cc.CANVAS) {
@@ -151,36 +205,71 @@ cc.Ribbon = cc.Node.extend({
 
     /** Texture lengths in pixels */
     _textureLength:0,
+
+    /**
+     * @return {Number}
+     */
     getTextureLength:function () {
         return this._textureLength;
     },
+
+    /**
+     * @param {Number} length
+     */
     setTextureLength:function (length) {
         this._textureLength = length;
     },
 
     /** GL blendind function */
     _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+
+    /**
+     * @return {cc.BlendFunc}
+     */
     getBlendFunc:function () {
         return this._blendFunc;
     },
+
+    /**
+     * @param {cc.BlendFunc} blendFunc
+     */
     setBlendFunc:function (blendFunc) {
         this._blendFunc = blendFunc;
     },
 
     /** color used by the Ribbon (RGBA) */
     _color:null,
+
+    /**
+     * @return {cc.Color4B}
+     */
     getColor:function () {
         return this._color;
     },
+
+    /**
+     * @param {cc.Color4B} color
+     */
     setColor:function (color) {
         this._color = color;
     },
 
+    /**
+     * @constructor
+     */
     ctor:function () {
         this._super();
     },
 
-    /** init the ribbon */
+    /**
+     * init the ribbon
+     * @param {Number} width
+     * @param {String} path file path
+     * @param {Number} length
+     * @param {cc.Color4B} color
+     * @param {Number} fade fade time in seconds
+     * @return {Boolean}
+     */
     initWithWidth:function (width, path, length, color, fade) {
         this._segments = [];
         this._deletedSegments = [];
@@ -218,7 +307,11 @@ cc.Ribbon = cc.Node.extend({
         return true;
     },
 
-    /** add a point to the ribbon */
+    /**
+     * add a point to the ribbon
+     * @param {cc.Point} location
+     * @param {Number} width
+     */
     addPointAt:function (location, width) {
         location.x *= cc.CONTENT_SCALE_FACTOR();
         location.y *= cc.CONTENT_SCALE_FACTOR();
@@ -329,19 +422,31 @@ cc.Ribbon = cc.Node.extend({
         seg.end++;
     },
 
-    /** polling function */
+    /**
+     * polling function
+     * @param {Number} delta delta time
+     */
     update:function (delta) {
         this._curTime += delta;
         this._delta = delta;
     },
 
-    /** determine side of line */
+    /**
+     * determine side of line
+     * @param {cc.Point} p
+     * @param {cc.Point} l1
+     * @param {cc.Point} l2
+     * @return {Number}
+     */
     sideOfLine:function (p, l1, l2) {
         var vp = cc.ccpPerp(cc.ccpSub(l1, l2));
         var vx = cc.ccpSub(p, l1);
         return cc.ccpDot(vx, vp);
     },
-    // super method
+
+    /**
+     * stuff gets drawn here
+     */
     draw:function () {
         this._super();
 
@@ -375,6 +480,16 @@ cc.Ribbon = cc.Node.extend({
     }
 });
 
+
+/**
+ * creates a cc Ribbon, which is a series of polygons to form the ribbon shape
+ * @param {Number} width width of the ribbon
+ * @param {String} path image texture path for the ribbon
+ * @param {Number} length length of the ribbon
+ * @param {cc.Color4B} color color to tint to
+ * @param {Number} fade time to fade out trails in seconds
+ * @return {cc.Ribbon}
+ */
 cc.Ribbon.create = function (width, path, length, color, fade) {
     var ret = new cc.Ribbon();
     if (ret && ret.initWithWidth(w, path, length, color, fade)) {
