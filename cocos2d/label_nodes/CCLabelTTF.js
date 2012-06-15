@@ -34,7 +34,7 @@
  */
 cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _dimensions:null,
-    _alignment:cc.TextAlignmentCenter,
+    _alignment:cc.TEXT_ALIGNMENT_CENTER,
     _fontName:"Arial",
     _fontSize:0.0,
     _string:null,
@@ -62,7 +62,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * initializes the cc.LabelTTF with a font name, alignment, dimension and font size
       * @param {String} label
      * @param {cc.Size} dimensions
-     * @param {cc.TextAlignmentLeft|cc.TextAlignmentCenter|cc.TextAlignmentRight} alignment
+     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
      * @param {String} fontName
      * @param {Number} fontSize
      * @return {Boolean} return false on error
@@ -147,10 +147,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             var offset = 0;
             switch (this._alignment) {
-                case cc.TextAlignmentLeft:
+                case cc.TEXT_ALIGNMENT_LEFT:
                     offset = -(this._dimensions.width - this._contentSize.width) / 2;
                     break;
-                case cc.TextAlignmentRight:
+                case cc.TEXT_ALIGNMENT_RIGHT:
                     offset = (this._dimensions.width - this._contentSize.width) / 2;
                     break;
                 default:
@@ -182,10 +182,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 var temWidth = testWidth - context.measureText(words[n]).width - 2 * context.measureText(" ").width;
                 var offset;
                 switch (texAlign) {
-                    case cc.TextAlignmentLeft:
+                    case cc.TEXT_ALIGNMENT_LEFT:
                         offset = 0
                         break;
-                    case cc.TextAlignmentRight:
+                    case cc.TEXT_ALIGNMENT_RIGHT:
                         offset = maxWidth - temWidth;
                         break;
                     default:
@@ -227,13 +227,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
  * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
  * @param {String} label
  * @param {cc.Size} dimensions
- * @param {cc.TextAlignmentLeft|cc.TextAlignmentCenter|cc.TextAlignmentRight} alignment
+ * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
  * @param {String} fontName
  * @param {Number} fontSize
  * @return {cc.LabelTTF|Null}
  * @example
  * // Example
- * var myLabel = cc.LabelTTF.create('label text', cc.SizeMake(32,16), cc.TextAlignmentLeft, 'Times New Roman', 32);
+ * var myLabel = cc.LabelTTF.create('label text', cc.SizeMake(32,16), cc.TEXT_ALIGNMENT_LEFT, 'Times New Roman', 32);
  */
 cc.LabelTTF.create = function (label, dimensions, alignment, fontName, fontSize) {
     var ret = new cc.LabelTTF();

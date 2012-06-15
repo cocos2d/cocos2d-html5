@@ -290,11 +290,16 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
 cc.KeypadDispatcher.sharedDispatcher = function () {
     if (!cc.keypadDispatcher) {
         cc.keypadDispatcher = new cc.KeypadDispatcher();
-        document.addEventListener("keydown", function (e) {
+        //make canvas focusable
+        cc.canvas.setAttribute('contentEditable', true);
+        cc.canvas.style.outline='none';
+        cc.canvas.style.cursor = 'default';
+        cc.canvas.addEventListener("keydown", function (e) {
+            console.log(e);
             cc.keypadDispatcher.dispatchKeypadMSG(e, true);
             cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
         });
-        document.addEventListener("keyup", function (e) {
+        cc.canvas.addEventListener("keyup", function (e) {
             cc.keypadDispatcher.dispatchKeypadMSG(e, false);
         });
     }

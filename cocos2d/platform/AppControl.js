@@ -24,10 +24,16 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-
-cc.AppController = cc.Class.extend({
+/**
+ * Controller of Game Application
+ * @class
+ * @extends cc.Class
+ */
+cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
+    /**
+     * did something when Finish Launching
+     * @return {Boolean}
+     */
     didFinishLaunchingWithOptions:function () {
         // Override point for customization after application launch.
         var app = new cc.AppDelegate();
@@ -36,44 +42,61 @@ cc.AppController = cc.Class.extend({
         return true;
     },
 
+    /**
+     * <p>
+     *  Sent when the application is about to move from active to inactive state. <br/>
+     *  This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) <br/>
+     *  or when the user quits the application and it begins the transition to the background state.     <br/>
+     *  Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. <br/>
+     *  Games should use this method to pause the game.
+     * </p>
+     */
     applicationWillResignActive:function () {
-        /*
-         Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
-         Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. Games should use this method to pause the game.
-         */
         cc.Director.sharedDirector().pause();
     },
 
+    /**
+     * <p>
+     * Restart any tasks that were paused (or not yet started) while the application was inactive. <br/>
+     * If the application was previously in the background, optionally refresh the user interface.
+     * </p>
+     */
     applicationDidBecomeActive:function () {
-        /*
-         Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
-         */
         cc.Director.sharedDirector().resume();
     },
 
+    /**
+     * <p>
+     *   Use this method to release shared resources, save user data, invalidate timers, and store enough application state information <br/>
+     *   to restore your application to its current state in case it is terminated later.<br/>
+     *   If your application supports background execution, called instead of applicationWillTerminate: when the user quits.
+     * </p>
+     */
     applicationDidEnterBackground:function () {
-        /*
-         Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
-         If your application supports background execution, called instead of applicationWillTerminate: when the user quits.
-         */
         cc.Application.sharedApplication().applicationDidEnterBackground();
     },
 
+    /**
+     * <p>
+     *     Called as part of  transition from the background to the inactive state: <br/>
+     *      here you can undo many of the changes made on entering the background.
+     * </p>
+     */
     applicationWillEnterForeground:function () {
-        /*
-         Called as part of  transition from the background to the inactive state: here you can undo many of the changes made on entering the background.
-         */
         cc.Application.sharedApplication().applicationWillEnterForeground();
     },
 
+    /**
+     * Called when the application is about to terminate. See also applicationDidEnterBackground.
+     */
     applicationWillTerminate:function () {
-        /*
-         Called when the application is about to terminate.
-         See also applicationDidEnterBackground:.
-         */
     }
 });
 
+/**
+ * Return Controller of Game Application
+ * @return {cc.AppController}
+ */
 cc.AppController.shareAppController = function () {
     if (cc.sharedAppController == null) {
         cc.sharedAppController = new cc.AppController();
@@ -81,5 +104,9 @@ cc.AppController.shareAppController = function () {
     cc.Assert(cc.sharedAppController, "shareAppController");
     return cc.sharedAppController;
 };
-// cocos2d application instance
+
+/**
+ * cocos2d application instance
+ * @type cc.AppController
+ */
 cc.sharedAppController = null;

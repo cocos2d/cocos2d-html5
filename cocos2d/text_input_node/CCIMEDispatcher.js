@@ -24,80 +24,95 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
+/**
+ * IME Keyboard Notification Info structure
+ * @param {cc.Rect} begin the soft keyboard rectangle when animatin begin
+ * @param {cc.Rect} end the soft keyboard rectangle when animatin end
+ * @param {Number} duration the soft keyboard animation duration
+ */
 cc.IMEKeyboardNotificationInfo = function (begin, end, duration) {
-    // the soft keyboard rectangle when animatin begin
     this.begin = begin || cc.RectZero();
-
-    // the soft keyboard rectangle when animatin end
     this.end = end || cc.RectZero();
-
-    // the soft keyboard animation duration
     this.duration = duration || 0;
 };
 
 /**
- @brief    Input method editor delegate.
+ * Input method editor delegate.
+ * @class
+ * @extends cc.Class
  */
-cc.IMEDelegate = cc.Class.extend({
+cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
+    /**
+     * @Constructor
+     */
     ctor:function () {
         cc.IMEDispatcher.sharedDispatcher().addDelegate(this);
     },
-
+    /**
+     * Remove delegate
+     */
     removeDelegate:function () {
         cc.IMEDispatcher.sharedDispatcher().removeDelegate(this);
     },
-
+    /**
+     * Remove delegate
+     * @return {Boolean}
+     */
     attachWithIME:function () {
         return cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
     },
+    /**
+     * Detach with IME
+     * @return {Boolean}
+     */
     detachWithIME:function () {
         return cc.IMEDispatcher.sharedDispatcher().detachDelegateWithIME(this);
     },
 
     /**
-     @brief    Decide the delegate instance is ready for receive ime message or not.
-
-     Called by CCIMEDispatcher.
+     * Decide the delegate instance is ready for receive ime message or not.<br />
+     * Called by CCIMEDispatcher.
+     * @return {Boolean}
      */
     canAttachWithIME:function () {
         return false;
     },
 
     /**
-     @brief    When the delegate detach with IME, this method call by CCIMEDispatcher.
+     * When the delegate detach with IME, this method call by CCIMEDispatcher.
      */
     didAttachWithIME:function () {
     },
 
     /**
-     @brief    Decide the delegate instance can stop receive ime message or not.
+     * Decide the delegate instance can stop receive ime message or not.
+     * @return {Boolean}
      */
     canDetachWithIME:function () {
         return false;
     },
 
     /**
-     @brief    When the delegate detach with IME, this method call by CCIMEDispatcher.
+     * When the delegate detach with IME, this method call by CCIMEDispatcher.
      */
     didDetachWithIME:function () {
     },
 
     /**
-     @brief    Called by CCIMEDispatcher when some text input from IME.
+     * Called by CCIMEDispatcher when some text input from IME.
      */
     insertText:function (text, len) {
     },
 
     /**
-     @brief    Called by CCIMEDispatcher when user clicked the backward key.
+     * Called by CCIMEDispatcher when user clicked the backward key.
      */
     deleteBackward:function () {
     },
 
     /**
-     @brief    Called by CCIMEDispatcher for get text which delegate already has.
+     * Called by CCIMEDispatcher for get text which delegate already has.
+     * @return {String}
      */
     getContentText:function () {
         return "";
@@ -118,16 +133,22 @@ cc.IMEDelegate = cc.Class.extend({
 
 
 /**
- @brief    Input Method Edit Message Dispatcher.
+ * Input Method Edit Message Dispatcher.
+ * @class
+ * @extends cc.Class
  */
-cc.IMEDispatcher = cc.Class.extend({
+cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
     impl:null,
-    //private construction method
+    /**
+     * @Constructor
+     */
     ctor:function () {
         this.impl = new cc.IMEDispatcher.Impl();
     },
     /**
-     @brief dispatch the input text from ime
+     * Dispatch the input text from ime
+     * @param {String} text
+     * @param {Number} len
      */
     dispatchInsertText:function (text, len) {
         if (!this.impl || !text || len <= 0)
@@ -141,7 +162,7 @@ cc.IMEDispatcher = cc.Class.extend({
     },
 
     /**
-     @brief    dispatch the delete backward operation
+     * Dispatch the delete backward operation
      */
     dispatchDeleteBackward:function () {
         if (!this.impl) {
@@ -156,7 +177,8 @@ cc.IMEDispatcher = cc.Class.extend({
     },
 
     /**
-     @brief    get the content text, which current CCIMEDelegate which attached with IME has.
+     * Get the content text, which current CCIMEDelegate which attached with IME has.
+     * @return {String}
      */
     getContentText:function () {
         if (this.impl && this.impl._delegateWithIme) {
@@ -166,9 +188,10 @@ cc.IMEDispatcher = cc.Class.extend({
         return "";
     },
 
-    //////////////////////////////////////////////////////////////////////////
-    // dispatch keyboard notification
-    //////////////////////////////////////////////////////////////////////////
+    /**
+     * Dispatch keyboard notification
+     * @param {cc.IMEKeyboardNotificationInfo} info
+     */
     dispatchKeyboardWillShow:function (info) {
         if (this.impl) {
             for (var i = 0; i < this.impl._delegateList.length; i++) {
@@ -179,6 +202,10 @@ cc.IMEDispatcher = cc.Class.extend({
             }
         }
     },
+    /**
+     * Dispatch keyboard notification
+     * @param {cc.IMEKeyboardNotificationInfo} info
+     */
     dispatchKeyboardDidShow:function (info) {
         if (this.impl) {
             for (var i = 0; i < this.impl._delegateList.length; i++) {
@@ -189,6 +216,10 @@ cc.IMEDispatcher = cc.Class.extend({
             }
         }
     },
+    /**
+     * Dispatch keyboard notification
+     * @param {cc.IMEKeyboardNotificationInfo} info
+     */
     dispatchKeyboardWillHide:function (info) {
         if (this.impl) {
             for (var i = 0; i < this.impl._delegateList.length; i++) {
@@ -199,6 +230,10 @@ cc.IMEDispatcher = cc.Class.extend({
             }
         }
     },
+    /**
+     * Dispatch keyboard notification
+     * @param {cc.IMEKeyboardNotificationInfo} info
+     */
     dispatchKeyboardDidHide:function (info) {
         if (this.impl) {
             for (var i = 0; i < this.impl._delegateList.length; i++) {
@@ -211,7 +246,11 @@ cc.IMEDispatcher = cc.Class.extend({
     },
 
     /**
-     @brief add delegate to concern ime msg
+     * Add delegate to concern ime msg
+     * @param {cc.IMEDelegate} delegate
+     * @example
+     * //example
+     * cc.IMEDispatcher.sharedDispatcher().addDelegate(this);
      */
     addDelegate:function (delegate) {
         if (!delegate || !this.impl) {
@@ -225,9 +264,12 @@ cc.IMEDispatcher = cc.Class.extend({
     },
 
     /**
-     @brief    attach the pDeleate with ime.
-     @return If the old delegate can detattach with ime and the new delegate
-     can attach with ime, return true, otherwise return false.
+     * Attach the pDeleate with ime.
+     * @param {cc.IMEDelegate} delegate
+     * @return {Boolean} If the old delegate can detattach with ime and the new delegate can attach with ime, return true, otherwise return false.
+     * @example
+     * //example
+     * var ret = cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
      */
     attachDelegateWithIME:function (delegate) {
         if (!this.impl || !delegate) {
@@ -265,6 +307,14 @@ cc.IMEDispatcher = cc.Class.extend({
         delegate.didAttachWithIME();
         return true;
     },
+    /**
+     * Detach the pDeleate with ime.
+     * @param {cc.IMEDelegate} delegate
+     * @return {Boolean} If the old delegate can detattach with ime and the new delegate can attach with ime, return true, otherwise return false.
+     * @example
+     * //example
+     * var ret = cc.IMEDispatcher.sharedDispatcher().detachDelegateWithIME(this);
+     */
     detachDelegateWithIME:function (delegate) {
         if (!this.impl || !delegate) {
             return false;
@@ -285,7 +335,11 @@ cc.IMEDispatcher = cc.Class.extend({
     },
 
     /**
-     @brief remove the delegate from the delegates who concern ime msg
+     * Remove the delegate from the delegates who concern ime msg
+     * @param {cc.IMEDelegate} delegate
+     * @example
+     * //example
+     * cc.IMEDispatcher.sharedDispatcher().removeDelegate(this);
      */
     removeDelegate:function (delegate) {
         if (!this.impl || !delegate) {
@@ -305,7 +359,15 @@ cc.IMEDispatcher = cc.Class.extend({
         cc.ArrayRemoveObject(this.impl._delegateList, delegate);
     },
 
-    //process keydown's keycode
+    /**
+     * Process keydown's keycode
+     * @param {Number} keyCode
+     * @example
+     * //example
+     * document.addEventListener("keydown", function (e) {
+     *      cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
+     * });
+     */
     processKeycode:function (keyCode) {
         if (keyCode < 32) {
             if (keyCode == cc.KEY.backspace) {
@@ -325,13 +387,24 @@ cc.IMEDispatcher = cc.Class.extend({
     }
 });
 
-cc.IMEDispatcher.Impl = cc.Class.extend({
+/**
+ * @class
+ * @extends cc.Class
+ */
+cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
     _delegateWithIme:null,
     _delegateList:null,
+    /**
+     * @Constructor
+     */
     ctor:function () {
         this._delegateList = [];
     },
-
+    /**
+     * Find delegate
+     * @param {cc.IMEDelegate} delegate
+     * @return {Number|Null}
+     */
     findDelegate:function (delegate) {
         for (var i = 0; i < this._delegateList.length; i++) {
             if (this._delegateList[i] == delegate) {
@@ -343,7 +416,8 @@ cc.IMEDispatcher.Impl = cc.Class.extend({
 });
 
 /**
- @brief Returns the shared CCIMEDispatcher object for the system.
+ * Returns the shared CCIMEDispatcher object for the system.
+ * @return {cc.IMEDispatcher}
  */
 cc.IMEDispatcher.sharedDispatcher = function () {
     if (!cc.IMEDispatcher.instance) {
@@ -352,4 +426,8 @@ cc.IMEDispatcher.sharedDispatcher = function () {
     }
     return cc.IMEDispatcher.instance;
 };
+
+/**
+ * @type object
+ */
 cc.IMEDispatcher.instance = null;

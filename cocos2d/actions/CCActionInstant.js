@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-12
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -28,89 +24,164 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-var cc = cc = cc || {};
 /**
- @brief Instant actions are immediate actions. They don't have a duration like
- the CCIntervalAction actions.
+ * Instant actions are immediate actions. They don't have a duration like
+ * the CCIntervalAction actions.
+ * @class
+ * @extends cc.FiniteTimeAction
  */
-cc.ActionInstant = cc.FiniteTimeAction.extend({
+cc.ActionInstant = cc.FiniteTimeAction.extend(/** @lends cc.ActionInstant# */{
+    /**
+     * @return {Boolean}
+     */
     isDone:function () {
         return true;
     },
+
+    /**
+     * @param {Number} dt
+     */
     step:function (dt) {
         this.update(1);
     },
+
+    /**
+     * @param {Number} time
+     */
     update:function (time) {
-        //cc.UNUSED_PARAM(time);
     }
 });
 
-/** @brief Show the node
+/**  Show the node
+ * @class
+ * @extends cc.ActionInstant
  */
-cc.Show = cc.ActionInstant.extend({
+cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
         target.setIsVisible(true);
     },
+
+    /**
+     * @return {cc.FiniteTimeAction}
+     */
     reverse:function () {
         return cc.Hide.create.call(this);
     }
 });
+/**
+ * @return {cc.Show}
+ * @example
+ * // example
+ * var showAction = cc.Show.create();
+ */
 cc.Show.create = function () {
     return new cc.Show();
 };
 
 /**
- @brief Hide the node
+ * Hide the node
+ * @class
+ * @extends cc.ActionInstant
  */
-cc.Hide = cc.ActionInstant.extend({
+cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
         target.setIsVisible(false);
     },
+
+    /**
+     * @return {cc.FiniteTimeAction}
+     */
     reverse:function () {
         return cc.Show.create.call(this);
     }
 });
+/**
+ * @return {cc.Hide}
+ * @example
+ * // example
+ * var hideAction = cc.Hide.create();
+ */
 cc.Hide.create = function () {
     return (new cc.Hide());
 };
 
 
-/** @brief Toggles the visibility of a node
+/** Toggles the visibility of a node
+ * @class
+ * @extends cc.ActionInstant
  */
-cc.ToggleVisibility = cc.ActionInstant.extend({
+cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */{
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super();
         target.setIsVisible(!target.getIsVisible());
     },
+
+    /**
+     * @return {cc.ToggleVisibility}
+     */
     reverse:function () {
         return new cc.ToggleVisibility();
     }
 });
+
+/**
+ * @return {cc.ToggleVisibility}
+ * @example
+ * // example
+ * var toggleVisibilityAction = cc.ToggleVisibility.create();
+ */
 cc.ToggleVisibility.create = function () {
     return (new cc.ToggleVisibility());
 };
 
 /**
- @brief Flips the sprite horizontally
- @since v0.99.0
+ * Flips the sprite horizontally
+ * @class
+ * @extends cc.ActionInstant
  */
-cc.FlipX = cc.ActionInstant.extend({
+cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
+    /**
+     * @param {Boolean} x
+     * @return {Boolean}
+     */
     initWithFlipX:function (x) {
         this._flipX = x;
         return true;
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super();
         target.setFlipX(this._flipX);
     },
+
+    /**
+     * @return {cc.FiniteTimeAction}
+     */
     reverse:function () {
         return this.actionWithFlipX(!this._flipX);
     },
     _flipX:false
 });
+
+/**
+ * @param {Boolean} x
+ * @return {cc.FlipX}
+ * var flipXAction = cc.FlipX.create(true);
+ */
 cc.FlipX.create = function (x) {
     var ret = new cc.FlipX();
     if (ret.initWithFlipX(x))
@@ -118,23 +189,43 @@ cc.FlipX.create = function (x) {
 };
 
 /**
- @brief Flips the sprite vertically
- @since v0.99.0
+ * Flips the sprite vertically
+ * @class
+ * @extends cc.ActionInstant
  */
-cc.FlipY = cc.ActionInstant.extend({
+cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
+    /**
+     * @param {Boolean} Y
+     * @return {Boolean}
+     */
     initWithFlipY:function (Y) {
         this._flipY = Y;
         return true;
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super();
         target.setFlipY(this._flipY);
     },
+
+    /**
+     * @return {cc.FiniteTimeAction}
+     */
     reverse:function () {
         return this.actionWithFlipY(!this._flipY);
     },
     _flipY:false
 });
+/**
+ * @param {Boolean} y
+ * @return {cc.FlipY}
+ * @example
+ * // example
+ * var flipYAction = cc.FlipY.create();
+ */
 cc.FlipY.create = function (y) {
     var ret = new cc.FlipY();
     if (ret.initWithFlipY(y))
@@ -142,20 +233,35 @@ cc.FlipY.create = function (y) {
 };
 
 
-/** @brief Places the node in a certain position
+/** Places the node in a certain position
+ * @class
+ * @extends cc.ActionInstant
  */
-cc.Place = cc.ActionInstant.extend({
-    /** Initializes a Place action with a position */
+cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
+    /** Initializes a Place action with a position
+     * @param {cc.Point} pos
+     * @return {Boolean}
+     */
     initWithPosition:function (pos) {
         this._position = pos;
         return true;
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
         this._target.setPosition(this._position);
     }
 });
-/** creates a Place action with a position */
+/** creates a Place action with a position
+ * @param {cc.Point} pos
+ * @return {cc.Place}
+ * @example
+ * // example
+ * var placeAction = cc.Place.create(cc.PointMake(200, 200));
+ */
 cc.Place.create = function (pos) {
     var ret = new cc.Place();
     ret.initWithPosition(pos);
@@ -163,46 +269,80 @@ cc.Place.create = function (pos) {
 };
 
 
-/** @brief Calls a 'callback'
+/** Calls a 'callback'
+ * @class
+ * @extends cc.ActionInstant
  */
-cc.CallFunc = cc.ActionInstant.extend({
-    initWithTarget:function (selectorTarget, selector, d) {
-        this._data = d || null;
+cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
+    /**
+     * @param {object} selectorTarget
+     * @param {function|Null} selector
+     * @param {*|Null} data data for function, it accepts all data types.
+     * @return {Boolean}
+     */
+    initWithTarget:function (selectorTarget, selector, data) {
+        this._data = data || null;
         this._callFunc = selector || null;
         this._selectorTarget = selectorTarget || null;
         return true;
     },
+
+    /**
+     * execute the function.
+     */
     execute:function () {
         if (this._callFunc != null)//CallFunc, N, ND
         {
             this._callFunc.call(this._selectorTarget, this._target, this._data);
         }
     },
+
+    /**
+     * @param {cc.Node} target
+     */
     startWithTarget:function (target) {
         this._super(target);
         this.execute();
     },
+
+    /**
+     * @return {object}
+     */
     getTargetCallback:function () {
         return this._selectorTarget;
     },
-    setTargetCallback:function (pSel) {
-        if (pSel != this._selectorTarget) {
+
+    /**
+     * @param {object} sel
+     */
+    setTargetCallback:function (sel) {
+        if (sel != this._selectorTarget) {
             if (this._selectorTarget) {
                 this._selectorTarget = null;
             }
-            this._selectorTarget = pSel;
+            this._selectorTarget = sel;
         }
     },
     _selectorTarget:null,
     _callFunc:null
 });
 /** creates the action with the callback
-
- typedef void (CCObject::*SEL_CallFunc)();
+ * @param {object} selectorTarget
+ * @param {function|Null} selector
+ * @param {*|Null} data data for function, it accepts all data types.
+ * @return {cc.CallFunc}
+ * @example
+ * // example
+ * // CallFunc without data
+ * var finish = cc.CallFunc.create(this, this.removeSprite);
+ *
+ * // CallFunc with data
+ * var finish = cc.CallFunc.create(this._grossini, this.removeFromParentAndCleanup, true),
  */
-cc.CallFunc.create = function (selectorTarget, selector, d) {
+
+cc.CallFunc.create = function (selectorTarget, selector, data) {
     var ret = new cc.CallFunc();
-    if (ret && ret.initWithTarget(selectorTarget, selector, d)) {
+    if (ret && ret.initWithTarget(selectorTarget, selector, data)) {
         ret._callFunc = selector;
         return ret;
     }

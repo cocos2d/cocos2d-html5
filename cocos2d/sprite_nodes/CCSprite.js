@@ -27,7 +27,7 @@
 /**
  * cc.Sprite invalid index on the cc.SpriteBatchode
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.SPRITE_INDEX_NOT_INITIALIZED = "0xffffffff";
 
@@ -131,40 +131,42 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
 /**
  * Translate with it's parent
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.HONOR_PARENT_TRANSFORM_TRANSLATE = 1 << 0;
 
 /**
  * Rotate with it's parent
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.HONOR_PARENT_TRANSFORM_ROTATE = 1 << 1;
 
 /**
  * Scale with it's parent
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.HONOR_PARENT_TRANSFORM_SCALE = 1 << 2;
 
 /**
  * Skew with it's parent
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.HONOR_PARENT_TRANSFORM_SKEW = 1 << 3;
 
 /**
  * All possible transformation enabled. Default value.
  * @constant
- * @type {Number}
+ * @type Number
  */
 cc.HONOR_PARENT_TRANSFORM_ALL = cc.HONOR_PARENT_TRANSFORM_TRANSLATE | cc.HONOR_PARENT_TRANSFORM_ROTATE | cc.HONOR_PARENT_TRANSFORM_SCALE | cc.HONOR_PARENT_TRANSFORM_SKEW;
 
 /**
  * a Values object for transform
+ * @Class
+ * @Construct
  * @param {cc.Point} pos position x and y
  * @param {cc.Point} scale scale x and y
  * @param {Number} rotation
@@ -211,7 +213,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  *    - But the rendering will be slower: 1 draw per children.   <br/>
  *
  * The default anchorPoint in cc.Sprite is (0.5, 0.5). </p>
- * @class cc.Sprite
+ * @class
  * @extends cc.Node
  *
  * @example

@@ -1471,7 +1471,7 @@ var SpriteFrameTest = SpriteTestDemo.extend({
         }
 
         var animation = cc.Animation.create(animFrames);
-        this._sprite1.runAction(cc.RepeatForever.create(cc.Animate.actionWithAnimation(animation, false)));
+        this._sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
 
         // to test issue #732, uncomment the following line
         this._sprite1.setFlipX(false);
@@ -1500,7 +1500,7 @@ var SpriteFrameTest = SpriteTestDemo.extend({
         moreFrames = moreFrames.concat(animFrames);
         var animMixed = cc.Animation.create(moreFrames);
 
-        this._sprite2.runAction(cc.RepeatForever.create(cc.Animate.actionWithAnimation(animMixed, false)));
+        this._sprite2.runAction(cc.RepeatForever.create(cc.Animate.create(animMixed, false)));
 
         // to test issue #732, uncomment the following line
         this._sprite2.setFlipX(false);
@@ -1672,7 +1672,7 @@ var SpriteOffsetAnchorRotation = SpriteTestDemo.extend({
             }
 
             var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.actionWithAnimation(animation, false)));
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
             sprite.runAction(cc.RepeatForever.create(cc.RotateBy.create(10, 360)));
 
             this.addChild(sprite, 0);
@@ -1740,7 +1740,7 @@ var SpriteBatchNodeOffsetAnchorRotation = SpriteTestDemo.extend({
             }
 
             var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.actionWithAnimation(animation, false)));
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
             sprite.runAction(cc.RepeatForever.create(cc.RotateBy.create(10, 360)));
 
             spritebatch.addChild(sprite, i);
@@ -1805,7 +1805,7 @@ var SpriteOffsetAnchorScale = SpriteTestDemo.extend({
             }
 
             var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.actionWithAnimation(animation, false)));
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
 
             var scale = cc.ScaleBy.create(2, 2);
             var scale_back = scale.reverse();
@@ -1878,7 +1878,7 @@ var SpriteBatchNodeOffsetAnchorScale = SpriteTestDemo.extend({
             }
 
             var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.actionWithAnimation(animation, false)));
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
 
             var scale = cc.ScaleBy.create(2, 2);
             var scale_back = scale.reverse();
@@ -2353,7 +2353,7 @@ var SpriteAnimationSplit = SpriteTestDemo.extend({
         animFrames.push(frame5);
 
         var animation = cc.Animation.create(animFrames, 0.2);
-        var animate = cc.Animate.actionWithAnimation(animation, false);
+        var animate = cc.Animate.create(animation, false);
         var seq = cc.Sequence.create(animate,
             cc.FlipX.create(true),
             animate.copy(),
@@ -2500,7 +2500,7 @@ var SpriteBatchNodeChildren = SpriteTestDemo.extend({
         }
 
         var animation = cc.Animation.create(animFrames, 0.2);
-        sprite1.runAction(cc.RepeatForever.create(cc.Animate.actionWithAnimation(animation, false)));
+        sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
         // END NEW CODE
 
         var action = cc.MoveBy.create(2, cc.ccp(200, 0));
@@ -3432,9 +3432,9 @@ var AnimationCache = SpriteTestDemo.extend({
         var dance_grey = animCache.animationByName("dance_gray");
         var dance_blue = animCache.animationByName("dance_blue");
 
-        var animN = cc.Animate.actionWithAnimation(normal);
-        var animG = cc.Animate.actionWithAnimation(dance_grey);
-        var animB = cc.Animate.actionWithAnimation(dance_blue);
+        var animN = cc.Animate.create(normal);
+        var animG = cc.Animate.create(dance_grey);
+        var animB = cc.Animate.create(dance_blue);
 
         var seq = cc.Sequence.create(animN, animG, animB);
 

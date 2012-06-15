@@ -25,23 +25,84 @@
  ****************************************************************************/
 
 
-/// Device oriented vertically, home button on the bottom
+/**
+ * Device oriented vertically, home button on the bottom
+ * @constant
+ * @type Number
+ */
 cc.ORIENTATION_PORTRAIT = 0;
-/// Device oriented vertically, home button on the top
+
+/**
+ * Device oriented vertically, home button on the top
+ * @constant
+ * @type Number
+ */
 cc.ORIENTATION_PORTRAIT_UPSIDE_DOWN = 1;
-/// Device oriented horizontally, home button on the right
+
+/**
+ * Device oriented horizontally, home button on the right
+ * @constant
+ * @type Number
+ */
 cc.ORIENTATION_LANDSCAPE_LEFT = 2;
-/// Device oriented horizontally, home button on the left
+
+/**
+ * Device oriented horizontally, home button on the left
+ * @constant
+ * @type Number
+ */
 cc.ORIENTATION_LANDSCAPE_RIGHT = 3;
 
+//engine render type
+
+/**
+ * Canvas of render type
+ * @constant
+ * @type Number
+ */
 cc.CANVAS = 0;
+
+/**
+ * WebGL of render type
+ * @constant
+ * @type Number
+ */
 cc.WEBGL = 1;
 
+/**
+ * drawing primitive of game engine
+ * @type cc.DrawingPrimitive
+ */
 cc.drawingUtil = null;
+
+/**
+ * main Canvas 2D Context of game engine
+ * @type CanvasContext
+ */
 cc.renderContext = null;
+
+/**
+ * main Canvas of game engine
+ * @type HTMLCanvasElement
+ */
 cc.canvas = null;
+
+/**
+ * This Div element contain all game canvas
+ * @type HTMLDivElement
+ */
 cc.gameDiv = null;
+
+/**
+ * current render type of game engine
+ * @type Number
+ */
 cc.renderContextType = cc.CANVAS;
+
+/**
+ * save original size of canvas, use for resize canvas
+ * @type cc.Size
+ */
 cc.originalCanvasSize = new cc.Size(0, 0);
 
 window.requestAnimFrame = (function () {
@@ -52,6 +113,7 @@ window.requestAnimFrame = (function () {
         window.msRequestAnimationFrame
 })();
 
+
 if (!window.console) {
     window.console = {};
     window.console.log = function () {
@@ -60,14 +122,37 @@ if (!window.console) {
     };
 }
 
-//setup game context
+/**
+ * <p>
+ *   setup game main canvas,renderContext,gameDiv and drawingUtil with argument  <br/>
+ *   <br/>
+ *   can receive follow type of arguemnt: <br/>
+ *      - empty: create a canvas append to document's body, and setup other option    <br/>
+ *      - string: search the element by document.getElementById(),    <br/>
+ *          if this element is HTMLCanvasElement, set this element as main canvas of engine, and set it's ParentNode as cc.gameDiv.<br/>
+ *          if this element is HTMLDivElement, set it's ParentNode to cc.gameDiv， and create a canvas as main canvas of engine.   <br/>
+ * </p>
+ * @function
+ * @example
+ * //setup with null
+ * cc.setup();
+ *
+ * // setup with HTMLCanvasElement, gameCanvas is Canvas element
+ * // declare like this: <canvas id="gameCanvas" width="800" height="450"></canvas>
+ * cc.setup("gameCanvas");
+ *
+ * //setup with HTMLDivElement, gameDiv is Div element
+ * // declare like this: <div id="Cocos2dGameContainer" width="800" height="450"></div>
+ * cc.setup("Cocos2dGameContainer");
+ */
 cc.setup = function () {
     //Browser Support Information
     //event register
+    var gameCanvas;
     switch (arguments.length) {
         case 0:
             //add canvas at document
-            var gameCanvas = document.createElement("Canvas");
+            gameCanvas = document.createElement("Canvas");
             gameCanvas.setAttribute("id", "gameCanvas");
             gameCanvas.setAttribute("width", 480);
             gameCanvas.setAttribute("height", 320);
@@ -95,7 +180,7 @@ cc.setup = function () {
                 cc.renderContextType = cc.CANVAS;
             } else if (getElement instanceof HTMLDivElement) {
                 //HTMLDivElement
-                var gameCanvas = document.createElement("Canvas");
+                gameCanvas = document.createElement("Canvas");
                 gameCanvas.setAttribute("id", "gameCanvas");
                 gameCanvas.setAttribute("width", getElement.width);
                 gameCanvas.setAttribute("height", getElement.height);
@@ -128,24 +213,19 @@ cc.setup = function () {
      */
 };
 
+/**
+ * setup css style of game div
+ * @param {cc.Node} obj
+ */
 cc.setupHTML = function (obj) {
     var canvas = cc.canvas;
-    /*canvas.style.position = "absolute";
-     canvas.style.top = 0;
-     canvas.style.left = 0;*/
+
     canvas.style.zIndex = 0;
     var _container = cc.$new("div");
     _container.id = "Cocos2dGameContainer";
     _container.style.position = "relative";
     _container.style.display = "inline-block";
-    //_container.style.width = cc.canvas.width;
-    //_container.style.height = cc.canvas.height;
-    //_container.style.overflow = "hidden";//TODO make it hidden when finished debugging
-    //this._container.style.backgroundColor="RGBA(100,100,200,0.5)";
-    //_container.style.top = canvas.offsetTop+parseInt(canvas.style.borderTopWidth)+"px";
-    //_container.style.left = canvas.offsetLeft+parseInt(canvas.style.borderLeftWidth)+"px";
-    //_container.style.height = canvas.clientHeight+"px";
-    //_container.style.width = canvas.clientWidth+"px";
+
     if (obj) {
         _container.setAttribute("height", obj.getContentSize().height);
     }
@@ -153,7 +233,15 @@ cc.setupHTML = function (obj) {
     _container.appendChild(canvas);
 };
 
-cc.Application = cc.Class.extend({
+/**
+ * Run main loop of game engine
+ * @class
+ * @extends cc.Class
+ */
+cc.Application = cc.Class.extend(/** @lends cc.Application# */{
+    /**
+     * @Constructor
+     */
     ctor:function () {
         this._animationInterval = 0;
         cc.Assert(!cc._sharedApplication, "CCApplication ctor");
@@ -161,17 +249,18 @@ cc.Application = cc.Class.extend({
     },
 
     /**
-     @brief    Callback by CCDirector for limit FPS.
-     @interval       The time, which expressed in second in second, between current frame and next.
+     * Callback by cc.Director for limit FPS.
+     * @param {Number} interval The time, which expressed in second, between current frame and next.
      */
     setAnimationInterval:function (interval) {
         this._animationInterval = interval;
     },
 
     /**
-     @brief    Callback by CCDirector for change device orientation.
-     @orientation    The defination of orientation which CCDirector want change to.
-     @return         The actual orientation of the application.
+     * Callback by cc.Director for change device orientation.
+     * @param {Number} orientation The defination of orientation which cc.Director want change to.
+     * @return {Number} The actual orientation of the application.
+     * @deprecated Does not require in html5
      */
     setOrientation:function (orientation) {
         // swap width and height
@@ -187,22 +276,23 @@ cc.Application = cc.Class.extend({
     },
 
     /**
-     @brief    Get status bar rectangle in EGLView window.
+     *  Get status bar rectangle in EGLView window.
+     * @param {cc.Rect} rect
+     * @deprecated
      */
     statusBarFrame:function (rect) {
         if (rect) {
             // Windows doesn't have status bar.
             rect = cc.RectMake(0, 0, 0, 0);
         }
-
     },
 
     /**
-     @brief    Run the message loop.
+     * Run the message loop.
+     * @return {Number}
      */
     run:function () {
         // Initialize instance and cocos2d.
-
         if (!this.initInstance() || !this.applicationDidFinishLaunching()) {
             return 0;
         }
@@ -224,12 +314,11 @@ cc.Application = cc.Class.extend({
 
     },
     _animationInterval:null
-
 });
 
 /**
- @brief    Get current applicaiton instance.
- @return Current application instance pointer.
+ * Get current applicaiton instance.
+ * @return {cc.Application}  Current application instance pointer.
  */
 cc.Application.sharedApplication = function () {
 
@@ -238,39 +327,11 @@ cc.Application.sharedApplication = function () {
 };
 
 /**
- @brief Get current language config
- @return Current language config
+ * Get current language config
+ * @return {Number} Current language config
  */
 cc.Application.getCurrentLanguage = function () {
     var ret = cc.LANGUAGE_ENGLISH;
-
-    // TODO, need to be fixed.
-    /*
-     var localeID = cc.GetUserDefaultLCID();
-     var primaryLanguageID = localeID & 0xFF;
-
-     switch (primaryLanguageID)
-     {
-     case LANG_CHINESE:
-     ret = cc.LANGUAGE_CHINESE;
-     break;
-     case LANG_FRENCH:
-     ret = cc.LANGUAGE_FRENCH;
-     break;
-     case LANG_ITALIAN:
-     ret = cc.LANGUAGE_ITALIAN;
-     break;
-     case LANG_GERMAN:
-     ret = cc.LANGUAGE_GERMAN;
-     break;
-     case LANG_SPANISH:
-     ret = cc.LANGUAGE_SPANISH;
-     break;
-     case LANG_RUSSIAN:
-     ret = cc.LANGUAGE_RUSSIAN;
-     break;
-     }
-     */
 
     var currentLang = navigator.language;
     currentLang = currentLang.toLowerCase();
