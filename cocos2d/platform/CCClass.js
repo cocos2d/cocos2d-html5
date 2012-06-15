@@ -39,6 +39,7 @@ var cc = cc = cc || {};
 
     /**
      * The base Class implementation (does nothing)
+     * @class
      */
     cc.Class = function () {
     };

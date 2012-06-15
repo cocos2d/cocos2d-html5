@@ -57,7 +57,7 @@ cc.AudioManager = cc.Class.extend(/** @lends cc.AudioManager# */{
     _playingBgm:null,
     _effectsVolume:1,
     /**
-    * @Constructor
+    * Constructor
     */
     ctor:function () {
         if (this._initialized)

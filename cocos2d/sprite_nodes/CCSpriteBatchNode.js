@@ -80,7 +80,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _isUseCache:false,
 
     /**
-     * @Constructor
+     * Constructor
      * @param {String} fileImage
      */
     ctor:function (fileImage) {

@@ -70,7 +70,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _contentScaleFactor:null,
 
     /**
-     *  @Constructor
+     *  Constructor
      */
     ctor:function () {
         this._super();

@@ -162,7 +162,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _transformGL:null,
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {

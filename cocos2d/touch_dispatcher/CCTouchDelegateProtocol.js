@@ -35,7 +35,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     _id:0,
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function (viewId, x, y) {
         this._viewId = viewId;

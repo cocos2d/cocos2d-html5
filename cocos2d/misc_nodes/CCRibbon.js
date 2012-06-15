@@ -255,7 +255,7 @@ cc.Ribbon = cc.Node.extend(/** @lends cc.Ribbon# */{
     },
 
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         this._super();

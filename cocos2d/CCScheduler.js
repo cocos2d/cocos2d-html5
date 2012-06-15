@@ -131,8 +131,8 @@ cc.ArrayContainsObject = function (arr, findObj) {
 /**
  * find object from array by target
  * @param {Array} arr source array
- * @param {cc.tListEntry|cc.tHashUpdateEntry|cc.tHashSelectorEntry} findInt find target
- * @return {cc.tListEntry|cc.tHashUpdateEntry|cc.tHashSelectorEntry}
+ * @param {cc.ListEntry|cc.HashUpdateEntry|cc.HashSelectorEntry} findInt find target
+ * @return {cc.ListEntry|cc.HashUpdateEntry|cc.HashSelectorEntry}
  */
 cc.HASH_FIND_INT = function (arr, findInt) {
     if (arr == null) {
@@ -151,14 +151,14 @@ cc.HASH_FIND_INT = function (arr, findInt) {
  * A list double-linked list used for "updates with priority"
  * @Class
  * @Construct
- * @param {cc.tListEntry} prev
- * @param {cc.tListEntry} next
+ * @param {cc.ListEntry} prev
+ * @param {cc.ListEntry} next
  * @param {cc.Class} target not retained (retained by hashUpdateEntry)
  * @param {Number} priority
  * @param {Boolean} paused
  * @param {Boolean} markedForDeletion selector will no longer be called and entry will be removed at end of the next tick
  */
-cc.tListEntry = function (prev, next, target, priority, paused, markedForDeletion) {
+cc.ListEntry = function (prev, next, target, priority, paused, markedForDeletion) {
     this.prev = prev;
     this.next = next;
     this.target = target;
@@ -171,12 +171,12 @@ cc.tListEntry = function (prev, next, target, priority, paused, markedForDeletio
  *  a update entry list
  * @Class
  * @Construct
- * @param {cc.tListEntry} list Which list does it belong to ?
- * @param {cc.tListEntry} entry entry in the list
+ * @param {cc.ListEntry} list Which list does it belong to ?
+ * @param {cc.ListEntry} entry entry in the list
  * @param {cc.Class} target hash key (retained)
  * @param {Array} hh
  */
-cc.tHashUpdateEntry = function (list, entry, target, hh) {
+cc.HashUpdateEntry = function (list, entry, target, hh) {
     this.list = list;
     this.entry = entry;
     this.target = target;
@@ -196,7 +196,7 @@ cc.tHashUpdateEntry = function (list, entry, target, hh) {
  * @param {Boolean} paused
  * @param {Array} hh
  */
-cc.tHashSelectorEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
+cc.HashSelectorEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
     this.timers = timers;
     this.target = target;
     this.timerIndex = timerIndex;
@@ -330,7 +330,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _updateHashLocked:false, //If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
     },
@@ -348,7 +348,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @private
      * @param {Array} Source Array
      * @param {cc.Class} destination object
-     * @return {cc.tListEntry} object if finded, or return null
+     * @return {cc.ListEntry} object if finded, or return null
      */
     _findElementFromArray:function (array, target) {
         for (var i = 0; i < array.length; i++) {
@@ -390,7 +390,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     _priorityIn:function (ppList, target, priority, paused) {
-        var listElement = new cc.tListEntry(null, null, target, priority, paused, false);
+        var listElement = new cc.ListEntry(null, null, target, priority, paused, false);
 
         // empey list ?
         if (!ppList) {
@@ -413,16 +413,16 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
 
         //update hash entry for quick access
-        var hashElement = new cc.tHashUpdateEntry(ppList, listElement, target, null);
+        var hashElement = new cc.HashUpdateEntry(ppList, listElement, target, null);
         this._hashForUpdates.push(hashElement);
     },
 
     _appendIn:function (ppList, target, paused) {
-        var listElement = new cc.tListEntry(null, null, target, 0, paused, false);
+        var listElement = new cc.ListEntry(null, null, target, 0, paused, false);
         ppList.push(listElement);
 
         //update hash entry for quicker access
-        var hashElement = new cc.tHashUpdateEntry(ppList, listElement, target, null);
+        var hashElement = new cc.HashUpdateEntry(ppList, listElement, target, null);
         this._hashForUpdates.push(hashElement);
     },
 
@@ -558,7 +558,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         if (!element) {
             // Is this the 1st element ? Then set the pause level to all the selectors of this target
-            element = new cc.tHashSelectorEntry(null, target, 0, null, null, paused, null);
+            element = new cc.HashSelectorEntry(null, target, 0, null, null, paused, null);
             this._hashForSelectors.push(element);
         } else {
             cc.Assert(element.paused == paused, "Sheduler.scheduleSelector()");

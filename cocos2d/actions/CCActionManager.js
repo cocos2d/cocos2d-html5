@@ -38,7 +38,7 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
     paused:false,
     hh:null, //ut hash handle
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         this.actions = [];
@@ -71,7 +71,7 @@ cc.ActionManager = cc.Class.extend({
     },
 
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         cc.Assert(cc.sharedManager == null, "");

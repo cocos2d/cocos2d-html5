@@ -39,7 +39,7 @@
  */
 cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         this._isRelativeAnchorPoint = false;
