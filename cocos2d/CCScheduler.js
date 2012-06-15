@@ -316,7 +316,7 @@ cc._sharedScheduler = null;
  * //register a schedule to scheduler
  * cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
  */
-cc.Scheduler = cc.Class.extend({
+cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _timeScale:0.0,
     _updatesNegList:[], // list of priority < 0
     _updates0List:[], // list priority == 0
