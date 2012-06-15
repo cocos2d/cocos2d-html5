@@ -73,7 +73,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
 
     /**
      * parse a tilemap xml from a string (xmlhttpObj.responseText)
-     * @param  textxml  tilemap xml content
+     * @param  {String} textxml  tilemap xml content
      * @return {Document} xml document
      */
     tmxParse:function (textxml) {

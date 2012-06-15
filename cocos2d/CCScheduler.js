@@ -23,66 +23,23 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-cc.DL_APPEND = function (head, add) {
-    if (head != null) {
-        add.prev = head.prev;
-        head.prev.next = add;
-        head.prev = add;
-        add.next = null;
-    } else {
-        head = add;
-        head.prev = head;
-        head.next = null;
-    }
-};
-
-cc.DL_PREPEND = function (head, add) {
-    add.next = head;
-    if (head != null) {
-        add.prev = head.prev;
-        head.prev = add;
-    } else {
-        add.prev = add;
-    }
-};
-
-cc.DL_DELETE = function (head, del) {
-    if (del.prev == del) {
-        head = null;
-    } else if (del == head) {
-        del.next.prev = del.prev;
-        head = del.next;
-    } else {
-        del.prev.next = del.next;
-        if (del.next != null) {
-            del.next.prev = del.prev;
-        } else {
-            head.prev = del.prev;
-        }
-    }
-};
-
-/** Removes object at specified index and pushes back all subsequent objects.
- Behaviour undefined if index outside [0, num-1]. */
+/**
+ * Removes object at specified index and pushes back all subsequent objects.Behaviour undefined if index outside [0, num-1].
+ * @function
+ * @param {Array} arr Source Array
+ * @param {Number} index index of remove object
+ */
 cc.ArrayRemoveObjectAtIndex = function (arr, index) {
     arr.splice(index, 1);
 };
 
-/** Removes object at specified index and fills the gap with the last object,
- thereby avoiding the need to push back subsequent objects.
- Behaviour undefined if index outside [0, num-1]. */
-cc.ArrayFastRemoveObjectAtIndex = function (arr, index) {
-    arr.splice(index, 1);
-};
-
-cc.ArrayFastRemoveObject = function (arr, delObj) {
-    cc.ArrayRemoveObject(arr, delObj);
-};
-
-/** Searches for the first occurance of object and removes it. If object is not
- found the function has no effect. */
+/**
+ * Searches for the first occurance of object and removes it. If object is not found the function has no effect.
+ * @function
+ * @param {Array} arr Source Array
+ * @param {*} delObj  remove object
+ */
 cc.ArrayRemoveObject = function (arr, delObj) {
     for (var i = 0; i < arr.length; i++) {
         if (arr[i] == delObj) {
@@ -91,16 +48,26 @@ cc.ArrayRemoveObject = function (arr, delObj) {
     }
 };
 
-/** Removes from arr all values in minusArr. For each Value in minusArr, the
- first matching instance in arr will be removed. */
+/**
+ * Removes from arr all values in minusArr. For each Value in minusArr, the first matching instance in arr will be removed.
+ * @function
+ * @param {Array} arr Source Array
+ * @param {Array} minusArr minus Array
+ */
 cc.ArrayRemoveArray = function (arr, minusArr) {
     for (var i = 0; i < minusArr.length; i++) {
         cc.ArrayRemoveObject(arr, minusArr[i]);
     }
 };
 
-/** Returns index of first occurence of value, NSNotFound if value not found. */
-cc.CArrayGetIndexOfValue = function (arr, value) {
+/**
+ * Returns index of first occurence of value, -1 if value not found.
+ * @function
+ * @param {Array} arr Source Array
+ * @param {*} value find value
+ * @return {Number} index of first occurence of value
+ */
+cc.ArrayGetIndexOfValue = function (arr, value) {
     for (var i = 0; i < arr.length; i++) {
         if (arr[i] == value) {
             return i;
@@ -109,10 +76,24 @@ cc.CArrayGetIndexOfValue = function (arr, value) {
     return -1;
 };
 
+/**
+ * append an object to array
+ * @function
+ * @param {Array} arr
+ * @param {*} addObj
+ */
 cc.ArrayAppendObject = function (arr, addObj) {
     arr.push(addObj);
 };
 
+/**
+ * Inserts an object at index
+ * @function
+ * @param {Array} arr
+ * @param {*} addObj
+ * @param {Number} index
+ * @return {Array}
+ */
 cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
     var part1 = arr.slice(0, index);
     var part2 = arr.slice(index);
@@ -121,6 +102,13 @@ cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
     return arr;
 };
 
+/**
+ * Returns index of first occurence of object, -1 if value not found.
+ * @function
+ * @param {Array} arr Source Array
+ * @param {*} findObj find object
+ * @return {Number} index of first occurence of value
+ */
 cc.ArrayGetIndexOfObject = function (arr, findObj) {
     for (var i = 0; i < arr.length; i++) {
         if (arr[i] == findObj)
@@ -129,10 +117,23 @@ cc.ArrayGetIndexOfObject = function (arr, findObj) {
     return -1;
 };
 
+/**
+ * Returns a Boolean value that indicates whether value is present in the array.
+ * @function
+ * @param {Array} arr
+ * @param {*} findObj
+ * @return {Boolean}
+ */
 cc.ArrayContainsObject = function (arr, findObj) {
     return cc.ArrayGetIndexOfObject(arr, findObj) != -1;
 };
 
+/**
+ * find object from array by target
+ * @param {Array} arr source array
+ * @param {cc.tListEntry|cc.tHashUpdateEntry|cc.tHashSelectorEntry} findInt find target
+ * @return {cc.tListEntry|cc.tHashUpdateEntry|cc.tHashSelectorEntry}
+ */
 cc.HASH_FIND_INT = function (arr, findInt) {
     if (arr == null) {
         return null;
@@ -145,35 +146,59 @@ cc.HASH_FIND_INT = function (arr, findInt) {
     return null;
 };
 
-cc.HASH_ADD_INT = function (head, intfield, add) {
-    cc.Log("HASH_ADD_INT no implemetion!");
-};
-
-cc.HASH_DEL = function (head, delptr) {
-    cc.Log("HASH_DEL no implemetion!");
-};
-
 //data structures
+/**
+ * A list double-linked list used for "updates with priority"
+ * @Class
+ * @Construct
+ * @param {cc.tListEntry} prev
+ * @param {cc.tListEntry} next
+ * @param {cc.Class} target not retained (retained by hashUpdateEntry)
+ * @param {Number} priority
+ * @param {Boolean} paused
+ * @param {Boolean} markedForDeletion selector will no longer be called and entry will be removed at end of the next tick
+ */
 cc.tListEntry = function (prev, next, target, priority, paused, markedForDeletion) {
     this.prev = prev;
     this.next = next;
-    this.target = target;                           // not retained (retained by hashUpdateEntry)
+    this.target = target;
     this.priority = priority;
     this.paused = paused;
-    this.makedForDeletion = markedForDeletion;      // selector will no longer be called and entry will be removed at end of the next tick
+    this.makedForDeletion = markedForDeletion;
 };
 
+/**
+ *  a update entry list
+ * @Class
+ * @Construct
+ * @param {cc.tListEntry} list Which list does it belong to ?
+ * @param {cc.tListEntry} entry entry in the list
+ * @param {cc.Class} target hash key (retained)
+ * @param {Array} hh
+ */
 cc.tHashUpdateEntry = function (list, entry, target, hh) {
-    this.list = list;                                   // Which list does it belong to ?
-    this.entry = entry;                                 // entry in the list
-    this.target = target;                               // hash key (retained)
+    this.list = list;
+    this.entry = entry;
+    this.target = target;
     this.hh = hh;
 };
 
-// Hash Element used for "selectors with interval"
+//
+/**
+ * Hash Element used for "selectors with interval"
+ * @Class
+ * @Construct
+ * @param {Array} timers
+ * @param {cc.Class} target  hash key (retained)
+ * @param {Number} timerIndex
+ * @param {cc.Timer} currentTimer
+ * @param {Boolean} currentTimerSalvaged
+ * @param {Boolean} paused
+ * @param {Array} hh
+ */
 cc.tHashSelectorEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
     this.timers = timers;
-    this.target = target;                                // hash key (retained)
+    this.target = target;
     this.timerIndex = timerIndex;
     this.currentTimer = currentTimer;
     this.currentTimerSalvaged = currentTimerSalvaged;
@@ -181,9 +206,12 @@ cc.tHashSelectorEntry = function (timers, target, timerIndex, currentTimer, curr
     this.hh = hh;
 };
 
-
-/** @brief Light weight timer */
-cc.Timer = cc.Class.extend({
+/**
+ * Light weight timer
+ * @class
+ * @extends cc.Class
+ */
+cc.Timer = cc.Class.extend(/** @lends cc.ParticleSystem# */{
     _interval:0.0,
     _selector:"",
 
@@ -191,22 +219,25 @@ cc.Timer = cc.Class.extend({
     _elapsed:0.0,
 
     /**
-     * CCTimer's Constructor
-     * @private
+     * cc.Timer's Constructor
+     * Constructor
      */
     ctor:function () {
     },
 
+    /**
+     * returns interval of timer
+     * @return {Number}
+     */
     getInterval:function () {
         return this._interval;
     },
 
-    /** Initializes a timer with a target, a selector and an interval in seconds.
-     *
-     * @param target target
-     * @param selector Selector
-     * @param seconds second
-     *
+    /**
+     * Initializes a timer with a target, a selector and an interval in seconds.
+     * @param {cc.Class} target target
+     * @param {String|function} selector Selector
+     * @param {Number} seconds second
      * @return {Boolean} <tt>true</tt> if inintialized
      * * */
     initWithTarget:function (target, selector, seconds) {
@@ -221,9 +252,10 @@ cc.Timer = cc.Class.extend({
         }
     },
 
-    /** triggers the timer
-     * @param {float} dt
-     * */
+    /**
+     * triggers the timer
+     * @param {Number} dt delta time
+     */
     update:function (dt) {
         if (this._elapsed == -1) {
             this._elapsed = 0;
@@ -244,13 +276,13 @@ cc.Timer = cc.Class.extend({
     }
 });
 
-/** Allocates a timer with a target, a selector and an interval in seconds.
- *
- * @param target target
- * @param selector Selector
- * @param seconds second
- *
- * @return a CCTimer instance
+/**
+ * Allocates a timer with a target, a selector and an interval in seconds.
+ * @function
+ * @param {cc.Class} target
+ * @param {String|function} selector Selector
+ * @param {Number} seconds
+ * @return {cc.Timer} a cc.Timer instance
  * */
 cc.Timer.timerWithTarget = function (target, selector, seconds) {
     if (arguments < 2)
@@ -266,18 +298,25 @@ cc.Timer.timerWithTarget = function (target, selector, seconds) {
 };
 
 cc._sharedScheduler = null;
-/** @brief Scheduler is responsible of triggering the scheduled callbacks.
- You should not use NSTimer. Instead use this class.
-
- There are 2 different types of callbacks (selectors):
-
- - update selector: the 'update' selector will be called every frame. You can customize the priority.
- - custom selector: A custom selector will be called every frame, or with a custom interval of time
-
- The 'custom selectors' should be avoided when possible. It is faster, and consumes less memory to use the 'update selector'.
-
+/**
+ * <p>
+ *    Scheduler is responsible of triggering the scheduled callbacks.<br/>
+ *    You should not use NSTimer. Instead use this class.<br/>
+ *    <br/>
+ *    There are 2 different types of callbacks (selectors):<br/>
+ *       - update selector: the 'update' selector will be called every frame. You can customize the priority.<br/>
+ *       - custom selector: A custom selector will be called every frame, or with a custom interval of time<br/>
+ *       <br/>
+ *    The 'custom selectors' should be avoided when possible. It is faster, and consumes less memory to use the 'update selector'. *
+ * </p>
+ * @class
+ * @extends cc.Class
+ *
+ * @example
+ * //register a schedule to scheduler
+ * cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
  */
-cc.Scheduler = cc.Class.extend({
+cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _timeScale:0.0,
     _updatesNegList:[], // list of priority < 0
     _updates0List:[], // list priority == 0
@@ -290,13 +329,13 @@ cc.Scheduler = cc.Class.extend({
     _currentTargetSalvaged:false,
     _updateHashLocked:false, //If true unschedule will not remove anything from a hash. Elements will only be marked for deletion.
 
+    /**
+     * @Constructor
+     */
     ctor:function () {
     },
 
     //-----------------------private method----------------------
-    /**
-     * @private
-     */
     _removeHashElement:function (element) {
         element.Timer = null;
         element.target = null;
@@ -305,10 +344,11 @@ cc.Scheduler = cc.Class.extend({
     },
 
     /**
-     * @brief find Object from Array
-     * @param Source Array
-     * @param destination object
-     * @return object if finded, or return null
+     * find Object from Array
+     * @private
+     * @param {Array} Source Array
+     * @param {cc.Class} destination object
+     * @return {cc.tListEntry} object if finded, or return null
      */
     _findElementFromArray:function (array, target) {
         for (var i = 0; i < array.length; i++) {
@@ -319,9 +359,6 @@ cc.Scheduler = cc.Class.extend({
         return null;
     },
 
-    /**
-     * @private
-     */
     _removeUpdateFromHash:function (entry) {
         var element = this._findElementFromArray(this._hashForUpdates, entry.target);
         if (element) {
@@ -335,9 +372,6 @@ cc.Scheduler = cc.Class.extend({
         }
     },
 
-    /**
-     * @private
-     */
     _init:function () {
         this._timeScale = 1.0;
 
@@ -355,9 +389,6 @@ cc.Scheduler = cc.Class.extend({
         return true;
     },
 
-    /**
-     * @private
-     */
     _priorityIn:function (ppList, target, priority, paused) {
         var listElement = new cc.tListEntry(null, null, target, priority, paused, false);
 
@@ -386,9 +417,6 @@ cc.Scheduler = cc.Class.extend({
         this._hashForUpdates.push(hashElement);
     },
 
-    /**
-     * @private
-     */
     _appendIn:function (ppList, target, paused) {
         var listElement = new cc.tListEntry(null, null, target, 0, paused, false);
         ppList.push(listElement);
@@ -399,22 +427,31 @@ cc.Scheduler = cc.Class.extend({
     },
 
     //-----------------------public method-------------------------
-    /** Modifies the time of all scheduled callbacks.
-     You can use this property to create a 'slow motion' or 'fast forward' effect.
-     Default is 1.0. To create a 'slow motion' effect, use values below 1.0.
-     To create a 'fast forward' effect, use values higher than 1.0.
-     @warning It will affect EVERY scheduled selector / action.
+    /**
+     * <p>
+     *    Modifies the time of all scheduled callbacks.<br/>
+     *    You can use this property to create a 'slow motion' or 'fast forward' effect.<br/>
+     *    Default is 1.0. To create a 'slow motion' effect, use values below 1.0.<br/>
+     *    To create a 'fast forward' effect, use values higher than 1.0.<br/>
+     *    @warning It will affect EVERY scheduled selector / action.
+     * </p>
+     * @param {Number} timeScale
      */
     setTimeScale:function (timeScale) {
         this._timeScale = timeScale;
     },
 
+    /**
+     * returns time scale of scheduler
+     * @return {Number}
+     */
     getTimeScale:function () {
         return this._timeScale;
     },
 
-    /** 'tick' the scheduler. main loop
-     You should NEVER call this method, unless you know what you are doing.
+    /**
+     * 'tick' the scheduler. main loop (You should NEVER call this method, unless you know what you are doing.)
+     * @param {Number} dt delta time
      */
     tick:function (dt) {
         this._updateHashLocked = true;
@@ -498,12 +535,20 @@ cc.Scheduler = cc.Class.extend({
         this._currentTarget = null;
     },
 
-    /** The scheduled method will be called every 'interval' seconds.
-     If paused is YES, then it won't be called until it is resumed.
-     If 'interval' is 0, it will be called every frame, but if so, it recommened to use 'scheduleUpdateForTarget:' instead.
-     If the selector is already scheduled, then only the interval parameter will be updated without re-scheduling it again.
-
-     @since v0.99.3
+    /**
+     * <p>
+     *   The scheduled method will be called every 'interval' seconds.</br>
+     *   If paused is YES, then it won't be called until it is resumed.<br/>
+     *   If 'interval' is 0, it will be called every frame, but if so, it recommened to use 'scheduleUpdateForTarget:' instead.<br/>
+     *   If the selector is already scheduled, then only the interval parameter will be updated without re-scheduling it again.
+     * </p>
+     * @param {function} selector
+     * @param {cc.Class} target
+     * @param {Number} interval
+     * @param {Boolean} paused
+     * @example
+     * //register a schedule to scheduler
+     * cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
      */
     scheduleSelector:function (selector, target, interval, paused) {
         cc.Assert(selector, "scheduler.scheduleSelector()");
@@ -537,10 +582,18 @@ cc.Scheduler = cc.Class.extend({
         element.timers.push(timer);
     },
 
-    /** Schedules the 'update' selector for a given target with a given priority.
-     The 'update' selector will be called every frame.
-     The lower the priority, the earlier it is called.
-     @since v0.99.3
+    /**
+     * <p>
+     *    Schedules the 'update' selector for a given target with a given priority.<br/>
+     *    The 'update' selector will be called every frame.<br/>
+     *    The lower the priority, the earlier it is called.
+     * </p>
+     * @param {cc.Class} target
+     * @param {Number} priority
+     * @param {Boolean} paused
+     * @example
+     * //register this object to scheduler
+     * cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
         var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);
@@ -566,9 +619,16 @@ cc.Scheduler = cc.Class.extend({
         }
     },
 
-    /** Unschedule a selector for a given target.
-     If you want to unschedule the "update", use unscheudleUpdateForTarget.
-     @since v0.99.3
+    /**
+     * <p>
+     *   Unschedule a selector for a given target.<br/>
+     *   If you want to unschedule the "update", use unscheudleUpdateForTarget.
+     * </p>
+     * @param {function} selector
+     * @param {cc.Class} target
+     * @example
+     * //unschedule a selector of target
+     * cc.Scheduler.sharedScheduler().unscheduleSelector(selector, this);
      */
     unscheduleSelector:function (selector, target) {
         // explicity handle nil arguments when removing an object
@@ -576,8 +636,6 @@ cc.Scheduler = cc.Class.extend({
             return;
         }
 
-        ////CCAssert(target);
-        ////CCAssert(selector);
         var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
         if (element != null) {
             for (var i = 0; i < element.timers.length; i++) {
@@ -606,8 +664,12 @@ cc.Scheduler = cc.Class.extend({
         }
     },
 
-    /** Unschedules the update selector for a given target
-     @since v0.99.3
+    /**
+     * Unschedules the update selector for a given target
+     * @param {cc.Class} target
+     * @example
+     * //unschedules the "update" method.
+     * cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
      */
     unscheduleUpdateForTarget:function (target) {
         if (target == null) {
@@ -624,9 +686,9 @@ cc.Scheduler = cc.Class.extend({
         }
     },
 
-    /** Unschedules all selectors for a given target.
-     This also includes the "update" selector.
-     @since v0.99.3
+    /**
+     * Unschedules all selectors for a given target. This also includes the "update" selector.
+     * @param {cc.Class} target
      */
     unscheduleAllSelectorsForTarget:function (target) {
         //explicit NULL handling
@@ -651,14 +713,15 @@ cc.Scheduler = cc.Class.extend({
         this.unscheduleUpdateForTarget(target);
     },
 
-    /** Unschedules all selectors from all targets.
-     You should NEVER call this method, unless you know what you are doing.
-
-     @since v0.99.3
+    /**
+     *  <p>
+     *      Unschedules all selectors from all targets. <br/>
+     *      You should NEVER call this method, unless you know what you are doing.
+     *  </p>
      */
     unscheduleAllSelectors:function () {
         // Custom Selectors
-        var i = 0;
+        var i;
         for (i = 0; i < this._hashForSelectors.length; i++) {
             // element may be removed in unscheduleAllSelectorsForTarget
             this.unscheduleAllSelectorsForTarget(this._hashForSelectors[i].target);
@@ -676,10 +739,13 @@ cc.Scheduler = cc.Class.extend({
         }
     },
 
-    /** Pauses the target.
-     All scheduled selectors/update for a given target won't be 'ticked' until the target is resumed.
-     If the target is not present, nothing happens.
-     @since v0.99.3
+    /**
+     * <p>
+     *    Pauses the target.<br/>
+     *    All scheduled selectors/update for a given target won't be 'ticked' until the target is resumed.<br/>
+     *    If the target is not present, nothing happens.
+     * </p>
+     * @param {cc.Class} target
      */
     pauseTarget:function (target) {
         cc.Assert(target != null, "Scheduler.pauseTarget():entry must be non nil");
@@ -698,10 +764,11 @@ cc.Scheduler = cc.Class.extend({
         }
     },
 
-    /** Resumes the target.
-     The 'target' will be unpaused, so all schedule selectors/update will be 'ticked' again.
-     If the target is not present, nothing happens.
-     @since v0.99.3
+    /**
+     * Resumes the target.<br/>
+     * The 'target' will be unpaused, so all schedule selectors/update will be 'ticked' again.<br/>
+     * If the target is not present, nothing happens.
+     * @param {cc.Class} target
      */
     resumeTarget:function (target) {
         cc.Assert(target != null, "");
@@ -722,8 +789,10 @@ cc.Scheduler = cc.Class.extend({
         }
     },
 
-    /** Returns whether or not the target is paused
-     @since v1.0.0
+    /**
+     * Returns whether or not the target is paused
+     * @param {cc.Class} target
+     * @return {Boolean}
      */
     isTargetPaused:function (target) {
         cc.Assert(target != null, "Scheduler.isTargetPaused():target must be non nil");
@@ -737,6 +806,11 @@ cc.Scheduler = cc.Class.extend({
     }
 });
 
+/**
+ * returns a shared instance of the Scheduler
+ * @function
+ * @return {cc.Scheduler}
+ */
 cc.Scheduler.sharedScheduler = function () {
     if (!cc._sharedScheduler) {
         cc._sharedScheduler = new cc.Scheduler();
@@ -745,6 +819,10 @@ cc.Scheduler.sharedScheduler = function () {
     return cc._sharedScheduler;
 };
 
+/**
+ * purges the shared scheduler. It releases the retained instance.
+ * @function
+ */
 cc.Scheduler.purgeSharedScheduler = function () {
     cc._sharedScheduler = null;
 };
