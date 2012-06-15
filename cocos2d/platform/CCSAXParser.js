@@ -24,16 +24,24 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-cc.SAXParser = cc.Class.extend({
+/**
+ * a SAX Parser
+ * @class
+ * @extends cc.Class
+ */
+cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
     xmlDoc:null,
     parser:null,
     xmlList:[],
     plist:[],
-    // parse a xml from a string (xmlhttpObj.responseText)
+
+    /**
+     * parse a xml from a string (xmlhttpObj.responseText)
+     * @param {String} textxml plist xml contents
+     * @return {Array} plist object array
+     */
     parse:function (textxml) {
-        var textxml = this.getList(textxml)
+        var textxml = this.getList(textxml);
         // get a reference to the requested corresponding xml file
         if (window.DOMParser) {
             this.parser = new DOMParser();
@@ -52,18 +60,24 @@ cc.SAXParser = cc.Class.extend({
             throw "Not a plist file"
         }
         // Get first real node
-        var node = null
+        var node = null;
         for (var i = 0, len = plist.childNodes.length; i < len; i++) {
-            node = plist.childNodes[i]
+            node = plist.childNodes[i];
             if (node.nodeType == 1) {
                 break
             }
         }
-        this.plist = this._parseNode(node)
+        this.plist = this._parseNode(node);
         return this.plist;
     },
+
+    /**
+     * parse a tilemap xml from a string (xmlhttpObj.responseText)
+     * @param  textxml  tilemap xml content
+     * @return {Document} xml document
+     */
     tmxParse:function (textxml) {
-        var textxml = this.getList(textxml)
+        var textxml = this.getList(textxml);
         // get a reference to the requested corresponding xml file
         if (window.DOMParser) {
             this.parser = new DOMParser();
@@ -79,66 +93,74 @@ cc.SAXParser = cc.Class.extend({
         }
         return this.xmlDoc;
     },
+
     _parseNode:function (node) {
-        var data = null
+        var data = null;
         switch (node.tagName) {
             case 'dict':
                 data = this._parseDict(node);
-                break
+                break;
             case 'array':
                 data = this._parseArray(node);
-                break
+                break;
             case 'string':
                 // FIXME - This needs to handle Firefox's 4KB nodeValue limit
-                data = node.firstChild.nodeValue
-                break
+                data = node.firstChild.nodeValue;
+                break;
             case 'false':
-                data = false
-                break
+                data = false;
+                break;
             case 'true':
-                data = true
-                break
+                data = true;
+                break;
             case 'real':
-                data = parseFloat(node.firstChild.nodeValue)
-                break
+                data = parseFloat(node.firstChild.nodeValue);
+                break;
             case 'integer':
-                data = parseInt(node.firstChild.nodeValue, 10)
-                break
+                data = parseInt(node.firstChild.nodeValue, 10);
+                break;
         }
 
-        return data
+        return data;
     },
+
     _parseArray:function (node) {
-        var data = []
+        var data = [];
         for (var i = 0, len = node.childNodes.length; i < len; i++) {
-            var child = node.childNodes[i]
+            var child = node.childNodes[i];
             if (child.nodeType != 1) {
-                continue
+                continue;
             }
-            data.push(this._parseNode(child))
+            data.push(this._parseNode(child));
         }
-        return data
+        return data;
     },
-    _parseDict:function (node) {
-        var data = {}
 
-        var key = null
+    _parseDict:function (node) {
+        var data = {};
+
+        var key = null;
         for (var i = 0, len = node.childNodes.length; i < len; i++) {
-            var child = node.childNodes[i]
+            var child = node.childNodes[i];
             if (child.nodeType != 1) {
-                continue
+                continue;
             }
 
             // Grab the key, next noe should be the value
             if (child.tagName == 'key') {
-                key = child.firstChild.nodeValue
+                key = child.firstChild.nodeValue;
             } else {
                 // Parse the value node
-                data[key] = this._parseNode(child)
+                data[key] = this._parseNode(child);
             }
         }
-        return data
+        return data;
     },
+
+    /**
+     * Preload plist file
+     * @param {String} filePath
+     */
     preloadPlist:function (filePath) {
         if (window.XMLHttpRequest) {
             // for IE7+, Firefox, Chrome, Opera, Safari brower
@@ -156,30 +178,51 @@ cc.SAXParser = cc.Class.extend({
             xmlhttp.send(null);
             this.xmlList[filePath] = xmlhttp.responseText;
             cc.Loader.shareLoader().onResLoaded();
-        }
-        else {
+        } else {
             alert("Your browser does not support XMLHTTP.");
         }
     },
+
+    /**
+     * get filename from filepath
+     * @param {String} filePath
+     * @return {String}
+     */
     getName:function (filePath) {
         var startPos = filePath.lastIndexOf("/", filePath.length) + 1;
         var endPos = filePath.lastIndexOf(".", filePath.length);
         return filePath.substring(startPos, endPos);
     },
+
+    /**
+     * get file extension name from filepath
+     * @param {String} filePath
+     * @return {String}
+     */
     getExt:function (filePath) {
         var startPos = filePath.lastIndexOf(".", filePath.length) + 1;
-        return filePath.substring(startPos, filePath.length)
+        return filePath.substring(startPos, filePath.length);
     },
-    getList:function (elt) {
+
+    /**
+     * get value by key from xmlList
+     * @param {String} key
+     * @return {String} xml content
+     */
+    getList:function (key) {
         if (this.xmlList != null) {
-            return this.xmlList[elt]
-        }
-        else {
+            return this.xmlList[key];
+        } else {
             return null;
         }
     }
 });
 
+/**
+ * get a singleton SAX parser
+ * @function
+ * @return {cc.SAXParser}
+ */
 cc.SAXParser.shareParser = function () {
     if (!cc.shareParser) {
         cc.shareParser = new cc.SAXParser();
