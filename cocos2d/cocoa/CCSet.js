@@ -31,7 +31,7 @@
 
 cc.Set = cc.Class.extend(/** @lends cc.Set# */{
     /**
-     * @constructor
+     * Constructor
      * @param {cc.Set} setObject
      */
     ctor:function (setObject) {

@@ -54,7 +54,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     // VBO id
     _quadsID:0,
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._super();
@@ -257,7 +257,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     /**
      * update particle's quad
      * @override
-     * @param {cc.tCCParticle} particle
+     * @param {cc.Particle} particle
      * @param {cc.Point} newPosition
      */
     updateQuadWithParticle:function (particle, newPosition) {
@@ -471,9 +471,4 @@ cc.ParticleSystemQuad.create = function (pListFile) {
     return null;
 };
 
-/**
- * ParticleSystem is the same as cc.ParticleSystemQuad
- * @class
- * @extends cc.ParticleSystemQuad
- */
 cc.ARCH_OPTIMAL_PARTICLE_SYSTEM = cc.ParticleSystemQuad;

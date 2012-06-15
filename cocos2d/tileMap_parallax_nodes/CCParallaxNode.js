@@ -125,7 +125,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
     },
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._parallaxArray = [];

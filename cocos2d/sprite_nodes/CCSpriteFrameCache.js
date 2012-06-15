@@ -37,7 +37,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
     _spriteFramesAliases:null,
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._spriteFrames = {};

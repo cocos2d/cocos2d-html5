@@ -96,7 +96,7 @@ cc.less = function (p1, p2) {
 
 /**
  * @param {Number} type
- * @constructor
+ * Constructor
  */
 cc.TouchHandlerHelperData = function (type) {
     // we only use the type
