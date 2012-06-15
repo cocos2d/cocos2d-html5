@@ -488,7 +488,7 @@ cc.Ribbon = cc.Node.extend(/** @lends cc.Ribbon# */{
  * @param {Number} length length of the ribbon
  * @param {cc.Color4B} color color to tint to
  * @param {Number} fade time to fade out trails in seconds
- * @return {*}
+ * @return {cc.Ribbon}
  */
 cc.Ribbon.create = function (width, path, length, color, fade) {
     var ret = new cc.Ribbon();
