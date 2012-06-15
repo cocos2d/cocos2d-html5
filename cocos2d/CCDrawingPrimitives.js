@@ -23,64 +23,97 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
 /**
- @file
- Drawing primitives Utility Class. this class contain some primitive Drawing Method:
- - drawPoint
- - drawLine
- - drawPoly
- - drawCircle
- - drawQuadBezier
- - drawCubicBezier
-
- You can change the color, width and other property by calling the
- glColor4ub(), glLineWidth(), glPointSize().
-
- @warning These functions draws the Line, Point, Polygon, immediately. They aren't batched. If you are going to make a game that depends on these primitives, I suggest creating a batch.
+ * <p>
+ *   Drawing primitives Utility Class. this class is base class, it contain some render type version: Canvas, WebGL, DOM.<br/>
+ *   this class contain some primitive Drawing Method: <br/>
+ *     - drawPoint<br/>
+ *     - drawLine<br/>
+ *     - drawPoly<br/>
+ *     - drawCircle<br/>
+ *     - drawQuadBezier<br/>
+ *     - drawCubicBezier<br/>
+ *     You can change the color, width and other property by calling these WebGL API:<br/>
+ *     glColor4ub(), glLineWidth(), glPointSize().<br/>
+ * </p>
+ * @class
+ * @extends cc.Class
+ * @warning These functions draws the Line, Point, Polygon, immediately. They aren't batched. <br/>
+ *   If you are going to make a game that depends on these primitives, I suggest creating a batch.
  */
-
-cc.DrawingPrimitive = cc.Class.extend({
+cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
     _renderContext:null,
+
+    /**
+     * set render context of drawing primitive
+     * @param context
+     */
     setRenderContext:function (context) {
         this._renderContext = context;
     },
+
+    /**
+     * returns render context of drawing primitive
+     * @return {CanvasContext}
+     */
     getRenderContext:function () {
         return this._renderContext;
     },
 
+    /**
+     * @constructor
+     * @param {CanvasContext} renderContext
+     */
     ctor:function (renderContext) {
         this._renderContext = renderContext;
     },
 
-
-    /** draws a point given x and y coordinate measured in points */
+    /**
+     * draws a point given x and y coordinate measured in points
+     * @param {cc.Point} point
+     */
     drawPoint:function (point) {
         cc.log("DrawingPrimitive.drawPoint() not implement!");
     },
 
-    /** draws an array of points.
-     @since v0.7.2
+    /**
+     * draws an array of points.
+     * @param {Array} points point of array
+     * @param {Number} numberOfPoints
      */
     drawPoints:function (points, numberOfPoints) {
         cc.log("DrawingPrimitive.drawPoints() not implement!");
     },
 
-    /** draws a line given the origin and destination point measured in points */
+    /**
+     * draws a line given the origin and destination point measured in points
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
     drawLine:function (origin, destination) {
         cc.log("DrawingPrimitive.drawLine() not implement!");
     },
 
-    /** draws a poligon given a pointer to CCPoint coordiantes and the number of vertices measured in points.
-     The polygon can be closed or open
-     The polygon can be closed or open and optionally filled with current GL color
+    /**
+     * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
+     * @param {Array} vertices a pointer to cc.Point coordiantes
+     * @param {Number} numOfVertices the number of vertices measured in points
+     * @param {Boolean} closePolygon The polygon can be closed or open
+     * @param {Boolean} fill The polygon can be closed or open and optionally filled with current color
      */
     drawPoly:function (vertices, numOfVertices, closePolygon, fill) {
         cc.log("DrawingPrimitive.drawPoly() not implement!");
     },
 
-    /** draws a circle given the center, radius and number of segments. */
+    /**
+     * draws a circle given the center, radius and number of segments.
+     * @param {cc.Point} center center of circle
+     * @param {Number} radius
+     * @param {Number} angle angle in radians
+     * @param {Number} segments
+     * @param {Boolean} drawLineToCenter
+     */
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
         //WEBGL version
         if ((segments == "undefined") || (segments == 0)) {
@@ -111,33 +144,41 @@ cc.DrawingPrimitive = cc.Class.extend({
         this.drawPoly(vertices, segments + 2, true, false);
     },
 
-    /** draws a quad bezier path
-     @since v0.8
+    /**
+     * draws a quad bezier path
+     * @param {cc.Point} origin
+     * @param {cc.Point} control
+     * @param {cc.Point} destination
+     * @param {Number} segments
      */
     drawQuadBezier:function (origin, control, destination, segments) {
         cc.log("DrawingPrimitive.drawQuadBezier() not implement!");
     },
 
-    /** draws a cubic bezier path
-     @since v0.8
+    /**
+     * draws a cubic bezier path
+     * @param {cc.Point} origin
+     * @param {cc.Point} control1
+     * @param {cc.Point} control2
+     * @param {cc.Point} destination
+     * @param {Number} segments
      */
     drawCubicBezier:function (origin, control1, control2, destination, segments) {
         cc.log("DrawingPrimitive.drawCubicBezier() not implement!");
-    },
-
-    drawImage:function (image, sourcePoint, sourceSize, destPoint, destSize) {
-        cc.log("DrawingPrimitive.drawImage() not implement!");
-    },
-
-    fillText:function () {
-        cc.log("DrawingPrimitive.fillText() not implement!");
     }
 });
 
 /**
- * @brief DrawingPrimitive's canvas implemention version
+ * Canvas of DrawingPrimitive implement version
+ * @class
+ * @extends cc.DrawingPrimitive
  */
-cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
+cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrimitiveCanvas# */{
+    /**
+     * draws a point given x and y coordinate measured in points
+     * @override
+     * @param {cc.Point} point
+     */
     drawPoint:function (point, size) {
         if (!size) {
             size = 1;
@@ -149,6 +190,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         this._renderContext.fill();
     },
 
+    /**
+     * draws an array of points.
+     * @override
+     * @param {Array} points point of array
+     * @param {Number} numberOfPoints
+     */
     drawPoints:function (points, numberOfPoints, size) {
         if (points == null) {
             return;
@@ -166,6 +213,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         this._renderContext.fill();
     },
 
+    /**
+     * draws a line given the origin and destination point measured in points
+     * @override
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
     drawLine:function (origin, destination) {
         this._renderContext.beginPath();
         this._renderContext.moveTo(origin.x * cc.CONTENT_SCALE_FACTOR(), -origin.y * cc.CONTENT_SCALE_FACTOR());
@@ -174,6 +227,14 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         this._renderContext.stroke();
     },
 
+    /**
+     * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
+     * @override
+     * @param {Array} vertices a pointer to cc.Point coordiantes
+     * @param {Number} numOfVertices the number of vertices measured in points
+     * @param {Boolean} closePolygon The polygon can be closed or open
+     * @param {Boolean} fill The polygon can be closed or open and optionally filled with current color
+     */
     drawPoly:function (vertices, numOfVertices, closePolygon, fill) {
         if (fill == 'undefined') {
             fill = false;
@@ -203,6 +264,15 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         }
     },
 
+    /**
+     * draws a circle given the center, radius and number of segments.
+     * @override
+     * @param {cc.Point} center center of circle
+     * @param {Number} radius
+     * @param {Number} angle angle in radians
+     * @param {Number} segments
+     * @param {Boolean} drawLineToCenter
+     */
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
         this._renderContext.beginPath();
         var endAngle = angle - Math.PI * 2;
@@ -213,6 +283,14 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         this._renderContext.stroke();
     },
 
+    /**
+     * draws a quad bezier path
+     * @override
+     * @param {cc.Point} origin
+     * @param {cc.Point} control
+     * @param {cc.Point} destination
+     * @param {Number} segments
+     */
     drawQuadBezier:function (origin, control, destination, segments) {
         //this is OpenGL Algorithm
         var vertices = [];
@@ -229,6 +307,15 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         this.drawPoly(vertices, segments + 1, false, false);
     },
 
+    /**
+     * draws a cubic bezier path
+     * @override
+     * @param {cc.Point} origin
+     * @param {cc.Point} control1
+     * @param {cc.Point} control2
+     * @param {cc.Point} destination
+     * @param {Number} segments
+     */
     drawCubicBezier:function (origin, control1, control2, destination, segments) {
         //this is OpenGL Algorithm
         var vertices = [];
@@ -245,6 +332,15 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         this.drawPoly(vertices, segments + 1, false, false);
     },
 
+    /**
+     * draw an image
+     * @override
+     * @param {HTMLImageElement|HTMLCanvasElement} image
+     * @param {cc.Point} sourcePoint
+     * @param {cc.Size} sourceSize
+     * @param {cc.Point} destPoint
+     * @param {cc.Size} destSize
+     */
     drawImage:function (image, sourcePoint, sourceSize, destPoint, destSize) {
         var len = arguments.length;
         switch (len) {
@@ -265,6 +361,13 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         }
     },
 
+    /**
+     * draw a star
+     * @param {CanvasContext} ctx canvas context
+     * @param {cc.Point} center
+     * @param {Number} radius
+     * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
+     */
     drawStar:function (ctx, center, radius, color) {
         var context = ctx || this._renderContext;
         context.save();
@@ -312,6 +415,13 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         context.restore();
     },
 
+    /**
+     * draw a color ball
+     * @param {CanvasContext} ctx canvas context
+     * @param {cc.Point} center
+     * @param {Number} radius
+     * @param {cc.Color3B|cc.Color4B|cc.Color4F} color
+     */
     drawColorBall:function (ctx, center, radius, color) {
         var context = ctx || this._renderContext;
         if (color instanceof cc.Color4F) {
@@ -334,6 +444,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend({
         context.fill();
     },
 
+    /**
+     * fill text
+     * @param {String} strText
+     * @param {Number} x
+     * @param {Number} y
+     */
     fillText:function (strText, x, y) {
         this._renderContext.fillText(strText, x, -y);
     }
