@@ -23,27 +23,110 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
+/**
+ * Image Format:JPG
+ * @constant
+ * @type Number
+ */
 cc.FMT_JPG = 0;
+
+/**
+ * Image Format:PNG
+ * @constant
+ * @type Number
+ */
 cc.FMT_PNG = 1;
+
+/**
+ * Image Format:RAWDATA
+ * @constant
+ * @type Number
+ */
 cc.FMT_RAWDATA = 2;
+
+/**
+ * Image Format:UNKNOWN
+ * @constant
+ * @type Number
+ */
 cc.FMT_UNKNOWN = 3;
 
-cc.ALIGN_CENTER = 0x33; ///< Horizontal center and vertical center.
-cc.ALIGN_TOP = 0x13; ///< Horizontal center and vertical top.
-cc.ALIGN_TOP_RIGHT = 0x12; ///< Horizontal right and vertical top.
-cc.ALIGN_RIGHT = 0x32; ///< Horizontal right and vertical center.
-cc.ALIGN_BOTTOM_RIGHT = 0x22; ///< Horizontal right and vertical bottom.
-cc.ALIGN_BOTTOM = 0x23; ///< Horizontal center and vertical bottom.
-cc.ALIGN_BOTTOM_LEFT = 0x21; ///< Horizontal left and vertical bottom.
-cc.ALIGN_LEFT = 0x31; ///< Horizontal left and vertical center.
-cc.ALIGN_TOP_LEFT = 0x11; ///< Horizontal left and vertical top.
+/**
+ * Horizontal center and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_CENTER = 0x33;
+
+/**
+ * Horizontal center and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP = 0x13;
+
+/**
+ * Horizontal right and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP_RIGHT = 0x12;
+
+/**
+ * Horizontal right and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_RIGHT = 0x32;
+
+/**
+ * Horizontal right and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM_RIGHT = 0x22;
+
+/**
+ * Horizontal center and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM = 0x23;
+
+/**
+ * Horizontal left and vertical bottom.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_BOTTOM_LEFT = 0x21;
+
+/**
+ * Horizontal left and vertical center.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_LEFT = 0x31;
+
+/**
+ * Horizontal left and vertical top.
+ * @constant
+ * @type Number
+ */
+cc.ALIGN_TOP_LEFT = 0x11;
 
 function cc.RGB_PREMULTIPLY_APLHA(vr, vg, vb, va) {
     return ((vr * (va + 1)) >> 8) | ((vg * (va + 1) >> 8) << 8) | ((vb * (va + 1) >> 8) << 16) | ((va) << 24)
 }
 
+/**
+ * image source
+ * @Class
+ * @Construct
+ * @param {String} data
+ * @param {Number} size
+ * @param {Number} offset
+ */
 function tImageSource(data, size, offset) {
     this.data = data;
     this.size = size;
@@ -63,7 +146,12 @@ cc.pngReadCallback = function (png_ptr, data, length) {
     }
 };
 
-cc.Image = cc.Class.extend({
+/**
+ * Image
+ * @class
+ * @extends cc.Class
+ */
+cc.Image = cc.Class.extend(/** @lends cc.Image# */{
     _width:0,
     _height:0,
     _bitsPerComponent:0,
@@ -72,22 +160,21 @@ cc.Image = cc.Class.extend({
     _preMulti:false,
 
     /**
-     @brief  Load the image from the specified path.
-     @param strPath   the absolute file path
-     @param imageType the type of image, now only support tow types.
-     @return  true if load correctly
+     * Load the image from the specified path.
+     * @param {String} strPath the absolute file path
+     * @param {Number} eImgFmt the type of image, now only support tow types.
+     * @return {Boolean} true if load correctly
      */
     initWithImageFile:function (strPath, eImgFmt) {
         var data = new cc.FileData(cc.FileUtils.fullPathFromRelativePath(strPath), "rb");
         return this.initWithImageData(data.getBuffer(), data.getSize(), eImgFmt);
     },
 
-    /*
-     @brief The same meaning as initWithImageFile, but it is thread safe. It is casued by
-     loadImage() in CCTextureCache.cpp.
-     @param fullpath  full path of the file
-     @param imageType the type of image, now only support tow types.
-     @return  true if load correctly
+    /**
+     * The same meaning as initWithImageFile, but it is thread safe. It is casued by loadImage() in cc.TextureCache.
+     * @param {String} fullpath full path of the file
+     * @param {Number} imageType the type of image, now only support tow types.
+     * @return {Boolean} true if load correctly
      */
     initWithImageFileThreadSafe:function (fullpath, imageType) {
         var data = new cc.FileData(fullpath, "rb");
@@ -95,13 +182,15 @@ cc.Image = cc.Class.extend({
     },
 
     /**
-     @brief  Load image from stream buffer.
-
-     @warning FMT_RAWDATA only support RGBA8888
-     @param pBuffer  stream buffer that hold the image data
-     @param nLength  the length of data(managed in byte)
-     @param width, height, nBitsPerComponent are used for FMT_RAWDATA
-     @return true if load correctly
+     * Load image from stream buffer.
+     * @warning FMT_RAWDATA only support RGBA8888
+     * @param {Array} pData stream buffer that hold the image data
+     * @param {Number} nDataLen the length of data(managed in byte)
+     * @param {Number} eFmt
+     * @param {Number} width
+     * @param {Number} height
+     * @param {Number} nBitsPerComponent
+     * @return {Boolean} true if load correctly
      */
     initWithImageData:function (pData, nDataLen, eFmt, width, height, nBitsPerComponent) {
         var ret = false;
@@ -145,10 +234,12 @@ cc.Image = cc.Class.extend({
     getBitsPerComponent:function () {
         return this._bitsPerComponent;
     },
+
     /**
-     @brief    Save the CCImage data to specified file with specified format.
-     @param    filePath        the file's absolute path, including file subfix
-     @param    isToRGB        if the image is saved as RGB format
+     * Save the CCImage data to specified file with specified format.
+     * @param {String} filePath the file's absolute path, including file subfix
+     * @param {Boolean} isToRGB  if the image is saved as RGB format
+     * @return {Boolean}
      */
     saveToFile:function (filePath, isToRGB) {
         var ret = false;
@@ -243,6 +334,7 @@ cc.Image = cc.Class.extend({
 
         return ret;
     },
+
     _initWithPngData:function (pData, nDatalen) {
         var ret = false, header = [0], png_ptr = 0, info_ptr = 0, imateData = 0;
 
@@ -328,7 +420,7 @@ cc.Image = cc.Class.extend({
         return ret;
     },
 
-// @warning FMT_RAWDATA only support RGBA8888
+    // @warning FMT_RAWDATA only support RGBA8888
     _initWithRawData:function (data, datalen, width, height, bitsPerComponent) {
         var ret = false;
         do
@@ -470,6 +562,7 @@ cc.Image = cc.Class.extend({
         } while (0);
         return ret;
     },
+
     _saveImageToJPG:function (pszFilePath) {
         var ret = false;
         do
@@ -545,15 +638,14 @@ cc.Image = cc.Class.extend({
     },
 
     /**
-     @brief    Create image with specified string.
-     @param  text       the text which the image show, nil cause init fail
-     @param  width      the image width, if 0, the width match the text's width
-     @param  height     the image height, if 0, the height match the text's height
-     @param  eAlignMask  the test Alignment
-     @param  pFontName   the name of the font which use to draw the text. If nil, use the default system font.
-     @param  nSize       the font size, if 0, use the system default size.
+     * Create image with specified string.
+     * @param {cc.Texture2D} text the text which the image show, nil cause init fail
+     * @param {Number} width the image width, if 0, the width match the text's width
+     * @param {Number} height the image height, if 0, the height match the text's height
+     * @param {Number} eAlignMask the test Alignment
+     * @param {String} pFontName the name of the font which use to draw the text. If nil, use the default system font.
+     * @param {Number} nSize the font size, if 0, use the system default size.
      */
     initWithString:function (text, width, height, eAlignMask, pFontName, nSize) {
-
     }
 });
