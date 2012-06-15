@@ -23,16 +23,43 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
+/**
+ * @constant
+ * @type Number
+ */
+cc.TGA_OK = 0;
 
-cc.TGA_OK = null;
-cc.TGA_ERROR_FILE_OPEN = null;
-cc.TGA_ERROR_READING_FILE = null;
-cc.TGA_ERROR_INDEXED_COLOR = null;
-cc.TGA_ERROR_MEMORY = null;
-cc.TGA_ERROR_COMPRESSED_FILE = null;
+/**
+ * @constant
+ * @type Number
+ */
+cc.TGA_ERROR_FILE_OPEN = 1;
 
-function sImageTGA(status, type, pixelDepth, width, height, imageData, flipped) {
+/**
+ * @constant
+ * @type Number
+ */
+cc.TGA_ERROR_READING_FILE = 2;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.TGA_ERROR_INDEXED_COLOR = 3;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.TGA_ERROR_MEMORY = 4;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.TGA_ERROR_COMPRESSED_FILE = 5;
+
+function cc.ImageTGA(status, type, pixelDepth, width, height, imageData, flipped) {
     this.status = status;
     this.type = type;
     this.pixelDepth = pixelDepth;
@@ -44,37 +71,59 @@ function sImageTGA(status, type, pixelDepth, width, height, imageData, flipped) 
     this.imageData = imageData;
     this.flipped = flipped;
 }
-/** @brief cc.TileMapAtlas is a subclass of cc.AtlasNode.
 
- It knows how to render a map based of tiles.
- The tiles must be in a .PNG format while the map must be a .TGA file.
-
- For more information regarding the format, please see this post:
- http://www.cocos2d-iphone.org/archives/27
-
- All features from cc.AtlasNode are valid in cc.TileMapAtlas
-
- IMPORTANT:
- This class is deprecated. It is maintained for compatibility reasons only.
- You SHOULD not use this class.
- Instead, use the newer TMX file format: cc.TMXTiledMap
+/**
+ * <p>cc.TileMapAtlas is a subclass of cc.AtlasNode.</p>
+ *
+ * <p>It knows how to render a map based of tiles.<br/>
+ * The tiles must be in a .PNG format while the map must be a .TGA file. </p>
+ *
+ * <p>For more information regarding the format, please see this post: <br/>
+ * http://www.cocos2d-iphone.org/archives/27 </p>
+ *
+ * <p>All features from cc.AtlasNode are valid in cc.TileMapAtlas</p>
+ *
+ * <p>IMPORTANT: <br/>
+ * This class is deprecated. It is maintained for compatibility reasons only.<br/>
+ * You SHOULD not use this class. <br/>
+ * Instead, use the newer TMX file format: cc.TMXTiledMap </p>
+ * @class
+ * @extends cc.AtlasNode
  */
-cc.TileMapAtlas = cc.AtlasNode.extend({
-    /** TileMap info */
+cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     _GAInfo:null,
     indices:null,
-    //! numbers of tiles to render
+    //numbers of tiles to render
     _itemsToRender:0,
-    //! x,y to altas dicctionary
+    //x,y to altas dictionary
     _posToAtlasIndex:null,
+
+    /**
+     * @return {cc.ImageTGA}
+     */
     getTGAInfo:function () {
         return this._GAInfo;
     },
+
+    /**
+     * @param  {cc.ImageTGA} Var
+     */
     setTGAInfo:function (Var) {
         this._GAInfo = Var;
     },
-    /** initializes a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.
-     The file will be loaded using the TextureMgr.
+
+    /**
+     * Initializes a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.<br />
+     * The file will be loaded using the TextureMgr.
+     * @param {String} tile
+     * @param {String} mapFile
+     * @param {Number} tileWidth
+     * @param {Number} tileHeight
+     * @return {Boolean}
+     * @example
+     * //example
+     * var tmpAtlas = new cc.TileMapAtlas();
+     * tmpAtlas.initWithTileFile("hello.png", "hello.tga", 16, 16);
      */
     initWithTileFile:function (tile, mapFile, tileWidth, tileHeight) {
         this._loadTGAfile(mapFile);
@@ -88,8 +137,12 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
         }
         return false;
     },
-    /** returns a tile from position x,y.
-     For the moment only channel R is used
+
+    /**
+     * <p>Returns a tile from position x,y.<br />
+     * For the moment only channel R is used. </p>
+     * @param {cc.Point} position
+     * @return {cc.Sprite}
      */
     tileAt:function (position) {
         cc.Assert(this._GAInfo != null, "tgaInfo must not be nil");
@@ -101,8 +154,12 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
 
         return value;
     },
-    /** sets a tile at position x,y.
-     For the moment only channel R is used
+
+    /**
+     * Sets a tile at position x,y.
+     * For the moment only channel R is used
+     * @param {cc.Sprite} tile
+     * @param {cc.Point} position
      */
     setTile:function (tile, position) {
         cc.Assert(this._GAInfo != null, "tgaInfo must not be nil");
@@ -119,7 +176,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
             ptr[position.x + position.y * this._GAInfo.width] = tile;
 
             // XXX: this method consumes a lot of memory
-            // XXX: a tree of something like that shall be impolemented
+            // XXX: a tree of something like that shall be implemented
             var buffer;
 
             cc.Log(buffer, position.x)
@@ -133,7 +190,10 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
             this._updateAtlasValueAt(position, tile, num);
         }
     },
-    /** dealloc the map from memory */
+
+    /**
+     * Dealloc the map from memory
+     */
     releaseMap:function () {
         if (this._GAInfo) {
             cc.tgaDestroy(this._GAInfo);
@@ -146,7 +206,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
             this._posToAtlasIndex = null;
         }
     },
-    /*private:*/
+
     _loadTGAfile:function (file) {
         cc.Assert(file != null, "file must be non-nil");
 
@@ -160,6 +220,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
             cc.Assert(0, "TileMapAtlasLoadTGA : TileMapAtas cannot load TGA file");
         }
     },
+
     _calculateItemsToRender:function () {
         cc.Assert(this._GAInfo != null, "tgaInfo must be non-nil");
 
@@ -174,6 +235,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
             }
         }
     },
+
     _updateAtlasValueAt:function (pos, value, index) {
         var quad = new cc.V3F_C4B_T2F_Quad();
 
@@ -221,6 +283,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
 
         this._textureAtlas.updateQuad(quad, index);
     },
+
     _updateAtlasValues:function () {
         cc.Assert(this._GAInfo != null, "tgaInfo must be non-nil");
 
@@ -254,8 +317,18 @@ cc.TileMapAtlas = cc.AtlasNode.extend({
     }
 });
 
-/** creates a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.
- The tile file will be loaded using the TextureMgr.
+/**
+ * <p>Creates a cc.TileMap with a tile file (atlas) with a map file and the width and height of each tile in points.<br />
+ * The tile file will be loaded using the TextureMgr. </p>
+ * @param {String} tile
+ * @param {String} mapFile
+ * @param {Number} tileWidth
+ * @param {Number} tileHeight
+ * @return {Boolean|Null}
+ * @example
+ * //example
+ * var tmpAtlas = new cc.TileMapAtlas();
+ *  tmpAtlas.initWithTileFile("hello.png", "hello.tga", 16, 16);
  */
 cc.TileMapAtlas.create = function (tile, mapFile, tileWidth, tileHeight) {
     var ret = new cc.TileMapAtlas();

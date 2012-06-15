@@ -23,99 +23,158 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
 
-/** @brief cc.TMXLayer represents the TMX layer.
-
- It is a subclass of cc.SpriteBatchNode. By default the tiles are rendered using a cc.TextureAtlas.
- If you modify a tile on runtime, then, that tile will become a cc.Sprite, otherwise no cc.Sprite objects are created.
- The benefits of using cc.Sprite objects as tiles are:
- - tiles (cc.Sprite) can be rotated/scaled/moved with a nice API
-
- If the layer contains a property named "cc_vertexz" with an integer (in can be positive or negative),
- then all the tiles belonging to the layer will use that value as their OpenGL vertex Z for depth.
-
- On the other hand, if the "cc_vertexz" property has the "automatic" value, then the tiles will use an automatic vertex Z value.
- Also before drawing the tiles, GL_ALPHA_TEST will be enabled, and disabled after drawin them. The used alpha func will be:
-
- glAlphaFunc( GL_GREATER, value )
-
- "value" by default is 0, but you can change it from Tiled by adding the "cc_alpha_func" property to the layer.
- The value 0 should work for most cases, but if you have tiles that are semi-transparent, then you might want to use a differnt
- value, like 0.5.
+/**
+ * <p>cc.TMXLayer represents the TMX layer. </p>
+ *
+ * <p>It is a subclass of cc.SpriteBatchNode. By default the tiles are rendered using a cc.TextureAtlas. <br />
+ * If you modify a tile on runtime, then, that tile will become a cc.Sprite, otherwise no cc.Sprite objects are created. <br />
+ * The benefits of using cc.Sprite objects as tiles are: <br />
+ * - tiles (cc.Sprite) can be rotated/scaled/moved with a nice API </p>
+ *
+ * <p>If the layer contains a property named "cc.vertexz" with an integer (in can be positive or negative), <br />
+ * then all the tiles belonging to the layer will use that value as their OpenGL vertex Z for depth. </p>
+ *
+ * <p>On the other hand, if the "cc.vertexz" property has the "automatic" value, then the tiles will use an automatic vertex Z value. <br />
+ * Also before drawing the tiles, GL_ALPHA_TEST will be enabled, and disabled after drawing them. The used alpha func will be:  </p>
+ *
+ * glAlphaFunc( GL_GREATER, value ) <br />
+ *
+ * <p>"value" by default is 0, but you can change it from Tiled by adding the "cc_alpha_func" property to the layer. <br />
+ * The value 0 should work for most cases, but if you have tiles that are semi-transparent, then you might want to use a different value, like 0.5.</p>
+ * @class
+ * @extends cc.SpriteBatchNode
  */
-cc.TMXLayer = cc.SpriteBatchNode.extend({
-    /** size of the layer in tiles */
+cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
+    //size of the layer in tiles
     _layerSize:cc.SizeZero(),
     _mapTileSize:cc.SizeZero(),
     _tiles:null,
     _tileSet:null,
     _layerOrientation:null,
     _properties:null,
-    //! name of the layer
+    //name of the layer
     _layerName:"",
-    //! TMX Layer supports opacity
+    //TMX Layer supports opacity
     _opacity:255,
     _minGID:null,
     _maxGID:null,
-    //! Only used when vertexZ is used
+    //Only used when vertexZ is used
     _vertexZvalue:null,
     _useAutomaticVertexZ:null,
     _alphaFuncValue:null,
-    //! used for optimization
+    //used for optimization
     _reusedTile:null,
     _atlasIndexArray:null,
-    // used for retina display
+    //used for retina display
     _contentScaleFactor:null,
+
+    /**
+     *  @Constructor
+     */
     ctor:function () {
         this._super();
         this._children = [];
         this._descendants = [];
         this._isUseCache = true;
     },
+
+    /**
+     * @return {cc.Size}
+     */
     getLayerSize:function () {
         return this._layerSize;
     },
+
+    /**
+     * @param {cc.Size} Var
+     */
     setLayerSize:function (Var) {
         this._layerSize = Var;
     },
 
-    /** size of the map's tile (could be differnt from the tile's size) */
+    /**
+     * Size of the map's tile (could be different from the tile's size)
+     * @return {cc.Size}
+     */
     getMapTileSize:function () {
         return this._mapTileSize;
     },
+
+    /**
+     * @param {cc.Size} Var
+     */
     setMapTileSize:function (Var) {
         this._mapTileSize = Var;
     },
-    /** pointer to the map of tiles */
+
+    /**
+     * Pointer to the map of tiles
+     * @return {Array}
+     */
     getTiles:function () {
         return this._tiles;
     },
+
+    /**
+     * @param {Array} Var
+     */
     setTiles:function (Var) {
         this._tiles = Var;
     },
-    /** Tilset information for the layer */
+
+    /**
+     * Tile set information for the layer
+     * @return {cc.TMXTilesetInfo}
+     */
     getTileSet:function () {
         return this._tileSet;
     },
+
+    /**
+     * @param {cc.TMXTilesetInfo} Var
+     */
     setTileSet:function (Var) {
         this._tileSet = Var;
     },
-    /** Layer orientation, which is the same as the map orientation */
+
+    /**
+     * Layer orientation, which is the same as the map orientation
+     * @return {Number}
+     */
     getLayerOrientation:function () {
         return this._layerOrientation;
     },
+
+    /**
+     * @param {Number} Var
+     */
     setLayerOrientation:function (Var) {
         this._layerOrientation = Var;
     },
-    /** properties from the layer. They can be added using Tiled */
+
+    /**
+     * properties from the layer. They can be added using Tiled
+     * @return {Array}
+     */
     getProperties:function () {
         return this._properties;
     },
+
+    /**
+     * @param {Array} Var
+     */
     setProperties:function (Var) {
         this._properties = Var;
     },
-    /** initializes a cc.TMXLayer with a tileset info, a layer info and a map info */
+
+    /**
+     * Initializes a cc.TMXLayer with a tileset info, a layer info and a map info
+     * @param {cc.TMXTilesetInfo} tilesetInfo
+     * @param {cc.TMXLayerInfo} layerInfo
+     * @param {cc.TMXMapInfo} mapInfo
+     * @return {Boolean}
+     */
     initWithTilesetInfo:function (tilesetInfo, layerInfo, mapInfo) {
         // XXX: is 35% a good estimate ?
         var size = layerInfo._layerSize;
@@ -163,9 +222,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         return false;
     },
 
-    /** dealloc the map that contains the tile position from memory.
-     Unless you want to know at runtime the tiles positions, you can safely call this method.
-     If you are going to call layer.tileGIDAt() then, don't release the map
+    /**
+     * <p>Dealloc the map that contains the tile position from memory. <br />
+     * Unless you want to know at runtime the tiles positions, you can safely call this method. <br />
+     * If you are going to call layer.tileGIDAt() then, don't release the map</p>
      */
     releaseMap:function () {
         if (this._tiles) {
@@ -177,12 +237,15 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         }
     },
 
-    /** returns the tile (cc.Sprite) at a given a tile coordinate.
-     The returned cc.Sprite will be already added to the cc.TMXLayer. Don't add it again.
-     The cc.Sprite can be treated like any other cc.Sprite: rotated, scaled, translated, opacity, color, etc.
-     You can remove either by calling:
-     - layer.removeChild(sprite, cleanup);
-     - or layer.removeTileAt(ccp(x,y));
+    /**
+     * <p>Returns the tile (cc.Sprite) at a given a tile coordinate. <br/>
+     * The returned cc.Sprite will be already added to the cc.TMXLayer. Don't add it again.<br/>
+     * The cc.Sprite can be treated like any other cc.Sprite: rotated, scaled, translated, opacity, color, etc. <br/>
+     * You can remove either by calling: <br/>
+     * - layer.removeChild(sprite, cleanup); <br/>
+     * - or layer.removeTileAt(ccp(x,y)); </p>
+     * @param {cc.Point} pos
+     * @return {cc.Sprite}
      */
     tileAt:function (pos) {
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
@@ -217,21 +280,27 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         return tile;
     },
 
-    /** returns the tile gid at a given tile coordinate.
-     if it returns 0, it means that the tile is empty.
-     This method requires the the tile map has not been previously released (eg. don't call layer.releaseMap())
+    /**
+     * Returns the tile gid at a given tile coordinate. <br />
+     * if it returns 0, it means that the tile is empty. <br />
+     * This method requires the the tile map has not been previously released (eg. don't call layer.releaseMap())<br />
+     * @param {cc.Point} pos
+     * @return {Number}
      */
     tileGIDAt:function (pos) {
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
 
         var idx = pos.x + pos.y * this._layerSize.width;
-        return this._tiles[ idx ];
+        return this._tiles[idx];
     },
 
-    /** sets the tile gid (gid = tile global id) at a given tile coordinate.
-     The Tile GID can be obtained by using the method "tileGIDAt" or by using the TMX editor . Tileset Mgr +1.
-     If a tile is already placed at that position, then it will be removed.
+    /**
+     * <p>Sets the tile gid (gid = tile global id) at a given tile coordinate.<br />
+     * The Tile GID can be obtained by using the method "tileGIDAt" or by using the TMX editor . Tileset Mgr +1.<br />
+     * If a tile is already placed at that position, then it will be removed.</p>
+     * @param {Number} gid
+     * @param {cc.Point} pos
      */
     setTileGID:function (gid, pos) {
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
@@ -271,7 +340,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         }
     },
 
-    /** removes a tile at given tile coordinate */
+    /**
+     * Removes a tile at given tile coordinate
+     * @param {cc.Point} pos
+     */
     removeTileAt:function (pos) {
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
@@ -315,7 +387,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         }
     },
 
-    /** returns the position in pixels of a given tile coordinate */
+    /**
+     * Returns the position in pixels of a given tile coordinate
+     * @param {cc.Point} pos
+     * @return {cc.Point}
+     */
     positionAt:function (pos) {
         var ret = cc.PointZero();
         switch (this._layerOrientation) {
@@ -332,14 +408,21 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         return ret;
     },
 
-    /** return the value for the specific property name */
+    /**
+     * Return the value for the specific property name
+     * @param {String} propertyName
+     * @return {Number}
+     * //todo
+     */
     propertyNamed:function (propertyName) {
         return this._properties[propertyName];
     },
 
-    /** Creates the tiles */
+    /**
+     * Creates the tiles
+     */
     setupTiles:function () {
-// Optimization: quick hack that sets the image size on the tileset
+        // Optimization: quick hack that sets the image size on the tileset
         var textureCache = this._textureAtlas.getTexture();
         this._tileSet.imageSize = new cc.Size(textureCache.width, textureCache.height);
 
@@ -350,8 +433,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         //  - difficult to scale / rotate / etc.
         //this._textureAtlas.getTexture().setAliasTexParameters();
 
-        //CFByteOrder o = CFByteOrderGetCurrent();
-
         // Parse cocos2d properties
         this._parseInternalProperties();
         this._setNodeDirtyForCache();
@@ -361,11 +442,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             for (var x = 0; x < this._layerSize.width; x++) {
                 var pos = x + this._layerSize.width * y;
                 var gid = this._tiles[pos];
-                // gid are stored in little endian.
-                // if host is big endian, then swap
-                //if( o == CFByteOrderBigEndian )
-                //	gid = CFSwapInt32( gid );
-                /* We support little endian.*/
 
                 // XXX: gid == 0 -. empty tile
                 if (gid != 0) {
@@ -381,13 +457,20 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             this._minGID >= this._tileSet.firstGid, "TMX: Only 1 tilset per layer is supported");
     },
 
-    /** cc.TMXLayer doesn't support adding a cc.Sprite manually.
-     @warning addchild(z, tag); is not supported on cc.TMXLayer. Instead of setTileGID.
+    /**
+     * cc.TMXLayer doesn't support adding a cc.Sprite manually.
+     * @warning addChild(child); is not supported on cc.TMXLayer. Instead of setTileGID.
+     * @param {cc.Node} child
      */
     addChild:function (child) {
         cc.Assert(0, "addChild: is not supported on cc.TMXLayer. Instead use setTileGID:at:/tileAt:");
     },
-// super method
+
+    /**
+     * Remove child
+     * @param  {cc.Node} child
+     * @param  {Boolean} cleanup
+     */
     removeChild:function (child, cleanup) {
         var sprite = child;
 
@@ -399,13 +482,16 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
 
         this._setNodeDirtyForCache();
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-        var atlasIndex = sprite.getAtlasIndex();
+        var atlasIndex = cc.ArrayGetIndexOfObject(this._children,sprite);
         var zz = this._atlasIndexArray[atlasIndex];
         this._tiles[zz] = 0;
         cc.ArrayRemoveObjectAtIndex(this._atlasIndexArray, atlasIndex);
-
         this._super(sprite, cleanup);
     },
+
+    /**
+     *  Draw
+     */
     draw:function () {
         if (this._useAutomaticVertexZ) {
             //TODO need to fix
@@ -420,23 +506,32 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         }
     },
 
+    /**
+     * @return {String}
+     */
     getLayerName:function () {
         return this._layerName.toString();
     },
+
+    /**
+     * @param {String} layerName
+     */
     setLayerName:function (layerName) {
         this._layerName = layerName;
     },
-    /*private:*/
+
     _positionForIsoAt:function (pos) {
         var xy = cc.PointMake(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
             this._mapTileSize.height / 2 * (( this._layerSize.height * 2 - pos.x - pos.y) - 2));
         return xy;
     },
+
     _positionForOrthoAt:function (pos) {
         var xy = cc.PointMake(pos.x * this._mapTileSize.width,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height);
         return xy;
     },
+
     _positionForHexAt:function (pos) {
         var diffY = 0;
         if (pos.x % 2 == 1) {
@@ -466,7 +561,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         return ret;
     },
 
-    /* optimization methos */
     _appendTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor,
@@ -495,6 +589,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._atlasIndexArray = cc.ArrayAppendObjectToIndex(this._atlasIndexArray, z, indexForZ);
         return this._reusedTile;
     },
+
     _insertTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor, rect.size.width / this._contentScaleFactor, rect.size.height / this._contentScaleFactor);
@@ -533,6 +628,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         this._tiles[z] = gid;
         return this._reusedTile;
     },
+
     _updateTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RectMake(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor,
@@ -559,9 +655,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         return this._reusedTile;
     },
 
-    /* The layer recognizes some special properties, like cc_vertez */
+    //The layer recognizes some special properties, like cc_vertez
     _parseInternalProperties:function () {
-// if cc_vertex=automatic, then tiles will be rendered using vertexz
+    // if cc_vertex=automatic, then tiles will be rendered using vertexz
 
         var vertexz = this.propertyNamed("cc_vertexz");
         if (vertexz) {
@@ -578,6 +674,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
             this._alphaFuncValue = parseInt(alphaFuncVal);
         }
     },
+
     _vertexZForPos:function (pos) {
         var ret = 0;
         var maxVal = 0;
@@ -604,7 +701,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         return ret;
     },
 
-// index
     _atlasIndexForExistantZ:function (z) {
         var item;
         if (this._atlasIndexArray) {
@@ -618,6 +714,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
         cc.Assert(item, "TMX atlas index not found. Shall not happen");
         return i;
     },
+
     _atlasIndexForNewZ:function (z) {
         for (var i = 0; i < this._atlasIndexArray.length; i++) {
             var val = this._atlasIndexArray[i];
@@ -628,7 +725,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend({
     }
 });
 
-/** creates a cc.TMXLayer with an tileset info, a layer info and a map info */
+/**
+ * Creates a cc.TMXLayer with an tile set info, a layer info and a map info
+ * @param {cc.TMXTilesetInfo} tilesetInfo
+ * @param {cc.TMXLayerInfo} layerInfo
+ * @param {cc.TMXMapInfo} mapInfo
+ * @return {cc.TMXLayer|Null}
+ */
 cc.TMXLayer.create = function (tilesetInfo, layerInfo, mapInfo) {
     var ret = new cc.TMXLayer();
     if (ret.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo)) {
@@ -637,7 +740,12 @@ cc.TMXLayer.create = function (tilesetInfo, layerInfo, mapInfo) {
     return null;
 };
 
-// cc.TMXLayer - atlasIndex and Z
+/**
+ * cc.TMXLayer - atlasIndex and Z
+ * @param {Number} a
+ * @param {Number} b
+ * @return {Number}
+ */
 cc.compareInts = function (a, b) {
     return a - b;
 };
