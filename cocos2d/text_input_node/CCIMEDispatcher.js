@@ -43,7 +43,7 @@ cc.IMEKeyboardNotificationInfo = function (begin, end, duration) {
  */
 cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         cc.IMEDispatcher.sharedDispatcher().addDelegate(this);
@@ -140,7 +140,7 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
 cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
     impl:null,
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this.impl = new cc.IMEDispatcher.Impl();
@@ -395,7 +395,7 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
     _delegateWithIme:null,
     _delegateList:null,
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._delegateList = [];

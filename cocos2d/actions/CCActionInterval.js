@@ -152,7 +152,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     _last:0,
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._actions = [];
@@ -1136,7 +1136,7 @@ cc.JumpTo.create = function (duration, position, height, jumps) {
  */
 cc.BezierConfig = cc.Class.extend({
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this.endPosition = new cc.Point();
@@ -1224,7 +1224,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     },
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._config = new cc.BezierConfig();

@@ -53,7 +53,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
     _frames:null,
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._frames = [];

@@ -495,7 +495,7 @@ cc.V3F_C4B_T2F_QuadZero = function () {
  * @param {cc.V2F_C4F_T2F} br1 bottom right
  * @param {cc.V2F_C4F_T2F} tl1 top left
  * @param {cc.V2F_C4F_T2F} tr1 top right
- * @constructor
+ * Constructor
  */
 cc.V2F_C4F_T2F_Quad = function (bl1, br1, tl1, tr1) {
     this.bl = bl1 || new cc.V2F_C4F_T2F();

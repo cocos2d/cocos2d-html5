@@ -338,7 +338,7 @@ cc.MenuItemLabel.create = function (label, two, three, four) {
 cc.MenuItemFont = cc.MenuItem.extend(/** @lends cc.MenuItemFont# */{
 
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         this._super();

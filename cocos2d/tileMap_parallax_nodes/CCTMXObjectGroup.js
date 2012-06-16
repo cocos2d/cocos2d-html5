@@ -37,7 +37,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     _objects:null,
 
     /**
-     *  @Constructor
+     *  Constructor
      */
     ctor:function () {
         this._properties = [];

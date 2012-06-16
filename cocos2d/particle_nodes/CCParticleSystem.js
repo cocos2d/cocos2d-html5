@@ -154,10 +154,10 @@ cc.PARTICLE_TYPE_GROUPED = cc.CCPARTICLE_TYPE_GROUPED;
  * @param {Number} rotation
  * @param {Number} deltaRotation
  * @param {Number} timeToLive
- * @param {cc.tCCParticle.tModeA} modeA
- * @param {cc.tCCParticle.tModeB} modeB
+ * @param {cc.Particle.ModeA} modeA
+ * @param {cc.Particle.ModeA} modeB
  */
-cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, modeA, modeB) {
+cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotation, deltaRotation, timeToLive, modeA, modeB) {
     this.pos = pos ? pos : cc.PointZero();
     this.startPos = startPos ? startPos : cc.PointZero();
     this.color = color ? color : new cc.Color4F(0, 0, 0, 1);
@@ -167,8 +167,8 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
     this.rotation = rotation || 0;
     this.deltaRotation = deltaRotation || 0;
     this.timeToLive = timeToLive || 0;
-    this.modeA = modeA ? modeA : new cc.tCCParticle.tModeA();
-    this.modeB = modeB ? modeB : new cc.tCCParticle.tModeB();
+    this.modeA = modeA ? modeA : new cc.Particle.ModeA();
+    this.modeB = modeB ? modeB : new cc.Particle.ModeB();
     this.isChangeColor = false;
     this.drawPos = new cc.Point(0, 0);
 };
@@ -181,7 +181,7 @@ cc.tCCParticle = function (pos, startPos, color, deltaColor, size, deltaSize, ro
  * @param {Number} radialAccel
  * @param {Number} tangentialAccel
  */
-cc.tCCParticle.tModeA = function (dir, radialAccel, tangentialAccel) {
+cc.Particle.ModeA = function (dir, radialAccel, tangentialAccel) {
     this.dir = dir ? dir : cc.PointZero();
     this.radialAccel = radialAccel || 0;
     this.tangentialAccel = tangentialAccel || 0;
@@ -196,7 +196,7 @@ cc.tCCParticle.tModeA = function (dir, radialAccel, tangentialAccel) {
  * @param {Number} radius
  * @param {Number} deltaRadius
  */
-cc.tCCParticle.tModeB = function (angle, degreesPerSecond, radius, deltaRadius) {
+cc.Particle.ModeB = function (angle, degreesPerSecond, radius, deltaRadius) {
     this.angle = angle || 0;
     this.degreesPerSecond = degreesPerSecond || 0;
     this.radius = radius || 0;
@@ -1091,13 +1091,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._super();
         this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
-        this.modeA = new cc.ParticleSystem.tModeA();
-        this.modeB = new cc.ParticleSystem.tModeB();
+        this.modeA = new cc.ParticleSystem.ModeA();
+        this.modeB = new cc.ParticleSystem.ModeB();
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
 
@@ -1347,7 +1347,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             return false;
         }
 
-        var particle = new cc.tCCParticle();
+        var particle = new cc.Particle();
         this.initParticle(particle);
         this._particles.push(particle);
         ++this._particleCount;
@@ -1357,7 +1357,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * Initializes a particle
-     * @param {cc.tCCParticle} particle
+     * @param {cc.Particle} particle
      */
     initParticle:function (particle) {
         // timeToLive
@@ -1494,7 +1494,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * should be overriden by subclasses
-     * @param {cc.tCCParticle} particle
+     * @param {cc.Particle} particle
      * @param {cc.Point} newPosition
      */
     updateQuadWithParticle:function (particle, newPosition) {
@@ -1681,7 +1681,7 @@ cc.ParticleSystem.create = function (plistFile) {
  * @param {Number} radialAccel radial acceleration of each particle.
  * @param {Number} radialAccelVar radial acceleration variance of each particle.
  */
-cc.ParticleSystem.tModeA = function (gravity, speed, speedVar, tangentialAccel, tangentialAccelVar, radialAccel, radialAccelVar) {
+cc.ParticleSystem.ModeA = function (gravity, speed, speedVar, tangentialAccel, tangentialAccelVar, radialAccel, radialAccelVar) {
     /** Gravity value. Only available in 'Gravity' mode. */
     this.gravity = gravity ? gravity : cc.PointZero();
     /** speed of each particle. Only available in 'Gravity' mode.  */
@@ -1709,7 +1709,7 @@ cc.ParticleSystem.tModeA = function (gravity, speed, speedVar, tangentialAccel, 
  * @param {Number} rotatePerSecond Number of degress to rotate a particle around the source pos per second.
  * @param {Number} rotatePerSecondVar Variance in degrees for rotatePerSecond.
  */
-cc.ParticleSystem.tModeB = function (startRadius, startRadiusVar, endRadius, endRadiusVar, rotatePerSecond, rotatePerSecondVar) {
+cc.ParticleSystem.ModeB = function (startRadius, startRadiusVar, endRadius, endRadiusVar, rotatePerSecond, rotatePerSecondVar) {
     /** The starting radius of the particles. Only available in 'Radius' mode. */
     this.startRadius = startRadius || 0;
     /** The starting radius variance of the particles. Only available in 'Radius' mode. */

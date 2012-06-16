@@ -240,7 +240,7 @@ cc.setupHTML = function (obj) {
  */
 cc.Application = cc.Class.extend(/** @lends cc.Application# */{
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._animationInterval = 0;

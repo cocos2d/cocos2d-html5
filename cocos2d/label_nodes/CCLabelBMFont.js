@@ -340,7 +340,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _string:"",
     _configuration:null,
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         this._super();
@@ -646,7 +646,7 @@ cc.configurations = null;
  * Load the .fnt file
  * @param {String} fntFile
  * @return {cc.BMFontConfiguration}
- * @constructor
+ * Constructor
  */
 cc.FNTConfigLoadFile = function (fntFile) {
     if (!cc.configurations) {

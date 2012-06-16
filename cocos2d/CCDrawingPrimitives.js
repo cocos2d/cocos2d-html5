@@ -62,7 +62,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
     },
 
     /**
-     * @constructor
+     * Constructor
      * @param {CanvasContext} renderContext
      */
     ctor:function (renderContext) {

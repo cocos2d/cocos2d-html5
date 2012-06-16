@@ -47,7 +47,7 @@ cc.CCIMAGE_FORMAT_RAWDATA = 2;
 /**
  * @param {Number} x
  * @return {Number}
- * @constructor
+ * Constructor
  */
 cc.NextPOT = function (x) {
     x = x - 1;
@@ -88,7 +88,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _sprite:null,
 
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         this.canvas = document.createElement('canvas');

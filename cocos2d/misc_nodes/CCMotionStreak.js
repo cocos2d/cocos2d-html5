@@ -83,7 +83,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     },
 
     /**
-     * @constructor
+     * Constructor
      */
     ctor:function () {
         this._super();

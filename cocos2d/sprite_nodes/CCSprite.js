@@ -174,7 +174,7 @@ cc.HONOR_PARENT_TRANSFORM_ALL = cc.HONOR_PARENT_TRANSFORM_TRANSLATE | cc.HONOR_P
  * @param {cc.Point} ap anchor point in pixels
  * @param {Boolean} visible
  */
-function transformValues_(pos, scale, rotation, skew, ap, visible) {
+cc.TransformValues = function(pos, scale, rotation, skew, ap, visible) {
     this.pos = pos;		// position x and y
     this.scale = scale;		// scale x and y
     this.rotation = rotation;
@@ -265,7 +265,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _opacity:255,
 
     /**
-     * @constructor
+     * Constructor
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
      */
     ctor:function (fileName) {
@@ -847,7 +847,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 // how to implement, we can not use dynamic
                 // cc.Assert( [p isKindOfClass:[CCSprite class]], @"CCSprite should be a CCSprite subclass. Probably you initialized an sprite with a batchnode, but you didn't add it to the batch node." );
 
-                var tv = new transformValues_();
+                var tv = new cc.TransformValues();
                 p._getTransformValues(tv);
 
                 // If any of the parents are not visible, then don't draw this node
@@ -933,8 +933,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     /**
      * <p>Optimization: instead of calling 5 times the parent sprite to obtain: position, scale.x, scale.y, anchorpoint and rotation,<br/>
      * this fuction return the 5 values in 1 single call <p/>
-     * @param {transformValues_} tv
-     * @return {transformValues_}
+     * @param {cc.TransformValues} tv
+     * @return {cc.TransformValues}
      * @private
      */
     _getTransformValues:function (tv) {

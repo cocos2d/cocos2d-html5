@@ -93,7 +93,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
     _delegate:null,
     _ColorSpaceHolder:null,
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         this._ColorSpaceHolder = new cc.Color3B(127, 127, 127);

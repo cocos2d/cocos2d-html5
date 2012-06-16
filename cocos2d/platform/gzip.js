@@ -7,7 +7,7 @@
 /**
  * See cc.Codec.GZip.gunzip.
  * @param {Array | String} data The bytestream to decompress
- * @constructor
+ * Constructor
  */
 cc.Codec.GZip = function Jacob__GZip(data) {
     this.data = data;

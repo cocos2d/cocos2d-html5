@@ -72,7 +72,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     _textureColorsCache:{},
 
     /**
-     * @Constructor
+     * Constructor
      */
     ctor:function () {
         cc.Assert(cc.g_sharedTextureCache == null, "Attempted to allocate a second instance of a singleton.");
