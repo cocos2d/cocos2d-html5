@@ -459,8 +459,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Initializes a sprite with an cc.SpriteBatchNode and a rect in pixels
-     * @param batchNode
-     * @param rect
+     * @param {cc.SpriteBatchNode} batchNode
+     * @param {cc.Rect} rect
      * @return {Boolean}
      */
     initWithBatchNodeRectInPixels:function (batchNode, rect) {
