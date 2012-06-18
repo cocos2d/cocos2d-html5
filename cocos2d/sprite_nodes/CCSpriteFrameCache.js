@@ -390,7 +390,6 @@ cc.sharedSpriteFrameCache = null;
 cc.SpriteFrameCache.sharedSpriteFrameCache = function () {
     if (!cc.sharedSpriteFrameCache) {
         cc.sharedSpriteFrameCache = new cc.SpriteFrameCache();
-        cc.sharedSpriteFrameCache.init();
     }
     return cc.sharedSpriteFrameCache;
 };

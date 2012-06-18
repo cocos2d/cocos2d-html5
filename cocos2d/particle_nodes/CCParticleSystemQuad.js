@@ -55,6 +55,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     _quadsID:0,
     /**
      * Constructor
+     * @override
      */
     ctor:function () {
         this._super();
@@ -348,6 +349,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     /**
      * draw particle
      * @param {CanvasContext} ctx CanvasContext
+     * @override
      */
     draw:function (ctx) {
         this._super();
