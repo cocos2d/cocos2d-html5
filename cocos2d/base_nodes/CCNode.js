@@ -174,21 +174,45 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._contentSize = new cc.Size(0, 0);
         this._contentSizeInPixels = new cc.Size(0, 0);
     },
+
     /**
      * @param {Array} array
      * @param {function} func
      * @private
      */
-    _arrayMakeObjectsPerformSelector:function (array, func) {
-        if (array && array.length > 0) {
-            for (var i = 0; i < array.length; i++) {
-                var node = array[i];
-                if (node && (typeof(func) == "string")) {
-                    node[func]();
-                } else if (node && (typeof(func) == "function")) {
-                    func.call(node);
+    _arrayMakeObjectsPerformSelector:function (array, callbackType) {
+        if (!array || array.length == 0)
+            return;
+
+        var i;
+        switch (callbackType) {
+            case cc.Node.StateCallbackType.onEnter:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onEnter();
                 }
-            }
+                break;
+            case cc.Node.StateCallbackType.onExit:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onExit();
+                }
+                break;
+            case cc.Node.StateCallbackType.onEnterTransitionDidFinish:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].onEnterTransitionDidFinish();
+                }
+                break;
+            case cc.Node.StateCallbackType.cleanup:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].cleanup();
+                }
+                break;
+            default :
+                throw "Unknown callback function";
+                break;
         }
     },
 
@@ -770,7 +794,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.unscheduleAllSelectors();
 
         // timers
-        this._arrayMakeObjectsPerformSelector(this._children, "cleanup");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },
 
     /**
@@ -1180,7 +1204,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * During onEnter you can't a "sister/brother" node.
      */
     onEnter:function () {
-        this._arrayMakeObjectsPerformSelector(this._children, "onEnter");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
         this.resumeSchedulerAndActions();
         this._isRunning = true;
     },
@@ -1190,7 +1214,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * If the cc.Node enters the 'stage' with a transition, this callback is called when the transition finishes.
      */
     onEnterTransitionDidFinish:function () {
-        this._arrayMakeObjectsPerformSelector(this._children, "onEnterTransitionDidFinish");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
     },
 
     /**
@@ -1201,7 +1225,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     onExit:function () {
         this.pauseSchedulerAndActions();
         this._isRunning = false;
-        this._arrayMakeObjectsPerformSelector(this._children, "onExit");
+        this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
     },
 
     // actions
@@ -1535,6 +1559,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     update:function (dt) {
     }
 });
+
+/**
+ * cc.Node's state callback type
+ * @constant
+ * @type Number
+ */
+cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5};
+
 
 /**
  * allocates and initializes a node.
