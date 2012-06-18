@@ -26,6 +26,18 @@
 
 /**
  * <p>
+ * The current version of Cocos2d-html5 being used.<br/>
+ * Please DO NOT remove this String, it is an important flag for bug tracking.<br/>
+ * If you post a bug to forum, please attach this flag.
+ * </p>
+ * @constant
+ * @type String
+ */
+cc.ENGINE_VERSION = "cocos2d-html5-v0.6.0-alpha";
+
+
+/**
+ * <p>
  *   If enabled, the texture coordinates will be calculated by using this formula: <br/>
  *      - texCoord.left = (rect.origin.x*2+1) / (texture.wide*2);                  <br/>
  *      - texCoord.right = texCoord.left + (rect.size.width*2-2)/(texture.wide*2); <br/>
@@ -331,9 +343,9 @@ cc.ENABLE_PROFILERS = 0;
 cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
 
 /**
- * Enable Lua engine debug log
+ * default engine
  * @constant
- * @type Number
+ * @type String
  */
-cc.LUA_ENGINE_DEBUG = 0;
+cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
