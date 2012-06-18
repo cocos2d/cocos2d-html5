@@ -1092,6 +1092,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * Constructor
+     * @override
      */
     ctor:function () {
         this._super();
@@ -1510,6 +1511,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * update emitter's status
+     * @override
      * @param {Number} dt delta time
      */
     update:function (dt) {
