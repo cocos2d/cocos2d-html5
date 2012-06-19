@@ -391,16 +391,22 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * tint this label
      * @param {cc.Color3B} Var
      */
-    setColor:function (Var) {
-        if (this._color == Var) {
+    setColor:function (color3) {
+        if ((this._color.r == color3.r)&&(this._color.g == color3.g)&&(this._color.b == color3.b)) {
             return;
         }
-        this._color = Var;
-        if (this._children && this._children.length != 0) {
-            for (var i = 0, len = this._children.length; i < len; i++) {
-                var node = this._children[i];
-                if (node) {
-                    node.setColor(this._color);
+        this._color = color3;
+        if (this.getTexture()) {
+            if (cc.renderContextType == cc.CANVAS) {
+                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
+                if (cacheTextureForColor) {
+                    //generate color texture cache
+                    var tx = this.getTexture();
+                    var textureRect = new cc.Rect(0,0,tx.width,tx.height);
+                    var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color,textureRect);
+                    var img = new Image();
+                    img.src = colorTexture.toDataURL();
+                    this.setTexture(img);
                 }
             }
         }
@@ -540,9 +546,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             // Apply label properties
             fontChar.setIsOpacityModifyRGB(this._isOpacityModifyRGB);
             // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
-            fontChar.setColor(this._color);
+            //fontChar.setColor(this._color);
 
-            // only apply opacc.ity if it is different than 255 )
+            // only apply opacity if it is different than 255 )
             // to prevent modifying the color too (issue #610)
             if (this._opacity != 255) {
                 fontChar.setOpacity(this._opacity);

@@ -53,48 +53,43 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      *  Atlas generation
      */
     updateAtlasValues:function () {
-        var n = this._string.length;
-
-        var s = this._string;
-        var texture = this._textureAtlas.getTexture();
-
+        var texture = this.getTexture();
         var textureWide = texture.width;
         var textureHigh = texture.height;
 
-        for (var i = 0; i < n; i++) {
-            var a = s.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
+        for (var i = 0; i < this._string.length; i++) {
+            var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
             var row = parseInt(a % this._itemsPerRow);
             var col = parseInt(a / this._itemsPerRow);
 
-            var left = row * this._itemWidth / textureWide;
-            var right = left + this._itemWidth / textureWide;
-            var top = col * this._itemHeight / textureHigh;
-            var bottom = top + this._itemHeight / textureHigh;
-
-            var quad = new cc.V2F_C4B_T2F_QuadZero();
-            quad.tl.texCoords.u = left;
-            quad.tl.texCoords.v = top;
-            quad.tr.texCoords.u = right;
-            quad.tr.texCoords.v = top;
-            quad.bl.texCoords.u = left;
-            quad.bl.texCoords.v = bottom;
-            quad.br.texCoords.u = right;
-            quad.br.texCoords.v = bottom;
-
-            quad.bl.vertices.x = i * this._itemWidth;
-            quad.bl.vertices.y = 0;
-            quad.bl.vertices.z = 0.0;
-            quad.br.vertices.x = i * this._itemWidth + this._itemWidth;
-            quad.br.vertices.y = 0;
-            quad.br.vertices.z = 0.0;
-            quad.tl.vertices.x = i * this._itemWidth;
-            quad.tl.vertices.y = this._itemHeight;
-            quad.tl.vertices.z = 0.0;
-            quad.tr.vertices.x = i * this._itemWidth + this._itemWidth;
-            quad.tr.vertices.y = this._itemHeight;
-            quad.tr.vertices.z = 0.0;
-
-            this._textureAtlas.updateQuad(quad, i);
+            var rect = cc.RectMake(row * this._itemWidth, col * this._itemHeight, this._itemWidth, this._itemHeight);
+            var c = this._string.charCodeAt(i);
+            var fontChar = this.getChildByTag(i);
+            if (!fontChar) {
+                fontChar = new cc.Sprite();
+                if (c == 32) {
+                    fontChar.init();
+                    fontChar.setTextureRect(cc.RectMake(0, 0, 0, 0));
+                }
+                else {
+                    fontChar.initWithTexture(texture, rect);
+                }
+                this.addChild(fontChar, 0, i);
+            }
+            else {
+                if (c == 32) {
+                    fontChar.init();
+                    fontChar.setTextureRect(cc.RectMake(0, 0, 0, 0));
+                }
+                else {
+                    // reusing fonts
+                    fontChar.initWithTexture(texture, rect);
+                    // restore to default in case they were modified
+                    fontChar.setIsVisible(true);
+                    fontChar.setOpacity(this._opacity);
+                }
+            }
+            fontChar.setPosition(new cc.Point(i * this._itemWidth, this._itemHeight / 2));
         }
     },
 
@@ -103,18 +98,24 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      * @param {String} label
      */
     setString:function (label) {
+        this._string = label;
         var len = label.length;
         this._textureAtlas.resizeCapacity(len);
-
-        this._string = label;
-        this.updateAtlasValues();
 
         var s = new cc.Size();
         s.width = len * this._itemWidth;
         s.height = this._itemHeight;
         this.setContentSizeInPixels(s);
 
-        this._quadsToDraw = len;
+        if (this._children) {
+            for (var i = 0; i < this._children.length; i++) {
+                var node = this._children[i];
+                if (node) {
+                    node.setIsVisible(false);
+                }
+            }
+        }
+        this.updateAtlasValues();
     },
 
     /**

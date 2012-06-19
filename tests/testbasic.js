@@ -119,7 +119,7 @@ var TestController = cc.Layer.extend({
         if (this.isMouseDown) {
             var touchLocation = touches[0].locationInView(0).y;
             var nMoveY = touchLocation - this._beginPos;
-            var curPos = cc.ccp(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
+            curPos = cc.ccp(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
 
             var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
             var winSize = cc.Director.sharedDirector().getWinSize();
@@ -134,7 +134,6 @@ var TestController = cc.Layer.extend({
             }
             this._itemMenu.setPosition(nextPos);
             this._beginPos = cc.ccp(0, touchLocation).y;
-
             curPos = nextPos;
         }
     },
