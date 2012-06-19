@@ -117,7 +117,13 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
         this.updateAtlasValues();
     },
-
+    /**
+     * @param {cc.Color3B} color3
+     */
+    setColor:function(color3){
+        this._super(color3);
+        this.updateAtlasValues();
+    },
     /**
      * return the text of this label
      * @return {String}
