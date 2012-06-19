@@ -120,7 +120,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @return {Boolean}
      */
     initWithTexture:function (texture) {
-        this._sprite = cc.Sprite.spriteWithTexture(texture);
+        this._sprite = cc.Sprite.createWithTexture(texture);
 
         this._percentage = 0.0;
         this._vertexData = null;
