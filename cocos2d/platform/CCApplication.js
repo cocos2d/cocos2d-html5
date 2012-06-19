@@ -203,6 +203,8 @@ cc.setup = function () {
     }
     cc.originalCanvasSize = new cc.Size(cc.canvas.width, cc.canvas.height);
 
+    console.log(cc.ENGINE_VERSION);
+
     //binding window size
     /*
      cc.canvas.addEventListener("resize", function () {

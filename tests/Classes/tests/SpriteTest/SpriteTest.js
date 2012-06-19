@@ -316,7 +316,7 @@ var SpriteBatchNode1 = SpriteTestDemo.extend({
         var x = (idx % 5) * 85;
         var y = (0 | (idx / 5)) * 121;
 
-        var sprite = cc.Sprite.spriteWithTexture(BatchNode.getTexture(), cc.RectMake(x, y, 85, 121));
+        var sprite = cc.Sprite.createWithTexture(BatchNode.getTexture(), cc.RectMake(x, y, 85, 121));
         BatchNode.addChild(sprite);
 
         sprite.setPosition(cc.ccp(p.x, p.y));
@@ -439,15 +439,15 @@ var SpriteBatchNodeColorOpacity = SpriteTestDemo.extend({
         var batch = cc.SpriteBatchNode.create(s_grossini_dance_atlas, 1);
         this.addChild(batch, 0, TAG_SPRITE_BATCH_NODE);
 
-        var sprite1 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
-        var sprite2 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
-        var sprite3 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 2, 121 * 1, 85, 121));
-        var sprite4 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 3, 121 * 1, 85, 121));
+        var sprite1 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
+        var sprite2 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
+        var sprite3 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 2, 121 * 1, 85, 121));
+        var sprite4 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 3, 121 * 1, 85, 121));
 
-        var sprite5 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
-        var sprite6 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
-        var sprite7 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 2, 121 * 1, 85, 121));
-        var sprite8 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 3, 121 * 1, 85, 121));
+        var sprite5 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
+        var sprite6 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
+        var sprite7 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 2, 121 * 1, 85, 121));
+        var sprite8 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 3, 121 * 1, 85, 121));
 
 
         var winSize = cc.Director.sharedDirector().getWinSize();
@@ -578,18 +578,18 @@ var SpriteBatchNodeZOrder = SpriteTestDemo.extend({
 
         var step = s.width / 11;
         for (var i = 0; i < 5; i++) {
-            var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
+            var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
             sprite.setPosition(cc.ccp((i + 1) * step, s.height / 2));
             batch.addChild(sprite, i);
         }
 
         for (i = 5; i < 10; i++) {
-            var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 0, 85, 121));
+            var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 0, 85, 121));
             sprite.setPosition(cc.ccp((i + 1) * step, s.height / 2));
             batch.addChild(sprite, 14 - i);
         }
 
-        var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 3, 121 * 0, 85, 121));
+        var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 3, 121 * 0, 85, 121));
         batch.addChild(sprite, -1, TAG_SPRITE1);
         sprite.setPosition(cc.ccp(s.width / 2, s.height / 2 - 20));
         sprite.setScaleX(6);
@@ -934,7 +934,7 @@ var SpriteBatchNodeZVertex = SpriteTestDemo.extend({
         this.addChild(batch, 0, TAG_SPRITE_BATCH_NODE);
 
         for (var i = 0; i < 5; i++) {
-            var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
+            var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 0, 121 * 1, 85, 121));
             sprite.setPosition(cc.ccp((i + 1) * step, s.height / 2));
             sprite.setVertexZ(10 + i * 40);
             batch.addChild(sprite, 0);
@@ -942,7 +942,7 @@ var SpriteBatchNodeZVertex = SpriteTestDemo.extend({
         }
 
         for (i = 5; i < 11; i++) {
-            var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 0, 85, 121));
+            var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 0, 85, 121));
             sprite.setPosition(cc.ccp((i + 1) * step, s.height / 2));
             sprite.setVertexZ(10 + (10 - i) * 40);
             batch.addChild(sprite, 0);
@@ -1031,7 +1031,7 @@ var SpriteBatchNodeAnchorPoint = SpriteTestDemo.extend({
         for (var i = 0; i < 3; i++) {
             var rotate = cc.RotateBy.create(10, 360);
             var action = cc.RepeatForever.create(rotate);
-            var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * i, 121 * 1, 85, 121));
+            var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * i, 121 * 1, 85, 121));
             sprite.setPosition(cc.ccp(s.width / 4 * (i + 1), s.height / 2));
 
             var point = cc.Sprite.create(s_pathR1);
@@ -1093,7 +1093,7 @@ var Sprite6 = SpriteTestDemo.extend({
         var step = s.width / 4;
 
         for (var i = 0; i < 3; i++) {
-            var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * i, 121 * 1, 85, 121));
+            var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * i, 121 * 1, 85, 121));
             sprite.setPosition(cc.ccp((i + 1) * step, s.height / 2));
 
             var rotate = cc.RotateBy.create(5, 360);
@@ -1150,11 +1150,11 @@ var SpriteBatchNodeFlip = SpriteTestDemo.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var sprite1 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
+        var sprite1 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
         sprite1.setPosition(cc.ccp(s.width / 2 - 100, s.height / 2));
         batch.addChild(sprite1, 0, TAG_SPRITE1);
 
-        var sprite2 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
+        var sprite2 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
         sprite2.setPosition(cc.ccp(s.width / 2 + 100, s.height / 2));
         batch.addChild(sprite2, 0, TAG_SPRITE2);
 
@@ -1237,11 +1237,11 @@ var SpriteBatchNodeAliased = SpriteTestDemo.extend({
 
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var sprite1 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
+        var sprite1 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
         sprite1.setPosition(cc.ccp(s.width / 2 - 100, s.height / 2));
         batch.addChild(sprite1, 0, TAG_SPRITE1);
 
-        var sprite2 = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
+        var sprite2 = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(85 * 1, 121 * 1, 85, 121));
         sprite2.setPosition(cc.ccp(s.width / 2 + 100, s.height / 2));
         batch.addChild(sprite2, 0, TAG_SPRITE2);
 
@@ -1313,7 +1313,7 @@ var SpriteNewTexture = SpriteTestDemo.extend({
 
 
         var node = this.getChildByTag(TAG_SPRITE_BATCH_NODE);
-        var sprite = cc.Sprite.spriteWithTexture(this._texture1, cc.RectMake(x, y, 85, 121));
+        var sprite = cc.Sprite.createWithTexture(this._texture1, cc.RectMake(x, y, 85, 121));
         node.addChild(sprite);
 
         sprite.setPosition(cc.ccp(p.x, p.y));
@@ -1398,7 +1398,7 @@ var SpriteBatchNodeNewTexture = SpriteTestDemo.extend({
         var x = (idx % 5) * 85;
         var y = (0 | (idx / 5)) * 121;
 
-        var sprite = cc.Sprite.spriteWithTexture(batch.getTexture(), cc.RectMake(x, y, 85, 121));
+        var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(x, y, 85, 121));
         batch.addChild(sprite);
 
         sprite.setPosition(cc.ccp(p.x, p.y));
@@ -1446,7 +1446,6 @@ var SpriteFrameTest = SpriteTestDemo.extend({
 
         // IMPORTANT:
         // The sprite frames will be cached AND RETAINED, and they won't be released unless you call
-        //     cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames);
         var cache = cc.SpriteFrameCache.sharedSpriteFrameCache();
         cache.addSpriteFramesWithFile(s_grossiniPlist);
         cache.addSpriteFramesWithFile(s_grossini_grayPlist, s_grossini_gray);
@@ -1579,7 +1578,6 @@ var SpriteFrameAliasNameTest = SpriteTestDemo.extend({
 
         // IMPORTANT:
         // The sprite frames will be cached AND RETAINED, and they won't be released unless you call
-        //     [[cc.SpriteFrameCache sharedSpriteFrameCache] removeUnusedSpriteFrames];
         //
         // cc.SpriteFrameCache is a cache of cc.SpriteFrames
         // cc.SpriteFrames each contain a texture id and a rect (frame).
@@ -2366,7 +2364,6 @@ var SpriteAnimationSplit = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2389,7 +2386,6 @@ var SpriteHybrid = SpriteTestDemo.extend({
 
         // IMPORTANT:
         // The sprite frames will be cached AND RETAINED, and they won't be released unless you call
-        //     cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames);
         cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
 
         // create 250 sprites
@@ -2521,7 +2517,6 @@ var SpriteBatchNodeChildren = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2606,7 +2601,6 @@ var SpriteBatchNodeChildren2 = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2697,7 +2691,6 @@ var SpriteBatchNodeChildrenZ = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2761,7 +2754,6 @@ var SpriteChildrenVisibility = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2923,7 +2915,6 @@ var SpriteChildrenAnchorPoint = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -3025,7 +3016,6 @@ var SpriteBatchNodeChildrenAnchorPoint = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 

@@ -134,6 +134,9 @@
             <sources dir="${basedir}/../CocosDenshion">
                 <file name="SimpleAudioEngine.js"/>
             </sources>
+            <sources dir="${basedir}/../box2d">
+                <file name="box2d.js"/>
+            </sources>
             <sources dir="${basedir}">
                 <file name="Classes/AppDelegate.js"/>
                 <file name="testbasic.js"/>

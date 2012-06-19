@@ -459,8 +459,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Initializes a sprite with an cc.SpriteBatchNode and a rect in pixels
-     * @param batchNode
-     * @param rect
+     * @param {cc.SpriteBatchNode} batchNode
+     * @param {cc.Rect} rect
      * @return {Boolean}
      */
     initWithBatchNodeRectInPixels:function (batchNode, rect) {
@@ -1630,15 +1630,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
  * var img = cc.TextureCache.sharedTextureCache().addImage("HelloWorld.png");
  *
  * //create a sprite with texture
- * var sprite1 = cc.Sprite.spriteWithTexture(img);
+ * var sprite1 = cc.Sprite.createWithTexture(img);
  *
  * //create a sprite with texture and rect
- * var sprite2 = cc.Sprite.spriteWithTexture(img, new cc.Rect(0,0,480,320));
+ * var sprite2 = cc.Sprite.createWithTexture(img, new cc.Rect(0,0,480,320));
  *
  * //create a sprite with texture and rect and offset
- * var sprite3 = cc.Sprite.spriteWithTexture(img, new cc.Rect(0,0,480,320),new cc.Point(0,0));
+ * var sprite3 = cc.Sprite.createWithTexture(img, new cc.Rect(0,0,480,320),new cc.Point(0,0));
  */
-cc.Sprite.spriteWithTexture = function (texture, rect, offset) {
+cc.Sprite.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
     var sprite = new cc.Sprite();
     switch (argnum) {

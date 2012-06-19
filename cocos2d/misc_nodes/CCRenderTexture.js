@@ -201,7 +201,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
             this._texture.setAliasTexParameters();
 
-            this._sprite = cc.Sprite.spriteWithTexture(this._texture);
+            this._sprite = cc.Sprite.createWithTexture(this._texture);
 
             this._sprite.setScaleY(-1);
             this.addChild(this._sprite);
