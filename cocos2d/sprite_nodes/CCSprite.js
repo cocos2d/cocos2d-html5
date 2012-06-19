@@ -1454,8 +1454,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
+        if ((this._color.r == color3.r)&&(this._color.g == color3.g)&&(this._color.b == color3.b)) {
+            return;
+        }
 
+        this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
         if (this.getTexture()) {
             if (cc.renderContextType == cc.CANVAS) {
                 var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
