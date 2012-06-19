@@ -111,28 +111,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     draw:function (ctx) {
         this._super();
         if (cc.renderContextType == cc.CANVAS) {
-            var context = ctx || cc.renderContext;
-            context.globalAlpha = this.getOpacity() / 255;
-            var tempAtlas = this._textureAtlas;
-            var tempTexture = this.getTexture();
-            var tempQuads = this._textureAtlas._quads;
-            var sx, sy, w, h, dx, dy;
-            var pos = new cc.Point(0 | ( -this._anchorPointInPixels.x), 0 | ( -this._anchorPointInPixels.y));
-            for (var i = 0, len = this._textureAtlas.getCapacity(); i < len; i++) {
-                sx = parseFloat(tempQuads[i].tl.texCoords.u) * tempTexture.width;
-                sy = parseFloat(tempQuads[i].tl.texCoords.v) * tempTexture.height;
-                dx = tempQuads[i].tl.vertices.x;
-                dy = tempQuads[i].tl.vertices.y;
-                /*dx = 0;
-                 dy = 0;*/
-                w = (parseFloat(tempQuads[i].br.texCoords.u) - parseFloat(tempQuads[i].tl.texCoords.u)) * tempTexture.width;
-                h = (parseFloat(tempQuads[i].br.texCoords.v) - parseFloat(tempQuads[i].tl.texCoords.v)) * tempTexture.height;
-                //console.log(sx,sy,w,h,dx,dy,w,h);
-                if (i == 8) {
-                    //throw "";
-                }
-                context.drawImage(tempTexture, sx, sy, w, h, dx + pos.x, -(dy + pos.y), w, h);
-            }
+
         }
         else {
             // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
@@ -181,6 +160,9 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
+        if ((this._color.r == color3.r)&&(this._color.g == color3.g)&&(this._color.b == color3.b)) {
+            return;
+        }
         this._color = this._colorUnmodified = color3;
 
         if (this.getTexture()) {
@@ -188,9 +170,12 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
                 var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
-                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color);
-                    //console.log(colorTexture)
-                    this.setTexture(colorTexture);
+                    var tx = this.getTexture();
+                    var textureRect = new cc.Rect(0,0,tx.width,tx.height);
+                    var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color,textureRect);
+                    var img = new Image();
+                    img.src = colorTexture.toDataURL();
+                    this.setTexture(img);
                 }
             }
         }

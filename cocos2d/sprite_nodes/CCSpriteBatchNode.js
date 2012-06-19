@@ -78,7 +78,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _descendants:[],
     _renderTexture:null,
     _isUseCache:false,
-
+    _originalTexture:null,
     /**
      * Constructor
      * @param {String} fileImage
@@ -214,7 +214,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._blendFunc.dst = cc.BLEND_DST;
         this._textureAtlas = new cc.TextureAtlas();
         this._textureAtlas.initWithTexture(tex, capacity);
-
+        if (cc.renderContextType == cc.CANVAS) {
+            this._originalTexture = tex;
+        }
         if (cc.renderContextType == cc.WEBGL) {
             this._updateBlendFunc();
         }
