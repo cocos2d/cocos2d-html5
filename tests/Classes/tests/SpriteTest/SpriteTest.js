@@ -1446,7 +1446,6 @@ var SpriteFrameTest = SpriteTestDemo.extend({
 
         // IMPORTANT:
         // The sprite frames will be cached AND RETAINED, and they won't be released unless you call
-        //     cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames);
         var cache = cc.SpriteFrameCache.sharedSpriteFrameCache();
         cache.addSpriteFramesWithFile(s_grossiniPlist);
         cache.addSpriteFramesWithFile(s_grossini_grayPlist, s_grossini_gray);
@@ -1579,7 +1578,6 @@ var SpriteFrameAliasNameTest = SpriteTestDemo.extend({
 
         // IMPORTANT:
         // The sprite frames will be cached AND RETAINED, and they won't be released unless you call
-        //     [[cc.SpriteFrameCache sharedSpriteFrameCache] removeUnusedSpriteFrames];
         //
         // cc.SpriteFrameCache is a cache of cc.SpriteFrames
         // cc.SpriteFrames each contain a texture id and a rect (frame).
@@ -2366,7 +2364,6 @@ var SpriteAnimationSplit = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2389,7 +2386,6 @@ var SpriteHybrid = SpriteTestDemo.extend({
 
         // IMPORTANT:
         // The sprite frames will be cached AND RETAINED, and they won't be released unless you call
-        //     cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames);
         cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
 
         // create 250 sprites
@@ -2521,7 +2517,6 @@ var SpriteBatchNodeChildren = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2606,7 +2601,6 @@ var SpriteBatchNodeChildren2 = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2697,7 +2691,6 @@ var SpriteBatchNodeChildrenZ = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2761,7 +2754,6 @@ var SpriteChildrenVisibility = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -2923,7 +2915,6 @@ var SpriteChildrenAnchorPoint = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
@@ -3025,7 +3016,6 @@ var SpriteBatchNodeChildrenAnchorPoint = SpriteTestDemo.extend({
     },
     onExit:function () {
         this._super();
-        cc.SpriteFrameCache.sharedSpriteFrameCache().removeUnusedSpriteFrames();
     }
 });
 
