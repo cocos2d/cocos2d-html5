@@ -33,7 +33,7 @@
  * @constant
  * @type String
  */
-cc.ENGINE_VERSION = "cocos2d-html5-v0.6.0-alpha";
+cc.ENGINE_VERSION = "cocos2d-html5-v0.5.0-alpha2";
 
 
 /**

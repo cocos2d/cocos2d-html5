@@ -1,6 +1,6 @@
 
 
-cocos2d-html5-v0.6.0-alpha @ June.18, 2012
+cocos2d-html5-v0.5.0-alpha2 @ June.18, 2012
 * Change API, use "create" to construct all objects.
 * Fix naming of variables.
 * Add JSDoc comments and shell.
