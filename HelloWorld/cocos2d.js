@@ -87,12 +87,7 @@ cc.loadjs = function (filename) {
     }
 };
 
-var menuType = menuType || "DOM";
-if (menuType == "DOM") {
-    cc.loadjs('../lib/Cocos2d-html5-dommenu-min.js');
-} else {
-    cc.loadjs('../lib/Cocos2d-html5-canvasmenu-min.js');
-}
+cc.loadjs('../lib/Cocos2d-html5-canvasmenu-min.js');
 
 // User files
 cc.loadjs('Classes/AppDelegate.js');//17
