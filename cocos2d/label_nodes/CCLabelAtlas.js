@@ -54,8 +54,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      */
     updateAtlasValues:function () {
         var texture = this.getTexture();
-        var textureWide = texture.width;
-        var textureHigh = texture.height;
 
         for (var i = 0; i < this._string.length; i++) {
             var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
@@ -89,7 +87,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.setOpacity(this._opacity);
                 }
             }
-            fontChar.setPosition(new cc.Point(i * this._itemWidth, this._itemHeight / 2));
+            fontChar.setPosition(new cc.Point(i * this._itemWidth + this._itemWidth / 2, this._itemHeight / 2));
         }
     },
 
