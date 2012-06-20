@@ -211,7 +211,7 @@ cc.HashSelectorEntry = function (timers, target, timerIndex, currentTimer, curre
  * @class
  * @extends cc.Class
  */
-cc.Timer = cc.Class.extend(/** @lends cc.ParticleSystem# */{
+cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
     _interval:0.0,
     _selector:"",
 

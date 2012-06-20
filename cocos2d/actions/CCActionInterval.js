@@ -1103,7 +1103,7 @@ cc.JumpBy.create = function (duration, position, height, jumps) {
  * @class
  * @extends cc.JumpBy
  */
-cc.JumpTo = cc.JumpBy.extend(/** cc.JumpTo# */{
+cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
     /**
      * @param {cc.Node} target
      */
@@ -1130,11 +1130,12 @@ cc.JumpTo.create = function (duration, position, height, jumps) {
     return jumpTo;
 };
 
-/** bezier configuration structure
+/**
+ * Bezier configuration structure
  * @class
  * @extends cc.Class
  */
-cc.BezierConfig = cc.Class.extend({
+cc.BezierConfig = cc.Class.extend(/** @lends cc.BezierConfig# */{
     /**
      * Constructor
      */
@@ -1474,7 +1475,7 @@ cc.Blink.create = function (duration, blinks) {
  * @class
  * @extends cc.ActionInterval
  */
-cc.FadeIn = cc.ActionInterval.extend({
+cc.FadeIn = cc.ActionInterval.extend(/** @lends cc.FadeIn# */{
     /**
      * @param {Number} time time in seconds
      */
