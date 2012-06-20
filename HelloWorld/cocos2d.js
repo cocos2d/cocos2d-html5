@@ -42,16 +42,6 @@ cc.$ = function (x) {
 cc.$new = function (x) {
     return document.createElement(x);
 };
-//function to load files into html
-/*
- cc.loadjs = function(filename)
- {
- //get a ref to header
- var head = cc.$('head');
- var insert = document.createElement('script');
- insert.setAttribute('src',cc.Dir+filename);
- head.appendChild(insert);
- };*/
 
 cc.loadjs = function (filename) {
     //add the file to the que
@@ -97,47 +87,12 @@ cc.loadjs = function (filename) {
     }
 };
 
-// Engine files,
-// They can be packeted to a single file using the Ant tool.
-// The shell files and Closure Compiler which Ant needs are provided in tools folder and cocos2d folder.
-cc.loadjs('../cocos2d/platform/CCClass.js');//0
-cc.loadjs('../cocos2d/platform/CCCommon.js');//1
-cc.loadjs('../cocos2d/platform/platform.js');//2
-cc.loadjs('../cocos2d/cocoa/CCGeometry.js');//3
-cc.loadjs('../cocos2d/cocoa/CCSet.js');//4
-cc.loadjs('../cocos2d/platform/CCTypes.js');//5
-cc.loadjs('../cocos2d/cocoa/CCAffineTransform.js');//5
-cc.loadjs('../cocos2d/support/CCPointExtension.js');//12
-cc.loadjs('../cocos2d/base_nodes/CCNode.js');//6
-cc.loadjs('../cocos2d/platform/CCMacro.js');//7
-cc.loadjs('../cocos2d/platform/CCConfig.js');//7
-cc.loadjs('../cocos2d/textures/CCTexture2D.js');//12
-cc.loadjs('../cocos2d/textures/CCTextureCache.js');//12
-cc.loadjs('../cocos2d/actions/CCAction.js');//7
-cc.loadjs('../cocos2d/actions/CCActionInterval.js');//7
-cc.loadjs('../cocos2d/actions/CCActionManager.js');//7
-cc.loadjs('../cocos2d/actions/CCActionEase.js');//7
-cc.loadjs('../cocos2d/layers_scenes_transitions_nodes/CCScene.js');//8
-cc.loadjs('../cocos2d/layers_scenes_transitions_nodes/CCLayer.js');//9
-cc.loadjs('../cocos2d/layers_scenes_transitions_nodes/CCTransition.js');
-cc.loadjs('../cocos2d/sprite_nodes/CCSprite.js');//10
-cc.loadjs('../cocos2d/label_nodes/CCLabelTTF.js');//11
-cc.loadjs('../cocos2d/text_input_node/CCIMEDispatcher.js');//12
-cc.loadjs('../cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js');//12
-cc.loadjs('../cocos2d/touch_dispatcher/CCTouchHandler.js');//12
-cc.loadjs('../cocos2d/touch_dispatcher/CCTouchDispatcher.js');//12
-cc.loadjs('../cocos2d/keypad_dispatcher/CCKeypadDelegate.js');//12
-cc.loadjs('../cocos2d/keypad_dispatcher/CCKeypadDispatcher.js');//12
-cc.loadjs('../cocos2d/CCDirector.js');//13
-cc.loadjs('../cocos2d/CCScheduler.js');//14
-cc.loadjs('../cocos2d/CCLoader.js');//14
-cc.loadjs('../cocos2d/CCDrawingPrimitives.js');//15
-cc.loadjs('../cocos2d/platform/CCApplication.js');//16
-cc.loadjs('../cocos2d/platform/CCSAXParser.js');//16
-cc.loadjs('../cocos2d/platform/AppControl.js');//18
-cc.loadjs('../cocos2d/menu_nodes/CCMenuItem.js');
-cc.loadjs('../cocos2d/menu_nodes/CCMenu.js');
-cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
+var menuType = menuType || "DOM";
+if (menuType == "DOM") {
+    cc.loadjs('../lib/Cocos2d-html5-dommenu-min.js');
+} else {
+    cc.loadjs('../lib/Cocos2d-html5-canvasmenu-min.js');
+}
 
 // User files
 cc.loadjs('Classes/AppDelegate.js');//17

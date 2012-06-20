@@ -30,7 +30,7 @@
 
 var cc = cc = cc || {};
 //Cocos2d directory
-cc.Dir = '../../cocos2d/';//in relate to the html file or use absolute
+cc.Dir = './';//in relate to the html file or use absolute
 cc.loadQue = [];//the load que which js files are loaded
 cc.COCOS2D_DEBUG = 2;
 cc._DEBUG = 1;
@@ -42,16 +42,6 @@ cc.$ = function (x) {
 cc.$new = function (x) {
     return document.createElement(x);
 };
-//function to load files into html
-/*
- cc.loadjs = function(filename)
- {
- //get a ref to header
- var head = cc.$('head');
- var insert = document.createElement('script');
- insert.setAttribute('src',cc.Dir+filename);
- head.appendChild(insert);
- };*/
 
 cc.loadjs = function (filename) {
     //add the file to the que
@@ -91,44 +81,7 @@ cc.loadjs = function (filename) {
     }
 };
 
+cc.loadjs('../../lib/Cocos2d-html5-dommenu-min.js');
 
-cc.loadjs('platform/CCClass.js');//0
-cc.loadjs('platform/CCCommon.js');//1
-cc.loadjs('platform/platform.js');//2
-cc.loadjs('cocoa/CCGeometry.js');//3
-cc.loadjs('cocoa/CCSet.js');//4
-cc.loadjs('platform/CCTypes.js');//5
-cc.loadjs('cocoa/CCAffineTransform.js');//5
-cc.loadjs('support/CCPointExtension.js');//12
-cc.loadjs('base_nodes/CCNode.js');//6
-cc.loadjs('platform/ccMacro.js');//7
-cc.loadjs('platform/ccConfig.js');//7
-cc.loadjs('textures/CCTexture2D.js');//12
-cc.loadjs('textures/CCTextureCache.js');//12
-cc.loadjs('actions/CCAction.js');//7
-cc.loadjs('actions/CCActionInterval.js');//7
-cc.loadjs('actions/CCActionManager.js');//7
-cc.loadjs('actions/CCActionEase.js');//7
-cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
-cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
-cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');//9
-cc.loadjs('sprite_nodes/CCSprite.js');//10
-cc.loadjs('label_nodes/CCLabelTTF.js');//11
-cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
-cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
-cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
-cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
-cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
-cc.loadjs('base_nodes/CCdomNode.js');
-cc.loadjs('CCDirector.js');//13
-cc.loadjs('CCScheduler.js');//14
-cc.loadjs('CCLoader.js');//14
-cc.loadjs('CCDrawingPrimitives.js');//15
-cc.loadjs('platform/CCApplication.js');//16
-cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-cc.loadjs('platform/CCSAXParser.js');//16
-cc.loadjs('../Demo/HelloDomMenu/Classes/AppDelegate.js');//17
-cc.loadjs('platform/AppControl.js');//18
-cc.loadjs('../Demo/HelloDomMenu/HelloDom.js');//19
-cc.loadjs('menu_nodes/CCdomMenuItem.js');
-cc.loadjs('menu_nodes/CCdomMenu.js');
+cc.loadjs('Classes/AppDelegate.js');//17
+cc.loadjs('HelloDom.js');//19
