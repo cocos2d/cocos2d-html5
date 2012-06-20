@@ -709,11 +709,11 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     initWithColor:function (start, end, v) {
         var argnum = arguments.length;
         if (argnum == 2) {
-            /** Initializes the CCLayer with a gradient between start and end. */
+            // Initializes the CCLayer with a gradient between start and end.
             v = cc.ccp(0, -1);
         }
 
-        /** Initializes the CCLayer with a gradient between start and end in the direction of v. */
+        // Initializes the CCLayer with a gradient between start and end in the direction of v.
         this._startColor.r = start.r;
         this._startColor.g = start.g;
         this._startColor.b = start.b;

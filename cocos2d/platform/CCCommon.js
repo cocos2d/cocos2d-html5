@@ -103,42 +103,49 @@ if (cc._DEBUG) {
 // Enum the language type supportted now
 /**
  * English language code
+ * @constant
  * @type Number
  */
 cc.LANGUAGE_ENGLISH = 0;
 
 /**
  * Chinese language code
+ * @constant
  * @type Number
  */
 cc.LANGUAGE_CHINESE = 1;
 
 /**
  * French language code
+ * @constant
  * @type Number
  */
 cc.LANGUAGE_FRENCH = 2;
 
 /**
  * Italian language code
+ * @constant
  * @type Number
  */
 cc.LANGUAGE_ITALIAN = 3;
 
 /**
  * German language code
+ * @constant
  * @type Number
  */
 cc.LANGUAGE_GERMAN = 4;
 
 /**
  * Spanish language code
+ * @constant
  * @type Number
  */
 cc.LANGUAGE_SPANISH = 5;
 
 /**
  * Russian language code
+ * @constant
  * @type Number
  */
 cc.LANGUAGE_RUSSIAN = 6;

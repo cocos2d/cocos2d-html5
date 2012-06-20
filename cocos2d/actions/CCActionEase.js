@@ -513,7 +513,7 @@ cc.EaseSineIn.create = function (action) {
  * @class
  * @extends cc.ActionEase
  */
-cc.EaseSineOut = cc.ActionEase.extend({
+cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
     /**
      * @param {Number} time1
      */
@@ -925,7 +925,7 @@ cc.EaseBounce.create = function (action) {
  * @class
  * @extends cc.EaseBounce
  */
-cc.EaseBounceIn = cc.EaseBounce.extend(/** cc.EaseBounceIn# */{
+cc.EaseBounceIn = cc.EaseBounce.extend(/** @lends cc.EaseBounceIn# */{
     /**
      * @param {Number} time1
      */
