@@ -52,7 +52,7 @@
 
     <target name="compile_test_advanced">
         <jscomp compilationLevel="advanced" warning="quiet"
-                debug="false" output="cocos2d-html5-testcases.js">
+                debug="false" output="cocos2d-html5-testcases-advanced.js">
             <externs dir="${basedir}/../cocos2d">
                 <file name="cocos2d_externs.js"/>
             </externs>

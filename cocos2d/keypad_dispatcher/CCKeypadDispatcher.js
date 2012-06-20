@@ -295,7 +295,6 @@ cc.KeypadDispatcher.sharedDispatcher = function () {
         cc.canvas.style.outline='none';
         cc.canvas.style.cursor = 'default';
         cc.canvas.addEventListener("keydown", function (e) {
-            console.log(e);
             cc.keypadDispatcher.dispatchKeypadMSG(e, true);
             cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
         });
