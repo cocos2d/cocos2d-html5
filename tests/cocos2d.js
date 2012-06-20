@@ -27,7 +27,7 @@
 
 var cc = cc = cc || {};
 //Cocos2d directory
-cc.Dir = '../cocos2d/';//in relate to the html file or use absolute
+cc.Dir = '../';//in relate to the html file or use absolute
 cc.loadQue = [];//the load que which js files are loaded
 cc.COCOS2D_DEBUG = 2;
 cc._DEBUG = 1;
@@ -39,16 +39,7 @@ cc.$ = function (x) {
 cc.$new = function (x) {
     return document.createElement(x);
 };
-//function to load files into html
-/*
- cc.loadjs = function(filename)
- {
- //get a ref to header
- var head = cc.$('head');
- var insert = document.createElement('script');
- insert.setAttribute('src',cc.Dir+filename);
- head.appendChild(insert);
- };*/
+
 
 cc.loadjs = function (filename) {
     //add the file to the que
@@ -87,126 +78,138 @@ cc.loadjs = function (filename) {
 
 //Canvas or DOM
 var menuType = menuType || "DOM";
+var isDebugMode = false;
 
-cc.loadjs('platform/CCClass.js');
-cc.loadjs('platform/CCCommon.js');
-cc.loadjs('platform/platform.js');
-cc.loadjs('platform/ZipUtils.js');
-cc.loadjs('platform/base64.js');
-cc.loadjs('platform/gzip.js');
-cc.loadjs('platform/CCMacro.js');
-cc.loadjs('platform/CCConfig.js');
-cc.loadjs('platform/CCFileUtils.js');
-cc.loadjs('platform/CCTypes.js');
-cc.loadjs('cocoa/CCGeometry.js');
-cc.loadjs('cocoa/CCSet.js');
-cc.loadjs('cocoa/CCAffineTransform.js');
-cc.loadjs('support/CCPointExtension.js');
-cc.loadjs('base_nodes/CCNode.js');
-cc.loadjs('base_nodes/CCAtlasNode.js');
-cc.loadjs('textures/CCTexture2D.js');
-cc.loadjs('textures/CCTextureCache.js');
-cc.loadjs('textures/CCTextureAtlas.js');
-cc.loadjs('misc_nodes/CCRenderTexture.js');
-cc.loadjs('misc_nodes/CCProgressTimer.js');
-cc.loadjs('effects/CCGrid.js');
-cc.loadjs('effects/CCGrabber.js');
-cc.loadjs('actions/CCAction.js');
-cc.loadjs('actions/CCActionInterval.js');
-cc.loadjs('actions/CCActionInstant.js');
-cc.loadjs('actions/CCActionManager.js');
-cc.loadjs('actions/CCActionProgressTimer.js');
-cc.loadjs('actions/CCActionCamera.js');
-cc.loadjs('actions/CCActionEase.js');
-cc.loadjs('actions/CCActionGrid.js');
-cc.loadjs('actions/CCActionTiledGrid.js');
-cc.loadjs('actions/CCActionGrid.js');
-cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');
-cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');
-cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');
-cc.loadjs('layers_scenes_transitions_nodes/CCTransitionRadial.js');
-cc.loadjs('layers_scenes_transitions_nodes/CCTransitionPageTurn.js');
-cc.loadjs('sprite_nodes/CCSprite.js');
-cc.loadjs('sprite_nodes/CCAnimation.js');
-cc.loadjs('sprite_nodes/CCAnimationCache.js');
-cc.loadjs('sprite_nodes/CCSpriteFrame.js');
-cc.loadjs('sprite_nodes/CCSpriteFrameCache.js');
-cc.loadjs('sprite_nodes/CCSpriteBatchNode.js');
-cc.loadjs('label_nodes/CCLabelAtlas.js');
-cc.loadjs('label_nodes/CCLabelTTF.js');
-cc.loadjs('label_nodes/CCLabelBMFont.js');
-cc.loadjs('particle_nodes/CCParticleSystem.js');
-cc.loadjs('particle_nodes/CCParticleSystemQuad.js');
-cc.loadjs('particle_nodes/CCParticleSystemPoint.js');
-cc.loadjs('particle_nodes/CCParticleExamples.js');
-cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');
-cc.loadjs('touch_dispatcher/CCTouchHandler.js');
-cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');
-cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');
-cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');
-cc.loadjs('text_input_node/CCIMEDispatcher.js');
-cc.loadjs('text_input_node/CCTextFieldTTF.js');
-cc.loadjs('CCDirector.js');
-cc.loadjs('CCCamera.js');
-cc.loadjs('CCScheduler.js');
-cc.loadjs('CCLoader.js');
-cc.loadjs('CCDrawingPrimitives.js');
-cc.loadjs('platform/CCApplication.js');
-cc.loadjs('platform/CCSAXParser.js');
-cc.loadjs('platform/AppControl.js');
-if (menuType == "DOM") {
-    cc.loadjs('base_nodes/CCdomNode.js');
-    cc.loadjs('menu_nodes/CCdomMenuItem.js');
-    cc.loadjs('menu_nodes/CCdomMenu.js');
-} else {
-    cc.loadjs('menu_nodes/CCMenuItem.js');
-    cc.loadjs('menu_nodes/CCMenu.js');
+if(!isDebugMode){
+    if (menuType == "DOM") {
+        cc.loadjs('lib/Cocos2d-html5-dommenu-min.js');
+    } else {
+        cc.loadjs('lib/Cocos2d-html5-canvasmenu-min.js');
+    }
+    cc.loadjs('box2d/box2d.js');
+    cc.loadjs('tests/cocos2d-html5-testcases.js');
+}else{
+    cc.loadjs('cocos2d/platform/CCClass.js');
+    cc.loadjs('cocos2d/platform/CCCommon.js');
+    cc.loadjs('cocos2d/platform/platform.js');
+    cc.loadjs('cocos2d/platform/ZipUtils.js');
+    cc.loadjs('cocos2d/platform/base64.js');
+    cc.loadjs('cocos2d/platform/gzip.js');
+    cc.loadjs('cocos2d/platform/CCMacro.js');
+    cc.loadjs('cocos2d/platform/CCConfig.js');
+    cc.loadjs('cocos2d/platform/CCFileUtils.js');
+    cc.loadjs('cocos2d/platform/CCTypes.js');
+    cc.loadjs('cocos2d/cocoa/CCGeometry.js');
+    cc.loadjs('cocos2d/cocoa/CCSet.js');
+    cc.loadjs('cocos2d/cocoa/CCAffineTransform.js');
+    cc.loadjs('cocos2d/support/CCPointExtension.js');
+    cc.loadjs('cocos2d/base_nodes/CCNode.js');
+    cc.loadjs('cocos2d/base_nodes/CCAtlasNode.js');
+    cc.loadjs('cocos2d/textures/CCTexture2D.js');
+    cc.loadjs('cocos2d/textures/CCTextureCache.js');
+    cc.loadjs('cocos2d/textures/CCTextureAtlas.js');
+    cc.loadjs('cocos2d/misc_nodes/CCRenderTexture.js');
+    cc.loadjs('cocos2d/misc_nodes/CCProgressTimer.js');
+    cc.loadjs('cocos2d/effects/CCGrid.js');
+    cc.loadjs('cocos2d/effects/CCGrabber.js');
+    cc.loadjs('cocos2d/actions/CCAction.js');
+    cc.loadjs('cocos2d/actions/CCActionInterval.js');
+    cc.loadjs('cocos2d/actions/CCActionInstant.js');
+    cc.loadjs('cocos2d/actions/CCActionManager.js');
+    cc.loadjs('cocos2d/actions/CCActionProgressTimer.js');
+    cc.loadjs('cocos2d/actions/CCActionCamera.js');
+    cc.loadjs('cocos2d/actions/CCActionEase.js');
+    cc.loadjs('cocos2d/actions/CCActionGrid.js');
+    cc.loadjs('cocos2d/actions/CCActionTiledGrid.js');
+    cc.loadjs('cocos2d/actions/CCActionGrid.js');
+    cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCScene.js');
+    cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCLayer.js');
+    cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransition.js');
+    cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransitionRadial.js');
+    cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransitionPageTurn.js');
+    cc.loadjs('cocos2d/sprite_nodes/CCSprite.js');
+    cc.loadjs('cocos2d/sprite_nodes/CCAnimation.js');
+    cc.loadjs('cocos2d/sprite_nodes/CCAnimationCache.js');
+    cc.loadjs('cocos2d/sprite_nodes/CCSpriteFrame.js');
+    cc.loadjs('cocos2d/sprite_nodes/CCSpriteFrameCache.js');
+    cc.loadjs('cocos2d/sprite_nodes/CCSpriteBatchNode.js');
+    cc.loadjs('cocos2d/label_nodes/CCLabelAtlas.js');
+    cc.loadjs('cocos2d/label_nodes/CCLabelTTF.js');
+    cc.loadjs('cocos2d/label_nodes/CCLabelBMFont.js');
+    cc.loadjs('cocos2d/particle_nodes/CCParticleSystem.js');
+    cc.loadjs('cocos2d/particle_nodes/CCParticleSystemQuad.js');
+    cc.loadjs('cocos2d/particle_nodes/CCParticleSystemPoint.js');
+    cc.loadjs('cocos2d/particle_nodes/CCParticleExamples.js');
+    cc.loadjs('cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js');
+    cc.loadjs('cocos2d/touch_dispatcher/CCTouchHandler.js');
+    cc.loadjs('cocos2d/touch_dispatcher/CCTouchDispatcher.js');
+    cc.loadjs('cocos2d/keypad_dispatcher/CCKeypadDelegate.js');
+    cc.loadjs('cocos2d/keypad_dispatcher/CCKeypadDispatcher.js');
+    cc.loadjs('cocos2d/text_input_node/CCIMEDispatcher.js');
+    cc.loadjs('cocos2d/text_input_node/CCTextFieldTTF.js');
+    cc.loadjs('cocos2d/CCDirector.js');
+    cc.loadjs('cocos2d/CCCamera.js');
+    cc.loadjs('cocos2d/CCScheduler.js');
+    cc.loadjs('cocos2d/CCLoader.js');
+    cc.loadjs('cocos2d/CCDrawingPrimitives.js');
+    cc.loadjs('cocos2d/platform/CCApplication.js');
+    cc.loadjs('cocos2d/platform/CCSAXParser.js');
+    cc.loadjs('cocos2d/platform/AppControl.js');
+    if (menuType == "DOM") {
+        cc.loadjs('cocos2d/base_nodes/CCdomNode.js');
+        cc.loadjs('cocos2d/menu_nodes/CCdomMenuItem.js');
+        cc.loadjs('cocos2d/menu_nodes/CCdomMenu.js');
+    } else {
+        cc.loadjs('cocos2d/menu_nodes/CCMenuItem.js');
+        cc.loadjs('cocos2d/menu_nodes/CCMenu.js');
+    }
+    cc.loadjs('cocos2d/tileMap_parallax_nodes/CCTMXTiledMap.js');
+    cc.loadjs('cocos2d/tileMap_parallax_nodes/CCTMXXMLParser.js');
+    cc.loadjs('cocos2d/tileMap_parallax_nodes/CCTMXObjectGroup.js');
+    cc.loadjs('cocos2d/tileMap_parallax_nodes/CCTMXLayer.js');
+    cc.loadjs('cocos2d/tileMap_parallax_nodes/CCParallaxNode.js');
+
+    cc.loadjs('CocosDenshion/SimpleAudioEngine.js');
+
+    cc.loadjs('box2d/box2d.js');
+
+    cc.loadjs('tests/Classes/AppDelegate.js');
+    cc.loadjs('tests/testbasic.js');
+    cc.loadjs('tests/testResource.js');
+    cc.loadjs('tests/Classes/tests/TouchesTest/Ball.js');
+    cc.loadjs('tests/Classes/tests/TouchesTest/Paddle.js');
+    cc.loadjs('tests/Classes/tests/TouchesTest/TouchesTest.js');
+    cc.loadjs('tests/Classes/tests/SchedulerTest/SchedulerTest.js');
+    cc.loadjs('tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
+    cc.loadjs('tests/Classes/tests/MenuTest/MenuTest.js');
+    cc.loadjs('tests/Classes/tests/ActionsTest/ActionsTest.js');
+    cc.loadjs('tests/Classes/tests/TileMapTest/TileMapTest.js');
+    cc.loadjs('tests/Classes/tests/TransitionsTest/TransitionsTest.js');
+    cc.loadjs('tests/Classes/tests/DrawPrimitivesTest/DrawPrimitivesTest.js');
+    cc.loadjs('tests/Classes/tests/ParticleTest/ParticleTest.js');
+    cc.loadjs('tests/Classes/tests/ProgressActionsTest/ProgressActionsTest.js');
+    cc.loadjs('tests/Classes/tests/LayerTest/LayerTest.js');
+    cc.loadjs('tests/Classes/tests/SceneTest/SceneTest.js');
+    cc.loadjs('tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
+    cc.loadjs('tests/Classes/tests/SpriteTest/SpriteTest.js');
+    cc.loadjs('tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
+    cc.loadjs('tests/Classes/tests/CocosNodeTest/CocosNodeTest.js');
+    cc.loadjs('tests/Classes/tests/RotateWorldTest/RotateWorldTest.js');
+    cc.loadjs('tests/Classes/tests/IntervelTest/IntervelTest.js');
+    cc.loadjs('tests/Classes/tests/ActionManagerTest/ActionManagerTest.js');
+    cc.loadjs('tests/Classes/tests/EaseActionsTest/EaseActionsTest.js');
+    cc.loadjs('tests/Classes/tests/ParallaxTest/ParallaxTest.js');
+    cc.loadjs('tests/Classes/tests/DirectorTest/DirectorTest.js');
+    cc.loadjs('tests/Classes/tests/PerformanceTest/PerformanceTest.js');
+    cc.loadjs('tests/Classes/tests/PerformanceTest/PerformanceSpriteTest.js');
+    cc.loadjs('tests/Classes/tests/PerformanceTest/PerformanceParticleTest.js');
+    cc.loadjs('tests/Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js');
+    cc.loadjs('tests/Classes/tests/PerformanceTest/PerformanceTextureTest.js');
+    cc.loadjs('tests/Classes/tests/FontTest/FontTest.js');
+    cc.loadjs('tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');
+    cc.loadjs('tests/Classes/tests/LabelTest/LabelTest.js');
+    cc.loadjs('tests/Classes/tests/CurrentLanguageTest/CurrentLanguageTest.js');
+    cc.loadjs('tests/Classes/tests/TextInputTest/TextInputTest.js');
+    cc.loadjs('tests/Classes/tests/Box2dTest/Box2dTest.js');
 }
-cc.loadjs('tileMap_parallax_nodes/CCTMXTiledMap.js');
-cc.loadjs('tileMap_parallax_nodes/CCTMXXMLParser.js');
-cc.loadjs('tileMap_parallax_nodes/CCTMXObjectGroup.js');
-cc.loadjs('tileMap_parallax_nodes/CCTMXLayer.js');
-cc.loadjs('tileMap_parallax_nodes/CCParallaxNode.js');
 
-cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-
-cc.loadjs('../box2d/box2d.js');
-
-cc.loadjs('../tests/Classes/AppDelegate.js');
-cc.loadjs('../tests/testbasic.js');
-cc.loadjs('../tests/testResource.js');
-cc.loadjs('../tests/Classes/tests/TouchesTest/Ball.js');
-cc.loadjs('../tests/Classes/tests/TouchesTest/Paddle.js');
-cc.loadjs('../tests/Classes/tests/TouchesTest/TouchesTest.js');
-cc.loadjs('../tests/Classes/tests/SchedulerTest/SchedulerTest.js');
-cc.loadjs('../tests/Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js');
-cc.loadjs('../tests/Classes/tests/MenuTest/MenuTest.js');
-cc.loadjs('../tests/Classes/tests/ActionsTest/ActionsTest.js');
-cc.loadjs('../tests/Classes/tests/TileMapTest/TileMapTest.js');
-cc.loadjs('../tests/Classes/tests/TransitionsTest/TransitionsTest.js');
-cc.loadjs('../tests/Classes/tests/DrawPrimitivesTest/DrawPrimitivesTest.js');
-cc.loadjs('../tests/Classes/tests/ParticleTest/ParticleTest.js');
-cc.loadjs('../tests/Classes/tests/ProgressActionsTest/ProgressActionsTest.js');
-cc.loadjs('../tests/Classes/tests/LayerTest/LayerTest.js');
-cc.loadjs('../tests/Classes/tests/SceneTest/SceneTest.js');
-cc.loadjs('../tests/Classes/tests/TextureCacheTest/TextureCacheTest.js');
-cc.loadjs('../tests/Classes/tests/SpriteTest/SpriteTest.js');
-cc.loadjs('../tests/Classes/tests/CocosDenshionTest/CocosDenshionTest.js');
-cc.loadjs('../tests/Classes/tests/CocosNodeTest/CocosNodeTest.js');
-cc.loadjs('../tests/Classes/tests/RotateWorldTest/RotateWorldTest.js');
-cc.loadjs('../tests/Classes/tests/IntervelTest/IntervelTest.js');
-cc.loadjs('../tests/Classes/tests/ActionManagerTest/ActionManagerTest.js');
-cc.loadjs('../tests/Classes/tests/EaseActionsTest/EaseActionsTest.js');
-cc.loadjs('../tests/Classes/tests/ParallaxTest/ParallaxTest.js');
-cc.loadjs('../tests/Classes/tests/DirectorTest/DirectorTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceSpriteTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceParticleTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceNodeChildrenTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTextureTest.js');
-cc.loadjs('../tests/Classes/tests/FontTest/FontTest.js');
-cc.loadjs('../tests/Classes/tests/PerformanceTest/PerformanceTouchesTest.js');
-cc.loadjs('../tests/Classes/tests/LabelTest/LabelTest.js');
-cc.loadjs('../tests/Classes/tests/CurrentLanguageTest/CurrentLanguageTest.js');
-cc.loadjs('../tests/Classes/tests/TextInputTest/TextInputTest.js');
-cc.loadjs('../tests/Classes/tests/Box2dTest/Box2dTest.js');
