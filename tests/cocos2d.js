@@ -78,7 +78,7 @@ cc.loadjs = function (filename) {
 
 //Canvas or DOM
 var menuType = menuType || "DOM";
-var isDebugMode = false;
+var isDebugMode = true;
 
 if(!isDebugMode){
     if (menuType == "DOM") {
