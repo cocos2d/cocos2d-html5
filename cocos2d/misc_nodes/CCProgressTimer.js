@@ -41,13 +41,13 @@ cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW = 1;
  * @type Number
  * @constant
  */
-cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR = 2;
+cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR = 2;
 /**
  * Horizontal Right-Left
  * @type Number
  * @constant
  */
-cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL = 3;
+cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL = 3;
 /**
  * Vertical Bottom-top
  * @type Number
@@ -85,7 +85,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
     /**
      *  Change the percentage to change progress
-     * @return {cc.CCPROGRESS_TIMER_RADIAL_CCW|cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB}
+     * @return {cc.CCPROGRESS_TIMER_RADIAL_CCW|cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW|cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR|cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB}
      */
     getType:function () {
         return this._type;
@@ -160,7 +160,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
-     * @param {cc.CCPROGRESS_TIMER_RADIAL_CCW|cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR|cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB} type
+     * @param {cc.CCPROGRESS_TIMER_RADIAL_CCW|cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW|cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR|cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT|cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB} type
      */
     setType:function (type) {
         if (type != this._type) {
@@ -235,8 +235,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
             if (this._type == cc.CCPROGRESS_TIMER_RADIAL_CCW || this._type == cc.CCPROGRESS_TIMER_TYPE_RADIAL_CW) {
                 //glDrawArrays(GL_TRIANGLE_FAN, 0, vertexDataCount);
-            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR ||
-                this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL ||
+            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR ||
+                this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL ||
                 this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT ||
                 this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB) {
                 //glDrawArrays(GL_TRIANGLE_STRIP, 0, vertexDataCount);
@@ -292,13 +292,13 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                 case cc.CCPROGRESS_TIMER_RADIAL_CCW:
                     this._startAngle = 270 - 3.6 * this._percentage;
                     break;
-                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR:
                     //left to right
                     this._origin = cc.PointZero();
                     this._drawPosition = cc.PointZero();
                     this._drawSize = cc.SizeMake(0 | ((this._percentage / 100) * size.width), size.height);
                     break;
-                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL:
                     //right to left
                     this._drawSize = cc.SizeMake(0 | ((this._percentage / 100) * size.width), size.height);
                     this._origin = cc.ccp((size.width - this._drawSize.width) | 0, 0);
@@ -323,8 +323,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                 case cc.CCPROGRESS_TIMER_RADIAL_CCW:
                     this._updateRadial();
                     break;
-                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR:
-                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR:
+                case cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL:
                 case cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT:
                 case cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_TB:
                     this._updateBar();
@@ -358,10 +358,10 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             }
             cc.Assert(this._vertexData, "");
 
-            if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR) {
+            if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR) {
                 this._vertexData[indexes[0] = 0].texCoords = cc.tex2(tMin.x, tMin.y);
                 this._vertexData[indexes[1] = 1].texCoords = cc.tex2(tMin.x, tMax.y);
-            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL) {
+            } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL) {
                 this._vertexData[indexes[0] = 2].texCoords = cc.tex2(tMax.x, tMax.y);
                 this._vertexData[indexes[1] = 3].texCoords = cc.tex2(tMax.x, tMin.y);
             } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT) {
@@ -399,10 +399,10 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             this._updateColor();
         }
 
-        if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_LR) {
+        if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_LR) {
             this._vertexData[indexes[0] = 3].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * alpha, tMax.y);
             this._vertexData[indexes[1] = 2].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * alpha, tMin.y);
-        } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTATAL_BAR_RL) {
+        } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_HORIZONTAL_BAR_RL) {
             this._vertexData[indexes[0] = 1].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * (1.0 - alpha), tMin.y);
             this._vertexData[indexes[1] = 0].texCoords = cc.tex2(tMin.x + (tMax.x - tMin.x) * (1.0 - alpha), tMax.y);
         } else if (this._type == cc.CCPROGRESS_TIMER_TYPE_VERTICAL_BAR_BT) {
