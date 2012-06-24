@@ -203,7 +203,7 @@ cc.setup = function () {
     }
     cc.originalCanvasSize = new cc.Size(cc.canvas.width, cc.canvas.height);
 
-    cc.log(cc.ENGINE_VERSION);
+    cc.Log(cc.ENGINE_VERSION);
 
     //binding window size
     /*
