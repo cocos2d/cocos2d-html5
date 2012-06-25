@@ -242,12 +242,12 @@ var LabelAtlasTest = AtlasDemo.extend({
     ctor:function () {
         this.time = 0;
 
-        var label1 = cc.LabelAtlas.create("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
+        var label1 = cc.LabelAtlas.create("123 Test", "Resources/fonts/tuffy_bold_italic-charmap.plist");
         this.addChild(label1, 0, TAG_LABEL_SPRITE1);
         label1.setPosition(cc.ccp(10, 100));
         label1.setOpacity(200);
 
-        var label2 = cc.LabelAtlas.create("0123456789", "Resources/fonts/tuffy_bold_italic-charmap.png", 48, 64, ' ');
+        var label2 = cc.LabelAtlas.create("0123456789", "Resources/fonts/tuffy_bold_italic-charmap.plist");
         this.addChild(label2, 0, TAG_LABEL_SPRITE12);
         label2.setPosition(cc.ccp(10, 200));
         label2.setOpacity(32);
@@ -734,7 +734,7 @@ var LabelAtlasHD = AtlasDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         // cc.LabelBMFont
-        var label1 = cc.LabelAtlas.create("TESTING RETINA DISPLAY", "Resources/fonts/larabie-16.png", 10, 20, 'A');
+        var label1 = cc.LabelAtlas.create("TESTING RETINA DISPLAY", "Resources/fonts/larabie-16.plist");
         label1.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         this.addChild(label1);
