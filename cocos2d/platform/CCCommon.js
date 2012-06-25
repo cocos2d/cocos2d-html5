@@ -47,12 +47,74 @@ cc.clone = function (obj) {
 };
 
 /**
+ * Is show bebug info on web page
+ * @constant
+ * @type {Boolean}
+ */
+cc.IS_SHOW_DEBUG_ON_PAGE = cc.IS_SHOW_DEBUG_ON_PAGE || false;
+
+cc._logToWebPage = function (message) {
+    var logList = document.getElementById("logInfoList");
+    if (!logList) {
+        var logDiv = document.createElement("Div");
+        logDiv.setAttribute("id", "logInfoDiv");
+        cc.canvas.parentNode.appendChild(logDiv);
+        logDiv.setAttribute("width", "300");
+        logDiv.setAttribute("height", cc.canvas.height);
+        logDiv.style.zIndex = "99999";
+        logDiv.style.position = "absolute";
+        logDiv.style.top = "0";
+        logDiv.style.left = "0";
+
+        logList = document.createElement("ul");
+        logDiv.appendChild(logList);
+        logList.setAttribute("id", "logInfoList");
+        logList.style.height = "450px";
+        logList.style.color = "#fff";
+        logList.style.textAlign = "left";
+        logList.style.listStyle = "disc outside";
+        logList.style.fontSize = "12px";
+        logList.style.fontFamily = "arial";
+        logList.style.padding = "0 0 0 20px";
+        logList.style.margin = "0";
+        logList.style.textShadow = "0 0 3px #000";
+        logList.style.zIndex = "99998";
+        logList.style.position = "absolute";
+        logList.style.top = "0";
+        logList.style.left = "0";
+        logList.style.overflowY = "hidden";
+
+        var tempDiv = document.createElement("Div");
+        logDiv.appendChild(tempDiv);
+        tempDiv.style.width = "300px";
+        tempDiv.style.height = cc.canvas.height + "px";
+        tempDiv.style.opacity = "0.1";
+        tempDiv.style.background = "#fff";
+        tempDiv.style.border = "1px solid #dfdfdf";
+        tempDiv.style.borderRadius = "8px";
+    }
+    var addMessage = document.createElement("li");
+    //var now = new Date();
+    //addMessage.innerHTML = now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds() + " " + now.getMilliseconds() + " " + message;
+    addMessage.innerHTML = message;
+    if (logList.childNodes.length == 0) {
+        logList.appendChild(addMessage);
+    } else {
+        logList.insertBefore(addMessage, logList.childNodes[0]);
+    }
+};
+
+/**
  * Output Debug message.
  * @function
  * @param {String} message
  */
 cc.Log = function (message) {
-    console.log(message);
+    if (!cc.IS_SHOW_DEBUG_ON_PAGE) {
+        console.log(message);
+    } else {
+        cc._logToWebPage(message);
+    }
 };
 
 /**
