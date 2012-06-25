@@ -25,6 +25,16 @@
  ****************************************************************************/
 
 /**
+ * @class
+ * @extends cc.Class
+ */
+cc.ActionTweenDelegate = cc.Class.extend(/** @lends cc.ActionTweenDelegate */{
+     updateTweenAction:function(value, key){
+
+     }
+});
+
+/**
  * cc.ActionTween
  * cc.ActionTween is an action that lets you update any property of an object.
  *
@@ -74,7 +84,7 @@ cc.ActionTween = cc.ActionInterval.extend(/** @lends cc.ActionTween */{
      * @param {Number} dt
      */
     update:function (dt) {
-        this._target[this.key] = this.to - this.delta * (1 - dt);
+        this._target.updateTweenAction(this.to - this.delta * (1 - dt), this.key);
     },
     /**
      * @return {cc.ActionTween}
@@ -98,4 +108,4 @@ cc.ActionTween.create = function (duration, key, from, to) {
         return ret;
     }
     return null;
-}
+};
