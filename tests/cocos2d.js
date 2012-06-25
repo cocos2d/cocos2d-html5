@@ -122,6 +122,7 @@ if(!isDebugMode){
     cc.loadjs('cocos2d/actions/CCActionGrid.js');
     cc.loadjs('cocos2d/actions/CCActionTiledGrid.js');
     cc.loadjs('cocos2d/actions/CCActionGrid.js');
+    cc.loadjs('cocos2d/actions/CCActionCatmullRom.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCScene.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCLayer.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransition.js');
