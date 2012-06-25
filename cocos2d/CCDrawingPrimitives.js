@@ -167,10 +167,21 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
         cc.Log("DrawingPrimitive.drawCubicBezier() not implement!");
     },
 
+    /**
+     * draw a catmull rom line
+     * @param {cc.PointArray} points
+     * @param {Number} segments
+     */
     drawCatmullRom:function (points, segments) {
         cc.Log("DrawingPrimitive.drawCardinalSpline() not implement!");
     },
 
+    /**
+     * draw a cardinal spline path
+     * @param {cc.PointArray} config
+     * @param {Number} tension
+     * @param {Number} segments
+     */
     drawCardinalSpline:function (config, tension, segments) {
         cc.Log("DrawingPrimitive.drawCardinalSpline() not implement!");
     }
@@ -340,10 +351,23 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         this.drawPoly(vertices, segments + 1, false, false);
     },
 
+    /**
+     * draw a CatmullRom curve
+     * @override
+     * @param {cc.PointArray} points
+     * @param {Number} segments
+     */
     drawCatmullRom:function (points, segments) {
         this.drawCardinalSpline(points, 0.5, segments);
     },
 
+    /**
+     * draw a cardinal spline path
+     * @override
+     * @param {cc.PointArray} config
+     * @param {Number} tension
+     * @param {Number} segments
+     */
     drawCardinalSpline:function (config, tension, segments) {
         //lazy_init();
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
@@ -364,12 +388,8 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
             }
 
             // Interpolate
-            var pp0 = config.getControlPointAtIndex(p - 1);
-            var pp1 = config.getControlPointAtIndex(p + 0);
-            var pp2 = config.getControlPointAtIndex(p + 1);
-            var pp3 = config.getControlPointAtIndex(p + 2);
-
-            var newPos = cc.CardinalSplineAt(pp0, pp1, pp2, pp3, tension, lt);
+            var newPos = cc.CardinalSplineAt(config.getControlPointAtIndex(p - 1), config.getControlPointAtIndex(p + 0),
+                config.getControlPointAtIndex(p + 1), config.getControlPointAtIndex(p + 2), tension, lt);
             points.push(newPos);
         }
         this.drawPoly(points, segments + 1, false, false);

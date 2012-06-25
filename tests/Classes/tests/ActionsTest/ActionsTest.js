@@ -27,13 +27,6 @@
 
 var actionTests = [
     function () {
-        return new ActionCardinalSpline()
-    }, //doing
-    function () {
-        return new ActionCatmullRom()
-    }, //doing
-
-    function () {
         return new ActionManual()
     }, //ok
     function () {
@@ -57,6 +50,14 @@ var actionTests = [
     function () {
         return new ActionBezier()
     }, //Buggy?
+
+    function () {
+        return new ActionCardinalSpline()
+    }, //ok
+    function () {
+        return new ActionCatmullRom()
+    }, //ok
+
     function () {
         return new ActionBlink()
     }, //OK
@@ -1057,23 +1058,23 @@ var ActionFollow = ActionsDemo.extend({
 //------------------------------------------------------------------
 var ActionCardinalSpline = ActionsDemo.extend({
     _array:null,
-    ctor:function(){
+    ctor:function () {
         this._array = new cc.PointArray();
     },
 
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.centerSprites(2);
 
         var winSize = cc.Director.sharedDirector().getWinSize();
 
-        var array = cc.PointArray.create(20);
+        var array = cc.PointArray.create();
 
         array.addControlPoint(new cc.Point(0, 0));
-        array.addControlPoint(new cc.Point(winSize.width/2-30, 0));
-        array.addControlPoint(new cc.Point(winSize.width/2-30, winSize.height-80));
-        array.addControlPoint(new cc.Point(0, winSize.height-80));
+        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, 0));
+        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, winSize.height - 80));
+        array.addControlPoint(new cc.Point(0, winSize.height - 80));
         array.addControlPoint(new cc.Point(0, 0));
 
         //
@@ -1097,13 +1098,13 @@ var ActionCardinalSpline = ActionsDemo.extend({
         var reverse2 = action2.reverse();
         var seq2 = cc.Sequence.create(action2, reverse2);
 
-        this._kathia.setPosition(new cc.Point(winSize.width/2, 50));
+        this._kathia.setPosition(new cc.Point(winSize.width / 2, 50));
         this._kathia.runAction(seq2);
 
         this._array = array;
     },
 
-    draw:function(ctx){
+    draw:function (ctx) {
         this._super();
 
         var context = ctx || cc.renderContext;
@@ -1116,14 +1117,14 @@ var ActionCardinalSpline = ActionsDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         context.save();
-        context.translate(s.width/2, -50);
+        context.translate(s.width / 2, -50);
         cc.drawingUtil.drawCardinalSpline(this._array, 1, 100);
         context.restore();
     },
-    subtitle:function(){
+    subtitle:function () {
         return "Cardinal Spline paths. Testing different tensions for one array";
     },
-    title:function(){
+    title:function () {
         return "CardinalSplineBy / CardinalSplineAt";
     }
 });
@@ -1136,12 +1137,12 @@ var ActionCardinalSpline = ActionsDemo.extend({
 var ActionCatmullRom = ActionsDemo.extend({
     _array1:null,
     _array2:null,
-    ctor:function(){
+    ctor:function () {
         this._array1 = new cc.PointArray();
         this._array2 = new cc.PointArray();
     },
 
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this.centerSprites(2);
@@ -1155,7 +1156,7 @@ var ActionCatmullRom = ActionsDemo.extend({
         //
         this._tamara.setPosition(new cc.Point(50, 50));
 
-        var array = cc.PointArray.create(20);
+        var array = cc.PointArray.create();
         array.addControlPoint(new cc.Point(0, 0));
         array.addControlPoint(new cc.Point(80, 80));
         array.addControlPoint(new cc.Point(winSize.width - 80, 80));
@@ -1176,10 +1177,10 @@ var ActionCatmullRom = ActionsDemo.extend({
         // The startPosition is not important here, because it uses a "To" action.
         // The initial position will be the 1st point of the Catmull Rom path
         //
-        var array2 = cc.PointArray.create(20);
+        var array2 = cc.PointArray.create();
 
         array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
-        array2.addControlPoint(new cc.Point(winSize.width  -80, 30));
+        array2.addControlPoint(new cc.Point(winSize.width - 80, 30));
         array2.addControlPoint(new cc.Point(winSize.width - 80, winSize.height - 80));
         array2.addControlPoint(new cc.Point(winSize.width / 2, winSize.height - 80));
         array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
@@ -1194,22 +1195,22 @@ var ActionCatmullRom = ActionsDemo.extend({
         this._array1 = array;
         this._array2 = array2;
     },
-    draw:function(ctx){
+    draw:function (ctx) {
         this._super();
         var context = ctx || cc.renderContext;
 
         // move to 50,50 since the "by" path will start at 50,50
         context.save();
         context.translate(50, -50);
-        cc.drawingUtil.drawCatmullRom(this._array1,50);
+        cc.drawingUtil.drawCatmullRom(this._array1, 50);
         context.restore();
 
-        cc.drawingUtil.drawCatmullRom(this._array2,50);
+        cc.drawingUtil.drawCatmullRom(this._array2, 50);
     },
-    subtitle:function(){
+    subtitle:function () {
         return "Catmull Rom spline paths. Testing reverse too";
     },
-    title:function(){
+    title:function () {
         return "CatmullRomBy / CatmullRomTo";
     }
 });
