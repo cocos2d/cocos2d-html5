@@ -112,6 +112,11 @@ var s_bitmapFontChinese_fnt = "Resources/fonts/bitmapFontChinese.fnt";
 var s_arial16_fnt = "Resources/fonts/arial16.fnt";
 var s_futura48_fnt = "Resources/fonts/futura-48.fnt";
 
+var s_larabie_16_plist = "Resources/fonts/larabie-16.plist";
+var s_larabie_16_hd_plist = "Resources/fonts/larabie-16-hd.plist";
+var s_tuffy_bold_italic_charmap = "Resources/fonts/tuffy_bold_italic-charmap.plist";
+var s_tuffy_bold_italic_charmap_hd = "Resources/fonts/tuffy_bold_italic-charmap-hd.plist";
+
 var g_ressources = [
     //image ressources
     {type:"image", src:s_pathGrossini},
@@ -213,6 +218,11 @@ var g_ressources = [
     {type:"plist", src:s_grossini_aliasesPlist},
     {type:"plist", src:s_ghostsPlist},
     {type:"plist", src:s_grossini_familyPlist},
+
+    {type:"plist", src:s_larabie_16_plist},
+    {type:"plist", src:s_larabie_16_hd_plist},
+    {type:"plist", src:s_tuffy_bold_italic_charmap},
+    {type:"plist", src:s_tuffy_bold_italic_charmap_hd},
 
     //tmx ressources
     {type:"tmx", src:"Resources/TileMaps/orthogonal-test1.tmx"},
