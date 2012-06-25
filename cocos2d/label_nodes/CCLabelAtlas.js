@@ -32,7 +32,7 @@
 cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     /**
      * initializes the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
-     *  It accepts three groups of parameters:
+     *  It accepts two groups of parameters:
      * a) string, fntFile
      * b) label, textureFilename, width, height, startChar
      * @return {Boolean} returns true on success
@@ -165,7 +165,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 });
 
 /**
- *  It accepts three groups of parameters:
+ *  It accepts two groups of parameters:
  * a) string, fntFile
  * b) label, textureFilename, width, height, startChar
  * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
