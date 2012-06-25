@@ -80,7 +80,7 @@ cc.loadjs = function (filename) {
 var menuType = menuType || "DOM";
 var isDebugMode = true;
 
-if(!isDebugMode){
+if (!isDebugMode) {
     if (menuType == "DOM") {
         cc.loadjs('lib/Cocos2d-html5-dommenu-min.js');
     } else {
@@ -88,7 +88,7 @@ if(!isDebugMode){
     }
     cc.loadjs('box2d/box2d.js');
     cc.loadjs('tests/cocos2d-html5-testcases.js');
-}else{
+} else {
     cc.loadjs('cocos2d/platform/CCClass.js');
     cc.loadjs('cocos2d/platform/CCCommon.js');
     cc.loadjs('cocos2d/platform/platform.js');
@@ -122,6 +122,7 @@ if(!isDebugMode){
     cc.loadjs('cocos2d/actions/CCActionGrid.js');
     cc.loadjs('cocos2d/actions/CCActionTiledGrid.js');
     cc.loadjs('cocos2d/actions/CCActionGrid.js');
+    cc.loadjs('cocos2d/actions/CCActionCatmullRom.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCScene.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCLayer.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransition.js');
