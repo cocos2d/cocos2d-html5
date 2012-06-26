@@ -43,7 +43,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     ctor:function () {
         this._super();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this._isRelativeAnchorPoint = false;
+        this._ignoreAnchorPointForPosition = true;
         //this.initLayer();
         var director = cc.Director.sharedDirector();
         if (!director) {

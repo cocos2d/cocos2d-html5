@@ -62,7 +62,7 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
      */
     startWithTarget:function (target) {
         this._super(target);
-        target.setIsVisible(true);
+        target.setVisible(true);
     },
 
     /**
@@ -93,7 +93,7 @@ cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
      */
     startWithTarget:function (target) {
         this._super(target);
-        target.setIsVisible(false);
+        target.setVisible(false);
     },
 
     /**
@@ -124,7 +124,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
      */
     startWithTarget:function (target) {
         this._super();
-        target.setIsVisible(!target.getIsVisible());
+        target.setVisible(!target.isVisible());
     },
 
     /**

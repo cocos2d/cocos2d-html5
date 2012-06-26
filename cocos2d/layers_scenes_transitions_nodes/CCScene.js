@@ -42,7 +42,7 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
      * Constructor
      */
     ctor:function () {
-        this._isRelativeAnchorPoint = false;
+        this._ignoreAnchorPointForPosition = true;
         var director = cc.Director.sharedDirector();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.setContentSize(director.getWinSize());

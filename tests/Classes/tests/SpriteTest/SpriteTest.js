@@ -1072,7 +1072,7 @@ var Sprite6 = SpriteTestDemo.extend({
         // Don't use capacity=1 in your real game. It is expensive to resize the capacity
         var batch = cc.SpriteBatchNode.create(s_grossini_dance_atlas, 1);
         this.addChild(batch, 0, TAG_SPRITE_BATCH_NODE);
-        batch.setIsRelativeAnchorPoint(false);
+        batch.ignoreAnchorPointForPosition(true);
 
         var s = cc.Director.sharedDirector().getWinSize();
 
@@ -2785,7 +2785,7 @@ var SpriteChildrenVisibilityIssue665 = SpriteTestDemo.extend({
         sprite3.setPosition(cc.ccp(-20, 30));
 
         // test issue #665
-        sprite1.setIsVisible(false);
+        sprite1.setVisible(false);
 
         aParent.addChild(sprite1);
         sprite1.addChild(sprite2, -2);
@@ -2808,7 +2808,7 @@ var SpriteChildrenVisibilityIssue665 = SpriteTestDemo.extend({
         sprite3.setPosition(cc.ccp(-20, 30));
 
         // test issue #665
-        sprite1.setIsVisible(false);
+        sprite1.setVisible(false);
 
         aParent.addChild(sprite1);
         sprite1.addChild(sprite2, -2);

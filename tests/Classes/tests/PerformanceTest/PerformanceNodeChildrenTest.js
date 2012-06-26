@@ -226,7 +226,7 @@ var IterateSpriteSheetFastEnum = IterateSpriteSheet.extend({
 
         for (var i = 0; i < children.length; i++) {
             var sprite = children[i];
-            sprite.setIsVisible(false);
+            sprite.setVisible(false);
         }
 
         if (cc.ENABLE_PROFILERS) {
@@ -260,7 +260,7 @@ var IterateSpriteSheetCArray = IterateSpriteSheet.extend({
         }
         for (var i = 0; i < children.length; i++) {
             var sprite = children[i];
-            sprite.setIsVisible(false);
+            sprite.setVisible(false);
         }
 
         if (cc.ENABLE_PROFILERS) {
@@ -300,7 +300,7 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
                 var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
                 this._batchNode.addChild(sprite);
                 sprite.setPosition(cc.ccp(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height));
-                sprite.setIsVisible(false);
+                sprite.setVisible(false);
             }
         }
         // decrease nodes
