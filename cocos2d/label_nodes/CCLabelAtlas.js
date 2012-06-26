@@ -32,17 +32,34 @@
 cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     /**
      * initializes the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
-     * @param {String} label
-     * @param {String} charMapFile
-     * @param {Number} itemWidth
-     * @param {Number} itemHeight
-     * @param {String} startCharMap
+     *  It accepts two groups of parameters:
+     * a) string, fntFile
+     * b) label, textureFilename, width, height, startChar
      * @return {Boolean} returns true on success
      */
-    initWithString:function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
-        cc.Assert(label != null, "");
-        if (this.initWithTileFile(charMapFile, itemWidth, itemHeight, label.length)) {
-            this._mapStartChar = startCharMap;
+    initWithString:function (arg) {
+        var label, textureFilename, width, height, startChar;
+        if (arg.length == 2) {
+            var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(arg[1]);
+            cc.Assert(parseInt(dict["version"]) == 1, "Unsupported version. Upgrade cocos2d version");
+
+            label = arg[0].toString();
+            textureFilename = cc.FileUtils.fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
+            width = parseInt(dict["itemWidth"]) / cc.CONTENT_SCALE_FACTOR();
+            height = parseInt(dict["itemHeight"]) / cc.CONTENT_SCALE_FACTOR();
+            startChar = String.fromCharCode(parseInt(dict["firstChar"]));
+        }
+        else {
+            label = arg[0].toString();
+            textureFilename = arg[1];
+            width = arg[2];
+            height = arg[3];
+            startChar = arg[4];
+            cc.Assert(label != null, "Label must be non-nil");
+        }
+
+        if (this.initWithTileFile(textureFilename, width, height, label.length)) {
+            this._mapStartChar = startChar;
             this.setString(label);
             return true;
         }
@@ -100,9 +117,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var len = label.length;
         this._textureAtlas.resizeCapacity(len);
 
-        var s = new cc.Size();
-        s.width = len * this._itemWidth;
-        s.height = this._itemHeight;
+        var s = new cc.SizeMake(len * this._itemWidth, this._itemHeight);
         this.setContentSizeInPixels(s);
 
         if (this._children) {
@@ -118,7 +133,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     /**
      * @param {cc.Color3B} color3
      */
-    setColor:function(color3){
+    setColor:function (color3) {
         this._super(color3);
         this.updateAtlasValues();
     },
@@ -143,10 +158,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
     },
 
-    convertToLabelProtocol:function () {
-        return this;
-    },
-
     // string to render
     _string:null,
     // the first char in the charmap
@@ -154,21 +165,21 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 });
 
 /**
- * creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the
- * starting char of the atlas
- * @param {String} label Text to display
- * @param {String} charMapFile the character map file
- * @param {Number} itemWidth the width of individual letter
- * @param {Number} itemHeight the height of individual letter
- * @param {String} startCharMap starting character on the character map file
+ *  It accepts two groups of parameters:
+ * a) string, fntFile
+ * b) label, textureFilename, width, height, startChar
  * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
  * @example
  * //Example
+ * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
+ *
+ * //creates the cc.LabelAtlas with a string, a fnt file
+ * var myLabel = cc.LabelAtlas.create('Text to display', ''CharMapFile.fnt);
  */
-cc.LabelAtlas.create = function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
+cc.LabelAtlas.create = function (/* Multi arguments */) {
     var ret = new cc.LabelAtlas();
-    if (ret && ret.initWithString(label, charMapFile, itemWidth, itemHeight, startCharMap)) {
+    if (ret && ret.initWithString(arguments)) {
         return ret;
     }
     return null;
