@@ -165,7 +165,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _isTransformGLDirty:null,
     _transform:null,
     _inverse:null,
-    _transformGL:null,
     //since 2.0 api
     _reorderChildDirty:false,
     _shaderProgram:null,
@@ -180,7 +179,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     ctor:function () {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._isTransformGLDirty = true;
-            this._transformGL = 0.0;
         }
         this._anchorPoint = new cc.Point(0, 0);
         this._anchorPointInPoints = new cc.Point(0, 0);
@@ -333,12 +331,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._zOrder = z
     },
 
+    setZOrder:function(z){
+        this._setZOrder(z);
+        if (this._parent) {
+            this._parent.reorderChild(this, z);
+        }
+    },
+
     /**
      * ertexZ getter
      * @return {Number}
      */
     getVertexZ:function () {
-        return this._vertexZ / cc.CONTENT_SCALE_FACTOR();
+        return this._vertexZ ;
     },
 
     /**
@@ -346,7 +351,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var
      */
     setVertexZ:function (Var) {
-        this._vertexZ = Var * cc.CONTENT_SCALE_FACTOR();
+        this._vertexZ = Var ;
     },
 
     /**
@@ -633,7 +638,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * isRunning getter
      * @return {Boolean}
      */
-    getIsRunning:function () {
+    isRunning:function () {
         return this._isRunning;
     },
 
@@ -1061,8 +1066,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
-        cc.ArrayRemoveObject(this._children, child);
-        this._insertChild(child, zOrder);
+        child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
+        child._setZOrder(zOrder);
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -1130,7 +1135,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         if (this._grid && this._grid.isActive()) {
             this._grid.beforeDraw();
-            this.transformAncestors();
         }
 
         this.transform(context);
@@ -1228,75 +1232,30 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             }
         } else {
             //Todo WebGL implement need fixed
-            if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-                // BEGIN alternative -- using cached transform
-                //
-                if (this._isTransformGLDirty) {
-                    var t = this.nodeToParentTransform();
-                    //cc.CGAffineToGL(t, this._transformGL);
-                    this._isTransformGLDirty = false;
-                }
-                //glMultMatrixf(this._transformGL);
-                if (this._vertexZ) {
-                    //glTranslatef(0, 0, this._vertexZ);
-                }
+            var transfrom4x4;
 
-                // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
-                if (this._camera && !(this._grid && this._grid.isActive())) {
-                    var translate = (this._anchorPointInPoints.x != 0.0 || this._anchorPointInPoints.y != 0.0);
+            // Convert 3x3 into 4x4 matrix
+            var tmpAffine = this.nodeToParentTransform();
+            //CGAffineToGL(&tmpAffine, transfrom4x4.mat);
 
-                    if (translate) {
-                        //cc.glTranslate(RENDER_IN_SUBPIXEL(this._anchorPointInPoints.x), RENDER_IN_SUBPIXEL(this._anchorPointInPoints.y), 0);
-                    }
-                    this._camera.locate();
-                    if (translate) {
-                        //cc.glTranslate(RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.x), RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.y), 0);
-                    }
-                }
-                // END alternative
-            } else {
-                // BEGIN original implementation
-                //
-                // translate
-                if (!this._ignoreAnchorPointForPosition && (this._anchorPointInPoints.x != 0 || this._anchorPointInPoints.y != 0 )) {
-                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.x), RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.y), 0);
-                }
-                if (this._anchorPointInPoints.x != 0 || this._anchorPointInPoints.y != 0) {
-                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._position.x + this._anchorPointInPoints.x), RENDER_IN_SUBPIXEL(this._position.y + this._anchorPointInPoints.y), this._vertexZ);
-                }
-                else if (this._position.x != 0 || this._position.y != 0 || this._vertexZ != 0) {
-                    //cc.glTranslatef(RENDER_IN_SUBPIXEL(this._position.x), RENDER_IN_SUBPIXEL(this._position.y), this._vertexZ);
-                }
-                // rotate
-                if (this._rotation != 0.0) {
-                    //glRotatef(-this._rotation, 0.0, 0.0, 1.0);
-                }
+            // Update Z vertex manually
+            //transfrom4x4.mat[14] = m_fVertexZ;
 
-                // skew
-                //if ((skewX_ != 0.0) || (skewY_ != 0.0)) {
-                //var skewMatrix = new cc.AffineTransform();
-                //skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(skewY_)), Math.tan(cc.DEGREES_TO_RADIANS(skewX_)), 1.0, 0.0, 0.0);
-                //TODO
-                // glMatrix = new GLfloat();
-                //cc.AffineToGL(skewMatrix, glMatrix);
-                //TODO
-                // glMultMatrixf(glMatrix);
-                // }
+            //kmGLMultMatrix( &transfrom4x4 );
 
-                // scale
-                if (this._scaleX != 1.0 || this._scaleY != 1.0) {
-                    // glScalef(this._scaleX, this._scaleY, 1.0);
-                }
-                if (this._camera && !(this._grid && this._grid.isActive()))
-                    this._camera.locate();
 
-                // restore and re-position point
-                if (this._anchorPointInPoints.x != 0.0 || this._anchorPointInPoints.y != 0.0) {
-                    // glTranslatef(RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.x), RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.y), 0);
-                }
-                //
-                // END original implementation
-            }
+            // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
+            /*if ( m_pCamera != NULL && !(m_pGrid != NULL && m_pGrid->isActive()) ) {
+                bool translate = (m_tAnchorPointInPoints.x != 0.0f || m_tAnchorPointInPoints.y != 0.0f);
+
+                if( translate )
+                    kmGLTranslatef(RENDER_IN_SUBPIXEL(m_tAnchorPointInPoints.x), RENDER_IN_SUBPIXEL(m_tAnchorPointInPoints.y), 0 );
+
+                m_pCamera->locate();
+
+                if( translate )
+                    kmGLTranslatef(RENDER_IN_SUBPIXEL(-m_tAnchorPointInPoints.x), RENDER_IN_SUBPIXEL(-m_tAnchorPointInPoints.y), 0 );
+            }*/
         }
     },
 
