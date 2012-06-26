@@ -103,7 +103,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         if (this._super()) {
             this.setIsTouchEnabled(true);
             var s = cc.Director.sharedDirector().getWinSize();
-            this._isRelativeAnchorPoint = false;
+
             this.setAnchorPoint(cc.ccp(0.5, 0.5));
             this.setContentSize(s);
             var r = new cc.Rect();
@@ -396,7 +396,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
 
         for (var c = this._parent; c != null; c = c.getParent()) {
-            if (!c.getIsVisible()) {
+            if (!c.isVisible()) {
                 return false;
             }
         }
@@ -473,7 +473,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         //console.log("touchLocation",touchLocation)
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i].getIsVisible() && this._children[i].getIsEnabled()) {
+                if (this._children[i].isVisible() && this._children[i].getIsEnabled()) {
                     var local = this._children[i].convertToNodeSpace(touchLocation);
                     var r = this._children[i].rect();
                     r.origin = cc.PointZero();

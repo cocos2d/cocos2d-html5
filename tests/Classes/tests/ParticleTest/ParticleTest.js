@@ -178,9 +178,9 @@ var ParticleDemo = cc.LayerColor.extend({
         this._freeMovementButton = cc.MenuItemSprite.create(freeBtnNormal, freeBtnSelected, freeBtnDisabled, this,
             function () {
                 selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_RELATIVE);
-                selfPoint._relativeMovementButton.setIsVisible(true);
-                selfPoint._freeMovementButton.setIsVisible(false);
-                selfPoint._groupMovementButton.setIsVisible(false);
+                selfPoint._relativeMovementButton.setVisible(true);
+                selfPoint._freeMovementButton.setVisible(false);
+                selfPoint._groupMovementButton.setVisible(false);
             });
         this._freeMovementButton.setPosition(new cc.Point(10, 150));
         this._freeMovementButton.setAnchorPoint(cc.PointMake(0, 0));
@@ -188,22 +188,22 @@ var ParticleDemo = cc.LayerColor.extend({
         this._relativeMovementButton = cc.MenuItemSprite.create(relativeBtnNormal, relativeBtnSelected, relativeBtnDisabled, this,
             function () {
                 selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_GROUPED);
-                selfPoint._relativeMovementButton.setIsVisible(false);
-                selfPoint._freeMovementButton.setIsVisible(false);
-                selfPoint._groupMovementButton.setIsVisible(true);
+                selfPoint._relativeMovementButton.setVisible(false);
+                selfPoint._freeMovementButton.setVisible(false);
+                selfPoint._groupMovementButton.setVisible(true);
             });
-        this._relativeMovementButton.setIsVisible(false);
+        this._relativeMovementButton.setVisible(false);
         this._relativeMovementButton.setPosition(new cc.Point(10, 150));
         this._relativeMovementButton.setAnchorPoint(cc.PointMake(0, 0));
 
         this._groupMovementButton = cc.MenuItemSprite.create(groupBtnNormal, groupBtnSelected, groupBtnDisabled, this,
             function () {
                 selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_FREE);
-                selfPoint._relativeMovementButton.setIsVisible(false);
-                selfPoint._freeMovementButton.setIsVisible(true);
-                selfPoint._groupMovementButton.setIsVisible(false);
+                selfPoint._relativeMovementButton.setVisible(false);
+                selfPoint._freeMovementButton.setVisible(true);
+                selfPoint._groupMovementButton.setVisible(false);
             });
-        this._groupMovementButton.setIsVisible(false);
+        this._groupMovementButton.setVisible(false);
         this._groupMovementButton.setPosition(new cc.Point(10, 150));
         this._groupMovementButton.setAnchorPoint(cc.PointMake(0, 0));
 
@@ -214,8 +214,8 @@ var ParticleDemo = cc.LayerColor.extend({
         this._shapeModeButton = cc.MenuItemSprite.create(spriteNormal, spriteSelected, spriteDisabled, this,
             function () {
                 selfPoint._emitter.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
-                selfPoint._textureModeButton.setIsVisible(true);
-                selfPoint._shapeModeButton.setIsVisible(false);
+                selfPoint._textureModeButton.setVisible(true);
+                selfPoint._shapeModeButton.setVisible(false);
             });
         this._shapeModeButton.setPosition(new cc.Point(10, 100));
         this._shapeModeButton.setAnchorPoint(cc.PointMake(0, 0));
@@ -227,10 +227,10 @@ var ParticleDemo = cc.LayerColor.extend({
         this._textureModeButton = cc.MenuItemSprite.create(spriteNormal_t, spriteSelected_t, spriteDisabled_t, this,
             function () {
                 selfPoint._emitter.setDrawMode(cc.PARTICLE_SHAPE_MODE);
-                selfPoint._textureModeButton.setIsVisible(false);
-                selfPoint._shapeModeButton.setIsVisible(true);
+                selfPoint._textureModeButton.setVisible(false);
+                selfPoint._shapeModeButton.setVisible(true);
             });
-        this._textureModeButton.setIsVisible(false);
+        this._textureModeButton.setVisible(false);
         this._textureModeButton.setPosition(new cc.Point(10, 100));
         this._textureModeButton.setAnchorPoint(cc.PointMake(0, 0));
 

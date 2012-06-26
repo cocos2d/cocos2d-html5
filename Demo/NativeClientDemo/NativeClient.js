@@ -199,7 +199,7 @@ var Helloworld = cc.Layer.extend({
 
         this.sprite = cc.Sprite.create("Resources/HelloWorld.png");
         this.sprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
-        this.sprite.setIsVisible(true);
+        this.sprite.setVisible(true);
         this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.sprite.setScale(0.5);
         //this.sprite.setRotation(180);

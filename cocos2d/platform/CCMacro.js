@@ -104,6 +104,12 @@ cc.RADIANS_TO_DEGREES = function (angle) {
 };
 
 /**
+ * @constant
+ * @type Number
+ */
+cc.REPEAT_FOREVER = Number.MAX_VALUE -1;
+
+/**
  * default gl blend src function. Compatible with premultiplied alpha images.
  * @constant
  * @type Number
