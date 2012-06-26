@@ -554,7 +554,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * isVisible getter
      * @return {Boolean}
      */
-    IsVisible:function () {
+    isVisible:function () {
         return this._isVisible;
     },
 

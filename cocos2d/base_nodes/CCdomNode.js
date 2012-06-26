@@ -439,7 +439,8 @@ cc.domNode = cc.Class.extend({
             this.hide();
         }
     },
-    IsVisible:function () {
+
+    isVisible:function () {
         if (this.dom.style.display != "block") {
             return false;
         } else {
