@@ -138,7 +138,7 @@ cc.domNodeMethods = {
                 p.dom.className += type;
             }
             p.dom.appendChild(this.dom);
-            if (p.getIsRunning()) {
+            if (p.isRunning()) {
                 p.show();
             }
             /*            if(!p.isIgnoreAnchorPointForPosition())
@@ -157,7 +157,7 @@ cc.domNodeMethods = {
         //we dont know if the parent is the top most level, as it could be not run yet.
         //but if a domnode is added after the scene ran, then, getisRunning will return true, and so in this case,
         //if parent have no more parent, but it is running, we add the parent to the domContainer
-        else if (p.getIsRunning) {
+        else if (p.isRunning()) {
             if (!p.dom) {
                 p.initDom();
                 var type = " CCNode";
@@ -272,7 +272,7 @@ cc.domNode = cc.Class.extend({
     getContentSize:function () {
         return new cc.Size(this._contentSize.width, this._contentSize.height);
     },
-    getIsRunning:function () {
+    isRunning:function () {
         return this._isRunning;
     },
 
