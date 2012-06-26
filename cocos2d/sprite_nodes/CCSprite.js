@@ -700,8 +700,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
          }
          */
 
-        this._offsetPositionInPixels.x = relativeOffsetInPixels.x + (this._contentSizeInPixels.width - this._rectInPixels.size.width) / 2;
-        this._offsetPositionInPixels.y = relativeOffsetInPixels.y + (this._contentSizeInPixels.height - this._rectInPixels.size.height) / 2;
+        this._offsetPositionInPixels.x = relativeOffsetInPixels.x + (this._contentSize.width - this._rectInPixels.size.width) / 2;
+        this._offsetPositionInPixels.y = relativeOffsetInPixels.y + (this._contentSize.height - this._rectInPixels.size.height) / 2;
 
         // rendering using batch node
         if (this._usesBatchNode) {
@@ -830,7 +830,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             var s = Math.sin(radians);
 
             matrix = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX, -s * this._scaleY, c * this._scaleY,
-                this._positionInPixels.x, this._positionInPixels.y);
+                this._position.x, this._position.y);
             if (this._skewX || this._skewY) {
                 var skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)), Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), 1.0, 0.0, 0.0);
                 matrix = cc.AffineTransformConcat(skewMatrix, matrix);
@@ -938,7 +938,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @private
      */
     _getTransformValues:function (tv) {
-        tv.pos = this._positionInPixels;
+        tv.pos = this._position;
         tv.scale.x = this._scaleX;
         tv.scale.y = this._scaleY;
         tv.rotation = this._rotation;
@@ -1307,8 +1307,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} relative
      * @override
      */
-    setIsRelativeAnchorPoint:function (relative) {
-        cc.Assert(!this._usesBatchNode, "");
+    ignoreAnchorPointForPosition:function (relative) {
+        cc.Assert(!this._usesBatchNode, "ignoreAnchorPointForPosition is invalid in CCSprite");
         this._super(relative);
     },
 
@@ -1317,7 +1317,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Boolean} visible
      * @override
      */
-    setIsVisible:function (visible) {
+    setVisible:function (visible) {
         this._super(visible);
         this.SET_DIRTY_RECURSIVELY();
     },
@@ -1332,7 +1332,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._flipX = flipX;
-            this.setTextureRectInPixels(this._rectInPixels, this._rectRotated, this._contentSizeInPixels);
+            this.setTextureRectInPixels(this._rectInPixels, this._rectRotated, this._contentSize);
 
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -1350,7 +1350,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._flipY = flipY;
-            //this.setTextureRectInPixels(this._rectInPixels, this._rectRotated, this._contentSizeInPixels);
+            //this.setTextureRectInPixels(this._rectInPixels, this._rectRotated, this._contentSize);
 
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -1568,13 +1568,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 this._rectInPixels,
                 this._rectRotated,
                 this._unflippedOffsetPositionFromCenter,
-                this._contentSizeInPixels);
+                this._contentSize);
         } else {
             return cc.SpriteFrame.create(this._texture,
                 this._rectInPixels,
                 this._rectRotated,
                 this._unflippedOffsetPositionFromCenter,
-                this._contentSizeInPixels);
+                this._contentSize);
         }
     },
 

@@ -722,7 +722,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
              }
              for (var index = 0; index < this._children.length; index++) {
              var sp = this._children[index];
-             if (sp.getIsVisible()) {
+             if (sp.IsVisible()) {
              cc.saveContext();
              cc.renderContext.translate(sp.getPositionX() - pAp.x, -(sp.getPositionY() - pAp.y ));
 

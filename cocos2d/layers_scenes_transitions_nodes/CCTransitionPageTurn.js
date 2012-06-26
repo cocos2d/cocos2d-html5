@@ -98,7 +98,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
                 null));
         } else {
             // to prevent initial flicker
-            this._inScene.setIsVisible(false);
+            this._inScene.setVisible(false);
             this._inScene.runAction(cc.Sequence.create(cc.Show.create(),
                 action,
                 cc.CallFunc.create(this, cc.TransitionScene.finish),

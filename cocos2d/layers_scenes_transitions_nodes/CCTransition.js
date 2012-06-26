@@ -93,7 +93,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         // enable events while transitions
         cc.TouchDispatcher.sharedDispatcher().setDispatchEvents(true);
         // issue #267
-        this._outScene.setIsVisible(true);
+        this._outScene.setVisible(true);
     },
 
     //protected
@@ -180,13 +180,13 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      */
     finish:function () {
         // clean up
-        this._inScene.setIsVisible(true);
+        this._inScene.setVisible(true);
         this._inScene.setPosition(cc.ccp(0, 0));
         this._inScene.setScale(1.0);
         this._inScene.setRotation(0.0);
         this._inScene.getCamera().restore();
 
-        this._outScene.setIsVisible(false);
+        this._outScene.setVisible(false);
         this._outScene.setPosition(cc.ccp(0, 0));
         this._outScene.setScale(1.0);
         this._outScene.setRotation(0.0);
@@ -200,8 +200,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * set hide the out scene and show in scene
      */
     hideOutShowIn:function () {
-        this._inScene.setIsVisible(true);
-        this._outScene.setIsVisible(false);
+        this._inScene.setVisible(true);
+        this._outScene.setVisible(false);
     }
 });
 /**
@@ -825,7 +825,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -904,7 +904,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -981,7 +981,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1059,7 +1059,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1147,7 +1147,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1237,7 +1237,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1333,7 +1333,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
         this._super();
 
         var l = cc.LayerColor.create(this._color);
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         this.addChild(l, 2, cc.SCENE_FADE);
         var f = this.getChildByTag(cc.SCENE_FADE);
@@ -1572,7 +1572,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      */
     onEnter:function () {
         this._super();
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var split = this.action();
         //TODO

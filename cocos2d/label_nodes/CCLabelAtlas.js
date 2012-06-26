@@ -83,7 +83,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     // reusing fonts
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
-                    fontChar.setIsVisible(true);
+                    fontChar.setVisible(true);
                     fontChar.setOpacity(this._opacity);
                 }
             }
@@ -109,7 +109,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
-                    node.setIsVisible(false);
+                    node.setVisible(false);
                 }
             }
         }

@@ -73,7 +73,7 @@ var Helloworld = cc.Layer.extend({
         // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("Resources/HelloWorld.png");
         this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        this.sprite.setIsVisible(true);
+        this.sprite.setVisible(true);
         this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.sprite.setScale(0.5);
         this.sprite.setRotation(180);
