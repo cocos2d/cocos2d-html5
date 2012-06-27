@@ -536,3 +536,24 @@ cc.TEXT_ALIGNMENT_CENTER = 1;
  * @type Number
  */
 cc.TEXT_ALIGNMENT_RIGHT = 2;
+
+/**
+ * text alignment : top
+ * @constant
+ * @type Number
+ */
+cc.VERTICAL_TEXT_ALIGNMENT_TOP = 0;
+
+/**
+ * text alignment : center
+ * @constant
+ * @type Number
+ */
+cc.VERTICAL_TEXT_ALIGNMENT_CENTER = 1;
+
+/**
+ * text alignment : bottom
+ * @constant
+ * @type Number
+ */
+cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM = 2;

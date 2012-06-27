@@ -40,6 +40,16 @@ var TAG_LABEL_SPRITE17 = 666;
 var TAG_LABEL_SPRITE18 = 667;
 
 var AtlasTests = [
+    //function(){ return new Atlas1();},
+    function () {
+        return new LabelTTFTest();
+    }, //ok
+    function () {
+        return new LabelTTFMultiline();
+    }, //ok
+    function () {
+        return new LabelTTFChinese();
+    }, //ok
     function () {
         return new LabelAtlasTest();
     }, //ok
@@ -79,16 +89,7 @@ var AtlasTests = [
     function () {
         return new LabelGlyphDesigner();
     },
-    //function(){ return new Atlas1();},
-    function () {
-        return new LabelTTFTest();
-    }, //ok
-    function () {
-        return new LabelTTFMultiline();
-    }, //ok
-    function () {
-        return new LabelTTFChinese();
-    },//ok
+
     function () {
         return new LabelBMFontChinese();
     }
@@ -779,27 +780,114 @@ var LabelGlyphDesigner = AtlasDemo.extend({
 //
 //------------------------------------------------------------------
 var LabelTTFTest = AtlasDemo.extend({
+    _label:null,
+    _horizAlign:null,
+    _vertAlign:null,
     ctor:function () {
+        var blockSize = cc.SizeMake(200, 160);
         var s = cc.Director.sharedDirector().getWinSize();
 
-        // cc.LabelBMFont
-        var left = cc.LabelTTF.create("align left", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_LEFT, "Marker Felt", 32);
-        var center = cc.LabelTTF.create("align center", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_CENTER, "Marker Felt", 32);
-        var right = cc.LabelTTF.create("align right", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_RIGHT, "Marker Felt", 32);
+        var colorLayer = cc.LayerColor.create(cc.ccc4(100, 100, 100, 255), blockSize.width, blockSize.height);
+        colorLayer.setAnchorPoint(cc.ccp(0, 0));
+        colorLayer.setPosition(cc.ccp((s.width - blockSize.width) / 2, (s.height - blockSize.height) / 2));
 
-        left.setPosition(cc.ccp(s.width / 2, 200));
-        center.setPosition(cc.ccp(s.width / 2, 150));
-        right.setPosition(cc.ccp(s.width / 2, 100));
+        this.addChild(colorLayer);
 
-        this.addChild(left);
-        this.addChild(center);
-        this.addChild(right);
+        cc.MenuItemFont.setFontSize(30);
+        var menu = cc.Menu.create(
+            cc.MenuItemFont.create("Left", this, this.setAlignmentLeft),
+            cc.MenuItemFont.create("Center", this, this.setAlignmentCenter),
+            cc.MenuItemFont.create("Right", this, this.setAlignmentRight));
+        menu.alignItemsVerticallyWithPadding(4);
+        menu.setPosition(cc.ccp(50, s.height / 2 - 20));
+        this.addChild(menu);
+
+        menu = cc.Menu.create(
+            cc.MenuItemFont.create("Top", this, this.setAlignmentTop),
+            cc.MenuItemFont.create("Middle", this, this.setAlignmentMiddle),
+            cc.MenuItemFont.create("Bottom", this, this.setAlignmentBottom));
+        menu.alignItemsVerticallyWithPadding(4);
+        menu.setPosition(cc.ccp(s.width - 50, s.height / 2 - 20));
+        this.addChild(menu);
+
+        this._label = null;
+        this._horizAlign = cc.TEXT_ALIGNMENT_LEFT;
+        this._vertAlign = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+
+        this.updateAlignment();
+    },
+    updateAlignment:function () {
+        var blockSize = cc.SizeMake(200, 160);
+        var s = cc.Director.sharedDirector().getWinSize();
+
+        if (this._label) {
+            this._label.removeFromParentAndCleanup(true);
+        }
+
+        this._label = cc.LabelTTF.create(this.getCurrentAlignment(), blockSize, this._horizAlign, this._vertAlign, "Arial", 22);
+
+        this._label.setAnchorPoint(cc.ccp(0, 0));
+        this._label.setPosition(cc.ccp((s.width - blockSize.width) / 2, (s.height - blockSize.height) / 2));
+
+        this.addChild(this._label);
+    },
+    setAlignmentLeft:function (sender) {
+        this._horizAlign = cc.TEXT_ALIGNMENT_LEFT;
+        this.updateAlignment();
+    },
+    setAlignmentCenter:function (sender) {
+        this._horizAlign = cc.TEXT_ALIGNMENT_CENTER;
+        this.updateAlignment();
+    },
+    setAlignmentRight:function (sender) {
+        this._horizAlign = cc.TEXT_ALIGNMENT_RIGHT;
+        this.updateAlignment();
+    },
+    setAlignmentTop:function (sender) {
+        this._vertAlign = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+        this.updateAlignment();
+    },
+    setAlignmentMiddle:function (sender) {
+        this._vertAlign = cc.VERTICAL_TEXT_ALIGNMENT_CENTER;
+        this.updateAlignment();
+    },
+    setAlignmentBottom:function (sender) {
+        this._vertAlign = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
+        this.updateAlignment();
+    },
+    getCurrentAlignment:function () {
+        var vertical = null;
+        var horizontal = null;
+        switch (this._vertAlign) {
+            case cc.VERTICAL_TEXT_ALIGNMENT_TOP:
+                vertical = "Top";
+                break;
+            case cc.VERTICAL_TEXT_ALIGNMENT_CENTER:
+                vertical = "Middle";
+                break;
+            case cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM:
+                vertical = "Bottom";
+                break;
+        }
+        switch (this._horizAlign) {
+            case cc.TEXT_ALIGNMENT_LEFT:
+                horizontal = "Left";
+                break;
+            case cc.TEXT_ALIGNMENT_CENTER:
+                horizontal = "Center";
+                break;
+            case cc.TEXT_ALIGNMENT_RIGHT:
+                horizontal = "Right";
+                break;
+        }
+
+        return "Alignment hello world angela baby" + vertical + " " + horizontal;
     },
     title:function () {
         return "Testing cc.LabelTTF";
     },
     subtitle:function () {
-        return "You should see 3 labels aligned left, center and right";
+        return "Select the buttons on the sides to change alignment";
     }
 });
 
@@ -825,7 +913,7 @@ var LabelTTFMultiline = AtlasDemo.extend({
 var LabelTTFChinese = AtlasDemo.extend({
     ctor:function () {
         var size = cc.Director.sharedDirector().getWinSize();
-        var lable = cc.LabelTTF.create("中国", "Marker Felt", 30);
+        var lable = cc.LabelTTF.create("中国", "Microsoft Yahei", 30);
         lable.setPosition(cc.ccp(size.width / 2, size.height / 2));
         this.addChild(lable);
     },
@@ -842,6 +930,6 @@ var LabelBMFontChinese = AtlasDemo.extend({
         this.addChild(lable);
     },
     title:function () {
-        return "Testing CCLabelBMFont with Chinese character";
+        return "Testing cc.LabelBMFont with Chinese character";
     }
 });

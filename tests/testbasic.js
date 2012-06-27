@@ -143,6 +143,12 @@ var TestController = cc.Layer.extend({
 });
 
 var testNames = [
+    {
+        title:"LabelTest",
+        testScene:function () {
+            return new LabelTestScene();
+        }
+    },
     //"Accelerometer",
     {
         title:"ActionManagerTest",
@@ -225,12 +231,7 @@ var testNames = [
         }
     },
     //"KeypadTest",
-    {
-        title:"LabelTest",
-        testScene:function () {
-            return new LabelTestScene();
-        }
-    },
+
     {
         title:"LayerTest",
         testScene:function () {
