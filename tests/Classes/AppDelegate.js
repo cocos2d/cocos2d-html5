@@ -55,7 +55,7 @@ cc.AppDelegate = cc.Application.extend({
 //     director->enableRetinaDisplay(true);
 
         // turn on display FPS
-        director.setDisplayFPS(true);
+        director.setDisplayStats(true);
 
         // director->setDeviceOrientation(CCDEVICE_ORIENTATION_LANDSCAPE_LEFT);
 

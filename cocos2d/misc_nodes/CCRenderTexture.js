@@ -226,7 +226,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var texSize = this._texture.getContentSizeInPixels();
 
         // Calculate the adjustment ratios based on the old and new projections
-        var size = cc.Director.sharedDirector().getDisplaySizeInPixels();
+        var size = cc.Director.sharedDirector().getWinSizeInPixels();
         var widthRatio = size.width / texSize.width;
         var heightRatio = size.height / texSize.height;
 
@@ -282,7 +282,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         ccglBindFramebuffer(cc.GL_FRAMEBUFFER, this._oldFBO);
         // Restore the original matrix and viewport
         glPopMatrix();
-        var size = cc.Director.sharedDirector().getDisplaySizeInPixels();
+        var size = cc.Director.sharedDirector().getWinSizeInPixels();
         //	glViewport(0, 0, (GLsizei)size.width, (GLsizei)size.height);
         cc.Director.sharedDirector().getOpenGLView().setViewPortInPoints(0, 0, size.width, size.height);
 
