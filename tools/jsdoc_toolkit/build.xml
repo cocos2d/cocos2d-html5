@@ -26,10 +26,10 @@
             <source file="${src.dir}/platform/base64.js"/>
             <source file="${src.dir}/platform/gzip.js"/>
             <source file="${src.dir}/platform/CCMacro.js"/>
-            <source file="${src.dir}/platform/CCConfig.js"/>
             <source file="${src.dir}/platform/CCFileUtils.js"/>
             <source file="${src.dir}/platform/CCTypes.js"/>
             <source file="${src.dir}/cocoa/CCGeometry.js"/>
+            <source file="${src.dir}/platform/CCConfig.js"/>
             <source file="${src.dir}/cocoa/CCSet.js"/>
             <source file="${src.dir}/cocoa/CCNS.js"/>
             <source file="${src.dir}/cocoa/CCAffineTransform.js"/>

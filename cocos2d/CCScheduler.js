@@ -25,6 +25,20 @@
  ****************************************************************************/
 
 /**
+ * Priority level reserved for system services.
+ * @constant
+ * @type Number
+ */
+cc.PRIORITY_SYSTEM = (-2147483647 - 1);
+
+/**
+ * Minimum priority level for user scheduling.
+ * @constant
+ * @type Number
+ */
+cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
+
+/**
  * Removes object at specified index and pushes back all subsequent objects.Behaviour undefined if index outside [0, num-1].
  * @function
  * @param {Array} arr Source Array
