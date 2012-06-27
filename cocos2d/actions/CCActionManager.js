@@ -82,7 +82,7 @@ cc.ActionManager = cc.Class.extend({
      * @return {Boolean}
      */
     init:function () {
-        cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, 0, false);
+        cc.Director.sharedDirector().getScheduler().scheduleUpdateForTarget(this, 0, false);
         return true;
     },
 
@@ -266,7 +266,7 @@ cc.ActionManager = cc.Class.extend({
      * because it uses this, so it can not be static
      */
     purgeSharedManager:function () {
-        cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
+        cc.Director.sharedDirector().getScheduler().unscheduleUpdateForTarget(this);
     },
 
     //protected
