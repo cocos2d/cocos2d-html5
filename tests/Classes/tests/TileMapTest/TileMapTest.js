@@ -348,11 +348,11 @@ var TMXOrthoTest2 = TileDemo.extend({
     },
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_3D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_2D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
     }
 });
 

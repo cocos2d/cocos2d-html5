@@ -61,6 +61,13 @@ cc.ENGINE_VERSION = "Cocos2d-html5-v0.5.0-alpha2";
 cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
 
 /**
+ * Position of the FPS (Default: 0,0 (bottom-left corner))
+ * @constant
+ * @type cc.Point
+ */
+cc.DIRECTOR_STATS_POSITION = new cc.Point(0,0);
+
+/**
  * <p>
  *    If enabled, FontLabel will be used to render .ttf files.<br/>
  *    If the .ttf file is not found, then it will use the standard UIFont class<br/>

@@ -894,11 +894,11 @@ var SpriteZVertex = SpriteTestDemo.extend({
         // TIP: don't forget to enable Alpha test
         //glEnable(GL_ALPHA_TEST);
         //glAlphaFunc(GL_GREATER, 0.0);
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_3D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
         //glDisable(GL_ALPHA_TEST);
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_2D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
         this._super();
     }
 });
@@ -961,11 +961,11 @@ var SpriteBatchNodeZVertex = SpriteTestDemo.extend({
         //glEnable(GL_ALPHA_TEST);
         //glAlphaFunc(GL_GREATER, 0.0);
 
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_3D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
         //glDisable(GL_ALPHA_TEST);
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_2D);
+        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
         this._super();
     }
 });

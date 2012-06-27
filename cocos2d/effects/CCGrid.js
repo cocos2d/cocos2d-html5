@@ -144,7 +144,6 @@ cc.GridBase = cc.Class.extend({
         this._grabber.afterRender(this._texture);
 
         this.set3DProjection();
-        this._applyLandscape();
 
         if (target.getCamera().getDirty()) {
             var offset = target.getAnchorPointInPixels();
@@ -161,8 +160,8 @@ cc.GridBase = cc.Class.extend({
         //glBindTexture(GL_TEXTURE_2D, this._texture.getName());
 
         // restore projection for default FBO .fixed bug #543 #544
-        cc.Director.sharedDirector().setProjection(cc.Director.sharedDirector().getProjection());
-        cc.Director.sharedDirector().applyOrientation();
+        //cc.Director.sharedDirector().setProjection(cc.Director.sharedDirector().getProjection());
+        //cc.Director.sharedDirector().applyOrientation();
         this.blit();
     },
     blit:function () {
@@ -176,66 +175,25 @@ cc.GridBase = cc.Class.extend({
     },
     set2DProjection:function () {
         var winSize = cc.Director.sharedDirector().getWinSizeInPixels();
-//todo gl
-        /* glLoadIdentity();
 
-         // set view port for user FBO, fixed bug #543 #544
-         glViewport(0, 0, winSize.width, winSize.height);
-         glMatrixMode(GL_PROJECTION);
-         glLoadIdentity();
-         ccglOrtho(0, winSize.width, 0, winSize.height, -1024, 1024);
-         glMatrixMode(GL_MODELVIEW);*/
-    },
-    set3DProjection:function () {
-        var winSize = cc.Director.sharedDirector().getDisplaySizeInPixels();
-//todo gl
-        /* // set view port for user FBO, fixed bug #543 #544
-         glViewport(0, 0, winSize.width, winSize.height);
-         glMatrixMode(GL_PROJECTION);
-         glLoadIdentity();
-         gluPerspective(60, winSize.width/winSize.height, 0.5, 1500.0);
+        //todo gl
+        /* glViewport(0, 0, (GLsizei)(size.width * CC_CONTENT_SCALE_FACTOR()), (GLsizei)(size.height * CC_CONTENT_SCALE_FACTOR()) );
+        kmGLMatrixMode(KM_GL_PROJECTION);
+        kmGLLoadIdentity();
 
-         glMatrixMode(GL_MODELVIEW);
-         glLoadIdentity();
-         gluLookAt( winSize.width/2, winSize.height/2, cc.Director.sharedDirector().getZEye(),
-         winSize.width/2, winSize.height/2, 0,
-         0.0, 1.0, 0.0
-         );*/
-    },
-    _applyLandscape:function () {
-        var director = cc.Director.sharedDirector();
+        kmMat4 orthoMatrix;
+        kmMat4OrthographicProjection(&orthoMatrix, 0, size.width * CC_CONTENT_SCALE_FACTOR(), 0, size.height * CC_CONTENT_SCALE_FACTOR(), -1, 1);
+        kmGLMultMatrix( &orthoMatrix );
 
-        var winSize = director.getDisplaySizeInPixels();
-        var w = winSize.width / 2;
-        var h = winSize.height / 2;
+        kmGLMatrixMode(KM_GL_MODELVIEW);
+        kmGLLoadIdentity();
 
-        var orientation = director.getDeviceOrientation();
 
-        switch (orientation) {
-            //todo gl
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
-                /*glTranslatef(w,h,0);
-                 glRotatef(-90,0,0,1);
-                 glTranslatef(-h,-w,0);*/
-                break;
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
-                /*glTranslatef(w,h,0);
-                 glRotatef(90,0,0,1);
-                 glTranslatef(-h,-w,0);*/
-                break;
-            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
-                /*glTranslatef(w,h,0);
-                 glRotatef(180,0,0,1);
-                 glTranslatef(-w,-h,0);*/
-                break;
-            default:
-                break;
-        }
+        ccSetProjectionMatrixDirty();*/
     }
 });
 cc.GridBase.create = function () {
-    var pGridBase = new cc.GridBase();
-    return pGridBase;
+    return new cc.GridBase();
 };
 
 /**
