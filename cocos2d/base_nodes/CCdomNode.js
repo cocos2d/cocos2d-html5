@@ -454,11 +454,11 @@ cc.domNode = cc.Class.extend({
         this.dom.style.display = "block";
     },
     pauseSchedulerAndActions:function () {
-        cc.Scheduler.sharedScheduler().pauseTarget(this);
+        cc.Director.sharedDirector().getScheduler().pauseTarget(this);
         cc.ActionManager.sharedManager().pauseTarget(this);
     },
     resumeSchedulerAndActions:function () {
-        cc.Scheduler.sharedScheduler().resumeTarget(this);
+        cc.Director.sharedDirector().getScheduler().resumeTarget(this);
         cc.ActionManager.sharedManager().resumeTarget(this);
     },
     _arrayMakeObjectsPerformSelector:function (array, callbackType) {
@@ -516,7 +516,7 @@ cc.domNode = cc.Class.extend({
         cc.ActionManager.sharedManager().removeAllActionsFromTarget(this);
     },
     unscheduleAllSelectors:function () {
-        cc.Scheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
+        cc.Director.sharedDirector().getScheduler().unscheduleAllSelectorsForTarget(this);
     }
 });
 cc.domNode.DomContainer = function () {
