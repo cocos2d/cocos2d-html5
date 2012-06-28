@@ -278,6 +278,7 @@ var SpriteTestDemo = cc.Layer.extend({
 //------------------------------------------------------------------
 var Sprite1 = SpriteTestDemo.extend({
     ctor:function () {
+        this._super();
         this.setIsTouchEnabled(true);
 
         var s = cc.Director.sharedDirector().getWinSize();

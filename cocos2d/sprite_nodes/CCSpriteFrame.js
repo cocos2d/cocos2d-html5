@@ -40,12 +40,15 @@
  * var frame0 = cc.SpriteFrame.create(texture, cc.RectMake(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
+    _offset:new cc.Point(0,0),
+    _originalSize:new cc.Size(0,0),
     _rectInPixels:new cc.Rect(),
     _rotated:null,
     _rect:new cc.Rect(),
     _offsetInPixels:new cc.Point(),
     _originalSizeInPixels:new cc.Size(),
     _texture:null,
+    _textureFilename:"",
 
     // attributes
     /**
@@ -62,6 +65,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._rectInPixels = rectInPixels;
         this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
     },
+
+
 
     /**
      * <p>
@@ -103,7 +108,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Point}
      */
     getOffsetInPixels:function () {
-        return this._offsetInPixels;
+        return new cc.Point(this._offsetInPixels.x,this._offsetInPixels.y);
     },
 
     /**
@@ -112,6 +117,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      */
     setOffsetInPixels:function (offsetInPixels) {
         this._offsetInPixels = offsetInPixels;
+        this._offset = cc.POINT_PIXELS_TO_POINTS(this._offsetInPixels);
     },
 
     /**
@@ -131,11 +137,33 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     },
 
     /**
+     * get original size of the trimmed image
+     * @return {cc.Size}
+     */
+    getOriginalSize:function(){
+        return new cc.Size(this._originalSize.width,this._originalSize.height);
+    },
+
+    /**
+     * set original size of the trimmed image
+     * @param {cc.Size} sizeInPixels
+     */
+    setOriginalSize:function(sizeInPixels){
+       this._originalSize = sizeInPixels;
+    },
+
+    /**
      * get texture of the frame
      * @return {cc.Texture2D|HTMLImageElement}
      */
     getTexture:function () {
-        return this._texture;
+        if(this._texture){
+            return this._texture;
+        }
+        if(this._textureFilename != ""){
+            return cc.TextureCache.sharedTextureCache().addImage(this._textureFilename);
+        }
+        return null;
     },
 
     /**
@@ -143,7 +171,25 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Texture2D|HTMLImageElement} texture
      */
     setTexture:function (texture) {
-        this._texture = texture;
+        if(this._texture != texture){
+            this._texture = texture;
+        }
+    },
+
+    /**
+     * Offset getter
+     * @return {cc.Point}
+     */
+    getOffset:function(){
+       return new cc.Point(this._offset.x,this._offset.y);
+    },
+
+    /**
+     * offset setter
+     * @param {cc.Point} offsets
+     */
+    setOffset:function(offsets){
+       this._offset = offsets;
     },
 
     /**
@@ -152,7 +198,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      */
     copyWithZone:function () {
         var copy = new cc.SpriteFrame();
-        copy.initWithTexture(this._texture, this._rectInPixels, this._rotated, this._offsetInPixels, this._originalSizeInPixels);
+        copy.initWithTextureFilename(this._textureFilename, this._rectInPixels, this._rotated, this._offsetInPixels, this._originalSizeInPixels);
+        copy.setTexture(this._texture);
         return copy;
     },
 
@@ -194,6 +241,35 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                 throw "Argument must be non-nil ";
                 break;
         }
+    },
+
+    /**
+     * <p>
+     *    Initializes a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.<br/>
+     *    The originalSize is the size in pixels of the frame before being trimmed.
+     * </p>
+     * @param {string} filename
+     * @param {cc.Rect} rect
+     * @param {Boolean} rotated
+     * @param {cc.Point} offset
+     * @param {cc.Size} originalSize
+     */
+    initWithTextureFilename:function(filename,rect,rotated,offset,originalSize){
+        var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
+        offset = offset || cc.Size(0,0);
+        originalSize = originalSize || rectInPixels.size;
+
+        this._texture = null;
+        this._textureFilename = filename;
+        this._rectInPixels = rectInPixels;
+        this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
+        this._rotated = rotated || false;
+        this._offsetInPixels = offset;
+        this._offset = cc.POINT_PIXELS_TO_POINTS(offset);
+        this._originalSizeInPixels = originalSize;
+        this._originalSize = cc.SIZE_PIXELS_TO_POINTS(originalSize);
+
+        return true;
     }
 });
 
@@ -227,6 +303,34 @@ cc.SpriteFrame.create = function (texture, rect, rotated, offset, originalSize) 
      */
         case 5:
             spriteFrame.initWithTexture(texture, rect, rotated, offset, originalSize);
+            break;
+        default:
+            throw "Argument must be non-nil ";
+            break;
+    }
+    return spriteFrame;
+};
+
+/**
+ * <p>
+ *    Create a cc.SpriteFrame with a texture filename, rect, rotated, offset and originalSize in pixels.<br/>
+ *    The originalSize is the size in pixels of the frame before being trimmed.
+ * </p>
+ * @param {string} filename
+ * @param {cc.Rect} rect
+ * @param {Boolean} rotated
+ * @param {cc.Point} offset
+ * @param {cc.Size} originalSize
+ * @return {cc.SpriteFrame}
+ */
+cc.SpriteFrame.createWithTextureFilename = function(filename,rect,rotated,offset,originalSize) {
+    var spriteFrame = new cc.SpriteFrame();
+    switch (arguments.length) {
+        case 2:
+            spriteFrame.initWithTextureFilename(filename, rect);
+            break;
+        case 5:
+            spriteFrame.initWithTextureFilename(filename, rect, rotated, offset, originalSize);
             break;
         default:
             throw "Argument must be non-nil ";

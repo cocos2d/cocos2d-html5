@@ -471,7 +471,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
 
         this.setTexture(texture);
-        this.setTextureRect(cc.RectZero(), rotated, cc.SizeZero());
+        this.setTextureRect(rect, rotated, rect.size);
 
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
