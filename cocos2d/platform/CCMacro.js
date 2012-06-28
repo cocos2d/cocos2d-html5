@@ -124,6 +124,20 @@ cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
 cc.BLEND_DST = 0x0303;
 
 /**
+ * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
+ * @param {cc.Node} node setup node
+ * @function
+ */
+cc.NODE_DRAW_SETUP = function(node){
+    ccGLEnable( node._glServerState );
+    cc.Assert(node.getShaderProgram(), "No shader program set for this node");
+    {
+        node.getShaderProgram().use();
+        node.getShaderProgram().setUniformForModelViewProjectionMatrix();
+    }
+};
+
+/**
  * <p>
  *     GL states that are enabled:<br/>
  *       - GL_TEXTURE_2D<br/>
@@ -162,6 +176,18 @@ cc.DISABLE_DEFAULT_GL_STATES = function () {
 };
 
 /**
+ * <p>
+ *  Increments the GL Draws counts by one.<br/>
+ *  The number of calls per frame are displayed on the screen when the CCDirector's stats are enabled.<br/>
+ * </p>
+ * @param {Number} addNumber
+ * @function
+ */
+cc.INCREMENT_GL_DRAWS = function(addNumber){
+   cc.g_NumberOfDraws += addNumber;
+};
+
+/**
  * @constant
  * @type Number
  */
@@ -178,6 +204,15 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
     return cc.Director.sharedDirector().getContentScaleFactor();
 } : function () {
     return 1;
+};
+
+/**
+ * Converts a rect in points to pixels
+ * @param {cc.Size} sizeInPoints
+ * @function
+ */
+cc.SIZE_POINTS_TO_PIXELS = function(sizeInPoints){
+   return new cc.Size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints * cc.CONTENT_SCALE_FACTOR());
 };
 
 /**

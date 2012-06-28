@@ -46,9 +46,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
         //this.initLayer();
         var director = cc.Director.sharedDirector();
-        if (!director) {
-            return false;
-        }
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
         this._isAccelerometerEnabled = false;
@@ -174,7 +171,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // then iterate over all the children
-        //cc.Node.onEnter();
         this._super();
 
         // add this layer to concern the Accelerometer Sensor

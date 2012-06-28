@@ -42,6 +42,7 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
      * Constructor
      */
     ctor:function () {
+        this._super();
         this._ignoreAnchorPointForPosition = true;
         var director = cc.Director.sharedDirector();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -68,6 +69,5 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
  * var aScene = new cc.Scene();
  */
 cc.Scene.create = function () {
-    var ret = new cc.Scene();
-    return ret;
+    return new cc.Scene();
 };
