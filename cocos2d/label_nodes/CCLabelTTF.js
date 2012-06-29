@@ -180,7 +180,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
             fontName = arg[3];
             fontSize = arg[4];
-            console.log(arg)
         }
         else {
             dimensions = cc.SizeMake(0, arg[2]);

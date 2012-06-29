@@ -608,7 +608,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     // reusing fonts
                     fontChar.initWithBatchNodeRectInPixels(this, rect);
                     // restore to default in case they were modified
-                    fontChar.setIsVisible(true);
+                    fontChar.setVisible(true);
                     fontChar.setOpacity(255);
                 }
             }

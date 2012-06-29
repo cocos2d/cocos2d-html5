@@ -103,18 +103,11 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         if (this._super()) {
             this.setIsTouchEnabled(true);
             var s = cc.Director.sharedDirector().getWinSize();
-            this._isRelativeAnchorPoint = false;
+
             this.setAnchorPoint(cc.ccp(0.5, 0.5));
             this.setContentSize(s);
             var r = new cc.Rect();
             cc.Application.sharedApplication().statusBarFrame(r);
-            var orientation = cc.Director.sharedDirector().getDeviceOrientation();
-            if (orientation == cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT || orientation == cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT) {
-                s.height -= r.size.width;
-            }
-            else {
-                s.height -= r.size.height;
-            }
             this.setPosition(cc.ccp(s.width / 2, s.height / 2));
             this._selectedItem = null;
             this._state = cc.CCMENU_STATE_WAITING;
@@ -396,7 +389,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
 
         for (var c = this._parent; c != null; c = c.getParent()) {
-            if (!c.getIsVisible()) {
+            if (!c.isVisible()) {
                 return false;
             }
         }
@@ -473,7 +466,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         //console.log("touchLocation",touchLocation)
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i].getIsVisible() && this._children[i].getIsEnabled()) {
+                if (this._children[i].isVisible() && this._children[i].getIsEnabled()) {
                     var local = this._children[i].convertToNodeSpace(touchLocation);
                     var r = this._children[i].rect();
                     r.origin = cc.PointZero();

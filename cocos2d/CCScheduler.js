@@ -25,6 +25,38 @@
  ****************************************************************************/
 
 /**
+ * Priority level reserved for system services.
+ * @constant
+ * @type Number
+ */
+cc.PRIORITY_SYSTEM = (-2147483647 - 1);
+
+/**
+ * Minimum priority level for user scheduling.
+ * @constant
+ * @type Number
+ */
+cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
+
+/**
+ * Verify Array's Type
+ * @param {Array} arr
+ * @param {function} type
+ * @return {Boolean}
+ * @function
+ */
+cc.ArrayVerifyType = function (arr, type) {
+    if (arr && arr.length > 0) {
+        for (var i = 0; i < arr.length; i++) {
+            if (!(arr[i] instanceof  type)) {
+                cc.Log("element type is wrong!");
+                return false;
+            }
+        }
+    }
+};
+
+/**
  * Removes object at specified index and pushes back all subsequent objects.Behaviour undefined if index outside [0, num-1].
  * @function
  * @param {Array} arr Source Array
@@ -218,6 +250,12 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
     _target:null,
     _elapsed:0.0,
 
+    _runForever:false,
+    _useDelay:false,
+    _timesExecuted:0,
+    _repeat:0, //0 = once, 1 is 2 x executed
+    _delay:0,
+
     /**
      * cc.Timer's Constructor
      * Constructor
@@ -240,12 +278,16 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
      * @param {Number} seconds second
      * @return {Boolean} <tt>true</tt> if inintialized
      * * */
-    initWithTarget:function (target, selector, seconds) {
+    initWithTarget:function (target, selector, seconds, repeat, delay) {
         try {
             this._target = target;
             this._selector = selector;
             this._elapsed = -1;
             this._interval = seconds || 0;
+            this._delay = delay || 0;
+            this._useDelay = this._delay > 0;
+            this._repeat = repeat || cc.REPEAT_FOREVER;
+            this._runForever = (this._repeat == cc.REPEAT_FOREVER);
             return true;
         } catch (e) {
             return false;
@@ -259,18 +301,55 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
     update:function (dt) {
         if (this._elapsed == -1) {
             this._elapsed = 0;
+            this._timesExecuted = 0;
         } else {
-            this._elapsed += dt;
-        }
+            if (this._runForever && !this._useDelay) {
+                //standard timer usage
+                this._elapsed += dt;
 
-        if (this._elapsed >= this._interval) {
-            if (this._selector) {
-                if (typeof(this._selector) == "string") {
-                    this._target[this._selector](this._elapsed);
-                } else if (typeof(this._selector) == "function") {
-                    this._selector.call(this._target, this._elapsed);
+                if (this._elapsed >= this._interval) {
+                    if (this._selector) {
+                        if (typeof(this._selector) == "string") {
+                            this._target[this._selector](this._elapsed);
+                        } else if (typeof(this._selector) == "function") {
+                            this._selector.call(this._target, this._elapsed);
+                        }
+                    }
+                    this._elapsed = 0;
                 }
-                this._elapsed = 0;
+            } else {
+                //advanced usage
+                this._elapsed += dt;
+                if (this._useDelay) {
+                    if (this._elapsed >= this._delay) {
+                        if (this._target && this._selector) {
+                            if (typeof(this._selector) == "string") {
+                                this._target[this._selector](this._elapsed);
+                            } else if (typeof(this._selector) == "function") {
+                                this._selector.call(this._target, this._elapsed);
+                            }
+                        }
+                        this._elapsed = this._elapsed - this._delay;
+                        this._timesExecuted += 1;
+                        this._useDelay = false;
+                    }
+                } else {
+                    if (this._elapsed >= this._interval) {
+                        if (this._target && this._selector) {
+                            if (typeof(this._selector) == "string") {
+                                this._target[this._selector](this._elapsed);
+                            } else if (typeof(this._selector) == "function") {
+                                this._selector.call(this._target, this._elapsed);
+                            }
+                        }
+                        this._elapsed = 0;
+                        this._timesExecuted += 1;
+                    }
+                }
+
+                if (this._timesExecuted > this._repeat) {
+                    cc.Director.getScheduler().unscheduleSelector(this._selector, this._target);
+                }
             }
         }
     }
@@ -290,9 +369,9 @@ cc.Timer.timerWithTarget = function (target, selector, seconds) {
 
     var timer = new cc.Timer();
     if (arguments.length == 2) {
-        timer.initWithTarget(target, selector, 0);
+        timer.initWithTarget(target, selector, 0, cc.REPEAT_FOREVER, 0);
     } else {
-        timer.initWithTarget(target, selector, seconds);
+        timer.initWithTarget(target, selector, seconds, cc.REPEAT_FOREVER, 0);
     }
     return timer;
 };
@@ -314,16 +393,16 @@ cc._sharedScheduler = null;
  *
  * @example
  * //register a schedule to scheduler
- * cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
+ * cc.Director.sharedDirector().getScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
  */
 cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
-    _timeScale:0.0,
-    _updatesNegList:[], // list of priority < 0
-    _updates0List:[], // list priority == 0
-    _updatesPosList:[], // list priority > 0
-    _hashForUpdates:[], // hash used to fetch quickly the list entries for pause,delete,etc
+    _timeScale:1.0,
+    _updatesNegList:null, // list of priority < 0
+    _updates0List:null, // list priority == 0
+    _updatesPosList:null, // list priority > 0
+    _hashForUpdates:null, // hash used to fetch quickly the list entries for pause,delete,etc
 
-    _hashForSelectors:[], //Used for "selectors with interval"
+    _hashForSelectors:null, //Used for "selectors with interval"
 
     _currentTarget:null,
     _currentTargetSalvaged:false,
@@ -333,6 +412,18 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * Constructor
      */
     ctor:function () {
+        this._timeScale = 1.0;
+
+        this._updatesNegList = [];
+        this._updates0List = [];
+        this._updatesPosList = [];
+
+        this._hashForUpdates = [];
+        this._hashForSelectors = [];
+
+        this._currentTarget = null;
+        this._currentTargetSalvaged = false;
+        this._updateHashLocked = false;
     },
 
     //-----------------------private method----------------------
@@ -370,23 +461,6 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             element.target = null;
             cc.ArrayRemoveObject(this._hashForUpdates, element);
         }
-    },
-
-    _init:function () {
-        this._timeScale = 1.0;
-
-        this._updatesNegList = [];
-        this._updates0List = [];
-        this._updatesPosList = [];
-
-        this._hashForUpdates = [];
-        this._hashForSelectors = [];
-
-        this._currentTarget = null;
-        this._currentTargetSalvaged = false;
-        this._updateHashLocked = false;
-
-        return true;
     },
 
     _priorityIn:function (ppList, target, priority, paused) {
@@ -450,10 +524,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     /**
-     * 'tick' the scheduler. main loop (You should NEVER call this method, unless you know what you are doing.)
+     * 'update' the scheduler. (You should NEVER call this method, unless you know what you are doing.)
      * @param {Number} dt delta time
      */
-    tick:function (dt) {
+    update:function (dt) {
         this._updateHashLocked = true;
 
         if (this._timeScale != 1.0) {
@@ -540,7 +614,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      *   The scheduled method will be called every 'interval' seconds.</br>
      *   If paused is YES, then it won't be called until it is resumed.<br/>
      *   If 'interval' is 0, it will be called every frame, but if so, it recommened to use 'scheduleUpdateForTarget:' instead.<br/>
-     *   If the selector is already scheduled, then only the interval parameter will be updated without re-scheduling it again.
+     *   If the selector is already scheduled, then only the interval parameter will be updated without re-scheduling it again.<br/>
+     *   repeat let the action be repeated repeat + 1 times, use kCCRepeatForever to let the action run continiously<br/>
+     *   delay is the amount of time the action will wait before it'll start<br/>
      * </p>
      * @param {function} selector
      * @param {cc.Class} target
@@ -548,11 +624,14 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register a schedule to scheduler
-     * cc.Scheduler.sharedScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
+     * cc.Director.sharedDirector().getScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
      */
-    scheduleSelector:function (selector, target, interval, paused) {
-        cc.Assert(selector, "scheduler.scheduleSelector()");
-        cc.Assert(target, "");
+    scheduleSelector:function (selector, target, interval, paused, repeat, delay) {
+        cc.Assert(selector, "scheduler.scheduleSelector() Argument selector must be non-NULL");
+        cc.Assert(target, "scheduler.scheduleSelector() Argument target must be non-NULL");
+
+        repeat = repeat || cc.REPEAT_FOREVER;
+        delay = delay || 0;
 
         var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
 
@@ -564,21 +643,23 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             cc.Assert(element.paused == paused, "Sheduler.scheduleSelector()");
         }
 
+        var timer;
         if (element.timers == null) {
             element.timers = [];
         } else {
             for (var i = 0; i < element.timers.length; i++) {
-                var timer = element.timers[i];
+                timer = element.timers[i];
                 if (selector == timer._selector) {
-                    cc.Log("CCSheduler#scheduleSelector. Selector already scheduled.");
+                    cc.Log("CCSheduler#scheduleSelector. Selector already scheduled. Updating interval from:"
+                        + timer.getInterval().toFixed(4) + " to " + interval.toFixed(4));
                     timer._interval = interval;
                     return;
                 }
             }
         }
 
-        var timer = new cc.Timer();
-        timer.initWithTarget(target, selector, interval);
+        timer = new cc.Timer();
+        timer.initWithTarget(target, selector, interval, repeat, delay);
         element.timers.push(timer);
     },
 
@@ -593,7 +674,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register this object to scheduler
-     * cc.Scheduler.sharedScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
+     * cc.Director.sharedDirector().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
         var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);
@@ -628,7 +709,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      * @example
      * //unschedule a selector of target
-     * cc.Scheduler.sharedScheduler().unscheduleSelector(selector, this);
+     * cc.Director.sharedDirector().getScheduler().unscheduleSelector(selector, this);
      */
     unscheduleSelector:function (selector, target) {
         // explicity handle nil arguments when removing an object
@@ -669,7 +750,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      * @example
      * //unschedules the "update" method.
-     * cc.Scheduler.sharedScheduler().unscheduleUpdateForTarget(this);
+     * cc.Director.sharedDirector().getScheduler().unscheduleUpdateForTarget(this);
      */
     unscheduleUpdateForTarget:function (target) {
         if (target == null) {
@@ -720,6 +801,17 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      *  </p>
      */
     unscheduleAllSelectors:function () {
+        this.unscheduleAllSelectorsWithMinPriority(cc.PRIORITY_SYSTEM);
+    },
+
+    /**
+     * <p>
+     *    Unschedules all selectors from all targets with a minimum priority.<br/>
+     *    You should only call this with kCCPriorityNonSystemMin or higher.
+     * </p>
+     * @param {Number} minPriority
+     */
+    unscheduleAllSelectorsWithMinPriority:function (minPriority) {
         // Custom Selectors
         var i;
         for (i = 0; i < this._hashForSelectors.length; i++) {
@@ -728,14 +820,96 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
 
         //updates selectors
-        for (i = 0; i < this._updates0List.length; i++) {
-            this.unscheduleUpdateForTarget(this._updates0List[i].target);
+        if (minPriority < 0) {
+            for (i = 0; i < this._updatesNegList.length; i++) {
+                this.unscheduleUpdateForTarget(this._updatesNegList[i].target);
+            }
         }
-        for (i = 0; i < this._updatesNegList.length; i++) {
-            this.unscheduleUpdateForTarget(this._updatesNegList[i].target);
+
+        if (minPriority <= 0) {
+            for (i = 0; i < this._updates0List.length; i++) {
+                this.unscheduleUpdateForTarget(this._updates0List[i].target);
+            }
         }
+
         for (i = 0; i < this._updatesPosList.length; i++) {
-            this.unscheduleUpdateForTarget(this._updatesPosList[i].target);
+            if (this._updatesPosList[i].priority >= minPriority) {
+                this.unscheduleUpdateForTarget(this._updatesPosList[i].target);
+            }
+        }
+    },
+
+    /**
+     * <p>
+     *  Pause all selectors from all targets.<br/>
+     *  You should NEVER call this method, unless you know what you are doing.
+     * </p>
+     */
+    pauseAllTargets:function () {
+        return this.pauseAllTargetsWithMinPriority(cc.PRIORITY_SYSTEM);
+    },
+
+    /**
+     * Pause all selectors from all targets with a minimum priority. <br/>
+     * You should only call this with kCCPriorityNonSystemMin or higher.
+     * @param minPriority
+     */
+    pauseAllTargetsWithMinPriority:function (minPriority) {
+        var idsWithSelectors = [];
+
+        var i, element;
+        // Custom Selectors
+        for (i = 0; i < this._hashForSelectors.length; i++) {
+            element = this._hashForSelectors[i];
+            if (element) {
+                element.paused = true;
+                idsWithSelectors.push(element.target);
+            }
+        }
+
+        // Updates selectors
+        if (minPriority < 0) {
+            for (i = 0; i < this._updatesNegList.length; i++) {
+                element = this._updatesNegList[i];
+                if (element) {
+                    element.paused = true;
+                    idsWithSelectors.push(element.target);
+                }
+            }
+        }
+
+        if (minPriority <= 0) {
+            for (i = 0; i < this._updates0List.length; i++) {
+                element = this._updates0List[i];
+                if (element) {
+                    element.paused = true;
+                    idsWithSelectors.push(element.target);
+                }
+            }
+        }
+
+        for (i = 0; i < this._updatesPosList.length; i++) {
+            element = this._updatesPosList[i];
+            if (element) {
+                element.paused = true;
+                idsWithSelectors.push(element.target);
+            }
+        }
+
+        return idsWithSelectors;
+    },
+
+    /**
+     * Resume selectors on a set of targets.<br/>
+     * This can be useful for undoing a call to pauseAllSelectors.
+     * @param targetsToResume
+     */
+    resumeTargets:function (targetsToResume) {
+        if (!targetsToResume)
+            return;
+
+        for (var i = 0; i < targetsToResume.length; i++) {
+            this.resumeTarget(targetsToResume[i]);
         }
     },
 
@@ -805,26 +979,5 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         return false;
     }
 });
-
-/**
- * returns a shared instance of the Scheduler
- * @function
- * @return {cc.Scheduler}
- */
-cc.Scheduler.sharedScheduler = function () {
-    if (!cc._sharedScheduler) {
-        cc._sharedScheduler = new cc.Scheduler();
-        cc._sharedScheduler._init();
-    }
-    return cc._sharedScheduler;
-};
-
-/**
- * purges the shared scheduler. It releases the retained instance.
- * @function
- */
-cc.Scheduler.purgeSharedScheduler = function () {
-    cc._sharedScheduler = null;
-};
 
 

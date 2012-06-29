@@ -193,7 +193,7 @@ var SchedulerPauseResume = SchedulerTestLayer.extend({
         cc.Log("tick2");
     },
     pause:function (dt) {
-        cc.Scheduler.sharedScheduler().pauseTarget(this);
+        cc.Director.sharedDirector().getScheduler().pauseTarget(this);
     }
 });
 
@@ -261,7 +261,7 @@ var SchedulerUnscheduleAllHard = SchedulerTestLayer.extend({
         cc.Log("tick4");
     },
     unscheduleAll:function (dt) {
-        cc.Scheduler.sharedScheduler().unscheduleAllSelectors();
+        cc.Director.sharedDirector().getScheduler().unscheduleAllSelectors();
     }
 });
 

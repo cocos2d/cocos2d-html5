@@ -259,25 +259,6 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
     },
 
     /**
-     * Callback by cc.Director for change device orientation.
-     * @param {Number} orientation The defination of orientation which cc.Director want change to.
-     * @return {Number} The actual orientation of the application.
-     * @deprecated Does not require in html5
-     */
-    setOrientation:function (orientation) {
-        // swap width and height
-        // TODO, need to be fixed.
-        /* var pView = cc.Director.sharedDirector().getOpenGLView();
-         if (pView)
-         {
-         return pView.setDeviceOrientation(orientation);
-         }
-         return cc.Director.sharedDirector().getDeviceOrientation(); */
-        return orientation;
-
-    },
-
-    /**
      *  Get status bar rectangle in EGLView window.
      * @param {cc.Rect} rect
      * @deprecated

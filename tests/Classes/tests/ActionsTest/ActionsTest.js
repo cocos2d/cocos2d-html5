@@ -50,6 +50,14 @@ var actionTests = [
     function () {
         return new ActionBezier()
     }, //Buggy?
+
+    function () {
+        return new ActionCardinalSpline()
+    }, //ok
+    function () {
+        return new ActionCatmullRom()
+    }, //ok
+
     function () {
         return new ActionBlink()
     }, //OK
@@ -141,14 +149,14 @@ var ActionsDemo = cc.Layer.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         if (numberOfSprites == 1) {
-            this._tamara.setIsVisible(false);
+            this._tamara.setVisible(false);
             this._kathia.setIsVisible(false);
             this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
         }
         else if (numberOfSprites == 2) {
             this._kathia.setPosition(cc.PointMake(s.width / 3, s.height / 2));
             this._tamara.setPosition(cc.PointMake(2 * s.width / 3, s.height / 2));
-            this._grossini.setIsVisible(false);
+            this._grossini.setVisible(false);
         }
         else if (numberOfSprites == 3) {
             this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
@@ -160,14 +168,14 @@ var ActionsDemo = cc.Layer.extend({
         var s = cc.Director.sharedDirector().getWinSize();
 
         if (numberOfSprites == 1) {
-            this._tamara.setIsVisible(false);
-            this._kathia.setIsVisible(false);
+            this._tamara.setVisible(false);
+            this._kathia.setVisible(false);
             this._grossini.setPosition(cc.PointMake(60, s.height / 2));
         }
         else if (numberOfSprites == 2) {
             this._kathia.setPosition(cc.PointMake(60, s.height / 3));
             this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
-            this._grossini.setIsVisible(false);
+            this._grossini.setVisible(false);
         }
         else if (numberOfSprites == 3) {
             this._grossini.setPosition(cc.PointMake(60, s.height / 2));
@@ -631,7 +639,7 @@ var ActionSequence2 = ActionsDemo.extend({
     onEnter:function () {
         this._super();
         this.centerSprites(1);
-        this._grossini.setIsVisible(false);
+        this._grossini.setVisible(false);
         var action = cc.Sequence.create(
             cc.Place.create(cc.PointMake(200, 200)),
             cc.Show.create(),
@@ -1037,10 +1045,172 @@ var ActionFollow = ActionsDemo.extend({
         this._grossini.runAction(rep);
 
         this.runAction(cc.Follow.create(this._grossini, cc.RectMake(0, 0, s.width * 2 - 100, s.height)));
-
-
     },
     subtitle:function () {
         return "Follow action";
+    }
+});
+
+//------------------------------------------------------------------
+//
+// ActionCardinalSpline
+//
+//------------------------------------------------------------------
+var ActionCardinalSpline = ActionsDemo.extend({
+    _array:null,
+    ctor:function () {
+        this._array = new cc.PointArray();
+    },
+
+    onEnter:function () {
+        this._super();
+
+        this.centerSprites(2);
+
+        var winSize = cc.Director.sharedDirector().getWinSize();
+
+        var array = cc.PointArray.create();
+
+        array.addControlPoint(new cc.Point(0, 0));
+        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, 0));
+        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, winSize.height - 80));
+        array.addControlPoint(new cc.Point(0, winSize.height - 80));
+        array.addControlPoint(new cc.Point(0, 0));
+
+        //
+        // sprite 1 (By)
+        //
+        // Spline with no tension (tension==0)
+        //
+        var action1 = cc.CardinalSplineBy.create(3, array, 0);
+        var reverse1 = action1.reverse();
+        var seq = cc.Sequence.create(action1, reverse1);
+
+        this._tamara.setPosition(new cc.Point(50, 50));
+        this._tamara.runAction(seq);
+
+        //
+        // sprite 2 (By)
+        //
+        // Spline with high tension (tension==1)
+        //
+        var action2 = cc.CardinalSplineBy.create(3, array, 1);
+        var reverse2 = action2.reverse();
+        var seq2 = cc.Sequence.create(action2, reverse2);
+
+        this._kathia.setPosition(new cc.Point(winSize.width / 2, 50));
+        this._kathia.runAction(seq2);
+
+        this._array = array;
+    },
+
+    draw:function (ctx) {
+        this._super();
+
+        var context = ctx || cc.renderContext;
+        // move to 50,50 since the "by" path will start at 50,50
+        context.save();
+        context.translate(50, -50);
+        cc.drawingUtil.drawCardinalSpline(this._array, 0, 100);
+        context.restore();
+
+        var s = cc.Director.sharedDirector().getWinSize();
+
+        context.save();
+        context.translate(s.width / 2, -50);
+        cc.drawingUtil.drawCardinalSpline(this._array, 1, 100);
+        context.restore();
+    },
+    subtitle:function () {
+        return "Cardinal Spline paths. Testing different tensions for one array";
+    },
+    title:function () {
+        return "CardinalSplineBy / CardinalSplineAt";
+    }
+});
+
+//------------------------------------------------------------------
+//
+// ActionCatmullRom
+//
+//------------------------------------------------------------------
+var ActionCatmullRom = ActionsDemo.extend({
+    _array1:null,
+    _array2:null,
+    ctor:function () {
+        this._array1 = new cc.PointArray();
+        this._array2 = new cc.PointArray();
+    },
+
+    onEnter:function () {
+        this._super();
+
+        this.centerSprites(2);
+        var winSize = cc.Director.sharedDirector().getWinSize();
+
+        //
+        // sprite 1 (By)
+        //
+        // startPosition can be any coordinate, but since the movement
+        // is relative to the Catmull Rom curve, it is better to start with (0,0).
+        //
+        this._tamara.setPosition(new cc.Point(50, 50));
+
+        var array = cc.PointArray.create();
+        array.addControlPoint(new cc.Point(0, 0));
+        array.addControlPoint(new cc.Point(80, 80));
+        array.addControlPoint(new cc.Point(winSize.width - 80, 80));
+        array.addControlPoint(new cc.Point(winSize.width - 80, winSize.height - 80));
+        array.addControlPoint(new cc.Point(80, winSize.height - 80));
+        array.addControlPoint(new cc.Point(80, 80));
+        array.addControlPoint(new cc.Point(winSize.width / 2, winSize.height / 2));
+
+        var action1 = cc.CatmullRomBy.create(3, array);
+        var reverse1 = action1.reverse();
+        var seq1 = cc.Sequence.create(action1, reverse1);
+
+        this._tamara.runAction(seq1);
+
+        //
+        // sprite 2 (To)
+        //
+        // The startPosition is not important here, because it uses a "To" action.
+        // The initial position will be the 1st point of the Catmull Rom path
+        //
+        var array2 = cc.PointArray.create();
+
+        array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
+        array2.addControlPoint(new cc.Point(winSize.width - 80, 30));
+        array2.addControlPoint(new cc.Point(winSize.width - 80, winSize.height - 80));
+        array2.addControlPoint(new cc.Point(winSize.width / 2, winSize.height - 80));
+        array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
+
+        var action2 = cc.CatmullRomTo.create(3, array2);
+        var reverse2 = action2.reverse();
+
+        var seq2 = cc.Sequence.create(action2, reverse2);
+
+        this._kathia.runAction(seq2);
+
+        this._array1 = array;
+        this._array2 = array2;
+    },
+    draw:function (ctx) {
+        this._super();
+        var context = ctx || cc.renderContext;
+
+        // move to 50,50 since the "by" path will start at 50,50
+        context.save();
+        context.translate(50, -50);
+        cc.drawingUtil.drawCatmullRom(this._array1, 50);
+        context.restore();
+
+        cc.drawingUtil.drawCatmullRom(this._array2, 50);
+    },
+    subtitle:function () {
+        return "Catmull Rom spline paths. Testing reverse too";
+    },
+    title:function () {
+        return "CatmullRomBy / CatmullRomTo";
     }
 });

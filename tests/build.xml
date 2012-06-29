@@ -64,10 +64,10 @@
                 <file name="platform/base64.js"/>
                 <file name="platform/gzip.js"/>
                 <file name="platform/CCMacro.js"/>
-                <file name="platform/CCConfig.js"/>
                 <file name="platform/CCFileUtils.js"/>
                 <file name="platform/CCTypes.js"/>
                 <file name="cocoa/CCGeometry.js"/>
+                <file name="platform/CCConfig.js"/>
                 <file name="cocoa/CCSet.js"/>
                 <file name="cocoa/CCNS.js"/>
                 <file name="cocoa/CCAffineTransform.js"/>
@@ -90,6 +90,7 @@
                 <file name="actions/CCActionEase.js"/>
                 <file name="actions/CCActionGrid.js"/>
                 <file name="actions/CCActionTiledGrid.js"/>
+                <file name="actions/CCActionCatmullRom.js"/>
                 <file name="layers_scenes_transitions_nodes/CCScene.js"/>
                 <file name="layers_scenes_transitions_nodes/CCLayer.js"/>
                 <file name="layers_scenes_transitions_nodes/CCTransition.js"/>

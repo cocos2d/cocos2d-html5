@@ -567,7 +567,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         if (NormalImage) {
             this.addChild(NormalImage, 0, cc.NORMAL_TAG);
             NormalImage.setAnchorPoint(cc.ccp(0, 0));
-            NormalImage.setIsVisible(true);
+            NormalImage.setVisible(true);
         }
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
@@ -591,7 +591,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         if (SelectedImage) {
             this.addChild(SelectedImage, 0, cc.SELECTED_TAG);
             SelectedImage.setAnchorPoint(cc.ccp(0, 0));
-            SelectedImage.setIsVisible(false);
+            SelectedImage.setVisible(false);
         }
 
         if (this._selectedImage) {
@@ -616,7 +616,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         if (DisabledImage) {
             this.addChild(DisabledImage, 0, cc.DISABLE_TAG);
             DisabledImage.setAnchorPoint(cc.ccp(0, 0));
-            DisabledImage.setIsVisible(false);
+            DisabledImage.setVisible(false);
         }
 
         if (this._disabledImage) {
@@ -695,15 +695,15 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     selected:function () {
         this._super();
         if (this._disabledImage) {
-            this._disabledImage.setIsVisible(false);
+            this._disabledImage.setVisible(false);
         }
 
         if (this._selectedImage) {
-            this._normalImage.setIsVisible(false);
-            this._selectedImage.setIsVisible(true);
+            this._normalImage.setVisible(false);
+            this._selectedImage.setVisible(true);
         }
         else {
-            this._normalImage.setIsVisible(true);
+            this._normalImage.setVisible(true);
         }
     },
 
@@ -713,14 +713,14 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     unselected:function () {
         this._super();
 
-        this._normalImage.setIsVisible(true);
+        this._normalImage.setVisible(true);
 
         if (this._selectedImage) {
-            this._selectedImage.setIsVisible(false);
+            this._selectedImage.setVisible(false);
         }
 
         if (this._disabledImage) {
-            this._disabledImage.setIsVisible(false);
+            this._disabledImage.setVisible(false);
         }
     },
 
@@ -731,23 +731,23 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         this._super(bEnabled);
 
         if (this._selectedImage) {
-            this._selectedImage.setIsVisible(false);
+            this._selectedImage.setVisible(false);
         }
 
         if (bEnabled) {
-            this._normalImage.setIsVisible(true);
+            this._normalImage.setVisible(true);
 
             if (this._disabledImage) {
-                this._disabledImage.setIsVisible(false);
+                this._disabledImage.setVisible(false);
             }
         }
         else {
             if (this._disabledImage) {
-                this._disabledImage.setIsVisible(true);
-                this._normalImage.setIsVisible(false);
+                this._disabledImage.setVisible(true);
+                this._normalImage.setVisible(false);
             }
             else {
-                this._normalImage.setIsVisible(true);
+                this._normalImage.setVisible(true);
             }
         }
     }

@@ -98,7 +98,7 @@ var s_konqa32_hd = "Resources/fonts/konqa32-hd.png";
 var s_bitmapFontChinese = "Resources/fonts/bitmapFontChinese.png";
 var s_arial16 = "Resources/fonts/arial16.png";
 var s_larabie_16 = "Resources/fonts/larabie-16.png";
-var s_larabie_16_hd= "Resources/fonts/larabie-16-hd.png";
+var s_larabie_16_hd = "Resources/fonts/larabie-16-hd.png";
 var s_futura48 = "Resources/fonts/futura-48.png";
 
 var s_bitmapFontTest_fnt = "Resources/fonts/bitmapFontTest.fnt";

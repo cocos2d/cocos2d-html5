@@ -74,7 +74,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {cc.Point} point
      */
     drawPoint:function (point) {
-        cc.log("DrawingPrimitive.drawPoint() not implement!");
+        cc.Log("DrawingPrimitive.drawPoint() not implement!");
     },
 
     /**
@@ -83,7 +83,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} numberOfPoints
      */
     drawPoints:function (points, numberOfPoints) {
-        cc.log("DrawingPrimitive.drawPoints() not implement!");
+        cc.Log("DrawingPrimitive.drawPoints() not implement!");
     },
 
     /**
@@ -92,7 +92,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {cc.Point} destination
      */
     drawLine:function (origin, destination) {
-        cc.log("DrawingPrimitive.drawLine() not implement!");
+        cc.Log("DrawingPrimitive.drawLine() not implement!");
     },
 
     /**
@@ -103,7 +103,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Boolean} fill The polygon can be closed or open and optionally filled with current color
      */
     drawPoly:function (vertices, numOfVertices, closePolygon, fill) {
-        cc.log("DrawingPrimitive.drawPoly() not implement!");
+        cc.Log("DrawingPrimitive.drawPoly() not implement!");
     },
 
     /**
@@ -152,7 +152,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} segments
      */
     drawQuadBezier:function (origin, control, destination, segments) {
-        cc.log("DrawingPrimitive.drawQuadBezier() not implement!");
+        cc.Log("DrawingPrimitive.drawQuadBezier() not implement!");
     },
 
     /**
@@ -164,7 +164,26 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} segments
      */
     drawCubicBezier:function (origin, control1, control2, destination, segments) {
-        cc.log("DrawingPrimitive.drawCubicBezier() not implement!");
+        cc.Log("DrawingPrimitive.drawCubicBezier() not implement!");
+    },
+
+    /**
+     * draw a catmull rom line
+     * @param {cc.PointArray} points
+     * @param {Number} segments
+     */
+    drawCatmullRom:function (points, segments) {
+        cc.Log("DrawingPrimitive.drawCardinalSpline() not implement!");
+    },
+
+    /**
+     * draw a cardinal spline path
+     * @param {cc.PointArray} config
+     * @param {Number} tension
+     * @param {Number} segments
+     */
+    drawCardinalSpline:function (config, tension, segments) {
+        cc.Log("DrawingPrimitive.drawCardinalSpline() not implement!");
     }
 });
 
@@ -330,6 +349,50 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         vertices.push(new cc.Point(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
 
         this.drawPoly(vertices, segments + 1, false, false);
+    },
+
+    /**
+     * draw a CatmullRom curve
+     * @override
+     * @param {cc.PointArray} points
+     * @param {Number} segments
+     */
+    drawCatmullRom:function (points, segments) {
+        this.drawCardinalSpline(points, 0.5, segments);
+    },
+
+    /**
+     * draw a cardinal spline path
+     * @override
+     * @param {cc.PointArray} config
+     * @param {Number} tension
+     * @param {Number} segments
+     */
+    drawCardinalSpline:function (config, tension, segments) {
+        //lazy_init();
+        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
+        var points = [];
+        var p, lt;
+        var deltaT = 1.0 / config.count();
+
+        for (var i = 0; i < segments + 1; i++) {
+            var dt = i / segments;
+
+            // border
+            if (dt == 1) {
+                p = config.count() - 1;
+                lt = 1;
+            } else {
+                p = 0 | (dt / deltaT);
+                lt = (dt - deltaT * p) / deltaT;
+            }
+
+            // Interpolate
+            var newPos = cc.CardinalSplineAt(config.getControlPointAtIndex(p - 1), config.getControlPointAtIndex(p + 0),
+                config.getControlPointAtIndex(p + 1), config.getControlPointAtIndex(p + 2), tension, lt);
+            points.push(newPos);
+        }
+        this.drawPoly(points, segments + 1, false, false);
     },
 
     /**
