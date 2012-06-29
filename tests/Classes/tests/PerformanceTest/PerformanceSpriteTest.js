@@ -75,7 +75,7 @@ var SubTest = cc.Class.extend({
             case 2:
             case 3:
             {
-                sprite = cc.Sprite.createWithBatchNode(this._batchNode, cc.RectMake(0, 0, 52, 139));
+                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 52, 139));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -94,7 +94,7 @@ var SubTest = cc.Class.extend({
                 var idx = 0 | (cc.RANDOM_0_1() * 14);
                 var x = (idx % 5) * 85;
                 var y = (0 | (idx / 5)) * 121;
-                sprite = cc.Sprite.createWithBatchNode(this._batchNode, cc.RectMake(x, y, 85, 121));
+                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(x, y, 85, 121));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -121,7 +121,7 @@ var SubTest = cc.Class.extend({
 
                 y = (0 | (r / 8)) * 32;
                 x = (r % 8) * 32;
-                sprite = cc.Sprite.createWithBatchNode(this._batchNode, cc.RectMake(x, y, 32, 32));
+                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(x, y, 32, 32));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
