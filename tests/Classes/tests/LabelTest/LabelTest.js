@@ -41,21 +41,12 @@ var TAG_LABEL_SPRITE18 = 667;
 
 var AtlasTests = [
     //function(){ return new Atlas1();},
-    function () {
-        return new LabelTTFTest();
-    }, //ok
-    function () {
-        return new LabelTTFMultiline();
-    }, //ok
-    function () {
-        return new LabelTTFChinese();
-    }, //ok
-    function () {
+    /*function () {
         return new LabelAtlasTest();
     }, //ok
     function () {
         return new LabelAtlasColorTest();
-    }, //ok
+    }, //ok*/
     function () {
         return new Atlas3();
     },
@@ -89,9 +80,38 @@ var AtlasTests = [
     function () {
         return new LabelGlyphDesigner();
     },
-
+    function () {
+        return new LabelTTFTest();
+    }, //ok
+    function () {
+        return new LabelTTFMultiline();
+    }, //ok
+    function () {
+        return new LabelTTFChinese();
+    }, //ok
     function () {
         return new LabelBMFontChinese();
+    },
+    function () {
+        return new BitmapFontMultiLineAlignment();
+    },
+    function () {
+        return new LabelTTFA8Test();
+    },
+    function () {
+        return new BMFontOneAtlas();
+    },
+    function () {
+        return new BMFontUnicode();
+    },
+    function () {
+        return new BMFontInit();
+    },
+    function () {
+        return new TTFFontInit();
+    },
+    function () {
+        return new LabelTTFAlignment();
     }
 ];
 
@@ -824,7 +844,7 @@ var LabelTTFTest = AtlasDemo.extend({
             this._label.removeFromParentAndCleanup(true);
         }
 
-        this._label = cc.LabelTTF.create(this.getCurrentAlignment(), blockSize, this._horizAlign, this._vertAlign, "Arial", 22);
+        this._label = cc.LabelTTF.create(this.getCurrentAlignment(), blockSize, this._horizAlign, this._vertAlign, "Arial", 32);
 
         this._label.setAnchorPoint(cc.ccp(0, 0));
         this._label.setPosition(cc.ccp((s.width - blockSize.width) / 2, (s.height - blockSize.height) / 2));
@@ -881,7 +901,7 @@ var LabelTTFTest = AtlasDemo.extend({
                 break;
         }
 
-        return "Alignment hello world angela baby" + vertical + " " + horizontal;
+        return "Alignment " + vertical + " " + horizontal;
     },
     title:function () {
         return "Testing cc.LabelTTF";
@@ -897,7 +917,7 @@ var LabelTTFMultiline = AtlasDemo.extend({
 
         // cc.LabelBMFont
         var center = cc.LabelTTF.create("word wrap \"testing\" (bla0) bla1 'bla2' [bla3] (bla4) {bla5} {bla6} [bla7] (bla8) [bla9] 'bla0' \"bla1\"",
-            cc.SizeMake(s.width / 2, 200), cc.TEXT_ALIGNMENT_CENTER, "Marker Felt", 32);
+            cc.SizeMake(s.width / 2, 200), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_TOP, "Marker Felt", 32);
         center.setPosition(cc.ccp(s.width / 2, 150));
 
         this.addChild(center);
@@ -931,5 +951,331 @@ var LabelBMFontChinese = AtlasDemo.extend({
     },
     title:function () {
         return "Testing cc.LabelBMFont with Chinese character";
+    }
+});
+
+var LongSentencesExample = "Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+var LineBreaksExample = "Lorem ipsum dolor\nsit amet\nconsectetur adipisicing elit\nblah\nblah";
+var MixedExample = "ABC\nLorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt\nDEF";
+
+var ArrowsMax = 0.95;
+var ArrowsMin = 0.7;
+
+var LeftAlign = 0;
+var CenterAlign = 1;
+var RightAlign = 2;
+
+var LongSentences = 0;
+var LineBreaks = 1;
+var Mixed = 2;
+
+var alignmentItemPadding = 50;
+var menuItemPaddingCenter = 50;
+
+var BitmapFontMultiLineAlignment = AtlasDemo.extend({
+    labelShouldRetain:null,
+    arrowsBarShouldRetain:null,
+    arrowsShouldRetain:null,
+    lastSentenceItem:null,
+    lastAlignmentItem:null,
+    drag:null,
+    ctor:function () {
+        //todo fixed
+        this.setIsTouchEnabled(true);
+
+        // ask director the the window size
+        var size = cc.Director.sharedDirector().getWinSize();
+
+        // create and initialize a Label
+        this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "fonts/markerFelt.fnt", size.width / 1.5, cc.TEXT_ALIGNMENT_CENTER);
+
+        this.arrowsBarShouldRetain = cc.Sprite.create("Images/arrowsBar.png");
+        this.arrowsShouldRetain = cc.Sprite.create("Images/arrows.png");
+
+        cc.MenuItemFont.setFontSize(20);
+        var longSentences = cc.MenuItemFont.create("Long Flowing Sentences", this, this.stringChanged);
+        var lineBreaks = cc.MenuItemFont.create("Short Sentences With Intentional Line Breaks", this, this.stringChanged);
+        var mixed = cc.MenuItemFont.create("Long Sentences Mixed With Intentional Line Breaks", this.stringChanged);
+        var stringMenu = cc.Menu.create(longSentences, lineBreaks, mixed);
+        stringMenu.alignItemsVertically();
+
+        longSentences.setColor(cc.RED());
+        this.lastSentenceItem = longSentences;
+        longSentences.setTag(LineBreaks);
+        lineBreaks.setTag(LineBreaks);
+        mixed.setTag(Mixed);
+
+        cc.MenuItemFont.setFontSize(30);
+
+        var left = cc.MenuItemFont.create("Left", this, this.alignmentChanged);
+        var center = cc.MenuItemFont.create("Center", this, this.alignmentChanged);
+        var right = cc.MenuItemFont.create("Right", this, this.alignmentChanged);
+        var alignmentMenu = cc.Menu.create(left, center, right);
+        alignmentMenu.alignItemsHorizontallyWithPadding(alignmentItemPadding);
+
+        center.setColor(cc.RED());
+        this.lastAlignmentItem = center;
+        left.setTag(LeftAlign);
+        center.setTag(CenterAlign);
+        right.setTag(RightAlign);
+
+        // position the label on the center of the screen
+        this.labelShouldRetain.setPosition(cc.ccp(size.width / 2, size.height / 2));
+
+        //todo fixed
+        this.arrowsBarShouldRetain.setIsVisible(false);
+
+        var arrowsWidth = (ArrowsMax - ArrowsMin) * size.width;
+        this.arrowsBarShouldRetain.setScaleX(arrowsWidth / this.arrowsBarShouldRetain.getContentSize().width);
+        this.arrowsBarShouldRetain.setPosition(cc.ccp(((ArrowsMax + ArrowsMin) / 2) * size.width, this.labelShouldRetain.getPosition().y));
+
+        this.snapArrowsToEdge();
+
+        stringMenu.setPosition(cc.ccp(size.width / 2, size.height - menuItemPaddingCenter));
+        alignmentMenu.setPosition(cc.ccp(size.width / 2, menuItemPaddingCenter + 15));
+
+        this.addChild(this.labelShouldRetain);
+        this.addChild(this.arrowsBarShouldRetain);
+        this.addChild(this.arrowsShouldRetain);
+        this.addChild(stringMenu);
+        this.addChild(alignmentMenu);
+    },
+    title:function () {
+        return "";
+    },
+    subtitle:function () {
+        return "";
+    },
+    stringChanged:function (sender) {
+        var item = sender;
+        item.setColor(cc.RED());
+        this.lastAlignmentItem.setColor(cc.WHITE());
+        this.lastAlignmentItem = item;
+
+        switch (item.getTag()) {
+            case LongSentences:
+                this.labelShouldRetain.setString(LongSentencesExample);
+                break;
+            case LineBreaks:
+                this.labelShouldRetain.setString(LineBreaksExample);
+                break;
+            case Mixed:
+                this.labelShouldRetain.setString(MixedExample);
+                break;
+
+            default:
+                break;
+        }
+
+        this.snapArrowsToEdge();
+    },
+    alignmentChanged:function (sender) {
+        var item = sender;
+        item.setColor(cc.RED());
+        this.lastAlignmentItem.setColor(cc.WHITE());
+        this.lastAlignmentItem = item;
+
+        switch (item.getTag()) {
+            case LeftAlign:
+                this.labelShouldRetain.setAlignment(cc.TEXT_ALIGNMENT_LEFT);
+                break;
+            case CenterAlign:
+                this.labelShouldRetain.setAlignment(cc.TEXT_ALIGNMENT_CENTER);
+                break;
+            case RightAlign:
+                this.labelShouldRetain.setAlignment(cc.TEXT_ALIGNMENT_RIGHT);
+                break;
+
+            default:
+                break;
+        }
+
+        this.snapArrowsToEdge();
+    },
+    ccTouchesBegan:function (touches) {
+        var touch = touches.anyObject();
+        var location = touch.locationInView();
+
+        if (cc.Rect.CCRectContainsPoint(this.arrowsShouldRetain.boundingBox(), location)) {
+            this.drag = true;
+            //todo fixed
+            this.arrowsBarShouldRetain.setIsVisible(true);
+        }
+    },
+    ccTouchesEnded:function () {
+        this.drag = false;
+        this.snapArrowsToEdge();
+        //todo fixed
+        this.arrowsBarShouldRetain.setIsVisible(false);
+    },
+    ccTouchesMoved:function (touches) {
+        if (!this.drag) {
+            return;
+        }
+
+        var touch = touches.anyObject();
+        var location = touch.locationInView();
+
+        var winSize = cc.Director.sharedDirector().getWinSize();
+
+        this.arrowsShouldRetain.setPosition(cc.ccp(Math.max(Math.min(location.x, ArrowsMax * winSize.width), ArrowsMin * winSize.width),
+            this.arrowsShouldRetain.getPosition().y));
+
+        var labelWidth = Math.abs(this.arrowsShouldRetain.getPosition().x - this.labelShouldRetain.getPosition().x) * 2;
+
+        this.labelShouldRetain.setWidth(labelWidth);
+    },
+    snapArrowsToEdge:function () {
+        this.arrowsShouldRetain.setPosition(cc.ccp(this.labelShouldRetain.getPosition().x + this.labelShouldRetain.getContentSize().width / 2,
+            this.labelShouldRetain.getPosition().y));
+    }
+});
+
+/// LabelTTFA8Test
+var LabelTTFA8Test = AtlasDemo.extend({
+    ctor:function () {
+        var s = cc.Director.sharedDirector().getWinSize();
+
+        var layer = cc.LayerColor.create(cc.ccc4(128, 128, 128, 255));
+        this.addChild(layer, -10);
+
+        // cc.LabelBMFont
+        var label1 = cc.LabelTTF.create("Testing A8 Format", "Marker Felt", 48);
+        this.addChild(label1);
+        label1.setColor(cc.RED());
+        label1.setPosition(cc.ccp(s.width / 2, s.height / 2));
+
+        var fadeOut = cc.FadeOut.create(2);
+        var fadeIn = cc.FadeIn.create(2);
+        var seq = cc.Sequence.create(fadeOut, fadeIn);
+        var forever = cc.RepeatForever.create(seq);
+        label1.runAction(forever);
+    },
+    title:function () {
+        return "Testing A8 Format";
+    },
+    subtitle:function () {
+        return "RED label, fading In and Out in the center of the screen";
+    }
+});
+
+/// BMFontOneAtlas
+var BMFontOneAtlas = AtlasDemo.extend({
+    ctor:function () {
+        var s = cc.Director.sharedDirector().getWinSize();
+
+        var label1 = cc.LabelBMFont.create("This is Helvetica", "Resources/fonts/helvetica-32.fnt", cc.CCLabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
+        this.addChild(label1);
+        label1.setPosition(cc.ccp(s.width / 2, s.height / 6));
+
+        var label2 = cc.LabelBMFont.create("And this is Geneva", "Resources/fonts/geneva-32.fnt", cc.CCLabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.ccp(0, 128));
+        this.addChild(label2);
+        label2.setPosition(cc.ccp(s.width / 2, s.height / 3));
+    },
+
+    title:function () {
+        return "cc.LabelBMFont with one texture";
+    },
+
+    subtitle:function () {
+        return "Using 2 .fnt definitions that share the same texture atlas.";
+    }
+});
+
+/// BMFontUnicode
+var BMFontUnicode = AtlasDemo.extend({
+    ctor:function () {
+        var strings = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe("Resources/fonts/strings.xml");
+        var chinese = strings["chinese1"]._string;
+        var japanese = strings["japanese"]._string;
+        var spanish = strings["spanish"]._string;
+
+
+        var s = cc.Director.sharedDirector().getWinSize();
+
+        var label1 = cc.LabelBMFont.create(spanish, "Resources/fonts/arial-unicode-26.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
+        this.addChild(label1);
+        label1.setPosition(cc.ccp(s.width / 2, s.height / 12));
+
+        var label2 = cc.LabelBMFont.create(chinese, "Resources/fonts/arial-unicode-26.fnt");
+        this.addChild(label2);
+        label2.setPosition(cc.ccp(s.width / 2, s.height / 8));
+
+        var label3 = cc.LabelBMFont.create(japanese, "Resources/fonts/arial-unicode-26.fnt");
+        this.addChild(label3);
+        label3.setPosition(cc.ccp(s.width / 2, s.height / 4));
+    },
+    title:function () {
+        return "cc.LabelBMFont with Unicode support";
+    },
+    subtitle:function () {
+        return "You should see 3 differnt labels: In Spanish, Chinese and Korean";
+    }
+});
+
+// BMFontInit
+var BMFontInit = AtlasDemo.extend({
+    ctor:function () {
+        var s = cc.Director.sharedDirector().getWinSize();
+
+        var bmFont = new cc.LabelBMFont();
+        bmFont.init();
+        bmFont.setFntFile("Resources/fonts/helvetica-32.fnt");
+        bmFont.setString("It is working!");
+        this.addChild(bmFont);
+        bmFont.setPosition(cc.ccp(s.width / 2, s.height / 8));
+    },
+    title:function () {
+        return "cc.LabelBMFont init";
+    },
+    subtitle:function () {
+        return "Test for support of init method without parameters.";
+    }
+});
+
+// TTFFontInit
+var TTFFontInit = AtlasDemo.extend({
+    ctor:function () {
+        var s = cc.Director.sharedDirector().getWinSize();
+        var font = new cc.LabelTTF();
+        font.init();
+        font.setFontName("Marker Felt");
+        font.setFontSize(48);
+        font.setString("It is working!");
+        this.addChild(font);
+        font.setPosition(cc.ccp(s.width / 2, s.height / 4 * 2));
+    },
+    title:function () {
+        return "cc.LabelTTF init";
+    },
+    subtitle:function () {
+        return "Test for support of init method without parameters.";
+    }
+});
+
+
+var LabelTTFAlignment = AtlasDemo.extend({
+    ctor:function () {
+        var s = cc.Director.sharedDirector().getWinSize();
+        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "Helvetica", 12);
+        ttf0.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 2));
+        ttf0.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.addChild(ttf0);
+
+        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", cc.SizeMake(245, 32), cc.TEXT_ALIGNMENT_CENTER, "Helvetica", 12);
+        ttf1.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 3));
+        ttf1.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.addChild(ttf1);
+
+        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", cc.SizeMake(245, 32), cc.TEXT_ALIGNMENT_RIGHT, "Helvetica", 12);
+        ttf2.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 4));
+        ttf2.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.addChild(ttf2);
+    },
+    title:function () {
+        return "cc.LabelTTF alignment";
+    },
+    subtitle:function () {
+        return "Tests alignment values";
     }
 });

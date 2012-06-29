@@ -278,9 +278,9 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         return this._label.getColor
     },
 
-    setIsOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB:function (value) {
     },
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
     },
 
     /**
@@ -1034,9 +1034,9 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     selectedItem:function () {
         return this._subItems[this._selectedIndex];
     },
-    setIsOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB:function (value) {
     },
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
     }
 });
 

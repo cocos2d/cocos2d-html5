@@ -1490,7 +1490,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * opacity: conforms to CCRGBAProtocol protocol
      * @param {Boolean} value
      */
-    setIsOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB:function (value) {
         var oldColor = this._color;
         this._opacityModifyRGB = value;
         this._color = oldColor;
@@ -1500,7 +1500,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * return IsOpacityModifyRGB value
      * @return {Boolean}
      */
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
         return this._opacityModifyRGB;
     },
 
@@ -1586,11 +1586,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (!this._texture || !this._texture.getHasPremultipliedAlpha()) {
                 this._blendFunc.src = cc.GL_SRC_ALPHA;
                 this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
-                this.setIsOpacityModifyRGB(false);
+                this.setOpacityModifyRGB(false);
             } else {
                 this._blendFunc.src = cc.BLEND_SRC;
                 this._blendFunc.dst = cc.BLEND_DST;
-                this.setIsOpacityModifyRGB(true);
+                this.setOpacityModifyRGB(true);
             }
         }
     },

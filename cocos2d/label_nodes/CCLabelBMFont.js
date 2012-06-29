@@ -29,14 +29,19 @@
  http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)
  http://www.angelcode.com/products/bmfont/ (Free, Windows only)
  ****************************************************************************/
+cc.CCLabelAutomaticWidth = -1;
 
-cc._KerningHashElement = function(key, amount) {
+cc._KerningHashElement = function (key, amount) {
     this.key = key;	// key for the hash. 16-bit for 1st element, 16-bit for 2nd element
     this.amount = amount;
 };
 
+cc._FontDefHashElement = function (key,fontDef) {
+    this.key = key;        // key. Font Unicode value
+    this.fontDef = fontDef;    // font definition
+};
 
-cc._BMFontDef = function(charID, rect, xOffset, yOffset, xAdvance) {
+cc._BMFontDef = function (charID, rect, xOffset, yOffset, xAdvance) {
     //! ID of the character
     this.charID = charID || 0;
     //! origin and size of the font
@@ -49,7 +54,7 @@ cc._BMFontDef = function(charID, rect, xOffset, yOffset, xAdvance) {
     this.xAdvance = xAdvance || 0;
 };
 
-cc._BMFontPadding = function(left, top, right, bottom) {
+cc._BMFontPadding = function (left, top, right, bottom) {
     /// padding left
     this.left = left || 0;
     /// padding top
@@ -93,7 +98,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      * @type cc._KerningHashElement
      */
     kerningDictionary:{},
-
+    fontDefDictionary:{},
     /**
      * Description of BMFontConfiguration
      * @return {String}
@@ -102,7 +107,18 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         var ret = "<cc.BMFontConfiguration | Kernings:" + this.kerningDictionary + " | Image = " + this.atlasName.toString() + ">";
         return ret;
     },
-
+    /**
+     * @return {String}
+     */
+    getAtlasName:function () {
+        return this.atlasName;
+    },
+    /**
+     * @param {String} atlasName
+     */
+    setAtlasName:function (atlasName) {
+        this.atlasName = atlasName;
+    },
     /**
      * initializes a BitmapFontConfiguration with a FNT file
      * @param {String} FNTfile
@@ -158,8 +174,8 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         }
 
         re = /kernings count+[a-z0-9\-= ",]+/gi;
-        if(re.test(data)){
-        line = RegExp.$1[0];
+        if (re.test(data)) {
+            line = RegExp.$1[0];
         }
         if (line) {
             this._parseKerningCapacity(line);
@@ -284,6 +300,9 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     },
     _purgeKerningDictionary:function () {
         this.kerningDictionary = {};
+    },
+    _purgeFontDefDictionary:function () {
+        this.fontDefDictionary = {};
     }
 });
 
@@ -339,6 +358,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _isOpacityModifyRGB:false,
     _string:"",
     _configuration:null,
+    // name of fntFile
+    _fntFile:"",
+    // initial string without line breaks
+    _initialString:"",
+    // max width until a line break is added
+    _width:0,
+    _lineBreakWithoutSpaces:false,
+    _imageOffset:cc.PointZero(),
     /**
      * Constructor
      */
@@ -357,7 +384,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     /**
      * conforms to cc.RGBAProtocol protocol
-      * @return {Number}
+     * @return {Number}
      */
     getOpacity:function () {
         return this._opacity;
@@ -378,10 +405,21 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
         }
     },
+    /**
+     *
+     */
+    isOpacityModifyRGB:function () {
 
+    },
+    /**
+     *
+     */
+    setOpacityModifyRGB:function (isOpacityModifyRGB) {
+
+    },
     /**
      * conforms to cc.RGBAProtocol protocol
-      * @return {cc.Color3B}
+     * @return {cc.Color3B}
      */
     getColor:function () {
         return this._color;
@@ -392,7 +430,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {cc.Color3B} Var
      */
     setColor:function (color3) {
-        if ((this._color.r == color3.r)&&(this._color.g == color3.g)&&(this._color.b == color3.b)) {
+        if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b)) {
             return;
         }
         this._color = color3;
@@ -402,8 +440,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 if (cacheTextureForColor) {
                     //generate color texture cache
                     var tx = this.getTexture();
-                    var textureRect = new cc.Rect(0,0,tx.width,tx.height);
-                    var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color,textureRect);
+                    var textureRect = new cc.Rect(0, 0, tx.width, tx.height);
+                    var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
                     var img = new Image();
                     img.src = colorTexture.toDataURL();
                     this.setTexture(img);
@@ -414,9 +452,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     /**
      * conforms to cc.RGBAProtocol protocol
-      * @return {Boolean}
+     * @return {Boolean}
      */
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
         return this._isOpacityModifyRGB;
     },
 
@@ -424,7 +462,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      *
      * @param {Boolean} Var
      */
-    setIsOpacityModifyRGB:function (Var) {
+    setOpacityModifyRGB:function (Var) {
         this._isOpacityModifyRGB = Var;
         if (this._children && this._children.length != 0) {
             for (var i = 0, len = this._children.length; i < len; i++) {
@@ -432,31 +470,58 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 if (node) {
                     var pRGBAProtocol = node instanceof cc.RGBAProtocol;
                     if (pRGBAProtocol) {
-                        pRGBAProtocol.setIsOpacityModifyRGB(this._isOpacityModifyRGB);
+                        pRGBAProtocol.setOpacityModifyRGB(this._isOpacityModifyRGB);
                     }
                 }
             }
         }
     },
 
+    init:function () {
 
+    },
     /**
      * init a bitmap font altas with an initial string and the FNT file
-      * @param {String} theString
+     * @param {String} theString
      * @param {String} fntFile
      * @return {Boolean}
      */
-    initWithString:function (theString, fntFile) {
-        cc.Assert(theString != null, "");
-        this._configuration = cc.FNTConfigLoadFile(fntFile);
+    initWithString:function (arg) {
+        var theString = arg[0],
+            fntFile = arg[1],
+            width = arg[2],
+            alignment = arg[3],
+            imageOffset = arg[4];
 
-        cc.Assert(this._configuration, "Error creating config for LabelBMFont");
-        if (this.initWithFile(this._configuration.atlasName, theString.length)) {
+        this._configuration = cc.FNTConfigLoadFile(fntFile);
+        cc.Assert(this._configuration, "re-init is no longer supported");
+        cc.Assert((theString && fntFile) || (theString == null && fntFile == null), "Invalid params for cc.LabelBMFont");
+
+        var texture;
+        if (fntFile) {
+            var newConf = cc.FNTConfigLoadFile(fntFile);
+            cc.Assert(newConf, "cc.LabelBMFont: Impossible to create font. Please check file");
+            this._configuration = newConf;
+            this._fntFile = fntFile;
+            texture = cc.TextureCache.sharedTextureCache().addImage(this._configuration.getAtlasName());
+        }
+        else {
+            texture = new cc.Texture2D();
+        }
+
+        if (theString == null) {
+            theString = "";
+        }
+
+        if (this.initWithTexture(texture, theString.length)) {
+            this._alignment = alignment;
+            this._imageOffset = imageOffset;
+            this._width = width;
             this._opacity = 255;
             this._color = cc.WHITE();
             this._contentSize = cc.SizeZero();
-            this.setAnchorPoint(cc.ccp(0.5, 0.5));
             this.setString(theString);
+            this.setAnchorPoint(cc.ccp(0.5, 0.5));
             return true;
         }
         return false;
@@ -464,7 +529,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
     /**
      * updates the font chars based on the string to render
-      */
+     */
     createFontChars:function () {
         var nextFontPositionX = 0;
         var nextFontPositionY = 0;
@@ -503,11 +568,24 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 continue;
             }
 
-            kerningAmount = this._kerningAmountForFirst(prev, c);
 
-            var fontDef = this._configuration.bitmapFontArray[c];
+
+            //kerningAmount = this._kerningAmountForFirst(prev, c);
+
+            var key = c;
+            var element = this._configuration.fontDefDictionary[key];
+            cc.Assert(element, "FontDefinition could not be found!");
+
+            var fontDef = element.fontDef;
+
+            //var fontDef = this._configuration.bitmapFontArray[c];
 
             var rect = fontDef.rect;
+
+            rect = cc.RECT_PIXELS_TO_POINTS(rect);
+
+            rect.origin.x += this._imageOffset.x;
+            rect.origin.y += this._imageOffset.y;
 
             var fontChar = this.getChildByTag(i);
             if (!fontChar) {
@@ -539,12 +617,17 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             fontChar.setPositionInPixels(cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width / 2.0 + kerningAmount,
                 nextFontPositionY + yOffset - rect.size.height / 2.0));
 
+            var yOffset = this._configuration.commonHeight - fontDef.yOffset;
+            var fontPos = cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width * 0.5 + kerningAmount,
+                nextFontPositionY + yOffset - rect.size.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
+            fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
+
             // update kerning
             nextFontPositionX += this._configuration.bitmapFontArray[c].xAdvance + kerningAmount;
             prev = c;
 
             // Apply label properties
-            fontChar.setIsOpacityModifyRGB(this._isOpacityModifyRGB);
+            fontChar.setOpacityModifyRGB(this._isOpacityModifyRGB);
             // Color MUST be set before opacity, since opacity might change color if OpacityModifyRGB is on
             //fontChar.setColor(this._color);
 
@@ -563,22 +646,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         tmpSize.height = totalHeight;
         this.setContentSizeInPixels(tmpSize);
     },
-
-    /**
-     * get the text of this label
-     * @return {String}
-     */
-    getString:function () {
-        return this._string;
-    },
-
-    /**
-     * set the text
-     * @param newString
-     */
-    setString:function (newString) {
-        this._string = newString;
-
+    updateString:function (fromUpdate) {
         if (this._children) {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
@@ -588,6 +656,39 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
         }
         this.createFontChars();
+
+        if (!fromUpdate) {
+            this.updateLabel();
+        }
+    },
+    /**
+     * get the text of this label
+     * @return {String}
+     */
+    getString:function () {
+        return this._initialString;
+    },
+
+    /**
+     * set the text
+     * @param newString
+     */
+    setString:function (newString, fromUpdate) {
+        fromUpdate = (fromUpdate != null);
+        this._initialString = newString;
+        this.updateString(fromUpdate);
+
+        /*this._string = newString;
+
+         if (this._children) {
+         for (var i = 0; i < this._children.length; i++) {
+         var node = this._children[i];
+         if (node) {
+         node.setIsVisible(false);
+         }
+         }
+         }
+         this.createFontChars();*/
     },
 
     /**
@@ -597,15 +698,258 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     setCString:function (label) {
         this.setString(label);
     },
+    updateLabel:function () {
+        this.setString(this._initialString, true);
 
+        if (this._width > 0) {
+            // Step 1: Make multiline
+            var stringLength = this._string.size();
+            var multiline_string;
+            multiline_string.reserve(stringLength);
+            var last_word;
+            last_word.reserve(stringLength);
+
+            var line = 1, i = 0;
+            var start_line = false, start_word = false;
+            var startOfLine = -1, startOfWord = -1;
+            var skip = 0;
+
+            for (var j = 0; j < this._children.length; j++) {
+                var characterSprite;
+
+                while (!(characterSprite = this.getChildByTag(j + skip)))
+                    skip++;
+                //todo fixed
+                if (!characterSprite.getIsVisible()) continue;
+
+                if (i >= stringLength)
+                    break;
+
+                var character = str_whole[i];
+
+                if (!start_word) {
+                    startOfWord = this._getLetterPosXLeft(characterSprite);
+                    start_word = true;
+                }
+                if (!start_line) {
+                    startOfLine = startOfWord;
+                    start_line = true;
+                }
+
+                // Newline.
+                if (character == '\n') {
+                    last_word.push_back('\n');
+                    multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
+                    last_word.clear();
+                    start_word = false;
+                    start_line = false;
+                    startOfWord = -1;
+                    startOfLine = -1;
+                    i++;
+                    line++;
+
+                    if (i >= stringLength)
+                        break;
+
+                    character = str_whole[i];
+
+                    if (!startOfWord) {
+                        startOfWord = this._getLetterPosXLeft(characterSprite);
+                        start_word = true;
+                    }
+                    if (!startOfLine) {
+                        startOfLine = startOfWord;
+                        start_line = true;
+                    }
+                }
+
+                // Whitespace.
+                if (isspace_unicode(character)) {
+                    last_word.push_back(character);
+                    multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
+                    last_word.clear();
+                    start_word = false;
+                    startOfWord = -1;
+                    i++;
+                    continue;
+                }
+
+                // Out of bounds.
+                if (this._getLetterPosXRight(characterSprite) - startOfLine > this._width) {
+                    if (!m_bLineBreakWithoutSpaces) {
+                        last_word.push_back(character);
+
+                        var found = cc_utf8_find_last_not_char(multiline_string, ' ');
+                        if (found != -1)
+                            cc_utf8_trim_ws(multiline_string);
+                        else
+                            multiline_string.clear();
+
+                        if (multiline_string.size() > 0)
+                            multiline_string.push_back('\n');
+
+                        line++;
+                        start_line = false;
+                        startOfLine = -1;
+                        i++;
+                    }
+                    else {
+                        cc_utf8_trim_ws(last_word);
+
+                        last_word.push_back('\n');
+                        multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
+                        last_word.clear();
+                        start_word = false;
+                        start_line = false;
+                        startOfWord = -1;
+                        startOfLine = -1;
+                        line++;
+
+                        if (i >= stringLength)
+                            break;
+
+                        if (!startOfWord) {
+                            startOfWord = this._getLetterPosXLeft(characterSprite);
+                            start_word = true;
+                        }
+                        if (!startOfLine) {
+                            startOfLine = startOfWord;
+                            start_line = true;
+                        }
+
+                        j--;
+                    }
+
+                    continue;
+                }
+                else {
+                    // Character is normal.
+                    last_word.push_back(character);
+                    i++;
+                    continue;
+                }
+            }
+
+            multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
+
+            var size = multiline_string.size();
+            var str_new = new [size + 1];
+
+            for (var i = 0; i < size; ++i) {
+                str_new[i] = multiline_string[i];
+            }
+
+            str_new[size] = 0;
+
+            this._string = str_new;
+            this.updateString(true);
+        }
+
+        // Step 2: Make alignment
+        if (this.alignment != cc.TEXT_ALIGNMENT_LEFT) {
+            var i = 0;
+
+            var lineNumber = 0;
+            var strlen = cc_wcslen(this._string);
+            var last_line;
+            for (var ctr = 0; ctr <= strlen; ++ctr) {
+                if (this._string[ctr] == '\n' || this._string[ctr] == 0) {
+                    var lineWidth = 0.0;
+                    var line_length = last_line.size();
+                    var index = i + line_length - 1 + lineNumber;
+                    if (index < 0) continue;
+
+                    var lastChar = this.getChildByTag(index);
+                    if (lastChar == null)
+                        continue;
+
+                    lineWidth = lastChar.getPosition().x + lastChar.getContentSize().width / 2;
+
+                    var shift = 0;
+                    switch (this._alignment) {
+                        case cc.TEXT_ALIGNMENT_CENTER:
+                            shift = this.getContentSize().width / 2 - lineWidth / 2;
+                            break;
+                        case cc.TEXT_ALIGNMENT_RIGHT:
+                            shift = this.getContentSize().width - lineWidth;
+                            break;
+                        default:
+                            break;
+                    }
+
+                    if (shift != 0) {
+                        for (var j = 0; j < line_length; j++) {
+                            index = i + j + lineNumber;
+                            if (index < 0) continue;
+
+                            var characterSprite = this.getChildByTag(index);
+                            characterSprite.setPosition(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0.0)));
+                        }
+                    }
+
+                    i += line_length;
+                    lineNumber++;
+
+                    last_line.clear();
+                    continue;
+                }
+
+                last_line.push_back(this._string[ctr]);
+            }
+        }
+    },
+    setAlignment:function (alignment) {
+        this.this._alignment = alignment;
+        this.updateLabel();
+    },
+    setWidth:function (width) {
+        this._width = width;
+        this.updateLabel();
+    },
+    setLineBreakWithoutSpace:function (breakWithoutSpace) {
+        this.lineBreakWithoutSpaces = breakWithoutSpace;
+        this.updateLabel();
+    },
+    setScale:function (scale) {
+        this._super(scale);
+        this.updateLabel();
+    },
+    setScaleX:function (scaleX) {
+        this._super(scaleX);
+        this.updateLabel();
+    },
+    setScaleY:function (scaleY) {
+        this._super(scaleY);
+        this.updateLabel();
+    },
+    setFntFile:function (fntFile) {
+        if (fntFile != null && strcmp(fntFile, m_sFntFile.c_str()) != 0) {
+            var newConf = cc.FNTConfigLoadFile(fntFile);
+
+            cc.Assert(newConf, "cc.LabelBMFont: Impossible to create font. Please check file");
+
+            this.fntFile = fntFile;
+            this._configuration = newConf;
+
+            this.setTexture(cc.TextureCache.sharedTextureCache().addImage(this._configuration.getAtlasName()));
+            this.createFontChars();
+        }
+    },
+    /**
+     * @return {String}
+     */
+    getFntFile:function () {
+        return this._fntFile;
+    },
     /**
      * set the anchorpoint of the label
      * @param {cc.Point} point
      */
     setAnchorPoint:function (point) {
-        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
+        if (!cc.Point.cc.PointEqualToPoint(point, this._anchorPoint)) {
             this._super(point);
             this.createFontChars();
+            //todo
         }
     },
 
@@ -621,6 +965,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
         }
         return ret;
+    },
+    _getLetterPosXLeft:function (characterSprite) {
+        return sp.getPosition().x * m_fScaleX + (sp.getContentSize().width * m_fScaleX * sp.getAnchorPoint().x);
+    },
+    _getLetterPosXRight:function (characterSprite) {
+        return sp.getPosition().x * m_fScaleX - (sp.getContentSize().width * m_fScaleX * sp.getAnchorPoint().x);
     }
 
 });
@@ -634,9 +984,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  * // Example
  * var label = cc.LabelBMFont.create('label text', 'fontfile.fnt')
  */
-cc.LabelBMFont.create = function (str, fntFile) {
+cc.LabelBMFont.create = function () {
     var ret = new cc.LabelBMFont();
-    if (ret && ret.initWithString(str, fntFile)) {
+    if (ret && ret.initWithString(arguments)) {
         return ret;
     }
     return null;

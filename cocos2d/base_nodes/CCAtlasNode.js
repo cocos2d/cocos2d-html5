@@ -209,7 +209,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     /**
      * @param {Boolean} value
      */
-    setIsOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB:function (value) {
         var oldColor = this._color;
         this._isOpacityModifyRGB = value;
         this._color = oldColor;
@@ -218,7 +218,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     /**
      * @return {Boolean}
      */
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
         return this._isOpacityModifyRGB;
     },
 

@@ -460,9 +460,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         }
     },
 
-    setIsOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB:function (value) {
     },
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
         return false;
     },
 

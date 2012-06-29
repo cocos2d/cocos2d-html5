@@ -196,8 +196,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
             this.setString(string);
+            //this._parseLabelTTF();
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            this._parseLabelTTF();
             return true;
         }
         return false;
@@ -220,6 +220,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             if (context.font != this._fontStyleStr)
                 context.font = this._fontStyleStr;
+            context.textBaseline = "bottom";
 
             var xOffset = 0, yOffset = 0;
             switch (this._hAlignment) {
@@ -274,60 +275,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             }
         }
     },
-    _parseLabelTTF:function () {
-        var  context = cc.renderContext;
-        var num = this._lineCount();
-        var ttf = new cc.LabelNode();
-
-        var xOffset = 0, yOffset = 0;
-        switch (this._hAlignment) {
-            case cc.TEXT_ALIGNMENT_LEFT:
-                context.textAlign = "left";
-                xOffset = 0;
-                break;
-            case cc.TEXT_ALIGNMENT_RIGHT:
-                context.textAlign = "right";
-                xOffset = this._dimensions.width;
-                break;
-            case cc.TEXT_ALIGNMENT_CENTER:
-                context.textAlign = "center";
-                xOffset = this._dimensions.width / 2;
-                break;
-            default:
-                break;
-        }
-
-        switch (this._vAlignment) {
-            case cc.VERTICAL_TEXT_ALIGNMENT_TOP:
-                context.textBaseline = "top";
-                yOffset = -this._dimensions.height;
-                break;
-            case cc.VERTICAL_TEXT_ALIGNMENT_CENTER:
-                context.textBaseline = "middle";
-                yOffset = -this._dimensions.height / 2;
-                break;
-            case cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM:
-                context.textBaseline = "bottom";
-                yOffset = 0;
-                break;
-            default:
-                break;
-        }
-
-
-        ttf.pos = cc.Point(-this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
-        ttf.text = this._string;
-    },
     _wrapText:function (context, text, x, y, maxWidth, maxHeight, lineHeight) {
         var words = text.split(" ");
         var line = "";
-
+        var num = this._lineCount() -1;
         for (var n = 0; n < words.length; n++) {
             var testLine = line + words[n] + " ";
             var testWidth = context.measureText(testLine).width - context.measureText(" ").width;
 
             var xOffset, yOffset;
-
             switch (this._hAlignment) {
                 case cc.TEXT_ALIGNMENT_LEFT:
                     context.textAlign = "left";
@@ -350,32 +306,29 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                     break;
                 case cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM:
                     context.textBaseline = "bottom";
-                    yOffset = -lineHeight * (n + 1);
+                    yOffset = -lineHeight * num;
                     break;
                 default:
                     context.textBaseline = "middle";
-                    yOffset = -maxHeight / 2 - (lineHeight * n / 2);
+                    yOffset = -maxHeight / 2 - (lineHeight * num / 2);
                     break;
             }
 
             if (testWidth >= maxWidth) {
-                //var tmpWidth = testWidth - context.measureText(words[n]).width - 2 * context.measureText(" ").width;
                 context.fillText(line, x + xOffset, y + yOffset);
                 y += lineHeight;
                 line = words[n] + " ";
             }
             else {
                 line = testLine;
-                if (n == words.length - 1) {
-                    context.fillText(line, x + xOffset, y + yOffset);
-                }
             }
-
-
+            if (n == words.length - 1) {
+                context.fillText(line, x + xOffset, y + yOffset);
+            }
         }
     },
     _lineCount:function () {
-        if(this._dimensions.width == 0){
+        if (this._dimensions.width == 0) {
             return 1;
         }
         var context = cc.renderContext;
@@ -390,10 +343,12 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 line = words[n] + " ";
             }
             else {
+
+
                 line = tmpLine;
-                if (n == words.length - 1) {
-                    num++;
-                }
+            }
+            if (n == words.length - 1) {
+                num++;
             }
         }
         cc.renderContext.restore();
@@ -406,27 +361,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this.setContentSize(new cc.Size(dim.width, this._fontSize));
         cc.renderContext.restore();
         this.setNodeDirty();
-
-        /*var tex;
-         if (this._dimensions.width == 0 || this._dimensions.height == 0) {
-         tex = new cc.Texture2D();
-         tex.initWithString(this._string, this._fontName, this._fontSize * cc.CONTENT_SCALE_FACTOR());
-         }
-         else {
-         tex = new cc.Texture2D();
-         tex.initWithString(this._string,
-         cc.SIZE_POINTS_TO_PIXELS(this._dimensions),
-         this._hAlignment,
-         this._vAlignment,
-         this._fontName,
-         this._fontSize * cc.CONTENT_SCALE_FACTOR());
-         }
-
-         this.setTexture(tex);
-
-         var rect = cc.RectZero();
-         rect.size = this._texture.getContentSize();
-         this.setTextureRect(rect);*/
     }
 });
 
@@ -469,7 +403,8 @@ cc.LabelTTF.node = function () {
     return cc.LabelTTF.create();
 };
 
-cc.LabelNode = function (pos, text) {
+cc.LabelNode = function (pos, text, align) {
     this.pos = pos;
     this.text = text;
+    this.align = align;
 };

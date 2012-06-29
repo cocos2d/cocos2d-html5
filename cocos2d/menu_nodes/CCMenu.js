@@ -464,9 +464,9 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         this._super();
     },
 
-    setIsOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB:function (value) {
     },
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
     },
     _itemForTouch:function (touch) {
         var touchLocation = touch.locationInView(touch.view());
