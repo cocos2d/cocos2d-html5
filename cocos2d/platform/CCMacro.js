@@ -260,26 +260,3 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
 } : function (p) {
     return p;
 };
-
-
-/**
- * Converts a rect in pixels to points
- * @param {cc.Point} point
- * @function
- */
-cc.POINT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
-    return cc.PointMake((point).x / cc.CONTENT_SCALE_FACTOR(), (point).y / cc.CONTENT_SCALE_FACTOR())
-} : function (p) {
-    return p;
-};
-
-/**
- * Converts a rect in points to pixels
- * @param {cc.Point} point
- * @function
- */
-cc.POINT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
-    cc.PointMake((point).x * cc.CONTENT_SCALE_FACTOR(), (point).y * cc.CONTENT_SCALE_FACTOR())
-} : function (p) {
-    return p;
-};

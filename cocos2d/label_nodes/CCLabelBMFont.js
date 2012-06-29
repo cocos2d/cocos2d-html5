@@ -36,7 +36,7 @@ cc._KerningHashElement = function (key, amount) {
     this.amount = amount;
 };
 
-cc._FontDefHashElement = function (key,fontDef) {
+cc._FontDefHashElement = function (key, fontDef) {
     this.key = key;        // key. Font Unicode value
     this.fontDef = fontDef;    // font definition
 };
@@ -569,7 +569,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
 
-
             //kerningAmount = this._kerningAmountForFirst(prev, c);
 
             var key = c;
@@ -595,7 +594,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.setTextureRect(rect);
                 }
                 else {
-                    fontChar.initWithBatchNodeRectInPixels(this, rect);
+                    fontChar.initWithTexture(this, rect);
                 }
                 this.addChild(fontChar, 0, i);
             }
@@ -606,16 +605,16 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
                 else {
                     // reusing fonts
-                    fontChar.initWithBatchNodeRectInPixels(this, rect);
+                    fontChar.initWithTexture(this, rect);
                     // restore to default in case they were modified
                     fontChar.setVisible(true);
                     fontChar.setOpacity(255);
                 }
             }
 
-            var yOffset = this._configuration.commonHeight - fontDef.yOffset;
-            fontChar.setPositionInPixels(cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width / 2.0 + kerningAmount,
-                nextFontPositionY + yOffset - rect.size.height / 2.0));
+            /*var yOffset = this._configuration.commonHeight - fontDef.yOffset;
+             fontChar.setPositionInPixels(cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width / 2.0 + kerningAmount,
+             nextFontPositionY + yOffset - rect.size.height / 2.0));*/
 
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
             var fontPos = cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width * 0.5 + kerningAmount,
@@ -644,14 +643,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         tmpSize.width = longestLine;
         tmpSize.height = totalHeight;
-        this.setContentSizeInPixels(tmpSize);
+        this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(tmpSize));
     },
     updateString:function (fromUpdate) {
         if (this._children) {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
-                    node.setIsVisible(false);
+                    node.setVisible(false);
                 }
             }
         }
@@ -720,7 +719,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 while (!(characterSprite = this.getChildByTag(j + skip)))
                     skip++;
                 //todo fixed
-                if (!characterSprite.getIsVisible()) continue;
+                if (!characterSprite.isVisible()) continue;
 
                 if (i >= stringLength)
                     break;
@@ -899,7 +898,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
     },
     setAlignment:function (alignment) {
-        this.this._alignment = alignment;
+        this._alignment = alignment;
         this.updateLabel();
     },
     setWidth:function (width) {
@@ -928,7 +927,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             cc.Assert(newConf, "cc.LabelBMFont: Impossible to create font. Please check file");
 
-            this.fntFile = fntFile;
+            this._fntFile = fntFile;
             this._configuration = newConf;
 
             this.setTexture(cc.TextureCache.sharedTextureCache().addImage(this._configuration.getAtlasName()));
@@ -946,7 +945,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {cc.Point} point
      */
     setAnchorPoint:function (point) {
-        if (!cc.Point.cc.PointEqualToPoint(point, this._anchorPoint)) {
+        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
             this._super(point);
             this.createFontChars();
             //todo
@@ -966,11 +965,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
         return ret;
     },
-    _getLetterPosXLeft:function (characterSprite) {
-        return sp.getPosition().x * m_fScaleX + (sp.getContentSize().width * m_fScaleX * sp.getAnchorPoint().x);
+    _getLetterPosXLeft:function (sp) {
+        return sp.getPosition().x * this._scaleX + (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     },
-    _getLetterPosXRight:function (characterSprite) {
-        return sp.getPosition().x * m_fScaleX - (sp.getContentSize().width * m_fScaleX * sp.getAnchorPoint().x);
+    _getLetterPosXRight:function (sp) {
+        return sp.getPosition().x * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     }
 
 });
