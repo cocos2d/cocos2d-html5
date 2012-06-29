@@ -224,6 +224,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                         array[i].cleanup();
                 }
                 break;
+            case cc.Node.StateCallbackType.updateTransform:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].updateTransform();
+                }
+                break;
             case cc.Node.StateCallbackType.onExitTransitionDidStart:
                 for (i = 0; i < array.length; i++) {
                     if (array[i])
