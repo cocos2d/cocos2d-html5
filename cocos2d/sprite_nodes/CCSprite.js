@@ -813,7 +813,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 context.scale(1, -1);
             }
             var offsetPixels = this._offsetPosition;
-            var pos = new cc.Point(0 | ( -this._anchorPoint.x + offsetPixels.x), 0 | ( -this._anchorPoint.y + offsetPixels.y));
+            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x + offsetPixels.x), 0 | ( -this._anchorPointInPoints.y + offsetPixels.y));
             if (this._texture) {
                 //direct draw image by canvas drawImage
                 if (this._texture instanceof HTMLImageElement) {

@@ -39,6 +39,24 @@ cc.PRIORITY_SYSTEM = (-2147483647 - 1);
 cc.PRIORITY_NON_SYSTEM = cc.PRIORITY_SYSTEM + 1;
 
 /**
+ * Verify Array's Type
+ * @param {Array} arr
+ * @param {function} type
+ * @return {Boolean}
+ * @function
+ */
+cc.ArrayVerifyType = function (arr, type) {
+    if (arr && arr.length > 0) {
+        for (var i = 0; i < arr.length; i++) {
+            if (!(arr[i] instanceof  type)) {
+                cc.Log("element type is wrong!");
+                return false;
+            }
+        }
+    }
+};
+
+/**
  * Removes object at specified index and pushes back all subsequent objects.Behaviour undefined if index outside [0, num-1].
  * @function
  * @param {Array} arr Source Array
@@ -839,31 +857,31 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     pauseAllTargetsWithMinPriority:function (minPriority) {
         var idsWithSelectors = [];
 
-        var i, element ;
+        var i, element;
         // Custom Selectors
-        for(i = 0; i < this._hashForSelectors.length;i++){
+        for (i = 0; i < this._hashForSelectors.length; i++) {
             element = this._hashForSelectors[i];
-            if(element){
+            if (element) {
                 element.paused = true;
                 idsWithSelectors.push(element.target);
             }
         }
 
         // Updates selectors
-        if(minPriority < 0) {
+        if (minPriority < 0) {
             for (i = 0; i < this._updatesNegList.length; i++) {
                 element = this._updatesNegList[i];
-                if(element){
+                if (element) {
                     element.paused = true;
                     idsWithSelectors.push(element.target);
                 }
             }
         }
 
-        if(minPriority <= 0) {
+        if (minPriority <= 0) {
             for (i = 0; i < this._updates0List.length; i++) {
                 element = this._updates0List[i];
-                if(element){
+                if (element) {
                     element.paused = true;
                     idsWithSelectors.push(element.target);
                 }
@@ -872,7 +890,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         for (i = 0; i < this._updatesPosList.length; i++) {
             element = this._updatesPosList[i];
-            if(element){
+            if (element) {
                 element.paused = true;
                 idsWithSelectors.push(element.target);
             }
@@ -891,7 +909,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             return;
 
         for (var i = 0; i < targetsToResume.length; i++) {
-           this.resumeTarget(targetsToResume[i]);
+            this.resumeTarget(targetsToResume[i]);
         }
     },
 
