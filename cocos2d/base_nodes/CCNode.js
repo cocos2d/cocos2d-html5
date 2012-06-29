@@ -191,7 +191,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * @param {Array} array
-     * @param {function} func
+     * @param {cc.Node.StateCallbackType} function Type
      * @private
      */
     _arrayMakeObjectsPerformSelector:function (array, callbackType) {
@@ -228,6 +228,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 for (i = 0; i < array.length; i++) {
                     if (array[i])
                         array[i].onExitTransitionDidStart();
+                }
+                break;
+            case cc.Node.StateCallbackType.sortAllChildren:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].sortAllChildren();
                 }
                 break;
             default :
@@ -782,6 +788,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.ActionManager}
      */
     getActionManager:function () {
+        if(!this._actionManager)
+            this._actionManager = cc.Director.sharedDirector().getActionManager();
         return this._actionManager;
     },
 
@@ -805,6 +813,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Scheduler}
      */
     getScheduler:function () {
+        if(!this._scheduler)
+            this._scheduler = cc.Director.sharedDirector().getScheduler();
         return this._scheduler;
     },
 
@@ -1308,7 +1318,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     runAction:function (action) {
         cc.Assert(action != null, "Argument must be non-nil");
-        this._actionManager.addAction(action, this, !this._isRunning);
+        this.getActionManager().addAction(action, this, !this._isRunning);
         return action;
     },
 
@@ -1316,7 +1326,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Removes all actions from the running action list
      */
     stopAllActions:function () {
-        this._actionManager.removeAllActionsFromTarget(this);
+        this.getActionManager().removeAllActionsFromTarget(this);
     },
 
     /**
@@ -1324,7 +1334,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Action} action
      */
     stopAction:function (action) {
-        this._actionManager.removeAction(action);
+        this.getActionManager().removeAction(action);
     },
 
     /**
@@ -1333,7 +1343,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     stopActionByTag:function (tag) {
         cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
-        this._actionManager.removeActionByTag(tag, this);
+        this.getActionManager().removeActionByTag(tag, this);
     },
 
     /**
@@ -1343,7 +1353,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getActionByTag:function (tag) {
         cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
-        return this._actionManager.getActionByTag(tag, this);
+        return this.getActionManager().getActionByTag(tag, this);
     },
 
     /** Returns the numbers of actions that are running plus the ones that are schedule to run (actions in actionsToAdd and actions arrays).<br/>
@@ -1353,7 +1363,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     numberOfRunningActions:function () {
-        return this._actionManager.numberOfRunningActionsInTarget(this);
+        return this.getActionManager().numberOfRunningActionsInTarget(this);
     },
 
     // cc.Node - Callbacks
@@ -1374,14 +1384,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} priority
      */
     scheduleUpdateWithPriority:function (priority) {
-        this._scheduler.scheduleUpdateForTarget(this, priority, !this._isRunning);
+        this.getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
     },
 
     /**
      * unschedules the "update" method.
      */
     unscheduleUpdate:function () {
-        this._scheduler.unscheduleUpdateForTarget(this);
+        this.getScheduler().unscheduleUpdateForTarget(this);
     },
 
     /**
@@ -1398,7 +1408,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         repeat = repeat || cc.REPEAT_FOREVER;
         delay = delay || 0;
 
-        this._scheduler.scheduleSelector(selector, this, interval, !this._isRunning, repeat, delay);
+        this.getScheduler().scheduleSelector(selector, this, interval, !this._isRunning, repeat, delay);
     },
 
     /**
@@ -1419,7 +1429,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!selector)
             return;
 
-        this._scheduler.unscheduleSelector(selector, this);
+        this.getScheduler().unscheduleSelector(selector, this);
     },
 
     /**
@@ -1427,7 +1437,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Actions are not affected by this method.
      */
     unscheduleAllSelectors:function () {
-        this._scheduler.unscheduleAllSelectorsForTarget(this);
+        this.getScheduler().unscheduleAllSelectorsForTarget(this);
     },
 
     /**
@@ -1435,8 +1445,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Called internally by onEnter
      */
     resumeSchedulerAndActions:function () {
-        this._scheduler.resumeTarget(this);
-        this._actionManager.resumeTarget(this);
+        this.getScheduler().resumeTarget(this);
+        this.getActionManager().resumeTarget(this);
     },
 
     /**
@@ -1444,8 +1454,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Called internally by onExit
      */
     pauseSchedulerAndActions:function () {
-        this._scheduler.pauseTarget(this);
-        this._actionManager.pauseTarget(this);
+        this.getScheduler().pauseTarget(this);
+        this.getActionManager().pauseTarget(this);
     },
 
     /** Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
@@ -1620,7 +1630,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
  * @constant
  * @type Number
  */
-cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6};
+cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6,sortAllChildren:7};
 
 
 /**

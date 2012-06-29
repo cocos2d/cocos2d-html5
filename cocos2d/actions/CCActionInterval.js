@@ -1925,7 +1925,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         this._super(target);
 
         if (this._restoreOriginalFrame) {
-            this._origFrame = target.displayedFrame();
+            this._origFrame = target.displayFrame();
         }
     },
 
