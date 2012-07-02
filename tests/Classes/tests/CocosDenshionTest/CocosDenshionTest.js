@@ -172,7 +172,7 @@ CocosDenshionTest = cc.Layer.extend({
         this._itmeMenu.setPosition(cc.PointZero());
         this.addChild(this._itmeMenu);
 
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         // set default volume
         cc.AudioManager.sharedEngine().setEffectsVolume(0.5);

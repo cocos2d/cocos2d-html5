@@ -197,7 +197,7 @@ Parallax2 = ParallaxDemo.extend({
 
 
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         // Top Layer, a simple image
         var cocosImage = cc.Sprite.create(s_power);

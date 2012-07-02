@@ -135,7 +135,7 @@ var LayerTest = cc.Layer.extend({
 var LayerTest1 = LayerTest.extend({
     onEnter:function () {
         this._super();
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         var s = cc.Director.sharedDirector().getWinSize();
         var layer = cc.LayerColor.create(cc.ccc4(255, 0, 0, 128), 200, 200);
@@ -265,7 +265,7 @@ var LayerGradient = LayerTest.extend({
         var layer1 = cc.LayerGradient.create(cc.ccc4(255, 0, 0, 255), cc.ccc4(0, 255, 0, 255), cc.ccp(0.9, 0.9));
         this.addChild(layer1, 0, cc.TAG_LAYER);
 
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         /*var label1 = cc.LabelTTF.create("Compressed Interpolation: Enabled", "Marker Felt", 26);
          var label2 = cc.LabelTTF.create("Compressed Interpolation: Disabled", "Marker Felt", 26);
@@ -308,6 +308,6 @@ var LayerGradient = LayerTest.extend({
     },
     toggleItem:function (sender) {
         var gradient = this.getChildByTag(cc.TAG_LAYER);
-        gradient.setIsCompressedInterpolation(!gradient.getIsCompressedInterpolation());
+        gradient.setCompressedInterpolation(!gradient.isCompressedInterpolation());
     }
 });

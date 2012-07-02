@@ -116,7 +116,7 @@ Director1 = DirectorTest.extend({
         var ret = false;
 
         if (this._super()) {
-            this.setIsTouchEnabled(true);
+            this.setTouchEnabled(true);
             var s = cc.Director.sharedDirector().getWinSize();
             var item = cc.MenuItemFont.create("Rotate Device", this, this.rotateDevice);
             var menu = cc.Menu.create(item, null);

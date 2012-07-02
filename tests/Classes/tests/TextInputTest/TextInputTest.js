@@ -145,7 +145,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
     _beginPos:null,
 
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
     },
 
     subtitle:function () {

@@ -39,7 +39,7 @@ var MenuLayer1 = cc.Layer.extend({
     ctor:function () {
         cc.MenuItemFont.setFontSize(30);
         cc.MenuItemFont.setFontName("Courier New");
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         // Font Item
 
         var spriteNormal = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
