@@ -250,7 +250,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
  * var seq = cc.Sequence.create(actArray);
  */
 cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
-    var paraArray = (typeof tempArray == "Array") ? tempArray : arguments;
+    var paraArray = (tempArray instanceof Array) ? tempArray : arguments;
     var prev = paraArray[0];
     for (var i = 1; i < paraArray.length; i++) {
         if (paraArray[i] != null) {
@@ -572,7 +572,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
  * var action = cc.Spawn.create(cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4), cc.RotateBy.create(2, 720));
  */
 cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
-    var paramArray = (typeof tempArray == "Array") ? tempArray : arguments;
+    var paramArray = (tempArray instanceof Array) ? tempArray : arguments;
     var prev = paramArray[0];
     for (var i = 1; i < paramArray.length; i++) {
         if (paramArray[i] != null) {
