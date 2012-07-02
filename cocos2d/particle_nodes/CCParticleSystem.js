@@ -1113,7 +1113,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var ret = false;
         //TODO
         this._plistFile = plistFile;
-        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(this._plistFile);
+        var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(this._plistFile);
 
         cc.Assert(dict != null, "Particles: file not found");
         return this.initWithDictionary(dict);
@@ -1240,18 +1240,18 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             // texture
             // Try to get the texture from the cache
             var textureName = this._valueForKey("textureFileName", dictionary);
-            var fullpath = cc.FileUtils.fullPathFromRelativeFile(textureName, this._plistFile);
+            var fullpath = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(textureName, this._plistFile);
 
             var tex = null;
 
             if (textureName.length > 0) {
                 // set not pop-up message box when load image failed
-                var notify = cc.FileUtils.getIsPopupNotify();
-                cc.FileUtils.setIsPopupNotify(false);
+                var notify = cc.FileUtils.sharedFileUtils().isPopupNotify();
+                cc.FileUtils.sharedFileUtils().setPopupNotify(false);
                 tex = cc.TextureCache.sharedTextureCache().addImage(fullpath);
 
                 // reset the value of UIImage notify
-                cc.FileUtils.setIsPopupNotify(notify);
+                cc.FileUtils.sharedFileUtils().setPopupNotify(notify);
             }
 
             if (tex) {
