@@ -215,7 +215,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         //	cc.String *resourcePath = [mainBndl resourcePath];
         //	cc.String * path = [resourcePath stringByAppendingPathComponent:file];
 
-        this._GAInfo = cc.tgaLoad(cc.FileUtils.fullPathFromRelativePath(file));
+        this._GAInfo = cc.tgaLoad(cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(file));
         if (this._GAInfo.status != cc.TGA_OK) {
             cc.Assert(0, "TileMapAtlasLoadTGA : TileMapAtas cannot load TGA file");
         }
