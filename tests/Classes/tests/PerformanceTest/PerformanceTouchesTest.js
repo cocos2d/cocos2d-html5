@@ -99,7 +99,7 @@ var TouchesMainScene = PerformBasicLayer.extend({
 var TouchesPerformTest1 = TouchesMainScene.extend({
     onEnter:function () {
         this._super();
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
     },
     title:function () {
         return "Targeted touches";
@@ -130,7 +130,7 @@ var TouchesPerformTest1 = TouchesMainScene.extend({
 var TouchesPerformTest2 = TouchesMainScene.extend({
     onEnter:function () {
         this._super();
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
     },
     title:function () {
         return "Standard touches";

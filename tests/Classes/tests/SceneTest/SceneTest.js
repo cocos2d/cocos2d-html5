@@ -154,7 +154,7 @@ SceneTestLayer3 = cc.LayerColor.extend({
 
     ctor:function () {
         this._super();
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         var label = cc.LabelTTF.create("Touch to popScene", "Arial", 28);
         this.addChild(label);
         var s = cc.Director.sharedDirector().getWinSize();

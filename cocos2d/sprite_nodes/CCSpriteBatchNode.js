@@ -384,7 +384,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Boolean} doCleanup
      */
     removeChildAtIndex:function (index, doCleanup) {
-        //TODO index
         this.removeChild(this._children[index], doCleanup);
     },
 
