@@ -805,6 +805,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
+
+            if(this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)){
+                context.globalCompositeOperation = 'lighter';
+            }
+
             context.globalAlpha = this._opacity / 255;
             if (this._flipX) {
                 context.scale(-1, 1);
