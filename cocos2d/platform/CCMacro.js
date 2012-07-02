@@ -123,6 +123,9 @@ cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
  */
 cc.BLEND_DST = 0x0303;
 
+cc.GL_ONE = 1;
+cc.GL_SRC_ALPHA = 0x0302;
+
 /**
  * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
  * @param {cc.Node} node setup node
