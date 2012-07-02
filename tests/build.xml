@@ -94,7 +94,7 @@
                 <file name="layers_scenes_transitions_nodes/CCScene.js"/>
                 <file name="layers_scenes_transitions_nodes/CCLayer.js"/>
                 <file name="layers_scenes_transitions_nodes/CCTransition.js"/>
-                <file name="layers_scenes_transitions_nodes/CCTransitionRadial.js"/>
+                <file name="layers_scenes_transitions_nodes/CCTransitionProgress.js"/>
                 <file name="layers_scenes_transitions_nodes/CCTransitionPageTurn.js"/>
                 <file name="sprite_nodes/CCSprite.js"/>
                 <file name="sprite_nodes/CCAnimation.js"/>
