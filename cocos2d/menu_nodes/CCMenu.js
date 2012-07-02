@@ -101,7 +101,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      */
     init:function () {
         if (this._super()) {
-            this.setIsTouchEnabled(true);
+            this.setTouchEnabled(true);
             var s = cc.Director.sharedDirector().getWinSize();
 
             this.setAnchorPoint(cc.ccp(0.5, 0.5));

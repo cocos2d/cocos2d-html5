@@ -92,7 +92,7 @@ var TestController = cc.Layer.extend({
 
         this._itemMenu.setContentSize(cc.SizeMake(s.width, (testNames.length + 1) * LINE_SPACE));
         this._itemMenu.setPosition(curPos);
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         this.addChild(this._itemMenu);
         this.addChild(menu, 1);
     },

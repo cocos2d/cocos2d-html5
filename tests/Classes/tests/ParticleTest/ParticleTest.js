@@ -146,7 +146,7 @@ var ParticleDemo = cc.LayerColor.extend({
 
         this._emitter = null;
 
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.create(this.title(), "Arial", 28);

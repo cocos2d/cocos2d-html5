@@ -127,7 +127,7 @@ var TileMapTestScene = TestScene.extend({
 //------------------------------------------------------------------
 var TileDemo = cc.Layer.extend({
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
     },
     title:function () {
         return "No title";
