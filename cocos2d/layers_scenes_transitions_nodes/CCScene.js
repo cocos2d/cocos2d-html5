@@ -44,9 +44,9 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
     ctor:function () {
         this._super();
         this._ignoreAnchorPointForPosition = true;
-        var director = cc.Director.sharedDirector();
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this.setContentSize(director.getWinSize());
+
+        this.setContentSize(cc.Director.sharedDirector().getWinSize());
     },
 
     /**
@@ -54,8 +54,7 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
      * @return {Boolean}
      */
     init:function () {
-        var director = cc.Director.sharedDirector();
-        this.setContentSize(director.getWinSize());
+        this.setContentSize(cc.Director.sharedDirector().getWinSize());
         return true;
     }
 });

@@ -207,7 +207,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
 
     /**
      * Initializes a cc.Animation with cc.AnimationFrame
-     * @param {Array} arrayOfAnimationFrams
+     * @param {Array} arrayOfAnimationFrames
      * @param {Number} delayPerUnit
      * @param {Number} loops
      */
