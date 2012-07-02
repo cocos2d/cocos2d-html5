@@ -179,7 +179,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
      */
     addSpriteFramesWithFile:function (plist, texture) {
-        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(plist);
+        var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(plist);
 
         switch (arguments.length) {
             case 1:
@@ -298,8 +298,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * @param {String} plist plist filename
      */
     removeSpriteFramesFromFile:function (plist) {
-        var path = cc.FileUtils.fullPathFromRelativePath(plist);
-        var dict = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe(path);
+        var path = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(plist);
+        var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(path);
 
         this._removeSpriteFramesFromDictionary(dict);
 

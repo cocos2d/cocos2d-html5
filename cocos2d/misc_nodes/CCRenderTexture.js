@@ -347,7 +347,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
             var image = new cc.Image();
             if (image != null && this.getUIImageFromBuffer(image, x, y, width, height)) {
-                var fullpath = cc.FileUtils.getWriteablePath() + filePath;
+                var fullpath = cc.FileUtils.sharedFileUtils().getWriteablePath() + filePath;
 
                 ret = image.saveToFile(fullpath);
             }

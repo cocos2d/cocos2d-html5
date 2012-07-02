@@ -254,7 +254,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         // file
         value = /file="([a-zA-Z0-9\-\._]+)/gi.exec(line)[1];
 
-        this.atlasName = cc.FileUtils.fullPathFromRelativeFile(value, fntFile);
+        this.atlasName = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(value, fntFile);
     },
     _parseKerningCapacity:function (line) {
     },
