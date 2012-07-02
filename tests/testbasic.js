@@ -190,12 +190,12 @@ var testNames = [
         }
     },
     //"CurlTest",
-    {
+    /*{
         title:"DirectorTest",
         testScene:function () {
             return new DirectorTestScene();
         }
-    },
+    },*/
     {
         title:"DrawPrimitivesTest",
         testScene:function () {
