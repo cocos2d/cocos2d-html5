@@ -24,12 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * maximum unsigned int value
- * @constant
- * @type Number
- */
-cc.UINT_MAX = 0xffffffff;
+
 
 /**
  * @constant
