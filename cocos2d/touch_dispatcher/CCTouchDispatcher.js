@@ -594,7 +594,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-            var touch = new cc.Touch(0, mouseX, mouseY);
+            var touch = new cc.Touch(mouseX, mouseY);
             touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -623,7 +623,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-            var touch = new cc.Touch(0, mouseX, mouseY);
+            var touch = new cc.Touch(mouseX, mouseY);
             touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -652,7 +652,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-            var touch = new cc.Touch(0, mouseX, mouseY);
+            var touch = new cc.Touch(mouseX, mouseY);
             touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -694,7 +694,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-                var touch = new cc.Touch(0, mouseX, mouseY);
+                var touch = new cc.Touch(mouseX, mouseY);
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -736,7 +736,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-                var touch = new cc.Touch(0, mouseX, mouseY);
+                var touch = new cc.Touch(mouseX, mouseY);
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -783,7 +783,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-                var touch = new cc.Touch(0, mouseX, mouseY);
+                var touch = new cc.Touch(mouseX, mouseY);
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -825,7 +825,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.sharedDirector().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.sharedDirector().getContentScaleFactor();
 
-                var touch = new cc.Touch(0, mouseX, mouseY);
+                var touch = new cc.Touch(mouseX, mouseY);
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;

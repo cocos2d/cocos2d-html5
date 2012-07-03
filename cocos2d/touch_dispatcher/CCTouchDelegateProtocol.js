@@ -36,8 +36,8 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     /**
      * Constructor
      */
-    ctor:function () {
-        this._point = new cc.Point(0,0);
+    ctor:function (x, y) {
+        this._point = new cc.Point(x || 0, y || 0);
     },
 
     /**
@@ -71,7 +71,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     setTouchInfo:function (id, x, y) {
         this._prevPoint = this._point;
         this._point = new cc.Point(x || 0, y || 0);
-        this._id = id ;
+        this._id = id;
     },
 
     _setPrevPoint:function (x, y) {
@@ -164,7 +164,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /**
      * Virtual function
-    */
+     */
     touchDelegateRelease:function () {
     }
 });
