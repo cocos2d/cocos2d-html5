@@ -24,7 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
 var actionTests = [
     function () {
         return new ActionManual()
@@ -141,119 +140,133 @@ var ActionsTestScene = TestScene.extend({
 });
 
 
-var ActionsDemo = cc.Layer.extend({
-    _grossini:null,
-    _tamara:null,
-    kathia:null,
-    centerSprites:function (numberOfSprites) {
-        var s = cc.Director.sharedDirector().getWinSize();
+var ActionsDemo = function() {
+	goog.base(this);
+}
+goog.inherits( ActionsDemo, cc.Layer );
 
-        if (numberOfSprites == 1) {
-            this._tamara.setVisible(false);
-            this._kathia.setVisible(false);
-            this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-        }
-        else if (numberOfSprites == 2) {
-            this._kathia.setPosition(cc.PointMake(s.width / 3, s.height / 2));
-            this._tamara.setPosition(cc.PointMake(2 * s.width / 3, s.height / 2));
-            this._grossini.setVisible(false);
-        }
-        else if (numberOfSprites == 3) {
-            this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-            this._tamara.setPosition(cc.PointMake(s.width / 4, s.height / 2));
-            this._kathia.setPosition(cc.PointMake(3 * s.width / 4, s.height / 2));
-        }
-    },
-    alignSpritesLeft:function (numberOfSprites) {
-        var s = cc.Director.sharedDirector().getWinSize();
+ActionsDemo.prototype._grossini = null;
+ActionsDemo.prototype._tamara = null;
+ActionsDemo.prototype._kathia = null;
 
-        if (numberOfSprites == 1) {
-            this._tamara.setVisible(false);
-            this._kathia.setVisible(false);
-            this._grossini.setPosition(cc.PointMake(60, s.height / 2));
-        }
-        else if (numberOfSprites == 2) {
-            this._kathia.setPosition(cc.PointMake(60, s.height / 3));
-            this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
-            this._grossini.setVisible(false);
-        }
-        else if (numberOfSprites == 3) {
-            this._grossini.setPosition(cc.PointMake(60, s.height / 2));
-            this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
-            this._kathia.setPosition(cc.PointMake(60, s.height / 3));
-        }
-    },
-    title:function () {
-        return "ActionsTest";
-    },
-    subtitle:function () {
-        return "";
-    },
-    restartCallback:function (sender) {
-        var s = new ActionsTestScene();
-        s.addChild(RestartAction());
-        cc.Director.sharedDirector().replaceScene(s);
-    },
-    nextCallback:function (sender) {
-        var s = new ActionsTestScene();
-        s.addChild(NextAction());
-        cc.Director.sharedDirector().replaceScene(s);
-    },
-    backCallback:function (sender) {
-        var s = new ActionsTestScene();
-        s.addChild(BackAction());
-        cc.Director.sharedDirector().replaceScene(s);
-    },
-    onEnter:function () {
-        this._super();
-        this._grossini = cc.Sprite.create(s_pathGrossini);
-        this._tamara = cc.Sprite.create(s_pathSister1);
-        this._kathia = cc.Sprite.create(s_pathSister2);
-        this.addChild(this._grossini, 1);
-        this.addChild(this._tamara, 2);
-        this.addChild(this._kathia, 3);
-        var s = cc.Director.sharedDirector().getWinSize();
-        this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 3));
-        this._tamara.setPosition(cc.PointMake(s.width / 2, 2 * s.height / 3));
-        this._kathia.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+ActionsDemo.prototype.centerSprites = function (numberOfSprites) {
+    var s = cc.Director.sharedDirector().getWinSize();
 
-        // add title and subtitle
-        var title = this.title();
-        var label = cc.LabelTTF.create(title, "Arial", 18);
-        this.addChild(label, 1);
-        label.setPosition(cc.PointMake(s.width / 2, s.height - 30));
-
-        var strSubtitle = this.subtitle();
-        if (strSubtitle) {
-            var l = cc.LabelTTF.create(strSubtitle, "Thonburi", 22);
-            this.addChild(l, 1);
-            l.setPosition(cc.PointMake(s.width / 2, s.height - 60));
-        }
-
-        // add menu
-        var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
-        var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
-        var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
-
-        var menu = cc.Menu.create(item1, item2, item3, null);
-
-        menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(s.width / 2, 30));
-        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
-
-        this.addChild(menu, 1);
+    if (numberOfSprites == 1) {
+        this._tamara.setVisible(false);
+        this._kathia.setVisible(false);
+        this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
     }
-});
+    else if (numberOfSprites == 2) {
+        this._kathia.setPosition(cc.PointMake(s.width / 3, s.height / 2));
+        this._tamara.setPosition(cc.PointMake(2 * s.width / 3, s.height / 2));
+        this._grossini.setVisible(false);
+    }
+    else if (numberOfSprites == 3) {
+        this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        this._tamara.setPosition(cc.PointMake(s.width / 4, s.height / 2));
+        this._kathia.setPosition(cc.PointMake(3 * s.width / 4, s.height / 2));
+    }
+}
+
+ActionsDemo.prototype.alignSpritesLeft = function (numberOfSprites) {
+    var s = cc.Director.sharedDirector().getWinSize();
+
+    if (numberOfSprites == 1) {
+        this._tamara.setVisible(false);
+        this._kathia.setVisible(false);
+        this._grossini.setPosition(cc.PointMake(60, s.height / 2));
+    }
+    else if (numberOfSprites == 2) {
+        this._kathia.setPosition(cc.PointMake(60, s.height / 3));
+        this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
+        this._grossini.setVisible(false);
+    }
+    else if (numberOfSprites == 3) {
+        this._grossini.setPosition(cc.PointMake(60, s.height / 2));
+        this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
+        this._kathia.setPosition(cc.PointMake(60, s.height / 3));
+    }
+}
+
+ActionsDemo.prototype.title = function () {
+    return "ActionsTest";
+}
+
+ActionsDemo.subtitle = function () {
+    return "";
+}
+
+ActionsDemo.prototype.restartCallback = function (sender) {
+    var s = new ActionsTestScene();
+    s.addChild(RestartAction());
+    cc.Director.sharedDirector().replaceScene(s);
+}
+
+ActionsDemo.prototype.nextCallback = function (sender) {
+    var s = new ActionsTestScene();
+    s.addChild(NextAction());
+    cc.Director.sharedDirector().replaceScene(s);
+}
+
+ActionsDemo.prototype.backCallback = function (sender) {
+    var s = new ActionsTestScene();
+    s.addChild(BackAction());
+    cc.Director.sharedDirector().replaceScene(s);
+}
+
+ActionsDemo.prototype.onEnter = function () {
+    goog.base(this, 'onEnter');
+    this._grossini = cc.Sprite.create(s_pathGrossini);
+    this._tamara = cc.Sprite.create(s_pathSister1);
+    this._kathia = cc.Sprite.create(s_pathSister2);
+    this.addChild(this._grossini, 1);
+    this.addChild(this._tamara, 2);
+    this.addChild(this._kathia, 3);
+    var s = cc.Director.sharedDirector().getWinSize();
+    this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 3));
+    this._tamara.setPosition(cc.PointMake(s.width / 2, 2 * s.height / 3));
+    this._kathia.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+
+    // add title and subtitle
+    var title = this.title();
+    var label = cc.LabelTTF.create(title, "Arial", 18);
+    this.addChild(label, 1);
+    label.setPosition(cc.PointMake(s.width / 2, s.height - 30));
+
+    var strSubtitle = this.subtitle();
+    if (strSubtitle) {
+        var l = cc.LabelTTF.create(strSubtitle, "Thonburi", 22);
+        this.addChild(l, 1);
+        l.setPosition(cc.PointMake(s.width / 2, s.height - 60));
+    }
+
+    // add menu
+    var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
+    var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
+    var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
+
+    var menu = cc.Menu.create(item1, item2, item3, null);
+
+    menu.setPosition(cc.PointZero());
+    item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
+    item2.setPosition(cc.PointMake(s.width / 2, 30));
+    item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
+
+    this.addChild(menu, 1);
+}
 
 //------------------------------------------------------------------
 //
 // ActionManual
 //
 //------------------------------------------------------------------
-var ActionManual = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionManual = function() {
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
+        
 
         var s = cc.Director.sharedDirector().getWinSize();
 
@@ -269,11 +282,14 @@ var ActionManual = ActionsDemo.extend({
 
         this._kathia.setPosition(cc.PointMake(s.width - 100, s.height / 2));
         this._kathia.setColor(cc.BLUE());
-    },
-    subtitle:function () {
-        return "Manual Transformation";
     }
-});
+
+    this.subtitle = function () {
+        return "Manual Transformation!";
+    }
+}
+goog.inherits( ActionManual, ActionsDemo );
+
 
 
 //------------------------------------------------------------------
@@ -281,9 +297,12 @@ var ActionManual = ActionsDemo.extend({
 //	ActionMove
 //
 //------------------------------------------------------------------
-var ActionMove = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionMove = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
 
         this.centerSprites(3);
         var s = cc.Director.sharedDirector().getWinSize();
@@ -296,20 +315,25 @@ var ActionMove = ActionsDemo.extend({
         this._tamara.runAction(actionTo);
         this._grossini.runAction(cc.Sequence.create(actionBy, actionByBack));
         this._kathia.runAction(cc.MoveTo.create(1, cc.PointMake(40, 40)));
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "MoveTo / MoveBy";
     }
-});
+}
+goog.inherits( ActionMove, ActionsDemo );
 
 //------------------------------------------------------------------
 //
 // ActionScale
 //
 //------------------------------------------------------------------
-var ActionScale = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionScale = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
 
         this.centerSprites(3);
 
@@ -323,20 +347,25 @@ var ActionScale = ActionsDemo.extend({
         this._kathia.runAction(cc.Sequence.create(actionBy2, actionBy2Back));
         this._grossini.runAction(cc.Sequence.create(actionBy, actionByBack, null));
 
-    },
-    subtitle:function () {
+    }
+    this.subtitle = function () {
         return "ScaleTo / ScaleBy";
     }
-});
+}
+goog.inherits( ActionScale, ActionsDemo );
 
 //------------------------------------------------------------------
 //
 //	ActionSkew
 //
 //------------------------------------------------------------------
-var ActionSkew = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionSkew = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
+
         this.centerSprites(3);
         var actionTo = cc.SkewTo.create(2, 37.2, -37.2);
         var actionToBack = cc.SkewTo.create(2, 0, 0);
@@ -352,15 +381,20 @@ var ActionSkew = ActionsDemo.extend({
         this._kathia.runAction(cc.Sequence.create(actionBy2, actionBy2Back, null));
 
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "SkewTo / SkewBy";
     }
-});
+}
+goog.inherits( ActionSkew, ActionsDemo );
 
-var ActionSkewRotateScale = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionSkewRotateScale = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this._tamara.removeFromParentAndCleanup(true);
         this._grossini.removeFromParentAndCleanup(true);
         this._kathia.removeFromParentAndCleanup(true);
@@ -399,20 +433,25 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         box.runAction(cc.Sequence.create(actionTo, actionToBack, null));
         box.runAction(cc.Sequence.create(rotateTo, rotateToBack, null));
         box.runAction(cc.Sequence.create(actionScaleTo, actionScaleToBack, null));
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Skew + Rotate + Scale";
     }
-});
+}
+goog.inherits( ActionSkewRotateScale, ActionsDemo );
 
 //------------------------------------------------------------------
 //
 //	ActionRotate
 //
 //------------------------------------------------------------------
-var ActionRotate = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionRotate = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(3);
         var actionTo = cc.RotateTo.create(2, 45);
         var actionTo2 = cc.RotateTo.create(2, -45);
@@ -425,11 +464,12 @@ var ActionRotate = ActionsDemo.extend({
 
         this._kathia.runAction(cc.Sequence.create(actionTo2, actionTo0.copy(), null));
 
-    },
-    subtitle:function () {
+    }
+    this.subtitle = function () {
         return "RotateTo / RotateBy";
     }
-});
+}
+goog.inherits( ActionRotate, ActionsDemo );
 
 
 //------------------------------------------------------------------
@@ -437,9 +477,12 @@ var ActionRotate = ActionsDemo.extend({
 // ActionJump
 //
 //------------------------------------------------------------------
-var ActionJump = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionJump = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(3);
 
         var actionTo = cc.JumpTo.create(2, cc.PointMake(300, 300), 50, 4);
@@ -451,19 +494,24 @@ var ActionJump = ActionsDemo.extend({
         this._grossini.runAction(cc.Sequence.create(actionBy, actionByBack, null));
         this._kathia.runAction(cc.RepeatForever.create(actionUp));
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "JumpTo / JumpBy";
     }
-});
+}
+goog.inherits( ActionJump, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionBezier
 //
 //------------------------------------------------------------------
-var ActionBezier = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionBezier = function() {
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         var s = cc.Director.sharedDirector().getWinSize();
 
         //
@@ -505,19 +553,25 @@ var ActionBezier = ActionsDemo.extend({
         this._tamara.runAction(bezierTo1);
         this._kathia.runAction(bezierTo2);
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "BezierBy / BezierTo";
     }
-});
+}
+goog.inherits( ActionBezier, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionBlink
 //
 //------------------------------------------------------------------
-var ActionBlink = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionBlink = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(2);
 
         var action1 = cc.Blink.create(2, 10);
@@ -526,19 +580,25 @@ var ActionBlink = ActionsDemo.extend({
         this._tamara.runAction(action1);
         this._kathia.runAction(action2);
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Blink";
     }
-});
+}
+goog.inherits( ActionBlink, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionFade
 //
 //------------------------------------------------------------------
-var ActionFade = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionFade = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(2);
         this._tamara.setOpacity(0);
         var action1 = cc.FadeIn.create(1.0);
@@ -551,19 +611,25 @@ var ActionFade = ActionsDemo.extend({
         this._kathia.runAction(cc.Sequence.create(action2, action2Back, null));
 
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "FadeIn / FadeOut";
     }
-});
+}
+goog.inherits( ActionFade, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionTint
 //
 //------------------------------------------------------------------
-var ActionTint = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionTint = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(2);
 
         var action1 = cc.TintTo.create(2, 255, 0, 255);
@@ -573,20 +639,25 @@ var ActionTint = ActionsDemo.extend({
         this._tamara.runAction(action1);
         this._kathia.runAction(cc.Sequence.create(action2, action2Back));
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "TintTo / TintBy";
     }
-});
+}
+goog.inherits( ActionTint, ActionsDemo );
 
 //------------------------------------------------------------------
 //
 // ActionAnimate
 //
 //------------------------------------------------------------------
-var ActionAnimate = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionAnimate = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(1);
 
         var animation = cc.Animation.create();
@@ -599,20 +670,25 @@ var ActionAnimate = ActionsDemo.extend({
         var action_back = action.reverse();
 
         this._grossini.runAction(cc.Sequence.create(action, action_back, null));
+    }
 
-    },
-    subtitle:function () {
+    this.subtitle = function () {
         return "Animation";
     }
-});
+}
+goog.inherits( ActionAnimate, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 //	ActionSequence
 //
 //------------------------------------------------------------------
-var ActionSequence = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionSequence = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.alignSpritesLeft(1);
 
         var action = cc.Sequence.create(
@@ -622,19 +698,25 @@ var ActionSequence = ActionsDemo.extend({
 
         this._grossini.runAction(action);
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Sequence: Move + Rotate";
     }
-});
+}
+goog.inherits( ActionSequence, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 //	ActionSequence2
 //
 //------------------------------------------------------------------
-var ActionSequence2 = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionSequence2 = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(1);
         this._grossini.setVisible(false);
         var action = cc.Sequence.create(
@@ -647,40 +729,49 @@ var ActionSequence2 = ActionsDemo.extend({
             null);
         this._grossini.runAction(action);
 
-    },
-    callback1:function () {
+    }
+
+    this.callback1 = function () {
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
 
         this.addChild(label);
-    },
-    callback2:function () {
+    }
+
+    this.callback2 = function () {
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
-    },
-    callback3:function () {
+    }
+
+    this.callback3 = function () {
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
 
         this.addChild(label);
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Sequence of InstantActions";
     }
-});
+}
+goog.inherits( ActionSequence2, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 //	ActionCallFunc
 //
 //------------------------------------------------------------------
-var ActionCallFunc = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionCallFunc = function() {
+
+	goog.base(this);
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(3);
 
         var action = cc.Sequence.create(
@@ -704,38 +795,44 @@ var ActionCallFunc = ActionsDemo.extend({
         this._tamara.runAction(action2);
         this._kathia.runAction(action3);
 
-    },
-    callback1:function () {
+    }
+
+    this.callback1 = function () {
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
         this.addChild(label);
-    },
-    callback2:function () {
+    }
+
+    this.callback2 = function () {
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
-    },
-    callback3:function () {
+    }
+
+    this.callback3 = function () {
         var s = cc.Director.sharedDirector().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
         this.addChild(label);
-    },
-    subtitle:function () {
+    }
+    
+    this.subtitle = function () {
         return "Callbacks: CallFunc and friends";
     }
-});
+}
+goog.inherits( ActionCallFunc, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionCallFuncND
 //
 //------------------------------------------------------------------
-var ActionCallFuncND = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionCallFuncND = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(1);
 
         var action = cc.Sequence.create(cc.MoveBy.create(2.0, cc.ccp(200, 0)),
@@ -744,22 +841,25 @@ var ActionCallFuncND = ActionsDemo.extend({
 
         this._grossini.runAction(action);
 
-    },
-    title:function () {
+    }
+    this.title = function () {
         return "CallFuncND + auto remove";
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "CallFuncND + removeFromParentAndCleanup. Grossini dissapears in 2s";
     }
-});
+}
+goog.inherits( ActionCallFuncND, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionSpawn
 //
 //------------------------------------------------------------------
-var ActionSpawn = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionSpawn = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.alignSpritesLeft(1);
 
         var action = cc.Spawn.create(
@@ -769,19 +869,22 @@ var ActionSpawn = ActionsDemo.extend({
 
         this._grossini.runAction(action);
 
-    },
-    subtitle:function () {
+    }
+    this.subtitle = function () {
         return "Spawn: Jump + Rotate";
     }
-});
+}
+goog.inherits( ActionSpawn, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionRepeatForever
 //
 //------------------------------------------------------------------
-var ActionRepeatForever = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionRepeatForever = function(){
+    goog.base(this);
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(1);
         var action = cc.Sequence.create(
             cc.DelayTime.create(1),
@@ -791,23 +894,27 @@ var ActionRepeatForever = ActionsDemo.extend({
         this._grossini.runAction(action);
 
 
-    },
-    repeatForever:function (sender) {
+    }
+    this.repeatForever = function (sender) {
         var repeat = cc.RepeatForever.create(cc.RotateBy.create(1.0, 360));
         sender.runAction(repeat)
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "CallFuncN + RepeatForever";
     }
-});
+}
+goog.inherits( ActionRepeatForever, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionRotateToRepeat
 //
 //------------------------------------------------------------------
-var ActionRotateToRepeat = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionRotateToRepeat = function(){
+    goog.base(this);
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(2);
 
         var act1 = cc.RotateTo.create(1, 90);
@@ -819,19 +926,23 @@ var ActionRotateToRepeat = ActionsDemo.extend({
         this._tamara.runAction(rep1);
         this._kathia.runAction(rep2);
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Repeat/RepeatForever + RotateTo";
     }
-});
+}
+goog.inherits( ActionRotateToRepeat, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionRotateJerk
 //
 //------------------------------------------------------------------
-var ActionRotateJerk = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionRotateJerk = function(){
+    goog.base(this);
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(2);
         var seq = cc.Sequence.create(
             cc.RotateTo.create(0.5, -20),
@@ -843,57 +954,66 @@ var ActionRotateJerk = ActionsDemo.extend({
 
         this._tamara.runAction(rep1);
         this._kathia.runAction(rep2);
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "RepeatForever / Repeat + Rotate";
     }
-});
+}
+goog.inherits( ActionRotateJerk, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionReverse
 //
 //------------------------------------------------------------------
-var ActionReverse = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionReverse = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.alignSpritesLeft(1);
 
         var jump = cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4);
         var action = cc.Sequence.create(jump, jump.reverse(), null);
 
         this._grossini.runAction(action);
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Reverse an action";
     }
-});
+}
+goog.inherits( ActionReverse, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionDelayTime
 //
 //------------------------------------------------------------------
-var ActionDelayTime = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionDelayTime = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.alignSpritesLeft(1);
 
         var move = cc.MoveBy.create(1, cc.PointMake(150, 0));
         var action = cc.Sequence.create(move, cc.DelayTime.create(2), move, null);
 
         this._grossini.runAction(action);
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "DelayTime: m + delay + m";
     }
-});
+}
+goog.inherits( ActionDelayTime, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionReverseSequence
 //
 //------------------------------------------------------------------
-var ActionReverseSequence = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionReverseSequence = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.alignSpritesLeft(1);
 
         var move1 = cc.MoveBy.create(1, cc.PointMake(250, 0));
@@ -903,19 +1023,22 @@ var ActionReverseSequence = ActionsDemo.extend({
 
         this._grossini.runAction(action);
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Reverse a sequence";
     }
-});
+}
+goog.inherits( ActionReverseSequence, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionReverseSequence2
 //
 //------------------------------------------------------------------
-var ActionReverseSequence2 = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionReverseSequence2 = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.alignSpritesLeft(2);
 
 
@@ -946,19 +1069,22 @@ var ActionReverseSequence2 = ActionsDemo.extend({
         var seq_tamara = cc.Sequence.create(move_tamara, hide, move_tamara2, null);
         var seq_back = seq_tamara.reverse();
         this._tamara.runAction(cc.Sequence.create(seq_tamara, seq_back, null));
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Reverse sequence 2";
     }
-});
+}
+goog.inherits( ActionReverseSequence2, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionRepeat
 //
 //------------------------------------------------------------------
-var ActionRepeat = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionRepeat = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.alignSpritesLeft(2);
 
 
@@ -972,19 +1098,22 @@ var ActionRepeat = ActionsDemo.extend({
 
         this._kathia.runAction(action1);
         this._tamara.runAction(action2);
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Repeat / RepeatForever actions";
     }
-});
+}
+goog.inherits( ActionRepeat, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionOrbit
 //
 //------------------------------------------------------------------
-var ActionOrbit = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionOrbit = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(3);
 
         var orbit1 = cc.OrbitCamera.create(2, 1, 0, 0, 180, 0, 0);
@@ -1017,19 +1146,22 @@ var ActionOrbit = ActionsDemo.extend({
         this._tamara.runAction((rfe.copy()));
         this._grossini.runAction((rfe.copy()));
 
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "OrbitCamera action";
     }
-});
+}
+goog.inherits( ActionOrbit, ActionsDemo );
+
 //------------------------------------------------------------------
 //
 // ActionFollow
 //
 //------------------------------------------------------------------
-var ActionFollow = ActionsDemo.extend({
-    onEnter:function () {
-        this._super();
+var ActionFollow = function(){
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
         this.centerSprites(1);
         var s = cc.Director.sharedDirector().getWinSize();
 
@@ -1042,25 +1174,26 @@ var ActionFollow = ActionsDemo.extend({
         this._grossini.runAction(rep);
 
         this.runAction(cc.Follow.create(this._grossini, cc.RectMake(0, 0, s.width * 2 - 100, s.height)));
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Follow action";
     }
-});
+}
+goog.inherits( ActionFollow, ActionsDemo );
 
 //------------------------------------------------------------------
 //
 // ActionCardinalSpline
 //
 //------------------------------------------------------------------
-var ActionCardinalSpline = ActionsDemo.extend({
-    _array:null,
-    ctor:function () {
-        this._array = new cc.PointArray();
-    },
+var ActionCardinalSpline = function(){
+    goog.base(this);
 
-    onEnter:function () {
-        this._super();
+    this._array = new cc.PointArray();
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
 
         this.centerSprites(2);
 
@@ -1099,10 +1232,10 @@ var ActionCardinalSpline = ActionsDemo.extend({
         this._kathia.runAction(seq2);
 
         this._array = array;
-    },
+    }
 
-    draw:function (ctx) {
-        this._super();
+    this.draw = function (ctx) {
+        goog.base(this, 'draw', ctx);
 
         var context = ctx || cc.renderContext;
         // move to 50,50 since the "by" path will start at 50,50
@@ -1117,30 +1250,31 @@ var ActionCardinalSpline = ActionsDemo.extend({
         context.translate(s.width / 2, -50);
         cc.drawingUtil.drawCardinalSpline(this._array, 1, 100);
         context.restore();
-    },
-    subtitle:function () {
+    }
+
+    this.subtitle = function () {
         return "Cardinal Spline paths. Testing different tensions for one array";
-    },
-    title:function () {
+    }
+
+    this.title = function () {
         return "CardinalSplineBy / CardinalSplineAt";
     }
-});
+}
+goog.inherits( ActionCardinalSpline, ActionsDemo );
 
 //------------------------------------------------------------------
 //
 // ActionCatmullRom
 //
 //------------------------------------------------------------------
-var ActionCatmullRom = ActionsDemo.extend({
-    _array1:null,
-    _array2:null,
-    ctor:function () {
-        this._array1 = new cc.PointArray();
-        this._array2 = new cc.PointArray();
-    },
+var ActionCatmullRom = function() {
+    goog.base(this);
 
-    onEnter:function () {
-        this._super();
+    this._array1 = new cc.PointArray();
+    this._array2 = new cc.PointArray();
+
+    this.onEnter = function () {
+        goog.base(this, 'onEnter');
 
         this.centerSprites(2);
         var winSize = cc.Director.sharedDirector().getWinSize();
@@ -1191,9 +1325,10 @@ var ActionCatmullRom = ActionsDemo.extend({
 
         this._array1 = array;
         this._array2 = array2;
-    },
-    draw:function (ctx) {
-        this._super();
+    }
+
+    this.draw = function (ctx) {
+        goog.base(this, 'draw', ctx);
         var context = ctx || cc.renderContext;
 
         // move to 50,50 since the "by" path will start at 50,50
@@ -1203,11 +1338,15 @@ var ActionCatmullRom = ActionsDemo.extend({
         context.restore();
 
         cc.drawingUtil.drawCatmullRom(this._array2, 50);
-    },
-    subtitle:function () {
-        return "Catmull Rom spline paths. Testing reverse too";
-    },
-    title:function () {
-        return "CatmullRomBy / CatmullRomTo";
     }
-});
+
+    this.subtitle = function () {
+        return "Catmull Rom spline paths. Testing reverse too";
+    }
+
+    this.title = function () {
+        return "CatmullRomBy / CatmullRomTo tito";
+    }
+}
+goog.inherits( ActionCatmullRom, ActionsDemo );
+
