@@ -44,6 +44,13 @@ cc.RAD = cc.PI / 180;
 cc.DEG = 180 / cc.PI;
 
 /**
+ * maximum unsigned int value
+ * @constant
+ * @type Number
+ */
+cc.UINT_MAX = 0xffffffff;
+
+/**
  * <p>
  * simple macro that swaps 2 variables<br/>
  *  modified from c++ macro, you need to pass in the x and y variables names in string, <br/>

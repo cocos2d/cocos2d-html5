@@ -39,7 +39,7 @@ cc.CCMENU_STATE_TRACKING_TOUCH = 1;
  * @constant
  * @type Number
  */
-cc.CCMENU_TOUCH_PRIORITY = -128;
+cc.CCMENU_HANDLER_PRIORITY = -128;
 /**
  * @constant
  * @type Number
