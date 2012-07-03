@@ -109,7 +109,7 @@ var MenuLayer1 = cc.Layer.extend({
         this.addChild(menu);
     },
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
     },
     ccTouchBegan:function () {
         return true;
@@ -121,13 +121,13 @@ var MenuLayer1 = cc.Layer.extend({
         this._parent.switchTo(3);
     },
     allowTouches:function (dt) {
-        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY + 1, this);
+        cc.Director.sharedDirector().getTouchDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY + 1, this);
         this.unscheduleAllSelectors();
         cc.Log("Touches allowed again!");
     },
     menuCallbackDisabled:function (sender) {
         // hijack all touch events for 5 seconds
-        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY - 1, this);
+        cc.Director.sharedDirector().getTouchDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY - 1, this);
         this.schedule(this.allowTouches, 5.0);
         cc.Log("TOUCHES DISABLED FOR 5 SECONDS");
     },

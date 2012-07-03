@@ -294,7 +294,7 @@ var ParticleDemo = cc.LayerColor.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, false);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, false);
     },
     ccTouchBegan:function (touch, event) {
         return true;
@@ -303,7 +303,7 @@ var ParticleDemo = cc.LayerColor.extend({
         return this.ccTouchEnded(touch, event);
     },
     ccTouchEnded:function (touch, event) {
-        var location = touch.locationInView(touch.view());
+        var location = touch.locationInView();
         //CCPoint convertedLocation = CCDirector::sharedDirector().convertToGL(location);
 
         var pos = cc.PointZero();
