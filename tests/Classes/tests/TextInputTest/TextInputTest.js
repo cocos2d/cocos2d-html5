@@ -155,7 +155,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, false);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, false);
     },
     keyboardWillShow:function (info) {
         cc.Log("TextInputTest:keyboardWillShowAt(origin:" + info.end.origin.x + "," + info.end.origin.y
@@ -190,7 +190,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
 
     ccTouchBegan:function (touch, event) {
         cc.Log("++++++++++++++++++++++++++++++++++++++++++++");
-        this._beginPos = touch.locationInView(touch.view());
+        this._beginPos = touch.locationInView();
         this._beginPos = cc.Director.sharedDirector().convertToGL(this._beginPos);
         return true;
     },
@@ -200,7 +200,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
             return;
         }
 
-        var endPos = touch.locationInView(touch.view());
+        var endPos = touch.locationInView();
         endPos = cc.Director.sharedDirector().convertToGL(endPos);
 
         var delta = 5.0;

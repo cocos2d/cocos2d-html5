@@ -179,7 +179,7 @@ Box2DTestLayer = cc.Layer.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView(touch.view());
+            var location = touch.locationInView();
             //location = cc.Director.sharedDirector().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }

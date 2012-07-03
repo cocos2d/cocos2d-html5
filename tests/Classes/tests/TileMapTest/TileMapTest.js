@@ -188,7 +188,7 @@ var TileDemo = cc.Layer.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         return true;
@@ -200,7 +200,7 @@ var TileDemo = cc.Layer.extend({
     },
     prevLocation:null,
     ccTouchMoved:function (touch, event) {
-        var touchLocation = touch.locationInView(touch.view());
+        var touchLocation = touch.locationInView();
 
         if (!this.prevLocation) {
             this.prevLocation = cc.ccp(touchLocation.x, touchLocation.y);

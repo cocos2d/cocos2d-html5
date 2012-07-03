@@ -11,6 +11,7 @@
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
                 <file name="platform/platform.js"/>
+                <file name="platform/miniFramework.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="cocoa/CCSet.js"/>
                 <file name="cocoa/CCNS.js"/>

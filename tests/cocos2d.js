@@ -92,6 +92,7 @@ if (!isDebugMode) {
     cc.loadjs('cocos2d/platform/CCClass.js');
     cc.loadjs('cocos2d/platform/CCCommon.js');
     cc.loadjs('cocos2d/platform/platform.js');
+    cc.loadjs('cocos2d/platform/miniFramework.js');
     cc.loadjs('cocos2d/platform/ZipUtils.js');
     cc.loadjs('cocos2d/platform/base64.js');
     cc.loadjs('cocos2d/platform/gzip.js');

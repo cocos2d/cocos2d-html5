@@ -14,6 +14,7 @@
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
                 <file name="platform/platform.js"/>
+                <file name="platform/miniFramework.js"/>
                 <file name="platform/ZipUtils.js"/>
                 <file name="platform/base64.js"/>
                 <file name="platform/gzip.js"/>
@@ -102,6 +103,7 @@
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
                 <file name="platform/platform.js"/>
+                <file name="platform/miniFramework.js"/>
                 <file name="platform/ZipUtils.js"/>
                 <file name="platform/base64.js"/>
                 <file name="platform/gzip.js"/>
