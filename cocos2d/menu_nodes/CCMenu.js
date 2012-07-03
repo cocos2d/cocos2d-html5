@@ -376,7 +376,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY, true);
     },
 
     /**
@@ -462,7 +462,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     getIsOpacityModifyRGB:function () {
     },
     _itemForTouch:function (touch) {
-        var touchLocation = touch.locationInView(touch.view());
+        var touchLocation = touch.locationInView();
         //console.log("touchLocation",touchLocation)
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {

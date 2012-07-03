@@ -70,7 +70,7 @@ var LayerTestScene = TestScene.extend({
 //
 //------------------------------------------------------------------
 var LayerTest = cc.Layer.extend({
-    title:null,
+    _title:null,
     title:function () {
         return "No title";
     },
@@ -149,10 +149,10 @@ var LayerTest1 = LayerTest.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
     },
     updateSize:function (touch) {
-        var touchLocation = touch.locationInView(touch.view());
+        var touchLocation = touch.locationInView();
         touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
 
         var s = cc.Director.sharedDirector().getWinSize();
@@ -280,7 +280,7 @@ var LayerGradient = LayerTest.extend({
     },
     prevLocation:null,
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         return true;
@@ -292,7 +292,7 @@ var LayerGradient = LayerTest.extend({
     },
     ccTouchMoved:function (touch, event) {
         var s = cc.Director.sharedDirector().getWinSize();
-        var start = touch.locationInView(touch.view());
+        var start = touch.locationInView();
 
         var diff = cc.ccpSub(cc.ccp(s.width / 2, s.height / 2), start);
         diff = cc.ccpNormalize(diff);

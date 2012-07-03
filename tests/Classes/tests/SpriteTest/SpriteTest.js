@@ -322,7 +322,7 @@ var Sprite1 = SpriteTestDemo.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView(touch.view());
+            var location = touch.locationInView();
             //location = cc.Director.sharedDirector().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }
@@ -386,7 +386,7 @@ var SpriteBatchNode1 = SpriteTestDemo.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView(touch.view());
+            var location = touch.locationInView();
             //location = cc.Director.sharedDirector().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }

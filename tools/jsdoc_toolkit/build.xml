@@ -22,6 +22,7 @@
             <source file="${src.dir}/platform/CCClass.js"/>
             <source file="${src.dir}/platform/CCCommon.js"/>
             <source file="${src.dir}/platform/platform.js"/>
+            <source file="${src.dir}/platform/miniFramework.js"/>
             <source file="${src.dir}/platform/ZipUtils.js"/>
             <source file="${src.dir}/platform/base64.js"/>
             <source file="${src.dir}/platform/gzip.js"/>

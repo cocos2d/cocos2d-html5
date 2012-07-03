@@ -164,7 +164,7 @@ Director1 = DirectorTest.extend({
             if (!touch) {
                 break;
             }
-            var a = touch.locationInView(touch.view());
+            var a = touch.locationInView();
             var director = cc.Director.sharedDirector();
             var b = director.convertToUI(director.convertToGL(a));
             cc.Log("(" + a.x + "," + a.y + ") ==( " + b.x + "," + b.y + ")");

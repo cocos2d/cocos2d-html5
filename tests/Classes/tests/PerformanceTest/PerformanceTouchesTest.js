@@ -105,7 +105,7 @@ var TouchesPerformTest1 = TouchesMainScene.extend({
         return "Targeted touches";
     },
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         this._numberOfTouchesB++;
@@ -136,7 +136,7 @@ var TouchesPerformTest2 = TouchesMainScene.extend({
         return "Standard touches";
     },
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addStandardDelegate(this, 0);
+        cc.Director.sharedDirector().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
     ccTouchesBegan:function (touches, event) {

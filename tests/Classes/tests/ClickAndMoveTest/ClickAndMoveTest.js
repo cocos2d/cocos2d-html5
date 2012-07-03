@@ -59,7 +59,7 @@ var MainLayer = cc.Layer.extend({
 
         var touch = touches[0];
 
-        var location = touch.locationInView(touch.view());
+        var location = touch.locationInView();
         //var convertedLocation = cc.Director.sharedDirector().convertToGL(location);
 
         var sprite = this.getChildByTag(TAG_SPRITE);
