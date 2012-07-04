@@ -149,7 +149,7 @@ var LayerTest1 = LayerTest.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY + 1, true);
     },
     updateSize:function (touch) {
         var touchLocation = touch.locationInView();

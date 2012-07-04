@@ -69,7 +69,7 @@ cc.SAX_ARRAY = 6;
 /**
  * @namespace
  */
-cc.FileUtils = {
+cc.FileUtils = cc.Class.extend({
     /**
      * Get resource file data
      * @function
@@ -208,7 +208,7 @@ cc.FileUtils = {
     isPopupNotify:function () {
         return cc.popupNotify;
     }
-};
+});
 
 cc.s_SharedFileUtils = null;
 cc.FileUtils.sharedFileUtils =  function(){

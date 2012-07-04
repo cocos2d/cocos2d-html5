@@ -209,7 +209,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             this._atlasIndexArray = [];
 
-            this.setContentSizeInPixels(cc.SizeMake(this._layerSize.width * this._mapTileSize.width,
+            this.setContentSize(cc.SizeMake(this._layerSize.width * this._mapTileSize.width,
                 this._layerSize.height * this._mapTileSize.height));
             this._mapTileSize.width /= this._contentScaleFactor;
             this._mapTileSize.height /= this._contentScaleFactor;

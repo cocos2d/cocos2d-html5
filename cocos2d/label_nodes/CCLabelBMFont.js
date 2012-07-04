@@ -517,7 +517,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.setTextureRect(rect);
                 }
                 else {
-                    fontChar.initWithBatchNodeRectInPixels(this, rect);
+                    fontChar.initWithTexture(this._textureAtlas.getTexture(), rect);
                 }
                 this.addChild(fontChar, 0, i);
             }
@@ -528,15 +528,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
                 else {
                     // reusing fonts
-                    fontChar.initWithBatchNodeRectInPixels(this, rect);
+                    fontChar.initWithTexture(this._textureAtlas.getTexture(), rect);
                     // restore to default in case they were modified
-                    fontChar.setIsVisible(true);
+                    fontChar.setVisible(true);
                     fontChar.setOpacity(255);
                 }
             }
 
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
-            fontChar.setPositionInPixels(cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width / 2.0 + kerningAmount,
+            fontChar.setPosition(cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width / 2.0 + kerningAmount,
                 nextFontPositionY + yOffset - rect.size.height / 2.0));
 
             // update kerning
@@ -561,7 +561,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         tmpSize.width = longestLine;
         tmpSize.height = totalHeight;
-        this.setContentSizeInPixels(tmpSize);
+        this.setContentSize(tmpSize);
     },
 
     /**
@@ -583,7 +583,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
-                    node.setIsVisible(false);
+                    node.setVisible(false);
                 }
             }
         }
