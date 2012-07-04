@@ -285,14 +285,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     didAccelerate:function (pAccelerationValue) {
-    },
-
-    /**
-     * @param {cc.Layer} layer
-     */
-    addLayer:function (layer) {
-        cc.Assert(this._layers, "cc.Layer addLayer");
-        this._layers.addObject(layer);
     }
 });
 
@@ -890,6 +882,14 @@ cc.LayerMultiplex = cc.Layer.extend(/** @lends cc.LayerMultiplex# */{
         this._enabledLayer = n;
 
         this.addChild(this._layers[n]);
+    },
+
+    /**
+     * @param {cc.Layer} layer
+     */
+    addLayer:function (layer) {
+        cc.Assert(this._layers, "cc.Layer addLayer");
+        this._layers.push(layer);
     }
 });
 
