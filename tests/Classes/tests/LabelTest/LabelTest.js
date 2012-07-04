@@ -46,7 +46,7 @@ var AtlasTests = [
     }, //ok
     function () {
         return new LabelAtlasColorTest();
-    }, //ok*/
+    }, //ok
     function () {
         return new Atlas3();
     },
@@ -94,7 +94,7 @@ var AtlasTests = [
     },
     function () {
         return new BitmapFontMultiLineAlignment();
-    },
+    },//bug
     function () {
         return new LabelTTFA8Test();
     },
@@ -103,13 +103,13 @@ var AtlasTests = [
     },
     function () {
         return new BMFontUnicode();
-    },
+    }//bug
     function () {
         return new BMFontInit();
     },
     function () {
         return new TTFFontInit();
-    },
+    },*/
     function () {
         return new LabelTTFAlignment();
     }
@@ -170,9 +170,9 @@ var AtlasDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
-        item2.setPosition(cc.ccp(s.width / 2, 30));
-        item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
+        item1.setPosition(cc.ccp( s.width/2 - item2.getContentSize().width*2, item2.getContentSize().height/2));
+        item2.setPosition(cc.ccp( s.width/2, item2.getContentSize().height/2));
+        item3.setPosition(cc.ccp( s.width/2 + item2.getContentSize().width*2, item2.getContentSize().height/2));
 
         this.addChild(menu, 1);
     },
@@ -388,7 +388,7 @@ var Atlas3 = AtlasDemo.extend({
         this.schedule(this.step);
     },
     step:function (dt) {
-        this.time += dt;
+        this.time += 10 * dt;
         //var string;
         var string = this.time.toFixed(2) + "Test j";
 
@@ -1164,11 +1164,11 @@ var BMFontOneAtlas = AtlasDemo.extend({
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
 
-        var label1 = cc.LabelBMFont.create("This is Helvetica", "Resources/fonts/helvetica-32.fnt", cc.CCLabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
+        var label1 = cc.LabelBMFont.create("This is Helvetica", "Resources/fonts/helvetica-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
         this.addChild(label1);
         label1.setPosition(cc.ccp(s.width / 2, s.height / 6));
 
-        var label2 = cc.LabelBMFont.create("And this is Geneva", "Resources/fonts/geneva-32.fnt", cc.CCLabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.ccp(0, 128));
+        var label2 = cc.LabelBMFont.create("And this is Geneva", "Resources/fonts/geneva-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.ccp(0, 128));
         this.addChild(label2);
         label2.setPosition(cc.ccp(s.width / 2, s.height / 3));
     },
@@ -1223,7 +1223,7 @@ var BMFontInit = AtlasDemo.extend({
         bmFont.setFntFile("Resources/fonts/helvetica-32.fnt");
         bmFont.setString("It is working!");
         this.addChild(bmFont);
-        bmFont.setPosition(cc.ccp(s.width / 2, s.height / 8));
+        bmFont.setPosition(cc.ccp(s.width / 2, s.height / 2));
     },
     title:function () {
         return "cc.LabelBMFont init";
@@ -1239,11 +1239,11 @@ var TTFFontInit = AtlasDemo.extend({
         var s = cc.Director.sharedDirector().getWinSize();
         var font = new cc.LabelTTF();
         font.init();
-        font.setFontName("Marker Felt");
+        font.setFontName("Comic Sans MS");
         font.setFontSize(48);
         font.setString("It is working!");
         this.addChild(font);
-        font.setPosition(cc.ccp(s.width / 2, s.height / 4 * 2));
+        font.setPosition(cc.ccp(s.width / 2, s.height / 2));
     },
     title:function () {
         return "cc.LabelTTF init";
@@ -1257,17 +1257,17 @@ var TTFFontInit = AtlasDemo.extend({
 var LabelTTFAlignment = AtlasDemo.extend({
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "Helvetica", 12);
+        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "SimHei", 12);
         ttf0.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 2));
         ttf0.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf0);
 
-        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", cc.SizeMake(245, 32), cc.TEXT_ALIGNMENT_CENTER, "Helvetica", 12);
+        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_CENTER, "SimHei", 12);
         ttf1.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 3));
         ttf1.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf1);
 
-        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", cc.SizeMake(245, 32), cc.TEXT_ALIGNMENT_RIGHT, "Helvetica", 12);
+        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_RIGHT, "SimHei", 12);
         ttf2.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 4));
         ttf2.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf2);
