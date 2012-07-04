@@ -118,7 +118,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         this._textureAtlas.resizeCapacity(len);
 
         var s = new cc.SizeMake(len * this._itemWidth, this._itemHeight);
-        this.setContentSizeInPixels(s);
+        this.setContentSize(s);
 
         if (this._children) {
             for (var i = 0; i < this._children.length; i++) {
