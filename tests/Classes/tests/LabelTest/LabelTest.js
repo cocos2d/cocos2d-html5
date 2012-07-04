@@ -1257,17 +1257,17 @@ var TTFFontInit = AtlasDemo.extend({
 var LabelTTFAlignment = AtlasDemo.extend({
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "SimHei", 12);
+        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "Arial", 22);
         ttf0.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 2));
         ttf0.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf0);
 
-        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_CENTER, "SimHei", 12);
+        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_CENTER, "Arial", 22);
         ttf1.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 3));
         ttf1.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf1);
 
-        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_RIGHT, "SimHei", 12);
+        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 22);
         ttf2.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 4));
         ttf2.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf2);

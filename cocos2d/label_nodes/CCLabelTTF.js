@@ -53,7 +53,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (callsuper) {
             return this._super();
         }
-        this.initWithString([" ", "Arial", 12]);
+        this.initWithString([" ", this._fontName, this._fontSize]);
     },
     /**
      * Prints out a description of this class
@@ -280,8 +280,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
     _wrapText:function (context, text, x, y, maxWidth, maxHeight, lineHeight) {
-
-
         var num = this._lineCount() - 1;
         var xOffset, yOffset;
         switch (this._hAlignment) {
