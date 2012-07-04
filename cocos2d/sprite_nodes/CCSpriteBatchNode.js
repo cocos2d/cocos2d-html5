@@ -318,21 +318,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     /**
-     * set Content Size of cc.SpriteBatchNode
-     * @param {cc.Size} size
-     */
-    setContentSizeInPixels:function (size) {
-        if (!size) {
-            return;
-        }
-
-        //if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
-        this._super(size);
-        this._renderTexture.setContentSize(size);
-        //}
-    },
-
-    /**
      * <p>
      *    initializes a cc.SpriteBatchNode with a file image (.png, .jpeg, .pvr, etc) and a capacity of children.<br/>
      *    The capacity will be increased in 33% in runtime if it run out of space.<br/>
