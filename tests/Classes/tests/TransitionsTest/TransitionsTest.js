@@ -29,6 +29,31 @@ var TransitionsTests = [
     {title:"JumpZoomTransition", transitionFunc:function (t, s) {
         return new JumpZoomTransition(t, s);
     }},
+
+    {title:"TransitionProgressRadialCCW", transitionFunc:function (t, s) {
+        return cc.TransitionProgressRadialCCW.create(t, s);
+    }},
+
+    {title:"TransitionProgressRadialCW", transitionFunc:function (t, s) {
+        return cc.TransitionProgressRadialCW.create(t, s);
+    }},
+
+    {title:"TransitionProgressHorizontal", transitionFunc:function (t, s) {
+        return cc.TransitionProgressHorizontal.create(t, s);
+    }},
+
+    {title:"TransitionProgressVertical", transitionFunc:function (t, s) {
+        return cc.TransitionProgressVertical.create(t, s);
+    }},
+
+    {title:"TransitionProgressInOut", transitionFunc:function (t, s) {
+        return cc.TransitionProgressInOut.create(t, s);
+    }},
+
+    {title:"TransitionProgressOutIn", transitionFunc:function (t, s) {
+        return cc.TransitionProgressOutIn.create(t, s);
+    }},
+
     //ok
     {title:"FadeTransition", transitionFunc:function (t, s) {
         return new FadeTransition(t, s);
@@ -97,19 +122,19 @@ var TransitionsTests = [
 ];
 
 var transitionsIdx = 0;
-function nextTransitionAction(t,s) {
+function nextTransitionAction(t, s) {
     ++transitionsIdx;
     transitionsIdx = transitionsIdx % TransitionsTests.length;
     return TransitionsTests[transitionsIdx].transitionFunc(t, s);
 }
-function backTransitionAction(t,s) {
+function backTransitionAction(t, s) {
     --transitionsIdx;
     if (transitionsIdx < 0) {
         transitionsIdx += TransitionsTests.length;
     }
     return TransitionsTests[transitionsIdx].transitionFunc(t, s);
 }
-function restartTransitionAction(t,s) {
+function restartTransitionAction(t, s) {
     return TransitionsTests[transitionsIdx].transitionFunc(t, s);
 }
 
@@ -127,7 +152,6 @@ var TransitionsTestScene = TestScene.extend({
          cc.Director.sharedDirector().replaceScene(this);*/
     }
 });
-
 
 var TestLayer1 = cc.Layer.extend({
     ctor:function () {
@@ -161,9 +185,9 @@ var TestLayer1 = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(size.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(size.width / 2, 30));
-        item3.setPosition(cc.PointMake(size.width / 2 + 100, 30));
+        item1.setPosition(cc.PointMake(size.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.PointMake(size.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.PointMake(size.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
         this.addChild(menu, 1);
         this.schedule(this.step, 1.0);
 
@@ -203,7 +227,25 @@ var TestLayer1 = cc.Layer.extend({
     },
 
     step:function (dt) {
+    },
 
+    onEnter:function () {
+        this._super();
+        cc.Log("Scene 1 onEnter");
+    },
+    onEnterTransitionDidFinish:function () {
+        this._super();
+        cc.Log("Scene 1 onEnterTransitionDidFinish");
+    },
+
+    onExitTransitionDidStart:function () {
+        this._super();
+        cc.Log("Scene 1 onExitTransitionDidStart");
+    },
+
+    onExit:function () {
+        this._super();
+        cc.Log("Scene 1 onExit");
     }
 });
 
@@ -239,9 +281,9 @@ var TestLayer2 = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(x / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(x / 2, 30));
-        item3.setPosition(cc.PointMake(x / 2 + 100, 30));
+        item1.setPosition(cc.PointMake(size.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.PointMake(size.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.PointMake(size.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
 
@@ -283,15 +325,34 @@ var TestLayer2 = cc.Layer.extend({
 
     step:function (dt) {
 
+    },
+
+    onEnter:function () {
+        this._super();
+        cc.Log("Scene 2 onEnter");
+    },
+    onEnterTransitionDidFinish:function () {
+        this._super();
+        cc.Log("Scene 2 onEnterTransitionDidFinish");
+    },
+
+    onExitTransitionDidStart:function () {
+        this._super();
+        cc.Log("Scene 2 onExitTransitionDidStart");
+    },
+
+    onExit:function () {
+        this._super();
+        cc.Log("Scene 2 onExit");
     }
 });
 
 var JumpZoomTransition = function (t, s) {
     return cc.TransitionJumpZoom.create(t, s);
-}
+};
 var FadeTransition = function (t, s) {
     return cc.TransitionFade.create(t, s);
-}
+};
 
 var FadeWhiteTransition = function (t, s) {
     return cc.TransitionFade.create(t, s, cc.WHITE());
