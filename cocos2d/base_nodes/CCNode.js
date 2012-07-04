@@ -153,7 +153,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _contentSize:cc.SizeZero(),
     _isRunning:false,
     _parent:null,
-    // "whole screen" objects. like Scenes and Layers, should set isRelativeAnchorPoint to false
+    // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
     _ignoreAnchorPointForPosition:false,
     _tag:cc.CCNODE_TAG_INVALID,
     // userData is always inited as nil
@@ -222,6 +222,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 for (i = 0; i < array.length; i++) {
                     if (array[i])
                         array[i].cleanup();
+                }
+                break;
+            case cc.Node.StateCallbackType.updateTransform:
+                for (i = 0; i < array.length; i++) {
+                    if (array[i])
+                        array[i].updateTransform();
                 }
                 break;
             case cc.Node.StateCallbackType.onExitTransitionDidStart:

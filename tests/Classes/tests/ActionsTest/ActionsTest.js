@@ -150,7 +150,7 @@ var ActionsDemo = cc.Layer.extend({
 
         if (numberOfSprites == 1) {
             this._tamara.setVisible(false);
-            this._kathia.setIsVisible(false);
+            this._kathia.setVisible(false);
             this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
         }
         else if (numberOfSprites == 2) {
@@ -590,12 +590,9 @@ var ActionAnimate = ActionsDemo.extend({
         this.centerSprites(1);
 
         var animation = cc.Animation.create();
-        var frameName = "";
-        var format;
         for (var i = 1; i < 15; i++) {
-            format = (i < 10) ? "0" + i : "" + i;
-            frameName = "Resources/Images/grossini_dance_" + format + ".png";
-            animation.addFrameWithFileName(frameName);
+            var frameName = "Resources/Images/grossini_dance_" + ((i < 10) ? ("0" + i) : i) + ".png";
+            animation.addSpriteFrameWithFileName(frameName);
         }
 
         var action = cc.Animate.create(3, animation, false);

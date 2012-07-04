@@ -36,7 +36,7 @@ var ClickAndMoveTestScene = TestScene.extend({
 
 var MainLayer = cc.Layer.extend({
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         var sprite = cc.Sprite.create(s_pathGrossini);
 
         var layer = cc.LayerColor.create(cc.ccc4(255, 255, 0, 100));
@@ -59,7 +59,7 @@ var MainLayer = cc.Layer.extend({
 
         var touch = touches[0];
 
-        var location = touch.locationInView(touch.view());
+        var location = touch.locationInView();
         //var convertedLocation = cc.Director.sharedDirector().convertToGL(location);
 
         var sprite = this.getChildByTag(TAG_SPRITE);

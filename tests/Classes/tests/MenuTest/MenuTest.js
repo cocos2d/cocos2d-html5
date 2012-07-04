@@ -39,7 +39,7 @@ var MenuLayer1 = cc.Layer.extend({
     ctor:function () {
         cc.MenuItemFont.setFontSize(30);
         cc.MenuItemFont.setFontName("Courier New");
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         // Font Item
 
         var spriteNormal = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
@@ -104,12 +104,12 @@ var MenuLayer1 = cc.Layer.extend({
             );
         }
         this._disabledItem = item3;
-        this._disabledItem.setIsEnabled(false);
+        this._disabledItem.setEnabled(false);
 
         this.addChild(menu);
     },
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY + 1, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY + 1, true);
     },
     ccTouchBegan:function () {
         return true;
@@ -121,18 +121,18 @@ var MenuLayer1 = cc.Layer.extend({
         this._parent.switchTo(3);
     },
     allowTouches:function (dt) {
-        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY + 1, this);
+        cc.Director.sharedDirector().getTouchDispatcher().setPriority(cc.CCMENU_HANDLER_PRIORITY + 1, this);
         this.unscheduleAllSelectors();
         cc.Log("Touches allowed again!");
     },
     menuCallbackDisabled:function (sender) {
         // hijack all touch events for 5 seconds
-        cc.TouchDispatcher.sharedDispatcher().setPriority(cc.CCMENU_TOUCH_PRIORITY - 1, this);
+        cc.Director.sharedDirector().getTouchDispatcher().setPriority(cc.CCMENU_HANDLER_PRIORITY - 1, this);
         this.schedule(this.allowTouches, 5.0);
         cc.Log("TOUCHES DISABLED FOR 5 SECONDS");
     },
     menuCallbackEnabled:function (sender) {
-        this._disabledItem.setIsEnabled(!this._disabledItem.getIsEnabled());
+        this._disabledItem.setEnabled(!this._disabledItem.isEnabled());
     },
     menuCallback2:function (sender) {
         this._parent.switchTo(2);
@@ -237,7 +237,7 @@ var MenuLayer3 = cc.Layer.extend({
 
         var item3 = cc.MenuItemSprite.create(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback3);
         this._disabledItem = item3;
-        this._disabledItem.setIsEnabled(false);
+        this._disabledItem.setEnabled(false);
 
         var menu = cc.Menu.create(item1, item2, item3);
         menu.setPosition(cc.PointMake(0, 0));
@@ -267,7 +267,7 @@ var MenuLayer3 = cc.Layer.extend({
         this._parent.switchTo(0);
     },
     menuCallback2:function (sender) {
-        this._disabledItem.setIsEnabled(!this._disabledItem.getIsEnabled());
+        this._disabledItem.setEnabled(!this._disabledItem.isEnabled());
         this._disabledItem.stopAllActions();
     },
     menuCallback3:function () {
@@ -281,7 +281,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontSize(18);
 
         var title1 = cc.MenuItemFont.create("Sound");
-        title1.setIsEnabled(false);
+        title1.setEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
         var item1 = cc.MenuItemToggle.create(this,
@@ -292,7 +292,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
         var title2 = cc.MenuItemFont.create("Music");
-        title2.setIsEnabled(false);
+        title2.setEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
         var item2 = cc.MenuItemToggle.create(this,
@@ -303,7 +303,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
         var title3 = cc.MenuItemFont.create("Quality");
-        title3.setIsEnabled(false);
+        title3.setEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
         var item3 = cc.MenuItemToggle.create(this,
@@ -314,7 +314,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("American Typewriter");
         cc.MenuItemFont.setFontSize(18);
         var title4 = cc.MenuItemFont.create("Orientation");
-        title4.setIsEnabled(false);
+        title4.setEnabled(false);
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
         var item4 = cc.MenuItemToggle.create(this,

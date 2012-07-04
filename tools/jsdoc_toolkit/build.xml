@@ -22,6 +22,7 @@
             <source file="${src.dir}/platform/CCClass.js"/>
             <source file="${src.dir}/platform/CCCommon.js"/>
             <source file="${src.dir}/platform/platform.js"/>
+            <source file="${src.dir}/platform/miniFramework.js"/>
             <source file="${src.dir}/platform/ZipUtils.js"/>
             <source file="${src.dir}/platform/base64.js"/>
             <source file="${src.dir}/platform/gzip.js"/>
@@ -53,7 +54,7 @@
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCScene.js"/>
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCLayer.js"/>
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransition.js"/>
-            <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionRadial.js"/>
+            <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionProgress.js"/>
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionPageTurn.js"/>
             <source file="${src.dir}/sprite_nodes/CCSprite.js"/>
             <source file="${src.dir}/sprite_nodes/CCAnimation.js"/>

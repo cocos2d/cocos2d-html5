@@ -279,7 +279,7 @@ var SpriteTestDemo = cc.Layer.extend({
 var Sprite1 = SpriteTestDemo.extend({
     ctor:function () {
         this._super();
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         var s = cc.Director.sharedDirector().getWinSize();
         this.addNewSpriteWithCoords(cc.ccp(s.width / 2, s.height / 2));
@@ -322,7 +322,7 @@ var Sprite1 = SpriteTestDemo.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView(touch.view());
+            var location = touch.locationInView();
             //location = cc.Director.sharedDirector().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }
@@ -336,7 +336,7 @@ var Sprite1 = SpriteTestDemo.extend({
 //------------------------------------------------------------------
 var SpriteBatchNode1 = SpriteTestDemo.extend({
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         var BatchNode = cc.SpriteBatchNode.create(s_grossini_dance_atlas, 50);
         this.addChild(BatchNode, 0, TAG_SPRITE_BATCH_NODE);
@@ -386,7 +386,7 @@ var SpriteBatchNode1 = SpriteTestDemo.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView(touch.view());
+            var location = touch.locationInView();
             //location = cc.Director.sharedDirector().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }
@@ -1323,7 +1323,7 @@ var SpriteNewTexture = SpriteTestDemo.extend({
     _texture1:null,
     _texture2:null,
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         var node = cc.Node.create();
         this.addChild(node, 0, TAG_SPRITE_BATCH_NODE);
@@ -1411,7 +1411,7 @@ var SpriteBatchNodeNewTexture = SpriteTestDemo.extend({
     _texture1:null,
     _texture2:null,
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         var batch = cc.SpriteBatchNode.create(s_grossini_dance_atlas, 50);
         this.addChild(batch, 0, TAG_SPRITE_BATCH_NODE);

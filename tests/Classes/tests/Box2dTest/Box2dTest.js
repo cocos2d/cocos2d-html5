@@ -33,8 +33,8 @@ Box2DTestLayer = cc.Layer.extend({
 
 
     ctor:function () {
-        this.setIsTouchEnabled(true);
-        //setIsAccelerometerEnabled( true );
+        this.setTouchEnabled(true);
+        //setAccelerometerEnabled( true );
 
         var b2Vec2 = Box2D.Common.Math.b2Vec2
             , b2BodyDef = Box2D.Dynamics.b2BodyDef
@@ -179,7 +179,7 @@ Box2DTestLayer = cc.Layer.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView(touch.view());
+            var location = touch.locationInView();
             //location = cc.Director.sharedDirector().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }

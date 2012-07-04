@@ -14,6 +14,7 @@
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
                 <file name="platform/platform.js"/>
+                <file name="platform/miniFramework.js"/>
                 <file name="platform/ZipUtils.js"/>
                 <file name="platform/base64.js"/>
                 <file name="platform/gzip.js"/>
@@ -48,7 +49,7 @@
                 <file name="layers_scenes_transitions_nodes/CCScene.js"/>
                 <file name="layers_scenes_transitions_nodes/CCLayer.js"/>
                 <file name="layers_scenes_transitions_nodes/CCTransition.js"/>
-                <file name="layers_scenes_transitions_nodes/CCTransitionRadial.js"/>
+                <file name="layers_scenes_transitions_nodes/CCTransitionProgress.js"/>
                 <file name="layers_scenes_transitions_nodes/CCTransitionPageTurn.js"/>
                 <file name="sprite_nodes/CCSprite.js"/>
                 <file name="sprite_nodes/CCAnimation.js"/>
@@ -102,6 +103,7 @@
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
                 <file name="platform/platform.js"/>
+                <file name="platform/miniFramework.js"/>
                 <file name="platform/ZipUtils.js"/>
                 <file name="platform/base64.js"/>
                 <file name="platform/gzip.js"/>
@@ -136,7 +138,7 @@
                 <file name="layers_scenes_transitions_nodes/CCScene.js"/>
                 <file name="layers_scenes_transitions_nodes/CCLayer.js"/>
                 <file name="layers_scenes_transitions_nodes/CCTransition.js"/>
-                <file name="layers_scenes_transitions_nodes/CCTransitionRadial.js"/>
+                <file name="layers_scenes_transitions_nodes/CCTransitionProgress.js"/>
                 <file name="layers_scenes_transitions_nodes/CCTransitionPageTurn.js"/>
                 <file name="sprite_nodes/CCSprite.js"/>
                 <file name="sprite_nodes/CCAnimation.js"/>

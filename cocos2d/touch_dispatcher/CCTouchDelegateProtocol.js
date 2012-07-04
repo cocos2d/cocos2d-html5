@@ -29,7 +29,6 @@
  * @extends cc.Class
  */
 cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
-    _viewId:0,
     _point:null,
     _prevPoint:cc.PointZero(),
     _id:0,
@@ -37,53 +36,44 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     /**
      * Constructor
      */
-    ctor:function (viewId, x, y) {
-        this._viewId = viewId;
+    ctor:function (x, y) {
         this._point = new cc.Point(x || 0, y || 0);
     },
 
     /**
-     * @param {Number} viewId
+     * get point of touch
      * @return {cc.Point}
      */
-    locationInView:function (viewId) {
+    locationInView:function () {
         return this._point;
     },
 
     /**
-     * @param {Number} viewId
      * @return {cc.Point}
      */
-    previousLocationInView:function (viewId) {
+    previousLocationInView:function () {
         return this._prevPoint;
     },
 
     /**
      * @return {Number}
      */
-    view:function () {
-        return this._viewId;
-    },
-
-    /**
-     * @return {Number}
-     */
-    id:function () {
+    getID:function () {
         return this._id;
     },
 
     /**
-     * @param {Number} viewId
+     * set information to touch
+     * @param {Number} id
      * @param  {Number} x
      * @param  {Number} y
-     * @param  {Number} id
      */
-    setTouchInfo:function (viewId, x, y, id) {
-        this._viewId = viewId;
+    setTouchInfo:function (id, x, y) {
         this._prevPoint = this._point;
         this._point = new cc.Point(x || 0, y || 0);
-        this._id = id || 0;
+        this._id = id;
     },
+
     _setPrevPoint:function (x, y) {
         this._prevPoint = new cc.Point(x || 0, y || 0);
     }
@@ -164,7 +154,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /*
      * In TouchesTest, class Padle inherits from cc.Sprite and cc.TargetedTouchDelegate.
-     * When it invoke  cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, true),
+     * When it invoke  cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true),
      * it will crash in cc.TouchHandler.initWithDelegate() because of dynamic_cast() on android.
      * I don't know why, so add these functions for the subclass to invoke it's own retain() and  release
      *Virtual function
@@ -174,7 +164,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /**
      * Virtual function
-    */
+     */
     touchDelegateRelease:function () {
     }
 });

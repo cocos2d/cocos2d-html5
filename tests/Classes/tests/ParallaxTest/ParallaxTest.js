@@ -197,7 +197,7 @@ Parallax2 = ParallaxDemo.extend({
 
 
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         // Top Layer, a simple image
         var cocosImage = cc.Sprite.create(s_power);
@@ -244,7 +244,7 @@ Parallax2 = ParallaxDemo.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         return true;
@@ -261,12 +261,12 @@ Parallax2 = ParallaxDemo.extend({
     ccTouchMoved:function (touch, event) {
 
         if (this._prevLocation == null) {
-            this._prevLocation = touch.locationInView(touch.view());
+            this._prevLocation = touch.locationInView();
             return;
         }
 
-        var touchLocation = touch.locationInView(touch.view());
-        //var prevLocation = touch.previousLocationInView(touch.view());
+        var touchLocation = touch.locationInView();
+        //var prevLocation = touch.previousLocationInView();
 
         //touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
         //prevLocation = cc.PointZero()//cc.Director.sharedDirector().convertToGL(prevLocation);

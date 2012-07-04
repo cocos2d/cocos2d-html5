@@ -220,7 +220,7 @@ var Helloworld = cc.Layer.extend({
 
         this.helloLb.runAction(cc.MoveBy.create(2.5, cc.ccp(0, 280)));
 
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         //this.adjustSizeForWindow();
 
         window.addEventListener("resize", function (event) {
@@ -296,7 +296,7 @@ var Helloworld = cc.Layer.extend({
     ccTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                this.circle.setPosition(new cc.Point(touches[0].locationInView(0).x, touches[0].locationInView(0).y));
+                this.circle.setPosition(new cc.Point(touches[0].locationInView().x, touches[0].locationInView().y));
             }
         }
     },

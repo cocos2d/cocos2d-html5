@@ -92,6 +92,7 @@ if (!isDebugMode) {
     cc.loadjs('cocos2d/platform/CCClass.js');
     cc.loadjs('cocos2d/platform/CCCommon.js');
     cc.loadjs('cocos2d/platform/platform.js');
+    cc.loadjs('cocos2d/platform/miniFramework.js');
     cc.loadjs('cocos2d/platform/ZipUtils.js');
     cc.loadjs('cocos2d/platform/base64.js');
     cc.loadjs('cocos2d/platform/gzip.js');
@@ -126,7 +127,7 @@ if (!isDebugMode) {
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCScene.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCLayer.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransition.js');
-    cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransitionRadial.js');
+    cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransitionProgress.js');
     cc.loadjs('cocos2d/layers_scenes_transitions_nodes/CCTransitionPageTurn.js');
     cc.loadjs('cocos2d/sprite_nodes/CCSprite.js');
     cc.loadjs('cocos2d/sprite_nodes/CCAnimation.js');

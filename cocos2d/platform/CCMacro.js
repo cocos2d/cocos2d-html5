@@ -44,6 +44,13 @@ cc.RAD = cc.PI / 180;
 cc.DEG = 180 / cc.PI;
 
 /**
+ * maximum unsigned int value
+ * @constant
+ * @type Number
+ */
+cc.UINT_MAX = 0xffffffff;
+
+/**
  * <p>
  * simple macro that swaps 2 variables<br/>
  *  modified from c++ macro, you need to pass in the x and y variables names in string, <br/>
@@ -122,6 +129,9 @@ cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
  * @type Number
  */
 cc.BLEND_DST = 0x0303;
+
+cc.GL_ONE = 1;
+cc.GL_SRC_ALPHA = 0x0302;
 
 /**
  * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix

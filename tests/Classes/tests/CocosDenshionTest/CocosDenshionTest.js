@@ -172,7 +172,7 @@ CocosDenshionTest = cc.Layer.extend({
         this._itmeMenu.setPosition(cc.PointZero());
         this.addChild(this._itmeMenu);
 
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         // set default volume
         cc.AudioManager.sharedEngine().setEffectsVolume(0.5);
@@ -185,7 +185,7 @@ CocosDenshionTest = cc.Layer.extend({
     },
     ccTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
-            var touchLocation = touches[0].locationInView(0);
+            var touchLocation = touches[0].locationInView();
             var nMoveY = touchLocation.y - this._beginPos.y;
             var curPos = this._itmeMenu.getPosition();
 
@@ -208,7 +208,7 @@ CocosDenshionTest = cc.Layer.extend({
     },
     ccTouchesBegan:function (touches, event) {
         if (!this.isMouseDown) {
-            this._beginPos = touches[0].locationInView(0);
+            this._beginPos = touches[0].locationInView();
         }
         this.isMouseDown = true;
     },

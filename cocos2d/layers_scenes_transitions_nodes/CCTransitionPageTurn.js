@@ -94,16 +94,14 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
         if (!this._back) {
             this._outScene.runAction(cc.Sequence.create(action,
                 cc.CallFunc.create(this, cc.TransitionScene.finish),
-                cc.StopGrid.create(),
-                null));
+                cc.StopGrid.create()));
         } else {
             // to prevent initial flicker
             this._inScene.setVisible(false);
             this._inScene.runAction(cc.Sequence.create(cc.Show.create(),
                 action,
                 cc.CallFunc.create(this, cc.TransitionScene.finish),
-                cc.StopGrid.create(),
-                null));
+                cc.StopGrid.create()));
         }
     },
     _sceneOrder:function () {

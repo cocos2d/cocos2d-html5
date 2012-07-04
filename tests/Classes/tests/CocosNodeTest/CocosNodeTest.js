@@ -587,7 +587,7 @@ var CameraCenterTest = TestCocosNodeDemo.extend({
 
 var ConvertToNode = TestCocosNodeDemo.extend({
     ctor:function () {
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         var s = cc.Director.sharedDirector().getWinSize();
 
         var rotate = cc.RotateBy.create(10, 360);
@@ -623,7 +623,7 @@ var ConvertToNode = TestCocosNodeDemo.extend({
     ccTouchesEnded:function (touches, event) {
         for (var it = 0; it < touches.length; it++) {
             var touch = touches[it];
-            var location = touch.locationInView(touch.view());
+            var location = touch.locationInView();
 
             location = cc.Director.sharedDirector().convertToGL(location);
 

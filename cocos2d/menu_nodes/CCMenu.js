@@ -38,7 +38,7 @@ cc.CCMENU_STATE_TRACKING_TOUCH = 1;
  * @constant
  * @type Number
  */
-cc.CCMENU_TOUCH_PRIORITY = -128;
+cc.CCMENU_HANDLER_PRIORITY = -128;
 /**
  * @constant
  * @type Number
@@ -74,6 +74,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             }
         }
     },
+
     _opacity:0,
 
     /**
@@ -94,26 +95,33 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             }
         }
     },
+
+    _enabled:false,
+
+    /**
+     * return whether or not the menu will receive events
+     * @return {Boolean}
+     */
+    isEnabled:function () {
+        return this._enabled;
+    },
+
+    /**
+     * set whether or not the menu will receive events
+     * @param {Boolean} enabled
+     */
+    setEnabled:function (enabled) {
+        this._enabled = enabled;
+    },
+
     _selectedItem:null,
     /**
      * initializes an empty cc.Menu
      * @return {Boolean}
      */
     init:function () {
-        if (this._super()) {
-            this.setIsTouchEnabled(true);
-            var s = cc.Director.sharedDirector().getWinSize();
+        return this._super();
 
-            this.setAnchorPoint(cc.ccp(0.5, 0.5));
-            this.setContentSize(s);
-            var r = new cc.Rect();
-            cc.Application.sharedApplication().statusBarFrame(r);
-            this.setPosition(cc.ccp(s.width / 2, s.height / 2));
-            this._selectedItem = null;
-            this._state = cc.CCMENU_STATE_WAITING;
-            return true;
-        }
-        return false;
     },
 
     /**
@@ -122,14 +130,42 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     initWithItems:function (args) {
-        if (this.init()) {
-            if (args.length > 0) {
-                for (var i = 0; i < args.length; i++) {
-                    if (args[i]) {
-                        this.addChild(args[i], i);
-                    }
+        var pArray = [];
+        if (args) {
+            for (var i = 0; i < args.length; i++) {
+                if (args[i]) {
+                    pArray.push(args[i]);
                 }
             }
+        }
+
+        return this.initWithArray(pArray);
+    },
+
+    /**
+     * initializes a cc.Menu with a Array of cc.MenuItem objects
+     */
+    initWithArray:function (arrayOfItems) {
+        if(this.init()){
+            this.setTouchEnabled(true);
+            this._enabled = true;
+
+            // menu in the center of the screen
+            var winSize = cc.Director.sharedDirector().getWinSize();
+            this.ignoreAnchorPointForPosition(true);
+            this.setAnchorPoint(cc.ccp(0.5, 0.5));
+            this.setContentSize(winSize);
+
+            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+
+            if(arrayOfItems){
+                for(var i = 0; i< arrayOfItems.length; i++){
+                    this.addChild(arrayOfItems[i],i);
+                }
+            }
+
+            this._selectedItem = null;
+            this._state = cc.CCMENU_STATE_WAITING;
             return true;
         }
         return false;
@@ -141,7 +177,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @param {Number|Null} tag
      */
     addChild:function (child, zOrder, tag) {
-        tag = tag || child._tag;
+        cc.Assert((child instanceof cc.MenuItem), "Menu only supports MenuItem objects as children");
         this._super(child, zOrder, tag);
     },
 
@@ -376,7 +412,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, cc.CCMENU_TOUCH_PRIORITY, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY, true);
     },
 
     /**
@@ -384,7 +420,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     ccTouchBegan:function (touch, e) {
-        if (this._state != cc.CCMENU_STATE_WAITING || !this._isVisible) {
+        if (this._state != cc.CCMENU_STATE_WAITING || !this._isVisible || !this._enabled) {
             return false;
         }
 
@@ -459,28 +495,38 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     setOpacityModifyRGB:function (value) {
     },
+
     isOpacityModifyRGB:function () {
+        return false;
     },
+
     _itemForTouch:function (touch) {
-        var touchLocation = touch.locationInView(touch.view());
-        //console.log("touchLocation",touchLocation)
+        var touchLocation = touch.locationInView();
+
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i].isVisible() && this._children[i].getIsEnabled()) {
+                if (this._children[i].isVisible() && this._children[i].isEnabled()) {
                     var local = this._children[i].convertToNodeSpace(touchLocation);
                     var r = this._children[i].rect();
-                    r.origin = cc.PointZero();
+                    r.origin = new cc.Point(0,0);
                     if (cc.Rect.CCRectContainsPoint(r, local)) {
                         return this._children[i];
                     }
                 }
             }
-
         }
 
         return null;
     },
-    _state:-1
+    _state:-1,
+
+    /**
+     * set event handler priority. By default it is: kCCMenuTouchPriority
+     * @param {Number} newPriority
+     */
+    setHandlerPriority:function (newPriority) {
+        cc.Director.sharedDirector().getTouchDispatcher().setPriority(newPriority, this);
+    }
 });
 
 /**
@@ -488,10 +534,20 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
  * @return {cc.Menu}
  * @example
  * // Example
- * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3)//there is no limit on how many menu item you can pass in
+ * //there is no limit on how many menu item you can pass in
+ * var myMenu = cc.Menu.create(menuitem1, menuitem2, menuitem3);
  */
 cc.Menu.create = function (/*Multiple Arguments*/) {
     var ret = new cc.Menu();
+
+    if (arguments.length == 0) {
+        ret.initWithItems(null, null);
+    } else if (arguments.length == 1) {
+        if (arguments[0] instanceof Array) {
+            ret.initWithArray(arguments[0]);
+            return ret;
+        }
+    }
     ret.initWithItems(arguments);
     return ret;
 };

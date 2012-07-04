@@ -55,6 +55,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     _originalTexture:null,
     // quads to draw
     _quadsToDraw:0,
+    _uniformColor:0,
 
     /** initializes an cc.AtlasNode  with an Atlas file the width and height of each item and the quantity of items to render
      * @param {String} tile
@@ -65,8 +66,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      */
     initWithTileFile:function (tile, tileWidth, tileHeight, itemsToRender) {
         cc.Assert(tile != null, "title should not be null");
-        this._itemWidth = tileWidth * cc.CONTENT_SCALE_FACTOR();
-        this._itemHeight = tileHeight * cc.CONTENT_SCALE_FACTOR();
+        this._itemWidth = tileWidth;
+        this._itemHeight = tileHeight;
 
         this._opacity = 255;
         this._color = this._colorUnmodified = cc.WHITE();
@@ -75,13 +76,14 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        // double retain to avoid the autorelease pool
-        // also, using: self.textureAtlas supports re-initialization without leaking
-        this._textureAtlas = new cc.TextureAtlas();
-        this._textureAtlas.initWithFile(tile, itemsToRender);
+        var newAtlas = new cc.TextureAtlas();
+        newAtlas.initWithFile(tile,itemsToRender);
+        this.setTextureAtlas(newAtlas);
+
         if (cc.renderContextType == cc.CANVAS) {
             this._originalTexture = this._textureAtlas.getTexture();
         }
+
         if (!this._textureAtlas) {
             cc.Log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
             return false;
@@ -93,6 +95,10 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._calculateMaxItems();
 
         this._quadsToDraw = itemsToRender;
+
+        //shader stuff
+        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTexture_uColor));
+        //this._uniformColor = glGetUniformLocation( this.getShaderProgram().getProgram(), "u_color");
 
         return true;
 
@@ -112,37 +118,16 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._super();
         if (cc.renderContextType == cc.CANVAS) {
 
-        }
-        else {
-            // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-            // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_TEXTURE_COORD_ARRAY
-            // Unneeded states: GL_COLOR_ARRAY
-            //TODO, for webgl porting.
-            //glDisableClientState(GL_COLOR_ARRAY);
+        } else {
+            //TODO for WebGL
+            //cc.NODE_DRAW_SETUP();
 
-            // glColor4ub isn't implement on some android devices
-            // glColor4ub( color.r, color.g, color.b, opacity);
-            //glColor4f(((GLfloat)color.r) / 255, ((GLfloat)color.g) / 255, ((GLfloat)color.b) / 255, ((GLfloat)opacity) / 255);
-            var newBlend = this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST;
-            if (newBlend) {
-                // TODO, need to be fixed
-                //glBlendFunc( blendFunc.src, blendFunc.dst );
-            }
+            //ccGLBlendFunc( this._blendFunc.src, this._blendFunc.dst );
 
-            this._textureAtlas.drawNumberOfQuads(this._quadsToDraw, 0);
+            //var colors = [this._color.r / 255.0, this._color.g / 255.0, this._color.b / 255.0, this._opacity / 255.0];
+            //this.getShaderProgram().setUniformLocationWith4fv(this._uniformColor, colors, 1);
 
-            if (newBlend) {
-                //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-            }
-
-            // is this chepear than saving/restoring color state ?
-            // XXX: There is no need to restore the color to (255,255,255,255). Objects should use the color
-            // XXX: that they need
-            //	glColor4ub( 255, 255, 255, 255);
-
-            // restore default GL state
-            //TODO, need to be fixed.
-            //glEnableClientState(GL_COLOR_ARRAY);
+            //this._textureAtlas.drawNumberOfQuads(this._quadsToDraw, 0);
         }
     },
 
@@ -160,7 +145,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        if ((this._color.r == color3.r)&&(this._color.g == color3.g)&&(this._color.b == color3.b)) {
+        if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b)) {
             return;
         }
         this._color = this._colorUnmodified = color3;
@@ -171,8 +156,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
                 if (cacheTextureForColor) {
                     //generate color texture cache
                     var tx = this.getTexture();
-                    var textureRect = new cc.Rect(0,0,tx.width,tx.height);
-                    var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color,textureRect);
+                    var textureRect = new cc.Rect(0, 0, tx.width, tx.height);
+                    var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
                     var img = new Image();
                     img.src = colorTexture.toDataURL();
                     this.setTexture(img);
@@ -199,11 +184,10 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      */
     setOpacity:function (opacity) {
         this._opacity = opacity;
-        return;
         // special opacity for premultiplied textures
-        if (this._isOpacityModifyRGB) {
-            this.setColor(this._colorUnmodified);
-        }
+        //if (this._isOpacityModifyRGB) {
+        //    this.setColor(this._colorUnmodified);
+        //}
     },
 
     /**
@@ -225,7 +209,6 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     /** cc.AtlasNode - CocosNodeTexture protocol
      * @return {cc.BlendFunc}
      */
-
     getBlendFunc:function () {
         return this._blendFunc;
     },
@@ -284,20 +267,20 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     _calculateMaxItems:function () {
-        var s = this._textureAtlas.getTexture();
-        this._itemsPerColumn = parseInt(s.height / this._itemHeight);
-        this._itemsPerRow = parseInt(s.width / this._itemWidth);
+        var size = this._textureAtlas.getTexture().getContentSize();
+        this._itemsPerColumn = parseInt(size.height / this._itemHeight);
+        this._itemsPerRow = parseInt(size.width / this._itemWidth);
     },
 
     _updateBlendFunc:function () {
-        /* if (!this._textureAtlas.getTexture().getHasPremultipliedAlpha()) {
+        /* if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
          this._blendFunc.src = cc.GL_SRC_ALPHA;
          this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
          }*/
     },
 
     _updateOpacityModifyRGB:function () {
-        //this._isOpacityModifyRGB = this._textureAtlas.getTexture().getHasPremultipliedAlpha();
+        //this._isOpacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
     }
 
 });

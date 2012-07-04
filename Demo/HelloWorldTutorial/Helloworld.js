@@ -111,7 +111,7 @@ var Helloworld = cc.Layer.extend({
 
         this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.ccp(0, size.height - 40)));
 
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
         this.adjustSizeForWindow();
         lazyLayer.adjustSizeForCanvas();
 
@@ -155,7 +155,7 @@ var Helloworld = cc.Layer.extend({
     ccTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                //this.circle.setPosition(new cc.Point(touches[0].locationInView(0).x, touches[0].locationInView(0).y));
+                //this.circle.setPosition(new cc.Point(touches[0].locationInView().x, touches[0].locationInView().y));
             }
         }
     },

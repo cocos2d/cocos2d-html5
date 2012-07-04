@@ -805,6 +805,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
+
+            if(this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)){
+                context.globalCompositeOperation = 'lighter';
+            }
+
             context.globalAlpha = this._opacity / 255;
             if (this._flipX) {
                 context.scale(-1, 1);
@@ -852,10 +857,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
                 s = this._contentSize;
-                vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0), cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
+                context.strokeStyle = "rgba(0,255,0,1)";
+                vertices = [cc.ccp(pos.x, pos.y), cc.ccp(pos.x + s.width, pos.y), cc.ccp(pos.x + s.width, pos.y + s.height), cc.ccp(pos.x, pos.y + s.height)];
                 cc.drawingUtil.drawPoly(vertices, 4, true);
             } else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
+                context.strokeStyle = "rgba(0,255,0,1)";
                 s = this.getTextureRect().size;
                 offsetPix = this.getOffsetPosition();
                 vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),

@@ -46,15 +46,15 @@ var Paddle = cc.Sprite.extend({
         return true;
     },
     onEnter:function () {
-        cc.TouchDispatcher.sharedDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
         this._super();
     },
     onExit:function () {
-        cc.TouchDispatcher.sharedDispatcher().removeDelegate(this);
+        cc.Director.sharedDirector().getTouchDispatcher().removeDelegate(this);
         this._super();
     },
     containsTouchLocation:function (touch) {
-        var getPoint = touch.locationInView(touch.view());
+        var getPoint = touch.locationInView();
         var myRect = this.rect();
 
         myRect.origin.x += this.getPosition().x;
@@ -78,7 +78,7 @@ var Paddle = cc.Sprite.extend({
         // in each touchXXX method.
         cc.Assert(this._state == PADDLE_STATE_GRABBED, "Paddle - Unexpected state!");
 
-        var touchPoint = touch.locationInView(touch.view());
+        var touchPoint = touch.locationInView();
         //touchPoint = cc.Director.sharedDirector().convertToGL( touchPoint );
 
         this.setPosition(cc.PointMake(touchPoint.x, this.getPosition().y));
