@@ -735,7 +735,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 break;
             case 3:
                 cc.Assert(child != null, "SpriteBatchNode.addChild():child should not be null");
-                cc.Assert(!(child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+                cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
                 // check CCSprite is using the same texture id
                 if (cc.renderContextType != cc.CANVAS) {

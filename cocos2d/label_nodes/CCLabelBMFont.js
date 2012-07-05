@@ -249,7 +249,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
 
         var value;
         // Height
-        this.commonHeight = /lineHeight=(\d+)/gi.exec(line)[1];
+        this.commonHeight = parseInt(/lineHeight=(\d+)/gi.exec(line)[1]);
 
         // pages. sanity check
         value = /pages=(\d+)/gi.exec(line)[1];
@@ -270,7 +270,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         // file
         value = /file="([a-zA-Z0-9\-\._]+)/gi.exec(line)[1];
 
-        this.atlasName = cc.FileUtils.fullPathFromRelativeFile(value, fntFile);
+        this.atlasName = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(value, fntFile);
     },
     _parseKerningCapacity:function (line) {
     },
@@ -362,6 +362,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _fntFile:"",
     // initial string without line breaks
     _initialString:"",
+    // alignment of all lines
+    _alignment:null,
     // max width until a line break is added
     _width:0,
     _lineBreakWithoutSpaces:false,
@@ -478,7 +480,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     init:function () {
-        this.initWithString([null,null]);
+        this.initWithString([null, null]);
     },
     /**
      * init a bitmap font altas with an initial string and the FNT file
@@ -490,11 +492,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         var theString = arg[0],
             fntFile = arg[1];
 
-        if(fntFile){
-            this._configuration = cc.FNTConfigLoadFile(fntFile);
-        }
         cc.Assert(!this._configuration, "re-init is no longer supported");
-        cc.Assert((theString && fntFile) || (theString==null && fntFile==null), "Invalid params for cc.LabelBMFont");
 
         var texture;
         if (fntFile) {
@@ -514,7 +512,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = arg[3] || cc.TEXT_ALIGNMENT_LEFT;
-            this._imageOffset = arg[3] || cc.PointZero();
+            this._imageOffset = arg[4] || cc.PointZero();
             this._width = arg[2] || cc.LabelAutomaticWidth;
             this._opacity = 255;
             this._color = cc.WHITE();
@@ -575,12 +573,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var fontDef = element.fontDef;
 
-            //var fontDef = this._configuration.bitmapFontArray[c];
-
-            var rect = fontDef.rect;
-
+            var rect = cc.RectMake(fontDef.rect.origin.x, fontDef.rect.origin.y, fontDef.rect.size.width, fontDef.rect.size.height);
             rect = cc.RECT_PIXELS_TO_POINTS(rect);
-
             rect.origin.x += this._imageOffset.x;
             rect.origin.y += this._imageOffset.y;
 
@@ -589,21 +583,21 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 fontChar = new cc.Sprite();
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
                 }
                 else {
-                    fontChar.initWithTexture(this._textureAtlas.getTexture(), rect);
+                    fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
                 }
                 this.addChild(fontChar, 0, i);
             }
             else {
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
                 }
                 else {
                     // reusing fonts
-                    fontChar.setTextureRect(rect, false, rect.size);
+                    fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
                     // restore to default in case they were modified
                     fontChar.setVisible(true);
                     fontChar.setOpacity(255);
@@ -649,7 +643,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.createFontChars();
 
         if (!fromUpdate) {
-            //this.updateLabel();
+            this.updateLabel();
         }
     },
     /**
@@ -684,8 +678,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (this._width > 0) {
             // Step 1: Make multiline
             var stringLength = this._string.length;
-            var multiline_string = stringLength;
-            var last_word = stringLength;
+            var multiline_string = [];
+            multiline_string.reverse();
+            var last_word = [];
+            last_word.reverse();
 
             var line = 1, i = 0;
             var start_line = false, start_word = false;
@@ -714,10 +710,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
 
                 // Newline.
-                if (character == '\n') {
-                    last_word.push_back('\n');
-                    multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
-                    last_word = 0;
+                if (character.charCodeAt(0) == 10) {
+                    last_word.push('\n');
+                    multiline_string.concat(multiline_string, last_word);
+                    last_word.length = 0;
                     start_word = false;
                     start_line = false;
                     startOfWord = -1;
@@ -741,10 +737,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
 
                 // Whitespace.
-                if (isspace_unicode(character)) {
-                    last_word.push_back(character);
-                    multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
-                    last_word.clear();
+                if (cc.isspace_unicode(character)) {
+                    last_word.push(character);
+                    multiline_string.concat(multiline_string, last_word);
+                    last_word.length = 0;
                     start_word = false;
                     startOfWord = -1;
                     i++;
@@ -754,16 +750,16 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 // Out of bounds.
                 if (this._getLetterPosXRight(characterSprite) - startOfLine > this._width) {
                     if (!this._lineBreakWithoutSpaces) {
-                        last_word.push_back(character);
+                        last_word.push(character);
 
-                        var found = cc_utf8_find_last_not_char(multiline_string, ' ');
+                        var found = cc.utf8_find_last_not_char(multiline_string, ' ');
                         if (found != -1)
-                            cc_utf8_trim_ws(multiline_string);
+                            cc.utf8_trim_ws(multiline_string);
                         else
-                            multiline_string.clear();
+                            multiline_string = [];
 
-                        if (multiline_string.size() > 0)
-                            multiline_string.push_back('\n');
+                        if (multiline_string.length > 0)
+                            multiline_string.push('\n');
 
                         line++;
                         start_line = false;
@@ -771,11 +767,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         i++;
                     }
                     else {
-                        cc_utf8_trim_ws(last_word);
+                        cc.utf8_trim_ws(last_word);
 
-                        last_word.push_back('\n');
-                        multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
-                        last_word.clear();
+                        last_word.push('\n');
+                        multiline_string.concat(multiline_string, last_word);
+                        last_word.length = 0;
                         start_word = false;
                         start_line = false;
                         startOfWord = -1;
@@ -801,23 +797,21 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
                 else {
                     // Character is normal.
-                    last_word.push_back(character);
+                    last_word.push(character);
                     i++;
                     continue;
                 }
             }
 
-            multiline_string.insert(multiline_string.end(), last_word.begin(), last_word.end());
+            multiline_string.concat(multiline_string, last_word);
 
-            var size = multiline_string.size();
-            var str_new = new [size + 1];
+            var len = multiline_string.length;
+            var str_new = "";
 
-            for (var i = 0; i < size; ++i) {
-                str_new[i] = multiline_string[i];
+            for (var i = 0; i < len; ++i) {
+                str_new += multiline_string[i] + "";
             }
-
-            str_new[size] = 0;
-
+            console.log(this._string);
             this._string = str_new;
             this.updateString(true);
         }
@@ -829,7 +823,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var lineNumber = 0;
             var strlen = this._string.length;
             var last_line = [];
-            for (var ctr = 0; ctr <= strlen; ++ctr) {
+
+            for (var ctr = 0; ctr < strlen; ctr++) {
                 if (this._string[ctr] == '\n' || this._string[ctr] == 0) {
                     var lineWidth = 0.0;
                     var line_length = last_line.length;
@@ -861,13 +856,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
                             var characterSprite = this.getChildByTag(index);
                             characterSprite.setPosition(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0.0)));
+                            console.log(JSON.stringify(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0.0))));
                         }
                     }
 
                     i += line_length;
                     lineNumber++;
 
-                    last_line = [];
+                    last_line.length = 0;
                     continue;
                 }
 
@@ -925,7 +921,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     setAnchorPoint:function (point) {
         if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
             this._super(point);
-            this.createFontChars();
+            this.updateLabel();
         }
     },
 
@@ -1006,3 +1002,58 @@ cc.FNTConfigRemoveCache = function () {
         cc.configurations = {};
     }
 };
+
+cc.isspace_unicode = function (ch) {
+    return  (ch >= 0x0009 && ch <= 0x000D) || ch == 0x0020 || ch == 0x0085 || ch == 0x00A0 || ch == 0x1680
+        || (ch >= 0x2000 && ch <= 0x200A) || ch == 0x2028 || ch == 0x2029 || ch == 0x202F
+        || ch == 0x205F || ch == 0x3000;
+}
+
+cc.utf8_find_last_not_char = function (str, c) {
+    var i = str.length - 1;
+    for (; i >= 0; --i) {
+        if (str[i] != c) {
+            return i;
+        }
+    }
+    return i;
+};
+
+
+cc.utf8_trim_ws = function (str) {
+    var len = str.length;
+
+    if (len <= 0)
+        return;
+
+    var last_index = len - 1;
+
+    // Only start trimming if the last character is whitespace..
+    if (cc.isspace_unicode(str)[last_index]) {
+        for (var i = last_index - 1; i >= 0; --i) {
+            if (cc.isspace_unicode(str[i]))
+                last_index = i;
+            else
+                break;
+        }
+
+        cc.utf8_trim_from(str, last_index);
+    }
+}
+
+
+/*
+ * @str:    the string to trim
+ * @index:    the index to start trimming from.
+ *
+ * Trims str st str=[0, index) after the operation.
+ *
+ * Return value: the trimmed string.
+ * */
+cc.utf8_trim_from = function (str, index) {
+    var len = str.length;
+    if (index >= len || index < 0)
+        return;
+
+    str.splice(index, len - index);
+}

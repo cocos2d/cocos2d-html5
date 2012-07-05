@@ -77,7 +77,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._blendFunc.dst = cc.BLEND_DST;
 
         var newAtlas = new cc.TextureAtlas();
-        newAtlas.initWithFile(tile,itemsToRender);
+        newAtlas.initWithFile(tile, itemsToRender);
         this.setTextureAtlas(newAtlas);
 
         if (cc.renderContextType == cc.CANVAS) {
@@ -267,7 +267,13 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     _calculateMaxItems:function () {
-        var size = this._textureAtlas.getTexture().getContentSize();
+        var size;
+        if (this._textureAtlas.getTexture() instanceof cc.Texture2D) {
+            size = this._textureAtlas.getTexture().getContentSize();
+        }
+        else {
+            size = new cc.Size(this._textureAtlas.getTexture().width, this._textureAtlas.getTexture().height);
+        }
         this._itemsPerColumn = parseInt(size.height / this._itemHeight);
         this._itemsPerRow = parseInt(size.width / this._itemWidth);
     },

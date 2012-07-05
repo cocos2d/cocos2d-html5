@@ -72,6 +72,11 @@ var s_grossiniDance12 = "Resources/Images/grossini_dance_12.png";
 var s_grossiniDance13 = "Resources/Images/grossini_dance_13.png";
 var s_grossiniDance14 = "Resources/Images/grossini_dance_14.png";
 
+var s_arrows = "Resources/Images/arrows.png";
+var s_arrowsBar = "Resources/Images/arrowsBar.png";
+var s_arrows_hd = "Resources/Images/arrows-hd.png";
+var s_arrowsBar_hd = "Resources/Images/arrowsBar-hd.png";
+
 // tilemaps resource
 var s_tilesPng = "Resources/TileMaps/tiles.png";
 var s_levelMapTga = "Resources/TileMaps/levelmap.tga";
@@ -114,6 +119,8 @@ var s_futura48_fnt = "Resources/fonts/futura-48.fnt";
 var s_helvetica32_fnt = "Resources/fonts/helvetica-32.fnt";
 var s_geneva32_fnt = "Resources/fonts/geneva-32.fnt";
 var s_arial_unicode_26_fnt = "Resources/fonts/arial-unicode-26.fnt";
+var s_markerFelt_fnt = "Resources/fonts/markerFelt.fnt";
+var s_markerFelt_hd_fnt = "Resources/fonts/markerFelt-hd.fnt";
 
 var s_larabie_16_plist = "Resources/fonts/larabie-16.plist";
 var s_larabie_16_hd_plist = "Resources/fonts/larabie-16-hd.plist";
@@ -215,6 +222,11 @@ var g_ressources = [
     {type:"image", src:s_larabie_16_hd},
     {type:"image", src:s_futura48},
 
+    {type:"image", src:s_arrows},
+    {type:"image", src:s_arrowsBar},
+    {type:"image", src:s_arrows_hd},
+    {type:"image", src:s_arrowsBar_hd},
+
     {type:"plist", src:s_boilingFoamPlist},
     {type:"plist", src:s_grossiniPlist},
     {type:"plist", src:s_grossini_grayPlist},
@@ -274,5 +286,7 @@ var g_ressources = [
     {type:"fnt", src:s_futura48_fnt},
     {type:"fnt", src:s_helvetica32_fnt},
     {type:"fnt", src:s_geneva32_fnt},
-    {type:"fnt", src:s_arial_unicode_26_fnt}
+    {type:"fnt", src:s_arial_unicode_26_fnt},
+    {type:"fnt", src:s_markerFelt_fnt},
+    {type:"fnt", src:s_markerFelt_hd_fnt}
 ];

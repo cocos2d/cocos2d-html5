@@ -40,7 +40,9 @@ var TAG_LABEL_SPRITE17 = 666;
 var TAG_LABEL_SPRITE18 = 667;
 
 var AtlasTests = [
-    //function(){ return new Atlas1();},
+    /*function(){
+        return new Atlas1();
+    },*/
     /*function () {
         return new LabelAtlasTest();
     }, //ok
@@ -49,70 +51,70 @@ var AtlasTests = [
     }, //ok
     function () {
         return new Atlas3();
-    },
+    },//ok
     function () {
         return new Atlas4();
-    },
+    },//ok
     function () {
         return new Atlas5();
-    },
+    },//ok
     function () {
         return new Atlas6();
-    },
+    },//ok
     function () {
         return new AtlasBitmapColor();
-    },
+    },//ok
     function () {
         return new AtlasFastBitmap();
-    },
+    },//ok
     function () {
         return new BitmapFontMultiLine();
-    },
+    },//ok
     function () {
         return new LabelsEmpty();
-    },
+    },//ok
     function () {
         return new LabelBMFontHD();
-    },
+    },//ok
     function () {
         return new LabelAtlasHD();
-    }, //ok
+    },//ok
     function () {
         return new LabelGlyphDesigner();
-    },
+    },//ok
     function () {
         return new LabelTTFTest();
-    }, //ok
+    },//ok
     function () {
         return new LabelTTFMultiline();
-    }, //ok
+    },//ok
     function () {
         return new LabelTTFChinese();
-    }, //ok
+    },//ok
     function () {
         return new LabelBMFontChinese();
-    },
+    },//ok                 */
     function () {
         return new BitmapFontMultiLineAlignment();
     },//bug
     function () {
         return new LabelTTFA8Test();
-    },
+    },//ok
     function () {
         return new BMFontOneAtlas();
-    },
+    },//ok
     function () {
         return new BMFontUnicode();
-    }//bug
+    },//bug
     function () {
         return new BMFontInit();
-    },
+    }, //ok
     function () {
         return new TTFFontInit();
-    },*/
+    }, //ok
     function () {
         return new LabelTTFAlignment();
-    }
+    }//ok
 ];
 
 var atlasIdx = -1;
@@ -980,17 +982,15 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
     lastAlignmentItem:null,
     drag:null,
     ctor:function () {
-        //todo fixed
-        this.setIsTouchEnabled(true);
+        this.setTouchEnabled(true);
 
         // ask director the the window size
         var size = cc.Director.sharedDirector().getWinSize();
 
         // create and initialize a Label
-        this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "fonts/markerFelt.fnt", size.width / 1.5, cc.TEXT_ALIGNMENT_CENTER);
-
-        this.arrowsBarShouldRetain = cc.Sprite.create("Images/arrowsBar.png");
-        this.arrowsShouldRetain = cc.Sprite.create("Images/arrows.png");
+        this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "Resources/fonts/markerFelt.fnt", size.width / 1.5, cc.TEXT_ALIGNMENT_CENTER,cc.PointZero());
+        this.arrowsBarShouldRetain = cc.Sprite.create("Resources/Images/arrowsBar.png");
+        this.arrowsShouldRetain = cc.Sprite.create("Resources/Images/arrows.png");
 
         cc.MenuItemFont.setFontSize(20);
         var longSentences = cc.MenuItemFont.create("Long Flowing Sentences", this, this.stringChanged);
@@ -1022,8 +1022,7 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         // position the label on the center of the screen
         this.labelShouldRetain.setPosition(cc.ccp(size.width / 2, size.height / 2));
 
-        //todo fixed
-        this.arrowsBarShouldRetain.setIsVisible(false);
+        this.arrowsBarShouldRetain.setVisible(false);
 
         var arrowsWidth = (ArrowsMax - ArrowsMin) * size.width;
         this.arrowsBarShouldRetain.setScaleX(arrowsWidth / this.arrowsBarShouldRetain.getContentSize().width);
@@ -1093,27 +1092,25 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         this.snapArrowsToEdge();
     },
     ccTouchesBegan:function (touches) {
-        var touch = touches.anyObject();
+        var touch = touches[0];
         var location = touch.locationInView();
 
         if (cc.Rect.CCRectContainsPoint(this.arrowsShouldRetain.boundingBox(), location)) {
             this.drag = true;
-            //todo fixed
-            this.arrowsBarShouldRetain.setIsVisible(true);
+            this.arrowsBarShouldRetain.setVisible(true);
         }
     },
     ccTouchesEnded:function () {
         this.drag = false;
         this.snapArrowsToEdge();
-        //todo fixed
-        this.arrowsBarShouldRetain.setIsVisible(false);
+        this.arrowsBarShouldRetain.setVisible(false);
     },
     ccTouchesMoved:function (touches) {
         if (!this.drag) {
             return;
         }
 
-        var touch = touches.anyObject();
+        var touch = touches[0];
         var location = touch.locationInView();
 
         var winSize = cc.Director.sharedDirector().getWinSize();
@@ -1166,9 +1163,9 @@ var BMFontOneAtlas = AtlasDemo.extend({
 
         var label1 = cc.LabelBMFont.create("This is Helvetica", "Resources/fonts/helvetica-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
         this.addChild(label1);
-        label1.setPosition(cc.ccp(s.width / 2, s.height / 6));
+        label1.setPosition(cc.ccp(s.width / 2, s.height * 2/ 3));
 
-        var label2 = cc.LabelBMFont.create("And this is Geneva", "Resources/fonts/geneva-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.ccp(0, 128));
+        var label2 = cc.LabelBMFont.create("And this is Geneva", "Resources/fonts/geneva-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, new cc.Point(0, 128));
         this.addChild(label2);
         label2.setPosition(cc.ccp(s.width / 2, s.height / 3));
     },
@@ -1257,17 +1254,17 @@ var TTFFontInit = AtlasDemo.extend({
 var LabelTTFAlignment = AtlasDemo.extend({
     ctor:function () {
         var s = cc.Director.sharedDirector().getWinSize();
-        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "Arial", 22);
+        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "Arial", 12);
         ttf0.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 2));
         ttf0.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf0);
 
-        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_CENTER, "Arial", 22);
+        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_CENTER, "Arial", 12);
         ttf1.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 3));
         ttf1.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf1);
 
-        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 22);
+        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 12);
         ttf2.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 4));
         ttf2.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.addChild(ttf2);
