@@ -176,8 +176,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
  * var action = cc.Action.create();
  */
 cc.Action.create = function () {
-    var ret = new cc.Action();
-    return ret;
+    return new cc.Action();
 };
 
 
@@ -250,13 +249,13 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
 
     /** initializes the action
      * @param {cc.ActionInterval} action
-     * @param {Number} rate
+     * @param {Number} speed
      * @return {Boolean}
      */
-    initWithAction:function (action, rate) {
+    initWithAction:function (action, speed) {
         cc.Assert(action != null, "");
         this._innerAction = action;
-        this._speed = rate;
+        this._speed = speed;
         return true;
     },
 
@@ -318,12 +317,12 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
 /** creates the action
  *
  * @param {cc.ActionInterval} action
- * @param {Number} rate
+ * @param {Number} speed
  * @return {cc.Speed}
  */
-cc.Speed.create = function (action, rate) {
+cc.Speed.create = function (action, speed) {
     var ret = new cc.Speed();
-    if (ret && ret.initWithAction(action, rate)) {
+    if (ret && ret.initWithAction(action, speed)) {
         return ret;
     }
     return null;
@@ -363,15 +362,19 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      */
     initWithTarget:function (followedNode, rect) {
         cc.Assert(followedNode != null, "");
+
+        rect = rect || cc.RectZero();
         this._followedNode = followedNode;
-        this._boundarySet = false;
+
+        this._boundarySet = cc.Rect.CCRectEqualToRect(rect,cc.RectZero());
+
         this._boundaryFullyCovered = false;
 
         var winSize = cc.Director.sharedDirector().getWinSize();
         this._fullScreenSize = cc.PointMake(winSize.width, winSize.height);
         this._halfScreenSize = cc.ccpMult(this._fullScreenSize, 0.5);
 
-        if (rect) {
+        if (this._boundarySet) {
             this.leftBoundary = -((rect.origin.x + rect.size.width) - this._fullScreenSize.x);
             this.rightBoundary = -rect.origin.x;
             this.topBoundary = -rect.origin.y;
@@ -408,8 +411,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
 
             this._target.setPosition(cc.ccp(cc.clampf(tempPos.x, this.leftBoundary, this.rightBoundary),
                 cc.clampf(tempPos.y, this.bottomBoundary, this.topBoundary)));
-        }
-        else {
+        } else {
             this._target.setPosition(cc.ccpSub(this._halfScreenSize, this._followedNode.getPosition()));
         }
     },
@@ -474,6 +476,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * this.runAction(followAction);
  */
 cc.Follow.create = function (followedNode, rect) {
+    rect = rect || new cc.RectZero();
     var ret = new cc.Follow();
     if (rect != null && ret && ret.initWithTarget(followedNode, rect)) {
         return ret;
