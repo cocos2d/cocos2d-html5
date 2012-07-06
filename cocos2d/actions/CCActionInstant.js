@@ -125,7 +125,7 @@ cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */
      */
     update:function (time) {
         //this._super();
-        this._target.setVisible(!target.isVisible());
+        this._target.setVisible(!this._target.isVisible());
     },
 
     /**

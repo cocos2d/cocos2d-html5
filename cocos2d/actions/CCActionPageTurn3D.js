@@ -24,8 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
 /**
  @brief This action simulates a page turn from the bottom right hand corner of the screen.
  It's not much use by itself but is used by the PageTurnTransition.

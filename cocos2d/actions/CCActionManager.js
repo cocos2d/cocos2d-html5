@@ -28,7 +28,6 @@
  * @class
  * @extends cc.Class
  */
-
 cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
     actions:null,
     target:null, //ccobject
@@ -74,19 +73,9 @@ cc.ActionManager = cc.Class.extend({
      * Constructor
      */
     ctor:function () {
-        cc.Assert(cc.sharedManager == null, "");
         this._targets = [];
     },
 
-    /**
-     * @return {Boolean}
-     */
-    init:function () {
-        cc.Director.sharedDirector().getScheduler().scheduleUpdateForTarget(this, 0, false);
-        return true;
-    },
-
-    selTarget:null,
     /** Adds an action with a target.
      * If the target is already present, then the action will be added to the existing target.
      * If the target is not present, a new instance of this target will be created either paused or not, and the action will be added to the newly created target.
@@ -105,8 +94,6 @@ cc.ActionManager = cc.Class.extend({
             element = new cc.HashElement();
             element.paused = paused;
             element.target = target;
-            element.id = target.id || "no id";
-            this.selTarget = element;
             this._targets.push(element);
         }
         //creates a array for that eleemnt to hold the actions
@@ -262,6 +249,36 @@ cc.ActionManager = cc.Class.extend({
             element.paused = false;
         }
     },
+
+    /**
+     * Pauses all running actions, returning a list of targets whose actions were paused.
+     */
+    pauseAllRunningActions:function(){
+        var idsWithActions = [];
+        for(var i = 0; i< this._targets.length; i++){
+            var element = this._targets[i];
+            if(element && !element.paused){
+                element.paused = true;
+                idsWithActions.push(element.target);
+            }
+        }
+        return idsWithActions;
+    },
+
+    /**
+     * Resume a set of targets (convenience function to reverse a pauseAllRunningActions call)
+     * @param {Array} targetsToResume
+     */
+    resumeTargets:function(targetsToResume){
+        if(!targetsToResume){
+            return;
+        }
+        for(var i = 0 ; i< targetsToResume.length; i++){
+            if(targetsToResume[i])
+                this.resumeTarget(targetsToResume[i]);
+        }
+    },
+
     /** purges the shared action manager. It releases the retained instance. <br/>
      * because it uses this, so it can not be static
      */
@@ -277,7 +294,7 @@ cc.ActionManager = cc.Class.extend({
             element.currentActionSalvaged = true;
         }
 
-        element.actions[index] = null;
+        cc.ArrayRemoveObjectAtIndex(element.actions,index);
 
         // update actionIndex in case we are in tick. looping over the actions
         if (element.actionIndex >= index) {
@@ -287,8 +304,7 @@ cc.ActionManager = cc.Class.extend({
         if (element.actions.length == 0) {
             if (this._currentTarget == element) {
                 this._currentTargetSalvaged = true;
-            }
-            else {
+            } else {
                 this._deleteHashElement(element);
             }
         }
@@ -357,22 +373,3 @@ cc.ActionManager = cc.Class.extend({
         }
     }
 });
-/** purges the shared action manager. It releases the retained instance. <br/>
- * because it uses this, so it can not be static
- * @return {cc.ActionManager}
- */
-cc.ActionManager.sharedManager = function () {
-    if (!cc.sharedManager) {
-        cc.sharedManager = new cc.ActionManager();
-        if (!cc.sharedManager.init()) {
-            //delete CCActionManager if init error
-            delete cc.sharedManager;
-        }
-    }
-    return cc.sharedManager;
-};
-
-/**
- * @type {cc.ActionManager}
- */
-cc.sharedManager = null;
