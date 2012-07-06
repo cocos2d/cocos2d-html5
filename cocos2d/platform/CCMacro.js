@@ -223,7 +223,7 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
  * @function
  */
 cc.SIZE_POINTS_TO_PIXELS = function(sizeInPoints){
-   return new cc.Size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints * cc.CONTENT_SCALE_FACTOR());
+   return new cc.Size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints.height * cc.CONTENT_SCALE_FACTOR());
 };
 
 /**
@@ -233,7 +233,7 @@ cc.SIZE_POINTS_TO_PIXELS = function(sizeInPoints){
  * @function
  */
 cc.SIZE_PIXELS_TO_POINTS = function(sizeInPixels){
-   return new cc.Size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels / cc.CONTENT_SCALE_FACTOR());
+   return new cc.Size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
 };
 
 /**

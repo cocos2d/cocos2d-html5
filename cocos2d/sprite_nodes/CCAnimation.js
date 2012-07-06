@@ -48,6 +48,10 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
         return cc.clone(this);
     },
 
+    copy:function (pZone) {
+        return cc.clone(this);
+    },
+
     /**
      * initializes the animation frame with a spriteframe, number of delay units and a notification user info
      * @param {cc.SpriteFrame} spriteFrame
@@ -129,7 +133,7 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
  * animation.addFrameWithFileName("grossini_dance_01.png");
  *
  * //create an animate with this animation
- * var action = cc.Animate.create(3, animation, false);
+ * var action = cc.Animate.create(animation);
  *
  * //run animate
  * this._grossini.runAction(action);
@@ -174,7 +178,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
     addSpriteFrame:function (frame) {
         var animFrame = new cc.AnimationFrame();
         animFrame.initWithSpriteFrame(frame, 1, null);
-        this._frames.push(frame);
+        this._frames.push(animFrame);
         // update duration
         this._totalDelayUnits++;
     },
@@ -192,7 +196,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
             rect.size = texture.getContentSize();
         }
         var frame = cc.SpriteFrame.create(texture, rect);
-        this._frames.push(frame);
+        this.addSpriteFrame(frame);
     },
 
     /**
@@ -235,6 +239,10 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
         pCopy.initWithAnimationFrames(this._frames, this._delayPerUnit, this._loops);
         pCopy.setRestoreOriginalFrame(this._restoreOriginalFrame);
         return pCopy;
+    },
+
+    copy:function (pZone) {
+        return this.copyWithZone(null);
     },
 
     /**
@@ -382,7 +390,7 @@ cc.Animation.createWithAnimationFrames = function (arrayOfAnimationFrameNames, d
  */
 cc.Animation.createWithSpriteFrames = function (arrayOfSpriteFrameNames, delay) {
     var animation = new cc.Animation();
-    animation.initWithAnimationFrames(arrayOfSpriteFrameNames, delay);
+    animation.initWithSpriteFrames(arrayOfSpriteFrameNames, delay);
     return animation;
 };
 

@@ -55,6 +55,7 @@ var s_grossini_bluePlist = "Resources/animations/grossini_blue.plist";
 var s_grossini_aliasesPlist = "Resources/animations/grossini-aliases.plist";
 var s_ghostsPlist = "Resources/animations/ghosts.plist";
 var s_grossini_familyPlist = "Resources/animations/grossini_family.plist";
+var s_animations2 = "Resources/animations/animations-2.plist";
 
 var s_helloWorld = "Resources/Images/HelloWorld.png";
 var s_grossiniDance01 = "Resources/Images/grossini_dance_01.png";
@@ -212,6 +213,7 @@ var g_ressources = [
     {type:"image", src:s_futura48},
 
     {type:"plist", src:s_boilingFoamPlist},
+    {type:"plist", src:s_animations2},
     {type:"plist", src:s_grossiniPlist},
     {type:"plist", src:s_grossini_grayPlist},
     {type:"plist", src:s_grossini_bluePlist},

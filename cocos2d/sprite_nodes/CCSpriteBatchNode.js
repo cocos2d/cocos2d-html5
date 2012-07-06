@@ -182,7 +182,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     addQuadFromSprite:function (sprite, index) {
         cc.Assert(sprite != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
-        cc.Assert(!(sprite instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+        cc.Assert((sprite instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         /*while(index >= this._textureAtlas.getCapacity() || this._textureAtlas.getCapacity() == this._textureAtlas.getTotalQuads()){
          this.increaseAtlasCapacity();
@@ -218,7 +218,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     addSpriteWithoutQuad:function (child, z, aTag) {
         cc.Assert(child != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
-        cc.Assert( !(child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+        cc.Assert( (child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         // quad index is Z
         child.setAtlasIndex(z);
@@ -735,7 +735,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 break;
             case 3:
                 cc.Assert(child != null, "SpriteBatchNode.addChild():child should not be null");
-                cc.Assert(!(child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+                cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
                 // check CCSprite is using the same texture id
                 if (cc.renderContextType != cc.CANVAS) {
