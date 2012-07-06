@@ -96,9 +96,9 @@ var ActionManagerTest = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(s.width / 2, 30));
-        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
+        item1.setPosition(cc.PointMake(s.width / 2 - item2.getContentSize().width * 2 , item2.getContentSize().height /2));
+        item2.setPosition(cc.PointMake(s.width / 2, item2.getContentSize().height /2));
+        item3.setPosition(cc.PointMake(s.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height /2));
 
         this.addChild(menu, 1);
     },
@@ -212,14 +212,14 @@ var PauseTest = ActionManagerTest.extend({
 
         var action = cc.MoveBy.create(1, cc.PointMake(150, 0));
 
-        cc.ActionManager.sharedManager().addAction(action, grossini, true);
+        cc.Director.sharedDirector().getActionManager().addAction(action, grossini, true);
 
         this.schedule(this.unpause, 3);
     },
     unpause:function (dt) {
         this.unschedule(this.unpause);
         var node = this.getChildByTag(TAG_GROSSINI);
-        cc.ActionManager.sharedManager().resumeTarget(node);
+        cc.Director.sharedDirector().getActionManager().resumeTarget(node);
     }
 });
 
@@ -280,7 +280,7 @@ var ResumeTest = ActionManagerTest.extend({
 
         grossini.runAction(cc.ScaleBy.create(2, 2));
 
-        cc.ActionManager.sharedManager().pauseTarget(grossini);
+        cc.Director.sharedDirector().getActionManager().pauseTarget(grossini);
         grossini.runAction(cc.RotateBy.create(2, 360));
 
         this.schedule(this.resumeGrossini, 3.0);
@@ -289,7 +289,7 @@ var ResumeTest = ActionManagerTest.extend({
         this.unschedule(this.resumeGrossini);
 
         var grossini = this.getChildByTag(TAG_GROSSINI);
-        cc.ActionManager.sharedManager().resumeTarget(grossini);
+        cc.Director.sharedDirector().getActionManager().resumeTarget(grossini);
     }
 });
 
