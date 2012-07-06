@@ -455,11 +455,11 @@ cc.domNode = cc.Class.extend({
     },
     pauseSchedulerAndActions:function () {
         cc.Director.sharedDirector().getScheduler().pauseTarget(this);
-        cc.ActionManager.sharedManager().pauseTarget(this);
+        cc.Director.sharedDirector().getActionManager().pauseTarget(this);
     },
     resumeSchedulerAndActions:function () {
         cc.Director.sharedDirector().getScheduler().resumeTarget(this);
-        cc.ActionManager.sharedManager().resumeTarget(this);
+        cc.Director.sharedDirector().getActionManager().resumeTarget(this);
     },
     _arrayMakeObjectsPerformSelector:function (array, callbackType) {
         if (!array || array.length == 0)
@@ -513,7 +513,7 @@ cc.domNode = cc.Class.extend({
         this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.cleanup);
     },
     stopAllActions:function () {
-        cc.ActionManager.sharedManager().removeAllActionsFromTarget(this);
+        cc.Director.sharedDirector().getActionManager().removeAllActionsFromTarget(this);
     },
     unscheduleAllSelectors:function () {
         cc.Director.sharedDirector().getScheduler().unscheduleAllSelectorsForTarget(this);
