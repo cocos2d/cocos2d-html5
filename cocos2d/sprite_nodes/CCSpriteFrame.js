@@ -40,15 +40,25 @@
  * var frame0 = cc.SpriteFrame.create(texture, cc.RectMake(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
-    _offset:new cc.Point(0,0),
-    _originalSize:new cc.Size(0,0),
-    _rectInPixels:new cc.Rect(),
+    _offset:null,
+    _originalSize:null,
+    _rectInPixels:null,
     _rotated:null,
-    _rect:new cc.Rect(),
-    _offsetInPixels:new cc.Point(),
-    _originalSizeInPixels:new cc.Size(),
+    _rect:null,
+    _offsetInPixels:null,
+    _originalSizeInPixels:null,
     _texture:null,
     _textureFilename:"",
+
+    ctor:function(){
+       this._offset = new cc.Point(0,0);
+        this._offsetInPixels = new cc.Point(0,0);
+        this._originalSize = new cc.Size(0,0);
+        this._rectInPixels = new cc.Rect();
+        this._rect = new cc.Rect();
+        this._originalSizeInPixels = new cc.Size();
+        this._textureFilename = "";
+    },
 
     // attributes
     /**
@@ -229,11 +239,12 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             case 5:
                 this._texture = texture;
                 this._rectInPixels = rect;
-
                 this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
-                this._rotated = rotated;
                 this._offsetInPixels = offset;
+                this._offset = cc.POINT_PIXELS_TO_POINTS( this._offsetInPixels );
                 this._originalSizeInPixels = originalSize;
+                this._originalSize = cc.SIZE_PIXELS_TO_POINTS(this._originalSizeInPixels);
+                this._rotated = rotated;
                 return true;
                 break;
 
@@ -344,8 +355,10 @@ cc.SpriteFrame._frameWithTextureForCanvas = function (texture, rect, rotated, of
     spriteFrame._texture = texture;
     spriteFrame._rectInPixels = rect;
     spriteFrame._rect = cc.RECT_PIXELS_TO_POINTS(rect);
-    spriteFrame._rotated = rotated;
     spriteFrame._offsetInPixels = offset;
+    spriteFrame._offset = cc.POINT_PIXELS_TO_POINTS( spriteFrame._offsetInPixels );
     spriteFrame._originalSizeInPixels = originalSize;
+    spriteFrame._originalSize = cc.SIZE_PIXELS_TO_POINTS(spriteFrame._originalSizeInPixels);
+    spriteFrame._rotated = rotated;
     return spriteFrame;
 };

@@ -171,7 +171,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         for (var key in animations) {
             var animationDict = animations[key];
             var loops = parseInt(animationDict["loops"])||0;
-            var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == "true") ? true : false;
+            var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == true) ? true : false;
             var frameArray = animationDict["frames"];
 
             if (!frameArray) {
