@@ -557,24 +557,24 @@ var SpriteZOrder = SpriteTestDemo.extend({
         this._dir = 1;
 
         var s = cc.Director.sharedDirector().getWinSize();
-
+        var sprite;
         var step = s.width / 11;
         for (var i = 0; i < 5; i++) {
-            var sprite = cc.Sprite.create(s_grossini_dance_atlas, cc.RectMake(85 * 0, 121 * 1, 85, 121));
+            sprite = cc.Sprite.create(s_grossini_dance_atlas, cc.RectMake(85 * 0, 121 * 1, 85, 121));
             sprite.setPosition(cc.ccp((i + 1) * step, s.height / 2));
             this.addChild(sprite, i);
         }
 
         for (i = 5; i < 10; i++) {
-            var sprite = cc.Sprite.create(s_grossini_dance_atlas, cc.RectMake(85 * 1, 121 * 0, 85, 121));
+            sprite = cc.Sprite.create(s_grossini_dance_atlas, cc.RectMake(85 * 1, 121 * 0, 85, 121));
             sprite.setPosition(cc.ccp((i + 1) * step, s.height / 2));
             this.addChild(sprite, 14 - i);
         }
 
-        var sprite = cc.Sprite.create(s_grossini_dance_atlas, cc.RectMake(85 * 3, 121 * 0, 85, 121));
+        sprite = cc.Sprite.create(s_grossini_dance_atlas, cc.RectMake(85 * 3, 121 * 0, 85, 121));
         this.addChild(sprite, -1, TAG_SPRITE1);
         sprite.setPosition(cc.ccp(s.width / 2, s.height / 2 - 20));
-        sprite.setScaleX(6);
+        sprite.setScaleX(10);
         sprite.setColor(cc.RED());
 
         this.schedule(this.reorderSprite, 1);
@@ -1493,7 +1493,7 @@ var SpriteFrameTest = SpriteTestDemo.extend({
         //
         // Animation using Sprite BatchNode
         //
-        this._sprite1 = cc.Sprite.createWithSpriteFrame(cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName("grossini_dance_01.png"));
+        this._sprite1 = cc.Sprite.createWithSpriteFrame("grossini_dance_01.png");
         this._sprite1.setPosition(cc.ccp(s.width / 2 - 80, s.height / 2));
 
         var spritebatch = cc.SpriteBatchNode.create(s_grossini);
@@ -1508,8 +1508,8 @@ var SpriteFrameTest = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.create(animFrames);
-        this._sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
+        var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+        this._sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
         // to test issue #732, uncomment the following line
         this._sprite1.setFlipX(false);
@@ -1536,9 +1536,9 @@ var SpriteFrameTest = SpriteTestDemo.extend({
 
         // append frames from another batch
         moreFrames = moreFrames.concat(animFrames);
-        var animMixed = cc.Animation.create(moreFrames);
+        var animMixed = cc.Animation.createWithSpriteFrames(moreFrames,0.3);
 
-        this._sprite2.runAction(cc.RepeatForever.create(cc.Animate.create(animMixed, false)));
+        this._sprite2.runAction(cc.RepeatForever.create(cc.Animate.create(animMixed)));
 
         // to test issue #732, uncomment the following line
         this._sprite2.setFlipX(false);
@@ -1652,9 +1652,9 @@ var SpriteFrameAliasNameTest = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.create(animFrames);
+        var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
         // 14 frames * 1sec = 14 seconds
-        sprite.runAction(cc.RepeatForever.create(cc.Animate.create(14.0, animation, false)));
+        sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
     },
     onExit:function () {
         this._super();
@@ -1708,8 +1708,8 @@ var SpriteOffsetAnchorRotation = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
             sprite.runAction(cc.RepeatForever.create(cc.RotateBy.create(10, 360)));
 
             this.addChild(sprite, 0);
@@ -1776,8 +1776,8 @@ var SpriteBatchNodeOffsetAnchorRotation = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
             sprite.runAction(cc.RepeatForever.create(cc.RotateBy.create(10, 360)));
 
             spritebatch.addChild(sprite, i);
@@ -1841,8 +1841,8 @@ var SpriteOffsetAnchorScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             var scale = cc.ScaleBy.create(2, 2);
             var scale_back = scale.reverse();
@@ -1914,8 +1914,8 @@ var SpriteBatchNodeOffsetAnchorScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             var scale = cc.ScaleBy.create(2, 2);
             var scale_back = scale.reverse();
@@ -1981,8 +1981,8 @@ var SpriteOffsetAnchorSkew = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(2.8, animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             var skewX = cc.SkewBy.create(2, 45, 0);
             var skewX_back = skewX.reverse();
@@ -2048,8 +2048,8 @@ var SpriteBatchNodeOffsetAnchorSkew = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(2.8, animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
 
@@ -2114,8 +2114,8 @@ var SpriteOffsetAnchorSkewScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(2.8, animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
 
@@ -2190,8 +2190,8 @@ var SpriteBatchNodeOffsetAnchorSkewScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(2.8, animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
 
@@ -2263,8 +2263,8 @@ var SpriteOffsetAnchorFlip = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(2.8, animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
 
@@ -2334,8 +2334,8 @@ var SpriteBatchNodeOffsetAnchorFlip = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.create(animFrames);
-            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(2.8, animation, false)));
+            var animation = cc.Animation.createWithSpriteFrames(animFrames,0.3);
+            sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
 
@@ -2378,7 +2378,7 @@ var SpriteAnimationSplit = SpriteTestDemo.extend({
         // Animation using Sprite BatchNode
         //
         var sprite = cc.Sprite.createWithSpriteFrame(frame0);
-        sprite.setPosition(cc.ccp(s.width / 2 - 80, s.height / 2));
+        sprite.setPosition(cc.ccp(s.width / 2 , s.height / 2));
         this.addChild(sprite);
 
         var animFrames = [];
@@ -2389,8 +2389,8 @@ var SpriteAnimationSplit = SpriteTestDemo.extend({
         animFrames.push(frame4);
         animFrames.push(frame5);
 
-        var animation = cc.Animation.create(animFrames, 0.2);
-        var animate = cc.Animate.create(animation, false);
+        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
+        var animate = cc.Animate.create(animation);
         var seq = cc.Sequence.create(animate,
             cc.FlipX.create(true),
             animate.copy(),
@@ -2534,8 +2534,8 @@ var SpriteBatchNodeChildren = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.create(animFrames, 0.2);
-        sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation, false)));
+        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
+        sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
         // END NEW CODE
 
         var action = cc.MoveBy.create(2, cc.ccp(200, 0));
@@ -2557,6 +2557,12 @@ var SpriteBatchNodeChildren = SpriteTestDemo.extend({
     onExit:function () {
         this._super();
     }
+});
+
+var SpriteBatchNodeChildren2 = SpriteTestDemo.extend({
+    ctor:function(){},
+    onExit:function(){},
+    title:function(){}
 });
 
 //------------------------------------------------------------------
@@ -3327,14 +3333,15 @@ var AnimationCache = SpriteTestDemo.extend({
         // create animation "dance"
         //
         var animFrames = [];
+        var frame;
         var str = "";
         for (var i = 1; i < 15; i++) {
             str = "grossini_dance_" + (i < 10 ? ("0" + i) : i) + ".png";
-            var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(str);
+            frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(str);
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.create(animFrames, 0.2);
+        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
 
         // Add an animation to the Cache
         cc.AnimationCache.sharedAnimationCache().addAnimation(animation, "dance");
@@ -3346,11 +3353,11 @@ var AnimationCache = SpriteTestDemo.extend({
 
         for (i = 1; i < 15; i++) {
             str = "grossini_dance_gray_" + (i < 10 ? ("0" + i) : i) + ".png";
-            var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(str);
+            frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(str);
             animFrames.push(frame);
         }
 
-        animation = cc.Animation.create(animFrames, 0.2);
+        animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
 
         // Add an animation to the Cache
         cc.AnimationCache.sharedAnimationCache().addAnimation(animation, "dance_gray");
@@ -3362,11 +3369,11 @@ var AnimationCache = SpriteTestDemo.extend({
 
         for (i = 1; i < 4; i++) {
             str = "grossini_blue_0" + i + ".png";
-            var frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(str);
+            frame = cc.SpriteFrameCache.sharedSpriteFrameCache().spriteFrameByName(str);
             animFrames.push(frame);
         }
 
-        animation = cc.Animation.create(animFrames, 0.2);
+        animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
 
         // Add an animation to the Cache
         cc.AnimationCache.sharedAnimationCache().addAnimation(animation, "dance_blue");
@@ -3401,6 +3408,89 @@ var AnimationCache = SpriteTestDemo.extend({
         return "Sprite should be animated";
     }
 });
+
+var NodeSort = SpriteTestDemo.extend({
+    _node:null,
+    _sprite1:null,
+    _sprite2:null,
+    _sprite3:null,
+    _sprite4:null,
+    _sprite5:null,
+
+    ctor:function(){
+
+    },
+
+    title:function(){
+
+    },
+
+    subtitle:function(){
+
+    },
+
+    reorderSprite:function(dt){
+
+    }
+});
+
+var SpriteBatchNodeReorderSameIndex = SpriteTestDemo.extend({
+   _batchNode:null,
+    _sprite1:null,
+    _sprite2:null,
+    _sprite3:null,
+    _sprite4:null,
+    _sprite5:null,
+
+    ctor:function(){
+
+    },
+
+    title:function(){
+
+    },
+
+    subtitle:function(){
+
+    },
+
+    reorderSprite:function(dt){
+
+    }
+});
+
+var SpriteBatchNodeReorderOneChild = SpriteTestDemo.extend({
+    _batchNode:null,
+    _reoderSprite:null,
+
+    ctor:function(){
+
+    },
+
+    reorderSprite:function(dt){
+
+    },
+
+    title:function(){
+
+    }
+});
+
+var SpriteBatchNodeSkewNegativeScaleChildren = SpriteTestDemo.extend({
+    ctor:function(){
+    },
+
+    title:function(){},
+    subtitle:function(){}
+});
+
+var SpriteSkewNegativeScaleChildren = SpriteTestDemo.extend({
+    ctor:function(){},
+    title:function(){},
+    subtitle:function(){}
+});
+
+
 
 var SpriteTestScene = TestScene.extend({
     runThisTest:function () {
