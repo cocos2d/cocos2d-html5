@@ -93,7 +93,7 @@ var AtlasTests = [
     },//ok
     function () {
         return new LabelBMFontChinese();
-    },//ok                 */
+    },//ok*/
     function () {
         return new BitmapFontMultiLineAlignment();
     },//bug
@@ -105,7 +105,7 @@ var AtlasTests = [
     },//ok
     function () {
         return new BMFontUnicode();
-    },//bug
+    },//ok
     function () {
         return new BMFontInit();
     }, //ok
@@ -988,20 +988,20 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // create and initialize a Label
-        this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "Resources/fonts/markerFelt.fnt", size.width / 1.5, cc.TEXT_ALIGNMENT_CENTER,cc.PointZero());
+        this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "Resources/fonts/markerFelt.fnt", size.width / 3, cc.TEXT_ALIGNMENT_CENTER,cc.PointZero());
         this.arrowsBarShouldRetain = cc.Sprite.create("Resources/Images/arrowsBar.png");
         this.arrowsShouldRetain = cc.Sprite.create("Resources/Images/arrows.png");
 
         cc.MenuItemFont.setFontSize(20);
         var longSentences = cc.MenuItemFont.create("Long Flowing Sentences", this, this.stringChanged);
         var lineBreaks = cc.MenuItemFont.create("Short Sentences With Intentional Line Breaks", this, this.stringChanged);
-        var mixed = cc.MenuItemFont.create("Long Sentences Mixed With Intentional Line Breaks", this.stringChanged);
+        var mixed = cc.MenuItemFont.create("Long Sentences Mixed With Intentional Line Breaks", this, this.stringChanged);
         var stringMenu = cc.Menu.create(longSentences, lineBreaks, mixed);
         stringMenu.alignItemsVertically();
 
         longSentences.setColor(cc.RED());
         this.lastSentenceItem = longSentences;
-        longSentences.setTag(LineBreaks);
+        longSentences.setTag(LongSentences);
         lineBreaks.setTag(LineBreaks);
         mixed.setTag(Mixed);
 
@@ -1046,12 +1046,11 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         return "";
     },
     stringChanged:function (sender) {
-        var item = sender;
-        item.setColor(cc.RED());
-        this.lastAlignmentItem.setColor(cc.WHITE());
-        this.lastAlignmentItem = item;
+        sender.setColor(cc.RED());
+        this.lastSentenceItem.setColor(cc.WHITE());
+        this.lastSentenceItem = sender;
 
-        switch (item.getTag()) {
+        switch (sender.getTag()) {
             case LongSentences:
                 this.labelShouldRetain.setString(LongSentencesExample);
                 break;
@@ -1182,25 +1181,24 @@ var BMFontOneAtlas = AtlasDemo.extend({
 /// BMFontUnicode
 var BMFontUnicode = AtlasDemo.extend({
     ctor:function () {
-        var strings = cc.FileUtils.dictionaryWithContentsOfFileThreadSafe("Resources/fonts/strings.xml");
-        var chinese = strings["chinese1"]._string;
-        var japanese = strings["japanese"]._string;
-        var spanish = strings["spanish"]._string;
-
+        var strings = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe("Resources/fonts/strings.xml");
+        var chinese = strings["chinese1"];
+        var japanese = strings["japanese"];
+        var spanish = strings["spanish"];
 
         var s = cc.Director.sharedDirector().getWinSize();
 
         var label1 = cc.LabelBMFont.create(spanish, "Resources/fonts/arial-unicode-26.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
         this.addChild(label1);
-        label1.setPosition(cc.ccp(s.width / 2, s.height / 12));
+        label1.setPosition(cc.ccp(s.width / 2, s.height / 4));
 
         var label2 = cc.LabelBMFont.create(chinese, "Resources/fonts/arial-unicode-26.fnt");
         this.addChild(label2);
-        label2.setPosition(cc.ccp(s.width / 2, s.height / 8));
+        label2.setPosition(cc.ccp(s.width / 2, s.height / 2.2));
 
         var label3 = cc.LabelBMFont.create(japanese, "Resources/fonts/arial-unicode-26.fnt");
         this.addChild(label3);
-        label3.setPosition(cc.ccp(s.width / 2, s.height / 4));
+        label3.setPosition(cc.ccp(s.width / 2, s.height / 1.5));
     },
     title:function () {
         return "cc.LabelBMFont with Unicode support";

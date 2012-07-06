@@ -315,7 +315,7 @@ cc.SPRITEBATCHNODE_DEBUG_DRAW = 0;
  * @constant
  * @type Number
  */
-cc.LABELBMFONT_DEBUG_DRAW = 0;
+cc.LABELBMFONT_DEBUG_DRAW = 1;
 
 /**
  * <p>

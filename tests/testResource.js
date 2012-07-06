@@ -105,6 +105,7 @@ var s_arial16 = "Resources/fonts/arial16.png";
 var s_larabie_16 = "Resources/fonts/larabie-16.png";
 var s_larabie_16_hd = "Resources/fonts/larabie-16-hd.png";
 var s_futura48 = "Resources/fonts/futura-48.png";
+var s_arial_unicode_26 = "Resources/fonts/arial-unicode-26.png";
 
 var s_bitmapFontTest_fnt = "Resources/fonts/bitmapFontTest.fnt";
 var s_bitmapFontTest2_fnt = "Resources/fonts/bitmapFontTest2.fnt";
@@ -221,6 +222,7 @@ var g_ressources = [
     {type:"image", src:s_larabie_16},
     {type:"image", src:s_larabie_16_hd},
     {type:"image", src:s_futura48},
+    {type:"image", src:s_arial_unicode_26},
 
     {type:"image", src:s_arrows},
     {type:"image", src:s_arrowsBar},
@@ -288,5 +290,7 @@ var g_ressources = [
     {type:"fnt", src:s_geneva32_fnt},
     {type:"fnt", src:s_arial_unicode_26_fnt},
     {type:"fnt", src:s_markerFelt_fnt},
-    {type:"fnt", src:s_markerFelt_hd_fnt}
+    {type:"fnt", src:s_markerFelt_hd_fnt},
+
+    {type:"plist", src:"Resources/fonts/strings.xml"}
 ];

@@ -373,17 +373,19 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     ctor:function () {
         this._super();
+    },
+    draw:function(ctx) {
+        this._super();
+        var context = ctx || cc.renderContext;
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
-            this.draw();
             var s = this.getContentSize();
-            var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0),
-                cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
-            cc.drawPoly(vertices, 4, true);
+            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
+            var vertices = [cc.ccp(pos.x, pos.y), cc.ccp(pos.x + s.width, pos.y), cc.ccp(pos.x + s.width, pos.y + s.height), cc.ccp(pos.x, pos.y + s.height)];
+            context.strokeStyle = "rgba(0,255,0,1)";
+            cc.drawingUtil.drawPoly(vertices, 4, true);
         }
-
     },
-
     /**
      * conforms to cc.RGBAProtocol protocol
      * @return {Number}
@@ -565,9 +567,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 continue;
             }
 
-            //kerningAmount = this._kerningAmountForFirst(prev, c);
-
             var key = c;
+
             var element = this._configuration.fontDefDictionary[key];
             cc.Assert(element, "FontDefinition could not be found!");
 
@@ -660,7 +661,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      */
     setString:function (newString, fromUpdate) {
         fromUpdate = (fromUpdate != null);
-        this._string = newString;
+        this._string = newString + String.fromCharCode(0);
         this._initialString = newString;
         this.updateString(fromUpdate);
     },
@@ -712,7 +713,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 // Newline.
                 if (character.charCodeAt(0) == 10) {
                     last_word.push('\n');
-                    multiline_string.concat(multiline_string, last_word);
+                    multiline_string = multiline_string.concat(last_word);
                     last_word.length = 0;
                     start_word = false;
                     start_line = false;
@@ -737,9 +738,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
 
                 // Whitespace.
-                if (cc.isspace_unicode(character)) {
+                if (character.charCodeAt(0) == 32) {
                     last_word.push(character);
-                    multiline_string.concat(multiline_string, last_word);
+                    multiline_string = multiline_string.concat(last_word);
                     last_word.length = 0;
                     start_word = false;
                     startOfWord = -1;
@@ -752,7 +753,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     if (!this._lineBreakWithoutSpaces) {
                         last_word.push(character);
 
-                        var found = cc.utf8_find_last_not_char(multiline_string, ' ');
+                        var found = multiline_string.lastIndexOf(" ");
                         if (found != -1)
                             cc.utf8_trim_ws(multiline_string);
                         else
@@ -770,7 +771,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         cc.utf8_trim_ws(last_word);
 
                         last_word.push('\n');
-                        multiline_string.concat(multiline_string, last_word);
+                        multiline_string = multiline_string.concat(last_word);
                         last_word.length = 0;
                         start_word = false;
                         start_line = false;
@@ -803,16 +804,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
             }
 
-            multiline_string.concat(multiline_string, last_word);
+            multiline_string = multiline_string.concat(last_word);
 
             var len = multiline_string.length;
             var str_new = "";
 
             for (var i = 0; i < len; ++i) {
-                str_new += multiline_string[i] + "";
+                str_new += multiline_string[i];
             }
-            console.log(this._string);
-            this._string = str_new;
+            this._string = str_new + String.fromCharCode(0);
             this.updateString(true);
         }
 
@@ -825,8 +825,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var last_line = [];
 
             for (var ctr = 0; ctr < strlen; ctr++) {
-                if (this._string[ctr] == '\n' || this._string[ctr] == 0) {
-                    var lineWidth = 0.0;
+                if (this._string[ctr].charCodeAt(0) == 10 || this._string[ctr].charCodeAt(0) == 0) {
+                    var lineWidth = 0;
                     var line_length = last_line.length;
                     var index = i + line_length - 1 + lineNumber;
                     if (index < 0) continue;
@@ -834,7 +834,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var lastChar = this.getChildByTag(index);
                     if (lastChar == null)
                         continue;
-
                     lineWidth = lastChar.getPosition().x + lastChar.getContentSize().width / 2;
 
                     var shift = 0;
@@ -848,15 +847,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         default:
                             break;
                     }
-
+                    console.log(shift)
                     if (shift != 0) {
                         for (var j = 0; j < line_length; j++) {
                             index = i + j + lineNumber;
                             if (index < 0) continue;
 
                             var characterSprite = this.getChildByTag(index);
-                            characterSprite.setPosition(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0.0)));
-                            console.log(JSON.stringify(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0.0))));
+                            characterSprite.setPosition(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0)));
                         }
                     }
 
@@ -867,7 +865,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     continue;
                 }
 
-                last_line.push(this._string[ctr]);
+                last_line.push(this._string[i]);
             }
         }
     },
@@ -944,7 +942,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _getLetterPosXRight:function (sp) {
         return sp.getPosition().x * this._scaleX - (sp.getContentSize().width * this._scaleX * sp.getAnchorPoint().x);
     }
-
 });
 
 /**
@@ -1004,21 +1001,11 @@ cc.FNTConfigRemoveCache = function () {
 };
 
 cc.isspace_unicode = function (ch) {
-    return  (ch >= 0x0009 && ch <= 0x000D) || ch == 0x0020 || ch == 0x0085 || ch == 0x00A0 || ch == 0x1680
-        || (ch >= 0x2000 && ch <= 0x200A) || ch == 0x2028 || ch == 0x2029 || ch == 0x202F
-        || ch == 0x205F || ch == 0x3000;
+    ch = ch.charCodeAt(0);
+    return  ((ch >= 9 && ch <= 13) || ch == 32 || ch == 133 || ch == 160 || ch == 5760
+        || (ch >= 8192 && ch <= 8202) || ch == 8232 || ch == 8233 || ch == 8239
+        || ch == 8287 || ch == 12288)
 }
-
-cc.utf8_find_last_not_char = function (str, c) {
-    var i = str.length - 1;
-    for (; i >= 0; --i) {
-        if (str[i] != c) {
-            return i;
-        }
-    }
-    return i;
-};
-
 
 cc.utf8_trim_ws = function (str) {
     var len = str.length;
@@ -1029,14 +1016,15 @@ cc.utf8_trim_ws = function (str) {
     var last_index = len - 1;
 
     // Only start trimming if the last character is whitespace..
-    if (cc.isspace_unicode(str)[last_index]) {
+    if (cc.isspace_unicode(str[last_index])) {
         for (var i = last_index - 1; i >= 0; --i) {
-            if (cc.isspace_unicode(str[i]))
+            if (cc.isspace_unicode(str[i])) {
                 last_index = i;
-            else
+            }
+            else {
                 break;
+            }
         }
-
         cc.utf8_trim_from(str, last_index);
     }
 }
@@ -1054,6 +1042,5 @@ cc.utf8_trim_from = function (str, index) {
     var len = str.length;
     if (index >= len || index < 0)
         return;
-
-    str.splice(index, len - index);
+    str.splice(index, len);
 }
