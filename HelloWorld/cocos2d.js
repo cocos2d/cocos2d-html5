@@ -100,6 +100,7 @@ if(!isDebugMode){
     cc.loadjs('../cocos2d/platform/CCTypes.js');
     cc.loadjs('../cocos2d/cocoa/CCGeometry.js');
     cc.loadjs('../cocos2d/platform/CCConfig.js');
+    cc.loadjs('../cocos2d/cocoa/CCNS.js');
     cc.loadjs('../cocos2d/cocoa/CCSet.js');
     cc.loadjs('../cocos2d/cocoa/CCAffineTransform.js');
     cc.loadjs('../cocos2d/support/CCPointExtension.js');

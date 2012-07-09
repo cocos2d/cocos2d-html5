@@ -105,30 +105,43 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     spriteFrame.initWithTexture(texture, frame, rotated, offset, sourceSize);
                 } else if (format == 3) {
                     // get values
-                    var spriteSize = cc.SizeFromString(this._valueForKey("spriteSize", frameDict));
-                    var spriteOffset = cc.PointFromString(this._valueForKey("spriteOffset", frameDict));
-                    var spriteSourceSize = cc.SizeFromString(this._valueForKey("spriteSourceSize", frameDict));
-                    var textureRect = cc.RectFromString(this._valueForKey("textureRect", frameDict));
-                    var textureRotated = this._valueForKey("textureRotated", frameDict) == "true";
+                    var spriteSize, spriteOffset,spriteSourceSize,textureRect, textureRotated;
+                    if(frameDict.hasOwnProperty("spriteSize")){
+                        spriteSize = cc.SizeFromString(this._valueForKey("spriteSize", frameDict));
+                        spriteOffset = cc.PointFromString(this._valueForKey("spriteOffset", frameDict));
+                        spriteSourceSize = cc.SizeFromString(this._valueForKey("spriteSourceSize", frameDict));
+                        textureRect = cc.RectFromString(this._valueForKey("textureRect", frameDict));
+                        textureRotated = this._valueForKey("textureRotated", frameDict) == "true";
+                    } else {
+                        spriteSize = cc.RectFromString(this._valueForKey("frame", frameDict));
+                        spriteOffset = cc.PointFromString(this._valueForKey("offset", frameDict));
+                        spriteSourceSize = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
+                        textureRect = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
+                        textureRotated = this._valueForKey("rotated", frameDict) == "true";
+                    }
 
                     // get aliases
                     var aliases = frameDict["aliases"];
-
                     var frameKey = key.toString();
 
-                    for (var i in aliases) {
-                        if (this._spriteFramesAliases.hasOwnProperty(aliases[i])) {
-                            cc.Log("cocos2d: WARNING: an alias with name " + i + " already exists");
+                    for (var aliasKey in aliases) {
+                        if (this._spriteFramesAliases.hasOwnProperty(aliases[aliasKey])) {
+                            cc.Log("cocos2d: WARNING: an alias with name " + aliasKey + " already exists");
                         }
-                        this._spriteFramesAliases[aliases[i]] = frameKey;
+                        this._spriteFramesAliases[aliases[aliasKey]] = frameKey;
                     }
+
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(texture,
-                        cc.RectMake(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
-                        textureRotated,
-                        spriteOffset,
-                        spriteSourceSize);
+                    if(frameDict.hasOwnProperty("spriteSize")){
+                        spriteFrame.initWithTexture(texture,
+                            cc.RectMake(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
+                            textureRotated,
+                            spriteOffset,
+                            spriteSourceSize);
+                    } else {
+                        spriteFrame.initWithTexture(texture, spriteSize, textureRotated, spriteOffset, spriteSourceSize);
+                    }
                 }
 
                 if (spriteFrame.isRotated()) {
