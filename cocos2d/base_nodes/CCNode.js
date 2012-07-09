@@ -537,6 +537,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {object}
      */
     getChildren:function () {
+        if(!this._children)
+            this._children = [];
         return this._children;
     },
 
