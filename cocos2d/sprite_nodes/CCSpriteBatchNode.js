@@ -849,8 +849,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 var index = 0;
                 //fast dispatch, give every child a new atlasIndex based on their relative zOrder (keep parent -> child relations intact)
                 // and at the same time reorder descedants and the quads to the right index
-                for (i = 0; i < this._children.length; i++) {
-                    index = this._updateAtlasIndex(this._children[i], index);
+                if(cc.renderContextType == cc.WEBGL){
+                    for (i = 0; i < this._children.length; i++) {
+                        index = this._updateAtlasIndex(this._children[i], index);
+                    }
                 }
             }
 

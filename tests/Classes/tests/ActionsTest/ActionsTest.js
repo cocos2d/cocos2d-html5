@@ -621,7 +621,7 @@ var ActionAnimate = ActionsDemo.extend({
         // With 2 loops and reverse
         var animCache = cc.AnimationCache.sharedAnimationCache();
 
-        animCache.addAnimationsWithFile(s_animations2);
+        animCache.addAnimationsWithFile(s_animations2Plist);
         var animation2 = animCache.animationByName("dance_1");
 
         var action2 = cc.Animate.create(animation2);
