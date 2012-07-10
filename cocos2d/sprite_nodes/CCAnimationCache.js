@@ -86,9 +86,10 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             return ;
         }
 
+        var version = 1;
         var properties = dictionary["properties"];
         if(properties){
-           var version = parseInt(properties["format"]) || 1;
+           version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
             for(var i = 0; i< spritesheets.length; i++){
                 cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(spritesheets[i]);
@@ -171,7 +172,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
         for (var key in animations) {
             var animationDict = animations[key];
             var loops = parseInt(animationDict["loops"])||0;
-            var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == "true") ? true : false;
+            var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == true) ? true : false;
             var frameArray = animationDict["frames"];
 
             if (!frameArray) {
@@ -222,8 +223,10 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
  * Purges the cache. It releases all the cc.Animation objects and the shared instance.
  */
 cc.AnimationCache.purgeSharedAnimationCache = function () {
-    cc.s_sharedAnimationCache._animations = null;
-    cc.s_sharedAnimationCache = null;
+    if(cc.s_sharedAnimationCache){
+        cc.s_sharedAnimationCache._animations = null;
+        cc.s_sharedAnimationCache = null;
+    }
 };
 
 /**

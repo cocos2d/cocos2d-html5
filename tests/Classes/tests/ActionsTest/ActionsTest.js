@@ -99,18 +99,39 @@ var actionTests = [
     }, //OK
     function () {
         return new ActionCallFuncND()
-    }, //OK (cocos2d-X c+ bug/incomplete)
+    }, //OK
     function () {
         return new ActionReverseSequence()
     }, //OK
     function () {
         return new ActionReverseSequence2()
-    }, //OK, Bug in Cocos2d-X implementation of FiniteTimeAction.reverse()
+    }, //OK,
     //"ActionOrbit",//Not possible in canvas, requires sprite camera
     //"ActionFollow",//Buggy
     function () {
+        return new ActionTargeted()
+    },
+    function () {
+        return new PauseResumeActions()
+    },
+    function () {
+        return new Issue1305()
+    },
+    function () {
+        return new Issue1305_2()
+    },
+    function () {
+        return new Issue1288()
+    },
+    function () {
+        return new Issue1288_2()
+    },
+    function () {
+        return new Issue1327()
+    },
+    function () {
         return new ActionAnimate()
-    }//Require Texture2d Implementation
+    }
 ];
 var actionIdx = -1;
 function NextAction() {
@@ -146,22 +167,26 @@ var ActionsDemo = cc.Layer.extend({
     _tamara:null,
     kathia:null,
     centerSprites:function (numberOfSprites) {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.sharedDirector().getWinSize();
 
-        if (numberOfSprites == 1) {
+        if (numberOfSprites == 0) {
             this._tamara.setVisible(false);
             this._kathia.setVisible(false);
-            this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+            this._grossini.setVisible(false);
+        } else if (numberOfSprites == 1) {
+            this._tamara.setVisible(false);
+            this._kathia.setVisible(false);
+            this._grossini.setPosition(cc.PointMake(winSize.width / 2, winSize.height / 2));
         }
         else if (numberOfSprites == 2) {
-            this._kathia.setPosition(cc.PointMake(s.width / 3, s.height / 2));
-            this._tamara.setPosition(cc.PointMake(2 * s.width / 3, s.height / 2));
+            this._kathia.setPosition(cc.PointMake(winSize.width / 3, winSize.height / 2));
+            this._tamara.setPosition(cc.PointMake(2 * winSize.width / 3, winSize.height / 2));
             this._grossini.setVisible(false);
         }
         else if (numberOfSprites == 3) {
-            this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-            this._tamara.setPosition(cc.PointMake(s.width / 4, s.height / 2));
-            this._kathia.setPosition(cc.PointMake(3 * s.width / 4, s.height / 2));
+            this._grossini.setPosition(cc.PointMake(winSize.width / 2, winSize.height / 2));
+            this._tamara.setPosition(cc.PointMake(winSize.width / 4, winSize.height / 2));
+            this._kathia.setPosition(cc.PointMake(3 * winSize.width / 4, winSize.height / 2));
         }
     },
     alignSpritesLeft:function (numberOfSprites) {
@@ -238,9 +263,9 @@ var ActionsDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(s.width / 2, 30));
-        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
+        item1.setPosition(cc.PointMake(s.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.PointMake(s.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.PointMake(s.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
     }
@@ -316,12 +341,10 @@ var ActionScale = ActionsDemo.extend({
         var actionTo = cc.ScaleTo.create(2, 0.5);
         var actionBy = cc.ScaleBy.create(2, 2);
         var actionBy2 = cc.ScaleBy.create(2, 0.25, 4.5);
-        var actionByBack = actionBy.reverse();
-        var actionBy2Back = actionBy2.reverse();
 
         this._tamara.runAction(actionTo);
-        this._kathia.runAction(cc.Sequence.create(actionBy2, actionBy2Back));
-        this._grossini.runAction(cc.Sequence.create(actionBy, actionByBack, null));
+        this._kathia.runAction(cc.Sequence.create(actionBy2, actionBy2.reverse()));
+        this._grossini.runAction(cc.Sequence.create(actionBy, actionBy.reverse()));
 
     },
     subtitle:function () {
@@ -342,16 +365,11 @@ var ActionSkew = ActionsDemo.extend({
         var actionToBack = cc.SkewTo.create(2, 0, 0);
         var actionBy = cc.SkewBy.create(2, 0, -90);
         var actionBy2 = cc.SkewBy.create(2, 45.0, 45.0);
-        var actionByBack = actionBy.reverse();
-        var actionBy2Back = actionBy2.reverse();
 
+        this._tamara.runAction(cc.Sequence.create(actionTo, actionToBack));
+        this._grossini.runAction(cc.Sequence.create(actionBy, actionBy.reverse()));
 
-        this._tamara.runAction(cc.Sequence.create(actionTo, actionToBack, null));
-        this._grossini.runAction(cc.Sequence.create(actionBy, actionByBack, null));
-
-        this._kathia.runAction(cc.Sequence.create(actionBy2, actionBy2Back, null));
-
-
+        this._kathia.runAction(cc.Sequence.create(actionBy2, actionBy2.reverse()));
     },
     subtitle:function () {
         return "SkewTo / SkewBy";
@@ -480,9 +498,7 @@ var ActionBezier = ActionsDemo.extend({
         bezier.endPosition = cc.PointMake(300, 100);
 
         var bezierForward = cc.BezierBy.create(3, bezier);
-        var bezierBack = bezierForward.reverse();
-        var rep = cc.RepeatForever.create(cc.Sequence.create(bezierForward, bezierBack, null));
-
+        var rep = cc.RepeatForever.create(cc.Sequence.create(bezierForward, bezierForward.reverse()));
 
         // sprite 2
         this._tamara.setPosition(cc.PointMake(80, 160));
@@ -496,10 +512,6 @@ var ActionBezier = ActionsDemo.extend({
         // sprite 3
         this._kathia.setPosition(cc.PointMake(400, 160));
         var bezierTo2 = cc.BezierTo.create(2, bezier2);
-
-        this._grossini.id = "gro";
-        this._tamara.id = "tam";
-        this._kathia.id = "kat";
 
         this._grossini.runAction(rep);
         this._tamara.runAction(bezierTo1);
@@ -587,22 +599,51 @@ var ActionTint = ActionsDemo.extend({
 var ActionAnimate = ActionsDemo.extend({
     onEnter:function () {
         this._super();
-        this.centerSprites(1);
+        this.centerSprites(3);
 
+        //
+        // Manual animation
+        //
         var animation = cc.Animation.create();
         for (var i = 1; i < 15; i++) {
             var frameName = "Resources/Images/grossini_dance_" + ((i < 10) ? ("0" + i) : i) + ".png";
             animation.addSpriteFrameWithFileName(frameName);
         }
+        animation.setDelayPerUnit(2.8 / 14);
+        animation.setRestoreOriginalFrame(true);
 
-        var action = cc.Animate.create(3, animation, false);
-        var action_back = action.reverse();
+        var action = cc.Animate.create(animation);
+        this._grossini.runAction(cc.Sequence.create(action, action.reverse()));
 
-        this._grossini.runAction(cc.Sequence.create(action, action_back, null));
+        //
+        // File animation
+        //
+        // With 2 loops and reverse
+        var animCache = cc.AnimationCache.sharedAnimationCache();
 
+        animCache.addAnimationsWithFile(s_animations2Plist);
+        var animation2 = animCache.animationByName("dance_1");
+
+        var action2 = cc.Animate.create(animation2);
+        this._tamara.runAction(cc.Sequence.create(action2, action2.reverse()));
+
+        //
+        // File animation
+        //
+        // with 4 loops
+        var animation3 = animation2.copy(null);
+        animation3.setLoops(4);
+
+        var action3 = cc.Animate.create(animation3);
+        this._kathia.runAction(action3);
     },
-    subtitle:function () {
+
+    title:function () {
         return "Animation";
+    },
+
+    subtitle:function () {
+        return "Center: Manual animation. Border: using file format animation";
     }
 });
 //------------------------------------------------------------------
@@ -739,12 +780,15 @@ var ActionCallFuncND = ActionsDemo.extend({
         this.centerSprites(1);
 
         var action = cc.Sequence.create(cc.MoveBy.create(2.0, cc.ccp(200, 0)),
-            cc.CallFunc.create(this._grossini, this.removeFromParentAndCleanup, true),
-            null);
+            cc.CallFunc.create(this._grossini, this.removeFromParentAndCleanup, true));
 
         this._grossini.runAction(action);
-
     },
+
+    removeFromParentAndCleanup:function (pSender, data) {
+        pSender.removeFromParentAndCleanup(data)
+    },
+
     title:function () {
         return "CallFuncND + auto remove";
     },
@@ -925,14 +969,9 @@ var ActionReverseSequence2 = ActionsDemo.extend({
         var move2 = cc.MoveBy.create(3, cc.PointMake(0, 50));
         var tog1 = new cc.ToggleVisibility();
         var tog2 = new cc.ToggleVisibility();
-        var seq = cc.Sequence.create(move1, tog1, move2, tog2, move1.reverse(), null);
+        var seq = cc.Sequence.create(move1, tog1, move2, tog2, move1.reverse());
         var action = cc.Repeat.create(
-            cc.Sequence.create(
-                seq,
-                seq.reverse(),
-                null
-            ),
-            3
+            cc.Sequence.create(seq, seq.reverse()), 3
         );
 
 
@@ -943,9 +982,9 @@ var ActionReverseSequence2 = ActionsDemo.extend({
         var move_tamara = cc.MoveBy.create(1, cc.PointMake(100, 0));
         var move_tamara2 = cc.MoveBy.create(1, cc.PointMake(50, 0));
         var hide = new cc.Hide();
-        var seq_tamara = cc.Sequence.create(move_tamara, hide, move_tamara2, null);
+        var seq_tamara = cc.Sequence.create(move_tamara, hide, move_tamara2);
         var seq_back = seq_tamara.reverse();
-        this._tamara.runAction(cc.Sequence.create(seq_tamara, seq_back, null));
+        this._tamara.runAction(cc.Sequence.create(seq_tamara, seq_back));
     },
     subtitle:function () {
         return "Reverse sequence 2";
@@ -1209,5 +1248,217 @@ var ActionCatmullRom = ActionsDemo.extend({
     },
     title:function () {
         return "CatmullRomBy / CatmullRomTo";
+    }
+});
+
+var ActionTargeted = ActionsDemo.extend({
+    onEnter:function () {
+        this._super();
+        this.centerSprites(2);
+
+        var jump1 = cc.JumpBy.create(2,cc.PointZero(),100,3);
+        var jump2 = jump1.copy();
+        var rot1 =  cc.RotateBy.create(1, 360);
+        var rot2 = rot1.copy();
+
+        var t1 = cc.TargetedAction.create(this._kathia, jump2);
+        var t2 = cc.TargetedAction.create(this._kathia, rot2);
+
+        var seq = cc.Sequence.create(jump1, t1, rot1, t2);
+        var always = cc.RepeatForever.create(seq);
+
+        this._tamara.runAction(always);
+    },
+    title:function () {
+        return "Action that runs on another target. Useful for sequences";
+    },
+    subtitle:function () {
+        return "ActionTargeted";
+    }
+});
+
+var PauseResumeActions = ActionsDemo.extend({
+    _pausedTargets:[],
+    onEnter:function () {
+        this._super();
+        this.centerSprites(2);
+
+        this._tamara.runAction(cc.RepeatForever.create(cc.RotateBy.create(3, 360)));
+        this._grossini.runAction(cc.RepeatForever.create(cc.RotateBy.create(3, -360)));
+        this._kathia.runAction(cc.RepeatForever.create(cc.RotateBy.create(3, 360)));
+
+        this.schedule(this.pause, 3, false, 0);
+        this.schedule(this.resume, 5, false, 0);
+    },
+
+    pause:function () {
+        cc.Log("Pausing");
+        this._pausedTargets = cc.Director.sharedDirector().getActionManager().pauseAllRunningActions();
+    },
+    resume:function () {
+        cc.Log("Resuming");
+        cc.Director.sharedDirector().getActionManager().resumeTargets(this._pausedTargets);
+    },
+
+    title:function () {
+        return "PauseResumeActions";
+    },
+    subtitle:function () {
+        return "All actions pause at 3s and resume at 5s";
+    }
+});
+
+var Issue1305 = ActionsDemo.extend({
+    _spriteTemp:null,
+    onEnter:function () {
+        this._super();
+        this.centerSprites(0);
+
+        this._spriteTmp = cc.Sprite.create(s_pathGrossini);
+        /* c++ can't support block, so we use CCCallFuncN instead.
+         [spriteTmp_ runAction:[CCCallBlockN actionWithBlock:^(CCNode* node) {
+         NSLog(@"This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
+         }] ];
+         */
+
+        this._spriteTmp.runAction(cc.CallFunc.create(this, this.log));
+        this.scheduleOnce(this.addSprite, 2);
+    },
+    onExit:function () {
+        this._super();
+    },
+    log:function (pSender) {
+        cc.Log("This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
+    },
+    addSprite:function (dt) {
+        this._spriteTmp.setPosition(cc.ccp(250,250));
+        this.addChild(this._spriteTmp);
+    },
+    title:function () {
+        return "Issue 1305";
+    },
+    subtitle:function () {
+        return "In two seconds you should see a message on the console. NOT BEFORE.";
+    }
+});
+
+var Issue1305_2 = ActionsDemo.extend({
+    onEnter:function () {
+        this._super();
+        this.centerSprites(0);
+
+        var spr = cc.Sprite.create(s_pathGrossini);
+        spr.setPosition(cc.ccp(200,200));
+        this.addChild(spr);
+
+        var act1 = cc.MoveBy.create(2 ,cc.ccp(0, 100));
+
+        var act2 = cc.CallFunc.create(this, this.log1) ;
+        var act3 = cc.MoveBy.create(2, cc.ccp(0, -100));
+        var act4 = cc.CallFunc.create(this, this.log2) ;
+        var act5 = cc.MoveBy.create(2, cc.ccp(100, -100));
+        var act6 = cc.CallFunc.create(this, this.log3) ;
+        var act7 = cc.MoveBy.create(2, cc.ccp(-100, 0));
+        var act8 = cc.CallFunc.create(this, this.log4) ;
+
+        var actF = cc.Sequence.create(act1, act2, act3, act4, act5, act6, act7, act8);
+
+        //    [spr runAction:actF];
+        cc.Director.sharedDirector().getActionManager().addAction(actF ,spr, false);
+    },
+    log1:function () {
+        cc.Log("1st block");
+    },
+    log2:function () {
+        cc.Log("2nd block");
+    },
+    log3:function () {
+        cc.Log("3rd block");
+    },
+    log4:function () {
+        cc.Log("4th block");
+    },
+    title:function () {
+        return "Issue 1305 #2";
+    },
+    subtitle:function () {
+        return "See console. You should only see one message for each block";
+    }
+});
+
+var Issue1288 = ActionsDemo.extend({
+    onEnter:function () {
+        this._super();
+        this.centerSprites(0);
+
+        var spr = cc.Sprite.create(s_pathGrossini);
+        spr.setPosition(cc.ccp(100, 100));
+        this.addChild(spr);
+
+        var act1 = cc.MoveBy.create(0.5, cc.ccp(100, 0));
+        var act2 = act1.reverse();
+        var act3 = cc.Sequence.create(act1, act2);
+        var act4 = cc.Repeat.create(act3, 2);
+
+        spr.runAction(act4);
+    },
+    title:function () {
+        return "Issue 1288";
+    },
+    subtitle:function () {
+        return "Sprite should end at the position where it started.";
+    }
+});
+
+var Issue1288_2 = ActionsDemo.extend({
+    onEnter:function () {
+        this._super();
+        this.centerSprites(0);
+
+        var spr = cc.Sprite.create(s_pathGrossini);
+        spr.setPosition(cc.ccp(100, 100));
+        this.addChild(spr);
+
+        var act1 = cc.MoveBy.create(0.5, cc.ccp(100, 0));
+        spr.runAction(cc.Repeat.create(act1, 1));
+    },
+    title:function () {
+        return "Issue 1288 #2";
+    },
+    subtitle:function () {
+        return "Sprite should move 100 pixels, and stay there";
+    }
+});
+
+var Issue1327 = ActionsDemo.extend({
+    onEnter:function () {
+        this._super();
+        this.centerSprites(0);
+
+        var spr = cc.Sprite.create(s_pathGrossini);
+        spr.setPosition(cc.ccp(100, 100));
+        this.addChild(spr);
+
+        var act1 = cc.CallFunc.create(this, this.logSprRotation);
+        var act2 = cc.RotateBy.create(0.25, 45);
+        var act3 = cc.CallFunc.create(this, this.logSprRotation);
+        var act4 = cc.RotateBy.create(0.25, 45);
+        var act5 = cc.CallFunc.create(this, this.logSprRotation);
+        var act6 = cc.RotateBy.create(0.25, 45);
+        var act7 = cc.CallFunc.create(this, this.logSprRotation);
+        var act8 = cc.RotateBy.create(0.25, 45);
+        var act9 = cc.CallFunc.create(this, this.logSprRotation);
+
+        var actF = cc.Sequence.create(act1, act2, act3, act4, act5, act6, act7, act8, act9);
+        spr.runAction(actF);
+    },
+    logSprRotation:function (pSender) {
+        cc.Log(pSender.getRotation());
+    },
+    title:function () {
+        return "Issue 1327";
+    },
+    subtitle:function () {
+        return "See console: You should see: 0, 45, 90, 135, 180";
     }
 });

@@ -286,7 +286,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
             this._interval = seconds || 0;
             this._delay = delay || 0;
             this._useDelay = this._delay > 0;
-            this._repeat = repeat || cc.REPEAT_FOREVER;
+            this._repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
             this._runForever = (this._repeat == cc.REPEAT_FOREVER);
             return true;
         } catch (e) {
@@ -348,7 +348,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 }
 
                 if (this._timesExecuted > this._repeat) {
-                    cc.Director.getScheduler().unscheduleSelector(this._selector, this._target);
+                    cc.Director.sharedDirector().getScheduler().unscheduleSelector(this._selector, this._target);
                 }
             }
         }
@@ -630,7 +630,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         cc.Assert(selector, "scheduler.scheduleSelector() Argument selector must be non-NULL");
         cc.Assert(target, "scheduler.scheduleSelector() Argument target must be non-NULL");
 
-        repeat = repeat || cc.REPEAT_FOREVER;
+        repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
         var element = cc.HASH_FIND_INT(this._hashForSelectors, target);

@@ -86,7 +86,8 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         else {
             this._elapsed += dt;
         }
-        this.update((1 > (this._elapsed / this._duration)) ? this._elapsed / this._duration : 1);
+        //this.update((1 > (this._elapsed / this._duration)) ? this._elapsed / this._duration : 1);
+        this.update(Math.max(0, Math.min(1, this._elapsed / Math.max(this._duration, cc.FLT_EPSILON))));
     },
 
     /**
@@ -102,13 +103,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @return {Null}
      */
     reverse:function () {
-        /*
-         NSException* myException = [NSException
-         exceptionWithName:@"ReverseActionNotImplemented"
-         reason:@"Reverse Action not implemented"
-         userInfo:nil];
-         @throw myException;
-         */
+        cc.Assert(false, "cc.IntervalAction: reverse not implemented.");
         return null;
     },
 
@@ -116,6 +111,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @param {Number} amp
      */
     setAmplitudeRate:function (amp) {
+        // Abstract class needs implementation
         cc.Assert(0, 'Actioninterval setAmplitudeRate');
     },
 
@@ -123,6 +119,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @return {Number}
      */
     getAmplitudeRate:function () {
+        // Abstract class needs implementation
         cc.Assert(0, 'Actioninterval getAmplitudeRate');
         return 0;
     }
@@ -195,8 +192,10 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * stop the action
      */
     stop:function () {
-        this._actions[0].stop();
-        this._actions[1].stop();
+        // Issue #1305
+        if (this._last != -1) {
+            this._actions[this._last].stop();
+        }
         this._super();
     },
 
@@ -206,25 +205,30 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
     update:function (time) {
         var found = 0;
         var new_t = 0;
-        if (time >= this._split) {
+        if (time < this._split) {
+            // action[0]
+            found = 0;
+            new_t = (this._split != 0) ? time / this._split : 1;
+        } else {
+            // action[1]
             found = 1;
             new_t = (this._split == 1) ? 1 : (time - this._split) / (1 - this._split);
         }
-        else {
-            found = 0;
-            new_t = (this._split != 0) ? time / this._split : 1;
-        }
-        if (this._last == -1 && found == 1) {
-            this._actions[0].startWithTarget(this._target);
-            this._actions[0].update(1);
-            this._actions[0].stop();
-        }
-        if (this._last != found) {
-            if (this._last != -1) {
-                this._actions[this._last].update(1);
-                this._actions[this._last].stop();
-            }
 
+        if (found == 1) {
+            if (this._last == -1) {
+                // action[0] was skipped, execute it.
+                this._actions[0].startWithTarget(this._target);
+                this._actions[0].update(1);
+                this._actions[0].stop();
+            } else if (this._last == 0) {
+                // switching to action 1. stop action 0.
+                this._actions[0].update(1);
+                this._actions[0].stop();
+            }
+        }
+
+        if (this._last != found) {
             this._actions[found].startWithTarget(this._target);
         }
         this._actions[found].update(new_t);
@@ -258,7 +262,6 @@ cc.Sequence.create = function (/*Multiple Arguments*/tempArray) {
         }
     }
     return prev;
-
 };
 
 /** creates the action
@@ -282,6 +285,8 @@ cc.Sequence._actionOneTwo = function (actionOne, actionTwo) {
 cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     _times:0,
     _total:0,
+    _nextDt:0,
+    _actionInstant:false,
     _innerAction:null, //CCFiniteTimeAction
 
     /**
@@ -290,11 +295,16 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @return {Boolean}
      */
     initWithAction:function (action, times) {
-        var d = action.getDuration() * times;
+        var duration = action.getDuration() * times;
 
-        if (this.initWithDuration(d)) {
+        if (this.initWithDuration(duration)) {
             this._times = times;
             this._innerAction = action;
+
+            if (action instanceof cc.ActionInstant) {
+                this._times -= 1;
+            }
+
             this._total = 0;
             return true;
         }
@@ -306,6 +316,7 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      */
     startWithTarget:function (target) {
         this._total = 0;
+        this._nextDt = this._innerAction.getDuration() / this._duration;
         this._super(target);
         this._innerAction.startWithTarget(target);
     },
@@ -322,36 +333,32 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        var t = time * this._times;
-        if (t > this._total + 1) {
-            this._innerAction.update(1);
-            this._total++;
-            this._innerAction.stop();
-            this._innerAction.startWithTarget(this._target);
-
-            // repeat is over?
-            if (this._total == this._times) {
-                // so, set it in the original position
-                this._innerAction.update(0);
-            }
-            else {
-                // no ? start next repeat with the right update
-                // to prevent jerk (issue #390)
-                this._innerAction.update(t - this._total);
-            }
-        }
-        else {
-            var r = t % 1;
-
-            // fix last repeat position
-            // else it could be 0.
-            if (time == 1) {
-                r = 1;
-                this._total++; // this is the added line
+        if (time >= this._nextDt) {
+            while (time > this._nextDt && this._total < this._times) {
+                this._innerAction.update(1);
+                this._total++;
+                this._innerAction.stop();
+                this._innerAction.startWithTarget(this._target);
+                this._nextDt += this._innerAction.getDuration() / this._duration;
             }
 
-            //		other->update(min(r, 1));
-            this._innerAction.update((r > 1) ? 1 : r);
+            // fix for issue #1288, incorrect end value of repeat
+            if (time >= 1.0 && this._total < this._times) {
+                this._total++;
+            }
+
+            // don't set a instantaction back or update it, it has no use because it has no duration
+            if (this._actionInstant) {
+                if (this._total == this._times) {
+                    this._innerAction.update(1);
+                    this._innerAction.stop();
+                } else {
+                    // issue #390 prevent jerk, use right update
+                    this._innerAction.update(time - (this._nextDt - this._innerAction.getDuration() / this._duration));
+                }
+            }
+        } else {
+            this._innerAction.update((time * this._times) % 1.0);
         }
     },
 
@@ -435,9 +442,10 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     step:function (dt) {
         this._innerAction.step(dt);
         if (this._innerAction.isDone()) {
-            var diff = dt + this._innerAction.getDuration() - this._innerAction.getElapsed();
+            var diff = this._innerAction.getElapsed() - this._innerAction.getDuration();
             this._innerAction.startWithTarget(this._target);
-            // to prevent jerk. issue #390
+            // to prevent jerk. issue #390 ,1247
+            this._innerAction.step(0);
             this._innerAction.step(diff);
         }
     },
@@ -1860,8 +1868,10 @@ cc.ReverseTime.create = function (action) {
  */
 cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     _animation:null,
+    _nextFrame:0,
     _origFrame:null,
-    _restoreOriginalFrame:false,
+    _executedLoops:0,
+    _splitTimes:null,
 
     /**
      * @return {cc.Animation}
@@ -1879,42 +1889,35 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
     /**
      * @param {cc.Animation} animation
-     * @param {Boolean} restoreOriginalFrame
      * @return {Boolean}
      */
-    initWithAnimation:function (animation, restoreOriginalFrame) {
-        cc.Assert(animation != null, "");
-        if (this.initWithDuration(animation.getFrames().length * animation.getDelay(), null, null, true)) {
-            this._restoreOriginalFrame = restoreOriginalFrame;
-            this._animation = animation;
+    initWithAnimation:function (animation) {
+        cc.Assert(animation != null, "Animate: argument Animation must be non-NULL");
+
+        var singleDuration = animation.getDuration();
+        if (this.initWithDuration(singleDuration * animation.getLoops())) {
+            this._nextFrame = 0;
+            this.setAnimation(animation);
+
             this._origFrame = null;
+            this._executedLoops = 0;
+
+            this._splitTimes = [];
+
+            var accumUnitsOfTime = 0;
+            var newUnitOfTimeValue = singleDuration / animation.getTotalDelayUnits();
+
+            var frames = animation.getFrames();
+            cc.ArrayVerifyType(frames, cc.AnimationFrame);
+
+            for (var i = 0; i < frames.length; i++) {
+                var frame = frames[i];
+                var value = (accumUnitsOfTime * newUnitOfTimeValue) / singleDuration;
+                accumUnitsOfTime += frame.getDelayUnits();
+                this._splitTimes.push(value);
+            }
             return true;
         }
-
-        return false;
-    },
-
-    /**
-     * @param {Number} duration
-     * @param {cc.Animation} animation
-     * @param {Boolean} restoreOriginalFrame
-     * @param {Boolean} isSuperCall
-     * @return {*}
-     */
-    initWithDuration:function (duration, animation, restoreOriginalFrame, isSuperCall) {
-        if (isSuperCall) {
-            return this._super(duration);
-        }
-        cc.Assert(animation != null, "");
-
-        if (this._super(duration)) {
-            this._restoreOriginalFrame = restoreOriginalFrame;
-            this._animation = animation;
-            this._origFrame = null;
-
-            return true;
-        }
-
         return false;
     },
 
@@ -1924,27 +1927,51 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     startWithTarget:function (target) {
         this._super(target);
 
-        if (this._restoreOriginalFrame) {
+        if (this._animation.getRestoreOriginalFrame()) {
             this._origFrame = target.displayFrame();
         }
+        this._nextFrame = 0;
+        this._executedLoops = 0;
     },
 
     /**
      * @param {Number} time
      */
     update:function (time) {
-        var frames = this._animation.getFrames();
-        var numberOfFrames = frames.length;
+        // if t==1, ignore. Animation should finish with t==1
+        if (time < 1.0) {
+            time *= this._animation.getLoops();
 
-        var idx = 0 | (time * numberOfFrames);
+            // new loop?  If so, reset frame counter
+            var loopNumber = 0 | time;
+            if (loopNumber > this._executedLoops) {
+                this._nextFrame = 0;
+                this._executedLoops++;
+            }
 
-        if (idx >= numberOfFrames) {
-            idx = numberOfFrames - 1;
+            // new t for animations
+            time = time % 1.0;
         }
 
-        var sprite = this._target;
-        if (!sprite.isFrameDisplayed(frames[idx])) {
-            sprite.setDisplayFrame(frames[idx]);
+        var frames = this._animation.getFrames();
+        var numberOfFrames = frames.length;
+        var frameToDisplay = null;
+
+        for (var i = this._nextFrame; i < numberOfFrames; i++) {
+            var splitTime = this._splitTimes[i];
+
+            if (splitTime <= time) {
+                var frame = frames[i];
+                frameToDisplay = frame.getSpriteFrame();
+                this._target.setDisplayFrame(frameToDisplay);
+
+                var dict = frame.getUserInfo();
+                if (dict) {
+                    //TODO: [[NSNotificationCenter defaultCenter] postNotificationName:CCAnimationFrameDisplayedNotification object:target_ userInfo:dict];
+                }
+                this._nextFrame = i + 1;
+                break;
+            }
         }
     },
 
@@ -1952,46 +1979,117 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        var newAnim = cc.Animation.create(this._animation.getFrames().reverse(), this._animation.getDelay());
-        return cc.Animate.create(this._duration, newAnim, this._restoreOriginalFrame);
+        var oldArray = this._animation.getFrames();
+        var newArray = [];
+        cc.ArrayVerifyType(oldArray, cc.AnimationFrame);
+        if (oldArray.length > 0) {
+            for (var i = oldArray.length - 1; i >= 0; i--) {
+                var element = oldArray[i];
+                if (!element) {
+                    break;
+                }
+                newArray.push(element.copy());
+            }
+        }
+
+        var newAnim = cc.Animation.createWithAnimationFrames(newArray, this._animation.getDelayPerUnit(), this._animation.getLoops());
+        newAnim.setRestoreOriginalFrame(this._animation.getRestoreOriginalFrame());
+        return cc.Animate.create(newAnim);
+
     },
 
     /**
      * stop the action
      */
     stop:function () {
-        if (this._restoreOriginalFrame && this._target) {
+        if (this._animation.getRestoreOriginalFrame() && this._target) {
             this._target.setDisplayFrame(this._origFrame);
         }
-
         this._super();
     }
 });
 
 /**
- * It accepts three groups of parameters:
- * a) animation
- * b) animation, restoreOriginalFrame
- * c) duration, animation, restoreOriginalFrame
+ * create the animate with animation
+ * @param {cc.Animation} animation
  * @return {cc.Animate}
  * @example
  * // example
  * // create the animation with animation
  * var anim = cc.Animate.create(dance_grey);
- *
- * // create the animation with animation and restoreOriginalFrame
- * var anim = cc.Animate.create(dance_grey, false);
- *
- * // create the animation with duration, animation and restoreOriginalFrame
- * var anim = cc.Animate.create(10, dance_grey, false);  // duration in seconds
  */
-cc.Animate.create = function (/* Multi arguments */) {
+cc.Animate.create = function (animation) {
     var animate = new cc.Animate();
-    if (arguments.length == 3) {
-        animate.initWithDuration(arguments[0], arguments[1], arguments[2]);
-    } else {
-        animate.initWithAnimation(arguments[0], arguments[1]);
-    }
-
+    animate.initWithAnimation(animation);
     return animate;
+};
+
+/**
+ * <p>
+ *     Overrides the target of an action so that it always runs on the target<br/>
+ *     specified at action creation rather than the one specified by runAction.
+ * </p>
+ * @class
+ * @extends cc.ActionInterval
+ */
+cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
+    _action:null,
+    _forcedTarget:null,
+
+    /**
+     * Init an action with the specified action and forced target
+     * @param {cc.Node} target
+     * @param {cc.FiniteTimeAction} action
+     * @return {Boolean}
+     */
+    initWithTarget:function (target, action) {
+        if (this.initWithDuration(action.getDuration())) {
+            this._forcedTarget = target;
+            this._action = action;
+            return true;
+        }
+        return false;
+    },
+
+    startWithTarget:function (target) {
+        this._super(this._forcedTarget);
+        this._action.startWithTarget(this._forcedTarget);
+    },
+
+    stop:function () {
+        this._action.stop();
+    },
+
+    update:function (time) {
+        this._action.update(time);
+    },
+
+    /**
+     * return the target that the action will be forced to run with
+     * @return {cc.Node}
+     */
+    getForcedTarget:function () {
+        return this._forcedTarget;
+    },
+
+    /**
+     * set the target that the action will be forced to run with
+     * @param {cc.Node} forcedTarget
+     */
+    setForcedTarget:function (forcedTarget) {
+        if (this._forcedTarget != forcedTarget) {
+            this._forcedTarget = forcedTarget;
+        }
+    }
+});
+
+/**
+ * Create an action with the specified action and forced target
+ * @param {cc.Node} target
+ * @param {cc.FiniteTimeAction} action
+ */
+cc.TargetedAction.create = function (target, action) {
+    var retObj = new cc.TargetedAction();
+    retObj.initWithTarget(target, action);
+    return retObj;
 };

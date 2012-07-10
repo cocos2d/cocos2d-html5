@@ -145,7 +145,8 @@ cc.PointFromString = function (content) {
     } catch (e) {
     }
     return ret;
-}
+};
+
 /**
  * Returns a Core Graphics size structure corresponding to the data in a given string.
  * @function
@@ -172,4 +173,4 @@ cc.SizeFromString = function (content) {
     } catch (e) {
     }
     return ret;
-}
+};
