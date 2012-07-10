@@ -74,8 +74,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
         for (var i = 0; i < this._string.length; i++) {
             var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._itemsPerRow);
-            var col = parseInt(a / this._itemsPerRow);
+            var row = parseInt(a % this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
+            var col = parseInt(a / this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
 
             var rect = cc.RectMake(row * this._itemWidth, col * this._itemHeight, this._itemWidth, this._itemHeight);
             var c = this._string.charCodeAt(i);
@@ -84,7 +84,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                 fontChar = new cc.Sprite();
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0, 0, 0, 0));
+                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
                 }
                 else {
                     fontChar.initWithTexture(texture, rect);
@@ -94,7 +94,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             else {
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0, 0, 0, 0));
+                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
                 }
                 else {
                     // reusing fonts
