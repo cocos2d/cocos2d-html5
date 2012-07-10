@@ -41,9 +41,9 @@ var TAG_LABEL_SPRITE18 = 667;
 
 var AtlasTests = [
     /*function(){
-        return new Atlas1();
-    },*/
-    /*function () {
+     return new Atlas1();
+     },*/
+    function () {
         return new LabelAtlasTest();
     }, //ok
     function () {
@@ -51,61 +51,61 @@ var AtlasTests = [
     }, //ok
     function () {
         return new Atlas3();
-    },//ok
+    }, //ok
     function () {
         return new Atlas4();
-    },//ok
+    }, //ok
     function () {
         return new Atlas5();
-    },//ok
+    }, //ok
     function () {
         return new Atlas6();
-    },//ok
+    }, //ok
     function () {
         return new AtlasBitmapColor();
-    },//ok
+    }, //ok
     function () {
         return new AtlasFastBitmap();
-    },//ok
+    }, //ok
     function () {
         return new BitmapFontMultiLine();
-    },//ok
+    }, //ok
     function () {
         return new LabelsEmpty();
-    },//ok
+    }, //ok
     function () {
         return new LabelBMFontHD();
-    },//ok
+    }, //ok
     function () {
         return new LabelAtlasHD();
-    },//ok
+    }, //ok
     function () {
         return new LabelGlyphDesigner();
-    },//ok
+    }, //ok
     function () {
         return new LabelTTFTest();
-    },//ok
+    }, //ok
     function () {
         return new LabelTTFMultiline();
-    },//ok
+    }, //ok
     function () {
         return new LabelTTFChinese();
-    },//ok
+    }, //ok
     function () {
         return new LabelBMFontChinese();
-    },//ok*/
+    }, //ok
     function () {
         return new BitmapFontMultiLineAlignment();
-    },//bug
+    }, //ok
     function () {
         return new LabelTTFA8Test();
-    },//ok
+    }, //ok
     function () {
         return new BMFontOneAtlas();
-    },//ok
+    }, //ok
     function () {
         return new BMFontUnicode();
-    },//ok
+    }, //ok
     function () {
         return new BMFontInit();
     }, //ok
@@ -172,9 +172,9 @@ var AtlasDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp( s.width/2 - item2.getContentSize().width*2, item2.getContentSize().height/2));
-        item2.setPosition(cc.ccp( s.width/2, item2.getContentSize().height/2));
-        item3.setPosition(cc.ccp( s.width/2 + item2.getContentSize().width*2, item2.getContentSize().height/2));
+        item1.setPosition(cc.ccp(s.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.ccp(s.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.ccp(s.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
     },
@@ -390,7 +390,7 @@ var Atlas3 = AtlasDemo.extend({
         this.schedule(this.step);
     },
     step:function (dt) {
-        this.time += 10 * dt;
+        this.time += dt;
         //var string;
         var string = this.time.toFixed(2) + "Test j";
 
@@ -988,7 +988,7 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // create and initialize a Label
-        this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "Resources/fonts/markerFelt.fnt", size.width / 3, cc.TEXT_ALIGNMENT_CENTER,cc.PointZero());
+        this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "Resources/fonts/markerFelt.fnt", size.width / 2, cc.TEXT_ALIGNMENT_CENTER, cc.PointZero());
         this.arrowsBarShouldRetain = cc.Sprite.create("Resources/Images/arrowsBar.png");
         this.arrowsShouldRetain = cc.Sprite.create("Resources/Images/arrows.png");
 
@@ -1162,7 +1162,7 @@ var BMFontOneAtlas = AtlasDemo.extend({
 
         var label1 = cc.LabelBMFont.create("This is Helvetica", "Resources/fonts/helvetica-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
         this.addChild(label1);
-        label1.setPosition(cc.ccp(s.width / 2, s.height * 2/ 3));
+        label1.setPosition(cc.ccp(s.width / 2, s.height * 2 / 3));
 
         var label2 = cc.LabelBMFont.create("And this is Geneva", "Resources/fonts/geneva-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, new cc.Point(0, 128));
         this.addChild(label2);

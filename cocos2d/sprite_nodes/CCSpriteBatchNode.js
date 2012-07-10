@@ -674,7 +674,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                         }
                     }
                 }
-                this.draw(ctx);
             }
 
             if (this._grid && this._grid.isActive()) {

@@ -29,10 +29,14 @@
  http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)
  http://www.angelcode.com/products/bmfont/ (Free, Windows only)
  ****************************************************************************/
+/**
+ * @constant
+ * @type Number
+ */
 cc.LabelAutomaticWidth = -1;
 
 cc._KerningHashElement = function (key, amount) {
-    this.key = key;	// key for the hash. 16-bit for 1st element, 16-bit for 2nd element
+    this.key = key;   //key for the hash. 16-bit for 1st element, 16-bit for 2nd element
     this.amount = amount;
 };
 
@@ -78,27 +82,56 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      *  @type object
      */
     bitmapFontArray:{},
+
     /**
      * FNTConfig: Common Height
      * @type Number
      */
     commonHeight:0,
+
     /**
      *  Padding
      *  @type cc._BMFontPadding
      */
     padding:new cc._BMFontPadding(),
+
     /**
      * atlas name
      * @type String
      */
     atlasName:"",
+
     /**
      * values for kerning
      * @type cc._KerningHashElement
      */
     kerningDictionary:{},
-    fontDefDictionary:{},
+
+    /**
+     * values for FontDef
+     * @type cc._FontDefHashElement
+     */
+    fontDefDictionary:{
+        "0":{
+            "key":"0",
+            "fontDef":{
+                "charID":"0",
+                "rect":{
+                    "origin":{
+                        "x":0,
+                        "y":0
+                    },
+                    "size":{
+                        "width":1,
+                        "height":1
+                    }
+                },
+                "xOffset":0,
+                "yOffset":0,
+                "xAdvance":0}
+        }
+    },
+
     /**
      * Description of BMFontConfiguration
      * @return {String}
@@ -107,18 +140,21 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         var ret = "<cc.BMFontConfiguration | Kernings:" + this.kerningDictionary + " | Image = " + this.atlasName.toString() + ">";
         return ret;
     },
+
     /**
      * @return {String}
      */
     getAtlasName:function () {
         return this.atlasName;
     },
+
     /**
      * @param {String} atlasName
      */
     setAtlasName:function (atlasName) {
         this.atlasName = atlasName;
     },
+
     /**
      * initializes a BitmapFontConfiguration with a FNT file
      * @param {String} FNTfile
@@ -189,6 +225,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
             }
         }
     },
+
     _parseCharacterDefinition:function (line, characterDefinition) {
         //////////////////////////////////////////////////////////////////////////
         // line to parse:
@@ -227,6 +264,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         characterDefinition.xAdvance = parseInt(value);
 
     },
+
     _parseInfoArguments:function (line) {
         //////////////////////////////////////////////////////////////////////////
         // possible lines to parse:
@@ -241,6 +279,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         this.padding.right = tmpPadding[3];
         this.padding.bottom = tmpPadding[4];
     },
+
     _parseCommonArguments:function (line) {
         //////////////////////////////////////////////////////////////////////////
         // line to parse:
@@ -257,6 +296,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
 
         // packed (ignore) What does this mean ??
     },
+
     _parseImageFileName:function (line, fntFile) {
         //////////////////////////////////////////////////////////////////////////
         // line to parse:
@@ -272,8 +312,10 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
 
         this.atlasName = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(value, fntFile);
     },
+
     _parseKerningCapacity:function (line) {
     },
+
     _parseKerningEntry:function (line) {
         //////////////////////////////////////////////////////////////////////////
         // line to parse:
@@ -298,11 +340,32 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         this.kerningDictionary[element.key] = element;
 
     },
+
     _purgeKerningDictionary:function () {
         this.kerningDictionary = {};
     },
+
     _purgeFontDefDictionary:function () {
-        this.fontDefDictionary = {};
+        this.fontDefDictionary = {
+            "0":{
+                "key":"0",
+                "fontDef":{
+                    "charID":"0",
+                    "rect":{
+                        "origin":{
+                            "x":0,
+                            "y":0
+                        },
+                        "size":{
+                            "width":1,
+                            "height":1
+                        }
+                    },
+                    "xOffset":0,
+                    "yOffset":0,
+                    "xAdvance":0}
+            }
+        };
     }
 });
 
@@ -324,38 +387,38 @@ cc.BMFontConfiguration.create = function (FNTfile) {
 
 /**
  * <p>cc.LabelBMFont is a subclass of cc.SpriteSheet.</p>
-
- <p>Features:<br/>
- <ul><li>- Treats each character like a cc.Sprite. This means that each individual character can be:</li>
- <li>- rotated</li>
- <li>- scaled</li>
- <li>- translated</li>
- <li>- tinted</li>
- <li>- chage the opacity</li>
- <li>- It can be used as part of a menu item.</li>
- <li>- anchorPoint can be used to align the "label"</li>
- <li>- Supports AngelCode text format</li></ul></p>
-
- <p>Limitations:<br/>
- - All inner characters are using an anchorPoint of (0.5, 0.5) and it is not recommend to change it
- because it might affect the rendering</p>
-
- <p>cc.LabelBMFont implements the protocol cc.LabelProtocol, like cc.Label and cc.LabelAtlas.<br/>
- cc.LabelBMFont has the flexibility of cc.Label, the speed of cc.LabelAtlas and all the features of cc.Sprite.<br/>
- If in doubt, use cc.LabelBMFont instead of cc.LabelAtlas / cc.Label.</p>
-
- <p>Supported editors:<br/>
- http://glyphdesigner.71squared.com/ (Commercial, Mac OS X)<br/>
- http://www.n4te.com/hiero/hiero.jnlp (Free, Java)<br/>
- http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)<br/>
- http://www.angelcode.com/products/bmfont/ (Free, Windows only)</p>
+ *
+ * <p>Features:<br/>
+ * <ul><li>- Treats each character like a cc.Sprite. This means that each individual character can be:</li>
+ * <li>- rotated</li>
+ * <li>- scaled</li>
+ * <li>- translated</li>
+ * <li>- tinted</li>
+ * <li>- chage the opacity</li>
+ * <li>- It can be used as part of a menu item.</li>
+ * <li>- anchorPoint can be used to align the "label"</li>
+ * <li>- Supports AngelCode text format</li></ul></p>
+ *
+ * <p>Limitations:<br/>
+ * - All inner characters are using an anchorPoint of (0.5, 0.5) and it is not recommend to change it
+ * because it might affect the rendering</p>
+ *
+ * <p>cc.LabelBMFont implements the protocol cc.LabelProtocol, like cc.Label and cc.LabelAtlas.<br/>
+ * cc.LabelBMFont has the flexibility of cc.Label, the speed of cc.LabelAtlas and all the features of cc.Sprite.<br/>
+ * If in doubt, use cc.LabelBMFont instead of cc.LabelAtlas / cc.Label.</p>
+ *
+ * <p>Supported editors:<br/>
+ * http://glyphdesigner.71squared.com/ (Commercial, Mac OS X)<br/>
+ * http://www.n4te.com/hiero/hiero.jnlp (Free, Java)<br/>
+ * http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)<br/>
+ * http://www.angelcode.com/products/bmfont/ (Free, Windows only)</p>
  * @class
  * @extends cc.
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     _opacity:0,
     _color:null,
-    _isOpacityModifyRGB:false,
+    _opacityModifyRGB:false,
     _string:"",
     _configuration:null,
     // name of fntFile
@@ -374,7 +437,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     ctor:function () {
         this._super();
     },
-    draw:function(ctx) {
+    /**
+     * @param {CanvasContext} ctx
+     */
+    draw:function (ctx) {
         this._super();
         var context = ctx || cc.renderContext;
         //LabelBMFont - Debug draw
@@ -386,6 +452,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
     },
+
     /**
      * conforms to cc.RGBAProtocol protocol
      * @return {Number}
@@ -409,18 +476,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
         }
     },
-    /**
-     *
-     */
-    isOpacityModifyRGB:function () {
 
-    },
-    /**
-     *
-     */
-    setOpacityModifyRGB:function (isOpacityModifyRGB) {
-
-    },
     /**
      * conforms to cc.RGBAProtocol protocol
      * @return {cc.Color3B}
@@ -459,40 +515,44 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @return {Boolean}
      */
     isOpacityModifyRGB:function () {
-        return this._isOpacityModifyRGB;
+        return this._opacityModifyRGB;
     },
 
     /**
-     *
      * @param {Boolean} Var
      */
     setOpacityModifyRGB:function (Var) {
-        this._isOpacityModifyRGB = Var;
+        this._opacityModifyRGB = Var;
         if (this._children && this._children.length != 0) {
             for (var i = 0, len = this._children.length; i < len; i++) {
                 var node = this._children[i];
                 if (node) {
-                    var pRGBAProtocol = node instanceof cc.RGBAProtocol;
-                    if (pRGBAProtocol) {
-                        pRGBAProtocol.setOpacityModifyRGB(this._isOpacityModifyRGB);
+                    if (node.RGBAProtocol) {
+                        node.setOpacity(255);
                     }
                 }
             }
         }
     },
 
+    /**
+     *  init LabelBMFont
+     */
     init:function () {
-        this.initWithString([null, null]);
+        this.initWithString(null, null, null, null, null);
     },
+
     /**
      * init a bitmap font altas with an initial string and the FNT file
-     * @param {String} theString
+     * @param {String} str
      * @param {String} fntFile
+     * @param {String} width
+     * @param {Number} alignment
+     * @param {Number} imageOffset
      * @return {Boolean}
      */
-    initWithString:function (arg) {
-        var theString = arg[0],
-            fntFile = arg[1];
+    initWithString:function (str, fntFile, width, alignment, imageOffset) {
+        var theString = str;
 
         cc.Assert(!this._configuration, "re-init is no longer supported");
 
@@ -513,9 +573,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         }
 
         if (this.initWithTexture(texture, theString.length)) {
-            this._alignment = arg[3] || cc.TEXT_ALIGNMENT_LEFT;
-            this._imageOffset = arg[4] || cc.PointZero();
-            this._width = arg[2] || cc.LabelAutomaticWidth;
+            this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
+            this._imageOffset = imageOffset || cc.PointZero();
+            this._width = width || cc.LabelAutomaticWidth;
             this._opacity = 255;
             this._color = cc.WHITE();
             this._contentSize = cc.SizeZero();
@@ -615,7 +675,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             prev = c;
 
             // Apply label properties
-            fontChar.setOpacityModifyRGB(this._isOpacityModifyRGB);
+            fontChar.setOpacityModifyRGB(this._opacityModifyRGB);
 
             // only apply opacity if it is different than 255 )
             if (this._opacity != 255) {
@@ -632,6 +692,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(tmpSize));
 
     },
+
+    /**
+     * update String
+     * @param {Boolean} fromUpdate
+     */
     updateString:function (fromUpdate) {
         if (this._children) {
             for (var i = 0; i < this._children.length; i++) {
@@ -641,12 +706,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 }
             }
         }
-        this.createFontChars();
-
+        if (this._configuration) {
+            this.createFontChars();
+        }
         if (!fromUpdate) {
             this.updateLabel();
         }
     },
+
     /**
      * get the text of this label
      * @return {String}
@@ -660,10 +727,13 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param newString
      */
     setString:function (newString, fromUpdate) {
-        fromUpdate = (fromUpdate != null);
-        this._string = newString + String.fromCharCode(0);
-        this._initialString = newString;
-        this.updateString(fromUpdate);
+        if (this._string != newString) {
+            this._string = newString + String.fromCharCode(0);
+            //  if(this._initialString == ""){
+            this._initialString = newString + String.fromCharCode(0);
+            //}
+            this.updateString(fromUpdate);
+        }
     },
 
     /**
@@ -673,29 +743,27 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     setCString:function (label) {
         this.setString(label);
     },
-    updateLabel:function () {
-        this.setString(this._initialString, true);
 
+    /**
+     *  update Label
+     */
+    updateLabel:function () {
         if (this._width > 0) {
+            this.setString(this._initialString, true);
+
             // Step 1: Make multiline
             var stringLength = this._string.length;
             var multiline_string = [];
-            multiline_string.reverse();
             var last_word = [];
-            last_word.reverse();
 
-            var line = 1, i = 0;
-            var start_line = false, start_word = false;
-            var startOfLine = -1, startOfWord = -1;
-            var skip = 0;
+            var line = 1, i = 0, start_line = false, start_word = false, startOfLine = -1, startOfWord = -1, skip = 0;
 
+            var characterSprite;
             for (var j = 0; j < this._children.length; j++) {
-                var characterSprite;
-
                 while (!(characterSprite = this.getChildByTag(j + skip)))
                     skip++;
-                if (!characterSprite.isVisible()) continue;
 
+                if (!characterSprite.isVisible()) continue;
                 if (i >= stringLength)
                     break;
 
@@ -805,14 +873,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
             multiline_string = multiline_string.concat(last_word);
-
             var len = multiline_string.length;
             var str_new = "";
 
             for (var i = 0; i < len; ++i) {
                 str_new += multiline_string[i];
             }
+
             this._string = str_new + String.fromCharCode(0);
+            console.log(this._string)
             this.updateString(true);
         }
 
@@ -847,7 +916,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         default:
                             break;
                     }
-                    console.log(shift)
+
                     if (shift != 0) {
                         for (var j = 0; j < line_length; j++) {
                             index = i + j + lineNumber;
@@ -869,30 +938,59 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
         }
     },
+
+    /**
+     * Set text vertical alignment
+     * @param {Number} alignment
+     */
     setAlignment:function (alignment) {
         this._alignment = alignment;
         this.updateLabel();
     },
+
+    /**
+     * @param {Number} width
+     */
     setWidth:function (width) {
         this._width = width;
         this.updateLabel();
     },
+
+    /**
+     * @param {Boolean}  breakWithoutSpace
+     */
     setLineBreakWithoutSpace:function (breakWithoutSpace) {
         this._lineBreakWithoutSpaces = breakWithoutSpace;
         this.updateLabel();
     },
+
+    /**
+     * @param {Number} scale
+     */
     setScale:function (scale) {
         this._super(scale);
         this.updateLabel();
     },
+
+    /**
+     * @param {Number} scaleX
+     */
     setScaleX:function (scaleX) {
         this._super(scaleX);
         this.updateLabel();
     },
+
+    /**
+     * @param {Number} scaleY
+     */
     setScaleY:function (scaleY) {
         this._super(scaleY);
         this.updateLabel();
     },
+    /**
+     * set fnt file path
+     * @param {String} fntFile
+     */
     setFntFile:function (fntFile) {
         if (fntFile != null && fntFile != this._fntFile) {
             var newConf = cc.FNTConfigLoadFile(fntFile);
@@ -906,12 +1004,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this.createFontChars();
         }
     },
+
     /**
      * @return {String}
      */
     getFntFile:function () {
         return this._fntFile;
     },
+
     /**
      * set the anchorpoint of the label
      * @param {cc.Point} point
@@ -948,14 +1048,23 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  * creates a bitmap font altas with an initial string and the FNT file
  * @param {String} str
  * @param {String} fntFile
- * @return {cc.LabelBMFont}
+ * @param {String} width
+ * @param {Number} alignment
+ * @param {Number} imageOffset
+ * @return {cc.LabelBMFont|Null}
  * @example
- * // Example
- * var label = cc.LabelBMFont.create('label text', 'fontfile.fnt')
+ * // Example 01
+ * var label1 = cc.LabelBMFont.create("Test case", "test.fnt");
+ *
+ * // Example 02
+ * var label2 = cc.LabelBMFont.create("test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
+ *
+ * // Example 03
+ * var label3 = cc.LabelBMFont.create("This is a \n test case", "test.fnt", 200, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
  */
-cc.LabelBMFont.create = function () {
+cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
-    if (ret && ret.initWithString(arguments)) {
+    if (ret && ret.initWithString(str, fntFile, width, alignment, imageOffset)) {
         return ret;
     }
     return null;
@@ -1000,6 +1109,10 @@ cc.FNTConfigRemoveCache = function () {
     }
 };
 
+/**
+ * @param {String} ch
+ * @return {Boolean}  weather the character is a whitespace character.
+ */
 cc.isspace_unicode = function (ch) {
     ch = ch.charCodeAt(0);
     return  ((ch >= 9 && ch <= 13) || ch == 32 || ch == 133 || ch == 160 || ch == 5760
@@ -1007,6 +1120,9 @@ cc.isspace_unicode = function (ch) {
         || ch == 8287 || ch == 12288)
 }
 
+/**
+ * @param {String} str
+ */
 cc.utf8_trim_ws = function (str) {
     var len = str.length;
 
@@ -1029,15 +1145,12 @@ cc.utf8_trim_ws = function (str) {
     }
 }
 
-
-/*
- * @str:    the string to trim
- * @index:    the index to start trimming from.
- *
+/**
  * Trims str st str=[0, index) after the operation.
- *
  * Return value: the trimmed string.
- * */
+ * @param {String} str  he string to trim
+ * @param {Number} index  the index to start trimming from.
+ */
 cc.utf8_trim_from = function (str, index) {
     var len = str.length;
     if (index >= len || index < 0)
