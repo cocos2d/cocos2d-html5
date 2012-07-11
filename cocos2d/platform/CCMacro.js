@@ -35,6 +35,12 @@ cc.PI = Math.PI;
  * @constant
  * @type Number
  */
+cc.FLT_MAX = parseFloat('3.402823466e+38F');
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.RAD = cc.PI / 180;
 
 /**
