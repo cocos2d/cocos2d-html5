@@ -1051,6 +1051,15 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
         context.restore();
     },
 
+    onExit:function(){
+       this._super();
+
+        var context = this._layerContext;
+        context.save();
+        context.clearRect(0, 0, this._layerCanvas.width, -this._layerCanvas.height);
+        context.restore();
+    },
+
     _setNodeDirtyForCache:function () {
         this._isCacheDirty = true;
         this._isNeedUpdate = true;
