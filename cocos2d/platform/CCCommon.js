@@ -145,7 +145,7 @@ else if (cc.COCOS2D_DEBUG > 1) {
     cc.LogERROR = cc.Log;
 }// COCOS2D_DEBUG
 
-if (cc._DEBUG) {
+if (cc.COCOS2D_DEBUG) {
     cc.Assert = function (cond, message) {
         if ((typeof console.assert) == "function") {
             console.assert(cond, message);

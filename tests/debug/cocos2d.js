@@ -26,13 +26,93 @@
  ****************************************************************************/
 var cc = cc = cc || {};
 var menuType = menuType || 'canvas';
-cc.dir = '../cocos2d/';
+cc.COCOS2D_DEBUG = 0;
+cc.engineDir = '../../cocos2d/';
+cc.gameDir = '';
 cc.loaded = 0;
 cc.engine = [
-    (menuType != 'dom') ? '../lib/Cocos2d-html5-dommenu-min.js' : '../lib/Cocos2d-html5-canvasmenu-min.js',
+    'platform/miniFramework.js',
+    'platform/CCClass.js',
+    'platform/CCCommon.js',
+    'platform/platform.js',
+    'platform/ZipUtils.js',
+    'platform/base64.js',
+    'platform/gzip.js',
+    'platform/CCMacro.js',
+    'platform/CCFileUtils.js',
+    'platform/CCTypes.js',
+    'cocoa/CCGeometry.js',
+    'platform/CCConfig.js',
+    'cocoa/CCSet.js',
+    'cocoa/CCNS.js',
+    'cocoa/CCAffineTransform.js',
+    'support/CCPointExtension.js',
+    'base_nodes/CCNode.js',
+    'base_nodes/CCAtlasNode.js',
+    'textures/CCTexture2D.js',
+    'textures/CCTextureCache.js',
+    'textures/CCTextureAtlas.js',
+    'misc_nodes/CCRenderTexture.js',
+    'misc_nodes/CCProgressTimer.js',
+    'effects/CCGrid.js',
+    'effects/CCGrabber.js',
+    'actions/CCAction.js',
+    'actions/CCActionInterval.js',
+    'actions/CCActionInstant.js',
+    'actions/CCActionManager.js',
+    'actions/CCActionProgressTimer.js',
+    'actions/CCActionCamera.js',
+    'actions/CCActionEase.js',
+    'actions/CCActionGrid.js',
+    'actions/CCActionTiledGrid.js',
+    'actions/CCActionGrid.js',
+    'actions/CCActionCatmullRom.js',
+    'layers_scenes_transitions_nodes/CCScene.js',
+    'layers_scenes_transitions_nodes/CCLayer.js',
+    'layers_scenes_transitions_nodes/CCTransition.js',
+    'layers_scenes_transitions_nodes/CCTransitionProgress.js',
+    'layers_scenes_transitions_nodes/CCTransitionPageTurn.js',
+    'sprite_nodes/CCSprite.js',
+    'sprite_nodes/CCAnimation.js',
+    'sprite_nodes/CCAnimationCache.js',
+    'sprite_nodes/CCSpriteFrame.js',
+    'sprite_nodes/CCSpriteFrameCache.js',
+    'sprite_nodes/CCSpriteBatchNode.js',
+    'label_nodes/CCLabelAtlas.js',
+    'label_nodes/CCLabelTTF.js',
+    'label_nodes/CCLabelBMFont.js',
+    'particle_nodes/CCParticleSystem.js',
+    'particle_nodes/CCParticleSystemQuad.js',
+    'particle_nodes/CCParticleSystemPoint.js',
+    'particle_nodes/CCParticleExamples.js',
+    'touch_dispatcher/CCTouchDelegateProtocol.js',
+    'touch_dispatcher/CCTouchHandler.js',
+    'touch_dispatcher/CCTouchDispatcher.js',
+    'keypad_dispatcher/CCKeypadDelegate.js',
+    'keypad_dispatcher/CCKeypadDispatcher.js',
+    'text_input_node/CCIMEDispatcher.js',
+    'text_input_node/CCTextFieldTTF.js',
+    'CCDirector.js',
+    'CCCamera.js',
+    'CCScheduler.js',
+    'CCLoader.js',
+    'CCDrawingPrimitives.js',
+    'platform/CCApplication.js',
+    'platform/CCSAXParser.js',
+    'platform/AppControl.js',
+    'menu_nodes/CCMenuItem.js',
+    'menu_nodes/CCMenu.js',
+    'tileMap_parallax_nodes/CCTMXTiledMap.js',
+    'tileMap_parallax_nodes/CCTMXXMLParser.js',
+    'tileMap_parallax_nodes/CCTMXObjectGroup.js',
+    'tileMap_parallax_nodes/CCTMXLayer.js',
+    'tileMap_parallax_nodes/CCParallaxNode.js',
     '../CocosDenshion/SimpleAudioEngine.js',
     '../box2d/box2d.js'
 ];
+(menuType != 'dom') ?
+    cc.engine.push('menu_nodes/CCMenuItem.js', 'menu_nodes/CCMenu.js') :
+    cc.engine.push('base_nodes/CCdomNode.js', 'menu_nodes/CCdomMenuItem.js', 'menu_nodes/CCdomMenu.js');
 cc.game = ['Classes/AppDelegate.js',
     'testbasic.js',
     'testResource.js',
@@ -74,7 +154,10 @@ cc.game = ['Classes/AppDelegate.js',
 ];
 
 cc.engine.forEach(function (e, i) {
-    cc.engine[i] = cc.dir + e;
+    cc.engine[i] = cc.engineDir + e;
+});
+cc.game.forEach(function (e, i) {
+    cc.game[i] = cc.gameDir + e;
 });
 cc.que = cc.engine.concat(cc.game);
 window.addEventListener('DOMContentLoaded', function () {
