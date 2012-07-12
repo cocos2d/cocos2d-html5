@@ -156,6 +156,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             this.canvas.height = height || 10;
 
             this.context.translate(0, this.canvas.height);
+
+            this._sprite = cc.Sprite.createWithTexture(this.canvas);
+
             return true;
         } else {
             //TODO
@@ -216,7 +219,6 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                     if (depthStencilFormat == cc.GL_DEPTH24_STENCIL8)
                         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this._depthRenderBuffer);
                 }
-
 
                 // check if it worked (probably worth doing :) )
                 cc.Assert(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Could not attach texture to framebuffer");
