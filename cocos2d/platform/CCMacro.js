@@ -114,7 +114,7 @@ cc.RADIANS_TO_DEGREES = function (angle) {
  * @constant
  * @type Number
  */
-cc.REPEAT_FOREVER = Number.MAX_VALUE -1;
+cc.REPEAT_FOREVER = Number.MAX_VALUE - 1;
 
 /**
  * default gl blend src function. Compatible with premultiplied alpha images.
@@ -138,8 +138,8 @@ cc.GL_SRC_ALPHA = 0x0302;
  * @param {cc.Node} node setup node
  * @function
  */
-cc.NODE_DRAW_SETUP = function(node){
-    ccGLEnable( node._glServerState );
+cc.NODE_DRAW_SETUP = function (node) {
+    ccGLEnable(node._glServerState);
     cc.Assert(node.getShaderProgram(), "No shader program set for this node");
     {
         node.getShaderProgram().use();
@@ -193,8 +193,8 @@ cc.DISABLE_DEFAULT_GL_STATES = function () {
  * @param {Number} addNumber
  * @function
  */
-cc.INCREMENT_GL_DRAWS = function(addNumber){
-   cc.g_NumberOfDraws += addNumber;
+cc.INCREMENT_GL_DRAWS = function (addNumber) {
+    cc.g_NumberOfDraws += addNumber;
 };
 
 /**
@@ -218,12 +218,22 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
 
 /**
  * Converts a rect in points to pixels
+ * @param {cc.Point} points
+ * @return {cc.Point}
+ * @function
+ */
+cc.POINT_POINTS_TO_PIXELS = function (points) {
+    return new cc.Point(points.x * cc.CONTENT_SCALE_FACTOR(), points.y * cc.CONTENT_SCALE_FACTOR())
+};
+
+/**
+ * Converts a rect in points to pixels
  * @param {cc.Size} sizeInPoints
  * @return {cc.Size}
  * @function
  */
-cc.SIZE_POINTS_TO_PIXELS = function(sizeInPoints){
-   return new cc.Size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints.height * cc.CONTENT_SCALE_FACTOR());
+cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
+    return new cc.Size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints.height * cc.CONTENT_SCALE_FACTOR());
 };
 
 /**
@@ -232,8 +242,8 @@ cc.SIZE_POINTS_TO_PIXELS = function(sizeInPoints){
  * @return {cc.Size}
  * @function
  */
-cc.SIZE_PIXELS_TO_POINTS = function(sizeInPixels){
-   return new cc.Size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
+cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
+    return new cc.Size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
 };
 
 /**
@@ -241,10 +251,9 @@ cc.SIZE_PIXELS_TO_POINTS = function(sizeInPixels){
  * @param pixels
  * @function
  */
-cc.POINT_PIXELS_TO_POINTS = function(pixels){
-   return new cc.Point(pixels.x / cc.CONTENT_SCALE_FACTOR(),pixels.y / cc.CONTENT_SCALE_FACTOR());
+cc.POINT_PIXELS_TO_POINTS = function (pixels) {
+    return new cc.Point(pixels.x / cc.CONTENT_SCALE_FACTOR(), pixels.y / cc.CONTENT_SCALE_FACTOR());
 };
-
 
 
 /**

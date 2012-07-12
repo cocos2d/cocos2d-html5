@@ -143,6 +143,12 @@ var TestController = cc.Layer.extend({
 });
 
 var testNames = [
+    {
+        title:"TileMapTest",
+        testScene:function () {
+            return new TileMapTestScene();
+        }
+    },
     //"Accelerometer",
     {
         title:"ActionManagerTest",
@@ -306,12 +312,7 @@ var testNames = [
             return new TextureCacheTestScene();
         }
     },
-    {
-        title:"TileMapTest",
-        testScene:function () {
-            return new TileMapTestScene();
-        }
-    },
+    //csx
     {
         title:"TouchesTest",
         testScene:function () {

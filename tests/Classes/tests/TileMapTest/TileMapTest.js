@@ -28,48 +28,48 @@ var TAG_TILE_MAP = 1;
 var TileMapTests = [
     //function(){ return new TileMapTest();}, //not support tga format
     // function(){ return new TileMapEditTest();}, //not support tga format
-    function () {
-        return new TMXOrthoTest();
-    },
-    function () {
-        return new TMXOrthoTest2();
-    }, //camera bug
-    function () {
-        return new TMXOrthoTest3();
-    },
-    function () {
-        return new TMXOrthoTest4();
-    },
-    function () {
-        return new TMXReadWriteTest();
-    },
-    function () {
-        return new TMXHexTest();
-    },
-    function () {
-        return new TMXIsoTest();
-    },
-    function () {
-        return new TMXIsoTest1();
-    },
-    function () {
-        return new TMXIsoTest2();
-    },
-    function () {
-        return new TMXUncompressedTest();
-    },
-    function () {
-        return new TMXTilesetTest();
-    },
-    function () {
-        return new TMXOrthoObjectsTest();
-    },
-    function () {
-        return new TMXIsoObjectsTest();
-    },
-    function () {
-        return new TMXResizeTest();
-    },
+    /*function () {
+     return new TMXOrthoTest();
+     },//ok
+     function () {
+     return new TMXOrthoTest2();
+     }, //camera bug
+     function () {
+     return new TMXOrthoTest3();
+     },//ok
+     function () {
+     return new TMXOrthoTest4();
+     },//ok
+     function () {
+     return new TMXReadWriteTest();
+     },//ok
+     function () {
+     return new TMXHexTest();
+     },//ok
+     function () {
+     return new TMXIsoTest();
+     },//ok
+     function () {
+     return new TMXIsoTest1();
+     },//ok
+     function () {
+     return new TMXIsoTest2();
+     },//ok
+     function () {
+     return new TMXUncompressedTest();
+     },//ok
+     function () {
+     return new TMXTilesetTest();
+     },//ok
+     function () {
+     return new TMXOrthoObjectsTest();
+     },//ok
+     function () {
+     return new TMXIsoObjectsTest();
+     },//ok
+     function () {
+     return new TMXResizeTest();
+     },//ok   */
     function () {
         return new TMXIsoZorder();
     },
@@ -78,11 +78,23 @@ var TileMapTests = [
     },
     //function(){ return new TMXIsoVertexZ();}, //VertexZ bug
     //function(){ return new TMXOrthoVertexZ();}, //VertexZ bug
+    /*function () {
+     return new TMXIsoMoveLayer();
+     },//ok
+     function () {
+     return new TMXOrthoMoveLayer();
+     }, */
     function () {
-        return new TMXIsoMoveLayer();
+        return new TMXTilePropertyTest();
     },
     function () {
-        return new TMXOrthoMoveLayer();
+        return new TMXOrthoFlipTest();
+    },
+    function () {
+        return new TMXOrthoFlipRunTimeTest();
+    },
+    function () {
+        return new TMXOrthoFromXMLTest();
     },
     function () {
         return new TMXBug987();
@@ -224,9 +236,8 @@ var TileMapTest = TileDemo.extend({
         map.getTexture().setAntiAliasTexParameters();
 
         var s = map.getContentSize();
+        cc.Log("ContentSize: " + s.width + " " + s.height);
 
-        // If you are not going to use the Map, you can free it now
-        // NEW since v0.7
         map.releaseMap();
 
         this.addChild(map, 0, TAG_TILE_MAP);
@@ -253,6 +264,7 @@ var TileMapEditTest = TileDemo.extend({
         map.getTexture().setAliasTexParameters();
 
         var s = map.getContentSize();
+        cc.Log("ContentSize: " + s.width + " " + s.height);
 
         // If you are not going to use the Map, you can free it now
         // [tilemap releaseMap);
@@ -299,17 +311,10 @@ var TMXOrthoTest = TileDemo.extend({
         var map = cc.TMXTiledMap.create("Resources/TileMaps/orthogonal-test1.tmx");
         this.addChild(map, 0, TAG_TILE_MAP);
 
-        var childrenArray = map.getChildren();
-        for (var i = 0; i < childrenArray.length; i++) {
-            var child = childrenArray[i];
-            if (!child)
-                break;
-            //child.getTexture().setAntiAliasTexParameters();
-        }
         map.runAction(cc.ScaleBy.create(2, 0.5));
     },
     title:function () {
-        return "TMX Ortho test2";
+        return "TMX Ortho test";
     }
 });
 
@@ -329,22 +334,12 @@ var TMXOrthoTest2 = TileDemo.extend({
         var map = cc.TMXTiledMap.create("Resources/TileMaps/orthogonal-test2.tmx");
         this.addChild(map, 0, TAG_TILE_MAP);
 
-        var s = map.getContentSize();
-        var childrenArray = map.getChildren();
-        var child = null;
-        for (var i = 0, len = childrenArray.length; i < len; i++) {
-            child = childrenArray[i];
-            if (!child) break;
-
-            //child.getTexture().setAntiAliasTexParameters();
-        }
-
-        var x, y, z;
-        map.getCamera().getEyeXYZ(x, y, z);
-        map.getCamera().setEyeXYZ(x - 200, y, z + 300);
+        /*var x, y, z;
+         map.getCamera().getEyeXYZ(x, y, z);
+         map.getCamera().setEyeXYZ(x - 200, y, z + 300);*/
     },
     title:function () {
-        return "TMX Orthogonal test";
+        return "TMX Orthogonal test 2";
     },
     onEnter:function () {
         this._super();
@@ -368,18 +363,6 @@ var TMXOrthoTest3 = TileDemo.extend({
         var map = cc.TMXTiledMap.create("Resources/TileMaps/orthogonal-test3.tmx");
         this.addChild(map, 0, TAG_TILE_MAP);
 
-        var s = map.getContentSize();
-        var childrenArray = map.getChildren();
-        var child = null;
-        for (var i = 0, len = childrenArray.length; i < len; i++) {
-            child = childrenArray[i];
-
-            if (!child)
-                break;
-
-            //child.getTexture().setAntiAliasTexParameters();
-        }
-
         map.setScale(0.2);
         map.setAnchorPoint(cc.ccp(0.5, 0.5));
     },
@@ -398,16 +381,6 @@ var TMXOrthoTest4 = TileDemo.extend({
         this._super();
         var map = cc.TMXTiledMap.create("Resources/TileMaps/orthogonal-test4.tmx");
         this.addChild(map, 0, TAG_TILE_MAP);
-
-        var childrenArray = map.getChildren();
-        var child = null;
-        for (var i = 0, len = childrenArray.length; i < len; i++) {
-            child = childrenArray[i];
-            if (!child)
-                break;
-
-            //child.getTexture().setAntiAliasTexParameters();
-        }
 
         map.setAnchorPoint(cc.ccp(0, 0));
 
@@ -459,7 +432,6 @@ var TMXReadWriteTest = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         var s = map.getContentSize();
-
 
         var layer = map.layerNamed("Layer 0");
         //layer.getTexture().setAntiAliasTexParameters();
@@ -518,7 +490,6 @@ var TMXReadWriteTest = TileDemo.extend({
         this.gid2 = (this.gid2 + 1) % 80;
     },
     repaintWithGID:function (dt) {
-        //	[self unschedule:_cmd);
 
         var map = this.getChildByTag(TAG_TILE_MAP);
         var layer = map.getChildByTag(0);
@@ -863,9 +834,8 @@ var TMXIsoZorder = TileDemo.extend({
         this.tamara = cc.Sprite.create(s_pathSister1);
         map.addChild(this.tamara, map.getChildren().length);
         var mapWidth = map.getMapSize().width * map.getTileSize().width;
-        this.tamara.setPositionInPixels(cc.ccp(mapWidth / 2, 0));
+        this.tamara.setPosition(cc.POINT_PIXELS_TO_POINTS(cc.ccp(mapWidth / 2, 0)));
         this.tamara.setAnchorPoint(cc.ccp(0.5, 0));
-
 
         var move = cc.MoveBy.create(10, cc.ccpMult(cc.ccp(300, 250), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
@@ -885,17 +855,17 @@ var TMXIsoZorder = TileDemo.extend({
         this._super();
     },
     repositionSprite:function (dt) {
-        var p = this.tamara.getPositionInPixels();
+        var p = this.tamara.getPosition();
+        p = cc.POINT_POINTS_TO_PIXELS(p);
         var map = this.getChildByTag(TAG_TILE_MAP);
 
         // there are only 4 layers. (grass and 3 trees layers)
         // if tamara < 48, z=4
         // if tamara < 96, z=3
-        // if tamara < 144,z=2
+        // if tamara < 144, z=2
 
         var newZ = 4 - (p.y / 48);
-        newZ = Math.max(newZ, 0);
-
+        newZ = parseInt(Math.max(newZ, 0));
         map.reorderChild(this.tamara, newZ);
     }
 });
@@ -932,7 +902,8 @@ var TMXOrthoZorder = TileDemo.extend({
         return "Sprite should hide behind the trees";
     },
     repositionSprite:function (dt) {
-        var p = this.tamara.getPositionInPixels();
+        var p = this.tamara.getPosition();
+        p = cc.POINT_POINTS_TO_PIXELS(p);
         var map = this.getChildByTag(TAG_TILE_MAP);
 
         // there are only 4 layers. (grass and 3 trees layers)
@@ -985,17 +956,18 @@ var TMXIsoVertexZ = TileDemo.extend({
     onEnter:function () {
         this._super();
         // TIP: 2d projection should be used
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_2D);
     },
     onExit:function () {
 // At exit use any other projection.
-        //	CCDirector.sharedDirector().setProjection:CCDIRECTOR_PROJECTION_3D);
+        //	cc.Director.sharedDirector().setProjection:cc.DIRECTOR_PROJECTION_3D);
         this._super();
     },
     repositionSprite:function (dt) {
         // tile height is 64x32
         // map size: 30x30
-        var p = this.tamara.getPositionInPixels();
+        var p = this.tamara.getPosition();
+        p = cc.POINT_POINTS_TO_PIXELS(p);
         this.tamara.setVertexZ(-( (p.y + 32) / 16));
     }
 });
@@ -1037,17 +1009,18 @@ var TMXOrthoVertexZ = TileDemo.extend({
         this._super();
 
         // TIP: 2d projection should be used
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_2D);
     },
     onExit:function () {
         // At exit use any other projection.
-        //	CCDirector.sharedDirector().setProjection:CCDIRECTOR_PROJECTION_3D);
+        //	cc.Director.sharedDirector().setProjection:cc.DIRECTOR_PROJECTION_3D);
         this._super();
     },
     repositionSprite:function (dt) {
         // tile height is 64x32
         // map size: 30x30
-        var p = this.tamara.getPositionInPixels();
+        var p = this.tamara.getPosition();
+        p = cc.POINT_POINTS_TO_PIXELS(p);
         this.tamara.setVertexZ(-( (p.y + 32) / 16));
     }
 });
@@ -1095,6 +1068,131 @@ var TMXOrthoMoveLayer = TileDemo.extend({
     }
 });
 
+var TMXTilePropertyTest = TileDemo.extend({
+    ctor:function () {
+        var map = cc.TMXTiledMap.create("TileMaps/ortho-tile-property.tmx");
+        this.addChild(map, 0, TAG_TILE_MAP);
+
+        for (var i = 1; i <= 20; i++) {
+            cc.Log("GID:%i, Properties:%p", i, map.propertiesForGID(i));
+        }
+    },
+    title:function () {
+        return "TMX Tile Property Test";
+    },
+    subtitle:function () {
+        return "In the console you should see tile properties";
+    }
+});
+
+var TMXOrthoFlipTest = TileDemo.extend({
+    ctor:function () {
+        var map = cc.TMXTiledMap.create("TileMaps/ortho-rotation-test.tmx");
+        this.addChild(map, 0, TAG_TILE_MAP);
+
+        var s = map.getContentSize();
+        cc.Log("ContentSize: %f, %f", s.width, s.height);
+
+        for (var i = 0; i < map.getChildren().length; i++) {
+            var child = map.getChildren()[i];
+            child.getTexture().setAntiAliasTexParameters();
+        }
+
+        var action = cc.ScaleBy.create(2, 0.5);
+        map.runAction(action);
+    },
+    title:function () {
+        return "TMX tile flip test";
+    }
+});
+
+var TMXOrthoFlipRunTimeTest = TileDemo.extend({
+    ctor:function () {
+        var map = cc.TMXTiledMap.create("TileMaps/ortho-rotation-test.tmx");
+        this.addChild(map, 0, TAG_TILE_MAP);
+
+        var s = map.getContentSize();
+        cc.Log("ContentSize: %f, %f", s.width, s.height);
+
+        for (var i = 0; i < map.getChildren().length; i++) {
+            var child = map.getChildren()[i];
+            child.getTexture().setAntiAliasTexParameters();
+        }
+
+        var action = cc.ScaleBy.create(2, 0.5);
+        map.runAction(action);
+
+        this.schedule(this.flipIt, 1);
+    },
+    title:function () {
+        return "TMX tile flip run time test";
+    },
+    subtitle:function () {
+        return "in 2 sec bottom left tiles will flip";
+    },
+    flipIt:function () {
+        var map = this.getChildByTag(TAG_TILE_MAP);
+        var layer = map.layerNamed("Layer 0");
+
+        //blue diamond
+        var tileCoord = cc.ccp(1, 10);
+        var flags;
+        var GID = layer.tileGIDAt(tileCoord, flags);
+        // Vertical
+        if (flags & cc.TMXTileVerticalFlag)
+            flags &= ~cc.TMXTileVerticalFlag;
+        else
+            flags |= cc.TMXTileVerticalFlag;
+        layer.setTileGID(GID, tileCoord, flags);
+
+
+        tileCoord = cc.ccp(1, 8);
+        GID = layer.tileGIDAt(tileCoord, flags);
+        // Vertical
+        if (flags & cc.TMXTileVerticalFlag)
+            flags &= ~cc.TMXTileVerticalFlag;
+        else
+            flags |= cc.TMXTileVerticalFlag;
+        layer.setTileGID(GID, tileCoord, flags);
+
+
+        tileCoord = ccp(2, 8);
+        GID = layer.tileGIDAt(tileCoord, flags);
+        // Horizontal
+        if (flags & cc.TMXTileHorizontalFlag)
+            flags &= ~cc.TMXTileHorizontalFlag;
+        else
+            flags |= kcc.TMXTileHorizontalFlag;
+        layer.setTileGID(GID, tileCoord, flags);
+    }
+});
+
+var TMXOrthoFromXMLTest = TileDemo.extend({
+    ctor:function () {
+        var resources = "TileMaps";        // partial paths are OK as resource paths.
+        var file = resources + "/orthogonal-test1.tmx";
+
+        var str = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(file);
+        cc.Assert(str != null, "Unable to open file");
+
+        var map = cc.TMXTiledMap.create(str, resources);
+        this.addChild(map, 0, TAG_TILE_MAP);
+
+        var s = map.getContentSize();
+        cc.Log("ContentSize: %f, %f", s.width, s.height);
+
+        for (var i = 0; i < map.getChildren().length; i++) {
+            var child = map.getChildren()[i];
+            child.getTexture().setAntiAliasTexParameters();
+        }
+
+        var action = cc.ScaleBy.create(2, 0.5);
+        map.runAction(action);
+    },
+    title:function () {
+        return "TMX created from XML test";
+    }
+});
 //------------------------------------------------------------------
 //
 // TMXBug987

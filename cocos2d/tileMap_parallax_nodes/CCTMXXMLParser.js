@@ -81,6 +81,14 @@ cc.TMXPropertyObject = 4;
  */
 cc.TMXPropertyTile = 5;
 
+cc.TMXTileHorizontalFlag = 0x80000000;
+cc.TMXTileVerticalFlag = 0x40000000;
+cc.TMXTileDiagonalFlag = 0x20000000;
+cc.FlipedAll = cc.TMXTileHorizontalFlag | cc.TMXTileVerticalFlag | cc.TMXTileDiagonalFlag;
+cc.FlippedMask = ~(cc.FlipedAll);
+
+// Bits on the far end of the 32-bit global tile ID (GID's) are used for tile flags
+
 /** <p>cc.TMXLayerInfo contains the information about the layers like: <br />
  * - Layer name<br />
  * - Layer size <br />
@@ -171,6 +179,7 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
     rectForGID:function (gid) {
         var rect = cc.RectZero();
         rect.size = this._tileSize;
+        gid &= cc.FlippedMask;
         gid = gid - parseInt(this.firstGid);
         var max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing));
         rect.origin.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin);
@@ -213,7 +222,10 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _currentString:null,
     // tile properties
     _tileProperties:[],
-
+    _resources:"",
+    ctor:function(){
+        this._tileSets = [];
+    },
     /**
      * @return {Number}
      */
@@ -384,22 +396,17 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {String}
      */
     initWithTMXFile:function (tmxFile) {
-        this._tileSets = [];
-        this._layers = [];
-        this._TMXFileName = tmxFile;
-        this._objectGroups = [];
-        this._properties = [];
-        this._tileProperties = [];
-
-        // tmp vars
-        this._currentString = "";
-        this._storingCharacters = false;
-        this._layerAttribs = cc.TMXLayerAttribNone;
-        this._parentElement = cc.TMXPropertyNone;
-
+        this._internalInit(tmxFile, null);
         return this.parseXMLFile(this._TMXFileName);
     },
 
+    /**
+     * initializes a TMX format with an XML string and a TMX resource path
+     */
+    initWithXML:function (tmxString, resourcePath) {
+        this._internalInit(null, resourcePath);
+        return this.parseXMLString(tmxString);
+    },
     /** Initalises parsing of an XML file, either a tmx (Map) file or tsx (Tileset) file
      * @param {String} xmlFilename
      * @return {Element}
@@ -453,6 +460,23 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             var externalTilesetFilename = t.getAttribute('source');
             var imgpath = xmlFilename.substring(0, xmlFilename.lastIndexOf("/") + 1);
             if (externalTilesetFilename) {
+
+                /* if (m_sTMXFileName.length() == 0)
+                 {
+                 string pszFullPath = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(m_sResources.c_str());
+                 if (pszFullPath.find_last_of("/\\") != pszFullPath.length()-1)
+                 {
+                 pszFullPath.append("/");
+                 }
+
+                 externalTilesetFilename = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(externalTilesetFilename.c_str(), pszFullPath.c_str()  );
+                 }
+                 else
+                 {
+                 externalTilesetFilename = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(externalTilesetFilename.c_str(), pTMXMapInfo.getTMXFileName());
+                 }*/
+
+
                 this.parseXMLFile(imgpath + externalTilesetFilename);
             }
             else {
@@ -474,6 +498,22 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 }
                 tileset.sourceImage = imgSource;
                 this.setTilesets(tileset);
+                /**
+                 *   if (m_sTMXFileName.length() == 0)
+                 {
+                 string pszFullPath = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(m_sResources.c_str());
+                 if (pszFullPath.find_last_of("/\\") != pszFullPath.length()-1)
+                 {
+                 pszFullPath.append("/");
+                 }
+
+                 tileset.m_sSourceImage = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(imagename.c_str(), pszFullPath.c_str()  );
+                 }
+                 else
+                 {
+                 tileset.m_sSourceImage = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(imagename.c_str(), pTMXMapInfo.getTMXFileName());
+                 }
+                 */
             }
         }
 
@@ -649,10 +689,27 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 }
             }
         }
-
         return map;
     },
+    /**
+     * initalises parsing of an XML string, either a tmx (Map) string or tsx (Tileset) string
+     */
+    parseXMLString:function (xmlString) {
+        if (xmlString == null || xmlString.length <= 0) {
+            return false;
+        }
 
+        cc.SAXParser
+        parser;
+
+        if (false == parser.init("UTF-8")) {
+            return false;
+        }
+
+        parser.setDelegator(this);
+
+        return parser.parse(xmlString, len);
+    },
     /**
      * @return {object}
      */
@@ -693,6 +750,29 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      */
     setTMXFileName:function (fileName) {
         this._TMXFileName = fileName;
+    },
+    _internalInit:function (tmxFileName, resourcePath) {
+        this._tileSets = [];
+        this._layers = [];
+
+        if (tmxFileName != null) {
+            this._TMXFileName = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(tmxFileName);
+        }
+
+        if (resourcePath != null) {
+            this._resources = resourcePath;
+        }
+
+        this._objectGroups = [];
+
+        this._properties = {};
+        this._tileProperties = {};
+
+        // tmp vars
+        this._currentString = "";
+        this._storingCharacters = false;
+        this._layerAttribs = cc.TMXLayerAttribNone;
+        this._parentElement = cc.TMXPropertyNone;
     }
 });
 
