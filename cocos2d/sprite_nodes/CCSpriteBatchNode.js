@@ -656,6 +656,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                     this._renderTexture.context.translate(this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
 
                     if (this._children) {
+                        this.sortAllChildren();
                         for (i = 0; i < this._children.length; i++) {
                             if (this._children[i]) {
                                 this._children[i].visit(this._renderTexture.context);
@@ -668,6 +669,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 this.draw(ctx);
             } else {
                 if (this._children) {
+                    this.sortAllChildren();
                     for (i = 0; i < this._children.length; i++) {
                         if (this._children[i]) {
                             this._children[i].visit(context);
@@ -814,7 +816,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (this._descendants && this._descendants.length > 0) {
             for (i = 0; i < this._descendants.length; i++) {
                 if (this._descendants[i]) {
-                    this._descendants.setBatchNode(null);
+                    this._descendants[i].setBatchNode(null);
                 }
             }
         }
