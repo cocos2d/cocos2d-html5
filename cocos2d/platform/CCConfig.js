@@ -217,6 +217,19 @@ cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
 
 /**
  * <p>
+ *    By default, cc.TextureAtlas (used by many cocos2d classes) will use VAO (Vertex Array Objects).<br/>
+ *    Apple recommends its usage but they might consume a lot of memory, specially if you use many of them.<br/>
+ *    So for certain cases, where you might need hundreds of VAO objects, it might be a good idea to disable it.<br/>
+ *    <br/>
+ *    To disable it set it to 0. Enabled by default.<br/>
+ * </p>
+ * @constant
+ * @type Number
+ */
+cc.TEXTURE_ATLAS_USE_VAO = 1;
+
+/**
+ * <p>
  *  If enabled, NPOT textures will be used where available. Only 3rd gen (and newer) devices support NPOT textures.<br/>
  *  NPOT textures have the following limitations:<br/>
  *     - They can't have mipmaps<br/>

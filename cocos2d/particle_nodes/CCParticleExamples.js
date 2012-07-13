@@ -32,7 +32,7 @@
  * @example
  * var emitter = cc.ParticleFire.create();
  */
-cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleFire# */{
+cc.ParticleFire = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFire# */{
     /**
      * initialize a fire particle system
      * @return {Boolean}
@@ -107,7 +107,7 @@ cc.ParticleFire = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleF
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(true);
+            this.setBlendAdditive(true);
             return true;
         }
         return false;
@@ -137,7 +137,7 @@ cc.ParticleFire.create = function () {
  * @example
  * var emitter = cc.ParticleFireworks.create();
  */
-cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleFireworks# */{
+cc.ParticleFireworks = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFireworks# */{
     /**
      * initialize a fireworks particle system
      * @return {Boolean}
@@ -210,7 +210,7 @@ cc.ParticleFireworks = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.Part
             this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // additive
-            this.setIsBlendAdditive(false);
+            this.setBlendAdditive(false);
             return true;
         }
         return false;
@@ -240,7 +240,7 @@ cc.ParticleFireworks.create = function () {
  * @example
  * var emitter = cc.ParticleSun.create();
  */
-cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSun# */{
+cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
     /**
      * initialize a sun particle system
      * @return {Boolean}
@@ -258,7 +258,7 @@ cc.ParticleSun = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSu
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // additive
-            this.setIsBlendAdditive(true);
+            this.setBlendAdditive(true);
 
             // duration
             this._duration = cc.CCPARTICLE_DURATION_INFINITY;
@@ -347,7 +347,7 @@ cc.ParticleSun.create = function () {
  * @example
  * var emitter = cc.ParticleGalaxy.create();
  */
-cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleGalaxy# */{
+cc.ParticleGalaxy = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleGalaxy# */{
     /**
      * initialize a galaxy particle system
      * @return {Boolean}
@@ -425,7 +425,7 @@ cc.ParticleGalaxy = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.Particl
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(true);
+            this.setBlendAdditive(true);
             return true;
         }
         return false;
@@ -454,7 +454,7 @@ cc.ParticleGalaxy.create = function () {
  * @example
  * var emitter = cc.ParticleFlower.create();
  */
-cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleFlower# */{
+cc.ParticleFlower = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFlower# */{
     /**
      * initialize a flower particle system
      * @return {Boolean}
@@ -532,7 +532,7 @@ cc.ParticleFlower = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.Particl
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(true);
+            this.setBlendAdditive(true);
             return true;
         }
         return false;
@@ -563,7 +563,7 @@ cc.ParticleFlower.create = function () {
  * @example
  * var emitter = cc.ParticleMeteor.create();
  */
-cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleMeteor# */{
+cc.ParticleMeteor = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleMeteor# */{
     /**
      * initialize a meteor particle system
      * @return {Boolean}
@@ -641,7 +641,7 @@ cc.ParticleMeteor = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.Particl
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(true);
+            this.setBlendAdditive(true);
             return true;
         }
         return false;
@@ -671,7 +671,7 @@ cc.ParticleMeteor.create = function () {
  * @example
  * var emitter = cc.ParticleSpiral.create();
  */
-cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSpiral# */{
+cc.ParticleSpiral = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSpiral# */{
     /**
      * initialize a spiral particle system
      * @return {Boolean}
@@ -749,7 +749,7 @@ cc.ParticleSpiral = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.Particl
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(false);
+            this.setBlendAdditive(false);
             return true;
         }
         return false;
@@ -779,7 +779,7 @@ cc.ParticleSpiral.create = function () {
  * @example
  * var emitter = cc.ParticleExplosion.create();
  */
-cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleExplosion# */{
+cc.ParticleExplosion = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleExplosion# */{
     /**
      * initialize an explosion particle system
      * @return {Boolean}
@@ -856,7 +856,7 @@ cc.ParticleExplosion = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.Part
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(false);
+            this.setBlendAdditive(false);
             return true;
         }
         return false;
@@ -886,7 +886,7 @@ cc.ParticleExplosion.create = function () {
  * @example
  * var emitter = cc.ParticleSmoke.create();
  */
-cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSmoke# */{
+cc.ParticleSmoke = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSmoke# */{
     /**
      * initialize a smoke particle system
      * @return {Boolean}
@@ -960,7 +960,7 @@ cc.ParticleSmoke = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.Particle
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(false);
+            this.setBlendAdditive(false);
             return true;
         }
         return false;
@@ -990,7 +990,7 @@ cc.ParticleSmoke.create = function () {
  * @example
  * var emitter = cc.ParticleSnow.create();
  */
-cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleSnow# */{
+cc.ParticleSnow = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSnow# */{
     /**
      * initialize a snow particle system
      * @return {Boolean}
@@ -1068,7 +1068,7 @@ cc.ParticleSnow = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleS
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(false);
+            this.setBlendAdditive(false);
             return true;
         }
         return false;
@@ -1099,7 +1099,7 @@ cc.ParticleSnow.create = function () {
  * @example
  * var emitter = cc.ParticleRain.create();
  */
-cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleRain# */{
+cc.ParticleRain = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleRain# */{
     /**
      * initialize a rain particle system
      * @return {Boolean}
@@ -1177,7 +1177,7 @@ cc.ParticleRain = cc.ARCH_OPTIMAL_PARTICLE_SYSTEM.extend(/** @lends cc.ParticleR
             this._endColorVar.a = 0.0;
 
             // additive
-            this.setIsBlendAdditive(false);
+            this.setBlendAdditive(false);
             return true;
         }
         return false;

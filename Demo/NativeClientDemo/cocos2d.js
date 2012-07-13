@@ -146,7 +146,6 @@ if(!isDebugMode){
     cc.loadjs('../../cocos2d/label_nodes/CCLabelBMFont.js');
     cc.loadjs('../../cocos2d/particle_nodes/CCParticleSystem.js');
     cc.loadjs('../../cocos2d/particle_nodes/CCParticleSystemQuad.js');
-    cc.loadjs('../../cocos2d/particle_nodes/CCParticleSystemPoint.js');
     cc.loadjs('../../cocos2d/particle_nodes/CCParticleExamples.js');
     cc.loadjs('../../cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js');
     cc.loadjs('../../cocos2d/touch_dispatcher/CCTouchHandler.js');
