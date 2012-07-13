@@ -303,7 +303,7 @@ var ParticlePerformTest1 = ParticleMainScene.extend({
         particleSystem.setStartSizeVar(0);
 
         // additive
-        particleSystem.setIsBlendAdditive(false);
+        particleSystem.setBlendAdditive(false);
     }
 });
 
@@ -370,7 +370,7 @@ var ParticlePerformTest2 = ParticleMainScene.extend({
         particleSystem.setStartSizeVar(0);
 
         // additive
-        particleSystem.setIsBlendAdditive(false);
+        particleSystem.setBlendAdditive(false);
     }
 });
 
@@ -437,7 +437,7 @@ var ParticlePerformTest3 = ParticleMainScene.extend({
         particleSystem.setStartSizeVar(0);
 
         // additive
-        particleSystem.setIsBlendAdditive(false);
+        particleSystem.setBlendAdditive(false);
     }
 });
 
@@ -504,7 +504,7 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
         particleSystem.setStartSizeVar(0);
 
         // additive
-        particleSystem.setIsBlendAdditive(false);
+        particleSystem.setBlendAdditive(false);
     }
 });
 

@@ -187,8 +187,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var director = cc.Director.sharedDirector();
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
-
-        this._children = [];
     },
 
     /**

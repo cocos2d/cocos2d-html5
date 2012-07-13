@@ -480,7 +480,7 @@ var DemoBigFlower = ParticleDemo.extend({
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
 
         // additive
-        this._emitter.setIsBlendAdditive(true);
+        this._emitter.setBlendAdditive(true);
 
         this.setEmitterPosition();
     },
@@ -557,7 +557,7 @@ var DemoRotFlower = ParticleDemo.extend({
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
 
         // additive
-        this._emitter.setIsBlendAdditive(false);
+        this._emitter.setBlendAdditive(false);
 
         this.setEmitterPosition();
     },
@@ -607,7 +607,7 @@ var DemoExplosion = ParticleDemo.extend({
 
         this._emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_stars1));
         this._emitter.setShapeType(cc.PARTICLE_STAR_SHAPE);
-        this._emitter.setIsAutoRemoveOnFinish(true);
+        this._emitter.setAutoRemoveOnFinish(true);
 
         this.setEmitterPosition();
     },
@@ -700,9 +700,6 @@ var DemoModernArt = ParticleDemo.extend({
     onEnter:function () {
         this._super();
 
-        //FIXME: If use CCParticleSystemPoint, bada 1.0 device will crash.
-        //  Crash place: CCParticleSystemPoint.cpp Line 149, function: glDrawArrays(GL_POINTS, 0, this._particleIdx);
-        //  this._emitter = new CCParticleSystemPoint();
         this._emitter = new cc.ParticleSystemQuad();
         //this._emitter.initWithTotalParticles(1000);
         this._emitter.initWithTotalParticles(200);
@@ -769,7 +766,7 @@ var DemoModernArt = ParticleDemo.extend({
         this._emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
         this._emitter.setShapeType(cc.PARTICLE_BALL_SHAPE);
         // additive
-        this._emitter.setIsBlendAdditive(false);
+        this._emitter.setBlendAdditive(false);
 
         this.setEmitterPosition();
     },
@@ -936,7 +933,7 @@ var RadiusMode1 = ParticleDemo.extend({
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
 
         // additive
-        this._emitter.setIsBlendAdditive(false);
+        this._emitter.setBlendAdditive(false);
     },
     title:function () {
         return "Radius Mode: Spiral";
@@ -1014,7 +1011,7 @@ var RadiusMode2 = ParticleDemo.extend({
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
 
         // additive
-        this._emitter.setIsBlendAdditive(false);
+        this._emitter.setBlendAdditive(false);
     },
     title:function () {
         return "Radius Mode: Semi Circle";
@@ -1092,7 +1089,7 @@ var Issue704 = ParticleDemo.extend({
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
 
         // additive
-        this._emitter.setIsBlendAdditive(false);
+        this._emitter.setBlendAdditive(false);
 
         var rot = cc.RotateBy.create(16, 360);
         this._emitter.runAction(cc.RepeatForever.create(rot));

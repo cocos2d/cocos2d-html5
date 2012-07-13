@@ -34,10 +34,8 @@
  *      - Particle size can be any float number. <br/>
  *      - The system can be scaled <br/>
  *      - The particles can be rotated     <br/>
- *      - On 1st and 2nd gen iPhones: It is only a bit slower that CCParticleSystemPoint <br/>
- *      - On 3rd gen iPhone and iPads: It is MUCH faster than CCParticleSystemPoint  <br/>
- *      - It consumes more RAM and more GPU memory than CCParticleSystemPoint  <br/>
  *      - It supports subrects   <br/>
+ *      - It supports batched rendering since 1.1<br/>
  * </p>
  * @class
  * @extends cc.ParticleSystem
@@ -51,20 +49,24 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     _quads:null,
     // indices
     _indices:null,
-    // VBO id
-    _quadsID:0,
+
+    _VAOname:0,
+    //0: vertex  1: indices
+    _buffersVBO:[],
     /**
      * Constructor
      * @override
      */
     ctor:function () {
         this._super();
+        this._buffersVBO = [0, 0];
+        this._quads = [];
     },
 
     /**
      * initialices the indices for the vertices
      */
-    initIndices:function () {
+    setupIndices:function () {
         for (var i = 0; i < this._totalParticles; ++i) {
             var i6 = i * 6;
             var i4 = i * 4;
@@ -123,24 +125,35 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         top = bottom;
         bottom = temp;
 
-        this._quads = [];
-        for (var i = 0; i < this._totalParticles; i++) {
-            this._quads[i] = cc.V3F_C4B_T2F_QuadZero();
+        var quads = null;
+        var start = 0, end = 0;
+        if (this._batchNode) {
+            quads = this._batchNode.getTextureAtlas().getQuads();
+            start = this._atlasIndex;
+            end = this._atlasIndex + this._totalParticles;
+        } else {
+            quads = this._quads;
+            start = 0;
+            end = this._totalParticles;
         }
 
-        for (var i = 0; i < this._totalParticles; i++) {
+        for (var i = start; i < this.end; i++) {
+            if (!quads[i]) {
+                quads[i] = cc.V3F_C4B_T2F_QuadZero();
+            }
+
             // bottom-left vertex:
-            this._quads[i].bl.texCoords.u = left;
-            this._quads[i].bl.texCoords.v = bottom;
+            quads[i].bl.texCoords.u = left;
+            quads[i].bl.texCoords.v = bottom;
             // bottom-right vertex:
-            this._quads[i].br.texCoords.u = right;
-            this._quads[i].br.texCoords.v = bottom;
+            quads[i].br.texCoords.u = right;
+            quads[i].br.texCoords.v = bottom;
             // top-left vertex:
-            this._quads[i].tl.texCoords.u = left;
-            this._quads[i].tl.texCoords.v = top;
+            quads[i].tl.texCoords.u = left;
+            quads[i].tl.texCoords.v = top;
             // top-right vertex:
-            this._quads[i].tr.texCoords.u = right;
-            this._quads[i].tr.texCoords.v = top;
+            quads[i].tr.texCoords.u = right;
+            quads[i].tr.texCoords.v = top;
         }
     },
 
@@ -185,47 +198,23 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         // base initialization
         if (this._super(numberOfParticles)) {
             // allocating data space
-            this._quads = [];
-            for (var i = 0; i < this._totalParticles; i++) {
-                this._quads[i] = cc.V3F_C4B_T2F_QuadZero();
+            if (!this._allocMemory()) {
+                return false;
             }
-            this._indices = [];
-            for (i = 0; i < this._totalParticles * 6; i++) {
-                this._indices[i] = 0;
-            }
-
-            if (!this._quads || !this._indices) {
-                cc.Log("cocos2d: Particle system: not enough memory");
-                if (this._quads)
-                    this._quads = null;
-                if (this._indices)
-                    this._indices = null;
-
-                return null;
-            }
-
-            // initialize only once the texCoords and the indices
-            if (this._texture) {
-                this.initTexCoordsWithRect(cc.RectMake(0, 0, this._texture.getPixelsWide(), this._texture.getPixelsHigh()));
+            this.setupIndices();
+            if (cc.TEXTURE_ATLAS_USE_VAO) {
+                this._setupVBOandVAO();
             } else {
-                this.initTexCoordsWithRect(cc.RectMake(0, 0, 1, 1));
+                this._setupVBO();
             }
 
-            this.initIndices();
+            //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTextureColor));
 
-            if (cc.USES_VBO) {
-                //TODO
-                //glEnable(GL_VERTEX_ARRAY);
-
-                // create the VBO buffer
-                //glGenBuffers(1, quadsID);
-
-
-                // initial binding
-                //glBindBuffer(GL_ARRAY_BUFFER, quadsID);
-                //glBufferData(GL_ARRAY_BUFFER, sizeof(quads[0])*totalParticles, quads, GL_DYNAMIC_DRAW);
-                //glBindBuffer(GL_ARRAY_BUFFER, 0);
-            }
+            // Need to listen the event only when not use batchnode, because it will use VBO
+            //extension.CCNotificationCenter.sharedNotificationCenter().addObserver(this,
+            //    callfuncO_selector(cc.ParticleSystemQuad.listenBackToForeground),
+            //    EVNET_COME_TO_FOREGROUND,
+            //    null);
 
             return true;
         }
@@ -263,10 +252,19 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     updateQuadWithParticle:function (particle, newPosition) {
         // colors
-        var quad = this._quads[this._particleIdx];
+        var quad = null;
+        if (this._batchNode) {
+            var batchQuads = this._batchNode.getTextureAtlas().getQuads();
+            quad = batchQuads[this._atlasIndex + particle.atlasIndex]
+        } else {
+            quad = this._quads[this._particleIdx];
+        }
 
-        var color = new cc.Color4B((particle.color.r * 255), (particle.color.g * 255), (particle.color.b * 255),
-            (particle.color.a * 255));
+        var color = (this._opacityModifyRGB) ?
+            new cc.Color4B(0 | (particle.color.r * particle.color.a * 255), 0 | (particle.color.g * particle.color.a * 255),
+                0 | (particle.color.b * particle.color.a * 255), 0 | (particle.color.a * 255)) :
+            new cc.Color4B(0 | (particle.color.r * 255), 0 | (particle.color.g * 255), 0 | (particle.color.b * 255), 0 | (particle.color.a * 255));
+
         quad.bl.colors = color;
         quad.br.colors = color;
         quad.tl.colors = color;
@@ -337,12 +335,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         if (cc.renderContextType == cc.CANVAS) {
 
         } else {
-            if (cc.USES_VBO) {
-                //TODO
-                glBindBuffer(GL_ARRAY_BUFFER, quadsID);
-                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(quads[0]) * particleCount, quads);
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
-            }
+            //TODO
+            glBindBuffer(GL_ARRAY_BUFFER, this._buffersVBO[0]);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(this._quads[0]) * particleCount, this._quads);
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+            CHECK_GL_ERROR_DEBUG();
         }
     },
 
@@ -352,6 +350,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @override
      */
     draw:function (ctx) {
+        cc.Assert(!this._batchNode, "draw should not be called when added to a particleBatchNode");
         this._super();
         if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
@@ -397,59 +396,230 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             }
             context.restore();
         } else {
-            //TODO need fixed for webGL
-            // Default GL states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-            // Needed states: GL_TEXTURE_2D, GL_VERTEX_ARRAY, GL_COLOR_ARRAY, GL_TEXTURE_COORD_ARRAY
-            // Unneeded states: -
-            glBindTexture(GL_TEXTURE_2D, this._texture.getName());
+            cc.NODE_DRAW_SETUP();
 
-            var quadSize = sizeof(this._quads[0].bl);
-
-            if (cc.USES_VBO) {
-                glBindBuffer(GL_ARRAY_BUFFER, this._quadsID);
-
-                if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
-                    glBufferData(GL_ARRAY_BUFFER, sizeof(this._quads[0]) * this._totalParticles, this._quads, GL_DYNAMIC_DRAW);
-                }
-
-                glVertexPointer(2, GL_FLOAT, quadSize, 0);
-
-                glColorPointer(4, GL_UNSIGNED_BYTE, quadSize, offsetof(ccV2F_C4B_T2F, colors));
-
-                glTexCoordPointer(2, GL_FLOAT, quadSize, offsetof(ccV2F_C4B_T2F, texCoords));
-            } else {
-                var offset = this._quads;
-
-                // vertex
-                var diff = offsetof(cc.V2F_C4B_T2F, vertices);
-                glVertexPointer(2, GL_FLOAT, quadSize, (offset + diff));
-
-                // color
-                diff = offsetof(cc.V2F_C4B_T2F, colors);
-                glColorPointer(4, GL_UNSIGNED_BYTE, quadSize, (offset + diff));
-
-                // tex coords
-                diff = offsetof(cc.V2F_C4B_T2F, texCoords);
-                glTexCoordPointer(2, GL_FLOAT, quadSize, (offset + diff));
-            }
-
-
-            var newBlend = !!(this._blendFunc.src != cc.BLEND_SRC || this._blendFunc.dst != cc.BLEND_DST);
-            if (newBlend) {
-                glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            }
+            ccGLBindTexture2D(this._texture.getName());
+            ccGLBlendFunc(m_tBlendFunc.src, m_tBlendFunc.dst);
 
             cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
 
-            glDrawElements(GL_TRIANGLES, (this._particleIdx * 6), GL_UNSIGNED_SHORT, this._indices);
+            if (cc.TEXTURE_ATLAS_USE_VAO) {
+                //
+                // Using VBO and VAO
+                //
+                glBindVertexArray(this._VAOname);
 
-            // restore blend state
-            if (newBlend)
-                glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+                if (cc.REBIND_INDICES_BUFFER)
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
 
-            if (cc.USES_VBO)
+                glDrawElements(GL_TRIANGLES, this._particleIdx * 6, GL_UNSIGNED_SHORT, 0);
+
+                if (cc.REBIND_INDICES_BUFFER)
+                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+                glBindVertexArray(0);
+            } else {
+                //
+                // Using VBO without VAO
+                //
+                var kQuadSize = sizeof(m_pQuads[0].bl);
+
+                ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
+
+                glBindBuffer(GL_ARRAY_BUFFER, this._buffersVBO[0]);
+                // vertices
+                glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, vertices));
+                // colors
+                glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, offsetof(ccV3F_C4B_T2F, colors));
+                // tex coords
+                glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, texCoords));
+
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+
+                glDrawElements(GL_TRIANGLES, this._particleIdx * 6, GL_UNSIGNED_SHORT, 0);
+
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            }
+            CHECK_GL_ERROR_DEBUG();
         }
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    setBatchNode:function (batchNode) {
+        if (this._batchNode != batchNode) {
+            var oldBatch = this._batchNode;
+
+            this._super(batchNode);
+
+            // NEW: is self render ?
+            if (!batchNode) {
+                this._allocMemory();
+                this.setupIndices();
+                this.setTexture(oldBatch.getTexture());
+                if (cc.TEXTURE_ATLAS_USE_VAO)
+                    this._setupVBOandVAO();
+                else
+                    this._setupVBO();
+            }
+            // OLD: was it self render ? cleanup
+            else if (!oldBatch) {
+                // copy current state to batch
+                var batchQuads = this._batchNode.getTextureAtlas().getQuads();
+                var quad = batchQuads[this._atlasIndex];
+                //memcpy( quad, m_pQuads, m_uTotalParticles * sizeof(m_pQuads[0]) );
+
+                glDeleteBuffers(2, this._buffersVBO[0]);
+                if (cc.TEXTURE_ATLAS_USE_VAO)
+                    glDeleteVertexArrays(1, this._VAOname);
+            }
+        }
+    },
+
+    setTotalParticles:function (tp) {
+        // If we are setting the total numer of particles to a number higher
+        // than what is allocated, we need to allocate new arrays
+        if (tp > m_uAllocatedParticles) {
+            // Allocate new memory
+            var particlesSize = tp * sizeof(tCCParticle);
+            var quadsSize = sizeof(this._quads[0]) * tp * 1;
+            var indicesSize = sizeof(m_pIndices[0]) * tp * 6 * 1;
+
+            //var particlesNew = (tCCParticle*)realloc(m_pParticles, particlesSize);
+            //ccV3F_C4B_T2F_Quad* quadsNew = (ccV3F_C4B_T2F_Quad*)realloc(m_pQuads, quadsSize);
+            //GLushort* indicesNew = (GLushort*)realloc(m_pIndices, indicesSize);
+
+            if (particlesNew && quadsNew && indicesNew) {
+                // Assign pointers
+                m_pParticles = particlesNew;
+                m_pQuads = quadsNew;
+                m_pIndices = indicesNew;
+
+                // Clear the memory
+                memset(m_pParticles, 0, particlesSize);
+                memset(m_pQuads, 0, quadsSize);
+                memset(m_pIndices, 0, indicesSize);
+
+                m_uAllocatedParticles = tp;
+            } else {
+                // Out of memory, failed to resize some array
+                if (particlesNew) m_pParticles = particlesNew;
+                if (quadsNew) m_pQuads = quadsNew;
+                if (indicesNew) m_pIndices = indicesNew;
+
+                cc.Log("Particle system: out of memory");
+                return;
+            }
+
+            m_uTotalParticles = tp;
+
+            // Init particles
+            if (this._batchNode) {
+                for (var i = 0; i < m_uTotalParticles; i++) {
+                    this._particles[i].atlasIndex = i;
+                }
+            }
+
+            this.setupIndices();
+            if (cc.TEXTURE_ATLAS_USE_VAO)
+                this._setupVBOandVAO();
+            else
+                this._setupVBO();
+
+        }
+        else {
+            m_uTotalParticles = tp;
+        }
+    },
+
+    /**
+     * listen the event that coming to foreground on Android
+     * @param {cc.Class} obj
+     */
+    listenBackToForeground:function (obj) {
+        if (cc.TEXTURE_ATLAS_USE_VAO)
+            this._setupVBOandVAO();
+        else
+            this._setupVBO();
+    },
+
+    _setupVBOandVAO:function () {
+        if(cc.renderContextType == cc.CANVAS){
+            return;
+        }
+
+        glGenVertexArrays(1, this._VAOname);
+        glBindVertexArray(this._VAOname);
+
+        var kQuadSize = sizeof(m_pQuads[0].bl)
+
+        glGenBuffers(2, this._buffersVBO[0]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, this._buffersVBO[0]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(this._quads[0]) * this._totalParticles, this._quads, GL_DYNAMIC_DRAW);
+
+        // vertices
+        glEnableVertexAttribArray(kCCVertexAttrib_Position);
+        glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, vertices));
+
+        // colors
+        glEnableVertexAttribArray(kCCVertexAttrib_Color);
+        glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, offsetof(ccV3F_C4B_T2F, colors));
+
+        // tex coords
+        glEnableVertexAttribArray(kCCVertexAttrib_TexCoords);
+        glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, texCoords));
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_pIndices[0]) * m_uTotalParticles * 6, m_pIndices, GL_STATIC_DRAW);
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        CHECK_GL_ERROR_DEBUG();
+    },
+
+    _setupVBO:function () {
+        if(cc.renderContextType == cc.CANVAS){
+            return;
+        }
+
+        glGenBuffers(2, this._buffersVBO[0]);
+
+        glBindBuffer(GL_ARRAY_BUFFER, this._buffersVBO[0]);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(m_pQuads[0]) * m_uTotalParticles, m_pQuads, GL_DYNAMIC_DRAW);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(m_pIndices[0]) * m_uTotalParticles * 6, m_pIndices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+        CHECK_GL_ERROR_DEBUG();
+    },
+
+    _allocMemory:function () {
+        //cc.Assert(( !this._quads && !this._indices), "Memory already alloced");
+        cc.Assert(!this._batchNode, "Memory should not be alloced when not using batchNode");
+        this._quads = [];
+        this._indices = [];
+        for(var i = 0; i < this._totalParticles; i++){
+            this._quads[i] = new cc.V3F_C4B_T2F_Quad();
+            this._indices[i * 6] = 0;
+            this._indices[(i * 6) + 1] = 0;
+            this._indices[(i * 6) + 2] = 0;
+            this._indices[(i * 6) + 3] = 0;
+            this._indices[(i * 6) + 4] = 0;
+            this._indices[(i * 6) + 5] = 0;
+        }
+
+        if (!this._quads || !this._indices) {
+            cc.Log("cocos2d: Particle system: not enough memory");
+            return false;
+        }
+
+        return true;
     }
 });
 
