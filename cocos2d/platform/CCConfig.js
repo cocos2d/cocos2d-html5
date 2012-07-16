@@ -65,7 +65,7 @@ cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
  * @constant
  * @type cc.Point
  */
-cc.DIRECTOR_STATS_POSITION = new cc.Point(0,0);
+cc.DIRECTOR_STATS_POSITION = new cc.Point(0, 0);
 
 /**
  * <p>

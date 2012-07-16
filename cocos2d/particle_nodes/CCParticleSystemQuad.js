@@ -545,7 +545,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     _setupVBOandVAO:function () {
-        if(cc.renderContextType == cc.CANVAS){
+        if (cc.renderContextType == cc.CANVAS) {
             return;
         }
 
@@ -582,7 +582,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     _setupVBO:function () {
-        if(cc.renderContextType == cc.CANVAS){
+        if (cc.renderContextType == cc.CANVAS) {
             return;
         }
 
@@ -604,7 +604,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         cc.Assert(!this._batchNode, "Memory should not be alloced when not using batchNode");
         this._quads = [];
         this._indices = [];
-        for(var i = 0; i < this._totalParticles; i++){
+        for (var i = 0; i < this._totalParticles; i++) {
             this._quads[i] = new cc.V3F_C4B_T2F_Quad();
             this._indices[i * 6] = 0;
             this._indices[(i * 6) + 1] = 0;
