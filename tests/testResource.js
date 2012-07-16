@@ -271,6 +271,8 @@ var g_ressources = [
     {type:"tmx", src:"Resources/TileMaps/orthogonal-test-movelayer.tmx"},
     {type:"tmx", src:"Resources/TileMaps/iso-test-bug787.tmx"},
     {type:"tmx", src:"Resources/TileMaps/test-object-layer.tmx"},
+    {type:"tmx", src:"Resources/TileMaps/ortho-tile-property.tmx"},
+    {type:"tmx", src:"Resources/TileMaps/ortho-rotation-test.tmx"},
 
     //audio ressources
     {type:"bgm", src:"Resources/background"},

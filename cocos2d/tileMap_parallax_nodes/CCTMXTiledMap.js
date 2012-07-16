@@ -184,25 +184,26 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     },
 
     /**
-     * @param tmxFile
+     * @param {String} tmxFile
      * @return {Boolean}
      * @example
      * //example
      * var map = new cc.TMXTiledMap()
      * map.initWithTMXFile("hello.tmx");
      */
-    initWithTMXFile:function (tmxFile) {
+    initWithTMXFile:function (tmxFile,resourcePath) {
         cc.Assert(tmxFile != null && tmxFile.length > 0, "TMXTiledMap: tmx file should not be nil");
         this.setContentSize(cc.SizeZero());
-        var mapInfo = cc.TMXMapInfo.create(tmxFile);
+        var mapInfo = cc.TMXMapInfo.create(tmxFile,resourcePath);
         if (!mapInfo) {
             return false;
         }
         cc.Assert(mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
-        this.buildWithMapInfo(mapInfo);
+        this._buildWithMapInfo(mapInfo);
         return true;
     },
-    buildWithMapInfo:function (mapInfo) {
+
+    _buildWithMapInfo:function (mapInfo) {
         this._mapSize = mapInfo.getMapSize();
         this._tileSize = mapInfo.getTileSize();
         this._mapOrientation = mapInfo.getOrientation();
@@ -233,21 +234,6 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
             }
         }
     },
-
-    /**
-     * initializes a TMX Tiled Map with a TMX formatted XML string and a path to TMX resources
-     */
-    initWithXML:function (tmxString, resourcePath) {
-        this.setContentSize(cc.SizeZero());
-
-        var mapInfo = cc.TMXMapInfo.create(tmxString, resourcePath);
-
-        cc.Assert( mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
-        this.buildWithMapInfo(mapInfo);
-
-        return true;
-    },
-
     /** return the TMXLayer for the specific layer
      * @param {String} layerName
      * @return {cc.TMXLayer}
@@ -269,11 +255,12 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     },
 
     /**
-     *return the TMXObjectGroup for the secific group
+     * Return the TMXObjectGroup for the secific group
      * @param {String} groupName
      * @return {cc.TMXObjectGroup}
      */
     objectGroupNamed:function (groupName) {
+        cc.Assert(groupName != null && groupName.length > 0, "Invalid group name!");
         if (this._objectGroups) {
             for (var i = 0; i < this._objectGroups.length; i++) {
                 var objectGroup = this._objectGroups[i];
@@ -310,7 +297,6 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         // tell the layerinfo to release the ownership of the tiles map.
         layerInfo.ownTiles = false;
         layer.setupTiles();
-
         return layer;
     },
 
@@ -318,19 +304,19 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         var size = layerInfo._layerSize;
         var tilesets = mapInfo.getTilesets();
         if (tilesets) {
-            var tileset = null;
             for (var i = tilesets.length - 1; i >= 0; i--) {
-                tileset = tilesets[i];
+                var tileset = tilesets[i];
                 if (tileset) {
                     for (var y = 0; y < size.height; y++) {
                         for (var x = 0; x < size.width; x++) {
-                            var pos = (x + size.width * y).toString();
+                            var pos = x + size.width * y;
                             var gid = layerInfo._tiles[pos];
-                            // XXX: gid == 0 -. empty tile
-                            // Optimization: quick return
-                            // if the layer is invalid (more than 1 tileset per layer) an cc.Assert will be thrown later
-                            if (gid !== 0 && gid >= tileset.firstGid) {
-                                return tileset;
+                            if (gid != 0) {
+                                // Optimization: quick return
+                                // if the layer is invalid (more than 1 tileset per layer) an cc.Assert will be thrown later
+                                if (((gid & cc.FlippedMask)>>>0) >= tileset.firstGid) {
+                                    return tileset;
+                                }
                             }
 
                         }
@@ -355,9 +341,9 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
  * //example
  * var map = cc.TMXTiledMap.create("hello.tmx");
  */
-cc.TMXTiledMap.create = function (tmxString, resourcePath) {
+cc.TMXTiledMap.create = function (tmxFile, resourcePath) {
     var ret = new cc.TMXTiledMap();
-    if (ret.initWithTMXFile(tmxString, resourcePath)) {
+    if (ret.initWithTMXFile(tmxFile,resourcePath)) {
         return ret;
     }
     return null;

@@ -1100,11 +1100,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Rotation setter (override cc.Node )
-     * @param {Number} fRotation
+     * @param {Number} rotation
      * @override
      */
-    setRotation:function (fRotation) {
-        this._super(fRotation);
+    setRotation:function (rotation) {
+        this._super(rotation);
         this.SET_DIRTY_RECURSIVELY();
     },
 

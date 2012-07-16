@@ -277,6 +277,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                     -this._dimensions.width * this._anchorPoint.x + xOffset,
                     this._dimensions.height * this._anchorPoint.y + yOffset);
             }
+            cc.INCREMENT_GL_DRAWS(1);
         }
     },
     _wrapText:function (context, text, x, y, maxWidth, maxHeight, lineHeight) {

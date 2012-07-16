@@ -68,7 +68,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     },
 
     /**
-     * @param properties
+     * @param {object} properties
      */
     setProperties:function (properties) {
         this._properties.push(properties);
