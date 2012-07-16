@@ -243,6 +243,12 @@ var testNames = [
             return new MenuTestScene();
         }
     },
+    {
+        title:"MutilTouchTest",
+        testScene:function () {
+            return new MutilTouchTestScene();
+        }
+    },
     //"MotionStreakTest",
     {
         title:"ParallaxTest",

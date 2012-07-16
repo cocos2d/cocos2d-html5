@@ -685,6 +685,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             pos.top -= document.body.scrollTop;
 
             for (var i = 0; i < event.touches.length; i++) {
+                cc.Log(event.touches[i].identifier);
                 var tx = event.touches[i].pageX;
                 var ty = event.touches[i].pageY;
                 if (event.touches[i]) {
