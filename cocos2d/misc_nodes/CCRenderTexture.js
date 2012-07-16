@@ -99,9 +99,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         // Listen this event to save render texture before come to background.
         // Then it can be restored after coming to foreground on Android.
         /*extension.CCNotificationCenter.sharedNotificationCenter().addObserver(this,
-            callfuncO_selector(CCRenderTexture.listenToBackground),
-            EVENT_COME_TO_BACKGROUND,
-            null);*/
+         callfuncO_selector(CCRenderTexture.listenToBackground),
+         EVENT_COME_TO_BACKGROUND,
+         null);*/
     },
 
     /**
@@ -174,7 +174,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 var powW = 0;
                 var powH = 0;
 
-                if( cc.Configuration.sharedConfiguration().supportsNPOT() ) {
+                if (cc.Configuration.sharedConfiguration().supportsNPOT()) {
                     powW = width;
                     powH = height;
                 } else {
@@ -192,7 +192,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 this._pixelFormat = format;
 
                 this._texture = new cc.Texture2D();
-                if(!this._texture)
+                if (!this._texture)
                     return false;
 
                 this._texture.initWithData(data, this._pixelFormat, powW, powH, cc.SizeMake(width, height));
@@ -235,8 +235,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
                 glBindRenderbuffer(GL_RENDERBUFFER, oldRBO);
                 glBindFramebuffer(GL_FRAMEBUFFER, this._oldFBO);
-            } catch(ex){
-               return false;
+            } catch (ex) {
+                return false;
             }
             return true;
         }
@@ -261,8 +261,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         glViewport(0, 0, texSize.width, texSize.height);
 
         var orthoMatrix;
-        kmMat4OrthographicProjection(orthoMatrix, -1.0 / widthRatio,  1.0 / widthRatio,
-            -1.0 / heightRatio, 1.0 / heightRatio, -1,1 );
+        kmMat4OrthographicProjection(orthoMatrix, -1.0 / widthRatio, 1.0 / widthRatio,
+            -1.0 / heightRatio, 1.0 / heightRatio, -1, 1);
         kmGLMultMatrix(orthoMatrix);
 
         glGetIntegerv(cc.GL_FRAMEBUFFER_BINDING, this._oldFBO);
@@ -279,10 +279,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} stencilValue
      * @param {Number} a alpha 0-255 0 is transparent
      */
-    beginWithClear:function (r, g, b, a, depthValue,stencilValue) {
+    beginWithClear:function (r, g, b, a, depthValue, stencilValue) {
         //TODO
         var clearColor;
-        switch (arguments.length){
+        switch (arguments.length) {
             case 4:
                 this.begin();
 
@@ -300,9 +300,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 this.begin();
 
                 // save clear color
-                clearColor= [0,0,0,0];
+                clearColor = [0, 0, 0, 0];
                 var depthClearValue;
-                glGetFloatv(GL_COLOR_CLEAR_VALUE,clearColor);
+                glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
                 glGetFloatv(GL_DEPTH_CLEAR_VALUE, depthClearValue);
 
                 glClearColor(r, g, b, a);
@@ -317,10 +317,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 this.begin();
 
                 // save clear color
-                clearColor= [0,0,0,0];
+                clearColor = [0, 0, 0, 0];
                 var depthClearValue;
                 var stencilClearValue;
-                glGetFloatv(GL_COLOR_CLEAR_VALUE,clearColor);
+                glGetFloatv(GL_COLOR_CLEAR_VALUE, clearColor);
                 glGetFloatv(GL_DEPTH_CLEAR_VALUE, depthClearValue);
                 glGetIntegerv(GL_STENCIL_CLEAR_VALUE, stencilClearValue);
 
@@ -355,8 +355,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         glViewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
 
         // special viewport for 3d projection + retina display
-        if ( director.getProjection() == cc.CCDIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1 ) {
-            glViewport((-size.width/2), (-size.height/2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
+        if (director.getProjection() == cc.CCDIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1) {
+            glViewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
         }
 
         director.setProjection(director.getProjection());
@@ -387,7 +387,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * clears the texture with a specified depth value
      * @param {Number} dep
      */
-    clearDepth:function(dep){
+    clearDepth:function (dep) {
         this.begin();
         //! save old depth value
         var depthClearValue;
@@ -405,7 +405,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * clears the texture with a specified stencil value
      * @param {Number} stencilValue
      */
-    clearStencil:function(stencilValue){
+    clearStencil:function (stencilValue) {
         // save old stencil value
         var stencilClearValue;
         glGetIntegerv(GL_STENCIL_CLEAR_VALUE, stencilClearValue);
@@ -421,10 +421,10 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * creates a new CCImage from with the texture's data. Caller is responsible for releasing it by calling delete.
      * @return {cc.Image}
      */
-    newCCImage:function(){
+    newCCImage:function () {
         cc.Assert(this._pixelFormat == cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
 
-        if (!this._texture){
+        if (!this._texture) {
             return null;
         }
 
@@ -443,31 +443,31 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         try {
             pBuffer = [];
             pBuffer.length = nSavedBufferWidth * nSavedBufferHeight * 4;
-            if(! (pBuffer))
+            if (!(pBuffer))
                 return pImage;
 
             pTempData = [];
             pTempData.length = nSavedBufferWidth * nSavedBufferHeight * 4;
-            if(! (pTempData)) {
+            if (!(pTempData)) {
                 pBuffer = null;
                 return pImage;
             }
 
             this.begin();
             glPixelStorei(GL_PACK_ALIGNMENT, 1);
-            glReadPixels(0,0,nSavedBufferWidth, nSavedBufferHeight,GL_RGBA,GL_UNSIGNED_BYTE, pTempData);
+            glReadPixels(0, 0, nSavedBufferWidth, nSavedBufferHeight, GL_RGBA, GL_UNSIGNED_BYTE, pTempData);
             this.end();
 
             // to get the actual texture data
             // #640 the image read from rendertexture is upseted
             for (var i = 0; i < nSavedBufferHeight; ++i) {
-                this._memcpy(pBuffer,i * nSavedBufferWidth * 4,
-                pTempData,(nSavedBufferHeight - i - 1) * nSavedBufferWidth * 4,
-                nSavedBufferWidth * 4);
+                this._memcpy(pBuffer, i * nSavedBufferWidth * 4,
+                    pTempData, (nSavedBufferHeight - i - 1) * nSavedBufferWidth * 4,
+                    nSavedBufferWidth * 4);
             }
 
-            pImage.initWithImageData(pBuffer, nSavedBufferWidth * nSavedBufferHeight * 4,  cc.FMT_RAWDATA, nSavedBufferWidth, nSavedBufferHeight, 8);
-        } catch(ex){
+            pImage.initWithImageData(pBuffer, nSavedBufferWidth * nSavedBufferHeight * 4, cc.FMT_RAWDATA, nSavedBufferWidth, nSavedBufferHeight, 8);
+        } catch (ex) {
             return pImage;
         }
 
@@ -488,12 +488,12 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} filePath
      * @param {Number} format
      */
-    saveToFile:function(filePath,format){
-        if(!format)
+    saveToFile:function (filePath, format) {
+        if (!format)
             filePath = cc.FileUtils.sharedFileUtils().getWriteablePath() + filePath;
         format = format || cc.CCIMAGE_FORMAT_JPEG;
 
-        cc.Assert(format == cc.CCIMAGE_FORMAT_JPEG|| format == cc.CCIMAGE_FORMAT_PNG,
+        cc.Assert(format == cc.CCIMAGE_FORMAT_JPEG || format == cc.CCIMAGE_FORMAT_PNG,
             "the image can only be saved as JPG or PNG format");
 
         var pImage = this.newCCImage();
@@ -507,8 +507,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Listen "come to background" message, and save render texture. It only has effect on Android.
      * @param {cc.Class} obj
      */
-    listenToBackground:function(obj){
-        if( cc.ENABLE_CACHE_TEXTURE_DATA){
+    listenToBackground:function (obj) {
+        if (cc.ENABLE_CACHE_TEXTURE_DATA) {
             cc.SAFE_DELETE(this.pITextureImage);
 
             // to get the rendered texture data

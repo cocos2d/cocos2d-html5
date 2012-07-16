@@ -956,12 +956,6 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
     },
 
     _setupHtml:function () {
-        var gameContainer = document.getElementById("Cocos2dGameContainer");
-        if (!gameContainer) {
-            cc.setupHTML();
-            gameContainer = document.getElementById("Cocos2dGameContainer");
-        }
-
         this._layerCanvas = document.createElement("canvas");
         this._layerCanvas.width = cc.canvas.width;
         this._layerCanvas.height = cc.canvas.height;
@@ -974,7 +968,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
         this._layerContext = this._layerCanvas.getContext("2d");
         this._layerContext.fillStyle = "rgba(0,0,0,1)";
         this._layerContext.translate(0, this._layerCanvas.height);
-        gameContainer.appendChild(this._layerCanvas);
+        cc.container.appendChild(this._layerCanvas);
         var selfPointer = this;
         window.addEventListener("resize", function (event) {
             selfPointer.adjustSizeForCanvas();
@@ -1001,8 +995,8 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
      * return lazylayer's canvas
      * @return {HTMLCanvasElement}
      */
-    getLayerCanvas:function(){
-       return this._layerCanvas;
+    getLayerCanvas:function () {
+        return this._layerCanvas;
     },
 
     /**
@@ -1061,11 +1055,11 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
         context.restore();
     },
 
-    onExit:function(){
-       this._super();
+    onExit:function () {
+        this._super();
 
         //clear canvas element from parent element
-        if(this._layerCanvas.parentNode){
+        if (this._layerCanvas.parentNode) {
             this._layerCanvas.parentNode.removeChild(this._layerCanvas);
         }
     },

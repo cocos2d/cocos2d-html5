@@ -44,7 +44,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     /**
      * @override
      */
-    onEnter:function(){
+    onEnter:function () {
         this._super();
 
         this._setupTransition();
@@ -55,15 +55,15 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
         // create the second render texture for outScene
         var texture = cc.RenderTexture.create(winSize.width, winSize.height);
-        texture.getSprite().setAnchorPoint(cc.ccp(0.5,0.5));
-        texture.setPosition(cc.ccp(winSize.width/2, winSize.height/2));
-        texture.setAnchorPoint(cc.ccp(0.5,0.5));
+        texture.getSprite().setAnchorPoint(cc.ccp(0.5, 0.5));
+        texture.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+        texture.setAnchorPoint(cc.ccp(0.5, 0.5));
 
-        if(cc.renderContextType == cc.CANVAS){
+        if (cc.renderContextType == cc.CANVAS) {
             // render outScene to its texturebuffer
             texture.clear();
             this._sceneToBeModified.visit(texture.context);
-        }else{
+        } else {
             // render outScene to its texturebuffer
             texture.clear(0, 0, 0, 1);
             texture.begin();
@@ -92,24 +92,24 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
     /**
      * @override
      */
-    onExit:function(){
+    onExit:function () {
         // remove our layer and release all containing objects
         this.removeChildByTag(cc.SCENE_RADIAL, false);
         this._super();
     },
 
-    _setupTransition:function(){
+    _setupTransition:function () {
         this._sceneToBeModified = this._outScene;
         this._from = 100;
         this._to = 0;
     },
 
-    _progressTimerNodeWithRenderTexture:function(texture){
+    _progressTimerNodeWithRenderTexture:function (texture) {
         cc.Assert(false, "override me - abstract class");
         return null;
     },
 
-    _sceneOrder:function(){
+    _sceneOrder:function () {
         this._isInSceneOnTop = false;
     }
 });
@@ -121,7 +121,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgress}
  */
-cc.TransitionProgress.create = function(t, scene){
+cc.TransitionProgress.create = function (t, scene) {
     var tempScene = new cc.TransitionProgress();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
@@ -136,21 +136,21 @@ cc.TransitionProgress.create = function(t, scene){
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCCW# */{
-    _progressTimerNodeWithRenderTexture:function(texture){
+    _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.sharedDirector().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if(cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
 
         //    Return the radial type that we want to use
         pNode.setReverseDirection(false);
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width/2, size.height/2));
-        pNode.setAnchorPoint(cc.ccp(0.5,0.5));
+        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         return pNode;
     }
@@ -163,7 +163,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressRadialCCW}
  */
-cc.TransitionProgressRadialCCW.create = function(t, scene){
+cc.TransitionProgressRadialCCW.create = function (t, scene) {
     var tempScene = new cc.TransitionProgressRadialCCW();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
@@ -178,21 +178,21 @@ cc.TransitionProgressRadialCCW.create = function(t, scene){
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCW# */{
-    _progressTimerNodeWithRenderTexture:function(texture){
+    _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.sharedDirector().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if(cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
 
         //    Return the radial type that we want to use
         pNode.setReverseDirection(true);
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width/2, size.height/2));
-        pNode.setAnchorPoint(cc.ccp(0.5,0.5));
+        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         return pNode;
     }
@@ -205,7 +205,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressRadialCW}
  */
-cc.TransitionProgressRadialCW.create = function(t, scene){
+cc.TransitionProgressRadialCW.create = function (t, scene) {
     var tempScene = new cc.TransitionProgressRadialCW();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
@@ -220,22 +220,22 @@ cc.TransitionProgressRadialCW.create = function(t, scene){
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressHorizontal# */{
-    _progressTimerNodeWithRenderTexture:function(texture){
+    _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.sharedDirector().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if(cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.ccp(1, 0));
-        pNode.setBarChangeRate(cc.ccp(1,0));
+        pNode.setBarChangeRate(cc.ccp(1, 0));
 
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width/2, size.height/2));
-        pNode.setAnchorPoint(cc.ccp(0.5,0.5));
+        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         return pNode;
     }
@@ -248,7 +248,7 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressHorizontal}
  */
-cc.TransitionProgressHorizontal.create = function(t, scene){
+cc.TransitionProgressHorizontal.create = function (t, scene) {
     var tempScene = new cc.TransitionProgressHorizontal();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
@@ -262,22 +262,22 @@ cc.TransitionProgressHorizontal.create = function(t, scene){
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressVertical# */{
-    _progressTimerNodeWithRenderTexture:function(texture){
+    _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.sharedDirector().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if(cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.ccp(0, 0));
-        pNode.setBarChangeRate(cc.ccp(0,1));
+        pNode.setBarChangeRate(cc.ccp(0, 1));
 
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width/2, size.height/2));
-        pNode.setAnchorPoint(cc.ccp(0.5,0.5));
+        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         return pNode;
     }
@@ -290,7 +290,7 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressVertical}
  */
-cc.TransitionProgressVertical.create = function(t, scene){
+cc.TransitionProgressVertical.create = function (t, scene) {
     var tempScene = new cc.TransitionProgressVertical();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
@@ -304,26 +304,28 @@ cc.TransitionProgressVertical.create = function(t, scene){
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressInOut# */{
-    _progressTimerNodeWithRenderTexture:function(texture){
+    _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.sharedDirector().getWinSize();
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if(cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.ccp(0.5, 0.5));
-        pNode.setBarChangeRate(cc.ccp(1,1));
+        pNode.setBarChangeRate(cc.ccp(1, 1));
 
         pNode.setPercentage(0);
-        pNode.setPosition(cc.ccp(size.width/2, size.height/2));
-        pNode.setAnchorPoint(cc.ccp(0.5,0.5));
+        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         return pNode;
     },
-    _sceneOrder:function(){this._isInSceneOnTop = false;},
-    _setupTransition:function(){
+    _sceneOrder:function () {
+        this._isInSceneOnTop = false;
+    },
+    _setupTransition:function () {
         this._sceneToBeModified = this._inScene;
         this._from = 0;
         this._to = 100;
@@ -337,7 +339,7 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressInOut}
  */
-cc.TransitionProgressInOut.create = function(t, scene){
+cc.TransitionProgressInOut.create = function (t, scene) {
     var tempScene = new cc.TransitionProgressInOut();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;
@@ -351,21 +353,21 @@ cc.TransitionProgressInOut.create = function(t, scene){
  * @extends cc.TransitionProgress
  */
 cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressOutIn# */{
-    _progressTimerNodeWithRenderTexture:function(texture){
+    _progressTimerNodeWithRenderTexture:function (texture) {
         var size = cc.Director.sharedDirector().getWinSize();
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if(cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
 
         pNode.setMidpoint(cc.ccp(0.5, 0.5));
-        pNode.setBarChangeRate(cc.ccp(1,1));
+        pNode.setBarChangeRate(cc.ccp(1, 1));
 
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width/2, size.height/2));
-        pNode.setAnchorPoint(cc.ccp(0.5,0.5));
+        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
 
         return pNode;
     }
@@ -378,7 +380,7 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
  * @param {cc.Scene} scene
  * @return {cc.TransitionProgressOutIn}
  */
-cc.TransitionProgressOutIn.create = function(t, scene){
+cc.TransitionProgressOutIn.create = function (t, scene) {
     var tempScene = new cc.TransitionProgressOutIn();
     if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
         return tempScene;

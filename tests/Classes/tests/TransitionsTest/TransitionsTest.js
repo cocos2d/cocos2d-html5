@@ -203,7 +203,7 @@ var TestLayer1 = cc.Layer.extend({
         if (transitionsIdx < 0)
             transitionsIdx += TransitionsTests.length;
 
-         var s = new TransitionsTestScene();
+        var s = new TransitionsTestScene();
         var layer = new TestLayer2();
         s.addChild(layer);
 
