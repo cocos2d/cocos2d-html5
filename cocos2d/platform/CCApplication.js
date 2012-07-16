@@ -228,7 +228,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
      */
     run:function () {
         // Initialize instance and cocos2d.
-        if (!this.initInstance() || !this.applicationDidFinishLaunching()) {
+        if (!this.applicationDidFinishLaunching()) {
             return 0;
         }
         // TODO, need to be fixed.
