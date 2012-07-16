@@ -85,9 +85,9 @@ cc.loadjs = function (filename) {
 
 var isDebugMode = true;
 
-if(!isDebugMode){
+if (!isDebugMode) {
     cc.loadjs('../lib/Cocos2d-html5-canvasmenu-min.js');
-}else{
+} else {
     cc.loadjs('../cocos2d/platform/CCClass.js');
     cc.loadjs('../cocos2d/platform/CCCommon.js');
     cc.loadjs('../cocos2d/platform/platform.js');
@@ -139,7 +139,6 @@ if(!isDebugMode){
     cc.loadjs('../cocos2d/label_nodes/CCLabelBMFont.js');
     cc.loadjs('../cocos2d/particle_nodes/CCParticleSystem.js');
     cc.loadjs('../cocos2d/particle_nodes/CCParticleSystemQuad.js');
-    cc.loadjs('../cocos2d/particle_nodes/CCParticleSystemPoint.js');
     cc.loadjs('../cocos2d/particle_nodes/CCParticleExamples.js');
     cc.loadjs('../cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js');
     cc.loadjs('../cocos2d/touch_dispatcher/CCTouchHandler.js');

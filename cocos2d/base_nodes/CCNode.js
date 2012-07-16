@@ -187,8 +187,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var director = cc.Director.sharedDirector();
         this._actionManager = director.getActionManager();
         this._scheduler = director.getScheduler();
-
-        this._children = [];
     },
 
     /**
@@ -345,7 +343,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._zOrder = z
     },
 
-    setZOrder:function(z){
+    setZOrder:function (z) {
         this._setZOrder(z);
         if (this._parent) {
             this._parent.reorderChild(this, z);
@@ -357,7 +355,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getVertexZ:function () {
-        return this._vertexZ ;
+        return this._vertexZ;
     },
 
     /**
@@ -365,7 +363,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} Var
      */
     setVertexZ:function (Var) {
-        this._vertexZ = Var ;
+        this._vertexZ = Var;
     },
 
     /**
@@ -539,7 +537,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {object}
      */
     getChildren:function () {
-        if(!this._children)
+        if (!this._children)
             this._children = [];
         return this._children;
     },
@@ -798,7 +796,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.ActionManager}
      */
     getActionManager:function () {
-        if(!this._actionManager)
+        if (!this._actionManager)
             this._actionManager = cc.Director.sharedDirector().getActionManager();
         return this._actionManager;
     },
@@ -823,7 +821,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Scheduler}
      */
     getScheduler:function () {
-        if(!this._scheduler)
+        if (!this._scheduler)
             this._scheduler = cc.Director.sharedDirector().getScheduler();
         return this._scheduler;
     },
@@ -1266,16 +1264,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
             /*if ( m_pCamera != NULL && !(m_pGrid != NULL && m_pGrid->isActive()) ) {
-                bool translate = (m_tAnchorPointInPoints.x != 0.0f || m_tAnchorPointInPoints.y != 0.0f);
+             bool translate = (m_tAnchorPointInPoints.x != 0.0f || m_tAnchorPointInPoints.y != 0.0f);
 
-                if( translate )
-                    kmGLTranslatef(RENDER_IN_SUBPIXEL(m_tAnchorPointInPoints.x), RENDER_IN_SUBPIXEL(m_tAnchorPointInPoints.y), 0 );
+             if( translate )
+             kmGLTranslatef(RENDER_IN_SUBPIXEL(m_tAnchorPointInPoints.x), RENDER_IN_SUBPIXEL(m_tAnchorPointInPoints.y), 0 );
 
-                m_pCamera->locate();
+             m_pCamera->locate();
 
-                if( translate )
-                    kmGLTranslatef(RENDER_IN_SUBPIXEL(-m_tAnchorPointInPoints.x), RENDER_IN_SUBPIXEL(-m_tAnchorPointInPoints.y), 0 );
-            }*/
+             if( translate )
+             kmGLTranslatef(RENDER_IN_SUBPIXEL(-m_tAnchorPointInPoints.x), RENDER_IN_SUBPIXEL(-m_tAnchorPointInPoints.y), 0 );
+             }*/
         }
     },
 
@@ -1412,10 +1410,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     schedule:function (selector, interval, repeat, delay) {
         interval = interval || 0;
 
-        cc.Assert( selector, "Argument must be non-nil");
-        cc.Assert( interval >=0, "Argument must be positive");
+        cc.Assert(selector, "Argument must be non-nil");
+        cc.Assert(interval >= 0, "Argument must be positive");
 
-        repeat = (repeat == null) ?cc.REPEAT_FOREVER : repeat;
+        repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
         this.getScheduler().scheduleSelector(selector, this, interval, !this._isRunning, repeat, delay);
@@ -1426,7 +1424,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {cc.Class} selector
      * @param {Number} delay
      */
-    scheduleOnce:function(selector,delay){
+    scheduleOnce:function (selector, delay) {
         this.schedule(selector, 0.0, 0, delay);
     },
 
@@ -1478,7 +1476,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             var x = this._position.x;
             var y = this._position.y;
 
-            if (this._ignoreAnchorPointForPosition){
+            if (this._ignoreAnchorPointForPosition) {
                 x += this._anchorPointInPoints.x;
                 y += this._anchorPointInPoints.y;
             }
@@ -1495,25 +1493,25 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // optimization:
             // inline anchor point calculation if skew is not needed
-            if (! needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, new cc.Point(0,0))) {
+            if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, new cc.Point(0, 0))) {
                 x += c * -this._anchorPointInPoints.x * this._scaleX + -s * -this._anchorPointInPoints.y * this._scaleY;
-                y += s * -this._anchorPointInPoints.x * this._scaleX +  c * -this._anchorPointInPoints.y * this._scaleY;
+                y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
             }
 
 
             // Build Transform Matrix
-            this._transform = cc.AffineTransformMake( c * this._scaleX,  s * this._scaleX,
-                -s * this._scaleY, c * this._scaleY, x, y );
+            this._transform = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX,
+                -s * this._scaleY, c * this._scaleY, x, y);
 
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
                 var skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
-                    Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), 1.0,0.0, 0.0 );
+                    Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), 1.0, 0.0, 0.0);
                 this._transform = cc.AffineTransformConcat(skewMatrix, this._transform);
 
                 // adjust anchor point
-                if (! cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, new cc.Point(0,0))) {
+                if (!cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, new cc.Point(0, 0))) {
                     this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
                 }
             }
@@ -1640,7 +1638,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
  * @constant
  * @type Number
  */
-cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6,sortAllChildren:7};
+cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6, sortAllChildren:7};
 
 
 /**

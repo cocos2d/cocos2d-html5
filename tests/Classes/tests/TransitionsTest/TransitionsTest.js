@@ -122,21 +122,6 @@ var TransitionsTests = [
 ];
 
 var transitionsIdx = 0;
-function nextTransitionAction(t, s) {
-    ++transitionsIdx;
-    transitionsIdx = transitionsIdx % TransitionsTests.length;
-    return TransitionsTests[transitionsIdx].transitionFunc(t, s);
-}
-function backTransitionAction(t, s) {
-    --transitionsIdx;
-    if (transitionsIdx < 0) {
-        transitionsIdx += TransitionsTests.length;
-    }
-    return TransitionsTests[transitionsIdx].transitionFunc(t, s);
-}
-function restartTransitionAction(t, s) {
-    return TransitionsTests[transitionsIdx].transitionFunc(t, s);
-}
 
 // the class inherit from TestScene
 // every .Scene each test used must inherit from TestScene,
@@ -146,10 +131,6 @@ var TransitionsTestScene = TestScene.extend({
         var layer = new TestLayer1();
         this.addChild(layer);
         cc.Director.sharedDirector().replaceScene(this);
-
-        /*s_nTransitionsIdx = -1;
-         this.addChild(nextTransitionAction());
-         cc.Director.sharedDirector().replaceScene(this);*/
     }
 });
 
@@ -197,30 +178,36 @@ var TestLayer1 = cc.Layer.extend({
 
         var layer = new TestLayer2();
         s.addChild(layer);
-        var scene = restartTransitionAction(TRANSITION_DURATION, s)
+        var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
 
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
     },
     nextCallback:function (sender) {
+        transitionsIdx++;
+        transitionsIdx = transitionsIdx % TransitionsTests.length;
+
         var s = new TransitionsTestScene();
 
         var layer = new TestLayer2();
         s.addChild(layer);
 
-        var scene = nextTransitionAction(TRANSITION_DURATION, s)
+        var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
     },
     backCallback:function (sender) {
-        var s = new TransitionsTestScene();
+        transitionsIdx--;
+        if (transitionsIdx < 0)
+            transitionsIdx += TransitionsTests.length;
 
+        var s = new TransitionsTestScene();
         var layer = new TestLayer2();
         s.addChild(layer);
 
-        var scene = backTransitionAction(TRANSITION_DURATION, s)
+        var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
@@ -295,29 +282,36 @@ var TestLayer2 = cc.Layer.extend({
         var layer = new TestLayer1();
         s.addChild(layer);
 
-        var scene = restartTransitionAction(TRANSITION_DURATION, s);
+        var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
     },
     nextCallback:function (sender) {
+        transitionsIdx++;
+        transitionsIdx = transitionsIdx % TransitionsTests.length;
+
         var s = new TransitionsTestScene();
 
         var layer = new TestLayer1();
         s.addChild(layer);
 
-        var scene = nextTransitionAction(TRANSITION_DURATION, s);
+        var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }
     },
     backCallback:function (sender) {
+        transitionsIdx--;
+        if (transitionsIdx < 0)
+            transitionsIdx += TransitionsTests.length;
+
         var s = new TransitionsTestScene();
 
         var layer = new TestLayer1();
         s.addChild(layer);
 
-        var scene = backTransitionAction(TRANSITION_DURATION, s);
+        var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
             cc.Director.sharedDirector().replaceScene(scene);
         }

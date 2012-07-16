@@ -65,7 +65,7 @@ cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
  * @constant
  * @type cc.Point
  */
-cc.DIRECTOR_STATS_POSITION = new cc.Point(0,0);
+cc.DIRECTOR_STATS_POSITION = new cc.Point(0, 0);
 
 /**
  * <p>
@@ -214,6 +214,19 @@ cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA = 1;
  * @type Number
  */
 cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
+
+/**
+ * <p>
+ *    By default, cc.TextureAtlas (used by many cocos2d classes) will use VAO (Vertex Array Objects).<br/>
+ *    Apple recommends its usage but they might consume a lot of memory, specially if you use many of them.<br/>
+ *    So for certain cases, where you might need hundreds of VAO objects, it might be a good idea to disable it.<br/>
+ *    <br/>
+ *    To disable it set it to 0. Enabled by default.<br/>
+ * </p>
+ * @constant
+ * @type Number
+ */
+cc.TEXTURE_ATLAS_USE_VAO = 1;
 
 /**
  * <p>
