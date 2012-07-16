@@ -82,10 +82,17 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (fileImage) {
             this.initWithFile(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
         }
-        this.setContentSize(new cc.Size(cc.canvas.width, cc.canvas.height));
         this._renderTexture = cc.RenderTexture.create(cc.canvas.width, cc.canvas.height);
+        this.setContentSize(new cc.Size(cc.canvas.width, cc.canvas.height));
     },
+    setContentSize:function(size){
+        if (!size) {
+            return;
+        }
 
+        this._super(size);
+        this._renderTexture.setContentSize(size);
+    },
     _updateBlendFunc:function () {
         if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
             this._blendFunc.src = cc.GL_SRC_ALPHA;
@@ -237,7 +244,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._descendants = cc.ArrayAppendObjectToIndex(this._descendants, child, i);
 
         // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
-        this.addChild(child, z, aTag, true);
+        this.addChild(child, z, aTag);
 
         //#issue 1262 don't use lazy sorting, tiles are added as quads not as sprites, so sprites need to be added in order
         this.reorderBatch(false);
@@ -865,6 +872,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * draw cc.SpriteBatchNode (override draw of cc.Node)
      * @param {CanvasContext} ctx
      */
+     testNum:0,
     draw:function (ctx) {
         //cc.PROFILER_START("cc.SpriteBatchNode - draw");
         this._super();
@@ -875,6 +883,13 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
             if (this._renderTexture) {
                 //direct draw image by canvas drawImage
+                /*var a = new Image();
+                a.src = this._renderTexture.getCanvas().toDataURL();
+                console.log(this._renderTexture.getCanvas().width)
+                this.testNum++;
+                if(this.testNum == 10){
+                    throw  ""
+                }*/
                 context.drawImage(this._renderTexture.getCanvas(), pos.x, -(pos.y + this._renderTexture.getCanvas().height));
             }
         } else {
