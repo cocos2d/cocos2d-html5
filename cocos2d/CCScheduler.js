@@ -54,6 +54,7 @@ cc.ArrayVerifyType = function (arr, type) {
             }
         }
     }
+    return true;
 };
 
 /**

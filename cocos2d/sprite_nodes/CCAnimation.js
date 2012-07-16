@@ -49,7 +49,9 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
     },
 
     copy:function (pZone) {
-        return cc.clone(this);
+        var newFrame = new cc.AnimationFrame();
+        newFrame.initWithSpriteFrame(this._spriteFrame,this._delayPerUnit,this._userInfo);
+        return newFrame;
     },
 
     /**
@@ -177,6 +179,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      */
     addSpriteFrame:function (frame) {
         var animFrame = new cc.AnimationFrame();
+
         animFrame.initWithSpriteFrame(frame, 1, null);
         this._frames.push(animFrame);
         // update duration
