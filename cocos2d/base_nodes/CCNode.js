@@ -1103,7 +1103,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             var i, j, length = this._children.length;
 
             // insertion sort
-            for (i = 0; i < length - 1; i++) {
+            for (i = 0; i < length; i++) {
                 var tempItem = this._children[i];
                 j = i - 1;
 

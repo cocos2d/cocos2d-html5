@@ -28,7 +28,7 @@ var TAG_TILE_MAP = 1;
 var TileMapTests = [
     //function(){ return new TileMapTest();}, //not support tga format
     // function(){ return new TileMapEditTest();}, //not support tga format
-     function () {
+    /*function () {
      return new TMXOrthoTest();
      },//ok
      function () {
@@ -39,11 +39,11 @@ var TileMapTests = [
      },//ok
      function () {
      return new TMXOrthoTest4();
-     },//ok
+     },//ok */
      function () {
      return new TMXReadWriteTest();
      },
-     function () {
+     /*function () {
      return new TMXHexTest();
      },//ok
      function () {
@@ -70,39 +70,39 @@ var TileMapTests = [
      function () {
      return new TMXResizeTest();
      },//ok
-    function () {
-        return new TMXIsoZorder();
-    },//bug
-    function () {
-        return new TMXOrthoZorder();
-    },//bug
-    //function(){ return new TMXIsoVertexZ();}, //VertexZ bug
-    //function(){ return new TMXOrthoVertexZ();}, //VertexZ bug
-    function () {
+     function () {
+     return new TMXIsoZorder();
+     },//ok
+     function () {
+     return new TMXOrthoZorder();
+     },//ok
+     //function(){ return new TMXIsoVertexZ();}, //VertexZ bug
+     //function(){ return new TMXOrthoVertexZ();}, //VertexZ bug
+     function () {
      return new TMXIsoMoveLayer();
      },//ok
      function () {
      return new TMXOrthoMoveLayer();
      },//ok
-    function () {
-        return new TMXTilePropertyTest();
-    },
-    function () {
-        return new TMXOrthoFlipTest();
-    },//ok
+     function () {
+     return new TMXTilePropertyTest();
+     },
+     function () {
+     return new TMXOrthoFlipTest();
+     },//ok*/
     function () {
         return new TMXOrthoFlipRunTimeTest();
     },
     function () {
         return new TMXOrthoFromXMLTest();
-    },//ok
+    }, //ok
     function () {
         return new TMXBug987();
-    },//ok
+    }, //ok
     function () {
         return new TMXBug787();
-    },//ok
-    function(){
+    }, //ok
+    function () {
         return new TMXGIDObjectsTest();
     }//ok
 ];
@@ -1082,7 +1082,7 @@ var TMXTilePropertyTest = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         for (var i = 1; i <= 20; i++) {
-            cc.Log("GID:"+i+", Properties:" + map.propertiesForGID(i));
+            cc.Log("GID:" + i + ", Properties:" + map.propertiesForGID(i));
         }
     },
     title:function () {
@@ -1104,7 +1104,7 @@ var TMXOrthoFlipTest = TileDemo.extend({
         var map = cc.TMXTiledMap.create("Resources/TileMaps/ortho-rotation-test.tmx");
         this.addChild(map, 0, TAG_TILE_MAP);
         var s = map.getContentSize();
-        cc.Log("ContentSize:"+ s.width + "," +  s.height);
+        cc.Log("ContentSize:" + s.width + "," + s.height);
 
         var action = cc.ScaleBy.create(2, 0.5);
         map.runAction(action);
@@ -1126,7 +1126,7 @@ var TMXOrthoFlipRunTimeTest = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         var s = map.getContentSize();
-        cc.Log("ContentSize:"+ s.width + "," +  s.height);
+        cc.Log("ContentSize:" + s.width + "," + s.height);
 
         var action = cc.ScaleBy.create(2, 0.5);
         map.runAction(action);
@@ -1145,34 +1145,35 @@ var TMXOrthoFlipRunTimeTest = TileDemo.extend({
 
         //blue diamond
         var tileCoord = cc.ccp(1, 10);
-        var tmpflags = {};
-        var flags = tmpflags.value;
-        var GID = layer.tileGIDAt(tileCoord,flags);
-        //console.log(flags)
+        var flags = layer.tileFlagAt(tileCoord)
+        var GID = layer.tileGIDAt(tileCoord);
+
         // Vertical
-        if ((flags & cc.TMXTileVerticalFlag)>>>0)
-            flags = (flags & (~cc.TMXTileVerticalFlag>>>0)>>>0);
+        if ((flags & cc.TMXTileVerticalFlag) >>> 0)
+            flags = (flags & ~cc.TMXTileVerticalFlag >>> 0) >>> 0;
         else
-            flags = (flags|cc.TMXTileVerticalFlag)>>>0;
+            flags = (flags | cc.TMXTileVerticalFlag) >>> 0;
         layer.setTileGID(GID, tileCoord, flags);
 
         tileCoord = cc.ccp(1, 8);
-        GID = layer.tileGIDAt(tileCoord, flags);
-        //console.log(flags)
+        flags = layer.tileFlagAt(tileCoord)
+        GID = layer.tileGIDAt(tileCoord);
+
         // Vertical
-        if ((flags & cc.TMXTileVerticalFlag)>>>0)
-            flags = (flags&(~cc.TMXTileVerticalFlag))>>>0;
+        if ((flags & cc.TMXTileVerticalFlag) >>> 0)
+            flags = (flags & ~cc.TMXTileVerticalFlag>>>0) >>> 0;
         else
-            flags = (flags|cc.TMXTileVerticalFlag)>>>0;
+            flags = (flags | cc.TMXTileVerticalFlag) >>> 0;
         layer.setTileGID(GID, tileCoord, flags);
 
         tileCoord = cc.ccp(2, 8);
-        GID = layer.tileGIDAt(tileCoord, flags);
+        flags = layer.tileFlagAt(tileCoord)
+        GID = layer.tileGIDAt(tileCoord);
         // Horizontal
-        if ((flags & cc.TMXTileHorizontalFlag)>>>0)
-            flags = (flags&((~cc.TMXTileHorizontalFlag)>>>0))>>>0;
+        if ((flags & cc.TMXTileHorizontalFlag) >>> 0)
+            flags = (flags & ~cc.TMXTileHorizontalFlag >>> 0) >>> 0;
         else
-            flags = (flags | cc.TMXTileHorizontalFlag)>>>0;
+            flags = (flags | cc.TMXTileHorizontalFlag) >>> 0;
         layer.setTileGID(GID, tileCoord, flags);
     }
 });
