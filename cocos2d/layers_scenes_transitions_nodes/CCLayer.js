@@ -924,6 +924,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
     _layerContext:null,
     _isNeedUpdate:false,
     _canvasZOrder:-10,
+    _layerId:"",
 
     /**
      * Constructor
@@ -964,7 +965,8 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
         this._layerCanvas = document.createElement("canvas");
         this._layerCanvas.width = cc.canvas.width;
         this._layerCanvas.height = cc.canvas.height;
-        this._layerCanvas.id = "lazyCanvas" + Date.now();
+        this._layerId = "lazyCanvas" + Date.now();
+        this._layerCanvas.id = this._layerId;
         this._layerCanvas.style.zIndex = this._canvasZOrder;
         this._layerCanvas.style.position = "absolute";
         this._layerCanvas.style.top = "0";
@@ -993,6 +995,14 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
         }
         this._layerContext.translate(0, this._layerCanvas.height);
         this._layerContext.scale(xScale, xScale);
+    },
+
+    /**
+     * return lazylayer's canvas
+     * @return {HTMLCanvasElement}
+     */
+    getLayerCanvas:function(){
+       return this._layerCanvas;
     },
 
     /**
@@ -1054,10 +1064,10 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
     onExit:function(){
        this._super();
 
-        var context = this._layerContext;
-        context.save();
-        context.clearRect(0, 0, this._layerCanvas.width, -this._layerCanvas.height);
-        context.restore();
+        //clear canvas element from parent element
+        if(this._layerCanvas.parentNode){
+            this._layerCanvas.parentNode.removeChild(this._layerCanvas);
+        }
     },
 
     _setNodeDirtyForCache:function () {
