@@ -50,7 +50,7 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
 
     copy:function (pZone) {
         var newFrame = new cc.AnimationFrame();
-        newFrame.initWithSpriteFrame(this._spriteFrame,this._delayPerUnit,this._userInfo);
+        newFrame.initWithSpriteFrame(this._spriteFrame, this._delayPerUnit, this._userInfo);
         return newFrame;
     },
 

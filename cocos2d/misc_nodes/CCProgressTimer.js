@@ -305,9 +305,9 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                         pos.x, -(pos.y + this._drawSize.height),
                         this._originSize.width, this._originSize.height);
                 } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
-                    if(this._originSize.width == 0)
+                    if (this._originSize.width == 0)
                         this._originSize.width = 0.1;
-                    if(this._originSize.height == 0)
+                    if (this._originSize.height == 0)
                         this._originSize.height = 0.1;
                     context.drawImage(this._sprite._texture,
                         this._origin.x, this._origin.y,

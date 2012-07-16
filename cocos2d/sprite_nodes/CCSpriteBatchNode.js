@@ -25,7 +25,6 @@
  ****************************************************************************/
 
 
-
 /**
  * @constant
  * @type Number
@@ -97,55 +96,55 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _updateAtlasIndex:function (sprite, curIndex) {
         var count = 0;
         var pArray = sprite.getChildren();
-        if(pArray){
+        if (pArray) {
             count = pArray.length;
         }
 
         var oldIndex = 0;
-        if(count == 0){
-           oldIndex = sprite.getAtlasIndex();
+        if (count == 0) {
+            oldIndex = sprite.getAtlasIndex();
             sprite.setAtlasIndex(curIndex);
             sprite.setOrderOfArrival(0);
-            if(oldIndex != curIndex){
-                this._swap(oldIndex,curIndex);
+            if (oldIndex != curIndex) {
+                this._swap(oldIndex, curIndex);
             }
             curIndex++;
         } else {
-           var needNewIndex = true;
-            if(pArray[0].getZOrder() >= 0){
+            var needNewIndex = true;
+            if (pArray[0].getZOrder() >= 0) {
                 //all children are in front of the parent
                 oldIndex = sprite.getAtlasIndex();
                 sprite.setAtlasIndex(curIndex);
                 sprite.setOrderOfArrival(0);
-                if(oldIndex != curIndex){
-                   this._swap(oldIndex,curIndex);
+                if (oldIndex != curIndex) {
+                    this._swap(oldIndex, curIndex);
                 }
                 curIndex++;
                 needNewIndex = false;
             }
 
-            for(var i = 0; i< pArray.length; i++){
+            for (var i = 0; i < pArray.length; i++) {
                 var child = pArray[i];
-                if(needNewIndex && child.getZOrder() >=0){
+                if (needNewIndex && child.getZOrder() >= 0) {
                     oldIndex = sprite.getAtlasIndex();
                     sprite.setAtlasIndex(curIndex);
                     sprite.setOrderOfArrival(0);
-                    if(oldIndex != curIndex){
-                        this._swap(oldIndex,curIndex);
+                    if (oldIndex != curIndex) {
+                        this._swap(oldIndex, curIndex);
                     }
                     curIndex++;
                     needNewIndex = false;
                 }
-                this._updateAtlasIndex(child,curIndex);
+                this._updateAtlasIndex(child, curIndex);
             }
 
-            if(needNewIndex){
+            if (needNewIndex) {
                 //all children have a zOrder < 0)
                 oldIndex = sprite.getAtlasIndex();
                 sprite.setAtlasIndex(curIndex);
                 sprite.setOrderOfArrival(0);
-                if(oldIndex != curIndex){
-                    this._swap(oldIndex,curIndex);
+                if (oldIndex != curIndex) {
+                    this._swap(oldIndex, curIndex);
                 }
                 curIndex++;
             }
@@ -201,7 +200,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setDirty(true);
         sprite.updateTransform();
 
-        if(cc.renderContextType == cc.CANVAS){
+        if (cc.renderContextType == cc.CANVAS) {
             this._children = cc.ArrayAppendObjectToIndex(this._children, sprite, index);
         }
     },
@@ -218,7 +217,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     addSpriteWithoutQuad:function (child, z, aTag) {
         cc.Assert(child != null, "SpriteBatchNode.addQuadFromSprite():Argument must be non-nil");
-        cc.Assert( (child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
+        cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         // quad index is Z
         child.setAtlasIndex(z);
@@ -386,7 +385,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._descendants = cc.ArrayAppendObjectToIndex(this._descendants, sprite, index);
 
         // update indices
-        var i = index+1;
+        var i = index + 1;
         if (this._descendants && this._descendants.length > 0) {
             for (; i < this._descendants.length; i++) {
                 this._descendants[i].setAtlasIndex(this._descendants[i].getAtlasIndex() + 1);
@@ -414,13 +413,13 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setBatchNode(this);
         sprite.setDirty(true);
 
-        if(this._textureAtlas.getTotalQuads() == this._textureAtlas.getCapacity()) {
+        if (this._textureAtlas.getTotalQuads() == this._textureAtlas.getCapacity()) {
             this.increaseAtlasCapacity();
         }
 
-        cc.ArrayAppendObject(this._descendants,sprite);
+        cc.ArrayAppendObject(this._descendants, sprite);
 
-        var index= this._descendants.length - 1;
+        var index = this._descendants.length - 1;
 
         sprite.setAtlasIndex(index);
 
@@ -428,7 +427,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // add children recursively
         var children = sprite.getChildren();
-        for(var i = 0; i< children.length; i++){
+        for (var i = 0; i < children.length; i++) {
             this.appendChild(children[i]);
         }
     },
@@ -590,7 +589,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Boolean} reorder
      */
     reorderBatch:function (reorder) {
-       this._reorderChildDirty = reorder;
+        this._reorderChildDirty = reorder;
     },
 
     // CCTextureProtocol
@@ -851,7 +850,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 var index = 0;
                 //fast dispatch, give every child a new atlasIndex based on their relative zOrder (keep parent -> child relations intact)
                 // and at the same time reorder descedants and the quads to the right index
-                if(cc.renderContextType == cc.WEBGL){
+                if (cc.renderContextType == cc.WEBGL) {
                     for (i = 0; i < this._children.length; i++) {
                         index = this._updateAtlasIndex(this._children[i], index);
                     }
@@ -886,7 +885,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
             //cc.NODE_DRAW_SETUP();
 
-            this._arrayMakeObjectsPerformSelector(this._children,cc.Node.StateCallbackType.updateTransform);
+            this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
 
             //ccGLBlendFunc( m_blendFunc.src, m_blendFunc.dst );
 

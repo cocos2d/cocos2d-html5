@@ -286,11 +286,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.ParticleBatchNode} batchNode
      */
     setBatchNode:function (batchNode) {
-        if(this._batchNode != batchNode){
+        if (this._batchNode != batchNode) {
             this._batchNode = batchNode; //weak reference
 
-            if(batchNode){
-                for(var i =0; i< this._totalParticles; i++){
+            if (batchNode) {
+                for (var i = 0; i < this._totalParticles; i++) {
                     this._particles[i].atlasIndex = i;
                 }
             }
@@ -742,7 +742,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     //don't use a transform matrix, this is faster
     setScale:function (scale) {
-       this._transformSystemDirty = true;
+        this._transformSystemDirty = true;
         this._super(scale);
     },
 
@@ -1001,7 +1001,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} totalParticles
      */
     setTotalParticles:function (totalParticles) {
-        cc.Assert( totalParticles <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
+        cc.Assert(totalParticles <= this._allocatedParticles, "Particle: resizing particle array only supported for quads");
         this._totalParticles = totalParticles;
     },
 
@@ -1020,7 +1020,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     setTexture:function (texture) {
         //TODO
-        if(this._texture != texture){
+        if (this._texture != texture) {
             this._texture = texture;
             this._updateBlendFunc();
         }
@@ -1041,7 +1041,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.BlendFunc} blendFunc
      */
     setBlendFunc:function (blendFunc) {
-        if(this._blendFunc.src != blendFunc.src || this._blendFunc.dst != blendFunc.dst){
+        if (this._blendFunc.src != blendFunc.src || this._blendFunc.dst != blendFunc.dst) {
             this._blendFunc = blendFunc;
             this._updateBlendFunc();
         }
@@ -1757,9 +1757,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     _updateBlendFunc:function () {
-        cc.Assert(! this._batchNode, "Can't change blending functions when the particle is being batched");
+        cc.Assert(!this._batchNode, "Can't change blending functions when the particle is being batched");
 
-        if(this._texture){
+        if (this._texture) {
             if ((this._texture instanceof HTMLImageElement) || (this._texture instanceof HTMLCanvasElement)) {
 
             } else {
@@ -1767,7 +1767,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 this._opacityModifyRGB = false;
 
                 if (this._texture && ( this._blendFunc.src == cc.BLEND_SRC && this._blendFunc.dst == cc.BLEND_DST )) {
-                    if(premultiplied){
+                    if (premultiplied) {
                         this._opacityModifyRGB = true;
                     } else {
                         this._blendFunc.src = GL_SRC_ALPHA;
