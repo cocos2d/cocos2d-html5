@@ -65,9 +65,9 @@ cc.loadjs = function (filename) {
             };
             //preload ressources
             cc.Loader.shareLoader().preload([
-                {type:"image", src:"Resources/HelloWorld.png"},
-                {type:"image", src:"Resources/grossini_dance_07.png"},
-                {type:"image", src:"Resources/cocos64.png"}
+                {type:"image", src:"res/HelloWorld.png"},
+                {type:"image", src:"res/grossini_dance_07.png"},
+                {type:"image", src:"res/cocos64.png"}
             ]);
         }
     };
@@ -166,5 +166,5 @@ if (!isDebugMode) {
     cc.loadjs('../../CocosDenshion/SimpleAudioEngine.js');
 }
 
-cc.loadjs('Classes/AppDelegate.js');
+cc.loadjs('src/AppDelegate.js');
 cc.loadjs('HelloDom.js');

@@ -102,7 +102,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
     onload:undefined,
 
     /**
-     *  status when Resources loading error
+     *  status when res loading error
      * @example
      * //example
      * cc.Loader.shareLoader().onerror = function () {
@@ -112,7 +112,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
     onerror:undefined,
 
     /**
-     *  status when Resources loading
+     *  status when res loading
      * @example
      * //example
      * cc.Loader.shareLoader().onloading = function () {

@@ -178,7 +178,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  *
  * @example
  * var aSprite = new cc.Sprite();
- * aSprite.initWithFile("HelloWorld.png",new cc.Rect(0,0,480,320));
+ * aSprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     //
@@ -418,7 +418,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect
      * @return {Boolean}
      * @example
-     * var img =cc.TextureCache.sharedTextureCache().addImage("HelloWorld.png");
+     * var img =cc.TextureCache.sharedTextureCache().addImage("HelloHTML5World.png");
      * var mySprite = new cc.Sprite();
      * mySprite.initWithTexture(img,new cc.Rect(0,0,480,320));
      */
@@ -487,7 +487,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Boolean}
      * @example
      * var mySprite = new cc.Sprite();
-     * mySprite.initWithFile("HelloWorld.png",new cc.Rect(0,0,480,320));
+     * mySprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
         var argnum = arguments.length;
@@ -1567,7 +1567,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
  * @return {cc.Sprite}
  * @example
  * //get an image
- * var img = cc.TextureCache.sharedTextureCache().addImage("HelloWorld.png");
+ * var img = cc.TextureCache.sharedTextureCache().addImage("HelloHTML5World.png");
  *
  * //create a sprite with texture
  * var sprite1 = cc.Sprite.createWithTexture(img);
@@ -1624,10 +1624,10 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
  * @return {cc.Sprite}
  * @example
  * //create a sprite with filename
- * var sprite1 = cc.Sprite.create("HelloWorld.png");
+ * var sprite1 = cc.Sprite.create("HelloHTML5World.png");
  *
  * //create a sprite with filename and rect
- * var sprite2 = cc.Sprite.create("HelloWorld.png",new cc.Rect(0,0,480,320));
+ * var sprite2 = cc.Sprite.create("HelloHTML5World.png",new cc.Rect(0,0,480,320));
  */
 cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
