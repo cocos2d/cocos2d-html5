@@ -79,7 +79,6 @@ var cc = cc || cc || {};
         'label_nodes/CCLabelBMFont.js',
         'particle_nodes/CCParticleSystem.js',
         'particle_nodes/CCParticleSystemQuad.js',
-        'particle_nodes/CCParticleSystemPoint.js',
         'particle_nodes/CCParticleExamples.js',
         'touch_dispatcher/CCTouchDelegateProtocol.js',
         'touch_dispatcher/CCTouchHandler.js',

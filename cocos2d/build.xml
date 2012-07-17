@@ -61,6 +61,7 @@
                 <file name="label_nodes/CCLabelTTF.js"/>
                 <file name="label_nodes/CCLabelBMFont.js"/>
                 <file name="particle_nodes/CCParticleSystem.js"/>
+                <file name="particle_nodes/CCParticleBatchNode.js"/>
                 <file name="particle_nodes/CCParticleSystemQuad.js"/>
                 <file name="particle_nodes/CCParticleExamples.js"/>
                 <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
@@ -149,6 +150,7 @@
                 <file name="label_nodes/CCLabelTTF.js"/>
                 <file name="label_nodes/CCLabelBMFont.js"/>
                 <file name="particle_nodes/CCParticleSystem.js"/>
+                <file name="particle_nodes/CCParticleBatchNode.js"/>
                 <file name="particle_nodes/CCParticleSystemQuad.js"/>
                 <file name="particle_nodes/CCParticleExamples.js"/>
                 <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
