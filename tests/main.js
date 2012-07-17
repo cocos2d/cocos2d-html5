@@ -26,10 +26,8 @@
  ****************************************************************************/
 var cocos2dApp = cc.Application.extend({
     config:document.querySelector('#cocos2d-html5')['c'],
-    startScene:null,
     ctor:function (scene) {
         this._super();
-
         this.startScene = scene;
         cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
         cc.setup(this.config['tag']);
@@ -65,5 +63,4 @@ var cocos2dApp = cc.Application.extend({
         return true;
     }
 });
-
 var myApp = new cocos2dApp(TestController);
