@@ -43,6 +43,7 @@
             'src/tests/SchedulerTest/SchedulerTest.js',
             'src/tests/ClickAndMoveTest/ClickAndMoveTest.js',
             'src/tests/MenuTest/MenuTest.js',
+            'src/tests/MultiTouchTest/MultiTouchTest.js',
             'src/tests/ActionsTest/ActionsTest.js',
             'src/tests/TileMapTest/TileMapTest.js',
             'src/tests/TransitionsTest/TransitionsTest.js',
