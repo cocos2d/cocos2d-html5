@@ -63,7 +63,7 @@ cc.DEFAULT_SPRITE_BATCH_CAPACITY = 29;
  * @extends cc.Node
  * @example
  * //create a SpriteBatchNode
- * var parent2 = cc.SpriteBatchNode.create("Resources/animations/grossini.png", 50);
+ * var parent2 = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
  */
 cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     _textureAtlas:new cc.TextureAtlas(),
@@ -922,7 +922,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
  * @return {cc.SpriteBatchNode}
  * @example
  * //create a SpriteBatchNode
- * var parent2 = cc.SpriteBatchNode.create("Resources/animations/grossini.png", 50);
+ * var parent2 = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
  */
 cc.SpriteBatchNode.create = function (fileImage, capacity) {
     if (!capacity) {
