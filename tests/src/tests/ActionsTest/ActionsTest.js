@@ -606,7 +606,7 @@ var ActionAnimate = ActionsDemo.extend({
         //
         var animation = cc.Animation.create();
         for (var i = 1; i < 15; i++) {
-            var frameName = "Resources/Images/grossini_dance_" + ((i < 10) ? ("0" + i) : i) + ".png";
+            var frameName = "res/Images/grossini_dance_" + ((i < 10) ? ("0" + i) : i) + ".png";
             animation.addSpriteFrameWithFileName(frameName);
         }
         animation.setDelayPerUnit(2.8 / 14);

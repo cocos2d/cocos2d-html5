@@ -65,8 +65,8 @@ var Helloworld = cc.Layer.extend({
 
         // add a "close" icon to exit the progress. it's an autorelease object
         var closeItem = cc.MenuItemImage.create(
-            "Resources/CloseNormal.png",
-            "Resources/CloseSelected.png",
+            "res/CloseNormal.png",
+            "res/CloseSelected.png",
             this,
             function () {
                 history.go(-1);
@@ -91,8 +91,8 @@ var Helloworld = cc.Layer.extend({
         var lazyLayer = new cc.LazyLayer();
         this.addChild(lazyLayer);
 
-        // add "HelloWorld" splash screen"
-        this.sprite = cc.Sprite.create("Resources/HelloWorld.png");
+        // add "HelloHTML5World" splash screen"
+        this.sprite = cc.Sprite.create("res/HelloWorld.png");
         this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
         this.sprite.setScale(0.5);
         this.sprite.setRotation(180);

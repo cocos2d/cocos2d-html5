@@ -72,7 +72,7 @@ var TestController = cc.Layer.extend({
     ctor:function () {
         // add close menu
         if (!s_pathClose) {
-            s_pathClose = cc.TextureCache.sharedTextureCache().textureForKey("Resources/CloseNormal.png");
+            s_pathClose = cc.TextureCache.sharedTextureCache().textureForKey("res/CloseNormal.png");
         }
         var closeItem = cc.MenuItemImage.create(s_pathClose, s_pathClose, this, this.closeCallback);
         var menu = cc.Menu.create(closeItem, null);//pmenu is just a holder for the close button
@@ -191,11 +191,11 @@ var testNames = [
     },
     //"CurlTest",
     /*{
-        title:"DirectorTest",
-        testScene:function () {
-            return new DirectorTestScene();
-        }
-    },*/
+     title:"DirectorTest",
+     testScene:function () {
+     return new DirectorTestScene();
+     }
+     },*/
     {
         title:"DrawPrimitivesTest",
         testScene:function () {

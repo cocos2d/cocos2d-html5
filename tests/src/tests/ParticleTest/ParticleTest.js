@@ -850,7 +850,7 @@ var DemoParticleFromFile = ParticleDemo.extend({
         this._background = null;
 
         this._emitter = new cc.ParticleSystemQuad();
-        var filename = "Resources/Images/" + this.title + ".plist";
+        var filename = "res/Images/" + this.title + ".plist";
         this._emitter.initWithFile(filename);
         this.addChild(this._emitter, 10);
 

@@ -35,8 +35,8 @@
         tag:'gameCanvas', //the dom element to run cocos2d on
         engineDir:'../cocos2d/',
         appFiles:[//'src/AppDelegate.js',
-            'testbasic.js',
-            'testResource.js',
+            'src/testbasic.js',
+            'src/testResource.js',
             'src/tests/TouchesTest/Ball.js',
             'src/tests/TouchesTest/Paddle.js',
             'src/tests/TouchesTest/TouchesTest.js',

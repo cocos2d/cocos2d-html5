@@ -632,7 +632,7 @@ var SchedulerTest = EaseSpriteDemo.extend({
 
         var emitter = new cc.ParticleFireworks();
         emitter.initWithTotalParticles(250);
-        emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png"));
+        emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
         this.addChild(emitter);
     },
     title:function () {

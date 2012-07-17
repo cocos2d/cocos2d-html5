@@ -27,14 +27,14 @@
 (function () {
     var d = document;
     var c = {
-        menuType:'canvas', //wether to use canvas mode menu or dom menu
+        menuType:'canvas', //whether to use canvas mode menu or dom menu
         COCOS2D_DEBUG:2, //0 to turn debug off, 1 for basic debug, and 2 for full debug
         box2d:false,
         showFPS:true,
         frameRate:60,
         tag:'gameCanvas', //the dom element to run cocos2d on
-        engineDir:'../cocos2d/',
-        appFiles:['Helloworld.js']
+        engineDir:'../../cocos2d/',
+        appFiles:['src/myApp.js']
     };
     window.addEventListener('DOMContentLoaded', function () {
         //first load engine file if specified

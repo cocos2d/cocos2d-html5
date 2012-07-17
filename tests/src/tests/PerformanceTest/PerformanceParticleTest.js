@@ -102,7 +102,7 @@ var ParticleMainScene = cc.Scene.extend({
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
         // particles on stage
-        //var labelAtlas = cc.LabelAtlas.create("0000", "Resources/Images/fps_images.png", 16, 24, '.');
+        //var labelAtlas = cc.LabelAtlas.create("0000", "res/Images/fps_images.png", 16, 24, '.');
         var labelAtlas = cc.LabelTTF.create("0000", "Marker Felt", 30);
         this.addChild(labelAtlas, 0, TAG_LABEL_ATLAS);
         labelAtlas.setPosition(cc.ccp(s.width - 66, 50));
@@ -167,7 +167,7 @@ var ParticleMainScene = cc.Scene.extend({
 
         //todo
         // remove the "fire.png" from the TextureCache cache.
-        var texture = cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png");
+        var texture = cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png");
         cc.TextureCache.sharedTextureCache().removeTexture(texture);
 
         particleSystem = new cc.ParticleSystemQuad();
@@ -176,17 +176,17 @@ var ParticleMainScene = cc.Scene.extend({
             case 1:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
-                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png"));
+                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
                 break;
             case 2:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
-                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png"));
+                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
                 break;
             case 3:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_A8);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
-                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("Resources/Images/fire.png"));
+                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
                 break;
             default:
                 particleSystem = null;

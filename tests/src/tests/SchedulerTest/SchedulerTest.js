@@ -98,9 +98,9 @@ var SchedulerTestLayer = cc.Layer.extend({
             subLabel.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
 
-        var item1 = cc.MenuItemImage.create("Resources/Images/b1.png", "Resources/Images/b2.png", this, this.backCallback);
-        var item2 = cc.MenuItemImage.create("Resources/Images/r1.png", "Resources/Images/r2.png", this, this.restartCallback);
-        var item3 = cc.MenuItemImage.create("Resources/Images/f1.png", "Resources/Images/f2.png", this, this.nextCallback);
+        var item1 = cc.MenuItemImage.create("res/Images/b1.png", "res/Images/b2.png", this, this.backCallback);
+        var item2 = cc.MenuItemImage.create("res/Images/r1.png", "res/Images/r2.png", this, this.restartCallback);
+        var item3 = cc.MenuItemImage.create("res/Images/f1.png", "res/Images/f2.png", this, this.nextCallback);
 
         var menu = cc.Menu.create(item1, item2, item3, null);
         menu.setPosition(cc.PointZero());

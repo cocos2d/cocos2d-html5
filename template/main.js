@@ -5,6 +5,7 @@
 
  http://www.cocos2d-x.org
 
+
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -23,30 +24,26 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-var cc = cc = cc || {};
-
-/**
- @brief    The cocos2d Application.
-
- The reason for implement as private inheritance is to hide some interface call by CCDirector.
- */
-cc.AppDelegate = cc.Application.extend({
-    ctor:function () {
+var cocos2dApp = cc.Application.extend({
+    config:document.querySelector('#cocos2d-html5').c,
+    ctor:function (scene) {
         this._super();
+        this.startScene = scene;
+        cc.COCOS2D_DEBUG = this.config.COCOS2D_DEBUG;
+        cc.setup(this.config.tag);
+        cc.AudioManager.sharedEngine().init("mp3,ogg");
+        cc.Loader.shareLoader().onloading = function () {
+            cc.LoaderScene.shareLoaderScene().draw();
+        };
+        cc.Loader.shareLoader().onload = function () {
+            cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+        };
+        cc.Loader.shareLoader().preload([
+            {type:"image", src:"res/HelloWorld.png"},
+            {type:"image", src:"res/CloseNormal.png"},
+            {type:"image", src:"res/CloseSelected.png"}
+        ]);
     },
-    /**
-     @brief    Implement for initialize OpenGL instance, set source path, etc...
-     */
-    initInstance:function () {
-        return true;
-    },
-
-    /**
-     @brief    Implement CCDirector and CCScene init code here.
-     @return true    Initialize success, app continue.
-     @return false   Initialize failed, app terminate.
-     */
     applicationDidFinishLaunching:function () {
         // initialize director
         var director = cc.Director.sharedDirector();
@@ -55,37 +52,19 @@ cc.AppDelegate = cc.Application.extend({
 //     director->enableRetinaDisplay(true);
 
         // turn on display FPS
-        director.setDisplayStats(true);
-
-        //cc.SPRITE_DEBUG_DRAW = 1;
+        director.setDisplayStats(this.config.showFPS);
 
         // director->setDeviceOrientation(CCDEVICE_ORIENTATION_LANDSCAPE_LEFT);
 
         // set FPS. the default value is 1.0/60 if you don't call this
-        director.setAnimationInterval(1.0 / 60);
+        director.setAnimationInterval(1.0 / this.config.frameRate);
 
         // create a scene. it's an autorelease object
-        var scene = new TestController();
 
         // run
-        director.runWithScene(scene);
+        director.runWithScene(new this.startScene());
 
         return true;
-    },
-
-    /**
-     @brief  The function be called when the application enter background
-     @param  the pointer of the application
-     */
-    applicationDidEnterBackground:function () {
-        cc.Director.sharedDirector().pause();
-    },
-
-    /**
-     @brief  The function be called when the application enter foreground
-     @param  the pointer of the application
-     */
-    applicationWillEnterForeground:function () {
-        cc.Director.sharedDirector().resume();
     }
 });
+var myApp = new cocos2dApp(MyScene);

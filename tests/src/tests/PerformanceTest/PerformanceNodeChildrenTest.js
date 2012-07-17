@@ -193,7 +193,7 @@ var IterateSpriteSheet = NodeChildrenMainScene.extend({
         this._currentQuantityOfNodes = this._quantityOfNodes;
     },
     initWithQuantityOfNodes:function (nodes) {
-        this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png");
+        this._batchNode = cc.SpriteBatchNode.create("res/Images/spritesheet1.png");
         this.addChild(this._batchNode);
 
         this._super(nodes);
@@ -314,7 +314,7 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
         this._currentQuantityOfNodes = this._quantityOfNodes;
     },
     initWithQuantityOfNodes:function (nodes) {
-        this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png");
+        this._batchNode = cc.SpriteBatchNode.create("res/Images/spritesheet1.png");
         this.addChild(this._batchNode);
 
         this._super(nodes);

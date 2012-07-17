@@ -23,8 +23,8 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var MUSIC_FILE = "Resources/background";
-var EFFECT_FILE = "Resources/effect2";
+var MUSIC_FILE = "res/background";
+var EFFECT_FILE = "res/effect2";
 
 var DenshionTests = [
     {

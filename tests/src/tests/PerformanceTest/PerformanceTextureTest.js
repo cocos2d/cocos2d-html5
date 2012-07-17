@@ -86,18 +86,18 @@ var TextureTest = TextureMenuLayer.extend({
     performTests:function () {
         cc.Log("--------");
         cc.Log("--- PNG 128x128 ---");
-        this.performTestsPNG("Resources/Images/test_image.png");
+        this.performTestsPNG("res/Images/test_image.png");
 
         cc.Log("--- PNG 512x512 ---");
-        this.performTestsPNG("Resources/Images/texture512x512.png");
+        this.performTestsPNG("res/Images/texture512x512.png");
 
         cc.Log("EMPTY IMAGE");
         cc.Log("--- PNG 1024x1024 ---");
-        this.performTestsPNG("Resources/Images/texture1024x1024.png");
+        this.performTestsPNG("res/Images/texture1024x1024.png");
 
         cc.Log("LANDSCAPE IMAGE");
         cc.Log("--- PNG 1024x1024 ---");
-        this.performTestsPNG("Resources/Images/landscape-1024x1024.png");
+        this.performTestsPNG("res/Images/landscape-1024x1024.png");
     },
     title:function () {
         return "Texture Performance Test";

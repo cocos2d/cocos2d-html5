@@ -39,9 +39,9 @@ var cocos2dApp = cc.Application.extend({
             cc.AppController.shareAppController().didFinishLaunchingWithOptions();
         };
         cc.Loader.shareLoader().preload([
-            {type:"image", src:"Resources/HelloWorld.png"},
-            {type:"image", src:"Resources/CloseNormal.png"},
-            {type:"image", src:"Resources/CloseSelected.png"}
+            {type:"image", src:"res/HelloWorld.png"},
+            {type:"image", src:"res/CloseNormal.png"},
+            {type:"image", src:"res/CloseSelected.png"}
         ]);
     },
     applicationDidFinishLaunching:function () {

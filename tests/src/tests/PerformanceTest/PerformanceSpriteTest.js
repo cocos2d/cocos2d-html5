@@ -68,7 +68,7 @@ var SubTest = cc.Class.extend({
         switch (this._subtestNumber) {
             case 1:
             {
-                sprite = cc.Sprite.create("Resources/Images/grossinis_sister1.png");
+                sprite = cc.Sprite.create("res/Images/grossinis_sister1.png");
                 this._parent.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -83,7 +83,7 @@ var SubTest = cc.Class.extend({
             {
                 var idx = parseInt(cc.RANDOM_0_1() * 14) + 1;
                 idx = idx < 10 ? "0" + idx : idx.toString();
-                var str = "Resources/Images/grossini_dance_" + idx + ".png";
+                var str = "res/Images/grossini_dance_" + idx + ".png";
                 sprite = cc.Sprite.create(str);
                 this._parent.addChild(sprite, 0, tag + 100);
                 break;
@@ -107,7 +107,7 @@ var SubTest = cc.Class.extend({
                 y = parseInt(r / 8);
                 x = parseInt(r % 8);
 
-                var str = "Resources/Images/sprites_test/sprite-" + x + "-" + y + ".png";
+                var str = "res/Images/sprites_test/sprite-" + x + "-" + y + ".png";
                 sprite = cc.Sprite.create(str);
                 this._parent.addChild(sprite, 0, tag + 100);
                 break;
@@ -159,9 +159,9 @@ var SubTest = cc.Class.extend({
         // purge textures
         var mgr = cc.TextureCache.sharedTextureCache();
         //		[mgr removeAllTextures];
-        mgr.removeTexture(mgr.addImage("Resources/Images/grossinis_sister1.png"));
-        mgr.removeTexture(mgr.addImage("Resources/Images/grossini_dance_atlas.png"));
-        mgr.removeTexture(mgr.addImage("Resources/Images/spritesheet1.png"));
+        mgr.removeTexture(mgr.addImage("res/Images/grossinis_sister1.png"));
+        mgr.removeTexture(mgr.addImage("res/Images/grossini_dance_atlas.png"));
+        mgr.removeTexture(mgr.addImage("res/Images/spritesheet1.png"));
 
         switch (this._subtestNumber) {
             case 1:
@@ -171,36 +171,36 @@ var SubTest = cc.Class.extend({
             ///
             case 2:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
-                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossinis_sister1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("res/Images/grossinis_sister1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 3:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
-                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossinis_sister1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("res/Images/grossinis_sister1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
             ///
             case 5:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
-                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossini_dance_atlas.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("res/Images/grossini_dance_atlas.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 6:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
-                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/grossini_dance_atlas.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("res/Images/grossini_dance_atlas.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
             ///
             case 8:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
-                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("res/Images/spritesheet1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
             case 9:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
-                this._batchNode = cc.SpriteBatchNode.create("Resources/Images/spritesheet1.png", 100);
+                this._batchNode = cc.SpriteBatchNode.create("res/Images/spritesheet1.png", 100);
                 p.addChild(this._batchNode, 0);
                 break;
 
