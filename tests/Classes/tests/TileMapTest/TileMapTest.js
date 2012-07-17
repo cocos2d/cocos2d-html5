@@ -28,7 +28,7 @@ var TAG_TILE_MAP = 1;
 var TileMapTests = [
     //function(){ return new TileMapTest();}, //not support tga format
     // function(){ return new TileMapEditTest();}, //not support tga format
-    /*function () {
+     function () {
      return new TMXOrthoTest();
      },//ok
      function () {
@@ -42,7 +42,7 @@ var TileMapTests = [
      },//ok
      function () {
      return new TMXReadWriteTest();
-     },
+     },//ok
      function () {
      return new TMXHexTest();
      },//ok
@@ -86,10 +86,10 @@ var TileMapTests = [
      },//ok
      function () {
      return new TMXTilePropertyTest();
-     },
+     },//ok
      function () {
      return new TMXOrthoFlipTest();
-     },//ok*/
+     },//ok
     function () {
         return new TMXOrthoFlipRunTimeTest();
     },
@@ -1082,8 +1082,9 @@ var TMXTilePropertyTest = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         for (var i = 1; i <= 20; i++) {
-            cc.Log("GID:" + i + ", Properties:" + map.propertiesForGID(i));
+            cc.Log("GID:" + i + ", Properties:" + JSON.stringify(map.propertiesForGID(i)));
         }
+
     },
     title:function () {
         return "TMX Tile Property Test";
