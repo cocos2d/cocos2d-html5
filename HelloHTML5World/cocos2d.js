@@ -33,7 +33,7 @@
         showFPS:true,
         frameRate:60,
         tag:'gameCanvas', //the dom element to run cocos2d on
-        engineDir:'../../cocos2d/',
+        engineDir:'../cocos2d/',
         appFiles:['src/myApp.js']
     };
     window.addEventListener('DOMContentLoaded', function () {
