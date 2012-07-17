@@ -43,6 +43,7 @@
             'Classes/tests/SchedulerTest/SchedulerTest.js',
             'Classes/tests/ClickAndMoveTest/ClickAndMoveTest.js',
             'Classes/tests/MenuTest/MenuTest.js',
+            'Classes/tests/MultiTouchTest/MultiTouchTest.js',
             'Classes/tests/ActionsTest/ActionsTest.js',
             'Classes/tests/TileMapTest/TileMapTest.js',
             'Classes/tests/TransitionsTest/TransitionsTest.js',

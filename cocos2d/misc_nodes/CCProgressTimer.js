@@ -286,10 +286,18 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             var context = ctx || cc.renderContext;
 
             context.globalAlpha = this._sprite._opacity / 255;
-            if (this._sprite._flipX) {
+            var centerPoint, mpX=0, mpY=0;
+            if (this._flipX) {
+                centerPoint = new cc.Point(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
+                mpX = 0 | (centerPoint.x - this._sprite._anchorPointInPoints.x);
+                context.translate(mpX, 0);
                 context.scale(-1, 1);
             }
-            if (this._sprite._flipY) {
+
+            if (this._flipY) {
+                centerPoint = new cc.Point(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
+                mpY = -(0 | (centerPoint.y - this._sprite._anchorPointInPoints.y));
+                context.translate(0, mpY);
                 context.scale(1, -1);
             }
 

@@ -244,9 +244,9 @@ var testNames = [
         }
     },
     {
-        title:"MutilTouchTest",
+        title:"MultiTouchTest",
         testScene:function () {
-            return new MutilTouchTestScene();
+            return new MultiTouchTestScene();
         }
     },
     //"MotionStreakTest",

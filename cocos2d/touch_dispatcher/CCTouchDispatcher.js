@@ -564,7 +564,6 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
 cc.TouchDispatcher.preTouchPoint = new cc.Point(0, 0);
 
 cc.TouchDispatcher.isRegisterEvent = false;
-
 /**
  * @param {HTMLCanvasElement|HTMLDivElement} element
  */
@@ -683,9 +682,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             }
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
-
             for (var i = 0; i < event.touches.length; i++) {
-                cc.Log(event.touches[i].identifier);
                 var tx = event.touches[i].pageX;
                 var ty = event.touches[i].pageY;
                 if (event.touches[i]) {
@@ -726,7 +723,6 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             }
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
-
             for (var i = 0; i < event.touches.length; i++) {
                 var tx = event.touches[i].pageX;
                 var ty = event.touches[i].pageY;

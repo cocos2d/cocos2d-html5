@@ -807,19 +807,30 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
 
-            if(this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)){
+            if (this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)) {
                 context.globalCompositeOperation = 'lighter';
             }
 
             context.globalAlpha = this._opacity / 255;
+
+            var centerPoint, mpX=0, mpY=0;
             if (this._flipX) {
+                centerPoint = new cc.Point(this._contentSize.width / 2, this._contentSize.height / 2);
+                mpX = 0 | (centerPoint.x - this._anchorPointInPoints.x);
+                context.translate(mpX, 0);
                 context.scale(-1, 1);
             }
+
             if (this._flipY) {
+                centerPoint = new cc.Point(this._contentSize.width / 2, this._contentSize.height / 2);
+                mpY = -(0 | (centerPoint.y - this._anchorPointInPoints.y));
+                context.translate(0, mpY);
                 context.scale(1, -1);
             }
+
             var offsetPixels = this._offsetPosition;
-            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x + offsetPixels.x), 0 | ( -this._anchorPointInPoints.y + offsetPixels.y));
+            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x - mpX + offsetPixels.x),
+                0 | ( -this._anchorPointInPoints.y + mpY + offsetPixels.y));
             if (this._texture) {
                 //direct draw image by canvas drawImage
                 if (this._texture instanceof HTMLImageElement) {
@@ -1068,7 +1079,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this.setDirty(value);
         // recursively set dirty
         if (this._children != null) {
-            for (var i = 0 ; i < this._children.length;i++) {
+            for (var i = 0; i < this._children.length; i++) {
                 if (this._children[i] instanceof cc.Sprite) {
                     this._children[i].setDirtyRecursively(true);
                 }
@@ -1432,7 +1443,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             return cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect);
         } else {
             return (cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
-                && cc.Point.CCPointEqualToPoint(frame.getOffset(),this._unflippedOffsetPositionFromCenter));
+                && cc.Point.CCPointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
         }
     },
 
@@ -1464,7 +1475,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._batchNode = spriteBatchNode; // weak reference
 
         // self render
-        if( ! this._batchNode ) {
+        if (!this._batchNode) {
             this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
             this.setTextureAtlas(null);
             this._recursiveDirty = false;
@@ -1474,10 +1485,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             var y1 = this._offsetPosition.y;
             var x2 = x1 + this._rect.size.width;
             var y2 = y1 + this._rect.size.height;
-            this._quad.bl.vertices = cc.vertex3( x1, y1, 0 );
-            this._quad.br.vertices = cc.vertex3( x2, y1, 0 );
-            this._quad.tl.vertices = cc.vertex3( x1, y2, 0 );
-            this._quad.tr.vertices = cc.vertex3( x2, y2, 0 );
+            this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
+            this._quad.br.vertices = cc.vertex3(x2, y1, 0);
+            this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
+            this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
 
         } else {
             // using batch
@@ -1506,13 +1517,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     _setReorderChildDirtyRecursively:function () {
         //only set parents flag the first time
-        if ( ! this._reorderChildDirty )
-        {
+        if (!this._reorderChildDirty) {
             this._reorderChildDirty = true;
             var pNode = this._parent;
             while (pNode && pNode != this._batchNode) {
                 pNode._setReorderChildDirtyRecursively();
-                pNode=pNode.getParent();
+                pNode = pNode.getParent();
             }
         }
     },
@@ -1524,19 +1534,19 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setTexture:function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.Assert( !texture || texture instanceof cc.Texture2D || texture instanceof HTMLImageElement
+        cc.Assert(!texture || texture instanceof cc.Texture2D || texture instanceof HTMLImageElement
             || texture instanceof HTMLCanvasElement, "setTexture expects a CCTexture2D. Invalid argument");
 
         if (cc.renderContextType != cc.CANVAS) {
             //TODO
             cc.Assert(!this._batchNode, "cc.Sprite: Batched sprites should use the same texture as the batchnode");
 
-            if(!this._batchNode && this._texture != texture){
+            if (!this._batchNode && this._texture != texture) {
                 this._texture = texture;
                 this._updateBlendFunc();
             }
-        }else{
-            if(this._texture != texture){
+        } else {
+            if (this._texture != texture) {
                 this._texture = texture;
                 this._updateBlendFunc();
             }
