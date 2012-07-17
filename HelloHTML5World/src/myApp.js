@@ -91,7 +91,7 @@ var Helloworld = cc.Layer.extend({
         var lazyLayer = new cc.LazyLayer();
         this.addChild(lazyLayer);
 
-        // add "HelloHTML5World" splash screen"
+        // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
         this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
         this.sprite.setScale(0.5);
