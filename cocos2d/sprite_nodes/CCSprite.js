@@ -812,14 +812,25 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
 
             context.globalAlpha = this._opacity / 255;
+            var centerPoint, mpX=0, mpY=0;
             if (this._flipX) {
+                centerPoint = new cc.Point(this._contentSize.width / 2, this._contentSize.height / 2);
+                mpX = 0 | (centerPoint.x - this._anchorPointInPoints.x);
+                context.translate(mpX, 0);
                 context.scale(-1, 1);
             }
+
             if (this._flipY) {
+                centerPoint = new cc.Point(this._contentSize.width / 2, this._contentSize.height / 2);
+                mpY = -(0 | (centerPoint.y - this._anchorPointInPoints.y));
+                context.translate(0, mpY);
                 context.scale(1, -1);
             }
+
             var offsetPixels = this._offsetPosition;
-            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x + offsetPixels.x), 0 | ( -this._anchorPointInPoints.y + offsetPixels.y));
+            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x - mpX + offsetPixels.x),
+                0 | ( -this._anchorPointInPoints.y + mpY + offsetPixels.y));
+
             if (this._texture) {
                 //direct draw image by canvas drawImage
                 if (this._texture instanceof HTMLImageElement) {
@@ -1100,11 +1111,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     /**
      * Rotation setter (override cc.Node )
-     * @param {Number} fRotation
+     * @param {Number} rotation
      * @override
      */
-    setRotation:function (fRotation) {
-        this._super(fRotation);
+    setRotation:function (rotation) {
+        this._super(rotation);
         this.SET_DIRTY_RECURSIVELY();
     },
 

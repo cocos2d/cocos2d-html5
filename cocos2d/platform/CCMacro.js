@@ -224,6 +224,16 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
 
 /**
  * Converts a rect in points to pixels
+ * @param {cc.Point} points
+ * @return {cc.Point}
+ * @function
+ */
+cc.POINT_POINTS_TO_PIXELS = function (points) {
+    return new cc.Point(points.x * cc.CONTENT_SCALE_FACTOR(), points.y * cc.CONTENT_SCALE_FACTOR())
+};
+
+/**
+ * Converts a rect in points to pixels
  * @param {cc.Size} sizeInPoints
  * @return {cc.Size}
  * @function
