@@ -178,7 +178,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  *
  * @example
  * var aSprite = new cc.Sprite();
- * aSprite.initWithFile("HelloWorld.png",new cc.Rect(0,0,480,320));
+ * aSprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     //
@@ -418,7 +418,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Rect} rect
      * @return {Boolean}
      * @example
-     * var img =cc.TextureCache.sharedTextureCache().addImage("HelloWorld.png");
+     * var img =cc.TextureCache.sharedTextureCache().addImage("HelloHTML5World.png");
      * var mySprite = new cc.Sprite();
      * mySprite.initWithTexture(img,new cc.Rect(0,0,480,320));
      */
@@ -487,7 +487,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Boolean}
      * @example
      * var mySprite = new cc.Sprite();
-     * mySprite.initWithFile("HelloWorld.png",new cc.Rect(0,0,480,320));
+     * mySprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
         var argnum = arguments.length;
@@ -807,7 +807,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
 
-            if(this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)){
+            if (this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)) {
                 context.globalCompositeOperation = 'lighter';
             }
 
@@ -1068,7 +1068,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this.setDirty(value);
         // recursively set dirty
         if (this._children != null) {
-            for (var i = 0 ; i < this._children.length;i++) {
+            for (var i = 0; i < this._children.length; i++) {
                 if (this._children[i] instanceof cc.Sprite) {
                     this._children[i].setDirtyRecursively(true);
                 }
@@ -1432,7 +1432,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             return cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect);
         } else {
             return (cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
-                && cc.Point.CCPointEqualToPoint(frame.getOffset(),this._unflippedOffsetPositionFromCenter));
+                && cc.Point.CCPointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
         }
     },
 
@@ -1464,7 +1464,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._batchNode = spriteBatchNode; // weak reference
 
         // self render
-        if( ! this._batchNode ) {
+        if (!this._batchNode) {
             this._atlasIndex = cc.SPRITE_INDEX_NOT_INITIALIZED;
             this.setTextureAtlas(null);
             this._recursiveDirty = false;
@@ -1474,10 +1474,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             var y1 = this._offsetPosition.y;
             var x2 = x1 + this._rect.size.width;
             var y2 = y1 + this._rect.size.height;
-            this._quad.bl.vertices = cc.vertex3( x1, y1, 0 );
-            this._quad.br.vertices = cc.vertex3( x2, y1, 0 );
-            this._quad.tl.vertices = cc.vertex3( x1, y2, 0 );
-            this._quad.tr.vertices = cc.vertex3( x2, y2, 0 );
+            this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
+            this._quad.br.vertices = cc.vertex3(x2, y1, 0);
+            this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
+            this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
 
         } else {
             // using batch
@@ -1506,13 +1506,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     _setReorderChildDirtyRecursively:function () {
         //only set parents flag the first time
-        if ( ! this._reorderChildDirty )
-        {
+        if (!this._reorderChildDirty) {
             this._reorderChildDirty = true;
             var pNode = this._parent;
             while (pNode && pNode != this._batchNode) {
                 pNode._setReorderChildDirtyRecursively();
-                pNode=pNode.getParent();
+                pNode = pNode.getParent();
             }
         }
     },
@@ -1524,19 +1523,19 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setTexture:function (texture) {
         // CCSprite: setTexture doesn't work when the sprite is rendered using a CCSpriteSheet
-        cc.Assert( !texture || texture instanceof cc.Texture2D || texture instanceof HTMLImageElement
+        cc.Assert(!texture || texture instanceof cc.Texture2D || texture instanceof HTMLImageElement
             || texture instanceof HTMLCanvasElement, "setTexture expects a CCTexture2D. Invalid argument");
 
         if (cc.renderContextType != cc.CANVAS) {
             //TODO
             cc.Assert(!this._batchNode, "cc.Sprite: Batched sprites should use the same texture as the batchnode");
 
-            if(!this._batchNode && this._texture != texture){
+            if (!this._batchNode && this._texture != texture) {
                 this._texture = texture;
                 this._updateBlendFunc();
             }
-        }else{
-            if(this._texture != texture){
+        } else {
+            if (this._texture != texture) {
                 this._texture = texture;
                 this._updateBlendFunc();
             }
@@ -1557,7 +1556,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
  * @return {cc.Sprite}
  * @example
  * //get an image
- * var img = cc.TextureCache.sharedTextureCache().addImage("HelloWorld.png");
+ * var img = cc.TextureCache.sharedTextureCache().addImage("HelloHTML5World.png");
  *
  * //create a sprite with texture
  * var sprite1 = cc.Sprite.createWithTexture(img);
@@ -1614,10 +1613,10 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
  * @return {cc.Sprite}
  * @example
  * //create a sprite with filename
- * var sprite1 = cc.Sprite.create("HelloWorld.png");
+ * var sprite1 = cc.Sprite.create("HelloHTML5World.png");
  *
  * //create a sprite with filename and rect
- * var sprite2 = cc.Sprite.create("HelloWorld.png",new cc.Rect(0,0,480,320));
+ * var sprite2 = cc.Sprite.create("HelloHTML5World.png",new cc.Rect(0,0,480,320));
  */
 cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
