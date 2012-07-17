@@ -481,7 +481,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     /**
      * cc.TMXLayer doesn't support adding a cc.Sprite manually.
      * @warning addChild(child); is not supported on cc.TMXLayer. Instead of setTileGID.
-     * @param {cc.Node} cv bhild
+     * @param {cc.Node} child
      */
     addChild:function (child) {
         cc.Assert(0, "addChild: is not supported on cc.TMXLayer. Instead use setTileGID:at:/tileAt:");
