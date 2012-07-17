@@ -1256,9 +1256,9 @@ var ActionTargeted = ActionsDemo.extend({
         this._super();
         this.centerSprites(2);
 
-        var jump1 = cc.JumpBy.create(2,cc.PointZero(),100,3);
+        var jump1 = cc.JumpBy.create(2, cc.PointZero(), 100, 3);
         var jump2 = jump1.copy();
-        var rot1 =  cc.RotateBy.create(1, 360);
+        var rot1 = cc.RotateBy.create(1, 360);
         var rot2 = rot1.copy();
 
         var t1 = cc.TargetedAction.create(this._kathia, jump2);
@@ -1331,7 +1331,7 @@ var Issue1305 = ActionsDemo.extend({
         cc.Log("This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
     },
     addSprite:function (dt) {
-        this._spriteTmp.setPosition(cc.ccp(250,250));
+        this._spriteTmp.setPosition(cc.ccp(250, 250));
         this.addChild(this._spriteTmp);
     },
     title:function () {
@@ -1348,23 +1348,23 @@ var Issue1305_2 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(200,200));
+        spr.setPosition(cc.ccp(200, 200));
         this.addChild(spr);
 
-        var act1 = cc.MoveBy.create(2 ,cc.ccp(0, 100));
+        var act1 = cc.MoveBy.create(2, cc.ccp(0, 100));
 
-        var act2 = cc.CallFunc.create(this, this.log1) ;
+        var act2 = cc.CallFunc.create(this, this.log1);
         var act3 = cc.MoveBy.create(2, cc.ccp(0, -100));
-        var act4 = cc.CallFunc.create(this, this.log2) ;
+        var act4 = cc.CallFunc.create(this, this.log2);
         var act5 = cc.MoveBy.create(2, cc.ccp(100, -100));
-        var act6 = cc.CallFunc.create(this, this.log3) ;
+        var act6 = cc.CallFunc.create(this, this.log3);
         var act7 = cc.MoveBy.create(2, cc.ccp(-100, 0));
-        var act8 = cc.CallFunc.create(this, this.log4) ;
+        var act8 = cc.CallFunc.create(this, this.log4);
 
         var actF = cc.Sequence.create(act1, act2, act3, act4, act5, act6, act7, act8);
 
         //    [spr runAction:actF];
-        cc.Director.sharedDirector().getActionManager().addAction(actF ,spr, false);
+        cc.Director.sharedDirector().getActionManager().addAction(actF, spr, false);
     },
     log1:function () {
         cc.Log("1st block");

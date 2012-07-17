@@ -166,5 +166,5 @@ if (!isDebugMode) {
     cc.loadjs('../../CocosDenshion/SimpleAudioEngine.js');
 }
 
-cc.loadjs('Classes/AppDelegate.js');
+cc.loadjs('src/AppDelegate.js');
 cc.loadjs('HelloDom.js');

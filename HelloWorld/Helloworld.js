@@ -51,12 +51,12 @@ var Helloworld = cc.Layer.extend({
             function () {
                 history.go(-1);
             });
-        closeItem.setAnchorPoint(new cc.Point(0.5,0.5));
+        closeItem.setAnchorPoint(new cc.Point(0.5, 0.5));
 
         var menu = cc.Menu.create(closeItem, null);
-        menu.setPosition( cc.PointZero() );
+        menu.setPosition(cc.PointZero());
         this.addChild(menu, 1);
-        closeItem.setPosition(new cc.Point(size.width -20 , 20));
+        closeItem.setPosition(new cc.Point(size.width - 20, 20));
 
         /////////////////////////////
         // 3. add your codes below...
@@ -83,26 +83,11 @@ var Helloworld = cc.Layer.extend({
 
 });
 
-Helloworld.scene = function () {
-    // 'scene' is an autorelease object
-    var scene = cc.Scene.create();
-
-    // 'layer' is an autorelease object
-    var layer = this.node();
-    scene.addChild(layer);
-    return scene;
-};
-// implement the "static node()" method manually
-Helloworld.node = function () {
-    var ret = new Helloworld();
-
-    // Init the helloworld display layer.
-    if (ret && ret.init()) {
-        return ret;
+var HelloWorldScene = cc.Scene.extend({
+    onEnter:function () {
+        this._super();
+        var layer = new Helloworld();
+        this.addChild(layer);
+        layer.init();
     }
-
-    return null;
-};
-
-
-
+});

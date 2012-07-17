@@ -307,27 +307,11 @@ var Helloworld = cc.Layer.extend({
         console.log("ccTouchesCancelled");
     }
 });
-// there's no 'id' in cpp, so we recommand to return the exactly class pointer
-Helloworld.scene = function () {
-    // 'scene' is an autorelease object
-    var scene = cc.Scene.create();
-
-    // 'layer' is an autorelease object
-    var layer = this.node();
-    scene.addChild(layer);
-    return scene;
-};
-// implement the "static node()" method manually
-Helloworld.node = function () {
-    var ret = new Helloworld();
-    if (ret && ret.init()) {
-        return ret;
+var HelloWorldScene = cc.Scene.extend({
+    onEnter:function () {
+        this._super();
+        var layer = new Helloworld();
+        this.addChild(layer);
+        layer.init();
     }
-    else {
-        ret = null;
-        return null;
-    }
-};
-
-
-
+});

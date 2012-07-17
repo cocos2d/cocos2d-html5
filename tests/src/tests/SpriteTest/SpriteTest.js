@@ -3711,7 +3711,7 @@ var SpriteSkewNegativeScaleChildren = SpriteTestDemo.extend({
         var parent = cc.Node.create();
         this.addChild(parent);
 
-        for (var i = 0;i < 2;i++){
+        for (var i = 0; i < 2; i++) {
             var sprite = cc.Sprite.createWithSpriteFrame("grossini_dance_01.png");
             sprite.setPosition(cc.ccp(winSize.width / 4 * (i + 1), winSize.height / 2));
 
@@ -3756,7 +3756,7 @@ var DoubleSprite = cc.Sprite.extend({
     },
 
     setContentSize:function (size) {
-        var newSize = new cc.Size(size.width,size.height);
+        var newSize = new cc.Size(size.width, size.height);
         // If Retina Display and Texture is in HD then scale the vertex rect
         if (cc.CONTENT_SCALE_FACTOR() == 2 && !this.HD) {
             newSize.width *= 2;
