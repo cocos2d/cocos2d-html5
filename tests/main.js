@@ -25,12 +25,12 @@
  THE SOFTWARE.
  ****************************************************************************/
 var cocos2dApp = cc.Application.extend({
-    config:document.querySelector('#cocos2d-html5').c,
+    config:document.querySelector('#cocos2d-html5')['c'],
     ctor:function (scene) {
         this._super();
         this.startScene = scene;
-        cc.COCOS2D_DEBUG = this.config.COCOS2D_DEBUG;
-        cc.setup(this.config.tag);
+        cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
+        cc.setup(this.config['tag']);
         cc.AudioManager.sharedEngine().init("mp3,ogg");
         cc.Loader.shareLoader().onloading = function () {
             cc.LoaderScene.shareLoaderScene().draw();
@@ -48,12 +48,12 @@ var cocos2dApp = cc.Application.extend({
 //     director->enableRetinaDisplay(true);
 
         // turn on display FPS
-        director.setDisplayStats(this.config.showFPS);
+        director.setDisplayStats(this.config['showFPS']);
 
         // director->setDeviceOrientation(CCDEVICE_ORIENTATION_LANDSCAPE_LEFT);
 
         // set FPS. the default value is 1.0/60 if you don't call this
-        director.setAnimationInterval(1.0 / this.config.frameRate);
+        director.setAnimationInterval(1.0 / this.config['frameRate']);
 
         // create a scene. it's an autorelease object
 

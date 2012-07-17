@@ -46,7 +46,7 @@ var cc = cc = cc || {};
 
     /**
      * Create a new Class that inherits from this Class
-     * @param {Array} prop
+     * @param {object} prop
      * @return {function}
      */
     cc.Class.extend = function (prop) {
