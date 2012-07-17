@@ -659,8 +659,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 if (this._isCacheDirty) {
                     //add dirty region
                     this._renderTexture.clear();
-                    this._renderTexture.context.translate(this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
-
+                    this._renderTexture.context.save();
+                    this._renderTexture.context.translate(this._anchorPointInPoints.x , -(this._anchorPointInPoints.y ));
                     if (this._children) {
                         this.sortAllChildren();
                         for (i = 0; i < this._children.length; i++) {
@@ -669,6 +669,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                             }
                         }
                     }
+                    this._renderTexture.context.restore();
                     this._isCacheDirty = false;
                 }
                 // draw RenderTexture
