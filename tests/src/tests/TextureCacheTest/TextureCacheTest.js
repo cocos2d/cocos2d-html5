@@ -42,7 +42,7 @@ var TextureCacheTest = cc.Layer.extend({
         this.addChild(this._labelPercent);
 
         // load textrues
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/HelloHTML5World.png", this, this.loadingCallBack);
+        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/HelloWorld.png", this, this.loadingCallBack);
         cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini.png", this, this.loadingCallBack);
         cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_01.png", this, this.loadingCallBack);
         cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_02.png", this, this.loadingCallBack);
@@ -67,7 +67,7 @@ var TextureCacheTest = cc.Layer.extend({
         var size = cc.Director.sharedDirector().getWinSize();
 
         // create sprites
-        var bg = cc.Sprite.create("res/Images/HelloHTML5World.png");
+        var bg = cc.Sprite.create("res/Images/HelloWorld.png");
         bg.setPosition(cc.PointMake(size.width / 2, size.height / 2));
         //bg.setScale(1.7);
 

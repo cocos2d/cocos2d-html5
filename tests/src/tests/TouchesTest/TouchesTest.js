@@ -38,7 +38,6 @@ var TouchesTestScene = TestScene.extend({
         cc.Director.sharedDirector().replaceScene(this);
     },
     MainMenuCallback:function (sender) {
-        cc.Director.sharedDirector().setDeviceOrientation(cc.DEVICE_ORIENTATION_PORTRAIT);
         this._super(sender);
     }
 });

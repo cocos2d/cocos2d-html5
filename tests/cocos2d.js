@@ -61,7 +61,6 @@
             'src/tests/ActionManagerTest/ActionManagerTest.js',
             'src/tests/EaseActionsTest/EaseActionsTest.js',
             'src/tests/ParallaxTest/ParallaxTest.js',
-            'src/tests/DirectorTest/DirectorTest.js',
             'src/tests/PerformanceTest/PerformanceTest.js',
             'src/tests/PerformanceTest/PerformanceSpriteTest.js',
             'src/tests/PerformanceTest/PerformanceParticleTest.js',
