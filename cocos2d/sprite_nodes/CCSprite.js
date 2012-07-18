@@ -806,7 +806,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
-
             if (this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)) {
                 context.globalCompositeOperation = 'lighter';
             }
@@ -819,7 +818,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 context.translate(mpX, 0);
                 context.scale(-1, 1);
             }
-
             if (this._flipY) {
                 centerPoint = new cc.Point(this._contentSize.width / 2, this._contentSize.height / 2);
                 mpY = -(0 | (centerPoint.y - this._anchorPointInPoints.y));
@@ -827,9 +825,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 context.scale(1, -1);
             }
 
-            var offsetPixels = this._offsetPosition;
-            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x - mpX + offsetPixels.x),
-                0 | ( -this._anchorPointInPoints.y + mpY + offsetPixels.y));
+            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x - mpX + this._offsetPosition.x),
+                0 | ( -this._anchorPointInPoints.y + mpY + this._offsetPosition.y));
 
             if (this._texture) {
                 //direct draw image by canvas drawImage
@@ -865,7 +862,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 context.fillRect(pos.x, pos.y, this._contentSize.width, this._contentSize.height);
             }
 
-            //TODO need to fixed
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
                 s = this._contentSize;

@@ -25,17 +25,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-var cc = cc = cc || {};
-
 var TestScene = cc.Scene.extend({
-    _portrait:false,
     ctor:function (bPortrait) {
         this._super();
-        this._portrait = bPortrait;
-        if (this._portrait) {
-            cc.Director.sharedDirector().setDeviceOrientation(cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT);
-        }
         this.init();
     },
     onEnter:function () {
@@ -190,12 +182,6 @@ var testNames = [
         }
     },
     //"CurlTest",
-    /*{
-     title:"DirectorTest",
-     testScene:function () {
-     return new DirectorTestScene();
-     }
-     },*/
     {
         title:"DrawPrimitivesTest",
         testScene:function () {

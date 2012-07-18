@@ -759,38 +759,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * set Orientation of device
-     * @param {Number} deviceOrientation
-     */
-    setDeviceOrientation:function (deviceOrientation) {
-        var eNewOrientation = cc.Application.sharedApplication().setOrientation(deviceOrientation);
-
-        if ((this._deviceOrientation % cc.DEVICE_MAX_ORIENTATIONS) != (eNewOrientation % cc.DEVICE_MAX_ORIENTATIONS)) {
-            this._deviceOrientation = eNewOrientation;
-            if (cc.renderContextType == cc.CANVAS) {
-                var height = cc.canvas.height;
-                cc.canvas.height = cc.canvas.width;
-                cc.canvas.width = height;
-                cc.renderContext.translate(0, cc.canvas.height);
-                if (cc.domNode) {
-                    var cont = cc.$("#Cocos2dGameContainer");
-                    if (cont) {
-                        cont.style.width = cc.canvas.width + "px";
-                        cont.style.height = cc.canvas.height + "px";
-                    }
-                }
-            }
-        } else {
-            // this logic is only run on win32 now
-            // On win32,the return value of CCApplication::setDeviceOrientation is always CCDEVICE_ORIENTATION_PORTRAIT
-            // So,we should calculate the Projection and window size again.
-            //this._winSizeInPoints = this._openGLView.getSize();
-            //this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
-            //this.setProjection(this._projection);
-        }
-    },
-
-    /**
      * sets the OpenGL default values
      */
     setGLDefaultValues:function () {

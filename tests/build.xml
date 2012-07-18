@@ -35,7 +35,6 @@
                 <file name="src/tests/ActionManagerTest/ActionManagerTest.js"/>
                 <file name="src/tests/EaseActionsTest/EaseActionsTest.js"/>
                 <file name="src/tests/ParallaxTest/ParallaxTest.js"/>
-                <file name="src/tests/DirectorTest/DirectorTest.js"/>
                 <file name="src/tests/PerformanceTest/PerformanceTest.js"/>
                 <file name="src/tests/PerformanceTest/PerformanceSpriteTest.js"/>
                 <file name="src/tests/PerformanceTest/PerformanceParticleTest.js"/>
@@ -167,7 +166,6 @@
                 <file name="src/tests/ActionManagerTest/ActionManagerTest.js"/>
                 <file name="src/tests/EaseActionsTest/EaseActionsTest.js"/>
                 <file name="src/tests/ParallaxTest/ParallaxTest.js"/>
-                <file name="src/tests/DirectorTest/DirectorTest.js"/>
                 <file name="src/tests/PerformanceTest/PerformanceTest.js"/>
                 <file name="src/tests/PerformanceTest/PerformanceSpriteTest.js"/>
                 <file name="src/tests/PerformanceTest/PerformanceParticleTest.js"/>
