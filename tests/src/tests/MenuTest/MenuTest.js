@@ -52,7 +52,7 @@ var MenuLayer1 = cc.Layer.extend({
         var item2 = cc.MenuItemImage.create(s_sendScore, s_pressSendScore, this, this.menuCallback2);
 
         // Label Item (LabelAtlas)
-        var labelAtlas = cc.LabelAtlas.create("0123456789", "res/fonts/fps_images.png", 16, 24, '.');
+        var labelAtlas = cc.LabelAtlas.create("0123456789", s_fpsImages, 16, 24, '.');
         var item3 = cc.MenuItemLabel.create(labelAtlas, this, this.menuCallbackDisabled);
         item3.setDisabledColor(cc.ccc3(32, 32, 64));
         item3.setColor(cc.ccc3(200, 200, 255));
@@ -64,7 +64,7 @@ var MenuLayer1 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
 
         // Label Item (CCLabelBMFont)
-        var label = cc.LabelBMFont.create("configuration", "res/fonts/bitmapFontTest3.fnt");
+        var label = cc.LabelBMFont.create("configuration", s_bitmapFontTest3_fnt);
         var item5 = cc.MenuItemLabel.create(label, this, this.menuCallbackConfig);
 
         // Testing issue #500
@@ -80,7 +80,6 @@ var MenuLayer1 = cc.Layer.extend({
 
         var menu = cc.Menu.create(item1, item2, item3, item4, item5, item6, null);
         menu.alignItemsVertically();
-
 
         // elastic effect
         var s = cc.Director.sharedDirector().getWinSize();
@@ -226,7 +225,7 @@ var MenuLayer3 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(28);
 
-        var label = cc.LabelBMFont.create("Enable AtlasItem", "res/fonts/bitmapFontTest3.fnt");
+        var label = cc.LabelBMFont.create("Enable AtlasItem", s_bitmapFontTest3_fnt);
         var item1 = cc.MenuItemLabel.create(label, this, this.menuCallback2);
         var item2 = cc.MenuItemFont.create("--- Go Back ---", this, this.menuCallback);
 
@@ -331,7 +330,7 @@ var MenuLayer4 = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Marker Felt");
         cc.MenuItemFont.setFontSize(34);
 
-        var label = cc.LabelBMFont.create("go back", "res/fonts/bitmapFontTest3.fnt");
+        var label = cc.LabelBMFont.create("go back", s_bitmapFontTest3_fnt);
         var back = cc.MenuItemLabel.create(label, this, this.backCallback);
 
         var menu = cc.Menu.create(

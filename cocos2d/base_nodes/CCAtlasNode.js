@@ -154,8 +154,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             if (cc.renderContextType == cc.CANVAS) {
                 var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
-                    //generate color texture cache
-                    var tx = this.getTexture();
+                    var tx = this._originalTexture;
                     var textureRect = new cc.Rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
                     var img = new Image();
