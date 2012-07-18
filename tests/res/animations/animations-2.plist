@@ -122,9 +122,9 @@
 	<dict>
 		<key>spritesheets</key>
 		<array>
-			<string>Resources/animations/grossini.plist</string>
-			<string>Resources/animations/grossini_blue.plist</string>
-			<string>Resources/animations/grossini_family.plist</string>
+			<string>res/animations/grossini.plist</string>
+			<string>res/animations/grossini_blue.plist</string>
+			<string>res/animations/grossini_family.plist</string>
 		</array>
 		<key>format</key>
 		<integer>2</integer>
