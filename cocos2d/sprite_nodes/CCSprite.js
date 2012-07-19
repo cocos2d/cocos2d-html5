@@ -362,12 +362,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         return this._blendFunc;
     },
 
+    _isLighterMode:false,
     /**
      * conforms to cc.TextureProtocol protocol
      * @param {cc.BlendFunc} blendFunc
      */
     setBlendFunc:function (blendFunc) {
         this._blendFunc = blendFunc;
+
+        this._isLighterMode = (this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE));
     },
 
     /**
@@ -490,7 +493,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * mySprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
-        var argnum = arguments.length;
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
 
         var texture = cc.TextureCache.sharedTextureCache().textureForKey(filename);
@@ -584,7 +586,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         // rendering using batch node
         if (this._batchNode) {
             // update dirty_, don't update recursiveDirty_
-            this.setDirty(true);
+            //this.setDirty(true);
+            this._dirty = true;
         } else {
             // self rendering
 
@@ -789,7 +792,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         tv.rotation = this._rotation;
         tv.skew.x = this._skewX;
         tv.skew.y = this._skewY;
-        tv.ap = this._anchorPointInPixels;
+        tv.ap = this._anchorPointInPoints;
         tv.visible = this._isVisible;
         return tv
     },
@@ -799,48 +802,42 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {CanvasContext} ctx 2d context of canvas
      */
     draw:function (ctx) {
-        this._super();
+        //this._super();
 
         //cc.PROFILER_START_CATEGORY(kCCProfilerCategorySprite, "cc.Sprite - draw");
-        var s, vertices, offsetPix;
-
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
-            if (this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE)) {
+            if (this._isLighterMode) {
                 context.globalCompositeOperation = 'lighter';
             }
 
             context.globalAlpha = this._opacity / 255;
-            var centerPoint, mpX=0, mpY=0;
+            var mpX = 0, mpY = 0;
             if (this._flipX) {
-                centerPoint = new cc.Point(this._contentSize.width / 2, this._contentSize.height / 2);
-                mpX = 0 | (centerPoint.x - this._anchorPointInPoints.x);
+                mpX = 0 | (this._contentSize.width / 2 - this._anchorPointInPoints.x);
                 context.translate(mpX, 0);
                 context.scale(-1, 1);
             }
             if (this._flipY) {
-                centerPoint = new cc.Point(this._contentSize.width / 2, this._contentSize.height / 2);
-                mpY = -(0 | (centerPoint.y - this._anchorPointInPoints.y));
+                mpY = -(0 | (this._contentSize.height / 2 - this._anchorPointInPoints.y));
                 context.translate(0, mpY);
                 context.scale(1, -1);
             }
 
-            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x - mpX + this._offsetPosition.x),
-                0 | ( -this._anchorPointInPoints.y + mpY + this._offsetPosition.y));
-
+            var posX = 0 | ( -this._anchorPointInPoints.x - mpX + this._offsetPosition.x);
+            var posY = 0 | ( -this._anchorPointInPoints.y + mpY + this._offsetPosition.y);
             if (this._texture) {
-                //direct draw image by canvas drawImage
                 if (this._texture instanceof HTMLImageElement) {
                     if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
                         this.setContentSize(new cc.Size(this._texture.width, this._texture.height));
                         this._rect.size.width = this._texture.width;
                         this._rect.size.height = this._texture.height;
-                        context.drawImage(this._texture, pos.x, -(pos.y + this._texture.height));
+                        context.drawImage(this._texture, posX, -(posY + this._texture.height));
                     } else {
                         context.drawImage(this._texture,
                             this._rect.origin.x, this._rect.origin.y,
                             this._rect.size.width, this._rect.size.height,
-                            pos.x, -(pos.y + this._rect.size.height),
+                            posX, -(posY + this._rect.size.height),
                             this._rect.size.width, this._rect.size.height);
                     }
                 } else {
@@ -848,34 +845,34 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                         this.setContentSize(new cc.Size(this._texture.width, this._texture.height));
                         this._rect.size.width = this._texture.width;
                         this._rect.size.height = this._texture.height;
-                        context.drawImage(this._texture, pos.x, -(pos.y + this._texture.height));
+                        context.drawImage(this._texture, posX, -(posY + this._texture.height));
                     } else {
                         context.drawImage(this._texture,
                             0, 0,
                             this._rect.size.width, this._rect.size.height,
-                            pos.x, -(pos.y + this._rect.size.height),
+                            posX, -(posY + this._rect.size.height),
                             this._rect.size.width, this._rect.size.height);
                     }
                 }
             } else {
                 context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";
-                context.fillRect(pos.x, pos.y, this._contentSize.width, this._contentSize.height);
+                context.fillRect(posX, posY, this._contentSize.width, this._contentSize.height);
             }
 
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
-                s = this._contentSize;
                 context.strokeStyle = "rgba(0,255,0,1)";
-                vertices = [cc.ccp(pos.x, pos.y), cc.ccp(pos.x + s.width, pos.y), cc.ccp(pos.x + s.width, pos.y + s.height), cc.ccp(pos.x, pos.y + s.height)];
-                cc.drawingUtil.drawPoly(vertices, 4, true);
+                var vertices1 = [cc.ccp(posX, posY), cc.ccp(posX + this._contentSize.width, posY), cc.ccp(posX + this._contentSize.width, posY + this._contentSize.height),
+                    cc.ccp(posX, posY + this._contentSize.height)];
+                cc.drawingUtil.drawPoly(vertices1, 4, true);
             } else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
                 context.strokeStyle = "rgba(0,255,0,1)";
-                s = this.getTextureRect().size;
-                offsetPix = this.getOffsetPosition();
-                vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),
-                    cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
-                cc.drawingUtil.drawPoly(vertices, 4, true);
+                var drawSize = this.getTextureRect().size;
+                var offsetPix = this.getOffsetPosition();
+                var vertices2 = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + drawSize.width, offsetPix.y),
+                    cc.ccp(offsetPix.x + drawSize.width, offsetPix.y + drawSize.height), cc.ccp(offsetPix.x, offsetPix.y + drawSize.height)];
+                cc.drawingUtil.drawPoly(vertices2, 4, true);
             }
         } else {
             //TODO  WebGL Draw of sprite
@@ -917,25 +914,26 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
-                vertices = [
+                var verticesG1 = [
                     new cc.Point(this._quad.tl.vertices.x, this._quad.tl.vertices.y),
                     new cc.Point(this._quad.bl.vertices.x, this._quad.bl.vertices.y),
                     new cc.Point(this._quad.br.vertices.x, this._quad.br.vertices.y),
                     new cc.Point(this._quad.tr.vertices.x, this._quad.tr.vertices.y)
                 ];
-                cc.drawingUtil.drawPoly(vertices, 4, true);
+                cc.drawingUtil.drawPoly(verticesG1, 4, true);
             }
             else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
-                s = this.getTextureRect().size;
-                offsetPix = this.getOffsetPosition();
-                vertices = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + s.width, offsetPix.y),
-                    cc.ccp(offsetPix.x + s.width, offsetPix.y + s.height), cc.ccp(offsetPix.x, offsetPix.y + s.height)];
-                cc.drawingUtil.drawPoly(vertices, 4, true);
+                var drawSizeG2 = this.getTextureRect().size;
+                var offsetPixG2 = this.getOffsetPosition();
+                var verticesG2 = [cc.ccp(offsetPixG2.x, offsetPixG2.y), cc.ccp(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
+                    cc.ccp(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.ccp(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
+                cc.drawingUtil.drawPoly(verticesG2, 4, true);
             } // CC_SPRITE_DEBUG_DRAW
         }
 
-        cc.INCREMENT_GL_DRAWS(1);
+        //cc.INCREMENT_GL_DRAWS(1);
+        cc.g_NumberOfDraws++;
 
         //CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
     },
@@ -984,9 +982,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var i = 0, j = 0, length = this._children.length;
+            var j;
             var tempItem = null;
-            for (i = 1; i < length; i++) {
+            for (var i = 1; i < this._children.length; i++) {
                 tempItem = this._children[i];
                 j = i - 1;
 
@@ -1089,7 +1087,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     SET_DIRTY_RECURSIVELY:function () {
         if (this._batchNode && !this._recursiveDirty) {
             this._recursiveDirty = true;
-            this.setDirty(true);
+            //this.setDirty(true);
+            this._dirty = true;
             if (this._hasChildren)
                 this.setDirtyRecursively(true);
         }
@@ -1289,7 +1288,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             } else {
                 // no need to set it recursively
                 // update dirty_, don't update recursiveDirty_
-                this.setDirty(true);
+                //this.setDirty(true);
+                this._dirty = true;
             }
         }
         // self render

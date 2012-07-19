@@ -139,7 +139,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotation:0.0,
     _scaleX:1.0,
     _scaleY:1.0,
-    _position:cc.PointZero(),
+    _position:new cc.Point(0, 0),
     _skewX:0.0,
     _skewY:0.0,
     // children (lazy allocs),
@@ -186,7 +186,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         var director = cc.Director.sharedDirector();
         this._actionManager = director.getActionManager();
+        this.getActionManager = function(){return this._actionManager;} ;
         this._scheduler = director.getScheduler();
+        this.getScheduler = function(){return this._scheduler;}
     },
 
     /**
@@ -276,6 +278,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _setNodeDirtyForCache:function () {
+        if(this._isCacheDirty)
+            return;
+
         this._isCacheDirty = true;
         if (this._parent) {
             this._parent._setNodeDirtyForCache();
@@ -374,16 +379,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return this._rotation;
     },
 
+    _rotationRadians:0,
     /**
      * rotation setter
      * @param {Number} newRotation
      */
     setRotation:function (newRotation) {
+        if(this._rotation == newRotation)
+            return ;
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
         this._rotation = newRotation;
-
+        this._rotationRadians = this._rotation * (Math.PI / 180);
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
         this.setNodeDirty();
@@ -468,8 +476,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition:function (newPosOrxValue, yValue) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-        if (typeof(newPosOrxValue) == 'number') {
-            this._position = new cc.Point(newPosOrxValue, yValue || 0);
+        if (yValue) {
+            this._position.x = newPosOrxValue;
+            this._position.y = yValue;
+            //this._position = new cc.Point(newPosOrxValue,yValue);
         } else if (newPosOrxValue instanceof  cc.Point) {
             this._position = newPosOrxValue;
         }
@@ -506,7 +516,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} x
      */
     setPositionX:function (x) {
-        this.setPosition(cc.ccp(x, this._position.y));
+        this._position.x = x;
+        //this._position = new cc.Point(x,this._position.y);
+        this.setNodeDirty();
     },
 
     /**
@@ -520,7 +532,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} y
      */
     setPositionY:function (y) {
-        this.setPosition(cc.ccp(this._position.x, y));
+        this._position.y = y;
+        //this._position = new cc.Point(this._position.x, y);
+        this.setNodeDirty();
     },
 
     /**
@@ -796,8 +810,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.ActionManager}
      */
     getActionManager:function () {
-        if (!this._actionManager)
+        if (!this._actionManager) {
             this._actionManager = cc.Director.sharedDirector().getActionManager();
+            this.getActionManager = function(){return this._actionManager;} ;
+        }
+
         return this._actionManager;
     },
 
@@ -821,8 +838,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Scheduler}
      */
     getScheduler:function () {
-        if (!this._scheduler)
+        if (!this._scheduler){
             this._scheduler = cc.Director.sharedDirector().getScheduler();
+            this.getScheduler = function(){return this._scheduler;} ;
+        }
         return this._scheduler;
     },
 
@@ -1148,55 +1167,89 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!this._isVisible) {
             return;
         }
+
         var context = ctx || cc.renderContext;
-        context.save();
+        var i;
 
-        if (this._grid && this._grid.isActive()) {
-            this._grid.beforeDraw();
-        }
+        if(cc.renderContextType == cc.CANVAS){
+            context.save();
+            this.transform(context);
 
-        this.transform(context);
-        var i, node;
-        if (this._children && this._children.length > 0) {
-            this.sortAllChildren();
-            // draw children zOrder < 0
-            for (i = 0; i < this._children.length; i++) {
-                node = this._children[i];
-                if (node && node._zOrder < 0) {
-                    node.visit(context);
-                } else {
-                    break;
-                }
-            }
-
-            //if (this._isInDirtyRegion()) {
-            // self draw
-            this.draw(context);
-            //}
-
-            // draw children zOrder >= 0
-            if (this._children) {
-                for (; i < this._children.length; i++) {
-                    node = this._children[i];
-                    if (node && node._zOrder >= 0) {
-                        node.visit(context);
+            if (this._children && this._children.length > 0) {
+                this.sortAllChildren();
+                // draw children zOrder < 0
+                for (i = 0; i < this._children.length; i++) {
+                    if (this._children[i] && this._children[i]._zOrder < 0) {
+                        this._children[i].visit(context);
+                    } else {
+                        break;
                     }
                 }
+                //if (this._isInDirtyRegion()) {
+                // self draw
+                this.draw(context);
+                //}
+                // draw children zOrder >= 0
+                if (this._children) {
+                    for (; i < this._children.length; i++) {
+                        if (this._children[i] && this._children[i]._zOrder >= 0) {
+                            this._children[i].visit(context);
+                        }
+                    }
+                }
+            } else {
+                //if (this._isInDirtyRegion()) {
+                // self draw
+                this.draw(context);
+                //}
             }
-        } else {
-            //if (this._isInDirtyRegion()) {
-            // self draw
-            this.draw(context);
-            //}
+            this._orderOfArrival = 0;
+            context.restore();
+        } else{
+            if (this._grid && this._grid.isActive()) {
+                this._grid.beforeDraw();
+            }
+
+            this.transform(context);
+            if (this._children && this._children.length > 0) {
+                this.sortAllChildren();
+                // draw children zOrder < 0
+                for (i = 0; i < this._children.length; i++) {
+                    if (this._children[i] && this._children[i]._zOrder < 0) {
+                        this._children[i].visit(context);
+                    } else {
+                        break;
+                    }
+                }
+
+                //if (this._isInDirtyRegion()) {
+                // self draw
+                this.draw(context);
+                //}
+
+                // draw children zOrder >= 0
+                if (this._children) {
+                    for (; i < this._children.length; i++) {
+                        if (this._children[i] && this._children[i]._zOrder >= 0) {
+                            this._children[i].visit(context);
+                        }
+                    }
+                }
+            } else {
+                //if (this._isInDirtyRegion()) {
+                // self draw
+                this.draw(context);
+                //}
+            }
+
+            this._orderOfArrival = 0;
+
+            if (this._grid && this._grid.isActive()) {
+                this._grid.afterDraw(this);
+            }
+
+            context.restore();
         }
-
-        this._orderOfArrival = 0;
-
-        if (this._grid && this._grid.isActive()) {
-            this._grid.afterDraw(this);
-        }
-
-        context.restore();
     },
 
     /** performs OpenGL view-matrix transformation of it's ancestors.<br/>
@@ -1218,30 +1271,30 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var context = ctx || cc.renderContext;
         // transformations
         if (cc.renderContextType == cc.CANVAS) {
-            var pAp;
             if (!this._ignoreAnchorPointForPosition) {
                 if (this._parent) {
-                    pAp = this._parent._anchorPointInPoints;
+                    context.translate(0 | (this._position.x - this._parent._anchorPointInPoints.x), -(0 | (this._position.y - this._parent._anchorPointInPoints.y)));
                 } else {
-                    pAp = new cc.Point(0, 0);
+                    context.translate(0 | this._position.x, -(0 | this._position.y));
                 }
-                context.translate(0 | (this._position.x - pAp.x), -(0 | (this._position.y - pAp.y)));
             } else {
                 if (this._parent) {
-                    pAp = this._parent._anchorPointInPoints;
+                    context.translate(0 | ( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
+                        -(0 | (this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
                 } else {
-                    pAp = new cc.Point(0, 0);
+                    context.translate(0 | ( this._position.x  + this._anchorPointInPoints.x), -(0 | (this._position.y + this._anchorPointInPoints.y)));
                 }
-                var lAp = this._anchorPointInPoints;
-                context.translate(0 | ( this._position.x - pAp.x + lAp.x), -(0 | (this._position.y - pAp.y + lAp.y)));
             }
 
             if (this._rotation != 0) {
-                context.rotate(cc.DEGREES_TO_RADIANS(this._rotation));
+                //context.rotate(cc.DEGREES_TO_RADIANS(this._rotation));
+                context.rotate(this._rotationRadians);
             }
+
             if ((this._scaleX != 1) || (this._scaleY != 1)) {
                 context.scale(this._scaleX, this._scaleY);
             }
+
             if ((this._skewX != 0) || (this._skewY != 0)) {
                 context.transform(1,
                     -Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
@@ -1484,9 +1537,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             // Rotation values
             var c = 1, s = 0;
             if (this._rotation) {
-                var radians = -cc.DEGREES_TO_RADIANS(this._rotation);
-                c = Math.cos(radians);
-                s = Math.sin(radians);
+                //var radians = -cc.DEGREES_TO_RADIANS(this._rotation);
+                c = Math.cos(-this._rotationRadians);
+                s = Math.sin(-this._rotationRadians);
             }
 
             var needsSkewMatrix = ( this._skewX || this._skewY );
