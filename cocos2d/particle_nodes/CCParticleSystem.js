@@ -741,9 +741,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //////////////////////////////////////////////////////////////////////////
 
     //don't use a transform matrix, this is faster
-    setScale:function (scale) {
+    setScale:function (scale,scaleY) {
         this._transformSystemDirty = true;
-        this._super(scale);
+        this._super(scale,scaleY);
     },
 
     setRotation:function (newRotation) {
