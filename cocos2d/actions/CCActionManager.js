@@ -337,7 +337,7 @@ cc.ActionManager = cc.Class.extend({
                 for (this._currentTarget.actionIndex = 0; this._currentTarget.actionIndex < this._currentTarget.actions.length;
                      this._currentTarget.actionIndex++) {
                     this._currentTarget.currentAction = this._currentTarget.actions[this._currentTarget.actionIndex];
-                    if (this._currentTarget.currentAction == null) {
+                    if (!this._currentTarget.currentAction) {
                         continue;
                     }
 

@@ -115,14 +115,6 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     _selectedItem:null,
-    /**
-     * initializes an empty cc.Menu
-     * @return {Boolean}
-     */
-    init:function () {
-        return this._super();
-
-    },
 
     /**
      * initializes a cc.Menu with it's items

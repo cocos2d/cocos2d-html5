@@ -434,9 +434,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     /**
      * Constructor
      */
-    ctor:function () {
+/*    ctor:function () {
         this._super();
-    },
+    },*/
     /**
      * @param {CanvasContext} ctx
      */
