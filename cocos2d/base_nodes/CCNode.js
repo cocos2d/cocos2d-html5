@@ -407,15 +407,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time.
-     * @param {Number} scale
+     * The scale factor of the node. 1.0 is the default scale factor.
+     * @param {Number} scale or scaleX value
+     * @param {Number} scaleY
      */
-    setScale:function (scale) {
+    setScale:function (scale,scaleY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
         this._scaleX = scale;
-        this._scaleY = scale;
+        this._scaleY = scaleY || scale;
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());

@@ -1160,7 +1160,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Number} scale
      * @override
      */
-    setScale:function (scale) {
+    setScale:function (scale,scaleY) {
         this._super(scale);
         this.SET_DIRTY_RECURSIVELY();
     },

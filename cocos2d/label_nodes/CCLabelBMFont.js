@@ -967,8 +967,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     /**
      * @param {Number} scale
      */
-    setScale:function (scale) {
-        this._super(scale);
+    setScale:function (scale,scaleY) {
+        this._super(scale,scaleY);
         this.updateLabel();
     },
 
