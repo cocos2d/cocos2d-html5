@@ -82,12 +82,14 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
         if (this._firstTick) {
             this._firstTick = false;
             this._elapsed = 0;
-        }
-        else {
+        } else {
             this._elapsed += dt;
         }
         //this.update((1 > (this._elapsed / this._duration)) ? this._elapsed / this._duration : 1);
-        this.update(Math.max(0, Math.min(1, this._elapsed / Math.max(this._duration, cc.FLT_EPSILON))));
+        //this.update(Math.max(0, Math.min(1, this._elapsed / Math.max(this._duration, cc.FLT_EPSILON))));
+        var t = this._elapsed / (this._duration > 0.0000001192092896 ? this._duration : 0.0000001192092896);
+        t = (1 > t ? t : 1);
+        this.update(t > 0 ? t : 0);
     },
 
     /**
@@ -203,25 +205,23 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      * @param {Number} time  time in seconds
      */
     update:function (time) {
-        var found = 0;
-        var new_t = 0;
+        var  new_t, found = 0;
         if (time < this._split) {
             // action[0]
-            found = 0;
+            //found = 0;
             new_t = (this._split != 0) ? time / this._split : 1;
         } else {
             // action[1]
             found = 1;
             new_t = (this._split == 1) ? 1 : (time - this._split) / (1 - this._split);
-        }
 
-        if (found == 1) {
             if (this._last == -1) {
                 // action[0] was skipped, execute it.
                 this._actions[0].startWithTarget(this._target);
                 this._actions[0].update(1);
                 this._actions[0].stop();
-            } else if (this._last == 0) {
+            }
+            if (this._last == 0) {
                 // switching to action 1. stop action 0.
                 this._actions[0].update(1);
                 this._actions[0].stop();
@@ -442,11 +442,13 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
     step:function (dt) {
         this._innerAction.step(dt);
         if (this._innerAction.isDone()) {
-            var diff = this._innerAction.getElapsed() - this._innerAction.getDuration();
+            //var diff = this._innerAction.getElapsed() - this._innerAction.getDuration();
             this._innerAction.startWithTarget(this._target);
             // to prevent jerk. issue #390 ,1247
-            this._innerAction.step(0);
-            this._innerAction.step(diff);
+            //this._innerAction.step(0);
+            //this._innerAction.step(diff);
+            this._innerAction.step(this._innerAction.getElapsed() - this._innerAction.getDuration());
+            //this._innerAction.step(this._innerAction._elapsed - this._innerAction._duration);
         }
     },
 
@@ -1339,8 +1341,9 @@ cc.ScaleTo = cc.ActionInterval.extend(/** @lends cc.ScaleTo# */{
      */
     update:function (time) {
         if (this._target) {
-            this._target.setScaleX(this._startScaleX + this._deltaX * time);
-            this._target.setScaleY(this._startScaleY + this._deltaY * time);
+            this._target.setScale(this._startScaleX + this._deltaX * time, this._startScaleY + this._deltaY * time);
+            //this._target.setScaleX(this._startScaleX + this._deltaX * time);
+            //this._target.setScaleY(this._startScaleY + this._deltaY * time);
         }
     },
     _scaleX:1,
