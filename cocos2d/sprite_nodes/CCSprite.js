@@ -1100,7 +1100,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setPosition:function (pos) {
-        this._super(pos);
+        cc.Node.prototype.setPosition.call(this, pos);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1110,7 +1110,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setRotation:function (rotation) {
-        this._super(rotation);
+        cc.Node.prototype.setRotation.call(this, rotation);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1120,7 +1120,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setSkewX:function (sx) {
-        this._super(sx);
+        cc.Node.prototype.setSkewX.call(this,sx);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1130,7 +1130,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setSkewY:function (sy) {
-        this._super(sy);
+        cc.Node.prototype.setSkewY.call(this,sy);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1140,7 +1140,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setScaleX:function (scaleX) {
-        this._super(scaleX);
+        cc.Node.prototype.setScaleX.call(this,scaleX);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1150,7 +1150,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setScaleY:function (scaleY) {
-        this._super(scaleY);
+        cc.Node.prototype.setScaleY.call(this,scaleY);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1161,7 +1161,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setScale:function (scale,scaleY) {
-        this._super(scale);
+        cc.Node.prototype.setScale.call(this,scale);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1171,7 +1171,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setVertexZ:function (vertexZ) {
-        this._super(vertexZ);
+        cc.Node.prototype.setVertexZ.call(this,vertexZ);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1181,7 +1181,17 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setAnchorPoint:function (anchor) {
-        this._super(anchor);
+        cc.Node.prototype.setAnchorPoint.call(this,anchor);
+        this.SET_DIRTY_RECURSIVELY();
+    },
+
+    /**
+     * visible setter  (override cc.Node )
+     * @param {Boolean} visible
+     * @override
+     */
+    setVisible:function (visible) {
+        cc.Node.prototype.setVisible.call(this,visible);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1193,16 +1203,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     ignoreAnchorPointForPosition:function (relative) {
         cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
         this._super(relative);
-    },
-
-    /**
-     * visible setter  (override cc.Node )
-     * @param {Boolean} visible
-     * @override
-     */
-    setVisible:function (visible) {
-        this._super(visible);
-        this.SET_DIRTY_RECURSIVELY();
     },
 
     /**
