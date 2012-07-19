@@ -222,13 +222,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
-     * @param {cc.Point} anchorPoint
-     */
-    setAnchorPoint:function (anchorPoint) {
-        this._super(anchorPoint);
-    },
-
-    /**
      * set color of sprite
      * @param {cc.Color3B} color
      */

@@ -263,7 +263,8 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        this._super(target);
+        //this._super(target);
+        cc.Action.prototype.startWithTarget.call(this,target);
         this._innerAction.startWithTarget(target);
     },
 
@@ -272,7 +273,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      */
     stop:function () {
         this._innerAction.stop();
-        cc.Action.stop();
+        cc.Action.prototype.stop.call(this);
     },
 
     /**
@@ -428,7 +429,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
      */
     stop:function () {
         this._target = null;
-        cc.Action.stop();
+        cc.Action.prototype.stop.call(this);
     },
 
     // node to follow
