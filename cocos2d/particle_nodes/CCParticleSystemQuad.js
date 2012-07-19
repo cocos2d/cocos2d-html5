@@ -478,6 +478,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     setTotalParticles:function (tp) {
+        this._totalParticles = tp;
+        return;
+
         // If we are setting the total numer of particles to a number higher
         // than what is allocated, we need to allocate new arrays
         if (tp > m_uAllocatedParticles) {
