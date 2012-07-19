@@ -312,7 +312,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                     if (this._selector) {
                         if (typeof(this._selector) == "string") {
                             this._target[this._selector](this._elapsed);
-                        } else if (typeof(this._selector) == "function") {
+                        } else{ // if (typeof(this._selector) == "function") {
                             this._selector.call(this._target, this._elapsed);
                         }
                     }
@@ -326,7 +326,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                         if (this._target && this._selector) {
                             if (typeof(this._selector) == "string") {
                                 this._target[this._selector](this._elapsed);
-                            } else if (typeof(this._selector) == "function") {
+                            } else{ // if (typeof(this._selector) == "function") {
                                 this._selector.call(this._target, this._elapsed);
                             }
                         }
@@ -339,7 +339,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                         if (this._target && this._selector) {
                             if (typeof(this._selector) == "string") {
                                 this._target[this._selector](this._elapsed);
-                            } else if (typeof(this._selector) == "function") {
+                            } else{  //if (typeof(this._selector) == "function") {
                                 this._selector.call(this._target, this._elapsed);
                             }
                         }
@@ -537,7 +537,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         //Iterate all over the Updates selectors
         var tmpEntry;
-        var i = 0;
+        var i;
         for (i = 0; i < this._updatesNegList.length; i++) {
             tmpEntry = this._updatesNegList[i];
             if ((!tmpEntry.paused) && (!tmpEntry.makedForDeletion)) {

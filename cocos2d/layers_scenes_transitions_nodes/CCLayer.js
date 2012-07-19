@@ -1036,11 +1036,6 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
         context.save();
         context.clearRect(0, 0, this._layerCanvas.width, -this._layerCanvas.height);
 
-        if (this._grid && this._grid.isActive()) {
-            this._grid.beforeDraw();
-            this.transformAncestors();
-        }
-
         if (this._children && this._children.length > 0) {
             this.sortAllChildren();
             // draw children zOrder < 0
@@ -1049,9 +1044,6 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
             }
         }
 
-        if (this._grid && this._grid.isActive()) {
-            this._grid.afterDraw(this);
-        }
         context.restore();
     },
 
