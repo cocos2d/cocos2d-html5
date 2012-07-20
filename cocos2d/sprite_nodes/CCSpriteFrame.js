@@ -247,7 +247,6 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                 this._rotated = rotated;
                 return true;
                 break;
-
             default:
                 throw "Argument must be non-nil ";
                 break;
