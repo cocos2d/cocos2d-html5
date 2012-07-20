@@ -145,6 +145,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 }
 
                 if (spriteFrame.isRotated()) {
+                    //clip to canvas
+
                     var rect = spriteFrame.getRect();
                     spriteFrame.setRect(new cc.Rect(rect.origin.x, rect.origin.y, rect.size.height, rect.size.width));
                 }
