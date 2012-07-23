@@ -143,7 +143,7 @@ var SpriteProgressToRadial = SpriteDemo.extend({
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathBlock));
         right.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
-        right.setReverseProgress(true);
+        right.setReverseDirection(true);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 200, winSize.height / 2));
         right.runAction(cc.RepeatForever.create(to2));

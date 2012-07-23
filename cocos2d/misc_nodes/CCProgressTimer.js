@@ -209,19 +209,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
-     * Reverse Progress setter
-     * @param {Boolean} reverse
-     */
-    setReverseProgress:function (reverse) {
-        if (this._reverseDirection != reverse) {
-            this._reverseDirection = reverse;
-            //release all previous information
-            this._vertexData = null;
-            this._vertexDataCount = 0;
-        }
-    },
-
-    /**
      * set color of sprite
      * @param {cc.Color3B} color
      */
@@ -266,8 +253,17 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         return this._reverseDirection;
     },
 
-    setReverseDirection:function (value) {
-        this._reverseDirection = value;
+    /**
+     * Reverse Progress setter
+     * @param {Boolean} reverse
+     */
+    setReverseDirection:function (reverse) {
+        if (this._reverseDirection != reverse) {
+            this._reverseDirection = reverse;
+            //release all previous information
+            this._vertexData = null;
+            this._vertexDataCount = 0;
+        }
     },
 
     /**
