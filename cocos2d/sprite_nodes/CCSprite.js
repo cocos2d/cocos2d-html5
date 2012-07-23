@@ -122,6 +122,26 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
     return buff;
 };
 
+cc.cutRotateImageToCanvas = function (texture, rect) {
+    if (!texture)
+        return null;
+
+    if (!rect)
+        return texture;
+
+    var nCanvas = document.createElement("canvas");
+    nCanvas.width = rect.size.width;
+    nCanvas.height = rect.size.height;
+
+    var ctx = nCanvas.getContext("2d");
+    ctx.translate(nCanvas.width/2,nCanvas.height/2);
+    ctx.rotate(-1.5707963267948966);
+    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height/2, -rect.size.width/2, rect.size.height, rect.size.width);
+    var img = new Image();
+    img.src = nCanvas.toDataURL();
+    return nCanvas;
+};
+
 
 /**
  * a Values object for transform
@@ -811,7 +831,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 context.globalCompositeOperation = 'lighter';
             }
 
-
             context.globalAlpha = this._opacity / 255;
             var mpX = 0, mpY = 0;
             if (this._flipX) {
@@ -827,9 +846,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
             var posX = 0 | ( -this._anchorPointInPoints.x - mpX + this._offsetPosition.x);
             var posY = 0 | ( -this._anchorPointInPoints.y + mpY + this._offsetPosition.y);
-
-            if (this._rectRotated)
-                context.rotate(-1.5707963267948966);
 
             if (this._texture) {
                 if (this._texture instanceof HTMLImageElement) {
@@ -879,9 +895,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     cc.ccp(offsetPix.x + drawSize.width, offsetPix.y + drawSize.height), cc.ccp(offsetPix.x, offsetPix.y + drawSize.height)];
                 cc.drawingUtil.drawPoly(vertices2, 4, true);
             }
-
-            if (this._rectRotated)
-                context.rotate(1.5707963267948966);
         } else {
             //TODO  WebGL Draw of sprite
             cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");

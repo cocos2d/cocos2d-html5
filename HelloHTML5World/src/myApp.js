@@ -73,7 +73,7 @@ var Helloworld = cc.Layer.extend({
             });
         closeItem.setAnchorPoint(new cc.Point(0.5, 0.5));
 
-        var menu = cc.Menu.create(closeItem, null);
+        var menu = cc.Menu.create(closeItem);
         menu.setPosition(cc.PointZero());
         this.addChild(menu, 1);
         closeItem.setPosition(new cc.Point(size.width - 20, 20));
