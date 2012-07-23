@@ -37,7 +37,19 @@ var LayerTests = [
     }, //todo fix Inverse color
     function () {
         return new LayerGradient();
-    } //todo fix ccMenuItem
+    }, //todo fix ccMenuItem
+    function () {
+        return new IgnoreAnchorpointTest1();
+    },
+    function () {
+        return new IgnoreAnchorpointTest2();
+    },
+    function () {
+        return new IgnoreAnchorpointTest3();
+    },
+    function () {
+        return new IgnoreAnchorpointTest4();
+    }
 ];
 var s_nLayerTestsIdx = -1;
 function nextLayerTestAction() {
@@ -87,7 +99,7 @@ var LayerTest = cc.Layer.extend({
 
         var subtitle_ = this.subtitle();
         if (subtitle_) {
-            var l = cc.LabelTTF.create(subtitle_, "Thonburi", 16);
+            var l = cc.LabelTTF.create(subtitle_, cc.SizeMake(400, 16), cc.TEXT_ALIGNMENT_CENTER, "Thonburi", 16);
             this.addChild(l, 1);
             l.setPosition(cc.ccp(s.width / 2, s.height - 80));
         }
@@ -173,6 +185,87 @@ var LayerTest1 = LayerTest.extend({
     },
     ccTouchEnded:function (touch, event) {
         this.updateSize(touch);
+    }
+});
+
+var IgnoreAnchorpointTest1 = LayerTest.extend({
+    onEnter:function () {
+        this._super();
+        //create layer
+        var ws = cc.Director.sharedDirector().getWinSize();
+        var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        layer1.ignoreAnchorPointForPosition(true);
+        var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        layer2.ignoreAnchorPointForPosition(true);
+        layer1.addChild(layer2);
+        layer1.setPosition(ws.width / 2, ws.height / 2);
+        this.addChild(layer1);
+    },
+    title:function () {
+        return "ignore Anchorpoint Test";
+    },
+    subtitle:function () {
+        return "red:true  green:true";
+    }
+});
+var IgnoreAnchorpointTest2 = LayerTest.extend({
+    onEnter:function () {
+        this._super();
+        //create layer
+        var ws = cc.Director.sharedDirector().getWinSize();
+        var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        layer1.ignoreAnchorPointForPosition(true);
+        var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        layer2.ignoreAnchorPointForPosition(false);
+        layer1.addChild(layer2);
+        layer1.setPosition(ws.width / 2, ws.height / 2);
+        this.addChild(layer1);
+    },
+    title:function () {
+        return "ignore Anchorpoint Test";
+    },
+    subtitle:function () {
+        return "red:true  green:false";
+    }
+});
+var IgnoreAnchorpointTest3 = LayerTest.extend({
+    onEnter:function () {
+        this._super();
+        //create layer
+        var ws = cc.Director.sharedDirector().getWinSize();
+        var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        layer1.ignoreAnchorPointForPosition(false);
+        var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        layer2.ignoreAnchorPointForPosition(false);
+        layer1.addChild(layer2);
+        layer1.setPosition(ws.width / 2, ws.height / 2);
+        this.addChild(layer1);
+    },
+    title:function () {
+        return "ignore Anchorpoint Test";
+    },
+    subtitle:function () {
+        return "red:false  green:false";
+    }
+});
+var IgnoreAnchorpointTest4 = LayerTest.extend({
+    onEnter:function () {
+        this._super();
+        //create layer
+        var ws = cc.Director.sharedDirector().getWinSize();
+        var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        layer1.ignoreAnchorPointForPosition(false);
+        var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        layer2.ignoreAnchorPointForPosition(true);
+        layer1.addChild(layer2);
+        layer1.setPosition(ws.width / 2, ws.height / 2);
+        this.addChild(layer1);
+    },
+    title:function () {
+        return "ignore Anchorpoint Test";
+    },
+    subtitle:function () {
+        return "red:false  green:true";
     }
 });
 
