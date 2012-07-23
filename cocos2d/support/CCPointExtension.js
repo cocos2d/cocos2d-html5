@@ -32,7 +32,7 @@
  *
  * <p> //Examples:<br />
  * - cc.pAdd( cc.p(1,1), cc.p(2,2) ); // preferred cocos2d way<br />
- * - cc.pAdd( cc.p(1,1), cc.PointMake(2,2) ); // also ok but more verbose<br />
+ * - cc.pAdd( cc.p(1,1), cc.p(2,2) ); // also ok but more verbose<br />
  * - cc.pAdd( cc.cpv(1,1), cc.cpv(2,2) ); // mixing chipmunk and cocos2d (avoid)</p>
  */
 
@@ -50,7 +50,7 @@ cc.POINT_EPSILON = parseFloat('1.192092896e-07F');
  * @return {cc.Point}
  */
 cc.p = function (x, y) {
-    return new cc.Point(x, y);
+    return cc.PointMake(x, y);
 };
 
 /**
@@ -59,7 +59,7 @@ cc.p = function (x, y) {
  * @return {cc.Point}
  */
 cc.pNeg = function (point) {
-    return new cc.Point(-point.x, -point.y);
+    return cc.p(-point.x, -point.y);
 };
 
 /**
@@ -69,7 +69,7 @@ cc.pNeg = function (point) {
  * @return {cc.Point}
  */
 cc.pAdd = function (v1, v2) {
-    return new cc.Point(v1.x + v2.x, v1.y + v2.y);
+    return cc.p(v1.x + v2.x, v1.y + v2.y);
 };
 
 /**
@@ -79,7 +79,7 @@ cc.pAdd = function (v1, v2) {
  * @return {cc.Point}
  */
 cc.pSub = function (v1, v2) {
-    return new cc.Point(v1.x - v2.x, v1.y - v2.y);
+    return cc.p(v1.x - v2.x, v1.y - v2.y);
 };
 
 /**
@@ -89,7 +89,7 @@ cc.pSub = function (v1, v2) {
  * @return {cc.Point}
  */
 cc.pMult = function (point, floatVar) {
-    return new cc.Point(point.x * floatVar, point.y * floatVar);
+    return cc.p(point.x * floatVar, point.y * floatVar);
 };
 
 /**
@@ -128,7 +128,7 @@ cc.pCross = function (v1, v2) {
  * @return {cc.Point}
  */
 cc.pPerp = function (point) {
-    return new cc.Point(-point.y, point.x);
+    return cc.p(-point.y, point.x);
 };
 
 /**
@@ -137,7 +137,7 @@ cc.pPerp = function (point) {
  * @return {cc.Point}
  */
 cc.pRPerp = function (point) {
-    return new cc.Point(point.y, -point.x);
+    return cc.p(point.y, -point.x);
 };
 
 /**
@@ -157,7 +157,7 @@ cc.pProject = function (v1, v2) {
  * @return {cc.Point}
  */
 cc.pRotate = function (v1, v2) {
-    return new cc.Point(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x);
+    return cc.p(v1.x * v2.x - v1.y * v2.y, v1.x * v2.y + v1.y * v2.x);
 };
 
 /**
@@ -167,7 +167,7 @@ cc.pRotate = function (v1, v2) {
  * @return {cc.Point}
  */
 cc.pUnrotate = function (v1, v2) {
-    return new cc.Point(v1.x * v2.x + v1.y * v2.y, v1.y * v2.x - v1.x * v2.y);
+    return cc.p(v1.x * v2.x + v1.y * v2.y, v1.y * v2.x - v1.x * v2.y);
 };
 
 /**
@@ -213,7 +213,7 @@ cc.pNormalize = function (v) {
  * @return {cc.Point}
  */
 cc.pForAngle = function (a) {
-    return new cc.Point(Math.cos(a), Math.sin(a));
+    return cc.p(Math.cos(a), Math.sin(a));
 };
 
 /**
@@ -249,7 +249,7 @@ cc.clampf = function (value, min_inclusive, max_inclusive) {
  * @return {cc.Point}
  */
 cc.pClamp = function (p, min_inclusive, max_inclusive) {
-    return new cc.Point(cc.clampf(p.x, min_inclusive.x, max_inclusive.x), cc.clampf(p.y, min_inclusive.y, max_inclusive.y));
+    return cc.p(cc.clampf(p.x, min_inclusive.x, max_inclusive.x), cc.clampf(p.y, min_inclusive.y, max_inclusive.y));
 };
 
 /**
@@ -258,7 +258,7 @@ cc.pClamp = function (p, min_inclusive, max_inclusive) {
  * @return {cc.Point}
  */
 cc.pFromSize = function (s) {
-    return new cc.Point(s.width, s.height);
+    return cc.p(s.width, s.height);
 };
 
 /**
@@ -269,10 +269,10 @@ cc.pFromSize = function (s) {
  * @return {cc.Point}
  * @example
  * //For example: let's try to take the floor of x,y
- * var p = cc.pCompOp(new cc.Point(10,10),Math.abs);
+ * var p = cc.pCompOp(cc.p(10,10),Math.abs);
  */
 cc.pCompOp = function (p, opFunc) {
-    return new cc.Point(opFunc(p.x), opFunc(p.y));
+    return cc.p(opFunc(p.x), opFunc(p.y));
 };
 
 /**
@@ -311,7 +311,7 @@ cc.pFuzzyEqual = function (a, b, variance) {
  * @return {cc.Point}
  */
 cc.pCompMult = function (a, b) {
-    return new cc.Point(a.x * b.x, a.y * b.y);
+    return cc.p(a.x * b.x, a.y * b.y);
 };
 
 /**
@@ -411,7 +411,7 @@ cc.pLineIntersect = function (A, B, C, D, retP) {
  * @return {Boolean}
  */
 cc.pSegmentIntersect = function (A, B, C, D) {
-    var retP = new cc.Point();
+    var retP = cc.p();
     if (cc.pLineIntersect(A, B, C, D, retP))
         if (retP.x >= 0.0 && retP.x <= 1.0 && retP.y >= 0.0 && retP.y <= 1.0)
             return true;
@@ -427,11 +427,11 @@ cc.pSegmentIntersect = function (A, B, C, D) {
  * @return {cc.Point}
  */
 cc.pIntersectPoint = function (A, B, C, D) {
-    var retP = new cc.Point();
+    var retP = cc.p();
 
     if (cc.pLineIntersect(A, B, C, D, retP)) {
         // Point of intersection
-        var P = new cc.Point();
+        var P = cc.p();
         P.x = A.x + retP.x * (B.x - A.x);
         P.y = A.y + retP.x * (B.y - A.y);
         return P;

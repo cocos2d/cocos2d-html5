@@ -80,17 +80,17 @@ cc.Size.CCSizeEqualToSize = function (size1, size2) {
 cc.Rect = function (x1, y1, width1, height1) {
     switch (arguments.length) {
         case 0:
-            this.origin = new cc.Point(0, 0);
+            this.origin = cc.p(0, 0);
             this.size = new cc.Size(0, 0);
             break;
         case 1:
             var oldRect = x1;
             if (!oldRect) {
-                this.origin = new cc.Point(0, 0);
+                this.origin = cc.p(0, 0);
                 this.size = new cc.Size(0, 0);
             } else {
                 if (oldRect instanceof cc.Rect) {
-                    this.origin = new cc.Point(oldRect.origin.x, oldRect.origin.y);
+                    this.origin = cc.p(oldRect.origin.x, oldRect.origin.y);
                     this.size = new cc.Size(oldRect.size.width, oldRect.size.height);
                 } else {
                     throw "unknown argument type";
@@ -98,11 +98,11 @@ cc.Rect = function (x1, y1, width1, height1) {
             }
             break;
         case 2:
-            this.origin = x1 ? new cc.Point(x1.x, x1.y) : new cc.Point(0, 0);
+            this.origin = x1 ? cc.p(x1.x, x1.y) : cc.p(0, 0);
             this.size = y1 ? new cc.Size(y1.width, y1.height) : new cc.Size(0, 0);
             break;
         case 4:
-            this.origin = new cc.Point(x1 || 0, y1 || 0);
+            this.origin = cc.p(x1 || 0, y1 || 0);
             this.size = new cc.Size(width1 || 0, height1 || 0);
             break;
         default:
@@ -284,7 +284,7 @@ cc.Rect.CCRectIntersection = function (rectA, rectB) {
  * @return {cc.Point}
  * Constructor
  */
-cc.p = function (x, y) {
+cc.PointMake = function (x, y) {
     return new cc.Point(x, y);
 };
 
@@ -319,7 +319,7 @@ cc.RectMake = function (x, y, width, height) {
  * Constructor
  */
 cc.PointZero = function () {
-    return new cc.Point(0, 0)
+    return cc.p(0, 0)
 };
 
 /**

@@ -71,12 +71,12 @@ var Helloworld = cc.Layer.extend({
             function () {
                 history.go(-1);
             });
-        closeItem.setAnchorPoint(new cc.Point(0.5, 0.5));
+        closeItem.setAnchorPoint(cc.p(0.5, 0.5));
 
         var menu = cc.Menu.create(closeItem);
         menu.setPosition(cc.PointZero());
         this.addChild(menu, 1);
-        closeItem.setPosition(new cc.Point(size.width - 20, 20));
+        closeItem.setPosition(cc.p(size.width - 20, 20));
 
         /////////////////////////////
         // 3. add your codes below...
@@ -105,7 +105,7 @@ var Helloworld = cc.Layer.extend({
         this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
 
         this.circle = new CircleSprite();
-        this.circle.setPosition(new cc.Point(40, size.height - 60));
+        this.circle.setPosition(cc.p(40, size.height - 60));
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
@@ -155,7 +155,7 @@ var Helloworld = cc.Layer.extend({
     onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                //this.circle.setPosition(new cc.Point(touches[0].getLocation().x, touches[0].getLocation().y));
+                //this.circle.setPosition(cc.p(touches[0].getLocation().x, touches[0].getLocation().y));
             }
         }
     },

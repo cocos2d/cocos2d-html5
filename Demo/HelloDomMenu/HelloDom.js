@@ -97,7 +97,7 @@ var Helloworld = cc.Layer.extend({
         this.sprite.runAction(cc.Sequence.create(actionBy, actionByBack));
 
         /*        this.circle = new CircleSprite();
-         this.circle.setPosition(new cc.Point(40, 280));
+         this.circle.setPosition(cc.p(40, 280));
          this.addChild(this.circle, 2);
          this.circle.schedule(this.circle.myUpdate, 1 / 60);*/
 

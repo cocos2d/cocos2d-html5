@@ -872,7 +872,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             //context.globalAlpha = this._opacity / 255;
-            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
+            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
             if (this._renderTexture) {
                 //direct draw image by canvas drawImage
                 context.drawImage(this._renderTexture.getCanvas(), pos.x, -(pos.y + this._renderTexture.getCanvas().height));

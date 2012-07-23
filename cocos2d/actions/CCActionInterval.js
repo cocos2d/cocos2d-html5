@@ -798,9 +798,9 @@ cc.MoveTo = cc.ActionInterval.extend(/** @lends cc.MoveTo# */{
     reverse:function () {
         cc.Assert(0, "moveto reverse is not implemented");
     },
-    _endPosition:new cc.Point(0,0),
-    _startPosition:new cc.Point(0,0),
-    _delta:new cc.Point(0,0)
+    _endPosition:cc.p(0,0),
+    _startPosition:cc.p(0,0),
+    _delta:cc.p(0,0)
 });
 
 /**
@@ -1088,8 +1088,8 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
     reverse:function () {
         return cc.JumpBy.create(this._duration, cc.p(-this._delta.x, -this._delta.y), this._height, this._jumps);
     },
-    _startPosition:new cc.Point(0,0),
-    _delta:new cc.Point(0,0),
+    _startPosition:cc.p(0,0),
+    _delta:cc.p(0,0),
     _height:0,
     _jumps:0
 });
@@ -1122,7 +1122,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
      */
     startWithTarget:function (target) {
         cc.JumpBy.prototype.startWithTarget.call(this, target);
-        this._delta = new cc.Point(this._delta.x - this._startPosition.x, this._delta.y - this._startPosition.y);
+        this._delta = cc.p(this._delta.x - this._startPosition.x, this._delta.y - this._startPosition.y);
     }
 });
 
@@ -1153,9 +1153,9 @@ cc.BezierConfig = cc.Class.extend(/** @lends cc.BezierConfig# */{
      * Constructor
      */
     ctor:function () {
-        this.endPosition = new cc.Point(0,0);
-        this.controlPoint_1 = new cc.Point(0,0);
-        this.controlPoint_2 = new cc.Point(0,0);
+        this.endPosition = cc.p(0,0);
+        this.controlPoint_1 = cc.p(0,0);
+        this.controlPoint_2 = cc.p(0,0);
     }
 });
 
@@ -1241,7 +1241,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     ctor:function () {
         this._config = new cc.BezierConfig();
-        this._startPosition = new cc.Point();
+        this._startPosition = cc.p();
     }
 });
 

@@ -38,7 +38,7 @@ var TouchPoint = cc.Node.extend({
     _styleStr:null,
 
     ctor:function () {
-        this._touchPoint = new cc.Point(0, 0);
+        this._touchPoint = cc.p(0, 0);
         this._tonchColor = new cc.Color3B(255, 255, 255);
         this._styleStr = "rgba(" + this._tonchColor.r + "," + this._tonchColor.g + "," + this._tonchColor.b + ", 1)";
         //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
@@ -51,8 +51,8 @@ var TouchPoint = cc.Node.extend({
         context.strokeStyle = this._styleStr;
         context.lineWidth = "10";
         var size = this.getContentSize();
-        cc.drawingUtil.drawLine(new cc.Point(0, this._touchPoint.y), new cc.Point(size.width, this._touchPoint.y));
-        cc.drawingUtil.drawLine(new cc.Point(this._touchPoint.x, 0), new cc.Point(this._touchPoint.x, size.height));
+        cc.drawingUtil.drawLine(cc.p(0, this._touchPoint.y), cc.p(size.width, this._touchPoint.y));
+        cc.drawingUtil.drawLine(cc.p(this._touchPoint.x, 0), cc.p(this._touchPoint.x, size.height));
         cc.drawingUtil.drawPoint(this._touchPoint, 15);
         context.restore();
     },
@@ -70,7 +70,7 @@ var TouchPoint = cc.Node.extend({
 TouchPoint.touchPointWithParent = function (parent) {
     var ret = new TouchPoint();
     ret.setContentSize(parent.getContentSize());
-    ret.setAnchorPoint(new cc.Point(0, 0));
+    ret.setAnchorPoint(cc.p(0, 0));
     return ret;
 };
 

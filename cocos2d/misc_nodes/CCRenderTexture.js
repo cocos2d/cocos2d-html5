@@ -94,7 +94,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     ctor:function () {
         this.canvas = document.createElement('canvas');
         this.context = this.canvas.getContext('2d');
-        this.setAnchorPoint(new cc.Point(0, 0));
+        this.setAnchorPoint(cc.p(0, 0));
 
         // Listen this event to save render texture before come to background.
         // Then it can be restored after coming to foreground on Android.

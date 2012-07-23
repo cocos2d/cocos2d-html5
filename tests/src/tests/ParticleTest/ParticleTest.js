@@ -182,7 +182,7 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._freeMovementButton.setVisible(false);
                 selfPoint._groupMovementButton.setVisible(false);
             });
-        this._freeMovementButton.setPosition(new cc.Point(10, 150));
+        this._freeMovementButton.setPosition(cc.p(10, 150));
         this._freeMovementButton.setAnchorPoint(cc.p(0, 0));
 
         this._relativeMovementButton = cc.MenuItemSprite.create(relativeBtnNormal, relativeBtnSelected, relativeBtnDisabled, this,
@@ -193,7 +193,7 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._groupMovementButton.setVisible(true);
             });
         this._relativeMovementButton.setVisible(false);
-        this._relativeMovementButton.setPosition(new cc.Point(10, 150));
+        this._relativeMovementButton.setPosition(cc.p(10, 150));
         this._relativeMovementButton.setAnchorPoint(cc.p(0, 0));
 
         this._groupMovementButton = cc.MenuItemSprite.create(groupBtnNormal, groupBtnSelected, groupBtnDisabled, this,
@@ -204,7 +204,7 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._groupMovementButton.setVisible(false);
             });
         this._groupMovementButton.setVisible(false);
-        this._groupMovementButton.setPosition(new cc.Point(10, 150));
+        this._groupMovementButton.setPosition(cc.p(10, 150));
         this._groupMovementButton.setAnchorPoint(cc.p(0, 0));
 
         var spriteNormal = cc.Sprite.create(s_shapeModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
@@ -217,7 +217,7 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._textureModeButton.setVisible(true);
                 selfPoint._shapeModeButton.setVisible(false);
             });
-        this._shapeModeButton.setPosition(new cc.Point(10, 100));
+        this._shapeModeButton.setPosition(cc.p(10, 100));
         this._shapeModeButton.setAnchorPoint(cc.p(0, 0));
 
         var spriteNormal_t = cc.Sprite.create(s_textureModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
@@ -231,7 +231,7 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._shapeModeButton.setVisible(true);
             });
         this._textureModeButton.setVisible(false);
-        this._textureModeButton.setPosition(new cc.Point(10, 100));
+        this._textureModeButton.setPosition(cc.p(10, 100));
         this._textureModeButton.setAnchorPoint(cc.p(0, 0));
 
         var menu = cc.Menu.create(item1, item2, item3, this._shapeModeButton, this._textureModeButton,
@@ -813,8 +813,8 @@ var ParallaxParticle = ParticleDemo.extend({
         var p1 = cc.Sprite.create(s_back3);
         var p2 = cc.Sprite.create(s_back3);
 
-        p.addChild(p1, 1, cc.p(0.5, 1), cc.PointMake(0, 250));
-        p.addChild(p2, 2, cc.p(1.5, 1), cc.PointMake(0, 50));
+        p.addChild(p1, 1, cc.p(0.5, 1), cc.p(0, 250));
+        p.addChild(p2, 2, cc.p(1.5, 1), cc.p(0, 50));
 
         this._emitter = cc.ParticleFlower.create();
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_fire));

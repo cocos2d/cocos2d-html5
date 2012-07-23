@@ -51,8 +51,8 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _textureFilename:"",
 
     ctor:function(){
-       this._offset = new cc.Point(0,0);
-        this._offsetInPixels = new cc.Point(0,0);
+       this._offset = cc.p(0,0);
+        this._offsetInPixels = cc.p(0,0);
         this._originalSize = new cc.Size(0,0);
         this._rectInPixels = new cc.Rect();
         this._rect = new cc.Rect();
@@ -118,7 +118,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Point}
      */
     getOffsetInPixels:function () {
-        return new cc.Point(this._offsetInPixels.x,this._offsetInPixels.y);
+        return cc.p(this._offsetInPixels.x,this._offsetInPixels.y);
     },
 
     /**
@@ -191,7 +191,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Point}
      */
     getOffset:function(){
-       return new cc.Point(this._offset.x,this._offset.y);
+       return cc.p(this._offset.x,this._offset.y);
     },
 
     /**

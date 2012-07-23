@@ -214,7 +214,7 @@ var Helloworld = cc.Layer.extend({
         //this.schedule(this.waveSprite,0.3);
 
         this.circle = new CircleSprite();
-        this.circle.setPosition(new cc.Point(40, 280));
+        this.circle.setPosition(cc.p(40, 280));
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
@@ -296,7 +296,7 @@ var Helloworld = cc.Layer.extend({
     onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                this.circle.setPosition(new cc.Point(touches[0].getLocation().x, touches[0].getLocation().y));
+                this.circle.setPosition(cc.p(touches[0].getLocation().x, touches[0].getLocation().y));
             }
         }
     },

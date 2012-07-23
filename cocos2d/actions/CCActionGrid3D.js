@@ -778,7 +778,7 @@ cc.Twirl = cc.Grid3DAction.extend({
                 var amp = 0.1 * this._amplitude * this._amplitudeRate;
                 var a = r * Math.cos(Math.PI / 2.0 + time * Math.PI * this._twirls * 2) * amp;
 
-                var d = new cc.Point();
+                var d = cc.p();
 
                 d.x = Math.sin(a) * (v.y - c.y) + Math.cos(a) * (v.x - c.x);
                 d.y = Math.cos(a) * (v.y - c.y) - Math.sin(a) * (v.x - c.x);

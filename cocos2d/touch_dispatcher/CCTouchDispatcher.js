@@ -561,7 +561,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
 /**
  * @type {cc.Point}
  */
-cc.TouchDispatcher.preTouchPoint = new cc.Point(0, 0);
+cc.TouchDispatcher.preTouchPoint = cc.p(0, 0);
 
 cc.TouchDispatcher.isRegisterEvent = false;
 /**

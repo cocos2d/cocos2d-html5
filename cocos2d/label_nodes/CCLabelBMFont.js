@@ -446,7 +446,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
             var s = this.getContentSize();
-            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
+            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
             var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + s.width, pos.y), cc.p(pos.x + s.width, pos.y + s.height), cc.p(pos.x, pos.y + s.height)];
             context.strokeStyle = "rgba(0,255,0,1)";
             cc.drawingUtil.drawPoly(vertices, 4, true);

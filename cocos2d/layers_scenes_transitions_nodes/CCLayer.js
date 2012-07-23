@@ -931,7 +931,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
      */
     ctor:function () {
         this._super();
-        this.setAnchorPoint(new cc.Point(0, 0));
+        this.setAnchorPoint(cc.p(0, 0));
         //setup html
         this._setupHtml();
     },

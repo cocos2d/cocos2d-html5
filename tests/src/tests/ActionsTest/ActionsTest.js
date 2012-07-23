@@ -388,7 +388,7 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         var boxSize = cc.SizeMake(100.0, 100.0);
         var box = cc.LayerColor.create(cc.c4(255, 255, 0, 255));
         box.setAnchorPoint(cc.p(0, 0));
-        box.setPosition(new cc.Point((winSize.width - boxSize.width) / 2, (winSize.height - boxSize.height) / 2));
+        box.setPosition(cc.p((winSize.width - boxSize.width) / 2, (winSize.height - boxSize.height) / 2));
         box.setContentSize(boxSize);
 
         var markrside = 10.0;
@@ -1107,11 +1107,11 @@ var ActionCardinalSpline = ActionsDemo.extend({
 
         var array = cc.PointArray.create();
 
-        array.addControlPoint(new cc.Point(0, 0));
-        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, 0));
-        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, winSize.height - 80));
-        array.addControlPoint(new cc.Point(0, winSize.height - 80));
-        array.addControlPoint(new cc.Point(0, 0));
+        array.addControlPoint(cc.p(0, 0));
+        array.addControlPoint(cc.p(winSize.width / 2 - 30, 0));
+        array.addControlPoint(cc.p(winSize.width / 2 - 30, winSize.height - 80));
+        array.addControlPoint(cc.p(0, winSize.height - 80));
+        array.addControlPoint(cc.p(0, 0));
 
         //
         // sprite 1 (By)
@@ -1122,7 +1122,7 @@ var ActionCardinalSpline = ActionsDemo.extend({
         var reverse1 = action1.reverse();
         var seq = cc.Sequence.create(action1, reverse1);
 
-        this._tamara.setPosition(new cc.Point(50, 50));
+        this._tamara.setPosition(cc.p(50, 50));
         this._tamara.runAction(seq);
 
         //
@@ -1134,7 +1134,7 @@ var ActionCardinalSpline = ActionsDemo.extend({
         var reverse2 = action2.reverse();
         var seq2 = cc.Sequence.create(action2, reverse2);
 
-        this._kathia.setPosition(new cc.Point(winSize.width / 2, 50));
+        this._kathia.setPosition(cc.p(winSize.width / 2, 50));
         this._kathia.runAction(seq2);
 
         this._array = array;
@@ -1190,16 +1190,16 @@ var ActionCatmullRom = ActionsDemo.extend({
         // startPosition can be any coordinate, but since the movement
         // is relative to the Catmull Rom curve, it is better to start with (0,0).
         //
-        this._tamara.setPosition(new cc.Point(50, 50));
+        this._tamara.setPosition(cc.p(50, 50));
 
         var array = cc.PointArray.create();
-        array.addControlPoint(new cc.Point(0, 0));
-        array.addControlPoint(new cc.Point(80, 80));
-        array.addControlPoint(new cc.Point(winSize.width - 80, 80));
-        array.addControlPoint(new cc.Point(winSize.width - 80, winSize.height - 80));
-        array.addControlPoint(new cc.Point(80, winSize.height - 80));
-        array.addControlPoint(new cc.Point(80, 80));
-        array.addControlPoint(new cc.Point(winSize.width / 2, winSize.height / 2));
+        array.addControlPoint(cc.p(0, 0));
+        array.addControlPoint(cc.p(80, 80));
+        array.addControlPoint(cc.p(winSize.width - 80, 80));
+        array.addControlPoint(cc.p(winSize.width - 80, winSize.height - 80));
+        array.addControlPoint(cc.p(80, winSize.height - 80));
+        array.addControlPoint(cc.p(80, 80));
+        array.addControlPoint(cc.p(winSize.width / 2, winSize.height / 2));
 
         var action1 = cc.CatmullRomBy.create(3, array);
         var reverse1 = action1.reverse();
@@ -1215,11 +1215,11 @@ var ActionCatmullRom = ActionsDemo.extend({
         //
         var array2 = cc.PointArray.create();
 
-        array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
-        array2.addControlPoint(new cc.Point(winSize.width - 80, 30));
-        array2.addControlPoint(new cc.Point(winSize.width - 80, winSize.height - 80));
-        array2.addControlPoint(new cc.Point(winSize.width / 2, winSize.height - 80));
-        array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
+        array2.addControlPoint(cc.p(winSize.width / 2, 30));
+        array2.addControlPoint(cc.p(winSize.width - 80, 30));
+        array2.addControlPoint(cc.p(winSize.width - 80, winSize.height - 80));
+        array2.addControlPoint(cc.p(winSize.width / 2, winSize.height - 80));
+        array2.addControlPoint(cc.p(winSize.width / 2, 30));
 
         var action2 = cc.CatmullRomTo.create(3, array2);
         var reverse2 = action2.reverse();

@@ -1164,7 +1164,7 @@ var BMFontOneAtlas = AtlasDemo.extend({
         this.addChild(label1);
         label1.setPosition(cc.p(s.width / 2, s.height * 2 / 3));
 
-        var label2 = cc.LabelBMFont.create("And this is Geneva", "res/fonts/geneva-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, new cc.Point(0, 128));
+        var label2 = cc.LabelBMFont.create("And this is Geneva", "res/fonts/geneva-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.p(0, 128));
         this.addChild(label2);
         label2.setPosition(cc.p(s.width / 2, s.height / 3));
     },

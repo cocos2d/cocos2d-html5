@@ -72,8 +72,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     ctor:function () {
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._percentage = 0.0;
-        this._midPoint = new cc.Point(0, 0);
-        this._barChangeRate = new cc.Point(0, 0);
+        this._midPoint = cc.p(0, 0);
+        this._barChangeRate = cc.p(0, 0);
         this._reverseDirection = false;
     },
 
@@ -97,7 +97,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Point} mpoint
      */
     setMidpoint:function (mpoint) {
-        this._midPoint = cc.pClamp(mpoint, cc.PointZero(), new cc.Point(1, 1));
+        this._midPoint = cc.pClamp(mpoint, cc.PointZero(), cc.p(1, 1));
     },
 
     /**
@@ -116,7 +116,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setBarChangeRate:function (barChangeRate) {
 
-        this._barChangeRate = cc.pClamp(barChangeRate, cc.PointZero(), new cc.Point(1, 1));
+        this._barChangeRate = cc.pClamp(barChangeRate, cc.PointZero(), cc.p(1, 1));
     },
 
     /**
@@ -152,12 +152,12 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this.setPercentage(0);
         this._vertexData = null;
         this._vertexDataCount = 0;
-        this.setAnchorPoint(new cc.Point(0.5, 0.5));
+        this.setAnchorPoint(cc.p(0.5, 0.5));
 
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
-        this.setMidpoint(new cc.Point(0.5, 0.5));
-        this.setBarChangeRate(new cc.Point(1, 1));
+        this.setMidpoint(cc.p(0.5, 0.5));
+        this.setBarChangeRate(cc.p(1, 1));
         this.setSprite(sprite);
 
         //shader program
@@ -277,14 +277,14 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             context.globalAlpha = this._sprite._opacity / 255;
             var centerPoint, mpX=0, mpY=0;
             if (this._sprite._flipX) {
-                centerPoint = new cc.Point(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
+                centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
                 mpX = 0 | (centerPoint.x - this._sprite._anchorPointInPoints.x);
                 context.translate(mpX, 0);
                 context.scale(-1, 1);
             }
 
             if (this._sprite._flipY) {
-                centerPoint = new cc.Point(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
+                centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
                 mpY = -(0 | (centerPoint.y - this._sprite._anchorPointInPoints.y));
                 context.translate(0, mpY);
                 context.scale(1, -1);
@@ -292,7 +292,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
             var pos;
             if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
-                pos = new cc.Point(( -this._sprite._anchorPointInPoints.x + this._sprite._offsetPosition.x + this._drawPosition.x),
+                pos = cc.p(( -this._sprite._anchorPointInPoints.x + this._sprite._offsetPosition.x + this._drawPosition.x),
                     ( -this._sprite._anchorPointInPoints.y + this._sprite._offsetPosition.y + this._drawPosition.y));
 
                 if (this._sprite._texture instanceof HTMLImageElement) {
@@ -321,7 +321,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                 context.closePath();
 
                 var offsetPixels = this._sprite._offsetPosition;
-                pos = new cc.Point(0 | ( -this._sprite._anchorPointInPoints.x + offsetPixels.x),
+                pos = cc.p(0 | ( -this._sprite._anchorPointInPoints.x + offsetPixels.x),
                     0 | ( -this._sprite._anchorPointInPoints.y + offsetPixels.y));
 
                 if (this._sprite._texture instanceof HTMLImageElement) {
@@ -394,7 +394,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             var textureSize = this._sprite.getTextureRect().size;
             if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
 
-                this._origin = new cc.Point(-(size.width * (0.5 - this._midPoint.x)), -(size.height * (0.5 - this._midPoint.y)));
+                this._origin = cc.p(-(size.width * (0.5 - this._midPoint.x)), -(size.height * (0.5 - this._midPoint.y)));
                 this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
                 if (this._reverseDirection) {
                     this._startAngle = 270 - 3.6 * this._percentage;
@@ -402,12 +402,12 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                     this._endAngle = 270 + 3.6 * this._percentage;
                 }
             } else {
-                this._origin = new cc.Point(0, 0);
-                this._drawPosition = new cc.Point(0, 0);
+                this._origin = cc.p(0, 0);
+                this._drawPosition = cc.p(0, 0);
 
                 var percentageF = this._percentage / 100;
-                var startPoint = new cc.Point(size.width * this._midPoint.x, size.height * this._midPoint.y);
-                var startPointTx = new cc.Point(textureSize.width * this._midPoint.x, textureSize.height * this._midPoint.y);
+                var startPoint = cc.p(size.width * this._midPoint.x, size.height * this._midPoint.y);
+                var startPointTx = cc.p(textureSize.width * this._midPoint.x, textureSize.height * this._midPoint.y);
 
                 var drawedSize = new cc.Size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
                 var drawingSize = new cc.Size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
@@ -602,7 +602,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
                 // s and t are returned by ccpLineIntersect
                 var s = 0, t = 0;
-                var retPoint = new cc.Point(0, 0);
+                var retPoint = cc.p(0, 0);
                 if (cc.pLineIntersect(edgePtA, edgePtB, this._midPoint, percentagePt, retPoint)) {
                     //    Since our hit test is on rays we have to deal with the top edge
                     //    being in split in half so we have to test as a segment

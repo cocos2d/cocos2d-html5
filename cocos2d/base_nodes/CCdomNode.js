@@ -252,7 +252,7 @@ cc.domNode = cc.Class.extend({
         if (this._pos.x == 0) {
             //throw "sadasd"
         }
-        return new cc.Point(this._pos.x, this._pos.y);
+        return cc.p(this._pos.x, this._pos.y);
     },
     getPositionX:function () {
         return this._pos.x;
@@ -267,7 +267,7 @@ cc.domNode = cc.Class.extend({
         return this._tag;
     },
     getAnchorPoint:function () {
-        return new cc.Point(this._AnchorPoint.x, this._AnchorPoint.y);
+        return cc.p(this._AnchorPoint.x, this._AnchorPoint.y);
     },
     getContentSize:function () {
         return new cc.Size(this._contentSize.width, this._contentSize.height);

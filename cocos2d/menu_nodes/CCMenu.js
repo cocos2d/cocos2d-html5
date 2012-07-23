@@ -500,7 +500,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
                 if (this._children[i].isVisible() && this._children[i].isEnabled()) {
                     var local = this._children[i].convertToNodeSpace(touchLocation);
                     var r = this._children[i].rect();
-                    r.origin = new cc.Point(0,0);
+                    r.origin = cc.p(0,0);
                     if (cc.Rect.CCRectContainsPoint(r, local)) {
                         return this._children[i];
                     }

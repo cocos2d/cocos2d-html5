@@ -139,7 +139,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotation:0.0,
     _scaleX:1.0,
     _scaleY:1.0,
-    _position:new cc.Point(0, 0),
+    _position:cc.p(0, 0),
     _skewX:0.0,
     _skewY:0.0,
     // children (lazy allocs),
@@ -148,8 +148,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _camera:null,
     _grid:null,
     _isVisible:true,
-    _anchorPoint:new cc.Point(0, 0),
-    _anchorPointInPoints:new cc.Point(0, 0),
+    _anchorPoint:cc.p(0, 0),
+    _anchorPointInPoints:cc.p(0, 0),
     _contentSize:cc.SizeZero(),
     _isRunning:false,
     _parent:null,
@@ -180,8 +180,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._isTransformGLDirty = true;
         }
-        this._anchorPoint = new cc.Point(0, 0);
-        this._anchorPointInPoints = new cc.Point(0, 0);
+        this._anchorPoint = cc.p(0, 0);
+        this._anchorPointInPoints = cc.p(0, 0);
         this._contentSize = new cc.Size(0, 0);
 
         var director = cc.Director.getInstance();
@@ -477,7 +477,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (yValue) {
             this._position.x = newPosOrxValue;
             this._position.y = yValue;
-            //this._position = new cc.Point(newPosOrxValue,yValue);
+            //this._position = cc.p(newPosOrxValue,yValue);
         } else if (newPosOrxValue instanceof  cc.Point) {
             this._position = newPosOrxValue;
         }
@@ -500,7 +500,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     getPosition:function () {
-        return new cc.Point(this._position.x, this._position.y);
+        return cc.p(this._position.x, this._position.y);
     },
 
     /**
@@ -515,7 +515,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setPositionX:function (x) {
         this._position.x = x;
-        //this._position = new cc.Point(x,this._position.y);
+        //this._position = cc.p(x,this._position.y);
         this.setNodeDirty();
     },
 
@@ -531,7 +531,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setPositionY:function (y) {
         this._position.y = y;
-        //this._position = new cc.Point(this._position.x, y);
+        //this._position = cc.p(this._position.x, y);
         this.setNodeDirty();
     },
 
@@ -606,7 +606,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
      */
     getAnchorPoint:function () {
-        return new cc.Point(this._anchorPoint.x, this._anchorPoint.y);
+        return cc.p(this._anchorPoint.x, this._anchorPoint.y);
     },
 
     /**
@@ -618,7 +618,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._anchorPoint = point;
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x,
+            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
                 this._contentSize.height * this._anchorPoint.y);
 
             //save dirty region when after changed
@@ -631,7 +631,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     getAnchorPointInPoints:function () {
-        return new cc.Point(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
+        return cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
     },
 
     /** <p>The untransformed size of the node. <br/>
@@ -652,7 +652,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._contentSize = size;
 
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x,
+            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
                 this._contentSize.height * this._anchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -1544,7 +1544,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // optimization:
             // inline anchor point calculation if skew is not needed
-            if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, new cc.Point(0, 0))) {
+            if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
                 x += c * -this._anchorPointInPoints.x * this._scaleX + -s * -this._anchorPointInPoints.y * this._scaleY;
                 y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
             }
@@ -1562,7 +1562,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 this._transform = cc.AffineTransformConcat(skewMatrix, this._transform);
 
                 // adjust anchor point
-                if (!cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, new cc.Point(0, 0))) {
+                if (!cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
                     this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
                 }
             }

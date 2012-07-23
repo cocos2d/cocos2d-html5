@@ -227,7 +227,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _rectRotated:null,
 
     // Offset Position (used by Zwoptex)
-    _offsetPosition:new cc.Point(0, 0), // absolute
+    _offsetPosition:cc.p(0, 0), // absolute
     _unflippedOffsetPositionFromCenter:cc.PointZero(),
 
     // vertex coords, texture coords and color info
@@ -250,8 +250,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     ctor:function (fileName) {
         this._super();
         this._shouldBeHidden = false;
-        this._offsetPosition = new cc.Point(0, 0);
-        this._unflippedOffsetPositionFromCenter = new cc.Point(0, 0);
+        this._offsetPosition = cc.p(0, 0);
+        this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
 
         if (fileName) {
             if (typeof(fileName) == "string") {
@@ -371,7 +371,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.Point}
      */
     getOffsetPosition:function () {
-        return new cc.Point(this._offsetPosition.x, this._offsetPosition.y);
+        return cc.p(this._offsetPosition.x, this._offsetPosition.y);
     },
 
     /**
@@ -468,10 +468,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._flipX = this._flipY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(new cc.Point(0.5, 0.5));
+        this.setAnchorPoint(cc.p(0.5, 0.5));
 
         // zwoptex default values
-        this._offsetPosition = new cc.Point(0, 0);
+        this._offsetPosition = cc.p(0, 0);
         this._hasChildren = false;
 
         // Atlas: Color
@@ -788,10 +788,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box
             var vertices = [
-                new cc.Point(this._quad.bl.vertices.x, this._quad.bl.vertices.y),
-                new cc.Point(this._quad.br.vertices.x, this._quad.br.vertices.y),
-                new cc.Point(this._quad.tr.vertices.x, this._quad.tr.vertices.y),
-                new cc.Point(this._quad.tl.vertices.x, this._quad.tl.vertices.y)
+                cc.p(this._quad.bl.vertices.x, this._quad.bl.vertices.y),
+                cc.p(this._quad.br.vertices.x, this._quad.br.vertices.y),
+                cc.p(this._quad.tr.vertices.x, this._quad.tr.vertices.y),
+                cc.p(this._quad.tl.vertices.x, this._quad.tl.vertices.y)
             ];
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
@@ -936,10 +936,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
                 var verticesG1 = [
-                    new cc.Point(this._quad.tl.vertices.x, this._quad.tl.vertices.y),
-                    new cc.Point(this._quad.bl.vertices.x, this._quad.bl.vertices.y),
-                    new cc.Point(this._quad.br.vertices.x, this._quad.br.vertices.y),
-                    new cc.Point(this._quad.tr.vertices.x, this._quad.tr.vertices.y)
+                    cc.p(this._quad.tl.vertices.x, this._quad.tl.vertices.y),
+                    cc.p(this._quad.bl.vertices.x, this._quad.bl.vertices.y),
+                    cc.p(this._quad.br.vertices.x, this._quad.br.vertices.y),
+                    cc.p(this._quad.tr.vertices.x, this._quad.tr.vertices.y)
                 ];
                 cc.drawingUtil.drawPoly(verticesG1, 4, true);
             }
@@ -1593,7 +1593,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
  * var sprite2 = cc.Sprite.createWithTexture(img, new cc.Rect(0,0,480,320));
  *
  * //create a sprite with texture and rect and offset
- * var sprite3 = cc.Sprite.createWithTexture(img, new cc.Rect(0,0,480,320),new cc.Point(0,0));
+ * var sprite3 = cc.Sprite.createWithTexture(img, new cc.Rect(0,0,480,320),cc.p(0,0));
  */
 cc.Sprite.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
@@ -1677,12 +1677,12 @@ cc.Sprite.create = function (fileName, rect) {
  * var spriteFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
  *
  * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName(spriteFrame);
+ * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameNameNameName(spriteFrame);
  *
  * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName('rossini_dance_01.png');
+ * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameNameNameName('rossini_dance_01.png');
  */
-cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName = function (spriteFrame) {
+cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameNameNameName = function (spriteFrame) {
     if (typeof(spriteFrame) == 'string') {
         var pFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName(spriteFrame);
         if (pFrame) {

@@ -229,7 +229,7 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
  * @function
  */
 cc.POINT_POINTS_TO_PIXELS = function (points) {
-    return new cc.Point(points.x * cc.CONTENT_SCALE_FACTOR(), points.y * cc.CONTENT_SCALE_FACTOR())
+    return cc.p(points.x * cc.CONTENT_SCALE_FACTOR(), points.y * cc.CONTENT_SCALE_FACTOR())
 };
 
 /**
@@ -258,7 +258,7 @@ cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
  * @function
  */
 cc.POINT_PIXELS_TO_POINTS = function (pixels) {
-    return new cc.Point(pixels.x / cc.CONTENT_SCALE_FACTOR(), pixels.y / cc.CONTENT_SCALE_FACTOR());
+    return cc.p(pixels.x / cc.CONTENT_SCALE_FACTOR(), pixels.y / cc.CONTENT_SCALE_FACTOR());
 };
 
 

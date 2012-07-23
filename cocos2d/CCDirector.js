@@ -296,7 +296,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     convertToGL:function (point) {
         var newY = this._winSizeInPoints.height - point.y;
-        return new cc.Point(point.x, newY);
+        return cc.p(point.x, newY);
     },
 
     /**
@@ -307,7 +307,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     convertToUI:function (point) {
         var oppositeY = this._winSizeInPoints.height - point.y;
-        return new cc.Point(point.x,oppositeY);
+        return cc.p(point.x,oppositeY);
     },
 
     //_fullRect:null,
@@ -1136,9 +1136,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._SPFLabel = cc.LabelTTF.create("0.000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
         this._drawsLabel = cc.LabelTTF.create("000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
 
-        this._drawsLabel.setPosition( cc.pAdd( new cc.Point(20,48), cc.DIRECTOR_STATS_POSITION ) );
-        this._SPFLabel.setPosition( cc.pAdd( new cc.Point(20,30), cc.DIRECTOR_STATS_POSITION ) );
-        this._FPSLabel.setPosition( cc.pAdd( new cc.Point(20,10), cc.DIRECTOR_STATS_POSITION ) );
+        this._drawsLabel.setPosition( cc.pAdd( cc.p(20,48), cc.DIRECTOR_STATS_POSITION ) );
+        this._SPFLabel.setPosition( cc.pAdd( cc.p(20,30), cc.DIRECTOR_STATS_POSITION ) );
+        this._FPSLabel.setPosition( cc.pAdd( cc.p(20,10), cc.DIRECTOR_STATS_POSITION ) );
     },
 
     _calculateMPF:function(){

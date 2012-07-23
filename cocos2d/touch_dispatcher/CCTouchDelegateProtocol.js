@@ -37,7 +37,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * Constructor
      */
     ctor:function (x, y) {
-        this._point = new cc.Point(x || 0, y || 0);
+        this._point = cc.p(x || 0, y || 0);
     },
 
     /**
@@ -77,12 +77,12 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     setTouchInfo:function (id, x, y) {
         this._prevPoint = this._point;
-        this._point = new cc.Point(x || 0, y || 0);
+        this._point = cc.p(x || 0, y || 0);
         this._id = id;
     },
 
     _setPrevPoint:function (x, y) {
-        this._prevPoint = new cc.Point(x || 0, y || 0);
+        this._prevPoint = cc.p(x || 0, y || 0);
     }
 });
 

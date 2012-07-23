@@ -387,9 +387,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     context.globalAlpha = particle.color.a;
                     context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
                     if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
-                        cc.drawingUtil.drawStar(context, new cc.Point(0, 0), lpx, particle.color);
+                        cc.drawingUtil.drawStar(context, cc.p(0, 0), lpx, particle.color);
                     } else {
-                        cc.drawingUtil.drawColorBall(context, new cc.Point(0, 0), lpx, particle.color);
+                        cc.drawingUtil.drawColorBall(context, cc.p(0, 0), lpx, particle.color);
                     }
                     context.restore()
                 }

@@ -837,7 +837,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setNormalSpriteFrame:function (frame) {
-        this.setNormalImage(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName(frame));
+        this.setNormalImage(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameNameNameName(frame));
     },
 
     /**
@@ -845,7 +845,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setSelectedSpriteFrame:function (frame) {
-        this.setSelectedImage(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName(frame));
+        this.setSelectedImage(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameNameNameName(frame));
     },
 
     /**
@@ -853,7 +853,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setDisabledSpriteFrame:function (frame) {
-        this.setDisabledImage(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName(frame));
+        this.setDisabledImage(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameNameNameName(frame));
     },
 
     /**

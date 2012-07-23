@@ -62,7 +62,7 @@ cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
 };
 
 cc.__PointApplyAffineTransform = function (point, t) {
-    var p = new cc.Point();
+    var p = cc.p();
     p.x = t.a * point.x + t.c * point.y + t.tx;
     p.y = t.b * point.x + t.d * point.y + t.ty;
     return p;

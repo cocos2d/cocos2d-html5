@@ -171,7 +171,7 @@ cc.Particle = function (pos, startPos, color, deltaColor, size, deltaSize, rotat
     this.modeA = modeA ? modeA : new cc.Particle.ModeA();
     this.modeB = modeB ? modeB : new cc.Particle.ModeB();
     this.isChangeColor = false;
-    this.drawPos = new cc.Point(0, 0);
+    this.drawPos = cc.p(0, 0);
 };
 
 /**

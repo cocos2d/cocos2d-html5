@@ -61,7 +61,7 @@
 
     var x = (p0.x * b1 + p1.x * b2 + p2.x * b3 + p3.x * b4);
     var y = (p0.y * b1 + p1.y * b2 + p2.y * b3 + p3.y * b4);
-    return new cc.Point(x, y);
+    return cc.p(x, y);
 };
 
 /**
@@ -74,11 +74,11 @@
  *  var array = cc.PointArray.create();
  *
  *  //add some points to this PointArray
- *  array.addControlPoint(new cc.Point(0, 0));
- *  array.addControlPoint(new cc.Point(winSize.width / 2 - 30, 0));
- *  array.addControlPoint(new cc.Point(winSize.width / 2 - 30, winSize.height - 80));
- *  array.addControlPoint(new cc.Point(0, winSize.height - 80));
- *  array.addControlPoint(new cc.Point(0, 0));
+ *  array.addControlPoint(cc.p(0, 0));
+ *  array.addControlPoint(cc.p(winSize.width / 2 - 30, 0));
+ *  array.addControlPoint(cc.p(winSize.width / 2 - 30, winSize.height - 80));
+ *  array.addControlPoint(cc.p(0, winSize.height - 80));
+ *  array.addControlPoint(cc.p(0, 0));
  */
 cc.PointArray = cc.Node.extend(/** @lends cc.PointArray# */{
     /** Array that contains the control points */
@@ -100,7 +100,7 @@ cc.PointArray = cc.Node.extend(/** @lends cc.PointArray# */{
         // because developer always use this function like this
         // addControlPoint(ccp(x, y))
         // passing controlPoint is a temple object
-        var temp = new cc.Point(controlPoint.x, controlPoint.y);
+        var temp = cc.p(controlPoint.x, controlPoint.y);
         this._controlPoints.push(temp);
     },
 
@@ -114,7 +114,7 @@ cc.PointArray = cc.Node.extend(/** @lends cc.PointArray# */{
         // because developer always use this function like this
         // insertControlPoint(ccp(x, y))
         // passing controlPoint is a temple object
-        var temp = new cc.Point(controlPoint.x, controlPoint.y);
+        var temp = cc.p(controlPoint.x, controlPoint.y);
         this._controlPoints = cc.ArrayAppendObjectToIndex(this._controlPoints, temp, index);
     },
 
@@ -128,7 +128,7 @@ cc.PointArray = cc.Node.extend(/** @lends cc.PointArray# */{
         // because developer always use this function like this
         // replaceControlPoint(ccp(x, y))
         // passing controlPoint is a temple object
-        this._controlPoints[index] = new cc.Point(controlPoint.x, controlPoint.y);
+        this._controlPoints[index] = cc.p(controlPoint.x, controlPoint.y);
     },
 
     /**
@@ -168,7 +168,7 @@ cc.PointArray = cc.Node.extend(/** @lends cc.PointArray# */{
     reverse:function () {
         var newArray = [];
         for (var i = this._controlPoints.length - 1; i >= 0; i--) {
-            newArray.push(new cc.Point(this._controlPoints[i].x, this._controlPoints[i].y));
+            newArray.push(cc.p(this._controlPoints[i].x, this._controlPoints[i].y));
         }
         var config = new cc.PointArray();
         config.setControlPoints(newArray);
@@ -196,7 +196,7 @@ cc.PointArray = cc.Node.extend(/** @lends cc.PointArray# */{
         var newArray = [];
         var newPoints = new cc.PointArray();
         for (var i = 0; i < this._controlPoints.length; i++) {
-            newArray.push(new cc.Point(this._controlPoints[i].x, this._controlPoints[i].y));
+            newArray.push(cc.p(this._controlPoints[i].x, this._controlPoints[i].y));
         }
         newPoints.setControlPoints(newArray);
         return newPoints;
@@ -365,7 +365,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      * Constructor
      */
     ctor:function () {
-        this._startPosition = new cc.Point(0, 0);
+        this._startPosition = cc.p(0, 0);
     },
 
     /**
