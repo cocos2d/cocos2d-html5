@@ -36,7 +36,7 @@
  * @extends cc.Class
  *
  * @example
- * var texture = cc.TextureCache.sharedTextureCache().addImage(s_dragon_animation);
+ * var texture = cc.TextureCache.getInstance().addImage(s_dragon_animation);
  * var frame0 = cc.SpriteFrame.create(texture, cc.RectMake(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
@@ -171,7 +171,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
             return this._texture;
         }
         if(this._textureFilename != ""){
-            return cc.TextureCache.sharedTextureCache().addImage(this._textureFilename);
+            return cc.TextureCache.getInstance().addImage(this._textureFilename);
         }
         return null;
     },

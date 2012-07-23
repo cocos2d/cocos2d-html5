@@ -44,15 +44,22 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * get point of touch
      * @return {cc.Point}
      */
-    locationInView:function () {
+    getLocation:function () {
         return this._point;
     },
 
     /**
      * @return {cc.Point}
      */
-    previousLocationInView:function () {
+    getPreviousLocation:function () {
         return this._prevPoint;
+    },
+
+    /**
+     * @return {cc.Point}
+     */
+    getDelta:function () {
+        return cc.ccpSub( this._point, this._prevPoint );
     },
 
     /**
@@ -154,7 +161,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
 
     /*
      * In TouchesTest, class Padle inherits from cc.Sprite and cc.TargetedTouchDelegate.
-     * When it invoke  cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true),
+     * When it invoke  cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true),
      * it will crash in cc.TouchHandler.initWithDelegate() because of dynamic_cast() on android.
      * I don't know why, so add these functions for the subclass to invoke it's own retain() and  release
      *Virtual function

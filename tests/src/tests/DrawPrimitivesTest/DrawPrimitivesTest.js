@@ -29,7 +29,7 @@ var DrawPrimitivesTest = cc.Layer.extend({
     draw:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         cc.renderContext.fillStyle = "rgba(255,255,255,1)";
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
@@ -126,6 +126,6 @@ var DrawPrimitivesTestScene = TestScene.extend({
         var layer = new DrawPrimitivesTest();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

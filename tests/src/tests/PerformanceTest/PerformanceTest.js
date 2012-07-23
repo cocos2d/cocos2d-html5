@@ -42,7 +42,7 @@ var PerformanceMainLayer = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var menu = cc.Menu.create(null);
         menu.setPosition(cc.PointZero());
@@ -97,7 +97,7 @@ var PerformBasicLayer = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         cc.MenuItemFont.setFontName("Arial");
         cc.MenuItemFont.setFontSize(24);
@@ -154,7 +154,7 @@ var PerformanceTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = new PerformanceMainLayer();
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 

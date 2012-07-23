@@ -43,7 +43,7 @@ Box2DTestLayer = cc.Layer.extend({
             , b2World = Box2D.Dynamics.b2World
             , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
 
-        var screenSize = cc.Director.sharedDirector().getWinSize();
+        var screenSize = cc.Director.getInstance().getWinSize();
         //UXLog(L"Screen width %0.2f screen height %0.2f",screenSize.width,screenSize.height);
 
 
@@ -179,8 +179,8 @@ Box2DTestLayer = cc.Layer.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView();
-            //location = cc.Director.sharedDirector().convertToGL(location);
+            var location = touch.getLocation();
+            //location = cc.Director.getInstance().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }
     }
@@ -195,6 +195,6 @@ Box2DTestScene = TestScene.extend({
         var layer = new Box2DTestLayer();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

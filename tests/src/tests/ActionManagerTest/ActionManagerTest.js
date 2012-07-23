@@ -83,7 +83,7 @@ var ActionManagerTest = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
@@ -106,17 +106,17 @@ var ActionManagerTest = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new ActionManagerTestScene();
         s.addChild(restartActionManagerAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new ActionManagerTestScene();
         s.addChild(nextActionManagerAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new ActionManagerTestScene();
         s.addChild(backActionManagerAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     }
 });
 
@@ -198,7 +198,7 @@ var PauseTest = ActionManagerTest.extend({
         //
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var l = cc.LabelTTF.create("After 5 seconds grossini should move", "Thonburi", 16);
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
@@ -212,14 +212,14 @@ var PauseTest = ActionManagerTest.extend({
 
         var action = cc.MoveBy.create(1, cc.PointMake(150, 0));
 
-        cc.Director.sharedDirector().getActionManager().addAction(action, grossini, true);
+        cc.Director.getInstance().getActionManager().addAction(action, grossini, true);
 
         this.schedule(this.unpause, 3);
     },
     unpause:function (dt) {
         this.unschedule(this.unpause);
         var node = this.getChildByTag(TAG_GROSSINI);
-        cc.Director.sharedDirector().getActionManager().resumeTarget(node);
+        cc.Director.getInstance().getActionManager().resumeTarget(node);
     }
 });
 
@@ -235,7 +235,7 @@ var RemoveTest = ActionManagerTest.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var l = cc.LabelTTF.create("Should not crash", "Thonburi", 16);
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
@@ -269,7 +269,7 @@ var ResumeTest = ActionManagerTest.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var l = cc.LabelTTF.create("Grossini only rotate/scale in 3 seconds", "Thonburi", 16);
         this.addChild(l);
         l.setPosition(cc.PointMake(s.width / 2, 245));
@@ -280,7 +280,7 @@ var ResumeTest = ActionManagerTest.extend({
 
         grossini.runAction(cc.ScaleBy.create(2, 2));
 
-        cc.Director.sharedDirector().getActionManager().pauseTarget(grossini);
+        cc.Director.getInstance().getActionManager().pauseTarget(grossini);
         grossini.runAction(cc.RotateBy.create(2, 360));
 
         this.schedule(this.resumeGrossini, 3.0);
@@ -289,7 +289,7 @@ var ResumeTest = ActionManagerTest.extend({
         this.unschedule(this.resumeGrossini);
 
         var grossini = this.getChildByTag(TAG_GROSSINI);
-        cc.Director.sharedDirector().getActionManager().resumeTarget(grossini);
+        cc.Director.getInstance().getActionManager().resumeTarget(grossini);
     }
 });
 
@@ -299,7 +299,7 @@ var ActionManagerTestScene = TestScene.extend({
         MAX_LAYER = 5;
         var layer = nextActionManagerAction();
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 

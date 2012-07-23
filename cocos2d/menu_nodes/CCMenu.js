@@ -143,7 +143,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             this._enabled = true;
 
             // menu in the center of the screen
-            var winSize = cc.Director.sharedDirector().getWinSize();
+            var winSize = cc.Director.getInstance().getWinSize();
             this.ignoreAnchorPointForPosition(true);
             this.setAnchorPoint(cc.ccp(0.5, 0.5));
             this.setContentSize(winSize);
@@ -270,7 +270,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         }
         // check if too many rows/columns for available menu items
         cc.Assert(!columnsOccupied, "");
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         row = 0;
         rowHeight = 0;
@@ -363,7 +363,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         // check if too many rows/columns for available menu items.
         cc.Assert(!rowsOccupied, "");
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         column = 0;
         columnWidth = 0;
@@ -404,7 +404,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY, true);
     },
 
     /**
@@ -493,7 +493,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     },
 
     _itemForTouch:function (touch) {
-        var touchLocation = touch.locationInView();
+        var touchLocation = touch.getLocation();
 
         if (this._children && this._children.length > 0) {
             for (var i = 0; i < this._children.length; i++) {
@@ -517,7 +517,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @param {Number} newPriority
      */
     setHandlerPriority:function (newPriority) {
-        cc.Director.sharedDirector().getTouchDispatcher().setPriority(newPriority, this);
+        cc.Director.getInstance().getTouchDispatcher().setPriority(newPriority, this);
     }
 });
 

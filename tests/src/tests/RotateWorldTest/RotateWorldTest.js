@@ -29,7 +29,7 @@ var RotateWorldTestScene = TestScene.extend({
         var layer = RotateWorldMainLayer.node();
         this.addChild(layer);
         this.runAction(cc.RotateBy.create(4, -360));
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -39,7 +39,7 @@ var SpriteLayer = cc.Layer.extend({
 
         var x, y;
 
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         x = size.width;
         y = size.height;
 
@@ -88,7 +88,7 @@ var TestLayer = cc.Layer.extend({
 
         var x, y;
 
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         x = size.width;
         y = size.height;
 
@@ -113,7 +113,7 @@ var RotateWorldMainLayer = cc.Layer.extend({
         this._super();
         var x, y;
 
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         x = size.width;
         y = size.height;
 

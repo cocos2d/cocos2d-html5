@@ -371,7 +371,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
 
         this._boundaryFullyCovered = false;
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
         this._fullScreenSize = cc.PointMake(winSize.width, winSize.height);
         this._halfScreenSize = cc.ccpMult(this._fullScreenSize, 0.5);
 

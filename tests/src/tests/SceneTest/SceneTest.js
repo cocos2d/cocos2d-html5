@@ -34,7 +34,7 @@ var MID_GOBACK = 105;
 SceneTestLayer1 = cc.Layer.extend({
 
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var item1 = cc.MenuItemFont.create("Test pushScene", this, this.onPushScene);
         var item2 = cc.MenuItemFont.create("Test pushScene w/transition", this, this.onPushSceneTran);
         var item3 = cc.MenuItemFont.create("Quit", this, function () {
@@ -74,7 +74,7 @@ SceneTestLayer1 = cc.Layer.extend({
         var scene = new SceneTestScene();
         var layer = new SceneTestLayer2();
         scene.addChild(layer, 0);
-        cc.Director.sharedDirector().pushScene(scene);
+        cc.Director.getInstance().pushScene(scene);
     },
 
     onPushSceneTran:function (sender) {
@@ -82,7 +82,7 @@ SceneTestLayer1 = cc.Layer.extend({
         var layer = new SceneTestLayer2();
         scene.addChild(layer, 0);
 
-        cc.Director.sharedDirector().pushScene(cc.TransitionSlideInT.create(1, scene));
+        cc.Director.getInstance().pushScene(cc.TransitionSlideInT.create(1, scene));
     },
     onQuit:function (sender) {
 
@@ -98,7 +98,7 @@ SceneTestLayer2 = cc.Layer.extend({
     ctor:function () {
         this.timeCounter = 0;
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var item1 = cc.MenuItemFont.create("replaceScene", this, this.onReplaceScene);
         var item2 = cc.MenuItemFont.create("replaceScene w/transition", this, this.onReplaceSceneTran);
@@ -127,14 +127,14 @@ SceneTestLayer2 = cc.Layer.extend({
     },
 
     onGoBack:function (sender) {
-        cc.Director.sharedDirector().popScene();
+        cc.Director.getInstance().popScene();
     },
 
     onReplaceScene:function (sender) {
         var scene = new SceneTestScene();
         var layer = new SceneTestLayer3();
         scene.addChild(layer, 0);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
 
     },
 
@@ -142,7 +142,7 @@ SceneTestLayer2 = cc.Layer.extend({
         var scene = new SceneTestScene();
         var layer = new SceneTestLayer3();
         scene.addChild(layer, 0);
-        cc.Director.sharedDirector().replaceScene(cc.TransitionSlideInT.create(2, scene));
+        cc.Director.getInstance().replaceScene(cc.TransitionSlideInT.create(2, scene));
 
     }
 
@@ -157,7 +157,7 @@ SceneTestLayer3 = cc.LayerColor.extend({
         this.setTouchEnabled(true);
         var label = cc.LabelTTF.create("Touch to popScene", "Arial", 28);
         this.addChild(label);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         label.setPosition(cc.PointMake(s.width / 2, s.height / 2));
 
         var sprite = cc.Sprite.create(s_pathGrossini);
@@ -174,7 +174,7 @@ SceneTestLayer3 = cc.LayerColor.extend({
     },
 
     ccTouchesEnded:function (touches, event) {
-        cc.Director.sharedDirector().popScene();
+        cc.Director.getInstance().popScene();
     }
 
     //CREATE_NODE(SceneTestLayer3);
@@ -186,7 +186,7 @@ SceneTestScene = TestScene.extend({
         var layer = new SceneTestLayer1();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
 
     }
 });

@@ -174,7 +174,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 var powW = 0;
                 var powH = 0;
 
-                if (cc.Configuration.sharedConfiguration().supportsNPOT()) {
+                if (cc.Configuration.getInstance().supportsNPOT()) {
                     powW = width;
                     powH = height;
                 } else {
@@ -253,7 +253,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var texSize = this._texture.getContentSizeInPixels();
 
         // Calculate the adjustment ratios based on the old and new projections
-        var size = cc.Director.sharedDirector().getWinSizeInPixels();
+        var size = cc.Director.getInstance().getWinSizeInPixels();
         var widthRatio = size.width / texSize.width;
         var heightRatio = size.height / texSize.height;
 
@@ -347,7 +347,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         glBindFramebuffer(GL_FRAMEBUFFER, this._oldFBO);
         kmGLPopMatrix();
 
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
 
         var size = director.getWinSizeInPixels();
 
@@ -490,7 +490,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     saveToFile:function (filePath, format) {
         if (!format)
-            filePath = cc.FileUtils.sharedFileUtils().getWriteablePath() + filePath;
+            filePath = cc.FileUtils.getInstance().getWriteablePath() + filePath;
         format = format || cc.CCIMAGE_FORMAT_JPEG;
 
         cc.Assert(format == cc.CCIMAGE_FORMAT_JPEG || format == cc.CCIMAGE_FORMAT_PNG,

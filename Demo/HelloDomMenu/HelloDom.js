@@ -61,11 +61,11 @@ var Helloworld = cc.Layer.extend({
         // 1. super init first
         this._super();
 
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         //this.helloLb = cc.LabelTTF.create("Hello World", "Arial", 24);
         // position the label on the center of the screen
-        //this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
+        //this.helloLb.setPosition(cc.ccp(cc.Director.getInstance().getWinSize().width / 2, 0));
         // add the label as a child to this layer
         //this.addChild(this.helloLb, 5);
 

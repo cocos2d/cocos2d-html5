@@ -310,7 +310,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         // file
         value = /file="([a-zA-Z0-9\-\._]+)/gi.exec(line)[1];
 
-        this.atlasName = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(value, fntFile);
+        this.atlasName = cc.FileUtils.getInstance().fullPathFromRelativeFile(value, fntFile);
     },
 
     _parseKerningCapacity:function (line) {
@@ -496,7 +496,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._color = color3;
         if (this.getTexture()) {
             if (cc.renderContextType == cc.CANVAS) {
-                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
+                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
                     var tx = this.getTexture();
@@ -562,7 +562,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             cc.Assert(newConf, "cc.LabelBMFont: Impossible to create font. Please check file");
             this._configuration = newConf;
             this._fntFile = fntFile;
-            texture = cc.TextureCache.sharedTextureCache().addImage(this._configuration.getAtlasName());
+            texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
         }
         else {
             texture = new Image();
@@ -1000,7 +1000,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._fntFile = fntFile;
             this._configuration = newConf;
 
-            this.setTexture(cc.TextureCache.sharedTextureCache().addImage(this._configuration.getAtlasName()));
+            this.setTexture(cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName()));
             this.createFontChars();
         }
     },

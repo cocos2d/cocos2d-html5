@@ -157,7 +157,7 @@ var SubTest = cc.Class.extend({
          */
 
         // purge textures
-        var mgr = cc.TextureCache.sharedTextureCache();
+        var mgr = cc.TextureCache.getInstance();
         //		[mgr removeAllTextures];
         mgr.removeTexture(mgr.addImage("res/Images/grossinis_sister1.png"));
         mgr.removeTexture(mgr.addImage("res/Images/grossini_dance_atlas.png"));
@@ -252,7 +252,7 @@ var SpriteMenuLayer = PerformBasicLayer.extend({
 
         if (scene) {
             scene.initWithSubTest(subTest, nodes);
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     }
 });
@@ -275,7 +275,7 @@ var SpriteMainScene = cc.Scene.extend({
         this._subTest = new SubTest();
         this._subTest.initWithSubTest(asubtest, this);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         this._lastRenderedCount = 0;
         this._quantityNodes = 0;
@@ -389,7 +389,7 @@ var SpriteMainScene = cc.Scene.extend({
 //
 ////////////////////////////////////////////////////////
 function performanceActions(sprite) {
-    var size = cc.Director.sharedDirector().getWinSize();
+    var size = cc.Director.getInstance().getWinSize();
     sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
 
     var period = 0.5 + (Math.random() * 1000) / 500.0;
@@ -405,7 +405,7 @@ function performanceActions(sprite) {
 }
 
 function performanceActions20(sprite) {
-    var size = cc.Director.sharedDirector().getWinSize();
+    var size = cc.Director.getInstance().getWinSize();
     if (cc.RANDOM_0_1() < 0.2)
         sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
     else
@@ -424,19 +424,19 @@ function performanceActions20(sprite) {
 }
 
 function performanceRotationScale(sprite) {
-    var size = cc.Director.sharedDirector().getWinSize();
+    var size = cc.Director.getInstance().getWinSize();
     sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
     sprite.setRotation(cc.RANDOM_0_1() * 360);
     sprite.setScale(cc.RANDOM_0_1() * 2);
 }
 
 function performancePosition(sprite) {
-    var size = cc.Director.sharedDirector().getWinSize();
+    var size = cc.Director.getInstance().getWinSize();
     sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
 }
 
 function performanceout20(sprite) {
-    var size = cc.Director.sharedDirector().getWinSize();
+    var size = cc.Director.getInstance().getWinSize();
 
     if (cc.RANDOM_0_1() < 0.2)
         sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
@@ -449,7 +449,7 @@ function performanceOut100(sprite) {
 }
 
 function performanceScale(sprite) {
-    var size = cc.Director.sharedDirector().getWinSize();
+    var size = cc.Director.getInstance().getWinSize();
     sprite.setPosition(cc.ccp(parseInt(Math.random() * size.width), parseInt(Math.random() * size.height)));
     sprite.setScale(cc.RANDOM_0_1() * 100 / 50);
 }
@@ -556,5 +556,5 @@ var SpritePerformTest7 = SpriteMainScene.extend({
 function runSpriteTest() {
     var scene = new SpritePerformTest1;
     scene.initWithSubTest(1, 50);
-    cc.Director.sharedDirector().replaceScene(scene);
+    cc.Director.getInstance().replaceScene(scene);
 }

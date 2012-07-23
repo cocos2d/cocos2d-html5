@@ -61,7 +61,7 @@ var Helloworld = cc.Layer.extend({
         // 2. add a menu item with "X" image, which is clicked to quit the program
         //    you may modify it.
         // ask director the window size
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         // add a "close" icon to exit the progress. it's an autorelease object
         var closeItem = cc.MenuItemImage.create(
@@ -143,11 +143,11 @@ var Helloworld = cc.Layer.extend({
         cc.canvas.height = cc.originalCanvasSize.height * xScale;
         cc.renderContext.translate(0, cc.canvas.height);
         cc.renderContext.scale(xScale, xScale);
-        cc.Director.sharedDirector().setContentScaleFactor(xScale);
+        cc.Director.getInstance().setContentScaleFactor(xScale);
     },
     // a selector callback
     menuCloseCallback:function (sender) {
-        cc.Director.sharedDirector().end();
+        cc.Director.getInstance().end();
     },
     ccTouchesBegan:function (touches, event) {
         this.isMouseDown = true;
@@ -155,7 +155,7 @@ var Helloworld = cc.Layer.extend({
     ccTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                //this.circle.setPosition(new cc.Point(touches[0].locationInView().x, touches[0].locationInView().y));
+                //this.circle.setPosition(new cc.Point(touches[0].getLocation().x, touches[0].getLocation().y));
             }
         }
     },

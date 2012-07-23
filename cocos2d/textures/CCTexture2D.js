@@ -124,7 +124,7 @@ cc.Texture2D = cc.Class.extend({
              */
             /** Initializes a texture from a PVRTC buffer */
             this.initWithPVRTCData = function (data, level, bpp, hasAlpha, length, pixelFormat) {
-                if (!(cc.Configuration.sharedConfiguration().isSupportsPVRTC())) {
+                if (!(cc.Configuration.getInstance().isSupportsPVRTC())) {
                     cc.Log("cocos2d: WARNING: PVRTC images is not supported.");
                     return false;
                 }
@@ -344,7 +344,7 @@ cc.Texture2D = cc.Class.extend({
             return false;
         }
 
-        var conf = cc.Configuration.sharedConfiguration();
+        var conf = cc.Configuration.getInstance();
 
         if (cc.TEXTURE_NPOT_SUPPORT) {
             if (conf.isSupportsNPOT()) {

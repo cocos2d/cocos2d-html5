@@ -62,7 +62,7 @@ var ParticleMenuLayer = PerformBasicLayer.extend({
         s_nParCurIdx = this._curCase;
         if (newScene) {
             newScene.initWithSubTest(subTest, parNum);
-            cc.Director.sharedDirector().replaceScene(newScene);
+            cc.Director.getInstance().replaceScene(newScene);
         }
     }
 });
@@ -80,7 +80,7 @@ var ParticleMainScene = cc.Scene.extend({
         //srandom(0);
 
         this._subtestNumber = asubtest;
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         this._lastRenderedCount = 0;
         this._quantityParticles = particles;
@@ -167,8 +167,8 @@ var ParticleMainScene = cc.Scene.extend({
 
         //todo
         // remove the "fire.png" from the TextureCache cache.
-        var texture = cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png");
-        cc.TextureCache.sharedTextureCache().removeTexture(texture);
+        var texture = cc.TextureCache.getInstance().addImage("res/Images/fire.png");
+        cc.TextureCache.getInstance().removeTexture(texture);
 
         particleSystem = new cc.ParticleSystemQuad();
 
@@ -176,17 +176,17 @@ var ParticleMainScene = cc.Scene.extend({
             case 1:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
-                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
+                particleSystem.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
                 break;
             case 2:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
-                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
+                particleSystem.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
                 break;
             case 3:
                 cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_A8);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
-                particleSystem.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
+                particleSystem.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
                 break;
             default:
                 particleSystem = null;
@@ -251,7 +251,7 @@ var ParticlePerformTest1 = ParticleMainScene.extend({
         return "A " + this._subtestNumber + " size=4";
     },
     doTest:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
@@ -318,7 +318,7 @@ var ParticlePerformTest2 = ParticleMainScene.extend({
         return "B " + this._subtestNumber + " size=8";
     },
     doTest:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
@@ -385,7 +385,7 @@ var ParticlePerformTest3 = ParticleMainScene.extend({
         return "C " + this._subtestNumber + " size=32";
     },
     doTest:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
@@ -452,7 +452,7 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
         return "D " + this._subtestNumber + " size=64";
     },
     doTest:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var particleSystem = this.getChildByTag(TAG_PARTICLE_SYSTEM);
 
         // duration
@@ -511,5 +511,5 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
 function runParticleTest() {
     var scene = new ParticlePerformTest1;
     scene.initWithSubTest(1, PARTICLE_NODES_INCREASE);
-    cc.Director.sharedDirector().replaceScene(scene);
+    cc.Director.getInstance().replaceScene(scene);
 }

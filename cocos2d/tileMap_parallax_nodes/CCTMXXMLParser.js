@@ -492,7 +492,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             // If this is an external tileset then start parsing that
             var externalTilesetFilename = t.getAttribute('source');
             if (externalTilesetFilename) {
-                this.parseXMLFile(cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(externalTilesetFilename, tmxFile));
+                this.parseXMLFile(cc.FileUtils.getInstance().fullPathFromRelativeFile(externalTilesetFilename, tmxFile));
             }
             else {
                 var tileset = new cc.TMXTilesetInfo();
@@ -513,7 +513,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         imgSource = this._resources + "/" + imgSource;
                     }
                     else{
-                        imgSource = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(imgSource, tmxFile);
+                        imgSource = cc.FileUtils.getInstance().fullPathFromRelativeFile(imgSource, tmxFile);
                     }
                 }
                 tileset.sourceImage = imgSource;
@@ -736,7 +736,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._tileSets = [];
         this._layers = [];
 
-        this._TMXFileName = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(tmxFileName);
+        this._TMXFileName = cc.FileUtils.getInstance().fullPathFromRelativePath(tmxFileName);
 
         if (resourcePath) {
             this._resources = resourcePath;

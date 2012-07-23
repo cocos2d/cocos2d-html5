@@ -303,7 +303,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
         if (cc.renderContextType == cc.WEBGL) {
             this._updateBlendFunc();
-            //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(cc.Shader_PositionTextureColor)) ;
+            //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.Shader_PositionTextureColor)) ;
         }
         return true;
     },
@@ -334,9 +334,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @return {Boolean}
      */
     initWithFile:function (fileImage, capacity) {
-        var texture2D = cc.TextureCache.sharedTextureCache().textureForKey(fileImage);
+        var texture2D = cc.TextureCache.getInstance().textureForKey(fileImage);
         if (!texture2D)
-            texture2D = cc.TextureCache.sharedTextureCache().addImage(fileImage);
+            texture2D = cc.TextureCache.getInstance().addImage(fileImage);
         return this.initWithTexture(texture2D, capacity);
     },
 

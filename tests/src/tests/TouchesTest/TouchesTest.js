@@ -35,7 +35,7 @@ var TouchesTestScene = TestScene.extend({
         this.addChild(pongLayer);
     },
     runThisTest:function () {
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     },
     MainMenuCallback:function (sender) {
         this._super(sender);
@@ -50,14 +50,14 @@ var PongLayer = cc.Layer.extend({
 
     ctor:function () {
         this._ballStartingVelocity = cc.PointMake(20.0, -100.0);
-        this._winSize = cc.Director.sharedDirector().getWinSize();
+        this._winSize = cc.Director.getInstance().getWinSize();
 
-        this._ball = Ball.ballWithTexture(cc.TextureCache.sharedTextureCache().addImage(s_ball));
+        this._ball = Ball.ballWithTexture(cc.TextureCache.getInstance().addImage(s_ball));
         this._ball.setPosition(cc.PointMake(this._winSize.width / 2, this._winSize.height / 2));
         this._ball.setVelocity(this._ballStartingVelocity);
         this.addChild(this._ball);
 
-        var paddleTexture = cc.TextureCache.sharedTextureCache().addImage(s_paddle);
+        var paddleTexture = cc.TextureCache.getInstance().addImage(s_paddle);
 
         this._paddles = [];
 

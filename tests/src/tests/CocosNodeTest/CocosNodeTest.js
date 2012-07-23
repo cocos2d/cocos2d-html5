@@ -85,7 +85,7 @@ var TestCocosNodeDemo = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
@@ -115,17 +115,17 @@ var TestCocosNodeDemo = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new CocosNodeTestScene();
         s.addChild(restartCocosNodeAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new CocosNodeTestScene();
         s.addChild(nextCocosNodeAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new CocosNodeTestScene();
         s.addChild(backCocosNodeAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     }
 });
 
@@ -133,7 +133,7 @@ var CCNodeTest2 = TestCocosNodeDemo.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var sp1 = cc.Sprite.create(s_pathSister1);
         var sp2 = cc.Sprite.create(s_pathSister2);
@@ -174,7 +174,7 @@ var CCNodeTest4 = TestCocosNodeDemo.extend({
     ctor:function () {
         var sp1 = cc.Sprite.create(s_pathSister1);
         var sp2 = cc.Sprite.create(s_pathSister2);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         sp1.setPosition(cc.PointMake(150, s.height / 2));
         sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
 
@@ -202,7 +202,7 @@ var CCNodeTest5 = TestCocosNodeDemo.extend({
     ctor:function () {
         var sp1 = cc.Sprite.create(s_pathSister1);
         var sp2 = cc.Sprite.create(s_pathSister2);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         sp1.setPosition(cc.PointMake(150, s.height / 2));
         sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
 
@@ -244,7 +244,7 @@ var CCNodeTest6 = TestCocosNodeDemo.extend({
         var sp2 = cc.Sprite.create(s_pathSister2);
         var sp21 = cc.Sprite.create(s_pathSister2);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         sp1.setPosition(cc.PointMake(150, s.height / 2));
         sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
 
@@ -285,7 +285,7 @@ var CCNodeTest6 = TestCocosNodeDemo.extend({
 
 var StressTest1 = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var sp1 = cc.Sprite.create(s_pathSister1);
         this.addChild(sp1, 0, TAG_SPRITE1);
@@ -297,11 +297,11 @@ var StressTest1 = TestCocosNodeDemo.extend({
     shouldNotCrash:function (dt) {
         this.unschedule(this.shouldNotCrash);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // if the node has timers, it crashes
         var explosion = cc.ParticleSun.create();
-        explosion.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
+        explosion.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
 
         explosion.setPosition(cc.PointMake(s.width / 2, s.height / 2));
 
@@ -322,7 +322,7 @@ var StressTest1 = TestCocosNodeDemo.extend({
 
 var StressTest2 = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var sublayer = cc.Layer.create();
 
@@ -337,7 +337,7 @@ var StressTest2 = TestCocosNodeDemo.extend({
         sublayer.addChild(sp1, 1);
 
         var fire = cc.ParticleFire.create();
-        fire.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
+        fire.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
         fire.setPosition(cc.PointMake(80, s.height / 2 - 50));
 
         var copy_seq3 = seq3.copy();
@@ -415,7 +415,7 @@ var NodeToWorld = TestCocosNodeDemo.extend({
 
 var CameraOrbitTest = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var p = cc.Sprite.create(s_back3);
         this.addChild(p, 0);
@@ -457,10 +457,10 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
     },
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
+        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {
@@ -471,7 +471,7 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
 var CameraZoomTest = TestCocosNodeDemo.extend({
     _z:0,
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // LEFT
         var sprite = cc.Sprite.create(s_pathGrossini);
@@ -512,10 +512,10 @@ var CameraZoomTest = TestCocosNodeDemo.extend({
 
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
+        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {
@@ -525,7 +525,7 @@ var CameraZoomTest = TestCocosNodeDemo.extend({
 
 var CameraCenterTest = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // LEFT-TOP
         var sprite = new cc.Sprite();//.node();
@@ -588,7 +588,7 @@ var CameraCenterTest = TestCocosNodeDemo.extend({
 var ConvertToNode = TestCocosNodeDemo.extend({
     ctor:function () {
         this.setTouchEnabled(true);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var rotate = cc.RotateBy.create(10, 360);
         var action = cc.RepeatForever.create(rotate);
@@ -623,9 +623,9 @@ var ConvertToNode = TestCocosNodeDemo.extend({
     ccTouchesEnded:function (touches, event) {
         for (var it = 0; it < touches.length; it++) {
             var touch = touches[it];
-            var location = touch.locationInView();
+            var location = touch.getLocation();
 
-            location = cc.Director.sharedDirector().convertToGL(location);
+            location = cc.Director.getInstance().convertToGL(location);
 
             for (var i = 0; i < 3; i++) {
                 var node = this.getChildByTag(100 + i);
@@ -652,7 +652,7 @@ var CocosNodeTestScene = TestScene.extend({
         var layer = nextCocosNodeAction();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 

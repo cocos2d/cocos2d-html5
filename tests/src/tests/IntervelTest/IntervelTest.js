@@ -44,10 +44,10 @@ IntervalLayer = cc.Layer.extend({
     ctor:function () {
         this.time0 = this.time1 = this.time2 = this.time3 = this.time4 = 0.0;
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         // sun
         var sun = cc.ParticleSun.create();
-        sun.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
+        sun.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
         sun.setPosition(cc.PointMake(s.width - 32, s.height - 32));
 
         sun.setTotalParticles(130);
@@ -98,16 +98,16 @@ IntervalLayer = cc.Layer.extend({
     },
 
     onPause:function (sender) {
-        if (cc.Director.sharedDirector().isPaused()) {
-            cc.Director.sharedDirector().resume();
+        if (cc.Director.getInstance().isPaused()) {
+            cc.Director.getInstance().resume();
         } else {
-            cc.Director.sharedDirector().pause();
+            cc.Director.getInstance().pause();
         }
     },
 
     onExit:function () {
-        if (cc.Director.sharedDirector().isPaused()) {
-            cc.Director.sharedDirector().resume();
+        if (cc.Director.getInstance().isPaused()) {
+            cc.Director.getInstance().resume();
         }
         this._super();
     },
@@ -142,6 +142,6 @@ IntervalTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = new IntervalLayer();
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

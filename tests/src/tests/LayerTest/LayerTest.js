@@ -72,7 +72,7 @@ var LayerTestScene = TestScene.extend({
     runThisTest:function () {
         s_nLayerTestsIdx = -1;
         this.addChild(nextLayerTestAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -91,7 +91,7 @@ var LayerTest = cc.Layer.extend({
     },
     onEnter:function () {
         this._super();
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
@@ -122,19 +122,19 @@ var LayerTest = cc.Layer.extend({
         var s = new LayerTestScene();
         s.addChild(restartLayerTestAction());
 
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     },
     nextCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(nextLayerTestAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     },
     backCallback:function (sender) {
         var s = new LayerTestScene();
         s.addChild(backLayerTestAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     }
 });
@@ -149,7 +149,7 @@ var LayerTest1 = LayerTest.extend({
         this._super();
         this.setTouchEnabled(true);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var layer = cc.LayerColor.create(cc.ccc4(255, 0, 0, 128), 200, 200);
 
         layer.ignoreAnchorPointForPosition(false);
@@ -161,13 +161,13 @@ var LayerTest1 = LayerTest.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY + 1, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY + 1, true);
     },
     updateSize:function (touch) {
-        var touchLocation = touch.locationInView();
-        touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
+        var touchLocation = touch.getLocation();
+        touchLocation = cc.Director.getInstance().convertToGL(touchLocation);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var newSize = cc.SizeMake(Math.abs(touchLocation.x - s.width / 2) * 2, Math.abs(touchLocation.y - s.height / 2) * 2);
 
@@ -192,7 +192,7 @@ var IgnoreAnchorpointTest1 = LayerTest.extend({
     onEnter:function () {
         this._super();
         //create layer
-        var ws = cc.Director.sharedDirector().getWinSize();
+        var ws = cc.Director.getInstance().getWinSize();
         var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(true);
         var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
@@ -212,7 +212,7 @@ var IgnoreAnchorpointTest2 = LayerTest.extend({
     onEnter:function () {
         this._super();
         //create layer
-        var ws = cc.Director.sharedDirector().getWinSize();
+        var ws = cc.Director.getInstance().getWinSize();
         var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(true);
         var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
@@ -232,7 +232,7 @@ var IgnoreAnchorpointTest3 = LayerTest.extend({
     onEnter:function () {
         this._super();
         //create layer
-        var ws = cc.Director.sharedDirector().getWinSize();
+        var ws = cc.Director.getInstance().getWinSize();
         var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(false);
         var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
@@ -252,7 +252,7 @@ var IgnoreAnchorpointTest4 = LayerTest.extend({
     onEnter:function () {
         this._super();
         //create layer
-        var ws = cc.Director.sharedDirector().getWinSize();
+        var ws = cc.Director.getInstance().getWinSize();
         var layer1 = cc.LayerColor.create(cc.ccc4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(false);
         var layer2 = cc.LayerColor.create(cc.ccc4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
@@ -278,7 +278,7 @@ var LayerTest2 = LayerTest.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var layer1 = cc.LayerColor.create(cc.ccc4(255, 255, 0, 80), 100, 300);
         layer1.setPosition(cc.PointMake(s.width / 3, s.height / 2));
         layer1.ignoreAnchorPointForPosition(false);
@@ -311,7 +311,7 @@ var LayerTest2 = LayerTest.extend({
 //------------------------------------------------------------------
 var LayerTestBlend = LayerTest.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var layer1 = cc.LayerColor.create(cc.ccc4(255, 255, 255, 80));
 
         var sister1 = cc.Sprite.create(s_pathSister1);
@@ -368,12 +368,12 @@ var LayerGradient = LayerTest.extend({
 
          var menu = cc.Menu.create(item, null);
          this.addChild(menu);
-         var s = cc.Director.sharedDirector().getWinSize();
+         var s = cc.Director.getInstance().getWinSize();
          menu.setPosition(cc.ccp(s.width / 2, 100));*/
     },
     prevLocation:null,
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         return true;
@@ -384,8 +384,8 @@ var LayerGradient = LayerTest.extend({
     ccTouchCancelled:function (touch, event) {
     },
     ccTouchMoved:function (touch, event) {
-        var s = cc.Director.sharedDirector().getWinSize();
-        var start = touch.locationInView();
+        var s = cc.Director.getInstance().getWinSize();
+        var start = touch.getLocation();
 
         var diff = cc.ccpSub(cc.ccp(s.width / 2, s.height / 2), start);
         diff = cc.ccpNormalize(diff);

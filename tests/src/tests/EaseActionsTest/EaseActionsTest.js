@@ -97,7 +97,7 @@ var EaseActionsTestScene = TestScene.extend({
     runThisTest:function () {
         s_nEaseActionIdx = -1;
         this.addChild(nextEaseAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -122,7 +122,7 @@ var EaseSpriteDemo = cc.Layer.extend({
         this.addChild(this._kathia, 2);
         this.addChild(this._tamara, 1);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         this._grossini.setPosition(cc.PointMake(60, 50));
         this._kathia.setPosition(cc.PointMake(60, 150));
@@ -149,17 +149,17 @@ var EaseSpriteDemo = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new EaseActionsTestScene();//cc.Scene.create();
         s.addChild(restartEaseAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new EaseActionsTestScene();//cc.Scene.create();
         s.addChild(nextEaseAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new EaseActionsTestScene();//cc.Scene.create();
         s.addChild(backEaseAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     positionForTwo:function () {
         this._grossini.setPosition(cc.PointMake(60, 120));
@@ -632,7 +632,7 @@ var SchedulerTest = EaseSpriteDemo.extend({
 
         var emitter = new cc.ParticleFireworks();
         emitter.initWithTotalParticles(250);
-        emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
+        emitter.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
         this.addChild(emitter);
     },
     title:function () {

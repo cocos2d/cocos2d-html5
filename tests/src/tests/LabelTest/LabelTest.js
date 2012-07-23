@@ -138,7 +138,7 @@ var LabelTestScene = TestScene.extend({
     runThisTest:function () {
         atlasIdx = -1;
         this.addChild(nextAtlasAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -152,7 +152,7 @@ var AtlasDemo = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 28);
         this.addChild(label, 1);
@@ -182,19 +182,19 @@ var AtlasDemo = cc.Layer.extend({
         var s = new LabelTestScene();
         s.addChild(restartAtlasAction());
 
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     },
     nextCallback:function (sender) {
         var s = new LabelTestScene();
         s.addChild(nextAtlasAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     },
     backCallback:function (sender) {
         var s = new LabelTestScene();
         s.addChild(backAtlasAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     }
 });
@@ -209,7 +209,7 @@ var Atlas1 = AtlasDemo.extend({
     ctor:function () {
         this.textureAtlas = cc.TextureAtlas.create(s_atlasTest, 3);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         //
         // Notice: u,v tex coordinates are inverted
@@ -382,7 +382,7 @@ var Atlas3 = AtlasDemo.extend({
         label3.setAnchorPoint(cc.ccp(1, 1));
         this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         label1.setPosition(cc.ccp(0, 0));
         label2.setPosition(cc.ccp(s.width / 2, s.height / 2));
         label3.setPosition(cc.ccp(s.width, s.height));
@@ -428,7 +428,7 @@ var Atlas4 = AtlasDemo.extend({
         var label = cc.LabelBMFont.create("Bitmap Font Atlas", "res/fonts/bitmapFontTest.fnt");
         this.addChild(label);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         label.setPosition(cc.ccp(s.width / 2, s.height / 2));
         label.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -476,7 +476,7 @@ var Atlas4 = AtlasDemo.extend({
         label1.setString(string);
     },
     draw:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var c = cc.RED();
         cc.renderContext.strokeStyle = "rgba(" + c.r + "," + c.g + "," + c.b + ",1)";
         cc.drawingUtil.drawLine(cc.ccp(0, s.height / 2), cc.ccp(s.width, s.height / 2));
@@ -503,7 +503,7 @@ var Atlas5 = AtlasDemo.extend({
         var label = cc.LabelBMFont.create("abcdefg", "res/fonts/bitmapFontTest4.fnt");
         this.addChild(label);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         label.setPosition(cc.ccp(s.width / 2, s.height / 2));
         label.setAnchorPoint(cc.ccp(0.5, 0.5));
@@ -525,7 +525,7 @@ var Atlas5 = AtlasDemo.extend({
 //------------------------------------------------------------------
 var Atlas6 = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = null;
         label = cc.LabelBMFont.create("FaFeFiFoFu", "res/fonts/bitmapFontTest5.fnt");
@@ -560,7 +560,7 @@ var Atlas6 = AtlasDemo.extend({
 //------------------------------------------------------------------
 var AtlasBitmapColor = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = null;
         label = cc.LabelBMFont.create("Blue", "res/fonts/bitmapFontTest5.fnt");
@@ -605,7 +605,7 @@ var AtlasFastBitmap = AtlasDemo.extend({
             var label = cc.LabelBMFont.create(str, "res/fonts/bitmapFontTest.fnt");
             this.addChild(label);
 
-            var s = cc.Director.sharedDirector().getWinSize();
+            var s = cc.Director.getInstance().getWinSize();
 
             var p = cc.ccp(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height);
             label.setPosition(p);
@@ -655,7 +655,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
         s = label3.getContentSize();
         cc.Log("content size:" + s.width + "," + s.height);
 
-        s = cc.Director.sharedDirector().getWinSize();
+        s = cc.Director.getInstance().getWinSize();
         label1.setPosition(cc.ccp(0, 0));
         label2.setPosition(cc.ccp(s.width / 2, s.height / 2));
         label3.setPosition(cc.ccp(s.width, s.height));
@@ -676,7 +676,7 @@ var BitmapFontMultiLine = AtlasDemo.extend({
 var LabelsEmpty = AtlasDemo.extend({
     setEmpty:null,
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // cc.LabelBMFont
         var label1 = cc.LabelBMFont.create("", "res/fonts/bitmapFontTest3.fnt");
@@ -732,7 +732,7 @@ var LabelsEmpty = AtlasDemo.extend({
 //------------------------------------------------------------------
 var LabelBMFontHD = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // cc.LabelBMFont
         var label1 = cc.LabelBMFont.create("TESTING RETINA DISPLAY", "res/fonts/konqa32.fnt");
@@ -754,7 +754,7 @@ var LabelBMFontHD = AtlasDemo.extend({
 //------------------------------------------------------------------
 var LabelAtlasHD = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // cc.LabelBMFont
         var label1 = cc.LabelAtlas.create("TESTING RETINA DISPLAY", "res/fonts/larabie-16.plist");
@@ -778,7 +778,7 @@ var LabelAtlasHD = AtlasDemo.extend({
 //------------------------------------------------------------------
 var LabelGlyphDesigner = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var layer = cc.LayerColor.create(cc.ccc4(128, 128, 128, 255));
         this.addChild(layer, -10);
@@ -807,7 +807,7 @@ var LabelTTFTest = AtlasDemo.extend({
     _vertAlign:null,
     ctor:function () {
         var blockSize = cc.SizeMake(200, 160);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var colorLayer = cc.LayerColor.create(cc.ccc4(100, 100, 100, 255), blockSize.width, blockSize.height);
         colorLayer.setAnchorPoint(cc.ccp(0, 0));
@@ -840,7 +840,7 @@ var LabelTTFTest = AtlasDemo.extend({
     },
     updateAlignment:function () {
         var blockSize = cc.SizeMake(200, 160);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         if (this._label) {
             this._label.removeFromParentAndCleanup(true);
@@ -915,7 +915,7 @@ var LabelTTFTest = AtlasDemo.extend({
 
 var LabelTTFMultiline = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // cc.LabelBMFont
         var center = cc.LabelTTF.create("word wrap \"testing\" (bla0) bla1 'bla2' [bla3] (bla4) {bla5} {bla6} [bla7] (bla8) [bla9] 'bla0' \"bla1\"",
@@ -934,7 +934,7 @@ var LabelTTFMultiline = AtlasDemo.extend({
 
 var LabelTTFChinese = AtlasDemo.extend({
     ctor:function () {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         var lable = cc.LabelTTF.create("中国", "Microsoft Yahei", 30);
         lable.setPosition(cc.ccp(size.width / 2, size.height / 2));
         this.addChild(lable);
@@ -946,7 +946,7 @@ var LabelTTFChinese = AtlasDemo.extend({
 
 var LabelBMFontChinese = AtlasDemo.extend({
     ctor:function () {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         var lable = cc.LabelBMFont.create("中国", "res/fonts/bitmapFontChinese.fnt");
         lable.setPosition(cc.ccp(size.width / 2, size.height / 2));
         this.addChild(lable);
@@ -985,7 +985,7 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         this.setTouchEnabled(true);
 
         // ask director the the window size
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         // create and initialize a Label
         this.labelShouldRetain = cc.LabelBMFont.create(LongSentencesExample, "res/fonts/markerFelt.fnt", size.width / 2, cc.TEXT_ALIGNMENT_CENTER, cc.PointZero());
@@ -1092,7 +1092,7 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
     },
     ccTouchesBegan:function (touches) {
         var touch = touches[0];
-        var location = touch.locationInView();
+        var location = touch.getLocation();
 
         if (cc.Rect.CCRectContainsPoint(this.arrowsShouldRetain.boundingBox(), location)) {
             this.drag = true;
@@ -1110,9 +1110,9 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         }
 
         var touch = touches[0];
-        var location = touch.locationInView();
+        var location = touch.getLocation();
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         this.arrowsShouldRetain.setPosition(cc.ccp(Math.max(Math.min(location.x, ArrowsMax * winSize.width), ArrowsMin * winSize.width),
             this.arrowsShouldRetain.getPosition().y));
@@ -1130,7 +1130,7 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
 /// LabelTTFA8Test
 var LabelTTFA8Test = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var layer = cc.LayerColor.create(cc.ccc4(128, 128, 128, 255));
         this.addChild(layer, -10);
@@ -1158,7 +1158,7 @@ var LabelTTFA8Test = AtlasDemo.extend({
 /// BMFontOneAtlas
 var BMFontOneAtlas = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label1 = cc.LabelBMFont.create("This is Helvetica", "res/fonts/helvetica-32.fnt", cc.LabelAutomaticWidth, cc.TEXT_ALIGNMENT_LEFT, cc.PointZero());
         this.addChild(label1);
@@ -1181,12 +1181,12 @@ var BMFontOneAtlas = AtlasDemo.extend({
 /// BMFontUnicode
 var BMFontUnicode = AtlasDemo.extend({
     ctor:function () {
-        var strings = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe("res/fonts/strings.xml");
+        var strings = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe("res/fonts/strings.xml");
         var chinese = strings["chinese1"];
         var japanese = strings["japanese"];
         var spanish = strings["spanish"];
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label1 = cc.LabelBMFont.create(spanish, "res/fonts/arial-unicode-26.fnt", 200, cc.TEXT_ALIGNMENT_LEFT);
         this.addChild(label1);
@@ -1211,7 +1211,7 @@ var BMFontUnicode = AtlasDemo.extend({
 // BMFontInit
 var BMFontInit = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var bmFont = new cc.LabelBMFont();
         bmFont.init();
@@ -1231,7 +1231,7 @@ var BMFontInit = AtlasDemo.extend({
 // TTFFontInit
 var TTFFontInit = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var font = new cc.LabelTTF();
         font.init();
         font.setFontName("Comic Sans MS");
@@ -1251,7 +1251,7 @@ var TTFFontInit = AtlasDemo.extend({
 
 var LabelTTFAlignment = AtlasDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT, "Arial", 12);
         ttf0.setPosition(cc.ccp(s.width / 2, (s.height / 6) * 2));
         ttf0.setAnchorPoint(cc.ccp(0.5, 0.5));

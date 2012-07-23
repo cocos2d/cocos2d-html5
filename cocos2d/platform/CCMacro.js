@@ -217,7 +217,7 @@ cc.FLT_EPSILON = 0.0000001192092896;
  * @function
  */
 cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
-    return cc.Director.sharedDirector().getContentScaleFactor();
+    return cc.Director.getInstance().getContentScaleFactor();
 } : function () {
     return 1;
 };

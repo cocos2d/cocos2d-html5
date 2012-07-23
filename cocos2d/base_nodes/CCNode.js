@@ -184,7 +184,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._anchorPointInPoints = new cc.Point(0, 0);
         this._contentSize = new cc.Size(0, 0);
 
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
         this.getActionManager = function(){return this._actionManager;} ;
         this._scheduler = director.getScheduler();
@@ -256,13 +256,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     _addDirtyRegionToDirector:function (rect) {
         //if (!cc.firstRun) {
-        //cc.Director.sharedDirector().addRegionToDirtyRegion(rect);
+        //cc.Director.getInstance().addRegionToDirtyRegion(rect);
         //}
     },
 
     _isInDirtyRegion:function () {
         //if (!cc.firstRun) {
-        //    return cc.Director.sharedDirector().rectIsInDirtyRegion(this.boundingBoxToWorld());
+        //    return cc.Director.getInstance().rectIsInDirtyRegion(this.boundingBoxToWorld());
         //}
     },
 
@@ -809,7 +809,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getActionManager:function () {
         if (!this._actionManager) {
-            this._actionManager = cc.Director.sharedDirector().getActionManager();
+            this._actionManager = cc.Director.getInstance().getActionManager();
             this.getActionManager = function(){return this._actionManager;} ;
         }
 
@@ -837,7 +837,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     getScheduler:function () {
         if (!this._scheduler){
-            this._scheduler = cc.Director.sharedDirector().getScheduler();
+            this._scheduler = cc.Director.getInstance().getScheduler();
             this.getScheduler = function(){return this._scheduler;} ;
         }
         return this._scheduler;
@@ -1653,7 +1653,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     _convertToWindowSpace:function (nodePoint) {
         var worldPoint = this.convertToWorldSpace(nodePoint);
-        return cc.Director.sharedDirector().convertToUI(worldPoint);
+        return cc.Director.getInstance().convertToUI(worldPoint);
     },
 
     /** convenience methods which take a cc.Touch instead of cc.Point
@@ -1661,8 +1661,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertTouchToNodeSpace:function (touch) {
-        var point = touch.locationInView();
-        point = cc.Director.sharedDirector().convertToGL(point);
+        var point = touch.getLocation();
+        point = cc.Director.getInstance().convertToGL(point);
         return this.convertToNodeSpace(point);
     },
 
@@ -1672,8 +1672,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertTouchToNodeSpaceAR:function (touch) {
-        var point = touch.locationInView();
-        point = cc.Director.sharedDirector().convertToGL(point);
+        var point = touch.getLocation();
+        point = cc.Director.getInstance().convertToGL(point);
         return this.convertToNodeSpaceAR(point);
     },
 

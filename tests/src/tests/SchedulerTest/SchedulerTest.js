@@ -85,7 +85,7 @@ var SchedulerTestLayer = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 30);
         this.addChild(label);
@@ -122,21 +122,21 @@ var SchedulerTestLayer = cc.Layer.extend({
         var layer = backSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
     nextCallback:function (sender) {
         var scene = new SchedulerTestScene();
         var layer = nextSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
     restartCallback:function (sender) {
         var scene = new SchedulerTestScene();
         var layer = restartSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     }
 });
 
@@ -193,7 +193,7 @@ var SchedulerPauseResume = SchedulerTestLayer.extend({
         cc.Log("tick2");
     },
     pause:function (dt) {
-        cc.Director.sharedDirector().getScheduler().pauseTarget(this);
+        cc.Director.getInstance().getScheduler().pauseTarget(this);
     }
 });
 
@@ -261,7 +261,7 @@ var SchedulerUnscheduleAllHard = SchedulerTestLayer.extend({
         cc.Log("tick4");
     },
     unscheduleAll:function (dt) {
-        cc.Director.sharedDirector().getScheduler().unscheduleAllSelectors();
+        cc.Director.getInstance().getScheduler().unscheduleAllSelectors();
     }
 });
 
@@ -456,6 +456,6 @@ var SchedulerTestScene = TestScene.extend({
         var layer = nextSchedulerTest();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

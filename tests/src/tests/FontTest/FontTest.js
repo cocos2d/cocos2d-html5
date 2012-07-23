@@ -68,13 +68,13 @@ FontTestScene = TestScene.extend({
         var layer = FontTest.node();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
 FontTest = cc.Layer.extend({
     ctor:function () {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
         var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
         var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
@@ -95,7 +95,7 @@ FontTest = cc.Layer.extend({
         this.removeChildByTag(TAG_LABEL3, true);
         this.removeChildByTag(TAG_LABEL4, true);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var top = cc.LabelTTF.create(pFont, pFont, 24);
         var left = cc.LabelTTF.create("alignment left", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_LEFT, pFont, 32);

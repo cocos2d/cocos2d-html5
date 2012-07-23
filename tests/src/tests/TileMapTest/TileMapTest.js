@@ -130,7 +130,7 @@ var TileMapTestScene = TestScene.extend({
     runThisTest:function () {
         tileMapIdx = -1;
         this.addChild(nextTileMapAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -155,7 +155,7 @@ var TileDemo = cc.Layer.extend({
         //this.m_subtitle.setString(this.subtitle().toString());
 
         this._super();
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         // add title and subtitle
         var title = this.title();
         var label = cc.LabelTTF.create(title, "Arial", 28);
@@ -188,21 +188,21 @@ var TileDemo = cc.Layer.extend({
         var s = new TileMapTestScene();
         s.addChild(restartTileMapAction());
 
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new TileMapTestScene();
         s.addChild(nextTileMapAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new TileMapTestScene();
         s.addChild(backTileMapAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         return true;
@@ -214,7 +214,7 @@ var TileDemo = cc.Layer.extend({
     },
     prevLocation:null,
     ccTouchMoved:function (touch, event) {
-        var touchLocation = touch.locationInView();
+        var touchLocation = touch.getLocation();
 
         if (!this.prevLocation) {
             this.prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
@@ -345,11 +345,11 @@ var TMXOrthoTest2 = TileDemo.extend({
     },
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
+        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
     }
 });
 
@@ -958,11 +958,11 @@ var TMXIsoVertexZ = TileDemo.extend({
     onEnter:function () {
         this._super();
         // TIP: 2d projection should be used
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_2D);
     },
     onExit:function () {
 // At exit use any other projection.
-        //	cc.Director.sharedDirector().setProjection:cc.DIRECTOR_PROJECTION_3D);
+        //	cc.Director.getInstance().setProjection:cc.DIRECTOR_PROJECTION_3D);
         this._super();
     },
     repositionSprite:function (dt) {
@@ -1011,11 +1011,11 @@ var TMXOrthoVertexZ = TileDemo.extend({
         this._super();
 
         // TIP: 2d projection should be used
-        cc.Director.sharedDirector().setProjection(cc.DIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_2D);
     },
     onExit:function () {
         // At exit use any other projection.
-        //	cc.Director.sharedDirector().setProjection:cc.DIRECTOR_PROJECTION_3D);
+        //	cc.Director.getInstance().setProjection:cc.DIRECTOR_PROJECTION_3D);
         this._super();
     },
     repositionSprite:function (dt) {
@@ -1190,7 +1190,7 @@ var TMXOrthoFromXMLTest = TileDemo.extend({
         var resources = "res/TileMaps";        // partial paths are OK as resource paths.
         var file = resources + "/orthogonal-test1.tmx";
 
-        var str = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(file);
+        var str = cc.FileUtils.getInstance().fullPathFromRelativePath(file);
         cc.Assert(str != null, "Unable to open file");
 
         var map = cc.TMXTiledMap.create(str, resources);

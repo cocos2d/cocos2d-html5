@@ -78,7 +78,7 @@ ParallaxDemo = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 28);
         this.addChild(label, 1);
@@ -103,20 +103,20 @@ ParallaxDemo = cc.Layer.extend({
         var s = new ParallaxTestScene();
         s.addChild(restartParallaxAction());
 
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
 
     nextCallback:function (sender) {
         var s = new ParallaxTestScene();
         s.addChild(nextParallaxAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     },
 
     backCallback:function (sender) {
         var s = new ParallaxTestScene();
         s.addChild(backParallaxAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     }
 });
 
@@ -244,7 +244,7 @@ Parallax2 = ParallaxDemo.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         return true;
@@ -261,15 +261,15 @@ Parallax2 = ParallaxDemo.extend({
     ccTouchMoved:function (touch, event) {
 
         if (this._prevLocation == null) {
-            this._prevLocation = touch.locationInView();
+            this._prevLocation = touch.getLocation();
             return;
         }
 
-        var touchLocation = touch.locationInView();
-        //var prevLocation = touch.previousLocationInView();
+        var touchLocation = touch.getLocation();
+        //var prevLocation = touch.getPreviousLocation();
 
-        //touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
-        //prevLocation = cc.PointZero()//cc.Director.sharedDirector().convertToGL(prevLocation);
+        //touchLocation = cc.Director.getInstance().convertToGL(touchLocation);
+        //prevLocation = cc.PointZero()//cc.Director.getInstance().convertToGL(prevLocation);
 
         var diff = cc.ccpSub(touchLocation, this._prevLocation);
 
@@ -294,6 +294,6 @@ ParallaxTestScene = TestScene.extend({
         var layer = nextParallaxAction();
 
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

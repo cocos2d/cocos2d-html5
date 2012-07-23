@@ -40,11 +40,11 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     initWithString:function (arg) {
         var label, textureFilename, width, height, startChar;
         if (arg.length == 2) {
-            var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(arg[1]);
+            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(arg[1]);
             cc.Assert(parseInt(dict["version"]) == 1, "Unsupported version. Upgrade cocos2d version");
 
             label = arg[0].toString();
-            textureFilename = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
+            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
             width = parseInt(dict["itemWidth"]) / cc.CONTENT_SCALE_FACTOR();
             height = parseInt(dict["itemHeight"]) / cc.CONTENT_SCALE_FACTOR();
             startChar = String.fromCharCode(parseInt(dict["firstChar"]));

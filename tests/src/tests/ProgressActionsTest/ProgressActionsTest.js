@@ -79,7 +79,7 @@ var SpriteDemo = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 18);
         this.addChild(label, 1);
@@ -111,26 +111,26 @@ var SpriteDemo = cc.Layer.extend({
     restartCallback:function (sender) {
         var scene = new ProgressActionsTestScene();
         scene.addChild(restartProgressAction());
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
 
     nextCallback:function (sender) {
         var scene = new ProgressActionsTestScene();
         scene.addChild(nextProgressAction());
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
 
     backCallback:function (sender) {
         var scene = new ProgressActionsTestScene();
         scene.addChild(backProgressAction());
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     }
 });
 
 var SpriteProgressToRadial = SpriteDemo.extend({
     onEnter:function () {
         this._super();
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var to1 = cc.ProgressTo.create(2, 100);
         var to2 = cc.ProgressTo.create(2, 100);
@@ -158,7 +158,7 @@ var SpriteProgressToHorizontal = SpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var to1 = cc.ProgressTo.create(2, 100);
         var to2 = cc.ProgressTo.create(2, 100);
@@ -192,7 +192,7 @@ var SpriteProgressToVertical = SpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var to1 = cc.ProgressTo.create(2, 100);
         var to2 = cc.ProgressTo.create(2, 100);
@@ -226,7 +226,7 @@ var SpriteProgressToRadialMidpointChanged = SpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
         var action = cc.ProgressTo.create(2, 100);
 
         /**
@@ -263,7 +263,7 @@ var SpriteProgressBarVarious = SpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var to = cc.ProgressTo.create(2, 100);
 
@@ -308,7 +308,7 @@ var SpriteProgressBarTintAndFade = SpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var to = cc.ProgressTo.create(6, 100);
         var tint = cc.Sequence.create(cc.TintTo.create(1, 255, 0, 0),
@@ -368,12 +368,12 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
         var to = cc.ProgressTo.create(6, 100);
 
-        cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(s_grossiniPlist);
+        cc.SpriteFrameCache.getInstance().addSpriteFramesWithFile(s_grossiniPlist);
 
-        var left = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrame("grossini_dance_01.png"));
+        var left = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameName("grossini_dance_01.png"));
         left.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         left.setMidpoint(new cc.Point(0.5, 0.5));
@@ -383,7 +383,7 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
         left.setPosition(new cc.Point(150, winSize.height / 2));
         left.runAction(cc.RepeatForever.create(to.copy()));
 
-        var middle = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrame("grossini_dance_02.png"));
+        var middle = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameName("grossini_dance_02.png"));
         middle.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         middle.setMidpoint(new cc.Point(0.5, 0.5));
@@ -393,7 +393,7 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
         middle.setPosition(new cc.Point(winSize.width / 2, winSize.height / 2));
         middle.runAction(cc.RepeatForever.create(to.copy()));
 
-        var right = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrame("grossini_dance_03.png"));
+        var right = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameName("grossini_dance_03.png"));
         right.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         right.setMidpoint(new cc.Point(0.5, 0.5));
@@ -414,6 +414,6 @@ var ProgressActionsTestScene = TestScene.extend({
         sceneIdx_Progress = -1;
         MAX_LAYER_Progress = 7;
         this.addChild(nextProgressAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

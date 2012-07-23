@@ -86,17 +86,17 @@ var TextInputTest = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new TextInputTestScene();
         s.addChild(restartTextInputTest());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new TextInputTestScene();
         s.addChild(nextTextInputTest());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new TextInputTestScene();
         s.addChild(backTextInputTest());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
 
     title:function () {
@@ -110,7 +110,7 @@ var TextInputTest = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 24);
         this.addChild(label);
@@ -155,7 +155,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, false);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, false);
     },
     keyboardWillShow:function (info) {
         cc.Log("TextInputTest:keyboardWillShowAt(origin:" + info.end.origin.x + "," + info.end.origin.y
@@ -190,8 +190,8 @@ var KeyboardNotificationLayer = cc.Layer.extend({
 
     ccTouchBegan:function (touch, event) {
         cc.Log("++++++++++++++++++++++++++++++++++++++++++++");
-        this._beginPos = touch.locationInView();
-        this._beginPos = cc.Director.sharedDirector().convertToGL(this._beginPos);
+        this._beginPos = touch.getLocation();
+        this._beginPos = cc.Director.getInstance().convertToGL(this._beginPos);
         return true;
     },
 
@@ -200,8 +200,8 @@ var KeyboardNotificationLayer = cc.Layer.extend({
             return;
         }
 
-        var endPos = touch.locationInView();
-        endPos = cc.Director.sharedDirector().convertToGL(endPos);
+        var endPos = touch.getLocation();
+        endPos = cc.Director.getInstance().convertToGL(endPos);
 
         var delta = 5.0;
         if (Math.abs(endPos.x - this._beginPos.x) > delta
@@ -250,7 +250,7 @@ var TextFieldTTFDefaultTest = KeyboardNotificationLayer.extend({
         this._super();
 
         // add CCTextFieldTTF
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var textField = cc.TextFieldTTF.create("<click here for input>",
             TEXT_INPUT_FONT_NAME,
@@ -308,7 +308,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         this._bAction = false;
 
         // add CCTextFieldTTF
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         this._pTextField = cc.TextFieldTTF.create("<click here for input>",
             TEXT_INPUT_FONT_NAME,
@@ -362,7 +362,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
             endPos.x += sender.getContentSize().width / 2;
         }
         var inputTextSize = label.getContentSize();
-        var beginPos = new cc.Point(endPos.x, cc.Director.sharedDirector().getWinSize().height - inputTextSize.height * 2);
+        var beginPos = new cc.Point(endPos.x, cc.Director.getInstance().getWinSize().height - inputTextSize.height * 2);
 
         var duration = 0.5;
         label.setPosition(beginPos);
@@ -389,7 +389,7 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         var labelSize = label.getContentSize();
         beginPos.x += (textfieldSize.width - labelSize.width) / 2.0;
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
         var endPos = new cc.Point(-winSize.width / 4.0, winSize.height * (0.5 + Math.random() / 2.0));
 
         var duration = 1;
@@ -417,6 +417,6 @@ var TextInputTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = nextTextInputTest();
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

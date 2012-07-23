@@ -157,7 +157,7 @@ var ActionsTestScene = TestScene.extend({
     runThisTest:function () {
         actionIdx = -1;
         this.addChild(NextAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -167,7 +167,7 @@ var ActionsDemo = cc.Layer.extend({
     _tamara:null,
     kathia:null,
     centerSprites:function (numberOfSprites) {
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         if (numberOfSprites == 0) {
             this._tamara.setVisible(false);
@@ -190,7 +190,7 @@ var ActionsDemo = cc.Layer.extend({
         }
     },
     alignSpritesLeft:function (numberOfSprites) {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         if (numberOfSprites == 1) {
             this._tamara.setVisible(false);
@@ -217,17 +217,17 @@ var ActionsDemo = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new ActionsTestScene();
         s.addChild(RestartAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new ActionsTestScene();
         s.addChild(NextAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new ActionsTestScene();
         s.addChild(BackAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     onEnter:function () {
         this._super();
@@ -237,7 +237,7 @@ var ActionsDemo = cc.Layer.extend({
         this.addChild(this._grossini, 1);
         this.addChild(this._tamara, 2);
         this.addChild(this._kathia, 3);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 3));
         this._tamara.setPosition(cc.PointMake(s.width / 2, 2 * s.height / 3));
         this._kathia.setPosition(cc.PointMake(s.width / 2, s.height / 2));
@@ -280,7 +280,7 @@ var ActionManual = ActionsDemo.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         this._tamara.setScaleX(2.5);
         //window.tam = this._tamara;
@@ -311,7 +311,7 @@ var ActionMove = ActionsDemo.extend({
         this._super();
 
         this.centerSprites(3);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var actionTo = cc.MoveTo.create(2, cc.PointMake(s.width - 40, s.height - 40));
 
@@ -383,7 +383,7 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         this._grossini.removeFromParentAndCleanup(true);
         this._kathia.removeFromParentAndCleanup(true);
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var boxSize = cc.SizeMake(100.0, 100.0);
         var box = cc.LayerColor.create(cc.ccc4(255, 255, 0, 255));
@@ -482,7 +482,7 @@ var ActionJump = ActionsDemo.extend({
 var ActionBezier = ActionsDemo.extend({
     onEnter:function () {
         this._super();
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         //
         // startPosition can be any coordinate, but since the movement
@@ -619,7 +619,7 @@ var ActionAnimate = ActionsDemo.extend({
         // File animation
         //
         // With 2 loops and reverse
-        var animCache = cc.AnimationCache.sharedAnimationCache();
+        var animCache = cc.AnimationCache.getInstance();
 
         animCache.addAnimationsWithFile(s_animations2Plist);
         var animation2 = animCache.animationByName("dance_1");
@@ -690,21 +690,21 @@ var ActionSequence2 = ActionsDemo.extend({
 
     },
     callback1:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
 
         this.addChild(label);
     },
     callback2:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
     },
     callback3:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
 
@@ -747,20 +747,20 @@ var ActionCallFunc = ActionsDemo.extend({
 
     },
     callback1:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
         this.addChild(label);
     },
     callback2:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
     },
     callback3:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
         label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
         this.addChild(label);
@@ -1070,7 +1070,7 @@ var ActionFollow = ActionsDemo.extend({
     onEnter:function () {
         this._super();
         this.centerSprites(1);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         this._grossini.setPosition(cc.PointMake(-200, s.height / 2));
         var move = cc.MoveBy.create(2, cc.PointMake(s.width * 3, 0));
@@ -1103,7 +1103,7 @@ var ActionCardinalSpline = ActionsDemo.extend({
 
         this.centerSprites(2);
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var array = cc.PointArray.create();
 
@@ -1150,7 +1150,7 @@ var ActionCardinalSpline = ActionsDemo.extend({
         cc.drawingUtil.drawCardinalSpline(this._array, 0, 100);
         context.restore();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         context.save();
         context.translate(s.width / 2, -50);
@@ -1182,7 +1182,7 @@ var ActionCatmullRom = ActionsDemo.extend({
         this._super();
 
         this.centerSprites(2);
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         //
         // sprite 1 (By)
@@ -1293,11 +1293,11 @@ var PauseResumeActions = ActionsDemo.extend({
 
     pause:function () {
         cc.Log("Pausing");
-        this._pausedTargets = cc.Director.sharedDirector().getActionManager().pauseAllRunningActions();
+        this._pausedTargets = cc.Director.getInstance().getActionManager().pauseAllRunningActions();
     },
     resume:function () {
         cc.Log("Resuming");
-        cc.Director.sharedDirector().getActionManager().resumeTargets(this._pausedTargets);
+        cc.Director.getInstance().getActionManager().resumeTargets(this._pausedTargets);
     },
 
     title:function () {
@@ -1364,7 +1364,7 @@ var Issue1305_2 = ActionsDemo.extend({
         var actF = cc.Sequence.create(act1, act2, act3, act4, act5, act6, act7, act8);
 
         //    [spr runAction:actF];
-        cc.Director.sharedDirector().getActionManager().addAction(actF, spr, false);
+        cc.Director.getInstance().getActionManager().addAction(actF, spr, false);
     },
     log1:function () {
         cc.Log("1st block");

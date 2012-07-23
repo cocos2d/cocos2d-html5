@@ -41,14 +41,14 @@ var TextureMenuLayer = PerformBasicLayer.extend({
         s_nTexCurCase = this._curCase;
 
         if (scene) {
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
 
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // Title
         var label = cc.LabelTTF.create(this.title(), "Arial", 40);
@@ -108,7 +108,7 @@ var TextureTest = TextureMenuLayer.extend({
     performTestsPNG:function (filename) {
         var now = cc.timeval();
         var texture;
-        var cache = cc.TextureCache.sharedTextureCache();
+        var cache = cc.TextureCache.getInstance();
 
         cc.Log("RGBA 8888");
         cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
@@ -161,7 +161,7 @@ TextureTest.scene = function () {
 function runTextureTest() {
     s_nTexCurCase = 0;
     var scene = TextureTest.scene();
-    cc.Director.sharedDirector().replaceScene(scene);
+    cc.Director.getInstance().replaceScene(scene);
 }
 
 function calculateDeltaTime(lastUpdate) {

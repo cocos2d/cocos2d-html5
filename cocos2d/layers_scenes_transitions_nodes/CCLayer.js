@@ -46,7 +46,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._ignoreAnchorPointForPosition = true;
 
         //this.initLayer();
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
         this._isAccelerometerEnabled = false;
@@ -57,7 +57,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @return {Boolean}
      */
     init:function () {
-        /*var director = cc.Director.sharedDirector();
+        /*var director = cc.Director.getInstance();
          if (!director) {
          return false;
          }
@@ -73,7 +73,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * way CCLayer receives touch events.<br/>
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addStandardDelegate(this, 0);
+        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
     /**
@@ -99,7 +99,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
                     this.registerWithTouchDispatcher();
                 } else {
                     // have problems?
-                    cc.Director.sharedDirector().getTouchDispatcher().removeDelegate(this);
+                    cc.Director.getInstance().getTouchDispatcher().removeDelegate(this);
                 }
             }
         }
@@ -123,7 +123,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._isAccelerometerEnabled = enabled;
 
             if (this._isRunning) {
-                var director = cc.Director.sharedDirector();
+                var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getAccelerometer().setDelegate(this);
                 } else {
@@ -151,7 +151,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (enabled != this._isKeypadEnabled) {
             this._isKeypadEnabled = enabled;
             if (this._isRunning) {
-                var director = cc.Director.sharedDirector();
+                var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getKeypadDispatcher().addDelegate(this);
                 } else {
@@ -165,7 +165,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * This is run when ever a layer just become visible
      */
     onEnter:function () {
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
         // register 'parent' nodes first
         // since events are propagated in reverse order
         if (this._isTouchEnabled) {
@@ -190,7 +190,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      */
     onExit:function () {
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
         if (this._isTouchEnabled) {
             director.getTouchDispatcher().removeDelegate(this);
         }
@@ -213,7 +213,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     onEnterTransitionDidFinish:function () {
         if (this._isAccelerometerEnabled) {
-            cc.Director.sharedDirector().getAccelerometer().setDelegate(this);
+            cc.Director.getInstance().getAccelerometer().setDelegate(this);
         }
         this._super();
     },
@@ -391,7 +391,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @return {Boolean}
      */
     initWithColor:function (color, width, height) {
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         width = width || winSize.width;
         height = height || winSize.height;
@@ -409,7 +409,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
 
         this.setContentSize(new cc.Size(width, height));
-        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionColor));
+        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
         return true;
     },

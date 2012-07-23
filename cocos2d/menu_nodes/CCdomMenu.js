@@ -61,7 +61,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
         this.dom.id = "DomMenu" + Date.now();
         this.dom.className += " domMenu";
         this._ignoreAnchorPointForPosition = false;
-        this.setContentSize(cc.Director.sharedDirector().getWinSize());
+        this.setContentSize(cc.Director.getInstance().getWinSize());
         for (var i = 0; i < args.length; i++) {
             if (args[i]) {
                 //this.dom.appendChild(args[i].dom);//we dont need to append child as the child will set parent, and add to the parent
@@ -83,7 +83,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsVerticallyWithPadding:function (padding) {
-        var s = cc.Director.sharedDirector().getWinSize();//get window size
+        var s = cc.Director.getInstance().getWinSize();//get window size
         var height = -padding;
         if (this.getChildren().length) {
             for (var i = 0; i < this.getChildren().length; i++) {
@@ -118,7 +118,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsHorizontallyWithPadding:function (padding) {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var width = -padding;
         if (this.getChildren().length > 0) {
             for (var i = 0; i < this.getChildren().length; i++) {

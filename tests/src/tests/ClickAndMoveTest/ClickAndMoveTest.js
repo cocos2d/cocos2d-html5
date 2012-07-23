@@ -30,7 +30,7 @@ var ClickAndMoveTestScene = TestScene.extend({
         var layer = new MainLayer();
 
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -59,8 +59,8 @@ var MainLayer = cc.Layer.extend({
 
         var touch = touches[0];
 
-        var location = touch.locationInView();
-        //var convertedLocation = cc.Director.sharedDirector().convertToGL(location);
+        var location = touch.getLocation();
+        //var convertedLocation = cc.Director.getInstance().convertToGL(location);
 
         var sprite = this.getChildByTag(TAG_SPRITE);
         sprite.stopAllActions();

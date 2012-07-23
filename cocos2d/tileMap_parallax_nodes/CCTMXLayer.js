@@ -182,7 +182,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var capacity = totalNumberOfTiles * 0.35 + 1; // 35 percent is occupied ?
 
         if (tilesetInfo) {
-            var texture = cc.TextureCache.sharedTextureCache().addImage(tilesetInfo.sourceImage.toString());
+            var texture = cc.TextureCache.getInstance().addImage(tilesetInfo.sourceImage.toString());
         }
         if (this.initWithTexture(texture, capacity)) {
             // layerInfo
@@ -193,7 +193,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._maxGID = layerInfo._maxGID;
             this._opacity = layerInfo._opacity;
             this.setProperties(layerInfo.getProperties());
-            this._contentScaleFactor = cc.Director.sharedDirector().getContentScaleFactor();
+            this._contentScaleFactor = cc.Director.getInstance().getContentScaleFactor();
 
             // tilesetInfo
             this._tileSet = tilesetInfo;
@@ -659,7 +659,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 var alphaFuncValue = 0;
 
                 //todo webgl
-                //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kcc.Shader_PositionTextureColorAlphaTest));
+                //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kcc.Shader_PositionTextureColorAlphaTest));
                 //var alphaValueLocation = glGetUniformLocation(getShaderProgram().getProgram(), kcc.UniformAlphaTestValue);
                 // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
                 //this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);

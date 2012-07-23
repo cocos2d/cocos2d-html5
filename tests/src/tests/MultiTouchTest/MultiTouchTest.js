@@ -41,7 +41,7 @@ var TouchPoint = cc.Node.extend({
         this._touchPoint = new cc.Point(0, 0);
         this._tonchColor = new cc.Color3B(255, 255, 255);
         this._styleStr = "rgba(" + this._tonchColor.r + "," + this._tonchColor.g + "," + this._tonchColor.b + ", 1)";
-        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTextureColor));
+        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
     },
 
     draw:function () {
@@ -84,7 +84,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addStandardDelegate(this, 0);
+        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
     _savePointArr:[],
@@ -99,7 +99,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
         for (var i = 0; i < touches.length; i++) {
             var touch = touches[i];
             var touchPoint = TouchPoint.touchPointWithParent(this);
-            var location = touch.locationInView();
+            var location = touch.getLocation();
 
             touchPoint.setTouchPos(location);
             touchPoint.setTouchColor(touchColors[i]);
@@ -126,7 +126,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
         for (var i = 0; i < touches.length; i++) {
             var touch = touches[i];
             var touchPoint = TouchPoint.touchPointWithParent(this);
-            var location = touch.locationInView();
+            var location = touch.getLocation();
 
             touchPoint.setTouchPos(location);
             touchPoint.setTouchColor(touchColors[i]);
@@ -159,6 +159,6 @@ var MultiTouchTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = MultiTouchTestLayer.create();
         this.addChild(layer, 0);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

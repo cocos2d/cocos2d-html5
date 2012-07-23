@@ -36,7 +36,7 @@ var TestScene = cc.Scene.extend({
         var menuItem = cc.MenuItemLabel.create(label, this, this.MainMenuCallback);
 
         var menu = cc.Menu.create(menuItem, null);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         menu.setPosition(cc.PointZero());
         menuItem.setPosition(cc.PointMake(s.width - 50, 25));
 
@@ -49,7 +49,7 @@ var TestScene = cc.Scene.extend({
         var scene = cc.Scene.create();
         var layer = new TestController();
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     }
 });
 //Controller stuff
@@ -64,11 +64,11 @@ var TestController = cc.Layer.extend({
     ctor:function () {
         // add close menu
         if (!s_pathClose) {
-            s_pathClose = cc.TextureCache.sharedTextureCache().textureForKey("res/CloseNormal.png");
+            s_pathClose = cc.TextureCache.getInstance().textureForKey("res/CloseNormal.png");
         }
         var closeItem = cc.MenuItemImage.create(s_pathClose, s_pathClose, this, this.closeCallback);
         var menu = cc.Menu.create(closeItem, null);//pmenu is just a holder for the close button
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         menu.setPosition(cc.PointZero());
         closeItem.setPosition(cc.PointMake(s.width - 30, s.height - 30));
 
@@ -102,19 +102,19 @@ var TestController = cc.Layer.extend({
     },
     ccTouchesBegan:function (touches, event) {
         if (!this.isMouseDown) {
-            //this._beginPos = cc.ccp(touches[0].locationInView().x, touches[0].locationInView().y);
-            this._beginPos = touches[0].locationInView().y;
+            //this._beginPos = cc.ccp(touches[0].getLocation().x, touches[0].getLocation().y);
+            this._beginPos = touches[0].getLocation().y;
         }
         this.isMouseDown = true;
     },
     ccTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
-            var touchLocation = touches[0].locationInView().y;
+            var touchLocation = touches[0].getLocation().y;
             var nMoveY = touchLocation - this._beginPos;
             curPos = cc.ccp(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
 
             var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
-            var winSize = cc.Director.sharedDirector().getWinSize();
+            var winSize = cc.Director.getInstance().getWinSize();
             if (nextPos.y < 0.0) {
                 this._itemMenu.setPosition(cc.PointZero());
                 return;

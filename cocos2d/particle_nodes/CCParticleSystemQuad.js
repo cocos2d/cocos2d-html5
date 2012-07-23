@@ -208,7 +208,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 this._setupVBO();
             }
 
-            //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTextureColor));
+            //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
 
             // Need to listen the event only when not use batchnode, because it will use VBO
             //extension.CCNotificationCenter.sharedNotificationCenter().addObserver(this,
@@ -369,7 +369,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
                     var drawTexture = this.getTexture();
                     if (particle.isChangeColor) {
-                        var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
+                        var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
                         if (cacheTextureForColor) {
                             drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color);
                         }

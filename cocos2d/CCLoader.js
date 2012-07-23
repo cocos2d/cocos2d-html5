@@ -134,8 +134,8 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
      * cc.Loader.shareLoader().preload(res);
      */
     preload:function (res) {
-        var sharedTextureCache = cc.TextureCache.sharedTextureCache();
-        var sharedEngine = cc.AudioManager.sharedEngine();
+        var sharedTextureCache = cc.TextureCache.getInstance();
+        var sharedEngine = cc.AudioEngine.getInstance();
         var shareParser = cc.SAXParser.shareParser();
 
         for (var i = 0; i < res.length; i++) {

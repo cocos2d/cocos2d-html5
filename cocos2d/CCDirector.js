@@ -133,7 +133,7 @@ cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT;
  *      - setting the orientation (default one is Protrait)<br/>
  *      <br/>
  *    Since the cc.Director is a singleton, the standard way to use it is by calling:<br/>
- *      - cc.Director.sharedDirector().methodName(); <br/>
+ *      - cc.Director.getInstance().methodName(); <br/>
  *    <br/>
  *    The CCDirector also sets the default OpenGL context:<br/>
  *      - GL_TEXTURE_2D is enabled<br/>
@@ -566,7 +566,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     purgeCachedData:function () {
         cc.LabelBMFont.purgeCachedData();
-        //cc.TextureCache.sharedTextureCache().removeUnusedTextures();
+        //cc.TextureCache.getInstance().removeUnusedTextures();
     },
 
     /**
@@ -1220,7 +1220,7 @@ cc.firstUseDirector = true;
  * @function
  * @return {cc.Director}
  */
-cc.Director.sharedDirector = function () {
+cc.Director.getInstance = function () {
     if(cc.firstUseDirector){
         cc.firstUseDirector = false;
         cc.s_SharedDirector = new cc.DisplayLinkDirector();
@@ -1244,7 +1244,7 @@ cc.defaultFPS = 60;
 /*
  window.onfocus = function () {
  if (!cc.firstRun) {
- cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+ cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
  }
  };
  */

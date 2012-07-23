@@ -57,7 +57,7 @@ var NodeChildrenMenuLayer = PerformBasicLayer.extend({
 
         if (scene) {
             scene.initWithQuantityOfNodes(nodes);
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     }
 });
@@ -73,7 +73,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
     _currentQuantityOfNodes:null,
     initWithQuantityOfNodes:function (nodes) {
         //srand(time());
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // Title
         var label = cc.LabelTTF.create(this.title(), "Arial", 40);
@@ -171,7 +171,7 @@ var IterateSpriteSheet = NodeChildrenMainScene.extend({
         }
     },
     updateQuantityOfNodes:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // increase nodes
         if (this._currentQuantityOfNodes < this._quantityOfNodes) {
@@ -292,7 +292,7 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
         }
     },
     updateQuantityOfNodes:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // increase nodes
         if (this._currentQuantityOfNodes < this._quantityOfNodes) {
@@ -506,5 +506,5 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 function runNodeChildrenTest() {
     var scene = new IterateSpriteSheetCArray();
     scene.initWithQuantityOfNodes(NODES_INCREASE);
-    cc.Director.sharedDirector().replaceScene(scene);
+    cc.Director.getInstance().replaceScene(scene);
 }

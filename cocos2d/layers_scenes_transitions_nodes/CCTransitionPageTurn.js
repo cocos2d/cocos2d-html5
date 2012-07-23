@@ -31,7 +31,7 @@
  * <p>This uses a 3DAction so it's strongly recommended that depth buffering<br/>
  * is turned on in cc.Director using:</p>
  *
- * <p>cc.Director.sharedDirector().setDepthBufferFormat(kDepthBuffer16);</p>
+ * <p>cc.Director.getInstance().setDepthBufferFormat(kDepthBuffer16);</p>
  * @class
  * @extends cc.TransitionScene
  */
@@ -79,7 +79,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      */
     onEnter:function () {
         this._super();
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var x, y;
         if (s.width > s.height) {
             x = 16;

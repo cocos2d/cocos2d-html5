@@ -34,7 +34,7 @@ var Ball = cc.Sprite.extend({
     },
     move:function (delta) {
         this.setPosition(cc.ccpAdd(this.getPosition(), cc.ccpMult(this._velocity, delta)));
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
         if (this.getPosition().x > winSize.width - this.radius()) {
             this.setPosition(cc.ccp(winSize.width - this.radius(), this.getPosition().y));
             this._velocity.x *= -1;

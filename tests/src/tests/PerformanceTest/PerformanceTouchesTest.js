@@ -49,13 +49,13 @@ var TouchesMainScene = PerformBasicLayer.extend({
             var scene = cc.Scene.create();
             scene.addChild(layer);
 
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // add title
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
@@ -105,7 +105,7 @@ var TouchesPerformTest1 = TouchesMainScene.extend({
         return "Targeted touches";
     },
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
     ccTouchBegan:function (touch, event) {
         this._numberOfTouchesB++;
@@ -136,7 +136,7 @@ var TouchesPerformTest2 = TouchesMainScene.extend({
         return "Standard touches";
     },
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addStandardDelegate(this, 0);
+        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
     ccTouchesBegan:function (touches, event) {
@@ -158,5 +158,5 @@ function runTouchesTest() {
     var scene = cc.Scene.create();
     var layer = new TouchesPerformTest1(true, 2, s_nTouchCurCase);
     scene.addChild(layer);
-    cc.Director.sharedDirector().replaceScene(scene);
+    cc.Director.getInstance().replaceScene(scene);
 }

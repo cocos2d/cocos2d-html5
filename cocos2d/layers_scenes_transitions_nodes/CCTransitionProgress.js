@@ -51,7 +51,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
         // create a transparent color layer
         // in which we are going to add our rendertextures
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         // create the second render texture for outScene
         var texture = cc.RenderTexture.create(winSize.width, winSize.height);
@@ -137,7 +137,7 @@ cc.TransitionProgress.create = function (t, scene) {
  */
 cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCCW# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
@@ -179,7 +179,7 @@ cc.TransitionProgressRadialCCW.create = function (t, scene) {
  */
 cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressRadialCW# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
@@ -221,7 +221,7 @@ cc.TransitionProgressRadialCW.create = function (t, scene) {
  */
 cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressHorizontal# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
@@ -263,7 +263,7 @@ cc.TransitionProgressHorizontal.create = function (t, scene) {
  */
 cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressVertical# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
@@ -305,7 +305,7 @@ cc.TransitionProgressVertical.create = function (t, scene) {
  */
 cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressInOut# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
@@ -354,7 +354,7 @@ cc.TransitionProgressInOut.create = function (t, scene) {
  */
 cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.TransitionProgressOutIn# */{
     _progressTimerNodeWithRenderTexture:function (texture) {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite

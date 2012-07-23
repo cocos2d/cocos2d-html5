@@ -82,7 +82,7 @@ var MenuLayer1 = cc.Layer.extend({
         menu.alignItemsVertically();
 
         // elastic effect
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var child;
         var array = menu.getChildren();
@@ -108,7 +108,7 @@ var MenuLayer1 = cc.Layer.extend({
         this.addChild(menu);
     },
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY + 1, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY + 1, true);
     },
     ccTouchBegan:function () {
         return true;
@@ -120,13 +120,13 @@ var MenuLayer1 = cc.Layer.extend({
         this._parent.switchTo(3);
     },
     allowTouches:function (dt) {
-        cc.Director.sharedDirector().getTouchDispatcher().setPriority(cc.CCMENU_HANDLER_PRIORITY + 1, this);
+        cc.Director.getInstance().getTouchDispatcher().setPriority(cc.CCMENU_HANDLER_PRIORITY + 1, this);
         this.unscheduleAllSelectors();
         cc.Log("Touches allowed again!");
     },
     menuCallbackDisabled:function (sender) {
         // hijack all touch events for 5 seconds
-        cc.Director.sharedDirector().getTouchDispatcher().setPriority(cc.CCMENU_HANDLER_PRIORITY - 1, this);
+        cc.Director.getInstance().getTouchDispatcher().setPriority(cc.CCMENU_HANDLER_PRIORITY - 1, this);
         this.schedule(this.allowTouches, 5.0);
         cc.Log("TOUCHES DISABLED FOR 5 SECONDS");
     },
@@ -241,7 +241,7 @@ var MenuLayer3 = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3);
         menu.setPosition(cc.PointMake(0, 0));
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         item1.setPosition(cc.PointMake(s.width / 2 - 150, s.height / 2));
         item2.setPosition(cc.PointMake(s.width / 2 - 200, s.height / 2));
@@ -360,6 +360,6 @@ var MenuTestScene = TestScene.extend({
 
         var layer = cc.LayerMultiplex.create(Layer1, Layer2, Layer3, Layer4, null);
         this.addChild(layer, 0);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
