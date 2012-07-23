@@ -149,21 +149,21 @@ var Helloworld = cc.Layer.extend({
     menuCloseCallback:function (sender) {
         cc.Director.getInstance().end();
     },
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         this.isMouseDown = true;
     },
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
                 //this.circle.setPosition(new cc.Point(touches[0].getLocation().x, touches[0].getLocation().y));
             }
         }
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         this.isMouseDown = false;
     },
-    ccTouchesCancelled:function (touches, event) {
-        console.log("ccTouchesCancelled");
+    onTouchesCancelled:function (touches, event) {
+        console.log("onTouchesCancelled");
     }
 });
 

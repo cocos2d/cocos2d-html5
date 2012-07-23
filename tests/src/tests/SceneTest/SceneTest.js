@@ -173,7 +173,7 @@ SceneTestLayer3 = cc.LayerColor.extend({
 
     },
 
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         cc.Director.getInstance().popScene();
     }
 

@@ -62,14 +62,14 @@ var Paddle = cc.Sprite.extend({
         return cc.Rect.CCRectContainsPoint(myRect, getPoint);//this.convertTouchToNodeSpaceAR(touch));
     },
 
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         if (this._state != PADDLE_STATE_UNGRABBED) return false;
         if (!this.containsTouchLocation(touch)) return false;
 
         this._state = PADDLE_STATE_GRABBED;
         return true;
     },
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
         // If it weren't for the TouchDispatcher, you would need to keep a reference
         // to the touch from touchBegan and check that the current touch is the same
         // as that one.
@@ -83,7 +83,7 @@ var Paddle = cc.Sprite.extend({
 
         this.setPosition(cc.PointMake(touchPoint.x, this.getPosition().y));
     },
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
         cc.Assert(this._state == PADDLE_STATE_GRABBED, "Paddle - Unexpected state!");
         this._state = PADDLE_STATE_UNGRABBED;
     },

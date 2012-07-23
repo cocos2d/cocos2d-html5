@@ -411,7 +411,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @param {cc.Touch} touch
      * @return {Boolean}
      */
-    ccTouchBegan:function (touch, e) {
+    onTouchBegan:function (touch, e) {
         if (this._state != cc.MENU_STATE_WAITING || !this._isVisible || !this._enabled) {
             return false;
         }
@@ -434,8 +434,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     /**
      * when a touch ended
      */
-    ccTouchEnded:function (touch, e) {
-        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu ccTouchEnded] -- invalid state");
+    onTouchEnded:function (touch, e) {
+        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu onTouchEnded] -- invalid state");
         if (this._selectedItem) {
             this._selectedItem.unselected();
             this._selectedItem.activate();
@@ -446,8 +446,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
     /**
      * touch cancelled
      */
-    ccTouchCancelled:function (touch, e) {
-        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu ccTouchCancelled] -- invalid state");
+    onTouchCancelled:function (touch, e) {
+        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu onTouchCancelled] -- invalid state");
         if (this._selectedItem) {
             this._selectedItem.unselected();
         }
@@ -458,8 +458,8 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * touch moved
      * @param {cc.Touch} touch
      */
-    ccTouchMoved:function (touch, e) {
-        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu ccTouchMoved] -- invalid state");
+    onTouchMoved:function (touch, e) {
+        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu onTouchMoved] -- invalid state");
         var currentItem = this._itemForTouch(touch);
         if (currentItem != this._selectedItem) {
             if (this._selectedItem) {

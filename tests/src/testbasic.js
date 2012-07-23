@@ -100,14 +100,14 @@ var TestController = cc.Layer.extend({
     closeCallback:function () {
         history.go(-1);
     },
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         if (!this.isMouseDown) {
             //this._beginPos = cc.p(touches[0].getLocation().x, touches[0].getLocation().y);
             this._beginPos = touches[0].getLocation().y;
         }
         this.isMouseDown = true;
     },
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             var touchLocation = touches[0].getLocation().y;
             var nMoveY = touchLocation - this._beginPos;
@@ -129,7 +129,7 @@ var TestController = cc.Layer.extend({
             curPos = nextPos;
         }
     },
-    ccTouchesEnded:function () {
+    onTouchesEnded:function () {
         this.isMouseDown = false;
     }
 });

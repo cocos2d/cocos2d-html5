@@ -339,7 +339,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
 
                     var claimed = false;
                     if (index == cc.TOUCH_BEGAN) {
-                        claimed = handler.getDelegate().ccTouchBegan(touch, event);
+                        claimed = handler.getDelegate().onTouchBegan(touch, event);
 
                         if (claimed) {
                             handler.getClaimedTouches().push(touch);
@@ -350,15 +350,15 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
                         claimed = true;
                         switch (helper.type) {
                             case cc.TOUCH_MOVED:
-                                handler.getDelegate().ccTouchMoved(touch, event);
+                                handler.getDelegate().onTouchMoved(touch, event);
                                 break;
                             case cc.TOUCH_ENDED:
-                                handler.getDelegate().ccTouchEnded(touch, event);
+                                handler.getDelegate().onTouchEnded(touch, event);
                                 handler.getClaimedTouches().length = 0;
                                 //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
                                 break;
                             case cc.TOUCH_CANCELLED:
-                                handler.getDelegate().ccTouchCancelled(touch, event);
+                                handler.getDelegate().onTouchCancelled(touch, event);
                                 handler.getClaimedTouches().length = 0;
                                 //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
                                 break;
@@ -389,19 +389,19 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
                 switch (helper.type) {
                     case cc.TOUCH_BEGAN:
                         if (mutableTouches.length > 0) {
-                            handler.getDelegate().ccTouchesBegan(mutableTouches, event);
+                            handler.getDelegate().onTouchesBegan(mutableTouches, event);
                         }
                         break;
                     case cc.TOUCH_MOVED:
                         if (mutableTouches.length > 0) {
-                            handler.getDelegate().ccTouchesMoved(mutableTouches, event);
+                            handler.getDelegate().onTouchesMoved(mutableTouches, event);
                         }
                         break;
                     case cc.TOUCH_ENDED:
-                        handler.getDelegate().ccTouchesEnded(mutableTouches, event);
+                        handler.getDelegate().onTouchesEnded(mutableTouches, event);
                         break;
                     case cc.TOUCH_CANCELLED:
-                        handler.getDelegate().ccTouchesCancelled(mutableTouches, event);
+                        handler.getDelegate().onTouchesCancelled(mutableTouches, event);
                         break;
                 }
             }

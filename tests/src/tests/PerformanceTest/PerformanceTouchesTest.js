@@ -107,17 +107,17 @@ var TouchesPerformTest1 = TouchesMainScene.extend({
     registerWithTouchDispatcher:function () {
         cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         this._numberOfTouchesB++;
         return true;
     },
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
         this._numberOfTouchesM++;
     },
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
         this._numberOfTouchesE++;
     },
-    ccTouchCancelled:function (touch, event) {
+    onTouchCancelled:function (touch, event) {
         this._numberOfTouchesC++;
     }
 });
@@ -139,16 +139,16 @@ var TouchesPerformTest2 = TouchesMainScene.extend({
         cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         this._numberOfTouchesB += touches.length;
     },
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         this._numberOfTouchesM += touches.length;
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         this._numberOfTouchesE += touches.length;
     },
-    ccTouchesCancelled:function (touches, event) {
+    onTouchesCancelled:function (touches, event) {
         this._numberOfTouchesC += touches.length;
     }
 });

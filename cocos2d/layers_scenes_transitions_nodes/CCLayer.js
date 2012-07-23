@@ -225,8 +225,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {event} event
      * @return {Boolean}
      */
-    ccTouchBegan:function (touch, event) {
-        cc.Assert(false, "Layer#ccTouchBegan override me");
+    onTouchBegan:function (touch, event) {
+        cc.Assert(false, "Layer#onTouchBegan override me");
         return true;
     },
 
@@ -235,7 +235,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
     },
 
     /**
@@ -243,14 +243,14 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
     },
 
     /**
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchCancelled:function (touch, event) {
+    onTouchCancelled:function (touch, event) {
     },
 
     /**
@@ -258,7 +258,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesBegan:function (touch, event) {
+    onTouchesBegan:function (touch, event) {
     },
 
     /**
@@ -266,7 +266,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesMoved:function (touch, event) {
+    onTouchesMoved:function (touch, event) {
     },
 
     /**
@@ -274,14 +274,14 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesEnded:function (touch, event) {
+    onTouchesEnded:function (touch, event) {
     },
 
     /**
      * @param touch
      * @param event
      */
-    ccTouchesCancelled:function (touch, event) {
+    onTouchesCancelled:function (touch, event) {
     },
 
     didAccelerate:function (pAccelerationValue) {

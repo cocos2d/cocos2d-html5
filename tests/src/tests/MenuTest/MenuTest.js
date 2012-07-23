@@ -110,7 +110,7 @@ var MenuLayer1 = cc.Layer.extend({
     registerWithTouchDispatcher:function () {
         cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.MENU_HANDLER_PRIORITY + 1, true);
     },
-    ccTouchBegan:function () {
+    onTouchBegan:function () {
         return true;
     },
     menuCallback:function (sender) {

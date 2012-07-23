@@ -89,7 +89,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
 
     _savePointArr:[],
     _isPressed:false,
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         this._isPressed = true;
         if (!touches)
             return;
@@ -115,7 +115,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
         }
     },
 
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         this._clearSavePointArr();
         if(!cc.Browser.isMobile){
             if(!this._isPressed){
@@ -136,13 +136,13 @@ var MultiTouchTestLayer = cc.Layer.extend({
         }
     },
 
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         this._isPressed = false;
         this._clearSavePointArr();
     },
 
-    ccTouchesCancelled:function (touches, event) {
-        this.ccTouchesEnded(touches, event);
+    onTouchesCancelled:function (touches, event) {
+        this.onTouchesEnded(touches, event);
     }
 
 });

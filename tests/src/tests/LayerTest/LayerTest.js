@@ -176,14 +176,14 @@ var LayerTest1 = LayerTest.extend({
         l.setContentSize(newSize);
     },
 
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         this.updateSize(touch);
         return true;
     },
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
         this.updateSize(touch);
     },
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
         this.updateSize(touch);
     }
 });
@@ -375,15 +375,15 @@ var LayerGradient = LayerTest.extend({
     registerWithTouchDispatcher:function () {
         cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         return true;
     },
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
         this.prevLocation = null;
     },
-    ccTouchCancelled:function (touch, event) {
+    onTouchCancelled:function (touch, event) {
     },
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
         var s = cc.Director.getInstance().getWinSize();
         var start = touch.getLocation();
 

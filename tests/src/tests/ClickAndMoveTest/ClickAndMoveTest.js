@@ -53,7 +53,7 @@ var MainLayer = cc.Layer.extend({
         layer.runAction(forever);
     },
 
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         if (touches.length <= 0)
             return;
 

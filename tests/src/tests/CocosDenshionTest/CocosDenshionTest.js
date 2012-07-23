@@ -183,7 +183,7 @@ CocosDenshionTest = cc.Layer.extend({
         // create the test scene and run it
         var scene = DenshionTests[idx].playFunc();
     },
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             var touchLocation = touches[0].getLocation();
             var nMoveY = touchLocation.y - this._beginPos.y;
@@ -206,13 +206,13 @@ CocosDenshionTest = cc.Layer.extend({
             this._beginPos = cc.p(0, touchLocation.y);
         }
     },
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         if (!this.isMouseDown) {
             this._beginPos = touches[0].getLocation();
         }
         this.isMouseDown = true;
     },
-    ccTouchesEnded:function () {
+    onTouchesEnded:function () {
         this.isMouseDown = false;
     },
     onExit:function () {

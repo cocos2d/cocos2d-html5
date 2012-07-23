@@ -620,7 +620,7 @@ var ConvertToNode = TestCocosNodeDemo.extend({
             this.addChild(sprite, i);
         }
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         for (var it = 0; it < touches.length; it++) {
             var touch = touches[it];
             var location = touch.getLocation();

@@ -1090,7 +1090,7 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
 
         this.snapArrowsToEdge();
     },
-    ccTouchesBegan:function (touches) {
+    onTouchesBegan:function (touches) {
         var touch = touches[0];
         var location = touch.getLocation();
 
@@ -1099,12 +1099,12 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
             this.arrowsBarShouldRetain.setVisible(true);
         }
     },
-    ccTouchesEnded:function () {
+    onTouchesEnded:function () {
         this.drag = false;
         this.snapArrowsToEdge();
         this.arrowsBarShouldRetain.setVisible(false);
     },
-    ccTouchesMoved:function (touches) {
+    onTouchesMoved:function (touches) {
         if (!this.drag) {
             return;
         }

@@ -246,11 +246,11 @@ Parallax2 = ParallaxDemo.extend({
     registerWithTouchDispatcher:function () {
         cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         return true;
     },
 
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
         var node = this.getChildByTag(TAG_NODE);
         var currentPos = node.getPosition();
         node.setPosition(cc.pAdd(currentPos, touch.getDelta() ));

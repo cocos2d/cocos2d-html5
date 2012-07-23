@@ -171,7 +171,7 @@ Box2DTestLayer = cc.Layer.extend({
         }
 
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         //Add a new body/atlas sprite at the touched location
         for (var it = 0; it < touches.length; it++) {
             var touch = touches[it];

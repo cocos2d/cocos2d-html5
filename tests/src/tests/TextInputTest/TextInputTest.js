@@ -188,14 +188,14 @@ var KeyboardNotificationLayer = cc.Layer.extend({
         }
     },
 
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         cc.Log("++++++++++++++++++++++++++++++++++++++++++++");
         this._beginPos = touch.getLocation();
         this._beginPos = cc.Director.getInstance().convertToGL(this._beginPos);
         return true;
     },
 
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
         if (!this._pTrackNode) {
             return;
         }
