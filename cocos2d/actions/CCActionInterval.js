@@ -582,7 +582,7 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
  * @return {cc.FiniteTimeAction}
  * @example
  * // example
- * var action = cc.Spawn.create(cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4), cc.RotateBy.create(2, 720));
+ * var action = cc.Spawn.create(cc.JumpBy.create(2, cc.p(300, 0), 50, 4), cc.RotateBy.create(2, 720));
  */
 cc.Spawn.create = function (/*Multiple Arguments*/tempArray) {
     var paramArray = (tempArray instanceof Array) ? tempArray : arguments;
@@ -809,7 +809,7 @@ cc.MoveTo = cc.ActionInterval.extend(/** @lends cc.MoveTo# */{
  * @return {cc.MoveTo}
  * @example
  * // example
- * var actionTo = cc.MoveTo.create(2, cc.PointMake(windowSize.width - 40, windowSize.height - 40));
+ * var actionTo = cc.MoveTo.create(2, cc.p(windowSize.width - 40, windowSize.height - 40));
  */
 cc.MoveTo.create = function (duration, position) {
     var moveTo = new cc.MoveTo();
@@ -862,7 +862,7 @@ cc.MoveBy = cc.MoveTo.extend(/** @lends cc.MoveBy# */{
  * @return {cc.MoveBy}
  * @example
  * // example
- * var actionBy = cc.MoveBy.create(2, cc.PointMake(80, 80));
+ * var actionBy = cc.MoveBy.create(2, cc.p(80, 80));
  */
 cc.MoveBy.create = function (duration, position) {
     var moveBy = new cc.MoveBy();
@@ -1102,7 +1102,7 @@ cc.JumpBy = cc.ActionInterval.extend(/** @lends cc.JumpBy# */{
  * @return {cc.JumpBy}
  * @example
  * // example
- * var actionBy = cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4);
+ * var actionBy = cc.JumpBy.create(2, cc.p(300, 0), 50, 4);
  */
 cc.JumpBy.create = function (duration, position, height, jumps) {
     var jumpBy = new cc.JumpBy();
@@ -1134,7 +1134,7 @@ cc.JumpTo = cc.JumpBy.extend(/** @lends cc.JumpTo# */{
  * @return {cc.JumpTo}
  * @example
  * // example
- * var actionTo = cc.JumpTo.create(2, cc.PointMake(300, 300), 50, 4);
+ * var actionTo = cc.JumpTo.create(2, cc.p(300, 300), 50, 4);
  */
 cc.JumpTo.create = function (duration, position, height, jumps) {
     var jumpTo = new cc.JumpTo();
@@ -1252,9 +1252,9 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
  * @example
  * // example
  * var bezier = new cc.BezierConfig();
- * bezier.controlPoint_1 = cc.PointMake(0, windowSize.height / 2);
- * bezier.controlPoint_2 = cc.PointMake(300, -windowSize.height / 2);
- * bezier.endPosition = cc.PointMake(300, 100);
+ * bezier.controlPoint_1 = cc.p(0, windowSize.height / 2);
+ * bezier.controlPoint_2 = cc.p(300, -windowSize.height / 2);
+ * bezier.endPosition = cc.p(300, 100);
  *
  * var bezierForward = cc.BezierBy.create(3, bezier);
  *
@@ -1289,9 +1289,9 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
  * @example
  * // example
  *  var bezier = new cc.BezierConfig();
- * bezier.controlPoint_1 = cc.PointMake(100, windowSize.height / 2);
- * bezier.controlPoint_2 = cc.PointMake(200, -windowSize.height / 2);
- * bezier.endPosition = cc.PointMake(240, 160);
+ * bezier.controlPoint_1 = cc.p(100, windowSize.height / 2);
+ * bezier.controlPoint_2 = cc.p(200, -windowSize.height / 2);
+ * bezier.endPosition = cc.p(240, 160);
  *
  * var bezierTo = cc.BezierTo.create(2, bezier);
  */

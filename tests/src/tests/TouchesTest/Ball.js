@@ -60,11 +60,11 @@ var Ball = cc.Sprite.extend({
             var hit = false;
             var angleOffset = 0.0;
             if ((this.getPositionY() > midY) && (this.getPositionY() <= (highY + this.radius()))) {
-                this.setPosition(cc.PointMake(this.getPosition().x, highY + this.radius()));
+                this.setPosition(cc.p(this.getPosition().x, highY + this.radius()));
                 hit = true;
                 angleOffset = Math.PI / 2;
             } else if (this.getPosition().y < midY && this.getPosition().y >= lowY - this.radius()) {
-                this.setPosition(cc.PointMake(this.getPosition().x, lowY - this.radius()));
+                this.setPosition(cc.p(this.getPosition().x, lowY - this.radius()));
                 hit = true;
                 angleOffset = -Math.PI / 2;
             }

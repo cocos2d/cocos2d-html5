@@ -48,7 +48,7 @@ IntervalLayer = cc.Layer.extend({
         // sun
         var sun = cc.ParticleSun.create();
         sun.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
-        sun.setPosition(cc.PointMake(s.width - 32, s.height - 32));
+        sun.setPosition(cc.p(s.width - 32, s.height - 32));
 
         sun.setTotalParticles(130);
         sun.setLife(0.6);
@@ -67,11 +67,11 @@ IntervalLayer = cc.Layer.extend({
         this.schedule(this.step3, 1.0);
         this.schedule(this.step4, 2.0);
 
-        this.label0.setPosition(cc.PointMake(s.width * 1 / 6, s.height / 2));
-        this.label1.setPosition(cc.PointMake(s.width * 2 / 6, s.height / 2));
-        this.label2.setPosition(cc.PointMake(s.width * 3 / 6, s.height / 2));
-        this.label3.setPosition(cc.PointMake(s.width * 4 / 6, s.height / 2));
-        this.label4.setPosition(cc.PointMake(s.width * 5 / 6, s.height / 2));
+        this.label0.setPosition(cc.p(s.width * 1 / 6, s.height / 2));
+        this.label1.setPosition(cc.p(s.width * 2 / 6, s.height / 2));
+        this.label2.setPosition(cc.p(s.width * 3 / 6, s.height / 2));
+        this.label3.setPosition(cc.p(s.width * 4 / 6, s.height / 2));
+        this.label4.setPosition(cc.p(s.width * 5 / 6, s.height / 2));
 
         this.addChild(this.label0);
         this.addChild(this.label1);
@@ -81,9 +81,9 @@ IntervalLayer = cc.Layer.extend({
 
         // Sprite
         var sprite = cc.Sprite.create(s_pathGrossini);
-        sprite.setPosition(cc.PointMake(40, 50));
+        sprite.setPosition(cc.p(40, 50));
 
-        var jump = cc.JumpBy.create(3, cc.PointMake(s.width - 80, 0), 50, 4);
+        var jump = cc.JumpBy.create(3, cc.p(s.width - 80, 0), 50, 4);
 
         this.addChild(sprite);
         sprite.runAction(cc.RepeatForever.create(cc.Sequence.create(jump, jump.reverse(), null)));
@@ -91,7 +91,7 @@ IntervalLayer = cc.Layer.extend({
         // pause button
         var item1 = cc.MenuItemFont.create("Pause", this, this.onPause);
         var menu = cc.Menu.create(item1, null);
-        menu.setPosition(cc.PointMake(s.width / 2, s.height - 50));
+        menu.setPosition(cc.p(s.width / 2, s.height - 50));
 
         this.addChild(menu);
 

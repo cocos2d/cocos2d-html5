@@ -85,7 +85,7 @@ var Helloworld = cc.Layer.extend({
         var rotateToBack = cc.RotateTo.create(5, 0);
         var actionScaleTo = cc.ScaleTo.create(5, -0.44, 0.47);
         var actionScaleToBack = cc.ScaleTo.create(5, 1.0, 1.0);
-        var actionBy = cc.MoveBy.create(5, cc.PointMake(80, 80));
+        var actionBy = cc.MoveBy.create(5, cc.p(80, 80));
         var actionByBack = actionBy.reverse();
 
         //this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));

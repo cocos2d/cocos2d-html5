@@ -83,13 +83,13 @@ var SpriteDemo = cc.Layer.extend({
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 18);
         this.addChild(label, 1);
-        label.setPosition(cc.PointMake(winSize.width / 2, winSize.height - 50));
+        label.setPosition(cc.p(winSize.width / 2, winSize.height - 50));
 
         var strSubtitle = this.subtitle();
         if (strSubtitle != "") {
             var l = cc.LabelTTF.create(strSubtitle, "Thonburi", 22);
             this.addChild(l, 1);
-            l.setPosition(cc.PointMake(winSize.width / 2, winSize.height - 80));
+            l.setPosition(cc.p(winSize.width / 2, winSize.height - 80));
         }
 
         var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
@@ -99,9 +99,9 @@ var SpriteDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(winSize.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
-        item2.setPosition(cc.PointMake(winSize.width / 2, item2.getContentSize().height / 2));
-        item3.setPosition(cc.PointMake(winSize.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item1.setPosition(cc.p(winSize.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.p(winSize.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.p(winSize.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
         var background = cc.LayerColor.create(cc.c4(0, 125, 0, 255));
@@ -138,14 +138,14 @@ var SpriteProgressToRadial = SpriteDemo.extend({
         var left = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister1));
         left.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         this.addChild(left);
-        left.setPosition(cc.PointMake(200, winSize.height / 2));
+        left.setPosition(cc.p(200, winSize.height / 2));
         left.runAction(cc.RepeatForever.create(to1));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathBlock));
         right.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         right.setReverseDirection(true);
         this.addChild(right);
-        right.setPosition(cc.PointMake(winSize.width - 200, winSize.height / 2));
+        right.setPosition(cc.p(winSize.width - 200, winSize.height / 2));
         right.runAction(cc.RepeatForever.create(to2));
     },
 
@@ -170,7 +170,7 @@ var SpriteProgressToHorizontal = SpriteDemo.extend({
         //    Setup for a horizontal bar since the bar change rate is 0 for y meaning no vertical change
         left.setBarChangeRate(new cc.Point(1, 0));
         this.addChild(left);
-        left.setPosition(cc.PointMake(200, winSize.height / 2));
+        left.setPosition(cc.p(200, winSize.height / 2));
         left.runAction(cc.RepeatForever.create(to1));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
@@ -180,7 +180,7 @@ var SpriteProgressToHorizontal = SpriteDemo.extend({
         //    Setup for a horizontal bar since the bar change rate is 0 for y meaning no vertical change
         right.setBarChangeRate(new cc.Point(1, 0));
         this.addChild(right);
-        right.setPosition(cc.PointMake(winSize.width - 200, winSize.height / 2));
+        right.setPosition(cc.p(winSize.width - 200, winSize.height / 2));
         right.runAction(cc.RepeatForever.create(to2));
     },
     subtitle:function () {
@@ -204,7 +204,7 @@ var SpriteProgressToVertical = SpriteDemo.extend({
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
         left.setBarChangeRate(new cc.Point(0, 1));
         this.addChild(left);
-        left.setPosition(cc.PointMake(200, winSize.height / 2));
+        left.setPosition(cc.p(200, winSize.height / 2));
         left.runAction(cc.RepeatForever.create(to1));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
@@ -214,7 +214,7 @@ var SpriteProgressToVertical = SpriteDemo.extend({
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
         right.setBarChangeRate(new cc.Point(0, 1));
         this.addChild(right);
-        right.setPosition(cc.PointMake(winSize.width - 200, winSize.height / 2));
+        right.setPosition(cc.p(winSize.width - 200, winSize.height / 2));
         right.runAction(cc.RepeatForever.create(to2));
     },
     subtitle:function () {
@@ -373,7 +373,7 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
 
         cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
 
-        var left = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameNameNameNameName("grossini_dance_01.png"));
+        var left = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName("grossini_dance_01.png"));
         left.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         left.setMidpoint(new cc.Point(0.5, 0.5));
@@ -383,7 +383,7 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
         left.setPosition(new cc.Point(150, winSize.height / 2));
         left.runAction(cc.RepeatForever.create(to.copy()));
 
-        var middle = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameNameNameNameName("grossini_dance_02.png"));
+        var middle = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName("grossini_dance_02.png"));
         middle.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         middle.setMidpoint(new cc.Point(0.5, 0.5));
@@ -393,7 +393,7 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
         middle.setPosition(new cc.Point(winSize.width / 2, winSize.height / 2));
         middle.runAction(cc.RepeatForever.create(to.copy()));
 
-        var right = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameNameNameNameName("grossini_dance_03.png"));
+        var right = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName("grossini_dance_03.png"));
         right.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         right.setMidpoint(new cc.Point(0.5, 0.5));

@@ -151,10 +151,10 @@ var ParticleDemo = cc.LayerColor.extend({
         var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create(this.title(), "Arial", 28);
         this.addChild(label, 100, 1000);
-        label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var tapScreen = cc.LabelTTF.create("(Tap the Screen)", "Arial", 20);
-        tapScreen.setPosition(cc.PointMake(s.width / 2, s.height - 80));
+        tapScreen.setPosition(cc.p(s.width / 2, s.height - 80));
         this.addChild(tapScreen, 100);
         var selfPoint = this;
         var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
@@ -183,7 +183,7 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._groupMovementButton.setVisible(false);
             });
         this._freeMovementButton.setPosition(new cc.Point(10, 150));
-        this._freeMovementButton.setAnchorPoint(cc.PointMake(0, 0));
+        this._freeMovementButton.setAnchorPoint(cc.p(0, 0));
 
         this._relativeMovementButton = cc.MenuItemSprite.create(relativeBtnNormal, relativeBtnSelected, relativeBtnDisabled, this,
             function () {
@@ -194,7 +194,7 @@ var ParticleDemo = cc.LayerColor.extend({
             });
         this._relativeMovementButton.setVisible(false);
         this._relativeMovementButton.setPosition(new cc.Point(10, 150));
-        this._relativeMovementButton.setAnchorPoint(cc.PointMake(0, 0));
+        this._relativeMovementButton.setAnchorPoint(cc.p(0, 0));
 
         this._groupMovementButton = cc.MenuItemSprite.create(groupBtnNormal, groupBtnSelected, groupBtnDisabled, this,
             function () {
@@ -205,7 +205,7 @@ var ParticleDemo = cc.LayerColor.extend({
             });
         this._groupMovementButton.setVisible(false);
         this._groupMovementButton.setPosition(new cc.Point(10, 150));
-        this._groupMovementButton.setAnchorPoint(cc.PointMake(0, 0));
+        this._groupMovementButton.setAnchorPoint(cc.p(0, 0));
 
         var spriteNormal = cc.Sprite.create(s_shapeModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
         var spriteSelected = cc.Sprite.create(s_shapeModeMenuItem, cc.RectMake(0, 23, 115, 23));
@@ -218,7 +218,7 @@ var ParticleDemo = cc.LayerColor.extend({
                 selfPoint._shapeModeButton.setVisible(false);
             });
         this._shapeModeButton.setPosition(new cc.Point(10, 100));
-        this._shapeModeButton.setAnchorPoint(cc.PointMake(0, 0));
+        this._shapeModeButton.setAnchorPoint(cc.p(0, 0));
 
         var spriteNormal_t = cc.Sprite.create(s_textureModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
         var spriteSelected_t = cc.Sprite.create(s_textureModeMenuItem, cc.RectMake(0, 23, 115, 23));
@@ -232,28 +232,28 @@ var ParticleDemo = cc.LayerColor.extend({
             });
         this._textureModeButton.setVisible(false);
         this._textureModeButton.setPosition(new cc.Point(10, 100));
-        this._textureModeButton.setAnchorPoint(cc.PointMake(0, 0));
+        this._textureModeButton.setAnchorPoint(cc.p(0, 0));
 
         var menu = cc.Menu.create(item1, item2, item3, this._shapeModeButton, this._textureModeButton,
             this._freeMovementButton, this._relativeMovementButton, this._groupMovementButton);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(s.width / 2, 30));
-        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 100);
         //TODO
         var labelAtlas = cc.LabelTTF.create("0000", "Arial", 24);
         this.addChild(labelAtlas, 100, TAG_LABEL_ATLAS);
-        labelAtlas.setPosition(cc.PointMake(s.width - 66, 50));
+        labelAtlas.setPosition(cc.p(s.width - 66, 50));
 
         // moving background
         this._background = cc.Sprite.create(s_back3);
         this.addChild(this._background, 5);
-        this._background.setPosition(cc.PointMake(s.width / 2, s.height - 180));
+        this._background.setPosition(cc.p(s.width / 2, s.height - 180));
 
-        var move = cc.MoveBy.create(4, cc.PointMake(300, 0));
+        var move = cc.MoveBy.create(4, cc.p(300, 0));
         var move_back = move.reverse();
         var seq = cc.Sequence.create(move, move_back, null);
         this._background.runAction(cc.RepeatForever.create(seq));
@@ -321,7 +321,7 @@ var ParticleDemo = cc.LayerColor.extend({
     },
     setEmitterPosition:function () {
         var s = cc.Director.getInstance().getWinSize();
-        this._emitter.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        this._emitter.setPosition(cc.p(s.width / 2, s.height / 2));
     }
 });
 
@@ -351,7 +351,7 @@ var DemoFire = ParticleDemo.extend({
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_fire));//.pvr"];
         this._emitter.setShapeType(cc.PARTICLE_BALL_SHAPE);
         var p = this._emitter.getPosition();
-        this._emitter.setPosition(cc.PointMake(p.x, 100));
+        this._emitter.setPosition(cc.p(p.x, 100));
 
         this.setEmitterPosition();
     },
@@ -445,7 +445,7 @@ var DemoBigFlower = ParticleDemo.extend({
         this._emitter.setTangentialAccelVar(0);
 
         // emitter position
-        this._emitter.setPosition(cc.PointMake(160, 240));
+        this._emitter.setPosition(cc.p(160, 240));
         this._emitter.setPosVar(cc.PointZero());
 
         // life of particles
@@ -523,7 +523,7 @@ var DemoRotFlower = ParticleDemo.extend({
         this._emitter.setTangentialAccelVar(0);
 
         // emitter position
-        this._emitter.setPosition(cc.PointMake(160, 240));
+        this._emitter.setPosition(cc.p(160, 240));
         this._emitter.setPosVar(cc.PointZero());
 
         // life of particles
@@ -625,7 +625,7 @@ var DemoSmoke = ParticleDemo.extend({
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
 
         var p = this._emitter.getPosition();
-        this._emitter.setPosition(cc.PointMake(p.x, 100));
+        this._emitter.setPosition(cc.p(p.x, 100));
 
         this.setEmitterPosition();
     },
@@ -642,12 +642,12 @@ var DemoSnow = ParticleDemo.extend({
         this._background.addChild(this._emitter, 10);
 
         var p = this._emitter.getPosition();
-        this._emitter.setPosition(cc.PointMake(p.x, p.y - 110));
+        this._emitter.setPosition(cc.p(p.x, p.y - 110));
         this._emitter.setLife(3);
         this._emitter.setLifeVar(1);
 
         // gravity
-        this._emitter.setGravity(cc.PointMake(0, -10));
+        this._emitter.setGravity(cc.p(0, -10));
 
         // speed of particles
         this._emitter.setSpeed(130);
@@ -684,7 +684,7 @@ var DemoRain = ParticleDemo.extend({
         this._background.addChild(this._emitter, 10);
 
         var p = this._emitter.getPosition();
-        this._emitter.setPosition(cc.PointMake(p.x, p.y - 100));
+        this._emitter.setPosition(cc.p(p.x, p.y - 100));
         this._emitter.setLife(4);
 
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
@@ -714,7 +714,7 @@ var DemoModernArt = ParticleDemo.extend({
         this._emitter.setDuration(-1);
 
         // gravity
-        this._emitter.setGravity(cc.PointMake(0, 0));
+        this._emitter.setGravity(cc.p(0, 0));
 
         // angle
         this._emitter.setAngle(0);
@@ -733,7 +733,7 @@ var DemoModernArt = ParticleDemo.extend({
         this._emitter.setSpeedVar(10);
 
         // emitter position
-        this._emitter.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        this._emitter.setPosition(cc.p(s.width / 2, s.height / 2));
         this._emitter.setPosVar(cc.PointZero());
 
         // life of particles
@@ -813,20 +813,20 @@ var ParallaxParticle = ParticleDemo.extend({
         var p1 = cc.Sprite.create(s_back3);
         var p2 = cc.Sprite.create(s_back3);
 
-        p.addChild(p1, 1, cc.PointMake(0.5, 1), cc.PointMake(0, 250));
-        p.addChild(p2, 2, cc.PointMake(1.5, 1), cc.PointMake(0, 50));
+        p.addChild(p1, 1, cc.p(0.5, 1), cc.PointMake(0, 250));
+        p.addChild(p2, 2, cc.p(1.5, 1), cc.PointMake(0, 50));
 
         this._emitter = cc.ParticleFlower.create();
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
 
         p1.addChild(this._emitter, 10);
-        this._emitter.setPosition(cc.PointMake(250, 200));
+        this._emitter.setPosition(cc.p(250, 200));
 
         var par = cc.ParticleSun.create();
         p2.addChild(par, 10);
         par.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
 
-        var move = cc.MoveBy.create(4, cc.PointMake(300, 0));
+        var move = cc.MoveBy.create(4, cc.p(300, 0));
         var move_back = move.reverse();
         var seq = cc.Sequence.create(move, move_back, null);
         p.runAction(cc.RepeatForever.create(seq));

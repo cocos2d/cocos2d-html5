@@ -95,7 +95,7 @@ var LayerTest = cc.Layer.extend({
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
-        label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var subtitle_ = this.subtitle();
         if (subtitle_) {
@@ -111,9 +111,9 @@ var LayerTest = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(s.width / 2, 30));
-        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1);
     },
@@ -153,7 +153,7 @@ var LayerTest1 = LayerTest.extend({
         var layer = cc.LayerColor.create(cc.c4(255, 0, 0, 128), 200, 200);
 
         layer.ignoreAnchorPointForPosition(false);
-        layer.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        layer.setPosition(cc.p(s.width / 2, s.height / 2));
         this.addChild(layer, 1, cc.TAG_LAYER);
     },
     title:function () {
@@ -280,12 +280,12 @@ var LayerTest2 = LayerTest.extend({
 
         var s = cc.Director.getInstance().getWinSize();
         var layer1 = cc.LayerColor.create(cc.c4(255, 255, 0, 80), 100, 300);
-        layer1.setPosition(cc.PointMake(s.width / 3, s.height / 2));
+        layer1.setPosition(cc.p(s.width / 3, s.height / 2));
         layer1.ignoreAnchorPointForPosition(false);
         this.addChild(layer1, 1);
 
         var layer2 = cc.LayerColor.create(cc.c4(0, 0, 255, 255), 100, 300);
-        layer2.setPosition(cc.PointMake((s.width / 3) * 2, s.height / 2));
+        layer2.setPosition(cc.p((s.width / 3) * 2, s.height / 2));
         layer2.ignoreAnchorPointForPosition(false);
         this.addChild(layer2, 1);
 
@@ -321,8 +321,8 @@ var LayerTestBlend = LayerTest.extend({
         this.addChild(sister2);
         this.addChild(layer1, 100, cc.TAG_LAYER);
 
-        sister1.setPosition(cc.PointMake(160, s.height / 2));
-        sister2.setPosition(cc.PointMake(320, s.height / 2));
+        sister1.setPosition(cc.p(160, s.height / 2));
+        sister2.setPosition(cc.p(320, s.height / 2));
 
         this.schedule(this.newBlend, 1.0);
     },

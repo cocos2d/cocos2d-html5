@@ -43,9 +43,9 @@ var MainLayer = cc.Layer.extend({
         this.addChild(layer, -1);
 
         this.addChild(sprite, 0, TAG_SPRITE);
-        sprite.setPosition(cc.PointMake(20, 150));
+        sprite.setPosition(cc.p(20, 150));
 
-        sprite.runAction(cc.JumpTo.create(4, cc.PointMake(300, 48), 100, 4));
+        sprite.runAction(cc.JumpTo.create(4, cc.p(300, 48), 100, 4));
 
         var fadeIn = cc.FadeIn.create(1);
         var fadeOut = cc.FadeOut.create(1);
@@ -64,7 +64,7 @@ var MainLayer = cc.Layer.extend({
 
         var sprite = this.getChildByTag(TAG_SPRITE);
         sprite.stopAllActions();
-        sprite.runAction(cc.MoveTo.create(1, cc.PointMake(location.x, location.y)));
+        sprite.runAction(cc.MoveTo.create(1, cc.p(location.x, location.y)));
         var o = location.x - sprite.getPositionX();
         var a = location.y - sprite.getPositionY();
         var at = cc.RADIANS_TO_DEGREES(Math.atan(o / a));

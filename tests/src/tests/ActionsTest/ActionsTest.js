@@ -176,17 +176,17 @@ var ActionsDemo = cc.Layer.extend({
         } else if (numberOfSprites == 1) {
             this._tamara.setVisible(false);
             this._kathia.setVisible(false);
-            this._grossini.setPosition(cc.PointMake(winSize.width / 2, winSize.height / 2));
+            this._grossini.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
         }
         else if (numberOfSprites == 2) {
-            this._kathia.setPosition(cc.PointMake(winSize.width / 3, winSize.height / 2));
-            this._tamara.setPosition(cc.PointMake(2 * winSize.width / 3, winSize.height / 2));
+            this._kathia.setPosition(cc.p(winSize.width / 3, winSize.height / 2));
+            this._tamara.setPosition(cc.p(2 * winSize.width / 3, winSize.height / 2));
             this._grossini.setVisible(false);
         }
         else if (numberOfSprites == 3) {
-            this._grossini.setPosition(cc.PointMake(winSize.width / 2, winSize.height / 2));
-            this._tamara.setPosition(cc.PointMake(winSize.width / 4, winSize.height / 2));
-            this._kathia.setPosition(cc.PointMake(3 * winSize.width / 4, winSize.height / 2));
+            this._grossini.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
+            this._tamara.setPosition(cc.p(winSize.width / 4, winSize.height / 2));
+            this._kathia.setPosition(cc.p(3 * winSize.width / 4, winSize.height / 2));
         }
     },
     alignSpritesLeft:function (numberOfSprites) {
@@ -195,17 +195,17 @@ var ActionsDemo = cc.Layer.extend({
         if (numberOfSprites == 1) {
             this._tamara.setVisible(false);
             this._kathia.setVisible(false);
-            this._grossini.setPosition(cc.PointMake(60, s.height / 2));
+            this._grossini.setPosition(cc.p(60, s.height / 2));
         }
         else if (numberOfSprites == 2) {
-            this._kathia.setPosition(cc.PointMake(60, s.height / 3));
-            this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
+            this._kathia.setPosition(cc.p(60, s.height / 3));
+            this._tamara.setPosition(cc.p(60, 2 * s.height / 3));
             this._grossini.setVisible(false);
         }
         else if (numberOfSprites == 3) {
-            this._grossini.setPosition(cc.PointMake(60, s.height / 2));
-            this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
-            this._kathia.setPosition(cc.PointMake(60, s.height / 3));
+            this._grossini.setPosition(cc.p(60, s.height / 2));
+            this._tamara.setPosition(cc.p(60, 2 * s.height / 3));
+            this._kathia.setPosition(cc.p(60, s.height / 3));
         }
     },
     title:function () {
@@ -238,21 +238,21 @@ var ActionsDemo = cc.Layer.extend({
         this.addChild(this._tamara, 2);
         this.addChild(this._kathia, 3);
         var s = cc.Director.getInstance().getWinSize();
-        this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 3));
-        this._tamara.setPosition(cc.PointMake(s.width / 2, 2 * s.height / 3));
-        this._kathia.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        this._grossini.setPosition(cc.p(s.width / 2, s.height / 3));
+        this._tamara.setPosition(cc.p(s.width / 2, 2 * s.height / 3));
+        this._kathia.setPosition(cc.p(s.width / 2, s.height / 2));
 
         // add title and subtitle
         var title = this.title();
         var label = cc.LabelTTF.create(title, "Arial", 18);
         this.addChild(label, 1);
-        label.setPosition(cc.PointMake(s.width / 2, s.height - 30));
+        label.setPosition(cc.p(s.width / 2, s.height - 30));
 
         var strSubtitle = this.subtitle();
         if (strSubtitle) {
             var l = cc.LabelTTF.create(strSubtitle, "Thonburi", 22);
             this.addChild(l, 1);
-            l.setPosition(cc.PointMake(s.width / 2, s.height - 60));
+            l.setPosition(cc.p(s.width / 2, s.height - 60));
         }
 
         // add menu
@@ -263,9 +263,9 @@ var ActionsDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
-        item2.setPosition(cc.PointMake(s.width / 2, item2.getContentSize().height / 2));
-        item3.setPosition(cc.PointMake(s.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item1.setPosition(cc.p(s.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.p(s.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.p(s.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
     }
@@ -285,14 +285,14 @@ var ActionManual = ActionsDemo.extend({
         this._tamara.setScaleX(2.5);
         //window.tam = this._tamara;
         this._tamara.setScaleY(-1.0);
-        this._tamara.setPosition(cc.PointMake(100, 70));
+        this._tamara.setPosition(cc.p(100, 70));
         this._tamara.setOpacity(128);
 
         this._grossini.setRotation(120);
-        this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        this._grossini.setPosition(cc.p(s.width / 2, s.height / 2));
         this._grossini.setColor(cc.c3(255, 0, 0));
 
-        this._kathia.setPosition(cc.PointMake(s.width - 100, s.height / 2));
+        this._kathia.setPosition(cc.p(s.width - 100, s.height / 2));
         this._kathia.setColor(cc.BLUE());
     },
     subtitle:function () {
@@ -313,14 +313,14 @@ var ActionMove = ActionsDemo.extend({
         this.centerSprites(3);
         var s = cc.Director.getInstance().getWinSize();
 
-        var actionTo = cc.MoveTo.create(2, cc.PointMake(s.width - 40, s.height - 40));
+        var actionTo = cc.MoveTo.create(2, cc.p(s.width - 40, s.height - 40));
 
-        var actionBy = cc.MoveBy.create(2, cc.PointMake(80, 80));
+        var actionBy = cc.MoveBy.create(2, cc.p(80, 80));
         var actionByBack = actionBy.reverse();
 
         this._tamara.runAction(actionTo);
         this._grossini.runAction(cc.Sequence.create(actionBy, actionByBack));
-        this._kathia.runAction(cc.MoveTo.create(1, cc.PointMake(40, 40)));
+        this._kathia.runAction(cc.MoveTo.create(1, cc.p(40, 40)));
     },
     subtitle:function () {
         return "MoveTo / MoveBy";
@@ -460,9 +460,9 @@ var ActionJump = ActionsDemo.extend({
         this._super();
         this.centerSprites(3);
 
-        var actionTo = cc.JumpTo.create(2, cc.PointMake(300, 300), 50, 4);
-        var actionBy = cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4);
-        var actionUp = cc.JumpBy.create(2, cc.PointMake(0, 0), 80, 4);
+        var actionTo = cc.JumpTo.create(2, cc.p(300, 300), 50, 4);
+        var actionBy = cc.JumpBy.create(2, cc.p(300, 0), 50, 4);
+        var actionUp = cc.JumpBy.create(2, cc.p(0, 0), 80, 4);
         var actionByBack = actionBy.reverse();
 
         this._tamara.runAction(actionTo);
@@ -493,24 +493,24 @@ var ActionBezier = ActionsDemo.extend({
 
         // sprite 1
         var bezier = new cc.BezierConfig();
-        bezier.controlPoint_1 = cc.PointMake(0, s.height / 2);
-        bezier.controlPoint_2 = cc.PointMake(300, -s.height / 2);
-        bezier.endPosition = cc.PointMake(300, 100);
+        bezier.controlPoint_1 = cc.p(0, s.height / 2);
+        bezier.controlPoint_2 = cc.p(300, -s.height / 2);
+        bezier.endPosition = cc.p(300, 100);
 
         var bezierForward = cc.BezierBy.create(3, bezier);
         var rep = cc.RepeatForever.create(cc.Sequence.create(bezierForward, bezierForward.reverse()));
 
         // sprite 2
-        this._tamara.setPosition(cc.PointMake(80, 160));
+        this._tamara.setPosition(cc.p(80, 160));
         var bezier2 = new cc.BezierConfig();
-        bezier2.controlPoint_1 = cc.PointMake(100, s.height / 2);
-        bezier2.controlPoint_2 = cc.PointMake(200, -s.height / 2);
-        bezier2.endPosition = cc.PointMake(240, 160);
+        bezier2.controlPoint_1 = cc.p(100, s.height / 2);
+        bezier2.controlPoint_2 = cc.p(200, -s.height / 2);
+        bezier2.endPosition = cc.p(240, 160);
 
         var bezierTo1 = cc.BezierTo.create(2, bezier2);
 
         // sprite 3
-        this._kathia.setPosition(cc.PointMake(400, 160));
+        this._kathia.setPosition(cc.p(400, 160));
         var bezierTo2 = cc.BezierTo.create(2, bezier2);
 
         this._grossini.runAction(rep);
@@ -657,7 +657,7 @@ var ActionSequence = ActionsDemo.extend({
         this.alignSpritesLeft(1);
 
         var action = cc.Sequence.create(
-            cc.MoveBy.create(2, cc.PointMake(240, 0)),
+            cc.MoveBy.create(2, cc.p(240, 0)),
             cc.RotateBy.create(2, 540),
             null);
 
@@ -679,9 +679,9 @@ var ActionSequence2 = ActionsDemo.extend({
         this.centerSprites(1);
         this._grossini.setVisible(false);
         var action = cc.Sequence.create(
-            cc.Place.create(cc.PointMake(200, 200)),
+            cc.Place.create(cc.p(200, 200)),
             cc.Show.create(),
-            cc.MoveBy.create(1, cc.PointMake(100, 0)),
+            cc.MoveBy.create(1, cc.p(100, 0)),
             cc.CallFunc.create(this, this.callback1),
             cc.CallFunc.create(this, this.callback2),
             cc.CallFunc.create(this, this.callback3),
@@ -692,21 +692,21 @@ var ActionSequence2 = ActionsDemo.extend({
     callback1:function () {
         var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 1, s.height / 2));
 
         this.addChild(label);
     },
     callback2:function () {
         var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
     },
     callback3:function () {
         var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 3, s.height / 2));
 
         this.addChild(label);
     },
@@ -725,7 +725,7 @@ var ActionCallFunc = ActionsDemo.extend({
         this.centerSprites(3);
 
         var action = cc.Sequence.create(
-            cc.MoveBy.create(2, cc.PointMake(200, 0)),
+            cc.MoveBy.create(2, cc.p(200, 0)),
             cc.CallFunc.create(this, this.callback1)
         );
 
@@ -749,20 +749,20 @@ var ActionCallFunc = ActionsDemo.extend({
     callback1:function () {
         var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 1, s.height / 2));
         this.addChild(label);
     },
     callback2:function () {
         var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
     },
     callback3:function () {
         var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 3, s.height / 2));
         this.addChild(label);
     },
     subtitle:function () {
@@ -807,7 +807,7 @@ var ActionSpawn = ActionsDemo.extend({
         this.alignSpritesLeft(1);
 
         var action = cc.Spawn.create(
-            cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4),
+            cc.JumpBy.create(2, cc.p(300, 0), 50, 4),
             cc.RotateBy.create(2, 720),
             null);
 
@@ -902,7 +902,7 @@ var ActionReverse = ActionsDemo.extend({
         this._super();
         this.alignSpritesLeft(1);
 
-        var jump = cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4);
+        var jump = cc.JumpBy.create(2, cc.p(300, 0), 50, 4);
         var action = cc.Sequence.create(jump, jump.reverse(), null);
 
         this._grossini.runAction(action);
@@ -921,7 +921,7 @@ var ActionDelayTime = ActionsDemo.extend({
         this._super();
         this.alignSpritesLeft(1);
 
-        var move = cc.MoveBy.create(1, cc.PointMake(150, 0));
+        var move = cc.MoveBy.create(1, cc.p(150, 0));
         var action = cc.Sequence.create(move, cc.DelayTime.create(2), move, null);
 
         this._grossini.runAction(action);
@@ -940,8 +940,8 @@ var ActionReverseSequence = ActionsDemo.extend({
         this._super();
         this.alignSpritesLeft(1);
 
-        var move1 = cc.MoveBy.create(1, cc.PointMake(250, 0));
-        var move2 = cc.MoveBy.create(1, cc.PointMake(0, 50));
+        var move1 = cc.MoveBy.create(1, cc.p(250, 0));
+        var move2 = cc.MoveBy.create(1, cc.p(0, 50));
         var seq = cc.Sequence.create(move1, move2, move1.reverse(), null);
         var action = cc.Sequence.create(seq, seq.reverse(), null);
 
@@ -965,8 +965,8 @@ var ActionReverseSequence2 = ActionsDemo.extend({
 
         // Test:
         //   Sequence should work both with IntervalAction and InstantActions
-        var move1 = cc.MoveBy.create(3, cc.PointMake(250, 0));
-        var move2 = cc.MoveBy.create(3, cc.PointMake(0, 50));
+        var move1 = cc.MoveBy.create(3, cc.p(250, 0));
+        var move2 = cc.MoveBy.create(3, cc.p(0, 50));
         var tog1 = new cc.ToggleVisibility();
         var tog2 = new cc.ToggleVisibility();
         var seq = cc.Sequence.create(move1, tog1, move2, tog2, move1.reverse());
@@ -979,8 +979,8 @@ var ActionReverseSequence2 = ActionsDemo.extend({
         //   Also test that the reverse of Hide is Show, and vice-versa
         this._kathia.runAction(action);
 
-        var move_tamara = cc.MoveBy.create(1, cc.PointMake(100, 0));
-        var move_tamara2 = cc.MoveBy.create(1, cc.PointMake(50, 0));
+        var move_tamara = cc.MoveBy.create(1, cc.p(100, 0));
+        var move_tamara2 = cc.MoveBy.create(1, cc.p(50, 0));
         var hide = new cc.Hide();
         var seq_tamara = cc.Sequence.create(move_tamara, hide, move_tamara2);
         var seq_back = seq_tamara.reverse();
@@ -1001,9 +1001,9 @@ var ActionRepeat = ActionsDemo.extend({
         this.alignSpritesLeft(2);
 
 
-        var a1 = cc.MoveBy.create(1, cc.PointMake(150, 0));
+        var a1 = cc.MoveBy.create(1, cc.p(150, 0));
         var action1 = cc.Repeat.create(
-            cc.Sequence.create(cc.Place.create(cc.PointMake(60, 60)), a1, null),
+            cc.Sequence.create(cc.Place.create(cc.p(60, 60)), a1, null),
             3);
         var action2 = cc.RepeatForever.create(
             (cc.Sequence.create((a1.copy()), a1.reverse(), null))
@@ -1048,7 +1048,7 @@ var ActionOrbit = ActionsDemo.extend({
         this._tamara.runAction(cc.RepeatForever.create(action2));
         this._grossini.runAction(cc.RepeatForever.create(action3));
 
-        var move = cc.MoveBy.create(3, cc.PointMake(100, -100));
+        var move = cc.MoveBy.create(3, cc.p(100, -100));
         var move_back = move.reverse();
         var seq = cc.Sequence.create(move, move_back, null);
         var rfe = cc.RepeatForever.create(seq);
@@ -1072,8 +1072,8 @@ var ActionFollow = ActionsDemo.extend({
         this.centerSprites(1);
         var s = cc.Director.getInstance().getWinSize();
 
-        this._grossini.setPosition(cc.PointMake(-200, s.height / 2));
-        var move = cc.MoveBy.create(2, cc.PointMake(s.width * 3, 0));
+        this._grossini.setPosition(cc.p(-200, s.height / 2));
+        var move = cc.MoveBy.create(2, cc.p(s.width * 3, 0));
         var move_back = move.reverse();
         var seq = cc.Sequence.create(move, move_back, null);
         var rep = cc.RepeatForever.create(seq);

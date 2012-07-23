@@ -89,7 +89,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     oh = Math.abs(oh);
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(texture, cc.RectMake(x, y, w, h), false, cc.PointMake(ox, oy), cc.SizeMake(ow, oh));
+                    spriteFrame.initWithTexture(texture, cc.RectMake(x, y, w, h), false, cc.p(ox, oy), cc.SizeMake(ow, oh));
                 } else if (format == 1 || format == 2) {
                     var frame = cc.RectFromString(this._valueForKey("frame", frameDict));
                     var rotated = false;

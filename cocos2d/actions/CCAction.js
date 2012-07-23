@@ -372,7 +372,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         this._boundaryFullyCovered = false;
 
         var winSize = cc.Director.getInstance().getWinSize();
-        this._fullScreenSize = cc.PointMake(winSize.width, winSize.height);
+        this._fullScreenSize = cc.p(winSize.width, winSize.height);
         this._halfScreenSize = cc.pMult(this._fullScreenSize, 0.5);
 
         if (this._boundarySet) {

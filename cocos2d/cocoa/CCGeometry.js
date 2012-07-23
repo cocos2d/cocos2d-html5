@@ -284,7 +284,7 @@ cc.Rect.CCRectIntersection = function (rectA, rectB) {
  * @return {cc.Point}
  * Constructor
  */
-cc.PointMake = function (x, y) {
+cc.p = function (x, y) {
     return new cc.Point(x, y);
 };
 
@@ -313,7 +313,7 @@ cc.RectMake = function (x, y, width, height) {
 };
 
 /**
- * The "left bottom" point -- equivalent to cc.PointMake(0, 0).
+ * The "left bottom" point -- equivalent to cc.p(0, 0).
  * @function
  * @return {cc.Point}
  * Constructor

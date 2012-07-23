@@ -129,7 +129,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      */
     ctor:function () {
         this._parallaxArray = [];
-        this._lastPosition = cc.PointMake(-100, -100);
+        this._lastPosition = cc.p(-100, -100);
     },
 
     /**

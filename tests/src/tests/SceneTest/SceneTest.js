@@ -47,7 +47,7 @@ SceneTestLayer1 = cc.Layer.extend({
 
         var sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite);
-        sprite.setPosition(cc.PointMake(s.width - 40, s.height / 2));
+        sprite.setPosition(cc.p(s.width - 40, s.height / 2));
         var rotate = cc.RotateBy.create(2, 360);
         var repeat = cc.RepeatForever.create(rotate);
         sprite.runAction(repeat);
@@ -111,7 +111,7 @@ SceneTestLayer2 = cc.Layer.extend({
         var sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite);
 
-        sprite.setPosition(cc.PointMake(s.width - 40, s.height / 2));
+        sprite.setPosition(cc.p(s.width - 40, s.height / 2));
         var rotate = cc.RotateBy.create(2, 360);
         var repeat = cc.RepeatForever.create(rotate);
         sprite.runAction(repeat);
@@ -158,12 +158,12 @@ SceneTestLayer3 = cc.LayerColor.extend({
         var label = cc.LabelTTF.create("Touch to popScene", "Arial", 28);
         this.addChild(label);
         var s = cc.Director.getInstance().getWinSize();
-        label.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        label.setPosition(cc.p(s.width / 2, s.height / 2));
 
         var sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite);
 
-        sprite.setPosition(cc.PointMake(s.width - 40, s.height / 2));
+        sprite.setPosition(cc.p(s.width - 40, s.height / 2));
         var rotate = cc.RotateBy.create(2, 360);
         var repeat = cc.RepeatForever.create(rotate);
         sprite.runAction(repeat);

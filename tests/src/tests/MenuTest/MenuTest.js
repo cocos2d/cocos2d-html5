@@ -97,9 +97,9 @@ var MenuLayer1 = cc.Layer.extend({
             if (i % 2 == 0)
                 offset = -offset;
 
-            child.setPosition(cc.PointMake(dstPoint.x + offset, dstPoint.y));
+            child.setPosition(cc.p(dstPoint.x + offset, dstPoint.y));
             child.runAction(
-                cc.EaseElasticOut.create(cc.MoveBy.create(2, cc.PointMake(dstPoint.x - offset, 0)), 0.35)
+                cc.EaseElasticOut.create(cc.MoveBy.create(2, cc.p(dstPoint.x - offset, 0)), 0.35)
             );
         }
         this._disabledItem = item3;
@@ -170,12 +170,12 @@ var MenuLayer2 = cc.Layer.extend({
             if (i == 0) {
                 menu.alignItemsHorizontally();
                 var p = menu.getPosition();
-                menu.setPosition(cc.pAdd(p, cc.PointMake(0, 30)));
+                menu.setPosition(cc.pAdd(p, cc.p(0, 30)));
             }
             else {
                 menu.alignItemsHorizontallyWithPadding(40);
                 var p = menu.getPosition();
-                menu.setPosition(cc.pSub(p, cc.PointMake(0, 30)));
+                menu.setPosition(cc.pSub(p, cc.p(0, 30)));
             }
         }
     },
@@ -186,12 +186,12 @@ var MenuLayer2 = cc.Layer.extend({
             if (i == 0) {
                 menu.alignItemsVertically();
                 var p = menu.getPosition();
-                menu.setPosition(cc.pAdd(p, cc.PointMake(100, 0)));
+                menu.setPosition(cc.pAdd(p, cc.p(100, 0)));
             }
             else {
                 menu.alignItemsVerticallyWithPadding(40);
                 var p = menu.getPosition();
-                menu.setPosition(cc.pSub(p, cc.PointMake(100, 0)));
+                menu.setPosition(cc.pSub(p, cc.p(100, 0)));
             }
         }
     },
@@ -239,15 +239,15 @@ var MenuLayer3 = cc.Layer.extend({
         this._disabledItem.setEnabled(false);
 
         var menu = cc.Menu.create(item1, item2, item3);
-        menu.setPosition(cc.PointMake(0, 0));
+        menu.setPosition(cc.p(0, 0));
 
         var s = cc.Director.getInstance().getWinSize();
 
-        item1.setPosition(cc.PointMake(s.width / 2 - 150, s.height / 2));
-        item2.setPosition(cc.PointMake(s.width / 2 - 200, s.height / 2));
-        item3.setPosition(cc.PointMake(s.width / 2, s.height / 2 - 100));
+        item1.setPosition(cc.p(s.width / 2 - 150, s.height / 2));
+        item2.setPosition(cc.p(s.width / 2 - 200, s.height / 2));
+        item3.setPosition(cc.p(s.width / 2, s.height / 2 - 100));
 
-        var jump = cc.JumpBy.create(3, cc.PointMake(400, 0), 50, 4);
+        var jump = cc.JumpBy.create(3, cc.p(400, 0), 50, 4);
         item2.runAction(cc.RepeatForever.create(
             (cc.Sequence.create(jump, jump.reverse()))
         )

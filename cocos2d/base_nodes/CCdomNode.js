@@ -248,7 +248,7 @@ cc.domNode = cc.Class.extend({
         return this._scaleY;
     },
     getPosition:function () {
-        //return cc.PointMake(this._pos.x, this._pos.y);
+        //return cc.p(this._pos.x, this._pos.y);
         if (this._pos.x == 0) {
             //throw "sadasd"
         }

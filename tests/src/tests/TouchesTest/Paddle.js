@@ -81,7 +81,7 @@ var Paddle = cc.Sprite.extend({
         var touchPoint = touch.getLocation();
         //touchPoint = cc.Director.getInstance().convertToGL( touchPoint );
 
-        this.setPosition(cc.PointMake(touchPoint.x, this.getPosition().y));
+        this.setPosition(cc.p(touchPoint.x, this.getPosition().y));
     },
     onTouchEnded:function (touch, event) {
         cc.Assert(this._state == PADDLE_STATE_GRABBED, "Paddle - Unexpected state!");

@@ -1677,12 +1677,12 @@ cc.Sprite.create = function (fileName, rect) {
  * var spriteFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
  *
  * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameName(spriteFrame);
+ * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName(spriteFrame);
  *
  * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameName('rossini_dance_01.png');
+ * var sprite = cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName('rossini_dance_01.png');
  */
-cc.Sprite.createWithSpriteFrameNameNameNameNameNameName = function (spriteFrame) {
+cc.Sprite.createWithSpriteFrameNameNameNameNameNameNameName = function (spriteFrame) {
     if (typeof(spriteFrame) == 'string') {
         var pFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName(spriteFrame);
         if (pFrame) {

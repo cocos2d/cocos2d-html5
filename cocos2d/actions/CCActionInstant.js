@@ -263,7 +263,7 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
  * @return {cc.Place}
  * @example
  * // example
- * var placeAction = cc.Place.create(cc.PointMake(200, 200));
+ * var placeAction = cc.Place.create(cc.p(200, 200));
  */
 cc.Place.create = function (pos) {
     var ret = new cc.Place();

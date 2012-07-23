@@ -525,7 +525,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _positionForIsoAt:function (pos) {
-        var xy = cc.PointMake(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
+        var xy = cc.p(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
             this._mapTileSize.height / 2 * (( this._layerSize.height * 2 - pos.x - pos.y) - 2));
         return xy;
     },
@@ -535,7 +535,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             console.log("before:", pos.x , this._mapTileSize.width,
                 this._layerSize.height , pos.y , 1 , this._mapTileSize.height);
         }
-        var xy = cc.PointMake(pos.x * this._mapTileSize.width,
+        var xy = cc.p(pos.x * this._mapTileSize.width,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height);
         if(pos.x  == 101){
             console.log("after:", xy);
@@ -549,7 +549,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             diffY = -this._mapTileSize.height / 2;
         }
 
-        var xy = cc.PointMake(pos.x * this._mapTileSize.width * 3 / 4,
+        var xy = cc.p(pos.x * this._mapTileSize.width * 3 / 4,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height + diffY);
         return xy;
     },

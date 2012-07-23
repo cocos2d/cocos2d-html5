@@ -207,7 +207,7 @@ cc.LoaderScene = cc.Class.extend(/**  @lends cc.LoaderScene# */{
         cc.renderContext.clearRect(0, -cc.canvas.height, cc.canvas.width, cc.canvas.height);
         cc.renderContext.fillStyle = "#202020";
         cc.renderContext.fillRect(0, -cc.canvas.height, cc.canvas.width, cc.canvas.height);
-        cc.drawingUtil.drawImage(this._logo, new cc.PointMake(logoWidth, logoHeight));
+        cc.drawingUtil.drawImage(this._logo, new cc.p(logoWidth, logoHeight));
         cc.renderContext.fillStyle = "#b2b4b3";
         cc.renderContext.font = 'Bold 12px Verdana';
         cc.renderContext.textAlign = 'left';
