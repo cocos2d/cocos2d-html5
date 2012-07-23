@@ -63,7 +63,7 @@ var DrawPrimitivesTest = cc.Layer.extend({
         cc.drawingUtil.drawPoint(cc.p(s.width / 2, s.height / 2), 40);
 
         // draw 4 small points
-        var points = [cc.p(60, 60), cc.p(70, 70), cc.p(60, 70), cc.PointMake(70, 60)];
+        var points = [cc.p(60, 60), cc.p(70, 70), cc.p(60, 70), cc.p(70, 60)];
         /*glColor4ub(0,255,255,255);*/
         cc.renderContext.fillStyle = "rgba(0,255,255,1)";
         //glColor4f(0.0, 1.0, 1.0, 1.0);
@@ -91,7 +91,7 @@ var DrawPrimitivesTest = cc.Layer.extend({
         cc.renderContext.strokeStyle = "rgba(255,255,0,1)";
         //glLineWidth(10);
         cc.renderContext.lineWidth = "10";
-        var vertices = [cc.p(0, 0), cc.p(50, 50), cc.p(100, 50), cc.PointMake(100, 100), cc.PointMake(50, 100) ];
+        var vertices = [cc.p(0, 0), cc.p(50, 50), cc.p(100, 50), cc.p(100, 100), cc.p(50, 100) ];
         cc.drawingUtil.drawPoly(vertices, 5, false);
 
         // closed purble poly
