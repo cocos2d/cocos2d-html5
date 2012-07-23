@@ -5,10 +5,6 @@
 
  http://www.cocos2d-x.org
 
- Created by JetBrains WebStorm.
- User: wuhao
- Date: 12-3-8
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights
@@ -30,7 +26,7 @@
 
 var cc = cc = cc || {};
 //Cocos2d directory
-cc.Dir = '../../cocos2d/';//in relate to the html file or use absolute
+cc.Dir = './';//in relate to the html file or use absolute
 cc.loadQue = [];//the load que which js files are loaded
 cc.COCOS2D_DEBUG = 2;
 cc._DEBUG = 1;
@@ -42,16 +38,6 @@ cc.$ = function (x) {
 cc.$new = function (x) {
     return document.createElement(x);
 };
-//function to load files into html
-/*
- cc.loadjs = function(filename)
- {
- //get a ref to header
- var head = cc.$('head');
- var insert = document.createElement('script');
- insert.setAttribute('src',cc.Dir+filename);
- head.appendChild(insert);
- };*/
 
 cc.loadjs = function (filename) {
     //add the file to the que
@@ -79,9 +65,9 @@ cc.loadjs = function (filename) {
             };
             //preload ressources
             cc.Loader.shareLoader().preload([
-                {type:"image", src:"Resources/HelloWorld.png"},
-                {type:"image", src:"Resources/grossini_dance_07.png"},
-                {type:"image", src:"Resources/cocos64.png"}
+                {type:"image", src:"res/HelloWorld.png"},
+                {type:"image", src:"res/grossini_dance_07.png"},
+                {type:"image", src:"res/cocos64.png"}
             ]);
         }
     };
@@ -91,44 +77,94 @@ cc.loadjs = function (filename) {
     }
 };
 
+var isDebugMode = true;
 
-cc.loadjs('platform/CCClass.js');//0
-cc.loadjs('platform/CCCommon.js');//1
-cc.loadjs('platform/platform.js');//2
-cc.loadjs('cocoa/CCGeometry.js');//3
-cc.loadjs('cocoa/CCSet.js');//4
-cc.loadjs('platform/CCTypes.js');//5
-cc.loadjs('cocoa/CCAffineTransform.js');//5
-cc.loadjs('support/CCPointExtension.js');//12
-cc.loadjs('base_nodes/CCNode.js');//6
-cc.loadjs('platform/ccMacro.js');//7
-cc.loadjs('platform/ccConfig.js');//7
-cc.loadjs('textures/CCTexture2D.js');//12
-cc.loadjs('textures/CCTextureCache.js');//12
-cc.loadjs('actions/CCAction.js');//7
-cc.loadjs('actions/CCActionInterval.js');//7
-cc.loadjs('actions/CCActionManager.js');//7
-cc.loadjs('actions/CCActionEase.js');//7
-cc.loadjs('layers_scenes_transitions_nodes/CCScene.js');//8
-cc.loadjs('layers_scenes_transitions_nodes/CCLayer.js');//9
-cc.loadjs('layers_scenes_transitions_nodes/CCTransition.js');//9
-cc.loadjs('sprite_nodes/CCSprite.js');//10
-cc.loadjs('label_nodes/CCLabelTTF.js');//11
-cc.loadjs('touch_dispatcher/CCTouchDelegateProtocol.js');//12
-cc.loadjs('touch_dispatcher/CCTouchHandler.js');//12
-cc.loadjs('touch_dispatcher/CCTouchDispatcher.js');//12
-cc.loadjs('keypad_dispatcher/CCKeypadDelegate.js');//12
-cc.loadjs('keypad_dispatcher/CCKeypadDispatcher.js');//12
-cc.loadjs('base_nodes/CCdomNode.js');
-cc.loadjs('CCDirector.js');//13
-cc.loadjs('CCScheduler.js');//14
-cc.loadjs('CCLoader.js');//14
-cc.loadjs('CCDrawingPrimitives.js');//15
-cc.loadjs('platform/CCApplication.js');//16
-cc.loadjs('../CocosDenshion/SimpleAudioEngine.js');
-cc.loadjs('platform/CCSAXParser.js');//16
-cc.loadjs('../Demo/HelloDomMenu/Classes/AppDelegate.js');//17
-cc.loadjs('platform/AppControl.js');//18
-cc.loadjs('../Demo/HelloDomMenu/HelloDom.js');//19
-cc.loadjs('menu_nodes/CCdomMenuItem.js');
-cc.loadjs('menu_nodes/CCdomMenu.js');
+if (!isDebugMode) {
+    // Engine files,
+    // They can be packeted to a single file using the Ant tool.
+    // The shell files and Closure Compiler which Ant needs are provided in tools folder and cocos2d folder.
+    cc.loadjs('../../lib/Cocos2d-html5-dommenu-min.js');
+} else {
+    cc.loadjs('../../cocos2d/platform/CCClass.js');
+    cc.loadjs('../../cocos2d/platform/CCCommon.js');
+    cc.loadjs('../../cocos2d/platform/platform.js');
+    cc.loadjs('../../cocos2d/platform/miniFramework.js');
+    cc.loadjs('../../cocos2d/platform/ZipUtils.js');
+    cc.loadjs('../../cocos2d/platform/base64.js');
+    cc.loadjs('../../cocos2d/platform/gzip.js');
+    cc.loadjs('../../cocos2d/platform/CCMacro.js');
+    cc.loadjs('../../cocos2d/platform/CCFileUtils.js');
+    cc.loadjs('../../cocos2d/platform/CCTypes.js');
+    cc.loadjs('../../cocos2d/cocoa/CCGeometry.js');
+    cc.loadjs('../../cocos2d/platform/CCConfig.js');
+    cc.loadjs('../../cocos2d/cocoa/CCSet.js');
+    cc.loadjs('../../cocos2d/cocoa/CCAffineTransform.js');
+    cc.loadjs('../../cocos2d/support/CCPointExtension.js');
+    cc.loadjs('../../cocos2d/cocoa/CCNS.js');
+    cc.loadjs('../../cocos2d/base_nodes/CCNode.js');
+    cc.loadjs('../../cocos2d/base_nodes/CCAtlasNode.js');
+    cc.loadjs('../../cocos2d/textures/CCTexture2D.js');
+    cc.loadjs('../../cocos2d/textures/CCTextureCache.js');
+    cc.loadjs('../../cocos2d/textures/CCTextureAtlas.js');
+    cc.loadjs('../../cocos2d/misc_nodes/CCRenderTexture.js');
+    cc.loadjs('../../cocos2d/misc_nodes/CCProgressTimer.js');
+    cc.loadjs('../../cocos2d/effects/CCGrid.js');
+    cc.loadjs('../../cocos2d/effects/CCGrabber.js');
+    cc.loadjs('../../cocos2d/actions/CCAction.js');
+    cc.loadjs('../../cocos2d/actions/CCActionInterval.js');
+    cc.loadjs('../../cocos2d/actions/CCActionInstant.js');
+    cc.loadjs('../../cocos2d/actions/CCActionManager.js');
+    cc.loadjs('../../cocos2d/actions/CCActionProgressTimer.js');
+    cc.loadjs('../../cocos2d/actions/CCActionCamera.js');
+    cc.loadjs('../../cocos2d/actions/CCActionEase.js');
+    cc.loadjs('../../cocos2d/actions/CCActionGrid.js');
+    cc.loadjs('../../cocos2d/actions/CCActionTiledGrid.js');
+    cc.loadjs('../../cocos2d/actions/CCActionGrid.js');
+    cc.loadjs('../../cocos2d/layers_scenes_transitions_nodes/CCScene.js');
+    cc.loadjs('../../cocos2d/layers_scenes_transitions_nodes/CCLayer.js');
+    cc.loadjs('../../cocos2d/layers_scenes_transitions_nodes/CCTransition.js');
+    cc.loadjs('../../cocos2d/layers_scenes_transitions_nodes/CCTransitionProgress.js');
+    cc.loadjs('../../cocos2d/layers_scenes_transitions_nodes/CCTransitionPageTurn.js');
+    cc.loadjs('../../cocos2d/sprite_nodes/CCSprite.js');
+    cc.loadjs('../../cocos2d/sprite_nodes/CCAnimation.js');
+    cc.loadjs('../../cocos2d/sprite_nodes/CCAnimationCache.js');
+    cc.loadjs('../../cocos2d/sprite_nodes/CCSpriteFrame.js');
+    cc.loadjs('../../cocos2d/sprite_nodes/CCSpriteFrameCache.js');
+    cc.loadjs('../../cocos2d/sprite_nodes/CCSpriteBatchNode.js');
+    cc.loadjs('../../cocos2d/label_nodes/CCLabelAtlas.js');
+    cc.loadjs('../../cocos2d/label_nodes/CCLabelTTF.js');
+    cc.loadjs('../../cocos2d/label_nodes/CCLabelBMFont.js');
+    cc.loadjs('../../cocos2d/particle_nodes/CCParticleSystem.js');
+    cc.loadjs('../../cocos2d/particle_nodes/CCParticleSystemQuad.js');
+    cc.loadjs('../../cocos2d/particle_nodes/CCParticleExamples.js');
+    cc.loadjs('../../cocos2d/touch_dispatcher/CCTouchDelegateProtocol.js');
+    cc.loadjs('../../cocos2d/touch_dispatcher/CCTouchHandler.js');
+    cc.loadjs('../../cocos2d/touch_dispatcher/CCTouchDispatcher.js');
+    cc.loadjs('../../cocos2d/keypad_dispatcher/CCKeypadDelegate.js');
+    cc.loadjs('../../cocos2d/keypad_dispatcher/CCKeypadDispatcher.js');
+    cc.loadjs('../../cocos2d/text_input_node/CCIMEDispatcher.js');
+    cc.loadjs('../../cocos2d/text_input_node/CCTextFieldTTF.js');
+    cc.loadjs('../../cocos2d/CCDirector.js');
+    cc.loadjs('../../cocos2d/CCCamera.js');
+    cc.loadjs('../../cocos2d/CCScheduler.js');
+    cc.loadjs('../../cocos2d/CCLoader.js');
+    cc.loadjs('../../cocos2d/CCDrawingPrimitives.js');
+    cc.loadjs('../../cocos2d/platform/CCApplication.js');
+    cc.loadjs('../../cocos2d/platform/CCSAXParser.js');
+    cc.loadjs('../../cocos2d/platform/AppControl.js');
+
+    cc.loadjs('../../cocos2d/base_nodes/CCdomNode.js');
+    cc.loadjs('../../cocos2d/menu_nodes/CCdomMenuItem.js');
+    cc.loadjs('../../cocos2d/menu_nodes/CCdomMenu.js');
+
+    cc.loadjs('../../cocos2d/tileMap_parallax_nodes/CCTMXTiledMap.js');
+    cc.loadjs('../../cocos2d/tileMap_parallax_nodes/CCTMXXMLParser.js');
+    cc.loadjs('../../cocos2d/tileMap_parallax_nodes/CCTMXObjectGroup.js');
+    cc.loadjs('../../cocos2d/tileMap_parallax_nodes/CCTMXLayer.js');
+    cc.loadjs('../../cocos2d/tileMap_parallax_nodes/CCParallaxNode.js');
+
+    cc.loadjs('../../CocosDenshion/SimpleAudioEngine.js');
+}
+
+cc.loadjs('src/AppDelegate.js');
+cc.loadjs('HelloDom.js');

@@ -48,13 +48,15 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
 
     /**
      *  Deletes a cc.Animation from the cache.
-      * @param  {String} name
+     * @param  {String} name
      */
     removeAnimationByName:function (name) {
         if (!name) {
             return;
         }
-        delete this._animations[name];
+        if (this._animations.hasOwnProperty(name)) {
+            delete this._animations[name];
+        }
     },
 
     /**
@@ -68,6 +70,141 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      */
     animationByName:function (name) {
         return this._animations[name];
+    },
+
+    /**
+     * <p>
+     *     Adds an animation from an NSDictionary<br/>
+     *     Make sure that the frames were previously loaded in the cc.SpriteFrameCache.
+     * </p>
+     * @param {object} dictionary
+     */
+    addAnimationsWithDictionary:function (dictionary) {
+        var animations = dictionary["animations"];
+        if(!animations){
+            cc.Log("cocos2d: cc.AnimationCache: No animations were found in provided dictionary.");
+            return ;
+        }
+
+        var version = 1;
+        var properties = dictionary["properties"];
+        if(properties){
+           version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
+            var spritesheets = properties["spritesheets"];
+            for(var i = 0; i< spritesheets.length; i++){
+                cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(spritesheets[i]);
+            }
+        }
+
+        switch (version){
+            case 1:
+                this._parseVersion1(animations);
+                break;
+            case 2:
+                this._parseVersion2(animations);
+                break;
+            default :
+                cc.Assert(false, "Invalid animation format");
+                break;
+        }
+    },
+
+    /**
+     * <p>
+     *    Adds an animation from a plist file.<br/>
+     *    Make sure that the frames were previously loaded in the cc.SpriteFrameCache.
+     * </p>
+     * @param {String} plist
+     */
+    addAnimationsWithFile:function (plist) {
+        cc.Assert( plist, "Invalid texture file name");
+
+        var path = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(plist);
+        var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(path);
+
+        cc.Assert( dict, "cc.AnimationCache: File could not be found");
+
+        this.addAnimationsWithDictionary(dict);
+    },
+
+    _parseVersion1:function (animations) {
+        var frameCache = cc.SpriteFrameCache.sharedSpriteFrameCache();
+
+        for (var key in animations) {
+            var animationDict = animations[key];
+            var frameNames = animationDict["frames"];
+            var delay = parseFloat(animationDict["delay"]) || 0;
+            var animation = null;
+            if (!frameNames) {
+                cc.Log("cocos2d: cc.AnimationCache: Animation '" + key + "' found in dictionary without any frames - cannot add to animation cache.");
+                continue;
+            }
+
+            var frames = [];
+            for (var i = 0; i < frameNames.length; i++) {
+                var spriteFrame = frameCache.spriteFrameByName(frameNames[i]);
+                if (!spriteFrame) {
+                    cc.Log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + frameNames[i]
+                        + "' which is not currently in the cc.SpriteFrameCache. This frame will not be added to the animation.");
+                    continue;
+                }
+                var animFrame = new cc.AnimationFrame();
+                animFrame.initWithSpriteFrame(spriteFrame, 1, null);
+                frames.push(animFrame);
+            }
+
+            if (frames.length == 0) {
+                cc.Log("cocos2d: cc.AnimationCache: None of the frames for animation '" + key
+                    + "' were found in the cc.SpriteFrameCache. Animation is not being added to the Animation Cache.");
+                continue;
+            } else if (frames.length != frameNames.length) {
+                cc.Log("cocos2d: cc.AnimationCache: An animation in your dictionary refers to a frame which is not in the cc.SpriteFrameCache." +
+                    " Some or all of the frames for the animation '" + key + "' may be missing.");
+            }
+            animation = cc.Animation.createWithAnimationFrames(frames, delay, 1);
+            cc.AnimationCache.sharedAnimationCache().addAnimation(animation,key);
+        }
+    },
+
+    _parseVersion2:function (animations) {
+        var frameCache = cc.SpriteFrameCache.sharedSpriteFrameCache();
+
+        for (var key in animations) {
+            var animationDict = animations[key];
+            var loops = parseInt(animationDict["loops"])||0;
+            var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == true) ? true : false;
+            var frameArray = animationDict["frames"];
+
+            if (!frameArray) {
+                cc.Log("cocos2d: CCAnimationCache: Animation '" + key + "' found in dictionary without any frames - cannot add to animation cache.");
+                continue;
+            }
+
+            //Array of AnimationFrames
+            var arr = [];
+            for(var i = 0; i<frameArray.length; i++){
+                var entry = frameArray[i];
+                var spriteFrameName = entry["spriteframe"];
+                var spriteFrame = frameCache.spriteFrameByName(spriteFrameName);
+                if(!spriteFrame){
+                    cc.Log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + spriteFrameName
+                        + "' which is not currently in the cc.SpriteFrameCache. This frame will not be added to the animation.");
+                    continue;
+                }
+
+                var delayUnits = parseFloat(entry["delayUnits"])||0;
+                var userInfo = entry["notification"];
+                var animFrame = new cc.AnimationFrame();
+                animFrame.initWithSpriteFrame(spriteFrame,delayUnits,userInfo);
+                arr.push(animFrame);
+            }
+
+            var delayPerUnit = parseFloat(animationDict["delayPerUnit"]) ||0;
+            var animation = new cc.Animation();
+            animation.initWithAnimationFrames(arr,delayPerUnit,loops);
+            animation.setRestoreOriginalFrame(restoreOriginalFrame);
+            cc.AnimationCache.sharedAnimationCache().addAnimation(animation,key);
+        }
     },
 
     /**
@@ -86,7 +223,10 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
  * Purges the cache. It releases all the cc.Animation objects and the shared instance.
  */
 cc.AnimationCache.purgeSharedAnimationCache = function () {
-    cc.sharedAnimationCache = null;
+    if(cc.s_sharedAnimationCache){
+        cc.s_sharedAnimationCache._animations = null;
+        cc.s_sharedAnimationCache = null;
+    }
 };
 
 /**
@@ -94,11 +234,11 @@ cc.AnimationCache.purgeSharedAnimationCache = function () {
  * @return {cc.AnimationCache}
  */
 cc.AnimationCache.sharedAnimationCache = function () {
-    if (cc.sharedAnimationCache == null) {
-        cc.sharedAnimationCache = new cc.AnimationCache();
-        cc.sharedAnimationCache.init();
+    if (cc.s_sharedAnimationCache == null) {
+        cc.s_sharedAnimationCache = new cc.AnimationCache();
+        cc.s_sharedAnimationCache.init();
     }
-    return cc.sharedAnimationCache;
+    return cc.s_sharedAnimationCache;
 };
 
-cc.sharedAnimationCache = null;
+cc.s_sharedAnimationCache = null;

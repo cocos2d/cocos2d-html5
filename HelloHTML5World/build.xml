@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<project name="Javascript compress project" basedir="." default="compile">
+
+    <taskdef name="jscomp" classname="com.google.javascript.jscomp.ant.CompileTask"
+             classpath="${basedir}/../../tools/compiler/compiler.jar"/>
+
+    <target name="compile">
+        <jscomp compilationLevel="simple" warning="quiet"
+                debug="false" output="cocos2d-html5-alpha-min.js">
+            <sources dir="${basedir}/../../cocos2d">
+                <file name="platform/CCClass.js"/>
+                <file name="platform/CCCommon.js"/>
+                <file name="platform/platform.js"/>
+                <file name="platform/miniFramework.js"/>
+                <file name="cocoa/CCGeometry.js"/>
+                <file name="platform/CCConfig.js"/>
+                <file name="cocoa/CCSet.js"/>
+                <file name="cocoa/CCNS.js"/>
+                <file name="platform/CCTypes.js"/>
+                <file name="cocoa/CCAffineTransform.js"/>
+                <file name="support/CCPointExtension.js"/>
+                <file name="base_nodes/CCNode.js"/>
+                <file name="platform/ccMacro.js"/>
+                <file name="platform/ccConfig.js"/>
+                <file name="textures/CCTexture2D.js"/>
+                <file name="textures/CCTextureCache.js"/>
+                <file name="actions/CCAction.js"/>
+                <file name="actions/CCActionInterval.js"/>
+                <file name="actions/CCActionManager.js"/>
+                <file name="actions/CCActionEase.js"/>
+                <file name="layers_scenes_transitions_nodes/CCScene.js"/>
+                <file name="layers_scenes_transitions_nodes/CCLayer.js"/>
+                <file name="layers_scenes_transitions_nodes/CCTransition.js"/>
+                <file name="sprite_nodes/CCSprite.js"/>
+                <file name="label_nodes/CCLabelTTF.js"/>
+                <file name="text_input_node/CCIMEDispatcher.js"/>
+                <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
+                <file name="touch_dispatcher/CCTouchHandler.js"/>
+                <file name="touch_dispatcher/CCTouchDispatcher.js"/>
+                <file name="keypad_dispatcher/CCKeypadDelegate.js"/>
+                <file name="keypad_dispatcher/CCKeypadDispatcher.js"/>
+                <file name="CCDirector.js"/>
+                <file name="CCScheduler.js"/>
+                <file name="CCLoader.js"/>
+                <file name="CCDrawingPrimitives.js"/>
+                <file name="platform/CCApplication.js"/>
+                <file name="platform/CCSAXParser.js"/>
+                <file name="platform/AppControl.js"/>
+                <file name="menu_nodes/CCMenuItem.js"/>
+                <file name="menu_nodes/CCMenu.js"/>
+            </sources>
+            <sources dir="${basedir}/../../CocosDenshion">
+                <file name="SimpleAudioEngine.js"/>
+            </sources>
+        </jscomp>
+    </target>
+</project>

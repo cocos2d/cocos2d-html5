@@ -27,11 +27,13 @@
 
 /**
  * default size for font size
+ * @constant
  * @type Number
  */
 cc.CCITEM_SIZE = 32;
+
 cc._fontSize = cc.CCITEM_SIZE;
-cc._fontName = "Marker Felt";
+cc._fontName = "Arial";
 cc._fontNameRelease = false;
 
 /**
@@ -80,7 +82,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     /**
      * @return {Boolean}
      */
-    getIsSelected:function () {
+    isSelected:function () {
         return this._isSelected;
     },
     _isEnabled:false,
@@ -88,7 +90,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     /**
      * @return {Boolean}
      */
-    getIsEnabled:function () {
+    isEnabled:function () {
         return this._isEnabled;
     },
 
@@ -96,7 +98,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      *
      * @param enable
      */
-    setIsEnabled:function (enable) {
+    setEnabled:function (enable) {
         this._isEnabled = enable;
     },
 
@@ -235,7 +237,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     /**
      * @param {Boolean} enabled
      */
-    setIsEnabled:function (enabled) {
+    setEnabled:function (enabled) {
         if (this._isEnabled != enabled) {
             if (!enabled) {
                 this._colorBackup = this._label.getColor();
@@ -276,9 +278,9 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         return this._label.getColor
     },
 
-    setIsOpacityModifyRGB:function (value) {
+    setOpacityModifyRGB:function (value) {
     },
-    getIsOpacityModifyRGB:function () {
+    isOpacityModifyRGB:function () {
     },
 
     /**
@@ -317,8 +319,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             var action = this.getActionByTag(cc.ZOOM_ACTION_TAG);
             if (action) {
                 this.stopAction(action);
-            }
-            else {
+            } else {
                 this._originalScale = this.getScale();
             }
 
@@ -350,11 +351,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
  */
 cc.MenuItemLabel.create = function (label, target, selector) {
     var ret = new cc.MenuItemLabel();
-    if (arguments.length == 3) {
-        ret.initWithLabel(label, target, selector);
-    } else {
-        ret.initWithLabel(label);
-    }
+    ret.initWithLabel(label, target, selector);
     return ret;
 };
 
@@ -375,11 +372,13 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
      * @param {function|String|Null} selector
      * @return {Boolean}
      */
-    initFromString:function (value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector) {
+    initWithString:function (value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector) {
         cc.Assert(value != null && value.length != 0, "value length must be greater than 0");
         var label = new cc.LabelAtlas();
         label.initWithString(value, charMapFile, itemWidth, itemHeight, startCharMap);
-        this.initWithLabel(label, target, selector);
+        if (this.initWithLabel(label, target, selector)) {
+            // do something ?
+        }
         return true;
     }
 });
@@ -403,7 +402,7 @@ cc.MenuItemAtlasFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemAtlasFont# 
  */
 cc.MenuItemAtlasFont.create = function (value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector) {
     var ret = new cc.MenuItemAtlasFont();
-    ret.initFromString(value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector);
+    ret.initWithString(value, charMapFile, itemWidth, itemHeight, startCharMap, target, selector);
     return ret;
 };
 
@@ -421,7 +420,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
      * @param {function|String} selector
      * @return {Boolean}
      */
-    initFromString:function (value, target, selector) {
+    initWithString:function (value, target, selector) {
         cc.Assert(value != null && value.length != 0, "Value length must be greater than 0");
 
         this._fontName = cc._fontName;
@@ -475,10 +474,10 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
 
 /**
  * a shared function to set the fontSize for menuitem font
- * @param {Number} s
+ * @param {Number} fontSize
  */
-cc.MenuItemFont.setFontSize = function (s) {
-    cc._fontSize = s;
+cc.MenuItemFont.setFontSize = function (fontSize) {
+    cc._fontSize = fontSize;
 };
 
 /**
@@ -530,7 +529,7 @@ cc.MenuItemFont.fontName = function () {
  */
 cc.MenuItemFont.create = function (value, target, selector) {
     var ret = new cc.MenuItemFont();
-    ret.initFromString(value, target, selector);
+    ret.initWithString(value, target, selector);
     return ret;
 };
 
@@ -552,51 +551,58 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     _normalImage:null,
 
     /**
-     * @return {cc.Sprite}
+     * @return {cc.Node}
      */
     getNormalImage:function () {
         return this._normalImage;
     },
 
     /**
-     * @param {cc.Sprite} NormalImage
+     * @param {cc.Node} normalImage
      */
-    setNormalImage:function (NormalImage) {
-        if (NormalImage) {
-            this.addChild(NormalImage, 0, cc.NORMAL_TAG);
-            NormalImage.setAnchorPoint(cc.ccp(0, 0));
-            NormalImage.setIsVisible(true);
+    setNormalImage:function (normalImage) {
+        if (this._normalImage == normalImage) {
+            return;
+        }
+        if (normalImage) {
+            this.addChild(normalImage, 0, cc.NORMAL_TAG);
+            normalImage.setAnchorPoint(cc.ccp(0, 0));
         }
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
         }
 
-        this._normalImage = NormalImage;
+        this._normalImage = normalImage;
+        this.setContentSize(this._normalImage.getContentSize());
+        this._updateImagesVisibility();
     },
     _selectedImage:null,
 
     /**
-     * @return {cc.Sprite}
+     * @return {cc.Node}
      */
     getSelectedImage:function () {
         return this._selectedImage;
     },
 
     /**
-     * @param {cc.Sprite} SelectedImage
+     * @param {cc.Node} selectedImage
      */
-    setSelectedImage:function (SelectedImage) {
-        if (SelectedImage) {
-            this.addChild(SelectedImage, 0, cc.SELECTED_TAG);
-            SelectedImage.setAnchorPoint(cc.ccp(0, 0));
-            SelectedImage.setIsVisible(false);
+    setSelectedImage:function (selectedImage) {
+        if (this._selectedImage == selectedImage)
+            return;
+
+        if (selectedImage) {
+            this.addChild(selectedImage, 0, cc.SELECTED_TAG);
+            selectedImage.setAnchorPoint(cc.ccp(0, 0));
         }
 
         if (this._selectedImage) {
             this.removeChild(this._selectedImage, true);
         }
 
-        this._selectedImage = SelectedImage;
+        this._selectedImage = selectedImage;
+        this._updateImagesVisibility();
     },
     _disabledImage:null,
 
@@ -608,20 +614,23 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     },
 
     /**
-     * @param {cc.Sprite} DisabledImage
+     * @param {cc.Sprite} disabledImage
      */
-    setDisabledImage:function (DisabledImage) {
-        if (DisabledImage) {
-            this.addChild(DisabledImage, 0, cc.DISABLE_TAG);
-            DisabledImage.setAnchorPoint(cc.ccp(0, 0));
-            DisabledImage.setIsVisible(false);
+    setDisabledImage:function (disabledImage) {
+        if (this._disabledImage == disabledImage)
+            return;
+
+        if (disabledImage) {
+            this.addChild(disabledImage, 0, cc.DISABLE_TAG);
+            disabledImage.setAnchorPoint(cc.ccp(0, 0));
         }
 
         if (this._disabledImage) {
             this.removeChild(this._disabledImage, true);
         }
 
-        this._disabledImage = DisabledImage;
+        this._disabledImage = disabledImage;
+        this._updateImagesVisibility();
     },
 
     /**
@@ -632,14 +641,14 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {function|String} selector
      * @return {Boolean}
      */
-    initFromNormalSprite:function (normalSprite, selectedSprite, disabledSprite, target, selector) {
-        cc.Assert(normalSprite != null, "");
+    initWithNormalSprite:function (normalSprite, selectedSprite, disabledSprite, target, selector) {
         this.initWithTarget(target, selector);
         this.setNormalImage(normalSprite);
         this.setSelectedImage(selectedSprite);
         this.setDisabledImage(disabledSprite);
-
-        this.setContentSize(this._normalImage.getContentSize());
+        if (this._normalImage) {
+            this.setContentSize(this._normalImage.getContentSize());
+        }
         return true;
     },
 
@@ -692,16 +701,18 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      */
     selected:function () {
         this._super();
-        if (this._disabledImage) {
-            this._disabledImage.setIsVisible(false);
-        }
+        if (this._normalImage) {
+            if (this._disabledImage) {
+                this._disabledImage.setVisible(false);
+            }
 
-        if (this._selectedImage) {
-            this._normalImage.setIsVisible(false);
-            this._selectedImage.setIsVisible(true);
-        }
-        else {
-            this._normalImage.setIsVisible(true);
+            if (this._selectedImage) {
+                this._normalImage.setVisible(false);
+                this._selectedImage.setVisible(true);
+            }
+            else {
+                this._normalImage.setVisible(true);
+            }
         }
     },
 
@@ -711,41 +722,59 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
     unselected:function () {
         this._super();
 
-        this._normalImage.setIsVisible(true);
+        if (this._normalImage) {
+            this._normalImage.setVisible(true);
 
-        if (this._selectedImage) {
-            this._selectedImage.setIsVisible(false);
-        }
+            if (this._selectedImage) {
+                this._selectedImage.setVisible(false);
+            }
 
-        if (this._disabledImage) {
-            this._disabledImage.setIsVisible(false);
+            if (this._disabledImage) {
+                this._disabledImage.setVisible(false);
+            }
         }
     },
 
     /**
      * @param {Boolean} bEnabled
      */
-    setIsEnabled:function (bEnabled) {
-        this._super(bEnabled);
-
-        if (this._selectedImage) {
-            this._selectedImage.setIsVisible(false);
+    setEnabled:function (bEnabled) {
+        if (this._isEnabled == bEnabled) {
+            this._super(bEnabled);
+            this._updateImagesVisibility();
         }
+    },
 
-        if (bEnabled) {
-            this._normalImage.setIsVisible(true);
+    setOpacityModifyRGB:function (value) {
+    },
 
+    isOpacityModifyRGB:function () {
+        return false;
+    },
+
+    _updateImagesVisibility:function () {
+        if (this._isEnabled) {
+            if (this._normalImage)
+                this._normalImage.setVisible(true);
+            if (this._selectedImage)
+                this._selectedImage.setVisible(false);
+            if (this._disabledImage)
+                this._disabledImage.setVisible(false);
+        } else {
             if (this._disabledImage) {
-                this._disabledImage.setIsVisible(false);
-            }
-        }
-        else {
-            if (this._disabledImage) {
-                this._disabledImage.setIsVisible(true);
-                this._normalImage.setIsVisible(false);
-            }
-            else {
-                this._normalImage.setIsVisible(true);
+                if (this._normalImage)
+                    this._normalImage.setVisible(false);
+                if (this._selectedImage)
+                    this._selectedImage.setVisible(false);
+                if (this._disabledImage)
+                    this._disabledImage.setVisible(true);
+            } else {
+                if (this._normalImage)
+                    this._normalImage.setVisible(true);
+                if (this._selectedImage)
+                    this._selectedImage.setVisible(false);
+                if (this._disabledImage)
+                    this._disabledImage.setVisible(false);
             }
         }
     }
@@ -772,19 +801,21 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
  * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, disabledImage, targetNode, targetNode.callback)
  * //same as above, but with disabled image, and passing in callback function
  */
-cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five)//overloaded function
-{
+cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five) {
+    var len = arguments.length;
+    var normalSprite = arguments[0], selectedSprite = arguments[1], disabledImage, target, callback;
     var ret = new cc.MenuItemSprite();
     //when you send 4 arguments, five is undefined
-    if (five) {
-        ret.initFromNormalSprite(normalSprite, selectedSprite, three, four, five);
+    if (len == 5) {
+        disabledImage = arguments[2], target = arguments[3], callback = arguments[4]
     }
-    else if (four) {
-        return cc.MenuItemSprite.create(normalSprite, selectedSprite, null, three, four);
+    else if (len == 4) {
+        target = arguments[2], callback = arguments[3];
     }
-    else {
-        return cc.MenuItemSprite.create(normalSprite, selectedSprite, three, null, null);
+    else if (len <= 3) {
+        disabledImage = arguments[2];
     }
+    ret.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, target, callback);
     return ret;
 };
 
@@ -801,23 +832,48 @@ cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, 
  * @extends cc.MenuItemSprite
  */
 cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
+    /**
+     * sets the sprite frame for the normal image
+     * @param {cc.SpriteFrame} frame
+     */
+    setNormalSpriteFrame:function (frame) {
+        this.setNormalImage(cc.Sprite.createWithSpriteFrame(frame));
+    },
+
+    /**
+     * sets the sprite frame for the selected image
+     * @param {cc.SpriteFrame} frame
+     */
+    setSelectedSpriteFrame:function (frame) {
+        this.setSelectedImage(cc.Sprite.createWithSpriteFrame(frame));
+    },
+
+    /**
+     * sets the sprite frame for the disabled image
+     * @param {cc.SpriteFrame} frame
+     */
+    setDisabledSpriteFrame:function (frame) {
+        this.setDisabledImage(cc.Sprite.createWithSpriteFrame(frame));
+    },
 
     /**
      * @return {Boolean}
      */
-    initFromNormalImage:function (normalImage, selectedImage, disabledImage, target, selector) {
-        var normalSprite = cc.Sprite.create(normalImage);
+    initWithNormalImage:function (normalImage, selectedImage, disabledImage, target, selector) {
+        var normalSprite = null;
         var selectedSprite = null;
         var disabledSprite = null;
 
+        if (normalImage) {
+            normalSprite = cc.Sprite.create(normalImage);
+        }
         if (selectedImage) {
             selectedSprite = cc.Sprite.create(selectedImage);
         }
-
         if (disabledImage) {
             disabledSprite = cc.Sprite.create(disabledImage);
         }
-        return this.initFromNormalSprite(normalSprite, selectedSprite, disabledSprite, target, selector);
+        return this.initWithNormalSprite(normalSprite, selectedSprite, disabledSprite, target, selector);
     }
 });
 
@@ -838,11 +894,14 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * //same as above, but pass in the actual function and disabled image
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
+    if (arguments.length == 0) {
+        return cc.MenuItemImage.create(null, null, null, null, null);
+    }
     if (arguments.length == 4) {
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, four);
     }
     var ret = new cc.MenuItemImage();
-    if (ret.initFromNormalImage(normalImage, selectedImage, three, four, five)) {
+    if (ret.initWithNormalImage(normalImage, selectedImage, three, four, five)) {
         return ret;
     }
     return null;
@@ -916,7 +975,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     setSelectedIndex:function (SelectedIndex) {
         if (SelectedIndex != this._selectedIndex) {
             this._selectedIndex = SelectedIndex;
-            this.removeChildByTag(cc.CURRENT_ITEM, false);
+            var currItem = this.getChildByTag(cc.CURRENT_ITEM);
+            if (currItem) {
+                currItem.removeFromParentAndCleanup(false);
+            }
+
             var item = this._subItems[this._selectedIndex];
             this.addChild(item, 0, cc.CURRENT_ITEM);
             var s = item.getContentSize();
@@ -948,6 +1011,9 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @return {Boolean}
      */
     initWithTarget:function (args) {
+        if (args.length < 2) {
+            return false;
+        }
         var target = args[0], selector = args[1];
         this._super(target, selector);
         if (args.length == 2) {
@@ -959,7 +1025,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
                 this._subItems.push(args[i]);
             }
         }
-        this._selectedIndex = 0xffffffff;
+        this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);
         return true;
     },
@@ -972,7 +1038,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         this.initWithTarget(null, null);
         this._subItems = [];
         this._subItems.push(item);
-        this._selectedIndex = 0xffffffff;
+        this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);
         return true;
     },
@@ -1015,12 +1081,14 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     /**
      * @param {Boolean} enabled
      */
-    setIsEnabled:function (enabled) {
-        this._super(enabled);
+    setEnabled:function (enabled) {
+        if (this._isEnabled = enabled) {
+            this._super(enabled);
 
-        if (this._subItems && this._subItems.length > 0) {
-            for (var it = 0; it < this._subItems.length; it++) {
-                this._subItems[it].setIsEnabled(enabled);
+            if (this._subItems && this._subItems.length > 0) {
+                for (var it = 0; it < this._subItems.length; it++) {
+                    this._subItems[it].setEnabled(enabled);
+                }
             }
         }
     },
@@ -1032,9 +1100,12 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     selectedItem:function () {
         return this._subItems[this._selectedIndex];
     },
-    setIsOpacityModifyRGB:function (value) {
+
+    setOpacityModifyRGB:function (value) {
     },
-    getIsOpacityModifyRGB:function () {
+
+    isOpacityModifyRGB:function () {
+        return false;
     }
 });
 

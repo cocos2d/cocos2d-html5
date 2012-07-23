@@ -22,14 +22,15 @@
             <source file="${src.dir}/platform/CCClass.js"/>
             <source file="${src.dir}/platform/CCCommon.js"/>
             <source file="${src.dir}/platform/platform.js"/>
+            <source file="${src.dir}/platform/miniFramework.js"/>
             <source file="${src.dir}/platform/ZipUtils.js"/>
             <source file="${src.dir}/platform/base64.js"/>
             <source file="${src.dir}/platform/gzip.js"/>
             <source file="${src.dir}/platform/CCMacro.js"/>
-            <source file="${src.dir}/platform/CCConfig.js"/>
             <source file="${src.dir}/platform/CCFileUtils.js"/>
             <source file="${src.dir}/platform/CCTypes.js"/>
             <source file="${src.dir}/cocoa/CCGeometry.js"/>
+            <source file="${src.dir}/platform/CCConfig.js"/>
             <source file="${src.dir}/cocoa/CCSet.js"/>
             <source file="${src.dir}/cocoa/CCNS.js"/>
             <source file="${src.dir}/cocoa/CCAffineTransform.js"/>
@@ -53,7 +54,7 @@
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCScene.js"/>
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCLayer.js"/>
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransition.js"/>
-            <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionRadial.js"/>
+            <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionProgress.js"/>
             <source file="${src.dir}/layers_scenes_transitions_nodes/CCTransitionPageTurn.js"/>
             <source file="${src.dir}/sprite_nodes/CCSprite.js"/>
             <source file="${src.dir}/sprite_nodes/CCAnimation.js"/>
@@ -66,7 +67,6 @@
             <source file="${src.dir}/label_nodes/CCLabelBMFont.js"/>
             <source file="${src.dir}/particle_nodes/CCParticleSystem.js"/>
             <source file="${src.dir}/particle_nodes/CCParticleSystemQuad.js"/>
-            <source file="${src.dir}/particle_nodes/CCParticleSystemPoint.js"/>
             <source file="${src.dir}/particle_nodes/CCParticleExamples.js"/>
             <source file="${src.dir}/touch_dispatcher/CCTouchDelegateProtocol.js"/>
             <source file="${src.dir}/touch_dispatcher/CCTouchHandler.js"/>

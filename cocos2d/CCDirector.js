@@ -24,9 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-if (cc.ENABLE_PROFILERS) {
-    //TODO include support/CCProfiling
-}
+cc.g_NumberOfDraws = 0;
 
 //Possible OpenGL projections used by director
 /**
@@ -57,117 +55,7 @@ cc.CCDIRECTOR_PROJECTION_CUSTOM = 3;
  */
 cc.CCDIRECTOR_PROJECTION_DEFAULT = cc.CCDIRECTOR_PROJECTION_3D;
 
-
-// backward compatibility stuff
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_2D = cc.CCDIRECTOR_PROJECTION_2D;
-
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_3D = cc.CCDIRECTOR_PROJECTION_3D;
-
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_PROJECTION_CUSTOM = cc.CCDIRECTOR_PROJECTION_CUSTOM;
-
-//Possible Director Types.
-/**
- * <p>Will use a Director that triggers the main loop from an NSTimer object <br/>
- * <br/>
- * Features and Limitations:  <br/>
- * - Integrates OK with UIKit objects   <br/>
- * - It the slowest director    <br/>
- * - The interval update is customizable from 1 to 60
- * </p>
- * @constant
- * @type Number
- */
-cc.CCDIRECTOR_TYPE_NS_TIMER = 0;
-
-/**
- * <p>will use a Director that triggers the main loop from a custom main loop.<br/>
- * <br/>
- * Features and Limitations:<br/>
- * - Faster than NSTimer Director<br/>
- * - It doesn't integrate well with UIKit objects<br/>
- * - The interval update can't be customizable  </p>
- * @constant
- * @type Number
- */
-cc.CCDIRECTOR_TYPE_MAIN_LOOP = 1;
-
-/**
- * <p>Will use a Director that triggers the main loop from a thread, but the main loop will be executed on the main thread.<br/>
- * <br/>
- * Features and Limitations:<br/>
- * - Faster than NSTimer Director<br/>
- * - It doesn't integrate well with UIKit objects<br/>
- * - The interval update can't be customizable </p>
- * @constant
- * @type Number
- */
-cc.CCDIRECTOR_TYPE_THREAD_MAIN_LOOP = 2;
-
-/**
- * <p>Will use a Director that synchronizes timers with the refresh rate of the display. <br/>
- * <br/>
- * Features and Limitations:  <br/>
- * - Faster than NSTimer Director <br/>
- * - Only available on 3.1+   <br/>
- * - Scheduled timers & drawing are synchronizes with the refresh rate of the display <br/>
- * - Integrates OK with UIKit objects <br/>
- * - The interval update can be 1/60, 1/30, 1/15  </p>
- * @constant
- * @type Number
- */
-cc.CCDIRECTOR_TYPE_DISPLAY_LINK = 3;
-
-/**
- * Default director is the NSTimer directory
- * @constant
- * @type Number
- */
-cc.CCDIRECTOR_TYPE_DEFAULT = cc.CCDIRECTOR_TYPE_NS_TIMER;
-
-// backward compatibility stuff
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_TYPE_NS_TIMER = cc.CCDIRECTOR_TYPE_NS_TIMER;
-
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_TYPE_MAIN_LOOP = cc.CCDIRECTOR_TYPE_MAIN_LOOP;
-
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_TYPE_THREAD_MAIN_LOOP = cc.CCDIRECTOR_TYPE_THREAD_MAIN_LOOP;
-
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_TYPE_DISPLAY_LINK = cc.CCDIRECTOR_TYPE_DISPLAY_LINK;
-
-/**
- * @constant
- * @type Number
- */
-cc.DIRECTOR_TYPE_DEFAULT = cc.CCDIRECTOR_TYPE_DEFAULT;
-
-
+//----------------------------------------------------------------------------------------------------------------------
 //Possible device orientations
 /**
  * Device oriented vertically, home button on the bottom (UIDeviceOrientationPortrait)
@@ -229,6 +117,8 @@ cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_LEFT;
  */
 cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT;
 
+//----------------------------------------------------------------------------------------------------------------------
+
 /**
  * <p>
  *    Class that creates and handle the main Window and manages how<br/>
@@ -256,26 +146,29 @@ cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT;
  */
 cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     //Variables
-    _displayFPS:false,
     _isContentScaleSupported:false,
     _landscape:false,
     _nextDeltaTimeZero:false,
     _paused:false,
     _purgeDirecotorInNextLoop:false,
-    _retinaDisplay:false,
     _sendCleanupToScene:false,
     _animationInterval:0.0,
     _oldAnimationInterval:0.0,
-    _deviceOrientation:0,
     _projection:0,
     _accumDt:0.0,
-    _accumDtForProfiler:0.0,
     _contentScaleFactor:1.0,
+
+    _displayStats:false,
     _deltaTime:0.0,
     _frameRate:0.0,
+
+    _FPSLabel:null,
+    _SPFLabel:null,
+    _drawsLabel:null,
+
     _winSizeInPixels:null,
     _winSizeInPoints:null,
-    _FPSLabel:null,
+
     _lastUpdate:null,
     _nextScene:null,
     _notificationNode:null,
@@ -286,25 +179,36 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _szFPS:'',
     _frames:0,
     _totalFrames:0,
+    _secondsPerFrame:0,
 
     _dirtyRegion:null,
+
+    _scheduler:null,
+    _actionManager:null,
+    _touchDispatcher:null,
+    _keypadDispatcher:null,
+    _accelerometer:null,
+
+    _watcherFun:null,
+    _watcherSender:null,
+
+    /**
+     * Constructor
+     */
+    ctor:function(){
+
+    },
 
     /**
      * initializes cc.Director
      * @return {Boolean}
      */
     init:function () {
-        if (!this._FPSLabel) {
-            this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 24);
-        }
-        this._FPSLabel.setPosition(cc.ccp(0, 0));
-        this._FPSLabel.setAnchorPoint(cc.ccp(0, 0));
         // scenes
         //TODO these are already set to null, so maybe we can remove them in the init?
         this._runningScene = null;
         this._nextScene = null;
         this._notificationNode = null;
-
 
         this._oldAnimationInterval = this._animationInterval = 1.0 / cc.defaultFPS;
         this._scenesStack = [];
@@ -314,7 +218,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._projectionDelegate = null;
 
         //FPS
-        this._displayFPS = false;//can remove
+        this._accumDt = 0;
+        this._frameRate = 0;
+        this._displayStats = false;//can remove
         this._totalFrames = this._frames = 0;
         this._szFPS = "";
         this._lastUpdate = new cc.timeval();
@@ -326,46 +232,29 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._purgeDirecotorInNextLoop = false;
         this._winSizeInPixels = this._winSizeInPoints = cc.SizeMake(cc.canvas.width, cc.canvas.height);
 
-        //portrait mode default
-        this._deviceOrientation = cc.DEVICE_ORIENTATION_PORTRAIT;
         this._openGLView = null;
-        this._retinaDisplay = false;
         this._contentScaleFactor = 1.0;
         this._isContentScaleSupported = false;
-        return true;
-    },
 
-    /**
-     * rotates the screen if an orientation different than Portrait is used
-     */
-    applyOrientation:function () {
-        var s = this._winSizeInPixels;
-        var w = s.width / 2;
-        var h = s.height / 2;
-        // XXX it's using hardcoded values.
-        // What if the the screen size changes in the future?
-        switch (this._deviceOrientation) {
-            case cc.DEVICE_ORIENTATION_PORTRAIT:
-                // nothing
-                break;
-            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
-                // upside down
-                //TODO OpenGL stuff
-                /*glTranslatef(w,h,0);
-                 glRotatef(180,0,0,1);
-                 glTranslatef(-w,-h,0);*/
-                break;
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
-                /*glTranslatef(w,h,0);
-                 glRotatef(90,0,0,1);
-                 glTranslatef(-h,-w,0);*/
-                break;
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
-                /*glTranslatef(w,h,0);
-                 glRotatef(-90,0,0,1);
-                 glTranslatef(-h,-w,0);*/
-                break;
-        }
+        this._watcherFun = null;
+        this._watcherSender = null;
+
+        //scheduler
+        this._scheduler = new cc.Scheduler();
+        //action manager
+        this._actionManager = new cc.ActionManager();
+        this._scheduler.scheduleUpdateForTarget(this._actionManager, cc.PRIORITY_SYSTEM, false);
+        //touchDispatcher
+        this._touchDispatcher = new cc.TouchDispatcher();
+        this._touchDispatcher.init();
+
+        //KeypadDispatcher
+        this._keypadDispatcher = new cc.KeypadDispatcher();
+
+        //accelerometer
+        //this._accelerometer = new cc.Accelerometer();
+
+        return true;
     },
 
     /**
@@ -380,12 +269,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             return;
         }
 
-        //new delta time
+        // new delta time.
         if (this._nextDeltaTimeZero) {
             this._deltaTime = 0;
             this._nextDeltaTimeZero = false;
-        }
-        else {
+        } else {
             this._deltaTime = (now.tv_sec - this._lastUpdate.tv_sec) + (now.tv_usec - this._lastUpdate.tv_usec) / 1000000.0;
             this._deltaTime = Math.max(0, this._deltaTime);
         }
@@ -407,28 +295,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Point}
      */
     convertToGL:function (point) {
-        var s = this._winSizeInPoints;
-        var newY = s.height - point.y;
-        var newX = s.width - point.x;
-
-        var ret = cc.PointZero();
-        switch (this._deviceOrientation) {
-            case cc.DEVICE_ORIENTATION_PORTRAIT:
-                ret = cc.ccp(point.x, newY);
-                break;
-            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
-                ret = cc.ccp(newX, point.y);
-                break;
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
-                ret.x = point.y;
-                ret.y = point.x;
-                break;
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
-                ret.x = newY;
-                ret.y = newX;
-                break;
-        }
-        return ret;
+        var newY = this._winSizeInPoints.height - point.y;
+        return new cc.Point(point.x, newY);
     },
 
     /**
@@ -438,28 +306,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Point}
      */
     convertToUI:function (point) {
-        var winSize = this._winSizeInPoints;
-        var oppositeX = winSize.width - point.x;
-        var oppositeY = winSize.height - point.y;
-        var uiPoint = cc.PointZero();
-
-        switch (this._deviceOrientation) {
-            case cc.DEVICE_ORIENTATION_PORTRAIT:
-                uiPoint = cc.ccp(point.x, oppositeY);
-                break;
-            case cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN:
-                uiPoint = cc.ccp(oppositeX, point.y);
-                break;
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT:
-                uiPoint = cc.ccp(point.y, point.x);
-                break;
-            case cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT:
-                // Can't use oppositeX/Y because x/y are flipped
-                uiPoint = cc.ccp(winSize.width - point.y, winSize.height - point.x);
-                break;
-        }
-        return uiPoint;
-
+        var oppositeY = this._winSizeInPoints.height - point.y;
+        return new cc.Point(point.x,oppositeY);
     },
 
     //_fullRect:null,
@@ -472,7 +320,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         //tick before glClear: issue #533
         if (!this._paused) {
-            cc.Scheduler.sharedScheduler().tick(this._deltaTime);
+            this._scheduler.update(this._deltaTime);
         }
         //this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
         //cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
@@ -481,6 +329,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         /*
          var isSaveContext = false;
          //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
          if (this._dirtyRegion) {
          //cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
@@ -512,11 +361,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this.setNextScene();
         }
 
-        //glPushMatrix();
-        this.applyOrientation();
-
-        // By default enable VertexArray, ColorArray, TextureCoordArray and Texture2D
-        cc.ENABLE_DEFAULT_GL_STATES();
+        //kmGLPushMatrix();
 
         // draw the scene
         if (this._runningScene) {
@@ -539,23 +384,26 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._notificationNode.visit();
         }
 
-        if (this._displayFPS) {
-            this.showFPS();
+        if (this._displayStats) {
+            this._showStats();
         }
 
-        if (cc.ENABLE_PROFILERS) {
-            this.showProfilers();
+        if(this._watcherFun && this._watcherSender){
+            this._watcherFun.call(this._watcherSender);
         }
 
-        cc.DISABLE_DEFAULT_GL_STATES();
         //TODO OpenGL
-        //glPopMatrix();
+        //kmGLPopMatrix();
 
         this._totalFrames++;
 
         // swap buffers
         if (this._openGLView) {
             this._openGLView.swapBuffers();
+        }
+
+        if(this._displayStats){
+            this._calculateMPF();
         }
     },
 
@@ -605,22 +453,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             return false;
         }
 
+        // SD device
+        if (this._openGLView.getMainScreenScale() == 1.0) {
+            return false;
+        }
+
         var newScale = (enabled) ? 2 : 1;
         this.setContentScaleFactor(newScale);
 
-        // release cached texture
-        cc.TextureCache.purgeSharedTextureCache();
-
-        if (cc.DIRECTOR_FAST_FPS) {
-            if (!this._FPSLabel) {
-                this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 24);
-                this._FPSLabel.setPosition(cc.ccp(0, 0));
-                this._FPSLabel.setAnchorPoint(cc.ccp(0, 0));
-            }
-        }
-
-        this._retinaDisplay = !!(this._contentScaleFactor == 2);
-
+        this._createStatsLabel();
         return true;
     },
 
@@ -643,22 +484,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * get orientation of device
-     * @return {Number}
-     */
-    getDeviceOrientation:function () {
-        return this._deviceOrientation;
-    },
-
-    /**
-     * returns the display size of the OpenGL view in pixels. It doesn't take into account any possible rotation of the window.
-     * @return {cc.Size}
-     */
-    getDisplaySizeInPixels:function () {
-        return this._winSizeInPixels;
-    },
-
-    /**
      * <p>
      *    This object will be visited after the main scene is visited.<br/>
      *    This object MUST implement the "visit" selector.<br/>
@@ -678,15 +503,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Size}
      */
     getWinSize:function () {
-        var tmp = this._winSizeInPoints;
-        if (this._deviceOrientation == cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT || this._deviceOrientation == cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT) {
-            // swap x,y in landspace mode
-            var size = new cc.SizeZero();
-            size.width = tmp.height;
-            size.height = tmp.width;
-            return size;
-        }
-        return tmp;
+        return this._winSizeInPoints;
     },
 
     /**
@@ -698,16 +515,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Size}
      */
     getWinSizeInPixels:function () {
-        var size = this.getWinSize();
-
-        size.width *= cc.CONTENT_SCALE_FACTOR();
-        size.height *= cc.CONTENT_SCALE_FACTOR();
-
-        return size;
+        return this._winSizeInPixels;
     },
 
     getZEye:function () {
-        return (this._winSizeInPixels.height / 1.1566);
+        return (this._winSizeInPixels.height / 1.1566 / cc.CONTENT_SCALE_FACTOR());
     },
 
     /**
@@ -754,7 +566,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     purgeCachedData:function () {
         cc.LabelBMFont.purgeCachedData();
-        cc.TextureCache.sharedTextureCache().removeUnusedTextures();
+        //cc.TextureCache.sharedTextureCache().removeUnusedTextures();
     },
 
     /**
@@ -763,7 +575,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     purgeDirector:function () {
         // don't release the event handlers
         // They are needed in case the director is run again
-        cc.TouchDispatcher.sharedDispatcher().removeAllDelegates();
+        this._touchDispatcher.removeAllDelegates();
 
         if (this._runningScene) {
             this._runningScene.onExit();
@@ -780,19 +592,26 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.stopAnimation();
 
         // purge bitmap cache
-        //cc.LabelBMFont.purgeCachedData();
+        cc.LabelBMFont.purgeCachedData();
 
         // purge all managers
         cc.AnimationCache.purgeSharedAnimationCache();
         cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
-        cc.ActionManager.sharedManager().purgeSharedManager();
-        cc.Scheduler.purgeSharedScheduler();
         cc.TextureCache.purgeSharedTextureCache();
 
-        if (cc.TARGET_PLATFORM != cc.PLATFORM_MARMALADE) {
-            cc.UserDefault.purgeSharedUserDefault();
-        }
+        //CCShaderCache::purgeSharedShaderCache();
+        //CCFileUtils::purgeFileUtils();
+        //CCConfiguration::purgeConfiguration();
+        //extension::CCNotificationCenter::purgeNotificationCenter();
+        //extension::CCTextureWatcher::purgeTextureWatcher();
+        //extension::CCNodeLoaderLibrary::purgeSharedCCNodeLoaderLibrary();
+        //cc.UserDefault.purgeSharedUserDefault();
+        //ccGLInvalidateStateCache();
+
+        //CHECK_GL_ERROR_DEBUG();
+
         // OpenGL view
+        this._openGLView.end();
         this._openGLView = null;
     },
 
@@ -832,52 +651,17 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
-     * reset director
-     */
-    resetDirector:function () {
-        // don't release the event handlers
-        // They are needed in case the director is run again
-        cc.TouchDispatcher.sharedDispatcher().removeAllDelegates();
-
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
-
-        if (this._runningScene) {
-            this._runningScene.onExit();
-            this._runningScene.cleanup();
-            this._runningScene.release();
-        }
-
-        this._runningScene = null;
-        this._nextScene = null;
-
-        // remove all objects, but don't release it.
-        // runWithScene might be executed after 'end'.
-        this._scenesStack.removeAllObjects();
-
-        this.stopAnimation();
-
-        // purge bitmap cache
-        cc.LabelBMFont.purgeCachedData();
-
-        // purge all managers
-        cc.AnimationCache.purgeSharedAnimationCache();
-        cc.SpriteFrameCache.purgeSharedSpriteFrameCache();
-        cc.ActionManager.sharedManager().purgeSharedManager();
-        cc.Scheduler.purgeSharedScheduler();
-        cc.TextureCache.purgeSharedTextureCache();
-    },
-
-    /**
      * changes the projection size
      * @param {cc.Size} newWindowSize
      */
     reshapeProjection:function (newWindowSize) {
-        cc.UNUSED_PARAM(newWindowSize);
-        this._winSizeInPoints = this._openGLView.getSize();
-        this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor,
-            this._winSizeInPoints.height * this._contentScaleFactor);
+        if(this._openGLView){
+            this._winSizeInPoints = this._openGLView.getSize();
+            this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor,
+                this._winSizeInPoints.height * this._contentScaleFactor);
 
-        this.setProjection(this._projection);
+            this.setProjection(this._projection);
+        }
     },
 
     /**
@@ -924,12 +708,13 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setAlphaBlending:function (on) {
         if (on) {
             //TODO OpenGL
-            //glEnable(GL_BLEND);
-            //glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+            //ccGLEnable(CC_GL_BLEND);
+            //ccGLBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
         }
         else {
             //glDisable(GL_BLEND);
         }
+        //CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -970,38 +755,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
              {
              glDisable(GL_DEPTH_TEST);*/
         }
-    },
-
-    /**
-     * set Orientation of device
-     * @param {Number} deviceOrientation
-     */
-    setDeviceOrientation:function (deviceOrientation) {
-        var eNewOrientation = cc.Application.sharedApplication().setOrientation(deviceOrientation);
-
-        if ((this._deviceOrientation % cc.DEVICE_MAX_ORIENTATIONS) != (eNewOrientation % cc.DEVICE_MAX_ORIENTATIONS)) {
-            this._deviceOrientation = eNewOrientation;
-            if (cc.renderContextType == cc.CANVAS) {
-                var height = cc.canvas.height;
-                cc.canvas.height = cc.canvas.width;
-                cc.canvas.width = height;
-                cc.renderContext.translate(0, cc.canvas.height);
-                if (cc.domNode) {
-                    var cont = cc.$("#Cocos2dGameContainer");
-                    if (cont) {
-                        cont.style.width = cc.canvas.width + "px";
-                        cont.style.height = cc.canvas.height + "px";
-                    }
-                }
-            }
-        } else {
-            // this logic is only run on win32 now
-            // On win32,the return value of CCApplication::setDeviceOrientation is always CCDEVICE_ORIENTATION_PORTRAIT
-            // So,we should calculate the Projection and window size again.
-            //this._winSizeInPoints = this._openGLView.getSize();
-            //this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
-            //this.setProjection(this._projection);
-        }
+        //CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -1018,15 +772,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // set other opengl default values
         //TODO OpenGl
         //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
-        if (cc.DIRECTOR_FAST_FPS) {
-            if (!this._FPSLabel) {
-                this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 24);
-                this._FPSLabel.setPosition(cc.ccp(0, 0));
-                this._FPSLabel.setAnchorPoint(cc.ccp(0, 0));
-                //this._FPSLabel.retain();
-            }
-        }
     },
 
     /**
@@ -1041,9 +786,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * set next scene
      */
     setNextScene:function () {
-        var runningIsTransition = this._runningScene? this._runningScene instanceof cc.TransitionScene:false;
+        var runningIsTransition = this._runningScene ? this._runningScene instanceof cc.TransitionScene : false;
 
-        var newIsTransition = this._nextScene? this._nextScene instanceof cc.TransitionScene:false;
+        var newIsTransition = this._nextScene ? this._nextScene instanceof cc.TransitionScene : false;
 
         // If it is not a transition, call onExit/cleanup
         if (!newIsTransition) {
@@ -1090,15 +835,21 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             // set size
             this._winSizeInPoints = this._openGLView.getSize();
             this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
-            this.setGLDefaultValues();
+
+            this._createStatsLabel();
+
+            if(this._openGLView){
+                this.setGLDefaultValues();
+            }
+
+            //CHECK_GL_ERROR_DEBUG();
 
             if (this._contentScaleFactor != 1) {
                 this.updateContentScaleFactor();
             }
 
-            var touchDispatcher = cc.TouchDispatcher.sharedDispatcher();
-            this._openGLView.setTouchDelegate(touchDispatcher);
-            touchDispatcher.setDispatchEvents(true);
+            this._openGLView.setTouchDelegate(this._touchDispatcher);
+            this._touchDispatcher.setDispatchEvents(true);
         }
     },
 
@@ -1108,37 +859,47 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setProjection:function (projection) {
         var size = this._winSizeInPixels;
-        var zeye = this.getZEye();
+        var sizePoint = this._winSizeInPoints;
+
+        if(this._openGLView){
+            this._openGLView.setViewPortInPoints(0, 0, sizePoint.width, sizePoint.height);
+        }
+
         switch (projection) {
             case cc.CCDIRECTOR_PROJECTION_2D:
-                if (this._openGLView) {
-                    this._openGLView.setViewPortInPoints(0, 0, size.width, size.height);
-                }
                 //TODO OpenGL
-                //glMatrixMode(GL_PROJECTION);
-                //glLoadIdentity();
-                //ccglOrtho(0, size.width, 0, size.height, -1024 * cc.CONTENT_SCALE_FACTOR(),1024 * cc.CONTENT_SCALE_FACTOR());
-                //glMatrixMode(GL_MODELVIEW);
-                //glLoadIdentity();
+                /* kmGLMatrixMode(KM_GL_PROJECTION);
+                kmGLLoadIdentity();
+                kmMat4 orthoMatrix;
+                kmMat4OrthographicProjection(&orthoMatrix, 0, size.width / CC_CONTENT_SCALE_FACTOR(), 0, size.height / CC_CONTENT_SCALE_FACTOR(), -1024, 1024 );
+                kmGLMultMatrix(&orthoMatrix);
+                kmGLMatrixMode(KM_GL_MODELVIEW);
+                kmGLLoadIdentity();*/
                 break;
-
             case cc.CCDIRECTOR_PROJECTION_3D:
-                if (this._openGLView) {
-                    this._openGLView.setViewPortInPoints(0, 0, size.width, size.height);
-                }
                 //TODO OpenGl
-                /*
-                 glMatrixMode(GL_PROJECTION);
-                 glLoadIdentity();
-                 gluPerspective(60, (GLfloat)size.width/size.height, 0.5f, 1500.0f);
+                /* float zeye = this->getZEye();
 
-                 glMatrixMode(GL_MODELVIEW);
-                 glLoadIdentity();
-                 gluLookAt( size.width/2, size.height/2, zeye,
-                 size.width/2, size.height/2, 0,
-                 0.0f, 1.0f, 0.0f);*/
+                kmMat4 matrixPerspective, matrixLookup;
+
+                kmGLMatrixMode(KM_GL_PROJECTION);
+                kmGLLoadIdentity();
+
+                // issue #1334
+                kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, zeye*2);
+                // kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, 1500);
+
+                kmGLMultMatrix(&matrixPerspective);
+
+                kmGLMatrixMode(KM_GL_MODELVIEW);
+                kmGLLoadIdentity();
+                kmVec3 eye, center, up;
+                kmVec3Fill( &eye, sizePoint.width/2, sizePoint.height/2, zeye );
+                kmVec3Fill( &center, sizePoint.width/2, sizePoint.height/2, 0.0f );
+                kmVec3Fill( &up, 0.0f, 1.0f, 0.0f);
+                kmMat4LookAt(&matrixLookup, &eye, &center, &up);
+                kmGLMultMatrix(&matrixLookup);*/
                 break;
-
             case cc.CCDIRECTOR_PROJECTION_CUSTOM:
                 if (this._projectionDelegate) {
                     this._projectionDelegate.updateProjection();
@@ -1146,42 +907,42 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 break;
 
             default:
-                cc.Log("cocos2d: Director: unrecognized projecgtion");
+                cc.Log("cocos2d: Director: unrecognized projection");
                 break;
         }
 
         this._projection = projection;
+        //ccSetProjectionMatrixDirty();
     },
 
     /**
      * shows the FPS in the screen
      */
-    showFPS:function () {
+    _showStats:function () {
         this._frames++;
         this._accumDt += this._deltaTime;
+        if(this._displayStats){
+            if(this._FPSLabel && this._SPFLabel && this._drawsLabel){
+                if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
+                    this._SPFLabel.setString(this._secondsPerFrame.toFixed(3));
 
-        if (this._accumDt > cc.DIRECTOR_FPS_INTERVAL) {
-            this._frameRate = this._frames / this._accumDt;
-            this._frames = 0;
-            this._accumDt = 0;
+                    this._frameRate = this._frames / this._accumDt;
+                    this._frames = 0;
+                    this._accumDt = 0;
 
-            this._szFPS = ('' + this._frameRate.toFixed(1));
-            this._FPSLabel.setString(this._szFPS);
-        }
-        this._FPSLabel.draw();
-    },
+                    this._szFPS = ('' + this._frameRate.toFixed(1));
+                    this._FPSLabel.setString(this._szFPS);
 
-    /**
-     * show profiler
-     */
-    showProfilers:function () {
-        if (cc.ENABLE_PROFILERS) {
-            this._accumDtForProfiler += this._deltaTime;
-            if (this._accumDtForProfiler > 1.0) {
-                this._accumDtForProfiler = 0;
-                cc.Profiler.sharedProfiler().displayTimers();
+                    this._drawsLabel.setString((0|cc.g_NumberOfDraws).toString());
+                }
+                this._FPSLabel.visit();
+                this._SPFLabel.visit();
+                this._drawsLabel.visit();
+            }else{
+                this._createStatsLabel();
             }
         }
+        cc.g_NumberOfDraws = 0;
     },
 
     /**
@@ -1196,14 +957,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         else {
             cc.Log("cocos2d: setContentScaleFactor:'is not supported on this device");
         }
-    },
-
-    /**
-     * is support retina display
-     * @return {Boolean}
-     */
-    isRetinaDisplay:function () {
-        return this._retinaDisplay;
     },
 
     /**
@@ -1238,16 +991,23 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * Whether or not to display the FPS on the bottom-left corner
      * @return {Boolean}
      */
-    isDisplayFPS:function () {
-        return this._displayFPS;
+    isDisplayStats:function () {
+        return this._displayStats;
     },
 
     /**
      * Display the FPS on the bottom-left corner
      * @param displayFPS
      */
-    setDisplayFPS:function (displayFPS) {
-        this._displayFPS = displayFPS;
+    setDisplayStats:function (displayStats) {
+        this._displayStats = displayStats;
+    },
+
+    /**
+     * seconds per frame
+     */
+    getSecondsPerFrame:function(){
+       return this._secondsPerFrame;
     },
 
     /**
@@ -1278,8 +1038,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * How many frames were called since the director started
      * @return {Number}
      */
-    getFrames:function () {
-        return this._frames;
+    getTotalFrames:function () {
+        return this._totalFrames;
     },
 
     /**
@@ -1288,44 +1048,107 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     getProjection:function () {
         return this._projection;
+    },
+
+    /**
+     * <p>
+     *     Pops out all scenes from the queue until the root scene in the queue. <br/>
+     *     This scene will replace the running one.  <br/>
+     *     The running scene will be deleted. If there are no more scenes in the stack the execution is terminated. <br/>
+     *     ONLY call it if there is a running scene.
+     * </p>
+     */
+    popToRootScene:function(){
+        cc.Assert(this._runningScene != null, "A running Scene is needed");
+        var c = this._scenesStack.length;
+
+        if (c == 1) {
+            this._scenesStack.pop();
+            this.end();
+        } else {
+            while (c > 1) {
+                var current = this._scenesStack.pop();
+                if( current.isRunning()) {
+                    current.onExit();
+                }
+                current.cleanup();
+                c--;
+            }
+            this._nextScene = this._scenesStack[this._scenesStack.length -1];
+            this._sendCleanupToScene = false;
+        }
+    },
+
+    setWatcherCallbackFun:function(pSender,func){
+       this._watcherFun = func;
+        this._watcherSender = pSender;
+    },
+
+    /**
+     * (cc.Scheduler associated with this director)
+     */
+    getScheduler:function(){
+        return this._scheduler;
+    },
+
+    setScheduler:function(scheduler){
+        if (this._scheduler != scheduler) {
+            this._scheduler = scheduler;
+        }
+    },
+
+    getActionManager:function(){
+       return this._actionManager;
+    },
+    setActionManager:function(actionManager){
+        if (this._actionManager != actionManager) {
+            this._actionManager = actionManager;
+        }
+    },
+
+    getTouchDispatcher:function(){
+       return this._touchDispatcher;
+    },
+    setTouchDispatcher:function(touchDispatcher){
+        if (this._touchDispatcher != touchDispatcher) {
+            this._touchDispatcher = touchDispatcher;
+        }
+    },
+
+    getKeypadDispatcher:function(){
+        return this._keypadDispatcher;
+    },
+    setKeypadDispatcher:function(keypadDispatcher){
+        this._keypadDispatcher = keypadDispatcher;
+    },
+
+    getAccelerometer:function(){
+       return this._accelerometer;
+    },
+    setAccelerometer:function(accelerometer){
+        if (this._accelerometer != accelerometer) {
+            this._accelerometer = accelerometer;
+        }
+    },
+
+    _createStatsLabel:function(){
+        this._FPSLabel = cc.LabelTTF.create("00.0",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
+        this._SPFLabel = cc.LabelTTF.create("0.000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
+        this._drawsLabel = cc.LabelTTF.create("000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
+
+        this._drawsLabel.setPosition( cc.ccpAdd( new cc.Point(20,48), cc.DIRECTOR_STATS_POSITION ) );
+        this._SPFLabel.setPosition( cc.ccpAdd( new cc.Point(20,30), cc.DIRECTOR_STATS_POSITION ) );
+        this._FPSLabel.setPosition( cc.ccpAdd( new cc.Point(20,10), cc.DIRECTOR_STATS_POSITION ) );
+    },
+
+    _calculateMPF:function(){
+        var now = cc.Time.gettimeofdayCocos2d();
+
+        this._secondsPerFrame = (now.tv_sec - this._lastUpdate.tv_sec) + (now.tv_usec - this._lastUpdate.tv_usec) / 1000000.0;
     }
 });
 
-/**
- * returns a shared instance of the director
- * @function
- * @return {cc.Director}
- */
-cc.Director.sharedDirector = function () {
-    if (cc.firstRun) {
-        cc.sharedDirector.init();
-        cc.firstRun = false;
-    }
-    return cc.sharedDirector;
-};
 
-/**
- * <p>
- *     There are 4 types of Director.<br/>
- *       - kCCDirectorTypeNSTimer (default)<br/>
- *       - kCCDirectorTypeMainLoop<br/>
- *       - kCCDirectorTypeThreadMainLoop<br/>
- *       - kCCDirectorTypeDisplayLink<br/>
- *      <br/>
- *      Each Director has it's own benefits, limitations.<br/>
- *      Now we only support DisplayLink director, so it has not effect.<br/>
- *      <br/>
- *      This method should be called before any other call to the director.
- * </p>
- * @function
- * @param obDirectorType
- * @return {Boolean}
- */
-cc.Director.setDirectorType = function (obDirectorType) {
-    // we only support CCDisplayLinkDirector
-    cc.Director.sharedDirector();
-    return true;
-};
 
 /***************************************************
  * implementation of DisplayLinkDirector
@@ -1360,8 +1183,8 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
      */
     mainLoop:function () {
         if (this._purgeDirecotorInNextLoop) {
-            this.purgeDirector();
             this._purgeDirecotorInNextLoop = false;
+            this.purgeDirector();
         }
         else if (!this.invalid) {
             this.drawScene();
@@ -1388,7 +1211,23 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
     }
 });
 
-cc.sharedDirector = new cc.DisplayLinkDirector();
+cc.s_SharedDirector = null;
+
+cc.firstUseDirector = true;
+
+/**
+ * returns a shared instance of the director
+ * @function
+ * @return {cc.Director}
+ */
+cc.Director.sharedDirector = function () {
+    if(cc.firstUseDirector){
+        cc.firstUseDirector = false;
+        cc.s_SharedDirector = new cc.DisplayLinkDirector();
+        cc.s_SharedDirector.init();
+    }
+    return cc.s_SharedDirector;
+};
 
 /**
  * is director first run

@@ -91,9 +91,9 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         director.replaceScene(this._inScene);
 
         // enable events while transitions
-        cc.TouchDispatcher.sharedDispatcher().setDispatchEvents(true);
+        director.getTouchDispatcher().setDispatchEvents(true);
         // issue #267
-        this._outScene.setIsVisible(true);
+        this._outScene.setVisible(true);
     },
 
     //protected
@@ -162,11 +162,15 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
             // retain
             this._inScene = scene;
             this._outScene = cc.Director.sharedDirector().getRunningScene();
+            if(!this._outScene){
+                this._outScene = cc.Scene.create();
+                this._outScene.init();
+            }
 
             cc.Assert(this._inScene != this._outScene, "CCTransitionScene.initWithDuration() Incoming scene must be different from the outgoing scene");
 
             // disable events while transitions
-            cc.TouchDispatcher.sharedDispatcher().setDispatchEvents(false);
+            cc.Director.sharedDirector().getTouchDispatcher().setDispatchEvents(false);
             this._sceneOrder();
 
             return true;
@@ -180,13 +184,13 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      */
     finish:function () {
         // clean up
-        this._inScene.setIsVisible(true);
+        this._inScene.setVisible(true);
         this._inScene.setPosition(cc.ccp(0, 0));
         this._inScene.setScale(1.0);
         this._inScene.setRotation(0.0);
         this._inScene.getCamera().restore();
 
-        this._outScene.setIsVisible(false);
+        this._outScene.setVisible(false);
         this._outScene.setPosition(cc.ccp(0, 0));
         this._outScene.setScale(1.0);
         this._outScene.setRotation(0.0);
@@ -200,8 +204,8 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * set hide the out scene and show in scene
      */
     hideOutShowIn:function () {
-        this._inScene.setIsVisible(true);
-        this._outScene.setIsVisible(false);
+        this._inScene.setVisible(true);
+        this._outScene.setVisible(false);
     }
 });
 /**
@@ -274,6 +278,7 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
 
     /**
      * Custom On Enter callback
+     * @override
      */
     onEnter:function () {
         this._super();
@@ -286,13 +291,13 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
 
         var rotozoom = cc.Sequence.create(
             cc.Spawn.create(cc.ScaleBy.create(this._duration / 2, 0.001),
-                cc.RotateBy.create(this._duration / 2, 360 * 2), null),
-            cc.DelayTime.create(this._duration / 2), null);
+                cc.RotateBy.create(this._duration / 2, 360 * 2)),
+            cc.DelayTime.create(this._duration / 2));
 
         this._outScene.runAction(rotozoom);
         this._inScene.runAction(
             cc.Sequence.create(rotozoom.reverse(),
-                cc.CallFunc.create(this, this.finish), null));
+                cc.CallFunc.create(this, this.finish)));
     }
 });
 
@@ -337,14 +342,13 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZo
         var scaleIn = cc.ScaleTo.create(this._duration / 4, 1.0);
         var scaleOut = cc.ScaleTo.create(this._duration / 4, 0.5);
 
-        var jumpZoomOut = cc.Sequence.create(scaleOut, jump, null);
-        var jumpZoomIn = cc.Sequence.create(jump, scaleIn, null);
+        var jumpZoomOut = cc.Sequence.create(scaleOut, jump);
+        var jumpZoomIn = cc.Sequence.create(jump, scaleIn);
 
         var delay = cc.DelayTime.create(this._duration / 2);
         this._outScene.runAction(jumpZoomOut);
         this._inScene.runAction(cc.Sequence.create(delay, jumpZoomIn,
-            cc.CallFunc.create(this, this.finish),
-            null));
+            cc.CallFunc.create(this, this.finish)));
     }
 });
 
@@ -777,8 +781,7 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
         this._outScene.runAction(
             cc.Sequence.create(
                 this.easeActionWithAction(scaleOut),
-                cc.CallFunc.create(this, this.finish),
-                null
+                cc.CallFunc.create(this, this.finish)
             )
         );
     },
@@ -825,7 +828,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -848,16 +851,14 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
                 cc.Show.create(),
                 //TODO
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
-                cc.CallFunc.create(this, this.finish),
-                null
+                cc.CallFunc.create(this, this.finish)
             );
 
         outA = cc.Sequence.create
             (
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
                 cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2),
-                null
+                cc.DelayTime.create(this._duration / 2)
             );
 
         this._inScene.runAction(inA);
@@ -904,7 +905,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -927,15 +928,13 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
                 cc.DelayTime.create(this._duration / 2),
                 cc.Show.create(),
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-                cc.CallFunc.create(this, this.finish),
-                null
+                cc.CallFunc.create(this, this.finish)
             );
         outA = cc.Sequence.create
             (
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
                 cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2),
-                null
+                cc.DelayTime.create(this._duration / 2)
             );
 
         this._inScene.runAction(inA);
@@ -981,7 +980,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1004,15 +1003,13 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
                 cc.DelayTime.create(this._duration / 2),
                 cc.Show.create(),
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
-                cc.CallFunc.create(this, this.finish),
-                null
+                cc.CallFunc.create(this, this.finish)
             );
         outA = cc.Sequence.create
             (
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
                 cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2),
-                null
+                cc.DelayTime.create(this._duration / 2)
             );
 
         this._inScene.runAction(inA);
@@ -1059,7 +1056,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1076,30 +1073,20 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
             outAngleZ = 0;
         }
         //TODO
-        inA = cc.Sequence.create
-            (
+        inA = cc.Sequence.create(
                 cc.DelayTime.create(this._duration / 2),
-                cc.Spawn.create
-                    (
+                cc.Spawn.create(
                         cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
                         cc.ScaleTo.create(this._duration / 2, 1),
-                        cc.Show.create(),
-                        null
-                    ),
-                cc.CallFunc.create(this, this.finish),
-                null
+                        cc.Show.create()),
+                cc.CallFunc.create(this, this.finish)
             );
-        outA = cc.Sequence.create
-            (
-                cc.Spawn.create
-                    (
+        outA = cc.Sequence.create(
+                cc.Spawn.create(
                         cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
-                        cc.ScaleTo.create(this._duration / 2, 0.5),
-                        null
-                    ),
+                        cc.ScaleTo.create(this._duration / 2, 0.5)),
                 cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2),
-                null
+                cc.DelayTime.create(this._duration / 2)
             );
 
         this._inScene.setScale(0.5);
@@ -1147,7 +1134,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1165,32 +1152,20 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         }
 
         //TODO
-        inA = cc.Sequence.create
-            (
+        inA = cc.Sequence.create(
                 cc.DelayTime.create(this._duration / 2),
-                cc.Spawn.create
-                    (
+                cc.Spawn.create(
                         cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
                         cc.ScaleTo.create(this._duration / 2, 1),
-                        cc.Show.create(),
-                        null
-                    ),
-                cc.CallFunc.create(this, this.finish),
-                null
-            );
+                        cc.Show.create()),
+                cc.CallFunc.create(this, this.finish));
 
-        outA = cc.Sequence.create
-            (
-                cc.Spawn.create
-                    (
+        outA = cc.Sequence.create(
+                cc.Spawn.create(
                         cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
-                        cc.ScaleTo.create(this._duration / 2, 0.5),
-                        null
-                    ),
+                        cc.ScaleTo.create(this._duration / 2, 0.5)),
                 cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2),
-                null
-            );
+                cc.DelayTime.create(this._duration / 2));
 
         this._inScene.setScale(0.5);
         this._inScene.runAction(inA);
@@ -1237,7 +1212,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
         this._super();
 
         var inA, outA;
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
@@ -1255,32 +1230,20 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
         }
 
         //TODO
-        inA = cc.Sequence.create
-            (
+        inA = cc.Sequence.create(
                 cc.DelayTime.create(this._duration / 2),
-                cc.Spawn.create
-                    (
+                cc.Spawn.create(
                         cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
                         cc.ScaleTo.create(this._duration / 2, 1),
-                        cc.Show.create(),
-                        null
-                    ),
+                        cc.Show.create()),
                 cc.Show.create(),
-                cc.CallFunc.create(this, this.finish),
-                null
-            );
-        outA = cc.Sequence.create
-            (
-                cc.Spawn.create
-                    (
+                cc.CallFunc.create(this, this.finish));
+        outA = cc.Sequence.create(
+                cc.Spawn.create(
                         cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
-                        cc.ScaleTo.create(this._duration / 2, 0.5),
-                        null
-                    ),
+                        cc.ScaleTo.create(this._duration / 2, 0.5)),
                 cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2),
-                null
-            );
+                cc.DelayTime.create(this._duration / 2));
 
         this._inScene.setScale(0.5);
         this._inScene.runAction(inA);
@@ -1333,19 +1296,17 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
         this._super();
 
         var l = cc.LayerColor.create(this._color);
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         this.addChild(l, 2, cc.SCENE_FADE);
         var f = this.getChildByTag(cc.SCENE_FADE);
 
         //TODO
-        var a = cc.Sequence.create
-            (
+        var a = cc.Sequence.create(
                 cc.FadeIn.create(this._duration / 2),
                 cc.CallFunc.create(this, this.hideOutShowIn), //CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
                 cc.FadeOut.create(this._duration / 2),
-                cc.CallFunc.create(this, this.finish), //:self selector:@selector(finish)],
-                null
+                cc.CallFunc.create(this, this.finish) //:self selector:@selector(finish)],
             );
         f.runAction(a);
     },
@@ -1463,12 +1424,10 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
 
         // create the blend action
         //TODO
-        var layerAction = cc.Sequence.create
-            (
+        var layerAction = cc.Sequence.create(
                 cc.FadeTo.create(this._duration, 0),
                 cc.CallFunc.create(this, this.hideOutShowIn),
-                cc.CallFunc.create(this, this.finish),
-                null
+                cc.CallFunc.create(this, this.finish)
             );
 
         // run the blend action
@@ -1531,7 +1490,7 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTu
         var toff = cc.TurnOffTiles.create(cc.ccg(x, y), this._duration);
         var action = this.easeActionWithAction(toff);
         //TODO
-        this._outScene.runAction(cc.Sequence.create(action, cc.CallFunc.create(this, this.finish), cc.StopGrid.create(), null));
+        this._outScene.runAction(cc.Sequence.create(action, cc.CallFunc.create(this, this.finish), cc.StopGrid.create()));
     },
 
     /**
@@ -1572,28 +1531,21 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      */
     onEnter:function () {
         this._super();
-        this._inScene.setIsVisible(false);
+        this._inScene.setVisible(false);
 
         var split = this.action();
         //TODO
-        var seq = cc.Sequence.create
-            (
+        var seq = cc.Sequence.create(
                 split,
                 cc.CallFunc.create(this, this.hideOutShowIn),
-                split.reverse(),
-                null
-            );
+                split.reverse());
 
-        this.runAction
-            (
-                cc.Sequence.create
-                    (
+        this.runAction(
+                cc.Sequence.create(
                         this.easeActionWithAction(seq),
                         cc.CallFunc.create(this, this.finish),
-                        cc.StopGrid.create(),
-                        null
-                    )
-            );
+                        cc.StopGrid.create()
+                ));
     },
 
     /**
@@ -1601,7 +1553,6 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      * @return {cc.EaseInOut}
      */
     easeActionWithAction:function (action) {
-        //TODO
         return cc.EaseInOut.create(action, 3.0);
     },
 
@@ -1610,7 +1561,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      */
     action:function () {
         //TODO
-        return cc.SplitCols.actionWithCols(3, this._duration / 2.0);
+        return cc.SplitCols.create(3, this._duration / 2.0);
     }
 });
 
@@ -1686,15 +1637,11 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
 
         var action = this.actionWithSize(cc.ccg(x, y));
 
-        this._outScene.runAction
-            (
-                cc.Sequence.create
-                    (
+        this._outScene.runAction(
+                cc.Sequence.create(
                         this.easeActionWithAction(action),
                         cc.CallFunc.create(this, this.finish),
-                        cc.StopGrid.create(),
-                        null
-                    )
+                        cc.StopGrid.create())
             );
     },
 

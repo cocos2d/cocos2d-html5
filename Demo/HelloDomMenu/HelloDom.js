@@ -23,15 +23,14 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-cc.fullscreen = function()
-{
+cc.fullscreen = function () {
     var container = cc.$("#Cocos2dGameContainer") || cc.canvas;
 
 };
 
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
-    ctor:function(){
+    ctor:function () {
         this._super();
     },
     draw:function () {
@@ -71,9 +70,9 @@ var Helloworld = cc.Layer.extend({
         //this.addChild(this.helloLb, 5);
 
         // add "HelloWorld" splash screen"
-        this.sprite = cc.Sprite.create("Resources/HelloWorld.png");
+        this.sprite = cc.Sprite.create("res/HelloWorld.png");
         this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        this.sprite.setIsVisible(true);
+        this.sprite.setVisible(true);
         this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
         this.sprite.setScale(0.5);
         this.sprite.setRotation(180);
@@ -97,25 +96,25 @@ var Helloworld = cc.Layer.extend({
         this.sprite.runAction(cc.Sequence.create(actionScaleTo, actionScaleToBack));
         this.sprite.runAction(cc.Sequence.create(actionBy, actionByBack));
 
-/*        this.circle = new CircleSprite();
-        this.circle.setPosition(new cc.Point(40, 280));
-        this.addChild(this.circle, 2);
-        this.circle.schedule(this.circle.myUpdate, 1 / 60);*/
+        /*        this.circle = new CircleSprite();
+         this.circle.setPosition(new cc.Point(40, 280));
+         this.addChild(this.circle, 2);
+         this.circle.schedule(this.circle.myUpdate, 1 / 60);*/
 
         //this.helloLb.runAction(cc.MoveBy.create(2.5, cc.ccp(0, 280)));
 
-        this.setIsTouchEnabled(true);
-
+        this.setTouchEnabled(true);
 
 
         var closeItem = cc.MenuItemImage.create(
-            "Resources/CloseNormal.png",
-            "Resources/CloseSelected.png",
+            "res/CloseNormal.png",
+            "res/CloseSelected.png",
             this,
             this.menuCloseCallback);
-        var text = cc.MenuItemFont.create("Hello Dom",this, function(){});
-        text.setColor({r:255,g:0,b:0});
-        text.setPosition(cc.ccp(cc.canvas.width/2,cc.canvas.height/2));
+        var text = cc.MenuItemFont.create("Hello Dom", this, function () {
+        });
+        text.setColor({r:255, g:0, b:0});
+        text.setPosition(cc.ccp(cc.canvas.width / 2, cc.canvas.height / 2));
         closeItem.setPosition(cc.ccp(cc.canvas.width - 20, 20));
         var menu = cc.Menu.create(closeItem, text);
         menu.setPosition(cc.ccp(0, 0));
@@ -129,7 +128,7 @@ var Helloworld = cc.Layer.extend({
     }
 
 });
-var requestFullScreen=function(element) {
+var requestFullScreen = function (element) {
     // Supports most browsers and their versions.
     var el = document.documentElement;
     var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;

@@ -55,9 +55,7 @@ cc.AppDelegate = cc.Application.extend({
 //     director->enableRetinaDisplay(true);
 
         // turn on display FPS
-        director.setDisplayFPS(true);
-
-        // director->setDeviceOrientation(CCDEVICE_ORIENTATION_LANDSCAPE_LEFT);
+        director.setDisplayStats(true);
 
         // set FPS. the default value is 1.0/60 if you don't call this
         director.setAnimationInterval(1.0 / 60);

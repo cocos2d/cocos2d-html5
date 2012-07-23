@@ -42,10 +42,11 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
      * Constructor
      */
     ctor:function () {
-        this._isRelativeAnchorPoint = false;
-        var director = cc.Director.sharedDirector();
+        this._super();
+        this._ignoreAnchorPointForPosition = true;
         this.setAnchorPoint(cc.ccp(0.5, 0.5));
-        this.setContentSize(director.getWinSize());
+
+        this.setContentSize(cc.Director.sharedDirector().getWinSize());
     },
 
     /**
@@ -53,8 +54,7 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
      * @return {Boolean}
      */
     init:function () {
-        var director = cc.Director.sharedDirector();
-        this.setContentSize(director.getWinSize());
+        this.setContentSize(cc.Director.sharedDirector().getWinSize());
         return true;
     }
 });
@@ -68,6 +68,5 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
  * var aScene = new cc.Scene();
  */
 cc.Scene.create = function () {
-    var ret = new cc.Scene();
-    return ret;
+    return new cc.Scene();
 };

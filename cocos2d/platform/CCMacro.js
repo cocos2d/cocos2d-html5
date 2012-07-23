@@ -35,6 +35,12 @@ cc.PI = Math.PI;
  * @constant
  * @type Number
  */
+cc.FLT_MAX = parseFloat('3.402823466e+38F');
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.RAD = cc.PI / 180;
 
 /**
@@ -42,6 +48,13 @@ cc.RAD = cc.PI / 180;
  * @type Number
  */
 cc.DEG = 180 / cc.PI;
+
+/**
+ * maximum unsigned int value
+ * @constant
+ * @type Number
+ */
+cc.UINT_MAX = 0xffffffff;
 
 /**
  * <p>
@@ -104,6 +117,12 @@ cc.RADIANS_TO_DEGREES = function (angle) {
 };
 
 /**
+ * @constant
+ * @type Number
+ */
+cc.REPEAT_FOREVER = Number.MAX_VALUE - 1;
+
+/**
  * default gl blend src function. Compatible with premultiplied alpha images.
  * @constant
  * @type Number
@@ -116,6 +135,23 @@ cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
  * @type Number
  */
 cc.BLEND_DST = 0x0303;
+
+cc.GL_ONE = 1;
+cc.GL_SRC_ALPHA = 0x0302;
+
+/**
+ * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
+ * @param {cc.Node} node setup node
+ * @function
+ */
+cc.NODE_DRAW_SETUP = function (node) {
+    ccGLEnable(node._glServerState);
+    cc.Assert(node.getShaderProgram(), "No shader program set for this node");
+    {
+        node.getShaderProgram().use();
+        node.getShaderProgram().setUniformForModelViewProjectionMatrix();
+    }
+};
 
 /**
  * <p>
@@ -156,6 +192,18 @@ cc.DISABLE_DEFAULT_GL_STATES = function () {
 };
 
 /**
+ * <p>
+ *  Increments the GL Draws counts by one.<br/>
+ *  The number of calls per frame are displayed on the screen when the CCDirector's stats are enabled.<br/>
+ * </p>
+ * @param {Number} addNumber
+ * @function
+ */
+cc.INCREMENT_GL_DRAWS = function (addNumber) {
+    cc.g_NumberOfDraws += addNumber;
+};
+
+/**
  * @constant
  * @type Number
  */
@@ -173,6 +221,46 @@ cc.CONTENT_SCALE_FACTOR = cc.IS_RETINA_DISPLAY_SUPPORTED ? function () {
 } : function () {
     return 1;
 };
+
+/**
+ * Converts a rect in points to pixels
+ * @param {cc.Point} points
+ * @return {cc.Point}
+ * @function
+ */
+cc.POINT_POINTS_TO_PIXELS = function (points) {
+    return new cc.Point(points.x * cc.CONTENT_SCALE_FACTOR(), points.y * cc.CONTENT_SCALE_FACTOR())
+};
+
+/**
+ * Converts a rect in points to pixels
+ * @param {cc.Size} sizeInPoints
+ * @return {cc.Size}
+ * @function
+ */
+cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
+    return new cc.Size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints.height * cc.CONTENT_SCALE_FACTOR());
+};
+
+/**
+ * Converts a rect in pixels to points
+ * @param {cc.Size} sizeInPixels
+ * @return {cc.Size}
+ * @function
+ */
+cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
+    return new cc.Size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
+};
+
+/**
+ * Converts a rect in pixels to points
+ * @param pixels
+ * @function
+ */
+cc.POINT_PIXELS_TO_POINTS = function (pixels) {
+    return new cc.Point(pixels.x / cc.CONTENT_SCALE_FACTOR(), pixels.y / cc.CONTENT_SCALE_FACTOR());
+};
+
 
 /**
  * Converts a rect in pixels to points

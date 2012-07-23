@@ -138,10 +138,10 @@ cc.domNodeMethods = {
                 p.dom.className += type;
             }
             p.dom.appendChild(this.dom);
-            if (p.getIsRunning()) {
+            if (p.isRunning()) {
                 p.show();
             }
-            /*            if(p.getIsRelativeAnchorPoint())
+            /*            if(!p.isIgnoreAnchorPointForPosition())
              {
              this.dom.style.marginLeft = (-this.getParent().getContentSize().width/2) + "px";
              this.dom.style.marginTop = (this.getParent().getContentSize().height/2) + "px";
@@ -157,7 +157,7 @@ cc.domNodeMethods = {
         //we dont know if the parent is the top most level, as it could be not run yet.
         //but if a domnode is added after the scene ran, then, getisRunning will return true, and so in this case,
         //if parent have no more parent, but it is running, we add the parent to the domContainer
-        else if (p.getIsRunning) {
+        else if (p.isRunning()) {
             if (!p.dom) {
                 p.initDom();
                 var type = " CCNode";
@@ -205,7 +205,7 @@ cc.domNode = cc.Class.extend({
     _children:null, //array
     _parent:null, //parent obj
     _tag:-1,
-    _isRelativeAnchorPoint:true,
+    _ignoreAnchorPointForPosition:true,
     _isRunning:false,
     _IsVisible:true,
     ctor:function () {
@@ -272,17 +272,18 @@ cc.domNode = cc.Class.extend({
     getContentSize:function () {
         return new cc.Size(this._contentSize.width, this._contentSize.height);
     },
-    getIsRunning:function () {
+    isRunning:function () {
         return this._isRunning;
     },
-    getIsRelativeAnchorPoint:function () {
-        return this._isRelativeAnchorPoint;
+
+    isIgnoreAnchorPointForPosition:function () {
+        return this._ignoreAnchorPointForPosition;
     },
 
     //Sets
     /// isRelativeAnchorPoint setter
-    setIsRelativeAnchorPoint:function (newValue) {
-        this._isRelativeAnchorPoint = newValue;
+    ignoreAnchorPointForPosition:function (newValue) {
+        this._ignoreAnchorPointForPosition = newValue;
     },
     _setZOrder:function (z) {
         this.dom.style.zIndex = z;
@@ -343,7 +344,7 @@ cc.domNode = cc.Class.extend({
     setAnchorPoint:function (s) {
         this._AnchorPoint = s;
         var size = this.getContentSize();
-        if (this._isRelativeAnchorPoint) {
+        if (this._ignoreAnchorPointForPosition) {
             this.dom.style.left = "-" + (s.x * size.width) + "px";
             this.dom.style.top = "-" + (s.y * size.height) + "px";
             this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";
@@ -431,14 +432,15 @@ cc.domNode = cc.Class.extend({
     onEnterTransitionDidFinish:function () {
         this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.onEnter);
     },
-    setIsVisible:function (isVisible) {
+    setVisible:function (isVisible) {
         if (isVisible) {
             this.show();
         } else {
             this.hide();
         }
     },
-    getIsVisible:function () {
+
+    isVisible:function () {
         if (this.dom.style.display != "block") {
             return false;
         } else {
@@ -452,12 +454,12 @@ cc.domNode = cc.Class.extend({
         this.dom.style.display = "block";
     },
     pauseSchedulerAndActions:function () {
-        cc.Scheduler.sharedScheduler().pauseTarget(this);
-        cc.ActionManager.sharedManager().pauseTarget(this);
+        cc.Director.sharedDirector().getScheduler().pauseTarget(this);
+        cc.Director.sharedDirector().getActionManager().pauseTarget(this);
     },
     resumeSchedulerAndActions:function () {
-        cc.Scheduler.sharedScheduler().resumeTarget(this);
-        cc.ActionManager.sharedManager().resumeTarget(this);
+        cc.Director.sharedDirector().getScheduler().resumeTarget(this);
+        cc.Director.sharedDirector().getActionManager().resumeTarget(this);
     },
     _arrayMakeObjectsPerformSelector:function (array, callbackType) {
         if (!array || array.length == 0)
@@ -511,10 +513,10 @@ cc.domNode = cc.Class.extend({
         this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.cleanup);
     },
     stopAllActions:function () {
-        cc.ActionManager.sharedManager().removeAllActionsFromTarget(this);
+        cc.Director.sharedDirector().getActionManager().removeAllActionsFromTarget(this);
     },
     unscheduleAllSelectors:function () {
-        cc.Scheduler.sharedScheduler().unscheduleAllSelectorsForTarget(this);
+        cc.Director.sharedDirector().getScheduler().unscheduleAllSelectorsForTarget(this);
     }
 });
 cc.domNode.DomContainer = function () {
@@ -598,42 +600,15 @@ cc.Node.implement({
             }
         }
     },
-    setContentSizeInPixels:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._contentSizeInPixels)) {
-            //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-            this._contentSizeInPixels = size;
-            if (cc.CONTENT_SCALE_FACTOR() == 1) {
-                this._contentSize = this._contentSizeInPixels;
-            } else {
-                this._contentSize = cc.SizeMake(size.width / cc.CONTENT_SCALE_FACTOR(), size.height / cc.CONTENT_SCALE_FACTOR());
-            }
-            this._anchorPointInPixels = cc.ccp(this._contentSizeInPixels.width * this._anchorPoint.x,
-                this._contentSizeInPixels.height * this._anchorPoint.y);
 
-            //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-            this.setNodeDirty(); // CC_NODE_TRANSFORM_USING_AFFINE_MATRIX
-            this._updateAnchorPoint();
-        }
-        if (this.dom)
-            this.dom.style.maxHeight = size.height + "px";
-    },
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._contentSize = size;
 
-            if (cc.CONTENT_SCALE_FACTOR() == 1) {
-                this._contentSizeInPixels = this._contentSize;
-            }
-            else {
-                this._contentSizeInPixels = cc.SizeMake(size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
-            }
-
-            this._anchorPointInPixels = cc.ccp(this._contentSizeInPixels.width * this._anchorPoint.x,
-                this._contentSizeInPixels.height * this._anchorPoint.y);
+            this._anchorPointInPoints = cc.ccp(this._contentSize.width * this._anchorPoint.x,
+                this._contentSize.height * this._anchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this.setNodeDirty();
@@ -649,8 +624,8 @@ cc.Node.implement({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._anchorPoint = point;
-            this._anchorPointInPixels = cc.ccp(this._contentSizeInPixels.width * this._anchorPoint.x,
-                this._contentSizeInPixels.height * this._anchorPoint.y);
+            this._anchorPointInPoints = cc.ccp(this._contentSize.width * this._anchorPoint.x,
+                this._contentSize.height * this._anchorPoint.y);
 
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -659,7 +634,7 @@ cc.Node.implement({
         if (this.dom) {
             var size = this.getContentSize();
             var s = point;
-            if (this._isRelativeAnchorPoint) {
+            if (this._ignoreAnchorPointForPosition) {
                 this.dom.style.left = "-" + (s.x * size.width) + "px";
                 this.dom.style.top = (s.y * size.height) + "px";
                 this.dom.style[cc.CSS3.origin] = (s.x * 100) + "% " + (s.y * -size.height) + "px";

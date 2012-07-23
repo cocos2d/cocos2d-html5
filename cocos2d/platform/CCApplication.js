@@ -145,65 +145,37 @@ if (!window.console) {
  * // declare like this: <div id="Cocos2dGameContainer" width="800" height="450"></div>
  * cc.setup("Cocos2dGameContainer");
  */
-cc.setup = function () {
-    //Browser Support Information
-    //event register
-    var gameCanvas;
-    switch (arguments.length) {
-        case 0:
-            //add canvas at document
-            gameCanvas = document.createElement("Canvas");
-            gameCanvas.setAttribute("id", "gameCanvas");
-            gameCanvas.setAttribute("width", 480);
-            gameCanvas.setAttribute("height", 320);
-            document.body.appendChild(gameCanvas);
-            cc.canvas = gameCanvas;
-            cc.renderContext = cc.canvas.getContext("2d");
-            cc.gameDiv = document.body;
-            cc.renderContextType = cc.CANVAS;
-            //document
-            break;
-        case 1:
-            var name = arguments[0];
-            var getElement = null;
-            if (typeof(name) == "string") {
-                getElement = document.getElementById(name);
-            } else {
-                getElement = arguments[0];
-            }
-
-            if (getElement instanceof HTMLCanvasElement) {
-                //HTMLCanvasElement
-                cc.canvas = getElement;
-                cc.gameDiv = getElement.parentNode;
-                cc.renderContext = cc.canvas.getContext("2d");
-                cc.renderContextType = cc.CANVAS;
-            } else if (getElement instanceof HTMLDivElement) {
-                //HTMLDivElement
-                gameCanvas = document.createElement("Canvas");
-                gameCanvas.setAttribute("id", "gameCanvas");
-                gameCanvas.setAttribute("width", getElement.width);
-                gameCanvas.setAttribute("height", getElement.height);
-                getElement.appendChild(gameCanvas);
-                cc.canvas = gameCanvas;
-                cc.renderContext = cc.canvas.getContext("2d");
-                cc.gameDiv = getElement;
-                cc.renderContextType = cc.CANVAS;
-            }
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
+cc.setup = function (el, width, height) {
+    var element = cc.$(el) || cc.$('#' + el);
+    if (element.tagName == "CANVAS") {
+        //it is already a canvas, we wrap it around with a div
+        cc.container = cc.$new("DIV");
+        cc.canvas = element;
+        cc.canvas.parentNode.insertBefore(cc.container, cc.canvas);
+        cc.canvas.appendTo(cc.container);
+        cc.container.style.width = (width || cc.canvas.width || 480) + "px";
+        cc.container.style.height = (height || cc.canvas.height || 320) + "px";
+        cc.container.setAttribute('id', 'Cocos2dGameContainer');
     }
-
+    else {//we must make a new canvas and place into this element
+        if (element.tagName != "DIV") {
+            cc.Log("Warning: target element is not a DIV or CANVAS");
+        }
+        cc.canvas = cc.$new("CANVAS");
+        cc.canvas.addClass = "gameCanvas";
+        cc.canvas.setAttribute("width", width || 480);
+        cc.canvas.setAttribute("height", height || 320);
+        cc.container = element;
+    }
+    cc.renderContext = cc.canvas.getContext("2d");
+    cc.renderContextType = cc.CANVAS;
     if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
     cc.originalCanvasSize = new cc.Size(cc.canvas.width, cc.canvas.height);
 
-    console.log(cc.ENGINE_VERSION);
+    cc.Log(cc.ENGINE_VERSION);
 
     //binding window size
     /*
@@ -213,26 +185,6 @@ cc.setup = function () {
      }
      }, true);
      */
-};
-
-/**
- * setup css style of game div
- * @param {cc.Node} obj
- */
-cc.setupHTML = function (obj) {
-    var canvas = cc.canvas;
-
-    canvas.style.zIndex = 0;
-    var _container = cc.$new("div");
-    _container.id = "Cocos2dGameContainer";
-    _container.style.position = "relative";
-    _container.style.display = "inline-block";
-
-    if (obj) {
-        _container.setAttribute("height", obj.getContentSize().height);
-    }
-    canvas.parentNode.insertBefore(_container, canvas);
-    _container.appendChild(canvas);
 };
 
 /**
@@ -259,25 +211,6 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
     },
 
     /**
-     * Callback by cc.Director for change device orientation.
-     * @param {Number} orientation The defination of orientation which cc.Director want change to.
-     * @return {Number} The actual orientation of the application.
-     * @deprecated Does not require in html5
-     */
-    setOrientation:function (orientation) {
-        // swap width and height
-        // TODO, need to be fixed.
-        /* var pView = cc.Director.sharedDirector().getOpenGLView();
-         if (pView)
-         {
-         return pView.setDeviceOrientation(orientation);
-         }
-         return cc.Director.sharedDirector().getDeviceOrientation(); */
-        return orientation;
-
-    },
-
-    /**
      *  Get status bar rectangle in EGLView window.
      * @param {cc.Rect} rect
      * @deprecated
@@ -295,7 +228,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
      */
     run:function () {
         // Initialize instance and cocos2d.
-        if (!this.initInstance() || !this.applicationDidFinishLaunching()) {
+        if (!this.applicationDidFinishLaunching()) {
             return 0;
         }
         // TODO, need to be fixed.

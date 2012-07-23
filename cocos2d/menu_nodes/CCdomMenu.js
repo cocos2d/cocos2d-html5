@@ -39,7 +39,7 @@ cc.CCMENU_STATE_TRACKING_TOUCH = 1;
  * @constant
  * @type Number
  */
-cc.CCMENU_TOUCH_PRIORITY = -128;
+cc.CCMENU_HANDLER_PRIORITY = -128;
 /**
  * @constant
  * @type Number
@@ -60,7 +60,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
     initWithItems:function (args) {
         this.dom.id = "DomMenu" + Date.now();
         this.dom.className += " domMenu";
-        this._isRelativeAnchorPoint = false;
+        this._ignoreAnchorPointForPosition = false;
         this.setContentSize(cc.Director.sharedDirector().getWinSize());
         for (var i = 0; i < args.length; i++) {
             if (args[i]) {

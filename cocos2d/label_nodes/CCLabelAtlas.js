@@ -32,17 +32,34 @@
 cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     /**
      * initializes the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
-     * @param {String} label
-     * @param {String} charMapFile
-     * @param {Number} itemWidth
-     * @param {Number} itemHeight
-     * @param {String} startCharMap
+     *  It accepts two groups of parameters:
+     * a) string, fntFile
+     * b) label, textureFilename, width, height, startChar
      * @return {Boolean} returns true on success
      */
-    initWithString:function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
-        cc.Assert(label != null, "");
-        if (this.initWithTileFile(charMapFile, itemWidth, itemHeight, label.length)) {
-            this._mapStartChar = startCharMap;
+    initWithString:function (arg) {
+        var label, textureFilename, width, height, startChar;
+        if (arg.length == 2) {
+            var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(arg[1]);
+            cc.Assert(parseInt(dict["version"]) == 1, "Unsupported version. Upgrade cocos2d version");
+
+            label = arg[0].toString();
+            textureFilename = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
+            width = parseInt(dict["itemWidth"]) / cc.CONTENT_SCALE_FACTOR();
+            height = parseInt(dict["itemHeight"]) / cc.CONTENT_SCALE_FACTOR();
+            startChar = String.fromCharCode(parseInt(dict["firstChar"]));
+        }
+        else {
+            label = arg[0].toString();
+            textureFilename = arg[1];
+            width = arg[2];
+            height = arg[3];
+            startChar = arg[4];
+            cc.Assert(label != null, "Label must be non-nil");
+        }
+
+        if (this.initWithTileFile(textureFilename, width, height, label.length)) {
+            this._mapStartChar = startChar;
             this.setString(label);
             return true;
         }
@@ -54,13 +71,11 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      */
     updateAtlasValues:function () {
         var texture = this.getTexture();
-        var textureWide = texture.width;
-        var textureHigh = texture.height;
 
         for (var i = 0; i < this._string.length; i++) {
             var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._itemsPerRow);
-            var col = parseInt(a / this._itemsPerRow);
+            var row = parseInt(a % this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
+            var col = parseInt(a / this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
 
             var rect = cc.RectMake(row * this._itemWidth, col * this._itemHeight, this._itemWidth, this._itemHeight);
             var c = this._string.charCodeAt(i);
@@ -69,7 +84,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                 fontChar = new cc.Sprite();
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0, 0, 0, 0));
+                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
                 }
                 else {
                     fontChar.initWithTexture(texture, rect);
@@ -79,17 +94,17 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             else {
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0, 0, 0, 0));
+                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
                 }
                 else {
                     // reusing fonts
                     fontChar.initWithTexture(texture, rect);
                     // restore to default in case they were modified
-                    fontChar.setIsVisible(true);
+                    fontChar.setVisible(true);
                     fontChar.setOpacity(this._opacity);
                 }
             }
-            fontChar.setPosition(new cc.Point(i * this._itemWidth, this._itemHeight / 2));
+            fontChar.setPosition(new cc.Point(i * this._itemWidth + this._itemWidth / 2, this._itemHeight / 2));
         }
     },
 
@@ -102,16 +117,14 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var len = label.length;
         this._textureAtlas.resizeCapacity(len);
 
-        var s = new cc.Size();
-        s.width = len * this._itemWidth;
-        s.height = this._itemHeight;
-        this.setContentSizeInPixels(s);
+        var s = new cc.SizeMake(len * this._itemWidth, this._itemHeight);
+        this.setContentSize(s);
 
         if (this._children) {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
-                    node.setIsVisible(false);
+                    node.setVisible(false);
                 }
             }
         }
@@ -120,7 +133,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     /**
      * @param {cc.Color3B} color3
      */
-    setColor:function(color3){
+    setColor:function (color3) {
         this._super(color3);
         this.updateAtlasValues();
     },
@@ -145,10 +158,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         }
     },
 
-    convertToLabelProtocol:function () {
-        return this;
-    },
-
     // string to render
     _string:null,
     // the first char in the charmap
@@ -156,21 +165,21 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 });
 
 /**
- * creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the
- * starting char of the atlas
- * @param {String} label Text to display
- * @param {String} charMapFile the character map file
- * @param {Number} itemWidth the width of individual letter
- * @param {Number} itemHeight the height of individual letter
- * @param {String} startCharMap starting character on the character map file
+ *  It accepts two groups of parameters:
+ * a) string, fntFile
+ * b) label, textureFilename, width, height, startChar
  * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
  * @example
  * //Example
+ * //creates the cc.LabelAtlas with a string, a char map file(the atlas), the width and height of each element and the starting char of the atlas
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
+ *
+ * //creates the cc.LabelAtlas with a string, a fnt file
+ * var myLabel = cc.LabelAtlas.create('Text to display', ''CharMapFile.fnt);
  */
-cc.LabelAtlas.create = function (label, charMapFile, itemWidth, itemHeight, startCharMap) {
+cc.LabelAtlas.create = function (/* Multi arguments */) {
     var ret = new cc.LabelAtlas();
-    if (ret && ret.initWithString(label, charMapFile, itemWidth, itemHeight, startCharMap)) {
+    if (ret && ret.initWithString(arguments)) {
         return ret;
     }
     return null;

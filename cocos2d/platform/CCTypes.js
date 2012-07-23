@@ -215,6 +215,23 @@ cc.Color4F = function (r1, g1, b1, a1) {
     this.a = a1;
 };
 
+
+/**
+ * helper macro that creates an ccColor4F type
+ * @Class
+ * @Construct
+ * @param {Number} r1 red value (0 to 1)
+ * @param {Number} g1 green value (0 to 1)
+ * @param {Number} b1 blue value (0 to 1)
+ * @param {Number} a1 Alpha value (0 to 1)
+ * @example
+ * //create a red color
+ * var redColor = cc.ccc4f(1,0,0,1);
+ */
+cc.ccc4f = function (r1, g1, b1, a1) {
+    return new cc.Color4F(r1, g1, b1, a1);
+};
+
 /**
  * Returns a cc.Color4F from a cc.Color3B. Alpha will be 1.
  * @function
@@ -536,3 +553,24 @@ cc.TEXT_ALIGNMENT_CENTER = 1;
  * @type Number
  */
 cc.TEXT_ALIGNMENT_RIGHT = 2;
+
+/**
+ * text alignment : top
+ * @constant
+ * @type Number
+ */
+cc.VERTICAL_TEXT_ALIGNMENT_TOP = 0;
+
+/**
+ * text alignment : center
+ * @constant
+ * @type Number
+ */
+cc.VERTICAL_TEXT_ALIGNMENT_CENTER = 1;
+
+/**
+ * text alignment : bottom
+ * @constant
+ * @type Number
+ */
+cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM = 2;

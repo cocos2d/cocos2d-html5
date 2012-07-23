@@ -49,6 +49,7 @@ cc.ActionInstant = cc.FiniteTimeAction.extend(/** @lends cc.ActionInstant# */{
      * @param {Number} time
      */
     update:function (time) {
+        //nothing
     }
 });
 
@@ -60,9 +61,9 @@ cc.Show = cc.ActionInstant.extend(/** @lends cc.Show# */{
     /**
      * @param {cc.Node} target
      */
-    startWithTarget:function (target) {
-        this._super(target);
-        target.setIsVisible(true);
+    update:function (target) {
+        //this._super(target);
+        this._target.setVisible(true);
     },
 
     /**
@@ -89,11 +90,11 @@ cc.Show.create = function () {
  */
 cc.Hide = cc.ActionInstant.extend(/** @lends cc.Hide# */{
     /**
-     * @param {cc.Node} target
+     * @param {Number} time
      */
-    startWithTarget:function (target) {
-        this._super(target);
-        target.setIsVisible(false);
+    update:function (time) {
+        //this._super(target);
+        this._target.setVisible(false);
     },
 
     /**
@@ -120,11 +121,11 @@ cc.Hide.create = function () {
  */
 cc.ToggleVisibility = cc.ActionInstant.extend(/** @lends cc.ToggleVisibility# */{
     /**
-     * @param {cc.Node} target
+     * @param {Number} time
      */
-    startWithTarget:function (target) {
-        this._super();
-        target.setIsVisible(!target.getIsVisible());
+    update:function (time) {
+        //this._super();
+        this._target.setVisible(!this._target.isVisible());
     },
 
     /**
@@ -161,18 +162,18 @@ cc.FlipX = cc.ActionInstant.extend(/** @lends cc.FlipX# */{
     },
 
     /**
-     * @param {cc.Node} target
+     * @param {Number} time
      */
-    startWithTarget:function (target) {
-        this._super();
-        target.setFlipX(this._flipX);
+    update:function (time) {
+        //this._super();
+        this._target.setFlipX(this._flipX);
     },
 
     /**
      * @return {cc.FiniteTimeAction}
      */
     reverse:function () {
-        return this.actionWithFlipX(!this._flipX);
+        return cc.FlipX.create(!this._flipX);
     },
     _flipX:false
 });
@@ -186,6 +187,7 @@ cc.FlipX.create = function (x) {
     var ret = new cc.FlipX();
     if (ret.initWithFlipX(x))
         return ret;
+    return null;
 };
 
 /**
@@ -204,18 +206,18 @@ cc.FlipY = cc.ActionInstant.extend(/** @lends cc.FlipY# */{
     },
 
     /**
-     * @param {cc.Node} target
+     * @param {Number} time
      */
-    startWithTarget:function (target) {
-        this._super();
-        target.setFlipY(this._flipY);
+    update:function (time) {
+        //this._super();
+        this._target.setFlipY(this._flipY);
     },
 
     /**
      * @return {cc.FiniteTimeAction}
      */
     reverse:function () {
-        return this.actionWithFlipY(!this._flipY);
+        return cc.FlipY.create(!this._flipY);
     },
     _flipY:false
 });
@@ -230,6 +232,7 @@ cc.FlipY.create = function (y) {
     var ret = new cc.FlipY();
     if (ret.initWithFlipY(y))
         return ret;
+    return null;
 };
 
 
@@ -248,10 +251,10 @@ cc.Place = cc.ActionInstant.extend(/** @lends cc.Place# */{
     },
 
     /**
-     * @param {cc.Node} target
+     * @param {Number} time
      */
-    startWithTarget:function (target) {
-        this._super(target);
+    update:function (time) {
+        //this._super(target);
         this._target.setPosition(this._position);
     }
 });
@@ -298,10 +301,10 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
     },
 
     /**
-     * @param {cc.Node} target
+     * @param {Number} time
      */
-    startWithTarget:function (target) {
-        this._super(target);
+    update:function (time) {
+        //this._super(target);
         this.execute();
     },
 

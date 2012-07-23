@@ -128,7 +128,8 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
     initWithTileFile:function (tile, mapFile, tileWidth, tileHeight) {
         this._loadTGAfile(mapFile);
         this._calculateItemsToRender();
-        if (cc.AtlasNode.initWithTileFile(tile, tileWidth, tileHeight, this._itemsToRender)) {
+        if (this.initWithTileFile(tile, tileWidth, tileHeight, this._itemsToRender)) {
+            this._color = cc.WHITE();
             this._posToAtlasIndex = new Object();
             this._updateAtlasValues();
             this.setContentSize(cc.SizeMake((this._GAInfo.width * this._itemWidth),
@@ -175,18 +176,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         } else {
             ptr[position.x + position.y * this._GAInfo.width] = tile;
 
-            // XXX: this method consumes a lot of memory
-            // XXX: a tree of something like that shall be implemented
-            var buffer;
-
-            cc.Log(buffer, position.x)
-            var key = buffer;
-
-            key += ",";
-            cc.Log(buffer, position.y)
-            key += buffer;
-
-            var num = this._posToAtlasIndex[key];
+            var num = this._posToAtlasIndex[position.x +""+ position.y];
             this._updateAtlasValueAt(position, tile, num);
         }
     },
@@ -199,12 +189,6 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
             cc.tgaDestroy(this._GAInfo);
         }
         this._GAInfo = null;
-
-        if (this._posToAtlasIndex) {
-            this._posToAtlasIndex.clear();
-            delete this._posToAtlasIndex;
-            this._posToAtlasIndex = null;
-        }
     },
 
     _loadTGAfile:function (file) {
@@ -215,7 +199,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         //	cc.String *resourcePath = [mainBndl resourcePath];
         //	cc.String * path = [resourcePath stringByAppendingPathComponent:file];
 
-        this._GAInfo = cc.tgaLoad(cc.FileUtils.fullPathFromRelativePath(file));
+        this._GAInfo = cc.tgaLoad(cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(file));
         if (this._GAInfo.status != cc.TGA_OK) {
             cc.Assert(0, "TileMapAtlasLoadTGA : TileMapAtas cannot load TGA file");
         }
@@ -244,19 +228,22 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         var row = (value.r % this._itemsPerRow);
         var col = (value.r / this._itemsPerRow);
 
-        var textureWide = (this._textureAtlas.getTexture().getPixelsWide());
-        var textureHigh = (this._textureAtlas.getTexture().getPixelsHigh());
+        var textureWide = this._textureAtlas.getTexture().getPixelsWide();
+        var textureHigh = this._textureAtlas.getTexture().getPixelsHigh();
+
+        var itemWidthInPixels = this._itemWidth * cc.CONTENT_SCALE_FACTOR();
+        var itemHeightInPixels = this._itemHeight * cc.CONTENT_SCALE_FACTOR();
 
         if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-            var left = (2 * row * this._itemWidth + 1) / (2 * textureWide);
-            var right = left + (this._itemWidth * 2 - 2) / (2 * textureWide);
-            var top = (2 * col * this._itemHeight + 1) / (2 * textureHigh);
-            var bottom = top + (this._itemHeight * 2 - 2) / (2 * textureHigh);
+            var left = (2 * row * itemWidthInPixels + 1) / (2 * textureWide);
+            var right = left + (itemWidthInPixels * 2 - 2) / (2 * textureWide);
+            var top = (2 * col * itemHeightInPixels + 1) / (2 * textureHigh);
+            var bottom = top + (itemHeightInPixels * 2 - 2) / (2 * textureHigh);
         } else {
-            var left = (row * this._itemWidth) / textureWide;
-            var right = left + this._itemWidth / textureWide;
-            var top = (col * this._itemHeight) / textureHigh;
-            var bottom = top + this._itemHeight / textureHigh;
+            var left = (row * itemWidthInPixels) / textureWide;
+            var right = left + itemWidthInPixels / textureWide;
+            var top = (col * itemHeightInPixels) / textureHigh;
+            var bottom = top + itemHeightInPixels / textureHigh;
         }
 
         quad.tl.texCoords.u = left;
@@ -281,6 +268,12 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         quad.tr.vertices.y = (y * this._itemHeight + this._itemHeight);
         quad.tr.vertices.z = 0.0;
 
+        var color = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
+        quad.tr.colors = color;
+        quad.tl.colors = color;
+        quad.br.colors = color;
+        quad.bl.colors = color;
+
         this._textureAtlas.updateQuad(quad, index);
     },
 
@@ -297,17 +290,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
                     if (value.r != 0) {
                         this._updateAtlasValueAt(cc.ccg(x, y), value, total);
-
-                        var buffer;
-
-                        cc.Log(buffer, x)
-                        var key = buffer;
-
-                        key += ",";
-                        cc.Log(buffer, y)
-                        key += buffer;
-
-                        this._posToAtlasIndex[key] = total;
+                        this._posToAtlasIndex[x+""+y] = total;
 
                         total++;
                     }
