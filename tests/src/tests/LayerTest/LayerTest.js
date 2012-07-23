@@ -205,7 +205,7 @@ var IgnoreAnchorpointTest1 = LayerTest.extend({
         return "ignore Anchorpoint Test";
     },
     subtitle:function () {
-        return "true true";
+        return "red:true  green:true";
     }
 });
 var IgnoreAnchorpointTest2 = LayerTest.extend({
@@ -225,7 +225,7 @@ var IgnoreAnchorpointTest2 = LayerTest.extend({
         return "ignore Anchorpoint Test";
     },
     subtitle:function () {
-        return "true false";
+        return "red:true  green:false";
     }
 });
 var IgnoreAnchorpointTest3 = LayerTest.extend({
@@ -245,7 +245,7 @@ var IgnoreAnchorpointTest3 = LayerTest.extend({
         return "ignore Anchorpoint Test";
     },
     subtitle:function () {
-        return "false false";
+        return "red:false  green:false";
     }
 });
 var IgnoreAnchorpointTest4 = LayerTest.extend({
@@ -265,7 +265,7 @@ var IgnoreAnchorpointTest4 = LayerTest.extend({
         return "ignore Anchorpoint Test";
     },
     subtitle:function () {
-        return "false true";
+        return "red:false  green:true";
     }
 });
 
