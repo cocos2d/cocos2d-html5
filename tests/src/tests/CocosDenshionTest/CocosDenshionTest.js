@@ -189,7 +189,7 @@ CocosDenshionTest = cc.Layer.extend({
             var nMoveY = touchLocation.y - this._beginPos.y;
             var curPos = this._itmeMenu.getPosition();
 
-            var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
+            var nextPos = cc.p(curPos.x, curPos.y + nMoveY);
             var winSize = cc.Director.getInstance().getWinSize();
             if (nextPos.y < 0.0) {
                 this._itmeMenu.setPosition(cc.PointZero());
@@ -197,13 +197,13 @@ CocosDenshionTest = cc.Layer.extend({
             }
 
             if (nextPos.y > ((this._testCount + 1) * LINE_SPACE - winSize.height)) {
-                this._itmeMenu.setPosition(cc.ccp(0, ((this._testCount + 1) * LINE_SPACE - winSize.height)));
+                this._itmeMenu.setPosition(cc.p(0, ((this._testCount + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
 
             this._itmeMenu.setPosition(nextPos);
 
-            this._beginPos = cc.ccp(0, touchLocation.y);
+            this._beginPos = cc.p(0, touchLocation.y);
         }
     },
     ccTouchesBegan:function (touches, event) {

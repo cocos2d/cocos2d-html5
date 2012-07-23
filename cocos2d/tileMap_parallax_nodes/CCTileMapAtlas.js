@@ -289,7 +289,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
                     var value = ptr[x + y * this._GAInfo.width];
 
                     if (value.r != 0) {
-                        this._updateAtlasValueAt(cc.ccg(x, y), value, total);
+                        this._updateAtlasValueAt(cc.g(x, y), value, total);
                         this._posToAtlasIndex[x+""+y] = total;
 
                         total++;

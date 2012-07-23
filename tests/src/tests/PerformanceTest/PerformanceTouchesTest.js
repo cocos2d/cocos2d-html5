@@ -60,12 +60,12 @@ var TouchesMainScene = PerformBasicLayer.extend({
         // add title
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         this.scheduleUpdate();
 
         this._plabel = cc.LabelTTF.create("00.0", "Arial", 16);
-        this._plabel.setPosition(cc.ccp(s.width / 2, s.height / 2));
+        this._plabel.setPosition(cc.p(s.width / 2, s.height / 2));
         this.addChild(this._plabel);
 
         this._elapsedTime = 0;

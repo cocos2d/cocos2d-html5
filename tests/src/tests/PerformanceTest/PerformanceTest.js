@@ -51,7 +51,7 @@ var PerformanceMainLayer = cc.Layer.extend({
 
         for (var i = 0; i < PerformanceTests.length; i++) {
             var pItem = cc.MenuItemFont.create(PerformanceTests[i], this, this.menuCallback);
-            pItem.setPosition(cc.ccp(s.width / 2, s.height - (i + 1) * LINE_SPACE));
+            pItem.setPosition(cc.p(s.width / 2, s.height - (i + 1) * LINE_SPACE));
             menu.addChild(pItem, ITEM_TAG_BASIC + i);
         }
 
@@ -102,7 +102,7 @@ var PerformBasicLayer = cc.Layer.extend({
         cc.MenuItemFont.setFontName("Arial");
         cc.MenuItemFont.setFontSize(24);
         var mainItem = cc.MenuItemFont.create("Back", this, this.toMainLayer);
-        mainItem.setPosition(cc.ccp(s.width - 50, 25));
+        mainItem.setPosition(cc.p(s.width - 50, 25));
         var menu = cc.Menu.create(mainItem, null);
         menu.setPosition(cc.PointZero());
 
@@ -110,9 +110,9 @@ var PerformBasicLayer = cc.Layer.extend({
             var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
             var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
             var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
-            item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
-            item2.setPosition(cc.ccp(s.width / 2, 30));
-            item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
+            item1.setPosition(cc.p(s.width / 2 - 100, 30));
+            item2.setPosition(cc.p(s.width / 2, 30));
+            item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
             menu.addChild(item1, ITEM_TAG_BASIC);
             menu.addChild(item2, ITEM_TAG_BASIC);

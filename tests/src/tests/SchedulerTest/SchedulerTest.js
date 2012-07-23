@@ -89,13 +89,13 @@ var SchedulerTestLayer = cc.Layer.extend({
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 30);
         this.addChild(label);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var subTitle = this.subtitle();
         if (subTitle != "") {
             var subLabel = cc.LabelTTF.create(subTitle, "Thonburi", 13);
             this.addChild(subLabel, 1);
-            subLabel.setPosition(cc.ccp(s.width / 2, s.height - 80));
+            subLabel.setPosition(cc.p(s.width / 2, s.height - 80));
         }
 
         var item1 = cc.MenuItemImage.create("res/Images/b1.png", "res/Images/b2.png", this, this.backCallback);
@@ -104,9 +104,9 @@ var SchedulerTestLayer = cc.Layer.extend({
 
         var menu = cc.Menu.create(item1, item2, item3, null);
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
-        item2.setPosition(cc.ccp(s.width / 2, 30));
-        item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1)
     },

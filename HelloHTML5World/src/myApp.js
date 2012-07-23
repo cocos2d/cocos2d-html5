@@ -84,7 +84,7 @@ var Helloworld = cc.Layer.extend({
         // create and initialize a label
         this.helloLabel = cc.LabelTTF.create("Hello World", "Arial", 38);
         // position the label on the center of the screen
-        this.helloLabel.setPosition(cc.ccp(size.width / 2, 0));
+        this.helloLabel.setPosition(cc.p(size.width / 2, 0));
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
@@ -93,7 +93,7 @@ var Helloworld = cc.Layer.extend({
 
         // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
-        this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
         this.sprite.setScale(0.5);
         this.sprite.setRotation(180);
 
@@ -109,7 +109,7 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.ccp(0, size.height - 40)));
+        this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)));
 
         this.setTouchEnabled(true);
         this.adjustSizeForWindow();

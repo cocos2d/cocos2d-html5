@@ -39,7 +39,7 @@ var MainLayer = cc.Layer.extend({
         this.setTouchEnabled(true);
         var sprite = cc.Sprite.create(s_pathGrossini);
 
-        var layer = cc.LayerColor.create(cc.ccc4(255, 255, 0, 100));
+        var layer = cc.LayerColor.create(cc.c4(255, 255, 0, 100));
         this.addChild(layer, -1);
 
         this.addChild(sprite, 0, TAG_SPRITE);

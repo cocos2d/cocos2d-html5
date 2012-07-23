@@ -104,7 +104,7 @@ var SpriteDemo = cc.Layer.extend({
         item3.setPosition(cc.PointMake(winSize.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
-        var background = cc.LayerColor.create(cc.ccc4(0, 125, 0, 255));
+        var background = cc.LayerColor.create(cc.c4(0, 125, 0, 255));
         this.addChild(background, -10);
     },
 
@@ -136,13 +136,13 @@ var SpriteProgressToRadial = SpriteDemo.extend({
         var to2 = cc.ProgressTo.create(2, 100);
 
         var left = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister1));
-        left.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
+        left.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         this.addChild(left);
         left.setPosition(cc.PointMake(200, winSize.height / 2));
         left.runAction(cc.RepeatForever.create(to1));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathBlock));
-        right.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
+        right.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         right.setReverseProgress(true);
         this.addChild(right);
         right.setPosition(cc.PointMake(winSize.width - 200, winSize.height / 2));
@@ -164,7 +164,7 @@ var SpriteProgressToHorizontal = SpriteDemo.extend({
         var to2 = cc.ProgressTo.create(2, 100);
 
         var left = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister1));
-        left.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        left.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the left since the midpoint is 0 for the x
         left.setMidpoint(new cc.Point(0, 0));
         //    Setup for a horizontal bar since the bar change rate is 0 for y meaning no vertical change
@@ -174,7 +174,7 @@ var SpriteProgressToHorizontal = SpriteDemo.extend({
         left.runAction(cc.RepeatForever.create(to1));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
-        right.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        right.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the left since the midpoint is 1 for the x
         right.setMidpoint(new cc.Point(1, 0));
         //    Setup for a horizontal bar since the bar change rate is 0 for y meaning no vertical change
@@ -198,7 +198,7 @@ var SpriteProgressToVertical = SpriteDemo.extend({
         var to2 = cc.ProgressTo.create(2, 100);
 
         var left = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister1));
-        left.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        left.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         left.setMidpoint(new cc.Point(0, 0));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -208,7 +208,7 @@ var SpriteProgressToVertical = SpriteDemo.extend({
         left.runAction(cc.RepeatForever.create(to1));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
-        right.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        right.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         right.setMidpoint(new cc.Point(0, 1));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -233,7 +233,7 @@ var SpriteProgressToRadialMidpointChanged = SpriteDemo.extend({
          *  Our image on the left should be a radial progress indicator, clockwise
          */
         var left = cc.ProgressTimer.create(cc.Sprite.create(s_pathBlock));
-        left.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
+        left.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         this.addChild(left);
         left.setMidpoint(new cc.Point(0.25, 0.75));
         left.setPosition(new cc.Point(200, winSize.height / 2));
@@ -243,7 +243,7 @@ var SpriteProgressToRadialMidpointChanged = SpriteDemo.extend({
          *  Our image on the left should be a radial progress indicator, counter clockwise
          */
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathBlock));
-        right.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
+        right.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         right.setMidpoint(new cc.Point(0.75, 0.25));
         /**
          *  Note the reverse property (default=NO) is only added to the right image. That's how
@@ -268,7 +268,7 @@ var SpriteProgressBarVarious = SpriteDemo.extend({
         var to = cc.ProgressTo.create(2, 100);
 
         var left = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister1));
-        left.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        left.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         left.setMidpoint(new cc.Point(0.5, 0.5));
@@ -279,7 +279,7 @@ var SpriteProgressBarVarious = SpriteDemo.extend({
         left.runAction(cc.RepeatForever.create(to.copy()));
 
         var middle = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
-        middle.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        middle.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         middle.setMidpoint(new cc.Point(0.5, 0.5));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -289,7 +289,7 @@ var SpriteProgressBarVarious = SpriteDemo.extend({
         middle.runAction(cc.RepeatForever.create(to.copy()));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
-        right.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        right.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         right.setMidpoint(new cc.Point(0.5, 0.5));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -318,7 +318,7 @@ var SpriteProgressBarTintAndFade = SpriteDemo.extend({
         var fade = cc.Sequence.create(cc.FadeTo.create(1.0, 0), cc.FadeTo.create(1.0, 255));
 
         var left = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister1));
-        left.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        left.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         left.setMidpoint(new cc.Point(0.5, 0.5));
@@ -332,7 +332,7 @@ var SpriteProgressBarTintAndFade = SpriteDemo.extend({
         left.addChild(cc.LabelTTF.create("Tint", "Marker Felt", 20.0));
 
         var middle = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
-        middle.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        middle.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         middle.setMidpoint(new cc.Point(0.5, 0.5));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -345,7 +345,7 @@ var SpriteProgressBarTintAndFade = SpriteDemo.extend({
         middle.addChild(cc.LabelTTF.create("Fade", "Marker Felt", 20.0));
 
         var right = cc.ProgressTimer.create(cc.Sprite.create(s_pathSister2));
-        right.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        right.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         right.setMidpoint(new cc.Point(0.5, 0.5));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -373,8 +373,8 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
 
         cc.SpriteFrameCache.getInstance().addSpriteFramesWithFile(s_grossiniPlist);
 
-        var left = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameName("grossini_dance_01.png"));
-        left.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        var left = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameName("grossini_dance_01.png"));
+        left.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         left.setMidpoint(new cc.Point(0.5, 0.5));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -383,8 +383,8 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
         left.setPosition(new cc.Point(150, winSize.height / 2));
         left.runAction(cc.RepeatForever.create(to.copy()));
 
-        var middle = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameName("grossini_dance_02.png"));
-        middle.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        var middle = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameName("grossini_dance_02.png"));
+        middle.setType(cc.PROGRESS_TIMER_TYPE_BAR);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         middle.setMidpoint(new cc.Point(0.5, 0.5));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change
@@ -393,8 +393,8 @@ var SpriteProgressWithSpriteFrame = SpriteDemo.extend({
         middle.setPosition(new cc.Point(winSize.width / 2, winSize.height / 2));
         middle.runAction(cc.RepeatForever.create(to.copy()));
 
-        var right = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameName("grossini_dance_03.png"));
-        right.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
+        var right = cc.ProgressTimer.create(cc.Sprite.createWithSpriteFrameNameNameName("grossini_dance_03.png"));
+        right.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
         //    Setup for a bar starting from the bottom since the midpoint is 0 for the y
         right.setMidpoint(new cc.Point(0.5, 0.5));
         //    Setup for a vertical bar since the bar change rate is 0 for x meaning no horizontal change

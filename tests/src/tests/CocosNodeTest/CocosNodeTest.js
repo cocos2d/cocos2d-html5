@@ -457,10 +457,10 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
     },
     onEnter:function () {
         this._super();
-        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {
@@ -512,10 +512,10 @@ var CameraZoomTest = TestCocosNodeDemo.extend({
 
     onEnter:function () {
         this._super();
-        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.getInstance().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {
@@ -594,7 +594,7 @@ var ConvertToNode = TestCocosNodeDemo.extend({
         var action = cc.RepeatForever.create(rotate);
         for (var i = 0; i < 3; i++) {
             var sprite = cc.Sprite.create(s_pathGrossini);
-            sprite.setPosition(cc.ccp(s.width / 4 * (i + 1), s.height / 2));
+            sprite.setPosition(cc.p(s.width / 4 * (i + 1), s.height / 2));
 
             var point = cc.Sprite.create(s_pathR1);
             point.setScale(0.25);
@@ -606,10 +606,10 @@ var ConvertToNode = TestCocosNodeDemo.extend({
                     sprite.setAnchorPoint(cc.PointZero());
                     break;
                 case 1:
-                    sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
+                    sprite.setAnchorPoint(cc.p(0.5, 0.5));
                     break;
                 case 2:
-                    sprite.setAnchorPoint(cc.ccp(1, 1));
+                    sprite.setAnchorPoint(cc.p(1, 1));
                     break;
             }
 

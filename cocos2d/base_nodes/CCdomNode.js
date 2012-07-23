@@ -607,7 +607,7 @@ cc.Node.implement({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._contentSize = size;
 
-            this._anchorPointInPoints = cc.ccp(this._contentSize.width * this._anchorPoint.x,
+            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
                 this._contentSize.height * this._anchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -624,7 +624,7 @@ cc.Node.implement({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._anchorPoint = point;
-            this._anchorPointInPoints = cc.ccp(this._contentSize.width * this._anchorPoint.x,
+            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
                 this._contentSize.height * this._anchorPoint.y);
 
             //save dirty region when after changed

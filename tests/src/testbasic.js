@@ -102,7 +102,7 @@ var TestController = cc.Layer.extend({
     },
     ccTouchesBegan:function (touches, event) {
         if (!this.isMouseDown) {
-            //this._beginPos = cc.ccp(touches[0].getLocation().x, touches[0].getLocation().y);
+            //this._beginPos = cc.p(touches[0].getLocation().x, touches[0].getLocation().y);
             this._beginPos = touches[0].getLocation().y;
         }
         this.isMouseDown = true;
@@ -111,9 +111,9 @@ var TestController = cc.Layer.extend({
         if (this.isMouseDown) {
             var touchLocation = touches[0].getLocation().y;
             var nMoveY = touchLocation - this._beginPos;
-            curPos = cc.ccp(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
+            curPos = cc.p(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
 
-            var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
+            var nextPos = cc.p(curPos.x, curPos.y + nMoveY);
             var winSize = cc.Director.getInstance().getWinSize();
             if (nextPos.y < 0.0) {
                 this._itemMenu.setPosition(cc.PointZero());
@@ -121,11 +121,11 @@ var TestController = cc.Layer.extend({
             }
 
             if (nextPos.y > ((testNames.length + 1) * LINE_SPACE - winSize.height)) {
-                this._itemMenu.setPosition(cc.ccp(0, ((testNames.length + 1) * LINE_SPACE - winSize.height)));
+                this._itemMenu.setPosition(cc.p(0, ((testNames.length + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
             this._itemMenu.setPosition(nextPos);
-            this._beginPos = cc.ccp(0, touchLocation).y;
+            this._beginPos = cc.p(0, touchLocation).y;
             curPos = nextPos;
         }
     },

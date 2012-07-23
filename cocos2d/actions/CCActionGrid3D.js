@@ -83,10 +83,10 @@ cc.Waves3D = cc.Grid3DAction.extend({
         var i, j;
         for (i = 0; i < this._gridSize.x + 1; ++i) {
             for (j = 0; j < this._gridSize.y + 1; ++j) {
-                var v = this.originalVertex(cc.ccg(i, j));
+                var v = this.originalVertex(cc.g(i, j));
                 v.z += (Math.sin(Math.PI * time * this._waves * 2 + (v.y + v.x) * .01) * this._amplitude * this._amplitudeRate);
                 cc.Log("v.z offset is" + (Math.sin(Math.PI * time * this._waves * 2 + (v.y + v.x) * .01) * this._amplitude * this._amplitudeRate));
-                this.setVertex(cc.ccg(i, j), v);
+                this.setVertex(cc.g(i, j), v);
             }
         }
     }
@@ -102,7 +102,7 @@ cc.Waves3D.create = function (wav, amp, gridSize, duration) {
 cc.FlipX3D = cc.Grid3DAction({
     /** initializes the action with duration */
     initWithDuration:function (duration) {
-        return cc.Grid3DAction.initWithSize(cc.ccg(1, 1), duration);
+        return cc.Grid3DAction.initWithSize(cc.g(1, 1), duration);
     },
     initWithSize:function (gridSize, duration) {
         if (gridSize.x != 1 || gridSize.y != 1) {
@@ -140,8 +140,8 @@ cc.FlipX3D = cc.Grid3DAction({
 
         var v0, v1, v, diff;
 
-        v0 = this.originalVertex(cc.ccg(1, 1));
-        v1 = this.originalVertex(cc.ccg(0, 0));
+        v0 = this.originalVertex(cc.g(1, 1));
+        v1 = this.originalVertex(cc.g(0, 0));
 
         var x0 = v0.x;
         var x1 = v1.x;
@@ -150,18 +150,18 @@ cc.FlipX3D = cc.Grid3DAction({
 
         if (x0 > x1) {
             // Normal Grid
-            a = cc.ccg(0, 0);
-            b = cc.ccg(0, 1);
-            c = cc.ccg(1, 0);
-            d = cc.ccg(1, 1);
+            a = cc.g(0, 0);
+            b = cc.g(0, 1);
+            c = cc.g(1, 0);
+            d = cc.g(1, 1);
             x = x0;
         }
         else {
             // Reversed Grid
-            c = cc.ccg(0, 0);
-            d = cc.ccg(0, 1);
-            a = cc.ccg(1, 0);
-            b = cc.ccg(1, 1);
+            c = cc.g(0, 0);
+            d = cc.g(0, 1);
+            a = cc.g(1, 0);
+            b = cc.g(1, 1);
             x = x1;
         }
 
@@ -211,8 +211,8 @@ cc.FlipY3D = cc.FlipX3D.extend({
 
         var v0, v1, v, diff;
 
-        v0 = this.originalVertex(cc.ccg(1, 1));
-        v1 = this.originalVertex(cc.ccg(0, 0));
+        v0 = this.originalVertex(cc.g(1, 1));
+        v1 = this.originalVertex(cc.g(0, 0));
 
         var y0 = v0.y;
         var y1 = v1.y;
@@ -221,18 +221,18 @@ cc.FlipY3D = cc.FlipX3D.extend({
 
         if (y0 > y1) {
             // Normal Grid
-            a = cc.ccg(0, 0);
-            b = cc.ccg(0, 1);
-            c = cc.ccg(1, 0);
-            d = cc.ccg(1, 1);
+            a = cc.g(0, 0);
+            b = cc.g(0, 1);
+            c = cc.g(1, 0);
+            d = cc.g(1, 1);
             y = y0;
         }
         else {
             // Reversed Grid
-            b = cc.ccg(0, 0);
-            a = cc.ccg(0, 1);
-            d = cc.ccg(1, 0);
-            c = cc.ccg(1, 1);
+            b = cc.g(0, 0);
+            a = cc.g(0, 1);
+            d = cc.g(1, 0);
+            c = cc.g(1, 1);
             y = y1;
         }
 
@@ -326,7 +326,7 @@ cc.Lens3D = cc.Grid3DAction.extend({
     /** initializes the action with center position, radius, a grid size and duration */
     initWithPosition:function (pos, r, gridSize, duration) {
         if (cc.Grid3DAction.initWithSize(gridSize, duration)) {
-            this._position = cc.ccp(-1, -1);
+            this._position = cc.p(-1, -1);
             this.setPosition(pos);
             this._radius = r;
             this._lensEffect = 0.7;
@@ -361,9 +361,9 @@ cc.Lens3D = cc.Grid3DAction.extend({
 
             for (i = 0; i < this._gridSize.x + 1; ++i) {
                 for (j = 0; j < this._gridSize.y + 1; ++j) {
-                    var v = this.originalVertex(cc.ccg(i, j));
-                    var vect = cc.ccpSub(this._positionInPixels, ccp(v.x, v.y));
-                    var r = cc.ccpLength(vect);
+                    var v = this.originalVertex(cc.g(i, j));
+                    var vect = cc.pSub(this._positionInPixels, ccp(v.x, v.y));
+                    var r = cc.pLength(vect);
 
                     if (r < this._radius) {
                         r = this._radius - r;
@@ -375,14 +375,14 @@ cc.Lens3D = cc.Grid3DAction.extend({
                         var l = Math.log(pre_log) * this._lensEffect;
                         var new_r = Math.exp(l) * this._radius;
 
-                        if (cc.ccpLength(vect) > 0) {
-                            vect = cc.ccpNormalize(vect);
-                            var new_vect = cc.ccpMult(vect, new_r);
-                            v.z += cc.ccpLength(new_vect) * this._lensEffect;
+                        if (cc.pLength(vect) > 0) {
+                            vect = cc.pNormalize(vect);
+                            var new_vect = cc.pMult(vect, new_r);
+                            v.z += cc.pLength(new_vect) * this._lensEffect;
                         }
                     }
 
-                    this.setVertex(cc.ccg(i, j), v);
+                    this.setVertex(cc.g(i, j), v);
                 }
             }
 
@@ -470,9 +470,9 @@ cc.Ripple3D = cc.Grid3DAction.extend({
 
         for (i = 0; i < (this._gridSize.x + 1); ++i) {
             for (j = 0; j < (this._gridSize.y + 1); ++j) {
-                var v = this.originalVertex(cc.ccg(i, j));
-                var vect = cc.ccpSub(this._positionInPixels, ccp(v.x, v.y));
-                var r = cc.ccpLength(vect);
+                var v = this.originalVertex(cc.g(i, j));
+                var vect = cc.pSub(this._positionInPixels, ccp(v.x, v.y));
+                var r = cc.pLength(vect);
 
                 if (r < this._radius) {
                     r = this._radius - r;
@@ -480,7 +480,7 @@ cc.Ripple3D = cc.Grid3DAction.extend({
                     v.z += (Math.sin(time * Math.PI * this._waves * 2 + r * 0.1) * this._amplitude * this._amplitudeRate * rate);
                 }
 
-                this.setVertex(cc.ccg(i, j), v);
+                this.setVertex(cc.g(i, j), v);
             }
         }
     }
@@ -530,14 +530,14 @@ cc.Shaky3D = cc.Grid3DAction.extend({
 
         for (i = 0; i < (this._gridSize.x + 1); ++i) {
             for (j = 0; j < (this._gridSize.y + 1); ++j) {
-                var v = this.originalVertex(cc.ccg(i, j));
+                var v = this.originalVertex(cc.g(i, j));
                 v.x += (Math.random() % (this._randrange * 2)) - this._randrange;
                 v.y += (Math.random() % (this._randrange * 2)) - this._randrange;
                 if (this._shakeZ) {
                     v.z += (Math.random() % (this._randrange * 2)) - this._randrange;
                 }
 
-                this.setVertex(cc.ccg(i, j), v);
+                this.setVertex(cc.g(i, j), v);
             }
         }
     }
@@ -603,10 +603,10 @@ cc.Liquid = cc.Grid3DAction.extend({
 
         for (i = 1; i < this._gridSize.x; ++i) {
             for (j = 1; j < this._gridSize.y; ++j) {
-                var v = this.originalVertex(cc.ccg(i, j));
+                var v = this.originalVertex(cc.g(i, j));
                 v.x = (v.x + (Math.sin(time * Math.PI * this._waves * 2 + v.x * .01) * this._amplitude * this._amplitudeRate));
                 v.y = (v.y + (Math.sin(time * Math.PI * this._waves * 2 + v.y * .01) * this._amplitude * this._amplitudeRate));
-                this.setVertex(cc.ccg(i, j), v);
+                this.setVertex(cc.g(i, j), v);
             }
         }
     }
@@ -676,7 +676,7 @@ cc.Waves = cc.Grid3DAction.extend({
 
         for (i = 0; i < this._gridSize.x + 1; ++i) {
             for (j = 0; j < this._gridSize.y + 1; ++j) {
-                var v = this.originalVertex(cc.ccg(i, j));
+                var v = this.originalVertex(cc.g(i, j));
 
                 if (this._vertical) {
                     v.x = (v.x + (Math.sin(time * Math.PI * this._waves * 2 + v.y * .01) * this._amplitude * this._amplitudeRate));
@@ -686,7 +686,7 @@ cc.Waves = cc.Grid3DAction.extend({
                     v.y = (v.y + (Math.sin(time * Math.PI * this._waves * 2 + v.x * .01) * this._amplitude * this._amplitudeRate));
                 }
 
-                this.setVertex(cc.ccg(i, j), v);
+                this.setVertex(cc.g(i, j), v);
             }
         }
     }
@@ -770,10 +770,10 @@ cc.Twirl = cc.Grid3DAction.extend({
 
         for (i = 0; i < (this._gridSize.x + 1); ++i) {
             for (j = 0; j < (this._gridSize.y + 1); ++j) {
-                var v = this.originalVertex(cc.ccg(i, j));
+                var v = this.originalVertex(cc.g(i, j));
 
-                var avg = cc.ccp(i - (this._gridSize.x / 2.0), j - (this._gridSize.y / 2.0));
-                var r = cc.ccpLength(avg);
+                var avg = cc.p(i - (this._gridSize.x / 2.0), j - (this._gridSize.y / 2.0));
+                var r = cc.pLength(avg);
 
                 var amp = 0.1 * this._amplitude * this._amplitudeRate;
                 var a = r * Math.cos(Math.PI / 2.0 + time * Math.PI * this._twirls * 2) * amp;
@@ -786,7 +786,7 @@ cc.Twirl = cc.Grid3DAction.extend({
                 v.x = c.x + d.x;
                 v.y = c.y + d.y;
 
-                this.setVertex(cc.ccg(i, j), v);
+                this.setVertex(cc.g(i, j), v);
             }
         }
     }

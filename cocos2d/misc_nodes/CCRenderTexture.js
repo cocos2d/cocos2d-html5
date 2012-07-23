@@ -30,19 +30,19 @@
  * @constant
  * @type Number
  */
-cc.CCIMAGE_FORMAT_JPEG = 0;
+cc.IMAGE_FORMAT_JPEG = 0;
 /**
  * enum for png
  * @constant
  * @type Number
  */
-cc.CCIMAGE_FORMAT_PNG = 1;
+cc.IMAGE_FORMAT_PNG = 1;
 /**
  * enum for raw
  * @constant
  * @type Number
  */
-cc.CCIMAGE_FORMAT_RAWDATA = 2;
+cc.IMAGE_FORMAT_RAWDATA = 2;
 
 /**
  * @param {Number} x
@@ -85,7 +85,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _oldFBO:0,
     _texture:null,
     _uITextureImage:null,
-    _pixelFormat:cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888,
+    _pixelFormat:cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888,
     _sprite:null,
 
     /**
@@ -146,7 +146,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     /**
      * @param {Number} width
      * @param {Number} height
-     * @param {cc.CCIMAGE_FORMAT_JPEG|cc.CCIMAGE_FORMAT_PNG|cc.CCIMAGE_FORMAT_RAWDATA} format
+     * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
      * @param {Number} depthStencilFormat
      * @return {Boolean}
      */
@@ -162,7 +162,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return true;
         } else {
             //TODO
-            cc.Assert(this._pixelFormat != cc.CCTEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
+            cc.Assert(this._pixelFormat != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
 
             try {
                 width *= cc.CONTENT_SCALE_FACTOR();
@@ -355,7 +355,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         glViewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
 
         // special viewport for 3d projection + retina display
-        if (director.getProjection() == cc.CCDIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1) {
+        if (director.getProjection() == cc.DIRECTOR_PROJECTION_3D && cc.CONTENT_SCALE_FACTOR() != 1) {
             glViewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
         }
 
@@ -422,7 +422,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @return {cc.Image}
      */
     newCCImage:function () {
-        cc.Assert(this._pixelFormat == cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
+        cc.Assert(this._pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
 
         if (!this._texture) {
             return null;
@@ -491,9 +491,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     saveToFile:function (filePath, format) {
         if (!format)
             filePath = cc.FileUtils.getInstance().getWriteablePath() + filePath;
-        format = format || cc.CCIMAGE_FORMAT_JPEG;
+        format = format || cc.IMAGE_FORMAT_JPEG;
 
-        cc.Assert(format == cc.CCIMAGE_FORMAT_JPEG || format == cc.CCIMAGE_FORMAT_PNG,
+        cc.Assert(format == cc.IMAGE_FORMAT_JPEG || format == cc.IMAGE_FORMAT_PNG,
             "the image can only be saved as JPG or PNG format");
 
         var pImage = this.newCCImage();
@@ -516,7 +516,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
             if (this.pITextureImage) {
                 var s = this._texture.getContentSizeInPixels();
-                VolatileTexture.addDataTexture(this._texture, this.pITextureImage.getData(), cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888, s);
+                VolatileTexture.addDataTexture(this._texture, this.pITextureImage.getData(), cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, s);
             } else {
                 cc.Log("Cache rendertexture failed!");
             }
@@ -528,7 +528,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
  * creates a RenderTexture object with width and height in Points and a pixel format, only RGB and RGBA formats are valid
  * @param {Number} width
  * @param {Number} height
- * @param {cc.CCIMAGE_FORMAT_JPEG|cc.CCIMAGE_FORMAT_PNG|cc.CCIMAGE_FORMAT_RAWDATA} format
+ * @param {cc.IMAGE_FORMAT_JPEG|cc.IMAGE_FORMAT_PNG|cc.IMAGE_FORMAT_RAWDATA} format
  * @param {Number} depthStencilFormat
  * @return {cc.RenderTexture}
  * @example
@@ -536,7 +536,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
  * var rt = cc.RenderTexture.create()
  */
 cc.RenderTexture.create = function (width, height, format, depthStencilFormat) {
-    format = format || cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888;
+    format = format || cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
     depthStencilFormat = depthStencilFormat || 0;
 
     var ret = new cc.RenderTexture();

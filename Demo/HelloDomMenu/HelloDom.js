@@ -65,15 +65,15 @@ var Helloworld = cc.Layer.extend({
 
         //this.helloLb = cc.LabelTTF.create("Hello World", "Arial", 24);
         // position the label on the center of the screen
-        //this.helloLb.setPosition(cc.ccp(cc.Director.getInstance().getWinSize().width / 2, 0));
+        //this.helloLb.setPosition(cc.p(cc.Director.getInstance().getWinSize().width / 2, 0));
         // add the label as a child to this layer
         //this.addChild(this.helloLb, 5);
 
         // add "HelloWorld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
-        this.sprite.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
         this.sprite.setVisible(true);
-        this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.sprite.setAnchorPoint(cc.p(0.5, 0.5));
         this.sprite.setScale(0.5);
         this.sprite.setRotation(180);
         this.addChild(this.sprite, 0);
@@ -101,7 +101,7 @@ var Helloworld = cc.Layer.extend({
          this.addChild(this.circle, 2);
          this.circle.schedule(this.circle.myUpdate, 1 / 60);*/
 
-        //this.helloLb.runAction(cc.MoveBy.create(2.5, cc.ccp(0, 280)));
+        //this.helloLb.runAction(cc.MoveBy.create(2.5, cc.p(0, 280)));
 
         this.setTouchEnabled(true);
 
@@ -114,10 +114,10 @@ var Helloworld = cc.Layer.extend({
         var text = cc.MenuItemFont.create("Hello Dom", this, function () {
         });
         text.setColor({r:255, g:0, b:0});
-        text.setPosition(cc.ccp(cc.canvas.width / 2, cc.canvas.height / 2));
-        closeItem.setPosition(cc.ccp(cc.canvas.width - 20, 20));
+        text.setPosition(cc.p(cc.canvas.width / 2, cc.canvas.height / 2));
+        closeItem.setPosition(cc.p(cc.canvas.width - 20, 20));
         var menu = cc.Menu.create(closeItem, text);
-        menu.setPosition(cc.ccp(0, 0));
+        menu.setPosition(cc.p(0, 0));
         this.sprite.addChild(menu);
         //cc.fullscreen();
         return true;

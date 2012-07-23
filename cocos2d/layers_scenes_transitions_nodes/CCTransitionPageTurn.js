@@ -89,7 +89,7 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
             y = 16;
         }
 
-        var action = this.actionWithSize(cc.ccg(x, y));
+        var action = this.actionWithSize(cc.g(x, y));
 
         if (!this._back) {
             this._outScene.runAction(cc.Sequence.create(action,

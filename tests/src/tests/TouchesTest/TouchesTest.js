@@ -88,9 +88,9 @@ var PongLayer = cc.Layer.extend({
     },
     resetAndScoreBallForPlayer:function (player) {
         if (Math.abs(this._ball.getVelocity().y) < 300) {
-            this._ballStartingVelocity = cc.ccpMult(this._ballStartingVelocity, -1.1);
+            this._ballStartingVelocity = cc.pMult(this._ballStartingVelocity, -1.1);
         } else {
-            this._ballStartingVelocity = cc.ccpMult(this._ballStartingVelocity, -1);
+            this._ballStartingVelocity = cc.pMult(this._ballStartingVelocity, -1);
         }
         this._ball.setVelocity(this._ballStartingVelocity);
         this._ball.setPosition(cc.PointMake(this._winSize.width / 2, this._winSize.height / 2));

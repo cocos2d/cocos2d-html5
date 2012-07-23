@@ -29,13 +29,13 @@
  * @type Number
  * @constant
  */
-cc.CCPROGRESS_TIMER_TYPE_RADIAL = 0;
+cc.PROGRESS_TIMER_TYPE_RADIAL = 0;
 /**
  * Bar
  * @type Number
  * @constant
  */
-cc.CCPROGRESS_TIMER_TYPE_BAR = 1;
+cc.PROGRESS_TIMER_TYPE_BAR = 1;
 
 /**
  * @constant
@@ -70,7 +70,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _reverseDirection:false,
 
     ctor:function () {
-        this._type = cc.CCPROGRESS_TIMER_TYPE_RADIAL;
+        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._percentage = 0.0;
         this._midPoint = new cc.Point(0, 0);
         this._barChangeRate = new cc.Point(0, 0);
@@ -82,10 +82,10 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      *    If you're using radials type then the midpoint changes the center point
      *    If you're using bar type the the midpoint changes the bar growth
      *        it expands from the center but clamps to the sprites edge so:
-     *        you want a left to right then set the midpoint all the way to cc.ccp(0,y)
-     *        you want a right to left then set the midpoint all the way to cc.ccp(1,y)
-     *        you want a bottom to top then set the midpoint all the way to cc.ccp(x,0)
-     *        you want a top to bottom then set the midpoint all the way to cc.ccp(x,1)
+     *        you want a left to right then set the midpoint all the way to cc.p(0,y)
+     *        you want a right to left then set the midpoint all the way to cc.p(1,y)
+     *        you want a bottom to top then set the midpoint all the way to cc.p(x,0)
+     *        you want a top to bottom then set the midpoint all the way to cc.p(x,1)
      *  @return {cc.Point}
      */
     getMidpoint:function () {
@@ -97,14 +97,14 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Point} mpoint
      */
     setMidpoint:function (mpoint) {
-        this._midPoint = cc.ccpClamp(mpoint, cc.PointZero(), new cc.Point(1, 1));
+        this._midPoint = cc.pClamp(mpoint, cc.PointZero(), new cc.Point(1, 1));
     },
 
     /**
      *    This allows the bar type to move the component at a specific rate
      *    Set the component to 0 to make sure it stays at 100%.
      *    For example you want a left to right bar but not have the height stay 100%
-     *    Set the rate to be cc.ccp(0,1); and set the midpoint to = cc.ccp(0,.5f);
+     *    Set the rate to be cc.p(0,1); and set the midpoint to = cc.p(0,.5f);
      *  @return {cc.Point}
      */
     getBarChangeRate:function () {
@@ -116,12 +116,12 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setBarChangeRate:function (barChangeRate) {
 
-        this._barChangeRate = cc.ccpClamp(barChangeRate, cc.PointZero(), new cc.Point(1, 1));
+        this._barChangeRate = cc.pClamp(barChangeRate, cc.PointZero(), new cc.Point(1, 1));
     },
 
     /**
      *  Change the percentage to change progress
-     * @return {cc.CCPROGRESS_TIMER_TYPE_RADIAL|cc.CCPROGRESS_TIMER_TYPE_BAR}
+     * @return {cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR}
      */
     getType:function () {
         return this._type;
@@ -154,7 +154,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this._vertexDataCount = 0;
         this.setAnchorPoint(new cc.Point(0.5, 0.5));
 
-        this._type = cc.CCPROGRESS_TIMER_TYPE_RADIAL;
+        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._reverseDirection = false;
         this.setMidpoint(new cc.Point(0.5, 0.5));
         this.setBarChangeRate(new cc.Point(1, 1));
@@ -194,7 +194,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     },
 
     /**
-     * @param {cc.CCPROGRESS_TIMER_TYPE_RADIAL|cc.CCPROGRESS_TIMER_TYPE_BAR} type
+     * @param {cc.PROGRESS_TIMER_TYPE_RADIAL|cc.PROGRESS_TIMER_TYPE_BAR} type
      */
     setType:function (type) {
         if (type != this._type) {
@@ -295,7 +295,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             }
 
             var pos;
-            if (this._type == cc.CCPROGRESS_TIMER_TYPE_BAR) {
+            if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
                 pos = new cc.Point(( -this._sprite._anchorPointInPoints.x + this._sprite._offsetPosition.x + this._drawPosition.x),
                     ( -this._sprite._anchorPointInPoints.y + this._sprite._offsetPosition.y + this._drawPosition.y));
 
@@ -360,8 +360,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             return ret;
         }
         var quad = this._sprite.getQuad();
-        var min = cc.ccp(quad.bl.texCoords.u, quad.bl.texCoords.v);
-        var max = cc.ccp(quad.tr.texCoords.u, quad.tr.texCoords.v);
+        var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
+        var max = cc.p(quad.tr.texCoords.u, quad.tr.texCoords.v);
 
         //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
         if (this._sprite.isTextureRectRotated()) {
@@ -378,8 +378,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             return ret;
         }
         var quad = this._sprite.getQuad();
-        var min = cc.ccp(quad.bl.vertices.x, quad.bl.vertices.y);
-        var max = cc.ccp(quad.tr.vertices.x, quad.tr.vertices.y);
+        var min = cc.p(quad.bl.vertices.x, quad.bl.vertices.y);
+        var max = cc.p(quad.tr.vertices.x, quad.tr.vertices.y);
         ret.x = min.x * (1 - alpha.x) + max.x * alpha.x;
         ret.y = min.y * (1 - alpha.y) + max.y * alpha.y;
         return ret;
@@ -396,7 +396,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         if (cc.renderContextType == cc.CANVAS) {
             var size = this._sprite.getContentSize();
             var textureSize = this._sprite.getTextureRect().size;
-            if (this._type == cc.CCPROGRESS_TIMER_TYPE_RADIAL) {
+            if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
 
                 this._origin = new cc.Point(-(size.width * (0.5 - this._midPoint.x)), -(size.height * (0.5 - this._midPoint.y)));
                 this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
@@ -444,10 +444,10 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             }
         } else {
             switch (this._type) {
-                case cc.CCPROGRESS_TIMER_TYPE_RADIAL:
+                case cc.PROGRESS_TIMER_TYPE_RADIAL:
                     this._updateRadial();
                     break;
-                case cc.CCPROGRESS_TIMER_TYPE_BAR:
+                case cc.PROGRESS_TIMER_TYPE_BAR:
                     this._updateBar();
                     break;
                 default:
@@ -462,10 +462,10 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         }
 
         var alpha = this._percentage / 100.0;
-        var alphaOffset = cc.ccpMult(cc.ccp((1.0 - this._barChangeRate.x) + alpha * this._barChangeRate.x,
+        var alphaOffset = cc.pMult(cc.p((1.0 - this._barChangeRate.x) + alpha * this._barChangeRate.x,
             (1.0 - this._barChangeRate.y) + alpha * this._barChangeRate.y), 0.5);
-        var min = cc.ccpSub(this._midPoint, alphaOffset);
-        var max = cc.ccpAdd(this._midPoint, alphaOffset);
+        var min = cc.pSub(this._midPoint, alphaOffset);
+        var max = cc.pAdd(this._midPoint, alphaOffset);
 
         if (min.x < 0) {
             max.x += -min.x;
@@ -498,20 +498,20 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             }
 
             //    TOPLEFT
-            this._vertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(min.x, max.y));
-            this._vertexData[0].vertices = this._vertexFromAlphaPoint(cc.ccp(min.x, max.y));
+            this._vertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
+            this._vertexData[0].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
 
             //    BOTLEFT
-            this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(min.x, min.y));
-            this._vertexData[1].vertices = this._vertexFromAlphaPoint(cc.ccp(min.x, min.y));
+            this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
+            this._vertexData[1].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
 
             //    TOPRIGHT
-            this._vertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(max.x, max.y));
-            this._vertexData[2].vertices = this._vertexFromAlphaPoint(cc.ccp(max.x, max.y));
+            this._vertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
+            this._vertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
 
             //    BOTRIGHT
-            this._vertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(max.x, min.y));
-            this._vertexData[3].vertices = this._vertexFromAlphaPoint(cc.ccp(max.x, min.y));
+            this._vertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
+            this._vertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         } else {
             if (!this._vertexData) {
                 this._vertexData = 8;
@@ -521,37 +521,37 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                 }
                 cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
                 //    TOPLEFT 1
-                this._vertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(0, 1));
-                this._vertexData[0].vertices = this._vertexFromAlphaPoint(cc.ccp(0, 1));
+                this._vertexData[0].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 1));
+                this._vertexData[0].vertices = this._vertexFromAlphaPoint(cc.p(0, 1));
 
                 //    BOTLEFT 1
-                this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(0, 0));
-                this._vertexData[1].vertices = this._vertexFromAlphaPoint(cc.ccp(0, 0));
+                this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(cc.p(0, 0));
+                this._vertexData[1].vertices = this._vertexFromAlphaPoint(cc.p(0, 0));
 
                 //    TOPRIGHT 2
-                this._vertexData[6].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(1, 1));
-                this._vertexData[6].vertices = this._vertexFromAlphaPoint(cc.ccp(1, 1));
+                this._vertexData[6].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 1));
+                this._vertexData[6].vertices = this._vertexFromAlphaPoint(cc.p(1, 1));
 
                 //    BOTRIGHT 2
-                this._vertexData[7].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(1, 0));
-                this._vertexData[7].vertices = this._vertexFromAlphaPoint(cc.ccp(1, 0));
+                this._vertexData[7].texCoords = this._textureCoordFromAlphaPoint(cc.p(1, 0));
+                this._vertexData[7].vertices = this._vertexFromAlphaPoint(cc.p(1, 0));
             }
 
             //    TOPRIGHT 1
-            this._vertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(min.x, max.y));
-            this._vertexData[2].vertices = this._vertexFromAlphaPoint(cc.ccp(min.x, max.y));
+            this._vertexData[2].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, max.y));
+            this._vertexData[2].vertices = this._vertexFromAlphaPoint(cc.p(min.x, max.y));
 
             //    BOTRIGHT 1
-            this._vertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(min.x, min.y));
-            this._vertexData[3].vertices = this._vertexFromAlphaPoint(cc.ccp(min.x, min.y));
+            this._vertexData[3].texCoords = this._textureCoordFromAlphaPoint(cc.p(min.x, min.y));
+            this._vertexData[3].vertices = this._vertexFromAlphaPoint(cc.p(min.x, min.y));
 
             //    TOPLEFT 2
-            this._vertexData[4].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(max.x, max.y));
-            this._vertexData[4].vertices = this._vertexFromAlphaPoint(cc.ccp(max.x, max.y));
+            this._vertexData[4].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, max.y));
+            this._vertexData[4].vertices = this._vertexFromAlphaPoint(cc.p(max.x, max.y));
 
             //    BOTLEFT 2
-            this._vertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.ccp(max.x, min.y));
-            this._vertexData[5].vertices = this._vertexFromAlphaPoint(cc.ccp(max.x, min.y));
+            this._vertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
+            this._vertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         }
         this._updateColor();
     },
@@ -567,8 +567,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         //    We find the vector to do a hit detection based on the percentage
         //    We know the first vector is the one @ 12 o'clock (top,mid) so we rotate
         //    from that by the progress angle around the m_tMidpoint pivot
-        var topMid = cc.ccp(this._midPoint.x, 1);
-        var percentagePt = cc.ccpRotateByAngle(topMid, this._midPoint, angle);
+        var topMid = cc.p(this._midPoint.x, 1);
+        var percentagePt = cc.pRotateByAngle(topMid, this._midPoint, angle);
 
         var index = 0;
         var hit = cc.PointZero;
@@ -599,15 +599,15 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                 //    Remember that the top edge is split in half for the 12 o'clock position
                 //    Let's deal with that here by finding the correct endpoints
                 if (i == 0) {
-                    edgePtB = cc.ccpLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
+                    edgePtB = cc.pLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
                 } else if (i == 4) {
-                    edgePtA = cc.ccpLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
+                    edgePtA = cc.pLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
                 }
 
                 // s and t are returned by ccpLineIntersect
                 var s = 0, t = 0;
                 var retPoint = new cc.Point(0, 0);
-                if (cc.ccpLineIntersect(edgePtA, edgePtB, this._midPoint, percentagePt, retPoint)) {
+                if (cc.pLineIntersect(edgePtA, edgePtB, this._midPoint, percentagePt, retPoint)) {
                     //    Since our hit test is on rays we have to deal with the top edge
                     //    being in split in half so we have to test as a segment
                     if ((i == 0 || i == 4)) {
@@ -630,7 +630,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             }
 
             //    Now that we have the minimum magnitude we can use that to find our intersection
-            hit = cc.ccpAdd(this._midPoint, cc.ccpMult(cc.ccpSub(percentagePt, this._midPoint), min_t));
+            hit = cc.pAdd(this._midPoint, cc.pMult(cc.pSub(percentagePt, this._midPoint), min_t));
         }
 
         //    The size of the vertex data is the index from the hitpoint
@@ -689,9 +689,9 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _boundaryTexCoord:function (index) {
         if (index < cc.PROGRESS_TEXTURE_COORDS_COUNT) {
             if (this._reverseDirection) {
-                return cc.ccp((cc.PROGRESS_TEXTURE_COORDS >> (7 - (index << 1))) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (7 - ((index << 1) + 1))) & 1);
+                return cc.p((cc.PROGRESS_TEXTURE_COORDS >> (7 - (index << 1))) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (7 - ((index << 1) + 1))) & 1);
             } else {
-                return cc.ccp((cc.PROGRESS_TEXTURE_COORDS >> ((index << 1) + 1)) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (index << 1)) & 1);
+                return cc.p((cc.PROGRESS_TEXTURE_COORDS >> ((index << 1) + 1)) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (index << 1)) & 1);
             }
         }
         return cc.PointZero();

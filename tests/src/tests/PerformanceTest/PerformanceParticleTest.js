@@ -87,25 +87,25 @@ var ParticleMainScene = cc.Scene.extend({
 
         cc.MenuItemFont.setFontSize(65);
         var decrease = cc.MenuItemFont.create(" - ", this, this.onDecrease);
-        decrease.setColor(cc.ccc3(0, 200, 20));
+        decrease.setColor(cc.c3(0, 200, 20));
         var increase = cc.MenuItemFont.create(" + ", this, this.onIncrease);
-        increase.setColor(cc.ccc3(0, 200, 20));
+        increase.setColor(cc.c3(0, 200, 20));
 
         var menu = cc.Menu.create(decrease, increase, null);
         menu.alignItemsHorizontally();
-        menu.setPosition(cc.ccp(s.width / 2, s.height / 2 + 15));
+        menu.setPosition(cc.p(s.width / 2, s.height / 2 + 15));
         this.addChild(menu, 1);
 
         var infoLabel = cc.LabelTTF.create("0 nodes", "Marker Felt", 30);
-        infoLabel.setColor(cc.ccc3(0, 200, 20));
-        infoLabel.setPosition(cc.ccp(s.width / 2, s.height - 90));
+        infoLabel.setColor(cc.c3(0, 200, 20));
+        infoLabel.setPosition(cc.p(s.width / 2, s.height - 90));
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
         // particles on stage
         //var labelAtlas = cc.LabelAtlas.create("0000", "res/Images/fps_images.png", 16, 24, '.');
         var labelAtlas = cc.LabelTTF.create("0000", "Marker Felt", 30);
         this.addChild(labelAtlas, 0, TAG_LABEL_ATLAS);
-        labelAtlas.setPosition(cc.ccp(s.width - 66, 50));
+        labelAtlas.setPosition(cc.p(s.width - 66, 50));
 
         // Next Prev Test
         var menu = new ParticleMenuLayer(true, 4, s_nParCurIdx);
@@ -121,20 +121,20 @@ var ParticleMainScene = cc.Scene.extend({
             subMenu.addChild(itemFont, 10);
 
             if (i <= 1) {
-                itemFont.setColor(cc.ccc3(200, 20, 20));
+                itemFont.setColor(cc.c3(200, 20, 20));
             }
             else {
-                itemFont.setColor(cc.ccc3(0, 200, 20));
+                itemFont.setColor(cc.c3(0, 200, 20));
             }
         }
         subMenu.alignItemsHorizontally();
-        subMenu.setPosition(cc.ccp(s.width / 2, 80));
+        subMenu.setPosition(cc.p(s.width / 2, 80));
         this.addChild(subMenu, 2);
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 32));
-        label.setColor(cc.ccc3(255, 255, 40));
+        label.setPosition(cc.p(s.width / 2, s.height - 32));
+        label.setColor(cc.c3(255, 255, 40));
 
         this.updateQuantityLabel();
         this.createParticleSystem();
@@ -174,17 +174,17 @@ var ParticleMainScene = cc.Scene.extend({
 
         switch (this._subtestNumber) {
             case 1:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
                 particleSystem.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
                 break;
             case 2:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA4444);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
                 particleSystem.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
                 break;
             case 3:
-                cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_A8);
+                cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_A8);
                 particleSystem.initWithTotalParticles(this._quantityParticles);
                 particleSystem.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
                 break;
@@ -198,7 +198,7 @@ var ParticleMainScene = cc.Scene.extend({
         this.doTest();
 
         // restore the default pixel format
-        cc.Texture2D.setDefaultAlphaPixelFormat(cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888);
+        cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888);
     },
     onDecrease:function (sender) {
         this._quantityParticles -= PARTICLE_NODES_INCREASE;
@@ -258,7 +258,7 @@ var ParticlePerformTest1 = ParticleMainScene.extend({
         particleSystem.setDuration(-1);
 
         // gravity
-        particleSystem.setGravity(cc.ccp(0, -90));
+        particleSystem.setGravity(cc.p(0, -90));
 
         // angle
         particleSystem.setAngle(90);
@@ -273,8 +273,8 @@ var ParticlePerformTest1 = ParticleMainScene.extend({
         particleSystem.setSpeedVar(50);
 
         // emitter position
-        particleSystem.setPosition(cc.ccp(s.width / 2, 100));
-        particleSystem.setPosVar(cc.ccp(s.width / 2, 0));
+        particleSystem.setPosition(cc.p(s.width / 2, 100));
+        particleSystem.setPosVar(cc.p(s.width / 2, 0));
 
         // life of particles
         particleSystem.setLife(2.0);
@@ -325,7 +325,7 @@ var ParticlePerformTest2 = ParticleMainScene.extend({
         particleSystem.setDuration(-1);
 
         // gravity
-        particleSystem.setGravity(cc.ccp(0, -90));
+        particleSystem.setGravity(cc.p(0, -90));
 
         // angle
         particleSystem.setAngle(90);
@@ -340,8 +340,8 @@ var ParticlePerformTest2 = ParticleMainScene.extend({
         particleSystem.setSpeedVar(50);
 
         // emitter position
-        particleSystem.setPosition(cc.ccp(s.width / 2, 100));
-        particleSystem.setPosVar(cc.ccp(s.width / 2, 0));
+        particleSystem.setPosition(cc.p(s.width / 2, 100));
+        particleSystem.setPosVar(cc.p(s.width / 2, 0));
 
         // life of particles
         particleSystem.setLife(2.0);
@@ -392,7 +392,7 @@ var ParticlePerformTest3 = ParticleMainScene.extend({
         particleSystem.setDuration(-1);
 
         // gravity
-        particleSystem.setGravity(cc.ccp(0, -90));
+        particleSystem.setGravity(cc.p(0, -90));
 
         // angle
         particleSystem.setAngle(90);
@@ -407,8 +407,8 @@ var ParticlePerformTest3 = ParticleMainScene.extend({
         particleSystem.setSpeedVar(50);
 
         // emitter position
-        particleSystem.setPosition(cc.ccp(s.width / 2, 100));
-        particleSystem.setPosVar(cc.ccp(s.width / 2, 0));
+        particleSystem.setPosition(cc.p(s.width / 2, 100));
+        particleSystem.setPosVar(cc.p(s.width / 2, 0));
 
         // life of particles
         particleSystem.setLife(2.0);
@@ -459,7 +459,7 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
         particleSystem.setDuration(-1);
 
         // gravity
-        particleSystem.setGravity(cc.ccp(0, -90));
+        particleSystem.setGravity(cc.p(0, -90));
 
         // angle
         particleSystem.setAngle(90);
@@ -474,8 +474,8 @@ var ParticlePerformTest4 = ParticleMainScene.extend({
         particleSystem.setSpeedVar(50);
 
         // emitter position
-        particleSystem.setPosition(cc.ccp(s.width / 2, 100));
-        particleSystem.setPosVar(cc.ccp(s.width / 2, 0));
+        particleSystem.setPosition(cc.p(s.width / 2, 100));
+        particleSystem.setPosVar(cc.p(s.width / 2, 0));
 
         // life of particles
         particleSystem.setLife(2.0);

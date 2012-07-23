@@ -28,17 +28,17 @@
  * @constant
  * @type Number
  */
-cc.CCMENU_STATE_WAITING = 0;
+cc.MENU_STATE_WAITING = 0;
 /**
  * @constant
  * @type Number
  */
-cc.CCMENU_STATE_TRACKING_TOUCH = 1;
+cc.MENU_STATE_TRACKING_TOUCH = 1;
 /**
  * @constant
  * @type Number
  */
-cc.CCMENU_HANDLER_PRIORITY = -128;
+cc.MENU_HANDLER_PRIORITY = -128;
 /**
  * @constant
  * @type Number
@@ -145,10 +145,10 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             // menu in the center of the screen
             var winSize = cc.Director.getInstance().getWinSize();
             this.ignoreAnchorPointForPosition(true);
-            this.setAnchorPoint(cc.ccp(0.5, 0.5));
+            this.setAnchorPoint(cc.p(0.5, 0.5));
             this.setContentSize(winSize);
 
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
 
             if(arrayOfItems){
                 for(var i = 0; i< arrayOfItems.length; i++){
@@ -157,7 +157,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             }
 
             this._selectedItem = null;
-            this._state = cc.CCMENU_STATE_WAITING;
+            this._state = cc.MENU_STATE_WAITING;
             return true;
         }
         return false;
@@ -195,7 +195,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         var y = height / 2.0;
         if (this._children && this._children.length > 0) {
             for (i = 0; i < this._children.length; i++) {
-                this._children[i].setPosition(cc.ccp(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2));
+                this._children[i].setPosition(cc.p(0, y - this._children[i].getContentSize().height * this._children[i].getScaleY() / 2));
                 y -= this._children[i].getContentSize().height * this._children[i].getScaleY() + padding;
             }
         }
@@ -223,7 +223,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
         var x = -width / 2.0;
         if (this._children && this._children.length > 0) {
             for (i = 0; i < this._children.length; i++) {
-                this._children[i].setPosition(cc.ccp(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2, 0));
+                this._children[i].setPosition(cc.p(x + this._children[i].getContentSize().width * this._children[i].getScaleX() / 2, 0));
                 x += this._children[i].getContentSize().width * this._children[i].getScaleX() + padding;
             }
         }
@@ -291,7 +291,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
                 var tmp = child.getContentSize().height;
                 rowHeight = ((rowHeight >= tmp || isNaN(tmp)) ? rowHeight : tmp);
 
-                child.setPosition(cc.ccp(x - winSize.width / 2,
+                child.setPosition(cc.p(x - winSize.width / 2,
                     y - child.getContentSize().height / 2));
 
                 x += w;
@@ -383,7 +383,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
                 var tmp = child.getContentSize().width;
                 columnWidth = ((columnWidth >= tmp || isNaN(tmp)) ? columnWidth : tmp);
 
-                child.setPosition(cc.ccp(x + columnWidths[column] / 2,
+                child.setPosition(cc.p(x + columnWidths[column] / 2,
                     y - winSize.height / 2));
 
                 y -= child.getContentSize().height + 10;
@@ -404,7 +404,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * make the menu clickable
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.CCMENU_HANDLER_PRIORITY, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, cc.MENU_HANDLER_PRIORITY, true);
     },
 
     /**
@@ -412,7 +412,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @return {Boolean}
      */
     ccTouchBegan:function (touch, e) {
-        if (this._state != cc.CCMENU_STATE_WAITING || !this._isVisible || !this._enabled) {
+        if (this._state != cc.MENU_STATE_WAITING || !this._isVisible || !this._enabled) {
             return false;
         }
 
@@ -424,7 +424,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
         this._selectedItem = this._itemForTouch(touch);
         if (this._selectedItem) {
-            this._state = cc.CCMENU_STATE_TRACKING_TOUCH;
+            this._state = cc.MENU_STATE_TRACKING_TOUCH;
             this._selectedItem.selected();
             return true;
         }
@@ -435,23 +435,23 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * when a touch ended
      */
     ccTouchEnded:function (touch, e) {
-        cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchEnded] -- invalid state");
+        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu ccTouchEnded] -- invalid state");
         if (this._selectedItem) {
             this._selectedItem.unselected();
             this._selectedItem.activate();
         }
-        this._state = cc.CCMENU_STATE_WAITING;
+        this._state = cc.MENU_STATE_WAITING;
     },
 
     /**
      * touch cancelled
      */
     ccTouchCancelled:function (touch, e) {
-        cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchCancelled] -- invalid state");
+        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu ccTouchCancelled] -- invalid state");
         if (this._selectedItem) {
             this._selectedItem.unselected();
         }
-        this._state = cc.CCMENU_STATE_WAITING;
+        this._state = cc.MENU_STATE_WAITING;
     },
 
     /**
@@ -459,7 +459,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * @param {cc.Touch} touch
      */
     ccTouchMoved:function (touch, e) {
-        cc.Assert(this._state == cc.CCMENU_STATE_TRACKING_TOUCH, "[Menu ccTouchMoved] -- invalid state");
+        cc.Assert(this._state == cc.MENU_STATE_TRACKING_TOUCH, "[Menu ccTouchMoved] -- invalid state");
         var currentItem = this._itemForTouch(touch);
         if (currentItem != this._selectedItem) {
             if (this._selectedItem) {
@@ -476,9 +476,9 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * custom on exit
      */
     onExit:function () {
-        if (this._state == cc.CCMENU_STATE_TRACKING_TOUCH) {
+        if (this._state == cc.MENU_STATE_TRACKING_TOUCH) {
             this._selectedItem.unselected();
-            this._state = cc.CCMENU_STATE_WAITING;
+            this._state = cc.MENU_STATE_WAITING;
             this._selectedItem = null;
         }
 

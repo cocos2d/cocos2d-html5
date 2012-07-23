@@ -29,17 +29,17 @@
  * @constant
  * @type Number
  */
-cc.CCNODE_TAG_INVALID = -1;
+cc.NODE_TAG_INVALID = -1;
 /**
  * Node on enter
  * @constant
  */
-cc.CCNODE_ON_ENTER = null;
+cc.NODE_ON_ENTER = null;
 /**
  * Node on exit
  * @constant
  */
-cc.CCNODE_ON_EXIT = null;
+cc.NODE_ON_EXIT = null;
 
 /**
  * save the context
@@ -155,7 +155,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _parent:null,
     // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
     _ignoreAnchorPointForPosition:false,
-    _tag:cc.CCNODE_TAG_INVALID,
+    _tag:cc.NODE_TAG_INVALID,
     // userData is always inited as nil
     _userData:null,
     _userObject:null,
@@ -918,7 +918,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Node}
      */
     getChildByTag:function (aTag) {
-        cc.Assert(aTag != cc.CCNODE_TAG_INVALID, "Invalid tag");
+        cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
         if (this._children != null) {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
@@ -1002,7 +1002,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Boolean} cleanup
      */
     removeChildByTag:function (tag, cleanup) {
-        cc.Assert(tag != cc.CCNODE_TAG_INVALID, "Invalid tag");
+        cc.Assert(tag != cc.NODE_TAG_INVALID, "Invalid tag");
 
         var child = this.getChildByTag(tag);
         if (child == null) {
@@ -1401,7 +1401,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} tag
      */
     stopActionByTag:function (tag) {
-        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
+        cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
         this.getActionManager().removeActionByTag(tag, this);
     },
 
@@ -1411,7 +1411,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Action}
      */
     getActionByTag:function (tag) {
-        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "Invalid tag");
+        cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
         return this.getActionManager().getActionByTag(tag, this);
     },
 
@@ -1632,7 +1632,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToNodeSpaceAR:function (worldPoint) {
-        return cc.ccpSub(this.convertToNodeSpace(worldPoint), this._anchorPointInPoints);
+        return cc.pSub(this.convertToNodeSpace(worldPoint), this._anchorPointInPoints);
     },
 
     /**
@@ -1642,7 +1642,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Point}
      */
     convertToWorldSpaceAR:function (nodePoint) {
-        var pt = cc.ccpAdd(nodePoint, this._anchorPointInPoints);
+        var pt = cc.pAdd(nodePoint, this._anchorPointInPoints);
         return this.convertToWorldSpace(pt);
     },
 

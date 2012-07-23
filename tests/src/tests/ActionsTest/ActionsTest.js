@@ -290,7 +290,7 @@ var ActionManual = ActionsDemo.extend({
 
         this._grossini.setRotation(120);
         this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-        this._grossini.setColor(cc.ccc3(255, 0, 0));
+        this._grossini.setColor(cc.c3(255, 0, 0));
 
         this._kathia.setPosition(cc.PointMake(s.width - 100, s.height / 2));
         this._kathia.setColor(cc.BLUE());
@@ -386,23 +386,23 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         var winSize = cc.Director.getInstance().getWinSize();
 
         var boxSize = cc.SizeMake(100.0, 100.0);
-        var box = cc.LayerColor.create(cc.ccc4(255, 255, 0, 255));
-        box.setAnchorPoint(cc.ccp(0, 0));
+        var box = cc.LayerColor.create(cc.c4(255, 255, 0, 255));
+        box.setAnchorPoint(cc.p(0, 0));
         box.setPosition(new cc.Point((winSize.width - boxSize.width) / 2, (winSize.height - boxSize.height) / 2));
         box.setContentSize(boxSize);
 
         var markrside = 10.0;
-        var uL = cc.LayerColor.create(cc.ccc4(255, 0, 0, 255));
+        var uL = cc.LayerColor.create(cc.c4(255, 0, 0, 255));
         box.addChild(uL);
         uL.setContentSize(cc.SizeMake(markrside, markrside));
-        uL.setPosition(cc.ccp(0, boxSize.height - markrside));
-        uL.setAnchorPoint(cc.ccp(0, 0));
+        uL.setPosition(cc.p(0, boxSize.height - markrside));
+        uL.setAnchorPoint(cc.p(0, 0));
 
-        var uR = cc.LayerColor.create(cc.ccc4(0, 0, 255, 255));
+        var uR = cc.LayerColor.create(cc.c4(0, 0, 255, 255));
         box.addChild(uR);
         uR.setContentSize(cc.SizeMake(markrside, markrside));
-        uR.setPosition(cc.ccp(boxSize.width - markrside, boxSize.height - markrside));
-        uR.setAnchorPoint(cc.ccp(0, 0));
+        uR.setPosition(cc.p(boxSize.width - markrside, boxSize.height - markrside));
+        uR.setAnchorPoint(cc.p(0, 0));
 
 
         this.addChild(box);
@@ -779,7 +779,7 @@ var ActionCallFuncND = ActionsDemo.extend({
         this._super();
         this.centerSprites(1);
 
-        var action = cc.Sequence.create(cc.MoveBy.create(2.0, cc.ccp(200, 0)),
+        var action = cc.Sequence.create(cc.MoveBy.create(2.0, cc.p(200, 0)),
             cc.CallFunc.create(this._grossini, this.removeFromParentAndCleanup, true));
 
         this._grossini.runAction(action);
@@ -1331,7 +1331,7 @@ var Issue1305 = ActionsDemo.extend({
         cc.Log("This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
     },
     addSprite:function (dt) {
-        this._spriteTmp.setPosition(cc.ccp(250, 250));
+        this._spriteTmp.setPosition(cc.p(250, 250));
         this.addChild(this._spriteTmp);
     },
     title:function () {
@@ -1348,17 +1348,17 @@ var Issue1305_2 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(200, 200));
+        spr.setPosition(cc.p(200, 200));
         this.addChild(spr);
 
-        var act1 = cc.MoveBy.create(2, cc.ccp(0, 100));
+        var act1 = cc.MoveBy.create(2, cc.p(0, 100));
 
         var act2 = cc.CallFunc.create(this, this.log1);
-        var act3 = cc.MoveBy.create(2, cc.ccp(0, -100));
+        var act3 = cc.MoveBy.create(2, cc.p(0, -100));
         var act4 = cc.CallFunc.create(this, this.log2);
-        var act5 = cc.MoveBy.create(2, cc.ccp(100, -100));
+        var act5 = cc.MoveBy.create(2, cc.p(100, -100));
         var act6 = cc.CallFunc.create(this, this.log3);
-        var act7 = cc.MoveBy.create(2, cc.ccp(-100, 0));
+        var act7 = cc.MoveBy.create(2, cc.p(-100, 0));
         var act8 = cc.CallFunc.create(this, this.log4);
 
         var actF = cc.Sequence.create(act1, act2, act3, act4, act5, act6, act7, act8);
@@ -1392,10 +1392,10 @@ var Issue1288 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(100, 100));
+        spr.setPosition(cc.p(100, 100));
         this.addChild(spr);
 
-        var act1 = cc.MoveBy.create(0.5, cc.ccp(100, 0));
+        var act1 = cc.MoveBy.create(0.5, cc.p(100, 0));
         var act2 = act1.reverse();
         var act3 = cc.Sequence.create(act1, act2);
         var act4 = cc.Repeat.create(act3, 2);
@@ -1416,10 +1416,10 @@ var Issue1288_2 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(100, 100));
+        spr.setPosition(cc.p(100, 100));
         this.addChild(spr);
 
-        var act1 = cc.MoveBy.create(0.5, cc.ccp(100, 0));
+        var act1 = cc.MoveBy.create(0.5, cc.p(100, 0));
         spr.runAction(cc.Repeat.create(act1, 1));
     },
     title:function () {
@@ -1436,7 +1436,7 @@ var Issue1327 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(100, 100));
+        spr.setPosition(cc.p(100, 100));
         this.addChild(spr);
 
         var act1 = cc.CallFunc.create(this, this.logSprRotation);

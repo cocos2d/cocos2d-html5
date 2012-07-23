@@ -55,9 +55,9 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
 
         // create the second render texture for outScene
         var texture = cc.RenderTexture.create(winSize.width, winSize.height);
-        texture.getSprite().setAnchorPoint(cc.ccp(0.5, 0.5));
-        texture.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
-        texture.setAnchorPoint(cc.ccp(0.5, 0.5));
+        texture.getSprite().setAnchorPoint(cc.p(0.5, 0.5));
+        texture.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
+        texture.setAnchorPoint(cc.p(0.5, 0.5));
 
         if (cc.renderContextType == cc.CANVAS) {
             // render outScene to its texturebuffer
@@ -144,13 +144,13 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
-        pNode.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
+        pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 
         //    Return the radial type that we want to use
         pNode.setReverseDirection(false);
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
+        pNode.setPosition(cc.p(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.p(0.5, 0.5));
 
         return pNode;
     }
@@ -186,13 +186,13 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
-        pNode.setType(cc.CCPROGRESS_TIMER_TYPE_RADIAL);
+        pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 
         //    Return the radial type that we want to use
         pNode.setReverseDirection(true);
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
+        pNode.setPosition(cc.p(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.p(0.5, 0.5));
 
         return pNode;
     }
@@ -228,14 +228,14 @@ cc.TransitionProgressHorizontal = cc.TransitionProgress.extend(/** @lends cc.Tra
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
-        pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
-        pNode.setMidpoint(cc.ccp(1, 0));
-        pNode.setBarChangeRate(cc.ccp(1, 0));
+        pNode.setMidpoint(cc.p(1, 0));
+        pNode.setBarChangeRate(cc.p(1, 0));
 
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
+        pNode.setPosition(cc.p(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.p(0.5, 0.5));
 
         return pNode;
     }
@@ -270,14 +270,14 @@ cc.TransitionProgressVertical = cc.TransitionProgress.extend(/** @lends cc.Trans
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
-        pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
-        pNode.setMidpoint(cc.ccp(0, 0));
-        pNode.setBarChangeRate(cc.ccp(0, 1));
+        pNode.setMidpoint(cc.p(0, 0));
+        pNode.setBarChangeRate(cc.p(0, 1));
 
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
+        pNode.setPosition(cc.p(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.p(0.5, 0.5));
 
         return pNode;
     }
@@ -311,14 +311,14 @@ cc.TransitionProgressInOut = cc.TransitionProgress.extend(/** @lends cc.Transiti
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
-        pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
-        pNode.setMidpoint(cc.ccp(0.5, 0.5));
-        pNode.setBarChangeRate(cc.ccp(1, 1));
+        pNode.setMidpoint(cc.p(0.5, 0.5));
+        pNode.setBarChangeRate(cc.p(1, 1));
 
         pNode.setPercentage(0);
-        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
+        pNode.setPosition(cc.p(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.p(0.5, 0.5));
 
         return pNode;
     },
@@ -360,14 +360,14 @@ cc.TransitionProgressOutIn = cc.TransitionProgress.extend(/** @lends cc.Transiti
         // but it is flipped upside down so we flip the sprite
         if (cc.renderContextType == cc.WEBGL)
             pNode.getSprite().setFlipY(true);
-        pNode.setType(cc.CCPROGRESS_TIMER_TYPE_BAR);
+        pNode.setType(cc.PROGRESS_TIMER_TYPE_BAR);
 
-        pNode.setMidpoint(cc.ccp(0.5, 0.5));
-        pNode.setBarChangeRate(cc.ccp(1, 1));
+        pNode.setMidpoint(cc.p(0.5, 0.5));
+        pNode.setBarChangeRate(cc.p(1, 1));
 
         pNode.setPercentage(100);
-        pNode.setPosition(cc.ccp(size.width / 2, size.height / 2));
-        pNode.setAnchorPoint(cc.ccp(0.5, 0.5));
+        pNode.setPosition(cc.p(size.width / 2, size.height / 2));
+        pNode.setAnchorPoint(cc.p(0.5, 0.5));
 
         return pNode;
     }

@@ -29,17 +29,17 @@
  * @constant
  * @type Number
  */
-cc.CCMENU_STATE_WAITING = 0;
+cc.MENU_STATE_WAITING = 0;
 /**
  * @constant
  * @type Number
  */
-cc.CCMENU_STATE_TRACKING_TOUCH = 1;
+cc.MENU_STATE_TRACKING_TOUCH = 1;
 /**
  * @constant
  * @type Number
  */
-cc.CCMENU_HANDLER_PRIORITY = -128;
+cc.MENU_HANDLER_PRIORITY = -128;
 /**
  * @constant
  * @type Number
@@ -100,7 +100,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
                 var childheight = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].dom.style.fontSize,
                     this.getChildren()[i].dom.style.fontFamily).height;
-                this.getChildren()[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._children[i].getScaleY()*/ / 2));
+                this.getChildren()[i].setPosition(cc.p(s.width / 2, s.height / 2 + y - childheight/* * this._children[i].getScaleY()*/ / 2));
                 y -= childheight /** this._children[i].getScaleY()*/ + padding;
             }
         }
@@ -134,8 +134,8 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
                 var childwidth = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].dom.style.fontSize,
                     this.getChildren()[i].dom.style.fontFamily).width;
-                this.getChildren()[i].setPosition(cc.ccp(-y + childwidth, 0/* * this._children[i].getScaleY()*/));
-                //console.log(cc.ccp(s.width / 2 + y - childwidth, -s.height / 2/* * this._children[i].getScaleY()*/));
+                this.getChildren()[i].setPosition(cc.p(-y + childwidth, 0/* * this._children[i].getScaleY()*/));
+                //console.log(cc.p(s.width / 2 + y - childwidth, -s.height / 2/* * this._children[i].getScaleY()*/));
                 y -= childwidth /** this._children[i].getScaleY()*/ + padding;
             }
         }

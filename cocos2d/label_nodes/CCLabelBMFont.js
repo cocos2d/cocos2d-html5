@@ -447,7 +447,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (cc.LABELBMFONT_DEBUG_DRAW) {
             var s = this.getContentSize();
             var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
-            var vertices = [cc.ccp(pos.x, pos.y), cc.ccp(pos.x + s.width, pos.y), cc.ccp(pos.x + s.width, pos.y + s.height), cc.ccp(pos.x, pos.y + s.height)];
+            var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + s.width, pos.y), cc.p(pos.x + s.width, pos.y + s.height), cc.p(pos.x, pos.y + s.height)];
             context.strokeStyle = "rgba(0,255,0,1)";
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
@@ -580,7 +580,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._color = cc.WHITE();
             this._contentSize = cc.SizeZero();
             this.setString(theString);
-            this.setAnchorPoint(cc.ccp(0.5, 0.5));
+            this.setAnchorPoint(cc.p(0.5, 0.5));
             return true;
         }
         return false;
@@ -666,7 +666,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
-            var fontPos = cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width * 0.5 + kerningAmount,
+            var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width * 0.5 + kerningAmount,
                 nextFontPositionY + yOffset - rect.size.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
             fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
 
@@ -923,7 +923,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                             if (index < 0) continue;
 
                             var characterSprite = this.getChildByTag(index);
-                            characterSprite.setPosition(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0)));
+                            characterSprite.setPosition(cc.pAdd(characterSprite.getPosition(), cc.p(shift, 0)));
                         }
                     }
 

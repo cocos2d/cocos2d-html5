@@ -94,7 +94,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
     }
     var selColor;
     if (color instanceof cc.Color4F) {
-        selColor = cc.ccc3(color.r * 255, color.g * 255, color.b * 255);
+        selColor = cc.c3(color.r * 255, color.g * 255, color.b * 255);
     } else {
         selColor = color;
     }
@@ -414,7 +414,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._flipX = this._flipY = false;
 
         // default transform anchor: center
-        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.setAnchorPoint(cc.p(0.5, 0.5));
 
         // zwoptex default values
         this._offsetPosition = cc.PointZero();
@@ -883,16 +883,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (cc.SPRITE_DEBUG_DRAW == 1) {
                 // draw bounding box
                 context.strokeStyle = "rgba(0,255,0,1)";
-                var vertices1 = [cc.ccp(posX, posY), cc.ccp(posX + this._rect.size.width, posY), cc.ccp(posX + this._rect.size.width, posY + this._rect.size.height),
-                    cc.ccp(posX, posY + this._rect.size.height)];
+                var vertices1 = [cc.p(posX, posY), cc.p(posX + this._rect.size.width, posY), cc.p(posX + this._rect.size.width, posY + this._rect.size.height),
+                    cc.p(posX, posY + this._rect.size.height)];
                 cc.drawingUtil.drawPoly(vertices1, 4, true);
             } else if (cc.SPRITE_DEBUG_DRAW == 2) {
                 // draw texture box
                 context.strokeStyle = "rgba(0,255,0,1)";
                 var drawSize = this._rect.size;
                 var offsetPix = this.getOffsetPosition();
-                var vertices2 = [cc.ccp(offsetPix.x, offsetPix.y), cc.ccp(offsetPix.x + drawSize.width, offsetPix.y),
-                    cc.ccp(offsetPix.x + drawSize.width, offsetPix.y + drawSize.height), cc.ccp(offsetPix.x, offsetPix.y + drawSize.height)];
+                var vertices2 = [cc.p(offsetPix.x, offsetPix.y), cc.p(offsetPix.x + drawSize.width, offsetPix.y),
+                    cc.p(offsetPix.x + drawSize.width, offsetPix.y + drawSize.height), cc.p(offsetPix.x, offsetPix.y + drawSize.height)];
                 cc.drawingUtil.drawPoly(vertices2, 4, true);
             }
         } else {
@@ -947,8 +947,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 // draw texture box
                 var drawSizeG2 = this.getTextureRect().size;
                 var offsetPixG2 = this.getOffsetPosition();
-                var verticesG2 = [cc.ccp(offsetPixG2.x, offsetPixG2.y), cc.ccp(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
-                    cc.ccp(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.ccp(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
+                var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
+                    cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
                 cc.drawingUtil.drawPoly(verticesG2, 4, true);
             } // CC_SPRITE_DEBUG_DRAW
         }
@@ -1677,12 +1677,12 @@ cc.Sprite.create = function (fileName, rect) {
  * var spriteFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
  *
  * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
+ * var sprite = cc.Sprite.createWithSpriteFrameNameNameName(spriteFrame);
  *
  * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameName('rossini_dance_01.png');
+ * var sprite = cc.Sprite.createWithSpriteFrameNameNameName('rossini_dance_01.png');
  */
-cc.Sprite.createWithSpriteFrameName = function (spriteFrame) {
+cc.Sprite.createWithSpriteFrameNameNameName = function (spriteFrame) {
     if (typeof(spriteFrame) == 'string') {
         var pFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName(spriteFrame);
         if (pFrame) {

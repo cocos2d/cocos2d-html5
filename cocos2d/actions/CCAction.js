@@ -29,7 +29,7 @@
  * @type {Number}
  */
 
-cc.CCACTION_TAG_INVALID = -1;
+cc.ACTION_TAG_INVALID = -1;
 
 /**
  * Base class for cc.Action objects.
@@ -46,7 +46,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      The target is 'assigned', it is not 'retained'.
      */
     _target:null,
-    _tag:cc.CCACTION_TAG_INVALID,
+    _tag:cc.ACTION_TAG_INVALID,
 
     //**************Public Functions***********
     /**
@@ -373,7 +373,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
 
         var winSize = cc.Director.getInstance().getWinSize();
         this._fullScreenSize = cc.PointMake(winSize.width, winSize.height);
-        this._halfScreenSize = cc.ccpMult(this._fullScreenSize, 0.5);
+        this._halfScreenSize = cc.pMult(this._fullScreenSize, 0.5);
 
         if (this._boundarySet) {
             this.leftBoundary = -((rect.origin.x + rect.size.width) - this._fullScreenSize.x);
@@ -408,12 +408,12 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
             if (this._boundaryFullyCovered)
                 return;
 
-            var tempPos = cc.ccpSub(this._halfScreenSize, this._followedNode.getPosition());
+            var tempPos = cc.pSub(this._halfScreenSize, this._followedNode.getPosition());
 
-            this._target.setPosition(cc.ccp(cc.clampf(tempPos.x, this.leftBoundary, this.rightBoundary),
+            this._target.setPosition(cc.p(cc.clampf(tempPos.x, this.leftBoundary, this.rightBoundary),
                 cc.clampf(tempPos.y, this.bottomBoundary, this.topBoundary)));
         } else {
-            this._target.setPosition(cc.ccpSub(this._halfScreenSize, this._followedNode.getPosition()));
+            this._target.setPosition(cc.pSub(this._halfScreenSize, this._followedNode.getPosition()));
         }
     },
 

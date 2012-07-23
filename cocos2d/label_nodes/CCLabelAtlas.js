@@ -152,8 +152,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         this._super();
         if (cc.LABELATLAS_DEBUG_DRAW) {
             var s = this.getContentSize();
-            var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0),
-                cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
+            var vertices = [cc.p(0, 0), cc.p(s.width, 0),
+                cc.p(s.width, s.height), cc.p(0, s.height)];
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
     },

@@ -389,7 +389,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
         var p = copyConfig.getControlPointAtIndex(0);
         for (var i = 1; i < copyConfig.count(); ++i) {
             current = copyConfig.getControlPointAtIndex(i);
-            var diff = cc.ccpSub(current, p);
+            var diff = cc.pSub(current, p);
             copyConfig.replaceControlPoint(diff, i);
             p = current;
         }
@@ -401,12 +401,12 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
         p = reverseArray.getControlPointAtIndex(reverseArray.count() - 1);
         reverseArray.removeControlPointAtIndex(reverseArray.count() - 1);
 
-        p = cc.ccpNeg(p);
+        p = cc.pNeg(p);
         reverseArray.insertControlPoint(p, 0);
         for (i = 1; i < reverseArray.count(); ++i) {
             current = reverseArray.getControlPointAtIndex(i);
-            current = cc.ccpNeg(current);
-            var abs = cc.ccpAdd(current, p);
+            current = cc.pNeg(current);
+            var abs = cc.pAdd(current, p);
             reverseArray.replaceControlPoint(abs, i);
             p = abs;
         }
@@ -418,7 +418,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
-        this._target.setPosition(cc.ccpAdd(newPos, this._startPosition));
+        this._target.setPosition(cc.pAdd(newPos, this._startPosition));
     }
 });
 

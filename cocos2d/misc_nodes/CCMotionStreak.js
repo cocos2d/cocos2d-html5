@@ -116,8 +116,8 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      */
     update:function (delta) {
         var location = this.convertToWorldSpace(cc.PointZero());
-        this._ribbon.setPosition(cc.ccp(-1 * location.x, -1 * location.y));
-        var len = cc.ccpLength(cc.ccpSub(this._lastLocation, location));
+        this._ribbon.setPosition(cc.p(-1 * location.x, -1 * location.y));
+        var len = cc.pLength(cc.pSub(this._lastLocation, location));
         if (len > this._segThreshold) {
             this._ribbon.addPointAt(location, this._width);
             this._lastLocation = location;

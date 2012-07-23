@@ -569,7 +569,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
                 var x = parseFloat(l.getAttribute('x')) || 0;
                 var y = parseFloat(l.getAttribute('y')) || 0;
-                layer.offset = cc.ccp(x, y);
+                layer.offset = cc.p(x, y);
 
                 var nodeValue = ''
                 for (var j = 0; j < data.childNodes.length; j++) {

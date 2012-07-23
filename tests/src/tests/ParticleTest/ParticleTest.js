@@ -142,7 +142,7 @@ var ParticleDemo = cc.LayerColor.extend({
 
     ctor:function () {
         this._super();
-        this.initWithColor(cc.ccc4(127, 127, 127, 255));
+        this.initWithColor(cc.c4(127, 127, 127, 255));
 
         this._emitter = null;
 
@@ -177,7 +177,7 @@ var ParticleDemo = cc.LayerColor.extend({
 
         this._freeMovementButton = cc.MenuItemSprite.create(freeBtnNormal, freeBtnSelected, freeBtnDisabled, this,
             function () {
-                selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_RELATIVE);
+                selfPoint._emitter.setPositionType(cc.PARTICLE_TYPE_RELATIVE);
                 selfPoint._relativeMovementButton.setVisible(true);
                 selfPoint._freeMovementButton.setVisible(false);
                 selfPoint._groupMovementButton.setVisible(false);
@@ -187,7 +187,7 @@ var ParticleDemo = cc.LayerColor.extend({
 
         this._relativeMovementButton = cc.MenuItemSprite.create(relativeBtnNormal, relativeBtnSelected, relativeBtnDisabled, this,
             function () {
-                selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_GROUPED);
+                selfPoint._emitter.setPositionType(cc.PARTICLE_TYPE_GROUPED);
                 selfPoint._relativeMovementButton.setVisible(false);
                 selfPoint._freeMovementButton.setVisible(false);
                 selfPoint._groupMovementButton.setVisible(true);
@@ -198,7 +198,7 @@ var ParticleDemo = cc.LayerColor.extend({
 
         this._groupMovementButton = cc.MenuItemSprite.create(groupBtnNormal, groupBtnSelected, groupBtnDisabled, this,
             function () {
-                selfPoint._emitter.setPositionType(cc.CCPARTICLE_TYPE_FREE);
+                selfPoint._emitter.setPositionType(cc.PARTICLE_TYPE_FREE);
                 selfPoint._relativeMovementButton.setVisible(false);
                 selfPoint._freeMovementButton.setVisible(true);
                 selfPoint._groupMovementButton.setVisible(false);
@@ -285,12 +285,12 @@ var ParticleDemo = cc.LayerColor.extend({
         cc.Director.getInstance().replaceScene(s);
     },
     toggleCallback:function (sender) {
-        if (this._emitter.getPositionType() == cc.CCPARTICLE_TYPE_GROUPED)
-            this._emitter.setPositionType(cc.CCPARTICLE_TYPE_FREE);
-        else if (this._emitter.getPositionType() == cc.CCPARTICLE_TYPE_FREE)
-            this._emitter.setPositionType(cc.CCPARTICLE_TYPE_RELATIVE);
-        else if (this._emitter.getPositionType() == cc.CCPARTICLE_TYPE_RELATIVE)
-            this._emitter.setPositionType(cc.CCPARTICLE_TYPE_GROUPED);
+        if (this._emitter.getPositionType() == cc.PARTICLE_TYPE_GROUPED)
+            this._emitter.setPositionType(cc.PARTICLE_TYPE_FREE);
+        else if (this._emitter.getPositionType() == cc.PARTICLE_TYPE_FREE)
+            this._emitter.setPositionType(cc.PARTICLE_TYPE_RELATIVE);
+        else if (this._emitter.getPositionType() == cc.PARTICLE_TYPE_RELATIVE)
+            this._emitter.setPositionType(cc.PARTICLE_TYPE_GROUPED);
     },
 
     registerWithTouchDispatcher:function () {
@@ -310,7 +310,7 @@ var ParticleDemo = cc.LayerColor.extend({
         if (this._background) {
             pos = this._background.convertToWorldSpace(cc.PointZero());
         }
-        this._emitter.setPosition(cc.ccpSub(location, pos));
+        this._emitter.setPosition(cc.pSub(location, pos));
     },
 
     step:function (dt) {
@@ -876,10 +876,10 @@ var RadiusMode1 = ParticleDemo.extend({
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_starsGrayscale));
 
         // duration
-        this._emitter.setDuration(cc.CCPARTICLE_DURATION_INFINITY);
+        this._emitter.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
         // radius mode
-        this._emitter.setEmitterMode(cc.CCPARTICLE_MODE_RADIUS);
+        this._emitter.setEmitterMode(cc.PARTICLE_MODE_RADIUS);
 
         // radius mode: start and end radius in pixels
         this._emitter.setStartRadius(0);
@@ -898,7 +898,7 @@ var RadiusMode1 = ParticleDemo.extend({
 
         // emitter position
         var size = cc.Director.getInstance().getWinSize();
-        this._emitter.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this._emitter.setPosition(cc.p(size.width / 2, size.height / 2));
         this._emitter.setPosVar(cc.PointZero());
 
         // life of particles
@@ -927,7 +927,7 @@ var RadiusMode1 = ParticleDemo.extend({
         // size, in pixels
         this._emitter.setStartSize(32);
         this._emitter.setStartSizeVar(0);
-        this._emitter.setEndSize(cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+        this._emitter.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
         // emits per second
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
@@ -954,15 +954,15 @@ var RadiusMode2 = ParticleDemo.extend({
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_starsGrayscale));
 
         // duration
-        this._emitter.setDuration(cc.CCPARTICLE_DURATION_INFINITY);
+        this._emitter.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
         // radius mode
-        this._emitter.setEmitterMode(cc.CCPARTICLE_MODE_RADIUS);
+        this._emitter.setEmitterMode(cc.PARTICLE_MODE_RADIUS);
 
         // radius mode: start and end radius in pixels
         this._emitter.setStartRadius(100);
         this._emitter.setStartRadiusVar(0);
-        this._emitter.setEndRadius(cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS);
+        this._emitter.setEndRadius(cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS);
         this._emitter.setEndRadiusVar(0);
 
         // radius mode: degrees per second
@@ -976,7 +976,7 @@ var RadiusMode2 = ParticleDemo.extend({
 
         // emitter position
         var size = cc.Director.getInstance().getWinSize();
-        this._emitter.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this._emitter.setPosition(cc.p(size.width / 2, size.height / 2));
         this._emitter.setPosVar(cc.PointZero());
 
         // life of particles
@@ -1005,7 +1005,7 @@ var RadiusMode2 = ParticleDemo.extend({
         // size, in pixels
         this._emitter.setStartSize(32);
         this._emitter.setStartSizeVar(0);
-        this._emitter.setEndSize(cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+        this._emitter.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
         // emits per second
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
@@ -1032,15 +1032,15 @@ var Issue704 = ParticleDemo.extend({
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
         this._emitter.setShapeType(cc.PARTICLE_BALL_SHAPE);
         // duration
-        this._emitter.setDuration(cc.CCPARTICLE_DURATION_INFINITY);
+        this._emitter.setDuration(cc.PARTICLE_DURATION_INFINITY);
 
         // radius mode
-        //this._emitter.setEmitterMode(cc.CCPARTICLE_MODE_RADIUS);
+        //this._emitter.setEmitterMode(cc.PARTICLE_MODE_RADIUS);
 
         // radius mode: start and end radius in pixels
         this._emitter.setStartRadius(50);
         this._emitter.setStartRadiusVar(0);
-        this._emitter.setEndRadius(cc.CCPARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS);
+        this._emitter.setEndRadius(cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS);
         this._emitter.setEndRadiusVar(0);
 
         // radius mode: degrees per second
@@ -1054,7 +1054,7 @@ var Issue704 = ParticleDemo.extend({
 
         // emitter position
         var size = cc.Director.getInstance().getWinSize();
-        this._emitter.setPosition(cc.ccp(size.width / 2, size.height / 2));
+        this._emitter.setPosition(cc.p(size.width / 2, size.height / 2));
         this._emitter.setPosVar(cc.PointZero());
 
         // life of particles
@@ -1083,7 +1083,7 @@ var Issue704 = ParticleDemo.extend({
         // size, in pixels
         this._emitter.setStartSize(16);
         this._emitter.setStartSizeVar(0);
-        this._emitter.setEndSize(cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
+        this._emitter.setEndSize(cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE);
 
         // emits per second
         this._emitter.setEmissionRate(this._emitter.getTotalParticles() / this._emitter.getLife());
