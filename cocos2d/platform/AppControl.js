@@ -52,7 +52,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      * </p>
      */
     applicationWillResignActive:function () {
-        cc.Director.sharedDirector().pause();
+        cc.Director.getInstance().pause();
     },
 
     /**
@@ -62,7 +62,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      * </p>
      */
     applicationDidBecomeActive:function () {
-        cc.Director.sharedDirector().resume();
+        cc.Director.getInstance().resume();
     },
 
     /**

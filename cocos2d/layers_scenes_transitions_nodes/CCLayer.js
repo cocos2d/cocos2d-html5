@@ -42,11 +42,11 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     ctor:function () {
         this._super();
-        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         this._ignoreAnchorPointForPosition = true;
 
         //this.initLayer();
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
         this._isAccelerometerEnabled = false;
@@ -57,7 +57,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @return {Boolean}
      */
     init:function () {
-        /*var director = cc.Director.sharedDirector();
+        /*var director = cc.Director.getInstance();
          if (!director) {
          return false;
          }
@@ -73,7 +73,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * way CCLayer receives touch events.<br/>
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addStandardDelegate(this, 0);
+        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
     /**
@@ -99,7 +99,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
                     this.registerWithTouchDispatcher();
                 } else {
                     // have problems?
-                    cc.Director.sharedDirector().getTouchDispatcher().removeDelegate(this);
+                    cc.Director.getInstance().getTouchDispatcher().removeDelegate(this);
                 }
             }
         }
@@ -123,7 +123,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             this._isAccelerometerEnabled = enabled;
 
             if (this._isRunning) {
-                var director = cc.Director.sharedDirector();
+                var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getAccelerometer().setDelegate(this);
                 } else {
@@ -151,7 +151,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (enabled != this._isKeypadEnabled) {
             this._isKeypadEnabled = enabled;
             if (this._isRunning) {
-                var director = cc.Director.sharedDirector();
+                var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getKeypadDispatcher().addDelegate(this);
                 } else {
@@ -165,7 +165,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * This is run when ever a layer just become visible
      */
     onEnter:function () {
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
         // register 'parent' nodes first
         // since events are propagated in reverse order
         if (this._isTouchEnabled) {
@@ -190,7 +190,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @function
      */
     onExit:function () {
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
         if (this._isTouchEnabled) {
             director.getTouchDispatcher().removeDelegate(this);
         }
@@ -213,7 +213,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     onEnterTransitionDidFinish:function () {
         if (this._isAccelerometerEnabled) {
-            cc.Director.sharedDirector().getAccelerometer().setDelegate(this);
+            cc.Director.getInstance().getAccelerometer().setDelegate(this);
         }
         this._super();
     },
@@ -225,8 +225,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {event} event
      * @return {Boolean}
      */
-    ccTouchBegan:function (touch, event) {
-        cc.Assert(false, "Layer#ccTouchBegan override me");
+    onTouchBegan:function (touch, event) {
+        cc.Assert(false, "Layer#onTouchBegan override me");
         return true;
     },
 
@@ -235,7 +235,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
     },
 
     /**
@@ -243,14 +243,14 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
     },
 
     /**
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchCancelled:function (touch, event) {
+    onTouchCancelled:function (touch, event) {
     },
 
     /**
@@ -258,7 +258,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesBegan:function (touch, event) {
+    onTouchesBegan:function (touch, event) {
     },
 
     /**
@@ -266,7 +266,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesMoved:function (touch, event) {
+    onTouchesMoved:function (touch, event) {
     },
 
     /**
@@ -274,14 +274,14 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesEnded:function (touch, event) {
+    onTouchesEnded:function (touch, event) {
     },
 
     /**
      * @param touch
      * @param event
      */
-    ccTouchesCancelled:function (touch, event) {
+    onTouchesCancelled:function (touch, event) {
     },
 
     didAccelerate:function (pAccelerationValue) {
@@ -391,7 +391,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @return {Boolean}
      */
     initWithColor:function (color, width, height) {
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         width = width || winSize.width;
         height = height || winSize.height;
@@ -409,7 +409,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._updateColor();
 
         this.setContentSize(new cc.Size(width, height));
-        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionColor));
+        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
         return true;
     },
@@ -515,11 +515,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
  * @example
  * // Example
  * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.ccc4(255,255,0,255));
+ * var yellowBackground = cc.LayerColor.create(cc.c4(255,255,0,255));
  * //If you didnt pass in width and height, it defaults to the same size as the canvas
  *
  * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColor.create(cc.ccc3(255,255,0,255), 200, 200);
+ * var yellowBox = cc.LayerColor.create(cc.c3(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
     var ret = new cc.LayerColor();
@@ -593,7 +593,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Color3B} color
      * @example
      * // Example
-     * myGradientLayer.setStartColor(cc.ccc3(255,0,0));
+     * myGradientLayer.setStartColor(cc.c3(255,0,0));
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
@@ -605,7 +605,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Color3B} color
      * @example
      * // Example
-     * myGradientLayer.setEndColor(cc.ccc3(255,0,0));
+     * myGradientLayer.setEndColor(cc.c3(255,0,0));
      * //set the ending gradient to red
      */
     setEndColor:function (color) {
@@ -696,7 +696,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var argnum = arguments.length;
         if (argnum == 2) {
             // Initializes the CCLayer with a gradient between start and end.
-            v = cc.ccp(0, -1);
+            v = cc.p(0, -1);
         }
 
         // Initializes the CCLayer with a gradient between start and end in the direction of v.
@@ -714,7 +714,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         this._compressedInterpolation = true;
 
-        return this._super(cc.ccc4(start.r, start.g, start.b, 255));
+        return this._super(cc.c4(start.r, start.g, start.b, 255));
     },
 
     _updateColor:function () {
@@ -734,17 +734,17 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
          */
 
 
-        var h = cc.ccpLength(this.alongVector);
+        var h = cc.pLength(this.alongVector);
         if (h == 0)
             return;
 
         var c = Math.sqrt(2.0);
-        var u = cc.ccp(this.alongVector.x / h, this.alongVector.y / h);
+        var u = cc.p(this.alongVector.x / h, this.alongVector.y / h);
 
         // Compressed Interpolation mode
         if (this._compressedInterpolation) {
             var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
-            u = cc.ccpMult(u, h2 * c);
+            u = cc.pMult(u, h2 * c);
         }
 
         var opacityf = this._opacity / 255.0;
@@ -931,7 +931,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
      */
     ctor:function () {
         this._super();
-        this.setAnchorPoint(new cc.Point(0, 0));
+        this.setAnchorPoint(cc.p(0, 0));
         //setup html
         this._setupHtml();
     },

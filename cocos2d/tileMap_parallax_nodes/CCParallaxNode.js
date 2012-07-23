@@ -129,7 +129,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      */
     ctor:function () {
         this._parallaxArray = [];
-        this._lastPosition = cc.PointMake(-100, -100);
+        this._lastPosition = cc.p(-100, -100);
     },
 
     /**
@@ -141,7 +141,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      * @param {cc.Point} offset
      * @example
      * //example
-     * voidNode.addChild(background, -1, cc.ccp(0.4, 0.5), cc.PointZero());
+     * voidNode.addChild(background, -1, cc.p(0.4, 0.5), cc.PointZero());
      */
     addChild:function (child, z, ratio, offset) {
         if (arguments.length == 3) {
@@ -199,7 +199,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
                 var point = this._parallaxArray[i];
                 var x = -pos.x + pos.x * point.getRatio().x + point.getOffset().x;
                 var y = -pos.y + pos.y * point.getRatio().y + point.getOffset().y;
-                point.getChild().setPosition(cc.ccp(x, y));
+                point.getChild().setPosition(cc.p(x, y));
             }
             this._lastPosition = pos;
         }
@@ -211,7 +211,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         var cn = this;
         while (cn.getParent() != null) {
             cn = cn.getParent();
-            ret = cc.ccpAdd(ret, cn.getPosition());
+            ret = cc.pAdd(ret, cn.getPosition());
         }
         return ret;
     }

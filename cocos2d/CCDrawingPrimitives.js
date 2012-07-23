@@ -132,12 +132,12 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
             var rads = i * coef;
             var j = radius * Math.cos(rads + angle) + center.x;
             var k = radius * Math.sin(rads + angle) + center.y;
-            var addPoint = new cc.Point(j * cc.CONTENT_SCALE_FACTOR(), k * cc.CONTENT_SCALE_FACTOR());
+            var addPoint = cc.p(j * cc.CONTENT_SCALE_FACTOR(), k * cc.CONTENT_SCALE_FACTOR());
             vertices.push(addPoint);
         }
 
         if (drawLineToCenter) {
-            var lastPoint = new cc.Point(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
+            var lastPoint = cc.p(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
             vertices.push(lastPoint);
         }
 
@@ -202,7 +202,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         if (!size) {
             size = 1;
         }
-        var newPoint = new cc.Point(point.x * cc.CONTENT_SCALE_FACTOR(), point.y * cc.CONTENT_SCALE_FACTOR());
+        var newPoint = cc.p(point.x * cc.CONTENT_SCALE_FACTOR(), point.y * cc.CONTENT_SCALE_FACTOR());
         this._renderContext.beginPath();
         this._renderContext.arc(newPoint.x, -newPoint.y, size * cc.CONTENT_SCALE_FACTOR(), 0, Math.PI * 2, false);
         this._renderContext.closePath();
@@ -318,10 +318,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 2) * origin.x + 2.0 * (1 - t) * t * control.x + t * t * destination.x;
             var y = Math.pow(1 - t, 2) * origin.y + 2.0 * (1 - t) * t * control.y + t * t * destination.y;
-            vertices.push(new cc.Point(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
+            vertices.push(cc.p(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
             t += 1.0 / segments;
         }
-        vertices.push(new cc.Point(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
+        vertices.push(cc.p(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
 
         this.drawPoly(vertices, segments + 1, false, false);
     },
@@ -343,10 +343,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         for (var i = 0; i < segments; i++) {
             var x = Math.pow(1 - t, 3) * origin.x + 3.0 * Math.pow(1 - t, 2) * t * control1.x + 3.0 * (1 - t) * t * t * control2.x + t * t * t * destination.x;
             var y = Math.pow(1 - t, 3) * origin.y + 3.0 * Math.pow(1 - t, 2) * t * control1.y + 3.0 * (1 - t) * t * t * control2.y + t * t * t * destination.y;
-            vertices.push(new cc.Point(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
+            vertices.push(cc.p(x * cc.CONTENT_SCALE_FACTOR(), y * cc.CONTENT_SCALE_FACTOR()));
             t += 1.0 / segments;
         }
-        vertices.push(new cc.Point(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
+        vertices.push(cc.p(destination.x * cc.CONTENT_SCALE_FACTOR(), destination.y * cc.CONTENT_SCALE_FACTOR()));
 
         this.drawPoly(vertices, segments + 1, false, false);
     },

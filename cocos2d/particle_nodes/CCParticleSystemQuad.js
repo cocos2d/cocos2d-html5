@@ -208,7 +208,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 this._setupVBO();
             }
 
-            //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTextureColor));
+            //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
 
             // Need to listen the event only when not use batchnode, because it will use VBO
             //extension.CCNotificationCenter.sharedNotificationCenter().addObserver(this,
@@ -369,7 +369,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
                     var drawTexture = this.getTexture();
                     if (particle.isChangeColor) {
-                        var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
+                        var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
                         if (cacheTextureForColor) {
                             drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color);
                         }
@@ -387,9 +387,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     context.globalAlpha = particle.color.a;
                     context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
                     if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
-                        cc.drawingUtil.drawStar(context, new cc.Point(0, 0), lpx, particle.color);
+                        cc.drawingUtil.drawStar(context, cc.p(0, 0), lpx, particle.color);
                     } else {
-                        cc.drawingUtil.drawColorBall(context, new cc.Point(0, 0), lpx, particle.color);
+                        cc.drawingUtil.drawColorBall(context, cc.p(0, 0), lpx, particle.color);
                     }
                     context.restore()
                 }

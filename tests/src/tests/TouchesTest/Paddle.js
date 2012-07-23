@@ -46,15 +46,15 @@ var Paddle = cc.Sprite.extend({
         return true;
     },
     onEnter:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
         this._super();
     },
     onExit:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().removeDelegate(this);
+        cc.Director.getInstance().getTouchDispatcher().removeDelegate(this);
         this._super();
     },
     containsTouchLocation:function (touch) {
-        var getPoint = touch.locationInView();
+        var getPoint = touch.getLocation();
         var myRect = this.rect();
 
         myRect.origin.x += this.getPosition().x;
@@ -62,14 +62,14 @@ var Paddle = cc.Sprite.extend({
         return cc.Rect.CCRectContainsPoint(myRect, getPoint);//this.convertTouchToNodeSpaceAR(touch));
     },
 
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         if (this._state != PADDLE_STATE_UNGRABBED) return false;
         if (!this.containsTouchLocation(touch)) return false;
 
         this._state = PADDLE_STATE_GRABBED;
         return true;
     },
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
         // If it weren't for the TouchDispatcher, you would need to keep a reference
         // to the touch from touchBegan and check that the current touch is the same
         // as that one.
@@ -78,12 +78,12 @@ var Paddle = cc.Sprite.extend({
         // in each touchXXX method.
         cc.Assert(this._state == PADDLE_STATE_GRABBED, "Paddle - Unexpected state!");
 
-        var touchPoint = touch.locationInView();
-        //touchPoint = cc.Director.sharedDirector().convertToGL( touchPoint );
+        var touchPoint = touch.getLocation();
+        //touchPoint = cc.Director.getInstance().convertToGL( touchPoint );
 
-        this.setPosition(cc.PointMake(touchPoint.x, this.getPosition().y));
+        this.setPosition(cc.p(touchPoint.x, this.getPosition().y));
     },
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
         cc.Assert(this._state == PADDLE_STATE_GRABBED, "Paddle - Unexpected state!");
         this._state = PADDLE_STATE_UNGRABBED;
     },

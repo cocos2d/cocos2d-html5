@@ -37,22 +37,29 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * Constructor
      */
     ctor:function (x, y) {
-        this._point = new cc.Point(x || 0, y || 0);
+        this._point = cc.p(x || 0, y || 0);
     },
 
     /**
      * get point of touch
      * @return {cc.Point}
      */
-    locationInView:function () {
+    getLocation:function () {
         return this._point;
     },
 
     /**
      * @return {cc.Point}
      */
-    previousLocationInView:function () {
+    getPreviousLocation:function () {
         return this._prevPoint;
+    },
+
+    /**
+     * @return {cc.Point}
+     */
+    getDelta:function () {
+        return cc.pSub( this._point, this._prevPoint );
     },
 
     /**
@@ -70,12 +77,12 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      */
     setTouchInfo:function (id, x, y) {
         this._prevPoint = this._point;
-        this._point = new cc.Point(x || 0, y || 0);
+        this._point = cc.p(x || 0, y || 0);
         this._id = id;
     },
 
     _setPrevPoint:function (x, y) {
-        this._prevPoint = new cc.Point(x || 0, y || 0);
+        this._prevPoint = cc.p(x || 0, y || 0);
     }
 });
 
@@ -92,7 +99,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {event} event
      * @return {Boolean}
      */
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         return false;
     },
 
@@ -101,7 +108,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
     },
 
     /**
@@ -109,7 +116,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
     },
 
     /**
@@ -117,7 +124,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchCancelled:function (touch, event) {
+    onTouchCancelled:function (touch, event) {
     },
 
     /**
@@ -125,7 +132,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
     },
 
     /**
@@ -133,7 +140,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
     },
 
     /**
@@ -141,7 +148,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
     },
 
     /**
@@ -149,12 +156,12 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchesCancelled:function (touches, event) {
+    onTouchesCancelled:function (touches, event) {
     },
 
     /*
      * In TouchesTest, class Padle inherits from cc.Sprite and cc.TargetedTouchDelegate.
-     * When it invoke  cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true),
+     * When it invoke  cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true),
      * it will crash in cc.TouchHandler.initWithDelegate() because of dynamic_cast() on android.
      * I don't know why, so add these functions for the subclass to invoke it's own retain() and  release
      *Virtual function
@@ -173,7 +180,7 @@ cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
  * Using this type of delegate results in two benefits:
  * - 1. You don't need to deal with cc.Sets, the dispatcher does the job of splitting
  * them. You get exactly one UITouch per call.
- * - 2. You can *claim* a UITouch by returning YES in ccTouchBegan. Updates of claimed
+ * - 2. You can *claim* a UITouch by returning YES in onTouchBegan. Updates of claimed
  * touches are sent only to the delegate(s) that claimed them. So if you get a move/
  * ended/cancelled update you're sure it's your touch. This frees you from doing a
  * lot of checks when doing multi-touch.
@@ -191,7 +198,7 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.TargetedTouchDe
      * @param {event} event
      * @return {Boolean}
      */
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         return false;
     },
 
@@ -200,7 +207,7 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.TargetedTouchDe
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
     },
 
     /**
@@ -208,7 +215,7 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.TargetedTouchDe
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
     },
 
     /**
@@ -216,7 +223,7 @@ cc.TargetedTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.TargetedTouchDe
      * @param {cc.Touch} touch
      * @param {event} event
      */
-    ccTouchCancelled:function (touch, event) {
+    onTouchCancelled:function (touch, event) {
     }
 });
 
@@ -232,7 +239,7 @@ cc.StandardTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.StandardTouchDe
      * @param {Array} touches
      * @param {event} event
      */
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
     },
 
     /**
@@ -240,7 +247,7 @@ cc.StandardTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.StandardTouchDe
      * @param {Array} touches
      * @param {event} event
      */
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
     },
 
     /**
@@ -248,7 +255,7 @@ cc.StandardTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.StandardTouchDe
      * @param {Array} touches
      * @param {event} event
      */
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
     },
 
     /**
@@ -256,7 +263,7 @@ cc.StandardTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.StandardTouchDe
      * @param {Array} touches
      * @param {event} event
      */
-    ccTouchesCancelled:function (touches, event) {
+    onTouchesCancelled:function (touches, event) {
     }
 });
 

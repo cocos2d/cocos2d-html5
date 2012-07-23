@@ -158,7 +158,7 @@ var Helloworld = cc.Layer.extend({
          "CloseSelected.png",
          this,
          cc.menu_selector(Helloworld.menuCloseCallback) );
-         closeItem.setPosition( cc.ccp(cc.Director.sharedDirector().getWinSize().width - 20, 20) );
+         closeItem.setPosition( cc.p(cc.Director.getInstance().getWinSize().width - 20, 20) );
 
          // create menu, it's an autorelease object
          var menu = cc.Menu.create(closeItem, null);
@@ -172,10 +172,10 @@ var Helloworld = cc.Layer.extend({
         // create and initialize a label
         //var pLabel = cc.LabelTTF.create("Hello World", "Arial", 24);
         // ask director the window size
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         // position the label on the center of the screen
-        //pLabel.setPosition( cc.ccp(size.width / 2, size.height - 50) );
+        //pLabel.setPosition( cc.p(size.width / 2, size.height - 50) );
 
         // add the label as a child to this layer
         //this.addChild(pLabel, 1);
@@ -185,7 +185,7 @@ var Helloworld = cc.Layer.extend({
          var sprite = cc.Sprite.create("HelloWorld.png");
 
          // position the sprite on the center of the screen
-         sprite.setPosition( cc.ccp(size.width/2, size.height/2) );
+         sprite.setPosition( cc.p(size.width/2, size.height/2) );
 
          // add the sprite as a child to this layer
          this.addChild(sprite, 0);
@@ -194,13 +194,13 @@ var Helloworld = cc.Layer.extend({
             //this.addChild(helloSprite,0);
 
         this.helloLb = cc.LabelTTF.create("Hello World", "Arial", 24);
-        this.helloLb.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, 0));
+        this.helloLb.setPosition(cc.p(cc.Director.getInstance().getWinSize().width / 2, 0));
         this.addChild(this.helloLb, 5);
 
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
-        this.sprite.setPosition(cc.ccp(cc.Director.sharedDirector().getWinSize().width / 2, cc.Director.sharedDirector().getWinSize().height / 2));
+        this.sprite.setPosition(cc.p(cc.Director.getInstance().getWinSize().width / 2, cc.Director.getInstance().getWinSize().height / 2));
         this.sprite.setVisible(true);
-        this.sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.sprite.setAnchorPoint(cc.p(0.5, 0.5));
         this.sprite.setScale(0.5);
         //this.sprite.setRotation(180);
         //this.sprite.setFlipY(true);
@@ -214,11 +214,11 @@ var Helloworld = cc.Layer.extend({
         //this.schedule(this.waveSprite,0.3);
 
         this.circle = new CircleSprite();
-        this.circle.setPosition(new cc.Point(40, 280));
+        this.circle.setPosition(cc.p(40, 280));
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLb.runAction(cc.MoveBy.create(2.5, cc.ccp(0, 280)));
+        this.helloLb.runAction(cc.MoveBy.create(2.5, cc.p(0, 280)));
 
         this.setTouchEnabled(true);
         //this.adjustSizeForWindow();
@@ -284,27 +284,27 @@ var Helloworld = cc.Layer.extend({
         cc.canvas.height = 320 * xScale;
         cc.renderContext.translate(0, cc.canvas.height);
         cc.renderContext.scale(xScale, xScale);
-        cc.Director.sharedDirector().setContentScaleFactor(xScale);
+        cc.Director.getInstance().setContentScaleFactor(xScale);
     },
     // a selector callback
     menuCloseCallback:function (sender) {
-        cc.Director.sharedDirector().end();
+        cc.Director.getInstance().end();
     },
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         this.isMouseDown = true;
     },
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
             if (touches) {
-                this.circle.setPosition(new cc.Point(touches[0].locationInView().x, touches[0].locationInView().y));
+                this.circle.setPosition(cc.p(touches[0].getLocation().x, touches[0].getLocation().y));
             }
         }
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         this.isMouseDown = false;
     },
-    ccTouchesCancelled:function (touches, event) {
-        console.log("ccTouchesCancelled");
+    onTouchesCancelled:function (touches, event) {
+        console.log("onTouchesCancelled");
     }
 });
 var HelloWorldScene = cc.Scene.extend({

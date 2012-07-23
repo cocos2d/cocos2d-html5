@@ -134,8 +134,8 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
      * cc.Loader.shareLoader().preload(res);
      */
     preload:function (res) {
-        var sharedTextureCache = cc.TextureCache.sharedTextureCache();
-        var sharedEngine = cc.AudioManager.sharedEngine();
+        var sharedTextureCache = cc.TextureCache.getInstance();
+        var sharedEngine = cc.AudioEngine.getInstance();
         var shareParser = cc.SAXParser.shareParser();
 
         for (var i = 0; i < res.length; i++) {
@@ -207,7 +207,7 @@ cc.LoaderScene = cc.Class.extend(/**  @lends cc.LoaderScene# */{
         cc.renderContext.clearRect(0, -cc.canvas.height, cc.canvas.width, cc.canvas.height);
         cc.renderContext.fillStyle = "#202020";
         cc.renderContext.fillRect(0, -cc.canvas.height, cc.canvas.width, cc.canvas.height);
-        cc.drawingUtil.drawImage(this._logo, new cc.PointMake(logoWidth, logoHeight));
+        cc.drawingUtil.drawImage(this._logo, new cc.p(logoWidth, logoHeight));
         cc.renderContext.fillStyle = "#b2b4b3";
         cc.renderContext.font = 'Bold 12px Verdana';
         cc.renderContext.textAlign = 'left';

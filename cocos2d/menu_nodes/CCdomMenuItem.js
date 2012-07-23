@@ -47,9 +47,9 @@ cc.MenuItemImage = cc.MenuItem.extend(/** @lends cc.MenuItemImage# */{
      * @param {String} file
      */
     init:function (file) {
-        var texture = cc.TextureCache.sharedTextureCache().textureForKey(file);
+        var texture = cc.TextureCache.getInstance().textureForKey(file);
         if (!texture) {
-            texture = cc.TextureCache.sharedTextureCache().addImage(file);
+            texture = cc.TextureCache.getInstance().addImage(file);
         }
         //create div containing an image - div created in ctor
         if (texture.width) {//image already loaded

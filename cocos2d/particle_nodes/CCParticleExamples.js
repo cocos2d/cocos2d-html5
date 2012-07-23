@@ -50,13 +50,13 @@ cc.ParticleFire = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFire# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, 0);
+            this.modeA.gravity = cc.p(0, 0);
 
             // Gravity Mode: radial acceleration
             this.modeA.radialAccel = 0;
@@ -71,9 +71,9 @@ cc.ParticleFire = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFire# */{
             this._angleVar = 10;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, 60));
-            this._posVar = cc.ccp(40, 20);
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, 60));
+            this._posVar = cc.p(40, 20);
 
             // life of particles
             this._life = 3;
@@ -83,7 +83,7 @@ cc.ParticleFire = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFire# */{
             // size, in pixels
             this._startSize = 54.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per frame
             this._emissionRate = this._totalParticles / this._life;
@@ -155,13 +155,13 @@ cc.ParticleFireworks = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFirewo
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, -90);
+            this.modeA.gravity = cc.p(0, -90);
 
             // Gravity Mode:  radial
             this.modeA.radialAccel = 0;
@@ -172,8 +172,8 @@ cc.ParticleFireworks = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFirewo
             this.modeA.speedVar = 50;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
 
             // angle
             this._angle = 90;
@@ -207,7 +207,7 @@ cc.ParticleFireworks = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFirewo
             // size, in pixels
             this._startSize = 8.0;
             this._startSizeVar = 2.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // additive
             this.setBlendAdditive(false);
@@ -261,13 +261,13 @@ cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
             this.setBlendAdditive(true);
 
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, 0);
+            this.modeA.gravity = cc.p(0, 0);
 
             // Gravity mode: radial acceleration
             this.modeA.radialAccel = 0;
@@ -283,8 +283,8 @@ cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
             this._angleVar = 360;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
             this._posVar = cc.PointZero();
 
             // life of particles
@@ -294,7 +294,7 @@ cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
             // size, in pixels
             this._startSize = 30.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per seconds
             this._emissionRate = this._totalParticles / this._life;
@@ -365,13 +365,13 @@ cc.ParticleGalaxy = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleGalaxy# *
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, 0);
+            this.modeA.gravity = cc.p(0, 0);
 
             // Gravity Mode: speed of particles
             this.modeA.speed = 60;
@@ -390,8 +390,8 @@ cc.ParticleGalaxy = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleGalaxy# *
             this._angleVar = 360;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
             this._posVar = cc.PointZero();
 
             // life of particles
@@ -401,7 +401,7 @@ cc.ParticleGalaxy = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleGalaxy# *
             // size, in pixels
             this._startSize = 37.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -472,13 +472,13 @@ cc.ParticleFlower = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFlower# *
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, 0);
+            this.modeA.gravity = cc.p(0, 0);
 
             // Gravity Mode: speed of particles
             this.modeA.speed = 80;
@@ -497,8 +497,8 @@ cc.ParticleFlower = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFlower# *
             this._angleVar = 360;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
             this._posVar = cc.PointZero();
 
             // life of particles
@@ -508,7 +508,7 @@ cc.ParticleFlower = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFlower# *
             // size, in pixels
             this._startSize = 30.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -581,13 +581,13 @@ cc.ParticleMeteor = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleMeteor# *
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(-200, 200);
+            this.modeA.gravity = cc.p(-200, 200);
 
             // Gravity Mode: speed of particles
             this.modeA.speed = 15;
@@ -606,8 +606,8 @@ cc.ParticleMeteor = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleMeteor# *
             this._angleVar = 360;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
             this._posVar = cc.PointZero();
 
             // life of particles
@@ -617,7 +617,7 @@ cc.ParticleMeteor = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleMeteor# *
             // size, in pixels
             this._startSize = 60.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -689,13 +689,13 @@ cc.ParticleSpiral = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSpiral# *
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, 0);
+            this.modeA.gravity = cc.p(0, 0);
 
             // Gravity Mode: speed of particles
             this.modeA.speed = 150;
@@ -714,8 +714,8 @@ cc.ParticleSpiral = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSpiral# *
             this._angleVar = 0;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
             this._posVar = cc.PointZero();
 
             // life of particles
@@ -725,7 +725,7 @@ cc.ParticleSpiral = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSpiral# *
             // size, in pixels
             this._startSize = 20.0;
             this._startSizeVar = 0.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._life;
@@ -799,10 +799,10 @@ cc.ParticleExplosion = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleExplos
             // duration
             this._duration = 0.1;
 
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, 0);
+            this.modeA.gravity = cc.p(0, 0);
 
             // Gravity Mode: speed of particles
             this.modeA.speed = 70;
@@ -821,8 +821,8 @@ cc.ParticleExplosion = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleExplos
             this._angleVar = 360;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height / 2));
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
             this._posVar = cc.PointZero();
 
             // life of particles
@@ -832,7 +832,7 @@ cc.ParticleExplosion = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleExplos
             // size, in pixels
             this._startSize = 15.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = this._totalParticles / this._duration;
@@ -904,13 +904,13 @@ cc.ParticleSmoke = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSmoke# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // Emitter mode: Gravity Mode
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, 0);
+            this.modeA.gravity = cc.p(0, 0);
 
             // Gravity Mode: radial acceleration
             this.modeA.radialAccel = 0;
@@ -925,9 +925,9 @@ cc.ParticleSmoke = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSmoke# */{
             this._angleVar = 5;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, 0));
-            this._posVar = cc.ccp(20, 0);
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, 0));
+            this._posVar = cc.p(20, 0);
 
             // life of particles
             this._life = 4;
@@ -936,7 +936,7 @@ cc.ParticleSmoke = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSmoke# */{
             // size, in pixels
             this._startSize = 60.0;
             this._startSizeVar = 10.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per frame
             this._emissionRate = this._totalParticles / this._life;
@@ -1008,13 +1008,13 @@ cc.ParticleSnow = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSnow# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
             // set gravity mode.
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(0, -1);
+            this.modeA.gravity = cc.p(0, -1);
 
             // Gravity Mode: speed of particles
             this.modeA.speed = 5;
@@ -1029,9 +1029,9 @@ cc.ParticleSnow = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSnow# */{
             this.modeA.tangentialAccelVar = 1;
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height + 10));
-            this._posVar = cc.ccp(winSize.width / 2, 0);
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height + 10));
+            this._posVar = cc.p(winSize.width / 2, 0);
 
             // angle
             this._angle = -90;
@@ -1044,7 +1044,7 @@ cc.ParticleSnow = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSnow# */{
             // size, in pixels
             this._startSize = 10.0;
             this._startSizeVar = 5.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = 10;
@@ -1117,12 +1117,12 @@ cc.ParticleRain = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleRain# */{
     initWithTotalParticles:function (numberOfParticles) {
         if (this._super(numberOfParticles)) {
             // duration
-            this._duration = cc.CCPARTICLE_DURATION_INFINITY;
+            this._duration = cc.PARTICLE_DURATION_INFINITY;
 
-            this._emitterMode = cc.CCPARTICLE_MODE_GRAVITY;
+            this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
 
             // Gravity Mode: gravity
-            this.modeA.gravity = cc.ccp(10, -10);
+            this.modeA.gravity = cc.p(10, -10);
 
             // Gravity Mode: radial
             this.modeA.radialAccel = 0;
@@ -1142,9 +1142,9 @@ cc.ParticleRain = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleRain# */{
 
 
             // emitter position
-            var winSize = cc.Director.sharedDirector().getWinSize();
-            this.setPosition(cc.ccp(winSize.width / 2, winSize.height));
-            this._posVar = cc.ccp(winSize.width / 2, 0);
+            var winSize = cc.Director.getInstance().getWinSize();
+            this.setPosition(cc.p(winSize.width / 2, winSize.height));
+            this._posVar = cc.p(winSize.width / 2, 0);
 
             // life of particles
             this._life = 4.5;
@@ -1153,7 +1153,7 @@ cc.ParticleRain = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleRain# */{
             // size, in pixels
             this._startSize = 4.0;
             this._startSizeVar = 2.0;
-            this._endSize = cc.CCPARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
+            this._endSize = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
 
             // emits per second
             this._emissionRate = 20;

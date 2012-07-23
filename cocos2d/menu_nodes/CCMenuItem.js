@@ -30,9 +30,9 @@
  * @constant
  * @type Number
  */
-cc.CCITEM_SIZE = 32;
+cc.ITEM_SIZE = 32;
 
-cc._fontSize = cc.CCITEM_SIZE;
+cc._fontSize = cc.ITEM_SIZE;
 cc._fontName = "Arial";
 cc._fontNameRelease = false;
 
@@ -108,7 +108,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      * @return {Boolean}
      */
     initWithTarget:function (rec, selector) {
-        this.setAnchorPoint(cc.ccp(0.5, 0.5));
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         this._listener = rec;
         this._selector = selector;
         this._isEnabled = true;
@@ -222,7 +222,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     setLabel:function (label) {
         if (label) {
             this.addChild(label);
-            label.setAnchorPoint(cc.ccp(0, 0));
+            label.setAnchorPoint(cc.p(0, 0));
             this.setContentSize(label.getContentSize());
         }
 
@@ -293,7 +293,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this.initWithTarget(target, selector);
         this._originalScale = 1.0;
         this._colorBackup = cc.WHITE();
-        this._disabledColor = cc.ccc3(126, 126, 126);
+        this._disabledColor = cc.c3(126, 126, 126);
         this.setLabel(label);
         return true;
     },
@@ -566,7 +566,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
         }
         if (normalImage) {
             this.addChild(normalImage, 0, cc.NORMAL_TAG);
-            normalImage.setAnchorPoint(cc.ccp(0, 0));
+            normalImage.setAnchorPoint(cc.p(0, 0));
         }
         if (this._normalImage) {
             this.removeChild(this._normalImage, true);
@@ -594,7 +594,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (selectedImage) {
             this.addChild(selectedImage, 0, cc.SELECTED_TAG);
-            selectedImage.setAnchorPoint(cc.ccp(0, 0));
+            selectedImage.setAnchorPoint(cc.p(0, 0));
         }
 
         if (this._selectedImage) {
@@ -622,7 +622,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
 
         if (disabledImage) {
             this.addChild(disabledImage, 0, cc.DISABLE_TAG);
-            disabledImage.setAnchorPoint(cc.ccp(0, 0));
+            disabledImage.setAnchorPoint(cc.p(0, 0));
         }
 
         if (this._disabledImage) {
@@ -837,7 +837,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setNormalSpriteFrame:function (frame) {
-        this.setNormalImage(cc.Sprite.createWithSpriteFrame(frame));
+        this.setNormalImage(cc.Sprite.createWithSpriteFrameName(frame));
     },
 
     /**
@@ -845,7 +845,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setSelectedSpriteFrame:function (frame) {
-        this.setSelectedImage(cc.Sprite.createWithSpriteFrame(frame));
+        this.setSelectedImage(cc.Sprite.createWithSpriteFrameName(frame));
     },
 
     /**
@@ -853,7 +853,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setDisabledSpriteFrame:function (frame) {
-        this.setDisabledImage(cc.Sprite.createWithSpriteFrame(frame));
+        this.setDisabledImage(cc.Sprite.createWithSpriteFrameName(frame));
     },
 
     /**
@@ -984,7 +984,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this.addChild(item, 0, cc.CURRENT_ITEM);
             var s = item.getContentSize();
             this.setContentSize(s);
-            item.setPosition(cc.ccp(s.width / 2, s.height / 2));
+            item.setPosition(cc.p(s.width / 2, s.height / 2));
         }
     },
     _subItems:[],

@@ -181,7 +181,7 @@ cc.setup = function (el, width, height) {
     /*
      cc.canvas.addEventListener("resize", function () {
      if (!cc.firstRun) {
-     cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+     cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
      }
      }, true);
      */
@@ -234,7 +234,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         // TODO, need to be fixed.
         if (window.requestAnimFrame) {
             var callback = function () {
-                cc.Director.sharedDirector().mainLoop();
+                cc.Director.getInstance().mainLoop();
                 window.requestAnimFrame(callback);
             };
             cc.Log(window.requestAnimFrame);
@@ -242,7 +242,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         }
         else {
             var callback = function () {
-                cc.Director.sharedDirector().mainLoop();
+                cc.Director.getInstance().mainLoop();
             };
             setInterval(callback, this._animationInterval * 1000);
         }

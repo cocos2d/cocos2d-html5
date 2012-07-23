@@ -171,7 +171,7 @@ cc.ActionManager = cc.Class.extend({
      * @param {object} target
      */
     removeActionByTag:function (tag, target) {
-        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
+        cc.Assert(tag != cc.ACTION_TAG_INVALID, "");
         cc.Assert(target != null, "");
 
         var element = this._searchElementByTarget(this._targets, target);
@@ -196,7 +196,7 @@ cc.ActionManager = cc.Class.extend({
      * @return {cc.Action|Null}  return the Action with the given tag on success
      */
     getActionByTag:function (tag, target) {
-        cc.Assert(tag != cc.CCACTION_TAG_INVALID, "");
+        cc.Assert(tag != cc.ACTION_TAG_INVALID, "");
         var element = this._searchElementByTarget(this._targets, target);
         if (element) {
             if (element.actions != null) {
@@ -283,7 +283,7 @@ cc.ActionManager = cc.Class.extend({
      * because it uses this, so it can not be static
      */
     purgeSharedManager:function () {
-        cc.Director.sharedDirector().getScheduler().unscheduleUpdateForTarget(this);
+        cc.Director.getInstance().getScheduler().unscheduleUpdateForTarget(this);
     },
 
     //protected

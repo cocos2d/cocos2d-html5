@@ -97,7 +97,7 @@ var EaseActionsTestScene = TestScene.extend({
     runThisTest:function () {
         s_nEaseActionIdx = -1;
         this.addChild(nextEaseAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -122,15 +122,15 @@ var EaseSpriteDemo = cc.Layer.extend({
         this.addChild(this._kathia, 2);
         this.addChild(this._tamara, 1);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
-        this._grossini.setPosition(cc.PointMake(60, 50));
-        this._kathia.setPosition(cc.PointMake(60, 150));
-        this._tamara.setPosition(cc.PointMake(60, 250));
+        this._grossini.setPosition(cc.p(60, 50));
+        this._kathia.setPosition(cc.p(60, 150));
+        this._tamara.setPosition(cc.p(60, 250));
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label);
-        label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
         var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
@@ -139,9 +139,9 @@ var EaseSpriteDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(s.width / 2, 30));
-        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1);
     },
@@ -149,21 +149,21 @@ var EaseSpriteDemo = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new EaseActionsTestScene();//cc.Scene.create();
         s.addChild(restartEaseAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new EaseActionsTestScene();//cc.Scene.create();
         s.addChild(nextEaseAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new EaseActionsTestScene();//cc.Scene.create();
         s.addChild(backEaseAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     positionForTwo:function () {
-        this._grossini.setPosition(cc.PointMake(60, 120));
-        this._tamara.setPosition(cc.PointMake(60, 220));
+        this._grossini.setPosition(cc.p(60, 120));
+        this._tamara.setPosition(cc.p(60, 220));
         this._kathia.setVisible(false);
     }
 });
@@ -178,7 +178,7 @@ var SpriteEase = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease_in = cc.EaseIn.create(move.copy(), 3.0);
@@ -226,7 +226,7 @@ var SpriteEaseInOut = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         //	id move_back = move.reverse();
 
         var move_ease_inout1 = cc.EaseInOut.create(move.copy(), 2.0);
@@ -262,7 +262,7 @@ var SpriteEaseExponential = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease_in = cc.EaseExponentialIn.create(move.copy());
@@ -296,7 +296,7 @@ var SpriteEaseExponentialInOut = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease = cc.EaseExponentialInOut.create(move.copy());
@@ -324,7 +324,7 @@ var SpriteEaseSine = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease_in = cc.EaseSineIn.create(move.copy());
@@ -358,7 +358,7 @@ var SpriteEaseSineInOut = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease = cc.EaseSineInOut.create(move.copy());
@@ -386,7 +386,7 @@ var SpriteEaseElastic = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease_in = cc.EaseElasticIn.create(move.copy());
@@ -417,7 +417,7 @@ var SpriteEaseElasticInOut = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
 
         var move_ease_inout1 = cc.EaseElasticInOut.create(move.copy(), 0.3);
         var move_ease_inout_back1 = move_ease_inout1.reverse();
@@ -451,7 +451,7 @@ var SpriteEaseBounce = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease_in = cc.EaseBounceIn.create(move.copy());
@@ -482,7 +482,7 @@ var SpriteEaseBounceInOut = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease = cc.EaseBounceInOut.create(move.copy());
@@ -510,7 +510,7 @@ var SpriteEaseBack = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease_in = cc.EaseBackIn.create(move.copy());
@@ -541,7 +541,7 @@ var SpriteEaseBackInOut = EaseSpriteDemo.extend({
     onEnter:function () {
         this._super();
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_back = move.reverse();
 
         var move_ease = cc.EaseBackInOut.create(move.copy());
@@ -565,7 +565,7 @@ var SpeedTest = EaseSpriteDemo.extend({
         this._super();
 
         // rotate and jump
-        var jump1 = cc.JumpBy.create(4, cc.PointMake(-400, 0), 100, 4);
+        var jump1 = cc.JumpBy.create(4, cc.p(-400, 0), 100, 4);
         var jump2 = jump1.reverse();
         var rot1 = cc.RotateBy.create(4, 360 * 2);
         var rot2 = rot1.reverse();
@@ -613,7 +613,7 @@ var SchedulerTest = EaseSpriteDemo.extend({
         this._super();
 
         // rotate and jump
-        var jump1 = cc.JumpBy.create(4, cc.PointMake(-400, 0), 100, 4);
+        var jump1 = cc.JumpBy.create(4, cc.p(-400, 0), 100, 4);
         var jump2 = jump1.reverse();
         var rot1 = cc.RotateBy.create(4, 360 * 2);
         var rot2 = rot1.reverse();
@@ -632,7 +632,7 @@ var SchedulerTest = EaseSpriteDemo.extend({
 
         var emitter = new cc.ParticleFireworks();
         emitter.initWithTotalParticles(250);
-        emitter.setTexture(cc.TextureCache.sharedTextureCache().addImage("res/Images/fire.png"));
+        emitter.setTexture(cc.TextureCache.getInstance().addImage("res/Images/fire.png"));
         this.addChild(emitter);
     },
     title:function () {

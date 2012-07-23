@@ -57,7 +57,7 @@ var NodeChildrenMenuLayer = PerformBasicLayer.extend({
 
         if (scene) {
             scene.initWithQuantityOfNodes(nodes);
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     }
 });
@@ -73,20 +73,20 @@ var NodeChildrenMainScene = cc.Scene.extend({
     _currentQuantityOfNodes:null,
     initWithQuantityOfNodes:function (nodes) {
         //srand(time());
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // Title
         var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 32));
-        label.setColor(cc.ccc3(255, 255, 40));
+        label.setPosition(cc.p(s.width / 2, s.height - 32));
+        label.setColor(cc.c3(255, 255, 40));
 
         // Subtitle
         var strSubTitle = this.subtitle();
         if (strSubTitle.length) {
             var l = cc.LabelTTF.create(strSubTitle, "Thonburi", 16);
             this.addChild(l, 1);
-            l.setPosition(cc.ccp(s.width / 2, s.height - 80));
+            l.setPosition(cc.p(s.width / 2, s.height - 80));
         }
 
         this._lastRenderedCount = 0;
@@ -96,18 +96,18 @@ var NodeChildrenMainScene = cc.Scene.extend({
         cc.MenuItemFont.setFontSize(65);
         var that = this;
         var decrease = cc.MenuItemFont.create(" - ", this, this.onDecrease);
-        decrease.setColor(cc.ccc3(0, 200, 20));
+        decrease.setColor(cc.c3(0, 200, 20));
         var increase = cc.MenuItemFont.create(" + ", this, this.onIncrease);
-        increase.setColor(cc.ccc3(0, 200, 20));
+        increase.setColor(cc.c3(0, 200, 20));
 
         var menu = cc.Menu.create(decrease, increase, null);
         menu.alignItemsHorizontally();
-        menu.setPosition(cc.ccp(s.width / 2, s.height / 2 + 15));
+        menu.setPosition(cc.p(s.width / 2, s.height / 2 + 15));
         this.addChild(menu, 1);
 
         var infoLabel = cc.LabelTTF.create("0 nodes", "Marker Felt", 30);
-        infoLabel.setColor(cc.ccc3(0, 200, 20));
-        infoLabel.setPosition(cc.ccp(s.width / 2, s.height / 2 - 15));
+        infoLabel.setColor(cc.c3(0, 200, 20));
+        infoLabel.setPosition(cc.p(s.width / 2, s.height / 2 - 15));
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
         var menu = new NodeChildrenMenuLayer(true, 4, s_nCurCase);
@@ -171,14 +171,14 @@ var IterateSpriteSheet = NodeChildrenMainScene.extend({
         }
     },
     updateQuantityOfNodes:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // increase nodes
         if (this._currentQuantityOfNodes < this._quantityOfNodes) {
             for (var i = 0; i < (this._quantityOfNodes - this._currentQuantityOfNodes); i++) {
                 var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
                 this._batchNode.addChild(sprite);
-                sprite.setPosition(cc.ccp(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height));
+                sprite.setPosition(cc.p(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height));
             }
         }
 
@@ -292,14 +292,14 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
         }
     },
     updateQuantityOfNodes:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // increase nodes
         if (this._currentQuantityOfNodes < this._quantityOfNodes) {
             for (var i = 0; i < (this._quantityOfNodes - this._currentQuantityOfNodes); i++) {
                 var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
                 this._batchNode.addChild(sprite);
-                sprite.setPosition(cc.ccp(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height));
+                sprite.setPosition(cc.p(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height));
                 sprite.setVisible(false);
             }
         }
@@ -506,5 +506,5 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 function runNodeChildrenTest() {
     var scene = new IterateSpriteSheetCArray();
     scene.initWithQuantityOfNodes(NODES_INCREASE);
-    cc.Director.sharedDirector().replaceScene(scene);
+    cc.Director.getInstance().replaceScene(scene);
 }

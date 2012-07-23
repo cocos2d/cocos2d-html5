@@ -166,7 +166,7 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
      * @return {Boolean} true if load correctly
      */
     initWithImageFile:function (strPath, eImgFmt) {
-        var data = new cc.FileData(cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(strPath), "rb");
+        var data = new cc.FileData(cc.FileUtils.getInstance().fullPathFromRelativePath(strPath), "rb");
         return this.initWithImageData(data.getBuffer(), data.getSize(), eImgFmt);
     },
 
