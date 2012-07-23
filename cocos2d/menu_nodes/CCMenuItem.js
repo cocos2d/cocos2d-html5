@@ -761,14 +761,14 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
             if (this._disabledImage)
                 this._disabledImage.setVisible(false);
         } else {
-            if(this._disabledImage){
+            if (this._disabledImage) {
                 if (this._normalImage)
                     this._normalImage.setVisible(false);
                 if (this._selectedImage)
                     this._selectedImage.setVisible(false);
                 if (this._disabledImage)
                     this._disabledImage.setVisible(true);
-            }else{
+            } else {
                 if (this._normalImage)
                     this._normalImage.setVisible(true);
                 if (this._selectedImage)
@@ -801,19 +801,21 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
  * var item = cc.MenuItemSprite.create(normalImage, SelectedImage, disabledImage, targetNode, targetNode.callback)
  * //same as above, but with disabled image, and passing in callback function
  */
-cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five)//overloaded function
-{
+cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, five) {
+    var len = arguments.length;
+    var normalSprite = arguments[0], selectedSprite = arguments[1], disabledImage, target, callback;
     var ret = new cc.MenuItemSprite();
     //when you send 4 arguments, five is undefined
-    if (five) {
-        ret.initWithNormalSprite(normalSprite, selectedSprite, three, four, five);
+    if (len == 5) {
+        disabledImage = arguments[2], target = arguments[3], callback = arguments[4]
     }
-    else if (four) {
-        return cc.MenuItemSprite.create(normalSprite, selectedSprite, null, three, four);
+    else if (len == 4) {
+        target = arguments[2], callback = arguments[3];
     }
-    else {
-        return cc.MenuItemSprite.create(normalSprite, selectedSprite, three, null, null);
+    else if (len <= 3) {
+        disabledImage = arguments[2];
     }
+    ret.initWithNormalSprite(normalSprite, selectedSprite, disabledImage, target, callback);
     return ret;
 };
 
@@ -835,7 +837,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setNormalSpriteFrame:function (frame) {
-       this.setNormalImage(cc.Sprite.createWithSpriteFrame(frame));
+        this.setNormalImage(cc.Sprite.createWithSpriteFrame(frame));
     },
 
     /**
@@ -862,7 +864,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
         var selectedSprite = null;
         var disabledSprite = null;
 
-        if(normalImage){
+        if (normalImage) {
             normalSprite = cc.Sprite.create(normalImage);
         }
         if (selectedImage) {
@@ -892,7 +894,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * //same as above, but pass in the actual function and disabled image
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
-    if(arguments.length == 0){
+    if (arguments.length == 0) {
         return cc.MenuItemImage.create(null, null, null, null, null);
     }
     if (arguments.length == 4) {
@@ -974,7 +976,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         if (SelectedIndex != this._selectedIndex) {
             this._selectedIndex = SelectedIndex;
             var currItem = this.getChildByTag(cc.CURRENT_ITEM);
-            if(currItem){
+            if (currItem) {
                 currItem.removeFromParentAndCleanup(false);
             }
 
@@ -1009,7 +1011,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @return {Boolean}
      */
     initWithTarget:function (args) {
-        if(args.length < 2){
+        if (args.length < 2) {
             return false;
         }
         var target = args[0], selector = args[1];
@@ -1080,7 +1082,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {Boolean} enabled
      */
     setEnabled:function (enabled) {
-        if(this._isEnabled = enabled){
+        if (this._isEnabled = enabled) {
             this._super(enabled);
 
             if (this._subItems && this._subItems.length > 0) {
