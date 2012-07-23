@@ -30,7 +30,7 @@
  * @extends cc.Class
  * @example
  * // add SpriteFrames to SpriteFrameCache With File
- * cc.SpriteFrameCache.getInstance().addSpriteFramesWithFile(s_grossiniPlist);
+ * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
  */
 cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
     _spriteFrames:null,
@@ -186,15 +186,15 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * <p>
      *   Adds multiple Sprite Frames from a plist file.<br/>
      *   A texture will be loaded automatically. The texture name will composed by replacing the .plist suffix with .png<br/>
-     *   If you want to use another texture, you should use the addSpriteFramesWithFile:texture method.<br/>
+     *   If you want to use another texture, you should use the addSpriteFrames:texture method.<br/>
      * </p>
      * @param {String} plist plist filename
      * @param {HTMLImageElement|cc.Texture2D} texture
      * @example
      * // add SpriteFrames to SpriteFrameCache With File
-     * cc.SpriteFrameCache.getInstance().addSpriteFramesWithFile(s_grossiniPlist);
+     * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
      */
-    addSpriteFramesWithFile:function (plist, texture) {
+    addSpriteFrames:function (plist, texture) {
         var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(plist);
 
         switch (arguments.length) {

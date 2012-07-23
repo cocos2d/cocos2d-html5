@@ -92,7 +92,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
            version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
             for(var i = 0; i< spritesheets.length; i++){
-                cc.SpriteFrameCache.getInstance().addSpriteFramesWithFile(spritesheets[i]);
+                cc.SpriteFrameCache.getInstance().addSpriteFrames(spritesheets[i]);
             }
         }
 
