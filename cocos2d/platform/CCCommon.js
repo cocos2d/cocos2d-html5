@@ -130,19 +130,19 @@ cc.MessageBox = function (message) {
 if (cc.COCOS2D_DEBUG == 0) {
     cc.log = function () {
     };
-    cc.LogINFO = function () {
+    cc.logINFO = function () {
     };
-    cc.LogERROR = function () {
+    cc.logERROR = function () {
     };
 }
 else if (cc.COCOS2D_DEBUG == 1) {
-    cc.LogINFO = cc.log;
-    cc.LogERROR = function () {
+    cc.logINFO = cc.log;
+    cc.logERROR = function () {
     };
 }
 else if (cc.COCOS2D_DEBUG > 1) {
-    cc.LogINFO = cc.log;
-    cc.LogERROR = cc.log;
+    cc.logINFO = cc.log;
+    cc.logERROR = cc.log;
 }// COCOS2D_DEBUG
 
 if (cc.COCOS2D_DEBUG) {
