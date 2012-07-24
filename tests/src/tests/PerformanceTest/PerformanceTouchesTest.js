@@ -49,23 +49,23 @@ var TouchesMainScene = PerformBasicLayer.extend({
             var scene = cc.Scene.create();
             scene.addChild(layer);
 
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // add title
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         this.scheduleUpdate();
 
         this._plabel = cc.LabelTTF.create("00.0", "Arial", 16);
-        this._plabel.setPosition(cc.ccp(s.width / 2, s.height / 2));
+        this._plabel.setPosition(cc.p(s.width / 2, s.height / 2));
         this.addChild(this._plabel);
 
         this._elapsedTime = 0;
@@ -105,19 +105,19 @@ var TouchesPerformTest1 = TouchesMainScene.extend({
         return "Targeted touches";
     },
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         this._numberOfTouchesB++;
         return true;
     },
-    ccTouchMoved:function (touch, event) {
+    onTouchMoved:function (touch, event) {
         this._numberOfTouchesM++;
     },
-    ccTouchEnded:function (touch, event) {
+    onTouchEnded:function (touch, event) {
         this._numberOfTouchesE++;
     },
-    ccTouchCancelled:function (touch, event) {
+    onTouchCancelled:function (touch, event) {
         this._numberOfTouchesC++;
     }
 });
@@ -136,19 +136,19 @@ var TouchesPerformTest2 = TouchesMainScene.extend({
         return "Standard touches";
     },
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addStandardDelegate(this, 0);
+        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         this._numberOfTouchesB += touches.length;
     },
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         this._numberOfTouchesM += touches.length;
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         this._numberOfTouchesE += touches.length;
     },
-    ccTouchesCancelled:function (touches, event) {
+    onTouchesCancelled:function (touches, event) {
         this._numberOfTouchesC += touches.length;
     }
 });
@@ -158,5 +158,5 @@ function runTouchesTest() {
     var scene = cc.Scene.create();
     var layer = new TouchesPerformTest1(true, 2, s_nTouchCurCase);
     scene.addChild(layer);
-    cc.Director.sharedDirector().replaceScene(scene);
+    cc.Director.getInstance().replaceScene(scene);
 }

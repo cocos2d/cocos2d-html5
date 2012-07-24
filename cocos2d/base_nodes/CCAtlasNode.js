@@ -97,7 +97,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._quadsToDraw = itemsToRender;
 
         //shader stuff
-        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTexture_uColor));
+        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTexture_uColor));
         //this._uniformColor = glGetUniformLocation( this.getShaderProgram().getProgram(), "u_color");
 
         return true;
@@ -152,7 +152,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
         if (this.getTexture()) {
             if (cc.renderContextType == cc.CANVAS) {
-                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
+                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     var tx = this._originalTexture;
                     var textureRect = new cc.Rect(0, 0, tx.width, tx.height);

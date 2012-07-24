@@ -36,9 +36,9 @@ var TestScene = cc.Scene.extend({
         var menuItem = cc.MenuItemLabel.create(label, this, this.MainMenuCallback);
 
         var menu = cc.Menu.create(menuItem, null);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         menu.setPosition(cc.PointZero());
-        menuItem.setPosition(cc.PointMake(s.width - 50, 25));
+        menuItem.setPosition(cc.p(s.width - 50, 25));
 
         this.addChild(menu, 1);
     },
@@ -49,7 +49,7 @@ var TestScene = cc.Scene.extend({
         var scene = cc.Scene.create();
         var layer = new TestController();
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     }
 });
 //Controller stuff
@@ -64,13 +64,13 @@ var TestController = cc.Layer.extend({
     ctor:function () {
         // add close menu
         if (!s_pathClose) {
-            s_pathClose = cc.TextureCache.sharedTextureCache().textureForKey("res/CloseNormal.png");
+            s_pathClose = cc.TextureCache.getInstance().textureForKey("res/CloseNormal.png");
         }
         var closeItem = cc.MenuItemImage.create(s_pathClose, s_pathClose, this, this.closeCallback);
         var menu = cc.Menu.create(closeItem, null);//pmenu is just a holder for the close button
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         menu.setPosition(cc.PointZero());
-        closeItem.setPosition(cc.PointMake(s.width - 30, s.height - 30));
+        closeItem.setPosition(cc.p(s.width - 30, s.height - 30));
 
         // add menu items for tests
         this._itemMenu = cc.Menu.create(null);//item menu is where all the label goes, and the one gets scrolled
@@ -79,7 +79,7 @@ var TestController = cc.Layer.extend({
             var label = cc.LabelTTF.create(testNames[i].title, "Arial", 24);
             var menuItem = cc.MenuItemLabel.create(label, this, this.menuCallback);
             this._itemMenu.addChild(menuItem, i + 10000);
-            menuItem.setPosition(cc.PointMake(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
+            menuItem.setPosition(cc.p(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }
 
         this._itemMenu.setContentSize(cc.SizeMake(s.width, (testNames.length + 1) * LINE_SPACE));
@@ -100,36 +100,36 @@ var TestController = cc.Layer.extend({
     closeCallback:function () {
         history.go(-1);
     },
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         if (!this.isMouseDown) {
-            //this._beginPos = cc.ccp(touches[0].locationInView().x, touches[0].locationInView().y);
-            this._beginPos = touches[0].locationInView().y;
+            //this._beginPos = cc.p(touches[0].getLocation().x, touches[0].getLocation().y);
+            this._beginPos = touches[0].getLocation().y;
         }
         this.isMouseDown = true;
     },
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         if (this.isMouseDown) {
-            var touchLocation = touches[0].locationInView().y;
+            var touchLocation = touches[0].getLocation().y;
             var nMoveY = touchLocation - this._beginPos;
-            curPos = cc.ccp(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
+            curPos = cc.p(this._itemMenu.getPosition().x, this._itemMenu.getPosition().y);
 
-            var nextPos = cc.ccp(curPos.x, curPos.y + nMoveY);
-            var winSize = cc.Director.sharedDirector().getWinSize();
+            var nextPos = cc.p(curPos.x, curPos.y + nMoveY);
+            var winSize = cc.Director.getInstance().getWinSize();
             if (nextPos.y < 0.0) {
                 this._itemMenu.setPosition(cc.PointZero());
                 return;
             }
 
             if (nextPos.y > ((testNames.length + 1) * LINE_SPACE - winSize.height)) {
-                this._itemMenu.setPosition(cc.ccp(0, ((testNames.length + 1) * LINE_SPACE - winSize.height)));
+                this._itemMenu.setPosition(cc.p(0, ((testNames.length + 1) * LINE_SPACE - winSize.height)));
                 return;
             }
             this._itemMenu.setPosition(nextPos);
-            this._beginPos = cc.ccp(0, touchLocation).y;
+            this._beginPos = cc.p(0, touchLocation).y;
             curPos = nextPos;
         }
     },
-    ccTouchesEnded:function () {
+    onTouchesEnded:function () {
         this.isMouseDown = false;
     }
 });

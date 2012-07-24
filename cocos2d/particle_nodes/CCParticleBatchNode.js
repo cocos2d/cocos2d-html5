@@ -81,7 +81,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTextureColor));
+        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
         return true;
     },
 
@@ -92,7 +92,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     initWithFile:function (fileImage, capacity) {
-        var tex = cc.TextureCache.sharedTextureCache().addImage(fileImage);
+        var tex = cc.TextureCache.getInstance().addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
 

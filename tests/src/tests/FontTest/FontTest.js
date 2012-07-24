@@ -68,22 +68,22 @@ FontTestScene = TestScene.extend({
         var layer = FontTest.node();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
 FontTest = cc.Layer.extend({
     ctor:function () {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
         var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
         var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
         var menu = cc.Menu.create(item1, item2, item3, null);
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp(size.width / 2 - 100, 30));
-        item2.setPosition(cc.ccp(size.width / 2, 30));
-        item3.setPosition(cc.ccp(size.width / 2 + 100, 30));
+        item1.setPosition(cc.p(size.width / 2 - 100, 30));
+        item2.setPosition(cc.p(size.width / 2, 30));
+        item3.setPosition(cc.p(size.width / 2 + 100, 30));
         this.addChild(menu, 1);
 
         this.showFont(restartFontTestAction());
@@ -95,17 +95,17 @@ FontTest = cc.Layer.extend({
         this.removeChildByTag(TAG_LABEL3, true);
         this.removeChildByTag(TAG_LABEL4, true);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var top = cc.LabelTTF.create(pFont, pFont, 24);
         var left = cc.LabelTTF.create("alignment left", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_LEFT, pFont, 32);
         var center = cc.LabelTTF.create("alignment center", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_CENTER, pFont, 32);
         var right = cc.LabelTTF.create("alignment right", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_RIGHT, pFont, 32);
 
-        top.setPosition(cc.ccp(s.width / 2, s.height * 3 / 4));
-        left.setPosition(cc.ccp(s.width / 2, s.height / 2));
-        center.setPosition(cc.ccp(s.width / 2, s.height * 3 / 8));
-        right.setPosition(cc.ccp(s.width / 2, s.height / 4));
+        top.setPosition(cc.p(s.width / 2, s.height * 3 / 4));
+        left.setPosition(cc.p(s.width / 2, s.height / 2));
+        center.setPosition(cc.p(s.width / 2, s.height * 3 / 8));
+        right.setPosition(cc.p(s.width / 2, s.height / 4));
 
         this.addChild(left, 0, TAG_LABEL1);
         this.addChild(right, 0, TAG_LABEL2);

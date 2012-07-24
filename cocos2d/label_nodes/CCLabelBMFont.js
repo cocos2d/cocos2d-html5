@@ -310,7 +310,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         // file
         value = /file="([a-zA-Z0-9\-\._]+)/gi.exec(line)[1];
 
-        this.atlasName = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(value, fntFile);
+        this.atlasName = cc.FileUtils.getInstance().fullPathFromRelativeFile(value, fntFile);
     },
 
     _parseKerningCapacity:function (line) {
@@ -446,8 +446,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
             var s = this.getContentSize();
-            var pos = new cc.Point(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
-            var vertices = [cc.ccp(pos.x, pos.y), cc.ccp(pos.x + s.width, pos.y), cc.ccp(pos.x + s.width, pos.y + s.height), cc.ccp(pos.x, pos.y + s.height)];
+            var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
+            var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + s.width, pos.y), cc.p(pos.x + s.width, pos.y + s.height), cc.p(pos.x, pos.y + s.height)];
             context.strokeStyle = "rgba(0,255,0,1)";
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
@@ -496,7 +496,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._color = color3;
         if (this.getTexture()) {
             if (cc.renderContextType == cc.CANVAS) {
-                var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this._originalTexture);
+                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
                     var tx = this.getTexture();
@@ -562,7 +562,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             cc.Assert(newConf, "cc.LabelBMFont: Impossible to create font. Please check file");
             this._configuration = newConf;
             this._fntFile = fntFile;
-            texture = cc.TextureCache.sharedTextureCache().addImage(this._configuration.getAtlasName());
+            texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
         }
         else {
             texture = new Image();
@@ -580,7 +580,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._color = cc.WHITE();
             this._contentSize = cc.SizeZero();
             this.setString(theString);
-            this.setAnchorPoint(cc.ccp(0.5, 0.5));
+            this.setAnchorPoint(cc.p(0.5, 0.5));
             return true;
         }
         return false;
@@ -666,7 +666,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
-            var fontPos = cc.ccp(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width * 0.5 + kerningAmount,
+            var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width * 0.5 + kerningAmount,
                 nextFontPositionY + yOffset - rect.size.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
             fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
 
@@ -923,7 +923,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                             if (index < 0) continue;
 
                             var characterSprite = this.getChildByTag(index);
-                            characterSprite.setPosition(cc.ccpAdd(characterSprite.getPosition(), cc.ccp(shift, 0)));
+                            characterSprite.setPosition(cc.pAdd(characterSprite.getPosition(), cc.p(shift, 0)));
                         }
                     }
 
@@ -1000,7 +1000,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._fntFile = fntFile;
             this._configuration = newConf;
 
-            this.setTexture(cc.TextureCache.sharedTextureCache().addImage(this._configuration.getAtlasName()));
+            this.setTexture(cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName()));
             this.createFontChars();
         }
     },

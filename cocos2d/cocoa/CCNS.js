@@ -141,7 +141,7 @@ cc.PointFromString = function (content) {
         var strs = cc.splitWithForm(content);
         var x = parseFloat(strs[0]);
         var y = parseFloat(strs[1]);
-        ret = cc.PointMake(x, y);
+        ret = cc.p(x, y);
     } catch (e) {
     }
     return ret;

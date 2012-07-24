@@ -85,17 +85,17 @@ var SchedulerTestLayer = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 30);
         this.addChild(label);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var subTitle = this.subtitle();
         if (subTitle != "") {
             var subLabel = cc.LabelTTF.create(subTitle, "Thonburi", 13);
             this.addChild(subLabel, 1);
-            subLabel.setPosition(cc.ccp(s.width / 2, s.height - 80));
+            subLabel.setPosition(cc.p(s.width / 2, s.height - 80));
         }
 
         var item1 = cc.MenuItemImage.create("res/Images/b1.png", "res/Images/b2.png", this, this.backCallback);
@@ -104,9 +104,9 @@ var SchedulerTestLayer = cc.Layer.extend({
 
         var menu = cc.Menu.create(item1, item2, item3, null);
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
-        item2.setPosition(cc.ccp(s.width / 2, 30));
-        item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1)
     },
@@ -122,21 +122,21 @@ var SchedulerTestLayer = cc.Layer.extend({
         var layer = backSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
     nextCallback:function (sender) {
         var scene = new SchedulerTestScene();
         var layer = nextSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
     restartCallback:function (sender) {
         var scene = new SchedulerTestScene();
         var layer = restartSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     }
 });
 
@@ -193,7 +193,7 @@ var SchedulerPauseResume = SchedulerTestLayer.extend({
         cc.Log("tick2");
     },
     pause:function (dt) {
-        cc.Director.sharedDirector().getScheduler().pauseTarget(this);
+        cc.Director.getInstance().getScheduler().pauseTarget(this);
     }
 });
 
@@ -261,7 +261,7 @@ var SchedulerUnscheduleAllHard = SchedulerTestLayer.extend({
         cc.Log("tick4");
     },
     unscheduleAll:function (dt) {
-        cc.Director.sharedDirector().getScheduler().unscheduleAllSelectors();
+        cc.Director.getInstance().getScheduler().unscheduleAllSelectors();
     }
 });
 
@@ -456,6 +456,6 @@ var SchedulerTestScene = TestScene.extend({
         var layer = nextSchedulerTest();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

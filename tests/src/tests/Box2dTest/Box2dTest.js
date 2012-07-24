@@ -43,7 +43,7 @@ Box2DTestLayer = cc.Layer.extend({
             , b2World = Box2D.Dynamics.b2World
             , b2PolygonShape = Box2D.Collision.Shapes.b2PolygonShape;
 
-        var screenSize = cc.Director.sharedDirector().getWinSize();
+        var screenSize = cc.Director.getInstance().getWinSize();
         //UXLog(L"Screen width %0.2f screen height %0.2f",screenSize.width,screenSize.height);
 
 
@@ -91,12 +91,12 @@ Box2DTestLayer = cc.Layer.extend({
         var mgr = cc.SpriteBatchNode.create(s_pathBlock, 150);
         this.addChild(mgr, 0, TAG_SPRITE_MANAGER);
 
-        this.addNewSpriteWithCoords(cc.PointMake(screenSize.width / 2, screenSize.height / 2));
+        this.addNewSpriteWithCoords(cc.p(screenSize.width / 2, screenSize.height / 2));
 
         var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
         this.addChild(label, 0);
-        label.setColor(cc.ccc3(0, 0, 255));
-        label.setPosition(cc.PointMake(screenSize.width / 2, screenSize.height - 50));
+        label.setColor(cc.c3(0, 0, 255));
+        label.setPosition(cc.p(screenSize.width / 2, screenSize.height - 50));
 
         this.scheduleUpdate();
 
@@ -119,7 +119,7 @@ Box2DTestLayer = cc.Layer.extend({
         var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(32 * idx, 32 * idy, 32, 32));
         batch.addChild(sprite);
 
-        sprite.setPosition(cc.PointMake(p.x, p.y));
+        sprite.setPosition(cc.p(p.x, p.y));
 
         // Define the dynamic body.
         //Set up a 1m squared box in the physics world
@@ -164,14 +164,14 @@ Box2DTestLayer = cc.Layer.extend({
             if (b.GetUserData() != null) {
                 //Synchronize the AtlasSprites position and rotation with the corresponding body
                 var myActor = b.GetUserData();
-                myActor.setPosition(cc.PointMake(b.GetPosition().x * PTM_RATIO, b.GetPosition().y * PTM_RATIO));
+                myActor.setPosition(cc.p(b.GetPosition().x * PTM_RATIO, b.GetPosition().y * PTM_RATIO));
                 myActor.setRotation(-1 * cc.RADIANS_TO_DEGREES(b.GetAngle()));
                 //console.log(b.GetAngle());
             }
         }
 
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         //Add a new body/atlas sprite at the touched location
         for (var it = 0; it < touches.length; it++) {
             var touch = touches[it];
@@ -179,8 +179,8 @@ Box2DTestLayer = cc.Layer.extend({
             if (!touch)
                 break;
 
-            var location = touch.locationInView();
-            //location = cc.Director.sharedDirector().convertToGL(location);
+            var location = touch.getLocation();
+            //location = cc.Director.getInstance().convertToGL(location);
             this.addNewSpriteWithCoords(location);
         }
     }
@@ -195,6 +195,6 @@ Box2DTestScene = TestScene.extend({
         var layer = new Box2DTestLayer();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

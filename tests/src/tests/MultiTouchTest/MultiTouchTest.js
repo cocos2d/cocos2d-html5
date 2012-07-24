@@ -38,10 +38,10 @@ var TouchPoint = cc.Node.extend({
     _styleStr:null,
 
     ctor:function () {
-        this._touchPoint = new cc.Point(0, 0);
+        this._touchPoint = cc.p(0, 0);
         this._tonchColor = new cc.Color3B(255, 255, 255);
         this._styleStr = "rgba(" + this._tonchColor.r + "," + this._tonchColor.g + "," + this._tonchColor.b + ", 1)";
-        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTextureColor));
+        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
     },
 
     draw:function () {
@@ -51,8 +51,8 @@ var TouchPoint = cc.Node.extend({
         context.strokeStyle = this._styleStr;
         context.lineWidth = "10";
         var size = this.getContentSize();
-        cc.drawingUtil.drawLine(new cc.Point(0, this._touchPoint.y), new cc.Point(size.width, this._touchPoint.y));
-        cc.drawingUtil.drawLine(new cc.Point(this._touchPoint.x, 0), new cc.Point(this._touchPoint.x, size.height));
+        cc.drawingUtil.drawLine(cc.p(0, this._touchPoint.y), cc.p(size.width, this._touchPoint.y));
+        cc.drawingUtil.drawLine(cc.p(this._touchPoint.x, 0), cc.p(this._touchPoint.x, size.height));
         cc.drawingUtil.drawPoint(this._touchPoint, 15);
         context.restore();
     },
@@ -70,7 +70,7 @@ var TouchPoint = cc.Node.extend({
 TouchPoint.touchPointWithParent = function (parent) {
     var ret = new TouchPoint();
     ret.setContentSize(parent.getContentSize());
-    ret.setAnchorPoint(new cc.Point(0, 0));
+    ret.setAnchorPoint(cc.p(0, 0));
     return ret;
 };
 
@@ -84,12 +84,12 @@ var MultiTouchTestLayer = cc.Layer.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addStandardDelegate(this, 0);
+        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
     },
 
     _savePointArr:[],
     _isPressed:false,
-    ccTouchesBegan:function (touches, event) {
+    onTouchesBegan:function (touches, event) {
         this._isPressed = true;
         if (!touches)
             return;
@@ -99,7 +99,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
         for (var i = 0; i < touches.length; i++) {
             var touch = touches[i];
             var touchPoint = TouchPoint.touchPointWithParent(this);
-            var location = touch.locationInView();
+            var location = touch.getLocation();
 
             touchPoint.setTouchPos(location);
             touchPoint.setTouchColor(touchColors[i]);
@@ -115,7 +115,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
         }
     },
 
-    ccTouchesMoved:function (touches, event) {
+    onTouchesMoved:function (touches, event) {
         this._clearSavePointArr();
         if(!cc.Browser.isMobile){
             if(!this._isPressed){
@@ -126,7 +126,7 @@ var MultiTouchTestLayer = cc.Layer.extend({
         for (var i = 0; i < touches.length; i++) {
             var touch = touches[i];
             var touchPoint = TouchPoint.touchPointWithParent(this);
-            var location = touch.locationInView();
+            var location = touch.getLocation();
 
             touchPoint.setTouchPos(location);
             touchPoint.setTouchColor(touchColors[i]);
@@ -136,13 +136,13 @@ var MultiTouchTestLayer = cc.Layer.extend({
         }
     },
 
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         this._isPressed = false;
         this._clearSavePointArr();
     },
 
-    ccTouchesCancelled:function (touches, event) {
-        this.ccTouchesEnded(touches, event);
+    onTouchesCancelled:function (touches, event) {
+        this.onTouchesEnded(touches, event);
     }
 
 });
@@ -159,6 +159,6 @@ var MultiTouchTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = MultiTouchTestLayer.create();
         this.addChild(layer, 0);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

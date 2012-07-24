@@ -30,45 +30,45 @@ var TextureCacheTest = cc.Layer.extend({
     _numberOfSprites:20,
     _numberOfLoadedSprites:0,
     ctor:function () {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         this._labelLoading = cc.LabelTTF.create("loading...", "Arial", 15);
         this._labelPercent = cc.LabelTTF.create("%0", "Arial", 15);
 
-        this._labelLoading.setPosition(cc.PointMake(size.width / 2, size.height / 2 - 20));
-        this._labelPercent.setPosition(cc.PointMake(size.width / 2, size.height / 2 + 20));
+        this._labelLoading.setPosition(cc.p(size.width / 2, size.height / 2 - 20));
+        this._labelPercent.setPosition(cc.p(size.width / 2, size.height / 2 + 20));
 
         this.addChild(this._labelLoading);
         this.addChild(this._labelPercent);
 
         // load textrues
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/HelloWorld.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_01.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_02.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_03.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_04.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_05.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_06.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_07.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_08.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_09.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_10.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_11.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_12.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_13.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/grossini_dance_14.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/background1.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/background2.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/background3.png", this, this.loadingCallBack);
-        cc.TextureCache.sharedTextureCache().addImageAsync("res/Images/blocks.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/HelloWorld.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_01.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_02.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_03.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_04.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_05.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_06.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_07.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_08.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_09.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_10.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_11.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_12.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_13.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/grossini_dance_14.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/background1.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/background2.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/background3.png", this, this.loadingCallBack);
+        cc.TextureCache.getInstance().addImageAsync("res/Images/blocks.png", this, this.loadingCallBack);
     },
     addSprite:function () {
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
 
         // create sprites
         var bg = cc.Sprite.create("res/Images/HelloWorld.png");
-        bg.setPosition(cc.PointMake(size.width / 2, size.height / 2));
+        bg.setPosition(cc.p(size.width / 2, size.height / 2));
         //bg.setScale(1.7);
 
         var s1 = cc.Sprite.create("res/Images/grossini.png");
@@ -93,23 +93,23 @@ var TextureCacheTest = cc.Layer.extend({
         var s18 = cc.Sprite.create("res/Images/background3.png");
         var s19 = cc.Sprite.create("res/Images/blocks.png");
 
-        s1.setPosition(cc.PointMake(50, 50));
-        s2.setPosition(cc.PointMake(60, 50));
-        s3.setPosition(cc.PointMake(70, 50));
-        s4.setPosition(cc.PointMake(80, 50));
-        s5.setPosition(cc.PointMake(90, 50));
-        s6.setPosition(cc.PointMake(100, 50));
+        s1.setPosition(cc.p(50, 50));
+        s2.setPosition(cc.p(60, 50));
+        s3.setPosition(cc.p(70, 50));
+        s4.setPosition(cc.p(80, 50));
+        s5.setPosition(cc.p(90, 50));
+        s6.setPosition(cc.p(100, 50));
 
-        s7.setPosition(cc.PointMake(50, 180));
-        s8.setPosition(cc.PointMake(60, 180));
-        s9.setPosition(cc.PointMake(70, 180));
-        s10.setPosition(cc.PointMake(80, 180));
-        s11.setPosition(cc.PointMake(90, 180));
-        s12.setPosition(cc.PointMake(100, 180));
+        s7.setPosition(cc.p(50, 180));
+        s8.setPosition(cc.p(60, 180));
+        s9.setPosition(cc.p(70, 180));
+        s10.setPosition(cc.p(80, 180));
+        s11.setPosition(cc.p(90, 180));
+        s12.setPosition(cc.p(100, 180));
 
-        s13.setPosition(cc.PointMake(50, 270));
-        s14.setPosition(cc.PointMake(60, 270));
-        s15.setPosition(cc.PointMake(70, 270));
+        s13.setPosition(cc.p(50, 270));
+        s14.setPosition(cc.p(60, 270));
+        s15.setPosition(cc.p(70, 270));
 
         this.addChild(bg);
 
@@ -144,6 +144,6 @@ var TextureCacheTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = new TextureCacheTest();
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

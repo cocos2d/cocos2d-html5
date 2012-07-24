@@ -111,7 +111,7 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
 
         for (i = 0; i < this._tilesCount; i++) {
             t = this._tilesOrder[i];
-            var tilePos = cc.ccg(t / this._gridSize.y, t % this._gridSize.y);
+            var tilePos = cc.g(t / this._gridSize.y, t % this._gridSize.y);
 
             if (i < l) {
                 this.turnOffTile(tilePos);
@@ -132,10 +132,10 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
  * @example
  * // example
  * // turnOffTiles without seed
- * var toff = cc.TurnOffTiles.create(cc.ccg(x, y), this._duration);
+ * var toff = cc.TurnOffTiles.create(cc.g(x, y), this._duration);
  *
  * // turnOffTiles with seed
- * var toff = cc.TurnOffTiles.create(cc.ccg(x, y), this._duration, 0);
+ * var toff = cc.TurnOffTiles.create(cc.g(x, y), this._duration, 0);
  */
 cc.TurnOffTiles.create = function (gridSize, duration, seed) {
     var action = new cc.TurnOffTiles();

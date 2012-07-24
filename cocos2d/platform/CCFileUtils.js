@@ -211,7 +211,7 @@ cc.FileUtils = cc.Class.extend({
 });
 
 cc.s_SharedFileUtils = null;
-cc.FileUtils.sharedFileUtils =  function(){
+cc.FileUtils.getInstance =  function(){
     if(cc.s_SharedFileUtils == null){
         cc.s_SharedFileUtils =  new cc.FileUtils();
 

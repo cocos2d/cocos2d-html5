@@ -182,7 +182,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var capacity = totalNumberOfTiles * 0.35 + 1; // 35 percent is occupied ?
 
         if (tilesetInfo) {
-            var texture = cc.TextureCache.sharedTextureCache().addImage(tilesetInfo.sourceImage.toString());
+            var texture = cc.TextureCache.getInstance().addImage(tilesetInfo.sourceImage.toString());
         }
         if (this.initWithTexture(texture, capacity)) {
             // layerInfo
@@ -193,7 +193,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._maxGID = layerInfo._maxGID;
             this._opacity = layerInfo._opacity;
             this.setProperties(layerInfo.getProperties());
-            this._contentScaleFactor = cc.Director.sharedDirector().getContentScaleFactor();
+            this._contentScaleFactor = cc.Director.getInstance().getContentScaleFactor();
 
             // tilesetInfo
             this._tileSet = tilesetInfo;
@@ -467,7 +467,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
                 // XXX: gid == 0 -. empty tile
                 if (gid != 0) {
-                    this._appendTileForGID(gid, cc.ccp(x, y));
+                    this._appendTileForGID(gid, cc.p(x, y));
                     // Optimization: update min and max GID rendered by the layer
                     this._minGID = Math.min(gid, this._minGID);
                     this._maxGID = Math.max(gid, this._maxGID);
@@ -525,7 +525,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _positionForIsoAt:function (pos) {
-        var xy = cc.PointMake(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
+        var xy = cc.p(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
             this._mapTileSize.height / 2 * (( this._layerSize.height * 2 - pos.x - pos.y) - 2));
         return xy;
     },
@@ -535,7 +535,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             console.log("before:", pos.x , this._mapTileSize.width,
                 this._layerSize.height , pos.y , 1 , this._mapTileSize.height);
         }
-        var xy = cc.PointMake(pos.x * this._mapTileSize.width,
+        var xy = cc.p(pos.x * this._mapTileSize.width,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height);
         if(pos.x  == 101){
             console.log("after:", xy);
@@ -549,7 +549,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             diffY = -this._mapTileSize.height / 2;
         }
 
-        var xy = cc.PointMake(pos.x * this._mapTileSize.width * 3 / 4,
+        var xy = cc.p(pos.x * this._mapTileSize.width * 3 / 4,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height + diffY);
         return xy;
     },
@@ -558,14 +558,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var ret = cc.PointZero();
         switch (this._layerOrientation) {
             case cc.TMXOrientationOrtho:
-                ret = cc.ccp(pos.x * this._mapTileSize.width, -pos.y * this._mapTileSize.height);
+                ret = cc.p(pos.x * this._mapTileSize.width, -pos.y * this._mapTileSize.height);
                 break;
             case cc.TMXOrientationIso:
-                ret = cc.ccp((this._mapTileSize.width / 2) * (pos.x - pos.y),
+                ret = cc.p((this._mapTileSize.width / 2) * (pos.x - pos.y),
                     (this._mapTileSize.height / 2 ) * (-pos.x - pos.y));
                 break;
             case cc.TMXOrientationHex:
-                ret = cc.ccp(0, 0);
+                ret = cc.p(0, 0);
                 cc.Log("cocos2d:offset for hexagonal map not implemented yet");
                 break;
         }
@@ -659,7 +659,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 var alphaFuncValue = 0;
 
                 //todo webgl
-                //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kcc.Shader_PositionTextureColorAlphaTest));
+                //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kcc.Shader_PositionTextureColorAlphaTest));
                 //var alphaValueLocation = glGetUniformLocation(getShaderProgram().getProgram(), kcc.UniformAlphaTestValue);
                 // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
                 //this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
@@ -689,8 +689,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         if ((gid & cc.TMXTileDiagonalFlag)>>>0) {
             // put the anchor in the middle for ease of rotation.
-            sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
-            sprite.setPosition(cc.ccp(this.positionAt(pos).x + sprite.getContentSize().height / 2,
+            sprite.setAnchorPoint(cc.p(0.5, 0.5));
+            sprite.setPosition(cc.p(this.positionAt(pos).x + sprite.getContentSize().height / 2,
                 this.positionAt(pos).y + sprite.getContentSize().width / 2));
 
             var flag = (gid & (cc.TMXTileHorizontalFlag | cc.TMXTileVerticalFlag) >>> 0) >>> 0;

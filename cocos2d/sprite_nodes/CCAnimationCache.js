@@ -33,7 +33,7 @@
  * @extends cc.Class
  *
  * @example
- * cc.AnimationCache.sharedAnimationCache().addAnimation(animation,"animation1");
+ * cc.AnimationCache.getInstance().addAnimation(animation,"animation1");
  */
 cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
 
@@ -92,7 +92,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
            version = (properties["format"] != null) ? parseInt(properties["format"]) : version;
             var spritesheets = properties["spritesheets"];
             for(var i = 0; i< spritesheets.length; i++){
-                cc.SpriteFrameCache.sharedSpriteFrameCache().addSpriteFramesWithFile(spritesheets[i]);
+                cc.SpriteFrameCache.getInstance().addSpriteFrames(spritesheets[i]);
             }
         }
 
@@ -119,8 +119,8 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
     addAnimationsWithFile:function (plist) {
         cc.Assert( plist, "Invalid texture file name");
 
-        var path = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(plist);
-        var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(path);
+        var path = cc.FileUtils.getInstance().fullPathFromRelativePath(plist);
+        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(path);
 
         cc.Assert( dict, "cc.AnimationCache: File could not be found");
 
@@ -128,7 +128,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
     },
 
     _parseVersion1:function (animations) {
-        var frameCache = cc.SpriteFrameCache.sharedSpriteFrameCache();
+        var frameCache = cc.SpriteFrameCache.getInstance();
 
         for (var key in animations) {
             var animationDict = animations[key];
@@ -162,12 +162,12 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                     " Some or all of the frames for the animation '" + key + "' may be missing.");
             }
             animation = cc.Animation.createWithAnimationFrames(frames, delay, 1);
-            cc.AnimationCache.sharedAnimationCache().addAnimation(animation,key);
+            cc.AnimationCache.getInstance().addAnimation(animation,key);
         }
     },
 
     _parseVersion2:function (animations) {
-        var frameCache = cc.SpriteFrameCache.sharedSpriteFrameCache();
+        var frameCache = cc.SpriteFrameCache.getInstance();
 
         for (var key in animations) {
             var animationDict = animations[key];
@@ -203,7 +203,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             var animation = new cc.Animation();
             animation.initWithAnimationFrames(arr,delayPerUnit,loops);
             animation.setRestoreOriginalFrame(restoreOriginalFrame);
-            cc.AnimationCache.sharedAnimationCache().addAnimation(animation,key);
+            cc.AnimationCache.getInstance().addAnimation(animation,key);
         }
     },
 
@@ -233,7 +233,7 @@ cc.AnimationCache.purgeSharedAnimationCache = function () {
  * Retruns ths shared instance of the Animation cache
  * @return {cc.AnimationCache}
  */
-cc.AnimationCache.sharedAnimationCache = function () {
+cc.AnimationCache.getInstance = function () {
     if (cc.s_sharedAnimationCache == null) {
         cc.s_sharedAnimationCache = new cc.AnimationCache();
         cc.s_sharedAnimationCache.init();

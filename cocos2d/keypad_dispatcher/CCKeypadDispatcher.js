@@ -287,7 +287,7 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
  * Returns the shared cc.KeypadDispatcher object for the system.
  * @return {cc.keypadDispatcher}
  */
-cc.KeypadDispatcher.sharedDispatcher = function () {
+cc.KeypadDispatcher.getInstance = function () {
     if (!cc.keypadDispatcher) {
         cc.keypadDispatcher = new cc.KeypadDispatcher();
         //make canvas focusable
@@ -296,7 +296,7 @@ cc.KeypadDispatcher.sharedDispatcher = function () {
         cc.canvas.style.cursor = 'default';
         cc.canvas.addEventListener("keydown", function (e) {
             cc.keypadDispatcher.dispatchKeypadMSG(e, true);
-            cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
+            cc.IMEDispatcher.getInstance().processKeycode(e.keyCode);
         });
         cc.canvas.addEventListener("keyup", function (e) {
             cc.keypadDispatcher.dispatchKeypadMSG(e, false);
