@@ -3486,25 +3486,25 @@ var NodeSort = SpriteTestDemo.extend({
     reorderSprite:function (dt) {
         this.unschedule(this.reorderSprite);
 
-        cc.Log("Before reorder--");
+        cc.log("Before reorder--");
 
         var i = 0;
         var child;
         var nodeChildren = this._node.getChildren();
         for (i = 0; i < nodeChildren.length; i++) {
             child = nodeChildren[i];
-            cc.Log("tag:" + child.getTag() + "  z: " + child.getZOrder());
+            cc.log("tag:" + child.getTag() + "  z: " + child.getZOrder());
         }
 
         //z-4
         this._node.reorderChild(this._node.getChildren()[0], -6);
         this._node.sortAllChildren();
 
-        cc.Log("After reorder--");
+        cc.log("After reorder--");
         nodeChildren = this._node.getChildren();
         for (i = 0; i < nodeChildren.length; i++) {
             child = nodeChildren[i];
-            cc.Log("tag:" + child.getTag() + "  z: " +
+            cc.log("tag:" + child.getTag() + "  z: " +
                 child.getZOrder());
         }
     }
@@ -3562,7 +3562,7 @@ var SpriteBatchNodeReorderSameIndex = SpriteTestDemo.extend({
 
         for (var i = 0; i < this._batchNode.getDescendants(); i++) {
             var child = this._batchNode.getDescendants()[i];
-            cc.Log("tag:" + child.getTag());
+            cc.log("tag:" + child.getTag());
         }
     }
 });

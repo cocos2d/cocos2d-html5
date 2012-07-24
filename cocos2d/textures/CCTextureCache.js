@@ -38,7 +38,7 @@ cc.loadImage = function (imageUrl) {
     // compute image type
     var imageType = cc.computeImageFormatType(imageUrl);
     if (imageType == cc.FMT_UNKNOWN) {
-        cc.Log("unsupported format" + imageUrl);
+        cc.log("unsupported format" + imageUrl);
         return;
     }
     var image = new Image();
@@ -215,7 +215,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         if ((key != null) && (texture != null)) {
             this.textures[key] = texture;
         } else {
-            cc.Log("cocos2d: Couldn't add UIImage in TextureCache");
+            cc.log("cocos2d: Couldn't add UIImage in TextureCache");
         }
 
         return texture;
@@ -326,7 +326,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     /**
-     * <p>Output to cc.Log the current contents of this TextureCache <br />
+     * <p>Output to cc.log the current contents of this TextureCache <br />
      * This will attempt to calculate the size of each texture, and the total texture memory in use. </p>
      */
     dumpCachedTextureInfo:function () {
@@ -339,10 +339,10 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             var bytes = tex.getPixelsWide() * tex.getPixelsHigh() * bpp / 8;
             totalBytes += bytes;
             count++;
-            cc.Log("cocos2d: '" + tex.toString() + "' id=" + tex.getName() + " " + tex.getPixelsWide() + " x " + tex.getPixelsHigh() + " @ " + bpp + " bpp => " + bytes / 1024 + " KB");
+            cc.log("cocos2d: '" + tex.toString() + "' id=" + tex.getName() + " " + tex.getPixelsWide() + " x " + tex.getPixelsHigh() + " @ " + bpp + " bpp => " + bytes / 1024 + " KB");
         }
 
-        cc.Log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, for " + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
+        cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, for " + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
     },
 
     /**
@@ -366,7 +366,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         if (tex.initWithPVRFile(key)) {
             this.textures[key] = tex;
         } else {
-            cc.Log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
+            cc.log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
         }
 
         return tex;

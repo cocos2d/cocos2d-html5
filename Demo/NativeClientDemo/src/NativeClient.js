@@ -36,16 +36,16 @@ var syncCmd = 'cocos2dNaclSync';
 
 function tickLoop() {
     if (cocos2dNaclBlock == true) {
-        cc.Log("Thread was blocked for nacl.");
+        cc.log("Thread was blocked for nacl.");
         setTimeout(tickLoop, 10);
     } else {
-        cc.Log("Thread was unblock.")
+        cc.log("Thread was unblock.")
     }
 
 }
 function naclCmdProcess(cmdType, cmd) {
     if (cmdType == asyncCmd) {
-        cc.Log("AsyncCmd result from nacl.");
+        cc.log("AsyncCmd result from nacl.");
         cocos2dnaclModule.postMessage(asyncCmd + ": " + "I am cocos2d.");
         return;
     } else {

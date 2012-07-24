@@ -84,19 +84,19 @@ var TextureMenuLayer = PerformBasicLayer.extend({
 ////////////////////////////////////////////////////////
 var TextureTest = TextureMenuLayer.extend({
     performTests:function () {
-        cc.Log("--------");
-        cc.Log("--- PNG 128x128 ---");
+        cc.log("--------");
+        cc.log("--- PNG 128x128 ---");
         this.performTestsPNG("res/Images/test_image.png");
 
-        cc.Log("--- PNG 512x512 ---");
+        cc.log("--- PNG 512x512 ---");
         this.performTestsPNG("res/Images/texture512x512.png");
 
-        cc.Log("EMPTY IMAGE");
-        cc.Log("--- PNG 1024x1024 ---");
+        cc.log("EMPTY IMAGE");
+        cc.log("--- PNG 1024x1024 ---");
         this.performTestsPNG("res/Images/texture1024x1024.png");
 
-        cc.Log("LANDSCAPE IMAGE");
-        cc.Log("--- PNG 1024x1024 ---");
+        cc.log("LANDSCAPE IMAGE");
+        cc.log("--- PNG 1024x1024 ---");
         this.performTestsPNG("res/Images/landscape-1024x1024.png");
     },
     title:function () {
@@ -110,44 +110,44 @@ var TextureTest = TextureMenuLayer.extend({
         var texture;
         var cache = cc.TextureCache.getInstance();
 
-        cc.Log("RGBA 8888");
+        cc.log("RGBA 8888");
         cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
-            cc.Log("  ms:" + calculateDeltaTime(now));
+            cc.log("  ms:" + calculateDeltaTime(now));
         else
-            cc.Log(" ERROR");
+            cc.log(" ERROR");
         cache.removeTexture(texture);
 
-        cc.Log("RGBA 4444");
+        cc.log("RGBA 4444");
         cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
-            cc.Log("  ms:" + calculateDeltaTime(now));
+            cc.log("  ms:" + calculateDeltaTime(now));
         else
-            cc.Log(" ERROR");
+            cc.log(" ERROR");
         cache.removeTexture(texture);
 
-        cc.Log("RGBA 5551");
+        cc.log("RGBA 5551");
         cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
-            cc.Log("  ms:" + calculateDeltaTime(now));
+            cc.log("  ms:" + calculateDeltaTime(now));
         else
-            cc.Log(" ERROR");
+            cc.log(" ERROR");
         cache.removeTexture(texture);
 
-        cc.Log("RGB 565");
+        cc.log("RGB 565");
         cc.Texture2D.setDefaultAlphaPixelFormat(cc.TEXTURE_2D_PIXEL_FORMAT_RGB565);
         var now = cc.Time.gettimeofdayCocos2d();
         texture = cache.addImage(filename);
         if (texture)
-            cc.Log("  ms:" + calculateDeltaTime(now));
+            cc.log("  ms:" + calculateDeltaTime(now));
         else
-            cc.Log(" ERROR");
+            cc.log(" ERROR");
         cache.removeTexture(texture);
     }
 });

@@ -218,21 +218,21 @@ var TestLayer1 = cc.Layer.extend({
 
     onEnter:function () {
         this._super();
-        cc.Log("Scene 1 onEnter");
+        cc.log("Scene 1 onEnter");
     },
     onEnterTransitionDidFinish:function () {
         this._super();
-        cc.Log("Scene 1 onEnterTransitionDidFinish");
+        cc.log("Scene 1 onEnterTransitionDidFinish");
     },
 
     onExitTransitionDidStart:function () {
         this._super();
-        cc.Log("Scene 1 onExitTransitionDidStart");
+        cc.log("Scene 1 onExitTransitionDidStart");
     },
 
     onExit:function () {
         this._super();
-        cc.Log("Scene 1 onExit");
+        cc.log("Scene 1 onExit");
     }
 });
 
@@ -323,21 +323,21 @@ var TestLayer2 = cc.Layer.extend({
 
     onEnter:function () {
         this._super();
-        cc.Log("Scene 2 onEnter");
+        cc.log("Scene 2 onEnter");
     },
     onEnterTransitionDidFinish:function () {
         this._super();
-        cc.Log("Scene 2 onEnterTransitionDidFinish");
+        cc.log("Scene 2 onEnterTransitionDidFinish");
     },
 
     onExitTransitionDidStart:function () {
         this._super();
-        cc.Log("Scene 2 onExitTransitionDidStart");
+        cc.log("Scene 2 onExitTransitionDidStart");
     },
 
     onExit:function () {
         this._super();
-        cc.Log("Scene 2 onExit");
+        cc.log("Scene 2 onExit");
     }
 });
 

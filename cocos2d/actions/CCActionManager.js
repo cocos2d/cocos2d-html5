@@ -140,7 +140,7 @@ cc.ActionManager = cc.Class.extend({
                 this._deleteHashElement(element);
             }
         } else {
-            //cc.Log("cocos2d: removeAllActionsFromTarget: Target not found");
+            //cc.log("cocos2d: removeAllActionsFromTarget: Target not found");
         }
     },
     /** Removes an action given an action reference.
@@ -162,7 +162,7 @@ cc.ActionManager = cc.Class.extend({
                 }
             }
         } else {
-            cc.Log("cocos2d: removeAction: Target not found");
+            cc.log("cocos2d: removeAction: Target not found");
         }
     },
 

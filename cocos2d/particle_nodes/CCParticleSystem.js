@@ -1384,7 +1384,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._particles = [];
 
         if (!this._particles) {
-            cc.Log("Particle system: not enough memory");
+            cc.log("Particle system: not enough memory");
             return false;
         }
         this._allocatedParticles = numberOfParticles;

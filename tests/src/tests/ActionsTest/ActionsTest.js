@@ -1292,11 +1292,11 @@ var PauseResumeActions = ActionsDemo.extend({
     },
 
     pause:function () {
-        cc.Log("Pausing");
+        cc.log("Pausing");
         this._pausedTargets = cc.Director.getInstance().getActionManager().pauseAllRunningActions();
     },
     resume:function () {
-        cc.Log("Resuming");
+        cc.log("Resuming");
         cc.Director.getInstance().getActionManager().resumeTargets(this._pausedTargets);
     },
 
@@ -1328,7 +1328,7 @@ var Issue1305 = ActionsDemo.extend({
         this._super();
     },
     log:function (pSender) {
-        cc.Log("This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
+        cc.log("This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
     },
     addSprite:function (dt) {
         this._spriteTmp.setPosition(cc.p(250, 250));
@@ -1367,16 +1367,16 @@ var Issue1305_2 = ActionsDemo.extend({
         cc.Director.getInstance().getActionManager().addAction(actF, spr, false);
     },
     log1:function () {
-        cc.Log("1st block");
+        cc.log("1st block");
     },
     log2:function () {
-        cc.Log("2nd block");
+        cc.log("2nd block");
     },
     log3:function () {
-        cc.Log("3rd block");
+        cc.log("3rd block");
     },
     log4:function () {
-        cc.Log("4th block");
+        cc.log("4th block");
     },
     title:function () {
         return "Issue 1305 #2";
@@ -1453,7 +1453,7 @@ var Issue1327 = ActionsDemo.extend({
         spr.runAction(actF);
     },
     logSprRotation:function (pSender) {
-        cc.Log(pSender.getRotation());
+        cc.log(pSender.getRotation());
     },
     title:function () {
         return "Issue 1327";

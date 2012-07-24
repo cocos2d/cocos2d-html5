@@ -158,7 +158,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
         cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, false);
     },
     keyboardWillShow:function (info) {
-        cc.Log("TextInputTest:keyboardWillShowAt(origin:" + info.end.origin.x + "," + info.end.origin.y
+        cc.log("TextInputTest:keyboardWillShowAt(origin:" + info.end.origin.x + "," + info.end.origin.y
             + ", size:" + info.end.size.width + "," + info.end.size.height + ")");
 
         if (!this._pTrackNode) {
@@ -166,7 +166,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
         }
 
         var rectTracked = textInputGetRect(this._pTrackNode);
-        cc.Log("TextInputTest:trackingNodeAt(origin:" + info.end.origin.x + "," + info.end.origin.y
+        cc.log("TextInputTest:trackingNodeAt(origin:" + info.end.origin.x + "," + info.end.origin.y
             + ", size:" + info.end.size.width + "," + info.end.size.height + ")");
 
         // if the keyboard area doesn't intersect with the tracking node area, nothing need to do.
@@ -176,7 +176,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
 
         // assume keyboard at the bottom of screen, calculate the vertical adjustment.
         var adjustVert = cc.Rect.CCRectGetMaxY(info.end) - cc.Rect.CCRectGetMinY(rectTracked);
-        cc.Log("TextInputTest:needAdjustVerticalPosition(" + adjustVert + ")");
+        cc.log("TextInputTest:needAdjustVerticalPosition(" + adjustVert + ")");
 
         // move all the children node of KeyboardNotificationLayer
         var children = this.getChildren();
@@ -189,7 +189,7 @@ var KeyboardNotificationLayer = cc.Layer.extend({
     },
 
     onTouchBegan:function (touch, event) {
-        cc.Log("++++++++++++++++++++++++++++++++++++++++++++");
+        cc.log("++++++++++++++++++++++++++++++++++++++++++++");
         this._beginPos = touch.getLocation();
         this._beginPos = cc.Director.getInstance().convertToGL(this._beginPos);
         return true;
@@ -214,14 +214,14 @@ var KeyboardNotificationLayer = cc.Layer.extend({
         // decide the trackNode is clicked.
         var point = this.convertTouchToNodeSpaceAR(touch);
         //var point = endPos;
-        cc.Log("KeyboardNotificationLayer:clickedAt(" + point.x + "," + point.y + ")");
+        cc.log("KeyboardNotificationLayer:clickedAt(" + point.x + "," + point.y + ")");
 
         var rect = textInputGetRect(this._pTrackNode);
-        cc.Log("KeyboardNotificationLayer:TrackNode at(origin:" + rect.origin.x + "," + rect.origin.y
+        cc.log("KeyboardNotificationLayer:TrackNode at(origin:" + rect.origin.x + "," + rect.origin.y
             + ", size:" + rect.size.width + "," + rect.size.height + ")");
 
         this.onClickTrackNode(cc.Rect.CCRectContainsPoint(rect, point));
-        cc.Log("----------------------------------");
+        cc.log("----------------------------------");
     }
 });
 
@@ -236,12 +236,12 @@ var TextFieldTTFDefaultTest = KeyboardNotificationLayer.extend({
         var textField = this._pTrackNode;
         if (clicked) {
             // TextFieldTTFTest be clicked
-            cc.Log("TextFieldTTFDefaultTest:CCTextFieldTTF attachWithIME");
+            cc.log("TextFieldTTFDefaultTest:CCTextFieldTTF attachWithIME");
             textField.attachWithIME();
         }
         else {
             // TextFieldTTFTest not be clicked
-            cc.Log("TextFieldTTFDefaultTest:CCTextFieldTTF detachWithIME");
+            cc.log("TextFieldTTFDefaultTest:CCTextFieldTTF detachWithIME");
             textField.detachWithIME();
         }
     },
@@ -287,11 +287,11 @@ var TextFieldTTFActionTest = KeyboardNotificationLayer.extend({
         var textField = this._pTrackNode;
         if (clicked) {
             // TextFieldTTFTest be clicked
-            cc.Log("TextFieldTTFActionTest:CCTextFieldTTF attachWithIME");
+            cc.log("TextFieldTTFActionTest:CCTextFieldTTF attachWithIME");
             textField.attachWithIME();
         } else {
             // TextFieldTTFTest not be clicked
-            cc.Log("TextFieldTTFActionTest:CCTextFieldTTF detachWithIME");
+            cc.log("TextFieldTTFActionTest:CCTextFieldTTF detachWithIME");
             textField.detachWithIME();
         }
     },
