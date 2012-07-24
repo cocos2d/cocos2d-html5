@@ -1688,7 +1688,7 @@ cc.Sprite.createWithSpriteFrameName = function (spriteFrame) {
         if (pFrame) {
             spriteFrame = pFrame;
         } else {
-            cc.Log("Invalid spriteFrameName: " + spriteFrame);
+            cc.log("Invalid spriteFrameName: " + spriteFrame);
             return null;
         }
     }

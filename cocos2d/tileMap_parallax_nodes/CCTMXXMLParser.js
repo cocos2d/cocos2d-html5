@@ -444,7 +444,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
         if (map.nodeName == "map") {
             if (version != "1.0" && version !== null) {
-                cc.Log("cocos2d: TMXFormat: Unsupported TMX version:" + version);
+                cc.log("cocos2d: TMXFormat: Unsupported TMX version:" + version);
             }
 
             if (orientationStr == "orthogonal")
@@ -454,7 +454,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             else if (orientationStr == "hexagonal")
                 this.setOrientation(cc.TMXOrientationHex);
             else if (orientationStr !== null)
-                cc.Log("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
+                cc.log("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
 
             var s = new cc.Size();
             s.width = parseFloat(map.getAttribute('width'));

@@ -172,7 +172,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         var ptr = this._GAInfo.imageData;
         var value = ptr[position.x + position.y * this._GAInfo.width];
         if (value.r == 0) {
-            cc.Log("cocos2d: Value.r must be non 0.");
+            cc.log("cocos2d: Value.r must be non 0.");
         } else {
             ptr[position.x + position.y * this._GAInfo.width] = tile;
 

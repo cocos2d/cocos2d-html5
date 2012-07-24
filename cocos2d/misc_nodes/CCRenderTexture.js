@@ -518,7 +518,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 var s = this._texture.getContentSizeInPixels();
                 VolatileTexture.addDataTexture(this._texture, this.pITextureImage.getData(), cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, s);
             } else {
-                cc.Log("Cache rendertexture failed!");
+                cc.log("Cache rendertexture failed!");
             }
         }
     }

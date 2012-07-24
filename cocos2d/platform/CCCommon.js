@@ -109,7 +109,7 @@ cc._logToWebPage = function (message) {
  * @function
  * @param {String} message
  */
-cc.Log = function (message) {
+cc.log = function (message) {
     if (!cc.IS_SHOW_DEBUG_ON_PAGE) {
         console.log(message);
     } else {
@@ -128,7 +128,7 @@ cc.MessageBox = function (message) {
 
 // cocos2d debug
 if (cc.COCOS2D_DEBUG == 0) {
-    cc.Log = function () {
+    cc.log = function () {
     };
     cc.LogINFO = function () {
     };
@@ -136,13 +136,13 @@ if (cc.COCOS2D_DEBUG == 0) {
     };
 }
 else if (cc.COCOS2D_DEBUG == 1) {
-    cc.LogINFO = cc.Log;
+    cc.LogINFO = cc.log;
     cc.LogERROR = function () {
     };
 }
 else if (cc.COCOS2D_DEBUG > 1) {
-    cc.LogINFO = cc.Log;
-    cc.LogERROR = cc.Log;
+    cc.LogINFO = cc.log;
+    cc.LogERROR = cc.log;
 }// COCOS2D_DEBUG
 
 if (cc.COCOS2D_DEBUG) {

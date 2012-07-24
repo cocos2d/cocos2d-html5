@@ -103,7 +103,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      */
 
     step:function (dt) {
-        cc.Log("[Action step]. override me");
+        cc.log("[Action step]. override me");
     },
 
     /**
@@ -116,7 +116,7 @@ cc.Action = cc.Class.extend(/** @lends cc.Action# */{
      * @param {Number}  time
      */
     update:function (time) {
-        cc.Log("[Action update]. override me");
+        cc.log("[Action update]. override me");
     },
 
     /**
@@ -215,7 +215,7 @@ cc.FiniteTimeAction = cc.Action.extend(/** @lends cc.FiniteTimeAction# */{
      * @return {Null}
      */
     reverse:function () {
-        cc.Log("cocos2d: FiniteTimeAction#reverse: Implement me");
+        cc.log("cocos2d: FiniteTimeAction#reverse: Implement me");
         return null;
     }
 });

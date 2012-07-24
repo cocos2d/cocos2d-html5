@@ -190,7 +190,7 @@ var ParticleMainScene = cc.Scene.extend({
                 break;
             default:
                 particleSystem = null;
-                cc.Log("Shall not happen!");
+                cc.log("Shall not happen!");
                 break;
         }
         this.addChild(particleSystem, 0, TAG_PARTICLE_SYSTEM);

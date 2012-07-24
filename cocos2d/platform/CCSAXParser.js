@@ -53,7 +53,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             this.xmlDoc.loadXML(textxml);
         }
         if (this.xmlDoc == null) {
-            cc.Log("xml " + this.xmlDoc + " not found!");
+            cc.log("xml " + this.xmlDoc + " not found!");
         }
         var plist = this.xmlDoc.documentElement;
         if (plist.tagName != 'plist') {
@@ -89,7 +89,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             this.xmlDoc.loadXML(textxml);
         }
         if (this.xmlDoc == null) {
-            cc.Log("xml " + this.xmlDoc + " not found!");
+            cc.log("xml " + this.xmlDoc + " not found!");
         }
         return this.xmlDoc;
     },

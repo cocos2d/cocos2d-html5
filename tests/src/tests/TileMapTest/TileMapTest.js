@@ -238,7 +238,7 @@ var TileMapTest = TileDemo.extend({
         map.getTexture().setAntiAliasTexParameters();
 
         var s = map.getContentSize();
-        cc.Log("ContentSize: " + s.width + " " + s.height);
+        cc.log("ContentSize: " + s.width + " " + s.height);
 
         map.releaseMap();
 
@@ -266,7 +266,7 @@ var TileMapEditTest = TileDemo.extend({
         map.getTexture().setAliasTexParameters();
 
         var s = map.getContentSize();
-        cc.Log("ContentSize: " + s.width + " " + s.height);
+        cc.log("ContentSize: " + s.width + " " + s.height);
 
         // If you are not going to use the Map, you can free it now
         // [tilemap releaseMap);
@@ -992,7 +992,7 @@ var TMXOrthoVertexZ = TileDemo.extend({
         // can use any cc.Sprite and it will work OK.
         var layer = map.layerNamed("trees");
         this.tamara = layer.tileAt(cc.p(0, 11));
-        cc.Log("vertexZ: " + this.tamara.getVertexZ());
+        cc.log("vertexZ: " + this.tamara.getVertexZ());
 
         var move = cc.MoveBy.create(10, cc.pMult(cc.p(400, 450), 1 / cc.CONTENT_SCALE_FACTOR()));
         var back = move.reverse();
@@ -1082,7 +1082,7 @@ var TMXTilePropertyTest = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         for (var i = 1; i <= 20; i++) {
-            cc.Log("GID:" + i + ", Properties:" + JSON.stringify(map.propertiesForGID(i)));
+            cc.log("GID:" + i + ", Properties:" + JSON.stringify(map.propertiesForGID(i)));
         }
 
     },
@@ -1105,7 +1105,7 @@ var TMXOrthoFlipTest = TileDemo.extend({
         var map = cc.TMXTiledMap.create("res/TileMaps/ortho-rotation-test.tmx");
         this.addChild(map, 0, TAG_TILE_MAP);
         var s = map.getContentSize();
-        cc.Log("ContentSize:" + s.width + "," + s.height);
+        cc.log("ContentSize:" + s.width + "," + s.height);
 
         var action = cc.ScaleBy.create(2, 0.5);
         map.runAction(action);
@@ -1127,7 +1127,7 @@ var TMXOrthoFlipRunTimeTest = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         var s = map.getContentSize();
-        cc.Log("ContentSize:" + s.width + "," + s.height);
+        cc.log("ContentSize:" + s.width + "," + s.height);
 
         var action = cc.ScaleBy.create(2, 0.5);
         map.runAction(action);
@@ -1197,7 +1197,7 @@ var TMXOrthoFromXMLTest = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         var s = map.getContentSize();
-        cc.Log("ContentSize:" + s.width + "," + s.height);
+        cc.log("ContentSize:" + s.width + "," + s.height);
 
         var action = cc.ScaleBy.create(2, 0.5);
         map.runAction(action);
@@ -1219,7 +1219,7 @@ var TMXBug987 = TileDemo.extend({
         this.addChild(map, 0, TAG_TILE_MAP);
 
         var s1 = map.getContentSize();
-        cc.Log("ContentSize:" + s1.width + "," + s1.height);
+        cc.log("ContentSize:" + s1.width + "," + s1.height);
 
         var childs = map.getChildren();
         var node = null;
@@ -1269,8 +1269,8 @@ var TMXGIDObjectsTest = TileDemo.extend({
         this.addChild(map, -1, TAG_TILE_MAP);
 
         var s = map.getContentSize();
-        cc.Log("ContentSize:" + s.width + "," + s.height);
-        cc.Log("---. Iterating over all the group objets");
+        cc.log("ContentSize:" + s.width + "," + s.height);
+        cc.log("---. Iterating over all the group objets");
     },
     title:function () {
         return "TMX GID objects";

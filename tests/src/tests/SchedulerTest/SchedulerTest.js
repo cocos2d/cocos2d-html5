@@ -159,15 +159,15 @@ var SchedulerAutoremove = SchedulerTestLayer.extend({
 
     autoremove:function (dt) {
         this._accum += dt;
-        cc.Log("Time: " + this._accum);
+        cc.log("Time: " + this._accum);
 
         if (this._accum > 3) {
             this.unschedule(this.autoremove);
-            cc.Log("scheduler removed");
+            cc.log("scheduler removed");
         }
     },
     tick:function (dt) {
-        cc.Log("This scheduler should not be removed");
+        cc.log("This scheduler should not be removed");
     }
 });
 
@@ -187,10 +187,10 @@ var SchedulerPauseResume = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     pause:function (dt) {
         cc.Director.getInstance().getScheduler().pauseTarget(this);
@@ -215,16 +215,16 @@ var SchedulerUnscheduleAll = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     tick3:function (dt) {
-        cc.Log("tick3");
+        cc.log("tick3");
     },
     tick4:function (dt) {
-        cc.Log("tick4");
+        cc.log("tick4");
     },
     unscheduleAll:function (dt) {
         this.unscheduleAllSelectors();
@@ -249,16 +249,16 @@ var SchedulerUnscheduleAllHard = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     tick3:function (dt) {
-        cc.Log("tick3");
+        cc.log("tick3");
     },
     tick4:function (dt) {
-        cc.Log("tick4");
+        cc.log("tick4");
     },
     unscheduleAll:function (dt) {
         cc.Director.getInstance().getScheduler().unscheduleAllSelectors();
@@ -281,16 +281,16 @@ var SchedulerSchedulesAndRemove = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     tick3:function (dt) {
-        cc.Log("tick3");
+        cc.log("tick3");
     },
     tick4:function (dt) {
-        cc.Log("tick4");
+        cc.log("tick4");
     },
     scheduleAndUnschedule:function (dt) {
         this.unschedule(this.tick1);
@@ -383,10 +383,10 @@ var SchedulerUpdateAndCustom = SchedulerTestLayer.extend({
     },
 
     update:function (dt) {
-        cc.Log("update called:" + dt);
+        cc.log("update called:" + dt);
     },
     tick:function (dt) {
-        cc.Log("custom selector called:" + dt);
+        cc.log("custom selector called:" + dt);
     },
     stopSelectors:function (dt) {
         this.unscheduleAllSelectors();
@@ -407,7 +407,7 @@ var SchedulerUpdateFromCustom = SchedulerTestLayer.extend({
     },
 
     update:function (dt) {
-        cc.Log("update called:" + dt);
+        cc.log("update called:" + dt);
     },
     schedUpdate:function (dt) {
         this.unschedule(this.schedUpdate);
@@ -442,7 +442,7 @@ var RescheduleSelector = SchedulerTestLayer.extend({
     schedUpdate:function (dt) {
         this._ticks++;
 
-        cc.Log("schedUpdate: " + dt.toFixed(2));
+        cc.log("schedUpdate: " + dt.toFixed(2));
         if (this._ticks > 3) {
             this._interval += 1.0;
             this.schedule(this.schedUpdate, this._interval);

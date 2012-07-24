@@ -50,7 +50,7 @@ cc.Grabber = cc.Class.extend({
          // check if it worked (probably worth doing :) )
          var status = ccglCheckFramebufferStatus(CC_GL_FRAMEBUFFER);
          if (status != CC_GL_FRAMEBUFFER_COMPLETE) {
-         cc.Log("Frame Grabber: could not attach texture to frmaebuffer");
+         cc.log("Frame Grabber: could not attach texture to frmaebuffer");
          }
 
          ccglBindFramebuffer(CC_GL_FRAMEBUFFER, this._oldFBO);*/
