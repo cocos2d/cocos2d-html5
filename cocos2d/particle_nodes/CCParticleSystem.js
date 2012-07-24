@@ -255,6 +255,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //! time elapsed since the start of the system (in seconds)
     _elapsed:0,
 
+    _dontTint:false,
+
     // Different modes
     //! Mode A:Gravity + Tangential Accel + Radial Accel
     modeA:null,
@@ -741,9 +743,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //////////////////////////////////////////////////////////////////////////
 
     //don't use a transform matrix, this is faster
-    setScale:function (scale,scaleY) {
+    setScale:function (scale, scaleY) {
         this._transformSystemDirty = true;
-        this._super(scale,scaleY);
+        this._super(scale, scaleY);
     },
 
     setRotation:function (newRotation) {
@@ -1075,8 +1077,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *    dest blend function = GL_ONE;
      */
     isBlendAdditive:function () {
-        return this._isBlendAdditive;
-        //return( this._blendFunc.src == GL_SRC_ALPHA && this._blendFunc.dst == GL_ONE);
+        //return this._isBlendAdditive;
+        return ( (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE));
     },
 
     /**
@@ -1088,11 +1090,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     setBlendAdditive:function (isBlendAdditive) {
         //TODO
         this._isBlendAdditive = isBlendAdditive;
-        return;
         if (isBlendAdditive) {
-            this._blendFunc.src = GL_SRC_ALPHA;
-            this._blendFunc.dst = GL_ONE;
+            this._blendFunc.src = cc.GL_SRC_ALPHA;
+            this._blendFunc.dst = cc.GL_ONE;
         } else {
+            this._blendFunc.src = cc.BLEND_SRC;
+            this._blendFunc.dst = cc.BLEND_DST;
+        }
+        /*else {
             if (this._texture && !this._texture.hasPremultipliedAlpha()) {
                 this._blendFunc.src = GL_SRC_ALPHA;
                 this._blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
@@ -1100,7 +1105,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 this._blendFunc.src = cc.BLEND_SRC;
                 this._blendFunc.dst = cc.BLEND_DST;
             }
-        }
+        }*/
     },
 
     _positionType:cc.CCPARTICLE_TYPE_FREE,
@@ -1326,47 +1331,39 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 var textureName = this._valueForKey("textureFileName", dictionary);
                 var fullpath = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(textureName, this._plistFile);
 
-                var tex = null;
-
-                if (textureName.length > 0) {
-                    // set not pop-up message box when load image failed
-                    var notify = cc.FileUtils.sharedFileUtils().isPopupNotify();
-                    cc.FileUtils.sharedFileUtils().setPopupNotify(false);
-                    tex = cc.TextureCache.sharedTextureCache().addImage(fullpath);
-
-                    // reset the value of UIImage notify
-                    cc.FileUtils.sharedFileUtils().setPopupNotify(notify);
-                }
+                var tex = cc.TextureCache.sharedTextureCache().textureForKey(fullpath);
 
                 if (tex) {
                     this._texture = tex;
                 } else {
                     var textureData = this._valueForKey("textureImageData", dictionary);
-                    cc.Assert(textureData, "cc.ParticleSystem.initWithDictory:textureImageData is null");
 
-                    if (textureData.length != 0) {
-                        //TODO base64Decode
-                        // if it fails, try to get it from the base64-gzipped data
-                        var decodeLen = cc.base64Decode(textureData, textureData.length, buffer);
-                        cc.Assert(buffer != null, "cc.ParticleSystem: error decoding textureImageData");
+                    if (textureData && textureData.length == 0) {
+                        cc.Assert(textureData, "cc.ParticleSystem.initWithDictory:textureImageData is null");
+                        tex = cc.TextureCache.sharedTextureCache().addImage(fullpath);
+                        if (!tex)
+                            return false;
+
+                        this._texture = tex;
+                    } else {
+                        buffer = cc.unzipBase64AsArray(textureData, 1);
                         if (!buffer)
-                            return false
+                            return false;
 
-                        var deflatedLen = cc.ZipUtils.ccInflateMemory(buffer, decodeLen, deflated);
-                        cc.Assert(deflated != null, "cc.ParticleSystem: error ungzipping textureImageData");
-                        if (!deflated)
-                            return false
+                        var newImageData = cc.encodeToBase64(buffer);
+                        if (!newImageData)
+                            return false;
 
-                        image = new cc.Image();
-                        var isOK = image.initWithImageData(deflated, deflatedLen);
-                        cc.Assert(isOK, "cc.ParticleSystem: error init image with Data");
-                        if (!isOK)
-                            return false
+                        var img = new Image();
+                        img.src = "data:image/png;base64," + newImageData;
+                        this._texture = img;
 
+                        //save image to TextureCache
+                        cc.TextureCache.sharedTextureCache().cacheImage(fullpath,img);
                         this._texture = cc.TextureCache.sharedTextureCache().addUIImage(image, fullpath);
                     }
+                    cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
                 }
-                cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
             }
             ret = true;
         }
@@ -1667,11 +1664,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
 
                     // color
-                    selParticle.color.r += (selParticle.deltaColor.r * dt);
-                    selParticle.color.g += (selParticle.deltaColor.g * dt);
-                    selParticle.color.b += (selParticle.deltaColor.b * dt);
-                    selParticle.color.a += (selParticle.deltaColor.a * dt);
-                    selParticle.isChangeColor = true;
+                    if(!this._dontTint){
+                        selParticle.color.r += (selParticle.deltaColor.r * dt);
+                        selParticle.color.g += (selParticle.deltaColor.g * dt);
+                        selParticle.color.b += (selParticle.deltaColor.b * dt);
+                        selParticle.color.a += (selParticle.deltaColor.a * dt);
+                        selParticle.isChangeColor = true;
+                    }
 
                     // size
                     selParticle.size += (selParticle.deltaSize * dt);
@@ -1751,7 +1750,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _valueForKey:function (key, dict) {
         if (dict) {
             var pString = dict[key];
-            return pString ? pString : "";
+            return pString != null ? pString : "";
         }
         return "";
     },
@@ -1778,6 +1777,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
     }
 });
+
+cc.encodeToBase64 = function (data) {
+    return btoa(String.fromCharCode.apply(data, data)).replace(/.{76}(?=.)/g, '$&\n');
+};
 
 /**
  * <p> return the string found by key in dict. <br/>

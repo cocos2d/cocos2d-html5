@@ -31,107 +31,68 @@ var MAX_LAYER = 33;
 var ParticleTestScene = TestScene.extend({
     runThisTest:function () {
         sceneIdx = -1;
-        MAX_LAYER = 15;
+        MAX_LAYER = 33;
 
         this.addChild(nextParticleAction());
         cc.Director.sharedDirector().replaceScene(this);
     }
 });
 
-var IDC_NEXT = 100;
-var IDC_BACK = 101;
-var IDC_RESTART = 102;
-var IDC_TOGGLE = 103;
-
-var createParticleLayer = function (index) {
-    switch (index) {
-        case 0:
-            return new DemoFlower();
-        case 1:
-            return new DemoGalaxy();
-        case 2:
-            return new DemoFirework();
-        case 3:
-            return new DemoSpiral();
-        case 4:
-            return new DemoSun();
-        case 5:
-            return new DemoMeteor();
-        case 6:
-            return new DemoFire();
-        case 7:
-            //return new DemoSmoke();
-            return new Issue704();
-        case 8:
-            return new DemoExplosion();
-        case 9:
-            return new DemoSnow();
-        case 10:
-            return new DemoRain();
-        case 11:
-            return new DemoBigFlower();
-        case 12:
-            return new DemoRotFlower();
-        case 13:
-            return new DemoModernArt();
-        case 14:
-            return new DemoRing();
-        case 15:
-            return new ParallaxParticle();
-        case 16:
-            return new DemoParticleFromFile("BoilingFoam");
-        case 17:
-            return new DemoParticleFromFile("BurstPipe");
-        case 18:
-            return new DemoParticleFromFile("Comet");
-        case 19:
-            return new DemoParticleFromFile("debian");
-        case 20:
-            return new DemoParticleFromFile("ExplodingRing");
-        case 21:
-            return new DemoParticleFromFile("LavaFlow");
-        case 22:
-            return new DemoParticleFromFile("SpinningPeas");
-        case 23:
-            return new DemoParticleFromFile("SpookyPeas");
-        case 24:
-            return new DemoParticleFromFile("Upsidedown");
-        case 25:
-            return new DemoParticleFromFile("Flower");
-        case 26:
-            return new DemoParticleFromFile("Spiral");
-        case 27:
-            return new DemoParticleFromFile("Galaxy");
-        case 28:
-            return new RadiusMode1();
-        case 29:
-            return new RadiusMode2();
-        case 30:
-            return new Issue704();
-        case 31:
-            return new Issue870();
-        case 32:
-            return new DemoParticleFromFile("Phoenix");
-    }
-    return null;
-};
+var particleSceneArr = [
+    function(){return new DemoFlower();},
+    function(){return new DemoGalaxy();},
+    function(){return new DemoFirework();},
+    function(){return new DemoSpiral();},
+    function(){return new DemoSun();},
+    function(){return new DemoMeteor();},
+    function(){return new DemoFire();},
+    function(){return new DemoSmoke();},
+    function(){return new DemoExplosion();},
+    function(){return new DemoSnow();},
+    function(){return new DemoRain();},
+    function(){return new DemoBigFlower();},
+    function(){return new DemoRotFlower();},
+    function(){return new DemoModernArt();},
+    function(){return new DemoRing();},
+    //function(){return new ParallaxParticle();},
+    function(){return new DemoParticleFromFile("BoilingFoam");},
+    function(){return new DemoParticleFromFile("BurstPipe");},
+    function(){return new DemoParticleFromFile("Comet");},
+    function(){return new DemoParticleFromFile("debian");},
+    function(){return new DemoParticleFromFile("ExplodingRing");},
+    function(){return new DemoParticleFromFile("LavaFlow");},
+    function(){return new DemoParticleFromFile("SpinningPeas");},
+    function(){return new DemoParticleFromFile("SpookyPeas");},
+    function(){return new DemoParticleFromFile("Upsidedown");},
+    function(){return new DemoParticleFromFile("Flower");},
+    function(){return new DemoParticleFromFile("Spiral");},
+    function(){return new DemoParticleFromFile("Galaxy");},
+    function(){return new RadiusMode1();},
+    function(){return new RadiusMode2();},
+    function(){return new Issue704();},
+    function(){return new Issue870();},
+    function(){return new DemoParticleFromFile("Phoenix");}
+];
 
 var nextParticleAction = function () {
     sceneIdx++;
-    sceneIdx = sceneIdx % MAX_LAYER;
-    return createParticleLayer(sceneIdx);
+    sceneIdx = sceneIdx % particleSceneArr.length;
+    //return createParticleLayer(sceneIdx);
+    return particleSceneArr[sceneIdx]();
 };
 
 var backParticleAction = function () {
     sceneIdx--;
     if (sceneIdx < 0)
-        sceneIdx += MAX_LAYER;
+        sceneIdx += particleSceneArr.length;
 
-    return createParticleLayer(sceneIdx);
+    //return createParticleLayer(sceneIdx);
+    return particleSceneArr[sceneIdx]();
 };
 
 var restartParticleAction = function () {
-    return createParticleLayer(sceneIdx);
+    return particleSceneArr[sceneIdx]();
+    //return createParticleLayer(sceneIdx);
 };
 
 var ParticleDemo = cc.LayerColor.extend({
@@ -837,10 +798,10 @@ var ParallaxParticle = ParticleDemo.extend({
 });
 
 var DemoParticleFromFile = ParticleDemo.extend({
-    title:"",
+    _title:"",
     ctor:function (filename) {
         this._super();
-        this.title = filename;
+        this._title = filename;
     },
     onEnter:function () {
         this._super();
@@ -850,14 +811,14 @@ var DemoParticleFromFile = ParticleDemo.extend({
         this._background = null;
 
         this._emitter = new cc.ParticleSystemQuad();
-        var filename = "res/Images/" + this.title + ".plist";
+        var filename = "res/Particles/" + this._title + ".plist";
         this._emitter.initWithFile(filename);
         this.addChild(this._emitter, 10);
 
         this.setEmitterPosition();
     },
     title:function () {
-        return this.title;
+        return this._title;
     }
 });
 
@@ -1112,8 +1073,8 @@ var Issue870 = ParticleDemo.extend({
         this._background = null;
 
         var system = new cc.ParticleSystemQuad();
-        system.initWithFile("Images/SpinningPeas.plist");
-        system.setTextureWithRect(cc.TextureCache.sharedTextureCache().addImage("Images/particles.png"), cc.RectMake(0, 0, 32, 32));
+        system.initWithFile("res/Particles/SpinningPeas.plist");
+        system.setTextureWithRect(cc.TextureCache.sharedTextureCache().addImage(s_particles), cc.RectMake(0, 0, 32, 32));
         this.addChild(system, 10);
         this._emitter = system;
 

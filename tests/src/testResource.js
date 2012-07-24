@@ -130,9 +130,14 @@ var s_larabie_16_hd_plist = "res/fonts/larabie-16-hd.plist";
 var s_tuffy_bold_italic_charmap = "res/fonts/tuffy_bold_italic-charmap.plist";
 var s_tuffy_bold_italic_charmap_hd = "res/fonts/tuffy_bold_italic-charmap-hd.plist";
 
+var s_particles = "res/Images/particles.png";
+var s_particles_hd = "res/Images/particles-hd.png";
 
 var g_ressources = [
     //image ressources
+    {type:"image", src:s_particles},
+    {type:"image", src:s_particles},
+
     {type:"image", src:s_pathGrossini},
     {type:"image", src:s_fnTuffyBoldItalicCharmapPng},
     {type:"image", src:s_fpsImages},
@@ -298,5 +303,20 @@ var g_ressources = [
     {type:"fnt", src:s_markerFelt_fnt},
     {type:"fnt", src:s_markerFelt_hd_fnt},
 
-    {type:"plist", src:"res/fonts/strings.xml"}
+    {type:"plist", src:"res/fonts/strings.xml"},
+    {type:"plist", src:"res/Particles/BoilingFoam.plist"},
+    {type:"plist", src:"res/Particles/BurstPipe.plist"},
+    {type:"plist", src:"res/Particles/Comet.plist"},
+    {type:"plist", src:"res/Particles/debian.plist"},
+    {type:"plist", src:"res/Particles/ExplodingRing.plist"},
+    {type:"plist", src:"res/Particles/Flower.plist"},
+    {type:"plist", src:"res/Particles/Galaxy.plist"},
+    {type:"plist", src:"res/Particles/LavaFlow.plist"},
+    {type:"plist", src:"res/Particles/Phoenix.plist"},
+    {type:"plist", src:"res/Particles/SmallSun.plist"},
+    {type:"plist", src:"res/Particles/SpinningPeas.plist"},
+    {type:"plist", src:"res/Particles/Spiral.plist"},
+    {type:"plist", src:"res/Particles/SpookyPeas.plist"},
+    {type:"plist", src:"res/Particles/TestPremultipliedAlpha.plist"},
+    {type:"plist", src:"res/Particles/Upsidedown.plist"}
 ];
