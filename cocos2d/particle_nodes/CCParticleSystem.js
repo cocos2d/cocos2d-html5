@@ -255,6 +255,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //! time elapsed since the start of the system (in seconds)
     _elapsed:0,
 
+    _dontTint:false,
+
     // Different modes
     //! Mode A:Gravity + Tangential Accel + Radial Accel
     modeA:null,
@@ -1662,11 +1664,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
 
                     // color
-                    selParticle.color.r += (selParticle.deltaColor.r * dt);
-                    selParticle.color.g += (selParticle.deltaColor.g * dt);
-                    selParticle.color.b += (selParticle.deltaColor.b * dt);
-                    selParticle.color.a += (selParticle.deltaColor.a * dt);
-                    selParticle.isChangeColor = true;
+                    if(!this._dontTint){
+                        selParticle.color.r += (selParticle.deltaColor.r * dt);
+                        selParticle.color.g += (selParticle.deltaColor.g * dt);
+                        selParticle.color.b += (selParticle.deltaColor.b * dt);
+                        selParticle.color.a += (selParticle.deltaColor.a * dt);
+                        selParticle.isChangeColor = true;
+                    }
 
                     // size
                     selParticle.size += (selParticle.deltaSize * dt);
