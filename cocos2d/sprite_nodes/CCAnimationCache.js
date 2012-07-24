@@ -82,7 +82,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
     addAnimationsWithDictionary:function (dictionary) {
         var animations = dictionary["animations"];
         if(!animations){
-            cc.Log("cocos2d: cc.AnimationCache: No animations were found in provided dictionary.");
+            cc.log("cocos2d: cc.AnimationCache: No animations were found in provided dictionary.");
             return ;
         }
 
@@ -136,7 +136,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             var delay = parseFloat(animationDict["delay"]) || 0;
             var animation = null;
             if (!frameNames) {
-                cc.Log("cocos2d: cc.AnimationCache: Animation '" + key + "' found in dictionary without any frames - cannot add to animation cache.");
+                cc.log("cocos2d: cc.AnimationCache: Animation '" + key + "' found in dictionary without any frames - cannot add to animation cache.");
                 continue;
             }
 
@@ -144,7 +144,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             for (var i = 0; i < frameNames.length; i++) {
                 var spriteFrame = frameCache.spriteFrameByName(frameNames[i]);
                 if (!spriteFrame) {
-                    cc.Log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + frameNames[i]
+                    cc.log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + frameNames[i]
                         + "' which is not currently in the cc.SpriteFrameCache. This frame will not be added to the animation.");
                     continue;
                 }
@@ -154,11 +154,11 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             }
 
             if (frames.length == 0) {
-                cc.Log("cocos2d: cc.AnimationCache: None of the frames for animation '" + key
+                cc.log("cocos2d: cc.AnimationCache: None of the frames for animation '" + key
                     + "' were found in the cc.SpriteFrameCache. Animation is not being added to the Animation Cache.");
                 continue;
             } else if (frames.length != frameNames.length) {
-                cc.Log("cocos2d: cc.AnimationCache: An animation in your dictionary refers to a frame which is not in the cc.SpriteFrameCache." +
+                cc.log("cocos2d: cc.AnimationCache: An animation in your dictionary refers to a frame which is not in the cc.SpriteFrameCache." +
                     " Some or all of the frames for the animation '" + key + "' may be missing.");
             }
             animation = cc.Animation.createWithAnimationFrames(frames, delay, 1);
@@ -176,7 +176,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             var frameArray = animationDict["frames"];
 
             if (!frameArray) {
-                cc.Log("cocos2d: CCAnimationCache: Animation '" + key + "' found in dictionary without any frames - cannot add to animation cache.");
+                cc.log("cocos2d: CCAnimationCache: Animation '" + key + "' found in dictionary without any frames - cannot add to animation cache.");
                 continue;
             }
 
@@ -187,7 +187,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                 var spriteFrameName = entry["spriteframe"];
                 var spriteFrame = frameCache.spriteFrameByName(spriteFrameName);
                 if(!spriteFrame){
-                    cc.Log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + spriteFrameName
+                    cc.log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + spriteFrameName
                         + "' which is not currently in the cc.SpriteFrameCache. This frame will not be added to the animation.");
                     continue;
                 }

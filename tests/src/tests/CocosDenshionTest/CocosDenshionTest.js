@@ -232,99 +232,99 @@ CocosDenshionTestScene = TestScene.extend({
 var soundId = null;
 
 var playBackgroundMusic = function () {
-    cc.Log("play background music");
+    cc.log("play background music");
     cc.AudioEngine.getInstance().playBackgroundMusic(MUSIC_FILE, false);
 };
 
 var stopBackgroundMusic = function () {
-    cc.Log("stop background music");
+    cc.log("stop background music");
     cc.AudioEngine.getInstance().stopBackgroundMusic();
 };
 
 var pauseBackgroundMusic = function () {
-    cc.Log("pause background music");
+    cc.log("pause background music");
     cc.AudioEngine.getInstance().pauseBackgroundMusic();
 };
 
 var resumeBackgroundMusic = function () {
-    cc.Log("resume background music");
+    cc.log("resume background music");
     cc.AudioEngine.getInstance().resumeBackgroundMusic();
 };
 
 var rewindBackgroundMusic = function () {
-    cc.Log("rewind background music");
+    cc.log("rewind background music");
     cc.AudioEngine.getInstance().rewindBackgroundMusic();
 };
 
 // is background music playing
 var isBackgroundMusicPlaying = function () {
     if (cc.AudioEngine.getInstance().isBackgroundMusicPlaying()) {
-        cc.Log("background music is playing");
+        cc.log("background music is playing");
     }
     else {
-        cc.Log("background music is not playing");
+        cc.log("background music is not playing");
     }
 };
 
 var playEffect = function () {
-    cc.Log("play effect");
+    cc.log("play effect");
     soundId = cc.AudioEngine.getInstance().playEffect(EFFECT_FILE);
 };
 
 var playEffectRepeatly = function () {
-    cc.Log("play effect repeatly");
+    cc.log("play effect repeatly");
     soundId = cc.AudioEngine.getInstance().playEffect(EFFECT_FILE, true);
 };
 
 var stopEffect = function () {
-    cc.Log("stop effect");
+    cc.log("stop effect");
     cc.AudioEngine.getInstance().stopEffect(soundId);
 };
 
 var unloadEffect = function () {
-    cc.Log("unload effect");
+    cc.log("unload effect");
     cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
 };
 
 var addBackgroundMusicVolume = function () {
-    cc.Log("add bakcground music volume");
+    cc.log("add bakcground music volume");
     cc.AudioEngine.getInstance().setBackgroundMusicVolume(cc.AudioEngine.getInstance().getBackgroundMusicVolume() + 0.1);
 };
 
 var subBackgroundMusicVolume = function () {
-    cc.Log("sub backgroud music volume");
+    cc.log("sub backgroud music volume");
     cc.AudioEngine.getInstance().setBackgroundMusicVolume(cc.AudioEngine.getInstance().getBackgroundMusicVolume() - 0.1);
 };
 
 var addEffectsVolume = function () {
-    cc.Log("add effects volume");
+    cc.log("add effects volume");
     cc.AudioEngine.getInstance().setEffectsVolume(cc.AudioEngine.getInstance().getEffectsVolume() + 0.1);
 };
 
 var subEffectsVolume = function () {
-    cc.Log("sub effects volume");
+    cc.log("sub effects volume");
     cc.AudioEngine.getInstance().setEffectsVolume(cc.AudioEngine.getInstance().getEffectsVolume() - 0.1);
 };
 
 var pauseEffect = function () {
-    cc.Log("pause effect");
+    cc.log("pause effect");
     cc.AudioEngine.getInstance().pauseEffect(soundId);
 };
 
 var resumeEffect = function () {
-    cc.Log("resume effect");
+    cc.log("resume effect");
     cc.AudioEngine.getInstance().resumeEffect(soundId);
 };
 
 var pauseAllEffects = function () {
-    cc.Log("pause all effects");
+    cc.log("pause all effects");
     cc.AudioEngine.getInstance().pauseAllEffects();
 };
 var resumeAllEffects = function () {
-    cc.Log("resume all effects");
+    cc.log("resume all effects");
     cc.AudioEngine.getInstance().resumeAllEffects();
 };
 var stopAllEffects = function () {
-    cc.Log("stop all effects");
+    cc.log("stop all effects");
     cc.AudioEngine.getInstance().stopAllEffects();
 };

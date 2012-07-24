@@ -566,7 +566,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 break;
             case cc.TMXOrientationHex:
                 ret = cc.p(0, 0);
-                cc.Log("cocos2d:offset for hexagonal map not implemented yet");
+                cc.log("cocos2d:offset for hexagonal map not implemented yet");
                 break;
         }
         return ret;

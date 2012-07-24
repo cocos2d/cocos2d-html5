@@ -49,7 +49,7 @@ cc.ArrayVerifyType = function (arr, type) {
     if (arr && arr.length > 0) {
         for (var i = 0; i < arr.length; i++) {
             if (!(arr[i] instanceof  type)) {
-                cc.Log("element type is wrong!");
+                cc.log("element type is wrong!");
                 return false;
             }
         }
@@ -651,7 +651,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for (var i = 0; i < element.timers.length; i++) {
                 timer = element.timers[i];
                 if (selector == timer._selector) {
-                    cc.Log("CCSheduler#scheduleSelector. Selector already scheduled. Updating interval from:"
+                    cc.log("CCSheduler#scheduleSelector. Selector already scheduled. Updating interval from:"
                         + timer.getInterval().toFixed(4) + " to " + interval.toFixed(4));
                     timer._interval = interval;
                     return;

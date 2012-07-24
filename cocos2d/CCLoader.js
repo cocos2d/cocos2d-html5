@@ -64,7 +64,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
      * cc.Loader.shareLoader().onResLoadingErr(name);
      */
     onResLoadingErr:function (name) {
-        cc.Log("cocos2d:Failed loading resource: " + name);
+        cc.log("cocos2d:Failed loading resource: " + name);
     },
 
     /**
@@ -83,7 +83,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
      * @return {Number}
      * @example
      * //example
-     * cc.Log(cc.Loader.shareLoader().getProgressBar() + "%");
+     * cc.log(cc.Loader.shareLoader().getProgressBar() + "%");
      */
     getProgressBar:function () {
         var per = this.loadedResourceCount / this.resourceCount;
@@ -159,7 +159,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
                     this.resourceCount += 1;
                     break;
                 case "tga":
-                    //cc.Log("cocos2d:not implemented yet")
+                    //cc.log("cocos2d:not implemented yet")
                     break;
                 default:
                     throw "cocos2d:unknow type : " + res[i].type;
@@ -207,7 +207,7 @@ cc.LoaderScene = cc.Class.extend(/**  @lends cc.LoaderScene# */{
         cc.renderContext.clearRect(0, -cc.canvas.height, cc.canvas.width, cc.canvas.height);
         cc.renderContext.fillStyle = "#202020";
         cc.renderContext.fillRect(0, -cc.canvas.height, cc.canvas.width, cc.canvas.height);
-        cc.drawingUtil.drawImage(this._logo, new cc.p(logoWidth, logoHeight));
+        cc.drawingUtil.drawImage(this._logo, cc.p(logoWidth, logoHeight));
         cc.renderContext.fillStyle = "#b2b4b3";
         cc.renderContext.font = 'Bold 12px Verdana';
         cc.renderContext.textAlign = 'left';

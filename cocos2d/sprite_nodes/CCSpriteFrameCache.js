@@ -82,7 +82,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     var oh = parseInt(this._valueForKey("originalHeight", frameDict));
                     // check ow/oh
                     if (!ow || !oh) {
-                        cc.Log("cocos2d: WARNING: originalWidth/Height not found on the cc.SpriteFrame. AnchorPoint won't work as expected. Regenrate the .plist");
+                        cc.log("cocos2d: WARNING: originalWidth/Height not found on the cc.SpriteFrame. AnchorPoint won't work as expected. Regenrate the .plist");
                     }
                     // Math.abs ow/oh
                     ow = Math.abs(ow);
@@ -126,7 +126,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                     for (var aliasKey in aliases) {
                         if (this._spriteFramesAliases.hasOwnProperty(aliases[aliasKey])) {
-                            cc.Log("cocos2d: WARNING: an alias with name " + aliasKey + " already exists");
+                            cc.log("cocos2d: WARNING: an alias with name " + aliasKey + " already exists");
                         }
                         this._spriteFramesAliases[aliases[aliasKey]] = frameKey;
                     }
@@ -178,7 +178,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
             this._addSpriteFramesWithDictionary(dict, texture);
         }
         else {
-            cc.Log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
+            cc.log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
         }
     },
 
@@ -222,14 +222,14 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                         // append .png
                         texturePath = texturePath + ".png";
-                        cc.Log("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
+                        cc.log("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
                     }
 
                     var getTexture = cc.TextureCache.getInstance().addImage(texturePath);
                     if (getTexture) {
                         this._addSpriteFramesWithDictionary(dict, getTexture);
                     } else {
-                        cc.Log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
+                        cc.log("cocos2d: cc.SpriteFrameCache: Couldn't load texture");
                     }
                 }
                 break;
@@ -248,7 +248,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     if (gTexture) {
                         this._addSpriteFramesWithDictionary(dict, gTexture);
                     } else {
-                        cc.Log("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found " + textureFileName);
+                        cc.log("cocos2d: cc.SpriteFrameCache: couldn't load texture file. File not found " + textureFileName);
                     }
                 }
                 break;
@@ -384,7 +384,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     frame = this._spriteFrames[key.toString()];
                 }
                 if (!frame) {
-                    cc.Log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
+                    cc.log("cocos2d: cc.SpriteFrameCahce: Frame " + name + " not found");
                 }
             }
         }

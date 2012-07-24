@@ -240,10 +240,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @example
      * //example
      *  if (cc.AudioEngine.getInstance().isBackgroundMusicPlaying()) {
-     *      cc.Log("background music is playing");
+     *      cc.log("background music is playing");
      *  }
      *  else {
-     *      cc.Log("background music is not playing");
+     *      cc.log("background music is not playing");
      *  }
      */
     isBackgroundMusicPlaying:function () {

@@ -74,7 +74,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {cc.Point} point
      */
     drawPoint:function (point) {
-        cc.Log("DrawingPrimitive.drawPoint() not implement!");
+        cc.log("DrawingPrimitive.drawPoint() not implement!");
     },
 
     /**
@@ -83,7 +83,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} numberOfPoints
      */
     drawPoints:function (points, numberOfPoints) {
-        cc.Log("DrawingPrimitive.drawPoints() not implement!");
+        cc.log("DrawingPrimitive.drawPoints() not implement!");
     },
 
     /**
@@ -92,7 +92,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {cc.Point} destination
      */
     drawLine:function (origin, destination) {
-        cc.Log("DrawingPrimitive.drawLine() not implement!");
+        cc.log("DrawingPrimitive.drawLine() not implement!");
     },
 
     /**
@@ -103,7 +103,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Boolean} fill The polygon can be closed or open and optionally filled with current color
      */
     drawPoly:function (vertices, numOfVertices, closePolygon, fill) {
-        cc.Log("DrawingPrimitive.drawPoly() not implement!");
+        cc.log("DrawingPrimitive.drawPoly() not implement!");
     },
 
     /**
@@ -152,7 +152,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} segments
      */
     drawQuadBezier:function (origin, control, destination, segments) {
-        cc.Log("DrawingPrimitive.drawQuadBezier() not implement!");
+        cc.log("DrawingPrimitive.drawQuadBezier() not implement!");
     },
 
     /**
@@ -164,7 +164,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} segments
      */
     drawCubicBezier:function (origin, control1, control2, destination, segments) {
-        cc.Log("DrawingPrimitive.drawCubicBezier() not implement!");
+        cc.log("DrawingPrimitive.drawCubicBezier() not implement!");
     },
 
     /**
@@ -173,7 +173,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} segments
      */
     drawCatmullRom:function (points, segments) {
-        cc.Log("DrawingPrimitive.drawCardinalSpline() not implement!");
+        cc.log("DrawingPrimitive.drawCardinalSpline() not implement!");
     },
 
     /**
@@ -183,7 +183,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Number} segments
      */
     drawCardinalSpline:function (config, tension, segments) {
-        cc.Log("DrawingPrimitive.drawCardinalSpline() not implement!");
+        cc.log("DrawingPrimitive.drawCardinalSpline() not implement!");
     }
 });
 

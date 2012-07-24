@@ -264,7 +264,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         var now = new cc.timeval();
         now = cc.Time.gettimeofdayCocos2d();
         if (!now) {
-            cc.Log("error in gettimeofday");
+            cc.log("error in gettimeofday");
             this._deltaTime = 0;
             return;
         }
@@ -676,7 +676,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = cc.Time.gettimeofdayCocos2d();
         if (!this._lastUpdate) {
-            cc.Log("cocos2d: Director: Error in gettimeofday");
+            cc.log("cocos2d: Director: Error in gettimeofday");
         }
 
         this._paused = false;
@@ -907,7 +907,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 break;
 
             default:
-                cc.Log("cocos2d: Director: unrecognized projection");
+                cc.log("cocos2d: Director: unrecognized projection");
                 break;
         }
 
@@ -955,7 +955,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._isContentScaleSupported = true;
         }
         else {
-            cc.Log("cocos2d: setContentScaleFactor:'is not supported on this device");
+            cc.log("cocos2d: setContentScaleFactor:'is not supported on this device");
         }
     },
 

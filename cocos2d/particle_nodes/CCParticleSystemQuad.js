@@ -511,7 +511,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 if (quadsNew) m_pQuads = quadsNew;
                 if (indicesNew) m_pIndices = indicesNew;
 
-                cc.Log("Particle system: out of memory");
+                cc.log("Particle system: out of memory");
                 return;
             }
 
@@ -618,7 +618,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         }
 
         if (!this._quads || !this._indices) {
-            cc.Log("cocos2d: Particle system: not enough memory");
+            cc.log("cocos2d: Particle system: not enough memory");
             return false;
         }
 

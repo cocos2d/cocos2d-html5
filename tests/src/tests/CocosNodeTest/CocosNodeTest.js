@@ -633,7 +633,7 @@ var ConvertToNode = TestCocosNodeDemo.extend({
                 var p1 = node.convertToNodeSpaceAR(location);
                 var p2 = node.convertToNodeSpace(location);
 
-                cc.Log("AR: x=" + p1.x.toFixed(2) + ", y=" + p1.y.toFixed(2) + " -- Not AR: x=" + p2.x.toFixed(2) + ", y=" + p2.y.toFixed(2));
+                cc.log("AR: x=" + p1.x.toFixed(2) + ", y=" + p1.y.toFixed(2) + " -- Not AR: x=" + p2.x.toFixed(2) + ", y=" + p2.y.toFixed(2));
             }
         }
     },
