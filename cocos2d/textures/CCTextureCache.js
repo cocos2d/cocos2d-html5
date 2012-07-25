@@ -38,13 +38,13 @@ cc.loadImage = function (imageUrl) {
     // compute image type
     var imageType = cc.computeImageFormatType(imageUrl);
     if (imageType == cc.FMT_UNKNOWN) {
-        cc.Log("unsupported format" + imageUrl);
+        cc.log("unsupported format" + imageUrl);
         return;
     }
     var image = new Image();
     image.src = imageUrl;
     image.onLoad = function (e) {
-        cc.TextureCache.sharedTextureCache().cacheImage(imageUrl, image);
+        cc.TextureCache.getInstance().cacheImage(imageUrl, image);
     };
 };
 
@@ -86,7 +86,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {Image}
      * @example
      * //example
-     * cc.TextureCache.sharedTextureCache().addImageAsync("hello.png", this, this.loadingCallBack);
+     * cc.TextureCache.getInstance().addImageAsync("hello.png", this, this.loadingCallBack);
      */
     addImageAsync:function (path, target, selector) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
@@ -144,7 +144,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {Image}
      * @example
      * //example
-     * cc.TextureCache.sharedTextureCache().addImage("hello.png");
+     * cc.TextureCache.getInstance().addImage("hello.png");
      */
     addImage:function (path) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
@@ -215,7 +215,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         if ((key != null) && (texture != null)) {
             this.textures[key] = texture;
         } else {
-            cc.Log("cocos2d: Couldn't add UIImage in TextureCache");
+            cc.log("cocos2d: Couldn't add UIImage in TextureCache");
         }
 
         return texture;
@@ -227,7 +227,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {Image|Null}
      * @example
      * //example
-     * var key = cc.TextureCache.sharedTextureCache().textureForKey("hello.png");
+     * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
      */
     textureForKey:function (key) {
         if (this.textures.hasOwnProperty(key)) {
@@ -242,7 +242,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {String|Null}
      * @example
      * //example
-     * var key = cc.TextureCache.sharedTextureCache().getKeyByTexture(texture);
+     * var key = cc.TextureCache.getInstance().getKeyByTexture(texture);
      */
     getKeyByTexture:function (texture) {
         for (var key in this.textures) {
@@ -258,7 +258,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @return {Array}
      * @example
      * //example
-     * var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(texture);
+     * var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(texture);
      */
     getTextureColors:function (texture) {
         var key = this.getKeyByTexture(texture);
@@ -284,7 +284,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * In the long term: it will be the same</p>
      * @example
      * //example
-     * cc.TextureCache.sharedTextureCache().removeAllTextures();
+     * cc.TextureCache.getInstance().removeAllTextures();
      */
     removeAllTextures:function () {
         this.textures = {};
@@ -295,7 +295,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @param {Image} texture
      * @example
      * //example
-     * cc.TextureCache.sharedTextureCache().removeTexture(texture);
+     * cc.TextureCache.getInstance().removeTexture(texture);
      */
     removeTexture:function (texture) {
         if (!texture)
@@ -314,7 +314,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * @param {String} textureKeyName
      * @example
      * //example
-     * cc.TextureCache.sharedTextureCache().removeTexture("hello.png");
+     * cc.TextureCache.getInstance().removeTexture("hello.png");
      */
     removeTextureForKey:function (textureKeyName) {
         if (textureKeyName == null) {
@@ -326,7 +326,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     },
 
     /**
-     * <p>Output to cc.Log the current contents of this TextureCache <br />
+     * <p>Output to cc.log the current contents of this TextureCache <br />
      * This will attempt to calculate the size of each texture, and the total texture memory in use. </p>
      */
     dumpCachedTextureInfo:function () {
@@ -339,10 +339,10 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             var bytes = tex.getPixelsWide() * tex.getPixelsHigh() * bpp / 8;
             totalBytes += bytes;
             count++;
-            cc.Log("cocos2d: '" + tex.toString() + "' id=" + tex.getName() + " " + tex.getPixelsWide() + " x " + tex.getPixelsHigh() + " @ " + bpp + " bpp => " + bytes / 1024 + " KB");
+            cc.log("cocos2d: '" + tex.toString() + "' id=" + tex.getName() + " " + tex.getPixelsWide() + " x " + tex.getPixelsHigh() + " @ " + bpp + " bpp => " + bytes / 1024 + " KB");
         }
 
-        cc.Log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, for " + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
+        cc.log("cocos2d: TextureCache dumpDebugInfo: " + count + " textures, for " + (totalBytes / 1024) + " KB (" + (totalBytes / (1024.0 * 1024.0)).toFixed(2) + " MB)");
     },
 
     /**
@@ -366,7 +366,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         if (tex.initWithPVRFile(key)) {
             this.textures[key] = tex;
         } else {
-            cc.Log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
+            cc.log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
         }
 
         return tex;
@@ -377,7 +377,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
  * Return ths shared instance of the cache
  * @return {cc.TextureCache}
  */
-cc.TextureCache.sharedTextureCache = function () {
+cc.TextureCache.getInstance = function () {
     if (!cc.g_sharedTextureCache)
         cc.g_sharedTextureCache = new cc.TextureCache();
     return cc.g_sharedTextureCache;

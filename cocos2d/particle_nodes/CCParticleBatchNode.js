@@ -81,7 +81,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        //this.setShaderProgram(cc.ShaderCache.sharedShaderCache().programForKey(kCCShader_PositionTextureColor));
+        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
         return true;
     },
 
@@ -92,7 +92,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @return {Boolean}
      */
     initWithFile:function (fileImage, capacity) {
-        var tex = cc.TextureCache.sharedTextureCache().addImage(fileImage);
+        var tex = cc.TextureCache.getInstance().addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
 
@@ -365,12 +365,12 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     },
 
     _increaseAtlasCapacityTo:function (quantity) {
-        cc.Log("cocos2d: cc.ParticleBatchNode: resizing TextureAtlas capacity from [" + this._textureAtlas.getCapacity()
+        cc.log("cocos2d: cc.ParticleBatchNode: resizing TextureAtlas capacity from [" + this._textureAtlas.getCapacity()
             + "] to [" + quantity + "].");
 
         if (!this._textureAtlas.resizeCapacity(quantity)) {
             // serious problems
-            cc.Log("cocos2d: WARNING: Not enough memory to resize the atlas");
+            cc.log("cocos2d: WARNING: Not enough memory to resize the atlas");
             cc.Assert(false, "XXX: cc.ParticleBatchNode #increaseAtlasCapacity SHALL handle this assert");
         }
     },

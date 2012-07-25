@@ -30,7 +30,7 @@ var ClickAndMoveTestScene = TestScene.extend({
         var layer = new MainLayer();
 
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -39,13 +39,13 @@ var MainLayer = cc.Layer.extend({
         this.setTouchEnabled(true);
         var sprite = cc.Sprite.create(s_pathGrossini);
 
-        var layer = cc.LayerColor.create(cc.ccc4(255, 255, 0, 100));
+        var layer = cc.LayerColor.create(cc.c4(255, 255, 0, 100));
         this.addChild(layer, -1);
 
         this.addChild(sprite, 0, TAG_SPRITE);
-        sprite.setPosition(cc.PointMake(20, 150));
+        sprite.setPosition(cc.p(20, 150));
 
-        sprite.runAction(cc.JumpTo.create(4, cc.PointMake(300, 48), 100, 4));
+        sprite.runAction(cc.JumpTo.create(4, cc.p(300, 48), 100, 4));
 
         var fadeIn = cc.FadeIn.create(1);
         var fadeOut = cc.FadeOut.create(1);
@@ -53,18 +53,18 @@ var MainLayer = cc.Layer.extend({
         layer.runAction(forever);
     },
 
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         if (touches.length <= 0)
             return;
 
         var touch = touches[0];
 
-        var location = touch.locationInView();
-        //var convertedLocation = cc.Director.sharedDirector().convertToGL(location);
+        var location = touch.getLocation();
+        //var convertedLocation = cc.Director.getInstance().convertToGL(location);
 
         var sprite = this.getChildByTag(TAG_SPRITE);
         sprite.stopAllActions();
-        sprite.runAction(cc.MoveTo.create(1, cc.PointMake(location.x, location.y)));
+        sprite.runAction(cc.MoveTo.create(1, cc.p(location.x, location.y)));
         var o = location.x - sprite.getPositionX();
         var a = location.y - sprite.getPositionY();
         var at = cc.RADIANS_TO_DEGREES(Math.atan(o / a));

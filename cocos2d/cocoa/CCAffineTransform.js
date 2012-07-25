@@ -62,7 +62,7 @@ cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
 };
 
 cc.__PointApplyAffineTransform = function (point, t) {
-    var p = new cc.Point();
+    var p = cc.p();
     p.x = t.a * point.x + t.c * point.y + t.tx;
     p.y = t.b * point.x + t.d * point.y + t.ty;
     return p;
@@ -128,10 +128,10 @@ cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
     var right = cc.Rect.CCRectGetMaxX(rect);
     var bottom = cc.Rect.CCRectGetMaxY(rect);
 
-    var topLeft = cc.PointApplyAffineTransform(cc.PointMake(left, top), anAffineTransform);
-    var topRight = cc.PointApplyAffineTransform(cc.PointMake(right, top), anAffineTransform);
-    var bottomLeft = cc.PointApplyAffineTransform(cc.PointMake(left, bottom), anAffineTransform);
-    var bottomRight = cc.PointApplyAffineTransform(cc.PointMake(right, bottom), anAffineTransform);
+    var topLeft = cc.PointApplyAffineTransform(cc.p(left, top), anAffineTransform);
+    var topRight = cc.PointApplyAffineTransform(cc.p(right, top), anAffineTransform);
+    var bottomLeft = cc.PointApplyAffineTransform(cc.p(left, bottom), anAffineTransform);
+    var bottomRight = cc.PointApplyAffineTransform(cc.p(right, bottom), anAffineTransform);
 
     var minX = Math.min(Math.min(topLeft.x, topRight.x), Math.min(bottomLeft.x, bottomRight.x));
     var maxX = Math.max(Math.max(topLeft.x, topRight.x), Math.max(bottomLeft.x, bottomRight.x));

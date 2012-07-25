@@ -444,7 +444,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
         if (map.nodeName == "map") {
             if (version != "1.0" && version !== null) {
-                cc.Log("cocos2d: TMXFormat: Unsupported TMX version:" + version);
+                cc.log("cocos2d: TMXFormat: Unsupported TMX version:" + version);
             }
 
             if (orientationStr == "orthogonal")
@@ -454,7 +454,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             else if (orientationStr == "hexagonal")
                 this.setOrientation(cc.TMXOrientationHex);
             else if (orientationStr !== null)
-                cc.Log("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
+                cc.log("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
 
             var s = new cc.Size();
             s.width = parseFloat(map.getAttribute('width'));
@@ -492,7 +492,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             // If this is an external tileset then start parsing that
             var externalTilesetFilename = t.getAttribute('source');
             if (externalTilesetFilename) {
-                this.parseXMLFile(cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(externalTilesetFilename, tmxFile));
+                this.parseXMLFile(cc.FileUtils.getInstance().fullPathFromRelativeFile(externalTilesetFilename, tmxFile));
             }
             else {
                 var tileset = new cc.TMXTilesetInfo();
@@ -513,7 +513,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         imgSource = this._resources + "/" + imgSource;
                     }
                     else{
-                        imgSource = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(imgSource, tmxFile);
+                        imgSource = cc.FileUtils.getInstance().fullPathFromRelativeFile(imgSource, tmxFile);
                     }
                 }
                 tileset.sourceImage = imgSource;
@@ -569,7 +569,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
                 var x = parseFloat(l.getAttribute('x')) || 0;
                 var y = parseFloat(l.getAttribute('y')) || 0;
-                layer.offset = cc.ccp(x, y);
+                layer.offset = cc.p(x, y);
 
                 var nodeValue = ''
                 for (var j = 0; j < data.childNodes.length; j++) {
@@ -626,7 +626,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 var g = objectgroups[i];
                 var objectGroup = new cc.TMXObjectGroup();
                 objectGroup.setGroupName(g.getAttribute('name'));
-                var positionOffset = new cc.Point();
+                var positionOffset = cc.p();
                 positionOffset.x = parseFloat(g.getAttribute('x')) * this.getTileSize().width || 0;
                 positionOffset.y = parseFloat(g.getAttribute('y')) * this.getTileSize().height || 0;
                 objectGroup.setPositionOffset(positionOffset);
@@ -736,7 +736,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._tileSets = [];
         this._layers = [];
 
-        this._TMXFileName = cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(tmxFileName);
+        this._TMXFileName = cc.FileUtils.getInstance().fullPathFromRelativePath(tmxFileName);
 
         if (resourcePath) {
             this._resources = resourcePath;

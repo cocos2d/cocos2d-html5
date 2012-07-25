@@ -33,7 +33,7 @@ cc.GridBase = cc.Class.extend({
     _reuseGrid:null,
     _gridSize:null,
     _texture:null,
-    _step:new cc.Point(),
+    _step:cc.p(),
     _grabber:null,
     _isTextureFlipped:null,
     /** wheter or not the grid is active */
@@ -43,7 +43,7 @@ cc.GridBase = cc.Class.extend({
     setActive:function (active) {
         this._active = active;
         if (!active) {
-            var director = cc.Director.sharedDirector();
+            var director = cc.Director.getInstance();
             var proj = director.getProjection();
             director.setProjection(proj);
         }
@@ -88,19 +88,19 @@ cc.GridBase = cc.Class.extend({
     initWithSize:function (gridSize, texture, flipped) {
         var argnum = arguments.length;
         if (argnum = 1) {
-            var director = cc.Director.sharedDirector();
+            var director = cc.Director.getInstance();
             var s = director.getWinSizeInPixels();
 
             var POTWide = cc.NextPOT(s.width);
             var POTHigh = cc.NextPOT(s.height);
 
             // we only use rgba8888
-            var format = cc.CCTEXTURE_2D_PIXEL_FORMAT_RGBA8888;
+            var format = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
 
             var pTextureTemp = new cc.Texture2D();
             pTextureTemp.initWithData(format, POTWide, POTHigh, s);
             if (!pTextureTemp) {
-                cc.Log("cocos2d: CCGrid: error creating texture");
+                cc.log("cocos2d: CCGrid: error creating texture");
                 return false;
             }
             texture = pTextureTemp;
@@ -160,8 +160,8 @@ cc.GridBase = cc.Class.extend({
         //glBindTexture(GL_TEXTURE_2D, this._texture.getName());
 
         // restore projection for default FBO .fixed bug #543 #544
-        //cc.Director.sharedDirector().setProjection(cc.Director.sharedDirector().getProjection());
-        //cc.Director.sharedDirector().applyOrientation();
+        //cc.Director.getInstance().setProjection(cc.Director.getInstance().getProjection());
+        //cc.Director.getInstance().applyOrientation();
         this.blit();
     },
     blit:function () {
@@ -174,7 +174,7 @@ cc.GridBase = cc.Class.extend({
         cc.Assert(0, "");
     },
     set2DProjection:function () {
-        var winSize = cc.Director.sharedDirector().getWinSizeInPixels();
+        var winSize = cc.Director.getInstance().getWinSizeInPixels();
 
         //todo gl
         /* glViewport(0, 0, (GLsizei)(size.width * CC_CONTENT_SCALE_FACTOR()), (GLsizei)(size.height * CC_CONTENT_SCALE_FACTOR()) );

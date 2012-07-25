@@ -31,7 +31,7 @@ var cocos2dApp = cc.Application.extend({
         this.startScene = scene;
         cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
         cc.setup(this.config['tag']);
-        cc.AudioManager.sharedEngine().init("mp3,ogg");
+        cc.AudioEngine.getInstance().init("mp3,ogg");
         cc.Loader.shareLoader().onloading = function () {
             cc.LoaderScene.shareLoaderScene().draw();
         };
@@ -42,7 +42,7 @@ var cocos2dApp = cc.Application.extend({
     },
     applicationDidFinishLaunching:function () {
         // initialize director
-        var director = cc.Director.sharedDirector();
+        var director = cc.Director.getInstance();
 
         // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
 //     director->enableRetinaDisplay(true);

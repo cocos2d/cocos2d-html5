@@ -326,7 +326,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         }
 
         // If all the tiles are 0, return empty tileset
-        cc.Log("cocos2d: Warning: TMX Layer " + layerInfo.name + " has no tiles");
+        cc.log("cocos2d: Warning: TMX Layer " + layerInfo.name + " has no tiles");
         return null;
     }
 });

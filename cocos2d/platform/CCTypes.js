@@ -77,7 +77,7 @@ cc.Color3B = function (r1, g1, b1) {
  * @param {Number} b blue value (0 to 255)
  * @return {cc.Color3B}
  */
-cc.ccc3 = function (r, g, b) {
+cc.c3 = function (r, g, b) {
     return new cc.Color3B(r, g, b);
 };
 
@@ -192,7 +192,7 @@ cc.Color4B = function (r1, g1, b1, a1) {
  * @param {Number} o Alpha value (0 to 255)
  * @return {cc.Color4B}
  */
-cc.ccc4 = function (r, g, b, o) {
+cc.c4 = function (r, g, b, o) {
     return new cc.Color4B(r, g, b, o);
 };
 
@@ -226,9 +226,9 @@ cc.Color4F = function (r1, g1, b1, a1) {
  * @param {Number} a1 Alpha value (0 to 1)
  * @example
  * //create a red color
- * var redColor = cc.ccc4f(1,0,0,1);
+ * var redColor = cc.c4f(1,0,0,1);
  */
-cc.ccc4f = function (r1, g1, b1, a1) {
+cc.c4f = function (r1, g1, b1, a1) {
     return new cc.Color4F(r1, g1, b1, a1);
 };
 
@@ -399,7 +399,7 @@ cc.GridSize = function (x1, y1) {
  * @param {Number} y
  * @return {cc.GridSize}
  */
-cc.ccg = function (x, y) {
+cc.g = function (x, y) {
     return new cc.GridSize(x, y);
 };
 

@@ -130,7 +130,7 @@ var TransitionsTestScene = TestScene.extend({
     runThisTest:function () {
         var layer = new TestLayer1();
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -139,23 +139,23 @@ var TestLayer1 = cc.Layer.extend({
         this._super();
         //this.init();
         var x, y;
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         x = size.width;
         y = size.height;
 
         var bg1 = cc.Sprite.create(s_back1);
-        bg1.setPosition(cc.PointMake(size.width / 2, size.height / 2));
+        bg1.setPosition(cc.p(size.width / 2, size.height / 2));
         bg1.setScale(1.7);
         this.addChild(bg1, -1);
 
         var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx].title, "Thonburi", 32);
         this.addChild(title);
-        title.setColor(cc.ccc3(255, 32, 32));
-        title.setPosition(cc.PointMake(x / 2, y - 100));
+        title.setColor(cc.c3(255, 32, 32));
+        title.setPosition(cc.p(x / 2, y - 100));
 
         var label = cc.LabelTTF.create("SCENE 1", "Marker Felt", 38);
-        label.setColor(cc.ccc3(16, 16, 255));
-        label.setPosition(cc.PointMake(x / 2, y / 2));
+        label.setColor(cc.c3(16, 16, 255));
+        label.setPosition(cc.p(x / 2, y / 2));
         this.addChild(label);
 
         // menu
@@ -166,9 +166,9 @@ var TestLayer1 = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(size.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
-        item2.setPosition(cc.PointMake(size.width / 2, item2.getContentSize().height / 2));
-        item3.setPosition(cc.PointMake(size.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item1.setPosition(cc.p(size.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.p(size.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.p(size.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
         this.addChild(menu, 1);
         this.schedule(this.step, 1.0);
 
@@ -181,7 +181,7 @@ var TestLayer1 = cc.Layer.extend({
         var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
 
         if (scene) {
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
     nextCallback:function (sender) {
@@ -195,7 +195,7 @@ var TestLayer1 = cc.Layer.extend({
 
         var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
     backCallback:function (sender) {
@@ -209,7 +209,7 @@ var TestLayer1 = cc.Layer.extend({
 
         var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
 
@@ -218,21 +218,21 @@ var TestLayer1 = cc.Layer.extend({
 
     onEnter:function () {
         this._super();
-        cc.Log("Scene 1 onEnter");
+        cc.log("Scene 1 onEnter");
     },
     onEnterTransitionDidFinish:function () {
         this._super();
-        cc.Log("Scene 1 onEnterTransitionDidFinish");
+        cc.log("Scene 1 onEnterTransitionDidFinish");
     },
 
     onExitTransitionDidStart:function () {
         this._super();
-        cc.Log("Scene 1 onExitTransitionDidStart");
+        cc.log("Scene 1 onExitTransitionDidStart");
     },
 
     onExit:function () {
         this._super();
-        cc.Log("Scene 1 onExit");
+        cc.log("Scene 1 onExit");
     }
 });
 
@@ -241,23 +241,23 @@ var TestLayer2 = cc.Layer.extend({
         this._super();
         //this.init();
         var x, y;
-        var size = cc.Director.sharedDirector().getWinSize();
+        var size = cc.Director.getInstance().getWinSize();
         x = size.width;
         y = size.height;
 
         var bg1 = cc.Sprite.create(s_back2);
-        bg1.setPosition(cc.PointMake(size.width / 2, size.height / 2));
+        bg1.setPosition(cc.p(size.width / 2, size.height / 2));
         bg1.setScale(1.7);
         this.addChild(bg1, -1);
 
         var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx].title, "Thonburi", 32);
         this.addChild(title);
-        title.setColor(cc.ccc3(255, 32, 32));
-        title.setPosition(cc.PointMake(x / 2, y - 100));
+        title.setColor(cc.c3(255, 32, 32));
+        title.setPosition(cc.p(x / 2, y - 100));
 
         var label = cc.LabelTTF.create("SCENE 2", "Marker Felt", 38);
-        label.setColor(cc.ccc3(16, 16, 255));
-        label.setPosition(cc.PointMake(x / 2, y / 2));
+        label.setColor(cc.c3(16, 16, 255));
+        label.setPosition(cc.p(x / 2, y / 2));
         this.addChild(label);
 
         // menu
@@ -268,9 +268,9 @@ var TestLayer2 = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(size.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
-        item2.setPosition(cc.PointMake(size.width / 2, item2.getContentSize().height / 2));
-        item3.setPosition(cc.PointMake(size.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item1.setPosition(cc.p(size.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.p(size.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.p(size.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
 
@@ -284,7 +284,7 @@ var TestLayer2 = cc.Layer.extend({
 
         var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
     nextCallback:function (sender) {
@@ -298,7 +298,7 @@ var TestLayer2 = cc.Layer.extend({
 
         var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
     backCallback:function (sender) {
@@ -313,7 +313,7 @@ var TestLayer2 = cc.Layer.extend({
 
         var scene = TransitionsTests[transitionsIdx].transitionFunc(TRANSITION_DURATION, s);
         if (scene) {
-            cc.Director.sharedDirector().replaceScene(scene);
+            cc.Director.getInstance().replaceScene(scene);
         }
     },
 
@@ -323,21 +323,21 @@ var TestLayer2 = cc.Layer.extend({
 
     onEnter:function () {
         this._super();
-        cc.Log("Scene 2 onEnter");
+        cc.log("Scene 2 onEnter");
     },
     onEnterTransitionDidFinish:function () {
         this._super();
-        cc.Log("Scene 2 onEnterTransitionDidFinish");
+        cc.log("Scene 2 onEnterTransitionDidFinish");
     },
 
     onExitTransitionDidStart:function () {
         this._super();
-        cc.Log("Scene 2 onExitTransitionDidStart");
+        cc.log("Scene 2 onExitTransitionDidStart");
     },
 
     onExit:function () {
         this._super();
-        cc.Log("Scene 2 onExit");
+        cc.log("Scene 2 onExit");
     }
 });
 
@@ -453,12 +453,12 @@ var CCTransitionRadialCW = function (t, s) {
 };
 
 var PageTransitionForward = function (t, s) {
-    cc.Director.sharedDirector().setDepthTest(true);
+    cc.Director.getInstance().setDepthTest(true);
     return cc.TransitionPageTurn.create(t, s, false);
 };
 
 var PageTransitionBackward = function (t, s) {
-    cc.Director.sharedDirector().setDepthTest(true);
+    cc.Director.getInstance().setDepthTest(true);
     return cc.TransitionPageTurn.create(t, s, true);
 };
 

@@ -29,17 +29,17 @@
  * @constant
  * @type Number
  */
-cc.CCMENU_STATE_WAITING = 0;
+cc.MENU_STATE_WAITING = 0;
 /**
  * @constant
  * @type Number
  */
-cc.CCMENU_STATE_TRACKING_TOUCH = 1;
+cc.MENU_STATE_TRACKING_TOUCH = 1;
 /**
  * @constant
  * @type Number
  */
-cc.CCMENU_HANDLER_PRIORITY = -128;
+cc.MENU_HANDLER_PRIORITY = -128;
 /**
  * @constant
  * @type Number
@@ -61,7 +61,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
         this.dom.id = "DomMenu" + Date.now();
         this.dom.className += " domMenu";
         this._ignoreAnchorPointForPosition = false;
-        this.setContentSize(cc.Director.sharedDirector().getWinSize());
+        this.setContentSize(cc.Director.getInstance().getWinSize());
         for (var i = 0; i < args.length; i++) {
             if (args[i]) {
                 //this.dom.appendChild(args[i].dom);//we dont need to append child as the child will set parent, and add to the parent
@@ -83,7 +83,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsVerticallyWithPadding:function (padding) {
-        var s = cc.Director.sharedDirector().getWinSize();//get window size
+        var s = cc.Director.getInstance().getWinSize();//get window size
         var height = -padding;
         if (this.getChildren().length) {
             for (var i = 0; i < this.getChildren().length; i++) {
@@ -100,7 +100,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
                 var childheight = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].dom.style.fontSize,
                     this.getChildren()[i].dom.style.fontFamily).height;
-                this.getChildren()[i].setPosition(cc.ccp(s.width / 2, s.height / 2 + y - childheight/* * this._children[i].getScaleY()*/ / 2));
+                this.getChildren()[i].setPosition(cc.p(s.width / 2, s.height / 2 + y - childheight/* * this._children[i].getScaleY()*/ / 2));
                 y -= childheight /** this._children[i].getScaleY()*/ + padding;
             }
         }
@@ -118,7 +118,7 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
      * @param {Number} padding
      */
     alignItemsHorizontallyWithPadding:function (padding) {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var width = -padding;
         if (this.getChildren().length > 0) {
             for (var i = 0; i < this.getChildren().length; i++) {
@@ -134,8 +134,8 @@ cc.Menu = cc.domNode.extend(/** @lends cc.Menu# */{
                 var childwidth = cc.domNode.getTextSize(this.getChildren()[i].dom.textContent,
                     this.getChildren()[i].dom.style.fontSize,
                     this.getChildren()[i].dom.style.fontFamily).width;
-                this.getChildren()[i].setPosition(cc.ccp(-y + childwidth, 0/* * this._children[i].getScaleY()*/));
-                //console.log(cc.ccp(s.width / 2 + y - childwidth, -s.height / 2/* * this._children[i].getScaleY()*/));
+                this.getChildren()[i].setPosition(cc.p(-y + childwidth, 0/* * this._children[i].getScaleY()*/));
+                //console.log(cc.p(s.width / 2 + y - childwidth, -s.height / 2/* * this._children[i].getScaleY()*/));
                 y -= childwidth /** this._children[i].getScaleY()*/ + padding;
             }
         }

@@ -40,11 +40,11 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
     initWithString:function (arg) {
         var label, textureFilename, width, height, startChar;
         if (arg.length == 2) {
-            var dict = cc.FileUtils.sharedFileUtils().dictionaryWithContentsOfFileThreadSafe(arg[1]);
+            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(arg[1]);
             cc.Assert(parseInt(dict["version"]) == 1, "Unsupported version. Upgrade cocos2d version");
 
             label = arg[0].toString();
-            textureFilename = cc.FileUtils.sharedFileUtils().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
+            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
             width = parseInt(dict["itemWidth"]) / cc.CONTENT_SCALE_FACTOR();
             height = parseInt(dict["itemHeight"]) / cc.CONTENT_SCALE_FACTOR();
             startChar = String.fromCharCode(parseInt(dict["firstChar"]));
@@ -104,7 +104,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.setOpacity(this._opacity);
                 }
             }
-            fontChar.setPosition(new cc.Point(i * this._itemWidth + this._itemWidth / 2, this._itemHeight / 2));
+            fontChar.setPosition(cc.p(i * this._itemWidth + this._itemWidth / 2, this._itemHeight / 2));
         }
     },
 
@@ -152,8 +152,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         this._super();
         if (cc.LABELATLAS_DEBUG_DRAW) {
             var s = this.getContentSize();
-            var vertices = [cc.ccp(0, 0), cc.ccp(s.width, 0),
-                cc.ccp(s.width, s.height), cc.ccp(0, s.height)];
+            var vertices = [cc.p(0, 0), cc.p(s.width, 0),
+                cc.p(s.width, s.height), cc.p(0, s.height)];
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
     },

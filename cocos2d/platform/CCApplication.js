@@ -159,7 +159,7 @@ cc.setup = function (el, width, height) {
     }
     else {//we must make a new canvas and place into this element
         if (element.tagName != "DIV") {
-            cc.Log("Warning: target element is not a DIV or CANVAS");
+            cc.log("Warning: target element is not a DIV or CANVAS");
         }
         cc.canvas = cc.$new("CANVAS");
         cc.canvas.addClass = "gameCanvas";
@@ -175,13 +175,13 @@ cc.setup = function (el, width, height) {
     }
     cc.originalCanvasSize = new cc.Size(cc.canvas.width, cc.canvas.height);
 
-    cc.Log(cc.ENGINE_VERSION);
+    cc.log(cc.ENGINE_VERSION);
 
     //binding window size
     /*
      cc.canvas.addEventListener("resize", function () {
      if (!cc.firstRun) {
-     cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+     cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
      }
      }, true);
      */
@@ -234,15 +234,15 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         // TODO, need to be fixed.
         if (window.requestAnimFrame) {
             var callback = function () {
-                cc.Director.sharedDirector().mainLoop();
+                cc.Director.getInstance().mainLoop();
                 window.requestAnimFrame(callback);
             };
-            cc.Log(window.requestAnimFrame);
+            cc.log(window.requestAnimFrame);
             window.requestAnimFrame(callback);
         }
         else {
             var callback = function () {
-                cc.Director.sharedDirector().mainLoop();
+                cc.Director.getInstance().mainLoop();
             };
             setInterval(callback, this._animationInterval * 1000);
         }

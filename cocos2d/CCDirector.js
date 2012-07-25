@@ -32,28 +32,28 @@ cc.g_NumberOfDraws = 0;
  * @constant
  * @type Number
  */
-cc.CCDIRECTOR_PROJECTION_2D = 0;
+cc.DIRECTOR_PROJECTION_2D = 0;
 
 /**
  * sets a 3D projection with a fovy=60, znear=0.5f and zfar=1500.
  * @constant
  * @type Number
  */
-cc.CCDIRECTOR_PROJECTION_3D = 1;
+cc.DIRECTOR_PROJECTION_3D = 1;
 
 /**
  * it calls "updateProjection" on the projection delegate.
  * @constant
  * @type Number
  */
-cc.CCDIRECTOR_PROJECTION_CUSTOM = 3;
+cc.DIRECTOR_PROJECTION_CUSTOM = 3;
 
 /**
  * Detault projection is 3D projection
  * @constant
  * @type Number
  */
-cc.CCDIRECTOR_PROJECTION_DEFAULT = cc.CCDIRECTOR_PROJECTION_3D;
+cc.DIRECTOR_PROJECTION_DEFAULT = cc.DIRECTOR_PROJECTION_3D;
 
 //----------------------------------------------------------------------------------------------------------------------
 //Possible device orientations
@@ -62,28 +62,28 @@ cc.CCDIRECTOR_PROJECTION_DEFAULT = cc.CCDIRECTOR_PROJECTION_3D;
  * @constant
  * @type Number
  */
-cc.CCDEVICE_ORIENTATION_PORTRAIT = 0;
+cc.DEVICE_ORIENTATION_PORTRAIT = 0;
 
 /**
  * Device oriented horizontally, home button on the right (UIDeviceOrientationLandscapeLeft)
  * @constant
  * @type Number
  */
-cc.CCDEVICE_ORIENTATION_LANDSCAPE_LEFT = 1;
+cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = 1;
 
 /**
  * Device oriented vertically, home button on the top (UIDeviceOrientationPortraitUpsideDown)
  * @constant
  * @type Number
  */
-cc.CCDEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = 2;
+cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = 2;
 
 /**
  * Device oriented horizontally, home button on the left (UIDeviceOrientationLandscapeRight)
  * @constant
  * @type Number
  */
-cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
+cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
 
 /**
  * In browsers, we only support 2 orientations by change window size.
@@ -97,25 +97,25 @@ cc.DEVICE_MAX_ORIENTATIONS = 2;
  * @constant
  * @type Number
  */
-cc.DEVICE_ORIENTATION_PORTRAIT = cc.CCDEVICE_ORIENTATION_PORTRAIT;
+cc.DEVICE_ORIENTATION_PORTRAIT = cc.DEVICE_ORIENTATION_PORTRAIT;
 
 /**
  * @constant
  * @type Number
  */
-cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = cc.CCDEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN;
+cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN;
 
 /**
  * @constant
  * @type Number
  */
-cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_LEFT;
+cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT;
 
 /**
  * @constant
  * @type Number
  */
-cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT;
+cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT;
 
 //----------------------------------------------------------------------------------------------------------------------
 
@@ -133,7 +133,7 @@ cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.CCDEVICE_ORIENTATION_LANDSCAPE_RIGHT;
  *      - setting the orientation (default one is Protrait)<br/>
  *      <br/>
  *    Since the cc.Director is a singleton, the standard way to use it is by calling:<br/>
- *      - cc.Director.sharedDirector().methodName(); <br/>
+ *      - cc.Director.getInstance().methodName(); <br/>
  *    <br/>
  *    The CCDirector also sets the default OpenGL context:<br/>
  *      - GL_TEXTURE_2D is enabled<br/>
@@ -213,7 +213,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._oldAnimationInterval = this._animationInterval = 1.0 / cc.defaultFPS;
         this._scenesStack = [];
         // Set default projection (3D)
-        this._projection = cc.CCDIRECTOR_PROJECTION_DEFAULT;
+        this._projection = cc.DIRECTOR_PROJECTION_DEFAULT;
         // projection delegate if "Custom" projection is used
         this._projectionDelegate = null;
 
@@ -264,7 +264,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         var now = new cc.timeval();
         now = cc.Time.gettimeofdayCocos2d();
         if (!now) {
-            cc.Log("error in gettimeofday");
+            cc.log("error in gettimeofday");
             this._deltaTime = 0;
             return;
         }
@@ -296,7 +296,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     convertToGL:function (point) {
         var newY = this._winSizeInPoints.height - point.y;
-        return new cc.Point(point.x, newY);
+        return cc.p(point.x, newY);
     },
 
     /**
@@ -307,7 +307,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     convertToUI:function (point) {
         var oppositeY = this._winSizeInPoints.height - point.y;
-        return new cc.Point(point.x,oppositeY);
+        return cc.p(point.x,oppositeY);
     },
 
     //_fullRect:null,
@@ -566,7 +566,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     purgeCachedData:function () {
         cc.LabelBMFont.purgeCachedData();
-        //cc.TextureCache.sharedTextureCache().removeUnusedTextures();
+        //cc.TextureCache.getInstance().removeUnusedTextures();
     },
 
     /**
@@ -676,7 +676,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = cc.Time.gettimeofdayCocos2d();
         if (!this._lastUpdate) {
-            cc.Log("cocos2d: Director: Error in gettimeofday");
+            cc.log("cocos2d: Director: Error in gettimeofday");
         }
 
         this._paused = false;
@@ -866,7 +866,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
 
         switch (projection) {
-            case cc.CCDIRECTOR_PROJECTION_2D:
+            case cc.DIRECTOR_PROJECTION_2D:
                 //TODO OpenGL
                 /* kmGLMatrixMode(KM_GL_PROJECTION);
                 kmGLLoadIdentity();
@@ -876,7 +876,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 kmGLMatrixMode(KM_GL_MODELVIEW);
                 kmGLLoadIdentity();*/
                 break;
-            case cc.CCDIRECTOR_PROJECTION_3D:
+            case cc.DIRECTOR_PROJECTION_3D:
                 //TODO OpenGl
                 /* float zeye = this->getZEye();
 
@@ -900,14 +900,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 kmMat4LookAt(&matrixLookup, &eye, &center, &up);
                 kmGLMultMatrix(&matrixLookup);*/
                 break;
-            case cc.CCDIRECTOR_PROJECTION_CUSTOM:
+            case cc.DIRECTOR_PROJECTION_CUSTOM:
                 if (this._projectionDelegate) {
                     this._projectionDelegate.updateProjection();
                 }
                 break;
 
             default:
-                cc.Log("cocos2d: Director: unrecognized projection");
+                cc.log("cocos2d: Director: unrecognized projection");
                 break;
         }
 
@@ -955,7 +955,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._isContentScaleSupported = true;
         }
         else {
-            cc.Log("cocos2d: setContentScaleFactor:'is not supported on this device");
+            cc.log("cocos2d: setContentScaleFactor:'is not supported on this device");
         }
     },
 
@@ -1136,9 +1136,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._SPFLabel = cc.LabelTTF.create("0.000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
         this._drawsLabel = cc.LabelTTF.create("000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
 
-        this._drawsLabel.setPosition( cc.ccpAdd( new cc.Point(20,48), cc.DIRECTOR_STATS_POSITION ) );
-        this._SPFLabel.setPosition( cc.ccpAdd( new cc.Point(20,30), cc.DIRECTOR_STATS_POSITION ) );
-        this._FPSLabel.setPosition( cc.ccpAdd( new cc.Point(20,10), cc.DIRECTOR_STATS_POSITION ) );
+        this._drawsLabel.setPosition( cc.pAdd( cc.p(20,48), cc.DIRECTOR_STATS_POSITION ) );
+        this._SPFLabel.setPosition( cc.pAdd( cc.p(20,30), cc.DIRECTOR_STATS_POSITION ) );
+        this._FPSLabel.setPosition( cc.pAdd( cc.p(20,10), cc.DIRECTOR_STATS_POSITION ) );
     },
 
     _calculateMPF:function(){
@@ -1220,7 +1220,7 @@ cc.firstUseDirector = true;
  * @function
  * @return {cc.Director}
  */
-cc.Director.sharedDirector = function () {
+cc.Director.getInstance = function () {
     if(cc.firstUseDirector){
         cc.firstUseDirector = false;
         cc.s_SharedDirector = new cc.DisplayLinkDirector();
@@ -1244,7 +1244,7 @@ cc.defaultFPS = 60;
 /*
  window.onfocus = function () {
  if (!cc.firstRun) {
- cc.Director.sharedDirector().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+ cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
  }
  };
  */

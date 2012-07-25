@@ -85,17 +85,17 @@ var SchedulerTestLayer = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 30);
         this.addChild(label);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var subTitle = this.subtitle();
         if (subTitle != "") {
             var subLabel = cc.LabelTTF.create(subTitle, "Thonburi", 13);
             this.addChild(subLabel, 1);
-            subLabel.setPosition(cc.ccp(s.width / 2, s.height - 80));
+            subLabel.setPosition(cc.p(s.width / 2, s.height - 80));
         }
 
         var item1 = cc.MenuItemImage.create("res/Images/b1.png", "res/Images/b2.png", this, this.backCallback);
@@ -104,9 +104,9 @@ var SchedulerTestLayer = cc.Layer.extend({
 
         var menu = cc.Menu.create(item1, item2, item3, null);
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
-        item2.setPosition(cc.ccp(s.width / 2, 30));
-        item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1)
     },
@@ -122,21 +122,21 @@ var SchedulerTestLayer = cc.Layer.extend({
         var layer = backSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
     nextCallback:function (sender) {
         var scene = new SchedulerTestScene();
         var layer = nextSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     },
     restartCallback:function (sender) {
         var scene = new SchedulerTestScene();
         var layer = restartSchedulerTest();
 
         scene.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(scene);
+        cc.Director.getInstance().replaceScene(scene);
     }
 });
 
@@ -159,15 +159,15 @@ var SchedulerAutoremove = SchedulerTestLayer.extend({
 
     autoremove:function (dt) {
         this._accum += dt;
-        cc.Log("Time: " + this._accum);
+        cc.log("Time: " + this._accum);
 
         if (this._accum > 3) {
             this.unschedule(this.autoremove);
-            cc.Log("scheduler removed");
+            cc.log("scheduler removed");
         }
     },
     tick:function (dt) {
-        cc.Log("This scheduler should not be removed");
+        cc.log("This scheduler should not be removed");
     }
 });
 
@@ -187,13 +187,13 @@ var SchedulerPauseResume = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     pause:function (dt) {
-        cc.Director.sharedDirector().getScheduler().pauseTarget(this);
+        cc.Director.getInstance().getScheduler().pauseTarget(this);
     }
 });
 
@@ -215,16 +215,16 @@ var SchedulerUnscheduleAll = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     tick3:function (dt) {
-        cc.Log("tick3");
+        cc.log("tick3");
     },
     tick4:function (dt) {
-        cc.Log("tick4");
+        cc.log("tick4");
     },
     unscheduleAll:function (dt) {
         this.unscheduleAllSelectors();
@@ -249,19 +249,19 @@ var SchedulerUnscheduleAllHard = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     tick3:function (dt) {
-        cc.Log("tick3");
+        cc.log("tick3");
     },
     tick4:function (dt) {
-        cc.Log("tick4");
+        cc.log("tick4");
     },
     unscheduleAll:function (dt) {
-        cc.Director.sharedDirector().getScheduler().unscheduleAllSelectors();
+        cc.Director.getInstance().getScheduler().unscheduleAllSelectors();
     }
 });
 
@@ -281,16 +281,16 @@ var SchedulerSchedulesAndRemove = SchedulerTestLayer.extend({
     },
 
     tick1:function (dt) {
-        cc.Log("tick1");
+        cc.log("tick1");
     },
     tick2:function (dt) {
-        cc.Log("tick2");
+        cc.log("tick2");
     },
     tick3:function (dt) {
-        cc.Log("tick3");
+        cc.log("tick3");
     },
     tick4:function (dt) {
-        cc.Log("tick4");
+        cc.log("tick4");
     },
     scheduleAndUnschedule:function (dt) {
         this.unschedule(this.tick1);
@@ -383,10 +383,10 @@ var SchedulerUpdateAndCustom = SchedulerTestLayer.extend({
     },
 
     update:function (dt) {
-        cc.Log("update called:" + dt);
+        cc.log("update called:" + dt);
     },
     tick:function (dt) {
-        cc.Log("custom selector called:" + dt);
+        cc.log("custom selector called:" + dt);
     },
     stopSelectors:function (dt) {
         this.unscheduleAllSelectors();
@@ -407,7 +407,7 @@ var SchedulerUpdateFromCustom = SchedulerTestLayer.extend({
     },
 
     update:function (dt) {
-        cc.Log("update called:" + dt);
+        cc.log("update called:" + dt);
     },
     schedUpdate:function (dt) {
         this.unschedule(this.schedUpdate);
@@ -442,7 +442,7 @@ var RescheduleSelector = SchedulerTestLayer.extend({
     schedUpdate:function (dt) {
         this._ticks++;
 
-        cc.Log("schedUpdate: " + dt.toFixed(2));
+        cc.log("schedUpdate: " + dt.toFixed(2));
         if (this._ticks > 3) {
             this._interval += 1.0;
             this.schedule(this.schedUpdate, this._interval);
@@ -456,6 +456,6 @@ var SchedulerTestScene = TestScene.extend({
         var layer = nextSchedulerTest();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

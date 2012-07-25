@@ -49,7 +49,7 @@ cc.ArrayVerifyType = function (arr, type) {
     if (arr && arr.length > 0) {
         for (var i = 0; i < arr.length; i++) {
             if (!(arr[i] instanceof  type)) {
-                cc.Log("element type is wrong!");
+                cc.log("element type is wrong!");
                 return false;
             }
         }
@@ -349,7 +349,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 }
 
                 if (this._timesExecuted > this._repeat) {
-                    cc.Director.sharedDirector().getScheduler().unscheduleSelector(this._selector, this._target);
+                    cc.Director.getInstance().getScheduler().unscheduleSelector(this._selector, this._target);
                 }
             }
         }
@@ -394,7 +394,7 @@ cc._sharedScheduler = null;
  *
  * @example
  * //register a schedule to scheduler
- * cc.Director.sharedDirector().getScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
+ * cc.Director.getInstance().getScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
  */
 cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _timeScale:1.0,
@@ -625,7 +625,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register a schedule to scheduler
-     * cc.Director.sharedDirector().getScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
+     * cc.Director.getInstance().getScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
      */
     scheduleSelector:function (selector, target, interval, paused, repeat, delay) {
         cc.Assert(selector, "scheduler.scheduleSelector() Argument selector must be non-NULL");
@@ -651,7 +651,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             for (var i = 0; i < element.timers.length; i++) {
                 timer = element.timers[i];
                 if (selector == timer._selector) {
-                    cc.Log("CCSheduler#scheduleSelector. Selector already scheduled. Updating interval from:"
+                    cc.log("CCSheduler#scheduleSelector. Selector already scheduled. Updating interval from:"
                         + timer.getInterval().toFixed(4) + " to " + interval.toFixed(4));
                     timer._interval = interval;
                     return;
@@ -675,7 +675,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register this object to scheduler
-     * cc.Director.sharedDirector().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
+     * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
         var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);
@@ -710,7 +710,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      * @example
      * //unschedule a selector of target
-     * cc.Director.sharedDirector().getScheduler().unscheduleSelector(selector, this);
+     * cc.Director.getInstance().getScheduler().unscheduleSelector(selector, this);
      */
     unscheduleSelector:function (selector, target) {
         // explicity handle nil arguments when removing an object
@@ -751,7 +751,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {cc.Class} target
      * @example
      * //unschedules the "update" method.
-     * cc.Director.sharedDirector().getScheduler().unscheduleUpdateForTarget(this);
+     * cc.Director.getInstance().getScheduler().unscheduleUpdateForTarget(this);
      */
     unscheduleUpdateForTarget:function (target) {
         if (target == null) {

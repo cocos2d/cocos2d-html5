@@ -85,17 +85,17 @@ var TestCocosNodeDemo = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 32);
         this.addChild(label, 1);
-        label.setPosition(cc.PointMake(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var strSubtitle = this.subtitle();
         if (!strSubtitle == "") {
             var l = cc.LabelTTF.create(strSubtitle, "Thonburi", 16);
             this.addChild(l, 1);
-            l.setPosition(cc.PointMake(s.width / 2, s.height - 80));
+            l.setPosition(cc.p(s.width / 2, s.height - 80));
         }
 
         var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
@@ -105,9 +105,9 @@ var TestCocosNodeDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - 100, 30));
-        item2.setPosition(cc.PointMake(s.width / 2, 30));
-        item3.setPosition(cc.PointMake(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1);
     },
@@ -115,17 +115,17 @@ var TestCocosNodeDemo = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new CocosNodeTestScene();
         s.addChild(restartCocosNodeAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new CocosNodeTestScene();
         s.addChild(nextCocosNodeAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new CocosNodeTestScene();
         s.addChild(backCocosNodeAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     }
 });
 
@@ -133,15 +133,15 @@ var CCNodeTest2 = TestCocosNodeDemo.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var sp1 = cc.Sprite.create(s_pathSister1);
         var sp2 = cc.Sprite.create(s_pathSister2);
         var sp3 = cc.Sprite.create(s_pathSister1);
         var sp4 = cc.Sprite.create(s_pathSister2);
 
-        sp1.setPosition(cc.PointMake(150, s.height / 2));
-        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
+        sp1.setPosition(cc.p(150, s.height / 2));
+        sp2.setPosition(cc.p(s.width - 150, s.height / 2));
         this.addChild(sp1);
         this.addChild(sp2);
 
@@ -158,7 +158,7 @@ var CCNodeTest2 = TestCocosNodeDemo.extend({
         var action2 = cc.RepeatForever.create(cc.Sequence.create(
             a1.copy(), a2.copy(), a2.reverse()));
 
-        sp2.setAnchorPoint(cc.PointMake(0, 0));
+        sp2.setAnchorPoint(cc.p(0, 0));
 
         sp1.runAction(action1);
         sp2.runAction(action2);
@@ -174,9 +174,9 @@ var CCNodeTest4 = TestCocosNodeDemo.extend({
     ctor:function () {
         var sp1 = cc.Sprite.create(s_pathSister1);
         var sp2 = cc.Sprite.create(s_pathSister2);
-        var s = cc.Director.sharedDirector().getWinSize();
-        sp1.setPosition(cc.PointMake(150, s.height / 2));
-        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
+        var s = cc.Director.getInstance().getWinSize();
+        sp1.setPosition(cc.p(150, s.height / 2));
+        sp2.setPosition(cc.p(s.width - 150, s.height / 2));
 
         this.addChild(sp1, 0, 2);
         this.addChild(sp2, 0, 3);
@@ -202,9 +202,9 @@ var CCNodeTest5 = TestCocosNodeDemo.extend({
     ctor:function () {
         var sp1 = cc.Sprite.create(s_pathSister1);
         var sp2 = cc.Sprite.create(s_pathSister2);
-        var s = cc.Director.sharedDirector().getWinSize();
-        sp1.setPosition(cc.PointMake(150, s.height / 2));
-        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
+        var s = cc.Director.getInstance().getWinSize();
+        sp1.setPosition(cc.p(150, s.height / 2));
+        sp2.setPosition(cc.p(s.width - 150, s.height / 2));
 
         var rot = cc.RotateBy.create(2, 360);
         var rot_back = rot.reverse();
@@ -244,9 +244,9 @@ var CCNodeTest6 = TestCocosNodeDemo.extend({
         var sp2 = cc.Sprite.create(s_pathSister2);
         var sp21 = cc.Sprite.create(s_pathSister2);
 
-        var s = cc.Director.sharedDirector().getWinSize();
-        sp1.setPosition(cc.PointMake(150, s.height / 2));
-        sp2.setPosition(cc.PointMake(s.width - 150, s.height / 2));
+        var s = cc.Director.getInstance().getWinSize();
+        sp1.setPosition(cc.p(150, s.height / 2));
+        sp2.setPosition(cc.p(s.width - 150, s.height / 2));
 
         var rot = cc.RotateBy.create(2, 360);
         var rot_back = rot.reverse();
@@ -285,25 +285,25 @@ var CCNodeTest6 = TestCocosNodeDemo.extend({
 
 var StressTest1 = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var sp1 = cc.Sprite.create(s_pathSister1);
         this.addChild(sp1, 0, TAG_SPRITE1);
 
-        sp1.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        sp1.setPosition(cc.p(s.width / 2, s.height / 2));
 
         this.schedule(this.shouldNotCrash, 1.0);
     },
     shouldNotCrash:function (dt) {
         this.unschedule(this.shouldNotCrash);
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // if the node has timers, it crashes
         var explosion = cc.ParticleSun.create();
-        explosion.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
+        explosion.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
 
-        explosion.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        explosion.setPosition(cc.p(s.width / 2, s.height / 2));
 
         this.runAction(cc.Sequence.create(
             cc.RotateBy.create(2, 360),
@@ -322,14 +322,14 @@ var StressTest1 = TestCocosNodeDemo.extend({
 
 var StressTest2 = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var sublayer = cc.Layer.create();
 
         var sp1 = cc.Sprite.create(s_pathSister1);
-        sp1.setPosition(cc.PointMake(80, s.height / 2));
+        sp1.setPosition(cc.p(80, s.height / 2));
 
-        var move = cc.MoveBy.create(3, cc.PointMake(350, 0));
+        var move = cc.MoveBy.create(3, cc.p(350, 0));
         var move_ease_inout3 = cc.EaseInOut.create(move.copy(), 2.0);
         var move_ease_inout_back3 = move_ease_inout3.reverse();
         var seq3 = cc.Sequence.create(move_ease_inout3, move_ease_inout_back3);
@@ -337,8 +337,8 @@ var StressTest2 = TestCocosNodeDemo.extend({
         sublayer.addChild(sp1, 1);
 
         var fire = cc.ParticleFire.create();
-        fire.setTexture(cc.TextureCache.sharedTextureCache().addImage(s_fire));
-        fire.setPosition(cc.PointMake(80, s.height / 2 - 50));
+        fire.setTexture(cc.TextureCache.getInstance().addImage(s_fire));
+        fire.setPosition(cc.p(80, s.height / 2 - 50));
 
         var copy_seq3 = seq3.copy();
 
@@ -389,20 +389,20 @@ var NodeToWorld = TestCocosNodeDemo.extend({
 
         var back = cc.Sprite.create(s_back3);
         this.addChild(back, -10);
-        back.setAnchorPoint(cc.PointMake(0, 0));
+        back.setAnchorPoint(cc.p(0, 0));
         var backSize = back.getContentSize();
 
         var item = cc.MenuItemImage.create(s_playNormal, s_playSelect);
         var menu = cc.Menu.create(item, null);
         menu.alignItemsVertically();
-        menu.setPosition(cc.PointMake(backSize.width / 2, backSize.height / 2));
+        menu.setPosition(cc.p(backSize.width / 2, backSize.height / 2));
         back.addChild(menu);
 
         var rot = cc.RotateBy.create(5, 360);
         var fe = cc.RepeatForever.create(rot);
         item.runAction(fe);
 
-        var move = cc.MoveBy.create(3, cc.PointMake(200, 0));
+        var move = cc.MoveBy.create(3, cc.p(200, 0));
         var move_back = move.reverse();
         var seq = cc.Sequence.create(move, move_back);
         var fe2 = cc.RepeatForever.create(seq);
@@ -415,11 +415,11 @@ var NodeToWorld = TestCocosNodeDemo.extend({
 
 var CameraOrbitTest = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var p = cc.Sprite.create(s_back3);
         this.addChild(p, 0);
-        p.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        p.setPosition(cc.p(s.width / 2, s.height / 2));
         p.setOpacity(128);
 
         // LEFT
@@ -427,7 +427,7 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
         var sprite = cc.Sprite.create(s_pathGrossini);
         sprite.setScale(0.5);
         p.addChild(sprite, 0);
-        sprite.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
+        sprite.setPosition(cc.p(s.width / 4 * 1, s.height / 2));
         var cam = sprite.getCamera();
         var orbit = cc.OrbitCamera.create(2, 1, 0, 0, 360, 0, 0);
         sprite.runAction(cc.RepeatForever.create(orbit));
@@ -436,7 +436,7 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
         sprite = cc.Sprite.create(s_pathGrossini);
         sprite.setScale(1.0);
         p.addChild(sprite, 0);
-        sprite.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
+        sprite.setPosition(cc.p(s.width / 4 * 2, s.height / 2));
         orbit = cc.OrbitCamera.create(2, 1, 0, 0, 360, 45, 0);
         sprite.runAction(cc.RepeatForever.create(orbit));
 
@@ -444,7 +444,7 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
         sprite = cc.Sprite.create(s_pathGrossini);
         sprite.setScale(2.0);
         p.addChild(sprite, 0);
-        sprite.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
+        sprite.setPosition(cc.p(s.width / 4 * 3, s.height / 2));
         var ss = sprite.getContentSize();
         orbit = cc.OrbitCamera.create(2, 1, 0, 0, 360, 90, -45);
         sprite.runAction(cc.RepeatForever.create(orbit));
@@ -457,10 +457,10 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
     },
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {
@@ -471,26 +471,26 @@ var CameraOrbitTest = TestCocosNodeDemo.extend({
 var CameraZoomTest = TestCocosNodeDemo.extend({
     _z:0,
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // LEFT
         var sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite, 0);
-        sprite.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
+        sprite.setPosition(cc.p(s.width / 4 * 1, s.height / 2));
         var cam = sprite.getCamera();
         cam.setEyeXYZ(0, 0, 415);
 
         // CENTER
         sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite, 0, 40);
-        sprite.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
+        sprite.setPosition(cc.p(s.width / 4 * 2, s.height / 2));
 //		cam = [sprite camera);
 //		[cam setEyeX:0 eyeY:0 eyeZ:415/2);
 
         // RIGHT
         sprite = cc.Sprite.create(s_pathGrossini);
         this.addChild(sprite, 0, 20);
-        sprite.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
+        sprite.setPosition(cc.p(s.width / 4 * 3, s.height / 2));
 //		cam = [sprite camera);
 //		[cam setEyeX:0 eyeY:0 eyeZ:-485);
 //		[cam setCenterX:0 centerY:0 centerZ:0);
@@ -512,10 +512,10 @@ var CameraZoomTest = TestCocosNodeDemo.extend({
 
     onEnter:function () {
         this._super();
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_3D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_3D);
     },
     onExit:function () {
-        cc.Director.sharedDirector().setProjection(cc.CCDIRECTOR_PROJECTION_2D);
+        cc.Director.getInstance().setProjection(cc.DIRECTOR_PROJECTION_2D);
         this._super();
     },
     title:function () {
@@ -525,13 +525,13 @@ var CameraZoomTest = TestCocosNodeDemo.extend({
 
 var CameraCenterTest = TestCocosNodeDemo.extend({
     ctor:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         // LEFT-TOP
         var sprite = new cc.Sprite();//.node();
         sprite.init();
         this.addChild(sprite, 0);
-        sprite.setPosition(cc.PointMake(s.width / 5 * 1, s.height / 5 * 1));
+        sprite.setPosition(cc.p(s.width / 5 * 1, s.height / 5 * 1));
         sprite.setColor(cc.RED());
         sprite.setTextureRect(cc.RectMake(0, 0, 120, 50));
         var orbit = cc.OrbitCamera.create(10, 1, 0, 0, 360, 0, 0);
@@ -541,7 +541,7 @@ var CameraCenterTest = TestCocosNodeDemo.extend({
         sprite = new cc.Sprite();//.node();
         sprite.init();
         this.addChild(sprite, 0, 40);
-        sprite.setPosition(cc.PointMake(s.width / 5 * 1, s.height / 5 * 4));
+        sprite.setPosition(cc.p(s.width / 5 * 1, s.height / 5 * 4));
         sprite.setColor(cc.BLUE());
         sprite.setTextureRect(cc.RectMake(0, 0, 120, 50));
         orbit = cc.OrbitCamera.create(10, 1, 0, 0, 360, 0, 0);
@@ -551,7 +551,7 @@ var CameraCenterTest = TestCocosNodeDemo.extend({
         sprite = new cc.Sprite();//.node();
         sprite.init();
         this.addChild(sprite, 0);
-        sprite.setPosition(cc.PointMake(s.width / 5 * 4, s.height / 5 * 1));
+        sprite.setPosition(cc.p(s.width / 5 * 4, s.height / 5 * 1));
         sprite.setColor(cc.YELLOW());
         sprite.setTextureRect(cc.RectMake(0, 0, 120, 50));
         orbit = cc.OrbitCamera.create(10, 1, 0, 0, 360, 0, 0);
@@ -561,7 +561,7 @@ var CameraCenterTest = TestCocosNodeDemo.extend({
         sprite = new cc.Sprite();//.node();
         sprite.init();
         this.addChild(sprite, 0, 40);
-        sprite.setPosition(cc.PointMake(s.width / 5 * 4, s.height / 5 * 4));
+        sprite.setPosition(cc.p(s.width / 5 * 4, s.height / 5 * 4));
         sprite.setColor(cc.GREEN());
         sprite.setTextureRect(cc.RectMake(0, 0, 120, 50));
         orbit = cc.OrbitCamera.create(10, 1, 0, 0, 360, 0, 0);
@@ -571,7 +571,7 @@ var CameraCenterTest = TestCocosNodeDemo.extend({
         sprite = new cc.Sprite();
         sprite.init();
         this.addChild(sprite, 0, 40);
-        sprite.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        sprite.setPosition(cc.p(s.width / 2, s.height / 2));
         sprite.setColor(cc.WHITE());
         sprite.setTextureRect(cc.RectMake(0, 0, 120, 50));
         orbit = cc.OrbitCamera.create(10, 1, 0, 0, 360, 0, 0);
@@ -588,13 +588,13 @@ var CameraCenterTest = TestCocosNodeDemo.extend({
 var ConvertToNode = TestCocosNodeDemo.extend({
     ctor:function () {
         this.setTouchEnabled(true);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var rotate = cc.RotateBy.create(10, 360);
         var action = cc.RepeatForever.create(rotate);
         for (var i = 0; i < 3; i++) {
             var sprite = cc.Sprite.create(s_pathGrossini);
-            sprite.setPosition(cc.ccp(s.width / 4 * (i + 1), s.height / 2));
+            sprite.setPosition(cc.p(s.width / 4 * (i + 1), s.height / 2));
 
             var point = cc.Sprite.create(s_pathR1);
             point.setScale(0.25);
@@ -606,10 +606,10 @@ var ConvertToNode = TestCocosNodeDemo.extend({
                     sprite.setAnchorPoint(cc.PointZero());
                     break;
                 case 1:
-                    sprite.setAnchorPoint(cc.ccp(0.5, 0.5));
+                    sprite.setAnchorPoint(cc.p(0.5, 0.5));
                     break;
                 case 2:
-                    sprite.setAnchorPoint(cc.ccp(1, 1));
+                    sprite.setAnchorPoint(cc.p(1, 1));
                     break;
             }
 
@@ -620,12 +620,12 @@ var ConvertToNode = TestCocosNodeDemo.extend({
             this.addChild(sprite, i);
         }
     },
-    ccTouchesEnded:function (touches, event) {
+    onTouchesEnded:function (touches, event) {
         for (var it = 0; it < touches.length; it++) {
             var touch = touches[it];
-            var location = touch.locationInView();
+            var location = touch.getLocation();
 
-            location = cc.Director.sharedDirector().convertToGL(location);
+            location = cc.Director.getInstance().convertToGL(location);
 
             for (var i = 0; i < 3; i++) {
                 var node = this.getChildByTag(100 + i);
@@ -633,7 +633,7 @@ var ConvertToNode = TestCocosNodeDemo.extend({
                 var p1 = node.convertToNodeSpaceAR(location);
                 var p2 = node.convertToNodeSpace(location);
 
-                cc.Log("AR: x=" + p1.x.toFixed(2) + ", y=" + p1.y.toFixed(2) + " -- Not AR: x=" + p2.x.toFixed(2) + ", y=" + p2.y.toFixed(2));
+                cc.log("AR: x=" + p1.x.toFixed(2) + ", y=" + p1.y.toFixed(2) + " -- Not AR: x=" + p2.x.toFixed(2) + ", y=" + p2.y.toFixed(2));
             }
         }
     },
@@ -652,7 +652,7 @@ var CocosNodeTestScene = TestScene.extend({
         var layer = nextCocosNodeAction();
         this.addChild(layer);
 
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 

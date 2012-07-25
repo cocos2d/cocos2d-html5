@@ -78,11 +78,11 @@ ParallaxDemo = cc.Layer.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         var label = cc.LabelTTF.create(this.title(), "Arial", 28);
         this.addChild(label, 1);
-        label.setPosition(cc.ccp(s.width / 2, s.height - 50));
+        label.setPosition(cc.p(s.width / 2, s.height - 50));
 
         var item1 = cc.MenuItemImage.create(s_pathB1, s_pathB2, this, this.backCallback);
         var item2 = cc.MenuItemImage.create(s_pathR1, s_pathR2, this, this.restartCallback);
@@ -91,9 +91,9 @@ ParallaxDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.ccp(s.width / 2 - 100, 30));
-        item2.setPosition(cc.ccp(s.width / 2, 30));
-        item3.setPosition(cc.ccp(s.width / 2 + 100, 30));
+        item1.setPosition(cc.p(s.width / 2 - 100, 30));
+        item2.setPosition(cc.p(s.width / 2, 30));
+        item3.setPosition(cc.p(s.width / 2 + 100, 30));
 
         this.addChild(menu, 1);
 
@@ -103,20 +103,20 @@ ParallaxDemo = cc.Layer.extend({
         var s = new ParallaxTestScene();
         s.addChild(restartParallaxAction());
 
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
 
     nextCallback:function (sender) {
         var s = new ParallaxTestScene();
         s.addChild(nextParallaxAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
 
     },
 
     backCallback:function (sender) {
         var s = new ParallaxTestScene();
         s.addChild(backParallaxAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     }
 });
 
@@ -133,7 +133,7 @@ Parallax1 = ParallaxDemo.extend({
         // scale the image (optional)
         cocosImage.setScale(0.5);
         // change the transform anchor point to 0,0 (optional)
-        cocosImage.setAnchorPoint(cc.ccp(0, 0));
+        cocosImage.setAnchorPoint(cc.p(0, 0));
 
 
         // Middle layer: a Tile map atlas
@@ -142,7 +142,7 @@ Parallax1 = ParallaxDemo.extend({
 
 
         // change the transform anchor to 0,0 (optional)
-        tilemap.setAnchorPoint(cc.ccp(0, 0));
+        tilemap.setAnchorPoint(cc.p(0, 0));
 
         // Anti Aliased images
         //tilemap.getTexture().setAntiAliasTexParameters();
@@ -153,7 +153,7 @@ Parallax1 = ParallaxDemo.extend({
         // scale the image (optional)
         //background.setScale(1.5);
         // change the transform anchor point (optional)
-        background.setAnchorPoint(cc.ccp(0, 0));
+        background.setAnchorPoint(cc.p(0, 0));
 
 
         // create a void node, a parent node
@@ -162,21 +162,21 @@ Parallax1 = ParallaxDemo.extend({
         // NOW add the 3 layers to the 'void' node
 
         // background image is moved at a ratio of 0.4x, 0.5y
-        voidNode.addChild(background, -1, cc.ccp(0.4, 0.5), cc.PointZero());
+        voidNode.addChild(background, -1, cc.p(0.4, 0.5), cc.PointZero());
 
         // tiles are moved at a ratio of 2.2x, 1.0y
-        voidNode.addChild(tilemap, 1, cc.ccp(2.2, 1.0), cc.ccp(0, 0));
+        voidNode.addChild(tilemap, 1, cc.p(2.2, 1.0), cc.p(0, 0));
 
         // top image is moved at a ratio of 3.0x, 2.5y
-        voidNode.addChild(cocosImage, 2, cc.ccp(3.0, 2.5), cc.ccp(0, 0));
+        voidNode.addChild(cocosImage, 2, cc.p(3.0, 2.5), cc.p(0, 0));
 
 
         // now create some actions that will move the 'void' node
         // and the children of the 'void' node will move at different
         // speed, thus, simulation the 3D environment
-        var goUp = cc.MoveBy.create(4, cc.ccp(0, 100));
+        var goUp = cc.MoveBy.create(4, cc.p(0, 100));
         var goDown = goUp.reverse();
-        var go = cc.MoveBy.create(8, cc.ccp(200, 0));
+        var go = cc.MoveBy.create(8, cc.p(200, 0));
         var goBack = go.reverse();
         var seq = cc.Sequence.create(goUp, go, goDown, goBack, null);
         voidNode.runAction((cc.RepeatForever.create(seq) ));
@@ -204,7 +204,7 @@ Parallax2 = ParallaxDemo.extend({
         // scale the image (optional)
         cocosImage.setScale(0.5);
         // change the transform anchor point to 0,0 (optional)
-        cocosImage.setAnchorPoint(cc.ccp(0, 0));
+        cocosImage.setAnchorPoint(cc.p(0, 0));
 
 
         // Middle layer: a Tile map atlas
@@ -212,7 +212,7 @@ Parallax2 = ParallaxDemo.extend({
         var tilemap = cc.TMXTiledMap.create("res/TileMaps/orthogonal-test2.tmx");
 
         // change the transform anchor to 0,0 (optional)
-        tilemap.setAnchorPoint(cc.ccp(0, 0));
+        tilemap.setAnchorPoint(cc.p(0, 0));
 
         // Anti Aliased images
         //tilemap.getTexture().setAntiAliasTexParameters();
@@ -223,7 +223,7 @@ Parallax2 = ParallaxDemo.extend({
         // scale the image (optional)
         //background.setScale(1.5);
         // change the transform anchor point (optional)
-        background.setAnchorPoint(cc.ccp(0, 0));
+        background.setAnchorPoint(cc.p(0, 0));
 
 
         // create a void node, a parent node
@@ -232,53 +232,28 @@ Parallax2 = ParallaxDemo.extend({
         // NOW add the 3 layers to the 'void' node
 
         // background image is moved at a ratio of 0.4x, 0.5y
-        voidNode.addChild(background, -1, cc.ccp(0.4, 0.5), cc.PointZero());
+        voidNode.addChild(background, -1, cc.p(0.4, 0.5), cc.PointZero());
 
         // tiles are moved at a ratio of 1.0, 1.0y
-        voidNode.addChild(tilemap, 1, cc.ccp(1.0, 1.0), cc.ccp(0, 0));
+        voidNode.addChild(tilemap, 1, cc.p(1.0, 1.0), cc.p(0, 0));
 
         // top image is moved at a ratio of 3.0x, 2.5y
-        voidNode.addChild(cocosImage, 2, cc.ccp(3.0, 2.5), cc.ccp(0, 0));
+        voidNode.addChild(cocosImage, 2, cc.p(3.0, 2.5), cc.p(0, 0));
         this.addChild(voidNode, 0, TAG_NODE);
 
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.sharedDirector().getTouchDispatcher().addTargetedDelegate(this, 0, true);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true);
     },
-    ccTouchBegan:function (touch, event) {
+    onTouchBegan:function (touch, event) {
         return true;
     },
-    ccTouchEnded:function (touch, event) {
-        this._prevLocation = null;
-    },
-    ccTouchCancelled:function (touch, event) {
 
-    },
-
-    _prevLocation:null,
-
-    ccTouchMoved:function (touch, event) {
-
-        if (this._prevLocation == null) {
-            this._prevLocation = touch.locationInView();
-            return;
-        }
-
-        var touchLocation = touch.locationInView();
-        //var prevLocation = touch.previousLocationInView();
-
-        //touchLocation = cc.Director.sharedDirector().convertToGL(touchLocation);
-        //prevLocation = cc.PointZero()//cc.Director.sharedDirector().convertToGL(prevLocation);
-
-        var diff = cc.ccpSub(touchLocation, this._prevLocation);
-
-        this._prevLocation = cc.ccp(touchLocation.x, touchLocation.y);
-
-
+    onTouchMoved:function (touch, event) {
         var node = this.getChildByTag(TAG_NODE);
         var currentPos = node.getPosition();
-        node.setPosition(cc.ccpAdd(currentPos, diff));
+        node.setPosition(cc.pAdd(currentPos, touch.getDelta() ));
     },
 
     title:function () {
@@ -294,6 +269,6 @@ ParallaxTestScene = TestScene.extend({
         var layer = nextParallaxAction();
 
         this.addChild(layer);
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });

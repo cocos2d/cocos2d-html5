@@ -157,7 +157,7 @@ var ActionsTestScene = TestScene.extend({
     runThisTest:function () {
         actionIdx = -1;
         this.addChild(NextAction());
-        cc.Director.sharedDirector().replaceScene(this);
+        cc.Director.getInstance().replaceScene(this);
     }
 });
 
@@ -167,7 +167,7 @@ var ActionsDemo = cc.Layer.extend({
     _tamara:null,
     kathia:null,
     centerSprites:function (numberOfSprites) {
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         if (numberOfSprites == 0) {
             this._tamara.setVisible(false);
@@ -176,36 +176,36 @@ var ActionsDemo = cc.Layer.extend({
         } else if (numberOfSprites == 1) {
             this._tamara.setVisible(false);
             this._kathia.setVisible(false);
-            this._grossini.setPosition(cc.PointMake(winSize.width / 2, winSize.height / 2));
+            this._grossini.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
         }
         else if (numberOfSprites == 2) {
-            this._kathia.setPosition(cc.PointMake(winSize.width / 3, winSize.height / 2));
-            this._tamara.setPosition(cc.PointMake(2 * winSize.width / 3, winSize.height / 2));
+            this._kathia.setPosition(cc.p(winSize.width / 3, winSize.height / 2));
+            this._tamara.setPosition(cc.p(2 * winSize.width / 3, winSize.height / 2));
             this._grossini.setVisible(false);
         }
         else if (numberOfSprites == 3) {
-            this._grossini.setPosition(cc.PointMake(winSize.width / 2, winSize.height / 2));
-            this._tamara.setPosition(cc.PointMake(winSize.width / 4, winSize.height / 2));
-            this._kathia.setPosition(cc.PointMake(3 * winSize.width / 4, winSize.height / 2));
+            this._grossini.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
+            this._tamara.setPosition(cc.p(winSize.width / 4, winSize.height / 2));
+            this._kathia.setPosition(cc.p(3 * winSize.width / 4, winSize.height / 2));
         }
     },
     alignSpritesLeft:function (numberOfSprites) {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         if (numberOfSprites == 1) {
             this._tamara.setVisible(false);
             this._kathia.setVisible(false);
-            this._grossini.setPosition(cc.PointMake(60, s.height / 2));
+            this._grossini.setPosition(cc.p(60, s.height / 2));
         }
         else if (numberOfSprites == 2) {
-            this._kathia.setPosition(cc.PointMake(60, s.height / 3));
-            this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
+            this._kathia.setPosition(cc.p(60, s.height / 3));
+            this._tamara.setPosition(cc.p(60, 2 * s.height / 3));
             this._grossini.setVisible(false);
         }
         else if (numberOfSprites == 3) {
-            this._grossini.setPosition(cc.PointMake(60, s.height / 2));
-            this._tamara.setPosition(cc.PointMake(60, 2 * s.height / 3));
-            this._kathia.setPosition(cc.PointMake(60, s.height / 3));
+            this._grossini.setPosition(cc.p(60, s.height / 2));
+            this._tamara.setPosition(cc.p(60, 2 * s.height / 3));
+            this._kathia.setPosition(cc.p(60, s.height / 3));
         }
     },
     title:function () {
@@ -217,17 +217,17 @@ var ActionsDemo = cc.Layer.extend({
     restartCallback:function (sender) {
         var s = new ActionsTestScene();
         s.addChild(RestartAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     nextCallback:function (sender) {
         var s = new ActionsTestScene();
         s.addChild(NextAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     backCallback:function (sender) {
         var s = new ActionsTestScene();
         s.addChild(BackAction());
-        cc.Director.sharedDirector().replaceScene(s);
+        cc.Director.getInstance().replaceScene(s);
     },
     onEnter:function () {
         this._super();
@@ -237,22 +237,22 @@ var ActionsDemo = cc.Layer.extend({
         this.addChild(this._grossini, 1);
         this.addChild(this._tamara, 2);
         this.addChild(this._kathia, 3);
-        var s = cc.Director.sharedDirector().getWinSize();
-        this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 3));
-        this._tamara.setPosition(cc.PointMake(s.width / 2, 2 * s.height / 3));
-        this._kathia.setPosition(cc.PointMake(s.width / 2, s.height / 2));
+        var s = cc.Director.getInstance().getWinSize();
+        this._grossini.setPosition(cc.p(s.width / 2, s.height / 3));
+        this._tamara.setPosition(cc.p(s.width / 2, 2 * s.height / 3));
+        this._kathia.setPosition(cc.p(s.width / 2, s.height / 2));
 
         // add title and subtitle
         var title = this.title();
         var label = cc.LabelTTF.create(title, "Arial", 18);
         this.addChild(label, 1);
-        label.setPosition(cc.PointMake(s.width / 2, s.height - 30));
+        label.setPosition(cc.p(s.width / 2, s.height - 30));
 
         var strSubtitle = this.subtitle();
         if (strSubtitle) {
             var l = cc.LabelTTF.create(strSubtitle, "Thonburi", 22);
             this.addChild(l, 1);
-            l.setPosition(cc.PointMake(s.width / 2, s.height - 60));
+            l.setPosition(cc.p(s.width / 2, s.height - 60));
         }
 
         // add menu
@@ -263,9 +263,9 @@ var ActionsDemo = cc.Layer.extend({
         var menu = cc.Menu.create(item1, item2, item3, null);
 
         menu.setPosition(cc.PointZero());
-        item1.setPosition(cc.PointMake(s.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
-        item2.setPosition(cc.PointMake(s.width / 2, item2.getContentSize().height / 2));
-        item3.setPosition(cc.PointMake(s.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item1.setPosition(cc.p(s.width / 2 - item2.getContentSize().width * 2, item2.getContentSize().height / 2));
+        item2.setPosition(cc.p(s.width / 2, item2.getContentSize().height / 2));
+        item3.setPosition(cc.p(s.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
     }
@@ -280,19 +280,19 @@ var ActionManual = ActionsDemo.extend({
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         this._tamara.setScaleX(2.5);
         //window.tam = this._tamara;
         this._tamara.setScaleY(-1.0);
-        this._tamara.setPosition(cc.PointMake(100, 70));
+        this._tamara.setPosition(cc.p(100, 70));
         this._tamara.setOpacity(128);
 
         this._grossini.setRotation(120);
-        this._grossini.setPosition(cc.PointMake(s.width / 2, s.height / 2));
-        this._grossini.setColor(cc.ccc3(255, 0, 0));
+        this._grossini.setPosition(cc.p(s.width / 2, s.height / 2));
+        this._grossini.setColor(cc.c3(255, 0, 0));
 
-        this._kathia.setPosition(cc.PointMake(s.width - 100, s.height / 2));
+        this._kathia.setPosition(cc.p(s.width - 100, s.height / 2));
         this._kathia.setColor(cc.BLUE());
     },
     subtitle:function () {
@@ -311,16 +311,16 @@ var ActionMove = ActionsDemo.extend({
         this._super();
 
         this.centerSprites(3);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
-        var actionTo = cc.MoveTo.create(2, cc.PointMake(s.width - 40, s.height - 40));
+        var actionTo = cc.MoveTo.create(2, cc.p(s.width - 40, s.height - 40));
 
-        var actionBy = cc.MoveBy.create(2, cc.PointMake(80, 80));
+        var actionBy = cc.MoveBy.create(2, cc.p(80, 80));
         var actionByBack = actionBy.reverse();
 
         this._tamara.runAction(actionTo);
         this._grossini.runAction(cc.Sequence.create(actionBy, actionByBack));
-        this._kathia.runAction(cc.MoveTo.create(1, cc.PointMake(40, 40)));
+        this._kathia.runAction(cc.MoveTo.create(1, cc.p(40, 40)));
     },
     subtitle:function () {
         return "MoveTo / MoveBy";
@@ -383,26 +383,26 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         this._grossini.removeFromParentAndCleanup(true);
         this._kathia.removeFromParentAndCleanup(true);
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var boxSize = cc.SizeMake(100.0, 100.0);
-        var box = cc.LayerColor.create(cc.ccc4(255, 255, 0, 255));
-        box.setAnchorPoint(cc.ccp(0, 0));
-        box.setPosition(new cc.Point((winSize.width - boxSize.width) / 2, (winSize.height - boxSize.height) / 2));
+        var box = cc.LayerColor.create(cc.c4(255, 255, 0, 255));
+        box.setAnchorPoint(cc.p(0, 0));
+        box.setPosition(cc.p((winSize.width - boxSize.width) / 2, (winSize.height - boxSize.height) / 2));
         box.setContentSize(boxSize);
 
         var markrside = 10.0;
-        var uL = cc.LayerColor.create(cc.ccc4(255, 0, 0, 255));
+        var uL = cc.LayerColor.create(cc.c4(255, 0, 0, 255));
         box.addChild(uL);
         uL.setContentSize(cc.SizeMake(markrside, markrside));
-        uL.setPosition(cc.ccp(0, boxSize.height - markrside));
-        uL.setAnchorPoint(cc.ccp(0, 0));
+        uL.setPosition(cc.p(0, boxSize.height - markrside));
+        uL.setAnchorPoint(cc.p(0, 0));
 
-        var uR = cc.LayerColor.create(cc.ccc4(0, 0, 255, 255));
+        var uR = cc.LayerColor.create(cc.c4(0, 0, 255, 255));
         box.addChild(uR);
         uR.setContentSize(cc.SizeMake(markrside, markrside));
-        uR.setPosition(cc.ccp(boxSize.width - markrside, boxSize.height - markrside));
-        uR.setAnchorPoint(cc.ccp(0, 0));
+        uR.setPosition(cc.p(boxSize.width - markrside, boxSize.height - markrside));
+        uR.setAnchorPoint(cc.p(0, 0));
 
 
         this.addChild(box);
@@ -460,9 +460,9 @@ var ActionJump = ActionsDemo.extend({
         this._super();
         this.centerSprites(3);
 
-        var actionTo = cc.JumpTo.create(2, cc.PointMake(300, 300), 50, 4);
-        var actionBy = cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4);
-        var actionUp = cc.JumpBy.create(2, cc.PointMake(0, 0), 80, 4);
+        var actionTo = cc.JumpTo.create(2, cc.p(300, 300), 50, 4);
+        var actionBy = cc.JumpBy.create(2, cc.p(300, 0), 50, 4);
+        var actionUp = cc.JumpBy.create(2, cc.p(0, 0), 80, 4);
         var actionByBack = actionBy.reverse();
 
         this._tamara.runAction(actionTo);
@@ -482,7 +482,7 @@ var ActionJump = ActionsDemo.extend({
 var ActionBezier = ActionsDemo.extend({
     onEnter:function () {
         this._super();
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         //
         // startPosition can be any coordinate, but since the movement
@@ -493,24 +493,24 @@ var ActionBezier = ActionsDemo.extend({
 
         // sprite 1
         var bezier = new cc.BezierConfig();
-        bezier.controlPoint_1 = cc.PointMake(0, s.height / 2);
-        bezier.controlPoint_2 = cc.PointMake(300, -s.height / 2);
-        bezier.endPosition = cc.PointMake(300, 100);
+        bezier.controlPoint_1 = cc.p(0, s.height / 2);
+        bezier.controlPoint_2 = cc.p(300, -s.height / 2);
+        bezier.endPosition = cc.p(300, 100);
 
         var bezierForward = cc.BezierBy.create(3, bezier);
         var rep = cc.RepeatForever.create(cc.Sequence.create(bezierForward, bezierForward.reverse()));
 
         // sprite 2
-        this._tamara.setPosition(cc.PointMake(80, 160));
+        this._tamara.setPosition(cc.p(80, 160));
         var bezier2 = new cc.BezierConfig();
-        bezier2.controlPoint_1 = cc.PointMake(100, s.height / 2);
-        bezier2.controlPoint_2 = cc.PointMake(200, -s.height / 2);
-        bezier2.endPosition = cc.PointMake(240, 160);
+        bezier2.controlPoint_1 = cc.p(100, s.height / 2);
+        bezier2.controlPoint_2 = cc.p(200, -s.height / 2);
+        bezier2.endPosition = cc.p(240, 160);
 
         var bezierTo1 = cc.BezierTo.create(2, bezier2);
 
         // sprite 3
-        this._kathia.setPosition(cc.PointMake(400, 160));
+        this._kathia.setPosition(cc.p(400, 160));
         var bezierTo2 = cc.BezierTo.create(2, bezier2);
 
         this._grossini.runAction(rep);
@@ -619,7 +619,7 @@ var ActionAnimate = ActionsDemo.extend({
         // File animation
         //
         // With 2 loops and reverse
-        var animCache = cc.AnimationCache.sharedAnimationCache();
+        var animCache = cc.AnimationCache.getInstance();
 
         animCache.addAnimationsWithFile(s_animations2Plist);
         var animation2 = animCache.animationByName("dance_1");
@@ -657,7 +657,7 @@ var ActionSequence = ActionsDemo.extend({
         this.alignSpritesLeft(1);
 
         var action = cc.Sequence.create(
-            cc.MoveBy.create(2, cc.PointMake(240, 0)),
+            cc.MoveBy.create(2, cc.p(240, 0)),
             cc.RotateBy.create(2, 540),
             null);
 
@@ -679,9 +679,9 @@ var ActionSequence2 = ActionsDemo.extend({
         this.centerSprites(1);
         this._grossini.setVisible(false);
         var action = cc.Sequence.create(
-            cc.Place.create(cc.PointMake(200, 200)),
+            cc.Place.create(cc.p(200, 200)),
             cc.Show.create(),
-            cc.MoveBy.create(1, cc.PointMake(100, 0)),
+            cc.MoveBy.create(1, cc.p(100, 0)),
             cc.CallFunc.create(this, this.callback1),
             cc.CallFunc.create(this, this.callback2),
             cc.CallFunc.create(this, this.callback3),
@@ -690,23 +690,23 @@ var ActionSequence2 = ActionsDemo.extend({
 
     },
     callback1:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 1, s.height / 2));
 
         this.addChild(label);
     },
     callback2:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
     },
     callback3:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 3, s.height / 2));
 
         this.addChild(label);
     },
@@ -725,7 +725,7 @@ var ActionCallFunc = ActionsDemo.extend({
         this.centerSprites(3);
 
         var action = cc.Sequence.create(
-            cc.MoveBy.create(2, cc.PointMake(200, 0)),
+            cc.MoveBy.create(2, cc.p(200, 0)),
             cc.CallFunc.create(this, this.callback1)
         );
 
@@ -747,22 +747,22 @@ var ActionCallFunc = ActionsDemo.extend({
 
     },
     callback1:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 1 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 1, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 1, s.height / 2));
         this.addChild(label);
     },
     callback2:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 2 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 2, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 2, s.height / 2));
 
         this.addChild(label);
     },
     callback3:function () {
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
         var label = cc.LabelTTF.create("callback 3 called", "Marker Felt", 16);
-        label.setPosition(cc.PointMake(s.width / 4 * 3, s.height / 2));
+        label.setPosition(cc.p(s.width / 4 * 3, s.height / 2));
         this.addChild(label);
     },
     subtitle:function () {
@@ -779,7 +779,7 @@ var ActionCallFuncND = ActionsDemo.extend({
         this._super();
         this.centerSprites(1);
 
-        var action = cc.Sequence.create(cc.MoveBy.create(2.0, cc.ccp(200, 0)),
+        var action = cc.Sequence.create(cc.MoveBy.create(2.0, cc.p(200, 0)),
             cc.CallFunc.create(this._grossini, this.removeFromParentAndCleanup, true));
 
         this._grossini.runAction(action);
@@ -807,7 +807,7 @@ var ActionSpawn = ActionsDemo.extend({
         this.alignSpritesLeft(1);
 
         var action = cc.Spawn.create(
-            cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4),
+            cc.JumpBy.create(2, cc.p(300, 0), 50, 4),
             cc.RotateBy.create(2, 720),
             null);
 
@@ -902,7 +902,7 @@ var ActionReverse = ActionsDemo.extend({
         this._super();
         this.alignSpritesLeft(1);
 
-        var jump = cc.JumpBy.create(2, cc.PointMake(300, 0), 50, 4);
+        var jump = cc.JumpBy.create(2, cc.p(300, 0), 50, 4);
         var action = cc.Sequence.create(jump, jump.reverse(), null);
 
         this._grossini.runAction(action);
@@ -921,7 +921,7 @@ var ActionDelayTime = ActionsDemo.extend({
         this._super();
         this.alignSpritesLeft(1);
 
-        var move = cc.MoveBy.create(1, cc.PointMake(150, 0));
+        var move = cc.MoveBy.create(1, cc.p(150, 0));
         var action = cc.Sequence.create(move, cc.DelayTime.create(2), move, null);
 
         this._grossini.runAction(action);
@@ -940,8 +940,8 @@ var ActionReverseSequence = ActionsDemo.extend({
         this._super();
         this.alignSpritesLeft(1);
 
-        var move1 = cc.MoveBy.create(1, cc.PointMake(250, 0));
-        var move2 = cc.MoveBy.create(1, cc.PointMake(0, 50));
+        var move1 = cc.MoveBy.create(1, cc.p(250, 0));
+        var move2 = cc.MoveBy.create(1, cc.p(0, 50));
         var seq = cc.Sequence.create(move1, move2, move1.reverse(), null);
         var action = cc.Sequence.create(seq, seq.reverse(), null);
 
@@ -965,8 +965,8 @@ var ActionReverseSequence2 = ActionsDemo.extend({
 
         // Test:
         //   Sequence should work both with IntervalAction and InstantActions
-        var move1 = cc.MoveBy.create(3, cc.PointMake(250, 0));
-        var move2 = cc.MoveBy.create(3, cc.PointMake(0, 50));
+        var move1 = cc.MoveBy.create(3, cc.p(250, 0));
+        var move2 = cc.MoveBy.create(3, cc.p(0, 50));
         var tog1 = new cc.ToggleVisibility();
         var tog2 = new cc.ToggleVisibility();
         var seq = cc.Sequence.create(move1, tog1, move2, tog2, move1.reverse());
@@ -979,8 +979,8 @@ var ActionReverseSequence2 = ActionsDemo.extend({
         //   Also test that the reverse of Hide is Show, and vice-versa
         this._kathia.runAction(action);
 
-        var move_tamara = cc.MoveBy.create(1, cc.PointMake(100, 0));
-        var move_tamara2 = cc.MoveBy.create(1, cc.PointMake(50, 0));
+        var move_tamara = cc.MoveBy.create(1, cc.p(100, 0));
+        var move_tamara2 = cc.MoveBy.create(1, cc.p(50, 0));
         var hide = new cc.Hide();
         var seq_tamara = cc.Sequence.create(move_tamara, hide, move_tamara2);
         var seq_back = seq_tamara.reverse();
@@ -1001,9 +1001,9 @@ var ActionRepeat = ActionsDemo.extend({
         this.alignSpritesLeft(2);
 
 
-        var a1 = cc.MoveBy.create(1, cc.PointMake(150, 0));
+        var a1 = cc.MoveBy.create(1, cc.p(150, 0));
         var action1 = cc.Repeat.create(
-            cc.Sequence.create(cc.Place.create(cc.PointMake(60, 60)), a1, null),
+            cc.Sequence.create(cc.Place.create(cc.p(60, 60)), a1, null),
             3);
         var action2 = cc.RepeatForever.create(
             (cc.Sequence.create((a1.copy()), a1.reverse(), null))
@@ -1048,7 +1048,7 @@ var ActionOrbit = ActionsDemo.extend({
         this._tamara.runAction(cc.RepeatForever.create(action2));
         this._grossini.runAction(cc.RepeatForever.create(action3));
 
-        var move = cc.MoveBy.create(3, cc.PointMake(100, -100));
+        var move = cc.MoveBy.create(3, cc.p(100, -100));
         var move_back = move.reverse();
         var seq = cc.Sequence.create(move, move_back, null);
         var rfe = cc.RepeatForever.create(seq);
@@ -1070,10 +1070,10 @@ var ActionFollow = ActionsDemo.extend({
     onEnter:function () {
         this._super();
         this.centerSprites(1);
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
-        this._grossini.setPosition(cc.PointMake(-200, s.height / 2));
-        var move = cc.MoveBy.create(2, cc.PointMake(s.width * 3, 0));
+        this._grossini.setPosition(cc.p(-200, s.height / 2));
+        var move = cc.MoveBy.create(2, cc.p(s.width * 3, 0));
         var move_back = move.reverse();
         var seq = cc.Sequence.create(move, move_back, null);
         var rep = cc.RepeatForever.create(seq);
@@ -1103,15 +1103,15 @@ var ActionCardinalSpline = ActionsDemo.extend({
 
         this.centerSprites(2);
 
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         var array = cc.PointArray.create();
 
-        array.addControlPoint(new cc.Point(0, 0));
-        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, 0));
-        array.addControlPoint(new cc.Point(winSize.width / 2 - 30, winSize.height - 80));
-        array.addControlPoint(new cc.Point(0, winSize.height - 80));
-        array.addControlPoint(new cc.Point(0, 0));
+        array.addControlPoint(cc.p(0, 0));
+        array.addControlPoint(cc.p(winSize.width / 2 - 30, 0));
+        array.addControlPoint(cc.p(winSize.width / 2 - 30, winSize.height - 80));
+        array.addControlPoint(cc.p(0, winSize.height - 80));
+        array.addControlPoint(cc.p(0, 0));
 
         //
         // sprite 1 (By)
@@ -1122,7 +1122,7 @@ var ActionCardinalSpline = ActionsDemo.extend({
         var reverse1 = action1.reverse();
         var seq = cc.Sequence.create(action1, reverse1);
 
-        this._tamara.setPosition(new cc.Point(50, 50));
+        this._tamara.setPosition(cc.p(50, 50));
         this._tamara.runAction(seq);
 
         //
@@ -1134,7 +1134,7 @@ var ActionCardinalSpline = ActionsDemo.extend({
         var reverse2 = action2.reverse();
         var seq2 = cc.Sequence.create(action2, reverse2);
 
-        this._kathia.setPosition(new cc.Point(winSize.width / 2, 50));
+        this._kathia.setPosition(cc.p(winSize.width / 2, 50));
         this._kathia.runAction(seq2);
 
         this._array = array;
@@ -1150,7 +1150,7 @@ var ActionCardinalSpline = ActionsDemo.extend({
         cc.drawingUtil.drawCardinalSpline(this._array, 0, 100);
         context.restore();
 
-        var s = cc.Director.sharedDirector().getWinSize();
+        var s = cc.Director.getInstance().getWinSize();
 
         context.save();
         context.translate(s.width / 2, -50);
@@ -1182,7 +1182,7 @@ var ActionCatmullRom = ActionsDemo.extend({
         this._super();
 
         this.centerSprites(2);
-        var winSize = cc.Director.sharedDirector().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         //
         // sprite 1 (By)
@@ -1190,16 +1190,16 @@ var ActionCatmullRom = ActionsDemo.extend({
         // startPosition can be any coordinate, but since the movement
         // is relative to the Catmull Rom curve, it is better to start with (0,0).
         //
-        this._tamara.setPosition(new cc.Point(50, 50));
+        this._tamara.setPosition(cc.p(50, 50));
 
         var array = cc.PointArray.create();
-        array.addControlPoint(new cc.Point(0, 0));
-        array.addControlPoint(new cc.Point(80, 80));
-        array.addControlPoint(new cc.Point(winSize.width - 80, 80));
-        array.addControlPoint(new cc.Point(winSize.width - 80, winSize.height - 80));
-        array.addControlPoint(new cc.Point(80, winSize.height - 80));
-        array.addControlPoint(new cc.Point(80, 80));
-        array.addControlPoint(new cc.Point(winSize.width / 2, winSize.height / 2));
+        array.addControlPoint(cc.p(0, 0));
+        array.addControlPoint(cc.p(80, 80));
+        array.addControlPoint(cc.p(winSize.width - 80, 80));
+        array.addControlPoint(cc.p(winSize.width - 80, winSize.height - 80));
+        array.addControlPoint(cc.p(80, winSize.height - 80));
+        array.addControlPoint(cc.p(80, 80));
+        array.addControlPoint(cc.p(winSize.width / 2, winSize.height / 2));
 
         var action1 = cc.CatmullRomBy.create(3, array);
         var reverse1 = action1.reverse();
@@ -1215,11 +1215,11 @@ var ActionCatmullRom = ActionsDemo.extend({
         //
         var array2 = cc.PointArray.create();
 
-        array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
-        array2.addControlPoint(new cc.Point(winSize.width - 80, 30));
-        array2.addControlPoint(new cc.Point(winSize.width - 80, winSize.height - 80));
-        array2.addControlPoint(new cc.Point(winSize.width / 2, winSize.height - 80));
-        array2.addControlPoint(new cc.Point(winSize.width / 2, 30));
+        array2.addControlPoint(cc.p(winSize.width / 2, 30));
+        array2.addControlPoint(cc.p(winSize.width - 80, 30));
+        array2.addControlPoint(cc.p(winSize.width - 80, winSize.height - 80));
+        array2.addControlPoint(cc.p(winSize.width / 2, winSize.height - 80));
+        array2.addControlPoint(cc.p(winSize.width / 2, 30));
 
         var action2 = cc.CatmullRomTo.create(3, array2);
         var reverse2 = action2.reverse();
@@ -1292,12 +1292,12 @@ var PauseResumeActions = ActionsDemo.extend({
     },
 
     pause:function () {
-        cc.Log("Pausing");
-        this._pausedTargets = cc.Director.sharedDirector().getActionManager().pauseAllRunningActions();
+        cc.log("Pausing");
+        this._pausedTargets = cc.Director.getInstance().getActionManager().pauseAllRunningActions();
     },
     resume:function () {
-        cc.Log("Resuming");
-        cc.Director.sharedDirector().getActionManager().resumeTargets(this._pausedTargets);
+        cc.log("Resuming");
+        cc.Director.getInstance().getActionManager().resumeTargets(this._pausedTargets);
     },
 
     title:function () {
@@ -1328,10 +1328,10 @@ var Issue1305 = ActionsDemo.extend({
         this._super();
     },
     log:function (pSender) {
-        cc.Log("This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
+        cc.log("This message SHALL ONLY appear when the sprite is added to the scene, NOT BEFORE");
     },
     addSprite:function (dt) {
-        this._spriteTmp.setPosition(cc.ccp(250, 250));
+        this._spriteTmp.setPosition(cc.p(250, 250));
         this.addChild(this._spriteTmp);
     },
     title:function () {
@@ -1348,35 +1348,35 @@ var Issue1305_2 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(200, 200));
+        spr.setPosition(cc.p(200, 200));
         this.addChild(spr);
 
-        var act1 = cc.MoveBy.create(2, cc.ccp(0, 100));
+        var act1 = cc.MoveBy.create(2, cc.p(0, 100));
 
         var act2 = cc.CallFunc.create(this, this.log1);
-        var act3 = cc.MoveBy.create(2, cc.ccp(0, -100));
+        var act3 = cc.MoveBy.create(2, cc.p(0, -100));
         var act4 = cc.CallFunc.create(this, this.log2);
-        var act5 = cc.MoveBy.create(2, cc.ccp(100, -100));
+        var act5 = cc.MoveBy.create(2, cc.p(100, -100));
         var act6 = cc.CallFunc.create(this, this.log3);
-        var act7 = cc.MoveBy.create(2, cc.ccp(-100, 0));
+        var act7 = cc.MoveBy.create(2, cc.p(-100, 0));
         var act8 = cc.CallFunc.create(this, this.log4);
 
         var actF = cc.Sequence.create(act1, act2, act3, act4, act5, act6, act7, act8);
 
         //    [spr runAction:actF];
-        cc.Director.sharedDirector().getActionManager().addAction(actF, spr, false);
+        cc.Director.getInstance().getActionManager().addAction(actF, spr, false);
     },
     log1:function () {
-        cc.Log("1st block");
+        cc.log("1st block");
     },
     log2:function () {
-        cc.Log("2nd block");
+        cc.log("2nd block");
     },
     log3:function () {
-        cc.Log("3rd block");
+        cc.log("3rd block");
     },
     log4:function () {
-        cc.Log("4th block");
+        cc.log("4th block");
     },
     title:function () {
         return "Issue 1305 #2";
@@ -1392,10 +1392,10 @@ var Issue1288 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(100, 100));
+        spr.setPosition(cc.p(100, 100));
         this.addChild(spr);
 
-        var act1 = cc.MoveBy.create(0.5, cc.ccp(100, 0));
+        var act1 = cc.MoveBy.create(0.5, cc.p(100, 0));
         var act2 = act1.reverse();
         var act3 = cc.Sequence.create(act1, act2);
         var act4 = cc.Repeat.create(act3, 2);
@@ -1416,10 +1416,10 @@ var Issue1288_2 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(100, 100));
+        spr.setPosition(cc.p(100, 100));
         this.addChild(spr);
 
-        var act1 = cc.MoveBy.create(0.5, cc.ccp(100, 0));
+        var act1 = cc.MoveBy.create(0.5, cc.p(100, 0));
         spr.runAction(cc.Repeat.create(act1, 1));
     },
     title:function () {
@@ -1436,7 +1436,7 @@ var Issue1327 = ActionsDemo.extend({
         this.centerSprites(0);
 
         var spr = cc.Sprite.create(s_pathGrossini);
-        spr.setPosition(cc.ccp(100, 100));
+        spr.setPosition(cc.p(100, 100));
         this.addChild(spr);
 
         var act1 = cc.CallFunc.create(this, this.logSprRotation);
@@ -1453,7 +1453,7 @@ var Issue1327 = ActionsDemo.extend({
         spr.runAction(actF);
     },
     logSprRotation:function (pSender) {
-        cc.Log(pSender.getRotation());
+        cc.log(pSender.getRotation());
     },
     title:function () {
         return "Issue 1327";

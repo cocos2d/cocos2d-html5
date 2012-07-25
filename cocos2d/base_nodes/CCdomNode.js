@@ -73,7 +73,7 @@ cc.CSS3 = {};
 cc.domNodeMethods = {
     //update the transform css, including translate, rotation, skew, scale
     _updateTransform:function () {
-        //var height = (this.dom.node.getParent()) ? this.dom.node.getParent().getContentSize().height : cc.Director.sharedDirector().getWinSize().height;
+        //var height = (this.dom.node.getParent()) ? this.dom.node.getParent().getContentSize().height : cc.Director.getInstance().getWinSize().height;
         var css = (cc.CSS3.hd) ? "translate3d(" : "translate(";
         css += this.getPositionX();
         css += "px, ";
@@ -216,7 +216,7 @@ cc.domNode = cc.Class.extend({
         this._AnchorPoint = {x:0.5, y:0.5};
         this.dom.id = "DomNode" + Date.now();
         this.dom.className = " DomNode";
-        this.setContentSize(cc.Director.sharedDirector().getWinSize());
+        this.setContentSize(cc.Director.getInstance().getWinSize());
         this._updateTransform();
     },
     id:function (id) {
@@ -248,11 +248,11 @@ cc.domNode = cc.Class.extend({
         return this._scaleY;
     },
     getPosition:function () {
-        //return cc.PointMake(this._pos.x, this._pos.y);
+        //return cc.p(this._pos.x, this._pos.y);
         if (this._pos.x == 0) {
             //throw "sadasd"
         }
-        return new cc.Point(this._pos.x, this._pos.y);
+        return cc.p(this._pos.x, this._pos.y);
     },
     getPositionX:function () {
         return this._pos.x;
@@ -267,7 +267,7 @@ cc.domNode = cc.Class.extend({
         return this._tag;
     },
     getAnchorPoint:function () {
-        return new cc.Point(this._AnchorPoint.x, this._AnchorPoint.y);
+        return cc.p(this._AnchorPoint.x, this._AnchorPoint.y);
     },
     getContentSize:function () {
         return new cc.Size(this._contentSize.width, this._contentSize.height);
@@ -454,12 +454,12 @@ cc.domNode = cc.Class.extend({
         this.dom.style.display = "block";
     },
     pauseSchedulerAndActions:function () {
-        cc.Director.sharedDirector().getScheduler().pauseTarget(this);
-        cc.Director.sharedDirector().getActionManager().pauseTarget(this);
+        cc.Director.getInstance().getScheduler().pauseTarget(this);
+        cc.Director.getInstance().getActionManager().pauseTarget(this);
     },
     resumeSchedulerAndActions:function () {
-        cc.Director.sharedDirector().getScheduler().resumeTarget(this);
-        cc.Director.sharedDirector().getActionManager().resumeTarget(this);
+        cc.Director.getInstance().getScheduler().resumeTarget(this);
+        cc.Director.getInstance().getActionManager().resumeTarget(this);
     },
     _arrayMakeObjectsPerformSelector:function (array, callbackType) {
         if (!array || array.length == 0)
@@ -513,10 +513,10 @@ cc.domNode = cc.Class.extend({
         this._arrayMakeObjectsPerformSelector(this.getChildren(), cc.Node.StateCallbackType.cleanup);
     },
     stopAllActions:function () {
-        cc.Director.sharedDirector().getActionManager().removeAllActionsFromTarget(this);
+        cc.Director.getInstance().getActionManager().removeAllActionsFromTarget(this);
     },
     unscheduleAllSelectors:function () {
-        cc.Director.sharedDirector().getScheduler().unscheduleAllSelectorsForTarget(this);
+        cc.Director.getInstance().getScheduler().unscheduleAllSelectorsForTarget(this);
     }
 });
 cc.domNode.DomContainer = function () {
@@ -595,7 +595,7 @@ cc.Node.implement({
         //if this node has a dom element attached, and it is the current running scene, we finally attach it to the dom container :)
         if (this.dom) {
             this.show();
-            if (this == cc.Director.sharedDirector().getRunningScene()) {
+            if (this == cc.Director.getInstance().getRunningScene()) {
                 cc.domNode.DomContainer().appendChild(this.dom);
             }
         }
@@ -607,7 +607,7 @@ cc.Node.implement({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
             this._contentSize = size;
 
-            this._anchorPointInPoints = cc.ccp(this._contentSize.width * this._anchorPoint.x,
+            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
                 this._contentSize.height * this._anchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
@@ -624,7 +624,7 @@ cc.Node.implement({
             //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
             this._anchorPoint = point;
-            this._anchorPointInPoints = cc.ccp(this._contentSize.width * this._anchorPoint.x,
+            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
                 this._contentSize.height * this._anchorPoint.y);
 
             //save dirty region when after changed

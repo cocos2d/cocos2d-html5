@@ -46,27 +46,27 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
      * Constructor
      */
     ctor:function () {
-        cc.IMEDispatcher.sharedDispatcher().addDelegate(this);
+        cc.IMEDispatcher.getInstance().addDelegate(this);
     },
     /**
      * Remove delegate
      */
     removeDelegate:function () {
-        cc.IMEDispatcher.sharedDispatcher().removeDelegate(this);
+        cc.IMEDispatcher.getInstance().removeDelegate(this);
     },
     /**
      * Remove delegate
      * @return {Boolean}
      */
     attachWithIME:function () {
-        return cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
+        return cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
     },
     /**
      * Detach with IME
      * @return {Boolean}
      */
     detachWithIME:function () {
-        return cc.IMEDispatcher.sharedDispatcher().detachDelegateWithIME(this);
+        return cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
     },
 
     /**
@@ -250,7 +250,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @param {cc.IMEDelegate} delegate
      * @example
      * //example
-     * cc.IMEDispatcher.sharedDispatcher().addDelegate(this);
+     * cc.IMEDispatcher.getInstance().addDelegate(this);
      */
     addDelegate:function (delegate) {
         if (!delegate || !this.impl) {
@@ -269,7 +269,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @return {Boolean} If the old delegate can detattach with ime and the new delegate can attach with ime, return true, otherwise return false.
      * @example
      * //example
-     * var ret = cc.IMEDispatcher.sharedDispatcher().attachDelegateWithIME(this);
+     * var ret = cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
      */
     attachDelegateWithIME:function (delegate) {
         if (!this.impl || !delegate) {
@@ -313,7 +313,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @return {Boolean} If the old delegate can detattach with ime and the new delegate can attach with ime, return true, otherwise return false.
      * @example
      * //example
-     * var ret = cc.IMEDispatcher.sharedDispatcher().detachDelegateWithIME(this);
+     * var ret = cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
      */
     detachDelegateWithIME:function (delegate) {
         if (!this.impl || !delegate) {
@@ -339,7 +339,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @param {cc.IMEDelegate} delegate
      * @example
      * //example
-     * cc.IMEDispatcher.sharedDispatcher().removeDelegate(this);
+     * cc.IMEDispatcher.getInstance().removeDelegate(this);
      */
     removeDelegate:function (delegate) {
         if (!this.impl || !delegate) {
@@ -365,7 +365,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * @example
      * //example
      * document.addEventListener("keydown", function (e) {
-     *      cc.IMEDispatcher.sharedDispatcher().processKeycode(e.keyCode);
+     *      cc.IMEDispatcher.getInstance().processKeycode(e.keyCode);
      * });
      */
     processKeycode:function (keyCode) {
@@ -419,10 +419,10 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
  * Returns the shared CCIMEDispatcher object for the system.
  * @return {cc.IMEDispatcher}
  */
-cc.IMEDispatcher.sharedDispatcher = function () {
+cc.IMEDispatcher.getInstance = function () {
     if (!cc.IMEDispatcher.instance) {
         cc.IMEDispatcher.instance = new cc.IMEDispatcher();
-        cc.KeypadDispatcher.sharedDispatcher();
+        cc.KeypadDispatcher.getInstance();
     }
     return cc.IMEDispatcher.instance;
 };

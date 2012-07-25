@@ -172,7 +172,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         var ptr = this._GAInfo.imageData;
         var value = ptr[position.x + position.y * this._GAInfo.width];
         if (value.r == 0) {
-            cc.Log("cocos2d: Value.r must be non 0.");
+            cc.log("cocos2d: Value.r must be non 0.");
         } else {
             ptr[position.x + position.y * this._GAInfo.width] = tile;
 
@@ -199,7 +199,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         //	cc.String *resourcePath = [mainBndl resourcePath];
         //	cc.String * path = [resourcePath stringByAppendingPathComponent:file];
 
-        this._GAInfo = cc.tgaLoad(cc.FileUtils.sharedFileUtils().fullPathFromRelativePath(file));
+        this._GAInfo = cc.tgaLoad(cc.FileUtils.getInstance().fullPathFromRelativePath(file));
         if (this._GAInfo.status != cc.TGA_OK) {
             cc.Assert(0, "TileMapAtlasLoadTGA : TileMapAtas cannot load TGA file");
         }
@@ -289,7 +289,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
                     var value = ptr[x + y * this._GAInfo.width];
 
                     if (value.r != 0) {
-                        this._updateAtlasValueAt(cc.ccg(x, y), value, total);
+                        this._updateAtlasValueAt(cc.g(x, y), value, total);
                         this._posToAtlasIndex[x+""+y] = total;
 
                         total++;
