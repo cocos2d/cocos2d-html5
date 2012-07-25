@@ -183,6 +183,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._anchorPoint = cc.p(0, 0);
         this._anchorPointInPoints = cc.p(0, 0);
         this._contentSize = new cc.Size(0, 0);
+        this._position = cc.p(0,0);
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
