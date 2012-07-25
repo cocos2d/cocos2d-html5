@@ -53,6 +53,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     _VAOname:0,
     //0: vertex  1: indices
     _buffersVBO:[],
+
+    _pointRect:new cc.Rect(0, 0, 0, 0),
     /**
      * Constructor
      * @override
@@ -178,12 +180,21 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @param {cc.Rect} rect
      */
     setTextureWithRect:function (texture, rect) {
-        // Only update the texture if is different from the current one
-        if (!this._texture || texture.getName() != this._texture.getName()) {
-            this.setTexture(texture, true);
+        if (texture instanceof  cc.Texture2D) {
+            // Only update the texture if is different from the current one
+            if (!this._texture || texture.getName() != this._texture.getName()) {
+                this.setTexture(texture, true);
+            }
+            this._pointRect = rect;
+            this.initTexCoordsWithRect(rect);
         }
-
-        this.initTexCoordsWithRect(rect);
+        if (texture  instanceof HTMLImageElement) {
+            if (!this._texture || texture != this._texture) {
+                this.setTexture(texture, true);
+            }
+            this._pointRect = rect;
+            this.initTexCoordsWithRect(rect);
+        }
     },
 
     // super methods
@@ -355,7 +366,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             context.save();
-            if (this._isBlendAdditive) {
+            if (this.isBlendAdditive()) {
                 context.globalCompositeOperation = 'lighter';
             } else {
                 context.globalCompositeOperation = 'source-over';
@@ -371,7 +382,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     if (particle.isChangeColor) {
                         var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
                         if (cacheTextureForColor) {
-                            drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color);
+                            drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color, this._pointRect);
                         }
                     }
 
