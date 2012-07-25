@@ -78,6 +78,36 @@ cc.generateTextureCacheForColor = function (texture) {
     return textureCache;
 };
 
+cc.generateTintImage2 = function(texture,color,rect){
+    if (!rect) {
+        rect = new cc.Rect();
+        rect.size = new cc.Size(texture.width, texture.height);
+    }
+    var selColor;
+    if (color instanceof cc.Color4F) {
+        selColor = cc.ccc4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+    } else {
+        selColor = cc.ccc4(color.r , color.g , color.b , 50);//color;
+    }
+
+    var buff = document.createElement("canvas");
+    var ctx = buff.getContext("2d");
+
+    if (buff.width != rect.size.width) buff.width = rect.size.width;
+    if (buff.height != rect.size.height) buff.height = rect.size.height;
+    ctx.save();
+
+    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
+
+    ctx.globalCompositeOperation = "source-in";
+    ctx.globalAlpha = selColor.a / 255.0;
+    ctx.fillStyle = "rgb(" + selColor.r + "," + selColor.g + "," + selColor.b + ")";
+    ctx.fillRect(0, 0, rect.size.width, rect.size.height);
+    ctx.restore();
+
+    return buff;
+};
+
 /**
  * generate tinted texture
  * @function

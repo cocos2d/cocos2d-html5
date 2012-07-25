@@ -377,7 +377,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
                     var drawTexture = this.getTexture();
                     if (particle.isChangeColor) {
-                        var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
+                      var cacheTextureForColor = cc.TextureCache.sharedTextureCache().getTextureColors(this.getTexture());
                         if (cacheTextureForColor) {
                             drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color);
                         }
