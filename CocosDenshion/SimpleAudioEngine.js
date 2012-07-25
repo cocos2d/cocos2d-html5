@@ -189,7 +189,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     stopBackgroundMusic:function (releaseData) {
         if (this._bgmList[this._playingBgm]) {
             this._bgmList[this._playingBgm].pause();
-            this._bgmList[this._playingBgm].currentTime = 0;
             if (releaseData && this._bgmList.hasOwnProperty(this._playingBgm)) {
                 delete this._bgmList[this._playingBgm];
             }
