@@ -136,7 +136,7 @@ var s_particles_hd = "res/Images/particles-hd.png";
 var g_ressources = [
     //image ressources
     {type:"image", src:s_particles},
-    {type:"image", src:s_particles},
+    {type:"image", src:s_particles_hd},
 
     {type:"image", src:s_pathGrossini},
     {type:"image", src:s_fnTuffyBoldItalicCharmapPng},
