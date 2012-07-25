@@ -1212,7 +1212,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setScale:function (scale, scaleY) {
-        cc.Node.prototype.setScale.call(this, scale);
+        cc.Node.prototype.setScale.call(this, scale, scaleY);
         this.SET_DIRTY_RECURSIVELY();
     },
 
