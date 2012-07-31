@@ -54,7 +54,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     //0: vertex  1: indices
     _buffersVBO:[],
 
-    _pointRect:new cc.Rect(0, 0, 0, 0),
+    _pointRect:null,
     /**
      * Constructor
      * @override
