@@ -1471,7 +1471,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
         cc.Assert(animationName, "cc.Sprite#setDisplayFrameWithAnimationName. animationName must not be null");
-        var cache = cc.AnimationCache.getInstance().animationByName(animationName);
+        var cache = cc.AnimationCache.getInstance().getAnimation(animationName);
         cc.Assert(cache, "cc.Sprite#setDisplayFrameWithAnimationName: Frame not found");
         var animFrame = cache.getFrames()[frameIndex];
         cc.Assert(animFrame, "cc.Sprite#setDisplayFrame. Invalid frame");

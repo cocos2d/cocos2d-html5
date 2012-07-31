@@ -50,7 +50,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      *  Deletes a cc.Animation from the cache.
      * @param  {String} name
      */
-    removeAnimationByName:function (name) {
+    removeAnimation:function (name) {
         if (!name) {
             return;
         }
@@ -68,7 +68,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @param {String} name
      * @return {cc.Animation}
      */
-    animationByName:function (name) {
+    getAnimation:function (name) {
         return this._animations[name];
     },
 
