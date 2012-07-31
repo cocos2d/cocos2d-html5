@@ -171,8 +171,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @return {Boolean} return false on error
      */
     initWithString:function (arg) {
-        var string = arg[0], dimensions, hAlignment, vAlignment, fontName, fontSize;
-        cc.Assert(string != null, "cc.LabelTTF.initWithString() label is null");
+        var strInfo = arg[0], dimensions, hAlignment, vAlignment, fontName, fontSize;
+        cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
         if (arg.length == 6) {
             dimensions = arg[1];
             hAlignment = arg[2];
@@ -200,7 +200,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
-            this.setString(string);
+            this.setString(strInfo);
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             return true;
         }
