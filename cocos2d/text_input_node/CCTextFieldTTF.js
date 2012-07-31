@@ -398,7 +398,7 @@ cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName,
             var ret = new cc.TextFieldTTF();
             fontName = arguments[1];
             fontSize = arguments[2];
-            if (ret && ret.initWithString("", fontName, fontSize)) {
+            if (ret && ret.initWithString(["",fontName,fontSize])) {
                 if (placeholder) {
                     ret.setPlaceHolder(placeholder);
                 }
