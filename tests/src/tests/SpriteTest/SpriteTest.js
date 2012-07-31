@@ -3407,11 +3407,11 @@ var AnimationCache = SpriteTestDemo.extend({
 
         var animCache = cc.AnimationCache.getInstance();
 
-        var normal = animCache.animationByName("dance");
+        var normal = animCache.getAnimation("dance");
         normal.setRestoreOriginalFrame(true);
-        var dance_grey = animCache.animationByName("dance_gray");
+        var dance_grey = animCache.getAnimation("dance_gray");
         dance_grey.setRestoreOriginalFrame(true);
-        var dance_blue = animCache.animationByName("dance_blue");
+        var dance_blue = animCache.getAnimation("dance_blue");
         dance_blue.setRestoreOriginalFrame(true);
 
         var animN = cc.Animate.create(normal);
@@ -3848,11 +3848,11 @@ var AnimationCacheFile = SpriteTestDemo.extend({
         // Add an animation to the Cache
         animCache.addAnimationsWithFile(s_animationsPlist);
 
-        var normal = animCache.animationByName("dance_1");
+        var normal = animCache.getAnimation("dance_1");
         normal.setRestoreOriginalFrame(true);
-        var dance_grey = animCache.animationByName("dance_2");
+        var dance_grey = animCache.getAnimation("dance_2");
         dance_grey.setRestoreOriginalFrame(true);
-        var dance_blue = animCache.animationByName("dance_3");
+        var dance_blue = animCache.getAnimation("dance_3");
         dance_blue.setRestoreOriginalFrame(true);
 
         var animN = cc.Animate.create(normal);

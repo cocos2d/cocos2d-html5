@@ -862,7 +862,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * The returned box is relative only to its parent.
      * @return {Number}
      */
-    boundingBox:function () {
+    getBoundingBox:function () {
         var rect = cc.RectMake(0, 0, this._contentSize.width, this._contentSize.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
@@ -874,7 +874,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var rect = cc.RectMake(0, 0, this._contentSize.width, this._contentSize.height);
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         rect = new cc.Rect(0 | rect.origin.x - 4, 0 | rect.origin.y - 4, 0 | rect.size.width + 8, 0 | rect.size.height + 8);
-        //query child's boundingBox
+        //query child's BoundingBox
         if (!this._children)
             return rect;
 

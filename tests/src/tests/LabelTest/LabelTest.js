@@ -1094,7 +1094,7 @@ var BitmapFontMultiLineAlignment = AtlasDemo.extend({
         var touch = touches[0];
         var location = touch.getLocation();
 
-        if (cc.Rect.CCRectContainsPoint(this.arrowsShouldRetain.boundingBox(), location)) {
+        if (cc.Rect.CCRectContainsPoint(this.arrowsShouldRetain.getBoundingBox(), location)) {
             this.drag = true;
             this.arrowsBarShouldRetain.setVisible(true);
         }
