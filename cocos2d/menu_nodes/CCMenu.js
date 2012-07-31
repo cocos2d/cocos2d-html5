@@ -53,6 +53,7 @@ cc.DEFAULT_PADDING = 5;
  * @extends cc.Layer
  */
 cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
+    RGBAProtocol:true,
     _color:new cc.Color3B(),
 
     /**

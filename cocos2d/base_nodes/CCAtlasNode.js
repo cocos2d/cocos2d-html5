@@ -37,6 +37,7 @@
  * @extends cc.Node
  */
 cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
+    RGBAProtocol:true,
     //! chars per row
     _itemsPerRow:0,
     //! chars per column

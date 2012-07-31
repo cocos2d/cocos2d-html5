@@ -314,6 +314,7 @@ cc.Layer.create = function () {
  * @extends cc.Layer
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
+    RGBAProtocol:true,
     _squareVertices:[],
     _squareColors:[],
     _opacity:0,

@@ -416,6 +416,7 @@ cc.BMFontConfiguration.create = function (FNTfile) {
  * @extends cc.
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
+    RGBAProtocol:true,
     _opacity:0,
     _color:null,
     _opacityModifyRGB:false,
