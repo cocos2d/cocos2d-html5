@@ -545,22 +545,39 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     initWithFile:function (filename, rect) {
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
+        var selfPointer = this;
 
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
-            texture = cc.TextureCache.getInstance().addImage(filename);
-        }
-        if (texture) {
-            if (!rect) {
-                rect = new cc.Rect();
-                if (texture instanceof cc.Texture2D)
-                    rect.size = texture.getContentSize();
-                else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
-                    rect.size = new cc.Size(texture.width, texture.height);
+            //texture = cc.TextureCache.getInstance().addImage(filename);
+            this._isVisible = false;
+            var loadImg = new Image();
+            loadImg.addEventListener("load", function () {
+                if (!rect) {
+                    rect = new cc.Rect();
+                    rect.size = new cc.Size(loadImg.width, loadImg.height);
+                }
+                selfPointer.initWithTexture(loadImg,rect);
+                cc.TextureCache.getInstance().cacheImage(filename,loadImg);
+                selfPointer._isVisible = true;
+            });
+            loadImg.addEventListener("error",function(){
+               cc.log("load failure:" + filename);
+            });
+            loadImg.src = filename;
+            return true;
+        }else{
+            if (texture) {
+                if (!rect) {
+                    rect = new cc.Rect();
+                    if (texture instanceof cc.Texture2D)
+                        rect.size = texture.getContentSize();
+                    else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
+                        rect.size = new cc.Size(texture.width, texture.height);
+                }
+                return this.initWithTexture(texture, rect);
             }
-            return this.initWithTexture(texture, rect);
         }
-
         return false;
     },
 
