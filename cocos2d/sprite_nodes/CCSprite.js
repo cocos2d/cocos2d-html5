@@ -231,6 +231,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  * aSprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
+    RGBAProtocol:true,
     //
     // Data used when the sprite is rendered using a CCSpriteSheet
     //
