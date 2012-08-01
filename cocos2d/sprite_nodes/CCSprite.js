@@ -78,16 +78,16 @@ cc.generateTextureCacheForColor = function (texture) {
     return textureCache;
 };
 
-cc.generateTintImage2 = function(texture,color,rect){
+cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
         rect = new cc.Rect();
         rect.size = new cc.Size(texture.width, texture.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
-        selColor = cc.ccc4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+        selColor = cc.c4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
     } else {
-        selColor = cc.ccc4(color.r , color.g , color.b , 50);//color;
+        selColor = cc.c4(color.r, color.g, color.b, 50);//color;
     }
 
     var buff = document.createElement("canvas");
@@ -164,9 +164,9 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     nCanvas.height = rect.size.height;
 
     var ctx = nCanvas.getContext("2d");
-    ctx.translate(nCanvas.width/2,nCanvas.height/2);
+    ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
     ctx.rotate(-1.5707963267948966);
-    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height/2, -rect.size.width/2, rect.size.height, rect.size.width);
+    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height / 2, -rect.size.width / 2, rect.size.height, rect.size.width);
     var img = new Image();
     img.src = nCanvas.toDataURL();
     return nCanvas;
@@ -248,8 +248,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // Data used when the sprite is self-rendered
     //
     _blendFunc:new cc.BlendFunc(),
-    _texture:new cc.Texture2D(),
+    _texture:null,
     _originalTexture:null,
+    _color:cc.WHITE(),
     //
     // Shared data
     //
@@ -514,9 +515,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         if (!rect) {
             rect = new cc.Rect();
-            if (texture instanceof cc.Texture2D)
+            if (texture instanceof cc.Texture2D) {
                 rect.size = texture.getContentSize();
-            else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
+            } else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
                 rect.size = new cc.Size(texture.width, texture.height);
         }
 
@@ -530,7 +531,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         this.setBatchNode(null);
-
         return true;
     },
 
@@ -553,20 +553,23 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._isVisible = false;
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
+                if (filename.indexOf("ui_box_02_rudder.png") > -1) {
+                    console.log("loading ui_box_02_rudder.png");
+                }
                 if (!rect) {
                     rect = new cc.Rect();
                     rect.size = new cc.Size(loadImg.width, loadImg.height);
                 }
-                selfPointer.initWithTexture(loadImg,rect);
-                cc.TextureCache.getInstance().cacheImage(filename,loadImg);
+                selfPointer.initWithTexture(loadImg, rect);
+                cc.TextureCache.getInstance().cacheImage(filename, loadImg);
                 selfPointer._isVisible = true;
             });
-            loadImg.addEventListener("error",function(){
-               cc.log("load failure:" + filename);
+            loadImg.addEventListener("error", function () {
+                cc.log("load failure:" + filename);
             });
             loadImg.src = filename;
             return true;
-        }else{
+        } else {
             if (texture) {
                 if (!rect) {
                     rect = new cc.Rect();
