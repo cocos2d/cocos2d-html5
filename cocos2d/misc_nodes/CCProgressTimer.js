@@ -311,7 +311,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                     }
                 }
             } else {
-                var size = this._sprite.getContentSize();
                 context.beginPath();
                 context.arc(this._origin.x, this._origin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
                 context.lineTo(this._origin.x, this._origin.y);
