@@ -553,9 +553,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._isVisible = false;
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
-                if (filename.indexOf("ui_box_02_rudder.png") > -1) {
-                    console.log("loading ui_box_02_rudder.png");
-                }
                 if (!rect) {
                     rect = new cc.Rect();
                     rect.size = new cc.Size(loadImg.width, loadImg.height);
