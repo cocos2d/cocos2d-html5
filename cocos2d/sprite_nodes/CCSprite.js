@@ -1527,7 +1527,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 this._unflippedOffsetPositionFromCenter,
                 cc.SIZE_POINTS_TO_PIXELS(this._contentSize));
         } else {
-            return cc.SpriteFrame.create(this._texture,
+            return cc.SpriteFrame.createWithTexture(this._texture,
                 cc.RECT_POINTS_TO_PIXELS(this._rect),
                 this._rectRotated,
                 this._unflippedOffsetPositionFromCenter,

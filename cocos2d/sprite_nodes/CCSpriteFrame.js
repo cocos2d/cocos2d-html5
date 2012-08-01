@@ -37,7 +37,7 @@
  *
  * @example
  * var texture = cc.TextureCache.getInstance().addImage(s_dragon_animation);
- * var frame0 = cc.SpriteFrame.create(texture, cc.RectMake(132 * 0, 132 * 0, 132, 132));
+ * var frame0 = cc.SpriteFrame.createWithTexture(texture, cc.RectMake(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _offset:null,
@@ -50,10 +50,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _texture:null,
     _textureFilename:"",
 
-    ctor:function(){
-       this._offset = cc.p(0,0);
-        this._offsetInPixels = cc.p(0,0);
-        this._originalSize = new cc.Size(0,0);
+    ctor:function () {
+        this._offset = cc.p(0, 0);
+        this._offsetInPixels = cc.p(0, 0);
+        this._originalSize = new cc.Size(0, 0);
         this._rectInPixels = new cc.Rect();
         this._rect = new cc.Rect();
         this._originalSizeInPixels = new cc.Size();
@@ -75,7 +75,6 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._rectInPixels = rectInPixels;
         this._rect = cc.RECT_PIXELS_TO_POINTS(rectInPixels);
     },
-
 
 
     /**
@@ -118,7 +117,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Point}
      */
     getOffsetInPixels:function () {
-        return cc.p(this._offsetInPixels.x,this._offsetInPixels.y);
+        return cc.p(this._offsetInPixels.x, this._offsetInPixels.y);
     },
 
     /**
@@ -150,16 +149,16 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * get original size of the trimmed image
      * @return {cc.Size}
      */
-    getOriginalSize:function(){
-        return new cc.Size(this._originalSize.width,this._originalSize.height);
+    getOriginalSize:function () {
+        return new cc.Size(this._originalSize.width, this._originalSize.height);
     },
 
     /**
      * set original size of the trimmed image
      * @param {cc.Size} sizeInPixels
      */
-    setOriginalSize:function(sizeInPixels){
-       this._originalSize = sizeInPixels;
+    setOriginalSize:function (sizeInPixels) {
+        this._originalSize = sizeInPixels;
     },
 
     /**
@@ -167,10 +166,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Texture2D|HTMLImageElement}
      */
     getTexture:function () {
-        if(this._texture){
+        if (this._texture) {
             return this._texture;
         }
-        if(this._textureFilename != ""){
+        if (this._textureFilename != "") {
             return cc.TextureCache.getInstance().addImage(this._textureFilename);
         }
         return null;
@@ -181,7 +180,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Texture2D|HTMLImageElement} texture
      */
     setTexture:function (texture) {
-        if(this._texture != texture){
+        if (this._texture != texture) {
             this._texture = texture;
         }
     },
@@ -190,16 +189,16 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * Offset getter
      * @return {cc.Point}
      */
-    getOffset:function(){
-       return cc.p(this._offset.x,this._offset.y);
+    getOffset:function () {
+        return cc.p(this._offset.x, this._offset.y);
     },
 
     /**
      * offset setter
      * @param {cc.Point} offsets
      */
-    setOffset:function(offsets){
-       this._offset = offsets;
+    setOffset:function (offsets) {
+        this._offset = offsets;
     },
 
     /**
@@ -241,7 +240,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
                 this._rectInPixels = rect;
                 this._rect = cc.RECT_PIXELS_TO_POINTS(rect);
                 this._offsetInPixels = offset;
-                this._offset = cc.POINT_PIXELS_TO_POINTS( this._offsetInPixels );
+                this._offset = cc.POINT_PIXELS_TO_POINTS(this._offsetInPixels);
                 this._originalSizeInPixels = originalSize;
                 this._originalSize = cc.SIZE_PIXELS_TO_POINTS(this._originalSizeInPixels);
                 this._rotated = rotated;
@@ -264,9 +263,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @param {cc.Point} offset
      * @param {cc.Size} originalSize
      */
-    initWithTextureFilename:function(filename,rect,rotated,offset,originalSize){
+    initWithTextureFilename:function (filename, rect, rotated, offset, originalSize) {
         var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
-        offset = offset || cc.Size(0,0);
+        offset = offset || cc.Size(0, 0);
         originalSize = originalSize || rectInPixels.size;
 
         this._texture = null;
@@ -284,6 +283,34 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
 });
 
 /**
+ * <p>
+ *    Create a cc.SpriteFrame with a texture filename, rect, rotated, offset and originalSize in pixels.<br/>
+ *    The originalSize is the size in pixels of the frame before being trimmed.
+ * </p>
+ * @param {string} filename
+ * @param {cc.Rect} rect
+ * @param {Boolean} rotated
+ * @param {cc.Point} offset
+ * @param {cc.Size} originalSize
+ * @return {cc.SpriteFrame}
+ */
+cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize) {
+    var spriteFrame = new cc.SpriteFrame();
+    switch (arguments.length) {
+        case 2:
+            spriteFrame.initWithTextureFilename(filename, rect);
+            break;
+        case 5:
+            spriteFrame.initWithTextureFilename(filename, rect, rotated, offset, originalSize);
+            break;
+        default:
+            throw "Argument must be non-nil ";
+            break;
+    }
+    return spriteFrame;
+};
+
+/**
  * Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
  * @param {cc.Texture2D|HTMLImageElement} texture
  * @param {cc.Rect} rect
@@ -293,12 +320,12 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
  * @return {cc.SpriteFrame}
  * @example
  * //Create a cc.SpriteFrame with a texture, rect in texture.
- * var frame1 = cc.SpriteFrame.create("grossini_dance.png",new cc.Rect(0,0,90,128));
+ * var frame1 = cc.SpriteFrame.createWithTexture("grossini_dance.png",new cc.Rect(0,0,90,128));
  *
  * //Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
- * var frame2 = cc.SpriteFrame.create(texture, frameRect, rotated, offset, sourceSize);
+ * var frame2 = cc.SpriteFrame.createWithTexture(texture, frameRect, rotated, offset, sourceSize);
  */
-cc.SpriteFrame.create = function (texture, rect, rotated, offset, originalSize) {
+cc.SpriteFrame.createWithTexture = function (texture, rect, rotated, offset, originalSize) {
     var argnum = arguments.length;
     var spriteFrame = new cc.SpriteFrame();
     switch (argnum) {
@@ -321,41 +348,13 @@ cc.SpriteFrame.create = function (texture, rect, rotated, offset, originalSize) 
     return spriteFrame;
 };
 
-/**
- * <p>
- *    Create a cc.SpriteFrame with a texture filename, rect, rotated, offset and originalSize in pixels.<br/>
- *    The originalSize is the size in pixels of the frame before being trimmed.
- * </p>
- * @param {string} filename
- * @param {cc.Rect} rect
- * @param {Boolean} rotated
- * @param {cc.Point} offset
- * @param {cc.Size} originalSize
- * @return {cc.SpriteFrame}
- */
-cc.SpriteFrame.createWithTextureFilename = function(filename,rect,rotated,offset,originalSize) {
-    var spriteFrame = new cc.SpriteFrame();
-    switch (arguments.length) {
-        case 2:
-            spriteFrame.initWithTextureFilename(filename, rect);
-            break;
-        case 5:
-            spriteFrame.initWithTextureFilename(filename, rect, rotated, offset, originalSize);
-            break;
-        default:
-            throw "Argument must be non-nil ";
-            break;
-    }
-    return spriteFrame;
-};
-
 cc.SpriteFrame._frameWithTextureForCanvas = function (texture, rect, rotated, offset, originalSize) {
     var spriteFrame = new cc.SpriteFrame();
     spriteFrame._texture = texture;
     spriteFrame._rectInPixels = rect;
     spriteFrame._rect = cc.RECT_PIXELS_TO_POINTS(rect);
     spriteFrame._offsetInPixels = offset;
-    spriteFrame._offset = cc.POINT_PIXELS_TO_POINTS( spriteFrame._offsetInPixels );
+    spriteFrame._offset = cc.POINT_PIXELS_TO_POINTS(spriteFrame._offsetInPixels);
     spriteFrame._originalSizeInPixels = originalSize;
     spriteFrame._originalSize = cc.SIZE_PIXELS_TO_POINTS(spriteFrame._originalSizeInPixels);
     spriteFrame._rotated = rotated;

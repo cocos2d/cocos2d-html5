@@ -1132,9 +1132,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _createStatsLabel:function(){
-        this._FPSLabel = cc.LabelTTF.create("00.0",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
-        this._SPFLabel = cc.LabelTTF.create("0.000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
-        this._drawsLabel = cc.LabelTTF.create("000",cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT, "Arial", 18);
+        this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._drawsLabel = cc.LabelTTF.create("000", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
 
         this._drawsLabel.setPosition( cc.pAdd( cc.p(20,48), cc.DIRECTOR_STATS_POSITION ) );
         this._SPFLabel.setPosition( cc.pAdd( cc.p(20,30), cc.DIRECTOR_STATS_POSITION ) );

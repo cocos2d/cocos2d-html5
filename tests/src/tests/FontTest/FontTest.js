@@ -98,9 +98,9 @@ FontTest = cc.Layer.extend({
         var s = cc.Director.getInstance().getWinSize();
 
         var top = cc.LabelTTF.create(pFont, pFont, 24);
-        var left = cc.LabelTTF.create("alignment left", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_LEFT, pFont, 32);
-        var center = cc.LabelTTF.create("alignment center", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_CENTER, pFont, 32);
-        var right = cc.LabelTTF.create("alignment right", cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_RIGHT, pFont, 32);
+        var left = cc.LabelTTF.create("alignment left", pFont, 32, cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_LEFT);
+        var center = cc.LabelTTF.create("alignment center", pFont, 32, cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_CENTER);
+        var right = cc.LabelTTF.create("alignment right", pFont, 32, cc.SizeMake(s.width, 50), cc.TEXT_ALIGNMENT_RIGHT);
 
         top.setPosition(cc.p(s.width / 2, s.height * 3 / 4));
         left.setPosition(cc.p(s.width / 2, s.height / 2));
