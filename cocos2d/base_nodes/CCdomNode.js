@@ -141,7 +141,6 @@ cc.DOM.methods = {
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
         this.dom.remove();
-        console.log(1);
     }
 };
 cc.DOM.parentDOM = function (x) {
