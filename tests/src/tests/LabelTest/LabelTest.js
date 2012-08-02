@@ -377,7 +377,7 @@ var Atlas3 = AtlasDemo.extend({
         this.addChild(label2, 0, TAG_BITMAP_ATLAS2);
         label2.runAction(repeat.copy());
 
-        var label3 = cc.LabelBMFont.create("Test", "res/fonts/bitmapFontTest2.fnt");
+        var label3 = cc.LabelBMFont.create("Test", "res/fonts/bitmapFontTest.fnt");
         // testing anchors
         label3.setAnchorPoint(cc.p(1, 1));
         this.addChild(label3, 0, TAG_BITMAP_ATLAS3);
