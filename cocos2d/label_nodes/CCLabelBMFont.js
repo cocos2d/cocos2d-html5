@@ -111,24 +111,30 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      * values for FontDef
      * @type cc._FontDefHashElement
      */
-    fontDefDictionary:{
-        "0":{
-            "key":"0",
-            "fontDef":{
-                "charID":"0",
-                "rect":{
-                    "origin":{
-                        "x":0,
-                        "y":0
+    fontDefDictionary:null,
+    /**
+     * Constructor
+     */
+    ctor:function(){
+        this.fontDefDictionary = {
+            "0":{
+                "key":"0",
+                "fontDef":{
+                    "charID":"0",
+                    "rect":{
+                        "origin":{
+                            "x":0,
+                            "y":0
+                        },
+                        "size":{
+                            "width":1,
+                            "height":1
+                        }
                     },
-                    "size":{
-                        "width":1,
-                        "height":1
-                    }
-                },
-                "xOffset":0,
-                "yOffset":0,
-                "xAdvance":0}
+                    "xOffset":0,
+                    "yOffset":0,
+                    "xAdvance":0}
+            }
         }
     },
 
