@@ -23,29 +23,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-cc.fullscreen = function () {
-    var container = cc.$("#Cocos2dGameContainer") || cc.canvas;
-
-};
-
-var CircleSprite = cc.Sprite.extend({
-    _radians:0,
-    ctor:function () {
-        this._super();
-    },
-    draw:function () {
-        cc.renderContext.fillStyle = "rgba(255,255,255,1)";
-        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
-
-        if (this._radians < 0)
-            this._radians = 360;
-        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
-    },
-    myUpdate:function (dt) {
-        this._radians -= 6;
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
-    }
-});
 
 
 var Helloworld = cc.Layer.extend({
@@ -96,12 +73,6 @@ var Helloworld = cc.Layer.extend({
         this.sprite.runAction(cc.Sequence.create(actionScaleTo, actionScaleToBack));
         this.sprite.runAction(cc.Sequence.create(actionBy, actionByBack));
 
-        /*        this.circle = new CircleSprite();
-         this.circle.setPosition(cc.p(40, 280));
-         this.addChild(this.circle, 2);
-         this.circle.schedule(this.circle.myUpdate, 1 / 60);*/
-
-        //this.helloLb.runAction(cc.MoveBy.create(2.5, cc.p(0, 280)));
 
         this.setTouchEnabled(true);
 
@@ -120,6 +91,8 @@ var Helloworld = cc.Layer.extend({
         menu.setPosition(cc.p(0, 0));
         this.sprite.addChild(menu);
         //cc.fullscreen();
+
+        cc.DOM.convert(this.sprite, closeItem, text);
         return true;
     },
     // a selector callback
@@ -128,42 +101,13 @@ var Helloworld = cc.Layer.extend({
     }
 
 });
-var requestFullScreen = function (element) {
-    // Supports most browsers and their versions.
-    var el = document.documentElement;
-    var requestMethod = el.requestFullScreen || el.webkitRequestFullScreen || el.mozRequestFullScreen || el.msRequestFullScreen;
-
-    if (requestMethod) { // Native full screen.
-        requestMethod.call(element);
-    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
-        var wscript = new ActiveXObject("WScript.Shell");
-        if (wscript !== null) {
-            wscript.SendKeys("{F11}");
-        }
+var HelloWorldScene = cc.Scene.extend({
+    onEnter:function () {
+        this._super();
+        var layer = new Helloworld();
+        layer.init();
+        this.addChild(layer);
     }
-};
-Helloworld.scene = function () {
-    // 'scene' is an autorelease object
-    var scene = cc.Scene.create();
-
-    // 'layer' is an autorelease object
-    var layer = this.node();
-    scene.addChild(layer);
-    return scene;
-};
-// implement the "static node()" method manually
-Helloworld.node = function () {
-    var ret = new Helloworld();
-
-    // Init the helloworld display layer.
-    if (ret && ret.init()) {
-        return ret;
-    }
-    else {
-        ret = null;
-        return null;
-    }
-};
-
+});
 
 
