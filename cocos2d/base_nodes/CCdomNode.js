@@ -171,7 +171,15 @@ cc.DOM.parentDOM = function (x) {
 };
 cc.DOM.setTransform = function (x) {
     x.ctx.translate(x.getAnchorPointInPoints().x, x.getAnchorPointInPoints().y);
-    cc.Sprite.prototype.visit.call(x, x.ctx);
+    if (x.isSprite) {
+        var tmp = x._children;
+        x._children = null;
+        cc.Sprite.prototype.visit.call(x, x.ctx);
+        x._children = tmp;
+    }
+    else {
+        cc.Sprite.prototype.visit.call(x, x.ctx);
+    }
     x.dom.position.x = x.getPosition().x;
     x.dom.position.y = -x.getPosition().y;
     x.dom.rotation = x.getRotation();
@@ -193,6 +201,7 @@ cc.DOM.forSprite = function (x) {
     if (x.getParent()) {
         cc.DOM.parentDOM(x);
     }
+    x.isSprite = true;
 };
 cc.DOM.forMenuItem = function (x) {
     x.dom = cc.$new('div');
