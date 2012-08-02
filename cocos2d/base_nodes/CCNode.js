@@ -183,13 +183,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._anchorPoint = cc.p(0, 0);
         this._anchorPointInPoints = cc.p(0, 0);
         this._contentSize = new cc.Size(0, 0);
-        this._position = cc.p(0,0);
+        this._position = cc.p(0, 0);
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
-        this.getActionManager = function(){return this._actionManager;} ;
+        this.getActionManager = function () {
+            return this._actionManager;
+        };
         this._scheduler = director.getScheduler();
-        this.getScheduler = function(){return this._scheduler;}
+        this.getScheduler = function () {
+            return this._scheduler;
+        }
     },
 
     /**
@@ -383,8 +387,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} newRotation
      */
     setRotation:function (newRotation) {
-        if(this._rotation == newRotation)
-            return ;
+        if (this._rotation == newRotation)
+            return;
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
@@ -409,7 +413,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} scale or scaleX value
      * @param {Number} scaleY
      */
-    setScale:function (scale,scaleY) {
+    setScale:function (scale, scaleY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
 
@@ -479,7 +483,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._position.x = newPosOrxValue;
             this._position.y = yValue;
             //this._position = cc.p(newPosOrxValue,yValue);
-        } else if (newPosOrxValue instanceof  cc.Point) {
+        } else if (newPosOrxValue.y != null) {
             this._position = newPosOrxValue;
         }
 
@@ -811,7 +815,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     getActionManager:function () {
         if (!this._actionManager) {
             this._actionManager = cc.Director.getInstance().getActionManager();
-            this.getActionManager = function(){return this._actionManager;} ;
+            this.getActionManager = function () {
+                return this._actionManager;
+            };
         }
 
         return this._actionManager;
@@ -837,9 +843,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Scheduler}
      */
     getScheduler:function () {
-        if (!this._scheduler){
+        if (!this._scheduler) {
             this._scheduler = cc.Director.getInstance().getScheduler();
-            this.getScheduler = function(){return this._scheduler;} ;
+            this.getScheduler = function () {
+                return this._scheduler;
+            };
         }
         return this._scheduler;
     },
@@ -1170,7 +1178,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var context = ctx || cc.renderContext;
         var i;
 
-        if(cc.renderContextType == cc.CANVAS){
+        if (cc.renderContextType == cc.CANVAS) {
             context.save();
             this.transform(context);
 
@@ -1204,7 +1212,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             }
             this._orderOfArrival = 0;
             context.restore();
-        } else{
+        } else {
             if (this._grid && this._grid.isActive()) {
                 this._grid.beforeDraw();
             }
@@ -1281,7 +1289,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                     context.translate(0 | ( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
                         -(0 | (this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
                 } else {
-                    context.translate(0 | ( this._position.x  + this._anchorPointInPoints.x), -(0 | (this._position.y + this._anchorPointInPoints.y)));
+                    context.translate(0 | ( this._position.x + this._anchorPointInPoints.x), -(0 | (this._position.y + this._anchorPointInPoints.y)));
                 }
             }
 
@@ -1336,9 +1344,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * During onEnter you can't a "sister/brother" node.
      */
     onEnter:function () {
+        this._isRunning = true;//should be running before resumeSchedule
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
         this.resumeSchedulerAndActions();
-        this._isRunning = true;
     },
 
     /**
@@ -1363,8 +1371,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * During onExit you can't access a sibling node.
      */
     onExit:function () {
-        this.pauseSchedulerAndActions();
         this._isRunning = false;
+        this.pauseSchedulerAndActions();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
     },
 
