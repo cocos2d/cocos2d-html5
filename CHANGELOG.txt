@@ -9,7 +9,7 @@ Cocos2d-html5-v0.5.0-beta @ Aug.3, 2012
 * Added Actions spline paths and cc.AnimationFrame.
 * Added support for multi-touch.
 * Added mini-framework for Dom manipulation.
-* Changed cc.Animation, cc.LableTTF and cc.Sprite API.
+* Changed cc.Animation, cc.AudioEngine, cc.LableTTF and cc.Sprite API.
 
 Cocos2d-html5-v0.5.0-alpha2 @ Jun.18, 2012
 * Changed API, use "create" to construct all objects.
