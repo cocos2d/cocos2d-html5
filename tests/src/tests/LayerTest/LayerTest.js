@@ -99,7 +99,7 @@ var LayerTest = cc.Layer.extend({
 
         var subtitle_ = this.subtitle();
         if (subtitle_) {
-            var l = cc.LabelTTF.create(subtitle_, cc.SizeMake(400, 16), cc.TEXT_ALIGNMENT_CENTER, "Thonburi", 16);
+            var l = cc.LabelTTF.create(subtitle_, "Thonburi", 16, cc.SizeMake(400, 16), cc.TEXT_ALIGNMENT_CENTER);
             this.addChild(l, 1);
             l.setPosition(cc.p(s.width / 2, s.height - 80));
         }

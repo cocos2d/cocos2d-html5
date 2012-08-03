@@ -275,7 +275,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             var context = ctx || cc.renderContext;
 
             context.globalAlpha = this._sprite._opacity / 255;
-            var centerPoint, mpX=0, mpY=0;
+            var centerPoint, mpX = 0, mpY = 0;
             if (this._sprite._flipX) {
                 centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
                 mpX = 0 | (centerPoint.x - this._sprite._anchorPointInPoints.x);
@@ -302,18 +302,15 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                         pos.x, -(pos.y + this._drawSize.height),
                         this._originSize.width, this._originSize.height);
                 } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
-                    if (this._originSize.width == 0)
-                        this._originSize.width = 0.1;
-                    if (this._originSize.height == 0)
-                        this._originSize.height = 0.1;
-                    context.drawImage(this._sprite._texture,
-                        this._origin.x, this._origin.y,
-                        this._originSize.width, this._originSize.height,
-                        pos.x, -(pos.y + this._drawSize.height),
-                        this._originSize.width, this._originSize.height);
+                    if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
+                        context.drawImage(this._sprite._texture,
+                            this._origin.x, this._origin.y,
+                            this._originSize.width, this._originSize.height,
+                            pos.x, -(pos.y + this._drawSize.height),
+                            this._originSize.width, this._originSize.height);
+                    }
                 }
             } else {
-                var size = this._sprite.getContentSize();
                 context.beginPath();
                 context.arc(this._origin.x, this._origin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
                 context.lineTo(this._origin.x, this._origin.y);

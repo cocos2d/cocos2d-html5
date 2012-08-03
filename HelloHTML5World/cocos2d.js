@@ -27,7 +27,6 @@
 (function () {
     var d = document;
     var c = {
-        menuType:'canvas', //whether to use canvas mode menu or dom menu
         COCOS2D_DEBUG:2, //0 to turn debug off, 1 for basic debug, and 2 for full debug
         box2d:false,
         showFPS:true,

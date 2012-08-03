@@ -167,6 +167,9 @@ cc.setup = function (el, width, height) {
         cc.canvas.setAttribute("height", height || 320);
         cc.container = element;
     }
+    cc.container.style.position = 'relative';
+    cc.container.style.overflow = 'hidden';
+    cc.container.top = '100%';
     cc.renderContext = cc.canvas.getContext("2d");
     cc.renderContextType = cc.CANVAS;
     if (cc.renderContextType == cc.CANVAS) {

@@ -78,16 +78,16 @@ cc.generateTextureCacheForColor = function (texture) {
     return textureCache;
 };
 
-cc.generateTintImage2 = function(texture,color,rect){
+cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
         rect = new cc.Rect();
         rect.size = new cc.Size(texture.width, texture.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
-        selColor = cc.ccc4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+        selColor = cc.c4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
     } else {
-        selColor = cc.ccc4(color.r , color.g , color.b , 50);//color;
+        selColor = cc.c4(color.r, color.g, color.b, 50);//color;
     }
 
     var buff = document.createElement("canvas");
@@ -164,9 +164,9 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     nCanvas.height = rect.size.height;
 
     var ctx = nCanvas.getContext("2d");
-    ctx.translate(nCanvas.width/2,nCanvas.height/2);
+    ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
     ctx.rotate(-1.5707963267948966);
-    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height/2, -rect.size.width/2, rect.size.height, rect.size.width);
+    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height / 2, -rect.size.width / 2, rect.size.height, rect.size.width);
     var img = new Image();
     img.src = nCanvas.toDataURL();
     return nCanvas;
@@ -231,6 +231,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  * aSprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
+    RGBAProtocol:true,
     //
     // Data used when the sprite is rendered using a CCSpriteSheet
     //
@@ -247,8 +248,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // Data used when the sprite is self-rendered
     //
     _blendFunc:new cc.BlendFunc(),
-    _texture:new cc.Texture2D(),
+    _texture:null,
     _originalTexture:null,
+    _color:cc.WHITE(),
     //
     // Shared data
     //
@@ -513,9 +515,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         if (!rect) {
             rect = new cc.Rect();
-            if (texture instanceof cc.Texture2D)
+            if (texture instanceof cc.Texture2D) {
                 rect.size = texture.getContentSize();
-            else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
+            } else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
                 rect.size = new cc.Size(texture.width, texture.height);
         }
 
@@ -529,7 +531,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         this.setBatchNode(null);
-
         return true;
     },
 
@@ -544,22 +545,39 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     initWithFile:function (filename, rect) {
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
+        var selfPointer = this;
 
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
-            texture = cc.TextureCache.getInstance().addImage(filename);
-        }
-        if (texture) {
-            if (!rect) {
-                rect = new cc.Rect();
-                if (texture instanceof cc.Texture2D)
-                    rect.size = texture.getContentSize();
-                else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
-                    rect.size = new cc.Size(texture.width, texture.height);
+            //texture = cc.TextureCache.getInstance().addImage(filename);
+            this._isVisible = false;
+            var loadImg = new Image();
+            loadImg.addEventListener("load", function () {
+                if (!rect) {
+                    rect = new cc.Rect();
+                    rect.size = new cc.Size(loadImg.width, loadImg.height);
+                }
+                selfPointer.initWithTexture(loadImg, rect);
+                cc.TextureCache.getInstance().cacheImage(filename, loadImg);
+                selfPointer._isVisible = true;
+            });
+            loadImg.addEventListener("error", function () {
+                cc.log("load failure:" + filename);
+            });
+            loadImg.src = filename;
+            return true;
+        } else {
+            if (texture) {
+                if (!rect) {
+                    rect = new cc.Rect();
+                    if (texture instanceof cc.Texture2D)
+                        rect.size = texture.getContentSize();
+                    else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
+                        rect.size = new cc.Size(texture.width, texture.height);
+                }
+                return this.initWithTexture(texture, rect);
             }
-            return this.initWithTexture(texture, rect);
         }
-
         return false;
     },
 
@@ -1471,7 +1489,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setDisplayFrameWithAnimationName:function (animationName, frameIndex) {
         cc.Assert(animationName, "cc.Sprite#setDisplayFrameWithAnimationName. animationName must not be null");
-        var cache = cc.AnimationCache.getInstance().animationByName(animationName);
+        var cache = cc.AnimationCache.getInstance().getAnimation(animationName);
         cc.Assert(cache, "cc.Sprite#setDisplayFrameWithAnimationName: Frame not found");
         var animFrame = cache.getFrames()[frameIndex];
         cc.Assert(animFrame, "cc.Sprite#setDisplayFrame. Invalid frame");
@@ -1506,7 +1524,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 this._unflippedOffsetPositionFromCenter,
                 cc.SIZE_POINTS_TO_PIXELS(this._contentSize));
         } else {
-            return cc.SpriteFrame.create(this._texture,
+            return cc.SpriteFrame.createWithTexture(this._texture,
                 cc.RECT_POINTS_TO_PIXELS(this._rect),
                 this._rectRotated,
                 this._unflippedOffsetPositionFromCenter,
