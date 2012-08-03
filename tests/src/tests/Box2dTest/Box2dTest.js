@@ -95,7 +95,7 @@ Box2DTestLayer = cc.Layer.extend({
 
         var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
         this.addChild(label, 0);
-        label.setColor(cc.c3(0, 0, 255));
+        label.setColor(cc.c3b(0, 0, 255));
         label.setPosition(cc.p(screenSize.width / 2, screenSize.height - 50));
 
         this.scheduleUpdate();
