@@ -61,7 +61,7 @@ var particleSceneArr = [
     function(){return new DemoParticleFromFile("debian");},
     function(){return new DemoParticleFromFile("ExplodingRing");},
     function(){return new DemoParticleFromFile("LavaFlow");},
-    function(){return new DemoParticleFromFile("SpinningPeas");},
+    //function(){return new DemoParticleFromFile("SpinningPeas");},
     function(){return new DemoParticleFromFile("SpookyPeas");},
     function(){return new DemoParticleFromFile("Upsidedown");},
     function(){return new DemoParticleFromFile("Flower");},
@@ -829,7 +829,7 @@ var RadiusMode1 = ParticleDemo.extend({
 
         this._emitter = new cc.ParticleSystemQuad();
         //this._emitter.initWithTotalParticles(200);
-        this._emitter.initWithTotalParticles(150);
+        this._emitter.initWithTotalParticles(100);
         this.addChild(this._emitter, 10);
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_starsGrayscale));
 
@@ -907,7 +907,8 @@ var RadiusMode2 = ParticleDemo.extend({
         this._background = null;
 
         this._emitter = new cc.ParticleSystemQuad();
-        this._emitter.initWithTotalParticles(200);
+        //this._emitter.initWithTotalParticles(200);
+        this._emitter.initWithTotalParticles(100);
         this.addChild(this._emitter, 10);
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_starsGrayscale));
 
