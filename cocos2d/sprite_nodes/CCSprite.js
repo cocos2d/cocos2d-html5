@@ -85,9 +85,9 @@ cc.generateTintImage2 = function (texture, color, rect) {
     }
     var selColor;
     if (color instanceof cc.Color4F) {
-        selColor = cc.c4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+        selColor = cc.c4b(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
     } else {
-        selColor = cc.c4(color.r, color.g, color.b, 50);//color;
+        selColor = cc.c4b(color.r, color.g, color.b, 50);//color;
     }
 
     var buff = document.createElement("canvas");
@@ -124,7 +124,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
     }
     var selColor;
     if (color instanceof cc.Color4F) {
-        selColor = cc.c3(color.r * 255, color.g * 255, color.b * 255);
+        selColor = cc.c3b(color.r * 255, color.g * 255, color.b * 255);
     } else {
         selColor = color;
     }

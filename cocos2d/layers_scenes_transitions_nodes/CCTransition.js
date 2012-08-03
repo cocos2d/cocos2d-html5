@@ -1350,7 +1350,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
  * @return {cc.TransitionFade}
  * @example
  * // Example
- * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.c3(255,0,0))//fade to red
+ * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.c3b(255,0,0))//fade to red
  */
 cc.TransitionFade.create = function (t, scene, color) {
     var transition = new cc.TransitionFade();

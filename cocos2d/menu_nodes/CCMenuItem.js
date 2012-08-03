@@ -293,7 +293,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this.initWithTarget(target, selector);
         this._originalScale = 1.0;
         this._colorBackup = cc.WHITE();
-        this._disabledColor = cc.c3(126, 126, 126);
+        this._disabledColor = cc.c3b(126, 126, 126);
         this.setLabel(label);
         return true;
     },

@@ -100,7 +100,7 @@ var ParticleDemo = cc.LayerColor.extend({
 
     ctor:function () {
         this._super();
-        this.initWithColor(cc.c4(127, 127, 127, 255));
+        this.initWithColor(cc.c4b(127, 127, 127, 255));
 
         this._emitter = null;
 

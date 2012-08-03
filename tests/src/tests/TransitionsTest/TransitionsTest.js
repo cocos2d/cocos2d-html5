@@ -150,11 +150,11 @@ var TestLayer1 = cc.Layer.extend({
 
         var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx].title, "Thonburi", 32);
         this.addChild(title);
-        title.setColor(cc.c3(255, 32, 32));
+        title.setColor(cc.c3b(255, 32, 32));
         title.setPosition(cc.p(x / 2, y - 100));
 
         var label = cc.LabelTTF.create("SCENE 1", "Marker Felt", 38);
-        label.setColor(cc.c3(16, 16, 255));
+        label.setColor(cc.c3b(16, 16, 255));
         label.setPosition(cc.p(x / 2, y / 2));
         this.addChild(label);
 
@@ -252,11 +252,11 @@ var TestLayer2 = cc.Layer.extend({
 
         var title = cc.LabelTTF.create(TransitionsTests[transitionsIdx].title, "Thonburi", 32);
         this.addChild(title);
-        title.setColor(cc.c3(255, 32, 32));
+        title.setColor(cc.c3b(255, 32, 32));
         title.setPosition(cc.p(x / 2, y - 100));
 
         var label = cc.LabelTTF.create("SCENE 2", "Marker Felt", 38);
-        label.setColor(cc.c3(16, 16, 255));
+        label.setColor(cc.c3b(16, 16, 255));
         label.setPosition(cc.p(x / 2, y / 2));
         this.addChild(label);
 

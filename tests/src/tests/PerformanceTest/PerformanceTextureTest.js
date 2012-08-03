@@ -54,7 +54,7 @@ var TextureMenuLayer = PerformBasicLayer.extend({
         var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
         label.setPosition(cc.p(s.width / 2, s.height - 32));
-        label.setColor(cc.c3(255, 255, 40));
+        label.setColor(cc.c3b(255, 255, 40));
 
         // Subtitle
         var strSubTitle = this.subtitle();

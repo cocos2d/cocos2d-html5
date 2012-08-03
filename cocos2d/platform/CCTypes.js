@@ -77,9 +77,12 @@ cc.Color3B = function (r1, g1, b1) {
  * @param {Number} b blue value (0 to 255)
  * @return {cc.Color3B}
  */
-cc.c3 = function (r, g, b) {
+cc.c3b = function (r, g, b) {
     return new cc.Color3B(r, g, b);
 };
+
+// compatibility
+cc.c3 = cc.c3b;
 
 
 //ccColor3B predefined colors
@@ -192,9 +195,12 @@ cc.Color4B = function (r1, g1, b1, a1) {
  * @param {Number} o Alpha value (0 to 255)
  * @return {cc.Color4B}
  */
-cc.c4 = function (r, g, b, o) {
+cc.c4b = function (r, g, b, o) {
     return new cc.Color4B(r, g, b, o);
 };
+
+// backwards compatibility
+cc.c4 = cc.c4b;
 
 /**
  * RGBA color composed of 4 floats

@@ -216,24 +216,24 @@ var Atlas1 = AtlasDemo.extend({
         //
         var quads = [
             new cc.V3F_C4B_T2F_Quad(
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), cc.c4(0, 0, 255, 255), new cc.Tex2F(0.0, 1.0)), // bottom left
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, 0, 0), cc.c4(0, 0, 255, 0), new cc.Tex2F(1.0, 1.0)), // bottom right
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(0, s.height, 0), cc.c4(0, 0, 255, 0), new cc.Tex2F(0.0, 0.0)), // top left
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, s.height, 0), cc.c4(0, 0, 255, 255), new cc.Tex2F(1.0, 0.0))    // top right
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), cc.c4b(0, 0, 255, 255), new cc.Tex2F(0.0, 1.0)), // bottom left
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, 0, 0), cc.c4b(0, 0, 255, 0), new cc.Tex2F(1.0, 1.0)), // bottom right
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(0, s.height, 0), cc.c4b(0, 0, 255, 0), new cc.Tex2F(0.0, 0.0)), // top left
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, s.height, 0), cc.c4b(0, 0, 255, 255), new cc.Tex2F(1.0, 0.0))    // top right
             ),
 
             new cc.V3F_C4B_T2F_Quad(
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(40, 40, 0), cc.c4(255, 255, 255, 255), new cc.Tex2F(0.0, 0.2)), // bottom left
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(120, 80, 0), cc.c4(255, 0, 0, 255), new cc.Tex2F(0.5, 0.2)), // bottom right
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(40, 160, 0), cc.c4(255, 255, 255, 255), new cc.Tex2F(0.0, 0.0)), // top left
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(160, 160, 0), cc.c4(0, 255, 0, 255), new cc.Tex2F(0.5, 0.0))            // top right
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(40, 40, 0), cc.c4b(255, 255, 255, 255), new cc.Tex2F(0.0, 0.2)), // bottom left
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(120, 80, 0), cc.c4b(255, 0, 0, 255), new cc.Tex2F(0.5, 0.2)), // bottom right
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(40, 160, 0), cc.c4b(255, 255, 255, 255), new cc.Tex2F(0.0, 0.0)), // top left
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(160, 160, 0), cc.c4b(0, 255, 0, 255), new cc.Tex2F(0.5, 0.0))            // top right
             ),
 
             new cc.V3F_C4B_T2F_Quad(
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width / 2, 40, 0), cc.c4(255, 0, 0, 255), new cc.Tex2F(0.0, 1.0)), // bottom left
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, 40, 0), cc.c4(0, 255, 0, 255), new cc.Tex2F(1.0, 1.0)), // bottom right
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width / 2 - 50, 200, 0), cc.c4(0, 0, 255, 255), new cc.Tex2F(0.0, 0.0)), // top left
-                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, 100, 0), cc.c4(255, 255, 0, 255), new cc.Tex2F(1.0, 0.0))        // top right
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width / 2, 40, 0), cc.c4b(255, 0, 0, 255), new cc.Tex2F(0.0, 1.0)), // bottom left
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, 40, 0), cc.c4b(0, 255, 0, 255), new cc.Tex2F(1.0, 1.0)), // bottom right
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width / 2 - 50, 200, 0), cc.c4b(0, 0, 255, 255), new cc.Tex2F(0.0, 0.0)), // top left
+                new cc.V3F_C4B_T2F(new cc.Vertex3F(s.width, 100, 0), cc.c4b(255, 255, 0, 255), new cc.Tex2F(1.0, 0.0))        // top right
             )
 
         ];
@@ -352,7 +352,7 @@ var LabelAtlasColorTest = AtlasDemo.extend({
 var Atlas3 = AtlasDemo.extend({
     time:0,
     ctor:function () {
-        var col = cc.LayerColor.create(cc.c4(128, 128, 128, 255));
+        var col = cc.LayerColor.create(cc.c4b(128, 128, 128, 255));
         this.addChild(col, -10);
 
         var label1 = cc.LabelBMFont.create("Test", "res/fonts/bitmapFontTest2.fnt");
@@ -780,7 +780,7 @@ var LabelGlyphDesigner = AtlasDemo.extend({
     ctor:function () {
         var s = cc.Director.getInstance().getWinSize();
 
-        var layer = cc.LayerColor.create(cc.c4(128, 128, 128, 255));
+        var layer = cc.LayerColor.create(cc.c4b(128, 128, 128, 255));
         this.addChild(layer, -10);
 
         // cc.LabelBMFont
@@ -809,7 +809,7 @@ var LabelTTFTest = AtlasDemo.extend({
         var blockSize = cc.SizeMake(200, 160);
         var s = cc.Director.getInstance().getWinSize();
 
-        var colorLayer = cc.LayerColor.create(cc.c4(100, 100, 100, 255), blockSize.width, blockSize.height);
+        var colorLayer = cc.LayerColor.create(cc.c4b(100, 100, 100, 255), blockSize.width, blockSize.height);
         colorLayer.setAnchorPoint(cc.p(0, 0));
         colorLayer.setPosition(cc.p((s.width - blockSize.width) / 2, (s.height - blockSize.height) / 2));
 
@@ -1132,7 +1132,7 @@ var LabelTTFA8Test = AtlasDemo.extend({
     ctor:function () {
         var s = cc.Director.getInstance().getWinSize();
 
-        var layer = cc.LayerColor.create(cc.c4(128, 128, 128, 255));
+        var layer = cc.LayerColor.create(cc.c4b(128, 128, 128, 255));
         this.addChild(layer, -10);
 
         // cc.LabelBMFont
