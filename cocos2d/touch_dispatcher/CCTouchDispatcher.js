@@ -564,6 +564,40 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
 cc.TouchDispatcher.preTouchPoint = cc.p(0, 0);
 
 cc.TouchDispatcher.isRegisterEvent = false;
+
+cc.getHTMLElementPosition = function(element){
+    var pos = null;
+    if (element instanceof HTMLCanvasElement) {
+        pos = {left:0, top:0, height:element.height};
+    } else {
+        pos = {left:0, top:0, height:parseInt(element.style.height)};
+    }
+    while (element != null) {
+        pos.left += element.offsetLeft;
+        pos.top += element.offsetTop;
+        element = element.offsetParent;
+    }
+    return pos;
+};
+
+cc.ProcessMouseupEvent = function(element, event) {
+    var pos = cc.getHTMLElementPosition(element);
+
+    var tx = event.pageX;
+    var ty = event.pageY;
+
+    var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
+    var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
+
+    var touch = new cc.Touch(mouseX, mouseY);
+    touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+    cc.TouchDispatcher.preTouchPoint.x = mouseX;
+    cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
+    var set = [];
+    set.push(touch);
+    cc.Director.getInstance().getTouchDispatcher().touchesEnded(set, null);
+};
 /**
  * @param {HTMLCanvasElement|HTMLDivElement} element
  */
@@ -574,18 +608,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
     if (!cc.Browser.isMobile) {
         //register canvas mouse event
         element.addEventListener("mousedown", function (event) {
-            var el = element;
-            var pos = null;
-            if (element instanceof HTMLCanvasElement) {
-                pos = {left:0, top:0, height:el.height};
-            } else {
-                pos = {left:0, top:0, height:parseInt(el.style.height)};
-            }
-            while (el != null) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
+            var pos = cc.getHTMLElementPosition(element);
 
             var tx = event.pageX;
             var ty = event.pageY;
@@ -604,47 +627,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         });
 
         element.addEventListener("mouseup", function (event) {
-            var el = element;
-            var pos = null;
-            if (element instanceof HTMLCanvasElement) {
-                pos = {left:0, top:0, height:el.height};
-            } else {
-                pos = {left:0, top:0, height:parseInt(el.style.height)};
-            }
-            while (el != null) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
-            var tx = event.pageX;
-            var ty = event.pageY;
-
-            var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
-            var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
-
-            var touch = new cc.Touch(mouseX, mouseY);
-            touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
-            cc.TouchDispatcher.preTouchPoint.x = mouseX;
-            cc.TouchDispatcher.preTouchPoint.y = mouseY;
-
-            var set = [];
-            set.push(touch);
-            cc.Director.getInstance().getTouchDispatcher().touchesEnded(set, null);
+            cc.ProcessMouseupEvent(element, event);
         });
 
         element.addEventListener("mousemove", function (event) {
-            var el = element;
-            var pos = null;
-            if (element instanceof HTMLCanvasElement) {
-                pos = {left:0, top:0, height:el.height};
-            } else {
-                pos = {left:0, top:0, height:parseInt(el.style.height)};
-            }
-            while (el != null) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
+            var pos = cc.getHTMLElementPosition(element);
+
             var tx = event.pageX;
             var ty = event.pageY;
 
@@ -652,6 +640,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
             var touch = new cc.Touch(mouseX, mouseY);
+
+            //TODO this feature only chrome support
+            //if((event.button == 0) && (event.which == 1))
+            //    touch._setPressed(true);
+
             touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -668,18 +661,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 return;
 
             var set = [];
-            var el = element;
-            var pos = null;
-            if (element instanceof HTMLCanvasElement) {
-                pos = {left:0, top:0, height:el.height};
-            } else {
-                pos = {left:0, top:0, height:parseInt(el.style.height)};
-            }
-            while (el != null) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
+            var pos = cc.getHTMLElementPosition(element);
+
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
             for (var i = 0; i < event.touches.length; i++) {
@@ -691,8 +674,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 }
                 var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
+                var touch = null;
+                if(event.touches[i].hasOwnProperty("identifier"))
+                    touch = new cc.Touch(mouseX, mouseY, event.touches[i].identifier);
+                else
+                    touch = new cc.Touch(mouseX, mouseY);
 
-                var touch = new cc.Touch(mouseX, mouseY);
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -709,18 +696,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 return;
 
             var set = [];
-            var el = element;
-            var pos = null;
-            if (element instanceof HTMLCanvasElement) {
-                pos = {left:0, top:0, height:el.height};
-            } else {
-                pos = {left:0, top:0, height:parseInt(el.style.height)};
-            }
-            while (el != null) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
+            var pos = cc.getHTMLElementPosition(element);
+
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
             for (var i = 0; i < event.touches.length; i++) {
@@ -733,7 +710,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
-                var touch = new cc.Touch(mouseX, mouseY);
+                var touch = null;
+                if(event.touches[i].hasOwnProperty("identifier"))
+                    touch = new cc.Touch(mouseX, mouseY, event.touches[i].identifier);
+                else
+                    touch = new cc.Touch(mouseX, mouseY);
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -750,18 +731,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 return;
 
             var set = [];
-            var el = element;
-            var pos = null;
-            if (element instanceof HTMLCanvasElement) {
-                pos = {left:0, top:0, height:el.height};
-            } else {
-                pos = {left:0, top:0, height:parseInt(el.style.height)};
-            }
-            while (el != null) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
+            var pos = cc.getHTMLElementPosition(element);
+
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
 
@@ -780,7 +751,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
-                var touch = new cc.Touch(mouseX, mouseY);
+                var touch = null;
+                if(fireTouches[i].hasOwnProperty("identifier"))
+                    touch = new cc.Touch(mouseX, mouseY, fireTouches[i].identifier);
+                else
+                    touch = new cc.Touch(mouseX, mouseY);
+
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
@@ -797,18 +773,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 return;
 
             var set = [];
-            var el = element;
-            var pos = null;
-            if (element instanceof HTMLCanvasElement) {
-                pos = {left:0, top:0, height:el.height};
-            } else {
-                pos = {left:0, top:0, height:parseInt(el.style.height)};
-            }
-            while (el != null) {
-                pos.left += el.offsetLeft;
-                pos.top += el.offsetTop;
-                el = el.offsetParent;
-            }
+            var pos = cc.getHTMLElementPosition(element);
+
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
 
@@ -822,7 +788,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
-                var touch = new cc.Touch(mouseX, mouseY);
+                var touch = null;
+                if(event.touches[i].hasOwnProperty("identifier"))
+                    touch = new cc.Touch(mouseX, mouseY, event.touches[i].identifier);
+                else
+                    touch = new cc.Touch(mouseX, mouseY);
                 touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
