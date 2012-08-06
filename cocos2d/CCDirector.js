@@ -249,7 +249,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._touchDispatcher.init();
 
         //KeypadDispatcher
-        this._keypadDispatcher = new cc.KeypadDispatcher();
+        this._keypadDispatcher = cc.KeypadDispatcher.getInstance();
 
         //accelerometer
         //this._accelerometer = new cc.Accelerometer();
