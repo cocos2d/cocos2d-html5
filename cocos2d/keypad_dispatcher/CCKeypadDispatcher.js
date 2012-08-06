@@ -224,9 +224,11 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
      * @param {cc.KeypadDelegate} delegate
      */
     forceRemoveDelegate:function (delegate) {
-        var i = this._delegates.indexOf(delegate);
-        if (i != -1) {
-            this._delegates.splice(this._delegates.indexOf(delegate), 1);
+        for (var i = 0; i < this._delegates.length; i++) {
+            if (this._delegates[i].getDelegate() == delegate) {
+                this._delegates.splice(i, 1);
+                return;
+            }
         }
     },
 
