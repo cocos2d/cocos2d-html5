@@ -91,7 +91,8 @@ cc.$ = function (x) {
          * @function
          */
         el.remove = el.remove || function () {
-            this.parentNode.removeChild(this);
+            if (this.parentNode)
+                this.parentNode.removeChild(this);
             return this;
         };
 

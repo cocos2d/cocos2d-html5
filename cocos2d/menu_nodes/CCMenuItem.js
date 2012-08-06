@@ -1106,6 +1106,10 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
 
     isOpacityModifyRGB:function () {
         return false;
+    },
+    onEnter:function () {
+        this._super();
+        this.setSelectedIndex(this._selectedIndex);
     }
 });
 
