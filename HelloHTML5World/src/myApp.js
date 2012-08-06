@@ -114,7 +114,6 @@ var Helloworld = cc.Layer.extend({
         this.setTouchEnabled(true);
         this.adjustSizeForWindow();
         lazyLayer.adjustSizeForCanvas();
-
         window.addEventListener("resize", function (event) {
             selfPointer.adjustSizeForWindow();
         });
@@ -141,6 +140,11 @@ var Helloworld = cc.Layer.extend({
         }
         cc.canvas.width = cc.originalCanvasSize.width * xScale;
         cc.canvas.height = cc.originalCanvasSize.height * xScale;
+        var parentDiv = document.getElementById("Cocos2dGameContainer");
+        if(parentDiv){
+            parentDiv.style.width = cc.canvas.width + "px";
+            parentDiv.style.height = cc.canvas.height + "px";
+        }
         cc.renderContext.translate(0, cc.canvas.height);
         cc.renderContext.scale(xScale, xScale);
         cc.Director.getInstance().setContentScaleFactor(xScale);
