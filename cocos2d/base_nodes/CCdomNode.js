@@ -45,6 +45,10 @@ cc.DOM.methods = {
         this._position.y = y;
         this.dom.translate(this._position.x, -this._position.y);
     },
+    setPositionX:function (x) {
+        this._position.x = x;
+        this.dom.translate(this._position.x, -this._position.y);
+    },
     setScale:function (scale, scaleY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
