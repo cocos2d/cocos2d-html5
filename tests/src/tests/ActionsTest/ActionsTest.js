@@ -290,7 +290,7 @@ var ActionManual = ActionsDemo.extend({
 
         this._grossini.setRotation(120);
         this._grossini.setPosition(cc.p(s.width / 2, s.height / 2));
-        this._grossini.setColor(cc.c3(255, 0, 0));
+        this._grossini.setColor(cc.c3b(255, 0, 0));
 
         this._kathia.setPosition(cc.p(s.width - 100, s.height / 2));
         this._kathia.setColor(cc.BLUE());
@@ -386,19 +386,19 @@ var ActionSkewRotateScale = ActionsDemo.extend({
         var winSize = cc.Director.getInstance().getWinSize();
 
         var boxSize = cc.SizeMake(100.0, 100.0);
-        var box = cc.LayerColor.create(cc.c4(255, 255, 0, 255));
+        var box = cc.LayerColor.create(cc.c4b(255, 255, 0, 255));
         box.setAnchorPoint(cc.p(0, 0));
         box.setPosition(cc.p((winSize.width - boxSize.width) / 2, (winSize.height - boxSize.height) / 2));
         box.setContentSize(boxSize);
 
         var markrside = 10.0;
-        var uL = cc.LayerColor.create(cc.c4(255, 0, 0, 255));
+        var uL = cc.LayerColor.create(cc.c4b(255, 0, 0, 255));
         box.addChild(uL);
         uL.setContentSize(cc.SizeMake(markrside, markrside));
         uL.setPosition(cc.p(0, boxSize.height - markrside));
         uL.setAnchorPoint(cc.p(0, 0));
 
-        var uR = cc.LayerColor.create(cc.c4(0, 0, 255, 255));
+        var uR = cc.LayerColor.create(cc.c4b(0, 0, 255, 255));
         box.addChild(uR);
         uR.setContentSize(cc.SizeMake(markrside, markrside));
         uR.setPosition(cc.p(boxSize.width - markrside, boxSize.height - markrside));

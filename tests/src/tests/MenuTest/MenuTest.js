@@ -54,8 +54,8 @@ var MenuLayer1 = cc.Layer.extend({
         // Label Item (LabelAtlas)
         var labelAtlas = cc.LabelAtlas.create("0123456789", s_fpsImages, 16, 24, '.');
         var item3 = cc.MenuItemLabel.create(labelAtlas, this, this.menuCallbackDisabled);
-        item3.setDisabledColor(cc.c3(32, 32, 64));
-        item3.setColor(cc.c3(200, 200, 255));
+        item3.setDisabledColor(cc.c3b(32, 32, 64));
+        item3.setColor(cc.c3b(200, 200, 255));
 
         // Font Item
         var item4 = cc.MenuItemFont.create("I toggle enable items", this, this.menuCallbackEnabled);

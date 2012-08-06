@@ -104,7 +104,7 @@ var SpriteDemo = cc.Layer.extend({
         item3.setPosition(cc.p(winSize.width / 2 + item2.getContentSize().width * 2, item2.getContentSize().height / 2));
 
         this.addChild(menu, 1);
-        var background = cc.LayerColor.create(cc.c4(0, 125, 0, 255));
+        var background = cc.LayerColor.create(cc.c4b(0, 125, 0, 255));
         this.addChild(background, -10);
     },
 

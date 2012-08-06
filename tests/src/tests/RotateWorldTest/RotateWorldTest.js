@@ -117,10 +117,10 @@ var RotateWorldMainLayer = cc.Layer.extend({
         x = size.width;
         y = size.height;
 
-        var blue = cc.LayerColor.create(cc.c4(0, 0, 255, 255));
-        var red = cc.LayerColor.create(cc.c4(255, 0, 0, 255));
-        var green = cc.LayerColor.create(cc.c4(0, 255, 0, 255));
-        var white = cc.LayerColor.create(cc.c4(255, 255, 255, 255));
+        var blue = cc.LayerColor.create(cc.c4b(0, 0, 255, 255));
+        var red = cc.LayerColor.create(cc.c4b(255, 0, 0, 255));
+        var green = cc.LayerColor.create(cc.c4b(0, 255, 0, 255));
+        var white = cc.LayerColor.create(cc.c4b(255, 255, 255, 255));
 
         blue.setScale(0.5);
         blue.setPosition(cc.p(-x / 4, -y / 4));

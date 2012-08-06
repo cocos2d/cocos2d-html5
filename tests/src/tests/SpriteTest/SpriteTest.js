@@ -3890,9 +3890,9 @@ var SpriteBatchBug1217 = SpriteTestDemo.extend({
         var s2 = cc.Sprite.createWithTexture(bn.getTexture(), cc.RectMake(0, 0, 57, 57));
         var s3 = cc.Sprite.createWithTexture(bn.getTexture(), cc.RectMake(0, 0, 57, 57));
 
-        s1.setColor(cc.c3(255, 0, 0));
-        s2.setColor(cc.c3(0, 255, 0));
-        s3.setColor(cc.c3(0, 0, 255));
+        s1.setColor(cc.c3b(255, 0, 0));
+        s2.setColor(cc.c3b(0, 255, 0));
+        s3.setColor(cc.c3b(0, 0, 255));
 
         s1.setPosition(cc.p(20, 200));
         s2.setPosition(cc.p(100, 0));
