@@ -60,7 +60,7 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
      * @return {cc.Point}
      */
     getDelta:function () {
-        return cc.pSub( this._point, this._prevPoint );
+        return cc.pSub(this._point, this._prevPoint);
     },
 
     /**

@@ -846,7 +846,7 @@ var LabelTTFTest = AtlasDemo.extend({
             this._label.removeFromParentAndCleanup(true);
         }
 
-        this._label = cc.LabelTTF.create(this.getCurrentAlignment(),  "Arial", 32, blockSize, this._horizAlign, this._vertAlign);
+        this._label = cc.LabelTTF.create(this.getCurrentAlignment(), "Arial", 32, blockSize, this._horizAlign, this._vertAlign);
 
         this._label.setAnchorPoint(cc.p(0, 0));
         this._label.setPosition(cc.p((s.width - blockSize.width) / 2, (s.height - blockSize.height) / 2));
@@ -919,7 +919,7 @@ var LabelTTFMultiline = AtlasDemo.extend({
 
         // cc.LabelBMFont
         var center = cc.LabelTTF.create("word wrap \"testing\" (bla0) bla1 'bla2' [bla3] (bla4) {bla5} {bla6} [bla7] (bla8) [bla9] 'bla0' \"bla1\"",
-             "Arial", 32, cc.size(s.width / 2, 200), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_TOP);
+            "Arial", 32, cc.size(s.width / 2, 200), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_TOP);
         center.setPosition(cc.p(s.width / 2, 150));
 
         this.addChild(center);

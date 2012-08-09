@@ -33,7 +33,7 @@ cc.GridBase = cc.Class.extend({
     _reuseGrid:null,
     _gridSize:null,
     _texture:null,
-    _step:cc.p(0,0),
+    _step:cc.p(0, 0),
     _grabber:null,
     _isTextureFlipped:null,
     /** wheter or not the grid is active */
@@ -178,18 +178,18 @@ cc.GridBase = cc.Class.extend({
 
         //todo gl
         /* glViewport(0, 0, (GLsizei)(size.width * CC_CONTENT_SCALE_FACTOR()), (GLsizei)(size.height * CC_CONTENT_SCALE_FACTOR()) );
-        kmGLMatrixMode(KM_GL_PROJECTION);
-        kmGLLoadIdentity();
+         kmGLMatrixMode(KM_GL_PROJECTION);
+         kmGLLoadIdentity();
 
-        kmMat4 orthoMatrix;
-        kmMat4OrthographicProjection(&orthoMatrix, 0, size.width * CC_CONTENT_SCALE_FACTOR(), 0, size.height * CC_CONTENT_SCALE_FACTOR(), -1, 1);
-        kmGLMultMatrix( &orthoMatrix );
+         kmMat4 orthoMatrix;
+         kmMat4OrthographicProjection(&orthoMatrix, 0, size.width * CC_CONTENT_SCALE_FACTOR(), 0, size.height * CC_CONTENT_SCALE_FACTOR(), -1, 1);
+         kmGLMultMatrix( &orthoMatrix );
 
-        kmGLMatrixMode(KM_GL_MODELVIEW);
-        kmGLLoadIdentity();
+         kmGLMatrixMode(KM_GL_MODELVIEW);
+         kmGLLoadIdentity();
 
 
-        ccSetProjectionMatrixDirty();*/
+         ccSetProjectionMatrixDirty();*/
     }
 });
 cc.GridBase.create = function () {

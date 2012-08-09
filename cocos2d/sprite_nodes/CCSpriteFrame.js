@@ -54,9 +54,9 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         this._offset = cc.p(0, 0);
         this._offsetInPixels = cc.p(0, 0);
         this._originalSize = cc.size(0, 0);
-        this._rectInPixels = cc.rect(0,0,0,0);
-        this._rect = cc.rect(0,0,0,0);
-        this._originalSizeInPixels = cc.size(0,0);
+        this._rectInPixels = cc.rect(0, 0, 0, 0);
+        this._rect = cc.rect(0, 0, 0, 0);
+        this._originalSizeInPixels = cc.size(0, 0);
         this._textureFilename = "";
     },
 

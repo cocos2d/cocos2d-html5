@@ -565,7 +565,7 @@ cc.TouchDispatcher.preTouchPoint = cc.p(0, 0);
 
 cc.TouchDispatcher.isRegisterEvent = false;
 
-cc.getHTMLElementPosition = function(element){
+cc.getHTMLElementPosition = function (element) {
     var pos = null;
     if (element instanceof HTMLCanvasElement) {
         pos = {left:0, top:0, height:element.height};
@@ -580,7 +580,7 @@ cc.getHTMLElementPosition = function(element){
     return pos;
 };
 
-cc.ProcessMouseupEvent = function(element, event) {
+cc.ProcessMouseupEvent = function (element, event) {
     var pos = cc.getHTMLElementPosition(element);
 
     var tx = event.pageX;
@@ -675,7 +675,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
                 var touch = null;
-                if(event.touches[i].hasOwnProperty("identifier"))
+                if (event.touches[i].hasOwnProperty("identifier"))
                     touch = new cc.Touch(mouseX, mouseY, event.touches[i].identifier);
                 else
                     touch = new cc.Touch(mouseX, mouseY);
@@ -711,7 +711,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
                 var touch = null;
-                if(event.touches[i].hasOwnProperty("identifier"))
+                if (event.touches[i].hasOwnProperty("identifier"))
                     touch = new cc.Touch(mouseX, mouseY, event.touches[i].identifier);
                 else
                     touch = new cc.Touch(mouseX, mouseY);
@@ -752,7 +752,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
                 var touch = null;
-                if(fireTouches[i].hasOwnProperty("identifier"))
+                if (fireTouches[i].hasOwnProperty("identifier"))
                     touch = new cc.Touch(mouseX, mouseY, fireTouches[i].identifier);
                 else
                     touch = new cc.Touch(mouseX, mouseY);
@@ -789,7 +789,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
                 var touch = null;
-                if(event.touches[i].hasOwnProperty("identifier"))
+                if (event.touches[i].hasOwnProperty("identifier"))
                     touch = new cc.Touch(mouseX, mouseY, event.touches[i].identifier);
                 else
                     touch = new cc.Touch(mouseX, mouseY);

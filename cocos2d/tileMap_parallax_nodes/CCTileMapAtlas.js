@@ -176,7 +176,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         } else {
             ptr[position.x + position.y * this._GAInfo.width] = tile;
 
-            var num = this._posToAtlasIndex[position.x +""+ position.y];
+            var num = this._posToAtlasIndex[position.x + "" + position.y];
             this._updateAtlasValueAt(position, tile, num);
         }
     },
@@ -290,7 +290,7 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
 
                     if (value.r != 0) {
                         this._updateAtlasValueAt(cc.g(x, y), value, total);
-                        this._posToAtlasIndex[x+""+y] = total;
+                        this._posToAtlasIndex[x + "" + y] = total;
 
                         total++;
                     }

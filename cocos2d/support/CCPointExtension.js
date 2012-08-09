@@ -401,7 +401,7 @@ cc.pLineIntersect = function (A, B, C, D, retP) {
  * @return {Boolean}
  */
 cc.pSegmentIntersect = function (A, B, C, D) {
-    var retP = cc.p(0,0);
+    var retP = cc.p(0, 0);
     if (cc.pLineIntersect(A, B, C, D, retP))
         if (retP.x >= 0.0 && retP.x <= 1.0 && retP.y >= 0.0 && retP.y <= 1.0)
             return true;
@@ -417,11 +417,11 @@ cc.pSegmentIntersect = function (A, B, C, D) {
  * @return {cc.Point}
  */
 cc.pIntersectPoint = function (A, B, C, D) {
-    var retP = cc.p(0,0);
+    var retP = cc.p(0, 0);
 
     if (cc.pLineIntersect(A, B, C, D, retP)) {
         // Point of intersection
-        var P = cc.p(0,0);
+        var P = cc.p(0, 0);
         P.x = A.x + retP.x * (B.x - A.x);
         P.y = A.y + retP.x * (B.y - A.y);
         return P;

@@ -141,7 +141,7 @@ var Helloworld = cc.Layer.extend({
         cc.canvas.width = cc.originalCanvasSize.width * xScale;
         cc.canvas.height = cc.originalCanvasSize.height * xScale;
         var parentDiv = document.getElementById("Cocos2dGameContainer");
-        if(parentDiv){
+        if (parentDiv) {
             parentDiv.style.width = cc.canvas.width + "px";
             parentDiv.style.height = cc.canvas.height + "px";
         }
