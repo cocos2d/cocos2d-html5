@@ -105,8 +105,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     spriteFrame.initWithTexture(texture, frame, rotated, offset, sourceSize);
                 } else if (format == 3) {
                     // get values
-                    var spriteSize, spriteOffset,spriteSourceSize,textureRect, textureRotated;
-                    if(frameDict.hasOwnProperty("spriteSize")){
+                    var spriteSize, spriteOffset, spriteSourceSize, textureRect, textureRotated;
+                    if (frameDict.hasOwnProperty("spriteSize")) {
                         spriteSize = cc.SizeFromString(this._valueForKey("spriteSize", frameDict));
                         spriteOffset = cc.PointFromString(this._valueForKey("spriteOffset", frameDict));
                         spriteSourceSize = cc.SizeFromString(this._valueForKey("spriteSourceSize", frameDict));
@@ -133,7 +133,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    if(frameDict.hasOwnProperty("spriteSize")){
+                    if (frameDict.hasOwnProperty("spriteSize")) {
                         spriteFrame.initWithTexture(texture,
                             cc.rect(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
                             textureRotated,
@@ -146,7 +146,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                 if (spriteFrame.isRotated()) {
                     //clip to canvas
-                    var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(),spriteFrame.getRect());
+                    var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(), spriteFrame.getRect());
                     var rect = spriteFrame.getRect();
                     spriteFrame.setRect(cc.rect(0, 0, rect.size.width, rect.size.height));
                     spriteFrame.setTexture(tempTexture);
@@ -320,9 +320,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         this._removeSpriteFramesFromDictionary(dict);
 
         //remove it from the cache
-         if (cc.ArrayContainsObject(this._loadedFileNames,plist)){
-             cc.ArrayRemoveObject(plist);
-         }
+        if (cc.ArrayContainsObject(this._loadedFileNames, plist)) {
+            cc.ArrayRemoveObject(plist);
+        }
     },
 
     /**

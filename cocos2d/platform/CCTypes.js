@@ -78,7 +78,7 @@ cc.Color3B = function (r1, g1, b1) {
  * @return {Number,Number,Number}
  */
 cc.c3b = function (r, g, b) {
-    return new cc.Color3B(r,g,b);
+    return new cc.Color3B(r, g, b);
 };
 
 // compatibility
@@ -169,7 +169,7 @@ cc.Color4B = function (r1, g1, b1, a1) {
  * @return {Number,Number,Number,Number}
  */
 cc.c4b = function (r, g, b, a) {
-    return new cc.Color4B(r,g,b,a);
+    return new cc.Color4B(r, g, b, a);
 };
 
 // backwards compatibility
@@ -208,7 +208,7 @@ cc.Color4F = function (r1, g1, b1, a1) {
  * var redColor = cc.c4f(1,0,0,1);
  */
 cc.c4f = function (r, g, b, a) {
-    return new cc.Color4F(r,g,b,a);
+    return new cc.Color4F(r, g, b, a);
 };
 
 /**

@@ -264,7 +264,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      */
     startWithTarget:function (target) {
         //this._super(target);
-        cc.Action.prototype.startWithTarget.call(this,target);
+        cc.Action.prototype.startWithTarget.call(this, target);
         this._innerAction.startWithTarget(target);
     },
 
@@ -367,7 +367,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         rect = rect || cc.RectZero();
         this._followedNode = followedNode;
 
-        this._boundarySet = cc.Rect.CCRectEqualToRect(rect,cc.RectZero());
+        this._boundarySet = cc.Rect.CCRectEqualToRect(rect, cc.RectZero());
 
         this._boundaryFullyCovered = false;
 

@@ -117,8 +117,8 @@ var MultiTouchTestLayer = cc.Layer.extend({
 
     onTouchesMoved:function (touches, event) {
         this._clearSavePointArr();
-        if(!cc.Browser.isMobile){
-            if(!this._isPressed){
+        if (!cc.Browser.isMobile) {
+            if (!this._isPressed) {
                 return;
             }
         }

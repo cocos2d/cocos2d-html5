@@ -115,7 +115,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     /**
      * Constructor
      */
-    ctor:function(){
+    ctor:function () {
         this.fontDefDictionary = {
             "0":{
                 "key":"0",
@@ -441,9 +441,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     /**
      * Constructor
      */
-/*    ctor:function () {
-        this._super();
-    },*/
+    /*    ctor:function () {
+     this._super();
+     },*/
     /**
      * @param {CanvasContext} ctx
      */
@@ -974,8 +974,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     /**
      * @param {Number} scale
      */
-    setScale:function (scale,scaleY) {
-        this._super(scale,scaleY);
+    setScale:function (scale, scaleY) {
+        this._super(scale, scaleY);
         this.updateLabel();
     },
 

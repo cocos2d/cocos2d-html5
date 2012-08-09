@@ -84,7 +84,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                 fontChar = new cc.Sprite();
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.rect(0,0,10,10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.SizeZero());
                 }
                 else {
                     fontChar.initWithTexture(texture, rect);
@@ -94,7 +94,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             else {
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.rect(0,0,10,10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.SizeZero());
                 }
                 else {
                     // reusing fonts

@@ -1241,7 +1241,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     ctor:function () {
         this._config = new cc.BezierConfig();
-        this._startPosition = cc.p(0,0);
+        this._startPosition = cc.p(0, 0);
     }
 });
 

@@ -318,7 +318,7 @@ cc.SizeMake = function (width, height) {
  * @return {Number, Number}
  * Constructor
  */
-cc.size = function(w, h) {
+cc.size = function (w, h) {
     // optimization
     return {width:w, height:h};
 
@@ -339,7 +339,7 @@ cc.RectMake = function (x, y, width, height) {
 };
 
 // backward compatible
-cc.rect = function(x,y,w,h) {
+cc.rect = function (x, y, w, h) {
     // optimization
     return { origin:{x:x, y:y}, size:{width:w, height:h} };
 //    return cc.rect(x, y, width, height);
@@ -359,7 +359,7 @@ cc.PointZero = function () {
  * Point Zero Constant
  * @return {cc.Point}
  */
-cc.POINT_ZERO = cc.p(0,0);
+cc.POINT_ZERO = cc.p(0, 0);
 
 /**
  * The "zero" size -- equivalent to cc.size(0, 0).
@@ -375,7 +375,7 @@ cc.SizeZero = function () {
  * Size Zero constant
  * @return {cc.Size}
  */
-cc.SIZE_ZERO = cc.size(0,0);
+cc.SIZE_ZERO = cc.size(0, 0);
 
 /**
  * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
@@ -391,4 +391,4 @@ cc.RectZero = function () {
  * Rect Zero Constant
  * @return {cc.Rect}
  */
-cc.RECT_ZERO = cc.rect(0,0,0,0);
+cc.RECT_ZERO = cc.rect(0, 0, 0, 0);

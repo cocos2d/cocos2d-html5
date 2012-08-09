@@ -39,39 +39,101 @@ var ParticleTestScene = TestScene.extend({
 });
 
 var particleSceneArr = [
-    function(){return new DemoFlower();},
-    function(){return new DemoGalaxy();},
-    function(){return new DemoFirework();},
-    function(){return new DemoSpiral();},
-    function(){return new DemoSun();},
-    function(){return new DemoMeteor();},
-    function(){return new DemoFire();},
-    function(){return new DemoSmoke();},
-    function(){return new DemoExplosion();},
-    function(){return new DemoSnow();},
-    function(){return new DemoRain();},
-    function(){return new DemoBigFlower();},
-    function(){return new DemoRotFlower();},
-    function(){return new DemoModernArt();},
-    function(){return new DemoRing();},
+    function () {
+        return new DemoFlower();
+    },
+    function () {
+        return new DemoGalaxy();
+    },
+    function () {
+        return new DemoFirework();
+    },
+    function () {
+        return new DemoSpiral();
+    },
+    function () {
+        return new DemoSun();
+    },
+    function () {
+        return new DemoMeteor();
+    },
+    function () {
+        return new DemoFire();
+    },
+    function () {
+        return new DemoSmoke();
+    },
+    function () {
+        return new DemoExplosion();
+    },
+    function () {
+        return new DemoSnow();
+    },
+    function () {
+        return new DemoRain();
+    },
+    function () {
+        return new DemoBigFlower();
+    },
+    function () {
+        return new DemoRotFlower();
+    },
+    function () {
+        return new DemoModernArt();
+    },
+    function () {
+        return new DemoRing();
+    },
     //function(){return new ParallaxParticle();},
-    function(){return new DemoParticleFromFile("BoilingFoam");},
-    function(){return new DemoParticleFromFile("BurstPipe");},
-    function(){return new DemoParticleFromFile("Comet");},
-    function(){return new DemoParticleFromFile("debian");},
-    function(){return new DemoParticleFromFile("ExplodingRing");},
-    function(){return new DemoParticleFromFile("LavaFlow");},
+    function () {
+        return new DemoParticleFromFile("BoilingFoam");
+    },
+    function () {
+        return new DemoParticleFromFile("BurstPipe");
+    },
+    function () {
+        return new DemoParticleFromFile("Comet");
+    },
+    function () {
+        return new DemoParticleFromFile("debian");
+    },
+    function () {
+        return new DemoParticleFromFile("ExplodingRing");
+    },
+    function () {
+        return new DemoParticleFromFile("LavaFlow");
+    },
     //function(){return new DemoParticleFromFile("SpinningPeas");},
-    function(){return new DemoParticleFromFile("SpookyPeas");},
-    function(){return new DemoParticleFromFile("Upsidedown");},
-    function(){return new DemoParticleFromFile("Flower");},
-    function(){return new DemoParticleFromFile("Spiral");},
-    function(){return new DemoParticleFromFile("Galaxy");},
-    function(){return new RadiusMode1();},
-    function(){return new RadiusMode2();},
-    function(){return new Issue704();},
-    function(){return new Issue870();},
-    function(){return new DemoParticleFromFile("Phoenix");}
+    function () {
+        return new DemoParticleFromFile("SpookyPeas");
+    },
+    function () {
+        return new DemoParticleFromFile("Upsidedown");
+    },
+    function () {
+        return new DemoParticleFromFile("Flower");
+    },
+    function () {
+        return new DemoParticleFromFile("Spiral");
+    },
+    function () {
+        return new DemoParticleFromFile("Galaxy");
+    },
+    function () {
+        return new RadiusMode1();
+    },
+    function () {
+        return new RadiusMode2();
+    },
+    function () {
+        return new Issue704();
+    },
+    function () {
+        return new Issue870();
+    },
+    function () {
+        return new DemoParticleFromFile("Phoenix");
+    }
 ];
 
 var nextParticleAction = function () {
@@ -83,7 +145,7 @@ var nextParticleAction = function () {
 var backParticleAction = function () {
     sceneIdx--;
     if (sceneIdx < 0)
-        sceneIdx +=  particleSceneArr.length;
+        sceneIdx += particleSceneArr.length;
 
     return particleSceneArr[sceneIdx]();
 };

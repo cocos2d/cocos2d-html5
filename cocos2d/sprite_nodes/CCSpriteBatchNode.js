@@ -85,7 +85,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._renderTexture = cc.RenderTexture.create(cc.canvas.width, cc.canvas.height);
         this.setContentSize(cc.size(cc.canvas.width, cc.canvas.height));
     },
-    setContentSize:function(size){
+    setContentSize:function (size) {
         if (!size) {
             return;
         }
@@ -656,7 +656,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                     //add dirty region
                     this._renderTexture.clear();
                     this._renderTexture.context.save();
-                    this._renderTexture.context.translate(this._anchorPointInPoints.x , -(this._anchorPointInPoints.y ));
+                    this._renderTexture.context.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y ));
                     if (this._children) {
                         this.sortAllChildren();
                         for (i = 0; i < this._children.length; i++) {

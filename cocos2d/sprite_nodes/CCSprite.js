@@ -80,7 +80,7 @@ cc.generateTextureCacheForColor = function (texture) {
 
 cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
-        rect = cc.rect(0,0,texture.width, texture.height);
+        rect = cc.rect(0, 0, texture.width, texture.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
@@ -118,7 +118,7 @@ cc.generateTintImage2 = function (texture, color, rect) {
  */
 cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
     if (!rect) {
-        rect = cc.rect(0,0, texture.width, texture.height);
+        rect = cc.rect(0, 0, texture.width, texture.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
@@ -253,7 +253,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // Shared data
     //
     // texture
-    _rect:cc.rect(0,0,0,0),
+    _rect:cc.rect(0, 0, 0, 0),
     _rectRotated:null,
 
     // Offset Position (used by Zwoptex)
@@ -513,7 +513,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._quad.tr.colors = tmpColor;
 
         if (!rect) {
-            rect = cc.rect(0,0,0,0);
+            rect = cc.rect(0, 0, 0, 0);
             if (texture instanceof cc.Texture2D) {
                 rect.size = texture.getContentSize();
             } else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
@@ -553,7 +553,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
                 if (!rect) {
-                    rect = cc.rect(0,0,loadImg.width, loadImg.height);
+                    rect = cc.rect(0, 0, loadImg.width, loadImg.height);
                 }
                 selfPointer.initWithTexture(loadImg, rect);
                 cc.TextureCache.getInstance().cacheImage(filename, loadImg);
@@ -567,7 +567,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         } else {
             if (texture) {
                 if (!rect) {
-                    rect = cc.rect(0,0,0,0);
+                    rect = cc.rect(0, 0, 0, 0);
                     if (texture instanceof cc.Texture2D)
                         rect.size = texture.getContentSize();
                     else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
