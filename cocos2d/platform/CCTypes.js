@@ -75,10 +75,10 @@ cc.Color3B = function (r1, g1, b1) {
  * @param {Number} r red value (0 to 255)
  * @param {Number} g green value (0 to 255)
  * @param {Number} b blue value (0 to 255)
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
 cc.c3b = function (r, g, b) {
-    return new cc.Color3B(r, g, b);
+    return new cc.Color3B(r,g,b);
 };
 
 // compatibility
@@ -88,84 +88,57 @@ cc.c3 = cc.c3b;
 //ccColor3B predefined colors
 /**
  *  White color (255,255,255)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.WHITE = function () {
-    return new cc.Color3B(255, 255, 255);
-};
+cc.WHITE = cc.c3b(255, 255, 255);
 
 /**
  *  Yellow color (255,255,0)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.YELLOW = function () {
-    return new cc.Color3B(255, 255, 0);
-};
+cc.YELLOW = cc.c3b(255, 255, 0);
 
 /**
  *  Blue color (0,0,255)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.BLUE = function () {
-    return new cc.Color3B(0, 0, 255);
-};
+cc.BLUE = cc.c3b(0, 0, 255);
 
 /**
  *  Green Color (0,255,0)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.GREEN = function () {
-    return new cc.Color3B(0, 255, 0);
-};
+cc.GREEN = cc.c3b(0, 255, 0);
 
 /**
  *  Red Color (255,0,0,)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.RED = function () {
-    return new cc.Color3B(255, 0, 0);
-};
+cc.RED = cc.c3b(255, 0, 0);
 
 /**
  *  Magenta Color (255,0,255)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.MAGENTA = function () {
-    return new cc.Color3B(255, 0, 255);
-};
+cc.MAGENTA = cc.c3b(255, 0, 255);
 
 /**
  *  Black Color (0,0,0)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.BLACK = function () {
-    return new cc.Color3B(0, 0, 0);
-};
+cc.BLACK = cc.c3b(0, 0, 0);
 
 /**
  *  Orange Color (255,127,0)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.ORANGE = function () {
-    return new cc.Color3B(255, 127, 0);
-};
+cc.ORANGE = cc.c3b(255, 127, 0);
 
 /**
  *  Gray Color (166,166,166)
- * @function
- * @return {cc.Color3B}
+ * @return {Number,Number,Number}
  */
-cc.GRAY = function () {
-    return new cc.Color3B(166, 166, 166);
-};
+cc.GRAY = cc.c3b(166, 166, 166);
 
 /**
  * RGBA color composed of 4 bytes
@@ -192,11 +165,11 @@ cc.Color4B = function (r1, g1, b1, a1) {
  * @param {Number} r red value (0 to 255)
  * @param {Number} g green value (0 to 255)
  * @param {Number} b blue value (0 to 255)
- * @param {Number} o Alpha value (0 to 255)
- * @return {cc.Color4B}
+ * @param {Number} a Alpha value (0 to 255)
+ * @return {Number,Number,Number,Number}
  */
-cc.c4b = function (r, g, b, o) {
-    return new cc.Color4B(r, g, b, o);
+cc.c4b = function (r, g, b, a) {
+    return new cc.Color4B(r,g,b,a);
 };
 
 // backwards compatibility
@@ -226,16 +199,16 @@ cc.Color4F = function (r1, g1, b1, a1) {
  * helper macro that creates an ccColor4F type
  * @Class
  * @Construct
- * @param {Number} r1 red value (0 to 1)
- * @param {Number} g1 green value (0 to 1)
- * @param {Number} b1 blue value (0 to 1)
- * @param {Number} a1 Alpha value (0 to 1)
+ * @param {Number} r red value (0 to 1)
+ * @param {Number} g green value (0 to 1)
+ * @param {Number} b blue value (0 to 1)
+ * @param {Number} a Alpha value (0 to 1)
  * @example
  * //create a red color
  * var redColor = cc.c4f(1,0,0,1);
  */
-cc.c4f = function (r1, g1, b1, a1) {
-    return new cc.Color4F(r1, g1, b1, a1);
+cc.c4f = function (r, g, b, a) {
+    return new cc.Color4F(r,g,b,a);
 };
 
 /**

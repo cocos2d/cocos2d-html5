@@ -168,7 +168,7 @@ CocosDenshionTest = cc.Layer.extend({
             menuItem.setPosition(cc.p(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }
         this._testCount = i;
-        this._itmeMenu.setContentSize(cc.SizeMake(s.width, (this._testCount + 1) * LINE_SPACE));
+        this._itmeMenu.setContentSize(cc.size(s.width, (this._testCount + 1) * LINE_SPACE));
         this._itmeMenu.setPosition(cc.PointZero());
         this.addChild(this._itmeMenu);
 

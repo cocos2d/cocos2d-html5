@@ -99,7 +99,7 @@ var LayerTest = cc.Layer.extend({
 
         var subtitle_ = this.subtitle();
         if (subtitle_) {
-            var l = cc.LabelTTF.create(subtitle_, "Thonburi", 16, cc.SizeMake(400, 16), cc.TEXT_ALIGNMENT_CENTER);
+            var l = cc.LabelTTF.create(subtitle_, "Thonburi", 16, cc.size(400, 16), cc.TEXT_ALIGNMENT_CENTER);
             this.addChild(l, 1);
             l.setPosition(cc.p(s.width / 2, s.height - 80));
         }
@@ -169,7 +169,7 @@ var LayerTest1 = LayerTest.extend({
 
         var s = cc.Director.getInstance().getWinSize();
 
-        var newSize = cc.SizeMake(Math.abs(touchLocation.x - s.width / 2) * 2, Math.abs(touchLocation.y - s.height / 2) * 2);
+        var newSize = cc.size(Math.abs(touchLocation.x - s.width / 2) * 2, Math.abs(touchLocation.y - s.height / 2) * 2);
 
         var l = this.getChildByTag(cc.TAG_LAYER);
 
