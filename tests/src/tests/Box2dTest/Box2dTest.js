@@ -116,7 +116,7 @@ Box2DTestLayer = cc.Layer.extend({
         //just randomly picking one of the images
         var idx = (cc.RANDOM_0_1() > .5 ? 0 : 1);
         var idy = (cc.RANDOM_0_1() > .5 ? 0 : 1);
-        var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(32 * idx, 32 * idy, 32, 32));
+        var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.rect(32 * idx, 32 * idy, 32, 32));
         batch.addChild(sprite);
 
         sprite.setPosition(cc.p(p.x, p.y));

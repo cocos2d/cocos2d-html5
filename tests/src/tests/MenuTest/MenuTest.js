@@ -42,9 +42,9 @@ var MenuLayer1 = cc.Layer.extend({
         this.setTouchEnabled(true);
         // Font Item
 
-        var spriteNormal = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
-        var spriteSelected = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23, 115, 23));
-        var spriteDisabled = cc.Sprite.create(s_menuItem, cc.RectMake(0, 0, 115, 23));
+        var spriteNormal = cc.Sprite.create(s_menuItem, cc.rect(0, 23 * 2, 115, 23));
+        var spriteSelected = cc.Sprite.create(s_menuItem, cc.rect(0, 23, 115, 23));
+        var spriteDisabled = cc.Sprite.create(s_menuItem, cc.rect(0, 0, 115, 23));
 
         var item1 = cc.MenuItemSprite.create(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback);
 
@@ -229,9 +229,9 @@ var MenuLayer3 = cc.Layer.extend({
         var item1 = cc.MenuItemLabel.create(label, this, this.menuCallback2);
         var item2 = cc.MenuItemFont.create("--- Go Back ---", this, this.menuCallback);
 
-        var spriteNormal = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23 * 2, 115, 23));
-        var spriteSelected = cc.Sprite.create(s_menuItem, cc.RectMake(0, 23, 115, 23));
-        var spriteDisabled = cc.Sprite.create(s_menuItem, cc.RectMake(0, 0, 115, 23));
+        var spriteNormal = cc.Sprite.create(s_menuItem, cc.rect(0, 23 * 2, 115, 23));
+        var spriteSelected = cc.Sprite.create(s_menuItem, cc.rect(0, 23, 115, 23));
+        var spriteDisabled = cc.Sprite.create(s_menuItem, cc.rect(0, 0, 115, 23));
 
 
         var item3 = cc.MenuItemSprite.create(spriteNormal, spriteSelected, spriteDisabled, this, this.menuCallback3);

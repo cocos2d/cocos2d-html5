@@ -365,9 +365,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * @return {cc.SpriteFrame}
      * @example
      * //get a SpriteFrame by name
-     * var frame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
+     * var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
      */
-    spriteFrameByName:function (name) {
+    getSpriteFrame:function (name) {
         var frame;
         if (this._spriteFrames.hasOwnProperty(name)) {
             frame = this._spriteFrames[name];

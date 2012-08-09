@@ -350,7 +350,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
  *
  * //Create an animation with sprite frames
  * var animFrames = [];
- * var frame = cache.spriteFrameByName("grossini_dance_01.png");
+ * var frame = cache.getSpriteFrame("grossini_dance_01.png");
  * animFrames.push(frame);
  * var animation2 = cc.Animation.create(animFrames);
  *

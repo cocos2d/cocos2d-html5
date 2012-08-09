@@ -287,7 +287,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         if (fileName) {
             if (typeof(fileName) == "string") {
-                var frame = cc.SpriteFrameCache.getInstance().spriteFrameByName(fileName);
+                var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(fileName);
                 this.initWithSpriteFrame(frame);
             } else if (typeof(fileName) == "object") {
                 if (fileName instanceof cc.SpriteFrame) {
@@ -586,7 +586,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteFrame} spriteFrame
      * @return {Boolean}
      * @example
-     * var spriteFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
+     * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
      * var sprite = new cc.Sprite();
      * sprite.initWithSpriteFrame(spriteFrame);
      */
@@ -610,7 +610,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     initWithSpriteFrameName:function (spriteFrameName) {
         cc.Assert(spriteFrameName != null, "");
-        var frame = cc.SpriteFrameCache.getInstance().spriteFrameByName(spriteFrameName);
+        var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
         return this.initWithSpriteFrame(frame);
     },
 
@@ -1722,7 +1722,7 @@ cc.Sprite.create = function (fileName, rect) {
  * @return {cc.Sprite}
  * @example
  * //get a sprite frame
- * var spriteFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
+ * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
  *
  * //create a sprite with a sprite frame
  * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
@@ -1732,7 +1732,7 @@ cc.Sprite.create = function (fileName, rect) {
  */
 cc.Sprite.createWithSpriteFrameName = function (spriteFrame) {
     if (typeof(spriteFrame) == 'string') {
-        var pFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName(spriteFrame);
+        var pFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrame);
         if (pFrame) {
             spriteFrame = pFrame;
         } else {

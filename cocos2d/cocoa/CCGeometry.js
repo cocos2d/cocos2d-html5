@@ -299,6 +299,9 @@ cc.SizeMake = function (width, height) {
     return new cc.Size(width, height);
 };
 
+// backward compatible
+cc.size = cc.SizeMake;
+
 /**
  * @function
  * @param {Number} x
@@ -311,6 +314,9 @@ cc.SizeMake = function (width, height) {
 cc.RectMake = function (x, y, width, height) {
     return new cc.Rect(x, y, width, height);
 };
+
+// backward compatible
+cc.rect = cc.RectMake;
 
 /**
  * The "left bottom" point -- equivalent to cc.p(0, 0).

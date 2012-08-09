@@ -142,7 +142,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
 
             var frames = [];
             for (var i = 0; i < frameNames.length; i++) {
-                var spriteFrame = frameCache.spriteFrameByName(frameNames[i]);
+                var spriteFrame = frameCache.getSpriteFrame(frameNames[i]);
                 if (!spriteFrame) {
                     cc.log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + frameNames[i]
                         + "' which is not currently in the cc.SpriteFrameCache. This frame will not be added to the animation.");
@@ -185,7 +185,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
             for(var i = 0; i<frameArray.length; i++){
                 var entry = frameArray[i];
                 var spriteFrameName = entry["spriteframe"];
-                var spriteFrame = frameCache.spriteFrameByName(spriteFrameName);
+                var spriteFrame = frameCache.getSpriteFrame(spriteFrameName);
                 if(!spriteFrame){
                     cc.log("cocos2d: cc.AnimationCache: Animation '" + key + "' refers to frame '" + spriteFrameName
                         + "' which is not currently in the cc.SpriteFrameCache. This frame will not be added to the animation.");

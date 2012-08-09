@@ -806,7 +806,7 @@ var LabelTTFTest = AtlasDemo.extend({
     _horizAlign:null,
     _vertAlign:null,
     ctor:function () {
-        var blockSize = cc.SizeMake(200, 160);
+        var blockSize = cc.size(200, 160);
         var s = cc.Director.getInstance().getWinSize();
 
         var colorLayer = cc.LayerColor.create(cc.c4b(100, 100, 100, 255), blockSize.width, blockSize.height);
@@ -839,7 +839,7 @@ var LabelTTFTest = AtlasDemo.extend({
         this.updateAlignment();
     },
     updateAlignment:function () {
-        var blockSize = cc.SizeMake(200, 160);
+        var blockSize = cc.size(200, 160);
         var s = cc.Director.getInstance().getWinSize();
 
         if (this._label) {
@@ -919,7 +919,7 @@ var LabelTTFMultiline = AtlasDemo.extend({
 
         // cc.LabelBMFont
         var center = cc.LabelTTF.create("word wrap \"testing\" (bla0) bla1 'bla2' [bla3] (bla4) {bla5} {bla6} [bla7] (bla8) [bla9] 'bla0' \"bla1\"",
-             "Arial", 32, cc.SizeMake(s.width / 2, 200), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_TOP);
+             "Arial", 32, cc.size(s.width / 2, 200), cc.TEXT_ALIGNMENT_CENTER, cc.VERTICAL_TEXT_ALIGNMENT_TOP);
         center.setPosition(cc.p(s.width / 2, 150));
 
         this.addChild(center);
@@ -1252,17 +1252,17 @@ var TTFFontInit = AtlasDemo.extend({
 var LabelTTFAlignment = AtlasDemo.extend({
     ctor:function () {
         var s = cc.Director.getInstance().getWinSize();
-        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", "Arial", 12, cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_LEFT);
+        var ttf0 = cc.LabelTTF.create("Alignment 0\nnew line", "Arial", 12, cc.size(256, 32), cc.TEXT_ALIGNMENT_LEFT);
         ttf0.setPosition(cc.p(s.width / 2, (s.height / 6) * 2));
         ttf0.setAnchorPoint(cc.p(0.5, 0.5));
         this.addChild(ttf0);
 
-        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", "Arial", 12, cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_CENTER);
+        var ttf1 = cc.LabelTTF.create("Alignment 1\nnew line", "Arial", 12, cc.size(256, 32), cc.TEXT_ALIGNMENT_CENTER);
         ttf1.setPosition(cc.p(s.width / 2, (s.height / 6) * 3));
         ttf1.setAnchorPoint(cc.p(0.5, 0.5));
         this.addChild(ttf1);
 
-        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", "Arial", 12, cc.SizeMake(256, 32), cc.TEXT_ALIGNMENT_RIGHT);
+        var ttf2 = cc.LabelTTF.create("Alignment 2\nnew line", "Arial", 12, cc.size(256, 32), cc.TEXT_ALIGNMENT_RIGHT);
         ttf2.setPosition(cc.p(s.width / 2, (s.height / 6) * 4));
         ttf2.setAnchorPoint(cc.p(0.5, 0.5));
         this.addChild(ttf2);
