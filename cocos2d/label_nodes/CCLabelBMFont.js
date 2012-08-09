@@ -507,7 +507,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 if (cacheTextureForColor) {
                     //generate color texture cache
                     var tx = this.getTexture();
-                    var textureRect = new cc.Rect(0, 0, tx.width, tx.height);
+                    var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
                     var img = new Image();
                     img.src = colorTexture.toDataURL();

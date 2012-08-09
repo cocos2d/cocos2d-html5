@@ -456,12 +456,12 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
             else if (orientationStr !== null)
                 cc.log("cocos2d: TMXFomat: Unsupported orientation:" + this.getOrientation());
 
-            var s = new cc.Size();
+            var s = cc.size(0,0);
             s.width = parseFloat(map.getAttribute('width'));
             s.height = parseFloat(map.getAttribute('height'));
             this.setMapSize(s);
 
-            s = new cc.Size();
+            s = cc.size(0,0);
             s.width = parseFloat(map.getAttribute('tilewidth'));
             s.height = parseFloat(map.getAttribute('tileheight'));
             this.setTileSize(s)
@@ -501,7 +501,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 tileset.spacing = parseInt(t.getAttribute('spacing')) || 0;
                 tileset.margin = parseInt(t.getAttribute('margin')) || 0;
 
-                var s = new cc.Size();
+                var s = cc.size(0,0);
                 s.width = parseFloat(t.getAttribute('tilewidth'));
                 s.height = parseFloat(t.getAttribute('tileheight'));
                 tileset._tileSize = s;
@@ -550,7 +550,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 var layer = new cc.TMXLayerInfo();
                 layer.name = l.getAttribute('name');
 
-                var s = new cc.Size();
+                var s = cc.size(0,0);
                 s.width = parseFloat(l.getAttribute('width'));
                 s.height = parseFloat(l.getAttribute('height'));
                 layer._layerSize = s;

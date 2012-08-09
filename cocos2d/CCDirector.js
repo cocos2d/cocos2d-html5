@@ -322,7 +322,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused) {
             this._scheduler.update(this._deltaTime);
         }
-        //this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+        //this._fullRect = cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
         //cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
         cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
@@ -333,7 +333,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          if (this._dirtyRegion) {
          //cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
-         var fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+         var fullRect = cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
          this._dirtyRegion = cc.Rect.CCRectIntersection(this._dirtyRegion, fullRect);
 
          if(cc.Rect.CCRectEqualToRect(cc.RectZero(), this._dirtyRegion)){
@@ -412,11 +412,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             return;
 
         if (!this._dirtyRegion) {
-            this._dirtyRegion = new cc.Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+            this._dirtyRegion = cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
             return;
         }
         this._dirtyRegion = cc.Rect.CCRectUnion(this._dirtyRegion,
-            new cc.Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
+            cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
     },
 
     rectIsInDirtyRegion:function (rect) {
@@ -547,7 +547,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     popScene:function () {
         cc.Assert(this._runningScene != null, "running scene should not null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this._scenesStack.pop();
         var c = this._scenesStack.length;
@@ -627,7 +627,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     pushScene:function (scene) {
         cc.Assert(scene, "the scene should not null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this._sendCleanupToScene = false;
 
@@ -642,7 +642,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     replaceScene:function (scene) {
         cc.Assert(scene != null, "the scene should not be null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
         var i = this._scenesStack.length;
 
         this._sendCleanupToScene = true;
@@ -671,7 +671,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused) {
             return;
         }
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = cc.Time.gettimeofdayCocos2d();
@@ -695,7 +695,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.Assert(scene != null, "running scene should not be null");
         cc.Assert(this._runningScene == null, "_runningScene should be null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.pushScene(scene);
         this.startAnimation();
@@ -1244,7 +1244,7 @@ cc.defaultFPS = 60;
 /*
  window.onfocus = function () {
  if (!cc.firstRun) {
- cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+ cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
  }
  };
  */

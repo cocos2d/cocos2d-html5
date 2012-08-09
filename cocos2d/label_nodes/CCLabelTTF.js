@@ -367,7 +367,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
         cc.renderContext.font = this._fontStyleStr;
         var dim = cc.renderContext.measureText(this._string);
-        this.setContentSize(new cc.Size(dim.width, this._fontSize));
+        this.setContentSize(cc.size(dim.width, this._fontSize));
         cc.renderContext.restore();
         this.setNodeDirty();
     }

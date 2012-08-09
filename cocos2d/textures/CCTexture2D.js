@@ -180,7 +180,7 @@ cc.Texture2D = cc.Class.extend({
     },
     //** content size *//
     getContentSizeInPixels:function () {
-        var ret = new cc.Size();
+        var ret = cc.size(0,0);
         ret.width = this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
         ret.height = this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
 
@@ -530,7 +530,7 @@ cc.Texture2D = cc.Class.extend({
         var inPixel32 = null;
         var outPixel16 = null;
         var hasAlpha;
-        var imageSize = new cc.Size();
+        var imageSize = cc.size(0,0);
         var pixelFormat = new cc.Texture2DPixelFormat();
         var bpp = new cc.size_t();
         hasAlpha = image.hasAlpha();

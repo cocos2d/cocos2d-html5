@@ -446,7 +446,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
         var textureCache = this._textureAtlas.getTexture();
-        this._tileSet.imageSize = new cc.Size(textureCache.width, textureCache.height);
+        this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
 
         // By default all the tiles are aliased
         // pros:

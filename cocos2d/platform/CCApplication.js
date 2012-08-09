@@ -103,7 +103,7 @@ cc.renderContextType = cc.CANVAS;
  * save original size of canvas, use for resize canvas
  * @type cc.Size
  */
-cc.originalCanvasSize = new cc.Size(0, 0);
+cc.originalCanvasSize = cc.size(0, 0);
 
 window.requestAnimFrame = (function () {
     return  window.requestAnimationFrame ||
@@ -176,7 +176,7 @@ cc.setup = function (el, width, height) {
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
-    cc.originalCanvasSize = new cc.Size(cc.canvas.width, cc.canvas.height);
+    cc.originalCanvasSize = cc.size(cc.canvas.width, cc.canvas.height);
 
     cc.log(cc.ENGINE_VERSION);
 
@@ -184,7 +184,7 @@ cc.setup = function (el, width, height) {
     /*
      cc.canvas.addEventListener("resize", function () {
      if (!cc.firstRun) {
-     cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+     cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
      }
      }, true);
      */

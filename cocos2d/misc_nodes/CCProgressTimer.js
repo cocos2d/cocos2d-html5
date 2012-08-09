@@ -406,13 +406,13 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                 var startPoint = cc.p(size.width * this._midPoint.x, size.height * this._midPoint.y);
                 var startPointTx = cc.p(textureSize.width * this._midPoint.x, textureSize.height * this._midPoint.y);
 
-                var drawedSize = new cc.Size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
-                var drawingSize = new cc.Size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
-                this._drawSize = new cc.Size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
+                var drawedSize = cc.size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
+                var drawingSize = cc.size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
+                this._drawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
 
-                var txDrawedSize = new cc.Size((textureSize.width * (1 - this._barChangeRate.x)), (textureSize.height * (1 - this._barChangeRate.y)));
-                var txDrawingSize = new cc.Size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
-                this._originSize = new cc.Size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
+                var txDrawedSize = cc.size((textureSize.width * (1 - this._barChangeRate.x)), (textureSize.height * (1 - this._barChangeRate.y)));
+                var txDrawingSize = cc.size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
+                this._originSize = cc.size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
 
                 var needToLeft = startPoint.x * percentageF;
                 var needToLeftTx = startPointTx.x * percentageF;

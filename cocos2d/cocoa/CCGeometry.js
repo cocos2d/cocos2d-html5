@@ -42,7 +42,9 @@ cc.Point = function (_x, _y) {
  * @return {}
  */
 cc.p = function (x, y) {
-    return new cc.Point(x,y);
+    // optimization
+    return {x:x, y:y};
+//    return new cc.Point(x,y);
 };
 
 /**
@@ -306,7 +308,7 @@ cc.PointMake = function (x, y) {
  * Constructor
  */
 cc.SizeMake = function (width, height) {
-    return new cc.Size(width, height);
+    return cc.size(width, height);
 };
 
 /**
@@ -317,7 +319,10 @@ cc.SizeMake = function (width, height) {
  * Constructor
  */
 cc.size = function(w, h) {
-    return new cc.Size(w,h);
+    // optimization
+    return {width:w, height:h};
+
+//    return cc.size(w,h);
 }
 
 /**
@@ -330,11 +335,15 @@ cc.size = function(w, h) {
  * Constructor
  */
 cc.RectMake = function (x, y, width, height) {
-    return new cc.Rect(x, y, width, height);
+    return cc.rect(x, y, width, height);
 };
 
 // backward compatible
-cc.rect = cc.RectMake;
+cc.rect = function(x,y,w,h) {
+    // optimization
+    return { origin:{x:x, y:y}, size:{width:w, height:h} };
+//    return cc.rect(x, y, width, height);
+}
 
 /**
  * The "left bottom" point -- equivalent to cc.p(0, 0).
@@ -347,6 +356,12 @@ cc.PointZero = function () {
 };
 
 /**
+ * Point Zero Constant
+ * @return {cc.Point}
+ */
+cc.POINT_ZERO = cc.p(0,0);
+
+/**
  * The "zero" size -- equivalent to cc.size(0, 0).
  * @function
  * @return {cc.Size}
@@ -355,6 +370,12 @@ cc.PointZero = function () {
 cc.SizeZero = function () {
     return cc.size(0, 0)
 };
+
+/**
+ * Size Zero constant
+ * @return {cc.Size}
+ */
+cc.SIZE_ZERO = cc.size(0,0);
 
 /**
  * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
@@ -366,3 +387,8 @@ cc.RectZero = function () {
     return cc.rect(0, 0, 0, 0)
 };
 
+/**
+ * Rect Zero Constant
+ * @return {cc.Rect}
+ */
+cc.RECT_ZERO = cc.rect(0,0,0,0);

@@ -409,7 +409,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         }
         this._updateColor();
 
-        this.setContentSize(new cc.Size(width, height));
+        this.setContentSize(cc.size(width, height));
         //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
         return true;

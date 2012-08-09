@@ -156,7 +156,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
                 var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     var tx = this._originalTexture;
-                    var textureRect = new cc.Rect(0, 0, tx.width, tx.height);
+                    var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
                     var img = new Image();
                     img.src = colorTexture.toDataURL();
@@ -272,7 +272,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             size = this._textureAtlas.getTexture().getContentSize();
         }
         else {
-            size = new cc.Size(this._textureAtlas.getTexture().width, this._textureAtlas.getTexture().height);
+            size = cc.size(this._textureAtlas.getTexture().width, this._textureAtlas.getTexture().height);
         }
         this._itemsPerColumn = parseInt(size.height / this._itemHeight);
         this._itemsPerRow = parseInt(size.width / this._itemWidth);

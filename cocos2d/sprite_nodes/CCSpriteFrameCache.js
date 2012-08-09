@@ -148,7 +148,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     //clip to canvas
                     var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(),spriteFrame.getRect());
                     var rect = spriteFrame.getRect();
-                    spriteFrame.setRect(new cc.Rect(0, 0, rect.size.width, rect.size.height));
+                    spriteFrame.setRect(cc.rect(0, 0, rect.size.width, rect.size.height));
                     spriteFrame.setTexture(tempTexture);
                 }
 

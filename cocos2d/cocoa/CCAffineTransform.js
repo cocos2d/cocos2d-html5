@@ -80,7 +80,7 @@ cc.PointApplyAffineTransform = function (point, t) {
 };
 
 cc.__SizeApplyAffineTransform = function (size, t) {
-    var s = new cc.Size();
+    var s = cc.size(0,0);
     s.width = t.a * size.width + t.c * size.height;
     s.height = t.b * size.width + t.d * size.height;
     return s;

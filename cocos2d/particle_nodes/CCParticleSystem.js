@@ -1205,7 +1205,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
-        return new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+        return cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
     },
 
     /**

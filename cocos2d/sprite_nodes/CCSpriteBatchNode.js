@@ -83,7 +83,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             this.initWithFile(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
         }
         this._renderTexture = cc.RenderTexture.create(cc.canvas.width, cc.canvas.height);
-        this.setContentSize(new cc.Size(cc.canvas.width, cc.canvas.height));
+        this.setContentSize(cc.size(cc.canvas.width, cc.canvas.height));
     },
     setContentSize:function(size){
         if (!size) {
