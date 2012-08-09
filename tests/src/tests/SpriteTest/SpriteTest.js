@@ -598,7 +598,7 @@ var SpriteZOrder = SpriteTestDemo.extend({
         this.addChild(sprite, -1, TAG_SPRITE1);
         sprite.setPosition(cc.p(s.width / 2, s.height / 2 - 20));
         sprite.setScaleX(10);
-        sprite.setColor(cc.RED());
+        sprite.setColor(cc.RED);
 
         this.schedule(this.reorderSprite, 1);
     },
@@ -655,7 +655,7 @@ var SpriteBatchNodeZOrder = SpriteTestDemo.extend({
         batch.addChild(sprite, -1, TAG_SPRITE1);
         sprite.setPosition(cc.p(s.width / 2, s.height / 2 - 20));
         sprite.setScaleX(10);
-        sprite.setColor(cc.RED());
+        sprite.setColor(cc.RED);
 
         this.schedule(this.reorderSprite, 1);
     },
@@ -3274,7 +3274,7 @@ var SpriteNilTexture = SpriteTestDemo.extend({
         var sprite = new cc.Sprite();
         sprite.init();
         sprite.setTextureRect(cc.rect(0, 0, 300, 300));
-        sprite.setColor(cc.RED());
+        sprite.setColor(cc.RED);
         sprite.setOpacity(128);
         sprite.setPosition(cc.p(3 * s.width / 4, s.height / 2));
         this.addChild(sprite, 100);
@@ -3282,7 +3282,7 @@ var SpriteNilTexture = SpriteTestDemo.extend({
         sprite = new cc.Sprite();
         sprite.init();
         sprite.setTextureRect(cc.rect(0, 0, 300, 300));
-        sprite.setColor(cc.BLUE());
+        sprite.setColor(cc.BLUE);
         sprite.setOpacity(128);
         sprite.setPosition(cc.p(s.width / 4, s.height / 2));
         this.addChild(sprite, 100);

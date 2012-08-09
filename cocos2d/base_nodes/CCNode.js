@@ -871,7 +871,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {Number}
      */
     getBoundingBox:function () {
-        var rect = cc.RectMake(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
 
@@ -879,7 +879,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
-        var rect = cc.RectMake(0, 0, this._contentSize.width, this._contentSize.height);
+        var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
         rect = new cc.Rect(0 | rect.origin.x - 4, 0 | rect.origin.y - 4, 0 | rect.size.width + 8, 0 | rect.size.height + 8);
         //query child's BoundingBox

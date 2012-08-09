@@ -195,7 +195,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 if (!this._texture)
                     return false;
 
-                this._texture.initWithData(data, this._pixelFormat, powW, powH, cc.SizeMake(width, height));
+                this._texture.initWithData(data, this._pixelFormat, powW, powH, cc.size(width, height));
                 //free( data );
 
                 var oldRBO;

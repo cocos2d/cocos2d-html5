@@ -230,7 +230,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         //purge?
         this._purgeDirecotorInNextLoop = false;
-        this._winSizeInPixels = this._winSizeInPoints = cc.SizeMake(cc.canvas.width, cc.canvas.height);
+        this._winSizeInPixels = this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);
 
         this._openGLView = null;
         this._contentScaleFactor = 1.0;
@@ -657,7 +657,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     reshapeProjection:function (newWindowSize) {
         if(this._openGLView){
             this._winSizeInPoints = this._openGLView.getSize();
-            this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor,
+            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor,
                 this._winSizeInPoints.height * this._contentScaleFactor);
 
             this.setProjection(this._projection);
@@ -728,7 +728,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setContentScaleFactor:function (scaleFactor) {
         if (scaleFactor != this._contentScaleFactor) {
             this._contentScaleFactor = scaleFactor;
-            this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * scaleFactor, this._winSizeInPoints.height * scaleFactor);
+            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * scaleFactor, this._winSizeInPoints.height * scaleFactor);
 
             if (this._openGLView) {
                 this.updateContentScaleFactor();
@@ -834,7 +834,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
             // set size
             this._winSizeInPoints = this._openGLView.getSize();
-            this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
 
             this._createStatsLabel();
 
@@ -1132,9 +1132,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _createStatsLabel:function(){
-        this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
-        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
-        this._drawsLabel = cc.LabelTTF.create("000", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 18, cc.size(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", 18, cc.size(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._drawsLabel = cc.LabelTTF.create("000", "Arial", 18, cc.size(60,16), cc.TEXT_ALIGNMENT_RIGHT);
 
         this._drawsLabel.setPosition( cc.pAdd( cc.p(20,48), cc.DIRECTOR_STATS_POSITION ) );
         this._SPFLabel.setPosition( cc.pAdd( cc.p(20,30), cc.DIRECTOR_STATS_POSITION ) );

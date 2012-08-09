@@ -37,7 +37,7 @@
  *
  * @example
  * var texture = cc.TextureCache.getInstance().addImage(s_dragon_animation);
- * var frame0 = cc.SpriteFrame.createWithTexture(texture, cc.RectMake(132 * 0, 132 * 0, 132, 132));
+ * var frame0 = cc.SpriteFrame.createWithTexture(texture, cc.rect(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _offset:null,

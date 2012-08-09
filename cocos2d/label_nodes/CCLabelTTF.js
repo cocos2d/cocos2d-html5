@@ -45,7 +45,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     ctor:function () {
         this._super();
-        this._color = cc.WHITE();
+        this._color = cc.WHITE;
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
     },
@@ -190,12 +190,12 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         else {
             fontName = arg[1];
             fontSize = arg[2];
-            dimensions = cc.SizeMake(0, arg[2]);
+            dimensions = cc.size(0, arg[2]);
             hAlignment = cc.TEXT_ALIGNMENT_LEFT;
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
         }
         if (this.init(true)) {
-            this._dimensions = cc.SizeMake(dimensions.width, dimensions.height);
+            this._dimensions = cc.size(dimensions.width, dimensions.height);
             this._fontName = fontName;
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
@@ -383,7 +383,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
  * @return {cc.LabelTTF|Null}
  * @example
  * // Example
- * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.SizeMake(32,16), cc.TEXT_ALIGNMENT_LEFT);
+ * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
  */
 cc.LabelTTF.create = function (/* Multi arguments */) {
     var ret = new cc.LabelTTF();

@@ -347,7 +347,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._opacity = Var;
         this._updateColor();
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -367,7 +367,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._color = Var;
         this._updateColor();
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -433,7 +433,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(cc.SizeMake(w, h));
+        this.setContentSize(cc.size(w, h));
     },
 
     /**
@@ -441,7 +441,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(cc.SizeMake(w, this._contentSize.height));
+        this.setContentSize(cc.size(w, this._contentSize.height));
     },
 
     /**
@@ -449,7 +449,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(cc.SizeMake(this._contentSize.width, h));
+        this.setContentSize(cc.size(this._contentSize.width, h));
     },
 
     _updateColor:function () {

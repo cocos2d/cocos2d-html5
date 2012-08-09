@@ -221,7 +221,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
     statusBarFrame:function (rect) {
         if (rect) {
             // Windows doesn't have status bar.
-            rect = cc.RectMake(0, 0, 0, 0);
+            rect = cc.rect(0, 0, 0, 0);
         }
     },
 

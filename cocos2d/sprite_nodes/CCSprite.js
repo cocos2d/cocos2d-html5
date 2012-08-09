@@ -250,7 +250,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _blendFunc:new cc.BlendFunc(),
     _texture:null,
     _originalTexture:null,
-    _color:cc.WHITE(),
+    _color:cc.WHITE,
     //
     // Shared data
     //
@@ -434,8 +434,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         this._opacityModifyRGB = true;
         this._opacity = 255;
-        this._color = cc.WHITE();
-        this._colorUnmodified = cc.WHITE();
+        this._color = cc.WHITE;
+        this._colorUnmodified = cc.WHITE;
 
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
@@ -491,8 +491,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this.setDirty(false);
         this._opacityModifyRGB = true;
         this._opacity = 255;
-        this._color = cc.WHITE();
-        this._colorUnmodified = cc.WHITE();
+        this._color = cc.WHITE;
+        this._colorUnmodified = cc.WHITE;
 
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
@@ -1281,13 +1281,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setFlipX:function (flipX) {
         if (this._flipX != flipX) {
             //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
             this._flipX = flipX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
 
             //save dirty region when after changed
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -1299,13 +1299,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setFlipY:function (flipY) {
         if (this._flipY != flipY) {
             //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
             this._flipY = flipY;
             //this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
 
             //save dirty region when after changed
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -1380,7 +1380,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setOpacity:function (opacity) {
         this._opacity = opacity;
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
         //TODO in canvas
         return;
@@ -1432,7 +1432,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
          */
         this.updateColor();
         //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this.setNodeDirty();
     },
@@ -1476,7 +1476,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         //    this.setRotation(-90);
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
         //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
     },
 
     // Animation

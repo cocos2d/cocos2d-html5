@@ -207,7 +207,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this.setPosition(cc.POINT_PIXELS_TO_POINTS(offset));
 
             this._atlasIndexArray = [];
-            this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.SizeMake(this._layerSize.width * this._mapTileSize.width,
+            this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
                 this._layerSize.height  * this._mapTileSize.height)));
 
             this._useAutomaticVertexZ = false;
@@ -370,7 +370,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
 
         this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         var gid = this.tileGIDAt(pos);
 
@@ -458,7 +458,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // Parse cocos2d properties
         this._parseInternalProperties();
         this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         for (var y = 0; y < this._layerSize.height; y++) {
             for (var x = 0; x < this._layerSize.width; x++) {
@@ -502,7 +502,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(cc.ArrayContainsObject(this._children, sprite), "Tile does not belong to TMXLayer");
 
         this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         var atlasIndex = cc.ArrayGetIndexOfObject(this._children, sprite);
         var zz = this._atlasIndexArray[atlasIndex];
         this._tiles[zz] = 0;
@@ -629,7 +629,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _updateTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
-        rect = cc.RectMake(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor,
+        rect = cc.rect(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor,
             rect.size.width / this._contentScaleFactor, rect.size.height / this._contentScaleFactor);
         var z = pos.x + pos.y * this._layerSize.width;
 

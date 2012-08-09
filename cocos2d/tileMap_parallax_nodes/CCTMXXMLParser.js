@@ -626,7 +626,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 var g = objectgroups[i];
                 var objectGroup = new cc.TMXObjectGroup();
                 objectGroup.setGroupName(g.getAttribute('name'));
-                var positionOffset = cc.p();
+                var positionOffset = cc.p(0,0);
                 positionOffset.x = parseFloat(g.getAttribute('x')) * this.getTileSize().width || 0;
                 positionOffset.y = parseFloat(g.getAttribute('y')) * this.getTileSize().height || 0;
                 objectGroup.setPositionOffset(positionOffset);
