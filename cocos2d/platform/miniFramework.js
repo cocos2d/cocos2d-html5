@@ -230,3 +230,12 @@ cc.$.skew = function (a) {
 cc.$new = function (x) {
     return cc.$(document.createElement(x))
 };
+cc.$.findpos = function (obj) {
+    var curleft = 0;
+    var curtop = 0;
+    do {
+        curleft += obj.offsetLeft;
+        curtop += obj.offsetTop;
+    } while (obj = obj.offsetParent);
+    return {x:curleft, y:curtop};
+};
