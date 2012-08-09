@@ -264,7 +264,7 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      */
     startWithTarget:function (target) {
         //this._super(target);
-        cc.Action.prototype.startWithTarget.call(this,target);
+        cc.Action.prototype.startWithTarget.call(this, target);
         this._innerAction.startWithTarget(target);
     },
 
@@ -367,7 +367,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         rect = rect || cc.RectZero();
         this._followedNode = followedNode;
 
-        this._boundarySet = cc.Rect.CCRectEqualToRect(rect,cc.RectZero());
+        this._boundarySet = cc.Rect.CCRectEqualToRect(rect, cc.RectZero());
 
         this._boundaryFullyCovered = false;
 
@@ -468,7 +468,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * // example
  * // creates the action with a set boundary
  * var sprite = cc.Sprite.create("spriteFileName");
- * var followAction = cc.Follow.create(sprite, cc.RectMake(0, 0, s.width * 2 - 100, s.height));
+ * var followAction = cc.Follow.create(sprite, cc.rect(0, 0, s.width * 2 - 100, s.height));
  * this.runAction(followAction);
  *
  * // creates the action with no boundary set

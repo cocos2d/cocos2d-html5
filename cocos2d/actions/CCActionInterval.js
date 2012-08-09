@@ -1241,7 +1241,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     ctor:function () {
         this._config = new cc.BezierConfig();
-        this._startPosition = cc.p();
+        this._startPosition = cc.p(0, 0);
     }
 });
 
@@ -1627,7 +1627,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      */
     initWithDuration:function (duration, red, green, blue) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._to = cc.c3(red, green, blue);
+            this._to = cc.c3b(red, green, blue);
             return true;
         }
 
@@ -1647,7 +1647,7 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        this._target.setColor(cc.c3(this._from.r + (this._to.r - this._from.r) * time,
+        this._target.setColor(cc.c3b(this._from.r + (this._to.r - this._from.r) * time,
             (this._from.g + (this._to.g - this._from.g) * time),
             (this._from.b + (this._to.b - this._from.b) * time)));
     },
@@ -1718,7 +1718,7 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      */
     update:function (time) {
         if (this._target.RGBAProtocol) {
-            this._target.setColor(cc.c3((this._fromR + this._deltaR * time),
+            this._target.setColor(cc.c3b((this._fromR + this._deltaR * time),
                 (this._fromG + this._deltaG * time),
                 (this._fromB + this._deltaB * time)));
         }

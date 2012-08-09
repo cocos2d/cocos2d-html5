@@ -37,7 +37,7 @@
  *
  * @example
  * var texture = cc.TextureCache.getInstance().addImage(s_dragon_animation);
- * var frame0 = cc.SpriteFrame.createWithTexture(texture, cc.RectMake(132 * 0, 132 * 0, 132, 132));
+ * var frame0 = cc.SpriteFrame.createWithTexture(texture, cc.rect(132 * 0, 132 * 0, 132, 132));
  */
 cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     _offset:null,
@@ -53,10 +53,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
     ctor:function () {
         this._offset = cc.p(0, 0);
         this._offsetInPixels = cc.p(0, 0);
-        this._originalSize = new cc.Size(0, 0);
-        this._rectInPixels = new cc.Rect();
-        this._rect = new cc.Rect();
-        this._originalSizeInPixels = new cc.Size();
+        this._originalSize = cc.size(0, 0);
+        this._rectInPixels = cc.rect(0, 0, 0, 0);
+        this._rect = cc.rect(0, 0, 0, 0);
+        this._originalSizeInPixels = cc.size(0, 0);
         this._textureFilename = "";
     },
 
@@ -150,7 +150,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Size}
      */
     getOriginalSize:function () {
-        return new cc.Size(this._originalSize.width, this._originalSize.height);
+        return cc.size(this._originalSize.width, this._originalSize.height);
     },
 
     /**
@@ -320,7 +320,7 @@ cc.SpriteFrame.create = function (filename, rect, rotated, offset, originalSize)
  * @return {cc.SpriteFrame}
  * @example
  * //Create a cc.SpriteFrame with a texture, rect in texture.
- * var frame1 = cc.SpriteFrame.createWithTexture("grossini_dance.png",new cc.Rect(0,0,90,128));
+ * var frame1 = cc.SpriteFrame.createWithTexture("grossini_dance.png",cc.rect(0,0,90,128));
  *
  * //Create a cc.SpriteFrame with a texture, rect, rotated, offset and originalSize in pixels.
  * var frame2 = cc.SpriteFrame.createWithTexture(texture, frameRect, rotated, offset, sourceSize);

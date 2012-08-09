@@ -90,7 +90,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     initTexCoordsWithRect:function (pointRect) {
         // convert to pixels coords
-        var rect = cc.RectMake(
+        var rect = cc.rect(
             pointRect.origin.x * cc.CONTENT_SCALE_FACTOR(),
             pointRect.origin.y * cc.CONTENT_SCALE_FACTOR(),
             pointRect.size.width * cc.CONTENT_SCALE_FACTOR(),
@@ -247,12 +247,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         }
         var size = null;
         if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
-            size = cc.SizeMake(texture.width, texture.height);
+            size = cc.size(texture.width, texture.height);
         } else {
             size = texture.getContentSize();
         }
 
-        this.setTextureWithRect(texture, cc.RectMake(0, 0, size.width, size.height));
+        this.setTextureWithRect(texture, cc.rect(0, 0, size.width, size.height));
     },
 
     /**

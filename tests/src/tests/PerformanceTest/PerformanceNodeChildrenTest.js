@@ -79,7 +79,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
         var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
         label.setPosition(cc.p(s.width / 2, s.height - 32));
-        label.setColor(cc.c3(255, 255, 40));
+        label.setColor(cc.c3b(255, 255, 40));
 
         // Subtitle
         var strSubTitle = this.subtitle();
@@ -96,9 +96,9 @@ var NodeChildrenMainScene = cc.Scene.extend({
         cc.MenuItemFont.setFontSize(65);
         var that = this;
         var decrease = cc.MenuItemFont.create(" - ", this, this.onDecrease);
-        decrease.setColor(cc.c3(0, 200, 20));
+        decrease.setColor(cc.c3b(0, 200, 20));
         var increase = cc.MenuItemFont.create(" + ", this, this.onIncrease);
-        increase.setColor(cc.c3(0, 200, 20));
+        increase.setColor(cc.c3b(0, 200, 20));
 
         var menu = cc.Menu.create(decrease, increase, null);
         menu.alignItemsHorizontally();
@@ -106,7 +106,7 @@ var NodeChildrenMainScene = cc.Scene.extend({
         this.addChild(menu, 1);
 
         var infoLabel = cc.LabelTTF.create("0 nodes", "Marker Felt", 30);
-        infoLabel.setColor(cc.c3(0, 200, 20));
+        infoLabel.setColor(cc.c3b(0, 200, 20));
         infoLabel.setPosition(cc.p(s.width / 2, s.height / 2 - 15));
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
@@ -176,7 +176,7 @@ var IterateSpriteSheet = NodeChildrenMainScene.extend({
         // increase nodes
         if (this._currentQuantityOfNodes < this._quantityOfNodes) {
             for (var i = 0; i < (this._quantityOfNodes - this._currentQuantityOfNodes); i++) {
-                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(0, 0, 32, 32));
                 this._batchNode.addChild(sprite);
                 sprite.setPosition(cc.p(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height));
             }
@@ -297,7 +297,7 @@ var AddRemoveSpriteSheet = NodeChildrenMainScene.extend({
         // increase nodes
         if (this._currentQuantityOfNodes < this._quantityOfNodes) {
             for (var i = 0; i < (this._quantityOfNodes - this._currentQuantityOfNodes); i++) {
-                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(0, 0, 32, 32));
                 this._batchNode.addChild(sprite);
                 sprite.setPosition(cc.p(cc.RANDOM_0_1() * s.width, cc.RANDOM_0_1() * s.height));
                 sprite.setVisible(false);
@@ -351,7 +351,7 @@ var AddSpriteSheet = AddRemoveSpriteSheet.extend({
 
                 // Don't include the sprite creation time and random as part of the profiling
                 for (var i = 0; i < totalToAdd; i++) {
-                    var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                    var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(0, 0, 32, 32));
                     sprites.push(sprite);
                     zs[i] = cc.RANDOM_MINUS1_1() * 50;
                 }
@@ -406,7 +406,7 @@ var RemoveSpriteSheet = AddRemoveSpriteSheet.extend({
 
             // Don't include the sprite creation time as part of the profiling
             for (var i = 0; i < totalToAdd; i++) {
-                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(0, 0, 32, 32));
                 sprites.push(sprite);
             }
 
@@ -458,7 +458,7 @@ var ReorderSpriteSheet = AddRemoveSpriteSheet.extend({
 
             // Don't include the sprite creation time as part of the profiling
             for (var i = 0; i < totalToAdd; i++) {
-                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 32, 32));
+                var sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(0, 0, 32, 32));
                 sprites.push(sprite);
             }
 

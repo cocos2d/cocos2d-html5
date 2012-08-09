@@ -61,7 +61,6 @@ var cc = cc || cc || {};
         'actions/CCActionEase.js',
         'actions/CCActionGrid.js',
         'actions/CCActionTiledGrid.js',
-        'actions/CCActionGrid.js',
         'actions/CCActionCatmullRom.js',
         'layers_scenes_transitions_nodes/CCScene.js',
         'layers_scenes_transitions_nodes/CCLayer.js',

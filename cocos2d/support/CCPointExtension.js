@@ -44,16 +44,6 @@
 cc.POINT_EPSILON = parseFloat('1.192092896e-07F');
 
 /**
- * Helper macro that creates a cc.Point.
- * @param {Number} x
- * @param {Number} y
- * @return {cc.Point}
- */
-cc.p = function (x, y) {
-    return cc.PointMake(x, y);
-};
-
-/**
  * Returns opposite of point.
  * @param {cc.Point} point
  * @return {cc.Point}
@@ -411,7 +401,7 @@ cc.pLineIntersect = function (A, B, C, D, retP) {
  * @return {Boolean}
  */
 cc.pSegmentIntersect = function (A, B, C, D) {
-    var retP = cc.p();
+    var retP = cc.p(0, 0);
     if (cc.pLineIntersect(A, B, C, D, retP))
         if (retP.x >= 0.0 && retP.x <= 1.0 && retP.y >= 0.0 && retP.y <= 1.0)
             return true;
@@ -427,11 +417,11 @@ cc.pSegmentIntersect = function (A, B, C, D) {
  * @return {cc.Point}
  */
 cc.pIntersectPoint = function (A, B, C, D) {
-    var retP = cc.p();
+    var retP = cc.p(0, 0);
 
     if (cc.pLineIntersect(A, B, C, D, retP)) {
         // Point of intersection
-        var P = cc.p();
+        var P = cc.p(0, 0);
         P.x = A.x + retP.x * (B.x - A.x);
         P.y = A.y + retP.x * (B.y - A.y);
         return P;

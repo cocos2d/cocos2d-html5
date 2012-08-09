@@ -74,6 +74,7 @@
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
                 <file name="base_nodes/CCNode.js"/>
+                <file name="base_nodes/CCdomNode.js"/>
                 <file name="base_nodes/CCAtlasNode.js"/>
                 <file name="textures/CCTexture2D.js"/>
                 <file name="textures/CCTextureCache.js"/>

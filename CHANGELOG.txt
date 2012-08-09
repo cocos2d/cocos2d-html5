@@ -1,20 +1,31 @@
+Cocos2d-html5-v0.5.0-beta @ Aug.3, 2012
+* Updated API to Cocos2d-x V2.0.
+* Updated template and directory name.
+* Improved JS files loader.
+* Added support for Dom rendering.
+* Updated JSDoc comments and shell.
+* Added TileMap property process and flip.
+* Improved BMFont.
+* Added Actions spline paths and cc.AnimationFrame.
+* Added support for multi-touch.
+* Added mini-framework for Dom manipulation.
+* Changed cc.Animation, cc.AudioEngine, cc.LableTTF and cc.Sprite API.
 
+Cocos2d-html5-v0.5.0-alpha2 @ Jun.18, 2012
+* Changed API, use "create" to construct all objects.
+* Fixed naming of variables.
+* Added JSDoc comments and shell.
+* Fixed Dom Menu flicker bug.
+* Changed code for closure compiler Advance optional.
+* Added version control.
 
-cocos2d-html5-v0.5.0-alpha2 @ June.18, 2012
-* Change API, use "create" to construct all objects.
-* Fix naming of variables.
-* Add JSDoc comments and shell.
-* Fix Dom Menu flicker bug.
-* Change code for closure compiler Advance optional.
-* Add version control.
-
-cocos2d-html5-v0.5.0-alpha @ May.28, 2012
+Cocos2d-html5-v0.5.0-alpha @ May.28, 2012
 * supports canvas and Dom Menu.
 * part of test cases were added and tested in chrome.
 * porting from cocos2d-x is not finished.
 * files must load from http server.
 
-cocos2d-html5-v0.1.0 @ Jan.29, 2012
+Cocos2d-html5-v0.1.0 @ Jan.29, 2012
 * Build the directory structure of Engine
 * cocos2d-html5 first version
 * more details: 	http://www.cocos2d-x.org/

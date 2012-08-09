@@ -150,7 +150,7 @@ cc.Texture2D = cc.Class.extend({
                 //TODO
                 // glCompressedTexImage2D(cc.GL_TEXTURE_2D, level, format, length, length, 0, size, data);
 
-                this._contentSize = cc.SizeMake(length, length);
+                this._contentSize = cc.size(length, length);
                 this._pixelsWide = length;
                 this._pixelsHigh = length;
                 this._maxS = 1.0;
@@ -180,7 +180,7 @@ cc.Texture2D = cc.Class.extend({
     },
     //** content size *//
     getContentSizeInPixels:function () {
-        var ret = new cc.Size();
+        var ret = cc.size(0, 0);
         ret.width = this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
         ret.height = this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
 
@@ -376,7 +376,7 @@ cc.Texture2D = cc.Class.extend({
         if (arguments.length == 3) {
             fontName = arguments[1];
             fontSize = arguments[2];
-            dimensions = cc.SizeMake(0, 0);
+            dimensions = cc.size(0, 0);
             alignment = cc.TEXT_ALIGNMENT_CENTER;
         }
         if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
@@ -409,7 +409,7 @@ cc.Texture2D = cc.Class.extend({
             this._maxT = 1.0;
             this._pixelsWide = pvr.getWidth();
             this._pixelsHigh = pvr.getHeight();
-            this._contentSize = cc.SizeMake(this._pixelsWide, this._pixelsHigh);
+            this._contentSize = cc.size(this._pixelsWide, this._pixelsHigh);
             this._hasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
             this._pixelFormat = pvr.getFormat();
 
@@ -530,7 +530,7 @@ cc.Texture2D = cc.Class.extend({
         var inPixel32 = null;
         var outPixel16 = null;
         var hasAlpha;
-        var imageSize = new cc.Size();
+        var imageSize = cc.size(0, 0);
         var pixelFormat = new cc.Texture2DPixelFormat();
         var bpp = new cc.size_t();
         hasAlpha = image.hasAlpha();
@@ -551,7 +551,7 @@ cc.Texture2D = cc.Class.extend({
         }
 
 
-        imageSize = cc.SizeMake(image.getWidth(), image.getHeight());
+        imageSize = cc.size(image.getWidth(), image.getHeight());
 
         switch (pixelFormat) {
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:

@@ -80,14 +80,13 @@ cc.generateTextureCacheForColor = function (texture) {
 
 cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
-        rect = new cc.Rect();
-        rect.size = new cc.Size(texture.width, texture.height);
+        rect = cc.rect(0, 0, texture.width, texture.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
-        selColor = cc.c4(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
+        selColor = cc.c4b(color.r * 255, color.g * 255, color.b * 255, color.a * 255);
     } else {
-        selColor = cc.c4(color.r, color.g, color.b, 50);//color;
+        selColor = cc.c4b(color.r, color.g, color.b, 50);//color;
     }
 
     var buff = document.createElement("canvas");
@@ -119,12 +118,11 @@ cc.generateTintImage2 = function (texture, color, rect) {
  */
 cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
     if (!rect) {
-        rect = new cc.Rect();
-        rect.size = new cc.Size(texture.width, texture.height);
+        rect = cc.rect(0, 0, texture.width, texture.height);
     }
     var selColor;
     if (color instanceof cc.Color4F) {
-        selColor = cc.c3(color.r * 255, color.g * 255, color.b * 255);
+        selColor = cc.c3b(color.r * 255, color.g * 255, color.b * 255);
     } else {
         selColor = color;
     }
@@ -228,7 +226,7 @@ cc.RENDER_IN_SUBPIXEL = function (A) {
  *
  * @example
  * var aSprite = new cc.Sprite();
- * aSprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
+ * aSprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
 cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     RGBAProtocol:true,
@@ -250,12 +248,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _blendFunc:new cc.BlendFunc(),
     _texture:null,
     _originalTexture:null,
-    _color:cc.WHITE(),
+    _color:cc.WHITE,
     //
     // Shared data
     //
     // texture
-    _rect:new cc.Rect(),
+    _rect:cc.rect(0, 0, 0, 0),
     _rectRotated:null,
 
     // Offset Position (used by Zwoptex)
@@ -287,7 +285,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         if (fileName) {
             if (typeof(fileName) == "string") {
-                var frame = cc.SpriteFrameCache.getInstance().spriteFrameByName(fileName);
+                var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(fileName);
                 this.initWithSpriteFrame(frame);
             } else if (typeof(fileName) == "object") {
                 if (fileName instanceof cc.SpriteFrame) {
@@ -362,7 +360,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return new cc.Rect(this._rect);
+        r = this._rect;
+        return cc.rect(r.origin.x, r.origin.y, r.size.width, r.size.height);
     },
 
     /**
@@ -434,8 +433,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         this._opacityModifyRGB = true;
         this._opacity = 255;
-        this._color = cc.WHITE();
-        this._colorUnmodified = cc.WHITE();
+        this._color = cc.WHITE;
+        this._colorUnmodified = cc.WHITE;
 
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
@@ -475,7 +474,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @example
      * var img =cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
      * var mySprite = new cc.Sprite();
-     * mySprite.initWithTexture(img,new cc.Rect(0,0,480,320));
+     * mySprite.initWithTexture(img,cc.rect(0,0,480,320));
      */
     initWithTexture:function (texture, rect, rotated) {
         var argnum = arguments.length;
@@ -491,8 +490,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this.setDirty(false);
         this._opacityModifyRGB = true;
         this._opacity = 255;
-        this._color = cc.WHITE();
-        this._colorUnmodified = cc.WHITE();
+        this._color = cc.WHITE;
+        this._colorUnmodified = cc.WHITE;
 
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
@@ -514,11 +513,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._quad.tr.colors = tmpColor;
 
         if (!rect) {
-            rect = new cc.Rect();
+            rect = cc.rect(0, 0, 0, 0);
             if (texture instanceof cc.Texture2D) {
                 rect.size = texture.getContentSize();
             } else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
-                rect.size = new cc.Size(texture.width, texture.height);
+                rect.size = cc.size(texture.width, texture.height);
         }
 
         if (cc.renderContextType == cc.CANVAS) {
@@ -541,7 +540,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Boolean}
      * @example
      * var mySprite = new cc.Sprite();
-     * mySprite.initWithFile("HelloHTML5World.png",new cc.Rect(0,0,480,320));
+     * mySprite.initWithFile("HelloHTML5World.png",cc.rect(0,0,480,320));
      */
     initWithFile:function (filename, rect) {
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
@@ -554,8 +553,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
                 if (!rect) {
-                    rect = new cc.Rect();
-                    rect.size = new cc.Size(loadImg.width, loadImg.height);
+                    rect = cc.rect(0, 0, loadImg.width, loadImg.height);
                 }
                 selfPointer.initWithTexture(loadImg, rect);
                 cc.TextureCache.getInstance().cacheImage(filename, loadImg);
@@ -569,11 +567,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         } else {
             if (texture) {
                 if (!rect) {
-                    rect = new cc.Rect();
+                    rect = cc.rect(0, 0, 0, 0);
                     if (texture instanceof cc.Texture2D)
                         rect.size = texture.getContentSize();
                     else if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement))
-                        rect.size = new cc.Size(texture.width, texture.height);
+                        rect.size = cc.size(texture.width, texture.height);
                 }
                 return this.initWithTexture(texture, rect);
             }
@@ -586,7 +584,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.SpriteFrame} spriteFrame
      * @return {Boolean}
      * @example
-     * var spriteFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
+     * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
      * var sprite = new cc.Sprite();
      * sprite.initWithSpriteFrame(spriteFrame);
      */
@@ -610,7 +608,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     initWithSpriteFrameName:function (spriteFrameName) {
         cc.Assert(spriteFrameName != null, "");
-        var frame = cc.SpriteFrameCache.getInstance().spriteFrameByName(spriteFrameName);
+        var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
         return this.initWithSpriteFrame(frame);
     },
 
@@ -898,7 +896,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (this._texture) {
                 if (this._texture instanceof HTMLImageElement) {
                     if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
-                        this.setContentSize(new cc.Size(this._texture.width, this._texture.height));
+                        this.setContentSize(cc.size(this._texture.width, this._texture.height));
                         this._rect.size.width = this._texture.width;
                         this._rect.size.height = this._texture.height;
                         context.drawImage(this._texture, posX, -(posY + this._texture.height));
@@ -911,7 +909,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     }
                 } else {
                     if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
-                        this.setContentSize(new cc.Size(this._texture.width, this._texture.height));
+                        this.setContentSize(cc.size(this._texture.width, this._texture.height));
                         this._rect.size.width = this._texture.width;
                         this._rect.size.height = this._texture.height;
                         context.drawImage(this._texture, posX, -(posY + this._texture.height));
@@ -1281,13 +1279,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setFlipX:function (flipX) {
         if (this._flipX != flipX) {
             //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
             this._flipX = flipX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
 
             //save dirty region when after changed
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -1299,13 +1297,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setFlipY:function (flipY) {
         if (this._flipY != flipY) {
             //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
             this._flipY = flipY;
             //this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
 
             //save dirty region when after changed
-            //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -1380,7 +1378,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     setOpacity:function (opacity) {
         this._opacity = opacity;
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
         //TODO in canvas
         return;
@@ -1432,7 +1430,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
          */
         this.updateColor();
         //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this.setNodeDirty();
     },
@@ -1476,7 +1474,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         //    this.setRotation(-90);
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
         //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
     },
 
     // Animation
@@ -1638,10 +1636,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
  * var sprite1 = cc.Sprite.createWithTexture(img);
  *
  * //create a sprite with texture and rect
- * var sprite2 = cc.Sprite.createWithTexture(img, new cc.Rect(0,0,480,320));
+ * var sprite2 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320));
  *
  * //create a sprite with texture and rect and offset
- * var sprite3 = cc.Sprite.createWithTexture(img, new cc.Rect(0,0,480,320),cc.p(0,0));
+ * var sprite3 = cc.Sprite.createWithTexture(img, cc.rect(0,0,480,320),cc.p(0,0));
  */
 cc.Sprite.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
@@ -1692,7 +1690,7 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
  * var sprite1 = cc.Sprite.create("HelloHTML5World.png");
  *
  * //create a sprite with filename and rect
- * var sprite2 = cc.Sprite.create("HelloHTML5World.png",new cc.Rect(0,0,480,320));
+ * var sprite2 = cc.Sprite.create("HelloHTML5World.png",cc.rect(0,0,480,320));
  */
 cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
@@ -1722,7 +1720,7 @@ cc.Sprite.create = function (fileName, rect) {
  * @return {cc.Sprite}
  * @example
  * //get a sprite frame
- * var spriteFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
+ * var spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
  *
  * //create a sprite with a sprite frame
  * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
@@ -1732,7 +1730,7 @@ cc.Sprite.create = function (fileName, rect) {
  */
 cc.Sprite.createWithSpriteFrameName = function (spriteFrame) {
     if (typeof(spriteFrame) == 'string') {
-        var pFrame = cc.SpriteFrameCache.getInstance().spriteFrameByName(spriteFrame);
+        var pFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrame);
         if (pFrame) {
             spriteFrame = pFrame;
         } else {

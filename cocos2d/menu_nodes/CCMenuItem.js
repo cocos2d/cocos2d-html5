@@ -120,7 +120,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      * @return {cc.Rect}
      */
     rect:function () {
-        return cc.RectMake(this._position.x - this._contentSize.width * this._anchorPoint.x,
+        return cc.rect(this._position.x - this._contentSize.width * this._anchorPoint.x,
             this._position.y - this._contentSize.height * this._anchorPoint.y,
             this._contentSize.width, this._contentSize.height);
     },
@@ -292,8 +292,8 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     initWithLabel:function (label, target, selector) {
         this.initWithTarget(target, selector);
         this._originalScale = 1.0;
-        this._colorBackup = cc.WHITE();
-        this._disabledColor = cc.c3(126, 126, 126);
+        this._colorBackup = cc.WHITE;
+        this._disabledColor = cc.c3b(126, 126, 126);
         this.setLabel(label);
         return true;
     },

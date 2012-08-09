@@ -25,11 +25,11 @@
  ****************************************************************************/
 
 var touchColors = [
-    cc.YELLOW(),
-    cc.BLUE(),
-    cc.GREEN(),
-    cc.RED(),
-    cc.MAGENTA()
+    cc.YELLOW,
+    cc.BLUE,
+    cc.GREEN,
+    cc.RED,
+    cc.MAGENTA
 ];
 
 var TouchPoint = cc.Node.extend({
@@ -117,8 +117,8 @@ var MultiTouchTestLayer = cc.Layer.extend({
 
     onTouchesMoved:function (touches, event) {
         this._clearSavePointArr();
-        if(!cc.Browser.isMobile){
-            if(!this._isPressed){
+        if (!cc.Browser.isMobile) {
+            if (!this._isPressed) {
                 return;
             }
         }

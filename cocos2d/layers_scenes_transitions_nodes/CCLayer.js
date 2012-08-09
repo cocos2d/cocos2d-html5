@@ -347,7 +347,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._opacity = Var;
         this._updateColor();
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -367,7 +367,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._color = Var;
         this._updateColor();
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -409,7 +409,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         }
         this._updateColor();
 
-        this.setContentSize(new cc.Size(width, height));
+        this.setContentSize(cc.size(width, height));
         //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
         return true;
@@ -433,7 +433,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(cc.SizeMake(w, h));
+        this.setContentSize(cc.size(w, h));
     },
 
     /**
@@ -441,7 +441,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(cc.SizeMake(w, this._contentSize.height));
+        this.setContentSize(cc.size(w, this._contentSize.height));
     },
 
     /**
@@ -449,7 +449,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(cc.SizeMake(this._contentSize.width, h));
+        this.setContentSize(cc.size(this._contentSize.width, h));
     },
 
     _updateColor:function () {
@@ -516,11 +516,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
  * @example
  * // Example
  * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.c4(255,255,0,255));
+ * var yellowBackground = cc.LayerColor.create(cc.c4b(255,255,0,255));
  * //If you didnt pass in width and height, it defaults to the same size as the canvas
  *
  * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColor.create(cc.c3(255,255,0,255), 200, 200);
+ * var yellowBox = cc.LayerColor.create(cc.c3b(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
     var ret = new cc.LayerColor();
@@ -594,7 +594,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Color3B} color
      * @example
      * // Example
-     * myGradientLayer.setStartColor(cc.c3(255,0,0));
+     * myGradientLayer.setStartColor(cc.c3b(255,0,0));
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
@@ -606,7 +606,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Color3B} color
      * @example
      * // Example
-     * myGradientLayer.setEndColor(cc.c3(255,0,0));
+     * myGradientLayer.setEndColor(cc.c3b(255,0,0));
      * //set the ending gradient to red
      */
     setEndColor:function (color) {
@@ -715,7 +715,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         this._compressedInterpolation = true;
 
-        return this._super(cc.c4(start.r, start.g, start.b, 255));
+        return this._super(cc.c4b(start.r, start.g, start.b, 255));
     },
 
     _updateColor:function () {

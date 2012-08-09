@@ -75,7 +75,7 @@ var SubTest = cc.Class.extend({
             case 2:
             case 3:
             {
-                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(0, 0, 52, 139));
+                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(0, 0, 52, 139));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -94,7 +94,7 @@ var SubTest = cc.Class.extend({
                 var idx = 0 | (cc.RANDOM_0_1() * 14);
                 var x = (idx % 5) * 85;
                 var y = (0 | (idx / 5)) * 121;
-                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(x, y, 85, 121));
+                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(x, y, 85, 121));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -121,7 +121,7 @@ var SubTest = cc.Class.extend({
 
                 y = (0 | (r / 8)) * 32;
                 x = (r % 8) * 32;
-                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.RectMake(x, y, 32, 32));
+                sprite = cc.Sprite.createWithTexture(this._batchNode.getTexture(), cc.rect(x, y, 32, 32));
                 this._batchNode.addChild(sprite, 0, tag + 100);
                 break;
             }
@@ -284,13 +284,13 @@ var SpriteMainScene = cc.Scene.extend({
         var label = cc.LabelTTF.create(this.title(), "Arial", 40);
         this.addChild(label, 1);
         label.setPosition(cc.p(s.width / 2, s.height - 32));
-        label.setColor(cc.c3(255, 255, 40));
+        label.setColor(cc.c3b(255, 255, 40));
 
         cc.MenuItemFont.setFontSize(65);
         var decrease = cc.MenuItemFont.create(" - ", this, this.onDecrease);
-        decrease.setColor(cc.c3(0, 200, 20));
+        decrease.setColor(cc.c3b(0, 200, 20));
         var increase = cc.MenuItemFont.create(" + ", this, this.onIncrease);
-        increase.setColor(cc.c3(0, 200, 20));
+        increase.setColor(cc.c3b(0, 200, 20));
 
         var menu = cc.Menu.create(decrease, increase, null);
         menu.alignItemsHorizontally();
@@ -299,7 +299,7 @@ var SpriteMainScene = cc.Scene.extend({
         this.addChild(menu, 1);
 
         var infoLabel = cc.LabelTTF.create("0 nodes", "Marker Felt", 30);
-        infoLabel.setColor(cc.c3(0, 200, 20));
+        infoLabel.setColor(cc.c3b(0, 200, 20));
         infoLabel.setPosition(cc.p(s.width / 2, s.height - 90));
         this.addChild(infoLabel, 1, TAG_INFO_LAYER);
 
@@ -317,11 +317,11 @@ var SpriteMainScene = cc.Scene.extend({
             subMenu.addChild(itemFont, 10);
 
             if (i <= 3)
-                itemFont.setColor(cc.c3(200, 20, 20));
+                itemFont.setColor(cc.c3b(200, 20, 20));
             else if (i <= 6)
-                itemFont.setColor(cc.c3(0, 200, 20));
+                itemFont.setColor(cc.c3b(0, 200, 20));
             else
-                itemFont.setColor(cc.c3(0, 20, 200));
+                itemFont.setColor(cc.c3b(0, 20, 200));
         }
 
         subMenu.alignItemsHorizontally();
