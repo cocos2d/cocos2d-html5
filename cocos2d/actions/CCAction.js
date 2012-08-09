@@ -468,7 +468,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
  * // example
  * // creates the action with a set boundary
  * var sprite = cc.Sprite.create("spriteFileName");
- * var followAction = cc.Follow.create(sprite, cc.RectMake(0, 0, s.width * 2 - 100, s.height));
+ * var followAction = cc.Follow.create(sprite, cc.rect(0, 0, s.width * 2 - 100, s.height));
  * this.runAction(followAction);
  *
  * // creates the action with no boundary set

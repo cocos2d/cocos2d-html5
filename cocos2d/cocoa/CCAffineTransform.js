@@ -62,7 +62,7 @@ cc.AffineTransformMake = function (a, b, c, d, tx, ty) {
 };
 
 cc.__PointApplyAffineTransform = function (point, t) {
-    var p = cc.p();
+    var p = cc.p(0,0);
     p.x = t.a * point.x + t.c * point.y + t.tx;
     p.y = t.b * point.x + t.d * point.y + t.ty;
     return p;
@@ -80,7 +80,7 @@ cc.PointApplyAffineTransform = function (point, t) {
 };
 
 cc.__SizeApplyAffineTransform = function (size, t) {
-    var s = new cc.Size();
+    var s = cc.size(0,0);
     s.width = t.a * size.width + t.c * size.height;
     s.height = t.b * size.width + t.d * size.height;
     return s;
@@ -138,7 +138,7 @@ cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
     var minY = Math.min(Math.min(topLeft.y, topRight.y), Math.min(bottomLeft.y, bottomRight.y));
     var maxY = Math.max(Math.max(topLeft.y, topRight.y), Math.max(bottomLeft.y, bottomRight.y));
 
-    return cc.RectMake(minX, minY, (maxX - minX), (maxY - minY));
+    return cc.rect(minX, minY, (maxX - minX), (maxY - minY));
 };
 
 /**

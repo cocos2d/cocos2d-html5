@@ -69,7 +69,7 @@ var backTextInputTest = function () {
 };
 
 var textInputGetRect = function (node) {
-    var rc = new cc.Rect(node.getPosition().x, node.getPosition().y, node.getContentSize().width, node.getContentSize().height);
+    var rc = cc.rect(node.getPosition().x, node.getPosition().y, node.getContentSize().width, node.getContentSize().height);
     rc.origin.x -= rc.size.width / 2;
     rc.origin.y -= rc.size.height / 2;
     return rc;

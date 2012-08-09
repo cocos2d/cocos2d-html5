@@ -51,13 +51,13 @@ cc.DOM.methods = {
     },
     setScale:function (scale, scaleY) {
         //save dirty region when before change
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this._scaleX = scale;
         this._scaleY = scaleY || scale;
 
         //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.dom.resize(this._scaleX, this._scaleY);
     },
     setScaleX:function (x) {
@@ -99,7 +99,7 @@ cc.DOM.methods = {
         if (this._rotation == newRotation)
             return;
         //save dirty region when before change
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this._rotation = newRotation;
         this._rotationRadians = this._rotation * (Math.PI / 180);

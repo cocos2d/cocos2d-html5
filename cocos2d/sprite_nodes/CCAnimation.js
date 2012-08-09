@@ -194,7 +194,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
         var texture = cc.TextureCache.getInstance().addImage(fileName);
         var rect = cc.RectZero();
         if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
-            rect.size = cc.SizeMake(texture.width, texture.height);
+            rect.size = cc.size(texture.width, texture.height);
         } else {
             rect.size = texture.getContentSize();
         }
@@ -350,7 +350,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
  *
  * //Create an animation with sprite frames
  * var animFrames = [];
- * var frame = cache.spriteFrameByName("grossini_dance_01.png");
+ * var frame = cache.getSpriteFrame("grossini_dance_01.png");
  * animFrames.push(frame);
  * var animation2 = cc.Animation.create(animFrames);
  *

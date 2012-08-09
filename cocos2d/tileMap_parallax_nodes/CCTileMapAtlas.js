@@ -129,10 +129,10 @@ cc.TileMapAtlas = cc.AtlasNode.extend(/** @lends cc.TileMapAtlas# */{
         this._loadTGAfile(mapFile);
         this._calculateItemsToRender();
         if (this.initWithTileFile(tile, tileWidth, tileHeight, this._itemsToRender)) {
-            this._color = cc.WHITE();
+            this._color = cc.WHITE;
             this._posToAtlasIndex = new Object();
             this._updateAtlasValues();
-            this.setContentSize(cc.SizeMake((this._GAInfo.width * this._itemWidth),
+            this.setContentSize(cc.size((this._GAInfo.width * this._itemWidth),
                 (this._GAInfo.height * this._itemHeight)));
             return true;
         }

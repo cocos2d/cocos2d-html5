@@ -33,7 +33,7 @@ cc.GridBase = cc.Class.extend({
     _reuseGrid:null,
     _gridSize:null,
     _texture:null,
-    _step:cc.p(),
+    _step:cc.p(0,0),
     _grabber:null,
     _isTextureFlipped:null,
     /** wheter or not the grid is active */

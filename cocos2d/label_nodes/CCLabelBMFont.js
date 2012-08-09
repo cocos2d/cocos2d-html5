@@ -49,7 +49,7 @@ cc._BMFontDef = function (charID, rect, xOffset, yOffset, xAdvance) {
     //! ID of the character
     this.charID = charID || 0;
     //! origin and size of the font
-    this.rect = rect || cc.RectMake(0, 0, 10, 10);
+    this.rect = rect || cc.rect(0, 0, 10, 10);
     //! The X amount the image should be offset when drawing the image (in pixels)
     this.xOffset = xOffset || 0;
     //! The Y amount the image should be offset when drawing the image (in pixels)
@@ -507,7 +507,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 if (cacheTextureForColor) {
                     //generate color texture cache
                     var tx = this.getTexture();
-                    var textureRect = new cc.Rect(0, 0, tx.width, tx.height);
+                    var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
                     var img = new Image();
                     img.src = colorTexture.toDataURL();
@@ -584,7 +584,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._imageOffset = imageOffset || cc.PointZero();
             this._width = width || cc.LabelAutomaticWidth;
             this._opacity = 255;
-            this._color = cc.WHITE();
+            this._color = cc.WHITE;
             this._contentSize = cc.SizeZero();
             this.setString(theString);
             this.setAnchorPoint(cc.p(0.5, 0.5));
@@ -641,7 +641,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var fontDef = element.fontDef;
 
-            var rect = cc.RectMake(fontDef.rect.origin.x, fontDef.rect.origin.y, fontDef.rect.size.width, fontDef.rect.size.height);
+            var rect = cc.rect(fontDef.rect.origin.x, fontDef.rect.origin.y, fontDef.rect.size.width, fontDef.rect.size.height);
             rect = cc.RECT_PIXELS_TO_POINTS(rect);
             rect.origin.x += this._imageOffset.x;
             rect.origin.y += this._imageOffset.y;

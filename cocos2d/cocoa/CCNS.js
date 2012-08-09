@@ -113,7 +113,7 @@ cc.RectFromString = function (content) {
         var width = parseFloat(sizeInfo[0]);
         var height = parseFloat(sizeInfo[1]);
 
-        result = cc.RectMake(x, y, width, height);
+        result = cc.rect(x, y, width, height);
     } while (0);
     return result;
 }
@@ -169,7 +169,7 @@ cc.SizeFromString = function (content) {
         var strs = cc.splitWithForm(content);
         var width = parseFloat(strs[0]);
         var height = parseFloat(strs[1]);
-        ret = cc.SizeMake(width, height);
+        ret = cc.size(width, height);
     } catch (e) {
     }
     return ret;

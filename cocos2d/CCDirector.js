@@ -230,7 +230,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         //purge?
         this._purgeDirecotorInNextLoop = false;
-        this._winSizeInPixels = this._winSizeInPoints = cc.SizeMake(cc.canvas.width, cc.canvas.height);
+        this._winSizeInPixels = this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);
 
         this._openGLView = null;
         this._contentScaleFactor = 1.0;
@@ -322,7 +322,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused) {
             this._scheduler.update(this._deltaTime);
         }
-        //this._fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+        //this._fullRect = cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
         //cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
         cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
@@ -333,7 +333,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          if (this._dirtyRegion) {
          //cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
 
-         var fullRect = new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+         var fullRect = cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
          this._dirtyRegion = cc.Rect.CCRectIntersection(this._dirtyRegion, fullRect);
 
          if(cc.Rect.CCRectEqualToRect(cc.RectZero(), this._dirtyRegion)){
@@ -412,11 +412,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             return;
 
         if (!this._dirtyRegion) {
-            this._dirtyRegion = new cc.Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+            this._dirtyRegion = cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
             return;
         }
         this._dirtyRegion = cc.Rect.CCRectUnion(this._dirtyRegion,
-            new cc.Rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
+            cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
     },
 
     rectIsInDirtyRegion:function (rect) {
@@ -547,7 +547,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     popScene:function () {
         cc.Assert(this._runningScene != null, "running scene should not null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this._scenesStack.pop();
         var c = this._scenesStack.length;
@@ -627,7 +627,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     pushScene:function (scene) {
         cc.Assert(scene, "the scene should not null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this._sendCleanupToScene = false;
 
@@ -642,7 +642,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     replaceScene:function (scene) {
         cc.Assert(scene != null, "the scene should not be null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
         var i = this._scenesStack.length;
 
         this._sendCleanupToScene = true;
@@ -657,7 +657,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     reshapeProjection:function (newWindowSize) {
         if(this._openGLView){
             this._winSizeInPoints = this._openGLView.getSize();
-            this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor,
+            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor,
                 this._winSizeInPoints.height * this._contentScaleFactor);
 
             this.setProjection(this._projection);
@@ -671,7 +671,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused) {
             return;
         }
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = cc.Time.gettimeofdayCocos2d();
@@ -695,7 +695,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.Assert(scene != null, "running scene should not be null");
         cc.Assert(this._runningScene == null, "_runningScene should be null");
 
-        //this.addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.pushScene(scene);
         this.startAnimation();
@@ -728,7 +728,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setContentScaleFactor:function (scaleFactor) {
         if (scaleFactor != this._contentScaleFactor) {
             this._contentScaleFactor = scaleFactor;
-            this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * scaleFactor, this._winSizeInPoints.height * scaleFactor);
+            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * scaleFactor, this._winSizeInPoints.height * scaleFactor);
 
             if (this._openGLView) {
                 this.updateContentScaleFactor();
@@ -834,7 +834,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
             // set size
             this._winSizeInPoints = this._openGLView.getSize();
-            this._winSizeInPixels = cc.SizeMake(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
 
             this._createStatsLabel();
 
@@ -1132,9 +1132,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _createStatsLabel:function(){
-        this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
-        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
-        this._drawsLabel = cc.LabelTTF.create("000", "Arial", 18, cc.SizeMake(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 18, cc.size(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", 18, cc.size(60,16), cc.TEXT_ALIGNMENT_RIGHT);
+        this._drawsLabel = cc.LabelTTF.create("000", "Arial", 18, cc.size(60,16), cc.TEXT_ALIGNMENT_RIGHT);
 
         this._drawsLabel.setPosition( cc.pAdd( cc.p(20,48), cc.DIRECTOR_STATS_POSITION ) );
         this._SPFLabel.setPosition( cc.pAdd( cc.p(20,30), cc.DIRECTOR_STATS_POSITION ) );
@@ -1244,7 +1244,7 @@ cc.defaultFPS = 60;
 /*
  window.onfocus = function () {
  if (!cc.firstRun) {
- cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+ cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
  }
  };
  */
