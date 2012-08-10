@@ -422,7 +422,7 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
 cc.IMEDispatcher.getInstance = function () {
     if (!cc.IMEDispatcher.instance) {
         cc.IMEDispatcher.instance = new cc.IMEDispatcher();
-        cc.KeypadDispatcher.getInstance();
+        cc.KeyboardDispatcher.getInstance();
     }
     return cc.IMEDispatcher.instance;
 };
