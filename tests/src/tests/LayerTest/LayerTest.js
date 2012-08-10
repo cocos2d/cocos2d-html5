@@ -332,16 +332,15 @@ var LayerTestBlend = LayerTest.extend({
         var src;
         var dst;
 
-        if (layer.getBlendFunc().dst == cc.ZERO) {
-            src = cc.BLEND_SRC;
-            dst = cc.BLEND_DST;
+        if (layer.getBlendFunc().dst == gl.ZERO) {
+            src = gl.BLEND_SRC;
+            dst = gl.BLEND_DST;
         }
         else {
-            src = cc.ONE_MINUS_DST_COLOR;
-            dst = cc.ZERO;
+            src = gl.ONE_MINUS_DST_COLOR;
+            dst = gl.ZERO;
         }
-        var bf = {"src":src, "dst":dst};
-        layer.setBlendFunc(bf);
+        layer.setBlendFunc( src, dst );
     },
     title:function () {
         return "ColorLayer: blend";

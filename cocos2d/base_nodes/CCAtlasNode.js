@@ -46,11 +46,11 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     _itemWidth:0,
     //! height of each char
     _itemHeight:0,
-    _colorUnmodified:new cc.Color3B(0, 0, 0),
+    _colorUnmodified:cc.c3b(0, 0, 0),
     _textureAtlas:null,
     // protocol variables
     _isOpacityModifyRGB:false,
-    _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _blendFunc: {src:cc.BLEND_SRC, dst:cc.BLEND_DST},
     _opacity:0,
     _color:null,
     _originalTexture:null,
@@ -216,8 +216,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     /**
      * @param {cc.BlendFunc} blendFunc
      */
-    setBlendFunc:function (blendFunc) {
-        this._blendFunc = blendFunc;
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     // cc.Texture protocol
@@ -280,8 +280,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
     _updateBlendFunc:function () {
         /* if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
-         this._blendFunc.src = cc.GL_SRC_ALPHA;
-         this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+         this._blendFunc.src = gl.SRC_ALPHA;
+         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
          }*/
     },
 

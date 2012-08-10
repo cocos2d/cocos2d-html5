@@ -58,7 +58,7 @@ cc.PARTICLE_DEFAULT_CAPACITY = 100;
 cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     TextureProtocol:true,
     //the blend function used for drawing the quads
-    _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _blendFunc:{src:cc.BLEND_SRC, dst:cc.BLEND_DST},
     _textureAtlas:null,
 
     ctor:function () {
@@ -116,7 +116,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
                 cc.Assert(child.getTexture() == this._textureAtlas.getTexture(), "cc.ParticleSystem is not using the same texture id");
                 // If this is the 1st children, then copy blending function
                 if (this._children.length == 0) {
-                    this.setBlendFunc(child.getBlendFunc());
+                    var blend = child.getBlendFunc();
+                    this.setBlendFunc(blend.src, blend.dst);
                 }
 
                 cc.Assert(this._blendFunc.src == child.getBlendFunc().src && this._blendFunc.dst == pChild.getBlendFunc().dst,
@@ -307,14 +308,14 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         this._textureAtlas.setTexture(texture);
 
         // If the new texture has No premultiplied alpha, AND the blendFunc hasn't been changed, then update it
-        if (texture && !texture.hasPremultipliedAlpha() && ( m_tBlendFunc.src == CC_BLEND_SRC && m_tBlendFunc.dst == CC_BLEND_DST )) {
-            m_tBlendFunc.src = GL_SRC_ALPHA;
-            m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+        if (texture && !texture.hasPremultipliedAlpha() && ( m_tBlendFunc.src == gl.BLEND_SRC && m_tBlendFunc.dst == gl.BLEND_DST )) {
+            this._blendFunc.src = gl.SRC_ALPHA;
+            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
         }
     },
 
-    setBlendFunc:function (blendFunc) {
-        m_tBlendFunc = blendFunc;
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     /**
@@ -457,8 +458,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     _updateBlendFunc:function () {
         if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
-            m_tBlendFunc.src = GL_SRC_ALPHA;
-            m_tBlendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+            this._blendFunc.src = gl.SRC_ALPHA;
+            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
         }
     },
 

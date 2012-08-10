@@ -88,55 +88,64 @@ cc.c3 = cc.c3b;
 //ccColor3B predefined colors
 /**
  *  White color (255,255,255)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.WHITE = cc.c3b(255, 255, 255);
 
 /**
  *  Yellow color (255,255,0)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.YELLOW = cc.c3b(255, 255, 0);
 
 /**
  *  Blue color (0,0,255)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.BLUE = cc.c3b(0, 0, 255);
 
 /**
  *  Green Color (0,255,0)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.GREEN = cc.c3b(0, 255, 0);
 
 /**
  *  Red Color (255,0,0,)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.RED = cc.c3b(255, 0, 0);
 
 /**
  *  Magenta Color (255,0,255)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.MAGENTA = cc.c3b(255, 0, 255);
 
 /**
  *  Black Color (0,0,0)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.BLACK = cc.c3b(0, 0, 0);
 
 /**
  *  Orange Color (255,127,0)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.ORANGE = cc.c3b(255, 127, 0);
 
 /**
  *  Gray Color (166,166,166)
- * @return {Number,Number,Number}
+ * @constant
+ * @type {Number,Number,Number} 
  */
 cc.GRAY = cc.c3b(166, 166, 166);
 

@@ -381,10 +381,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * blendFunc setter
-     * @param {cc.BlendFunc} Var
-     */
-    setBlendFunc:function (Var) {
-        this._blendFunc = Var;
+     * @param {Number} src
+     * @param {Number} dst
+    */
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     /**
