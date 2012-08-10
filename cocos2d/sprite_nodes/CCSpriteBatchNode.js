@@ -25,17 +25,6 @@
  ****************************************************************************/
 
 
-/**
- * @constant
- * @type Number
- */
-cc.GL_SRC_ALPHA = 0x0302;
-
-/**
- * @constant
- * @type Number
- */
-cc.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 
 /**
  * @constant
@@ -95,8 +84,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
     _updateBlendFunc:function () {
         if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
-            this._blendFunc.src = cc.GL_SRC_ALPHA;
-            this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+            this._blendFunc.src = gl.SRC_ALPHA;
+            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
         }
     },
 
@@ -622,10 +611,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     /**
      * set the source blending function for the texture
-     * @param {cc.BlendFunc} blendFunc
+     * @param {Number} src 
+     * @param {Number} dst
      */
-    setBlendFunc:function (blendFunc) {
-        this._blendFunc = blendFunc;
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     /**

@@ -245,7 +245,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     //
     // Data used when the sprite is self-rendered
     //
-    _blendFunc:new cc.BlendFunc(),
+    _blendFunc: {src:cc.BLEND_SRC, dst:cc.BLEND_DST},
     _texture:null,
     _originalTexture:null,
     _color:cc.WHITE,
@@ -416,12 +416,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _isLighterMode:false,
     /**
      * conforms to cc.TextureProtocol protocol
-     * @param {cc.BlendFunc} blendFunc
-     */
-    setBlendFunc:function (blendFunc) {
-        this._blendFunc = blendFunc;
+     * @param {Number} src
+     * @param {Number} dst
+    */
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
 
-        this._isLighterMode = (this._blendFunc && (this._blendFunc.src == cc.GL_SRC_ALPHA) && (this._blendFunc.dst == cc.GL_ONE));
+        this._isLighterMode = (this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE));
     },
 
     /**
@@ -1567,8 +1568,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             cc.Assert(!this._batchNode, "cc.Sprite: _updateBlendFunc doesn't work when the sprite is rendered using a cc.SpriteSheet");
             // it's possible to have an untextured sprite
             if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
-                this._blendFunc.src = cc.GL_SRC_ALPHA;
-                this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+                this._blendFunc.src = gl.SRC_ALPHA;
+                this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
                 this.setOpacityModifyRGB(false);
             } else {
                 this._blendFunc.src = cc.BLEND_SRC;
