@@ -34,7 +34,7 @@
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isTouchEnabled:false,
     _isAccelerometerEnabled:false,
-    _isKeypadEnabled:false,
+    _isKeyboardEnabled:false,
 
     /**
      * Constructor
@@ -134,28 +134,28 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     /**
-     * whether or not it will receive keypad events<br/>
+     * whether or not it will receive keyboard events<br/>
      * You can enable / disable accelerometer events with this property.<br/>
      * it's new in cocos2d-x
      * @return {Boolean}
      */
-    isKeypadEnabled:function () {
-        return this._isKeypadEnabled;
+    isKeyboardEnabled:function () {
+        return this._isKeyboardEnabled;
     },
 
     /**
      * Enable Keyboard interaction
      * @param {Boolean} enabled
      */
-    setKeypadEnabled:function (enabled) {
-        if (enabled != this._isKeypadEnabled) {
-            this._isKeypadEnabled = enabled;
+    setKeyboardEnabled:function (enabled) {
+        if (enabled != this._isKeyboardEnabled) {
+            this._isKeyboardEnabled = enabled;
             if (this._isRunning) {
                 var director = cc.Director.getInstance();
                 if (enabled) {
-                    director.getKeypadDispatcher().addDelegate(this);
+                    director.getKeyboardDispatcher().addDelegate(this);
                 } else {
-                    director.getKeypadDispatcher().removeDelegate(this);
+                    director.getKeyboardDispatcher().removeDelegate(this);
                 }
             }
         }
@@ -181,8 +181,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // add this layer to concern the kaypad msg
-        if (this._isKeypadEnabled) {
-            director.getKeypadDispatcher().addDelegate(this);
+        if (this._isKeyboardEnabled) {
+            director.getKeyboardDispatcher().addDelegate(this);
         }
     },
 
@@ -201,8 +201,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // remove this layer from the delegates who concern the kaypad msg
-        if (this._isKeypadEnabled) {
-            director.getKeypadDispatcher().removeDelegate(this);
+        if (this._isKeyboardEnabled) {
+            director.getKeyboardDispatcher().removeDelegate(this);
         }
 
         this._super();
@@ -381,10 +381,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * blendFunc setter
-     * @param {cc.BlendFunc} Var
-     */
-    setBlendFunc:function (Var) {
-        this._blendFunc = Var;
+     * @param {Number} src
+     * @param {Number} dst
+    */
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     /**
