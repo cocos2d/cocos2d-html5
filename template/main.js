@@ -38,11 +38,7 @@ var cocos2dApp = cc.Application.extend({
         cc.Loader.shareLoader().onload = function () {
             cc.AppController.shareAppController().didFinishLaunchingWithOptions();
         };
-        cc.Loader.shareLoader().preload([
-            {type:"image", src:"res/HelloWorld.png"},
-            {type:"image", src:"res/CloseNormal.png"},
-            {type:"image", src:"res/CloseSelected.png"}
-        ]);
+        cc.Loader.shareLoader().preload(g_ressources);
     },
     applicationDidFinishLaunching:function () {
         // initialize director
