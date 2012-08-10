@@ -186,7 +186,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _scheduler:null,
     _actionManager:null,
     _touchDispatcher:null,
-    _keypadDispatcher:null,
+    _keyboardDispatcher:null,
     _accelerometer:null,
 
     _watcherFun:null,
@@ -248,8 +248,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._touchDispatcher = new cc.TouchDispatcher();
         this._touchDispatcher.init();
 
-        //KeypadDispatcher
-        this._keypadDispatcher = cc.KeypadDispatcher.getInstance();
+        //KeyboardDispatcher
+        this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
 
         //accelerometer
         //this._accelerometer = new cc.Accelerometer();
@@ -1115,11 +1115,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
     },
 
-    getKeypadDispatcher:function () {
-        return this._keypadDispatcher;
+    getKeyboardDispatcher:function () {
+        return this._keyboardDispatcher;
     },
-    setKeypadDispatcher:function (keypadDispatcher) {
-        this._keypadDispatcher = keypadDispatcher;
+    setKeyboardDispatcher:function (keyboardDispatcher) {
+        this._keyboardDispatcher = keyboardDispatcher;
     },
 
     getAccelerometer:function () {

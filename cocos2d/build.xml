@@ -68,8 +68,8 @@
                 <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
                 <file name="touch_dispatcher/CCTouchHandler.js"/>
                 <file name="touch_dispatcher/CCTouchDispatcher.js"/>
-                <file name="keypad_dispatcher/CCKeypadDelegate.js"/>
-                <file name="keypad_dispatcher/CCKeypadDispatcher.js"/>
+                <file name="keyboard_dispatcher/CCKeyboardDelegate.js"/>
+                <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
                 <file name="CCDirector.js"/>

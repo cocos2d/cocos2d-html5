@@ -210,7 +210,7 @@ var testNames = [
             return new IntervalTestScene();
         }
     },
-    //"KeypadTest",
+    //"KeyboardTest",
     {
         title:"LabelTest",
         testScene:function () {
