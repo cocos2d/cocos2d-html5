@@ -1544,7 +1544,7 @@ var SpriteFrameTest = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+        var animation = cc.Animation.create(animFrames, 0.3);
         this._sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
         // to test issue #732, uncomment the following line
@@ -1573,7 +1573,7 @@ var SpriteFrameTest = SpriteTestDemo.extend({
 
         // append frames from another batch
         moreFrames = moreFrames.concat(animFrames);
-        var animMixed = cc.Animation.createWithSpriteFrames(moreFrames, 0.3);
+        var animMixed = cc.Animation.create(moreFrames, 0.3);
 
         this._sprite2.runAction(cc.RepeatForever.create(cc.Animate.create(animMixed)));
 
@@ -1687,7 +1687,7 @@ var SpriteFrameAliasNameTest = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+        var animation = cc.Animation.create(animFrames, 0.3);
         // 14 frames * 1sec = 14 seconds
         sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
     },
@@ -1743,7 +1743,7 @@ var SpriteOffsetAnchorRotation = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
             sprite.runAction(cc.RepeatForever.create(cc.RotateBy.create(10, 360)));
 
@@ -1810,7 +1810,7 @@ var SpriteBatchNodeOffsetAnchorRotation = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
             sprite.runAction(cc.RepeatForever.create(cc.RotateBy.create(10, 360)));
 
@@ -1875,7 +1875,7 @@ var SpriteOffsetAnchorScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             var scale = cc.ScaleBy.create(2, 2);
@@ -1948,7 +1948,7 @@ var SpriteBatchNodeOffsetAnchorScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             var scale = cc.ScaleBy.create(2, 2);
@@ -2015,7 +2015,7 @@ var SpriteOffsetAnchorSkew = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             var skewX = cc.SkewBy.create(2, 45, 0);
@@ -2082,7 +2082,7 @@ var SpriteBatchNodeOffsetAnchorSkew = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
@@ -2148,7 +2148,7 @@ var SpriteOffsetAnchorSkewScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
@@ -2224,7 +2224,7 @@ var SpriteBatchNodeOffsetAnchorSkewScale = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
@@ -2297,7 +2297,7 @@ var SpriteOffsetAnchorFlip = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
@@ -2368,7 +2368,7 @@ var SpriteBatchNodeOffsetAnchorFlip = SpriteTestDemo.extend({
                 animFrames.push(frame);
             }
 
-            var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.3);
+            var animation = cc.Animation.create(animFrames, 0.3);
             sprite.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
 
             animFrames = null;
@@ -2423,7 +2423,7 @@ var SpriteAnimationSplit = SpriteTestDemo.extend({
         animFrames.push(frame4);
         animFrames.push(frame5);
 
-        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
+        var animation = cc.Animation.create(animFrames, 0.2);
         var animate = cc.Animate.create(animation);
         var seq = cc.Sequence.create(animate,
             cc.FlipX.create(true),
@@ -2568,7 +2568,7 @@ var SpriteBatchNodeChildren = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
+        var animation = cc.Animation.create(animFrames, 0.2);
         sprite1.runAction(cc.RepeatForever.create(cc.Animate.create(animation)));
         // END NEW CODE
 
@@ -3370,7 +3370,7 @@ var AnimationCache = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        var animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
+        var animation = cc.Animation.create(animFrames, 0.2);
 
         // Add an animation to the Cache
         cc.AnimationCache.getInstance().addAnimation(animation, "dance");
@@ -3385,7 +3385,7 @@ var AnimationCache = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
+        animation = cc.Animation.create(animFrames, 0.2);
 
         // Add an animation to the Cache
         cc.AnimationCache.getInstance().addAnimation(animation, "dance_gray");
@@ -3400,7 +3400,7 @@ var AnimationCache = SpriteTestDemo.extend({
             animFrames.push(frame);
         }
 
-        animation = cc.Animation.createWithSpriteFrames(animFrames, 0.2);
+        animation = cc.Animation.create(animFrames, 0.2);
 
         // Add an animation to the Cache
         cc.AnimationCache.getInstance().addAnimation(animation, "dance_blue");
