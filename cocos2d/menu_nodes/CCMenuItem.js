@@ -107,7 +107,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      * @param {function|String} selector
      * @return {Boolean}
      */
-    initWithTarget:function (rec, selector) {
+    initWithCallback:function (rec, selector) {
         this.setAnchorPoint(cc.p(0.5, 0.5));
         this._listener = rec;
         this._selector = selector;
@@ -143,7 +143,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      * @param {cc.Node} rec
      * @param {function|String} selector
      */
-    setTarget:function (rec, selector) {
+    setCallback:function (rec, selector) {
         this._listener = rec;
         this._selector = selector;
     },
@@ -171,7 +171,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
  */
 cc.MenuItem.create = function (rec, selector) {
     var ret = new cc.MenuItem();
-    ret.initWithTarget(rec, selector);
+    ret.initWithCallback(rec, selector);
     return ret;
 };
 
@@ -290,7 +290,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * @return {Boolean}
      */
     initWithLabel:function (label, target, selector) {
-        this.initWithTarget(target, selector);
+        this.initWithCallback(target, selector);
         this._originalScale = 1.0;
         this._colorBackup = cc.WHITE;
         this._disabledColor = cc.c3b(126, 126, 126);
@@ -642,7 +642,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @return {Boolean}
      */
     initWithNormalSprite:function (normalSprite, selectedSprite, disabledSprite, target, selector) {
-        this.initWithTarget(target, selector);
+        this.initWithCallback(target, selector);
         this.setNormalImage(normalSprite);
         this.setSelectedImage(selectedSprite);
         this.setDisabledImage(disabledSprite);
@@ -1035,9 +1035,26 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @return {Boolean}
      */
     initWithItem:function (item) {
-        this.initWithTarget(null, null);
+        this.initWithCallback(null, null);
         this._subItems = [];
         this._subItems.push(item);
+        this._selectedIndex = cc.UINT_MAX;
+        this.setSelectedIndex(0);
+        return true;
+    },
+
+    /**
+     * @param {cc.MenuItem} args[1+] items
+     * @return {Boolean}
+     */
+    initWithItems:function (args) {
+        this.initWithCallback(null, null);
+        this._subItems = [];
+        for (var i = 0; i < args.length; i++) {
+            if (args[i]) {
+                this._subItems.push(args[i]);
+            }
+        }
         this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);
         return true;
@@ -1131,10 +1148,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
  */
 cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     var ret = new cc.MenuItemToggle();
-    if (arguments.length == 1) {
-        ret.initWithItem(arguments);
-    } else {
-        ret.initWithTarget(arguments);
-    }
+    ret.initWithItems(arguments);
+//    if (arguments.length == 1) {
+//        ret.initWithItem(arguments);
+//    } else {
+//        ret.initWithTarget(arguments);
+//    }
     return ret;
 };

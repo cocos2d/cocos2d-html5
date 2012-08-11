@@ -385,15 +385,3 @@ cc.Animation.createWithAnimationFrames = function (arrayOfAnimationFrameNames, d
     return animation;
 };
 
-/**
- * Creates an animation with an array of cc.SpriteFrame and a delay between frames in seconds. The frames will be added with one "delay unit".
- * @param {Array} arrayOfSpriteFrameNames
- * @param {Number} delay
- * @return {cc.Animation}
- */
-cc.Animation.createWithSpriteFrames = function (arrayOfSpriteFrameNames, delay) {
-    var animation = new cc.Animation();
-    animation.initWithSpriteFrames(arrayOfSpriteFrameNames, delay);
-    return animation;
-};
-

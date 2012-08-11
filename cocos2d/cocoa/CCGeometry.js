@@ -237,6 +237,15 @@ cc.Rect.CCRectIntersectsRect = function (rectA, rectB) {
  * @return {Boolean}
  * Constructor
  */
+cc.rectIntersectsRect = cc.Rect.CCRectIntersectsRect;
+
+/**
+ * @function
+ * @param {cc.Rect} rectA
+ * @param {cc.Rect} rectB
+ * @return {Boolean}
+ * Constructor
+ */
 cc.Rect.CCRectOverlapsRect = function (rectA, rectB) {
     if (rectA.origin.x + rectA.size.width < rectB.origin.x) {
         return false;
