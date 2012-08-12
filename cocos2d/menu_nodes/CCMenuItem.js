@@ -210,14 +210,14 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _label:null,
 
     /**
-     * @return {String}
+     * @return {cc.Node}
      */
     getLabel:function () {
         return this._label;
     },
 
     /**
-     * @param {String} label
+     * @param {cc.Node} label
      */
     setLabel:function (label) {
         if (label) {
@@ -284,7 +284,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     },
 
     /**
-     * @param {String} label
+     * @param {cc.Node} label
      * @param {cc.Node} target
      * @param {function|String} selector
      * @return {Boolean}
@@ -296,6 +296,14 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
         this._disabledColor = cc.c3b(126, 126, 126);
         this.setLabel(label);
         return true;
+    },
+
+    /**
+     * @param {String} label
+     */
+    setString:function (label) {
+        this._label.setString(label);
+        this.setContentSize(this._label.getContentSize());
     },
 
     /**
@@ -344,7 +352,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 });
 
 /**
- * @param {String} label
+ * @param {cc.Node} label
  * @param {cc.Node|Null} target
  * @param {function|String|Null} selector
  * @return {cc.MenuItemLabel}
