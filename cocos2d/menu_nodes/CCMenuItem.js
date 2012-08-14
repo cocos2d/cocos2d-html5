@@ -739,7 +739,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {Boolean} bEnabled
      */
     setEnabled:function (bEnabled) {
-        if (this._isEnabled == bEnabled) {
+        if (this._isEnabled != bEnabled) {
             this._super(bEnabled);
             this._updateImagesVisibility();
         }
