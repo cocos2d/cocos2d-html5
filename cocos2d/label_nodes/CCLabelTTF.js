@@ -171,7 +171,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      * @return {Boolean} return false on error
      */
     initWithString:function (arg) {
-        var strInfo = arg[0], fontName, fontSize, dimensions, hAlignment, vAlignment;
+        var strInfo = new String(arg[0]), fontName, fontSize, dimensions, hAlignment, vAlignment;
         cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
         if (arg.length == 6) {
             fontName = arg[1];
