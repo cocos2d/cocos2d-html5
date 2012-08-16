@@ -250,7 +250,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     copy:function () {
         return cc.Sequence._actionOneTwo(this._actions[0].copy(), this._actions[1].copy() );
-    },
+    }
 });
 /** helper constructor to create an array of sequenceable actions
  * @param {Array|cc.FiniteTimeAction} tempArray
