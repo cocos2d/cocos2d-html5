@@ -36,7 +36,7 @@ cc.Browser = {};
     cc.Browser.UA = cc.Browser.ua.match(/(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/) || [null, 'unknown', 0];
     cc.Browser.mode = cc.Browser.UA[1] == 'ie' && document.documentMode;
     cc.Browser.type = (cc.Browser.UA[1] == 'version') ? cc.Browser.UA[3] : cc.Browser.UA[1];
-    cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1);
+    cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
 })();
 
 
