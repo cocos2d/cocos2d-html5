@@ -278,7 +278,7 @@ cc.config = {
     'engine' : 'cocos2d-html5/canvas',
     'arch' : 'web',
     'version' : cc.ENGINE_VERSION,
-    'debug' : false,
+    'debug' : false
 };
 
 /**
