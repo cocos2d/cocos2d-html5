@@ -136,7 +136,7 @@ cc.$ = function (x) {
          * @param {Number} y in pixel
          * @return {cc.$}
          */
-        el.translate = function (x, y) {
+        el.translates = function (x, y) {
             this.position.x = x;
             this.position.y = y;
             this.transforms();
