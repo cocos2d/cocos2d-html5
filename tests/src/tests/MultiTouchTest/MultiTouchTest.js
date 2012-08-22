@@ -25,11 +25,11 @@
  ****************************************************************************/
 
 var touchColors = [
-    cc.YELLOW,
-    cc.BLUE,
-    cc.GREEN,
-    cc.RED,
-    cc.MAGENTA
+    cc.YELLOW(),
+    cc.BLUE(),
+    cc.GREEN(),
+    cc.RED(),
+    cc.MAGENTA()
 ];
 
 var TouchPoint = cc.Node.extend({
