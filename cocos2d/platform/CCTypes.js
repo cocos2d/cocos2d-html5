@@ -89,65 +89,83 @@ cc.c3 = cc.c3b;
 /**
  *  White color (255,255,255)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.WHITE = cc.c3b(255, 255, 255);
+cc.WHITE = function () {
+    return new cc.Color3B(255, 255, 255);
+};
 
 /**
  *  Yellow color (255,255,0)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.YELLOW = cc.c3b(255, 255, 0);
+cc.YELLOW = function () {
+    return new cc.Color3B(255, 255, 0);
+};
 
 /**
  *  Blue color (0,0,255)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.BLUE = cc.c3b(0, 0, 255);
+cc.BLUE = function () {
+    return new cc.Color3B(0, 0, 255);
+};
 
 /**
  *  Green Color (0,255,0)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.GREEN = cc.c3b(0, 255, 0);
+cc.GREEN = function () {
+    return new cc.Color3B(0, 255, 0);
+};
 
 /**
  *  Red Color (255,0,0,)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.RED = cc.c3b(255, 0, 0);
+cc.RED = function () {
+    return new cc.Color3B(255, 0, 0);
+};
 
 /**
  *  Magenta Color (255,0,255)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.MAGENTA = cc.c3b(255, 0, 255);
+cc.MAGENTA = function () {
+    return new cc.Color3B(255, 0, 255);
+};
 
 /**
  *  Black Color (0,0,0)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.BLACK = cc.c3b(0, 0, 0);
+cc.BLACK = function () {
+    return new cc.Color3B(0, 0, 0);
+};
 
 /**
  *  Orange Color (255,127,0)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.ORANGE = cc.c3b(255, 127, 0);
+cc.ORANGE = function () {
+    return new cc.Color3B(255, 127, 0);
+};
 
 /**
  *  Gray Color (166,166,166)
  * @constant
- * @type {Number,Number,Number} 
+ * @type {Number,Number,Number}
  */
-cc.GRAY = cc.c3b(166, 166, 166);
+cc.GRAY = function () {
+    return new cc.Color3B(166, 166, 166);
+}
 
 /**
  * RGBA color composed of 4 bytes
@@ -284,7 +302,7 @@ cc.Vertex2 = function (x, y) {
 cc.Vertex3F = function (x1, y1, z1) {
     this.x = x1 || 0;
     this.y = y1 || 0;
-    this.Z = z1 || 0;
+    this.z = z1 || 0;
 };
 
 /**

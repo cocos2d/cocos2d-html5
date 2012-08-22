@@ -349,7 +349,7 @@ var FadeTransition = function (t, s) {
 };
 
 var FadeWhiteTransition = function (t, s) {
-    return cc.TransitionFade.create(t, s, cc.WHITE);
+    return cc.TransitionFade.create(t, s, cc.WHITE());
 };
 
 var FlipXLeftOver = function (t, s) {
