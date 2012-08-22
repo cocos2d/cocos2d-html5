@@ -436,7 +436,7 @@ cc.DOM.convert = function () {
             //add hover event to popup inspector
             if (!cc.DOM.tooltip) {
                 var style = cc.$new('style');
-                style.innerText = ".CCDOMEdit:hover{border: rgba(255,0,0,0.5) 2px dashed;left: -2px;}.CCDOMEdit #CCCloseButton{width:80px;height:15px;background: rgba(0,0,0,0.4);border:1px solid #aaaaaa;font-size: 9px;line-height:9px;color:#bbbbbb;}.CCTipWindow .CCTipMove{cursor:move;}.CCTipWindow .CCTipRotate{cursor:w-resize;}.CCTipWindow .CCTipScale{cursor:ne-resize;}.CCTipWindow .CCTipSkew{cursor:se-resize;}.CCTipWindow input{width:40px;background: rgba(0,0,0,0.5);color:white;border:none;border-bottom: 1px solid #fff;}div.CCTipWindow:hover{color:rgb(50,50,255);}";
+                style.textContent = ".CCDOMEdit:hover{border: rgba(255,0,0,0.5) 2px dashed;left: -2px;} .CCDOMEdit #CCCloseButton{width:80px;height:15px;background: rgba(0,0,0,0.4);border:1px solid #aaaaaa;font-size: 9px;line-height:9px;color:#bbbbbb;} .CCTipWindow .CCTipMove{cursor:move;} .CCTipWindow .CCTipRotate{cursor:w-resize;} .CCTipWindow .CCTipScale{cursor:ne-resize;} .CCTipWindow .CCTipSkew{cursor:se-resize;} .CCTipWindow input{width:40px;background: rgba(0,0,0,0.5);color:white;border:none;border-bottom: 1px solid #fff;} div.CCTipWindow:hover{color:rgb(50,50,255);}";
                 document.body.appendChild(style);
                 cc.container.style.overflow = "visible";
                 var tip = cc.DOM.tooltip = cc.$new('div');
