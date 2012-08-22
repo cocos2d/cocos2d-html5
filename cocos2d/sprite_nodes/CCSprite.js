@@ -248,7 +248,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _blendFunc: {src:cc.BLEND_SRC, dst:cc.BLEND_DST},
     _texture:null,
     _originalTexture:null,
-    _color:cc.WHITE(),
+    _color:cc.white(),
     //
     // Shared data
     //
@@ -434,8 +434,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         this._opacityModifyRGB = true;
         this._opacity = 255;
-        this._color = cc.WHITE();
-        this._colorUnmodified = cc.WHITE();
+        this._color = cc.white();
+        this._colorUnmodified = cc.white();
 
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
@@ -491,8 +491,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this.setDirty(false);
         this._opacityModifyRGB = true;
         this._opacity = 255;
-        this._color = cc.WHITE();
-        this._colorUnmodified = cc.WHITE();
+        this._color = cc.white();
+        this._colorUnmodified = cc.white();
 
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;

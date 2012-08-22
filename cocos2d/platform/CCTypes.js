@@ -91,7 +91,7 @@ cc.c3 = cc.c3b;
  * @constant
  * @type {Number,Number,Number}
  */
-cc.WHITE = function () {
+cc.white = function () {
     return new cc.Color3B(255, 255, 255);
 };
 
@@ -100,7 +100,7 @@ cc.WHITE = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.YELLOW = function () {
+cc.yellow = function () {
     return new cc.Color3B(255, 255, 0);
 };
 
@@ -109,7 +109,7 @@ cc.YELLOW = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.BLUE = function () {
+cc.blue = function () {
     return new cc.Color3B(0, 0, 255);
 };
 
@@ -118,7 +118,7 @@ cc.BLUE = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.GREEN = function () {
+cc.green = function () {
     return new cc.Color3B(0, 255, 0);
 };
 
@@ -127,7 +127,7 @@ cc.GREEN = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.RED = function () {
+cc.red = function () {
     return new cc.Color3B(255, 0, 0);
 };
 
@@ -136,7 +136,7 @@ cc.RED = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.MAGENTA = function () {
+cc.magenta = function () {
     return new cc.Color3B(255, 0, 255);
 };
 
@@ -145,7 +145,7 @@ cc.MAGENTA = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.BLACK = function () {
+cc.black = function () {
     return new cc.Color3B(0, 0, 0);
 };
 
@@ -154,7 +154,7 @@ cc.BLACK = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.ORANGE = function () {
+cc.orange = function () {
     return new cc.Color3B(255, 127, 0);
 };
 
@@ -163,7 +163,7 @@ cc.ORANGE = function () {
  * @constant
  * @type {Number,Number,Number}
  */
-cc.GRAY = function () {
+cc.gray = function () {
     return new cc.Color3B(166, 166, 166);
 }
 
