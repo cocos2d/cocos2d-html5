@@ -33,7 +33,7 @@ cc.DOM.addMethods = function (x) {
 };
 cc.DOM.methods = {
     setPosition:function (x, y) {
-        if (y) {
+        if (y != 0) {
             this._position.x = x;
             this._position.y = y;
             //this._position = cc.p(newPosOrxValue,yValue);
