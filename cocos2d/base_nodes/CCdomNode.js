@@ -37,18 +37,18 @@ cc.DOM.methods = {
             this._position.x = x;
             this._position.y = y;
             //this._position = cc.p(newPosOrxValue,yValue);
-        } else if (x instanceof  cc.Point) {
+        } else {
             this._position = x;
         }
-        this.dom.translate(this._position.x, -this._position.y);
+        this.dom.translates(this._position.x, -this._position.y);
     },
     setPositionY:function (y) {
         this._position.y = y;
-        this.dom.translate(this._position.x, -this._position.y);
+        this.dom.translates(this._position.x, -this._position.y);
     },
     setPositionX:function (x) {
         this._position.x = x;
-        this.dom.translate(this._position.x, -this._position.y);
+        this.dom.translates(this._position.x, -this._position.y);
     },
     setScale:function (scale, scaleY) {
         //save dirty region when before change
