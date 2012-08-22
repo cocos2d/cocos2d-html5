@@ -45,7 +45,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     ctor:function () {
         this._super();
-        this._color = cc.WHITE();
+        this._color = cc.white();
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
     },
