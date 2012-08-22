@@ -218,7 +218,7 @@ cc.$.scale = function (a) {
     return "scale(" + a.x + ", " + a.y + ") "
 };
 cc.$.skew = function (a) {
-    return "skew(" + -a.x + "deg, " + -a.y + "deg)"
+    return "skewX(" + -a.x + "deg) skewY(" + a.y + "deg)";
 };
 
 
