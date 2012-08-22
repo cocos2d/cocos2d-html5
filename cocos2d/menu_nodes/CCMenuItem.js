@@ -292,7 +292,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     initWithLabel:function (label, target, selector) {
         this.initWithCallback(target, selector);
         this._originalScale = 1.0;
-        this._colorBackup = cc.WHITE();
+        this._colorBackup = cc.white();
         this._disabledColor = cc.c3b(126, 126, 126);
         this.setLabel(label);
         return true;

@@ -1328,7 +1328,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      */
     initWithDuration:function (t, scene, color) {
         if ((color == 'undefined') || (color == null)) {
-            color = cc.BLACK();
+            color = cc.black();
         }
 
         if (this._super(t, scene)) {

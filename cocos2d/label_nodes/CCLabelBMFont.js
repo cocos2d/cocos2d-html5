@@ -584,7 +584,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._imageOffset = imageOffset || cc.PointZero();
             this._width = width || cc.LabelAutomaticWidth;
             this._opacity = 255;
-            this._color = cc.WHITE();
+            this._color = cc.white();
             this._contentSize = cc.SizeZero();
             this.setString(theString);
             this.setAnchorPoint(cc.p(0.5, 0.5));
