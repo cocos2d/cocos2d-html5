@@ -1018,7 +1018,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {cc.MenuItem} args[2+] the rest in the array are cc.MenuItems
      * @return {Boolean}
      */
-    initWithTarget:function (args) {
+    initWithCallback:function (args) {
         if (args.length < 2) {
             return false;
         }
@@ -1156,11 +1156,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
  */
 cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     var ret = new cc.MenuItemToggle();
-    ret.initWithItems(arguments);
-//    if (arguments.length == 1) {
-//        ret.initWithItem(arguments);
-//    } else {
-//        ret.initWithTarget(arguments);
-//    }
+    //ret.initWithItems(arguments);
+    if (arguments.length == 1) {
+        ret.initWithItem(arguments);
+    } else {
+        ret.initWithCallback(arguments);
+    }
     return ret;
 };
