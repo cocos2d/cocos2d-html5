@@ -175,7 +175,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
  *
  * //creates the cc.LabelAtlas with a string, a fnt file
- * var myLabel = cc.LabelAtlas.create('Text to display', ''CharMapFile.fnt);
+ * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
 cc.LabelAtlas.create = function (/* Multi arguments */) {
     var ret = new cc.LabelAtlas();
