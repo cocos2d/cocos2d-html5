@@ -265,7 +265,7 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      */
     initWithTextureFilename:function (filename, rect, rotated, offset, originalSize) {
         var rectInPixels = cc.RECT_POINTS_TO_PIXELS(rect);
-        offset = offset || cc.Size(0, 0);
+        offset = offset || cc.size(0, 0);
         originalSize = originalSize || rectInPixels.size;
 
         this._texture = null;
