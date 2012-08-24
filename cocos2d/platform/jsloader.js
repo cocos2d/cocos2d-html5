@@ -24,11 +24,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc || cc || {};
 (function () {
     var engine = [
-        'platform/miniFramework.js',
         'platform/CCClass.js',
+        'platform/miniFramework.js',
         'platform/CCCommon.js',
         'platform/platform.js',
         'platform/ZipUtils.js',
@@ -109,12 +108,17 @@ var cc = cc || cc || {};
     ];
     var d = document;
     var c = d.querySelector('#cocos2d-html5').c;
+    if (!c.engineDir) {
+        engine = [];
+    }
+    else {
+        engine.forEach(function (e, i) {
+            engine[i] = c.engineDir + e;
+        });
+    }
     if (c.box2d)
         engine.push('../box2d/box2d.js');
     var loaded = 0;
-    engine.forEach(function (e, i) {
-        engine[i] = c.engineDir + e;
-    });
     var que = engine.concat(c.appFiles);
     que.push('main.js');
     if (navigator.userAgent.indexOf("Trident/5") > -1) {
