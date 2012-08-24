@@ -85,7 +85,7 @@
             s.src = c.engineDir + 'platform/jsloader.js';
         }
         else {
-            alert('you must specify either the single engine file OR the engine directory in "cocos2d.js"');
+            alert('You must specify either the single engine file OR the engine directory in "cocos2d.js"');
         }
         /*********Delete this section if you have packed all files into one*******/
 
