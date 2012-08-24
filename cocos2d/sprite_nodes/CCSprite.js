@@ -56,7 +56,7 @@ cc.generateTextureCacheForColor = function (texture) {
 
     var pixels = ctx.getImageData(0, 0, w, h).data;
 
-    for (var rgbI = 0; rgbI < 4; rgbI++) {
+    for (var rgbI = 0; rgbI < 3; rgbI++) {
         var cacheCanvas = document.createElement("canvas");
         cacheCanvas.width = w;
         cacheCanvas.height = h;
@@ -116,7 +116,7 @@ cc.generateTintImage2 = function (texture, color, rect) {
  * @param {cc.Rect} rect
  * @return {HTMLCanvasElement}
  */
-cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
+cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas) {
     if (!rect) {
         rect = cc.rect(0, 0, texture.width, texture.height);
     }
@@ -126,13 +126,10 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect) {
     } else {
         selColor = color;
     }
-    var buff = document.createElement("canvas");
+    var buff = renderCanvas || document.createElement("canvas");
     buff.width = rect.size.width;
     buff.height = rect.size.height;
     var ctx = buff.getContext("2d");
-    ctx.globalAlpha = 1;
-    ctx.globalCompositeOperation = 'copy';
-    ctx.drawImage(tintedImgCache[3], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
 
     ctx.globalCompositeOperation = 'lighter';
     if (selColor.r > 0) {
@@ -1417,8 +1414,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
-                    var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect());
-                    this.setTexture(colorTexture);
+                    if(this._texture instanceof HTMLCanvasElement){
+                        cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect(),this._texture);
+                    } else {
+                        var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect());
+                        this.setTexture(colorTexture);
+                    }
                 }
             }
         }
