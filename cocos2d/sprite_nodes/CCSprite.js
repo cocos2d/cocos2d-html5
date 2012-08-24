@@ -130,9 +130,6 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
     buff.width = rect.size.width;
     buff.height = rect.size.height;
     var ctx = buff.getContext("2d");
-    //ctx.globalAlpha = 1;
-    //ctx.globalCompositeOperation = 'copy';
-    //ctx.drawImage(tintedImgCache[3], rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
 
     ctx.globalCompositeOperation = 'lighter';
     if (selColor.r > 0) {
