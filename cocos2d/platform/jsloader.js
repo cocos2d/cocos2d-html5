@@ -43,6 +43,7 @@ var cc = cc || cc || {};
         'cocoa/CCNS.js',
         'cocoa/CCAffineTransform.js',
         'support/CCPointExtension.js',
+        'support/CCUserDefault.js',
         'base_nodes/CCNode.js',
         'base_nodes/CCAtlasNode.js',
         'textures/CCTexture2D.js',
