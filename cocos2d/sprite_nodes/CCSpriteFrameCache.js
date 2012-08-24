@@ -89,7 +89,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     oh = Math.abs(oh);
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    spriteFrame.initWithTexture(texture, cc.RectMake(x, y, w, h), false, cc.p(ox, oy), cc.SizeMake(ow, oh));
+                    spriteFrame.initWithTexture(texture, cc.rect(x, y, w, h), false, cc.p(ox, oy), cc.size(ow, oh));
                 } else if (format == 1 || format == 2) {
                     var frame = cc.RectFromString(this._valueForKey("frame", frameDict));
                     var rotated = false;
@@ -105,8 +105,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     spriteFrame.initWithTexture(texture, frame, rotated, offset, sourceSize);
                 } else if (format == 3) {
                     // get values
-                    var spriteSize, spriteOffset,spriteSourceSize,textureRect, textureRotated;
-                    if(frameDict.hasOwnProperty("spriteSize")){
+                    var spriteSize, spriteOffset, spriteSourceSize, textureRect, textureRotated;
+                    if (frameDict.hasOwnProperty("spriteSize")) {
                         spriteSize = cc.SizeFromString(this._valueForKey("spriteSize", frameDict));
                         spriteOffset = cc.PointFromString(this._valueForKey("spriteOffset", frameDict));
                         spriteSourceSize = cc.SizeFromString(this._valueForKey("spriteSourceSize", frameDict));
@@ -133,9 +133,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                     // create frame
                     spriteFrame = new cc.SpriteFrame();
-                    if(frameDict.hasOwnProperty("spriteSize")){
+                    if (frameDict.hasOwnProperty("spriteSize")) {
                         spriteFrame.initWithTexture(texture,
-                            cc.RectMake(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
+                            cc.rect(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
                             textureRotated,
                             spriteOffset,
                             spriteSourceSize);
@@ -146,9 +146,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                 if (spriteFrame.isRotated()) {
                     //clip to canvas
-                    var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(),spriteFrame.getRect());
+                    var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(), spriteFrame.getRect());
                     var rect = spriteFrame.getRect();
-                    spriteFrame.setRect(new cc.Rect(0, 0, rect.size.width, rect.size.height));
+                    spriteFrame.setRect(cc.rect(0, 0, rect.size.width, rect.size.height));
                     spriteFrame.setTexture(tempTexture);
                 }
 
@@ -320,9 +320,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
         this._removeSpriteFramesFromDictionary(dict);
 
         //remove it from the cache
-         if (cc.ArrayContainsObject(this._loadedFileNames,plist)){
-             cc.ArrayRemoveObject(plist);
-         }
+        if (cc.ArrayContainsObject(this._loadedFileNames, plist)) {
+            cc.ArrayRemoveObject(plist);
+        }
     },
 
     /**
@@ -365,9 +365,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * @return {cc.SpriteFrame}
      * @example
      * //get a SpriteFrame by name
-     * var frame = cc.SpriteFrameCache.getInstance().spriteFrameByName("grossini_dance_01.png");
+     * var frame = cc.SpriteFrameCache.getInstance().getSpriteFrame("grossini_dance_01.png");
      */
-    spriteFrameByName:function (name) {
+    getSpriteFrame:function (name) {
         var frame;
         if (this._spriteFrames.hasOwnProperty(name)) {
             frame = this._spriteFrames[name];

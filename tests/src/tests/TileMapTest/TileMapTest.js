@@ -28,68 +28,68 @@ var TAG_TILE_MAP = 1;
 var TileMapTests = [
     //function(){ return new TileMapTest();}, //not support tga format
     // function(){ return new TileMapEditTest();}, //not support tga format
-     function () {
-     return new TMXOrthoTest();
-     },//ok
-     function () {
-     return new TMXOrthoTest2();
-     }, //camera bug
-     function () {
-     return new TMXOrthoTest3();
-     },//ok
-     function () {
-     return new TMXOrthoTest4();
-     },//ok
-     function () {
-     return new TMXReadWriteTest();
-     },//ok
-     function () {
-     return new TMXHexTest();
-     },//ok
-     function () {
-     return new TMXIsoTest();
-     },//ok
-     function () {
-     return new TMXIsoTest1();
-     },//ok
-     function () {
-     return new TMXIsoTest2();
-     },//ok
-     function () {
-     return new TMXUncompressedTest();
-     },//ok
-     function () {
-     return new TMXTilesetTest();
-     },//ok
-     function () {
-     return new TMXOrthoObjectsTest();
-     },//ok
-     function () {
-     return new TMXIsoObjectsTest();
-     },//ok
-     function () {
-     return new TMXResizeTest();
-     },//ok
-     function () {
-     return new TMXIsoZorder();
-     },//ok
-     function () {
-     return new TMXOrthoZorder();
-     },//ok
-     //function(){ return new TMXIsoVertexZ();}, //VertexZ bug
-     //function(){ return new TMXOrthoVertexZ();}, //VertexZ bug
-     function () {
-     return new TMXIsoMoveLayer();
-     },//ok
-     function () {
-     return new TMXOrthoMoveLayer();
-     },//ok
-     function () {
-     return new TMXTilePropertyTest();
-     },//ok
-     function () {
-     return new TMXOrthoFlipTest();
-     },//ok
+    function () {
+        return new TMXOrthoTest();
+    }, //ok
+    function () {
+        return new TMXOrthoTest2();
+    }, //camera bug
+    function () {
+        return new TMXOrthoTest3();
+    }, //ok
+    function () {
+        return new TMXOrthoTest4();
+    }, //ok
+    function () {
+        return new TMXReadWriteTest();
+    }, //ok
+    function () {
+        return new TMXHexTest();
+    }, //ok
+    function () {
+        return new TMXIsoTest();
+    }, //ok
+    function () {
+        return new TMXIsoTest1();
+    }, //ok
+    function () {
+        return new TMXIsoTest2();
+    }, //ok
+    function () {
+        return new TMXUncompressedTest();
+    }, //ok
+    function () {
+        return new TMXTilesetTest();
+    }, //ok
+    function () {
+        return new TMXOrthoObjectsTest();
+    }, //ok
+    function () {
+        return new TMXIsoObjectsTest();
+    }, //ok
+    function () {
+        return new TMXResizeTest();
+    }, //ok
+    function () {
+        return new TMXIsoZorder();
+    }, //ok
+    function () {
+        return new TMXOrthoZorder();
+    }, //ok
+    //function(){ return new TMXIsoVertexZ();}, //VertexZ bug
+    //function(){ return new TMXOrthoVertexZ();}, //VertexZ bug
+    function () {
+        return new TMXIsoMoveLayer();
+    }, //ok
+    function () {
+        return new TMXOrthoMoveLayer();
+    }, //ok
+    function () {
+        return new TMXTilePropertyTest();
+    }, //ok
+    function () {
+        return new TMXOrthoFlipTest();
+    }, //ok
     function () {
         return new TMXOrthoFlipRunTimeTest();
     },
@@ -528,7 +528,7 @@ var TMXReadWriteTest = TileDemo.extend({
 var TMXHexTest = TileDemo.extend({
     ctor:function () {
         this._super();
-        var color = cc.LayerColor.create(cc.c4(64, 64, 64, 255));
+        var color = cc.LayerColor.create(cc.c4b(64, 64, 64, 255));
         this.addChild(color, -1);
 
         var map = cc.TMXTiledMap.create("res/TileMaps/hexa-test.tmx");
@@ -547,7 +547,7 @@ var TMXHexTest = TileDemo.extend({
 var TMXIsoTest = TileDemo.extend({
     ctor:function () {
         this._super();
-        var color = cc.LayerColor.create(cc.c4(64, 64, 64, 255));
+        var color = cc.LayerColor.create(cc.c4b(64, 64, 64, 255));
         this.addChild(color, -1);
 
         var map = cc.TMXTiledMap.create("res/TileMaps/iso-test.tmx");
@@ -571,7 +571,7 @@ var TMXIsoTest = TileDemo.extend({
 var TMXIsoTest1 = TileDemo.extend({
     ctor:function () {
         this._super();
-        var color = cc.LayerColor.create(cc.c4(64, 64, 64, 255));
+        var color = cc.LayerColor.create(cc.c4b(64, 64, 64, 255));
         this.addChild(color, -1);
 
         var map = cc.TMXTiledMap.create("res/TileMaps/iso-test1.tmx");
@@ -594,7 +594,7 @@ var TMXIsoTest1 = TileDemo.extend({
 var TMXIsoTest2 = TileDemo.extend({
     ctor:function () {
         this._super();
-        var color = cc.LayerColor.create(cc.c4(64, 64, 64, 255));
+        var color = cc.LayerColor.create(cc.c4b(64, 64, 64, 255));
         this.addChild(color, -1);
 
         var map = cc.TMXTiledMap.create("res/TileMaps/iso-test2.tmx");
@@ -620,7 +620,7 @@ var TMXIsoTest2 = TileDemo.extend({
 var TMXUncompressedTest = TileDemo.extend({
     ctor:function () {
         this._super();
-        var color = cc.LayerColor.create(cc.c4(64, 64, 64, 255));
+        var color = cc.LayerColor.create(cc.c4b(64, 64, 64, 255));
         this.addChild(color, -1);
 
         var map = cc.TMXTiledMap.create("res/TileMaps/iso-test2-uncompressed.tmx");
@@ -1149,20 +1149,20 @@ var TMXOrthoFlipRunTimeTest = TileDemo.extend({
         var flags = layer.tileFlagAt(tileCoord);
         var GID = layer.tileGIDAt(tileCoord);
         // Vertical
-        if ((flags & cc.TMXTileVerticalFlag) >>> 0){
+        if ((flags & cc.TMXTileVerticalFlag) >>> 0) {
             flags = (flags & ~cc.TMXTileVerticalFlag >>> 0) >>> 0;
         }
-        else{
+        else {
             flags = (flags | cc.TMXTileVerticalFlag) >>> 0;
         }
         layer.setTileGID(GID, tileCoord, flags);
 
-       tileCoord = cc.p(1, 8);
+        tileCoord = cc.p(1, 8);
         flags = layer.tileFlagAt(tileCoord);
         GID = layer.tileGIDAt(tileCoord);
         // Vertical
         if ((flags & cc.TMXTileVerticalFlag) >>> 0)
-            flags = (flags & ~cc.TMXTileVerticalFlag>>>0) >>> 0;
+            flags = (flags & ~cc.TMXTileVerticalFlag >>> 0) >>> 0;
         else
             flags = (flags | cc.TMXTileVerticalFlag) >>> 0;
         layer.setTileGID(GID, tileCoord, flags);

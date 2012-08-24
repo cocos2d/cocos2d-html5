@@ -45,7 +45,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     ctor:function () {
         this._super();
-        this._color = cc.WHITE();
+        this._color = cc.white();
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
     },
@@ -164,43 +164,43 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     /**
      * initializes the cc.LabelTTF with a font name, alignment, dimension and font size
      * @param {String} string
-     * @param {cc.Size} dimensions
-     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
      * @param {String} fontName
      * @param {Number} fontSize
+     * @param {cc.Size} dimensions
+     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
      * @return {Boolean} return false on error
      */
     initWithString:function (arg) {
-        var string = arg[0], dimensions, hAlignment, vAlignment, fontName, fontSize;
-        cc.Assert(string != null, "cc.LabelTTF.initWithString() label is null");
+        var strInfo = new String(arg[0]), fontName, fontSize, dimensions, hAlignment, vAlignment;
+        cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
         if (arg.length == 6) {
-            dimensions = arg[1];
-            hAlignment = arg[2];
-            vAlignment = arg[3];
-            fontName = arg[4];
-            fontSize = arg[5];
-        }
-        else if (arg.length == 5) {
-            dimensions = arg[1];
-            hAlignment = arg[2];
-            vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
-            fontName = arg[3];
-            fontSize = arg[4];
-        }
-        else {
-            dimensions = cc.SizeMake(0, arg[2]);
-            hAlignment = cc.TEXT_ALIGNMENT_LEFT;
-            vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
             fontName = arg[1];
             fontSize = arg[2];
+            dimensions = arg[3];
+            hAlignment = arg[4];
+            vAlignment = arg[5];
+        }
+        else if (arg.length == 5) {
+            fontName = arg[1];
+            fontSize = arg[2];
+            dimensions = arg[3];
+            hAlignment = arg[4];
+            vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+        }
+        else {
+            fontName = arg[1];
+            fontSize = arg[2];
+            dimensions = cc.size(0, arg[2]);
+            hAlignment = cc.TEXT_ALIGNMENT_LEFT;
+            vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
         }
         if (this.init(true)) {
-            this._dimensions = cc.SizeMake(dimensions.width, dimensions.height);
+            this._dimensions = cc.size(dimensions.width, dimensions.height);
             this._fontName = fontName;
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
-            this.setString(string);
+            this.setString(strInfo);
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             return true;
         }
@@ -367,7 +367,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
         cc.renderContext.font = this._fontStyleStr;
         var dim = cc.renderContext.measureText(this._string);
-        this.setContentSize(new cc.Size(dim.width, this._fontSize));
+        this.setContentSize(cc.size(dim.width, this._fontSize));
         cc.renderContext.restore();
         this.setNodeDirty();
     }
@@ -376,14 +376,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 /**
  * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
  * @param {String} label
- * @param {cc.Size} dimensions
- * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
  * @param {String} fontName
  * @param {Number} fontSize
+ * @param {cc.Size} dimensions
+ * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment
  * @return {cc.LabelTTF|Null}
  * @example
  * // Example
- * var myLabel = cc.LabelTTF.create('label text', cc.SizeMake(32,16), cc.TEXT_ALIGNMENT_LEFT, 'Times New Roman', 32);
+ * var myLabel = cc.LabelTTF.create('label text',  'Times New Roman', 32, cc.size(32,16), cc.TEXT_ALIGNMENT_LEFT);
  */
 cc.LabelTTF.create = function (/* Multi arguments */) {
     var ret = new cc.LabelTTF();

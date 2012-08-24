@@ -26,50 +26,50 @@
 
 
 /**
- * you must extend the keypadDelegate and
+ * you must extend the keyboardDelegate and
  * implement your own game logic in
  * keydown and keyup functions
  * @class
  * @extends cc.Class
  */
-cc.KeypadDelegate = cc.Class.extend(/** @lends cc.KeypadDelegate# */{
+cc.KeyboardDelegate = cc.Class.extend(/** @lends cc.KeyboardDelegate# */{
     /**
      * Call back when a key is pressed down
      */
-    keyDown:function () {
+    onKeyDown:function () {
     },
 
     /**
      * Call back when a key is released
      */
-    keyUp:function () {
+    onKeyUp:function () {
     }
 });
 
 /**
- * KeypadHandler is an object that contains KeypadDelegate
+ * KeyboardHandler is an object that contains KeyboardDelegate
  * @class
  * @extends cc.Class
  */
-cc.KeypadHandler = cc.Class.extend(/** @lends cc.KeypadHandler# */{
+cc.KeyboardHandler = cc.Class.extend(/** @lends cc.KeyboardHandler# */{
     /**
-     * returns the keypad delegate
-     * @return {cc.KeypadDelegate}
+     * returns the keyboard delegate
+     * @return {cc.KeyboardDelegate}
      */
     getDelegate:function () {
         return this._delegate;
     },
 
     /**
-     * set the keypad delegate
-     * @param {cc.KeypadDelegate} delegate
+     * set the keyboard delegate
+     * @param {cc.KeyboardDelegate} delegate
      */
     setDelegate:function (delegate) {
         this._delegate = delegate;
     },
     /**
-     * initializes a cc.KeypadHandler with a delegate
-     * @param {cc.KeypadDelegate} delegate
+     * initializes a cc.KeyboardHandler with a delegate
+     * @param {cc.KeyboardDelegate} delegate
      * @return {Boolean}
      */
     initWithDelegate:function (delegate) {
@@ -82,12 +82,12 @@ cc.KeypadHandler = cc.Class.extend(/** @lends cc.KeypadHandler# */{
     _delegate:null
 });
 /**
- * Create a KeypadHandler with KeypadDelegate
+ * Create a KeyboardHandler with KeyboardDelegate
  * @param delegate
- * @return {cc.KeypadHandler}
+ * @return {cc.KeyboardHandler}
  */
-cc.KeypadHandler.create = function (delegate) {
-    var handler = new cc.KeypadHandler();
+cc.KeyboardHandler.create = function (delegate) {
+    var handler = new cc.KeyboardHandler();
     handler.initWithDelegate(delegate);
     return handler;
 };

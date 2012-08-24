@@ -33,8 +33,7 @@
  * @constant
  * @type String
  */
-cc.ENGINE_VERSION = "Cocos2d-html5-v0.5.0-alpha2";
-
+cc.ENGINE_VERSION = "Cocos2d-html5-v0.5.0-beta";
 
 /**
  * <p>
@@ -65,34 +64,7 @@ cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL = 0;
  * @constant
  * @type cc.Point
  */
-cc.DIRECTOR_STATS_POSITION = cc.PointMake(0, 0);
-
-/**
- * <p>
- *    If enabled, FontLabel will be used to render .ttf files.<br/>
- *    If the .ttf file is not found, then it will use the standard UIFont class<br/>
- *    If disabled, the standard UIFont class will be used.<br/>
- *    <br/>
- *    To disable set it to 0. Enabled by default.<br/>
- *    Only valid for cocos2d-ios. Not supported on cocos2d-mac<br/>
- * </p>
- * @constant
- * @type Number
- */
-cc.FONT_LABEL_SUPPORT = 1;
-
-/**
- * <p>
- *     If enabled, then the FPS will be drawn using cc.LabelAtlas (fast rendering).<br/>
- *     You will need to add the fps_images.png to your project.<br/>
- *     If disabled, the FPS will be rendered using cc.Label (slow rendering)<br/>
- *     <br/>
- *     To enable set it to a value different than 0. Enabled by default.<br/>
- * </p>
- * @constant
- * @type Number
- */
-cc.DIRECTOR_FAST_FPS = 1;
+cc.DIRECTOR_STATS_POSITION = cc.p(0, 0);
 
 /**
  * <p>
@@ -106,36 +78,6 @@ cc.DIRECTOR_FAST_FPS = 1;
  * @type Number
  */
 cc.DIRECTOR_FPS_INTERVAL = 0.5;
-
-/**
- * <p>
- *    If enabled, and only when it is used with cc.FastDirector, the main loop will wait 0.04 seconds to<br/>
- *    dispatch all the events, even if there are not events to dispatch.<br/>
- *    If your game uses lot's of events (eg: touches) it might be a good idea to enable this feature.<br/>
- *    Otherwise, it is safe to leave it disabled.<br/>
- *    <br/>
- *    To enable set it to 1. Disabled by default.<br/>
- * </p>
- * @warning This feature is experimental
- * @constant
- * @type Number
- */
-cc.DIRECTOR_DISPATCH_FAST_EVENTS = 0;
-
-/**
- * <p>
- *    If enabled, cocos2d-mac will run on the Display Link thread. If disabled cocos2d-mac will run in its own thread.<br/>
- *    <br/>
- *    If enabled, the images will be drawn at the "correct" time, but the events might not be very responsive.<br/>
- *    If disabled, some frames might be skipped, but the events will be dispatched as they arrived.<br/>
- *    To enable set it to a 1, to disable it set to 0. Enabled by default.<br/>
- *    <br/>
- *    Only valid for cocos2d-mac. Not supported on cocos2d-ios.
- * </p>
- * @constant
- * @type Number
- */
-cc.DIRECTOR_MAC_USE_DISPLAY_LINK_THREAD = 1;
 
 /**
  * <p>
@@ -160,19 +102,6 @@ cc.COCOSNODE_RENDER_SUBPIXEL = 1;
  * @type Number
  */
 cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
-
-/**
- * <p>
- *    If enabled, batch nodes (texture atlas and particle system) will use VBO instead of vertex list (VBO is recommended by Apple)<br/>
- *    <br/>
- *    To enable set it to 1.<br/>
- *    Enabled by default on iPhone with ARMv7 processors, iPhone Simulator and Mac<br/>
- *    Disabled by default on iPhone with ARMv6 processors.
- * </p>
- * @constant
- * @type Number
- */
-cc.USES_VBO = 1;
 
 /**
  * <p>
@@ -278,21 +207,6 @@ cc.RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
 
 /**
  * <p>
- *   If enabled, it will use LA88 (16-bit textures) on Neon devices for cc.LabelTTF objects.<br/>
- *   If it is disabled, or if it is used on another architecture it will use A8 (8-bit textures).<br/>
- *   On Neon devices, LA88 textures are 6% faster than A8 textures, but then will consume 2x memory.<br/>
- *   <br/>
- *   This feature is disabled by default.<br/>
- *   <br/>
- *   Platforms: Only used on ARM Neon architectures like iPhone 3GS or newer and iPad.
- * </p>
- * @constant
- * @type Number
- */
-cc.USE_LA88_LABELS_ON_NEON_ARCH = 0;
-
-/**
- * <p>
  *   If enabled, all subclasses of cc.Sprite will draw a bounding box<br/>
  *   Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
  *   <br/>
@@ -343,19 +257,6 @@ cc.LABELBMFONT_DEBUG_DRAW = 0;
 cc.LABELATLAS_DEBUG_DRAW = 0;
 
 /**
- * <p>
- *     If enabled, will activate various profilers withing cocos2d. This statistical data will be output to the console<br/>
- *     once per second showing average time (in milliseconds) required to execute the specific routine(s).<br/>
- *     Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
- *     <br/>
- *     To enable set it to a value different than 0. Disabled by default.
- * </p>
- * @constant
- * @type Number
- */
-cc.ENABLE_PROFILERS = 0;
-
-/**
  * whether or not support retina display
  * @constant
  * @type Number
@@ -369,3 +270,22 @@ cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
  */
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
+
+/* Runtime information  */
+cc.config = {
+    'os' : navigator.appVersion,
+    'deviceType' : 'browser',
+    'engine' : 'cocos2d-html5/canvas',
+    'arch' : 'web',
+    'version' : cc.ENGINE_VERSION,
+    'debug' : false
+};
+
+/**
+ * dump config info, but only in debug mode
+ */
+cc.dumpConfig = function()
+{
+    for( i in cc.config )
+        cc.log( i + " = " + cc.config[i] );
+}

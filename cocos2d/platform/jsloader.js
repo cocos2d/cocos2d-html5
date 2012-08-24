@@ -43,6 +43,7 @@ var cc = cc || cc || {};
         'cocoa/CCNS.js',
         'cocoa/CCAffineTransform.js',
         'support/CCPointExtension.js',
+        'support/CCUserDefault.js',
         'base_nodes/CCNode.js',
         'base_nodes/CCAtlasNode.js',
         'textures/CCTexture2D.js',
@@ -61,7 +62,6 @@ var cc = cc || cc || {};
         'actions/CCActionEase.js',
         'actions/CCActionGrid.js',
         'actions/CCActionTiledGrid.js',
-        'actions/CCActionGrid.js',
         'actions/CCActionCatmullRom.js',
         'layers_scenes_transitions_nodes/CCScene.js',
         'layers_scenes_transitions_nodes/CCLayer.js',
@@ -83,8 +83,8 @@ var cc = cc || cc || {};
         'touch_dispatcher/CCTouchDelegateProtocol.js',
         'touch_dispatcher/CCTouchHandler.js',
         'touch_dispatcher/CCTouchDispatcher.js',
-        'keypad_dispatcher/CCKeypadDelegate.js',
-        'keypad_dispatcher/CCKeypadDispatcher.js',
+        'keyboard_dispatcher/CCKeyboardDelegate.js',
+        'keyboard_dispatcher/CCKeyboardDispatcher.js',
         'text_input_node/CCIMEDispatcher.js',
         'text_input_node/CCTextFieldTTF.js',
         'CCDirector.js',
@@ -102,15 +102,15 @@ var cc = cc || cc || {};
         'tileMap_parallax_nodes/CCTMXObjectGroup.js',
         'tileMap_parallax_nodes/CCTMXLayer.js',
         'tileMap_parallax_nodes/CCParallaxNode.js',
+        'menu_nodes/CCMenuItem.js',
+        'menu_nodes/CCMenu.js',
+        'base_nodes/CCdomNode.js',
         '../CocosDenshion/SimpleAudioEngine.js'
     ];
     var d = document;
     var c = d.querySelector('#cocos2d-html5').c;
     if (c.box2d)
         engine.push('../box2d/box2d.js');
-    (c.menuType != 'dom') ?
-        engine.push('menu_nodes/CCMenuItem.js', 'menu_nodes/CCMenu.js') :
-        engine.push('base_nodes/CCdomNode.js', 'menu_nodes/CCdomMenuItem.js', 'menu_nodes/CCdomMenu.js');
     var loaded = 0;
     engine.forEach(function (e, i) {
         engine[i] = c.engineDir + e;

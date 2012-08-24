@@ -82,7 +82,7 @@ var TestController = cc.Layer.extend({
             menuItem.setPosition(cc.p(s.width / 2, (s.height - (i + 1) * LINE_SPACE)));
         }
 
-        this._itemMenu.setContentSize(cc.SizeMake(s.width, (testNames.length + 1) * LINE_SPACE));
+        this._itemMenu.setContentSize(cc.size(s.width, (testNames.length + 1) * LINE_SPACE));
         this._itemMenu.setPosition(curPos);
         this.setTouchEnabled(true);
         this.addChild(this._itemMenu);
@@ -210,7 +210,7 @@ var testNames = [
             return new IntervalTestScene();
         }
     },
-    //"KeypadTest",
+    //"KeyboardTest",
     {
         title:"LabelTest",
         testScene:function () {

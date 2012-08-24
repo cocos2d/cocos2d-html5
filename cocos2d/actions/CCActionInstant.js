@@ -326,6 +326,12 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
             this._selectorTarget = sel;
         }
     },
+
+    copy:function() {
+        var n = new cc.CallFunc();
+        n.initWithTarget( this._selectorTarget, this._callFunc, this._data );
+        return n;
+    },
     _selectorTarget:null,
     _callFunc:null
 });

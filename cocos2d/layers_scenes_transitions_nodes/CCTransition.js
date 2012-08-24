@@ -162,7 +162,7 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
             // retain
             this._inScene = scene;
             this._outScene = cc.Director.getInstance().getRunningScene();
-            if(!this._outScene){
+            if (!this._outScene) {
                 this._outScene = cc.Scene.create();
                 this._outScene.init();
             }
@@ -1074,20 +1074,20 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         }
         //TODO
         inA = cc.Sequence.create(
-                cc.DelayTime.create(this._duration / 2),
-                cc.Spawn.create(
-                        cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
-                        cc.ScaleTo.create(this._duration / 2, 1),
-                        cc.Show.create()),
-                cc.CallFunc.create(this, this.finish)
-            );
+            cc.DelayTime.create(this._duration / 2),
+            cc.Spawn.create(
+                cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
+                cc.ScaleTo.create(this._duration / 2, 1),
+                cc.Show.create()),
+            cc.CallFunc.create(this, this.finish)
+        );
         outA = cc.Sequence.create(
-                cc.Spawn.create(
-                        cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
-                        cc.ScaleTo.create(this._duration / 2, 0.5)),
-                cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2)
-            );
+            cc.Spawn.create(
+                cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
+                cc.ScaleTo.create(this._duration / 2, 0.5)),
+            cc.Hide.create(),
+            cc.DelayTime.create(this._duration / 2)
+        );
 
         this._inScene.setScale(0.5);
         this._inScene.runAction(inA);
@@ -1153,19 +1153,19 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
 
         //TODO
         inA = cc.Sequence.create(
-                cc.DelayTime.create(this._duration / 2),
-                cc.Spawn.create(
-                        cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-                        cc.ScaleTo.create(this._duration / 2, 1),
-                        cc.Show.create()),
-                cc.CallFunc.create(this, this.finish));
+            cc.DelayTime.create(this._duration / 2),
+            cc.Spawn.create(
+                cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
+                cc.ScaleTo.create(this._duration / 2, 1),
+                cc.Show.create()),
+            cc.CallFunc.create(this, this.finish));
 
         outA = cc.Sequence.create(
-                cc.Spawn.create(
-                        cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
-                        cc.ScaleTo.create(this._duration / 2, 0.5)),
-                cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2));
+            cc.Spawn.create(
+                cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
+                cc.ScaleTo.create(this._duration / 2, 0.5)),
+            cc.Hide.create(),
+            cc.DelayTime.create(this._duration / 2));
 
         this._inScene.setScale(0.5);
         this._inScene.runAction(inA);
@@ -1231,19 +1231,19 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
 
         //TODO
         inA = cc.Sequence.create(
-                cc.DelayTime.create(this._duration / 2),
-                cc.Spawn.create(
-                        cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
-                        cc.ScaleTo.create(this._duration / 2, 1),
-                        cc.Show.create()),
-                cc.Show.create(),
-                cc.CallFunc.create(this, this.finish));
+            cc.DelayTime.create(this._duration / 2),
+            cc.Spawn.create(
+                cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
+                cc.ScaleTo.create(this._duration / 2, 1),
+                cc.Show.create()),
+            cc.Show.create(),
+            cc.CallFunc.create(this, this.finish));
         outA = cc.Sequence.create(
-                cc.Spawn.create(
-                        cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
-                        cc.ScaleTo.create(this._duration / 2, 0.5)),
-                cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2));
+            cc.Spawn.create(
+                cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
+                cc.ScaleTo.create(this._duration / 2, 0.5)),
+            cc.Hide.create(),
+            cc.DelayTime.create(this._duration / 2));
 
         this._inScene.setScale(0.5);
         this._inScene.runAction(inA);
@@ -1303,11 +1303,11 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
 
         //TODO
         var a = cc.Sequence.create(
-                cc.FadeIn.create(this._duration / 2),
-                cc.CallFunc.create(this, this.hideOutShowIn), //CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
-                cc.FadeOut.create(this._duration / 2),
-                cc.CallFunc.create(this, this.finish) //:self selector:@selector(finish)],
-            );
+            cc.FadeIn.create(this._duration / 2),
+            cc.CallFunc.create(this, this.hideOutShowIn), //CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
+            cc.FadeOut.create(this._duration / 2),
+            cc.CallFunc.create(this, this.finish) //:self selector:@selector(finish)],
+        );
         f.runAction(a);
     },
 
@@ -1328,7 +1328,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      */
     initWithDuration:function (t, scene, color) {
         if ((color == 'undefined') || (color == null)) {
-            color = cc.BLACK();
+            color = cc.black();
         }
 
         if (this._super(t, scene)) {
@@ -1350,7 +1350,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
  * @return {cc.TransitionFade}
  * @example
  * // Example
- * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.c3(255,0,0))//fade to red
+ * var myTransition = cc.TransitionFade.create(1.5, nextScene, cc.c3b(255,0,0))//fade to red
  */
 cc.TransitionFade.create = function (t, scene, color) {
     var transition = new cc.TransitionFade();
@@ -1405,14 +1405,10 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         this._outScene.visit();
         outTexture.end();
 
-        // create blend functions
-
-        var blend1 = new cc.BlendFunc(cc.GL_ONE, cc.GL_ONE); // inScene will lay on background and will not be used with alpha
-        var blend2 = cc.BlendFunc(cc.GL_SRC_ALPHA, cc.GL_ONE_MINUS_SRC_ALPHA); // we are going to blend outScene via alpha
-
-        // set blendfunctions
-        inTexture.getSprite().setBlendFunc(blend1);
-        outTexture.getSprite().setBlendFunc(blend2);
+        // inScene will lay on background and will not be used with alpha
+        inTexture.getSprite().setBlendFunc(gl.ONE, gl.ONE);
+        // we are going to blend outScene via alpha
+        outTexture.getSprite().setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
         // add render textures to the layer
         layer.addChild(inTexture);
@@ -1425,10 +1421,10 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         // create the blend action
         //TODO
         var layerAction = cc.Sequence.create(
-                cc.FadeTo.create(this._duration, 0),
-                cc.CallFunc.create(this, this.hideOutShowIn),
-                cc.CallFunc.create(this, this.finish)
-            );
+            cc.FadeTo.create(this._duration, 0),
+            cc.CallFunc.create(this, this.hideOutShowIn),
+            cc.CallFunc.create(this, this.finish)
+        );
 
         // run the blend action
         outTexture.getSprite().runAction(layerAction);
@@ -1536,16 +1532,16 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
         var split = this.action();
         //TODO
         var seq = cc.Sequence.create(
-                split,
-                cc.CallFunc.create(this, this.hideOutShowIn),
-                split.reverse());
+            split,
+            cc.CallFunc.create(this, this.hideOutShowIn),
+            split.reverse());
 
         this.runAction(
-                cc.Sequence.create(
-                        this.easeActionWithAction(seq),
-                        cc.CallFunc.create(this, this.finish),
-                        cc.StopGrid.create()
-                ));
+            cc.Sequence.create(
+                this.easeActionWithAction(seq),
+                cc.CallFunc.create(this, this.finish),
+                cc.StopGrid.create()
+            ));
     },
 
     /**
@@ -1638,11 +1634,11 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
         var action = this.actionWithSize(cc.g(x, y));
 
         this._outScene.runAction(
-                cc.Sequence.create(
-                        this.easeActionWithAction(action),
-                        cc.CallFunc.create(this, this.finish),
-                        cc.StopGrid.create())
-            );
+            cc.Sequence.create(
+                this.easeActionWithAction(action),
+                cc.CallFunc.create(this, this.finish),
+                cc.StopGrid.create())
+        );
     },
 
     /**

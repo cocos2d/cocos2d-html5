@@ -103,7 +103,7 @@ cc.renderContextType = cc.CANVAS;
  * save original size of canvas, use for resize canvas
  * @type cc.Size
  */
-cc.originalCanvasSize = new cc.Size(0, 0);
+cc.originalCanvasSize = cc.size(0, 0);
 
 window.requestAnimFrame = (function () {
     return  window.requestAnimationFrame ||
@@ -162,18 +162,21 @@ cc.setup = function (el, width, height) {
             cc.log("Warning: target element is not a DIV or CANVAS");
         }
         cc.canvas = cc.$new("CANVAS");
-        cc.canvas.addClass = "gameCanvas";
+        cc.canvas.addClass("gameCanvas");
         cc.canvas.setAttribute("width", width || 480);
         cc.canvas.setAttribute("height", height || 320);
         cc.container = element;
     }
+    cc.container.style.position = 'relative';
+    cc.container.style.overflow = 'hidden';
+    cc.container.top = '100%';
     cc.renderContext = cc.canvas.getContext("2d");
     cc.renderContextType = cc.CANVAS;
     if (cc.renderContextType == cc.CANVAS) {
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
-    cc.originalCanvasSize = new cc.Size(cc.canvas.width, cc.canvas.height);
+    cc.originalCanvasSize = cc.size(cc.canvas.width, cc.canvas.height);
 
     cc.log(cc.ENGINE_VERSION);
 
@@ -181,7 +184,7 @@ cc.setup = function (el, width, height) {
     /*
      cc.canvas.addEventListener("resize", function () {
      if (!cc.firstRun) {
-     cc.Director.getInstance().addRegionToDirtyRegion(new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height));
+     cc.Director.getInstance().addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
      }
      }, true);
      */
@@ -218,7 +221,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
     statusBarFrame:function (rect) {
         if (rect) {
             // Windows doesn't have status bar.
-            rect = cc.RectMake(0, 0, 0, 0);
+            rect = cc.rect(0, 0, 0, 0);
         }
     },
 

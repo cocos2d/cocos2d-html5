@@ -47,6 +47,15 @@ cc.clone = function (obj) {
 };
 
 /**
+ * Function added for JS bindings compatibility. Not needed in cocos2d-html5.
+ * @function
+ * @param {object} jsobj subclass
+ * @param {object} klass superclass
+ */
+cc.associateWithNative = function( jsobj, superclass ) {
+};
+
+/**
  * Is show bebug info on web page
  * @constant
  * @type {Boolean}

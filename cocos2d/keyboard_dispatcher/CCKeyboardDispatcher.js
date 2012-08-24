@@ -164,14 +164,14 @@ cc.KEY = {
 };
 
 /**
- * Dispatch the keypad message
+ * Dispatch the keyboard message
  * @class
  * @extends cc.Class
  */
-cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
+cc.KeyboardDispatcher = cc.Class.extend(/** @lends cc.KeyboardDispatcher# */{
     /**
-     * add delegate to concern keypad msg
-     * @param {cc.KeypadDelegate} delegate keypad delegate object
+     * add delegate to concern keyboard msg
+     * @param {cc.KeyboardDelegate} delegate keyboard delegate object
      */
     addDelegate:function (delegate) {
         if (!delegate) {
@@ -187,8 +187,8 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
     },
 
     /**
-     * remove the delegate from the delegates who concern keypad msg
-     * @param {cc.KeypadDelegate} delegate
+     * remove the delegate from the delegates who concern keyboard msg
+     * @param {cc.KeyboardDelegate} delegate
      */
     removeDelegate:function (delegate) {
         if (!delegate) {
@@ -205,10 +205,10 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
 
     /**
      * force add the delegate
-     * @param {cc.KeypadDelegate} delegate
+     * @param {cc.KeyboardDelegate} delegate
      */
     forceAddDelegate:function (delegate) {
-        var handler = cc.KeypadHandler.create(delegate);
+        var handler = cc.KeyboardHandler.create(delegate);
         if (handler) {
             //if handler already exist
             for (var i = 0; i < this._delegates; i++) {
@@ -221,22 +221,24 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
 
     /**
      * force remove the delegate
-     * @param {cc.KeypadDelegate} delegate
+     * @param {cc.KeyboardDelegate} delegate
      */
     forceRemoveDelegate:function (delegate) {
-        var i = this._delegates.indexOf(delegate);
-        if (i != -1) {
-            this._delegates.splice(this._delegates.indexOf(delegate), 1);
+        for (var i = 0; i < this._delegates.length; i++) {
+            if (this._delegates[i].getDelegate() == delegate) {
+                this._delegates.splice(i, 1);
+                return;
+            }
         }
     },
 
     /**
-     * dispatch the keypad message to the delegates
+     * dispatch the keyboard message to the delegates
      * @param {event} e
      * @param {Boolean} keydown whether this is a keydown or keyup
      * @return {Boolean}
      */
-    dispatchKeypadMSG:function (e, keydown) {
+    dispatchKeyboardMSG:function (e, keydown) {
         this._locked = true;
         e.stopPropagation();
         e.preventDefault();
@@ -245,13 +247,13 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
         {
             //execute all deletegate that registered a keyboard event
             for (var i = 0; i < this._delegates.length; i++) {
-                this._delegates[i].getDelegate().keyDown(e.keyCode);
+                this._delegates[i].getDelegate().onKeyDown(e.keyCode);
             }
         }
         else if (!keydown && e)//if keyup and our keymap have that key in it
         {
             for (var i = 0; i < this._delegates.length; i++) {
-                this._delegates[i].getDelegate().keyUp(e.keyCode);
+                this._delegates[i].getDelegate().onKeyUp(e.keyCode);
             }
         }
         this._locked = false;
@@ -284,33 +286,33 @@ cc.KeypadDispatcher = cc.Class.extend(/** @lends cc.KeypadDispatcher# */{
 });
 
 /**
- * Returns the shared cc.KeypadDispatcher object for the system.
- * @return {cc.keypadDispatcher}
+ * Returns the shared cc.KeyboardDispatcher object for the system.
+ * @return {cc.keyboardDispatcher}
  */
-cc.KeypadDispatcher.getInstance = function () {
-    if (!cc.keypadDispatcher) {
-        cc.keypadDispatcher = new cc.KeypadDispatcher();
+cc.KeyboardDispatcher.getInstance = function () {
+    if (!cc.keyboardDispatcher) {
+        cc.keyboardDispatcher = new cc.KeyboardDispatcher();
         //make canvas focusable
         cc.canvas.setAttribute('contentEditable', true);
-        cc.canvas.style.outline='none';
+        cc.canvas.style.outline = 'none';
         cc.canvas.style.cursor = 'default';
         cc.canvas.addEventListener("keydown", function (e) {
-            cc.keypadDispatcher.dispatchKeypadMSG(e, true);
+            cc.keyboardDispatcher.dispatchKeyboardMSG(e, true);
             cc.IMEDispatcher.getInstance().processKeycode(e.keyCode);
         });
         cc.canvas.addEventListener("keyup", function (e) {
-            cc.keypadDispatcher.dispatchKeypadMSG(e, false);
+            cc.keyboardDispatcher.dispatchKeyboardMSG(e, false);
         });
     }
-    return cc.keypadDispatcher;
+    return cc.keyboardDispatcher;
 };
 
 /**
- * Release the shared cc.KeypadDispatcher object from the system.
+ * Release the shared cc.KeyboardDispatcher object from the system.
  */
-cc.KeypadDispatcher.purgeSharedDispatcher = function () {
-    if (cc.keypadDispatcher) {
-        delete cc.keypadDispatcher;
-        cc.keypadDispatcher = null;
+cc.KeyboardDispatcher.purgeSharedDispatcher = function () {
+    if (cc.keyboardDispatcher) {
+        delete cc.keyboardDispatcher;
+        cc.keyboardDispatcher = null;
     }
 };

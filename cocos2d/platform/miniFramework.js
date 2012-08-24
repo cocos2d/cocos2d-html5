@@ -36,7 +36,7 @@ cc.Browser = {};
     cc.Browser.UA = cc.Browser.ua.match(/(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/) || [null, 'unknown', 0];
     cc.Browser.mode = cc.Browser.UA[1] == 'ie' && document.documentMode;
     cc.Browser.type = (cc.Browser.UA[1] == 'version') ? cc.Browser.UA[3] : cc.Browser.UA[1];
-    cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1);
+    cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
 })();
 
 
@@ -91,7 +91,8 @@ cc.$ = function (x) {
          * @function
          */
         el.remove = el.remove || function () {
-            this.parentNode.removeChild(this);
+            if (this.parentNode)
+                this.parentNode.removeChild(this);
             return this;
         };
 
@@ -135,7 +136,7 @@ cc.$ = function (x) {
          * @param {Number} y in pixel
          * @return {cc.$}
          */
-        el.translate = function (x, y) {
+        el.translates = function (x, y) {
             this.position.x = x;
             this.position.y = y;
             this.transforms();
@@ -217,7 +218,7 @@ cc.$.scale = function (a) {
     return "scale(" + a.x + ", " + a.y + ") "
 };
 cc.$.skew = function (a) {
-    return "skew(" + a.x + "deg, " + a.y + "deg)"
+    return "skewX(" + -a.x + "deg) skewY(" + a.y + "deg)";
 };
 
 
@@ -228,4 +229,13 @@ cc.$.skew = function (a) {
  */
 cc.$new = function (x) {
     return cc.$(document.createElement(x))
+};
+cc.$.findpos = function (obj) {
+    var curleft = 0;
+    var curtop = 0;
+    do {
+        curleft += obj.offsetLeft;
+        curtop += obj.offsetTop;
+    } while (obj = obj.offsetParent);
+    return {x:curleft, y:curtop};
 };

@@ -315,8 +315,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             this._effectsVolume = volume;
         }
         if (this._audioList) {
+            var au;
             for (var i in this._audioList) {
-                this._audioList[i].volume = this._effectsVolume;
+                au = this._audioList[i];
+                if(au){
+                    au.volume = this._effectsVolume;
+                }
             }
         }
     },
@@ -359,8 +363,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     pauseAllEffects:function () {
         if (this._audioList) {
+            var au;
             for (var i in this._audioList) {
-                this._audioList[i].pause();
+                au = this._audioList[i];
+                if(au){
+                    au.pause();
+                }
             }
         }
     },
@@ -386,8 +394,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     resumeAllEffects:function () {
         if (this._audioList) {
+            var au;
             for (var i in this._audioList) {
-                this._audioList[i].play();
+                au = this._audioList[i];
+                if(au){
+                    au.play();
+                }
             }
         }
     },
@@ -414,9 +426,13 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     stopAllEffects:function () {
         if (this._audioList) {
+            var au;
             for (var i in this._audioList) {
-                this._audioList[i].pause();
-                this._audioList[i].currentTime = 0;
+                au = this._audioList[i];
+                if(au){
+                    au.pause();
+                    au.currentTime = 0;
+                }
             }
         }
     },

@@ -77,14 +77,14 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             var row = parseInt(a % this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
             var col = parseInt(a / this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
 
-            var rect = cc.RectMake(row * this._itemWidth, col * this._itemHeight, this._itemWidth, this._itemHeight);
+            var rect = cc.rect(row * this._itemWidth, col * this._itemHeight, this._itemWidth, this._itemHeight);
             var c = this._string.charCodeAt(i);
             var fontChar = this.getChildByTag(i);
             if (!fontChar) {
                 fontChar = new cc.Sprite();
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.SizeZero());
                 }
                 else {
                     fontChar.initWithTexture(texture, rect);
@@ -94,7 +94,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             else {
                 if (c == 32) {
                     fontChar.init();
-                    fontChar.setTextureRect(cc.RectMake(0,0,10,10), false, cc.SizeZero());
+                    fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.SizeZero());
                 }
                 else {
                     // reusing fonts
@@ -117,7 +117,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var len = label.length;
         this._textureAtlas.resizeCapacity(len);
 
-        var s = new cc.SizeMake(len * this._itemWidth, this._itemHeight);
+        var s = new cc.size(len * this._itemWidth, this._itemHeight);
         this.setContentSize(s);
 
         if (this._children) {
@@ -175,7 +175,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapfile.png', 12, 20, ' ')
  *
  * //creates the cc.LabelAtlas with a string, a fnt file
- * var myLabel = cc.LabelAtlas.create('Text to display', ''CharMapFile.fnt);
+ * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
 cc.LabelAtlas.create = function (/* Multi arguments */) {
     var ret = new cc.LabelAtlas();

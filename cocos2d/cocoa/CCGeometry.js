@@ -36,6 +36,18 @@ cc.Point = function (_x, _y) {
 };
 
 /**
+ * Helper macro that creates a cc.Point.
+ * @param {Number} x
+ * @param {Number} y
+ * @return {}
+ */
+cc.p = function (x, y) {
+    // optimization
+    return {x:x, y:y};
+//    return new cc.Point(x,y);
+};
+
+/**
  * @function
  * @param {cc.Point} point1
  * @param {cc.Point} point2
@@ -81,17 +93,17 @@ cc.Rect = function (x1, y1, width1, height1) {
     switch (arguments.length) {
         case 0:
             this.origin = cc.p(0, 0);
-            this.size = new cc.Size(0, 0);
+            this.size = cc.size(0, 0);
             break;
         case 1:
             var oldRect = x1;
             if (!oldRect) {
                 this.origin = cc.p(0, 0);
-                this.size = new cc.Size(0, 0);
+                this.size = cc.size(0, 0);
             } else {
                 if (oldRect instanceof cc.Rect) {
                     this.origin = cc.p(oldRect.origin.x, oldRect.origin.y);
-                    this.size = new cc.Size(oldRect.size.width, oldRect.size.height);
+                    this.size = cc.size(oldRect.size.width, oldRect.size.height);
                 } else {
                     throw "unknown argument type";
                 }
@@ -99,11 +111,11 @@ cc.Rect = function (x1, y1, width1, height1) {
             break;
         case 2:
             this.origin = x1 ? cc.p(x1.x, x1.y) : cc.p(0, 0);
-            this.size = y1 ? new cc.Size(y1.width, y1.height) : new cc.Size(0, 0);
+            this.size = y1 ? cc.size(y1.width, y1.height) : cc.size(0, 0);
             break;
         case 4:
             this.origin = cc.p(x1 || 0, y1 || 0);
-            this.size = new cc.Size(width1 || 0, height1 || 0);
+            this.size = cc.size(width1 || 0, height1 || 0);
             break;
         default:
             throw "unknown argument type";
@@ -225,6 +237,15 @@ cc.Rect.CCRectIntersectsRect = function (rectA, rectB) {
  * @return {Boolean}
  * Constructor
  */
+cc.rectIntersectsRect = cc.Rect.CCRectIntersectsRect;
+
+/**
+ * @function
+ * @param {cc.Rect} rectA
+ * @param {cc.Rect} rectB
+ * @return {Boolean}
+ * Constructor
+ */
 cc.Rect.CCRectOverlapsRect = function (rectA, rectB) {
     if (rectA.origin.x + rectA.size.width < rectB.origin.x) {
         return false;
@@ -250,7 +271,7 @@ cc.Rect.CCRectOverlapsRect = function (rectA, rectB) {
  * Constructor
  */
 cc.Rect.CCRectUnion = function (rectA, rectB) {
-    var rect = new cc.Rect(0, 0, 0, 0);
+    var rect = cc.rect(0, 0, 0, 0);
     rect.origin.x = Math.min(rectA.origin.x, rectB.origin.x);
     rect.origin.y = Math.min(rectA.origin.y, rectB.origin.y);
     rect.size.width = Math.max(rectA.origin.x + rectA.size.width, rectB.origin.x + rectB.size.width) - rect.origin.x;
@@ -267,7 +288,7 @@ cc.Rect.CCRectUnion = function (rectA, rectB) {
  * Constructor
  */
 cc.Rect.CCRectIntersection = function (rectA, rectB) {
-    var intersection = new cc.Rect(
+    var intersection = cc.rect(
         Math.max(cc.Rect.CCRectGetMinX(rectA), cc.Rect.CCRectGetMinX(rectB)),
         Math.max(cc.Rect.CCRectGetMinY(rectA), cc.Rect.CCRectGetMinY(rectB)),
         0, 0);
@@ -296,8 +317,22 @@ cc.PointMake = function (x, y) {
  * Constructor
  */
 cc.SizeMake = function (width, height) {
-    return new cc.Size(width, height);
+    return cc.size(width, height);
 };
+
+/**
+ * @function
+ * @param {Number} width
+ * @param {Number} height
+ * @return {Number, Number}
+ * Constructor
+ */
+cc.size = function (w, h) {
+    // optimization
+    return {width:w, height:h};
+
+//    return cc.size(w,h);
+}
 
 /**
  * @function
@@ -309,8 +344,15 @@ cc.SizeMake = function (width, height) {
  * Constructor
  */
 cc.RectMake = function (x, y, width, height) {
-    return new cc.Rect(x, y, width, height);
+    return cc.rect(x, y, width, height);
 };
+
+// backward compatible
+cc.rect = function (x, y, w, h) {
+    // optimization
+    return { origin:{x:x, y:y}, size:{width:w, height:h} };
+//    return cc.rect(x, y, width, height);
+}
 
 /**
  * The "left bottom" point -- equivalent to cc.p(0, 0).
@@ -323,22 +365,39 @@ cc.PointZero = function () {
 };
 
 /**
- * The "zero" size -- equivalent to cc.SizeMake(0, 0).
+ * Point Zero Constant
+ * @return {cc.Point}
+ */
+cc.POINT_ZERO = cc.p(0, 0);
+
+/**
+ * The "zero" size -- equivalent to cc.size(0, 0).
  * @function
  * @return {cc.Size}
  * Constructor
  */
 cc.SizeZero = function () {
-    return new cc.Size(0, 0)
+    return cc.size(0, 0)
 };
 
 /**
- * The "zero" rectangle -- equivalent to cc.RectMake(0, 0, 0, 0).
+ * Size Zero constant
+ * @return {cc.Size}
+ */
+cc.SIZE_ZERO = cc.size(0, 0);
+
+/**
+ * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
  * @function
  * @return {cc.Rect}
  * Constructor
  */
 cc.RectZero = function () {
-    return new cc.Rect(0, 0, 0, 0)
+    return cc.rect(0, 0, 0, 0)
 };
 
+/**
+ * Rect Zero Constant
+ * @return {cc.Rect}
+ */
+cc.RECT_ZERO = cc.rect(0, 0, 0, 0);

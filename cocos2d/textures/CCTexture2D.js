@@ -69,10 +69,6 @@ cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444 = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444;
 cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1 = cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1;
 cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT = cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT;
 
-if (cc.FONT_LABEL_SUPPORT) {
-//TODO
-// FontLabel support
-}// CC_FONT_LABEL_SUPPORT
 
 if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
     //TODO include CCTextureCache.h
@@ -120,7 +116,7 @@ cc.Texture2D = cc.Class.extend({
         if (cc.SUPPORT_PVRTC) {
             /**
              Extensions to make it easy to create a cc.Texture2D object from a PVRTC file
-             Note that the generated textures don't have their alpha premultiplied - use the blending mode (cc.GL_SRC_ALPHA, cc.GL_ONE_MINUS_SRC_ALPHA).
+             Note that the generated textures don't have their alpha premultiplied - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
              */
             /** Initializes a texture from a PVRTC buffer */
             this.initWithPVRTCData = function (data, level, bpp, hasAlpha, length, pixelFormat) {
@@ -132,7 +128,7 @@ cc.Texture2D = cc.Class.extend({
                 //TODO
                 // glGenTextures(1, this._name);
                 //TODO
-                // glBindTexture(cc.GL_TEXTURE_2D, this._name);
+                // glBindTexture(gl.TEXTURE_2D, this._name);
 
                 this.setAntiAliasTexParameters();
 
@@ -140,17 +136,17 @@ cc.Texture2D = cc.Class.extend({
                 var size = new cc.GLsizei();
                 size = length * length * bpp / 8;
                 if (hasAlpha) {
-                    format = (bpp == 4) ? cc.GL_COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : cc.GL_COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
+                    format = (bpp == 4) ? gl.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
                 } else {
-                    format = (bpp == 4) ? cc.GL_COMPRESSED_RGB_PVRTC_4BPPV1_IMG : cc.GL_COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+                    format = (bpp == 4) ? gl.COMPRESSED_RGB_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
                 }
                 if (size < 32) {
                     size = 32;
                 }
                 //TODO
-                // glCompressedTexImage2D(cc.GL_TEXTURE_2D, level, format, length, length, 0, size, data);
+                // glCompressedTexImage2D(gl.TEXTURE_2D, level, format, length, length, 0, size, data);
 
-                this._contentSize = cc.SizeMake(length, length);
+                this._contentSize = cc.size(length, length);
                 this._pixelsWide = length;
                 this._pixelsHigh = length;
                 this._maxS = 1.0;
@@ -180,7 +176,7 @@ cc.Texture2D = cc.Class.extend({
     },
     //** content size *//
     getContentSizeInPixels:function () {
-        var ret = new cc.Size();
+        var ret = cc.size(0, 0);
         ret.width = this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
         ret.height = this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
 
@@ -221,11 +217,11 @@ cc.Texture2D = cc.Class.extend({
     /** Intializes with a texture2d with data */
     initWithData:function (pixelFormat, pixelsWide, pixelsHigh, contentSize) {
         //TODO
-        // glPixelStorei(cc.GL_UNPACK_ALIGNMENT,1);
+        // glPixelStorei(gl.UNPACK_ALIGNMENT,1);
         //TODO
         // glGenTextures(1, this._name);
         //TODO
-        // glBindTexture(cc.GL_TEXTURE_2D, this._name);
+        // glBindTexture(gl.TEXTURE_2D, this._name);
 
         this.setAntiAliasTexParameters();
 
@@ -234,31 +230,31 @@ cc.Texture2D = cc.Class.extend({
         switch (pixelFormat) {
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
                 //TODO
-                // glTexImage2D(cc.GL_TEXTURE_2D, 0, cc.GL_RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, cc.GL_RGBA, cc.GL_UNSIGNED_BYTE, data);
+                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
                 //TODO
-                // glTexImage2D(cc.GL_TEXTURE_2D, 0, cc.GL_RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, cc.GL_RGB, cc.GL_UNSIGNED_BYTE, data);
+                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGB, gl.UNSIGNED_BYTE, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
                 //TODO
-                // glTexImage2D(cc.GL_TEXTURE_2D, 0, cc.GL_RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, cc.GL_RGBA, cc.GL_UNSIGNED_SHORT_4_4_4_4, data);
+                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
                 //TODO
-                // glTexImage2D(cc.GL_TEXTURE_2D, 0, cc.GL_RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, cc.GL_RGBA, cc.GL_UNSIGNED_SHORT_5_5_5_1, data);
+                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
                 //TODO
-                // glTexImage2D(cc.GL_TEXTURE_2D, 0, cc.GL_RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, cc.GL_RGB, cc.GL_UNSIGNED_SHORT_5_6_5, data);
+                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
                 //TODO
-                // glTexImage2D(cc.GL_TEXTURE_2D, 0, cc.GL_LUMINANCE_ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, cc.GL_LUMINANCE_ALPHA, cc.GL_UNSIGNED_BYTE, data);
+                // glTexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
                 //TODO
-                // glTexImage2D(cc.GL_TEXTURE_2D, 0, cc.GL_ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, cc.GL_ALPHA, cc.GL_UNSIGNED_BYTE, data);
+                // glTexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, data);
                 break;
             default:
                 cc.Assert(0, "NSInternalInconsistencyException");
@@ -279,7 +275,7 @@ cc.Texture2D = cc.Class.extend({
 
     /**
      Drawing extensions to make it easy to draw basic quads using a CCTexture2D object.
-     These functions require cc.GL_TEXTURE_2D and both cc.GL_VERTEX_ARRAY and cc.GL_TEXTURE_COORD_ARRAY client states to be enabled.
+     These functions require gl.TEXTURE_2D and both gl.VERTEX_ARRAY and gl.TEXTURE_COORD_ARRAY client states to be enabled.
      */
     /** draws a texture at a given point */
     drawAtPoint:function (point) {
@@ -299,13 +295,13 @@ cc.Texture2D = cc.Class.extend({
             width + point.x, height + point.y, 0.0 ];
 
         //TODO
-        // glBindTexture(cc.GL_TEXTURE_2D, this._name);
+        // glBindTexture(gl.TEXTURE_2D, this._name);
         //TODO
-        // glVertexPointer(3, cc.GL_FLOAT, 0, vertices);
+        // glVertexPointer(3, gl.FLOAT, 0, vertices);
         //TODO
-        // glTexCoordPointer(2, cc.GL_FLOAT, 0, coordinates);
+        // glTexCoordPointer(2, gl.FLOAT, 0, coordinates);
         //TODO
-        // glDrawArrays(cc.GL_TRIANGLE_STRIP, 0, 4);
+        // glDrawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
 
     /** draws a texture inside a rect */
@@ -322,18 +318,18 @@ cc.Texture2D = cc.Class.extend({
             rect.origin.x + rect.size.width, rect.origin.y + rect.size.height        /*0.0*/ ];
 
         //TODO
-        // glBindTexture(cc.GL_TEXTURE_2D, this._name);
+        // glBindTexture(gl.TEXTURE_2D, this._name);
         //TODO
-        // glVertexPointer(2, cc.GL_FLOAT, 0, vertices);
+        // glVertexPointer(2, gl.FLOAT, 0, vertices);
         //TODO
-        // glTexCoordPointer(2, cc.GL_FLOAT, 0, coordinates);
+        // glTexCoordPointer(2, gl.FLOAT, 0, coordinates);
         //TODO
-        // glDrawArrays(cc.GL_TRIANGLE_STRIP, 0, 4);
+        // glDrawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
 
     /**
      Extensions to make it easy to create a CCTexture2D object from an image file.
-     Note that RGBA type textures will have their alpha premultiplied - use the blending mode (cc.GL_ONE, cc.GL_ONE_MINUS_SRC_ALPHA).
+     Note that RGBA type textures will have their alpha premultiplied - use the blending mode (gl.ONE, gl.ONE_MINUS_SRC_ALPHA).
      */
     /** Initializes a texture from a UIImage object */
     initWithImage:function (uiImage) {
@@ -369,14 +365,14 @@ cc.Texture2D = cc.Class.extend({
 
     /**
      Extensions to make it easy to create a cc.Texture2D object from a string of text.
-     Note that the generated textures are of type A8 - use the blending mode (cc.GL_SRC_ALPHA, cc.GL_ONE_MINUS_SRC_ALPHA).
+     Note that the generated textures are of type A8 - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
      */
     /** Initializes a texture from a string with dimensions, alignment, font name and font size */
     initWithString:function (text, dimensions, alignment, fontName, fontSize) {
         if (arguments.length == 3) {
             fontName = arguments[1];
             fontSize = arguments[2];
-            dimensions = cc.SizeMake(0, 0);
+            dimensions = cc.size(0, 0);
             alignment = cc.TEXT_ALIGNMENT_CENTER;
         }
         if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
@@ -409,7 +405,7 @@ cc.Texture2D = cc.Class.extend({
             this._maxT = 1.0;
             this._pixelsWide = pvr.getWidth();
             this._pixelsHigh = pvr.getHeight();
-            this._contentSize = cc.SizeMake(this._pixelsWide, this._pixelsHigh);
+            this._contentSize = cc.size(this._pixelsWide, this._pixelsHigh);
             this._hasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
             this._pixelFormat = pvr.getFormat();
 
@@ -423,44 +419,44 @@ cc.Texture2D = cc.Class.extend({
     },
 
     /** sets the min filter, mag filter, wrap s and wrap t texture parameters.
-     If the texture size is NPOT (non power of 2), then in can only use cc.GL_CLAMP_TO_EDGE in cc.GL_TEXTURE_WRAP_{S,T}.
+     If the texture size is NPOT (non power of 2), then in can only use gl.CLAMP_TO_EDGE in gl.TEXTURE_WRAP_{S,T}.
      @since v0.8
      */
     setTexParameters:function (texParams) {
         cc.Assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
-            (texParams.wrapS == cc.GL_CLAMP_TO_EDGE && texParams.wrapT == cc.GL_CLAMP_TO_EDGE),
-            "cc.GL_CLAMP_TO_EDGE should be used in NPOT textures");
+            (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
+            "gl.CLAMP_TO_EDGE should be used in NPOT textures");
         //TODO
-        // BindTexture( cc.GL_TEXTURE_2D, this.this._name );
+        // BindTexture( gl.TEXTURE_2D, this.this._name );
         //TODO
-        // glTexParameteri(cc.GL_TEXTURE_2D, cc.GL_TEXTURE_MIN_FILTER, texParams.minFilter );
+        // glTexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter );
         //TODO
-        // glTexParameteri(cc.GL_TEXTURE_2D, cc.GL_TEXTURE_MAG_FILTER, texParams.magFilter );
+        // glTexParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter );
         //TODO
-        // glTexParameteri( cc.GL_TEXTURE_2D, cc.GL_TEXTURE_WRAP_S, texParams.wrapS );
+        // glTexParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, texParams.wrapS );
         //TODO
-        // glTexParameteri( cc.GL_TEXTURE_2D, cc.GL_TEXTURE_WRAP_T, texParams.wrapT );
+        // glTexParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, texParams.wrapT );
     },
 
     /** sets antialias texture parameters:
-     - cc.GL_TEXTURE_MIN_FILTER = cc.GL_LINEAR
-     - cc.GL_TEXTURE_MAG_FILTER = cc.GL_LINEAR
+     - gl.TEXTURE_MIN_FILTER = gl.LINEAR
+     - gl.TEXTURE_MAG_FILTER = gl.LINEAR
 
      @since v0.8
      */
     setAntiAliasTexParameters:function () {
-        var texParams = [ cc.GL_LINEAR, cc.GL_LINEAR, cc.GL_CLAMP_TO_EDGE, cc.GL_CLAMP_TO_EDGE ];
+        var texParams = [ gl.LINEAR, gl.LINEAR, gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE ];
         this.setTexParameters(texParams);
     },
 
     /** sets alias texture parameters:
-     - cc.GL_TEXTURE_MIN_FILTER = cc.GL_NEAREST
-     - cc.GL_TEXTURE_MAG_FILTER = cc.GL_NEAREST
+     - gl.TEXTURE_MIN_FILTER = gl.NEAREST
+     - gl.TEXTURE_MAG_FILTER = gl.NEAREST
 
      @since v0.8
      */
     setAliasTexParameters:function () {
-        var texParams = [ cc.GL_NEAREST, cc.GL_NEAREST, cc.GL_CLAMP_TO_EDGE, cc.GL_CLAMP_TO_EDGE ];
+        var texParams = [ gl.NEAREST, gl.NEAREST, gl.CLAMP_TO_EDGE, gl.CLAMP_TO_EDGE ];
         this.setTexParameters(texParams);
     },
 
@@ -472,8 +468,8 @@ cc.Texture2D = cc.Class.extend({
     generateMipmap:function () {
         cc.Assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
         //TODO
-        // glBindTexture( cc.GL_TEXTURE_2D, this.this._name );
-        //cc.glGenerateMipmap(cc.GL_TEXTURE_2D);
+        // glBindTexture( gl.TEXTURE_2D, this.this._name );
+        //cc.glGenerateMipmap(gl.TEXTURE_2D);
     },
 
     /** returns the bits-per-pixel of the in-memory OpenGL texture
@@ -530,7 +526,7 @@ cc.Texture2D = cc.Class.extend({
         var inPixel32 = null;
         var outPixel16 = null;
         var hasAlpha;
-        var imageSize = new cc.Size();
+        var imageSize = cc.size(0, 0);
         var pixelFormat = new cc.Texture2DPixelFormat();
         var bpp = new cc.size_t();
         hasAlpha = image.hasAlpha();
@@ -551,7 +547,7 @@ cc.Texture2D = cc.Class.extend({
         }
 
 
-        imageSize = cc.SizeMake(image.getWidth(), image.getHeight());
+        imageSize = cc.size(image.getWidth(), image.getHeight());
 
         switch (pixelFormat) {
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:

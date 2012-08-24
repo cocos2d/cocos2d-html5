@@ -136,9 +136,6 @@ cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
  */
 cc.BLEND_DST = 0x0303;
 
-cc.GL_ONE = 1;
-cc.GL_SRC_ALPHA = 0x0302;
-
 /**
  * Helpful macro that setups the GL server state, the correct GL program and sets the Model View Projection matrix
  * @param {cc.Node} node setup node
@@ -239,7 +236,7 @@ cc.POINT_POINTS_TO_PIXELS = function (points) {
  * @function
  */
 cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
-    return new cc.Size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints.height * cc.CONTENT_SCALE_FACTOR());
+    return cc.size(sizeInPoints.width * cc.CONTENT_SCALE_FACTOR(), sizeInPoints.height * cc.CONTENT_SCALE_FACTOR());
 };
 
 /**
@@ -249,7 +246,7 @@ cc.SIZE_POINTS_TO_PIXELS = function (sizeInPoints) {
  * @function
  */
 cc.SIZE_PIXELS_TO_POINTS = function (sizeInPixels) {
-    return new cc.Size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
+    return cc.size(sizeInPixels.width / cc.CONTENT_SCALE_FACTOR(), sizeInPixels.height / cc.CONTENT_SCALE_FACTOR());
 };
 
 /**
@@ -268,7 +265,7 @@ cc.POINT_PIXELS_TO_POINTS = function (pixels) {
  * @function
  */
 cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
-    return cc.RectMake(pixel.origin.x / cc.CONTENT_SCALE_FACTOR(), pixel.origin.y / cc.CONTENT_SCALE_FACTOR(),
+    return cc.rect(pixel.origin.x / cc.CONTENT_SCALE_FACTOR(), pixel.origin.y / cc.CONTENT_SCALE_FACTOR(),
         pixel.size.width / cc.CONTENT_SCALE_FACTOR(), pixel.size.height / cc.CONTENT_SCALE_FACTOR());
 } : function (p) {
     return p;
@@ -280,8 +277,106 @@ cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
  * @function
  */
 cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
-    return cc.RectMake(point.origin.x * cc.CONTENT_SCALE_FACTOR(), point.origin.y * cc.CONTENT_SCALE_FACTOR(),
+    return cc.rect(point.origin.x * cc.CONTENT_SCALE_FACTOR(), point.origin.y * cc.CONTENT_SCALE_FACTOR(),
         point.size.width * cc.CONTENT_SCALE_FACTOR(), point.size.height * cc.CONTENT_SCALE_FACTOR());
 } : function (p) {
     return p;
 };
+
+
+//
+// WebGL constants
+//
+var gl = gl || {};
+/**
+ * @constant
+ * @type Number
+ */
+gl.NEAREST                      = 0x2600;
+
+/**
+ * @constant
+ * @type Number
+ */
+gl.LINEAR                       = 0x2601;
+/**
+ * @constant
+ * @type Number
+ */
+gl.REPEAT                       = 0x2901;
+/**
+ * @constant
+ * @type Number
+ */
+gl.CLAMP_TO_EDGE                = 0x812F;
+/**
+ * @constant
+ * @type Number
+ */
+gl.CLAMP_TO_BORDER              = 0x812D;
+/**
+ * @constant
+ * @type Number
+ */
+gl.LINEAR_MIPMAP_NEAREST        = 0x2701;
+/**
+ * @constant
+ * @type Number
+ */
+gl.NEAREST_MIPMAP_NEAREST       = 0x2700;
+/**
+ * @constant
+ * @type Number
+ */
+gl.ZERO                         = 0;
+/**
+ * @constant
+ * @type Number
+ */
+gl.ONE                          = 1;
+/**
+ * @constant
+ * @type Number
+ */
+gl.SRC_COLOR                    = 0x0300;
+/**
+ * @constant
+ * @type Number
+ */
+gl.ONE_MINUS_SRC_COLOR          = 0x0301;
+/**
+ * @constant
+ * @type Number
+ */
+gl.SRC_ALPHA                    = 0x0302;
+/**
+ * @constant
+ * @type Number
+ */
+gl.ONE_MINUS_SRC_ALPHA          = 0x0303;
+/**
+ * @constant
+ * @type Number
+ */
+gl.DST_ALPHA                    = 0x0304;
+/**
+ * @constant
+ * @type Number
+ */
+gl.ONE_MINUS_DST_ALPHA          = 0x0305;
+/**
+ * @constant
+ * @type Number
+ */
+gl.DST_COLOR                    = 0x0306;
+/**
+ * @constant
+ * @type Number
+ */
+gl.ONE_MINUS_DST_COLOR          = 0x0307;
+/**
+ * @constant
+ * @type Number
+ */
+gl.SRC_ALPHA_SATURATE           = 0x0308;
+

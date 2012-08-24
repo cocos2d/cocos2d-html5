@@ -48,7 +48,7 @@ Box2DTestLayer = cc.Layer.extend({
 
 
         // Construct a world object, which will hold and simulate the rigid bodies.
-        this.world = new b2World(new b2Vec2(0, 10), true);
+        this.world = new b2World(new b2Vec2(0, -10), true);
         this.world.SetContinuousPhysics(true);
 
         // Define the ground body.
@@ -95,7 +95,7 @@ Box2DTestLayer = cc.Layer.extend({
 
         var label = cc.LabelTTF.create("Tap screen", "Marker Felt", 32);
         this.addChild(label, 0);
-        label.setColor(cc.c3(0, 0, 255));
+        label.setColor(cc.c3b(0, 0, 255));
         label.setPosition(cc.p(screenSize.width / 2, screenSize.height - 50));
 
         this.scheduleUpdate();
@@ -116,7 +116,7 @@ Box2DTestLayer = cc.Layer.extend({
         //just randomly picking one of the images
         var idx = (cc.RANDOM_0_1() > .5 ? 0 : 1);
         var idy = (cc.RANDOM_0_1() > .5 ? 0 : 1);
-        var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.RectMake(32 * idx, 32 * idy, 32, 32));
+        var sprite = cc.Sprite.createWithTexture(batch.getTexture(), cc.rect(32 * idx, 32 * idy, 32, 32));
         batch.addChild(sprite);
 
         sprite.setPosition(cc.p(p.x, p.y));

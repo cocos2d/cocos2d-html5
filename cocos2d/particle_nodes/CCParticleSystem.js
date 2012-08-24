@@ -1029,7 +1029,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _blendFunc:new cc.BlendFunc(0, 0),
+    _blendFunc: {src:gl.ONE, dst:gl.ONE},
     /**
      * get BlendFunc of Particle System
      * @return {cc.BlendFunc}
@@ -1040,11 +1040,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
     /**
      * set BlendFunc of Particle System
-     * @param {cc.BlendFunc} blendFunc
+     * @param {Number} src
+     * @param {Number} dst
      */
-    setBlendFunc:function (blendFunc) {
-        if (this._blendFunc.src != blendFunc.src || this._blendFunc.dst != blendFunc.dst) {
-            this._blendFunc = blendFunc;
+    setBlendFunc:function (src, dst) {
+        if (this._blendFunc.src != src || this._blendFunc.dst != dst) {
+            this._blendFunc = {src:src, dst:dst};
             this._updateBlendFunc();
         }
     },
@@ -1078,7 +1079,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     isBlendAdditive:function () {
         //return this._isBlendAdditive;
-        return( this._blendFunc.src == cc.GL_SRC_ALPHA && this._blendFunc.dst == cc.GL_ONE);
+        return( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE);
     },
 
     /**
@@ -1091,14 +1092,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         //TODO
         this._isBlendAdditive = isBlendAdditive;
         if (isBlendAdditive) {
-            this._blendFunc.src = cc.GL_SRC_ALPHA;
-            this._blendFunc.dst = cc.GL_ONE;
+            this._blendFunc.src = gl.SRC_ALPHA;
+            this._blendFunc.dst = gl.ONE;
         } else {
             this._blendFunc.src = cc.BLEND_SRC;
             this._blendFunc.dst = cc.BLEND_DST;
             /*if (this._texture && !this._texture.hasPremultipliedAlpha()) {
-             this._blendFunc.src = GL_SRC_ALPHA;
-             this._blendFunc.dst = GL_ONE_MINUS_SRC_ALPHA;
+             this._blendFunc.src = gl.SRC_ALPHA;
+             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
              } else {
              this._blendFunc.src = cc.BLEND_SRC;
              this._blendFunc.dst = cc.BLEND_DST;
@@ -1173,7 +1174,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
         this.modeA = new cc.ParticleSystem.ModeA();
         this.modeB = new cc.ParticleSystem.ModeB();
-        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
     },
 
     /**
@@ -1204,8 +1205,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * return bounding box of particle system in world space
      * @return {cc.Rect}
      */
-    boundingBoxToWorld:function () {
-        return new cc.Rect(0, 0, cc.canvas.width, cc.canvas.height);
+    getBoundingBoxToWorld:function () {
+        return cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
     },
 
     /**
@@ -1764,8 +1765,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     if (premultiplied) {
                         this._opacityModifyRGB = true;
                     } else {
-                        this._blendFunc.src = cc.GL_SRC_ALPHA;
-                        this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+                        this._blendFunc.src = gl.SRC_ALPHA;
+                        this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
                     }
                 }
             }

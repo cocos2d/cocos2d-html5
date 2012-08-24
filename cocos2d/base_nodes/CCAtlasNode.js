@@ -37,6 +37,7 @@
  * @extends cc.Node
  */
 cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
+    RGBAProtocol:true,
     //! chars per row
     _itemsPerRow:0,
     //! chars per column
@@ -45,11 +46,11 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     _itemWidth:0,
     //! height of each char
     _itemHeight:0,
-    _colorUnmodified:new cc.Color3B(0, 0, 0),
+    _colorUnmodified:cc.c3b(0, 0, 0),
     _textureAtlas:null,
     // protocol variables
     _isOpacityModifyRGB:false,
-    _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _blendFunc: {src:cc.BLEND_SRC, dst:cc.BLEND_DST},
     _opacity:0,
     _color:null,
     _originalTexture:null,
@@ -70,7 +71,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._itemHeight = tileHeight;
 
         this._opacity = 255;
-        this._color = this._colorUnmodified = cc.WHITE();
+        this._color = cc.white();
+        this._colorUnmodified = cc.white();
         this._isOpacityModifyRGB = true;
 
         this._blendFunc.src = cc.BLEND_SRC;
@@ -155,7 +157,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
                 var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     var tx = this._originalTexture;
-                    var textureRect = new cc.Rect(0, 0, tx.width, tx.height);
+                    var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
                     var img = new Image();
                     img.src = colorTexture.toDataURL();
@@ -215,8 +217,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     /**
      * @param {cc.BlendFunc} blendFunc
      */
-    setBlendFunc:function (blendFunc) {
-        this._blendFunc = blendFunc;
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     // cc.Texture protocol
@@ -271,7 +273,7 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
             size = this._textureAtlas.getTexture().getContentSize();
         }
         else {
-            size = new cc.Size(this._textureAtlas.getTexture().width, this._textureAtlas.getTexture().height);
+            size = cc.size(this._textureAtlas.getTexture().width, this._textureAtlas.getTexture().height);
         }
         this._itemsPerColumn = parseInt(size.height / this._itemHeight);
         this._itemsPerRow = parseInt(size.width / this._itemWidth);
@@ -279,8 +281,8 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
     _updateBlendFunc:function () {
         /* if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
-         this._blendFunc.src = cc.GL_SRC_ALPHA;
-         this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+         this._blendFunc.src = gl.SRC_ALPHA;
+         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
          }*/
     },
 

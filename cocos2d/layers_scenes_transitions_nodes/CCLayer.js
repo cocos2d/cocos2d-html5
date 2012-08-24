@@ -34,7 +34,7 @@
 cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isTouchEnabled:false,
     _isAccelerometerEnabled:false,
-    _isKeypadEnabled:false,
+    _isKeyboardEnabled:false,
 
     /**
      * Constructor
@@ -134,28 +134,28 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     /**
-     * whether or not it will receive keypad events<br/>
+     * whether or not it will receive keyboard events<br/>
      * You can enable / disable accelerometer events with this property.<br/>
      * it's new in cocos2d-x
      * @return {Boolean}
      */
-    isKeypadEnabled:function () {
-        return this._isKeypadEnabled;
+    isKeyboardEnabled:function () {
+        return this._isKeyboardEnabled;
     },
 
     /**
      * Enable Keyboard interaction
      * @param {Boolean} enabled
      */
-    setKeypadEnabled:function (enabled) {
-        if (enabled != this._isKeypadEnabled) {
-            this._isKeypadEnabled = enabled;
+    setKeyboardEnabled:function (enabled) {
+        if (enabled != this._isKeyboardEnabled) {
+            this._isKeyboardEnabled = enabled;
             if (this._isRunning) {
                 var director = cc.Director.getInstance();
                 if (enabled) {
-                    director.getKeypadDispatcher().addDelegate(this);
+                    director.getKeyboardDispatcher().addDelegate(this);
                 } else {
-                    director.getKeypadDispatcher().removeDelegate(this);
+                    director.getKeyboardDispatcher().removeDelegate(this);
                 }
             }
         }
@@ -181,8 +181,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // add this layer to concern the kaypad msg
-        if (this._isKeypadEnabled) {
-            director.getKeypadDispatcher().addDelegate(this);
+        if (this._isKeyboardEnabled) {
+            director.getKeyboardDispatcher().addDelegate(this);
         }
     },
 
@@ -201,8 +201,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // remove this layer from the delegates who concern the kaypad msg
-        if (this._isKeypadEnabled) {
-            director.getKeypadDispatcher().removeDelegate(this);
+        if (this._isKeyboardEnabled) {
+            director.getKeyboardDispatcher().removeDelegate(this);
         }
 
         this._super();
@@ -314,6 +314,7 @@ cc.Layer.create = function () {
  * @extends cc.Layer
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
+    RGBAProtocol:true,
     _squareVertices:[],
     _squareColors:[],
     _opacity:0,
@@ -346,7 +347,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._opacity = Var;
         this._updateColor();
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -366,7 +367,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._color = Var;
         this._updateColor();
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -380,10 +381,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
     /**
      * blendFunc setter
-     * @param {cc.BlendFunc} Var
-     */
-    setBlendFunc:function (Var) {
-        this._blendFunc = Var;
+     * @param {Number} src
+     * @param {Number} dst
+    */
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     /**
@@ -408,7 +410,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         }
         this._updateColor();
 
-        this.setContentSize(new cc.Size(width, height));
+        this.setContentSize(cc.size(width, height));
         //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
         return true;
@@ -432,7 +434,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeWidthAndHeight:function (w, h) {
-        this.setContentSize(cc.SizeMake(w, h));
+        this.setContentSize(cc.size(w, h));
     },
 
     /**
@@ -440,7 +442,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} w width
      */
     changeWidth:function (w) {
-        this.setContentSize(cc.SizeMake(w, this._contentSize.height));
+        this.setContentSize(cc.size(w, this._contentSize.height));
     },
 
     /**
@@ -448,7 +450,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} h height
      */
     changeHeight:function (h) {
-        this.setContentSize(cc.SizeMake(this._contentSize.width, h));
+        this.setContentSize(cc.size(this._contentSize.width, h));
     },
 
     _updateColor:function () {
@@ -515,11 +517,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
  * @example
  * // Example
  * //Create a yellow color layer as background
- * var yellowBackground = cc.LayerColor.create(cc.c4(255,255,0,255));
+ * var yellowBackground = cc.LayerColor.create(cc.c4b(255,255,0,255));
  * //If you didnt pass in width and height, it defaults to the same size as the canvas
  *
  * //create a yellow box, 200 by 200 in size
- * var yellowBox = cc.LayerColor.create(cc.c3(255,255,0,255), 200, 200);
+ * var yellowBox = cc.LayerColor.create(cc.c3b(255,255,0,255), 200, 200);
  */
 cc.LayerColor.create = function (color, width, height) {
     var ret = new cc.LayerColor();
@@ -593,7 +595,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Color3B} color
      * @example
      * // Example
-     * myGradientLayer.setStartColor(cc.c3(255,0,0));
+     * myGradientLayer.setStartColor(cc.c3b(255,0,0));
      * //set the starting gradient to red
      */
     setStartColor:function (color) {
@@ -605,7 +607,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Color3B} color
      * @example
      * // Example
-     * myGradientLayer.setEndColor(cc.c3(255,0,0));
+     * myGradientLayer.setEndColor(cc.c3b(255,0,0));
      * //set the ending gradient to red
      */
     setEndColor:function (color) {
@@ -714,7 +716,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         this._compressedInterpolation = true;
 
-        return this._super(cc.c4(start.r, start.g, start.b, 255));
+        return this._super(cc.c4b(start.r, start.g, start.b, 255));
     },
 
     _updateColor:function () {

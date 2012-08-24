@@ -107,7 +107,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      * @param {function|String} selector
      * @return {Boolean}
      */
-    initWithTarget:function (rec, selector) {
+    initWithCallback:function (rec, selector) {
         this.setAnchorPoint(cc.p(0.5, 0.5));
         this._listener = rec;
         this._selector = selector;
@@ -120,7 +120,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      * @return {cc.Rect}
      */
     rect:function () {
-        return cc.RectMake(this._position.x - this._contentSize.width * this._anchorPoint.x,
+        return cc.rect(this._position.x - this._contentSize.width * this._anchorPoint.x,
             this._position.y - this._contentSize.height * this._anchorPoint.y,
             this._contentSize.width, this._contentSize.height);
     },
@@ -143,7 +143,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
      * @param {cc.Node} rec
      * @param {function|String} selector
      */
-    setTarget:function (rec, selector) {
+    setCallback:function (rec, selector) {
         this._listener = rec;
         this._selector = selector;
     },
@@ -171,7 +171,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
  */
 cc.MenuItem.create = function (rec, selector) {
     var ret = new cc.MenuItem();
-    ret.initWithTarget(rec, selector);
+    ret.initWithCallback(rec, selector);
     return ret;
 };
 
@@ -210,14 +210,14 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _label:null,
 
     /**
-     * @return {String}
+     * @return {cc.Node}
      */
     getLabel:function () {
         return this._label;
     },
 
     /**
-     * @param {String} label
+     * @param {cc.Node} label
      */
     setLabel:function (label) {
         if (label) {
@@ -284,18 +284,26 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     },
 
     /**
-     * @param {String} label
+     * @param {cc.Node} label
      * @param {cc.Node} target
      * @param {function|String} selector
      * @return {Boolean}
      */
     initWithLabel:function (label, target, selector) {
-        this.initWithTarget(target, selector);
+        this.initWithCallback(target, selector);
         this._originalScale = 1.0;
-        this._colorBackup = cc.WHITE();
-        this._disabledColor = cc.c3(126, 126, 126);
+        this._colorBackup = cc.white();
+        this._disabledColor = cc.c3b(126, 126, 126);
         this.setLabel(label);
         return true;
+    },
+
+    /**
+     * @param {String} label
+     */
+    setString:function (label) {
+        this._label.setString(label);
+        this.setContentSize(this._label.getContentSize());
     },
 
     /**
@@ -344,7 +352,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 });
 
 /**
- * @param {String} label
+ * @param {cc.Node} label
  * @param {cc.Node|Null} target
  * @param {function|String|Null} selector
  * @return {cc.MenuItemLabel}
@@ -642,7 +650,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @return {Boolean}
      */
     initWithNormalSprite:function (normalSprite, selectedSprite, disabledSprite, target, selector) {
-        this.initWithTarget(target, selector);
+        this.initWithCallback(target, selector);
         this.setNormalImage(normalSprite);
         this.setSelectedImage(selectedSprite);
         this.setDisabledImage(disabledSprite);
@@ -739,7 +747,7 @@ cc.MenuItemSprite = cc.MenuItem.extend(/** @lends cc.MenuItemSprite# */{
      * @param {Boolean} bEnabled
      */
     setEnabled:function (bEnabled) {
-        if (this._isEnabled == bEnabled) {
+        if (this._isEnabled != bEnabled) {
             this._super(bEnabled);
             this._updateImagesVisibility();
         }
@@ -1010,7 +1018,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {cc.MenuItem} args[2+] the rest in the array are cc.MenuItems
      * @return {Boolean}
      */
-    initWithTarget:function (args) {
+    initWithCallback:function (args) {
         if (args.length < 2) {
             return false;
         }
@@ -1035,9 +1043,26 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @return {Boolean}
      */
     initWithItem:function (item) {
-        this.initWithTarget(null, null);
+        this.initWithCallback(null, null);
         this._subItems = [];
         this._subItems.push(item);
+        this._selectedIndex = cc.UINT_MAX;
+        this.setSelectedIndex(0);
+        return true;
+    },
+
+    /**
+     * @param {cc.MenuItem} args[1+] items
+     * @return {Boolean}
+     */
+    initWithItems:function (args) {
+        this.initWithCallback(null, null);
+        this._subItems = [];
+        for (var i = 0; i < args.length; i++) {
+            if (args[i]) {
+                this._subItems.push(args[i]);
+            }
+        }
         this._selectedIndex = cc.UINT_MAX;
         this.setSelectedIndex(0);
         return true;
@@ -1106,6 +1131,10 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
 
     isOpacityModifyRGB:function () {
         return false;
+    },
+    onEnter:function () {
+        this._super();
+        this.setSelectedIndex(this._selectedIndex);
     }
 });
 
@@ -1127,10 +1156,11 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
  */
 cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     var ret = new cc.MenuItemToggle();
+    //ret.initWithItems(arguments);
     if (arguments.length == 1) {
         ret.initWithItem(arguments);
     } else {
-        ret.initWithTarget(arguments);
+        ret.initWithCallback(arguments);
     }
     return ret;
 };

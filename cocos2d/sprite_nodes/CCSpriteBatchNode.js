@@ -25,17 +25,6 @@
  ****************************************************************************/
 
 
-/**
- * @constant
- * @type Number
- */
-cc.GL_SRC_ALPHA = 0x0302;
-
-/**
- * @constant
- * @type Number
- */
-cc.GL_ONE_MINUS_SRC_ALPHA = 0x0303;
 
 /**
  * @constant
@@ -83,9 +72,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             this.initWithFile(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
         }
         this._renderTexture = cc.RenderTexture.create(cc.canvas.width, cc.canvas.height);
-        this.setContentSize(new cc.Size(cc.canvas.width, cc.canvas.height));
+        this.setContentSize(cc.size(cc.canvas.width, cc.canvas.height));
     },
-    setContentSize:function(size){
+    setContentSize:function (size) {
         if (!size) {
             return;
         }
@@ -95,8 +84,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
     _updateBlendFunc:function () {
         if (!this._textureAtlas.getTexture().hasPremultipliedAlpha()) {
-            this._blendFunc.src = cc.GL_SRC_ALPHA;
-            this._blendFunc.dst = cc.GL_ONE_MINUS_SRC_ALPHA;
+            this._blendFunc.src = gl.SRC_ALPHA;
+            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
         }
     },
 
@@ -622,10 +611,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     /**
      * set the source blending function for the texture
-     * @param {cc.BlendFunc} blendFunc
+     * @param {Number} src 
+     * @param {Number} dst
      */
-    setBlendFunc:function (blendFunc) {
-        this._blendFunc = blendFunc;
+    setBlendFunc:function (src, dst) {
+        this._blendFunc = {src:src, dst:dst};
     },
 
     /**
@@ -656,7 +646,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                     //add dirty region
                     this._renderTexture.clear();
                     this._renderTexture.context.save();
-                    this._renderTexture.context.translate(this._anchorPointInPoints.x , -(this._anchorPointInPoints.y ));
+                    this._renderTexture.context.translate(this._anchorPointInPoints.x, -(this._anchorPointInPoints.y ));
                     if (this._children) {
                         this.sortAllChildren();
                         for (i = 0; i < this._children.length; i++) {
@@ -756,7 +746,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 break;
         }
 
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -775,13 +765,13 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         }
 
         //save dirty region when before change
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         //set the z-order and sort later
         this._super(child, zOrder);
 
         //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.boundingBoxToWorld());
+        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 

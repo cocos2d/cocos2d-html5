@@ -31,7 +31,7 @@ var Paddle = cc.Sprite.extend({
     _rect:null,
 
     rect:function () {
-        return cc.RectMake(-this._rect.size.width / 2, -this._rect.size.height / 2, this._rect.size.width, this._rect.size.height);
+        return cc.rect(-this._rect.size.width / 2, -this._rect.size.height / 2, this._rect.size.width, this._rect.size.height);
     },
     initWithTexture:function (aTexture) {
         if (this._super(aTexture)) {
@@ -39,9 +39,9 @@ var Paddle = cc.Sprite.extend({
         }
         if (aTexture instanceof cc.Texture2D) {
             var s = aTexture.getContentSize();
-            this._rect = cc.RectMake(0, 0, s.width, s.height);
+            this._rect = cc.rect(0, 0, s.width, s.height);
         } else if ((aTexture instanceof HTMLImageElement) || (aTexture instanceof HTMLCanvasElement)) {
-            this._rect = cc.RectMake(0, 0, aTexture.width, aTexture.height);
+            this._rect = cc.rect(0, 0, aTexture.width, aTexture.height);
         }
         return true;
     },

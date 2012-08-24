@@ -99,7 +99,7 @@ var LayerTest = cc.Layer.extend({
 
         var subtitle_ = this.subtitle();
         if (subtitle_) {
-            var l = cc.LabelTTF.create(subtitle_, cc.SizeMake(400, 16), cc.TEXT_ALIGNMENT_CENTER, "Thonburi", 16);
+            var l = cc.LabelTTF.create(subtitle_, "Thonburi", 16, cc.size(400, 16), cc.TEXT_ALIGNMENT_CENTER);
             this.addChild(l, 1);
             l.setPosition(cc.p(s.width / 2, s.height - 80));
         }
@@ -150,7 +150,7 @@ var LayerTest1 = LayerTest.extend({
         this.setTouchEnabled(true);
 
         var s = cc.Director.getInstance().getWinSize();
-        var layer = cc.LayerColor.create(cc.c4(255, 0, 0, 128), 200, 200);
+        var layer = cc.LayerColor.create(cc.c4b(255, 0, 0, 128), 200, 200);
 
         layer.ignoreAnchorPointForPosition(false);
         layer.setPosition(cc.p(s.width / 2, s.height / 2));
@@ -169,7 +169,7 @@ var LayerTest1 = LayerTest.extend({
 
         var s = cc.Director.getInstance().getWinSize();
 
-        var newSize = cc.SizeMake(Math.abs(touchLocation.x - s.width / 2) * 2, Math.abs(touchLocation.y - s.height / 2) * 2);
+        var newSize = cc.size(Math.abs(touchLocation.x - s.width / 2) * 2, Math.abs(touchLocation.y - s.height / 2) * 2);
 
         var l = this.getChildByTag(cc.TAG_LAYER);
 
@@ -193,9 +193,9 @@ var IgnoreAnchorpointTest1 = LayerTest.extend({
         this._super();
         //create layer
         var ws = cc.Director.getInstance().getWinSize();
-        var layer1 = cc.LayerColor.create(cc.c4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        var layer1 = cc.LayerColor.create(cc.c4b(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(true);
-        var layer2 = cc.LayerColor.create(cc.c4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        var layer2 = cc.LayerColor.create(cc.c4b(100, 255, 100, 128), ws.width / 4, ws.height / 4);
         layer2.ignoreAnchorPointForPosition(true);
         layer1.addChild(layer2);
         layer1.setPosition(ws.width / 2, ws.height / 2);
@@ -213,9 +213,9 @@ var IgnoreAnchorpointTest2 = LayerTest.extend({
         this._super();
         //create layer
         var ws = cc.Director.getInstance().getWinSize();
-        var layer1 = cc.LayerColor.create(cc.c4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        var layer1 = cc.LayerColor.create(cc.c4b(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(true);
-        var layer2 = cc.LayerColor.create(cc.c4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        var layer2 = cc.LayerColor.create(cc.c4b(100, 255, 100, 128), ws.width / 4, ws.height / 4);
         layer2.ignoreAnchorPointForPosition(false);
         layer1.addChild(layer2);
         layer1.setPosition(ws.width / 2, ws.height / 2);
@@ -233,9 +233,9 @@ var IgnoreAnchorpointTest3 = LayerTest.extend({
         this._super();
         //create layer
         var ws = cc.Director.getInstance().getWinSize();
-        var layer1 = cc.LayerColor.create(cc.c4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        var layer1 = cc.LayerColor.create(cc.c4b(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(false);
-        var layer2 = cc.LayerColor.create(cc.c4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        var layer2 = cc.LayerColor.create(cc.c4b(100, 255, 100, 128), ws.width / 4, ws.height / 4);
         layer2.ignoreAnchorPointForPosition(false);
         layer1.addChild(layer2);
         layer1.setPosition(ws.width / 2, ws.height / 2);
@@ -253,9 +253,9 @@ var IgnoreAnchorpointTest4 = LayerTest.extend({
         this._super();
         //create layer
         var ws = cc.Director.getInstance().getWinSize();
-        var layer1 = cc.LayerColor.create(cc.c4(255, 100, 100, 128), ws.width / 2, ws.height / 2);
+        var layer1 = cc.LayerColor.create(cc.c4b(255, 100, 100, 128), ws.width / 2, ws.height / 2);
         layer1.ignoreAnchorPointForPosition(false);
-        var layer2 = cc.LayerColor.create(cc.c4(100, 255, 100, 128), ws.width / 4, ws.height / 4);
+        var layer2 = cc.LayerColor.create(cc.c4b(100, 255, 100, 128), ws.width / 4, ws.height / 4);
         layer2.ignoreAnchorPointForPosition(true);
         layer1.addChild(layer2);
         layer1.setPosition(ws.width / 2, ws.height / 2);
@@ -279,12 +279,12 @@ var LayerTest2 = LayerTest.extend({
         this._super();
 
         var s = cc.Director.getInstance().getWinSize();
-        var layer1 = cc.LayerColor.create(cc.c4(255, 255, 0, 80), 100, 300);
+        var layer1 = cc.LayerColor.create(cc.c4b(255, 255, 0, 80), 100, 300);
         layer1.setPosition(cc.p(s.width / 3, s.height / 2));
         layer1.ignoreAnchorPointForPosition(false);
         this.addChild(layer1, 1);
 
-        var layer2 = cc.LayerColor.create(cc.c4(0, 0, 255, 255), 100, 300);
+        var layer2 = cc.LayerColor.create(cc.c4b(0, 0, 255, 255), 100, 300);
         layer2.setPosition(cc.p((s.width / 3) * 2, s.height / 2));
         layer2.ignoreAnchorPointForPosition(false);
         this.addChild(layer2, 1);
@@ -312,7 +312,7 @@ var LayerTest2 = LayerTest.extend({
 var LayerTestBlend = LayerTest.extend({
     ctor:function () {
         var s = cc.Director.getInstance().getWinSize();
-        var layer1 = cc.LayerColor.create(cc.c4(255, 255, 255, 80));
+        var layer1 = cc.LayerColor.create(cc.c4b(255, 255, 255, 80));
 
         var sister1 = cc.Sprite.create(s_pathSister1);
         var sister2 = cc.Sprite.create(s_pathSister2);
@@ -332,16 +332,15 @@ var LayerTestBlend = LayerTest.extend({
         var src;
         var dst;
 
-        if (layer.getBlendFunc().dst == cc.ZERO) {
-            src = cc.BLEND_SRC;
-            dst = cc.BLEND_DST;
+        if (layer.getBlendFunc().dst == gl.ZERO) {
+            src = gl.BLEND_SRC;
+            dst = gl.BLEND_DST;
         }
         else {
-            src = cc.ONE_MINUS_DST_COLOR;
-            dst = cc.ZERO;
+            src = gl.ONE_MINUS_DST_COLOR;
+            dst = gl.ZERO;
         }
-        var bf = {"src":src, "dst":dst};
-        layer.setBlendFunc(bf);
+        layer.setBlendFunc( src, dst );
     },
     title:function () {
         return "ColorLayer: blend";
@@ -355,7 +354,7 @@ var LayerTestBlend = LayerTest.extend({
 //------------------------------------------------------------------
 var LayerGradient = LayerTest.extend({
     ctor:function () {
-        var layer1 = cc.LayerGradient.create(cc.c4(255, 0, 0, 255), cc.c4(0, 255, 0, 255), cc.p(0.9, 0.9));
+        var layer1 = cc.LayerGradient.create(cc.c4b(255, 0, 0, 255), cc.c4b(0, 255, 0, 255), cc.p(0.9, 0.9));
         this.addChild(layer1, 0, cc.TAG_LAYER);
 
         this.setTouchEnabled(true);

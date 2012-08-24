@@ -39,39 +39,101 @@ var ParticleTestScene = TestScene.extend({
 });
 
 var particleSceneArr = [
-    function(){return new DemoFlower();},
-    function(){return new DemoGalaxy();},
-    function(){return new DemoFirework();},
-    function(){return new DemoSpiral();},
-    function(){return new DemoSun();},
-    function(){return new DemoMeteor();},
-    function(){return new DemoFire();},
-    function(){return new DemoSmoke();},
-    function(){return new DemoExplosion();},
-    function(){return new DemoSnow();},
-    function(){return new DemoRain();},
-    function(){return new DemoBigFlower();},
-    function(){return new DemoRotFlower();},
-    function(){return new DemoModernArt();},
-    function(){return new DemoRing();},
+    function () {
+        return new DemoFlower();
+    },
+    function () {
+        return new DemoGalaxy();
+    },
+    function () {
+        return new DemoFirework();
+    },
+    function () {
+        return new DemoSpiral();
+    },
+    function () {
+        return new DemoSun();
+    },
+    function () {
+        return new DemoMeteor();
+    },
+    function () {
+        return new DemoFire();
+    },
+    function () {
+        return new DemoSmoke();
+    },
+    function () {
+        return new DemoExplosion();
+    },
+    function () {
+        return new DemoSnow();
+    },
+    function () {
+        return new DemoRain();
+    },
+    function () {
+        return new DemoBigFlower();
+    },
+    function () {
+        return new DemoRotFlower();
+    },
+    function () {
+        return new DemoModernArt();
+    },
+    function () {
+        return new DemoRing();
+    },
     //function(){return new ParallaxParticle();},
-    function(){return new DemoParticleFromFile("BoilingFoam");},
-    function(){return new DemoParticleFromFile("BurstPipe");},
-    function(){return new DemoParticleFromFile("Comet");},
-    function(){return new DemoParticleFromFile("debian");},
-    function(){return new DemoParticleFromFile("ExplodingRing");},
-    function(){return new DemoParticleFromFile("LavaFlow");},
-    function(){return new DemoParticleFromFile("SpinningPeas");},
-    function(){return new DemoParticleFromFile("SpookyPeas");},
-    function(){return new DemoParticleFromFile("Upsidedown");},
-    function(){return new DemoParticleFromFile("Flower");},
-    function(){return new DemoParticleFromFile("Spiral");},
-    function(){return new DemoParticleFromFile("Galaxy");},
-    function(){return new RadiusMode1();},
-    function(){return new RadiusMode2();},
-    function(){return new Issue704();},
-    function(){return new Issue870();},
-    function(){return new DemoParticleFromFile("Phoenix");}
+    function () {
+        return new DemoParticleFromFile("BoilingFoam");
+    },
+    function () {
+        return new DemoParticleFromFile("BurstPipe");
+    },
+    function () {
+        return new DemoParticleFromFile("Comet");
+    },
+    function () {
+        return new DemoParticleFromFile("debian");
+    },
+    function () {
+        return new DemoParticleFromFile("ExplodingRing");
+    },
+    function () {
+        return new DemoParticleFromFile("LavaFlow");
+    },
+    //function(){return new DemoParticleFromFile("SpinningPeas");},
+    function () {
+        return new DemoParticleFromFile("SpookyPeas");
+    },
+    function () {
+        return new DemoParticleFromFile("Upsidedown");
+    },
+    function () {
+        return new DemoParticleFromFile("Flower");
+    },
+    function () {
+        return new DemoParticleFromFile("Spiral");
+    },
+    function () {
+        return new DemoParticleFromFile("Galaxy");
+    },
+    function () {
+        return new RadiusMode1();
+    },
+    function () {
+        return new RadiusMode2();
+    },
+    function () {
+        return new Issue704();
+    },
+    function () {
+        return new Issue870();
+    },
+    function () {
+        return new DemoParticleFromFile("Phoenix");
+    }
 ];
 
 var nextParticleAction = function () {
@@ -83,7 +145,7 @@ var nextParticleAction = function () {
 var backParticleAction = function () {
     sceneIdx--;
     if (sceneIdx < 0)
-        sceneIdx +=  particleSceneArr.length;
+        sceneIdx += particleSceneArr.length;
 
     return particleSceneArr[sceneIdx]();
 };
@@ -100,7 +162,7 @@ var ParticleDemo = cc.LayerColor.extend({
 
     ctor:function () {
         this._super();
-        this.initWithColor(cc.c4(127, 127, 127, 255));
+        this.initWithColor(cc.c4b(127, 127, 127, 255));
 
         this._emitter = null;
 
@@ -121,17 +183,17 @@ var ParticleDemo = cc.LayerColor.extend({
         });
         var item3 = cc.MenuItemImage.create(s_pathF1, s_pathF2, this, this.nextCallback);
 
-        var freeBtnNormal = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(0, 23 * 2, 123, 23));
-        var freeBtnSelected = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(0, 23, 123, 23));
-        var freeBtnDisabled = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(0, 0, 123, 23));
+        var freeBtnNormal = cc.Sprite.create(s_MovementMenuItem, cc.rect(0, 23 * 2, 123, 23));
+        var freeBtnSelected = cc.Sprite.create(s_MovementMenuItem, cc.rect(0, 23, 123, 23));
+        var freeBtnDisabled = cc.Sprite.create(s_MovementMenuItem, cc.rect(0, 0, 123, 23));
 
-        var relativeBtnNormal = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(123, 23 * 2, 138, 23));
-        var relativeBtnSelected = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(123, 23, 138, 23));
-        var relativeBtnDisabled = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(123, 0, 138, 23));
+        var relativeBtnNormal = cc.Sprite.create(s_MovementMenuItem, cc.rect(123, 23 * 2, 138, 23));
+        var relativeBtnSelected = cc.Sprite.create(s_MovementMenuItem, cc.rect(123, 23, 138, 23));
+        var relativeBtnDisabled = cc.Sprite.create(s_MovementMenuItem, cc.rect(123, 0, 138, 23));
 
-        var groupBtnNormal = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(261, 23 * 2, 136, 23));
-        var groupBtnSelected = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(261, 23, 136, 23));
-        var groupBtnDisabled = cc.Sprite.create(s_MovementMenuItem, cc.RectMake(261, 0, 136, 23));
+        var groupBtnNormal = cc.Sprite.create(s_MovementMenuItem, cc.rect(261, 23 * 2, 136, 23));
+        var groupBtnSelected = cc.Sprite.create(s_MovementMenuItem, cc.rect(261, 23, 136, 23));
+        var groupBtnDisabled = cc.Sprite.create(s_MovementMenuItem, cc.rect(261, 0, 136, 23));
 
         this._freeMovementButton = cc.MenuItemSprite.create(freeBtnNormal, freeBtnSelected, freeBtnDisabled, this,
             function () {
@@ -165,9 +227,9 @@ var ParticleDemo = cc.LayerColor.extend({
         this._groupMovementButton.setPosition(cc.p(10, 150));
         this._groupMovementButton.setAnchorPoint(cc.p(0, 0));
 
-        var spriteNormal = cc.Sprite.create(s_shapeModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
-        var spriteSelected = cc.Sprite.create(s_shapeModeMenuItem, cc.RectMake(0, 23, 115, 23));
-        var spriteDisabled = cc.Sprite.create(s_shapeModeMenuItem, cc.RectMake(0, 0, 115, 23));
+        var spriteNormal = cc.Sprite.create(s_shapeModeMenuItem, cc.rect(0, 23 * 2, 115, 23));
+        var spriteSelected = cc.Sprite.create(s_shapeModeMenuItem, cc.rect(0, 23, 115, 23));
+        var spriteDisabled = cc.Sprite.create(s_shapeModeMenuItem, cc.rect(0, 0, 115, 23));
 
         this._shapeModeButton = cc.MenuItemSprite.create(spriteNormal, spriteSelected, spriteDisabled, this,
             function () {
@@ -178,9 +240,9 @@ var ParticleDemo = cc.LayerColor.extend({
         this._shapeModeButton.setPosition(cc.p(10, 100));
         this._shapeModeButton.setAnchorPoint(cc.p(0, 0));
 
-        var spriteNormal_t = cc.Sprite.create(s_textureModeMenuItem, cc.RectMake(0, 23 * 2, 115, 23));
-        var spriteSelected_t = cc.Sprite.create(s_textureModeMenuItem, cc.RectMake(0, 23, 115, 23));
-        var spriteDisabled_t = cc.Sprite.create(s_textureModeMenuItem, cc.RectMake(0, 0, 115, 23));
+        var spriteNormal_t = cc.Sprite.create(s_textureModeMenuItem, cc.rect(0, 23 * 2, 115, 23));
+        var spriteSelected_t = cc.Sprite.create(s_textureModeMenuItem, cc.rect(0, 23, 115, 23));
+        var spriteDisabled_t = cc.Sprite.create(s_textureModeMenuItem, cc.rect(0, 0, 115, 23));
 
         this._textureModeButton = cc.MenuItemSprite.create(spriteNormal_t, spriteSelected_t, spriteDisabled_t, this,
             function () {
@@ -803,7 +865,7 @@ var DemoParticleFromFile = ParticleDemo.extend({
     onEnter:function () {
         this._super();
 
-        this.setColor(cc.BLACK());
+        this.setColor(cc.black());
         this.removeChild(this._background, true);
         this._background = null;
 
@@ -823,13 +885,13 @@ var RadiusMode1 = ParticleDemo.extend({
     onEnter:function () {
         this._super();
 
-        this.setColor(cc.BLACK());
+        this.setColor(cc.black());
         this.removeChild(this._background, true);
         this._background = null;
 
         this._emitter = new cc.ParticleSystemQuad();
         //this._emitter.initWithTotalParticles(200);
-        this._emitter.initWithTotalParticles(150);
+        this._emitter.initWithTotalParticles(100);
         this.addChild(this._emitter, 10);
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_starsGrayscale));
 
@@ -902,12 +964,13 @@ var RadiusMode2 = ParticleDemo.extend({
     onEnter:function () {
         this._super();
 
-        this.setColor(cc.BLACK());
+        this.setColor(cc.black());
         this.removeChild(this._background, true);
         this._background = null;
 
         this._emitter = new cc.ParticleSystemQuad();
-        this._emitter.initWithTotalParticles(200);
+        //this._emitter.initWithTotalParticles(200);
+        this._emitter.initWithTotalParticles(100);
         this.addChild(this._emitter, 10);
         this._emitter.setTexture(cc.TextureCache.getInstance().addImage(s_starsGrayscale));
 
@@ -980,7 +1043,7 @@ var Issue704 = ParticleDemo.extend({
     onEnter:function () {
         this._super();
 
-        this.setColor(cc.BLACK());
+        this.setColor(cc.black());
         this.removeChild(this._background, true);
         this._background = null;
 
@@ -1065,13 +1128,13 @@ var Issue870 = ParticleDemo.extend({
     onEnter:function () {
         this._super();
 
-        this.setColor(cc.BLACK());
+        this.setColor(cc.black());
         this.removeChild(this._background, true);
         this._background = null;
 
         var system = new cc.ParticleSystemQuad();
         system.initWithFile("res/Particles/SpinningPeas.plist");
-        system.setTextureWithRect(cc.TextureCache.getInstance().addImage(s_particles), cc.RectMake(0, 0, 32, 32));
+        system.setTextureWithRect(cc.TextureCache.getInstance().addImage(s_particles), cc.rect(0, 0, 32, 32));
         this.addChild(system, 10);
         this._emitter = system;
 
@@ -1086,7 +1149,7 @@ var Issue870 = ParticleDemo.extend({
     },
     updateQuads:function (dt) {
         this._index = (this._index + 1) % 4;
-        var rect = cc.RectMake(this._index * 32, 0, 32, 32);
+        var rect = cc.rect(this._index * 32, 0, 32, 32);
         this._emitter.setTextureWithRect(this._emitter.getTexture(), rect);
     }
 });

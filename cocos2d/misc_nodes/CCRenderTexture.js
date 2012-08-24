@@ -168,7 +168,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 width *= cc.CONTENT_SCALE_FACTOR();
                 height *= cc.CONTENT_SCALE_FACTOR();
 
-                glGetIntegerv(cc.GL_FRAMEBUFFER_BINDING, this._oldFBO);
+                glGetIntegerv(gl.FRAMEBUFFER_BINDING, this._oldFBO);
 
                 // textures must be power of two squared
                 var powW = 0;
@@ -195,7 +195,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 if (!this._texture)
                     return false;
 
-                this._texture.initWithData(data, this._pixelFormat, powW, powH, cc.SizeMake(width, height));
+                this._texture.initWithData(data, this._pixelFormat, powW, powH, cc.size(width, height));
                 //free( data );
 
                 var oldRBO;
@@ -206,7 +206,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 glBindFramebuffer(GL_FRAMEBUFFER, this._fBO);
 
                 // associate texture with FBO
-                glFramebufferTexture2D(cc.GL_FRAMEBUFFER, cc.GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this._texture.getName(), 0);
+                glFramebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, GL_TEXTURE_2D, this._texture.getName(), 0);
 
                 if (this._depthRenderBuffer != 0) {
                     //create and attach depth buffer
@@ -216,7 +216,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, this._depthRenderBuffer);
 
                     // if depth format is the one with stencil part, bind same render buffer as stencil attachment
-                    if (depthStencilFormat == cc.GL_DEPTH24_STENCIL8)
+                    if (depthStencilFormat == gl.DEPTH24_STENCIL8)
                         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, this._depthRenderBuffer);
                 }
 
@@ -230,8 +230,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
                 this._sprite.setScaleY(-1);
                 this.addChild(this._sprite);
 
-                var tBlendFunc = new cc.BlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-                this._sprite.setBlendFunc(tBlendFunc);
+                this._sprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
                 glBindRenderbuffer(GL_RENDERBUFFER, oldRBO);
                 glBindFramebuffer(GL_FRAMEBUFFER, this._oldFBO);
@@ -265,8 +264,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             -1.0 / heightRatio, 1.0 / heightRatio, -1, 1);
         kmGLMultMatrix(orthoMatrix);
 
-        glGetIntegerv(cc.GL_FRAMEBUFFER_BINDING, this._oldFBO);
-        glBindFramebuffer(cc.GL_FRAMEBUFFER, this._fBO);//Will direct drawing to the frame buffer created above
+        glGetIntegerv(gl.FRAMEBUFFER_BINDING, this._oldFBO);
+        glBindFramebuffer(gl.FRAMEBUFFER, this._fBO);//Will direct drawing to the frame buffer created above
     },
 
     /**

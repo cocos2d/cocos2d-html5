@@ -6,7 +6,7 @@
 
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="cocos2d-html5-alpha-min.js">
+                debug="false" output="myApp-v0.1.js">
             <sources dir="${basedir}/../cocos2d">
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
@@ -19,6 +19,7 @@
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
                 <file name="base_nodes/CCNode.js"/>
+                <file name="base_nodes/CCdomNode.js"/>
                 <file name="platform/CCMacro.js"/>
                 <file name="platform/CCConfig.js"/>
                 <file name="textures/CCTexture2D.js"/>
@@ -50,6 +51,11 @@
             </sources>
             <sources dir="${basedir}/../CocosDenshion">
                 <file name="SimpleAudioEngine.js"/>
+            </sources>
+            <sources dir="${basedir}">
+                <file name="src/resource.js"/>
+                <file name="src/myApp.js"/>
+                <file name="main.js"/>
             </sources>
         </jscomp>
     </target>

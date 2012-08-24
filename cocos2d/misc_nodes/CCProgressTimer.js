@@ -275,7 +275,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             var context = ctx || cc.renderContext;
 
             context.globalAlpha = this._sprite._opacity / 255;
-            var centerPoint, mpX=0, mpY=0;
+            var centerPoint, mpX = 0, mpY = 0;
             if (this._sprite._flipX) {
                 centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
                 mpX = 0 | (centerPoint.x - this._sprite._anchorPointInPoints.x);
@@ -302,18 +302,15 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                         pos.x, -(pos.y + this._drawSize.height),
                         this._originSize.width, this._originSize.height);
                 } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
-                    if (this._originSize.width == 0)
-                        this._originSize.width = 0.1;
-                    if (this._originSize.height == 0)
-                        this._originSize.height = 0.1;
-                    context.drawImage(this._sprite._texture,
-                        this._origin.x, this._origin.y,
-                        this._originSize.width, this._originSize.height,
-                        pos.x, -(pos.y + this._drawSize.height),
-                        this._originSize.width, this._originSize.height);
+                    if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
+                        context.drawImage(this._sprite._texture,
+                            this._origin.x, this._origin.y,
+                            this._originSize.width, this._originSize.height,
+                            pos.x, -(pos.y + this._drawSize.height),
+                            this._originSize.width, this._originSize.height);
+                    }
                 }
             } else {
-                var size = this._sprite.getContentSize();
                 context.beginPath();
                 context.arc(this._origin.x, this._origin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
                 context.lineTo(this._origin.x, this._origin.y);
@@ -409,13 +406,13 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
                 var startPoint = cc.p(size.width * this._midPoint.x, size.height * this._midPoint.y);
                 var startPointTx = cc.p(textureSize.width * this._midPoint.x, textureSize.height * this._midPoint.y);
 
-                var drawedSize = new cc.Size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
-                var drawingSize = new cc.Size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
-                this._drawSize = new cc.Size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
+                var drawedSize = cc.size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
+                var drawingSize = cc.size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
+                this._drawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
 
-                var txDrawedSize = new cc.Size((textureSize.width * (1 - this._barChangeRate.x)), (textureSize.height * (1 - this._barChangeRate.y)));
-                var txDrawingSize = new cc.Size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
-                this._originSize = new cc.Size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
+                var txDrawedSize = cc.size((textureSize.width * (1 - this._barChangeRate.x)), (textureSize.height * (1 - this._barChangeRate.y)));
+                var txDrawingSize = cc.size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
+                this._originSize = cc.size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
 
                 var needToLeft = startPoint.x * percentageF;
                 var needToLeftTx = startPointTx.x * percentageF;
