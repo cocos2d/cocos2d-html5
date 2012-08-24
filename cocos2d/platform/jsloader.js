@@ -24,11 +24,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc || cc || {};
 (function () {
     var engine = [
-        'platform/miniFramework.js',
         'platform/CCClass.js',
+        'platform/miniFramework.js',
         'platform/CCCommon.js',
         'platform/platform.js',
         'platform/ZipUtils.js',
@@ -115,6 +114,7 @@ var cc = cc || cc || {};
     engine.forEach(function (e, i) {
         engine[i] = c.engineDir + e;
     });
+    if (!c.engineDir)engine = [];
     var que = engine.concat(c.appFiles);
     que.push('main.js');
     if (navigator.userAgent.indexOf("Trident/5") > -1) {
