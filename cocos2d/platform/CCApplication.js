@@ -235,7 +235,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             return 0;
         }
         // TODO, need to be fixed.
-        if (window.requestAnimFrame) {
+        if (window.requestAnimFrame && this._animationInterval == 1/60) {
             var callback = function () {
                 cc.Director.getInstance().mainLoop();
                 window.requestAnimFrame(callback);
