@@ -8,9 +8,8 @@
         <jscomp compilationLevel="simple" warning="quiet"
                 debug="false" output="cocos2d-html5-testcases.js">
             <sources dir="${basedir}">
-                <file name="src/AppDelegate.js"/>
-                <file name="testbasic.js"/>
-                <file name="testResource.js"/>
+                <file name="src/testbasic.js"/>
+                <file name="src/testResource.js"/>
                 <file name="src/tests/TouchesTest/Ball.js"/>
                 <file name="src/tests/TouchesTest/Paddle.js"/>
                 <file name="src/tests/TouchesTest/TouchesTest.js"/>
@@ -69,7 +68,6 @@
                 <file name="platform/CCTypes.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="platform/CCConfig.js"/>
-                <file name="cocoa/CCSet.js"/>
                 <file name="cocoa/CCNS.js"/>
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
@@ -114,8 +112,8 @@
                 <file name="touch_dispatcher/CCTouchDelegateProtocol.js"/>
                 <file name="touch_dispatcher/CCTouchHandler.js"/>
                 <file name="touch_dispatcher/CCTouchDispatcher.js"/>
-                <file name="keypad_dispatcher/CCKeypadDelegate.js"/>
-                <file name="keypad_dispatcher/CCKeypadDispatcher.js"/>
+                <file name="keyboard_dispatcher/CCKeyboardDelegate.js"/>
+                <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
                 <file name="CCDirector.js"/>
