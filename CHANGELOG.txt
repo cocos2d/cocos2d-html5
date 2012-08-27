@@ -1,4 +1,4 @@
-Cocos2d-html5-v0.5.0-beta @ Aug.3, 2012
+Cocos2d-html5-v2.0.0 @ Aug.28, 2012
 * Updated API to Cocos2d-x V2.0.
 * Updated template and directory name.
 * Improved JS files loader.
