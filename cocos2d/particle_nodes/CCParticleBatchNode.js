@@ -61,10 +61,6 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _blendFunc:{src:cc.BLEND_SRC, dst:cc.BLEND_DST},
     _textureAtlas:null,
 
-    ctor:function () {
-
-    },
-
     /**
      * initializes the particle system with cc.Texture2D, a capacity of particles
      * @param {cc.Texture2D|HTMLImageElement|HTMLCanvasElement} texture
@@ -277,6 +273,10 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             quad.tl.vertices.x = quad.tl.vertices.y = quad.bl.vertices.x = quad.bl.vertices.y = 0.0;
     },
 
+    /**
+     * @override
+     * @param {CanvasContext} ctx
+     */
     draw:function (ctx) {
         cc.PROFILER_STOP("CCParticleBatchNode - draw");
         if (this._textureAtlas.getTotalQuads() == 0) {
@@ -314,6 +314,11 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         }
     },
 
+    /**
+     * set the blending function used for the texture
+     * @param {Number} src
+     * @param {Number} dst
+     */
     setBlendFunc:function (src, dst) {
         this._blendFunc = {src:src, dst:dst};
     },

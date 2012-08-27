@@ -30,18 +30,15 @@
  * or the parameter strs will be empty. <br/>
  * if the form is right return true,else return false.<br/>
  * @function
- * @param {String} str
+ * @param {String} content
  * @param {String} strs
  * @return {String}
  */
-cc.splitWithForm = function (str, strs) {
-    var ret = false;
-    do
-    {
-        if (!str) break;
+cc.splitWithForm = function (content, strs) {
+    do {
+        if (!content) break;
 
         // string is empty
-        var content = str;
         if (content.length == 0) break;
 
         var posLeft = content.indexOf('{');
@@ -85,10 +82,8 @@ cc.splitWithForm = function (str, strs) {
  */
 cc.RectFromString = function (content) {
     var result = cc.RectZero();
-
     do {
         if (!content) break;
-        var content = content;
 
         // find the first '{' and the third '}'
         var posLeft = content.indexOf('{') + 1;
@@ -105,8 +100,8 @@ cc.RectFromString = function (content) {
         var sizeStr = content.substr(nPointEnd + 1, content.length - nPointEnd);
 
         // split the string with ','
-        var pointInfo = cc.splitWithForm(pointStr.toString());
-        var sizeInfo = cc.splitWithForm(sizeStr.toString());
+        var pointInfo = cc.splitWithForm(pointStr);
+        var sizeInfo = cc.splitWithForm(sizeStr);
 
         var x = parseFloat(pointInfo[0]);
         var y = parseFloat(pointInfo[1]);
@@ -116,7 +111,8 @@ cc.RectFromString = function (content) {
         result = cc.rect(x, y, width, height);
     } while (0);
     return result;
-}
+};
+
 /**
  * Returns a Core Graphics point structure corresponding to the data in a given string.
  * @function
@@ -133,7 +129,6 @@ cc.RectFromString = function (content) {
  */
 cc.PointFromString = function (content) {
     var ret = cc.PointZero();
-
     try {
         if (content == "")
             return ret;

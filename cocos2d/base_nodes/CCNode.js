@@ -687,14 +687,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._parent = Var;
     },
 
-    /** isIgnoreAnchorPointForPosition getter
+    /** ignoreAnchorPointForPosition getter
      * @return {Boolean}
      */
     isIgnoreAnchorPointForPosition:function () {
         return this._ignoreAnchorPointForPosition;
     },
 
-    /** isRelativeAnchorPoint setter
+    /** ignoreAnchorPointForPosition setter
      * @param {Boolean} newValue
      */
     ignoreAnchorPointForPosition:function (newValue) {
@@ -857,7 +857,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      *   cc.Scheduler used to schedule all "updates" and timers.<br/>
      *   IMPORTANT: If you set a new cc.Scheduler, then previously created timers/update are going to be removed.
      * </p>
-     * @return {cc.Scheduler}
      */
     setScheduler:function (scheduler) {
         if (this._scheduler != scheduler) {
@@ -868,14 +867,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /** returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
-     * @return {Number}
+     * @return {cc.rect}
      */
     getBoundingBox:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         return cc.RectApplyAffineTransform(rect, this.nodeToParentTransform());
     },
 
-    /**
+    /** returns a "world" axis aligned bounding box of the node. <br/>
      * @return {cc.Rect}
      */
     getBoundingBoxToWorld:function () {
@@ -909,7 +908,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },
 
-    /**
+    /** Node description
      * @return {String}
      */
     description:function () {
@@ -1655,11 +1654,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return this.convertToWorldSpace(pt);
     },
 
-    /**
-     * @param nodePoint
-     * @return {cc.Point}
-     * @private
-     */
     _convertToWindowSpace:function (nodePoint) {
         var worldPoint = this.convertToWorldSpace(nodePoint);
         return cc.Director.getInstance().convertToUI(worldPoint);

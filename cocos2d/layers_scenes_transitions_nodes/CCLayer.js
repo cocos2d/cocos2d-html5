@@ -462,8 +462,17 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         }
     },
 
+    /**
+     * set OpacityModifyRGB of cc.LayerColor
+     * @param {Boolean}  value
+     */
     setOpacityModifyRGB:function (value) {
     },
+
+    /**
+     * is OpacityModifyRGB
+     * @return {Boolean}
+     */
     isOpacityModifyRGB:function () {
         return false;
     },
@@ -673,7 +682,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         return this.alongVector;
     },
 
-    /**
+    /** is Compressed Interpolation
      * @return {Boolean}
      */
     isCompressedInterpolation:function () {
@@ -1049,6 +1058,10 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
         context.restore();
     },
 
+    /**
+     * override onExit of cc.Node
+     * @override
+     */
     onExit:function () {
         this._super();
 

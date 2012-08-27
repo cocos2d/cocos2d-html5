@@ -143,8 +143,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      * @return {String}
      */
     description:function () {
-        var ret = "<cc.BMFontConfiguration | Kernings:" + this.kerningDictionary + " | Image = " + this.atlasName.toString() + ">";
-        return ret;
+        return "<cc.BMFontConfiguration | Kernings:" + this.kerningDictionary + " | Image = " + this.atlasName.toString() + ">";
     },
 
     /**
@@ -163,7 +162,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
 
     /**
      * initializes a BitmapFontConfiguration with a FNT file
-     * @param {String} FNTfile
+     * @param {String} FNT file path
      * @return {Boolean}
      */
     initWithFNTfile:function (FNTfile) {
@@ -614,10 +613,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (stringLen == 0) {
             return;
         }
-
-        for (var i = 0; i < stringLen; i++) {
-            var c = this._string.charCodeAt(i);
-            if (c == 10) {
+        var i;
+        for (i = 0; i < stringLen; i++) {
+            if (this._string.charCodeAt(i) == 10) {
                 quantityOfLines++;
             }
         }
@@ -625,16 +623,14 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         totalHeight = this._configuration.commonHeight * quantityOfLines;
         nextFontPositionY = -(this._configuration.commonHeight - this._configuration.commonHeight * quantityOfLines);
 
-        for (var i = 0; i < stringLen; i++) {
-            var c = this._string.charCodeAt(i);
+        for (i = 0; i < stringLen; i++) {
+            var key = this._string.charCodeAt(i);
 
-            if (c == 10) {
+            if (key == 10) {
                 nextFontPositionX = 0;
                 nextFontPositionY -= this._configuration.commonHeight;
                 continue;
             }
-
-            var key = c;
 
             var element = this._configuration.fontDefDictionary[key];
             cc.Assert(element, "FontDefinition could not be found!");
@@ -649,21 +645,18 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var fontChar = this.getChildByTag(i);
             if (!fontChar) {
                 fontChar = new cc.Sprite();
-                if (c == 32) {
+                if (key == 32) {
                     fontChar.init();
                     fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
-                }
-                else {
+                } else {
                     fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
                 }
                 this.addChild(fontChar, 0, i);
-            }
-            else {
-                if (c == 32) {
+            } else {
+                if (key == 32) {
                     fontChar.init();
                     fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
-                }
-                else {
+                } else {
                     // reusing fonts
                     fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
                     // restore to default in case they were modified
@@ -697,7 +690,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         tmpSize.width = longestLine;
         tmpSize.height = totalHeight;
         this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(tmpSize));
-
     },
 
     /**
@@ -1125,7 +1117,7 @@ cc.isspace_unicode = function (ch) {
     return  ((ch >= 9 && ch <= 13) || ch == 32 || ch == 133 || ch == 160 || ch == 5760
         || (ch >= 8192 && ch <= 8202) || ch == 8232 || ch == 8233 || ch == 8239
         || ch == 8287 || ch == 12288)
-}
+};
 
 /**
  * @param {String} str
@@ -1150,7 +1142,7 @@ cc.utf8_trim_ws = function (str) {
         }
         cc.utf8_trim_from(str, last_index);
     }
-}
+};
 
 /**
  * Trims str st str=[0, index) after the operation.
@@ -1163,4 +1155,4 @@ cc.utf8_trim_from = function (str, index) {
     if (index >= len || index < 0)
         return;
     str.splice(index, len);
-}
+};
