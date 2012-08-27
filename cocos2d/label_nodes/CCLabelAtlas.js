@@ -90,8 +90,7 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
                     fontChar.initWithTexture(texture, rect);
                 }
                 this.addChild(fontChar, 0, i);
-            }
-            else {
+            } else {
                 if (c == 32) {
                     fontChar.init();
                     fontChar.setTextureRect(cc.rect(0, 0, 10, 10), false, cc.SizeZero());

@@ -28,7 +28,6 @@
  * @class
  * @extends cc.Class
  */
-
 cc.Set = cc.Class.extend(/** @lends cc.Set# */{
     /**
      * Constructor

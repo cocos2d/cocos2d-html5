@@ -158,7 +158,7 @@ cc.AffineTransformTranslate = function (t, tx, ty) {
  * @param {cc.AffineTransform} t
  * @param {Number} sx
  * @param {Number} sy
- * @return {{cc.AffineTransform}}
+ * @return {cc.AffineTransform}
  * Constructor
  */
 cc.AffineTransformScale = function (t, sx, sy) {

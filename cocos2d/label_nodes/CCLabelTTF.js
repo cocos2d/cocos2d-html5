@@ -49,6 +49,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
     },
+
     init:function (callsuper) {
         if (callsuper) {
             return this._super();
@@ -87,10 +88,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return this._string;
     },
 
+    /**
+     * return Horizontal Alignment of cc.LabelTTF
+     * @return {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT}
+     */
     getHorizontalAlignment:function () {
         return this._hAlignment;
     },
 
+    /**
+     * set Horizontal Alignment of cc.LabelTTF
+     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} Horizontal Alignment
+     */
     setHorizontalAlignment:function (alignment) {
         if (alignment != this._hAlignment) {
             this._hAlignment = alignment;
@@ -102,10 +111,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
+    /**
+     * return Vertical Alignment of cc.LabelTTF
+     * @return {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM}
+     */
     getVerticalAlignment:function () {
         return this._vAlignment;
     },
 
+    /**
+     * set Vertical Alignment of cc.LabelTTF
+     * @param {cc.VERTICAL_TEXT_ALIGNMENT_TOP|cc.VERTICAL_TEXT_ALIGNMENT_CENTER|cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM} verticalAlignment
+     */
     setVerticalAlignment:function (verticalAlignment) {
         if (verticalAlignment != this._vAlignment) {
             this._vAlignment = verticalAlignment;
@@ -117,10 +134,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
+    /**
+     * return Dimensions of cc.LabelTTF
+     * @return {cc.Size}
+     */
     getDimensions:function () {
         return this._dimensions;
     },
 
+    /**
+     * set Dimensions of cc.LabelTTF
+     * @param {cc.Size} dim
+     */
     setDimensions:function (dim) {
         if (dim.width != this._dimensions.width || dim.height != this._dimensions.height) {
             this._dimensions = dim;
@@ -132,10 +157,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
+    /**
+     * return font size of cc.LabelTTF
+     * @return {Number}
+     */
     getFontSize:function () {
         return this._fontSize;
     },
 
+    /**
+     * set font size of cc.LabelTTF
+     * @param {Number} fontSize
+     */
     setFontSize:function (fontSize) {
         if (this._fontSize != fontSize) {
             this._fontSize = fontSize;
@@ -147,10 +180,18 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
+    /**
+     * return font name of cc.LabelTTF
+     * @return {String}
+     */
     getFontName:function () {
         return this._fontName;
     },
 
+    /**
+     * set font name of cc.LabelTTF
+     * @param {String} fontName
+     */
     setFontName:function (fontName) {
         if (this._fontName != fontName) {
             this._fontName = new String(fontName);
@@ -163,7 +204,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * initializes the cc.LabelTTF with a font name, alignment, dimension and font size
-     * @param {String} string
+     * @param {String} initialize string
      * @param {String} fontName
      * @param {Number} fontSize
      * @param {cc.Size} dimensions
@@ -280,6 +321,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             cc.INCREMENT_GL_DRAWS(1);
         }
     },
+
     _wrapText:function (context, text, x, y, maxWidth, maxHeight, lineHeight) {
         var num = this._lineCount() - 1;
         var xOffset, yOffset;
