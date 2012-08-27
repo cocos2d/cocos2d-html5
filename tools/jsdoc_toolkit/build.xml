@@ -31,7 +31,7 @@
             <source file="${src.dir}/platform/CCTypes.js"/>
             <source file="${src.dir}/cocoa/CCGeometry.js"/>
             <source file="${src.dir}/platform/CCConfig.js"/>
-            <source file="${src.dir}/cocoa/CCSet.js"/>
+            <!--<source file="${src.dir}/cocoa/CCSet.js"/>-->
             <source file="${src.dir}/cocoa/CCNS.js"/>
             <source file="${src.dir}/cocoa/CCAffineTransform.js"/>
             <source file="${src.dir}/support/CCPointExtension.js"/>
@@ -46,6 +46,7 @@
             <source file="${src.dir}/actions/CCAction.js"/>
             <source file="${src.dir}/actions/CCActionInterval.js"/>
             <source file="${src.dir}/actions/CCActionInstant.js"/>
+            <source file="${src.dir}/actions/CCActionCatmullRom.js"/>
             <source file="${src.dir}/actions/CCActionManager.js"/>
             <source file="${src.dir}/actions/CCActionProgressTimer.js"/>
             <!--<source file="${src.dir}/actions/CCActionCamera.js"/>-->
@@ -72,8 +73,8 @@
             <source file="${src.dir}/touch_dispatcher/CCTouchDelegateProtocol.js"/>
             <source file="${src.dir}/touch_dispatcher/CCTouchHandler.js"/>
             <source file="${src.dir}/touch_dispatcher/CCTouchDispatcher.js"/>
-            <source file="${src.dir}/keypad_dispatcher/CCKeypadDelegate.js"/>
-            <source file="${src.dir}/keypad_dispatcher/CCKeypadDispatcher.js"/>
+            <source file="${src.dir}/keyboard_dispatcher/CCKeyboardDelegate.js"/>
+            <source file="${src.dir}/keyboard_dispatcher/CCKeyboardDispatcher.js"/>
             <source file="${src.dir}/text_input_node/CCIMEDispatcher.js"/>
             <source file="${src.dir}/text_input_node/CCTextFieldTTF.js"/>
             <source file="${src.dir}/CCDirector.js"/>

@@ -80,6 +80,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     _isSelected:false,
 
     /**
+     * MenuItem is selected
      * @return {Boolean}
      */
     isSelected:function () {
@@ -88,6 +89,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     _isEnabled:false,
 
     /**
+     * MenuItem is Enabled
      * @return {Boolean}
      */
     isEnabled:function () {
@@ -95,8 +97,8 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     },
 
     /**
-     *
-     * @param enable
+     * set enable value of MenuItem
+     * @param {Boolean} enable
      */
     setEnabled:function (enable) {
         this._isEnabled = enable;
@@ -117,6 +119,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     },
 
     /**
+     * return rect value of cc.MenuItem
      * @return {cc.Rect}
      */
     rect:function () {
@@ -192,6 +195,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * @type Boolean
      */
     RGBAProtocol:true,
+
     _disabledColor:new cc.Color3B(),
 
     /**
@@ -210,6 +214,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
     _label:null,
 
     /**
+     * return label of MenuItemLabel
      * @return {cc.Node}
      */
     getLabel:function () {
@@ -280,6 +285,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
 
     setOpacityModifyRGB:function (value) {
     },
+
     isOpacityModifyRGB:function () {
     },
 
