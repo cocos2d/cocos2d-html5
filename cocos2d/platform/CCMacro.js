@@ -284,10 +284,13 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
 };
 
 
-//
-// WebGL constants
-//
+
+/**
+ * WebGL constants
+ * @type {object}
+ */
 var gl = gl || {};
+
 /**
  * @constant
  * @type Number
