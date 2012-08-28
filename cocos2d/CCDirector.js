@@ -92,30 +92,6 @@ cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
  */
 cc.DEVICE_MAX_ORIENTATIONS = 2;
 
-// Backward compatibility stuff
-/**
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_PORTRAIT = cc.DEVICE_ORIENTATION_PORTRAIT;
-
-/**
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN = cc.DEVICE_ORIENTATION_PORTRAIT_UPSIDE_DOWN;
-
-/**
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT = cc.DEVICE_ORIENTATION_LANDSCAPE_LEFT;
-
-/**
- * @constant
- * @type Number
- */
-cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT;
 
 //----------------------------------------------------------------------------------------------------------------------
 
