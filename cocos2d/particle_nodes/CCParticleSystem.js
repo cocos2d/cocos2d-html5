@@ -89,15 +89,6 @@ cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE = -1;
 cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS = -1;
 
 /**
- * backward compatible
- * @constant
- * @type Number
- */
-cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE = cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE;
-cc.PARTICLE_DURATION_INFINITY = cc.PARTICLE_DURATION_INFINITY;
-
-
-/**
  * Gravity mode (A mode)
  * @constant
  * @type Number

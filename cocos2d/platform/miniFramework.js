@@ -50,7 +50,12 @@ cc.Browser = {};
 cc.$ = function (x) {
     /** @lends cc.$# */
     var parent = (this == cc) ? document : this;
+
+    /**
+     * @type {HTMLElement}
+     */
     var el = (x instanceof HTMLElement) ? x : parent.querySelector(x);
+
     if (el) {
         /**
          * find and return the child wth css selector (same as jquery.find)
