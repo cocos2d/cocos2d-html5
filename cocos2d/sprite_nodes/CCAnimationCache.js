@@ -69,7 +69,9 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @return {cc.Animation}
      */
     getAnimation:function (name) {
-        return this._animations[name];
+        if(this._animations.hasOwnProperty(name))
+            return this._animations[name];
+        return null;
     },
 
     /**
