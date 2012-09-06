@@ -71,11 +71,11 @@ cc.NodeLoader = cc.Class.extend({
             var setProp = false;
 
             var platform = ccbReader.readByte();
-            if ((platform == kCCBPlatformAll) ||(platform == kCCBPlatformIOS) ||(platform == kCCBPlatformMac) )
+            if ((platform == CCB_PLATFORM_ALL) ||(platform == CCB_PLATFORM_IOS) ||(platform == CCB_PLATFORM_MAC) )
                 setProp = true;
 
             switch (type) {
-                case kCCBPropTypePosition:
+                case CCB_PROPTYPE_POSITION:
                 {
                     var position = this.parsePropTypePosition(node, parent, ccbReader);
                     if (setProp) {
@@ -83,7 +83,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypePoint:
+                case CCB_PROPTYPE_POINT:
                 {
                     var point = this.parsePropTypePoint(node, parent, ccbReader);
                     if (setProp) {
@@ -91,7 +91,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypePointLock:
+                case CCB_PROPTYPE_POINTLOCK:
                 {
                     var pointLock = this.parsePropTypePointLock(node, parent, ccbReader);
                     if (setProp) {
@@ -99,7 +99,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeSize:
+                case CCB_PROPTYPE_SIZE:
                 {
                     var size = this.parsePropTypeSize(node, parent, ccbReader);
                     if (setProp) {
@@ -107,7 +107,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeScaleLock:
+                case CCB_PROPTYPE_SCALELOCK:
                 {
                     var scaleLock = this.parsePropTypeScaleLock(node, parent, ccbReader);
                     if (setProp) {
@@ -115,7 +115,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeFloat:
+                case CCB_PROTYPE_FLOAT:
                 {
                     var f = this.parsePropTypeFloat(node, parent, ccbReader);
                     if (setProp) {
@@ -123,7 +123,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeDegrees:
+                case CCB_PROPTYPE_DEGREES:
                 {
                     var degrees = this.parsePropTypeDegrees(node, parent, ccbReader);
                     if (setProp) {
@@ -131,7 +131,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeFloatScale:
+                case CCB_PROTYPE_FLOATSCALE:
                 {
                     var floatScale = this.parsePropTypeFloatScale(node, parent, ccbReader);
                     if (setProp) {
@@ -139,7 +139,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeInteger:
+                case CCB_PROTYPE_INTEGER:
                 {
                     var integer = this.parsePropTypeInteger(node, parent, ccbReader);
                     if (setProp) {
@@ -147,7 +147,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeIntegerLabeled:
+                case CCB_PROTYPE_INTEGERLABELED:
                 {
                     var integerLabeled = this.parsePropTypeIntegerLabeled(node, parent, ccbReader);
                     if (setProp) {
@@ -155,7 +155,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeFloatVar:
+                case CCB_PROTYPE_FLOATVAR:
                 {
                     var floatVar = this.parsePropTypeFloatVar(node, parent, ccbReader);
                     if (setProp) {
@@ -163,7 +163,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeCheck:
+                case CCB_PROTYPE_CHECK:
                 {
                     var check = this.parsePropTypeCheck(node, parent, ccbReader);
                     if (setProp) {
@@ -171,7 +171,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeSpriteFrame:
+                case CCB_PROTYPE_SPRITEFRAME:
                 {
                     var ccSpriteFrame = this.parsePropTypeSpriteFrame(node, parent, ccbReader);
                     if (setProp) {
@@ -179,7 +179,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeAnimation:
+                case CCB_PROTYPE_ANIMATION:
                 {
                     var ccAnimation = this.parsePropTypeAnimation(node, parent, ccbReader);
                     if (setProp) {
@@ -187,7 +187,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeTexture:
+                case CCB_PROTYPE_TEXTURE:
                 {
                     var ccTexture2D = this.parsePropTypeTexture(node, parent, ccbReader);
                     if (setProp) {
@@ -195,7 +195,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeByte:
+                case CCB_PROTYPE_BYTE:
                 {
                     var byteValue = this.parsePropTypeByte(node, parent, ccbReader);
                     if (setProp) {
@@ -203,7 +203,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeColor3:
+                case CCB_PROTYPE_COLOR3:
                 {
                     var color3B = this.parsePropTypeColor3(node, parent, ccbReader);
                     if (setProp) {
@@ -211,7 +211,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeColor4FVar:
+                case CCB_PROTYPE_COLOR4VAR:
                 {
                     var color4FVar = this.parsePropTypeColor4FVar(node, parent, ccbReader);
                     if (setProp) {
@@ -219,7 +219,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeFlip:
+                case CCB_PROTYPE_FLIP:
                 {
                     var flip = this.parsePropTypeFlip(node, parent, ccbReader);
                     if (setProp) {
@@ -227,7 +227,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeBlendFunc:
+                case CCB_PROTYPE_BLENDFUNC:
                 {
                     var blendFunc = this.parsePropTypeBlendFunc(node, parent, ccbReader);
                     if (setProp) {
@@ -235,7 +235,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeFntFile:
+                case CCB_PROTYPE_FNTFILE:
                 {
                     var fntFile = this.parsePropTypeFntFile(node, parent, ccbReader);
                     if (setProp) {
@@ -243,7 +243,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeFontTTF:
+                case CCB_PROTYPE_FONTTTF:
                 {
                     var fontTTF = this.parsePropTypeFontTTF(node, parent, ccbReader);
                     if (setProp) {
@@ -251,7 +251,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeString:
+                case CCB_PROTYPE_STRING:
                 {
                     var stringValue = this.parsePropTypeString(node, parent, ccbReader);
                     if (setProp) {
@@ -259,7 +259,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeText:
+                case CCB_PROTYPE_TEXT:
                 {
                     var textValue = this.parsePropTypeText(node, parent, ccbReader);
                     if (setProp) {
@@ -267,7 +267,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeBlock:
+                case CCB_PROTYPE_BLOCK:
                 {
                     var blockData = this.parsePropTypeBlock(node, parent, ccbReader);
                     if (setProp) {
@@ -275,7 +275,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeBlockCCControl:
+                case CCB_PROTYPE_BLOCKCCCONTROL:
                 {
                     var blockCCControlData = this.parsePropTypeBlockCCControl(node, parent, ccbReader);
                     if (setProp && blockCCControlData != null) {
@@ -283,7 +283,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case kCCBPropTypeCCBFile:
+                case CCB_PROTYPE_CCBFILE:
                 {
                     var ccbFileNode = this.parsePropTypeCCBFile(node, parent, ccbReader);
                     if (setProp) {
@@ -311,28 +311,28 @@ cc.NodeLoader = cc.Class.extend({
         var containerSize = ccbReader.getContainerSize(parent);
 
         switch (type) {
-            case kCCBPositionTypeRelativeBottomLeft:
+            case CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT:
             {
                 /* Nothing. */
                 break;
             }
-            case kCCBPositionTypeRelativeTopLeft:
+            case CCB_POSITIONTYPE_RELATIVE_TOP_LEFT:
             {
                 y = containerSize.height - y;
                 break;
             }
-            case kCCBPositionTypeRelativeTopRight:
+            case CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT:
             {
                 x = containerSize.width - x;
                 y = containerSize.height - y;
                 break;
             }
-            case kCCBPositionTypeRelativeBottomRight:
+            case CCB_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT:
             {
                 x = containerSize.width - x;
                 break;
             }
-            case kCCBPositionTypePercent:
+            case CCB_POSITIONTYPE_PERCENT:
             {
                 x = (containerSize.width * x / 100.0);
                 y = (containerSize.height * y / 100.0);
@@ -366,29 +366,29 @@ cc.NodeLoader = cc.Class.extend({
         var containerSize = ccbReader.getContainerSize(parent);
 
         switch (type) {
-            case kCCBSizeTypeAbsolute:
+            case CCB_SIZETYPE_ABSOLUTE:
             {
                 /* Nothing. */
                 break;
             }
-            case kCCBSizeTypeRelativeContainer:
+            case CCB_SIZETYPE_RELATIVE_CONTAINER:
             {
                 width = containerSize.width - width;
                 height = containerSize.height - height;
                 break;
             }
-            case kCCBSizeTypePercent:
+            case CCB_SIZETYPE_PERCENT:
             {
                 width = (containerSize.width * width / 100.0);
                 height = (containerSize.height * height / 100.0);
                 break;
             }
-            case kCCBSizeTypeHorizontalPercent:
+            case CCB_SIZETYPE_HORIZONTAL_PERCENT:
             {
                 width = (containerSize.width * width / 100.0);
                 break;
             }
-            case kCCBSzieTypeVerticalPercent:
+            case CCB_SIZETYPE_VERTICAL_PERCENT:
             {
                 height = (containerSize.height * height / 100.0);
                 break;
@@ -406,7 +406,7 @@ cc.NodeLoader = cc.Class.extend({
 
         var type = ccbReader.readInt(false);
 
-        if (type == kCCBScaleTypeMultiplyResolution) {
+        if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
             x *= ccbReader.getResolutionScale();
             y *= ccbReader.getResolutionScale();
         }
@@ -427,7 +427,7 @@ cc.NodeLoader = cc.Class.extend({
 
         var type = ccbReader.readInt(false);
 
-        if (type == kCCBScaleTypeMultiplyResolution) {
+        if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
             f *= ccbReader.getResolutionScale();
         }
 
@@ -587,11 +587,11 @@ cc.NodeLoader = cc.Class.extend({
         var selectorName = ccbReader.readCachedString();
         var selectorTarget = ccbReader.readInt(false);
 
-        if (selectorTarget != kCCBTargetTypeNone) {
+        if (selectorTarget != CCB_TARGETTYPE_NONE) {
             var target = null;
-            if (selectorTarget == kCCBTargetTypeDocumentRoot) {
+            if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
                 target = ccbReader.getRootNode();
-            } else if (selectorTarget == kCCBTargetTypeOwner) {
+            } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
                 target = ccbReader.getOwner();
             }
 
@@ -638,11 +638,11 @@ cc.NodeLoader = cc.Class.extend({
         var selectorTarget = ccbReader.readInt(false);
         var controlEvents = ccbReader.readInt(false);
 
-        if (selectorTarget != kCCBTargetTypeNone) {
+        if (selectorTarget != CCB_TARGETTYPE_NONE) {
             var target = null;
-            if (selectorTarget == kCCBTargetTypeDocumentRoot) {
+            if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
                 target = ccbReader.getRootNode();
-            } else if (selectorTarget == kCCBTargetTypeOwner) {
+            } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
                 target = ccbReader.getOwner();
             }
 
