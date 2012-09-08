@@ -867,7 +867,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /** returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
-     * @return {cc.rect}
+     * @return {cc.Rect}
      */
     getBoundingBox:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
