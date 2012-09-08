@@ -79,9 +79,8 @@ cc.ControlButton = cc.Control.extend({
 
         this._titleLabel = this.getTitleLabelForState(this._state);
 
-        //var label = dynamic_cast<CCLabelProtocol*>(this._titleLabel);
         var label = this._titleLabel;
-        if (label)
+        if (label && label.setString)
             label.setString(this._currentTitle);
 
         if (this._titleLabel && this._titleLabel.RGBAProtocol)
@@ -128,7 +127,6 @@ cc.ControlButton = cc.Control.extend({
     initWithLabelAndBackgroundSprite:function (label, backgroundSprite) {
         if (this.init(true)) {
             cc.Assert(label != null, "node must not be nil");
-            //var label = dynamic_cast<CCLabelProtocol*>(node);
             cc.Assert(label != null || label.RGBAProtocol || backgroundSprite != null, "");
 
             this.setTouchEnabled(true);

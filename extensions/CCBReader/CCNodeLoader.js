@@ -465,7 +465,13 @@ cc.NodeLoader = cc.Class.extend({
             var spriteFilePath = cc.CCBReader.concat(ccbReader.getCCBRootPath(), spriteFile);
 
             var texture = cc.TextureCache.getInstance().addImage(spriteFilePath);
-            var bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
+            var bounds;
+            if(texture instanceof  cc.Texture2D){
+                bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
+            }else{
+                bounds = cc.RectMake(0, 0, texture.width, texture.height);
+            }
+
             spriteFrame = cc.SpriteFrame.createWithTexture(texture, bounds);
         } else {
             var frameCache = cc.SpriteFrameCache.getInstance();
@@ -599,11 +605,9 @@ cc.NodeLoader = cc.Class.extend({
                 if (selectorName.length() > 0) {
                     var selMenuHandler = 0;
 
-                    //var targetAsCCBSelectorResolver = dynamic_cast<CCBSelectorResolver *>(target);
                     var targetAsCCBSelectorResolver = target;
-
-                    if (targetAsCCBSelectorResolver != null) {
-                        selMenuHandler = targetAsCCBSelectorResolver.onResolveCCBCCMenuItemSelector(target, selectorName);
+                    if (target != null && target.onResolveCCBCCMenuItemSelector) {
+                        selMenuHandler = target.onResolveCCBCCMenuItemSelector(target, selectorName);
                     }
                     if (selMenuHandler == 0) {
                         var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
@@ -650,11 +654,8 @@ cc.NodeLoader = cc.Class.extend({
                 if (selectorName.length() > 0) {
                     var selCCControlHandler = 0;
 
-                    //var targetAsCCBSelectorResolver = dynamic_cast<CCBSelectorResolver *>(target);
-                    var targetAsCCBSelectorResolver = target;
-
-                    if (targetAsCCBSelectorResolver != null) {
-                        selCCControlHandler = targetAsCCBSelectorResolver.onResolveCCBCCControlSelector(target, selectorName);
+                    if (target != null && target.onResolveCCBCCControlSelector) {
+                        selCCControlHandler = target.onResolveCCBCCControlSelector(target, selectorName);
                     }
                     if (selCCControlHandler == 0) {
                         var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
@@ -664,7 +665,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
 
                     if (selCCControlHandler == 0) {
-                        cc.log("Skipping selector '%s' since no CCBSelectorResolver is present.", selectorName);
+                        cc.log("Skipping selector '" + selectorName + "' since no CCBSelectorResolver is present.");
                     } else {
                         var blockCCControlData = new BlockCCControlData();
                         blockCCControlData.mSELCCControlHandler = selCCControlHandler;

@@ -163,6 +163,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
                     break;
                 case "ccbi":
                     cc.FileUtils.getInstance().preloadBinaryFileData(res[i].src);
+                    this.resourceCount += 1;
                     break;
                 default:
                     throw "cocos2d:unknow type : " + res[i].type;
