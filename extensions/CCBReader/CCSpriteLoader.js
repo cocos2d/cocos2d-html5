@@ -31,8 +31,8 @@ var PROPERTY_OPACITY = "opacity";
 var PROPERTY_BLENDFUNC = "blendFunc";
 
 cc.SpriteLoader = cc.NodeLoader.extend({
-    _createNode:function (parent, ccbReader) {
-        return cc.Sprite.create();
+    _createCCNode:function (parent, ccbReader) {
+        return new cc.Sprite();
     },
 
     onHandlePropTypeColor3:function (node, parent, propertyName, color3BValue, ccbReader) {
@@ -137,7 +137,7 @@ cc.LayerColorLoader = cc.LayerLoader.extend({
     }
 });
 
-cc.LayerLoader.loader = function () {
+cc.LayerColorLoader.loader = function () {
     return new cc.LayerColorLoader();
 };
 

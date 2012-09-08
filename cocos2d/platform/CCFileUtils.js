@@ -91,6 +91,7 @@ cc.FileUtils = cc.Class.extend({
     },
 
     preloadBinaryFileData:function(fileUrl){
+        var selfPointer = this;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", fileUrl, true);
         if(xhr.overrideMimeType)
@@ -98,7 +99,8 @@ cc.FileUtils = cc.Class.extend({
         xhr.onload = function(e) {
             var arrayStr = xhr.responseText;
             if(arrayStr){
-                this._fileDataCache[fileUrl] = this._stringConvertToArray(arrayStr);
+                cc.Loader.shareLoader().onResLoaded();
+                selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
             }
         };
         xhr.send(null);
