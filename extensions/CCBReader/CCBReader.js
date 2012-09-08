@@ -108,7 +108,10 @@ cc.CCBReader = cc.Class.extend({
     _loadedSpriteSheets:null,
 
     ctor:function (ccNodeLoaderLibrary, ccbMemberVariableAssigner, ccbSelectorResolver, ccNodeLoaderListener) {
-        if (arguments.length == 1) {
+        this._stringCache = [];
+        this._loadedSpriteSheets = [];
+
+        if (ccNodeLoaderLibrary instanceof cc.CCBReader) {
             var ccbReader = ccNodeLoaderLibrary;
             this._rootNode = null;
             this._rootCCBReader = false;
@@ -256,7 +259,7 @@ cc.CCBReader = cc.Class.extend({
             default:
                 /* using a memcpy since the compiler isn't
                  * doing the float ptr math correctly on device.
-                 * TODO still applies in C++ ? */
+                 */
                 var pF =  this._decodeFloat(23,8); //this._bytes + this._currentByte;
                 //this._currentByte += 4;
                 return pF;
@@ -362,7 +365,7 @@ cc.CCBReader = cc.Class.extend({
         var strValue = "";
         var i;
         if (reverse) {
-            for (i = strLen - 1; i >= 0; i++) {
+            for (i = strLen - 1; i >= 0; i--) {
                 strValue += String.fromCharCode(this._bytes[this._currentByte + i]);
             }
         } else {
@@ -389,8 +392,11 @@ cc.CCBReader = cc.Class.extend({
 
         var str = "";
         for (var i = 0; i < numBytes; i++) {
-            str += String.fromCharCode(this._bytes[this._currentByte + i]);
+            var hexChar = this._bytes[this._currentByte + i].toString("16").toUpperCase();
+            hexChar = hexChar.length > 1?hexChar : "0" + hexChar;
+            str += "%" + hexChar;
         }
+        str = decodeURIComponent(str);
 
         this._currentByte += numBytes;
         this._stringCache.push(str);
@@ -425,14 +431,11 @@ cc.CCBReader = cc.Class.extend({
             if (target != null) {
                 var assigned = false;
 
-                //var targetAsCCBMemberVariableAssigner = dynamic_cast<CCBMemberVariableAssigner *>(target);
-                var targetAsCCBMemberVariableAssigner = target;
-
-                if (targetAsCCBMemberVariableAssigner != null) {
-                    assigned = targetAsCCBMemberVariableAssigner.onAssignCCBMemberVariable(target, memberVarAssignmentName, node);
+                if (target != null && (target.onAssignCCBMemberVariable)) {
+                    assigned = target.onAssignCCBMemberVariable(target, memberVarAssignmentName, node);
                 }
 
-                if (!assigned && this._ccbMemberVariableAssigner != null) {
+                if (!assigned && this._ccbMemberVariableAssigner != null && this._ccbMemberVariableAssigner.onAssignCCBMemberVariable) {
                     this._ccbMemberVariableAssigner.onAssignCCBMemberVariable(target, memberVarAssignmentName, node);
                 }
             }
@@ -445,10 +448,9 @@ cc.CCBReader = cc.Class.extend({
             node.addChild(child);
         }
 
-        //var nodeAsCCNodeLoaderListener = dynamic_cast<CCNodeLoaderListener *>(node);
-        var nodeAsCCNodeLoaderListener = node;
-        if (nodeAsCCNodeLoaderListener != null) {
-            nodeAsCCNodeLoaderListener.onNodeLoaded(node, ccNodeLoader);
+        //var nodeAsCCNodeLoaderListener = node;
+        if (node != null && node.onNodeLoaded) {
+            node.onNodeLoaded(node, ccNodeLoader);
         } else if (this._ccNodeLoaderListener != null) {
             this._ccNodeLoaderListener.onNodeLoaded(node, ccNodeLoader);
         }
