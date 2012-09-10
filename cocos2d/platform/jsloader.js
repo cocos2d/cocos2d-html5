@@ -106,6 +106,30 @@
         'base_nodes/CCdomNode.js',
         '../CocosDenshion/SimpleAudioEngine.js'
     ];
+
+    if(c.loadExtension != null && c.loadExtension == true){
+        engine.concat([
+            '../extensions/GUI/CCControlExtension/CCControl.js',
+            '../extensions/GUI/CCControlExtension/CCControlButton.js',
+            '../extensions/GUI/CCControlExtension/CCControlUtils.js',
+            '../extensions/GUI/CCControlExtension/CCInvocation.js',
+            '../extensions/GUI/CCControlExtension/CCScale9Sprite.js',
+            '../extensions/GUI/CCControlExtension/CCMenuPassive.js',
+            '../extensions/GUI/CCControlExtension/CCControlSaturationBrightnessPicker.js',
+            '../extensions/GUI/CCControlExtension/CCControlHuePicker.js',
+            '../extensions/GUI/CCControlExtension/CCControlColourPicker.js',
+            '../extensions/GUI/CCControlExtension/CCControlSlider.js',
+            '../extensions/GUI/CCControlExtension/CCControlSwitch.js',
+            '../extensions/GUI/CCScrollView/CCScrollView.js',
+            '../extensions/CCBReader/CCNodeLoader.js',
+            '../extensions/CCBReader/CCBReaderUtil.js',
+            '../extensions/CCBReader/CCControlLoader.js',
+            '../extensions/CCBReader/CCSpriteLoader.js',
+            '../extensions/CCBReader/CCNodeLoaderLibrary.js',
+            '../extensions/CCBReader/CCBReader.js'
+        ]);
+    }
+
     var d = document;
     var c = d.querySelector('#cocos2d-html5').c;
     if (!c.engineDir) {
