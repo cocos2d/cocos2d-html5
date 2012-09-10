@@ -107,6 +107,9 @@
         '../CocosDenshion/SimpleAudioEngine.js'
     ];
 
+    var d = document;
+    var c = d.querySelector('#cocos2d-html5').c;
+
     if(c.loadExtension != null && c.loadExtension == true){
         engine.concat([
             '../extensions/GUI/CCControlExtension/CCControl.js',
@@ -130,8 +133,6 @@
         ]);
     }
 
-    var d = document;
-    var c = d.querySelector('#cocos2d-html5').c;
     if (!c.engineDir) {
         engine = [];
     }
