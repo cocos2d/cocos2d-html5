@@ -125,8 +125,8 @@ cc.ScrollView = cc.Layer.extend({
     /**
      * Sets a new content offset. It ignores max/min offset. It just sets what's given. (just like UIKit's UIScrollView)
      *
-     * @param offset new offset
-     * @param If YES, the view scrolls to the new offset
+     * @param {cc.Point} offset new offset
+     * @param {Number} animated, the view scrolls to the new offset
      */
     setContentOffset:function (offset, animated) {
         if (animated) { //animate scrolling
@@ -142,7 +142,7 @@ cc.ScrollView = cc.Layer.extend({
 
             this._container.setPosition(offset);
 
-            if (this._delegate != null) {
+            if (this._delegate != null && this._delegate.scrollViewDidScroll) {
                 this._delegate.scrollViewDidScroll(this);
             }
         }
@@ -157,7 +157,7 @@ cc.ScrollView = cc.Layer.extend({
      * You can override the animation duration with this method.
      *
      * @param offset new offset
-     * @param animation duration
+     * @param dt duration
      */
     setContentOffsetInDuration:function (offset, dt) {
         var scroll = cc.MoveTo.create(dt, offset);
@@ -360,7 +360,7 @@ cc.ScrollView = cc.Layer.extend({
         var frame = cc.RectMake(this.getPosition().x, this.getPosition().y, this._viewSize.width, this._viewSize.height);
 
         //dispatcher does not know about clipping. reject touches outside visible bounds.
-        if (this._touches.length > 2 || m_bTouchMoved ||
+        if (this._touches.length > 2 || this._touchMoved ||
             !cc.CCRectContainsPoint(frame, this._container.convertToWorldSpace(this._container.convertTouchToNodeSpace(touch)))) {
             return false;
         }
@@ -439,7 +439,7 @@ cc.ScrollView = cc.Layer.extend({
             return;
 
         if (this._touches.index(touch)) {
-            if (this._touches.length == 1 && m_bTouchMoved)
+            if (this._touches.length == 1 && this._touchMoved)
                 this.schedule(this._deaccelerateScrolling);
             cc.ArrayRemoveObject(this._touches, touch);
         }
@@ -478,57 +478,92 @@ cc.ScrollView = cc.Layer.extend({
     isClippingToBounds:function () {
         return this._clippingToBounds;
     },
+
     setClippingToBounds:function (clippingToBounds) {
         this._clippingToBounds = clippingToBounds;
     },
 
-    visit:function () {
+    visit:function (ctx) {
         // quick return if not visible
         if (!this.isVisible())
             return;
 
-        //TODO draw by canvas
-        cc.kmGLPushMatrix();
+        var context = ctx || cc.renderContext;
+        var i;
 
-        //	glPushMatrix();
+        if (cc.renderContextType == cc.CANVAS) {
+            context.save();
+            this.transform(context);
+            this._beforeDraw();
 
-        if (this._grid && this._grid.isActive()) {
-            this._grid.beforeDraw();
-            this.transformAncestors();
-        }
+            if (this._children && this._children.length > 0) {
+                this.sortAllChildren();
+                // draw children zOrder < 0
+                for (i = 0; i < this._children.length; i++) {
+                    if (this._children[i] && this._children[i]._zOrder < 0)
+                        this._children[i].visit(context);
+                    else
+                        break;
+                }
 
-        this.transform();
-        this.beforeDraw();
+                this.draw(context);             // self draw
 
-        if (this._children) {
-            var i = 0;
+                // draw children zOrder >= 0
+                if (this._children) {
+                    for (; i < this._children.length; i++) {
+                        if (this._children[i] && this._children[i]._zOrder >= 0)
+                            this._children[i].visit(context);
+                    }
+                }
+            } else
+                this.draw(context);             // self draw
 
-            // draw children zOrder < 0
-            for (; i < this._children.length; i++) {
-                if (this._children[i].getZOrder() < 0)
-                    this._children[i].visit();
-                else
-                    break;
-            }
-
-            // this draw
-            this.draw();
-
-            // draw children zOrder >= 0
-            for (; i < this._children.length; i++) {
-                this._children[i].visit();
-            }
+            this._afterDraw();
+            context.restore();
         } else {
-            this.draw();
-        }
+            //TODO visit by WebGL
+            /*cc.kmGLPushMatrix();
 
-        this.afterDraw();
-        if (this._grid && this._grid.isActive()) {
-            this._grid.afterDraw(this);
-        }
+             //	glPushMatrix();
 
-        cc.kmGLPopMatrix();
-        //	glPopMatrix();
+             if (this._grid && this._grid.isActive()) {
+             this._grid.beforeDraw();
+             this.transformAncestors();
+             }
+
+             this.transform();
+             this.beforeDraw();
+
+             if (this._children) {
+             var i = 0;
+
+             // draw children zOrder < 0
+             for (; i < this._children.length; i++) {
+             if (this._children[i].getZOrder() < 0)
+             this._children[i].visit();
+             else
+             break;
+             }
+
+             // this draw
+             this.draw();
+
+             // draw children zOrder >= 0
+             for (; i < this._children.length; i++) {
+             this._children[i].visit();
+             }
+             } else {
+             this.draw();
+             }
+
+             this.afterDraw();
+             if (this._grid && this._grid.isActive()) {
+             this._grid.afterDraw(this);
+             }
+
+             cc.kmGLPopMatrix();
+             //	glPopMatrix();*/
+        }
     },
 
     addChild:function (child, zOrder, tag) {
@@ -545,7 +580,6 @@ cc.ScrollView = cc.Layer.extend({
         } else {
             this._super(child, zOrder, tag);
         }
-
     },
 
     setTouchEnabled:function (e) {
@@ -564,7 +598,7 @@ cc.ScrollView = cc.Layer.extend({
      * @return initialized scroll view object
      */
     _initWithViewSize:function (size) {
-
+        return null;
     },
 
     /**
@@ -611,7 +645,7 @@ cc.ScrollView = cc.Layer.extend({
         var newX, newY;
         var maxInset, minInset;
 
-        this._container.setPosition(cc.pAdd(this._container.getPosition(), m_tScrollDistance));
+        this._container.setPosition(cc.pAdd(this._container.getPosition(), this._scrollDistance));
 
         if (this._bounceable) {
             maxInset = this._maxInset;
@@ -664,18 +698,23 @@ cc.ScrollView = cc.Layer.extend({
      */
     _beforeDraw:function () {
         if (this._clippingToBounds) {
-            // TODO: This scrollview should respect parents' positions
             var screenPos = this.convertToWorldSpace(this.getParent().getPosition());
-
-            glEnable(GL_SCISSOR_TEST);
             var s = this.getScale();
+            s *= cc.Director.getInstance().getContentScaleFactor();
 
-            var director = cc.Director.getInstance();
-            s *= director.getContentScaleFactor();
+            if (cc.renderContextType == cc.CANVAS) {
+                var ctx = cc.renderContext;
+                ctx.beginPath();
+                ctx.rect(screenPos.x, screenPos.y, (this._viewSize.width * s), (this._viewSize.height * s));
+                ctx.clip();
+                ctx.closePath();
+            } else {
+                // TODO: This scrollview should respect parents' positions
+                glEnable(GL_SCISSOR_TEST);
 
-            //clip
-            glScissor( screenPos.x, screenPos.y, (this._viewSize.width * s), (this._viewSize.height * s)) ;
-
+                //clip
+                glScissor(screenPos.x, screenPos.y, (this._viewSize.width * s), (this._viewSize.height * s));
+            }
         }
     },
     /**
@@ -684,7 +723,10 @@ cc.ScrollView = cc.Layer.extend({
      */
     _afterDraw:function () {
         if (this._clippingToBounds) {
-            glDisable(GL_SCISSOR_TEST);
+            if (cc.renderContextType == cc.WEBGL) {
+                //TODO disable clip
+                glDisable(GL_SCISSOR_TEST);
+            }
         }
     },
     /**
