@@ -161,6 +161,10 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
                 case "tga":
                     //cc.log("cocos2d:not implemented yet")
                     break;
+                case "ccbi":
+                    cc.FileUtils.getInstance().preloadBinaryFileData(res[i].src);
+                    this.resourceCount += 1;
+                    break;
                 default:
                     throw "cocos2d:unknow type : " + res[i].type;
                     break;

@@ -23,15 +23,34 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+/**
+ * the DOM object
+ * @class
+ * @type {Object}
+ */
 cc.DOM = {};
+/**
+ * Set to true to enalbe DOM debugging/editing, which allows you to move, rotate, scale, skew an element.
+ * Set to false to turn off debugging/editing
+ * @type Boolean
+ */
 cc.DOMEditMode = true;
+/**
+ * @function
+ * @private
+ * @param x
+ */
 cc.DOM.addMethods = function (x) {
     for (funcs in cc.DOM.methods) {
         x[funcs] = cc.DOM.methods[funcs];
     }
 };
-cc.DOM.methods = {
+cc.DOM.methods = /** @lends cc.DOM# */{
+    /**
+     * Replace the set position of ccNode
+     * @param {object|Number} x
+     * @param {Number} y
+     */
     setPosition:function (x, y) {
         if (y != null) {
             this._position.x = x;
@@ -42,14 +61,29 @@ cc.DOM.methods = {
         }
         this.dom.translates(this._position.x, -this._position.y);
     },
+    /**
+     * replace set Position Y of ccNode
+     * @param {Number} y
+     */
     setPositionY:function (y) {
         this._position.y = y;
         this.dom.translates(this._position.x, -this._position.y);
     },
+
+    /**
+     * replace set Position X of ccNode
+     * @param {Number} x
+     */
     setPositionX:function (x) {
         this._position.x = x;
         this.dom.translates(this._position.x, -this._position.y);
     },
+
+    /**
+     * replace set Scale of ccNode
+     * @param {object|Number} scale
+     * @param {Number} scaleY
+     */
     setScale:function (scale, scaleY) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
@@ -61,14 +95,29 @@ cc.DOM.methods = {
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.dom.resize(this._scaleX, this._scaleY);
     },
+
+    /**
+     * replace set Scale X of ccNode
+     * @param {Number} x
+     */
     setScaleX:function (x) {
         this._scaleX = x;
         this.dom.resize(this._scaleX, this._scaleY);
     },
+
+    /**
+     * replace set Scale Y of ccNode
+     * @param {Number} y
+     */
     setScaleY:function (y) {
         this._scaleY = y;
         this.dom.resize(this._scaleX, this._scaleY);
     },
+
+    /**
+     * replace set anchorpoint of ccNode
+     * @param {object} point
+     */
     setAnchorpoint:function (point) {
         this._anchorPoint = point;
         this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
@@ -83,6 +132,11 @@ cc.DOM.methods = {
             this.dom.style.marginBottom = -this._anchorPointInPoints.y + 'px';
         }
     },
+
+    /**
+     * replace set ContentSize of ccNode
+     * @param {cc.Size} size
+     */
     setContentSize:function (size) {
         if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
             this._contentSize = size;
@@ -103,6 +157,11 @@ cc.DOM.methods = {
         }
         this.redraw();
     },
+
+    /**
+     * replace set Rotation of ccNode
+     * @param {Number} newRotation
+     */
     setRotation:function (newRotation) {
         if (this._rotation == newRotation)
             return;
@@ -113,14 +172,29 @@ cc.DOM.methods = {
         this._rotationRadians = this._rotation * (Math.PI / 180);
         this.dom.rotate(newRotation);
     },
+
+    /**
+     * replace set SkewX of ccNode
+     * @param {Number} x
+     */
     setSkewX:function (x) {
         this._skewX = x;
         this.dom.setSkew(this._skewX, this._skewY);
     },
+
+    /**
+     * replace set SkewY of ccNode
+     * @param {Number} y
+     */
     setSkewY:function (y) {
         this._skewY = y;
         this.dom.setSkew(this._skewX, this._skewY);
     },
+
+    /**
+     * replace set Visible of ccNode
+     * @param {Boolean} x
+     */
     setVisible:function (x) {
         this._isVisible = x;
         if (this.dom)
@@ -131,10 +205,19 @@ cc.DOM.methods = {
         if (this.dom)
             this.dom.zIndex = z;
     },
+
+    /**
+     * replace set Parent of ccNode
+     * @param {cc.Node} p
+     */
     setParent:function (p) {
         this._parent = p;
         cc.DOM.parentDOM(this);
     },
+
+    /**
+     * replace resume Schedule and actions of ccNode
+     */
     resumeSchedulerAndActions:function () {
         this.getScheduler().resumeTarget(this);
         this.getActionManager().resumeTarget(this);
@@ -150,6 +233,10 @@ cc.DOM.methods = {
         if (this.dom)
             this.dom.style.visibility = "visible";
     },
+
+    /**
+     * replace pause Schedule and Actions of ccNode
+     */
     pauseSchedulerAndActions:function () {
         this.getScheduler().pauseTarget(this);
         this.getActionManager().pauseTarget(this);
@@ -157,6 +244,10 @@ cc.DOM.methods = {
             this.dom.style.visibility = 'hidden';
         }
     },
+
+    /**
+     * replace clean up of ccNode
+     */
     cleanup:function () {
         // actions
         this.stopAllActions();
@@ -169,6 +260,9 @@ cc.DOM.methods = {
             //this.dom=null;
         }
     },
+    /**
+     * replace remove from parent and clean up of ccNode
+     */
     removeFromParentAndCleanup:function () {
         this.dom.remove();
         //this.dom=null;
@@ -177,6 +271,9 @@ cc.DOM.methods = {
         this._opacity = o;
         this.dom.style.opacity = o / 255;
     },
+    /**
+     * refresh/updates the DOM element
+     */
     redraw:function () {
         if (this.isSprite) {
             var tmp = this._children;
@@ -189,6 +286,12 @@ cc.DOM.methods = {
         }
     }
 };
+/**
+ * @function
+ * @private
+ * @param x
+ * @return {Boolean}
+ */
 cc.DOM.parentDOM = function (x) {
     var p = x.getParent();
     //if has parent, parent need to have dom too
@@ -217,6 +320,12 @@ cc.DOM.parentDOM = function (x) {
      p.parentDiv = p.parentDiv || this.parentDiv;
      }*/
 };
+
+/**
+ * @function
+ * @private
+ * @param x
+ */
 cc.DOM.setTransform = function (x) {
     if (x.ctx) {
         /*        x.ctx.save();
@@ -253,6 +362,12 @@ cc.DOM.setTransform = function (x) {
     }
 
 };
+
+/**
+ * @function
+ * @private
+ * @param x
+ */
 cc.DOM.forSprite = function (x) {
     x.dom = cc.$new('div');
     x.canvas = cc.$new('canvas');
@@ -272,6 +387,12 @@ cc.DOM.forSprite = function (x) {
     }
     x.isSprite = true;
 };
+
+/**
+ * @function
+ * @private
+ * @param x
+ */
 cc.DOM.forMenuToggler = function (x) {
     x.dom = cc.$new('div');
     x.dom2 = cc.$new('div');
@@ -329,6 +450,12 @@ cc.DOM.forMenuToggler = function (x) {
     x.dom.style.position = "absolute";
     x.isToggler = true;
 };
+
+/**
+ * @function
+ * @private
+ * @param x
+ */
 cc.DOM.forMenuItem = function (x) {
     x.dom = cc.$new('div');
     x.canvas = cc.$new('canvas');
@@ -381,6 +508,13 @@ cc.DOM.forMenuItem = function (x) {
         })
     }
 };
+
+/**
+ * This creates divs for parent Nodes that are related to the current node
+ * @function
+ * @private
+ * @param x
+ */
 cc.DOM.placeHolder = function (x) {
     //creating a placeholder dom to simulate other ccNode in the hierachy
     x.dom = cc.$new('div');
@@ -396,7 +530,19 @@ cc.DOM.placeHolder = function (x) {
     cc.DOM.addMethods(x);
     //x.dom.style.border = 'red 1px dotted';
 };
-//does not return, only convert
+
+/**
+ * Converts cc.Sprite or cc.MenuItem to DOM elements <br/>
+ * It currently only supports cc.Sprite and cc.MenuItem
+ * @function
+ * @param {cc.Sprite|cc.MenuItem|Array}
+    * * @example
+ * // example
+ * cc.DOM.convert(Sprite1, Sprite2, Menuitem);
+ *
+ * var myDOMElements = [Sprite1, Sprite2, MenuItem];
+ * cc.DOM.convert(myDOMElements);
+ */
 cc.DOM.convert = function () {
     //if passing by list, make it an array
     if (arguments.length > 1) {

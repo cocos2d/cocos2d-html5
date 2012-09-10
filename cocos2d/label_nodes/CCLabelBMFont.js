@@ -49,7 +49,7 @@ cc._BMFontDef = function (charID, rect, xOffset, yOffset, xAdvance) {
     //! ID of the character
     this.charID = charID || 0;
     //! origin and size of the font
-    this.rect = rect || cc.rect(0, 0, 10, 10);
+    this.rect = rect || cc.rect(0, 0, 0.1, 0.1);
     //! The X amount the image should be offset when drawing the image (in pixels)
     this.xOffset = xOffset || 0;
     //! The Y amount the image should be offset when drawing the image (in pixels)
@@ -116,26 +116,8 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      * Constructor
      */
     ctor:function () {
-        this.fontDefDictionary = {
-            "0":{
-                "key":"0",
-                "fontDef":{
-                    "charID":"0",
-                    "rect":{
-                        "origin":{
-                            "x":0,
-                            "y":0
-                        },
-                        "size":{
-                            "width":1,
-                            "height":1
-                        }
-                    },
-                    "xOffset":0,
-                    "yOffset":0,
-                    "xAdvance":0}
-            }
-        }
+        this.fontDefDictionary = {};
+        this.fontDefDictionary["0"] = new cc._FontDefHashElement();
     },
 
     /**
@@ -672,7 +654,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             // update kerning
             nextFontPositionX += fontDef.xAdvance + kerningAmount;
-            prev = c;
+            prev = key;
 
             // Apply label properties
             fontChar.setOpacityModifyRGB(this._opacityModifyRGB);

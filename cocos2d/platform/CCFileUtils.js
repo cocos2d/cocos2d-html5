@@ -70,17 +70,65 @@ cc.SAX_ARRAY = 6;
  * @namespace
  */
 cc.FileUtils = cc.Class.extend({
+    _fileDataCache:null,
+
+    ctor:function(){
+       this._fileDataCache = {};
+    },
     /**
      * Get resource file data
      * @function
      * @param {String} fileName The resource file name which contain the path
-     * @param {Number} mode mode The read mode of the file
+     * @param {String} mode mode The read mode of the file
      * @param {Number} size If get the file data succeed the it will be the data size,or it will be 0
      * @warning If you get the file data succeed,you must delete it after used.
-     * @deprecated
      */
-
     getFileData:function (fileName, mode, size) {
+        if(this._fileDataCache.hasOwnProperty(fileName))
+            return this._fileDataCache[fileName];
+
+        return this._loadBinaryFileData(fileName);
+    },
+
+    preloadBinaryFileData:function(fileUrl){
+        var selfPointer = this;
+        var xhr = new XMLHttpRequest();
+        xhr.open("GET", fileUrl, true);
+        if(xhr.overrideMimeType)
+            xhr.overrideMimeType("text\/plain; charset=x-user-defined");
+        xhr.onload = function(e) {
+            var arrayStr = xhr.responseText;
+            if(arrayStr){
+                cc.Loader.shareLoader().onResLoaded();
+                selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
+            }
+        };
+        xhr.send(null);
+    },
+
+    _loadBinaryFileData:function(fileUrl){
+        var req = new XMLHttpRequest();
+        req.open('GET', fileUrl, false);
+        if(req.overrideMimeType)
+            req.overrideMimeType('text\/plain; charset=x-user-defined');
+        req.send(null);
+        if (req.status != 200)
+            return '';
+
+        var arrayInfo = this._stringConvertToArray(req.responseText);
+        this._fileDataCache[fileUrl] = arrayInfo;
+        return arrayInfo;
+    },
+
+    _stringConvertToArray:function(strData){
+        if(!strData)
+            return null;
+
+        var arrData = new Uint8Array(strData.length);
+        for(var i = 0; i< strData.length; i++){
+            arrData[i] = strData.charCodeAt(i) ; //& 0xff;
+        }
+        return arrData;
     },
 
     /**
@@ -214,7 +262,6 @@ cc.s_SharedFileUtils = null;
 cc.FileUtils.getInstance =  function(){
     if(cc.s_SharedFileUtils == null){
         cc.s_SharedFileUtils =  new cc.FileUtils();
-
     }
     return cc.s_SharedFileUtils;
 };
