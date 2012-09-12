@@ -219,9 +219,9 @@ cc.CCBReader = cc.Class.extend({
         if (signed) {
             var s = current % 2;
             if (s) {
-                num = current / 2;
+                num = 0|(current / 2);
             } else {
-                num = -current / 2;
+                num = 0|(-current / 2);
             }
         } else {
             num = current - 1;
