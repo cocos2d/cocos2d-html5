@@ -78,6 +78,7 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     _listener:null,
     _selector:null,
     _isSelected:false,
+    _isEnabled:false,
 
     /**
      * MenuItem is selected
@@ -86,7 +87,16 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
     isSelected:function () {
         return this._isSelected;
     },
-    _isEnabled:false,
+
+    /**
+     * set the target/selector of the menu item
+     * @param {cc.Node} rec
+     * @param {function|String} selector
+     */
+    setTarget:function (rec,  selector) {
+        this._listener = rec;
+        this._selector = selector;
+    },
 
     /**
      * MenuItem is Enabled

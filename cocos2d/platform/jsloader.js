@@ -111,7 +111,7 @@
     var c = d.querySelector('#cocos2d-html5').c;
 
     if(c.loadExtension != null && c.loadExtension == true){
-        engine.concat([
+        engine = engine.concat([
             '../extensions/GUI/CCControlExtension/CCControl.js',
             '../extensions/GUI/CCControlExtension/CCControlButton.js',
             '../extensions/GUI/CCControlExtension/CCControlUtils.js',
@@ -124,6 +124,8 @@
             '../extensions/GUI/CCControlExtension/CCControlSlider.js',
             '../extensions/GUI/CCControlExtension/CCControlSwitch.js',
             '../extensions/GUI/CCScrollView/CCScrollView.js',
+            '../extensions/GUI/CCScrollView/CCSorting.js',
+            '../extensions/GUI/CCScrollView/CCTableView.js',
             '../extensions/CCBReader/CCNodeLoader.js',
             '../extensions/CCBReader/CCBReaderUtil.js',
             '../extensions/CCBReader/CCControlLoader.js',
