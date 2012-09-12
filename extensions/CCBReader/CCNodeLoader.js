@@ -602,7 +602,7 @@ cc.NodeLoader = cc.Class.extend({
             }
 
             if (target != null) {
-                if (selectorName.length() > 0) {
+                if (selectorName.length > 0) {
                     var selMenuHandler = 0;
 
                     var targetAsCCBSelectorResolver = target;
