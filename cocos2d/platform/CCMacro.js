@@ -25,6 +25,12 @@
  ****************************************************************************/
 
 /**
+ * @constant
+ * @type Number
+ */
+cc.INVALID_INDEX = 0xffffffff;
+
+/**
  * PI is the ratio of a circle's circumference to its diameter.
  * @constant
  * @type Number

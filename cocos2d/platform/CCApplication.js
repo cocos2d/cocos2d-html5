@@ -148,26 +148,33 @@ if (!window.console) {
 cc.setup = function (el, width, height) {
     var element = cc.$(el) || cc.$('#' + el);
     if (element.tagName == "CANVAS") {
+        width = width || element.width;
+        height = height || element.height;
+
         //it is already a canvas, we wrap it around with a div
         cc.container = cc.$new("DIV");
         cc.canvas = element;
         cc.canvas.parentNode.insertBefore(cc.container, cc.canvas);
         cc.canvas.appendTo(cc.container);
-        cc.container.style.width = (width || cc.canvas.width || 480) + "px";
-        cc.container.style.height = (height || cc.canvas.height || 320) + "px";
+        cc.container.style.width = (width || 480) + "px";
+        cc.container.style.height = (height || 320) + "px";
         cc.container.setAttribute('id', 'Cocos2dGameContainer');
         cc.canvas.setAttribute("width", width || 480);
         cc.canvas.setAttribute("height", height || 320);
-    }
-    else {//we must make a new canvas and place into this element
+    } else {//we must make a new canvas and place into this element
         if (element.tagName != "DIV") {
             cc.log("Warning: target element is not a DIV or CANVAS");
         }
+        width = width || parseInt(element.style.width);
+        height = height || parseInt(element.style.height);
+
         cc.canvas = cc.$new("CANVAS");
         cc.canvas.addClass("gameCanvas");
         cc.canvas.setAttribute("width", width || 480);
         cc.canvas.setAttribute("height", height || 320);
         cc.container = element;
+        cc.container.style.width = (width || 480) + "px";
+        cc.container.style.height = (height || 320) + "px";
     }
     cc.container.style.position = 'relative';
     cc.container.style.overflow = 'hidden';

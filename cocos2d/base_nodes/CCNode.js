@@ -1665,7 +1665,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertTouchToNodeSpace:function (touch) {
         var point = touch.getLocation();
-        point = cc.Director.getInstance().convertToGL(point);
+        //TODO in canvas point don't convert to GL
+        //point = cc.Director.getInstance().convertToGL(point);
         return this.convertToNodeSpace(point);
     },
 
