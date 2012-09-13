@@ -651,6 +651,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
  */
 cc.ParticleSystemQuad.create = function (pListFile) {
     var ret = new cc.ParticleSystemQuad();
+    if(!pListFile)
+        return ret;
     if (ret && ret.initWithFile(pListFile)) {
         return ret;
     }
