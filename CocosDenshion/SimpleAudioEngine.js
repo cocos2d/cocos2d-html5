@@ -57,8 +57,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _playingBgm:null,
     _effectsVolume:1,
     /**
-    * Constructor
-    */
+     * Constructor
+     */
     ctor:function () {
         if (this._initialized)
             return;
@@ -318,7 +318,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au;
             for (var i in this._audioList) {
                 au = this._audioList[i];
-                if(au){
+                if (au) {
                     au.volume = this._effectsVolume;
                 }
             }
@@ -336,8 +336,20 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     playEffect:function (path, loop) {
         var soundCache = this._getEffectList(path);
         if (soundCache) {
-            soundCache.loop = loop || false;
-            soundCache.play();
+            if (soundCache.finishedPlaying) {
+                soundCache.finishedPlaying = false;
+                soundCache.loop = loop || false;
+                soundCache.play();
+            }
+            else {
+                var tempsoundCache = new Audio(path + "." + this._activeAudioExt);
+                tempsoundCache.load();
+                tempsoundCache.loop = loop || false;
+                tempsoundCache.addEventListener('ended', function () {
+                    tempsoundCache = null;
+                });
+                tempsoundCache.play();
+            }
         }
         return path;
     },
@@ -366,7 +378,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au;
             for (var i in this._audioList) {
                 au = this._audioList[i];
-                if(au){
+                if (au) {
                     au.pause();
                 }
             }
@@ -397,7 +409,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au;
             for (var i in this._audioList) {
                 au = this._audioList[i];
-                if(au){
+                if (au) {
                     au.play();
                 }
             }
@@ -429,7 +441,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au;
             for (var i in this._audioList) {
                 au = this._audioList[i];
-                if(au){
+                if (au) {
                     au.pause();
                     au.currentTime = 0;
                 }
@@ -460,6 +472,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             // load it
             soundCache.load();
             this._audioList[path] = soundCache;
+            soundCache.finishedPlaying = true;
+            soundCache.addEventListener('ended', function () {
+                this.finishedPlaying = true;
+            })
         }
         cc.Loader.shareLoader().onResLoaded();
     },
