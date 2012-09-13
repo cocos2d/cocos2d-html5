@@ -92,6 +92,29 @@
             <sources dir="${basedir}/../CocosDenshion">
                 <file name="SimpleAudioEngine.js"/>
             </sources>
+            <!-- extensions -->
+            <sources dir="${basedir}/../extensions">
+                <file name="CCBReader/CCNodeLoaderLibrary.js"/>
+                <file name="CCBReader/CCBReaderUtil.js"/>
+                <file name="CCBReader/CCNodeLoader.js"/>
+                <file name="CCBReader/CCBReader.js"/>
+                <file name="CCBReader/CCControlLoader.js"/>
+                <file name="CCBReader/CCSpriteLoader.js"/>
+                <file name="GUI/CCControlExtension/CCControl.js"/>
+                <file name="GUI/CCControlExtension/CCControlButton.js"/>
+                <file name="GUI/CCControlExtension/CCControlUtils.js"/>
+                <file name="GUI/CCControlExtension/CCInvocation.js"/>
+                <file name="GUI/CCControlExtension/CCScale9Sprite.js"/>
+                <file name="GUI/CCControlExtension/CCControlSlider.js"/>
+                <file name="GUI/CCControlExtension/CCControlSwitch.js"/>
+                <file name="GUI/CCControlExtension/CCControlColourPicker.js"/>
+                <file name="GUI/CCControlExtension/CCControlHuePicker.js"/>
+                <file name="GUI/CCControlExtension/CCControlSaturationBrightnessPicker.js"/>
+                <file name="GUI/CCControlExtension/CCMenuPassive.js"/>
+                <file name="GUI/CCScrollView/CCSorting.js"/>
+                <file name="GUI/CCScrollView/CCTableView.js"/>
+                <file name="GUI/CCScrollView/CCScrollView.js"/>
+            </sources>
         </jscomp>
     </target>
 </project>
