@@ -694,8 +694,7 @@ cc.NodeLoader = cc.Class.extend({
         var ccbiFileName = ccbFileWithoutPathExtension + ".ccbi";
 
         var newCCBReader = new cc.CCBReader(ccbReader);
-
-        return ccbReader.readNodeGraphFromFile(newCCBReader.getCCBRootPath(), ccbiFileName, newCCBReader.getOwner(), parent.getContentSize());
+        return newCCBReader.readNodeGraphFromFile(ccbReader.getCCBRootPath(), ccbiFileName, ccbReader.getOwner(), parent.getContentSize());
     },
 
     onHandlePropTypePosition:function (node, parent, propertyName, position, ccbReader) {
