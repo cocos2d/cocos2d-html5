@@ -181,7 +181,7 @@ cc.Scale9Sprite = cc.Node.extend({
     },
     setCapInsets:function (capInsets) {
         var contentSize = this._contentSize;
-        this.updateWithBatchNode(this.scale9Image, this._spriteRect, capInsets);
+        this.updateWithBatchNode(this._scale9Image, this._spriteRect, capInsets);
         this.setContentSize(contentSize);
     },
 
@@ -404,24 +404,19 @@ cc.Scale9Sprite = cc.Node.extend({
         this._scale9Image.addChild(this._centre, 0, cc.POSITIONS_CENTRE);
 
         // Top
-        this._top = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x,
-            t,
-            this._capInsetsInternal.size.width,
+        this._top = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x, t, this._capInsetsInternal.size.width,
             this._capInsetsInternal.origin.y - t));
         this._scale9Image.addChild(this._top, 1, cc.POSITIONS_TOP);
 
         // Bottom
         this._bottom = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x,
-            this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
-            this._capInsetsInternal.size.width,
+            this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height, this._capInsetsInternal.size.width,
             h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
         this._scale9Image.addChild(this._bottom, 1, cc.POSITIONS_BOTTOM);
 
         // Left
         this._left = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            l,
-            this._capInsetsInternal.origin.y,
-            this._capInsetsInternal.origin.x - l,
+            l, this._capInsetsInternal.origin.y, this._capInsetsInternal.origin.x - l,
             this._capInsetsInternal.size.height));
         this._scale9Image.addChild(this._left, 1, cc.POSITIONS_LEFT);
 
@@ -435,26 +430,20 @@ cc.Scale9Sprite = cc.Node.extend({
 
         // Top left
         this._topLeft = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            l,
-            t,
-            this._capInsetsInternal.origin.x - l,
-            this._capInsetsInternal.origin.y - t));
+            l, t, this._capInsetsInternal.origin.x - l, this._capInsetsInternal.origin.y - t));
         this._scale9Image.addChild(this._topLeft, 2, cc.POSITIONS_TOPLEFT);
 
         // Top right
         this._topRight = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            this._capInsetsInternal.origin.x + this._capInsetsInternal.size.width,
-            t,
+            this._capInsetsInternal.origin.x + this._capInsetsInternal.size.width, t,
             w - (this._capInsetsInternal.origin.x - l + this._capInsetsInternal.size.width),
             this._capInsetsInternal.origin.y - t));
         this._scale9Image.addChild(this._topRight, 2, cc.POSITIONS_TOPRIGHT);
 
         // Bottom left
         this._bottomLeft = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            l,
-            this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
-            this._capInsetsInternal.origin.x - l,
-            h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
+            l, this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
+            this._capInsetsInternal.origin.x - l, h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
         this._scale9Image.addChild(this._bottomLeft, 2, cc.POSITIONS_BOTTOMLEFT);
 
         // Bottom right
@@ -465,10 +454,8 @@ cc.Scale9Sprite = cc.Node.extend({
             h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
         this._scale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
 
-
         this.setContentSize(rect.size);
         this.addChild(this._scale9Image);
-
         return true;
     },
 

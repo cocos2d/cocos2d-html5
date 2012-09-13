@@ -1038,14 +1038,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                         node.onExitTransitionDidStart();
                         node.onExit();
                     }
-                    if (cleanup) {
+                    if (cleanup)
                         node.cleanup();
-                    }
                     // set parent nil at the end
                     node.setParent(null);
                 }
             }
-            this._children = [];
+            this._children.length = 0;
         }
     },
 
