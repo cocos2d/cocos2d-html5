@@ -52,7 +52,7 @@ cc.ControlLoader = cc.NodeLoader.extend({
     },
     onHandlePropTypeBlockCCControl:function (node, parent, propertyName, blockCCControlData, ccbReader) {
         if (propertyName == PROPERTY_CCCONTROL) {
-            node.addTargetWithActionForControlEvents(blockCCControlData.mTarget, blockCCControlData.selCCControlHandler, blockCCControlData.controlEvents);
+            node.addTargetWithActionForControlEvents(blockCCControlData.target, blockCCControlData.selCCControlHandler, blockCCControlData.controlEvents);
         } else {
             this._super(node, parent, propertyName, blockCCControlData, ccbReader);
         }

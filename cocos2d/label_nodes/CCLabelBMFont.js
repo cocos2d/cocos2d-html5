@@ -527,7 +527,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      *  init LabelBMFont
      */
     init:function () {
-        this.initWithString(null, null, null, null, null);
+        return this.initWithString(null, null, null, null, null);
     },
 
     /**
@@ -982,6 +982,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._configuration = newConf;
 
             this.setTexture(cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName()));
+            if (cc.renderContextType == cc.CANVAS) {
+                this._originalTexture = this.getTexture();
+            }
             this.createFontChars();
         }
     },
@@ -1045,6 +1048,13 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
+    if(arguments.length == 0){
+        if(ret && ret.init()){
+            return ret;
+        }
+        return null;
+    }
+
     if (ret && ret.initWithString(str, fntFile, width, alignment, imageOffset)) {
         return ret;
     }
