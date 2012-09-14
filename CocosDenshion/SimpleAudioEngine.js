@@ -352,6 +352,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         for (var i = 0; i < soundPath.length; i++) {
             //if one of the effect ended, play it
             if (soundPath[i].ended) {
+                if (loop) {
+                    soundPath[i].loop = loop;
+                    soundPath[i].currentTime = 0;
+                }
                 soundPath[i].play();
                 return path;
             }
@@ -359,6 +363,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         //If code reach here, means no cache or all cache are playing, then we create new one
         var cache = this._pushEffectCache(path);
         if (cache) {
+            if (loop) {
+                cache.loop = loop;
+            }
             cache.play();
         }
         return path;
@@ -384,8 +391,11 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     pauseEffect:function (path) {
         if (this._audioList[path]) {
-            for (var i = 0; i < this._audioList[path].length; i++) {
-                this._audioList[path][i].pause();
+            for (var i = this._audioList[path].length - 1; i >= 0; i--) {
+                if (!this._audioList[path][i].ended) {
+                    this._audioList[path][i].pause();
+                    return;
+                }
             }
 
         }
@@ -403,8 +413,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             for (var i in this._audioList) {
                 au = this._audioList[i];
                 if (au) {
-                    for (var i = 0; i < au.length; i++) {
-                        au[i].pause();
+                    for (var j = 0; j < au.length; j++) {
+                        au[j].pause();
                     }
                 }
             }
@@ -422,7 +432,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (this._audioList[path]) {
             for (var i = 0; i < this._audioList[path].length; i++) {
                 if (!this._audioList[path][i].ended)
-                    this._audioList[path].play();
+                    this._audioList[path][i].play();
             }
         }
     },
@@ -456,9 +466,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     stopEffect:function (path) {
         if (this._audioList[path]) {
-            for (var i = 0; i < this._audioList[path].length; i++) {
-                this._audioList[path][i].pause();
-                this._audioList[path][i].currentTime = 0;
+            for (var i = this._audioList[path].length - 1; i >= 0; i--) {
+                if (!this._audioList[path][i].ended) {
+                    this._audioList[path][i].loop = false;
+                    this._audioList[path][i].currentTime = this._audioList[path][i].duration;
+                    return;
+                }
             }
         }
     },
@@ -476,8 +489,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 au = this._audioList[i];
                 for (var j = 0; j < au.length; j++) {
                     if (au[j] && !au[j].ended) {
-                        au[j].pause();
-                        au[j].currentTime = 0;
+                        au[j].loop = false;
+                        au[j].currentTime = au[j].duration;
                     }
                 }
             }
