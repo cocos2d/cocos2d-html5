@@ -500,7 +500,7 @@ cc.TableView = cc.ScrollView.extend({
                 var cellSize = this._dataSource.cellSizeForTable(this);
                 point.y -= cellSize.height;
             }
-            var index = this._indexFromOffset(point);
+            var index = 0 | this._indexFromOffset(point);
             var cell = this._cellWithIndex(index);
 
             if (cell) {
