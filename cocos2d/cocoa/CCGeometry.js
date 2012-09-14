@@ -136,6 +136,23 @@ cc.Rect.CCRectEqualToRect = function (rect1, rect2) {
 };
 
 /**
+ * @function
+ * @param {cc.Rect} rect1
+ * @param {cc.Rect} rect2
+ * @return {Boolean}
+ */
+cc.Rect.CCRectContainsRect = function (rect1, rect2) {
+    if (!rect1 || !rect2)
+        return false;
+
+    if ((rect1.origin.x >= rect2.origin.x) || (rect1.origin.y >= rect2.origin.y) ||
+        ( rect1.origin.x + rect1.size.width <= rect2.origin.x + rect2.size.width) ||
+        ( rect1.origin.y + rect1.size.height <= rect2.origin.y + rect2.size.height))
+        return false;
+    return true;
+};
+
+/**
  * return the rightmost x-value of 'rect'
  * @function
  * @param {cc.Rect} rect
