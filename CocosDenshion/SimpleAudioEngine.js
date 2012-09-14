@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+var cc = cc || {};
 /**
  * Whether the sound on or not
  * @type Boolean
@@ -39,7 +39,7 @@ cc.capabilities = {
     ogg:false,
     wav:false
 };
-
+cc.MAX_AUDIO_INSTANCES = 10;
 /**
  * Offer a VERY simple interface to play background music & sound effect.
  * @class
@@ -334,24 +334,42 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * var soundId = cc.AudioEngine.getInstance().playEffect(path);
      */
     playEffect:function (path, loop) {
-        var soundCache = this._getEffectList(path);
-        if (soundCache) {
-            if (soundCache.finishedPlaying) {
-                soundCache.finishedPlaying = false;
-                soundCache.loop = loop || false;
-                soundCache.play();
-            }
-            else {
-                var tempsoundCache = new Audio(path + "." + this._activeAudioExt);
-                tempsoundCache.load();
-                tempsoundCache.loop = loop || false;
-                tempsoundCache.addEventListener('ended', function () {
-                    tempsoundCache = null;
-                });
-                tempsoundCache.play();
+        /*        var soundCache = this._getEffectList(path);
+         if (soundCache) {
+         if (soundCache.ended) {
+         soundCache.loop = loop || false;
+         soundCache.play();
+         }
+         else {
+         var tempsoundCache = soundCache.cloneNode(true);
+         tempsoundCache.addEventListener('ended', function () {
+         tempsoundCache = null;
+         });
+         tempsoundCache.play();
+         }
+         }*/
+        var soundPath = this._getEffectList(path);
+        for (var i = 0; i < soundPath.length; i++) {
+            //if one of the effect ended, play it
+            if (soundPath[i].ended) {
+                soundPath[i].play();
+                return path;
             }
         }
+        //If code reach here, means no cache or all cache are playing, then we create new one
+        this._pushEffectCache(path).play();
         return path;
+    },
+    _pushEffectCache:function (path) {
+        var soundPath = this._getEffectList(path);
+        if (soundPath.length < cc.MAX_AUDIO_INSTANCES) {
+            var effect = new Audio(path + "." + this._activeAudioExt);
+            soundPath.push(effect);
+            return effect;
+        }
+        else {
+            cc.log("Warning: " + path + " reached Audio Cache limit of " + cc.MAX_AUDIO_INSTANCES);
+        }
     },
 
     /**
@@ -458,24 +476,21 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (this._sound_enable) {
             if (this._activeAudioExt == -1) return;
             var soundPath = path + "." + this._activeAudioExt;
-            var soundCache = new Audio(soundPath);
-            soundCache.preload = 'auto';
+            //var soundCache = new Audio(soundPath);
 
-            soundCache.addEventListener('canplaythrough', function (e) {
-                this.removeEventListener('canplaythrough', arguments.callee,
-                    false);
-            }, false);
-            soundCache.addEventListener("error", function (e) {
-                cc.Loader.shareLoader().onResLoadingErr();
-            }, false);
+            /*soundCache.addEventListener('canplaythrough', function (e) {
+             this.removeEventListener('canplaythrough', arguments.callee,
+             false);
+             }, false);
+             soundCache.addEventListener("error", function (e) {
+             cc.Loader.shareLoader().onResLoadingErr();
+             }, false);*/
 
             // load it
-            soundCache.load();
-            this._audioList[path] = soundCache;
-            soundCache.finishedPlaying = true;
-            soundCache.addEventListener('ended', function () {
-                this.finishedPlaying = true;
-            })
+            //soundCache.load();
+            //this._audioList[path] = soundCache;
+            this._audioList[path] = [];
+            this._pushEffectCache(path);
         }
         cc.Loader.shareLoader().onResLoaded();
     },
