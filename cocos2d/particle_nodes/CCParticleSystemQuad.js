@@ -159,6 +159,114 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         }
     },
 
+    clone:function(){
+       var retParticle = new cc.ParticleSystemQuad();
+
+        // self, not super
+        if (retParticle.initWithTotalParticles(this._totalParticles)) {
+            // angle
+            retParticle._angle = this._angle;
+            retParticle._angleVar = this._angleVar;
+
+            // duration
+            retParticle._duration = this._duration;
+
+            // blend function
+            retParticle._blendFunc.src = this._blendFunc.src;
+            retParticle._blendFunc.dst = this._blendFunc.dst;
+
+            // color
+            retParticle._startColor.r = this._startColor.r;
+            retParticle._startColor.g = this._startColor.g;
+            retParticle._startColor.b = this._startColor.b;
+            retParticle._startColor.a = this._startColor.a;
+
+            retParticle._startColorVar.r = this._startColorVar.r;
+            retParticle._startColorVar.g = this._startColorVar.g;
+            retParticle._startColorVar.b = this._startColorVar.b;
+            retParticle._startColorVar.a = this._startColorVar.a;
+
+            retParticle._endColor.r = this._endColor.r;
+            retParticle._endColor.g = this._endColor.g;
+            retParticle._endColor.b = this._endColor.b;
+            retParticle._endColor.a = this._endColor.a;
+
+            retParticle._endColorVar.r = this._endColorVar.r;
+            retParticle._endColorVar.g = this._endColorVar.g;
+            retParticle._endColorVar.b = this._endColorVar.b;
+            retParticle._endColorVar.a = this._endColorVar.a;
+
+            // particle size
+            retParticle._startSize = this._startSize;
+            retParticle._startSizeVar = this._startSizeVar;
+            retParticle._endSize = this._endSize;
+            retParticle._endSizeVar = this._endSizeVar;
+
+            // position
+            retParticle.setPosition(new cc.Point(this._position.x,this._position.y));
+            retParticle._posVar.x = this._posVar.x;
+            retParticle._posVar.y = this._posVar.y;
+
+            // Spinning
+            retParticle._startSpin = this._startSpin;
+            retParticle._startSpinVar = this._startSpinVar;
+            retParticle._endSpin = this._endSpin;
+            retParticle._endSpinVar = this._endSpinVar;
+
+            retParticle._emitterMode = this._emitterMode;
+
+            // Mode A: Gravity + tangential accel + radial accel
+            if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
+                // gravity
+                retParticle.modeA.gravity.x = this.modeA.gravity.x;
+                retParticle.modeA.gravity.y = this.modeA.gravity.y;
+
+                // speed
+                retParticle.modeA.speed = this.modeA.speed;
+                retParticle.modeA.speedVar = this.modeA.speedVar;
+
+                // radial acceleration
+                retParticle.modeA.radialAccel = this.modeA.radialAccel;
+
+                retParticle.modeA.radialAccelVar = this.modeA.radialAccelVar;
+
+                // tangential acceleration
+                retParticle.modeA.tangentialAccel = this.modeA.tangentialAccel;
+
+                retParticle.modeA.tangentialAccelVar = this.modeA.tangentialAccelVar;
+            } else if (this._emitterMode == cc.PARTICLE_MODE_RADIUS) {
+                // or Mode B: radius movement
+                retParticle.modeB.startRadius = this.modeB.startRadius;
+                retParticle.modeB.startRadiusVar = this.modeB.startRadiusVar;
+                retParticle.modeB.endRadius = this.modeB.endRadius;
+                retParticle.modeB.endRadiusVar = this.modeB.endRadiusVar;
+                retParticle.modeB.rotatePerSecond = this.modeB.rotatePerSecond;
+                retParticle.modeB.rotatePerSecondVar = this.modeB.rotatePerSecondVar;
+            }
+
+            // life span
+            retParticle._life = this._life;
+            retParticle._lifeVar = this._lifeVar;
+
+            // emission Rate
+            retParticle._emissionRate = this._emissionRate;
+
+            //don't get the internal texture if a batchNode is used
+            if (!this._batchNode) {
+                // Set a compatible default for the alpha transfer
+                retParticle._opacityModifyRGB = this._opacityModifyRGB;
+
+                // texture
+                if(this._texture instanceof cc.Texture2D){
+                      retParticle._texture = this._texture;
+                } else {
+                      retParticle._texture = this._texture;
+                }
+            }
+        }
+        return retParticle;
+    },
+
     /**
      * <p> Sets a new CCSpriteFrame as particle.</br>
      * WARNING: this method is experimental. Use setTexture:withRect instead.
