@@ -23,7 +23,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+var cc = cc || {};
 /**
  * Whether the sound on or not
  * @type Boolean
@@ -39,7 +39,7 @@ cc.capabilities = {
     ogg:false,
     wav:false
 };
-
+cc.MAX_AUDIO_INSTANCES = 10;
 /**
  * Offer a VERY simple interface to play background music & sound effect.
  * @class
@@ -334,24 +334,52 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * var soundId = cc.AudioEngine.getInstance().playEffect(path);
      */
     playEffect:function (path, loop) {
-        var soundCache = this._getEffectList(path);
-        if (soundCache) {
-            if (soundCache.finishedPlaying) {
-                soundCache.finishedPlaying = false;
-                soundCache.loop = loop || false;
-                soundCache.play();
-            }
-            else {
-                var tempsoundCache = new Audio(path + "." + this._activeAudioExt);
-                tempsoundCache.load();
-                tempsoundCache.loop = loop || false;
-                tempsoundCache.addEventListener('ended', function () {
-                    tempsoundCache = null;
-                });
-                tempsoundCache.play();
+        /*        var soundCache = this._getEffectList(path);
+         if (soundCache) {
+         if (soundCache.ended) {
+         soundCache.loop = loop || false;
+         soundCache.play();
+         }
+         else {
+         var tempsoundCache = soundCache.cloneNode(true);
+         tempsoundCache.addEventListener('ended', function () {
+         tempsoundCache = null;
+         });
+         tempsoundCache.play();
+         }
+         }*/
+        var soundPath = this._getEffectList(path);
+        for (var i = 0; i < soundPath.length; i++) {
+            //if one of the effect ended, play it
+            if (soundPath[i].ended) {
+                if (loop) {
+                    soundPath[i].loop = loop;
+                    soundPath[i].currentTime = 0;
+                }
+                soundPath[i].play();
+                return path;
             }
         }
+        //If code reach here, means no cache or all cache are playing, then we create new one
+        var cache = this._pushEffectCache(path);
+        if (cache) {
+            if (loop) {
+                cache.loop = loop;
+            }
+            cache.play();
+        }
         return path;
+    },
+    _pushEffectCache:function (path) {
+        var soundPath = this._getEffectList(path);
+        if (soundPath.length < cc.MAX_AUDIO_INSTANCES) {
+            var effect = new Audio(path + "." + this._activeAudioExt);
+            soundPath.push(effect);
+            return effect;
+        }
+        else {
+            cc.log("error: " + path + " greater than " + cc.MAX_AUDIO_INSTANCES);
+        }
     },
 
     /**
@@ -363,7 +391,13 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     pauseEffect:function (path) {
         if (this._audioList[path]) {
-            this._audioList[path].pause();
+            for (var i = this._audioList[path].length - 1; i >= 0; i--) {
+                if (!this._audioList[path][i].ended) {
+                    this._audioList[path][i].pause();
+                    return;
+                }
+            }
+
         }
     },
 
@@ -379,7 +413,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             for (var i in this._audioList) {
                 au = this._audioList[i];
                 if (au) {
-                    au.pause();
+                    for (var j = 0; j < au.length; j++) {
+                        au[j].pause();
+                    }
                 }
             }
         }
@@ -394,7 +430,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     resumeEffect:function (path) {
         if (this._audioList[path]) {
-            this._audioList[path].play();
+            for (var i = 0; i < this._audioList[path].length; i++) {
+                if (!this._audioList[path][i].ended)
+                    this._audioList[path][i].play();
+            }
         }
     },
 
@@ -409,8 +448,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au;
             for (var i in this._audioList) {
                 au = this._audioList[i];
-                if (au) {
-                    au.play();
+                for (var j = 0; j < au.length; j++) {
+                    if (au[j] && !au[j].ended) {
+                        au[j].play();
+                    }
                 }
             }
         }
@@ -425,8 +466,13 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     stopEffect:function (path) {
         if (this._audioList[path]) {
-            this._audioList[path].pause();
-            this._audioList[path].currentTime = 0;
+            for (var i = this._audioList[path].length - 1; i >= 0; i--) {
+                if (!this._audioList[path][i].ended) {
+                    this._audioList[path][i].loop = false;
+                    this._audioList[path][i].currentTime = this._audioList[path][i].duration;
+                    return;
+                }
+            }
         }
     },
 
@@ -441,9 +487,11 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au;
             for (var i in this._audioList) {
                 au = this._audioList[i];
-                if (au) {
-                    au.pause();
-                    au.currentTime = 0;
+                for (var j = 0; j < au.length; j++) {
+                    if (au[j] && !au[j].ended) {
+                        au[j].loop = false;
+                        au[j].currentTime = au[j].duration;
+                    }
                 }
             }
         }
@@ -458,24 +506,21 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (this._sound_enable) {
             if (this._activeAudioExt == -1) return;
             var soundPath = path + "." + this._activeAudioExt;
-            var soundCache = new Audio(soundPath);
-            soundCache.preload = 'auto';
+            //var soundCache = new Audio(soundPath);
 
-            soundCache.addEventListener('canplaythrough', function (e) {
-                this.removeEventListener('canplaythrough', arguments.callee,
-                    false);
-            }, false);
-            soundCache.addEventListener("error", function (e) {
-                cc.Loader.shareLoader().onResLoadingErr();
-            }, false);
+            /*soundCache.addEventListener('canplaythrough', function (e) {
+             this.removeEventListener('canplaythrough', arguments.callee,
+             false);
+             }, false);
+             soundCache.addEventListener("error", function (e) {
+             cc.Loader.shareLoader().onResLoadingErr();
+             }, false);*/
 
             // load it
-            soundCache.load();
-            this._audioList[path] = soundCache;
-            soundCache.finishedPlaying = true;
-            soundCache.addEventListener('ended', function () {
-                this.finishedPlaying = true;
-            })
+            //soundCache.load();
+            //this._audioList[path] = soundCache;
+            this._audioList[path] = [];
+            this._pushEffectCache(path);
         }
         cc.Loader.shareLoader().onResLoaded();
     },
@@ -489,6 +534,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     unloadEffect:function (path) {
         if (this._audioList.hasOwnProperty(path)) {
+            this._audioList[path] = null;
             delete this._audioList[path];
         }
     },
