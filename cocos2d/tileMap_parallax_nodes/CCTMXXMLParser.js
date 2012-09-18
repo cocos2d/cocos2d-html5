@@ -434,7 +434,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      * @return {Element}
      */
     parseXMLFile:function (tmxFile) {
-        var mapXML = cc.SAXParser.shareParser().tmxParse(tmxFile);
+        var mapXML = cc.SAXParser.getInstance().tmxParse(tmxFile);
 
         // PARSE <map>
         var map = mapXML.documentElement;

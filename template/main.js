@@ -32,13 +32,13 @@ var cocos2dApp = cc.Application.extend({
         cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
         cc.setup(this.config['tag']);
         cc.AudioEngine.getInstance().init("mp3,ogg");
-        cc.Loader.shareLoader().onloading = function () {
-            cc.LoaderScene.shareLoaderScene().draw();
+        cc.Loader.getInstance().onloading = function () {
+            cc.LoaderScene.getInstance().draw();
         };
-        cc.Loader.shareLoader().onload = function () {
+        cc.Loader.getInstance().onload = function () {
             cc.AppController.shareAppController().didFinishLaunchingWithOptions();
         };
-        cc.Loader.shareLoader().preload(g_ressources);
+        cc.Loader.getInstance().preload(g_ressources);
     },
     applicationDidFinishLaunching:function () {
         // initialize director

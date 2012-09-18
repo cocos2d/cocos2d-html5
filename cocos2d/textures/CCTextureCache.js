@@ -150,17 +150,17 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         cc.Assert(path != null, "TextureCache: path MUST not be null");
         var texture = this.textures[path.toString()];
         if (texture) {
-            cc.Loader.shareLoader().onResLoaded();
+            cc.Loader.getInstance().onResLoaded();
         }
         else {
             texture = new Image();
             var that = this;
             texture.addEventListener("load", function () {
 
-                cc.Loader.shareLoader().onResLoaded();
+                cc.Loader.getInstance().onResLoaded();
             });
             texture.addEventListener("error", function () {
-                cc.Loader.shareLoader().onResLoadingErr(path);
+                cc.Loader.getInstance().onResLoadingErr(path);
             });
             texture.src = path;
             this.textures[path.toString()] = texture;
