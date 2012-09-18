@@ -63,6 +63,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         this._super();
         this._buffersVBO = [0, 0];
         this._quads = [];
+        this._indices = [];
+        this._pointRect = cc.RectZero();
     },
 
     /**
