@@ -59,7 +59,7 @@ cc.ControlButton = cc.Control.extend({
 
     init:function (isDirectCall) {
         if ((isDirectCall != null) && (isDirectCall == true))
-            this._super();
+            return this._super();
         return this.initWithLabelAndBackgroundSprite(cc.LabelTTF.create("", "Helvetica", 12), cc.Scale9Sprite.create());
     },
 

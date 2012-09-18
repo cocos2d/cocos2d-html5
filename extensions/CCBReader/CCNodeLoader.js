@@ -602,10 +602,10 @@ cc.NodeLoader = cc.Class.extend({
             }
 
             if (target != null) {
-                if (selectorName.length() > 0) {
+                if (selectorName.length > 0) {
                     var selMenuHandler = 0;
 
-                    var targetAsCCBSelectorResolver = target;
+                    //var targetAsCCBSelectorResolver = target;
                     if (target != null && target.onResolveCCBCCMenuItemSelector) {
                         selMenuHandler = target.onResolveCCBCCMenuItemSelector(target, selectorName);
                     }
@@ -617,14 +617,9 @@ cc.NodeLoader = cc.Class.extend({
                     }
 
                     if (selMenuHandler == 0) {
-                        cc.Log("Skipping selector '%s' since no CCBSelectorResolver is present.", selectorName);
+                        cc.log("Skipping selector '" +selectorName+ "' since no CCBSelectorResolver is present.");
                     } else {
-                        var blockData = new BlockData();
-                        blockData.mSELMenuHandler = selMenuHandler;
-
-                        blockData.mTarget = target;
-
-                        return blockData;
+                        return new BlockData(selMenuHandler,target);
                     }
                 } else {
                     cc.log("Unexpected empty selector.");
@@ -651,7 +646,7 @@ cc.NodeLoader = cc.Class.extend({
             }
 
             if (target != null) {
-                if (selectorName.length() > 0) {
+                if (selectorName.length > 0) {
                     var selCCControlHandler = 0;
 
                     if (target != null && target.onResolveCCBCCControlSelector) {
@@ -667,13 +662,7 @@ cc.NodeLoader = cc.Class.extend({
                     if (selCCControlHandler == 0) {
                         cc.log("Skipping selector '" + selectorName + "' since no CCBSelectorResolver is present.");
                     } else {
-                        var blockCCControlData = new BlockCCControlData();
-                        blockCCControlData.mSELCCControlHandler = selCCControlHandler;
-
-                        blockCCControlData.mTarget = target;
-                        blockCCControlData.mControlEvents = controlEvents;
-
-                        return blockCCControlData;
+                        return new BlockCCControlData(selCCControlHandler,target,controlEvents);
                     }
                 } else {
                     cc.log("Unexpected empty selector.");
@@ -694,8 +683,7 @@ cc.NodeLoader = cc.Class.extend({
         var ccbiFileName = ccbFileWithoutPathExtension + ".ccbi";
 
         var newCCBReader = new cc.CCBReader(ccbReader);
-
-        return ccbReader.readNodeGraphFromFile(newCCBReader.getCCBRootPath(), ccbiFileName, newCCBReader.getOwner(), parent.getContentSize());
+        return newCCBReader.readNodeGraphFromFile(ccbReader.getCCBRootPath(), ccbiFileName, ccbReader.getOwner(), parent.getContentSize());
     },
 
     onHandlePropTypePosition:function (node, parent, propertyName, position, ccbReader) {

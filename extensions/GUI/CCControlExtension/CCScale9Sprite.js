@@ -78,13 +78,14 @@ cc.Scale9Sprite = cc.Node.extend({
         }
         this.setCapInsets(insets);
     },
+
     _updatePositions:function () {
         var size = this._contentSize;
 
         var sizableWidth = size.width - this._topLeft.getContentSize().width - this._topRight.getContentSize().width;
         var sizableHeight = size.height - this._topLeft.getContentSize().height - this._bottomRight.getContentSize().height;
         var horizontalScale = sizableWidth / this._centre.getContentSize().width;
-        var verticalScale = sizableHeight / cthis._entre.getContentSize().height;
+        var verticalScale = sizableHeight / this._centre.getContentSize().height;
         this._centre.setScaleX(horizontalScale);
         this._centre.setScaleY(verticalScale);
         var rescaledWidth = this._centre.getContentSize().width * horizontalScale;
@@ -180,7 +181,7 @@ cc.Scale9Sprite = cc.Node.extend({
     },
     setCapInsets:function (capInsets) {
         var contentSize = this._contentSize;
-        this.updateWithBatchNode(this.scale9Image, this._spriteRect, capInsets);
+        this.updateWithBatchNode(this._scale9Image, this._spriteRect, capInsets);
         this.setContentSize(contentSize);
     },
 
@@ -352,29 +353,34 @@ cc.Scale9Sprite = cc.Node.extend({
         // Release old sprites
         this.removeAllChildrenWithCleanup(true);
 
-        if (this.scale9Image != batchNode) {
-            this.scale9Image = batchNode;
+        if (this._scale9Image != batchNode) {
+            this._scale9Image = batchNode;
         }
 
-        this.scale9Image.removeAllChildrenWithCleanup(true);
+        this._scale9Image.removeAllChildrenWithCleanup(true);
 
         this._capInsets = capInsets;
 
         // If there is no given rect
-        if (cc.CCRectEqualToRect(rect,cc.RectZero())) {
+        if (cc.Rect.CCRectEqualToRect(rect, cc.RectZero())) {
             // Get the texture size as original
-            var textureSize = this._scale9Image.getTextureAtlas().getTexture().getContentSize();
-            rect = cc.RectMake(0, 0, textureSize.width, textureSize.height);
+            var selTexture  = this._scale9Image.getTextureAtlas().getTexture();
+            if(selTexture instanceof  cc.Texture2D){
+                var textureSize = selTexture.getContentSize();
+                rect = cc.RectMake(0, 0, textureSize.width, textureSize.height);
+            }else{
+                rect = cc.RectMake(0, 0, selTexture.width, selTexture.height);
+            }
         }
 
         // Set the given rect's size as original size
         this._spriteRect = rect;
-        this._originalSize = new cc.Size(rect.size.width,rect.size.height);
+        this._originalSize = new cc.Size(rect.size.width, rect.size.height);
         this._preferredSize = this._originalSize;
         this._capInsetsInternal = capInsets;
 
         // If there is no specified center region
-        if (cc.CCRectEqualToRect(this._capInsetsInternal,cc.RectZero())) {
+        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, cc.RectZero())) {
             // Apply the 3x3 grid format
             this._capInsetsInternal = cc.RectMake(
                 rect.origin.x + this._originalSize.width / 3,
@@ -398,24 +404,19 @@ cc.Scale9Sprite = cc.Node.extend({
         this._scale9Image.addChild(this._centre, 0, cc.POSITIONS_CENTRE);
 
         // Top
-        this._top = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x,
-            t,
-            this._capInsetsInternal.size.width,
+        this._top = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x, t, this._capInsetsInternal.size.width,
             this._capInsetsInternal.origin.y - t));
-        this._scale9Image.addChild(top, 1, cc.POSITIONS_TOP);
+        this._scale9Image.addChild(this._top, 1, cc.POSITIONS_TOP);
 
         // Bottom
         this._bottom = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x,
-            this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
-            this._capInsetsInternal.size.width,
+            this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height, this._capInsetsInternal.size.width,
             h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
         this._scale9Image.addChild(this._bottom, 1, cc.POSITIONS_BOTTOM);
 
         // Left
         this._left = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            l,
-            this._capInsetsInternal.origin.y,
-            this._capInsetsInternal.origin.x - l,
+            l, this._capInsetsInternal.origin.y, this._capInsetsInternal.origin.x - l,
             this._capInsetsInternal.size.height));
         this._scale9Image.addChild(this._left, 1, cc.POSITIONS_LEFT);
 
@@ -429,26 +430,20 @@ cc.Scale9Sprite = cc.Node.extend({
 
         // Top left
         this._topLeft = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            l,
-            t,
-            this._capInsetsInternal.origin.x - l,
-            this._capInsetsInternal.origin.y - t));
+            l, t, this._capInsetsInternal.origin.x - l, this._capInsetsInternal.origin.y - t));
         this._scale9Image.addChild(this._topLeft, 2, cc.POSITIONS_TOPLEFT);
 
         // Top right
         this._topRight = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            this._capInsetsInternal.origin.x + this._capInsetsInternal.size.width,
-            t,
+            this._capInsetsInternal.origin.x + this._capInsetsInternal.size.width, t,
             w - (this._capInsetsInternal.origin.x - l + this._capInsetsInternal.size.width),
             this._capInsetsInternal.origin.y - t));
         this._scale9Image.addChild(this._topRight, 2, cc.POSITIONS_TOPRIGHT);
 
         // Bottom left
         this._bottomLeft = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
-            l,
-            this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
-            this._capInsetsInternal.origin.x - l,
-            h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
+            l, this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
+            this._capInsetsInternal.origin.x - l, h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
         this._scale9Image.addChild(this._bottomLeft, 2, cc.POSITIONS_BOTTOMLEFT);
 
         // Bottom right
@@ -459,10 +454,8 @@ cc.Scale9Sprite = cc.Node.extend({
             h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
         this._scale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
 
-
         this.setContentSize(rect.size);
         this.addChild(this._scale9Image);
-
         return true;
     },
 
@@ -522,35 +515,17 @@ cc.Scale9Sprite.create = function (file, rect, capInsets) {
 };
 
 cc.Scale9Sprite.createWithSpriteFrame = function (spriteFrame, capInsets) {
-    var pReturn;
-    if (arguments.length == 1) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithSpriteFrame(spriteFrame)) {
-            return pReturn;
-        }
-        return null;
-    } else if (arguments.length == 2) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithSpriteFrame(spriteFrame, capInsets)) {
-            return pReturn;
-        }
-        return null;
+    var pReturn = new cc.Scale9Sprite();
+    if (pReturn && pReturn.initWithSpriteFrame(spriteFrame, capInsets)) {
+        return pReturn;
     }
+    return null;
 };
 
 cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets) {
-    var pReturn;
-    if (arguments.length == 1) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithSpriteFrameName(spriteFrameName)) {
-            return pReturn;
-        }
-        return null;
-    } else if (arguments.length == 2) {
-        pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithSpriteFrameName(spriteFrameName, capInsets)) {
-            return pReturn;
-        }
-        return null;
+    var pReturn = new cc.Scale9Sprite();
+    if (pReturn && pReturn.initWithSpriteFrameName(spriteFrameName, capInsets)) {
+        return pReturn;
     }
+    return null;
 };

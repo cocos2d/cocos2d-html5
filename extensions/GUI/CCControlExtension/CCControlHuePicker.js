@@ -125,7 +125,7 @@ cc.ControlHuePicker = cc.Control.extend({
     },
     _checkSliderPosition:function (location) {
         // check that the touch location is within the bounding rectangle before sending updates
-        if (cc.CCRectContainsPoint(this._background.getBoundingBox(), location)) {
+        if (cc.Rect.CCRectContainsPoint(this._background.getBoundingBox(), location)) {
             this._updateSliderPosition(location);
             return true;
         }

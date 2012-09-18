@@ -250,7 +250,7 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
             var strFilePath = filePath;
             if (strFilePath.size() <= 4) break;
             var strLowerCasePath = strFilePath;
-            for (var i = 0; i < strLowerCasePath.length(); ++i) {
+            for (var i = 0; i < strLowerCasePath.length; ++i) {
                 strLowerCasePath[i] = cc.tolower(strFilePath[i]);
             }
 

@@ -193,7 +193,7 @@ cc.Control = cc.Layer.extend({
                 // <CCInvocation*>
                 var invocationList = this._dispatchListforControlEvent(1 << i);
                 for (var j = 0; j < invocationList.length; j++) {
-                    invocationList[i].invoke(this);
+                    invocationList[j].invoke(this);
                 }
             }
         }
@@ -267,7 +267,7 @@ cc.Control = cc.Layer.extend({
     isTouchInside:function (touch) {
         var touchLocation = this.getTouchLocation(touch);
         var bBox = this.getBoundingBox();
-        return cc.CCRectContainsPoint(bBox, touchLocation);
+        return cc.Rect.CCRectContainsPoint(bBox, touchLocation);
     },
 
     /**

@@ -1038,14 +1038,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                         node.onExitTransitionDidStart();
                         node.onExit();
                     }
-                    if (cleanup) {
+                    if (cleanup)
                         node.cleanup();
-                    }
                     // set parent nil at the end
                     node.setParent(null);
                 }
             }
-            this._children = [];
+            this._children.length = 0;
         }
     },
 
@@ -1665,7 +1664,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertTouchToNodeSpace:function (touch) {
         var point = touch.getLocation();
-        point = cc.Director.getInstance().convertToGL(point);
+        //TODO in canvas point don't convert to GL
+        //point = cc.Director.getInstance().convertToGL(point);
         return this.convertToNodeSpace(point);
     },
 

@@ -588,6 +588,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor:function () {
         this._startColor = new cc.Color3B(0, 0, 0);
         this._endColor = new cc.Color3B(0, 0, 0);
+        this._alongVector = cc.p(0, -1);
         this._super();
     },
 
@@ -745,12 +746,12 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
          */
 
 
-        var h = cc.pLength(this.alongVector);
+        var h = cc.pLength(this._alongVector);
         if (h == 0)
             return;
 
         var c = Math.sqrt(2.0);
-        var u = cc.p(this.alongVector.x / h, this.alongVector.y / h);
+        var u = cc.p(this._alongVector.x / h, this._alongVector.y / h);
 
         // Compressed Interpolation mode
         if (this._compressedInterpolation) {
@@ -810,7 +811,9 @@ cc.LayerGradient.create = function (start, end, v) {
             }
             break;
         case 0:
-            layer.init();
+            if(layer && layer.init()){
+                return layer;
+            }
             break;
         default:
             throw "Arguments error ";

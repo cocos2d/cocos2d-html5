@@ -52,7 +52,7 @@ cc.ControlLoader = cc.NodeLoader.extend({
     },
     onHandlePropTypeBlockCCControl:function (node, parent, propertyName, blockCCControlData, ccbReader) {
         if (propertyName == PROPERTY_CCCONTROL) {
-            node.addTargetWithActionForControlEvents(blockCCControlData.mTarget, blockCCControlData.selCCControlHandler, blockCCControlData.controlEvents);
+            node.addTargetWithActionForControlEvents(blockCCControlData.target, blockCCControlData.selCCControlHandler, blockCCControlData.controlEvents);
         } else {
             this._super(node, parent, propertyName, blockCCControlData, ccbReader);
         }
@@ -94,40 +94,40 @@ cc.ControlButtonLoader = cc.ControlLoader.extend({
 
     onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
         if (propertyName == PROPERTY_ZOOMONTOUCHDOWN) {
-            node.setZoomOnTouchDown(pCheck);
+            node.setZoomOnTouchDown(check);
         } else {
             this._super(node, parent, propertyName, check, ccbReader);
         }
     },
     onHandlePropTypeString:function (node, parent, propertyName, stringValue, ccbReader) {
         if (propertyName == PROPERTY_TITLE_NORMAL) {
-            node.setTitleForState(stringValue, cc.ControlStateNormal);
+            node.setTitleForState(stringValue, cc.CONTROL_STATE_NORMAL);
         } else if (propertyName == PROPERTY_TITLE_HIGHLIGHTED) {
-            node.setTitleForState(stringValue, cc.ControlStateHighlighted);
+            node.setTitleForState(stringValue, cc.CONTROL_STATE_HIGHLIGHTED);
         } else if (propertyName == PROPERTY_TITLE_DISABLED) {
-            node.setTitleForState(stringValue, cc.ControlStateDisabled);
+            node.setTitleForState(stringValue, cc.CONTROL_STATE_DISABLED);
         } else {
             this._super(node, parent, propertyName, stringValue, ccbReader);
         }
     },
     onHandlePropTypeFontTTF:function (node, parent, propertyName, fontTTF, ccbReader) {
         if (propertyName == PROPERTY_TITLETTF_NORMAL) {
-            node.setTitleTTFForState(fontTTF, cc.ControlStateNormal);
+            node.setTitleTTFForState(fontTTF, cc.CONTROL_STATE_NORMAL);
         } else if (propertyName == PROPERTY_TITLETTF_HIGHLIGHTED) {
-            node.setTitleTTFForState(fontTTF, cc.ControlStateHighlighted);
+            node.setTitleTTFForState(fontTTF, cc.CONTROL_STATE_HIGHLIGHTED);
         } else if (propertyName == PROPERTY_TITLETTF_DISABLED) {
-            node.setTitleTTFForState(fontTTF, cc.ControlStateDisabled);
+            node.setTitleTTFForState(fontTTF, cc.CONTROL_STATE_DISABLED);
         } else {
             this._super(node, parent, propertyName, fontTTF, ccbReader);
         }
     },
     onHandlePropTypeFloatScale:function (node, parent, propertyName, floatScale, ccbReader) {
         if (propertyName == PROPERTY_TITLETTFSIZE_NORMAL) {
-            node.setTitleTTFSizeForState(floatScale, cc.ControlStateNormal);
+            node.setTitleTTFSizeForState(floatScale, cc.CONTROL_STATE_NORMAL);
         } else if (propertyName == PROPERTY_TITLETTFSIZE_HIGHLIGHTED) {
-            node.setTitleTTFSizeForState(floatScale, cc.ControlStateHighlighted);
+            node.setTitleTTFSizeForState(floatScale, cc.CONTROL_STATE_HIGHLIGHTED);
         } else if (propertyName == PROPERTY_TITLETTFSIZE_DISABLED) {
-            node.setTitleTTFSizeForState(floatScale, cc.ControlStateDisabled);
+            node.setTitleTTFSizeForState(floatScale, cc.CONTROL_STATE_DISABLED);
         } else {
             this._super(node, parent, propertyName, floatScale, ccbReader);
         }
@@ -149,15 +149,15 @@ cc.ControlButtonLoader = cc.ControlLoader.extend({
     onHandlePropTypeSpriteFrame:function (node, parent, propertyName, spriteFrame, ccbReader) {
         if (propertyName == PROPERTY_BACKGROUNDSPRITEFRAME_NORMAL) {
             if (spriteFrame != null) {
-                node.setBackgroundSpriteFrameForState(spriteFrame, cc.ControlStateNormal);
+                node.setBackgroundSpriteFrameForState(spriteFrame, cc.CONTROL_STATE_NORMAL);
             }
         } else if (propertyName == PROPERTY_BACKGROUNDSPRITEFRAME_HIGHLIGHTED) {
             if (spriteFrame != null) {
-                node.setBackgroundSpriteFrameForState(spriteFrame, cc.ControlStateHighlighted);
+                node.setBackgroundSpriteFrameForState(spriteFrame, cc.CONTROL_STATE_HIGHLIGHTED);
             }
         } else if (propertyName == PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED) {
             if (spriteFrame != null) {
-                node.setBackgroundSpriteFrameForState(spriteFrame, cc.ControlStateDisabled);
+                node.setBackgroundSpriteFrameForState(spriteFrame, cc.CONTROL_STATE_DISABLED);
             }
         } else {
             this._super(node, parent, propertyName, spriteFrame, ccbReader);
@@ -165,11 +165,11 @@ cc.ControlButtonLoader = cc.ControlLoader.extend({
     },
     onHandlePropTypeColor3:function (node, parent, propertyName, ccColor3B, ccbReader) {
         if (propertyName == PROPERTY_TITLECOLOR_NORMAL) {
-            node.setTitleColorForState(ccColor3B, cc.ControlStateNormal);
+            node.setTitleColorForState(ccColor3B, cc.CONTROL_STATE_NORMAL);
         } else if (propertyName == PROPERTY_TITLECOLOR_HIGHLIGHTED) {
-            node.setTitleColorForState(ccColor3B, cc.ControlStateHighlighted);
+            node.setTitleColorForState(ccColor3B, cc.CONTROL_STATE_HIGHLIGHTED);
         } else if (propertyName == PROPERTY_TITLECOLOR_DISABLED) {
-            node.setTitleColorForState(ccColor3B, cc.ControlStateDisabled);
+            node.setTitleColorForState(ccColor3B, cc.CONTROL_STATE_DISABLED);
         } else {
             this._super(node, parent, propertyName, ccColor3B, ccbReader);
         }
