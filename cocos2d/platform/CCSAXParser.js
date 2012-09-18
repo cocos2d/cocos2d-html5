@@ -53,11 +53,11 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             this.xmlDoc.loadXML(textxml);
         }
         if (this.xmlDoc == null) {
-            cc.log("xml " + this.xmlDoc + " not found!");
+            cc.log("cocos2d:xml " + this.xmlDoc + " not found!");
         }
         var plist = this.xmlDoc.documentElement;
         if (plist.tagName != 'plist') {
-            throw "Not a plist file"
+            throw "cocos2d:Not a plist file"
         }
         // Get first real node
         var node = null;
@@ -89,7 +89,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             this.xmlDoc.loadXML(textxml);
         }
         if (this.xmlDoc == null) {
-            cc.log("xml " + this.xmlDoc + " not found!");
+            cc.log("cocos2d:xml " + this.xmlDoc + " not found!");
         }
         return this.xmlDoc;
     },
