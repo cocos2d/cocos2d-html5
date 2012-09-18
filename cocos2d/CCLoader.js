@@ -160,6 +160,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
                     //cc.log("cocos2d:not implemented yet")
                     break;
                 case "ccbi":
+                case "binary":
                     sharedFileUtils.preloadBinaryFileData(res[i].src);
                     break;
                 default:
