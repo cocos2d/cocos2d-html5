@@ -1166,6 +1166,15 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this.modeA = new cc.ParticleSystem.ModeA();
         this.modeB = new cc.ParticleSystem.ModeB();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
+
+        this._particles = [];
+        this._sourcePosition = new cc.Point(0,0);
+        this._posVar = new cc.Point(0,0);
+
+        this._startColor = new cc.Color4F(1,1,1,1);
+        this._startColorVar = new cc.Color4F(1,1,1,1);
+        this._endColor = new cc.Color4F(1,1,1,1);
+        this._endColorVar = new cc.Color4F(1,1,1,1);
     },
 
     /**
