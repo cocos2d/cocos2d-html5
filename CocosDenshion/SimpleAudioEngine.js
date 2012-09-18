@@ -145,7 +145,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 this.removeEventListener('canplaythrough', arguments.callee, false);
             }, false);
             soundCache.addEventListener("error", function (e) {
-                cc.Loader.shareLoader().onResLoadingErr();
+                cc.Loader.getInstance().onResLoadingErr();
             }, false);
             soundCache.addEventListener("playing", function (e) {
                 cc.sharedEngine._isBgmPlaying = true;
@@ -159,7 +159,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
             this._bgmList[path] = soundCache
         }
-        cc.Loader.shareLoader().onResLoaded();
+        cc.Loader.getInstance().onResLoaded();
     },
     /**
      * Play background music.
@@ -513,7 +513,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
              false);
              }, false);
              soundCache.addEventListener("error", function (e) {
-             cc.Loader.shareLoader().onResLoadingErr();
+             cc.Loader.getInstance().onResLoadingErr();
              }, false);*/
 
             // load it
@@ -522,7 +522,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             this._audioList[path] = [];
             this._pushEffectCache(path);
         }
-        cc.Loader.shareLoader().onResLoaded();
+        cc.Loader.getInstance().onResLoaded();
     },
 
     /**

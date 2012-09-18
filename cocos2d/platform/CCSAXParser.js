@@ -173,13 +173,22 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
             xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
         }
         if (xmlhttp != null) {
+            var that = this;
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4) {
+                    if (xmlhttp.status == 200) {
+                        cc.Loader.getInstance().onResLoaded();
+                        that.xmlList[filePath] = xmlhttp.responseText;
+                    } else {
+                        cc.Assert("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
+                    }
+                }
+            };
             // load xml
             xmlhttp.open("GET", filePath, false);
             xmlhttp.send(null);
-            this.xmlList[filePath] = xmlhttp.responseText;
-            cc.Loader.shareLoader().onResLoaded();
         } else {
-            alert("Your browser does not support XMLHTTP.");
+            cc.Assert("cocos2d:Your browser does not support XMLHTTP.");
         }
     },
 
@@ -223,9 +232,11 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
  * @function
  * @return {cc.SAXParser}
  */
-cc.SAXParser.shareParser = function () {
-    if (!cc.shareParser) {
-        cc.shareParser = new cc.SAXParser();
+cc.SAXParser.getInstance = function () {
+    if (!this._instance) {
+        this._instance = new cc.SAXParser();
     }
-    return cc.shareParser;
+    return this._instance;
 };
+
+cc.SAXParser._instance = null;
