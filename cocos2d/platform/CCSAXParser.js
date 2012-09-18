@@ -185,7 +185,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                 }
             };
             // load xml
-            xmlhttp.open("GET", filePath, false);
+            xmlhttp.open("GET", filePath, true);
             xmlhttp.send(null);
         } else {
             cc.Assert("cocos2d:Your browser does not support XMLHTTP.");
