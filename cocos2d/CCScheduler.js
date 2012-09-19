@@ -197,7 +197,7 @@ cc.ListEntry = function (prev, next, target, priority, paused, markedForDeletion
     this.target = target;
     this.priority = priority;
     this.paused = paused;
-    this.makedForDeletion = markedForDeletion;
+    this.markedForDeletion = markedForDeletion;
 };
 
 /**
@@ -540,7 +540,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         var i;
         for (i = 0; i < this._updatesNegList.length; i++) {
             tmpEntry = this._updatesNegList[i];
-            if ((!tmpEntry.paused) && (!tmpEntry.makedForDeletion)) {
+            if ((!tmpEntry.paused) && (!tmpEntry.markedForDeletion)) {
                 tmpEntry.target.update(dt);
             }
         }
@@ -548,7 +548,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         // updates with priority == 0
         for (i = 0; i < this._updates0List.length; i++) {
             tmpEntry = this._updates0List[i];
-            if ((!tmpEntry.paused) && (!tmpEntry.makedForDeletion)) {
+            if ((!tmpEntry.paused) && (!tmpEntry.markedForDeletion)) {
                 tmpEntry.target.update(dt);
             }
         }
@@ -556,7 +556,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         // updates with priority > 0
         for (i = 0; i < this._updatesPosList.length; i++) {
             tmpEntry = this._updatesPosList[i];
-            if ((!tmpEntry.paused) && (!tmpEntry.makedForDeletion)) {
+            if ((!tmpEntry.paused) && (!tmpEntry.markedForDeletion)) {
                 tmpEntry.target.update(dt);
             }
         }
@@ -587,21 +587,21 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         //delete all updates that are marked for deletion
         // updates with priority < 0
         for (i = 0; i < this._updatesNegList.length; i++) {
-            if (this._updatesNegList[i].makedForDeletion) {
+            if (this._updatesNegList[i].markedForDeletion) {
                 this._removeUpdateFromHash(tmpEntry);
             }
         }
 
         // updates with priority == 0
         for (i = 0; i < this._updates0List.length; i++) {
-            if (this._updates0List[i].makedForDeletion) {
+            if (this._updates0List[i].markedForDeletion) {
                 this._removeUpdateFromHash(tmpEntry);
             }
         }
 
         // updates with priority > 0
         for (i = 0; i < this._updatesPosList.length; i++) {
-            if (this._updatesPosList[i].makedForDeletion) {
+            if (this._updatesPosList[i].markedForDeletion) {
                 this._removeUpdateFromHash(tmpEntry);
             }
         }
