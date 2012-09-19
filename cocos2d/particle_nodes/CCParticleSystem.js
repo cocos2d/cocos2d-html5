@@ -1419,7 +1419,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         return true;
     },
 
-    destoryParticleSystem:function () {
+    destroyParticleSystem:function () {
         this.unscheduleUpdate();
     },
 
