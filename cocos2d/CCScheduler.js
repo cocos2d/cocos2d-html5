@@ -588,21 +588,21 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         // updates with priority < 0
         for (i = 0; i < this._updatesNegList.length; i++) {
             if (this._updatesNegList[i].markedForDeletion) {
-                this._removeUpdateFromHash(tmpEntry);
+                this._removeUpdateFromHash(this._updatesNegList[i]);
             }
         }
 
         // updates with priority == 0
         for (i = 0; i < this._updates0List.length; i++) {
             if (this._updates0List[i].markedForDeletion) {
-                this._removeUpdateFromHash(tmpEntry);
+                this._removeUpdateFromHash(this._updates0List[i]);
             }
         }
 
         // updates with priority > 0
         for (i = 0; i < this._updatesPosList.length; i++) {
             if (this._updatesPosList[i].markedForDeletion) {
-                this._removeUpdateFromHash(tmpEntry);
+                this._removeUpdateFromHash(this._updatesPosList[i]);
             }
         }
 
