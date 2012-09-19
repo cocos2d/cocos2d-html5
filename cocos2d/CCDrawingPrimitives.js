@@ -435,7 +435,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         var context = ctx || this._renderContext;
         context.save();
         context.translate(center.x, -center.y);
-        context.rotate(cc.DEGREES_TO_RADIANS(45));
+
+        //context.rotate(cc.DEGREES_TO_RADIANS(45));
+        context.rotate(0.7853981633974483);
+
         if (color instanceof cc.Color4F) {
             color = new cc.Color3B(0 | (color.r * 255), 0 | (color.g * 255), 0 | (color.b * 255));
         }
@@ -450,10 +453,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         context.lineTo(radius, 0);
         context.lineTo(0, subRadius);
         context.lineTo(-radius, 0);
-        context.closePath();
-        context.fill();
 
-        context.beginPath();
         context.moveTo(0, -radius);
         context.lineTo(-subRadius, 0);
         context.lineTo(0, radius);
@@ -471,7 +471,7 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         context.beginPath();
         var startAngle_1 = 0;
         var endAngle_1 = Math.PI * 2;
-        context.arc(0, 0, radius, startAngle_1, endAngle_1, false);
+        context.arc(0, 0, radius - subRadius, startAngle_1, endAngle_1, false);
         context.closePath();
         context.fill();
 
