@@ -439,17 +439,15 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         var subRadius = radius / 10;
 
         context.beginPath();
-        context.moveTo(-radius, 0);
-        context.lineTo(0, -subRadius);
-        context.lineTo(radius, 0);
+        context.moveTo(-radius, radius);
         context.lineTo(0, subRadius);
-        context.lineTo(-radius, 0);
-
-        context.moveTo(0, -radius);
-        context.lineTo(-subRadius, 0);
-        context.lineTo(0, radius);
+        context.lineTo(radius, radius);
         context.lineTo(subRadius, 0);
-        context.lineTo(0, -radius);
+        context.lineTo(radius, -radius);
+        context.lineTo(0, -subRadius);
+        context.lineTo(-radius, -radius);
+        context.lineTo(-subRadius, 0);
+        context.lineTo(-radius, radius);
         context.closePath();
         context.fill();
 
