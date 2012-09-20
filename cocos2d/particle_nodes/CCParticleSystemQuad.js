@@ -476,11 +476,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             context.save();
-            if (this.isBlendAdditive()) {
+            if (this.isBlendAdditive())
                 context.globalCompositeOperation = 'lighter';
-            } else {
+            else
                 context.globalCompositeOperation = 'source-over';
-            }
 
             for (var i = 0; i < this._particleCount; i++) {
                 var particle = this._particles[i];
@@ -491,11 +490,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     var drawTexture = this.getTexture();
                     if (particle.isChangeColor) {
                         var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
-                        if (cacheTextureForColor) {
+                        if (cacheTextureForColor)
                             drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color, this._pointRect);
-                        }
                     }
-
                     context.save();
                     context.globalAlpha = particle.color.a;
                     context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
@@ -507,11 +504,13 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     context.save();
                     context.globalAlpha = particle.color.a;
                     context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
+
                     if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
-                        cc.drawingUtil.drawStar(context, cc.p(0, 0), lpx, particle.color);
-                    } else {
-                        cc.drawingUtil.drawColorBall(context, cc.p(0, 0), lpx, particle.color);
-                    }
+                        if(particle.rotation)
+                            context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
+                        cc.drawingUtil.drawStar(context, lpx, particle.color);
+                    } else
+                        cc.drawingUtil.drawColorBall(context, lpx, particle.color);
                     context.restore()
                 }
             }

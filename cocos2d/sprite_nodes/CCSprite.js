@@ -357,8 +357,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        r = this._rect;
-        return cc.rect(r.origin.x, r.origin.y, r.size.width, r.size.height);
+        return cc.rect(this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height);
     },
 
     /**
@@ -866,14 +865,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {CanvasContext} ctx 2d context of canvas
      */
     draw:function (ctx) {
-        //this._super();
-
         //cc.PROFILER_START_CATEGORY(kCCProfilerCategorySprite, "cc.Sprite - draw");
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
-            if (this._isLighterMode) {
+            if (this._isLighterMode)
                 context.globalCompositeOperation = 'lighter';
-            }
 
             context.globalAlpha = this._opacity / 255;
             var mpX = 0, mpY = 0;
