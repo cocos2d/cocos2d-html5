@@ -1169,13 +1169,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     visit:function (ctx) {
         // quick return if not visible
-        if (!this._isVisible) {
+        if (!this._isVisible)
             return;
-        }
 
-        var context = ctx || cc.renderContext;
-        var i;
-
+        var context = ctx || cc.renderContext, i;
         if (cc.renderContextType == cc.CANVAS) {
             context.save();
             this.transform(context);
@@ -1184,30 +1181,21 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 this.sortAllChildren();
                 // draw children zOrder < 0
                 for (i = 0; i < this._children.length; i++) {
-                    if (this._children[i] && this._children[i]._zOrder < 0) {
+                    if (this._children[i] && this._children[i]._zOrder < 0)
                         this._children[i].visit(context);
-                    } else {
+                    else
                         break;
-                    }
                 }
-                //if (this._isInDirtyRegion()) {
-                // self draw
                 this.draw(context);
-                //}
-                // draw children zOrder >= 0
                 if (this._children) {
                     for (; i < this._children.length; i++) {
-                        if (this._children[i] && this._children[i]._zOrder >= 0) {
+                        if (this._children[i] && this._children[i]._zOrder >= 0)
                             this._children[i].visit(context);
-                        }
                     }
                 }
-            } else {
-                //if (this._isInDirtyRegion()) {
-                // self draw
+            } else
                 this.draw(context);
-                //}
-            }
+
             this._orderOfArrival = 0;
             context.restore();
         } else {
@@ -1291,14 +1279,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 }
             }
 
-            if (this._rotation != 0) {
-                //context.rotate(cc.DEGREES_TO_RADIANS(this._rotation));
+            if (this._rotation != 0)
                 context.rotate(this._rotationRadians);
-            }
 
-            if ((this._scaleX != 1) || (this._scaleY != 1)) {
+            if ((this._scaleX != 1) || (this._scaleY != 1))
                 context.scale(this._scaleX, this._scaleY);
-            }
 
             if ((this._skewX != 0) || (this._skewY != 0)) {
                 context.transform(1,
