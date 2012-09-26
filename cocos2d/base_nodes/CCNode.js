@@ -484,7 +484,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._position.y = yValue;
             //this._position = cc.p(newPosOrxValue,yValue);
         } else if (newPosOrxValue.y != null) {
-            this._position = newPosOrxValue;
+            this._position.x = newPosOrxValue.x;
+            this._position.y = newPosOrxValue.y;
         }
 
         //save dirty region when after changed
@@ -622,9 +623,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
-            this._anchorPoint = point;
-            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-                this._contentSize.height * this._anchorPoint.y);
+            this._anchorPoint.x = point.x;
+            this._anchorPoint.y = point.y;
+
+            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
+            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
 
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
@@ -655,10 +658,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
-            this._contentSize = size;
+            this._contentSize.width = size.width;
+            this._contentSize.height = size.height;
 
-            this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
-                this._contentSize.height * this._anchorPoint.y);
+            this._anchorPointInPoints.width = this._contentSize.width * this._anchorPoint.x;
+            this._anchorPointInPoints.height = this._contentSize.height * this._anchorPoint.y;
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
             this.setNodeDirty();
