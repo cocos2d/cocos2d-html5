@@ -171,7 +171,7 @@ cc.Rect.CCRectGetMaxX = function (rect) {
  * Constructor
  */
 cc.Rect.CCRectGetMidX = function (rect) {
-    return ((rect.origin.x + rect.size.width) / 2.0);
+    return (rect.origin.x + rect.size.width / 2.0);
 };
 /**
  * return the leftmost x-value of 'rect'
