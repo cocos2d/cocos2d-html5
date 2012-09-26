@@ -1941,7 +1941,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     },
 
     /**
-     * @param {cc.Node} target
+     * @param {cc.Sprite} target
      */
     startWithTarget:function (target) {
         //this._super(target);
@@ -1975,20 +1975,15 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
         var frames = this._animation.getFrames();
         var numberOfFrames = frames.length;
-        var frameToDisplay = null;
 
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
-            var splitTime = this._splitTimes[i];
+            if (this._splitTimes[i] <= time) {
+                this._target.setDisplayFrame(frames[i].getSpriteFrame());
 
-            if (splitTime <= time) {
-                var frame = frames[i];
-                frameToDisplay = frame.getSpriteFrame();
-                this._target.setDisplayFrame(frameToDisplay);
-
-                var dict = frame.getUserInfo();
-                if (dict) {
+                //var dict = frame.getUserInfo();
+                //if (dict) {
                     //TODO: [[NSNotificationCenter defaultCenter] postNotificationName:CCAnimationFrameDisplayedNotification object:target_ userInfo:dict];
-                }
+                //}
                 this._nextFrame = i + 1;
                 break;
             }
