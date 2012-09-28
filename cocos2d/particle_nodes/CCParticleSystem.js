@@ -1428,9 +1428,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {Boolean}
      */
     addParticle:function () {
-        if (this.isFull()) {
+        if (this.isFull())
             return false;
-        }
 
         var particle = new cc.Particle();
         this.initParticle(particle);
@@ -1496,12 +1495,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         particle.deltaRotation = (endA - startA) / particle.timeToLive;
 
         // position
-        if (this._positionType == cc.PARTICLE_TYPE_FREE) {
-            particle.startPos = this.convertToWorldSpace(cc.PointZero());
-
-        } else if (this._positionType == cc.PARTICLE_TYPE_RELATIVE) {
+        if (this._positionType == cc.PARTICLE_TYPE_FREE)
+            particle.startPos = this.convertToWorldSpace(cc.POINT_ZERO);
+        else if (this._positionType == cc.PARTICLE_TYPE_RELATIVE)
             particle.startPos = this._position;
-        }
 
         // direction
         var a = cc.DEGREES_TO_RADIANS(this._angle + this._angleVar * cc.RANDOM_MINUS1_1());
@@ -1593,9 +1590,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if (this._isActive && this._emissionRate) {
             var rate = 1.0 / this._emissionRate;
             //issue #1201, prevent bursts of particles, due to too high emitCounter
-            if (this._particleCount < this._totalParticles) {
+            if (this._particleCount < this._totalParticles)
                 this._emitCounter += dt;
-            }
 
             while ((this._particleCount < this._totalParticles) && (this._emitCounter > rate)) {
                 this.addParticle();
@@ -1603,15 +1599,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             }
 
             this._elapsed += dt;
-            if (this._duration != -1 && this._duration < this._elapsed) {
+            if (this._duration != -1 && this._duration < this._elapsed)
                 this.stopSystem();
-            }
         }
         this._particleIdx = 0;
 
-        var currentPosition = cc.PointZero();
+        var currentPosition; // = cc.PointZero();
         if (this._positionType == cc.PARTICLE_TYPE_FREE) {
-            currentPosition = this.convertToWorldSpace(cc.PointZero());
+            currentPosition = this.convertToWorldSpace(cc.POINT_ZERO);
         } else if (this._positionType == cc.PARTICLE_TYPE_RELATIVE) {
             currentPosition = cc.p(this._position.x, this._position.y);
         }
@@ -1628,10 +1623,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
                         var tmp, radial, tangential;
 
-                        radial = cc.PointZero();
                         // radial acceleration
                         if (selParticle.pos.x || selParticle.pos.y)
                             radial = cc.pNormalize(selParticle.pos);
+                        else
+                            radial = cc.PointZero();
 
                         tangential = radial;
                         radial = cc.pMult(radial, selParticle.modeA.radialAccel);
