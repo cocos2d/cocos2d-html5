@@ -185,6 +185,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
 
+        this.setAnchorPoint = this._setAnchorPointByValue;
+        this.setPosition = this._setPositionByValue;
+        this.setContentSize = this._setContentSizeByValue;
+
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
         this.getActionManager = function () {
@@ -480,15 +484,27 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         if (yValue) {
-            this._position.x = newPosOrxValue;
-            this._position.y = yValue;
-            //this._position = cc.p(newPosOrxValue,yValue);
+            this._position = new cc.Point(newPosOrxValue,yValue);
+            this.setPosition = this._setPositionByValue;
         } else if (newPosOrxValue.y != null) {
             this._position = new cc.Point(newPosOrxValue.x,newPosOrxValue.y);
+            this.setPosition = this._setPositionByValue;
         }
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+        this.setNodeDirty();
+    },
+
+    _setPositionByValue:function (newPosOrxValue, yValue) {
+        if (yValue) {
+            this._position.x = newPosOrxValue;
+            this._position.y = yValue;
+            //this._position = cc.p(newPosOrxValue,yValue);
+        } else if (newPosOrxValue.y != null) {
+            this._position.x = newPosOrxValue.x;
+            this._position.y = newPosOrxValue.y;
+        }
         this.setNodeDirty();
     },
 
@@ -625,8 +641,20 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._anchorPoint = new cc.Point(point.x, point.y);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x,this._contentSize.height * this._anchorPoint.y);
 
+            this.setAnchorPoint = this._setAnchorPointByValue;
+
             //save dirty region when after changed
             //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+            this.setNodeDirty();
+        }
+    },
+
+    _setAnchorPointByValue:function(point){
+        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
+            this._anchorPoint.x = point.x;
+            this._anchorPoint.y = point.y;
+            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
+            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
             this.setNodeDirty();
         }
     },
@@ -658,6 +686,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
             //save dirty region when before change
             //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+            this.setContentSize = this._setContentSizeByValue;
+            this.setNodeDirty();
+        }
+    },
+
+    _setContentSizeByValue:function (size) {
+        if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
+            this._contentSize.width = size.width;
+            this._contentSize.height = size.height;
+            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
+            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
             this.setNodeDirty();
         }
     },
