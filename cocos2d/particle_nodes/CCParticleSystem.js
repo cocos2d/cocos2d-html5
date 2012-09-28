@@ -254,6 +254,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //! Mode B: circular movement (gravity, radial accel and tangential accel don't are not used in this mode)
     modeB:null,
 
+    //private POINTZERO for ParticleSystem
+    _pointZeroForParticle:cc.p(0,0),
+
     //! Array of particles
     _particles:null,
 
@@ -1496,7 +1499,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         // position
         if (this._positionType == cc.PARTICLE_TYPE_FREE)
-            particle.startPos = this.convertToWorldSpace(cc.POINT_ZERO);
+            particle.startPos = this.convertToWorldSpace(this._pointZeroForParticle);
         else if (this._positionType == cc.PARTICLE_TYPE_RELATIVE)
             particle.startPos = this._position;
 
@@ -1606,7 +1609,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         var currentPosition; // = cc.PointZero();
         if (this._positionType == cc.PARTICLE_TYPE_FREE) {
-            currentPosition = this.convertToWorldSpace(cc.POINT_ZERO);
+            currentPosition = this.convertToWorldSpace(this._pointZeroForParticle);
         } else if (this._positionType == cc.PARTICLE_TYPE_RELATIVE) {
             currentPosition = cc.p(this._position.x, this._position.y);
         }
