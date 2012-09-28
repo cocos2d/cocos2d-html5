@@ -242,24 +242,25 @@ cc.KeyboardDispatcher = cc.Class.extend(/** @lends cc.KeyboardDispatcher# */{
         this._locked = true;
         e.stopPropagation();
         e.preventDefault();
+
+        var i = 0;
         //update keymap
-        if (keydown && e)//if keydown and our keymap doesnt have it
-        {
+        if (keydown && e) {     //if keydown and our keymap doesnt have it
             //execute all deletegate that registered a keyboard event
-            for (var i = 0; i < this._delegates.length; i++) {
-                this._delegates[i].getDelegate().onKeyDown(e.keyCode);
+            for (i = 0; i < this._delegates.length; i++) {
+                if(this._delegates[i].getDelegate() && this._delegates[i].getDelegate().onKeyDown)
+                    this._delegates[i].getDelegate().onKeyDown(e.keyCode);
             }
-        }
-        else if (!keydown && e)//if keyup and our keymap have that key in it
-        {
-            for (var i = 0; i < this._delegates.length; i++) {
-                this._delegates[i].getDelegate().onKeyUp(e.keyCode);
+        }  else if (!keydown && e) {//if keyup and our keymap have that key in it
+            for (i = 0; i < this._delegates.length; i++) {
+                if(this._delegates[i].getDelegate() && this._delegates[i].getDelegate().onKeyUp)
+                    this._delegates[i].getDelegate().onKeyUp(e.keyCode);
             }
         }
         this._locked = false;
         if (this._toRemove) {
             this._toRemove = false;
-            for (var i = 0; i < this._handlersToRemove.length; ++i) {
+            for (i = 0; i < this._handlersToRemove.length; ++i) {
                 this.forceRemoveDelegate(this._handlersToRemove[i]);
             }
             delete this._handlersToRemove;
@@ -268,7 +269,7 @@ cc.KeyboardDispatcher = cc.Class.extend(/** @lends cc.KeyboardDispatcher# */{
 
         if (this._toAdd) {
             this._toAdd = false;
-            for (var i = 0; i < this._handlersToAdd.length; ++i) {
+            for (i = 0; i < this._handlersToAdd.length; ++i) {
                 this.forceAddDelegate(this._handlersToAdd[i]);
             }
             this._handlersToAdd = [];
