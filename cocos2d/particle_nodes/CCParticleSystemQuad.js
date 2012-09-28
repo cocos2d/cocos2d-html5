@@ -161,8 +161,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         }
     },
 
-    clone:function(){
-       var retParticle = new cc.ParticleSystemQuad();
+    clone:function () {
+        var retParticle = new cc.ParticleSystemQuad();
 
         // self, not super
         if (retParticle.initWithTotalParticles(this._totalParticles)) {
@@ -205,7 +205,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             retParticle._endSizeVar = this._endSizeVar;
 
             // position
-            retParticle.setPosition(new cc.Point(this._position.x,this._position.y));
+            retParticle.setPosition(new cc.Point(this._position.x, this._position.y));
             retParticle._posVar.x = this._posVar.x;
             retParticle._posVar.y = this._posVar.y;
 
@@ -259,10 +259,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 retParticle._opacityModifyRGB = this._opacityModifyRGB;
 
                 // texture
-                if(this._texture instanceof cc.Texture2D){
-                      retParticle._texture = this._texture;
+                if (this._texture instanceof cc.Texture2D) {
+                    retParticle._texture = this._texture;
                 } else {
-                      retParticle._texture = this._texture;
+                    retParticle._texture = this._texture;
                 }
             }
         }
@@ -472,97 +472,99 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     draw:function (ctx) {
         cc.Assert(!this._batchNode, "draw should not be called when added to a particleBatchNode");
-        this._super();
-        if (cc.renderContextType == cc.CANVAS) {
-            var context = ctx || cc.renderContext;
-            context.save();
-            if (this.isBlendAdditive())
-                context.globalCompositeOperation = 'lighter';
-            else
-                context.globalCompositeOperation = 'source-over';
+        //this._super();
+        var context = ctx || cc.renderContext;
+        context.save();
+        if (this.isBlendAdditive())
+            context.globalCompositeOperation = 'lighter';
+        else
+            context.globalCompositeOperation = 'source-over';
 
-            for (var i = 0; i < this._particleCount; i++) {
-                var particle = this._particles[i];
-                var lpx = (0 | (particle.size * 0.5));
+        for (var i = 0; i < this._particleCount; i++) {
+            var particle = this._particles[i];
+            var lpx = (0 | (particle.size * 0.5));
 
-                //TODO these are temporary code, need modifier
-                if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
-                    var drawTexture = this.getTexture();
-                    if (particle.isChangeColor) {
-                        var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
-                        if (cacheTextureForColor)
-                            drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color, this._pointRect);
-                    }
-                    context.save();
-                    context.globalAlpha = particle.color.a;
-                    context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-                    context.drawImage(drawTexture,
-                        lpx, -(lpx + particle.size),
-                        particle.size, particle.size);
-                    context.restore();
-                } else {
-                    context.save();
-                    context.globalAlpha = particle.color.a;
-                    context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-
-                    if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
-                        if(particle.rotation)
-                            context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
-                        cc.drawingUtil.drawStar(context, lpx, particle.color);
-                    } else
-                        cc.drawingUtil.drawColorBall(context, lpx, particle.color);
-                    context.restore()
+            //TODO these are temporary code, need modifier
+            if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
+                var drawTexture = this.getTexture();
+                if (particle.isChangeColor) {
+                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
+                    if (cacheTextureForColor)
+                        drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color, this._pointRect);
                 }
-            }
-            context.restore();
-        } else {
-            cc.NODE_DRAW_SETUP();
-
-            ccGLBindTexture2D(this._texture.getName());
-            ccGLBlendFunc(m_tBlendFunc.src, m_tBlendFunc.dst);
-
-            cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
-
-            if (cc.TEXTURE_ATLAS_USE_VAO) {
-                //
-                // Using VBO and VAO
-                //
-                glBindVertexArray(this._VAOname);
-
-                if (cc.REBIND_INDICES_BUFFER)
-                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
-
-                glDrawElements(GL_TRIANGLES, this._particleIdx * 6, GL_UNSIGNED_SHORT, 0);
-
-                if (cc.REBIND_INDICES_BUFFER)
-                    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-                glBindVertexArray(0);
+                context.save();
+                context.globalAlpha = particle.color.a;
+                context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
+                context.drawImage(drawTexture,
+                    lpx, -(lpx + particle.size),
+                    particle.size, particle.size);
+                context.restore();
             } else {
-                //
-                // Using VBO without VAO
-                //
-                var kQuadSize = sizeof(m_pQuads[0].bl);
+                context.save();
+                context.globalAlpha = particle.color.a;
+                context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
 
-                ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
+                if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
+                    if (particle.rotation)
+                        context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
+                    cc.drawingUtil.drawStar(context, lpx, particle.color);
+                } else
+                    cc.drawingUtil.drawColorBall(context, lpx, particle.color);
+                context.restore()
+            }
+        }
+        context.restore();
 
-                glBindBuffer(GL_ARRAY_BUFFER, this._buffersVBO[0]);
-                // vertices
-                glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, vertices));
-                // colors
-                glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, offsetof(ccV3F_C4B_T2F, colors));
-                // tex coords
-                glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, texCoords));
+        cc.INCREMENT_GL_DRAWS(1);
+    },
 
+    _drawForWebGL:function (ctx) {
+        cc.NODE_DRAW_SETUP();
+
+        ccGLBindTexture2D(this._texture.getName());
+        ccGLBlendFunc(m_tBlendFunc.src, m_tBlendFunc.dst);
+
+        cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
+
+        if (cc.TEXTURE_ATLAS_USE_VAO) {
+            //
+            // Using VBO and VAO
+            //
+            glBindVertexArray(this._VAOname);
+
+            if (cc.REBIND_INDICES_BUFFER)
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
 
-                glDrawElements(GL_TRIANGLES, this._particleIdx * 6, GL_UNSIGNED_SHORT, 0);
+            glDrawElements(GL_TRIANGLES, this._particleIdx * 6, GL_UNSIGNED_SHORT, 0);
 
-                glBindBuffer(GL_ARRAY_BUFFER, 0);
+            if (cc.REBIND_INDICES_BUFFER)
                 glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-            }
-            CHECK_GL_ERROR_DEBUG();
+
+            glBindVertexArray(0);
+        } else {
+            //
+            // Using VBO without VAO
+            //
+            var kQuadSize = sizeof(m_pQuads[0].bl);
+
+            ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
+
+            glBindBuffer(GL_ARRAY_BUFFER, this._buffersVBO[0]);
+            // vertices
+            glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, vertices));
+            // colors
+            glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, offsetof(ccV3F_C4B_T2F, colors));
+            // tex coords
+            glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, offsetof(ccV3F_C4B_T2F, texCoords));
+
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
+
+            glDrawElements(GL_TRIANGLES, this._particleIdx * 6, GL_UNSIGNED_SHORT, 0);
+
+            glBindBuffer(GL_ARRAY_BUFFER, 0);
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
+        CHECK_GL_ERROR_DEBUG();
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -760,7 +762,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
  */
 cc.ParticleSystemQuad.create = function (pListFile) {
     var ret = new cc.ParticleSystemQuad();
-    if(!pListFile)
+    if (!pListFile)
         return ret;
     if (ret && ret.initWithFile(pListFile)) {
         return ret;
