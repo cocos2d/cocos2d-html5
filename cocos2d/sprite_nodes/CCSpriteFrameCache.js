@@ -222,7 +222,6 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                         // append .png
                         texturePath = texturePath + ".png";
-                        cc.log("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
                     }
 
                     var getTexture = cc.TextureCache.getInstance().addImage(texturePath);
