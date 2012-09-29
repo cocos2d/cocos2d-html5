@@ -51,8 +51,8 @@ cc.Time = {};
  * get time of day
  * @return {cc.timeval}
  */
-cc.Time.gettimeofdayCocos2d = function () {
-    var timeval = new cc.timeval();
+cc.Time.gettimeofdayCocos2d = function (timeValue) {
+    var timeval = timeValue || new cc.timeval();
     var tmp = Date.now();
     timeval.tv_usec = (tmp % 1000) * 1000;
     timeval.tv_sec = Math.floor(tmp / 1000);
