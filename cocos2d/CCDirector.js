@@ -168,11 +168,18 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _watcherFun:null,
     _watcherSender:null,
 
+    _currTimeValue:null,
+
     /**
      * Constructor
      */
     ctor:function () {
-
+        this._currTimeValue = new cc.timeval();
+        this._lastUpdate = new cc.timeval();
+        var selfPointer = this;
+        window.addEventListener("focus",function(){
+            selfPointer._lastUpdate = cc.Time.gettimeofdayCocos2d(selfPointer._lastUpdate);
+        }, false);
     },
 
     /**
@@ -237,8 +244,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * calculates delta time since last time it was called
      */
     calculateDeltaTime:function () {
-        var now = new cc.timeval();
-        now = cc.Time.gettimeofdayCocos2d();
+        var now = cc.Time.gettimeofdayCocos2d(this._currTimeValue);
         if (!now) {
             cc.log("error in gettimeofday");
             this._deltaTime = 0;
@@ -259,7 +265,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 this._deltaTime = 1 / 60.0;
             }
         }
-        this._lastUpdate = now;
+        this._lastUpdate.tv_sec = now.tv_sec;
+        this._lastUpdate.tv_usec = now.tv_usec;
     },
 
     /**
