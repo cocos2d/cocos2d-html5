@@ -169,6 +169,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _watcherSender:null,
 
     _currTimeValue:null,
+    _isBlur:false,
 
     /**
      * Constructor
@@ -176,10 +177,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     ctor:function () {
         this._currTimeValue = new cc.timeval();
         this._lastUpdate = new cc.timeval();
-        var selfPointer = this;
-        window.addEventListener("focus",function(){
-            selfPointer._lastUpdate = cc.Time.gettimeofdayCocos2d(selfPointer._lastUpdate);
-        }, false);
+        if(!cc.isAddedHiddenEvent){
+            var selfPointer = this;
+            window.addEventListener("focus",function(){
+                selfPointer._lastUpdate = cc.Time.gettimeofdayCocos2d(selfPointer._lastUpdate);
+            }, false);
+        }
+    },
+
+    _resetLastUpdate:function(){
+        this._lastUpdate = cc.Time.gettimeofdayCocos2d(this._lastUpdate);
     },
 
     /**
