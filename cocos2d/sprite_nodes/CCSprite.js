@@ -1720,8 +1720,36 @@ cc.Sprite.create = function (fileName, rect) {
 };
 
 /**
+ * Creates a sprite with a sprite frame name
+ * @param {String} spriteFrame name
+ * @return {cc.Sprite}
+ * @example
+ *
+ * //create a sprite with a sprite frame
+ * var sprite = cc.Sprite.createWithSpriteFrameName('grossini_dance_01.png');
+ */
+cc.Sprite.createWithSpriteFrameName = function (spriteFrameName) {
+    var spriteFrame = null;
+    if (typeof(spriteFrameName) == 'string') {
+        spriteFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrameName);
+        if (!spriteFrame) {
+            cc.log("Invalid spriteFrameName: " + spriteFrameName);
+            return null;
+        }
+    } else {
+        cc.log("Invalid argument. Expecting string.");
+        return null;
+    }
+    var sprite = new cc.Sprite();
+    if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
+        return sprite;
+    }
+    return null;
+};
+
+/**
  * Creates a sprite with a sprite frame.
- * @param {cc.SpriteFrame|String} spriteFrame or spriteFrame name
+ * @param {cc.SpriteFrame} spriteFrame
  * @return {cc.Sprite}
  * @example
  * //get a sprite frame
@@ -1729,20 +1757,8 @@ cc.Sprite.create = function (fileName, rect) {
  *
  * //create a sprite with a sprite frame
  * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
- *
- * //create a sprite with a sprite frame
- * var sprite = cc.Sprite.createWithSpriteFrameName('rossini_dance_01.png');
  */
-cc.Sprite.createWithSpriteFrameName = function (spriteFrame) {
-    if (typeof(spriteFrame) == 'string') {
-        var pFrame = cc.SpriteFrameCache.getInstance().getSpriteFrame(spriteFrame);
-        if (pFrame) {
-            spriteFrame = pFrame;
-        } else {
-            cc.log("Invalid spriteFrameName: " + spriteFrame);
-            return null;
-        }
-    }
+cc.Sprite.createWithSpriteFrame = function (spriteFrame) {
     var sprite = new cc.Sprite();
     if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
         return sprite;

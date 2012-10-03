@@ -118,7 +118,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * </p>
      * @param {String} plist
      */
-    addAnimationsWithFile:function (plist) {
+    addAnimations:function (plist) {
         cc.Assert(plist, "Invalid texture file name");
 
         var path = cc.FileUtils.getInstance().fullPathFromRelativePath(plist);
@@ -155,7 +155,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
                 frames.push(animFrame);
             }
 
-            if (frames.length == 0) {
+            if (frames.length === 0) {
                 cc.log("cocos2d: cc.AnimationCache: None of the frames for animation '" + key
                     + "' were found in the cc.SpriteFrameCache. Animation is not being added to the Animation Cache.");
                 continue;
@@ -236,7 +236,7 @@ cc.AnimationCache.purgeSharedAnimationCache = function () {
  * @return {cc.AnimationCache}
  */
 cc.AnimationCache.getInstance = function () {
-    if (cc.s_sharedAnimationCache == null) {
+    if (cc.s_sharedAnimationCache === null) {
         cc.s_sharedAnimationCache = new cc.AnimationCache();
         cc.s_sharedAnimationCache.init();
     }
