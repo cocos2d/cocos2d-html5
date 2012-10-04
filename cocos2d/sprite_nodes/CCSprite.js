@@ -1317,7 +1317,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *      sprite->setScaleX(sprite->getScaleX() * -1);  <p/>
      * @return {Boolean}
      */
-    isFlipX:function () {
+    getFlipX:function () {
         return this._flipX;
     },
 
@@ -1329,7 +1329,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *         sprite->setScaleY(sprite->getScaleY() * -1); <p/>
      * @return {Boolean}
      */
-    isFlipY:function () {
+    getFlipY:function () {
         return this._flipY;
     },
 
@@ -1700,7 +1700,11 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
 cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
     var sprite = new cc.Sprite();
-    if (argnum < 2) {
+    if( argnum === 0 ) {
+        if( sprite.init() )
+            return sprite;
+        return null;
+    } else if (argnum < 2) {
         /** Creates an sprite with an image filename.
          The rect used will be the size of the image.
          The offset will be (0,0).
