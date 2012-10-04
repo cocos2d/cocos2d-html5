@@ -857,7 +857,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         tv.skew.y = this._skewY;
         tv.ap = this._anchorPointInPoints;
         tv.visible = this._isVisible;
-        return tv
+        return tv;
     },
 
     /**
@@ -1317,7 +1317,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *      sprite->setScaleX(sprite->getScaleX() * -1);  <p/>
      * @return {Boolean}
      */
-    getFlipX:function () {
+    isFlippedX:function () {
         return this._flipX;
     },
 
@@ -1329,7 +1329,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      *         sprite->setScaleY(sprite->getScaleY() * -1); <p/>
      * @return {Boolean}
      */
-    getFlipY:function () {
+    isFlippedY:function () {
         return this._flipY;
     },
 
