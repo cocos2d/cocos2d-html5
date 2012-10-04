@@ -1619,6 +1619,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 this._updateBlendFunc();
             }
         }
+        // XXX Added for compatibility with JSB
+        // XXX This should be removed once WebGL support is added, it these
+        // two methods should be part of Texture2D
+        // In fact, cocos2d-html5 should use Texture2D object, always.
+        // And this 3 lines are a horrible, HORRIBLE hack
+        if( this._texture !== null) {
+            this._texture.setAliasTexParameters = function(){};
+            this._texture.setAntiAliasTexParameters = function(){};
+        }
     },
 
     getTexture:function () {
