@@ -197,7 +197,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._scheduler = director.getScheduler();
         this.getScheduler = function () {
             return this._scheduler;
-        }
+        };
     },
 
     /**
@@ -351,7 +351,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @private
      */
     _setZOrder:function (z) {
-        this._zOrder = z
+        this._zOrder = z;
     },
 
     setZOrder:function (z) {
