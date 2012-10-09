@@ -460,7 +460,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     /**
      * @param {Number} s
      */
-    setFontSizeObj:function (s) {
+    setFontSize:function (s) {
         this._fontSize = s;
         this._recreateLabel();
     },
@@ -469,14 +469,14 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
      *
      * @return {Number}
      */
-    fontSizeObj:function () {
+    fontSize:function () {
         return this._fontSize;
     },
 
     /**
      * @param {String} name
      */
-    setFontNameObj:function (name) {
+    setFontName:function (name) {
         this._fontName = name;
         this._recreateLabel();
     },
@@ -484,7 +484,7 @@ cc.MenuItemFont = cc.MenuItemLabel.extend(/** @lends cc.MenuItemFont# */{
     /**
      * @return {String}
      */
-    fontNameObj:function () {
+    fontName:function () {
         return this._fontName;
     },
     _recreateLabel:function () {
@@ -1029,52 +1029,23 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
     },
 
     /**
-     * @param {cc.Node} args[0] the first item in the args array is a target
-     * @param {function|String} args[1] the second item in the args array is the callback
-     * @param {cc.MenuItem} args[2+] the rest in the array are cc.MenuItems
-     * @return {Boolean}
-     */
-    initWithCallback:function (args) {
-        if (args.length < 2) {
-            return false;
-        }
-        var target = args[0], selector = args[1];
-        this._super(target, selector);
-        if (args.length == 2) {
-            return false;
-        }
-        this._subItems = [];
-        for (var i = 2; i < args.length; i++) {
-            if (args[i]) {
-                this._subItems.push(args[i]);
-            }
-        }
-        this._selectedIndex = cc.UINT_MAX;
-        this.setSelectedIndex(0);
-        return true;
-    },
-
-    /**
-     * @param {cc.MenuItem} item
-     * @return {Boolean}
-     */
-    initWithItem:function (item) {
-        this.initWithCallback(null, null);
-        this._subItems = [];
-        this._subItems.push(item);
-        this._selectedIndex = cc.UINT_MAX;
-        this.setSelectedIndex(0);
-        return true;
-    },
-
-    /**
-     * @param {cc.MenuItem} args[1+] items
+     * @param {cc.MenuItem} args[0...last-2] the rest in the array are cc.MenuItems
+     * @param {cc.Node} args[last-1] the first item in the args array is a target
+     * @param {function|String} args[last] the second item in the args array is the callback
      * @return {Boolean}
      */
     initWithItems:function (args) {
-        this.initWithCallback(null, null);
+        var l =  args.length;
+        // passing callback.
+        if (typeof args[args.length-1] === 'function') {
+            this.initWithCallback( args[args.length-2], args[args.length-1] );
+            l = l-2;
+        }
+        else
+            this.initWithCallback(null, null);
+
         this._subItems = [];
-        for (var i = 0; i < args.length; i++) {
+        for (var i = 0; i < l; i++) {
             if (args[i]) {
                 this._subItems.push(args[i]);
             }
@@ -1123,7 +1094,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {Boolean} enabled
      */
     setEnabled:function (enabled) {
-        if (this._isEnabled = enabled) {
+        if (this._isEnabled == enabled) {
             this._super(enabled);
 
             if (this._subItems && this._subItems.length > 0) {
@@ -1172,11 +1143,6 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
  */
 cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     var ret = new cc.MenuItemToggle();
-    //ret.initWithItems(arguments);
-    if (arguments.length == 1) {
-        ret.initWithItem(arguments);
-    } else {
-        ret.initWithCallback(arguments);
-    }
+    ret.initWithItems(arguments);
     return ret;
 };
