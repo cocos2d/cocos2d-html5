@@ -166,6 +166,8 @@ cc.initDebugSetting = function () {
         };
         cc.logERROR = function () {
         };
+        cc.Assert = function () {
+        };
     }
     else if (cc.COCOS2D_DEBUG == 1) {
         cc.logINFO = cc.log;
@@ -176,24 +178,6 @@ cc.initDebugSetting = function () {
         cc.logINFO = cc.log;
         cc.logERROR = cc.log;
     }// COCOS2D_DEBUG
-
-    if (cc.COCOS2D_DEBUG) {
-        cc.Assert = function (cond, message) {
-            if ((typeof console.assert) == "function") {
-                console.assert(cond, message);
-            } else {
-                if (!cond) {
-                    if (message) {
-                        alert(message);
-                    }
-                }
-            }
-        }
-    } else {
-        cc.Assert = function () {
-        };
-    }
-
 }
 
 // Enum the language type supportted now
