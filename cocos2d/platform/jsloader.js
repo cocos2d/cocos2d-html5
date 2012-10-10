@@ -172,7 +172,7 @@
             s.src = f;
             s.onload = function () {
                 loaded++;
-                p = loaded / que.length;
+                var p = loaded / que.length;
                 //TODO: code for updating progress bar
             };
             d.body.appendChild(s);
