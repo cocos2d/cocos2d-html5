@@ -52,7 +52,7 @@ cc.clone = function (obj) {
  * @param {object} jsobj subclass
  * @param {object} klass superclass
  */
-cc.associateWithNative = function( jsobj, superclass ) {
+cc.associateWithNative = function (jsobj, superclass) {
 };
 
 /**
@@ -135,40 +135,49 @@ cc.MessageBox = function (message) {
     console.log(message);
 };
 
-// cocos2d debug
-if (cc.COCOS2D_DEBUG == 0) {
-    cc.log = function () {
-    };
-    cc.logINFO = function () {
-    };
-    cc.logERROR = function () {
-    };
-}
-else if (cc.COCOS2D_DEBUG == 1) {
-    cc.logINFO = cc.log;
-    cc.logERROR = function () {
-    };
-}
-else if (cc.COCOS2D_DEBUG > 1) {
-    cc.logINFO = cc.log;
-    cc.logERROR = cc.log;
-}// COCOS2D_DEBUG
-
-if (cc.COCOS2D_DEBUG) {
-    cc.Assert = function (cond, message) {
-        if ((typeof console.assert) == "function") {
-            console.assert(cond, message);
-        } else {
-            if (!cond) {
-                if (message) {
-                    alert(message);
-                }
+/**
+ * Output Assert message.
+ * @function
+ * @param {Boolean} cond If cond is false, assert.
+ * @param {String} message
+ */
+cc.Assert = function (cond, message) {
+    if ((typeof console.assert) == "function") {
+        console.assert(cond, message);
+    } else {
+        if (!cond) {
+            if (message) {
+                alert(message);
             }
         }
     }
-} else {
-    cc.Assert = function () {
-    };
+}
+
+/**
+ * Update Debug setting.
+ * @function
+ */
+cc.initDebugSetting = function () {
+    // cocos2d debug
+    if (cc.COCOS2D_DEBUG == 0) {
+        cc.log = function () {
+        };
+        cc.logINFO = function () {
+        };
+        cc.logERROR = function () {
+        };
+        cc.Assert = function () {
+        };
+    }
+    else if (cc.COCOS2D_DEBUG == 1) {
+        cc.logINFO = cc.log;
+        cc.logERROR = function () {
+        };
+    }
+    else if (cc.COCOS2D_DEBUG > 1) {
+        cc.logINFO = cc.log;
+        cc.logERROR = cc.log;
+    }// COCOS2D_DEBUG
 }
 
 // Enum the language type supportted now
