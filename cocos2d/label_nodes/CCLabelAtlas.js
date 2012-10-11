@@ -41,21 +41,21 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
         var label, textureFilename, width, height, startChar;
         if (arg.length == 2) {
             var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(arg[1]);
-            cc.Assert(parseInt(dict["version"]) == 1, "Unsupported version. Upgrade cocos2d version");
+            cc.Assert(parseInt(dict["version"],10) == 1, "Unsupported version. Upgrade cocos2d version");
 
             label = arg[0].toString();
             textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
-            width = parseInt(dict["itemWidth"]) / cc.CONTENT_SCALE_FACTOR();
-            height = parseInt(dict["itemHeight"]) / cc.CONTENT_SCALE_FACTOR();
-            startChar = String.fromCharCode(parseInt(dict["firstChar"]));
+            width = parseInt(dict["itemWidth"],10) / cc.CONTENT_SCALE_FACTOR();
+            height = parseInt(dict["itemHeight"],10) / cc.CONTENT_SCALE_FACTOR();
+            startChar = String.fromCharCode(parseInt(dict["firstChar"],10));
         }
         else {
             label = arg[0].toString();
             textureFilename = arg[1];
             width = arg[2];
             height = arg[3];
-            startChar = arg[4];
-            cc.Assert(label != null, "Label must be non-nil");
+            startChar = String.fromCharCode(arg[4]);
+            cc.Assert(label !== null, "Label must be non-nil");
         }
 
         if (this.initWithTileFile(textureFilename, width, height, label.length)) {
@@ -74,8 +74,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
 
         for (var i = 0; i < this._string.length; i++) {
             var a = this._string.charCodeAt(i) - this._mapStartChar.charCodeAt(0);
-            var row = parseInt(a % this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
-            var col = parseInt(a / this._itemsPerRow) * cc.CONTENT_SCALE_FACTOR();
+            var row = parseInt(a % this._itemsPerRow,10) * cc.CONTENT_SCALE_FACTOR();
+            var col = parseInt(a / this._itemsPerRow,10) * cc.CONTENT_SCALE_FACTOR();
 
             var rect = cc.rect(row * this._itemWidth, col * this._itemHeight, this._itemWidth, this._itemHeight);
             var c = this._string.charCodeAt(i);

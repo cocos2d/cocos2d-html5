@@ -373,14 +373,14 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
         var points = [];
         var p, lt;
-        var deltaT = 1.0 / config.count();
+        var deltaT = 1.0 / config.length;
 
         for (var i = 0; i < segments + 1; i++) {
             var dt = i / segments;
 
             // border
             if (dt == 1) {
-                p = config.count() - 1;
+                p = config.length - 1;
                 lt = 1;
             } else {
                 p = 0 | (dt / deltaT);
@@ -388,8 +388,12 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
             }
 
             // Interpolate
-            var newPos = cc.CardinalSplineAt(config.getControlPointAtIndex(p - 1), config.getControlPointAtIndex(p + 0),
-                config.getControlPointAtIndex(p + 1), config.getControlPointAtIndex(p + 2), tension, lt);
+            var newPos = cc.CardinalSplineAt(
+                cc.getControlPointAt( config, p - 1),
+                cc.getControlPointAt( config, p - 0),
+                cc.getControlPointAt( config, p + 1),
+                cc.getControlPointAt( config, p + 2),
+                tension, lt);
             points.push(newPos);
         }
         this.drawPoly(points, segments + 1, false, false);
