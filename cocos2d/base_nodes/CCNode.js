@@ -186,7 +186,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._position = cc.p(0, 0);
 
         this.setAnchorPoint = this._setAnchorPointByValue;
-        this.setPosition = this._setPositionByValue;
         this.setContentSize = this._setContentSizeByValue;
 
         var director = cc.Director.getInstance();
@@ -477,36 +476,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * position setter
-     * @param {cc.Point|Number} newPosOrxValue
-     * @param {Number}  yValue
+     * @param {cc.Point} newPos
      */
-    setPosition:function (newPosOrxValue, yValue) {
-        //save dirty region when before change
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
-        if (yValue) {
-            this._position = new cc.Point(newPosOrxValue, yValue);
-            this.setPosition = this._setPositionByValue;
-        } else if (newPosOrxValue.y != null) {
-            this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
-            this.setPosition = this._setPositionByValue;
-        }
-
-        //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+    setPosition:function (newPos) {
+   
+        this._position = newPos;
         this.setNodeDirty();
+
     },
 
-    _setPositionByValue:function (newPosOrxValue, yValue) {
-        if (yValue) {
-            this._position.x = newPosOrxValue;
-            this._position.y = yValue;
-            //this._position = cc.p(newPosOrxValue,yValue);
-        } else if (newPosOrxValue.y != null) {
-            this._position.x = newPosOrxValue.x;
-            this._position.y = newPosOrxValue.y;
-        }
-        this.setNodeDirty();
-    },
 
     /** <p>get/set Position for Lua (pass number faster than cc.Point object)</p>
 
