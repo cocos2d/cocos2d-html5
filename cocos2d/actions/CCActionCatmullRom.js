@@ -64,169 +64,42 @@
     return cc.p(x, y);
 };
 
+
 /**
- * An Array that contain control points. Used by cc.CardinalSplineTo and (By) and cc.CatmullRomTo (and By) actions.
- * @class
- * @extends cc.Node
- *
- * @example
- * //create a PointArray
- *  var array = cc.PointArray.create();
- *
- *  //add some points to this PointArray
- *  array.addControlPoint(cc.p(0, 0));
- *  array.addControlPoint(cc.p(winSize.width / 2 - 30, 0));
- *  array.addControlPoint(cc.p(winSize.width / 2 - 30, winSize.height - 80));
- *  array.addControlPoint(cc.p(0, winSize.height - 80));
- *  array.addControlPoint(cc.p(0, 0));
+ * returns a new copy of the array reversed.
+ * @return {Array}
  */
-cc.PointArray = cc.Node.extend(/** @lends cc.PointArray# */{
-    /** Array that contains the control points */
-    _controlPoints:null,
-
-    /**
-     * Constructor
-     */
-    ctor:function () {
-        this._controlPoints = [];
-    },
-
-    /**
-     * appends a control point
-     * @param {cc.Point} controlPoint
-     */
-    addControlPoint:function (controlPoint) {
-        // should create a new object of cc.Point
-        // because developer always use this function like this
-        // addControlPoint(ccp(x, y))
-        // passing controlPoint is a temple object
-        var temp = cc.p(controlPoint.x, controlPoint.y);
-        this._controlPoints.push(temp);
-    },
-
-    /**
-     * inserts a controlPoint at index
-     * @param {cc.Point} controlPoint
-     * @param {Number} index
-     */
-    insertControlPoint:function (controlPoint, index) {
-        // should create a new object of cc.Point
-        // because developer always use this function like this
-        // insertControlPoint(ccp(x, y))
-        // passing controlPoint is a temple object
-        var temp = cc.p(controlPoint.x, controlPoint.y);
-        this._controlPoints = cc.ArrayAppendObjectToIndex(this._controlPoints, temp, index);
-    },
-
-    /**
-     * replaces an existing controlPoint at index
-     * @param {cc.Point} controlPoint
-     * @param {Number} index
-     */
-    replaceControlPoint:function (controlPoint, index) {
-        // should create a new object of cc.Point
-        // because developer always use this function like this
-        // replaceControlPoint(ccp(x, y))
-        // passing controlPoint is a temple object
-        this._controlPoints[index] = cc.p(controlPoint.x, controlPoint.y);
-    },
-
-    /**
-     * get the value of a controlPoint at a given index
-     * @param {Number} index
-     * @return {cc.Point}
-     */
-    getControlPointAtIndex:function (index) {
-        if (!this._controlPoints) {
-            return null;
-        }
-        index = index < 0 ? 0 : index;
-        index = index > this._controlPoints.length - 1 ? this._controlPoints.length - 1 : index;
-        return this._controlPoints[index];
-    },
-
-    /**
-     * deletes a control point at a given index
-     * @param {Number} index
-     */
-    removeControlPointAtIndex:function (index) {
-        cc.ArrayRemoveObjectAtIndex(this._controlPoints, index);
-    },
-
-    /**
-     * returns the number of objects of the control point array
-     * @return {Number}
-     */
-    count:function () {
-        return this._controlPoints.length;
-    },
-
-    /**
-     * returns a new copy of the array reversed. User is responsible for releasing this copy
-     * @return {cc.PointArray}
-     */
-    reverse:function () {
-        var newArray = [];
-        for (var i = this._controlPoints.length - 1; i >= 0; i--) {
-            newArray.push(cc.p(this._controlPoints[i].x, this._controlPoints[i].y));
-        }
-        var config = new cc.PointArray();
-        config.setControlPoints(newArray);
-        return config;
-    },
-
-    /**
-     * reverse the current control point array inline, without generating a new one
-     */
-    reverseInline:function () {
-        var len = this._controlPoints.length;
-        var mid = 0 | (len / 2);
-        for (var i = 0; i < mid; ++i) {
-            var temp = this._controlPoints[i];
-            this._controlPoints[i] = this._controlPoints[len - i - 1];
-            this._controlPoints[len - i - 1] = temp;
-        }
-    },
-
-    /**
-     * copy a new PointArray
-     * @return {cc.PointArray}
-     */
-    copyWithZone:function () {
-        var newArray = [];
-        var newPoints = new cc.PointArray();
-        for (var i = 0; i < this._controlPoints.length; i++) {
-            newArray.push(cc.p(this._controlPoints[i].x, this._controlPoints[i].y));
-        }
-        newPoints.setControlPoints(newArray);
-        return newPoints;
-    },
-
-    /**
-     * get control points
-     * @return {Array}
-     */
-    getControlPoints:function () {
-        return this._controlPoints;
-    },
-
-    /**
-     * set control points
-     * @param {Array} controlPoints
-     */
-    setControlPoints:function (controlPoints) {
-        this._controlPoints = controlPoints;
+cc.reverseControlPoints = function( controlPoints ) {
+    var newArray = [];
+    for (var i = controlPoints.length - 1; i >= 0; i--) {
+        newArray.push(cc.p(controlPoints[i].x, controlPoints[i].y));
     }
-});
+    return newArray;
+};
 
 /**
- * creates and initializes a Points array with capacity
- * @function
- * @return {cc.PointArray}
+ * returns a point from the array
+ * @return {Array}
  */
-cc.PointArray.create = function () {
-    return new cc.PointArray();
+cc.getControlPointAt = function( controlPoints, pos ) {
+    var p = Math.min( controlPoints.length-1, Math.max(pos,0));
+    return controlPoints[p];
 };
+
+
+/**
+ * reverse the current control point array inline, without generating a new one
+ */
+cc.reverseControlPointsInline = function (controlPoints) {
+    var len = controlPoints.length;
+    var mid = 0 | (len / 2);
+    for (var i = 0; i < mid; ++i) {
+        var temp = controlPoints[i];
+        controlPoints[i] = controlPoints[len - i - 1];
+        controlPoints[len - i - 1] = temp;
+    }
+},
+
 
 /**
  * Cardinal Spline path. http://en.wikipedia.org/wiki/Cubic_Hermite_spline#Cardinal_spline
@@ -247,18 +120,18 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * Constructor
      */
     ctor:function () {
-        this._points = new cc.PointArray();
+        this._points = [];
     },
 
     /**
      * initializes the action with a duration and an array of points
      * @param {Number} duration
-     * @param {cc.PointArray} points
+     * @param {Array} points array of control points
      * @param {Number} tension
      * @return {Boolean}
      */
     initWithDuration:function (duration, points, tension) {
-        cc.Assert(points.count() > 0, "Invalid configuration. It must at least have one control point");
+        cc.Assert(points.length > 0, "Invalid configuration. It must at least have one control point");
         if (this._super(duration)) {
             this.setPoints(points);
             this._tension = tension;
@@ -272,7 +145,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      */
     startWithTarget:function (target) {
         this._super(target);
-        this._deltaT = 1 / this._points.count();
+        this._deltaT = 1 / this._points.length;
     },
 
     /**
@@ -283,15 +156,19 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
         // border
         if (time == 1) {
-            p = this._points.count() - 1;
+            p = this._points.length - 1;
             lt = 1;
         } else {
             p = 0 | (time / this._deltaT);
             lt = (time - this._deltaT * p) / this._deltaT;
         }
 
-        var newPos = cc.CardinalSplineAt(this._points.getControlPointAtIndex(p - 1), this._points.getControlPointAtIndex(p + 0),
-            this._points.getControlPointAtIndex(p + 1), this._points.getControlPointAtIndex(p + 2), this._tension, lt);
+        var newPos = cc.CardinalSplineAt(
+            cc.getControlPointAt( this._points, p - 1),
+            cc.getControlPointAt( this._points, p - 0),
+            cc.getControlPointAt( this._points, p + 1),
+            cc.getControlPointAt( this._points, p + 2),
+            this._tension, lt);
         this.updatePosition(newPos);
     },
 
@@ -300,7 +177,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      * @return {cc.CardinalSplineTo}
      */
     reverse:function () {
-        var reversePoints = this._points.reverse();
+        var reversePoints = cc.reverseControlPoints(this._points);
         return cc.CardinalSplineTo.create(this._duration, reversePoints, this._tension);
     },
 
@@ -314,7 +191,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
     /**
      * Points getter
-     * @return {cc.PointArray}
+     * @return {Array}
      */
     getPoints:function () {
         return this._points;
@@ -322,7 +199,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
 
     /**
      * Points setter
-     * @param {cc.PointArray} points
+     * @param {Array} points
      */
     setPoints:function (points) {
         this._points = points;
@@ -333,7 +210,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
  * creates an action with a Cardinal Spline array of points and tension
  * @function
  * @param {Number} duration
- * @param {cc.PointArray} points
+ * @param {Array} points array of control points
  * @param {Number} tension
  * @return {cc.CardinalSplineTo}
  *
@@ -381,33 +258,33 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      * @return {cc.CardinalSplineBy}
      */
     reverse:function () {
-        var copyConfig = this._points.copyWithZone(null);
+        var copyConfig = this._points.slice();
         var current;
         //
         // convert "absolutes" to "diffs"
         //
-        var p = copyConfig.getControlPointAtIndex(0);
-        for (var i = 1; i < copyConfig.count(); ++i) {
-            current = copyConfig.getControlPointAtIndex(i);
+        var p = copyConfig[0];
+        for (var i = 1; i < copyConfig.length; ++i) {
+            current = copyConfig[i];
             var diff = cc.pSub(current, p);
-            copyConfig.replaceControlPoint(diff, i);
+            copyConfig[i] = diff;
             p = current;
         }
 
         // convert to "diffs" to "reverse absolute"
-        var reverseArray = copyConfig.reverse();
+        var reverseArray =  cc.reverseControlPoints( copyConfig );
 
         // 1st element (which should be 0,0) should be here too
-        p = reverseArray.getControlPointAtIndex(reverseArray.count() - 1);
-        reverseArray.removeControlPointAtIndex(reverseArray.count() - 1);
+        p = reverseArray[ reverseArray.length - 1 ];
+        reverseArray.pop();
 
         p = cc.pNeg(p);
-        reverseArray.insertControlPoint(p, 0);
-        for (i = 1; i < reverseArray.count(); ++i) {
-            current = reverseArray.getControlPointAtIndex(i);
+        reverseArray.unshift(p);
+        for (i = 1; i < reverseArray.length; ++i) {
+            current = reverseArray[i];
             current = cc.pNeg(current);
             var abs = cc.pAdd(current, p);
-            reverseArray.replaceControlPoint(abs, i);
+            reverseArray[i] = abs;
             p = abs;
         }
         return cc.CardinalSplineBy.create(this._duration, reverseArray, this._tension);
