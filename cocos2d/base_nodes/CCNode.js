@@ -483,10 +483,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition:function (newPosOrxValue, yValue) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
-        if (yValue) {
+        if (arguments.length==2) {
             this._position = new cc.Point(newPosOrxValue, yValue);
             this.setPosition = this._setPositionByValue;
-        } else if (newPosOrxValue.y != null) {
+        } else if (arguments.length==1) {
             this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
             this.setPosition = this._setPositionByValue;
         }
@@ -497,11 +497,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     _setPositionByValue:function (newPosOrxValue, yValue) {
-        if (yValue) {
+        if (arguments.length==2) {
             this._position.x = newPosOrxValue;
             this._position.y = yValue;
             //this._position = cc.p(newPosOrxValue,yValue);
-        } else if (newPosOrxValue.y != null) {
+        } else if (arguments.length==1) {
             this._position.x = newPosOrxValue.x;
             this._position.y = newPosOrxValue.y;
         }

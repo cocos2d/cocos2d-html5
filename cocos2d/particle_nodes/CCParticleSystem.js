@@ -1786,11 +1786,13 @@ cc.encodeToBase64 = function (data) {
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    var ret = new cc.ParticleSystem();
-    if (ret && ret.initWithFile(plistFile)) {
-        return ret;
-    }
-    return null;
+    return cc.ParticleSystemQuad.create(plistFile);
+};
+
+cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
+    var emitter = cc.ParticleSystemQuad.create();
+    emitter.initWithTotalParticles(number_of_particles);
+    return emitter;
 };
 
 // Different modes
