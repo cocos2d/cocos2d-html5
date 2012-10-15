@@ -41,14 +41,14 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     ctor:function () {
         this._super();
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        /*this.setAnchorPoint(cc.p(0.5, 0.5));
         this._ignoreAnchorPointForPosition = true;
 
         //this.initLayer();
         var director = cc.Director.getInstance();
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
-        this._isAccelerometerEnabled = false;
+        this._isAccelerometerEnabled = false;*/
     },
 
     /**
