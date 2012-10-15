@@ -1168,7 +1168,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setPosition:function (pos) {
-        cc.Node.prototype.setPosition.call(this, pos);
+        if(arguments.length >= 2)
+            cc.Node.prototype.setPosition.call(this, pos,arguments[1]);
+        else
+            cc.Node.prototype.setPosition.call(this, pos);
         this.SET_DIRTY_RECURSIVELY();
     },
 

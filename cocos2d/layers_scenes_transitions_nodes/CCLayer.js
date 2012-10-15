@@ -38,18 +38,17 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     /**
      * Constructor
-     * @return {Boolean} return false if director fails
      */
     ctor:function () {
         this._super();
-        this.setAnchorPoint(cc.p(0.5, 0.5));
+        /*this.setAnchorPoint(cc.p(0.5, 0.5));
         this._ignoreAnchorPointForPosition = true;
 
         //this.initLayer();
         var director = cc.Director.getInstance();
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
-        this._isAccelerometerEnabled = false;
+        this._isAccelerometerEnabled = false;*/
     },
 
     /**
@@ -64,7 +63,16 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
          this.setContentSize(director.getWinSize());
          this._isTouchEnabled = false;*/
 
+        this._super();
         // success
+        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this._ignoreAnchorPointForPosition = true;
+
+        //this.initLayer();
+        var director = cc.Director.getInstance();
+        this.setContentSize(director.getWinSize());
+        this._isTouchEnabled = false;
+        this._isAccelerometerEnabled = false;
         return true;
     },
 
