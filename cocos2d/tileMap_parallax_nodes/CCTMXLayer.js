@@ -77,6 +77,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._children = [];
         this._descendants = [];
         this._isUseCache = true;
+        this._layerSize = cc.p(0,0);
+        this._mapTileSize = cc.p(0,0);
     },
 
     /**
@@ -209,7 +211,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._atlasIndexArray = [];
             this.setContentSize(cc.SIZE_PIXELS_TO_POINTS(cc.size(this._layerSize.width * this._mapTileSize.width,
                 this._layerSize.height * this._mapTileSize.height)));
-
             this._useAutomaticVertexZ = false;
             this._vertexZvalue = 0;
             return true;
