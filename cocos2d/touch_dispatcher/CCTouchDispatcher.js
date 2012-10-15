@@ -594,9 +594,9 @@ cc.ProcessMouseupEvent = function (element, event) {
     cc.TouchDispatcher.preTouchPoint.x = mouseX;
     cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-    var set = [];
-    set.push(touch);
-    cc.Director.getInstance().getTouchDispatcher().touchesEnded(set, null);
+    var posArr = [];
+    posArr.push(touch);
+    cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
 };
 /**
  * @param {HTMLCanvasElement|HTMLDivElement} element
@@ -621,9 +621,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            var set = [];
-            set.push(touch);
-            cc.Director.getInstance().getTouchDispatcher().touchesBegan(set, null);
+            var posArr = [];
+            posArr.push(touch);
+            cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
         });
 
         element.addEventListener("mouseup", function (event) {
@@ -649,10 +649,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            var set = [];
-            set.push(touch);
+            var posArr = [];
+            posArr.push(touch);
 
-            cc.Director.getInstance().getTouchDispatcher().touchesMoved(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
         });
     } else {
         //register canvas touch event
@@ -660,7 +660,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -684,9 +684,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesBegan(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -695,7 +695,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -719,9 +719,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesMoved(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -730,7 +730,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -761,9 +761,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesEnded(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -772,7 +772,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -797,9 +797,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesCancelled(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesCancelled(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
