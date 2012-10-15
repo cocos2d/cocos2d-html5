@@ -45,7 +45,6 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
         this._super();
         this._ignoreAnchorPointForPosition = true;
         this.setAnchorPoint(cc.p(0.5, 0.5));
-
         this.setContentSize(cc.Director.getInstance().getWinSize());
     },
 
@@ -54,6 +53,9 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
      * @return {Boolean}
      */
     init:function () {
+        this._super();
+        this._ignoreAnchorPointForPosition = true;
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         this.setContentSize(cc.Director.getInstance().getWinSize());
         return true;
     }
