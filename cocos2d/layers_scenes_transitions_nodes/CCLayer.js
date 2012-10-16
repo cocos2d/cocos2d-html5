@@ -401,6 +401,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @return {Boolean}
      */
     initWithColor:function (color, width, height) {
+        this.init();
         var winSize = cc.Director.getInstance().getWinSize();
 
         width = width || winSize.width;
