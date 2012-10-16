@@ -41,14 +41,18 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     ctor:function () {
         this._super();
-        /*this.setAnchorPoint(cc.p(0.5, 0.5));
+
+        //this._initLayer();
+    },
+
+    _initLayer:function(){
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         this._ignoreAnchorPointForPosition = true;
 
-        //this.initLayer();
         var director = cc.Director.getInstance();
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
-        this._isAccelerometerEnabled = false;*/
+        this._isAccelerometerEnabled = false;
     },
 
     /**
@@ -62,17 +66,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
          }
          this.setContentSize(director.getWinSize());
          this._isTouchEnabled = false;*/
-
+        this._initLayer();
         this._super();
         // success
-        this.setAnchorPoint(cc.p(0.5, 0.5));
-        this._ignoreAnchorPointForPosition = true;
 
-        //this.initLayer();
-        var director = cc.Director.getInstance();
-        this.setContentSize(director.getWinSize());
-        this._isTouchEnabled = false;
-        this._isAccelerometerEnabled = false;
         return true;
     },
 
@@ -401,7 +398,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @return {Boolean}
      */
     initWithColor:function (color, width, height) {
-        this.init();
+        this._initLayer();
+
         var winSize = cc.Director.getInstance().getWinSize();
 
         width = width || winSize.width;
