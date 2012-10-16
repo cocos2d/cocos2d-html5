@@ -495,8 +495,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.save();
                 context.globalAlpha = particle.color.a;
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
-                context.drawImage(drawTexture,
-                    lpx, -(lpx + particle.size),
+                if (particle.rotation)
+                    context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
+                context.drawImage(drawTexture, -lpx, -lpx,
                     particle.size, particle.size);
                 context.restore();
             } else {
