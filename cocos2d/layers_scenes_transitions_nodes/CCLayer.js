@@ -66,10 +66,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
          }
          this.setContentSize(director.getWinSize());
          this._isTouchEnabled = false;*/
-        this._initLayer();
         this._super();
-        // success
-
+        this._initLayer();
         return true;
     },
 
