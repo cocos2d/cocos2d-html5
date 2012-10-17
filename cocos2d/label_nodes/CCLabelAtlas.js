@@ -54,7 +54,8 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             textureFilename = arg[1];
             width = arg[2];
             height = arg[3];
-            startChar = String.fromCharCode(arg[4]);
+            //startChar = String.fromCharCode(arg[4]);
+            startChar = arg[4];
             cc.Assert(label !== null, "Label must be non-nil");
         }
 
