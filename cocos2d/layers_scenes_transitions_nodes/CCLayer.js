@@ -413,9 +413,10 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             this._squareVertices[i].x = 0.0;
             this._squareVertices[i].y = 0.0;
         }
-        this._updateColor();
 
         this.setContentSize(cc.size(width, height));
+
+        this._updateColor();
         //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
         return true;
@@ -586,6 +587,60 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _alongVector:null,
     _compressedInterpolation:false,
 
+    _drawGradientCanvas:null,
+
+    _buildGradientCanvas:function(layerWidth,layerHeight){
+        layerWidth = layerWidth || this.getContentSize().width;
+        layerHeight = layerHeight || this.getContentSize().height;
+
+        var canvas_colors = document.createElement( 'canvas' );
+        canvas_colors.width = 2;
+        canvas_colors.height = 2;
+
+        var context_colors = canvas_colors.getContext( '2d' );
+        context_colors.fillStyle = 'rgba(0,0,0,1)';
+        context_colors.fillRect( 0, 0, 2, 2 );
+
+        var image_colors = context_colors.getImageData( 0, 0, 2, 2 );
+        var data = image_colors.data;
+
+        var canvas_render = document.createElement( 'canvas' );
+        canvas_render.width = layerWidth;
+        canvas_render.height = layerHeight;
+
+        var context_render = canvas_render.getContext( '2d' );
+        context_render.translate( - layerWidth / 2, - layerHeight / 2 );
+        context_render.scale( layerWidth, layerHeight );
+
+        // Top-left,
+        data[ 0 ] = 0 | (this._squareColors[0].r * 255);
+        data[ 1 ] = 0 | (this._squareColors[0].g * 255);
+        data[ 2 ] = 0 | (this._squareColors[0].b * 255);
+        data[ 3 ] = 0 | (this._squareColors[0].a * 255);
+
+        // Top-right,
+        data[ 4 ] = 0 | (this._squareColors[1].r * 255);
+        data[ 5 ] = 0 | (this._squareColors[1].g * 255);
+        data[ 6 ] = 0 | (this._squareColors[1].b * 255);
+        data[ 7 ] = 0 | (this._squareColors[1].a * 255);
+
+        // Bottom-left,
+        data[ 8 ] = 0 | (this._squareColors[2].r * 255);
+        data[ 9 ] = 0 | (this._squareColors[2].g * 255);
+        data[ 10 ] = 0 | (this._squareColors[2].b * 255);
+        data[ 11 ] = 0 | (this._squareColors[2].a * 255);
+
+        // Bottom-right,
+        data[ 12 ] = 0 | (this._squareColors[3].r * 255);
+        data[ 13 ] = 0 | (this._squareColors[3].g * 255);
+        data[ 14 ] = 0 | (this._squareColors[3].b * 255);
+        data[ 15 ] = 0 | (this._squareColors[3].a * 255);
+
+        context_colors.putImageData( image_colors, 0, 0 );
+        context_render.drawImage( canvas_colors, 0, 0 );
+        return canvas_render;
+    },
+
     /**
      * Constructor
      * @function
@@ -595,6 +650,13 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._endColor = new cc.Color3B(0, 0, 0);
         this._alongVector = cc.p(0, -1);
         this._super();
+
+        this._drawGradientCanvas = this._buildGradientCanvas();
+    },
+
+    init:function(){
+        this._super();
+        this._drawGradientCanvas = this._buildGradientCanvas();
     },
 
     /**
@@ -677,7 +739,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Point} Var
      */
     setVector:function (Var) {
-        this.alongVector = Var;
+        this._alongVector = Var;
         this._updateColor();
     },
 
@@ -685,7 +747,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {cc.Point}
      */
     getVector:function () {
-        return this.alongVector;
+        return this._alongVector;
     },
 
     /** is Compressed Interpolation
@@ -737,19 +799,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _updateColor:function () {
         //todo need fixed for webGL
         this._super();
-        /*
-         this._squareColors[0].r = Math.round(this._startColor.r);
-         this._squareColors[0].g = Math.round(this._startColor.g);
-         this._squareColors[0].b = Math.round(this._startColor.b);
-         this._squareColors[0].a = Math.round(this._startColor.a);
-
-         this._squareColors[3].r = Math.round(this._endColor.r);
-         this._squareColors[3].g = Math.round(this._endColor.g);
-         this._squareColors[3].b = Math.round(this._endColor.b);
-         this._squareColors[3].a = Math.round(this._endColor.a);
-         return;
-         */
-
 
         var h = cc.pLength(this._alongVector);
         if (h == 0)
@@ -771,25 +820,46 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var E = new cc.Color4F(this._endColor.r / 255, this._endColor.g / 255, this._endColor.b / 255, (this._endOpacity * opacityf) / 255);
 
         // (-1, -1)
-        this._squareColors[0].r = parseInt((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].g = parseInt((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].b = parseInt((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].a = parseInt((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].r = ((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].g = ((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].b = ((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].a = ((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
         // (1, -1)
-        this._squareColors[1].r = parseInt((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].g = parseInt((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].b = parseInt((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].a = parseInt((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].r = ((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].g = ((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].b = ((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].a = ((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
         // (-1, 1)
-        this._squareColors[2].r = parseInt((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].g = parseInt((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].b = parseInt((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].a = parseInt((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].r = ((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].g = ((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].b = ((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].a = ((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
         // (1, 1)
-        this._squareColors[3].r = parseInt((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].g = parseInt((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].b = parseInt((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].a = parseInt((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].r = ((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].g = ((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
+
+        this._drawGradientCanvas = this._buildGradientCanvas();
+    },
+
+    draw:function(ctx){
+        var context = ctx || cc.renderContext;
+        if (cc.renderContextType == cc.CANVAS) {
+            if(this._drawGradientCanvas== null){
+                this._super(context);
+            }else{
+                context.globalAlpha = this._opacity / 255;
+                var posX = 0 | ( -this._anchorPointInPoints.x );
+                var posY = 0 | ( -this._anchorPointInPoints.y );
+
+                context.drawImage(this._drawGradientCanvas,
+                    0, 0,
+                    this._drawGradientCanvas.width, this._drawGradientCanvas.height,
+                    posX, -(posY + this._contentSize.height),
+                    this._contentSize.width, this._contentSize.height);
+            }
+        }
     }
 });
 
