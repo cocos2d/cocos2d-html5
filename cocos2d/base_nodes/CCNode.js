@@ -1010,7 +1010,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} tag
      */
     addChild:function (child, zOrder, tag) {
-        var argnum = arguments.length;
+        if ( child === this ) {
+            console.warn( 'cc.Node.addChild: An Node can\'t be added as a child of itself.' );
+            return;
+        }
+
         cc.Assert(child != null, "Argument must be non-nil");
         cc.Assert(child._parent == null, "child already added. It can't be added again");
         var tempzOrder = (zOrder != null) ? zOrder : child.getZOrder();
