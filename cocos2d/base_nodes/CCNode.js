@@ -1037,7 +1037,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     // composition: REMOVE
     /** Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks. <br/>
-     *  If the node orphan, then nothing happens.
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
+     * If the node orphan, then nothing happens.
      * @param {Boolean} cleanup
      */
     removeFromParent:function (cleanup) {
@@ -1054,7 +1055,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /** <p>Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter. </p>
-     *
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      *<p> "remove" logic MUST only be on this method  <br/>
      * If a class wants to extend the 'removeChild' behavior it only needs <br/>
      * to override this method </p>
@@ -1081,7 +1082,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter
+     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @param {Number} tag
      * @param {Boolean} cleanup
      */
@@ -1102,9 +1104,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.log("removeAllChildrenWithCleanup is deprecated. Use removeFromParent instead");
         this.removeAllChildren(cleanup);
     },
-    
+
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @param {Boolean} cleanup
      */
     removeAllChildren:function (cleanup) {
