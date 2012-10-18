@@ -24,6 +24,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/** Layer will receive all the touches at once The onTouchesXXX API will be called
+*/
+cc.TOUCH_ALL_AT_ONCE = 0;
+
+/** Layer will receive only one touch at the time. The onTouchXXX API will be called */
+cc.TOUCH_ONE_BY_ONE = 1;
+
 /** cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.<br/>
  * All features from cc.Node are valid, plus the following new features:<br/>
  * It can receive iPhone Touches<br/>
@@ -35,6 +42,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isTouchEnabled:false,
     _isAccelerometerEnabled:false,
     _isKeyboardEnabled:false,
+    _touchPriority:0,
+    _touchMode:cc.TOUCH_ALL_AT_ONCE,
 
     /**
      * Constructor
@@ -53,6 +62,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
         this._isAccelerometerEnabled = false;
+        this._touchMode = cc.TOUCH_ALL_AT_ONCE;
+        this._touchPriority = 0;
     },
 
     /**
@@ -72,11 +83,13 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     /**
-     * If isTouchEnabled, this method is called onEnter. Override it to change the<br/>
-     * way CCLayer receives touch events.<br/>
+     * If isTouchEnabled, this method is called onEnter.
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
+        if( this._touchMode === cc.TOUCH_ALL_AT_ONCE )
+            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
+        else
+            cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
     },
 
     /**
@@ -104,6 +117,48 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
                     // have problems?
                     cc.Director.getInstance().getTouchDispatcher().removeDelegate(this);
                 }
+            }
+        }
+    },
+
+    /** returns the priority of the touch event handler
+     * @return {Number}
+     */
+    getTouchPriority:function() {
+        return this._touchPriority;
+    },
+
+    /** Sets the touch event handler priority. Default is 0.
+     * @param {Number} priority
+     */
+    setTouchPriority:function(priority) {
+        if( this._touchPriority != priority ) {
+            this._touchPriority = priority;
+            // Update touch priority with handler
+            if( this._isTouchEnabled ) {
+                this.setTouchEnabled( false );
+                this.setTouchEnabled( true );
+            }
+        }
+    },
+
+    /** returns the touch mode.
+     * @return {Number}
+     */
+    getTouchMode:function() {
+        return this._touchMode;
+    },
+
+    /** Sets the touch mode.
+     * @param {Number} mode
+     */
+    setTouchMode:function(mode) {
+        if( this._touchMode != mode ) {
+            this._touchMode = mode;
+            // update the mode with handler
+            if( this._isTouchEnabled ) {
+                this.setTouchEnabled( false );
+                this.setTouchEnabled( true );
             }
         }
     },
