@@ -638,27 +638,30 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _compressedInterpolation:false,
 
     _drawGradientCanvas:null,
+    _sourceGradientCanvas:null,
 
     _buildGradientCanvas:function (layerWidth, layerHeight) {
         layerWidth = layerWidth || this.getContentSize().width;
         layerHeight = layerHeight || this.getContentSize().height;
 
-        var canvas_colors = document.createElement('canvas');
-        canvas_colors.width = 2;
-        canvas_colors.height = 2;
+        if(!this._sourceGradientCanvas)
+            this._sourceGradientCanvas = document.createElement('canvas');
+        this._sourceGradientCanvas.width = 2;
+        this._sourceGradientCanvas.height = 2;
 
-        var context_colors = canvas_colors.getContext('2d');
+        var context_colors = this._sourceGradientCanvas.getContext('2d');
         context_colors.fillStyle = 'rgba(0,0,0,1)';
         context_colors.fillRect(0, 0, 2, 2);
 
         var image_colors = context_colors.getImageData(0, 0, 2, 2);
         var data = image_colors.data;
 
-        var canvas_render = document.createElement('canvas');
-        canvas_render.width = layerWidth;
-        canvas_render.height = layerHeight;
+        if(!this._drawGradientCanvas)
+            this._drawGradientCanvas = document.createElement('canvas');
+        this._drawGradientCanvas.width = layerWidth;
+        this._drawGradientCanvas.height = layerHeight;
 
-        var context_render = canvas_render.getContext('2d');
+        var context_render = this._drawGradientCanvas.getContext('2d');
         context_render.translate(-layerWidth / 2, -layerHeight / 2);
         context_render.scale(layerWidth, layerHeight);
 
@@ -687,8 +690,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         data[ 15 ] = 0 | (this._squareColors[1].a * 255);
 
         context_colors.putImageData(image_colors, 0, 0);
-        context_render.drawImage(canvas_colors, 0, 0);
-        return canvas_render;
+        context_render.drawImage(this._sourceGradientCanvas, 0, 0);
     },
 
     /**
@@ -701,12 +703,12 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._alongVector = cc.p(0, -1);
         this._super();
 
-        this._drawGradientCanvas = this._buildGradientCanvas();
+        this._buildGradientCanvas();
     },
 
     init:function () {
         this._super();
-        this._drawGradientCanvas = this._buildGradientCanvas();
+        this._buildGradientCanvas();
     },
 
     /**
@@ -890,7 +892,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
         this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
 
-        this._drawGradientCanvas = this._buildGradientCanvas();
+        this._buildGradientCanvas();
     },
 
     draw:function (ctx) {
