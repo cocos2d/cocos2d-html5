@@ -1037,18 +1037,27 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     // composition: REMOVE
     /** Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks. <br/>
-     *  If the node orphan, then nothing happens.
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
+     * If the node orphan, then nothing happens.
      * @param {Boolean} cleanup
      */
-    removeFromParentAndCleanup:function (cleanup) {
-        if (this._parent)
+    removeFromParent:function (cleanup) {
+        if (this._parent) {
+            if( arguments.length === 0)
+                cleanup = true;
             this._parent.removeChild(this, cleanup);
+        }
+    },
+    /** XXX deprecated */
+    removeFromParentAndCleanup:function (cleanup) {
+        cc.log("removeFromParentAndCleanup is deprecated. Use removeFromParent instead");
+        this.removeFromParent(cleanup);
     },
 
     /** <p>Removes a child from the container. It will also cleanup all running actions depending on the cleanup parameter. </p>
-     *
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      *<p> "remove" logic MUST only be on this method  <br/>
-     * If a class want's to extend the 'removeChild' behavior it only needs <br/>
+     * If a class wants to extend the 'removeChild' behavior it only needs <br/>
      * to override this method </p>
      *
      * @param {cc.Node} child
@@ -1060,6 +1069,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
         }
 
+        // If only one argument, then force cleanup
+        if( arguments.length == 1)
+            cleanup = true;
+
         if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
@@ -1069,7 +1082,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter
+     * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @param {Number} tag
      * @param {Boolean} cleanup
      */
@@ -1085,13 +1099,22 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
     },
 
+    /* XXX deprecated */
+    removeAllChildrenWithCleanup:function (cleanup) {
+        cc.log("removeAllChildrenWithCleanup is deprecated. Use removeFromParent instead");
+        this.removeAllChildren(cleanup);
+    },
+
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
+     * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @param {Boolean} cleanup
      */
-    removeAllChildrenWithCleanup:function (cleanup) {
+    removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
+            if(arguments.length === 0)
+                cleanup = true;
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
@@ -1745,7 +1768,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} dt
      */
     update:function (dt) {
-    }
+    },
+
+    /**
+     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
+     * This is a hack, and should be removed once JSB fixes the retain/release bug
+     */
+     retain:function() {},
+     release:function() {}
 });
 
 /**

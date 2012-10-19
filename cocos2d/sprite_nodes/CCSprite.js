@@ -1113,7 +1113,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param cleanup whether or not cleanup all running actions
      * @override
      */
-    removeAllChildrenWithCleanup:function (cleanup) {
+    removeAllChildren:function (cleanup) {
         if (this._batchNode) {
             if (this._children != null) {
                 for (var i = 0; i < this._children.length; i++) {

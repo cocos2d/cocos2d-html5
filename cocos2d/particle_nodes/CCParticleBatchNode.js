@@ -255,7 +255,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     /**
      * @param {Boolean} doCleanup
      */
-    removeAllChildrenWithCleanup:function (doCleanup) {
+    removeAllChildren:function (doCleanup) {
         for (var i = 0; i < this._children.length; i++) {
             this._children[i].setBatchNode(null);
         }
