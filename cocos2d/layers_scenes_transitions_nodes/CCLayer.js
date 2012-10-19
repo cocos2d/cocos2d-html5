@@ -663,28 +663,28 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         context_render.scale(layerWidth, layerHeight);
 
         // Top-left,
-        data[ 0 ] = 0 | (this._squareColors[0].r * 255);
-        data[ 1 ] = 0 | (this._squareColors[0].g * 255);
-        data[ 2 ] = 0 | (this._squareColors[0].b * 255);
-        data[ 3 ] = 0 | (this._squareColors[0].a * 255);
+        data[ 0 ] = 0 | (this._squareColors[2].r * 255);
+        data[ 1 ] = 0 | (this._squareColors[2].g * 255);
+        data[ 2 ] = 0 | (this._squareColors[2].b * 255);
+        data[ 3 ] = 0 | (this._squareColors[2].a * 255);
 
         // Top-right,
-        data[ 4 ] = 0 | (this._squareColors[1].r * 255);
-        data[ 5 ] = 0 | (this._squareColors[1].g * 255);
-        data[ 6 ] = 0 | (this._squareColors[1].b * 255);
-        data[ 7 ] = 0 | (this._squareColors[1].a * 255);
+        data[ 4 ] = 0 | (this._squareColors[3].r * 255);
+        data[ 5 ] = 0 | (this._squareColors[3].g * 255);
+        data[ 6 ] = 0 | (this._squareColors[3].b * 255);
+        data[ 7 ] = 0 | (this._squareColors[3].a * 255);
 
         // Bottom-left,
-        data[ 8 ] = 0 | (this._squareColors[2].r * 255);
-        data[ 9 ] = 0 | (this._squareColors[2].g * 255);
-        data[ 10 ] = 0 | (this._squareColors[2].b * 255);
-        data[ 11 ] = 0 | (this._squareColors[2].a * 255);
+        data[ 8 ] = 0 | (this._squareColors[0].r * 255);
+        data[ 9 ] = 0 | (this._squareColors[0].g * 255);
+        data[ 10 ] = 0 | (this._squareColors[0].b * 255);
+        data[ 11 ] = 0 | (this._squareColors[0].a * 255);
 
         // Bottom-right,
-        data[ 12 ] = 0 | (this._squareColors[3].r * 255);
-        data[ 13 ] = 0 | (this._squareColors[3].g * 255);
-        data[ 14 ] = 0 | (this._squareColors[3].b * 255);
-        data[ 15 ] = 0 | (this._squareColors[3].a * 255);
+        data[ 12 ] = 0 | (this._squareColors[1].r * 255);
+        data[ 13 ] = 0 | (this._squareColors[1].g * 255);
+        data[ 14 ] = 0 | (this._squareColors[1].b * 255);
+        data[ 15 ] = 0 | (this._squareColors[1].a * 255);
 
         context_colors.putImageData(image_colors, 0, 0);
         context_render.drawImage(canvas_colors, 0, 0);
@@ -839,7 +839,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._endColor.b = end.b;
         this._endOpacity = end.a;
 
-        this.alongVector = v;
+        this._alongVector = v;
 
         this._compressedInterpolation = true;
 
