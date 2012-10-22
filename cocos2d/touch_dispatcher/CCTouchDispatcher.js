@@ -121,6 +121,7 @@ cc.TouchHandlerHelperData = function (type) {
  * @extends cc.Class
  */
 cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
+    _mousePressed:false,
     _targetedHandlers:null,
     _standardHandlers:null,
     _locked:false,
@@ -146,8 +147,17 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
         this._toAdd = false;
         this._toQuit = false;
         this._locked = false;
+        this._mousePressed = false;
         cc.TouchDispatcher.registerHtmlElementEvent(cc.canvas);
         return true;
+    },
+
+    _setMousePressed:function (pressed) {
+        this._mousePressed = pressed;
+    },
+
+    _getMousePressed:function () {
+        return this._mousePressed;
     },
 
     /**
@@ -350,7 +360,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
                         claimed = true;
                         switch (helper.type) {
                             case cc.TOUCH_MOVED:
-                                handler.getDelegate().onTouchMoved(touch, event);
+                                if (cc.Browser.isMobile) {
+                                    handler.getDelegate().onTouchMoved(touch, event);
+                                } else {
+                                    if (this._mousePressed)
+                                        handler.getDelegate().onTouchMoved(touch, event);
+                                }
                                 break;
                             case cc.TOUCH_ENDED:
                                 handler.getDelegate().onTouchEnded(touch, event);
@@ -394,7 +409,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
                         break;
                     case cc.TOUCH_MOVED:
                         if (mutableTouches.length > 0) {
-                            handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                            if (cc.Browser.isMobile) {
+                                handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                            } else {
+                                if (this._mousePressed)
+                                    handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                            }
                         }
                         break;
                     case cc.TOUCH_ENDED:
@@ -606,6 +626,14 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         return;
 
     if (!cc.Browser.isMobile) {
+        window.addEventListener('mousedown', function (event) {
+            cc.Director.getInstance().getTouchDispatcher()._setMousePressed(true);
+        });
+
+        window.addEventListener('mouseup', function (event) {
+            cc.Director.getInstance().getTouchDispatcher()._setMousePressed(false);
+        });
+
         //register canvas mouse event
         element.addEventListener("mousedown", function (event) {
             var pos = cc.getHTMLElementPosition(element);
@@ -654,6 +682,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
             cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
         });
+
+        element.addEventListener("mousewheel",function(event){
+
+        }, false);
     } else {
         //register canvas touch event
         element.addEventListener("touchstart", function (event) {

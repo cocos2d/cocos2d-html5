@@ -44,6 +44,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isKeyboardEnabled:false,
     _touchPriority:0,
     _touchMode:cc.TOUCH_ALL_AT_ONCE,
+    _isMouseEnabled:false,
 
     /**
      * Constructor
@@ -62,6 +63,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
         this._isAccelerometerEnabled = false;
+        this._isMouseEnabled = false;
         this._touchMode = cc.TOUCH_ALL_AT_ONCE;
         this._touchPriority = 0;
     },
@@ -90,6 +92,19 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
         else
             cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
+    },
+
+    isMouseEnabled:function(){
+       return this._isMouseEnabled;
+    },
+
+    setMouseEnabled:function(enabled){
+        if(this._isMouseEnabled != enabled){
+            this._isMouseEnabled = enabled;
+            if(this._isRunning){
+
+            }
+        }
     },
 
     /**
@@ -343,6 +358,56 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     didAccelerate:function (pAccelerationValue) {
+    },
+
+    // ---------------------CCMouseEventDelegate interface------------------------------
+
+    //
+    // left
+    //
+    onMouseDown:function(event){
+    },
+
+    onMouseDragged:function(event){
+    },
+
+    onMouseMoved : function(event){
+    },
+
+    onMouseUp:function(event){
+    },
+
+    //right
+
+    onRightMouseDown : function(event){
+    },
+
+    onRightMouseDragged : function(event){
+    },
+
+    onRightMouseUp : function( event ){
+    },
+
+    //other
+    onOtherMouseDown : function(event){
+    },
+
+    onOtherMouseDragged : function( event){
+    },
+
+    onOtherMouseUp:function(event){
+    },
+
+    //scroll wheel
+    onScrollWheel : function( event){
+    },
+
+    // enter / exit
+
+    onMouseEntered:function(theEvent){
+    },
+
+    onMouseExited:function(theEvent){
     }
 });
 
