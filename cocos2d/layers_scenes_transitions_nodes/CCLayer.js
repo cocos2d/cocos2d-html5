@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 /** Layer will receive all the touches at once The onTouchesXXX API will be called
-*/
+ */
 cc.TOUCH_ALL_AT_ONCE = 0;
 
 /** Layer will receive only one touch at the time. The onTouchXXX API will be called */
@@ -45,6 +45,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _touchPriority:0,
     _touchMode:cc.TOUCH_ALL_AT_ONCE,
     _isMouseEnabled:false,
+    _mousePriority:0,
 
     /**
      * Constructor
@@ -88,23 +89,41 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * If isTouchEnabled, this method is called onEnter.
      */
     registerWithTouchDispatcher:function () {
-        if( this._touchMode === cc.TOUCH_ALL_AT_ONCE )
+        if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
             cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
         else
             cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
     },
 
-    isMouseEnabled:function(){
-       return this._isMouseEnabled;
+    isMouseEnabled:function () {
+        return this._isMouseEnabled;
     },
 
-    setMouseEnabled:function(enabled){
-        if(this._isMouseEnabled != enabled){
+    setMouseEnabled:function (enabled) {
+        if (this._isMouseEnabled != enabled) {
             this._isMouseEnabled = enabled;
-            if(this._isRunning){
-
+            if (this._isRunning) {
+                if (enabled)
+                    cc.Director.getInstance().getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
+                else
+                    cc.Director.getInstance().getMouseDispatcher().removeMouseDelegate(this);
             }
         }
+    },
+
+    setMousePriority:function (priority) {
+        if (this._mousePriority != priority) {
+            this._mousePriority = priority;
+            // Update touch priority with handler
+            if (this._isMouseEnabled) {
+                this.setMouseEnabled(false);
+                this.setMouseEnabled(true);
+            }
+        }
+    },
+
+    getMousePriority:function () {
+        return this._mousePriority;
     },
 
     /**
@@ -139,20 +158,20 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /** returns the priority of the touch event handler
      * @return {Number}
      */
-    getTouchPriority:function() {
+    getTouchPriority:function () {
         return this._touchPriority;
     },
 
     /** Sets the touch event handler priority. Default is 0.
      * @param {Number} priority
      */
-    setTouchPriority:function(priority) {
-        if( this._touchPriority != priority ) {
+    setTouchPriority:function (priority) {
+        if (this._touchPriority != priority) {
             this._touchPriority = priority;
             // Update touch priority with handler
-            if( this._isTouchEnabled ) {
-                this.setTouchEnabled( false );
-                this.setTouchEnabled( true );
+            if (this._isTouchEnabled) {
+                this.setTouchEnabled(false);
+                this.setTouchEnabled(true);
             }
         }
     },
@@ -160,20 +179,20 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     /** returns the touch mode.
      * @return {Number}
      */
-    getTouchMode:function() {
+    getTouchMode:function () {
         return this._touchMode;
     },
 
     /** Sets the touch mode.
      * @param {Number} mode
      */
-    setTouchMode:function(mode) {
-        if( this._touchMode != mode ) {
+    setTouchMode:function (mode) {
+        if (this._touchMode != mode) {
             this._touchMode = mode;
             // update the mode with handler
-            if( this._isTouchEnabled ) {
-                this.setTouchEnabled( false );
-                this.setTouchEnabled( true );
+            if (this._isTouchEnabled) {
+                this.setTouchEnabled(false);
+                this.setTouchEnabled(true);
             }
         }
     },
@@ -249,14 +268,15 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._super();
 
         // add this layer to concern the Accelerometer Sensor
-        if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled)
             director.getAccelerometer().setDelegate(this);
-        }
 
         // add this layer to concern the kaypad msg
-        if (this._isKeyboardEnabled) {
+        if (this._isKeyboardEnabled)
             director.getKeyboardDispatcher().addDelegate(this);
-        }
+
+        if (this._isMouseEnabled)
+            director.getMouseDispatcher().addMouseDelegate(this,this._mousePriority);
     },
 
     /**
@@ -277,6 +297,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (this._isKeyboardEnabled) {
             director.getKeyboardDispatcher().removeDelegate(this);
         }
+
+        if (this._isMouseEnabled)
+            director.getMouseDispatcher().removeMouseDelegate(this);
 
         this._super();
     },
@@ -362,52 +385,138 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     // ---------------------CCMouseEventDelegate interface------------------------------
 
-    //
-    // left
-    //
-    onMouseDown:function(event){
+    /**
+     * <p>called when the "mouseDown" event is received. <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseDown:function (event) {
+        return false;
     },
 
-    onMouseDragged:function(event){
+    /**
+     * <p>called when the "mouseDragged" event is received.         <br/>
+     * Return YES to avoid propagating the event to other delegates.</p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseDragged:function (event) {
+        return false;
     },
 
-    onMouseMoved : function(event){
+    /**
+     * <p> called when the "mouseMoved" event is received.            <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseMoved:function (event) {
+        return false;
     },
 
-    onMouseUp:function(event){
+    /**
+     * <p> called when the "mouseUp" event is received.               <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseUp:function (event) {
+        return false;
     },
 
     //right
-
-    onRightMouseDown : function(event){
+    /**
+     * <p> called when the "rightMouseDown" event is received.        <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onRightMouseDown:function (event) {
+        return false;
     },
 
-    onRightMouseDragged : function(event){
+    /**
+     * <p> called when the "rightMouseDragged" event is received.    <br/>
+     * Return YES to avoid propagating the event to other delegates. </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onRightMouseDragged:function (event) {
+        return false;
     },
 
-    onRightMouseUp : function( event ){
+    /**
+     * <p> called when the "rightMouseUp" event is received.          <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onRightMouseUp:function (event) {
+        return false;
     },
 
     //other
-    onOtherMouseDown : function(event){
+    /**
+     * <p>called when the "otherMouseDown" event is received.         <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onOtherMouseDown:function (event) {
+        return false;
     },
 
-    onOtherMouseDragged : function( event){
+    /**
+     * <p> called when the "otherMouseDragged" event is received.     <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onOtherMouseDragged:function (event) {
+        return false;
     },
 
-    onOtherMouseUp:function(event){
+    /**
+     * <p> called when the "otherMouseUp" event is received.          <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onOtherMouseUp:function (event) {
+        return false;
     },
 
     //scroll wheel
-    onScrollWheel : function( event){
+    /**
+     * <p> called when the "scrollWheel" event is received.           <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onScrollWheel:function (event) {
+        return false;
     },
 
     // enter / exit
-
-    onMouseEntered:function(theEvent){
+    /**
+     *  <p> called when the "mouseEntered" event is received.         <br/>
+     *  Return YES to avoid propagating the event to other delegates. </p>
+     * @param theEvent
+     * @return {Boolean}
+     */
+    onMouseEntered:function (theEvent) {
+        return false;
     },
 
-    onMouseExited:function(theEvent){
+    /**
+     * <p> called when the "mouseExited" event is received.          <br/>
+     * Return YES to avoid propagating the event to other delegates. </p>
+     * @param theEvent
+     * @return {Boolean}
+     */
+    onMouseExited:function (theEvent) {
+        return false;
     }
 });
 
@@ -709,7 +818,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         layerWidth = layerWidth || this.getContentSize().width;
         layerHeight = layerHeight || this.getContentSize().height;
 
-        if(!this._sourceGradientCanvas)
+        if (!this._sourceGradientCanvas)
             this._sourceGradientCanvas = document.createElement('canvas');
         this._sourceGradientCanvas.width = 2;
         this._sourceGradientCanvas.height = 2;
@@ -721,7 +830,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var image_colors = context_colors.getImageData(0, 0, 2, 2);
         var data = image_colors.data;
 
-        if(!this._drawGradientCanvas)
+        if (!this._drawGradientCanvas)
             this._drawGradientCanvas = document.createElement('canvas');
         this._drawGradientCanvas.width = layerWidth;
         this._drawGradientCanvas.height = layerHeight;

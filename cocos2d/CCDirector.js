@@ -164,6 +164,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _touchDispatcher:null,
     _keyboardDispatcher:null,
     _accelerometer:null,
+    _mouseDispatcher:null,
 
     _watcherFun:null,
     _watcherSender:null,
@@ -243,6 +244,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         //accelerometer
         //this._accelerometer = new cc.Accelerometer();
+
+        //MouseDispatcher
+        this._mouseDispatcher = new cc.MouseDispatcher();
+        this._mouseDispatcher.init();
 
         return true;
     },
@@ -1119,6 +1124,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._accelerometer != accelerometer) {
             this._accelerometer = accelerometer;
         }
+    },
+
+    getMouseDispatcher:function(){
+       return this._mouseDispatcher;
+    },
+
+    setMouseDispatcher:function( mouseDispatcher){
+        if(this._mouseDispatcher != mouseDispatcher)
+            this._mouseDispatcher = mouseDispatcher;
     },
 
     _createStatsLabel:function () {
