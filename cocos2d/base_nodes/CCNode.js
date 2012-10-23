@@ -1534,7 +1534,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} priority
      */
     scheduleUpdateWithPriority:function (priority) {
-        this.getScheduler().scheduleUpdateForTarget(this, !this._isRunning, priority);
+        this.getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
     },
 
     /**
@@ -1558,7 +1558,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
-        this.getScheduler().scheduleCallbackForTarget(this, callback_fn, !this._isRunning, interval, repeat, delay);
+        this.getScheduler().scheduleCallbackForTarget(this, callback_fn, interval, repeat, delay, !this._isRunning);
     },
 
     /**

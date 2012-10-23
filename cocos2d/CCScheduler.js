@@ -623,18 +623,23 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * </p>
      * @param {cc.Class} target
      * @param {function} callback_fn
-     * @param {Boolean} paused
      * @param {Number} interval
+     * @param {Number} repeat
+     * @param {Number} delay
+     * @param {Boolean} paused
      * @example
      * //register a schedule to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(function, this, !this._isRunning, interval, repeat, delay );
+     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(function, this, interval, repeat, delay, !this._isRunning );
      */
-    scheduleCallbackForTarget:function (target, callback_fn, paused, interval, repeat, delay) {
+    scheduleCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
         cc.Assert(callback_fn, "scheduler.scheduleCallbackForTarget() Argument callback_fn must be non-NULL");
         cc.Assert(target, "scheduler.scheduleCallbackForTarget() Argument target must be non-NULL");
 
+        // default arguments
+        interval = interval || 0;
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
+        paused = paused || false;
 
         var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
 
@@ -673,13 +678,13 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      *    The lower the priority, the earlier it is called.
      * </p>
      * @param {cc.Class} target
-     * @param {Boolean} paused
      * @param {Number} priority
+     * @param {Boolean} paused
      * @example
      * //register this object to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, !this._isRunning, priority );
+     * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
      */
-    scheduleUpdateForTarget:function (target, paused, priority) {
+    scheduleUpdateForTarget:function (target, priority, paused) {
         var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);
 
         if (hashElement) {
