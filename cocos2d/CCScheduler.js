@@ -490,6 +490,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         //update hash entry for quick access
         var hashElement = new cc.HashUpdateEntry(ppList, listElement, target, null);
         this._hashForUpdates.push(hashElement);
+
+        return ppList;
     },
 
     _appendIn:function (ppList, target, paused) {
@@ -694,10 +696,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         if (priority == 0) {
             this._appendIn(this._updates0List, target, paused);
         } else if (priority < 0) {
-            this._priorityIn(this._updatesNegList, target, priority, paused);
+            this._updatesNegList = this._priorityIn(this._updatesNegList, target, priority, paused);
         } else {
             // priority > 0
-            this._priorityIn(this._updatesPosList, target, priority, paused);
+            this._updatesPosList = this._priorityIn(this._updatesPosList, target, priority, paused);
         }
     },
 
