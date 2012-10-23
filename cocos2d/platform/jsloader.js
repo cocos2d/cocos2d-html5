@@ -82,6 +82,7 @@
         'touch_dispatcher/CCTouchDelegateProtocol.js',
         'touch_dispatcher/CCTouchHandler.js',
         'touch_dispatcher/CCTouchDispatcher.js',
+        'touch_dispatcher/CCMouseDispatcher.js',
         'keyboard_dispatcher/CCKeyboardDelegate.js',
         'keyboard_dispatcher/CCKeyboardDispatcher.js',
         'text_input_node/CCIMEDispatcher.js',
