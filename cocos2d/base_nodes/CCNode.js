@@ -1528,13 +1528,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * schedules the "update" selector with a custom priority. This selector will be called every frame.<br/>
-     * Scheduled selectors with a lower priority will be called before the ones that have a higher value.<br/>
-     * Only one "update" selector could be scheduled per node (You can't have 2 'update' selectors).<br/>
+     * schedules the "update" callback function with a custom priority. This callback function will be called every frame.<br/>
+     * Scheduled callback functions with a lower priority will be called before the ones that have a higher value.<br/>
+     * Only one "update" callback function could be scheduled per node (You can't have 2 'update' callback functions).<br/>
      * @param {Number} priority
      */
     scheduleUpdateWithPriority:function (priority) {
-        this.getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
+        this.getScheduler().scheduleUpdateForTarget(this, !this._isRunning, priority);
     },
 
     /**
@@ -1546,40 +1546,40 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * schedules a callback function with interval, repeat and delay.
-     * @param {function} selector
+     * @param {function} callback_fn
      * @param {Number} interval
      */
-    schedule:function (selector, interval, repeat, delay) {
+    schedule:function (callback_fn, interval, repeat, delay) {
         interval = interval || 0;
 
-        cc.Assert(selector, "Argument must be non-nil");
+        cc.Assert(callback_fn, "Argument must be non-nil");
         cc.Assert(interval >= 0, "Argument must be positive");
 
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
-        this.getScheduler().scheduleCallback(selector, this, interval, !this._isRunning, repeat, delay);
+        this.getScheduler().scheduleCallbackForTarget(this, callback_fn, !this._isRunning, interval, repeat, delay);
     },
 
     /**
      * Schedules a callback function that runs only once, with a delay of 0 or larger
-     * @param {cc.Class} selector
+     * @param {cc.Class} callback_fn
      * @param {Number} delay
      */
-    scheduleOnce:function (selector, delay) {
-        this.schedule(selector, 0.0, 0, delay);
+    scheduleOnce:function (callback_fn, delay) {
+        this.schedule(callback_fn, 0.0, 0, delay);
     },
 
     /**
      * unschedules a custom callback function.
-     * @param {function} selector
+     * @param {function} callback_fn
      */
-    unschedule:function (selector) {
+    unschedule:function (callback_fn) {
         // explicit nil handling
-        if (!selector)
+        if (!callback_fn)
             return;
 
-        this.getScheduler().unscheduleCallback(selector, this);
+        this.getScheduler().unscheduleCallbackForTarget(this, callback_fn);
     },
 
     /**
