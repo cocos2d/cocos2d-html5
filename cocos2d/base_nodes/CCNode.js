@@ -920,7 +920,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     setScheduler:function (scheduler) {
         if (this._scheduler != scheduler) {
-            this.unscheduleAllSelectors();
+            this.unscheduleAllCallbacks();
             this._scheduler = scheduler;
         }
     },
@@ -962,7 +962,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     cleanup:function () {
         // actions
         this.stopAllActions();
-        this.unscheduleAllSelectors();
+        this.unscheduleAllCallbacks();
 
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
@@ -1545,7 +1545,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * schedule
+     * schedules a callback function with interval, repeat and delay.
      * @param {function} selector
      * @param {Number} interval
      */
@@ -1558,11 +1558,11 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
 
-        this.getScheduler().scheduleSelector(selector, this, interval, !this._isRunning, repeat, delay);
+        this.getScheduler().scheduleCallback(selector, this, interval, !this._isRunning, repeat, delay);
     },
 
     /**
-     * Schedules a selector that runs only once, with a delay of 0 or larger
+     * Schedules a callback function that runs only once, with a delay of 0 or larger
      * @param {cc.Class} selector
      * @param {Number} delay
      */
@@ -1571,7 +1571,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * unschedules a custom selector.
+     * unschedules a custom callback function.
      * @param {function} selector
      */
     unschedule:function (selector) {
@@ -1579,19 +1579,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!selector)
             return;
 
-        this.getScheduler().unscheduleSelector(selector, this);
+        this.getScheduler().unscheduleCallback(selector, this);
     },
 
     /**
-     * unschedule all scheduled selectors: custom selectors, and the 'update' selector.<br/>
+     * unschedule all scheduled callback functions: custom callback functions, and the 'update' callback function.<br/>
      * Actions are not affected by this method.
      */
-    unscheduleAllSelectors:function () {
-        this.getScheduler().unscheduleAllSelectorsForTarget(this);
+    unscheduleAllCallbacks:function () {
+        this.getScheduler().unscheduleAllCallbacksForTarget(this);
     },
 
     /**
-     * resumes all scheduled selectors and actions.<br/>
+     * resumes all scheduled callback functions and actions.<br/>
      * Called internally by onEnter
      */
     resumeSchedulerAndActions:function () {
