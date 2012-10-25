@@ -561,6 +561,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
         this._squareColors = [new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1)];
         this._color = new cc.Color4B(0, 0, 0, 0);
+        this._opacity = 255;
         this._super();
         this._layerColorStr = this._getLayerColorString();
     },
@@ -613,13 +614,19 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         return this._blendFunc;
     },
 
+    _isLighterMode:false,
     /**
      * blendFunc setter
      * @param {Number} src
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        this._blendFunc = {src:src, dst:dst};
+        if(arguments.length == 1){
+            this._blendFunc = src;
+        }else{
+            this._blendFunc = {src:src, dst:dst};
+        }
+        this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
     },
 
     /**
@@ -883,6 +890,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     init:function () {
         this._super();
         this._buildGradientCanvas();
+        return true;
     },
 
     /**
@@ -1072,6 +1080,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
+            if(this._isLighterMode)
+                context.globalCompositeOperation = 'lighter';
+
             if (this._drawGradientCanvas == null) {
                 var tWidth = this.getContentSize().width;
                 var tHeight = this.getContentSize().height;

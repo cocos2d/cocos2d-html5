@@ -1038,10 +1038,18 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (this._blendFunc.src != src || this._blendFunc.dst != dst) {
-            this._blendFunc = {src:src, dst:dst};
-            this._updateBlendFunc();
+        if(arguments.length == 1){
+            if (this._blendFunc != src ) {
+                this._blendFunc = src;
+                this._updateBlendFunc();
+            }
+        }else{
+            if (this._blendFunc.src != src || this._blendFunc.dst != dst) {
+                this._blendFunc = {src:src, dst:dst};
+                this._updateBlendFunc();
+            }
         }
+
     },
 
     _opacityModifyRGB:false,
@@ -1073,7 +1081,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      */
     isBlendAdditive:function () {
         //return this._isBlendAdditive;
-        return( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE);
+        return (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE));
     },
 
     /**
