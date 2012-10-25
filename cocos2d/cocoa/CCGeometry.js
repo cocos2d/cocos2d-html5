@@ -429,3 +429,12 @@ cc.RectZero = function () {
  * @return {cc.Rect}
  */
 cc.RECT_ZERO = cc.rect(0, 0, 0, 0);
+
+
+//
+// JSB compatbility
+//
+// in JSB, cc._p, cc._size, cc._rect reuses objects instead of creating new ones
+cc._p = cc.p;
+cc._size = cc.size;
+cc._rect = cc.rect;
