@@ -254,15 +254,6 @@ cc.Rect.CCRectIntersectsRect = function (rectA, rectB) {
  * @return {Boolean}
  * Constructor
  */
-cc.rectIntersectsRect = cc.Rect.CCRectIntersectsRect;
-
-/**
- * @function
- * @param {cc.Rect} rectA
- * @param {cc.Rect} rectB
- * @return {Boolean}
- * Constructor
- */
 cc.Rect.CCRectOverlapsRect = function (rectA, rectB) {
     if (rectA.origin.x + rectA.size.width < rectB.origin.x) {
         return false;
@@ -314,6 +305,20 @@ cc.Rect.CCRectIntersection = function (rectA, rectB) {
     intersection.size.height = Math.min(cc.Rect.CCRectGetMaxY(rectA), cc.Rect.CCRectGetMaxY(rectB)) - cc.Rect.CCRectGetMinY(intersection);
     return intersection
 };
+
+// Rect compatibility API
+cc.rectEqualToRect = cc.Rect.CCRectEqualToRect;
+cc.rectContainsRect = cc.Rect.CCRectContainsRect;
+cc.rectGetMaxX = cc.Rect.CCRectGetMaxX;
+cc.rectGetMidX = cc.Rect.CCRectGetMidX;
+cc.rectGetMinX = cc.Rect.CCRectGetMinX;
+cc.rectGetMaxY = cc.Rect.CCRectGetMaxY;
+cc.rectGetMidY = cc.Rect.CCRectGetMidY;
+cc.rectGetMinY = cc.Rect.CCRectGetMinY;
+cc.rectContainsPoint = cc.Rect.CCRectContainsPoint;
+cc.rectIntersectsRect = cc.Rect.CCRectIntersectsRect;
+cc.rectUnion = cc.Rect.CCRectUnion;
+cc.rectIntersection = cc.Rect.CCRectIntersection;
 
 /**
  * @function
