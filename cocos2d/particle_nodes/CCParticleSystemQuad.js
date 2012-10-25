@@ -511,7 +511,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     cc.drawingUtil.drawStar(context, lpx, particle.color);
                 } else
                     cc.drawingUtil.drawColorBall(context, lpx, particle.color);
-                context.restore()
+                context.restore();
             }
         }
         context.restore();
@@ -601,7 +601,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     setTotalParticles:function (tp) {
-        this._totalParticles = tp;
+        //TODO
+        if(tp < 200)
+            this._totalParticles = tp;
+        else
+            this._totalParticles = 200;
+
         return;
 
         // If we are setting the total numer of particles to a number higher
@@ -763,8 +768,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
  */
 cc.ParticleSystemQuad.create = function (pListFile) {
     var ret = new cc.ParticleSystemQuad();
-    if (!pListFile)
+    if (!pListFile) {
+        ret.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
+        ret.initWithTotalParticles(100);
         return ret;
+    }
+
     if (ret && ret.initWithFile(pListFile)) {
         return ret;
     }

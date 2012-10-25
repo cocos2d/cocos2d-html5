@@ -1618,8 +1618,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
         } else {
             if (this._texture != texture) {
-                this._texture = texture;
-                this._updateBlendFunc();
+                if(texture instanceof  HTMLImageElement){
+                    this._rect = cc.rect(0, 0, texture.width, texture.height);
+                    this._texture = texture;
+                    this._originalTexture = texture;
+                }else {
+                    this._texture = texture;
+                    this._updateBlendFunc();
+                }
             }
         }
     },
