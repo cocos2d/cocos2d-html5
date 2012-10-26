@@ -24,6 +24,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+//--------------------------------------------------------
+//
+// POINT
+//
+//--------------------------------------------------------
 /**
  * @class
  * @param {Number} _x
@@ -36,6 +41,17 @@ cc.Point = function (_x, _y) {
 };
 
 /**
+ * @function
+ * @param {Number} x
+ * @param {Number} y
+ * @return {cc.Point}
+ * Constructor
+ */
+cc.PointMake = function (x, y) {
+    return new cc.Point(x, y);
+};
+
+/**
  * Helper macro that creates a cc.Point.
  * @param {Number} x
  * @param {Number} y
@@ -44,8 +60,26 @@ cc.Point = function (_x, _y) {
 cc.p = function (x, y) {
     // optimization
     return {x:x, y:y};
-//    return new cc.Point(x,y);
 };
+
+// JSB compatbility: in JSB, cc._p reuses objects instead of creating new ones
+cc._p = cc.p;
+
+/**
+ * The "left bottom" point -- equivalent to cc.p(0, 0).
+ * @function
+ * @return {cc.Point}
+ * Constructor
+ */
+cc.PointZero = function () {
+    return cc.p(0, 0);
+};
+
+/**
+ * Point Zero Constant
+ * @return {cc.Point}
+ */
+cc.POINT_ZERO = cc.p(0, 0);
 
 /**
  * @function
@@ -61,6 +95,13 @@ cc.pointEqualToPoint = function (point1, point2) {
 // deprecated
 cc.Point.CCPointEqualToPoint = cc.pointEqualToPoint;
 
+
+//--------------------------------------------------------
+//
+// SIZE
+//
+//--------------------------------------------------------
+
 /**
  * @class
  * @param {Number} _width
@@ -74,6 +115,48 @@ cc.Size = function (_width, _height) {
 
 /**
  * @function
+ * @param {Number} width
+ * @param {Number} height
+ * @return {cc.Size}
+ * Constructor
+ */
+cc.SizeMake = function (width, height) {
+    return cc.size(width, height);
+};
+
+/**
+ * @function
+ * @param {Number} width
+ * @param {Number} height
+ * @return {Number, Number}
+ * Constructor
+ */
+cc.size = function (w, h) {
+    // optimization
+    return {width:w, height:h};
+};
+
+// JSB compatbility: in JSB, cc._size reuses objects instead of creating new ones
+cc._size = cc.size;
+
+/**
+ * The "zero" size -- equivalent to cc.size(0, 0).
+ * @function
+ * @return {cc.Size}
+ * Constructor
+ */
+cc.SizeZero = function () {
+    return cc.size(0, 0);
+};
+
+/**
+ * Size Zero constant
+ * @return {cc.Size}
+ */
+cc.SIZE_ZERO = cc.size(0, 0);
+
+/**
+ * @function
  * @param {cc.Size} size1
  * @param {cc.Size} size2
  * @return {Boolean}
@@ -81,11 +164,16 @@ cc.Size = function (_width, _height) {
  */
 cc.sizeEqualToSize = function (size1, size2) {
     return ((size1.width == size2.width) && (size1.height == size2.height));
-
 };
 
 // deprecated
 cc.Size.CCSizeEqualToSize = cc.sizeEqualToSize;
+
+//--------------------------------------------------------
+//
+// RECT
+//
+//--------------------------------------------------------
 
 /**
  * @class
@@ -128,6 +216,45 @@ cc.Rect = function (x1, y1, width1, height1) {
             break;
     }
 };
+
+/**
+ * @function
+ * @param {Number} x
+ * @param {Number} y
+ * @param {Number} width
+ * @param {Number} height
+ * @return {cc.Rect}
+ * Constructor
+ */
+cc.RectMake = function (x, y, width, height) {
+    return cc.rect(x, y, width, height);
+};
+
+// backward compatible
+cc.rect = function (x, y, w, h) {
+    // XXX: We can't do optimization here, since the cc.Rect class has some instance methods.
+    // return { origin:{x:x, y:y}, size:{width:w, height:h} };
+    return new cc.Rect(x,y,w,h);
+};
+
+// JSB compatbility: in JSB, cc._rect reuses objects instead of creating new ones
+cc._rect = cc.rect;
+
+/**
+ * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
+ * @function
+ * @return {cc.Rect}
+ * Constructor
+ */
+cc.RectZero = function () {
+    return cc.rect(0, 0, 0, 0);
+};
+
+/**
+ * Rect Zero Constant
+ * @return {cc.Rect}
+ */
+cc.RECT_ZERO = cc.rect(0, 0, 0, 0);
 
 /**
  * @function
@@ -312,6 +439,82 @@ cc.rectIntersection = function (rectA, rectB) {
     return intersection;
 };
 
+//
+// Rect JSB compatibility
+// JSB uses:
+//   rect.x, rect.y, rect.width and rect.height
+// while HTML5 uses:
+//   rect.origin, rect.size
+//
+cc.Rect.prototype.getX = function() {
+    return this.origin.x;
+};
+cc.Rect.prototype.setX = function(x) {
+    this.origin.x = x;
+};
+cc.Rect.prototype.getY = function() {
+    return this.origin.y;
+};
+cc.Rect.prototype.setY = function(y) {
+    this.origin.y = y;
+};
+cc.Rect.prototype.getWidth = function(){
+    return this.size.width;
+};
+cc.Rect.prototype.setWidth = function(w){
+    this.size.width = w;
+};
+cc.Rect.prototype.getHeight = function(){
+    return this.size.height;
+};
+cc.Rect.prototype.setHeight = function(h){
+    this.size.height = h;
+};
+Object.defineProperties(cc.Rect.prototype,
+                {
+                    "x" : {
+                        get : function(){
+                            return this.getX();
+                        },
+                        set : function(newValue){
+                            this.setX(newValue);
+                        },
+                        enumerable : true,
+                        configurable : true
+                    },
+                    "y" : {
+                        get : function(){
+                            return this.getY();
+                        },
+                        set : function(newValue){
+                            this.setY(newValue);
+                        },
+                        enumerable : true,
+                        configurable : true
+                    },
+                    "width" : {
+                        get : function(){
+                            return this.getWidth();
+                        },
+                        set : function(newValue){
+                            this.setWidth(newValue);
+                        },
+                        enumerable : true,
+                        configurable : true
+                    },
+                    "height" : {
+                        get : function(){
+                            return this.getHeight();
+                        },
+                        set : function(newValue){
+                            this.setHeight(newValue);
+                        },
+                        enumerable : true,
+                        configurable : true
+                    }
+                });
+
+
 // Deprecated
 cc.Rect.CCRectEqualToRect = cc.rectEqualToRect;
 cc.Rect.CCRectContainsRect = cc.rectContainsRect;
@@ -326,115 +529,3 @@ cc.Rect.CCRectIntersectsRect = cc.rectIntersectsRect;
 cc.Rect.CCRectUnion = cc.rectUnion;
 cc.Rect.CCRectIntersection = cc.rectIntersection;
 
-/**
- * @function
- * @param {Number} x
- * @param {Number} y
- * @return {cc.Point}
- * Constructor
- */
-cc.PointMake = function (x, y) {
-    return new cc.Point(x, y);
-};
-
-/**
- * @function
- * @param {Number} width
- * @param {Number} height
- * @return {cc.Size}
- * Constructor
- */
-cc.SizeMake = function (width, height) {
-    return cc.size(width, height);
-};
-
-/**
- * @function
- * @param {Number} width
- * @param {Number} height
- * @return {Number, Number}
- * Constructor
- */
-cc.size = function (w, h) {
-    // optimization
-    return {width:w, height:h};
-
-//    return cc.size(w,h);
-};
-
-/**
- * @function
- * @param {Number} x
- * @param {Number} y
- * @param {Number} width
- * @param {Number} height
- * @return {cc.Rect}
- * Constructor
- */
-cc.RectMake = function (x, y, width, height) {
-    return cc.rect(x, y, width, height);
-};
-
-// backward compatible
-cc.rect = function (x, y, w, h) {
-    // optimization
-    return { origin:{x:x, y:y}, size:{width:w, height:h} };
-//    return cc.rect(x, y, width, height);
-};
-
-/**
- * The "left bottom" point -- equivalent to cc.p(0, 0).
- * @function
- * @return {cc.Point}
- * Constructor
- */
-cc.PointZero = function () {
-    return cc.p(0, 0)
-};
-
-/**
- * Point Zero Constant
- * @return {cc.Point}
- */
-cc.POINT_ZERO = cc.p(0, 0);
-
-/**
- * The "zero" size -- equivalent to cc.size(0, 0).
- * @function
- * @return {cc.Size}
- * Constructor
- */
-cc.SizeZero = function () {
-    return cc.size(0, 0)
-};
-
-/**
- * Size Zero constant
- * @return {cc.Size}
- */
-cc.SIZE_ZERO = cc.size(0, 0);
-
-/**
- * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
- * @function
- * @return {cc.Rect}
- * Constructor
- */
-cc.RectZero = function () {
-    return cc.rect(0, 0, 0, 0)
-};
-
-/**
- * Rect Zero Constant
- * @return {cc.Rect}
- */
-cc.RECT_ZERO = cc.rect(0, 0, 0, 0);
-
-
-//
-// JSB compatbility
-//
-// in JSB, cc._p, cc._size, cc._rect reuses objects instead of creating new ones
-cc._p = cc.p;
-cc._size = cc.size;
-cc._rect = cc.rect;
