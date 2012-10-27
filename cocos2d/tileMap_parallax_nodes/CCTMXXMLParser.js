@@ -85,31 +85,32 @@ cc.TMXPropertyTile = 5;
  * @constant
  * @type Number
  */
-cc.TMXTileHorizontalFlag = 0x80000000;
+cc.TMX_TILE_HORIZONTAL_FLAG = 0x80000000;
+
 
 /**
  * @constant
  * @type Number
  */
-cc.TMXTileVerticalFlag = 0x40000000;
+cc.TMX_TILE_VERTICAL_FLAG = 0x40000000;
 
 /**
  * @constant
  * @type Number
  */
-cc.TMXTileDiagonalFlag = 0x20000000;
+cc.TMX_TILE_DIAGONAL_FLAG = 0x20000000;
 
 /**
  * @constant
  * @type Number
  */
-cc.FlipedAll = (cc.TMXTileHorizontalFlag | cc.TMXTileVerticalFlag | cc.TMXTileDiagonalFlag) >>> 0;
+cc.TMX_TILE_ALL_FLAGS = (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_DIAGONAL_FLAG) >>> 0;
 
 /**
  * @constant
  * @type Number
  */
-cc.FlippedMask = (~(cc.FlipedAll)) >>> 0;
+cc.TMX_TILE_ALL_FLAGS_MASK = (~(cc.TMX_TILE_ALL_FLAGS)) >>> 0;
 
 // Bits on the far end of the 32-bit global tile ID (GID's) are used for tile flags
 
@@ -206,11 +207,11 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
     rectForGID:function (gid) {
         var rect = cc.RectZero();
         rect.size = this._tileSize;
-        gid &= cc.FlippedMask;
-        gid = gid - parseInt(this.firstGid);
-        var max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing));
-        rect.origin.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin);
-        rect.origin.y = parseInt(parseInt(gid / max_x) * (this._tileSize.height + this.spacing) + this.margin);
+        gid &= cc.TMX_TILE_ALL_FLAGS_MASK;
+        gid = gid - parseInt(this.firstGid,10);
+        var max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing),10);
+        rect.origin.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin,10);
+        rect.origin.y = parseInt(parseInt(gid / max_x,10) * (this._tileSize.height + this.spacing) + this.margin,10);
         return rect;
     }
 });

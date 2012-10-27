@@ -80,21 +80,21 @@ cc.TMXOrientationIso = 2;
  * unless the layer visibility is off. In that case, the layer won't be created at all. <br />
  * You can obtain the layers (cc.TMXLayer objects) at runtime by: <br />
  * - map.getChildByTag(tag_number);  // 0=1st layer, 1=2nd layer, 2=3rd layer, etc...<br />
- * - map.layerNamed(name_of_the_layer); </p>
+ * - map.getLayer(name_of_the_layer); </p>
  *
  * <p>Each object group is created using a cc.TMXObjectGroup which is a subclass of cc.MutableArray.<br />
  * You can obtain the object groups at runtime by: <br />
- * - map.objectGroupNamed(name_of_the_object_group); </p>
+ * - map.getObjectGroup(name_of_the_object_group); </p>
  *
  * <p>Each object is a cc.TMXObject.</p>
  *
  * <p>Each property is stored as a key-value pair in an cc.MutableDictionary.<br />
  * You can obtain the properties at runtime by: </p>
  *
- * <p>map.propertyNamed(name_of_the_property); <br />
- * layer.propertyNamed(name_of_the_property); <br />
- * objectGroup.propertyNamed(name_of_the_property); <br />
- * object.propertyNamed(name_of_the_property);</p>
+ * <p>map.getProperty(name_of_the_property); <br />
+ * layer.getProperty(name_of_the_property); <br />
+ * objectGroup.getProperty(name_of_the_property); <br />
+ * object.getProperty(name_of_the_property);</p>
  * @class
  * @extends cc.Node
  */
@@ -238,7 +238,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} layerName
      * @return {cc.TMXLayer}
      */
-    layerNamed:function (layerName) {
+    getLayer:function (layerName) {
         cc.Assert(layerName != null && layerName.length > 0, "Invalid layer name!");
 
         for (var i = 0; i < this._children.length; i++) {
@@ -259,7 +259,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} groupName
      * @return {cc.TMXObjectGroup}
      */
-    objectGroupNamed:function (groupName) {
+    getObjectGroup:function (groupName) {
         cc.Assert(groupName != null && groupName.length > 0, "Invalid group name!");
         if (this._objectGroups) {
             for (var i = 0; i < this._objectGroups.length; i++) {
@@ -278,7 +278,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
      * @param {String} propertyName
      * @return {String}
      */
-    propertyNamed:function (propertyName) {
+    getProperty:function (propertyName) {
         return this._properties[propertyName.toString()];
     },
 
@@ -314,7 +314,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
                             if (gid != 0) {
                                 // Optimization: quick return
                                 // if the layer is invalid (more than 1 tileset per layer) an cc.Assert will be thrown later
-                                if (((gid & cc.FlippedMask)>>>0) >= tileset.firstGid) {
+                                if (((gid & cc.TMX_TILE_ALL_FLAGS_MASK)>>>0) >= tileset.firstGid) {
                                     return tileset;
                                 }
                             }
