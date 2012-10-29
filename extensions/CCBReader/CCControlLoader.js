@@ -191,9 +191,18 @@ cc.ScrollViewLoader = cc.NodeLoader.extend({
         return cc.ScrollView.create();
     },
 
+    onHandlePropTypeSize:function(node,parent,propertyName,size,ccbReader){
+        if(propertyName == PROPERTY_CONTENTSIZE){
+            node.setViewSize(size);
+        }else{
+            this._super(node,parent,propertyName.size,ccbReader);
+        }
+    },
+
     onHandlePropTypeCCBFile:function (node, parent, propertyName, ccbFileNode, ccbReader) {
         if (propertyName == PROPERTY_CONTAINER) {
             node.setContainer(ccbFileNode);
+            node.updateInset();
         } else {
             this._super(node, parent, propertyName, ccbFileNode, ccbReader);
         }
