@@ -632,6 +632,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
         window.addEventListener('mouseup', function (event) {
             cc.Director.getInstance().getTouchDispatcher()._setMousePressed(false);
+            cc.ProcessMouseupEvent(element, event);
         });
 
         //register canvas mouse event
@@ -682,10 +683,6 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
             cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
         });
-
-        element.addEventListener("mousewheel",function(event){
-
-        }, false);
     } else {
         //register canvas touch event
         element.addEventListener("touchstart", function (event) {
