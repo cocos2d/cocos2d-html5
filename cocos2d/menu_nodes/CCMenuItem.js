@@ -861,7 +861,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setNormalSpriteFrame:function (frame) {
-        this.setNormalImage(cc.Sprite.createWithSpriteFrameName(frame));
+        this.setNormalImage(cc.Sprite.createWithSpriteFrame(frame));
     },
 
     /**
@@ -869,7 +869,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setSelectedSpriteFrame:function (frame) {
-        this.setSelectedImage(cc.Sprite.createWithSpriteFrameName(frame));
+        this.setSelectedImage(cc.Sprite.createWithSpriteFrame(frame));
     },
 
     /**
@@ -877,7 +877,7 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
      * @param {cc.SpriteFrame} frame
      */
     setDisabledSpriteFrame:function (frame) {
-        this.setDisabledImage(cc.Sprite.createWithSpriteFrameName(frame));
+        this.setDisabledImage(cc.Sprite.createWithSpriteFrame(frame));
     },
 
     /**
@@ -1001,7 +1001,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this._selectedIndex = SelectedIndex;
             var currItem = this.getChildByTag(cc.CURRENT_ITEM);
             if (currItem) {
-                currItem.removeFromParentAndCleanup(false);
+                currItem.removeFromParent(false);
             }
 
             var item = this._subItems[this._selectedIndex];
