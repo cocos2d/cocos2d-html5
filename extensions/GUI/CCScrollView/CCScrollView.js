@@ -314,7 +314,7 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     setContainer:function (container) {
-        this.removeAllChildrenWithCleanup(true);
+        this.removeAllChildren(true);
 
         if (!container)
             return;
