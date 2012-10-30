@@ -177,7 +177,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Constructor
      */
     ctor:function () {
-        this._initNode();
+        //this._initNode();
     },
 
     _initNode:function(){
