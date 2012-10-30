@@ -121,6 +121,7 @@ cc.TouchHandlerHelperData = function (type) {
  * @extends cc.Class
  */
 cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
+    _mousePressed:false,
     _targetedHandlers:null,
     _standardHandlers:null,
     _locked:false,
@@ -146,8 +147,17 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
         this._toAdd = false;
         this._toQuit = false;
         this._locked = false;
+        this._mousePressed = false;
         cc.TouchDispatcher.registerHtmlElementEvent(cc.canvas);
         return true;
+    },
+
+    _setMousePressed:function (pressed) {
+        this._mousePressed = pressed;
+    },
+
+    _getMousePressed:function () {
+        return this._mousePressed;
     },
 
     /**
@@ -350,7 +360,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
                         claimed = true;
                         switch (helper.type) {
                             case cc.TOUCH_MOVED:
-                                handler.getDelegate().onTouchMoved(touch, event);
+                                if (cc.Browser.isMobile) {
+                                    handler.getDelegate().onTouchMoved(touch, event);
+                                } else {
+                                    if (this._mousePressed)
+                                        handler.getDelegate().onTouchMoved(touch, event);
+                                }
                                 break;
                             case cc.TOUCH_ENDED:
                                 handler.getDelegate().onTouchEnded(touch, event);
@@ -394,7 +409,12 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */{
                         break;
                     case cc.TOUCH_MOVED:
                         if (mutableTouches.length > 0) {
-                            handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                            if (cc.Browser.isMobile) {
+                                handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                            } else {
+                                if (this._mousePressed)
+                                    handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                            }
                         }
                         break;
                     case cc.TOUCH_ENDED:
@@ -594,9 +614,9 @@ cc.ProcessMouseupEvent = function (element, event) {
     cc.TouchDispatcher.preTouchPoint.x = mouseX;
     cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-    var set = [];
-    set.push(touch);
-    cc.Director.getInstance().getTouchDispatcher().touchesEnded(set, null);
+    var posArr = [];
+    posArr.push(touch);
+    cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
 };
 /**
  * @param {HTMLCanvasElement|HTMLDivElement} element
@@ -606,6 +626,15 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         return;
 
     if (!cc.Browser.isMobile) {
+        window.addEventListener('mousedown', function (event) {
+            cc.Director.getInstance().getTouchDispatcher()._setMousePressed(true);
+        });
+
+        window.addEventListener('mouseup', function (event) {
+            cc.Director.getInstance().getTouchDispatcher()._setMousePressed(false);
+            cc.ProcessMouseupEvent(element, event);
+        });
+
         //register canvas mouse event
         element.addEventListener("mousedown", function (event) {
             var pos = cc.getHTMLElementPosition(element);
@@ -621,9 +650,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            var set = [];
-            set.push(touch);
-            cc.Director.getInstance().getTouchDispatcher().touchesBegan(set, null);
+            var posArr = [];
+            posArr.push(touch);
+            cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
         });
 
         element.addEventListener("mouseup", function (event) {
@@ -649,10 +678,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.TouchDispatcher.preTouchPoint.x = mouseX;
             cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-            var set = [];
-            set.push(touch);
+            var posArr = [];
+            posArr.push(touch);
 
-            cc.Director.getInstance().getTouchDispatcher().touchesMoved(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
         });
     } else {
         //register canvas touch event
@@ -660,7 +689,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -684,9 +713,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesBegan(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -695,7 +724,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -719,9 +748,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesMoved(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -730,7 +759,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -761,9 +790,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesEnded(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -772,7 +801,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             if (!event.touches)
                 return;
 
-            var set = [];
+            var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
             pos.left -= document.body.scrollLeft;
@@ -797,9 +826,9 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                 cc.TouchDispatcher.preTouchPoint.x = mouseX;
                 cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
-                set.push(touch);
+                posArr.push(touch);
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesCancelled(set, null);
+            cc.Director.getInstance().getTouchDispatcher().touchesCancelled(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);

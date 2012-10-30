@@ -122,6 +122,9 @@ if (!window.console) {
     };
 }
 
+
+cc.isAddedHiddenEvent = false;
+
 /**
  * <p>
  *   setup game main canvas,renderContext,gameDiv and drawingUtil with argument  <br/>
@@ -197,7 +200,36 @@ cc.setup = function (el, width, height) {
      }
      }, true);
      */
+
+    var hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") {
+        hidden = "hidden";
+        visibilityChange = "visibilitychange";
+    } else if (typeof document.mozHidden !== "undefined") {
+        hidden = "mozHidden";
+        visibilityChange = "mozvisibilitychange";
+    } else if (typeof document.msHidden !== "undefined") {
+        hidden = "msHidden";
+        visibilityChange = "msvisibilitychange";
+    } else if (typeof document.webkitHidden !== "undefined") {
+        hidden = "webkitHidden";
+        visibilityChange = "webkitvisibilitychange";
+    }
+
+    function handleVisibilityChange() {
+        if (!document[hidden])
+            cc.Director.getInstance()._resetLastUpdate();
+    }
+
+    if (typeof document.addEventListener === "undefined" ||
+        typeof hidden === "undefined") {
+        cc.isAddedHiddenEvent = false;
+    } else {
+        cc.isAddedHiddenEvent = true;
+        document.addEventListener(visibilityChange, handleVisibilityChange, false);
+    }
 };
+
 
 /**
  * Run main loop of game engine
@@ -244,7 +276,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             return 0;
         }
         // TODO, need to be fixed.
-        if (window.requestAnimFrame && this._animationInterval == 1/60) {
+        if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
             var callback = function () {
                 cc.Director.getInstance().mainLoop();
                 window.requestAnimFrame(callback);

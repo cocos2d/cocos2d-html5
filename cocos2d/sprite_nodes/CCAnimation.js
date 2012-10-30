@@ -132,7 +132,7 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
  * var animation = cc.Animation.create();
  *
  * //add a sprite frame to this animation
- * animation.addFrameWithFileName("grossini_dance_01.png");
+ * animation.addFrameWithFile("grossini_dance_01.png");
  *
  * //create an animate with this animation
  * var action = cc.Animate.create(animation);
@@ -190,7 +190,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      * Adds a frame with an image filename. Internally it will create a cc.SpriteFrame and it will add it. The frame will be added with one "delay unit".
      * @param {String} fileName
      */
-    addSpriteFrameWithFileName:function (fileName) {
+    addSpriteFrameWithFile:function (fileName) {
         var texture = cc.TextureCache.getInstance().addImage(fileName);
         var rect = cc.RectZero();
         if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {

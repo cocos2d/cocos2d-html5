@@ -99,7 +99,7 @@ cc.FileUtils = cc.Class.extend({
         xhr.onload = function(e) {
             var arrayStr = xhr.responseText;
             if(arrayStr){
-                cc.Loader.shareLoader().onResLoaded();
+                cc.Loader.getInstance().onResLoaded();
                 selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
             }
         };
@@ -214,7 +214,7 @@ cc.FileUtils = cc.Class.extend({
      * @return {object} The Dictionary of object generated from the file
      */
     dictionaryWithContentsOfFile:function (fileName) {
-        var parser = cc.SAXParser.shareParser();
+        var parser = cc.SAXParser.getInstance();
         this.rootDict = parser.parse(fileName);
         return this.rootDict;
     },
@@ -283,7 +283,7 @@ cc.DictMaker = cc.Class.extend(/** @lends cc.DictMaker# */{
      * @return {Array}
      */
     dictionaryWithContentsOfFile:function (fileName) {
-        var parser = cc.SAXParser.shareParser();
+        var parser = cc.SAXParser.getInstance();
         this.rootDict = parser.parse(fileName);
         return this.rootDict;
     }

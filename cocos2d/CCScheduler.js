@@ -197,7 +197,7 @@ cc.ListEntry = function (prev, next, target, priority, paused, markedForDeletion
     this.target = target;
     this.priority = priority;
     this.paused = paused;
-    this.makedForDeletion = markedForDeletion;
+    this.markedForDeletion = markedForDeletion;
 };
 
 /**
@@ -349,7 +349,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 }
 
                 if (this._timesExecuted > this._repeat) {
-                    cc.Director.getInstance().getScheduler().unscheduleSelector(this._selector, this._target);
+                    cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget( this._target, this._selector);
                 }
             }
         }
@@ -490,6 +490,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         //update hash entry for quick access
         var hashElement = new cc.HashUpdateEntry(ppList, listElement, target, null);
         this._hashForUpdates.push(hashElement);
+
+        return ppList;
     },
 
     _appendIn:function (ppList, target, paused) {
@@ -540,7 +542,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         var i;
         for (i = 0; i < this._updatesNegList.length; i++) {
             tmpEntry = this._updatesNegList[i];
-            if ((!tmpEntry.paused) && (!tmpEntry.makedForDeletion)) {
+            if ((!tmpEntry.paused) && (!tmpEntry.markedForDeletion)) {
                 tmpEntry.target.update(dt);
             }
         }
@@ -548,7 +550,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         // updates with priority == 0
         for (i = 0; i < this._updates0List.length; i++) {
             tmpEntry = this._updates0List[i];
-            if ((!tmpEntry.paused) && (!tmpEntry.makedForDeletion)) {
+            if ((!tmpEntry.paused) && (!tmpEntry.markedForDeletion)) {
                 tmpEntry.target.update(dt);
             }
         }
@@ -556,7 +558,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         // updates with priority > 0
         for (i = 0; i < this._updatesPosList.length; i++) {
             tmpEntry = this._updatesPosList[i];
-            if ((!tmpEntry.paused) && (!tmpEntry.makedForDeletion)) {
+            if ((!tmpEntry.paused) && (!tmpEntry.markedForDeletion)) {
                 tmpEntry.target.update(dt);
             }
         }
@@ -587,22 +589,22 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         //delete all updates that are marked for deletion
         // updates with priority < 0
         for (i = 0; i < this._updatesNegList.length; i++) {
-            if (this._updatesNegList[i].makedForDeletion) {
-                this._removeUpdateFromHash(tmpEntry);
+            if (this._updatesNegList[i].markedForDeletion) {
+                this._removeUpdateFromHash(this._updatesNegList[i]);
             }
         }
 
         // updates with priority == 0
         for (i = 0; i < this._updates0List.length; i++) {
-            if (this._updates0List[i].makedForDeletion) {
-                this._removeUpdateFromHash(tmpEntry);
+            if (this._updates0List[i].markedForDeletion) {
+                this._removeUpdateFromHash(this._updates0List[i]);
             }
         }
 
         // updates with priority > 0
         for (i = 0; i < this._updatesPosList.length; i++) {
-            if (this._updatesPosList[i].makedForDeletion) {
-                this._removeUpdateFromHash(tmpEntry);
+            if (this._updatesPosList[i].markedForDeletion) {
+                this._removeUpdateFromHash(this._updatesPosList[i]);
             }
         }
 
@@ -614,34 +616,39 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * <p>
      *   The scheduled method will be called every 'interval' seconds.</br>
      *   If paused is YES, then it won't be called until it is resumed.<br/>
-     *   If 'interval' is 0, it will be called every frame, but if so, it recommened to use 'scheduleUpdateForTarget:' instead.<br/>
-     *   If the selector is already scheduled, then only the interval parameter will be updated without re-scheduling it again.<br/>
-     *   repeat let the action be repeated repeat + 1 times, use kCCRepeatForever to let the action run continiously<br/>
+     *   If 'interval' is 0, it will be called every frame, but if so, it recommended to use 'scheduleUpdateForTarget:' instead.<br/>
+     *   If the callback function is already scheduled, then only the interval parameter will be updated without re-scheduling it again.<br/>
+     *   repeat let the action be repeated repeat + 1 times, use cc.REPEAT_FOREVER to let the action run continuously<br/>
      *   delay is the amount of time the action will wait before it'll start<br/>
      * </p>
-     * @param {function} selector
      * @param {cc.Class} target
+     * @param {function} callback_fn
      * @param {Number} interval
+     * @param {Number} repeat
+     * @param {Number} delay
      * @param {Boolean} paused
      * @example
      * //register a schedule to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleSelector(selector, this, interval, !this._isRunning);
+     * cc.Director.getInstance().getScheduler().scheduleCallbackForTarget(function, this, interval, repeat, delay, !this._isRunning );
      */
-    scheduleSelector:function (selector, target, interval, paused, repeat, delay) {
-        cc.Assert(selector, "scheduler.scheduleSelector() Argument selector must be non-NULL");
-        cc.Assert(target, "scheduler.scheduleSelector() Argument target must be non-NULL");
+    scheduleCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
+        cc.Assert(callback_fn, "scheduler.scheduleCallbackForTarget() Argument callback_fn must be non-NULL");
+        cc.Assert(target, "scheduler.scheduleCallbackForTarget() Argument target must be non-NULL");
 
+        // default arguments
+        interval = interval || 0;
         repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
         delay = delay || 0;
+        paused = paused || false;
 
         var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
 
         if (!element) {
-            // Is this the 1st element ? Then set the pause level to all the selectors of this target
+            // Is this the 1st element ? Then set the pause level to all the callback_fns of this target
             element = new cc.HashSelectorEntry(null, target, 0, null, null, paused, null);
             this._hashForSelectors.push(element);
         } else {
-            cc.Assert(element.paused == paused, "Sheduler.scheduleSelector()");
+            cc.Assert(element.paused == paused, "Sheduler.scheduleCallbackForTarget()");
         }
 
         var timer;
@@ -650,8 +657,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         } else {
             for (var i = 0; i < element.timers.length; i++) {
                 timer = element.timers[i];
-                if (selector == timer._selector) {
-                    cc.log("CCSheduler#scheduleSelector. Selector already scheduled. Updating interval from:"
+                if (callback_fn == timer._selector) {
+                    cc.log("CCSheduler#scheduleCallback. Callback already scheduled. Updating interval from:"
                         + timer.getInterval().toFixed(4) + " to " + interval.toFixed(4));
                     timer._interval = interval;
                     return;
@@ -660,14 +667,14 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         }
 
         timer = new cc.Timer();
-        timer.initWithTarget(target, selector, interval, repeat, delay);
+        timer.initWithTarget(target, callback_fn, interval, repeat, delay);
         element.timers.push(timer);
     },
 
     /**
      * <p>
-     *    Schedules the 'update' selector for a given target with a given priority.<br/>
-     *    The 'update' selector will be called every frame.<br/>
+     *    Schedules the 'update' callback_fn for a given target with a given priority.<br/>
+     *    The 'update' callback_fn will be called every frame.<br/>
      *    The lower the priority, the earlier it is called.
      * </p>
      * @param {cc.Class} target
@@ -675,7 +682,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @param {Boolean} paused
      * @example
      * //register this object to scheduler
-     * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning);
+     * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
         var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);
@@ -694,27 +701,27 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         if (priority == 0) {
             this._appendIn(this._updates0List, target, paused);
         } else if (priority < 0) {
-            this._priorityIn(this._updatesNegList, target, priority, paused);
+            this._updatesNegList = this._priorityIn(this._updatesNegList, target, priority, paused);
         } else {
             // priority > 0
-            this._priorityIn(this._updatesPosList, target, priority, paused);
+            this._updatesPosList = this._priorityIn(this._updatesPosList, target, priority, paused);
         }
     },
 
     /**
      * <p>
-     *   Unschedule a selector for a given target.<br/>
+     *   Unschedule a callback function for a given target.<br/>
      *   If you want to unschedule the "update", use unscheudleUpdateForTarget.
      * </p>
-     * @param {function} selector
      * @param {cc.Class} target
+     * @param {function} callback_fn
      * @example
      * //unschedule a selector of target
-     * cc.Director.getInstance().getScheduler().unscheduleSelector(selector, this);
+     * cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget(function, this);
      */
-    unscheduleSelector:function (selector, target) {
+    unscheduleCallbackForTarget:function (target, callback_fn) {
         // explicity handle nil arguments when removing an object
-        if ((target == null) || (selector == null)) {
+        if ((target == null) || (callback_fn == null)) {
             return;
         }
 
@@ -722,7 +729,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         if (element != null) {
             for (var i = 0; i < element.timers.length; i++) {
                 var timer = element.timers[i];
-                if (selector == timer._selector) {
+                if (callback_fn == timer._selector) {
                     if ((timer == element.currentTimer) && (!element.currentTimerSalvaged)) {
                         element.currentTimerSalvaged = true;
                     }
@@ -747,7 +754,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     /**
-     * Unschedules the update selector for a given target
+     * Unschedules the update callback function for a given target
      * @param {cc.Class} target
      * @example
      * //unschedules the "update" method.
@@ -769,10 +776,10 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     },
 
     /**
-     * Unschedules all selectors for a given target. This also includes the "update" selector.
+     * Unschedules all function callbacks for a given target. This also includes the "update" callback function.
      * @param {cc.Class} target
      */
-    unscheduleAllSelectorsForTarget:function (target) {
+    unscheduleAllCallbacksForTarget:function (target) {
         //explicit NULL handling
         if (target == null) {
             return;
@@ -797,27 +804,27 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
     /**
      *  <p>
-     *      Unschedules all selectors from all targets. <br/>
+     *      Unschedules all function callbacks from all targets. <br/>
      *      You should NEVER call this method, unless you know what you are doing.
      *  </p>
      */
-    unscheduleAllSelectors:function () {
-        this.unscheduleAllSelectorsWithMinPriority(cc.PRIORITY_SYSTEM);
+    unscheduleAllCallbacks:function () {
+        this.unscheduleAllCallbacksWithMinPriority(cc.PRIORITY_SYSTEM);
     },
 
     /**
      * <p>
-     *    Unschedules all selectors from all targets with a minimum priority.<br/>
+     *    Unschedules all function callbacks from all targets with a minimum priority.<br/>
      *    You should only call this with kCCPriorityNonSystemMin or higher.
      * </p>
      * @param {Number} minPriority
      */
-    unscheduleAllSelectorsWithMinPriority:function (minPriority) {
+    unscheduleAllCallbacksWithMinPriority:function (minPriority) {
         // Custom Selectors
         var i;
         for (i = 0; i < this._hashForSelectors.length; i++) {
-            // element may be removed in unscheduleAllSelectorsForTarget
-            this.unscheduleAllSelectorsForTarget(this._hashForSelectors[i].target);
+            // element may be removed in unscheduleAllCallbacksForTarget
+            this.unscheduleAllCallbacksForTarget(this._hashForSelectors[i].target);
         }
 
         //updates selectors
@@ -902,7 +909,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
     /**
      * Resume selectors on a set of targets.<br/>
-     * This can be useful for undoing a call to pauseAllSelectors.
+     * This can be useful for undoing a call to pauseAllCallbacks.
      * @param targetsToResume
      */
     resumeTargets:function (targetsToResume) {

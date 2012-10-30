@@ -1151,21 +1151,6 @@ cc.JumpTo.create = function (duration, position, height, jumps) {
     return jumpTo;
 };
 
-/**
- * Bezier configuration structure
- * @class
- * @extends cc.Class
- */
-cc.BezierConfig = cc.Class.extend(/** @lends cc.BezierConfig# */{
-    /**
-     * Constructor
-     */
-    ctor:function () {
-        this.endPosition = cc.p(0, 0);
-        this.controlPoint_1 = cc.p(0, 0);
-        this.controlPoint_2 = cc.p(0, 0);
-    }
-});
 
 /**
  * @function
@@ -1190,7 +1175,7 @@ cc.bezierat = function (a, b, c, d, t) {
 cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     /**
      * @param {Number} t time in seconds
-     * @param {cc.BezierConfig} c
+     * @param {Array} c Array of points
      * @return {Boolean}
      */
     initWithDuration:function (t, c) {
@@ -1216,14 +1201,14 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     update:function (time) {
         if (this._target) {
             var xa = 0;
-            var xb = this._config.controlPoint_1.x;
-            var xc = this._config.controlPoint_2.x;
-            var xd = this._config.endPosition.x;
+            var xb = this._config[0].x;
+            var xc = this._config[1].x;
+            var xd = this._config[2].x;
 
             var ya = 0;
-            var yb = this._config.controlPoint_1.y;
-            var yc = this._config.controlPoint_2.y;
-            var yd = this._config.endPosition.y;
+            var yb = this._config[0].y;
+            var yc = this._config[1].y;
+            var yd = this._config[2].y;
 
             var x = cc.bezierat(xa, xb, xc, xd, time);
             var y = cc.bezierat(ya, yb, yc, yd, time);
@@ -1235,11 +1220,10 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        var r = new cc.BezierConfig();
-
-        r.endPosition = cc.pNeg(this._config.endPosition);
-        r.controlPoint_1 = cc.pAdd(this._config.controlPoint_2, cc.pNeg(this._config.endPosition));
-        r.controlPoint_2 = cc.pAdd(this._config.controlPoint_1, cc.pNeg(this._config.endPosition));
+        var r = [
+            cc.pAdd(this._config[1], cc.pNeg(this._config[2]) ),
+            cc.pAdd(this._config[0], cc.pNeg(this._config[2]) ),
+            cc.pNeg(this._config[2]) ];
 
         return cc.BezierBy.create(this._duration, r);
     },
@@ -1248,22 +1232,18 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      * Constructor
      */
     ctor:function () {
-        this._config = new cc.BezierConfig();
+        this._config = [];
         this._startPosition = cc.p(0, 0);
     }
 });
 
 /**
  * @param {Number} t time in seconds
- * @param {cc.BezierConfig} c
+ * @param {Array} c Array of points
  * @return {cc.BezierBy}
  * @example
  * // example
- * var bezier = new cc.BezierConfig();
- * bezier.controlPoint_1 = cc.p(0, windowSize.height / 2);
- * bezier.controlPoint_2 = cc.p(300, -windowSize.height / 2);
- * bezier.endPosition = cc.p(300, 100);
- *
+ * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
  * var bezierForward = cc.BezierBy.create(3, bezier);
  *
  */
@@ -1285,22 +1265,18 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      */
     startWithTarget:function (target) {
         cc.BezierBy.prototype.startWithTarget.call(this, target);
-        this._config.controlPoint_1 = cc.pSub(this._config.controlPoint_1, this._startPosition);
-        this._config.controlPoint_2 = cc.pSub(this._config.controlPoint_2, this._startPosition);
-        this._config.endPosition = cc.pSub(this._config.endPosition, this._startPosition);
+        this._config[0] = cc.pSub(this._config[0], this._startPosition);
+        this._config[1] = cc.pSub(this._config[1], this._startPosition);
+        this._config[2] = cc.pSub(this._config[2], this._startPosition);
     }
 });
 /**
  * @param {Number} t
- * @param {cc.BezierConfig} c
+ * @param {Array} c array of points
  * @return {cc.BezierTo}
  * @example
  * // example
- *  var bezier = new cc.BezierConfig();
- * bezier.controlPoint_1 = cc.p(100, windowSize.height / 2);
- * bezier.controlPoint_2 = cc.p(200, -windowSize.height / 2);
- * bezier.endPosition = cc.p(240, 160);
- *
+ * var bezier = [cc.p(0, windowSize.height / 2), cc.p(300, -windowSize.height / 2), cc.p(300, 100)];
  * var bezierTo = cc.BezierTo.create(2, bezier);
  */
 cc.BezierTo.create = function (t, c) {
@@ -1941,7 +1917,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
     },
 
     /**
-     * @param {cc.Node} target
+     * @param {cc.Sprite} target
      */
     startWithTarget:function (target) {
         //this._super(target);
@@ -1975,20 +1951,15 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
         var frames = this._animation.getFrames();
         var numberOfFrames = frames.length;
-        var frameToDisplay = null;
 
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
-            var splitTime = this._splitTimes[i];
+            if (this._splitTimes[i] <= time) {
+                this._target.setDisplayFrame(frames[i].getSpriteFrame());
 
-            if (splitTime <= time) {
-                var frame = frames[i];
-                frameToDisplay = frame.getSpriteFrame();
-                this._target.setDisplayFrame(frameToDisplay);
-
-                var dict = frame.getUserInfo();
-                if (dict) {
+                //var dict = frame.getUserInfo();
+                //if (dict) {
                     //TODO: [[NSNotificationCenter defaultCenter] postNotificationName:CCAnimationFrameDisplayedNotification object:target_ userInfo:dict];
-                }
+                //}
                 this._nextFrame = i + 1;
                 break;
             }

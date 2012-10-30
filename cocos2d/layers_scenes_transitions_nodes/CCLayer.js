@@ -24,6 +24,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/** Layer will receive all the touches at once The onTouchesXXX API will be called
+ */
+cc.TOUCH_ALL_AT_ONCE = 0;
+
+/** Layer will receive only one touch at the time. The onTouchXXX API will be called */
+cc.TOUCH_ONE_BY_ONE = 1;
+
 /** cc.Layer is a subclass of cc.Node that implements the TouchEventsDelegate protocol.<br/>
  * All features from cc.Node are valid, plus the following new features:<br/>
  * It can receive iPhone Touches<br/>
@@ -35,21 +42,31 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isTouchEnabled:false,
     _isAccelerometerEnabled:false,
     _isKeyboardEnabled:false,
+    _touchPriority:0,
+    _touchMode:cc.TOUCH_ALL_AT_ONCE,
+    _isMouseEnabled:false,
+    _mousePriority:0,
 
     /**
      * Constructor
-     * @return {Boolean} return false if director fails
      */
     ctor:function () {
         this._super();
+
+        //this._initLayer();
+    },
+
+    _initLayer:function () {
         this.setAnchorPoint(cc.p(0.5, 0.5));
         this._ignoreAnchorPointForPosition = true;
 
-        //this.initLayer();
         var director = cc.Director.getInstance();
         this.setContentSize(director.getWinSize());
         this._isTouchEnabled = false;
         this._isAccelerometerEnabled = false;
+        this._isMouseEnabled = false;
+        this._touchMode = cc.TOUCH_ALL_AT_ONCE;
+        this._touchPriority = 0;
     },
 
     /**
@@ -63,17 +80,50 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
          }
          this.setContentSize(director.getWinSize());
          this._isTouchEnabled = false;*/
-
-        // success
+        this._super();
+        this._initLayer();
         return true;
     },
 
     /**
-     * If isTouchEnabled, this method is called onEnter. Override it to change the<br/>
-     * way CCLayer receives touch events.<br/>
+     * If isTouchEnabled, this method is called onEnter.
      */
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
+        if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
+            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
+        else
+            cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
+    },
+
+    isMouseEnabled:function () {
+        return this._isMouseEnabled;
+    },
+
+    setMouseEnabled:function (enabled) {
+        if (this._isMouseEnabled != enabled) {
+            this._isMouseEnabled = enabled;
+            if (this._isRunning) {
+                if (enabled)
+                    cc.Director.getInstance().getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
+                else
+                    cc.Director.getInstance().getMouseDispatcher().removeMouseDelegate(this);
+            }
+        }
+    },
+
+    setMousePriority:function (priority) {
+        if (this._mousePriority != priority) {
+            this._mousePriority = priority;
+            // Update touch priority with handler
+            if (this._isMouseEnabled) {
+                this.setMouseEnabled(false);
+                this.setMouseEnabled(true);
+            }
+        }
+    },
+
+    getMousePriority:function () {
+        return this._mousePriority;
     },
 
     /**
@@ -101,6 +151,48 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
                     // have problems?
                     cc.Director.getInstance().getTouchDispatcher().removeDelegate(this);
                 }
+            }
+        }
+    },
+
+    /** returns the priority of the touch event handler
+     * @return {Number}
+     */
+    getTouchPriority:function () {
+        return this._touchPriority;
+    },
+
+    /** Sets the touch event handler priority. Default is 0.
+     * @param {Number} priority
+     */
+    setTouchPriority:function (priority) {
+        if (this._touchPriority != priority) {
+            this._touchPriority = priority;
+            // Update touch priority with handler
+            if (this._isTouchEnabled) {
+                this.setTouchEnabled(false);
+                this.setTouchEnabled(true);
+            }
+        }
+    },
+
+    /** returns the touch mode.
+     * @return {Number}
+     */
+    getTouchMode:function () {
+        return this._touchMode;
+    },
+
+    /** Sets the touch mode.
+     * @param {Number} mode
+     */
+    setTouchMode:function (mode) {
+        if (this._touchMode != mode) {
+            this._touchMode = mode;
+            // update the mode with handler
+            if (this._isTouchEnabled) {
+                this.setTouchEnabled(false);
+                this.setTouchEnabled(true);
             }
         }
     },
@@ -176,14 +268,15 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._super();
 
         // add this layer to concern the Accelerometer Sensor
-        if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled)
             director.getAccelerometer().setDelegate(this);
-        }
 
         // add this layer to concern the kaypad msg
-        if (this._isKeyboardEnabled) {
+        if (this._isKeyboardEnabled)
             director.getKeyboardDispatcher().addDelegate(this);
-        }
+
+        if (this._isMouseEnabled)
+            director.getMouseDispatcher().addMouseDelegate(this,this._mousePriority);
     },
 
     /**
@@ -204,6 +297,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (this._isKeyboardEnabled) {
             director.getKeyboardDispatcher().removeDelegate(this);
         }
+
+        if (this._isMouseEnabled)
+            director.getMouseDispatcher().removeMouseDelegate(this);
 
         this._super();
     },
@@ -285,6 +381,142 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     didAccelerate:function (pAccelerationValue) {
+    },
+
+    // ---------------------CCMouseEventDelegate interface------------------------------
+
+    /**
+     * <p>called when the "mouseDown" event is received. <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseDown:function (event) {
+        return false;
+    },
+
+    /**
+     * <p>called when the "mouseDragged" event is received.         <br/>
+     * Return YES to avoid propagating the event to other delegates.</p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseDragged:function (event) {
+        return false;
+    },
+
+    /**
+     * <p> called when the "mouseMoved" event is received.            <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseMoved:function (event) {
+        return false;
+    },
+
+    /**
+     * <p> called when the "mouseUp" event is received.               <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onMouseUp:function (event) {
+        return false;
+    },
+
+    //right
+    /**
+     * <p> called when the "rightMouseDown" event is received.        <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onRightMouseDown:function (event) {
+        return false;
+    },
+
+    /**
+     * <p> called when the "rightMouseDragged" event is received.    <br/>
+     * Return YES to avoid propagating the event to other delegates. </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onRightMouseDragged:function (event) {
+        return false;
+    },
+
+    /**
+     * <p> called when the "rightMouseUp" event is received.          <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onRightMouseUp:function (event) {
+        return false;
+    },
+
+    //other
+    /**
+     * <p>called when the "otherMouseDown" event is received.         <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onOtherMouseDown:function (event) {
+        return false;
+    },
+
+    /**
+     * <p> called when the "otherMouseDragged" event is received.     <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onOtherMouseDragged:function (event) {
+        return false;
+    },
+
+    /**
+     * <p> called when the "otherMouseUp" event is received.          <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onOtherMouseUp:function (event) {
+        return false;
+    },
+
+    //scroll wheel
+    /**
+     * <p> called when the "scrollWheel" event is received.           <br/>
+     * Return YES to avoid propagating the event to other delegates.  </p>
+     * @param event
+     * @return {Boolean}
+     */
+    onScrollWheel:function (event) {
+        return false;
+    },
+
+    // enter / exit
+    /**
+     *  <p> called when the "mouseEntered" event is received.         <br/>
+     *  Return YES to avoid propagating the event to other delegates. </p>
+     * @param theEvent
+     * @return {Boolean}
+     */
+    onMouseEntered:function (theEvent) {
+        return false;
+    },
+
+    /**
+     * <p> called when the "mouseExited" event is received.          <br/>
+     * Return YES to avoid propagating the event to other delegates. </p>
+     * @param theEvent
+     * @return {Boolean}
+     */
+    onMouseExited:function (theEvent) {
+        return false;
     }
 });
 
@@ -320,6 +552,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _opacity:0,
     _color:new cc.Color3B(255, 255, 255),
     _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _layerColorStr:null,
 
     /**
      * Constructor
@@ -328,7 +561,13 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
         this._squareColors = [new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1)];
         this._color = new cc.Color4B(0, 0, 0, 0);
+        this._opacity = 255;
         this._super();
+        this._layerColorStr = this._getLayerColorString();
+    },
+
+    _getLayerColorString:function () {
+        return "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + (this.getOpacity() / 255).toFixed(5) + ")";
     },
 
     /**
@@ -346,8 +585,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     setOpacity:function (Var) {
         this._opacity = Var;
         this._updateColor();
-
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -366,8 +603,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     setColor:function (Var) {
         this._color = Var;
         this._updateColor();
-
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
@@ -379,13 +614,19 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         return this._blendFunc;
     },
 
+    _isLighterMode:false,
     /**
      * blendFunc setter
      * @param {Number} src
      * @param {Number} dst
-    */
+     */
     setBlendFunc:function (src, dst) {
-        this._blendFunc = {src:src, dst:dst};
+        if(arguments.length == 1){
+            this._blendFunc = src;
+        }else{
+            this._blendFunc = {src:src, dst:dst};
+        }
+        this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
     },
 
     /**
@@ -393,6 +634,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @return {Boolean}
      */
     initWithColor:function (color, width, height) {
+        this._initLayer();
+
         var winSize = cc.Director.getInstance().getWinSize();
 
         width = width || winSize.width;
@@ -408,9 +651,10 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
             this._squareVertices[i].x = 0.0;
             this._squareVertices[i].y = 0.0;
         }
-        this._updateColor();
 
         this.setContentSize(cc.size(width, height));
+
+        this._updateColor();
         //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
         return true;
@@ -484,36 +728,29 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        if (cc.renderContextType == cc.CANVAS) {
-            //context.globalAlpha = this.getOpacity() / 255;
-            var tWidth = this.getContentSize().width;
-            var tHeight = this.getContentSize().height;
-            var apip = this.getAnchorPointInPoints();
-            var tGradient = context.createLinearGradient(-apip.x, apip.y,
-                -apip.x + tWidth, -(apip.y + tHeight));
+        var tWidth = this.getContentSize().width;
+        var tHeight = this.getContentSize().height;
+        var apip = this.getAnchorPointInPoints();
 
-            tGradient.addColorStop(0, "rgba(" + Math.round(this._squareColors[0].r * 255) + "," + Math.round(this._squareColors[0].g * 255) + ","
-                + Math.round(this._squareColors[0].b * 255) + "," + this._squareColors[0].a.toFixed(4) + ")");
-            tGradient.addColorStop(1, "rgba(" + Math.round(this._squareColors[3].r * 255) + "," + Math.round(this._squareColors[3].g * 255) + ","
-                + Math.round(this._squareColors[3].b * 255) + "," + this._squareColors[3].a.toFixed(4) + ")");
+        context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
+        context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
-            context.fillStyle = tGradient;
-            context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
-        } else {
-            /*cc.NODE_DRAW_SETUP();
-             ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position | kCCVertexAttribFlag_Color );
-
-             //
-             // Attributes
-             //
-             glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, m_pSquareVertices);
-             glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_FLOAT, GL_FALSE, 0, m_pSquareColors);
-             ccGLBlendFunc( m_tBlendFunc.src, m_tBlendFunc.dst );
-             glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);   */
-        }
         this._super(context);
 
         cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    _drawForWebGL:function (ctx) {
+        /*cc.NODE_DRAW_SETUP();
+         ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position | kCCVertexAttribFlag_Color );
+
+         //
+         // Attributes
+         //
+         glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, m_pSquareVertices);
+         glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_FLOAT, GL_FALSE, 0, m_pSquareColors);
+         ccGLBlendFunc( m_tBlendFunc.src, m_tBlendFunc.dst );
+         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);   */
     }
 });
 
@@ -581,6 +818,62 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _alongVector:null,
     _compressedInterpolation:false,
 
+    _drawGradientCanvas:null,
+    _sourceGradientCanvas:null,
+
+    _buildGradientCanvas:function (layerWidth, layerHeight) {
+        layerWidth = layerWidth || this.getContentSize().width;
+        layerHeight = layerHeight || this.getContentSize().height;
+
+        if (!this._sourceGradientCanvas)
+            this._sourceGradientCanvas = document.createElement('canvas');
+        this._sourceGradientCanvas.width = 2;
+        this._sourceGradientCanvas.height = 2;
+
+        var context_colors = this._sourceGradientCanvas.getContext('2d');
+        context_colors.fillStyle = 'rgba(0,0,0,1)';
+        context_colors.fillRect(0, 0, 2, 2);
+
+        var image_colors = context_colors.getImageData(0, 0, 2, 2);
+        var data = image_colors.data;
+
+        if (!this._drawGradientCanvas)
+            this._drawGradientCanvas = document.createElement('canvas');
+        this._drawGradientCanvas.width = layerWidth;
+        this._drawGradientCanvas.height = layerHeight;
+
+        var context_render = this._drawGradientCanvas.getContext('2d');
+        context_render.translate(-layerWidth / 2, -layerHeight / 2);
+        context_render.scale(layerWidth, layerHeight);
+
+        // Top-left,
+        data[ 0 ] = 0 | (this._squareColors[2].r * 255);
+        data[ 1 ] = 0 | (this._squareColors[2].g * 255);
+        data[ 2 ] = 0 | (this._squareColors[2].b * 255);
+        data[ 3 ] = 0 | (this._squareColors[2].a * 255);
+
+        // Top-right,
+        data[ 4 ] = 0 | (this._squareColors[3].r * 255);
+        data[ 5 ] = 0 | (this._squareColors[3].g * 255);
+        data[ 6 ] = 0 | (this._squareColors[3].b * 255);
+        data[ 7 ] = 0 | (this._squareColors[3].a * 255);
+
+        // Bottom-left,
+        data[ 8 ] = 0 | (this._squareColors[0].r * 255);
+        data[ 9 ] = 0 | (this._squareColors[0].g * 255);
+        data[ 10 ] = 0 | (this._squareColors[0].b * 255);
+        data[ 11 ] = 0 | (this._squareColors[0].a * 255);
+
+        // Bottom-right,
+        data[ 12 ] = 0 | (this._squareColors[1].r * 255);
+        data[ 13 ] = 0 | (this._squareColors[1].g * 255);
+        data[ 14 ] = 0 | (this._squareColors[1].b * 255);
+        data[ 15 ] = 0 | (this._squareColors[1].a * 255);
+
+        context_colors.putImageData(image_colors, 0, 0);
+        context_render.drawImage(this._sourceGradientCanvas, 0, 0);
+    },
+
     /**
      * Constructor
      * @function
@@ -590,6 +883,14 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._endColor = new cc.Color3B(0, 0, 0);
         this._alongVector = cc.p(0, -1);
         this._super();
+
+        this._buildGradientCanvas();
+    },
+
+    init:function () {
+        this._super();
+        this._buildGradientCanvas();
+        return true;
     },
 
     /**
@@ -672,7 +973,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Point} Var
      */
     setVector:function (Var) {
-        this.alongVector = Var;
+        this._alongVector = Var;
         this._updateColor();
     },
 
@@ -680,7 +981,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {cc.Point}
      */
     getVector:function () {
-        return this.alongVector;
+        return this._alongVector;
     },
 
     /** is Compressed Interpolation
@@ -722,7 +1023,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._endColor.b = end.b;
         this._endOpacity = end.a;
 
-        this.alongVector = v;
+        this._alongVector = v;
 
         this._compressedInterpolation = true;
 
@@ -732,19 +1033,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _updateColor:function () {
         //todo need fixed for webGL
         this._super();
-        /*
-         this._squareColors[0].r = Math.round(this._startColor.r);
-         this._squareColors[0].g = Math.round(this._startColor.g);
-         this._squareColors[0].b = Math.round(this._startColor.b);
-         this._squareColors[0].a = Math.round(this._startColor.a);
-
-         this._squareColors[3].r = Math.round(this._endColor.r);
-         this._squareColors[3].g = Math.round(this._endColor.g);
-         this._squareColors[3].b = Math.round(this._endColor.b);
-         this._squareColors[3].a = Math.round(this._endColor.a);
-         return;
-         */
-
 
         var h = cc.pLength(this._alongVector);
         if (h == 0)
@@ -766,25 +1054,61 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         var E = new cc.Color4F(this._endColor.r / 255, this._endColor.g / 255, this._endColor.b / 255, (this._endOpacity * opacityf) / 255);
 
         // (-1, -1)
-        this._squareColors[0].r = parseInt((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].g = parseInt((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].b = parseInt((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].a = parseInt((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].r = ((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].g = ((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].b = ((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
+        this._squareColors[0].a = ((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
         // (1, -1)
-        this._squareColors[1].r = parseInt((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].g = parseInt((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].b = parseInt((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].a = parseInt((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].r = ((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].g = ((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].b = ((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
+        this._squareColors[1].a = ((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
         // (-1, 1)
-        this._squareColors[2].r = parseInt((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].g = parseInt((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].b = parseInt((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].a = parseInt((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].r = ((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].g = ((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].b = ((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
+        this._squareColors[2].a = ((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
         // (1, 1)
-        this._squareColors[3].r = parseInt((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].g = parseInt((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].b = parseInt((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].a = parseInt((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].r = ((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].g = ((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
+        this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
+
+        this._buildGradientCanvas();
+    },
+
+    draw:function (ctx) {
+        var context = ctx || cc.renderContext;
+        if (cc.renderContextType == cc.CANVAS) {
+            if(this._isLighterMode)
+                context.globalCompositeOperation = 'lighter';
+
+            if (this._drawGradientCanvas == null) {
+                var tWidth = this.getContentSize().width;
+                var tHeight = this.getContentSize().height;
+                var apip = this.getAnchorPointInPoints();
+                var tGradient = context.createLinearGradient(-apip.x, apip.y,
+                    -apip.x + tWidth, -(apip.y + tHeight));
+
+                tGradient.addColorStop(0, "rgba(" + Math.round(this._squareColors[0].r * 255) + "," + Math.round(this._squareColors[0].g * 255) + ","
+                    + Math.round(this._squareColors[0].b * 255) + "," + this._squareColors[0].a.toFixed(4) + ")");
+                tGradient.addColorStop(1, "rgba(" + Math.round(this._squareColors[3].r * 255) + "," + Math.round(this._squareColors[3].g * 255) + ","
+                    + Math.round(this._squareColors[3].b * 255) + "," + this._squareColors[3].a.toFixed(4) + ")");
+
+                context.fillStyle = tGradient;
+                context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+            } else {
+                context.globalAlpha = this._opacity / 255;
+                var posX = 0 | ( -this._anchorPointInPoints.x );
+                var posY = 0 | ( -this._anchorPointInPoints.y );
+
+                context.drawImage(this._drawGradientCanvas,
+                    0, 0,
+                    this._drawGradientCanvas.width, this._drawGradientCanvas.height,
+                    posX, -(posY + this._contentSize.height),
+                    this._contentSize.width, this._contentSize.height);
+            }
+        }
     }
 });
 
@@ -811,7 +1135,7 @@ cc.LayerGradient.create = function (start, end, v) {
             }
             break;
         case 0:
-            if(layer && layer.init()){
+            if (layer && layer.init()) {
                 return layer;
             }
             break;

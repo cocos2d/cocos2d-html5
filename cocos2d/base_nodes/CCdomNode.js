@@ -52,7 +52,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} y
      */
     setPosition:function (x, y) {
-        if (y != null) {
+        if (arguments.length==2) {
             this._position.x = x;
             this._position.y = y;
             //this._position = cc.p(newPosOrxValue,yValue);

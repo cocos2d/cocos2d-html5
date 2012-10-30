@@ -351,13 +351,13 @@ cc.Scale9Sprite = cc.Node.extend({
 
     updateWithBatchNode:function (batchNode, rect, capInsets) {
         // Release old sprites
-        this.removeAllChildrenWithCleanup(true);
+        this.removeAllChildren(true);
 
         if (this._scale9Image != batchNode) {
             this._scale9Image = batchNode;
         }
 
-        this._scale9Image.removeAllChildrenWithCleanup(true);
+        this._scale9Image.removeAllChildren(true);
 
         this._capInsets = capInsets;
 

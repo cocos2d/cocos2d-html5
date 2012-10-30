@@ -106,19 +106,11 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                 } else if (format == 3) {
                     // get values
                     var spriteSize, spriteOffset, spriteSourceSize, textureRect, textureRotated;
-                    if (frameDict.hasOwnProperty("spriteSize")) {
-                        spriteSize = cc.SizeFromString(this._valueForKey("spriteSize", frameDict));
-                        spriteOffset = cc.PointFromString(this._valueForKey("spriteOffset", frameDict));
-                        spriteSourceSize = cc.SizeFromString(this._valueForKey("spriteSourceSize", frameDict));
-                        textureRect = cc.RectFromString(this._valueForKey("textureRect", frameDict));
-                        textureRotated = this._valueForKey("textureRotated", frameDict) == "true";
-                    } else {
-                        spriteSize = cc.RectFromString(this._valueForKey("frame", frameDict));
-                        spriteOffset = cc.PointFromString(this._valueForKey("offset", frameDict));
-                        spriteSourceSize = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
-                        textureRect = cc.SizeFromString(this._valueForKey("sourceSize", frameDict));
-                        textureRotated = this._valueForKey("rotated", frameDict) == "true";
-                    }
+                    spriteSize = cc.SizeFromString(this._valueForKey("spriteSize", frameDict));
+                    spriteOffset = cc.PointFromString(this._valueForKey("spriteOffset", frameDict));
+                    spriteSourceSize = cc.SizeFromString(this._valueForKey("spriteSourceSize", frameDict));
+                    textureRect = cc.RectFromString(this._valueForKey("textureRect", frameDict));
+                    textureRotated = this._valueForKey("textureRotated", frameDict) == "true";
 
                     // get aliases
                     var aliases = frameDict["aliases"];
@@ -222,7 +214,6 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
 
                         // append .png
                         texturePath = texturePath + ".png";
-                        cc.log("cocos2d: cc.SpriteFrameCache: Trying to use file " + texturePath.toString() + " as texture");
                     }
 
                     var getTexture = cc.TextureCache.getInstance().addImage(texturePath);
