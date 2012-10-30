@@ -77,8 +77,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._children = [];
         this._descendants = [];
         this._isUseCache = true;
-        this._layerSize = cc.p(0,0);
-        this._mapTileSize = cc.p(0,0);
+        this._layerSize = cc.p(0, 0);
+        this._mapTileSize = cc.p(0, 0);
     },
 
     /**
@@ -339,29 +339,21 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             // setting gid=0 is equal to remove the tile
             if (gid == 0) {
                 this.removeTileAt(pos);
-            }
-
-            // empty tile. create a new one
-            else if (currentGID == 0) {
+            } else if (currentGID == 0) {           // empty tile. create a new one
                 this._insertTileForGID(gidAndFlags, pos);
-            }
-
-            // modifying an existing tile with a non-empty tile
-            else {
+            } else {                // modifying an existing tile with a non-empty tile
                 var z = pos.x + pos.y * this._layerSize.width;
                 var sprite = this.getChildByTag(z);
-
                 if (sprite) {
                     var rect = this._tileSet.rectForGID(gid);
                     rect = cc.RECT_PIXELS_TO_POINTS(rect);
 
                     sprite.setTextureRect(rect, false, rect.size);
-                    if (flags) {
+                    if (flags != null) {
                         this._setupTileSprite(sprite, pos, gidAndFlags);
                     }
                     this._tiles[z] = gidAndFlags;
-                }
-                else {
+                } else {
                     this._updateTileForGID(gidAndFlags, pos);
                 }
             }
@@ -536,22 +528,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _positionForIsoAt:function (pos) {
-        var xy = cc.p(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
+        return cc.p(this._mapTileSize.width / 2 * ( this._layerSize.width + pos.x - pos.y - 1),
             this._mapTileSize.height / 2 * (( this._layerSize.height * 2 - pos.x - pos.y) - 2));
-        return xy;
     },
 
     _positionForOrthoAt:function (pos) {
-        if (pos.x == 101) {
-            console.log("before:", pos.x, this._mapTileSize.width,
-                this._layerSize.height, pos.y, 1, this._mapTileSize.height);
-        }
-        var xy = cc.p(pos.x * this._mapTileSize.width,
+        return cc.p(pos.x * this._mapTileSize.width,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height);
-        if (pos.x == 101) {
-            console.log("after:", xy);
-        }
-        return xy;
     },
 
     _positionForHexAt:function (pos) {
@@ -560,9 +543,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             diffY = -this._mapTileSize.height / 2;
         }
 
-        var xy = cc.p(pos.x * this._mapTileSize.width * 3 / 4,
+        return cc.p(pos.x * this._mapTileSize.width * 3 / 4,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height + diffY);
-        return xy;
     },
 
     _calculateLayerOffset:function (pos) {
@@ -676,13 +658,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 //this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
             }
             else {
-                this._vertexZvalue = parseInt(vertexz,10);
+                this._vertexZvalue = parseInt(vertexz, 10);
             }
         }
 
         var alphaFuncVal = this.getProperty("cc_alpha_func");
         if (alphaFuncVal) {
-            this._alphaFuncValue = parseInt(alphaFuncVal,10);
+            this._alphaFuncValue = parseInt(alphaFuncVal, 10);
         }
     },
 
