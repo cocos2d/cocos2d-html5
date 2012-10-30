@@ -1001,7 +1001,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
             this._selectedIndex = SelectedIndex;
             var currItem = this.getChildByTag(cc.CURRENT_ITEM);
             if (currItem) {
-                currItem.removeFromParentAndCleanup(false);
+                currItem.removeFromParent(false);
             }
 
             var item = this._subItems[this._selectedIndex];

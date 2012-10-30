@@ -349,7 +349,7 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 }
 
                 if (this._timesExecuted > this._repeat) {
-                    cc.Director.getInstance().getScheduler().unscheduleSelector(this._selector, this._target);
+                    cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget( this._target, this._selector);
                 }
             }
         }
