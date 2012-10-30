@@ -177,6 +177,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * Constructor
      */
     ctor:function () {
+        //this._initNode();
+    },
+
+    _initNode:function(){
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._isTransformGLDirty = true;
         }
@@ -184,10 +188,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._anchorPointInPoints = cc.p(0, 0);
         this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
-
-        //this.setAnchorPoint = this._setAnchorPointByValue;
-        //this.setPosition = this._setPositionByValue;
-        //this.setContentSize = this._setContentSizeByValue;
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
@@ -201,27 +201,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     init:function(){
-        if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._isTransformGLDirty = true;
-        }
-        this._anchorPoint = cc.p(0, 0);
-        this._anchorPointInPoints = cc.p(0, 0);
-        this._contentSize = cc.size(0, 0);
-        this._position = cc.p(0, 0);
-
-        //this.setAnchorPoint = this._setAnchorPointByValue;
-        //this.setPosition = this._setPositionByValue;
-        //this.setContentSize = this._setContentSizeByValue;
-
-        var director = cc.Director.getInstance();
-        this._actionManager = director.getActionManager();
-        this.getActionManager = function () {
-            return this._actionManager;
-        };
-        this._scheduler = director.getScheduler();
-        this.getScheduler = function () {
-            return this._scheduler;
-        };
+        this._initNode();
     } ,
 
     /**
