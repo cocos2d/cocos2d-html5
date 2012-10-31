@@ -91,6 +91,8 @@ cc.FileUtils = cc.Class.extend({
     },
 
     preloadBinaryFileData:function(fileUrl){
+        fileUrl = this.fullPathFromRelativePath(fileUrl);
+
         var selfPointer = this;
         var xhr = new XMLHttpRequest();
         xhr.open("GET", fileUrl, true);
