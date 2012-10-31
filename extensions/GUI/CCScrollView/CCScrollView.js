@@ -165,7 +165,7 @@ cc.ScrollView = cc.Layer.extend({
      */
     setContentOffsetInDuration:function (offset, dt) {
         var scroll = cc.MoveTo.create(dt, offset);
-        var expire = cc.CallFunc.create(this, this._stoppedAnimatedScroll);
+        var expire = cc.CallFunc.create(this._stoppedAnimatedScroll, this);
         this._container.runAction(cc.Sequence.create(scroll, expire));
         this.schedule(this._performedAnimatedScroll);
     },
