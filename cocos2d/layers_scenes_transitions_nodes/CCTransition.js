@@ -48,25 +48,25 @@ cc.TransitionEaseScene = cc.Class.extend(/** @lends cc.TransitionEaseScene# */{
  * @constant
  * @type Number
  */
-cc.ORIENTATION_LEFT_OVER = 0;
+cc.TRANSITION_ORIENTATION_LEFT_OVER = 0;
 /**
  * horizontal orientation type where the Right is nearer
  * @constant
  * @type Number
  */
-cc.ORIENTATION_RIGHT_OVER = 1;
+cc.TRANSITION_ORIENTATION_RIGHT_OVER = 1;
 /**
  * vertical orientation type where the Up is nearer
  * @constant
  * @type Number
  */
-cc.ORIENTATION_UP_OVER = 0;
+cc.TRANSITION_ORIENTATION_UP_OVER = 0;
 /**
  * vertical orientation type where the Bottom is nearer
  * @constant
  * @type Number
  */
-cc.ORIENTATION_DOWN_OVER = 1;
+cc.TRANSITION_ORIENTATION_DOWN_OVER = 1;
 
 /**
  * @class
@@ -236,7 +236,7 @@ cc.TransitionSceneOriented = cc.TransitionScene.extend(/** @lends cc.TransitionS
      * initialize the transition
      * @param {Number} t time in seconds
      * @param {cc.Scene} scene
-     * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} orientation
+     * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} orientation
      * @return {Boolean}
      */
     initWithDuration:function (t, scene, orientation) {
@@ -251,11 +251,11 @@ cc.TransitionSceneOriented = cc.TransitionScene.extend(/** @lends cc.TransitionS
  * creates a base transition with duration and incoming scene
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} orientation
+ * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} orientation
  * @return {cc.TransitionSceneOriented}
  * @example
  * // Example
- * var goHorizontal = cc.TransitionSceneOriented.create(0.5, thisScene, cc.ORIENTATION_LEFT_OVER)
+ * var goHorizontal = cc.TransitionSceneOriented.create(0.5, thisScene, cc.TRANSITION_ORIENTATION_LEFT_OVER)
  */
 cc.TransitionSceneOriented.create = function (t, scene, orientation) {
     var tempScene = new cc.TransitionSceneOriented();
@@ -833,7 +833,7 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
+        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -871,18 +871,18 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
  * The front face is the outgoing scene and the back face is the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
  * @return {cc.TransitionFlipX}
  * @example
  * // Example
- * var myTransition = cc.TransitionFlipX.create(1.5, nextScene) //default is cc.ORIENTATION_RIGHT_OVER
+ * var myTransition = cc.TransitionFlipX.create(1.5, nextScene) //default is cc.TRANSITION_ORIENTATION_RIGHT_OVER
  *
  * //OR
- * var myTransition = cc.TransitionFlipX.create(1.5, nextScene, cc.ORIENTATION_UP_OVER)
+ * var myTransition = cc.TransitionFlipX.create(1.5, nextScene, cc.TRANSITION_ORIENTATION_UP_OVER)
  */
 cc.TransitionFlipX.create = function (t, scene, o) {
     if (o == null)
-        o = cc.ORIENTATION_RIGHT_OVER;
+        o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionFlipX();
     tempScene.initWithDuration(t, scene, o);
@@ -910,7 +910,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.ORIENTATION_UP_OVER) {
+        if (this._orientation == cc.TRANSITION_ORIENTATION_UP_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -947,18 +947,18 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
  * The front face is the outgoing scene and the back face is the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
  * @return {cc.TransitionFlipY}
  * @example
  * // Example
- * var myTransition = cc.TransitionFlipY.create(1.5, nextScene)//default is cc.ORIENTATION_UP_OVER
+ * var myTransition = cc.TransitionFlipY.create(1.5, nextScene)//default is cc.TRANSITION_ORIENTATION_UP_OVER
  *
  * //OR
- * var myTransition = cc.TransitionFlipY.create(1.5, nextScene, cc.ORIENTATION_RIGHT_OVER)
+ * var myTransition = cc.TransitionFlipY.create(1.5, nextScene, cc.TRANSITION_ORIENTATION_RIGHT_OVER)
  */
 cc.TransitionFlipY.create = function (t, scene, o) {
     if (o == null)
-        o = cc.ORIENTATION_UP_OVER;
+        o = cc.TRANSITION_ORIENTATION_UP_OVER;
 
     var tempScene = new cc.TransitionFlipY();
     tempScene.initWithDuration(t, scene, o);
@@ -985,7 +985,7 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
+        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1022,18 +1022,18 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
  * The front face is the outgoing scene and the back face is the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
  * @return {cc.TransitionFlipAngular}
  * @example
  * // Example
- * var myTransition = cc.TransitionFlipAngular.create(1.5, nextScene)//default is cc.ORIENTATION_RIGHT_OVER
+ * var myTransition = cc.TransitionFlipAngular.create(1.5, nextScene)//default is cc.TRANSITION_ORIENTATION_RIGHT_OVER
  *
  * //or
- * var myTransition = cc.TransitionFlipAngular.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ * var myTransition = cc.TransitionFlipAngular.create(1.5, nextScene, cc.TRANSITION_ORIENTATION_DOWN_OVER)
  */
 cc.TransitionFlipAngular.create = function (t, scene, o) {
     if (o == null)
-        o = cc.ORIENTATION_RIGHT_OVER;
+        o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionFlipAngular();
     tempScene.initWithDuration(t, scene, o);
@@ -1061,7 +1061,7 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
+        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1100,18 +1100,18 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
  * The front face is the outgoing scene and the back face is the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
  * @return {cc.TransitionZoomFlipX}
  * @example
  * // Example
- * var myTransition = cc.TransitionZoomFlipX.create(1.5, nextScene)//default is cc.ORIENTATION_RIGHT_OVER
+ * var myTransition = cc.TransitionZoomFlipX.create(1.5, nextScene)//default is cc.TRANSITION_ORIENTATION_RIGHT_OVER
  *
  * //OR
- * var myTransition = cc.TransitionZoomFlipX.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ * var myTransition = cc.TransitionZoomFlipX.create(1.5, nextScene, cc.TRANSITION_ORIENTATION_DOWN_OVER)
  */
 cc.TransitionZoomFlipX.create = function (t, scene, o) {
     if (o == null)
-        o = cc.ORIENTATION_RIGHT_OVER;
+        o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionZoomFlipX();
     tempScene.initWithDuration(t, scene, o);
@@ -1139,7 +1139,7 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.ORIENTATION_UP_OVER) {
+        if (this._orientation == cc.TRANSITION_ORIENTATION_UP_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1178,18 +1178,18 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
  * The front face is the outgoing scene and the back face is the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
  * @return {cc.TransitionZoomFlipY}
  * @example
  * // Example
- * var myTransition = cc.TransitionZoomFlipY.create(1.5, nextScene)//default is cc.ORIENTATION_UP_OVER
+ * var myTransition = cc.TransitionZoomFlipY.create(1.5, nextScene)//default is cc.TRANSITION_ORIENTATION_UP_OVER
  *
  * //OR
- * var myTransition = cc.TransitionZoomFlipY.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ * var myTransition = cc.TransitionZoomFlipY.create(1.5, nextScene, cc.TRANSITION_ORIENTATION_DOWN_OVER)
  */
 cc.TransitionZoomFlipY.create = function (t, scene, o) {
     if (o == null)
-        o = cc.ORIENTATION_UP_OVER;
+        o = cc.TRANSITION_ORIENTATION_UP_OVER;
 
     var tempScene = new cc.TransitionZoomFlipY();
     tempScene.initWithDuration(t, scene, o);
@@ -1217,7 +1217,7 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
         var inDeltaZ, inAngleZ;
         var outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.ORIENTATION_RIGHT_OVER) {
+        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1256,18 +1256,18 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
  * The front face is the outgoing scene and the back face is the incoming scene.
  * @param {Number} t time in seconds
  * @param {cc.Scene} scene
- * @param {cc.ORIENTATION_LEFT_OVER|cc.ORIENTATION_RIGHT_OVER|cc.ORIENTATION_UP_OVER|cc.ORIENTATION_DOWN_OVER} o
+ * @param {cc.TRANSITION_ORIENTATION_LEFT_OVER|cc.TRANSITION_ORIENTATION_RIGHT_OVER|cc.TRANSITION_ORIENTATION_UP_OVER|cc.TRANSITION_ORIENTATION_DOWN_OVER} o
  * @return {cc.TransitionZoomFlipAngular}
  * @example
  * // Example
- * var myTransition = cc.TransitionZoomFlipAngular.create(1.5, nextScene)//default is cc.ORIENTATION_RIGHT_OVER
+ * var myTransition = cc.TransitionZoomFlipAngular.create(1.5, nextScene)//default is cc.TRANSITION_ORIENTATION_RIGHT_OVER
  *
  * //OR
- * var myTransition = cc.TransitionZoomFlipAngular.create(1.5, nextScene, cc.ORIENTATION_DOWN_OVER)
+ * var myTransition = cc.TransitionZoomFlipAngular.create(1.5, nextScene, cc.TRANSITION_ORIENTATION_DOWN_OVER)
  */
 cc.TransitionZoomFlipAngular.create = function (t, scene, o) {
     if (o == null)
-        o = cc.ORIENTATION_RIGHT_OVER;
+        o = cc.TRANSITION_ORIENTATION_RIGHT_OVER;
 
     var tempScene = new cc.TransitionZoomFlipAngular();
     tempScene.initWithDuration(t, scene, o);
