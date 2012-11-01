@@ -438,9 +438,3 @@ cc.LabelTTF.create = function (/* Multi arguments */) {
 cc.LabelTTF.node = function () {
     return cc.LabelTTF.create();
 };
-
-cc.LabelNode = function (pos, text, align) {
-    this.pos = pos;
-    this.text = text;
-    this.align = align;
-};

@@ -101,6 +101,11 @@
                 <file name="CCBReader/CCBReader.js"/>
                 <file name="CCBReader/CCControlLoader.js"/>
                 <file name="CCBReader/CCSpriteLoader.js"/>
+                <file name="CCBReader/CCBValue.js"/>
+                <file name="CCBReader/CCBKeyframe.js"/>
+                <file name="CCBReader/CCBSequence.js"/>
+                <file name="CCBReader/CCBRelativePositioning.js"/>
+                <file name="CCBReader/CCBAnimationManager.js"/>
                 <file name="GUI/CCControlExtension/CCControl.js"/>
                 <file name="GUI/CCControlExtension/CCControlButton.js"/>
                 <file name="GUI/CCControlExtension/CCControlUtils.js"/>
