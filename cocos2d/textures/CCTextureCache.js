@@ -90,6 +90,9 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      */
     addImageAsync:function (path, target, selector) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
+
+        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
+
         var texture = this.textures[path.toString()];
 
         if (texture) {
@@ -148,6 +151,9 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      */
     addImage:function (path) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
+
+        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
+
         var texture = this.textures[path.toString()];
         if (texture) {
             cc.Loader.getInstance().onResLoaded();
@@ -354,6 +360,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      */
     addPVRImage:function (path) {
         cc.Assert(path != null, "TextureCache: file image MUST not be null");
+
+        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
 
         var key = path;
 

@@ -211,7 +211,7 @@ cc.MenuItemLoader = cc.NodeLoader.extend({
     onHandlePropTypeBlock:function (node, parent, propertyName, blockData, ccbReader) {
         if (propertyName == PROPERTY_BLOCK) {
             if (null != blockData) { // Add this condition to allow CCMenuItemImage without target/selector predefined
-                node.setTarget(blockData.target, blockData.selMenuHander);
+                node.setTarget(blockData.selMenuHander, blockData.target);
             }
         } else {
             this._super(node, parent, propertyName, blockData, ccbReader);
