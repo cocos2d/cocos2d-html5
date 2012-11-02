@@ -82,8 +82,8 @@ var Helloworld = cc.Layer.extend({
             "res/CloseSelected.png",
             this,
             this.menuCloseCallback);
-        var text = cc.MenuItemFont.create("Hello Dom", this, function () {
-        });
+        var text = cc.MenuItemFont.create("Hello Dom", function () {
+        }, this);
         text.setColor({r:255, g:0, b:0});
         text.setPosition(cc.p(cc.canvas.width / 2, cc.canvas.height / 2));
         closeItem.setPosition(cc.p(cc.canvas.width - 20, 20));
