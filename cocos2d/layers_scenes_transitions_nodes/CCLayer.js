@@ -638,6 +638,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
         var winSize = cc.Director.getInstance().getWinSize();
 
+        color = color || new cc.Color4B(0,0,0,255);
         width = width || winSize.width;
         height = height || winSize.height;
 
@@ -1002,6 +1003,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     init:function (start, end, v) {
 
         var argnum = arguments.length;
+
+        if(argnum == 0)
+            return this._super();
+
         if (argnum == 2) {
             // Initializes the CCLayer with a gradient between start and end.
             v = cc.p(0, -1);
