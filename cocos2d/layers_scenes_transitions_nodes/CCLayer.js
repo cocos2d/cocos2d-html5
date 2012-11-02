@@ -633,7 +633,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param color
      * @return {Boolean}
      */
-    initWithColor:function (color, width, height) {
+    init:function (color, width, height) {
         this._initLayer();
 
         var winSize = cc.Director.getInstance().getWinSize();
@@ -776,10 +776,10 @@ cc.LayerColor.create = function (color, width, height) {
             ret.init();
             break;
         case 1:
-            ret.initWithColor(color);
+            ret.init(color);
             break;
         case 3:
-            ret.initWithColor(color, width, height);
+            ret.init(color, width, height);
             break;
         default :
             ret.init();
@@ -885,12 +885,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
         this._super();
 
         this._buildGradientCanvas();
-    },
-
-    init:function () {
-        this._super();
-        this._buildGradientCanvas();
-        return true;
     },
 
     /**
@@ -1005,7 +999,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Point|Null} v
      * @return {Boolean}
      */
-    initWithColor:function (start, end, v) {
+    init:function (start, end, v) {
+
         var argnum = arguments.length;
         if (argnum == 2) {
             // Initializes the CCLayer with a gradient between start and end.
@@ -1027,7 +1022,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         this._compressedInterpolation = true;
 
-        return this._super(cc.c4b(start.r, start.g, start.b, 255));
+        this._super(cc.c4b(start.r, start.g, start.b, 255));
+        this._buildGradientCanvas();
+        return true;
     },
 
     _updateColor:function () {
@@ -1124,13 +1121,13 @@ cc.LayerGradient.create = function (start, end, v) {
     switch (arguments.length) {
         case 2:
             /** Creates a full-screen CCLayer with a gradient between start and end. */
-            if (layer && layer.initWithColor(start, end)) {
+            if (layer && layer.init(start, end)) {
                 return layer;
             }
             break;
         case 3:
             /** Creates a full-screen CCLayer with a gradient between start and end in the direction of v. */
-            if (layer && layer.initWithColor(start, end, v)) {
+            if (layer && layer.init(start, end, v)) {
                 return layer;
             }
             break;
