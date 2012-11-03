@@ -77,7 +77,12 @@ cc.$ = function (x) {
          * @return {cc.$}
          */
         el.addClass = el.addClass || function (cls) {
-            if (!this.hasClass(cls)) this.className += " " + cls;
+            if (!this.hasClass(cls)) {
+                if (this.className) {
+                    this.className += " ";
+                }
+                this.className += cls;
+            }
             return this;
         };
         /**
