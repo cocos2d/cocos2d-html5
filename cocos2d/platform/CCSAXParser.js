@@ -104,8 +104,15 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                 data = this._parseArray(node);
                 break;
             case 'string':
-                // FIXME - This needs to handle Firefox's 4KB nodeValue limit
-                data = node.firstChild.nodeValue;
+                if (node.childNodes.length == 1) {
+                    data = node.firstChild.nodeValue;
+                } else {
+                    //handle Firefox's 4KB nodeValue limit
+                    data = "";
+                    for (var i = 0; i < node.childNodes.length; i++) {
+                        data += node.childNodes[i].nodeValue;
+                    }
+                }
                 break;
             case 'false':
                 data = false;
