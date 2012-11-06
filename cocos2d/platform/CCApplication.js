@@ -176,6 +176,7 @@ cc.setup = function (el, width, height) {
         cc.canvas.setAttribute("width", width || 480);
         cc.canvas.setAttribute("height", height || 320);
         cc.container = element;
+        element.appendChild(cc.canvas);
         cc.container.style.width = (width || 480) + "px";
         cc.container.style.height = (height || 320) + "px";
     }

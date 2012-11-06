@@ -146,7 +146,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
                     sharedTextureCache.addImage(res[i].src);
                     break;
                 case "bgm":
-                    sharedEngine.preloadBackgroundMusic(res[i].src);
+                    sharedEngine.preloadMusic(res[i].src);
                     break;
                 case "effect":
                     sharedEngine.preloadEffect(res[i].src);
