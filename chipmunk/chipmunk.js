@@ -18,6 +18,9 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
+ *
+ * Sean Lin, 2012-11-6.
+ * Version:
  */
 
 Object.create = Object.create || function(o) {
@@ -1114,7 +1117,7 @@ var BoxShape2 = cp.BoxShape2 = function(body, box)
 		box.l, box.b,
 		box.l, box.t,
 		box.r, box.t,
-		box.r, box.b,
+		box.r, box.b
 	];
 	
 	return new PolyShape(body, verts, vzero);
