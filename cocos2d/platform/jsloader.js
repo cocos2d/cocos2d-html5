@@ -146,6 +146,8 @@
     }
     if (c.box2d)
         engine.push('../box2d/box2d.js');
+    if (c.chipmunk)
+        engine.push('../chipmunk/chipmunk.js');
     var loaded = 0;
     var que = engine.concat(c.appFiles);
     que.push('main.js');
