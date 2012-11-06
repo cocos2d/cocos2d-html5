@@ -469,6 +469,10 @@ cc._Dictionary = cc.Class.extend({
     removeAllObjects:function () {
         this._keyMapTb = {};
         this._valueMapTb = {};
+    },
+
+    count:function(){
+        return this.allKeys().length;
     }
 });
 

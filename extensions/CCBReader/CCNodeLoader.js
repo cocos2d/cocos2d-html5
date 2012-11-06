@@ -227,7 +227,7 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
-                case CCB_PROTYPE_BLENDFUNC:
+                case CCB_PROTYPE_BLENDMODE:
                 {
                     var blendFunc = this.parsePropTypeBlendFunc(node, parent, ccbReader);
                     if (setProp) {

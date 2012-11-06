@@ -276,7 +276,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             director.getKeyboardDispatcher().addDelegate(this);
 
         if (this._isMouseEnabled)
-            director.getMouseDispatcher().addMouseDelegate(this,this._mousePriority);
+            director.getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
     },
 
     /**
@@ -621,9 +621,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if(arguments.length == 1){
+        if (arguments.length == 1) {
             this._blendFunc = src;
-        }else{
+        } else {
             this._blendFunc = {src:src, dst:dst};
         }
         this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
@@ -735,8 +735,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
         context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
-        this._super(context);
-
         cc.INCREMENT_GL_DRAWS(1);
     },
 
@@ -822,6 +820,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _sourceGradientCanvas:null,
 
     _buildGradientCanvas:function (layerWidth, layerHeight) {
+        //http://ricardocabello.com/blog/post/710
+
         layerWidth = layerWidth || this.getContentSize().width;
         layerHeight = layerHeight || this.getContentSize().height;
 
@@ -1077,7 +1077,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
-            if(this._isLighterMode)
+            if (this._isLighterMode)
                 context.globalCompositeOperation = 'lighter';
 
             if (this._drawGradientCanvas == null) {
@@ -1087,10 +1087,10 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
                 var tGradient = context.createLinearGradient(-apip.x, apip.y,
                     -apip.x + tWidth, -(apip.y + tHeight));
 
-                tGradient.addColorStop(0, "rgba(" + Math.round(this._squareColors[0].r * 255) + "," + Math.round(this._squareColors[0].g * 255) + ","
-                    + Math.round(this._squareColors[0].b * 255) + "," + this._squareColors[0].a.toFixed(4) + ")");
-                tGradient.addColorStop(1, "rgba(" + Math.round(this._squareColors[3].r * 255) + "," + Math.round(this._squareColors[3].g * 255) + ","
-                    + Math.round(this._squareColors[3].b * 255) + "," + this._squareColors[3].a.toFixed(4) + ")");
+                tGradient.addColorStop(0, "rgba(" + Math.round(this._startColor.r) + "," + Math.round(this._startColor.g) + ","
+                    + Math.round(this._startColor.b) + "," + Math.round(this._startOpacity / 255).toFixed(4) + ")");
+                tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
+                    + Math.round(this._endColor.b) + "," + Math.round(this._endOpacity / 255).toFixed(4) + ")");
 
                 context.fillStyle = tGradient;
                 context.fillRect(-apip.x, apip.y, tWidth, -tHeight);

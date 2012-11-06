@@ -300,7 +300,6 @@ cc.Codec.GZip.prototype.DecodeValue = function (currentTree) {
 
 cc.Codec.GZip.prototype.DeflateLoop = function () {
     var last, c, type, i, len;
-
     do {
         last = this.readBit();
         type = this.readBits(2);
