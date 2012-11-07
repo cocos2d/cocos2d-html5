@@ -276,7 +276,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
             director.getKeyboardDispatcher().addDelegate(this);
 
         if (this._isMouseEnabled)
-            director.getMouseDispatcher().addMouseDelegate(this,this._mousePriority);
+            director.getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
     },
 
     /**
@@ -621,9 +621,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if(arguments.length == 1){
+        if (arguments.length == 1) {
             this._blendFunc = src;
-        }else{
+        } else {
             this._blendFunc = {src:src, dst:dst};
         }
         this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
@@ -633,11 +633,12 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param color
      * @return {Boolean}
      */
-    initWithColor:function (color, width, height) {
+    init:function (color, width, height) {
         this._initLayer();
 
         var winSize = cc.Director.getInstance().getWinSize();
 
+        color = color || new cc.Color4B(0, 0, 0, 255);
         width = width || winSize.width;
         height = height || winSize.height;
 
@@ -776,10 +777,10 @@ cc.LayerColor.create = function (color, width, height) {
             ret.init();
             break;
         case 1:
-            ret.initWithColor(color);
+            ret.init(color);
             break;
         case 3:
-            ret.initWithColor(color, width, height);
+            ret.init(color, width, height);
             break;
         default :
             ret.init();
@@ -818,79 +819,22 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     _alongVector:null,
     _compressedInterpolation:false,
 
-    _drawGradientCanvas:null,
-    _sourceGradientCanvas:null,
-
-    _buildGradientCanvas:function (layerWidth, layerHeight) {
-        layerWidth = layerWidth || this.getContentSize().width;
-        layerHeight = layerHeight || this.getContentSize().height;
-
-        if (!this._sourceGradientCanvas)
-            this._sourceGradientCanvas = document.createElement('canvas');
-        this._sourceGradientCanvas.width = 2;
-        this._sourceGradientCanvas.height = 2;
-
-        var context_colors = this._sourceGradientCanvas.getContext('2d');
-        context_colors.fillStyle = 'rgba(0,0,0,1)';
-        context_colors.fillRect(0, 0, 2, 2);
-
-        var image_colors = context_colors.getImageData(0, 0, 2, 2);
-        var data = image_colors.data;
-
-        if (!this._drawGradientCanvas)
-            this._drawGradientCanvas = document.createElement('canvas');
-        this._drawGradientCanvas.width = layerWidth;
-        this._drawGradientCanvas.height = layerHeight;
-
-        var context_render = this._drawGradientCanvas.getContext('2d');
-        context_render.translate(-layerWidth / 2, -layerHeight / 2);
-        context_render.scale(layerWidth, layerHeight);
-
-        // Top-left,
-        data[ 0 ] = 0 | (this._squareColors[2].r * 255);
-        data[ 1 ] = 0 | (this._squareColors[2].g * 255);
-        data[ 2 ] = 0 | (this._squareColors[2].b * 255);
-        data[ 3 ] = 0 | (this._squareColors[2].a * 255);
-
-        // Top-right,
-        data[ 4 ] = 0 | (this._squareColors[3].r * 255);
-        data[ 5 ] = 0 | (this._squareColors[3].g * 255);
-        data[ 6 ] = 0 | (this._squareColors[3].b * 255);
-        data[ 7 ] = 0 | (this._squareColors[3].a * 255);
-
-        // Bottom-left,
-        data[ 8 ] = 0 | (this._squareColors[0].r * 255);
-        data[ 9 ] = 0 | (this._squareColors[0].g * 255);
-        data[ 10 ] = 0 | (this._squareColors[0].b * 255);
-        data[ 11 ] = 0 | (this._squareColors[0].a * 255);
-
-        // Bottom-right,
-        data[ 12 ] = 0 | (this._squareColors[1].r * 255);
-        data[ 13 ] = 0 | (this._squareColors[1].g * 255);
-        data[ 14 ] = 0 | (this._squareColors[1].b * 255);
-        data[ 15 ] = 0 | (this._squareColors[1].a * 255);
-
-        context_colors.putImageData(image_colors, 0, 0);
-        context_render.drawImage(this._sourceGradientCanvas, 0, 0);
-    },
+    _gradientStartPoint:null,
+    _gradientEndPoint:null,
 
     /**
      * Constructor
      * @function
      */
     ctor:function () {
+        this._super();
+
         this._startColor = new cc.Color3B(0, 0, 0);
         this._endColor = new cc.Color3B(0, 0, 0);
         this._alongVector = cc.p(0, -1);
-        this._super();
 
-        this._buildGradientCanvas();
-    },
-
-    init:function () {
-        this._super();
-        this._buildGradientCanvas();
-        return true;
+        this._gradientStartPoint = cc.p(0, 0);
+        this._gradientEndPoint = cc.p(0, 0);
     },
 
     /**
@@ -1005,8 +949,13 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @param {cc.Point|Null} v
      * @return {Boolean}
      */
-    initWithColor:function (start, end, v) {
+    init:function (start, end, v) {
+
         var argnum = arguments.length;
+
+        if (argnum == 0)
+            return this._super();
+
         if (argnum == 2) {
             // Initializes the CCLayer with a gradient between start and end.
             v = cc.p(0, -1);
@@ -1027,87 +976,85 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
         this._compressedInterpolation = true;
 
-        return this._super(cc.c4b(start.r, start.g, start.b, 255));
+        this._super(cc.c4b(start.r, start.g, start.b, 255));
+        return true;
     },
 
     _updateColor:function () {
-        //todo need fixed for webGL
-        this._super();
+        if (cc.renderContextType === cc.CANVAS) {
+            var tWidth = this.getContentSize().width/2 ;
+            var tHeight = this.getContentSize().height/2;
+            var apip = this.getAnchorPointInPoints();
+            var offWidth = tWidth - apip.x;
+            var offHeight = tHeight - apip.y;
 
-        var h = cc.pLength(this._alongVector);
-        if (h == 0)
-            return;
+            this._gradientStartPoint = cc.p(tWidth * - this._alongVector.x + offWidth , tHeight *  this._alongVector.y - offHeight );
+            this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth , tHeight * -this._alongVector.y - offHeight);
+        } else {
+            //todo need fixed for webGL
+            this._super();
 
-        var c = Math.sqrt(2.0);
-        var u = cc.p(this._alongVector.x / h, this._alongVector.y / h);
+            var h = cc.pLength(this._alongVector);
+            if (h == 0)
+                return;
 
-        // Compressed Interpolation mode
-        if (this._compressedInterpolation) {
-            var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
-            u = cc.pMult(u, h2 * c);
+            var c = Math.sqrt(2.0);
+            var u = cc.p(this._alongVector.x / h, this._alongVector.y / h);
+
+            // Compressed Interpolation mode
+            if (this._compressedInterpolation) {
+                var h2 = 1 / ( Math.abs(u.x) + Math.abs(u.y) );
+                u = cc.pMult(u, h2 * c);
+            }
+
+            var opacityf = this._opacity / 255.0;
+
+            var S = new cc.Color4F(this._startColor.r / 255, this._startColor.g / 255, this._startColor.b / 255, (this._startOpacity * opacityf) / 255);
+
+            var E = new cc.Color4F(this._endColor.r / 255, this._endColor.g / 255, this._endColor.b / 255, (this._endOpacity * opacityf) / 255);
+
+            // (-1, -1)
+            this._squareColors[0].r = ((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
+            this._squareColors[0].g = ((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
+            this._squareColors[0].b = ((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
+            this._squareColors[0].a = ((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
+            // (1, -1)
+            this._squareColors[1].r = ((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
+            this._squareColors[1].g = ((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
+            this._squareColors[1].b = ((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
+            this._squareColors[1].a = ((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
+            // (-1, 1)
+            this._squareColors[2].r = ((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
+            this._squareColors[2].g = ((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
+            this._squareColors[2].b = ((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
+            this._squareColors[2].a = ((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
+            // (1, 1)
+            this._squareColors[3].r = ((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
+            this._squareColors[3].g = ((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
+            this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
+            this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
         }
-
-        var opacityf = this._opacity / 255.0;
-
-        var S = new cc.Color4F(this._startColor.r / 255, this._startColor.g / 255, this._startColor.b / 255, (this._startOpacity * opacityf) / 255);
-
-        var E = new cc.Color4F(this._endColor.r / 255, this._endColor.g / 255, this._endColor.b / 255, (this._endOpacity * opacityf) / 255);
-
-        // (-1, -1)
-        this._squareColors[0].r = ((E.r + (S.r - E.r) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].g = ((E.g + (S.g - E.g) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].b = ((E.b + (S.b - E.b) * ((c + u.x + u.y) / (2.0 * c))));
-        this._squareColors[0].a = ((E.a + (S.a - E.a) * ((c + u.x + u.y) / (2.0 * c))));
-        // (1, -1)
-        this._squareColors[1].r = ((E.r + (S.r - E.r) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].g = ((E.g + (S.g - E.g) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].b = ((E.b + (S.b - E.b) * ((c - u.x + u.y) / (2.0 * c))));
-        this._squareColors[1].a = ((E.a + (S.a - E.a) * ((c - u.x + u.y) / (2.0 * c))));
-        // (-1, 1)
-        this._squareColors[2].r = ((E.r + (S.r - E.r) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].g = ((E.g + (S.g - E.g) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].b = ((E.b + (S.b - E.b) * ((c + u.x - u.y) / (2.0 * c))));
-        this._squareColors[2].a = ((E.a + (S.a - E.a) * ((c + u.x - u.y) / (2.0 * c))));
-        // (1, 1)
-        this._squareColors[3].r = ((E.r + (S.r - E.r) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].g = ((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
-        this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
-
-        this._buildGradientCanvas();
     },
 
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
         if (cc.renderContextType == cc.CANVAS) {
-            if(this._isLighterMode)
+            if (this._isLighterMode)
                 context.globalCompositeOperation = 'lighter';
 
-            if (this._drawGradientCanvas == null) {
-                var tWidth = this.getContentSize().width;
-                var tHeight = this.getContentSize().height;
-                var apip = this.getAnchorPointInPoints();
-                var tGradient = context.createLinearGradient(-apip.x, apip.y,
-                    -apip.x + tWidth, -(apip.y + tHeight));
+            var tWidth = this.getContentSize().width;
+            var tHeight = this.getContentSize().height;
+            var apip = this.getAnchorPointInPoints();
+            var tGradient = context.createLinearGradient(this._gradientStartPoint.x,this._gradientStartPoint.y,
+                this._gradientEndPoint.x, this._gradientEndPoint.y);
 
-                tGradient.addColorStop(0, "rgba(" + Math.round(this._squareColors[0].r * 255) + "," + Math.round(this._squareColors[0].g * 255) + ","
-                    + Math.round(this._squareColors[0].b * 255) + "," + this._squareColors[0].a.toFixed(4) + ")");
-                tGradient.addColorStop(1, "rgba(" + Math.round(this._squareColors[3].r * 255) + "," + Math.round(this._squareColors[3].g * 255) + ","
-                    + Math.round(this._squareColors[3].b * 255) + "," + this._squareColors[3].a.toFixed(4) + ")");
+            tGradient.addColorStop(0, "rgba(" + Math.round(this._startColor.r) + "," + Math.round(this._startColor.g) + ","
+                + Math.round(this._startColor.b) + "," + (this._startOpacity / 255).toFixed(4) + ")");
+            tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
+                + Math.round(this._endColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
 
-                context.fillStyle = tGradient;
-                context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
-            } else {
-                context.globalAlpha = this._opacity / 255;
-                var posX = 0 | ( -this._anchorPointInPoints.x );
-                var posY = 0 | ( -this._anchorPointInPoints.y );
-
-                context.drawImage(this._drawGradientCanvas,
-                    0, 0,
-                    this._drawGradientCanvas.width, this._drawGradientCanvas.height,
-                    posX, -(posY + this._contentSize.height),
-                    this._contentSize.width, this._contentSize.height);
-            }
+            context.fillStyle = tGradient;
+            context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
         }
     }
 });
@@ -1124,13 +1071,13 @@ cc.LayerGradient.create = function (start, end, v) {
     switch (arguments.length) {
         case 2:
             /** Creates a full-screen CCLayer with a gradient between start and end. */
-            if (layer && layer.initWithColor(start, end)) {
+            if (layer && layer.init(start, end)) {
                 return layer;
             }
             break;
         case 3:
             /** Creates a full-screen CCLayer with a gradient between start and end in the direction of v. */
-            if (layer && layer.initWithColor(start, end, v)) {
+            if (layer && layer.init(start, end, v)) {
                 return layer;
             }
             break;

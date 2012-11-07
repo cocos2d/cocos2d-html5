@@ -1047,9 +1047,12 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
         if (typeof args[args.length-2] === 'function') {
             this.initWithCallback( args[args.length-2], args[args.length-1] );
             l = l-2;
-        }
-        else
+        } else if(typeof args[args.length-1] === 'function'){
+            this.initWithCallback( args[args.length-1], null );
+            l = l-1;
+        } else {
             this.initWithCallback(null, null);
+        }
 
         this._subItems = [];
         for (var i = 0; i < l; i++) {

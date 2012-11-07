@@ -23,19 +23,71 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-/* Simple JavaScript Inheritance
- * By John Resig http://ejohn.org/
+/* Managed JavaScript Inheritance
+ * Based on John Resig's Simple JavaScript Inheritance http://ejohn.org/blog/simple-javascript-inheritance/
  * MIT Licensed.
  */
-// Inspired by base2 and Prototype
 
 /**
  * @namespace
  */
 var cc = cc = cc || {};
 
+//
+function ClassManager(){
+    //tells own name
+    return arguments.callee.name || (arguments.callee.toString()).match(/^function ([^(]+)/)[1];
+}
+ClassManager.id=(0|(Math.random()*998));
+ClassManager.compileSuper=function(func, name, id){
+    //make the func to a string
+    var str = func.toString();
+    //find parameters
+    var pstart = str.indexOf('(');
+    var pend = str.indexOf(')');
+    var params = str.substring(pstart+1, pend);
+    params = params.trim();
+
+    //find function body
+    var bstart = str.indexOf('{');
+    var bend = str.lastIndexOf('}');
+    var str = str.substring(bstart+1, bend);
+
+    //now we have the content of the function, replace this._super
+    //find this._super
+    while(str.indexOf('this._super')!= -1)
+    {
+        var sp = str.indexOf('this._super');
+        //find the first '(' from this._super)
+        var bp = str.indexOf('(', sp);
+
+        //find if we are passing params to super
+        var bbp = str.indexOf(')', bp);
+        var superParams = str.substring(bp+1, bbp);
+        superParams = superParams.trim();
+        var coma = superParams? ',':'';
+
+        //find name of ClassManager
+        var Cstr = arguments.callee.ClassManager();
+
+        //replace this._super
+        str = str.substring(0, sp)+  Cstr+'['+id+'].'+name+'.call(this'+coma+str.substring(bp+1);
+    }
+    return Function(params, str);
+};
+ClassManager.compileSuper.ClassManager = ClassManager;
+ClassManager.getNewID=function(){
+    return this.id++;
+};
+
+
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
+    var releaseMode = document.querySelector('#cocos2d-html5')['c']['CLASS_RELEASE_MODE'];
+    if(releaseMode)
+    {
+        console.log("release Mode");
+    }
 
     /**
      * The base Class implementation (does nothing)
@@ -58,12 +110,22 @@ var cc = cc = cc || {};
         var prototype = new this();
         initializing = false;
 
+        // The dummy Class constructor
+        function Class() {
+            // All construction is actually done in the init method
+            if (!initializing && this.ctor)
+                this.ctor.apply(this, arguments);
+        }
+        Class.id = ClassManager.getNewID();
+        ClassManager[Class.id] = _super;
         // Copy the properties over onto the new prototype
         for (var name in prop) {
-            // Check if we're overwriting an existing function
-            prototype[name] = typeof prop[name] == "function" &&
-                typeof _super[name] == "function" && fnTest.test(prop[name]) ?
-                (function (name, fn) {
+            if(releaseMode && typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name]))
+            {
+                prototype[name] = ClassManager.compileSuper(prop[name], name, Class.id);
+            }
+            else if(typeof prop[name] == "function" && typeof _super[name] == "function" && fnTest.test(prop[name])){
+                prototype[name] = (function (name, fn) {
                     return function () {
                         var tmp = this._super;
 
@@ -78,16 +140,13 @@ var cc = cc = cc || {};
 
                         return ret;
                     };
-                })(name, prop[name]) :
-                prop[name];
+                })(name, prop[name]);
+            }
+            else{
+                prototype[name] = prop[name];
+            }
         }
-
-        // The dummy Class constructor
-        function Class() {
-            // All construction is actually done in the init method
-            if (!initializing && this.ctor)
-                this.ctor.apply(this, arguments);
-        }
+        prototype.__pid = Class.id;
 
         // Populate our constructed prototype object
         Class.prototype = prototype;
@@ -114,7 +173,7 @@ var cc = cc = cc || {};
 //
 cc.inherits = function (childCtor, parentCtor) {
     /** @constructor */
-    function tempCtor() {};
+    function tempCtor() {}
     tempCtor.prototype = parentCtor.prototype;
     childCtor.superClass_ = parentCtor.prototype;
     childCtor.prototype = new tempCtor();
