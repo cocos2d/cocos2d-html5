@@ -306,9 +306,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                     this._dimensions.height,
                     this._fontSize * 1.2);
             } else if (this._dimensions.width == 0) {
-                if (this._string.indexOf("\n") > -1)
+               if (this._string.indexOf("\n") > -1)
                     this._multiLineText(context);
-                else
+                 else
                     context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
             } else {
                 var xOffset = 0, yOffset = 0;
