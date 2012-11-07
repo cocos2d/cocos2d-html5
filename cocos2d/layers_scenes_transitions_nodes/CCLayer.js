@@ -736,7 +736,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
         context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
-        this._super(context);
+        if (this._rotation != 0)
+            context.rotate(this._rotationRadians);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -1055,6 +1056,9 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
             context.fillStyle = tGradient;
             context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+
+            if (this._rotation != 0)
+                context.rotate(this._rotationRadians);
         }
     }
 });
