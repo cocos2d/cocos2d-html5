@@ -1688,7 +1688,7 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
             break;
 
         default:
-            throw "Sprite.spriteWithTexture(): Argument must be non-nil ";
+            throw "Sprite.createWithTexture(): Argument must be non-nil ";
             break;
     }
 };
