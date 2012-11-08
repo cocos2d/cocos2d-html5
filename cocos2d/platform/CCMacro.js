@@ -87,6 +87,7 @@ cc.SWAP = function (x, y, ref) {
 /**
  * <p>
  *     Linear interpolation between 2 numbers, the ratio sets how much it is biased to each end
+ * </p>
  * @param {Number} a number A
  * @param {Number} b number B
  * @param {Number} r ratio between 0 and 1
