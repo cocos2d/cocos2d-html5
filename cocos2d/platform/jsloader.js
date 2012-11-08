@@ -111,7 +111,7 @@
     var d = document;
     var c = d.querySelector('#cocos2d-html5').c;
 
-    if(c.loadExtension != null && c.loadExtension == true){
+    if (c.loadExtension != null && c.loadExtension == true) {
         engine = engine.concat([
             '../extensions/GUI/CCControlExtension/CCControl.js',
             '../extensions/GUI/CCControlExtension/CCControlButton.js',
@@ -140,12 +140,20 @@
         engine = [];
     }
     else {
+        if(c.box2d || c.chipmunk){
+            engine.push('Draw_Nodes/CCDrawNode.js');
+            engine.push('Physics_Nodes/CCPhysicsSprite.js');
+            engine.push('Physics_Nodes/CCPhysicsDebugNode.js');
+            if (c.box2d)
+                engine.push('../box2d/box2d.js');
+            if (c.chipmunk)
+                engine.push('../chipmunk/chipmunk.js');
+        }
         engine.forEach(function (e, i) {
             engine[i] = c.engineDir + e;
         });
     }
-    if (c.box2d)
-        engine.push('../box2d/box2d.js');
+
     var loaded = 0;
     var que = engine.concat(c.appFiles);
     que.push('main.js');

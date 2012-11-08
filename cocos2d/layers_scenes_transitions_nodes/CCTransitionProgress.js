@@ -80,7 +80,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         // create the blend action
         var layerAction = cc.Sequence.create(
             cc.ProgressFromTo.create(this._duration, this._from, this._to),
-            cc.CallFunc.create(this, this.finish));
+            cc.CallFunc.create(this.finish, this));
         // run the blend action
         pNode.runAction(layerAction);
 

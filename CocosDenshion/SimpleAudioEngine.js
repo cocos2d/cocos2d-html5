@@ -41,7 +41,7 @@ cc.capabilities = {
 };
 cc.MAX_AUDIO_INSTANCES = 10;
 /**
- * Offer a VERY simple interface to play background music & sound effect.
+ * Offer a VERY simple interface to play music & sound effect.
  * @class
  * @extends   cc.Class
  */
@@ -130,11 +130,11 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         return -1;
     },
     /**
-     * Preload background music resource.<br />
+     * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
-     * @param {String} path The path of the background music file without filename extension.
+     * @param {String} path The path of the music file without filename extension.
      */
-    preloadBackgroundMusic:function (path) {
+    preloadMusic:function (path) {
         if (this._sound_enable) {
             if (this._activeAudioExt == -1) return;
             var soundPath = path + "." + this._activeAudioExt;
@@ -162,14 +162,14 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         cc.Loader.getInstance().onResLoaded();
     },
     /**
-     * Play background music.
-     * @param {String} path The path of the background music file without filename extension.
-     * @param {Boolean} loop Whether the background music loop or not.
+     * Play music.
+     * @param {String} path The path of the music file without filename extension.
+     * @param {Boolean} loop Whether the music loop or not.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().playBackgroundMusic(path, false);
+     * cc.AudioEngine.getInstance().playMusic(path, false);
      */
-    playBackgroundMusic:function (path, loop) {
+    playMusic:function (path, loop) {
         if (this._bgmList[this._playingBgm]) {
             this._bgmList[this._playingBgm].pause();
         }
@@ -180,13 +180,13 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
     },
     /**
-     * Stop playing background music.
-     * @param {Boolean} releaseData If release the background music data or not.As default value is false.
+     * Stop playing music.
+     * @param {Boolean} releaseData If release the music data or not.As default value is false.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().stopBackgroundMusic();
+     * cc.AudioEngine.getInstance().stopMusic();
      */
-    stopBackgroundMusic:function (releaseData) {
+    stopMusic:function (releaseData) {
         if (this._bgmList[this._playingBgm]) {
             this._bgmList[this._playingBgm].pause();
             if (releaseData && this._bgmList.hasOwnProperty(this._playingBgm)) {
@@ -195,68 +195,68 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
     },
     /**
-     * Pause playing background music.
+     * Pause playing music.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().pauseBackgroundMusic();
+     * cc.AudioEngine.getInstance().pauseMusic();
      */
-    pauseBackgroundMusic:function () {
+    pauseMusic:function () {
         if (this._bgmList[this._playingBgm]) {
             this._bgmList[this._playingBgm].pause();
         }
     },
     /**
-     * Resume playing background music.
+     * Resume playing music.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().resumeBackgroundMusic();
+     * cc.AudioEngine.getInstance().resumeMusic();
      */
-    resumeBackgroundMusic:function () {
+    resumeMusic:function () {
         if (this._bgmList[this._playingBgm]) {
             this._bgmList[this._playingBgm].play();
         }
     },
 
     /**
-     * Rewind playing background music.
+     * Rewind playing music.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().rewindBackgroundMusic();
+     * cc.AudioEngine.getInstance().rewindMusic();
      */
-    rewindBackgroundMusic:function () {
+    rewindMusic:function () {
         if (this._bgmList[this._playingBgm]) {
             this._bgmList[this._playingBgm].currentTime = 0;
             this._bgmList[this._playingBgm].play();
         }
     },
-    willPlayBackgroundMusic:function () {
+    willPlayMusic:function () {
         return false;
     },
 
     /**
-     * Whether the background music is playing.
+     * Whether the music is playing.
      * @return {Boolean} If is playing return true,or return false.
      * @example
      * //example
-     *  if (cc.AudioEngine.getInstance().isBackgroundMusicPlaying()) {
-     *      cc.log("background music is playing");
+     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
+     *      cc.log("music is playing");
      *  }
      *  else {
-     *      cc.log("background music is not playing");
+     *      cc.log("music is not playing");
      *  }
      */
-    isBackgroundMusicPlaying:function () {
+    isMusicPlaying:function () {
         return cc.sharedEngine._isBgmPlaying;
     },
 
     /**
-     * The volume of the background music max value is 1.0,the min value is 0.0 .
+     * The volume of the music max value is 1.0,the min value is 0.0 .
      * @return {Number}
      * @example
      * //example
-     * var volume = cc.AudioEngine.getInstance().getBackgroundMusicVolume();
+     * var volume = cc.AudioEngine.getInstance().getMusicVolume();
      */
-    getBackgroundMusicVolume:function () {
+    getMusicVolume:function () {
         if (this._bgmList[this._playingBgm]) {
             return this._bgmList[this._playingBgm].volume;
         }
@@ -266,13 +266,13 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     },
 
     /**
-     * Set the volume of background music.
+     * Set the volume of music.
      * @param {Number} volume Volume must be in 0.0~1.0 .
      * @example
      * //example
-     * cc.AudioEngine.getInstance().setBackgroundMusicVolume(0.5);
+     * cc.AudioEngine.getInstance().setMusicVolume(0.5);
      */
-    setBackgroundMusicVolume:function (volume) {
+    setMusicVolume:function (volume) {
         if (this._bgmList[this._playingBgm]) {
             if (volume > 1) {
                 this._bgmList[this._playingBgm].volume = 1;
@@ -547,13 +547,13 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
     },
     /**
-     *  Stop all background music and sound effects
+     *  Stop all music and sound effects
      * @example
      * //example
      * cc.AudioEngine.getInstance().end();
      */
     end:function () {
-        this.stopBackgroundMusic();
+        this.stopMusic();
         this.stopAllEffects();
     }
 });
