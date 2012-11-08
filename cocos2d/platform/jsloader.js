@@ -68,6 +68,9 @@
         'layers_scenes_transitions_nodes/CCTransitionProgress.js',
         'layers_scenes_transitions_nodes/CCTransitionPageTurn.js',
         'sprite_nodes/CCSprite.js',
+        'Draw_Nodes/CCDrawNode.js',
+        'Physics_Nodes/CCPhysicsSprite.js',
+        'Physics_Nodes/CCPhysicsDebugNode.js',
         'sprite_nodes/CCAnimation.js',
         'sprite_nodes/CCAnimationCache.js',
         'sprite_nodes/CCSpriteFrame.js',
@@ -111,7 +114,7 @@
     var d = document;
     var c = d.querySelector('#cocos2d-html5').c;
 
-    if(c.loadExtension != null && c.loadExtension == true){
+    if (c.loadExtension != null && c.loadExtension == true) {
         engine = engine.concat([
             '../extensions/GUI/CCControlExtension/CCControl.js',
             '../extensions/GUI/CCControlExtension/CCControlButton.js',
