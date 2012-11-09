@@ -43,6 +43,16 @@ cc.CCBAnimationManager = cc.Class.extend({
     _delegate:null,
     _runningSequence:null,
 
+    _documentOutletNames:null,
+    _documentOutletNodes:null,
+    _documentCallbackNames:null,
+    _documentCallbackNodes:null,
+    _documentControllerName:"",
+    _lastCompletedSequenceName:"",
+
+    _animationCompleteCallbackFunc:null,
+    _target:null,
+
     ctor:function () {
         this._rootContainerSize = cc.size(0, 0);
         this.init();
@@ -52,6 +62,11 @@ cc.CCBAnimationManager = cc.Class.extend({
         this._sequences = [];
         this._nodeSequences = new cc._Dictionary();
         this._baseValues = new cc._Dictionary();
+
+        this._documentOutletNames = [];
+        this._documentOutletNodes = [];
+        this._documentCallbackNames = [];
+        this._documentCallbackNodes = [];
 
         return true;
     },
@@ -72,6 +87,50 @@ cc.CCBAnimationManager = cc.Class.extend({
     },
     setRootNode:function (rootNode) {
         this._rootNode = rootNode;
+    },
+
+    addDocumentCallbackNode:function(node){
+        this._documentCallbackNodes.push(node);
+    },
+
+    addDocumentCallbackName:function(name){
+        this._documentCallbackNames.push(name);
+    },
+
+    addDocumentOutletNode:function(node){
+        this._documentOutletNodes.push(node);
+    },
+
+    addDocumentOutletName:function(name){
+        this._documentOutletNames.push(name);
+    },
+
+    setDocumentControllerName:function(name){
+        this._documentControllerName = name;
+    },
+
+    getDocumentControllerName:function(name){
+        return this._documentControllerName = name;
+    },
+
+    getDocumentCallbackNames:function(){
+        return this._documentCallbackNames;
+    },
+
+    getDocumentCallbackNodes:function(){
+        return this._documentCallbackNodes;
+    },
+
+    getDocumentOutletNames:function(){
+        return this._documentOutletNames;
+    },
+
+    getDocumentOutletNodes:function(){
+        return this._documentOutletNodes;
+    },
+
+    getLastCompletedSequenceName:function(){
+        return this._lastCompletedSequenceName;
     },
 
     getRootContainerSize:function () {
@@ -109,6 +168,22 @@ cc.CCBAnimationManager = cc.Class.extend({
             this._baseValues.setObject(props, node);
         }
         props.setObject(value, propName);
+    },
+
+    moveAnimationsFromNode:function(fromNode,toNode){
+        // Move base values
+        var baseValue = this._baseValues.objectForKey(fromNode);
+        if(baseValue) {
+            this._baseValues.setObject(baseValue, toNode);
+            this._baseValues.removeObjectForKey(fromNode);
+        }
+
+        // Move seqs
+        var seqs = this._nodeSequences.objectForKey(fromNode);
+        if(seqs) {
+            this._nodeSequences.setObject(seqs, toNode);
+            this._nodeSequences.removeObjectForKey(fromNode);
+        }
     },
 
     runAnimations:function (name, tweenDuration) {
@@ -163,6 +238,11 @@ cc.CCBAnimationManager = cc.Class.extend({
         this._rootNode.runAction(completeAction);
         // Set the running scene
         this._runningSequence = this._getSequence(nSeqId);
+    },
+
+    setAnimationCompletedCallback:function(target,callbackFunc){
+        this._target = target;
+        this._animationCompleteCallbackFunc = callbackFunc;
     },
 
     debug:function () {

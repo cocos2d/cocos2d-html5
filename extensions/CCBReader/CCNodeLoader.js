@@ -57,13 +57,17 @@ function BlockCCControlData(selCCControlHandler, target, controlEvents) {
 cc.NodeLoader = cc.Class.extend({
     loadCCNode:function (parent, ccbReader) {
         var node = this._createCCNode(parent, ccbReader);
-        this.parseProperties(node, parent, ccbReader);
+        //this.parseProperties(node, parent, ccbReader);
         return node;
     },
 
     parseProperties:function (node, parent, ccbReader) {
-        var propertyCount = ccbReader.readInt(false);
+        var numRegularProps = ccbReader.readInt(false);
+        var numExturaProps = ccbReader.readInt(false);
+        var propertyCount = numRegularProps + numExturaProps;
+
         for (var i = 0; i < propertyCount; i++) {
+            var isExtraProp = (i >= numRegularProps);
             var type = ccbReader.readInt(false);
             var propertyName = ccbReader.readCachedString();
 
@@ -74,10 +78,27 @@ cc.NodeLoader = cc.Class.extend({
             if ((platform == CCB_PLATFORM_ALL) ||(platform == CCB_PLATFORM_IOS) ||(platform == CCB_PLATFORM_MAC) )
                 setProp = true;
 
+            //forward properties for sub ccb files
+            if(node instanceof cc.CCBFile){
+                if(node.getCCBFileNode() && isExtraProp){
+                    node = node.getCCBFileNode();
+                    //skip properties that doesn't have a value to override
+                    var getExtraPropsNames = node.getUserObject();
+                    setProp = cc.ArrayContainsObject(getExtraPropsNames,propertyName);
+                }
+            } else if(isExtraProp && node == ccbReader.getAnimationManager().getRootNode()){
+                var extraPropsNames = node.getUserObject();
+                if(!extraPropsNames){
+                    extraPropsNames = [];
+                    node.setUserObject(extraPropsNames);
+                }
+                extraPropsNames.push(propertyName);
+            }
+
             switch (type) {
                 case CCB_PROPTYPE_POSITION:
                 {
-                    var position = this.parsePropTypePosition(node, parent, ccbReader);
+                    var position = this.parsePropTypePosition(node, parent, ccbReader, propertyName);
                     if (setProp) {
                         this.onHandlePropTypePosition(node, parent, propertyName, position, ccbReader);
                     }
@@ -109,7 +130,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_SCALELOCK:
                 {
-                    var scaleLock = this.parsePropTypeScaleLock(node, parent, ccbReader);
+                    var scaleLock = this.parsePropTypeScaleLock(node, parent, ccbReader, propertyName);
                     if (setProp) {
                         this.onHandlePropTypeScaleLock(node, parent, propertyName, scaleLock, ccbReader);
                     }
@@ -125,7 +146,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_DEGREES:
                 {
-                    var degrees = this.parsePropTypeDegrees(node, parent, ccbReader);
+                    var degrees = this.parsePropTypeDegrees(node, parent, ccbReader, propertyName);
                     if (setProp) {
                         this.onHandlePropTypeDegrees(node, parent, propertyName, degrees, ccbReader);
                     }
@@ -165,7 +186,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_CHECK:
                 {
-                    var check = this.parsePropTypeCheck(node, parent, ccbReader);
+                    var check = this.parsePropTypeCheck(node, parent, ccbReader, propertyName);
                     if (setProp) {
                         this.onHandlePropTypeCheck(node, parent, propertyName, check, ccbReader);
                     }
@@ -173,7 +194,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_SPRITEFRAME:
                 {
-                    var ccSpriteFrame = this.parsePropTypeSpriteFrame(node, parent, ccbReader);
+                    var ccSpriteFrame = this.parsePropTypeSpriteFrame(node, parent, ccbReader, propertyName);
                     if (setProp) {
                         this.onHandlePropTypeSpriteFrame(node, parent, propertyName, ccSpriteFrame, ccbReader);
                     }
@@ -197,7 +218,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_BYTE:
                 {
-                    var byteValue = this.parsePropTypeByte(node, parent, ccbReader);
+                    var byteValue = this.parsePropTypeByte(node, parent, ccbReader, propertyName);
                     if (setProp) {
                         this.onHandlePropTypeByte(node, parent, propertyName, byteValue, ccbReader);
                     }
@@ -205,7 +226,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_COLOR3:
                 {
-                    var color3B = this.parsePropTypeColor3(node, parent, ccbReader);
+                    var color3B = this.parsePropTypeColor3(node, parent, ccbReader, propertyName);
                     if (setProp) {
                         this.onHandlePropTypeColor3(node, parent, propertyName, color3B, ccbReader);
                     }
@@ -302,45 +323,22 @@ cc.NodeLoader = cc.Class.extend({
         return cc.Node.create();
     },
 
-    parsePropTypePosition:function (node, parent, ccbReader) {
+    parsePropTypePosition:function (node, parent, ccbReader, propertyName) {
         var x = ccbReader.readFloat();
         var y = ccbReader.readFloat();
 
         var type = ccbReader.readInt(false);
 
-        var containerSize = ccbReader.getContainerSize(parent);
+        var containerSize = ccbReader.getAnimationManager().getContainerSize(parent);
+        var pt = cc.getAbsolutePosition(cc.p(x,y),type,containerSize,propertyName);
+        node.setPosition(cc.getAbsolutePosition(pt,type,containerSize,propertyName));
 
-        switch (type) {
-            case CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT:
-            {
-                /* Nothing. */
-                break;
-            }
-            case CCB_POSITIONTYPE_RELATIVE_TOP_LEFT:
-            {
-                y = containerSize.height - y;
-                break;
-            }
-            case CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT:
-            {
-                x = containerSize.width - x;
-                y = containerSize.height - y;
-                break;
-            }
-            case CCB_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT:
-            {
-                x = containerSize.width - x;
-                break;
-            }
-            case CCB_POSITIONTYPE_PERCENT:
-            {
-                x = (containerSize.width * x / 100.0);
-                y = (containerSize.height * y / 100.0);
-                break;
-            }
+        if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
+            var baseValue = [x,y,type];
+            ccbReader.getAnimationManager().setBaseValue(baseValue,node,propertyName);
         }
 
-        return new cc.Point(x, y);
+        return pt;
     },
 
     parsePropTypePoint:function (node, parent, ccbReader) {
@@ -363,36 +361,31 @@ cc.NodeLoader = cc.Class.extend({
 
         var type = ccbReader.readInt(false);
 
-        var containerSize = ccbReader.getContainerSize(parent);
+        var containerSize = ccbReader.getAnimationManager().getContainerSize(parent);
 
         switch (type) {
             case CCB_SIZETYPE_ABSOLUTE:
-            {
                 /* Nothing. */
                 break;
-            }
             case CCB_SIZETYPE_RELATIVE_CONTAINER:
-            {
                 width = containerSize.width - width;
                 height = containerSize.height - height;
                 break;
-            }
             case CCB_SIZETYPE_PERCENT:
-            {
                 width = (containerSize.width * width / 100.0);
                 height = (containerSize.height * height / 100.0);
                 break;
-            }
             case CCB_SIZETYPE_HORIZONTAL_PERCENT:
-            {
                 width = (containerSize.width * width / 100.0);
                 break;
-            }
             case CCB_SIZETYPE_VERTICAL_PERCENT:
-            {
                 height = (containerSize.height * height / 100.0);
                 break;
-            }
+            case CCB_SIZETYPE_MULTIPLY_RESOLUTION:
+                var resolutionScale = cc.CCBReader.getResolutionScale();
+                width *= resolutionScale;
+                height *= resolutionScale;
+                break;
             default:
                 break;
         }
@@ -400,11 +393,17 @@ cc.NodeLoader = cc.Class.extend({
         return new cc.Size(width, height);
     },
 
-    parsePropTypeScaleLock:function (node, parent, ccbReader) {
+    parsePropTypeScaleLock:function (node, parent, ccbReader, propertyName) {
         var x = ccbReader.readFloat();
         var y = ccbReader.readFloat();
 
         var type = ccbReader.readInt(false);
+
+        this.setRelativeScale(node,x,y,type,propertyName);
+
+        if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
+            ccbReader.getAnimationManager().setBaseValue([x,y,type],node,propertyName);
+        }
 
         if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
             x *= ccbReader.getResolutionScale();
@@ -418,8 +417,12 @@ cc.NodeLoader = cc.Class.extend({
         return ccbReader.readFloat();
     },
 
-    parsePropTypeDegrees:function (node, parent, ccbReader) {
-        return ccbReader.readFloat();
+    parsePropTypeDegrees:function (node, parent, ccbReader, propertyName) {
+        var ret = ccbReader.readFloat();
+        if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
+            ccbReader.getAnimationManager().setBaseValue(ret,node, propertyName);
+        }
+        return ret;
     },
 
     parsePropTypeFloatScale:function (node, parent, ccbReader) {
@@ -448,44 +451,44 @@ cc.NodeLoader = cc.Class.extend({
         return [f, fVar];
     },
 
-    parsePropTypeCheck:function (node, parent, ccbReader) {
-        return ccbReader.readBool();
+    parsePropTypeCheck:function (node, parent, ccbReader, propertyName) {
+        var ret = ccbReader.readBool();
+        if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
+            ccbReader.getAnimationManager().setBaseValue(ret,node, propertyName);
+        }
+        return ret;
     },
 
-    parsePropTypeSpriteFrame:function (node, parent, ccbReader) {
+    parsePropTypeSpriteFrame:function (node, parent, ccbReader, propertyName) {
         var spriteSheet = ccbReader.readCachedString();
         var spriteFile = ccbReader.readCachedString();
 
         var spriteFrame;
-        if (spriteSheet == null || spriteSheet.length == 0) {
-            if (spriteFile == null || spriteFile.length == 0) {
-                return null;
+        if(spriteFile != null && spriteFile.length != 0){
+            if(spriteSheet != null && spriteSheet.length != 0){
+                var texture = cc.TextureCache.getInstance().addImage(spriteFilePath);
+                var bounds;
+                if(texture instanceof  cc.Texture2D){
+                    bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
+                }else{
+                    bounds = cc.RectMake(0, 0, texture.width, texture.height);
+                }
+                spriteFrame = cc.SpriteFrame.createWithTexture(texture, bounds);
+            } else {
+                var frameCache = cc.SpriteFrameCache.getInstance();
+
+                //load the sprite sheet only if it is not loaded
+                if(ccbReader.getLoadedSpriteSheet().indexOf(spriteSheet) > -1){
+                    frameCache.addSpriteFrames(spriteSheet);
+                    ccbReader.getLoadedSpriteSheet().push(spriteSheet);
+                }
+                spriteFrame = frameCache.getSpriteFrame(spriteFile);
             }
-
-            var spriteFilePath = cc.CCBReader.concat(ccbReader.getCCBRootPath(), spriteFile);
-
-            var texture = cc.TextureCache.getInstance().addImage(spriteFilePath);
-            var bounds;
-            if(texture instanceof  cc.Texture2D){
-                bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
-            }else{
-                bounds = cc.RectMake(0, 0, texture.width, texture.height);
+            if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
+                ccbReader.getAnimatedProperties().setBaseValue(spriteFrame,node,propertyName);
             }
-
-            spriteFrame = cc.SpriteFrame.createWithTexture(texture, bounds);
-        } else {
-            var frameCache = cc.SpriteFrameCache.getInstance();
-
-            var spriteSheetPath = cc.CCBReader.concat(ccbReader.getCCBRootPath(), spriteSheet);
-
-            /* Load the sprite sheet only if it is not loaded. */
-            if (!ccbReader.isSpriteSheetLoaded(spriteSheetPath)) {
-                frameCache.addSpriteFrames(spriteSheetPath);
-                ccbReader.addLoadedSpriteSheet(spriteSheetPath);
-            }
-
-            spriteFrame = frameCache.getSpriteFrame(spriteFile);
         }
+
         return spriteFrame;
     },
 
@@ -513,21 +516,30 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     parsePropTypeTexture:function (node, parent, ccbReader) {
-        var spriteFile = ccbReader.getCCBRootPath() + ccbReader.readCachedString();
+        var spriteFile = ccbReader.readCachedString();
 
-        return cc.TextureCache.getInstance().addImage(spriteFile);
+        if(spriteFile != "")
+            return cc.TextureCache.getInstance().addImage(spriteFile);
+        return null;
     },
 
-    parsePropTypeByte:function (node, parent, ccbReader) {
-        return ccbReader.readByte();
+    parsePropTypeByte:function (node, parent, ccbReader, propertyName) {
+        var ret = ccbReader.readByte();
+        if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
+            ccbReader.getAnimationManager().setBaseValue(ret,node, propertyName);
+        }
+        return ret;
     },
 
-    parsePropTypeColor3:function (node, parent, ccbReader) {
+    parsePropTypeColor3:function (node, parent, ccbReader, propertyName) {
         var red = ccbReader.readByte();
         var green = ccbReader.readByte();
         var blue = ccbReader.readByte();
-
-        return {r:red, g:green, b:blue };
+        var color = {r:red, g:green, b:blue };
+        if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
+            ccbReader.getAnimationManager().setBaseValue(cc.Color3BWapper.create(color),node, propertyName);
+        }
+        return color;
     },
 
     parsePropTypeColor4FVar:function (node, parent, ccbReader) {
@@ -562,9 +574,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     parsePropTypeFntFile:function (node, parent, ccbReader) {
-        var fntFile = ccbReader.readCachedString();
-
-        return cc.CCBReader.concat(ccbReader.getCCBRootPath(), fntFile);
+        return ccbReader.readCachedString();
     },
 
     parsePropTypeString:function (node, parent, ccbReader) {
@@ -576,17 +586,15 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     parsePropTypeFontTTF:function (node, parent, ccbReader) {
-        var fontTTF = ccbReader.readCachedString();
+        return ccbReader.readCachedString();
+        //var ttfEnding = ".ttf";
 
-        var ttfEnding = ".ttf";
-
+        //TODO Fix me if it is wrong
         /* If the fontTTF comes with the ".ttf" extension, prepend the absolute path.
          * System fonts come without the ".ttf" extension and do not need the path prepended. */
-        if (cc.CCBReader.endsWith(fontTTF.toLowerCase(), ttfEnding)) {
+        /*if (cc.CCBReader.endsWith(fontTTF.toLowerCase(), ttfEnding)) {
             fontTTF = ccbReader.getCCBRootPath() + fontTTF;
-        }
-
-        return fontTTF;
+        }*/
     },
 
     parsePropTypeBlock:function (node, parent, ccbReader) {
@@ -595,37 +603,47 @@ cc.NodeLoader = cc.Class.extend({
 
         if (selectorTarget != CCB_TARGETTYPE_NONE) {
             var target = null;
-            if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
-                target = ccbReader.getRootNode();
-            } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
-                target = ccbReader.getOwner();
-            }
+            if(!ccbReader.isJSControlled()) {
+                if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
+                    target = ccbReader.getRootNode();
+                } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
+                    target = ccbReader.getOwner();
+                }
 
-            if (target != null) {
-                if (selectorName.length > 0) {
-                    var selMenuHandler = 0;
+                if (target != null) {
+                    if (selectorName.length > 0) {
+                        var selMenuHandler = 0;
 
-                    //var targetAsCCBSelectorResolver = target;
-                    if (target != null && target.onResolveCCBCCMenuItemSelector) {
-                        selMenuHandler = target.onResolveCCBCCMenuItemSelector(target, selectorName);
-                    }
-                    if (selMenuHandler == 0) {
-                        var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
-                        if (ccbSelectorResolver != null) {
-                            selMenuHandler = ccbSelectorResolver.onResolveCCBCCMenuItemSelector(target, selectorName);
+                        //var targetAsCCBSelectorResolver = target;
+                        if (target != null && target.onResolveCCBCCMenuItemSelector) {
+                            selMenuHandler = target.onResolveCCBCCMenuItemSelector(target, selectorName);
                         }
-                    }
+                        if (selMenuHandler == 0) {
+                            var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
+                            if (ccbSelectorResolver != null) {
+                                selMenuHandler = ccbSelectorResolver.onResolveCCBCCMenuItemSelector(target, selectorName);
+                            }
+                        }
 
-                    if (selMenuHandler == 0) {
-                        cc.log("Skipping selector '" +selectorName+ "' since no CCBSelectorResolver is present.");
+                        if (selMenuHandler == 0) {
+                            cc.log("Skipping selector '" +selectorName+ "' since no CCBSelectorResolver is present.");
+                        } else {
+                            return new BlockData(selMenuHandler,target);
+                        }
                     } else {
-                        return new BlockData(selMenuHandler,target);
+                        cc.log("Unexpected empty selector.");
                     }
                 } else {
-                    cc.log("Unexpected empty selector.");
+                    cc.log("Unexpected NULL target for selector.");
                 }
             } else {
-                cc.log("Unexpected NULL target for selector.");
+                if(selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT){
+                    ccbReader.addDocumentCallbackName(node);
+                    ccbReader.addDocumentCallbackName(selectorName);
+                } else {
+                    ccbReader.addOwnerCallbackNode(node);
+                    ccbReader.addOwnerCallbackName(selectorName);
+                }
             }
         }
 
@@ -638,37 +656,47 @@ cc.NodeLoader = cc.Class.extend({
         var controlEvents = ccbReader.readInt(false);
 
         if (selectorTarget != CCB_TARGETTYPE_NONE) {
-            var target = null;
-            if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
-                target = ccbReader.getRootNode();
-            } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
-                target = ccbReader.getOwner();
-            }
+            if(ccbReader.isJSControlled()){
+                var target = null;
+                if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
+                    target = ccbReader.getAnimationManager().getRootNode();
+                } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
+                    target = ccbReader.getOwner();
+                }
 
-            if (target != null) {
-                if (selectorName.length > 0) {
-                    var selCCControlHandler = 0;
+                if (target != null) {
+                    if (selectorName.length > 0) {
+                        var selCCControlHandler = 0;
 
-                    if (target != null && target.onResolveCCBCCControlSelector) {
-                        selCCControlHandler = target.onResolveCCBCCControlSelector(target, selectorName);
-                    }
-                    if (selCCControlHandler == 0) {
-                        var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
-                        if (ccbSelectorResolver != null) {
-                            selCCControlHandler = ccbSelectorResolver.onResolveCCBCCControlSelector(target, selectorName);
+                        if (target != null && target.onResolveCCBCCControlSelector) {
+                            selCCControlHandler = target.onResolveCCBCCControlSelector(target, selectorName);
                         }
-                    }
+                        if (selCCControlHandler == 0) {
+                            var ccbSelectorResolver = ccbReader.getCCBSelectorResolver();
+                            if (ccbSelectorResolver != null) {
+                                selCCControlHandler = ccbSelectorResolver.onResolveCCBCCControlSelector(target, selectorName);
+                            }
+                        }
 
-                    if (selCCControlHandler == 0) {
-                        cc.log("Skipping selector '" + selectorName + "' since no CCBSelectorResolver is present.");
+                        if (selCCControlHandler == 0) {
+                            cc.log("Skipping selector '" + selectorName + "' since no CCBSelectorResolver is present.");
+                        } else {
+                            return new BlockCCControlData(selCCControlHandler,target,controlEvents);
+                        }
                     } else {
-                        return new BlockCCControlData(selCCControlHandler,target,controlEvents);
+                        cc.log("Unexpected empty selector.");
                     }
                 } else {
-                    cc.log("Unexpected empty selector.");
+                    cc.log("Unexpected NULL target for selector.");
                 }
             } else {
-                cc.log("Unexpected NULL target for selector.");
+                if(selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT){
+                    ccbReader.addDocumentCallbackName(node);
+                    ccbReader.addDocumentCallbackName(selectorName);
+                } else {
+                    ccbReader.addOwnerCallbackNode(node);
+                    ccbReader.addOwnerCallbackName(selectorName);
+                }
             }
         }
 
@@ -680,10 +708,24 @@ cc.NodeLoader = cc.Class.extend({
 
         /* Change path extension to .ccbi. */
         var ccbFileWithoutPathExtension = cc.CCBReader.deletePathExtension(ccbFileName);
-        var ccbiFileName = ccbFileWithoutPathExtension + ".ccbi";
+        ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
 
-        var newCCBReader = new cc.CCBReader(ccbReader);
-        return newCCBReader.readNodeGraphFromFile(ccbReader.getCCBRootPath(), ccbiFileName, ccbReader.getOwner(), parent.getContentSize());
+        //load sub file
+        var path = cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
+        var myCCBReader = new cc.CCBReader(ccbReader);
+
+        var size ;
+        var bytes = cc.FileUtils.getInstance().getFileData(path,"rb", size);
+        size = bytes.length;
+        myCCBReader.initWithData(bytes,ccbReader.getOwner());
+        myCCBReader.getAnimationManager().setRootContainerSize(parent.getContentSize());
+        myCCBReader.setAnimationManagers(ccbReader.getAnimationManagers());
+        var ccbFileNode = myCCBReader.readFileWithCleanUp(false);
+        ccbReader.setAnimationManagers(myCCBReader.getAnimationManagers());
+        if(ccbFileNode && ccbReader.getAnimationManager().getAutoPlaySequenceId() != -1)
+            ccbReader.getAnimationManager().runAnimations(ccbReader.getAnimationManager().getAutoPlaySequenceId(),0);
+
+        return ccbFileNode;
     },
 
     onHandlePropTypePosition:function (node, parent, propertyName, position, ccbReader) {

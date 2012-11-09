@@ -25,11 +25,14 @@
  ****************************************************************************/
 
 cc.NodeLoaderListener = cc.Class.extend({
-    onNodeLoaded:function(node,nodeLoader){
-    }
+    onNodeLoaded:function(node,nodeLoader){}
 });
 
 cc.CCBSelectorResolver = cc.Class.extend({
     onResolveCCBCCMenuItemSelector:function(target, selectorName){},
     onResolveCCBCCControlSelector:function(target,selectorName){}
+});
+
+cc.CCBScriptOwnerProtocol = cc.Class.extend({
+    createNew:function(){}
 });

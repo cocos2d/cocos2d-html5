@@ -42,7 +42,6 @@ cc.getAbsolutePosition = function(pt, type, containerSize, propName){
         absPt.y = (containerSize.height * pt.y / 100.0);
     } else if (type == CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
         var resolutionScale = cc.CCBReader.getResolutionScale();
-
         absPt.x = pt.x * resolutionScale;
         absPt.y = pt.y * resolutionScale;
     }

@@ -66,7 +66,7 @@ cc.SpriteLoader = cc.NodeLoader.extend({
     onHandlePropTypeFlip:function (node, parent, propertyName, flip, ccbReader) {
         if (propertyName == PROPERTY_FLIP) {
             node.setFlipX(flip[0]);
-            node.setFlipX(flip[1]);
+            node.setFlipY(flip[1]);
         } else {
             this._super(node, parent, propertyName, flip, ccbReader);
         }
