@@ -274,7 +274,6 @@ cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 /* Runtime information  */
 cc.config = {
     'os' : navigator.appVersion,
-    'deviceType' : 'browser',
     'platform' : 'browser',
     'engine' : 'cocos2d-html5/canvas',
     'arch' : 'web',
