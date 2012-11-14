@@ -219,10 +219,11 @@ cc.CCBAnimationManager = cc.Class.extend({
             if(nodeBaseValues){
                 var baseKeys = nodeBaseValues.allKeys();
                 for(j = 0; j < baseKeys.length;j++){
-                    if(seqNodePropNames.indexOf(baseKeys[j]) > -1){
-                        var value = nodeBaseValues.objectForKey(baseKeys[j]);
+                    var selBaseKey =  baseKeys[j];
+                    if(seqNodePropNames.indexOf(selBaseKey) == -1){
+                        var value = nodeBaseValues.objectForKey(selBaseKey);
                         if(value)
-                            this._setAnimatedProperty(baseKeys[j],node, value, tweenDuration);
+                            this._setAnimatedProperty(selBaseKey,node, value, tweenDuration);
                     }
                 }
             }
@@ -281,7 +282,7 @@ cc.CCBAnimationManager = cc.Class.extend({
         } else if (propName == "opacity") {
             return cc.FadeTo.create(duration, keyframe1.getValue());
         } else if (propName == "color") {
-            var selColor = keyframe1.getValue();
+            var selColor = keyframe1.getValue().getColor();
             return cc.TintTo.create(duration, selColor.r, selColor.g, selColor.b);
         } else if (propName == "visible") {
             var isVisible = keyframe1.getValue();
