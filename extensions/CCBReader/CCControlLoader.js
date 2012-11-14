@@ -28,11 +28,11 @@ var PROPERTY_CCBFILE = "ccbFile";
 
 cc.CCBFileLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return cc.Node.create();
+        return cc.CCBFile.create();
     },
     onHandlePropTypeCCBFile:function (node, parent, propertyName, ccbFileNode, ccbReader) {
         if (propertyName == PROPERTY_CCBFILE) {
-            node.addChild(ccbFileNode);
+            node.setCCBFileNode(ccbFileNode);
         } else {
             this._super(node, parent, propertyName, ccbFileNode, ccbReader);
         }
@@ -71,13 +71,13 @@ cc.ControlLoader = cc.NodeLoader.extend({
 var PROPERTY_ZOOMONTOUCHDOWN = "zoomOnTouchDown";
 var PROPERTY_TITLE_NORMAL = "title|1";
 var PROPERTY_TITLE_HIGHLIGHTED = "title|2";
-var PROPERTY_TITLE_DISABLED = "title|4";
+var PROPERTY_TITLE_DISABLED = "title|3";
 var PROPERTY_TITLECOLOR_NORMAL = "titleColor|1";
 var PROPERTY_TITLECOLOR_HIGHLIGHTED = "titleColor|2";
-var PROPERTY_TITLECOLOR_DISABLED = "titleColor|4";
+var PROPERTY_TITLECOLOR_DISABLED = "titleColor|3";
 var PROPERTY_TITLETTF_NORMAL = "titleTTF|1";
 var PROPERTY_TITLETTF_HIGHLIGHTED = "titleTTF|2";
-var PROPERTY_TITLETTF_DISABLED = "titleTTF|4";
+var PROPERTY_TITLETTF_DISABLED = "titleTTF|3";
 var PROPERTY_TITLETTFSIZE_NORMAL = "titleTTFSize|1";
 var PROPERTY_TITLETTFSIZE_HIGHLIGHTED = "titleTTFSize|2";
 var PROPERTY_TITLETTFSIZE_DISABLED = "titleTTFSize|4";
@@ -85,7 +85,7 @@ var PROPERTY_LABELANCHORPOINT = "labelAnchorPoint";
 var PROPERTY_PREFEREDSIZE = "preferedSize";         // TODO Should be = "preferredSize". This is a typo in cocos2d-iphone, cocos2d-x and CocosBuilder!
 var PROPERTY_BACKGROUNDSPRITEFRAME_NORMAL = "backgroundSpriteFrame|1";
 var PROPERTY_BACKGROUNDSPRITEFRAME_HIGHLIGHTED = "backgroundSpriteFrame|2";
-var PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED = "backgroundSpriteFrame|4";
+var PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED = "backgroundSpriteFrame|3";
 
 cc.ControlButtonLoader = cc.ControlLoader.extend({
     _createCCNode:function (parent, ccbReader) {

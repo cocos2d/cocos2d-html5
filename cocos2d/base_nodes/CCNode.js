@@ -495,7 +495,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
             //this.setPosition = this._setPositionByValue;
         }
-
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
