@@ -1,3 +1,3 @@
 [submodule "tests"]
 	path = tests
-	url = https://github.com/cocos2d/cocos2d-html5-tests.git
+	url = https://github.com/cocos2d/cocos2d-js-tests.git
