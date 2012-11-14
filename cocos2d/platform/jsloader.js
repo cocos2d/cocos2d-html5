@@ -132,7 +132,12 @@
             '../extensions/CCBReader/CCControlLoader.js',
             '../extensions/CCBReader/CCSpriteLoader.js',
             '../extensions/CCBReader/CCNodeLoaderLibrary.js',
-            '../extensions/CCBReader/CCBReader.js'
+            '../extensions/CCBReader/CCBReader.js',
+            '../extensions/CCBReader/CCBValue.js',
+            '../extensions/CCBReader/CCBKeyframe.js',
+            '../extensions/CCBReader/CCBSequence.js',
+            '../extensions/CCBReader/CCBRelativePositioning.js',
+            '../extensions/CCBReader/CCBAnimationManager.js'
         ]);
     }
 

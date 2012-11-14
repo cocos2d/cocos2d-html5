@@ -862,7 +862,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
             this._string = str_new + String.fromCharCode(0);
-            console.log(this._string)
             this.updateString(true);
         }
 

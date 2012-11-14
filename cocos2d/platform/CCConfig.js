@@ -288,4 +288,4 @@ cc.dumpConfig = function()
 {
     for( i in cc.config )
         cc.log( i + " = " + cc.config[i] );
-}
+};

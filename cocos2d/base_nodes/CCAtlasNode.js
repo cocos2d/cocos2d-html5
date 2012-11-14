@@ -218,7 +218,10 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @param {cc.BlendFunc} blendFunc
      */
     setBlendFunc:function (src, dst) {
-        this._blendFunc = {src:src, dst:dst};
+        if(arguments.length == 1)
+            this._blendFunc = src;
+        else
+            this._blendFunc = {src:src, dst:dst};
     },
 
     // cc.Texture protocol

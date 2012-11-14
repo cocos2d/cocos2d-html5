@@ -73,6 +73,9 @@
                 <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
+                <file name="draw_nodes/CCDrawNode.js" />
+                <file name="physics_nodes/CCPhysicsDebugNode.js" />
+                <file name="physics_nodes/CCPhysicsSprite.js" />
                 <file name="CCDirector.js"/>
                 <file name="CCCamera.js"/>
                 <file name="CCScheduler.js"/>
@@ -101,6 +104,11 @@
                 <file name="CCBReader/CCBReader.js"/>
                 <file name="CCBReader/CCControlLoader.js"/>
                 <file name="CCBReader/CCSpriteLoader.js"/>
+                <file name="CCBReader/CCBValue.js"/>
+                <file name="CCBReader/CCBKeyframe.js"/>
+                <file name="CCBReader/CCBSequence.js"/>
+                <file name="CCBReader/CCBRelativePositioning.js"/>
+                <file name="CCBReader/CCBAnimationManager.js"/>
                 <file name="GUI/CCControlExtension/CCControl.js"/>
                 <file name="GUI/CCControlExtension/CCControlButton.js"/>
                 <file name="GUI/CCControlExtension/CCControlUtils.js"/>

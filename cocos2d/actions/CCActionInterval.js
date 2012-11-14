@@ -97,7 +97,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     startWithTarget:function (target) {
         //this._super(target);
-        cc.Action.prototype.startWithTarget.call(this, target)
+        cc.Action.prototype.startWithTarget.call(this, target);
         this._elapsed = 0;
         this._firstTick = true;
     },
@@ -169,10 +169,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 
         var one = actionOne.getDuration();
         var two = actionTwo.getDuration();
-        if (isNaN(one) || isNaN(two)) {
-            console.log(actionOne);
-            console.log(actionTwo);
-        }
+
         var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
 
