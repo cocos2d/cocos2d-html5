@@ -717,14 +717,17 @@ cc.NodeLoader = cc.Class.extend({
 
         var size ;
         var bytes = cc.FileUtils.getInstance().getFileData(path,"rb", size);
-        size = bytes.length;
+
         myCCBReader.initWithData(bytes,ccbReader.getOwner());
         myCCBReader.getAnimationManager().setRootContainerSize(parent.getContentSize());
         myCCBReader.setAnimationManagers(ccbReader.getAnimationManagers());
+
         var ccbFileNode = myCCBReader.readFileWithCleanUp(false);
+
         ccbReader.setAnimationManagers(myCCBReader.getAnimationManagers());
-        if(ccbFileNode && ccbReader.getAnimationManager().getAutoPlaySequenceId() != -1)
-            ccbReader.getAnimationManager().runAnimations(ccbReader.getAnimationManager().getAutoPlaySequenceId(),0);
+
+        if(ccbFileNode && myCCBReader.getAnimationManager().getAutoPlaySequenceId() != -1)
+            myCCBReader.getAnimationManager().runAnimations(myCCBReader.getAnimationManager().getAutoPlaySequenceId(),0);
 
         return ccbFileNode;
     },
