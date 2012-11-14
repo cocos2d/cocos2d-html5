@@ -32,7 +32,7 @@ var PROPERTY_BLENDFUNC = "blendFunc";
 
 cc.SpriteLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return new cc.Sprite();
+        return cc.Sprite.create();
     },
 
     onHandlePropTypeColor3:function (node, parent, propertyName, color3BValue, ccbReader) {
@@ -206,6 +206,7 @@ var PROPERTY_ISENABLED = "isEnabled";
 
 cc.MenuItemLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
+        return null;
     },
 
     onHandlePropTypeBlock:function (node, parent, propertyName, blockData, ccbReader) {

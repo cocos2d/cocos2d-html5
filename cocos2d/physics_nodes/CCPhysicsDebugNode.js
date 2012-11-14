@@ -60,7 +60,7 @@ cc.DrawShape = function (shape, renderer) {
             this.drawPolyWithVerts(shape.tVerts, shape.getNumVerts(), color, 1.0, line);
             break;
         default:
-            cc.assert(false, "Bad assertion in DrawShape()");
+            cc.Assert(false, "Bad assertion in DrawShape()");
     }
 };
 

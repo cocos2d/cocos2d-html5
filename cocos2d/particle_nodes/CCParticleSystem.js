@@ -1355,7 +1355,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         this._texture = tex;
                     } else {
-                        console.log("Data Length:" + textureData.length);
                         buffer = cc.unzipBase64AsArray(textureData, 1);
                         if (!buffer)
                             return false;

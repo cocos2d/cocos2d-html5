@@ -25,16 +25,13 @@
  ****************************************************************************/
 
 cc.CCBAnimationManagerDelegate = cc.Class.extend({
-    completedAnimationSequenceNamed:function (name) {
-    }
+    completedAnimationSequenceNamed:function (name) {}
 });
-
 
 cc.CCBAnimationManager = cc.Class.extend({
     _sequences:null,
     _nodeSequences:null,
     _baseValues:null,
-
     _autoPlaySequenceId:0,
 
     _rootNode:null,
@@ -193,7 +190,7 @@ cc.CCBAnimationManager = cc.Class.extend({
         else
             nSeqId = name;
 
-        cc.assert(nSeqId != -1, "Sequence id couldn't be found");
+        cc.Assert(nSeqId != -1, "Sequence id couldn't be found");
 
         this._rootNode.stopAllActions();
 
@@ -259,7 +256,7 @@ cc.CCBAnimationManager = cc.Class.extend({
         var element = null;
         for (var i = 0; i < this._sequences.length; i++) {
             element = this._sequences[i];
-            if (element && element.getName() === sequenceName)
+            if (element && element.getName() == sequenceName)
                 return element.getSequenceId();
         }
         return -1;
@@ -296,14 +293,13 @@ cc.CCBAnimationManager = cc.Class.extend({
         } else if (propName == "displayFrame") {
             return cc.Sequence.create(cc.DelayTime.create(duration), cc.CCBSetSpriteFrame.create(keyframe1.getValue()));
         } else if(propName == "position"){
-            //TODO need fixed
             getArr = this._getBaseValue(node,propName);
-            type = getArr[2].getValue();
+            type = getArr[2];
 
             //get relative position
             getValueArr = keyframe1.getValue();
-            x = getValueArr[0].getValue();
-            y = getValueArr[1].getValue();
+            x = getValueArr[0];
+            y = getValueArr[1];
 
             var containerSize = this.getContainerSize(node.getParent());
 
@@ -312,17 +308,15 @@ cc.CCBAnimationManager = cc.Class.extend({
             return cc.MoveTo.create(duration,absPos);
         } else if( propName == "scale"){
             getArr = this._getBaseValue(node,propName);
-            type = getArr[2].getValue();
+            type = getArr[2];
 
             //get relative position
             getValueArr = keyframe1.getValue();
-            x = getValueArr[0].getValue();
-            y = getValueArr[1].getValue();
+            x = getValueArr[0];
+            y = getValueArr[1];
 
-            if(type == CCB_SCALETYPE_MULTIPLY_RESOLUTION){
+            if(type == CCB_SCALETYPE_MULTIPLY_RESOLUTION)
                  var resolutionScale = cc.CCBReader.getResolutionScale();
-
-            }
             return cc.ScaleTo.create(duration,x,y);
         } else {
             cc.log("CCBReader: Failed to create animation for property: " + propName);
@@ -369,14 +363,14 @@ cc.CCBAnimationManager = cc.Class.extend({
                 } else if(propName == "opacity"){
                     //var opacity = ((CCBValue*)pValue).getByteValue();
                     node.setOpacity(value);
-                } else if(propName == "dipslayFrame"){
+                } else if(propName == "displayFrame"){
                     node.setDisplayFrame(value);
                 } else if(propName == "color"){
                     //var color = (ccColor3BWapper*)pValue;
                     node.setColor(value.getColor());
                 } else {
                     cc.log("unsupported property name is "+ propName);
-                    cc.assert(false, "unsupported property now");
+                    cc.Assert(false, "unsupported property now");
                 }
             }
         }
@@ -385,10 +379,10 @@ cc.CCBAnimationManager = cc.Class.extend({
     _setFirstFrame:function (node, seqProp, tweenDuration) {
         var keyframes = seqProp.getKeyframes();
 
-        if (keyframes.count() == 0) {
+        if (keyframes.length == 0) {
             // Use base value (no animation)
             var baseValue = this._getBaseValue(node, seqProp.getName());
-            cc.assert(baseValue, "No baseValue found for property");
+            cc.Assert(baseValue, "No baseValue found for property");
             this._setAnimatedProperty(seqProp.getName(), node, baseValue, tweenDuration);
         } else {
             // Use first keyframe
@@ -453,7 +447,7 @@ cc.CCBAnimationManager = cc.Class.extend({
                 if (action) {
                     // Apply easing
                     action = this._getEaseAction(action, kf0.getEasingType(), kf0.getEasingOpt());
-                    actions.addObject(action);
+                    actions.push(action);
                 }
             }
 

@@ -28,7 +28,7 @@ var PROPERTY_CCBFILE = "ccbFile";
 
 cc.CCBFileLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return cc.Node.create();
+        return cc.CCBFile.create();
     },
     onHandlePropTypeCCBFile:function (node, parent, propertyName, ccbFileNode, ccbReader) {
         if (propertyName == PROPERTY_CCBFILE) {

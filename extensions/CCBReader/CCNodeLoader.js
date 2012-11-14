@@ -56,9 +56,9 @@ function BlockCCControlData(selCCControlHandler, target, controlEvents) {
 
 cc.NodeLoader = cc.Class.extend({
     loadCCNode:function (parent, ccbReader) {
-        var node = this._createCCNode(parent, ccbReader);
+        return this._createCCNode(parent, ccbReader);
         //this.parseProperties(node, parent, ccbReader);
-        return node;
+        //return node;
     },
 
     parseProperties:function (node, parent, ccbReader) {
@@ -258,7 +258,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
                 case CCB_PROPTYPE_FNTFILE:
                 {
-                    var fntFile = this.parsePropTypeFntFile(node, parent, ccbReader);
+                    var fntFile = ccbReader.getCCBRootPath() + this.parsePropTypeFntFile(node, parent, ccbReader);
                     if (setProp) {
                         this.onHandlePropTypeFntFile(node, parent, propertyName, fntFile, ccbReader);
                     }
@@ -399,15 +399,15 @@ cc.NodeLoader = cc.Class.extend({
 
         var type = ccbReader.readInt(false);
 
-        this.setRelativeScale(node,x,y,type,propertyName);
+        cc.setRelativeScale(node,x,y,type,propertyName);
 
         if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
             ccbReader.getAnimationManager().setBaseValue([x,y,type],node,propertyName);
         }
 
         if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
-            x *= ccbReader.getResolutionScale();
-            y *= ccbReader.getResolutionScale();
+            x *= cc.CCBReader.getResolutionScale();
+            y *= cc.CCBReader.getResolutionScale();
         }
 
         return [x, y];
@@ -431,7 +431,7 @@ cc.NodeLoader = cc.Class.extend({
         var type = ccbReader.readInt(false);
 
         if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
-            f *= ccbReader.getResolutionScale();
+            f *= cc.CCBReader.getResolutionScale();
         }
 
         return f;
@@ -461,12 +461,13 @@ cc.NodeLoader = cc.Class.extend({
 
     parsePropTypeSpriteFrame:function (node, parent, ccbReader, propertyName) {
         var spriteSheet = ccbReader.readCachedString();
-        var spriteFile = ccbReader.readCachedString();
+        var spriteFile =  ccbReader.readCachedString();
 
         var spriteFrame;
         if(spriteFile != null && spriteFile.length != 0){
-            if(spriteSheet != null && spriteSheet.length != 0){
-                var texture = cc.TextureCache.getInstance().addImage(spriteFilePath);
+            if(spriteSheet.length == 0){
+                spriteFile = ccbReader.getCCBRootPath() + spriteFile;
+                var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var bounds;
                 if(texture instanceof  cc.Texture2D){
                     bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
@@ -476,16 +477,16 @@ cc.NodeLoader = cc.Class.extend({
                 spriteFrame = cc.SpriteFrame.createWithTexture(texture, bounds);
             } else {
                 var frameCache = cc.SpriteFrameCache.getInstance();
-
+                spriteSheet = ccbReader.getCCBRootPath() + spriteSheet;
                 //load the sprite sheet only if it is not loaded
-                if(ccbReader.getLoadedSpriteSheet().indexOf(spriteSheet) > -1){
+                if(ccbReader.getLoadedSpriteSheet().indexOf(spriteSheet) == -1){
                     frameCache.addSpriteFrames(spriteSheet);
                     ccbReader.getLoadedSpriteSheet().push(spriteSheet);
                 }
                 spriteFrame = frameCache.getSpriteFrame(spriteFile);
             }
             if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
-                ccbReader.getAnimatedProperties().setBaseValue(spriteFrame,node,propertyName);
+                ccbReader.getAnimationManager().setBaseValue(spriteFrame,node,propertyName);
             }
         }
 
@@ -493,7 +494,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     parsePropTypeAnimation:function (node, parent, ccbReader) {
-        var animationFile = ccbReader.readCachedString();
+        var animationFile = ccbReader.getCCBRootPath() + ccbReader.readCachedString();
         var animation = ccbReader.readCachedString();
 
         var ccAnimation = null;
@@ -516,7 +517,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     parsePropTypeTexture:function (node, parent, ccbReader) {
-        var spriteFile = ccbReader.readCachedString();
+        var spriteFile = ccbReader.getCCBRootPath() + ccbReader.readCachedString();
 
         if(spriteFile != "")
             return cc.TextureCache.getInstance().addImage(spriteFile);
@@ -605,7 +606,7 @@ cc.NodeLoader = cc.Class.extend({
             var target = null;
             if(!ccbReader.isJSControlled()) {
                 if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
-                    target = ccbReader.getRootNode();
+                    target = ccbReader.getAnimationManager().getRootNode();
                 } else if (selectorTarget == CCB_TARGETTYPE_OWNER) {
                     target = ccbReader.getOwner();
                 }
@@ -656,7 +657,7 @@ cc.NodeLoader = cc.Class.extend({
         var controlEvents = ccbReader.readInt(false);
 
         if (selectorTarget != CCB_TARGETTYPE_NONE) {
-            if(ccbReader.isJSControlled()){
+            if(!ccbReader.isJSControlled()){
                 var target = null;
                 if (selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT) {
                     target = ccbReader.getAnimationManager().getRootNode();
@@ -704,7 +705,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     parsePropTypeCCBFile:function (node, parent, ccbReader) {
-        var ccbFileName = ccbReader.readCachedString();
+        var ccbFileName = ccbReader.getCCBRootPath() + ccbReader.readCachedString();
 
         /* Change path extension to .ccbi. */
         var ccbFileWithoutPathExtension = cc.CCBReader.deletePathExtension(ccbFileName);

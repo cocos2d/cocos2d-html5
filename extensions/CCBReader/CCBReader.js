@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CCB_VERSION = 2;
+var CCB_VERSION = 4;
 
 var CCB_PROPTYPE_POSITION = 0;
 var CCB_PROPTYPE_SIZE = 1;
@@ -122,7 +122,7 @@ cc.CCBFile.create = function () {
 cc.CCBReader = cc.Class.extend({
     _jsControlled:false,
     _data:null,
-    //_ccbRootPath:null,
+    _ccbRootPath:"",
 
     _bytes:0,
     _currentByte:0,
@@ -173,6 +173,7 @@ cc.CCBReader = cc.Class.extend({
                 this._ownerCallbackNodes = ccbReader._ownerCallbackNodes;
                 this._ownerOutletNames = ccbReader._ownerOutletNames;
                 this._ownerOutletNodes = ccbReader._ownerOutletNodes;
+                this._ccbRootPath = ccbReader._ccbRootPath;
             } else {
                 this._ccNodeLoaderLibrary = ccNodeLoaderLibrary;
                 this._ccbMemberVariableAssigner = ccbMemberVariableAssigner;
@@ -180,6 +181,14 @@ cc.CCBReader = cc.Class.extend({
                 this._ccNodeLoaderListener = ccNodeLoaderListener;
             }
         }
+    },
+
+    getCCBRootPath:function(){
+       return this._ccbRootPath;
+    },
+
+    setCCBRootPath:function(rootPath){
+       this._ccbRootPath = rootPath;
     },
 
     initWithData:function(data, owner){
@@ -209,7 +218,7 @@ cc.CCBReader = cc.Class.extend({
             parentSize = cc.Director.getInstance().getWinSize();
         }
 
-        var path = cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
+        var path = this._ccbRootPath + cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
         var data = cc.FileUtils.getInstance().getFileData(path);
 
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
@@ -219,14 +228,16 @@ cc.CCBReader = cc.Class.extend({
         this.initWithData(data,owner);
         this._actionManager.setRootContainerSize(parentSize);
 
+        this._ownerOutletNames = [];
+        this._ownerOutletNodes = [];
+        this._ownerCallbackNames = [];
+        this._ownerCallbackNodes = [];
+
         var nodeGraph = this.readFileWithCleanUp(true);
+
         if(nodeGraph && this._actionManager.getAutoPlaySequenceId() != -1){
             //auto play animations
             this._actionManager.runAnimations(this._actionManager.getAutoPlaySequenceId(), 0);
-        }
-
-        if(this._jsControlled){
-
         }
 
         if(this._jsControlled){
@@ -316,7 +327,7 @@ cc.CCBReader = cc.Class.extend({
     },
 
     readByte:function () {
-        var byteValue = this._bytes[this._currentByte];
+        var byteValue = this._data[this._currentByte];
         this._currentByte++;
         return byteValue;
     },
@@ -400,7 +411,7 @@ cc.CCBReader = cc.Class.extend({
     },
 
     _readByteOnly:function (i, size) {
-        return this._bytes[this._currentByte + size - i - 1];
+        return this._data[this._currentByte + size - i - 1];
     },
 
     _shl:function (a, b) {
@@ -409,7 +420,7 @@ cc.CCBReader = cc.Class.extend({
     },
 
     _checkSize:function (neededBits) {
-        if (!(this._currentByte + Math.ceil(neededBits / 8) < this._bytes.length)) {
+        if (!(this._currentByte + Math.ceil(neededBits / 8) < this._data.length)) {
             throw new Error("Index out of bound");
         }
     },
@@ -473,7 +484,7 @@ cc.CCBReader = cc.Class.extend({
     readFileWithCleanUp:function (cleanUp) {
         if(!this._readHeader())
             return null;
-        if(! this.readCachedString())
+        if(! this._readStringCache())
             return null;
         if(! this._readSequences())
             return null;
@@ -499,7 +510,7 @@ cc.CCBReader = cc.Class.extend({
             var seq = new cc.CCBSequence();
             seq.setDuration(this.readFloat());
             seq.setName(this.readCachedString());
-            set.setSequenceId(this.readInt(false));
+            seq.setSequenceId(this.readInt(false));
             seq.setChainedSequenceId(this.readInt(true));
             sequences.push(seq);
         }
@@ -542,6 +553,7 @@ cc.CCBReader = cc.Class.extend({
             var spriteFile = this.readCachedString();
 
             if(spriteSheet == ""){
+                spriteFile = this._ccbRootPath + spriteFile;
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var bounds;
                 if(cc.renderContextType == cc.CANVAS)
@@ -550,9 +562,10 @@ cc.CCBReader = cc.Class.extend({
                     bounds = cc.RectMake(0,0,texture.getContentSize().width, texture.getContentSize().height);
                 value = cc.SpriteFrame.createWithTexture(texture,bounds);
             }else{
+                spriteSheet = this._ccbRootPath + spriteSheet;
                 var frameCache = cc.SpriteFrameCache.getInstance();
                 // Load the sprite sheet only if it is not loaded
-                if(this._loadedSpriteSheets.find(spriteSheet)== null){
+                if(this._loadedSpriteSheets.indexOf(spriteSheet) == -1){
                     frameCache.addSpriteFrames(spriteSheet);
                     this._loadedSpriteSheets.push(spriteSheet);
                 }
@@ -565,7 +578,7 @@ cc.CCBReader = cc.Class.extend({
 
     _readHeader:function () {
         /* If no bytes loaded, don't crash about it. */
-        if (this._bytes == null) {
+        if (this._data == null) {
             return false;
         }
 
@@ -584,6 +597,8 @@ cc.CCBReader = cc.Class.extend({
             return false;
         }
 
+        this._jsControlled = this.readBool();
+
         return true;
     },
 
@@ -593,11 +608,11 @@ cc.CCBReader = cc.Class.extend({
         var i;
         if (reverse) {
             for (i = strLen - 1; i >= 0; i--) {
-                strValue += String.fromCharCode(this._bytes[this._currentByte + i]);
+                strValue += String.fromCharCode(this._data[this._currentByte + i]);
             }
         } else {
             for (i = 0; i < strLen; i++) {
-                strValue += String.fromCharCode(this._bytes[this._currentByte + i]);
+                strValue += String.fromCharCode(this._data[this._currentByte + i]);
             }
         }
         return strValue;
@@ -619,7 +634,7 @@ cc.CCBReader = cc.Class.extend({
 
         var str = "";
         for (var i = 0; i < numBytes; i++) {
-            var hexChar = this._bytes[this._currentByte + i].toString("16").toUpperCase();
+            var hexChar = this._data[this._currentByte + i].toString("16").toUpperCase();
             hexChar = hexChar.length > 1 ? hexChar : "0" + hexChar;
             str += "%" + hexChar;
         }
@@ -707,7 +722,7 @@ cc.CCBReader = cc.Class.extend({
         }
 
         if (memberVarAssignmentType != CCB_TARGETTYPE_NONE) {
-            if(this._jsControlled){
+            if(!this._jsControlled){
                 var target = null;
                 if (memberVarAssignmentType == CCB_TARGETTYPE_DOCUMENTROOT) {
                     target = this._actionManager.getRootNode();
@@ -756,7 +771,7 @@ cc.CCBReader = cc.Class.extend({
     },
 
     _getBit:function () {
-        var bit = (this._bytes[this._currentByte] & (1 << this._currentBit)) != 0;
+        var bit = (this._data[this._currentByte] & (1 << this._currentBit)) != 0;
 
         this._currentBit++;
 
