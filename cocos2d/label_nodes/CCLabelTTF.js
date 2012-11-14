@@ -295,10 +295,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             if (context.font != this._fontStyleStr)
                 context.font = this._fontStyleStr;
 
-            context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
-            context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
-
             if (((this._contentSize.width > this._dimensions.width) || this._string.indexOf("\n") > -1) && this._dimensions.width !== 0) {
+                context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
+                context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
                 this._wrapText(context, this._string,
                     -this._dimensions.width * this._anchorPoint.x,
                     this._dimensions.height * this._anchorPoint.y,
@@ -306,11 +305,16 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                     this._dimensions.height,
                     this._fontSize * 1.2);
             } else if (this._dimensions.width == 0) {
+                context.textBaseline = "bottom";
+                context.textAlign = "left";
                if (this._string.indexOf("\n") > -1)
                     this._multiLineText(context);
-                 else
-                    context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+                 else {
+                   context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+               }
             } else {
+                context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
+                context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
                 var xOffset = 0, yOffset = 0;
                 if (this._hAlignment == cc.TEXT_ALIGNMENT_RIGHT)
                     xOffset = this._dimensions.width;
