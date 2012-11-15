@@ -170,14 +170,14 @@ cc.CCBAnimationManager = cc.Class.extend({
     moveAnimationsFromNode:function(fromNode,toNode){
         // Move base values
         var baseValue = this._baseValues.objectForKey(fromNode);
-        if(baseValue) {
+        if(baseValue != null) {
             this._baseValues.setObject(baseValue, toNode);
             this._baseValues.removeObjectForKey(fromNode);
         }
 
         // Move seqs
         var seqs = this._nodeSequences.objectForKey(fromNode);
-        if(seqs) {
+        if(seqs != null) {
             this._nodeSequences.setObject(seqs, toNode);
             this._nodeSequences.removeObjectForKey(fromNode);
         }
@@ -185,7 +185,7 @@ cc.CCBAnimationManager = cc.Class.extend({
 
     runAnimations:function (name, tweenDuration) {
         var nSeqId;
-        if(typeof(name) == "string")
+        if(typeof(name) === "string")
             nSeqId = this._getSequenceId(name);
         else
             nSeqId = name;
@@ -222,8 +222,10 @@ cc.CCBAnimationManager = cc.Class.extend({
                     var selBaseKey =  baseKeys[j];
                     if(seqNodePropNames.indexOf(selBaseKey) == -1){
                         var value = nodeBaseValues.objectForKey(selBaseKey);
-                        if(value)
+                        if(value != null){
                             this._setAnimatedProperty(selBaseKey,node, value, tweenDuration);
+                        }
+
                     }
                 }
             }
@@ -277,23 +279,23 @@ cc.CCBAnimationManager = cc.Class.extend({
         var duration = keyframe1.getTime() - (keyframe0 ? keyframe0.getTime() : 0);
         var getArr,type,getValueArr, x, y;
 
-        if (propName == "rotation") {
+        if (propName === "rotation") {
             return cc.CCBRotateTo.create(duration, keyframe1.getValue());
-        } else if (propName == "opacity") {
+        } else if (propName === "opacity") {
             return cc.FadeTo.create(duration, keyframe1.getValue());
-        } else if (propName == "color") {
+        } else if (propName === "color") {
             var selColor = keyframe1.getValue().getColor();
             return cc.TintTo.create(duration, selColor.r, selColor.g, selColor.b);
-        } else if (propName == "visible") {
+        } else if (propName === "visible") {
             var isVisible = keyframe1.getValue();
             if (isVisible) {
                 return cc.Sequence.create(cc.DelayTime.create(duration), cc.Show.create());
             } else {
                 return cc.Sequence.create(cc.DelayTime.create(duration), cc.Hide.create());
             }
-        } else if (propName == "displayFrame") {
+        } else if (propName === "displayFrame") {
             return cc.Sequence.create(cc.DelayTime.create(duration), cc.CCBSetSpriteFrame.create(keyframe1.getValue()));
-        } else if(propName == "position"){
+        } else if(propName === "position"){
             getArr = this._getBaseValue(node,propName);
             type = getArr[2];
 
@@ -307,7 +309,7 @@ cc.CCBAnimationManager = cc.Class.extend({
             var absPos = cc.getAbsolutePosition(cc.p(x,y), type,containerSize,propName);
 
             return cc.MoveTo.create(duration,absPos);
-        } else if( propName == "scale"){
+        } else if( propName === "scale"){
             getArr = this._getBaseValue(node,propName);
             type = getArr[2];
 
@@ -358,15 +360,15 @@ cc.CCBAnimationManager = cc.Class.extend({
                 // [node setValue:value forKey:name];
 
                 // TODO only handle rotation, opacity, displayFrame, color
-                if(propName == "rotation"){
+                if(propName === "rotation"){
                     //var rotate = ((CCBValue*)pValue).getFloatValue();
                     node.setRotation(value);
-                } else if(propName == "opacity"){
+                } else if(propName === "opacity"){
                     //var opacity = ((CCBValue*)pValue).getByteValue();
                     node.setOpacity(value);
-                } else if(propName == "displayFrame"){
+                } else if(propName === "displayFrame"){
                     node.setDisplayFrame(value);
-                } else if(propName == "color"){
+                } else if(propName === "color"){
                     //var color = (ccColor3BWapper*)pValue;
                     node.setColor(value.getColor());
                 } else {

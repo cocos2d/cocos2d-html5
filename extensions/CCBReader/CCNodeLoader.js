@@ -733,7 +733,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     onHandlePropTypePosition:function (node, parent, propertyName, position, ccbReader) {
-        if (propertyName == PROPERTY_POSITION) {
+        if (propertyName === PROPERTY_POSITION) {
             node.setPosition(position);
         } else {
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
@@ -741,7 +741,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     onHandlePropTypePoint:function (node, parent, propertyName, position, ccbReader) {
-        if (propertyName == PROPERTY_ANCHORPOINT) {
+        if (propertyName === PROPERTY_ANCHORPOINT) {
             node.setAnchorPoint(position);
         } else {
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
@@ -753,7 +753,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     onHandlePropTypeSize:function (node, parent, propertyName, sizeValue, ccbReader) {
-        if (propertyName == PROPERTY_CONTENTSIZE) {
+        if (propertyName === PROPERTY_CONTENTSIZE) {
             node.setContentSize(sizeValue);
         } else {
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
@@ -761,7 +761,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     onHandlePropTypeScaleLock:function (node, parent, propertyName, scaleLock, ccbReader) {
-        if (propertyName == PROPERTY_SCALE) {
+        if (propertyName === PROPERTY_SCALE) {
             node.setScaleX(scaleLock[0]);
             node.setScaleY(scaleLock[1]);
         } else {
@@ -774,7 +774,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     onHandlePropTypeDegrees:function (node, parent, propertyName, degrees, ccbReader) {
-        if (propertyName == PROPERTY_ROTATION) {
+        if (propertyName === PROPERTY_ROTATION) {
             node.setRotation(degrees);
         } else {
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
@@ -786,7 +786,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     onHandlePropTypeInteger:function (node, parent, propertyName, integer, ccbReader) {
-        if (propertyName == PROPERTY_TAG) {
+        if (propertyName === PROPERTY_TAG) {
             node.setTag(integer);
         } else {
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
@@ -802,7 +802,7 @@ cc.NodeLoader = cc.Class.extend({
     },
 
     onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
-        if (propertyName == PROPERTY_VISIBLE) {
+        if (propertyName === PROPERTY_VISIBLE) {
             node.setVisible(check);
         } else if (propertyName == PROPERTY_IGNOREANCHORPOINTFORPOSITION) {
             node.ignoreAnchorPointForPosition(check);
