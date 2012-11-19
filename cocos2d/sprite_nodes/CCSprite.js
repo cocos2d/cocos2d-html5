@@ -429,6 +429,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Boolean}
      */
     init:function () {
+        this._super();
+
         this._dirty = this._recursiveDirty = false;
 
         this._opacityModifyRGB = true;
