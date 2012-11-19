@@ -209,7 +209,7 @@
     };
 
 /// Clamp @c f to be between 0 and 1.
-    var clamp01 = function(f)
+    var clamp01 = cp.clamp01 = function(f)
     {
         return max(0, min(f, 1));
     };

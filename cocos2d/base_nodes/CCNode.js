@@ -173,11 +173,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _actionManager:null,
     _scheduler:null,
 
+    _initializedNode:false,
+
     /**
      * Constructor
      */
     ctor:function () {
-        //this._initNode();
+        this._initNode();
     },
 
     _initNode:function () {
@@ -198,10 +200,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.getScheduler = function () {
             return this._scheduler;
         };
+        this._initializedNode = true;
     },
 
     init:function () {
-        this._initNode();
+        if(this._initializedNode === false)
+            this._initNode();
         return true;
     },
 
@@ -1619,7 +1623,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 x += c * -this._anchorPointInPoints.x * this._scaleX + -s * -this._anchorPointInPoints.y * this._scaleY;
                 y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
             }
-
 
             // Build Transform Matrix
             this._transform = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX,
