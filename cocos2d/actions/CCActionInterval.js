@@ -1948,11 +1948,9 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
         var frames = this._animation.getFrames();
         var numberOfFrames = frames.length;
-
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
             if (this._splitTimes[i] <= time) {
                 this._target.setDisplayFrame(frames[i].getSpriteFrame());
-
                 //var dict = frame.getUserInfo();
                 //if (dict) {
                     //TODO: [[NSNotificationCenter defaultCenter] postNotificationName:CCAnimationFrameDisplayedNotification object:target_ userInfo:dict];

@@ -210,6 +210,10 @@ cc.CCBReader = cc.Class.extend({
         return true;
     },
 
+    load:function(fileName,owner){
+
+    },
+
     readNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
         if(parentSize == null){
             parentSize = cc.Director.getInstance().getWinSize();
@@ -232,6 +236,7 @@ cc.CCBReader = cc.Class.extend({
         this._ownerOutletNodes = [];
         this._ownerCallbackNames = [];
         this._ownerCallbackNodes = [];
+        this._animationManagers = new cc._Dictionary();
 
         var nodeGraph = this.readFileWithCleanUp(true);
 
@@ -244,10 +249,10 @@ cc.CCBReader = cc.Class.extend({
             this._nodesWithAnimationManagers = [];
             this._animationManagerForNodes = [];
 
-            var allKeys = this._animationManagers.allKeys();
-            for(var i = 0; i< this.allKeys.length; i++){
-                this._nodesWithAnimationManagers.push(allKeys[i]);
-                this._animationManagerForNodes.push(this._animationManagers.objectForKey(allKeys[i]));
+            var getAllKeys = this._animationManagers.allKeys();
+            for(var i = 0; i< getAllKeys.length; i++){
+                this._nodesWithAnimationManagers.push(getAllKeys[i]);
+                this._animationManagerForNodes.push(this._animationManagers.objectForKey(getAllKeys[i]));
             }
         }
 
@@ -660,8 +665,9 @@ cc.CCBReader = cc.Class.extend({
 
         var ccNodeLoader = this._ccNodeLoaderLibrary.getCCNodeLoader(className);
         if(!ccNodeLoader){
-            cc.log("no corresponding node loader for" + className);
-            return null;
+            ccNodeLoader = this._ccNodeLoaderLibrary.getCCNodeLoader("CCNode");
+            //cc.log("no corresponding node loader for" + className);
+            //return null;
         }
         var node = ccNodeLoader.loadCCNode(parent, this);
 
