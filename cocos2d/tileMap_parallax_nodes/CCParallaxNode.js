@@ -224,6 +224,5 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
  * var voidNode = cc.ParallaxNode.create();
  */
 cc.ParallaxNode.create = function () {
-    var ret = new cc.ParallaxNode();
-    return ret;
+    return new cc.ParallaxNode();
 };

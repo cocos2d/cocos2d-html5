@@ -210,10 +210,6 @@ cc.CCBReader = cc.Class.extend({
         return true;
     },
 
-    load:function(fileName,owner){
-
-    },
-
     readNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
         if(parentSize == null){
             parentSize = cc.Director.getInstance().getWinSize();
@@ -805,6 +801,23 @@ cc.CCBReader.getResolutionScale = function () {
     return 1;
 };
 
+cc.CCBReader.loadAsScene = function(ccbFilePath,owner,ccbRootPath){
+    ccbRootPath = ccbRootPath || "";
+    var Reader = new cc.CCBReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
+    Reader.setCCBRootPath(ccbRootPath);
+    var getNode = Reader.readNodeGraphFromFile(ccbFilePath, owner);
+    var scene = cc.Scene.create();
+    scene.addChild(getNode);
+    return scene;
+};
+
+cc.CCBReader.load = function(ccbFilePath, owner, ccbRootPath){
+    ccbRootPath = ccbRootPath || "";
+    var Reader = new cc.CCBReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
+    Reader.setCCBRootPath(ccbRootPath);
+    return Reader.readNodeGraphFromFile(ccbFilePath, owner);
+};
+
 cc.CCBReader.lastPathComponent = function (pathStr) {
     var slashPos = pathStr.lastIndexOf("/");
     if (slashPos != -1) {
@@ -835,4 +848,6 @@ cc.CCBReader.endsWith = function (sourceStr, ending) {
 cc.CCBReader.concat = function (stringA, stringB) {
     return stringA + stringB;
 };
+
+cc.Reader = cc.CCBReader;
 
