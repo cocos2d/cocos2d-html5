@@ -41,7 +41,7 @@ cc.NodeLoaderLibrary = cc.Class.extend({
         this.registerCCNodeLoader("CCLabelTTF", cc.LabelTTFLoader.loader());
         this.registerCCNodeLoader("CCScale9Sprite", cc.Scale9SpriteLoader.loader());
         this.registerCCNodeLoader("CCScrollView", cc.ScrollViewLoader.loader());
-        this.registerCCNodeLoader("CCBFile", cc.CCBFileLoader.loader());
+        this.registerCCNodeLoader("CCBFile", cc.BuilderFileLoader.loader());
         this.registerCCNodeLoader("CCMenu", cc.MenuLoader.loader());
         this.registerCCNodeLoader("CCMenuItemImage", cc.MenuItemImageLoader.loader());
         this.registerCCNodeLoader("CCControlButton", cc.ControlButtonLoader.loader());

@@ -24,15 +24,64 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.NodeLoaderListener = cc.Class.extend({
-    onNodeLoaded:function(node,nodeLoader){}
+cc.INT_VALUE = 0;
+
+cc.FLOAT_VALUE = 1;
+
+cc.POINTER_VALUE = 2;
+
+cc.BOOL_VALUE = 3;
+
+cc.UNSIGNEDCHAR_VALUE = 4;
+
+
+cc.Color3BWapper = cc.Class.extend({
+    _color:null,
+    ctor:function () {
+        this._color = new cc.Color3B(0, 0, 0);
+    },
+    getColor:function () {
+        return this._color;
+    }
 });
 
-cc.BuilderSelectorResolver = cc.Class.extend({
-    onResolveCCBCCMenuItemSelector:function(target, selectorName){},
-    onResolveCCBCCControlSelector:function(target,selectorName){}
+cc.Color3BWapper.create = function (color) {
+    var ret = new cc.Color3BWapper();
+    if (ret) {
+        ret._color.r = color.r;
+        ret._color.g = color.g;
+        ret._color.b = color.b;
+    }
+    return ret;
+};
+
+cc.BuilderValue = cc.Class.extend({
+    _value:null,
+    _type:0,
+
+    getIntValue:function () {
+    },
+    getFloatValue:function () {
+    },
+    getBoolValue:function () {
+    },
+    getByteValue:function () {
+    },
+    getPointer:function () {
+    },
+
+    getValue:function(){
+        return this._value;
+    }
 });
 
-cc.BuilderScriptOwnerProtocol = cc.Class.extend({
-    createNew:function(){}
-});
+cc.BuilderValue.create = function (value) {
+    var ret = new cc.BuilderValue();
+    if(ret){
+        if(typeof(value) == "number"){
+
+        }
+    }
+    return ret;
+};
+

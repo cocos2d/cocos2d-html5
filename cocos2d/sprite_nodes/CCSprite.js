@@ -416,7 +416,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        this._blendFunc = {src:src, dst:dst};
+        if (arguments.length == 1)
+            this._blendFunc = src;
+        else
+            this._blendFunc = {src:src, dst:dst};
 
         this._isLighterMode = (this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE));
     },
@@ -426,6 +429,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Boolean}
      */
     init:function () {
+        this._super();
+
         this._dirty = this._recursiveDirty = false;
 
         this._opacityModifyRGB = true;
@@ -1168,8 +1173,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setPosition:function (pos) {
-        if(arguments.length >= 2)
-            cc.Node.prototype.setPosition.call(this, pos,arguments[1]);
+        if (arguments.length >= 2)
+            cc.Node.prototype.setPosition.call(this, pos, arguments[1]);
         else
             cc.Node.prototype.setPosition.call(this, pos);
         this.SET_DIRTY_RECURSIVELY();
@@ -1618,11 +1623,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
         } else {
             if (this._texture != texture) {
-                if(texture instanceof  HTMLImageElement){
+                if (texture instanceof  HTMLImageElement) {
                     this._rect = cc.rect(0, 0, texture.width, texture.height);
                     this._texture = texture;
                     this._originalTexture = texture;
-                }else {
+                } else {
                     this._texture = texture;
                     this._updateBlendFunc();
                 }
@@ -1688,7 +1693,7 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
             break;
 
         default:
-            throw "Sprite.spriteWithTexture(): Argument must be non-nil ";
+            throw "Sprite.createWithTexture(): Argument must be non-nil ";
             break;
     }
 };
@@ -1709,8 +1714,8 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
 cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
     var sprite = new cc.Sprite();
-    if( argnum === 0 ) {
-        if( sprite.init() )
+    if (argnum === 0) {
+        if (sprite.init())
             return sprite;
         return null;
     } else if (argnum < 2) {

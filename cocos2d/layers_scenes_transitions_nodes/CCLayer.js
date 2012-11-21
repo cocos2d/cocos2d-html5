@@ -736,7 +736,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
         context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
-        this._super(context);
+        if (this._rotation != 0)
+            context.rotate(this._rotationRadians);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -812,8 +813,8 @@ cc.LayerColor.create = function (color, width, height) {
  * @extends cc.LayerColor
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
-    _startColor:new cc.Color3B(0, 0, 0),
-    _endColor:new cc.Color3B(0, 0, 0),
+    _startColor:null,
+    _endColor:null,
     _startOpacity:null,
     _endOpacity:null,
     _alongVector:null,
@@ -829,9 +830,12 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor:function () {
         this._super();
 
+        this._color = new cc.Color3B(0, 0, 0);
         this._startColor = new cc.Color3B(0, 0, 0);
         this._endColor = new cc.Color3B(0, 0, 0);
         this._alongVector = cc.p(0, -1);
+        this._startOpacity = 255;
+        this._endOpacity = 255;
 
         this._gradientStartPoint = cc.p(0, 0);
         this._gradientEndPoint = cc.p(0, 0);
@@ -1009,7 +1013,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
             var opacityf = this._opacity / 255.0;
 
-            var S = new cc.Color4F(this._startColor.r / 255, this._startColor.g / 255, this._startColor.b / 255, (this._startOpacity * opacityf) / 255);
+            var S = new cc.Color4F(this._color.r / 255, this._color.g / 255, this._color.b / 255, (this._startOpacity * opacityf) / 255);
 
             var E = new cc.Color4F(this._endColor.r / 255, this._endColor.g / 255, this._endColor.b / 255, (this._endOpacity * opacityf) / 255);
 
@@ -1047,14 +1051,18 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             var apip = this.getAnchorPointInPoints();
             var tGradient = context.createLinearGradient(this._gradientStartPoint.x,this._gradientStartPoint.y,
                 this._gradientEndPoint.x, this._gradientEndPoint.y);
+            var curPos = this.getPosition();
 
-            tGradient.addColorStop(0, "rgba(" + Math.round(this._startColor.r) + "," + Math.round(this._startColor.g) + ","
-                + Math.round(this._startColor.b) + "," + (this._startOpacity / 255).toFixed(4) + ")");
+            tGradient.addColorStop(0, "rgba(" + Math.round(this._color.r) + "," + Math.round(this._color.g) + ","
+                + Math.round(this._color.b) + "," + (this._startOpacity / 255).toFixed(4) + ")");
             tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
                 + Math.round(this._endColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
 
             context.fillStyle = tGradient;
             context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+
+            if (this._rotation != 0)
+                context.rotate(this._rotationRadians);
         }
     }
 });

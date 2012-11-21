@@ -97,7 +97,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      */
     startWithTarget:function (target) {
         //this._super(target);
-        cc.Action.prototype.startWithTarget.call(this, target)
+        cc.Action.prototype.startWithTarget.call(this, target);
         this._elapsed = 0;
         this._firstTick = true;
     },
@@ -169,10 +169,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
 
         var one = actionOne.getDuration();
         var two = actionTwo.getDuration();
-        if (isNaN(one) || isNaN(two)) {
-            console.log(actionOne);
-            console.log(actionTwo);
-        }
+
         var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
 
@@ -1951,11 +1948,9 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
 
         var frames = this._animation.getFrames();
         var numberOfFrames = frames.length;
-
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
             if (this._splitTimes[i] <= time) {
                 this._target.setDisplayFrame(frames[i].getSpriteFrame());
-
                 //var dict = frame.getUserInfo();
                 //if (dict) {
                     //TODO: [[NSNotificationCenter defaultCenter] postNotificationName:CCAnimationFrameDisplayedNotification object:target_ userInfo:dict];

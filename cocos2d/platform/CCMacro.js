@@ -85,6 +85,22 @@ cc.SWAP = function (x, y, ref) {
 };
 
 /**
+ * <p>
+ *     Linear interpolation between 2 numbers, the ratio sets how much it is biased to each end
+ * </p>
+ * @param {Number} a number A
+ * @param {Number} b number B
+ * @param {Number} r ratio between 0 and 1
+ * @function
+ * @example
+ * cc.lerp(2,10,0.5)//returns 6<br/>
+ * cc.lerp(2,10,0.2)//returns 3.6
+ */
+cc.lerp = function (a, b, r) {
+    return a + (b - a) * r;
+};
+
+/**
  * returns a random float between -1 and 1
  * @return {Number}
  * @function
@@ -290,7 +306,6 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
 };
 
 
-
 /**
  * WebGL constants
  * @type {object}
@@ -301,91 +316,91 @@ var gl = gl || {};
  * @constant
  * @type Number
  */
-gl.NEAREST                      = 0x2600;
+gl.NEAREST = 0x2600;
 
 /**
  * @constant
  * @type Number
  */
-gl.LINEAR                       = 0x2601;
+gl.LINEAR = 0x2601;
 /**
  * @constant
  * @type Number
  */
-gl.REPEAT                       = 0x2901;
+gl.REPEAT = 0x2901;
 /**
  * @constant
  * @type Number
  */
-gl.CLAMP_TO_EDGE                = 0x812F;
+gl.CLAMP_TO_EDGE = 0x812F;
 /**
  * @constant
  * @type Number
  */
-gl.CLAMP_TO_BORDER              = 0x812D;
+gl.CLAMP_TO_BORDER = 0x812D;
 /**
  * @constant
  * @type Number
  */
-gl.LINEAR_MIPMAP_NEAREST        = 0x2701;
+gl.LINEAR_MIPMAP_NEAREST = 0x2701;
 /**
  * @constant
  * @type Number
  */
-gl.NEAREST_MIPMAP_NEAREST       = 0x2700;
+gl.NEAREST_MIPMAP_NEAREST = 0x2700;
 /**
  * @constant
  * @type Number
  */
-gl.ZERO                         = 0;
+gl.ZERO = 0;
 /**
  * @constant
  * @type Number
  */
-gl.ONE                          = 1;
+gl.ONE = 1;
 /**
  * @constant
  * @type Number
  */
-gl.SRC_COLOR                    = 0x0300;
+gl.SRC_COLOR = 0x0300;
 /**
  * @constant
  * @type Number
  */
-gl.ONE_MINUS_SRC_COLOR          = 0x0301;
+gl.ONE_MINUS_SRC_COLOR = 0x0301;
 /**
  * @constant
  * @type Number
  */
-gl.SRC_ALPHA                    = 0x0302;
+gl.SRC_ALPHA = 0x0302;
 /**
  * @constant
  * @type Number
  */
-gl.ONE_MINUS_SRC_ALPHA          = 0x0303;
+gl.ONE_MINUS_SRC_ALPHA = 0x0303;
 /**
  * @constant
  * @type Number
  */
-gl.DST_ALPHA                    = 0x0304;
+gl.DST_ALPHA = 0x0304;
 /**
  * @constant
  * @type Number
  */
-gl.ONE_MINUS_DST_ALPHA          = 0x0305;
+gl.ONE_MINUS_DST_ALPHA = 0x0305;
 /**
  * @constant
  * @type Number
  */
-gl.DST_COLOR                    = 0x0306;
+gl.DST_COLOR = 0x0306;
 /**
  * @constant
  * @type Number
  */
-gl.ONE_MINUS_DST_COLOR          = 0x0307;
+gl.ONE_MINUS_DST_COLOR = 0x0307;
 /**
  * @constant
  * @type Number
  */
-gl.SRC_ALPHA_SATURATE           = 0x0308;
+gl.SRC_ALPHA_SATURATE = 0x0308;
 

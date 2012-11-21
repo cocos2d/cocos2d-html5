@@ -24,15 +24,37 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.NodeLoaderListener = cc.Class.extend({
-    onNodeLoaded:function(node,nodeLoader){}
-});
+cc.BuilderKeyframe = cc.Class.extend({
+    _value:null,
+    _time:0,
+    _easingType:0,
+    _easingOpt:0,
 
-cc.BuilderSelectorResolver = cc.Class.extend({
-    onResolveCCBCCMenuItemSelector:function(target, selectorName){},
-    onResolveCCBCCControlSelector:function(target,selectorName){}
-});
+    getValue:function(){
+        return this._value;
+    },
+    setValue:function(value){
+        this._value = value;
+    },
 
-cc.BuilderScriptOwnerProtocol = cc.Class.extend({
-    createNew:function(){}
+    getTime:function(){
+        return this._time;
+    },
+    setTime:function(time){
+        this._time = time;
+    },
+
+    getEasingType:function(){
+        return this._easingType;
+    },
+    setEasingType:function(easingType){
+        this._easingType = easingType;
+    },
+
+    getEasingOpt:function(){
+        return this._easingOpt;
+    },
+    setEasingOpt:function(easingOpt){
+        this._easingOpt = easingOpt;
+    }
 });

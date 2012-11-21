@@ -173,14 +173,16 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _actionManager:null,
     _scheduler:null,
 
+    _initializedNode:false,
+
     /**
      * Constructor
      */
     ctor:function () {
-        //this._initNode();
+        this._initNode();
     },
 
-    _initNode:function(){
+    _initNode:function () {
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
             this._isTransformGLDirty = true;
         }
@@ -198,11 +200,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.getScheduler = function () {
             return this._scheduler;
         };
+        this._initializedNode = true;
     },
 
-    init:function(){
-        this._initNode();
-    } ,
+    init:function () {
+        if(this._initializedNode === false)
+            this._initNode();
+        return true;
+    },
 
     /**
      * @param {Array} array
@@ -487,25 +492,24 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition:function (newPosOrxValue, yValue) {
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
-        if (arguments.length==2) {
+        if (arguments.length == 2) {
             this._position = new cc.Point(newPosOrxValue, yValue);
             //this.setPosition = this._setPositionByValue;
-        } else if (arguments.length==1) {
+        } else if (arguments.length == 1) {
             this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
             //this.setPosition = this._setPositionByValue;
         }
-
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
     },
 
     _setPositionByValue:function (newPosOrxValue, yValue) {
-        if (arguments.length==2) {
+        if (arguments.length == 2) {
             this._position.x = newPosOrxValue;
             this._position.y = yValue;
             //this._position = cc.p(newPosOrxValue,yValue);
-        } else if (arguments.length==1) {
+        } else if (arguments.length == 1) {
             this._position.x = newPosOrxValue.x;
             this._position.y = newPosOrxValue.y;
         }
@@ -990,8 +994,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @param {Number} tag
      */
     addChild:function (child, zOrder, tag) {
-        if ( child === this ) {
-            console.warn( 'cc.Node.addChild: An Node can\'t be added as a child of itself.' );
+        if (child === this) {
+            console.warn('cc.Node.addChild: An Node can\'t be added as a child of itself.');
             return;
         }
 
@@ -1023,7 +1027,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
-            if( arguments.length === 0)
+            if (arguments.length === 0)
                 cleanup = true;
             this._parent.removeChild(this, cleanup);
         }
@@ -1050,7 +1054,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         // If only one argument, then force cleanup
-        if( arguments.length == 1)
+        if (arguments.length == 1)
             cleanup = true;
 
         if (this._children.indexOf(child) > -1) {
@@ -1093,7 +1097,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
-            if(arguments.length === 0)
+            if (arguments.length === 0)
                 cleanup = true;
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
@@ -1620,7 +1624,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
             }
 
-
             // Build Transform Matrix
             this._transform = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX,
                 -s * this._scaleY, c * this._scaleY, x, y);
@@ -1755,8 +1758,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
      * This is a hack, and should be removed once JSB fixes the retain/release bug
      */
-     retain:function() {},
-     release:function() {}
+    retain:function () {
+    },
+    release:function () {
+    }
 });
 
 /**

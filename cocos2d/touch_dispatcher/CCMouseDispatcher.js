@@ -425,30 +425,38 @@ cc.MouseDispatcher = cc.Class.extend({
     },
 
     mouseHandle:function (mouseObj, event, index) {
-        for(var i = 0 ; i < this._mouseDelegateHandlers.length; i++){
+        for (var i = 0; i < this._mouseDelegateHandlers.length; i++) {
             var handler = this._mouseDelegateHandlers[i];
 
-            switch(index){
+            switch (index) {
                 case cc.MOUSE_DOWN:
-                    handler.getDelegate().onMouseDown(mouseObj);
+                    if (handler.getDelegate().onMouseDown)
+                        handler.getDelegate().onMouseDown(mouseObj);
                     break;
                 case cc.MOUSE_UP:
-                    handler.getDelegate().onMouseUp(mouseObj);
+                    if (handler.getDelegate().onMouseUp)
+                        handler.getDelegate().onMouseUp(mouseObj);
                     break;
                 case cc.MOUSE_MOVED:
-                    if(this._mousePressed)
-                        handler.getDelegate().onMouseDragged(mouseObj);
-                    else
-                        handler.getDelegate().onMouseMoved(mouseObj);
+                    if (this._mousePressed) {
+                        if (handler.getDelegate().onMouseDragged)
+                            handler.getDelegate().onMouseDragged(mouseObj);
+                    } else {
+                        if (handler.getDelegate().onMouseMoved)
+                            handler.getDelegate().onMouseMoved(mouseObj);
+                    }
                     break;
                 case cc.MOUSE_ENTERED:
-                    handler.getDelegate().onMouseEntered(mouseObj);
+                    if (handler.getDelegate().onMouseEntered)
+                        handler.getDelegate().onMouseEntered(mouseObj);
                     break;
                 case cc.MOUSE_EXITED:
-                    handler.getDelegate().onMouseExited(mouseObj);
+                    if (handler.getDelegate().onMouseExited)
+                        handler.getDelegate().onMouseExited(mouseObj);
                     break;
                 case cc.SCROLL_WHEEL:
-                    handler.getDelegate().onScrollWheel(mouseObj);
+                    if (handler.getDelegate().onScrollWheel)
+                        handler.getDelegate().onScrollWheel(mouseObj);
                     break;
             }
         }
