@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.CCBKeyframe = cc.Class.extend({
+cc.BuilderKeyframe = cc.Class.extend({
     _value:null,
     _time:0,
     _easingType:0,

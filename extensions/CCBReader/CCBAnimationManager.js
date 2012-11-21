@@ -24,11 +24,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.CCBAnimationManagerDelegate = cc.Class.extend({
+cc.BuilderAnimationManagerDelegate = cc.Class.extend({
     completedAnimationSequenceNamed:function (name) {}
 });
 
-cc.CCBAnimationManager = cc.Class.extend({
+cc.BuilderAnimationManager = cc.Class.extend({
     _sequences:null,
     _nodeSequences:null,
     _baseValues:null,
@@ -222,10 +222,8 @@ cc.CCBAnimationManager = cc.Class.extend({
                     var selBaseKey =  baseKeys[j];
                     if(seqNodePropNames.indexOf(selBaseKey) == -1){
                         var value = nodeBaseValues.objectForKey(selBaseKey);
-                        if(value != null){
+                        if(value != null)
                             this._setAnimatedProperty(selBaseKey,node, value, tweenDuration);
-                        }
-
                     }
                 }
             }
@@ -280,7 +278,7 @@ cc.CCBAnimationManager = cc.Class.extend({
         var getArr,type,getValueArr, x, y;
 
         if (propName === "rotation") {
-            return cc.CCBRotateTo.create(duration, keyframe1.getValue());
+            return cc.BuilderRotateTo.create(duration, keyframe1.getValue());
         } else if (propName === "opacity") {
             return cc.FadeTo.create(duration, keyframe1.getValue());
         } else if (propName === "color") {
@@ -294,7 +292,7 @@ cc.CCBAnimationManager = cc.Class.extend({
                 return cc.Sequence.create(cc.DelayTime.create(duration), cc.Hide.create());
             }
         } else if (propName === "displayFrame") {
-            return cc.Sequence.create(cc.DelayTime.create(duration), cc.CCBSetSpriteFrame.create(keyframe1.getValue()));
+            return cc.Sequence.create(cc.DelayTime.create(duration), cc.BuilderSetSpriteFrame.create(keyframe1.getValue()));
         } else if(propName === "position"){
             getArr = this._getBaseValue(node,propName);
             type = getArr[2];
@@ -319,10 +317,10 @@ cc.CCBAnimationManager = cc.Class.extend({
             y = getValueArr[1];
 
             if(type == CCB_SCALETYPE_MULTIPLY_RESOLUTION)
-                 var resolutionScale = cc.CCBReader.getResolutionScale();
+                 var resolutionScale = cc.BuilderReader.getResolutionScale();
             return cc.ScaleTo.create(duration,x,y);
         } else {
-            cc.log("CCBReader: Failed to create animation for property: " + propName);
+            cc.log("BuilderReader: Failed to create animation for property: " + propName);
         }
         return null;
     },
@@ -330,7 +328,7 @@ cc.CCBAnimationManager = cc.Class.extend({
     _setAnimatedProperty:function (propName, node, value, tweenDuration) {
         if(tweenDuration > 0){
             // Create a fake keyframe to generate the action from
-            var kf1 = new cc.CCBKeyframe();
+            var kf1 = new cc.BuilderKeyframe();
             kf1.setValue(value);
             kf1.setTime(tweenDuration);
             kf1.setEasingType(CCB_KEYFRAME_EASING_LINEAR);
@@ -422,7 +420,7 @@ cc.CCBAnimationManager = cc.Class.extend({
         } else if (easingType === CCB_KEYFRAME_EASING_ELASTIC_INOUT) {
             return cc.EaseElasticInOut.create(action, easingOpt);
         } else {
-            cc.log("CCBReader: Unkown easing type " + easingType);
+            cc.log("BuilderReader: Unkown easing type " + easingType);
             return action;
         }
     },
@@ -553,7 +551,7 @@ cc._Dictionary = cc.Class.extend({
     }
 });
 
-cc.CCBSetSpriteFrame = cc.ActionInstant.extend({
+cc.BuilderSetSpriteFrame = cc.ActionInstant.extend({
     _spriteFrame:null,
 
     initWithSpriteFrame:function (spriteFrame) {
@@ -565,8 +563,8 @@ cc.CCBSetSpriteFrame = cc.ActionInstant.extend({
     }
 });
 
-cc.CCBSetSpriteFrame.create = function (spriteFrame) {
-    var ret = new cc.CCBSetSpriteFrame();
+cc.BuilderSetSpriteFrame.create = function (spriteFrame) {
+    var ret = new cc.BuilderSetSpriteFrame();
     if (ret) {
         if (ret.initWithSpriteFrame(spriteFrame))
             return ret;
@@ -574,7 +572,7 @@ cc.CCBSetSpriteFrame.create = function (spriteFrame) {
     return null;
 };
 
-cc.CCBRotateTo = cc.ActionInterval.extend({
+cc.BuilderRotateTo = cc.ActionInterval.extend({
     _startAngle:0,
     _dstAngle:0,
     _diffAngle:0,
@@ -598,8 +596,8 @@ cc.CCBRotateTo = cc.ActionInterval.extend({
     }
 });
 
-cc.CCBRotateTo.create = function (duration, angle) {
-    var ret = new cc.CCBRotateTo();
+cc.BuilderRotateTo.create = function (duration, angle) {
+    var ret = new cc.BuilderRotateTo();
     if (ret) {
         if (ret.initWithDuration(duration, angle))
             return ret;

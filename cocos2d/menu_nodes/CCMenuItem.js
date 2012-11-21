@@ -171,10 +171,8 @@ cc.MenuItem = cc.Node.extend(/** @lends cc.MenuItem# */{
             } else if (this._listener && (typeof(this._selector) == "function")) {
                 this._selector.call(this._listener, this);
             } else {
-                //console.log(this._selector);
-                this._selector();
+                this._selector(this);
             }
-
         }
     }
 });
@@ -261,8 +259,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
             if (!enabled) {
                 this._colorBackup = this._label.getColor();
                 this._label.setColor(this._disabledColor);
-            }
-            else {
+            } else {
                 this._label.setColor(this._colorBackup);
             }
         }
@@ -294,7 +291,7 @@ cc.MenuItemLabel = cc.MenuItem.extend(/** @lends cc.MenuItemLabel# */{
      * @return {cc.Color3B}
      */
     getColor:function () {
-        return this._label.getColor
+        return this._label.getColor();
     },
 
     setOpacityModifyRGB:function (value) {

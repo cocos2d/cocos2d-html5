@@ -493,6 +493,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var img = new Image();
                     img.src = colorTexture.toDataURL();
                     this.setTexture(img);
+                    this.updateString(false);
                 }
             }
         }
