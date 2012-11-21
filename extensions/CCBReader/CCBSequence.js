@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.CCBSequence = cc.Class.extend({
+cc.BuilderSequence = cc.Class.extend({
     _duration:0,
     _name:"",
     _sequenceId:0,
@@ -63,7 +63,7 @@ cc.CCBSequence = cc.Class.extend({
     }
 });
 
-cc.CCBSequenceProperty = cc.Class.extend({
+cc.BuilderSequenceProperty = cc.Class.extend({
     _name : null,
     _type:0,
     _keyFrames:null,

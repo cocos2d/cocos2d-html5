@@ -66,14 +66,60 @@ cc.SAX_STRING = 5;
  */
 cc.SAX_ARRAY = 6;
 
+//Compatibility with IE9
+var Uint8Array = Uint8Array || Array;
+
+if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+    var IEBinaryToArray_ByteStr_Script =
+        "<!-- IEBinaryToArray_ByteStr -->\r\n" +
+            //"<script type='text/vbscript'>\r\n" +
+            "Function IEBinaryToArray_ByteStr(Binary)\r\n" +
+            "   IEBinaryToArray_ByteStr = CStr(Binary)\r\n" +
+            "End Function\r\n" +
+            "Function IEBinaryToArray_ByteStr_Last(Binary)\r\n" +
+            "   Dim lastIndex\r\n" +
+            "   lastIndex = LenB(Binary)\r\n" +
+            "   if lastIndex mod 2 Then\r\n" +
+            "       IEBinaryToArray_ByteStr_Last = Chr( AscB( MidB( Binary, lastIndex, 1 ) ) )\r\n" +
+            "   Else\r\n" +
+            "       IEBinaryToArray_ByteStr_Last = " + '""' + "\r\n" +
+            "   End If\r\n" +
+            "End Function\r\n";// +
+            //"</script>\r\n";
+
+    // inject VBScript
+    //document.write(IEBinaryToArray_ByteStr_Script);
+    var myVBScript = document.createElement('script');
+    myVBScript.type = "text/vbscript";
+    myVBScript.textContent = IEBinaryToArray_ByteStr_Script;
+    document.body.appendChild(myVBScript);
+
+    // helper to convert from responseBody to a "responseText" like thing
+    cc._convertResponseBodyToText = function (binary) {
+        var byteMapping = {};
+        for (var i = 0; i < 256; i++) {
+            for (var j = 0; j < 256; j++) {
+                byteMapping[ String.fromCharCode(i + j * 256) ] =
+                    String.fromCharCode(i) + String.fromCharCode(j);
+            }
+        }
+        var rawBytes = IEBinaryToArray_ByteStr(binary);
+        var lastChr = IEBinaryToArray_ByteStr_Last(binary);
+        return rawBytes.replace(/[\s\S]/g,
+            function (match) {
+                return byteMapping[match];
+            }) + lastChr;
+    };
+}
+
 /**
  * @namespace
  */
 cc.FileUtils = cc.Class.extend({
     _fileDataCache:null,
 
-    ctor:function(){
-       this._fileDataCache = {};
+    ctor:function () {
+        this._fileDataCache = {};
     },
     /**
      * Get resource file data
@@ -84,51 +130,88 @@ cc.FileUtils = cc.Class.extend({
      * @warning If you get the file data succeed,you must delete it after used.
      */
     getFileData:function (fileName, mode, size) {
-        if(this._fileDataCache.hasOwnProperty(fileName))
+        if (this._fileDataCache.hasOwnProperty(fileName))
             return this._fileDataCache[fileName];
 
         return this._loadBinaryFileData(fileName);
     },
 
-    preloadBinaryFileData:function(fileUrl){
-        fileUrl = this.fullPathFromRelativePath(fileUrl);
+    _getXMLHttpRequest:function () {
+        if (window.XMLHttpRequest) {
+            return new window.XMLHttpRequest();
+        } else {
+            return new ActiveXObject("MSXML2.XMLHTTP");
+        }
+    },
 
+    preloadBinaryFileData:function (fileUrl) {
+        fileUrl = this.fullPathFromRelativePath(fileUrl);
         var selfPointer = this;
-        var xhr = new XMLHttpRequest();
+
+        var xhr = this._getXMLHttpRequest();
         xhr.open("GET", fileUrl, true);
-        if(xhr.overrideMimeType)
-            xhr.overrideMimeType("text\/plain; charset=x-user-defined");
-        xhr.onload = function(e) {
-            var arrayStr = xhr.responseText;
-            if(arrayStr){
-                cc.Loader.getInstance().onResLoaded();
-                selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
-            }
-        };
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            // IE-specific logic here
+            xhr.setRequestHeader("Accept-Charset", "x-user-defined");
+            xhr.onreadystatechange = function (event) {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        var fileContents = cc._convertResponseBodyToText(xhr.responseBody);
+                        if (fileContents)
+                            selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
+                    }
+                    cc.Loader.getInstance().onResLoaded();
+                }
+            };
+        } else {
+            if (xhr.overrideMimeType)
+                xhr.overrideMimeType("text\/plain; charset=x-user-defined");
+            xhr.onload = function (e) {
+                var arrayStr = xhr.responseText;
+                if (arrayStr) {
+                    cc.Loader.getInstance().onResLoaded();
+                    selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(arrayStr);
+                }
+            };
+        }
         xhr.send(null);
     },
 
-    _loadBinaryFileData:function(fileUrl){
-        var req = new XMLHttpRequest();
+    _loadBinaryFileData:function (fileUrl) {
+        var req = this._getXMLHttpRequest();
         req.open('GET', fileUrl, false);
-        if(req.overrideMimeType)
-            req.overrideMimeType('text\/plain; charset=x-user-defined');
-        req.send(null);
-        if (req.status != 200)
-            return '';
+        var arrayInfo = null;
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            req.setRequestHeader("Accept-Charset", "x-user-defined");
+            req.send(null);
+            if (req.status != 200)
+                return null;
 
-        var arrayInfo = this._stringConvertToArray(req.responseText);
-        this._fileDataCache[fileUrl] = arrayInfo;
+            var fileContents = cc._convertResponseBodyToText(req.responseBody);
+            if(fileContents){
+                arrayInfo = this._stringConvertToArray(req.responseText);
+                this._fileDataCache[fileUrl] = arrayInfo;
+            }
+        } else {
+            if (req.overrideMimeType)
+                req.overrideMimeType('text\/plain; charset=x-user-defined');
+            req.send(null);
+            if (req.status != 200)
+                return null;
+
+            arrayInfo = this._stringConvertToArray(req.responseText);
+            this._fileDataCache[fileUrl] = arrayInfo;
+        }
         return arrayInfo;
     },
 
-    _stringConvertToArray:function(strData){
-        if(!strData)
+    _stringConvertToArray:function (strData) {
+        if (!strData)
             return null;
 
         var arrData = new Uint8Array(strData.length);
-        for(var i = 0; i< strData.length; i++){
-            arrData[i] = strData.charCodeAt(i) ; //& 0xff;
+        for (var i = 0; i < strData.length; i++) {
+            arrData[i] = strData.charCodeAt(i) & 0xff;
         }
         return arrData;
     },
@@ -261,9 +344,9 @@ cc.FileUtils = cc.Class.extend({
 });
 
 cc.s_SharedFileUtils = null;
-cc.FileUtils.getInstance =  function(){
-    if(cc.s_SharedFileUtils == null){
-        cc.s_SharedFileUtils =  new cc.FileUtils();
+cc.FileUtils.getInstance = function () {
+    if (cc.s_SharedFileUtils == null) {
+        cc.s_SharedFileUtils = new cc.FileUtils();
     }
     return cc.s_SharedFileUtils;
 };

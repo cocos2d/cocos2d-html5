@@ -26,9 +26,9 @@
 
 var PROPERTY_CCBFILE = "ccbFile";
 
-cc.CCBFileLoader = cc.NodeLoader.extend({
+cc.BuilderFileLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
-        return cc.CCBFile.create();
+        return cc.BuilderFile.create();
     },
     onHandlePropTypeCCBFile:function (node, parent, propertyName, ccbFileNode, ccbReader) {
         if (propertyName == PROPERTY_CCBFILE) {
@@ -39,8 +39,8 @@ cc.CCBFileLoader = cc.NodeLoader.extend({
     }
 });
 
-cc.CCBFileLoader.loader = function () {
-    return new cc.CCBFileLoader();
+cc.BuilderFileLoader.loader = function () {
+    return new cc.BuilderFileLoader();
 };
 
 var PROPERTY_ENABLED = "enabled";

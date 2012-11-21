@@ -79,7 +79,7 @@ cc.NodeLoader = cc.Class.extend({
                 setProp = true;
 
             //forward properties for sub ccb files
-            if(node instanceof cc.CCBFile){
+            if(node instanceof cc.BuilderFile){
                 if(node.getCCBFileNode() && isExtraProp){
                     node = node.getCCBFileNode();
                     //skip properties that doesn't have a value to override
@@ -382,7 +382,7 @@ cc.NodeLoader = cc.Class.extend({
                 height = (containerSize.height * height / 100.0);
                 break;
             case CCB_SIZETYPE_MULTIPLY_RESOLUTION:
-                var resolutionScale = cc.CCBReader.getResolutionScale();
+                var resolutionScale = cc.BuilderReader.getResolutionScale();
                 width *= resolutionScale;
                 height *= resolutionScale;
                 break;
@@ -406,8 +406,8 @@ cc.NodeLoader = cc.Class.extend({
         }
 
         if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
-            x *= cc.CCBReader.getResolutionScale();
-            y *= cc.CCBReader.getResolutionScale();
+            x *= cc.BuilderReader.getResolutionScale();
+            y *= cc.BuilderReader.getResolutionScale();
         }
 
         return [x, y];
@@ -431,7 +431,7 @@ cc.NodeLoader = cc.Class.extend({
         var type = ccbReader.readInt(false);
 
         if (type == CCB_SCALETYPE_MULTIPLY_RESOLUTION) {
-            f *= cc.CCBReader.getResolutionScale();
+            f *= cc.BuilderReader.getResolutionScale();
         }
 
         return f;
@@ -504,8 +504,8 @@ cc.NodeLoader = cc.Class.extend({
         // Eventually this should be handled by a client side asset manager
         // interface which figured out what resources to load.
         // TODO Does this problem exist in C++?
-        animation = cc.CCBReader.lastPathComponent(animation);
-        animationFile = cc.CCBReader.lastPathComponent(animationFile);
+        animation = cc.BuilderReader.lastPathComponent(animation);
+        animationFile = cc.BuilderReader.lastPathComponent(animationFile);
 
         if (animation != null && animation != "") {
             var animationCache = cc.AnimationCache.getInstance();
@@ -708,12 +708,12 @@ cc.NodeLoader = cc.Class.extend({
         var ccbFileName = ccbReader.getCCBRootPath() + ccbReader.readCachedString();
 
         /* Change path extension to .ccbi. */
-        var ccbFileWithoutPathExtension = cc.CCBReader.deletePathExtension(ccbFileName);
+        var ccbFileWithoutPathExtension = cc.BuilderReader.deletePathExtension(ccbFileName);
         ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
 
         //load sub file
         var path = cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
-        var myCCBReader = new cc.CCBReader(ccbReader);
+        var myCCBReader = new cc.BuilderReader(ccbReader);
 
         var size ;
         var bytes = cc.FileUtils.getInstance().getFileData(path,"rb", size);
