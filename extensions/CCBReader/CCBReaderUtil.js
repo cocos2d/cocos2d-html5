@@ -28,11 +28,11 @@ cc.NodeLoaderListener = cc.Class.extend({
     onNodeLoaded:function(node,nodeLoader){}
 });
 
-cc.CCBSelectorResolver = cc.Class.extend({
+cc.BuilderSelectorResolver = cc.Class.extend({
     onResolveCCBCCMenuItemSelector:function(target, selectorName){},
     onResolveCCBCCControlSelector:function(target,selectorName){}
 });
 
-cc.CCBScriptOwnerProtocol = cc.Class.extend({
+cc.BuilderScriptOwnerProtocol = cc.Class.extend({
     createNew:function(){}
 });

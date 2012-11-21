@@ -55,7 +55,7 @@ cc.Color3BWapper.create = function (color) {
     return ret;
 };
 
-cc.CCBValue = cc.Class.extend({
+cc.BuilderValue = cc.Class.extend({
     _value:null,
     _type:0,
 
@@ -75,8 +75,8 @@ cc.CCBValue = cc.Class.extend({
     }
 });
 
-cc.CCBValue.create = function (value) {
-    var ret = new cc.CCBValue();
+cc.BuilderValue.create = function (value) {
+    var ret = new cc.BuilderValue();
     if(ret){
         if(typeof(value) == "number"){
 

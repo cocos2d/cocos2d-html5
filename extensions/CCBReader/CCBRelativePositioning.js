@@ -41,7 +41,7 @@ cc.getAbsolutePosition = function(pt, type, containerSize, propName){
         absPt.x = (containerSize.width * pt.x / 100.0);
         absPt.y = (containerSize.height * pt.y / 100.0);
     } else if (type == CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
-        var resolutionScale = cc.CCBReader.getResolutionScale();
+        var resolutionScale = cc.BuilderReader.getResolutionScale();
         absPt.x = pt.x * resolutionScale;
         absPt.y = pt.y * resolutionScale;
     }
@@ -53,7 +53,7 @@ cc.setRelativeScale = function(node,scaleX, scaleY, type, propName){
     cc.Assert(node, "pNode should not be null");
 
     if (type == CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
-        var resolutionScale = cc.CCBReader.getResolutionScale();
+        var resolutionScale = cc.BuilderReader.getResolutionScale();
 
         scaleX *= resolutionScale;
         scaleY *= resolutionScale;
