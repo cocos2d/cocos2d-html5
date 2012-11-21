@@ -1085,7 +1085,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /* XXX deprecated */
     removeAllChildrenWithCleanup:function (cleanup) {
-        cc.log("removeAllChildrenWithCleanup is deprecated. Use removeFromParent instead");
+        cc.log("removeAllChildrenWithCleanup is deprecated. Use removeAllChildren instead");
         this.removeAllChildren(cleanup);
     },
 
