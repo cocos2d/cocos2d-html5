@@ -110,7 +110,7 @@
             //this._syncPosition();
         },
         _syncPosition:function () {
-            if(this._position.x != this._body.p.x && this._position.y != this._body.p.y){
+            if(this._position.x != this._body.p.x || this._position.y != this._body.p.y){
                 this._position = {x:this._body.p.x, y:this._body.p.y};
                 this.setNodeDirty();
             }
