@@ -102,7 +102,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     setMouseEnabled:function (enabled) {
         if (this._isMouseEnabled != enabled) {
             this._isMouseEnabled = enabled;
-            if (this._isRunning) {
+            if (this._running) {
                 if (enabled)
                     cc.Director.getInstance().getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
                 else
@@ -144,7 +144,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (this._isTouchEnabled != enabled) {
             this._isTouchEnabled = enabled;
 
-            if (this._isRunning) {
+            if (this._running) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
                 } else {
@@ -214,7 +214,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (enabled != this._isAccelerometerEnabled) {
             this._isAccelerometerEnabled = enabled;
 
-            if (this._isRunning) {
+            if (this._running) {
                 var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getAccelerometer().setDelegate(this);
@@ -242,7 +242,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     setKeyboardEnabled:function (enabled) {
         if (enabled != this._isKeyboardEnabled) {
             this._isKeyboardEnabled = enabled;
-            if (this._isRunning) {
+            if (this._running) {
                 var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getKeyboardDispatcher().addDelegate(this);
@@ -736,9 +736,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
         context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
-        if (this._rotation != 0)
-            context.rotate(this._rotationRadians);
-
         cc.INCREMENT_GL_DRAWS(1);
     },
 
@@ -954,7 +951,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {Boolean}
      */
     init:function (start, end, v) {
-
         var argnum = arguments.length;
 
         if (argnum == 0)
@@ -986,14 +982,14 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     _updateColor:function () {
         if (cc.renderContextType === cc.CANVAS) {
-            var tWidth = this.getContentSize().width/2 ;
-            var tHeight = this.getContentSize().height/2;
+            var tWidth = this.getContentSize().width / 2;
+            var tHeight = this.getContentSize().height / 2;
             var apip = this.getAnchorPointInPoints();
             var offWidth = tWidth - apip.x;
             var offHeight = tHeight - apip.y;
 
-            this._gradientStartPoint = cc.p(tWidth * - this._alongVector.x + offWidth , tHeight *  this._alongVector.y - offHeight );
-            this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth , tHeight * -this._alongVector.y - offHeight);
+            this._gradientStartPoint = cc.p(tWidth * -this._alongVector.x + offWidth, tHeight * this._alongVector.y - offHeight);
+            this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth, tHeight * -this._alongVector.y - offHeight);
         } else {
             //todo need fixed for webGL
             this._super();
@@ -1046,23 +1042,22 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             if (this._isLighterMode)
                 context.globalCompositeOperation = 'lighter';
 
+            context.save();
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
             var apip = this.getAnchorPointInPoints();
-            var tGradient = context.createLinearGradient(this._gradientStartPoint.x,this._gradientStartPoint.y,
+            var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
                 this._gradientEndPoint.x, this._gradientEndPoint.y);
-            var curPos = this.getPosition();
-
             tGradient.addColorStop(0, "rgba(" + Math.round(this._color.r) + "," + Math.round(this._color.g) + ","
                 + Math.round(this._color.b) + "," + (this._startOpacity / 255).toFixed(4) + ")");
             tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
                 + Math.round(this._endColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
-
             context.fillStyle = tGradient;
             context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
             if (this._rotation != 0)
                 context.rotate(this._rotationRadians);
+            context.restore();
         }
     }
 });
@@ -1317,7 +1312,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
      */
     visit:function () {
         // quick return if not visible
-        if (!this._isVisible) {
+        if (!this._visible) {
             return;
         }
         if (!this._isNeedUpdate) {
@@ -1354,7 +1349,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
     },
 
     _setNodeDirtyForCache:function () {
-        this._isCacheDirty = true;
+        this._cacheDirty = true;
         this._isNeedUpdate = true;
     }
 });

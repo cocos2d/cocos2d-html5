@@ -70,12 +70,14 @@ cc.computeImageFormatType = function (filename) {
 cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     textures:{},
     _textureColorsCache:{},
+    _textureKeySeq:1000,
 
     /**
      * Constructor
      */
     ctor:function () {
         cc.Assert(cc.g_sharedTextureCache == null, "Attempted to allocate a second instance of a singleton.");
+        this._textureKeySeq += (0|Math.random() * 1000);
     },
 
     /**
@@ -259,6 +261,11 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         return null;
     },
 
+    _generalTextureKey:function(){
+        this._textureKeySeq++;
+        return "_textureKey_" + this._textureKeySeq;
+    },
+
     /**
      * @param {Image} texture
      * @return {Array}
@@ -268,11 +275,11 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      */
     getTextureColors:function (texture) {
         var key = this.getKeyByTexture(texture);
-        if (key) {
+        if (!key) {
             if (texture instanceof HTMLImageElement) {
                 key = texture.src;
             } else {
-                return null;
+                key = this._generalTextureKey();
             }
         }
 
