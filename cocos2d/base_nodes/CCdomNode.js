@@ -196,7 +196,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Boolean} x
      */
     setVisible:function (x) {
-        this._isVisible = x;
+        this._visible = x;
         if (this.dom)
             this.dom.style.visibility = (x) ? 'visible' : 'hidden';
     },
@@ -419,13 +419,13 @@ cc.DOM.forMenuToggler = function (x) {
     x.dom2.addEventListener('mousedown', function () {
         for (var i = 0; i < x._subItems.length; i++) {
             x._subItems[i]._isEnabled = true;
-            x._subItems[i]._isRunning = true;
+            x._subItems[i]._running = true;
             x._subItems[i].selected();
             x._subItems[i]._isEnabled = false;
-            x._subItems[i]._isRunning = false;
+            x._subItems[i]._running = false;
         }
         x._subItems[x.getSelectedIndex()]._isEnabled = true;
-        x._subItems[x.getSelectedIndex()]._isRunning = true;
+        x._subItems[x.getSelectedIndex()]._running = true;
 
     });
     x.dom2.addEventListener('mouseup', function () {

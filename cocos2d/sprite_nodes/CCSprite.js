@@ -551,7 +551,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             //texture = cc.TextureCache.getInstance().addImage(filename);
-            this._isVisible = false;
+            this._visible = false;
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
                 if (!rect) {
@@ -559,7 +559,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 }
                 selfPointer.initWithTexture(loadImg, rect);
                 cc.TextureCache.getInstance().cacheImage(filename, loadImg);
-                selfPointer._isVisible = true;
+                selfPointer._visible = true;
             });
             loadImg.addEventListener("error", function () {
                 cc.log("load failure:" + filename);
@@ -775,7 +775,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this.isDirty()) {
 
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
-            if (!this._isVisible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
+            if (!this._visible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
                 this._quad.br.vertices = this._quad.tl.vertices = this._quad.tr.vertices = this._quad.bl.vertices = cc.vertex3(0, 0, 0);
                 this._shouldBeHidden = true;
             } else {
@@ -861,7 +861,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         tv.skew.x = this._skewX;
         tv.skew.y = this._skewY;
         tv.ap = this._anchorPointInPoints;
-        tv.visible = this._isVisible;
+        tv.visible = this._visible;
         return tv;
     },
 
@@ -1624,7 +1624,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         } else {
             if (this._texture != texture) {
                 if (texture instanceof  HTMLImageElement) {
-                    this._rect = cc.rect(0, 0, texture.width, texture.height);
+                    if(cc.rectEqualToRect(this._rect,cc.RectZero()))
+                        this._rect = cc.rect(0, 0, texture.width, texture.height);
                     this._texture = texture;
                     this._originalTexture = texture;
                 } else {

@@ -1622,7 +1622,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             currentPosition = cc.p(this._position.x, this._position.y);
         }
 
-        if (this._isVisible) {
+        if (this._visible) {
             while (this._particleIdx < this._particleCount) {
                 var selParticle = this._particles[this._particleIdx];
 

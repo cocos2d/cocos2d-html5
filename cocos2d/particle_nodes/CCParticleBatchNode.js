@@ -344,7 +344,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
         // The alternative is to have a void cc.Sprite#visit, but
         // although this is less mantainable, is faster
         //
-        if (!this._isVisible) {
+        if (!this._visible) {
             return;
         }
 
@@ -457,7 +457,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
         child.setParent(this);
 
-        if (this._isRunning) {
+        if (this._running) {
             child.onEnter();
             child.onEnterTransitionDidFinish();
         }
