@@ -172,7 +172,7 @@ cc.HASH_FIND_INT = function (arr, findInt) {
         return null;
     }
     for (var i = 0; i < arr.length; i++) {
-        if (arr[i].target == findInt) {
+        if (arr[i].target === findInt) {
             return arr[i];
         }
     }

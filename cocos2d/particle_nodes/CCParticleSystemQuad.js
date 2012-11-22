@@ -768,9 +768,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
  */
 cc.ParticleSystemQuad.create = function (pListFile) {
     var ret = new cc.ParticleSystemQuad();
-    if (!pListFile) {
+    if (!pListFile || typeof(pListFile) === "number") {
+        var ton = pListFile || 100;
         ret.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
-        ret.initWithTotalParticles(100);
+        ret.initWithTotalParticles(ton);
         return ret;
     }
 
