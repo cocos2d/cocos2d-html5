@@ -1848,8 +1848,8 @@ cc.ParticleSystem.create = function (plistFile) {
 };
 
 cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    var emitter = cc.ParticleSystemQuad.create();
-    emitter.initWithTotalParticles(number_of_particles);
+    var emitter = cc.ParticleSystemQuad.create(number_of_particles);
+    //emitter.initWithTotalParticles(number_of_particles);
     return emitter;
 };
 
