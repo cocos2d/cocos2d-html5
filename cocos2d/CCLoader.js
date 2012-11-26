@@ -156,6 +156,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
         var sharedParser = cc.SAXParser.getInstance();
         var sharedFileUtils = cc.FileUtils.getInstance();
 
+        this.loadedResourceCount = 0;
         this.resourceCount = res.length;
         for (var i = 0; i < res.length; i++) {
             switch (res[i].type) {
