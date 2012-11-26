@@ -58,7 +58,7 @@
 
             //s.src = 'Packed_Release_File.js'; //IMPORTANT: Un-comment this line if you have packed all files into one
 
-        s.c = c;
+        document.ccConfig = c;
         s.id = 'cocos2d-html5';
         d.body.appendChild(s);
         //else if single file specified, load singlefile
