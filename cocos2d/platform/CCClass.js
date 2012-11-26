@@ -83,7 +83,7 @@ ClassManager.getNewID=function(){
 
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
-    var releaseMode = document.querySelector('#cocos2d-html5')['c']['CLASS_RELEASE_MODE'];
+    var releaseMode = document['ccConfig']['CLASS_RELEASE_MODE'];
     if(releaseMode)
     {
         console.log("release Mode");
