@@ -41,6 +41,8 @@ cc.ControlEditBox = cc.Node.extend({
         this._edTxt.style.paddingLeft = "2px";
         this._edTxt.style.width = "100%";
         this._edTxt.style.height = "100%";
+        this._edTxt.style.active = 0;
+        this._edTxt.style.outline = "medium";
 
         this._edDiv.appendChild(this._edTxt);
 
@@ -117,7 +119,6 @@ cc.ControlEditBox = cc.Node.extend({
      this._edDiv.zIndex = z;
   },
 
-//设置背景图片
     setImgStyle:function(url)
     {
         this._edDiv.style.backgroundImage = "url('"+url+"')";
