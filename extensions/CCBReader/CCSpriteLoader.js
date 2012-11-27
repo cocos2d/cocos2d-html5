@@ -79,7 +79,8 @@ cc.SpriteLoader.loader = function () {
 
 var PROPERTY_TOUCH_ENABLED = "isTouchEnabled";
 var PROPERTY_ACCELEROMETER_ENABLED = "isAccelerometerEnabled";
-var PROPERTY_MOUSE_ENABLED = "isMouseEnabled";
+var PROPERTY_IS_MOUSE_ENABLED = "isMouseEnabled";
+var PROPERTY_MOUSE_ENABLED = "mouseEnabled";
 var PROPERTY_KEYBOARD_ENABLED = "isKeyboardEnabled";
 
 cc.LayerLoader = cc.NodeLoader.extend({
@@ -91,9 +92,8 @@ cc.LayerLoader = cc.NodeLoader.extend({
             node.setTouchEnabled(check);
         } else if (propertyName == PROPERTY_ACCELEROMETER_ENABLED) {
             node.setAccelerometerEnabled(check);
-        } else if (propertyName == PROPERTY_MOUSE_ENABLED) {
-            // TODO XXX
-            cc.log("The property '" + PROPERTY_MOUSE_ENABLED + "' is not supported!");
+        } else if (propertyName == PROPERTY_IS_MOUSE_ENABLED || propertyName == PROPERTY_MOUSE_ENABLED ) {
+           node.setMouseEnabled(check)
         } else if (propertyName == PROPERTY_KEYBOARD_ENABLED) {
             // TODO XXX
             cc.log("The property '" + PROPERTY_KEYBOARD_ENABLED + "' is not supported!");

@@ -183,6 +183,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
         }
     },
 
+    runAnimationsForSequenceNamed:function(name){
+        this.runAnimations(name);
+    },
+
     runAnimations:function (name, tweenDuration) {
         var nSeqId;
         if(typeof(name) === "string")
@@ -241,6 +245,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
     setAnimationCompletedCallback:function(target,callbackFunc){
         this._target = target;
         this._animationCompleteCallbackFunc = callbackFunc;
+    },
+
+    setCompletedAnimationCallback:function(target,callbackFunc){
+        this.setAnimationCompletedCallback(target,callbackFunc);
     },
 
     debug:function () {
@@ -458,8 +466,16 @@ cc.BuilderAnimationManager = cc.Class.extend({
     },
 
     _sequenceCompleted:function () {
+        if(this._lastCompletedSequenceName != this._runningSequence.getName()){
+            this._lastCompletedSequenceName = this._runningSequence.getName();
+        }
+
         if (this._delegate)
             this._delegate.completedAnimationSequenceNamed(this._runningSequence.getName());
+
+        if(this._target && this._animationCompleteCallbackFunc){
+            this._animationCompleteCallbackFunc.call(this._target);
+        }
 
         var nextSeqId = this._runningSequence.getChainedSequenceId();
         this._runningSequence = null;
