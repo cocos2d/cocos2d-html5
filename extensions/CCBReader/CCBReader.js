@@ -677,7 +677,6 @@ cc.BuilderReader = cc.Class.extend({
 
         if(this._jsControlled && node == this._actionManager.getRootNode()){
             this._actionManager.setDocumentControllerName(jsControlledName);
-            cc.__myAnimationManager = this._actionManager;
         }
 
 
