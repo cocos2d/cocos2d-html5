@@ -106,8 +106,8 @@ cc.BuilderAnimationManager = cc.Class.extend({
         this._documentControllerName = name;
     },
 
-    getDocumentControllerName:function(name){
-        return this._documentControllerName = name;
+    getDocumentControllerName:function(){
+        return this._documentControllerName;
     },
 
     getDocumentCallbackNames:function(){
