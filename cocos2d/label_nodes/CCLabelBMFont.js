@@ -154,7 +154,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     },
 
     _parseConfigFile:function (controlFile) {
-        var data = cc.SAXParser.getInstance().getList(controlFile);
+        var data = cc.SAXParser.getInstance().getList(cc.FileUtils.getInstance().fullPathFromRelativePath(controlFile));
         cc.Assert(data, "cc.BMFontConfiguration._parseConfigFile | Open file error.");
 
         // parse spacing / padding
