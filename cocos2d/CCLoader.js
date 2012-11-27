@@ -121,6 +121,23 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
      */
     onloading:undefined,
 
+    _registerFaceFont:function (fontRes) {
+        var srcArr = fontRes.srcArr;
+        if (fontRes.srcArr && srcArr.length > 0) {
+            var fontStyle = document.createElement("style");
+            fontStyle.type = "text/css";
+            document.body.appendChild(fontStyle);
+
+            var fontStr = "@font-face { font-family:" + fontRes.fontName + "; src:";
+            for (var i = 0; i < srcArr.length; i++) {
+                fontStr += "url('" + encodeURI(srcArr[i].src) + "') format('" + srcArr[i].type + "')";
+                fontStr += (i == (srcArr.length - 1)) ? ";" : ",";
+            }
+            fontStyle.textContent += fontStr + "};";
+        }
+        cc.Loader.getInstance().onResLoaded();
+    },
+
     /**
      * Pre-load the resources before engine start game main loop.
      * There will be some error without pre-loading resources.
@@ -139,6 +156,7 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
         var sharedParser = cc.SAXParser.getInstance();
         var sharedFileUtils = cc.FileUtils.getInstance();
 
+        this.loadedResourceCount = 0;
         this.resourceCount = res.length;
         for (var i = 0; i < res.length; i++) {
             switch (res[i].type) {
@@ -162,6 +180,9 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
                 case "ccbi":
                 case "binary":
                     sharedFileUtils.preloadBinaryFileData(res[i].src);
+                    break;
+                case "face-font":
+                    this._registerFaceFont(res[i]);
                     break;
                 default:
                     throw "cocos2d:unknow type : " + res[i].type;

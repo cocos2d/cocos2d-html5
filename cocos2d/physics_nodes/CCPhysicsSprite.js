@@ -56,6 +56,7 @@
         setPosition:function (p) {
             var angle = this._body.GetAngle();
             this._body.setTransform(Box2D.b2Vec2(p.x / this._PTMRatio, p.y / this._PTMRatio), angle);
+            this.setNodeDirty();
         },
         getRotation:function () {
             return (this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadians) : cc.RADIANS_TO_DEGREES(this._body.GetAngle()));
@@ -68,6 +69,7 @@
                 var p = this._body.GetPosition();
                 this._body.SetTransform(p, cc.DEGREES_TO_RADIANS(r));
             }
+            this.setNodeDirty();
         },
         _syncPosition:function () {
             var pos = this._body.GetPosition();
@@ -108,7 +110,10 @@
             //this._syncPosition();
         },
         _syncPosition:function () {
-            this._position = {x:this._body.p.x, y:this._body.p.y};
+            if(this._position.x != this._body.p.x || this._position.y != this._body.p.y){
+                this._position = {x:this._body.p.x, y:this._body.p.y};
+                this.setNodeDirty();
+            }
         },
         getRotation:function () {
             return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadians) : -cc.RADIANS_TO_DEGREES(this._body.a)
@@ -123,7 +128,10 @@
             }
         },
         _syncRotation:function () {
-            this._rotationRadians = -this._body.a;
+            if(this._rotationRadians != -this._body.a){
+                this._rotationRadians = -this._body.a;
+                this.setNodeDirty();
+            }
         },
         visit:function (ctx) {
             if (this._body) {

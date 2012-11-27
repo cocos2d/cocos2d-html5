@@ -102,7 +102,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     setMouseEnabled:function (enabled) {
         if (this._isMouseEnabled != enabled) {
             this._isMouseEnabled = enabled;
-            if (this._isRunning) {
+            if (this._running) {
                 if (enabled)
                     cc.Director.getInstance().getMouseDispatcher().addMouseDelegate(this, this._mousePriority);
                 else
@@ -144,7 +144,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (this._isTouchEnabled != enabled) {
             this._isTouchEnabled = enabled;
 
-            if (this._isRunning) {
+            if (this._running) {
                 if (enabled) {
                     this.registerWithTouchDispatcher();
                 } else {
@@ -214,7 +214,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         if (enabled != this._isAccelerometerEnabled) {
             this._isAccelerometerEnabled = enabled;
 
-            if (this._isRunning) {
+            if (this._running) {
                 var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getAccelerometer().setDelegate(this);
@@ -242,7 +242,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     setKeyboardEnabled:function (enabled) {
         if (enabled != this._isKeyboardEnabled) {
             this._isKeyboardEnabled = enabled;
-            if (this._isRunning) {
+            if (this._running) {
                 var director = cc.Director.getInstance();
                 if (enabled) {
                     director.getKeyboardDispatcher().addDelegate(this);
@@ -736,9 +736,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
         context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
-        if (this._rotation != 0)
-            context.rotate(this._rotationRadians);
-
         cc.INCREMENT_GL_DRAWS(1);
     },
 
@@ -813,8 +810,8 @@ cc.LayerColor.create = function (color, width, height) {
  * @extends cc.LayerColor
  */
 cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
-    _startColor:new cc.Color3B(0, 0, 0),
-    _endColor:new cc.Color3B(0, 0, 0),
+    _startColor:null,
+    _endColor:null,
     _startOpacity:null,
     _endOpacity:null,
     _alongVector:null,
@@ -830,9 +827,12 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     ctor:function () {
         this._super();
 
+        this._color = new cc.Color3B(0, 0, 0);
         this._startColor = new cc.Color3B(0, 0, 0);
         this._endColor = new cc.Color3B(0, 0, 0);
         this._alongVector = cc.p(0, -1);
+        this._startOpacity = 255;
+        this._endOpacity = 255;
 
         this._gradientStartPoint = cc.p(0, 0);
         this._gradientEndPoint = cc.p(0, 0);
@@ -951,7 +951,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
      * @return {Boolean}
      */
     init:function (start, end, v) {
-
         var argnum = arguments.length;
 
         if (argnum == 0)
@@ -983,14 +982,14 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
     _updateColor:function () {
         if (cc.renderContextType === cc.CANVAS) {
-            var tWidth = this.getContentSize().width/2 ;
-            var tHeight = this.getContentSize().height/2;
+            var tWidth = this.getContentSize().width / 2;
+            var tHeight = this.getContentSize().height / 2;
             var apip = this.getAnchorPointInPoints();
             var offWidth = tWidth - apip.x;
             var offHeight = tHeight - apip.y;
 
-            this._gradientStartPoint = cc.p(tWidth * - this._alongVector.x + offWidth , tHeight *  this._alongVector.y - offHeight );
-            this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth , tHeight * -this._alongVector.y - offHeight);
+            this._gradientStartPoint = cc.p(tWidth * -this._alongVector.x + offWidth, tHeight * this._alongVector.y - offHeight);
+            this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth, tHeight * -this._alongVector.y - offHeight);
         } else {
             //todo need fixed for webGL
             this._super();
@@ -1010,7 +1009,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
 
             var opacityf = this._opacity / 255.0;
 
-            var S = new cc.Color4F(this._startColor.r / 255, this._startColor.g / 255, this._startColor.b / 255, (this._startOpacity * opacityf) / 255);
+            var S = new cc.Color4F(this._color.r / 255, this._color.g / 255, this._color.b / 255, (this._startOpacity * opacityf) / 255);
 
             var E = new cc.Color4F(this._endColor.r / 255, this._endColor.g / 255, this._endColor.b / 255, (this._endOpacity * opacityf) / 255);
 
@@ -1043,22 +1042,22 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             if (this._isLighterMode)
                 context.globalCompositeOperation = 'lighter';
 
+            context.save();
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
             var apip = this.getAnchorPointInPoints();
-            var tGradient = context.createLinearGradient(this._gradientStartPoint.x,this._gradientStartPoint.y,
+            var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
                 this._gradientEndPoint.x, this._gradientEndPoint.y);
-
-            tGradient.addColorStop(0, "rgba(" + Math.round(this._startColor.r) + "," + Math.round(this._startColor.g) + ","
-                + Math.round(this._startColor.b) + "," + (this._startOpacity / 255).toFixed(4) + ")");
+            tGradient.addColorStop(0, "rgba(" + Math.round(this._color.r) + "," + Math.round(this._color.g) + ","
+                + Math.round(this._color.b) + "," + (this._startOpacity / 255).toFixed(4) + ")");
             tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
                 + Math.round(this._endColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
-
             context.fillStyle = tGradient;
             context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
             if (this._rotation != 0)
                 context.rotate(this._rotationRadians);
+            context.restore();
         }
     }
 });
@@ -1313,7 +1312,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
      */
     visit:function () {
         // quick return if not visible
-        if (!this._isVisible) {
+        if (!this._visible) {
             return;
         }
         if (!this._isNeedUpdate) {
@@ -1350,7 +1349,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
     },
 
     _setNodeDirtyForCache:function () {
-        this._isCacheDirty = true;
+        this._cacheDirty = true;
         this._isNeedUpdate = true;
     }
 });

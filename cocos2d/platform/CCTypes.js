@@ -50,9 +50,9 @@ cc.Color3B = function (r1, g1, b1) {
             break;
         case 1:
             if (r1 && r1 instanceof cc.Color3B) {
-                this.r = r1.r || 0;
-                this.g = r1.g || 0;
-                this.b = r1.b || 0;
+                this.r = (0|r1.r) || 0;
+                this.g = (0|r1.g) || 0;
+                this.b = (0|r1.b) || 0;
             } else {
                 this.r = 0;
                 this.g = 0;
@@ -60,9 +60,9 @@ cc.Color3B = function (r1, g1, b1) {
             }
             break;
         case 3:
-            this.r = r1 || 0;
-            this.g = g1 || 0;
-            this.b = b1 || 0;
+            this.r = (0|r1) || 0;
+            this.g = (0|g1) || 0;
+            this.b = (0|b1) || 0;
             break;
         default:
             throw "unknown argument type";
@@ -192,10 +192,10 @@ cc.gray = function () {
  * var redColor = new cc.Color4B(255,0,0,255);
  */
 cc.Color4B = function (r1, g1, b1, a1) {
-    this.r = r1;
-    this.g = g1;
-    this.b = b1;
-    this.a = a1;
+    this.r = 0|r1;
+    this.g = 0|g1;
+    this.b = 0|b1;
+    this.a = 0|a1;
 };
 
 /**

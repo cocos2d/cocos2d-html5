@@ -136,23 +136,25 @@ cc.DrawNode = cc.Node.extend({
         for (var i = 0; i < this._buffer.length; i++) {
             var element = this._buffer[i];
             if (element.type === cc.DRAWNODE_TYPE_DOT) {
-                context.fillStyle = "rgba(" + element.color.r * 255 + "," + element.color.g * 255 + "," + element.color.b * 255 + "," + element.color.a + ")";
+                context.fillStyle = "rgba(" + (0|(element.color.r * 255)) + "," + (0|(element.color.g * 255)) + "," + (0|(element.color.b * 255)) + "," + element.color.a + ")";
                 cc.drawingUtil.drawPoint(element.position, element.radius);
             }
 
             if (element.type === cc.DRAWNODE_TYPE_SEGMENT) {
-                context.strokeStyle = "rgba(" + element.color.r * 255 + "," + element.color.g * 255 + "," + element.color.b * 255 + "," + element.color.a + ")";
+                context.strokeStyle = "rgba(" + (0|(element.color.r * 255)) + "," + (0|(element.color.g * 255)) + "," + (0|(element.color.b * 255)) + "," + element.color.a + ")";
                 context.lineWidth = element.radius;
                 context.lineCap = "round";
                 cc.drawingUtil.drawLine(element.from, element.to);
             }
 
             if (element.type === cc.DRAWNODE_TYPE_POLY) {
-                context.fillStyle = "rgba(" + element.fillColor.r * 255 + "," + element.fillColor.g * 255 + "," + element.fillColor.b * 255 + "," + element.fillColor.a + ")";
+                context.fillStyle = "rgba(" + (0|(element.fillColor.r * 255)) + "," + (0|(element.fillColor.g * 255)) + ","
+                    + (0|(element.fillColor.b * 255)) + "," + element.fillColor.a + ")";
                 cc.drawingUtil.drawPoly(element.verts, element.count, false, true);
                 context.lineWidth = element.borderWidth;
                 context.lineCap = "round";
-                context.strokeStyle = "rgba(" + element.borderColor.r * 255 + "," + element.borderColor.g * 255 + "," + element.borderColor.b * 255 + "," + element.borderColor.a + ")";
+                context.strokeStyle = "rgba(" + (0|(element.borderColor.r * 255)) + "," + (0|(element.borderColor.g * 255)) + ","
+                    + (0|(element.borderColor.b * 255)) + "," + element.borderColor.a + ")";
                 cc.drawingUtil.drawPoly(element.verts, element.count, false, false);
             }
         }
@@ -201,7 +203,7 @@ cc.DrawNode = cc.Node.extend({
     },
 
     /** draw a segment with a radius and color */
-    drawSegmentFrom:function (a, b, radius, color) {
+    drawSegment:function (a, b, radius, color) {
         var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_SEGMENT);
         element.from = a;
         element.to = b;
@@ -378,6 +380,13 @@ cc.DrawNode = cc.Node.extend({
         this._dirty = true;
     }
 });
+
+cc.DrawNode.create = function(){
+   var ret = new cc.DrawNode();
+    if(ret && ret.init())
+        return ret;
+    return null;
+};
 
 cc._DrawNodeElement = function (type) {
     this.type = type;

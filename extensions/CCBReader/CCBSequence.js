@@ -24,15 +24,75 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.NodeLoaderListener = cc.Class.extend({
-    onNodeLoaded:function(node,nodeLoader){}
+cc.BuilderSequence = cc.Class.extend({
+    _duration:0,
+    _name:"",
+    _sequenceId:0,
+    _chainedSequenceId:0,
+
+    ctor:function(){
+        this._name = "";
+    },
+
+    getDuration:function(){
+        return this._duration;
+    },
+    setDuration:function(duration){
+        this._duration = duration;
+    },
+
+    getName:function(){
+        return this._name;
+    },
+    setName:function(name){
+        this._name = name;
+    },
+
+    getSequenceId:function(){
+        return this._sequenceId;
+    },
+    setSequenceId:function(sequenceId){
+        this._sequenceId = sequenceId;
+    },
+
+    getChainedSequenceId:function(){
+        return this._chainedSequenceId;
+    },
+    setChainedSequenceId:function(chainedSequenceId){
+        this._chainedSequenceId = chainedSequenceId;
+    }
 });
 
-cc.BuilderSelectorResolver = cc.Class.extend({
-    onResolveCCBCCMenuItemSelector:function(target, selectorName){},
-    onResolveCCBCCControlSelector:function(target,selectorName){}
-});
+cc.BuilderSequenceProperty = cc.Class.extend({
+    _name : null,
+    _type:0,
+    _keyFrames:null,
 
-cc.BuilderScriptOwnerProtocol = cc.Class.extend({
-    createNew:function(){}
+    ctor:function(){
+        this.init();
+    },
+
+    init:function(){
+        this._keyFrames = [];
+        this._name = "";
+    },
+
+    getName:function(){
+        return this._name;
+    },
+
+    setName :function(name){
+        this._name = name;
+    },
+
+    getType:function(){
+        return this._type;
+    },
+    setType :function(type){
+        this._type = type;
+    },
+
+    getKeyframes:function(){
+        return this._keyFrames;
+    }
 });

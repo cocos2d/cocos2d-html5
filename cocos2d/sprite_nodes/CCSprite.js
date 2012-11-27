@@ -416,7 +416,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        this._blendFunc = {src:src, dst:dst};
+        if (arguments.length == 1)
+            this._blendFunc = src;
+        else
+            this._blendFunc = {src:src, dst:dst};
 
         this._isLighterMode = (this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE));
     },
@@ -426,6 +429,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {Boolean}
      */
     init:function () {
+        this._super();
+
         this._dirty = this._recursiveDirty = false;
 
         this._opacityModifyRGB = true;
@@ -546,7 +551,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             //texture = cc.TextureCache.getInstance().addImage(filename);
-            this._isVisible = false;
+            this._visible = false;
             var loadImg = new Image();
             loadImg.addEventListener("load", function () {
                 if (!rect) {
@@ -554,7 +559,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 }
                 selfPointer.initWithTexture(loadImg, rect);
                 cc.TextureCache.getInstance().cacheImage(filename, loadImg);
-                selfPointer._isVisible = true;
+                selfPointer._visible = true;
             });
             loadImg.addEventListener("error", function () {
                 cc.log("load failure:" + filename);
@@ -770,7 +775,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this.isDirty()) {
 
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
-            if (!this._isVisible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
+            if (!this._visible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
                 this._quad.br.vertices = this._quad.tl.vertices = this._quad.tr.vertices = this._quad.bl.vertices = cc.vertex3(0, 0, 0);
                 this._shouldBeHidden = true;
             } else {
@@ -856,7 +861,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         tv.skew.x = this._skewX;
         tv.skew.y = this._skewY;
         tv.ap = this._anchorPointInPoints;
-        tv.visible = this._isVisible;
+        tv.visible = this._visible;
         return tv;
     },
 
@@ -1168,8 +1173,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     setPosition:function (pos) {
-        if(arguments.length >= 2)
-            cc.Node.prototype.setPosition.call(this, pos,arguments[1]);
+        if (arguments.length >= 2)
+            cc.Node.prototype.setPosition.call(this, pos, arguments[1]);
         else
             cc.Node.prototype.setPosition.call(this, pos);
         this.SET_DIRTY_RECURSIVELY();
@@ -1618,11 +1623,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             }
         } else {
             if (this._texture != texture) {
-                if(texture instanceof  HTMLImageElement){
-                    this._rect = cc.rect(0, 0, texture.width, texture.height);
+                if (texture instanceof  HTMLImageElement) {
+                    if(cc.rectEqualToRect(this._rect,cc.RectZero()))
+                        this._rect = cc.rect(0, 0, texture.width, texture.height);
                     this._texture = texture;
                     this._originalTexture = texture;
-                }else {
+                } else {
                     this._texture = texture;
                     this._updateBlendFunc();
                 }
@@ -1709,8 +1715,8 @@ cc.Sprite.createWithTexture = function (texture, rect, offset) {
 cc.Sprite.create = function (fileName, rect) {
     var argnum = arguments.length;
     var sprite = new cc.Sprite();
-    if( argnum === 0 ) {
-        if( sprite.init() )
+    if (argnum === 0) {
+        if (sprite.init())
             return sprite;
         return null;
     } else if (argnum < 2) {

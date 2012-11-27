@@ -302,14 +302,14 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     setNodeDirty:function () {
         this._setNodeDirtyForCache();
-        this._isTransformDirty = this._isInverseDirty = true;
+        this._transformDirty = this._inverseDirty = true;
         if (cc.NODE_TRANSFORM_USING_AFFINE_MATRIX) {
-            this._isTransformGLDirty = true;
+            this._transformGLDirty = true;
         }
     },
 
     _setNodeDirtyForCache:function () {
-        this._isCacheDirty = true;
+        this._cacheDirty = true;
     },
 
     /**
@@ -615,7 +615,10 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        this._blendFunc = {src:src, dst:dst};
+        if(arguments.length == 1)
+            this._blendFunc = src;
+        else
+            this._blendFunc = {src:src, dst:dst};
     },
 
     /**
@@ -635,14 +638,14 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (cc.renderContextType == cc.CANVAS) {
             var context = ctx || cc.renderContext;
             // quick return if not visible
-            if (!this._isVisible) {
+            if (!this._visible) {
                 return;
             }
             context.save();
             this.transform(ctx);
             var i;
             if (this._isUseCache) {
-                if (this._isCacheDirty) {
+                if (this._cacheDirty) {
                     //add dirty region
                     this._renderTexture.clear();
                     this._renderTexture.context.save();
@@ -656,7 +659,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                         }
                     }
                     this._renderTexture.context.restore();
-                    this._isCacheDirty = false;
+                    this._cacheDirty = false;
                 }
                 // draw RenderTexture
                 this.draw(ctx);
@@ -682,7 +685,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             // The alternative is to have a void CCSprite#visit, but
             // although this is less mantainable, is faster
             //
-            if (!this._isVisible) {
+            if (!this._visible) {
                 return;
             }
 
