@@ -203,7 +203,7 @@ cc.DrawNode = cc.Node.extend({
     },
 
     /** draw a segment with a radius and color */
-    drawSegmentFrom:function (a, b, radius, color) {
+    drawSegment:function (a, b, radius, color) {
         var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_SEGMENT);
         element.from = a;
         element.to = b;
