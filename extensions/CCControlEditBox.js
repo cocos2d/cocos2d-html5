@@ -1,9 +1,27 @@
-/**
- * Created with JetBrains WebStorm.
- * User: Administrator
- * Date: 12-11-21
- * Time: 上午11:40
- * To change this template use File | Settings | File Templates.
+/*
+ * CCControlButton.m
+ *
+ * Copyright (c) 2010-2012 cocos2d-x.org
+ * Copyright 2012 Yannick Loriot.
+ * http://yannickloriot.com
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 cc.ControlEditBox = cc.Node.extend({
       _edDiv : null,
@@ -49,54 +67,45 @@ cc.ControlEditBox = cc.Node.extend({
     },
 
     onEnter:function(){
-         //alert("onEnter");
+        //
     },
 
     onExit:function(){
        this.hideEditBox();
     },
 
-    //设置宽
     setWidth : function(w)
    {
        this._edWidth = w;
        this._edDiv.style.width = w.toString()+"px";
    },
-   //设置高
     setHeight : function(h)
    {
        this._edHeight = h;
        this._edDiv.style.height = h.toString()+"px";
    },
- //设置字号
    setFontSize : function(size)
   {
       this._edFontSize = size;
       this._edTxt.style.fontSize = this._edFontSize+"px";
   },
- //设置editbox文字
   setDefaultValue : function(st)
  {
      this._edTxt.value = st;
  },
- //设置字体颜色
- //接受一个字符串作为颜色参数
   setFontColor : function(clrSt)
   {
      this._edTxt.style.color = clrSt;
   },
- //设置背景色
   setBgClr : function(clrSt)
   {
      this._edDiv.style.backgroundColor = clrSt;
   },
- //设置边框颜色
   setBorderClr : function(clrSt)
  {
      this._edDiv.style.borderColor = clrSt;
  },
 
- //设置maxlength值
   setMaxLength : function(n)
  {
      if(!isNaN(n) && n>0)
@@ -105,7 +114,6 @@ cc.ControlEditBox = cc.Node.extend({
      }
  },
 
-    //设置位置
   setPosition : function(x,y)
  {
      this._edDiv.style.position ="absolute";
@@ -113,7 +121,6 @@ cc.ControlEditBox = cc.Node.extend({
      this._edDiv.style.top =  y.toString()+"px";
  },
 
-  //设置zIndex
    setZIndex:function(z)
   {
      this._edDiv.zIndex = z;
@@ -126,18 +133,15 @@ cc.ControlEditBox = cc.Node.extend({
     },
 
 
-//设置密码样式
   setPasswordStyle:function()
   {
       this._edTxt.type ="password";
   },
-    //返回editBox的值
     getTxtValue : function()
     {
         return this._edTxt.value;
     },
 
-    //隐藏EditBox
     hideEditBox : function()
     {
         this._edDiv.style.display = "none";
