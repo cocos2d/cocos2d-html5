@@ -267,9 +267,12 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         // then iterate over all the children
         this._super();
 
+        //TODO not supported
         // add this layer to concern the Accelerometer Sensor
-        if (this._isAccelerometerEnabled)
-            director.getAccelerometer().setDelegate(this);
+/*        if (this._isAccelerometerEnabled){
+           director.getAccelerometer().setDelegate(this);
+        }*/
+
 
         // add this layer to concern the kaypad msg
         if (this._isKeyboardEnabled)
@@ -289,9 +292,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // remove this layer from the delegates who concern Accelerometer Sensor
-        if (this._isAccelerometerEnabled) {
+        //TODO not supported
+/*        if (this._isAccelerometerEnabled) {
             director.getAccelerometer().setDelegate(null);
-        }
+        }*/
 
         // remove this layer from the delegates who concern the kaypad msg
         if (this._isKeyboardEnabled) {
@@ -308,9 +312,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * this is called when ever a layer is a child of a scene that just finished a transition
      */
     onEnterTransitionDidFinish:function () {
-        if (this._isAccelerometerEnabled) {
+        //TODO not supported
+        /*if (this._isAccelerometerEnabled) {
             cc.Director.getInstance().getAccelerometer().setDelegate(this);
-        }
+        }*/
         this._super();
     },
 
