@@ -50,10 +50,10 @@ cc.DrawShape = function (shape, renderer) {
     switch (shape.collisionCode) {
         case cp.CircleShape.prototype.collisionCode:
             this.drawDot(shape.tc, Math.max(shape.r, 1.0), color);
-            this.drawSegmentFrom(shape.tc, cp.v.add(shape.tc, cp.v.mult(body.rot, shape.r)), 1.0, color);
+            this.drawSegment(shape.tc, cp.v.add(shape.tc, cp.v.mult(body.rot, shape.r)), 1.0, color);
             break;
         case cp.SegmentShape.prototype.collisionCode:
-            this.drawSegmentFrom(shape.ta, shape.tb, Math.max(shape.r, 2.0), color);
+            this.drawSegment(shape.ta, shape.tb, Math.max(shape.r, 2.0), color);
             break;
         case cp.PolyShape.prototype.collisionCode:
             var line = cc.c4f(color.r, color.g, color.b, cc.lerp(color.a, 1.0, 0.5));
@@ -74,14 +74,14 @@ cc.DrawConstraint = function (constraint, renderer) {
         b = body_b.local2World(constraint.anchr2);
         this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
         this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawSegmentFrom(a, b, 1.0, cc.CONSTRAINT_COLOR);
+        this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
     } else if (constraint instanceof cp.SlideJoint) {
         a = body_a.local2World(constraint.anchr1);
         b = body_b.local2World(constraint.anchr2);
 
         this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
         this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawSegmentFrom(a, b, 1.0, cc.CONSTRAINT_COLOR);
+        this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
     } else if (constraint instanceof cp.PivotJoint) {
         a = body_a.local2World(constraint.anchr1);
         b = body_b.local2World(constraint.anchr2);
@@ -93,7 +93,7 @@ cc.DrawConstraint = function (constraint, renderer) {
         var c = body_b.local2World(constraint.anchr2);
 
         this.drawDot(c, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawSegmentFrom(a, b, 1.0, cc.CONSTRAINT_COLOR);
+        this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
     } else if (constraint instanceof cp.DampedSpring) {
         // TODO
     } else {
