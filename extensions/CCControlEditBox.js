@@ -35,6 +35,8 @@ cc.ControlEditBox = cc.Node.extend({
       _posX : 0,
       _posY : 0,
       _id:"",
+      _passwordMode:1,
+      _textMode:2,
 
     ctor:function(w,h,size){
         this._super();
@@ -64,6 +66,9 @@ cc.ControlEditBox = cc.Node.extend({
 
         this._edDiv.appendChild(this._edTxt);
 
+        this.passwordMode = 1;
+        this.textMode = 2;
+
     },
 
     onEnter:function(){
@@ -89,28 +94,28 @@ cc.ControlEditBox = cc.Node.extend({
       this._edFontSize = size;
       this._edTxt.style.fontSize = this._edFontSize+"px";
   },
-  setDefaultValue : function(st)
+  setText : function(pText)
  {
-     this._edTxt.value = st;
+     this._edTxt.value = pText;
  },
-  setFontColor : function(clrSt)
+  setFontColor : function(color)
   {
-     this._edTxt.style.color = clrSt;
+     this._edTxt.style.color = color;
   },
-  setBgClr : function(clrSt)
+  setBgClr : function(color)
   {
-     this._edDiv.style.backgroundColor = clrSt;
+     this._edDiv.style.backgroundColor = color;
   },
-  setBorderClr : function(clrSt)
+  setBorderClr : function(color)
  {
-     this._edDiv.style.borderColor = clrSt;
+     this._edDiv.style.borderColor = color;
  },
 
-  setMaxLength : function(n)
+  setMaxLength : function(maxLength)
  {
-     if(!isNaN(n) && n>0)
+     if(!isNaN(maxLength) && maxLength>0)
      {
-         this._edTxt.maxLength = n;
+         this._edTxt.maxLength = maxLength;
      }
  },
 
@@ -133,11 +138,20 @@ cc.ControlEditBox = cc.Node.extend({
     },
 
 
-  setPasswordStyle:function()
+  setInputMode:function(inputMode)
   {
-      this._edTxt.type ="password";
+      var cInput = inputMode.toLocaleLowerCase();
+      if(cInput == "password")
+      {
+          this._edTxt.type ="password";
+      }
+      else if(cInput == "text")
+      {
+          this._edTxt.type = "text";
+      }
+
   },
-    getTxtValue : function()
+    getText : function()
     {
         return this._edTxt.value;
     },
