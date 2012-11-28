@@ -188,6 +188,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
     },
 
     runAnimations:function (name, tweenDuration) {
+        tweenDuration = tweenDuration || 0;
         var nSeqId;
         if(typeof(name) === "string")
             nSeqId = this._getSequenceId(name);
@@ -364,19 +365,18 @@ cc.BuilderAnimationManager = cc.Class.extend({
                 cc.setRelativeScale(node,x,y,nType,propName);
             }else {
                 // [node setValue:value forKey:name];
-
                 // TODO only handle rotation, opacity, displayFrame, color
                 if(propName === "rotation"){
-                    //var rotate = ((CCBValue*)pValue).getFloatValue();
                     node.setRotation(value);
                 } else if(propName === "opacity"){
-                    //var opacity = ((CCBValue*)pValue).getByteValue();
                     node.setOpacity(value);
                 } else if(propName === "displayFrame"){
                     node.setDisplayFrame(value);
                 } else if(propName === "color"){
-                    //var color = (ccColor3BWapper*)pValue;
                     node.setColor(value.getColor());
+                } else if( propName === "visible"){
+                    value = value || false;
+                    node.setVisible(value);
                 } else {
                     cc.log("unsupported property name is "+ propName);
                     cc.Assert(false, "unsupported property now");

@@ -166,12 +166,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
      * @return {cc.Texture2D|HTMLImageElement}
      */
     getTexture:function () {
-        if (this._texture) {
+        if (this._texture)
             return this._texture;
-        }
-        if (this._textureFilename != "") {
+        if (this._textureFilename !== "")
             return cc.TextureCache.getInstance().addImage(this._textureFilename);
-        }
         return null;
     },
 
