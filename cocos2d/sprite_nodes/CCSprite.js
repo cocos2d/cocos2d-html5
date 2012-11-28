@@ -245,7 +245,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _blendFunc:{src:cc.BLEND_SRC, dst:cc.BLEND_DST},
     _texture:null,
     _originalTexture:null,
-    _color:cc.white(),
+    _color:null,
     //
     // Shared data
     //
@@ -279,6 +279,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
+        this._color = cc.white();
 
         if (fileName) {
             if (typeof(fileName) == "string") {
@@ -1420,20 +1421,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
 
         this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
-        if (this.getTexture()) {
-            if (cc.renderContextType == cc.CANVAS) {
-                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
-                if (cacheTextureForColor) {
-                    //generate color texture cache
-                    if (this._texture instanceof HTMLCanvasElement) {
-                        cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect(), this._texture);
-                    } else {
-                        var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect());
-                        this.setTexture(colorTexture);
-                    }
-                }
-            }
-        }
+        this._changeTextureColor();
+
         /*
          if (this._opacityModifyRGB) {
          this._color.r = Math.round(color3.r * this._opacity / 255);
@@ -1446,6 +1435,23 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this.setNodeDirty();
+    },
+
+    _changeTextureColor:function(){
+        if (this.getTexture()) {
+            if (cc.renderContextType === cc.CANVAS) {
+                var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
+                if (cacheTextureForColor) {
+                    //generate color texture cache
+                    if (this._texture instanceof HTMLCanvasElement && !this._rectRotated) {
+                        cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect(), this._texture);
+                    } else {
+                        var colorTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect());
+                        this.setTexture(colorTexture);
+                    }
+                }
+            }
+        }
     },
 
     // RGBAProtocol
@@ -1483,11 +1489,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
         // update rect
         this._rectRotated = newFrame.isRotated();
-        //if (this._rectRotated)
-        //    this.setRotation(-90);
+        if(this._rectRotated)
+            this._originalTexture = pNewTexture;
+
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
-        //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+
+        if(this._color.r !== 255 || this._color.g !== 255 || this._color.b !== 255)
+            this._changeTextureColor();
     },
 
     // Animation
