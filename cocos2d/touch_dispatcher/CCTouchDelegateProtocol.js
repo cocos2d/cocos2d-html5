@@ -71,6 +71,13 @@ cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
     },
 
     /**
+     * @return {Number}
+     */
+    getId:function () {
+        return this._id;
+    },
+
+    /**
      * set information to touch
      * @param {Number} id
      * @param  {Number} x
