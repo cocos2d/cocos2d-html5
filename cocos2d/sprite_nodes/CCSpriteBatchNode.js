@@ -69,7 +69,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     ctor:function (fileImage) {
         this._super();
         if (fileImage) {
-            this.initWithFile(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
+            this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
         }
         this._renderTexture = cc.RenderTexture.create(cc.canvas.width, cc.canvas.height);
         this.setContentSize(cc.size(cc.canvas.width, cc.canvas.height));
@@ -322,16 +322,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} capacity
      * @return {Boolean}
      */
-    initWithFile:function (fileImage, capacity) {
+    init:function (fileImage, capacity) {
         var texture2D = cc.TextureCache.getInstance().textureForKey(fileImage);
         if (!texture2D)
             texture2D = cc.TextureCache.getInstance().addImage(fileImage);
         return this.initWithTexture(texture2D, capacity);
-    },
-
-    init:function () {
-        var texture = new cc.Texture2D();
-        return this.initWithTexture(texture, 0);
     },
 
     /**
@@ -611,7 +606,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
     /**
      * set the source blending function for the texture
-     * @param {Number} src 
+     * @param {Number} src
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
@@ -908,7 +903,7 @@ cc.SpriteBatchNode.create = function (fileImage, capacity) {
     }
 
     var batchNode = new cc.SpriteBatchNode();
-    batchNode.initWithFile(fileImage, capacity);
+    batchNode.init(fileImage, capacity);
 
     return batchNode;
 };
