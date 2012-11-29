@@ -185,15 +185,15 @@ cc.BuilderReader = cc.Class.extend({
         }
     },
 
-    getCCBRootPath:function(){
-       return this._ccbRootPath;
+    getCCBRootPath:function () {
+        return this._ccbRootPath;
     },
 
-    setCCBRootPath:function(rootPath){
-       this._ccbRootPath = rootPath;
+    setCCBRootPath:function (rootPath) {
+        this._ccbRootPath = rootPath;
     },
 
-    initWithData:function(data, owner){
+    initWithData:function (data, owner) {
         //setup action manager
         this._actionManager = new cc.BuilderAnimationManager();
 
@@ -213,9 +213,9 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     readNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
-        if(parentSize == null){
+        if (parentSize == null) {
             parentSize = cc.Director.getInstance().getWinSize();
-        } else if( parentSize instanceof  cc.BuilderAnimationManager){
+        } else if (parentSize instanceof  cc.BuilderAnimationManager) {
             animationManager = parentSize;
             parentSize = cc.Director.getInstance().getWinSize();
         }
@@ -227,7 +227,7 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     readNodeGraphFromData:function (data, owner, parentSize, animationManager) {
-        this.initWithData(data,owner);
+        this.initWithData(data, owner);
         this._actionManager.setRootContainerSize(parentSize);
 
         this._ownerOutletNames = [];
@@ -238,17 +238,17 @@ cc.BuilderReader = cc.Class.extend({
 
         var nodeGraph = this.readFileWithCleanUp(true);
 
-        if(nodeGraph && this._actionManager.getAutoPlaySequenceId() != -1){
+        if (nodeGraph && this._actionManager.getAutoPlaySequenceId() != -1) {
             //auto play animations
             this._actionManager.runAnimations(this._actionManager.getAutoPlaySequenceId(), 0);
         }
 
-        if(this._jsControlled){
+        if (this._jsControlled) {
             this._nodesWithAnimationManagers = [];
             this._animationManagerForNodes = [];
 
             var getAllKeys = this._animationManagers.allKeys();
-            for(var i = 0; i< getAllKeys.length; i++){
+            for (var i = 0; i < getAllKeys.length; i++) {
                 this._nodesWithAnimationManagers.push(getAllKeys[i]);
                 this._animationManagerForNodes.push(this._animationManagers.objectForKey(getAllKeys[i]));
             }
@@ -264,7 +264,7 @@ cc.BuilderReader = cc.Class.extend({
     },
 
     createSceneWithNodeGraphFromFile:function (ccbFileName, owner, parentSize, animationManager) {
-        var node = this.readNodeGraphFromFile(ccbFileName,owner,parentSize,animationManager);
+        var node = this.readNodeGraphFromFile(ccbFileName, owner, parentSize, animationManager);
         var scene = cc.Scene.create();
         scene.addChild(node);
         return scene;
@@ -432,70 +432,70 @@ cc.BuilderReader = cc.Class.extend({
         return this._stringCache[this.readInt(false)];
     },
 
-    isJSControlled:function(){
+    isJSControlled:function () {
         return this._jsControlled;
     },
 
-    getOwnerCallbackNames:function(){
+    getOwnerCallbackNames:function () {
         return this._ownerCallbackNames;
     },
 
-    getOwnerCallbackNodes:function(){
+    getOwnerCallbackNodes:function () {
         return this._ownerCallbackNodes;
     },
 
-    getOwnerOutletNames:function(){
+    getOwnerOutletNames:function () {
         return this._ownerOutletNames;
     },
 
-    getOwnerOutletNodes:function(){
+    getOwnerOutletNodes:function () {
         return this._ownerOutletNodes;
     },
 
-    getNodesWithAnimationManagers:function(){
+    getNodesWithAnimationManagers:function () {
         return this._nodesWithAnimationManagers;
     },
 
-    getAnimationManagersForNodes:function(){
+    getAnimationManagersForNodes:function () {
         return this._animationManagerForNodes;
     },
 
-    getAnimationManagers:function(){
+    getAnimationManagers:function () {
         return this._animationManagers;
     },
 
-    setAnimationManagers:function(animationManagers){
+    setAnimationManagers:function (animationManagers) {
         this._animationManagers = animationManagers;
     },
 
-    addOwnerCallbackName:function(name){
+    addOwnerCallbackName:function (name) {
         this._ownerCallbackNames.push(name)
     },
 
-    addOwnerCallbackNode:function(node){
+    addOwnerCallbackNode:function (node) {
         this._ownerCallbackNodes.push(node);
     },
 
-    addDocumentCallbackName:function(name){
+    addDocumentCallbackName:function (name) {
         this._actionManager.addDocumentCallbackName(name);
     },
 
-    addDocumentCallbackNode:function(node){
+    addDocumentCallbackNode:function (node) {
         this._actionManager.addDocumentCallbackNode(node);
     },
 
     readFileWithCleanUp:function (cleanUp) {
-        if(!this._readHeader())
+        if (!this._readHeader())
             return null;
-        if(! this._readStringCache())
+        if (!this._readStringCache())
             return null;
-        if(! this._readSequences())
+        if (!this._readSequences())
             return null;
 
         var node = this._readNodeGraph();
-        this._animationManagers.setObject(this._actionManager,node);
+        this._animationManagers.setObject(this._actionManager, node);
 
-        if(cleanUp)
+        if (cleanUp)
             this._cleanUpNodeGraph(node);
         return node;
     },
@@ -503,7 +503,7 @@ cc.BuilderReader = cc.Class.extend({
     _cleanUpNodeGraph:function (node) {
         node.setUserObject(null);
         var getChildren = node.getChildren();
-        for(var i = 0; i < getChildren.length;i++){
+        for (var i = 0; i < getChildren.length; i++) {
             this._cleanUpNodeGraph(getChildren[i]);
         }
     },
@@ -511,7 +511,7 @@ cc.BuilderReader = cc.Class.extend({
     _readSequences:function () {
         var sequences = this._actionManager.getSequences();
         var numSeqs = this.readInt(false);
-        for(var i = 0; i< numSeqs; i++){
+        for (var i = 0; i < numSeqs; i++) {
             var seq = new cc.BuilderSequence();
             seq.setDuration(this.readFloat());
             seq.setName(this.readCachedString());
@@ -530,47 +530,47 @@ cc.BuilderReader = cc.Class.extend({
         var easingOpt = 0;
         var value = null;
 
-        if(easingType === CCB_KEYFRAME_EASING_CUBIC_IN
+        if (easingType === CCB_KEYFRAME_EASING_CUBIC_IN
             || easingType === CCB_KEYFRAME_EASING_CUBIC_OUT
             || easingType === CCB_KEYFRAME_EASING_CUBIC_INOUT
             || easingType === CCB_KEYFRAME_EASING_ELASTIC_IN
             || easingType === CCB_KEYFRAME_EASING_ELASTIC_OUT
-            || easingType === CCB_KEYFRAME_EASING_ELASTIC_INOUT){
+            || easingType === CCB_KEYFRAME_EASING_ELASTIC_INOUT) {
             easingOpt = this.readFloat();
         }
 
         keyframe.setEasingType(easingType);
         keyframe.setEasingOpt(easingOpt);
 
-        if(type == CCB_PROPTYPE_CHECK){
+        if (type == CCB_PROPTYPE_CHECK) {
             value = this.readBool();
-        } else if( type == CCB_PROPTYPE_BYTE){
+        } else if (type == CCB_PROPTYPE_BYTE) {
             value = this.readByte();
-        } else if( type == CCB_PROPTYPE_COLOR3){
-            var c = cc.c3(this.readByte(),this.readByte(),this.readByte());
+        } else if (type == CCB_PROPTYPE_COLOR3) {
+            var c = cc.c3(this.readByte(), this.readByte(), this.readByte());
             value = cc.Color3BWapper.create(c);
-        } else if( type == CCB_PROPTYPE_DEGREES){
+        } else if (type == CCB_PROPTYPE_DEGREES) {
             value = this.readFloat();
-        } else if( type == CCB_PROPTYPE_SCALELOCK || type == CCB_PROPTYPE_POSITION){
+        } else if (type == CCB_PROPTYPE_SCALELOCK || type == CCB_PROPTYPE_POSITION) {
             value = [this.readFloat(), this.readFloat()];
-        } else if( type == CCB_PROPTYPE_SPRITEFRAME){
+        } else if (type == CCB_PROPTYPE_SPRITEFRAME) {
             var spriteSheet = this.readCachedString();
             var spriteFile = this.readCachedString();
 
-            if(spriteSheet == ""){
+            if (spriteSheet == "") {
                 spriteFile = this._ccbRootPath + spriteFile;
                 var texture = cc.TextureCache.getInstance().addImage(spriteFile);
                 var bounds;
-                if(cc.renderContextType == cc.CANVAS)
-                    bounds = cc.RectMake(0,0, texture.width, texture.height);
+                if (cc.renderContextType == cc.CANVAS)
+                    bounds = cc.RectMake(0, 0, texture.width, texture.height);
                 else
-                    bounds = cc.RectMake(0,0,texture.getContentSize().width, texture.getContentSize().height);
-                value = cc.SpriteFrame.createWithTexture(texture,bounds);
-            }else{
+                    bounds = cc.RectMake(0, 0, texture.getContentSize().width, texture.getContentSize().height);
+                value = cc.SpriteFrame.createWithTexture(texture, bounds);
+            } else {
                 spriteSheet = this._ccbRootPath + spriteSheet;
                 var frameCache = cc.SpriteFrameCache.getInstance();
                 // Load the sprite sheet only if it is not loaded
-                if(this._loadedSpriteSheets.indexOf(spriteSheet) == -1){
+                if (this._loadedSpriteSheets.indexOf(spriteSheet) == -1) {
                     frameCache.addSpriteFrames(spriteSheet);
                     this._loadedSpriteSheets.push(spriteSheet);
                 }
@@ -654,7 +654,7 @@ cc.BuilderReader = cc.Class.extend({
         var className = this.readCachedString();
 
         var jsControlledName;
-        if(this._jsControlled)
+        if (this._jsControlled)
             jsControlledName = this.readCachedString();
 
         var memberVarAssignmentType = this.readInt(false);
@@ -664,7 +664,7 @@ cc.BuilderReader = cc.Class.extend({
         }
 
         var ccNodeLoader = this._ccNodeLoaderLibrary.getCCNodeLoader(className);
-        if(!ccNodeLoader){
+        if (!ccNodeLoader) {
             ccNodeLoader = this._ccNodeLoaderLibrary.getCCNodeLoader("CCNode");
             //cc.log("no corresponding node loader for" + className);
             //return null;
@@ -672,10 +672,10 @@ cc.BuilderReader = cc.Class.extend({
         var node = ccNodeLoader.loadCCNode(parent, this);
 
         //set root node
-        if(!this._actionManager.getRootNode())
+        if (!this._actionManager.getRootNode())
             this._actionManager.setRootNode(node);
 
-        if(this._jsControlled && node == this._actionManager.getRootNode()){
+        if (this._jsControlled && node == this._actionManager.getRootNode()) {
             this._actionManager.setDocumentControllerName(jsControlledName);
         }
 
@@ -686,13 +686,13 @@ cc.BuilderReader = cc.Class.extend({
 
         var i;
         var numSequence = this.readInt(false);
-        for(i = 0; i< numSequence;++i){
+        for (i = 0; i < numSequence; ++i) {
             var seqId = this.readInt(false);
             var seqNodeProps = new cc._Dictionary();
 
             var numProps = this.readInt(false);
 
-            for(var j = 0; j < numProps; ++j){
+            for (var j = 0; j < numProps; ++j) {
                 var seqProp = new cc.BuilderSequenceProperty();
                 seqProp.setName(this.readCachedString());
                 seqProp.setType(this.readInt(false));
@@ -700,24 +700,24 @@ cc.BuilderReader = cc.Class.extend({
                 this._animatedProps.push(seqProp.getName());
                 var numKeyframes = this.readInt(false);
 
-                for(var k = 0; k < numKeyframes; ++k){
+                for (var k = 0; k < numKeyframes; ++k) {
                     var keyFrame = this.readKeyframe(seqProp.getType());
                     seqProp.getKeyframes().push(keyFrame);
                 }
-                seqNodeProps.setObject(seqProp,seqProp.getName());
+                seqNodeProps.setObject(seqProp, seqProp.getName());
             }
-            seqs.setObject(seqNodeProps,seqId);
+            seqs.setObject(seqNodeProps, seqId);
         }
 
-        if(seqs.count() > 0)
-            this._actionManager.addNode(node,seqs);
+        if (seqs.count() > 0)
+            this._actionManager.addNode(node, seqs);
 
         //read properties
         ccNodeLoader.parseProperties(node, parent, this);
 
         //handle sub ccb files(remove middle node)
-        if(node instanceof cc.BuilderFile){
-             var embeddedNode = node.getCCBFileNode();
+        if (node instanceof cc.BuilderFile) {
+            var embeddedNode = node.getCCBFileNode();
             embeddedNode.setPosition(node.getPosition());
             embeddedNode.setRotation(node.getRotation());
             embeddedNode.setScale(node.getScale());
@@ -730,7 +730,7 @@ cc.BuilderReader = cc.Class.extend({
         }
 
         if (memberVarAssignmentType != CCB_TARGETTYPE_NONE) {
-            if(!this._jsControlled){
+            if (!this._jsControlled) {
                 var target = null;
                 if (memberVarAssignmentType == CCB_TARGETTYPE_DOCUMENTROOT) {
                     target = this._actionManager.getRootNode();
@@ -750,10 +750,10 @@ cc.BuilderReader = cc.Class.extend({
                     }
                 }
             } else {
-                if(memberVarAssignmentType == CCB_TARGETTYPE_DOCUMENTROOT){
+                if (memberVarAssignmentType == CCB_TARGETTYPE_DOCUMENTROOT) {
                     this._actionManager.addDocumentOutletName(memberVarAssignmentName);
                     this._actionManager.addDocumentOutletNode(node);
-                }else{
+                } else {
                     this._ownerOutletNames.push(memberVarAssignmentName);
                     this._ownerOutletNodes.push(node);
                 }
@@ -808,24 +808,24 @@ cc.BuilderReader.getResolutionScale = function () {
     return 1;
 };
 
-cc.BuilderReader.loadAsScene = function(ccbFilePath,owner,parentSize, ccbRootPath){
-    ccbRootPath = ccbRootPath || "";
+cc.BuilderReader.loadAsScene = function (ccbFilePath, owner, parentSize, ccbRootPath) {
+    ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
 
-    var getNode = cc.BuilderReader.load(ccbFilePath, owner,parentSize, ccbRootPath);
+    var getNode = cc.BuilderReader.load(ccbFilePath, owner, parentSize, ccbRootPath);
 
     var scene = cc.Scene.create();
     scene.addChild(getNode);
     return scene;
 };
 
-cc.BuilderReader.load = function(ccbFilePath, owner, parentSize, ccbRootPath){
-    ccbRootPath = ccbRootPath || "";
+cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
+    ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
     var reader = new cc.BuilderReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
     reader.setCCBRootPath(ccbRootPath);
     var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
 
     var i;
-    var callbackName,callbackNode,outletName,outletNode;
+    var callbackName, callbackNode, outletName, outletNode;
     // Assign owner callbacks & member variables
     if (owner) {
         // Callbacks
@@ -854,7 +854,7 @@ cc.BuilderReader.load = function(ccbFilePath, owner, parentSize, ccbRootPath){
         var innerNode = nodesWithAnimationManagers[i];
         var animationManager = animationManagersForNodes[i];
 
-        var j ;
+        var j;
 
         innerNode.animationManager = animationManager;
 
@@ -894,6 +894,15 @@ cc.BuilderReader.load = function(ccbFilePath, owner, parentSize, ccbRootPath){
     }
 
     return node;
+};
+
+cc.BuilderReader._resourcePath = "";
+cc.BuilderReader.setResourcePath = function (rootPath) {
+    cc.BuilderReader._resourcePath = rootPath;
+};
+
+cc.BuilderReader.getResourcePath = function () {
+    return cc.BuilderReader._resourcePath;
 };
 
 cc.BuilderReader.lastPathComponent = function (pathStr) {
