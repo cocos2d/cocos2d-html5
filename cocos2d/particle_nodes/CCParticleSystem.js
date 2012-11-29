@@ -260,6 +260,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //! Array of particles
     _particles:null,
 
+    //particle pool
+    _particlePool:null,
+
     // color modulate
     //	BOOL colorModulate;
 
@@ -1186,6 +1189,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._startColorVar = new cc.Color4F(1,1,1,1);
         this._endColor = new cc.Color4F(1,1,1,1);
         this._endColorVar = new cc.Color4F(1,1,1,1);
+
+        this._particlePool = [];
     },
 
     /**
@@ -1386,6 +1391,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._totalParticles = numberOfParticles;
 
         this._particles = [];
+        this._particlePool = [];
 
         if (!this._particles) {
             cc.log("Particle system: not enough memory");
@@ -1393,11 +1399,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
         this._allocatedParticles = numberOfParticles;
 
-        if (this._batchNode) {
-            for (var i = 0; i < this._totalParticles; i++) {
+        if (this._batchNode)
+            for (var i = 0; i < this._totalParticles; i++)
                 this._particles[i].atlasIndex = i;
-            }
-        }
 
         // default, active
         this._isActive = true;
@@ -1431,7 +1435,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     destroyParticleSystem:function () {
+        this._particlePool = null;
         this.unscheduleUpdate();
+    },
+
+    _getParticleObject:function(){
+        if(this._particlePool.length > 0)
+            return this._particlePool.pop();
+        return new cc.Particle();
     },
 
     /**
@@ -1442,7 +1453,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if (this.isFull())
             return false;
 
-        var particle = new cc.Particle();
+        var particle = this._getParticleObject();
         this.initParticle(particle);
         this._particles.push(particle);
         ++this._particleCount;
@@ -1554,6 +1565,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._isActive = false;
         this._elapsed = this._duration;
         this._emitCounter = 0;
+
+        this._particlePool = [];
     },
 
     /**
@@ -1713,6 +1726,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     // life < 0
                     var currentIndex = selParticle.atlasIndex;
                     cc.ArrayRemoveObject(this._particles, selParticle);
+
+                    //cache particle to pool
+                    this._particlePool.push(selParticle);
+
                     if (this._batchNode) {
                         //disable the switched particle
                         this._batchNode.disableParticle(this._atlasIndex + currentIndex);
