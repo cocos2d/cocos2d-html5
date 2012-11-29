@@ -809,7 +809,7 @@ cc.BuilderReader.getResolutionScale = function () {
 };
 
 cc.BuilderReader.loadAsScene = function (ccbFilePath, owner, parentSize, ccbRootPath) {
-    ccbRootPath = ccbRootPath || cc.BuilderReader.getDefaultRootPath();
+    ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
 
     var getNode = cc.BuilderReader.load(ccbFilePath, owner, parentSize, ccbRootPath);
 
@@ -819,7 +819,7 @@ cc.BuilderReader.loadAsScene = function (ccbFilePath, owner, parentSize, ccbRoot
 };
 
 cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
-    ccbRootPath = ccbRootPath || cc.BuilderReader.getDefaultRootPath();
+    ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
     var reader = new cc.BuilderReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
     reader.setCCBRootPath(ccbRootPath);
     var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
