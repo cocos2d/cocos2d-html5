@@ -261,12 +261,12 @@ cc.ControlEditBox = cc.Node.extend({
      * Set a text in the edit box that acts as a placeholder when an edit box is empty.
      * @param pText The given text.
      */
-    setPlaceHolder:function (pText) {
+    setPlaceHolder:function (text) {
         this._inputTooltip = true;
         this.tooltip = true;
         this._edTxt._inputToolip = this._inputTooltip;
-        this._edTxt.value = pText;
-        this._edTxt._tooltipTxt = pText;
+        this._edTxt.value = text;
+        this._edTxt._tooltipTxt = text;
     },
 
     /**
@@ -297,12 +297,12 @@ cc.ControlEditBox = cc.Node.extend({
     /**
      * * Init edit box with specified size.
      * * @param size The size and background-color.     */
-    initWithSizeAndBackgroundSprite:function (size, pNormal9SpriteBg) {
+    initWithSizeAndBackgroundSprite:function (size, normal9SpriteBg) {
         this._edWidth = size.width;
         this._edDiv.style.width = this._edWidth.toString() + "px";
         this._edHeight = size.height;
         this._edDiv.style.height = this._edHeight.toString() + "px";
-        this._edDiv.style.backgroundColor = cc.convertColor3BtoHexString(pNormal9SpriteBg);
+        this._edDiv.style.backgroundColor = cc.convertColor3BtoHexString(normal9SpriteBg);
     },
 
     /**
