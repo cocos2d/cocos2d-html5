@@ -171,7 +171,7 @@ cc.ControlEditBox = cc.Node.extend({
     },
 
     onExit:function () {
-        this.hideEditBox();
+        this.disposeEditBox();
     },
 
     setWidth:function (w) {
@@ -312,10 +312,6 @@ cc.ControlEditBox = cc.Node.extend({
      */
     disposeEditBox:function()
     {
-        //cc.$("#Cocos2dGameContainer").remove(this._edDiv);
-        //cc.$("#Cocos2dGameContainer").remove(this._edTxt);
-        //var eddiv = document.getElementById(this._edDiv.id);
-        //var edtxt = document.getElementById(this._edTxt.id);
         var divNode = this._edDiv;
         this._edDiv.parentNode.removeChild(divNode);
         var txtNode = this._edTxt;
