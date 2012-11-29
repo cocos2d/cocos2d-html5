@@ -194,8 +194,8 @@ cc.ControlEditBox = cc.Node.extend({
      * * Set the text entered in the edit box.
      * * @param pText The given text.
      * */
-    setText:function (pText) {
-        this._edTxt.value = pText;
+    setText:function (text) {
+        this._edTxt.value = text;
     },
     /**
      *  Set the font color of the widget's text.
@@ -275,8 +275,7 @@ cc.ControlEditBox = cc.Node.extend({
      * e.g.cc.EDITBOX_INPUT_FLAG_PASSWORD
      */
     setInputFlag:function (inputMode) {
-        var cInput = inputMode;
-        if (cInput == cc.EDITBOX_INPUT_FLAG_PASSWORD) {
+        if (inputMode == cc.EDITBOX_INPUT_FLAG_PASSWORD) {
             this._edTxt.type = "password";
         } else {
             this._edTxt.type = "text";
@@ -319,7 +318,7 @@ cc.ControlEditBox = cc.Node.extend({
     },
 
     /* override functions */
-    setDelegate:function (pDelegate) {
+    setDelegate:function (delegate) {
     },
     setPlaceholderFontColor:function (color) {
     },
@@ -357,9 +356,9 @@ cc.ControlEditBox = cc.Node.extend({
 /**
  * * create a edit box with size and background-color     *
  * */
-cc.ControlEditBox.create = function (size, pNormal9SpriteBg) {
+cc.ControlEditBox.create = function (size, normal9SpriteBg) {
     var edbox1 = new cc.ControlEditBox(size.width, size.height, 14);
-    edbox1.setBgClr(pNormal9SpriteBg);
+    edbox1.setBgClr(normal9SpriteBg);
     cc.$("#Cocos2dGameContainer").appendChild(edbox1._edDiv);
     return edbox1;
 };
