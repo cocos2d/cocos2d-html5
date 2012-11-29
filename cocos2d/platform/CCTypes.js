@@ -558,7 +558,7 @@ cc.BlendFunc = function (src1, dst1) {
  * @param clr
  * @return {String}
  */
-cc.setHColor = function (clr) {
+cc.convertColor3BtoHexString = function (clr) {
     var hR = clr.r.toString(16);
     var hG = clr.g.toString(16);
     var hB = clr.b.toString(16);
@@ -572,7 +572,7 @@ cc.setHColor = function (clr) {
  * @param clr
  * @return {String}
  */
-cc.setHNum  = function(clrSt)
+cc.convertHexNumToColor3B  = function(clrSt)
 {
     var nAr = clrSt.substr(1).split("");
     var r = parseInt("0x"+nAr[0]+nAr[1]);

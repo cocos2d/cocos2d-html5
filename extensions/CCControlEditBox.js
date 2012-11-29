@@ -132,6 +132,7 @@ cc.ControlEditBox = cc.Node.extend({
         this._edDiv.style.borderStyle = "solid";
         this._edDiv.style.border = 2;
         this._edDiv.style.borderRadius = "8px";
+        this._edDiv.id = (Math.random()*1000).toString();
 
         this._edTxt.style.fontSize = this._edFontSize + "px";
         this._edTxt.style.color = new cc.Color3B(0, 0, 0);
@@ -142,6 +143,7 @@ cc.ControlEditBox = cc.Node.extend({
         this._edTxt.style.height = "100%";
         this._edTxt.style.active = 0;
         this._edTxt.style.outline = "medium";
+        this._edTxt.id = (Math.random()*1000).toString();
 
         this._edDiv.appendChild(this._edTxt);
 
@@ -199,19 +201,19 @@ cc.ControlEditBox = cc.Node.extend({
      *  Set the font color of the widget's text.
      */
     setFontColor:function (color) {
-        this._edTxt.style.color = cc.setHColor(color);
+        this._edTxt.style.color = cc.convertColor3BtoHexString(color);
     },
     /**
      *  Set the background-color edit text.
      */
     setBgClr:function (color) {
-        this._edDiv.style.backgroundColor = cc.setHColor(color);
+        this._edDiv.style.backgroundColor = cc.convertColor3BtoHexString(color);
     },
     /**
      *  Set the border-color edit text.
      */
     setBorderClr:function (color) {
-        this._edDiv.style.borderColor = cc.setHColor(color);
+        this._edDiv.style.borderColor = cc.convertColor3BtoHexString(color);
     },
 
     /**
@@ -301,7 +303,23 @@ cc.ControlEditBox = cc.Node.extend({
         this._edDiv.style.width = this._edWidth.toString() + "px";
         this._edHeight = size.height;
         this._edDiv.style.height = this._edHeight.toString() + "px";
-        this._edDiv.style.backgroundColor = this.setHColor(pNormal9SpriteBg);
+        this._edDiv.style.backgroundColor = cc.convertColor3BtoHexString(pNormal9SpriteBg);
+    },
+
+    /**
+     * dispose EditBox
+     * remove the editbox' div and input from there parentnode
+     */
+    disposeEditBox:function()
+    {
+        //cc.$("#Cocos2dGameContainer").remove(this._edDiv);
+        //cc.$("#Cocos2dGameContainer").remove(this._edTxt);
+        //var eddiv = document.getElementById(this._edDiv.id);
+        //var edtxt = document.getElementById(this._edTxt.id);
+        var divNode = this._edDiv;
+        this._edDiv.parentNode.removeChild(divNode);
+        var txtNode = this._edTxt;
+        this._edTxt.parentNode.removeChild(txtNode);
     },
 
     /* override functions */
