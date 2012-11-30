@@ -99,47 +99,47 @@ cc.c3 = cc.c3b;
 
 //ccColor3B predefined colors
 Object.defineProperties(cc, {
-    "WHITE":{
+    WHITE:{
         get:function () {
             return cc.c3b(255, 255, 255);
         }
     },
-    "YELLOW":{
+    YELLOW:{
         get:function () {
             return cc.c3b(255, 255, 0);
         }
     },
-    "BLUE":{
+    BLUE:{
         get:function () {
             return cc.c3b(0, 0, 255);
         }
     },
-    "GREEN":{
+    GREEN:{
         get:function () {
             return cc.c3b(0, 255, 0);
         }
     },
-    "RED":{
+    RED:{
         get:function () {
             return cc.c3b(255, 0, 0);
         }
     },
-    "MAGENTA":{
+    MAGENTA:{
         get:function () {
             return cc.c3b(255, 0, 255);
         }
     },
-    "BLACK":{
+    BLACK:{
         get:function () {
             return cc.c3b(0, 0, 0);
         }
     },
-    "ORANGE":{
+    ORANGE:{
         get:function () {
             return cc.c3b(255, 127, 0);
         }
     },
-    "GRAY":{
+    GRAY:{
         get:function () {
             return cc.c3b(166, 166, 166);
         }

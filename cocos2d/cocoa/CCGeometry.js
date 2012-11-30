@@ -76,17 +76,17 @@ cc.PointZero = function () {
 };
 
 Object.defineProperties(cc, {
-    "POINT_ZERO":{
+    POINT_ZERO:{
         get:function () {
             return cc.p(0, 0);
         }
     },
-    "SIZE_ZERO":{
+    SIZE_ZERO:{
         get:function () {
             return cc.size(0, 0);
         }
     },
-    "RECT_ZERO":{
+    RECT_ZERO:{
         get:function () {
             return cc.rect(0, 0, 0, 0);
         }
