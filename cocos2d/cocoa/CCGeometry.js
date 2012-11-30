@@ -75,11 +75,25 @@ cc.PointZero = function () {
     return cc.p(0, 0);
 };
 
-/**
- * Point Zero Constant
- * @return {cc.Point}
- */
-cc.POINT_ZERO = cc.p(0, 0);
+Object.defineProperties(cc, {
+    "POINT_ZERO":{
+        get:function () {
+            return cc.p(0, 0);
+        }
+    },
+    "SIZE_ZERO":{
+        get:function () {
+            return cc.size(0, 0);
+        }
+    },
+    "RECT_ZERO":{
+        get:function () {
+            return cc.rect(0, 0, 0, 0);
+        }
+    }
+});
+
+
 
 /**
  * @function
@@ -149,11 +163,6 @@ cc.SizeZero = function () {
     return cc.size(0, 0);
 };
 
-/**
- * Size Zero constant
- * @return {cc.Size}
- */
-cc.SIZE_ZERO = cc.size(0, 0);
 
 /**
  * @function
@@ -249,12 +258,6 @@ cc._rect = cc.rect;
 cc.RectZero = function () {
     return cc.rect(0, 0, 0, 0);
 };
-
-/**
- * Rect Zero Constant
- * @return {cc.Rect}
- */
-cc.RECT_ZERO = cc.rect(0, 0, 0, 0);
 
 /**
  * @function
