@@ -599,6 +599,37 @@ cc.BlendFunc = function (src1, dst1) {
     this.dst = dst1;
 };
 
+
+/**
+ * convert Color3B to a string of color for style.
+ * e.g.  Color3B(255,6,255)  to : "#ff06ff"
+ * @param clr
+ * @return {String}
+ */
+cc.convertColor3BtoHexString = function (clr) {
+    var hR = clr.r.toString(16);
+    var hG = clr.g.toString(16);
+    var hB = clr.b.toString(16);
+    var stClr = "#" + (clr.r < 16 ? ("0" + hR) : hR) + (clr.g < 16 ? ("0" + hG) : hG) + (clr.b < 16 ? ("0" + hB) : hB);
+    return stClr;
+};
+
+/**
+ * convert a string of color for style to Color3B.
+ * e.g. "#ff06ff"  to : Color3B(255,6,255)
+ * @param clr
+ * @return {String}
+ */
+cc.convertHexNumToColor3B  = function(clrSt)
+{
+    var nAr = clrSt.substr(1).split("");
+    var r = parseInt("0x"+nAr[0]+nAr[1]);
+    var g = parseInt("0x"+nAr[2]+nAr[3]);
+    var b = parseInt("0x"+nAr[4]+nAr[5]);
+    return new cc.Color3B(r,g,b);
+};
+
+
 /**
  * text alignment : left
  * @constant
