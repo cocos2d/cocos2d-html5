@@ -67,10 +67,9 @@ var Helloworld = cc.Layer.extend({
         var closeItem = cc.MenuItemImage.create(
             "res/CloseNormal.png",
             "res/CloseSelected.png",
-            this,
             function () {
                 history.go(-1);
-            });
+            },this);
         closeItem.setAnchorPoint(cc.p(0.5, 0.5));
 
         var menu = cc.Menu.create(closeItem);
