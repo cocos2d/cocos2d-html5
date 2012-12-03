@@ -71,9 +71,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     /**
      * Initialize sound type
      * @return {Boolean}
-     * @example
-     * //example
-     * cc.AudioEngine.getInstance().init("mp3,ogg");
      */
     init:function () {
         // detect the prefered audio format
@@ -259,7 +256,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var keyname = this._getPathWithoutExt(path);
             if (this._checkAudioFormatSupported(extName) && !this._effectList.hasOwnProperty(keyname)) {
                 this._effectList[keyname] = [];
-                this._pushEffectCache(path, keyname);
+                this._effectList[keyname].push(new Audio(path));
             }
         }
         cc.Loader.getInstance().onResLoaded();
@@ -275,27 +272,31 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     playEffect:function (path, loop) {
         var keyname = this._getPathWithoutExt(path);
-        var tmpArr = this._getEffectList(keyname), au;
-        for (var i = 0; i < tmpArr.length; i++) {
-            //if one of the effect ended, play it
-            au = tmpArr[i];
-            if (au.ended) {
-                if (loop) {
-                    au.loop = loop;
+        var actExt = this._supportedFormat[0];
+        var reclaim = this._getEffectList(keyname), au;
+        if(reclaim.length > 0){
+            for (var i = 0; i < reclaim.length; i++) {
+                //if one of the effect ended, play it
+                if (reclaim[i].ended) {
+                    au = reclaim[i];
                     au.currentTime = 0;
+                    break;
                 }
-                au.play();
+            }
+        }
+        if (!au){
+            if (reclaim.length >= this._maxAudioInstance) {
+                cc.log("Error: " + path + " greater than " + this._maxAudioInstance);
                 return keyname;
             }
+            au = new Audio(keyname+"."+actExt);
+            reclaim.push(au);
         }
-        //If code reach here, means no cache or all cache are playing, then we create new one
-        var cache = this._pushEffectCache(path, keyname);
-        if (cache) {
-            if (loop) {
-                cache.loop = loop;
-            }
-            cache.play();
+
+        if (loop) {
+            au.loop = loop;
         }
+        au.play();
         return keyname;
     },
 
@@ -337,18 +338,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                     au.volume = this._effectsVolume;
                 }
             }
-        }
-    },
-
-    _pushEffectCache:function (path, keyname) {
-        var tmpArr = this._getEffectList(keyname);
-        if (tmpArr.length < this._maxAudioInstance) {
-            var au = new Audio(path);
-            tmpArr.push(au);
-            return au;
-        }
-        else {
-            cc.log("Error: " + path + " greater than " + this._maxAudioInstance);
         }
     },
 
