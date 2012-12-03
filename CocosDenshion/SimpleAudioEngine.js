@@ -287,7 +287,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (!au){
             if (reclaim.length >= this._maxAudioInstance) {
                 cc.log("Error: " + path + " greater than " + this._maxAudioInstance);
-                return null;
+                return keyname;
             }
             au = new Audio(keyname+"."+actExt);
             reclaim.push(au);
