@@ -1632,7 +1632,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         } else {
             if (this._texture != texture) {
                 if (texture instanceof  HTMLImageElement) {
-                    if(cc.rectEqualToRect(this._rect,cc.RectZero()))
+                    if(!this._rect || cc.rectEqualToRect(this._rect,cc.RectZero()))
                         this._rect = cc.rect(0, 0, texture.width, texture.height);
                     this._texture = texture;
                     this._originalTexture = texture;
