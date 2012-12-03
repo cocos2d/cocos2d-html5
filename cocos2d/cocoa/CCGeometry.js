@@ -103,6 +103,8 @@ Object.defineProperties(cc, {
  * Constructor
  */
 cc.pointEqualToPoint = function (point1, point2) {
+    if (!point1 || !point2)
+        return false;
     return ((point1.x == point2.x) && (point1.y == point2.y));
 };
 
@@ -172,6 +174,8 @@ cc.SizeZero = function () {
  * Constructor
  */
 cc.sizeEqualToSize = function (size1, size2) {
+    if (!size1 || !size2)
+        return false;
     return ((size1.width == size2.width) && (size1.height == size2.height));
 };
 
@@ -267,6 +271,8 @@ cc.RectZero = function () {
  * Constructor
  */
 cc.rectEqualToRect = function (rect1, rect2) {
+    if(!rect1 || !rect2)
+        return false;
     return ((cc.Point.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
         (cc.Size.CCSizeEqualToSize(rect1.size, rect2.size)));
 };
