@@ -32,7 +32,6 @@ var cocos2dApp = cc.Application.extend({
         cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
         cc.initDebugSetting();
         cc.setup(this.config['tag']);
-        cc.AudioEngine.getInstance().init("mp3,ogg");
         cc.Loader.getInstance().onloading = function () {
             cc.LoaderScene.getInstance().draw();
         };

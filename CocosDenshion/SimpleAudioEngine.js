@@ -71,9 +71,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     /**
      * Initialize sound type
      * @return {Boolean}
-     * @example
-     * //example
-     * cc.AudioEngine.getInstance().init("mp3,ogg");
      */
     init:function () {
         // detect the prefered audio format
