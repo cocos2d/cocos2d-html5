@@ -87,7 +87,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {String} path The path of the music file without filename extension.
      */
     preloadMusic:function (path) {
-        cc.log(path)
         if (this._soundEnable) {
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
