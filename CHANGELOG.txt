@@ -22,6 +22,7 @@ Cocos2d-html5-v2.0.0 @ Aug.28, 2012
 * Added support for multi-touch.
 * Added mini-framework for Dom manipulation.
 * Changed cc.Animation, cc.AudioEngine, cc.LableTTF and cc.Sprite API.
+* Added Edit Box.
 
 Cocos2d-html5-v0.5.0-alpha2 @ Jun.18, 2012
 * Changed API, use "create" to construct all objects.
