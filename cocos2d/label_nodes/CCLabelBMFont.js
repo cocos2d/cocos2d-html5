@@ -902,9 +902,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                         for (var j = 0; j < line_length; j++) {
                             index = i + j + lineNumber;
                             if (index < 0) continue;
-
                             var characterSprite = this.getChildByTag(index);
-                            characterSprite.setPosition(cc.pAdd(characterSprite.getPosition(), cc.p(shift, 0)));
+                            if(characterSprite){
+                                characterSprite.setPosition(cc.pAdd(characterSprite.getPosition(), cc.p(shift, 0)));
+                            }
                         }
                     }
 
