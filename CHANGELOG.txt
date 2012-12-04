@@ -1,12 +1,12 @@
-Cocos2d-html5-v2.1.0-Beta @ Nov.28, 2012
+Cocos2d-html5-v2.1.0 @ Dec.4, 2012
 * Improved cc.Class and add Release Mode.
 * Added support for google.base.
 * Added support for CocosBuilder and Bone Animation.
 * Updated API for Javascript Binding.
 * Integrated Chipmunk physical engine.
 * Added physicsDebugNode, physicsSprite, drawNode.
-* Builded a cocos2d-js-tests repo for tests
-* Fixed support for mouse/touch/keyboard
+* Builded a cocos2d-js-tests repo for tests.
+* Fixed support for mouse/touch/keyboard.
 * Fixed bugs.
 * Added WaterMelon with me and CocosDragon games for sample.
 
