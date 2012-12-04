@@ -220,7 +220,7 @@ cc.BuilderReader = cc.Class.extend({
             parentSize = cc.Director.getInstance().getWinSize();
         }
 
-        var path = this._ccbRootPath + cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
+        var path = cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
         var data = cc.FileUtils.getInstance().getFileData(path);
 
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
