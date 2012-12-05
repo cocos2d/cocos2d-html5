@@ -81,7 +81,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     /**
      * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
-     * @param {String} path The path of the music file without filename extension.
+     * @param {String} path The path of the music file with filename extension.
      */
     preloadMusic:function (path) {
         if (this._soundEnable) {
@@ -248,7 +248,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     /**
      * Preload sound effect resource.
      * This method is called when cc.Loader preload  resources.
-     * @param {String} path The path of the sound effect file without filename extension.
+     * @param {String} path The path of the sound effect file with filename extension.
      */
     preloadEffect:function (path) {
         if (this._soundEnable) {
