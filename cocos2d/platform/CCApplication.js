@@ -193,6 +193,8 @@ cc.setup = function (el, width, height) {
 
     cc.log(cc.ENGINE_VERSION);
 
+    cc.setContextMenuEnable(false);
+
     //binding window size
     /*
      cc.canvas.addEventListener("resize", function () {
@@ -231,6 +233,22 @@ cc.setup = function (el, width, height) {
     }
 };
 
+cc._isContextMenuEnable = false;
+/**
+ * enable/disable contextMenu for Canvas
+ * @param {Boolean} enabled
+ */
+cc.setContextMenuEnable = function (enabled) {
+    cc._isContextMenuEnable = enabled;
+    if (!cc._isContextMenuEnable) {
+        cc.canvas.oncontextmenu = function () {
+            event.returnValue = false;
+        };
+    } else {
+        cc.canvas.oncontextmenu = function () {
+        };
+    }
+};
 
 /**
  * Run main loop of game engine
