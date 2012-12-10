@@ -102,6 +102,23 @@ cc.MOUSE_ENTERED = 1 << 11;
  */
 cc.MOUSE_EXITED = 1 << 12;
 
+/**
+ * @constant
+ * @type Number
+ */
+cc.MOUSE_LEFTBUTTON = 0;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.MOUSE_MIDDLEBUTTON = 1;
+
+/**
+ * @constant
+ * @type Number
+ */
+cc.MOUSE_RIGHTBUTTON = 2;
 
 /**
  *     CCMouseEventDelegate protocol.
@@ -111,7 +128,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p>called when the "mouseDown" event is received. <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onMouseDown:function (event) {
@@ -121,7 +138,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p>called when the "mouseDragged" event is received.         <br/>
      * Return YES to avoid propagating the event to other delegates.</p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onMouseDragged:function (event) {
@@ -131,7 +148,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "mouseMoved" event is received.            <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onMouseMoved:function (event) {
@@ -141,7 +158,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "mouseUp" event is received.               <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onMouseUp:function (event) {
@@ -152,7 +169,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "rightMouseDown" event is received.        <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onRightMouseDown:function (event) {
@@ -162,7 +179,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "rightMouseDragged" event is received.    <br/>
      * Return YES to avoid propagating the event to other delegates. </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onRightMouseDragged:function (event) {
@@ -172,7 +189,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "rightMouseUp" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onRightMouseUp:function (event) {
@@ -183,7 +200,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p>called when the "otherMouseDown" event is received.         <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onOtherMouseDown:function (event) {
@@ -193,7 +210,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "otherMouseDragged" event is received.     <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onOtherMouseDragged:function (event) {
@@ -203,7 +220,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "otherMouseUp" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onOtherMouseUp:function (event) {
@@ -214,7 +231,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "scrollWheel" event is received.           <br/>
      * Return YES to avoid propagating the event to other delegates.  </p>
-     * @param event
+     * @param {cc.Mouse} event
      * @return {Boolean}
      */
     onScrollWheel:function (event) {
@@ -225,7 +242,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      *  <p> called when the "mouseEntered" event is received.         <br/>
      *  Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
+     * @param {cc.Mouse} theEvent
      * @return {Boolean}
      */
     onMouseEntered:function (theEvent) {
@@ -235,7 +252,7 @@ cc.MouseEventDelegate = cc.Class.extend({
     /**
      * <p> called when the "mouseExited" event is received.          <br/>
      * Return YES to avoid propagating the event to other delegates. </p>
-     * @param theEvent
+     * @param {cc.Mouse} theEvent
      * @return {Boolean}
      */
     onMouseExited:function (theEvent) {
@@ -245,6 +262,7 @@ cc.MouseEventDelegate = cc.Class.extend({
 
 cc.Mouse = cc.Touch.extend({
     _wheelDelta:0,
+    _button:cc.MOUSE_LEFTBUTTON,
 
     getWheelDelta:function () {
         return this._wheelDelta;
@@ -252,6 +270,14 @@ cc.Mouse = cc.Touch.extend({
 
     setWheelDelta:function (delta) {
         this._wheelDelta = delta;
+    },
+
+    getButton:function () {
+        return this._button;
+    },
+
+    setButton:function (button) {
+        this._button = button;
     }
 });
 
@@ -265,7 +291,6 @@ cc.MouseHandler = cc.Class.extend(/** @lends cc.MouseHandler# */{
     _delegate:null,
     _priority:0,
     _enabledSelectors:0,
-
 
     /**
      * @return {cc.MouseEventDelegate}
@@ -490,6 +515,7 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 
         var mouse = new cc.Mouse(mouseX, mouseY);
         mouse._setPrevPoint(cc.MouseDispatcher._preMousePoint.x, cc.MouseDispatcher._preMousePoint.y);
+        mouse.setButton(event.button);
         cc.MouseDispatcher._preMousePoint.x = mouseX;
         cc.MouseDispatcher._preMousePoint.y = mouseY;
 
