@@ -121,8 +121,8 @@
                 <file name="GUI/CCControlExtension/CCControlSaturationBrightnessPicker.js"/>
                 <file name="GUI/CCControlExtension/CCMenuPassive.js"/>
                 <file name="GUI/CCScrollView/CCSorting.js"/>
-                <file name="GUI/CCScrollView/CCTableView.js"/>
                 <file name="GUI/CCScrollView/CCScrollView.js"/>
+                <file name="GUI/CCScrollView/CCTableView.js"/>
                 <file name="CCControlEditBox.js"/>
             </sources>
         </jscomp>
