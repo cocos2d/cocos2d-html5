@@ -1,10 +1,6 @@
-cocos2d-html5 authors 
-
-
+Cocos2d-html5 authors
 
 (ordered by the join in time)
-
-
 
 Core Developers:
 
@@ -16,13 +12,11 @@ Core Developers:
 
     Shengxiang Chen (Nero Chan)
 
-
-
+    Ricardo Quesada
 
 
 Developers:
    
-
 
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
