@@ -79,6 +79,7 @@
         'particle_nodes/CCParticleSystem.js',
         'particle_nodes/CCParticleSystemQuad.js',
         'particle_nodes/CCParticleExamples.js',
+        'particle_nodes/CCParticleBatchNode.js',
         'touch_dispatcher/CCTouchDelegateProtocol.js',
         'touch_dispatcher/CCTouchHandler.js',
         'touch_dispatcher/CCTouchDispatcher.js',
