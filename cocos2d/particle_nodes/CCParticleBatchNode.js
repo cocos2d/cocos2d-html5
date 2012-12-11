@@ -87,7 +87,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} capacity
      * @return {Boolean}
      */
-    initWithFile:function (fileImage, capacity) {
+    init:function (fileImage, capacity) {
         var tex = cc.TextureCache.getInstance().addImage(fileImage);
         return this.initWithTexture(tex, capacity);
     },
@@ -277,7 +277,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @override
      * @param {CanvasContext} ctx
      */
-    draw:function (ctx) {
+     // XXX: Remove the "XXX_" prefix once WebGL is supported
+    XXX_draw:function (ctx) {
         cc.PROFILER_STOP("CCParticleBatchNode - draw");
         if (this._textureAtlas.getTotalQuads() == 0) {
             return;
@@ -336,7 +337,8 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
 
     // override visit.
     // Don't call visit on it's children
-    visit:function (ctx) {
+    // XXX: Remove the "XXX_" prefix once WebGL is supported
+    XXX_visit:function (ctx) {
         // CAREFUL:
         // This visit is almost identical to cc.Node#visit
         // with the exception that it doesn't call visit on it's children
@@ -499,7 +501,7 @@ cc.ParticleBatchNode.createWithTexture = function (texture, capacity) {
  */
 cc.ParticleBatchNode.create = function (fileImage, capacity) {
     var ret = new cc.ParticleBatchNode();
-    if (ret && ret.initWithFile(fileImage, capacity)) {
+    if (ret && ret.init(fileImage, capacity)) {
         return ret;
     }
     return null;
