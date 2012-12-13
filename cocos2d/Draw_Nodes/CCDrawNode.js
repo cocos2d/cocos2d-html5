@@ -275,10 +275,10 @@ cc.DrawNode = cc.Node.extend({
     },
 
     /** draw a polygon with a fill color and line color */
-    drawPolyWithVerts:function (verts, count, fillColor, width, borderColor) {
+    drawPoly:function (verts, fillColor, width, borderColor) {
         var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_POLY);
-        element.verts = cc.DrawNode.convertVerts(verts);
-        element.count = count;
+        element.verts = verts;
+        element.count = verts.length;
         element.fillColor = fillColor;
         element.borderWidth = width;
         element.borderColor = borderColor;
@@ -395,10 +395,3 @@ cc._DrawNodeElement = function (type) {
 cc.DRAWNODE_TYPE_DOT = 0;
 cc.DRAWNODE_TYPE_SEGMENT = 1;
 cc.DRAWNODE_TYPE_POLY = 2;
-cc.DrawNode.convertVerts = function (verts) {
-    var ret = [];
-    for (var i = 0; i < verts.length / 2; i++) {
-        ret[i] = {x:verts[i * 2], y:verts[i * 2 + 1]};
-    }
-    return ret;
-};
