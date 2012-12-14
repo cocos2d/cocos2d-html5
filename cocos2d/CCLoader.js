@@ -163,11 +163,8 @@ cc.Loader = cc.Class.extend(/**  @lends cc.Loader# */{
                 case "image":
                     sharedTextureCache.addImage(res[i].src);
                     break;
-                case "bgm":
-                    sharedEngine.preloadMusic(res[i].src);
-                    break;
-                case "effect":
-                    sharedEngine.preloadEffect(res[i].src);
+                case "sound":
+                    sharedEngine.preloadSound(res[i].src);
                     break;
                 case "plist":
                 case "tmx":
