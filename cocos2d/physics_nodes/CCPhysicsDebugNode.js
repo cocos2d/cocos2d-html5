@@ -34,6 +34,15 @@
  as the private API may change with little or no warning.
  */
 
+// Helper. Converts an array of numbers into an array of vectors(x,y)
+cc.__convertVerts = function (verts) {
+    var ret = [];
+    for (var i = 0; i < verts.length / 2; i++) {
+        ret[i] = {x:verts[i * 2], y:verts[i * 2 + 1]};
+    }
+    return ret;
+};
+
 cc.ColorForBody = function (body) {
     if (body.isRogue() || body.isSleeping()) {
         return cc.c4f(0.5, 0.5, 0.5, 0.5);
@@ -57,7 +66,7 @@ cc.DrawShape = function (shape, renderer) {
             break;
         case cp.PolyShape.prototype.collisionCode:
             var line = cc.c4f(color.r, color.g, color.b, cc.lerp(color.a, 1.0, 0.5));
-            this.drawPolyWithVerts(shape.tVerts, shape.getNumVerts(), color, 1.0, line);
+            this.drawPoly(cc.__convertVerts(shape.tVerts), color, 1.0, line);
             break;
         default:
             cc.Assert(false, "Bad assertion in DrawShape()");
@@ -154,3 +163,4 @@ cc.PhysicsDebugNode.debugNodeForCPSpace = function (space) {
 };
 
 cc.PhysicsDebugNode.create = cc.PhysicsDebugNode.debugNodeForCPSpace;
+
