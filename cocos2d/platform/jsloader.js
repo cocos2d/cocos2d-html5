@@ -79,6 +79,7 @@
         'particle_nodes/CCParticleSystem.js',
         'particle_nodes/CCParticleSystemQuad.js',
         'particle_nodes/CCParticleExamples.js',
+        'particle_nodes/CCParticleBatchNode.js',
         'touch_dispatcher/CCTouchDelegateProtocol.js',
         'touch_dispatcher/CCTouchHandler.js',
         'touch_dispatcher/CCTouchDispatcher.js',
@@ -105,7 +106,8 @@
         'menu_nodes/CCMenuItem.js',
         'menu_nodes/CCMenu.js',
         'base_nodes/CCdomNode.js',
-        '../CocosDenshion/SimpleAudioEngine.js'
+        '../CocosDenshion/SimpleAudioEngine.js',
+        '../System/LocalStorage.js'
     ];
 
     var d = document;

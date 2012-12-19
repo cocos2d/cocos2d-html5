@@ -335,7 +335,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             for (var i = 0; i < this._children.length; i++) {
                 var child = this._children[i];
                 // check if too many menu items for the amount of rows/columns
-                cc.Assert(column < columns.size(), "");
+                cc.Assert(column < columns.length, "");
 
                 columnRows = columns[column];
                 // can't have zero rows on a column
