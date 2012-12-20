@@ -122,8 +122,27 @@ if (!window.console) {
     };
 }
 
-
 cc.isAddedHiddenEvent = false;
+
+/**
+ * create a webgl context
+ * @param {HTMLCanvasElement} canvas
+ * @param {Object} opt_attribs
+ * @return {WebGLRenderingContext}
+ */
+cc.create3DContext = function(canvas, opt_attribs) {
+    var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+    var context = null;
+    for (var ii = 0; ii < names.length; ++ii) {
+        try {
+            context = canvas.getContext(names[ii], opt_attribs);
+        } catch(e) {}
+        if (context) {
+            break;
+        }
+    }
+    return context;
+};
 
 /**
  * <p>
@@ -183,12 +202,18 @@ cc.setup = function (el, width, height) {
     cc.container.style.position = 'relative';
     cc.container.style.overflow = 'hidden';
     cc.container.top = '100%';
-    cc.renderContext = cc.canvas.getContext("2d");
-    cc.renderContextType = cc.CANVAS;
-    if (cc.renderContextType == cc.CANVAS) {
+
+    if(cc.Browser.supportWebGL){
+        cc.webglContext = cc.create3DContext(cc.canvas);
+        cc.renderContextType = cc.WEBGL;
+        cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.webglContext);
+    }else{
+        cc.renderContext = cc.canvas.getContext("2d");
+        cc.renderContextType = cc.CANVAS;
         cc.renderContext.translate(0, cc.canvas.height);
         cc.drawingUtil = new cc.DrawingPrimitiveCanvas(cc.renderContext);
     }
+
     cc.originalCanvasSize = cc.size(cc.canvas.width, cc.canvas.height);
 
     cc.log(cc.ENGINE_VERSION);

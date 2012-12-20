@@ -37,6 +37,7 @@ cc.Browser = {};
     cc.Browser.mode = cc.Browser.UA[1] == 'ie' && document.documentMode;
     cc.Browser.type = (cc.Browser.UA[1] == 'version') ? cc.Browser.UA[3] : cc.Browser.UA[1];
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
+    cc.Browser.supportWebGL = !(window.WebGLRenderingContext == null);
 })();
 
 

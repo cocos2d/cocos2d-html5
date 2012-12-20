@@ -59,36 +59,22 @@ cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC2 = 10;
 //! Default texture format: RGBA8888
 cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
 
-// backward compatibility stuff
-cc.TEXTURE_2D_PIXEL_FORMAT_AUTOMATIC = cc.TEXTURE_2D_PIXEL_FORMAT_AUTOMATIC;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB888 = cc.TEXTURE_2D_PIXEL_FORMAT_RGB888;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB565 = cc.TEXTURE_2D_PIXEL_FORMAT_RGB565;
-cc.TEXTURE_2D_PIXEL_FORMAT_A8 = cc.TEXTURE_2D_PIXEL_FORMAT_A8;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444 = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1 = cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1;
-cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT = cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT;
-
-
-if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
-    //TODO include CCTextureCache.h
-}
 
 // If the image has alpha, you can create RGBA8 (32-bit) or RGBA4 (16-bit) or RGB5A1 (16-bit)
 // Default is: RGBA8888 (32-bit textures)
 cc.g_defaultAlphaPixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT;
 // By default PVR images are treated as if they don't have the alpha channel premultiplied
 cc.PVRHaveAlphaPremultiplied_ = false;
+
 /**
  Extension to set the Min / Mag filter
  */
-
-function _ccTexParams(minFilter, magFilter, wrapS, wrapT) {
-    this.minFilter = minFilter;
-    this.magFilter = magFilter;
-    this.wrapS = wrapS;
-    this.wrapT = wrapT;
-}
+cc._texParams = function (minFilter, magFilter, wrapS, wrapT) {
+    this.minFilter = minFilter || 0;
+    this.magFilter = magFilter || 0;
+    this.wrapS = wrapS || 0;
+    this.wrapT = wrapT || 0;
+};
 
 //CLASS INTERFACES:
 
@@ -109,152 +95,140 @@ cc.Texture2D = cc.Class.extend({
     _maxS:null,
     _maxT:null,
     _hasPremultipliedAlpha:null,
+    _hasMipmaps:false,
+
+    _shaderProgram:null,
+
+    _isLoaded:false,
+    _htmlElementObj:null,
+    _webTextureObj:null,
 
     /*public:*/
     ctor:function () {
-        // implementation CCTexture2D (PVRTC);
-        if (cc.SUPPORT_PVRTC) {
-            /**
-             Extensions to make it easy to create a cc.Texture2D object from a PVRTC file
-             Note that the generated textures don't have their alpha premultiplied - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
-             */
-            /** Initializes a texture from a PVRTC buffer */
-            this.initWithPVRTCData = function (data, level, bpp, hasAlpha, length, pixelFormat) {
-                if (!(cc.Configuration.getInstance().isSupportsPVRTC())) {
-                    cc.log("cocos2d: WARNING: PVRTC images is not supported.");
-                    return false;
-                }
-
-                //TODO
-                // glGenTextures(1, this._name);
-                //TODO
-                // glBindTexture(gl.TEXTURE_2D, this._name);
-
-                this.setAntiAliasTexParameters();
-
-                var format;
-                var size = new cc.GLsizei();
-                size = length * length * bpp / 8;
-                if (hasAlpha) {
-                    format = (bpp == 4) ? gl.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
-                } else {
-                    format = (bpp == 4) ? gl.COMPRESSED_RGB_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
-                }
-                if (size < 32) {
-                    size = 32;
-                }
-                //TODO
-                // glCompressedTexImage2D(gl.TEXTURE_2D, level, format, length, length, 0, size, data);
-
-                this._contentSize = cc.size(length, length);
-                this._pixelsWide = length;
-                this._pixelsHigh = length;
-                this._maxS = 1.0;
-                this._maxT = 1.0;
-                this._hasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
-                this._pixelFormat = pixelFormat;
-
-                return true;
-            };
-        }// cc.SUPPORT_PVRTC
+        this._pixelsWide = 0;
+        this._pixelsWide = 0;
+        this._name = "";
+        this._maxS = 0;
+        this._maxT = 0;
+        this._hasPremultipliedAlpha = false;
+        this._hasMipmaps = false;
+        this._pVRHaveAlphaPremultiplied = true;
+        this._pixelFormat = cc.Texture2D.defaultAlphaPixelFormat();
     },
+
     /** pixel format of the texture */
     getPixelFormat:function () {
         return this._pixelFormat;
     },
+
     //** width in pixels *//
     getPixelsWide:function () {
         return this._pixelsWide;
     },
+
     //** hight in pixels *//
     getPixelsHigh:function () {
         return this._pixelsHigh;
     },
+
     //** texture name *//
     getName:function () {
         return this._name;
     },
-    //** content size *//
-    getContentSizeInPixels:function () {
-        var ret = cc.size(0, 0);
-        ret.width = this._contentSize.width / cc.CONTENT_SCALE_FACTOR();
-        ret.height = this._contentSize.height / cc.CONTENT_SCALE_FACTOR();
 
-        return ret;
+    //** content size *//
+    getContentSize:function(){
+        return cc.size(this._contentSize.width / cc.CONTENT_SCALE_FACTOR(), this._contentSize.height / cc.CONTENT_SCALE_FACTOR());
     },
+
+    getContentSizeInPixels:function () {
+        return this._contentSize;
+    },
+
     //** texture max S *//
     getMaxS:function () {
         return this._maxS;
     },
+
     setMaxS:function (maxS) {
         this._maxS = maxS;
     },
+
     //** texture max T *//
     getMaxT:function () {
         return this._maxT;
     },
+
     setMaxT:function (maxT) {
         this._maxT = maxT;
     },
+
+    getShaderProgram:function(){
+        return this._shaderProgram;
+    },
+
+    setShaderProgram:function(shaderProgram){
+        this._shaderProgram = shaderProgram;
+    },
+
     //** whether or not the texture has their Alpha premultiplied *//
-    getHasPremultipliedAlpha:function () {
+    hasPremultipliedAlpha:function () {
         return this._hasPremultipliedAlpha;
     },
+
     description:function () {
-        var ret = "<cc.Texture2D | Name = " + this._name + " | Dimensions = " + this._pixelsWide + " x " + this._pixelsHigh
+        return "<cc.Texture2D | Name = " + this._name + " | Dimensions = " + this._pixelsWide + " x " + this._pixelsHigh
             + " | Coordinates = (" + this._maxS + ", " + this._maxT + ")>";
-        return ret;
     },
     /** These functions are needed to create mutable textures */
     releaseData:function (data) {
-        cc.free(data);
+        data = null;
     },
+
     keepData:function (data, length) {
         //The texture data mustn't be saved becuase it isn't a mutable texture.
         return data;
     },
 
     /** Intializes with a texture2d with data */
-    initWithData:function (pixelFormat, pixelsWide, pixelsHigh, contentSize) {
-        //TODO
-        // glPixelStorei(gl.UNPACK_ALIGNMENT,1);
-        //TODO
-        // glGenTextures(1, this._name);
-        //TODO
-        // glBindTexture(gl.TEXTURE_2D, this._name);
+    initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
+        var gl = cc.webglContext;
+        // XXX: 32 bits or POT textures uses UNPACK of 4 (is this correct ??? )
+        if( pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 || ( cc.NextPOT(pixelsWide)==pixelsWide && cc.NextPOT(pixelsHigh)==pixelsHigh) )
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);
+        else
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
 
-        this.setAntiAliasTexParameters();
+        this._name = gl.createTexture();
+        gl.bindTexture(gl.TEXTURE_2D, this._name);
+
+        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR );
+        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR );
+        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE );
+        gl.texParameteri( gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE );
 
         // Specify OpenGL texture image
-
         switch (pixelFormat) {
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
-                //TODO
-                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
-                //TODO
-                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGB, gl.UNSIGNED_BYTE, data);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_BYTE, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
-                //TODO
-                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, data);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
-                //TODO
-                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, data);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, pixelsWide, pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
-                //TODO
-                // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, data);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGB, pixelsWide, pixelsHigh, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
-                //TODO
-                // glTexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, data);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, pixelsWide, pixelsHigh, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, data);
                 break;
             case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
-                //TODO
-                // glTexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, data);
+                gl.texImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, pixelsWide, pixelsHigh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, data);
                 break;
             default:
                 cc.Assert(0, "NSInternalInconsistencyException");
@@ -269,6 +243,9 @@ cc.Texture2D = cc.Class.extend({
         this._maxT = contentSize.height / pixelsHigh;
 
         this._hasPremultipliedAlpha = false;
+        this._hasMipmaps = false;
+
+        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.Shader_PositionTexture))
 
         return true;
     },
@@ -418,6 +395,51 @@ cc.Texture2D = cc.Class.extend({
         return ret;
     },
 
+    /**
+     Extensions to make it easy to create a cc.Texture2D object from a PVRTC file
+     Note that the generated textures don't have their alpha premultiplied - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
+     */
+    /**
+     *  Initializes a texture from a PVRTC buffer
+     **/
+    initWithPVRTCData:function (data, level, bpp, hasAlpha, length, pixelFormat) {
+        if (!(cc.Configuration.getInstance().isSupportsPVRTC())) {
+            cc.log("cocos2d: WARNING: PVRTC images is not supported.");
+            return false;
+        }
+
+        //TODO
+        // glGenTextures(1, this._name);
+        //TODO
+        // glBindTexture(gl.TEXTURE_2D, this._name);
+
+        this.setAntiAliasTexParameters();
+
+        var format;
+        var size = new cc.GLsizei();
+        size = length * length * bpp / 8;
+        if (hasAlpha) {
+            format = (bpp == 4) ? gl.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
+        } else {
+            format = (bpp == 4) ? gl.COMPRESSED_RGB_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
+        }
+        if (size < 32) {
+            size = 32;
+        }
+        //TODO
+        // glCompressedTexImage2D(gl.TEXTURE_2D, level, format, length, length, 0, size, data);
+
+        this._contentSize = cc.size(length, length);
+        this._pixelsWide = length;
+        this._pixelsHigh = length;
+        this._maxS = 1.0;
+        this._maxT = 1.0;
+        this._hasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
+        this._pixelFormat = pixelFormat;
+
+        return true;
+    },
+
     /** sets the min filter, mag filter, wrap s and wrap t texture parameters.
      If the texture size is NPOT (non power of 2), then in can only use gl.CLAMP_TO_EDGE in gl.TEXTURE_WRAP_{S,T}.
      @since v0.8
@@ -512,7 +534,7 @@ cc.Texture2D = cc.Class.extend({
             default:
                 ret = -1;
                 cc.Assert(false, "illegal pixel format");
-                cc.log("bitsPerPixelForFormat: %d, cannot give useful result", this._pixelFormat);
+                cc.log("bitsPerPixelForFormat: " + this._pixelFormat + ", cannot give useful result");
                 break;
         }
         return ret;
@@ -535,8 +557,7 @@ cc.Texture2D = cc.Class.extend({
         // compute pixel format
         if (hasAlpha) {
             pixelFormat = cc.g_defaultAlphaPixelFormat;
-        }
-        else {
+        } else {
             if (bpp >= 8) {
                 pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGB888;
             }

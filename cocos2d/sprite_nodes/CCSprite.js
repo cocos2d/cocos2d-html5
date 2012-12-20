@@ -455,12 +455,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._hasChildren = false;
 
         // Atlas: Color
-        var tmpColor = new cc.Color4B(255, 255, 255, 255);
-        this._quad.bl.colors = tmpColor;
-        this._quad.br.colors = tmpColor;
-        this._quad.tl.colors = tmpColor;
-        this._quad.tr.colors = tmpColor;
-
+        if(cc.renderContextType == cc.WEBGL){
+            var tmpColor = new cc.Color4B(255, 255, 255, 255);
+            this._quad.bl.colors = tmpColor;
+            this._quad.br.colors = tmpColor;
+            this._quad.tl.colors = tmpColor;
+            this._quad.tr.colors = tmpColor;
+        }
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
@@ -871,8 +872,19 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {CanvasContext} ctx 2d context of canvas
      */
     draw:function (ctx) {
-        //draw for canvas
         //cc.PROFILER_START_CATEGORY(kCCProfilerCategorySprite, "cc.Sprite - draw");
+
+        if(cc.renderContextType == cc.CANVAS)
+            this._drawForCanvas(ctx);
+        else
+            this._drawForWebGL(ctx);
+
+        cc.g_NumberOfDraws++;
+
+        //CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
+    },
+
+    _drawForCanvas:function(ctx){
         var context = ctx || cc.renderContext;
 
         if (this._isLighterMode)
@@ -942,27 +954,32 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 cc.p(offsetPix.x + drawSize.width, offsetPix.y + drawSize.height), cc.p(offsetPix.x, offsetPix.y + drawSize.height)];
             cc.drawingUtil.drawPoly(vertices2, 4, true);
         }
-
-        //cc.INCREMENT_GL_DRAWS(1);
-        cc.g_NumberOfDraws++;
-
-        //CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
     },
 
+    _verticesFloat32Buffer:null,
+    _textureCoordsFloat32Buffer:null,
+    _colorsFloat32Buffer:null,
     _drawForWebGL:function (ctx) {
-        var context = ctx;
-        //cc.PROFILER_START_CATEGORY(kCCProfilerCategorySprite, "cc.Sprite - draw");
-        //TODO  WebGL Draw of sprite
+        var gl = ctx || cc.webglContext;
+
         cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        cc.NODE_DRAW_SETUP(this);
+        //cc.NODE_DRAW_SETUP(this);
+        gl.enable(gl.BLEND);
+        if (this._shaderProgram) {
+            gl.useProgram(this._shaderProgram._programObj);
+            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+        }
 
         //ccGLBlendFunc( m_sBlendFunc.src, m_sBlendFunc.dst );
+        gl.blendFunc(this._blendFunc.src, this._blendFunc.dst);
 
         if (this._texture) {
             //ccGLBindTexture2D(this._texture.getName());
+            gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
         } else {
             //ccGLBindTexture2D(0);
+            gl.bindTexture(gl.TEXTURE_2D, null);
         }
 
         //

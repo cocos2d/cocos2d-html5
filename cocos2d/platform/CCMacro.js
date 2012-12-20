@@ -164,7 +164,7 @@ cc.BLEND_DST = 0x0303;
  * @function
  */
 cc.NODE_DRAW_SETUP = function (node) {
-    ccGLEnable(node._glServerState);
+    cc.glEnable(node._glServerState);
     cc.Assert(node.getShaderProgram(), "No shader program set for this node");
     {
         node.getShaderProgram().use();
@@ -404,3 +404,9 @@ gl.ONE_MINUS_DST_COLOR = 0x0307;
  */
 gl.SRC_ALPHA_SATURATE = 0x0308;
 
+cc.CHECK_GL_ERROR_DEBUG = function(){
+    var _error = cc.webglContext.getError();
+    if(_error){
+        cc.log("WebGL error " + _error);
+    }
+};

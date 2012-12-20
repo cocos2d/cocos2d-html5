@@ -136,6 +136,24 @@ cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
 };
 
 /**
+ * Inserts some objects at index
+ * @function
+ * @param {Array} arr
+ * @param {Array} addObjs
+ * @param {Number} index
+ * @return {Array}
+ */
+cc.ArrayAppendObjectsToIndex = function(arr, addObjs,index){
+    var part1 = arr.slice(0, index);
+    var part2 = arr.slice(index);
+    for(var i = 0; i< addObjs.length;i++){
+        part1.push(addObjs[i]);
+    }
+    arr = (part1.concat(part2));
+    return arr;
+};
+
+/**
  * Returns index of first occurence of object, -1 if value not found.
  * @function
  * @param {Array} arr Source Array

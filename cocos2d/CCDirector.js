@@ -178,15 +178,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     ctor:function () {
         this._currTimeValue = new cc.timeval();
         this._lastUpdate = new cc.timeval();
-        if(!cc.isAddedHiddenEvent){
+        if (!cc.isAddedHiddenEvent) {
             var selfPointer = this;
-            window.addEventListener("focus",function(){
+            window.addEventListener("focus", function () {
                 selfPointer._lastUpdate = cc.Time.gettimeofdayCocos2d(selfPointer._lastUpdate);
             }, false);
         }
     },
 
-    _resetLastUpdate:function(){
+    _resetLastUpdate:function () {
         this._lastUpdate = cc.Time.gettimeofdayCocos2d(this._lastUpdate);
     },
 
@@ -313,92 +313,76 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.calculateDeltaTime();
 
         //tick before glClear: issue #533
-        if (!this._paused) {
+        if (!this._paused)
             this._scheduler.update(this._deltaTime);
+
+        if (cc.renderContextType === cc.CANVAS)
+            this._drawSceneForCanvas();
+        else
+            this._drawSceneForWebGL();
+
+        this._totalFrames++;
+
+        // swap buffers
+        /*        if (this._openGLView) {
+         this._openGLView.swapBuffers();
+         }*/
+
+        if (this._displayStats) {
+            this._calculateMPF();
         }
-        //this._fullRect = cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
-        //cc.renderContext.clearRect(this._fullRect.origin.x, this._fullRect.origin.y, this._fullRect.size.width, -this._fullRect.size.height);
+    },
+
+    _drawSceneForCanvas:function () {
         cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
-
-        /*
-         var isSaveContext = false;
-         //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-         if (this._dirtyRegion) {
-         //cc.renderContext.clearRect(0, 0, cc.canvas.width, -cc.canvas.height);
-
-         var fullRect = cc.rect(0, 0, cc.canvas.width, cc.canvas.height);
-         this._dirtyRegion = cc.Rect.CCRectIntersection(this._dirtyRegion, fullRect);
-
-         if(cc.Rect.CCRectEqualToRect(cc.RectZero(), this._dirtyRegion)){
-         this._dirtyRegion = null;
-         }else{
-         cc.renderContext.clearRect(0 | this._dirtyRegion.origin.x, -(0 | this._dirtyRegion.origin.y),
-         0 | this._dirtyRegion.size.width, -(0 | this._dirtyRegion.size.height));
-
-         if(!cc.Rect.CCRectEqualToRect(fullRect, this._dirtyRegion)){
-         isSaveContext = true;
-         cc.renderContext.save();
-         cc.renderContext.beginPath();
-         cc.renderContext.rect(0 | this._dirtyRegion.origin.x - 1, -(0 | this._dirtyRegion.origin.y - 1),
-         0 | this._dirtyRegion.size.width + 2, -(0 | this._dirtyRegion.size.height + 2));
-         cc.renderContext.clip();
-         cc.renderContext.closePath();
-         }
-         }
-         }
-         */
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
          XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
         if (this._nextScene) {
             this.setNextScene();
         }
-
-        //kmGLPushMatrix();
-
         // draw the scene
-        if (this._runningScene) {
-            //if (this._dirtyRegion) {
+        if (this._runningScene)
             this._runningScene.visit();
-            //}
-        }
-
-        /*
-         if (this._dirtyRegion) {
-         this._dirtyRegion = null;
-         if(isSaveContext){
-         cc.renderContext.restore();
-         }
-         }
-         */
 
         // draw the notifications node
-        if (this._notificationNode) {
+        if (this._notificationNode)
             this._notificationNode.visit();
-        }
 
-        if (this._displayStats) {
+        if (this._displayStats)
             this._showStats();
-        }
 
-        if (this._watcherFun && this._watcherSender) {
+        if (this._watcherFun && this._watcherSender)
             this._watcherFun.call(this._watcherSender);
-        }
+    },
 
-        //TODO OpenGL
-        //kmGLPopMatrix();
+    _drawSceneForWebGL:function () {
+        var gl = cc.webglContext;
+        gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-        this._totalFrames++;
+        /* to avoid flickr, nextScene MUST be here: after tick and before draw.
+         XXX: Which bug is this one. It seems that it can't be reproduced with v0.9 */
+        if (this._nextScene)
+            this.setNextScene();
 
-        // swap buffers
-        if (this._openGLView) {
-            this._openGLView.swapBuffers();
-        }
+        cc.kmGLPushMatrix();
 
-        if (this._displayStats) {
-            this._calculateMPF();
-        }
+        // draw the scene
+        if (this._runningScene)
+            this._runningScene.visit();
+
+        // draw the notifications node
+        if (this._notificationNode)
+            this._notificationNode.visit();
+
+        //TODO need open
+        //if (this._displayStats)
+        //    this._showStats();
+
+        if (this._watcherFun && this._watcherSender)
+            this._watcherFun.call(this._watcherSender);
+
+        cc.kmGLPopMatrix();
     },
 
     addRegionToDirtyRegion:function (rect) {
@@ -602,7 +586,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //cc.UserDefault.purgeSharedUserDefault();
         //ccGLInvalidateStateCache();
 
-        //CHECK_GL_ERROR_DEBUG();
+        cc.CHECK_GL_ERROR_DEBUG();
 
         // OpenGL view
         this._openGLView.end();
@@ -621,8 +605,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     pushScene:function (scene) {
         cc.Assert(scene, "the scene should not null");
 
-        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
-
         this._sendCleanupToScene = false;
 
         this._scenesStack.push(scene);
@@ -636,7 +618,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     replaceScene:function (scene) {
         cc.Assert(scene != null, "the scene should not be null");
 
-        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
         var i = this._scenesStack.length;
 
         this._sendCleanupToScene = true;
@@ -650,7 +631,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     reshapeProjection:function (newWindowSize) {
         if (this._openGLView) {
-            this._winSizeInPoints = this._openGLView.getSize();
+            this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);     //this._openGLView.getSize();
             this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor,
                 this._winSizeInPoints.height * this._contentScaleFactor);
 
@@ -665,7 +646,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!this._paused) {
             return;
         }
-        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.setAnimationInterval(this._oldAnimationInterval);
         this._lastUpdate = cc.Time.gettimeofdayCocos2d();
@@ -689,8 +669,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.Assert(scene != null, "running scene should not be null");
         cc.Assert(this._runningScene == null, "_runningScene should be null");
 
-        //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
-
         this.pushScene(scene);
         this.startAnimation();
     },
@@ -701,14 +679,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setAlphaBlending:function (on) {
         if (on) {
-            //TODO OpenGL
-            //ccGLEnable(CC_GL_BLEND);
-            //ccGLBlendFunc(CC_BLEND_SRC, CC_BLEND_DST);
+            cc.glEnable(cc.GL_BLEND);
+            cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+        } else {
+            cc.webglContext.disable(cc.webglContext.BLEND);
         }
-        else {
-            //glDisable(GL_BLEND);
-        }
-        //CHECK_GL_ERROR_DEBUG();
+        cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -739,17 +715,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setDepthTest:function (on) {
         if (on) {
-            /*TODO OpenGL Stuff
-             ccglClearDepth(1.0f);
-             glEnable(GL_DEPTH_TEST);
-             glDepthFunc(GL_LEQUAL);
-             //        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
-             }
-             else
-             {
-             glDisable(GL_DEPTH_TEST);*/
+            cc.webglContext.clearDepth(1.0);
+            cc.webglContext.enable(cc.webglContext.DEPTH_TEST);
+            cc.webglContext.depthFunc(cc.webglContext.LEQUAL);
+            //cc.webglContext.hint(GL_PERSPECTIVE_CORRECTION_HINT, cc.webglContext.NICEST);
+        } else {
+            cc.webglContext.disable(cc.webglContext.DEPTH_TEST);
         }
-        //CHECK_GL_ERROR_DEBUG();
+        cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -760,12 +733,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.Assert(this._openGLView, "opengl view should not be null");
 
         this.setAlphaBlending(true);
-        this.setDepthTest(true);
+        this.setDepthTest(false);
         this.setProjection(this._projection);
 
         // set other opengl default values
-        //TODO OpenGl
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        cc.webglContext.clearColor(0.0, 0.0, 0.0, 1.0);
     },
 
     /**
@@ -819,6 +791,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {*} openGLView
      */
     setOpenGLView:function (openGLView) {
+        if(cc.renderContextType !== cc.WEBGL)
+            return;
+
         cc.Assert(openGLView, "opengl view should not be null");
 
         if (this._openGLView != openGLView) {
@@ -827,22 +802,20 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._openGLView = openGLView;
 
             // set size
-            this._winSizeInPoints = this._openGLView.getSize();
+            this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);        //this._openGLView.getSize();
             this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
 
-            this._createStatsLabel();
+            //TODO need open
+            //this._createStatsLabel();
 
-            if (this._openGLView) {
-                this.setGLDefaultValues();
-            }
+            //if (this._openGLView)
+            this.setGLDefaultValues();
 
-            //CHECK_GL_ERROR_DEBUG();
+            cc.CHECK_GL_ERROR_DEBUG();
 
-            if (this._contentScaleFactor != 1) {
+            if (this._contentScaleFactor != 1)
                 this.updateContentScaleFactor();
-            }
 
-            this._openGLView.setTouchDelegate(this._touchDispatcher);
             this._touchDispatcher.setDispatchEvents(true);
         }
     },
@@ -861,52 +834,46 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         switch (projection) {
             case cc.DIRECTOR_PROJECTION_2D:
-                //TODO OpenGL
-                /* kmGLMatrixMode(KM_GL_PROJECTION);
-                 kmGLLoadIdentity();
-                 kmMat4 orthoMatrix;
-                 kmMat4OrthographicProjection(&orthoMatrix, 0, size.width / CC_CONTENT_SCALE_FACTOR(), 0, size.height / CC_CONTENT_SCALE_FACTOR(), -1024, 1024 );
-                 kmGLMultMatrix(&orthoMatrix);
-                 kmGLMatrixMode(KM_GL_MODELVIEW);
-                 kmGLLoadIdentity();*/
+                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+                cc.kmGLLoadIdentity();
+                var orthoMatrix = new cc.kmMat4();
+                cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width / cc.CONTENT_SCALE_FACTOR(), 0, size.height / cc.CONTENT_SCALE_FACTOR(), -1024, 1024);
+                cc.kmGLMultMatrix(orthoMatrix);
+                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+                cc.kmGLLoadIdentity();
                 break;
             case cc.DIRECTOR_PROJECTION_3D:
-                //TODO OpenGl
-                /* float zeye = this->getZEye();
+                var zeye = this.getZEye();
+                var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
+                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+                cc.kmGLLoadIdentity();
 
-                 kmMat4 matrixPerspective, matrixLookup;
+                // issue #1334
+                cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
+                // kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, 1500);
 
-                 kmGLMatrixMode(KM_GL_PROJECTION);
-                 kmGLLoadIdentity();
+                cc.kmGLMultMatrix(matrixPerspective);
 
-                 // issue #1334
-                 kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, zeye*2);
-                 // kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, 1500);
-
-                 kmGLMultMatrix(&matrixPerspective);
-
-                 kmGLMatrixMode(KM_GL_MODELVIEW);
-                 kmGLLoadIdentity();
-                 kmVec3 eye, center, up;
-                 kmVec3Fill( &eye, sizePoint.width/2, sizePoint.height/2, zeye );
-                 kmVec3Fill( &center, sizePoint.width/2, sizePoint.height/2, 0.0f );
-                 kmVec3Fill( &up, 0.0f, 1.0f, 0.0f);
-                 kmMat4LookAt(&matrixLookup, &eye, &center, &up);
-                 kmGLMultMatrix(&matrixLookup);*/
+                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+                cc.kmGLLoadIdentity();
+                var eye = new cc.kmVec3(), center = new cc.kmVec3(), up = new cc.kmVec3();
+                cc.kmVec3Fill(eye, sizePoint.width / 2, sizePoint.height / 2, zeye);
+                cc.kmVec3Fill(center, sizePoint.width / 2, sizePoint.height / 2, 0.0);
+                cc.kmVec3Fill(up, 0.0, 1.0, 0.0);
+                cc.kmMat4LookAt(matrixLookup, eye, center, up);
+                cc.kmGLMultMatrix(matrixLookup);
                 break;
             case cc.DIRECTOR_PROJECTION_CUSTOM:
-                if (this._projectionDelegate) {
+                if (this._projectionDelegate)
                     this._projectionDelegate.updateProjection();
-                }
                 break;
-
             default:
                 cc.log("cocos2d: Director: unrecognized projection");
                 break;
         }
 
         this._projection = projection;
-        //ccSetProjectionMatrixDirty();
+        //cc.setProjectionMatrixDirty();
     },
 
     /**
@@ -941,12 +908,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * update content scale factor
      */
     updateContentScaleFactor:function () {
-        // [openGLView responseToSelector:@selector(setContentScaleFactor)]
         if (this._openGLView.canSetContentScaleFactor()) {
             this._openGLView.setContentScaleFactor(this._contentScaleFactor);
             this._isContentScaleSupported = true;
-        }
-        else {
+        } else {
             cc.log("cocos2d: setContentScaleFactor:'is not supported on this device");
         }
     },
@@ -1123,12 +1088,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
     },
 
-    getMouseDispatcher:function(){
-       return this._mouseDispatcher;
+    getMouseDispatcher:function () {
+        return this._mouseDispatcher;
     },
 
-    setMouseDispatcher:function( mouseDispatcher){
-        if(this._mouseDispatcher != mouseDispatcher)
+    setMouseDispatcher:function (mouseDispatcher) {
+        if (this._mouseDispatcher != mouseDispatcher)
             this._mouseDispatcher = mouseDispatcher;
     },
 
