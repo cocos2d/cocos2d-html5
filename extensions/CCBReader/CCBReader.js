@@ -803,9 +803,13 @@ cc.BuilderReader = cc.Class.extend({
     }
 });
 
+cc.BuilderReader._ccbResolutionScale = 1;
+cc.BuilderReader.setResolutionScale = function(scale){
+    cc.BuilderReader._ccbResolutionScale = scale;
+};
+
 cc.BuilderReader.getResolutionScale = function () {
-    //if(cc.Application.getInstance().getT)
-    return 1;
+    return cc.BuilderReader._ccbResolutionScale;
 };
 
 cc.BuilderReader.loadAsScene = function (ccbFilePath, owner, parentSize, ccbRootPath) {
