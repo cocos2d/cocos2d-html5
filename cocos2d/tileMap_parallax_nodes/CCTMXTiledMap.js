@@ -29,7 +29,7 @@
  * @constant
  * @type Number
  */
-cc.TMXOrientationOrtho = 0;
+cc.TMX_ORIENTATION_ORTHO = 0;
 
 /**
  * Hexagonal orientation
@@ -37,14 +37,14 @@ cc.TMXOrientationOrtho = 0;
  * @type Number
  */
 
-cc.TMXOrientationHex = 1;
+cc.TMX_ORIENTATION_HEX = 1;
 
 /**
  * Isometric orientation
  * @constant
  * @type Number
  */
-cc.TMXOrientationIso = 2;
+cc.TMX_ORIENTATION_ISO = 2;
 
 /**
  * <p>cc.TMXTiledMap knows how to parse and render a TMX map.</p>

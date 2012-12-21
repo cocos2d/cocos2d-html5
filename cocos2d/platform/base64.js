@@ -69,6 +69,7 @@ cc.Codec.Base64.decode = function Jacob__Codec__Base64__decode(input) {
  * var decodeArr = cc.Codec.Base64.decodeAsArray("U29tZSBTdHJpbmc=");
  */
 cc.Codec.Base64.decodeAsArray = function Jacob__Codec__Base64___decodeAsArray(input, bytes) {
+    bytes = bytes || 4;
     var dec = this.decode(input),
         ar = [], i, j, len;
     for (i = 0, len = dec.length / bytes; i < len; i++) {
@@ -114,4 +115,17 @@ cc.Codec.Base64.encode = function Jacob__Codec__Base64__encode(input) {
     } while (i < input.length);
 
     return output;
+};
+
+cc.uint8ArrayToUint32Array = function(uint8Arr){
+    if(uint8Arr.length % 4 != 0)
+        return null;
+
+    var arrLen = uint8Arr.length /4;
+    var retArr = window.Uint8Array? new Uint32Array(arrLen) : [];
+    for(var i = 0; i < arrLen; i++){
+        var offset = i * 4;
+        retArr[i] = uint8Arr[offset]  + uint8Arr[offset + 1] * (1 << 8) + uint8Arr[offset + 2] * (1 << 16) + uint8Arr[offset + 3] * (1<<24);
+    }
+    return retArr;
 };
