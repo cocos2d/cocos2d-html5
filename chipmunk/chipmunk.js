@@ -27,13 +27,12 @@
     };
 
 //var VERSION = CP_VERSION_MAJOR + "." + CP_VERSION_MINOR + "." + CP_VERSION_RELEASE;
-
     var cp;
     if(typeof exports === 'undefined'){
         cp = {};
 
         if(typeof window === 'object'){
-            window.cp = cp;
+            window["cp"] = cp;
         }
     } else {
         cp = exports;
@@ -3370,7 +3369,7 @@
 
     SegmentShape.prototype.collisionTable = [
         null,
-        function(seg, seg) { return NONE; }, // seg2seg
+        function(seg, seg2) { return NONE; }, // seg2seg
         seg2poly
     ];
 

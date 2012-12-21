@@ -36,6 +36,7 @@
         'platform/CCMacro.js',
         'platform/CCFileUtils.js',
         'platform/CCTypes.js',
+        'platform/zlib.min.js',
         'cocoa/CCGeometry.js',
         'platform/CCConfig.js',
         'cocoa/CCSet.js',
