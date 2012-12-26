@@ -39,18 +39,25 @@ cc.FMT_JPG = 0;
 cc.FMT_PNG = 1;
 
 /**
+ * Image Format:TIFF
+ * @constant
+ * @type Number
+ */
+cc.FMT_TIFF = 2;
+
+/**
  * Image Format:RAWDATA
  * @constant
  * @type Number
  */
-cc.FMT_RAWDATA = 2;
+cc.FMT_RAWDATA = 3;
 
 /**
  * Image Format:UNKNOWN
  * @constant
  * @type Number
  */
-cc.FMT_UNKNOWN = 3;
+cc.FMT_UNKNOWN = 4;
 
 /**
  * Horizontal center and vertical center.
@@ -115,6 +122,16 @@ cc.ALIGN_LEFT = 0x31;
  */
 cc.ALIGN_TOP_LEFT = 0x11;
 
+/**
+ * premultiply alpha, or the effect will wrong when want to use other pixel format in CCTexture2D,
+ * such as RGB888, RGB5A1
+ * @param {Number} vr
+ * @param {Number} vg
+ * @param {Number} vb
+ * @param {Number} va
+ * @return {Number}
+ * @constructor
+ */
 function cc.RGB_PREMULTIPLY_APLHA(vr, vg, vb, va) {
     return ((vr * (va + 1)) >> 8) | ((vg * (va + 1) >> 8) << 8) | ((vb * (va + 1) >> 8) << 16) | ((va) << 24)
 }
@@ -123,18 +140,18 @@ function cc.RGB_PREMULTIPLY_APLHA(vr, vg, vb, va) {
  * image source
  * @Class
  * @Construct
- * @param {String} data
+ * @param {Array||String} data
  * @param {Number} size
  * @param {Number} offset
  */
-function tImageSource(data, size, offset) {
+cc.tImageSource = function (data, size, offset) {
     this.data = data;
-    this.size = size;
-    this.offset = offset;
-}
+    this.size = size || 0;
+    this.offset = offset || 0;
+};
 
 cc.pngReadCallback = function (png_ptr, data, length) {
-    var isource = new tImageSource();
+    var isource = new cc.tImageSource();
     isource = cc.png_get_io_ptr(png_ptr);
 
     if (isource.offset + length <= isource.size) {
@@ -162,12 +179,15 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
     /**
      * Load the image from the specified path.
      * @param {String} strPath the absolute file path
-     * @param {Number} eImgFmt the type of image, now only support tow types.
+     * @param {Number} imageType the type of image, now only support tow types.
      * @return {Boolean} true if load correctly
      */
-    initWithImageFile:function (strPath, eImgFmt) {
-        var data = new cc.FileData(cc.FileUtils.getInstance().fullPathFromRelativePath(strPath), "rb");
-        return this.initWithImageData(data.getBuffer(), data.getSize(), eImgFmt);
+    initWithImageFile:function (strPath, imageType) {
+        var data = cc.FileUtils.getInstance().getFileData(strPath, "rb");
+        var size = data.length;
+        if (data != null && data.length > 0)
+            return this.initWithImageData(data, data.length, imageType);
+        return false;
     },
 
     /**
@@ -177,60 +197,89 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
      * @return {Boolean} true if load correctly
      */
     initWithImageFileThreadSafe:function (fullpath, imageType) {
-        var data = new cc.FileData(fullpath, "rb");
-        return this.initWithImageData(data.getBuffer(), data.getSize(), imageType);
+        return this.initWithImageFile(fullpath,imageType);
     },
 
     /**
      * Load image from stream buffer.
      * @warning FMT_RAWDATA only support RGBA8888
-     * @param {Array} pData stream buffer that hold the image data
-     * @param {Number} nDataLen the length of data(managed in byte)
+     * @param {Array} data stream buffer that hold the image data
+     * @param {Number} dataLen the length of data(managed in byte)
      * @param {Number} eFmt
      * @param {Number} width
      * @param {Number} height
-     * @param {Number} nBitsPerComponent
+     * @param {Number} bitsPerComponent
      * @return {Boolean} true if load correctly
      */
-    initWithImageData:function (pData, nDataLen, eFmt, width, height, nBitsPerComponent) {
-        var ret = false;
-        do
-        {
-            if (!pData || nDataLen <= 0) break;
+    initWithImageData:function (data, dataLen, eFmt, width, height, bitsPerComponent) {
+        bitsPerComponent = bitsPerComponent || 8;
+        width = width || 0;
+        height = height || 0;
+        eFmt = eFmt || cc.FMT_UNKNOWN;
 
-            if (cc.FMT_PNG == eFmt) {
-                ret = this._initWithPngData(pData, nDataLen);
-                break;
+            if(! data || dataLen <= 0)
+                return false;
+
+            if (cc.FMT_PNG == eFmt)
+                return this._initWithPngData(data, dataLen);
+            else if (cc.FMT_JPG == eFmt)
+                return this._initWithJpgData(data, dataLen);
+            else if (cc.FMT_TIFF == eFmt)
+                return this._initWithTiffData(data, dataLen);
+            else if (cc.FMT_RAWDATA == eFmt)
+                return this._initWithRawData(data, dataLen, width, height, bitsPerComponent);
+            else {
+                // if it is a png file buffer.
+                if (dataLen > 8) {
+                    if (   data[0] == 0x89
+                        && data[1] == 0x50
+                        && data[2] == 0x4E
+                        && data[3] == 0x47
+                        && data[4] == 0x0D
+                        && data[5] == 0x0A
+                        && data[6] == 0x1A
+                        && data[7] == 0x0A) {
+                        return this._initWithPngData(data, dataLen);
+                    }
+                }
+
+                // if it is a tiff file buffer.
+                if (dataLen > 2) {
+                    if (  (data[0] == 0x49 && data[1] == 0x49)
+                        || (data[0] == 0x4d && data[1] == 0x4d)) {
+                        return this._initWithTiffData(data, dataLen);
+                    }else if(   data[0] == 0xff && data[1] == 0xd8){
+                        return this._initWithTiffData(data, dataLen);
+                    }
+                }
             }
-            else if (cc.FMT_JPG == eFmt) {
-                ret = this._initWithJpgData(pData, nDataLen);
-                break;
-            }
-            else if (cc.FMT_RAWDATA == eFmt) {
-                ret = this._initWithRawData(pData, nDataLen, width, height, nBitsPerComponent);
-                break;
-            }
-        } while (0);
-        return ret;
+        return false;
     },
+
     getData:function () {
         return this._data;
     },
+
     getDataLen:function () {
         return this._width * this._height;
     },
+
     hasAlpha:function () {
         return this._hasAlpha;
     },
+
     isPremultipliedAlpha:function () {
         return this._preMulti;
     },
+
     getWidth:function () {
         return this._width;
     },
+
     getHeight:function () {
         return this._height;
     },
+
     getBitsPerComponent:function () {
         return this._bitsPerComponent;
     },
@@ -242,6 +291,7 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
      * @return {Boolean}
      */
     saveToFile:function (filePath, isToRGB) {
+        isToRGB = isToRGB || true;
         var ret = false;
         do
         {
@@ -271,7 +321,7 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
     },
 
     /*protected:*/
-    _initWithJpgData:function (data, size) {
+    _initWithJpgData:function (data, dataLen) {
         /* these are standard libjpeg structures for reading(decompression) */
         var cinfo = new cc.jpeg_decompress_struct();
         var jerr = new cc.jpeg_error_mgr();
@@ -335,7 +385,7 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
         return ret;
     },
 
-    _initWithPngData:function (pData, nDatalen) {
+    _initWithPngData:function (data, datalen) {
         var ret = false, header = [0], png_ptr = 0, info_ptr = 0, imateData = 0;
 
         do
@@ -420,6 +470,10 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
         return ret;
     },
 
+    _initWithTiffData:function (data, dataLen) {
+
+    },
+
     // @warning FMT_RAWDATA only support RGBA8888
     _initWithRawData:function (data, datalen, width, height, bitsPerComponent) {
         var ret = false;
@@ -445,6 +499,7 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
     },
 
     _saveImageToPNG:function (filePath, isToRGB) {
+        isToRGB = isToRGB || true;
         var ret = false;
         do
         {
@@ -563,11 +618,11 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
         return ret;
     },
 
-    _saveImageToJPG:function (pszFilePath) {
+    _saveImageToJPG:function (filePath) {
         var ret = false;
         do
         {
-            if (null == pszFilePath) break;
+            if (null == filePath) break;
             var cinfo = new cc.jpeg_compress_struct(),
                 jerr = new cc.jpeg_error_mgr(),
                 outfile = new cc.FILE(), /* target file */
@@ -639,13 +694,15 @@ cc.Image = cc.Class.extend(/** @lends cc.Image# */{
 
     /**
      * Create image with specified string.
-     * @param {cc.Texture2D} text the text which the image show, nil cause init fail
+     * @param {String} text the text which the image show, nil cause init fail
      * @param {Number} width the image width, if 0, the width match the text's width
      * @param {Number} height the image height, if 0, the height match the text's height
      * @param {Number} eAlignMask the test Alignment
-     * @param {String} pFontName the name of the font which use to draw the text. If nil, use the default system font.
-     * @param {Number} nSize the font size, if 0, use the system default size.
+     * @param {String} fontName the name of the font which use to draw the text. If nil, use the default system font.
+     * @param {Number} size the font size, if 0, use the system default size.
+     * @return {Boolean}
      */
-    initWithString:function (text, width, height, eAlignMask, pFontName, nSize) {
+    initWithString:function (text, width, height, eAlignMask, fontName, size) {
+        return false;
     }
 });
