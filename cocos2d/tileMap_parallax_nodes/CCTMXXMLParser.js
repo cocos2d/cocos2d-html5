@@ -529,6 +529,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 var info = this._tileSets[0];
                 var t = tiles[i];
                 this.setParentGID(parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0));
+                
                 var tp = t.querySelectorAll("properties > property");
                 if(tp){
                 	var dict = {};
