@@ -521,10 +521,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         if (tiles) {
             for (i = 0; i < tiles.length; i++) {
                 var info = this._tileSets[0];
-<<<<<<< HEAD
                 var t = tiles[i];
                 this.setParentGID(parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0));
-                
                 var tp = t.querySelectorAll("properties > property");
                 if(tp){
                 	var dict = {};
@@ -534,16 +532,6 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                     	dict[name] = value;
                     }
                     this._tileProperties[this.getParentGID()] = dict;
-=======
-                var selTile = tiles[i];
-                this.setParentGID(parseInt(info.firstGid) + parseInt(selTile.getAttribute('id') || 0));
-                var tp = selTile.querySelectorAll("properties > property")[0];
-
-                if (tp) {
-                    var tileProp = {};
-                    tileProp[tp.getAttribute('name')] = tp.getAttribute('value');
-                    this._tileProperties[this.getParentGID()] = tileProp;
->>>>>>> upstream/master
                 }
             }
         }
