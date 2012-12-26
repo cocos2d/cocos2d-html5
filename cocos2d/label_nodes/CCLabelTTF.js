@@ -425,14 +425,12 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _updateTTF:function () {
-        cc.renderContext.save();
-
+        var oldFontStr = cc.renderContext.font;
         this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
         cc.renderContext.font = this._fontStyleStr;
         var dim = cc.renderContext.measureText(this._string);
         this.setContentSize(cc.size(dim.width, this._fontSize));
-
-        cc.renderContext.restore();
+        cc.renderContext.font = oldFontStr;
         this.setNodeDirty();
     }
 });
