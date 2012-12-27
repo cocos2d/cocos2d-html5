@@ -89,24 +89,61 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
             if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
-                var soundCache = new Audio(path);
-                soundCache.preload = 'auto';
 
-                soundCache.addEventListener('canplaythrough', function (e) {
+
+                /*soundCache.addEventListener('canplaythrough', function (e) {
                     this.removeEventListener('canplaythrough', arguments.callee, false);
                 }, false);
 
                 soundCache.addEventListener("error", function (e) {
+                    cc.Loader.getInstance().onResLoadingErr(e.srcElement.src);
                     this.removeEventListener('error', arguments.callee, false);
-                    cc.Loader.getInstance().onResLoadingErr();
-                }, false);
+                }, false);*/
 
-                this._soundList[keyname] = true;
+                if (window.XMLHttpRequest) {
+                    // for IE7+, Firefox, Chrome, Opera, Safari brower
+                    var xmlhttp = new XMLHttpRequest();
+                    // is xml file?
+                    if (xmlhttp.overrideMimeType)
+                        xmlhttp.overrideMimeType('text/xml');
+                } else {
+                    // for IE6, IE5 brower
+                    xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+                }
+                if (xmlhttp != null) {
+                    var that = this;
+                    xmlhttp.onreadystatechange = function () {
+                        if (xmlhttp.readyState == 4) {
+                            if (xmlhttp.responseText) {
+                                console.log(123)
+                                cc.Loader.getInstance().onResLoaded();
+                                that._soundList[keyname] = true;
+                                var soundCache = new Audio(path);
+                                soundCache.preload = 'auto';
+                                soundCache.load();
+                                xmlhttp = null;
+                            } else {
+                                cc.Assert("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
+                            }
+                        }
+                    };
+                    // load xml
+                    xmlhttp.open("GET", path, true);
+                    xmlhttp.send(null);
+                } else {
+                    cc.Assert("cocos2d:Your browser does not support XMLHTTP.");
+                }
+
+            /*    this._soundList[keyname] = true;
                 // load it
-                soundCache.load();
+                soundCache.load();*/
+            }
+            else{
+                cc.Loader.getInstance().onResLoaded();
             }
         }
-        cc.Loader.getInstance().onResLoaded();
+
+        //cc.Loader.getInstance().onResLoaded();
     },
 
     /**
@@ -283,7 +320,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (!au) {
             if (reclaim.length >= this._maxAudioInstance) {
                 cc.log("Error: " + path + " greater than " + this._maxAudioInstance);
-                return keyname;
+                return path;
             }
             au = new Audio(keyname + "." + actExt);
             reclaim.push(au);
@@ -293,7 +330,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             au.loop = loop;
         }
         au.play();
-        return keyname;
+        return path;
     },
 
     /**
@@ -501,6 +538,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     },
 
     _getPathWithoutExt:function (fullpath) {
+        if(typeof(fullpath) != "string"){
+            return;
+        }
         var endPos = fullpath.lastIndexOf(".");
         if (endPos != -1) {
             return fullpath.substring(0, endPos);
