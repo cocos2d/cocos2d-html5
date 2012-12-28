@@ -162,8 +162,6 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
     ctx.rotate(-1.5707963267948966);
     ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height / 2, -rect.size.width / 2, rect.size.height, rect.size.width);
-    var img = new Image();
-    img.src = nCanvas.toDataURL();
     return nCanvas;
 };
 
