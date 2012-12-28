@@ -208,10 +208,10 @@ cc.TMXTilesetInfo = cc.Class.extend(/** @lends cc.TMXTilesetInfo# */{
         var rect = cc.RectZero();
         rect.size = this._tileSize;
         gid &= cc.TMX_TILE_ALL_FLAGS_MASK;
-        gid = gid - parseInt(this.firstGid,10);
-        var max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing),10);
-        rect.origin.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin,10);
-        rect.origin.y = parseInt(parseInt(gid / max_x,10) * (this._tileSize.height + this.spacing) + this.margin,10);
+        gid = gid - parseInt(this.firstGid, 10);
+        var max_x = parseInt((this.imageSize.width - this.margin * 2 + this.spacing) / (this._tileSize.width + this.spacing), 10);
+        rect.origin.x = parseInt((gid % max_x) * (this._tileSize.width + this.spacing) + this.margin, 10);
+        rect.origin.y = parseInt(parseInt(gid / max_x, 10) * (this._tileSize.height + this.spacing) + this.margin, 10);
         return rect;
     }
 });
@@ -524,12 +524,12 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 var t = tiles[i];
                 this.setParentGID(parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0));
                 var tp = t.querySelectorAll("properties > property");
-                if(tp){
-                	var dict = {};
-                	for(var j = 0; j < tp.length; j++) {
-                    	var name = tp[j].getAttribute('name');
-                    	var value = tp[j].getAttribute('value');
-                    	dict[name] = value;
+                if (tp) {
+                    var dict = {};
+                    for (var j = 0; j < tp.length; j++) {
+                        var name = tp[j].getAttribute('name');
+                        var value = tp[j].getAttribute('value');
+                        dict[name] = value;
                     }
                     this._tileProperties[this.getParentGID()] = dict;
                 }
@@ -563,7 +563,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 layer.offset = cc.p(parseFloat(selLayer.getAttribute('x')) || 0, parseFloat(selLayer.getAttribute('y')) || 0);
 
                 var nodeValue = '';
-                for ( j = 0; j < data.childNodes.length; j++) {
+                for (j = 0; j < data.childNodes.length; j++) {
                     nodeValue += data.childNodes[j].nodeValue
                 }
                 nodeValue = nodeValue.trim();
@@ -577,7 +577,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         layer._tiles = cc.unzipBase64AsArray(nodeValue, 4);
                         break;
                     case 'zlib':
-                        var inflator = new Zlib.Inflate(cc.Codec.Base64.decodeAsArray(nodeValue,1));
+                        var inflator = new Zlib.Inflate(cc.Codec.Base64.decodeAsArray(nodeValue, 1));
                         layer._tiles = cc.uint8ArrayToUint32Array(inflator.decompress());
                         break;
                     case null:
@@ -585,8 +585,18 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                         // Uncompressed
                         if (encoding == "base64")
                             layer._tiles = cc.Codec.Base64.decodeAsArray(nodeValue, 4);
-                        else
-                            layer._tiles = cc.StringToArray(nodeValue);
+                        else if (encoding === "csv") {
+                            layer._tiles = [];
+                            var csvTiles = nodeValue.split(',');
+                            for (var csvIdx = 0; csvIdx < csvTiles.length; csvIdx++)
+                                layer._tiles.push(parseInt(csvTiles[csvIdx]));
+                        } else {
+                            //XML format
+                            var selDataTiles = data.getElementsByTagName("tile");
+                            layer._tiles = [];
+                            for(var xmlIdx = 0; xmlIdx < selDataTiles.length; xmlIdx++)
+                                layer._tiles.push(parseInt(selDataTiles[xmlIdx].getAttribute("gid")));
+                        }
                         break;
                     default:
                         cc.Assert(this.getLayerAttribs() != cc.TMX_LAYER_ATTRIB_NONE, "TMX tile map: Only base64 and/or gzip/zlib maps are supported");
