@@ -140,23 +140,32 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
     _domInputControl:null,
     impl:null,
     _currentInputString:"",
+    _lastClickPosition:null,
     /**
      * Constructor
      */
     ctor:function () {
         this.impl = new cc.IMEDispatcher.Impl();
+        this._lastClickPosition = cc.p(0, 0);
     },
 
     init:function () {
-        this._domInputControl = document.getElementById("imeDispatcherInput");
+        if (cc.Browser.isMobile)
+            return;
+        this._domInputControl = cc.$("#imeDispatcherInput");
         if (!this._domInputControl) {
-            this._domInputControl = document.createElement("input");
+            this._domInputControl = cc.$new("input");
             this._domInputControl.setAttribute("type", "text");
             this._domInputControl.setAttribute("id", "imeDispatcherInput");
-            this._domInputControl.style.position = "absolute";
-            this._domInputControl.style.top = "-200px";
-            this._domInputControl.style.left = "-200px";
+            this._domInputControl.resize(0.0, 0.0);
+            this._domInputControl.translates(0, 0);
+            this._domInputControl.style.opacity = "0";
+            //this._domInputControl.style.filter = "alpha(opacity = 0)";
+            this._domInputControl.style.fontSize = "1px";
             this._domInputControl.setAttribute('tabindex', 2);
+            this._domInputControl.style.position = "absolute";
+            this._domInputControl.style.top = 0;
+            this._domInputControl.style.left = 0;
             document.body.appendChild(this._domInputControl);
         }
         var selfPointer = this;
@@ -174,6 +183,21 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
                 e.stopPropagation();
                 e.preventDefault();
             }
+        }, false);
+
+        if (/msie/i.test(navigator.userAgent)) {
+            this._domInputControl.addEventListener("keyup", function (e) {
+                if (e.keyCode == cc.KEY.backspace) {
+                    selfPointer._processDomInputString(selfPointer._domInputControl.value);
+                }
+            }, false);
+        }
+
+        window.addEventListener('mousedown', function (event) {
+            var tx = event.pageX || 0;
+            var ty = event.pageY || 0;
+
+            selfPointer._lastClickPosition = cc.p(tx, ty);
         }, false);
     },
 
@@ -344,11 +368,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             this.impl._delegateWithIme = null;
             pOldDelegate.didDetachWithIME();
 
-            this.impl._delegateWithIme = delegate;
-            this._currentInputString = delegate.getString ? delegate.getString() : "";
-            delegate.didAttachWithIME();
-            this._domInputControl.focus();
-            this._domInputControl.value = this._currentInputString;
+            this._focusDomInput(delegate);
             return true;
         }
 
@@ -356,13 +376,39 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
         if (!delegate.canAttachWithIME())
             return false;
 
-        this.impl._delegateWithIme = delegate;
-        this._currentInputString = delegate.getString ? delegate.getString() : "";
-        delegate.didAttachWithIME();
-        this._domInputControl.focus();
-        this._domInputControl.value = this._currentInputString;
+        this._focusDomInput(delegate);
         return true;
     },
+
+    _focusDomInput:function (delegate) {
+        if(cc.Browser.isMobile){
+            this.impl._delegateWithIme = delegate;
+            delegate.didAttachWithIME();
+            //prompt
+            this._currentInputString = delegate.getString ? delegate.getString() : "";
+            var userInput = prompt("please enter your word:", this._currentInputString);
+            if(userInput != null)
+                this._processDomInputString(userInput);
+            this.dispatchInsertText("\n", 1);
+        }else{
+            this.impl._delegateWithIme = delegate;
+            this._currentInputString = delegate.getString ? delegate.getString() : "";
+            delegate.didAttachWithIME();
+            this._domInputControl.focus();
+            this._domInputControl.value = this._currentInputString;
+            this._domInputControlTranslate();
+        }
+    },
+
+    _domInputControlTranslate:function () {
+        if (/msie/i.test(navigator.userAgent)) {
+            this._domInputControl.style.left = this._lastClickPosition.x + "px";
+            this._domInputControl.style.top = this._lastClickPosition.y + "px";
+        } else {
+            this._domInputControl.translates(this._lastClickPosition.x, this._lastClickPosition.y);
+        }
+    },
+
     /**
      * Detach the pDeleate with ime.
      * @param {cc.IMEDelegate} delegate
