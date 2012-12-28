@@ -521,14 +521,17 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         if (tiles) {
             for (i = 0; i < tiles.length; i++) {
                 var info = this._tileSets[0];
-                var selTile = tiles[i];
-                this.setParentGID(parseInt(info.firstGid) + parseInt(selTile.getAttribute('id') || 0));
-                var tp = selTile.querySelectorAll("properties > property")[0];
-
-                if (tp) {
-                    var tileProp = {};
-                    tileProp[tp.getAttribute('name')] = tp.getAttribute('value');
-                    this._tileProperties[this.getParentGID()] = tileProp;
+                var t = tiles[i];
+                this.setParentGID(parseInt(info.firstGid) + parseInt(t.getAttribute('id') || 0));
+                var tp = t.querySelectorAll("properties > property");
+                if(tp){
+                	var dict = {};
+                	for(var j = 0; j < tp.length; j++) {
+                    	var name = tp[j].getAttribute('name');
+                    	var value = tp[j].getAttribute('value');
+                    	dict[name] = value;
+                    }
+                    this._tileProperties[this.getParentGID()] = dict;
                 }
             }
         }
