@@ -36,6 +36,7 @@
         'platform/CCMacro.js',
         'platform/CCFileUtils.js',
         'platform/CCTypes.js',
+        'platform/zlib.min.js',
         'cocoa/CCGeometry.js',
         'platform/CCConfig.js',
         'cocoa/CCSet.js',
@@ -106,7 +107,8 @@
         'menu_nodes/CCMenuItem.js',
         'menu_nodes/CCMenu.js',
         'base_nodes/CCdomNode.js',
-        '../CocosDenshion/SimpleAudioEngine.js'
+        '../CocosDenshion/SimpleAudioEngine.js',
+        '../System/LocalStorage.js'
     ];
 
     var d = document;
