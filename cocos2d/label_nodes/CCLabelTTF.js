@@ -96,17 +96,37 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     /**
      * changes the string to render
      * @warning Changing the string is as expensive as creating a new cc.LabelTTF. To obtain better performance use cc.LabelAtlas
-     * @param {String} string text for the label
+     * @param {String} text text for the label
      */
-    setString:function (string) {
-        if (this._string != string) {
-            this._string = string + "";
+    setString:function (text) {
+        cc.Assert(text != null, "Invalid string");
+        if (this._string != text) {
+            this._string = text + "";
 
-            // Force update
-            if (this._string.length > 0) {
-                this._updateTTF();
+            if (cc.renderContextType === cc.CANVAS) {
+                // Force update
+                if (this._string.length > 0) {
+                    this._updateTTF();
+                }
+            } else {
+                this._updateTexture();
             }
         }
+    },
+
+    _updateTexture:function () {
+        var tex = new cc.Texture2D();
+        tex.initWithString(this._string, this._fontName, this._fontSize * cc.CONTENT_SCALE_FACTOR(), cc.SIZE_POINTS_TO_PIXELS(this._dimensions),
+            this._hAlignment, this._vAlignment);
+
+        if (!tex)
+            return false;
+
+        this.setTexture(tex);
+        var texSize = this._texture.getContentSize();
+        this.setTextureRect(cc.rect(0, 0, texSize.width, texSize.height));
+
+        return true;
     },
 
     /**
@@ -127,7 +147,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * set Horizontal Alignment of cc.LabelTTF
-     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} Horizontal Alignment
+     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment HorizontalAlignment
      */
     setHorizontalAlignment:function (alignment) {
         if (alignment != this._hAlignment) {
@@ -135,7 +155,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             // Force update
             if (this._string.length > 0) {
-                this._updateTTF();
+                if(cc.renderContextType === cc.CANVAS)
+                    this._updateTTF();
+                else
+                    this._updateTexture();
             }
         }
     },
@@ -158,7 +181,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             // Force update
             if (this._string.length > 0) {
-                this._updateTTF();
+                if(cc.renderContextType === cc.CANVAS)
+                    this._updateTTF();
+                else
+                    this._updateTexture();
             }
         }
     },
@@ -181,7 +207,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             // Force udpate
             if (this._string.length > 0) {
-                this._updateTTF();
+                if(cc.renderContextType === cc.CANVAS)
+                    this._updateTTF();
+                else
+                    this._updateTexture();
             }
         }
     },
@@ -204,7 +233,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             // Force update
             if (this._string.length > 0) {
-                this._updateTTF();
+                if(cc.renderContextType === cc.CANVAS)
+                    this._updateTTF();
+                else
+                    this._updateTexture();
             }
         }
     },
@@ -226,7 +258,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._fontName = new String(fontName);
             // Force update
             if (this._string.length > 0) {
-                this._updateTTF();
+                if(cc.renderContextType === cc.CANVAS)
+                    this._updateTTF();
+                else
+                    this._updateTexture();
             }
         }
     },
@@ -264,14 +299,21 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
 
         if (this.init(true)) {
+            if (cc.renderContextType === cc.WEBGL)
+                this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM));
+
             this._dimensions = cc.size(dimensions.width, dimensions.height);
             this._fontName = fontName;
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
-            this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
+            this._fontSize = fontSize;
+
             this.setString(strInfo);
-            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            this._updateTTF();
+
+            if (cc.renderContextType == cc.CANVAS) {
+                this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+                this._updateTTF();
+            }
             return true;
         }
         return false;
@@ -307,14 +349,14 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             } else if (this._dimensions.width == 0) {
                 context.textBaseline = "bottom";
                 context.textAlign = "left";
-                if(!this._string.indexOf){
+                if (!this._string.indexOf) {
                     var z = 0;
                 }
 
                 if (this._string.indexOf("\n") > -1)
                     this._multiLineText(context);
-                 else
-                   context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+                else
+                    context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
             } else {
                 context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
                 context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
@@ -337,26 +379,26 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
     },
 
-    _multiLineText:function(context){
+    _multiLineText:function (context) {
         var rowHeight = this._fontSize * 1.2;
         var tmpWords = this._string.split("\n");
         var lineHeight = tmpWords.length;
         var splitStrWidthArr = [];
         var maxLineWidth = 0;
-        for(var i = 0; i< lineHeight; i++){
+        for (var i = 0; i < lineHeight; i++) {
             splitStrWidthArr[i] = context.measureText(tmpWords[i]).width;
-            if(splitStrWidthArr[i] > maxLineWidth)
+            if (splitStrWidthArr[i] > maxLineWidth)
                 maxLineWidth = splitStrWidthArr[i];
         }
 
-        var centerPoint = cc.p(maxLineWidth / 2,(lineHeight * rowHeight) / 2);
+        var centerPoint = cc.p(maxLineWidth / 2, (lineHeight * rowHeight) / 2);
         for (i = 0; i < lineHeight; i++) {
-            var xOffset = -splitStrWidthArr[i]/2;
+            var xOffset = -splitStrWidthArr[i] / 2;
             if (this._hAlignment == cc.TEXT_ALIGNMENT_RIGHT)
                 xOffset = centerPoint.x - maxLineWidth;
             if (this._hAlignment == cc.TEXT_ALIGNMENT_CENTER)
                 xOffset = maxLineWidth - splitStrWidthArr[i];
-            context.fillText(tmpWords[i], xOffset, i * rowHeight - centerPoint.y + rowHeight/2);
+            context.fillText(tmpWords[i], xOffset, i * rowHeight - centerPoint.y + rowHeight / 2);
         }
     },
 
@@ -440,6 +482,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 
 cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
+
+cc.LabelTTF._SHADER_PROGRAM = cc.USE_LA88_LABELS ? cc.SHADER_POSITION_TEXTURECOLOR : cc.SHADER_POSITION_TEXTUREA8COLOR;
 
 /**
  * creates a cc.LabelTTF from a fontname, alignment, dimension and font size
