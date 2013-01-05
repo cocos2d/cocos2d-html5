@@ -108,7 +108,7 @@
         'menu_nodes/CCMenu.js',
         'base_nodes/CCdomNode.js',
         '../CocosDenshion/SimpleAudioEngine.js',
-        '../System/LocalStorage.js'
+        '../System/Sys.js'
     ];
 
     var d = document;
