@@ -144,7 +144,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
                 this._contentSize.height * this._anchorPoint.y);
             this.dom.width = size.width;
             this.dom.height = size.height;
-            this.setAnchorpoint(this.getAnchorPoint());
+            this.setAnchorPoint(this.getAnchorPoint());
         }
         if (this.canvas) {
             this.canvas.width = this._contentSize.width;
@@ -342,15 +342,15 @@ cc.DOM.setTransform = function (x) {
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
-        if (x.setAnchorpoint)
-            x.setAnchorpoint(x.getAnchorPoint());
+        if (x.setAnchorPoint)
+            x.setAnchorPoint(x.getAnchorPoint());
         x.dom.transforms();
         x.dom.position.y = -x.getPosition().y;
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
-        if (x.setAnchorpoint)
-            x.setAnchorpoint(x.getAnchorPoint());
+        if (x.setAnchorPoint)
+            x.setAnchorPoint(x.getAnchorPoint());
         x.dom.transforms();
     }
 
