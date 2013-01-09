@@ -152,7 +152,7 @@ cc.UNIFORM_MVMATRIX_S = "CC_MVMatrix";
  * @constant
  * @type {String}
  */
-cc.UNIFORM_MVPMATRIX_S = "u_MVPMatrix";
+cc.UNIFORM_MVPMATRIX_S = "CC_MVPMatrix";
 /**
  * @constant
  * @type {String}
@@ -202,8 +202,8 @@ cc.ATTRIBUTE_NAME_POSITION = "a_position";
 cc.ATTRIBUTE_NAME_TEXCOORD = "a_texCoord";
 
 cc.HashUniformEntry = function (value, location, hh) {
-    this.value = value || 0;
-    this.location = location || 0;
+    this.value = value;
+    this.location = location;
     this.hh = hh || {};
 };
 
@@ -223,7 +223,7 @@ cc.GLProgram = cc.Class.extend({
 
     // Uniform cache
     _updateUniformLocation:function (location, data, bytes) {
-        if(location == null)
+        if (location == null)
             return false;
 
         var updated = true;
@@ -258,20 +258,28 @@ cc.GLProgram = cc.Class.extend({
         if (!source || !shader)
             return false;
 
-        //shader = this._glContext.createShader(type);
-        this._glContext.shaderSource(shader, source);
-        cc.CHECK_GL_ERROR_DEBUG();
-        this._glContext.compileShader(shader);
-        cc.CHECK_GL_ERROR_DEBUG();
+        var preStr =(type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
 
+        source = preStr
+            + "uniform mat4 CC_PMatrix;          \n"
+            + "uniform mat4 CC_MVMatrix;        \n"
+            + "uniform mat4 CC_MVPMatrix;       \n"
+            + "uniform vec4 CC_Time;            \n"
+            + "uniform vec4 CC_SinTime;         \n"
+            + "uniform vec4 CC_CosTime;         \n"
+            + "uniform vec4 CC_Random01;        \n"
+            + "//CC INCLUDES END                \n  \n" + source;
+
+        this._glContext.shaderSource(shader, source);
+        this._glContext.compileShader(shader);
         var status = this._glContext.getShaderParameter(shader, this._glContext.COMPILE_STATUS);
-        cc.CHECK_GL_ERROR_DEBUG();
 
         if (!status) {
+            cc.log("cocos2d: ERROR: Failed to compile shader:\n" + this._glContext.getShaderSource(shader));
             if (type == this._glContext.VERTEX_SHADER)
-                cc.log("cocos2d: " + this.vertexShaderLog());
+                cc.log("cocos2d: \n" + this.vertexShaderLog());
             else
-                cc.log("cocos2d: " + this.fragmentShaderLog());
+                cc.log("cocos2d: \n" + this.fragmentShaderLog());
         }
         return ( status == 1 );
     },
@@ -285,7 +293,7 @@ cc.GLProgram = cc.Class.extend({
         this._glContext = glContext || cc.webglContext;
     },
 
-    destroyProgram:function(){
+    destroyProgram:function () {
         this._vertShader = null;
         this._fragShader = null;
         this._uniforms = null;
@@ -336,8 +344,8 @@ cc.GLProgram = cc.Class.extend({
 
     /**
      * It will add a new attribute to the shader
-     * @param attributeName
-     * @param index
+     * @param {String} attributeName
+     * @param {Number} index
      */
     addAttribute:function (attributeName, index) {
         this._glContext.bindAttribLocation(this._programObj, index, attributeName);
@@ -360,9 +368,9 @@ cc.GLProgram = cc.Class.extend({
         this._vertShader = null;
         this._fragShader = null;
 
-        if(cc.COCOS2D_DEBUG){
+        if (cc.COCOS2D_DEBUG) {
             var status = this._glContext.getProgramParameter(this._programObj, this._glContext.LINK_STATUS);
-            if(!status){
+            if (!status) {
                 cc.log("cocos2d: ERROR: Failed to link program: " + this._programObj);
                 cc.glDeleteProgram(this._programObj);
                 this._programObj = null;
@@ -398,7 +406,6 @@ cc.GLProgram = cc.Class.extend({
         this._usesTime = (this._uniforms[cc.UNIFORM_TIME] != null || this._uniforms[cc.UNIFORM_SINTIME] != null || this._uniforms[cc.UNIFORM_COSTIME] != null);
 
         this._uniforms[cc.UNIFORM_RANDOM01] = this._glContext.getUniformLocation(this._programObj, cc.UNIFORM_RANDOM01_S);
-
         this._uniforms[cc.UNIFORM_SAMPLER] = this._glContext.getUniformLocation(this._programObj, cc.UNIFORM_SAMPLER_S);
 
         this.use();
@@ -529,7 +536,7 @@ cc.GLProgram = cc.Class.extend({
     /**
      * will update the builtin uniforms if they are different than the previous call for this same shader program.
      */
-    setUniformsForBuiltins:function(){
+    setUniformsForBuiltins:function () {
         var matrixP = new cc.kmMat4();
         var matrixMV = new cc.kmMat4();
         var matrixMVP = new cc.kmMat4();
@@ -543,16 +550,16 @@ cc.GLProgram = cc.Class.extend({
         this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], matrixMV.mat, 1);
         this.setUniformLocationWithMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX], matrixMVP.mat, 1);
 
-        if(this._usesTime) {
+        if (this._usesTime) {
             var director = cc.Director.getInstance();
             // This doesn't give the most accurate global time value.
             // Cocos2D doesn't store a high precision time value, so this will have to do.
             // Getting Mach time per frame per shader using time could be extremely expensive.
             var time = director.getTotalFrames() * director.getAnimationInterval();
 
-            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_TIME], time/10.0, time, time*2, time*4);
-            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_SINTIME], time/8.0, time/4.0, time/2.0, Math.sin(time));
-            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_COSTIME], time/8.0, time/4.0, time/2.0, Math.cos(time));
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_TIME], time / 10.0, time, time * 2, time * 4);
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_SINTIME], time / 8.0, time / 4.0, time / 2.0, Math.sin(time));
+            this.setUniformLocationWith4f(this._uniforms[cc.UNIFORM_COSTIME], time / 8.0, time / 4.0, time / 2.0, Math.cos(time));
         }
 
         if (this._uniforms[cc.UNIFORM_RANDOM01] != -1)
@@ -598,8 +605,10 @@ cc.GLProgram = cc.Class.extend({
         return this._glContext.getProgramInfoLog(this._programObj);
     },
 
-    // reload all shaders, this function is designed for android
-    // when opengl context lost, so don't call it.
+    /**
+     *  reload all shaders, this function is designed for android  <br/>
+     *  when opengl context lost, so don't call it.
+     */
     reset:function () {
         this._vertShader = null;
         this._fragShader = null;

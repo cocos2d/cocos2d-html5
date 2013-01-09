@@ -440,6 +440,48 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         return this._initPremultipliedATextureWithImage(uiImage, imageWidth, imageHeight);
     },
 
+    initWithElement:function(element){
+        if(!element)
+            return;
+
+        this._webTextureObj = cc.webglContext.createTexture();
+        this._htmlElementObj = element;
+    },
+
+    handleLoadedTexture:function(){
+        //upload image to buffer
+        var gl = cc.webglContext;
+
+        var pixelsWide = this._htmlElementObj.width;
+        var pixelsHigh = this._htmlElementObj.height;
+
+        cc.glBindTexture2D(this._webTextureObj);
+
+        gl.pixelStorei(gl.UNPACK_ALIGNMENT, 4);
+
+        // Specify OpenGL texture image
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, this._htmlElementObj);
+
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        this._contentSize = new cc.Size(pixelsWide,pixelsHigh);
+        this._pixelsWide = pixelsWide;
+        this._pixelsHigh = pixelsHigh;
+        this._pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
+        this._maxS = 1;
+        this._maxT = 1;
+
+        this._hasPremultipliedAlpha = false;
+        this._hasMipmaps = false;
+
+        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
+
+        gl.bindTexture(gl.TEXTURE_2D, null);
+    },
+
     /**
      Extensions to make it easy to create a cc.Texture2D object from a string of text.
      Note that the generated textures are of type A8 - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).

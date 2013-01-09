@@ -89,7 +89,7 @@ cc.SHADER_POSITION_COLOR_FRAG =
  * @type {String}
  */
 cc.SHADER_POSITION_COLOR_VERT =
-    "                                            \n"
+    "                                                \n"
         + "attribute vec4 a_position;                \n"
         + "attribute vec4 a_color;                   \n"
         + "                                          \n"
@@ -186,8 +186,8 @@ cc.SHADER_POSITION_TEXTURE_FRAG =
  * @type {String}
  */
 cc.SHADER_POSITION_TEXTURE_VERT =
-    "                                             \n"
-        + "attribute vec4 a_position;               \n"
+    "                                                   \n"
+        + "attribute vec4 a_position;                   \n"
         + "attribute vec2 a_texCoord;                  \n"
         + "                                            \n"
         + "#ifdef GL_ES                               \n"
@@ -287,7 +287,7 @@ cc.SHADER_POSITION_TEXTURE_A8COLOR_VERT =
         + "                                             \n"
         + "void main()                                  \n"
         + "{                                            \n"
-        + "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = CC_MVPMatrix * a_position; \n"
         + "    v_fragmentColor = a_color;               \n"
         + "    v_texCoord = a_texCoord;                 \n"
         + "}";
@@ -305,7 +305,7 @@ cc.SHADER_POSITION_TEXTURE_COLOR_FRAG =
         + "                                             \n"
         + "varying vec4 v_fragmentColor;                \n"
         + "varying vec2 v_texCoord;                     \n"
-        + "uniform sampler2D CC_Texture0;                 \n"
+        + "uniform sampler2D CC_Texture0;               \n"
         + "                                             \n"
         + "void main()                                  \n"
         + "{                                            \n"
@@ -353,16 +353,16 @@ cc.SHADER_POSITION_TEXTURE_COLOR_ALPHATEST_FRAG =
         + "varying vec4 v_fragmentColor;                   \n"
         + "varying vec2 v_texCoord;                        \n"
         + "uniform sampler2D CC_Texture0;                  \n"
-        + "uniform float CC_alpha_value;             \n"
+        + "uniform float CC_alpha_value;                   \n"
         + "                                                \n"
         + "void main()                                     \n"
         + "{                                               \n"
         + "    vec4 texColor = texture2D(CC_Texture0, v_texCoord);          \n"
         + "                                                \n"
         + "    // mimic: glAlphaFunc(GL_GREATER)           \n"
-        + "    //pass if ( incoming_pixel >= u_alpha_value ) => fail if incoming_pixel < u_alpha_value         \n"
+        + "    //pass if ( incoming_pixel >= CC_alpha_value ) => fail if incoming_pixel < CC_alpha_value         \n"
         + "                                                \n"
-        + "    if ( texColor.a <= u_alpha_value )          \n"
+        + "    if ( texColor.a <= CC_alpha_value )          \n"
         + "        discard;                                \n"
         + "                                                \n"
         + "    gl_FragColor = texColor * v_fragmentColor;  \n"

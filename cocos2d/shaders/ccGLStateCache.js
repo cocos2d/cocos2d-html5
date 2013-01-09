@@ -100,27 +100,27 @@ cc.glInvalidateStateCache = function () {
 /**
  * Uses the GL program in case program is different than the current one.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will the glUseProgram() directly.
- * @param {cc.GLProgram} program
+ * @param {WebGLProgram} program
  */
 cc.glUseProgram = function (program) {
     if (cc.ENABLE_GL_STATE_CACHE) {
         if (program != cc._currentShaderProgram)
             cc._currentShaderProgram = program;
     }
-    cc.webglContext.useProgram(program.getProgram());
+    cc.webglContext.useProgram(program);
 };
 
 /**
  * Deletes the GL program. If it is the one that is being used, it invalidates it.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will the glDeleteProgram() directly.
- * @param {cc.GLProgram} program
+ * @param {WebGLProgram} program
  */
 cc.glDeleteProgram = function (program) {
     if (cc.ENABLE_GL_STATE_CACHE) {
         if (program == cc._currentShaderProgram)
             cc._currentShaderProgram = -1;
     }
-    cc.webglContext.deleteProgram(program.getProgram());
+    cc.webglContext.deleteProgram(program);
 };
 
 /**
@@ -177,7 +177,7 @@ cc.setProjectionMatrixDirty = function () {
  *                                                              <br/>
  *    These flags can be ORed. The flags that are not present, will be disabled.
  * </p>
- * @param {cc.VERTEX_ATTRIBFLAG_POSITION|cc.VERTEX_ATTRIBFLAG_COLOR|cc.VERTEX_ATTRIBFLAG_TEXCOORDS} flags
+ * @param {cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR | cc.VERTEX_ATTRIBFLAG_TEXCOORDS} flags
  */
 cc.glEnableVertexAttribs = function (flags) {
     cc.glBindVAO(0);

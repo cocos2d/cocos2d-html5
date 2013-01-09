@@ -535,7 +535,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             //
             // Position and 1 color passed as a uniform (to similate glColor4ub )
             //
-            this._shader = cc.ShaderCache.sharedShaderCache().programForKey(cc.SHADER_POSITION_UCOLOR);
+            this._shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_UCOLOR);
 
             this._colorLocation = this._renderContext.getUniformLocation(this._shader.getProgram(), "u_color");
             cc.CHECK_GL_ERROR_DEBUG();

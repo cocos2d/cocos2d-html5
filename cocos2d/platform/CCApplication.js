@@ -316,12 +316,13 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
      */
     run:function () {
         // Initialize instance and cocos2d.
-        if (!this.applicationDidFinishLaunching()) {
+        if (!this.applicationDidFinishLaunching())
             return 0;
-        }
+
         // TODO, need to be fixed.
+        var callback;
         if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
-            var callback = function () {
+            callback = function () {
                 cc.Director.getInstance().mainLoop();
                 window.requestAnimFrame(callback);
             };
@@ -329,12 +330,12 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             window.requestAnimFrame(callback);
         }
         else {
-            var callback = function () {
+            callback = function () {
                 cc.Director.getInstance().mainLoop();
             };
             setInterval(callback, this._animationInterval * 1000);
         }
-
+        return 0;
     },
     _animationInterval:null
 });

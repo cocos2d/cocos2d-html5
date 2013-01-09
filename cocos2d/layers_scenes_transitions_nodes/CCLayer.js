@@ -74,12 +74,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @return {Boolean}
      */
     init:function () {
-        /*var director = cc.Director.getInstance();
-         if (!director) {
-         return false;
-         }
-         this.setContentSize(director.getWinSize());
-         this._isTouchEnabled = false;*/
         this._super();
         this._initLayer();
         return true;
@@ -269,9 +263,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
         //TODO not supported
         // add this layer to concern the Accelerometer Sensor
-/*        if (this._isAccelerometerEnabled){
-           director.getAccelerometer().setDelegate(this);
-        }*/
+        /*        if (this._isAccelerometerEnabled){
+         director.getAccelerometer().setDelegate(this);
+         }*/
 
 
         // add this layer to concern the kaypad msg
@@ -293,9 +287,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
         // remove this layer from the delegates who concern Accelerometer Sensor
         //TODO not supported
-/*        if (this._isAccelerometerEnabled) {
-            director.getAccelerometer().setDelegate(null);
-        }*/
+        /*        if (this._isAccelerometerEnabled) {
+         director.getAccelerometer().setDelegate(null);
+         }*/
 
         // remove this layer from the delegates who concern the kaypad msg
         if (this._isKeyboardEnabled) {
@@ -314,8 +308,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     onEnterTransitionDidFinish:function () {
         //TODO not supported
         /*if (this._isAccelerometerEnabled) {
-            cc.Director.getInstance().getAccelerometer().setDelegate(this);
-        }*/
+         cc.Director.getInstance().getAccelerometer().setDelegate(this);
+         }*/
         this._super();
     },
 
@@ -556,19 +550,24 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _squareColors:[],
     _opacity:0,
     _color:new cc.Color3B(255, 255, 255),
-    _blendFunc:new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST),
+    _blendFunc:null,
     _layerColorStr:null,
 
     /**
      * Constructor
      */
     ctor:function () {
-        this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
-        this._squareColors = [new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1)];
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+
         this._color = new cc.Color4B(0, 0, 0, 0);
         this._opacity = 255;
         this._super();
         this._layerColorStr = this._getLayerColorString();
+
+        if (cc.renderContextType === cc.WEBGL) {
+            this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
+            this._squareColors = [new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1)];
+        }
     },
 
     _getLayerColorString:function () {
@@ -642,27 +641,27 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         this._initLayer();
 
         var winSize = cc.Director.getInstance().getWinSize();
-
         color = color || new cc.Color4B(0, 0, 0, 255);
         width = width || winSize.width;
         height = height || winSize.height;
 
-        this._blendFunc.src = cc.BLEND_SRC;
-        this._blendFunc.dst = cc.BLEND_DST;
-
         this._color = new cc.Color3B(color.r, color.g, color.b);
         this._opacity = color.a;
-
-        for (var i = 0; i < this._squareVertices.length; i++) {
-            this._squareVertices[i].x = 0.0;
-            this._squareVertices[i].y = 0.0;
-        }
 
         this.setContentSize(cc.size(width, height));
 
         this._updateColor();
-        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionColor));
 
+        if (cc.renderContextType === cc.WEBGL) {
+            this._blendFunc.src = cc.webglContext.BLEND_SRC;
+            this._blendFunc.dst = cc.webglContext.BLEND_DST;
+            for (var i = 0; i < this._squareVertices.length; i++) {
+                this._squareVertices[i].x = 0.0;
+                this._squareVertices[i].y = 0.0;
+            }
+            this._verticesFloat32Buffer = this._getLayerVertexArray();
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
+        }
         return true;
     },
 
@@ -671,10 +670,13 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {cc.Size} size
      */
     setContentSize:function (size) {
-        this._squareVertices[1].x = size.width;
-        this._squareVertices[2].y = size.height;
-        this._squareVertices[3].x = size.width;
-        this._squareVertices[3].y = size.height;
+        if (cc.renderContextType === cc.WEBGL) {
+            this._squareVertices[1].x = size.width;
+            this._squareVertices[2].y = size.height;
+            this._squareVertices[3].x = size.width;
+            this._squareVertices[3].y = size.height;
+            this._verticesFloat32Buffer = this._getLayerVertexArray();
+        }
         this._super(size);
     },
 
@@ -704,11 +706,14 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     _updateColor:function () {
-        for (var i = 0; i < 4; i++) {
-            this._squareColors[i].r = this._color.r / 255;
-            this._squareColors[i].g = this._color.g / 255;
-            this._squareColors[i].b = this._color.b / 255;
-            this._squareColors[i].a = this._opacity / 255;
+        if (cc.renderContextType === cc.WEBGL) {
+            for (var i = 0; i < 4; i++) {
+                this._squareColors[i].r = this._color.r / 255;
+                this._squareColors[i].g = this._color.g / 255;
+                this._squareColors[i].b = this._color.b / 255;
+                this._squareColors[i].a = this._opacity / 255;
+            }
+            this._colorsFloat32Buffer = this._getLayerColorArray();
         }
     },
 
@@ -734,27 +739,69 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
 
+        if (cc.renderContextType === cc.CANVAS)
+            this._drawForCanvas(context);
+        else
+            this._drawForWebGL(context);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    _drawForCanvas:function (context) {
         var tWidth = this.getContentSize().width;
         var tHeight = this.getContentSize().height;
         var apip = this.getAnchorPointInPoints();
 
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
         context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
-
-        cc.INCREMENT_GL_DRAWS(1);
     },
 
-    _drawForWebGL:function (ctx) {
-        /*cc.NODE_DRAW_SETUP();
-         ccGLEnableVertexAttribs( kCCVertexAttribFlag_Position | kCCVertexAttribFlag_Color );
+    _verticesFloat32Buffer:null,
+    _colorsFloat32Buffer:null,
+    _drawForWebGL:function (context) {
+        //cc.NODE_DRAW_SETUP();
+        context.enable(context.BLEND);
+        if (this._shaderProgram) {
+            context.useProgram(this._shaderProgram._programObj);
+            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+        }
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR);
 
-         //
-         // Attributes
-         //
-         glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, 0, m_pSquareVertices);
-         glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_FLOAT, GL_FALSE, 0, m_pSquareColors);
-         ccGLBlendFunc( m_tBlendFunc.src, m_tBlendFunc.dst );
-         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);   */
+        //
+        // Attributes
+        //
+        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
+
+        context.bindBuffer(context.ARRAY_BUFFER, this._colorsFloat32Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.FLOAT, false, 0, 0);
+
+        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
+    },
+
+    _getLayerVertexArray:function(){
+        var vertexBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+            this._squareVertices[0].x, this._squareVertices[0].y,
+            this._squareVertices[1].x, this._squareVertices[1].y,
+            this._squareVertices[2].x, this._squareVertices[2].y,
+            this._squareVertices[3].x, this._squareVertices[3].y
+        ]), cc.webglContext.STATIC_DRAW);
+        return vertexBuffer;
+    },
+
+    _getLayerColorArray:function(){
+        var colorsBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+            this._squareColors[0].r, this._squareColors[0].g, this._squareColors[0].b, this._squareColors[0].a,
+            this._squareColors[1].r, this._squareColors[1].g, this._squareColors[1].b, this._squareColors[1].a,
+            this._squareColors[2].r, this._squareColors[2].g, this._squareColors[2].b, this._squareColors[2].a,
+            this._squareColors[3].r, this._squareColors[3].g, this._squareColors[3].b, this._squareColors[3].a
+        ]), cc.webglContext.STATIC_DRAW);
+        return colorsBuffer;
     }
 });
 
@@ -794,8 +841,8 @@ cc.LayerColor.create = function (color, width, height) {
 
 
 /**
- * CCLayerGradient is a subclass of cc.LayerColor that draws gradients across<br/>
- * the background.<br/>
+ * <p>
+ * CCLayerGradient is a subclass of cc.LayerColor that draws gradients across the background.<br/>
  *<br/>
  * All features from cc.LayerColor are valid, plus the following new features:<br/>
  * <ul><li>direction</li>
@@ -810,7 +857,8 @@ cc.LayerColor.create = function (color, width, height) {
  * non-cardinal vectors; a smooth gradient implying both end points will be still<br/>
  * be drawn, however.<br/>
  *<br/>
- * If ' compressedInterpolation' is enabled (default mode) you will see both the start and end colors of the gradient.
+ * If 'compressedInterpolation' is enabled (default mode) you will see both the start and end colors of the gradient.
+ * </p>
  * @class
  * @extends cc.LayerColor
  */
@@ -950,8 +998,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
     },
 
     /**
-     * @param {cc.Color3B} start starting color
-     * @param {cc.Color3B} end
+     * @param {cc.Color4B} start starting color
+     * @param {cc.Color4B} end
      * @param {cc.Point|Null} v
      * @return {Boolean}
      */
@@ -996,7 +1044,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             this._gradientStartPoint = cc.p(tWidth * -this._alongVector.x + offWidth, tHeight * this._alongVector.y - offHeight);
             this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth, tHeight * -this._alongVector.y - offHeight);
         } else {
-            //todo need fixed for webGL
             this._super();
 
             var h = cc.pLength(this._alongVector);
@@ -1038,12 +1085,14 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             this._squareColors[3].g = ((E.g + (S.g - E.g) * ((c - u.x - u.y) / (2.0 * c))));
             this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
             this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
+
+            this._colorsFloat32Buffer = this._getLayerColorArray();
         }
     },
 
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
-        if (cc.renderContextType == cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS) {
             if (this._isLighterMode)
                 context.globalCompositeOperation = 'lighter';
 
@@ -1063,6 +1112,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             if (this._rotation != 0)
                 context.rotate(this._rotationRadians);
             context.restore();
+        }else{
+            this._super(context);
         }
     }
 });

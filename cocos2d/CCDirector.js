@@ -92,7 +92,28 @@ cc.DEVICE_ORIENTATION_LANDSCAPE_RIGHT = 3;
  */
 cc.DEVICE_MAX_ORIENTATIONS = 2;
 
+/**
+ * OpenGL projection protocol
+ * @class
+ * @extends cc.Class
+ */
+cc.DirectorDelegate = cc.Class.extend(/** @lends cc.DirectorDelegate# */{
+    /**
+     * Called by CCDirector when the projection is updated, and "custom" projection is used
+     */
+    updateProjection:function () {
+    }
+});
 
+cc.GLToClipTransform = function (transformOut) {
+    var projection = new cc.kmMat4();
+    cc.kmGLGetMatrix(cc.KM_GL_PROJECTION, projection);
+
+    var modelview = new cc.kmMat4();
+    cc.kmGLGetMatrix(cc.KM_GL_MODELVIEW, modelview);
+
+    cc.kmMat4Multiply(transformOut, projection, modelview);
+};
 //----------------------------------------------------------------------------------------------------------------------
 
 /**
@@ -122,7 +143,6 @@ cc.DEVICE_MAX_ORIENTATIONS = 2;
  */
 cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     //Variables
-    _isContentScaleSupported:false,
     _landscape:false,
     _nextDeltaTimeZero:false,
     _paused:false,
@@ -142,7 +162,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _SPFLabel:null,
     _drawsLabel:null,
 
-    _winSizeInPixels:null,
     _winSizeInPoints:null,
 
     _lastUpdate:null,
@@ -165,9 +184,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _keyboardDispatcher:null,
     _accelerometer:null,
     _mouseDispatcher:null,
-
-    _watcherFun:null,
-    _watcherSender:null,
 
     _currTimeValue:null,
     _isBlur:false,
@@ -196,11 +212,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     init:function () {
         // scenes
-        //TODO these are already set to null, so maybe we can remove them in the init?
-        this._runningScene = null;
-        this._nextScene = null;
-        this._notificationNode = null;
-
         this._oldAnimationInterval = this._animationInterval = 1.0 / cc.defaultFPS;
         this._scenesStack = [];
         // Set default projection (3D)
@@ -220,14 +231,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         //purge?
         this._purgeDirecotorInNextLoop = false;
-        this._winSizeInPixels = this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);
+
+        this._winSizeInPoints = cc.size(0, 0);
 
         this._openGLView = null;
         this._contentScaleFactor = 1.0;
-        this._isContentScaleSupported = false;
-
-        this._watcherFun = null;
-        this._watcherSender = null;
 
         //scheduler
         this._scheduler = new cc.Scheduler();
@@ -271,11 +279,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._deltaTime = Math.max(0, this._deltaTime);
         }
 
-        if (cc.DEBUG) {
-            if (this._deltaTime > 0.2) {
-                this._deltaTime = 1 / 60.0;
-            }
-        }
+        if ((cc.COCOS2D_DEBUG > 0) && (this._deltaTime > 0.2))
+            this._deltaTime = 1 / 60.0;
+
         this._lastUpdate.tv_sec = now.tv_sec;
         this._lastUpdate.tv_usec = now.tv_usec;
     },
@@ -288,9 +294,23 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Point} point
      * @return {cc.Point}
      */
-    convertToGL:function (point) {
-        var newY = this._winSizeInPoints.height - point.y;
-        return cc.p(point.x, newY);
+    convertToGL:function (uiPoint) {
+        var transform = new cc.kmMat4();
+        cc.GLToClipTransform(transform);
+
+        var transformInv = new cc.kmMat4();
+        cc.kmMat4Inverse(transformInv, transform);
+
+        // Calculate z=0 using -> transform*[0, 0, 0, 1]/w
+        var zClip = transform.mat[14] / transform.mat[15];
+
+        var glSize = this._openGLView.getDesignResolutionSize();
+        var clipCoord = new cc.kmVec3(2.0 * uiPoint.x / glSize.width - 1.0, 1.0 - 2.0 * uiPoint.y / glSize.height, zClip);
+
+        var glCoord = new cc.kmVec3();
+        cc.kmVec3TransformCoord(glCoord, clipCoord, transformInv);
+
+        return cc.p(glCoord.x, glCoord.y);
     },
 
     /**
@@ -299,9 +319,17 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Point} point
      * @return {cc.Point}
      */
-    convertToUI:function (point) {
-        var oppositeY = this._winSizeInPoints.height - point.y;
-        return cc.p(point.x, oppositeY);
+    convertToUI:function (glPoint) {
+        var transform = new cc.kmMat4();
+        cc.GLToClipTransform(transform);
+
+        var clipCoord = new cc.kmVec3();
+        // Need to calculate the zero depth from the transform.
+        var glCoord = new cc.kmVec3(glPoint.x, glPoint.y, 0.0);
+        cc.kmVec3TransformCoord(clipCoord, glCoord, transform);
+
+        var glSize = this._openGLView.getDesignResolutionSize();
+        return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5));
     },
 
     //_fullRect:null,
@@ -328,9 +356,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
          this._openGLView.swapBuffers();
          }*/
 
-        if (this._displayStats) {
+        if (this._displayStats)
             this._calculateMPF();
-        }
     },
 
     _drawSceneForCanvas:function () {
@@ -351,9 +378,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         if (this._displayStats)
             this._showStats();
-
-        if (this._watcherFun && this._watcherSender)
-            this._watcherFun.call(this._watcherSender);
     },
 
     _drawSceneForWebGL:function () {
@@ -375,12 +399,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (this._notificationNode)
             this._notificationNode.visit();
 
-        //TODO need open
-        //if (this._displayStats)
-        //    this._showStats();
-
-        if (this._watcherFun && this._watcherSender)
-            this._watcherFun.call(this._watcherSender);
+        if (this._displayStats)
+            this._showStats();
 
         cc.kmGLPopMatrix();
     },
@@ -402,45 +422,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             return false;
 
         return cc.Rect.CCRectIntersectsRect(this._fullRect, rect);
-    },
-
-    /**
-     * <p>
-     *   Will enable Retina Display on devices that supports it. <br/>
-     *   It will enable Retina Display on iPhone4 and iPod Touch 4.<br/>
-     *   It will return YES, if it could enabled it, otherwise it will return NO.<br/>
-     *   <br/>
-     *   This is the recommened way to enable Retina Display.
-     * </p>
-     * @param {Boolean} enabled
-     * @return {Boolean}
-     */
-    enableRetinaDisplay:function (enabled) {
-        // Already enabled?
-        if (enabled && this._contentScaleFactor == 2) {
-            return true;
-        }
-
-        // Already diabled?
-        if (!enabled && this._contentScaleFactor == 1) {
-            return false;
-        }
-
-        // setContentScaleFactor is not supported
-        if (!this._openGLView.canSetContentScaleFactor()) {
-            return false;
-        }
-
-        // SD device
-        if (this._openGLView.getMainScreenScale() == 1.0) {
-            return false;
-        }
-
-        var newScale = (enabled) ? 2 : 1;
-        this.setContentScaleFactor(newScale);
-
-        this._createStatsLabel();
-        return true;
     },
 
     /**
@@ -493,20 +474,19 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @return {cc.Size}
      */
     getWinSizeInPixels:function () {
-        return this._winSizeInPixels;
+        return cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
     },
 
     getZEye:function () {
-        return (this._winSizeInPixels.height / 1.1566 / cc.CONTENT_SCALE_FACTOR());
+        return (this._winSizeInPoints.height / 1.1566 );
     },
 
     /**
      * pause director
      */
     pause:function () {
-        if (this._paused) {
+        if (this._paused)
             return;
-        }
 
         this._oldAnimationInterval = this._animationInterval;
         // when paused, don't consume CPU
@@ -530,10 +510,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._scenesStack.pop();
         var c = this._scenesStack.length;
 
-        if (c == 0) {
+        if (c == 0)
             this.end();
-        }
-        else {
+         else {
             this._sendCleanupToScene = true;
             this._nextScene = this._scenesStack[c - 1];
         }
@@ -551,11 +530,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * purge Director
      */
     purgeDirector:function () {
+        //cleanup scheduler
+        this.getScheduler().unscheduleAllCallbacks();
+
         // don't release the event handlers
         // They are needed in case the director is run again
         this._touchDispatcher.removeAllDelegates();
 
         if (this._runningScene) {
+            this._runningScene.onExitTransitionDidStart();
             this._runningScene.onExit();
             this._runningScene.cleanup();
         }
@@ -616,6 +599,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Scene} scene
      */
     replaceScene:function (scene) {
+        cc.Assert(this._runningScene, "Use runWithScene: instead to start the director");
         cc.Assert(scene != null, "the scene should not be null");
 
         var i = this._scenesStack.length;
@@ -623,20 +607,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._sendCleanupToScene = true;
         this._scenesStack[i - 1] = scene;
         this._nextScene = scene;
-    },
-
-    /**
-     * changes the projection size
-     * @param {cc.Size} newWindowSize
-     */
-    reshapeProjection:function (newWindowSize) {
-        if (this._openGLView) {
-            this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);     //this._openGLView.getSize();
-            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor,
-                this._winSizeInPoints.height * this._contentScaleFactor);
-
-            this.setProjection(this._projection);
-        }
     },
 
     /**
@@ -666,7 +636,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {cc.Scene} scene
      */
     runWithScene:function (scene) {
-        cc.Assert(scene != null, "running scene should not be null");
+        cc.Assert(scene != null, "This command can only be used to start the CCDirector. There is already a scene present.");
         cc.Assert(this._runningScene == null, "_runningScene should be null");
 
         this.pushScene(scene);
@@ -678,12 +648,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Boolean} on
      */
     setAlphaBlending:function (on) {
-        if (on) {
-            cc.glEnable(cc.GL_BLEND);
+        if (on)
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-        } else {
-            cc.webglContext.disable(cc.webglContext.BLEND);
-        }
+        else
+            cc.glBlendFunc(cc.webglContext.ONE, cc.webglContext.ZERO);
+
         cc.CHECK_GL_ERROR_DEBUG();
     },
 
@@ -698,14 +667,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setContentScaleFactor:function (scaleFactor) {
         if (scaleFactor != this._contentScaleFactor) {
             this._contentScaleFactor = scaleFactor;
-            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * scaleFactor, this._winSizeInPoints.height * scaleFactor);
-
-            if (this._openGLView) {
-                this.updateContentScaleFactor();
-            }
-
-            // update projection
-            this.setProjection(this._projection);
+            this._createStatsLabel();
         }
     },
 
@@ -729,11 +691,10 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * sets the OpenGL default values
      */
     setGLDefaultValues:function () {
-        // This method SHOULD be called only after openGLView_ was initialized
-        cc.Assert(this._openGLView, "opengl view should not be null");
-
         this.setAlphaBlending(true);
-        this.setDepthTest(false);
+        // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
+        // [self setDepthTest: view_.depthFormat];
+        this.setDepthTest(true);
         this.setProjection(this._projection);
 
         // set other opengl default values
@@ -759,14 +720,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // If it is not a transition, call onExit/cleanup
         if (!newIsTransition) {
             if (this._runningScene) {
+                this._runningScene.onExitTransitionDidStart();
                 this._runningScene.onExit();
             }
 
             // issue #709. the root node (scene) should receive the cleanup message too
             // otherwise it might be leaked.
-            if (this._sendCleanupToScene && this._runningScene) {
+            if (this._sendCleanupToScene && this._runningScene)
                 this._runningScene.cleanup();
-            }
         }
 
         this._runningScene = this._nextScene;
@@ -787,37 +748,43 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     /**
+     *  CCDirector delegate. It shall implemente the CCDirectorDelegate protocol
+     *  @return {cc.DirectorDelegate}
+     */
+    getDelegate:function () {
+        return this._projectionDelegate;
+    },
+
+    setDelegate:function (delegate) {
+        this._projectionDelegate = delegate;
+    },
+
+    /**
      * Set the CCEGLView, where everything is rendered
      * @param {*} openGLView
      */
     setOpenGLView:function (openGLView) {
-        if(cc.renderContextType !== cc.WEBGL)
+        // set size
+        this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);        //this._openGLView.getDesignResolutionSize();
+
+        if (cc.renderContextType !== cc.WEBGL)
             return;
 
-        cc.Assert(openGLView, "opengl view should not be null");
+        //cc.Assert(openGLView, "opengl view should not be null");
 
-        if (this._openGLView != openGLView) {
-            // because EAGLView is not kind of CCObject
-            delete this._openGLView; // [openGLView_ release]
-            this._openGLView = openGLView;
+        //if (this._openGLView != openGLView) {
+        // because EAGLView is not kind of CCObject
+        this._openGLView = openGLView;
 
-            // set size
-            this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);        //this._openGLView.getSize();
-            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+        this._createStatsLabel();
 
-            //TODO need open
-            //this._createStatsLabel();
+        //if (this._openGLView)
+        this.setGLDefaultValues();
 
-            //if (this._openGLView)
-            this.setGLDefaultValues();
+        cc.CHECK_GL_ERROR_DEBUG();
 
-            cc.CHECK_GL_ERROR_DEBUG();
-
-            if (this._contentScaleFactor != 1)
-                this.updateContentScaleFactor();
-
-            this._touchDispatcher.setDispatchEvents(true);
-        }
+        this._touchDispatcher.setDispatchEvents(true);
+        //}
     },
 
     /**
@@ -825,19 +792,17 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Number} projection
      */
     setProjection:function (projection) {
-        var size = this._winSizeInPixels;
-        var sizePoint = this._winSizeInPoints;
+        var size = this._winSizeInPoints;
 
-        if (this._openGLView) {
-            this._openGLView.setViewPortInPoints(0, 0, sizePoint.width, sizePoint.height);
-        }
+        if (this._openGLView)
+            this._openGLView.setViewPortInPoints(0, 0, size.width, size.height);
 
         switch (projection) {
             case cc.DIRECTOR_PROJECTION_2D:
                 cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
                 cc.kmGLLoadIdentity();
                 var orthoMatrix = new cc.kmMat4();
-                cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width / cc.CONTENT_SCALE_FACTOR(), 0, size.height / cc.CONTENT_SCALE_FACTOR(), -1024, 1024);
+                cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width, 0, size.height, -1024, 1024);
                 cc.kmGLMultMatrix(orthoMatrix);
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
@@ -857,8 +822,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
                 var eye = new cc.kmVec3(), center = new cc.kmVec3(), up = new cc.kmVec3();
-                cc.kmVec3Fill(eye, sizePoint.width / 2, sizePoint.height / 2, zeye);
-                cc.kmVec3Fill(center, sizePoint.width / 2, sizePoint.height / 2, 0.0);
+                cc.kmVec3Fill(eye, size.width / 2, size.height / 2, zeye);
+                cc.kmVec3Fill(center, size.width / 2, size.height / 2, 0.0);
                 cc.kmVec3Fill(up, 0.0, 1.0, 0.0);
                 cc.kmMat4LookAt(matrixLookup, eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
@@ -873,7 +838,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
 
         this._projection = projection;
-        //cc.setProjectionMatrixDirty();
+        cc.setProjectionMatrixDirty();
     },
 
     /**
@@ -902,18 +867,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             }
         }
         cc.g_NumberOfDraws = 0;
-    },
-
-    /**
-     * update content scale factor
-     */
-    updateContentScaleFactor:function () {
-        if (this._openGLView.canSetContentScaleFactor()) {
-            this._openGLView.setContentScaleFactor(this._contentScaleFactor);
-            this._isContentScaleSupported = true;
-        } else {
-            cc.log("cocos2d: setContentScaleFactor:'is not supported on this device");
-        }
     },
 
     /**
@@ -1026,6 +979,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             while (c > 1) {
                 var current = this._scenesStack.pop();
                 if (current.isRunning()) {
+                    current.onExitTransitionDidStart();
                     current.onExit();
                 }
                 current.cleanup();
@@ -1034,11 +988,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._nextScene = this._scenesStack[this._scenesStack.length - 1];
             this._sendCleanupToScene = false;
         }
-    },
-
-    setWatcherCallbackFun:function (pSender, func) {
-        this._watcherFun = func;
-        this._watcherSender = pSender;
     },
 
     /**
@@ -1098,13 +1047,22 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _createStatsLabel:function () {
-        this._FPSLabel = cc.LabelTTF.create("00.0", "Arial", 18, cc.size(60, 16), cc.TEXT_ALIGNMENT_RIGHT);
-        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", 18, cc.size(60, 16), cc.TEXT_ALIGNMENT_RIGHT);
-        this._drawsLabel = cc.LabelTTF.create("000", "Arial", 18, cc.size(60, 16), cc.TEXT_ALIGNMENT_RIGHT);
+        var fontSize = 0;
+        if (this._winSizeInPoints.width > this._winSizeInPoints.height)
+            fontSize = 0 | (this._winSizeInPoints.height / 320 * 24);
+        else
+            fontSize = 0 | (this._winSizeInPoints.width / 320 * 24);
 
-        this._drawsLabel.setPosition(cc.pAdd(cc.p(20, 48), cc.DIRECTOR_STATS_POSITION));
-        this._SPFLabel.setPosition(cc.pAdd(cc.p(20, 30), cc.DIRECTOR_STATS_POSITION));
-        this._FPSLabel.setPosition(cc.pAdd(cc.p(20, 10), cc.DIRECTOR_STATS_POSITION));
+        this._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
+        this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
+        this._drawsLabel = cc.LabelTTF.create("000", "Arial", fontSize);
+
+        var contentSize = this._drawsLabel.getContentSize();
+        this._drawsLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height * 5 / 2), cc.DIRECTOR_STATS_POSITION));
+        contentSize = this._SPFLabel.getContentSize();
+        this._SPFLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height * 3 / 2), cc.DIRECTOR_STATS_POSITION));
+        contentSize = this._FPSLabel.getContentSize();
+        this._FPSLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height / 2), cc.DIRECTOR_STATS_POSITION));
     },
 
     _calculateMPF:function () {
@@ -1190,6 +1148,7 @@ cc.Director.getInstance = function () {
         cc.firstUseDirector = false;
         cc.s_SharedDirector = new cc.DisplayLinkDirector();
         cc.s_SharedDirector.init();
+        cc.s_SharedDirector.setOpenGLView();
     }
     return cc.s_SharedDirector;
 };

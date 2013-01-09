@@ -283,22 +283,20 @@ cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
  */
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
-/* Runtime information  */
+/**
+ *  Runtime information
+ *  @deprecated Use "sys" instead.
+ */
 cc.config = {
-    'os' : navigator.appVersion,
-    'platform' : 'browser',
-    'engine' : 'cocos2d-html5/canvas',
-    'arch' : 'web',
-    'version' : cc.ENGINE_VERSION,
-    'debug' : false
+    'platform' : sys.platform
 };
 
 /**
  * dump config info, but only in debug mode
  */
 cc.dumpConfig = function() {
-    for( i in cc.config )
-        cc.log( i + " = " + cc.config[i] );
+    for(var i in sys )
+        cc.log( i + " = " + sys[i] );
 };
 
 /** @def CC_ENABLE_GL_STATE_CACHE

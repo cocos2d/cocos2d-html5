@@ -136,7 +136,9 @@ cc.s_globalOrderOfArrival = 1;
 cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _zOrder:0,
     _vertexZ:0.0,
-    _rotation:0.0,
+
+    _rotationX:0,
+    _rotationY:0.0,
     _scaleX:1.0,
     _scaleY:1.0,
     _position:cc.p(0, 0),
@@ -195,7 +197,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._contentSize = cc.size(0, 0);
         this._position = cc.p(0, 0);
 
-        this._glServerState = cc.GL_BLEND;
+        this._glServerState = 0;
 
         this._transform4x4 = new cc.kmMat4();
         this._mvpMatrix = new cc.kmMat4();
@@ -313,7 +315,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     *  get the skew degrees in X
+     *  <p>get the skew degrees in X </br>
+     *  The X skew angle of the node in degrees.  <br/>
+     *  This angle describes the shear distortion in the X direction.<br/>
+     *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
+     *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
+     *  </p>
      * @return {Number}
      */
     getSkewX:function () {
@@ -329,7 +336,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.setNodeDirty();
     },
 
-    /** get the skew degrees in Y
+    /**
+     * <p>get the skew degrees in Y               <br/>
+     * The Y skew angle of the node in degrees.                            <br/>
+     * This angle describes the shear distortion in the Y direction.       <br/>
+     * Thus, it is the angle between the X axis and the bottom edge of the shape       <br/>
+     * The default skewY angle is 0. Positive values distort the node in a CCW direction.    <br/>
+     * </p>
      * @return {Number}
      */
     getSkewY:function () {
@@ -386,24 +399,59 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * rotation getter
+     * The rotation (angle) of the node in degrees. 0 is the default rotation angle. Positive values rotate node CW.
      * @return {Number}
      */
     getRotation:function () {
-        return this._rotation;
+        cc.Assert(this._rotationX == this._rotationY, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
+        return this._rotationX;
     },
 
-    _rotationRadians:0,
+    _rotationRadiansX:0,
+    _rotationRadiansY:0,
     /**
      * rotation setter
      * @param {Number} newRotation
      */
     setRotation:function (newRotation) {
-        if (this._rotation == newRotation)
-            return;
-        this._rotation = newRotation;
-        this._rotationRadians = this._rotation * (Math.PI / 180);
+        this._rotationX = this._rotationY = newRotation;
+        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
 
+        this.setNodeDirty();
+    },
+
+    /**
+     * The rotation (angle) of the node in degrees. 0 is the default rotation angle. <br/>
+     * Positive values rotate node CW. It only modifies the X rotation performing a horizontal rotational skew .
+     * (support only in WebGl rendering mode)
+     * @return {Number}
+     */
+    getRotationX:function () {
+        return this._rotationX;
+    },
+
+    /**
+     * rotationX setter
+     * @param {Number} rotationX
+     */
+    setRotationX:function (rotationX) {
+        this._rotationX = rotationX;
+        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
+        this.setNodeDirty();
+    },
+
+    /**
+     * The rotation (angle) of the node in degrees. 0 is the default rotation angle.  <br/>
+     * Positive values rotate node CW. It only modifies the Y rotation performing a vertical rotational skew .
+     * @return {Number}
+     */
+    getRotationY:function () {
+        return this._rotationY;
+    },
+
+    setRotationY:function (rotationY) {
+        this._rotationY = rotationY;
+        this._rotationRadiansY = this._rotationX * (Math.PI / 180);
         this.setNodeDirty();
     },
 
@@ -417,7 +465,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * The scale factor of the node. 1.0 is the default scale factor.
+     * The scale factor of the node. 1.0 is the default scale factor. It modifies the X and Y scale at the same time.
      * @param {Number} scale or scaleX value
      * @param {Number} scaleY
      */
@@ -469,10 +517,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setPosition:function (newPosOrxValue, yValue) {
         if (arguments.length == 2) {
             this._position = new cc.Point(newPosOrxValue, yValue);
-            //this.setPosition = this._setPositionByValue;
         } else if (arguments.length == 1) {
             this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
-            //this.setPosition = this._setPositionByValue;
         }
         this.setNodeDirty();
     },
@@ -481,7 +527,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (arguments.length == 2) {
             this._position.x = newPosOrxValue;
             this._position.y = yValue;
-            //this._position = cc.p(newPosOrxValue,yValue);
         } else if (arguments.length == 1) {
             this._position.x = newPosOrxValue.x;
             this._position.y = newPosOrxValue.y;
@@ -489,16 +534,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.setNodeDirty();
     },
 
-    /** <p>get/set Position for Lua (pass number faster than cc.Point object)</p>
-
-     <p>lua code:<br/>
-     local x, y = node:getPosition()    -- return x, y values from C++ <br/>
-     local x    = node:getPositionX()<br/>
-     local y    = node:getPositionY()<br/>
-     node:setPosition(x, y)             -- pass x, y values to C++ <br/>
-     node:setPositionX(x) <br/>
-     node:setPositionY(y)<br/>
-     node:setPositionInPixels(x, y)     -- pass x, y values to C++ <br/></P>
+    /**
+     * <p>Position (x,y) of the node in OpenGL coordinates. (0,0) is the left-bottom corner. </p>
      * @return {cc.Point}
      */
     getPosition:function () {
@@ -555,7 +592,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * camera getter: lazy alloc
+     * A CCCamera object that lets you move the node using a gluLookAt
      * @return {cc.Camera}
      */
     getCamera:function () {
@@ -567,6 +604,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * grid getter
+     * A CCGrid object that is used when applying effects
      * @return {cc.GridBase}
      */
     getGrid:function () {
@@ -598,11 +636,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this.setNodeDirty();
     },
 
-    /** <p>anchorPoint is the point around which all transformations and positioning manipulations take place.<br/>
-     It's like a pin in the node where it is "attached" to its parent. <br/>
-     The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
-     But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
-     The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
+    /**
+     *  <p>anchorPoint is the point around which all transformations and positioning manipulations take place.<br/>
+     *  It's like a pin in the node where it is "attached" to its parent. <br/>
+     *  The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
+     *  But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
+     *  The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
+     * @return {cc.Point}
      */
     getAnchorPoint:function () {
         return cc.p(this._anchorPoint.x, this._anchorPoint.y);
@@ -616,22 +656,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._anchorPoint = new cc.Point(point.x, point.y);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
 
-            //this.setAnchorPoint = this._setAnchorPointByValue;
             this.setNodeDirty();
         }
     },
 
-    _setAnchorPointByValue:function (point) {
-        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
-            this._anchorPoint.x = point.x;
-            this._anchorPoint.y = point.y;
-            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
-            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
-            this.setNodeDirty();
-        }
-    },
-
-    /** AnchorPointInPoints getter
+    /**
+     *  The anchorPoint in absolute pixels.  <br/>
+     *  you can only read it. If you wish to modify it, use anchorPoint instead
      * @return {cc.Point}
      */
     getAnchorPointInPoints:function () {
@@ -654,30 +685,19 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
             this._contentSize = new cc.Size(size.width, size.height);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
-            //this.setContentSize = this._setContentSizeByValue;
-            this.setNodeDirty();
-        }
-    },
-
-    _setContentSizeByValue:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
-            this._contentSize.width = size.width;
-            this._contentSize.height = size.height;
-            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
-            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
             this.setNodeDirty();
         }
     },
 
     /**
-     * isRunning getter
+     * whether or not the node is running
      * @return {Boolean}
      */
     isRunning:function () {
         return this._running;
     },
 
-    /** parent getter
+    /** A weak reference to the parent
      * @return {cc.Node}
      */
     getParent:function () {
@@ -691,14 +711,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         this._parent = Var;
     },
 
-    /** ignoreAnchorPointForPosition getter
+    /**
+     * If true, the Anchor Point will be (0,0) when you position the CCNode.<br/>
+     * Used by CCLayer and CCScene
      * @return {Boolean}
      */
     isIgnoreAnchorPointForPosition:function () {
         return this._ignoreAnchorPointForPosition;
     },
 
-    /** ignoreAnchorPointForPosition setter
+    /**
+     * ignoreAnchorPointForPosition setter
      * @param {Boolean} newValue
      */
     ignoreAnchorPointForPosition:function (newValue) {
@@ -709,7 +732,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
-     * tag getter
+     * A tag used to identify the node easily
      * @return {Number}
      */
     getTag:function () {
@@ -724,6 +747,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     /**
+     * A custom user data pointer
      * @return {object}
      */
     getUserData:function () {
@@ -765,12 +789,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * Shader Program setter
-     * @param {object} newValue
+     * @param {object} newShaderProgram
      */
-    setShaderProgram:function (newValue) {
-        if (this._shaderProgram != newValue) {
-            this._shaderProgram = newValue;
-        }
+    setShaderProgram:function (newShaderProgram) {
+        this._shaderProgram = newShaderProgram;
     },
 
     /**
@@ -799,10 +821,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     /**
      * GL server side state setter
-     * @param {Number} Var
+     * @param {Number} state
      */
-    setGLServerState:function (Var) {
-        this._glServerState = Var;
+    setGLServerState:function (state) {
+        this._glServerState = state;
     },
 
     /**
@@ -974,7 +996,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     },
 
     // composition: REMOVE
-    /** Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks. <br/>
+    /**
+     * Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * If the node orphan, then nothing happens.
      * @param {Boolean} cleanup
@@ -985,7 +1008,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._parent.removeChild(this, cleanup);
         }
     },
-    /** XXX deprecated */
+
+    /**
+     * Remove itself from its parent node.
+     * @deprecated
+     * @param {Boolean} cleanup
+     */
     removeFromParentAndCleanup:function (cleanup) {
         cc.log("removeFromParentAndCleanup is deprecated. Use removeFromParent instead");
         this.removeFromParent(cleanup);
@@ -1002,9 +1030,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeChild:function (child, cleanup) {
         // explicit nil handling
-        if (this._children == null) {
+        if (this._children == null)
             return;
-        }
 
         cleanup = cleanup || true;
         if (this._children.indexOf(child) > -1) {
@@ -1024,21 +1051,24 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         cc.Assert(tag != cc.NODE_TAG_INVALID, "Invalid tag");
 
         var child = this.getChildByTag(tag);
-        if (child == null) {
+        if (child == null)
             cc.log("cocos2d: removeChildByTag: child not found!");
-        } else {
+        else
             this.removeChild(child, cleanup);
-        }
     },
 
-    /* XXX deprecated */
+    /**
+     * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
+     * @deprecated
+     * @param {Boolean} cleanup
+     */
     removeAllChildrenWithCleanup:function (cleanup) {
         cc.log("removeAllChildrenWithCleanup is deprecated. Use removeAllChildren instead");
         this.removeAllChildren(cleanup);
     },
 
     /**
-     * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
+     * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * @param {Boolean} cleanup
      */
@@ -1185,13 +1215,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!this._visible)
             return;
 
-        if(cc.renderContextType == cc.CANVAS)
+        if (cc.renderContextType == cc.CANVAS)
             this._visitForCanvas(ctx);
         else
             this._visitForWebGL(ctx);
     },
 
-    _visitForCanvas:function(ctx){
+    _visitForCanvas:function (ctx) {
         //visit for canvas
         var context = ctx || cc.renderContext, i;
         context.save();
@@ -1300,8 +1330,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             }
         }
 
-        if (this._rotation != 0)
-            context.rotate(this._rotationRadians);
+        if (this._rotationX != 0)
+            context.rotate(this._rotationRadiansX);
 
         if ((this._scaleX != 1) || (this._scaleY != 1))
             context.scale(this._scaleX, this._scaleY);
@@ -1542,25 +1572,32 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             }
 
             // Rotation values
-            var c = 1, s = 0;
-            if (this._rotation) {
-                //var radians = -cc.DEGREES_TO_RADIANS(this._rotation);
-                c = Math.cos(-this._rotationRadians);
-                s = Math.sin(-this._rotationRadians);
+            // Change rotation code to handle X and Y
+            // If we skew with the exact same value for both x and y then we're simply just rotating
+            var cx = 1, sx = 0, cy = 1, sy = 0;
+            if (this._rotationX != 0 || this._rotationY != 0) {
+                //var radiansX = -CC_DEGREES_TO_RADIANS(this._rotationX);
+                //var radiansY = -CC_DEGREES_TO_RADIANS(this._rotationY);
+                cx = Math.cos(-this._rotationRadiansX);
+                sx = Math.sin(-this._rotationRadiansX);
+                cy = Math.cos(-this._rotationRadiansY);
+                sy = Math.sin(-this._rotationRadiansY);
             }
 
             var needsSkewMatrix = ( this._skewX || this._skewY );
 
             // optimization:
             // inline anchor point calculation if skew is not needed
+            // Adjusted transform calculation for rotational skew
             if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
-                x += c * -this._anchorPointInPoints.x * this._scaleX + -s * -this._anchorPointInPoints.y * this._scaleY;
-                y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
+                x += cy * -this._anchorPointInPoints.x * this._scaleX + -sx * -this._anchorPointInPoints.y * this._scaleY;
+                y += sy * -this._anchorPointInPoints.x * this._scaleX + cx * -this._anchorPointInPoints.y * this._scaleY;
             }
 
             // Build Transform Matrix
-            this._transform = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX,
-                -s * this._scaleY, c * this._scaleY, x, y);
+            // Adjusted transform calculation for rotational skew
+            this._transform = cc.AffineTransformMake(cy * this._scaleX, sy * this._scaleX,
+                -sx * this._scaleY, cx * this._scaleY, x, y);
 
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
@@ -1681,12 +1718,17 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         return this.convertToNodeSpaceAR(point);
     },
 
-    /** implement cc.Object's method (override me)
+    /**
+     * Update will be called automatically every frame if "scheduleUpdate" is called, and the node is "live" <br/>
+     * (override me)
      * @param {Number} dt
      */
     update:function (dt) {
     },
 
+    /**
+     * updates the quad according the the rotation, position, scale values.
+     */
     updateTransform:function () {
         // Recursively iterate over children
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
