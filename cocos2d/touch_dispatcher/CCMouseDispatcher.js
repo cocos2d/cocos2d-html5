@@ -466,7 +466,7 @@ cc.MouseDispatcher = cc.Class.extend({
             switch (index) {
                 case cc.MOUSE_DOWN:
                     if (mouseObj.getButton() == cc.MOUSE_RIGHTBUTTON) {
-                        if (handler.getDelegate().onRightMouseDown);
+                        if (handler.getDelegate().onRightMouseDown)
                             handler.getDelegate().onRightMouseDown(mouseObj);
                     }
                     else {
@@ -476,7 +476,7 @@ cc.MouseDispatcher = cc.Class.extend({
                     break;
                 case cc.MOUSE_UP:
                     if (mouseObj.getButton() == cc.MOUSE_RIGHTBUTTON) {
-                        if (handler.getDelegate().onRightMouseUp);
+                        if (handler.getDelegate().onRightMouseUp)
                             handler.getDelegate().onRightMouseUp(mouseObj);
                     }
                     else {
