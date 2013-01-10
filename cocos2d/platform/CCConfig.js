@@ -276,7 +276,7 @@ cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
   @deprecated Use "sys" instead.
 */
 cc.config = {
-    'platform' : sys.platform,
+    'platform' : sys.platform
 };
 
 /**

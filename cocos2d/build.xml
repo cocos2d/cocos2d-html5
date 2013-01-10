@@ -13,7 +13,6 @@
             <sources dir="${basedir}">
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
-                <file name="platform/platform.js"/>
                 <file name="platform/miniFramework.js"/>
                 <file name="platform/ZipUtils.js"/>
                 <file name="platform/base64.js"/>
@@ -21,6 +20,7 @@
                 <file name="platform/CCMacro.js"/>
                 <file name="platform/CCFileUtils.js"/>
                 <file name="platform/CCTypes.js"/>
+                <file name="platform/Sys.js"/>
                 <file name="platform/zlib.min.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="platform/CCConfig.js"/>
