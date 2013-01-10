@@ -29,7 +29,6 @@
         'platform/CCClass.js',
         'platform/miniFramework.js',
         'platform/CCCommon.js',
-        'platform/platform.js',
         'platform/ZipUtils.js',
         'platform/base64.js',
         'platform/gzip.js',
