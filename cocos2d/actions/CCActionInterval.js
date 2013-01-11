@@ -625,17 +625,23 @@ cc.Spawn._actionOneTwo = function (action1, action2) {
  * @extends cc.ActionInterval
  */
 cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
-    _dstAngle:0,
-    _startAngle:0,
-    _diffAngle:0,
+    _dstAngleX:0,
+    _startAngleX:0,
+    _diffAngleX:0,
+
+    _dstAngleY:0,
+    _startAngleY:0,
+    _diffAngleY:0,
     /**
      * @param {Number} duration
-     * @param {Number} deltaAngle
+     * @param {Number} deltaAngleX
+     * @param {Number} deltaAngleY
      * @return {Boolean}
      */
-    initWithDuration:function (duration, deltaAngle) {
+    initWithDuration:function (duration, deltaAngleX, deltaAngleY) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._dstAngle = deltaAngle || 0;
+            this._dstAngleX = deltaAngleX || 0;
+            this._dstAngleY = deltaAngleY || this._dstAngleX;
             return true;
         }
         return false;
@@ -647,18 +653,26 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
-        this._startAngle = target.getRotation();
-        if (this._startAngle > 0)
-            this._startAngle = this._startAngle % 360.0;
-        else
-            this._startAngle = this._startAngle % 360.0;
+        // Calculate X
+        this._startAngleX = target.getRotationX();
+        this._startAngleX = this._startAngleX % 360.0;
 
-        this._diffAngle = this._dstAngle - this._startAngle;
-        if (this._diffAngle > 180)
-            this._diffAngle -= 360;
+        this._diffAngleX = this._dstAngleX - this._startAngleX;
+        if(this._diffAngleX > 180)
+            this._diffAngleX -= 360;
+        if(this._diffAngleX < -180)
+            this._diffAngleX += 360;
 
-        if (this._diffAngle < -180)
-            this._diffAngle += 360;
+        // Calculate Y
+        this._startAngleY = target.getRotationY();
+        this._startAngleY = this._startAngleY % 360.0;
+
+        this._diffAngleY = this._dstAngleY - this._startAngleY;
+        if(this._diffAngleY > 180)
+            this._diffAngleY -= 360;
+
+        if(this._diffAngleY < -180)
+            this._diffAngleY += 360;
     },
 
     /**
@@ -672,22 +686,26 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this._target)
-            this._target.setRotation(this._startAngle + this._diffAngle * time);
+        if (this._target){
+            this._target.setRotationX(this._startAngleX + this._diffAngleX * time);
+            this._target.setRotationY(this._startAngleY + this._diffAngleY * time);
+        }
     }
 });
 
 /**
+ * creates the action with separate rotation angles
  * @param {Number} duration duration in seconds
- * @param {Number} deltaAngle deltaAngle in degrees.
+ * @param {Number} deltaAngleX deltaAngleX in degrees.
+ * @param {Number} deltaAngleY deltaAngleY in degrees.
  * @return {cc.RotateTo}
  * @example
  * // example
  * var rotateTo = cc.RotateTo.create(2, 61.0);
  */
-cc.RotateTo.create = function (duration, deltaAngle) {
+cc.RotateTo.create = function (duration, deltaAngleX, deltaAngleY) {
     var rotateTo = new cc.RotateTo();
-    rotateTo.initWithDuration(duration, deltaAngle);
+    rotateTo.initWithDuration(duration, deltaAngleX,deltaAngleY);
 
     return rotateTo;
 };
@@ -698,17 +716,22 @@ cc.RotateTo.create = function (duration, deltaAngle) {
  * @extends  cc.ActionInterval
  */
 cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
-    _angle:0,
-    _startAngle:0,
+    _angleX:0,
+    _startAngleX:0,
+    _angleY:0,
+    _startAngleY:0,
 
     /**
      * @param {Number} duration duration in seconds
-     * @param {Number} deltaAngle deltaAngle in degrees
+     * @param {Number} deltaAngleX deltaAngleX in degrees
+     * @param {Number} deltaAngleY deltaAngleY in degrees
      * @return {Boolean}
      */
-    initWithDuration:function (duration, deltaAngle) {
+    initWithDuration:function (duration, deltaAngleX, deltaAngleY) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
-            this._angle = deltaAngle;
+            this._angleX = deltaAngleX || 0;
+            this._angleY = deltaAngleY || this._angleX;
+
             return true;
         }
 
@@ -720,7 +743,8 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startAngle = target.getRotation();
+        this._startAngleX = target.getRotationX();
+        this._startAngleY = target.getRotationY();
     },
 
     /**
@@ -728,7 +752,8 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      */
     update:function (time) {
         if (this._target) {
-            this._target.setRotation(this._startAngle + this._angle * time);
+            this._target.setRotationX(this._startAngleX + this._angleX * time);
+            this._target.setRotationY(this._startAngleY + this._angleY * time);
         }
     },
 
@@ -736,21 +761,22 @@ cc.RotateBy = cc.ActionInterval.extend(/** @lends cc.RotateBy# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.RotateBy.create(this._duration, -this._angle);
+        return cc.RotateBy.create(this._duration, -this._angleX, -this._angleY);
     }
 });
 
 /**
  * @param {Number} duration druation in seconds
- * @param {Number} deltaAngle deltaAngle in degrees
+ * @param {Number} deltaAngleX deltaAngleX in degrees
+ * @param {Number} deltaAngleY deltaAngleY in degrees
  * @return {cc.RotateBy}
  * @example
  * // example
  * var actionBy = cc.RotateBy.create(2, 360);
  */
-cc.RotateBy.create = function (duration, deltaAngle) {
+cc.RotateBy.create = function (duration, deltaAngleX, deltaAngleY) {
     var rotateBy = new cc.RotateBy();
-    rotateBy.initWithDuration(duration, deltaAngle);
+    rotateBy.initWithDuration(duration, deltaAngleX, deltaAngleY);
 
     return rotateBy;
 };
@@ -763,7 +789,7 @@ cc.RotateBy.create = function (duration, deltaAngle) {
 cc.MoveTo = cc.ActionInterval.extend(/** @lends cc.MoveTo# */{
     /**
      * @param {Number} duration duration in seconds
-     * @param {cc.Poin} position
+     * @param {cc.Point} position
      * @return {Boolean}
      */
     initWithDuration:function (duration, position) {

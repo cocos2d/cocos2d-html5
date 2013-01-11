@@ -23,8 +23,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cc = cc = cc || {};
-
 
 /**
  A CCCamera is used in every CCNode.
@@ -53,13 +51,17 @@ cc.Camera = cc.Class.extend({
     _eyeX:null,
     _eyeY:null,
     _eyeZ:null,
+
     _centerX:null,
     _centerY:null,
     _centerZ:null,
+
     _upX:null,
     _upY:null,
     _upZ:null,
+
     _dirty:null,
+    _lookupMatrix:new cc.kmMat4(),
 
     /*public:*/
     ctor:function () {
@@ -88,29 +90,40 @@ cc.Camera = cc.Class.extend({
         this._upY = 1.0;
         this._upZ = 0.0;
 
+        cc.kmMat4Identity( this._lookupMatrix );
+
         this._dirty = false;
     },
+
     /** Sets the camera using gluLookAt using its eye, center and up_vector */
     locate:function () {
         if (this._dirty) {
-            //TODO gl
-            //gluLookAt(this._eyeX, this._eyeY, this._eyeZ,this._centerX, this._centerY, this._centerZ,this._upX, this._upY, this._upZ);
-        }
+            var eye = new cc.kmVec3(), center = new cc.kmVec3(), up = new cc.kmVec3();
 
+            cc.kmVec3Fill( eye, this._eyeX, this._eyeY , this._eyeZ );
+            cc.kmVec3Fill( center, this._centerX, this._centerY, this._centerZ);
+
+            cc.kmVec3Fill( up, this._upX, this._upY, this._upZ);
+            cc.kmMat4LookAt( this._lookupMatrix, eye, center, up);
+
+            this._dirty = false;
+        }
+        cc.kmGLMultMatrix( this._lookupMatrix );
     },
+
     /** sets the eye values in points */
     setEyeXYZ:function (eyeX, eyeY, eyeZ) {
-        this._eyeX = eyeX * cc.CONTENT_SCALE_FACTOR;
-        this._eyeY = eyeY * cc.CONTENT_SCALE_FACTOR;
-        this._eyeZ = eyeZ * cc.CONTENT_SCALE_FACTOR;
+        this._eyeX = eyeX ;
+        this._eyeY = eyeY ;
+        this._eyeZ = eyeZ ;
 
         this._dirty = true;
     },
     /** sets the center values in points */
     setCenterXYZ:function (centerX, centerY, fenterZ) {
-        this._centerX = centerX * cc.CONTENT_SCALE_FACTOR;
-        this._centerY = centerY * cc.CONTENT_SCALE_FACTOR;
-        this._centerZ = fenterZ * cc.CONTENT_SCALE_FACTOR;
+        this._centerX = centerX ;
+        this._centerY = centerY ;
+        this._centerZ = fenterZ ;
 
         this._dirty = true;
     },
@@ -125,21 +138,15 @@ cc.Camera = cc.Class.extend({
 
     /** get the eye vector values in points */
     getEyeXYZ:function (eyeX, eyeY, eyeZ) {
-        eyeX = this._eyeX / cc.CONTENT_SCALE_FACTOR;
-        eyeY = this._eyeY / cc.CONTENT_SCALE_FACTOR;
-        eyeZ = this._eyeZ / cc.CONTENT_SCALE_FACTOR;
+        return {eyeX:this._eyeX , eyeY:this._eyeY , eyeZ: this._eyeZ };
     },
     /** get the center vector values int points */
     getCenterXYZ:function (centerX, centerY, centerZ) {
-        centerX = this._centerX / cc.CONTENT_SCALE_FACTOR;
-        centerY = this._centerY / cc.CONTENT_SCALE_FACTOR;
-        centerZ = this._centerZ / cc.CONTENT_SCALE_FACTOR;
+        return {centerX:this._centerX ,centerY:this._centerY ,centerZ:this._centerZ };
     },
     /** get the up vector values */
     getUpXYZ:function (upX, upY, upZ) {
-        upX = this._upX;
-        upY = this._upY;
-        upZ = this._upZ;
+        return {upX:this._upX,upY:this._upY,upZ:this._upZ};
     },
 
     /*private:*/

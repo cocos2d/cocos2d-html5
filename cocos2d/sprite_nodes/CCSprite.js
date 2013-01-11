@@ -162,11 +162,8 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
     ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
     ctx.rotate(-1.5707963267948966);
     ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height / 2, -rect.size.width / 2, rect.size.height, rect.size.width);
-    var img = new Image();
-    img.src = nCanvas.toDataURL();
     return nCanvas;
 };
-
 
 /**
  * a Values object for transform
@@ -189,11 +186,7 @@ cc.TransformValues = function (pos, scale, rotation, skew, ap, visible) {
 };
 
 cc.RENDER_IN_SUBPIXEL = function (A) {
-    if (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) {
-        return A;
-    } else {
-        return parseInt(A);
-    }
+    return (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) ? A : (0 | A);
 };
 
 /**
@@ -258,7 +251,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _unflippedOffsetPositionFromCenter:cc.PointZero(),
 
     // vertex coords, texture coords and color info
-    _quad:cc.V3F_C4B_T2F_QuadZero(),
+    _quad:null,
 
     // opacity and RGB protocol
     colorUnmodified:null,
@@ -280,6 +273,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._color = cc.white();
+        this._quad = cc.V3F_C4B_T2F_QuadZero();
 
         if (fileName) {
             if (typeof(fileName) == "string") {
@@ -413,7 +407,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _isLighterMode:false,
     /**
      * conforms to cc.TextureProtocol protocol
-     * @param {Number} src
+     * @param {Number|cc.BlendFunc} src
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
@@ -422,7 +416,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         else
             this._blendFunc = {src:src, dst:dst};
 
-        this._isLighterMode = (this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE));
+        if (cc.renderContextType === cc.CANVAS)
+            this._isLighterMode = (this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE));
     },
 
     /**
@@ -455,12 +450,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._hasChildren = false;
 
         // Atlas: Color
-        var tmpColor = new cc.Color4B(255, 255, 255, 255);
-        this._quad.bl.colors = tmpColor;
-        this._quad.br.colors = tmpColor;
-        this._quad.tl.colors = tmpColor;
-        this._quad.tr.colors = tmpColor;
-
+        if (cc.renderContextType == cc.WEBGL) {
+            this._quad.bl.colors = new cc.Color4B(255, 255, 255, 255);
+            this._quad.br.colors = new cc.Color4B(255, 255, 255, 255);
+            this._quad.tl.colors = new cc.Color4B(255, 255, 255, 255);
+            this._quad.tr.colors = new cc.Color4B(255, 255, 255, 255);
+            this._colorsFloat32Buffer = this._getSpriteColorsArray();
+        }
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
@@ -487,7 +483,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         rotated = rotated || false;
 
         this._batchNode = null;
-        //this.setShaderProgram(CCShaderCache::getInstance()->programForKey(kCCShader_PositionTextureColor));
+        if (cc.renderContextType === cc.WEBGL)
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
 
         this._recursiveDirty = false;
         this.setDirty(false);
@@ -533,6 +530,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         this.setBatchNode(null);
+        if (cc.renderContextType == cc.WEBGL) {
+            this._textureCoordsFloat32Buffer = this._getSpriteTexCoodsArray();
+            this._verticesFloat32Buffer = this._getSpriteVertexArray();
+            this._colorsFloat32Buffer = this._getSpriteColorsArray();
+        }
         return true;
     },
 
@@ -640,14 +642,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
 
-        /* WEBGL Code
-         if (this._flipX) {
-         //relativeOffset.x = -relativeOffset.x;
-         }
-         if (this._flipY) {
-         //relativeOffset.y = -relativeOffset.y;
-         }
-         */
+        if (cc.renderContextType === cc.WEBGL) {
+            if (this._flipX)
+                relativeOffset.x = -relativeOffset.x;
+            if (this._flipY)
+                relativeOffset.y = -relativeOffset.y;
+        }
 
         this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.size.width) / 2;
         this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.size.height) / 2;
@@ -659,18 +659,21 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._dirty = true;
         } else {
             // self rendering
+            if (cc.renderContextType === cc.WEBGL) {
+                // Atlas: Vertex
+                var x1 = 0 + this._offsetPosition.x;
+                var y1 = 0 + this._offsetPosition.y;
+                var x2 = x1 + this._rect.size.width;
+                var y2 = y1 + this._rect.size.height;
 
-            // Atlas: Vertex
-            var x1 = 0 + this._offsetPosition.x;
-            var y1 = 0 + this._offsetPosition.y;
-            var x2 = x1 + this._rect.size.width;
-            var y2 = y1 + this._rect.size.height;
+                // Don't update Z.
+                this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
+                this._quad.br.vertices = cc.vertex3(x2, y1, 0);
+                this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
+                this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
 
-            // Don't update Z.
-            this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
-            this._quad.br.vertices = cc.vertex3(x2, y1, 0);
-            this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
-            this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
+                this._verticesFloat32Buffer = this._getSpriteVertexArray();
+            }
         }
     },
 
@@ -692,15 +695,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
             var tex = this._batchNode ? this._textureAtlas.getTexture() : this._texture;
-            if (!tex) {
+            if (!tex)
                 return;
-            }
 
             var atlasWidth = tex.getPixelsWide();
             var atlasHeight = tex.getPixelsHigh();
 
-            var left, right, top, bottom;
-
+            var left, right, top, bottom, tempSwap;
             if (this._rectRotated) {
                 if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
                     left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
@@ -714,13 +715,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     bottom = (rect.origin.y + rect.size.width) / atlasHeight;
                 }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
-
                 if (this._flipX) {
-                    cc.SWAP(top, bottom);
+                    tempSwap = top;
+                    top = bottom;
+                    bottom = tempSwap;
                 }
 
                 if (this._flipY) {
-                    cc.SWAP(left, right);
+                    tempSwap = left;
+                    left = right;
+                    right = tempSwap;
                 }
 
                 this._quad.bl.texCoords.u = left;
@@ -737,8 +741,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
                     top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
                     bottom = top + (rect.size.height * 2 - 2) / (2 * atlasHeight);
-                }
-                else {
+                } else {
                     left = rect.origin.x / atlasWidth;
                     right = (rect.origin.x + rect.size.width) / atlasWidth;
                     top = rect.origin.y / atlasHeight;
@@ -746,11 +749,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
                 if (this._flipX) {
-                    cc.SWAP(left, right);
+                    tempSwap = left;
+                    left = right;
+                    right = tempSwap;
                 }
 
                 if (this._flipY) {
-                    cc.SWAP(top, bottom);
+                    tempSwap = top;
+                    top = bottom;
+                    bottom = tempSwap;
                 }
 
                 this._quad.bl.texCoords.u = left;
@@ -762,6 +769,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 this._quad.tr.texCoords.u = right;
                 this._quad.tr.texCoords.v = top;
             }
+            this._textureCoordsFloat32Buffer = this._getSpriteTexCoodsArray();
         }
     },
 
@@ -777,7 +785,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!this._visible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
-                this._quad.br.vertices = this._quad.tl.vertices = this._quad.tr.vertices = this._quad.bl.vertices = cc.vertex3(0, 0, 0);
+                this._quad.br.vertices = {x:0, y:0, z:0};
+                this._quad.tl.vertices = {x:0, y:0, z:0};
+                this._quad.tr.vertices = {x:0, y:0, z:0};
+                this._quad.bl.vertices = {x:0, y:0, z:0};
                 this._shouldBeHidden = true;
             } else {
                 this._shouldBeHidden = false;
@@ -847,32 +858,23 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     /**
-     * <p>Optimization: instead of calling 5 times the parent sprite to obtain: position, scale.x, scale.y, anchorpoint and rotation,<br/>
-     * this fuction return the 5 values in 1 single call <p/>
-     * @param {cc.TransformValues} tv
-     * @return {cc.TransformValues}
-     * @private
-     */
-    //TODO
-    _getTransformValues:function (tv) {
-        tv.pos = this._position;
-        tv.scale.x = this._scaleX;
-        tv.scale.y = this._scaleY;
-        tv.rotation = this._rotation;
-        tv.skew.x = this._skewX;
-        tv.skew.y = this._skewY;
-        tv.ap = this._anchorPointInPoints;
-        tv.visible = this._visible;
-        return tv;
-    },
-
-    /**
      * draw sprite to canvas
      * @param {CanvasContext} ctx 2d context of canvas
      */
     draw:function (ctx) {
-        //draw for canvas
         //cc.PROFILER_START_CATEGORY(kCCProfilerCategorySprite, "cc.Sprite - draw");
+
+        if (cc.renderContextType == cc.CANVAS)
+            this._drawForCanvas(ctx);
+        else
+            this._drawForWebGL(ctx);
+
+        cc.g_NumberOfDraws++;
+
+        //CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
+    },
+
+    _drawForCanvas:function (ctx) {
         var context = ctx || cc.renderContext;
 
         if (this._isLighterMode)
@@ -942,50 +944,48 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 cc.p(offsetPix.x + drawSize.width, offsetPix.y + drawSize.height), cc.p(offsetPix.x, offsetPix.y + drawSize.height)];
             cc.drawingUtil.drawPoly(vertices2, 4, true);
         }
-
-        //cc.INCREMENT_GL_DRAWS(1);
-        cc.g_NumberOfDraws++;
-
-        //CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
     },
 
+    _verticesFloat32Buffer:null,
+    _textureCoordsFloat32Buffer:null,
+    _colorsFloat32Buffer:null,
     _drawForWebGL:function (ctx) {
-        var context = ctx;
-        //cc.PROFILER_START_CATEGORY(kCCProfilerCategorySprite, "cc.Sprite - draw");
-        //TODO  WebGL Draw of sprite
+        var gl = ctx || cc.webglContext;
         cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        cc.NODE_DRAW_SETUP(this);
+        //cc.NODE_DRAW_SETUP(this);
+        gl.enable(gl.BLEND);
+        if (this._shaderProgram) {
+            gl.useProgram(this._shaderProgram._programObj);
+            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+        }
 
-        //ccGLBlendFunc( m_sBlendFunc.src, m_sBlendFunc.dst );
+        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        //gl.blendFunc(this._blendFunc.src, this._blendFunc.dst);
 
         if (this._texture) {
-            //ccGLBindTexture2D(this._texture.getName());
+            cc.glBindTexture2D(this._texture._webTextureObj);
+            //gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
         } else {
-            //ccGLBindTexture2D(0);
+            cc.glBindTexture2D(null);
+            //gl.bindTexture(gl.TEXTURE_2D, null);
         }
 
         //
         // Attributes
         //
-        //ccGLEnableVertexAttribs( kCCVertexAttribFlag_PosColorTex );
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
 
-        //#define kQuadSize  sizeof(this._quad.bl)
-        var offset = this._quad;
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
 
-        // vertex
-        //int diff = offsetof( ccV3F_C4B_T2F, vertices);
-        //glVertexAttribPointer(kCCVertexAttrib_Position, 3, GL_FLOAT, GL_FALSE, kQuadSize, (void*) (offset + diff));
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
 
-        // texCoods
-        //diff = offsetof( ccV3F_C4B_T2F, texCoords);
-        //glVertexAttribPointer(kCCVertexAttrib_TexCoords, 2, GL_FLOAT, GL_FALSE, kQuadSize, (void*)(offset + diff));
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsFloat32Buffer);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.FLOAT, false, 0, 0);
 
-        // color
-        //diff = offsetof( ccV3F_C4B_T2F, colors);
-        //glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, kQuadSize, (void*)(offset + diff));
-
-        //glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
         //CHECK_GL_ERROR_DEBUG();
 
@@ -998,8 +998,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 cc.p(this._quad.tr.vertices.x, this._quad.tr.vertices.y)
             ];
             cc.drawingUtil.drawPoly(verticesG1, 4, true);
-        }
-        else if (cc.SPRITE_DEBUG_DRAW == 2) {
+        } else if (cc.SPRITE_DEBUG_DRAW == 2) {
             // draw texture box
             var drawSizeG2 = this.getTextureRect().size;
             var offsetPixG2 = this.getOffsetPosition();
@@ -1007,9 +1006,42 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
+    },
 
-        cc.g_NumberOfDraws++;
-        //CC_PROFILER_STOP_CATEGORY(kCCProfilerCategorySprite, "CCSprite - draw");
+    _getSpriteVertexArray:function () {
+        var vertexBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+            this._quad.bl.vertices.x, this._quad.bl.vertices.y, this._quad.bl.vertices.z,
+            this._quad.br.vertices.x, this._quad.br.vertices.y, this._quad.br.vertices.z,
+            this._quad.tl.vertices.x, this._quad.tl.vertices.y, this._quad.tl.vertices.z,
+            this._quad.tr.vertices.x, this._quad.tr.vertices.y, this._quad.tr.vertices.z
+        ]), cc.webglContext.STATIC_DRAW);
+        return vertexBuffer;
+    },
+
+    _getSpriteTexCoodsArray:function () {
+        var texCoodsBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, texCoodsBuffer);
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+            this._quad.bl.texCoords.u, this._quad.bl.texCoords.v,
+            this._quad.br.texCoords.u, this._quad.br.texCoords.v,
+            this._quad.tl.texCoords.u, this._quad.tl.texCoords.v,
+            this._quad.tr.texCoords.u, this._quad.tr.texCoords.v
+        ]), cc.webglContext.STATIC_DRAW);
+        return texCoodsBuffer;
+    },
+
+    _getSpriteColorsArray:function () {
+        var colorsBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+            this._quad.bl.colors.r / 255, this._quad.bl.colors.g / 255, this._quad.bl.colors.b / 255, this._quad.bl.colors.a / 255,
+            this._quad.br.colors.r / 255, this._quad.br.colors.g / 255, this._quad.br.colors.b / 255, this._quad.br.colors.a / 255,
+            this._quad.tl.colors.r / 255, this._quad.tl.colors.g / 255, this._quad.tl.colors.b / 255, this._quad.tl.colors.a / 255,
+            this._quad.tr.colors.r / 255, this._quad.tr.colors.g / 255, this._quad.tr.colors.b / 255, this._quad.tr.colors.a / 255
+        ]), cc.webglContext.STATIC_DRAW);
+        return colorsBuffer;
     },
 
     /**
@@ -1288,14 +1320,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setFlipX:function (flipX) {
         if (this._flipX != flipX) {
-            //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
-
             this._flipX = flipX;
             this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
 
-            //save dirty region when after changed
-            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -1306,14 +1333,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setFlipY:function (flipY) {
         if (this._flipY != flipY) {
-            //save dirty region when before change
-            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
             this._flipY = flipY;
-            //this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
+            this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
 
-            //save dirty region when after changed
-            //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
             this.setNodeDirty();
         }
     },
@@ -1350,15 +1373,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Update sprite's color
      */
     updateColor:function () {
-        var color4 = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
+        if(cc.renderContextType === cc.CANVAS)
+            return;
 
+        var color4 = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
         this._quad.bl.colors = color4;
         this._quad.br.colors = color4;
         this._quad.tl.colors = color4;
         this._quad.tr.colors = color4;
 
         // renders using Sprite Manager
-        //TODO
         if (this._batchNode) {
             if (this._atlasIndex != cc.SPRITE_INDEX_NOT_INITIALIZED) {
                 this._textureAtlas.updateQuad(this._quad, this._atlasIndex)
@@ -1371,6 +1395,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
         // self render
         // do nothing
+        this._colorsFloat32Buffer = this._getSpriteColorsArray();
     },
 
     /**
@@ -1390,14 +1415,14 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         this.setNodeDirty();
-        //TODO in canvas
-        return;
-        // special opacity for premultiplied textures
-        if (this._opacityModifyRGB) {
-            this.setColor(this._colorUnmodified);
-        }
 
-        this.updateColor();
+        if (cc.renderContextType === cc.WEBGL) {
+            // special opacity for premultiplied textures
+            if (this._opacityModifyRGB)
+                this.setColor(this._colorUnmodified);
+
+            this.updateColor();
+        }
     },
 
     /**
@@ -1405,9 +1430,9 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @return {cc.Color3B}
      */
     getColor:function () {
-        if (this._opacityModifyRGB) {
+        if (this._opacityModifyRGB)
             return new cc.Color3B(this._colorUnmodified);
-        }
+
         return new cc.Color3B(this._color);
     },
 
@@ -1416,30 +1441,25 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b)) {
+        if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b))
             return;
-        }
 
         this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
         this._changeTextureColor();
 
-        /*
-         if (this._opacityModifyRGB) {
-         this._color.r = Math.round(color3.r * this._opacity / 255);
-         this._color.g = Math.round(color3.g * this._opacity / 255);
-         this._color.b = Math.round(color3.b * this._opacity / 255);
-         }
-         */
+        if (this._opacityModifyRGB) {
+            this._color.r = 0 | (color3.r * this._opacity / 255);
+            this._color.g = 0 | (color3.g * this._opacity / 255);
+            this._color.b = 0 | (color3.b * this._opacity / 255);
+        }
         this.updateColor();
-        //save dirty region when after changed
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         this.setNodeDirty();
     },
 
-    _changeTextureColor:function(){
-        if (this.getTexture()) {
-            if (cc.renderContextType === cc.CANVAS) {
+    _changeTextureColor:function () {
+        if (cc.renderContextType === cc.CANVAS) {
+            if (this.getTexture()) {
                 var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
                     //generate color texture cache
@@ -1484,18 +1504,22 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._unflippedOffsetPositionFromCenter = newFrame.getOffset();
         var pNewTexture = newFrame.getTexture();
         // update texture before updating texture rect
-        if (pNewTexture != this._texture) {
+        if (pNewTexture != this._texture)
             this.setTexture(pNewTexture);
-        }
+
         // update rect
         this._rectRotated = newFrame.isRotated();
-        if(this._rectRotated)
-            this._originalTexture = pNewTexture;
+        if (cc.renderContextType === cc.WEBGL) {
+            this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
+        } else {
+            if (this._rectRotated)
+                this._originalTexture = pNewTexture;
 
-        this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
+            this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
 
-        if(this._color.r !== 255 || this._color.g !== 255 || this._color.b !== 255)
-            this._changeTextureColor();
+            if (this._color.r !== 255 || this._color.g !== 255 || this._color.b !== 255)
+                this._changeTextureColor();
+        }
     },
 
     // Animation
@@ -1565,15 +1589,18 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._recursiveDirty = false;
             this.setDirty(false);
 
-            var x1 = this._offsetPosition.x;
-            var y1 = this._offsetPosition.y;
-            var x2 = x1 + this._rect.size.width;
-            var y2 = y1 + this._rect.size.height;
-            this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
-            this._quad.br.vertices = cc.vertex3(x2, y1, 0);
-            this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
-            this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
+            if (cc.renderContextType == cc.WEBGL) {
+                var x1 = this._offsetPosition.x;
+                var y1 = this._offsetPosition.y;
+                var x2 = x1 + this._rect.size.width;
+                var y2 = y1 + this._rect.size.height;
+                this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
+                this._quad.br.vertices = cc.vertex3(x2, y1, 0);
+                this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
+                this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
 
+                this._verticesFloat32Buffer = this._getSpriteVertexArray();
+            }
         } else {
             // using batch
             this._transformToBatch = cc.AffineTransformIdentity();
@@ -1584,7 +1611,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     // Texture protocol
     _updateBlendFunc:function () {
         if (cc.renderContextType == cc.WEBGL) {
-            //TODO
             cc.Assert(!this._batchNode, "cc.Sprite: _updateBlendFunc doesn't work when the sprite is rendered using a cc.SpriteSheet");
             // it's possible to have an untextured sprite
             if (!this._texture || !this._texture.hasPremultipliedAlpha()) {
@@ -1621,7 +1647,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         cc.Assert(!texture || texture instanceof cc.Texture2D || texture instanceof HTMLImageElement
             || texture instanceof HTMLCanvasElement, "setTexture expects a CCTexture2D. Invalid argument");
 
-        if (cc.renderContextType != cc.CANVAS) {
+        if (cc.renderContextType === cc.WEBGL) {
             //TODO
             cc.Assert(!this._batchNode, "cc.Sprite: Batched sprites should use the same texture as the batchnode");
 
@@ -1632,7 +1658,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         } else {
             if (this._texture != texture) {
                 if (texture instanceof  HTMLImageElement) {
-                    if(!this._rect || cc.rectEqualToRect(this._rect,cc.RectZero()))
+                    if (!this._rect || cc.rectEqualToRect(this._rect, cc.RectZero()))
                         this._rect = cc.rect(0, 0, texture.width, texture.height);
                     this._texture = texture;
                     this._originalTexture = texture;

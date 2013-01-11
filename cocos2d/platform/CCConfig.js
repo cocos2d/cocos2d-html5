@@ -207,6 +207,19 @@ cc.RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
 
 /**
  * <p>
+ *     If enabled, it will use LA88 (Luminance Alpha 16-bit textures) for CCLabelTTF objects. <br/>
+ *     If it is disabled, it will use A8 (Alpha 8-bit textures).                              <br/>
+ *     LA88 textures are 6% faster than A8 textures, but they will consume 2x memory.         <br/>
+ *                                                                                            <br/>
+ *     This feature is enabled by default.
+ * </p>
+ * @constant
+ * @type Number
+ */
+cc.USE_LA88_LABELS = 1;
+
+/**
+ * <p>
  *   If enabled, all subclasses of cc.Sprite will draw a bounding box<br/>
  *   Useful for debugging purposes only. It is recommened to leave it disabled.<br/>
  *   <br/>
@@ -270,22 +283,34 @@ cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
  */
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
-
-/* Runtime information  */
+/**
+ *  Runtime information
+ *  @deprecated Use "sys" instead.
+ */
 cc.config = {
-    'os' : navigator.appVersion,
-    'platform' : 'browser',
-    'engine' : 'cocos2d-html5/canvas',
-    'arch' : 'web',
-    'version' : cc.ENGINE_VERSION,
-    'debug' : false
+    'platform' : sys.platform
 };
 
 /**
  * dump config info, but only in debug mode
  */
-cc.dumpConfig = function()
-{
-    for( i in cc.config )
-        cc.log( i + " = " + cc.config[i] );
+cc.dumpConfig = function() {
+    for(var i in sys )
+        cc.log( i + " = " + sys[i] );
 };
+
+/** @def CC_ENABLE_GL_STATE_CACHE
+ If enabled, cocos2d will maintain an OpenGL state cache internally to avoid unnecessary switches.
+ In order to use them, you have to use the following functions, insead of the the GL ones:
+ - ccGLUseProgram() instead of glUseProgram()
+ - ccGLDeleteProgram() instead of glDeleteProgram()
+ - ccGLBlendFunc() instead of glBlendFunc()
+
+ If this functionality is disabled, then ccGLUseProgram(), ccGLDeleteProgram(), ccGLBlendFunc() will call the GL ones, without using the cache.
+
+ It is recommened to enable whenever possible to improve speed.
+ If you are migrating your code from GL ES 1.1, then keep it disabled. Once all your code works as expected, turn it on.
+
+ @since v2.0.0
+ */
+cc.ENABLE_GL_STATE_CACHE = 1;

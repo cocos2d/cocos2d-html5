@@ -65,11 +65,12 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _vertexDataCount:0,
     _vertexData:null,
 
-    _midPoint:cc.PointZero(),
-    _barChangeRate:cc.PointZero(),
+    _midPoint:null,
+    _barChangeRate:null,
     _reverseDirection:false,
 
     ctor:function () {
+        this._super();
         this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
         this._percentage = 0.0;
         this._midPoint = cc.p(0, 0);
@@ -97,7 +98,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {cc.Point} mpoint
      */
     setMidpoint:function (mpoint) {
-        this._midPoint = cc.pClamp(mpoint, cc.PointZero(), cc.p(1, 1));
+        this._midPoint = cc.pClamp(mpoint, cc.p(0, 0), cc.p(1, 1));
     },
 
     /**
@@ -116,7 +117,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      */
     setBarChangeRate:function (barChangeRate) {
 
-        this._barChangeRate = cc.pClamp(barChangeRate, cc.PointZero(), cc.p(1, 1));
+        this._barChangeRate = cc.pClamp(barChangeRate, cc.p(0, 0), cc.p(1, 1));
     },
 
     /**
@@ -161,10 +162,12 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         this.setSprite(sprite);
 
         //shader program
-        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kCCShader_PositionTextureColor));
+        if (cc.renderContextType === cc.WEBGL)
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
 
         return true;
     },
+
 
     /**
      * from 0-100
@@ -174,6 +177,19 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         if (this._percentage != percentage) {
             this._percentage = cc.clampf(percentage, 0, 100);
             this._updateProgress();
+        }
+    },
+
+    /**
+     * @param {Boolean} reverse
+     */
+    setReverseProgress:function (reverse) {
+        if (this._reverseDirection != reverse) {
+            this._reverseDirection = reverse;
+
+            //    release all previous information
+            this._vertexData = null;
+            this._vertexDataCount = 0;
         }
     },
 
@@ -272,77 +288,168 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
-        if (cc.renderContextType == cc.CANVAS) {
-            var context = ctx || cc.renderContext;
+        var context = ctx || cc.renderContext;
+        if (cc.renderContextType == cc.CANVAS)
+            this._drawForCanvas(context);
+        else
+            this._drawForWebGL(context);
 
-            context.globalAlpha = this._sprite._opacity / 255;
-            var centerPoint, mpX = 0, mpY = 0;
-            if (this._sprite._flipX) {
-                centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
-                mpX = 0 | (centerPoint.x - this._sprite._anchorPointInPoints.x);
-                context.translate(mpX, 0);
-                context.scale(-1, 1);
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    _verticesFloat32Buffer:null,
+    _textureCoordsFloat32Buffer:null,
+    _colorsFloat32Buffer:null,
+    _getProgressTimerVertexArray:function () {
+        var vertexBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
+        var vertiesArray = new Float32Array(2 * this._vertexDataCount);
+        for (var i = 0; i < this._vertexDataCount; i++) {
+            vertiesArray[i * 2] = this._vertexData[i].vertices.x;
+            vertiesArray[i * 2 + 1] = this._vertexData[i].vertices.y;
+        }
+
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertiesArray, cc.webglContext.STATIC_DRAW);
+        return vertexBuffer;
+    },
+
+    _getProgressTimerColorArray:function () {
+        var colorsBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
+        var vertiesArray = new Float32Array(4 * this._vertexDataCount);
+        for (var i = 0; i < this._vertexDataCount; i++) {
+            vertiesArray[i * 4] = this._vertexData[i].colors.r / 255;
+            vertiesArray[i * 4 + 1] = this._vertexData[i].colors.g / 255;
+            vertiesArray[i * 4 + 2] = this._vertexData[i].colors.b / 255;
+            vertiesArray[i * 4 + 3] = this._vertexData[i].colors.a / 255;
+        }
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertiesArray, cc.webglContext.STATIC_DRAW);
+        return colorsBuffer;
+    },
+
+    _getProgressTimerTexCoodsArray:function () {
+        var vertexBuffer = cc.webglContext.createBuffer();
+        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
+        var vertiesArray = new Float32Array(2 * this._vertexDataCount);
+        for (var i = 0; i < this._vertexDataCount; i++) {
+            vertiesArray[i * 2] = this._vertexData[i].texCoords.u;
+            vertiesArray[i * 2 + 1] = this._vertexData[i].texCoords.v;
+        }
+
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertiesArray, cc.webglContext.STATIC_DRAW);
+        return vertexBuffer;
+    },
+
+    _drawForWebGL:function (context) {
+        if (!this._vertexData || !this._sprite)
+            return;
+
+        //cc.NODE_DRAW_SETUP(this);
+        context.enable(context.BLEND);
+        if (this._shaderProgram) {
+            context.useProgram(this._shaderProgram._programObj);
+            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+        }
+
+        cc.glBlendFunc(this._sprite.getBlendFunc().src, this._sprite.getBlendFunc().dst);
+
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
+
+        if (this._sprite.getTexture()) {
+            cc.glBindTexture2D(this._sprite.getTexture()._webTextureObj);
+            //gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
+        } else {
+            cc.glBindTexture2D(null);
+            //gl.bindTexture(gl.TEXTURE_2D, null);
+        }
+
+        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
+
+        context.bindBuffer(context.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, context.FLOAT, false, 0, 0);
+
+        context.bindBuffer(context.ARRAY_BUFFER, this._colorsFloat32Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.FLOAT, false, 0, 0);
+
+        if (this._type === cc.PROGRESS_TIMER_TYPE_RADIAL)
+            context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
+        else if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
+            if (!this._reverseDirection)
+                context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount);
+            else {
+                context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount / 2);
+                context.drawArrays(context.TRIANGLE_STRIP, 4, this._vertexDataCount / 2);
+                // 2 draw calls
+                cc.INCREMENT_GL_DRAWS(1);
             }
+        }
+    },
 
-            if (this._sprite._flipY) {
-                centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
-                mpY = -(0 | (centerPoint.y - this._sprite._anchorPointInPoints.y));
-                context.translate(0, mpY);
-                context.scale(1, -1);
-            }
+    _drawForCanvas:function (context) {
+        context.globalAlpha = this._sprite._opacity / 255;
+        var centerPoint, mpX = 0, mpY = 0;
+        if (this._sprite._flipX) {
+            centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
+            mpX = 0 | (centerPoint.x - this._sprite._anchorPointInPoints.x);
+            context.translate(mpX, 0);
+            context.scale(-1, 1);
+        }
 
-            var pos;
-            if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
-                pos = cc.p(( -this._sprite._anchorPointInPoints.x + this._sprite._offsetPosition.x + this._drawPosition.x),
-                    ( -this._sprite._anchorPointInPoints.y + this._sprite._offsetPosition.y + this._drawPosition.y));
+        if (this._sprite._flipY) {
+            centerPoint = cc.p(this._sprite._contentSize.width / 2, this._sprite._contentSize.height / 2);
+            mpY = -(0 | (centerPoint.y - this._sprite._anchorPointInPoints.y));
+            context.translate(0, mpY);
+            context.scale(1, -1);
+        }
 
-                if (this._sprite._texture instanceof HTMLImageElement) {
-                    if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
-                        context.drawImage(this._sprite._texture,
-                            this._sprite._rect.origin.x + this._origin.x, this._sprite._rect.origin.y + this._origin.y,
-                            this._originSize.width, this._originSize.height,
-                            pos.x, -(pos.y + this._drawSize.height),
-                            this._originSize.width, this._originSize.height);
-                    }
-                } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
-                    if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
-                        context.drawImage(this._sprite._texture,
-                            this._origin.x, this._origin.y,
-                            this._originSize.width, this._originSize.height,
-                            pos.x, -(pos.y + this._drawSize.height),
-                            this._originSize.width, this._originSize.height);
-                    }
+        var pos;
+        if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {
+            pos = cc.p(( -this._sprite._anchorPointInPoints.x + this._sprite._offsetPosition.x + this._drawPosition.x),
+                ( -this._sprite._anchorPointInPoints.y + this._sprite._offsetPosition.y + this._drawPosition.y));
+
+            if (this._sprite._texture instanceof HTMLImageElement) {
+                if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
+                    context.drawImage(this._sprite._texture,
+                        this._sprite._rect.origin.x + this._origin.x, this._sprite._rect.origin.y + this._origin.y,
+                        this._originSize.width, this._originSize.height,
+                        pos.x, -(pos.y + this._drawSize.height),
+                        this._originSize.width, this._originSize.height);
                 }
-            } else {
-                context.beginPath();
-                context.arc(this._origin.x, this._origin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
-                context.lineTo(this._origin.x, this._origin.y);
-                context.clip();
-                context.closePath();
-
-                var offsetPixels = this._sprite._offsetPosition;
-                pos = cc.p(0 | ( -this._sprite._anchorPointInPoints.x + offsetPixels.x),
-                    0 | ( -this._sprite._anchorPointInPoints.y + offsetPixels.y));
-
-                if (this._sprite._texture instanceof HTMLImageElement) {
+            } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
+                if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
                     context.drawImage(this._sprite._texture,
-                        this._sprite._rect.origin.x, this._sprite._rect.origin.y,
-                        this._sprite._rect.size.width, this._sprite._rect.size.height,
-                        pos.x, -(pos.y + this._sprite._rect.size.height),
-                        this._sprite._rect.size.width, this._sprite._rect.size.height);
-                } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
-                    context.drawImage(this._sprite._texture,
-                        0, 0,
-                        this._sprite._rect.size.width, this._sprite._rect.size.height,
-                        pos.x, -(pos.y + this._sprite._rect.size.height),
-                        this._sprite._rect.size.width, this._sprite._rect.size.height);
+                        this._origin.x, this._origin.y,
+                        this._originSize.width, this._originSize.height,
+                        pos.x, -(pos.y + this._drawSize.height),
+                        this._originSize.width, this._originSize.height);
                 }
             }
         } else {
-            if (!this._vertexData || !this._sprite)
-                return;
+            context.beginPath();
+            context.arc(this._origin.x, this._origin.y, this._radius, (Math.PI / 180) * this._startAngle, (Math.PI / 180) * this._endAngle, false);
+            context.lineTo(this._origin.x, this._origin.y);
+            context.clip();
+            context.closePath();
+
+            var offsetPixels = this._sprite._offsetPosition;
+            pos = cc.p(0 | ( -this._sprite._anchorPointInPoints.x + offsetPixels.x),
+                0 | ( -this._sprite._anchorPointInPoints.y + offsetPixels.y));
+
+            if (this._sprite._texture instanceof HTMLImageElement) {
+                context.drawImage(this._sprite._texture,
+                    this._sprite._rect.origin.x, this._sprite._rect.origin.y,
+                    this._sprite._rect.size.width, this._sprite._rect.size.height,
+                    pos.x, -(pos.y + this._sprite._rect.size.height),
+                    this._sprite._rect.size.width, this._sprite._rect.size.height);
+            } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
+                context.drawImage(this._sprite._texture,
+                    0, 0,
+                    this._sprite._rect.size.width, this._sprite._rect.size.height,
+                    pos.x, -(pos.y + this._sprite._rect.size.height),
+                    this._sprite._rect.size.width, this._sprite._rect.size.height);
+            }
         }
-        cc.INCREMENT_GL_DRAWS(1);
     },
 
     /**
@@ -351,9 +458,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
      * @private
      */
     _textureCoordFromAlphaPoint:function (alpha) {
-        var ret = new cc.Tex2F(0, 0);
         if (!this._sprite) {
-            return ret;
+            return new cc.Tex2F(0, 0);
         }
         var quad = this._sprite.getQuad();
         var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
@@ -361,9 +467,9 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
         //  Fix bug #1303 so that progress timer handles sprite frame texture rotation
         if (this._sprite.isTextureRectRotated()) {
-            var tempX = alpha.x;
+            var temp = alpha.x;
             alpha.x = alpha.y;
-            alpha.y = tempX;
+            alpha.y = temp;
         }
         return new cc.Tex2F(min.x * (1 - alpha.x) + max.x * alpha.x, min.y * (1 - alpha.y) + max.y * alpha.y);
     },
@@ -388,56 +494,60 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _startAngle:270,
     _endAngle:270,
     _radius:0,
+    _updateProgressWithCanvas:function () {
+        var size = this._sprite.getContentSize();
+        var textureSize = this._sprite.getTextureRect().size;
+        if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
+
+            this._origin = cc.p(-(size.width * (0.5 - this._midPoint.x)), -(size.height * (0.5 - this._midPoint.y)));
+            this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
+            if (this._reverseDirection) {
+                this._startAngle = 270 - 3.6 * this._percentage;
+            } else {
+                this._endAngle = 270 + 3.6 * this._percentage;
+            }
+        } else {
+            this._origin = cc.p(0, 0);
+            this._drawPosition = cc.p(0, 0);
+
+            var percentageF = this._percentage / 100;
+            var startPoint = cc.p(size.width * this._midPoint.x, size.height * this._midPoint.y);
+            var startPointTx = cc.p(textureSize.width * this._midPoint.x, textureSize.height * this._midPoint.y);
+
+            var drawedSize = cc.size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
+            var drawingSize = cc.size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
+            this._drawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
+
+            var txDrawedSize = cc.size((textureSize.width * (1 - this._barChangeRate.x)), (textureSize.height * (1 - this._barChangeRate.y)));
+            var txDrawingSize = cc.size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
+            this._originSize = cc.size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
+
+            var needToLeft = startPoint.x * percentageF;
+            var needToLeftTx = startPointTx.x * percentageF;
+
+            if (size.width == this._drawSize.width) {
+                this._origin.x = 0;
+                this._drawPosition.x = 0;
+            } else {
+                this._origin.x = (startPointTx.x - needToLeftTx);
+                this._drawPosition.x = (startPoint.x - needToLeft);
+            }
+
+            var needToTop = (textureSize.height - startPointTx.y) * percentageF;
+
+            if (size.height == this._drawSize.height) {
+                this._origin.y = 0;
+                this._drawPosition.y = 0;
+            } else {
+                this._origin.y = (textureSize.height - startPointTx.y - needToTop);
+                this._drawPosition.y = (startPoint.y - (startPoint.y * percentageF));
+            }
+        }
+    },
+
     _updateProgress:function () {
         if (cc.renderContextType == cc.CANVAS) {
-            var size = this._sprite.getContentSize();
-            var textureSize = this._sprite.getTextureRect().size;
-            if (this._type == cc.PROGRESS_TIMER_TYPE_RADIAL) {
-
-                this._origin = cc.p(-(size.width * (0.5 - this._midPoint.x)), -(size.height * (0.5 - this._midPoint.y)));
-                this._radius = Math.round(Math.sqrt(size.width * size.width + size.height * size.height));
-                if (this._reverseDirection) {
-                    this._startAngle = 270 - 3.6 * this._percentage;
-                } else {
-                    this._endAngle = 270 + 3.6 * this._percentage;
-                }
-            } else {
-                this._origin = cc.p(0, 0);
-                this._drawPosition = cc.p(0, 0);
-
-                var percentageF = this._percentage / 100;
-                var startPoint = cc.p(size.width * this._midPoint.x, size.height * this._midPoint.y);
-                var startPointTx = cc.p(textureSize.width * this._midPoint.x, textureSize.height * this._midPoint.y);
-
-                var drawedSize = cc.size((size.width * (1 - this._barChangeRate.x)), (size.height * (1 - this._barChangeRate.y)));
-                var drawingSize = cc.size((size.width - drawedSize.width) * percentageF, (size.height - drawedSize.height) * percentageF);
-                this._drawSize = cc.size(drawedSize.width + drawingSize.width, drawedSize.height + drawingSize.height);
-
-                var txDrawedSize = cc.size((textureSize.width * (1 - this._barChangeRate.x)), (textureSize.height * (1 - this._barChangeRate.y)));
-                var txDrawingSize = cc.size((textureSize.width - txDrawedSize.width) * percentageF, (textureSize.height - txDrawedSize.height) * percentageF);
-                this._originSize = cc.size(txDrawedSize.width + txDrawingSize.width, txDrawedSize.height + txDrawingSize.height);
-
-                var needToLeft = startPoint.x * percentageF;
-                var needToLeftTx = startPointTx.x * percentageF;
-
-                if (size.width == this._drawSize.width) {
-                    this._origin.x = 0;
-                    this._drawPosition.x = 0;
-                } else {
-                    this._origin.x = (startPointTx.x - needToLeftTx);
-                    this._drawPosition.x = (startPoint.x - needToLeft);
-                }
-
-                var needToTop = (textureSize.height - startPointTx.y) * percentageF;
-
-                if (size.height == this._drawSize.height) {
-                    this._origin.y = 0;
-                    this._drawPosition.y = 0;
-                } else {
-                    this._origin.y = (textureSize.height - startPointTx.y - needToTop);
-                    this._drawPosition.y = (startPoint.y - (startPoint.y * percentageF));
-                }
-            }
+            this._updateProgressWithCanvas();
         } else {
             switch (this._type) {
                 case cc.PROGRESS_TIMER_TYPE_RADIAL:
@@ -452,11 +562,22 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         }
     },
 
+    /**
+     * <p>
+     *    Update does the work of mapping the texture onto the triangles for the bar                            <br/>
+     *    It now doesn't occur the cost of free/alloc data every update cycle.                                  <br/>
+     *    It also only changes the percentage point but no other points if they have not been modified.         <br/>
+     *                                                                                                          <br/>
+     *    It now deals with flipped texture. If you run into this problem, just use the                         <br/>
+     *    sprite property and enable the methods flipX, flipY.                                                  <br/>
+     * </p>
+     * @private
+     */
     _updateBar:function () {
-        if (!this._sprite) {
+        if (!this._sprite)
             return;
-        }
 
+        var i;
         var alpha = this._percentage / 100.0;
         var alphaOffset = cc.pMult(cc.p((1.0 - this._barChangeRate.x) + alpha * this._barChangeRate.x,
             (1.0 - this._barChangeRate.y) + alpha * this._barChangeRate.y), 0.5);
@@ -549,13 +670,26 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             this._vertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
             this._vertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         }
+        this._verticesFloat32Buffer = this._getProgressTimerVertexArray();
+        this._textureCoordsFloat32Buffer = this._getProgressTimerTexCoodsArray();
         this._updateColor();
     },
 
+    /**
+     * <p>
+     *    Update does the work of mapping the texture onto the triangles            <br/>
+     *    It now doesn't occur the cost of free/alloc data every update cycle.      <br/>
+     *    It also only changes the percentage point but no other points if they have not been modified.       <br/>
+     *                                                                              <br/>
+     *    It now deals with flipped texture. If you run into this problem, just use the                       <br/>
+     *    sprite property and enable the methods flipX, flipY.                      <br/>
+     * </p>
+     * @private
+     */
     _updateRadial:function () {
-        if (!this._sprite) {
+        if (!this._sprite)
             return;
-        }
+
         var i;
         var alpha = this._percentage / 100;
         var angle = 2 * (cc.PI) * ( this._reverseDirection ? alpha : 1.0 - alpha);
@@ -567,7 +701,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         var percentagePt = cc.pRotateByAngle(topMid, this._midPoint, angle);
 
         var index = 0;
-        var hit = cc.PointZero;
+        var hit;
 
         if (alpha == 0) {
             //    More efficient since we don't always need to check intersection
@@ -594,31 +728,28 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
                 //    Remember that the top edge is split in half for the 12 o'clock position
                 //    Let's deal with that here by finding the correct endpoints
-                if (i == 0) {
+                if (i == 0)
                     edgePtB = cc.pLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
-                } else if (i == 4) {
+                else if (i == 4)
                     edgePtA = cc.pLerp(edgePtA, edgePtB, 1 - this._midPoint.x);
-                }
 
-                // s and t are returned by ccpLineIntersect
-                var s = 0, t = 0;
+                // retPoint are returned by ccpLineIntersect
                 var retPoint = cc.p(0, 0);
                 if (cc.pLineIntersect(edgePtA, edgePtB, this._midPoint, percentagePt, retPoint)) {
                     //    Since our hit test is on rays we have to deal with the top edge
                     //    being in split in half so we have to test as a segment
                     if ((i == 0 || i == 4)) {
                         //    s represents the point between edgePtA--edgePtB
-                        if (!(0 <= retPoint.width && retPoint.width <= 1)) {
+                        if (!(0 <= retPoint.x && retPoint.x <= 1))
                             continue;
-                        }
                     }
                     //    As long as our t isn't negative we are at least finding a
                     //    correct hitpoint from m_tMidpoint to percentagePt.
-                    if (retPoint.height >= 0) {
+                    if (retPoint.y >= 0) {
                         //    Because the percentage line and all the texture edges are
                         //    rays we should only account for the shortest intersection
-                        if (t < min_t) {
-                            min_t = t;
+                        if (retPoint.y < min_t) {
+                            min_t = retPoint.y;
                             index = i;
                         }
                     }
@@ -646,7 +777,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             }
             cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
         }
-        this._updateColor();
 
         if (!sameIndexCount) {
             //    First we populate the array with the m_tMidpoint, then all
@@ -657,7 +787,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             this._vertexData[1].texCoords = this._textureCoordFromAlphaPoint(topMid);
             this._vertexData[1].vertices = this._vertexFromAlphaPoint(topMid);
 
-            for (i = 0; i < index; ++i) {
+            for (i = 0; i < index; i++) {
                 var alphaPoint = this._boundaryTexCoord(i);
                 this._vertexData[i + 2].texCoords = this._textureCoordFromAlphaPoint(alphaPoint);
                 this._vertexData[i + 2].vertices = this._vertexFromAlphaPoint(alphaPoint);
@@ -667,18 +797,22 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         //    hitpoint will go last
         this._vertexData[this._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
         this._vertexData[this._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
+
+        this._verticesFloat32Buffer = this._getProgressTimerVertexArray();
+        this._textureCoordsFloat32Buffer = this._getProgressTimerTexCoodsArray();
+        this._updateColor();
     },
 
     _updateColor:function () {
-        if (!this._sprite) {
+        if (!this._sprite)
             return;
-        }
 
         if (this._vertexData) {
             var sc = this._sprite.getQuad().tl.colors;
             for (var i = 0; i < this._vertexDataCount; ++i) {
                 this._vertexData[i].colors = sc;
             }
+            this._colorsFloat32Buffer = this._getProgressTimerColorArray();
         }
     },
 

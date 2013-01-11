@@ -164,7 +164,7 @@ cc.BLEND_DST = 0x0303;
  * @function
  */
 cc.NODE_DRAW_SETUP = function (node) {
-    ccGLEnable(node._glServerState);
+    cc.glEnable(node._glServerState);
     cc.Assert(node.getShaderProgram(), "No shader program set for this node");
     {
         node.getShaderProgram().use();
@@ -316,91 +316,30 @@ var gl = gl || {};
  * @constant
  * @type Number
  */
-gl.NEAREST = 0x2600;
-
-/**
- * @constant
- * @type Number
- */
-gl.LINEAR = 0x2601;
-/**
- * @constant
- * @type Number
- */
-gl.REPEAT = 0x2901;
-/**
- * @constant
- * @type Number
- */
-gl.CLAMP_TO_EDGE = 0x812F;
-/**
- * @constant
- * @type Number
- */
-gl.CLAMP_TO_BORDER = 0x812D;
-/**
- * @constant
- * @type Number
- */
-gl.LINEAR_MIPMAP_NEAREST = 0x2701;
-/**
- * @constant
- * @type Number
- */
-gl.NEAREST_MIPMAP_NEAREST = 0x2700;
-/**
- * @constant
- * @type Number
- */
-gl.ZERO = 0;
-/**
- * @constant
- * @type Number
- */
 gl.ONE = 1;
-/**
- * @constant
- * @type Number
- */
-gl.SRC_COLOR = 0x0300;
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_SRC_COLOR = 0x0301;
+
 /**
  * @constant
  * @type Number
  */
 gl.SRC_ALPHA = 0x0302;
+
 /**
  * @constant
  * @type Number
  */
 gl.ONE_MINUS_SRC_ALPHA = 0x0303;
-/**
- * @constant
- * @type Number
- */
-gl.DST_ALPHA = 0x0304;
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_DST_ALPHA = 0x0305;
-/**
- * @constant
- * @type Number
- */
-gl.DST_COLOR = 0x0306;
+
 /**
  * @constant
  * @type Number
  */
 gl.ONE_MINUS_DST_COLOR = 0x0307;
-/**
- * @constant
- * @type Number
- */
-gl.SRC_ALPHA_SATURATE = 0x0308;
 
+
+cc.CHECK_GL_ERROR_DEBUG = function(){
+    var _error = cc.webglContext.getError();
+    if(_error){
+        cc.log("WebGL error " + _error);
+    }
+};
