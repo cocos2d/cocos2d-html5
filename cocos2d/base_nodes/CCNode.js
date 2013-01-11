@@ -416,6 +416,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     setRotation:function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
         this._rotationRadiansX = this._rotationX * (Math.PI / 180);
+        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
 
         this.setNodeDirty();
     },
@@ -451,7 +452,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     setRotationY:function (rotationY) {
         this._rotationY = rotationY;
-        this._rotationRadiansY = this._rotationX * (Math.PI / 180);
+        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
         this.setNodeDirty();
     },
 

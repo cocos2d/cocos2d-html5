@@ -115,6 +115,9 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
     },
 
     init:function () {
+        if(cc.renderContextType === cc.CANVAS)
+            return true;
+
         var gl = cc.webglContext;
         cc.log("cocos2d: GL_VENDOR:     " + gl.getParameter(gl.VENDOR));
         cc.log("cocos2d: GL_RENDERER:   " + gl.getParameter(gl.RENDERER));

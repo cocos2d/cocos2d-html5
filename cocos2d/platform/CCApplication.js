@@ -204,7 +204,7 @@ cc.setup = function (el, width, height) {
     cc.container.top = '100%';
 
     if(cc.Browser.supportWebGL){
-        cc.webglContext = cc.create3DContext(cc.canvas);
+        cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas);
         cc.renderContextType = cc.WEBGL;
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.webglContext);
     }else{

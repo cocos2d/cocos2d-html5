@@ -664,7 +664,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     setAliasTexParameters:function(){
         var gl = cc.webglContext;
 
-        gl.bindTexture(this._webTextureObj);
+        cc.glBindTexture2D(this._webTextureObj);
 
         if(!this._hasMipmaps)
             gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER, gl.NEAREST);

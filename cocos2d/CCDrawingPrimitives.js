@@ -881,14 +881,14 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
 
         var p;
         var lt;
-        var deltaT = 1.0 / config.count();
+        var deltaT = 1.0 / config.length;
 
         for (var i = 0; i < segments + 1; i++) {
             var dt = i / segments;
 
             // border
             if (dt == 1) {
-                p = config.count() - 1;
+                p = config.length - 1;
                 lt = 1;
             } else {
                 p = dt / deltaT;
@@ -896,14 +896,14 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             }
 
             // Interpolate
-            var pp0 = config.getControlPointAtIndex(p - 1);
-            var pp1 = config.getControlPointAtIndex(p + 0);
-            var pp2 = config.getControlPointAtIndex(p + 1);
-            var pp3 = config.getControlPointAtIndex(p + 2);
-
-            var newPos = cc.CardinalSplineAt(pp0, pp1, pp2, pp3, tension, lt);
-            vertices[i * 2].x = newPos.x;
-            vertices[i * 2 + 1].y = newPos.y;
+            var newPos = cc.CardinalSplineAt(
+                cc.getControlPointAt( config, p - 1),
+                cc.getControlPointAt( config, p - 0),
+                cc.getControlPointAt( config, p + 1),
+                cc.getControlPointAt( config, p + 2),
+                tension, lt);
+            vertices[i * 2] = newPos.x;
+            vertices[i * 2 + 1] = newPos.y;
         }
 
         this._shader.use();

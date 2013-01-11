@@ -1021,8 +1021,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _getSpriteTexCoodsArray:function () {
-        if(this._string && (this._string == "Hello World" || this._string == "Hello World!"))
-            console.log(this._quad);
         var texCoodsBuffer = cc.webglContext.createBuffer();
         cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, texCoodsBuffer);
         cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
@@ -1337,7 +1335,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this._flipY != flipY) {
 
             this._flipY = flipY;
-            //this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
+            this.setTextureRect(this._rect, this._rectRotated, this._contentSize);
 
             this.setNodeDirty();
         }
@@ -1375,8 +1373,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Update sprite's color
      */
     updateColor:function () {
-        var color4 = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
+        if(cc.renderContextType === cc.CANVAS)
+            return;
 
+        var color4 = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
         this._quad.bl.colors = color4;
         this._quad.br.colors = color4;
         this._quad.tl.colors = color4;

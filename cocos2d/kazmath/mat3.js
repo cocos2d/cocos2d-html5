@@ -24,6 +24,8 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+var Float32Array = Float32Array || Array;
+
 cc.kmMat3 = function () {
     this.mat = new Float32Array([0, 0, 0,
         0, 0, 0,

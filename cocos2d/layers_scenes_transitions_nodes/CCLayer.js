@@ -546,8 +546,8 @@ cc.Layer.create = function () {
  */
 cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     RGBAProtocol:true,
-    _squareVertices:[],
-    _squareColors:[],
+    _squareVertices:null,
+    _squareColors:null,
     _opacity:0,
     _color:new cc.Color3B(255, 255, 255),
     _blendFunc:null,
@@ -639,6 +639,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      */
     init:function (color, width, height) {
         this._initLayer();
+        if (cc.renderContextType === cc.WEBGL) {
+            this._blendFunc.src = cc.BLEND_SRC;
+            this._blendFunc.dst = cc.BLEND_DST;
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
+        }
 
         var winSize = cc.Director.getInstance().getWinSize();
         color = color || new cc.Color4B(0, 0, 0, 255);
@@ -652,16 +657,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
         this._updateColor();
 
-        if (cc.renderContextType === cc.WEBGL) {
-            this._blendFunc.src = cc.webglContext.BLEND_SRC;
-            this._blendFunc.dst = cc.webglContext.BLEND_DST;
-            for (var i = 0; i < this._squareVertices.length; i++) {
-                this._squareVertices[i].x = 0.0;
-                this._squareVertices[i].y = 0.0;
-            }
-            this._verticesFloat32Buffer = this._getLayerVertexArray();
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
-        }
         return true;
     },
 
@@ -738,7 +733,6 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
-
         if (cc.renderContextType === cc.CANVAS)
             this._drawForCanvas(context);
         else
@@ -759,6 +753,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     _verticesFloat32Buffer:null,
     _colorsFloat32Buffer:null,
     _drawForWebGL:function (context) {
+        context = context || cc.webglContext;
+
         //cc.NODE_DRAW_SETUP();
         context.enable(context.BLEND);
         if (this._shaderProgram) {
@@ -1044,8 +1040,6 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             this._gradientStartPoint = cc.p(tWidth * -this._alongVector.x + offWidth, tHeight * this._alongVector.y - offHeight);
             this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth, tHeight * -this._alongVector.y - offHeight);
         } else {
-            this._super();
-
             var h = cc.pLength(this._alongVector);
             if (h == 0)
                 return;

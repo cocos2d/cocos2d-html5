@@ -107,6 +107,7 @@
         'keyboard_dispatcher/CCKeyboardDispatcher.js',
         'text_input_node/CCIMEDispatcher.js',
         'text_input_node/CCTextFieldTTF.js',
+        'CCConfiguration.js',
         'CCDirector.js',
         'CCCamera.js',
         'CCScheduler.js',

@@ -142,7 +142,7 @@ cc.TransitionProgressRadialCCW = cc.TransitionProgress.extend(/** @lends cc.Tran
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if (cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType === cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 
@@ -184,7 +184,7 @@ cc.TransitionProgressRadialCW = cc.TransitionProgress.extend(/** @lends cc.Trans
         var pNode = cc.ProgressTimer.create(texture.getSprite());
 
         // but it is flipped upside down so we flip the sprite
-        if (cc.renderContextType == cc.WEBGL)
+        if (cc.renderContextType === cc.WEBGL)
             pNode.getSprite().setFlipY(true);
         pNode.setType(cc.PROGRESS_TIMER_TYPE_RADIAL);
 
