@@ -107,9 +107,9 @@
                 <file name="CCBReader/CCNodeLoaderLibrary.js"/>
                 <file name="CCBReader/CCBRelativePositioning.js"/>
                 <file name="CCBReader/CCBAnimationManager.js"/>
+                <file name="GUI/CCControlExtension/CCControlUtils.js"/>
                 <file name="GUI/CCControlExtension/CCControl.js"/>
                 <file name="GUI/CCControlExtension/CCControlButton.js"/>
-                <file name="GUI/CCControlExtension/CCControlUtils.js"/>
                 <file name="GUI/CCControlExtension/CCInvocation.js"/>
                 <file name="GUI/CCControlExtension/CCScale9Sprite.js"/>
                 <file name="GUI/CCControlExtension/CCControlSlider.js"/>
