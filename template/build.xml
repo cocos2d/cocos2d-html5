@@ -6,7 +6,7 @@
 
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="myApp-v2.1.js">
+                debug="false" output="myTemplate.js">
             <sources dir="${basedir}/../cocos2d">
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
