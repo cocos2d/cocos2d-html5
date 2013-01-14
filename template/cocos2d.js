@@ -31,6 +31,7 @@
         box2d:false,
         chipmunk:false,
         showFPS:true,
+        loadExtension:false,
         frameRate:60,
         tag:'gameCanvas', //the dom element to run cocos2d on
         engineDir:'../cocos2d/',
@@ -55,7 +56,7 @@
         }
         /*********Delete this section if you have packed all files into one*******/
 
-            //s.src = 'Packed_Release_File.js'; //IMPORTANT: Un-comment this line if you have packed all files into one
+            //s.src = 'myTemplate.js'; //IMPORTANT: Un-comment this line if you have packed all files into one
 
         d.body.appendChild(s);
         document.ccConfig = c;
