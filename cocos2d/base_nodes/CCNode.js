@@ -996,7 +996,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         }
 
         cc.Assert(child != null, "Argument must be non-nil");
-        cc.Assert(child._parent == null, "child already added. It can't be added again");
+        if(child._parent !== null){
+            cc.Assert(child._parent === null, "child already added. It can't be added again");
+            return;
+        }
         var tempzOrder = (zOrder != null) ? zOrder : child.getZOrder();
         var tmptag = (tag != null) ? tag : child.getTag();
         child.setTag(tmptag);
