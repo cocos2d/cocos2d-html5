@@ -530,9 +530,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             //! make sure all children are drawn
             this.sortAllChildren();
 
-            for(var i = 0; i< this._children.length; i++){
+            for (var i = 0; i < this._children.length; i++) {
                 var getChild = this._children[i];
-                if(getChild != this._sprite)
+                if (getChild != this._sprite)
                     getChild.visit();
             }
 
@@ -565,36 +565,31 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         var gl = cc.renderContext;
 
-        try {
-            pBuffer = [];
-            pBuffer.length = nSavedBufferWidth * nSavedBufferHeight * 4;
-            if (!(pBuffer))
-                return pImage;
 
-            pTempData = [];
-            pTempData.length = nSavedBufferWidth * nSavedBufferHeight * 4;
-            if (!(pTempData)) {
-                pBuffer = null;
-                return pImage;
-            }
-
-            this.begin();
-            gl.pixelStorei(gl.PACK_ALIGNMENT, 1);
-            gl.readPixels(0, 0, nSavedBufferWidth, nSavedBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pTempData);
-            this.end();
-
-            // to get the actual texture data
-            // #640 the image read from rendertexture is upseted
-            for (var i = 0; i < nSavedBufferHeight; ++i) {
-                this._memcpy(pBuffer, i * nSavedBufferWidth * 4,
-                    pTempData, (nSavedBufferHeight - i - 1) * nSavedBufferWidth * 4,
-                    nSavedBufferWidth * 4);
-            }
-
-            pImage.initWithImageData(pBuffer, nSavedBufferWidth * nSavedBufferHeight * 4, cc.FMT_RAWDATA, nSavedBufferWidth, nSavedBufferHeight, 8);
-        } catch (ex) {
+        pBuffer = [];
+        pBuffer.length = nSavedBufferWidth * nSavedBufferHeight * 4;
+        if (!(pBuffer))
             return pImage;
+
+        pTempData = [];
+        pTempData.length = nSavedBufferWidth * nSavedBufferHeight * 4;
+        if (!(pTempData)) {
+            return null;
         }
+
+        this.begin();
+        gl.pixelStorei(gl.PACK_ALIGNMENT, 1);
+        gl.readPixels(0, 0, nSavedBufferWidth, nSavedBufferHeight, gl.RGBA, gl.UNSIGNED_BYTE, pTempData);
+        this.end();
+
+        // to get the actual texture data
+        // #640 the image read from rendertexture is upseted
+        for (var i = 0; i < nSavedBufferHeight; ++i) {
+            this._memcpy(pBuffer, i * nSavedBufferWidth * 4,
+                pTempData, (nSavedBufferHeight - i - 1) * nSavedBufferWidth * 4,
+                nSavedBufferWidth * 4);
+        }
+        pImage.initWithImageData(pBuffer, nSavedBufferWidth * nSavedBufferHeight * 4, cc.FMT_RAWDATA, nSavedBufferWidth, nSavedBufferHeight, 8);
 
         pBuffer = null;
         pTempData = null;

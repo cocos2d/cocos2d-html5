@@ -322,6 +322,12 @@ gl.ONE = 1;
  * @constant
  * @type Number
  */
+gl.ZERO = 0;
+
+/**
+ * @constant
+ * @type Number
+ */
 gl.SRC_ALPHA = 0x0302;
 
 /**

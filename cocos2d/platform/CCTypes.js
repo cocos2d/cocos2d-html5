@@ -319,6 +319,15 @@ cc.c4FFromccc4B = function (c) {
 };
 
 /**
+ * Returns a cc.Color4B from a cc.Color4F.
+ * @param {cc.Color4F} c
+ * @return {cc.Color4B}
+ */
+cc.c4BFromccc4F = function(c){
+    return new cc.Color4B(0|(c.r * 255), 0|(c.g * 255),0|(c.b * 255),0|(c.a * 255));
+};
+
+/**
  * returns YES if both cc.Color4F are equal. Otherwise it returns NO.
  * @param {cc.Color4F} a color1
  * @param {cc.Color4F} b color2
@@ -512,6 +521,20 @@ cc.V3F_C4B_T2F = function (vertices1, colors1, texCoords1) {
 };
 
 /**
+ * A Triangle of ccV2F_C4B_T2F
+ * @Class
+ * @Construct
+ * @param {cc.V2F_C4B_T2F} a
+ * @param {cc.V2F_C4B_T2F} b
+ * @param {cc.V2F_C4B_T2F} c
+ */
+cc.V2F_C4B_T2F_Triangle = function(a, b, c){
+    this.a = a || new cc.V2F_C4B_T2F();
+    this.b = b || new cc.V2F_C4B_T2F();
+    this.c = c || new cc.V2F_C4B_T2F();
+};
+
+/**
  * 4 ccVertex2FTex2FColor4B Quad
  * @Class
  * @Construct
@@ -599,6 +622,9 @@ cc.BlendFunc = function (src1, dst1) {
     this.dst = dst1;
 };
 
+cc.BlendFuncDisable = function(){
+    return new cc.BlendFunc(gl.ONE,gl.ZERO);
+};
 
 /**
  * convert Color3B to a string of color for style.

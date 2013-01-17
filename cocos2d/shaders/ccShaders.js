@@ -127,7 +127,7 @@ cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_FRAG =
         + "// #if defined GL_OES_standard_derivatives																					\n"
         + "// gl_FragColor = v_color*smoothstep(0.0, length(fwidth(v_texcoord)), 1.0 - length(v_texcoord));							    \n"
         + "// #else																														\n"
-        + "gl_FragColor = v_color*step(0.0, 1.0 - length(v_texcoord));																    \n"
+        + "gl_FragColor = v_color * step(0.0, 1.0 - length(v_texcoord));														        \n"
         + "// #endif																													\n"
         + "}";
 
@@ -156,7 +156,7 @@ cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_VERT =
         + "\n"
         + "void main()															\n"
         + "{																	\n"
-        + "     v_color = vec4(a_color.rgb * a_color.a, a_color.a);				\n"
+        + "     v_color = a_color;//vec4(a_color.rgb * a_color.a, a_color.a);				\n"
         + "     v_texcoord = a_texcoord;										\n"
         + "																        \n"
         + "     gl_Position = CC_MVPMatrix * a_position;						\n"
