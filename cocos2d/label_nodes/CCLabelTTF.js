@@ -115,14 +115,12 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         //set size for labelCanvas
         this._labelContext.font = this._fontStyleStr;
+        var size = this._computeLabelSizeForWebGL();
 
-        var dim = this._labelContext.measureText(this._string);
-        //TODO multiple line
+        this._labelCanvas.width = size.width;
+        this._labelCanvas.height = size.height;
 
-        this._labelCanvas.width = dim.width;
-        this._labelCanvas.height = this._fontSize;
-
-        this.setContentSize(cc.size(this._labelCanvas.width,this._labelCanvas.height));
+        this.setContentSize(cc.size(this._labelCanvas.width, this._labelCanvas.height));
 
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
@@ -131,12 +129,36 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         return true;
     },
 
-    _drawTTFInCanvasForWebGL:function(context){
-        if(!context)
-            return ;
+    _computeLabelSizeForWebGL:function () {
+        if (this._dimensions.width == 0) {
+            if (this._string.indexOf("\n") === -1) {
+                var dim = this._labelContext.measureText(this._string);
+                return cc.size(dim.width, this._fontSize);
+            } else {
+                var rowHeight = this._fontSize * 1.2;
+                var tmpWords = this._string.split("\n");
+                var lineHeight = tmpWords.length;
+                var splitStrWidthArr = [];
+                var maxLineWidth = 0;
+                for (var i = 0; i < lineHeight; i++) {
+                    splitStrWidthArr[i] = this._labelContext.measureText(tmpWords[i]).width;
+                    if (splitStrWidthArr[i] > maxLineWidth)
+                        maxLineWidth = splitStrWidthArr[i];
+                }
+                return cc.size(maxLineWidth, rowHeight * lineHeight);
+            }
+        } else {
+
+        }
+
+    },
+
+    _drawTTFInCanvasForWebGL:function (context) {
+        if (!context)
+            return;
 
         context.save();
-        context.translate(this._contentSize.width/2,this._contentSize.height/2);
+        context.translate(this._contentSize.width / 2, this._contentSize.height / 2);
         //this is fillText for canvas
         if (context.font != this._fontStyleStr)
             context.font = this._fontStyleStr;
@@ -155,9 +177,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             context.textBaseline = "bottom";
             context.textAlign = "left";
 
-            if (this._string.indexOf("\n") > -1)
+            if (this._string.indexOf("\n") > -1) {
                 this._multiLineText(context);
-            else
+            } else
                 context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
         } else {
             context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
@@ -376,10 +398,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             this.setString(strInfo);
 
-            //TODO
-            //if (cc.renderContextType === cc.CANVAS) {
-            //    this._updateTTF();
-            //}
             return true;
         }
         return false;
@@ -466,7 +484,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 xOffset = centerPoint.x - maxLineWidth;
             if (this._hAlignment == cc.TEXT_ALIGNMENT_CENTER)
                 xOffset = maxLineWidth - splitStrWidthArr[i];
-            context.fillText(tmpWords[i], xOffset, i * rowHeight - centerPoint.y + rowHeight / 2);
+            context.fillText(tmpWords[i], xOffset, i * rowHeight - centerPoint.y + rowHeight);
         }
     },
 
