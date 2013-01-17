@@ -204,6 +204,13 @@ cc.ShaderCache = cc.Class.extend({
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_UCOLOR);
         this._programs[cc.SHADER_POSITION_UCOLOR] = program;
+
+        //
+        // Position, Legth(TexCoords, Color (used by Draw Node basically )
+        //
+        program = new cc.GLProgram();
+        this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_LENGTH_TEXTURECOLOR);
+        this._programs[cc.SHADER_POSITION_LENGTHTEXTURECOLOR] = program;
     },
 
     /**
