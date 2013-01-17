@@ -73,8 +73,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     setColor:function (color3) {
-        this._setColorStyleStr();
         this._super(color3);
+        this._setColorStyleStr();
     },
 
     setOpacity:function (opacity) {
@@ -115,15 +115,16 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         //set size for labelCanvas
         this._labelContext.font = this._fontStyleStr;
+
         var dim = this._labelContext.measureText(this._string);
         //TODO multiple line
+
         this._labelCanvas.width = dim.width;
         this._labelCanvas.height = this._fontSize;
 
         this.setContentSize(cc.size(this._labelCanvas.width,this._labelCanvas.height));
 
         //draw text to labelCanvas
-        //TODO is need set color?
         this._drawTTFInCanvasForWebGL(this._labelContext);
         this._texture.handleLoadedTexture();
         this.setTextureRect(cc.rect(0, 0, this._labelCanvas.width, this._labelCanvas.height));

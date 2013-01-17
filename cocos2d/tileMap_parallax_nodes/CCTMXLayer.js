@@ -76,7 +76,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._super();
         this._children = [];
         this._descendants = [];
-        this._isUseCache = true;
+        this._useCache = true;
         this._layerSize = cc.p(0, 0);
         this._mapTileSize = cc.p(0, 0);
     },
@@ -448,7 +448,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      */
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
-        var textureCache = this._textureAtlas.getTexture();
+        var textureCache = this.getTexture();
         this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
 
         // By default all the tiles are aliased
@@ -461,7 +461,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         // Parse cocos2d properties
         this._parseInternalProperties();
         this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
         for (var y = 0; y < this._layerSize.height; y++) {
             for (var x = 0; x < this._layerSize.width; x++) {
@@ -505,7 +504,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(cc.ArrayContainsObject(this._children, sprite), "Tile does not belong to TMXLayer");
 
         this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
         var atlasIndex = cc.ArrayGetIndexOfObject(this._children, sprite);
         var zz = this._atlasIndexArray[atlasIndex];
         this._tiles[zz] = 0;

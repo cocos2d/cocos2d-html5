@@ -96,6 +96,25 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
     },
 
     /**
+     * draws a rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
+    drawRect:function (origin, destination) {
+        cc.log("DrawingPrimitive.drawRect() not implement!");
+    },
+
+    /**
+     * draws a solid rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     * @param {cc.Color4F} color
+     */
+    drawSolidRect:function (origin, destination, color) {
+        cc.log("DrawingPrimitive.drawSolidRect() not implement!");
+    },
+
+    /**
      * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
      * @param {Array} vertices a pointer to cc.Point coordiantes
      * @param {Number} numOfVertices the number of vertices measured in points
@@ -107,6 +126,16 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
     },
 
     /**
+     * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
+     * @param {Array} poli
+     * @param {Number} numberOfPoints
+     * @param {cc.Color4F} color
+     */
+    drawSolidPoly:function (poli, numberOfPoints, color) {
+        cc.log("DrawingPrimitive.drawSolidPoly() not implement!");
+    },
+
+    /**
      * draws a circle given the center, radius and number of segments.
      * @param {cc.Point} center center of circle
      * @param {Number} radius
@@ -115,33 +144,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Boolean} drawLineToCenter
      */
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
-        //WEBGL version
-        if ((segments == "undefined") || (segments == 0)) {
-            return;
-        }
-        var additionalSegment = 1;
-        if (drawLineToCenter) {
-            ++additionalSegment;
-        }
-
-        var coef = 2.0 * Math.PI / segments;
-
-        var vertices = [];
-
-        for (var i = 0; i <= segments; i++) {
-            var rads = i * coef;
-            var j = radius * Math.cos(rads + angle) + center.x;
-            var k = radius * Math.sin(rads + angle) + center.y;
-            var addPoint = cc.p(j * cc.CONTENT_SCALE_FACTOR(), k * cc.CONTENT_SCALE_FACTOR());
-            vertices.push(addPoint);
-        }
-
-        if (drawLineToCenter) {
-            var lastPoint = cc.p(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
-            vertices.push(lastPoint);
-        }
-
-        this.drawPoly(vertices, segments + 2, true, false);
+        cc.log("DrawingPrimitive.drawCircle() not implement!");
     },
 
     /**
@@ -247,6 +250,35 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     },
 
     /**
+     * draws a rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
+    drawRect:function (origin, destination) {
+        this.drawLine(cc.p(origin.x, origin.y), cc.p(destination.x, origin.y));
+        this.drawLine(cc.p(destination.x, origin.y), cc.p(destination.x, destination.y));
+        this.drawLine(cc.p(destination.x, destination.y), cc.p(origin.x, destination.y));
+        this.drawLine(cc.p(origin.x, destination.y), cc.p(origin.x, origin.y));
+    },
+
+    /**
+     * draws a solid rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     * @param {cc.Color4F} color
+     */
+    drawSolidRect:function (origin, destination, color) {
+        var vertices = [
+            origin,
+            cc.p(destination.x, origin.y),
+            destination,
+            cc.p(origin.x, destination.y)
+        ];
+
+        this.drawSolidPoly(vertices, 4, color);
+    },
+
+    /**
      * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
      * @override
      * @param {Array} vertices a pointer to cc.Point coordiantes
@@ -281,6 +313,17 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         } else {
             this._renderContext.stroke();
         }
+    },
+
+    /**
+     * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
+     * @param {Array} poli
+     * @param {Number} numberOfPoints
+     * @param {cc.Color4F} color
+     */
+    drawSolidPoly:function (poli, numberOfPoints, color) {
+        this.setDrawColor4F(color.r, color.g, color.b, color.a);
+        this.drawPoly(poli, numberOfPoints, true, true);
     },
 
     /**
@@ -389,10 +432,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
 
             // Interpolate
             var newPos = cc.CardinalSplineAt(
-                cc.getControlPointAt( config, p - 1),
-                cc.getControlPointAt( config, p - 0),
-                cc.getControlPointAt( config, p + 1),
-                cc.getControlPointAt( config, p + 2),
+                cc.getControlPointAt(config, p - 1),
+                cc.getControlPointAt(config, p - 0),
+                cc.getControlPointAt(config, p + 1),
+                cc.getControlPointAt(config, p + 2),
                 tension, lt);
             points.push(newPos);
         }
@@ -503,6 +546,45 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      */
     fillText:function (strText, x, y) {
         this._renderContext.fillText(strText, x, -y);
+    },
+
+    /**
+     * set the drawing color with 4 unsigned bytes
+     * @param {Number} r red value (0 to 255)
+     * @param {Number} r green value (0 to 255)
+     * @param {Number} r blue value (0 to 255)
+     * @param {Number} a Alpha value (0 to 255)
+     */
+    setDrawColor4B:function (r, g, b, a) {
+        this._renderContext.fillStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
+        this._renderContext.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
+    },
+
+    /**
+     * set the drawing color with 4 floats
+     * @param {Number} r red value (0 to 1)
+     * @param {Number} r green value (0 to 1)
+     * @param {Number} r blue value (0 to 1)
+     * @param {Number} a Alpha value (0 to 1)
+     */
+    setDrawColor4F:function (r, g, b, a) {
+        this._renderContext.fillStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
+        this._renderContext.strokeStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
+    },
+
+    /**
+     * set the point size in points. Default 1.
+     * @param {Number} pointSize
+     */
+    setPointSize:function (pointSize) {
+    },
+
+    /**
+     * set the line width. Default 1.
+     * @param {Number} width
+     */
+    setLineWidth:function (width) {
+        this._renderContext.lineWidth = width;
     }
 });
 
@@ -585,7 +667,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      * @param {Number} numberOfPoints
      */
     drawPoints:function (points, numberOfPoints) {
-        if(!points || points.length == 0)
+        if (!points || points.length == 0)
             return;
 
         this.lazy_init();
@@ -609,11 +691,11 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         cc.INCREMENT_GL_DRAWS(1);
     },
 
-    _pointsToTypeArray:function(points){
+    _pointsToTypeArray:function (points) {
         var typeArr = new Float32Array(points.length * 2);
-        for(var i = 0; i< points.length;i++){
-            typeArr[i*2] = points[i].x;
-            typeArr[i*2 +1] = points[i].y;
+        for (var i = 0; i < points.length; i++) {
+            typeArr[i * 2] = points[i].x;
+            typeArr[i * 2 + 1] = points[i].y;
         }
         return typeArr;
     },
@@ -628,7 +710,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
 
         var pointBuffer = this._renderContext.createBuffer();
         this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
-        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, this._pointsToTypeArray([origin,destination]), this._renderContext.STATIC_DRAW);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, this._pointsToTypeArray([origin, destination]), this._renderContext.STATIC_DRAW);
 
         this._shader.use();
         cc.CHECK_GL_ERROR_DEBUG();
@@ -715,7 +797,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      */
     drawSolidPoly:function (poli, numberOfPoints, color) {
         this.lazy_init();
-        if(!color)
+        if (!color)
             color = this._color;
 
         this._shader.use();
@@ -751,7 +833,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
 
         var coef = 2.0 * Math.PI / segments;
 
-        var vertices = new Float32Array((segments +2) * 2);
+        var vertices = new Float32Array((segments + 2) * 2);
         if (!vertices)
             return;
 
@@ -802,7 +884,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             t += 1.0 / segments;
         }
         vertices[segments * 2] = destination.x;
-        vertices[segments* 2 + 1] = destination.y;
+        vertices[segments * 2 + 1] = destination.y;
 
         this._shader.use();
         this._shader.setUniformForModelViewProjectionMatrix();
@@ -841,7 +923,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             t += 1.0 / segments;
         }
         vertices[segments * 2] = destination.x;
-        vertices[segments* 2 + 1] = destination.y;
+        vertices[segments * 2 + 1] = destination.y;
 
         this._shader.use();
         this._shader.setUniformForModelViewProjectionMatrix();
@@ -861,7 +943,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
 
     /**
      * draw a catmull rom line
-     * @param {cc.PointArray} points
+     * @param {Array} points
      * @param {Number} segments
      */
     drawCatmullRom:function (points, segments) {
@@ -870,7 +952,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
 
     /**
      * draw a cardinal spline path
-     * @param {cc.PointArray} config
+     * @param {Array} config
      * @param {Number} tension
      * @param {Number} segments
      */
@@ -878,11 +960,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this.lazy_init();
 
         var vertices = new Float32Array((segments + 1) * 2);
-
-        var p;
-        var lt;
-        var deltaT = 1.0 / config.length;
-
+        var p, lt, deltaT = 1.0 / config.length;
         for (var i = 0; i < segments + 1; i++) {
             var dt = i / segments;
 
@@ -891,17 +969,18 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
                 p = config.length - 1;
                 lt = 1;
             } else {
-                p = dt / deltaT;
+                p = 0 | (dt / deltaT);
                 lt = (dt - deltaT * p) / deltaT;
             }
 
-            // Interpolate
             var newPos = cc.CardinalSplineAt(
-                cc.getControlPointAt( config, p - 1),
-                cc.getControlPointAt( config, p - 0),
-                cc.getControlPointAt( config, p + 1),
-                cc.getControlPointAt( config, p + 2),
+                cc.getControlPointAt(config, p - 1),
+                cc.getControlPointAt(config, p),
+                cc.getControlPointAt(config, p + 1),
+                cc.getControlPointAt(config, p + 2),
                 tension, lt);
+            // Interpolate
+
             vertices[i * 2] = newPos.x;
             vertices[i * 2 + 1] = newPos.y;
         }
@@ -956,6 +1035,14 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
      */
     setPointSize:function (pointSize) {
         this._pointSize = pointSize * cc.CONTENT_SCALE_FACTOR();
+    },
+
+    /**
+     * set the line width. Default 1.
+     * @param {Number} width
+     */
+    setLineWidth:function (width) {
+        this._renderContext.lineWidth(width);
     }
 });
 

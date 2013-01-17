@@ -130,13 +130,14 @@ cc.isAddedHiddenEvent = false;
  * @param {Object} opt_attribs
  * @return {WebGLRenderingContext}
  */
-cc.create3DContext = function(canvas, opt_attribs) {
+cc.create3DContext = function (canvas, opt_attribs) {
     var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
     var context = null;
     for (var ii = 0; ii < names.length; ++ii) {
         try {
             context = canvas.getContext(names[ii], opt_attribs);
-        } catch(e) {}
+        } catch (e) {
+        }
         if (context) {
             break;
         }
@@ -203,11 +204,11 @@ cc.setup = function (el, width, height) {
     cc.container.style.overflow = 'hidden';
     cc.container.top = '100%';
 
-    if(cc.Browser.supportWebGL){
+    if (cc.Browser.supportWebGL) {
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas);
         cc.renderContextType = cc.WEBGL;
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.webglContext);
-    }else{
+    } else {
         cc.renderContext = cc.canvas.getContext("2d");
         cc.renderContextType = cc.CANVAS;
         cc.renderContext.translate(0, cc.canvas.height);
@@ -217,6 +218,7 @@ cc.setup = function (el, width, height) {
     cc.originalCanvasSize = cc.size(cc.canvas.width, cc.canvas.height);
 
     cc.log(cc.ENGINE_VERSION);
+    cc.Configuration.getInstance();
 
     cc.setContextMenuEnable(false);
 
