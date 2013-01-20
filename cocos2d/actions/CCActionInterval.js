@@ -780,7 +780,7 @@ cc.MoveTo = cc.ActionInterval.extend(/** @lends cc.MoveTo# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startPosition = target.getPosition();
+        this._previousPosition = this._startPosition = target.getPosition();
         this._delta = cc.pSub(this._endPosition, this._startPosition);
     },
 
@@ -789,8 +789,13 @@ cc.MoveTo = cc.ActionInterval.extend(/** @lends cc.MoveTo# */{
      */
     update:function (time) {
         if (this._target) {
-            this._target.setPosition(cc.p(this._startPosition.x + this._delta.x * time,
-                this._startPosition.y + this._delta.y * time));
+          var currentPos = this._target.getPosition();
+          var diff = cc.pSub(currentPos, this._previousPosition);
+          this._startPosition = cc.pAdd(this._startPosition, diff);
+          var newPos = cc.p(this._startPosition.x + this._delta.x * time,
+                           this._startPosition.y + this._delta.y * time);
+          this._target.setPosition(newPos);
+          this._previousPosition = newPos;
         }
     },
 
