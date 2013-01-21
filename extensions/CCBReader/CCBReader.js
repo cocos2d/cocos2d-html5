@@ -826,8 +826,10 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
     ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
     var reader = new cc.BuilderReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
     reader.setCCBRootPath(ccbRootPath);
-    var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
+    if(ccbFilePath.toLowerCase().lastIndexOf(".ccbi") != ccbFilePath.length - 5)
+        ccbFilePath = ccbFilePath + ".ccbi";
 
+    var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
     var i;
     var callbackName, callbackNode, outletName, outletNode;
     // Assign owner callbacks & member variables
