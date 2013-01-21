@@ -33,19 +33,19 @@
  * @constant
  * @type Number
  */
-cc.LabelAutomaticWidth = -1;
+cc.LABEL_AUTOMATIC_WIDTH = -1;
 
-cc._KerningHashElement = function (key, amount) {
-    this.key = key;   //key for the hash. 16-bit for 1st element, 16-bit for 2nd element
-    this.amount = amount;
+cc.KerningHashElement = function (key, amount) {
+    this.key = key || 0;   //key for the hash. 16-bit for 1st element, 16-bit for 2nd element
+    this.amount = amount || 0;
 };
 
-cc._FontDefHashElement = function (key, fontDef) {
+cc.FontDefHashElement = function (key, fontDef) {
     this.key = key || 0;        // key. Font Unicode value
-    this.fontDef = fontDef || new cc._BMFontDef();    // font definition
+    this.fontDef = fontDef || new cc.BMFontDef();    // font definition
 };
 
-cc._BMFontDef = function (charID, rect, xOffset, yOffset, xAdvance) {
+cc.BMFontDef = function (charID, rect, xOffset, yOffset, xAdvance) {
     //! ID of the character
     this.charID = charID || 0;
     //! origin and size of the font
@@ -58,7 +58,7 @@ cc._BMFontDef = function (charID, rect, xOffset, yOffset, xAdvance) {
     this.xAdvance = xAdvance || 0;
 };
 
-cc._BMFontPadding = function (left, top, right, bottom) {
+cc.BMFontPadding = function (left, top, right, bottom) {
     /// padding left
     this.left = left || 0;
     /// padding top
@@ -81,7 +81,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      *  The characters building up the font
      *  @type object
      */
-    bitmapFontArray:{},
+    bitmapFontArray:null,
 
     /**
      * FNTConfig: Common Height
@@ -91,33 +91,45 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
 
     /**
      *  Padding
-     *  @type cc._BMFontPadding
+     *  @type cc.BMFontPadding
      */
-    padding:new cc._BMFontPadding(),
+    padding:null,
 
     /**
      * atlas name
      * @type String
      */
-    atlasName:"",
+    atlasName:null,
 
     /**
      * values for kerning
-     * @type cc._KerningHashElement
+     * @type cc.KerningHashElement
      */
-    kerningDictionary:{},
+    kerningDictionary:null,
 
     /**
      * values for FontDef
-     * @type cc._FontDefHashElement
+     * @type cc.FontDefHashElement
      */
     fontDefDictionary:null,
+
+    /**
+     * Character Set defines the letters that actually exist in the font
+     * @type Array
+     */
+    characterSet:null,
+
     /**
      * Constructor
      */
     ctor:function () {
+        this.bitmapFontArray = {};
+        this.padding = new cc.BMFontPadding();
+        this.atlasName = "";
+        this.kerningDictionary = new cc.KerningHashElement();
         this.fontDefDictionary = {};
-        this.fontDefDictionary["0"] = new cc._FontDefHashElement();
+        this.fontDefDictionary["0"] = new cc.FontDefHashElement();
+        this.characterSet = [];
     },
 
     /**
@@ -125,7 +137,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
      * @return {String}
      */
     description:function () {
-        return "<cc.BMFontConfiguration | Kernings:" + this.kerningDictionary + " | Image = " + this.atlasName.toString() + ">";
+        return "<cc.BMFontConfiguration | Kernings:" + this.kerningDictionary.amount + " | Image = " + this.atlasName.toString() + ">";
     },
 
     /**
@@ -143,26 +155,41 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     },
 
     /**
+     * @return {Object}
+     */
+    getCharacterSet:function () {
+        return this.characterSet;
+    },
+
+    /**
      * initializes a BitmapFontConfiguration with a FNT file
-     * @param {String} FNT file path
+     * @param {String} FNTfile file path
      * @return {Boolean}
      */
     initWithFNTfile:function (FNTfile) {
         cc.Assert(FNTfile != null && FNTfile.length != 0, "");
-        this._parseConfigFile(FNTfile);
-        return true;
+        this.characterSet = this._parseConfigFile(FNTfile);
+        return this.characterSet != null;
     },
 
     _parseConfigFile:function (controlFile) {
         var data = cc.SAXParser.getInstance().getList(controlFile);
         cc.Assert(data, "cc.BMFontConfiguration._parseConfigFile | Open file error.");
 
-        // parse spacing / padding
-        var line, re;
+        if (!data) {
+            cc.log("cocos2d: Error parsing FNTfile " + controlFile);
+            return null;
+        }
 
-        re = /padding+[a-z0-9\-= ",]+/gi;
+        var validCharsString = [];
+
+        // parse spacing / padding
+        var line, re, i;
+
+        re = /info face=[a-z0-9\-= ",]+/gi;
         line = re.exec(data)[0];
         if (line) {
+            // Not needed for the Hiero editors, but needed for the AngelCode editor
             this._parseInfoArguments(line);
         }
 
@@ -188,29 +215,31 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         line = data.match(re);
         if (line) {
             // Parse the current line and create a new CharDef
-            for (var i = 0; i < line.length; i++) {
-                var element = new cc._FontDefHashElement();
+            for (i = 0; i < line.length; i++) {
+                var element = new cc.FontDefHashElement();
                 this._parseCharacterDefinition(line[i], element.fontDef);
                 element.key = element.fontDef.charID;
                 this.fontDefDictionary[element.key] = element;
+                validCharsString.push(element.fontDef.charID);
             }
         }
 
-        re = /kernings count+[a-z0-9\-= ",]+/gi;
-        if (re.test(data)) {
-            line = RegExp.$1[0];
-        }
-        if (line) {
-            this._parseKerningCapacity(line);
-        }
+        /*
+         re = /kernings count+[a-z0-9\-= ",]+/gi;
+         if (re.test(data)) {
+         line = RegExp.$1[0];
+         if (line)
+         this._parseKerningCapacity(line);
+         }*/
 
-        re = /first=\w[a-z0-9\-= ]+/gi;
+        re = /kerning first=\w[a-z0-9\-= ]+/gi;
         line = data.match(re);
         if (line) {
-            for (var i = 0; i < line.length; i++) {
+            for (i = 0; i < line.length; i++)
                 this._parseKerningEntry(line[i]);
-            }
         }
+
+        return validCharsString;
     },
 
     _parseCharacterDefinition:function (line, characterDefinition) {
@@ -262,9 +291,10 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         // padding
         var tmpPadding = /padding=(\d+)[,](\d+)[,](\d+)[,](\d+)/gi.exec(line);
         this.padding.left = tmpPadding[1];
-        this.padding.top = tmpPadding[2]
+        this.padding.top = tmpPadding[2];
         this.padding.right = tmpPadding[3];
         this.padding.bottom = tmpPadding[4];
+        cc.log("cocos2d: padding: " + this.padding.left + "," + this.padding.top + "," + this.padding.right + "," + this.padding.bottom);
     },
 
     _parseCommonArguments:function (line) {
@@ -276,6 +306,14 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         var value;
         // Height
         this.commonHeight = parseInt(/lineHeight=(\d+)/gi.exec(line)[1]);
+
+        if(cc.renderContextType === cc.WEBGL){
+            var scaleW = parseInt(/scaleW=(\d+)/gi.exec(line)[1]);
+            cc.Assert(scaleW <= cc.Configuration.getInstance().getMaxTextureSize(), "cc.LabelBMFont: page can't be larger than supported");
+
+            var scaleH = parseInt(/scaleH=(\d+)/gi.exec(line)[1]);
+            cc.Assert(scaleH <= cc.Configuration.getInstance().getMaxTextureSize(), "cc.LabelBMFont: page can't be larger than supported");
+        }
 
         // pages. sanity check
         value = /pages=(\d+)/gi.exec(line)[1];
@@ -320,7 +358,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         value = /amount=([\-\d]+)/gi.exec(line)[1];
         var amount = parseInt(value);
 
-        var element = new cc._KerningHashElement();
+        var element = new cc.KerningHashElement();
         element.amount = amount;
         element.key = (first << 16) | (second & 0xffff);
 
@@ -404,13 +442,15 @@ cc.BMFontConfiguration.create = function (FNTfile) {
  */
 cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     RGBAProtocol:true,
+
     _opacity:0,
     _color:null,
     _opacityModifyRGB:false,
-    _string:"",
+
+    _string:null,
     _configuration:null,
     // name of fntFile
-    _fntFile:"",
+    _fntFile:null,
     // initial string without line breaks
     _initialString:"",
     // alignment of all lines
@@ -418,13 +458,20 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     // max width until a line break is added
     _width:0,
     _lineBreakWithoutSpaces:false,
-    _imageOffset:cc.PointZero(),
+    _imageOffset:null,
+
+    _reusedChar:null,
     /**
      * Constructor
      */
-    /*    ctor:function () {
-     this._super();
-     },*/
+    ctor:function () {
+        this._super();
+        this._imageOffset = cc.POINT_ZERO;
+        this._string = "";
+        this._fntFile = "";
+        this._initialString = "";
+        this._reusedChar = [];
+    },
     /**
      * @param {CanvasContext} ctx
      */
@@ -508,10 +555,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     },
 
     /**
-     * @param {Boolean} Var
+     * @param {Boolean} isOpacityModifyRGB
      */
-    setOpacityModifyRGB:function (Var) {
-        this._opacityModifyRGB = Var;
+    setOpacityModifyRGB:function (opacityModifyRGB) {
+        this._opacityModifyRGB = opacityModifyRGB;
         if (this._children && this._children.length != 0) {
             for (var i = 0, len = this._children.length; i < len; i++) {
                 var node = this._children[i];
@@ -564,7 +611,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
             this._imageOffset = imageOffset || cc.PointZero();
-            this._width = width || cc.LabelAutomaticWidth;
+            this._width = width || cc.LABEL_AUTOMATIC_WIDTH;
             this._opacity = 255;
             this._color = cc.white();
             this._contentSize = cc.SizeZero();
@@ -903,7 +950,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                             index = i + j + lineNumber;
                             if (index < 0) continue;
                             var characterSprite = this.getChildByTag(index);
-                            if(characterSprite){
+                            if (characterSprite) {
                                 characterSprite.setPosition(cc.pAdd(characterSprite.getPosition(), cc.p(shift, 0)));
                             }
                         }
@@ -1049,8 +1096,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  */
 cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
     var ret = new cc.LabelBMFont();
-    if(arguments.length == 0){
-        if(ret && ret.init()){
+    if (arguments.length == 0) {
+        if (ret && ret.init()) {
             return ret;
         }
         return null;
@@ -1097,7 +1144,7 @@ cc.purgeCachedData = function () {
  */
 cc.FNTConfigRemoveCache = function () {
     if (cc.configurations) {
-        cc.configurations = {};
+        cc.configurations = null;
     }
 };
 

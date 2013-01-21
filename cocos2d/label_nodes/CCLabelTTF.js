@@ -130,27 +130,45 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     _computeLabelSizeForWebGL:function () {
+        var dim, rowHeight, i, tmpWords, maxLineWidth, rowCount;
         if (this._dimensions.width == 0) {
             if (this._string.indexOf("\n") === -1) {
-                var dim = this._labelContext.measureText(this._string);
+                dim = this._labelContext.measureText(this._string);
                 return cc.size(dim.width, this._fontSize);
             } else {
-                var rowHeight = this._fontSize * 1.2;
-                var tmpWords = this._string.split("\n");
-                var lineHeight = tmpWords.length;
-                var splitStrWidthArr = [];
-                var maxLineWidth = 0;
-                for (var i = 0; i < lineHeight; i++) {
-                    splitStrWidthArr[i] = this._labelContext.measureText(tmpWords[i]).width;
-                    if (splitStrWidthArr[i] > maxLineWidth)
-                        maxLineWidth = splitStrWidthArr[i];
-                }
-                return cc.size(maxLineWidth, rowHeight * lineHeight);
+                rowHeight = this._fontSize * 1.2;
+                tmpWords = this._string.split("\n");
+                rowCount = tmpWords.length;
+                maxLineWidth = 0;
+                for (i = 0; i < rowCount; i++)
+                    maxLineWidth = Math.max(maxLineWidth, this._labelContext.measureText(tmpWords[i]).width);
+
+                return cc.size(maxLineWidth, rowHeight * rowCount);
             }
         } else {
-
+            if (this._string.indexOf("\n") === -1) {
+                dim = this._labelContext.measureText(this._string);
+                if (dim.width <= this._dimensions.width)
+                    return cc.size(this._dimensions.width, this._dimensions.height);
+                else {
+                    rowCount = 0 | (dim.width / this._dimensions.width);
+                    rowCount += (dim.width % this._dimensions.width === 0) ? 0 : 1;
+                    return cc.size(this._dimensions.width, this._dimensions.height * rowCount);
+                }
+            } else {
+                rowHeight = this._dimensions.height;
+                tmpWords = this._string.split("\n");
+                rowCount = tmpWords.length;
+                for (i = 0; i < tmpWords.length; i++) {
+                    var currRowWidth = this._labelContext.measureText(tmpWords[i]).width;
+                    if (currRowWidth > this._dimensions.width) {
+                        rowCount += 0 | (currRowWidth / this._dimensions.width);
+                        rowCount += (currRowWidth % this._dimensions.width === 0) ? -1 : 0;
+                    }
+                }
+                return cc.size(this._dimensions.width, rowHeight * rowCount);
+            }
         }
-
     },
 
     _drawTTFInCanvasForWebGL:function (context) {
