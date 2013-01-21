@@ -181,7 +181,7 @@ cc.Scale9Sprite = cc.Node.extend({
     },
     setCapInsets:function (capInsets) {
         var contentSize = this._contentSize;
-        this.updateWithBatchNode(this._scale9Image, this._spriteRect, capInsets);
+        this.updateWithBatchNode(this._scale9Image, this._spriteRect, false, capInsets);
         this.setContentSize(contentSize);
     },
 
@@ -231,12 +231,12 @@ cc.Scale9Sprite = cc.Node.extend({
     },
 
     init:function () {
-        return this.initWithBatchNode(null, cc.RectZero(), cc.RectZero());
+        return this.initWithBatchNode(null, cc.RectZero(), false, cc.RectZero());
     },
 
-    initWithBatchNode:function (batchNode, rect, capInsets) {
+    initWithBatchNode:function (batchNode, rect, unused, capInsets) {
         if (batchNode) {
-            this.updateWithBatchNode(batchNode, rect, capInsets);
+            this.updateWithBatchNode(batchNode, rect, unused, capInsets);
             this.setAnchorPoint(cc.p(0.5, 0.5));
         }
         this.m_positionsAreDirty = true;
@@ -268,7 +268,7 @@ cc.Scale9Sprite = cc.Node.extend({
 
         cc.Assert(file != null, "Invalid file for sprite");
         var batchnode = cc.SpriteBatchNode.create(file, 9);
-        return this.initWithBatchNode(batchnode, rect, capInsets);
+        return this.initWithBatchNode(batchnode, rect, false, capInsets);
     },
 
     /**
@@ -287,7 +287,7 @@ cc.Scale9Sprite = cc.Node.extend({
         cc.Assert(spriteFrame != null, "Sprite frame must not be nil");
 
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
-        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), capInsets);
+        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), false, capInsets);
     },
 
     /**
@@ -318,7 +318,7 @@ cc.Scale9Sprite = cc.Node.extend({
      */
     resizableSpriteWithCapInsets:function (capInsets) {
         var pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithBatchNode(this._scale9Image, this._spriteRect, capInsets)) {
+        if (pReturn && pReturn.initWithBatchNode(this._scale9Image, this._spriteRect, false, capInsets)) {
             return pReturn;
         }
         return null;
@@ -349,7 +349,7 @@ cc.Scale9Sprite = cc.Node.extend({
         return this._isOpacityModifyRGB;
     },
 
-    updateWithBatchNode:function (batchNode, rect, capInsets) {
+    updateWithBatchNode:function (batchNode, rect, unused, capInsets) {
         // Release old sprites
         this.removeAllChildren(true);
 
@@ -461,7 +461,7 @@ cc.Scale9Sprite = cc.Node.extend({
 
     setSpriteFrame:function (spriteFrame) {
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
-        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.RectZero());
+        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), false, cc.RectZero());
 
         // Reset insets
         this._insetLeft = 0;
