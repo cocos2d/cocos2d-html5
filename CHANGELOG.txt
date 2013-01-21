@@ -5,6 +5,7 @@ Cocos2d-html5-v2.1.1 @ Jan.22, 2013
 * Added "Sys" class for system capabilities
 * Improved cc.BuilderReader to support .ccbi extension auto-completion
 * Improved TMXXMLParser to support XML, CSV and zlib compression
+* Changed cc.Time.gettimeofdayCocos2d to Date.now which is more javascript friendly.
 
 Cocos2d-html5-v2.1.0 @ Dec.4, 2012
 * Improved cc.Class and add Release Mode
