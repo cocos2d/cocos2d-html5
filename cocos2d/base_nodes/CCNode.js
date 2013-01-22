@@ -1026,7 +1026,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
-            cleanup = cleanup || true;
+            if (cleanup == null){
+                cleanup = true;
+            }
             this._parent.removeChild(this, cleanup);
         }
     },
@@ -1051,7 +1053,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
         }
 
-        cleanup = cleanup || true;
+        if (cleanup == null){
+            cleanup = true;
+        }
         if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
@@ -1090,7 +1094,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
-            cleanup = cleanup || true;
+            if (cleanup == null){
+                cleanup = true;
+            }
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
