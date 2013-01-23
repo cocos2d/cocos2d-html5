@@ -80,19 +80,8 @@ cc.Scale9Sprite = cc.Node.extend({
     },
 
     _updatePositions:function () {
+
         var size = this._contentSize;
-
-        var sizableWidth = size.width - this._topLeft.getContentSize().width - this._topRight.getContentSize().width;
-        var sizableHeight = size.height - this._topLeft.getContentSize().height - this._bottomRight.getContentSize().height;
-        var horizontalScale = sizableWidth / this._centre.getContentSize().width;
-        var verticalScale = sizableHeight / this._centre.getContentSize().height;
-        this._centre.setScaleX(horizontalScale);
-        this._centre.setScaleY(verticalScale);
-        var rescaledWidth = this._centre.getContentSize().width * horizontalScale;
-        var rescaledHeight = this._centre.getContentSize().height * verticalScale;
-
-        var leftWidth = this._bottomLeft.getContentSize().width;
-        var bottomHeight = this._bottomLeft.getContentSize().height;
 
         this._bottomLeft.setAnchorPoint(cc.p(0, 0));
         this._bottomRight.setAnchorPoint(cc.p(0, 0));
@@ -104,24 +93,67 @@ cc.Scale9Sprite = cc.Node.extend({
         this._bottom.setAnchorPoint(cc.p(0, 0));
         this._centre.setAnchorPoint(cc.p(0, 0));
 
-        // Position corners
-        this._bottomLeft.setPosition(cc.p(0, 0));
-        this._bottomRight.setPosition(cc.p(leftWidth + rescaledWidth, 0));
-        this._topLeft.setPosition(cc.p(0, bottomHeight + rescaledHeight));
-        this._topRight.setPosition(cc.p(leftWidth + rescaledWidth, bottomHeight + rescaledHeight));
+        if(!this._capInsets)
+        {
+            var equalWidth = size.width / 3;
+            var equalHeight = size.height / 3;
 
-        // Scale and position borders
-        this._left.setPosition(cc.p(0, bottomHeight));
-        this._left.setScaleY(verticalScale);
-        this._right.setPosition(cc.p(leftWidth + rescaledWidth, bottomHeight));
-        this._right.setScaleY(verticalScale);
-        this._bottom.setPosition(cc.p(leftWidth, 0));
-        this._bottom.setScaleX(horizontalScale);
-        this._top.setPosition(cc.p(leftWidth, bottomHeight + rescaledHeight));
-        this._top.setScaleX(horizontalScale);
+            var equalWidthScale = equalWidth / this._centre.getContentSize().width;
+            var equalHeightScale = equalHeight / this._centre.getContentSize().height;
 
-        // Position centre
-        this._centre.setPosition(cc.p(leftWidth, bottomHeight));
+            this._topLeft.setScale(equalWidthScale, equalHeightScale);
+            this._top.setScale(equalWidthScale, equalHeightScale);
+            this._topRight.setScale(equalWidthScale, equalHeightScale);
+            this._left.setScale(equalWidthScale, equalHeightScale);
+            this._centre.setScale(equalWidthScale, equalHeightScale);
+            this._right.setScale(equalWidthScale, equalHeightScale);
+            this._bottomLeft.setScale(equalWidthScale, equalHeightScale);
+            this._bottom.setScale(equalWidthScale, equalHeightScale);
+            this._bottomRight.setScale(equalWidthScale, equalHeightScale);
+
+            this._topLeft.setPosition(cc.p(0, 2 * equalHeight));
+            this._top.setPosition(cc.p(equalWidth, 2 * equalHeight));
+            this._topRight.setPosition(cc.p(2 * equalWidth, 2 * equalHeight));
+            this._left.setPosition(cc.p(0, equalHeight));
+            this._centre.setPosition(cc.p(equalWidth, equalHeight));
+            this._right.setPosition(cc.p(2 * equalWidth, equalHeight));
+            this._bottomLeft.setPosition(cc.p(0, 0));
+            this._bottom.setPosition(cc.p(equalWidth, 0));
+            this._bottomRight.setPosition(cc.p(2 * equalWidth, 0));
+        }
+        else
+        {
+            var sizableWidth = size.width - this._topLeft.getContentSize().width - this._topRight.getContentSize().width;
+            var sizableHeight = size.height - this._topLeft.getContentSize().height - this._bottomRight.getContentSize().height;
+            var horizontalScale = sizableWidth / this._centre.getContentSize().width;
+            var verticalScale = sizableHeight / this._centre.getContentSize().height;
+            this._centre.setScaleX(horizontalScale);
+            this._centre.setScaleY(verticalScale);
+            var rescaledWidth = this._centre.getContentSize().width * horizontalScale;
+            var rescaledHeight = this._centre.getContentSize().height * verticalScale;
+
+            var leftWidth = this._bottomLeft.getContentSize().width;
+            var bottomHeight = this._bottomLeft.getContentSize().height;
+
+            // Position corners
+            this._bottomLeft.setPosition(cc.p(0, 0));
+            this._bottomRight.setPosition(cc.p(leftWidth + rescaledWidth, 0));
+            this._topLeft.setPosition(cc.p(0, bottomHeight + rescaledHeight));
+            this._topRight.setPosition(cc.p(leftWidth + rescaledWidth, bottomHeight + rescaledHeight));
+
+            // Scale and position borders
+            this._left.setPosition(cc.p(0, bottomHeight));
+            this._left.setScaleY(verticalScale);
+            this._right.setPosition(cc.p(leftWidth + rescaledWidth, bottomHeight));
+            this._right.setScaleY(verticalScale);
+            this._bottom.setPosition(cc.p(leftWidth, 0));
+            this._bottom.setScaleX(horizontalScale);
+            this._top.setPosition(cc.p(leftWidth, bottomHeight + rescaledHeight));
+            this._top.setScaleX(horizontalScale);
+
+            // Position centre
+            this._centre.setPosition(cc.p(leftWidth, bottomHeight));
+        }
     },
 
     ctor:function () {
@@ -237,7 +269,6 @@ cc.Scale9Sprite = cc.Node.extend({
     initWithBatchNode:function (batchNode, rect, unused, capInsets) {
         if (batchNode) {
             this.updateWithBatchNode(batchNode, rect, unused, capInsets);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
         }
         this.m_positionsAreDirty = true;
         return true;
@@ -377,16 +408,27 @@ cc.Scale9Sprite = cc.Node.extend({
         this._spriteRect = rect;
         this._originalSize = new cc.Size(rect.size.width, rect.size.height);
         this._preferredSize = this._originalSize;
-        this._capInsetsInternal = capInsets;
+        this._capInsetsInternal = capInsets || cc.RectZero();
 
         // If there is no specified center region
-        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, cc.RectZero())) {
+        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, cc.RectZero()) ||
+            cc.Rect.CCRectEqualToRect(this._capInsetsInternal, this._spriteRect)) {
             // Apply the 3x3 grid format
             this._capInsetsInternal = cc.RectMake(
                 rect.origin.x + this._originalSize.width / 3,
                 rect.origin.y + this._originalSize.height / 3,
                 this._originalSize.width / 3,
                 this._originalSize.height / 3);
+            this._capInsets = null;
+        }
+        else
+        {
+            this._capInsetsInternal = cc.RectMake(
+                rect.origin.x + this._capInsetsInternal.origin.x,
+                rect.origin.y + this._capInsetsInternal.origin.y,
+                this._capInsetsInternal.size.width,
+                this._capInsetsInternal.size.height
+            );
         }
 
         // Get the image edges
@@ -456,6 +498,7 @@ cc.Scale9Sprite = cc.Node.extend({
 
         this.setContentSize(rect.size);
         this.addChild(this._scale9Image);
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         return true;
     },
 
