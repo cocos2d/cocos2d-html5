@@ -69,7 +69,7 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @return {cc.Animation}
      */
     getAnimation:function (name) {
-        if(this._animations.hasOwnProperty(name))
+        if (this._animations.hasOwnProperty(name))
             return this._animations[name];
         return null;
     },
@@ -173,7 +173,9 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
 
         for (var key in animations) {
             var animationDict = animations[key];
-            var loops = parseInt(animationDict["loops"]) || 1;
+
+            var loopsTemp = parseInt(animationDict["loops"]);
+            var loops = (loopsTemp == null) ? 1 : loopsTemp;
             var restoreOriginalFrame = (animationDict["restoreOriginalFrame"] && animationDict["restoreOriginalFrame"] == true) ? true : false;
             var frameArray = animationDict["frames"];
 
