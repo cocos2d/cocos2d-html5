@@ -80,18 +80,7 @@ cc.Scale9Sprite = cc.Node.extend({
     },
 
     _updatePositions:function () {
-
         var size = this._contentSize;
-
-        this._bottomLeft.setAnchorPoint(cc.p(0, 0));
-        this._bottomRight.setAnchorPoint(cc.p(0, 0));
-        this._topLeft.setAnchorPoint(cc.p(0, 0));
-        this._topRight.setAnchorPoint(cc.p(0, 0));
-        this._left.setAnchorPoint(cc.p(0, 0));
-        this._right.setAnchorPoint(cc.p(0, 0));
-        this._top.setAnchorPoint(cc.p(0, 0));
-        this._bottom.setAnchorPoint(cc.p(0, 0));
-        this._centre.setAnchorPoint(cc.p(0, 0));
 
         var sizableWidth = size.width - this._topLeft.getContentSize().width - this._topRight.getContentSize().width;
         var sizableHeight = size.height - this._topLeft.getContentSize().height - this._bottomRight.getContentSize().height;
@@ -104,6 +93,16 @@ cc.Scale9Sprite = cc.Node.extend({
 
         var leftWidth = this._bottomLeft.getContentSize().width;
         var bottomHeight = this._bottomLeft.getContentSize().height;
+
+        this._bottomLeft.setAnchorPoint(cc.p(0, 0));
+        this._bottomRight.setAnchorPoint(cc.p(0, 0));
+        this._topLeft.setAnchorPoint(cc.p(0, 0));
+        this._topRight.setAnchorPoint(cc.p(0, 0));
+        this._left.setAnchorPoint(cc.p(0, 0));
+        this._right.setAnchorPoint(cc.p(0, 0));
+        this._top.setAnchorPoint(cc.p(0, 0));
+        this._bottom.setAnchorPoint(cc.p(0, 0));
+        this._centre.setAnchorPoint(cc.p(0, 0));
 
         // Position corners
         this._bottomLeft.setPosition(cc.p(0, 0));
