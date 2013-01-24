@@ -172,23 +172,23 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             texture.addEventListener("load", function () {
                 cc.Loader.getInstance().onResLoaded();
 
-                if(cc.renderContextType == cc.WEBGL){
-                    if(that._texture2Ds.hasOwnProperty(path))
+                if (cc.renderContextType == cc.WEBGL) {
+                    if (that._texture2Ds.hasOwnProperty(path))
                         that._texture2Ds[path].handleLoadedTexture();
                 }
             });
             texture.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
                 //remove from cache
-                if(that._textures.hasOwnProperty(path))
+                if (that._textures.hasOwnProperty(path))
                     delete that._textures[path];
 
-                if(that._texture2Ds.hasOwnProperty(path))
+                if (that._texture2Ds.hasOwnProperty(path))
                     delete that._texture2Ds[path];
             });
             texture.src = path;
             this._textures[path] = texture;
-            if(cc.renderContextType === cc.WEBGL){
+            if (cc.renderContextType === cc.WEBGL) {
                 var texture2d = new cc.Texture2D();
                 texture2d.initWithElement(texture);
                 this._texture2Ds[path] = texture2d;
@@ -207,6 +207,13 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         if (!this._textures[path]) {
             this._textures[path] = texture;
         }
+
+        if (cc.renderContextType === cc.WEBGL) {
+            var texture2d = new cc.Texture2D();
+            texture2d.initWithElement(texture);
+            texture2d.handleLoadedTexture();
+            this._texture2Ds[path] = texture2d;
+        }
     },
 
     /**
@@ -215,7 +222,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * Otherwise it will return a reference of a previously loaded image<br />
      * The "key" parameter will be used as the "key" for the cache.<br />
      * If "key" is null, then a new texture will be created each time.</p>
-     * @param {Image} image
+     * @param {cc.Image} image
      * @param {String} key
      * @return {cc.Texture2D}
      */
@@ -225,8 +232,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         var texture = null;
 
         if (key) {
-            if (this._textures.hasOwnProperty(key)) {
-                texture = this._textures[key];
+            if (this._texture2Ds.hasOwnProperty(key)) {
+                texture = this._texture2Ds[key];
                 if (texture)
                     return texture;
             }
@@ -236,11 +243,10 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         texture = new cc.Texture2D();
         texture.initWithImage(image);
 
-        if ((key != null) && (texture != null)) {
+        if ((key != null) && (texture != null))
             this._textures[key] = texture;
-        } else {
+        else
             cc.log("cocos2d: Couldn't add UIImage in TextureCache");
-        }
 
         return texture;
     },
@@ -254,10 +260,10 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
      * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
      */
     textureForKey:function (key) {
-        if(cc.renderContextType === cc.WEBGL){
-            if(this._texture2Ds.hasOwnProperty(key))
+        if (cc.renderContextType === cc.WEBGL) {
+            if (this._texture2Ds.hasOwnProperty(key))
                 return this._texture2Ds[key];
-        }else{
+        } else {
             if (this._textures.hasOwnProperty(key))
                 return this._textures[key];
         }
