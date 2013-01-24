@@ -150,12 +150,12 @@ cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
  *    Apple recommends its usage but they might consume a lot of memory, specially if you use many of them.<br/>
  *    So for certain cases, where you might need hundreds of VAO objects, it might be a good idea to disable it.<br/>
  *    <br/>
- *    To disable it set it to 0. Enabled by default.<br/>
+ *    To disable it set it to 0. disable by default.(Not Supported on WebGL)<br/>
  * </p>
  * @constant
  * @type Number
  */
-cc.TEXTURE_ATLAS_USE_VAO = 1;
+cc.TEXTURE_ATLAS_USE_VAO = 0;
 
 /**
  * <p>

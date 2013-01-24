@@ -115,34 +115,53 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
         //set size for labelCanvas
         this._labelContext.font = this._fontStyleStr;
+        var size = this._computeLabelSizeForWebGL();
 
-        var dim = this._labelContext.measureText(this._string);
-        //TODO multiple line
+        this._labelCanvas.width = size.width;
+        this._labelCanvas.height = size.height;
 
-        this._labelCanvas.width = dim.width;
-        this._labelCanvas.height = this._fontSize;
-
-        this.setContentSize(cc.size(this._labelCanvas.width,this._labelCanvas.height));
+        this.setContentSize(cc.size(this._labelCanvas.width, this._labelCanvas.height));
 
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
         this._texture.handleLoadedTexture();
+
         this.setTextureRect(cc.rect(0, 0, this._labelCanvas.width, this._labelCanvas.height));
         return true;
     },
 
-    _drawTTFInCanvasForWebGL:function(context){
-        if(!context)
-            return ;
+    _computeLabelSizeForWebGL:function () {
+        var dim, rowHeight = this._fontSize * 1.2, i, tmpWords, maxLineWidth, rowCount;
+        if (this._dimensions.width == 0) {
+            if (this._string.indexOf("\n") === -1) {
+                dim = this._labelContext.measureText(this._string);
+                return cc.size(dim.width === 0 ? 1 : dim.width, this._fontSize);
+            } else {
+                tmpWords = this._string.split("\n");
+                rowCount = tmpWords.length;
+                maxLineWidth = 1;
+                for (i = 0; i < rowCount; i++)
+                    maxLineWidth = Math.max(maxLineWidth, this._labelContext.measureText(tmpWords[i]).width);
+
+                return cc.size(maxLineWidth, rowHeight * rowCount);
+            }
+        } else {
+            return cc.size(this._dimensions.width, this._dimensions.height);
+        }
+    },
+
+    _drawTTFInCanvasForWebGL:function (context) {
+        if (!context)
+            return;
 
         context.save();
-        context.translate(this._contentSize.width/2,this._contentSize.height/2);
+        context.translate(this._contentSize.width / 2, this._contentSize.height / 2);
         //this is fillText for canvas
         if (context.font != this._fontStyleStr)
             context.font = this._fontStyleStr;
         context.fillStyle = "rgba(255,255,255,1)";
 
-        if (((this._contentSize.width > this._dimensions.width) || this._string.indexOf("\n") > -1) && this._dimensions.width !== 0) {
+        if (((this._contentSize.width >= this._dimensions.width) || this._string.indexOf("\n") > -1) && this._dimensions.width !== 0) {
             context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
             context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
             this._wrapText(context, this._string,
@@ -155,10 +174,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             context.textBaseline = "bottom";
             context.textAlign = "left";
 
-            if (this._string.indexOf("\n") > -1)
+            if (this._string.indexOf("\n") > -1) {
                 this._multiLineText(context);
-            else
-                context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+            } else
+                context.fillText(this._string, 0 | (-this._contentSize.width * this._anchorPoint.x), 0 | (this._contentSize.height * this._anchorPoint.y));
         } else {
             context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
             context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
@@ -173,8 +192,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             if (this._vAlignment == cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
                 yOffset = -this._dimensions.height / 2;
 
-            context.fillText(this._string, -this._dimensions.width * this._anchorPoint.x + xOffset,
-                this._dimensions.height * this._anchorPoint.y + yOffset);
+            context.fillText(this._string, 0 | (-this._dimensions.width * this._anchorPoint.x + xOffset),
+                0 | (this._dimensions.height * this._anchorPoint.y + yOffset));
         }
         context.restore();
     },
@@ -294,6 +313,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setFontSize:function (fontSize) {
         if (this._fontSize != fontSize) {
             this._fontSize = fontSize;
+            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
 
             // Force update
             if (this._string.length > 0) {
@@ -319,7 +339,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     setFontName:function (fontName) {
         if (this._fontName != fontName) {
-            this._fontName = new String(fontName);
+            this._fontName = fontName;
+            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             // Force update
             if (this._string.length > 0) {
                 if (cc.renderContextType === cc.CANVAS)
@@ -376,10 +397,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
             this.setString(strInfo);
 
-            //TODO
-            //if (cc.renderContextType === cc.CANVAS) {
-            //    this._updateTTF();
-            //}
             return true;
         }
         return false;
@@ -466,7 +483,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                 xOffset = centerPoint.x - maxLineWidth;
             if (this._hAlignment == cc.TEXT_ALIGNMENT_CENTER)
                 xOffset = maxLineWidth - splitStrWidthArr[i];
-            context.fillText(tmpWords[i], xOffset, i * rowHeight - centerPoint.y + rowHeight / 2);
+            context.fillText(tmpWords[i], xOffset, i * rowHeight - centerPoint.y + rowHeight);
         }
     },
 

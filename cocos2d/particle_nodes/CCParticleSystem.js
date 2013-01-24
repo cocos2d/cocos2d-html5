@@ -255,7 +255,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     modeB:null,
 
     //private POINTZERO for ParticleSystem
-    _pointZeroForParticle:cc.p(0,0),
+    _pointZeroForParticle:cc.p(0, 0),
 
     //! Array of particles
     _particles:null,
@@ -1026,7 +1026,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _blendFunc: {src:gl.ONE, dst:gl.ONE},
+    _blendFunc:{src:gl.ONE, dst:gl.ONE},
     /**
      * get BlendFunc of Particle System
      * @return {cc.BlendFunc}
@@ -1041,12 +1041,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if(arguments.length == 1){
-            if (this._blendFunc != src ) {
+        if (arguments.length == 1) {
+            if (this._blendFunc != src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();
             }
-        }else{
+        } else {
             if (this._blendFunc.src != src || this._blendFunc.dst != dst) {
                 this._blendFunc = {src:src, dst:dst};
                 this._updateBlendFunc();
@@ -1182,13 +1182,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
 
         this._particles = [];
-        this._sourcePosition = new cc.Point(0,0);
-        this._posVar = new cc.Point(0,0);
+        this._sourcePosition = new cc.Point(0, 0);
+        this._posVar = new cc.Point(0, 0);
 
-        this._startColor = new cc.Color4F(1,1,1,1);
-        this._startColorVar = new cc.Color4F(1,1,1,1);
-        this._endColor = new cc.Color4F(1,1,1,1);
-        this._endColorVar = new cc.Color4F(1,1,1,1);
+        this._startColor = new cc.Color4F(1, 1, 1, 1);
+        this._startColorVar = new cc.Color4F(1, 1, 1, 1);
+        this._endColor = new cc.Color4F(1, 1, 1, 1);
+        this._endColorVar = new cc.Color4F(1, 1, 1, 1);
 
         this._particlePool = [];
     },
@@ -1214,7 +1214,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(this._plistFile);
 
         cc.Assert(dict != null, "Particles: file not found");
-        return this.initWithDictionary(dict);
+        return this.initWithDictionary(dict, "");
     },
 
     /**
@@ -1226,11 +1226,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * initializes a CCQuadParticleSystem from a CCDictionary.
+     * initializes a particle system from a NSDictionary and the path from where to load the png
      * @param {object} dictionary
+     * @param {String} dirname
      * @return {Boolean}
      */
-    initWithDictionary:function (dictionary) {
+    initWithDictionary:function (dictionary, dirname) {
         var ret = false;
         var buffer = null;
         var deflated = null;
@@ -1344,22 +1345,28 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // texture
                 // Try to get the texture from the cache
                 var textureName = this._valueForKey("textureFileName", dictionary);
-                var fullpath = cc.FileUtils.getInstance().fullPathFromRelativeFile(textureName, this._plistFile);
 
-                var tex = cc.TextureCache.getInstance().textureForKey(fullpath);
+                if (dirname != null && dirname != "") {
+                    var rPos = textureName.lastIndexOf("/");
+                    textureName = dirname + textureName.substring(rPos + 1, textureName.length);
+                }
+
+                var tex = cc.TextureCache.getInstance().textureForKey(textureName);
 
                 if (tex) {
-                    this._texture = tex;
+                    this.setTexture(tex);
                 } else {
                     var textureData = this._valueForKey("textureImageData", dictionary);
 
                     if (textureData && textureData.length == 0) {
                         cc.Assert(textureData, "cc.ParticleSystem.initWithDictory:textureImageData is null");
-                        tex = cc.TextureCache.getInstance().addImage(fullpath);
+                        tex = cc.TextureCache.getInstance().addImage(textureName);
                         if (!tex)
                             return false;
-                        this._texture = tex;
+                        this.setTexture(tex);
                     } else {
+                        //TODO need implement parse image data for cc.Image
+                        //if(cc.renderContextType === cc.CANVAS){
                         buffer = cc.unzipBase64AsArray(textureData, 1);
                         if (!buffer)
                             return false;
@@ -1369,10 +1376,24 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         var img = new Image();
                         img.src = "data:image/png;base64," + newImageData;
-                        this._texture = img;
 
                         //save image to TextureCache
-                        cc.TextureCache.getInstance().cacheImage(fullpath, img);
+                        cc.TextureCache.getInstance().cacheImage(textureName, img);
+                        this.setTexture(cc.TextureCache.getInstance().textureForKey(textureName));
+                        /*} else {
+                         buffer = cc.unzipBase64AsArray(textureData, 1);
+                         if (!buffer){
+                         cc.Assert( buffer != null, "cc.ParticleSystem: error decoding textureImageData");
+                         return false;
+                         }
+                         image = new cc.Image();
+                         var isOK = image.initWithImageData(buffer, buffer.length);
+                         if(!isOK){
+                         cc.Assert(isOK, "cc.ParticleSystem: error init image with Data");
+                         return false;
+                         }
+                         this.setTexture(cc.TextureCache.getInstance().addUIImage(image, textureName));
+                         }*/
                     }
                 }
                 cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
@@ -1439,8 +1460,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this.unscheduleUpdate();
     },
 
-    _getParticleObject:function(){
-        if(this._particlePool.length > 0)
+    _getParticleObject:function () {
+        if (this._particlePool.length > 0)
             return this._particlePool.pop();
         return new cc.Particle();
     },
@@ -1590,7 +1611,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * should be overriden by subclasses
+     * should be overridden by subclasses
      * @param {cc.Particle} particle
      * @param {cc.Point} newPosition
      */
@@ -1599,7 +1620,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * should be overriden by subclasses
+     * should be overridden by subclasses
      */
     postStep:function () {
         // should be overriden
@@ -1804,8 +1825,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         object = typeof window != 'undefined' ? window : exports,
         chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
         INVALID_CHARACTER_ERR = (function () {
-            try { document.createElement('$'); }
-            catch (error) { return error; }}());
+            try {
+                document.createElement('$');
+            }
+            catch (error) {
+                return error;
+            }
+        }());
 
     object.btoa || (
         object.btoa = function (input) {
@@ -1819,7 +1845,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
                 output += map.charAt(63 & block >> 8 - idx % 1 * 8)
                 ) {
-                charCode = input.charCodeAt(idx += 3/4);
+                charCode = input.charCodeAt(idx += 3 / 4);
                 if (charCode > 0xFF) throw INVALID_CHARACTER_ERR;
                 block = block << 8 | charCode;
             }
@@ -1861,13 +1887,25 @@ cc.encodeToBase64 = function (data) {
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    return cc.ParticleSystemQuad.create(plistFile);
+    // return cc.ParticleSystemQuad.create(plistFile);
+    var particle = new cc.ParticleSystem();
+    if (particle && particle.initWithFile(plistFile))
+        return particle;
+    return null;
 };
 
+/**
+ * create a system with a fixed number of particles
+ * @param {Number} number_of_particles
+ * @return {cc.ParticleSystem}
+ */
 cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    var emitter = cc.ParticleSystemQuad.create(number_of_particles);
+    //return cc.ParticleSystemQuad.create(number_of_particles);
     //emitter.initWithTotalParticles(number_of_particles);
-    return emitter;
+    var particle = new cc.ParticleSystem();
+    if (particle && particle.initWithTotalParticles(number_of_particles))
+        return particle;
+    return null;
 };
 
 // Different modes
