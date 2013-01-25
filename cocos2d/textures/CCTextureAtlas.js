@@ -226,7 +226,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         gl.bufferData(gl.ARRAY_BUFFER,this._texCoordsArray, gl.DYNAMIC_DRAW);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
-        //gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, sizeof(m_pIndices[0]) * m_uCapacity * 6, m_pIndices, gl.STATIC_DRAW);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, null);
 

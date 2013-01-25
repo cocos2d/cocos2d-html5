@@ -160,6 +160,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         //update the index of other swapped item
         this._descendants[newIndex].setAtlasIndex(oldIndex);
 
+
         this._descendants[oldIndex] = this._descendants[newIndex];
         quads[oldIndex] = quads[newIndex];
         this._descendants[newIndex] = tempItem;
@@ -377,7 +378,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // if we're going beyond the current TextureAtlas's capacity,
         // all the previously initialized sprites will need to redo their texture coords
         // this is likely computationally expensive
-        var quantity = (this._textureAtlas.getCapacity() + 1) * 4 / 3;
+        var quantity = 0 | ((this._textureAtlas.getCapacity() + 1) * 4 / 3);
 
         cc.log("cocos2d: CCSpriteBatchNode: resizing TextureAtlas capacity from " + this._textureAtlas.getCapacity() + " to [" + quantity + "].");
 
@@ -750,18 +751,18 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} tag
      */
     addChild:function (child, zOrder, tag) {
-        if(child == null)
+        if (child == null)
             return;
 
-        if(arguments.length === 4)
-            if (arguments[3] == true){
+        if (arguments.length === 4)
+            if (arguments[3] == true) {
                 this._super(child, zOrder, tag);
                 this.setNodeDirty();
                 return;
             }
 
-        zOrder = zOrder || child.getZOrder();
-        tag = tag || child.getTag();
+        zOrder = (zOrder == null)? child.getZOrder() : zOrder;
+        tag = (tag == null) ? child.getTag() : tag;
 
         cc.Assert(child != null, "SpriteBatchNode.addChild():child should not be null");
         cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
