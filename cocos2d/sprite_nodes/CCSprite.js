@@ -244,6 +244,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _texture:null,
     _originalTexture:null,
     _color:null,
+    _colorized:false,
     //
     // Shared data
     //
@@ -912,9 +913,15 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     this._rect.size.width = this._texture.width;
                     this._rect.size.height = this._texture.height;
                     context.drawImage(this._texture, posX, -(posY + this._texture.height));
-                } else {
+                } else if(this._colorized) {
                     context.drawImage(this._texture,
                         0, 0,
+                        this._rect.size.width, this._rect.size.height,
+                        posX, -(posY + this._rect.size.height),
+                        this._rect.size.width, this._rect.size.height);
+                } else {
+                    context.drawImage(this._texture,
+                        this._rect.origin.x, this._rect.origin.y,
                         this._rect.size.width, this._rect.size.height,
                         posX, -(posY + this._rect.size.height),
                         this._rect.size.width, this._rect.size.height);
@@ -1440,6 +1447,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (cc.renderContextType === cc.CANVAS) {
                 var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
+                    this._colorized = true;
                     //generate color texture cache
                     if (this._texture instanceof HTMLCanvasElement && !this._rectRotated) {
                         cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect(), this._texture);
