@@ -29,7 +29,7 @@
  * @constant
  * @type Number
  */
-cc.SPRITE_INDEX_NOT_INITIALIZED = "0xffffffff";
+cc.SPRITE_INDEX_NOT_INITIALIZED = -1;
 
 /**
  * generate texture's cache for texture tint
