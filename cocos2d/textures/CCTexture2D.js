@@ -34,41 +34,30 @@ var cc = cc = cc || {};
  * Support for RGBA_4_4_4_4 and RGBA_5_5_5_1 was copied from:
  * https://devforums.apple.com/message/37855#37855 by a1studmuffin
  */
-cc.TEXTURE_2D_PIXEL_FORMAT_AUTOMATIC = 0;
+cc.TEXTURE_PIXELFORMAT_AUTOMATIC = 0;
 //! 32-bit texture: RGBA8888
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 = 1;
+cc.TEXTURE_PIXELFORMAT_RGBA8888 = 1;
 //! 24-bit texture: RGBA888
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB888 = 2;
+cc.TEXTURE_PIXELFORMAT_RGB888 = 2;
 //! 16-bit texture without Alpha channel
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB565 = 3;
+cc.TEXTURE_PIXELFORMAT_RGB565 = 3;
 //! 8-bit textures used as masks
-cc.TEXTURE_2D_PIXEL_FORMAT_A8 = 4;
+cc.TEXTURE_PIXELFORMAT_A8 = 4;
 //! 8-bit intensity texture
-cc.TEXTURE_2D_PIXEL_FORMAT_I8 = 5;
+cc.TEXTURE_PIXELFORMAT_I8 = 5;
 //! 16-bit textures used as masks
-cc.TEXTURE_2D_PIXEL_FORMAT_AI88 = 6;
+cc.TEXTURE_PIXELFORMAT_AI88 = 6;
 //! 16-bit textures: RGBA4444
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444 = 7;
+cc.TEXTURE_PIXELFORMAT_RGBA4444 = 7;
 //! 16-bit textures: RGB5A1
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1 = 8;
+cc.TEXTURE_PIXELFORMAT_RGB5A1 = 8;
 //! 4-bit PVRTC-compressed texture: PVRTC4
-cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC4 = 9;
+cc.TEXTURE_PIXELFORMAT_PVRTC4 = 9;
 //! 2-bit PVRTC-compressed texture: PVRTC2
-cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC2 = 10;
+cc.TEXTURE_PIXELFORMAT_PVRTC2 = 10;
 
 //! Default texture format: RGBA8888
-cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
-
-// backward compatibility stuff
-cc.TEXTURE_2D_PIXEL_FORMAT_AUTOMATIC = cc.TEXTURE_2D_PIXEL_FORMAT_AUTOMATIC;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB888 = cc.TEXTURE_2D_PIXEL_FORMAT_RGB888;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB565 = cc.TEXTURE_2D_PIXEL_FORMAT_RGB565;
-cc.TEXTURE_2D_PIXEL_FORMAT_A8 = cc.TEXTURE_2D_PIXEL_FORMAT_A8;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444 = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444;
-cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1 = cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1;
-cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT = cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT;
-
+cc.TEXTURE_PIXELFORMAT_DEFAULT = cc.TEXTURE_PIXELFORMAT_RGBA8888;
 
 if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
     //TODO include CCTextureCache.h
@@ -76,7 +65,7 @@ if (cc.ENABLE_CACHE_TEXTTURE_DATA) {
 
 // If the image has alpha, you can create RGBA8 (32-bit) or RGBA4 (16-bit) or RGB5A1 (16-bit)
 // Default is: RGBA8888 (32-bit textures)
-cc.g_defaultAlphaPixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_DEFAULT;
+cc.g_defaultAlphaPixelFormat = cc.TEXTURE_PIXELFORMAT_DEFAULT;
 // By default PVR images are treated as if they don't have the alpha channel premultiplied
 cc.PVRHaveAlphaPremultiplied_ = false;
 /**
@@ -228,31 +217,31 @@ cc.Texture2D = cc.Class.extend({
         // Specify OpenGL texture image
 
         switch (pixelFormat) {
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
+            case cc.TEXTURE_PIXELFORMAT_RGBA8888:
                 //TODO
                 // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
+            case cc.TEXTURE_PIXELFORMAT_RGB888:
                 //TODO
                 // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGB, gl.UNSIGNED_BYTE, data);
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
+            case cc.TEXTURE_PIXELFORMAT_RGBA4444:
                 //TODO
                 // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_4_4_4_4, data);
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
+            case cc.TEXTURE_PIXELFORMAT_RGB5A1:
                 //TODO
                 // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGBA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGBA, gl.UNSIGNED_SHORT_5_5_5_1, data);
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
+            case cc.TEXTURE_PIXELFORMAT_RGB565:
                 //TODO
                 // glTexImage2D(gl.TEXTURE_2D, 0, gl.RGB, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.RGB, gl.UNSIGNED_SHORT_5_6_5, data);
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
+            case cc.TEXTURE_PIXELFORMAT_AI88:
                 //TODO
                 // glTexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE_ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.LUMINANCE_ALPHA, gl.UNSIGNED_BYTE, data);
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
+            case cc.TEXTURE_PIXELFORMAT_A8:
                 //TODO
                 // glTexImage2D(gl.TEXTURE_2D, 0, gl.ALPHA, (GLsizei)pixelsWide, (GLsizei)pixelsHigh, 0, gl.ALPHA, gl.UNSIGNED_BYTE, data);
                 break;
@@ -479,34 +468,34 @@ cc.Texture2D = cc.Class.extend({
         var ret = 0;
 
         switch (this._pixelFormat) {
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
+            case cc.TEXTURE_PIXELFORMAT_RGBA8888:
                 ret = 32;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
+            case cc.TEXTURE_PIXELFORMAT_RGB565:
                 ret = 16;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
+            case cc.TEXTURE_PIXELFORMAT_A8:
                 ret = 8;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
+            case cc.TEXTURE_PIXELFORMAT_RGBA4444:
                 ret = 16;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
+            case cc.TEXTURE_PIXELFORMAT_RGB5A1:
                 ret = 16;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC4:
+            case cc.TEXTURE_PIXELFORMAT_PVRTC4:
                 ret = 4;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_PVRTC2:
+            case cc.TEXTURE_PIXELFORMAT_PVRTC2:
                 ret = 2;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_I8:
+            case cc.TEXTURE_PIXELFORMAT_I8:
                 ret = 8;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_AI88:
+            case cc.TEXTURE_PIXELFORMAT_AI88:
                 ret = 16;
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
+            case cc.TEXTURE_PIXELFORMAT_RGB888:
                 ret = 24;
                 break;
             default:
@@ -538,11 +527,11 @@ cc.Texture2D = cc.Class.extend({
         }
         else {
             if (bpp >= 8) {
-                pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGB888;
+                pixelFormat = cc.TEXTURE_PIXELFORMAT_RGB888;
             }
             else {
                 cc.log("cocos2d: cc.Texture2D: Using RGB565 texture since image has no alpha");
-                pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGB565;
+                pixelFormat = cc.TEXTURE_PIXELFORMAT_RGB565;
             }
         }
 
@@ -550,11 +539,11 @@ cc.Texture2D = cc.Class.extend({
         imageSize = cc.size(image.getWidth(), image.getHeight());
 
         switch (pixelFormat) {
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888:
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444:
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1:
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB565:
-            case cc.TEXTURE_2D_PIXEL_FORMAT_A8:
+            case cc.TEXTURE_PIXELFORMAT_RGBA8888:
+            case cc.TEXTURE_PIXELFORMAT_RGBA4444:
+            case cc.TEXTURE_PIXELFORMAT_RGB5A1:
+            case cc.TEXTURE_PIXELFORMAT_RGB565:
+            case cc.TEXTURE_PIXELFORMAT_A8:
                 tempData = image.getData();
                 cc.Assert(tempData != null, "null image data.");
 
@@ -575,7 +564,7 @@ cc.Texture2D = cc.Class.extend({
                 }
 
                 break;
-            case cc.TEXTURE_2D_PIXEL_FORMAT_RGB888:
+            case cc.TEXTURE_PIXELFORMAT_RGB888:
                 tempData = image.getData();
                 cc.Assert(tempData != null, "null image data.");
                 if (image.getWidth() == POTWide && image.getHeight() == POTHigh) {
@@ -600,7 +589,7 @@ cc.Texture2D = cc.Class.extend({
 
         // Repack the pixel data into the right format
 
-        if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGB565) {
+        if (pixelFormat == cc.TEXTURE_PIXELFORMAT_RGB565) {
             //Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGGBBBBB"
             tempData = new (POTHigh * POTWide * 2);
             inPixel32 = data;
@@ -618,7 +607,7 @@ cc.Texture2D = cc.Class.extend({
             delete data;
             data = tempData;
         }
-        else if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444) {
+        else if (pixelFormat == cc.TEXTURE_PIXELFORMAT_RGBA4444) {
             //Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRGGGGBBBBAAAA"
             tempData = new (POTHigh * POTWide * 2);
             inPixel32 = data;
@@ -637,7 +626,7 @@ cc.Texture2D = cc.Class.extend({
             delete data;
             data = tempData;
         }
-        else if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1) {
+        else if (pixelFormat == cc.TEXTURE_PIXELFORMAT_RGB5A1) {
             //Convert "RRRRRRRRRGGGGGGGGBBBBBBBBAAAAAAAA" to "RRRRRGGGGGBBBBBA"
             tempData = new (POTHigh * POTWide * 2);
             inPixel32 = data;
@@ -656,9 +645,9 @@ cc.Texture2D = cc.Class.extend({
             delete data;
             data = tempData;
         }
-        else if (pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_A8) {
+        else if (pixelFormat == cc.TEXTURE_PIXELFORMAT_A8) {
             // fix me, how to convert to A8
-            pixelFormat = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
+            pixelFormat = cc.TEXTURE_PIXELFORMAT_RGBA8888;
 
             /*
              * The code can not work, how to convert to A8?
@@ -693,12 +682,12 @@ cc.Texture2D = cc.Class.extend({
 
 /** sets the default pixel format for UIImagescontains alpha channel.
  If the UIImage contains alpha channel, then the options are:
- - generate 32-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 (default one)
- - generate 24-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGB888
- - generate 16-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGBA4444
- - generate 16-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGB5A1
- - generate 16-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_RGB565
- - generate 8-bit textures: cc.TEXTURE_2D_PIXEL_FORMAT_A8 (only use it if you use just 1 color)
+ - generate 32-bit textures: cc.TEXTURE_PIXELFORMAT_RGBA8888 (default one)
+ - generate 24-bit textures: cc.TEXTURE_PIXELFORMAT_RGB888
+ - generate 16-bit textures: cc.TEXTURE_PIXELFORMAT_RGBA4444
+ - generate 16-bit textures: cc.TEXTURE_PIXELFORMAT_RGB5A1
+ - generate 16-bit textures: cc.TEXTURE_PIXELFORMAT_RGB565
+ - generate 8-bit textures: cc.TEXTURE_PIXELFORMAT_A8 (only use it if you use just 1 color)
 
  How does it work ?
  - If the image is an RGBA (with Alpha) then the default pixel format will be used (it can be a 8-bit, 16-bit or 32-bit texture)
