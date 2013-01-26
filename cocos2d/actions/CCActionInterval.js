@@ -1222,7 +1222,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             var currentPos = this._target.getPosition();
             var diff = cc.pSub(currentPos, this._previousPosition);
             this._startPosition = cc.pAdd(this._startPosition, diff);
-            var newPos = cc.pAdd(this._startPosition, cc.p(x y));
+            var newPos = cc.pAdd(this._startPosition, cc.p(x, y));
 
             this._target.setPosition(newPos);
             this._previousPosition = newPos;
