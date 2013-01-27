@@ -1198,7 +1198,7 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        this._startPosition = target.getPosition();
+        this._previousPosition = this._startPosition = target.getPosition();
     },
 
     /**
@@ -1218,7 +1218,14 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
 
             var x = cc.bezierat(xa, xb, xc, xd, time);
             var y = cc.bezierat(ya, yb, yc, yd, time);
-            this._target.setPosition(cc.pAdd(this._startPosition, cc.p(x, y)));
+
+            var currentPos = this._target.getPosition();
+            var diff = cc.pSub(currentPos, this._previousPosition);
+            this._startPosition = cc.pAdd(this._startPosition, diff);
+            var newPos = cc.pAdd(this._startPosition, cc.p(x, y));
+
+            this._target.setPosition(newPos);
+            this._previousPosition = newPos;
         }
     },
 
