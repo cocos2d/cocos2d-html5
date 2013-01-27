@@ -24,8 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
 /**
  @brief Base class for cc.Camera actions
  */
