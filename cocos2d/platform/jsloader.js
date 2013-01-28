@@ -29,14 +29,15 @@
         'platform/CCClass.js',
         'platform/miniFramework.js',
         'platform/CCCommon.js',
-        'platform/platform.js',
         'platform/ZipUtils.js',
         'platform/base64.js',
         'platform/gzip.js',
         'platform/CCMacro.js',
         'platform/CCFileUtils.js',
         'platform/CCTypes.js',
+        'platform/zlib.min.js',
         'cocoa/CCGeometry.js',
+        'platform/Sys.js',
         'platform/CCConfig.js',
         'cocoa/CCSet.js',
         'cocoa/CCNS.js',
@@ -107,6 +108,7 @@
         'menu_nodes/CCMenu.js',
         'base_nodes/CCdomNode.js',
         '../CocosDenshion/SimpleAudioEngine.js'
+
     ];
 
     var d = document;

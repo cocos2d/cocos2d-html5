@@ -349,6 +349,7 @@ cc.MouseHandler.create = function (delegate, priority) {
 
 cc.MouseDispatcher = cc.Class.extend({
     _mousePressed:false,
+    _rightMousePressed:false,
     _mouseDelegateHandlers:null,
     _dispatchEvents:false,
 
@@ -356,6 +357,7 @@ cc.MouseDispatcher = cc.Class.extend({
         this._dispatchEvents = true;
         this._mouseDelegateHandlers = [];
         this._mousePressed = false;
+        this._rightMousePressed = false;
 
         cc.MouseDispatcher._registerHtmlElementEvent(cc.canvas);
         return true;
@@ -367,6 +369,14 @@ cc.MouseDispatcher = cc.Class.extend({
 
     _getMousePressed:function () {
         return this._mousePressed;
+    },
+    
+    _setRightMousePressed:function (pressed) {
+        this._rightMousePressed = pressed;
+    },
+
+    _getRightMousePressed:function () {
+        return this._rightMousePressed;
     },
 
     /**
@@ -455,17 +465,32 @@ cc.MouseDispatcher = cc.Class.extend({
 
             switch (index) {
                 case cc.MOUSE_DOWN:
-                    if (handler.getDelegate().onMouseDown)
-                        handler.getDelegate().onMouseDown(mouseObj);
+                    if (mouseObj.getButton() == cc.MOUSE_RIGHTBUTTON) {
+                        if (handler.getDelegate().onRightMouseDown)
+                            handler.getDelegate().onRightMouseDown(mouseObj);
+                    }
+                    else {
+	                   if (handler.getDelegate().onMouseDown)
+	                       handler.getDelegate().onMouseDown(mouseObj);
+                     }
                     break;
                 case cc.MOUSE_UP:
-                    if (handler.getDelegate().onMouseUp)
-                        handler.getDelegate().onMouseUp(mouseObj);
+                    if (mouseObj.getButton() == cc.MOUSE_RIGHTBUTTON) {
+                        if (handler.getDelegate().onRightMouseUp)
+                            handler.getDelegate().onRightMouseUp(mouseObj);
+                    }
+                    else {
+                        if (handler.getDelegate().onMouseUp)
+                            handler.getDelegate().onMouseUp(mouseObj);
+                    }
                     break;
                 case cc.MOUSE_MOVED:
-                    if (this._mousePressed) {
+                    if (this._mousePressed) {                        
                         if (handler.getDelegate().onMouseDragged)
                             handler.getDelegate().onMouseDragged(mouseObj);
+                    } else if (this._rightMousePressed) {
+                        if (handler.getDelegate().onRightMouseDragged)
+                            handler.getDelegate().onRightMouseDragged(mouseObj);
                     } else {
                         if (handler.getDelegate().onMouseMoved)
                             handler.getDelegate().onMouseMoved(mouseObj);
@@ -497,11 +522,21 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
         return;
 
     window.addEventListener('mousedown', function (event) {
-        cc.Director.getInstance().getMouseDispatcher()._setMousePressed(true);
+        if (event.button == cc.MOUSE_RIGHTBUTTON) {
+            cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(true);	       
+        }
+        else {
+            cc.Director.getInstance().getMouseDispatcher()._setMousePressed(true);
+        }
     });
 
     window.addEventListener('mouseup', function (event) {
-        cc.Director.getInstance().getMouseDispatcher()._setMousePressed(false);
+        if (event.button == cc.MOUSE_RIGHTBUTTON) {
+            cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(false);	       
+        }
+        else {
+            cc.Director.getInstance().getMouseDispatcher()._setMousePressed(false);
+        }
     });
 
     function getMouseByEvent(event) {

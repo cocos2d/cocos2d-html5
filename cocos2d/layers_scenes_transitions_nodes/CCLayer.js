@@ -635,7 +635,9 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     /**
-     * @param color
+     * @param {cc.Color4B} color
+     * @param {Number} width
+     * @param {Number} height
      * @return {Boolean}
      */
     init:function (color, width, height) {

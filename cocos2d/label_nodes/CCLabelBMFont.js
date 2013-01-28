@@ -537,7 +537,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {String} fntFile
      * @param {String} width
      * @param {Number} alignment
-     * @param {Number} imageOffset
+     * @param {cc.Point} imageOffset
      * @return {Boolean}
      */
     initWithString:function (str, fntFile, width, alignment, imageOffset) {
@@ -564,7 +564,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
             this._imageOffset = imageOffset || cc.PointZero();
-            this._width = width || cc.LabelAutomaticWidth;
+            this._width = (width == null)?cc.LabelAutomaticWidth:width;
             this._opacity = 255;
             this._color = cc.white();
             this._contentSize = cc.SizeZero();
@@ -1035,7 +1035,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  * @param {String} fntFile
  * @param {String} width
  * @param {Number} alignment
- * @param {Number} imageOffset
+ * @param {cc.Point} imageOffset
  * @return {cc.LabelBMFont|Null}
  * @example
  * // Example 01

@@ -25,7 +25,6 @@
  ****************************************************************************/
 
 
-
 /**
  * @constant
  * @type Number
@@ -118,7 +117,6 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 curIndex++;
                 needNewIndex = false;
             }
-
             for (var i = 0; i < pArray.length; i++) {
                 var child = pArray[i];
                 if (needNewIndex && child.getZOrder() >= 0) {
@@ -150,17 +148,21 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     _swap:function (oldIndex, newIndex) {
-        var quads = this._textureAtlas.getQuads();
-        var tempItem = this._descendants[oldIndex];
-        var tempIteQuad = quads[oldIndex];
+        if ((this._descendants.length >= 2) && newIndex < this._descendants.length) {
+            if (oldIndex == -1) {
+                oldIndex = this._descendants.length - 1;
+            }
+            var quads = this._textureAtlas.getQuads();
+            var tempItem = this._descendants[oldIndex];
+            var tempIteQuad = quads[oldIndex];
 
-        //update the index of other swapped item
-        this._descendants[newIndex].setAtlasIndex(oldIndex);
-
-        this._descendants[oldIndex] = this._descendants[newIndex];
-        quads[oldIndex] = quads[newIndex];
-        this._descendants[newIndex] = tempItem;
-        quads[newIndex] = tempIteQuad;
+            //update the index of other swapped item
+            this._descendants[newIndex].setAtlasIndex(oldIndex);
+            this._descendants[oldIndex] = this._descendants[newIndex];
+            quads[oldIndex] = quads[newIndex];
+            this._descendants[newIndex] = tempItem;
+            quads[newIndex] = tempIteQuad;
+        }
     },
 
     // IMPORTANT XXX IMPORTNAT:
@@ -610,7 +612,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if(arguments.length == 1)
+        if (arguments.length == 1)
             this._blendFunc = src;
         else
             this._blendFunc = {src:src, dst:dst};
@@ -822,8 +824,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 j = i - 1;
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but orderOfArrival is smaller
-                while (j >= 0 && (tempItem.getZOrder() < this._children[j].getZOrder() ||
-                    (tempItem.getZOrder() == this._children[j].getZOrder() && tempItem.getOrderOfArrival() < this._children[j].getOrderOfArrival()))) {
+                while (j >= 0 && (tempItem.getZOrder() < this._children[j].getZOrder() || (tempItem.getZOrder() == this._children[j].getZOrder() && tempItem.getOrderOfArrival() < this._children[j].getOrderOfArrival()))) {
                     this._children[j + 1] = this._children[j];
                     j--;
                 }
@@ -838,11 +839,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 var index = 0;
                 //fast dispatch, give every child a new atlasIndex based on their relative zOrder (keep parent -> child relations intact)
                 // and at the same time reorder descedants and the quads to the right index
-                if (cc.renderContextType == cc.WEBGL) {
-                    for (i = 0; i < this._children.length; i++) {
-                        index = this._updateAtlasIndex(this._children[i], index);
-                    }
+                //if (cc.renderContextType == cc.WEBGL) {
+                for (i = 0; i < this._children.length; i++) {
+                    index = this._updateAtlasIndex(this._children[i], index);
                 }
+                //}
             }
 
             this._reorderChildDirty = false;

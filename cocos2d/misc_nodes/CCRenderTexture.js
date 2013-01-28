@@ -85,7 +85,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
     _oldFBO:0,
     _texture:null,
     _uITextureImage:null,
-    _pixelFormat:cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888,
+    _pixelFormat:cc.TEXTURE_PIXELFORMAT_RGBA8888,
     _sprite:null,
 
     /**
@@ -152,8 +152,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     initWithWidthAndHeight:function (width, height, format, depthStencilFormat) {
         if (cc.renderContextType == cc.CANVAS) {
-            this.canvas.width = width || 10;
-            this.canvas.height = height || 10;
+            this.canvas.width = (width == null) ? 10 : width;
+            this.canvas.height = (height == null) ? 10 : height;
 
             this.context.translate(0, this.canvas.height);
 
@@ -162,7 +162,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return true;
         } else {
             //TODO
-            cc.Assert(this._pixelFormat != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
+            cc.Assert(this._pixelFormat != cc.TEXTURE_PIXELFORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
 
             try {
                 width *= cc.CONTENT_SCALE_FACTOR();
@@ -421,7 +421,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @return {cc.Image}
      */
     newCCImage:function () {
-        cc.Assert(this._pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
+        cc.Assert(this._pixelFormat == cc.TEXTURE_PIXELFORMAT_RGBA8888, "only RGBA8888 can be saved as image");
 
         if (!this._texture) {
             return null;
@@ -515,7 +515,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
             if (this.pITextureImage) {
                 var s = this._texture.getContentSizeInPixels();
-                VolatileTexture.addDataTexture(this._texture, this.pITextureImage.getData(), cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, s);
+                VolatileTexture.addDataTexture(this._texture, this.pITextureImage.getData(), cc.TEXTURE_PIXELFORMAT_RGBA8888, s);
             } else {
                 cc.log("Cache rendertexture failed!");
             }
@@ -535,7 +535,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
  * var rt = cc.RenderTexture.create()
  */
 cc.RenderTexture.create = function (width, height, format, depthStencilFormat) {
-    format = format || cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
+    format = format || cc.TEXTURE_PIXELFORMAT_RGBA8888;
     depthStencilFormat = depthStencilFormat || 0;
 
     var ret = new cc.RenderTexture();
