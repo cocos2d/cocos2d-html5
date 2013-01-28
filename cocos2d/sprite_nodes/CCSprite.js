@@ -29,7 +29,7 @@
  * @constant
  * @type Number
  */
-cc.SPRITE_INDEX_NOT_INITIALIZED = "0xffffffff";
+cc.SPRITE_INDEX_NOT_INITIALIZED = -1;
 
 /**
  * generate texture's cache for texture tint
@@ -547,7 +547,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
 
-        var texture = cc.TextureCache.getInstance().textureForKey(filename);
+        var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
+        //var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             //texture = cc.TextureCache.getInstance().addImage(filename);
             this._visible = false;

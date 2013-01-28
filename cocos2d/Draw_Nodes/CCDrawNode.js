@@ -142,7 +142,7 @@ cc.DrawNode = cc.Node.extend({
 
             if (element.type === cc.DRAWNODE_TYPE_SEGMENT) {
                 context.strokeStyle = "rgba(" + (0|(element.color.r * 255)) + "," + (0|(element.color.g * 255)) + "," + (0|(element.color.b * 255)) + "," + element.color.a + ")";
-                context.lineWidth = element.radius;
+                context.lineWidth = element.radius * 2;
                 context.lineCap = "round";
                 cc.drawingUtil.drawLine(element.from, element.to);
             }
@@ -151,11 +151,11 @@ cc.DrawNode = cc.Node.extend({
                 context.fillStyle = "rgba(" + (0|(element.fillColor.r * 255)) + "," + (0|(element.fillColor.g * 255)) + ","
                     + (0|(element.fillColor.b * 255)) + "," + element.fillColor.a + ")";
                 cc.drawingUtil.drawPoly(element.verts, element.count, false, true);
-                context.lineWidth = element.borderWidth;
+                context.lineWidth = element.borderWidth * 2;
                 context.lineCap = "round";
                 context.strokeStyle = "rgba(" + (0|(element.borderColor.r * 255)) + "," + (0|(element.borderColor.g * 255)) + ","
                     + (0|(element.borderColor.b * 255)) + "," + element.borderColor.a + ")";
-                cc.drawingUtil.drawPoly(element.verts, element.count, false, false);
+                cc.drawingUtil.drawPoly(element.verts, element.count, true, false);
             }
         }
 
