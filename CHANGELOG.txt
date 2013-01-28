@@ -1,4 +1,4 @@
-Cocos2d-html5-v2.1.1 @ Jan.22, 2013
+Cocos2d-html5-v2.1.1 @ Jan.28, 2013
 * Fixed bugs
 * Added mouse button to MouseDispatcher, supports right-click
 * Changed  preload audio type from "bgm" and "effect" to "sound"
@@ -6,6 +6,7 @@ Cocos2d-html5-v2.1.1 @ Jan.22, 2013
 * Improved cc.BuilderReader to support .ccbi extension auto-completion
 * Improved TMXXMLParser to support XML, CSV and zlib compression
 * Changed cc.Time.gettimeofdayCocos2d to Date.now which is more javascript friendly.
+* Added support for stackable actions
 
 Cocos2d-html5-v2.1.0 @ Dec.4, 2012
 * Improved cc.Class and add Release Mode
