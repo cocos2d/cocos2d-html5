@@ -237,7 +237,6 @@ cc.Scale9Sprite = cc.Node.extend({
     initWithBatchNode:function (batchNode, rect, unused, capInsets) {
         if (batchNode) {
             this.updateWithBatchNode(batchNode, rect, unused, capInsets);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
         }
         this.m_positionsAreDirty = true;
         return true;
@@ -377,16 +376,27 @@ cc.Scale9Sprite = cc.Node.extend({
         this._spriteRect = rect;
         this._originalSize = new cc.Size(rect.size.width, rect.size.height);
         this._preferredSize = this._originalSize;
-        this._capInsetsInternal = capInsets;
+        this._capInsetsInternal = capInsets || cc.RectZero();
 
         // If there is no specified center region
-        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, cc.RectZero())) {
+        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, cc.RectZero()) ||
+            cc.Rect.CCRectEqualToRect(this._capInsetsInternal, this._spriteRect)) {
             // Apply the 3x3 grid format
             this._capInsetsInternal = cc.RectMake(
                 rect.origin.x + this._originalSize.width / 3,
                 rect.origin.y + this._originalSize.height / 3,
                 this._originalSize.width / 3,
                 this._originalSize.height / 3);
+            this._capInsets = null;
+        }
+        else
+        {
+            this._capInsetsInternal = cc.RectMake(
+                rect.origin.x + this._capInsetsInternal.origin.x,
+                rect.origin.y + this._capInsetsInternal.origin.y,
+                this._capInsetsInternal.size.width,
+                this._capInsetsInternal.size.height
+            );
         }
 
         // Get the image edges
@@ -456,6 +466,7 @@ cc.Scale9Sprite = cc.Node.extend({
 
         this.setContentSize(rect.size);
         this.addChild(this._scale9Image);
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         return true;
     },
 

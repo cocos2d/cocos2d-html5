@@ -152,8 +152,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      */
     initWithWidthAndHeight:function (width, height, format, depthStencilFormat) {
         if (cc.renderContextType == cc.CANVAS) {
-            this.canvas.width = width || 10;
-            this.canvas.height = height || 10;
+            this.canvas.width = (width == null) ? 10 : width;
+            this.canvas.height = (height == null) ? 10 : height;
 
             this.context.translate(0, this.canvas.height);
 

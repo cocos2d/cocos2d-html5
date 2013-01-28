@@ -315,7 +315,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1 )) + 1));
+        this._other.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1)) + 1));
     },
 
     /**
@@ -674,24 +674,20 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
      */
     update:function (time1) {
         var newT = 0;
-        if (time1 == 0 || time1 == 1) {
+        if (time1 === 0 || time1 === 1) {
             newT = time1;
         } else {
             time1 = time1 * 2;
-            if (!this._period) {
+            if (!this._period)
                 this._period = 0.3 * 1.5;
-            }
 
             var s = this._period / 4;
-
             time1 = time1 - 1;
-            if (time1 < 0) {
+            if (time1 < 0)
                 newT = -0.5 * Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
-            } else {
+            else
                 newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period) * 0.5 + 1;
-            }
         }
-
         this._other.update(newT);
     },
 
@@ -699,7 +695,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseInOut.create(this._other.reverse(), this._period);
+        return cc.EaseElasticInOut.create(this._other.reverse(), this._period);
     }
 });
 

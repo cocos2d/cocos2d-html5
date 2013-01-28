@@ -1026,7 +1026,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
-            cleanup = cleanup || true;
+            if (cleanup == null){
+                cleanup = true;
+            }
             this._parent.removeChild(this, cleanup);
         }
     },
@@ -1051,7 +1053,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
         }
 
-        cleanup = cleanup || true;
+        if (cleanup == null){
+            cleanup = true;
+        }
         if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
@@ -1090,7 +1094,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
-            cleanup = cleanup || true;
+            if (cleanup == null){
+                cleanup = true;
+            }
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
@@ -1336,15 +1342,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // transformations
         if (!this._ignoreAnchorPointForPosition) {
             if (this._parent)
-                context.translate(0 | (this._position.x - this._parent._anchorPointInPoints.x), -(0 | (this._position.y - this._parent._anchorPointInPoints.y)));
+                context.translate((this._position.x - this._parent._anchorPointInPoints.x), -((this._position.y - this._parent._anchorPointInPoints.y)));
             else
-                context.translate(0 | this._position.x, -(0 | this._position.y));
+                context.translate(this._position.x, -(this._position.y));
         } else {
             if (this._parent) {
-                context.translate(0 | ( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
-                    -(0 | (this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
+                context.translate(( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
+                    -((this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
             } else {
-                context.translate(0 | ( this._position.x + this._anchorPointInPoints.x), -(0 | (this._position.y + this._anchorPointInPoints.y)));
+                context.translate(( this._position.x + this._anchorPointInPoints.x), -((this._position.y + this._anchorPointInPoints.y)));
             }
         }
 
