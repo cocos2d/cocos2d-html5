@@ -23,7 +23,14 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/** converts a line to a polygon */
+/**
+ * converts a line to a polygon
+ * @param {Array} points
+ * @param {Number} stroke
+ * @param {Array} vertices
+ * @param {Number} offset
+ * @param {Number} nuPoints
+ */
 cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
     nuPoints += offset;
     if (nuPoints <= 1) return;
@@ -86,7 +93,18 @@ cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
     }
 };
 
-/** returns wheter or not the line intersects */
+/**
+ * returns wheter or not the line intersects
+ * @param {Number} Ax
+ * @param {Number} Ay
+ * @param {Number} Bx
+ * @param {Number} By
+ * @param {Number} Cx
+ * @param {Number} Cy
+ * @param {Number} Dx
+ * @param {Number} Dy
+ * @return {Object}
+ */
 cc.vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
     var distAB, theCos, theSin, newX;
 
@@ -122,5 +140,5 @@ cc.vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
     var t = (Dx + (Cx - Dx) * Dy / (Dy - Cy)) / distAB;
 
     // Success.
-    return {isSuccess:false, value:t};
+    return {isSuccess:true, value:t};
 };

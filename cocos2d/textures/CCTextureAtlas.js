@@ -216,14 +216,14 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     _mapBuffers:function () {
         var gl = cc.renderContext;
 
-        gl.bindBuffer(gl.ARRAY_BUFFER,this._positionsArrayBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER,this._positionsArray, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._positionsArrayBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._positionsArray, gl.DYNAMIC_DRAW);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER,this._colorsArrayBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER,this._colorsArray, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsArrayBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._colorsArray, gl.DYNAMIC_DRAW);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER,this._texCoordsArrayBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER,this._texCoordsArray, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordsArrayBuffer);
+        gl.bufferData(gl.ARRAY_BUFFER, this._texCoordsArray, gl.DYNAMIC_DRAW);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
@@ -272,7 +272,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     initWithTexture:function (texture, capacity) {
         //cc.Assert(texture != null, "TextureAtlas.initWithTexture():texture should not be null");
-        this._capacity = capacity;
+        this._capacity = 0 | (capacity);
         this._totalQuads = 0;
 
         // retained in property
@@ -364,8 +364,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} newIndex
      */
     insertQuadFromIndex:function (fromIndex, newIndex) {
-        cc.Assert( newIndex >= 0 && newIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
-        cc.Assert( fromIndex >= 0 && fromIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
+        cc.Assert(newIndex >= 0 && newIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
+        cc.Assert(fromIndex >= 0 && fromIndex < this._totalQuads, "insertQuadFromIndex:atIndex: Invalid index");
         if (fromIndex == newIndex)
             return;
 
@@ -386,7 +386,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     removeQuadAtIndex:function (index) {
-        cc.Assert( index < this._totalQuads, "removeQuadAtIndex: Invalid index");
+        cc.Assert(index < this._totalQuads, "removeQuadAtIndex: Invalid index");
 
         cc.ArrayRemoveObjectAtIndex(this._quads, index);
         this._totalQuads--;
@@ -401,7 +401,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._dirty = true;
     },
 
-    removeQuadsAtIndex:function(index, amount){
+    removeQuadsAtIndex:function (index, amount) {
         cc.Assert(index + amount <= this._totalQuads, "removeQuadAtIndex: index + amount out of bounds");
 
         this._totalQuads -= amount;
@@ -441,25 +441,25 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         var oldCapacity = this._capacity;
         // update capacity and totolQuads
         this._totalQuads = Math.min(this._totalQuads, newCapacity);
-        this._capacity = newCapacity;
+        this._capacity = 0 | newCapacity;
 
-        if(this._quads == null){
+        if (this._quads == null) {
             this._quads = [];
             this._positionsArray = new Float32Array(this._capacity * 12);
             this._colorsArray = new Float32Array(this._capacity * 16);
             this._texCoordsArray = new Float32Array(this._capacity * 8);
         } else {
-            if(this._capacity > oldCapacity){
+            if (this._capacity > oldCapacity) {
                 var tempPositionArray = new Float32Array(this._capacity * 12);
-                tempPositionArray.set(this._positionsArray,0);
+                tempPositionArray.set(this._positionsArray, 0);
                 this._positionsArray = tempPositionArray;
 
                 var tempColorsArray = new Float32Array(this._capacity * 16);
-                tempColorsArray.set(this._colorsArray,0);
+                tempColorsArray.set(this._colorsArray, 0);
                 this._colorsArray = tempColorsArray;
 
                 var tempTexCoordsArray = new Float32Array(this._capacity * 8);
-                tempTexCoordsArray.set(this._texCoordsArray,0);
+                tempTexCoordsArray.set(this._texCoordsArray, 0);
                 this._texCoordsArray = tempTexCoordsArray;
             } else {
                 this._positionsArray = this._positionsArray.subarray(0, this._capacity * 12);
@@ -468,10 +468,10 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             }
         }
 
-        if(this._indices == null){
-           this._indices = new Uint16Array(this._capacity * 6);
+        if (this._indices == null) {
+            this._indices = new Uint16Array(this._capacity * 6);
         } else {
-            if(this._capacity > oldCapacity){
+            if (this._capacity > oldCapacity) {
                 var tempIndices = new Uint16Array(this._capacity * 6);
                 tempIndices.set(this._indices, 0);
                 this._indices = tempIndices;
@@ -493,7 +493,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * don't use this unless you know what you're doing
      * @param {Number} amount
      */
-    increaseTotalQuadsWith:function(amount){
+    increaseTotalQuadsWith:function (amount) {
         this._totalQuads += amount;
     },
 
@@ -503,19 +503,19 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} amount
      * @param {Number} newIndex
      */
-    moveQuadsFromIndex:function(oldIndex, amount, newIndex){
-        if(arguments.length == 2){
+    moveQuadsFromIndex:function (oldIndex, amount, newIndex) {
+        if (arguments.length == 2) {
             newIndex = amount;
             amount = this._totalQuads - oldIndex;
         }
         cc.Assert(newIndex + amount <= this._totalQuads, "moveQuadsFromIndex:newIndex: Invalid index");
         cc.Assert(oldIndex < this._totalQuads, "moveQuadsFromIndex:oldIndex: Invalid index");
 
-        if( oldIndex == newIndex)
+        if (oldIndex == newIndex)
             return;
 
         //TODO
-        for(var i = 0; i< amount;i++)
+        for (var i = 0; i < amount; i++)
             this._quads[newIndex + i] = this._quads[oldIndex + i];
 
         this._resetQuadsToTypeArray((oldIndex > newIndex ? newIndex : oldIndex));
@@ -529,13 +529,13 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      * @param {Number} amount
      */
-    fillWithEmptyQuadsFromIndex:function(index, amount){
+    fillWithEmptyQuadsFromIndex:function (index, amount) {
         var to = index + amount;
-        for (var i = index ; i < to ; i++) {
+        for (var i = index; i < to; i++) {
             this._quads[i] = cc.V3F_C4B_T2F_QuadZero();
-            this._setQuadToColorsTypeArray(this._quads[i],i);
-            this._setQuadToPositionsTypeArray(this._quads[i],i);
-            this._setQuadToTexCoordsTypeArray(this._quads[i],i);
+            this._setQuadToColorsTypeArray(this._quads[i], i);
+            this._setQuadToPositionsTypeArray(this._quads[i], i);
+            this._setQuadToTexCoordsTypeArray(this._quads[i], i);
         }
     },
 
@@ -567,27 +567,27 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         // vertices
         gl.bindBuffer(gl.ARRAY_BUFFER, this._positionsArrayBuffer);
         if (this._dirty)
-            gl.bufferData(gl.ARRAY_BUFFER,this._positionsArray, gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, this._positionsArray, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
 
         // colors
         gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsArrayBuffer);
         if (this._dirty)
-            gl.bufferData(gl.ARRAY_BUFFER,this._colorsArray, gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, this._colorsArray, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.FLOAT, true, 0, 0);
 
         // tex coords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordsArrayBuffer);
         if (this._dirty)
-            gl.bufferData(gl.ARRAY_BUFFER,this._texCoordsArray, gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ARRAY_BUFFER, this._texCoordsArray, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
 
-        if(this._dirty)
+        if (this._dirty)
             this._dirty = false;
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
 
-        if(cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP)
+        if (cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP)
             gl.drawElements(gl.TRIANGLE_STRIP, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
         else
             gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);

@@ -62,6 +62,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     _textureAtlas:null,
 
     ctor:function () {
+        this._super();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
     },
 
