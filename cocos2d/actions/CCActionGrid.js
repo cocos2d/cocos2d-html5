@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
+ Copyright (c) 2010-2013 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
  Copyright (c) 2011      Zynga Inc.
 
@@ -24,29 +24,28 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
-/** @brief Base class for Grid actions */
-cc.GridAction = cc.ActionInterval.extend({
+/**
+ * Base class for Grid actions
+ * @class
+ * @extends cc.ActionInterval
+ */
+cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     _gridSize:null,
+
     startWithTarget:function (target) {
         this._super(target);
-        var newgrid = this.getGrid();
+        var newGrid = this.getGrid();
         var t = this._target;
         var targetGrid = t.getGrid();
         if (targetGrid && targetGrid.getReuseGrid() > 0) {
-            if (targetGrid.isActive() && targetGrid.getGridSize().x == this._gridSize.x && targetGrid.getGridSize().y == this._gridSize.y) {
+            if (targetGrid.isActive() && (targetGrid.getGridSize().width == this._gridSize.width) && (targetGrid.getGridSize().height == this._gridSize.height))
                 targetGrid.reuse();
-            }
-            else {
+            else
                 cc.Assert(0, "");
-            }
-        }
-        else {
-            if (targetGrid && targetGrid.isActive()) {
+        } else {
+            if (targetGrid && targetGrid.isActive())
                 targetGrid.setActive(false);
-            }
-            t.setGrid(newgrid);
+            t.setGrid(newGrid);
             t.getGrid().setActive(true);
         }
     },
@@ -55,16 +54,24 @@ cc.GridAction = cc.ActionInterval.extend({
         return cc.ReverseTime.create(this);
     },
 
-    /** initializes the action with size and duration */
-    initWithSize:function (gridSize, duration) {
-        if (this.initWithDuration(duration)) {
+    /**
+     * initializes the action with size and duration
+     * @param {Number} duration
+     * @param {cc.Size} gridSize
+     * @return {Boolean}
+     */
+    initWithDuration:function (duration, gridSize) {
+        if (this._super(duration)) {
             this._gridSize = gridSize;
             return true;
         }
         return false;
     },
 
-    /** returns the grid */
+    /**
+     * returns the grid
+     * @return {cc.GridBase}
+     */
     getGrid:function () {
         // Abstract class needs implementation
         cc.Assert(0, "");
@@ -72,261 +79,182 @@ cc.GridAction = cc.ActionInterval.extend({
     }
 });
 
-/** creates the action with size and duration */
-cc.GridAction.create = function (gridSize, duration) {
+/**
+ * creates the action with size and duration
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @return {cc.GridAction}
+ */
+cc.GridAction.create = function (duration, gridSize) {
     var action = new cc.GridAction();
-    action.initWithSize(gridSize, duration)
+    action.initWithDuration(duration, gridSize);
     return action;
-},
+};
 
 /**
- @brief Base class for cc.Grid3D actions.
- Grid3D actions can modify a non-tiled grid.
+ * Base class for cc.Grid3D actions.                     <br/>
+ * Grid3D actions can modify a non-tiled grid.
+ * @class
+ * @extends cc.GridAction
  */
-    cc.Grid3DAction = cc.GridAction.extend({
-        /** returns the grid */
-        getGrid:function () {
-            return cc.Grid3D.create(this._gridSize);
-        },
+cc.Grid3DAction = cc.GridAction.extend(/** @lends cc.GridAction# */{
+    /**
+     * returns the grid
+     * @return {cc.GridBase}
+     */
+    getGrid:function () {
+        return cc.Grid3D.create(this._gridSize);
+    },
 
-        /** returns the vertex than belongs to certain position in the grid */
-        vertex:function (pos) {
-            var g = this._target.getGrid();
-            return g.vertex(pos);
-        },
+    /**
+     * returns the vertex than belongs to certain position in the grid
+     * @param {cc.Point} position
+     * @return {cc.Vertex3F}
+     */
+    vertex:function (position) {
+        return this._target.getGrid().vertex(position);
+    },
 
-        /** returns the non-transformed vertex than belongs to certain position in the grid */
-        originalVertex:function (pos) {
-            var g = this._target.getGrid();
-            return g.originalVertex(pos);
-        },
+    /**
+     * returns the non-transformed vertex than belongs to certain position in the grid
+     * @param {cc.Point} position
+     * @return {*}
+     */
+    originalVertex:function (position) {
+        return this._target.getGrid().originalVertex(position);
+    },
 
-        /** sets a new vertex to a certain position of the grid */
-        setVertex:function (pos, vertex) {
-            var g = this._target.getGrid();
-            g.setVertex(pos, vertex);
-        }
-    });
-/** creates the action with size and duration */
-cc.Grid3DAction.create = function () {
+    /**
+     * sets a new vertex to a certain position of the grid
+     * @param position
+     * @param vertex
+     */
+    setVertex:function (position, vertex) {
+        this._target.getGrid().setVertex(position, vertex);
+    }
+});
 
+/**
+ * creates the action with size and duration
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @return {cc.Grid3DAction}
+ */
+cc.Grid3DAction.create = function (duration,gridSize) {
+    return new cc.Grid3DAction();
 };
-/** @brief Base class for cc.TiledGrid3D actions */
-cc.TiledGrid3DAction = cc.GridAction.extend({
-    /** returns the tile that belongs to a certain position of the grid */
-    tile:function (pos) {
-        var g = this._target.getGrid();
-        return g.tile(pos);
+
+/**
+ * Base class for cc.TiledGrid3D actions
+ * @class
+ * @extends cc.GridAction
+ */
+cc.TiledGrid3DAction = cc.GridAction.extend(/** @lends cc.TiledGrid3DAction# */{
+    /**
+     * returns the tile that belongs to a certain position of the grid
+     * @param {cc.Point} position
+     * @return {cc.Quad3}
+     */
+    tile:function (position) {
+        return this._target.getGrid().tile(position);
     },
 
-    /** returns the non-transformed tile that belongs to a certain position of the grid */
-    originalTile:function (pos) {
-        var g = this._target.getGrid();
-        return g.originalTile(pos);
+    /**
+     * returns the non-transformed tile that belongs to a certain position of the grid
+     * @param {cc.Point} position
+     * @return {cc.Quad3}
+     */
+    originalTile:function (position) {
+        return this._target.getGrid().originalTile(position);
     },
 
-    /** sets a new tile to a certain position of the grid */
-    setTile:function (pos, coords) {
-        var g = this._target.getGrid();
-        return g.setTile(pos, coords);
+    /**
+     * sets a new tile to a certain position of the grid
+     * @param {cc.Point} position
+     * @param {cc.Quad3} coords
+     */
+    setTile:function (position, coords) {
+        this._target.getGrid().setTile(position, coords);
     },
 
-    /** returns the grid */
+    /**
+     * returns the grid
+     * @return {cc.GridBase}
+     */
     getGrid:function () {
         return cc.TiledGrid3D.create(this._gridSize);
     }
 });
 
-/** creates the action with size and duration */
-cc.TiledGrid3DAction.create = function (gridSize, duration) {
-
-};
-
-/** @brief cc.AccelDeccelAmplitude action */
-cc.AccelDeccelAmplitude = cc.ActionInterval.extend({
-    _rate:null,
-    _other:null,
-    /** initializes the action with an inner action that has the amplitude property, and a duration time */
-    initWithAction:function (action, duration) {
-        if (cc.ActionInterval.initWithDuration(duration)) {
-            this._rate = 1.0;
-            this._other = action;
-            return true;
-        }
-        return false;
-    },
-
-    startWithTarget:function (target) {
-        cc.ActionInterval.startWithTarget(target);
-        this._other.startWithTarget(target);
-    },
-
-    update:function (time) {
-        var f = time * 2;
-        if (f > 1) {
-            f -= 1;
-            f = 1 - f;
-        }
-        this._other.setAmplitudeRate(Math.pow(f, this._rate));
-    },
-
-    reverse:function () {
-        return cc.AccelDeccelAmplitude.create(this._other.reverse(), this._duration);
-    },
-
-    /** get amplitude rate */
-    getRate:function () {
-        return this._rate;
-    },
-
-    /** set amplitude rate */
-    setRate:function (rate) {
-        this._rate = rate;
-    }
-});
-
-/** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.AccelDeccelAmplitude.create = function (action, duration) {
-    var ret = new cc.AccelDeccelAmplitude();
-    return ret;
-};
-
-/** @brief cc.AccelAmplitude action */
-cc.AccelAmplitude = cc.ActionInterval.extend({
-    _rate:null,
-    _other:null,
-    /** initializes the action with an inner action that has the amplitude property, and a duration time */
-    initWithAction:function (action, duration) {
-        if (cc.ActionInterval.initWithDuration(duration)) {
-            this._rate = 1.0;
-            this._other = action;
-
-            return true;
-        }
-        return false;
-    },
-
-    /** get amplitude rate */
-    getRate:function () {
-        return this._rate;
-    },
-
-    /** set amplitude rate */
-    setRate:function (rate) {
-        this._rate = rate;
-    },
-
-    startWithTarget:function (target) {
-        cc.ActionInterval.startWithTarget(target);
-        this._other.startWithTarget(target);
-    },
-
-    update:function (time) {
-
-        this._other.setAmplitudeRate(Math.pow(time, this._rate));
-        this._other.update(time);
-    },
-
-    reverse:function () {
-        return cc.AccelAmplitude.create(this._other.reverse(), this._duration);
-    }
-});
-
-/** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.AccelAmplitude.create = function (action, duration) {
-    var ret = new cc.AccelAmplitude();
-    return ret;
-};
-
-/** @brief cc.DeccelAmplitude action */
-cc.DeccelAmplitude = cc.ActionInterval.extend({
-    _rate:null,
-    _other:null,
-    /** initializes the action with an inner action that has the amplitude property, and a duration time */
-    initWithAction:function (action, duration) {
-        if (cc.ActionInterval.initWithDuration(duration)) {
-            this._rate = 1.0;
-            this._other = action;
-            return true;
-        }
-
-        return false;
-    },
-
-    /** get amplitude rate */
-    getRate:function () {
-        return this._rate;
-    },
-
-    /** set amplitude rate */
-    setRate:function (rate) {
-        this._rate = rate;
-    },
-
-    startWithTarget:function (target) {
-        cc.ActionInterval.startWithTarget(target);
-        this._other.startWithTarget(target);
-    },
-
-    update:function (time) {
-        this._other.setAmplitudeRate(Math.pow((1 - time), this._rate));
-        this._other.update(time);
-    },
-
-    reverse:function () {
-        return cc.DeccelAmplitude.create(this._other.reverse(), this._duration);
-    }
-});
-
-/** creates the action with an inner action that has the amplitude property, and a duration time */
-cc.DeccelAmplitude.create = function (action, duration) {
-    var ret = new cc.DeccelAmplitude();
-    return ret;
-};
-
-/** @brief cc.StopGrid action.
- @warning Don't call this action if another grid action is active.
- Call if you want to remove the the grid effect. Example:
- cc.Sequence.create(Lens.action(...), cc.StopGrid.create(...), null);
+/**
+ * creates the action with size and duration
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @return {cc.TiledGrid3DAction}
  */
-cc.StopGrid = cc.ActionInstant.extend({
+cc.TiledGrid3DAction.create = function (duration, gridSize) {
+     var ret = new cc.TiledGrid3DAction();
+    ret.initWithDuration(duration, gridSize);
+    return ret;
+};
+
+/**
+ * <p>
+ * cc.StopGrid action.                                                               <br/>
+ * @warning Don't call this action if another grid action is active.                 <br/>
+ * Call if you want to remove the the grid effect. Example:                          <br/>
+ * cc.Sequence.create(Lens.action(...), cc.StopGrid.create(...), null);              <br/>
+ * </p>
+ * @class
+ * @extends cc.ActionInstant
+ */
+cc.StopGrid = cc.ActionInstant.extend(/** @lends cc.StopGrid# */{
     startWithTarget:function (target) {
         this._super(target);
         var grid = this._target.getGrid();
-        if (grid && grid.isActive()) {
+        if (grid && grid.isActive())
             grid.setActive(false);
-        }
     }
 });
 
-/** Allocates and initializes the action */
+/**
+ * Allocates and initializes the action
+ * @return {cc.StopGrid}
+ */
 cc.StopGrid.create = function () {
-    var action = new cc.StopGrid();
-    return action;
+    return new cc.StopGrid();
 };
 
-/** @brief cc.ReuseGrid action */
-cc.ReuseGrid = cc.ActionInstant.extend({
+/**
+ * cc.ReuseGrid action
+ * @class
+ * @extends cc.ActionInstant
+ */
+cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
     _times:null,
-    /** initializes an action with the number of times that the current grid will be reused */
+
+    /**
+     * initializes an action with the number of times that the current grid will be reused
+     * @param {Number} times
+     * @return {Boolean}
+     */
     initWithTimes:function (times) {
         this._times = times;
-
         return true;
     },
 
     startWithTarget:function (target) {
-        cc.ActionInstant.startWithTarget(target);
-
-        if (this._target.getGrid() && this._target.getGrid().isActive()) {
+        cc.ActionInstant.prototype.startWithTarget.call(this, target);
+        if (this._target.getGrid() && this._target.getGrid().isActive())
             this._target.getGrid().setReuseGrid(this._target.getGrid().getReuseGrid() + this._times);
-        }
     }
-
 });
 
-/** creates an action with the number of times that the current grid will be reused */
+/**
+ * creates an action with the number of times that the current grid will be reused
+ * @param {Number} times
+ * @return {cc.ReuseGrid}
+ */
 cc.ReuseGrid.create = function (times) {
-    var action = new cc.ReuseGrid();
-    return action;
+    return new cc.ReuseGrid();
 };

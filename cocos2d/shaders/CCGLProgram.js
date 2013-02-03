@@ -616,6 +616,7 @@ cc.GLProgram = cc.Class.extend({
 
         // it is already deallocated by android
         //ccGLDeleteProgram(m_uProgram);
+        this._glContext.deleteProgram(this._programObj);
         this._programObj = null;
 
         // Purge uniform hash
@@ -627,6 +628,10 @@ cc.GLProgram = cc.Class.extend({
         this._hashForUniforms = [];
     },
 
+    /**
+     * get WebGLProgram object
+     * @return {WebGLProgram}
+     */
     getProgram:function () {
         return this._programObj;
     }

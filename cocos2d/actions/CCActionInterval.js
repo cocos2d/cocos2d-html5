@@ -1808,8 +1808,8 @@ cc.DelayTime.create = function (d) {
 };
 
 
-/** Executes an action in reverse order, from time=duration to time=0
-
+/**
+ * Executes an action in reverse order, from time=duration to time=0
  * @warning Use this action carefully. This action is not
  * sequenceable. Use it as the default "reversed" method
  * of your own actions, but using it outside the "reversed"
