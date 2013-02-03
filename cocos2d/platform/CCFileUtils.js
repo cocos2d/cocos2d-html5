@@ -545,11 +545,11 @@ cc.FileUtils = cc.Class.extend({
             file = filename.substr(pos+1);
         }
         var path = searchPath;
-        if(path.length > 0 && path.indexOf('/') !== path.length -1)
+        if(path.length > 0 && path.lastIndexOf('/') !== path.length -1)
             path += '/';
         path += file_path;
         path += resourceDirectory;
-        if(path.length > 0 && path.indexOf("/") !== path.length -1)
+        if(path.length > 0 && path.lastIndexOf("/") !== path.length -1)
             path += '/';
         path += file;
         ret += path;
