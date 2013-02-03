@@ -93,11 +93,11 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
 
     /**
      * set size of the grid
-     * @param {cc.GridSize} gridSize
+     * @param {cc.size} gridSize
      */
     setGridSize:function (gridSize) {
-        this._gridSize.x = parseInt(gridSize.x);
-        this._gridSize.y = parseInt(gridSize.y);
+        this._gridSize.width = parseInt(gridSize.width);
+        this._gridSize.height = parseInt(gridSize.height);
     },
 
     /**
@@ -166,9 +166,9 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
         this._texture = texture;
         this._isTextureFlipped = flipped;
 
-        var texSize = this._texture.getContentSizeInPixels();
-        this._step.x = texSize.width / this._gridSize.x;
-        this._step.y = texSize.height / this._gridSize.y;
+        var texSize = this._texture.getContentSize();
+        this._step.x = texSize.width / this._gridSize.width;
+        this._step.y = texSize.height / this._gridSize.height;
 
         this._grabber = new cc.Grabber();
         if (!this._grabber)
@@ -283,7 +283,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
      * @return {cc.Vertex3F}
      */
     vertex:function (pos) {
-        var index = 0 | ((pos.x * (this._gridSize.y + 1) + pos.y) * 3);
+        var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         return new cc.Vertex3F(this._vertices[index], this._vertices[index + 1], this._vertices[index + 2]);
     },
 
@@ -293,7 +293,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
      * @return {cc.Vertex3F}
      */
     originalVertex:function (pos) {
-        var index = 0 | ((pos.x * (this._gridSize.y + 1) + pos.y) * 3);
+        var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         return new cc.Vertex3F(this._originalVertices[index], this._originalVertices[index + 1], this._originalVertices[index + 2]);
     },
 
@@ -303,7 +303,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
      * @param {cc.Vertex3F} vertex
      */
     setVertex:function (pos, vertex) {
-        var index = 0 | ((pos.x * (this._gridSize.y + 1) + pos.y) * 3);
+        var index = 0 | ((pos.x * (this._gridSize.height + 1) + pos.y) * 3);
         var vertArray = this._vertices;
         vertArray[index] = vertex.x;
         vertArray[index + 1] = vertex.y;
@@ -312,7 +312,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
     },
 
     blit:function () {
-        var n = this._gridSize.x * this._gridSize.y;
+        var n = this._gridSize.width * this._gridSize.height;
 
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_TEXCOORDS);
         this._shaderProgram.use();
@@ -326,20 +326,20 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
         if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIBFLAG_POSITION, 3, gl.FLOAT, false, 0, this._vertices);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
 
         // texCoords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIBFLAG_TEXCOORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._indicesBuffer);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         if (this._dirty)
-            gl.bufferData(gl.ARRAY_BUFFER, this._indices, gl.DYNAMIC_DRAW);
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
-
-        this._dirty = false;
+        if (this._dirty)
+            this._dirty = false;
         cc.INCREMENT_GL_DRAWS(1);
     },
 
@@ -358,35 +358,35 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         var height = this._texture.getPixelsHigh();
         var imageH = this._texture.getContentSizeInPixels().height;
 
-        var numOfPoints = this._gridSize.x * this._gridSize.y;
+        var numOfPoints = (this._gridSize.width + 1) * (this._gridSize.height + 1);
         this._vertices = new Float32Array(numOfPoints * 3);
         this._texCoordinates = new Float32Array(numOfPoints * 2);
-        this._indices = new Uint16Array(this._gridSize.x * this._gridSize.y * 6);
+        this._indices = new Uint16Array(this._gridSize.width * this._gridSize.height * 6);
 
         this._verticesBuffer = gl.createBuffer();
         this._texCoordinateBuffer = gl.createBuffer();
-        this._indices = gl.createBuffer();
+        this._indicesBuffer = gl.createBuffer();
 
         var x, y, i;
-        for (x = 0; x < this._gridSize.x; x++) {
-            for (y = 0; y < this._gridSize.y; y++) {
-                var idx = (y * this._gridSize.x) + x;
+        for (x = 0; x < this._gridSize.width; ++x) {
+            for (y = 0; y < this._gridSize.height; ++y) {
+                var idx = (y * this._gridSize.width) + x;
                 var x1 = x * this._step.x;
                 var x2 = x1 + this._step.x;
                 var y1 = y * this._step.y;
                 var y2 = y1 + this._step.y;
 
-                var a = (x * (this._gridSize.y + 1) + y);
-                var b = ((x + 1) * (this._gridSize.y + 1) + y);
-                var c = ((x + 1) * (this._gridSize.y + 1) + (y + 1));
-                var d = (x * (this._gridSize.y + 1) + (y + 1));
+                var a = (x * (this._gridSize.height + 1) + y);
+                var b = ((x + 1) * (this._gridSize.height + 1) + y);
+                var c = ((x + 1) * (this._gridSize.height + 1) + (y + 1));
+                var d = (x * (this._gridSize.height + 1) + (y + 1));
 
-                this._indices[idx] = a;
-                this._indices[idx + 1] = b;
-                this._indices[idx + 2] = d;
-                this._indices[idx + 3] = b;
-                this._indices[idx + 4] = c;
-                this._indices[idx + 5] = d;
+                this._indices[idx * 6] = a;
+                this._indices[idx * 6 + 1] = b;
+                this._indices[idx * 6 + 2] = d;
+                this._indices[idx * 6 + 3] = b;
+                this._indices[idx * 6 + 4] = c;
+                this._indices[idx * 6 + 5] = d;
 
                 var l1 = [a * 3, b * 3, c * 3, d * 3];
                 var e = new cc.Vertex3F(x1, y1, 0);
@@ -415,8 +415,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._indicesBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this._indices, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         this._dirty = true;
     }
 });
@@ -462,7 +462,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
      * @return {cc.Quad3}
      */
     tile:function (pos) {
-        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
+        var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
         return new cc.Quad3(new cc.Vertex3F(this._vertices[idx], this._vertices[idx + 1], this._vertices[idx + 2]),
             new cc.Vertex3F(this._vertices[idx + 3], this._vertices[idx + 4], this._vertices[idx + 5]),
             new cc.Vertex3F(this._vertices[idx + 6 ], this._vertices[idx + 7], this._vertices[idx + 8]),
@@ -475,7 +475,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
      * @return {cc.Quad3}
      */
     originalTile:function (pos) {
-        var idx = (this._gridSize.y * pos.x + pos.y) * 4 * 3;
+        var idx = (this._gridSize.height * pos.x + pos.y) * 4 * 3;
         return new cc.Quad3(new cc.Vertex3F(this._originalVertices[idx], this._originalVertices[idx + 1], this._originalVertices[idx + 2]),
             new cc.Vertex3F(this._originalVertices[idx + 3], this._originalVertices[idx + 4], this._originalVertices[idx + 5]),
             new cc.Vertex3F(this._originalVertices[idx + 6 ], this._originalVertices[idx + 7], this._originalVertices[idx + 8]),
@@ -488,7 +488,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
      * @param {cc.Quad3} coords
      */
     setTile:function (pos, coords) {
-        var idx = (this._gridSize.y * pos.x + pos.y) * 12;
+        var idx = (this._gridSize.height * pos.x + pos.y) * 12;
         this._vertices[idx] = coords.bl.x;
         this._vertices[idx + 1] = coords.bl.y;
         this._vertices[idx + 2] = coords.bl.z;
@@ -505,32 +505,32 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
     },
 
     blit:function () {
-        var n = this._gridSize.x * this._gridSize.y;
+        var n = this._gridSize.width * this._gridSize.height;
 
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
 
-        var gl = cc.renderContext;
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_TEXCOORDS);
         //
         // Attributes
         //
+        var gl = cc.renderContext;
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_TEXCOORDS);
 
         // position
         gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
-        if (this._dirty)
+        //if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIBFLAG_POSITION, 3, gl.FLOAT, false, 0, this._vertices);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, this._vertices);
 
         // texCoords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
-        if (this._dirty)
+        //if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIBFLAG_TEXCOORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._indicesBuffer);
-        if (this._dirty)
-            gl.bufferData(gl.ARRAY_BUFFER, this._indices, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        //if (this._dirty)
+            gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -548,19 +548,19 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         var height = this._texture.getPixelsHigh();
         var imageH = this._texture.getContentSizeInPixels().height;
 
-        var numQuads = this._gridSize.x * this._gridSize.y;
+        var numQuads = this._gridSize.width * this._gridSize.height;
         this._vertices = new Float32Array(numQuads * 12);
         this._texCoordinates = new Float32Array(numQuads * 8);
         this._indices = new Uint16Array(numQuads * 6);
 
+        var gl = cc.renderContext;
         this._verticesBuffer = gl.createBuffer();
         this._texCoordinateBuffer = gl.createBuffer();
-        this._indices = gl.createBuffer();
+        this._indicesBuffer = gl.createBuffer();
 
         var x, y, i = 0;
-        for (x = 0; x < this._gridSize.x; x++) {
-            for (y = 0; y < this._gridSize.y; y++) {
-
+        for (x = 0; x < this._gridSize.width; x++) {
+            for (y = 0; y < this._gridSize.height; y++) {
                 var x1 = x * this._step.x;
                 var x2 = x1 + this._step.x;
                 var y1 = y * this._step.y;
@@ -588,13 +588,13 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
                 }
 
                 this._texCoordinates[i * 8] = x1 / width;
-                this._texCoordinates[i * 8] = newY1 / height;
-                this._texCoordinates[i * 8] = x2 / width;
-                this._texCoordinates[i * 8] = newY1 / height;
-                this._texCoordinates[i * 8] = x1 / width;
-                this._texCoordinates[i * 8] = newY2 / height;
-                this._texCoordinates[i * 8] = x2 / width;
-                this._texCoordinates[i * 8] = newY2 / height;
+                this._texCoordinates[i * 8 + 1] = newY1 / height;
+                this._texCoordinates[i * 8 + 2] = x2 / width;
+                this._texCoordinates[i * 8 + 3] = newY1 / height;
+                this._texCoordinates[i * 8 + 4] = x1 / width;
+                this._texCoordinates[i * 8 + 5] = newY2 / height;
+                this._texCoordinates[i * 8 + 6] = x2 / width;
+                this._texCoordinates[i * 8 + 7] = newY2 / height;
                 i++;
             }
         }
@@ -614,8 +614,8 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._indicesBuffer);
-        gl.bufferData(gl.ARRAY_BUFFER, this._indices, gl.DYNAMIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.DYNAMIC_DRAW);
         this._dirty = true;
     }
 });

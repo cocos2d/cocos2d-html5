@@ -163,10 +163,20 @@ cc.pUnrotate = function (v1, v2) {
 /**
  * Calculates the square length of a cc.Point (not calling sqrt() )
  * @param  {cc.Point} v
- *@return {cc.pDot}
+ *@return {Number}
  */
 cc.pLengthSQ = function (v) {
     return cc.pDot(v, v);
+};
+
+/**
+ * Calculates the square distance between two points (not calling sqrt() )
+ * @param {cc.Point} point1
+ * @param {cc.Point} point2
+ * @return {Number}
+ */
+cc.pDistanceSQ = function(point1, point2){
+    return cc.pLengthSQ(cc.pSub(point1,point2));
 };
 
 /**

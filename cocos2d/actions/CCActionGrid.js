@@ -38,7 +38,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
         var t = this._target;
         var targetGrid = t.getGrid();
         if (targetGrid && targetGrid.getReuseGrid() > 0) {
-            if (targetGrid.isActive() && (targetGrid.getGridSize().x == this._gridSize.x) && (targetGrid.getGridSize().y == this._gridSize.y))
+            if (targetGrid.isActive() && (targetGrid.getGridSize().width == this._gridSize.width) && (targetGrid.getGridSize().height == this._gridSize.height))
                 targetGrid.reuse();
             else
                 cc.Assert(0, "");
@@ -244,7 +244,7 @@ cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
     },
 
     startWithTarget:function (target) {
-        cc.ActionInstant.startWithTarget(target);
+        cc.ActionInstant.prototype.startWithTarget.call(this, target);
         if (this._target.getGrid() && this._target.getGrid().isActive())
             this._target.getGrid().setReuseGrid(this._target.getGrid().getReuseGrid() + this._times);
     }

@@ -85,7 +85,7 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
      * get the dirty value
      * @return {Boolean}
      */
-    getDirty:function () {
+    isDirty:function () {
         return this._dirty;
     },
 
