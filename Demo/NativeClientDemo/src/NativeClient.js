@@ -109,9 +109,9 @@ function updateStatus(opt_message) {
 
 
 var g_ressources = [
-    {type:"image", src:"res/HelloWorld.png"},
-    {type:"image", src:"res/CloseNormal.png"},
-    {type:"image", src:"res/CloseSelected.png"}
+    {src:"res/HelloWorld.png"},
+    {src:"res/CloseNormal.png"},
+    {src:"res/CloseSelected.png"}
 ];
 
 
