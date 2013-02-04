@@ -39,7 +39,7 @@ var cocos2dApp = cc.Application.extend({
         var director = cc.Director.getInstance();
 
         // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
-//     director->enableRetinaDisplay(true);
+        //director.enableRetinaDisplay(true);
 
         // turn on display FPS
         director.setDisplayStats(this.config['showFPS']);
