@@ -1369,13 +1369,21 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         var img = new Image();
                         img.src = "data:image/png;base64," + newImageData;
-                        this._texture = img;
-
-                        //save image to TextureCache
                         cc.TextureCache.getInstance().cacheImage(fullpath, img);
+
+                        // Manually decode the base 64 image size since the browser will only do so asynchronously
+                        var w = (buffer[16] << 24) + (buffer[17] << 16) + (buffer[18] << 8) + (buffer[19]),
+                            h = (buffer[20] << 24) + (buffer[21] << 16) + (buffer[22] << 8) + (buffer[23]);
+
+                        // Patch this on so we can correctly create the draw rect later on
+                        img.textureWidth = w;
+                        img.textureHeight = h;
+
+                        this._texture = img;
                     }
                 }
                 cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
+                this.setTexture(this._texture);;
             }
             ret = true;
         }
