@@ -282,11 +282,12 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
     },
 
     _getResType:function (resInfo) {
-        var src = resInfo.src;
-        if (src instanceof Array) {
+        var isFont = resInfo.fontName;
+        if (isFont != null) {
             return cc.RESOURCE_TYPE.FONT;
         }
         else {
+            var src = resInfo.src;
             var ext = src.substring(src.lastIndexOf(".") + 1, src.length);
             for (var resType in cc.RESOURCE_TYPE) {
                 if (cc.RESOURCE_TYPE[resType].indexOf(ext) != -1) {
