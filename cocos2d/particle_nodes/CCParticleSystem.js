@@ -846,6 +846,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} startColor
      */
     setStartColor:function (startColor) {
+        if (startColor instanceof cc.Color3B)
+            startColor = cc.c4FFromccc3B(startColor);
         this._startColor = startColor;
     },
 
@@ -863,6 +865,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} startColorVar
      */
     setStartColorVar:function (startColorVar) {
+        if (startColorVar instanceof cc.Color3B)
+            startColorVar = cc.c4FFromccc3B(startColorVar);
         this._startColorVar = startColorVar;
     },
 
@@ -881,6 +885,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} endColor
      */
     setEndColor:function (endColor) {
+        if (endColor instanceof cc.Color3B)
+            endColor = cc.c4FFromccc3B(endColor);
         this._endColor = endColor;
     },
 
@@ -898,6 +904,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} endColorVar
      */
     setEndColorVar:function (endColorVar) {
+        if (endColorVar instanceof cc.Color3B)
+            endColorVar = cc.c4FFromccc3B(endColorVar);
         this._endColorVar = endColorVar;
     },
 
