@@ -102,6 +102,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         }
         else {
             texture = new Image();
+            texture.crossOrigin = "Anonymous";
+
             var that = this;
             texture.addEventListener("load", function () {
                 that._addImageAsyncCallBack(target, selector);
@@ -162,6 +164,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         }
         else {
             texture = new Image();
+            texture.crossOrigin = "Anonymous";
+
             var that = this;
             texture.addEventListener("load", function () {
 
