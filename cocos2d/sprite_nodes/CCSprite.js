@@ -51,7 +51,7 @@ cc.generateTextureCacheForColor = function (texture) {
     var textureCache = [
         document.createElement("canvas"),
         document.createElement("canvas"),
-        document.createElement("canvas"),
+        document.createElement("canvas")
     ];
 
     textureCache[0].width = w;
@@ -930,10 +930,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (this._texture) {
             if (this._texture instanceof HTMLImageElement) {
                 if ((this._contentSize.width === 0) || (this._contentSize.height === 0)) {
-/*                    this.setContentSize(cc.size(this._texture.width, this._texture.height));
-                    this._rect.size.width = this._texture.width;
-                    this._rect.size.height = this._texture.height;
-                    context.drawImage(this._texture, posX, -(posY + this._texture.height));*/
                     // image hasn't loaded, do nothing
                 } else {
                     context.drawImage(this._texture,
@@ -943,7 +939,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                         this._rect.size.width, this._rect.size.height);
                 }
             } else {
-/*                if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
+                if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
                     this.setContentSize(cc.size(this._texture.width, this._texture.height));
                     this._rect.size.width = this._texture.width;
                     this._rect.size.height = this._texture.height;
