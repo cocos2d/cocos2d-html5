@@ -305,6 +305,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             this._pointRect = rect;
             this.initTexCoordsWithRect(rect);
         }
+        this.setDrawMode(cc.PARTICLE_TEXTURE_MODE);
     },
 
     // super methods
@@ -357,7 +358,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         }
         var size = null;
         if ((texture instanceof HTMLImageElement) || (texture instanceof HTMLCanvasElement)) {
-            size = cc.size(texture.width, texture.height);
+            // Fall back to the read-out texture size
+            size = cc.size(texture.width || texture.textureWidth, texture.height || texture.textureHeight);
         } else {
             size = texture.getContentSize();
         }
@@ -484,21 +486,29 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             var particle = this._particles[i];
             var lpx = (0 | (particle.size * 0.5));
 
-            //TODO these are temporary code, need modifier
             if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
                 var drawTexture = this.getTexture();
+
+                // Delay drawing until the texture is fully loaded by the browser
+                if (!drawTexture.width || !drawTexture.height)
+                    continue;
+
                 if (particle.isChangeColor) {
-                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
+                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
                     if (cacheTextureForColor)
-                        drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color, this._pointRect);
+                        drawTexture = cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect);
                 }
                 context.save();
                 context.globalAlpha = particle.color.a;
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
+
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
-                context.drawImage(drawTexture, -lpx, -lpx,
-                    particle.size, particle.size);
+
+                var w = this._pointRect.size.width;
+                var h = this._pointRect.size.height;
+                context.scale((1 / w) * particle.size, (1 / h) * particle.size);
+                context.drawImage(drawTexture, -(0 | (w / 2)), -(0 | (h / 2)), w, h);
                 context.restore();
             } else {
                 context.save();
