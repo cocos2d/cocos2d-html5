@@ -239,6 +239,44 @@ cc.HashSelectorEntry = function (timers, target, timerIndex, currentTimer, curre
     this.hh = hh;
 };
 
+cc.ThreadedTimer = cc.Class.extend({
+    _interval:0.0,
+    _selector:null,
+    target:null,
+    _runForever:false,
+    _useDelay:false,
+    _timesExecuted:0,
+    _repeat:0,
+    _delay:0,
+
+    _timerID:null,
+    initWithTarget:function(target, selector, interval, repeat, delay){
+        this._target = target;
+        this._selector = selector;
+        this._elapsed = -1;
+        this._interval = seconds || 0;
+        this._delay = delay || 0;
+        this._useDelay = this._delay > 0;
+        this._repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
+        this._runForever = (this._repeat == cc.REPEAT_FOREVER);
+
+
+        if(this._runForever)
+        {
+            var that = this;
+            this._timerID = setInterval(function(){that.execute()}, this._interval*1000);
+        }
+    },
+    execute:function(){
+        this._timesExecuted++;
+        this._selector.call(this._target, this._interval);
+    },
+    update:function(){
+        //do nothing?
+    }
+});
+
+
 /**
  * Light weight timer
  * @class
@@ -671,6 +709,46 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         element.timers.push(timer);
     },
 
+    scheduleThreadedCallbackForTarget:function (target, callback_fn, interval, repeat, delay, paused) {
+        cc.Assert(callback_fn, "scheduler.scheduleCallbackForTarget() Argument callback_fn must be non-NULL");
+        cc.Assert(target, "scheduler.scheduleCallbackForTarget() Argument target must be non-NULL");
+
+        // default arguments
+        interval = interval || 0;
+        repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
+        delay = delay || 0;
+        paused = paused || false;
+
+        var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
+
+        if (!element) {
+            // Is this the 1st element ? Then set the pause level to all the callback_fns of this target
+            element = new cc.HashSelectorEntry(null, target, 0, null, null, paused, null);
+            this._hashForSelectors.push(element);
+        } else {
+            cc.Assert(element.paused == paused, "Sheduler.scheduleCallbackForTarget()");
+        }
+
+        var timer;
+        if (element.timers == null) {
+            element.timers = [];
+        } else {
+            for (var i = 0; i < element.timers.length; i++) {
+                timer = element.timers[i];
+                if (callback_fn == timer._selector) {
+                    cc.log("CCSheduler#scheduleCallback. Callback already scheduled. Updating interval from:"
+                        + timer.getInterval().toFixed(4) + " to " + interval.toFixed(4));
+                    timer._interval = interval;
+                    return;
+                }
+            }
+        }
+
+        timer = new cc.ThreadedTimer();
+        timer.initWithTarget(target, callback_fn, interval, repeat, delay);
+        element.timers.push(timer);
+    },
+
     /**
      * <p>
      *    Schedules the 'update' callback_fn for a given target with a given priority.<br/>
@@ -683,6 +761,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
      * @example
      * //register this object to scheduler
      * cc.Director.getInstance().getScheduler().scheduleUpdateForTarget(this, priority, !this._isRunning );
+     * 我觉得边玩游戏边找攻略确实不错，但是
+     1. 你的攻略多吗，权威吗？ （起码在产品有）
      */
     scheduleUpdateForTarget:function (target, priority, paused) {
         var hashElement = cc.HASH_FIND_INT(this._hashForUpdates, target);

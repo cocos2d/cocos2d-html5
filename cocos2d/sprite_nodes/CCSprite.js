@@ -877,48 +877,48 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             context.globalCompositeOperation = 'lighter';
 
         context.globalAlpha = this._opacity / 255;
-        var mpX = 0, mpY = 0;
-        if (this._flipX) {
-            mpX = 0 | (this._contentSize.width / 2 - this._anchorPointInPoints.x);
-            context.translate(mpX, 0);
+        var flipXOffset = 0, flipYOffset = 0;
+        if(this._flipX){
+            flipXOffset = this._rect.size.width;
             context.scale(-1, 1);
         }
         if (this._flipY) {
-            mpY = -(0 | (this._contentSize.height / 2 - this._anchorPointInPoints.y));
-            context.translate(0, mpY);
+            flipYOffset = this._rect.size.height;
             context.scale(1, -1);
         }
 
-        var posX = 0 | ( -this._anchorPointInPoints.x - mpX + this._offsetPosition.x);
-        var posY = 0 | ( -this._anchorPointInPoints.y + mpY + this._offsetPosition.y);
+        var posX = 0 | ( -this._anchorPointInPoints.x + this._offsetPosition.x);
+        var posY = 0 | ( -this._anchorPointInPoints.y  + this._offsetPosition.y);
 
         if (this._texture) {
             if (this._texture instanceof HTMLImageElement) {
-                if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
-                    this.setContentSize(cc.size(this._texture.width, this._texture.height));
+                if ((this._contentSize.width === 0) || (this._contentSize.height === 0)) {
+/*                    this.setContentSize(cc.size(this._texture.width, this._texture.height));
                     this._rect.size.width = this._texture.width;
                     this._rect.size.height = this._texture.height;
-                    context.drawImage(this._texture, posX, -(posY + this._texture.height));
+                    context.drawImage(this._texture, posX, -(posY + this._texture.height));*/
+                    // image hasn't loaded, do nothing
                 } else {
                     context.drawImage(this._texture,
                         this._rect.origin.x, this._rect.origin.y,
                         this._rect.size.width, this._rect.size.height,
-                        posX, -(posY + this._rect.size.height),
+                        this._offsetPosition.x-flipXOffset, -this._offsetPosition.y-this._rect.size.height + flipYOffset,
                         this._rect.size.width, this._rect.size.height);
                 }
             } else {
-                if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
+/*                if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
                     this.setContentSize(cc.size(this._texture.width, this._texture.height));
                     this._rect.size.width = this._texture.width;
                     this._rect.size.height = this._texture.height;
                     context.drawImage(this._texture, posX, -(posY + this._texture.height));
-                } else {
+                } else {*/
+                // should be another canvas
                     context.drawImage(this._texture,
                         0, 0,
                         this._rect.size.width, this._rect.size.height,
-                        posX, -(posY + this._rect.size.height),
+                        this._offsetPosition.x-flipXOffset, -this._offsetPosition.y-this._rect.size.height + flipYOffset,
                         this._rect.size.width, this._rect.size.height);
-                }
+                //}
             }
         } else {
             context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";

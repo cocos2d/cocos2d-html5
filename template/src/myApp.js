@@ -67,15 +67,25 @@ var MyLayer = cc.Layer.extend({
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
-        var lazyLayer = new cc.LazyLayer();
+        var lazyLayer = cc.Layer.create();
+        window.l = lazyLayer;
         this.addChild(lazyLayer);
 
         // add "Helloworld" splash screen"
         this.sprite = cc.Sprite.create("res/HelloWorld.png");
         this.sprite.setAnchorPoint(cc.p(0.5, 0.5));
         this.sprite.setPosition(cc.p(size.width / 2, size.height / 2));
+        this.sprite.setScale(0.5);
+        window.sp = this.sprite;
+        this.sprite._flipX = true;
+        this.sprite.ignoreAnchorPointForPosition(true);
 
         lazyLayer.addChild(this.sprite, 0);
+
+        var test = cc.Sprite.create("res/CloseNormal.png");
+        this.sprite.addChild(test);
+
+
 
         return true;
     }

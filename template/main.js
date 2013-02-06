@@ -56,7 +56,11 @@ var cocos2dApp = cc.Application.extend({
         // create a scene. it's an autorelease object
 
         // run
-        director.runWithScene(new this.startScene());
+        var scene = new this.startScene();
+        scene.init();
+        console.log("scene", scene, scene.nodeToParentTransform());
+        window.s = scene;
+        director.runWithScene(scene);
 
         return true;
     }
