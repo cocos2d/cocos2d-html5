@@ -208,7 +208,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     /**
      * isAccelerometerEnabled setter
-     * @param enabled
+     * @param {Boolean} enabled
      */
     setAccelerometerEnabled:function (enabled) {
         if (enabled != this._isAccelerometerEnabled) {
@@ -223,6 +223,23 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
                 }
             }
         }
+    },
+
+    /**
+     * accelerometerInterval setter
+     * @param {Number} interval
+     */
+    setAccelerometerInterval:function (interval) {
+        if (this._isAccelerometerEnabled) {
+            if (this._running) {
+                var director = cc.Director.getInstance();
+                director.getAccelerometer().setAccelerometerInterval(interval);
+            }
+        }
+    },
+
+    onAccelerometer:function (accelerationValue) {
+        console.log("onAccelerate");
     },
 
     /**
@@ -267,12 +284,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         // then iterate over all the children
         this._super();
 
-        //TODO not supported
         // add this layer to concern the Accelerometer Sensor
-/*        if (this._isAccelerometerEnabled){
-           director.getAccelerometer().setDelegate(this);
-        }*/
-
+        if (this._isAccelerometerEnabled) {
+            director.getAccelerometer().setDelegate(this);
+        }
 
         // add this layer to concern the kaypad msg
         if (this._isKeyboardEnabled)
@@ -292,10 +307,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // remove this layer from the delegates who concern Accelerometer Sensor
-        //TODO not supported
-/*        if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled) {
             director.getAccelerometer().setDelegate(null);
-        }*/
+        }
 
         // remove this layer from the delegates who concern the kaypad msg
         if (this._isKeyboardEnabled) {
@@ -312,10 +326,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * this is called when ever a layer is a child of a scene that just finished a transition
      */
     onEnterTransitionDidFinish:function () {
-        //TODO not supported
-        /*if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled) {
             cc.Director.getInstance().getAccelerometer().setDelegate(this);
-        }*/
+        }
         this._super();
     },
 
@@ -383,9 +396,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param event
      */
     onTouchesCancelled:function (touch, event) {
-    },
-
-    didAccelerate:function (pAccelerationValue) {
     },
 
     // ---------------------CCMouseEventDelegate interface------------------------------

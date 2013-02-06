@@ -43,11 +43,15 @@ Object.defineProperties(sys,
 
 			if( 'ontouchstart' in document.documentElement )
 				capabilities["touches"] = true;
+
 			else if( 'onmouseup' in document.documentElement )
 				capabilities["mouse"] = true;
 
 			if( 'onkeyup' in document.documentElement )
 				capabilities["keyboard"] = true;
+
+            if(1)
+                capabilities["accelerometer"] = true;
 
 			return capabilities;
         },
