@@ -146,6 +146,9 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
     startWithTarget:function (target) {
         this._super(target);
         this._deltaT = 1 / this._points.length;
+
+        this._previousPosition = this._target.getPosition();
+        this._accumulatedDiff = cc.p(0, 0);
     },
 
     /**
@@ -169,6 +172,14 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
             cc.getControlPointAt( this._points, p + 1),
             cc.getControlPointAt( this._points, p + 2),
             this._tension, lt);
+
+        var node = this._target;
+        var diff = cc.pSub(node.getPosition(), this._previousPosition);
+        if (diff.x != 0 || diff.y != 0) {
+            this._accumulatedDiff = cc.pAdd(this._accumulatedDiff, diff);
+            newPos = cc.pAdd(newPos, this._accumulatedDiff);
+        }
+ 
         this.updatePosition(newPos);
     },
 
@@ -187,6 +198,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      */
     updatePosition:function (newPos) {
         this._target.setPosition(newPos);
+        this._previousPosition = newPos;
     },
 
     /**
@@ -295,7 +307,9 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
-        this._target.setPosition(cc.pAdd(newPos, this._startPosition));
+        var p = cc.pAdd(newPos, this._startPosition);
+        this._target.setPosition(p)
+        this._previousPosition = p;
     }
 });
 

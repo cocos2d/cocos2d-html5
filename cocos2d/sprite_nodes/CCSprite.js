@@ -29,7 +29,7 @@
  * @constant
  * @type Number
  */
-cc.SPRITE_INDEX_NOT_INITIALIZED = "0xffffffff";
+cc.SPRITE_INDEX_NOT_INITIALIZED = -1;
 
 /**
  * generate texture's cache for texture tint
@@ -37,33 +37,60 @@ cc.SPRITE_INDEX_NOT_INITIALIZED = "0xffffffff";
  * @param {HTMLImageElement} texture
  * @return {Array}
  */
+
 cc.generateTextureCacheForColor = function (texture) {
+
+    if (texture.hasOwnProperty('channelCache')) {
+        return texture.channelCache;
+    }
+
+    var ref = cc.generateTextureCacheForColor;
+
     var w = texture.width;
     var h = texture.height;
-    var textureCache = [];
+    var textureCache = [
+        document.createElement("canvas"),
+        document.createElement("canvas"),
+        document.createElement("canvas"),
+    ];
 
-    var canvas = document.createElement("canvas");
-    canvas.width = w;
-    canvas.height = h;
+    textureCache[0].width = w;
+    textureCache[0].height = h;
+    textureCache[1].width = w;
+    textureCache[1].height = h;
+    textureCache[2].width = w;
+    textureCache[2].height = h;
 
-    var ctx = canvas.getContext("2d");
+    if (w > ref.canvas.width || h > ref.canvas.height) {
+        ref.canvas.width = w;
+        ref.canvas.height = h;
+
+    } else {
+        ref.canvas.width = ref.canvas.width;
+        ref.canvas.height = ref.canvas.height;
+    }
+
+    var ctx = ref.canvas.getContext("2d");
     ctx.drawImage(texture, 0, 0);
 
-    var tempCanvas = document.createElement("canvas");
-    tempCanvas.width = w;
-    tempCanvas.height = h;
-    var tempCtx = tempCanvas.getContext('2d');
+    if (w > ref.tempCanvas.width || h > ref.tempCanvas.height) {
+        ref.tempCanvas.width = w;
+        ref.tempCanvas.height = h;
+
+    } else {
+        ref.tempCanvas.width = ref.tempCanvas.width;
+        ref.tempCanvas.height = ref.tempCanvas.height;
+    }
 
     var pixels = ctx.getImageData(0, 0, w, h).data;
 
     for (var rgbI = 0; rgbI < 3; rgbI++) {
-        var cacheCanvas = document.createElement("canvas");
-        cacheCanvas.width = w;
-        cacheCanvas.height = h;
-        var cacheCtx = cacheCanvas.getContext('2d');
 
-        tempCtx.drawImage(texture, 0, 0);
-        var to = tempCtx.getImageData(0, 0, w, h);
+        var cacheCtx = textureCache[rgbI].getContext('2d');
+        cacheCtx.getImageData(0, 0, w, h).data;
+        ref.tempCtx.drawImage(texture, 0, 0);
+
+        var to = ref.tempCtx.getImageData(0, 0, w, h);
         var toData = to.data;
 
         for (var i = 0; i < pixels.length; i += 4) {
@@ -72,11 +99,19 @@ cc.generateTextureCacheForColor = function (texture) {
             toData[i + 2] = (rgbI === 2) ? pixels[i + 2] : 0;
             toData[i + 3] = pixels[i + 3];
         }
+
         cacheCtx.putImageData(to, 0, 0);
-        textureCache.push(cacheCanvas);
+
     }
+
+    texture.channelCache = textureCache;
     return textureCache;
 };
+
+cc.generateTextureCacheForColor.canvas = document.createElement('canvas');
+cc.generateTextureCacheForColor.tempCanvas = document.createElement('canvas');
+cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCanvas.getContext('2d');
+
 
 cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
@@ -244,6 +279,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _texture:null,
     _originalTexture:null,
     _color:null,
+    _colorized:false,
     //
     // Shared data
     //
@@ -547,7 +583,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
 
-        var texture = cc.TextureCache.getInstance().textureForKey(filename);
+        var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
+        //var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             //texture = cc.TextureCache.getInstance().addImage(filename);
             this._visible = false;
@@ -911,14 +948,19 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     this._rect.size.width = this._texture.width;
                     this._rect.size.height = this._texture.height;
                     context.drawImage(this._texture, posX, -(posY + this._texture.height));
-                } else {*/
-                // should be another canvas
+                } else if(this._colorized) {
                     context.drawImage(this._texture,
                         0, 0,
                         this._rect.size.width, this._rect.size.height,
                         this._offsetPosition.x-flipXOffset, -this._offsetPosition.y-this._rect.size.height + flipYOffset,
                         this._rect.size.width, this._rect.size.height);
-                //}
+                } else {
+                    context.drawImage(this._texture,
+                        this._rect.origin.x, this._rect.origin.y,
+                        this._rect.size.width, this._rect.size.height,
+                        posX, -(posY + this._rect.size.height),
+                        this._rect.size.width, this._rect.size.height);
+                }
             }
         } else {
             context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";
@@ -1440,6 +1482,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             if (cc.renderContextType === cc.CANVAS) {
                 var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this._originalTexture);
                 if (cacheTextureForColor) {
+                    this._colorized = true;
                     //generate color texture cache
                     if (this._texture instanceof HTMLCanvasElement && !this._rectRotated) {
                         cc.generateTintImage(this.getTexture(), cacheTextureForColor, this._color, this.getTextureRect(), this._texture);

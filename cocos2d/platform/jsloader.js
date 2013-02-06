@@ -104,8 +104,6 @@
         'tileMap_parallax_nodes/CCTMXObjectGroup.js',
         'tileMap_parallax_nodes/CCTMXLayer.js',
         'tileMap_parallax_nodes/CCParallaxNode.js',
-        'menu_nodes/CCMenuItem.js',
-        'menu_nodes/CCMenu.js',
         'base_nodes/CCdomNode.js',
         '../CocosDenshion/SimpleAudioEngine.js'
 

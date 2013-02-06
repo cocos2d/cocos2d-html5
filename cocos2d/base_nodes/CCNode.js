@@ -1342,15 +1342,15 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 /*        // transformations
         if (!this._ignoreAnchorPointForPosition) {
             if (this._parent)
-                context.translate(0 | (this._position.x - this._parent._anchorPointInPoints.x), -(0 | (this._position.y - this._parent._anchorPointInPoints.y)));
+                context.translate((this._position.x - this._parent._anchorPointInPoints.x), -((this._position.y - this._parent._anchorPointInPoints.y)));
             else
-                context.translate(0 | this._position.x, -(0 | this._position.y));
+                context.translate(this._position.x, -(this._position.y));
         } else {
             if (this._parent) {
-                context.translate(0 | ( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
-                    -(0 | (this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
+                context.translate(( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
+                    -((this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
             } else {
-                context.translate(0 | ( this._position.x + this._anchorPointInPoints.x), -(0 | (this._position.y + this._anchorPointInPoints.y)));
+                context.translate(( this._position.x + this._anchorPointInPoints.x), -((this._position.y + this._anchorPointInPoints.y)));
             }
         }
 
