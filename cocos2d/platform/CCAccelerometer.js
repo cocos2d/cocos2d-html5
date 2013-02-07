@@ -23,7 +23,32 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
+if (window.DeviceMotionEvent) {
+    window.addEventListener('devicemotion', deviceMotionHandler, false);
+}
+var SHAKE_THRESHOLD = 800;
+var lastUpdate = 0;
+var x, y, z, last_x, last_y, last_z;
+function deviceMotionHandler(eventData) {
+    // Grab the acceleration including gravity from the results
+    var acceleration = eventData.accelerationIncludingGravity;
+    var curTime = new Date().getTime();
+    if ((curTime - lastUpdate) > 100) {
+        var diffTime = (curTime - lastUpdate);
+        lastUpdate = curTime;
+        x = acceleration.x;
+        y = acceleration.y;
+        z = acceleration.z;
+        var speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
+        document.getElementById("container").innerHTML = document.getElementById("container").innerHTML + "<br />" + speed;
+        if (speed > SHAKE_THRESHOLD) {
+            alert("shaked!");
+        }
+        last_x = x;
+        last_y = y;
+        last_z = z;
+    }
+}
 /**
  * he device accelerometer reports values for each axis in units of g-force
  */
@@ -57,9 +82,11 @@ cc.Accelerometer = cc.Class.extend(/** @lends cc.Accelerometer# */{
 cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatcher# */{
     _delegate:null,
     _acceleration:null,
+    _deviceEvent:null,
 
     init:function () {
         this._acceleration = new cc.Acceleration();
+        this._deviceEvent = window.DeviceMotionEvent || window.DeviceOrientationEvent;
         return true;
     },
 
@@ -71,12 +98,18 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
         this._delegate = delegate;
         var acc = this.didAccelerate.bind(this);
         if (this._delegate) {
-            if (window.DeviceOrientationEvent) {
+            if (this._deviceEvent == window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', acc, false);
+            }
+            else {
                 window.addEventListener('deviceorientation', acc, false);
             }
         }
         else {
-            if (window.DeviceOrientationEvent) {
+            if (this._deviceEvent == window.DeviceMotionEvent) {
+                window.removeEventListener('devicemotion', acc);
+            }
+            else {
                 window.removeEventListener('deviceorientation', acc);
             }
         }
@@ -86,15 +119,23 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
         //not available on browser
     },
 
-    didAccelerate:function (acceleration) {
+    didAccelerate:function (eventData) {
         if (!this._delegate) {
             return;
         }
+        if (this._deviceEvent == window.DeviceMotionEvent) {
+            var acceleration = eventData.accelerationIncludingGravity;
+            var dt = eventData.interval / 1000;
+            this._acceleration.x = -acceleration.x * dt;
+            this._acceleration.y = -acceleration.y * dt;
+            this._acceleration.z = acceleration.z * dt;
+            this._acceleration.timestamp = new Date().getTime();
+        }
 
-        this._acceleration.x = acceleration.gamma;
-        this._acceleration.y = acceleration.alpha;
-        this._acceleration.z = acceleration.beta;
-        this._acceleration.timestamp = acceleration.timestamp;
+        /*this._acceleration.x = acceleration.gamma;
+         this._acceleration.y = acceleration.alpha;
+         this._acceleration.z = acceleration.beta;
+         this._acceleration.timestamp = acceleration.timestamp;*/
 
         /*var tmp = this.acceleration.x;
 
