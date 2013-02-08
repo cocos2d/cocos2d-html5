@@ -51,7 +51,7 @@ cc.generateTextureCacheForColor = function (texture) {
     var textureCache = [
         document.createElement("canvas"),
         document.createElement("canvas"),
-        document.createElement("canvas"),
+        document.createElement("canvas")
     ];
 
     textureCache[0].width = w;
