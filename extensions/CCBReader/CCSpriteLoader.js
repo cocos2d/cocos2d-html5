@@ -77,11 +77,11 @@ cc.SpriteLoader.loader = function () {
     return new cc.SpriteLoader();
 };
 
-var PROPERTY_TOUCH_ENABLED = "isTouchEnabled";
-var PROPERTY_ACCELEROMETER_ENABLED = "isAccelerometerEnabled";
+var PROPERTY_TOUCH_ENABLED = "touchEnabled";
+var PROPERTY_ACCELEROMETER_ENABLED = "accelerometerEnabled";
 var PROPERTY_IS_MOUSE_ENABLED = "isMouseEnabled";
 var PROPERTY_MOUSE_ENABLED = "mouseEnabled";
-var PROPERTY_KEYBOARD_ENABLED = "isKeyboardEnabled";
+var PROPERTY_KEYBOARD_ENABLED = "keyboardEnabled";
 
 cc.LayerLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {

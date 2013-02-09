@@ -71,6 +71,7 @@ Object.defineProperties(sys,
 				OSName = "iOS";
 			else if( isAndroid )
 				OSName = "Android";
+			return OSName;
 		},
 		enumerable : true,
 		configurable : true
