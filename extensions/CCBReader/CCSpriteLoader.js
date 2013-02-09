@@ -93,11 +93,15 @@ cc.LayerLoader = cc.NodeLoader.extend({
         } else if (propertyName == PROPERTY_ACCELEROMETER_ENABLED) {
             node.setAccelerometerEnabled(check);
         } else if (propertyName == PROPERTY_IS_MOUSE_ENABLED || propertyName == PROPERTY_MOUSE_ENABLED ) {
-           node.setMouseEnabled(check)
+            node.setMouseEnabled(check);
         } else if (propertyName == PROPERTY_KEYBOARD_ENABLED) {
             // TODO XXX
-            cc.log("The property '" + PROPERTY_KEYBOARD_ENABLED + "' is not supported!");
-            // This comes closest: ((CCLayer *)pNode).setKeypadEnabled(pCheck);
+            if(node.setKeyboardEnabled && sys.platform == "browser") {
+                node.setKeyboardEnabled(check);
+            } else {
+                cc.log("The property '" + PROPERTY_KEYBOARD_ENABLED + "' is not supported!");
+                // This comes closest: ((CCLayer *)pNode).setKeypadEnabled(pCheck);
+            }
         } else {
             this._super(node, parent, propertyName, check, ccbReader);
         }
