@@ -1063,7 +1063,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
 
             if (this._rotation != 0)
-                context.rotate(this._rotationRadians);
+                context.rotate(Math.round(this._rotationRadians * 1000) / 1000);
+
             context.restore();
         }
     }
