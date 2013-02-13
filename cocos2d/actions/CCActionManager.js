@@ -30,7 +30,8 @@
  */
 cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
     actions:null,
-    target:null, //ccobject
+    _id:null,
+    _target:null, //ccobject
     actionIndex:0,
     currentAction:null, //CCAction
     currentActionSalvaged:false,
@@ -40,9 +41,42 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
      * Constructor
      */
     ctor:function () {
+        this._id = ++cc.HashElement.id;
         this.actions = [];
+    },
+
+    setTarget: function(target) {
+        if (target === null) {
+            if (this._target) {
+                this._target = null;
+                delete cc.HashElement.leakedHashes[this._id];
+            }
+
+        } else {
+            this._target = target;
+            cc.HashElement.leakedHashes[this._id] = this;
+        }
+    },
+
+    getTarget: function() {
+        return this._target;
     }
 });
+
+cc.HashElement.id = 0;
+cc.HashElement.leakedHashes = {};
+
+cc.HashElement.clearLeaks = function() {
+    var hashes = cc.HashElement.leakedHashes;
+    for(var i in hashes) {
+        if (hashes.hasOwnProperty(i)) {
+            var hash = hashes[i];
+            hash._target = null;
+            hash.currentAction = null;
+        }
+    }
+};
+
 
 /**
  * cc.ActionManager is a singleton that manages all the actions.<br/>
@@ -62,7 +96,7 @@ cc.ActionManager = cc.Class.extend({
 
     _searchElementByTarget:function (arr, target) {
         for (var k = 0; k < arr.length; k++) {
-            if (target == arr[k].target) {
+            if (target == arr[k].getTarget()) {
                 return arr[k];
             }
         }
@@ -85,15 +119,18 @@ cc.ActionManager = cc.Class.extend({
      * @param {Boolean} paused
      */
     addAction:function (action, target, paused) {
+
         cc.Assert(action != null, "no action");
         cc.Assert(target != null, "");
         //check if the action target already exists
         var element = this._searchElementByTarget(this._targets, target);
+
+
         //if doesnt exists, create a hashelement and push in mpTargets
         if (!element) {
             element = new cc.HashElement();
             element.paused = paused;
-            element.target = target;
+            element.setTarget(target);
             this._targets.push(element);
         }
         //creates a array for that eleemnt to hold the actions
@@ -107,18 +144,24 @@ cc.ActionManager = cc.Class.extend({
      * Removes all actions from all the targets.
      */
     removeAllActions:function () {
+        console.log('removing all actions');
         for (var i = 0; i < this._targets.length; i++) {
             var element = this._targets[i];
             if (element) {
-                this.removeAllActionsFromTarget(element.target);
+                this.removeAllActionsFromTarget(element.getTarget());
             }
         }
+
+        this._targets = [];
+        this._currentTarget = null;
+
     },
     /** Removes all actions from a certain target. <br/>
      * All the actions that belongs to the target will be removed.
      * @param {object} target
      */
     removeAllActionsFromTarget:function (target) {
+
         // explicit null handling
         if (target == null) {
             return;
@@ -139,7 +182,7 @@ cc.ActionManager = cc.Class.extend({
                 this._deleteHashElement(element);
             }
         } else {
-            //cc.log("cocos2d: removeAllActionsFromTarget: Target not found");
+            cc.log("cocos2d: removeAllActionsFromTarget: Target not found");
         }
     },
     /** Removes an action given an action reference.
@@ -217,7 +260,7 @@ cc.ActionManager = cc.Class.extend({
     /** Returns the numbers of actions that are running in a certain target. <br/>
      * Composable actions are counted as 1 action. <br/>
      * Example: <br/>
-     * - If you are running 1 Sequence of 7 actions, it will return 1. <br/>
+     * - If yog are running 1 Sequence of 7 actions, it will return 1. <br/>
      * - If you are running 7 Sequences of 2 actions, it will return 7.
      * @param {object} target
      * @return {Number}
@@ -258,7 +301,7 @@ cc.ActionManager = cc.Class.extend({
             var element = this._targets[i];
             if(element && !element.paused){
                 element.paused = true;
-                idsWithActions.push(element.target);
+                idsWithActions.push(element.getTarget());
             }
         }
         return idsWithActions;
@@ -313,7 +356,7 @@ cc.ActionManager = cc.Class.extend({
         cc.ArrayRemoveObject(this._targets, element);
         if (element) {
             element.actions = null;
-            element.target = null;
+            element.setTarget(null);
         }
     },
 

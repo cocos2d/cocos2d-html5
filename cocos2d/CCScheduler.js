@@ -74,11 +74,7 @@ cc.ArrayRemoveObjectAtIndex = function (arr, index) {
  * @param {*} delObj  remove object
  */
 cc.ArrayRemoveObject = function (arr, delObj) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] == delObj) {
-            arr.splice(i, 1);
-        }
-    }
+    arr.splice(arr.indexOf(delObj), 1);
 };
 
 /**
@@ -101,12 +97,7 @@ cc.ArrayRemoveArray = function (arr, minusArr) {
  * @return {Number} index of first occurence of value
  */
 cc.ArrayGetIndexOfValue = function (arr, value) {
-    for (var i = 0; i < arr.length; i++) {
-        if (arr[i] == value) {
-            return i;
-        }
-    }
-    return -1;
+    return arr.indexOf(value);
 };
 
 /**

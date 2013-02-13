@@ -99,7 +99,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
             if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
-                var soundCache = new Audio(path);
+                var soundCache = document.createElement('audio');
                 soundCache.preload = 'auto';
 
                 soundCache.addEventListener('canplaythrough', function (e) {
@@ -295,7 +295,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 cc.log("Error: " + path + " greater than " + this._maxAudioInstance);
                 return keyname;
             }
-            au = new Audio(keyname + "." + actExt);
+            au = document.createElement('audio');
+            au.src = keyname + "." + actExt;
             reclaim.push(au);
         }
 
