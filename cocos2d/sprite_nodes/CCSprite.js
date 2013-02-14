@@ -1487,7 +1487,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
 
         this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
-        this._changeTextureColor();
+        if (this._color.r + this._color.g + this._color.b > 3 * 254) {
+            this.setTexture(this._originalTexture);
+
+        } else {
+            this._changeTextureColor();
+        }
 
         /*
          if (this._opacityModifyRGB) {
