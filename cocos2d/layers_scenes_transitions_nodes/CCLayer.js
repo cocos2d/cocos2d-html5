@@ -741,7 +741,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         var apip = this.getAnchorPointInPoints();
 
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
-        context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+        context.fillRect(-(0 | apip.x), apip.y | 0, 0 | tWidth, -tHeight | 0);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -1060,7 +1060,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
                 + Math.round(this._endColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
             context.fillStyle = tGradient;
-            context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+            context.fillRect(-(0 | apip.x), apip.y | 0, 0 | tWidth, -tHeight | 0);
 
             if (this._rotation != 0)
                 context.rotate(Math.round(this._rotationRadians * 1000) / 1000);
