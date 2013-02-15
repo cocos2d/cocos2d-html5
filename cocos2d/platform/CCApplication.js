@@ -335,8 +335,6 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             setTimeout(callback, step);
         }
 
-        console.log('step', step);
-
     },
     _animationInterval:null
 });
