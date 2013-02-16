@@ -530,7 +530,7 @@ cc.MenuItemFont.setFontName = function (name) {
  * @return {String}
  */
 cc.MenuItemFont.fontName = function () {
-    return cc._fontName
+    return cc._fontName;
 };
 
 /**
