@@ -1984,10 +1984,6 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         for (var i = this._nextFrame; i < numberOfFrames; i++) {
             if (this._splitTimes[i] <= time) {
                 this._target.setDisplayFrame(frames[i].getSpriteFrame());
-                //var dict = frame.getUserInfo();
-                //if (dict) {
-                    //TODO: [[NSNotificationCenter defaultCenter] postNotificationName:CCAnimationFrameDisplayedNotification object:target_ userInfo:dict];
-                //}
                 this._nextFrame = i + 1;
                 break;
             }
@@ -2014,7 +2010,10 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         var newAnim = cc.Animation.createWithAnimationFrames(newArray, this._animation.getDelayPerUnit(), this._animation.getLoops());
         newAnim.setRestoreOriginalFrame(this._animation.getRestoreOriginalFrame());
         return cc.Animate.create(newAnim);
+    },
 
+    copy:function(){
+        return cc.Animate.create(this._animation.copy());
     },
 
     /**

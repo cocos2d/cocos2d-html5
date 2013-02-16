@@ -377,9 +377,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
     setZOrder:function (z) {
         this._setZOrder(z);
-        if (this._parent) {
+        if (this._parent)
             this._parent.reorderChild(this, z);
-        }
     },
 
     /**
@@ -656,7 +655,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
             this._anchorPoint = new cc.Point(point.x, point.y);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
-
             this.setNodeDirty();
         }
     },
@@ -947,13 +945,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.Node}
      */
     getChildByTag:function (aTag) {
-        cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
+        //cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
         if (this._children != null) {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
-                if (node && node._tag == aTag) {
+                if (node && node._tag == aTag)
                     return node;
-                }
             }
         }
         //throw "not found";
@@ -982,9 +979,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var tmptag = (tag != null) ? tag : child.getTag();
         child.setTag(tmptag);
 
-        if (!this._children) {
+        if (!this._children)
             this._childrenAlloc();
-        }
 
         this._insertChild(child, tempzOrder);
 
@@ -1005,7 +1001,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
-            cleanup = cleanup || true;
+            if(cleanup === null)
+                cleanup = true;
             this._parent.removeChild(this, cleanup);
         }
     },
@@ -1034,7 +1031,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (this._children == null)
             return;
 
-        cleanup = cleanup || true;
+        if(cleanup === null)
+            cleanup = true;
         if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
@@ -1076,7 +1074,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
-            cleanup = cleanup || true;
+            if(cleanup === null)
+                cleanup = true;
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
@@ -1113,9 +1112,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
         // If you don't do cleanup, the child's actions will not get removed and the
         // its scheduledSelectors_ dict will not get released!
-        if (doCleanup) {
+        if (doCleanup)
             child.cleanup();
-        }
 
         // set parent nil at the end
         child.setParent(null);
@@ -1131,9 +1129,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _insertChild:function (child, z) {
         this._reorderChildDirty = true;
         var a = this._children[this._children.length - 1];
-        if (!a || a.getZOrder() <= z) {
+        if (!a || a.getZOrder() <= z)
             this._children.push(child);
-        } else {
+        else {
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node && (node.getZOrder() > z )) {
@@ -1153,10 +1151,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     reorderChild:function (child, zOrder) {
         cc.Assert(child != null, "Child must be non-nil");
         this._reorderChildDirty = true;
-
         child.setOrderOfArrival(cc.s_globalOrderOfArrival++);
         child._setZOrder(zOrder);
-
         this.setNodeDirty();
     },
 
@@ -1639,9 +1635,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     nodeToWorldTransform:function () {
         var t = this.nodeToParentTransform();
-        for (var p = this._parent; p != null; p = p.getParent()) {
+        for (var p = this._parent; p != null; p = p.getParent())
             t = cc.AffineTransformConcat(t, p.nodeToParentTransform());
-        }
         return t;
     },
 

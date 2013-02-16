@@ -50,7 +50,7 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
 
     copy:function (pZone) {
         var newFrame = new cc.AnimationFrame();
-        newFrame.initWithSpriteFrame(this._spriteFrame, this._delayPerUnit, this._userInfo);
+        newFrame.initWithSpriteFrame(this._spriteFrame.copy(), this._delayPerUnit, this._userInfo);
         return newFrame;
     },
 
@@ -239,9 +239,16 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
      */
     copyWithZone:function (pZone) {
         var pCopy = new cc.Animation();
-        pCopy.initWithAnimationFrames(this._frames, this._delayPerUnit, this._loops);
+        pCopy.initWithAnimationFrames(this._copyFrames(), this._delayPerUnit, this._loops);
         pCopy.setRestoreOriginalFrame(this._restoreOriginalFrame);
         return pCopy;
+    },
+
+    _copyFrames:function(){
+       var copyFrames = [];
+        for(var i = 0; i< this._frames.length;i++)
+            copyFrames.push(this._frames[i].copy());
+        return copyFrames;
     },
 
     copy:function (pZone) {

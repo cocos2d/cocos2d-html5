@@ -625,11 +625,10 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if (arguments.length == 1) {
+        if (arguments.length == 1)
             this._blendFunc = src;
-        } else {
+        else
             this._blendFunc = {src:src, dst:dst};
-        }
         this._isLighterMode = (this._blendFunc && (this._blendFunc.src == 1) && (this._blendFunc.dst == 771));
     },
 
@@ -652,11 +651,8 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
         this._color = new cc.Color3B(color.r, color.g, color.b);
         this._opacity = color.a;
-
         this.setContentSize(cc.size(width, height));
-
         this._updateColor();
-
         return true;
     },
 
@@ -708,7 +704,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
                 this._squareColors[i].b = this._color.b / 255;
                 this._squareColors[i].a = this._opacity / 255;
             }
-            this._colorsFloat32Buffer = this._getLayerColorArray();
+            this._colorsUint8Buffer = this._getLayerColorArray();
         }
     },
 
@@ -751,16 +747,11 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
     },
 
     _verticesFloat32Buffer:null,
-    _colorsFloat32Buffer:null,
+    _colorsUint8Buffer:null,
     _drawForWebGL:function (context) {
         context = context || cc.webglContext;
 
-        //cc.NODE_DRAW_SETUP();
-        context.enable(context.BLEND);
-        if (this._shaderProgram) {
-            context.useProgram(this._shaderProgram._programObj);
-            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
-        }
+        cc.NODE_DRAW_SETUP(this);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR);
 
         //
@@ -769,14 +760,14 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
 
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsFloat32Buffer);
+        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.FLOAT, false, 0, 0);
 
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
         context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
     },
 
-    _getLayerVertexArray:function(){
+    _getLayerVertexArray:function () {
         var vertexBuffer = cc.webglContext.createBuffer();
         cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
         cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
@@ -788,7 +779,7 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
         return vertexBuffer;
     },
 
-    _getLayerColorArray:function(){
+    _getLayerColorArray:function () {
         var colorsBuffer = cc.webglContext.createBuffer();
         cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
         cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
@@ -1080,7 +1071,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
             this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
 
-            this._colorsFloat32Buffer = this._getLayerColorArray();
+            this._colorsUint8Buffer = this._getLayerColorArray();
         }
     },
 
@@ -1106,7 +1097,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             if (this._rotation != 0)
                 context.rotate(this._rotationRadians);
             context.restore();
-        }else{
+        } else {
             this._super(context);
         }
     }

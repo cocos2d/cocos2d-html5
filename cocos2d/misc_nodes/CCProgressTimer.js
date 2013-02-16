@@ -299,7 +299,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
     _verticesFloat32Buffer:null,
     _textureCoordsFloat32Buffer:null,
-    _colorsFloat32Buffer:null,
+    _colorsUint8Buffer:null,
     _getProgressTimerVertexArray:function () {
         var vertexBuffer = cc.webglContext.createBuffer();
         cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
@@ -308,7 +308,6 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             vertiesArray[i * 2] = this._vertexData[i].vertices.x;
             vertiesArray[i * 2 + 1] = this._vertexData[i].vertices.y;
         }
-
         cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertiesArray, cc.webglContext.STATIC_DRAW);
         return vertexBuffer;
     },
@@ -316,14 +315,14 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
     _getProgressTimerColorArray:function () {
         var colorsBuffer = cc.webglContext.createBuffer();
         cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
-        var vertiesArray = new Float32Array(4 * this._vertexDataCount);
+        var verticesArray = new Uint8Array(4 * this._vertexDataCount);
         for (var i = 0; i < this._vertexDataCount; i++) {
-            vertiesArray[i * 4] = this._vertexData[i].colors.r / 255;
-            vertiesArray[i * 4 + 1] = this._vertexData[i].colors.g / 255;
-            vertiesArray[i * 4 + 2] = this._vertexData[i].colors.b / 255;
-            vertiesArray[i * 4 + 3] = this._vertexData[i].colors.a / 255;
+            verticesArray[i * 4] = this._vertexData[i].colors.r ;
+            verticesArray[i * 4 + 1] = this._vertexData[i].colors.g ;
+            verticesArray[i * 4 + 2] = this._vertexData[i].colors.b ;
+            verticesArray[i * 4 + 3] = this._vertexData[i].colors.a ;
         }
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertiesArray, cc.webglContext.STATIC_DRAW);
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, verticesArray, cc.webglContext.STATIC_DRAW);
         return colorsBuffer;
     },
 
@@ -344,24 +343,15 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         if (!this._vertexData || !this._sprite)
             return;
 
-        //cc.NODE_DRAW_SETUP(this);
-        context.enable(context.BLEND);
-        if (this._shaderProgram) {
-            context.useProgram(this._shaderProgram._programObj);
-            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
-        }
+        cc.NODE_DRAW_SETUP(this);
 
         cc.glBlendFunc(this._sprite.getBlendFunc().src, this._sprite.getBlendFunc().dst);
-
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
 
-        if (this._sprite.getTexture()) {
+        if (this._sprite.getTexture())
             cc.glBindTexture2D(this._sprite.getTexture()._webTextureObj);
-            //gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
-        } else {
+        else
             cc.glBindTexture2D(null);
-            //gl.bindTexture(gl.TEXTURE_2D, null);
-        }
 
         context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
@@ -369,8 +359,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
         context.bindBuffer(context.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, context.FLOAT, false, 0, 0);
 
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.FLOAT, false, 0, 0);
+        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
 
         if (this._type === cc.PROGRESS_TIMER_TYPE_RADIAL)
             context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
@@ -809,20 +799,18 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
 
         if (this._vertexData) {
             var sc = this._sprite.getQuad().tl.colors;
-            for (var i = 0; i < this._vertexDataCount; ++i) {
+            for (var i = 0; i < this._vertexDataCount; ++i)
                 this._vertexData[i].colors = sc;
-            }
-            this._colorsFloat32Buffer = this._getProgressTimerColorArray();
+            this._colorsUint8Buffer = this._getProgressTimerColorArray();
         }
     },
 
     _boundaryTexCoord:function (index) {
         if (index < cc.PROGRESS_TEXTURE_COORDS_COUNT) {
-            if (this._reverseDirection) {
+            if (this._reverseDirection)
                 return cc.p((cc.PROGRESS_TEXTURE_COORDS >> (7 - (index << 1))) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (7 - ((index << 1) + 1))) & 1);
-            } else {
+            else
                 return cc.p((cc.PROGRESS_TEXTURE_COORDS >> ((index << 1) + 1)) & 1, (cc.PROGRESS_TEXTURE_COORDS >> (index << 1)) & 1);
-            }
         }
         return cc.PointZero();
     }
@@ -838,10 +826,8 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
  */
 cc.ProgressTimer.create = function (sprite) {
     var progressTimer = new cc.ProgressTimer();
-    if (progressTimer.initWithSprite(sprite)) {
+    if (progressTimer.initWithSprite(sprite))
         return progressTimer;
-    } else {
-        return null;
-    }
+    return null;
 };
 

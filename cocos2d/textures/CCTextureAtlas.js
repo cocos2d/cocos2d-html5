@@ -92,6 +92,14 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._texture = texture;
     },
 
+    setDirty:function (dirty) {
+        this._dirty = dirty;
+    },
+
+    getDirty:function () {
+        return this._dirty;
+    },
+
     /**
      * Quads that are going to be rendered
      * @return {Array}
@@ -120,6 +128,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             this._setQuadToColorsTypeArray(this._quads[i], i);
             this._setQuadToTexCoordsTypeArray(this._quads[i], i);
         }
+        this._dirty = true;
     },
 
     _setQuadToPositionsTypeArray:function (quad, index) {
@@ -138,22 +147,22 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     },
 
     _setQuadToColorsTypeArray:function (quad, index) {
-        this._colorsArray[index * 16] = quad.bl.colors.r / 255;
-        this._colorsArray[index * 16 + 1] = quad.bl.colors.g / 255;
-        this._colorsArray[index * 16 + 2] = quad.bl.colors.b / 255;
-        this._colorsArray[index * 16 + 3] = quad.bl.colors.a / 255;
-        this._colorsArray[index * 16 + 4] = quad.br.colors.r / 255;
-        this._colorsArray[index * 16 + 5] = quad.br.colors.g / 255;
-        this._colorsArray[index * 16 + 6] = quad.br.colors.b / 255;
-        this._colorsArray[index * 16 + 7] = quad.br.colors.a / 255;
-        this._colorsArray[index * 16 + 8] = quad.tl.colors.r / 255;
-        this._colorsArray[index * 16 + 9] = quad.tl.colors.g / 255;
-        this._colorsArray[index * 16 + 10] = quad.tl.colors.b / 255;
-        this._colorsArray[index * 16 + 11] = quad.tl.colors.a / 255;
-        this._colorsArray[index * 16 + 12] = quad.tr.colors.r / 255;
-        this._colorsArray[index * 16 + 13] = quad.tr.colors.g / 255;
-        this._colorsArray[index * 16 + 14] = quad.tr.colors.b / 255;
-        this._colorsArray[index * 16 + 15] = quad.tr.colors.a / 255;
+        this._colorsArray[index * 16] = quad.bl.colors.r;
+        this._colorsArray[index * 16 + 1] = quad.bl.colors.g;
+        this._colorsArray[index * 16 + 2] = quad.bl.colors.b;
+        this._colorsArray[index * 16 + 3] = quad.bl.colors.a;
+        this._colorsArray[index * 16 + 4] = quad.br.colors.r;
+        this._colorsArray[index * 16 + 5] = quad.br.colors.g;
+        this._colorsArray[index * 16 + 6] = quad.br.colors.b;
+        this._colorsArray[index * 16 + 7] = quad.br.colors.a;
+        this._colorsArray[index * 16 + 8] = quad.tl.colors.r;
+        this._colorsArray[index * 16 + 9] = quad.tl.colors.g;
+        this._colorsArray[index * 16 + 10] = quad.tl.colors.b;
+        this._colorsArray[index * 16 + 11] = quad.tl.colors.a;
+        this._colorsArray[index * 16 + 12] = quad.tr.colors.r;
+        this._colorsArray[index * 16 + 13] = quad.tr.colors.g;
+        this._colorsArray[index * 16 + 14] = quad.tr.colors.b;
+        this._colorsArray[index * 16 + 15] = quad.tr.colors.a;
     },
 
     _setQuadToTexCoordsTypeArray:function (quad, index) {
@@ -284,7 +293,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._quads = [];
         this._indices = new Uint16Array(this._capacity * 6);
         this._positionsArray = new Float32Array(this._capacity * 12);
-        this._colorsArray = new Float32Array(this._capacity * 16);
+        this._colorsArray = new Uint8Array(this._capacity * 16);
         this._texCoordsArray = new Float32Array(this._capacity * 8);
 
         if (!( this._quads && this._indices) && this._capacity > 0)
@@ -293,7 +302,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._setupIndices();
         this._setupVBO();
         this._dirty = true;
-
         return true;
     },
 
@@ -304,14 +312,13 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @param {Number} index
      */
     updateQuad:function (quad, index) {
-        cc.Assert(index >= 0 && index < this._capacity, "updateQuadWithTexture: Invalid index");
+        //cc.Assert(index >= 0 && index < this._capacity, "updateQuadWithTexture: Invalid index");
         this._totalQuads = Math.max(index + 1, this._totalQuads);
         this._quads[index] = quad;
 
         this._setQuadToPositionsTypeArray(this._quads[index], index);
         this._setQuadToColorsTypeArray(this._quads[index], index);
         this._setQuadToTexCoordsTypeArray(this._quads[index], index);
-
         this._dirty = true;
     },
 
@@ -416,13 +423,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * The total number of quads to be drawn will be 0</p>
      */
     removeAllQuads:function () {
-        this._quads.length = 0;
+        //this._quads.length = 0;
         this._totalQuads = 0;
-
-        this._indices = null;
-        this._positionsArray = null;
-        this._colorsArray = null;
-        this._texCoordsArray = null;
     },
 
     /**
@@ -446,7 +448,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (this._quads == null) {
             this._quads = [];
             this._positionsArray = new Float32Array(this._capacity * 12);
-            this._colorsArray = new Float32Array(this._capacity * 16);
+            this._colorsArray = new Uint8Array(this._capacity * 16);
             this._texCoordsArray = new Float32Array(this._capacity * 8);
         } else {
             if (this._capacity > oldCapacity) {
@@ -454,7 +456,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
                 tempPositionArray.set(this._positionsArray, 0);
                 this._positionsArray = tempPositionArray;
 
-                var tempColorsArray = new Float32Array(this._capacity * 16);
+                var tempColorsArray = new Uint8Array(this._capacity * 16);
                 tempColorsArray.set(this._colorsArray, 0);
                 this._colorsArray = tempColorsArray;
 
@@ -574,7 +576,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsArrayBuffer);
         if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._colorsArray, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.FLOAT, true, 0, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 0, 0);
 
         // tex coords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordsArrayBuffer);

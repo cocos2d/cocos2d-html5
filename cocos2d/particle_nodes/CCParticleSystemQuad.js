@@ -151,9 +151,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         }
 
         for (var i = start; i < end; i++) {
-            if (!quads[i]) {
+            if (!quads[i])
                 quads[i] = cc.V3F_C4B_T2F_QuadZero();
-            }
 
             // bottom-left vertex:
             quads[i].bl.texCoords.u = left;
@@ -268,11 +267,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 retParticle._opacityModifyRGB = this._opacityModifyRGB;
 
                 // texture
-                if (this._texture instanceof cc.Texture2D) {
+                if (this._texture instanceof cc.Texture2D)
                     retParticle._texture = this._texture;
-                } else {
+                 else
                     retParticle._texture = this._texture;
-                }
             }
         }
         return retParticle;
@@ -446,7 +444,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             quad.tr.vertices.y = newPosition.y + size_2;
         }
 
-        if (!this._batchNode){
+        if (!this._batchNode) {
             this._setQuadToPositionsTypeArray(quad, this._particleIdx);
             this._setQuadToColorsTypeArray(quad, this._particleIdx);
             this._setQuadToTexCoordsTypeArray(quad, this._particleIdx);
@@ -501,22 +499,22 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     _setQuadToColorsTypeArray:function (quad, index) {
-        this._colorsArray[index * 16] = quad.bl.colors.r / 255;
-        this._colorsArray[index * 16 + 1] = quad.bl.colors.g / 255;
-        this._colorsArray[index * 16 + 2] = quad.bl.colors.b / 255;
-        this._colorsArray[index * 16 + 3] = quad.bl.colors.a / 255;
-        this._colorsArray[index * 16 + 4] = quad.br.colors.r / 255;
-        this._colorsArray[index * 16 + 5] = quad.br.colors.g / 255;
-        this._colorsArray[index * 16 + 6] = quad.br.colors.b / 255;
-        this._colorsArray[index * 16 + 7] = quad.br.colors.a / 255;
-        this._colorsArray[index * 16 + 8] = quad.tl.colors.r / 255;
-        this._colorsArray[index * 16 + 9] = quad.tl.colors.g / 255;
-        this._colorsArray[index * 16 + 10] = quad.tl.colors.b / 255;
-        this._colorsArray[index * 16 + 11] = quad.tl.colors.a / 255;
-        this._colorsArray[index * 16 + 12] = quad.tr.colors.r / 255;
-        this._colorsArray[index * 16 + 13] = quad.tr.colors.g / 255;
-        this._colorsArray[index * 16 + 14] = quad.tr.colors.b / 255;
-        this._colorsArray[index * 16 + 15] = quad.tr.colors.a / 255;
+        this._colorsArray[index * 16] = quad.bl.colors.r;
+        this._colorsArray[index * 16 + 1] = quad.bl.colors.g;
+        this._colorsArray[index * 16 + 2] = quad.bl.colors.b;
+        this._colorsArray[index * 16 + 3] = quad.bl.colors.a;
+        this._colorsArray[index * 16 + 4] = quad.br.colors.r;
+        this._colorsArray[index * 16 + 5] = quad.br.colors.g;
+        this._colorsArray[index * 16 + 6] = quad.br.colors.b;
+        this._colorsArray[index * 16 + 7] = quad.br.colors.a;
+        this._colorsArray[index * 16 + 8] = quad.tl.colors.r;
+        this._colorsArray[index * 16 + 9] = quad.tl.colors.g;
+        this._colorsArray[index * 16 + 10] = quad.tl.colors.b;
+        this._colorsArray[index * 16 + 11] = quad.tl.colors.a;
+        this._colorsArray[index * 16 + 12] = quad.tr.colors.r;
+        this._colorsArray[index * 16 + 13] = quad.tr.colors.g;
+        this._colorsArray[index * 16 + 14] = quad.tr.colors.b;
+        this._colorsArray[index * 16 + 15] = quad.tr.colors.a;
     },
 
     _setQuadToTexCoordsTypeArray:function (quad, index) {
@@ -629,7 +627,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         // colors
         gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsArrayBuffer);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.FLOAT, true, 0, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 0, 0);
 
         // tex coords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordsArrayBuffer);
@@ -697,7 +695,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 this._quads = quadsNew;
                 this._indices = indicesNew;
                 this._positionsArray = new Float32Array(tp * 12);
-                this._colorsArray = new Float32Array(tp * 16);
+                this._colorsArray = new Uint8Array(tp * 16);
                 this._texCoordsArray = new Float32Array(tp * 8);
 
                 for (var j = 0; j < tp; j++) {
@@ -817,7 +815,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         this._quads = [];
         this._indices = new Uint16Array(this._totalParticles * 6);
         this._positionsArray = new Float32Array(this._totalParticles * 12);
-        this._colorsArray = new Float32Array(this._totalParticles * 16);
+        this._colorsArray = new Uint8Array(this._totalParticles * 16);
         this._texCoordsArray = new Float32Array(this._totalParticles * 8);
         for (var i = 0; i < this._totalParticles; i++)
             this._quads[i] = new cc.V3F_C4B_T2F_Quad();

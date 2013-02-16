@@ -703,7 +703,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 fontChar.setColor(this._color);
 
             // only apply opacity if it is different than 255 )
-            if (this._opacity != 255)
+            if (this._opacity !== 255)
                 fontChar.setOpacity(this._opacity);
 
             if (longestLine < nextFontPositionX)

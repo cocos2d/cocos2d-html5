@@ -190,7 +190,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
 
         // draw a fullscreen solid rectangle to clear the stencil buffer
         //ccDrawSolidRect(CCPointZero, ccpFromSize([[CCDirector sharedDirector] winSize]), ccc4f(1, 1, 1, 1));
-        cc.drawSolidRect(cc.PointZero(), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
+        cc.drawingUtil.drawSolidRect(cc.PointZero(), cc.pFromSize(cc.Director.getInstance().getWinSize()), cc.c4f(1, 1, 1, 1));
 
         ///////////////////////////////////
         // DRAW CLIPPING STENCIL
@@ -203,14 +203,13 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         gl.stencilFunc(gl.NEVER, mask_layer, mask_layer);
         gl.stencilOp(!this._inverted ? gl.REPLACE : gl.ZERO, gl.KEEP, gl.KEEP);
 
-
         if (this._alphaThreshold < 1) {
-
             // since glAlphaTest do not exists in OES, use a shader that writes
             // pixel only if greater than an alpha threshold
             var program = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST);
             var alphaValueLocation = gl.getUniformLocation(program.getProgram(), cc.UNIFORM_ALPHATEST_VALUE);
             // set our alphaThreshold
+            cc.glUseProgram(program.getProgram());
             program.setUniformLocationWith1f(alphaValueLocation, this._alphaThreshold);
             // we need to recursively apply this shader to all the nodes in the stencil node
             // XXX: we should have a way to apply shader to all nodes without having to do this

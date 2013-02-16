@@ -25,34 +25,35 @@
 
 /**
  * converts a line to a polygon
- * @param {Array} points
+ * @param {Float32Array} points
  * @param {Number} stroke
- * @param {Array} vertices
+ * @param {Float32Array} vertices
  * @param {Number} offset
  * @param {Number} nuPoints
  */
 cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
     nuPoints += offset;
-    if (nuPoints <= 1) return;
+    if (nuPoints <= 1)
+        return;
 
     stroke *= 0.5;
-
     var idx;
     var nuPointsMinus = nuPoints - 1;
-
     for (var i = offset; i < nuPoints; i++) {
         idx = i * 2;
+        var p1 = cc.p(points[i * 2], points[i * 2 + 1]);
         var perpVector;
 
-        if (i == 0)
-            perpVector = cc.pPerp(cc.pNormalize(cc.pSub(points[i], points[i + 1])));
-        else if (i == nuPointsMinus)
-            perpVector = cc.pPerp(cc.pNormalize(cc.pSub(points[i - 1], points[i])));
+        if (i === 0)
+            perpVector = cc.pPerp(cc.pNormalize(cc.pSub(p1, cc.p(points[(i + 1) * 2], points[(i + 1) * 2 + 1]))));
+        else if (i === nuPointsMinus)
+            perpVector = cc.pPerp(cc.pNormalize(cc.pSub(cc.p(points[(i - 1) * 2], points[(i - 1) * 2 + 1]), p1)));
         else {
-            var p0 = points[i - 1];
+            var p0 = cc.p(points[(i - 1) * 2], points[(i - 1) * 2 + 1]);
+            var p2 = cc.p(points[(i + 1) * 2], points[(i + 1) * 2 + 1]);
 
-            var p2p1 = cc.pNormalize(cc.pSub(points[i + 1], points[i]));
-            var p0p1 = cc.pNormalize(cc.pSub(p0, points[i]));
+            var p2p1 = cc.pNormalize(cc.pSub(p2, p1));
+            var p0p1 = cc.pNormalize(cc.pSub(p0, p1));
 
             // Calculate angle between vectors
             var angle = Math.acos(cc.pDot(p2p1, p0p1));
@@ -62,12 +63,14 @@ cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
             else if (angle < cc.DEGREES_TO_RADIANS(170))
                 perpVector = cc.pNormalize(cc.pMidpoint(p2p1, p0p1));
             else
-                perpVector = cc.pPerp(cc.pNormalize(cc.pSub(points[i + 1], p0)));
+                perpVector = cc.pPerp(cc.pNormalize(cc.pSub(p2, p0)));
         }
         perpVector = cc.pMult(perpVector, stroke);
 
-        vertices[idx] = new cc.Vertex2F(points[i].x + perpVector.x, points[i].y + perpVector.y);
-        vertices[idx + 1] = new cc.Vertex2F(points[i].x - perpVector.x, points[i].y - perpVector.y);
+        vertices[idx * 2] = p1.x + perpVector.x;
+        vertices[idx * 2 + 1] = p1.y + perpVector.y;
+        vertices[(idx + 1) * 2] = p1.x - perpVector.x;
+        vertices[(idx + 1) * 2 + 1] = p1.y - perpVector.y;
     }
 
     // Validate vertexes
@@ -76,19 +79,22 @@ cc.vertexLineToPolygon = function (points, stroke, vertices, offset, nuPoints) {
         idx = i * 2;
         var idx1 = idx + 2;
 
-        var p2 = vertices[idx + 1];
-        var p3 = vertices[idx1];
-        var p4 = vertices[idx1 + 1];
+        var v1 = cc.Vertex2(vertices[idx * 2], vertices[idx * 2 + 1]);
+        var v2 = cc.Vertex2(vertices[(idx + 1) * 2], vertices[(idx + 1) * 2 + 1]);
+        var v3 = cc.Vertex2(vertices[idx1 * 2], vertices[idx1 * 2]);
+        var v4 = cc.Vertex2(vertices[(idx1 + 1) * 2], vertices[(idx1 + 1) * 2 + 1]);
 
         //BOOL fixVertex = !ccpLineIntersect(ccp(p1.x, p1.y), ccp(p4.x, p4.y), ccp(p2.x, p2.y), ccp(p3.x, p3.y), &s, &t);
-        var fixVertexResult = !cc.vertexLineIntersect(vertices[idx].x, vertices[idx].y, p4.x, p4.y, p2.x, p2.y, p3.x, p3.y);
+        var fixVertexResult = !cc.vertexLineIntersect(v1.x, v1.y, v4.x, v4.y, v2.x, v2.y, v3.x, v3.y);
         if (!fixVertexResult.isSuccess)
             if (fixVertexResult.value < 0.0 || fixVertexResult.value > 1.0)
                 fixVertexResult.isSuccess = true;
 
         if (fixVertexResult.isSuccess) {
-            vertices[idx1] = p4;
-            vertices[idx1 + 1] = p3;
+            vertices[idx1 * 2] = v4.x;
+            vertices[idx1 * 2 + 1] = v4.y;
+            vertices[(idx1 + 1) * 2] = v3.x;
+            vertices[(idx1 + 1) * 2 + 1] = v3.y;
         }
     }
 };
