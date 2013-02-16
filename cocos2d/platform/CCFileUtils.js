@@ -528,7 +528,7 @@ cc.FileUtils = cc.Class.extend({
         var resourceRootPath = this.getResourceRootPath(); //cc.Application.getInstance().getResourceRootPath();
 
         if(filename && (filename.length > 0) && (filename.indexOf('/') === 0 || filename.indexOf("\\") === 0)){
-
+            ret = "";
         } else if( resourceRootPath.length > 0){
             ret = resourceRootPath;
             if(ret[ret.length -1] != '\\' && ret[ret.length -1] != '/')
