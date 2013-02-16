@@ -301,16 +301,14 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     getTextureColors:function (texture) {
         var key = this.getKeyByTexture(texture);
         if (!key) {
-            if (texture instanceof HTMLImageElement) {
+            if (texture instanceof HTMLImageElement)
                 key = texture.src;
-            } else {
+            else
                 key = this._generalTextureKey();
-            }
         }
 
-        if (!this._textureColorsCache.hasOwnProperty(key)) {
+        if (!this._textureColorsCache.hasOwnProperty(key))
             this._textureColorsCache[key] = cc.generateTextureCacheForColor(texture);
-        }
         return this._textureColorsCache[key];
     },
 

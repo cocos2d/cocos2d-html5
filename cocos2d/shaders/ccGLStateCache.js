@@ -103,11 +103,11 @@ cc.glInvalidateStateCache = function () {
  * @param {WebGLProgram} program
  */
 cc.glUseProgram = function (program) {
-    if (cc.ENABLE_GL_STATE_CACHE) {
-        if (program != cc._currentShaderProgram)
-            cc._currentShaderProgram = program;
-    }
-    cc.webglContext.useProgram(program);
+    if (cc.ENABLE_GL_STATE_CACHE && (program !== cc._currentShaderProgram)) {
+        cc._currentShaderProgram = program;
+        cc.webglContext.useProgram(program);
+    } else
+        cc.webglContext.useProgram(program);
 };
 
 /**
@@ -154,7 +154,7 @@ cc.setBlending = function (sfactor, dfactor) {
  */
 cc.glBlendResetToCache = function () {
     cc.webglContext.blendEquation(cc.webglContext.FUNC_ADD);
-    if(cc.ENABLE_GL_STATE_CACHE)
+    if (cc.ENABLE_GL_STATE_CACHE)
         cc.setBlending(cc._blendingSource, cc._blendingDest);
     else
         cc.setBlending(cc.webglContext.BLEND_SRC, cc.webglContext.BLEND_DST);
@@ -195,7 +195,7 @@ cc.glEnableVertexAttribs = function (flags) {
     }
 
     /* Color */
-    var enableColor = (flags & cc.VERTEX_ATTRIBFLAG_COLOR) != 0 ;
+    var enableColor = (flags & cc.VERTEX_ATTRIBFLAG_COLOR) != 0;
 
     if (enableColor != cc._vertexAttribColor) {
         if (enableColor)
@@ -225,7 +225,7 @@ cc.glEnableVertexAttribs = function (flags) {
  * @param {WebGLTexture} textureId
  */
 cc.glBindTexture2D = function (textureId) {
-    cc.glBindTexture2DN(0,textureId);
+    cc.glBindTexture2DN(0, textureId);
 };
 
 /**
@@ -236,7 +236,7 @@ cc.glBindTexture2D = function (textureId) {
  */
 cc.glBindTexture2DN = function (textureUnit, textureId) {
     if (cc.ENABLE_GL_STATE_CACHE) {
-        cc.Assert(textureUnit < cc.MAX_ACTIVETEXTURE, "textureUnit is too big");
+        //cc.Assert(textureUnit < cc.MAX_ACTIVETEXTURE, "textureUnit is too big");
         if (cc._currentBoundTexture[ textureUnit ] != textureId)
             cc._currentBoundTexture[ textureUnit ] = textureId;
     }
@@ -250,7 +250,7 @@ cc.glBindTexture2DN = function (textureUnit, textureId) {
  * @param {WebGLTexture} textureId
  */
 cc.glDeleteTexture = function (textureId) {
-    cc.glDeleteTextureN(0,textureId);
+    cc.glDeleteTextureN(0, textureId);
 };
 
 /**
@@ -273,11 +273,11 @@ cc.glDeleteTextureN = function (textureUnit, textureId) {
  * @param vaoId
  */
 cc.glBindVAO = function (vaoId) {
-    if(!cc.TEXTURE_ATLAS_USE_VAO)
+    if (!cc.TEXTURE_ATLAS_USE_VAO)
         return;
 
-    if(cc.ENABLE_GL_STATE_CACHE){
-        if(cc._uVAO != vaoId){
+    if (cc.ENABLE_GL_STATE_CACHE) {
+        if (cc._uVAO != vaoId) {
             cc._uVAO = vaoId;
             //TODO need fixed
             //glBindVertexArray(vaoId);
@@ -296,21 +296,23 @@ cc.glEnable = function (flags) {
     if (cc.ENABLE_GL_STATE_CACHE) {
         /*var enabled;
 
-        *//* GL_BLEND *//*
-        if ((enabled = (flags & cc.GL_BLEND)) != (cc._GLServerState & cc.GL_BLEND)) {
-            if (enabled) {
-                cc.webglContext.enable(cc.webglContext.BLEND);
-                cc._GLServerState |= cc.GL_BLEND;
-            } else {
-                cc.webglContext.disable(cc.webglContext.BLEND);
-                cc._GLServerState &= ~cc.GL_BLEND;
-            }
-        }*/
+         */
+        /* GL_BLEND */
+        /*
+         if ((enabled = (flags & cc.GL_BLEND)) != (cc._GLServerState & cc.GL_BLEND)) {
+         if (enabled) {
+         cc.webglContext.enable(cc.webglContext.BLEND);
+         cc._GLServerState |= cc.GL_BLEND;
+         } else {
+         cc.webglContext.disable(cc.webglContext.BLEND);
+         cc._GLServerState &= ~cc.GL_BLEND;
+         }
+         }*/
     } else {
         /*if ((flags & cc.GL_BLEND))
-            cc.webglContext.enable(cc.webglContext.BLEND);
-        else
-            cc.webglContext.disable(cc.webglContext.BLEND);*/
+         cc.webglContext.enable(cc.webglContext.BLEND);
+         else
+         cc.webglContext.disable(cc.webglContext.BLEND);*/
     }
 };
 

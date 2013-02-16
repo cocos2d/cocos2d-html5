@@ -624,7 +624,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
             "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
         var gl = cc.webglContext;
-        gl.bindTexture(this._webTextureObj);
+        cc.glBindTexture2D(this._webTextureObj);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, texParams.wrapS);
@@ -642,8 +642,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     setAntiAliasTexParameters:function () {
         var gl = cc.webglContext;
 
-        gl.bindTexture(this._webTextureObj);
-
+        cc.glBindTexture2D(this._webTextureObj);
         if(!this._hasMipmaps)
             gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER, gl.LINEAR);
         else
@@ -665,7 +664,6 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         var gl = cc.webglContext;
 
         cc.glBindTexture2D(this._webTextureObj);
-
         if(!this._hasMipmaps)
             gl.texParameteri(gl.TEXTURE_2D,gl.TEXTURE_MIN_FILTER, gl.NEAREST);
          else
@@ -686,8 +684,9 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     generateMipmap:function () {
         cc.Assert(this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh), "Mimpap texture only works in POT textures");
 
-        cc.webglContext.bindTexture(cc.webglContext.TEXTURE_2D, this._webTextureObj);
+        cc.glBindTexture2D(this._webTextureObj);
         cc.webglContext.generateMipmap(cc.webglContext.TEXTURE_2D);
+        this._hasMipmaps = true;
     },
 
     /**

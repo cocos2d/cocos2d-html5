@@ -195,6 +195,11 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this._colorPointer = new Uint8Array(this._maxPoints * 8);
 
         var gl = cc.renderContext;
+
+        this._verticesBuffer = gl.createBuffer();
+        this._texCoordsBuffer = gl.createBuffer();
+        this._colorPointerBuffer = gl.createBuffer();
+
         // Set blend mode
         this._blendFunc.src = gl.SRC_ALPHA;
         this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
@@ -259,9 +264,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             return;
 
         ctx = ctx || cc.renderContext;
-
         cc.NODE_DRAW_SETUP(this);
-
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
@@ -297,7 +300,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      * @param {Number} delta
      */
     update:function (delta) {
-        if (this._startingPositionInitialized)
+        if (!this._startingPositionInitialized)
             return;
 
         this._isDirty = true;
@@ -318,13 +321,16 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
                     // Move data
                     this._pointState[newIdx] = this._pointState[i];
                     // Move point
-                    this._pointVertexes[newIdx] = this._pointVertexes[i];
+                    this._pointVertexes[newIdx * 2] = this._pointVertexes[i * 2];
+                    this._pointVertexes[newIdx * 2 + 1] = this._pointVertexes[i * 2 + 1];
 
                     // Move vertices
                     i2 = i * 2;
                     newIdx2 = newIdx * 2;
-                    this._vertices[newIdx2] = this._vertices[i2];
-                    this._vertices[newIdx2 + 1] = this._vertices[i2 + 1];
+                    this._vertices[newIdx2 * 2] = this._vertices[i2 * 2];
+                    this._vertices[newIdx2 * 2 + 1] = this._vertices[i2 * 2 + 1];
+                    this._vertices[(newIdx2 + 1) * 2] = this._vertices[(i2 + 1) * 2];
+                    this._vertices[(newIdx2 + 1) * 2 + 1] = this._vertices[(i2 + 1) * 2 + 1];
 
                     // Move color
                     i2 *= 4;
@@ -350,14 +356,17 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         if (this._nuPoints >= this._maxPoints)
             appendNewPoint = false;
         else if (this._nuPoints > 0) {
-            var a1 = cc.pDistanceSQ(this._pointVertexes[this._nuPoints - 1], this._positionR) < this._minSeg;
-            var a2 = (this._nuPoints == 1) ? false : (cc.pDistanceSQ(this._pointVertexes[this._nuPoints - 2], this._positionR) < (this._minSeg * 2.0));
+            var a1 = cc.pDistanceSQ(cc.p(this._pointVertexes[(this._nuPoints - 1) * 2], this._pointVertexes[(this._nuPoints - 1) * 2 + 1]),
+                this._positionR) < this._minSeg;
+            var a2 = (this._nuPoints == 1) ? false : (cc.pDistanceSQ(
+                cc.p(this._pointVertexes[(this._nuPoints - 2) * 2],this._pointVertexes[(this._nuPoints - 2) * 2 + 1]), this._positionR) < (this._minSeg * 2.0));
             if (a1 || a2)
                 appendNewPoint = false;
         }
 
         if (appendNewPoint) {
-            this._pointVertexes[this._nuPoints] = this._positionR;
+            this._pointVertexes[this._nuPoints * 2] = this._positionR.x;
+            this._pointVertexes[this._nuPoints * 2 + 1] = this._positionR.y;
             this._pointState[this._nuPoints] = 1.0;
 
             // Color assignment
@@ -392,8 +401,11 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         if (this._nuPoints && this._previousNuPoints != this._nuPoints) {
             var texDelta = 1.0 / this._nuPoints;
             for (i = 0; i < this._nuPoints; i++) {
-                this._texCoords[i * 2] = cc.tex2(0, texDelta * i);
-                this._texCoords[i * 2 + 1] = cc.tex2(1, texDelta * i);
+                this._texCoords[i * 4] = 0;
+                this._texCoords[i * 4 + 1] = texDelta * i;
+
+                this._texCoords[(i * 2 + 1) * 2] = 1;
+                this._texCoords[(i * 2 + 1) * 2 + 1] = texDelta * i;
             }
 
             this._previousNuPoints = this._nuPoints;

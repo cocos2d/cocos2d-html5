@@ -79,9 +79,8 @@ cc.SWAP = function (x, y, ref) {
         var tmp = ref[x];
         ref[x] = ref[y];
         ref[y] = tmp;
-    } else {
+    } else
         cc.Assert(false, "CC_SWAP is being modified from original macro, please check usage");
-    }
 };
 
 /**
@@ -164,11 +163,10 @@ cc.BLEND_DST = 0x0303;
  * @function
  */
 cc.NODE_DRAW_SETUP = function (node) {
-    cc.glEnable(node._glServerState);
-    cc.Assert(node.getShaderProgram(), "No shader program set for this node");
-    {
+    //cc.glEnable(node._glServerState);
+    if (node.getShaderProgram()) {
         node.getShaderProgram().use();
-        node.getShaderProgram().setUniformForModelViewProjectionMatrix();
+        node.getShaderProgram().setUniformForModelViewProjectionMatrixWithMat4(node._mvpMatrix);
     }
 };
 

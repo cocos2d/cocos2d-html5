@@ -48,9 +48,8 @@ cc.kmMat4 = function () {
  * @Return Returns pOut so that the call can be nested
  */
 cc.kmMat4Fill = function (pOut, pMat) {
-    for (var i = 0; i < 16; i++) {
+    for (var i = 0; i < 16; i++)
         pOut.mat[i] = pMat;
-    }
 };
 
 /**
@@ -59,10 +58,10 @@ cc.kmMat4Fill = function (pOut, pMat) {
  * @Return Returns pOut so that the call can be nested
  */
 cc.kmMat4Identity = function (pOut) {
-    pOut.mat = [1.0, 0, 0, 0,
+    pOut.mat = new Float32Array([1.0, 0, 0, 0,
         0, 1.0, 0, 0,
         0, 0, 1.0, 0,
-        0, 0, 0, 1.0];
+        0, 0, 0, 1.0]);
     return pOut;
 };
 
@@ -109,37 +108,33 @@ cc.kmMat4._gaussj = function (a, b) {
         }
         ++(ipiv[icol]);
         if (irow != icol) {
-            for (l = 0; l < n; l++) {
+            for (l = 0; l < n; l++)
                 cc.kmMat4._swap(a, irow, l, icol, l);
-            }
-            for (l = 0; l < m; l++) {
+            for (l = 0; l < m; l++)
                 cc.kmMat4._swap(b, irow, l, icol, l);
-            }
         }
         indxr[i] = irow;
         indxc[i] = icol;
-        if (cc.kmMat4._get(a, icol, icol) == 0.0) {
+        if (cc.kmMat4._get(a, icol, icol) == 0.0)
             return cc.KM_FALSE;
-        }
+
         pivinv = 1.0 / cc.kmMat4._get(a, icol, icol);
         cc.kmMat4._set(a, icol, icol, 1.0);
-        for (l = 0; l < n; l++) {
+        for (l = 0; l < n; l++)
             cc.kmMat4._set(a, icol, l, cc.kmMat4._get(a, icol, l) * pivinv);
-        }
-        for (l = 0; l < m; l++) {
+
+        for (l = 0; l < m; l++)
             cc.kmMat4._set(b, icol, l, cc.kmMat4._get(b, icol, l) * pivinv);
-        }
 
         for (ll = 0; ll < n; ll++) {
             if (ll != icol) {
                 dum = cc.kmMat4._get(a, ll, icol);
                 cc.kmMat4._set(a, ll, icol, 0.0);
-                for (l = 0; l < n; l++) {
+                for (l = 0; l < n; l++)
                     cc.kmMat4._set(a, ll, l, cc.kmMat4._get(a, ll, l) - cc.kmMat4._get(a, icol, l) * dum);
-                }
-                for (l = 0; l < m; l++) {
+
+                for (l = 0; l < m; l++)
                     cc.kmMat4._set(b, ll, l, cc.kmMat4._get(a, ll, l) - cc.kmMat4._get(b, icol, l) * dum);
-                }
             }
         }
     }
@@ -148,9 +143,8 @@ cc.kmMat4._gaussj = function (a, b) {
 //    columns in the reverse order that the permutation was built up.
     for (l = n - 1; l >= 0; l--) {
         if (indxr[l] != indxc[l]) {
-            for (k = 0; k < n; k++) {
+            for (k = 0; k < n; k++)
                 cc.kmMat4._swap(a, k, indxr[l], k, indxc[l]);
-            }
         }
     }
     return cc.KM_TRUE;
@@ -175,9 +169,8 @@ cc.kmMat4Inverse = function (pOut, pM) {
 
     cc.kmMat4Identity(tmp);
 
-    if (cc.kmMat4._gaussj(inv, tmp) == cc.KM_FALSE) {
+    if (cc.kmMat4._gaussj(inv, tmp) == cc.KM_FALSE)
         return null;
-    }
 
     cc.kmMat4Assign(pOut, inv);
     return pOut;
@@ -201,9 +194,8 @@ cc.kmMat4IsIdentity = function (pIn) {
 cc.kmMat4Transpose = function (pOut, pIn) {
     var x, z;
     for (z = 0; z < 4; ++z) {
-        for (x = 0; x < 4; ++x) {
+        for (x = 0; x < 4; ++x)
             pOut.mat[(z * 4) + x] = pIn.mat[(x * 4) + z];
-        }
     }
     return pOut;
 };
@@ -301,7 +293,7 @@ cc.getMat4MultiplyWithMat4 = function(pM1,pM2, swapMat){
  * Assigns the value of pIn to pOut
  */
 cc.kmMat4Assign = function (pOut, pIn) {
-    cc.Assert(pOut != pIn, "You have tried to self-assign!!");
+    //cc.Assert(pOut != pIn, "You have tried to self-assign!!");
 
     for (var i = 0; i < 16; i++) {
         pOut.mat[i] = pIn.mat[i];
@@ -551,9 +543,7 @@ cc.kmMat4GetUpVec3 = function (pOut, pIn) {
     pOut.x = pIn.mat[4];
     pOut.y = pIn.mat[5];
     pOut.z = pIn.mat[6];
-
     cc.kmVec3Normalize(pOut, pOut);
-
     return pOut;
 };
 
@@ -564,9 +554,7 @@ cc.kmMat4GetRightVec3 = function (pOut, pIn) {
     pOut.x = pIn.mat[0];
     pOut.y = pIn.mat[1];
     pOut.z = pIn.mat[2];
-
     cc.kmVec3Normalize(pOut, pOut);
-
     return pOut;
 };
 
@@ -578,9 +566,7 @@ cc.kmMat4GetForwardVec3 = function (pOut, pIn) {
     pOut.x = pIn.mat[8];
     pOut.y = pIn.mat[9];
     pOut.z = pIn.mat[10];
-
     cc.kmVec3Normalize(pOut, pOut);
-
     return pOut;
 };
 
@@ -593,9 +579,8 @@ cc.kmMat4PerspectiveProjection = function (pOut, fovY, aspect, zNear, zFar) {
     var deltaZ = zFar - zNear;
     var s = Math.sin(r);
 
-    if (deltaZ == 0 || s == 0 || aspect == 0) {
+    if (deltaZ == 0 || s == 0 || aspect == 0)
         return null;
-    }
 
     //cos(r) / sin(r) = cot(r)
     var cotangent = Math.cos(r) / s;

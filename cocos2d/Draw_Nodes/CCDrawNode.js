@@ -135,23 +135,23 @@ cc.DrawNode = cc.Node.extend({
 
     _getColorsBuffer:function () {
         var colorBuffer = cc.webglContext.createBuffer();
-        var colorArray = new Float32Array(this._buffer.length * 12);
+        var colorArray = new Uint8Array(this._buffer.length * 12);
         for (var i = 0; i < this._buffer.length; i++) {
             var selTriangle = this._buffer[i];
-            colorArray[i * 12 ] = selTriangle.a.colors.r/255;
-            colorArray[i * 12 + 1] = selTriangle.a.colors.g/255;
-            colorArray[i * 12 + 2] = selTriangle.a.colors.b/255;
-            colorArray[i * 12 + 3] = selTriangle.a.colors.a/255;
+            colorArray[i * 12 ] = selTriangle.a.colors.r;
+            colorArray[i * 12 + 1] = selTriangle.a.colors.g;
+            colorArray[i * 12 + 2] = selTriangle.a.colors.b;
+            colorArray[i * 12 + 3] = selTriangle.a.colors.a;
 
-            colorArray[i * 12 + 4] = selTriangle.b.colors.r/255;
-            colorArray[i * 12 + 5] = selTriangle.b.colors.g/255;
-            colorArray[i * 12 + 6] = selTriangle.b.colors.b/255;
-            colorArray[i * 12 + 7] = selTriangle.b.colors.a/255;
+            colorArray[i * 12 + 4] = selTriangle.b.colors.r;
+            colorArray[i * 12 + 5] = selTriangle.b.colors.g;
+            colorArray[i * 12 + 6] = selTriangle.b.colors.b;
+            colorArray[i * 12 + 7] = selTriangle.b.colors.a;
 
-            colorArray[i * 12 + 8] = selTriangle.c.colors.r/255;
-            colorArray[i * 12 + 9] = selTriangle.c.colors.g/255;
-            colorArray[i * 12 + 10] = selTriangle.c.colors.b/255;
-            colorArray[i * 12 + 11] = selTriangle.c.colors.a/255;
+            colorArray[i * 12 + 8] = selTriangle.c.colors.r;
+            colorArray[i * 12 + 9] = selTriangle.c.colors.g;
+            colorArray[i * 12 + 10] = selTriangle.c.colors.b;
+            colorArray[i * 12 + 11] = selTriangle.c.colors.a;
         }
         cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorBuffer);
         cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, colorArray, cc.webglContext.STREAM_DRAW);
@@ -183,7 +183,6 @@ cc.DrawNode = cc.Node.extend({
             this._texCoordF32Buffer = this._getTexCoordsBuffer();
             this._dirty = false;
         }
-
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
 
         // vertex
@@ -192,14 +191,13 @@ cc.DrawNode = cc.Node.extend({
 
         // color
         gl.bindBuffer(gl.ARRAY_BUFFER, this._colorU8Buffer);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 0, 0);
 
         // texcood
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordF32Buffer);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
 
         gl.drawArrays(gl.TRIANGLES, 0, this._buffer.length*3);
-
         cc.INCREMENT_GL_DRAWS(1);
         cc.CHECK_GL_ERROR_DEBUG();
     },
@@ -207,14 +205,12 @@ cc.DrawNode = cc.Node.extend({
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
 
-        if (cc.renderContextType === cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS)
             this._drawForCanvas(context);
-        } else {
+        else {
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-
             this.getShaderProgram().use();
             this.getShaderProgram().setUniformsForBuiltins();
-
             this._render();
         }
     },

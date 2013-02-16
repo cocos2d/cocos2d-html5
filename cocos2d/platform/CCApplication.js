@@ -142,6 +142,8 @@ cc.create3DContext = function (canvas, opt_attribs) {
             break;
         }
     }
+    if(context === null)
+        throw "create 3D context fail!";
     return context;
 };
 
@@ -205,7 +207,7 @@ cc.setup = function (el, width, height) {
     cc.container.top = '100%';
 
     if (cc.Browser.supportWebGL) {
-        cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas);
+        cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true });
         cc.renderContextType = cc.WEBGL;
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.webglContext);
     } else {
