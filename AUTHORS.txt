@@ -45,8 +45,11 @@ Surith Thekkiam(Zynga)  @folecr  match Cocos2dx api
 Robert Boyd         @rboyd       fix stackable actions
 
 Ivo Wetzel(Zynga Germany) @BonsaiDen Fixes for Audio Support Detection,
-                                     Texture Support in Particle System
+                                     Texture Support in Particle System,
                                      and Performance improvements
+
+
+Mario Adrian        @many20        Code review, multi touch improvements
 
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
