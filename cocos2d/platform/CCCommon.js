@@ -151,7 +151,7 @@ cc.Assert = function (cond, message) {
             }
         }
     }
-}
+};
 
 /**
  * Update Debug setting.

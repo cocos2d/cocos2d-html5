@@ -113,7 +113,16 @@ cc.generateTextureCacheForColor.canvas = document.createElement('canvas');
 cc.generateTextureCacheForColor.tempCanvas = document.createElement('canvas');
 cc.generateTextureCacheForColor.tempCtx = cc.generateTextureCacheForColor.tempCanvas.getContext('2d');
 
-
+/**
+ * generate tinted texture
+ * source-in: Where source and destination overlaps and both are opaque, the source is displayed.
+ * Everywhere else transparency is displayed.
+ * @function
+ * @param {HTMLImageElement} texture
+ * @param {cc.Color3B|cc.Color4F} color
+ * @param {cc.Rect} rect
+ * @return {HTMLCanvasElement}
+ */
 cc.generateTintImage2 = function (texture, color, rect) {
     if (!rect) {
         rect = cc.rect(0, 0, texture.width, texture.height);
@@ -145,6 +154,8 @@ cc.generateTintImage2 = function (texture, color, rect) {
 
 /**
  * generate tinted texture
+ * lighter:    The source and destination colors are added to each other, resulting in brighter colors,
+ * moving towards color values of 1 (maximum brightness for that color).
  * @function
  * @param {HTMLImageElement} texture
  * @param {Array} tintedImgCache

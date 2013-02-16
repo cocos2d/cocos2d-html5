@@ -87,7 +87,7 @@ cc.GridBase = cc.Class.extend({
 
     initWithSize:function (gridSize, texture, flipped) {
         var argnum = arguments.length;
-        if (argnum = 1) {
+        if (argnum == 1) {
             var director = cc.Director.getInstance();
             var s = director.getWinSizeInPixels();
 
