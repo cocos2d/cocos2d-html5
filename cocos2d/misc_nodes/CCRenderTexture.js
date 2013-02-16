@@ -545,7 +545,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @return {cc.Image}
      */
     newCCImage:function (flipImage) {
-        flipImage = flipImage || true;
+        if(flipImage === null)
+            flipImage = true;
         cc.Assert(this._pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888, "only RGBA8888 can be saved as image");
 
         if (!this._texture)

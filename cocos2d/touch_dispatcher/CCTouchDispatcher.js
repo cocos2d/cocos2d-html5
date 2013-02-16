@@ -597,18 +597,21 @@ cc.TouchDispatcher.preTouchPoint = cc.p(0, 0);
 cc.TouchDispatcher.isRegisterEvent = false;
 
 cc.getHTMLElementPosition = function (element) {
-    var pos = null;
-    if (element instanceof HTMLCanvasElement) {
-        pos = {left:0, top:0, width:element.width, height:element.height};
-    } else {
-        pos = {left:0, top:0, width:parseInt(element.style.width), height:parseInt(element.style.height)};
+    var docElem = document.documentElement;
+    var win = window;
+    var box = null;
+    if (typeof element.getBoundingClientRect === "function")
+        box = element.getBoundingClientRect();
+    else {
+        if (element instanceof HTMLCanvasElement)
+            box = {left:0, right:0, width:element.width, height:element.height};
+        else
+            box = {left:0, right:0, width:parseInt(element.style.width), height:parseInt(element.style.height)};
     }
-    while (element != null) {
-        pos.left += element.offsetLeft;
-        pos.top += element.offsetTop;
-        element = element.offsetParent;
-    }
-    return pos;
+    return { left:box.left + win.pageXOffset - docElem.clientLeft,
+        top:box.top + win.pageYOffset - docElem.clientTop,
+        width:box.width,
+        height:box.height };
 };
 
 cc.ProcessMouseupEvent = function (element, event) {

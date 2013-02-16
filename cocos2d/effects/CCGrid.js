@@ -313,7 +313,6 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 
     blit:function () {
         var n = this._gridSize.width * this._gridSize.height;
-
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_TEXCOORDS);
         this._shaderProgram.use();
         this._shaderProgram.setUniformsForBuiltins();
@@ -518,20 +517,22 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
 
         // position
         gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesBuffer);
-        //if (this._dirty)
+        if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._vertices, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, this._vertices);
 
         // texCoords
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
-        //if (this._dirty)
+        if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
-        //if (this._dirty)
+        if (this._dirty)
             gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, 0);
+        if (this._dirty)
+            this._dirty = false;
         cc.INCREMENT_GL_DRAWS(1);
     },
 

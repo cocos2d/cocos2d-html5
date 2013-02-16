@@ -680,7 +680,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             cc.webglContext.clearDepth(1.0);
             cc.webglContext.enable(cc.webglContext.DEPTH_TEST);
             cc.webglContext.depthFunc(cc.webglContext.LEQUAL);
-            //cc.webglContext.hint(GL_PERSPECTIVE_CORRECTION_HINT, cc.webglContext.NICEST);
+            //cc.webglContext.hint(cc.webglContext.PERSPECTIVE_CORRECTION_HINT, cc.webglContext.NICEST);
         } else {
             cc.webglContext.disable(cc.webglContext.DEPTH_TEST);
         }
@@ -1067,7 +1067,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _calculateMPF:function () {
         var now = cc.Time.gettimeofdayCocos2d();
-
         this._secondsPerFrame = (now.tv_sec - this._lastUpdate.tv_sec) + (now.tv_usec - this._lastUpdate.tv_usec) / 1000000.0;
     }
 });

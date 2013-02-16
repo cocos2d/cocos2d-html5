@@ -71,6 +71,8 @@
         'textures/CCTextureAtlas.js',
         'misc_nodes/CCRenderTexture.js',
         'misc_nodes/CCProgressTimer.js',
+        'misc_nodes/CCMotionStreak.js',
+        'misc_nodes/CCClippingNode.js',
         'effects/CCGrid.js',
         'effects/CCGrabber.js',
         'actions/CCAction.js',

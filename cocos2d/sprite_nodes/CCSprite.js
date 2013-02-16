@@ -455,13 +455,12 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._quad.br.colors = new cc.Color4B(255, 255, 255, 255);
             this._quad.tl.colors = new cc.Color4B(255, 255, 255, 255);
             this._quad.tr.colors = new cc.Color4B(255, 255, 255, 255);
-            this._colorsFloat32Buffer = this._getSpriteColorsArray();
+            this._colorsUint8Buffer = this._getSpriteColorsArray();
         }
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
         this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
-
         return true;
     },
 
@@ -520,7 +519,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 rect.size = cc.size(texture.width, texture.height);
         }
 
-        if (cc.renderContextType == cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS) {
             this._originalTexture = texture;
         }
 
@@ -533,7 +532,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         if (cc.renderContextType == cc.WEBGL) {
             this._textureCoordsFloat32Buffer = this._getSpriteTexCoodsArray();
             this._verticesFloat32Buffer = this._getSpriteVertexArray();
-            this._colorsFloat32Buffer = this._getSpriteColorsArray();
+            this._colorsUint8Buffer = this._getSpriteColorsArray();
         }
         return true;
     },
@@ -778,7 +777,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * updates the quad according the the rotation, position, scale values.
      */
     updateTransform:function () {
-        cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
+        //cc.Assert(this._batchNode, "updateTransform is only valid when cc.Sprite is being rendered using an cc.SpriteBatchNode");
 
         // recaculate matrix only if it is dirty
         if (this.isDirty()) {
@@ -796,7 +795,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 if (!this._parent || this._parent == this._batchNode) {
                     this._transformToBatch = this.nodeToParentTransform();
                 } else {
-                    cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
+                    //cc.Assert(this._parent instanceof cc.Sprite, "Logic error in CCSprite. Parent must be a CCSprite");
                     this._transformToBatch = cc.AffineTransformConcat(this.nodeToParentTransform(), this._parent._transformToBatch);
                 }
 
@@ -841,9 +840,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
 
         // recursively iterate over children
-        if (this._hasChildren) {
+        if (this._hasChildren)
             this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
-        }
 
         if (cc.SPRITE_DEBUG_DRAW) {
             // draw bounding box
@@ -948,42 +946,41 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
     _verticesFloat32Buffer:null,
     _textureCoordsFloat32Buffer:null,
-    _colorsFloat32Buffer:null,
+    _colorsUint8Buffer:null,
     _drawForWebGL:function (ctx) {
         var gl = ctx || cc.webglContext;
-        cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
+        //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        //cc.NODE_DRAW_SETUP(this);
-        gl.enable(gl.BLEND);
-        if (this._shaderProgram) {
-            gl.useProgram(this._shaderProgram._programObj);
-            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
-        }
-
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        //gl.blendFunc(this._blendFunc.src, this._blendFunc.dst);
-
-        if (this._texture) {
+        if (this._texture){
+            cc.NODE_DRAW_SETUP(this);
+            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(this._texture._webTextureObj);
-            //gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
+
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
         } else {
+            gl.enable(gl.BLEND);
+            var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
+            if (shaderProgram) {
+                gl.useProgram(shaderProgram._programObj);
+                shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            }
+            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);
-            //gl.bindTexture(gl.TEXTURE_2D, null);
+
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
         }
 
-        //
-        // Attributes
-        //
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsFloat32Buffer);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.FLOAT, false, 0, 0);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsUint8Buffer);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 0, 0);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
@@ -1035,11 +1032,11 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     _getSpriteColorsArray:function () {
         var colorsBuffer = cc.webglContext.createBuffer();
         cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
-            this._quad.bl.colors.r / 255, this._quad.bl.colors.g / 255, this._quad.bl.colors.b / 255, this._quad.bl.colors.a / 255,
-            this._quad.br.colors.r / 255, this._quad.br.colors.g / 255, this._quad.br.colors.b / 255, this._quad.br.colors.a / 255,
-            this._quad.tl.colors.r / 255, this._quad.tl.colors.g / 255, this._quad.tl.colors.b / 255, this._quad.tl.colors.a / 255,
-            this._quad.tr.colors.r / 255, this._quad.tr.colors.g / 255, this._quad.tr.colors.b / 255, this._quad.tr.colors.a / 255
+        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Uint8Array([
+            this._quad.bl.colors.r , this._quad.bl.colors.g , this._quad.bl.colors.b , this._quad.bl.colors.a,
+            this._quad.br.colors.r , this._quad.br.colors.g , this._quad.br.colors.b , this._quad.br.colors.a,
+            this._quad.tl.colors.r , this._quad.tl.colors.g , this._quad.tl.colors.b , this._quad.tl.colors.a,
+            this._quad.tr.colors.r , this._quad.tr.colors.g , this._quad.tr.colors.b , this._quad.tr.colors.a
         ]), cc.webglContext.STATIC_DRAW);
         return colorsBuffer;
     },
@@ -1052,38 +1049,27 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     addChild:function (child, zOrder, tag) {
-        var argnum = arguments.length;
-        switch (argnum) {
-            case 1:
-                this._super(child);
-                break;
-            case 2:
-                this._super(child, zOrder);
-                break;
-            case 3:
-                cc.Assert(child != null, "Argument must be non-NULL");
-                if (cc.renderContextType == cc.WEBGL) {
-                    //TODO
-                    if (this._batchNode) {
-                        cc.Assert((child instanceof cc.Sprite), "cc.Sprite only supports cc.Sprites as children when using cc.SpriteBatchNode");
-                        cc.Assert(child.getTexture().getName() == this._textureAtlas.getTexture().getName(), "");
+        cc.Assert(child != null, "Argument must be non-NULL");
+        if (zOrder === null)
+            zOrder = child._zOrder;
+        if (tag === null)
+            tag = child._tag;
 
-                        //put it in descendants array of batch node
-                        this._batchNode.appendChild(child);
-                        if (!this._reorderChildDirty) {
-                            this._setReorderChildDirtyRecursively();
-                        }
-                    }
-                }
+        if (cc.renderContextType == cc.WEBGL) {
+            if (this._batchNode) {
+                cc.Assert((child instanceof cc.Sprite), "cc.Sprite only supports cc.Sprites as children when using cc.SpriteBatchNode");
+                cc.Assert(child.getTexture()._webTextureObj === this._textureAtlas.getTexture()._webTextureObj, "");
 
-                //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-                this._super(child, zOrder, tag);
-                this._hasChildren = true;
-                break;
-            default:
-                throw "Sprite.addChild():Argument must be non-nil ";
-                break;
+                //put it in descendants array of batch node
+                this._batchNode.appendChild(child);
+                if (!this._reorderChildDirty)
+                    this._setReorderChildDirtyRecursively();
+            }
         }
+
+        //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
+        this._super(child, zOrder, tag);
+        this._hasChildren = true;
     },
 
     sortAllChildren:function () {
@@ -1121,15 +1107,13 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         cc.Assert(child != null, "child is null");
         cc.Assert(this._children.indexOf(child) > -1, "this child is not in children list");
 
-        if (zOrder == child.getZOrder()) {
+        if (zOrder === child.getZOrder())
             return;
-        }
 
-        if (this._batchNode && this._reorderChildDirty) {
+        if (this._batchNode && !this._reorderChildDirty) {
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
-
         this._super(child, zOrder);
     },
 
@@ -1140,9 +1124,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * @override
      */
     removeChild:function (child, cleanup) {
-        if (this._batchNode) {
+        if (this._batchNode)
             this._batchNode.removeSpriteFromAtlas(child);
-        }
         this._super(child, cleanup);
     },
 
@@ -1193,7 +1176,6 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     SET_DIRTY_RECURSIVELY:function () {
         if (this._batchNode && !this._recursiveDirty) {
             this._recursiveDirty = true;
-            //this.setDirty(true);
             this._dirty = true;
             if (this._hasChildren)
                 this.setDirtyRecursively(true);
@@ -1220,6 +1202,16 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      */
     setRotation:function (rotation) {
         cc.Node.prototype.setRotation.call(this, rotation);
+        this.SET_DIRTY_RECURSIVELY();
+    },
+
+    setRotationX:function (rotationX) {
+        cc.Node.prototype.setRotationX.call(this, rotationX);
+        this.SET_DIRTY_RECURSIVELY();
+    },
+
+    setRotationY:function (rotationY) {
+        cc.Node.prototype.setRotationY.call(this, rotationY);
         this.SET_DIRTY_RECURSIVELY();
     },
 
@@ -1373,7 +1365,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
      * Update sprite's color
      */
     updateColor:function () {
-        if(cc.renderContextType === cc.CANVAS)
+        if (cc.renderContextType === cc.CANVAS)
             return;
 
         var color4 = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
@@ -1395,7 +1387,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         }
         // self render
         // do nothing
-        this._colorsFloat32Buffer = this._getSpriteColorsArray();
+        this._colorsUint8Buffer = this._getSpriteColorsArray();
     },
 
     /**
