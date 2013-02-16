@@ -27,8 +27,16 @@ var sys = sys || {};
 
 /** LocalStorage is a local storage component.
 */
-sys.localStorage = window.localStorage;
+try{
+	sys.localStorage = window.localStorage;
+	
+}catch(e){
 
+	if( e.name === "SECURITY_ERR" ) {
+		cc.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+	}
+	sys.localStorage = function(){};
+}
 
 /** Capabilities
 */
