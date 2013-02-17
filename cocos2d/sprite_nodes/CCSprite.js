@@ -954,7 +954,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     context.drawImage(this._texture,
                         this._rect.origin.x, this._rect.origin.y,
                         this._rect.size.width, this._rect.size.height,
-                        posX, -(posY + this._rect.size.height),
+                        0, -this._rect.size.height,
                         this._rect.size.width, this._rect.size.height);
                 }
             }
