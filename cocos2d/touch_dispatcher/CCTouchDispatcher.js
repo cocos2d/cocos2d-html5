@@ -330,15 +330,18 @@ cc.TouchDispatcher = cc.Class.extend( /** @lends cc.TouchDispatcher# */ {
 
         var mutableTouches = (needsMutableSet ? touches.slice() : touches);
         var helper = this._handlerHelperData[index];
+
+        var i=0, handler;
         //
         // process the target handlers 1st
         //
         if(targetedHandlersCount > 0) {
-            var touch, handler, claimed;
-            for(var i = 0; i < touches.length; i++) {
+            var touch, claimed;
+            var touchesLength = touches.length;
+            for(i = 0; i < touchesLength; i++) {
                 touch = touches[i];
 
-                for(var j = 0; j < this._targetedHandlers.length; j++) {
+                for(var j = 0; j < targetedHandlersCount; j++) {
                     handler = this._targetedHandlers[j];
 
                     if(!handler) {
@@ -355,9 +358,16 @@ cc.TouchDispatcher = cc.Class.extend( /** @lends cc.TouchDispatcher# */ {
                             }
                         }
                         //} else if (handler.getClaimedTouches().indexOf(touch)> -1){
-                    } else if(handler.getClaimedTouches().length > 0) {
+                    } else {
+                        var claimedTouches = handler.getClaimedTouches();
+                        var claimedTouchesLength = claimedTouches.length;
+                        for(var k = 0; k < claimedTouchesLength; k++) {
+                            if(claimedTouches[k].getId() == touch.getId()) {
+                                claimed = true;
+                            }
+                        }
+                        if(claimed) {
                         // moved ended cancelled
-                        claimed = true;
                         switch(helper.type) {
                         case cc.TOUCH_MOVED:
                             if(cc.Browser.isMobile) {
@@ -377,6 +387,7 @@ cc.TouchDispatcher = cc.Class.extend( /** @lends cc.TouchDispatcher# */ {
                             //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
                             break;
                         }
+                        }
                     }
 
                     if(claimed && handler.isSwallowsTouches()) {
@@ -392,8 +403,7 @@ cc.TouchDispatcher = cc.Class.extend( /** @lends cc.TouchDispatcher# */ {
         //
         // process standard handlers 2nd
         //
-        if(standardHandlersCount > 0) {
-            for(i = 0; i < this._standardHandlers.length; i++) {
+            for(i = 0; i < standardHandlersCount; i++) {
                 handler = this._standardHandlers[i];
 
                 if(!handler) {
@@ -423,7 +433,6 @@ cc.TouchDispatcher = cc.Class.extend( /** @lends cc.TouchDispatcher# */ {
                     break;
                 }
             }
-        }
 
         if(needsMutableSet) {
             mutableTouches = null;
@@ -436,7 +445,8 @@ cc.TouchDispatcher = cc.Class.extend( /** @lends cc.TouchDispatcher# */ {
         this._locked = false;
         if(this._toRemove) {
             this._toRemove = false;
-            for(i = 0; i < this._handlersToRemove.length; i++) {
+            var handlersToRemoveLength = this._handlersToRemove.length;
+            for(i = 0; i < handlersToRemoveLength; i++) {
                 this.forceRemoveDelegate(this._handlersToRemove[i]);
             }
             this._handlersToRemove.length = 0;
@@ -445,7 +455,8 @@ cc.TouchDispatcher = cc.Class.extend( /** @lends cc.TouchDispatcher# */ {
         if(this._toAdd) {
             this._toAdd = false;
 
-            for(i = 0; i < this._handlersToAdd.length; i++) {
+            var handlersToAddLength = this._handlersToAdd.length;
+            for(i = 0; i < handlersToAddLength; i++) {
                 handler = this._handlersToAdd[i];
                 if(!handler) {
                     break;
@@ -960,29 +971,35 @@ init: function(maxLength) {
     return true;
 },
 
+/**
+ * @return {Number} hashlist length
+ */
 getLength: function() {
     return this._hashList.length;
 },
 
+/**
+ * @return {Array} hashlist
+ */
 getHashList: function() {
     return this._hashList;
 },
 
 /**
- * @param {Number} hash
+ * @param {*} hash
  */
 getObjectForHash: function(hash) {
     return this._objList[hash];
 },
 
 /**
- * @param {Object} obj
- * @param {Number} hash
+ * @param {*} object for hash
+ * @param {*} hash
  */
 addObjectForHash: function(obj, hash) {
     if(this._maxLength > 0) {
         if(!this._objList[hash]) {
-            if(this._hashList.length <= this._maxLength || this._maxLength === 0) {
+            if(this._hashList.length <= this._maxLength) {
                 this._hashList.push(hash);
             } else {
                 //use it as a ringBuffer (override the oldest one)
@@ -1001,11 +1018,11 @@ addObjectForHash: function(obj, hash) {
 },
 
 /**
- * @param {Number} hash
+ * @param {*} hash
  */
 deleteObjectForHash: function(hash) {
-    if(this._maxLength !== 0) {
-        var changeHash;
+    if(this._maxLength > 0) {
+        /*var changeHash;
         var length = this._hashList.length;
         for(var i = 0; i < length; i++) {
            if(this._hashList[i] == hash) {
@@ -1015,7 +1032,8 @@ deleteObjectForHash: function(hash) {
                 }
                 break;
             }
-        }
+        }*/
+        cc.ArrayRemoveObject(this._hashList, hash);
     }
     delete this._objList[hash];
 }
