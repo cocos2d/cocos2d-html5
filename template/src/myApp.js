@@ -47,16 +47,15 @@ var MyLayer = cc.Layer.extend({
         var closeItem = cc.MenuItemImage.create(
             "res/CloseNormal.png",
             "res/CloseSelected.png",
-            this,
             function () {
                 history.go(-1);
-            });
-        closeItem.setAnchorPoint(new cc.Point(0.5, 0.5));
+            },this);
+        closeItem.setAnchorPoint(cc.p(0.5, 0.5));
 
         var menu = cc.Menu.create(closeItem, null);
         menu.setPosition(cc.PointZero());
         this.addChild(menu, 1);
-        closeItem.setPosition(new cc.Point(size.width - 20, 20));
+        closeItem.setPosition(cc.p(size.width - 20, 20));
 
         /////////////////////////////
         // 3. add your codes below...
