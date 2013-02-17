@@ -493,22 +493,30 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 if (!drawTexture.width || !drawTexture.height)
                     continue;
 
-                if (particle.isChangeColor) {
-                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
-                    if (cacheTextureForColor)
-                        drawTexture = cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect);
-                }
                 context.save();
                 context.globalAlpha = particle.color.a;
-                context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
+                context.translate((0 | particle.drawPos.x),
+                                 -(0 | particle.drawPos.y));
+
+                var size = Math.floor(particle.size / 4) * 4;
+                var w = this._pointRect.size.width;
+                var h = this._pointRect.size.height;
+
+                context.scale((1 / w) * size, (1 / h) * size);
 
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
 
-                var w = this._pointRect.size.width;
-                var h = this._pointRect.size.height;
-                context.scale((1 / w) * particle.size, (1 / h) * particle.size);
-                context.drawImage(drawTexture, -(0 | (w / 2)), -(0 | (h / 2)), w, h);
+                context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
+
+                if (particle.isChangeColor) {
+                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
+                    if (cacheTextureForColor)
+                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, context.canvas, true);
+                } else {
+                    context.drawImage(drawTexture);
+                }
+
                 context.restore();
             } else {
                 context.save();

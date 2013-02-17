@@ -319,6 +319,8 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         this._super();
     },
 
+    // ---------------------CCTouchDelegate interface------------------------------
+
     /**
      * default implements are used to call script callback if exist<br/>
      * you must override these touch functions if you wish to utilize them
@@ -522,7 +524,30 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     onMouseExited:function (theEvent) {
         return false;
+    },
+
+    // ---------------------CCKeyboardDelegate interface------------------------------
+
+    /**
+     * Call back when a key is pressed down
+     * @param {Integer} keyCode
+     * @example
+     * // example
+     * if(keyCode == cc.KEY.w){}
+     */
+    onKeyDown:function (keyCode) {
+    },
+
+    /**
+     * Call back when a key is released
+     * @param {Integer} keyCode
+     * @example
+     * // example
+     * if(keyCode == cc.KEY.w){}
+     */
+    onKeyUp:function (keyCode) {
     }
+
 });
 
 /**
