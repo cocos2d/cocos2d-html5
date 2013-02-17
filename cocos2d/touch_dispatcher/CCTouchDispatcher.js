@@ -747,6 +747,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
             cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
         });
     } else {
+        if(!(cc.TouchDispatcher._preTouchPool)){
+            cc.TouchDispatcher._preTouchPool = new cc.DataCache();
+            cc.TouchDispatcher._preTouchPool.init(50);
+        }
+
         //register canvas touch event
         element.addEventListener("touchstart", function(event) {
             if(!event.changedTouches) return;
@@ -757,7 +762,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for(var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -773,9 +778,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
                     if(touch_event.hasOwnProperty("identifier")) {
                         touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
                         //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
+                        preTouch = cc.TouchDispatcher._preTouchPool.getObjectForHash(touch.getId());
+                        if(!preTouch) { preTouch = touch; }
+                        preLocation = preTouch.getLocation();
                         touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._setPreTouch(touch);
+                        cc.TouchDispatcher._preTouchPool.addObjectForHash(touch, touch.getId());
                     } else {
                         touch = new cc.Touch(mouseX, mouseY);
                         touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
@@ -800,7 +807,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for(var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -817,9 +824,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
                     if(touch_event.hasOwnProperty("identifier")) {
                         touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
                         //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
+                        preTouch = cc.TouchDispatcher._preTouchPool.getObjectForHash(touch.getId());
+                        if(!preTouch) { preTouch = touch; }
+                        preLocation = preTouch.getLocation();
                         touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._setPreTouch(touch);
+                        cc.TouchDispatcher._preTouchPool.addObjectForHash(touch, touch.getId());
                     } else {
                         touch = new cc.Touch(mouseX, mouseY);
                         touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
@@ -844,7 +853,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for(var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -861,9 +870,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
                     if(touch_event.hasOwnProperty("identifier")) {
                         touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
                         //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
+                        preTouch = cc.TouchDispatcher._preTouchPool.getObjectForHash(touch.getId());
+                        if(!preTouch) { preTouch = touch; }
+                        preLocation = preTouch.getLocation();
                         touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._deletePreTouchWithSameId(touch);
+                        cc.TouchDispatcher._preTouchPool.deleteObjectForHash(touch.getId());
                     } else {
                         touch = new cc.Touch(mouseX, mouseY);
                         touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
@@ -888,7 +899,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
             pos.left -= document.body.scrollLeft;
             pos.top -= document.body.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for(var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -905,9 +916,11 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
                     if(touch_event.hasOwnProperty("identifier")) {
                         touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
                         //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
+                        preTouch = cc.TouchDispatcher._preTouchPool.getObjectForHash(touch.getId());
+                        if(!preTouch) { preTouch = touch; }
+                        preLocation = preTouch.getLocation();
                         touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._deletePreTouchWithSameId(touch);
+                        cc.TouchDispatcher._preTouchPool.deleteObjectForHash(touch.getId());
                     } else {
                         touch = new cc.Touch(mouseX, mouseY);
                         touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
@@ -928,76 +941,91 @@ cc.TouchDispatcher.registerHtmlElementEvent = function(element) {
 };
 
 /**
- * @param {cc.Touch} touch
- * @return {cc.Touch} preTouch
+ * cc.DataCache
+ *
+ * @class
+ * @extends cc.Class
  */
-cc.TouchDispatcher._getPreTouch = function(touch) {
-    var preTouch = null;
-    var preTouchPool = cc.TouchDispatcher._preTouchPool;
-    var id = touch.getId();
-    for(var i = preTouchPool.length - 1; i >= 0; i--) {
-        if(preTouchPool[i].getId() == id) {
-            preTouch = preTouchPool[i];
-            break;
-        }
-    }
-    if(!preTouch) {
-        preTouch = touch;
-    }
-    return preTouch;
-};
+cc.DataCache = cc.Class.extend({
+    _objList:{},
+    _hashList:[],
+    _maxLength:0,
+    _writePointer:0,
 
 /**
- * @param {cc.Touch} touch
+ * @param {Number} maxLength
  */
-cc.TouchDispatcher._setPreTouch = function(touch) {
-    var find = false;
-    var preTouchPool = cc.TouchDispatcher._preTouchPool;
-    var id = touch.getId();
-    for(var i = preTouchPool.length - 1; i >= 0; i--) {
-        if(preTouchPool[i].getId() == id) {
-            preTouchPool[i] = touch;
-            find = true;
-            break;
-        }
-    }
-    if(!find) {
-        //debug touches{
-        //cc.log("Pool.length: " + preTouchPool.length);
-        //}
-        if(preTouchPool.length <= 50) {
-            preTouchPool.push(touch);
-        } else {
-            preTouchPool[cc.TouchDispatcher._preTouchPoolPointer] = touch;
-            cc.TouchDispatcher._preTouchPoolPointer = (cc.TouchDispatcher._preTouchPoolPointer + 1) % 50;
-        }
-    }
-};
+init: function(maxLength) {
+    this._maxLength = maxLength;
+    return true;
+},
+
+getLength: function() {
+    return this._hashList.length;
+},
+
+getHashList: function() {
+    return this._hashList;
+},
 
 /**
- * @param {cc.Touch} touch
+ * @param {Number} hash
  */
-cc.TouchDispatcher._deletePreTouchWithSameId = function(touch) {
-    var changeTouch;
-    var preTouchPool = cc.TouchDispatcher._preTouchPool;
-    var id = touch.getId();
-    for(var i = preTouchPool.length - 1; i >= 0; i--) {
-        if(preTouchPool[i].getId() == id) {
-            changeTouch = preTouchPool.pop();
-            if(i != preTouchPool.length){
-                preTouchPool[i] = changeTouch;
+getObjectForHash: function(hash) {
+    return this._objList[hash];
+},
+
+/**
+ * @param {Object} obj
+ * @param {Number} hash
+ */
+addObjectForHash: function(obj, hash) {
+    if(this._maxLength > 0) {
+        if(!this._objList[hash]) {
+            if(this._hashList.length <= this._maxLength || this._maxLength === 0) {
+                this._hashList.push(hash);
+            } else {
+                //use it as a ringBuffer (override the oldest one)
+                delete this._objList[this._hashList[this._writePointer]];
+                this._hashList[this._writePointer] = hash;
+                this._writePointer = (this._writePointer + 1) % this._maxLength;
             }
-            break;
+            //debug {
+            //cc.log("DataCache.length: " + this._hashList.length);
+            //cc.log("objList: ");
+            //cc.log(this._objList);
+            //}
         }
     }
-};
+    this._objList[hash] = obj;
+},
 
 /**
- * @type {Array}
+ * @param {Number} hash
  */
-cc.TouchDispatcher._preTouchPool = [];
+deleteObjectForHash: function(hash) {
+    if(this._maxLength !== 0) {
+        var changeHash;
+        var length = this._hashList.length;
+        for(var i = 0; i < length; i++) {
+           if(this._hashList[i] == hash) {
+                changeHash = this._hashList.pop();
+                if(i != length-1){
+                    this._hashList[i] = changeHash;
+                }
+                break;
+            }
+        }
+    }
+    delete this._objList[hash];
+}
+
+
+});
 
 /**
- * @type {Number}
+ * @type {cc.DataCache}
  */
-cc.TouchDispatcher._preTouchPoolPointer = 0;
+cc.TouchDispatcher._preTouchPool = null;
+
+
