@@ -907,8 +907,8 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * @param {String} normalImage file name for normal state
  * @param {String} selectedImage image for selected state
  * @param {String|cc.Node} three Disabled image OR target
+ * @param {cc.Node|String|function|Null} four cc.Node target to run callback when clicked OR the callback
  * @param {String|function|Null} five callback function, either name in string, or pass the whole function
- * * @param {cc.Node|String|function|Null} four cc.Node target to run callback when clicked OR the callback
  * @return {cc.MenuItemImage}
  * @example
  * // Example
@@ -926,7 +926,7 @@ cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, fiv
         return cc.MenuItemImage.create(normalImage, selectedImage, null, three, null);
     }
     if (arguments.length == 4) {
-        return cc.MenuItemImage.create(normalImage, selectedImage, null, three, four);
+        return cc.MenuItemImage.create(normalImage, selectedImage, null, four, three);
     }
     var ret = new cc.MenuItemImage();
     if (ret.initWithNormalImage(normalImage, selectedImage, three, four, five)) {
