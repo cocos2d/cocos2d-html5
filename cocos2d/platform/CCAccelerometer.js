@@ -66,11 +66,16 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
     _delegate:null,
     _acceleration:null,
     _deviceEvent:null,
-    _orientation:0,
+    //_orientation:0,
     _interval:0.1,
     init:function () {
         this._acceleration = new cc.Acceleration();
         this._deviceEvent = window.DeviceMotionEvent || window.DeviceOrientationEvent;
+
+        //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
+        /*if(navigator.userAgent.indexOf("qqbrowser")){
+            this._deviceEvent = window.DeviceOrientationEvent;
+         }*/
         return true;
     },
 
