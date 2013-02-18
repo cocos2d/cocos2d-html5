@@ -23,32 +23,15 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-if (window.DeviceMotionEvent) {
-    window.addEventListener('devicemotion', deviceMotionHandler, false);
-}
-var SHAKE_THRESHOLD = 800;
-var lastUpdate = 0;
-var x, y, z, last_x, last_y, last_z;
-function deviceMotionHandler(eventData) {
-    // Grab the acceleration including gravity from the results
-    var acceleration = eventData.accelerationIncludingGravity;
-    var curTime = new Date().getTime();
-    if ((curTime - lastUpdate) > 100) {
-        var diffTime = (curTime - lastUpdate);
-        lastUpdate = curTime;
-        x = acceleration.x;
-        y = acceleration.y;
-        z = acceleration.z;
-        var speed = Math.abs(x + y + z - last_x - last_y - last_z) / diffTime * 10000;
-        document.getElementById("container").innerHTML = document.getElementById("container").innerHTML + "<br />" + speed;
-        if (speed > SHAKE_THRESHOLD) {
-            alert("shaked!");
-        }
-        last_x = x;
-        last_y = y;
-        last_z = z;
-    }
-}
+
+cc.UIInterfaceOrientationLandscapeLeft = -90;
+
+cc.UIInterfaceOrientationLandscapeRight = 90;
+
+cc.UIInterfaceOrientationPortraitUpsideDown = 180;
+
+cc.UIInterfaceOrientationPortrait = 0;
+
 /**
  * he device accelerometer reports values for each axis in units of g-force
  */
@@ -83,7 +66,8 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
     _delegate:null,
     _acceleration:null,
     _deviceEvent:null,
-
+    _orientation:0,
+    _interval:0.1,
     init:function () {
         this._acceleration = new cc.Acceleration();
         this._deviceEvent = window.DeviceMotionEvent || window.DeviceOrientationEvent;
@@ -97,6 +81,7 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
     addDelegate:function (delegate) {
         this._delegate = delegate;
         var acc = this.didAccelerate.bind(this);
+
         if (this._delegate) {
             if (this._deviceEvent == window.DeviceMotionEvent) {
                 window.addEventListener('devicemotion', acc, false);
@@ -113,49 +98,54 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
                 window.removeEventListener('deviceorientation', acc);
             }
         }
+
     },
 
     setAccelerometerInterval:function (interval) {
         //not available on browser
+        if (this._interval !== interval) {
+            this._interval = interval;
+        }
     },
 
     didAccelerate:function (eventData) {
         if (!this._delegate) {
             return;
         }
+
         if (this._deviceEvent == window.DeviceMotionEvent) {
             var acceleration = eventData.accelerationIncludingGravity;
             var dt = eventData.interval / 1000;
             this._acceleration.x = -acceleration.x * dt;
             this._acceleration.y = -acceleration.y * dt;
             this._acceleration.z = acceleration.z * dt;
-            this._acceleration.timestamp = new Date().getTime();
+        }
+        else {
+            this._acceleration.x = (eventData.gamma / 90) * 0.981;
+            this._acceleration.y = -(eventData.beta / 90) * 0.981;
+            this._acceleration.z = (eventData.alpha / 90) * 0.981;
         }
 
-        /*this._acceleration.x = acceleration.gamma;
-         this._acceleration.y = acceleration.alpha;
-         this._acceleration.z = acceleration.beta;
-         this._acceleration.timestamp = acceleration.timestamp;*/
+        this._acceleration.timestamp = (new Date()).getTime();
 
-        /*var tmp = this.acceleration.x;
-
-         switch (cc.UIAccelerometer.getInstance().statusBarOrientation()) {
-         case UIInterfaceOrientationLandscapeRight:
-         this.acceleration.x = -this.acceleration.y;
-         this.acceleration.y = tmp;
+        /*var tmp = this._acceleration.x;
+         switch (this._orientation) {
+         case cc.UIInterfaceOrientationLandscapeRight:
+         this._acceleration.x = -this._acceleration.y;
+         this._acceleration.y = tmp;
          break;
 
-         case UIInterfaceOrientationLandscapeLeft:
-         this.acceleration.x = this.acceleration.y;
-         this.acceleration.y = -tmp;
+         case cc.UIInterfaceOrientationLandscapeLeft:
+         this._acceleration.x = this._acceleration.y;
+         this._acceleration.y = -tmp;
          break;
 
-         case UIInterfaceOrientationPortraitUpsideDown:
-         this.acceleration.x = -this.acceleration.y;
-         this.acceleration.y = -tmp;
+         case cc.UIInterfaceOrientationPortraitUpsideDown:
+         this._acceleration.x = -this._acceleration.y;
+         this._acceleration.y = -tmp;
          break;
 
-         case UIInterfaceOrientationPortrait:
+         case cc.UIInterfaceOrientationPortrait:
          break;
          }*/
 

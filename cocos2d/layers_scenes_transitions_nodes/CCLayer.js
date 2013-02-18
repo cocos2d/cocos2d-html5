@@ -239,7 +239,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     },
 
     onAccelerometer:function (accelerationValue) {
-        console.log("onAccelerate");
+        //Layer#onAccelerometer override me
     },
 
     /**
