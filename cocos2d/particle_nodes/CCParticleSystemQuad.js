@@ -516,7 +516,6 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
                         // Create another cache for the tinted version
                         if (!cacheTextureForColor.tintCache) {
-                            console.log('created tint cache');
                             cacheTextureForColor.tintCache = document.createElement('canvas');
                             cacheTextureForColor.tintCache.width = drawTexture.width;
                             cacheTextureForColor.tintCache.height = drawTexture.height;
