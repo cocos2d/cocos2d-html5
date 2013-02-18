@@ -240,7 +240,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
 
         //accelerometer
-        //this._accelerometer = new cc.Accelerometer();
+        this._accelerometer = new cc.Accelerometer();
 
         //MouseDispatcher
         this._mouseDispatcher = new cc.MouseDispatcher();
