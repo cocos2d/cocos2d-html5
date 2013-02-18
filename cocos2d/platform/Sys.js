@@ -50,7 +50,7 @@ Object.defineProperties(sys,
 			if( 'onkeyup' in document.documentElement )
 				capabilities["keyboard"] = true;
 
-            if(1)
+            if(window.DeviceMotionEvent || window.DeviceOrientationEvent)
                 capabilities["accelerometer"] = true;
 
 			return capabilities;

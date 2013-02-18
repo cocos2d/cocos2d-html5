@@ -75,7 +75,7 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
         /*if(navigator.userAgent.indexOf("qqbrowser")){
             this._deviceEvent = window.DeviceOrientationEvent;
-         }*/
+        }*/
         return true;
     },
 
@@ -133,6 +133,7 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
 
         this._acceleration.timestamp = (new Date()).getTime();
 
+        //todo implement
         /*var tmp = this._acceleration.x;
          switch (this._orientation) {
          case cc.UIInterfaceOrientationLandscapeRight:
