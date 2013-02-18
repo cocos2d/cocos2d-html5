@@ -906,17 +906,17 @@ cc.MenuItemImage = cc.MenuItemSprite.extend(/** @lends cc.MenuItemImage# */{
  * creates a new menu item image
  * @param {String} normalImage file name for normal state
  * @param {String} selectedImage image for selected state
- * @param {String|cc.Node} three Disabled image OR target
- * @param {String|function|Null} five callback function, either name in string, or pass the whole function
- * * @param {cc.Node|String|function|Null} four cc.Node target to run callback when clicked OR the callback
+ * @param {String|cc.Node} three Disabled image OR allback function
+ * @param {String|function|Null} four callback function, either name in string or pass the whole function OR the target
+ * @param {cc.Node|String|function|Null} five cc.Node target to run callback when clicked
  * @return {cc.MenuItemImage}
  * @example
  * // Example
- * var item = cc.MenuItemImage.create('normal.png', 'selected.png', gameScene, 'run')
  * //create a dom menu item with normal and selected state, when clicked it will run the run function from gameScene object
+ * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'run', gameScene)
  *
- * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'disabled.png',  gameScene, gameScene.run)
  * //same as above, but pass in the actual function and disabled image
+ * var item = cc.MenuItemImage.create('normal.png', 'selected.png', 'disabled.png', gameScene.run, gameScene)
  */
 cc.MenuItemImage.create = function (normalImage, selectedImage, three, four, five) {
     if (arguments.length == 0) {
