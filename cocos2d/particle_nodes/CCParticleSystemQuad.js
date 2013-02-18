@@ -510,15 +510,28 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
 
                 if (particle.isChangeColor) {
+
                     var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
                     if (cacheTextureForColor) {
-                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, drawTexture.canvas);
+
+                        // Create another cache for the tinted version
+                        if (!cacheTextureForColor.tintCache) {
+                            console.log('created tint cache');
+                            cacheTextureForColor.tintCache = document.createElement('canvas');
+                            cacheTextureForColor.tintCache.width = drawTexture.width;
+                            cacheTextureForColor.tintCache.height = drawTexture.height;
+                        }
+
+                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
+                        drawTexture = cacheTextureForColor.tintCache;
+
                     }
+
                 }
 
                 context.drawImage(drawTexture, 0, 0);
-
                 context.restore();
+
             } else {
                 context.save();
                 context.globalAlpha = particle.color.a;

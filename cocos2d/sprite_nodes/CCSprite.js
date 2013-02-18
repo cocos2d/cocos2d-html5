@@ -47,7 +47,7 @@ cc.generateTextureCacheForColor = function (texture) {
     var textureCache = [
         document.createElement("canvas"),
         document.createElement("canvas"),
-        document.createElement("canvas"),
+        document.createElement("canvas")
     ];
 
     function renderToCache() {
@@ -152,7 +152,7 @@ cc.generateTintImage2 = function (texture, color, rect) {
  * @param {cc.Rect} rect
  * @return {HTMLCanvasElement}
  */
-cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas, overdraw) {
+cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCanvas) {
 
     if (!rect) {
         rect = cc.rect(0, 0, texture.width, texture.height);
@@ -160,7 +160,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
 
     var selColor;
     if (color instanceof cc.Color3B) {
-        // Optimization for the particel system which mainly uses c4f colors
+        // Optimization for the particle system which mainly uses c4f colors
         selColor = cc.c4f(color.r / 255.0, color.g / 255.0, color.b / 255, 1);
 
     } else {
@@ -179,8 +179,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         buff.height = h;
         ctx = buff.getContext("2d");
 
-    // Unless overdraw is active, resize and clear the renderCanvas
-    } else if (!overdraw) {
+    } else {
         ctx = buff.getContext("2d");
         ctx.clearRect(0, 0, w, h);
     }
