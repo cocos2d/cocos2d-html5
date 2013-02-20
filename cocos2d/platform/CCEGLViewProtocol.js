@@ -60,10 +60,10 @@ cc._touches = [];
 cc._indexBitsUsed = 0;
 cc._touchesIntegerDict = new cc._Dictionary();
 
-cc.getUnUsedIndex = function(){
+cc.getUnUsedIndex = function () {
     var temp = cc._indexBitsUsed;
-    for(var i = 0; i< cc.MAX_TOUCHES; i++){
-        if(!(temp & 0x00000001)){
+    for (var i = 0; i < cc.MAX_TOUCHES; i++) {
+        if (!(temp & 0x00000001)) {
             cc._indexBitsUsed != (i << i);
             return i;
         }
@@ -73,9 +73,9 @@ cc.getUnUsedIndex = function(){
     return -1;
 };
 
-cc.removeUsedIndexBit = function(index){
-    if(index < 0 || index >= cc.MAX_TOUCHES)
-        return ;
+cc.removeUsedIndexBit = function (index) {
+    if (index < 0 || index >= cc.MAX_TOUCHES)
+        return;
 
     var temp = 1 << index;
     temp = ~temp;
@@ -86,50 +86,57 @@ cc.EGLViewProtocol = cc.Class.extend({
     _delegate:null,
 
     //real screen size
-    _screenSize:cc.SIZE_ZERO,
+    _screenSize:null,
     // resolution size, it is the size appropriate for the app resources.
-    _designResolutionSize:cc.SIZE_ZERO,
+    _designResolutionSize:null,
     //the view port size
-    _viewPortRect:cc.RECT_ZERO,
+    _viewPortRect:null,
     // the view name
     _viewName:"",
 
-    _scaleX:0,
-    _scaleY:0,
+    _scaleX:1,
+    _scaleY:1,
     _gl:null,
 
     _resolutionPolicy:cc.RESOLUTION_UNKNOWN,
 
-    ctor:function(){
-        this._gl = cc.webglContext;
+    ctor:function () {
+        this._gl = cc.renderContext;
+        this._screenSize = cc.SIZE_ZERO;
+        this._designResolutionSize = cc.SIZE_ZERO;
+        this._viewPortRect = cc.RECT_ZERO;
     },
 
     /**
      * Force destroying EGL view, subclass must implement this method.
      */
-    end:function(){},
+    end:function () {
+    },
 
     /**
      * Get whether opengl render system is ready, subclass must implement this method.
      */
-    isOpenGLReady:function(){},
+    isOpenGLReady:function () {
+    },
 
     /**
      * Exchanges the front and back buffers, subclass must implement this method.
      */
-    swapBuffers:function(){},
+    swapBuffers:function () {
+    },
 
     /**
      * Open or close IME keyboard (HTML5 Not support)
      * @param open
      */
-    setIMEKeyboardState:function(open){},
+    setIMEKeyboardState:function (open) {
+    },
 
     /**
      * Get the frame size of EGL view.
      * In general, it returns the screen size since the EGL view is a fullscreen view.
      */
-    getFrameSize:function(){
+    getFrameSize:function () {
         return this._screenSize;
     },
 
@@ -138,20 +145,18 @@ cc.EGLViewProtocol = cc.Class.extend({
      * @param {Number} width
      * @param {Number} height
      */
-    setFrameSize:function(width, height){
+    setFrameSize:function (width, height) {
         this._designResolutionSize = this._screenSize = CCSizeMake(width, height);
     },
 
     /**
      * Get the visible area size of opengl viewport.
      */
-    getVisibleSize:function(){
-        if (this._resolutionPolicy == kResolutionNoBorder)
-        {
-            return CCSizeMake(this._screenSize.width/this._scaleX, this._screenSize.height/this._scaleY);
+    getVisibleSize:function () {
+        if (this._resolutionPolicy == kResolutionNoBorder) {
+            return CCSizeMake(this._screenSize.width / this._scaleX, this._screenSize.height / this._scaleY);
         }
-        else
-        {
+        else {
             return this._designResolutionSize;
         }
     },
@@ -159,14 +164,12 @@ cc.EGLViewProtocol = cc.Class.extend({
     /**
      * Get the visible origin point of opengl viewport.
      */
-    getVisibleOrigin:function(){
-        if (this._resolutionPolicy == kResolutionNoBorder)
-        {
-            return CCPointMake((this._designResolutionSize.width - this._screenSize.width/this._scaleX)/2,
-                (this._designResolutionSize.height - this._screenSize.height/this._scaleY)/2);
+    getVisibleOrigin:function () {
+        if (this._resolutionPolicy == kResolutionNoBorder) {
+            return CCPointMake((this._designResolutionSize.width - this._screenSize.width / this._scaleX) / 2,
+                (this._designResolutionSize.height - this._screenSize.height / this._scaleY) / 2);
         }
-        else
-        {
+        else {
             return CCPointZero;
         }
     },
@@ -182,7 +185,7 @@ cc.EGLViewProtocol = cc.Class.extend({
      * @param height Design resolution height
      * @param resolutionPolicy  The resolution policy desired
      */
-    setDesignResolutionSize:function(width, height, resolutionPolicy){
+    setDesignResolutionSize:function (width, height, resolutionPolicy) {
         cc.Assert(resolutionPolicy != cc.RESOLUTION_UNKNOWN, "should set resolutionPolicy");
 
         if (width === 0.0 || height === 0.0)
@@ -217,7 +220,7 @@ cc.EGLViewProtocol = cc.Class.extend({
      *  Get design resolution size. <br/>
      *  Default resolution size is the same as 'getFrameSize'.
      */
-    getDesignResolutionSize:function() {
+    getDesignResolutionSize:function () {
         return this._designResolutionSize;
     },
 
@@ -225,7 +228,7 @@ cc.EGLViewProtocol = cc.Class.extend({
      * Set touch delegate
      * @param delegate
      */
-    setTouchDelegate:function(delegate) {
+    setTouchDelegate:function (delegate) {
         this._delegate = delegate;
     },
 
@@ -236,30 +239,30 @@ cc.EGLViewProtocol = cc.Class.extend({
      * @param {Number} w width
      * @param {Number} h height
      */
-    setViewPortInPoints:function(x, y, w, h){
+    setViewPortInPoints:function (x, y, w, h) {
         this._gl.viewport((x * this._scaleX + this._viewPortRect.origin.x),
             (y * this._scaleY + this._viewPortRect.origin.y),
             (w * this._scaleX), (h * this._scaleY));
     },
 
-    setScissorInPoints:function(x, y, w, h){
+    setScissorInPoints:function (x, y, w, h) {
         this._gl.scissor((x * this._scaleX + this._viewPortRect.origin.x),
             (y * this._scaleY + this._viewPortRect.origin.y),
             (w * this._scaleX), (h * this._scaleY));
     },
 
-    setViewName:function(viewName){
+    setViewName:function (viewName) {
         if (viewName != null && viewName.length > 0)
             this._viewName = viewName;
     },
 
-    getViewName:function(){
+    getViewName:function () {
         return this._viewName;
     },
 
     /** Touch events are handled by default; if you want to customize your handlers, please override these functions: */
 
-    handleTouchesBegin:function(num, ids, xs,ys){
+    handleTouchesBegin:function (num, ids, xs, ys) {
         var setArr = [];
         for (var i = 0; i < num; ++i) {
             var id = ids[i];
@@ -295,7 +298,7 @@ cc.EGLViewProtocol = cc.Class.extend({
         this._delegate.touchesBegan(setArr, null);
     },
 
-    handleTouchesMove:function(num, ids, xs, ys){
+    handleTouchesMove:function (num, ids, xs, ys) {
         var setArr = [];
         for (var i = 0; i < num; i++) {
             var id = ids[i];
@@ -328,12 +331,12 @@ cc.EGLViewProtocol = cc.Class.extend({
 
         this._delegate.touchesMoved(setArr, null);
     },
-    handleTouchesEnd:function(num, ids, xs, ys){
+    handleTouchesEnd:function (num, ids, xs, ys) {
         var setArr = [];
         this._getSetOfTouchesEndOrCancel(setArr, num, ids, xs, ys);
         this._delegate.touchesEnded(setArr, null);
     },
-    handleTouchesCancel:function(num, ids, xs, ys){
+    handleTouchesCancel:function (num, ids, xs, ys) {
         var setArr = [];
         this._getSetOfTouchesEndOrCancel(setArr, num, ids, xs, ys);
         this._delegate.touchesCancelled(setArr, null);
@@ -342,25 +345,25 @@ cc.EGLViewProtocol = cc.Class.extend({
     /**
      * Get the opengl view port rectangle.
      */
-    getViewPortRect:function(){
+    getViewPortRect:function () {
         return this._viewPortRect;
     },
 
     /**
      * Get scale factor of the horizontal direction.
      */
-    getScaleX:function(){
+    getScaleX:function () {
         return this._scaleX;
     },
 
     /**
      * Get scale factor of the vertical direction.
      */
-    getScaleY:function(){
+    getScaleY:function () {
         return this._scaleY;
     },
 
-    _getSetOfTouchesEndOrCancel :function(setArr, num, ids, xs, ys){
+    _getSetOfTouchesEndOrCancel:function (setArr, num, ids, xs, ys) {
         for (var i = 0; i < num; ++i) {
             var id = ids[i];
             var x = xs[i];
@@ -374,7 +377,7 @@ cc.EGLViewProtocol = cc.Class.extend({
             /* Add to the set to send to the director */
             var touch = this._touches[index];
             if (touch) {
-                cc.logINFO("Ending touches with id: "+id+", x=" +x + ", y=" + y);
+                cc.logINFO("Ending touches with id: " + id + ", x=" + x + ", y=" + y);
                 touch.setTouchInfo(index, (x - this._viewPortRect.origin.x) / this._scaleX,
                     (y - this._viewPortRect.origin.y) / this._scaleY);
                 setArr.addObject(touch);

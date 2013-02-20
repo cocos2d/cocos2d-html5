@@ -113,7 +113,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     setQuads:function (quads) {
         this._quads = quads;
-
         this._resetQuadsToTypeArray(0);
     },
 
@@ -314,7 +313,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     updateQuad:function (quad, index) {
         //cc.Assert(index >= 0 && index < this._capacity, "updateQuadWithTexture: Invalid index");
         this._totalQuads = Math.max(index + 1, this._totalQuads);
-        this._quads[index] = quad;
+        this._quads[index] = cc.V3F_C4B_T2F_QuadCopy(quad);
 
         this._setQuadToPositionsTypeArray(this._quads[index], index);
         this._setQuadToColorsTypeArray(this._quads[index], index);
@@ -334,7 +333,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._totalQuads++;
         cc.Assert(this._totalQuads <= this._capacity, "invalid totalQuads");
 
-        this._quads = cc.ArrayAppendObjectToIndex(this._quads, quad, index);
+        this._quads = cc.ArrayAppendObjectToIndex(this._quads, cc.V3F_C4B_T2F_QuadCopy(quad), index);
 
         //reset form index
         this._resetQuadsToTypeArray(index);
@@ -356,11 +355,10 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._totalQuads += amount;
         cc.Assert(this._totalQuads <= this._capacity, "invalid totalQuads");
 
-        this._quads = cc.ArrayAppendObjectsToIndex(this._quads, quads, index);
+        this._quads = cc.ArrayAppendObjectsToIndex(this._quads, cc.V3F_C4B_T2F_QuadsCopy(quads), index);
 
         //reset form index
         this._resetQuadsToTypeArray(index);
-
         this._dirty = true;
     },
 
@@ -397,14 +395,11 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         cc.ArrayRemoveObjectAtIndex(this._quads, index);
         this._totalQuads--;
-
         for (var i = index; i < this._quads.length; i++) {
             this._setQuadToPositionsTypeArray(this._quads[i], i);
             this._setQuadToColorsTypeArray(this._quads[i], i);
             this._setQuadToTexCoordsTypeArray(this._quads[i], i);
         }
-        this._resetQuadsToTypeArray(index);
-
         this._dirty = true;
     },
 

@@ -32,12 +32,12 @@
 cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
     xmlDoc:null,
     parser:null,
-    xmlList:null,
+    _xmlDict:null,
     plist:null,
 
     ctor:function () {
-        this.xmlList = [];
-        this.plist = [];
+        this._xmlDict = {};
+        this.plist = {};
     },
 
     /**
@@ -186,7 +186,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
                 if (xmlhttp.readyState == 4) {
                     if (xmlhttp.responseText) {
                         cc.Loader.getInstance().onResLoaded();
-                        that.xmlList[filePath] = xmlhttp.responseText;
+                        that._xmlDict[filePath] = xmlhttp.responseText;
                         xmlhttp = null;
                     } else
                         cc.Assert("cocos2d:There was a problem retrieving the xml data:" + xmlhttp.statusText);
@@ -226,8 +226,8 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @return {String} xml content
      */
     getList:function (key) {
-        if (this.xmlList != null) {
-            return this.xmlList[key];
+        if (this._xmlDict != null) {
+            return this._xmlDict[key];
         }
         return null;
     }

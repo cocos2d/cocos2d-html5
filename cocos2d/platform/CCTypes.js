@@ -593,6 +593,36 @@ cc.V3F_C4B_T2F_QuadZero = function () {
         new cc.V3F_C4B_T2F(new cc.Vertex3F(0, 0, 0), new cc.Color4B(0, 0, 0, 255), new cc.Tex2F(0, 0)));
 };
 
+cc.V3F_C4B_T2F_QuadCopy = function(sourceQuad){
+    if(!sourceQuad)
+        return  cc.V3F_C4B_T2F_QuadZero();
+
+    return new cc.V3F_C4B_T2F_Quad(
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.tl.vertices.x, sourceQuad.tl.vertices.y, sourceQuad.tl.vertices.z),
+            new cc.Color4B(sourceQuad.tl.colors.r, sourceQuad.tl.colors.g, sourceQuad.tl.colors.b,sourceQuad.tl.colors.a),
+            new cc.Tex2F(sourceQuad.tl.texCoords.u, sourceQuad.tl.texCoords.v)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.bl.vertices.x, sourceQuad.bl.vertices.y, sourceQuad.bl.vertices.z),
+            new cc.Color4B(sourceQuad.bl.colors.r, sourceQuad.bl.colors.g, sourceQuad.bl.colors.b,sourceQuad.bl.colors.a),
+            new cc.Tex2F(sourceQuad.bl.texCoords.u, sourceQuad.bl.texCoords.v)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.tr.vertices.x, sourceQuad.tr.vertices.y, sourceQuad.tr.vertices.z),
+            new cc.Color4B(sourceQuad.tr.colors.r, sourceQuad.tr.colors.g, sourceQuad.tr.colors.b,sourceQuad.tr.colors.a),
+            new cc.Tex2F(sourceQuad.tr.texCoords.u, sourceQuad.tr.texCoords.v)),
+        new cc.V3F_C4B_T2F(new cc.Vertex3F(sourceQuad.br.vertices.x, sourceQuad.br.vertices.y, sourceQuad.br.vertices.z),
+            new cc.Color4B(sourceQuad.br.colors.r, sourceQuad.br.colors.g, sourceQuad.br.colors.b,sourceQuad.br.colors.a),
+            new cc.Tex2F(sourceQuad.br.texCoords.u, sourceQuad.br.texCoords.v)));
+};
+
+cc.V3F_C4B_T2F_QuadsCopy = function(sourceQuads){
+    if(!sourceQuads)
+        return  [];
+
+    var retArr = [];
+    for(var i = 0; i< sourceQuads.length;i++){
+        retArr.push(cc.V3F_C4B_T2F_QuadCopy(sourceQuads[i]));
+    }
+    return retArr;
+};
+
 /**
  * 4 ccVertex2FTex2FColor4F Quad
  * @Class
