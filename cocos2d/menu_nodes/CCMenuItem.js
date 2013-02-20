@@ -1101,7 +1101,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
      * @param {Boolean} enabled
      */
     setEnabled:function (enabled) {
-        if (this._isEnabled == enabled) {
+        if (this._isEnabled != enabled) {
             this._super(enabled);
 
             if (this._subItems && this._subItems.length > 0) {
