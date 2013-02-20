@@ -337,7 +337,7 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         // process the target handlers 1st
         //
         if (targetedHandlersCount > 0) {
-            var touch, claimed;
+            var touch, claimed, claimedTouches, indexOfTouch;
             var touchesLength = touches.length;
             for (i = 0; i < touchesLength; i++) {
                 touch = touches[i];
@@ -353,20 +353,16 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                     if (index == cc.TOUCH_BEGAN) {
                         if (handler.getDelegate().onTouchBegan) {
                             claimed = handler.getDelegate().onTouchBegan(touch, event);
-
                             if (claimed) {
                                 handler.getClaimedTouches().push(touch);
                             }
                         }
-                        //} else if (handler.getClaimedTouches().indexOf(touch)> -1){
                     } else {
-                        var claimedTouches = handler.getClaimedTouches();
-                        var claimedTouchesLength = claimedTouches.length;
-                        for (k = 0; k < claimedTouchesLength; k++) {
-                            if (claimedTouches[k].getId() == touch.getId()) {
-                                claimed = true;
-                            }
+                        claimedTouches = handler.getClaimedTouches();
+                        if (this._searchIndexOfTouchWithId(claimedTouches, touch.getId()) >= 0) {
+                            claimed = true;
                         }
+
                         if (claimed) {
                             // moved ended cancelled
                             switch (helper.type) {
@@ -379,11 +375,17 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                                     break;
                                 case cc.TOUCH_ENDED:
                                     if (handler.getDelegate().onTouchEnded) handler.getDelegate().onTouchEnded(touch, event);
-                                    cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
+                                    indexOfTouch = this._searchIndexOfTouchWithId(claimedTouches, touch.getId());
+                                    if (indexOfTouch >= 0) {
+                                        cc.ArrayRemoveObjectAtIndex(claimedTouches, indexOfTouch);
+                                    }
                                     break;
                                 case cc.TOUCH_CANCELLED:
                                     if (handler.getDelegate().onTouchCancelled) handler.getDelegate().onTouchCancelled(touch, event);
-                                    cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
+                                    indexOfTouch = this._searchIndexOfTouchWithId(claimedTouches, touch.getId());
+                                    if (indexOfTouch >= 0) {
+                                        cc.ArrayRemoveObjectAtIndex(claimedTouches, indexOfTouch);
+                                    }
                                     break;
                             }
                         }
@@ -472,6 +474,22 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
             this._toQuit = false;
             this.forceRemoveAllDelegates();
         }
+    },
+
+    /**
+     * @param {Array} touchesArray
+     * @param {Number} id
+     */
+    _searchIndexOfTouchWithId:function (touchesArray, id) {
+        var ret = -1;
+        var touchesArrayLength = touchesArray.length;
+        for (var i = 0; i < touchesArrayLength; i++) {
+            if (touchesArray[i].getId() == id) {
+                ret = i;
+                break;
+            }
+        }
+        return ret;
     },
 
     /**
