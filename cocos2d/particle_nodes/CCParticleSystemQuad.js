@@ -269,7 +269,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 // texture
                 if (this._texture instanceof cc.Texture2D)
                     retParticle._texture = this._texture;
-                 else
+                else
                     retParticle._texture = this._texture;
             }
         }
@@ -300,12 +300,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         if (cc.renderContextType === cc.WEBGL) {
             // Only update the texture if is different from the current one
             if (!this._texture || texture._webTextureObj != this._texture._webTextureObj)
-                this.setTexture(texture, true);
+                cc.ParticleSystem.prototype.setTexture.call(this, texture);
             this._pointRect = rect;
             this.initTexCoordsWithRect(rect);
         } else {
             if (!this._texture || texture != this._texture)
-                this.setTexture(texture, true);
+                cc.ParticleSystem.prototype.setTexture.call(this, texture);
             this._pointRect = rect;
             this.initTexCoordsWithRect(rect);
         }
@@ -593,10 +593,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var gl = ctx || cc.renderContext;
 
         cc.NODE_DRAW_SETUP(this);
-
         cc.glBindTexture2D(this._texture._webTextureObj);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-        //cc.glBlendFunc(null, null);
 
         cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
 
@@ -849,9 +847,8 @@ cc.ParticleSystemQuad.create = function (pListFile) {
         return ret;
     }
 
-    if (ret && ret.initWithFile(pListFile)) {
+    if (ret && ret.initWithFile(pListFile))
         return ret;
-    }
     return null;
 };
 

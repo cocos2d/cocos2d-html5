@@ -456,6 +456,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             this._quad.tl.colors = new cc.Color4B(255, 255, 255, 255);
             this._quad.tr.colors = new cc.Color4B(255, 255, 255, 255);
             this._colorsUint8Buffer = this._getSpriteColorsArray();
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
         }
 
         // updated in "useSelfRender"
@@ -1640,8 +1641,10 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             || texture instanceof HTMLCanvasElement, "setTexture expects a CCTexture2D. Invalid argument");
 
         if (cc.renderContextType === cc.WEBGL) {
-            //TODO
+            // If batchnode, then texture id should be the same
             cc.Assert(!this._batchNode, "cc.Sprite: Batched sprites should use the same texture as the batchnode");
+            // accept texture==nil as argument
+            cc.Assert( !texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
 
             if (!this._batchNode && this._texture != texture) {
                 this._texture = texture;

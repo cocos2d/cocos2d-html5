@@ -125,6 +125,7 @@ cc.Scale9Sprite = cc.Node.extend({
     },
 
     ctor:function () {
+        this._super();
         this._spriteRect = cc.RectZero();
         this._capInsetsInternal = cc.RectZero();
 

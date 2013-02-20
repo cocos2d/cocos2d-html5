@@ -283,7 +283,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
         var gl = cc.webglContext;
         // XXX: 32 bits or POT textures uses UNPACK of 4 (is this correct ??? )
-        if( pixelFormat == cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 || ( cc.NextPOT(pixelsWide)==pixelsWide && cc.NextPOT(pixelsHigh)==pixelsHigh) )
+        if( pixelFormat === cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 || ( cc.NextPOT(pixelsWide)==pixelsWide && cc.NextPOT(pixelsHigh)==pixelsHigh) )
             gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);
         else
             gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
@@ -336,7 +336,6 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         this._hasPremultipliedAlpha = false;
         this._hasMipmaps = false;
-
         this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
 
         return true;

@@ -37,6 +37,8 @@
         'platform/CCFileUtils.js',
         'platform/CCTypes.js',
         'platform/zlib.min.js',
+        'platform/CCEGLViewProtocol.js',
+        'platform/CCEGLView.js',
         'cocoa/CCGeometry.js',
         '../System/Sys.js',
         'platform/CCConfig.js',

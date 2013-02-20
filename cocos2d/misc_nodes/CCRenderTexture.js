@@ -151,9 +151,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {cc.Size} size
      */
     setContentSize:function (size) {
-        if (!size) {
+        if (!size)
             return;
-        }
 
         //if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
         this._super(size);
@@ -247,19 +246,22 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             }
 
             // check if it worked (probably worth doing :) )
-            cc.Assert(gl.checkFramebufferStatus(gl.FRAMEBUFFER) == gl.FRAMEBUFFER_COMPLETE, "Could not attach texture to framebuffer");
+            cc.Assert(gl.checkFramebufferStatus(gl.FRAMEBUFFER) === gl.FRAMEBUFFER_COMPLETE, "Could not attach texture to framebuffer");
 
             this._texture.setAliasTexParameters();
 
             this._sprite = cc.Sprite.createWithTexture(this._texture);
-
             this._sprite.setScaleY(-1);
-            this.addChild(this._sprite);
-
             this._sprite.setBlendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA);
 
             gl.bindRenderbuffer(gl.RENDERBUFFER, oldRBO);
             gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
+
+            // Diabled by default.
+            this._autoDraw = false;
+
+            // add sprite for backward compatibility
+            this.addChild(this._sprite);
             return true;
         }
     },
@@ -304,7 +306,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
             cc.CHECK_GL_ERROR_DEBUG();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
+            gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
         }
     },
 
@@ -319,6 +321,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} stencilValue
      */
     beginWithClear:function (r, g, b, a, depthValue, stencilValue) {
+        var gl = cc.renderContext;
         depthValue = depthValue || gl.COLOR_BUFFER_BIT;
         stencilValue = stencilValue || (gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
@@ -560,23 +563,16 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         var nSavedBufferWidth = size.width;
         var nSavedBufferHeight = size.height;
 
-        var pBuffer = null;
-        var pTempData = null;
         var pImage = new cc.Image();
-
         var gl = cc.renderContext;
 
-
-        pBuffer = [];
-        pBuffer.length = nSavedBufferWidth * nSavedBufferHeight * 4;
+        var pBuffer = new Uint8Array(nSavedBufferWidth * nSavedBufferHeight * 4);
         if (!(pBuffer))
             return pImage;
 
-        pTempData = [];
-        pTempData.length = nSavedBufferWidth * nSavedBufferHeight * 4;
-        if (!(pTempData)) {
+        var pTempData = new Uint8Array(nSavedBufferWidth * nSavedBufferHeight * 4);
+        if (!(pTempData))
             return null;
-        }
 
         this.begin();
         gl.pixelStorei(gl.PACK_ALIGNMENT, 1);
@@ -611,7 +607,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {Number} format
      */
     saveToFile:function (filePath, format) {
-        cc.log("Cocos2d-Html5 support is not needed");
+        cc.log("saveToFile is NoSupported on Cocos2d-Html5");
     },
 
     /**
@@ -619,7 +615,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {cc.Class} obj
      */
     listenToBackground:function (obj) {
-        cc.log("Cocos2d-Html5 support is not needed");
+        cc.log("listenToBackground is NoSupported on Cocos2d-Html5");
     },
 
     /**
@@ -627,7 +623,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * @param {cc.Class} obj
      */
     listenToForeground:function (obj) {
-        cc.log("Cocos2d-Html5 support is not needed");
+        cc.log("listenToForeground is NoSupported on Cocos2d-Html5");
     },
 
     /**
@@ -708,8 +704,7 @@ cc.RenderTexture.create = function (width, height, format, depthStencilFormat) {
     depthStencilFormat = depthStencilFormat || 0;
 
     var ret = new cc.RenderTexture();
-    if (ret && ret.initWithWidthAndHeight(width, height, format, depthStencilFormat)) {
+    if (ret && ret.initWithWidthAndHeight(width, height, format, depthStencilFormat))
         return ret;
-    }
     return null;
 };

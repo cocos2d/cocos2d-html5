@@ -155,7 +155,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             return;
 
         context.save();
-        context.translate(this._contentSize.width / 2, this._contentSize.height / 2);
+        context.translate(this._contentSize.width * 0.5, this._contentSize.height * 0.5);
         //this is fillText for canvas
         if (context.font != this._fontStyleStr)
             context.font = this._fontStyleStr;
@@ -165,8 +165,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
             context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
             this._wrapText(context, this._string,
-                -this._dimensions.width * this._anchorPoint.x,
-                this._dimensions.height * this._anchorPoint.y,
+                -this._dimensions.width * 0.5,
+                this._dimensions.height * 0.5,
                 this._dimensions.width,
                 this._dimensions.height,
                 this._fontSize * 1.2);
@@ -177,7 +177,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             if (this._string.indexOf("\n") > -1) {
                 this._multiLineText(context);
             } else
-                context.fillText(this._string, 0 | (-this._contentSize.width * this._anchorPoint.x), 0 | (this._contentSize.height * this._anchorPoint.y));
+                context.fillText(this._string, 0 | (-this._contentSize.width * 0.5), 0 | (this._contentSize.height * 0.5));
         } else {
             context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
             context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
@@ -185,15 +185,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             if (this._hAlignment == cc.TEXT_ALIGNMENT_RIGHT)
                 xOffset = this._dimensions.width;
             if (this._hAlignment == cc.TEXT_ALIGNMENT_CENTER)
-                xOffset = this._dimensions.width / 2;
+                xOffset = this._dimensions.width * 0.5;
 
             if (this._vAlignment == cc.VERTICAL_TEXT_ALIGNMENT_TOP)
                 yOffset = -this._dimensions.height;
             if (this._vAlignment == cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
-                yOffset = -this._dimensions.height / 2;
+                yOffset = -this._dimensions.height * 0.5;
 
-            context.fillText(this._string, 0 | (-this._dimensions.width * this._anchorPoint.x + xOffset),
-                0 | (this._dimensions.height * this._anchorPoint.y + yOffset));
+            context.fillText(this._string, 0 | (-this._dimensions.width * 0.5 + xOffset),
+                0 | (this._dimensions.height * 0.5 + yOffset));
         }
         context.restore();
     },
