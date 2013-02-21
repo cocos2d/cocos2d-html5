@@ -58,6 +58,14 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             this._capabilities.mp3 = ("no" != au.canPlayType("audio/mpeg"))
                 && ("" != au.canPlayType("audio/mpeg"));
 
+            this._capabilities.mp4 = ("no" != au.canPlayType("audio/mp4"))
+                && ("" != au.canPlayType("audio/mp4"));
+
+            this._capabilities.m4a = (("no" != au.canPlayType("audio/x-m4a"))
+                && ("" != au.canPlayType("audio/x-m4a")))
+                || (("no" != au.canPlayType("audio/aac"))
+                && ("" != au.canPlayType("audio/aac")));
+
             this._capabilities.ogg = ("no" != au.canPlayType('audio/ogg; codecs="vorbis"'))
                 && ("" != au.canPlayType('audio/ogg; codecs="vorbis"'));
 
@@ -65,7 +73,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 && ("" != au.canPlayType('audio/wav; codecs="1"'));
 
             // enable sound if any of the audio format is supported
-            this._soundEnable = this._capabilities.mp3 || this._capabilities.ogg || this._capabilities.wav;
+            this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
+                                || this._capabilities.m4a || this._capabilities.ogg
+                                || this._capabilities.wav;
         }
     },
 
@@ -571,6 +581,16 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         // check for sound support by the browser
         if (!this._soundEnable) {
             return;
+        }
+
+        // check for MP4
+        if (this._capabilities.mp4) {
+            this._supportedFormat.push("mp4");
+        }
+
+        // check for M4A
+        if (this._capabilities.m4a) {
+            this._supportedFormat.push("m4a");
         }
 
         // check for MP3

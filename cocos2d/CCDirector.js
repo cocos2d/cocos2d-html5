@@ -240,7 +240,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
 
         //accelerometer
-        //this._accelerometer = new cc.Accelerometer();
+        this._accelerometer = new cc.Accelerometer();
 
         //MouseDispatcher
         this._mouseDispatcher = new cc.MouseDispatcher();
@@ -659,7 +659,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //this.addRegionToDirtyRegion(cc.rect(0, 0, cc.canvas.width, cc.canvas.height));
 
         this.setAnimationInterval(this._oldAnimationInterval);
-        this._lastUpdate = cc.Time.gettimeofdayCocos2d();
+        this._lastUpdate = Date.now();
         if (!this._lastUpdate) {
             cc.log("cocos2d: Director: Error in gettimeofday");
         }

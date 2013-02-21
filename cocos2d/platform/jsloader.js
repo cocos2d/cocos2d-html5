@@ -35,6 +35,7 @@
         'platform/CCMacro.js',
         'platform/CCFileUtils.js',
         'platform/CCTypes.js',
+        'platform/CCAccelerometer.js',
         'platform/zlib.min.js',
         'cocoa/CCGeometry.js',
         'platform/Sys.js',
@@ -104,8 +105,6 @@
         'tileMap_parallax_nodes/CCTMXObjectGroup.js',
         'tileMap_parallax_nodes/CCTMXLayer.js',
         'tileMap_parallax_nodes/CCParallaxNode.js',
-        'menu_nodes/CCMenuItem.js',
-        'menu_nodes/CCMenu.js',
         'base_nodes/CCdomNode.js',
         '../CocosDenshion/SimpleAudioEngine.js'
 

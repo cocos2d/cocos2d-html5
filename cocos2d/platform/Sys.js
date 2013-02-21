@@ -27,8 +27,16 @@ var sys = sys || {};
 
 /** LocalStorage is a local storage component.
 */
-sys.localStorage = window.localStorage;
+try{
+	sys.localStorage = window.localStorage;
+	
+}catch(e){
 
+	if( e.name === "SECURITY_ERR" ) {
+		cc.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+	}
+	sys.localStorage = function(){};
+}
 
 /** Capabilities
 */
@@ -43,11 +51,15 @@ Object.defineProperties(sys,
 
 			if( 'ontouchstart' in document.documentElement )
 				capabilities["touches"] = true;
+
 			else if( 'onmouseup' in document.documentElement )
 				capabilities["mouse"] = true;
 
 			if( 'onkeyup' in document.documentElement )
 				capabilities["keyboard"] = true;
+
+            if(window.DeviceMotionEvent || window.DeviceOrientationEvent)
+                capabilities["accelerometer"] = true;
 
 			return capabilities;
         },
@@ -71,6 +83,7 @@ Object.defineProperties(sys,
 				OSName = "iOS";
 			else if( isAndroid )
 				OSName = "Android";
+			return OSName;
 		},
 		enumerable : true,
 		configurable : true

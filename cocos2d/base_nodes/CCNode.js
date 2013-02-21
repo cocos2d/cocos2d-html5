@@ -1026,7 +1026,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
-            cleanup = cleanup || true;
+            if (cleanup == null){
+                cleanup = true;
+            }
             this._parent.removeChild(this, cleanup);
         }
     },
@@ -1051,7 +1053,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return;
         }
 
-        cleanup = cleanup || true;
+        if (cleanup == null){
+            cleanup = true;
+        }
         if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
         }
@@ -1090,7 +1094,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
-            cleanup = cleanup || true;
+            if (cleanup == null){
+                cleanup = true;
+            }
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
                 if (node) {
@@ -1333,18 +1339,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // transform for canvas
         var context = ctx || cc.renderContext;
 
-        // transformations
+/*        // transformations
         if (!this._ignoreAnchorPointForPosition) {
             if (this._parent)
-                context.translate(0 | (this._position.x - this._parent._anchorPointInPoints.x), -(0 | (this._position.y - this._parent._anchorPointInPoints.y)));
+                context.translate((this._position.x - this._parent._anchorPointInPoints.x), -((this._position.y - this._parent._anchorPointInPoints.y)));
             else
-                context.translate(0 | this._position.x, -(0 | this._position.y));
+                context.translate(this._position.x, -(this._position.y));
         } else {
             if (this._parent) {
-                context.translate(0 | ( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
-                    -(0 | (this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
+                context.translate(( this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
+                    -((this._position.y - this._parent._anchorPointInPoints.y + this._anchorPointInPoints.y)));
             } else {
-                context.translate(0 | ( this._position.x + this._anchorPointInPoints.x), -(0 | (this._position.y + this._anchorPointInPoints.y)));
+                context.translate(( this._position.x + this._anchorPointInPoints.x), -((this._position.y + this._anchorPointInPoints.y)));
             }
         }
 
@@ -1359,7 +1365,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 -Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
                 -Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)),
                 1, 0, 0);
-        }
+        }*/
+
+        var t = this.nodeToParentTransform();
+        context.transform(t.a, t.b, t.c, t.d, t.tx, -t.ty);
     },
 
     _transformForWebGL:function (ctx) {
@@ -1586,14 +1595,14 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     nodeToParentTransform:function () {
-        if (this._transformDirty) {
+/*        if (this._transformDirty) {
             // Translate values
             var x = this._position.x;
             var y = this._position.y;
 
             if (this._ignoreAnchorPointForPosition) {
-                x += this._anchorPointInPoints.x;
-                y += this._anchorPointInPoints.y;
+                x -= this._anchorPointInPoints.x;
+                y -= this._anchorPointInPoints.y;
             }
 
             // Rotation values
@@ -1633,6 +1642,62 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             this._transformDirty = false;
         }
 
+        return this._transform;*/
+        if(!this._transform){
+            this._transform = {a:1,b:0,c:0,d:1,tx:0,ty:0};
+        }
+        if(this._transformDirty){
+            var t = this._transform;// quick reference
+            // base position
+            t.tx = this._position.x;
+            t.ty = this._position.y;
+
+            // rotation Cos and Sin
+            var Cos = 1, Sin = 0;
+            if(this._rotation){
+                Cos = Math.cos(this._rotationRadians);
+                Sin = Math.sin(this._rotationRadians);
+            }
+
+            // base abcd
+            t.a = t.d = Cos;
+            t.c = -Sin;
+            t.b = Sin;
+
+            // skew
+            if(this._skewX || this._skewY){
+                // offset the anchorpoint
+                var skx = Math.tan(-this._skewX*Math.PI/180);
+                var sky = Math.tan(-this._skewY*Math.PI/180);
+                var xx = this._anchorPointInPoints.y*skx*this._scaleX;
+                var yy = this._anchorPointInPoints.x*sky*this._scaleY;
+                t.a = Cos + -Sin*sky;
+                t.c = Cos * skx + -Sin;
+                t.b = Sin + Cos*sky;
+                t.d = Sin*skx + Cos;
+                t.tx += Cos*xx + -Sin*yy;
+                t.ty += Sin*xx + Cos*yy;
+            }
+
+            // scale
+            if(this._scaleX !== 1 || this._scaleY !== 1){
+                t.a *= this._scaleX;
+                t.b *= this._scaleX;
+                t.c *= this._scaleY;
+                t.d *= this._scaleY;
+            }
+
+            // adjust anchorPoint
+            t.tx += Cos*-this._anchorPointInPoints.x*this._scaleX + -Sin*this._anchorPointInPoints.y*this._scaleY;
+            t.ty -= Sin*-this._anchorPointInPoints.x*this._scaleX + Cos*this._anchorPointInPoints.y*this._scaleY;
+
+            // if ignore anchorPoint
+            if(this._ignoreAnchorPointForPosition){
+                t.tx += this._anchorPointInPoints.x;
+                t.ty += this._anchorPointInPoints.y;
+            }
+            this._transformDirty = false;
+        }
         return this._transform;
     },
 
