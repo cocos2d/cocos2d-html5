@@ -773,10 +773,10 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
         var tWidth = this.getContentSize().width;
         var tHeight = this.getContentSize().height;
-        var apip = this.getAnchorPointInPoints();
+        //var apip = this.getAnchorPointInPoints();
 
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
-        context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+        context.fillRect(0, 0, tWidth, -tHeight);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -1027,8 +1027,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             var tWidth = this.getContentSize().width / 2;
             var tHeight = this.getContentSize().height / 2;
             var apip = this.getAnchorPointInPoints();
-            var offWidth = tWidth - apip.x;
-            var offHeight = tHeight - apip.y;
+            var offWidth = tWidth;// - apip.x;
+            var offHeight = tHeight;// - apip.y;
 
             this._gradientStartPoint = cc.p(tWidth * -this._alongVector.x + offWidth, tHeight * this._alongVector.y - offHeight);
             this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth, tHeight * -this._alongVector.y - offHeight);
@@ -1087,7 +1087,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.save();
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
-            var apip = this.getAnchorPointInPoints();
+            //var apip = this.getAnchorPointInPoints();
             var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
                 this._gradientEndPoint.x, this._gradientEndPoint.y);
             tGradient.addColorStop(0, "rgba(" + Math.round(this._color.r) + "," + Math.round(this._color.g) + ","
@@ -1095,7 +1095,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
                 + Math.round(this._endColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
             context.fillStyle = tGradient;
-            context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+            context.fillRect(0, 0, tWidth, -tHeight);
 
             if (this._rotation != 0)
                 context.rotate(this._rotationRadians);
