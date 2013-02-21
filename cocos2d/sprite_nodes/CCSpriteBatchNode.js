@@ -161,7 +161,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         this._textureAtlas.updateQuad(quads[newIndex], oldIndex);
         this._descendants[newIndex] = tempItem;
-        this._textureAtlas.updateQuad(tempIteQuad,newIndex);
+        this._textureAtlas.updateQuad(tempIteQuad, newIndex);
     },
 
     /**
@@ -178,7 +178,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         cc.Assert(sprite instanceof cc.Sprite, "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         // make needed room
-        while (index >= this._textureAtlas.getCapacity() || this._textureAtlas.getCapacity() == this._textureAtlas.getTotalQuads()) {
+        while (index >= this._textureAtlas.getCapacity() || this._textureAtlas.getCapacity() === this._textureAtlas.getTotalQuads()) {
             this.increaseAtlasCapacity();
         }
         //
@@ -245,23 +245,20 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         // XXX: optimize with a binary search
         var i = 0;
-
         if (this._descendants && this._descendants.length > 0) {
             for (var index = 0; index < this._descendants.length; index++) {
                 var obj = this._descendants[index];
-                if (obj && (obj.getAtlasIndex() >= z)) {
+                if (obj && (obj.getAtlasIndex() >= z))
                     ++i;
-                }
             }
         }
         this._descendants = cc.ArrayAppendObjectToIndex(this._descendants, child, i);
 
         // IMPORTANT: Call super, and not self. Avoid adding it to the texture atlas array
-        this.addChild(child, z, aTag, true);
+        cc.Node.prototype.addChild.call(this, child, z, aTag);
 
         //#issue 1262 don't use lazy sorting, tiles are added as quads not as sprites, so sprites need to be added in order
         this.reorderBatch(false);
-
         return this;
     },
 
@@ -628,11 +625,11 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
-        this._textureAtlas.setTexture(texture);
         if (cc.renderContextType === cc.CANVAS) {
             for (var i = 0; i < this._children.length; i++)
                 this._children[i].setTexture(texture);
-        }
+        } else
+            this._textureAtlas.setTexture(texture);
         this._updateBlendFunc();
     },
 
@@ -754,7 +751,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
                 return;
             }
 
-        zOrder = (zOrder == null)? child.getZOrder() : zOrder;
+        zOrder = (zOrder == null) ? child.getZOrder() : zOrder;
         tag = (tag == null) ? child.getTag() : tag;
 
         cc.Assert(child != null, "SpriteBatchNode.addChild():child should not be null");

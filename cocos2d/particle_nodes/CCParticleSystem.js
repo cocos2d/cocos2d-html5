@@ -1018,7 +1018,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Texture2D | HTMLImageElement | HTMLCanvasElement} texture
      */
     setTexture:function (texture) {
-        //TODO
         if (this._texture != texture) {
             this._texture = texture;
             this._updateBlendFunc();
@@ -1072,7 +1071,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._opacityModifyRGB = newValue;
     },
 
-    _isBlendAdditive:false,
     /**
      * <p>whether or not the particles are using blend additive.<br/>
      *     If enabled, the following blending function will be used.<br/>
@@ -1083,7 +1081,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *    dest blend function = GL_ONE;
      */
     isBlendAdditive:function () {
-        //return this._isBlendAdditive;
         return (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE));
     },
 
@@ -1094,21 +1091,22 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Boolean} isBlendAdditive
      */
     setBlendAdditive:function (isBlendAdditive) {
-        //TODO
-        this._isBlendAdditive = isBlendAdditive;
         if (isBlendAdditive) {
             this._blendFunc.src = gl.SRC_ALPHA;
             this._blendFunc.dst = gl.ONE;
         } else {
-            this._blendFunc.src = cc.BLEND_SRC;
-            this._blendFunc.dst = cc.BLEND_DST;
-            /*if (this._texture && !this._texture.hasPremultipliedAlpha()) {
-             this._blendFunc.src = gl.SRC_ALPHA;
-             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-             } else {
-             this._blendFunc.src = cc.BLEND_SRC;
-             this._blendFunc.dst = cc.BLEND_DST;
-             }*/
+            if (cc.renderContextType === cc.WEBGL) {
+                if (this._texture && !this._texture.hasPremultipliedAlpha()) {
+                    this._blendFunc.src = gl.SRC_ALPHA;
+                    this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+                } else {
+                    this._blendFunc.src = cc.BLEND_SRC;
+                    this._blendFunc.dst = cc.BLEND_DST;
+                }
+            } else {
+                this._blendFunc.src = cc.BLEND_SRC;
+                this._blendFunc.dst = cc.BLEND_DST;
+            }
         }
     },
 
@@ -1201,19 +1199,22 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * <p> initializes a CCParticleSystem from a plist file. <br/>
+     * <p>
+     *     initializes a CCParticleSystem from a plist file. <br/>
      *      This plist files can be creted manually or with Particle Designer:<br/>
-     *      http://particledesigner.71squared.com/<br/></p>
+     *      http://particledesigner.71squared.com/
+     * </p>
      * @param {String} plistFile
      * @return {cc.ParticleSystem}
      */
     initWithFile:function (plistFile) {
-        var ret = false;
         //TODO
         this._plistFile = plistFile;
         var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(this._plistFile);
 
         cc.Assert(dict != null, "Particles: file not found");
+
+        // XXX compute path from a path, should define a function somewhere to do it
         return this.initWithDictionary(dict, "");
     },
 

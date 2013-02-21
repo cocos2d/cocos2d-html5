@@ -438,16 +438,16 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (cc.renderContextType === cc.CANVAS) {
             var textureCache = this.getTexture();
             this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
-        } else
+        } else {
             this._tileSet.imageSize = this._textureAtlas.getTexture().getContentSizeInPixels();
 
-        // By default all the tiles are aliased
-        // pros:
-        //  - easier to render
-        // cons:
-        //  - difficult to scale / rotate / etc.
-        if (cc.renderContextType === cc.WEBGL)
+            // By default all the tiles are aliased
+            // pros:
+            //  - easier to render
+            // cons:
+            //  - difficult to scale / rotate / etc.
             this._textureAtlas.getTexture().setAliasTexParameters();
+        }
 
         // Parse cocos2d properties
         this._parseInternalProperties();
@@ -623,7 +623,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //The layer recognizes some special properties, like cc_vertez
     _parseInternalProperties:function () {
         // if cc_vertex=automatic, then tiles will be rendered using vertexz
-
         var vertexz = this.getProperty("cc_vertexz");
         if (vertexz) {
             if (vertexz == "automatic") {
@@ -637,6 +636,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST));
                     var alphaValueLocation = cc.renderContext.getUniformLocation(this.getShaderProgram().getProgram(), cc.UNIFORM_ALPHATEST_VALUE);
                     // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
+                    this.getShaderProgram().use();
                     this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
                 }
             } else
@@ -696,8 +696,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             this._reusedTile = new cc.Sprite();
             this._reusedTile.initWithTexture(this._textureAtlas.getTexture(), rect, false);
             this._reusedTile.setBatchNode(this);
-            //TODO need delete?  Test
-            //this._reusedTile.setParent(this);
         } else {
             // XXX HACK: Needed because if "batch node" is nil,
             // then the Sprite'squad will be reset
@@ -709,8 +707,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             // restore the batch node
             this._reusedTile.setBatchNode(this);
         }
-
-
         return this._reusedTile;
     },
 

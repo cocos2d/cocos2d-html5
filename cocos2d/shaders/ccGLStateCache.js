@@ -134,7 +134,9 @@ cc.glBlendFunc = function (sfactor, dfactor) {
         if (sfactor != cc._blendingSource || dfactor != cc._blendingDest) {
             cc._blendingSource = sfactor;
             cc._blendingDest = dfactor;
+            cc.setBlending(sfactor, dfactor);
         }
+        return;
     }
     cc.setBlending(sfactor, dfactor);
 };
