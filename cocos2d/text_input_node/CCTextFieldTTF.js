@@ -222,6 +222,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
+        //console.log("size",this._contentSize);
         var context = ctx || cc.renderContext;
         if (this._delegate && this._delegate.onDraw(this))
             return;
