@@ -68,12 +68,16 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
     _deviceEvent:null,
     //_orientation:0,
     _interval:0.1,
+    _minus:1,
     init:function () {
         this._acceleration = new cc.Acceleration();
         this._deviceEvent = window.DeviceMotionEvent || window.DeviceOrientationEvent;
-
+        var ua = navigator.userAgent;
+        if(ua.indexOf("Andriod")){
+            this._minus = -1;
+        }
         //TODO fix DeviceMotionEvent bug on QQ Browser version 4.1 and below.
-        /*if(navigator.userAgent.indexOf("qqbrowser")){
+        /*if(ua.indexOf("qqbrowser")){
             this._deviceEvent = window.DeviceOrientationEvent;
         }*/
         return true;
@@ -103,7 +107,6 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
                 window.removeEventListener('deviceorientation', acc);
             }
         }
-
     },
 
     setAccelerometerInterval:function (interval) {
@@ -120,10 +123,9 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
 
         if (this._deviceEvent == window.DeviceMotionEvent) {
             var acceleration = eventData.accelerationIncludingGravity;
-            var dt = eventData.interval / 1000;
-            this._acceleration.x = -acceleration.x * dt;
-            this._acceleration.y = -acceleration.y * dt;
-            this._acceleration.z = acceleration.z * dt;
+            this._acceleration.x = this._minus * acceleration.x * 0.1;
+            this._acceleration.y = this._minus * acceleration.y * 0.1;
+            this._acceleration.z = acceleration.z * 0.1;
         }
         else {
             this._acceleration.x = (eventData.gamma / 90) * 0.981;
@@ -133,27 +135,26 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
 
         this._acceleration.timestamp = (new Date()).getTime();
 
-        //todo implement
-        /*var tmp = this._acceleration.x;
-         switch (this._orientation) {
-         case cc.UIInterfaceOrientationLandscapeRight:
-         this._acceleration.x = -this._acceleration.y;
-         this._acceleration.y = tmp;
-         break;
+        var tmp = this._acceleration.x;
+        switch (window.orientation) {
+            case cc.UIInterfaceOrientationLandscapeRight://-90
+                this._acceleration.x = -this._acceleration.y;
+                this._acceleration.y = tmp;
+                break;
 
-         case cc.UIInterfaceOrientationLandscapeLeft:
-         this._acceleration.x = this._acceleration.y;
-         this._acceleration.y = -tmp;
-         break;
+            case cc.UIInterfaceOrientationLandscapeLeft://90
+                this._acceleration.x = this._acceleration.y;
+                this._acceleration.y = -tmp;
+                break;
 
-         case cc.UIInterfaceOrientationPortraitUpsideDown:
-         this._acceleration.x = -this._acceleration.y;
-         this._acceleration.y = -tmp;
-         break;
+            case cc.UIInterfaceOrientationPortraitUpsideDown://180
+                this._acceleration.x = -this._acceleration.x
+                this._acceleration.y = -this._acceleration.y;
+                break;
 
-         case cc.UIInterfaceOrientationPortrait:
-         break;
-         }*/
+            case cc.UIInterfaceOrientationPortrait://0
+                break;
+        }
 
         this._delegate.onAccelerometer(this._acceleration);
     }
