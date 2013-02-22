@@ -960,8 +960,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             context.scale(1, -1);
         }
 
-        var posX = 0 | ( -this._anchorPointInPoints.x + this._offsetPosition.x);
-        var posY = 0 | ( -this._anchorPointInPoints.y  + this._offsetPosition.y);
+        var posX = 0 | (this._offsetPosition.x);
+        var posY = 0 | (this._offsetPosition.y);
 
         if (this._texture) {
             if (this._texture instanceof HTMLImageElement) {
