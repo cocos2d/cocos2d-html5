@@ -210,6 +210,10 @@ switch (cc.Browser.type) {
     case "ie":
         cc.$.pfx = "ms";
         cc.$.hd = false;
+        break;
+    default:
+        cc.$.pfx = "webkit";
+        cc.$.hd = true;
 }
 //cache for prefixed transform
 cc.$.trans = cc.$.pfx + "Transform";
