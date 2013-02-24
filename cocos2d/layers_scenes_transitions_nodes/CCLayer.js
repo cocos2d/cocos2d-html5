@@ -530,7 +530,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     /**
      * Call back when a key is pressed down
-     * @param {Integer} keyCode
+     * @param {Number} keyCode
      * @example
      * // example
      * if(keyCode == cc.KEY.w){}
@@ -540,7 +540,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     /**
      * Call back when a key is released
-     * @param {Integer} keyCode
+     * @param {Number} keyCode
      * @example
      * // example
      * if(keyCode == cc.KEY.w){}
