@@ -1,6 +1,6 @@
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2012 lzn
+ Copyright (c) 2012 James Chen
 
  http://www.cocos2d-x.org
 
@@ -24,56 +24,90 @@
  ****************************************************************************/
 
 /**
- * Default Node tag
  * @constant
  * @type Number
  */
-
 cc.KEYBOARD_RETURNTYPE_DEFAULT = 0;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.KEYBOARD_RETURNTYPE_DONE = 1;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.KEYBOARD_RETURNTYPE_SEND = 2;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.KEYBOARD_RETURNTYPE_SEARCH = 3;
+
+/**
+ * @constant
+ * @type Number
+ */
 cc.KEYBOARD_RETURNTYPE_GO = 4;
 
 /**
- * * The EditBoxInputMode defines the type of text that the user is allowed * to enter.
+ * The EditBoxInputMode defines the type of text that the user is allowed * to enter.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_MODE_ANY = 0;
 
 /**
  * The user is allowed to enter an e-mail address.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_MODE_EMAILADDR = 1;
 
 /**
  * The user is allowed to enter an integer value.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_MODE_NUMERIC = 2;
 
 /**
  * The user is allowed to enter a phone number.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_MODE_PHONENUMBER = 3;
 
 /**
  * The user is allowed to enter a URL.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_MODE_URL = 4;
 
 /**
  * The user is allowed to enter a real number value.
  * This extends kEditBoxInputModeNumeric by allowing a decimal point.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_MODE_DECIMAL = 5;
 
 /**
  * The user is allowed to enter any text, except for line breaks.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_MODE_SINGLELINE = 6;
 
 /**
  * Indicates that the text entered is confidential data that should be
  * obscured whenever possible. This implies EDIT_BOX_INPUT_FLAG_SENSITIVE.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_FLAG_PASSWORD = 0;
 
@@ -82,58 +116,65 @@ cc.EDITBOX_INPUT_FLAG_PASSWORD = 0;
  * implementation must never store into a dictionary or table for use
  * in predictive, auto-completing, or other accelerated input schemes.
  * A credit card number is an example of sensitive data.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_FLAG_SENSITIVE = 1;
 
 /**
  * This flag is a hint to the implementation that during text editing,
  * the initial letter of each word should be capitalized.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_WORD = 2;
 
 /**
  * This flag is a hint to the implementation that during text editing,
  * the initial letter of each sentence should be capitalized.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_SENTENCE = 3;
 
 /**
  * Capitalize all characters automatically.
+ * @constant
+ * @type Number
  */
 cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_ALL_CHARACTERS = 4;
 
+/**
+ * brief Class for edit box.
+ *
+ * You can use this widget to gather small amounts of text from the user.
+ *
+ */
+cc.EditBox = cc.Sprite.extend({
+    _deleget:null,
+    _editBoxInputMode:cc.EDITBOX_INPUT_MODE_ANY,
+    _editBoxInputFlag:cc.EDITBOX_INPUT_FLAG_SENSITIVE,
+    _keyboardReturnType:cc.KEYBOARD_RETURNTYPE_DEFAULT,
 
-cc.ControlEditBox = cc.Node.extend({
-    _edDiv:null,
+    _placeHolderText:"",
+    _textColor:cc.BLACK,
+    _placeHolderColor:cc.BLACK,
+    _maxLength:50,
+    _adjustHeight:18,
+
     _edTxt:null,
-    _edWidth:0,
-    _edHeight:0,
     _edFontSize:14,
-    _posX:0,
-    _posY:0,
     _tooltip:false,
-    _tooltipTxt:"",
 
     /**
      * * Constructor.
      * */
-    ctor:function (w, h, size) {
+    ctor:function (editBoxSize, fontSize) {
         this._super();
-        this._edDiv = document.createElement("div"),
+        var selfPointer = this;
+        this.setContentSize(editBoxSize);
         this._edTxt = document.createElement("input");
         this._edTxt.type = "text";
-        this._edWidth = w;
-        this._edHeight = h;
-        this._edFontSize = size;
-        this._edDiv.style.backgroundColor = new cc.Color3B(255, 0, 0);
-        this._edDiv.style.width = this._edWidth.toString() + "px";
-        this._edDiv.style.height = this._edHeight.toString() + "px";
-        this._edDiv.style.borderColor = new cc.Color3B(255, 255, 255);
-        this._edDiv.style.borderStyle = "solid";
-        this._edDiv.style.border = 2;
-        this._edDiv.style.borderRadius = "8px";
-        this._edDiv.id = (Math.random()*1000).toString();
-
         this._edTxt.style.fontSize = this._edFontSize + "px";
         this._edTxt.style.color = new cc.Color3B(0, 0, 0);
         this._edTxt.style.border = 0;
@@ -143,193 +184,220 @@ cc.ControlEditBox = cc.Node.extend({
         this._edTxt.style.height = "100%";
         this._edTxt.style.active = 0;
         this._edTxt.style.outline = "medium";
-        this._edTxt.id = (Math.random()*1000).toString();
-
-        this._edDiv.appendChild(this._edTxt);
-
-        this._tooltipTxt = "";
-        var selfPointer = this;
-
-        var onFocusHandle = function () {
-            if (this._inputToolip) {
+        this._edTxt.addEventListener("change",function(){
+             if(this.value == ""){
+                 this.value = selfPointer._placeHolderText;
+                 this.style.color = cc.convertColor3BtoHexString(selfPointer._placeHolderColor);
+             }
+        });
+        this._edTxt.addEventListener("focus", function(){
+            if(this.value == selfPointer._placeHolderText){
                 this.value = "";
-                this._inputToolip = false;
+                this.style.color = cc.convertColor3BtoHexString(selfPointer._textColor);
             }
-        };
-        var onBlurFocusHandle = function () {
-            if ((this.value.length == 0) && (this._tooltipTxt.length > 0)) {
-                this.value = this._tooltipTxt;
-                this._inputToolip = true;
+        });
+        this._edTxt.addEventListener("blur", function(){
+            if(this.value == ""){
+                this.value = selfPointer._placeHolderText;
+                this.style.color = cc.convertColor3BtoHexString(selfPointer._placeHolderColor);
             }
-        };
-        this._edTxt.onfocus = onFocusHandle;
-        this._edTxt.onblur = onBlurFocusHandle;
+        });
+
+        this.setFontSize(fontSize);
+
+        cc.DOM.convert(this);
+        this.dom.appendChild(this._edTxt);
+        this.dom.showTooltipDiv = false;
+        this.dom.className = "";
+        this.dom.style.borderWidth = "1px";
+        this.dom.style.borderStyle = "solid";
+        this.dom.style.borderRadius = "8px";
+        this.canvas.remove();
+        console.log(this.dom);
     },
 
-    onEnter:function () {
-        //
-    },
-
-    onExit:function () {
-        this.disposeEditBox();
-    },
-
-    setWidth:function (w) {
-        this._edWidth = w;
-        this._edDiv.style.width = w.toString() + "px";
-    },
-    setHeight:function (h) {
-        this._edHeight = h;
-        this._edDiv.style.height = h.toString() + "px";
-    },
     /**
-     * * Set the font-size in the edit box.
-     * * @param font-size of int.
-     * */
-    setContentSize:function (size) {
-        this._edFontSize = size;
+     * Set the font-size in the edit box.
+     * @param {Number} fontSize
+     */
+    setFontSize:function (fontSize) {
+        this._edFontSize = fontSize;
         this._edTxt.style.fontSize = this._edFontSize + "px";
     },
+
     /**
-     * * Set the text entered in the edit box.
-     * * @param pText The given text.
-     * */
+     *  Set the text entered in the edit box.
+     * @param {string} text The given text.
+     */
     setText:function (text) {
-        this._edTxt.value = text;
+        if (text != null) {
+            if(text == ""){
+                this._edTxt.value = this._placeHolderText;
+                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeHolderColor);
+            }else{
+                this._edTxt.value = text;
+                this._edTxt.style.color = cc.convertColor3BtoHexString(this._textColor);
+            }
+        }
     },
+
     /**
-     *  Set the font color of the widget's text.
+     * Set the font color of the widget's text.
+     * @param {cc.Color3B} color
      */
     setFontColor:function (color) {
-        this._edTxt.style.color = cc.convertColor3BtoHexString(color);
+        this._textColor = color;
+        if(this._edTxt.value != this._placeHolderText){
+            this._edTxt.style.color = cc.convertColor3BtoHexString(color);
+        }
     },
+
     /**
      *  Set the background-color edit text.
      */
     setBgClr:function (color) {
-        this._edDiv.style.backgroundColor = cc.convertColor3BtoHexString(color);
+        this.dom.style.backgroundColor = cc.convertColor3BtoHexString(color);
     },
+
     /**
      *  Set the border-color edit text.
      */
     setBorderClr:function (color) {
-        this._edDiv.style.borderColor = cc.convertColor3BtoHexString(color);
+        this.dom.style.borderColor = cc.convertColor3BtoHexString(color);
+    },
+
+    setBorderWidth:function(width){
+        this.dom.style.borderWidth = width + "px";
     },
 
     /**
+     * <p>
      * Sets the maximum input length of the edit box.
-     * @param maxLength The maximum length.
+     * </p>
+     * @param {Number} maxLength The maximum length.
      */
     setMaxLength:function (maxLength) {
         if (!isNaN(maxLength) && maxLength > 0) {
+            this._maxLength = maxLength;
             this._edTxt.maxLength = maxLength;
         }
     },
 
     /**
-     * Gets the maximum input length of the edit box.     *     * @return Maximum input length.
+     * Gets the maximum input length of the edit box.
+     * @return {Number} Maximum input length.
      */
     getMaxLength:function () {
-        return this._edTxt.maxLength;
-    },
-
-    /**
-     *  Set the position of edit text.
-     */
-    setPosition:function (x, y) {
-        this._edDiv.style.position = "absolute";
-        this._edDiv.style.left = x.toString() + "px";
-        this._edDiv.style.top = y.toString() + "px";
+        return this._maxLength;
     },
 
     /**
      *  Set the zindex of edit text.
      */
     setZIndex:function (z) {
-        this._edDiv.zIndex = z;
+        this.dom.zIndex = z;
     },
 
     /**
      *  Set the background-image of edit text.
      */
-    setImgStyle:function (url) {
-        this._edDiv.style.backgroundImage = "url('" + url + "')";
-        this._edDiv.style.border = 0;
+    setImageStyle:function (url) {
+        this.dom.style.backgroundImage = "url('" + url + "')";
+        this.dom.style.border = 0;
     },
 
     /**
      * Set a text in the edit box that acts as a placeholder when an edit box is empty.
-     * @param pText The given text.
+     * @param {string} text The given text.
      */
     setPlaceHolder:function (text) {
-        this._inputTooltip = true;
-        this.tooltip = true;
-        this._edTxt._inputToolip = this._inputTooltip;
-        this._edTxt.value = text;
-        this._edTxt._tooltipTxt = text;
+        if (text != null) {
+            this._placeHolderText = text;
+            if(this._edTxt.value == ""){
+                this._edTxt.value = text;
+                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeHolderColor);
+            }
+        }
+    },
+
+    /**
+     * Set the font color of the placeholder text when the edit box is empty.
+     * @param {cc.Color3B} color
+     */
+    setPlaceholderFontColor:function (color) {
+        this._placeHolderColor = color;
+        if(this._edTxt.value == this._placeHolderText){
+            this._edTxt.style.color = cc.convertColor3BtoHexString(color);
+        }
     },
 
     /**
      * Set the input flags that are to be applied to the edit box.
-     * @param inputFlag One of the EditBoxInputFlag constants.
+     * @param {Number} inputFlag One of the EditBoxInputFlag constants.
      * e.g.cc.EDITBOX_INPUT_FLAG_PASSWORD
      */
-    setInputFlag:function (inputMode) {
-        if (inputMode == cc.EDITBOX_INPUT_FLAG_PASSWORD) {
+    setInputFlag:function (inputFlag) {
+        this._editBoxInputFlag = inputFlag;
+        if (inputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD)
             this._edTxt.type = "password";
-        } else {
+        else
             this._edTxt.type = "text";
-        }
+
     },
+
     /**
      * Gets the  input string of the edit box.
+     * @return {string}
      */
     getText:function () {
         return this._edTxt.value;
     },
 
     /**
-     * Hide the   edit box.
-     */
-    hideEditBox:function () {
-        this._edDiv.style.display = "none";
-    },
-    /**
      * * Init edit box with specified size.
      * * @param size The size and background-color.     */
     initWithSizeAndBackgroundSprite:function (size, normal9SpriteBg) {
         this._edWidth = size.width;
-        this._edDiv.style.width = this._edWidth.toString() + "px";
+        this.dom.style.width = this._edWidth.toString() + "px";
         this._edHeight = size.height;
-        this._edDiv.style.height = this._edHeight.toString() + "px";
-        this._edDiv.style.backgroundColor = cc.convertColor3BtoHexString(normal9SpriteBg);
-    },
-
-    /**
-     * dispose EditBox
-     * remove the editbox' div and input from there parentnode
-     */
-    disposeEditBox:function()
-    {
-        var divNode = this._edDiv;
-        this._edDiv.parentNode.removeChild(divNode);
-        var txtNode = this._edTxt;
-        this._edTxt.parentNode.removeChild(txtNode);
+        this.dom.style.height = this._edHeight.toString() + "px";
+        this.dom.style.backgroundColor = cc.convertColor3BtoHexString(normal9SpriteBg);
     },
 
     /* override functions */
+
+    /**
+     * Set the delegate for edit box.
+     */
     setDelegate:function (delegate) {
+        this._deleget = delegate;
     },
-    setPlaceholderFontColor:function (color) {
-    },
+
+    /**
+     * Get a text in the edit box that acts as a placeholder when an
+     * edit box is empty.
+     * @return {String}
+     */
     getPlaceHolder:function () {
+        return this._placeHolderText;
     },
-    setInputMode:function () {
+
+    /**
+     * Set the input mode of the edit box.
+     * @param {Number} inputMode One of the EditBoxInputMode constants.
+     */
+    setInputMode:function (inputMode) {
+        this._editBoxInputMode = inputMode;
     },
+
+    /**
+     * Set the return type that are to be applied to the edit box.
+     * @param {Number} returnType One of the CCKeyboardReturnType constants.
+     */
     setReturnType:function (returnType) {
+        this._keyboardReturnType = returnType;
     },
-    visit:function () {
-    },
+
     keyboardWillShow:function (info) {
     },
     keyboardDidShow:function (info) {
@@ -340,27 +408,51 @@ cc.ControlEditBox = cc.Node.extend({
     },
     touchDownAction:function (sender, controlEvent) {
     },
-    ccEditBoxDelegate:function (editBox) {
-    },
+
+    //CCEditBoxDelegate interface
+    /**
+     * This method is called when an edit box gains focus after keyboard is shown.
+     * @param editBox The edit box object that generated the event.
+     */
     editBoxEditingDidBegin:function (editBox) {
     },
+
+    /**
+     * This method is called when an edit box loses focus after keyboard is hidden.
+     * @param editBox The edit box object that generated the event.
+     */
     editBoxEditingDidEnd:function (editBox) {
     },
+
+    /**
+     * This method is called when the edit box text was changed.
+     * @param editBox The edit box object that generated the event.
+     * @param text The new text.
+     */
     editBoxTextChanged:function (editBox, text) {
     },
+
+    /**
+     * This method is called when the return button was pressed or the outside area of keyboard was touched.
+     * @param editBox The edit box object that generated the event.
+     */
     editBoxReturn:function (editBox) {
-        return 0
     }
 });
 
 /**
- * * create a edit box with size and background-color     *
- * */
-cc.ControlEditBox.create = function (size, normal9SpriteBg) {
-    var edbox1 = new cc.ControlEditBox(size.width, size.height, 14);
-    edbox1.setBgClr(normal9SpriteBg);
-    cc.$("#Cocos2dGameContainer").appendChild(edbox1._edDiv);
-    return edbox1;
+ * create a edit box with size and background-color or
+ * @param {cc.Size} size
+ * @param {cc.Color3B | cc.Scale9Sprite } normal9SpriteBg
+ */
+cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
+    var edbox = new cc.EditBox(size, 14);
+    if (normal9SpriteBg instanceof cc.Color3B) {
+        edbox.setBgClr(normal9SpriteBg);
+    } else {
+        //Todo
+    }
+    return edbox;
 };
 
 

@@ -37,13 +37,12 @@ cc.LOADING_INTERVAL = 1 / 20;
  */
 cc.RESOURCE_TYPE = {
     IMAGE:["png", "jpg", "bmp"],
-    SOUND:["mp3", "ogg", "wav"],
+    SOUND:["mp3", "ogg", "wav", "mp4", "m4a"],
     XML:["plist", "xml", "fnt", "tmx", "tsx"],
     BINARY:["ccbi"],
     FONT:"FONT",
     UNKNOW:[]
 };
-
 
 /**
  * A class to pre-load resources before engine start game main loop.
@@ -107,17 +106,16 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
             this.addChild(this._bgLayer, 0);
 
             //logo
-            var s = cc.Director.getInstance().getWinSize();
+            var winSize = cc.Director.getInstance().getWinSize();
             if(cc.renderContextType === cc.CANVAS){
                 this._logo = cc.Sprite.createWithTexture(this._logoTexture);
             } else {
                 var texture2d = new cc.Texture2D();
                 texture2d.initWithElement(this._logoTexture);
                 texture2d.handleLoadedTexture();
-                console.log(this._logoTexture);
                 this._logo = cc.Sprite.createWithTexture(texture2d);
             }
-            this._logo.setPosition(cc.p(s.width / 2, s.height / 2));
+            this._logo.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
             this._bgLayer.addChild(this._logo, 10);
 
             //loading percent
@@ -141,13 +139,10 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
                     var each = resources[i];
                     this._resouces = this._resouces.concat(each);
                 }
-            }
-            else {
+            } else
                 this._resouces = resources;
-            }
             this._totalNumber = this._resouces.length;
         }
-
 
         //load resources
         this.schedule(this._preload);

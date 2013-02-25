@@ -560,7 +560,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {String} fntFile
      * @param {Number} width
      * @param {Number} alignment
-     * @param {Number} imageOffset
+     * @param {cc.Point} imageOffset
      * @return {Boolean}
      */
     initWithString:function (str, fntFile, width, alignment, imageOffset) {
@@ -581,7 +581,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
             this._imageOffset = imageOffset || cc.PointZero();
-            this._width = width || cc.LABEL_AUTOMATIC_WIDTH;
+            this._width = (width == null) ? cc.LabelAutomaticWidth : width;
             this._opacity = 255;
             this._color = cc.white();
             this._contentSize = cc.SizeZero();
@@ -674,7 +674,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 if ((key === 32) && (cc.renderContextType === cc.CANVAS)) {
                     fontChar.init();
                     fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
-                } else {
+                }
+                else {
                     // updating previous sprite
                     if(cc.renderContextType === cc.CANVAS)
                         fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
@@ -782,12 +783,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 while (!(characterSprite = this.getChildByTag(j + skip)))
                     skip++;
 
-                if (!characterSprite.isVisible()) continue;
+                //if (!characterSprite.isVisible()) continue;
                 if (i >= stringLength)
                     break;
 
                 var character = this._string[i];
-
                 if (!start_word) {
                     startOfWord = this._getLetterPosXLeft(characterSprite);
                     start_word = true;
@@ -1065,7 +1065,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  * @param {String} fntFile
  * @param {String} width
  * @param {Number} alignment
- * @param {Number} imageOffset
+ * @param {cc.Point} imageOffset
  * @return {cc.LabelBMFont|Null}
  * @example
  * // Example 01
@@ -1143,7 +1143,7 @@ cc.isspace_unicode = function (ch) {
 };
 
 /**
- * @param {String} str
+ * @param {Array} str
  */
 cc.utf8_trim_ws = function (str) {
     var len = str.length;
@@ -1170,7 +1170,7 @@ cc.utf8_trim_ws = function (str) {
 /**
  * Trims str st str=[0, index) after the operation.
  * Return value: the trimmed string.
- * @param {String} str  he string to trim
+ * @param {Array} str  he string to trim
  * @param {Number} index  the index to start trimming from.
  */
 cc.utf8_trim_from = function (str, index) {

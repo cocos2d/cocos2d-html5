@@ -392,6 +392,7 @@ cc.ProgressTimer = cc.Node.extend(/** @lends cc.ProgressTimer# */{
             context.translate(0, mpY);
             context.scale(1, -1);
         }
+        context.translate(this._sprite._anchorPointInPoints.x, -this._sprite._anchorPointInPoints.y );
 
         var pos;
         if (this._type == cc.PROGRESS_TIMER_TYPE_BAR) {

@@ -218,6 +218,7 @@ cc.setup = function (el, width, height) {
     }
 
     cc.originalCanvasSize = cc.size(cc.canvas.width, cc.canvas.height);
+    cc.gameDiv = cc.container;
 
     cc.log(cc.ENGINE_VERSION);
     cc.Configuration.getInstance();
@@ -232,6 +233,8 @@ cc.setup = function (el, width, height) {
      }
      }, true);
      */
+    if(cc.Browser.isMobile)
+        cc._addUserSelectStatus();
 
     var hidden, visibilityChange;
     if (typeof document.hidden !== "undefined") {
@@ -260,6 +263,15 @@ cc.setup = function (el, width, height) {
         cc.isAddedHiddenEvent = true;
         document.addEventListener(visibilityChange, handleVisibilityChange, false);
     }
+};
+
+cc._addUserSelectStatus = function(){
+    var fontStyle = document.createElement("style");
+    fontStyle.type = "text/css";
+    document.body.appendChild(fontStyle);
+
+    fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
+        +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
 };
 
 cc._isContextMenuEnable = false;

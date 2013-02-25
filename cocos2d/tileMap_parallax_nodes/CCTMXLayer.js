@@ -468,8 +468,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 }
             }
         }
-        // console.log(this._maxGID , this._tileSet.firstGid , this._minGID , this._tileSet.firstGid)
-        cc.Assert((this._maxGID >= this._tileSet.firstGid && this._minGID >= this._tileSet.firstGid), "TMX: Only 1 tileset per layer is supported");
+        
+        if(!((this._maxGID >= this._tileSet.firstGid) && (this._minGID >= this._tileSet.firstGid))){
+            cc.log("cocos2d:TMX: Only 1 tileset per layer is supported");
+        }
     },
 
     /**

@@ -39,11 +39,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     _fontName:"Arial",
     _fontSize:0.0,
     _string:"",
+    _isMultiLine:false,
     _fontStyleStr:null,
     _colorStyleStr:null,
-
-    _labelCanvas:null,
-    _labelContext:null,
     /**
      * Constructor
      */
@@ -73,8 +71,13 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     },
 
     setColor:function (color3) {
+        if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b))
+            return;
+
+        this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
         this._super(color3);
         this._setColorStyleStr();
+        this.setNodeDirty();
     },
 
     setOpacity:function (opacity) {
@@ -174,9 +177,9 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             context.textBaseline = "bottom";
             context.textAlign = "left";
 
-            if (this._string.indexOf("\n") > -1) {
+            if (this._string.indexOf("\n") > -1)
                 this._multiLineText(context);
-            } else
+            else
                 context.fillText(this._string, 0 | (-this._contentSize.width * 0.5), 0 | (this._contentSize.height * 0.5));
         } else {
             context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
@@ -230,7 +233,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
 
     /**
      * set Horizontal Alignment of cc.LabelTTF
-     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment HorizontalAlignment
+     * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
      */
     setHorizontalAlignment:function (alignment) {
         if (alignment != this._hAlignment) {
@@ -313,7 +316,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setFontSize:function (fontSize) {
         if (this._fontSize != fontSize) {
             this._fontSize = fontSize;
-            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
 
             // Force update
             if (this._string.length > 0) {
@@ -339,8 +341,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
      */
     setFontName:function (fontName) {
         if (this._fontName != fontName) {
-            this._fontName = fontName;
-            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+            this._fontName = new String(fontName);
             // Force update
             if (this._string.length > 0) {
                 if (cc.renderContextType === cc.CANVAS)
@@ -384,19 +385,15 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         }
 
         if (this.init(true)) {
-            if (cc.renderContextType === cc.WEBGL) {
-                this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.LabelTTF._SHADER_PROGRAM));
-            }
-
             this._dimensions = cc.size(dimensions.width, dimensions.height);
+            //this._contentSize = this._dimensions;
             this._fontName = fontName;
             this._hAlignment = hAlignment;
             this._vAlignment = vAlignment;
-            this._fontSize = fontSize;
+            this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-
             this.setString(strInfo);
-
+            //this._updateTTF();
             return true;
         }
         return false;
@@ -413,11 +410,10 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             this._super(ctx);
     },
 
-    _drawTTFForCanvas:function (context) {
-        context = context || cc.renderContext;
+    _drawTTFForCanvas:function (ctx) {
+        var context = ctx || cc.renderContext;
         if (this._flipX)
             context.scale(-1, 1);
-
         if (this._flipY)
             context.scale(1, -1);
 
@@ -427,41 +423,112 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if (context.font != this._fontStyleStr)
             context.font = this._fontStyleStr;
 
-        if (((this._contentSize.width > this._dimensions.width) || this._string.indexOf("\n") > -1) && this._dimensions.width !== 0) {
-            context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
-            context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
-            this._wrapText(context, this._string,
-                -this._dimensions.width * this._anchorPoint.x,
-                this._dimensions.height * this._anchorPoint.y,
-                this._dimensions.width,
-                this._dimensions.height,
-                this._fontSize * 1.2);
-        } else if (this._dimensions.width == 0) {
-            context.textBaseline = "bottom";
-            context.textAlign = "left";
+        context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
+        context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
+        var xoffset = 0;
+        if (this._hAlignment === cc.TEXT_ALIGNMENT_RIGHT)
+            xoffset = this._contentSize.width;
+        else if (this._hAlignment === cc.TEXT_ALIGNMENT_CENTER)
+            xoffset = this._contentSize.width / 2;
+        if (this._isMultiLine) {
+            var yOffset = 0;
+            if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+                yOffset = this._fontSize + this._contentSize.height - this._fontSize * this._strings.length;
+            else if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
+                yOffset = this._fontSize / 2 + (this._contentSize.height - this._fontSize * this._strings.length) / 2;
 
-            if (this._string.indexOf("\n") > -1)
-                this._multiLineText(context);
-            else
-                context.fillText(this._string, -this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+            for (var i = 0; i < this._strings.length; i++) {
+                var line = this._strings[i];
+                context.fillText(line, xoffset, -this._contentSize.height + (this._fontSize * i) + yOffset);
+            }
         } else {
-            context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
-            context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
-            var xOffset = 0, yOffset = 0;
-            if (this._hAlignment == cc.TEXT_ALIGNMENT_RIGHT)
-                xOffset = this._dimensions.width;
-            if (this._hAlignment == cc.TEXT_ALIGNMENT_CENTER)
-                xOffset = this._dimensions.width / 2;
-
-            if (this._vAlignment == cc.VERTICAL_TEXT_ALIGNMENT_TOP)
-                yOffset = -this._dimensions.height;
-            if (this._vAlignment == cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
-                yOffset = -this._dimensions.height / 2;
-
-            context.fillText(this._string, -this._dimensions.width * this._anchorPoint.x + xOffset,
-                this._dimensions.height * this._anchorPoint.y + yOffset);
+            if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+                context.fillText(this._string, xoffset, 0);
+            else
+                context.fillText(this._string, xoffset, -this._fontSize);
         }
+
+        if (cc.SPRITE_DEBUG_DRAW === 1) {
+            context.fillStyle = "rgba(255,0,0,0.2)";
+            context.fillRect(this._offsetPosition.x, this._offsetPosition.y, this._contentSize.width, -this._contentSize.height);
+        }
+
         cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    _updateTTF:function () {
+        if (cc.renderContext.font != this._fontStyleStr)
+            cc.renderContext.font = this._fontStyleStr;
+        // we need to find out if the label needs multiline, if its automatic new line or specified newline
+        var stringWidth = cc.renderContext.measureText(this._string).width;
+
+        if (this._string.indexOf('\n') !== -1 || (this._dimensions.width !== 0 && stringWidth > this._dimensions.width && this._string.indexOf(" ") !== -1)) {
+            var strings = this._strings = this._string.split('\n');
+            var lineWidths = this._lineWidths = [];
+            for (var i = 0; i < strings.length; i++) {
+                if (strings[i].indexOf(" ") !== -1 && this._dimensions.width > 0) {
+                    var percent = this._dimensions.width / cc.renderContext.measureText(this._strings[i]).width;
+                    var startSearch = 0 | (percent * strings[i].length + 1);
+                    var cutoff = startSearch;
+                    var tempLineWidth = 0;
+                    if (percent < 1) {
+                        do {
+                            cutoff = strings[i].lastIndexOf(" ", cutoff - 1);
+                            var str = strings[i].substring(0, cutoff);
+                            tempLineWidth = cc.renderContext.measureText(str).width;
+                            if (cutoff === -1) {
+                                cutoff = strings[i].indexOf(" ", startSearch);
+                                break;
+                            }
+                        } while (tempLineWidth > this._dimensions.width);
+                        var newline = strings[i].substr(cutoff + 1);
+                        strings.splice(i + 1, 0, newline);
+                        strings[i] = str;
+                    }
+                }
+                lineWidths[i] = tempLineWidth || cc.renderContext.measureText(strings[i]).width;
+            }
+            this._isMultiLine = true;
+        } else
+            this._isMultiLine = false;
+
+        // we will need to change contentSize to cater this
+        //if dimension is not set, set contentSize according to actual size
+        if (this._dimensions.width === 0) {
+            if (this._isMultiLine)
+                this.setContentSize(cc.size(Math.max.apply(Math, this._lineWidths), this._fontSize * this._strings.length));
+            else
+                this.setContentSize(cc.size(stringWidth, this._fontSize));
+            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+        } else {
+            //dimension is already set, contentSize must be same as dimension
+            this.setContentSize(cc.size(this._dimensions.width, this._dimensions.height));
+            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+        }
+    },
+
+    _lineCount:function (context) {
+        if (this._dimensions.width == 0)
+            return 1;
+
+        context = context || cc.renderContext;
+        var words = this._string.split(" ");
+        var line = "", num = 0;
+        context.save();
+        for (var n = 0; n < words.length; n++) {
+            var tmpLine = line + words[n] + " ";
+            var tmpWidth = context.measureText(tmpLine).width - context.measureText(" ").width;
+            if (tmpWidth >= this._dimensions.width) {
+                num++;
+                line = words[n] + " ";
+            } else
+                line = tmpLine;
+
+            if (n == words.length - 1)
+                num++;
+        }
+        context.restore();
+        return num;
     },
 
     _multiLineText:function (context) {
@@ -515,61 +582,19 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
                     context.fillText(line, x + xOffset, y + yOffset + jOffset);
                     y += lineHeight;
                     line = words[n] + " ";
-                } else {
+                } else
                     line = testLine;
-                }
-                if (n == words.length - 1) {
+
+                if (n == words.length - 1)
                     context.fillText(line, x + xOffset, y + yOffset + jOffset);
-                }
             }
         }
-    },
-
-    _lineCount:function (context) {
-        if (this._dimensions.width == 0) {
-            return 1;
-        }
-        context = context || cc.renderContext;
-        var words = this._string.split(" ");
-        var line = "", num = 0;
-        context.save();
-        for (var n = 0; n < words.length; n++) {
-            var tmpLine = line + words[n] + " ";
-            var tmpWidth = context.measureText(tmpLine).width - context.measureText(" ").width;
-            if (tmpWidth >= this._dimensions.width) {
-                num++;
-                line = words[n] + " ";
-            }
-            else {
-                line = tmpLine;
-            }
-            if (n == words.length - 1) {
-                num++;
-            }
-        }
-        context.restore();
-        return num;
-    },
-
-    _updateTTF:function (ctx) {
-        var context = ctx || cc.renderContext;
-        context.save();
-
-        this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-        context.font = this._fontStyleStr;
-        var dim = cc.renderContext.measureText(this._string);
-        this.setContentSize(cc.size(dim.width, this._fontSize));
-
-        context.restore();
-        this.setNodeDirty();
     }
 });
 
 cc.LabelTTF._textAlign = ["left", "center", "right"];
 
 cc.LabelTTF._textBaseline = ["top", "middle", "bottom"];
-
-cc.LabelTTF._SHADER_PROGRAM = cc.USE_LA88_LABELS ? cc.SHADER_POSITION_TEXTURECOLOR : cc.SHADER_POSITION_TEXTUREA8COLOR;
 
 /**
  * creates a cc.LabelTTF from a fontname, alignment, dimension and font size

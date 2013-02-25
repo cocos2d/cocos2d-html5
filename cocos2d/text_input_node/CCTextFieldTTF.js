@@ -100,30 +100,35 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         cc.IMEDispatcher.getInstance().addDelegate(this);
         this._super();
     },
+
     /**
      * @return {cc.Node}
      */
     getDelegate:function () {
         return this._delegate;
     },
+
     /**
      * @param {cc.Node} value
      */
     setDelegate:function (value) {
         this._delegate = value;
     },
+
     /**
      * @return {Number}
      */
     getCharCount:function () {
         return this._charCount;
     },
+
     /**
      * @return {cc.Color3B}
      */
     getColorSpaceHolder:function () {
         return this._ColorSpaceHolder;
     },
+
     /**
      * @param {cc.Color3B} value
      */
@@ -167,6 +172,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
                 break;
         }
     },
+
     /**
      * Input text property
      * @param {String} text
@@ -177,26 +183,24 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this._super(text);
             return;
         }
-        if (text) {
-            this._inputText = text;
-        } else {
-            this._inputText = "";
-        }
+
+        this._inputText = text || "";
 
         // if there is no input text, display placeholder instead
-        if (!this._inputText.length) {
+        if (!this._inputText.length)
             this._super(this._placeHolder);
-        } else {
+        else
             this._super(this._inputText);
-        }
         this._charCount = this._inputText.length;
     },
+
     /**
      * @return {String}
      */
     getString:function () {
         return this._inputText;
     },
+
     /**
      * @param {String} text
      */
@@ -206,21 +210,24 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this.setString(this._placeHolder, true);
         }
     },
+
     /**
      * @return {String}
      */
     getPlaceHolder:function () {
         return this._placeHolder;
     },
+
     /**
      * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
+        //console.log("size",this._contentSize);
         var context = ctx || cc.renderContext;
-        if (this._delegate && this._delegate.onDraw(this)) {
+        if (this._delegate && this._delegate.onDraw(this))
             return;
-        }
-        if (this._inputText) {
+
+        if (this._inputText && this._inputText.length > 0) {
             this._super(context);
             return;
         }
@@ -240,17 +247,17 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      * @return {Boolean}
      */
     attachWithIME:function () {
-        var ret = cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
-        return ret;
+        return cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
     },
+
     /**
      * End text input  and close keyboard.
      * @return {Boolean}
      */
     detachWithIME:function () {
-        var ret = cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
-        return ret;
+        return cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
     },
+
     /**
      * @return {Boolean}
      */
@@ -263,6 +270,7 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      */
     didAttachWithIME:function () {
     },
+
     /**
      * @return {Boolean}
      */
@@ -275,26 +283,25 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
      */
     didDetachWithIME:function () {
     },
+
     /**
      *  Delete backward
      */
     deleteBackward:function () {
-        var nStrLen = this._inputText.length;
-        if (nStrLen == 0) {
-            // there is no string
+        var strLen = this._inputText.length;
+        if (strLen == 0)
             return;
-        }
 
         // get the delete byte number
-        var nDeleteLen = 1;    // default, erase 1 byte
+        var deleteLen = 1;    // default, erase 1 byte
 
-        if (this._delegate && this._delegate.onTextFieldDeleteBackward(this, this._inputText[nStrLen - nDeleteLen], nDeleteLen)) {
+        if (this._delegate && this._delegate.onTextFieldDeleteBackward(this, this._inputText[strLen - deleteLen], deleteLen)) {
             // delegate don't want delete backward
             return;
         }
 
         // if delete all text, show space holder string
-        if (nStrLen <= nDeleteLen) {
+        if (strLen <= deleteLen) {
             this._inputText = "";
             this._charCount = 0;
             this.setString(this._placeHolder, true);
@@ -302,15 +309,17 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         }
 
         // set new input text
-        var sText = this._inputText.substring(0, nStrLen - nDeleteLen);
-        this.setString(sText);
+        var sText = this._inputText.substring(0, strLen - deleteLen);
+        this.setString(sText, false);
     },
+
     /**
      *  Remove delegate
      */
     removeDelegate:function () {
         cc.IMEDispatcher.getInstance().removeDelegate(this);
     },
+
     /**
      * @param {String} text
      * @param {Number} len
@@ -319,9 +328,9 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
         var sInsert = text;
 
         // insert \n means input end
-        var nPos = sInsert.indexOf('\n');
-        if (nPos > -1) {
-            sInsert = sInsert.substring(0, nPos);
+        var pos = sInsert.indexOf('\n');
+        if (pos > -1) {
+            sInsert = sInsert.substring(0, pos);
         }
 
         if (sInsert.length > 0) {
@@ -335,14 +344,12 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
             this.setString(sText);
         }
 
-        if (nPos == -1) {
+        if (pos == -1)
             return;
-        }
 
         // '\n' has inserted,  let delegate process first
-        if (this._delegate && this._delegate.onTextFieldInsertText(this, "\n", 1)) {
+        if (this._delegate && this._delegate.onTextFieldInsertText(this, "\n", 1))
             return;
-        }
 
         // if delegate hasn't process, detach with ime as default
         this.detachWithIME();
@@ -383,25 +390,24 @@ cc.TextFieldTTF = cc.LabelTTF.extend(/** @lends cc.TextFieldTTF# */{
  * var textField = cc.TextFieldTTF.create("<click here for input>", "Arial", 32);
  */
 cc.TextFieldTTF.create = function (placeholder, dimensions, alignment, fontName, fontSize) {
+    var ret;
     switch (arguments.length) {
         case 5:
-            var ret = new cc.TextFieldTTF();
+            ret = new cc.TextFieldTTF();
             if (ret && ret.initWithPlaceHolder("", dimensions, alignment, fontName, fontSize)) {
-                if (placeholder) {
+                if (placeholder)
                     ret.setPlaceHolder(placeholder);
-                }
                 return ret;
             }
             return null;
             break;
         case 3:
-            var ret = new cc.TextFieldTTF();
+            ret = new cc.TextFieldTTF();
             fontName = arguments[1];
             fontSize = arguments[2];
             if (ret && ret.initWithString(["", fontName, fontSize])) {
-                if (placeholder) {
+                if (placeholder)
                     ret.setPlaceHolder(placeholder);
-                }
                 return ret;
             }
             return null;

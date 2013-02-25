@@ -108,6 +108,14 @@ function updateStatus(opt_message) {
 }
 
 
+var g_ressources = [
+    {src:"res/HelloWorld.png"},
+    {src:"res/CloseNormal.png"},
+    {src:"res/CloseSelected.png"}
+];
+
+
+
 var CircleSprite = cc.Sprite.extend({
     _radians:0,
     draw:function () {
@@ -122,7 +130,6 @@ var CircleSprite = cc.Sprite.extend({
         this._radians -= 6;
     }
 });
-
 
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,

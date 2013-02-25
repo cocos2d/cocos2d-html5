@@ -461,6 +461,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     parseXMLFile:function (tmxFile, isXmlString) {
         isXmlString = isXmlString || false;
         var mapXML = cc.SAXParser.getInstance().tmxParse(tmxFile, isXmlString);
+        var i, j;
 
         var i, j;
 
