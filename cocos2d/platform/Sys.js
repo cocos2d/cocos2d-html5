@@ -27,8 +27,14 @@ var sys = sys || {};
 
 /** LocalStorage is a local storage component.
 */
-sys.localStorage = window.localStorage;
+try {
+    sys.localStorage = window.localStorage;
 
+// IE10 on Metro blocks access to localStorage unless it's run
+// without protected mode OR as an administrator
+} catch(e) {
+    sys.localStorage = window.sessionStorage;
+}
 
 /** Capabilities
 */
