@@ -821,10 +821,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
-                var eye = new cc.kmVec3(), center = new cc.kmVec3(), up = new cc.kmVec3();
-                cc.kmVec3Fill(eye, size.width / 2, size.height / 2, zeye);
-                cc.kmVec3Fill(center, size.width / 2, size.height / 2, 0.0);
-                cc.kmVec3Fill(up, 0.0, 1.0, 0.0);
+                var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
+                var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
+                var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
                 cc.kmMat4LookAt(matrixLookup, eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
                 break;

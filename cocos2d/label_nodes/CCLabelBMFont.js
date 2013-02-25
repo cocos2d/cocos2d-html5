@@ -178,10 +178,9 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         // parse spacing / padding
         var line, re, i;
 
-        re = /info face=[a-z0-9\-= ",]+/gi;
+        re = /padding+[a-z0-9\-= ",]+/gi;
         line = re.exec(data)[0];
         if (line) {
-            // Not needed for the Hiero editors, but needed for the AngelCode editor
             this._parseInfoArguments(line);
         }
 

@@ -110,13 +110,12 @@
             //this._syncPosition();
         },
         _syncPosition:function () {
-            if(this._position.x != this._body.p.x || this._position.y != this._body.p.y){
-                this._position = {x:this._body.p.x, y:this._body.p.y};
-                this.setNodeDirty();
+            if (this._position.x != this._body.p.x || this._position.y != this._body.p.y) {
+                cc.Sprite.prototype.setPosition.call(this, {x:this._body.p.x, y:this._body.p.y});
             }
         },
         getRotation:function () {
-            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadians) : -cc.RADIANS_TO_DEGREES(this._body.a)
+            return this._ignoreBodyRotation ? cc.RADIANS_TO_DEGREES(this._rotationRadiansX) : -cc.RADIANS_TO_DEGREES(this._body.a)
         },
         setRotation:function (r) {
             if (this._ignoreBodyRotation) {
@@ -128,10 +127,38 @@
             }
         },
         _syncRotation:function () {
-            if(this._rotationRadians != -this._body.a){
-                this._rotationRadians = -this._body.a;
-                this.setNodeDirty();
+            if (this._rotationRadiansX != -this._body.a) {
+                cc.Sprite.prototype.setRotation.call(this, -cc.RADIANS_TO_DEGREES(this._body.a));
             }
+        },
+        nodeToParentTransform:function () {
+               var x = this._body.p.x;
+            var y = this._body.p.y;
+
+            if (this._ignoreAnchorPointForPosition) {
+                x += this._anchorPointInPoints.x;
+                y += this._anchorPointInPoints.y;
+            }
+
+            // Make matrix
+            var radians = this._body.a;
+            var c = Math.cos(radians);
+            var s = Math.sin(radians);
+
+            // Although scale is not used by physics engines, it is calculated just in case
+            // the sprite is animated (scaled up/down) using actions.
+            // For more info see: http://www.cocos2d-iphone.org/forum/topic/68990
+            if (!cc.pointEqualToPoint(this._anchorPointInPoints, cc.PointZero())) {
+                x += c * -this._anchorPointInPoints.x * this._scaleX + -s * -this._anchorPointInPoints.y * this._scaleY;
+                y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
+            }
+
+            // Rot, Translate Matrix
+            this._transform = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX,
+                -s * this._scaleY, c * this._scaleY,
+                x, y);
+
+            return this._transform;
         },
         visit:function (ctx) {
             if (this._body) {

@@ -94,7 +94,6 @@ cc.kmGLPopMatrix = function () {
 
 cc.kmGLMatrixMode = function (mode) {
     //cc.lazyInitialize();
-
     switch (mode) {
         case cc.KM_GL_MODELVIEW:
             cc.current_stack = cc.modelview_matrix_stack;
@@ -139,9 +138,6 @@ cc.kmGLTranslatef = function (x, y, z) {
 cc.kmGLRotatef = function (angle, x, y, z) {
     var axis = new cc.kmVec3(x, y, z);
     var rotation = new cc.kmMat4();
-
-    //Create an axis vector
-    //cc.kmVec3Fill(axis, x, y, z);
 
     //Create a rotation matrix using the axis and the angle
     cc.kmMat4RotationAxisAngle(rotation, axis, cc.kmDegreesToRadians(angle));

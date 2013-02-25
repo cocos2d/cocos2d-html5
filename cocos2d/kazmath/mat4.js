@@ -32,7 +32,6 @@
  | 2   6  10  14 |
  | 3   7  11  15 |
  */
-
 cc.kmMat4 = function () {
     this.mat = new Float32Array([0, 0, 0, 0,
         0, 0, 0, 0,
@@ -41,10 +40,9 @@ cc.kmMat4 = function () {
 };
 
 /**
- * Fills a kmMat4 structure with the values from a 16
- * element array of floats
+ * Fills a kmMat4 structure with the values from a 16 element array of floats
  * @Params pOut - A pointer to the destination matrix
- *            pMat - A 16 element array of floats
+ * @Params pMat - A 16 element array of floats
  * @Return Returns pOut so that the call can be nested
  */
 cc.kmMat4Fill = function (pOut, pMat) {
@@ -58,10 +56,11 @@ cc.kmMat4Fill = function (pOut, pMat) {
  * @Return Returns pOut so that the call can be nested
  */
 cc.kmMat4Identity = function (pOut) {
-    pOut.mat = new Float32Array([1.0, 0, 0, 0,
-        0, 1.0, 0, 0,
-        0, 0, 1.0, 0,
-        0, 0, 0, 1.0]);
+    pOut.mat[1] = pOut.mat[2] = pOut.mat[3]
+        = pOut.mat[4] = pOut.mat[6] = pOut.mat[7]
+        = pOut.mat[8] = pOut.mat[9] = pOut.mat[11]
+        = pOut.mat[12] = pOut.mat[13] = pOut.mat[14] = 0;
+    pOut.mat[0] = pOut.mat[5] = pOut.mat[10] = pOut.mat[15] = 1.0;
     return pOut;
 };
 
@@ -215,27 +214,26 @@ cc.kmMat4Multiply = function (pOut, pM1, pM2) {
     var b20 = pM2.mat[8], b21 = pM2.mat[9], b22 = pM2.mat[10], b23 = pM2.mat[11];
     var b30 = pM2.mat[12], b31 = pM2.mat[13], b32 = pM2.mat[14], b33 = pM2.mat[15];
 
-    pOut.mat[0] = b00*a00 + b01*a10 + b02*a20 + b03*a30;
-    pOut.mat[1] = b00*a01 + b01*a11 + b02*a21 + b03*a31;
-    pOut.mat[2] = b00*a02 + b01*a12 + b02*a22 + b03*a32;
-    pOut.mat[3] = b00*a03 + b01*a13 + b02*a23 + b03*a33;
-    pOut.mat[4] = b10*a00 + b11*a10 + b12*a20 + b13*a30;
-    pOut.mat[5] = b10*a01 + b11*a11 + b12*a21 + b13*a31;
-    pOut.mat[6] = b10*a02 + b11*a12 + b12*a22 + b13*a32;
-    pOut.mat[7] = b10*a03 + b11*a13 + b12*a23 + b13*a33;
-    pOut.mat[8] = b20*a00 + b21*a10 + b22*a20 + b23*a30;
-    pOut.mat[9] = b20*a01 + b21*a11 + b22*a21 + b23*a31;
-    pOut.mat[10] = b20*a02 + b21*a12 + b22*a22 + b23*a32;
-    pOut.mat[11] = b20*a03 + b21*a13 + b22*a23 + b23*a33;
-    pOut.mat[12] = b30*a00 + b31*a10 + b32*a20 + b33*a30;
-    pOut.mat[13] = b30*a01 + b31*a11 + b32*a21 + b33*a31;
-    pOut.mat[14] = b30*a02 + b31*a12 + b32*a22 + b33*a32;
-    pOut.mat[15] = b30*a03 + b31*a13 + b32*a23 + b33*a33;
-    //pOut.mat = mat;
+    pOut.mat[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
+    pOut.mat[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
+    pOut.mat[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
+    pOut.mat[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
+    pOut.mat[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
+    pOut.mat[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
+    pOut.mat[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
+    pOut.mat[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
+    pOut.mat[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
+    pOut.mat[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
+    pOut.mat[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
+    pOut.mat[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
+    pOut.mat[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
+    pOut.mat[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
+    pOut.mat[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
+    pOut.mat[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
     return pOut;
 };
 
-cc.getMat4MultiplyValue = function(pM1,pM2){
+cc.getMat4MultiplyValue = function (pM1, pM2) {
     var m1 = pM1.mat, m2 = pM2.mat;
     var mat = new Float32Array(16);
 
@@ -262,7 +260,7 @@ cc.getMat4MultiplyValue = function(pM1,pM2){
     return mat;
 };
 
-cc.getMat4MultiplyWithMat4 = function(pM1,pM2, swapMat){
+cc.getMat4MultiplyWithMat4 = function (pM1, pM2, swapMat) {
     var m1 = pM1.mat, m2 = pM2.mat;
     var mat = swapMat.mat;
 
@@ -294,10 +292,8 @@ cc.getMat4MultiplyWithMat4 = function(pM1,pM2, swapMat){
  */
 cc.kmMat4Assign = function (pOut, pIn) {
     //cc.Assert(pOut != pIn, "You have tried to self-assign!!");
-
-    for (var i = 0; i < 16; i++) {
+    for (var i = 0; i < 16; i++)
         pOut.mat[i] = pIn.mat[i];
-    }
     return pOut;
 };
 
@@ -306,15 +302,13 @@ cc.kmMat4Assign = function (pOut, pIn) {
  */
 cc.kmMat4AreEqual = function (pMat1, pMat2) {
     cc.Assert(pMat1 != pMat2, "You are comparing the same thing!");
-
     for (var i = 0; i < 16; i++) {
         if (!(pMat1.mat[i] + cc.kmEpsilon > pMat2.mat[i] &&
             pMat1.mat[i] - cc.kmEpsilon < pMat2.mat[i])) {
-            return cc.KM_FALSE;
+            return false;
         }
     }
-
-    return cc.KM_TRUE;
+    return true;
 };
 
 /**
@@ -514,9 +508,9 @@ cc.kmMat4RotationTranslation = function (pOut, rotation, translation) {
 cc.kmMat4Scaling = function (pOut, x, y, z) {
     pOut.mat = new Float32Array(
         [x, 0, 0, 0,
-        0, y, 0, 0,
-        0, 0, z, 0,
-        0, 0, 0, 1.0]);
+            0, y, 0, 0,
+            0, 0, z, 0,
+            0, 0, 0, 1.0]);
     return pOut;
 };
 
@@ -528,9 +522,9 @@ cc.kmMat4Translation = function (pOut, x, y, z) {
 //FIXME: Write a test for this
     pOut.mat = new Float32Array(
         [1.0, 0, 0, 0,
-        0, 1.0, 0, 0,
-        0, 0, 1.0, 0,
-        x, y, z, 1.0]);
+            0, 1.0, 0, 0,
+            0, 0, 1.0, 0,
+            x, y, z, 1.0]);
     return pOut;
 };
 
@@ -598,18 +592,13 @@ cc.kmMat4PerspectiveProjection = function (pOut, fovY, aspect, zNear, zFar) {
 
 /** Creates an orthographic projection matrix like glOrtho */
 cc.kmMat4OrthographicProjection = function (pOut, left, right, bottom, top, nearVal, farVal) {
-    var tx = -((right + left) / (right - left));
-    var ty = -((top + bottom) / (top - bottom));
-    var tz = -((farVal + nearVal) / (farVal - nearVal));
-
     cc.kmMat4Identity(pOut);
     pOut.mat[0] = 2 / (right - left);
     pOut.mat[5] = 2 / (top - bottom);
     pOut.mat[10] = -2 / (farVal - nearVal);
-    pOut.mat[12] = tx;
-    pOut.mat[13] = ty;
-    pOut.mat[14] = tz;
-
+    pOut.mat[12] = -((right + left) / (right - left));
+    pOut.mat[13] = -((top + bottom) / (top - bottom));
+    pOut.mat[14] = -((farVal + nearVal) / (farVal - nearVal));
     return pOut;
 };
 

@@ -235,7 +235,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     //
     // Data used when the sprite is self-rendered
     //
-    _blendFunc:{src:cc.BLEND_SRC, dst:cc.BLEND_DST},
+    _blendFunc:null,
     _texture:null,
     _originalTexture:null,
     _color:null,
@@ -274,6 +274,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._color = cc.white();
         this._quad = cc.V3F_C4B_T2F_QuadZero();
+        this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
 
         if (fileName) {
             if (typeof(fileName) == "string") {
