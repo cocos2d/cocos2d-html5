@@ -65,6 +65,9 @@ cc.Scale9Sprite = cc.Node.extend({
     _insetTop:0,
     _insetRight:0,
     _insetBottom:0,
+    _texture:null,
+    _offsetPosition:cc.p(0, 0), // absolute
+    _rect:cc.rect(0, 0, 0, 0),
 
     _updateCapInset:function () {
         var insets;
@@ -122,6 +125,32 @@ cc.Scale9Sprite = cc.Node.extend({
 
         // Position centre
         this._centre.setPosition(cc.p(leftWidth, bottomHeight));
+
+        // Cache
+        this._texture = this._texture || document.createElement('canvas');
+        this._texture.width = size.width;
+        this._texture.height = size.height;
+
+        var ctx = this._texture.getContext('2d');
+        ctx.save();
+        ctx.translate(0, size.height);
+        this._centre.visit(ctx);
+        this._left.visit(ctx);
+        this._right.visit(ctx);
+        this._top.visit(ctx);
+        this._bottom.visit(ctx);
+        this._bottomLeft.visit(ctx);
+        this._bottomRight.visit(ctx);
+        this._topLeft.visit(ctx);
+        this._topRight.visit(ctx);
+        ctx.restore();
+
+        this._rect = cc.RectMake(0, 0, size.width, size.height);
+
+    },
+
+    draw: function(ctx) {
+        cc.Sprite.prototype.draw.call(this, ctx);
     },
 
     ctor:function () {
@@ -131,7 +160,10 @@ cc.Scale9Sprite = cc.Node.extend({
         this._colorUnmodified = cc.white();
         this._originalSize = new cc.Size(0, 0);
         this._preferredSize = new cc.Size(0, 0);
+        this._offsetPosition = cc.p(0, 0);
+        this._rect = cc.RectMake(0, 0, 0, 0);
         this._color = cc.white();
+        this.setOpacity(1);
         this._capInsets = cc.RectZero();
     },
 
@@ -154,10 +186,10 @@ cc.Scale9Sprite = cc.Node.extend({
 
     /** Opacity: conforms to CCRGBAProtocol protocol */
     getOpacity:function () {
-        return this._opacity;
+        return this._opacity / 255;
     },
     setOpacity:function (opacity) {
-        this._opacity = opacity;
+        this._opacity = opacity * 255;
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -407,28 +439,28 @@ cc.Scale9Sprite = cc.Node.extend({
 
         //
         // Set up the image
-        //
 
         // Centre
         this._centre = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), this._capInsetsInternal);
-        this._scale9Image.addChild(this._centre, 0, cc.POSITIONS_CENTRE);
+        //this._scale9Image.addChild(this._centre, 0, cc.POSITIONS_CENTRE);
 
         // Top
         this._top = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x, t, this._capInsetsInternal.size.width,
             this._capInsetsInternal.origin.y - t));
-        this._scale9Image.addChild(this._top, 1, cc.POSITIONS_TOP);
+
+        //this._scale9Image.addChild(this._top, 1, cc.POSITIONS_TOP);
 
         // Bottom
         this._bottom = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(this._capInsetsInternal.origin.x,
             this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height, this._capInsetsInternal.size.width,
             h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
-        this._scale9Image.addChild(this._bottom, 1, cc.POSITIONS_BOTTOM);
+        //this._scale9Image.addChild(this._bottom, 1, cc.POSITIONS_BOTTOM);
 
         // Left
         this._left = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
             l, this._capInsetsInternal.origin.y, this._capInsetsInternal.origin.x - l,
             this._capInsetsInternal.size.height));
-        this._scale9Image.addChild(this._left, 1, cc.POSITIONS_LEFT);
+        //this._scale9Image.addChild(this._left, 1, cc.POSITIONS_LEFT);
 
         // Right
         this._right = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
@@ -436,25 +468,25 @@ cc.Scale9Sprite = cc.Node.extend({
             this._capInsetsInternal.origin.y,
             w - (this._capInsetsInternal.origin.x - l + this._capInsetsInternal.size.width),
             this._capInsetsInternal.size.height));
-        this._scale9Image.addChild(this._right, 1, cc.POSITIONS_RIGHT);
+        //this._scale9Image.addChild(this._right, 1, cc.POSITIONS_RIGHT);
 
         // Top left
         this._topLeft = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
             l, t, this._capInsetsInternal.origin.x - l, this._capInsetsInternal.origin.y - t));
-        this._scale9Image.addChild(this._topLeft, 2, cc.POSITIONS_TOPLEFT);
+        //this._scale9Image.addChild(this._topLeft, 2, cc.POSITIONS_TOPLEFT);
 
         // Top right
         this._topRight = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
             this._capInsetsInternal.origin.x + this._capInsetsInternal.size.width, t,
             w - (this._capInsetsInternal.origin.x - l + this._capInsetsInternal.size.width),
             this._capInsetsInternal.origin.y - t));
-        this._scale9Image.addChild(this._topRight, 2, cc.POSITIONS_TOPRIGHT);
+        //this._scale9Image.addChild(this._topRight, 2, cc.POSITIONS_TOPRIGHT);
 
         // Bottom left
         this._bottomLeft = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
             l, this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
             this._capInsetsInternal.origin.x - l, h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
-        this._scale9Image.addChild(this._bottomLeft, 2, cc.POSITIONS_BOTTOMLEFT);
+        //this._scale9Image.addChild(this._bottomLeft, 2, cc.POSITIONS_BOTTOMLEFT);
 
         // Bottom right
         this._bottomRight = cc.Sprite.createWithTexture(this._scale9Image.getTexture(), cc.RectMake(
@@ -462,10 +494,12 @@ cc.Scale9Sprite = cc.Node.extend({
             this._capInsetsInternal.origin.y + this._capInsetsInternal.size.height,
             w - (this._capInsetsInternal.origin.x - l + this._capInsetsInternal.size.width),
             h - (this._capInsetsInternal.origin.y - t + this._capInsetsInternal.size.height)));
-        this._scale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
 
+        //this._scale9Image.addChild(this._bottomRight, 2, cc.POSITIONS_BOTTOMRIGHT);
+
+        //this._scale9Image.setParent(this);
+        //this.addChild(this._scale9Image);
         this.setContentSize(rect.size);
-        this.addChild(this._scale9Image);
         this.setAnchorPoint(cc.p(0.5, 0.5));
         return true;
     },
