@@ -26,10 +26,9 @@
 
 var cc = cc || {};
 
-cc.SFX = function(keyname, ext, audio){
-  this.key = keyname || "";
-  this.ext = ext || ".ogg";
-  this.audio = audio;
+cc.SFX = function (audio, ext) {
+    this.audio = audio;
+    this.ext = ext || ".ogg";
 };
 
 /**
@@ -41,7 +40,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _supportedFormat:[],
     _soundEnable:false,
     _effectList:{},
-    _muiscList:{},
     _soundList:{},
     _isMusicPlaying:false,
     _playingMusic:null,
@@ -109,7 +107,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var keyname = this._getPathWithoutExt(path);
             if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
                 var sfxCache = new cc.SFX();
-                sfxCache.key = keyname;
                 sfxCache.ext = extName;
                 sfxCache.audio = new Audio(path);
 
@@ -159,7 +156,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
         else {
             var sfxCache = new cc.SFX();
-            sfxCache.key = keyname;
             sfxCache.ext = extName;
             au = sfxCache.audio = new Audio(path);
             sfxCache.audio.preload = 'auto';
@@ -300,29 +296,14 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * var soundId = cc.AudioEngine.getInstance().playEffect(path);
      */
     playEffect:function (path, loop) {
-        var keyname = this._getPathWithoutExt(path);
-        if(this._soundList.hasOwnProperty(keyname)){
-            var au = this._soundList[keyname].audio;
-            if(au.ended){
-                au.play();
-            }
-            else{
-                var reclaim = this._getEffectList(keyname), au;
-                if (reclaim.length > 0) {
-                    for (var i = 0; i < reclaim.length; i++) {
-                        //if one of the effect ended, play it
-                        if (reclaim[i].ended) {
-                            au = reclaim[i];
-                            au.currentTime = 0;
-                            break;
-                        }
-                    }
-                }
-            }
+        var keyname = this._getPathWithoutExt(path), actExt;
+        if (this._soundList.hasOwnProperty(keyname)) {
+            actExt = this._soundList[keyname].ext;
+        }
+        else {
+            actExt = this._getExtFromFullPath(path);
         }
 
-        var keyname = this._getPathWithoutExt(path);
-        var actExt = this._supportedFormat[0];
         var reclaim = this._getEffectList(keyname), au;
         if (reclaim.length > 0) {
             for (var i = 0; i < reclaim.length; i++) {
@@ -348,6 +329,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             au.loop = loop;
         }
         au.play();
+
         return path;
     },
 
@@ -400,6 +382,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * cc.AudioEngine.getInstance().pauseEffect(path);
      */
     pauseEffect:function (path) {
+        if (!path) return;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
             var tmpArr = this._effectList[keyname], au;
@@ -439,6 +422,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * cc.AudioEngine.getInstance().resumeEffect(path);
      */
     resumeEffect:function (path) {
+        if (!path) return;
         var tmpArr, au;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
@@ -483,6 +467,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * cc.AudioEngine.getInstance().stopEffect(path);
      */
     stopEffect:function (path) {
+        if (!path) return;
         var tmpArr, au;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
@@ -527,6 +512,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
      */
     unloadEffect:function (path) {
+        if (!path) return;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
             this.stopEffect(path);
