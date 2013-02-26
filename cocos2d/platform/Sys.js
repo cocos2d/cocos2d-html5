@@ -29,7 +29,7 @@ var sys = sys || {};
 */
 try{
 	sys.localStorage = window.localStorage;
-	
+
 }catch(e){
 
 	if( e.name === "SECURITY_ERR" ) {
@@ -103,3 +103,18 @@ Object.defineProperties(sys,
 		configurable : true
 	}
 });
+
+// Forces the garbage collector
+sys.garbageCollect = function() {
+	// N/A in cocos2d-html5
+};
+
+// Dumps rooted objects
+sys.dumpRoot = function() {
+	// N/A in cocos2d-html5
+};
+
+// restarts the JS VM
+sys.restartVM = function() {
+	// N/A in cocos2d-html5
+};
