@@ -45,6 +45,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _playingMusic:null,
     _effectsVolume:1,
     _maxAudioInstance:10,
+    _canPlay:true,
     _capabilities:{
         mp3:false,
         ogg:false,
@@ -58,7 +59,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     ctor:function () {
         this._supportedFormat = [];
-        window.test = this;
         // init audio
         var au = document.createElement('audio');
         if (au.canPlayType) {
@@ -84,10 +84,15 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 || this._capabilities.m4a || this._capabilities.ogg
                 || this._capabilities.wav;
         }
+
+        var ua = navigator.userAgent;
+        if(/Mobile/.test(ua) && (/Safari/.test(ua)||/Firefox/.test(ua))){
+            this._canPlay = false;
+        }
     },
 
     /**
-     * Initialize sound type
+     * Initialize sound typef
      * @return {Boolean}
      */
     init:function () {
@@ -124,6 +129,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
                 this._soundList[keyname] = sfxCache;
                 sfxCache.audio.load();
+
+                if(!this._canPlay){
+                    cc.Loader.getInstance().onResLoaded();
+                }
             }
             else {
                 cc.Loader.getInstance().onResLoaded();
