@@ -121,15 +121,19 @@ cc.NotificationObserver = cc.Class.extend({
         this._target = target;
         this._selector = selector;
         this._name = name;
-        this._obj = obj;
+        this._object = obj;
     },
 
     /**
      * @param {cc.Class} obj
      */
     performSelector:function (obj) {
-        if (this._target) {
+        if (this._target && (typeof(this._selector) == "string")) {
             this._target[this._selector](obj);
+        } else if (this._target && (typeof(this._selector) == "function")) {
+            this._selector.call(this._target, obj);
+        } else {
+            this._selector(obj);
         }
     },
 
