@@ -1171,12 +1171,12 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
     /**
      * main loop of director
      */
-    mainLoop:function () {
+    mainLoop:function (manual) {
         if (this._purgeDirecotorInNextLoop) {
             this._purgeDirecotorInNextLoop = false;
             this.purgeDirector();
         }
-        else if (!this.invalid) {
+        else if (!this.invalid || manual) {
             this.drawScene();
         }
     },

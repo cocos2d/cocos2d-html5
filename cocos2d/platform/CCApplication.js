@@ -306,20 +306,38 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         if (!this.applicationDidFinishLaunching()) {
             return 0;
         }
-        // TODO, need to be fixed.
-        if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
+
+        var lastTime =+new Date(), 
+            step = Math.floor(this._animationInterval * 1000),
+            that = this;
+
+
+        if (window.requestAnimFrame) {
+
             var callback = function () {
-                cc.Director.getInstance().mainLoop();
+
+                step = Math.floor(that._animationInterval * 1000);
+
                 window.requestAnimFrame(callback);
+
+                var now = +new Date();
+                if (now - lastTime >= step) {
+                    cc.Director.getInstance().mainLoop();
+                    lastTime = now;
+                }
+
             };
+
             cc.log(window.requestAnimFrame);
             window.requestAnimFrame(callback);
-        }
-        else {
+
+        } else {
             var callback = function () {
+                step = Math.floor(that._animationInterval * 1000);
+                setTimeout(callback, step);
                 cc.Director.getInstance().mainLoop();
             };
-            setInterval(callback, this._animationInterval * 1000);
+            setTimeout(callback, step);
         }
 
     },
