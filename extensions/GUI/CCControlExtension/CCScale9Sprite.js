@@ -91,8 +91,8 @@ cc.Scale9Sprite = cc.Node.extend({
         var verticalScale = sizableHeight / this._centre.getContentSize().height;
         this._centre.setScaleX(horizontalScale);
         this._centre.setScaleY(verticalScale);
-        var rescaledWidth = this._centre.getContentSize().width * horizontalScale;
-        var rescaledHeight = this._centre.getContentSize().height * verticalScale;
+        var rescaledWidth = Math.round(this._centre.getContentSize().width * horizontalScale);
+        var rescaledHeight = Math.round(this._centre.getContentSize().height * verticalScale);
 
         var leftWidth = this._bottomLeft.getContentSize().width;
         var bottomHeight = this._bottomLeft.getContentSize().height;
@@ -163,7 +163,7 @@ cc.Scale9Sprite = cc.Node.extend({
         this._offsetPosition = cc.p(0, 0);
         this._rect = cc.RectMake(0, 0, 0, 0);
         this._color = cc.white();
-        this.setOpacity(1);
+        this.setOpacity(255);
         this._capInsets = cc.RectZero();
     },
 
@@ -186,10 +186,10 @@ cc.Scale9Sprite = cc.Node.extend({
 
     /** Opacity: conforms to CCRGBAProtocol protocol */
     getOpacity:function () {
-        return this._opacity / 255;
+        return this._opacity;
     },
     setOpacity:function (opacity) {
-        this._opacity = opacity * 255;
+        this._opacity = opacity;
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -415,10 +415,10 @@ cc.Scale9Sprite = cc.Node.extend({
             cc.Rect.CCRectEqualToRect(this._capInsetsInternal, this._spriteRect)) {
             // Apply the 3x3 grid format
             this._capInsetsInternal = cc.RectMake(
-                rect.origin.x + this._originalSize.width / 3,
-                rect.origin.y + this._originalSize.height / 3,
-                this._originalSize.width / 3,
-                this._originalSize.height / 3);
+                0 | (rect.origin.x + this._originalSize.width / 3),
+                0 | (rect.origin.y + this._originalSize.height / 3),
+                0 | (this._originalSize.width / 3),
+                0 | (this._originalSize.height / 3));
             this._capInsets = null;
         }
         else
@@ -501,6 +501,7 @@ cc.Scale9Sprite = cc.Node.extend({
         //this.addChild(this._scale9Image);
         this.setContentSize(rect.size);
         this.setAnchorPoint(cc.p(0.5, 0.5));
+        this._updatePositions();
         return true;
     },
 
