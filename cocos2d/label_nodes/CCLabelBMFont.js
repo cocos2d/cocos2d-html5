@@ -178,10 +178,9 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
         // parse spacing / padding
         var line, re, i;
 
-        re = /info face=[a-z0-9\-= ",]+/gi;
+        re = /padding+[a-z0-9\-= ",]+/gi;
         line = re.exec(data)[0];
         if (line) {
-            // Not needed for the Hiero editors, but needed for the AngelCode editor
             this._parseInfoArguments(line);
         }
 
@@ -517,9 +516,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var tx = this.getTexture();
                     var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
-                    var img = new Image();
-                    img.src = colorTexture.toDataURL();
-                    this.setTexture(img);
+                    //TODO need test for modify
+                    //var img = new Image();
+                    //img.src = colorTexture.toDataURL();
+                    this.setTexture(colorTexture);
                     this.updateString(false);
                 }
             }
@@ -561,7 +561,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {String} fntFile
      * @param {Number} width
      * @param {Number} alignment
-     * @param {Number} imageOffset
+     * @param {cc.Point} imageOffset
      * @return {Boolean}
      */
     initWithString:function (str, fntFile, width, alignment, imageOffset) {
@@ -577,12 +577,12 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._fntFile = fntFile;
             texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
         } else
-            texture = new cc.Texture2D();
+            texture = (cc.renderContextType === cc.CANVAS) ? new Image() : new cc.Texture2D();
 
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
             this._imageOffset = imageOffset || cc.PointZero();
-            this._width = width || cc.LABEL_AUTOMATIC_WIDTH;
+            this._width = (width == null) ? cc.LabelAutomaticWidth : width;
             this._opacity = 255;
             this._color = cc.white();
             this._contentSize = cc.SizeZero();
@@ -668,7 +668,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.init();
                     fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
                 } else
-                    fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
+                    fontChar.initWithTexture(this.getTexture(), rect, false);
 
                 this.addChild(fontChar, 0, i);
             } else {
@@ -677,8 +677,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
                 } else {
                     // updating previous sprite
-                    if(cc.renderContextType === cc.CANVAS)
-                        fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
+                    if (cc.renderContextType === cc.CANVAS)
+                        fontChar.initWithTexture(this.getTexture(), rect, false);
                     else
                         fontChar.setTextureRect(rect, false, rect.size);
                     // restore to default in case they were modified
@@ -699,7 +699,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             // Apply label properties
             fontChar.setOpacityModifyRGB(this._opacityModifyRGB);
 
-            if(cc.renderContextType === cc.WEBGL)
+            if (cc.renderContextType === cc.WEBGL)
                 fontChar.setColor(this._color);
 
             // only apply opacity if it is different than 255 )
@@ -783,12 +783,11 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 while (!(characterSprite = this.getChildByTag(j + skip)))
                     skip++;
 
-                if (!characterSprite.isVisible()) continue;
+                //if (!characterSprite.isVisible()) continue;
                 if (i >= stringLength)
                     break;
 
                 var character = this._string[i];
-
                 if (!start_word) {
                     startOfWord = this._getLetterPosXLeft(characterSprite);
                     start_word = true;
@@ -1066,7 +1065,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
  * @param {String} fntFile
  * @param {String} width
  * @param {Number} alignment
- * @param {Number} imageOffset
+ * @param {cc.Point} imageOffset
  * @return {cc.LabelBMFont|Null}
  * @example
  * // Example 01
@@ -1144,7 +1143,7 @@ cc.isspace_unicode = function (ch) {
 };
 
 /**
- * @param {String} str
+ * @param {Array} str
  */
 cc.utf8_trim_ws = function (str) {
     var len = str.length;
@@ -1171,7 +1170,7 @@ cc.utf8_trim_ws = function (str) {
 /**
  * Trims str st str=[0, index) after the operation.
  * Return value: the trimmed string.
- * @param {String} str  he string to trim
+ * @param {Array} str  he string to trim
  * @param {Number} index  the index to start trimming from.
  */
 cc.utf8_trim_from = function (str, index) {

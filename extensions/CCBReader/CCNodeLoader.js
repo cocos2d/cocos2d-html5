@@ -509,7 +509,7 @@ cc.NodeLoader = cc.Class.extend({
 
         if (animation != null && animation != "") {
             var animationCache = cc.AnimationCache.getInstance();
-            animationCache.addAnimationsWithFile(animationFile);
+            animationCache.addAnimations(animationFile);
 
             ccAnimation = animationCache.getAnimation(animation);
         }

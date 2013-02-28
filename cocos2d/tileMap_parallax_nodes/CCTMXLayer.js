@@ -381,7 +381,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             if (sprite)
                 this.removeChild(sprite, true);
             else {
-                this._textureAtlas.removeQuadAtIndex(atlasIndex);
+                if(cc.renderContextType === cc.WEBGL)
+                    this._textureAtlas.removeQuadAtIndex(atlasIndex);
 
                 // update possible children
                 if (this._children) {
@@ -436,7 +437,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
         if (cc.renderContextType === cc.CANVAS) {
-            var textureCache = this.getTexture();
+            var textureCache = this._originalTexture;
             this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
         } else {
             this._tileSet.imageSize = this._textureAtlas.getTexture().getContentSizeInPixels();
@@ -468,8 +469,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 }
             }
         }
-        // console.log(this._maxGID , this._tileSet.firstGid , this._minGID , this._tileSet.firstGid)
-        cc.Assert((this._maxGID >= this._tileSet.firstGid && this._minGID >= this._tileSet.firstGid), "TMX: Only 1 tileset per layer is supported");
+
+        if (!((this._maxGID >= this._tileSet.firstGid) && (this._minGID >= this._tileSet.firstGid))) {
+            cc.log("cocos2d:TMX: Only 1 tileset per layer is supported");
+        }
     },
 
     /**
@@ -692,20 +695,29 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _reusedTileWithRect:function (rect) {
-        if (!this._reusedTile) {
-            this._reusedTile = new cc.Sprite();
-            this._reusedTile.initWithTexture(this._textureAtlas.getTexture(), rect, false);
-            this._reusedTile.setBatchNode(this);
+        if(cc.renderContextType === cc.WEBGL){
+            if (!this._reusedTile) {
+                this._reusedTile = new cc.Sprite();
+                this._reusedTile.initWithTexture(this.getTexture(), rect, false);
+                this._reusedTile.setBatchNode(this);
+            } else {
+                // XXX HACK: Needed because if "batch node" is nil,
+                // then the Sprite'squad will be reset
+                this._reusedTile.setBatchNode(null);
+
+                // Re-init the sprite
+                this._reusedTile.setTextureRect(rect, false, rect.size);
+
+                // restore the batch node
+                this._reusedTile.setBatchNode(this);
+            }
         } else {
-            // XXX HACK: Needed because if "batch node" is nil,
-            // then the Sprite'squad will be reset
-            this._reusedTile.setBatchNode(null);
-
-            // Re-init the sprite
-            this._reusedTile.setTextureRect(rect, false, rect.size);
-
-            // restore the batch node
+            this._reusedTile = new cc.Sprite();
+            this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
             this._reusedTile.setBatchNode(this);
+            this._reusedTile.setParent(this);
+
+            return this._reusedTile;
         }
         return this._reusedTile;
     },

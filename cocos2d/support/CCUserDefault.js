@@ -113,7 +113,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      */
     getFloatForKey:function (key, defaultValue) {
         var value = this._getValueForKey(key);
-        var ret = defaultValue || 0.0;
+        var ret = defaultValue || 0;
 
         if (value) {
             return parseFloat(value);

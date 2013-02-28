@@ -299,7 +299,6 @@ cc.KeyboardDispatcher.getInstance = function () {
         cc.canvas.style.cursor = 'default';
         cc.canvas.addEventListener("keydown", function (e) {
             cc.keyboardDispatcher.dispatchKeyboardMSG(e, true);
-            cc.IMEDispatcher.getInstance().processKeycode(e.keyCode);
         });
         cc.canvas.addEventListener("keyup", function (e) {
             cc.keyboardDispatcher.dispatchKeyboardMSG(e, false);

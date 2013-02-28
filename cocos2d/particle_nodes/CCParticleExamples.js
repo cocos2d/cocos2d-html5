@@ -38,7 +38,7 @@ cc.ParticleFire = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFire# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 250 : 150);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 300 : 150);
     },
 
     /**
@@ -142,7 +142,7 @@ cc.ParticleFireworks = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFirewo
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 500 : 150);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 1500 : 150);
     },
 
     /**

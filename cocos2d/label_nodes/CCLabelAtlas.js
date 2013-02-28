@@ -78,7 +78,6 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
             this._updateAtlasValuesForCanvas();
         else
             this._updateAtlasValuesForWebGL();
-
     },
 
     _updateAtlasValuesForWebGL:function () {
@@ -178,8 +177,10 @@ cc.LabelAtlas = cc.AtlasNode.extend(/** @lends cc.LabelAtlas# */{
      */
     setString:function (label) {
         var len = label.length;
-        if (len > this._textureAtlas.getTotalQuads())
-            this._textureAtlas.resizeCapacity(len);
+        if (cc.renderContextType === cc.WEBGL) {
+            if (len > this._textureAtlas.getTotalQuads())
+                this._textureAtlas.resizeCapacity(len);
+        }
 
         this._string = label;
 
@@ -262,3 +263,4 @@ cc.LabelAtlas.create = function (/* Multi arguments */) {
     }
     return null;
 };
+

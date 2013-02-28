@@ -67,7 +67,9 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     ctor:function () {
         this._super();
         this._colorUnmodified = cc.WHITE;
+        this._color = cc.white();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
+        this._opacity = 255;
     },
 
     /** initializes an cc.AtlasNode  with an Atlas file the width and height of each item and the quantity of items to render
@@ -82,24 +84,26 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._itemWidth = tileWidth;
         this._itemHeight = tileHeight;
 
-        this._opacity = 255;
-        this._color = cc.white();
-        this._colorF32Array = new Float32Array([this._color.r / 255.0, this._color.g / 255.0, this._color.b / 255.0, this._opacity / 255.0]);
-        this._colorUnmodified = cc.white();
         this._isOpacityModifyRGB = true;
 
-        this._blendFunc.src = cc.BLEND_SRC;
-        this._blendFunc.dst = cc.BLEND_DST;
+        if(cc.renderContextType === cc.WEBGL){
+            this._colorF32Array = new Float32Array([this._color.r / 255.0, this._color.g / 255.0, this._color.b / 255.0, this._opacity / 255.0]);
+            var newAtlas = new cc.TextureAtlas();
+            newAtlas.initWithFile(tile, itemsToRender);
+            this.setTextureAtlas(newAtlas);
+            if (!this._textureAtlas) {
+                cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+                return false;
+            }
+        }
 
-        var newAtlas = new cc.TextureAtlas();
-        newAtlas.initWithFile(tile, itemsToRender);
-        this.setTextureAtlas(newAtlas);
-        if (cc.renderContextType == cc.CANVAS)
-            this._originalTexture = this._textureAtlas.getTexture();
-
-        if (!this._textureAtlas) {
-            cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
-            return false;
+        if (cc.renderContextType === cc.CANVAS){
+            this._originalTexture = cc.TextureCache.getInstance().addImage(tile);
+            if (!this._originalTexture) {
+                cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
+                return false;
+            }
+            this._textureForCanvas = this._originalTexture;
         }
 
         this._updateBlendFunc();
@@ -162,9 +166,10 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
                     var tx = this._originalTexture;
                     var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
-                    var img = new Image();
-                    img.src = colorTexture.toDataURL();
-                    this.setTexture(img);
+                    //TODO need test for modify
+/*                    var img = new Image();
+                    img.src = colorTexture.toDataURL();*/
+                    this.setTexture(colorTexture);
                 }
             }
         }
@@ -236,20 +241,23 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
     },
 
     // cc.Texture protocol
-
+    _textureForCanvas:null,
     /**
      * returns the used texture
      * @return {cc.Texture2D}
      */
     getTexture:function () {
-        return this._textureAtlas.getTexture();
+        return  (cc.renderContextType === cc.CANVAS)?this._textureForCanvas : this._textureAtlas.getTexture();
     },
 
     /** sets a new texture. it will be retained
      * @param {cc.Texture2D} texture
      */
     setTexture:function (texture) {
-        this._textureAtlas.setTexture(texture);
+        if(cc.renderContextType === cc.CANVAS)
+            this._textureForCanvas = texture;
+        else
+            this._textureAtlas.setTexture(texture);
         this._updateBlendFunc();
         this._updateOpacityModifyRGB();
     },
@@ -284,10 +292,11 @@ cc.AtlasNode = cc.Node.extend(/** @lends cc.AtlasNode# */{
 
     _calculateMaxItems:function () {
         var size;
-        if (this._textureAtlas.getTexture() instanceof cc.Texture2D)
-            size = this._textureAtlas.getTexture().getContentSize();
+        var selTexture = this.getTexture();
+        if (selTexture instanceof cc.Texture2D)
+            size = selTexture.getContentSize();
         else
-            size = cc.size(this._textureAtlas.getTexture().width, this._textureAtlas.getTexture().height);
+            size = cc.size(selTexture.width, selTexture.height);
 
         this._itemsPerColumn = 0 | (size.height / this._itemHeight);
         this._itemsPerRow = 0 | (size.width / this._itemWidth);

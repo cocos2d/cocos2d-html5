@@ -119,18 +119,10 @@ cc.EGLView = cc.EGLViewProtocol.extend({
     },
 
     setScissorInPoints:function(x, y, w, h){
-        cc.drawingUtil.setPointSize(10) ;
-        cc.drawingUtil.setDrawColor4B(255,0,0,255) ;
-        cc.drawingUtil.drawPoint(cc.p((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
-            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.origin.y * this._frameZoomFactor)));
-        cc.drawingUtil.drawRect(cc.p((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
-            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.origin.y * this._frameZoomFactor)),
-            cc.p((w * this._scaleX * this._frameZoomFactor),
-                (h * this._scaleY * this._frameZoomFactor)));
-        /*this._gl.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
+        this._gl.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
             (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.origin.y * this._frameZoomFactor),
             (w * this._scaleX * this._frameZoomFactor),
-            (h * this._scaleY * this._frameZoomFactor));*/
+            (h * this._scaleY * this._frameZoomFactor));
     }
 });
 
