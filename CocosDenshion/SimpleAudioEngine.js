@@ -303,7 +303,11 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (loop) {
             au.loop = loop;
         }
-        au.play();
+
+        if (this._soundEnable) {
+            au.play();
+        }
+
         return keyname;
     },
 
