@@ -101,7 +101,7 @@ cc.generateTextureCacheForColor = function (texture) {
     try {
         renderToCache();
 
-    } catch(e) {
+    } catch (e) {
         texture.onload = renderToCache;
     }
 
@@ -186,7 +186,7 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         buff.width = rect.size.width;
         buff.height = rect.size.height;
 
-    // Unless overdraw is active, resize and clear the renderCanvas
+        // Unless overdraw is active, resize and clear the renderCanvas
     } else if (!overdraw) {
         buff.width = rect.size.width;
         buff.height = rect.size.height;
@@ -765,86 +765,87 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
     },
 
     _setTextureCoords:function (rect) {
-        if (cc.renderContextType == cc.WEBGL) {
-            rect = cc.RECT_POINTS_TO_PIXELS(rect);
+        if (cc.renderContextType === cc.CANVAS)
+            return;
 
-            var tex = this._batchNode ? this._textureAtlas.getTexture() : this._texture;
-            if (!tex)
-                return;
+        rect = cc.RECT_POINTS_TO_PIXELS(rect);
 
-            var atlasWidth = tex.getPixelsWide();
-            var atlasHeight = tex.getPixelsHigh();
+        var tex = this._batchNode ? this._textureAtlas.getTexture() : this._texture;
+        if (!tex)
+            return;
 
-            var left, right, top, bottom, tempSwap;
-            if (this._rectRotated) {
-                if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                    left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                    right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
-                    top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                    bottom = top + (rect.size.width * 2 - 2) / (2 * atlasHeight);
-                } else {
-                    left = rect.origin.x / atlasWidth;
-                    right = (rect.origin.x + rect.size.height) / atlasWidth;
-                    top = rect.origin.y / atlasHeight;
-                    bottom = (rect.origin.y + rect.size.width) / atlasHeight;
-                }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+        var atlasWidth = tex.getPixelsWide();
+        var atlasHeight = tex.getPixelsHigh();
 
-                if (this._flipX) {
-                    tempSwap = top;
-                    top = bottom;
-                    bottom = tempSwap;
-                }
-
-                if (this._flipY) {
-                    tempSwap = left;
-                    left = right;
-                    right = tempSwap;
-                }
-
-                this._quad.bl.texCoords.u = left;
-                this._quad.bl.texCoords.v = top;
-                this._quad.br.texCoords.u = left;
-                this._quad.br.texCoords.v = bottom;
-                this._quad.tl.texCoords.u = right;
-                this._quad.tl.texCoords.v = top;
-                this._quad.tr.texCoords.u = right;
-                this._quad.tr.texCoords.v = bottom;
+        var left, right, top, bottom, tempSwap;
+        if (this._rectRotated) {
+            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
+                right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.size.width * 2 - 2) / (2 * atlasHeight);
             } else {
-                if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                    left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                    right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
-                    top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                    bottom = top + (rect.size.height * 2 - 2) / (2 * atlasHeight);
-                } else {
-                    left = rect.origin.x / atlasWidth;
-                    right = (rect.origin.x + rect.size.width) / atlasWidth;
-                    top = rect.origin.y / atlasHeight;
-                    bottom = (rect.origin.y + rect.size.height) / atlasHeight;
-                } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+                left = rect.origin.x / atlasWidth;
+                right = (rect.origin.x + rect.size.height) / atlasWidth;
+                top = rect.origin.y / atlasHeight;
+                bottom = (rect.origin.y + rect.size.width) / atlasHeight;
+            }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
-                if (this._flipX) {
-                    tempSwap = left;
-                    left = right;
-                    right = tempSwap;
-                }
-
-                if (this._flipY) {
-                    tempSwap = top;
-                    top = bottom;
-                    bottom = tempSwap;
-                }
-
-                this._quad.bl.texCoords.u = left;
-                this._quad.bl.texCoords.v = bottom;
-                this._quad.br.texCoords.u = right;
-                this._quad.br.texCoords.v = bottom;
-                this._quad.tl.texCoords.u = left;
-                this._quad.tl.texCoords.v = top;
-                this._quad.tr.texCoords.u = right;
-                this._quad.tr.texCoords.v = top;
+            if (this._flipX) {
+                tempSwap = top;
+                top = bottom;
+                bottom = tempSwap;
             }
-            this._textureCoordsFloat32Buffer = this._getSpriteTexCoodsArray();
+
+            if (this._flipY) {
+                tempSwap = left;
+                left = right;
+                right = tempSwap;
+            }
+
+            this._quad.bl.texCoords.u = left;
+            this._quad.bl.texCoords.v = top;
+            this._quad.br.texCoords.u = left;
+            this._quad.br.texCoords.v = bottom;
+            this._quad.tl.texCoords.u = right;
+            this._quad.tl.texCoords.v = top;
+            this._quad.tr.texCoords.u = right;
+            this._quad.tr.texCoords.v = bottom;
+        } else {
+            if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
+                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
+                right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.size.height * 2 - 2) / (2 * atlasHeight);
+            } else {
+                left = rect.origin.x / atlasWidth;
+                right = (rect.origin.x + rect.size.width) / atlasWidth;
+                top = rect.origin.y / atlasHeight;
+                bottom = (rect.origin.y + rect.size.height) / atlasHeight;
+            } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
+
+            if (this._flipX) {
+                tempSwap = left;
+                left = right;
+                right = tempSwap;
+            }
+
+            if (this._flipY) {
+                tempSwap = top;
+                top = bottom;
+                bottom = tempSwap;
+            }
+
+            this._quad.bl.texCoords.u = left;
+            this._quad.bl.texCoords.v = bottom;
+            this._quad.br.texCoords.u = right;
+            this._quad.br.texCoords.v = bottom;
+            this._quad.tl.texCoords.u = left;
+            this._quad.tl.texCoords.v = top;
+            this._quad.tr.texCoords.u = right;
+            this._quad.tr.texCoords.v = top;
         }
+        this._textureCoordsFloat32Buffer = this._getSpriteTexCoodsArray();
     },
 
     // BatchNode methods
@@ -908,8 +909,8 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                 this._quad.tl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(dx), cc.RENDER_IN_SUBPIXEL(dy), this._vertexZ);
                 this._quad.tr.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(cx), cc.RENDER_IN_SUBPIXEL(cy), this._vertexZ);
             }
-
-            this._textureAtlas.updateQuad(this._quad, this._atlasIndex);
+            if (cc.renderContextType === cc.WEBGL)
+                this._textureAtlas.updateQuad(this._quad, this._atlasIndex);
             this._recursiveDirty = false;
             this.setDirty(false);
         }
@@ -955,7 +956,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
 
         context.globalAlpha = this._opacity / 255;
         var flipXOffset = 0, flipYOffset = 0;
-        if(this._flipX){
+        if (this._flipX) {
             flipXOffset = this._rect.size.width;
             context.scale(-1, 1);
         }
@@ -968,48 +969,31 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var posY = 0 | (this._offsetPosition.y);
 
         if (this._texture) {
-            if (this._texture instanceof HTMLImageElement) {
-                if ((this._contentSize.width === 0) || (this._contentSize.height === 0)) {
-                    // image hasn't loaded, do nothing
-                } else {
-                    context.drawImage(this._texture,
-                        this._rect.origin.x, this._rect.origin.y,
-                        this._rect.size.width, this._rect.size.height,
-                        this._offsetPosition.x-flipXOffset, -this._offsetPosition.y-this._rect.size.height + flipYOffset,
-                        this._rect.size.width, this._rect.size.height);
-                }
+            if (this._colorized) {
+                context.drawImage(this._texture,
+                    0, 0,
+                    this._rect.size.width, this._rect.size.height,
+                    this._offsetPosition.x - flipXOffset, -this._offsetPosition.y - this._rect.size.height + flipYOffset,
+                    this._rect.size.width, this._rect.size.height);
             } else {
-                if ((this._contentSize.width == 0) && (this._contentSize.height == 0)) {
-                    this.setContentSize(cc.size(this._texture.width, this._texture.height));
-                    this._rect.size.width = this._texture.width;
-                    this._rect.size.height = this._texture.height;
-                    context.drawImage(this._texture, posX, -(posY + this._texture.height));
-                } else if(this._colorized) {
-                    context.drawImage(this._texture,
-                        0, 0,
-                        this._rect.size.width, this._rect.size.height,
-                        this._offsetPosition.x-flipXOffset, -this._offsetPosition.y-this._rect.size.height + flipYOffset,
-                        this._rect.size.width, this._rect.size.height);
-                } else {
-                    context.drawImage(this._texture,
-                        this._rect.origin.x, this._rect.origin.y,
-                        this._rect.size.width, this._rect.size.height,
-                        0, -this._rect.size.height,
-                        this._rect.size.width, this._rect.size.height);
-                }
+                context.drawImage(this._texture,
+                    this._rect.origin.x, this._rect.origin.y,
+                    this._rect.size.width, this._rect.size.height,
+                    this._offsetPosition.x - flipXOffset, -this._offsetPosition.y - this._rect.size.height + flipYOffset,
+                    this._rect.size.width, this._rect.size.height);
             }
-        } else {
+        } else if (this._contentSize.width !== 0) {
             context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";
-            context.fillRect(posX, posY, this._contentSize.width, this._contentSize.height);
+            context.fillRect(posX, posY, this._contentSize.width, -this._contentSize.height);
         }
 
-        if (cc.SPRITE_DEBUG_DRAW == 1) {
+        if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
             context.strokeStyle = "rgba(0,255,0,1)";
             var vertices1 = [cc.p(posX, posY), cc.p(posX + this._rect.size.width, posY), cc.p(posX + this._rect.size.width, posY + this._rect.size.height),
                 cc.p(posX, posY + this._rect.size.height)];
             cc.drawingUtil.drawPoly(vertices1, 4, true);
-        } else if (cc.SPRITE_DEBUG_DRAW == 2) {
+        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
             context.strokeStyle = "rgba(0,255,0,1)";
             var drawSize = this._rect.size;
@@ -1027,7 +1011,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
         var gl = ctx || cc.webglContext;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        if (this._texture){
+        if (this._texture) {
             cc.NODE_DRAW_SETUP(this);
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(this._texture._webTextureObj);
@@ -1720,7 +1704,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
             // If batchnode, then texture id should be the same
             cc.Assert(!this._batchNode, "cc.Sprite: Batched sprites should use the same texture as the batchnode");
             // accept texture==nil as argument
-            cc.Assert( !texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
+            cc.Assert(!texture || texture instanceof cc.Texture2D, "setTexture expects a CCTexture2D. Invalid argument");
 
             if (!this._batchNode && this._texture != texture) {
                 this._texture = texture;

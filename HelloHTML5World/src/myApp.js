@@ -106,14 +106,14 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)));
+        this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
         this.setTouchEnabled(true);
-        this.adjustSizeForWindow();
+        //this.adjustSizeForWindow();
         //lazyLayer.adjustSizeForCanvas();
-        window.addEventListener("resize", function (event) {
+        /*window.addEventListener("resize", function (event) {
             selfPointer.adjustSizeForWindow();
-        });
+        });*/
         return true;
     },
 

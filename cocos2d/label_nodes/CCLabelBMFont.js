@@ -516,9 +516,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var tx = this.getTexture();
                     var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
-                    var img = new Image();
-                    img.src = colorTexture.toDataURL();
-                    this.setTexture(img);
+                    //TODO need test for modify
+                    //var img = new Image();
+                    //img.src = colorTexture.toDataURL();
+                    this.setTexture(colorTexture);
                     this.updateString(false);
                 }
             }
@@ -576,7 +577,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._fntFile = fntFile;
             texture = cc.TextureCache.getInstance().addImage(this._configuration.getAtlasName());
         } else
-            texture = new cc.Texture2D();
+            texture = (cc.renderContextType === cc.CANVAS) ? new Image() : new cc.Texture2D();
 
         if (this.initWithTexture(texture, theString.length)) {
             this._alignment = alignment || cc.TEXT_ALIGNMENT_LEFT;
@@ -667,18 +668,17 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     fontChar.init();
                     fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
                 } else
-                    fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
+                    fontChar.initWithTexture(this.getTexture(), rect, false);
 
                 this.addChild(fontChar, 0, i);
             } else {
                 if ((key === 32) && (cc.renderContextType === cc.CANVAS)) {
                     fontChar.init();
                     fontChar.setTextureRect(cc.RectZero(), false, cc.SizeZero());
-                }
-                else {
+                } else {
                     // updating previous sprite
-                    if(cc.renderContextType === cc.CANVAS)
-                        fontChar.initWithTexture(this._textureAtlas.getTexture(), rect, false);
+                    if (cc.renderContextType === cc.CANVAS)
+                        fontChar.initWithTexture(this.getTexture(), rect, false);
                     else
                         fontChar.setTextureRect(rect, false, rect.size);
                     // restore to default in case they were modified
@@ -699,7 +699,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             // Apply label properties
             fontChar.setOpacityModifyRGB(this._opacityModifyRGB);
 
-            if(cc.renderContextType === cc.WEBGL)
+            if (cc.renderContextType === cc.WEBGL)
                 fontChar.setColor(this._color);
 
             // only apply opacity if it is different than 255 )

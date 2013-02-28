@@ -518,7 +518,7 @@ cc.FileUtils = cc.Class.extend({
             newFileName = filename;
         else {
             newFileName = fileNameFound;
-            cc.log("FOUND NEW FILE NAME: %s", newFileName);
+            cc.log("FOUND NEW FILE NAME: " + newFileName);
         }
         return newFileName;
     },

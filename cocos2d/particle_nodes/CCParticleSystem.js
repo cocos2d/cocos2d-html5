@@ -1354,13 +1354,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 // texture
                 // Try to get the texture from the cache
                 var textureName = this._valueForKey("textureFileName", dictionary);
+                var fullpath = cc.FileUtils.getInstance().fullPathFromRelativeFile(textureName, this._plistFile);
 
-                if (dirname != null && dirname != "") {
-                    var rPos = textureName.lastIndexOf("/");
-                    textureName = dirname + textureName.substring(rPos + 1, textureName.length);
-                }
-
-                var tex = cc.TextureCache.getInstance().textureForKey(textureName);
+                var tex = cc.TextureCache.getInstance().textureForKey(fullpath);
 
                 if (tex) {
                     this.setTexture(tex);
@@ -1369,13 +1365,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                     if (textureData && textureData.length == 0) {
                         cc.Assert(textureData, "cc.ParticleSystem.initWithDictory:textureImageData is null");
-                        tex = cc.TextureCache.getInstance().addImage(textureName);
+                        tex = cc.TextureCache.getInstance().addImage(fullpath);
                         if (!tex)
                             return false;
                         this.setTexture(tex);
                     } else {
                         //TODO need implement parse image data for cc.Image
-                        //if(cc.renderContextType === cc.CANVAS){
+                        //if(cc.renderContextType === cc.CANVAS)
                         buffer = cc.unzipBase64AsArray(textureData, 1);
                         if (!buffer)
                             return false;
@@ -1385,7 +1381,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         var img = new Image();
                         img.src = "data:image/png;base64," + newImageData;
-                        cc.TextureCache.getInstance().cacheImage(fullpath, img);
 
                         // Manually decode the base 64 image size since the browser will only do so asynchronously
                         var w = (buffer[16] << 24) + (buffer[17] << 16) + (buffer[18] << 8) + (buffer[19]),
@@ -1395,11 +1390,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         img.textureWidth = w;
                         img.textureHeight = h;
 
-                        this._texture = img;
+                        cc.TextureCache.getInstance().cacheImage(fullpath, img);
+                        this._texture = cc.TextureCache.getInstance().textureForKey(textureName);
                     }
                 }
                 cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
-                this.setTexture(this._texture);;
+                this.setTexture(this._texture);
             }
             ret = true;
         }

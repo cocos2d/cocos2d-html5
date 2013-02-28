@@ -74,7 +74,6 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
         if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b))
             return;
 
-        this._color = this._colorUnmodified = new cc.Color3B(color3.r, color3.g, color3.b);
         this._super(color3);
         this._setColorStyleStr();
         this.setNodeDirty();
@@ -83,10 +82,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setOpacity:function (opacity) {
         if (this._opacity === opacity)
             return;
-
-        this._opacity = opacity;
+        this._super(opacity);
         this._setColorStyleStr();
-        this.setNodeDirty();
     },
 
     _setColorStyleStr:function () {
@@ -316,7 +313,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setFontSize:function (fontSize) {
         if (this._fontSize != fontSize) {
             this._fontSize = fontSize;
-
+            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             // Force update
             if (this._string.length > 0) {
                 if (cc.renderContextType === cc.CANVAS)
@@ -342,6 +339,7 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
     setFontName:function (fontName) {
         if (this._fontName != fontName) {
             this._fontName = new String(fontName);
+            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             // Force update
             if (this._string.length > 0) {
                 if (cc.renderContextType === cc.CANVAS)
@@ -384,7 +382,8 @@ cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
         }
 
-        if (this.init(true)) {
+        if (cc.Sprite.prototype.init.call(this)) {
+            this._opacityModifyRGB = false;
             this._dimensions = cc.size(dimensions.width, dimensions.height);
             //this._contentSize = this._dimensions;
             this._fontName = fontName;

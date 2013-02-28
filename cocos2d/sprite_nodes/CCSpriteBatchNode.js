@@ -177,15 +177,18 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         cc.Assert(sprite instanceof cc.Sprite, "cc.SpriteBatchNode only supports cc.Sprites as children");
 
         // make needed room
-        while (index >= this._textureAtlas.getCapacity() || this._textureAtlas.getCapacity() === this._textureAtlas.getTotalQuads()) {
-            this.increaseAtlasCapacity();
+        if(cc.renderContextType === cc.WEBGL){
+            while (index >= this._textureAtlas.getCapacity() || this._textureAtlas.getCapacity() === this._textureAtlas.getTotalQuads())
+                this.increaseAtlasCapacity();
         }
+
         //
         // update the quad directly. Don't add the sprite to the scene graph
         //
         sprite.setBatchNode(this);
         sprite.setAtlasIndex(index);
-        this._textureAtlas.insertQuad(sprite.getQuad(), index);
+        if(cc.renderContextType === cc.WEBGL)
+            this._textureAtlas.insertQuad(sprite.getQuad(), index);
 
         // XXX: updateTransform will update the textureAtlas too, using updateQuad.
         // XXX: so, it should be AFTER the insertQuad
@@ -304,8 +307,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;
 
-        if (cc.renderContextType == cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS) {
             this._originalTexture = tex;
+            this._textureForCanvas = tex;
         } else {
             this._textureAtlas = new cc.TextureAtlas();
             this._textureAtlas.initWithTexture(tex, capacity);
@@ -441,13 +445,15 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         sprite.setBatchNode(this);
         sprite.setDirty(true);
 
-        if (this._textureAtlas.getTotalQuads() == this._textureAtlas.getCapacity())
-            this.increaseAtlasCapacity();
-
         cc.ArrayAppendObject(this._descendants, sprite);
         var index = this._descendants.length - 1;
         sprite.setAtlasIndex(index);
-        this._textureAtlas.insertQuad(sprite.getQuad(), index);
+
+        if(cc.renderContextType === cc.WEBGL){
+            if (this._textureAtlas.getTotalQuads() == this._textureAtlas.getCapacity())
+                this.increaseAtlasCapacity();
+            this._textureAtlas.insertQuad(sprite.getQuad(), index);
+        }
 
         // add children recursively
         var children = sprite.getChildren();
@@ -460,8 +466,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {cc.Sprite} sprite
      */
     removeSpriteFromAtlas:function (sprite) {
-        // remove from TextureAtlas
-        this._textureAtlas.removeQuadAtIndex(sprite.getAtlasIndex());
+        if(cc.renderContextType === cc.WEBGL)
+            this._textureAtlas.removeQuadAtIndex(sprite.getAtlasIndex());   // remove from TextureAtlas
 
         // Cleanup sprite. It might be reused (issue #569)
         sprite.setBatchNode(null);
@@ -481,10 +487,9 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         // remove children recursively
         var children = sprite.getChildren();
         if (children && children.length > 0) {
-            for (var i = 0; i < children.length; i++) {
+            for (var i = 0; i < children.length; i++)
                 if (children[i])
                     this.removeSpriteFromAtlas(children[i]);
-            }
         }
     },
 
@@ -606,6 +611,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
     },
 
     // CCTextureProtocol
+    _textureForCanvas:null,
     /**
      * Return texture of cc.SpriteBatchNode
      * @return {cc.Texture2D|HTMLImageElement|HTMLCanvasElement}
@@ -614,7 +620,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
         if (cc.renderContextType === cc.CANVAS) {
             if (this._useCache)
                 return this._renderTexture.getCanvas();
-            return this._originalTexture;
+            return this._textureForCanvas;
         }
         return this._textureAtlas.getTexture();
     },
@@ -625,6 +631,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      */
     setTexture:function (texture) {
         if (cc.renderContextType === cc.CANVAS) {
+            this._textureForCanvas = texture;
             for (var i = 0; i < this._children.length; i++)
                 this._children[i].setTexture(texture);
         } else
@@ -820,7 +827,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
 
         this._super(cleanup);
         this._descendants = [];
-        this._textureAtlas.removeAllQuads();
+        if(cc.renderContextType === cc.WEBGL)
+            this._textureAtlas.removeAllQuads();
     },
 
     sortAllChildren:function () {
@@ -862,7 +870,7 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
      * @param {CanvasContext} ctx
      */
     draw:function (ctx) {
-        if (cc.renderContextType == cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS) {
             var context = ctx || cc.renderContext;
             //context.globalAlpha = this._opacity / 255;
             var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
@@ -870,9 +878,8 @@ cc.SpriteBatchNode = cc.Node.extend(/** @lends cc.SpriteBatchNode# */{
             if (this._renderTexture)
                 context.drawImage(this._renderTexture.getCanvas(), pos.x, -(pos.y + this._renderTexture.getCanvas().height));
         } else {
-
             // Optimization: Fast Dispatch
-            if (this._textureAtlas.getTotalQuads() == 0)
+            if (this._textureAtlas.getTotalQuads() === 0)
                 return;
 
             cc.NODE_DRAW_SETUP(this);

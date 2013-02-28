@@ -364,7 +364,7 @@ cc.Scale9Sprite = cc.Node.extend({
         // If there is no given rect
         if (cc.Rect.CCRectEqualToRect(rect, cc.RectZero())) {
             // Get the texture size as original
-            var selTexture  = this._scale9Image.getTextureAtlas().getTexture();
+            var selTexture  = this._scale9Image.getTexture();
             if(selTexture instanceof  cc.Texture2D){
                 var textureSize = selTexture.getContentSize();
                 rect = cc.RectMake(0, 0, textureSize.width, textureSize.height);

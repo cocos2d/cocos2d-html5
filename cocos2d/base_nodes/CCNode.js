@@ -42,30 +42,6 @@ cc.NODE_ON_ENTER = null;
 cc.NODE_ON_EXIT = null;
 
 /**
- * save the context
- * @function
- */
-cc.saveContext = function () {
-    if (cc.renderContextType == cc.CANVAS) {
-        cc.renderContext.save();
-    } else {
-        cc.kmGLPushMatrix();
-    }
-};
-
-/**
- * restore the context
- * @function
- */
-cc.restoreContext = function () {
-    if (cc.renderContextType == cc.CANVAS) {
-        cc.renderContext.restore();
-    } else {
-        cc.kmGLPopMatrix();
-    }
-};
-
-/**
  *  XXX: Yes, nodes might have a sort problem once every 15 days if the game runs at 60 FPS and each frame sprites are reordered.
  * @type Number
  */
@@ -141,7 +117,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _rotationY:0.0,
     _scaleX:1.0,
     _scaleY:1.0,
-    _position:cc.p(0, 0),
+    _position:null,
     _skewX:0.0,
     _skewY:0.0,
     // children (lazy allocs),
@@ -150,9 +126,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _camera:null,
     _grid:null,
     _visible:true,
-    _anchorPoint:cc.p(0, 0),
-    _anchorPointInPoints:cc.p(0, 0),
-    _contentSize:cc.SizeZero(),
+    _anchorPoint:null,
+    _anchorPointInPoints:null,
+    _contentSize:null,
     _running:false,
     _parent:null,
     // "whole screen" objects. like Scenes and Layers, should set _ignoreAnchorPointForPosition to true
@@ -278,22 +254,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 throw "Unknown callback function";
                 break;
         }
-    },
-
-    /**
-     * @param {cc.Rect} rect
-     * @private
-     */
-    _addDirtyRegionToDirector:function (rect) {
-        //if (!cc.firstRun) {
-        //cc.Director.getInstance().addRegionToDirtyRegion(rect);
-        //}
-    },
-
-    _isInDirtyRegion:function () {
-        //if (!cc.firstRun) {
-        //    return cc.Director.getInstance().rectIsInDirtyRegion(this.getBoundingBoxToWorld());
-        //}
     },
 
     /**
@@ -1564,14 +1524,18 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      * @return {cc.AffineTransform}
      */
     nodeToParentTransform:function () {
-/*        if (this._transformDirty) {
+        return (cc.renderContextType === cc.CANVAS)? this._nodeToParentTransformForCanvas(): this._nodeToParentTransformForWebGL();
+    },
+
+    _nodeToParentTransformForWebGL:function(){
+        if (this._transformDirty) {
             // Translate values
             var x = this._position.x;
             var y = this._position.y;
 
             if (this._ignoreAnchorPointForPosition) {
-                x -= this._anchorPointInPoints.x;
-                y -= this._anchorPointInPoints.y;
+                x += this._anchorPointInPoints.x;
+                y += this._anchorPointInPoints.y;
             }
 
             // Rotation values
@@ -1617,11 +1581,12 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             this._transformDirty = false;
         }
+        return this._transform;
+    },
 
-        return this._transform;*/
-        if(!this._transform){
+    _nodeToParentTransformForCanvas:function(){
+        if(!this._transform)
             this._transform = {a:1,b:0,c:0,d:1,tx:0,ty:0};
-        }
         if(this._transformDirty){
             var t = this._transform;// quick reference
             // base position
@@ -1630,9 +1595,9 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
 
             // rotation Cos and Sin
             var Cos = 1, Sin = 0;
-            if(this._rotation){
-                Cos = Math.cos(this._rotationRadians);
-                Sin = Math.sin(this._rotationRadians);
+            if(this._rotationX){
+                Cos = Math.cos(this._rotationRadiansX);
+                Sin = Math.sin(this._rotationRadiansX);
             }
 
             // base abcd
@@ -1760,7 +1725,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
      */
     convertTouchToNodeSpace:function (touch) {
         var point = touch.getLocation();
-        //TODO in canvas point don't convert to GL
+        //TODO Point needn't convert to GL in HTML5
         //point = cc.Director.getInstance().convertToGL(point);
         return this.convertToNodeSpace(point);
     },
@@ -1810,7 +1775,6 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
  */
 cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDidFinish:4, updateTransform:5, onExitTransitionDidStart:6, sortAllChildren:7};
 
-
 /**
  * allocates and initializes a node.
  * @constructs
@@ -1822,4 +1786,3 @@ cc.Node.StateCallbackType = {onEnter:1, onExit:2, cleanup:3, onEnterTransitionDi
 cc.Node.create = function () {
     return new cc.Node();
 };
-

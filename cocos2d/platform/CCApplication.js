@@ -344,8 +344,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             };
             cc.log(window.requestAnimFrame);
             window.requestAnimFrame(callback);
-        }
-        else {
+        } else {
             callback = function () {
                 cc.Director.getInstance().mainLoop();
             };
@@ -361,7 +360,6 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
  * @return {cc.Application}  Current application instance pointer.
  */
 cc.Application.sharedApplication = function () {
-
     cc.Assert(cc._sharedApplication, "sharedApplication");
     return cc._sharedApplication;
 };
@@ -374,6 +372,11 @@ cc.Application.getCurrentLanguage = function () {
     var ret = cc.LANGUAGE_ENGLISH;
 
     var currentLang = navigator.language;
+    if(!currentLang)
+        currentLang = navigator.browserLanguage || navigator.userLanguage;
+    if(!currentLang)
+        return ret;
+
     currentLang = currentLang.toLowerCase();
     switch (currentLang) {
         case "zh-cn":

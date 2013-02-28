@@ -132,7 +132,10 @@
             }
         },
         nodeToParentTransform:function () {
-               var x = this._body.p.x;
+            if(cc.renderContextType === cc.CANVAS)
+                return this._nodeToParentTransformForCanvas();
+
+            var x = this._body.p.x;
             var y = this._body.p.y;
 
             if (this._ignoreAnchorPointForPosition) {
@@ -160,16 +163,53 @@
 
             return this._transform;
         },
-        visit:function (ctx) {
-            if (this._body) {
-                this._syncPosition();
-                if (!this._ignoreBodyRotation)
-                    this._syncRotation();
+
+        _nodeToParentTransformForCanvas:function(){
+            if(!this._transform)
+                this._transform = {a:1,b:0,c:0,d:1,tx:0,ty:0};
+            if(this.isDirty()){
+                var t = this._transform;// quick reference
+                // base position
+                t.tx = this._body.p.x;
+                t.ty = this._body.p.y;
+
+                // rotation Cos and Sin
+                var radians = -this._body.a;
+                var Cos = 1, Sin = 0;
+                if(radians){
+                    Cos = Math.cos(radians);
+                    Sin = Math.sin(radians);
+                }
+
+                // base abcd
+                t.a = t.d = Cos;
+                t.c = -Sin;
+                t.b = Sin;
+
+                // scale
+                if(this._scaleX !== 1 || this._scaleY !== 1){
+                    t.a *= this._scaleX;
+                    t.b *= this._scaleX;
+                    t.c *= this._scaleY;
+                    t.d *= this._scaleY;
+                }
+
+                // adjust anchorPoint
+                t.tx += Cos*-this._anchorPointInPoints.x*this._scaleX + -Sin*this._anchorPointInPoints.y*this._scaleY;
+                t.ty -= Sin*-this._anchorPointInPoints.x*this._scaleX + Cos*this._anchorPointInPoints.y*this._scaleY;
+
+                // if ignore anchorPoint
+                if(this._ignoreAnchorPointForPosition){
+                    t.tx += this._anchorPointInPoints.x;
+                    t.ty += this._anchorPointInPoints.y;
+                }
+                this._transformDirty = false;
             }
-            else {
-                cc.log("PhysicsSprite body was not set");
-            }
-            this._super(ctx);
+            return this._transform;
+        },
+
+        isDirty:function(){
+           return !this._body.isSleeping();
         }
     };
     cc.PhysicsSprite = cc.Sprite.extend(chipmunkAPI);
