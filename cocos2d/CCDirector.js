@@ -185,25 +185,23 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     _accelerometer:null,
     _mouseDispatcher:null,
 
-    _currTimeValue:null,
     _isBlur:false,
 
     /**
      * Constructor
      */
     ctor:function () {
-        this._currTimeValue = new cc.timeval();
-        this._lastUpdate = new cc.timeval();
+        this._lastUpdate = Date.now();
         if (!cc.isAddedHiddenEvent) {
             var selfPointer = this;
             window.addEventListener("focus", function () {
-                selfPointer._lastUpdate = cc.Time.gettimeofdayCocos2d(selfPointer._lastUpdate);
+                selfPointer._lastUpdate = Date.now();
             }, false);
         }
     },
 
     _resetLastUpdate:function () {
-        this._lastUpdate = cc.Time.gettimeofdayCocos2d(this._lastUpdate);
+        this._lastUpdate = Date.now();
     },
 
     /**
@@ -224,7 +222,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._frameRate = 0;
         this._displayStats = false;//can remove
         this._totalFrames = this._frames = 0;
-        this._lastUpdate = new cc.timeval();
+        this._lastUpdate = Date.now();
 
         //Paused?
         this._paused = false;
@@ -250,7 +248,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this._keyboardDispatcher = cc.KeyboardDispatcher.getInstance();
 
         //accelerometer
-        //this._accelerometer = new cc.Accelerometer();
+        this._accelerometer = new cc.Accelerometer();
 
         //MouseDispatcher
         this._mouseDispatcher = new cc.MouseDispatcher();
@@ -263,27 +261,20 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * calculates delta time since last time it was called
      */
     calculateDeltaTime:function () {
-        var now = cc.Time.gettimeofdayCocos2d(this._currTimeValue);
-        if (!now) {
-            cc.log("error in gettimeofday");
-            this._deltaTime = 0;
-            return;
-        }
+        var now = Date.now();
 
         // new delta time.
         if (this._nextDeltaTimeZero) {
             this._deltaTime = 0;
             this._nextDeltaTimeZero = false;
         } else {
-            this._deltaTime = (now.tv_sec - this._lastUpdate.tv_sec) + (now.tv_usec - this._lastUpdate.tv_usec) / 1000000.0;
-            this._deltaTime = Math.max(0, this._deltaTime);
+            this._deltaTime = (now-this._lastUpdate) / 1000;
         }
 
         if ((cc.COCOS2D_DEBUG > 0) && (this._deltaTime > 0.2))
             this._deltaTime = 1 / 60.0;
 
-        this._lastUpdate.tv_sec = now.tv_sec;
-        this._lastUpdate.tv_usec = now.tv_usec;
+        this._lastUpdate = now;
     },
 
     /**
@@ -618,7 +609,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
 
         this.setAnimationInterval(this._oldAnimationInterval);
-        this._lastUpdate = cc.Time.gettimeofdayCocos2d();
+        this._lastUpdate = Date.now();
         if (!this._lastUpdate) {
             cc.log("cocos2d: Director: Error in gettimeofday");
         }
@@ -821,10 +812,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
                 cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
                 cc.kmGLLoadIdentity();
-                var eye = new cc.kmVec3(), center = new cc.kmVec3(), up = new cc.kmVec3();
-                cc.kmVec3Fill(eye, size.width / 2, size.height / 2, zeye);
-                cc.kmVec3Fill(center, size.width / 2, size.height / 2, 0.0);
-                cc.kmVec3Fill(up, 0.0, 1.0, 0.0);
+                var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
+                var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
+                var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
                 cc.kmMat4LookAt(matrixLookup, eye, center, up);
                 cc.kmGLMultMatrix(matrixLookup);
                 break;
@@ -1066,8 +1056,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _calculateMPF:function () {
-        var now = cc.Time.gettimeofdayCocos2d();
-        this._secondsPerFrame = (now.tv_sec - this._lastUpdate.tv_sec) + (now.tv_usec - this._lastUpdate.tv_usec) / 1000000.0;
+        var now = Date.now();
+        this._secondsPerFrame = (now-this._lastUpdate)/1000;
     }
 });
 
@@ -1095,7 +1085,7 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
      * start Animation
      */
     startAnimation:function () {
-        this._lastUpdate = cc.Time.gettimeofdayCocos2d();
+        this._nextDeltaTimeZero = true;
         this.invalid = false;
         cc.Application.sharedApplication().setAnimationInterval(this._animationInterval);
     },

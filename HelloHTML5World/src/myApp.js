@@ -30,8 +30,7 @@ var CircleSprite = cc.Sprite.extend({
         this._super();
     },
     draw:function () {
-        cc.renderContext.fillStyle = "rgba(255,255,255,1)";
-        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
+        cc.drawingUtil.setDrawColor4B(255,255,255,255);
 
         if (this._radians < 0)
             this._radians = 360;
@@ -39,7 +38,6 @@ var CircleSprite = cc.Sprite.extend({
     },
     myUpdate:function (dt) {
         this._radians -= 6;
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
     }
 });
 
@@ -87,7 +85,7 @@ var Helloworld = cc.Layer.extend({
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
-        var lazyLayer = new cc.LazyLayer();
+        var lazyLayer = cc.Layer.create();
         this.addChild(lazyLayer);
 
         // add "HelloWorld" splash screen"
@@ -108,14 +106,14 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)));
+        this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
         this.setTouchEnabled(true);
-        this.adjustSizeForWindow();
-        lazyLayer.adjustSizeForCanvas();
-        window.addEventListener("resize", function (event) {
+        //this.adjustSizeForWindow();
+        //lazyLayer.adjustSizeForCanvas();
+        /*window.addEventListener("resize", function (event) {
             selfPointer.adjustSizeForWindow();
-        });
+        });*/
         return true;
     },
 
@@ -144,8 +142,12 @@ var Helloworld = cc.Layer.extend({
             parentDiv.style.width = cc.canvas.width + "px";
             parentDiv.style.height = cc.canvas.height + "px";
         }
-        cc.renderContext.translate(0, cc.canvas.height);
-        cc.renderContext.scale(xScale, xScale);
+        if(cc.renderContext === cc.CANVAS){
+            cc.renderContext.translate(0, cc.canvas.height);
+            cc.renderContext.scale(xScale, xScale);
+        } else {
+            cc.Director.getInstance().setOpenGLView();
+        }
         cc.Director.getInstance().setContentScaleFactor(xScale);
     },
     // a selector callback

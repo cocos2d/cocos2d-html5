@@ -66,8 +66,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     _colorPointerBuffer:null,
     _texCoordsBuffer:null,
 
-    _isDirty:false,
-
     /**
      * @return {cc.Texture2D}
      */
@@ -252,7 +250,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
      */
     setPosition:function (position) {
         this._startingPositionInitialized = true;
-        this._positionR = position;
+        this._positionR = cc.p(position.x,position.y);
     },
 
     /**
@@ -272,24 +270,18 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
 
         //position
         ctx.bindBuffer(ctx.ARRAY_BUFFER, this._verticesBuffer);
-        if (this._isDirty)
-            ctx.bufferData(ctx.ARRAY_BUFFER, this._vertices, ctx.DYNAMIC_DRAW);
+        ctx.bufferData(ctx.ARRAY_BUFFER, this._vertices, ctx.DYNAMIC_DRAW);
         ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, ctx.FLOAT, false, 0, 0);
 
         //texcoords
         ctx.bindBuffer(ctx.ARRAY_BUFFER, this._texCoordsBuffer);
-        if (this._isDirty)
-            ctx.bufferData(ctx.ARRAY_BUFFER, this._texCoords, ctx.DYNAMIC_DRAW);
+        ctx.bufferData(ctx.ARRAY_BUFFER, this._texCoords, ctx.DYNAMIC_DRAW);
         ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, ctx.FLOAT, false, 0, 0);
 
         //colors
         ctx.bindBuffer(ctx.ARRAY_BUFFER, this._colorPointerBuffer);
-        if (this._isDirty)
-            ctx.bufferData(ctx.ARRAY_BUFFER, this._colorPointer, ctx.DYNAMIC_DRAW);
+        ctx.bufferData(ctx.ARRAY_BUFFER, this._colorPointer, ctx.DYNAMIC_DRAW);
         ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
-
-        if (this._isDirty)
-            this._isDirty = false;
 
         ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, this._nuPoints * 2);
         cc.INCREMENT_GL_DRAWS(1);
@@ -303,7 +295,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         if (!this._startingPositionInitialized)
             return;
 
-        this._isDirty = true;
         delta *= this._fadeDelta;
 
         var newIdx, newIdx2, i, i2;
@@ -344,7 +335,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
                 } else
                     newIdx2 = newIdx * 8;
 
-                var op = 0 | ((this._pointState[newIdx] * 255.0) % 255);
+                var op = this._pointState[newIdx] * 255.0;
                 this._colorPointer[newIdx2 + 3] = op;
                 this._colorPointer[newIdx2 + 7] = op;
             }
@@ -359,7 +350,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             var a1 = cc.pDistanceSQ(cc.p(this._pointVertexes[(this._nuPoints - 1) * 2], this._pointVertexes[(this._nuPoints - 1) * 2 + 1]),
                 this._positionR) < this._minSeg;
             var a2 = (this._nuPoints == 1) ? false : (cc.pDistanceSQ(
-                cc.p(this._pointVertexes[(this._nuPoints - 2) * 2],this._pointVertexes[(this._nuPoints - 2) * 2 + 1]), this._positionR) < (this._minSeg * 2.0));
+                cc.p(this._pointVertexes[(this._nuPoints - 2) * 2], this._pointVertexes[(this._nuPoints - 2) * 2 + 1]), this._positionR) < (this._minSeg * 2.0));
             if (a1 || a2)
                 appendNewPoint = false;
         }

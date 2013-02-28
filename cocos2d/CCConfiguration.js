@@ -127,7 +127,7 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
         var extArr = gl.getSupportedExtensions();
         for (var i = 0; i < extArr.length; i++)
             this._GlExtensions += extArr[i] + " ";
-        cc.log("cocos2d:GL_EXTENSIONS:  " + this._GlExtensions);
+        cc.log("cocos2d: GL_EXTENSIONS:  " + this._GlExtensions);
 
         this._maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
         this._maxTextureUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);

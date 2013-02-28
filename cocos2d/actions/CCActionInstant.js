@@ -284,9 +284,9 @@ cc.CallFunc = cc.ActionInstant.extend(/** @lends cc.CallFunc# */{
      * @return {Boolean}
      */
     initWithTarget:function (selector, selectorTarget, data) {
-        this._data = data || null;
-        this._callFunc = selector || null;
-        this._selectorTarget = selectorTarget || null;
+        this._data = data;
+        this._callFunc = selector;
+        this._selectorTarget = selectorTarget;
         return true;
     },
 

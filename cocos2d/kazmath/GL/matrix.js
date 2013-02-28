@@ -36,7 +36,7 @@ cc.texture_matrix_stack = new cc.km_mat4_stack();
 
 cc.current_stack = null;
 
-cc.initialized = 0;
+cc.initialized = false;
 
 cc.lazyInitialize = function () {
     if (!cc.initialized) {
@@ -44,14 +44,11 @@ cc.lazyInitialize = function () {
 
         //Initialize all 3 stacks
         cc.km_mat4_stack_initialize(cc.modelview_matrix_stack);
-
         cc.km_mat4_stack_initialize(cc.projection_matrix_stack);
-
         cc.km_mat4_stack_initialize(cc.texture_matrix_stack);
 
         cc.current_stack = cc.modelview_matrix_stack;
-        cc.initialized = 1;
-
+        cc.initialized = true;
         cc.kmMat4Identity(identity);
 
         //Make sure that each stack has the identity matrix
@@ -70,8 +67,7 @@ cc.kmGLFreeAll = function () {
     cc.km_mat4_stack_release(cc.texture_matrix_stack);
 
     //Delete the matrices
-    cc.initialized = 0; //Set to uninitialized
-
+    cc.initialized = false; //Set to uninitialized
     cc.current_stack = null; //Set the current stack to point nowhere
 };
 
@@ -94,7 +90,6 @@ cc.kmGLPopMatrix = function () {
 
 cc.kmGLMatrixMode = function (mode) {
     //cc.lazyInitialize();
-
     switch (mode) {
         case cc.KM_GL_MODELVIEW:
             cc.current_stack = cc.modelview_matrix_stack;
@@ -139,9 +134,6 @@ cc.kmGLTranslatef = function (x, y, z) {
 cc.kmGLRotatef = function (angle, x, y, z) {
     var axis = new cc.kmVec3(x, y, z);
     var rotation = new cc.kmMat4();
-
-    //Create an axis vector
-    //cc.kmVec3Fill(axis, x, y, z);
 
     //Create a rotation matrix using the axis and the angle
     cc.kmMat4RotationAxisAngle(rotation, axis, cc.kmDegreesToRadians(angle));

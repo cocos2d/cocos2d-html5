@@ -139,7 +139,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
      * initializes a cc.Menu with a Array of cc.MenuItem objects
      */
     initWithArray:function (arrayOfItems) {
-        if(this.init()){
+        if (this.init()) {
             this.setTouchEnabled(true);
             this._enabled = true;
 
@@ -148,11 +148,10 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             this.ignoreAnchorPointForPosition(true);
             this.setAnchorPoint(cc.p(0.5, 0.5));
             this.setContentSize(winSize);
-
             this.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
 
-            if(arrayOfItems){
-                for(var i = 0; i< arrayOfItems.length; i++){
+            if (arrayOfItems) {
+                for (var i = 0; i < arrayOfItems.length; i++) {
                     this.addChild(arrayOfItems[i],i);
                 }
             }
@@ -336,7 +335,7 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
             for (var i = 0; i < this._children.length; i++) {
                 var child = this._children[i];
                 // check if too many menu items for the amount of rows/columns
-                cc.Assert(column < columns.size(), "");
+                cc.Assert(column < columns.length, "");
 
                 columnRows = columns[column];
                 // can't have zero rows on a column

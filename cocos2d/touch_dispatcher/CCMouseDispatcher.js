@@ -370,7 +370,7 @@ cc.MouseDispatcher = cc.Class.extend({
     _getMousePressed:function () {
         return this._mousePressed;
     },
-
+    
     _setRightMousePressed:function (pressed) {
         this._rightMousePressed = pressed;
     },
@@ -470,9 +470,9 @@ cc.MouseDispatcher = cc.Class.extend({
                             handler.getDelegate().onRightMouseDown(mouseObj);
                     }
                     else {
-                        if (handler.getDelegate().onMouseDown)
-                            handler.getDelegate().onMouseDown(mouseObj);
-                    }
+	                   if (handler.getDelegate().onMouseDown)
+	                       handler.getDelegate().onMouseDown(mouseObj);
+                     }
                     break;
                 case cc.MOUSE_UP:
                     if (mouseObj.getButton() == cc.MOUSE_RIGHTBUTTON) {
@@ -485,7 +485,7 @@ cc.MouseDispatcher = cc.Class.extend({
                     }
                     break;
                 case cc.MOUSE_MOVED:
-                    if (this._mousePressed) {
+                    if (this._mousePressed) {                        
                         if (handler.getDelegate().onMouseDragged)
                             handler.getDelegate().onMouseDragged(mouseObj);
                     } else if (this._rightMousePressed) {
@@ -523,7 +523,7 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 
     window.addEventListener('mousedown', function (event) {
         if (event.button == cc.MOUSE_RIGHTBUTTON) {
-            cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(true);
+            cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(true);	       
         }
         else {
             cc.Director.getInstance().getMouseDispatcher()._setMousePressed(true);
@@ -532,7 +532,7 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 
     window.addEventListener('mouseup', function (event) {
         if (event.button == cc.MOUSE_RIGHTBUTTON) {
-            cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(false);
+            cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(false);	       
         }
         else {
             cc.Director.getInstance().getMouseDispatcher()._setMousePressed(false);

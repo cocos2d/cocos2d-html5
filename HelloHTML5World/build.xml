@@ -6,11 +6,10 @@
 
     <target name="compile">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="myApp-v2.1.js">
+                debug="false" output="myApp-HelloWorld.js">
             <sources dir="${basedir}/../cocos2d">
                 <file name="platform/CCClass.js"/>
                 <file name="platform/CCCommon.js"/>
-                <file name="platform/platform.js"/>
                 <file name="platform/miniFramework.js"/>
                 <file name="platform/ZipUtils.js"/>
                 <file name="platform/base64.js"/>
@@ -18,12 +17,15 @@
                 <file name="platform/CCMacro.js"/>
                 <file name="platform/CCFileUtils.js"/>
                 <file name="platform/CCTypes.js"/>
+                <file name="platform/zlib.min.js"/>
                 <file name="cocoa/CCGeometry.js"/>
+                <file name="platform/Sys.js"/>
                 <file name="platform/CCConfig.js"/>
                 <file name="cocoa/CCNS.js"/>
                 <file name="cocoa/CCSet.js"/>
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
+                <file name="support/CCUserDefault.js"/>
                 <file name="base_nodes/CCNode.js"/>
                 <file name="base_nodes/CCdomNode.js"/>
                 <file name="base_nodes/CCAtlasNode.js"/>
@@ -91,6 +93,35 @@
             </sources>
             <sources dir="${basedir}/../CocosDenshion">
                 <file name="SimpleAudioEngine.js"/>
+            </sources>
+            <!-- extensions -->
+            <sources dir="${basedir}/../extensions">
+                <file name="CCBReader/CCBReaderUtil.js"/>
+                <file name="CCBReader/CCBValue.js"/>
+                <file name="CCBReader/CCBKeyframe.js"/>
+                <file name="CCBReader/CCBSequence.js"/>
+                <file name="CCBReader/CCNodeLoader.js"/>
+                <file name="CCBReader/CCBReader.js"/>
+                <file name="CCBReader/CCControlLoader.js"/>
+                <file name="CCBReader/CCSpriteLoader.js"/>
+                <file name="CCBReader/CCNodeLoaderLibrary.js"/>
+                <file name="CCBReader/CCBRelativePositioning.js"/>
+                <file name="CCBReader/CCBAnimationManager.js"/>
+                <file name="GUI/CCControlExtension/CCControl.js"/>
+                <file name="GUI/CCControlExtension/CCControlButton.js"/>
+                <file name="GUI/CCControlExtension/CCControlUtils.js"/>
+                <file name="GUI/CCControlExtension/CCInvocation.js"/>
+                <file name="GUI/CCControlExtension/CCScale9Sprite.js"/>
+                <file name="GUI/CCControlExtension/CCControlSlider.js"/>
+                <file name="GUI/CCControlExtension/CCControlSwitch.js"/>
+                <file name="GUI/CCControlExtension/CCControlColourPicker.js"/>
+                <file name="GUI/CCControlExtension/CCControlHuePicker.js"/>
+                <file name="GUI/CCControlExtension/CCControlSaturationBrightnessPicker.js"/>
+                <file name="GUI/CCControlExtension/CCMenuPassive.js"/>
+                <file name="GUI/CCScrollView/CCSorting.js"/>
+                <file name="GUI/CCScrollView/CCScrollView.js"/>
+                <file name="GUI/CCScrollView/CCTableView.js"/>
+                <file name="CCControlEditBox.js"/>
             </sources>
             <sources dir="${basedir}">
                 <file name="src/resource.js"/>

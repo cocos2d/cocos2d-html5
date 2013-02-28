@@ -52,7 +52,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {Number} y
      */
     setPosition:function (x, y) {
-        if (arguments.length==2) {
+        if (arguments.length == 2) {
             this._position.x = x;
             this._position.y = y;
             //this._position = cc.p(newPosOrxValue,yValue);
@@ -118,7 +118,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * replace set anchorpoint of ccNode
      * @param {object} point
      */
-    setAnchorpoint:function (point) {
+    setAnchorPoint:function (point) {
         this._anchorPoint = point;
         this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
             this._contentSize.height * this._anchorPoint.y);
@@ -144,7 +144,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
                 this._contentSize.height * this._anchorPoint.y);
             this.dom.width = size.width;
             this.dom.height = size.height;
-            this.setAnchorpoint(this.getAnchorPoint());
+            this.setAnchorPoint(this.getAnchorPoint());
         }
         if (this.canvas) {
             this.canvas.width = this._contentSize.width;
@@ -251,13 +251,12 @@ cc.DOM.methods = /** @lends cc.DOM# */{
     cleanup:function () {
         // actions
         this.stopAllActions();
-        this.unscheduleAllSelectors();
+        this.unscheduleAllCallbacks();
 
         // timers
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
         if (this.dom) {
             this.dom.remove();
-            //this.dom=null;
         }
     },
     /**
@@ -265,7 +264,6 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     removeFromParentAndCleanup:function () {
         this.dom.remove();
-        //this.dom=null;
     },
     setOpacity:function (o) {
         this._opacity = o;
@@ -313,12 +311,7 @@ cc.DOM.parentDOM = function (x) {
             p.dom.appendTo(cc.container);
         }
     }
-    //x.dom.appendTo(cc.container);
-    /*    var pp;
-     if(pp = p.getParent())
-     {
-     p.parentDiv = p.parentDiv || this.parentDiv;
-     }*/
+    return true;
 };
 
 /**
@@ -349,15 +342,15 @@ cc.DOM.setTransform = function (x) {
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
-        if (x.setAnchorpoint)
-            x.setAnchorpoint(x.getAnchorPoint());
+        if (x.setAnchorPoint)
+            x.setAnchorPoint(x.getAnchorPoint());
         x.dom.transforms();
         x.dom.position.y = -x.getPosition().y;
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
-        if (x.setAnchorpoint)
-            x.setAnchorpoint(x.getAnchorPoint());
+        if (x.setAnchorPoint)
+            x.setAnchorPoint(x.getAnchorPoint());
         x.dom.transforms();
     }
 
@@ -582,7 +575,11 @@ cc.DOM.convert = function () {
             //add hover event to popup inspector
             if (!cc.DOM.tooltip) {
                 var style = cc.$new('style');
-                style.textContent = ".CCDOMEdit:hover{border: rgba(255,0,0,0.5) 2px dashed;left: -2px;} .CCDOMEdit #CCCloseButton{width:80px;height:15px;background: rgba(0,0,0,0.4);border:1px solid #aaaaaa;font-size: 9px;line-height:9px;color:#bbbbbb;} .CCTipWindow .CCTipMove{cursor:move;} .CCTipWindow .CCTipRotate{cursor:w-resize;} .CCTipWindow .CCTipScale{cursor:ne-resize;} .CCTipWindow .CCTipSkew{cursor:se-resize;} .CCTipWindow input{width:40px;background: rgba(0,0,0,0.5);color:white;border:none;border-bottom: 1px solid #fff;} div.CCTipWindow:hover{color:rgb(50,50,255);}";
+                style.textContent = ".CCDOMEdit:hover{border: rgba(255,0,0,0.5) 2px dashed;left: -2px;} .CCDOMEdit "
+                    + " #CCCloseButton{width:80px;height:15px;background: rgba(0,0,0,0.4);border:1px solid #aaaaaa;font-size: 9px;line-height:9px;color:#bbbbbb;} "
+                    + " .CCTipWindow .CCTipMove{cursor:move;} .CCTipWindow .CCTipRotate{cursor:w-resize;} .CCTipWindow .CCTipScale{cursor:ne-resize;} "
+                    + ".CCTipWindow .CCTipSkew{cursor:se-resize;} .CCTipWindow input{width:40px;background: rgba(0,0,0,0.5);color:white;border:none;border-bottom: 1px solid #fff;} "
+                    + "div.CCTipWindow:hover{color:rgb(50,50,255);}";
                 document.body.appendChild(style);
                 cc.container.style.overflow = "visible";
                 var tip = cc.DOM.tooltip = cc.$new('div');
@@ -728,6 +725,11 @@ cc.DOM.convert = function () {
             args[i].dom.ccnode = args[i];
             var that = args[i];
             args[i].dom.addEventListener('mouseover', function () {
+                this.style.zIndex = 999999;
+
+                if(this.showTooltipDiv !== undefined && this.showTooltipDiv === false)
+                    return;
+
                 if (!cc.DOM.tooltip.mouseDown) {
                     var pos = cc.$.findpos(this);
                     cc.DOM.tooltip.style.display = 'block';
@@ -742,6 +744,4 @@ cc.DOM.convert = function () {
             });
         }
     }
-
-
 };

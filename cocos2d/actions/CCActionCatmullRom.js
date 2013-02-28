@@ -140,13 +140,16 @@ cc.reverseControlPointsInline = function (controlPoints) {
             return false;
         },
 
-        /**
-         * @param {cc.Node} target
-         */
-        startWithTarget:function (target) {
-            this._super(target);
-            this._deltaT = 1 / this._points.length;
-        },
+    /**
+     * @param {cc.Node} target
+     */
+    startWithTarget:function (target) {
+        this._super(target);
+        this._deltaT = 1 / this._points.length;
+
+        this._previousPosition = this._target.getPosition();
+        this._accumulatedDiff = cc.p(0, 0);
+    },
 
         /**
          * @param {Number} time
@@ -163,14 +166,22 @@ cc.reverseControlPointsInline = function (controlPoints) {
                 lt = (time - this._deltaT * p) / this._deltaT;
             }
 
-            var newPos = cc.CardinalSplineAt(
-                cc.getControlPointAt(this._points, p - 1),
-                cc.getControlPointAt(this._points, p - 0),
-                cc.getControlPointAt(this._points, p + 1),
-                cc.getControlPointAt(this._points, p + 2),
-                this._tension, lt);
-            this.updatePosition(newPos);
-        },
+        var newPos = cc.CardinalSplineAt(
+            cc.getControlPointAt( this._points, p - 1),
+            cc.getControlPointAt( this._points, p - 0),
+            cc.getControlPointAt( this._points, p + 1),
+            cc.getControlPointAt( this._points, p + 2),
+            this._tension, lt);
+
+        var node = this._target;
+        var diff = cc.pSub(node.getPosition(), this._previousPosition);
+        if (diff.x != 0 || diff.y != 0) {
+            this._accumulatedDiff = cc.pAdd(this._accumulatedDiff, diff);
+            newPos = cc.pAdd(newPos, this._accumulatedDiff);
+        }
+ 
+        this.updatePosition(newPos);
+    },
 
         /**
          * reverse a new cc.CardinalSplineTo
@@ -181,13 +192,14 @@ cc.reverseControlPointsInline = function (controlPoints) {
             return cc.CardinalSplineTo.create(this._duration, reversePoints, this._tension);
         },
 
-        /**
-         * update position of target
-         * @param {cc.Point} newPos
-         */
-        updatePosition:function (newPos) {
-            this._target.setPosition(newPos);
-        },
+    /**
+     * update position of target
+     * @param {cc.Point} newPos
+     */
+    updatePosition:function (newPos) {
+        this._target.setPosition(newPos);
+        this._previousPosition = newPos;
+    },
 
         /**
          * Points getter
@@ -295,7 +307,9 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
      * @param {cc.Point} newPos
      */
     updatePosition:function (newPos) {
-        this._target.setPosition(cc.pAdd(newPos, this._startPosition));
+        var p = cc.pAdd(newPos, this._startPosition);
+        this._target.setPosition(p)
+        this._previousPosition = p;
     }
 });
 

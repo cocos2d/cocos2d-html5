@@ -131,20 +131,94 @@ cc.IMEDelegate = cc.Class.extend(/** @lends cc.IMEDelegate# */{
     }
 });
 
-
 /**
  * Input Method Edit Message Dispatcher.
  * @class
  * @extends cc.Class
  */
 cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
+    _domInputControl:null,
     impl:null,
+    _currentInputString:"",
+    _lastClickPosition:null,
     /**
      * Constructor
      */
     ctor:function () {
         this.impl = new cc.IMEDispatcher.Impl();
+        this._lastClickPosition = cc.p(0, 0);
     },
+
+    init:function () {
+        if (cc.Browser.isMobile)
+            return;
+        this._domInputControl = cc.$("#imeDispatcherInput");
+        if (!this._domInputControl) {
+            this._domInputControl = cc.$new("input");
+            this._domInputControl.setAttribute("type", "text");
+            this._domInputControl.setAttribute("id", "imeDispatcherInput");
+            this._domInputControl.resize(0.0, 0.0);
+            this._domInputControl.translates(0, 0);
+            this._domInputControl.style.opacity = "0";
+            //this._domInputControl.style.filter = "alpha(opacity = 0)";
+            this._domInputControl.style.fontSize = "1px";
+            this._domInputControl.setAttribute('tabindex', 2);
+            this._domInputControl.style.position = "absolute";
+            this._domInputControl.style.top = 0;
+            this._domInputControl.style.left = 0;
+            document.body.appendChild(this._domInputControl);
+        }
+        var selfPointer = this;
+        //add event listener
+        this._domInputControl.addEventListener("input", function () {
+            selfPointer._processDomInputString(selfPointer._domInputControl.value);
+        }, false);
+        this._domInputControl.addEventListener("keydown", function (e) {
+            // ignore tab key
+            if (e.keyCode === cc.KEY.tab) {
+                e.stopPropagation();
+                e.preventDefault();
+            } else if (e.keyCode == cc.KEY.enter) {
+                selfPointer.dispatchInsertText("\n", 1);
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        }, false);
+
+        if (/msie/i.test(navigator.userAgent)) {
+            this._domInputControl.addEventListener("keyup", function (e) {
+                if (e.keyCode == cc.KEY.backspace) {
+                    selfPointer._processDomInputString(selfPointer._domInputControl.value);
+                }
+            }, false);
+        }
+
+        window.addEventListener('mousedown', function (event) {
+            var tx = event.pageX || 0;
+            var ty = event.pageY || 0;
+
+            selfPointer._lastClickPosition = cc.p(tx, ty);
+        }, false);
+    },
+
+    _processDomInputString:function (text) {
+        var i, startPos;
+        var len = this._currentInputString.length < text.length ? this._currentInputString.length : text.length;
+        for (startPos = 0; startPos < len; startPos++) {
+            if (text[startPos] !== this._currentInputString[startPos])
+                break;
+        }
+        var delTimes = this._currentInputString.length - startPos;
+        var insTimes = text.length - startPos;
+        for (i = 0; i < delTimes; i++)
+            this.dispatchDeleteBackward();
+
+        for (i = 0; i < insTimes; i++)
+            this.dispatchInsertText(text[startPos + i], 1);
+
+        this._currentInputString = text;
+    },
+
     /**
      * Dispatch the input text from ime
      * @param {String} text
@@ -202,6 +276,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             }
         }
     },
+
     /**
      * Dispatch keyboard notification
      * @param {cc.IMEKeyboardNotificationInfo} info
@@ -210,12 +285,12 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
         if (this.impl) {
             for (var i = 0; i < this.impl._delegateList.length; i++) {
                 var delegate = this.impl._delegateList[i];
-                if (delegate) {
+                if (delegate)
                     delegate.keyboardDidShow(info);
-                }
             }
         }
     },
+
     /**
      * Dispatch keyboard notification
      * @param {cc.IMEKeyboardNotificationInfo} info
@@ -230,6 +305,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             }
         }
     },
+
     /**
      * Dispatch keyboard notification
      * @param {cc.IMEKeyboardNotificationInfo} info
@@ -253,9 +329,9 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * cc.IMEDispatcher.getInstance().addDelegate(this);
      */
     addDelegate:function (delegate) {
-        if (!delegate || !this.impl) {
+        if (!delegate || !this.impl)
             return;
-        }
+
         if (this.impl._delegateList.indexOf(delegate) > -1) {
             // delegate already in list
             return;
@@ -272,14 +348,12 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * var ret = cc.IMEDispatcher.getInstance().attachDelegateWithIME(this);
      */
     attachDelegateWithIME:function (delegate) {
-        if (!this.impl || !delegate) {
+        if (!this.impl || !delegate)
             return false;
-        }
 
         // if delegate is not in delegate list, return
-        if (this.impl._delegateList.indexOf(delegate) == -1) {
+        if (this.impl._delegateList.indexOf(delegate) == -1)
             return false;
-        }
 
         if (this.impl._delegateWithIme) {
             // if old delegate canDetachWithIME return false
@@ -294,8 +368,7 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
             this.impl._delegateWithIme = null;
             pOldDelegate.didDetachWithIME();
 
-            this.impl._delegateWithIme = delegate;
-            delegate.didAttachWithIME();
+            this._focusDomInput(delegate);
             return true;
         }
 
@@ -303,10 +376,39 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
         if (!delegate.canAttachWithIME())
             return false;
 
-        this.impl._delegateWithIme = delegate;
-        delegate.didAttachWithIME();
+        this._focusDomInput(delegate);
         return true;
     },
+
+    _focusDomInput:function (delegate) {
+        if(cc.Browser.isMobile){
+            this.impl._delegateWithIme = delegate;
+            delegate.didAttachWithIME();
+            //prompt
+            this._currentInputString = delegate.getString ? delegate.getString() : "";
+            var userInput = prompt("please enter your word:", this._currentInputString);
+            if(userInput != null)
+                this._processDomInputString(userInput);
+            this.dispatchInsertText("\n", 1);
+        }else{
+            this.impl._delegateWithIme = delegate;
+            this._currentInputString = delegate.getString ? delegate.getString() : "";
+            delegate.didAttachWithIME();
+            this._domInputControl.focus();
+            this._domInputControl.value = this._currentInputString;
+            this._domInputControlTranslate();
+        }
+    },
+
+    _domInputControlTranslate:function () {
+        if (/msie/i.test(navigator.userAgent)) {
+            this._domInputControl.style.left = this._lastClickPosition.x + "px";
+            this._domInputControl.style.top = this._lastClickPosition.y + "px";
+        } else {
+            this._domInputControl.translates(this._lastClickPosition.x, this._lastClickPosition.y);
+        }
+    },
+
     /**
      * Detach the pDeleate with ime.
      * @param {cc.IMEDelegate} delegate
@@ -316,21 +418,19 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * var ret = cc.IMEDispatcher.getInstance().detachDelegateWithIME(this);
      */
     detachDelegateWithIME:function (delegate) {
-        if (!this.impl || !delegate) {
+        if (!this.impl || !delegate)
             return false;
-        }
 
         // if delegate is not the current delegate attached with ime, return
-        if (this.impl._delegateWithIme != delegate) {
+        if (this.impl._delegateWithIme != delegate)
             return false;
-        }
 
-        if (!delegate.canDetachWithIME()) {
+        if (!delegate.canDetachWithIME())
             return false;
-        }
 
-        this.impl._delegateWithIme = 0;
+        this.impl._delegateWithIme = null;
         delegate.didDetachWithIME();
+        cc.canvas.focus();
         return true;
     },
 
@@ -342,14 +442,12 @@ cc.IMEDispatcher = cc.Class.extend(/**  @lends cc.IMEDispatcher# */{
      * cc.IMEDispatcher.getInstance().removeDelegate(this);
      */
     removeDelegate:function (delegate) {
-        if (!this.impl || !delegate) {
+        if (!this.impl || !delegate)
             return;
-        }
 
         // if delegate is not in delegate list, return
-        if (this.impl._delegateList.indexOf(delegate) == -1) {
+        if (this.impl._delegateList.indexOf(delegate) == -1)
             return;
-        }
 
         if (this.impl._delegateWithIme) {
             if (delegate == this.impl._delegateWithIme) {
@@ -407,9 +505,8 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
      */
     findDelegate:function (delegate) {
         for (var i = 0; i < this._delegateList.length; i++) {
-            if (this._delegateList[i] == delegate) {
+            if (this._delegateList[i] == delegate)
                 return i;
-            }
         }
         return null;
     }
@@ -422,7 +519,7 @@ cc.IMEDispatcher.Impl = cc.Class.extend(/** @lends cc.IMEDispatcher.Impl# */{
 cc.IMEDispatcher.getInstance = function () {
     if (!cc.IMEDispatcher.instance) {
         cc.IMEDispatcher.instance = new cc.IMEDispatcher();
-        cc.KeyboardDispatcher.getInstance();
+        cc.IMEDispatcher.instance.init();
     }
     return cc.IMEDispatcher.instance;
 };

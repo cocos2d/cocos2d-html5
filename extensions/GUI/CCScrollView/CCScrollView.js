@@ -491,7 +491,6 @@ cc.ScrollView = cc.Layer.extend({
 
         var context = ctx || cc.renderContext;
         var i;
-
         if (cc.renderContextType == cc.CANVAS) {
             context.save();
             this.transform(context);
@@ -688,15 +687,16 @@ cc.ScrollView = cc.Layer.extend({
      */
     _beforeDraw:function (context) {
         if (this._clippingToBounds) {
-            var screenPos = this.getParent().getPosition();  //this.convertToWorldSpace(this.getParent().getPosition());
+            var screenPos;
             var scaleValue = this.getScale();
 
             var ctx = context || cc.renderContext;
             if (cc.renderContextType == cc.CANVAS) {
+                screenPos = this.getParent().getPosition();
                 var getWidth = (this._viewSize.width * scaleValue);
                 var getHeight = (this._viewSize.height * scaleValue);
-                var startX = screenPos.x * scaleValue - this._anchorPointInPoints.x;
-                var startY = screenPos.y * scaleValue + this._anchorPointInPoints.y;
+                var startX = screenPos.x * scaleValue;
+                var startY = screenPos.y * scaleValue;// + this._anchorPointInPoints.y;
 
                 ctx.beginPath();
                 ctx.rect(startX, startY, getWidth, -getHeight);
@@ -704,12 +704,12 @@ cc.ScrollView = cc.Layer.extend({
                 ctx.closePath();
             } else {
                 // TODO: This scrollview should respect parents' positions
+                screenPos = this.convertToWorldSpace(this.getParent().getPosition());
                 ctx.enable(ctx.SCISSOR_TEST);
 
                 //clip
                 cc.EGLView.getInstance().setScissorInPoints(screenPos.x * scaleValue , screenPos.y * scaleValue ,
                     this._viewSize.width * scaleValue , this._viewSize.height * scaleValue );
-                //ctx.scissor(screenPos.x, screenPos.y, this._viewSize.width * scaleValue, this._viewSize.height * scaleValue);
             }
         }
     },

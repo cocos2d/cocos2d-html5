@@ -56,8 +56,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
 
     ctor:function () {
-        //this._quads = [];
-        //this._indices = [];
         this._buffersVBO = [];
     },
 

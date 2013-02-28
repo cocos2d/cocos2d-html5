@@ -31,6 +31,8 @@ cc.kmVec3 = function (x, y, z) {
 };
 
 cc.kmVec3Fill = function(pOut, x, y , z){
+    if(!pOut)
+        return new cc.kmVec3(x, y , z);
     pOut.x = x;
     pOut.y = y;
     pOut.z = z;
@@ -51,7 +53,6 @@ cc.kmVec3Normalize = function(pOut,pIn){
     pOut.x = pIn.x * l;
     pOut.y = pIn.y * l;
     pOut.z = pIn.z * l;
-
     return pOut;
 };
 
@@ -69,30 +70,16 @@ cc.kmVec3Dot = function(pV1, pV2){
 } ;
 
 cc.kmVec3Add = function(pOut, pV1, pV2){
-    var v = new cc.kmVec3();
-
-    v.x = pV1.x + pV2.x;
-    v.y = pV1.y + pV2.y;
-    v.z = pV1.z + pV2.z;
-
-    pOut.x = v.x;
-    pOut.y = v.y;
-    pOut.z = v.z;
-
+    pOut.x = pV1.x + pV2.x;
+    pOut.y = pV1.y + pV2.y;
+    pOut.z = pV1.z + pV2.z;
     return pOut;
 };
 
 cc.kmVec3Subtract = function(pOut, pV1, pV2){
-    var v = new cc.kmVec3();
-
-    v.x = pV1.x - pV2.x;
-    v.y = pV1.y - pV2.y;
-    v.z = pV1.z - pV2.z;
-
-    pOut.x = v.x;
-    pOut.y = v.y;
-    pOut.z = v.z;
-
+    pOut.x = pV1.x - pV2.x;
+    pOut.y = pV1.y - pV2.y;
+    pOut.z = pV1.z - pV2.z;
     return pOut;
 };
 
@@ -102,16 +89,9 @@ cc.kmVec3Transform = function(pOut, pV, pM){
      b = (a×M)T
      Out = (bx, by, bz)
      */
-    var v = new cc.kmVec3();
-
-    v.x = pV.x * pM.mat[0] + pV.y * pM.mat[4] + pV.z * pM.mat[8] + pM.mat[12];
-    v.y = pV.x * pM.mat[1] + pV.y * pM.mat[5] + pV.z * pM.mat[9] + pM.mat[13];
-    v.z = pV.x * pM.mat[2] + pV.y * pM.mat[6] + pV.z * pM.mat[10] + pM.mat[14];
-
-    pOut.x = v.x;
-    pOut.y = v.y;
-    pOut.z = v.z;
-
+    pOut.x = pV.x * pM.mat[0] + pV.y * pM.mat[4] + pV.z * pM.mat[8] + pM.mat[12];
+    pOut.y = pV.x * pM.mat[1] + pV.y * pM.mat[5] + pV.z * pM.mat[9] + pM.mat[13];
+    pOut.z = pV.x * pM.mat[2] + pV.y * pM.mat[6] + pV.z * pM.mat[10] + pM.mat[14];
     return pOut;
 };
 
@@ -122,16 +102,9 @@ cc.kmVec3TransformNormal = function(pOut, pV, pM){
      Out = (bx, by, bz)
      */
     //Omits the translation, only scaling + rotating
-    var v = new cc.kmVec3();
-
-    v.x = pV.x * pM.mat[0] + pV.y * pM.mat[4] + pV.z * pM.mat[8];
-    v.y = pV.x * pM.mat[1] + pV.y * pM.mat[5] + pV.z * pM.mat[9];
-    v.z = pV.x * pM.mat[2] + pV.y * pM.mat[6] + pV.z * pM.mat[10];
-
-    pOut.x = v.x;
-    pOut.y = v.y;
-    pOut.z = v.z;
-
+    pOut.x = pV.x * pM.mat[0] + pV.y * pM.mat[4] + pV.z * pM.mat[8];
+    pOut.y = pV.x * pM.mat[1] + pV.y * pM.mat[5] + pV.z * pM.mat[9];
+    pOut.z = pV.x * pM.mat[2] + pV.y * pM.mat[6] + pV.z * pM.mat[10];
     return pOut;
 };
 
@@ -173,46 +146,30 @@ cc.kmVec3AreEqual = function(p1, p2){
 };
 
 cc.kmVec3InverseTransform = function(pOut, pVect,pM){
-    var v1 = new cc.kmVec3(), v2 = new cc.kmVec3();
+    var v1 = new cc.kmVec3(pVect.x - pM.mat[12], pVect.y - pM.mat[13],pVect.z - pM.mat[14]);
 
-    v1.x = pVect.x - pM.mat[12];
-    v1.y = pVect.y - pM.mat[13];
-    v1.z = pVect.z - pM.mat[14];
-
-    v2.x = v1.x * pM.mat[0] + v1.y * pM.mat[1] + v1.z * pM.mat[2];
-    v2.y = v1.x * pM.mat[4] + v1.y * pM.mat[5] + v1.z * pM.mat[6];
-    v2.z = v1.x * pM.mat[8] + v1.y * pM.mat[9] + v1.z * pM.mat[10];
-
-    pOut.x = v2.x;
-    pOut.y = v2.y;
-    pOut.z = v2.z;
+    pOut.x = v1.x * pM.mat[0] + v1.y * pM.mat[1] + v1.z * pM.mat[2];
+    pOut.y = v1.x * pM.mat[4] + v1.y * pM.mat[5] + v1.z * pM.mat[6];
+    pOut.z = v1.x * pM.mat[8] + v1.y * pM.mat[9] + v1.z * pM.mat[10];
 
     return pOut;
 };
 
 cc.kmVec3InverseTransformNormal = function(pOut, pVect, pM){
-    var v = new cc.kmVec3();
-
-    v.x = pVect.x * pM.mat[0] + pVect.y * pM.mat[1] + pVect.z * pM.mat[2];
-    v.y = pVect.x * pM.mat[4] + pVect.y * pM.mat[5] + pVect.z * pM.mat[6];
-    v.z = pVect.x * pM.mat[8] + pVect.y * pM.mat[9] + pVect.z * pM.mat[10];
-
-    pOut.x = v.x;
-    pOut.y = v.y;
-    pOut.z = v.z;
+    pOut.x = pVect.x * pM.mat[0] + pVect.y * pM.mat[1] + pVect.z * pM.mat[2];
+    pOut.y = pVect.x * pM.mat[4] + pVect.y * pM.mat[5] + pVect.z * pM.mat[6];
+    pOut.z = pVect.x * pM.mat[8] + pVect.y * pM.mat[9] + pVect.z * pM.mat[10];
 
     return pOut;
 };
 
 cc.kmVec3Assign = function(pOut,pIn){
-    if (pOut == pIn) {
+    if (pOut == pIn)
         return pOut;
-    }
 
     pOut.x = pIn.x;
     pOut.y = pIn.y;
     pOut.z = pIn.z;
-
     return pOut;
 };
 

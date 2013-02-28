@@ -56,9 +56,8 @@ cc.kmMat3Adjugate = function (pOut, pIn) {
 };
 
 cc.kmMat3Identity = function (pOut) {
-    for (var i = 0; i < 9; i++) {
-        pOut.mat[i] = 0;
-    }
+    pOut.mat[1] = pOut.mat[2] = pOut.mat[3] =
+        pOut.mat[5] = pOut.mat[6] = pOut.mat[7] = 0;
     pOut.mat[0] = pOut.mat[4] = pOut.mat[8] = 1.0;
     return pOut;
 };
@@ -67,9 +66,8 @@ cc.kmMat3Inverse = function (pOut, pDeterminate, pM) {
     var detInv;
     var adjugate = new cc.kmMat3();
 
-    if (pDeterminate == 0.0) {
+    if (pDeterminate === 0.0)
         return null;
-    }
 
     detInv = 1.0 / pDeterminate;
 
@@ -86,7 +84,7 @@ cc.kmMat3._identity =
 
 cc.kmMat3IsIdentity = function (pIn) {
     for (var i = 0; i < 9; i++) {
-        if (cc.kmMat3._identity[i] != pIn.mat[i])
+        if (cc.kmMat3._identity[i] !== pIn.mat[i])
             return false;
     }
     return true;
@@ -95,9 +93,8 @@ cc.kmMat3IsIdentity = function (pIn) {
 cc.kmMat3Transpose = function (pOut, pIn) {
     var z, x;
     for (z = 0; z < 3; ++z) {
-        for (x = 0; x < 3; ++x) {
+        for (x = 0; x < 3; ++x)
             pOut.mat[(z * 3) + x] = pIn.mat[(x * 3) + z];
-        }
     }
 
     return pOut;
@@ -142,7 +139,6 @@ cc.kmMat3ScalarMultiply = function (pOut, pM, pFactor) {
     for (var i = 0; i < 9; i++) {
         pOut.mat[i] = pM.mat[i] * pFactor;
     }
-
     return pOut;
 };
 
@@ -168,26 +164,23 @@ cc.kmMat3RotationAxisAngle = function (pOut, axis, radians) {
 cc.kmMat3Assign = function (pOut, pIn) {
     cc.Assert(pOut != pIn, "Is same object"); //You have tried to self-assign!!
 
-    for (var i = 0; i < 9; i++) {
+    for (var i = 0; i < 9; i++)
         pOut.mat[i] = pIn.mat[i];
-    }
-
     return pOut;
 };
 
 cc.kmMat3AreEqual = function (pMat1, pMat2) {
-    if (pMat1 == pMat2) {
-        return cc.KM_TRUE;
-    }
+    if (pMat1 == pMat2)
+        return true;
 
     for (var i = 0; i < 9; ++i) {
         if (!(pMat1.mat[i] + cc.kmEpsilon > pMat2.mat[i] &&
             pMat1.mat[i] - cc.kmEpsilon < pMat2.mat[i])) {
-            return cc.KM_FALSE;
+            return false;
         }
     }
 
-    return cc.KM_TRUE;
+    return true;
 };
 
 cc.kmMat3RotationX = function (pOut, radians) {
@@ -273,7 +266,6 @@ cc.kmMat3Rotation = function (pOut, radians) {
     pOut.mat[6] = 0.0;
     pOut.mat[7] = 0.0;
     pOut.mat[8] = 1.0;
-
     return pOut;
 };
 
@@ -297,9 +289,8 @@ cc.kmMat3Translation = function (pOut, x, y) {
 };
 
 cc.kmMat3RotationQuaternion = function (pOut, pIn) {
-    if (!pIn || !pOut) {
+    if (!pIn || !pOut)
         return null;
-    }
 
     // First row
     pOut.mat[0] = 1.0 - 2.0 * (pIn.y * pIn.y + pIn.z * pIn.z);
