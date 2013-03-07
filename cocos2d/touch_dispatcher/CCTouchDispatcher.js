@@ -923,7 +923,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
  * cc.HashSet
  *
  * A generic implementation of a Set with a optional maximum size.
- * To compare 2 objects is a little bit difficult in js, so I used an separate Hash, for faster search.
+ * It uses an separate hash, for a faster search.
  * All hashes are unique, objects must not.
  *
  * @class
