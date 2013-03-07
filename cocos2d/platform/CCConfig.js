@@ -105,23 +105,6 @@ cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
 
 /**
  * <p>
- *   If enabled, cc.Node will transform the nodes using a cached Affine matrix.<br/>
- *   If disabled, the node will be transformed using glTranslate,glRotate,glScale.<br/>
- *   Using the affine matrix only requires 2 GL calls.<br/>
- *   Using the translate/rotate/scale requires 5 GL calls.<br/>
- *   But computing the Affine matrix is relative expensive.<br/>
- *   But according to performance tests, Affine matrix performs better.<br/>
- *   This parameter doesn't affect cc.SpriteBatchNode nodes.<br/>
- *   <br/>
- *   To enable set it to a value different than 0. Enabled by default.
- * </p>
- * @constant
- * @type Number
- */
-cc.NODE_TRANSFORM_USING_AFFINE_MATRIX = 1;
-
-/**
- * <p>
  *     If most of your imamges have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).<br/>
  *     Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)<br/>
  *     <br/>

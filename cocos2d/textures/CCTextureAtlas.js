@@ -24,7 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
 /**
  * <p>A class that implements a Texture Atlas. <br />
  * Supported features: <br />
@@ -53,7 +52,6 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
     _colorsArrayBuffer:null,
     _texCoordsArray:null,
     _texCoordsArrayBuffer:null,
-
 
     ctor:function () {
         this._buffersVBO = [];
@@ -477,9 +475,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         this._setupIndices();
         this._mapBuffers();
-
         this._dirty = true;
-
         return true;
     },
 

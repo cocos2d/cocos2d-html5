@@ -125,29 +125,6 @@ if (!window.console) {
 cc.isAddedHiddenEvent = false;
 
 /**
- * create a webgl context
- * @param {HTMLCanvasElement} canvas
- * @param {Object} opt_attribs
- * @return {WebGLRenderingContext}
- */
-cc.create3DContext = function (canvas, opt_attribs) {
-    var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
-    var context = null;
-    for (var ii = 0; ii < names.length; ++ii) {
-        try {
-            context = canvas.getContext(names[ii], opt_attribs);
-        } catch (e) {
-        }
-        if (context) {
-            break;
-        }
-    }
-    if(context === null)
-        throw "create 3D context fail!";
-    return context;
-};
-
-/**
  * <p>
  *   setup game main canvas,renderContext,gameDiv and drawingUtil with argument  <br/>
  *   <br/>
@@ -206,10 +183,11 @@ cc.setup = function (el, width, height) {
     cc.container.style.overflow = 'hidden';
     cc.container.top = '100%';
 
-    if (cc.Browser.supportWebGL) {
+    if (cc.Browser.supportWebGL)
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true });
+    if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
-        cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.webglContext);
+        cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
     } else {
         cc.renderContext = cc.canvas.getContext("2d");
         cc.renderContextType = cc.CANVAS;
@@ -272,6 +250,32 @@ cc._addUserSelectStatus = function(){
 
     fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
         +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
+};
+
+cc.bindingRendererClass = function(renderType){
+     if(renderType === cc.WEBGL){
+         cc.Node = cc.NodeWebGL;
+         cc.Sprite = cc.SpriteWebGL;
+         cc.SpriteBatchNode = cc.SpriteBatchNodeWebGL;
+         cc.TextureCache = cc.TextureCacheWebGL;
+         cc.ProgressTimer = cc.ProgressTimerWebGL;
+         cc.AtlasNode = cc.AtlasNodeWebGL;
+         cc.LabelTTF = cc.LabelTTFWebGL;
+         cc.LayerColor = cc.LayerColorWebGL;
+         cc.DrawNode = cc.DrawNodeWebGL;
+         cc.LabelAtlas = cc.LabelAtlasWebGL;
+     } else {
+         cc.Node = cc.NodeCanvas;
+         cc.Sprite = cc.SpriteCanvas;
+         cc.SpriteBatchNode = cc.SpriteBatchNodeCanvas;
+         cc.TextureCache = cc.TextureCacheCanvas;
+         cc.ProgressTimer = cc.ProgressTimerCanvas;
+         cc.AtlasNode = cc.AtlasNodeCanvas;
+         cc.LabelTTF = cc.LabelTTFCanvas;
+         cc.LayerColor = cc.LayerColorCanvas;
+         cc.DrawNode = cc.DrawNodeCanvas;
+         cc.LabelAtlas = cc.LabelAtlasCanvas;
+     }
 };
 
 cc._isContextMenuEnable = false;

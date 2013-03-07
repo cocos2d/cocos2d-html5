@@ -92,7 +92,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     },
 
     /**
-     * Initialize sound typef
+     * Initialize sound type
      * @return {Boolean}
      */
     init:function () {

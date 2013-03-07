@@ -59,7 +59,7 @@ cc.TransitionProgress = cc.TransitionScene.extend(/** @lends cc.TransitionProgre
         texture.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
         texture.setAnchorPoint(cc.p(0.5, 0.5));
 
-        if (cc.renderContextType == cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS) {
             // render outScene to its texturebuffer
             texture.clear();
             this._sceneToBeModified.visit(texture.context);

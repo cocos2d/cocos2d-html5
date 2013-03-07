@@ -659,7 +659,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         sprite.setOpacity(this._opacity);
         if (cc.renderContextType === cc.WEBGL) {
             sprite.setRotation(0.0);
-            //sprite.setAnchorPoint(cc.p(0,0));
         }
 
         sprite.setFlipX(false);
