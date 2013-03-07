@@ -598,7 +598,7 @@ cc.TouchDispatcher.activeTouch = new cc.Touch();
 cc.TouchDispatcher.isRegisterEvent = false;
 
 /**
- * @type {cc.HashSet}
+ * @type {cc.Dictionary}
  */
 cc.TouchDispatcher._preTouchCache = null;
 
@@ -740,7 +740,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         });
     } else {
         if (!(cc.TouchDispatcher._preTouchCache)) {
-            cc.TouchDispatcher._preTouchCache = cc.HashSet.create();
+            cc.TouchDispatcher._preTouchCache = cc.Dictionary.create(50);
         }
 
         //register canvas touch event
@@ -767,10 +767,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = cc.TouchDispatcher._preTouchCache.getObjectForHash(touch_event.identifier);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
                         if (!touch) {
                             touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
-                            cc.TouchDispatcher._preTouchCache.addObjectForHash(touch, touch.getId());
+                            cc.TouchDispatcher._preTouchCache.setObjectForKey(touch, touch.getId());
                         }
                         touch.setTouchInfo(touch.getId(), mouseX, mouseY);
                     } else {
@@ -810,10 +810,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = cc.TouchDispatcher._preTouchCache.getObjectForHash(touch_event.identifier);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
                         if (!touch) {
                             touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
-                            cc.TouchDispatcher._preTouchCache.addObjectForHash(touch, touch.getId());
+                            cc.TouchDispatcher._preTouchCache.setObjectForKey(touch, touch.getId());
                         }
                         touch.setTouchInfo(touch.getId(), mouseX, mouseY);
                     } else {
@@ -853,12 +853,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = cc.TouchDispatcher._preTouchCache.getObjectForHash(touch_event.identifier);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
                         if (!touch) {
                             touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
                         }
                         touch.setTouchInfo(touch.getId(), mouseX, mouseY);
-                        cc.TouchDispatcher._preTouchCache.deleteObjectForHash(touch.getId());
+                        cc.TouchDispatcher._preTouchCache.removeObjectForKey(touch.getId());
                     } else {
                         touch = cc.TouchDispatcher.activeTouch;
                         touch.setTouchInfo(0, mouseX, mouseY);
@@ -896,12 +896,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = cc.TouchDispatcher._preTouchCache.getObjectForHash(touch_event.identifier);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
                         if (!touch) {
                             touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
                         }
                         touch.setTouchInfo(touch.getId(), mouseX, mouseY);
-                        cc.TouchDispatcher._preTouchCache.deleteObjectForHash(touch.getId());
+                        cc.TouchDispatcher._preTouchCache.removeObjectForKey(touch.getId());
                     } else {
                         touch = cc.TouchDispatcher.activeTouch;
                         touch.setTouchInfo(0, mouseX, mouseY);
@@ -920,20 +920,38 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 };
 
 /**
- * cc.HashSet
+ * cc.Dictionary
  *
- * A generic implementation of a Set with a optional maximum size.
- * It uses an separate hash, for a faster search.
- * All hashes are unique, objects must not.
+ * A generic implementation of a Dictionary/Map, with a optional maximum size.
+ * It uses an separate key, for a faster search.
+ * All keys are unique, objects must not.
  *
  * @class
  * @extends cc.Class
  */
-cc.HashSet = cc.Class.extend({
-    _objList:{},
-    _hashList:null,
-    _maxLength:0,
-    _writePointer:0,
+cc.Dictionary = cc.Class.extend({
+    _valueList: {},
+    _keyList: null,
+    _maxLength: 0,
+    _writePointer: 0,
+
+    /**
+     * Constructor
+     * @param {cc.Dictionary} dictionaryObject
+     */
+    ctor:function (dictionaryObject) {
+        if (dictionaryObject) {
+            if (dictionaryObject._maxLength > 0) {
+                this._keyList = [].concat(dictionaryObject._keyList);
+                this._maxLength = dictionaryObject._maxLength;
+                this._writePointer = dictionaryObject._writePointer;
+            }
+
+            for (var key in dictionaryObject._valueList) {
+                this._valueList[key] = dictionaryObject._valueList[key];
+            }
+        }
+    },
 
     /**
      * @param {Number} maxLength
@@ -941,103 +959,124 @@ cc.HashSet = cc.Class.extend({
     initWithMaxLength:function (maxLength) {
         cc.Assert(maxLength >= 0, "");
         if (maxLength && maxLength >= 0) {
-            this._hashList = [];
+            this._keyList = [];
             this._maxLength = maxLength;
         }
         return true;
     },
 
     /**
-     * @return {Number} hashlist length
+     * Return a copy of the cc.Dictionary, it will copy all the elments.
+     * @return {cc.Dictionary}
      */
-    getLength:function () {
+    copy:function () {
+        return new cc.Dictionary(this);
+    },
+
+    /**
+     * It is the same as copy().
+     * @return {cc.Dictionary}
+     */
+    mutableCopy:function () {
+        return this.copy();
+    },
+
+    /**
+     * Return the number of keys the cc.Dictionary contains.
+     * @return {Number} keylist length
+     */
+    count:function () {
         var length = 0;
-        if (!this._hashList) {
-            var hash;
-            for (hash in this._objList) {
-                if (this._objList.hasOwnProperty(hash)) {
+        if (!this._keyList) {
+            var key;
+            for (key in this._valueList) {
+                if (this._valueList.hasOwnProperty(key)) {
                     length++;
                 }
             }
         } else {
-            length = this._hashList.length;
+            length = this._keyList.length;
         }
         return length;
     },
 
     /**
-     * @return {Array} hashlist
+     * Return a list of all keys the cc.Dictionary contains.
+     * @return {Array} keylist
      */
-    getHashList:function () {
-        var hashList = this._hashList;
-        if (!hashList) {
-            hashList = [];
+    getKeyList:function () {
+        var keylist = this._keyList;
+        if (!keylist) {
+            keylist = [];
 
-            var i = 0, hash;
-            for (hash in this._objList) {
-                if (this._objList.hasOwnProperty(hash)) {
-                    hashList[i] = hash;
+            var i = 0, key;
+            for (key in this._valueList) {
+                if (this._valueList.hasOwnProperty(key)) {
+                    keyist[i] = key;
                     i++;
                 }
             }
         }
-        return hashList;
+        return keylist;
     },
 
     /**
-     * @param {*} hash
+     * Return the object for a key.
+     * @param {*} key
      */
-    getObjectForHash:function (hash) {
-        return this._objList[hash];
+    getObjectForKey:function (key) {
+        return this._valueList[key];
     },
 
     /**
-     * @param {*} object for hash
-     * @param {*} hash
+     * Add a object for the given key.
+     * @param {*} object for key
+     * @param {*} key
      */
-    addObjectForHash:function (obj, hash) {
+    setObjectForKey:function (obj, key) {
         if (this._maxLength > 0) {
-            if (!this._objList[hash]) {
-                if (this._hashList.length <= this._maxLength) {
-                    this._hashList.push(hash);
+            if (!this._valueList[key]) {
+                if (this._keyList.length <= this._maxLength) {
+                    this._keyList.push(key);
                 } else {
                     //use it as a ringBuffer (override the oldest one)
-                    delete this._objList[this._hashList[this._writePointer]];
-                    this._hashList[this._writePointer] = hash;
+                    delete this._valueList[this._keyList[this._writePointer]];
+                    this._keyList[this._writePointer] = key;
                     this._writePointer = (this._writePointer + 1) % this._maxLength;
                 }
                 //debug (to test with maxLength){
-                //cc.log("DataCache.length: " + this._hashList.length);
-                //cc.log("objList: ");
-                //cc.log(this._objList);
+                //cc.log("DataCache.length: " + this._keyList.length);
+                //cc.log("valueList: ");
+                //cc.log(this._valueList);
                 //}
             }
         }
-        this._objList[hash] = obj;
+        this._valueList[key] = obj;
         //debug (to test without maxLength){
         //cc.log("DataCache.length: " + this.getLength());
-        //cc.log("hashList: ");
-        //cc.log(this.getHashList());
+        //cc.log("keyList: ");
+        //cc.log(this.getKeyList());
         //}
     },
 
     /**
-     * @param {*} hash
+     * Remove the object and the key for the given key, nothing todo if no element equals key.
+     * @param {*} key
      */
-    deleteObjectForHash:function (hash) {
+    removeObjectForKey:function (key) {
         if (this._maxLength > 0) {
-            cc.ArrayRemoveObject(this._hashList, hash);
+            cc.ArrayRemoveObject(this._keyList, key);
         }
-        delete this._objList[hash];
+        delete this._valueList[key];
     }
 
 
 });
 
-cc.HashSet.create = function (maxLength) {
-    var hashSet = new cc.HashSet();
+cc.Dictionary.create = function (maxLength) {
+    var dictionary = new cc.Dictionary();
     if (maxLength) {
-        hashSet.initWithMaxLength(maxLength);
+        dictionary.initWithMaxLength(maxLength);
     }
-    return hashSet;
+    return dictionary;
 };
