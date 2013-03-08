@@ -451,11 +451,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         //LabelBMFont - Debug draw
         if (cc.LABELBMFONT_DEBUG_DRAW) {
-            var context = ctx || cc.renderContext;
-            var s = this.getContentSize();
+            var size = this.getContentSize();
             var pos = cc.p(0 | ( -this._anchorPointInPoints.x), 0 | ( -this._anchorPointInPoints.y));
-            var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + s.width, pos.y), cc.p(pos.x + s.width, pos.y + s.height), cc.p(pos.x, pos.y + s.height)];
-            context.strokeStyle = "rgba(0,255,0,1)";
+            var vertices = [cc.p(pos.x, pos.y), cc.p(pos.x + size.width, pos.y), cc.p(pos.x + size.width, pos.y + size.height), cc.p(pos.x, pos.y + size.height)];
+            cc.drawingUtil.setDrawColor4B(0,255,0,255);
             cc.drawingUtil.drawPoly(vertices, 4, true);
         }
     },
@@ -491,6 +490,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         return this._color;
     },
 
+    //TODO
     /**
      * tint this label
      * @param {cc.Color3B} color3
@@ -516,9 +516,6 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                     var tx = this.getTexture();
                     var textureRect = cc.rect(0, 0, tx.width, tx.height);
                     var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
-                    //TODO need test for modify
-                    //var img = new Image();
-                    //img.src = colorTexture.toDataURL();
                     this.setTexture(colorTexture);
                     this.updateString(false);
                 }
@@ -555,6 +552,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         return this.initWithString(null, null, null, null, null);
     },
 
+    //TODO
     /**
      * init a bitmap font altas with an initial string and the FNT file
      * @param {String} str
@@ -604,6 +602,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         return false;
     },
 
+    //TODO
     /**
      * updates the font chars based on the string to render
      */
@@ -997,6 +996,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
         this._super(scaleY);
         this.updateLabel();
     },
+
+    //TODO
     /**
      * set fnt file path
      * @param {String} fntFile

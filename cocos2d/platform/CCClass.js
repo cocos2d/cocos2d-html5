@@ -215,3 +215,13 @@ cc.base = function(me, opt_methodName, var_args) {
                     'to a method of a different name');
     }
 };
+
+cc.concatObjectProperties = function(dstObject, srcObject){
+    if(!dstObject)
+        dstObject = {};
+
+    for(var selKey in srcObject){
+        dstObject[selKey] = srcObject[selKey];
+    }
+    return dstObject;
+};

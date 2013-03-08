@@ -359,7 +359,19 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
                 fontStr += (i == (srcArr.length - 1)) ? ";" : ",";
             }
             fontStyle.textContent += fontStr + "};";
+
+            //preload
+            //<div style="font-family: PressStart;">.</div>
+            var preloadDiv = document.createElement("div");
+            preloadDiv.style.fontFamily = fontRes.fontName;
+            preloadDiv.innerHTML = ".";
+            preloadDiv.style.position = "absolute";
+            preloadDiv.style.left = -100;
+            preloadDiv.style.top = -100;
+            document.body.appendChild(preloadDiv);
         }
+
+
         cc.Loader.getInstance().onResLoaded();
     },
 

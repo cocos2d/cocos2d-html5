@@ -25,22 +25,21 @@
  ****************************************************************************/
 
 var CircleSprite = cc.Sprite.extend({
-    _radians:0,
+    _degree:0,
     ctor:function () {
         this._super();
     },
     draw:function () {
         cc.drawingUtil.setDrawColor4B(255,255,255,255);
 
-        if (this._radians < 0)
-            this._radians = 360;
-        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
+        if (this._degree < 0)
+            this._degree = 360;
+        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._degree), 60, true);
     },
     myUpdate:function (dt) {
-        this._radians -= 6;
+        this._degree -= 6;
     }
 });
-
 
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,
