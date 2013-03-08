@@ -746,7 +746,44 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
             cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
         });
-    } else {
+    } 
+    else if(window.navigator.msPointerEnabled){ 
+        var _pointerEventsMap = {
+            "MSPointerDown"     : "touchesBegan",
+            "MSPointerMove"     : "touchesMoved",
+            "MSPointerUp"       : "touchesEnded",
+            "MSPointerCancel"   : "touchesCancelled" 
+        };
+
+        for(var i in _pointerEventsMap){
+            (function(_pointerEvent, _touchEvent){
+                element.addEventListener(_pointerEvent, function (event){
+                    var pos = cc.getHTMLElementPosition(element);
+
+                    pos.left -= document.body.scrollLeft;
+                    pos.top -= document.body.scrollTop;
+                    
+                    var tx, ty, mouseX, mouseY, touch, preLocation;
+                    tx = event.clientX;
+                    ty = event.clientY;
+
+                    mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
+                    mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();         
+                    
+                    touch = new cc.Touch(mouseX, mouseY);
+                    touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+                    cc.TouchDispatcher.preTouchPoint.x = mouseX;
+                    cc.TouchDispatcher.preTouchPoint.y = mouseY;
+
+                    cc.Director.getInstance().getTouchDispatcher()[_touchEvent]([touch], null);
+                    event.stopPropagation();
+                    event.preventDefault();
+                }, false);
+            })(i, _pointerEventsMap[i]);
+        }
+    }
+    else {
+
         //register canvas touch event
         element.addEventListener("touchstart", function (event) {
             if (!event.changedTouches) return;
