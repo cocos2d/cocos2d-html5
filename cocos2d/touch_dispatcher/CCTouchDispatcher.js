@@ -638,12 +638,12 @@ cc.ProcessMouseupEvent = function (element, event, rectTest) {
     var pos = cc.getHTMLElementPosition(element);
 
     var tx, ty;
-    if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+    if ((event.pageX) != undefined) { //not avalable in <= IE8
         tx = event.pageX;
         ty = event.pageY;
     } else {
-        pos.left -= document.body.scrollLeft;
-        pos.top -= document.body.scrollTop;
+        pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+        pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
         tx = event.clientX;
         ty = event.clientY;
     }
@@ -688,12 +688,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if ((event.pageX) != undefined) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
-                pos.left -= document.body.scrollLeft;
-                pos.top -= document.body.scrollTop;
+                pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+                pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
                 tx = event.clientX;
                 ty = event.clientY;
             }
@@ -717,12 +717,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if ((event.pageX) != undefined) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
-                pos.left -= document.body.scrollLeft;
-                pos.top -= document.body.scrollTop;
+                pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+                pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
                 tx = event.clientX;
                 ty = event.clientY;
             }
@@ -750,8 +750,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
             var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
@@ -792,8 +792,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
             var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
@@ -835,8 +835,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
             var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
@@ -878,8 +878,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
             var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
