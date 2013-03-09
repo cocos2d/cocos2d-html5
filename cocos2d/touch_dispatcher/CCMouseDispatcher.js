@@ -546,12 +546,12 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
         var pos = cc.getHTMLElementPosition(element);
 
         var tx, ty;
-        if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+        if ((event.pageX) != undefined) { //not avalable in <= IE8
             tx = event.pageX;
             ty = event.pageY;
         } else {
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
             tx = event.clientX;
             ty = event.clientY;
         }
