@@ -208,7 +208,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
 
     /**
      * isAccelerometerEnabled setter
-     * @param enabled
+     * @param {Boolean} enabled
      */
     setAccelerometerEnabled:function (enabled) {
         if (enabled != this._isAccelerometerEnabled) {
@@ -223,6 +223,23 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
                 }
             }
         }
+    },
+
+    /**
+     * accelerometerInterval setter
+     * @param {Number} interval
+     */
+    setAccelerometerInterval:function (interval) {
+        if (this._isAccelerometerEnabled) {
+            if (this._running) {
+                var director = cc.Director.getInstance();
+                director.getAccelerometer().setAccelerometerInterval(interval);
+            }
+        }
+    },
+
+    onAccelerometer:function (accelerationValue) {
+        //Layer#onAccelerometer override me
     },
 
     /**
@@ -267,12 +284,10 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         // then iterate over all the children
         this._super();
 
-        //TODO not supported
         // add this layer to concern the Accelerometer Sensor
-/*        if (this._isAccelerometerEnabled){
-           director.getAccelerometer().setDelegate(this);
-        }*/
-
+        if (this._isAccelerometerEnabled) {
+            director.getAccelerometer().setDelegate(this);
+        }
 
         // add this layer to concern the kaypad msg
         if (this._isKeyboardEnabled)
@@ -292,10 +307,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
         }
 
         // remove this layer from the delegates who concern Accelerometer Sensor
-        //TODO not supported
-/*        if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled) {
             director.getAccelerometer().setDelegate(null);
-        }*/
+        }
 
         // remove this layer from the delegates who concern the kaypad msg
         if (this._isKeyboardEnabled) {
@@ -312,10 +326,9 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * this is called when ever a layer is a child of a scene that just finished a transition
      */
     onEnterTransitionDidFinish:function () {
-        //TODO not supported
-        /*if (this._isAccelerometerEnabled) {
+        if (this._isAccelerometerEnabled) {
             cc.Director.getInstance().getAccelerometer().setDelegate(this);
-        }*/
+        }
         this._super();
     },
 
@@ -385,9 +398,6 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      * @param event
      */
     onTouchesCancelled:function (touch, event) {
-    },
-
-    didAccelerate:function (pAccelerationValue) {
     },
 
     // ---------------------CCMouseEventDelegate interface------------------------------
@@ -763,10 +773,10 @@ cc.LayerColor = cc.Layer.extend(/** @lends cc.LayerColor# */{
 
         var tWidth = this.getContentSize().width;
         var tHeight = this.getContentSize().height;
-        var apip = this.getAnchorPointInPoints();
+        //var apip = this.getAnchorPointInPoints();
 
         context.fillStyle = "rgba(" + (0 | this._color.r) + "," + (0 | this._color.g) + "," + (0 | this._color.b) + "," + this.getOpacity() / 255 + ")";
-        context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+        context.fillRect(0, 0, tWidth, -tHeight);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -1017,8 +1027,8 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             var tWidth = this.getContentSize().width / 2;
             var tHeight = this.getContentSize().height / 2;
             var apip = this.getAnchorPointInPoints();
-            var offWidth = tWidth - apip.x;
-            var offHeight = tHeight - apip.y;
+            var offWidth = tWidth;// - apip.x;
+            var offHeight = tHeight;// - apip.y;
 
             this._gradientStartPoint = cc.p(tWidth * -this._alongVector.x + offWidth, tHeight * this._alongVector.y - offHeight);
             this._gradientEndPoint = cc.p(tWidth * this._alongVector.x + offWidth, tHeight * -this._alongVector.y - offHeight);
@@ -1077,7 +1087,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             context.save();
             var tWidth = this.getContentSize().width;
             var tHeight = this.getContentSize().height;
-            var apip = this.getAnchorPointInPoints();
+            //var apip = this.getAnchorPointInPoints();
             var tGradient = context.createLinearGradient(this._gradientStartPoint.x, this._gradientStartPoint.y,
                 this._gradientEndPoint.x, this._gradientEndPoint.y);
             tGradient.addColorStop(0, "rgba(" + Math.round(this._color.r) + "," + Math.round(this._color.g) + ","
@@ -1085,7 +1095,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             tGradient.addColorStop(1, "rgba(" + Math.round(this._endColor.r) + "," + Math.round(this._endColor.g) + ","
                 + Math.round(this._endColor.b) + "," + (this._endOpacity / 255).toFixed(4) + ")");
             context.fillStyle = tGradient;
-            context.fillRect(-apip.x, apip.y, tWidth, -tHeight);
+            context.fillRect(0, 0, tWidth, -tHeight);
 
             if (this._rotation != 0)
                 context.rotate(this._rotationRadians);

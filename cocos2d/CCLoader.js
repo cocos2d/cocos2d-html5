@@ -37,7 +37,7 @@ cc.LOADING_INTERVAL = 1 / 20;
  */
 cc.RESOURCE_TYPE = {
     IMAGE:["png", "jpg", "bmp"],
-    SOUND:["mp3", "ogg", "wav"],
+    SOUND:["mp3", "ogg", "wav", "mp4", "m4a"],
     XML:["plist", "xml", "fnt", "tmx", "tsx"],
     BINARY:["ccbi"],
     FONT:"FONT",

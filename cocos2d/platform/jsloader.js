@@ -35,6 +35,7 @@
         'platform/CCMacro.js',
         'platform/CCFileUtils.js',
         'platform/CCTypes.js',
+        'platform/CCAccelerometer.js',
         'platform/zlib.min.js',
         'cocoa/CCGeometry.js',
         'platform/Sys.js',

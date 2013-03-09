@@ -27,8 +27,16 @@ var sys = sys || {};
 
 /** LocalStorage is a local storage component.
 */
-sys.localStorage = window.localStorage;
+try{
+	sys.localStorage = window.localStorage;
 
+}catch(e){
+
+	if( e.name === "SECURITY_ERR" ) {
+		cc.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+	}
+	sys.localStorage = function(){};
+}
 
 /** Capabilities
 */
@@ -43,11 +51,15 @@ Object.defineProperties(sys,
 
 			if( 'ontouchstart' in document.documentElement )
 				capabilities["touches"] = true;
+
 			else if( 'onmouseup' in document.documentElement )
 				capabilities["mouse"] = true;
 
 			if( 'onkeyup' in document.documentElement )
 				capabilities["keyboard"] = true;
+
+            if(window.DeviceMotionEvent || window.DeviceOrientationEvent)
+                capabilities["accelerometer"] = true;
 
 			return capabilities;
         },
@@ -91,3 +103,18 @@ Object.defineProperties(sys,
 		configurable : true
 	}
 });
+
+// Forces the garbage collector
+sys.garbageCollect = function() {
+	// N/A in cocos2d-html5
+};
+
+// Dumps rooted objects
+sys.dumpRoot = function() {
+	// N/A in cocos2d-html5
+};
+
+// restarts the JS VM
+sys.restartVM = function() {
+	// N/A in cocos2d-html5
+};
