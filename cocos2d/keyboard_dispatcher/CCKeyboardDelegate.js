@@ -35,7 +35,7 @@
 cc.KeyboardDelegate = cc.Class.extend(/** @lends cc.KeyboardDelegate# */{
     /**
      * Call back when a key is pressed down
-     * @param {Integer} keyCode
+     * @param {Number} keyCode
      * @example
      * // example
      * if(keyCode == cc.KEY.w){}
@@ -45,7 +45,7 @@ cc.KeyboardDelegate = cc.Class.extend(/** @lends cc.KeyboardDelegate# */{
 
     /**
      * Call back when a key is released
-     * @param {Integer} keyCode
+     * @param {Number} keyCode
      * @example
      * // example
      * if(keyCode == cc.KEY.w){}

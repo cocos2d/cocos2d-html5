@@ -42,7 +42,7 @@ cc.Set = cc.Class.extend(/** @lends cc.Set# */{
     },
 
     /**
-     * Return a copy of the cc.Set, it will copy all the elelments.
+     * Return a copy of the cc.Set, it will copy all the elments.
      * @return {cc.Set}
      */
     copy:function () {

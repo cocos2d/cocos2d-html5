@@ -230,7 +230,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
      * @return {Array}
      */
     forceAddHandler:function (handler, array) {
-        var u = 0, h;
+        var u = 0,
+            h;
 
         for (var i = 0; i < array.length; i++) {
             h = array[i];
@@ -330,15 +331,18 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
 
         var mutableTouches = (needsMutableSet ? touches.slice() : touches);
         var helper = this._handlerHelperData[index];
+
+        var i, j, k, handler;
         //
         // process the target handlers 1st
         //
         if (targetedHandlersCount > 0) {
-            var touch, handler, claimed;
-            for (var i = 0; i < touches.length; i++) {
+            var touch, claimed;
+            var touchesLength = touches.length;
+            for (i = 0; i < touchesLength; i++) {
                 touch = touches[i];
 
-                for (var j = 0; j < this._targetedHandlers.length; j++) {
+                for (j = 0; j < targetedHandlersCount; j++) {
                     handler = this._targetedHandlers[j];
 
                     if (!handler) {
@@ -349,15 +353,13 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                     if (index == cc.TOUCH_BEGAN) {
                         if (handler.getDelegate().onTouchBegan) {
                             claimed = handler.getDelegate().onTouchBegan(touch, event);
-
                             if (claimed) {
                                 handler.getClaimedTouches().push(touch);
                             }
                         }
-                        //} else if (handler.getClaimedTouches().indexOf(touch)> -1){
-                    } else if (handler.getClaimedTouches().length > 0) {
-                        // moved ended cancelled
+                    } else if (cc.ArrayContainsObject(handler.getClaimedTouches(), touch)) {
                         claimed = true;
+                        // moved ended cancelled
                         switch (helper.type) {
                             case cc.TOUCH_MOVED:
                                 if (cc.Browser.isMobile) {
@@ -368,13 +370,11 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
                                 break;
                             case cc.TOUCH_ENDED:
                                 if (handler.getDelegate().onTouchEnded) handler.getDelegate().onTouchEnded(touch, event);
-                                handler.getClaimedTouches().length = 0;
-                                //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
+                                cc.ArrayRemoveObject(handler.getClaimedTouches(), touch);
                                 break;
                             case cc.TOUCH_CANCELLED:
                                 if (handler.getDelegate().onTouchCancelled) handler.getDelegate().onTouchCancelled(touch, event);
-                                handler.getClaimedTouches().length = 0;
-                                //cc.ArrayRemoveObject(handler.getClaimedTouches(),touch);
+                                cc.ArrayRemoveObject(handler.getClaimedTouches(), touch);
                                 break;
                         }
                     }
@@ -392,8 +392,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         //
         // process standard handlers 2nd
         //
-        if (standardHandlersCount > 0) {
-            for (i = 0; i < this._standardHandlers.length; i++) {
+        if (standardHandlersCount > 0 && mutableTouches.length > 0) {
+            for (i = 0; i < standardHandlersCount; i++) {
                 handler = this._standardHandlers[i];
 
                 if (!handler) {
@@ -402,17 +402,13 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
 
                 switch (helper.type) {
                     case cc.TOUCH_BEGAN:
-                        if (mutableTouches.length > 0) {
-                            if (handler.getDelegate().onTouchesBegan) handler.getDelegate().onTouchesBegan(mutableTouches, event);
-                        }
+                        if (handler.getDelegate().onTouchesBegan) handler.getDelegate().onTouchesBegan(mutableTouches, event);
                         break;
                     case cc.TOUCH_MOVED:
-                        if (mutableTouches.length > 0) {
-                            if (cc.Browser.isMobile) {
-                                if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
-                            } else {
-                                if (this._mousePressed) if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
-                            }
+                        if (cc.Browser.isMobile) {
+                            if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
+                        } else {
+                            if (this._mousePressed) if (handler.getDelegate().onTouchesMoved) handler.getDelegate().onTouchesMoved(mutableTouches, event);
                         }
                         break;
                     case cc.TOUCH_ENDED:
@@ -436,7 +432,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         this._locked = false;
         if (this._toRemove) {
             this._toRemove = false;
-            for (i = 0; i < this._handlersToRemove.length; i++) {
+            var handlersToRemoveLength = this._handlersToRemove.length;
+            for (i = 0; i < handlersToRemoveLength; i++) {
                 this.forceRemoveDelegate(this._handlersToRemove[i]);
             }
             this._handlersToRemove.length = 0;
@@ -445,7 +442,8 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
         if (this._toAdd) {
             this._toAdd = false;
 
-            for (i = 0; i < this._handlersToAdd.length; i++) {
+            var handlersToAddLength = this._handlersToAdd.length;
+            for (i = 0; i < handlersToAddLength; i++) {
                 handler = this._handlersToAdd[i];
                 if (!handler) {
                     break;
@@ -464,6 +462,22 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
             this._toQuit = false;
             this.forceRemoveAllDelegates();
         }
+    },
+
+    /**
+     * @param {Array} touchesArray
+     * @param {Number} id
+     */
+    _searchIndexOfTouchWithId:function (touchesArray, id) {
+        var ret = -1;
+        var touchesArrayLength = touchesArray.length;
+        for (var i = 0; i < touchesArrayLength; i++) {
+            if (touchesArray[i].getId() == id) {
+                ret = i;
+                break;
+            }
+        }
+        return ret;
     },
 
     /**
@@ -577,11 +591,16 @@ cc.TouchDispatcher = cc.Class.extend(/** @lends cc.TouchDispatcher# */ {
 });
 
 /**
- * @type {cc.Point}
+ * @type {cc.Touch}
  */
-cc.TouchDispatcher.preTouchPoint = cc.p(0, 0);
+cc.TouchDispatcher.activeTouch = new cc.Touch();
 
 cc.TouchDispatcher.isRegisterEvent = false;
+
+/**
+ * @type {cc.Dictionary}
+ */
+cc.TouchDispatcher._preTouchCache = null;
 
 cc.getHTMLElementPosition = function (element) {
     var docElem = document.documentElement;
@@ -615,31 +634,38 @@ cc.getHTMLElementPosition = function (element) {
     };
 };
 
-cc.ProcessMouseupEvent = function (element, event) {
+cc.ProcessMouseupEvent = function (element, event, rectTest) {
     var pos = cc.getHTMLElementPosition(element);
 
     var tx, ty;
-    if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+    if ((event.pageX) != undefined) { //not avalable in <= IE8
         tx = event.pageX;
         ty = event.pageY;
     } else {
-        pos.left -= document.body.scrollLeft;
-        pos.top -= document.body.scrollTop;
+        pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+        pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
         tx = event.clientX;
         ty = event.clientY;
     }
 
-    var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
-    var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
+    var rectContainsPoint;
+    if (rectTest) {
+        rectContainsPoint = (!cc.rectContainsPoint(new cc.Rect(pos.left, pos.top, pos.width, pos.height), cc.p(tx, ty)));
+    } else {
+        rectContainsPoint = true;
+    }
 
-    var touch = new cc.Touch(mouseX, mouseY);
-    touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
-    cc.TouchDispatcher.preTouchPoint.x = mouseX;
-    cc.TouchDispatcher.preTouchPoint.y = mouseY;
+    if (rectContainsPoint) {
+        var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
+        var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
-    var posArr = [];
-    posArr.push(touch);
-    cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+        var touch = cc.TouchDispatcher.activeTouch;
+        touch.setTouchInfo(0, mouseX, mouseY);
+
+        var posArr = [];
+        posArr.push(touch);
+        cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+    }
 };
 /**
  * @param {HTMLCanvasElement|HTMLDivElement} element
@@ -654,33 +680,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
         window.addEventListener('mouseup', function (event) {
             cc.Director.getInstance().getTouchDispatcher()._setMousePressed(false);
-
-            var pos = cc.getHTMLElementPosition(element);
-
-            var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
-                tx = event.pageX;
-                ty = event.pageY;
-            } else {
-                pos.left -= document.body.scrollLeft;
-                pos.top -= document.body.scrollTop;
-                tx = event.clientX;
-                ty = event.clientY;
-            }
-
-            if (!cc.rectContainsPoint(new cc.Rect(pos.left, pos.top, pos.width, pos.height), cc.p(tx, ty))) {
-                var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
-                var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
-
-                var touch = new cc.Touch(mouseX, mouseY);
-                touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
-                cc.TouchDispatcher.preTouchPoint.x = mouseX;
-                cc.TouchDispatcher.preTouchPoint.y = mouseY;
-
-                var posArr = [];
-                posArr.push(touch);
-                cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
-            }
+            cc.ProcessMouseupEvent(element, event, true);
         });
 
         //register canvas mouse event
@@ -688,12 +688,12 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if ((event.pageX) != undefined) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
-                pos.left -= document.body.scrollLeft;
-                pos.top -= document.body.scrollTop;
+                pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+                pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
                 tx = event.clientX;
                 ty = event.clientY;
             }
@@ -701,10 +701,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
-            var touch = new cc.Touch(mouseX, mouseY);
-            touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
-            cc.TouchDispatcher.preTouchPoint.x = mouseX;
-            cc.TouchDispatcher.preTouchPoint.y = mouseY;
+            var touch = cc.TouchDispatcher.activeTouch;
+            touch.setTouchInfo(0, mouseX, mouseY);
 
             var posArr = [];
             posArr.push(touch);
@@ -712,19 +710,19 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
         });
 
         element.addEventListener("mouseup", function (event) {
-            cc.ProcessMouseupEvent(element, event);
+            cc.ProcessMouseupEvent(element, event, false);
         });
 
         element.addEventListener("mousemove", function (event) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if ((event.pageX) != undefined) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
-                pos.left -= document.body.scrollLeft;
-                pos.top -= document.body.scrollTop;
+                pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+                pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
                 tx = event.clientX;
                 ty = event.clientY;
             }
@@ -732,14 +730,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var mouseX = (tx - pos.left) / cc.Director.getInstance().getContentScaleFactor();
             var mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
 
-            var touch = new cc.Touch(mouseX, mouseY);
-
-            //TODO this feature only chrome support
-            //if((event.button == 0) && (event.which == 1))
-            //    touch._setPressed(true);
-            touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
-            cc.TouchDispatcher.preTouchPoint.x = mouseX;
-            cc.TouchDispatcher.preTouchPoint.y = mouseY;
+            var touch = cc.TouchDispatcher.activeTouch;
+            touch.setTouchInfo(0, mouseX, mouseY);
 
             var posArr = [];
             posArr.push(touch);
@@ -747,6 +739,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
         });
     } else {
+        if (!(cc.TouchDispatcher._preTouchCache)) {
+            cc.TouchDispatcher._preTouchCache = cc.Dictionary.create(50);
+        }
+
         //register canvas touch event
         element.addEventListener("touchstart", function (event) {
             if (!event.changedTouches) return;
@@ -754,10 +750,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for (var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -771,17 +767,16 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     mouseY = (pos.height - (ty - pos.top)) / cc.Director.getInstance().getContentScaleFactor();
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
-                        //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
-                        touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._setPreTouch(touch);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
+                        if (!touch) {
+                            touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
+                            cc.TouchDispatcher._preTouchCache.setObjectForKey(touch, touch.getId());
+                        }
+                        touch.setTouchInfo(touch.getId(), mouseX, mouseY);
                     } else {
-                        touch = new cc.Touch(mouseX, mouseY);
-                        touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+                        touch = cc.TouchDispatcher.activeTouch;
+                        touch.setTouchInfo(0, mouseX, mouseY);
                     }
-                    cc.TouchDispatcher.preTouchPoint.x = mouseX;
-                    cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
                     posArr.push(touch);
                 }
@@ -797,10 +792,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for (var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -815,17 +810,16 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
-                        //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
-                        touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._setPreTouch(touch);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
+                        if (!touch) {
+                            touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
+                            cc.TouchDispatcher._preTouchCache.setObjectForKey(touch, touch.getId());
+                        }
+                        touch.setTouchInfo(touch.getId(), mouseX, mouseY);
                     } else {
-                        touch = new cc.Touch(mouseX, mouseY);
-                        touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+                        touch = cc.TouchDispatcher.activeTouch;
+                        touch.setTouchInfo(0, mouseX, mouseY);
                     }
-                    cc.TouchDispatcher.preTouchPoint.x = mouseX;
-                    cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
                     posArr.push(touch);
                 }
@@ -841,10 +835,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for (var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -859,17 +853,16 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
-                        //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
-                        touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._deletePreTouchWithSameId(touch);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
+                        if (!touch) {
+                            touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
+                        }
+                        touch.setTouchInfo(touch.getId(), mouseX, mouseY);
+                        cc.TouchDispatcher._preTouchCache.removeObjectForKey(touch.getId());
                     } else {
-                        touch = new cc.Touch(mouseX, mouseY);
-                        touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+                        touch = cc.TouchDispatcher.activeTouch;
+                        touch.setTouchInfo(0, mouseX, mouseY);
                     }
-                    cc.TouchDispatcher.preTouchPoint.x = mouseX;
-                    cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
                     posArr.push(touch);
                 }
@@ -885,10 +878,10 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             var pos = cc.getHTMLElementPosition(element);
 
-            pos.left -= document.body.scrollLeft;
-            pos.top -= document.body.scrollTop;
+            pos.left -= document.body.scrollLeft || document.documentElement.scrollLeft;
+            pos.top -= document.body.scrollTop || document.documentElement.scrollTop;
 
-            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation;
+            var touch_event, tx, ty, mouseX, mouseY, touch, preLocation, preTouch;
             var length = event.changedTouches.length;
             for (var i = 0; i < length; i++) {
                 touch_event = event.changedTouches[i];
@@ -903,17 +896,16 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                     touch = null;
                     if (touch_event.hasOwnProperty("identifier")) {
-                        touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
-                        //use Touch Pool
-                        preLocation = cc.TouchDispatcher._getPreTouch(touch).getLocation();
-                        touch._setPrevPoint(preLocation.x, preLocation.y);
-                        cc.TouchDispatcher._deletePreTouchWithSameId(touch);
+                        touch = cc.TouchDispatcher._preTouchCache.getObjectForKey(touch_event.identifier);
+                        if (!touch) {
+                            touch = new cc.Touch(mouseX, mouseY, touch_event.identifier);
+                        }
+                        touch.setTouchInfo(touch.getId(), mouseX, mouseY);
+                        cc.TouchDispatcher._preTouchCache.removeObjectForKey(touch.getId());
                     } else {
-                        touch = new cc.Touch(mouseX, mouseY);
-                        touch._setPrevPoint(cc.TouchDispatcher.preTouchPoint.x, cc.TouchDispatcher.preTouchPoint.y);
+                        touch = cc.TouchDispatcher.activeTouch;
+                        touch.setTouchInfo(0, mouseX, mouseY);
                     }
-                    cc.TouchDispatcher.preTouchPoint.x = mouseX;
-                    cc.TouchDispatcher.preTouchPoint.y = mouseY;
 
                     posArr.push(touch);
                 }
@@ -928,76 +920,163 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 };
 
 /**
- * @param {cc.Touch} touch
- * @return {cc.Touch} preTouch
+ * cc.Dictionary
+ *
+ * A generic implementation of a Dictionary/Map, with a optional maximum size.
+ * It uses an separate key, for a faster search.
+ * All keys are unique, objects must not.
+ *
+ * @class
+ * @extends cc.Class
  */
-cc.TouchDispatcher._getPreTouch = function (touch) {
-    var preTouch = null;
-    var preTouchPool = cc.TouchDispatcher._preTouchPool;
-    var id = touch.getId();
-    for (var i = preTouchPool.length - 1; i >= 0; i--) {
-        if (preTouchPool[i].getId() == id) {
-            preTouch = preTouchPool[i];
-            break;
-        }
-    }
-    if (!preTouch) {
-        preTouch = touch;
-    }
-    return preTouch;
-};
+cc.Dictionary = cc.Class.extend({
+    _valueList: {},
+    _keyList: null,
+    _maxLength: 0,
+    _writePointer: 0,
 
-/**
- * @param {cc.Touch} touch
- */
-cc.TouchDispatcher._setPreTouch = function (touch) {
-    var find = false;
-    var preTouchPool = cc.TouchDispatcher._preTouchPool;
-    var id = touch.getId();
-    for (var i = preTouchPool.length - 1; i >= 0; i--) {
-        if (preTouchPool[i].getId() == id) {
-            preTouchPool[i] = touch;
-            find = true;
-            break;
-        }
-    }
-    if (!find) {
-        //debug touches{
-        //cc.log("Pool.length: " + preTouchPool.length);
-        //}
-        if (preTouchPool.length <= 50) {
-            preTouchPool.push(touch);
-        } else {
-            preTouchPool[cc.TouchDispatcher._preTouchPoolPointer] = touch;
-            cc.TouchDispatcher._preTouchPoolPointer = (cc.TouchDispatcher._preTouchPoolPointer + 1) % 50;
-        }
-    }
-};
-
-/**
- * @param {cc.Touch} touch
- */
-cc.TouchDispatcher._deletePreTouchWithSameId = function (touch) {
-    var changeTouch;
-    var preTouchPool = cc.TouchDispatcher._preTouchPool;
-    var id = touch.getId();
-    for (var i = preTouchPool.length - 1; i >= 0; i--) {
-        if (preTouchPool[i].getId() == id) {
-            changeTouch = preTouchPool.pop();
-            if (i != preTouchPool.length) {
-                preTouchPool[i] = changeTouch;
+    /**
+     * Constructor
+     * @param {cc.Dictionary} dictionaryObject
+     */
+    ctor:function (dictionaryObject) {
+        if (dictionaryObject) {
+            if (dictionaryObject._maxLength > 0) {
+                this._keyList = [].concat(dictionaryObject._keyList);
+                this._maxLength = dictionaryObject._maxLength;
+                this._writePointer = dictionaryObject._writePointer;
             }
-            break;
+
+            for (var key in dictionaryObject._valueList) {
+                this._valueList[key] = dictionaryObject._valueList[key];
+            }
         }
+    },
+
+    /**
+     * @param {Number} maxLength
+     */
+    initWithMaxLength:function (maxLength) {
+        cc.Assert(maxLength >= 0, "");
+        if (maxLength && maxLength >= 0) {
+            this._keyList = [];
+            this._maxLength = maxLength;
+        }
+        return true;
+    },
+
+    /**
+     * Return a copy of the cc.Dictionary, it will copy all the elments.
+     * @return {cc.Dictionary}
+     */
+    copy:function () {
+        return new cc.Dictionary(this);
+    },
+
+    /**
+     * It is the same as copy().
+     * @return {cc.Dictionary}
+     */
+    mutableCopy:function () {
+        return this.copy();
+    },
+
+    /**
+     * Return the number of keys the cc.Dictionary contains.
+     * @return {Number} keylist length
+     */
+    count:function () {
+        var length = 0;
+        if (!this._keyList) {
+            var key;
+            for (key in this._valueList) {
+                if (this._valueList.hasOwnProperty(key)) {
+                    length++;
+                }
+            }
+        } else {
+            length = this._keyList.length;
+        }
+        return length;
+    },
+
+    /**
+     * Return a list of all keys the cc.Dictionary contains.
+     * @return {Array} keylist
+     */
+    getKeyList:function () {
+        var keylist = this._keyList;
+        if (!keylist) {
+            keylist = [];
+
+            var i = 0, key;
+            for (key in this._valueList) {
+                if (this._valueList.hasOwnProperty(key)) {
+                    keyist[i] = key;
+                    i++;
+                }
+            }
+        }
+        return keylist;
+    },
+
+    /**
+     * Return the object for a key.
+     * @param {*} key
+     */
+    getObjectForKey:function (key) {
+        return this._valueList[key];
+    },
+
+    /**
+     * Add a object for the given key.
+     * @param {*} object for key
+     * @param {*} key
+     */
+    setObjectForKey:function (obj, key) {
+        if (this._maxLength > 0) {
+            if (!this._valueList[key]) {
+                if (this._keyList.length <= this._maxLength) {
+                    this._keyList.push(key);
+                } else {
+                    //use it as a ringBuffer (override the oldest one)
+                    delete this._valueList[this._keyList[this._writePointer]];
+                    this._keyList[this._writePointer] = key;
+                    this._writePointer = (this._writePointer + 1) % this._maxLength;
+                }
+                //debug (to test with maxLength){
+                //cc.log("DataCache.length: " + this._keyList.length);
+                //cc.log("valueList: ");
+                //cc.log(this._valueList);
+                //}
+            }
+        }
+        this._valueList[key] = obj;
+        //debug (to test without maxLength){
+        //cc.log("DataCache.length: " + this.getLength());
+        //cc.log("keyList: ");
+        //cc.log(this.getKeyList());
+        //}
+    },
+
+    /**
+     * Remove the object and the key for the given key, nothing todo if no element equals key.
+     * @param {*} key
+     */
+    removeObjectForKey:function (key) {
+        if (this._maxLength > 0) {
+            cc.ArrayRemoveObject(this._keyList, key);
+        }
+        delete this._valueList[key];
     }
+
+
+});
+
+cc.Dictionary.create = function (maxLength) {
+    var dictionary = new cc.Dictionary();
+    if (maxLength) {
+        dictionary.initWithMaxLength(maxLength);
+    }
+    return dictionary;
 };
-
-/**
- * @type {Array}
- */
-cc.TouchDispatcher._preTouchPool = [];
-
-/**
- * @type {Number}
- */
-cc.TouchDispatcher._preTouchPoolPointer = 0;
