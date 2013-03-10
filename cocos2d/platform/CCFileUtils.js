@@ -300,17 +300,17 @@ cc.FileUtils = cc.Class.extend({
         if (newFileName && newFileName.length > 1 && (newFileName.indexOf(":") == 1))
             return newFileName;
 
-        for(var i = 0; i< this._searchPathArray.length; i++){
+        for (var i = 0; i < this._searchPathArray.length; i++) {
             var searchPath = this._searchPathArray[i];
-            for(var j = 0; j < this._searchResolutionsOrderArray.length; j++){
+            for (var j = 0; j < this._searchResolutionsOrderArray.length; j++) {
                 var resourceDirectory = this._searchResolutionsOrderArray[j];
-                fullPath = this._getPathForFilename(newFileName, resourceDirectory,searchPath);
-                if(fullPath){
+                fullPath = this._getPathForFilename(newFileName, resourceDirectory, searchPath);
+                if (fullPath) {
                     found = true;
                     break;
                 }
             }
-            if(found)
+            if (found)
                 break;
         }
 
@@ -464,6 +464,16 @@ cc.FileUtils = cc.Class.extend({
     },
 
     /**
+     * get string  from file
+     * @function
+     * @param {String} fileName
+     * @return {String}
+     */
+    getStringFromFile:function (fileName) {
+        return cc.SAXParser.getInstance().getList(fileName);
+    },
+
+    /**
      * The same meaning as dictionaryWithContentsOfFile(), but it doesn't call autorelease, so the invoker should call release().
      * @function
      * @param {String} fileName
@@ -503,11 +513,11 @@ cc.FileUtils = cc.Class.extend({
     },
 
     _resourceRootPath:"",
-    getResourceRootPath:function(){
+    getResourceRootPath:function () {
         return this._resourceRootPath;
     },
 
-    setResourceRootPath:function(resourceRootPath){
+    setResourceRootPath:function (resourceRootPath) {
         this._resourceRootPath = resourceRootPath;
     },
 
@@ -524,14 +534,14 @@ cc.FileUtils = cc.Class.extend({
     },
 
     _getPathForFilename:function (filename, resourceDirectory, searchPath) {
-        var ret ;
+        var ret;
         var resourceRootPath = this.getResourceRootPath(); //cc.Application.getInstance().getResourceRootPath();
 
-        if(filename && (filename.length > 0) && (filename.indexOf('/') === 0 || filename.indexOf("\\") === 0)){
+        if (filename && (filename.length > 0) && (filename.indexOf('/') === 0 || filename.indexOf("\\") === 0)) {
             ret = "";
-        } else if( resourceRootPath.length > 0){
+        } else if (resourceRootPath.length > 0) {
             ret = resourceRootPath;
-            if(ret[ret.length -1] != '\\' && ret[ret.length -1] != '/')
+            if (ret[ret.length - 1] != '\\' && ret[ret.length - 1] != '/')
                 ret += "/";
         } else {
             ret = resourceRootPath;
@@ -540,16 +550,16 @@ cc.FileUtils = cc.Class.extend({
         var file = filename;
         var file_path = "";
         var pos = filename.lastIndexOf('/');
-        if(pos != -1){
-            file_path = filename.substr(0,pos+1);
-            file = filename.substr(pos+1);
+        if (pos != -1) {
+            file_path = filename.substr(0, pos + 1);
+            file = filename.substr(pos + 1);
         }
         var path = searchPath;
-        if(path.length > 0 && path.lastIndexOf('/') !== path.length -1)
+        if (path.length > 0 && path.lastIndexOf('/') !== path.length - 1)
             path += '/';
         path += file_path;
         path += resourceDirectory;
-        if(path.length > 0 && path.lastIndexOf("/") !== path.length -1)
+        if (path.length > 0 && path.lastIndexOf("/") !== path.length - 1)
             path += '/';
         path += file;
         ret += path;
