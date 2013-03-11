@@ -176,15 +176,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     ctor:function () {
         this._lastUpdate = Date.now();
-        if(!cc.isAddedHiddenEvent){
+        if (!cc.isAddedHiddenEvent) {
             var selfPointer = this;
-            window.addEventListener("focus",function(){
+            window.addEventListener("focus", function () {
                 selfPointer._lastUpdate = Date.now();
             }, false);
         }
     },
 
-    _resetLastUpdate:function(){
+    _resetLastUpdate:function () {
         this._lastUpdate = Date.now();
     },
 
@@ -260,7 +260,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._deltaTime = 0;
             this._nextDeltaTimeZero = false;
         } else {
-            this._deltaTime = (now-this._lastUpdate) / 1000;
+            this._deltaTime = (now - this._lastUpdate) / 1000;
         }
 
         if (cc.DEBUG) {
@@ -501,6 +501,24 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     getWinSizeInPixels:function () {
         return this._winSizeInPixels;
+    },
+
+    getVisibleSize:function () {
+        if (this._openGLView) {
+            return this._openGLView.getVisibleSize();
+        }
+        else {
+            return cc.size(0,0);
+        }
+    },
+
+    getVisibleOrigin:function () {
+        if (this._openGLView) {
+            return this._openGLView.getVisibleOrigin();
+        }
+        else {
+            return cc.p(0, 0);
+        }
     },
 
     getZEye:function () {
@@ -818,8 +836,8 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._openGLView = openGLView;
 
             // set size
-            this._winSizeInPoints = this._openGLView.getSize();
-            this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+            //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
+            //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
 
             this._createStatsLabel();
 
@@ -829,9 +847,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
             //CHECK_GL_ERROR_DEBUG();
 
-            if (this._contentScaleFactor != 1) {
-                this.updateContentScaleFactor();
-            }
+            /* if (this._contentScaleFactor != 1) {
+             this.updateContentScaleFactor();
+             }*/
 
             this._openGLView.setTouchDelegate(this._touchDispatcher);
             this._touchDispatcher.setDispatchEvents(true);
@@ -863,7 +881,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
                 break;
             case cc.DIRECTOR_PROJECTION_3D:
                 //TODO OpenGl
-                /* float zeye = this->getZEye();
+                /* float zeye = this.getZEye();
 
                  kmMat4 matrixPerspective, matrixLookup;
 
@@ -1114,12 +1132,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         }
     },
 
-    getMouseDispatcher:function(){
-       return this._mouseDispatcher;
+    getMouseDispatcher:function () {
+        return this._mouseDispatcher;
     },
 
-    setMouseDispatcher:function( mouseDispatcher){
-        if(this._mouseDispatcher != mouseDispatcher)
+    setMouseDispatcher:function (mouseDispatcher) {
+        if (this._mouseDispatcher != mouseDispatcher)
             this._mouseDispatcher = mouseDispatcher;
     },
 
@@ -1135,7 +1153,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _calculateMPF:function () {
         var now = Date.now();
-        this._secondsPerFrame = (now-this._lastUpdate)/1000;
+        this._secondsPerFrame = (now - this._lastUpdate) / 1000;
     }
 });
 
@@ -1215,6 +1233,7 @@ cc.Director.getInstance = function () {
         cc.firstUseDirector = false;
         cc.s_SharedDirector = new cc.DisplayLinkDirector();
         cc.s_SharedDirector.init();
+        cc.s_SharedDirector.setOpenGLView(cc.EGLView.getInstance());
     }
     return cc.s_SharedDirector;
 };
