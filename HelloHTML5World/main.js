@@ -37,6 +37,7 @@ var cocos2dApp = cc.Application.extend({
     applicationDidFinishLaunching:function () {
         // initialize director
         var director = cc.Director.getInstance();
+        director.setOpenGLView(cc.EGLView.getInstance());
 
         // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
         //director.enableRetinaDisplay(true);
