@@ -1033,7 +1033,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _blendFunc:{src:gl.ONE, dst:gl.ONE},
+    _blendFunc: null,
     /**
      * get BlendFunc of Particle System
      * @return {cc.BlendFunc}

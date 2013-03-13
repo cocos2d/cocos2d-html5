@@ -156,10 +156,11 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
         //if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
         this._super(size);
-        this.canvas.width = size.width * 1.5;
-        this.canvas.height = size.height * 1.5;
-
-        this.context.translate(0, this.canvas.height);
+        if(cc.renderContextType === cc.CANVAS){
+            this.canvas.width = size.width * 1.5;
+            this.canvas.height = size.height * 1.5;
+            this.context.translate(0, this.canvas.height);
+        }
         //}
     },
 

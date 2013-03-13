@@ -372,7 +372,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _drawSceneForWebGL:function () {
-        var gl = cc.webglContext;
+        var gl = cc.renderContext;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
@@ -642,7 +642,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (on)
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         else
-            cc.glBlendFunc(cc.webglContext.ONE, cc.webglContext.ZERO);
+            cc.glBlendFunc(cc.renderContext.ONE, cc.renderContext.ZERO);
 
         cc.CHECK_GL_ERROR_DEBUG();
     },
@@ -668,12 +668,12 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     setDepthTest:function (on) {
         if (on) {
-            cc.webglContext.clearDepth(1.0);
-            cc.webglContext.enable(cc.webglContext.DEPTH_TEST);
-            cc.webglContext.depthFunc(cc.webglContext.LEQUAL);
-            //cc.webglContext.hint(cc.webglContext.PERSPECTIVE_CORRECTION_HINT, cc.webglContext.NICEST);
+            cc.renderContext.clearDepth(1.0);
+            cc.renderContext.enable(cc.renderContext.DEPTH_TEST);
+            cc.renderContext.depthFunc(cc.renderContext.LEQUAL);
+            //cc.renderContext.hint(cc.renderContext.PERSPECTIVE_CORRECTION_HINT, cc.renderContext.NICEST);
         } else {
-            cc.webglContext.disable(cc.webglContext.DEPTH_TEST);
+            cc.renderContext.disable(cc.renderContext.DEPTH_TEST);
         }
         cc.CHECK_GL_ERROR_DEBUG();
     },
@@ -685,11 +685,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.setAlphaBlending(true);
         // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
         // [self setDepthTest: view_.depthFormat];
-        this.setDepthTest(true);
+        this.setDepthTest(false);
         this.setProjection(this._projection);
 
         // set other opengl default values
-        cc.webglContext.clearColor(0.0, 0.0, 0.0, 1.0);
+        cc.renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     },
 
     /**
@@ -758,14 +758,14 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // set size
         this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);        //this._openGLView.getDesignResolutionSize();
 
-        if (cc.renderContextType !== cc.WEBGL)
+        if (cc.renderContextType === cc.CANVAS)
             return;
 
         //cc.Assert(openGLView, "opengl view should not be null");
 
         //if (this._openGLView != openGLView) {
         // because EAGLView is not kind of CCObject
-        this._openGLView = openGLView;
+        this._openGLView = openGLView || cc.EGLView.getInstance();
 
         this._createStatsLabel();
 

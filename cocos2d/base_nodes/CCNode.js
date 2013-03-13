@@ -115,7 +115,7 @@ cc.s_globalOrderOfArrival = 1;
 cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /// ---- common properties start ----
     _zOrder:0,
-        _vertexZ:0.0,
+    _vertexZ:0.0,
 
     _rotationX:0,
     _rotationY:0.0,
@@ -1491,7 +1491,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             // optimization:
             // inline anchor point calculation if skew is not needed
             // Adjusted transform calculation for rotational skew
-            if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
+            //if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
+            if (!needsSkewMatrix && (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0)) {
                 x += cy * -this._anchorPointInPoints.x * this._scaleX + -sx * -this._anchorPointInPoints.y * this._scaleY;
                 y += sy * -this._anchorPointInPoints.x * this._scaleX + cx * -this._anchorPointInPoints.y * this._scaleY;
             }
@@ -1509,7 +1510,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
                 this._transform = cc.AffineTransformConcat(skewMatrix, this._transform);
 
                 // adjust anchor point
-                if (!cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
+                if (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0) {
                     this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
                 }
             }

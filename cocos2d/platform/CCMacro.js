@@ -164,9 +164,10 @@ cc.BLEND_DST = 0x0303;
  */
 cc.NODE_DRAW_SETUP = function (node) {
     //cc.glEnable(node._glServerState);
-    if (node.getShaderProgram()) {
-        node.getShaderProgram().use();
-        node.getShaderProgram().setUniformForModelViewProjectionMatrixWithMat4(node._mvpMatrix);
+    if (node._shaderProgram) {
+        cc.renderContext.useProgram(node._shaderProgram._programObj);
+        //node._shaderProgram.use();
+        node._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(node._mvpMatrix);
     }
 };
 
@@ -303,47 +304,47 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
     return p;
 };
 
+if (!cc.Browser.supportWebGL) {
+    /**
+     * WebGL constants
+     * @type {object}
+     */
+    var gl = gl || {};
 
-/**
- * WebGL constants
- * @type {object}
- */
-var gl = gl || {};
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ONE = 1;
 
-/**
- * @constant
- * @type Number
- */
-gl.ONE = 1;
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ZERO = 0;
 
-/**
- * @constant
- * @type Number
- */
-gl.ZERO = 0;
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.SRC_ALPHA = 0x0302;
 
-/**
- * @constant
- * @type Number
- */
-gl.SRC_ALPHA = 0x0302;
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ONE_MINUS_SRC_ALPHA = 0x0303;
 
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_SRC_ALPHA = 0x0303;
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ONE_MINUS_DST_COLOR = 0x0307;
+}
 
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_DST_COLOR = 0x0307;
-
-
-cc.CHECK_GL_ERROR_DEBUG = function(){
-    var _error = cc.webglContext.getError();
-    if(_error){
+cc.CHECK_GL_ERROR_DEBUG = function () {
+    var _error = cc.renderContext.getError();
+    if (_error) {
         cc.log("WebGL error " + _error);
     }
 };

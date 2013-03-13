@@ -78,14 +78,14 @@ cc._sharedShaderCache = null;
  * @extends cc.Class
  */
 cc.ShaderCache = cc.Class.extend({
-    _programs:null,
+    _programs: null,
 
-    _init:function () {
+    _init: function () {
         this.loadDefaultShaders();
         return true;
     },
 
-    _loadDefaultShader:function (program, type) {
+    _loadDefaultShader: function (program, type) {
         switch (type) {
             case cc.SHADERTYPE_POSITION_TEXTURECOLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, cc.SHADER_POSITION_TEXTURE_COLOR_FRAG);
@@ -152,23 +152,25 @@ cc.ShaderCache = cc.Class.extend({
      * Constructor
      * @override
      */
-    ctor:function () {
+    ctor: function () {
         this._programs = {};
     },
 
     /**
      * loads the default shaders
      */
-    loadDefaultShaders:function () {
+    loadDefaultShaders: function () {
         // Position Texture Color shader
         var program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURECOLOR);
         this._programs[cc.SHADER_POSITION_TEXTURECOLOR] = program;
+        this._programs["ShaderPositionTextureColor"] = program;
 
         // Position Texture Color alpha test
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURECOLOR_ALPHATEST);
         this._programs[cc.SHADER_POSITION_TEXTURECOLORALPHATEST] = program;
+        this._programs["ShaderPositionTextureColorAlphaTest"] = program;
 
         //
         // Position, Color shader
@@ -176,6 +178,7 @@ cc.ShaderCache = cc.Class.extend({
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_COLOR);
         this._programs[cc.SHADER_POSITION_COLOR] = program;
+        this._programs["ShaderPositionColor"] = program;
 
         //
         // Position Texture shader
@@ -183,6 +186,7 @@ cc.ShaderCache = cc.Class.extend({
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURE);
         this._programs[cc.SHADER_POSITION_TEXTURE] = program;
+        this._programs["ShaderPositionTexture"] = program;
 
         //
         // Position, Texture attribs, 1 Color as uniform shader
@@ -190,6 +194,7 @@ cc.ShaderCache = cc.Class.extend({
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURE_UCOLOR);
         this._programs[cc.SHADER_POSITION_TEXTURE_UCOLOR] = program;
+        this._programs["ShaderPositionTextureUColor"] = program;
 
         //
         // Position Texture A8 Color shader
@@ -197,6 +202,7 @@ cc.ShaderCache = cc.Class.extend({
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURE_A8COLOR);
         this._programs[cc.SHADER_POSITION_TEXTUREA8COLOR] = program;
+        this._programs["ShaderPositionTextureA8Color"] = program;
 
         //
         // Position and 1 color passed as a uniform (to similate glColor4ub )
@@ -204,6 +210,7 @@ cc.ShaderCache = cc.Class.extend({
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_UCOLOR);
         this._programs[cc.SHADER_POSITION_UCOLOR] = program;
+        this._programs["ShaderPositionUColor"] = program;
 
         //
         // Position, Legth(TexCoords, Color (used by Draw Node basically )
@@ -211,12 +218,13 @@ cc.ShaderCache = cc.Class.extend({
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_LENGTH_TEXTURECOLOR);
         this._programs[cc.SHADER_POSITION_LENGTHTEXTURECOLOR] = program;
+        this._programs["ShaderPositionLengthTextureColor"] = program;
     },
 
     /**
      * reload the default shaders
      */
-    reloadDefaultShaders:function () {
+    reloadDefaultShaders: function () {
         // reset all programs and reload them
 
         // Position Texture Color shader
@@ -266,15 +274,21 @@ cc.ShaderCache = cc.Class.extend({
     },
 
     /** returns a GL program for a given key */
-    programForKey:function (key) {
-        if (this._programs.hasOwnProperty(key))
-            return this._programs[key];
+    programForKey: function (key) {
+        return this._programs[key];
+    },
 
-        return null;
+    /**
+     * returns a GL program for a shader name
+     * @param {String} shaderName
+     * @return cc.GLProgram
+     */
+    getProgram: function (shaderName) {
+        return this._programs[shaderName];
     },
 
     /** adds a CCGLProgram to the cache for a given name */
-    addProgram:function (program, key) {
+    addProgram: function (program, key) {
         this._programs[key] = program;
     }
 });

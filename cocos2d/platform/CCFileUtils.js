@@ -117,6 +117,7 @@ if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
  */
 cc.FileUtils = cc.Class.extend({
     _fileDataCache:null,
+    _textFileCache:null,
 
     _directory:null,
     _filenameLookupDict:null,
@@ -125,6 +126,7 @@ cc.FileUtils = cc.Class.extend({
 
     ctor:function () {
         this._fileDataCache = {};
+        this._textFileCache = {};
 
         this._searchPathArray = [];
         this._searchPathArray.push("");
@@ -143,7 +145,6 @@ cc.FileUtils = cc.Class.extend({
     getFileData:function (fileName, mode, size) {
         if (this._fileDataCache.hasOwnProperty(fileName))
             return this._fileDataCache[fileName];
-
         return this._loadBinaryFileData(fileName);
     },
 
@@ -153,6 +154,11 @@ cc.FileUtils = cc.Class.extend({
         } else {
             return new ActiveXObject("MSXML2.XMLHTTP");
         }
+    },
+
+    unloadBinaryFileData:function(fileUrl){
+        if (this._fileDataCache.hasOwnProperty(fileUrl))
+            delete this._fileDataCache[fileUrl];
     },
 
     preloadBinaryFileData:function (fileUrl) {
@@ -200,7 +206,7 @@ cc.FileUtils = cc.Class.extend({
 
             var fileContents = cc._convertResponseBodyToText(req.responseBody);
             if (fileContents) {
-                arrayInfo = this._stringConvertToArray(req.responseText);
+                arrayInfo = this._stringConvertToArray(fileContents);
                 this._fileDataCache[fileUrl] = arrayInfo;
             }
         } else {
@@ -225,6 +231,77 @@ cc.FileUtils = cc.Class.extend({
             arrData[i] = strData.charCodeAt(i) & 0xff;
         }
         return arrData;
+    },
+
+    unloadTextFileData:function(fileUrl){
+        if (this._textFileCache.hasOwnProperty(fileUrl))
+            delete this._textFileCache[fileUrl];
+    },
+
+    preloadTextFileData:function(fileUrl){
+        fileUrl = this.fullPathFromRelativePath(fileUrl);
+        var selfPointer = this;
+
+        var xhr = this._getXMLHttpRequest();
+        xhr.open("GET", fileUrl, true);
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            // IE-specific logic here
+            xhr.setRequestHeader("Accept-Charset", "x-user-defined");
+            xhr.onreadystatechange = function (event) {
+                if (xhr.readyState == 4) {
+                    if (xhr.status == 200) {
+                        var fileContents = cc._convertResponseBodyToText(xhr.responseBody);
+                        if (fileContents)
+                            selfPointer._textFileCache[fileUrl] = fileContents;
+                    }
+                    cc.Loader.getInstance().onResLoaded();
+                }
+            };
+        } else {
+            if (xhr.overrideMimeType)
+                xhr.overrideMimeType("text\/plain; charset=x-user-defined");
+            xhr.onload = function (e) {
+                if (xhr.responseText) {
+                    cc.Loader.getInstance().onResLoaded();
+                    selfPointer._fileDataCache[fileUrl] = xhr.responseText;
+                }
+            };
+        }
+        xhr.send(null);
+    },
+
+    _loadTextFileData:function(fileUrl){
+        var req = this._getXMLHttpRequest();
+        req.open('GET', fileUrl, false);
+        var arrayInfo = null;
+        if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
+            req.setRequestHeader("Accept-Charset", "x-user-defined");
+            req.send(null);
+            if (req.status != 200)
+                return null;
+
+            var fileContents = cc._convertResponseBodyToText(req.responseBody);
+            if (fileContents) {
+                arrayInfo = fileContents;
+                this._textFileCache[fileUrl] = fileContents;
+            }
+        } else {
+            if (req.overrideMimeType)
+                req.overrideMimeType('text\/plain; charset=x-user-defined');
+            req.send(null);
+            if (req.status != 200)
+                return null;
+
+            arrayInfo = req.responseText;
+            this._textFileCache[fileUrl] = arrayInfo;
+        }
+        return arrayInfo;
+    },
+
+    getTextFileData:function(fileUrl){
+        if (this._textFileCache.hasOwnProperty(fileUrl))
+            return this._textFileCache[fileUrl];
+        return this._loadTextFileData(fileUrl);
     },
 
     /**

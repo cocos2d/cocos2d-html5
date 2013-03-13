@@ -40,7 +40,6 @@ cc.EGLView = cc.EGLViewProtocol.extend({
     ctor:function(){
         this._super();
         this._viewName = "Cocos2dHTML5";
-
         this._initGL();
     },
 
@@ -76,7 +75,7 @@ cc.EGLView = cc.EGLViewProtocol.extend({
 
     _initGL:function(){
         this._hDC = cc.canvas;
-        this._hRC = cc.webglContext;
+        this._hRC = cc.renderContext;
 
         var glVersion = this._hRC.getParameter(this._hRC.VERSION);
         cc.log("WebGL version = " + glVersion );

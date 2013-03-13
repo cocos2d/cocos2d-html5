@@ -108,11 +108,10 @@ var Helloworld = cc.Layer.extend({
         this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
         this.setTouchEnabled(true);
-        //this.adjustSizeForWindow();
-        //lazyLayer.adjustSizeForCanvas();
-        /*window.addEventListener("resize", function (event) {
+        this.adjustSizeForWindow();
+        window.addEventListener("resize", function (event) {
             selfPointer.adjustSizeForWindow();
-        });*/
+        });
         return true;
     },
 
@@ -144,10 +143,11 @@ var Helloworld = cc.Layer.extend({
         if(cc.renderContext === cc.CANVAS){
             cc.renderContext.translate(0, cc.canvas.height);
             cc.renderContext.scale(xScale, xScale);
+            cc.Director.getInstance().setContentScaleFactor(xScale);
         } else {
+            cc.Director.getInstance().setContentScaleFactor(xScale);
             cc.Director.getInstance().setOpenGLView();
         }
-        cc.Director.getInstance().setContentScaleFactor(xScale);
     },
     // a selector callback
     menuCloseCallback:function (sender) {
