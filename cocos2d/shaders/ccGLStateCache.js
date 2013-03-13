@@ -29,27 +29,27 @@
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIBFLAG_NONE = 0;
+cc.VERTEX_ATTRIB_FLAG_NONE = 0;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIBFLAG_POSITION = 1 << 0;
+cc.VERTEX_ATTRIB_FLAG_POSITION = 1 << 0;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIBFLAG_COLOR = 1 << 1;
+cc.VERTEX_ATTRIB_FLAG_COLOR = 1 << 1;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIBFLAG_TEXCOORDS = 1 << 2;
+cc.VERTEX_ATTRIB_FLAG_TEXCOORDS = 1 << 2;
 /**
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIBFLAG_POSCOLORTEX = ( cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR | cc.VERTEX_ATTRIBFLAG_TEXCOORDS );
+cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX = ( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS );
 
 /**
  * GL server side states
@@ -105,9 +105,9 @@ cc.glInvalidateStateCache = function () {
 cc.glUseProgram = function (program) {
     if (cc.ENABLE_GL_STATE_CACHE && (program !== cc._currentShaderProgram)) {
         cc._currentShaderProgram = program;
-        cc.webglContext.useProgram(program);
+        cc.renderContext.useProgram(program);
     } else
-        cc.webglContext.useProgram(program);
+        cc.renderContext.useProgram(program);
 };
 
 /**
@@ -120,7 +120,7 @@ cc.glDeleteProgram = function (program) {
         if (program == cc._currentShaderProgram)
             cc._currentShaderProgram = -1;
     }
-    cc.webglContext.deleteProgram(program);
+    cc.renderContext.deleteProgram(program);
 };
 
 /**
@@ -142,11 +142,11 @@ cc.glBlendFunc = function (sfactor, dfactor) {
 };
 
 cc.setBlending = function (sfactor, dfactor) {
-    if (sfactor === cc.webglContext.ONE && dfactor === cc.webglContext.ZERO) {
-        cc.webglContext.disable(cc.webglContext.BLEND);
+    if (sfactor === cc.renderContext.ONE && dfactor === cc.renderContext.ZERO) {
+        cc.renderContext.disable(cc.renderContext.BLEND);
     } else {
-        cc.webglContext.enable(cc.webglContext.BLEND);
-        cc.webglContext.blendFunc(sfactor, dfactor);
+        cc.renderContext.enable(cc.renderContext.BLEND);
+        cc.renderContext.blendFunc(sfactor, dfactor);
     }
 };
 
@@ -155,11 +155,11 @@ cc.setBlending = function (sfactor, dfactor) {
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will just set the default blending mode using GL_FUNC_ADD.
  */
 cc.glBlendResetToCache = function () {
-    cc.webglContext.blendEquation(cc.webglContext.FUNC_ADD);
+    cc.renderContext.blendEquation(cc.renderContext.FUNC_ADD);
     if (cc.ENABLE_GL_STATE_CACHE)
         cc.setBlending(cc._blendingSource, cc._blendingDest);
     else
-        cc.setBlending(cc.webglContext.BLEND_SRC, cc.webglContext.BLEND_DST);
+        cc.setBlending(cc.renderContext.BLEND_SRC, cc.renderContext.BLEND_DST);
 };
 
 /**
@@ -173,49 +173,49 @@ cc.setProjectionMatrixDirty = function () {
  * <p>
  *    Will enable the vertex attribs that are passed as flags.  <br/>
  *    Possible flags:                                           <br/>
- *    cc.VERTEX_ATTRIBFLAG_POSITION                             <br/>
- *    cc.VERTEX_ATTRIBFLAG_COLOR                                <br/>
- *    cc.VERTEX_ATTRIBFLAG_TEXCOORDS                            <br/>
+ *    cc.VERTEX_ATTRIB_FLAG_POSITION                             <br/>
+ *    cc.VERTEX_ATTRIB_FLAG_COLOR                                <br/>
+ *    cc.VERTEX_ATTRIB_FLAG_TEXCOORDS                            <br/>
  *                                                              <br/>
  *    These flags can be ORed. The flags that are not present, will be disabled.
  * </p>
- * @param {cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR | cc.VERTEX_ATTRIBFLAG_TEXCOORDS} flags
+ * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS} flags
  */
 cc.glEnableVertexAttribs = function (flags) {
     cc.glBindVAO(0);
 
     /* Position */
-    var enablePosition = ( flags & cc.VERTEX_ATTRIBFLAG_POSITION );
+    var enablePosition = ( flags & cc.VERTEX_ATTRIB_FLAG_POSITION );
 
     if (enablePosition != cc._vertexAttribPosition) {
         if (enablePosition)
-            cc.webglContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         else
-            cc.webglContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
 
         cc._vertexAttribPosition = enablePosition;
     }
 
     /* Color */
-    var enableColor = (flags & cc.VERTEX_ATTRIBFLAG_COLOR) != 0;
+    var enableColor = (flags & cc.VERTEX_ATTRIB_FLAG_COLOR) != 0;
 
     if (enableColor != cc._vertexAttribColor) {
         if (enableColor)
-            cc.webglContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         else
-            cc.webglContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
 
         cc._vertexAttribColor = enableColor;
     }
 
     /* Tex Coords */
-    var enableTexCoords = (flags & cc.VERTEX_ATTRIBFLAG_TEXCOORDS) != 0;
+    var enableTexCoords = (flags & cc.VERTEX_ATTRIB_FLAG_TEXCOORDS) != 0;
 
     if (enableTexCoords != cc._vertexAttribTexCoords) {
         if (enableTexCoords)
-            cc.webglContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEXCOORDS);
+            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEXCOORDS);
         else
-            cc.webglContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEXCOORDS);
+            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEXCOORDS);
 
         cc._vertexAttribTexCoords = enableTexCoords;
     }
@@ -242,8 +242,8 @@ cc.glBindTexture2DN = function (textureUnit, textureId) {
         if (cc._currentBoundTexture[ textureUnit ] != textureId)
             cc._currentBoundTexture[ textureUnit ] = textureId;
     }
-    cc.webglContext.activeTexture(cc.webglContext.TEXTURE0 + textureUnit);
-    cc.webglContext.bindTexture(cc.webglContext.TEXTURE_2D, textureId);
+    cc.renderContext.activeTexture(cc.renderContext.TEXTURE0 + textureUnit);
+    cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId);
 };
 
 /**
@@ -266,7 +266,7 @@ cc.glDeleteTextureN = function (textureUnit, textureId) {
         if (textureId == cc._currentBoundTexture[ textureUnit ])
             cc._currentBoundTexture[ textureUnit ] = -1;
     }
-    cc.webglContext.deleteTexture(textureId);
+    cc.renderContext.deleteTexture(textureId);
 };
 
 /**
@@ -303,18 +303,18 @@ cc.glEnable = function (flags) {
         /*
          if ((enabled = (flags & cc.GL_BLEND)) != (cc._GLServerState & cc.GL_BLEND)) {
          if (enabled) {
-         cc.webglContext.enable(cc.webglContext.BLEND);
+         cc.renderContext.enable(cc.renderContext.BLEND);
          cc._GLServerState |= cc.GL_BLEND;
          } else {
-         cc.webglContext.disable(cc.webglContext.BLEND);
+         cc.renderContext.disable(cc.renderContext.BLEND);
          cc._GLServerState &= ~cc.GL_BLEND;
          }
          }*/
     } else {
         /*if ((flags & cc.GL_BLEND))
-         cc.webglContext.enable(cc.webglContext.BLEND);
+         cc.renderContext.enable(cc.renderContext.BLEND);
          else
-         cc.webglContext.disable(cc.webglContext.BLEND);*/
+         cc.renderContext.disable(cc.renderContext.BLEND);*/
     }
 };
 

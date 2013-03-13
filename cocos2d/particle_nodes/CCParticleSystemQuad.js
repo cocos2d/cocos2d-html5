@@ -617,7 +617,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         //
         // Using VBO without VAO
         //
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
         // vertices
         gl.bindBuffer(gl.ARRAY_BUFFER, this._positionsArrayBuffer);

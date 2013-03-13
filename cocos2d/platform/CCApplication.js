@@ -187,6 +187,7 @@ cc.setup = function (el, width, height) {
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true });
     if(cc.renderContext){
         cc.renderContextType = cc.WEBGL;
+        window.gl = cc.renderContext;
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
     } else {
         cc.renderContext = cc.canvas.getContext("2d");

@@ -263,7 +263,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
 
         ctx = ctx || cc.renderContext;
         cc.NODE_DRAW_SETUP(this);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
         cc.glBindTexture2D(this._texture._webTextureObj);

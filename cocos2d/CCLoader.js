@@ -41,6 +41,7 @@ cc.RESOURCE_TYPE = {
     XML:["plist", "xml", "fnt", "tmx", "tsx"],
     BINARY:["ccbi"],
     FONT:"FONT",
+    TEXT:["txt", "vsh", "fsh"],
     UNKNOW:[]
 };
 
@@ -221,6 +222,9 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
             case "BINARY":
                 sharedFileUtils.preloadBinaryFileData(resInfo.src);
                 break;
+            case "TEXT" :
+                sharedFileUtils.preloadTextFileData(resInfo.src);
+                break;
             case "FONT":
                 this._registerFaceFont(resInfo);
                 break;
@@ -258,6 +262,9 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
                         break;
                     case "BINARY":
                         sharedFileUtils.unloadBinaryFileData(resInfo.src);
+                        break;
+                    case "TEXT":
+                        sharedFileUtils.unloadTextFileData(resInfo.src);
                         break;
                     case "FONT":
                         this._unregisterFaceFont(resInfo);
@@ -366,12 +373,10 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
             preloadDiv.style.fontFamily = fontRes.fontName;
             preloadDiv.innerHTML = ".";
             preloadDiv.style.position = "absolute";
-            preloadDiv.style.left = -100;
-            preloadDiv.style.top = -100;
+            preloadDiv.style.left = "-100px";
+            preloadDiv.style.top = "-100px";
             document.body.appendChild(preloadDiv);
         }
-
-
         cc.Loader.getInstance().onResLoaded();
     },
 

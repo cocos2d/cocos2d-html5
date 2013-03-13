@@ -692,20 +692,20 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
     },
 
     _getProgressTimerVertexArray:function () {
-        var vertexBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
+        var vertexBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
         var vertiesArray = new Float32Array(2 * this._vertexDataCount);
         for (var i = 0; i < this._vertexDataCount; i++) {
             vertiesArray[i * 2] = this._vertexData[i].vertices.x;
             vertiesArray[i * 2 + 1] = this._vertexData[i].vertices.y;
         }
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertiesArray, cc.webglContext.STATIC_DRAW);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, vertiesArray, cc.renderContext.STATIC_DRAW);
         return vertexBuffer;
     },
 
     _getProgressTimerColorArray:function () {
-        var colorsBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
+        var colorsBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorsBuffer);
         var verticesArray = new Uint8Array(4 * this._vertexDataCount);
         for (var i = 0; i < this._vertexDataCount; i++) {
             verticesArray[i * 4] = this._vertexData[i].colors.r;
@@ -713,26 +713,26 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             verticesArray[i * 4 + 2] = this._vertexData[i].colors.b;
             verticesArray[i * 4 + 3] = this._vertexData[i].colors.a;
         }
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, verticesArray, cc.webglContext.STATIC_DRAW);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, verticesArray, cc.renderContext.STATIC_DRAW);
         return colorsBuffer;
     },
 
     _getProgressTimerTexCoodsArray:function () {
-        var vertexBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
+        var vertexBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
         var vertiesArray = new Float32Array(2 * this._vertexDataCount);
         for (var i = 0; i < this._vertexDataCount; i++) {
             vertiesArray[i * 2] = this._vertexData[i].texCoords.u;
             vertiesArray[i * 2 + 1] = this._vertexData[i].texCoords.v;
         }
 
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertiesArray, cc.webglContext.STATIC_DRAW);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, vertiesArray, cc.renderContext.STATIC_DRAW);
         return vertexBuffer;
     },
 
     /**
      * stuff gets drawn here
-     * @param {CanvasContext} ctx
+     * @param {WebGLRenderingContext } ctx
      */
     draw:function (ctx) {
         var context = ctx || cc.renderContext;
@@ -742,7 +742,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         cc.NODE_DRAW_SETUP(this);
 
         cc.glBlendFunc(this._sprite.getBlendFunc().src, this._sprite.getBlendFunc().dst);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
         if (this._sprite.getTexture())
             cc.glBindTexture2D(this._sprite.getTexture()._webTextureObj);

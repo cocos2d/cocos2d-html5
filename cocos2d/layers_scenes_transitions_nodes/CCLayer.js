@@ -945,7 +945,7 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
         var context = ctx || cc.renderContext;
 
         cc.NODE_DRAW_SETUP(this);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
         //
         // Attributes
@@ -961,26 +961,26 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
     },
 
     _getLayerVertexArray:function () {
-        var vertexBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+        var vertexBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
             this._squareVertices[0].x, this._squareVertices[0].y,
             this._squareVertices[1].x, this._squareVertices[1].y,
             this._squareVertices[2].x, this._squareVertices[2].y,
             this._squareVertices[3].x, this._squareVertices[3].y
-        ]), cc.webglContext.STATIC_DRAW);
+        ]), cc.renderContext.STATIC_DRAW);
         return vertexBuffer;
     },
 
     _getLayerColorArray:function () {
-        var colorsBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+        var colorsBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorsBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
             this._squareColors[0].r, this._squareColors[0].g, this._squareColors[0].b, this._squareColors[0].a,
             this._squareColors[1].r, this._squareColors[1].g, this._squareColors[1].b, this._squareColors[1].a,
             this._squareColors[2].r, this._squareColors[2].g, this._squareColors[2].b, this._squareColors[2].a,
             this._squareColors[3].r, this._squareColors[3].g, this._squareColors[3].b, this._squareColors[3].a
-        ]), cc.webglContext.STATIC_DRAW);
+        ]), cc.renderContext.STATIC_DRAW);
         return colorsBuffer;
     }
 });

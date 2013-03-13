@@ -45,7 +45,7 @@
  * @param {Number} t
  * @return {cc.Point}
  */
-cc.CardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
+ cc.CardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
     var t2 = t * t;
     var t3 = t2 * t;
 
@@ -69,7 +69,7 @@ cc.CardinalSplineAt = function (p0, p1, p2, p3, tension, t) {
  * returns a new copy of the array reversed.
  * @return {Array}
  */
-cc.reverseControlPoints = function (controlPoints) {
+cc.reverseControlPoints = function( controlPoints ) {
     var newArray = [];
     for (var i = controlPoints.length - 1; i >= 0; i--) {
         newArray.push(cc.p(controlPoints[i].x, controlPoints[i].y));
@@ -81,8 +81,8 @@ cc.reverseControlPoints = function (controlPoints) {
  * returns a point from the array
  * @return {Array}
  */
-cc.getControlPointAt = function (controlPoints, pos) {
-    var p = Math.min(controlPoints.length - 1, Math.max(pos, 0));
+cc.getControlPointAt = function( controlPoints, pos ) {
+    var p = Math.min( controlPoints.length-1, Math.max(pos,0));
     return controlPoints[p];
 };
 
@@ -110,61 +110,65 @@ cc.reverseControlPointsInline = function (controlPoints) {
  * //create a cc.CardinalSplineTo
  * var action1 = cc.CardinalSplineTo.create(3, array, 0);
  */
-    cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# */{
-        /** Array of control points */
-        _points:null,
-        _deltaT:0,
-        _tension:0,
+cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# */{
+    /** Array of control points */
+    _points:null,
+    _deltaT:0,
+    _tension:0,
 
-        /**
-         * Constructor
-         */
-        ctor:function () {
-            this._points = [];
-        },
+    /**
+     * Constructor
+     */
+    ctor:function () {
+        this._points = [];
+    },
 
-        /**
-         * initializes the action with a duration and an array of points
-         * @param {Number} duration
-         * @param {Array} points array of control points
-         * @param {Number} tension
-         * @return {Boolean}
-         */
-        initWithDuration:function (duration, points, tension) {
-            cc.Assert(points.length > 0, "Invalid configuration. It must at least have one control point");
-            if (this._super(duration)) {
-                this.setPoints(points);
-                this._tension = tension;
-                return true;
-            }
-            return false;
-        },
+    /**
+     * initializes the action with a duration and an array of points
+     * @param {Number} duration
+     * @param {Array} points array of control points
+     * @param {Number} tension
+     * @return {Boolean}
+     */
+    initWithDuration:function (duration, points, tension) {
+        cc.Assert(points.length > 0, "Invalid configuration. It must at least have one control point");
+        if (this._super(duration)) {
+            this.setPoints(points);
+            this._tension = tension;
+            return true;
+        }
+        return false;
+    },
 
     /**
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
         this._super(target);
-        this._deltaT = 1 / this._points.length;
+        // Issue #1441 from cocos2d-iphone
+        this._deltaT = 1 / (this._points.length-1);
 
         this._previousPosition = this._target.getPosition();
         this._accumulatedDiff = cc.p(0, 0);
     },
 
-        /**
-         * @param {Number} time
-         */
-        update:function (time) {
-            var p, lt;
+    /**
+     * @param {Number} time
+     */
+    update:function (time) {
+        var p, lt;
 
-            // border
-            if (time == 1) {
-                p = this._points.length - 1;
-                lt = 1;
-            } else {
-                p = 0 | (time / this._deltaT);
-                lt = (time - this._deltaT * p) / this._deltaT;
-            }
+        // eg.
+        // p..p..p..p..p..p..p
+        // 1..2..3..4..5..6..7
+        // want p to be 1, 2, 3, 4, 5, 6
+        if (time == 1) {
+            p = this._points.length - 1;
+            lt = 1;
+        } else {
+            p = 0 | (time / this._deltaT);
+            lt = (time - this._deltaT * p) / this._deltaT;
+        }
 
         var newPos = cc.CardinalSplineAt(
             cc.getControlPointAt( this._points, p - 1),
@@ -179,18 +183,18 @@ cc.reverseControlPointsInline = function (controlPoints) {
             this._accumulatedDiff = cc.pAdd(this._accumulatedDiff, diff);
             newPos = cc.pAdd(newPos, this._accumulatedDiff);
         }
- 
+
         this.updatePosition(newPos);
     },
 
-        /**
-         * reverse a new cc.CardinalSplineTo
-         * @return {cc.CardinalSplineTo}
-         */
-        reverse:function () {
-            var reversePoints = cc.reverseControlPoints(this._points);
-            return cc.CardinalSplineTo.create(this._duration, reversePoints, this._tension);
-        },
+    /**
+     * reverse a new cc.CardinalSplineTo
+     * @return {cc.CardinalSplineTo}
+     */
+    reverse:function () {
+        var reversePoints = cc.reverseControlPoints(this._points);
+        return cc.CardinalSplineTo.create(this._duration, reversePoints, this._tension);
+    },
 
     /**
      * update position of target
@@ -201,22 +205,22 @@ cc.reverseControlPointsInline = function (controlPoints) {
         this._previousPosition = newPos;
     },
 
-        /**
-         * Points getter
-         * @return {Array}
-         */
-        getPoints:function () {
-            return this._points;
-        },
+    /**
+     * Points getter
+     * @return {Array}
+     */
+    getPoints:function () {
+        return this._points;
+    },
 
-        /**
-         * Points setter
-         * @param {Array} points
-         */
-        setPoints:function (points) {
-            this._points = points;
-        }
-    });
+    /**
+     * Points setter
+     * @param {Array} points
+     */
+    setPoints:function (points) {
+        this._points = points;
+    }
+});
 
 /**
  * creates an action with a Cardinal Spline array of points and tension
@@ -284,7 +288,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
         }
 
         // convert to "diffs" to "reverse absolute"
-        var reverseArray = cc.reverseControlPoints(copyConfig);
+        var reverseArray =  cc.reverseControlPoints( copyConfig );
 
         // 1st element (which should be 0,0) should be here too
         p = reverseArray[ reverseArray.length - 1 ];
