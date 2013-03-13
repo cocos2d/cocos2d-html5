@@ -685,6 +685,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Boolean} on
      */
     setDepthTest:function (on) {
+        if(cc.renderContextType === cc.CANVAS)
+            return;
+
         if (on) {
             cc.renderContext.clearDepth(1.0);
             cc.renderContext.enable(cc.renderContext.DEPTH_TEST);
