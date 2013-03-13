@@ -627,7 +627,8 @@ cc.ProcessMouseupEvent = function (element, event) {
 
     var posArr = [];
     posArr.push(touch);
-    cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+    //csx cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+    cc.EGLView.getInstance().touchesEnded(posArr, null);
 };
 /**
  * @param {HTMLCanvasElement|HTMLDivElement} element
@@ -667,7 +668,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
                 var posArr = [];
                 posArr.push(touch);
-                cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+                //csx cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+                cc.EGLView.getInstance().touchesEnded(posArr, null);
             }
         });
 
@@ -696,7 +698,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
 
             var posArr = [];
             posArr.push(touch);
-            cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
+            //csx cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
+            cc.EGLView.getInstance().touchesBegan(posArr, null);
         });
 
         element.addEventListener("mouseup", function (event) {
@@ -732,7 +735,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var posArr = [];
             posArr.push(touch);
 
-            cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
+            //csx cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
+            cc.EGLView.getInstance().touchesMoved(posArr, null);
         });
     } else {
         //register canvas touch event
@@ -774,7 +778,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     posArr.push(touch);
                 }
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
+            //csx cc.Director.getInstance().getTouchDispatcher().touchesBegan(posArr, null);
+            cc.EGLView.getInstance().touchesBegan(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -818,7 +823,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     posArr.push(touch);
                 }
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
+            //csx cc.Director.getInstance().getTouchDispatcher().touchesMoved(posArr, null);
+            cc.EGLView.getInstance().touchesMoved(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -862,7 +868,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     posArr.push(touch);
                 }
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+            //csx cc.Director.getInstance().getTouchDispatcher().touchesEnded(posArr, null);
+            cc.EGLView.getInstance().touchesEnded(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);
@@ -906,7 +913,8 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
                     posArr.push(touch);
                 }
             }
-            cc.Director.getInstance().getTouchDispatcher().touchesCancelled(posArr, null);
+            //csx cc.Director.getInstance().getTouchDispatcher().touchesCancelled(posArr, null);
+            cc.EGLView.getInstance().touchesCancelled(posArr, null);
             event.stopPropagation();
             event.preventDefault();
         }, false);

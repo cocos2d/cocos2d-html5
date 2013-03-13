@@ -268,7 +268,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._deltaTime = 0;
             this._nextDeltaTimeZero = false;
         } else {
-            this._deltaTime = (now-this._lastUpdate) / 1000;
+            this._deltaTime = (now - this._lastUpdate) / 1000;
         }
 
         if ((cc.COCOS2D_DEBUG > 0) && (this._deltaTime > 0.2))
@@ -466,6 +466,24 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     getWinSizeInPixels:function () {
         return cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+    },
+
+    getVisibleSize:function () {
+        if (this._openGLView) {
+            return this._openGLView.getVisibleSize();
+        }
+        else {
+            return cc.size(0,0);
+        }
+    },
+
+    getVisibleOrigin:function () {
+        if (this._openGLView) {
+            return this._openGLView.getVisibleOrigin();
+        }
+        else {
+            return cc.p(0, 0);
+        }
     },
 
     getZEye:function () {
@@ -761,7 +779,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (cc.renderContextType === cc.CANVAS)
             return;
 
-        //cc.Assert(openGLView, "opengl view should not be null");
+            // set size
+            //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
+            //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
 
         //if (this._openGLView != openGLView) {
         // because EAGLView is not kind of CCObject
@@ -772,7 +792,9 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         //if (this._openGLView)
         this.setGLDefaultValues();
 
-        cc.CHECK_GL_ERROR_DEBUG();
+            /* if (this._contentScaleFactor != 1) {
+             this.updateContentScaleFactor();
+             }*/
 
         this._touchDispatcher.setDispatchEvents(true);
         //}
@@ -1057,7 +1079,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _calculateMPF:function () {
         var now = Date.now();
-        this._secondsPerFrame = (now-this._lastUpdate)/1000;
+        this._secondsPerFrame = (now - this._lastUpdate) / 1000;
     }
 });
 
@@ -1137,7 +1159,7 @@ cc.Director.getInstance = function () {
         cc.firstUseDirector = false;
         cc.s_SharedDirector = new cc.DisplayLinkDirector();
         cc.s_SharedDirector.init();
-        cc.s_SharedDirector.setOpenGLView();
+        cc.s_SharedDirector.setOpenGLView(cc.EGLView.getInstance());
     }
     return cc.s_SharedDirector;
 };
