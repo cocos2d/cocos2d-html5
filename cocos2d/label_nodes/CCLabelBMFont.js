@@ -190,7 +190,8 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
             this._parseCommonArguments(line);
         }
 
-        re = /page id=[a-zA-Z0-9\.\-= ",]+/gi;
+        //re = /page id=[a-zA-Z0-9\.\-= ",]+/gi;
+        re = /page id=[0-9]+ file="[\w\-\.]+/gi;
         line = re.exec(data)[0];
         if (line) {
             this._parseImageFileName(line, controlFile);

@@ -41,7 +41,7 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
     _upZOrig:0,
 
     startWithTarget:function (target) {
-        this._super(target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
         var camera = target.getCamera();
         var centerXYZ = camera.getCenterXYZ();
@@ -94,7 +94,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
      * @return {Boolean}
      */
     initWithDuration:function (t, radius, deltaRadius, angleZ, deltaAngleZ, angleX, deltaAngleX) {
-        if (this._super(t)) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, t)) {
             this._radius = radius;
             this._deltaRadius = deltaRadius;
             this._angleZ = angleZ;
@@ -140,7 +140,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
     },
 
     startWithTarget:function (target) {
-        this._super(target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         var retValue = this.sphericalRadius();
         if (isNaN(this._radius))
             this._radius = retValue.newRadius;

@@ -2,15 +2,26 @@
 <html>
 <head>
     <title>Cocos2d-html5 Hello World test</title>
-    <link rel="icon"
-          type="image/GIF"
-          href="../../samples/tests/res/Images/favicon.ico"/>
+    <link rel="icon" type="image/GIF" href="../../samples/tests/res/Images/favicon.ico"/>
+    <meta name="viewport" content="width=800,user-scalable=no"/>
+    <meta name="screen-orientation" content="portrait"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="full-screen" content="yes"/>
+    <meta name="x5-fullscreen" content="true"/>
+    <style>
+        body, canvas, div {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            -khtml-user-select: none;
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+    </style>
 </head>
 <body style="text-align: center;background: #f2f6f8;">
 <script type="text/javascript">
     //TODO to implement
     var cc = cc = cc || {};
-
     cc.TransitionScene = function () {
     };
 </script>

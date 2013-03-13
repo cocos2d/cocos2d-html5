@@ -21,6 +21,7 @@
                 <file name="platform/CCFileUtils.js"/>
                 <file name="platform/CCTypes.js"/>
                 <file name="platform/CCAccelerometer.js"/>
+                <file name="platform/CCEGLView.js"/>
                 <file name="platform/zlib.min.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="platform/Sys.js"/>

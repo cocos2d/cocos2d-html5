@@ -40,6 +40,7 @@
         'platform/CCEGLViewProtocol.js',
         'platform/CCEGLView.js',
         'cocoa/CCGeometry.js',
+        'platform/CCEGLView.js',
         'platform/Sys.js',
         'platform/CCConfig.js',
         'kazmath/utility.js',

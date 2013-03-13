@@ -2639,11 +2639,18 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (this._texture) {
-            cc.NODE_DRAW_SETUP(this);
-            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            cc.glBindTexture2D(this._texture._webTextureObj);
+            //cc.NODE_DRAW_SETUP(this);
+            if (this._shaderProgram) {
+                gl.useProgram(this._shaderProgram._programObj);
+                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            }
+            //cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+            cc.setBlending(this._blendFunc.src, this._blendFunc.dst);
+            //cc.glBindTexture2D(this._texture._webTextureObj);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
 
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
@@ -2651,7 +2658,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             gl.bindBuffer(gl.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
         } else {
-            gl.enable(gl.BLEND);
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
             if (shaderProgram) {
                 gl.useProgram(shaderProgram._programObj);
@@ -2660,7 +2666,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);
 
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSITION | cc.VERTEX_ATTRIBFLAG_COLOR);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
@@ -2692,38 +2698,38 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     },
 
     _getSpriteVertexArray:function () {
-        var vertexBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+        var vertexBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
             this._quad.bl.vertices.x, this._quad.bl.vertices.y, this._quad.bl.vertices.z,
             this._quad.br.vertices.x, this._quad.br.vertices.y, this._quad.br.vertices.z,
             this._quad.tl.vertices.x, this._quad.tl.vertices.y, this._quad.tl.vertices.z,
             this._quad.tr.vertices.x, this._quad.tr.vertices.y, this._quad.tr.vertices.z
-        ]), cc.webglContext.STATIC_DRAW);
+        ]), cc.renderContext.STATIC_DRAW);
         return vertexBuffer;
     },
 
     _getSpriteTexCoodsArray:function () {
-        var texCoodsBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, texCoodsBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Float32Array([
+        var texCoodsBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, texCoodsBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
             this._quad.bl.texCoords.u, this._quad.bl.texCoords.v,
             this._quad.br.texCoords.u, this._quad.br.texCoords.v,
             this._quad.tl.texCoords.u, this._quad.tl.texCoords.v,
             this._quad.tr.texCoords.u, this._quad.tr.texCoords.v
-        ]), cc.webglContext.STATIC_DRAW);
+        ]), cc.renderContext.STATIC_DRAW);
         return texCoodsBuffer;
     },
 
     _getSpriteColorsArray:function () {
-        var colorsBuffer = cc.webglContext.createBuffer();
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorsBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, new Uint8Array([
+        var colorsBuffer = cc.renderContext.createBuffer();
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorsBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Uint8Array([
             this._quad.bl.colors.r , this._quad.bl.colors.g , this._quad.bl.colors.b , this._quad.bl.colors.a,
             this._quad.br.colors.r , this._quad.br.colors.g , this._quad.br.colors.b , this._quad.br.colors.a,
             this._quad.tl.colors.r , this._quad.tl.colors.g , this._quad.tl.colors.b , this._quad.tl.colors.a,
             this._quad.tr.colors.r , this._quad.tr.colors.g , this._quad.tr.colors.b , this._quad.tr.colors.a
-        ]), cc.webglContext.STATIC_DRAW);
+        ]), cc.renderContext.STATIC_DRAW);
         return colorsBuffer;
     }
 });

@@ -249,7 +249,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
     },
 
     _getVerticesBuffer:function () {
-        var vertexBuffer = cc.webglContext.createBuffer();
+        var vertexBuffer = cc.renderContext.createBuffer();
         var vertArray = new Float32Array(this._buffer.length * 6);
         for (var i = 0; i < this._buffer.length; i++) {
             var selTriangle = this._buffer[i];
@@ -260,13 +260,13 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
             vertArray[i * 6 + 4] = selTriangle.c.vertices.x;
             vertArray[i * 6 + 5] = selTriangle.c.vertices.y;
         }
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, vertexBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, vertArray, cc.webglContext.STREAM_DRAW);
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, vertArray, cc.renderContext.STREAM_DRAW);
         return vertexBuffer;
     },
 
     _getColorsBuffer:function () {
-        var colorBuffer = cc.webglContext.createBuffer();
+        var colorBuffer = cc.renderContext.createBuffer();
         var colorArray = new Uint8Array(this._buffer.length * 12);
         for (var i = 0; i < this._buffer.length; i++) {
             var selTriangle = this._buffer[i];
@@ -285,13 +285,13 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
             colorArray[i * 12 + 10] = selTriangle.c.colors.b;
             colorArray[i * 12 + 11] = selTriangle.c.colors.a;
         }
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, colorBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, colorArray, cc.webglContext.STREAM_DRAW);
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, colorArray, cc.renderContext.STREAM_DRAW);
         return colorBuffer;
     },
 
     _getTexCoordsBuffer:function () {
-        var texCoordsBuffer = cc.webglContext.createBuffer();
+        var texCoordsBuffer = cc.renderContext.createBuffer();
         var texCoordsArray = new Float32Array(this._buffer.length * 6);
         for (var i = 0; i < this._buffer.length; i++) {
             var selTriangle = this._buffer[i];
@@ -302,8 +302,8 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
             texCoordsArray[i * 6 + 4] = selTriangle.c.texCoords.u;
             texCoordsArray[i * 6 + 5] = selTriangle.c.texCoords.v;
         }
-        cc.webglContext.bindBuffer(cc.webglContext.ARRAY_BUFFER, texCoordsBuffer);
-        cc.webglContext.bufferData(cc.webglContext.ARRAY_BUFFER, texCoordsArray, cc.webglContext.STREAM_DRAW);
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, texCoordsBuffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, texCoordsArray, cc.renderContext.STREAM_DRAW);
         return texCoordsBuffer;
     },
 
@@ -315,7 +315,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
             this._texCoordF32Buffer = this._getTexCoordsBuffer();
             this._dirty = false;
         }
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIBFLAG_POSCOLORTEX);
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
         // vertex
         gl.bindBuffer(gl.ARRAY_BUFFER, this._vertexF32Buffer);

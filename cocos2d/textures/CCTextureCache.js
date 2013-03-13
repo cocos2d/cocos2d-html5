@@ -593,9 +593,9 @@ cc.TextureCacheWebGL = cc.Class.extend({
 
             var that = this;
             texture.addEventListener("load", function () {
-                that._addImageAsyncCallBack(target, selector);
                 if (that._textures.hasOwnProperty(path))
                     that._textures[path].handleLoadedTexture();
+                that._addImageAsyncCallBack(target, selector);
             });
             texture.addEventListener("error", function () {
                 cc.Loader.getInstance().onResLoadingErr(path);
@@ -604,7 +604,9 @@ cc.TextureCacheWebGL = cc.Class.extend({
                     delete that._textures[path];
             });
             texture.src = path;
-            this._textures[path] = texture;
+            var texture2d = new cc.Texture2D();
+            texture2d.initWithElement(texture);
+            this._textures[path] = texture2d;
         }
         return this._textures[path];
     },
@@ -650,7 +652,6 @@ cc.TextureCacheWebGL = cc.Class.extend({
             var texture2d = new cc.Texture2D();
             texture2d.initWithElement(texture);
             this._textures[path] = texture2d;
-
         }
 
         return this._textures[path];

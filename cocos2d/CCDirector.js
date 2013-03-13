@@ -268,7 +268,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._deltaTime = 0;
             this._nextDeltaTimeZero = false;
         } else {
-            this._deltaTime = (now-this._lastUpdate) / 1000;
+            this._deltaTime = (now - this._lastUpdate) / 1000;
         }
 
         if ((cc.COCOS2D_DEBUG > 0) && (this._deltaTime > 0.2))
@@ -372,7 +372,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     },
 
     _drawSceneForWebGL:function () {
-        var gl = cc.webglContext;
+        var gl = cc.renderContext;
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
         /* to avoid flickr, nextScene MUST be here: after tick and before draw.
@@ -466,6 +466,24 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      */
     getWinSizeInPixels:function () {
         return cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
+    },
+
+    getVisibleSize:function () {
+        if (this._openGLView) {
+            return this._openGLView.getVisibleSize();
+        }
+        else {
+            return cc.size(0,0);
+        }
+    },
+
+    getVisibleOrigin:function () {
+        if (this._openGLView) {
+            return this._openGLView.getVisibleOrigin();
+        }
+        else {
+            return cc.p(0, 0);
+        }
     },
 
     getZEye:function () {
@@ -642,7 +660,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (on)
             cc.glBlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
         else
-            cc.glBlendFunc(cc.webglContext.ONE, cc.webglContext.ZERO);
+            cc.glBlendFunc(cc.renderContext.ONE, cc.renderContext.ZERO);
 
         cc.CHECK_GL_ERROR_DEBUG();
     },
@@ -667,13 +685,16 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
      * @param {Boolean} on
      */
     setDepthTest:function (on) {
+        if(cc.renderContextType === cc.CANVAS)
+            return;
+
         if (on) {
-            cc.webglContext.clearDepth(1.0);
-            cc.webglContext.enable(cc.webglContext.DEPTH_TEST);
-            cc.webglContext.depthFunc(cc.webglContext.LEQUAL);
-            //cc.webglContext.hint(cc.webglContext.PERSPECTIVE_CORRECTION_HINT, cc.webglContext.NICEST);
+            cc.renderContext.clearDepth(1.0);
+            cc.renderContext.enable(cc.renderContext.DEPTH_TEST);
+            cc.renderContext.depthFunc(cc.renderContext.LEQUAL);
+            //cc.renderContext.hint(cc.renderContext.PERSPECTIVE_CORRECTION_HINT, cc.renderContext.NICEST);
         } else {
-            cc.webglContext.disable(cc.webglContext.DEPTH_TEST);
+            cc.renderContext.disable(cc.renderContext.DEPTH_TEST);
         }
         cc.CHECK_GL_ERROR_DEBUG();
     },
@@ -685,11 +706,11 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         this.setAlphaBlending(true);
         // XXX: Fix me, should enable/disable depth test according the depth format as cocos2d-iphone did
         // [self setDepthTest: view_.depthFormat];
-        this.setDepthTest(true);
+        this.setDepthTest(false);
         this.setProjection(this._projection);
 
         // set other opengl default values
-        cc.webglContext.clearColor(0.0, 0.0, 0.0, 1.0);
+        cc.renderContext.clearColor(0.0, 0.0, 0.0, 1.0);
     },
 
     /**
@@ -758,21 +779,25 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         // set size
         this._winSizeInPoints = cc.size(cc.canvas.width, cc.canvas.height);        //this._openGLView.getDesignResolutionSize();
 
-        if (cc.renderContextType !== cc.WEBGL)
+        if (cc.renderContextType === cc.CANVAS)
             return;
 
-        //cc.Assert(openGLView, "opengl view should not be null");
+            // set size
+            //this._winSizeInPoints = this._openGLView.getDesignResolutionSize();
+            //this._winSizeInPixels = cc.size(this._winSizeInPoints.width * this._contentScaleFactor, this._winSizeInPoints.height * this._contentScaleFactor);
 
         //if (this._openGLView != openGLView) {
         // because EAGLView is not kind of CCObject
-        this._openGLView = openGLView;
+        this._openGLView = openGLView || cc.EGLView.getInstance();
 
         this._createStatsLabel();
 
         //if (this._openGLView)
         this.setGLDefaultValues();
 
-        cc.CHECK_GL_ERROR_DEBUG();
+            /* if (this._contentScaleFactor != 1) {
+             this.updateContentScaleFactor();
+             }*/
 
         this._touchDispatcher.setDispatchEvents(true);
         //}
@@ -1057,7 +1082,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
     _calculateMPF:function () {
         var now = Date.now();
-        this._secondsPerFrame = (now-this._lastUpdate)/1000;
+        this._secondsPerFrame = (now - this._lastUpdate) / 1000;
     }
 });
 
@@ -1137,7 +1162,7 @@ cc.Director.getInstance = function () {
         cc.firstUseDirector = false;
         cc.s_SharedDirector = new cc.DisplayLinkDirector();
         cc.s_SharedDirector.init();
-        cc.s_SharedDirector.setOpenGLView();
+        cc.s_SharedDirector.setOpenGLView(cc.EGLView.getInstance());
     }
     return cc.s_SharedDirector;
 };
