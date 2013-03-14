@@ -571,7 +571,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordsArrayBuffer);
         if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordsArray, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
 
         if (this._dirty)
             this._dirty = false;
