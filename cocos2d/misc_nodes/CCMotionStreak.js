@@ -276,7 +276,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         //texcoords
         ctx.bindBuffer(ctx.ARRAY_BUFFER, this._texCoordsBuffer);
         ctx.bufferData(ctx.ARRAY_BUFFER, this._texCoords, ctx.DYNAMIC_DRAW);
-        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, ctx.FLOAT, false, 0, 0);
+        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, ctx.FLOAT, false, 0, 0);
 
         //colors
         ctx.bindBuffer(ctx.ARRAY_BUFFER, this._colorPointerBuffer);

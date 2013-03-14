@@ -331,7 +331,7 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         if (this._dirty)
@@ -525,7 +525,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordinateBuffer);
         if (this._dirty)
             gl.bufferData(gl.ARRAY_BUFFER, this._texCoordinates, gl.DYNAMIC_DRAW);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, this._texCoordinates);
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._indicesBuffer);
         if (this._dirty)

@@ -374,7 +374,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         var gl = cc.renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, coordinates);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },
@@ -403,7 +403,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
 
         var gl = cc.renderContext;
         gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, 0, vertices);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, coordinates);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, coordinates);
 
         gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     },

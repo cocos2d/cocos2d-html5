@@ -41,7 +41,7 @@ cc.VERTEX_ATTRIB_COLOR = 1;
  * @constant
  * @type {Number}
  */
-cc.VERTEX_ATTRIB_TEXCOORDS = 2;
+cc.VERTEX_ATTRIB_TEX_COORDS = 2;
 /**
  * @constant
  * @type {Number}
@@ -182,7 +182,7 @@ cc.UNIFORM_SAMPLER_S = "CC_Texture0";
  * @constant
  * @type {String}
  */
-cc.UNIFORM_ALPHATEST_VALUE = "CC_alpha_value";
+cc.UNIFORM_ALPHA_TEST_VALUE_S = "CC_alpha_value";
 
 //------------Attribute names--------------
 /**
@@ -199,7 +199,7 @@ cc.ATTRIBUTE_NAME_POSITION = "a_position";
  * @constant
  * @type {String}
  */
-cc.ATTRIBUTE_NAME_TEXCOORD = "a_texCoord";
+cc.ATTRIBUTE_NAME_TEX_COORD = "a_texCoord";
 
 cc.HashUniformEntry = function (value, location, hh) {
     this.value = value;

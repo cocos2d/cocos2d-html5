@@ -753,7 +753,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
 
         context.bindBuffer(context.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, context.FLOAT, false, 0, 0);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, 0, 0);
 
         context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
         context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
