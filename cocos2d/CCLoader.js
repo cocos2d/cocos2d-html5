@@ -36,12 +36,12 @@ cc.LOADING_INTERVAL = 1 / 20;
  * @type Object
  */
 cc.RESOURCE_TYPE = {
-    IMAGE:["png", "jpg", "bmp"],
-    SOUND:["mp3", "ogg", "wav", "mp4", "m4a"],
-    XML:["plist", "xml", "fnt", "tmx", "tsx"],
-    BINARY:["ccbi"],
-    FONT:"FONT",
-    UNKNOW:[]
+    "IMAGE":["png", "jpg", "bmp"],
+    "SOUND":["mp3", "ogg", "wav", "mp4", "m4a"],
+    "XML":["plist", "xml", "fnt", "tmx", "tsx"],
+    "BINARY":["ccbi"],
+    "FONT":"FONT",
+    "UNKNOWN":[]
 };
 
 /**
@@ -221,7 +221,7 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
                 this._registerFaceFont(resInfo);
                 break;
             default:
-                throw "cocos2d:unknow filename extension: " + type;
+                throw "cocos2d:unknown filename extension: " + type;
                 break;
         }
     },
@@ -259,7 +259,7 @@ cc.Loader = cc.Scene.extend(/** @lends cc.Loader# */{
                         this._unregisterFaceFont(resInfo);
                         break;
                     default:
-                        throw "cocos2d:unknow filename extension: " + type;
+                        throw "cocos2d:unknown filename extension: " + type;
                         break;
                 }
             }
