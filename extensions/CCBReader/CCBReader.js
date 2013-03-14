@@ -221,7 +221,7 @@ cc.BuilderReader = cc.Class.extend({
         }
 
         var path = cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
-        var data = cc.FileUtils.getInstance().getFileData(path);
+        var data = cc.FileUtils.getInstance().getByteArrayFromFile(path);
 
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
     },
