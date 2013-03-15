@@ -174,6 +174,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
     _scheduler:null,
 
     _initializedNode:false,
+    _additionalTransformDirty:false,
+    _additionalTransform:null,
 
     /**
      * Constructor
@@ -201,6 +203,8 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
             return this._scheduler;
         };
         this._initializedNode = true;
+        this._additionalTransform = cc.AffineTransformMakeIdentity();
+        this._additionalTransformDirty = false;
     },
 
     init:function () {
@@ -1696,9 +1700,65 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
                 t.tx += this._anchorPointInPoints.x;
                 t.ty += this._anchorPointInPoints.y;
             }
+            if (this._additionalTransformDirty) {
+                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
+                this._additionalTransformDirty = false;
+            }
             this._transformDirty = false;
         }
         return this._transform;
+    },
+
+    /**
+     *<p>  Sets the additional transform.<br/>
+     *  The additional transform will be concatenated at the end of nodeToParentTransform.<br/>
+     *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
+     * // create a batchNode<br/>
+     * var batch= cc.SpriteBatchNode.create("Icon-114.png");<br/>
+     * this.addChild(batch);<br/>
+     *<br/>
+     * // create two sprites, spriteA will be added to batchNode, they are using different textures.<br/>
+     * var spriteA = cc.Sprite.createWithTexture(batch->getTexture());<br/>
+     * var spriteB = cc.Sprite.create("Icon-72.png");<br/>
+     *<br/>
+     * batch.addChild(spriteA);<br/>
+     *<br/>
+     * // We can't make spriteB as spriteA's child since they use different textures. So just add it to layer.<br/>
+     * // But we want to simulate `parent-child` relationship for these two node.<br/>
+     * this.addChild(spriteB);<br/>
+     *<br/>
+     * //position<br/>
+     * spriteA.setPosition(ccp(200, 200));<br/>
+     *<br/>
+     * // Gets the spriteA's transform.<br/>
+     * var t = spriteA.nodeToParentTransform();<br/>
+     *<br/>
+     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA. <br/>
+     * spriteB.setAdditionalTransform(t);<br/>
+     *<br/>
+     * //scale<br/>
+     * spriteA.setScale(2);<br/>
+     *<br/>
+     // Gets the spriteA's transform.<br/>
+     * * t = spriteA.nodeToParentTransform();<br/>
+     *<br/>
+     * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA. <br/>
+     * spriteB.setAdditionalTransform(t);<br/>
+     *<br/>
+     * //rotation<br/>
+     * spriteA.setRotation(20);<br/>
+     *<br/>
+     * // Gets the spriteA's transform.<br/>
+     * t = spriteA.nodeToParentTransform();<br/>
+     *<br/>
+     * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA. <br/>
+     * spriteB.setAdditionalTransform(t);<br/>
+     </p>
+     */
+    setAdditionalTransform:function (additionalTransform) {
+        this._additionalTransform = additionalTransform;
+        this._transformDirty = true;
+        this._additionalTransformDirty = true;
     },
 
     /**
