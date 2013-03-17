@@ -327,7 +327,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
 
         // texcood
         gl.bindBuffer(gl.ARRAY_BUFFER, this._texCoordF32Buffer);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEXCOORDS, 2, gl.FLOAT, false, 0, 0);
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
 
         gl.drawArrays(gl.TRIANGLES, 0, this._buffer.length * 3);
         cc.INCREMENT_GL_DRAWS(1);

@@ -213,9 +213,9 @@ cc.glEnableVertexAttribs = function (flags) {
 
     if (enableTexCoords != cc._vertexAttribTexCoords) {
         if (enableTexCoords)
-            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEXCOORDS);
+            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
         else
-            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEXCOORDS);
+            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
 
         cc._vertexAttribTexCoords = enableTexCoords;
     }

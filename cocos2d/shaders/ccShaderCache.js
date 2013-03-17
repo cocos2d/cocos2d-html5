@@ -92,14 +92,14 @@ cc.ShaderCache = cc.Class.extend({
 
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
-                program.addAttribute(cc.ATTRIBUTE_NAME_TEXCOORD, cc.VERTEX_ATTRIB_TEXCOORDS);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             case cc.SHADERTYPE_POSITION_TEXTURECOLOR_ALPHATEST:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_VERT, cc.SHADER_POSITION_TEXTURE_COLOR_ALPHATEST_FRAG);
 
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
-                program.addAttribute(cc.ATTRIBUTE_NAME_TEXCOORD, cc.VERTEX_ATTRIB_TEXCOORDS);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             case cc.SHADERTYPE_POSITION_COLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_COLOR_VERT, cc.SHADER_POSITION_COLOR_FRAG);
@@ -111,20 +111,20 @@ cc.ShaderCache = cc.Class.extend({
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_VERT, cc.SHADER_POSITION_TEXTURE_FRAG);
 
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
-                program.addAttribute(cc.ATTRIBUTE_NAME_TEXCOORD, cc.VERTEX_ATTRIB_TEXCOORDS);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             case cc.SHADERTYPE_POSITION_TEXTURE_UCOLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_UCOLOR_VERT, cc.SHADER_POSITION_TEXTURE_UCOLOR_FRAG);
 
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
-                program.addAttribute(cc.ATTRIBUTE_NAME_TEXCOORD, cc.VERTEX_ATTRIB_TEXCOORDS);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             case cc.SHADERTYPE_POSITION_TEXTURE_A8COLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_A8COLOR_VERT, cc.SHADER_POSITION_TEXTURE_A8COLOR_FRAG);
 
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
-                program.addAttribute(cc.ATTRIBUTE_NAME_TEXCOORD, cc.VERTEX_ATTRIB_TEXCOORDS);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             case cc.SHADERTYPE_POSITION_UCOLOR:
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_UCOLOR_VERT, cc.SHADER_POSITION_UCOLOR_FRAG);
@@ -134,7 +134,7 @@ cc.ShaderCache = cc.Class.extend({
                 program.initWithVertexShaderByteArray(cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_VERT, cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_FRAG);
 
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
-                program.addAttribute(cc.ATTRIBUTE_NAME_TEXCOORD, cc.VERTEX_ATTRIB_TEXCOORDS);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
                 break;
             default:
