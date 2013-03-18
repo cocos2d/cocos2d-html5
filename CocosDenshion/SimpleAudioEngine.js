@@ -331,6 +331,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 return path;
             }
             au = new Audio(keyname + "." + actExt);
+            au.volume = this._effectsVolume;
             reclaim.push(au);
         }
 
