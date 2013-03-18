@@ -529,17 +529,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
     },
 
-    /**
-     *  Stop all music and sound effects
-     * @example
-     * //example
-     * cc.AudioEngine.getInstance().end();
-     */
-    end:function () {
-        this.stopMusic();
-        this.stopAllEffects();
-    },
-
     _getEffectList:function (elt) {
         if (this._effectList.hasOwnProperty(elt)) {
             return this._effectList[elt];
@@ -625,4 +614,19 @@ cc.AudioEngine.getInstance = function () {
         this._instance.init();
     }
     return this._instance;
+};
+
+
+/**
+ *  Stop all music and sound effects
+ * @example
+ * //example
+ * cc.AudioEngine.end();
+ */
+cc.AudioEngine.end = function () {
+    if (this._instance) {
+        this._instance.stopMusic();
+        this._instance.stopAllEffects();
+    }
+    this._instance = null;
 };
