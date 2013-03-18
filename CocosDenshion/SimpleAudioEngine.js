@@ -41,7 +41,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _soundEnable:false,
     _effectList:{},
     _soundList:{},
-    _isMusicPlaying:false,
     _playingMusic:null,
     _effectsVolume:1,
     _maxAudioInstance:10,
@@ -89,6 +88,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if(/Mobile/.test(ua) && (/Safari/.test(ua)||/Firefox/.test(ua))){
             this._canPlay = false;
         }
+
+        this.musicListener = this._puaseMusic;
     },
 
     /**
@@ -172,16 +173,16 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             sfxCache.audio.load();
         }
 
-        au.addEventListener("playing", function (e) {
-            this._isMusicPlaying = true;
-        }.bind(this), false);
-
-        au.addEventListener("pause", function (e) {
-            this._isMusicPlaying = false;
-        }.bind(this), false);
+        au.addEventListener("pause", this.musicListener , false);
 
         au.loop = loop || false;
         au.play();
+        cc.AudioEngine.isMusicPlaying = true;
+    },
+
+    _puaseMusic:function(e){
+        cc.AudioEngine.isMusicPlaying = false;
+        this.removeEventListener('pause', arguments.callee, false);
     },
 
     /**
@@ -199,6 +200,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             if (releaseData) {
                 delete this._soundList[this._playingMusic];
             }
+            cc.AudioEngine.isMusicPlaying = false;
         }
     },
 
@@ -210,7 +212,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     pauseMusic:function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            this._soundList[this._playingMusic].audio.pause();
+            var au = this._soundList[this._playingMusic].audio;
+            au.pause();
+            cc.AudioEngine.isMusicPlaying = false;
         }
     },
 
@@ -222,7 +226,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     resumeMusic:function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            this._soundList[this._playingMusic].audio.play();
+            var au = this._soundList[this._playingMusic].audio;
+            au.play();
+            au.addEventListener("pause", this.musicListener , false);
+            cc.AudioEngine.isMusicPlaying = true;
         }
     },
 
@@ -237,6 +244,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au = this._soundList[this._playingMusic].audio;
             au.currentTime = 0;
             au.play();
+            au.addEventListener("pause", this.musicListener , false);
+            cc.AudioEngine.isMusicPlaying = true;
         }
     },
 
@@ -257,7 +266,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      *  }
      */
     isMusicPlaying:function () {
-        return this._isMusicPlaying;
+        return cc.AudioEngine.isMusicPlaying;
     },
 
     /**
@@ -603,6 +612,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 });
 
 cc.AudioEngine._instance = null;
+
+cc.AudioEngine.isMusicPlaying = false;
 
 /**
  * Get the shared Engine object, it will new one when first time be called.
