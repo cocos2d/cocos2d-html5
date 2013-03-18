@@ -251,7 +251,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var gid = this.getTileGIDAt(pos);
 
         // if GID == 0, then no tile is present
-        if (gid) {
+        if (gid != null) {
             var z = pos.x + pos.y * this._layerSize.width;
 
             tile = this.getChildByTag(z);
@@ -373,7 +373,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         var gid = this.getTileGIDAt(pos);
 
-        if (gid) {
+        if (gid != null) {
             var z = pos.x + pos.y * this._layerSize.width;
             var atlasIndex = this._atlasIndexForExistantZ(z);
             // remove tile from GID map
