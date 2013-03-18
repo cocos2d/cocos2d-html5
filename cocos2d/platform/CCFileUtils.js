@@ -133,14 +133,14 @@ cc.FileUtils = cc.Class.extend({
         this._searchResolutionsOrderArray.push("");
     },
     /**
-     * Get resource file data
+     * Get Byte Array from file
      * @function
      * @param {String} fileName The resource file name which contain the path
      * @param {String} mode mode The read mode of the file
      * @param {Number} size If get the file data succeed the it will be the data size,or it will be 0
      * @warning If you get the file data succeed,you must delete it after used.
      */
-    getFileData:function (fileName, mode, size) {
+    getByteArrayFromFile:function (fileName, mode, size) {
         if (this._fileDataCache.hasOwnProperty(fileName))
             return this._fileDataCache[fileName];
 
@@ -249,10 +249,10 @@ cc.FileUtils = cc.Class.extend({
     },
 
     //////////////////////////////////////////////////////////////////////////
-    // Notification support when getFileData from invalid file path.
+    // Notification support when getByteArrayFromFile from invalid file path.
     //////////////////////////////////////////////////////////////////////////
     /**
-     * Notification support when getFileData from invalid file path.
+     * Notification support when getByteArrayFromFile from invalid file path.
      * @function
      * @type {Boolean}
      */
@@ -444,7 +444,7 @@ cc.FileUtils = cc.Class.extend({
      * @function
      * @param {String} resourcePath The absolute resource path
      * @warning Don't call this function in android and iOS, it has not effect.<br/>
-     * In android, if you want to read file other than apk, you shoud use invoke getFileData(), and pass the<br/>
+     * In android, if you want to read file other than apk, you shoud use invoke getByteArrayFromFile(), and pass the<br/>
      * absolute path.
      * @deprecated
      */
