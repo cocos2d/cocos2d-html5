@@ -68,8 +68,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _hRC:null,
     _accelerometerKeyHook:null,
     _supportTouch:false,
+    _contentTranslateLeftTop:null,
 
-    _menu:null,
+        _menu:null,
     _wndProc:null,
 
     _frameZoomFactor:1.0,
@@ -80,6 +81,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._designResolutionSize = cc.SizeZero();
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
+        this._contentTranslateLeftTop = {left: 0, top: 0};
 
         this._hDC = cc.canvas;
         this._hRC = cc.renderContext;
@@ -170,6 +172,28 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
+     * <p>
+     *   The resolution translate on EGLView
+     * </p>
+     * @param {Number} translateX
+     * @param {Number} translateY
+     */
+    setContentTranslateLeftTop: function(offsetLeft, offsetTop){
+        this._contentTranslateLeftTop = {left : offsetLeft, top : offsetTop};
+    },
+
+    /**
+     * <p>
+     *   get the resolution translate on EGLView
+     * </p>
+     * @param {Number} translateX
+     * @param {Number} translateY
+     */
+    getContentTranslateLeftTop: function(){
+        return this._contentTranslateLeftTop;
+    },
+
+    /**
      * Get the frame size of EGL view.
      * In general, it returns the screen size since the EGL view is a fullscreen view.
      * @return {cc.Size}
@@ -222,6 +246,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
     },
 
+    canSetContentScaleFactor:function() {
+        return true;
+    },
+
     /**
      * Set the design resolution size.
      * @param {Number} width Design resolution width.
@@ -254,7 +282,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
         }
 
-        if (this._resolutionPolicy == cc.RESOLUTION_POLICY.SHOW_ALL) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
             this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
         }
 
@@ -268,23 +296,16 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         var diretor = cc.Director.getInstance();
         diretor._winSizeInPoints = this.getDesignResolutionSize();
 
-        if (cc.renderContextType == cc.CANVAS) {
-            var width, height;
-            switch (this._resolutionPolicy) {
-                case cc.RESOLUTION_POLICY.EXACTFIT:
-                    width = 0;
-                    height = 0;
-                case cc.RESOLUTION_POLICY.NOBORDER:
-                    width = 0;
-                    height = 0;
-                case cc.RESOLUTION_POLICY.SHOW_ALL:
-                    width = (this._screenSize.width - viewPortW) / 2;
-                    height = -(this._screenSize.height - viewPortH) / 2;
-                    var context = cc.renderContext;
-                    context.beginPath();
-                    context.rect(width, -viewPortH + height, viewPortW, viewPortH);
-                    context.clip();
-                    context.closePath();
+        if (cc.renderContextType === cc.CANVAS) {
+            var width = 0, height= 0;
+            if(this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL){
+                width = (this._screenSize.width - viewPortW) / 2;
+                height = -(this._screenSize.height - viewPortH) / 2;
+                var context = cc.renderContext;
+                context.beginPath();
+                context.rect(width, -viewPortH + height, viewPortW, viewPortH);
+                context.clip();
+                context.closePath();
             }
             cc.renderContext.translate(width, height);
             cc.renderContext.scale(this._scaleX, this._scaleY);
@@ -378,6 +399,17 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         return this._scaleY;
     },
 
+    /**
+     * Get the real location in view
+     */
+    convertToLocationInView: function(tx, ty, relatedPos){
+        var pos = this.getContentTranslateLeftTop();
+
+        var x = (pos.left + tx - relatedPos.left) / cc.Director.getInstance().getContentScaleFactor();
+        var y = (pos.top + relatedPos.height - (ty - relatedPos.top)) / cc.Director.getInstance().getContentScaleFactor();
+
+        return {x: x, y: y};
+    },
 
     /**
      * Touch events are handled by default; if you want to customize your handlers, please override these functions:
