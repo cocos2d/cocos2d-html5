@@ -88,8 +88,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if(/Mobile/.test(ua) && (/Safari/.test(ua)||/Firefox/.test(ua))){
             this._canPlay = false;
         }
-
-        this.musicListener = this._puaseMusic;
     },
 
     /**
@@ -173,14 +171,14 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             sfxCache.audio.load();
         }
 
-        au.addEventListener("pause", this.musicListener , false);
+        au.addEventListener("pause", this._musicListener , false);
 
         au.loop = loop || false;
         au.play();
         cc.AudioEngine.isMusicPlaying = true;
     },
 
-    _puaseMusic:function(e){
+    _musicListener:function(e){
         cc.AudioEngine.isMusicPlaying = false;
         this.removeEventListener('pause', arguments.callee, false);
     },
@@ -228,7 +226,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
             au.play();
-            au.addEventListener("pause", this.musicListener , false);
+            au.addEventListener("pause", this._musicListener , false);
             cc.AudioEngine.isMusicPlaying = true;
         }
     },
@@ -244,7 +242,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au = this._soundList[this._playingMusic].audio;
             au.currentTime = 0;
             au.play();
-            au.addEventListener("pause", this.musicListener , false);
+            au.addEventListener("pause", this._musicListener , false);
             cc.AudioEngine.isMusicPlaying = true;
         }
     },
