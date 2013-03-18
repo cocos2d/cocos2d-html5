@@ -173,12 +173,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
 
         au.addEventListener("playing", function (e) {
-            cc.AudioEngine._instance._isMusicPlaying = true;
-        }, false);
+            this._isMusicPlaying = true;
+        }.bind(this), false);
 
         au.addEventListener("pause", function (e) {
-            cc.AudioEngine._instance._isMusicPlaying = false;
-        }, false);
+            this._isMusicPlaying = false;
+        }.bind(this), false);
 
         au.loop = loop || false;
         au.play();
