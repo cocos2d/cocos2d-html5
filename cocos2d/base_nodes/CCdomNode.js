@@ -551,17 +551,13 @@ cc.DOM.convert = function () {
             // create a canvas
             if (!args[i].dom)
                 cc.DOM.forSprite(args[i]);
-        }
-        else if (args[i] instanceof cc.MenuItemToggle) {
+        } else if (args[i] instanceof cc.MenuItemToggle) {
             if (!args[i].dom)
                 cc.DOM.forMenuToggler(args[i]);
-        }
-
-        else if (args[i] instanceof cc.MenuItem) {
+        } else if (args[i] instanceof cc.MenuItem) {
             if (!args[i].dom)
                 cc.DOM.forMenuItem(args[i]);
-        }
-        else {
+        } else {
             cc.log('DOM converter only supports sprite and menuitems yet');
         }
         cc.DOM.addMethods(args[i]);

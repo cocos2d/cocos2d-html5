@@ -144,39 +144,84 @@ cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_SENTENCE = 3;
  */
 cc.EDITBOX_INPUT_FLAG_INITIAL_CAPS_ALL_CHARACTERS = 4;
 
+cc.EditBoxDelegate = cc.Class.extend({
+    /**
+     * This method is called when an edit box gains focus after keyboard is shown.
+     * @param {cc.EditBox} sender
+     */
+    editBoxEditingDidBegin: function (sender) {
+    },
+
+    /**
+     * This method is called when an edit box loses focus after keyboard is hidden.
+     * @param {cc.EditBox} sender
+     */
+    editBoxEditingDidEnd: function (sender) {
+    },
+
+    /**
+     * This method is called when the edit box text was changed.
+     * @param {cc.EditBox} sender
+     * @param {String} text
+     */
+    editBoxTextChanged: function (sender, text) {
+    },
+
+    /**
+     * This method is called when the return button was pressed or the outside area of keyboard was touched.
+     * @param {cc.EditBox} sender
+     */
+    editBoxReturn: function (sender) {
+    }
+});
+
 /**
  * brief Class for edit box.
  *
  * You can use this widget to gather small amounts of text from the user.
  *
  */
-cc.EditBox = cc.Sprite.extend({
-    _deleget:null,
-    _editBoxInputMode:cc.EDITBOX_INPUT_MODE_ANY,
-    _editBoxInputFlag:cc.EDITBOX_INPUT_FLAG_SENSITIVE,
-    _keyboardReturnType:cc.KEYBOARD_RETURNTYPE_DEFAULT,
+cc.EditBox = cc.ControlButton.extend({
+    _domInputSprite: null,
 
-    _placeHolderText:"",
-    _textColor:cc.BLACK,
-    _placeHolderColor:cc.BLACK,
-    _maxLength:50,
-    _adjustHeight:18,
+    _delegate: null,
+    _editBoxInputMode: cc.EDITBOX_INPUT_MODE_ANY,
+    _editBoxInputFlag: cc.EDITBOX_INPUT_FLAG_SENSITIVE,
+    _keyboardReturnType: cc.KEYBOARD_RETURNTYPE_DEFAULT,
 
-    _edTxt:null,
-    _edFontSize:14,
-    _tooltip:false,
+    _text: "",
+    _placeholderText: "",
+    _textColor: null,
+    _placeholderColor: null,
+    _maxLength: 50,
+    _adjustHeight: 18,
+
+    _edTxt: null,
+    _edFontSize: 14,
+    _edFontName: "Arial",
+
+    _placeholderFontName: "",
+    _placeholderFontSize: 14,
+
+    _tooltip: false,
 
     /**
      * * Constructor.
      * */
-    ctor:function (editBoxSize, fontSize) {
+    ctor: function (boxSize) {
         this._super();
+
+        this._textColor = cc.WHITE;
+        this._placeholderColor = cc.GRAY;
+
+        this._domInputSprite = new cc.Sprite();
+        this._domInputSprite.setContentSize(boxSize);
+        this.addChild(this._domInputSprite);
         var selfPointer = this;
-        this.setContentSize(editBoxSize);
         this._edTxt = document.createElement("input");
         this._edTxt.type = "text";
         this._edTxt.style.fontSize = this._edFontSize + "px";
-        this._edTxt.style.color = new cc.Color3B(0, 0, 0);
+        this._edTxt.style.color = "#000000";
         this._edTxt.style.border = 0;
         this._edTxt.style.background = "transparent";
         this._edTxt.style.paddingLeft = "2px";
@@ -185,56 +230,61 @@ cc.EditBox = cc.Sprite.extend({
         this._edTxt.style.active = 0;
         this._edTxt.style.outline = "medium";
         this._edTxt.addEventListener("change",function(){
-             if(this.value == ""){
-                 this.value = selfPointer._placeHolderText;
-                 this.style.color = cc.convertColor3BtoHexString(selfPointer._placeHolderColor);
-             }
+            if(this.value == ""){
+                this.value = selfPointer._placeholderText;
+                this.style.color = cc.convertColor3BtoHexString(selfPointer._placeHolderColor);
+            }
         });
         this._edTxt.addEventListener("focus", function(){
-            if(this.value == selfPointer._placeHolderText){
+            if(this.value == selfPointer._placeholderText){
                 this.value = "";
                 this.style.color = cc.convertColor3BtoHexString(selfPointer._textColor);
             }
         });
         this._edTxt.addEventListener("blur", function(){
             if(this.value == ""){
-                this.value = selfPointer._placeHolderText;
+                this.value = selfPointer._placeholderText;
                 this.style.color = cc.convertColor3BtoHexString(selfPointer._placeHolderColor);
             }
         });
 
-        this.setFontSize(fontSize);
-
-        cc.DOM.convert(this);
-        this.dom.appendChild(this._edTxt);
-        this.dom.showTooltipDiv = false;
-        this.dom.className = "";
-        this.dom.style.borderWidth = "1px";
-        this.dom.style.borderStyle = "solid";
-        this.dom.style.borderRadius = "8px";
-        this.canvas.remove();
-        console.log(this.dom);
+        cc.DOM.convert(this._domInputSprite);
+        this._domInputSprite.dom.appendChild(this._edTxt);
+        this._domInputSprite.dom.showTooltipDiv = false;
+        this._domInputSprite.dom.className = "";
+        this._domInputSprite.dom.style.borderWidth = "1px";
+        this._domInputSprite.dom.style.borderStyle = "solid";
+        this._domInputSprite.dom.style.borderRadius = "8px";
+        this._domInputSprite.canvas.remove();
     },
 
     /**
-     * Set the font-size in the edit box.
-     * @param {Number} fontSize
+     * Set the font.
+     * @param {String} fontName  The font name.
+     * @param {Number} fontSize  The font size.
      */
-    setFontSize:function (fontSize) {
+    setFont: function (fontName, fontSize) {
         this._edFontSize = fontSize;
-        this._edTxt.style.fontSize = this._edFontSize + "px";
+        this._edFontName = fontName;
+        if(this._edTxt.value == this._placeholderText)
+            this._setFontToEditBox();
+    },
+
+    _setFontToEditBox:function(){
+        this._edTxt.style.fontFamily = this._placeholderFontName;
+        this._edTxt.style.fontSize = this._placeholderFontSize;
     },
 
     /**
      *  Set the text entered in the edit box.
      * @param {string} text The given text.
      */
-    setText:function (text) {
+    setText: function (text) {
         if (text != null) {
-            if(text == ""){
-                this._edTxt.value = this._placeHolderText;
-                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeHolderColor);
-            }else{
+            if (text == "") {
+                this._edTxt.value = this._placeholderText;
+                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeholderColor);
+            } else {
                 this._edTxt.value = text;
                 this._edTxt.style.color = cc.convertColor3BtoHexString(this._textColor);
             }
@@ -245,9 +295,9 @@ cc.EditBox = cc.Sprite.extend({
      * Set the font color of the widget's text.
      * @param {cc.Color3B} color
      */
-    setFontColor:function (color) {
+    setFontColor: function (color) {
         this._textColor = color;
-        if(this._edTxt.value != this._placeHolderText){
+        if (this._edTxt.value != this._placeholderText) {
             this._edTxt.style.color = cc.convertColor3BtoHexString(color);
         }
     },
@@ -255,28 +305,29 @@ cc.EditBox = cc.Sprite.extend({
     /**
      *  Set the background-color edit text.
      */
-    setBgClr:function (color) {
+    setBackgroundColor: function (color) {
         this.dom.style.backgroundColor = cc.convertColor3BtoHexString(color);
     },
 
     /**
      *  Set the border-color edit text.
      */
-    setBorderClr:function (color) {
+    setBorderColor: function (color) {
         this.dom.style.borderColor = cc.convertColor3BtoHexString(color);
     },
 
-    setBorderWidth:function(width){
+    setBorderWidth: function (width) {
         this.dom.style.borderWidth = width + "px";
     },
 
     /**
      * <p>
-     * Sets the maximum input length of the edit box.
+     * Sets the maximum input length of the edit box. <br/>
+     * Setting this value enables multiline input mode by default.
      * </p>
      * @param {Number} maxLength The maximum length.
      */
-    setMaxLength:function (maxLength) {
+    setMaxLength: function (maxLength) {
         if (!isNaN(maxLength) && maxLength > 0) {
             this._maxLength = maxLength;
             this._edTxt.maxLength = maxLength;
@@ -287,21 +338,21 @@ cc.EditBox = cc.Sprite.extend({
      * Gets the maximum input length of the edit box.
      * @return {Number} Maximum input length.
      */
-    getMaxLength:function () {
+    getMaxLength: function () {
         return this._maxLength;
     },
 
     /**
      *  Set the zindex of edit text.
      */
-    setZIndex:function (z) {
+    setZIndex: function (z) {
         this.dom.zIndex = z;
     },
 
     /**
      *  Set the background-image of edit text.
      */
-    setImageStyle:function (url) {
+    setImageStyle: function (url) {
         this.dom.style.backgroundImage = "url('" + url + "')";
         this.dom.style.border = 0;
     },
@@ -310,23 +361,42 @@ cc.EditBox = cc.Sprite.extend({
      * Set a text in the edit box that acts as a placeholder when an edit box is empty.
      * @param {string} text The given text.
      */
-    setPlaceHolder:function (text) {
+    setPlaceHolder: function (text) {
         if (text != null) {
-            this._placeHolderText = text;
-            if(this._edTxt.value == ""){
+            var oldPlaceholderText = this._placeholderColor;
+            this._placeholderText = text;
+            if (this._edTxt.value == oldPlaceholderText) {
                 this._edTxt.value = text;
-                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeHolderColor);
+                this._edTxt.style.color = cc.convertColor3BtoHexString(this._placeholderColor);
+                this._setPlaceholderFontToEditText();
             }
         }
+    },
+
+    /**
+     * Set the placeholder's font.
+     * @param {String} fontName
+     * @param {Number} fontSize
+     */
+    setPlaceholderFont: function (fontName, fontSize) {
+        this._placeholderFontName = fontName;
+        this._placeholderFontSize = fontSize;
+        if (this._edTxt.value == this._placeholderText)
+            this._setPlaceholderFontToEditText();
+    },
+
+    _setPlaceholderFontToEditText:function(){
+        this._edTxt.style.fontFamily = this._placeholderFontName;
+        this._edTxt.style.fontSize = this._placeholderFontSize;
     },
 
     /**
      * Set the font color of the placeholder text when the edit box is empty.
      * @param {cc.Color3B} color
      */
-    setPlaceholderFontColor:function (color) {
-        this._placeHolderColor = color;
-        if(this._edTxt.value == this._placeHolderText){
+    setPlaceholderFontColor: function (color) {
+        this._placeholderColor = color;
+        if (this._edTxt.value == this._placeholderText) {
             this._edTxt.style.color = cc.convertColor3BtoHexString(color);
         }
     },
@@ -336,41 +406,48 @@ cc.EditBox = cc.Sprite.extend({
      * @param {Number} inputFlag One of the EditBoxInputFlag constants.
      * e.g.cc.EDITBOX_INPUT_FLAG_PASSWORD
      */
-    setInputFlag:function (inputFlag) {
+    setInputFlag: function (inputFlag) {
         this._editBoxInputFlag = inputFlag;
         if (inputFlag == cc.EDITBOX_INPUT_FLAG_PASSWORD)
             this._edTxt.type = "password";
         else
             this._edTxt.type = "text";
-
     },
 
     /**
      * Gets the  input string of the edit box.
      * @return {string}
      */
-    getText:function () {
+    getText: function () {
+
         return this._edTxt.value;
     },
 
     /**
-     * * Init edit box with specified size.
-     * * @param size The size and background-color.     */
-    initWithSizeAndBackgroundSprite:function (size, normal9SpriteBg) {
-        this._edWidth = size.width;
-        this.dom.style.width = this._edWidth.toString() + "px";
-        this._edHeight = size.height;
-        this.dom.style.height = this._edHeight.toString() + "px";
-        this.dom.style.backgroundColor = cc.convertColor3BtoHexString(normal9SpriteBg);
+     * Init edit box with specified size.
+     * @param {cc.Size} size
+     * @param {cc.Color3B | cc.Scale9Sprite} normal9SpriteBg
+     */
+    initWithSizeAndBackgroundSprite: function (size, normal9SpriteBg) {
+        if (this.initWithBackgroundSprite(normal9SpriteBg)) {
+            //m_pEditBoxImpl = __createSystemEditBox(this);
+            //m_pEditBoxImpl->initWithSize(size);
+
+            this.setZoomOnTouchDown(false);
+            this.setPreferredSize(size);
+            this.setPosition(cc.p(0, 0));
+            this.addTargetWithActionForControlEvent(this, this.touchDownAction, cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
+            return true;
+        }
+        return false;
     },
 
     /* override functions */
-
     /**
      * Set the delegate for edit box.
      */
-    setDelegate:function (delegate) {
-        this._deleget = delegate;
+    setDelegate: function (delegate) {
+        this._delegate = delegate;
     },
 
     /**
@@ -378,15 +455,15 @@ cc.EditBox = cc.Sprite.extend({
      * edit box is empty.
      * @return {String}
      */
-    getPlaceHolder:function () {
-        return this._placeHolderText;
+    getPlaceHolder: function () {
+        return this._placeholderText;
     },
 
     /**
      * Set the input mode of the edit box.
      * @param {Number} inputMode One of the EditBoxInputMode constants.
      */
-    setInputMode:function (inputMode) {
+    setInputMode: function (inputMode) {
         this._editBoxInputMode = inputMode;
     },
 
@@ -394,51 +471,91 @@ cc.EditBox = cc.Sprite.extend({
      * Set the return type that are to be applied to the edit box.
      * @param {Number} returnType One of the CCKeyboardReturnType constants.
      */
-    setReturnType:function (returnType) {
+    setReturnType: function (returnType) {
         this._keyboardReturnType = returnType;
     },
 
-    keyboardWillShow:function (info) {
+    keyboardWillShow: function (info) {
+        var rectTracked = cc.EditBox.getRect(this);
+        // some adjustment for margin between the keyboard and the edit box.
+        rectTracked.origin.y -= 4;
+        // if the keyboard area doesn't intersect with the tracking node area, nothing needs to be done.
+        if (!rectTracked.intersectsRect(info.end)) {
+            cc.log("needn't to adjust view layout.");
+            return;
+        }
+
+        // assume keyboard at the bottom of screen, calculate the vertical adjustment.
+        this._adjustHeight = info.end.getMaxY() - rectTracked.getMinY();
+        // CCLOG("CCEditBox:needAdjustVerticalPosition(%f)", m_fAdjustHeight);
+
+        //callback
     },
-    keyboardDidShow:function (info) {
+    keyboardDidShow: function (info) {
     },
-    keyboardWillHide:function (info) {
+    keyboardWillHide: function (info) {
+        //if (m_pEditBoxImpl != NULL) {
+        //    m_pEditBoxImpl->doAnimationWhenKeyboardMove(info.duration, -m_fAdjustHeight);
+        //}
     },
-    keyboardDidHide:function (info) {
-    },
-    touchDownAction:function (sender, controlEvent) {
+    keyboardDidHide: function (info) {
     },
 
-    //CCEditBoxDelegate interface
-    /**
-     * This method is called when an edit box gains focus after keyboard is shown.
-     * @param editBox The edit box object that generated the event.
-     */
-    editBoxEditingDidBegin:function (editBox) {
+    touchDownAction: function (sender, controlEvent) {
+        //this._editBoxImpl.openKeyboard();
     },
 
-    /**
-     * This method is called when an edit box loses focus after keyboard is hidden.
-     * @param editBox The edit box object that generated the event.
-     */
-    editBoxEditingDidEnd:function (editBox) {
+    //override function
+    setPosition:function(pos){
+       this._super(pos);
+        //TODO set to DOM
     },
 
-    /**
-     * This method is called when the edit box text was changed.
-     * @param editBox The edit box object that generated the event.
-     * @param text The new text.
-     */
-    editBoxTextChanged:function (editBox, text) {
+    setVisible:function(visible){
+        this._super(visible);
+        // TODO set to DOM
     },
 
-    /**
-     * This method is called when the return button was pressed or the outside area of keyboard was touched.
-     * @param editBox The edit box object that generated the event.
-     */
-    editBoxReturn:function (editBox) {
+    setContentSize:function(size){
+        this._super(size);
+        //TODO set to DOM
+    },
+
+    setAnchorPoint:function(anchorPoint){
+        this._super(anchorPoint);
+        //TODO set to DOM
+    },
+
+    visit:function(context){
+        this._super(context);
+        //TODO ?
+    },
+
+    onEnter:function(){
+        this._super();
+        //TODO
+    },
+
+    onExit:function(){
+        this._super();
+        //TODO
+    },
+
+    //HTML5 Only
+    initWithBackgroundColor: function (size, bgColor) {
+        this._edWidth = size.width;
+        this.dom.style.width = this._edWidth.toString() + "px";
+        this._edHeight = size.height;
+        this.dom.style.height = this._edHeight.toString() + "px";
+        this.dom.style.backgroundColor = cc.convertColor3BtoHexString(bgColor);
     }
 });
+
+cc.EditBox.getRect = function(node){
+    var contentSize = node.getContentSize();
+    var rect = cc.RectMake(0,0, contentSize.width, contentSize.height);
+    return cc.RectApplyAffineTransform(rect, node.nodeToWorldTransform());
+};
 
 /**
  * create a edit box with size and background-color or
@@ -446,11 +563,18 @@ cc.EditBox = cc.Sprite.extend({
  * @param {cc.Color3B | cc.Scale9Sprite } normal9SpriteBg
  */
 cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9SpriteBg) {
-    var edbox = new cc.EditBox(size, 14);
+    var edbox = new cc.EditBox(size);
     if (normal9SpriteBg instanceof cc.Color3B) {
-        edbox.setBgClr(normal9SpriteBg);
+        edbox.setBackgroundColor(normal9SpriteBg);
     } else {
         //Todo
+        if (edbox.initWithSizeAndBackgroundSprite(size, normal9SpriteBg)) {
+            if (press9SpriteBg)
+                edbox.setBackgroundSpriteForState(press9SpriteBg, cc.CONTROL_STATE_HIGHLIGHTED);
+
+            if (disabled9SpriteBg)
+                edbox.setBackgroundSpriteForState(disabled9SpriteBg, cc.CONTROL_STATE_DISABLED);
+        }
     }
     return edbox;
 };
