@@ -749,9 +749,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
     setString:function (newString, fromUpdate) {
         fromUpdate = fromUpdate || false;
         if (this._string != newString) {
-            this._string = newString;
+            this._string = newString + "";
             if (this._initialString !== this._string)
-                this._initialString = this._string;
+                this._initialString = this._string ;
             this.updateString(fromUpdate);
         }
     },
