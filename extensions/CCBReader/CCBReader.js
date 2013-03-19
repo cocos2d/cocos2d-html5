@@ -151,7 +151,7 @@ cc.BuilderReader = cc.Class.extend({
     _ownerCallbackNames:null,
     _ownerCallbackNodes:null,
 
-    hasScriptingOwner:false,
+    _hasScriptingOwner:false,
 
     ctor:function (ccNodeLoaderLibrary, ccbMemberVariableAssigner, ccbSelectorResolver, ccNodeLoaderListener) {
         this._stringCache = [];
