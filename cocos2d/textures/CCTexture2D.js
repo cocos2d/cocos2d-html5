@@ -909,6 +909,10 @@ cc.Texture2D.defaultAlphaPixelFormat = function () {
     return cc._defaultAlphaPixelFormat;
 };
 
+cc.Texture2D.getDefaultAlphaPixelFormat = function () {
+    return cc._defaultAlphaPixelFormat;
+};
+
 /**
  * <p>
  *    treats (or not) PVR files as if they have alpha premultiplied.                                                <br/>
