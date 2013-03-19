@@ -181,7 +181,7 @@ cc.Scale9Sprite = cc.Node.extend({
     },
     setCapInsets:function (capInsets) {
         var contentSize = this._contentSize;
-        this.updateWithBatchNode(this._scale9Image, this._spriteRect, capInsets);
+        this.updateWithBatchNode(this._scale9Image, this._spriteRect, false, capInsets);
         this.setContentSize(contentSize);
     },
 
@@ -231,13 +231,12 @@ cc.Scale9Sprite = cc.Node.extend({
     },
 
     init:function () {
-        return this.initWithBatchNode(null, cc.RectZero(), cc.RectZero());
+        return this.initWithBatchNode(null, cc.RectZero(), false, cc.RectZero());
     },
 
-    initWithBatchNode:function (batchNode, rect, capInsets) {
+    initWithBatchNode:function (batchNode, rect, unused, capInsets) {
         if (batchNode) {
-            this.updateWithBatchNode(batchNode, rect, capInsets);
-            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.updateWithBatchNode(batchNode, rect, unused, capInsets);
         }
         this.m_positionsAreDirty = true;
         return true;
@@ -268,7 +267,7 @@ cc.Scale9Sprite = cc.Node.extend({
 
         cc.Assert(file != null, "Invalid file for sprite");
         var batchnode = cc.SpriteBatchNode.create(file, 9);
-        return this.initWithBatchNode(batchnode, rect, capInsets);
+        return this.initWithBatchNode(batchnode, rect, false, capInsets);
     },
 
     /**
@@ -287,7 +286,7 @@ cc.Scale9Sprite = cc.Node.extend({
         cc.Assert(spriteFrame != null, "Sprite frame must not be nil");
 
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
-        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), capInsets);
+        return this.initWithBatchNode(batchNode, spriteFrame.getRect(), false, capInsets);
     },
 
     /**
@@ -318,7 +317,7 @@ cc.Scale9Sprite = cc.Node.extend({
      */
     resizableSpriteWithCapInsets:function (capInsets) {
         var pReturn = new cc.Scale9Sprite();
-        if (pReturn && pReturn.initWithBatchNode(this._scale9Image, this._spriteRect, capInsets)) {
+        if (pReturn && pReturn.initWithBatchNode(this._scale9Image, this._spriteRect, false, capInsets)) {
             return pReturn;
         }
         return null;
@@ -349,7 +348,7 @@ cc.Scale9Sprite = cc.Node.extend({
         return this._isOpacityModifyRGB;
     },
 
-    updateWithBatchNode:function (batchNode, rect, capInsets) {
+    updateWithBatchNode:function (batchNode, rect, unused, capInsets) {
         // Release old sprites
         this.removeAllChildren(true);
 
@@ -377,16 +376,27 @@ cc.Scale9Sprite = cc.Node.extend({
         this._spriteRect = rect;
         this._originalSize = new cc.Size(rect.size.width, rect.size.height);
         this._preferredSize = this._originalSize;
-        this._capInsetsInternal = capInsets;
+        this._capInsetsInternal = capInsets || cc.RectZero();
 
         // If there is no specified center region
-        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, cc.RectZero())) {
+        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, cc.RectZero()) ||
+            cc.Rect.CCRectEqualToRect(this._capInsetsInternal, this._spriteRect)) {
             // Apply the 3x3 grid format
             this._capInsetsInternal = cc.RectMake(
                 rect.origin.x + this._originalSize.width / 3,
                 rect.origin.y + this._originalSize.height / 3,
                 this._originalSize.width / 3,
                 this._originalSize.height / 3);
+            this._capInsets = null;
+        }
+        else
+        {
+            this._capInsetsInternal = cc.RectMake(
+                rect.origin.x + this._capInsetsInternal.origin.x,
+                rect.origin.y + this._capInsetsInternal.origin.y,
+                this._capInsetsInternal.size.width,
+                this._capInsetsInternal.size.height
+            );
         }
 
         // Get the image edges
@@ -456,12 +466,13 @@ cc.Scale9Sprite = cc.Node.extend({
 
         this.setContentSize(rect.size);
         this.addChild(this._scale9Image);
+        this.setAnchorPoint(cc.p(0.5, 0.5));
         return true;
     },
 
     setSpriteFrame:function (spriteFrame) {
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
-        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.RectZero());
+        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), false, cc.RectZero());
 
         // Reset insets
         this._insetLeft = 0;

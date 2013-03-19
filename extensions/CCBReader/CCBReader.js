@@ -221,7 +221,7 @@ cc.BuilderReader = cc.Class.extend({
         }
 
         var path = cc.FileUtils.getInstance().fullPathFromRelativePath(ccbFileName);
-        var data = cc.FileUtils.getInstance().getFileData(path);
+        var data = cc.FileUtils.getInstance().getByteArrayFromFile(path);
 
         return this.readNodeGraphFromData(data, owner, parentSize, animationManager);
     },
@@ -803,9 +803,13 @@ cc.BuilderReader = cc.Class.extend({
     }
 });
 
+cc.BuilderReader._ccbResolutionScale = 1;
+cc.BuilderReader.setResolutionScale = function(scale){
+    cc.BuilderReader._ccbResolutionScale = scale;
+};
+
 cc.BuilderReader.getResolutionScale = function () {
-    //if(cc.Application.getInstance().getT)
-    return 1;
+    return cc.BuilderReader._ccbResolutionScale;
 };
 
 cc.BuilderReader.loadAsScene = function (ccbFilePath, owner, parentSize, ccbRootPath) {
@@ -822,8 +826,10 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
     ccbRootPath = ccbRootPath || cc.BuilderReader.getResourcePath();
     var reader = new cc.BuilderReader(cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary());
     reader.setCCBRootPath(ccbRootPath);
-    var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
+    if(ccbFilePath.toLowerCase().lastIndexOf(".ccbi") != ccbFilePath.length - 5)
+        ccbFilePath = ccbFilePath + ".ccbi";
 
+    var node = reader.readNodeGraphFromFile(ccbFilePath, owner, parentSize);
     var i;
     var callbackName, callbackNode, outletName, outletNode;
     // Assign owner callbacks & member variables

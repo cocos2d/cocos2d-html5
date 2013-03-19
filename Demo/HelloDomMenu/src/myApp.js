@@ -24,6 +24,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+var g_ressources = [
+    {src:"res/HelloWorld.png"},
+    {src:"res/CloseNormal.png"},
+    {src:"res/CloseSelected.png"}
+];
 
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,

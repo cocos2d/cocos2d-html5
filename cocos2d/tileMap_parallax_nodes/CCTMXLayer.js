@@ -251,7 +251,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var gid = this.getTileGIDAt(pos);
 
         // if GID == 0, then no tile is present
-        if (gid) {
+        if (gid != null) {
             var z = pos.x + pos.y * this._layerSize.width;
 
             tile = this.getChildByTag(z);
@@ -373,7 +373,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         var gid = this.getTileGIDAt(pos);
 
-        if (gid) {
+        if (gid != null) {
             var z = pos.x + pos.y * this._layerSize.width;
             var atlasIndex = this._atlasIndexForExistantZ(z);
             // remove tile from GID map
@@ -415,13 +415,13 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     getPositionAt:function (pos) {
         var ret = cc.PointZero();
         switch (this._layerOrientation) {
-            case cc.TMXOrientationOrtho:
+            case cc.TMX_ORIENTATION_ORTHO:
                 ret = this._positionForOrthoAt(pos);
                 break;
-            case cc.TMXOrientationIso:
+            case cc.TMX_ORIENTATION_ISO:
                 ret = this._positionForIsoAt(pos);
                 break;
-            case cc.TMXOrientationHex:
+            case cc.TMX_ORIENTATION_HEX:
                 ret = this._positionForHexAt(pos);
                 break;
         }
@@ -477,8 +477,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 }
             }
         }
-        // console.log(this._maxGID , this._tileSet.firstGid , this._minGID , this._tileSet.firstGid)
-        cc.Assert((this._maxGID >= this._tileSet.firstGid && this._minGID >= this._tileSet.firstGid), "TMX: Only 1 tileset per layer is supported");
+        
+        if(!((this._maxGID >= this._tileSet.firstGid) && (this._minGID >= this._tileSet.firstGid))){
+            cc.log("cocos2d:TMX: Only 1 tileset per layer is supported");
+        }
     },
 
     /**
@@ -550,14 +552,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     _calculateLayerOffset:function (pos) {
         var ret = cc.PointZero();
         switch (this._layerOrientation) {
-            case cc.TMXOrientationOrtho:
+            case cc.TMX_ORIENTATION_ORTHO:
                 ret = cc.p(pos.x * this._mapTileSize.width, -pos.y * this._mapTileSize.height);
                 break;
-            case cc.TMXOrientationIso:
+            case cc.TMX_ORIENTATION_ISO:
                 ret = cc.p((this._mapTileSize.width / 2) * (pos.x - pos.y),
                     (this._mapTileSize.height / 2 ) * (-pos.x - pos.y));
                 break;
-            case cc.TMXOrientationHex:
+            case cc.TMX_ORIENTATION_HEX:
                 ret = cc.p(0, 0);
                 cc.log("cocos2d:offset for hexagonal map not implemented yet");
                 break;
@@ -728,14 +730,14 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var maxVal = 0;
         if (this._useAutomaticVertexZ) {
             switch (this._layerOrientation) {
-                case cc.TMXOrientationIso:
+                case cc.TMX_ORIENTATION_ISO:
                     maxVal = this._layerSize.width + this._layerSize.height;
                     ret = -(maxVal - (pos.x + pos.y));
                     break;
-                case cc.TMXOrientationOrtho:
+                case cc.TMX_ORIENTATION_ORTHO:
                     ret = -(this._layerSize.height - pos.y);
                     break;
-                case cc.TMXOrientationHex:
+                case cc.TMX_ORIENTATION_HEX:
                     cc.Assert(0, "TMX Hexa zOrder not supported");
                     break;
                 default:

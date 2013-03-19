@@ -35,14 +35,22 @@
 cc.KeyboardDelegate = cc.Class.extend(/** @lends cc.KeyboardDelegate# */{
     /**
      * Call back when a key is pressed down
+     * @param {Integer} keyCode
+     * @example
+     * // example
+     * if(keyCode == cc.KEY.w){}
      */
-    onKeyDown:function () {
+    onKeyDown:function (keyCode) {
     },
 
     /**
      * Call back when a key is released
+     * @param {Integer} keyCode
+     * @example
+     * // example
+     * if(keyCode == cc.KEY.w){}
      */
-    onKeyUp:function () {
+    onKeyUp:function (keyCode) {
     }
 });
 

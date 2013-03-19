@@ -33,7 +33,7 @@
  * @constant
  * @type String
  */
-cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.0";
+cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.1";
 
 /**
  * <p>
@@ -271,14 +271,12 @@ cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
 
-/* Runtime information  */
+/**
+  Runtime information.
+  @deprecated Use "sys" instead.
+*/
 cc.config = {
-    'os' : navigator.appVersion,
-    'platform' : 'browser',
-    'engine' : 'cocos2d-html5/canvas',
-    'arch' : 'web',
-    'version' : cc.ENGINE_VERSION,
-    'debug' : false
+    'platform' : sys.platform
 };
 
 /**
@@ -286,6 +284,7 @@ cc.config = {
  */
 cc.dumpConfig = function()
 {
-    for( i in cc.config )
-        cc.log( i + " = " + cc.config[i] );
+    for( i in sys )
+        cc.log( i + " = " + sys[i] );
 };
+

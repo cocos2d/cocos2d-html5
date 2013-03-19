@@ -509,7 +509,7 @@ cc.NodeLoader = cc.Class.extend({
 
         if (animation != null && animation != "") {
             var animationCache = cc.AnimationCache.getInstance();
-            animationCache.addAnimationsWithFile(animationFile);
+            animationCache.addAnimations(animationFile);
 
             ccAnimation = animationCache.getAnimation(animation);
         }
@@ -715,7 +715,7 @@ cc.NodeLoader = cc.Class.extend({
         var myCCBReader = new cc.BuilderReader(ccbReader);
 
         var size ;
-        var bytes = cc.FileUtils.getInstance().getFileData(path,"rb", size);
+        var bytes = cc.FileUtils.getInstance().getByteArrayFromFile(path,"rb", size);
 
         myCCBReader.initWithData(bytes,ccbReader.getOwner());
         myCCBReader.getAnimationManager().setRootContainerSize(parent.getContentSize());

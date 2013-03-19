@@ -87,7 +87,7 @@ cc.GridBase = cc.Class.extend({
 
     initWithSize:function (gridSize, texture, flipped) {
         var argnum = arguments.length;
-        if (argnum = 1) {
+        if (argnum == 1) {
             var director = cc.Director.getInstance();
             var s = director.getWinSizeInPixels();
 
@@ -95,7 +95,7 @@ cc.GridBase = cc.Class.extend({
             var POTHigh = cc.NextPOT(s.height);
 
             // we only use rgba8888
-            var format = cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888;
+            var format = cc.TEXTURE_PIXELFORMAT_RGBA8888;
 
             var pTextureTemp = new cc.Texture2D();
             pTextureTemp.initWithData(format, POTWide, POTHigh, s);

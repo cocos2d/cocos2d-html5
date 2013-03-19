@@ -48,8 +48,8 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
 
     _getLocalStorage:function () {
         try {
-            if (!!window.localStorage) {
-                return window.localStorage;
+            if (!!sys.localStorage) {
+                return sys.localStorage;
             }
         } catch (e) {
             return undefined;
@@ -113,7 +113,7 @@ cc.UserDefault = cc.Class.extend(/** @lends cc.UserDefault# */{
      */
     getFloatForKey:function (key, defaultValue) {
         var value = this._getValueForKey(key);
-        var ret = defaultValue || 0.0;
+        var ret = defaultValue || 0;
 
         if (value) {
             return parseFloat(value);
@@ -255,8 +255,10 @@ cc.UserDefault.getInstance = function () {
  * @return {cc.UserDefault|}
  */
 cc.UserDefault.purgeInstanceUserDefault = function () {
-    if (this._db) {
-        this._db.clear();
+    if (cc.hasOwnProperty("Browser")) { //TODO: clear() is not implemented in JSB
+        if (this._db) {
+            this._db.clear();
+        }
     }
 };
 

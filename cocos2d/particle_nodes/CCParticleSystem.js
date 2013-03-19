@@ -846,6 +846,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} startColor
      */
     setStartColor:function (startColor) {
+        if (startColor instanceof cc.Color3B)
+            startColor = cc.c4FFromccc3B(startColor);
         this._startColor = startColor;
     },
 
@@ -863,6 +865,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} startColorVar
      */
     setStartColorVar:function (startColorVar) {
+        if (startColorVar instanceof cc.Color3B)
+            startColorVar = cc.c4FFromccc3B(startColorVar);
         this._startColorVar = startColorVar;
     },
 
@@ -881,6 +885,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} endColor
      */
     setEndColor:function (endColor) {
+        if (endColor instanceof cc.Color3B)
+            endColor = cc.c4FFromccc3B(endColor);
         this._endColor = endColor;
     },
 
@@ -898,6 +904,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} endColorVar
      */
     setEndColorVar:function (endColorVar) {
+        if (endColorVar instanceof cc.Color3B)
+            endColorVar = cc.c4FFromccc3B(endColorVar);
         this._endColorVar = endColorVar;
     },
 
@@ -1369,13 +1377,21 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         var img = new Image();
                         img.src = "data:image/png;base64," + newImageData;
-                        this._texture = img;
-
-                        //save image to TextureCache
                         cc.TextureCache.getInstance().cacheImage(fullpath, img);
+
+                        // Manually decode the base 64 image size since the browser will only do so asynchronously
+                        var w = (buffer[16] << 24) + (buffer[17] << 16) + (buffer[18] << 8) + (buffer[19]),
+                            h = (buffer[20] << 24) + (buffer[21] << 16) + (buffer[22] << 8) + (buffer[23]);
+
+                        // Patch this on so we can correctly create the draw rect later on
+                        img.textureWidth = w;
+                        img.textureHeight = h;
+
+                        this._texture = img;
                     }
                 }
                 cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
+                this.setTexture(this._texture);;
             }
             ret = true;
         }
@@ -1798,60 +1814,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-//Compatibility with IE9
-(function () {
-    var
-        object = typeof window != 'undefined' ? window : exports,
-        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
-        INVALID_CHARACTER_ERR = (function () {
-            try { document.createElement('$'); }
-            catch (error) { return error; }}());
-
-    object.btoa || (
-        object.btoa = function (input) {
-            for (
-                // initialize result and counter
-                var block, charCode, idx = 0, map = chars, output = '';
-                // if the next input index does not exist:
-                //   change the mapping table to "="
-                //   check if d has no fractional digits
-                input.charAt(idx | 0) || (map = '=', idx % 1);
-                // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-                output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-                ) {
-                charCode = input.charCodeAt(idx += 3/4);
-                if (charCode > 0xFF) throw INVALID_CHARACTER_ERR;
-                block = block << 8 | charCode;
-            }
-            return output;
-        });
-
-    object.atob || (
-        object.atob = function (input) {
-            input = input.replace(/=+$/, '')
-            if (input.length % 4 == 1) throw INVALID_CHARACTER_ERR;
-            for (
-                // initialize result and counters
-                var bc = 0, bs, buffer, idx = 0, output = '';
-                // get next character
-                buffer = input.charAt(idx++);
-                // character found in table? initialize bit storage and add its ascii value;
-                ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-                    // and if not first of each 4 characters,
-                    // convert the first 8 bits to one ascii character
-                    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-                ) {
-                // try to find character in table (0-63, not found => -1)
-                buffer = chars.indexOf(buffer);
-            }
-            return output;
-        });
-}());
-
-cc.encodeToBase64 = function (data) {
-    return btoa(String.fromCharCode.apply(data, data)).replace(/.{76}(?=.)/g, '$&\n');
-};
-
 /**
  * <p> return the string found by key in dict. <br/>
  *    This plist files can be creted manually or with Particle Designer:<br/>
@@ -1925,3 +1887,57 @@ cc.ParticleSystem.ModeB = function (startRadius, startRadiusVar, endRadius, endR
     /** Variance in degrees for rotatePerSecond. Only available in 'Radius' mode. */
     this.rotatePerSecondVar = rotatePerSecondVar || 0;
 };
+
+
+cc.encodeToBase64 = function (bytes) {
+
+    //return btoa(String.fromCharCode.apply(data, data)).replace(/.{76}(?=.)/g, '$&\n');
+
+    var padding = '=',
+        chrTable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+        binTable = [
+            -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+            -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+            -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,62, -1,-1,-1,63,
+            52,53,54,55, 56,57,58,59, 60,61,-1,-1, -1, 0,-1,-1,
+            -1, 0, 1, 2,  3, 4, 5, 6,  7, 8, 9,10, 11,12,13,14,
+            15,16,17,18, 19,20,21,22, 23,24,25,-1, -1,-1,-1,-1,
+            -1,26,27,28, 29,30,31,32, 33,34,35,36, 37,38,39,40,
+            41,42,43,44, 45,46,47,48, 49,50,51,-1, -1,-1,-1,-1
+        ];
+
+    var result = '',
+        length = bytes.length,
+        i;
+
+    // Convert every three bytes to 4 ascii characters.
+    for(i = 0; i < (length - 2); i += 3) {
+        result += chrTable[bytes[i] >> 2];
+        result += chrTable[((bytes[i] & 0x03) << 4) + (bytes[i + 1] >> 4)];
+        result += chrTable[((bytes[i + 1] & 0x0f) << 2) + (bytes[i + 2] >> 6)];
+        result += chrTable[bytes[i + 2] & 0x3f];
+    }
+
+    // Convert the remaining 1 or 2 bytes, pad out to 4 characters.
+    if (length % 3) {
+
+        i = length - (length % 3);
+
+        result += chrTable[bytes[i] >> 2];
+        if ((length % 3) === 2) {
+
+            result += chrTable[((bytes[i] & 0x03) << 4) + (bytes[i + 1] >> 4)];
+            result += chrTable[(bytes[i + 1] & 0x0f) << 2];
+            result += padding;
+
+        } else {
+            result += chrTable[(bytes[i] & 0x03) << 4];
+            result += padding + padding;
+        }
+
+    }
+
+    return result;
+
+};
+

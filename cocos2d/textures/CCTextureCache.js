@@ -102,6 +102,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         }
         else {
             texture = new Image();
+            texture.crossOrigin = "Anonymous";
+
             var that = this;
             texture.addEventListener("load", function () {
                 that._addImageAsyncCallBack(target, selector);
@@ -154,7 +156,7 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
     addImage:function (path) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
 
-        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
+        path = cc.FileUtils.getInstance().fullPathForFilename(path);
 
         var texture = this.textures[path.toString()];
         if (texture) {
@@ -162,6 +164,8 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
         }
         else {
             texture = new Image();
+            texture.crossOrigin = "Anonymous";
+
             var that = this;
             texture.addEventListener("load", function () {
 
@@ -174,10 +178,11 @@ cc.TextureCache = cc.Class.extend(/** @lends cc.TextureCache# */{
             this.textures[path.toString()] = texture;
         }
 
-        if (cc.renderContextType == cc.CANVAS) {
+        if (cc.renderContextType === cc.CANVAS) {
             return this.textures[path.toString()];
         } else {
             //todo texture for gl
+            return null;
         }
     },
 
