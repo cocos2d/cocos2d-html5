@@ -152,7 +152,7 @@ cc.BuilderReader = cc.Class.extend({
     _ownerCallbackNames:null,
     _ownerCallbackNodes:null,
 
-    hasScriptingOwner:false,
+    _hasScriptingOwner:false,
 
     ctor:function (ccNodeLoaderLibrary, ccbMemberVariableAssigner, ccbSelectorResolver, ccNodeLoaderListener) {
         this._stringCache = [];
@@ -530,8 +530,9 @@ cc.BuilderReader = cc.Class.extend({
             keyframe.setTime(time);
             keyframe.setValue(value);
 
-            var callbackIdentifier = callbackType + ":" + callbackName;
-            actionManager.getKeyframeCallbacks().push(callbackIdentifier);
+            if(this._jsControlled) {
+                this._actionManager.getKeyframeCallbacks().push(callbackType+":"+callbackName);
+            }
             channel.getKeyframes().push(keyframe);
         }
 
@@ -672,6 +673,7 @@ cc.BuilderReader = cc.Class.extend({
         }
 
         this._jsControlled = this.readBool();
+        this._actionManager._jsControlled = this._jsControlled;
         // no need to set if it is "jscontrolled". It is obvious.
         return true;
     },
@@ -829,6 +831,26 @@ cc.BuilderReader = cc.Class.extend({
             }
         }
 
+        // Assign custom properties.
+        if (ccNodeLoader.getCustomProperties().length > 0) {
+            var customAssigned = false;
+
+            if(!this._jsControlled) {
+                var target = node;
+                if(target != null && target.onAssignCCBCustomProperty != null) {
+                    var customProperties = ccNodeLoader.getCustomProperties();
+                    var customPropKeys = customProperties.allKeys();
+                    for(i = 0;i < customPropKeys.length;i++){
+                        var customPropValue = customProperties.objectForKey(customPropKeys[i]);
+                        customAssigned = target.onAssignCCBCustomProperty(target, customPropKeys[i], customPropValue);
+
+                        if(!customAssigned && (this._ccbMemberVariableAssigner != null) && (this._ccbMemberVariableAssigner.onAssignCCBCustomProperty != null))
+                            customAssigned = this._ccbMemberVariableAssigner.onAssignCCBCustomProperty(target, customPropKeys[i], customPropValue);
+                    }
+                }
+            }
+        }
+
         this._animatedProps = null;
 
         /* Read and add children. */
@@ -965,6 +987,22 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
 
         if (controller.onDidLoadFromCCB && typeof(controller.onDidLoadFromCCB) == "function") {
             controller.onDidLoadFromCCB();
+        }
+
+        // Setup timeline callbacks
+        var keyframeCallbacks = animationManager.getKeyframeCallbacks();
+        for (j = 0; j < keyframeCallbacks.length; j++) {
+            var callbackSplit = keyframeCallbacks[j].split(":");
+            var callbackType = callbackSplit[0];
+            var callbackName = callbackSplit[1];
+
+            if (callbackType == 1){ // Document callback
+                var callfunc = cc.CallFunc.create(controller[callbackName], controller);
+                animationManager.setCallFunc(callfunc, keyframeCallbacks[j]);
+            } else if (callbackType == 2 && owner) {// Owner callback
+                var callfunc = cc.CallFunc.create(owner[callbackName], owner);
+                animationManager.setCallFunc(callfunc, keyframeCallbacks[j]);
+            }
         }
     }
 
