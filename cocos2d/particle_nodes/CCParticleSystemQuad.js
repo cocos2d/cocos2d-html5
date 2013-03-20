@@ -556,21 +556,28 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             var particle = this._particles[i];
             var lpx = (0 | (particle.size * 0.5));
 
-            //TODO these are temporary code, need modifier
             if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
                 var drawTexture = this.getTexture();
-                if (particle.isChangeColor) {
-                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(this.getTexture());
-                    if (cacheTextureForColor)
-                        drawTexture = cc.generateTintImage(this.getTexture(), cacheTextureForColor, particle.color, this._pointRect);
-                }
+
+                // Delay drawing until the texture is fully loaded by the browser
+                if (!drawTexture.width || !drawTexture.height)
+                    continue;
+
                 context.save();
                 context.globalAlpha = particle.color.a;
-                context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
+                context.translate((0 | particle.drawPos.x),
+                    -(0 | particle.drawPos.y));
+
+                var size = Math.floor(particle.size / 4) * 4;
+                var w = this._pointRect.size.width;
+                var h = this._pointRect.size.height;
+
+                context.scale((1 / w) * size, (1 / h) * size);
+
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
 
-                context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
+                context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
 
                 if (particle.isChangeColor) {
                     var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
