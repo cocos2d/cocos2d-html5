@@ -946,7 +946,7 @@ cc.BuilderReader.load = function (ccbFilePath, owner, parentSize, ccbRootPath) {
 
     var nodesWithAnimationManagers = reader.getNodesWithAnimationManagers();
     var animationManagersForNodes = reader.getAnimationManagersForNodes();
-    if(nodesWithAnimationManagers || animationManagersForNodes)
+    if(!nodesWithAnimationManagers || !animationManagersForNodes)
         return node;
     // Attach animation managers to nodes and assign root node callbacks and member variables
     for (i = 0; i < nodesWithAnimationManagers.length; i++) {
