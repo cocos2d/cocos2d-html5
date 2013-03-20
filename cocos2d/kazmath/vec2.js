@@ -46,7 +46,7 @@ cc.kmVec2LengthSq = function (pIn) {
 cc.kmVec2Normalize = function (pOut, pIn) {
     var l = 1.0 / cc.kmVec2Length(pIn);
 
-    var v;
+    var v = new cc.kmVec2();
     v.x = pIn.x * l;
     v.y = pIn.y * l;
 
@@ -75,7 +75,7 @@ cc.kmVec2Subtract = function (pOut, pV1, pV2) {
 };
 
 cc.kmVec2Transform = function (pOut, pV, pM) {
-    var v;
+    var v= new cc.kmVec2();
 
     v.x = pV.x * pM.mat[0] + pV.y * pM.mat[3] + pM.mat[6];
     v.y = pV.x * pM.mat[1] + pV.y * pM.mat[4] + pM.mat[7];
