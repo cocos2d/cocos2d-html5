@@ -514,7 +514,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     if (cacheTextureForColor)
                         cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, context.canvas, true);
                 } else {
-                    context.drawImage(drawTexture);
+                    context.drawImage(drawTexture,0,0);
                 }
 
                 context.restore();
