@@ -569,8 +569,17 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
-                context.drawImage(drawTexture, -lpx, -lpx,
-                    particle.size, particle.size);
+
+                context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
+
+                if (particle.isChangeColor) {
+                    var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
+                    if (cacheTextureForColor)
+                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, context.canvas, true);
+                } else {
+                    context.drawImage(drawTexture,0,0);
+                }
+
                 context.restore();
             } else {
                 context.save();
