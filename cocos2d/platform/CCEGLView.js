@@ -53,6 +53,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _designResolutionSize:cc.size(0, 0),
     // the view port size
     _viewPortRect:cc.rect(0,0,0,0),
+    _contentTranslateLeftTop : {left: 0, top: 0},
     // the view name
     _viewName:"",
     _scaleX:1,

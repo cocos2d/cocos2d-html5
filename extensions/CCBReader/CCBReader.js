@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var CCB_VERSION = 4;
+var CCB_VERSION = 5;
 
 var CCB_PROPTYPE_POSITION = 0;
 var CCB_PROPTYPE_SIZE = 1;
@@ -53,6 +53,7 @@ var CCB_PROPTYPE_CCBFILE = 23;
 var CCB_PROPTYPE_STRING = 24;
 var CCB_PROPTYPE_BLOCKCCCONTROL = 25;
 var CCB_PROPTYPE_FLOATSCALE = 26;
+var CCB_PROPTYPE_FLOATXY = 27;
 
 var CCB_FLOAT0 = 0;
 var CCB_FLOAT1 = 1;
@@ -229,6 +230,7 @@ cc.BuilderReader = cc.Class.extend({
     readNodeGraphFromData:function (data, owner, parentSize, animationManager) {
         this.initWithData(data, owner);
         this._actionManager.setRootContainerSize(parentSize);
+        this._actionManager.setOwner(owner);
 
         this._ownerOutletNames = [];
         this._ownerOutletNodes = [];
@@ -508,6 +510,65 @@ cc.BuilderReader = cc.Class.extend({
         }
     },
 
+    _readCallbackKeyframesForSeq:function(seq) {
+        var numKeyframes = this.readInt(false);
+
+        if (!numKeyframes)
+            return true;
+
+        var channel = new cc.BuilderSequenceProperty();
+
+        for (var i = 0; i < numKeyframes; i++)
+        {
+            var time = this.readFloat();
+            var callbackName = this.readCachedString();
+            var callbackType = this.readInt(false);
+
+            var value = [ callbackName, callbackType];
+
+            var keyframe = new cc.BuilderKeyframe();
+            keyframe.setTime(time);
+            keyframe.setValue(value);
+
+            var callbackIdentifier = callbackType + ":" + callbackName;
+            actionManager.getKeyframeCallbacks().push(callbackIdentifier);
+            channel.getKeyframes().push(keyframe);
+        }
+
+        // Assign to sequence
+        seq.setCallbackChannel(channel);
+
+        return true;
+    },
+
+    _readSoundKeyframesForSeq:function(seq) {
+        var numKeyframes = this.readInt(false);
+
+        if (!numKeyframes) return true;
+
+        var channel = new cc.BuilderSequenceProperty();
+
+        for (var i = 0; i < numKeyframes; i++)
+        {
+            var time = this.readFloat();
+            var soundFile = this.readCachedString();
+            var pitch = this.readFloat();
+            var pan = this.readFloat();
+            var gain = this.readFloat();
+
+            var value  = [soundFile, pitch, pan, gain];
+            var keyframe = new cc.BuilderKeyframe();
+            keyframe.setTime(time);
+            keyframe.setValue(value);
+
+            channel.getKeyframes().push(keyframe);
+        }
+
+        // Assign to sequence
+        seq.setSoundChannel(channel);
+
+        return true;
+    },
     _readSequences:function () {
         var sequences = this._actionManager.getSequences();
         var numSeqs = this.readInt(false);
@@ -517,6 +578,12 @@ cc.BuilderReader = cc.Class.extend({
             seq.setName(this.readCachedString());
             seq.setSequenceId(this.readInt(false));
             seq.setChainedSequenceId(this.readInt(true));
+
+            if (!this._readCallbackKeyframesForSeq(seq))
+                return false;
+            if (!this._readSoundKeyframesForSeq(seq))
+                return false;
+
             sequences.push(seq);
         }
         this._actionManager.setAutoPlaySequenceId(this.readInt(true));
@@ -549,9 +616,11 @@ cc.BuilderReader = cc.Class.extend({
         } else if (type == CCB_PROPTYPE_COLOR3) {
             var c = cc.c3(this.readByte(), this.readByte(), this.readByte());
             value = cc.Color3BWapper.create(c);
+        } else if (type == CCB_PROPTYPE_FLOATXY) {
+            value = [this.readFloat(), this.readFloat()];
         } else if (type == CCB_PROPTYPE_DEGREES) {
             value = this.readFloat();
-        } else if (type == CCB_PROPTYPE_SCALELOCK || type == CCB_PROPTYPE_POSITION) {
+        } else if (type == CCB_PROPTYPE_SCALELOCK || type == CCB_PROPTYPE_POSITION || type == CCB_PROPTYPE_FLOATXY) {
             value = [this.readFloat(), this.readFloat()];
         } else if (type == CCB_PROPTYPE_SPRITEFRAME) {
             var spriteSheet = this.readCachedString();
@@ -603,7 +672,7 @@ cc.BuilderReader = cc.Class.extend({
         }
 
         this._jsControlled = this.readBool();
-
+        // no need to set if it is "jscontrolled". It is obvious.
         return true;
     },
 
