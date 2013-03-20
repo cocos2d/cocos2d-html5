@@ -47,11 +47,12 @@ cc.BuilderAnimationManager = cc.Class.extend({
     _documentCallbackNodes:null,
     _documentControllerName:"",
     _lastCompletedSequenceName:"",
-    _keyframeCallbacks:[],
-    _keyframeCallfuncs:{},
+    _keyframeCallbacks:null,
+    _keyframeCallFuncs:null,
 
     _animationCompleteCallbackFunc:null,
     _target:null,
+    _jsControlled:false,
 
     ctor:function () {
         this._rootContainerSize = cc.size(0, 0);
@@ -68,11 +69,18 @@ cc.BuilderAnimationManager = cc.Class.extend({
         this._documentCallbackNames = [];
         this._documentCallbackNodes = [];
 
+        this._keyframeCallbacks = [];
+        this._keyframeCallFuncs = {};
+
         return true;
     },
 
     getSequences:function () {
         return this._sequences;
+    },
+
+    setSequences:function(seqs){
+        this._sequences = seqs;
     },
 
     getAutoPlaySequenceId:function () {
@@ -140,6 +148,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
         return this._lastCompletedSequenceName;
     },
 
+    getKeyframeCallbacks:function(){
+        return this._keyframeCallbacks;
+    },
+
     getRootContainerSize:function () {
         return this._rootContainerSize;
     },
@@ -195,58 +207,82 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     getActionForCallbackChannel:function(channel) {
         var lastKeyframeTime = 0;
-        var actions = [];
 
-        for (var keyframe in channel.getKeyframes())
-        {
+        var actions = [];
+        var keyframes = channel.getKeyframes();
+        var numKeyframes = keyframes.length;
+
+        for (var i = 0; i < numKeyframes; ++i) {
+            var keyframe = keyframes[i];
             var timeSinceLastKeyframe = keyframe.getTime() - lastKeyframeTime;
             lastKeyframeTime = keyframe.getTime();
-            if (timeSinceLastKeyframe > 0)
-            {
+            if(timeSinceLastKeyframe > 0) {
                 actions.push(cc.DelayTime.create(timeSinceLastKeyframe));
             }
 
-            var selectorName = keyframe.getValue()[0];
-            var selectorTarget = keyframe.getValue()[1];
+            var keyVal = keyframe.getValue();
+            var selectorName = keyVal[0];
+            var selectorTarget = keyVal[1];
 
-            // Handle JS controlled timelines
-            var callbackName = "" + selectorTarget + ":" + selectorName;
-            var callback = _keyframeCallFuncs[callbackName];
+            if(this._jsControlled) {
+                var callbackName = selectorTarget + ":" + selectorName;    //add number to the stream
+                var callback = this._keyframeCallFuncs[callbackName];
 
-            if (callback)
-            {
-                actions.push(callback);
+                if(callback != null)
+                    actions.push(callback);
+            } else {
+                var target;
+                if(selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT)
+                    target = this._rootNode;
+                else if (selectorTarget == CCB_TARGETTYPE_OWNER)
+                    target = this._owner;
+
+                if(target != null) {
+                    if(selectorName.length > 0) {
+                        var selCallFunc = 0;
+
+                        var targetAsCCBSelectorResolver = target;
+
+                        if(target.onResolveCCBCCCallFuncSelector != null)
+                            selCallFunc = targetAsCCBSelectorResolver.onResolveCCBCCCallFuncSelector(target, selectorName);
+                        if(selCallFunc == 0)
+                            cc.log("Skipping selector '" + selectorName + "' since no CCBSelectorResolver is present.");
+                        else
+                            actions.push(cc.CallFunc.create(selCallFunc,target));
+                    } else {
+                        cc.log("Unexpected empty selector.");
+                    }
+                }
             }
         }
-
-        if (!actions.length)
+        if(actions.length < 1)
             return null;
 
         return cc.Sequence.create(actions);
     },
     getActionForSoundChannel:function(channel) {
         var lastKeyframeTime = 0;
-        var actions = [];
 
-        for (var keyframe in channel.getKeyframes())
-        {
+        var actions = [];
+        var keyframes = channel.getKeyframes();
+        var numKeyframes = keyframes.length;
+
+        for (var i = 0; i < numKeyframes; ++i) {
+            var keyframe = keyframes[i];
             var timeSinceLastKeyframe = keyframe.getTime() - lastKeyframeTime;
             lastKeyframeTime = keyframe.getTime();
-            if (timeSinceLastKeyframe > 0)
-            {
+            if(timeSinceLastKeyframe > 0) {
                 actions.push(cc.DelayTime.create(timeSinceLastKeyframe));
             }
 
-            var array = keyframe.getValue();
-            var soundFile = array[0];
-            var pitch = array[1];
-            var pan = array[2];
-            var gain = array[3];
-
-            actions.push( cc.BuilderSoundEffect.create(soundFile, pitch, pan, gain));
+            var keyVal = keyframe.getValue();
+            var soundFile = cc.BuilderReader.getResourcePath() + keyVal[0];
+            var pitch = parseFloat(keyVal[1]), pan = parseFloat(keyVal[2]), gain = parseFloat(keyVal[3]);
+            actions.push(cc.BuilderSoundEffect.create(soundFile, pitch, pan, gain));
         }
 
-        if (!actions.length) return null;
+        if(actions.length < 1)
+            return null;
 
         return cc.Sequence.create(actions);
     },
@@ -311,8 +347,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
         if (seq.getCallbackChannel()) {
             // Build sound actions for channel
             var action = this.getActionForCallbackChannel(seq.getCallbackChannel());
-            if (action)
-            {
+            if (action) {
                 this._rootNode.runAction(action);
             }
         }
@@ -320,8 +355,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
         if (seq.getSoundChannel()) {
             // Build sound actions for channel
             var action = this.getActionForSoundChannel(seq.getSoundChannel());
-            if (action)
-            {
+            if (action) {
                 this._rootNode.runAction(action);
             }
         }
@@ -759,6 +793,7 @@ cc.BuilderRotateYTo.create = function (duration, angle) {
 cc.BuilderSoundEffect = cc.ActionInstant.extend({
     init:function(file) {
         this._file = file;
+        return true;
     },
     update:function(dt) {
         cc.AudioEngine.getInstance().playEffect(this._file);
@@ -766,8 +801,7 @@ cc.BuilderSoundEffect = cc.ActionInstant.extend({
 });
 cc.BuilderSoundEffect.create = function (file, pitch, pan, gain) {
     var ret = new cc.BuilderSoundEffect();
-    if (ret) {
-        if (ret.init(file))
+    if (ret && ret.init(file)) {
             return ret;
     }
     return null;
