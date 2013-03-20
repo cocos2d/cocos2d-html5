@@ -1653,7 +1653,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         if (this._visible) {
             while (this._particleIdx < this._particleCount) {
+
                 var selParticle = this._particles[this._particleIdx];
+                if (!selParticle) {
+                    continue;
+                }
 
                 // life
                 selParticle.timeToLive -= dt;
