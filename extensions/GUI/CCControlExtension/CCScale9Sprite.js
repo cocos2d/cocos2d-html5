@@ -170,7 +170,7 @@ cc.Scale9Sprite = cc.Node.extend({
         var scaleChildren = this._scale9Image.getChildren();
         if (scaleChildren && scaleChildren.length != 0) {
             for (var i = 0; i < scaleChildren.length; i++) {
-                if (scaleChildren[i] && scaleChildren.RGBAProtocol) {
+                if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
                     scaleChildren[i].setColor(this._color);
                 }
             }
@@ -335,7 +335,7 @@ cc.Scale9Sprite = cc.Node.extend({
         var scaleChildren = this._scale9Image.getChildren();
         if (scaleChildren && scaleChildren.length != 0) {
             for (var i = 0; i < scaleChildren.length; i++) {
-                if (scaleChildren[i] && scaleChildren.RGBAProtocol) {
+                if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
                     scaleChildren[i].setOpacityModifyRGB(this._isOpacityModifyRGB);
                 }
             }
