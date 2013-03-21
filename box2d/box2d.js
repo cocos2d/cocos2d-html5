@@ -10873,6 +10873,12 @@ Box2D.postDefs = [];
         s.closePath();
         s.stroke();
     };
+
+    b2DebugDraw.prototype.SetOffSet = function(offsets)
+    {
+        OffSet.x = offsets.x;
+        OffSet.y = offsets.y;
+    }
 })(); //post-definitions
 var i;
 for (i = 0; i < Box2D.postDefs.length; ++i) Box2D.postDefs[i]();
