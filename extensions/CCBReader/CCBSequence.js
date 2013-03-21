@@ -29,6 +29,8 @@ cc.BuilderSequence = cc.Class.extend({
     _name:"",
     _sequenceId:0,
     _chainedSequenceId:0,
+    _callbackChannel:null,
+    _soundChannel:null,
 
     ctor:function(){
         this._name = "";
@@ -60,7 +62,22 @@ cc.BuilderSequence = cc.Class.extend({
     },
     setChainedSequenceId:function(chainedSequenceId){
         this._chainedSequenceId = chainedSequenceId;
+    },
+
+    getCallbackChannel:function() {
+        return this._callbackChannel;
+    },
+    setCallbackChannel:function(channel) {
+        this._callbackChannel = channel;
+    },
+
+    getSoundChannel:function() {
+        return this._soundChannel;
+    },
+    setSoundChannel:function(channel) {
+        this._soundChannel = channel;
     }
+
 });
 
 cc.BuilderSequenceProperty = cc.Class.extend({

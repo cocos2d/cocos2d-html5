@@ -53,6 +53,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _designResolutionSize:cc.size(0, 0),
     // the view port size
     _viewPortRect:cc.rect(0,0,0,0),
+    _contentTranslateLeftTop : {left: 0, top: 0},
     // the view name
     _viewName:"",
     _scaleX:1,
@@ -68,6 +69,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     initialize:function () {
         this._initialize = true;
         this._adjustSize();
+        this._contentTranslateLeftTop = {left: 0, top: 0};
 
         var adjustSize = this._adjustSize.bind(this);
         window.addEventListener('resize', adjustSize, false);
@@ -134,6 +136,28 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         return true;
     },
 
+     /**
+     * <p>
+     *   The resolution translate on EGLView
+     * </p>
+     * @param {Number} translateX
+     * @param {Number} translateY
+     */   
+    setContentTranslateLeftTop: function(offsetLeft, offsetTop){
+        this._contentTranslateLeftTop = {left : offsetLeft, top : offsetTop};
+    },
+
+     /**
+     * <p>
+     *   get the resolution translate on EGLView
+     * </p>
+     * @param {Number} translateX
+     * @param {Number} translateY
+     */   
+    getContentTranslateLeftTop: function(){
+        return this._contentTranslateLeftTop;
+    },
+
     /**
      * Get the frame size of EGL view.
      * In general, it returns the screen size since the EGL view is a fullscreen view.
@@ -173,7 +197,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             return cc.p(0, 0);
         }
     },
-
+    canSetContentScaleFactor:function() {
+        return true;
+    },
     /**
      * Set the design resolution size.
      * @param {Number} width Design resolution width.
@@ -223,14 +249,10 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         diretor._winSizeInPoints = this.getDesignResolutionSize();
 
         if (cc.renderContextType == cc.CANVAS) {
-            var width, height;
+            var width = 0, height = 0;
             switch (this._resolutionPolicy) {
                 case cc.RESOLUTION_POLICY.EXACTFIT:
-                    width = 0;
-                    height = 0;
                 case cc.RESOLUTION_POLICY.NOBORDER:
-                    width = 0;
-                    height = 0;
                 case cc.RESOLUTION_POLICY.SHOW_ALL:
                     width = (this._screenSize.width - viewPortW) / 2;
                     height = -(this._screenSize.height - viewPortH) / 2;
@@ -242,6 +264,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             }
             cc.renderContext.translate(width, height);
             cc.renderContext.scale(this._scaleX, this._scaleY);
+
+            diretor.setContentScaleFactor(this._scaleX);
+            this.setContentTranslateLeftTop(width, height);
         }
         //diretor.setGLDefaultValues();
     },
@@ -320,7 +345,18 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     getScaleY:function () {
         return this._scaleY;
     },
+    
+    /**
+     * Get the real location in view
+     */
+    convertToLocationInView: function(tx, ty, relatedPos){
+        var pos = this.getContentTranslateLeftTop();
 
+        var x = (pos.left + tx - relatedPos.left) / cc.Director.getInstance().getContentScaleFactor();
+        var y = (pos.top + relatedPos.height - (ty - relatedPos.top)) / cc.Director.getInstance().getContentScaleFactor();
+        
+        return {x: x, y: y}; 
+    },
 
     /**
      * Touch events are handled by default; if you want to customize your handlers, please override these functions:
