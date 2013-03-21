@@ -27,6 +27,7 @@
  */
 
 var Box2D = {};
+var OffSet = {x:0, y:0};
 
 (function (a2j, undefined) {
 
@@ -10812,11 +10813,11 @@ Box2D.postDefs = [];
         s.beginPath();
         s.strokeStyle = this._color(color.color, this.m_alpha);
         s.fillStyle = this._color(color.color, this.m_fillAlpha);
-        s.moveTo(vertices[0].x * drawScale, vertices[0].y * drawScale);
+        s.moveTo((vertices[0].x+OffSet.x) * drawScale, ((vertices[0].y*-1)+OffSet.y) * drawScale);
         for (var i = 1; i < vertexCount; i++) {
-            s.lineTo(vertices[i].x * drawScale, vertices[i].y * drawScale);
+            s.lineTo((vertices[i].x+OffSet.x) * drawScale, (((vertices[i].y*-1)+OffSet.y)) * drawScale);
         }
-        s.lineTo(vertices[0].x * drawScale, vertices[0].y * drawScale);
+        s.lineTo((vertices[0].x+OffSet.x) * drawScale, ((vertices[0].y*-1)+OffSet.y) * drawScale);
         s.closePath();
         s.fill();
         s.stroke();
@@ -10863,12 +10864,12 @@ Box2D.postDefs = [];
             drawScale = this.m_drawScale;
         s.beginPath();
         s.strokeStyle = this._color(0xff0000, this.m_alpha);
-        s.moveTo(xf.position.x * drawScale, xf.position.y * drawScale);
-        s.lineTo((xf.position.x + this.m_xformScale * xf.R.col1.x) * drawScale, (xf.position.y + this.m_xformScale * xf.R.col1.y) * drawScale);
+        s.moveTo((xf.position.x+OffSet.x) * drawScale, (((xf.position.y*-1)+OffSet.y)) * drawScale);
+        s.lineTo(((xf.position.x + this.m_xformScale * xf.R.col1.x)+OffSet.x) * drawScale, (((xf.position.y + this.m_xformScale * xf.R.col1.y)*-1)+OffSet.y) * drawScale);
 
         s.strokeStyle = this._color(0xff00, this.m_alpha);
-        s.moveTo(xf.position.x * drawScale, xf.position.y * drawScale);
-        s.lineTo((xf.position.x + this.m_xformScale * xf.R.col2.x) * drawScale, (xf.position.y + this.m_xformScale * xf.R.col2.y) * drawScale);
+        s.moveTo((xf.position.x+OffSet.x) * drawScale, ((xf.position.y*-1)+OffSet.y) * drawScale);
+        s.lineTo(((xf.position.x + this.m_xformScale * xf.R.col2.x)+OffSet.x) * drawScale, (((xf.position.y + this.m_xformScale * xf.R.col2.y)*-1)+OffSet.y) * drawScale);
         s.closePath();
         s.stroke();
     };

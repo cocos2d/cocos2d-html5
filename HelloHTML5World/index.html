@@ -1,28 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="utf-8">
     <title>Cocos2d-html5 Hello World test</title>
     <link rel="icon" type="image/GIF" href="res/favicon.ico"/>
-    <meta name="viewport" content="width=800,user-scalable=no"/>
-    <meta name="screen-orientation" content="portrait"/>
-    <meta name="apple-mobile-web-app-capable" content="yes"/>
-    <meta name="full-screen" content="yes"/>
-    <meta name="x5-fullscreen" content="true"/>
-    <style>
-        body, canvas, div {
-            -moz-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            -khtml-user-select: none;
-            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-        }
-    </style>
+    <script type="text/javascript">
+        window.onload=function()
+        {
+            gameCanvas.focus()
+        };
+    </script>
 </head>
-<body style="padding:0; margin: 0; background: #000;">
-<div style="text-align: center;">
-    <canvas id="gameCanvas" width="800" height="450"></canvas>
+<body style="text-align:left;padding:0; margin: 0; background: #fff;">
+
+<div style="float:left">
+    <canvas id="gameCanvas" width="800px" height="450px" tabindex="0"></canvas>
+</div>
+<div id="actions" style="float: left;position:relative;height:825px;">
+    <div style='position:absolute;bottom:0;left:0'>
+        <button id="reload" onclick="window.location.reload(true)">Reload</button>
+        <!--<button id="PausePlaySchedule" onclick="sim.isPaused()>Pause</button>-->
+    </div>
 </div>
 </body>
 </html>
-<script src="cocos2d.js"></script>
+<script src="cocos2d.js?n=1"></script>

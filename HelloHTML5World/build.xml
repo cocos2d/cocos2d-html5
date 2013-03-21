@@ -126,6 +126,8 @@
             <sources dir="${basedir}">
                 <file name="src/resource.js"/>
                 <file name="src/myApp.js"/>
+                <file name="src/player.js"/>
+                <file name="src/obstacle.js"/>
                 <file name="main.js"/>
             </sources>
         </jscomp>
