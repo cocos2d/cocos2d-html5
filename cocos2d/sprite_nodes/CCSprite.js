@@ -167,8 +167,8 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         selColor = color;
     }
 
-    var w = rect.size.width;
-    var h = rect.size.height;
+    var w = Math.min(rect.size.width, tintedImgCache[0].width);
+    var h = Math.min(rect.size.height, tintedImgCache[0].height);
     var buff = renderCanvas;
     var ctx;
 
