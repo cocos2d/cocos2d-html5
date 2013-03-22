@@ -1363,7 +1363,7 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         var sx = Math.max(Math.round(this._scaleX * 1000) / 1000, 0.000001),
             sy = Math.max(Math.round(this._scaleY * 1000) / 1000, 0.000001);
 
-        if ((sx !== 1) || (sx !== 1)) {
+        if ((this._scaleX !== 1) || (this._scaleY !== 1)) {
             context.scale(sx, sy);
         }
 
