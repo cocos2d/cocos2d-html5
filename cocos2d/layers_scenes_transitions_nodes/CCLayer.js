@@ -1284,7 +1284,7 @@ cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
             xScale = yScale;
         }
         this._layerContext.translate(0, this._layerCanvas.height);
-        this._layerContext.scale(xScale, xScale);
+        this._layerContext.scale(Math.max(xScale, 0.000001), Math.max(xScale, 0.000001));
     },
 
     /**

@@ -502,12 +502,15 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 var w = this._pointRect.size.width;
                 var h = this._pointRect.size.height;
 
-                context.scale((1 / w) * size, (1 / h) * size);
+                context.scale(
+                    Math.max((1 / w) * size, 0.000001),
+                    Math.max((1 / h) * size, 0.000001)
+                );
 
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
 
-                context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
+                context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
 
                 if (particle.isChangeColor) {
 

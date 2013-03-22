@@ -1342,10 +1342,10 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         // transformations
         if (!this._ignoreAnchorPointForPosition) {
             if (this._parent)
-                context.translate(0 | (this._position.x - this._parent._anchorPointInPoints.x),
-                                  0 | -((this._position.y - this._parent._anchorPointInPoints.y)));
+                context.translate(0 | (this._position.x - this._parent._anchorPointInPoints.x),
+                                  0 | -((this._position.y - this._parent._anchorPointInPoints.y)));
             else
-                context.translate(0 | this._position.x, 0 | -(this._position.y));
+                context.translate(0 | this._position.x, 0 | -(this._position.y));
         } else {
             if (this._parent) {
                 context.translate(0 | (this._position.x - this._parent._anchorPointInPoints.x + this._anchorPointInPoints.x),
@@ -1359,8 +1359,13 @@ cc.Node = cc.Class.extend(/** @lends cc.Node# */{
         if (this._rotation != 0)
             context.rotate(Math.round(this._rotationRadians * 1000) / 1000);
 
-        if ((this._scaleX != 1) || (this._scaleY != 1))
-            context.scale(this._scaleX, this._scaleY);
+        // Workaround for Firefox on Vista and XP which explodes on scale 0.0, 0.0
+        var sx = Math.max(Math.round(this._scaleX * 1000) / 1000, 0.000001),
+            sy = Math.max(Math.round(this._scaleY * 1000) / 1000, 0.000001);
+
+        if ((sx !== 1) || (sx !== 1)) {
+            context.scale(sx, sy);
+        }
 
         if ((this._skewX != 0) || (this._skewY != 0)) {
             context.transform(1,
