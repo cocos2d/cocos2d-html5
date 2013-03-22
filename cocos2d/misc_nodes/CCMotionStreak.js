@@ -261,30 +261,32 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         if (this._nuPoints <= 1)
             return;
 
-        ctx = ctx || cc.renderContext;
-        cc.NODE_DRAW_SETUP(this);
-        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        if(this._texture && this._texture.isLoaded()){
+            ctx = ctx || cc.renderContext;
+            cc.NODE_DRAW_SETUP(this);
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
-        cc.glBindTexture2D(this._texture._webTextureObj);
+            cc.glBindTexture2D(this._texture._webTextureObj);
 
-        //position
-        ctx.bindBuffer(ctx.ARRAY_BUFFER, this._verticesBuffer);
-        ctx.bufferData(ctx.ARRAY_BUFFER, this._vertices, ctx.DYNAMIC_DRAW);
-        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, ctx.FLOAT, false, 0, 0);
+            //position
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, this._verticesBuffer);
+            ctx.bufferData(ctx.ARRAY_BUFFER, this._vertices, ctx.DYNAMIC_DRAW);
+            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, ctx.FLOAT, false, 0, 0);
 
-        //texcoords
-        ctx.bindBuffer(ctx.ARRAY_BUFFER, this._texCoordsBuffer);
-        ctx.bufferData(ctx.ARRAY_BUFFER, this._texCoords, ctx.DYNAMIC_DRAW);
-        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, ctx.FLOAT, false, 0, 0);
+            //texcoords
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, this._texCoordsBuffer);
+            ctx.bufferData(ctx.ARRAY_BUFFER, this._texCoords, ctx.DYNAMIC_DRAW);
+            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, ctx.FLOAT, false, 0, 0);
 
-        //colors
-        ctx.bindBuffer(ctx.ARRAY_BUFFER, this._colorPointerBuffer);
-        ctx.bufferData(ctx.ARRAY_BUFFER, this._colorPointer, ctx.DYNAMIC_DRAW);
-        ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
+            //colors
+            ctx.bindBuffer(ctx.ARRAY_BUFFER, this._colorPointerBuffer);
+            ctx.bufferData(ctx.ARRAY_BUFFER, this._colorPointer, ctx.DYNAMIC_DRAW);
+            ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
 
-        ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, this._nuPoints * 2);
-        cc.INCREMENT_GL_DRAWS(1);
+            ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, this._nuPoints * 2);
+            cc.INCREMENT_GL_DRAWS(1);
+        }
     },
 
     /**

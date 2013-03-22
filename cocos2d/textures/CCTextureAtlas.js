@@ -541,7 +541,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     drawNumberOfQuads:function (n, start) {
         start = start || 0;
-        if (0 == n)
+        if (0 === n || !this._texture || !this._texture.isLoaded())
             return;
 
         var gl = cc.renderContext;

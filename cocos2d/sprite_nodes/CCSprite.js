@@ -2639,24 +2639,25 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (this._texture) {
-            //cc.NODE_DRAW_SETUP(this);
-            if (this._shaderProgram) {
-                gl.useProgram(this._shaderProgram._programObj);
-                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            if(this._texture.isLoaded()){
+                if (this._shaderProgram) {
+                    gl.useProgram(this._shaderProgram._programObj);
+                    this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+                }
+                //cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+                cc.setBlending(this._blendFunc.src, this._blendFunc.dst);
+                //cc.glBindTexture2D(this._texture._webTextureObj);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
+
+                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
             }
-            //cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            cc.setBlending(this._blendFunc.src, this._blendFunc.dst);
-            //cc.glBindTexture2D(this._texture._webTextureObj);
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
-
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
             if (shaderProgram) {

@@ -146,7 +146,9 @@ cc.setBlending = function (sfactor, dfactor) {
         cc.renderContext.disable(cc.renderContext.BLEND);
     } else {
         cc.renderContext.enable(cc.renderContext.BLEND);
-        cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
+        cc.renderContext.blendFunc(sfactor,dfactor);
+        //TODO need fix for WebGL
+        //cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
     }
 };
 
