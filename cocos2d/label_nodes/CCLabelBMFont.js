@@ -172,7 +172,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
             this._parseCommonArguments(line);
         }
 
-        re = /page id=[a-zA-Z0-9\.\-= ",]+/gi;
+        re = /page id=[a-zA-Z0-9_\.\-= ",]+/gi;
         line = re.exec(data)[0];
         if (line) {
             this._parseImageFileName(line, controlFile);
@@ -723,9 +723,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this._string = newString + String.fromCharCode(0);
             //  if(this._initialString == ""){
             this._initialString = newString + String.fromCharCode(0);
-            //}
-            this.updateString(fromUpdate);
+            //} 
         }
+        this.updateString(fromUpdate);
     },
 
     /**
@@ -740,9 +740,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      *  update Label
      */
     updateLabel:function () {
-        if (this._width > 0) {
-            this.setString(this._initialString, true);
+    	this.setString(this._initialString, true);
 
+        if (this._width > 0) {
             // Step 1: Make multiline
             var stringLength = this._string.length;
             var multiline_string = [];
@@ -755,7 +755,9 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 while (!(characterSprite = this.getChildByTag(j + skip)))
                     skip++;
 
-                //if (!characterSprite.isVisible()) continue;
+                if (!characterSprite.isVisible())
+                	continue;
+
                 if (i >= stringLength)
                     break;
 
@@ -884,7 +886,15 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
                 if (this._string[ctr].charCodeAt(0) == 10 || this._string[ctr].charCodeAt(0) == 0) {
                     var lineWidth = 0;
                     var line_length = last_line.length;
+                   
+                   // if last line is empty we must just increase lineNumber and work with next line
+	                if (line_length == 0) {
+	                    lineNumber++;
+	                    continue;
+	                }
+
                     var index = i + line_length - 1 + lineNumber;
+
                     if (index < 0) continue;
 
                     var lastChar = this.getChildByTag(index);
