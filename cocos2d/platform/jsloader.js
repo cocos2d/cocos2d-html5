@@ -141,7 +141,7 @@
             '../extensions/CCBReader/CCBSequence.js',
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
-            '../extensions/CCControlEditBox.js'
+            '../extensions/CCEditBox.js'
         ]);
     }
 

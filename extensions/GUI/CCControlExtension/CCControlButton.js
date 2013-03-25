@@ -338,15 +338,15 @@ cc.ControlButton = cc.Control.extend({
         if (isTouchMoveInside && !this._highlighted) {
             this._state = cc.CONTROL_STATE_HIGHLIGHTED;
             this.setHighlighted(true);
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGENTER);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_ENTER);
         } else if (isTouchMoveInside && this._highlighted) {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGINSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_INSIDE);
         } else if (!isTouchMoveInside && this._highlighted) {
             this._state = cc.CONTROL_STATE_NORMAL;
             this.setHighlighted(false);
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGEXIT);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_EXIT);
         } else if (!isTouchMoveInside && !this._highlighted) {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAGOUTSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_DRAG_OUTSIDE);
         }
     },
     onTouchEnded:function (touch, event) {
@@ -355,9 +355,9 @@ cc.ControlButton = cc.Control.extend({
         this.setHighlighted(false);
 
         if (this.isTouchInside(touch)) {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UPINSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UP_INSIDE);
         } else {
-            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UPOUTSIDE);
+            this.sendActionsForControlEvents(cc.CONTROL_EVENT_TOUCH_UP_OUTSIDE);
         }
     },
 
