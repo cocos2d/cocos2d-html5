@@ -172,7 +172,7 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
             this._parseCommonArguments(line);
         }
 
-        re = /page id=[a-zA-Z0-9\.\-= ",]+/gi;
+        re = /page id=[a-zA-Z0-9_\.\-= ",]+/gi;
         line = re.exec(data)[0];
         if (line) {
             this._parseImageFileName(line, controlFile);
@@ -591,7 +591,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
         var quantityOfLines = 1;
 
-        var stringLen = this._string.length;
+        var stringLen = this._string.length - 1;
 
         if (stringLen == 0) {
             return;
@@ -744,7 +744,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this.setString(this._initialString, true);
 
             // Step 1: Make multiline
-            var stringLength = this._string.length;
+            var stringLength = this._string.length - 1;
             var multiline_string = [];
             var last_word = [];
 
@@ -877,7 +877,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             var i = 0;
 
             var lineNumber = 0;
-            var strlen = this._string.length;
+            var strlen = this._string.length - 1;
             var last_line = [];
 
             for (var ctr = 0; ctr < strlen; ctr++) {
