@@ -350,12 +350,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * Get the real location in view
      */
     convertToLocationInView: function(tx, ty, relatedPos){
-        var pos = this.getContentTranslateLeftTop();
-
-        var x = (pos.left + tx - relatedPos.left) / cc.Director.getInstance().getContentScaleFactor();
-        var y = (pos.top + relatedPos.height - (ty - relatedPos.top)) / cc.Director.getInstance().getContentScaleFactor();
-        
-        return {x: x, y: y}; 
+        return {x: tx - relatedPos.left, y: relatedPos.top + relatedPos.height - ty};
     },
 
     /**
