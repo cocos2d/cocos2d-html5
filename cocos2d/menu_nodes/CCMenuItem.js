@@ -832,11 +832,15 @@ cc.MenuItemSprite.create = function (normalSprite, selectedSprite, three, four, 
     var ret = new cc.MenuItemSprite();
     //when you send 4 arguments, five is undefined
     if (len == 5) {
-        disabledImage = arguments[2], callback = arguments[3], target = arguments[4];
+        disabledImage = arguments[2];
+        callback = arguments[3];
+        target = arguments[4];
     } else if (len == 4 && typeof arguments[3] === "function") {
-        disabledImage = arguments[2], callback = arguments[3];
+        disabledImage = arguments[2];
+        callback = arguments[3];
     } else if (len == 4 && typeof arguments[2] === "function") {
-        target = arguments[3], callback = arguments[2];
+        target = arguments[3];
+        callback = arguments[2];
     } else if (len <= 2) {
         disabledImage = arguments[2];
     }

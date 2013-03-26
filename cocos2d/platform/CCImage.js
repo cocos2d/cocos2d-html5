@@ -132,7 +132,7 @@ cc.ALIGN_TOP_LEFT = 0x11;
  * @return {Number}
  * @constructor
  */
-function cc.RGB_PREMULTIPLY_APLHA(vr, vg, vb, va) {
+cc.RGB_PREMULTIPLY_APLHA = function(vr, vg, vb, va) {
     return ((vr * (va + 1)) >> 8) | ((vg * (va + 1) >> 8) << 8) | ((vb * (va + 1) >> 8) << 16) | ((va) << 24)
 }
 
