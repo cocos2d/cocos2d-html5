@@ -338,6 +338,8 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._hasMipmaps = false;
         this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE));
 
+        this._isLoaded = true;
+
         return true;
     },
 
@@ -434,6 +436,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
             cc.log("cocos2d: WARNING: Image (" + imageWidth + " x " + imageHeight+ ") is bigger than the supported " + maxTextureSize + " x " + maxTextureSize);
             return false;
         }
+        this._isLoaded = true;
 
         // always load premultiplied images
         return this._initPremultipliedATextureWithImage(uiImage, imageWidth, imageHeight);
@@ -447,7 +450,12 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._htmlElementObj = element;
     },
 
+    isLoaded:function(){
+       return this._isLoaded;
+    },
+
     handleLoadedTexture:function(){
+        this._isLoaded = true;
         //upload image to buffer
         var gl = cc.renderContext;
 

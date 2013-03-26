@@ -2030,10 +2030,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     },
     /// ---- common properties end   ----
 
-    _verticesFloat32Buffer:null,
-    _textureCoordsFloat32Buffer:null,
-    _colorsUint8Buffer:null,
     _quad:null,              // vertex coords, texture coords and color info
+    _quadWebBuffer:null,
+    _quadDirty:false,
 
     /**
      * Constructor
@@ -2045,8 +2044,12 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
         this._color = cc.white();
-        this._quad = cc.V3F_C4B_T2F_QuadZero();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
+
+        this._quad = new cc.V3F_C4B_T2F_Quad();
+        this._quadWebBuffer = cc.renderContext.createBuffer();
+        this._quadDirty = true;
+        this._myViewer = new Uint8Array(this._quad.arrayBuffer);
 
         if (fileName) {
             if (typeof(fileName) == "string") {
@@ -2126,7 +2129,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         this._quad.br.colors = new cc.Color4B(255, 255, 255, 255);
         this._quad.tl.colors = new cc.Color4B(255, 255, 255, 255);
         this._quad.tr.colors = new cc.Color4B(255, 255, 255, 255);
-        this._colorsUint8Buffer = this._getSpriteColorsArray();
+        this._quadDirty = true;
         this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
 
         // updated in "useSelfRender"
@@ -2183,6 +2186,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * Initializes a sprite with a texture and a rect in texture
      * @param {cc.Texture2D} texture
      * @param {cc.Rect} rect
+     * @param {Boolean} rotated
      * @return {Boolean}
      * @example
      * var img =cc.TextureCache.getInstance().addImage("HelloHTML5World.png");
@@ -2235,9 +2239,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         // by default use "Self Render".
         // if the sprite is added to a batchnode, then it will automatically switch to "batchnode Render"
         this.setBatchNode(null);
-        this._textureCoordsFloat32Buffer = this._getSpriteTexCoodsArray();
-        this._verticesFloat32Buffer = this._getSpriteVertexArray();
-        this._colorsUint8Buffer = this._getSpriteColorsArray();
+        this._quadDirty = true;
         return true;
     },
     /**
@@ -2281,7 +2283,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._quad.br.vertices = cc.vertex3(x2, y1, 0);
             this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
             this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
-            this._verticesFloat32Buffer = this._getSpriteVertexArray();
+
+            this._quadDirty = true;
         }
     },
 
@@ -2417,7 +2420,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         }
         // self render
         // do nothing
-        this._colorsUint8Buffer = this._getSpriteColorsArray();
+        this._quadDirty = true;
     },
 
     /**
@@ -2509,7 +2512,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
             this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
 
-            this._verticesFloat32Buffer = this._getSpriteVertexArray();
+            this._quadDirty = true;
         } else {
             // using batch
             this._transformToBatch = cc.AffineTransformIdentity();
@@ -2628,35 +2631,40 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._quad.tr.texCoords.u = right;
             this._quad.tr.texCoords.v = top;
         }
-        this._textureCoordsFloat32Buffer = this._getSpriteTexCoodsArray();
+        this._quadDirty = true;
     },
     /**
      * draw sprite to canvas
-     * @param {CanvasContext} ctx 2d context of canvas
+     * @param {WebGLRenderContext} ctx 3d context of canvas
      */
     draw:function (ctx) {
         var gl = ctx || cc.renderContext;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (this._texture) {
-            //cc.NODE_DRAW_SETUP(this);
-            if (this._shaderProgram) {
-                gl.useProgram(this._shaderProgram._programObj);
-                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            if(this._texture.isLoaded()){
+                if (this._shaderProgram) {
+                    gl.useProgram(this._shaderProgram._programObj);
+                    this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+                }
+
+                //cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+                cc.setBlending(this._blendFunc.src, this._blendFunc.dst);
+                //cc.glBindTexture2D(this._texture._webTextureObj);
+                gl.activeTexture(gl.TEXTURE0);
+                gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
+
+                cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+
+                gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
+                if(this._quadDirty){
+                    cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc.renderContext.DYNAMIC_DRAW);
+                    this._quadDirty = false;
+                }
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
+                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
             }
-            //cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            cc.setBlending(this._blendFunc.src, this._blendFunc.dst);
-            //cc.glBindTexture2D(this._texture._webTextureObj);
-            gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
-
-            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
-
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 0, 0);
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
             if (shaderProgram) {
@@ -2668,14 +2676,15 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR);
 
-            gl.bindBuffer(gl.ARRAY_BUFFER, this._verticesFloat32Buffer);
-            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 0, 0);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
+            if(this._quadDirty){
+                cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc.renderContext.DYNAMIC_DRAW);
+                this._quadDirty = false;
+            }
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
         }
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, this._colorsUint8Buffer);
-        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 0, 0);
-
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); //30%
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
@@ -2695,42 +2704,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.g_NumberOfDraws++;
-    },
-
-    _getSpriteVertexArray:function () {
-        var vertexBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
-            this._quad.bl.vertices.x, this._quad.bl.vertices.y, this._quad.bl.vertices.z,
-            this._quad.br.vertices.x, this._quad.br.vertices.y, this._quad.br.vertices.z,
-            this._quad.tl.vertices.x, this._quad.tl.vertices.y, this._quad.tl.vertices.z,
-            this._quad.tr.vertices.x, this._quad.tr.vertices.y, this._quad.tr.vertices.z
-        ]), cc.renderContext.STATIC_DRAW);
-        return vertexBuffer;
-    },
-
-    _getSpriteTexCoodsArray:function () {
-        var texCoodsBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, texCoodsBuffer);
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
-            this._quad.bl.texCoords.u, this._quad.bl.texCoords.v,
-            this._quad.br.texCoords.u, this._quad.br.texCoords.v,
-            this._quad.tl.texCoords.u, this._quad.tl.texCoords.v,
-            this._quad.tr.texCoords.u, this._quad.tr.texCoords.v
-        ]), cc.renderContext.STATIC_DRAW);
-        return texCoodsBuffer;
-    },
-
-    _getSpriteColorsArray:function () {
-        var colorsBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorsBuffer);
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Uint8Array([
-            this._quad.bl.colors.r , this._quad.bl.colors.g , this._quad.bl.colors.b , this._quad.bl.colors.a,
-            this._quad.br.colors.r , this._quad.br.colors.g , this._quad.br.colors.b , this._quad.br.colors.a,
-            this._quad.tl.colors.r , this._quad.tl.colors.g , this._quad.tl.colors.b , this._quad.tl.colors.a,
-            this._quad.tr.colors.r , this._quad.tr.colors.g , this._quad.tr.colors.b , this._quad.tr.colors.a
-        ]), cc.renderContext.STATIC_DRAW);
-        return colorsBuffer;
     }
 });
 

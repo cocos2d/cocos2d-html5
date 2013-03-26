@@ -859,12 +859,15 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
     isOpacityModifyRGB:function () {
         return false;
     },
-    // ---- common properties end ----
 
+    // ---- common properties end ----
     _squareVertices:null,
     _squareColors:null,
     _verticesFloat32Buffer:null,
     _colorsUint8Buffer:null,
+    _squareVerticesAB:null,
+    _squareColorsAB:null,
+
     /**
      * Constructor
      */
@@ -875,8 +878,19 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
         this._color = new cc.Color4B(0, 0, 0, 0);
         this._opacity = 255;
 
-        this._squareVertices = [new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0), new cc.Vertex2F(0, 0)];
-        this._squareColors = [new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1), new cc.Color4F(0, 0, 0, 1)];
+        this._squareVerticesAB = new ArrayBuffer(32);
+        this._squareColorsAB = new ArrayBuffer(64);
+
+        this._squareVertices = [new cc.Vertex2F(0, 0, this._squareVerticesAB, 0),
+            new cc.Vertex2F(0, 0, this._squareVerticesAB, cc.Vertex2F.BYTES_PER_ELEMENT),
+            new cc.Vertex2F(0, 0, this._squareVerticesAB, cc.Vertex2F.BYTES_PER_ELEMENT * 2),
+            new cc.Vertex2F(0, 0, this._squareVerticesAB, cc.Vertex2F.BYTES_PER_ELEMENT * 3)];
+        this._squareColors = [new cc.Color4F(0, 0, 0, 1, this._squareColorsAB, 0),
+            new cc.Color4F(0, 0, 0, 1, this._squareColorsAB, cc.Color4F.BYTES_PER_ELEMENT),
+            new cc.Color4F(0, 0, 0, 1, this._squareColorsAB, cc.Color4F.BYTES_PER_ELEMENT * 2),
+            new cc.Color4F(0, 0, 0, 1, this._squareColorsAB, cc.Color4F.BYTES_PER_ELEMENT * 3)];
+        this._verticesFloat32Buffer = cc.renderContext.createBuffer();
+        this._colorsUint8Buffer = cc.renderContext.createBuffer();
     },
 
 
@@ -923,7 +937,7 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
         this._squareVertices[2].y = size.height;
         this._squareVertices[3].x = size.width;
         this._squareVertices[3].y = size.height;
-        this._verticesFloat32Buffer = this._getLayerVertexArray();
+        this._bindLayerVerticesBufferData();
         this._super(size);
     },
 
@@ -934,7 +948,7 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
             this._squareColors[i].b = this._color.b / 255;
             this._squareColors[i].a = this._opacity / 255;
         }
-        this._colorsUint8Buffer = this._getLayerColorArray();
+        this._bindLayerColorsBufferData();
     },
 
     /**
@@ -960,28 +974,14 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
         context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
     },
 
-    _getLayerVertexArray:function () {
-        var vertexBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
-            this._squareVertices[0].x, this._squareVertices[0].y,
-            this._squareVertices[1].x, this._squareVertices[1].y,
-            this._squareVertices[2].x, this._squareVertices[2].y,
-            this._squareVertices[3].x, this._squareVertices[3].y
-        ]), cc.renderContext.STATIC_DRAW);
-        return vertexBuffer;
+    _bindLayerVerticesBufferData:function () {
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, this._verticesFloat32Buffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._squareVerticesAB , cc.renderContext.STATIC_DRAW);
     },
 
-    _getLayerColorArray:function () {
-        var colorsBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorsBuffer);
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, new Float32Array([
-            this._squareColors[0].r, this._squareColors[0].g, this._squareColors[0].b, this._squareColors[0].a,
-            this._squareColors[1].r, this._squareColors[1].g, this._squareColors[1].b, this._squareColors[1].a,
-            this._squareColors[2].r, this._squareColors[2].g, this._squareColors[2].b, this._squareColors[2].a,
-            this._squareColors[3].r, this._squareColors[3].g, this._squareColors[3].b, this._squareColors[3].a
-        ]), cc.renderContext.STATIC_DRAW);
-        return colorsBuffer;
+    _bindLayerColorsBufferData:function () {
+        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, this._colorsUint8Buffer);
+        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._squareColorsAB, cc.renderContext.STATIC_DRAW);
     }
 });
 
@@ -1282,7 +1282,7 @@ cc.LayerGradient = cc.LayerColor.extend(/** @lends cc.LayerGradient# */{
             this._squareColors[3].b = ((E.b + (S.b - E.b) * ((c - u.x - u.y) / (2.0 * c))));
             this._squareColors[3].a = ((E.a + (S.a - E.a) * ((c - u.x - u.y) / (2.0 * c))));
 
-            this._colorsUint8Buffer = this._getLayerColorArray();
+            this._bindLayerColorsBufferData();
         }
     }
 });
@@ -1417,159 +1417,3 @@ cc.LayerMultiplex.create = function (/*Multiple Arguments*/) {
     return null;
 };
 
-
-/**
- * a layer that does not get redraw if not needed, and its always gets placed on the bottom layer
- * @class
- * @extends cc.Node
- * @example
- * // Example
- * var veryLazy = new cc.LazyLayer();
- * veryLazy.addChild(mySprite);
- */
-cc.LazyLayer = cc.Node.extend(/** @lends cc.LazyLayer# */{
-    _layerCanvas:null,
-    _layerContext:null,
-    _isNeedUpdate:false,
-    _canvasZOrder:-10,
-    _layerId:"",
-
-    /**
-     * Constructor
-     */
-    ctor:function () {
-        this._super();
-        this.setAnchorPoint(cc.p(0, 0));
-        //setup html
-        this._setupHtml();
-    },
-
-    /**
-     * @param {Number} zOrder
-     */
-    setLayerZOrder:function (zOrder) {
-        if (zOrder >= 0) {
-            throw "LazyLayer zOrder must Less than Zero.Because LazyLayer is a background Layer!";
-        }
-        this._canvasZOrder = zOrder;
-        this._layerCanvas.style.zIndex = this._canvasZOrder;
-    },
-
-    /**
-     *
-     * @return {Number}
-     */
-    getLayerZOrder:function () {
-        return this._canvasZOrder;
-    },
-
-    _setupHtml:function () {
-        this._layerCanvas = document.createElement("canvas");
-        this._layerCanvas.width = cc.canvas.width;
-        this._layerCanvas.height = cc.canvas.height;
-        this._layerId = "lazyCanvas" + Date.now();
-        this._layerCanvas.id = this._layerId;
-        this._layerCanvas.style.zIndex = this._canvasZOrder;
-        this._layerCanvas.style.position = "absolute";
-        this._layerCanvas.style.top = "0";
-        this._layerCanvas.style.left = "0";
-        this._layerContext = this._layerCanvas.getContext("2d");
-        this._layerContext.fillStyle = "rgba(0,0,0,1)";
-        this._layerContext.translate(0, this._layerCanvas.height);
-        cc.container.appendChild(this._layerCanvas);
-        var selfPointer = this;
-        window.addEventListener("resize", function (event) {
-            selfPointer.adjustSizeForCanvas();
-        });
-    },
-
-    /**
-     * make it the same size as canvas, in case canvas resized
-     */
-    adjustSizeForCanvas:function () {
-        this._isNeedUpdate = true;
-        this._layerCanvas.width = cc.canvas.width;
-        this._layerCanvas.height = cc.canvas.height;
-        var xScale = cc.canvas.width / cc.originalCanvasSize.width;
-        var yScale = cc.canvas.height / cc.originalCanvasSize.height;
-        if (xScale > yScale) {
-            xScale = yScale;
-        }
-        this._layerContext.translate(0, this._layerCanvas.height);
-        this._layerContext.scale(xScale, xScale);
-    },
-
-    /**
-     * return lazylayer's canvas
-     * @return {HTMLCanvasElement}
-     */
-    getLayerCanvas:function () {
-        return this._layerCanvas;
-    },
-
-    /**
-     * same as cc.Node
-     * @param {cc.Node} child
-     * @param {Number|Null} zOrder
-     * @param {Number|Null} tag
-     */
-    addChild:function (child, zOrder, tag) {
-        this._isNeedUpdate = true;
-        this._super(child, zOrder, tag);
-    },
-
-    /**
-     * @param {cc.Node} child
-     * @param {Boolean} cleanup
-     */
-    removeChild:function (child, cleanup) {
-        this._isNeedUpdate = true;
-        this._super(child, cleanup);
-    },
-
-    /**
-     * stuff gets drawn in here
-     */
-    visit:function () {
-        // quick return if not visible
-        if (!this._visible) {
-            return;
-        }
-        if (!this._isNeedUpdate) {
-            return;
-        }
-
-        this._isNeedUpdate = false;
-        var context = this._layerContext;
-        context.save();
-        context.clearRect(0, 0, this._layerCanvas.width, -this._layerCanvas.height);
-
-        if (this._children && this._children.length > 0) {
-            this.sortAllChildren();
-            // draw children zOrder < 0
-            for (var i = 0; i < this._children.length; i++) {
-                this._children[i].visit(context);
-            }
-        }
-
-        context.restore();
-    },
-
-    /**
-     * override onExit of cc.Node
-     * @override
-     */
-    onExit:function () {
-        this._super();
-
-        //clear canvas element from parent element
-        if (this._layerCanvas.parentNode) {
-            this._layerCanvas.parentNode.removeChild(this._layerCanvas);
-        }
-    },
-
-    _setNodeDirtyForCache:function () {
-        this._cacheDirty = true;
-        this._isNeedUpdate = true;
-    }
-});

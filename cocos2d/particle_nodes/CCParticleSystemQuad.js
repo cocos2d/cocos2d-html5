@@ -606,6 +606,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     _drawForWebGL:function (ctx) {
+        if(!this._texture || !this._texture.isLoaded())
+            return;
+
         var gl = ctx || cc.renderContext;
 
         cc.NODE_DRAW_SETUP(this);
