@@ -231,7 +231,7 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
 
     var ctx = nCanvas.getContext("2d");
     ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
-    ctx.rotate(-1.5707963267948966);
+    ctx.rotate(-Math.PI / 2);
     ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height / 2, -rect.size.width / 2, rect.size.height, rect.size.width);
     return nCanvas;
 };
@@ -990,7 +990,7 @@ cc.Sprite = cc.Node.extend(/** @lends cc.Sprite# */{
                     context.drawImage(this._texture,
                         this._rect.origin.x, this._rect.origin.y,
                         this._rect.size.width, this._rect.size.height,
-                        0, -this._rect.size.height,
+                        this._offsetPosition.x-flipXOffset, -this._offsetPosition.y-this._rect.size.height + flipYOffset,
                         this._rect.size.width, this._rect.size.height);
                 }
             }
