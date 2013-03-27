@@ -146,18 +146,9 @@ cc.setBlending = function (sfactor, dfactor) {
         cc.renderContext.disable(cc.renderContext.BLEND);
     } else {
         cc.renderContext.enable(cc.renderContext.BLEND);
-        if((sfactor === cc.renderContext.ONE) && (dfactor === cc.renderContext.ONE))
-        {
-            cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor)   ;
-            //cc.renderContext.blendFunc(gl.SRC_ALPHA, gl.ONE);
-/*            this._blendFunc.src = gl.SRC_ALPHA;
-            this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;*/
-        }
-        else{
-            cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor)   ;
-            //cc.renderContext.blendFunc(sfactor, dfactor);
-        }
-
+        cc.renderContext.blendFunc(sfactor,dfactor);
+        //TODO need fix for WebGL
+        //cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
     }
 };
 

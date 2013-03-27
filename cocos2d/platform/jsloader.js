@@ -40,9 +40,9 @@
         'platform/CCEGLViewProtocol.js',
         'platform/CCEGLView.js',
         'cocoa/CCGeometry.js',
-        'platform/CCEGLView.js',
         'platform/Sys.js',
         'platform/CCConfig.js',
+        'platform/CCImage.js',
         'kazmath/utility.js',
         'kazmath/vec2.js',
         'kazmath/vec3.js',
@@ -65,7 +65,7 @@
         'support/CCTGAlib.js',
         'shaders/ccShaders.js',
         'shaders/ccShaderCache.js',
-        'shaders/ccGLProgram.js',
+        'shaders/CCGLProgram.js',
         'shaders/ccGLStateCache.js',
         'base_nodes/CCNode.js',
         'base_nodes/CCAtlasNode.js',
@@ -134,7 +134,6 @@
         'tileMap_parallax_nodes/CCParallaxNode.js',
         'base_nodes/CCdomNode.js',
         '../CocosDenshion/SimpleAudioEngine.js'
-
     ];
 
     var d = document;
@@ -167,7 +166,7 @@
             '../extensions/CCBReader/CCBSequence.js',
             '../extensions/CCBReader/CCBRelativePositioning.js',
             '../extensions/CCBReader/CCBAnimationManager.js',
-            '../extensions/CCControlEditBox.js'
+            '../extensions/CCEditBox.js'
         ]);
     }
 
