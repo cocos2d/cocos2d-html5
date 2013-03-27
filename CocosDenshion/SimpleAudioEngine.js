@@ -85,7 +85,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
 
         var ua = navigator.userAgent;
-        if(/Mobile/.test(ua) && (/Safari/.test(ua)||/Firefox/.test(ua))){
+        if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
             this._canPlay = false;
         }
     },
@@ -110,26 +110,25 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
             if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
-                var sfxCache = new cc.SFX();
-                sfxCache.ext = extName;
-                sfxCache.audio = new Audio(path);
+                if(this._canPlay){
+                    var sfxCache = new cc.SFX();
+                    sfxCache.ext = extName;
+                    sfxCache.audio = new Audio(path);
+                    sfxCache.audio.preload = 'auto';
+                    sfxCache.audio.addEventListener('canplaythrough', function (e) {
+                        cc.Loader.getInstance().onResLoaded();
+                        this.removeEventListener('canplaythrough', arguments.callee, false);
+                    }, false);
 
-                sfxCache.audio.preload = 'auto';
+                    sfxCache.audio.addEventListener("error", function (e) {
+                        cc.Loader.getInstance().onResLoadingErr(e.srcElement.src);
+                        this.removeEventListener('error', arguments.callee, false);
+                    }, false);
 
-                sfxCache.audio.addEventListener('canplaythrough', function (e) {
-                    cc.Loader.getInstance().onResLoaded();
-                    this.removeEventListener('canplaythrough', arguments.callee, false);
-                }, false);
-
-                sfxCache.audio.addEventListener("error", function (e) {
-                    cc.Loader.getInstance().onResLoadingErr(e.srcElement.src);
-                    this.removeEventListener('error', arguments.callee, false);
-                }, false);
-
-                this._soundList[keyname] = sfxCache;
-                sfxCache.audio.load();
-
-                if(!this._canPlay){
+                    this._soundList[keyname] = sfxCache;
+                    sfxCache.audio.load();
+                }
+                else{
                     cc.Loader.getInstance().onResLoaded();
                 }
             }
