@@ -153,7 +153,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
         obj.setChild(child);
         this._parallaxArray.push(obj);
 
-        var pos = this._position;
+        var pos = cc.p(this._position.x, this._position.y);
         pos.x = pos.x * ratio.x + offset.x;
         pos.y = pos.y * ratio.y + offset.y;
         child.setPosition(pos);
