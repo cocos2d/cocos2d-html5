@@ -1063,12 +1063,15 @@ if(cc.Browser.supportWebGL){
             enumerable: true
         }
     });
+    cc.V3F_C4B_T2F_QuadZero = function(){
+        return new cc.V3F_C4B_T2F_Quad();
+    }
 }
 
 /**
  * convert a string of color for style to Color3B.
  * e.g. "#ff06ff"  to : Color3B(255,6,255)
- * @param {String} clr
+ * @param {String} clrSt
  * @return {String}
  */
 cc.convertHexNumToColor3B = function (clrSt) {
