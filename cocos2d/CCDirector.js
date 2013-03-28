@@ -810,48 +810,49 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
     setProjection:function (projection) {
         var size = this._winSizeInPoints;
 
-        if (this._openGLView)
-            this._openGLView.setViewPortInPoints(0, 0, size.width, size.height);
+        if(cc.renderContextType === cc.WEBGL){
+            if (this._openGLView)
+                this._openGLView.setViewPortInPoints(0, 0, size.width, size.height);
 
-        switch (projection) {
-            case cc.DIRECTOR_PROJECTION_2D:
-                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-                cc.kmGLLoadIdentity();
-                var orthoMatrix = new cc.kmMat4();
-                cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width, 0, size.height, -1024, 1024);
-                cc.kmGLMultMatrix(orthoMatrix);
-                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-                cc.kmGLLoadIdentity();
-                break;
-            case cc.DIRECTOR_PROJECTION_3D:
-                var zeye = this.getZEye();
-                var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
-                cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
-                cc.kmGLLoadIdentity();
+            switch (projection) {
+                case cc.DIRECTOR_PROJECTION_2D:
+                    cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+                    cc.kmGLLoadIdentity();
+                    var orthoMatrix = new cc.kmMat4();
+                    cc.kmMat4OrthographicProjection(orthoMatrix, 0, size.width, 0, size.height, -1024, 1024);
+                    cc.kmGLMultMatrix(orthoMatrix);
+                    cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+                    cc.kmGLLoadIdentity();
+                    break;
+                case cc.DIRECTOR_PROJECTION_3D:
+                    var zeye = this.getZEye();
+                    var matrixPerspective = new cc.kmMat4(), matrixLookup = new cc.kmMat4();
+                    cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+                    cc.kmGLLoadIdentity();
 
-                // issue #1334
-                cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
-                // kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, 1500);
+                    // issue #1334
+                    cc.kmMat4PerspectiveProjection(matrixPerspective, 60, size.width / size.height, 0.1, zeye * 2);
+                    // kmMat4PerspectiveProjection( &matrixPerspective, 60, (GLfloat)size.width/size.height, 0.1f, 1500);
 
-                cc.kmGLMultMatrix(matrixPerspective);
+                    cc.kmGLMultMatrix(matrixPerspective);
 
-                cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
-                cc.kmGLLoadIdentity();
-                var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
-                var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
-                var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
-                cc.kmMat4LookAt(matrixLookup, eye, center, up);
-                cc.kmGLMultMatrix(matrixLookup);
-                break;
-            case cc.DIRECTOR_PROJECTION_CUSTOM:
-                if (this._projectionDelegate)
-                    this._projectionDelegate.updateProjection();
-                break;
-            default:
-                cc.log("cocos2d: Director: unrecognized projection");
-                break;
+                    cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+                    cc.kmGLLoadIdentity();
+                    var eye = cc.kmVec3Fill(null, size.width / 2, size.height / 2, zeye);
+                    var center = cc.kmVec3Fill(null, size.width / 2, size.height / 2, 0.0);
+                    var up = cc.kmVec3Fill(null, 0.0, 1.0, 0.0);
+                    cc.kmMat4LookAt(matrixLookup, eye, center, up);
+                    cc.kmGLMultMatrix(matrixLookup);
+                    break;
+                case cc.DIRECTOR_PROJECTION_CUSTOM:
+                    if (this._projectionDelegate)
+                        this._projectionDelegate.updateProjection();
+                    break;
+                default:
+                    cc.log("cocos2d: Director: unrecognized projection");
+                    break;
+            }
         }
-
         this._projection = projection;
         cc.setProjectionMatrixDirty();
     },
@@ -1070,7 +1071,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
 
         this._FPSLabel = cc.LabelTTF.create("000.0", "Arial", fontSize);
         this._SPFLabel = cc.LabelTTF.create("0.000", "Arial", fontSize);
-        this._drawsLabel = cc.LabelTTF.create("000", "Arial", fontSize);
+        this._drawsLabel = cc.LabelTTF.create("0000", "Arial", fontSize);
 
         var contentSize = this._drawsLabel.getContentSize();
         this._drawsLabel.setPosition(cc.pAdd(cc.p(contentSize.width / 2, contentSize.height * 5 / 2), cc.DIRECTOR_STATS_POSITION));

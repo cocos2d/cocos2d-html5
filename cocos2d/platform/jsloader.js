@@ -37,7 +37,6 @@
         'platform/CCTypes.js',
 		'platform/CCAccelerometer.js',
         'platform/zlib.min.js',
-        'platform/CCEGLViewProtocol.js',
         'platform/CCEGLView.js',
         'cocoa/CCGeometry.js',
         'platform/Sys.js',

@@ -2049,7 +2049,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         this._quad = new cc.V3F_C4B_T2F_Quad();
         this._quadWebBuffer = cc.renderContext.createBuffer();
         this._quadDirty = true;
-        this._myViewer = new Uint8Array(this._quad.arrayBuffer);
 
         if (fileName) {
             if (typeof(fileName) == "string") {
@@ -2658,7 +2657,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if(this._quadDirty){
-                    cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc.renderContext.DYNAMIC_DRAW);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
                     this._quadDirty = false;
                 }
                 gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
@@ -2684,7 +2683,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
         }
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4); //30%
+        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
