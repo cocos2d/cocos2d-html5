@@ -131,7 +131,7 @@ cc.glDeleteProgram = function (program) {
  */
 cc.glBlendFunc = function (sfactor, dfactor) {
     if (cc.ENABLE_GL_STATE_CACHE) {
-        if (sfactor != cc._blendingSource || dfactor != cc._blendingDest) {
+        if (sfactor !== cc._blendingSource || dfactor !== cc._blendingDest) {
             cc._blendingSource = sfactor;
             cc._blendingDest = dfactor;
             cc.setBlending(sfactor, dfactor);
@@ -184,41 +184,36 @@ cc.setProjectionMatrixDirty = function () {
  * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS} flags
  */
 cc.glEnableVertexAttribs = function (flags) {
-    cc.glBindVAO(0);
+    //cc.glBindVAO(0);
 
     /* Position */
     var enablePosition = ( flags & cc.VERTEX_ATTRIB_FLAG_POSITION );
 
-    if (enablePosition != cc._vertexAttribPosition) {
+    if (enablePosition !== cc._vertexAttribPosition) {
         if (enablePosition)
             cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         else
             cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
-
         cc._vertexAttribPosition = enablePosition;
     }
 
     /* Color */
-    var enableColor = (flags & cc.VERTEX_ATTRIB_FLAG_COLOR) != 0;
-
-    if (enableColor != cc._vertexAttribColor) {
+    var enableColor = (flags & cc.VERTEX_ATTRIB_FLAG_COLOR);
+    if (enableColor !== cc._vertexAttribColor) {
         if (enableColor)
             cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         else
             cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
-
         cc._vertexAttribColor = enableColor;
     }
 
     /* Tex Coords */
-    var enableTexCoords = (flags & cc.VERTEX_ATTRIB_FLAG_TEXCOORDS) != 0;
-
-    if (enableTexCoords != cc._vertexAttribTexCoords) {
+    var enableTexCoords = (flags & cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
+    if (enableTexCoords !== cc._vertexAttribTexCoords) {
         if (enableTexCoords)
             cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
         else
             cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
-
         cc._vertexAttribTexCoords = enableTexCoords;
     }
 };

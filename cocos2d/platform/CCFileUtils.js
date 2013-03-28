@@ -173,7 +173,7 @@ cc.FileUtils = cc.Class.extend({
             xhr.onreadystatechange = function (event) {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
-                        var fileContents = cc._convertResponseBodyToText(xhr.responseBody);
+                        var fileContents = cc._convertResponseBodyToText(xhr["responseBody"]);
                         if (fileContents)
                             selfPointer._fileDataCache[fileUrl] = selfPointer._stringConvertToArray(fileContents);
                     }
@@ -204,7 +204,7 @@ cc.FileUtils = cc.Class.extend({
             if (req.status != 200)
                 return null;
 
-            var fileContents = cc._convertResponseBodyToText(req.responseBody);
+            var fileContents = cc._convertResponseBodyToText(req["responseBody"]);
             if (fileContents) {
                 arrayInfo = this._stringConvertToArray(fileContents);
                 this._fileDataCache[fileUrl] = arrayInfo;
