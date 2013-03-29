@@ -555,8 +555,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         else
             gl.drawElements(gl.TRIANGLES, n * 6, gl.UNSIGNED_SHORT, start * 6 * this._indices.BYTES_PER_ELEMENT);
 
-        cc.INCREMENT_GL_DRAWS(1);
-        cc.CHECK_GL_ERROR_DEBUG();
+        cc.g_NumberOfDraws++;
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**

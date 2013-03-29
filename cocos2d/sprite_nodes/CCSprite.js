@@ -1061,7 +1061,6 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
 
         // recaculate matrix only if it is dirty
         if (this.isDirty()) {
-
             // If it is not visible, or one of its ancestors is not visible, then do nothing:
             if (!this._visible || ( this._parent && this._parent != this._batchNode && this._parent._shouldBeHidden)) {
                 this._shouldBeHidden = true;
@@ -2278,10 +2277,10 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             var y2 = y1 + this._rect.size.height;
 
             // Don't update Z.
-            this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
-            this._quad.br.vertices = cc.vertex3(x2, y1, 0);
-            this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
-            this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
+            this._quad.bl.vertices = {x:x1, y:y1, z:0};
+            this._quad.br.vertices = {x:x2, y:y1, z:0};
+            this._quad.tl.vertices = {x:x1, y:y2, z:0};
+            this._quad.tr.vertices = {x:x2, y:y2, z:0};
 
             this._quadDirty = true;
         }
@@ -2341,10 +2340,10 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
                 var dx = x1 * cr - y2 * sr2 + x;
                 var dy = x1 * sr + y2 * cr2 + y;
 
-                this._quad.bl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(ax), cc.RENDER_IN_SUBPIXEL(ay), this._vertexZ);
-                this._quad.br.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(bx), cc.RENDER_IN_SUBPIXEL(by), this._vertexZ);
-                this._quad.tl.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(dx), cc.RENDER_IN_SUBPIXEL(dy), this._vertexZ);
-                this._quad.tr.vertices = cc.vertex3(cc.RENDER_IN_SUBPIXEL(cx), cc.RENDER_IN_SUBPIXEL(cy), this._vertexZ);
+                this._quad.bl.vertices = {x:cc.RENDER_IN_SUBPIXEL(ax), y:cc.RENDER_IN_SUBPIXEL(ay), z:this._vertexZ};
+                this._quad.br.vertices = {x:cc.RENDER_IN_SUBPIXEL(bx), y:cc.RENDER_IN_SUBPIXEL(by), z:this._vertexZ};
+                this._quad.tl.vertices = {x:cc.RENDER_IN_SUBPIXEL(dx), y:cc.RENDER_IN_SUBPIXEL(dy), z:this._vertexZ};
+                this._quad.tr.vertices = {x:cc.RENDER_IN_SUBPIXEL(cx), y:cc.RENDER_IN_SUBPIXEL(cy), z:this._vertexZ};
             }
             if (cc.renderContextType === cc.WEBGL)
                 this._textureAtlas.updateQuad(this._quad, this._atlasIndex);
@@ -2400,7 +2399,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * Update sprite's color
      */
     updateColor:function () {
-        var color4 = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
+        //var color4 = new cc.Color4B(this._color.r, this._color.g, this._color.b, this._opacity);
+        var color4 = {r:this._color.r, g:this._color.g, b:this._color.b, a:this._opacity};
         this._quad.bl.colors = color4;
         this._quad.br.colors = color4;
         this._quad.tl.colors = color4;
@@ -2506,10 +2506,10 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             var y1 = this._offsetPosition.y;
             var x2 = x1 + this._rect.size.width;
             var y2 = y1 + this._rect.size.height;
-            this._quad.bl.vertices = cc.vertex3(x1, y1, 0);
-            this._quad.br.vertices = cc.vertex3(x2, y1, 0);
-            this._quad.tl.vertices = cc.vertex3(x1, y2, 0);
-            this._quad.tr.vertices = cc.vertex3(x2, y2, 0);
+            this._quad.bl.vertices = {x:x1, y:y1, z:0};
+            this._quad.br.vertices = {x:x2, y:y1, z:0};
+            this._quad.tl.vertices = {x:x1, y:y2, z:0};
+            this._quad.tr.vertices = {x:x2, y:y2, z:0};
 
             this._quadDirty = true;
         } else {
@@ -2657,7 +2657,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if(this._quadDirty){
-                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
                     this._quadDirty = false;
                 }
                 gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
@@ -2677,7 +2677,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
             gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
             if(this._quadDirty){
-                cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc.renderContext.DYNAMIC_DRAW);
+                cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, this._quad.arrayBuffer, cc.renderContext.STATIC_DRAW);
                 this._quadDirty = false;
             }
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
