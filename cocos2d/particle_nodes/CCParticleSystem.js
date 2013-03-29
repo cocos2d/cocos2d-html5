@@ -1407,7 +1407,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             else
                                 cc.log("Image format:UNKNOWN");
 
-                            this.setTexture(cc.TextureCache.getInstance().textureForKey(s_stars1));
+                            //this.setTexture(cc.TextureCache.getInstance().textureForKey(s_stars1));
 
                             /*var uiImage = new cc.Image();
                             var isOK = uiImage.initWithImageData(buffer,buffer.length);
