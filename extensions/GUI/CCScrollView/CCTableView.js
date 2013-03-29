@@ -32,9 +32,6 @@ cc.TABLEVIEW_FILL_BOTTOMUP = 1;
 cc.TableViewCell = cc.Node.extend({
     _idx:0,
 
-    ctor:function () {
-    },
-
     /**
      * The index used internally by SWTableView and its subclasses
      */
@@ -145,7 +142,7 @@ cc.TableView = cc.ScrollView.extend({
     _indexFromOffset:function (offset) {
         var maxIdx = this._dataSource.numberOfCellsInTableView(this) - 1;
 
-        var offset1 = new cc.Point(offset.x,offset.y);
+        var offset1 = new cc.Point(offset.x, offset.y);
 
         var cellSize = this._dataSource.cellSizeForTable(this);
         if (this._vOrdering == cc.TABLEVIEW_FILL_TOPDOWN) {
@@ -429,8 +426,14 @@ cc.TableView = cc.ScrollView.extend({
     },
 
     scrollViewDidScroll:function (view) {
-        var idx = 0;
+        var countOfItems = this._dataSource.numberOfCellsInTableView(this);
+        if (0 === countOfItems)
+            return;
 
+        if (this._tableViewDelegate != null)
+            this._tableViewDelegate.scrollViewDidScroll(this);
+
+        var idx = 0;
         var offset = cc.pMult(this.getContentOffset(), -1);
         var maxIdx = Math.max(this._dataSource.numberOfCellsInTableView(this) - 1, 0);
 

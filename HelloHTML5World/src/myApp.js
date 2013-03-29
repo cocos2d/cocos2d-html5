@@ -25,24 +25,21 @@
  ****************************************************************************/
 
 var CircleSprite = cc.Sprite.extend({
-    _radians:0,
+    _degree:0,
     ctor:function () {
         this._super();
     },
     draw:function () {
-        cc.renderContext.fillStyle = "rgba(255,255,255,1)";
-        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
+        cc.drawingUtil.setDrawColor4B(255,255,255,255);
 
-        if (this._radians < 0)
-            this._radians = 360;
-        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
+        if (this._degree < 0)
+            this._degree = 360;
+        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._degree), 60, true);
     },
     myUpdate:function (dt) {
-        this._radians -= 6;
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+        this._degree -= 6;
     }
 });
-
 
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,
@@ -87,7 +84,7 @@ var Helloworld = cc.Layer.extend({
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
-        var lazyLayer = new cc.LazyLayer();
+        var lazyLayer = cc.Layer.create();
         this.addChild(lazyLayer);
 
         // add "HelloWorld" splash screen"
@@ -108,7 +105,7 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)));
+        this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
         this.setTouchEnabled(true);
         return true;

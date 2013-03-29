@@ -32,7 +32,7 @@
 cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     //name of the group
     _groupName:"",
-    _positionOffset:cc.PointZero(),
+    _positionOffset:null,
     _properties:null,
     _objects:null,
 
@@ -42,6 +42,7 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
     ctor:function () {
         this._properties = [];
         this._objects = [];
+        this._positionOffset = cc.PointZero();
     },
 
     /**
@@ -107,9 +108,8 @@ cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
         if (this._objects && this._objects.length > 0) {
             for (var i = 0, len = this._objects.length; i < len; i++) {
                 var name = this._objects[i]["name"];
-                if (name && name == objectName) {
+                if (name && name == objectName)
                     return this._objects[i];
-                }
             }
         }
         // object not found

@@ -47,8 +47,8 @@
  */
 cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //size of the layer in tiles
-    _layerSize:cc.SizeZero(),
-    _mapTileSize:cc.SizeZero(),
+    _layerSize:null,
+    _mapTileSize:null,
     _tiles:null,
     _tileSet:null,
     _layerOrientation:null,
@@ -76,9 +76,9 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         this._super();
         this._children = [];
         this._descendants = [];
-        this._isUseCache = true;
-        this._layerSize = cc.p(0, 0);
-        this._mapTileSize = cc.p(0, 0);
+        this._useCache = true;
+        this._layerSize = cc.SizeZero();
+        this._mapTileSize = cc.SizeZero();
     },
 
     /**
@@ -182,10 +182,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var size = layerInfo._layerSize;
         var totalNumberOfTiles = parseInt(size.width * size.height);
         var capacity = totalNumberOfTiles * 0.35 + 1; // 35 percent is occupied ?
+        var texture;
+        if (tilesetInfo)
+            texture = cc.TextureCache.getInstance().addImage(tilesetInfo.sourceImage);
 
-        if (tilesetInfo) {
-            var texture = cc.TextureCache.getInstance().addImage(tilesetInfo.sourceImage.toString());
-        }
         if (this.initWithTexture(texture, capacity)) {
             // layerInfo
             this._layerName = layerInfo.name;
@@ -224,13 +224,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * If you are going to call layer.getTileGIDAt() then, don't release the map</p>
      */
     releaseMap:function () {
-        if (this._tiles) {
+        if (this._tiles)
             this._tiles = null;
-        }
 
-        if (this._atlasIndexArray) {
+        if (this._atlasIndexArray)
             this._atlasIndexArray = null;
-        }
     },
 
     /**
@@ -252,10 +250,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
         // if GID == 0, then no tile is present
         if (gid != null) {
-            var z = pos.x + pos.y * this._layerSize.width;
-
+            var z = 0 | (pos.x + pos.y * this._layerSize.width);
             tile = this.getChildByTag(z);
-
             // tile not created yet. create it
             if (!tile) {
                 var rect = this._tileSet.rectForGID(gid);
@@ -275,8 +271,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         }
         return tile;
     },
-    // XXX: deprecated
-    // tileAt:getTileAt,
 
     /**
      * Returns the tile gid at a given tile coordinate. <br />
@@ -289,11 +283,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
 
-        var idx = pos.x + pos.y * this._layerSize.width;
+        var idx = 0 | (pos.x + pos.y * this._layerSize.width);
         // Bits on the far end of the 32-bit global tile ID are used for tile flags
         var tile = this._tiles[idx];
 
-        return (tile & cc.TMX_TILE_ALL_FLAGS_MASK) >>> 0;
+        return (tile & cc.TMX_TILE_FLIPPED_MASK) >>> 0;
     },
     // XXX: deprecated
     // tileGIDAt:getTileGIDAt,
@@ -307,11 +301,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
 
-        var idx = pos.x + pos.y * this._layerSize.width;
+        var idx = 0 | (pos.x + pos.y * this._layerSize.width);
         // Bits on the far end of the 32-bit global tile ID are used for tile flags
         var tile = this._tiles[idx];
 
-        return (tile & cc.TMX_TILE_ALL_FLAGS) >>> 0;
+        return (tile & cc.TMX_TILE_FLIPPED_ALL) >>> 0;
     },
     // XXX: deprecated
     // tileFlagAt:getTileFlagsAt,
@@ -329,6 +323,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
         cc.Assert(gid !== 0 || !(gid >= this._tileSet.firstGid), "TMXLayer: invalid gid:" + gid);
 
+        flags = flags || 0;
         this._setNodeDirtyForCache();
 
         var currentFlags = this.getTileFlagsAt(pos);
@@ -337,11 +332,11 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (currentGID != gid || currentFlags != flags) {
             var gidAndFlags = (gid | flags) >>> 0;
             // setting gid=0 is equal to remove the tile
-            if (gid == 0) {
+            if (gid === 0)
                 this.removeTileAt(pos);
-            } else if (currentGID == 0) {           // empty tile. create a new one
+            else if (currentGID === 0)            // empty tile. create a new one
                 this._insertTileForGID(gidAndFlags, pos);
-            } else {                // modifying an existing tile with a non-empty tile
+            else {                // modifying an existing tile with a non-empty tile
                 var z = pos.x + pos.y * this._layerSize.width;
                 var sprite = this.getChildByTag(z);
                 if (sprite) {
@@ -349,13 +344,12 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     rect = cc.RECT_PIXELS_TO_POINTS(rect);
 
                     sprite.setTextureRect(rect, false, rect.size);
-                    if (flags != null) {
+                    if (flags != null)
                         this._setupTileSprite(sprite, pos, gidAndFlags);
-                    }
+
                     this._tiles[z] = gidAndFlags;
-                } else {
+                } else
                     this._updateTileForGID(gidAndFlags, pos);
-                }
             }
         }
     },
@@ -368,13 +362,12 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
 
-        this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+        if (cc.renderContextType === cc.CANVAS)
+            this._setNodeDirtyForCache();
 
         var gid = this.getTileGIDAt(pos);
-
         if (gid != null) {
-            var z = pos.x + pos.y * this._layerSize.width;
+            var z = 0 | (pos.x + pos.y * this._layerSize.width);
             var atlasIndex = this._atlasIndexForExistantZ(z);
             // remove tile from GID map
             this._tiles[z] = 0;
@@ -385,21 +378,20 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             // remove it from sprites and/or texture atlas
             var sprite = this.getChildByTag(z);
 
-            if (sprite) {
+            if (sprite)
                 this.removeChild(sprite, true);
-            }
             else {
-                this._textureAtlas.removeQuadAtIndex(atlasIndex);
+                if(cc.renderContextType === cc.WEBGL)
+                    this._textureAtlas.removeQuadAtIndex(atlasIndex);
 
                 // update possible children
                 if (this._children) {
-                    for (var i = 0, len = this._children.length; i < len; i++) {
+                    for (var i = 0; i < this._children.length; i++) {
                         var child = this._children[i];
                         if (child) {
                             var ai = child.getAtlasIndex();
-                            if (ai >= atlasIndex) {
+                            if (ai >= atlasIndex)
                                 child.setAtlasIndex(ai - 1);
-                            }
                         }
                     }
                 }
@@ -425,8 +417,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 ret = this._positionForHexAt(pos);
                 break;
         }
-        ret = cc.POINT_PIXELS_TO_POINTS(ret);
-        return ret;
+        return cc.POINT_PIXELS_TO_POINTS(ret);
     },
     // XXX: Deprecated. For backward compatibility only
     // positionAt:getPositionAt,
@@ -434,34 +425,35 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     /**
      * Return the value for the specific property name
      * @param {String} propertyName
-     * @return {Number}
-     * //todo
+     * @return {*}
      */
     getProperty:function (propertyName) {
         return this._properties[propertyName];
     },
-    // XXX: Deprecated. For backward compatibility only
-    // propertyNamed:getProperty,
 
     /**
      * Creates the tiles
      */
     setupTiles:function () {
         // Optimization: quick hack that sets the image size on the tileset
-        var textureCache = this._textureAtlas.getTexture();
-        this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
+        if (cc.renderContextType === cc.CANVAS) {
+            var textureCache = this._originalTexture;
+            this._tileSet.imageSize = cc.size(textureCache.width, textureCache.height);
+        } else {
+            this._tileSet.imageSize = this._textureAtlas.getTexture().getContentSizeInPixels();
 
-        // By default all the tiles are aliased
-        // pros:
-        //  - easier to render
-        // cons:
-        //  - difficult to scale / rotate / etc.
-        //this._textureAtlas.getTexture().setAliasTexParameters();
+            // By default all the tiles are aliased
+            // pros:
+            //  - easier to render
+            // cons:
+            //  - difficult to scale / rotate / etc.
+            this._textureAtlas.getTexture().setAliasTexParameters();
+        }
 
         // Parse cocos2d properties
         this._parseInternalProperties();
-        this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+        if (cc.renderContextType === cc.CANVAS)
+            this._setNodeDirtyForCache();
 
         for (var y = 0; y < this._layerSize.height; y++) {
             for (var x = 0; x < this._layerSize.width; x++) {
@@ -477,8 +469,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 }
             }
         }
-        
-        if(!((this._maxGID >= this._tileSet.firstGid) && (this._minGID >= this._tileSet.firstGid))){
+
+        if (!((this._maxGID >= this._tileSet.firstGid) && (this._minGID >= this._tileSet.firstGid))) {
             cc.log("cocos2d:TMX: Only 1 tileset per layer is supported");
         }
     },
@@ -488,27 +480,25 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @warning addChild(child); is not supported on cc.TMXLayer. Instead of setTileGID.
      * @param {cc.Node} child
      */
-    addChild:function (child) {
+    addChild:function (child, zOrder, tag) {
         cc.Assert(0, "addChild: is not supported on cc.TMXLayer. Instead use setTileGID:at:/tileAt:");
     },
 
     /**
      * Remove child
-     * @param  {cc.Node} child
+     * @param  {cc.Sprite} sprite
      * @param  {Boolean} cleanup
      */
-    removeChild:function (child, cleanup) {
-        var sprite = child;
-
+    removeChild:function (sprite, cleanup) {
         // allows removing nil objects
         if (!sprite)
             return;
 
         cc.Assert(cc.ArrayContainsObject(this._children, sprite), "Tile does not belong to TMXLayer");
 
-        this._setNodeDirtyForCache();
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
-        var atlasIndex = cc.ArrayGetIndexOfObject(this._children, sprite);
+        if (cc.renderContextType === cc.CANVAS)
+            this._setNodeDirtyForCache();
+        var atlasIndex = sprite.getAtlasIndex();         //cc.ArrayGetIndexOfObject(this._children, sprite);
         var zz = this._atlasIndexArray[atlasIndex];
         this._tiles[zz] = 0;
         cc.ArrayRemoveObjectAtIndex(this._atlasIndexArray, atlasIndex);
@@ -540,11 +530,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     },
 
     _positionForHexAt:function (pos) {
-        var diffY = 0;
-        if (pos.x % 2 == 1) {
-            diffY = -this._mapTileSize.height / 2;
-        }
-
+        var diffY = (pos.x % 2 == 1) ? (-this._mapTileSize.height / 2) : 0;
         return cc.p(pos.x * this._mapTileSize.width * 3 / 4,
             (this._layerSize.height - pos.y - 1) * this._mapTileSize.height + diffY);
     },
@@ -560,8 +546,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     (this._mapTileSize.height / 2 ) * (-pos.x - pos.y));
                 break;
             case cc.TMX_ORIENTATION_HEX:
-                ret = cc.p(0, 0);
-                cc.log("cocos2d:offset for hexagonal map not implemented yet");
+                cc.Assert(cc.pointEqualToPoint(pos, cc.PointZero()), "offset for hexagonal map not implemented yet");
                 break;
         }
         return ret;
@@ -571,19 +556,17 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RECT_PIXELS_TO_POINTS(rect);
 
-        var z = pos.x + pos.y * this._layerSize.width;
+        var z = 0 | (pos.x + pos.y * this._layerSize.width);
         var tile = this._reusedTileWithRect(rect);
-
         this._setupTileSprite(tile, pos, gid);
 
         // optimization:
-        // The difference between _appendTileForGID and _insertTileForGID is that append is faster, since
+        // The difference between appendTileForGID and insertTileforGID is that append is faster, since
         // it appends the tile at the end of the texture atlas
-        //todo fix
         var indexForZ = this._atlasIndexArray.length;
 
         // don't add it using the "standard" way.
-        this.addQuadFromSprite(tile, indexForZ);
+        this.insertQuadFromSprite(tile, indexForZ);
 
         // append should be after addQuadFromSprite since it modifies the quantity values
         this._atlasIndexArray = cc.ArrayAppendObjectToIndex(this._atlasIndexArray, z, indexForZ);
@@ -594,7 +577,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var rect = this._tileSet.rectForGID(gid);
         rect = cc.RECT_PIXELS_TO_POINTS(rect);
 
-        var z = parseInt(pos.x + pos.y * this._layerSize.width);
+        var z = 0 | (pos.x + pos.y * this._layerSize.width);
         var tile = this._reusedTileWithRect(rect);
         this._setupTileSprite(tile, pos, gid);
 
@@ -602,19 +585,18 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var indexForZ = this._atlasIndexForNewZ(z);
 
         // Optimization: add the quad without adding a child
-        this.addQuadFromSprite(tile, indexForZ);
+        this.insertQuadFromSprite(tile, indexForZ);
 
         // insert it into the local atlasindex array
         this._atlasIndexArray = cc.ArrayAppendObjectToIndex(this._atlasIndexArray, z, indexForZ);
         // update possible children
         if (this._children) {
-            for (var i = 0, len = this._children.length; i < len; i++) {
+            for (var i = 0; i < this._children.length; i++) {
                 var child = this._children[i];
                 if (child) {
                     var ai = child.getAtlasIndex();
-                    if (ai >= indexForZ) {
+                    if (ai >= indexForZ)
                         child.setAtlasIndex(ai + 1);
-                    }
                 }
             }
         }
@@ -629,7 +611,6 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var z = pos.x + pos.y * this._layerSize.width;
 
         var tile = this._reusedTileWithRect(rect);
-
         this._setupTileSprite(tile, pos, gid);
 
         // get atlas index
@@ -645,43 +626,45 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
     //The layer recognizes some special properties, like cc_vertez
     _parseInternalProperties:function () {
         // if cc_vertex=automatic, then tiles will be rendered using vertexz
-
         var vertexz = this.getProperty("cc_vertexz");
         if (vertexz) {
             if (vertexz == "automatic") {
                 this._useAutomaticVertexZ = true;
                 var alphaFuncVal = this.getProperty("cc_alpha_func");
                 var alphaFuncValue = 0;
+                if (alphaFuncVal)
+                    alphaFuncValue = parseFloat(alphaFuncVal);
 
-                //todo webgl
-                //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(kcc.Shader_PositionTextureColorAlphaTest));
-                //var alphaValueLocation = glGetUniformLocation(getShaderProgram().getProgram(), kcc.UniformAlphaTestValue);
-                // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
-                //this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
-            }
-            else {
+                if (cc.renderContextType === cc.WEBGL) {
+                    this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLORALPHATEST));
+                    var alphaValueLocation = cc.renderContext.getUniformLocation(this.getShaderProgram().getProgram(), cc.UNIFORM_ALPHA_TEST_VALUE_S);
+                    // NOTE: alpha test shader is hard-coded to use the equivalent of a glAlphaFunc(GL_GREATER) comparison
+                    this.getShaderProgram().use();
+                    this.getShaderProgram().setUniformLocationWith1f(alphaValueLocation, alphaFuncValue);
+                }
+            } else
                 this._vertexZvalue = parseInt(vertexz, 10);
-            }
-        }
-
-        var alphaFuncVal = this.getProperty("cc_alpha_func");
-        if (alphaFuncVal) {
-            this._alphaFuncValue = parseInt(alphaFuncVal, 10);
         }
     },
 
     _setupTileSprite:function (sprite, pos, gid) {
         var z = pos.x + pos.y * this._layerSize.width;
         sprite.setPosition(this.getPositionAt(pos));
-        //sprite.setVertexZ(this._vertexZForPos(pos));
+        if (cc.renderContextType === cc.WEBGL)
+            sprite.setVertexZ(this._vertexZForPos(pos));
+        else
+            sprite.setTag(z);
+
         sprite.setAnchorPoint(cc.PointZero());
         sprite.setOpacity(this._opacity);
-        sprite.setTag(z);
+        if (cc.renderContextType === cc.WEBGL) {
+            sprite.setRotation(0.0);
+        }
+
         sprite.setFlipX(false);
         sprite.setFlipY(false);
 
         // Rotation in tiled is achieved using 3 flipped states, flipping across the horizontal, vertical, and diagonal axes of the tiles.
-
         if ((gid & cc.TMX_TILE_DIAGONAL_FLAG) >>> 0) {
             // put the anchor in the middle for ease of rotation.
             sprite.setAnchorPoint(cc.p(0.5, 0.5));
@@ -690,38 +673,51 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
             var flag = (gid & (cc.TMX_TILE_HORIZONTAL_FLAG | cc.TMX_TILE_VERTICAL_FLAG) >>> 0) >>> 0;
             // handle the 4 diagonally flipped states.
-            if (flag == cc.TMX_TILE_HORIZONTAL_FLAG) {
+            if (flag == cc.TMX_TILE_HORIZONTAL_FLAG)
                 sprite.setRotation(90);
-            }
-            else if (flag == cc.TMX_TILE_VERTICAL_FLAG) {
+            else if (flag == cc.TMX_TILE_VERTICAL_FLAG)
                 sprite.setRotation(270);
-            }
             else if (flag == (cc.TMX_TILE_VERTICAL_FLAG | cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
                 sprite.setRotation(90);
                 sprite.setFlipX(true);
-            }
-            else {
+            } else {
                 sprite.setRotation(270);
                 sprite.setFlipX(true);
             }
-        }
-        else {
-            if ((gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0) {
+        } else {
+            if ((gid & cc.TMX_TILE_HORIZONTAL_FLAG) >>> 0)
                 sprite.setFlipX(true);
-            }
 
-            if ((gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0) {
+            if ((gid & cc.TMX_TILE_VERTICAL_FLAG) >>> 0)
                 sprite.setFlipY(true);
-            }
         }
     },
 
     _reusedTileWithRect:function (rect) {
-        this._reusedTile = new cc.Sprite();
-        this._reusedTile.initWithTexture(this._textureAtlas.getTexture(), rect, false);
-        this._reusedTile.setBatchNode(this);
-        this._reusedTile.setParent(this);
+        if(cc.renderContextType === cc.WEBGL){
+            if (!this._reusedTile) {
+                this._reusedTile = new cc.Sprite();
+                this._reusedTile.initWithTexture(this.getTexture(), rect, false);
+                this._reusedTile.setBatchNode(this);
+            } else {
+                // XXX HACK: Needed because if "batch node" is nil,
+                // then the Sprite'squad will be reset
+                this._reusedTile.setBatchNode(null);
 
+                // Re-init the sprite
+                this._reusedTile.setTextureRect(rect, false, rect.size);
+
+                // restore the batch node
+                this._reusedTile.setBatchNode(this);
+            }
+        } else {
+            this._reusedTile = new cc.Sprite();
+            this._reusedTile.initWithTexture(this._textureForCanvas, rect, false);
+            this._reusedTile.setBatchNode(this);
+            this._reusedTile.setParent(this);
+
+            return this._reusedTile;
+        }
         return this._reusedTile;
     },
 
@@ -744,10 +740,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                     cc.Assert(0, "TMX invalid value");
                     break;
             }
-        }
-        else {
+        } else
             ret = this._vertexZvalue;
-        }
         return ret;
     },
 
@@ -756,9 +750,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         if (this._atlasIndexArray) {
             for (var i = 0; i < this._atlasIndexArray.length; i++) {
                 item = this._atlasIndexArray[i];
-                if (item == z) {
+                if (item == z)
                     break;
-                }
             }
         }
         cc.Assert(item != null, "TMX atlas index not found. Shall not happen");
@@ -784,8 +777,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
  */
 cc.TMXLayer.create = function (tilesetInfo, layerInfo, mapInfo) {
     var ret = new cc.TMXLayer();
-    if (ret.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo)) {
+    if (ret.initWithTilesetInfo(tilesetInfo, layerInfo, mapInfo))
         return ret;
-    }
     return null;
 };
