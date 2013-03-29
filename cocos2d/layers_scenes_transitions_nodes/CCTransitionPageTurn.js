@@ -61,17 +61,14 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
     },
 
     /**
-     * @param {cc.GridSiz} vector
+     * @param {cc.Size} vector
      * @return {cc.ReverseTime|cc.TransitionScene}
      */
     actionWithSize:function (vector) {
-        if (this._back) {
-            // Get hold of the PageTurn3DAction
-            return cc.ReverseTime.create(this._super(vector, this._duration));
-        } else {
-            // Get hold of the PageTurn3DAction
-            return this._super(vector, this._duration);
-        }
+        if (this._back)
+            return cc.ReverseTime.create(cc.PageTurn3D.create(this._duration, vector));        // Get hold of the PageTurn3DAction
+        else
+            return cc.PageTurn3D.create(this._duration, vector);     // Get hold of the PageTurn3DAction
     },
 
     /**
@@ -79,9 +76,9 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
      */
     onEnter:function () {
         this._super();
-        var s = cc.Director.getInstance().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
         var x, y;
-        if (s.width > s.height) {
+        if (winSize.width > winSize.height) {
             x = 16;
             y = 12;
         } else {
@@ -89,23 +86,21 @@ cc.TransitionPageTurn = cc.TransitionScene.extend(/** @lends cc.TransitionPageTu
             y = 16;
         }
 
-        var action = this.actionWithSize(cc.g(x, y));
+        var action = this.actionWithSize(cc.SizeMake(x, y));
 
         if (!this._back) {
-            this._outScene.runAction(cc.Sequence.create(action,
-                cc.CallFunc.create(cc.TransitionScene.finish, this),
-                cc.StopGrid.create()));
+            this._outScene.runAction( cc.Sequence.create(action,cc.CallFunc.create(this.finish, this),cc.StopGrid.create()));
         } else {
             // to prevent initial flicker
             this._inScene.setVisible(false);
-            this._inScene.runAction(cc.Sequence.create(cc.Show.create(),
-                action,
-                cc.CallFunc.create(cc.TransitionScene.finish, this),
-                cc.StopGrid.create()));
+            this._inScene.runAction(
+                cc.Sequence.create(cc.Show.create(),action, cc.CallFunc.create(this.finish, this), cc.StopGrid.create())
+            );
         }
     },
+
     _sceneOrder:function () {
-        this.isInSceneOnTop = this._back;
+        this._isInSceneOnTop = this._back;
     }
 });
 

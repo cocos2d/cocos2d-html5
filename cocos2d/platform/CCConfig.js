@@ -33,7 +33,7 @@
  * @constant
  * @type String
  */
-cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.1";
+cc.ENGINE_VERSION = "Cocos2d-html5-v2.1.2-beta";
 
 /**
  * <p>
@@ -105,23 +105,6 @@ cc.SPRITEBATCHNODE_RENDER_SUBPIXEL = 1;
 
 /**
  * <p>
- *   If enabled, cc.Node will transform the nodes using a cached Affine matrix.<br/>
- *   If disabled, the node will be transformed using glTranslate,glRotate,glScale.<br/>
- *   Using the affine matrix only requires 2 GL calls.<br/>
- *   Using the translate/rotate/scale requires 5 GL calls.<br/>
- *   But computing the Affine matrix is relative expensive.<br/>
- *   But according to performance tests, Affine matrix performs better.<br/>
- *   This parameter doesn't affect cc.SpriteBatchNode nodes.<br/>
- *   <br/>
- *   To enable set it to a value different than 0. Enabled by default.
- * </p>
- * @constant
- * @type Number
- */
-cc.NODE_TRANSFORM_USING_AFFINE_MATRIX = 1;
-
-/**
- * <p>
  *     If most of your imamges have pre-multiplied alpha, set it to 1 (if you are going to use .PNG/.JPG file images).<br/>
  *     Only set to 0 if ALL your images by-pass Apple UIImage loading system (eg: if you use libpng or PVR images)<br/>
  *     <br/>
@@ -150,12 +133,12 @@ cc.TEXTURE_ATLAS_USE_TRIANGLE_STRIP = 0;
  *    Apple recommends its usage but they might consume a lot of memory, specially if you use many of them.<br/>
  *    So for certain cases, where you might need hundreds of VAO objects, it might be a good idea to disable it.<br/>
  *    <br/>
- *    To disable it set it to 0. Enabled by default.<br/>
+ *    To disable it set it to 0. disable by default.(Not Supported on WebGL)<br/>
  * </p>
  * @constant
  * @type Number
  */
-cc.TEXTURE_ATLAS_USE_VAO = 1;
+cc.TEXTURE_ATLAS_USE_VAO = 0;
 
 /**
  * <p>
@@ -204,6 +187,19 @@ cc.RETINA_DISPLAY_SUPPORT = 1;
  * @type String
  */
 cc.RETINA_DISPLAY_FILENAME_SUFFIX = "-hd";
+
+/**
+ * <p>
+ *     If enabled, it will use LA88 (Luminance Alpha 16-bit textures) for CCLabelTTF objects. <br/>
+ *     If it is disabled, it will use A8 (Alpha 8-bit textures).                              <br/>
+ *     LA88 textures are 6% faster than A8 textures, but they will consume 2x memory.         <br/>
+ *                                                                                            <br/>
+ *     This feature is enabled by default.
+ * </p>
+ * @constant
+ * @type Number
+ */
+cc.USE_LA88_LABELS = 1;
 
 /**
  * <p>
@@ -270,11 +266,10 @@ cc.IS_RETINA_DISPLAY_SUPPORTED = 1;
  */
 cc.DEFAULT_ENGINE = cc.ENGINE_VERSION + "-canvas";
 
-
 /**
-  Runtime information.
-  @deprecated Use "sys" instead.
-*/
+ *  Runtime information
+ *  @deprecated Use "sys" instead.
+ */
 cc.config = {
     'platform' : sys.platform
 };
@@ -282,9 +277,23 @@ cc.config = {
 /**
  * dump config info, but only in debug mode
  */
-cc.dumpConfig = function()
-{
-    for( i in sys )
+cc.dumpConfig = function() {
+    for(var i in sys )
         cc.log( i + " = " + sys[i] );
 };
 
+/** @def CC_ENABLE_GL_STATE_CACHE
+ If enabled, cocos2d will maintain an OpenGL state cache internally to avoid unnecessary switches.
+ In order to use them, you have to use the following functions, insead of the the GL ones:
+ - ccGLUseProgram() instead of glUseProgram()
+ - ccGLDeleteProgram() instead of glDeleteProgram()
+ - ccGLBlendFunc() instead of glBlendFunc()
+
+ If this functionality is disabled, then ccGLUseProgram(), ccGLDeleteProgram(), ccGLBlendFunc() will call the GL ones, without using the cache.
+
+ It is recommened to enable whenever possible to improve speed.
+ If you are migrating your code from GL ES 1.1, then keep it disabled. Once all your code works as expected, turn it on.
+
+ @since v2.0.0
+ */
+cc.ENABLE_GL_STATE_CACHE = 1;

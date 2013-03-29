@@ -100,15 +100,23 @@ cc.TMX_ORIENTATION_ISO = 2;
  */
 cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
     //the map's size property measured in tiles
-    _mapSize:cc.SizeZero(),
-    _tileSize:cc.SizeZero(),
+    _mapSize:null,
+    _tileSize:null,
     _properties:null,
     _objectGroups:null,
     _mapOrientation:null,
     //tile properties
     //todo delete
     _TMXLayers:null,
-    _tileProperties:[],
+    _tileProperties:null,
+
+    ctor:function(){
+        this._super();
+        this._mapSize = cc.SizeZero();
+        this._tileSize = cc.SizeZero();
+
+        this._tileProperties = [];
+    },
 
     /**
      * @return {cc.Size}
@@ -195,10 +203,20 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         cc.Assert(tmxFile != null && tmxFile.length > 0, "TMXTiledMap: tmx file should not be nil");
         this.setContentSize(cc.SizeZero());
         var mapInfo = cc.TMXMapInfo.create(tmxFile,resourcePath);
-        if (!mapInfo) {
+        if (!mapInfo)
             return false;
-        }
+
         cc.Assert(mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
+        this._buildWithMapInfo(mapInfo);
+        return true;
+    },
+
+    initWithXML:function(tmxString, resourcePath){
+        this.setContentSize(cc.SizeZero());
+
+        var mapInfo = cc.TMXMapInfo.createWithXML(tmxString, resourcePath);
+
+        cc.Assert( mapInfo.getTilesets().length != 0, "TMXTiledMap: Map not found. Please check the filename.");
         this._buildWithMapInfo(mapInfo);
         return true;
     },
@@ -212,7 +230,6 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
         this._tileProperties = mapInfo.getTileProperties();
 
         var idx = 0;
-
         var layers = mapInfo.getLayers();
         if (layers) {
             var layerInfo = null;
@@ -228,7 +245,6 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
                     currentSize.width = Math.max(currentSize.width, childSize.width);
                     currentSize.height = Math.max(currentSize.height, childSize.height);
                     this.setContentSize(currentSize);
-
                     idx++;
                 }
             }
@@ -314,7 +330,7 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
                             if (gid != 0) {
                                 // Optimization: quick return
                                 // if the layer is invalid (more than 1 tileset per layer) an cc.Assert will be thrown later
-                                if (((gid & cc.TMX_TILE_ALL_FLAGS_MASK)>>>0) >= tileset.firstGid) {
+                                if (((gid & cc.TMX_TILE_FLIPPED_MASK)>>>0) >= tileset.firstGid) {
                                     return tileset;
                                 }
                             }
@@ -334,9 +350,9 @@ cc.TMXTiledMap = cc.Node.extend(/** @lends cc.TMXTiledMap# */{
 /**
  * Creates a TMX Tiled Map with a TMX file.
  * Implementation cc.TMXTiledMap
- * @param {String} tmxString
+ * @param {String} tmxFile
  * @param {String} resourcePath
- * @return {cc.TMXTiledMap|null}
+ * @return {cc.TMXTiledMap|undefined}
  * @example
  * //example
  * var map = cc.TMXTiledMap.create("hello.tmx");
@@ -346,5 +362,18 @@ cc.TMXTiledMap.create = function (tmxFile, resourcePath) {
     if (ret.initWithTMXFile(tmxFile,resourcePath)) {
         return ret;
     }
+    return null;
+};
+
+/**
+ * initializes a TMX Tiled Map with a TMX formatted XML string and a path to TMX resources
+ * @param {String} tmxString
+ * @param {String} resourcePath
+ * @return {cc.TMXTiledMap|undefined}
+ */
+cc.TMXTiledMap.createWithXML = function(tmxString, resourcePath){
+    var tileMap = new cc.TMXTiledMap();
+    if(tileMap.initWithXML(tmxString,resourcePath))
+        return tileMap;
     return null;
 };

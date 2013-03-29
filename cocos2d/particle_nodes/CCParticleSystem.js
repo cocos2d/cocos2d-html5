@@ -255,7 +255,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     modeB:null,
 
     //private POINTZERO for ParticleSystem
-    _pointZeroForParticle:cc.p(0,0),
+    _pointZeroForParticle:cc.p(0, 0),
 
     //! Array of particles
     _particles:null,
@@ -1026,7 +1026,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Texture2D | HTMLImageElement | HTMLCanvasElement} texture
      */
     setTexture:function (texture) {
-        //TODO
         if (this._texture != texture) {
             this._texture = texture;
             this._updateBlendFunc();
@@ -1034,7 +1033,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _blendFunc: {src:gl.ONE, dst:gl.ONE},
+    _blendFunc: null,
     /**
      * get BlendFunc of Particle System
      * @return {cc.BlendFunc}
@@ -1049,12 +1048,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if(arguments.length == 1){
-            if (this._blendFunc != src ) {
+        if (arguments.length == 1) {
+            if (this._blendFunc != src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();
             }
-        }else{
+        } else {
             if (this._blendFunc.src != src || this._blendFunc.dst != dst) {
                 this._blendFunc = {src:src, dst:dst};
                 this._updateBlendFunc();
@@ -1080,7 +1079,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._opacityModifyRGB = newValue;
     },
 
-    _isBlendAdditive:false,
     /**
      * <p>whether or not the particles are using blend additive.<br/>
      *     If enabled, the following blending function will be used.<br/>
@@ -1091,7 +1089,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *    dest blend function = GL_ONE;
      */
     isBlendAdditive:function () {
-        //return this._isBlendAdditive;
         return (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE));
     },
 
@@ -1102,21 +1099,22 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Boolean} isBlendAdditive
      */
     setBlendAdditive:function (isBlendAdditive) {
-        //TODO
-        this._isBlendAdditive = isBlendAdditive;
         if (isBlendAdditive) {
             this._blendFunc.src = gl.SRC_ALPHA;
             this._blendFunc.dst = gl.ONE;
         } else {
-            this._blendFunc.src = cc.BLEND_SRC;
-            this._blendFunc.dst = cc.BLEND_DST;
-            /*if (this._texture && !this._texture.hasPremultipliedAlpha()) {
-             this._blendFunc.src = gl.SRC_ALPHA;
-             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-             } else {
-             this._blendFunc.src = cc.BLEND_SRC;
-             this._blendFunc.dst = cc.BLEND_DST;
-             }*/
+            if (cc.renderContextType === cc.WEBGL) {
+                if (this._texture && !this._texture.hasPremultipliedAlpha()) {
+                    this._blendFunc.src = gl.SRC_ALPHA;
+                    this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+                } else {
+                    this._blendFunc.src = cc.BLEND_SRC;
+                    this._blendFunc.dst = cc.BLEND_DST;
+                }
+            } else {
+                this._blendFunc.src = cc.BLEND_SRC;
+                this._blendFunc.dst = cc.BLEND_DST;
+            }
         }
     },
 
@@ -1190,13 +1188,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
 
         this._particles = [];
-        this._sourcePosition = new cc.Point(0,0);
-        this._posVar = new cc.Point(0,0);
+        this._sourcePosition = new cc.Point(0, 0);
+        this._posVar = new cc.Point(0, 0);
 
-        this._startColor = new cc.Color4F(1,1,1,1);
-        this._startColorVar = new cc.Color4F(1,1,1,1);
-        this._endColor = new cc.Color4F(1,1,1,1);
-        this._endColorVar = new cc.Color4F(1,1,1,1);
+        this._startColor = new cc.Color4F(1, 1, 1, 1);
+        this._startColorVar = new cc.Color4F(1, 1, 1, 1);
+        this._endColor = new cc.Color4F(1, 1, 1, 1);
+        this._endColorVar = new cc.Color4F(1, 1, 1, 1);
 
         this._particlePool = [];
     },
@@ -1209,20 +1207,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * <p> initializes a CCParticleSystem from a plist file. <br/>
+     * <p>
+     *     initializes a CCParticleSystem from a plist file. <br/>
      *      This plist files can be creted manually or with Particle Designer:<br/>
-     *      http://particledesigner.71squared.com/<br/></p>
+     *      http://particledesigner.71squared.com/
+     * </p>
      * @param {String} plistFile
      * @return {cc.ParticleSystem}
      */
     initWithFile:function (plistFile) {
-        var ret = false;
         //TODO
         this._plistFile = plistFile;
         var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(this._plistFile);
 
         cc.Assert(dict != null, "Particles: file not found");
-        return this.initWithDictionary(dict);
+
+        // XXX compute path from a path, should define a function somewhere to do it
+        return this.initWithDictionary(dict, "");
     },
 
     /**
@@ -1234,14 +1235,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * initializes a CCQuadParticleSystem from a CCDictionary.
+     * initializes a particle system from a NSDictionary and the path from where to load the png
      * @param {object} dictionary
+     * @param {String} dirname
      * @return {Boolean}
      */
-    initWithDictionary:function (dictionary) {
+    initWithDictionary:function (dictionary, dirname) {
         var ret = false;
         var buffer = null;
-        var deflated = null;
         var image = null;
 
         var maxParticles = parseInt(this._valueForKey("maxParticles", dictionary));
@@ -1357,7 +1358,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 var tex = cc.TextureCache.getInstance().textureForKey(fullpath);
 
                 if (tex) {
-                    this._texture = tex;
+                    this.setTexture(tex);
                 } else {
                     var textureData = this._valueForKey("textureImageData", dictionary);
 
@@ -1366,32 +1367,59 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         tex = cc.TextureCache.getInstance().addImage(fullpath);
                         if (!tex)
                             return false;
-                        this._texture = tex;
+                        this.setTexture(tex);
                     } else {
+                        //TODO need implement parse image data for cc.Image
                         buffer = cc.unzipBase64AsArray(textureData, 1);
-                        if (!buffer)
+                        if (!buffer) {
+                            cc.log("cc.ParticleSystem: error decoding or ungzipping textureImageData");
                             return false;
-                        var newImageData = cc.encodeToBase64(buffer);
-                        if (!newImageData)
-                            return false;
+                        }
 
-                        var img = new Image();
-                        img.src = "data:image/png;base64," + newImageData;
-                        cc.TextureCache.getInstance().cacheImage(fullpath, img);
+                        var imageFormat = cc.getImageFormatByData(buffer);
+                        //if(cc.renderContextType === cc.CANVAS){
+                        if(imageFormat === cc.FMT_PNG){
+                            cc.log("Image format:PNG");
+                            var newImageData = cc.encodeToBase64(buffer);
+                            if (!newImageData)
+                                return false;
 
-                        // Manually decode the base 64 image size since the browser will only do so asynchronously
-                        var w = (buffer[16] << 24) + (buffer[17] << 16) + (buffer[18] << 8) + (buffer[19]),
-                            h = (buffer[20] << 24) + (buffer[21] << 16) + (buffer[22] << 8) + (buffer[23]);
+                            var img = new Image();
+                            img.src = "data:image/png;base64," + newImageData;
 
-                        // Patch this on so we can correctly create the draw rect later on
-                        img.textureWidth = w;
-                        img.textureHeight = h;
+                            // Manually decode the base 64 image size since the browser will only do so asynchronously
+                            var w = (buffer[16] << 24) + (buffer[17] << 16) + (buffer[18] << 8) + (buffer[19]),
+                                h = (buffer[20] << 24) + (buffer[21] << 16) + (buffer[22] << 8) + (buffer[23]);
 
-                        this._texture = img;
+                            // Patch this on so we can correctly create the draw rect later on
+                            img.textureWidth = w;
+                            img.textureHeight = h;
+
+                            cc.TextureCache.getInstance().cacheImage(fullpath, img);
+                            this._texture = cc.TextureCache.getInstance().textureForKey(textureName);
+
+                            cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
+                            this.setTexture(this._texture);
+
+                        } else {
+                            if(imageFormat === cc.FMT_TIFF)
+                                cc.log("Image format:TIFF");
+                            else
+                                cc.log("Image format:UNKNOWN");
+
+                            this.setTexture(cc.TextureCache.getInstance().textureForKey(s_stars1));
+
+                            /*var uiImage = new cc.Image();
+                            var isOK = uiImage.initWithImageData(buffer,buffer.length);
+                            if(!isOK){
+                                cc.log("cc.ParticleSystem: error init image with Data");
+                                return false;
+                            }
+                            this.setTexture(cc.TextureCache.getInstance().addUIImage(uiImage,fullpath));*/
+                        }
                     }
                 }
-                cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
-                this.setTexture(this._texture);;
+
             }
             ret = true;
         }
@@ -1455,8 +1483,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this.unscheduleUpdate();
     },
 
-    _getParticleObject:function(){
-        if(this._particlePool.length > 0)
+    _getParticleObject:function () {
+        if (this._particlePool.length > 0)
             return this._particlePool.pop();
         return new cc.Particle();
     },
@@ -1606,7 +1634,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * should be overriden by subclasses
+     * should be overridden by subclasses
      * @param {cc.Particle} particle
      * @param {cc.Point} newPosition
      */
@@ -1615,7 +1643,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * should be overriden by subclasses
+     * should be overridden by subclasses
      */
     postStep:function () {
         // should be overriden
@@ -1823,13 +1851,25 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    return cc.ParticleSystemQuad.create(plistFile);
+    // return cc.ParticleSystemQuad.create(plistFile);
+    var particle = new cc.ParticleSystem();
+    if (particle && particle.initWithFile(plistFile))
+        return particle;
+    return null;
 };
 
+/**
+ * create a system with a fixed number of particles
+ * @param {Number} number_of_particles
+ * @return {cc.ParticleSystem}
+ */
 cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    var emitter = cc.ParticleSystemQuad.create(number_of_particles);
+    //return cc.ParticleSystemQuad.create(number_of_particles);
     //emitter.initWithTotalParticles(number_of_particles);
-    return emitter;
+    var particle = new cc.ParticleSystem();
+    if (particle && particle.initWithTotalParticles(number_of_particles))
+        return particle;
+    return null;
 };
 
 // Different modes

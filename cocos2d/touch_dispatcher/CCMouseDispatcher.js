@@ -586,4 +586,3 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 };
 
 
-

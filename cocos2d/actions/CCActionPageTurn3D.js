@@ -25,18 +25,19 @@
  ****************************************************************************/
 
 /**
- @brief This action simulates a page turn from the bottom right hand corner of the screen.
- It's not much use by itself but is used by the PageTurnTransition.
-
- Based on an original paper by L Hong et al.
- http://www.parc.com/publication/1638/turning-pages-of-3d-electronic-books.html
-
- @since v0.8.2
+ * <p>
+ *     This action simulates a page turn from the bottom right hand corner of the screen.     <br/>
+ *     It's not much use by itself but is used by the PageTurnTransition.                     <br/>
+ *                                                                                            <br/>
+ *     Based on an original paper by L Hong et al.                                            <br/>
+ *     http://www.parc.com/publication/1638/turning-pages-of-3d-electronic-books.html
+ * </p>
+ * @class
+ * @extends cc.Grid3DAction
  */
-
-cc.PageTurn3D = cc.Grid3DAction.extend({
-    /*
-     * Update each tick
+cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
+    /**
+     * Update each tick                                         <br/>
      * Time is the percentage of the way through the duration
      */
     update:function (time) {
@@ -50,10 +51,10 @@ cc.PageTurn3D = cc.Grid3DAction.extend({
         var sinTheta = Math.sin(theta);
         var cosTheta = Math.cos(theta);
 
-        for (var i = 0; i <= this._gridSize.x; ++i) {
-            for (var j = 0; j <= this._gridSize.y; ++j) {
+        for (var i = 0; i <= this._gridSize.width; ++i) {
+            for (var j = 0; j <= this._gridSize.height; ++j) {
                 // Get original vertex
-                var p = this.originalVertex(cc.g(i, j));
+                var p = this.originalVertex(cc.p(i, j));
 
                 var R = Math.sqrt((p.x * p.x) + ((p.y - ay) * (p.y - ay)));
                 var r = R * sinTheta;
@@ -63,14 +64,10 @@ cc.PageTurn3D = cc.Grid3DAction.extend({
 
                 // If beta > PI then we've wrapped around the cone
                 // Reduce the radius to stop these points interfering with others
-                if (beta <= Math.PI) {
+                if (beta <= Math.PI)
                     p.x = ( r * Math.sin(beta));
-                }
-                else {
-                    // Force X = 0 to stop wrapped
-                    // points
-                    p.x = 0;
-                }
+                else
+                    p.x = 0;     //Force X = 0 to stop wrapped points
 
                 p.y = ( R + ay - ( r * (1 - cosBeta) * sinTheta));
 
@@ -80,20 +77,25 @@ cc.PageTurn3D = cc.Grid3DAction.extend({
 
                 //	Stop z coord from dropping beneath underlying page in a transition
                 // issue #751
-                if (p.z < 0.5) {
+                if (p.z < 0.5)
                     p.z = 0.5;
-                }
 
                 // Set new coords
-                this.setVertex(cc.g(i, j), p);
-
+                this.setVertex(cc.p(i, j), p);
             }
         }
     }
 });
 
-/** create the action */
-cc.PageTurn3D.create = function (gridSize, time) {
+/**  */
+/**
+ * create PageTurn3D action
+ * @param {Number} duration
+ * @param {cc.Size} gridSize
+ * @return {cc.PageTurn3D}
+ */
+cc.PageTurn3D.create = function (duration, gridSize) {
     var action = new cc.PageTurn3D();
+    action.initWithDuration(duration, gridSize);
     return action;
 };
