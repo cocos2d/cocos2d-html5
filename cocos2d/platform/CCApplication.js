@@ -183,6 +183,9 @@ cc.setup = function (el, width, height) {
     cc.container.style.overflow = 'hidden';
     cc.container.top = '100%';
 
+    if(cc.__renderDoesnotSupport)
+        return;
+
     if (cc.Browser.supportWebGL)
         cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
     if(cc.renderContext){
