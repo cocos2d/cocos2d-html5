@@ -59,11 +59,32 @@ cc.Browser = {};
     cc.Browser.mode = cc.Browser.UA[1] == 'ie' && document.documentMode;
     cc.Browser.type = (cc.Browser.UA[1] == 'version') ? cc.Browser.UA[3] : cc.Browser.UA[1];
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
-    cc.Browser.supportWebGL = !(window.WebGLRenderingContext == null);
-    var tempCanvas = document.createElement("Canvas");
-    var tempContext = cc.create3DContext(tempCanvas, {'stencil':true, 'preserveDrawingBuffer':true });
-    cc.Browser.supportWebGL = !(tempContext == null)
+
+    var c = document.ccConfig;
+    // check supportWebGL item
+    cc._userRenderMode = parseInt(c["renderMode"]) || 0;
+
+    if(cc._userRenderMode === 1) {
+         //canvas only
+        cc.Browser.supportWebGL = false;
+    } else{
+        // WebGL first
+        cc.Browser.supportWebGL = !(window.WebGLRenderingContext == null);
+        var tempCanvas = document.createElement("Canvas");
+        var tempContext = cc.create3DContext(tempCanvas, {'stencil':true, 'preserveDrawingBuffer':true });
+        cc.Browser.supportWebGL = !(tempContext == null)
+    }
+    if(cc._userRenderMode === 2 && !cc.Browser.supportWebGL){
+        // WebGL render only, but browser doesn't support WebGL.
+        cc.__renderDoesnotSupport = true;
+    }
 })();
+
+cc.RenderDoesnotSuppot = function(){
+    if(cc.__renderDoesnotSupport === "undefined")
+        return false;
+    return cc.__renderDoesnotSupport;
+};
 
 
 /**
