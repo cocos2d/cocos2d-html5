@@ -31,7 +31,7 @@
 /**
  * @namespace
  */
-var cc = cc = cc || {};
+var cc = cc || {};
 
 //
 function ClassManager(){
