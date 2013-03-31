@@ -98,7 +98,7 @@ cc.reverseControlPointsInline = function (controlPoints) {
         controlPoints[i] = controlPoints[len - i - 1];
         controlPoints[len - i - 1] = temp;
     }
-},
+};
 
 
 /**
