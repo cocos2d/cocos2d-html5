@@ -59,7 +59,7 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @return {Boolean}
      */
     initWithDuration:function (d) {
-        this._duration = (d == 0) ? cc.FLT_EPSILON : d;
+        this._duration = (d === 0) ? cc.FLT_EPSILON : d;
         // prevent division by 0
         // This comparison could be in step:, but it might decrease the performance
         // by 3% in heavy based action games.
@@ -211,9 +211,9 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         } else {
             // action[1]
             found = 1;
-            new_t = (this._split == 1) ? 1 : (time - this._split) / (1 - this._split);
+            new_t = (this._split === 1) ? 1 : (time - this._split) / (1 - this._split);
 
-            if (this._last == -1) {
+            if (this._last === -1) {
                 // action[0] was skipped, execute it.
                 this._actions[0].startWithTarget(this._target);
                 this._actions[0].update(1);
@@ -227,7 +227,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         }
 
         // Last action found and it is done.
-        if(this._last == found && this._actions[found].isDone())
+        if(this._last === found && this._actions[found].isDone())
             return;
 
         // Last action found and it is done

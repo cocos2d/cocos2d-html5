@@ -839,6 +839,55 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
         this.setTextureRect(cc.rect(0, 0, this._labelCanvas.width, this._labelCanvas.height));
         return true;
+    },
+    /**
+     * draw sprite to canvas
+     * @param {WebGLRenderContext} ctx 3d context of canvas
+     */
+    draw:function (ctx) {
+        var gl = ctx || cc.renderContext;
+        //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
+
+        if (this._texture && this._texture.isLoaded()) {
+            gl.useProgram(this._shaderProgram._programObj);
+            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+
+            cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+            cc.glBindTexture2D(this._texture);
+            gl.activeTexture(gl.TEXTURE0);
+            gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
+
+            cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+
+            gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
+            if (this._quadDirty) {
+                gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                this._quadDirty = false;
+            }
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
+            gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+        }
+
+        if (cc.SPRITE_DEBUG_DRAW === 1) {
+            // draw bounding box
+            var verticesG1 = [
+                cc.p(this._quad.tl.vertices.x, this._quad.tl.vertices.y),
+                cc.p(this._quad.bl.vertices.x, this._quad.bl.vertices.y),
+                cc.p(this._quad.br.vertices.x, this._quad.br.vertices.y),
+                cc.p(this._quad.tr.vertices.x, this._quad.tr.vertices.y)
+            ];
+            cc.drawingUtil.drawPoly(verticesG1, 4, true);
+        } else if (cc.SPRITE_DEBUG_DRAW === 2) {
+            // draw texture box
+            var drawSizeG2 = this.getTextureRect().size;
+            var offsetPixG2 = this.getOffsetPosition();
+            var verticesG2 = [cc.p(offsetPixG2.x, offsetPixG2.y), cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y),
+                cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
+            cc.drawingUtil.drawPoly(verticesG2, 4, true);
+        } // CC_SPRITE_DEBUG_DRAW
+        cc.g_NumberOfDraws++;
     }
 });
 

@@ -527,7 +527,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
             return;
 
         var gl = cc.renderContext;
-        cc.glBindTexture2D(this._texture._webTextureObj);
+        cc.glBindTexture2D(this._texture);
 
         //
         // Using VBO without VAO

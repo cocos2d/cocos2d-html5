@@ -612,7 +612,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var gl = ctx || cc.renderContext;
 
         cc.NODE_DRAW_SETUP(this);
-        cc.glBindTexture2D(this._texture._webTextureObj);
+        cc.glBindTexture2D(this._texture);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
         cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");

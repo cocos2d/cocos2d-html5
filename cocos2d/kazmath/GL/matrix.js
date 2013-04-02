@@ -79,13 +79,13 @@ cc.kmGLPushMatrixWitMat4 = function (saveMat) {
     cc.current_stack.stack.push(cc.current_stack.top);
     cc.kmMat4Assign(saveMat, cc.current_stack.top);
     cc.current_stack.top = saveMat;
-    cc.current_stack.item_count++;
 };
 
 cc.kmGLPopMatrix = function () {
     //cc.Assert(cc.initialized , "Cannot Pop empty matrix stack");
     //No need to lazy initialize, you shouldnt be popping first anyway!
-    cc.km_mat4_stack_pop(cc.current_stack, null);
+    //cc.km_mat4_stack_pop(cc.current_stack, null);
+    cc.current_stack.top = cc.current_stack.stack.pop();
 };
 
 cc.kmGLMatrixMode = function (mode) {

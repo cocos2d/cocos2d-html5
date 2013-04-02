@@ -103,12 +103,17 @@ cc.glInvalidateStateCache = function () {
  * @param {WebGLProgram} program
  */
 cc.glUseProgram = function (program) {
-    if (cc.ENABLE_GL_STATE_CACHE && (program !== cc._currentShaderProgram)) {
+    if (program !== cc._currentShaderProgram) {
         cc._currentShaderProgram = program;
         cc.renderContext.useProgram(program);
-    } else
-        cc.renderContext.useProgram(program);
+    }
 };
+
+if(!cc.ENABLE_GL_STATE_CACHE){
+    cc.glUseProgram = function (program) {
+        cc.renderContext.useProgram(program);
+    }
+}
 
 /**
  * Deletes the GL program. If it is the one that is being used, it invalidates it.<br/>
@@ -117,7 +122,7 @@ cc.glUseProgram = function (program) {
  */
 cc.glDeleteProgram = function (program) {
     if (cc.ENABLE_GL_STATE_CACHE) {
-        if (program == cc._currentShaderProgram)
+        if (program === cc._currentShaderProgram)
             cc._currentShaderProgram = -1;
     }
     cc.renderContext.deleteProgram(program);
@@ -130,19 +135,15 @@ cc.glDeleteProgram = function (program) {
  * @param {Number} dfactor
  */
 cc.glBlendFunc = function (sfactor, dfactor) {
-    if (cc.ENABLE_GL_STATE_CACHE) {
-        if (sfactor !== cc._blendingSource || dfactor !== cc._blendingDest) {
-            cc._blendingSource = sfactor;
-            cc._blendingDest = dfactor;
-            cc.setBlending(sfactor, dfactor);
-        }
-        return;
+    if ((sfactor !== cc._blendingSource) || (dfactor !== cc._blendingDest)) {
+        cc._blendingSource = sfactor;
+        cc._blendingDest = dfactor;
+        cc.setBlending(sfactor, dfactor);
     }
-    cc.setBlending(sfactor, dfactor);
 };
 
 cc.setBlending = function (sfactor, dfactor) {
-    if (sfactor === cc.renderContext.ONE && dfactor === cc.renderContext.ZERO) {
+    if ((sfactor === cc.renderContext.ONE) && (dfactor === cc.renderContext.ZERO)) {
         cc.renderContext.disable(cc.renderContext.BLEND);
     } else {
         cc.renderContext.enable(cc.renderContext.BLEND);
@@ -150,6 +151,10 @@ cc.setBlending = function (sfactor, dfactor) {
         //TODO need fix for WebGL
         //cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
     }
+};
+
+if(cc.ENABLE_GL_STATE_CACHE){
+    cc.glBlendFunc = cc.setBlending;
 };
 
 /**
@@ -184,11 +189,8 @@ cc.setProjectionMatrixDirty = function () {
  * @param {cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_COLOR | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS} flags
  */
 cc.glEnableVertexAttribs = function (flags) {
-    //cc.glBindVAO(0);
-
     /* Position */
     var enablePosition = ( flags & cc.VERTEX_ATTRIB_FLAG_POSITION );
-
     if (enablePosition !== cc._vertexAttribPosition) {
         if (enablePosition)
             cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
@@ -221,7 +223,7 @@ cc.glEnableVertexAttribs = function (flags) {
 /**
  * If the texture is not already bound, it binds it.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glBindTexture() directly.
- * @param {WebGLTexture} textureId
+ * @param {cc.Texture2D} textureId
  */
 cc.glBindTexture2D = function (textureId) {
     cc.glBindTexture2DN(0, textureId);
@@ -231,17 +233,21 @@ cc.glBindTexture2D = function (textureId) {
  * If the texture is not already bound to a given unit, it binds it.<br/>
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will call glBindTexture() directly.
  * @param {Number} textureUnit
- * @param {WebGLTexture} textureId
+ * @param {cc.Texture2D} textureId
  */
 cc.glBindTexture2DN = function (textureUnit, textureId) {
-    if (cc.ENABLE_GL_STATE_CACHE) {
-        //cc.Assert(textureUnit < cc.MAX_ACTIVETEXTURE, "textureUnit is too big");
-        if (cc._currentBoundTexture[ textureUnit ] != textureId)
-            cc._currentBoundTexture[ textureUnit ] = textureId;
-    }
+    if (cc._currentBoundTexture[textureUnit] === textureId)
+        return;
+    cc._currentBoundTexture[textureUnit] = textureId;
     cc.renderContext.activeTexture(cc.renderContext.TEXTURE0 + textureUnit);
-    cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId);
+    cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
 };
+if (!cc.ENABLE_GL_STATE_CACHE){
+    cc.glBindTexture2DN = function (textureUnit, textureId) {
+        cc.renderContext.activeTexture(cc.renderContext.TEXTURE0 + textureUnit);
+        cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
+    };
+}
 
 /**
  * It will delete a given texture. If the texture was bound, it will invalidate the cached. <br/>
