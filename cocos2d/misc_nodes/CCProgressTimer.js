@@ -745,7 +745,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
         if (this._sprite.getTexture())
-            cc.glBindTexture2D(this._sprite.getTexture()._webTextureObj);
+            cc.glBindTexture2D(this._sprite.getTexture());
         else
             cc.glBindTexture2D(null);
 

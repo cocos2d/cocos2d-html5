@@ -1413,10 +1413,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         this._stackMatrix = this._stackMatrix || new cc.kmMat4();
         cc.kmGLPushMatrixWitMat4(this._stackMatrix);
 
-        if (this._grid && this._grid.isActive())
+        if (this._grid && this._grid._active)
             this._grid.beforeDraw();
 
-        this.transform(context);
+        this.transform();
         if (this._children && this._children.length > 0) {
             this.sortAllChildren();
             // draw children zOrder < 0
@@ -1445,7 +1445,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         cc.kmGLPopMatrix();
     },
 
-    transform:function (ctx) {
+    transform:function () {
         this._transform4x4 = this._transform4x4 || new cc.kmMat4();
         // Convert 3x3 into 4x4 matrix
         cc.CGAffineToGL(this.nodeToParentTransform(), this._transform4x4.mat);
@@ -1484,7 +1484,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             // Change rotation code to handle X and Y
             // If we skew with the exact same value for both x and y then we're simply just rotating
             var cx = 1, sx = 0, cy = 1, sy = 0;
-            if (this._rotationX != 0 || this._rotationY != 0) {
+            if (this._rotationX !== 0 || this._rotationY !== 0) {
                 cx = Math.cos(-this._rotationRadiansX);
                 sx = Math.sin(-this._rotationRadiansX);
                 cy = Math.cos(-this._rotationRadiansY);
@@ -1495,7 +1495,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             // optimization:
             // inline anchor point calculation if skew is not needed
             // Adjusted transform calculation for rotational skew
-            //if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
             if (!needsSkewMatrix && (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0)) {
                 x += cy * -this._anchorPointInPoints.x * this._scaleX + -sx * -this._anchorPointInPoints.y * this._scaleY;
                 y += sy * -this._anchorPointInPoints.x * this._scaleX + cx * -this._anchorPointInPoints.y * this._scaleY;
@@ -1503,22 +1502,19 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
             // Build Transform Matrix
             // Adjusted transform calculation for rotational skew
-            this._transform = cc.AffineTransformMake(cy * this._scaleX, sy * this._scaleX,
-                -sx * this._scaleY, cx * this._scaleY, x, y);
+            this._transform = {a: cy * this._scaleX, b: sy * this._scaleX, c: -sx * this._scaleY, d: cx * this._scaleY, tx: x, ty: y};
 
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
-                var skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
-                    Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), 1.0, 0.0, 0.0);
+                var skewMatrix = {a: 1.0, b: Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
+                    c: Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), d: 1.0, tx: 0.0, ty: 0.0};
                 this._transform = cc.AffineTransformConcat(skewMatrix, this._transform);
 
                 // adjust anchor point
-                if (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0) {
+                if (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0)
                     this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
-                }
             }
-
             this._transformDirty = false;
         }
         return this._transform;
@@ -1902,8 +1898,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     setRotation:function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
-        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
-        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
+        this._rotationRadiansX = this._rotationX * 0.017453292519943295; //(Math.PI / 180);
+        this._rotationRadiansY = this._rotationY * 0.017453292519943295; //(Math.PI / 180);
 
         this.setNodeDirty();
     },
@@ -1924,7 +1920,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     setRotationX:function (rotationX) {
         this._rotationX = rotationX;
-        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
+        this._rotationRadiansX = this._rotationX * 0.017453292519943295; //(Math.PI / 180);
         this.setNodeDirty();
     },
 
@@ -1939,7 +1935,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     setRotationY:function (rotationY) {
         this._rotationY = rotationY;
-        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
+        this._rotationRadiansY = this._rotationY * 0.017453292519943295;  //(Math.PI / 180);
         this.setNodeDirty();
     },
 
@@ -2003,19 +1999,19 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {Number}  yValue
      */
     setPosition:function (newPosOrxValue, yValue) {
-        if (arguments.length == 2) {
+        if (arguments.length === 2) {
             this._position = new cc.Point(newPosOrxValue, yValue);
-        } else if (arguments.length == 1) {
+        } else if (arguments.length === 1) {
             this._position = new cc.Point(newPosOrxValue.x, newPosOrxValue.y);
         }
         this.setNodeDirty();
     },
 
     _setPositionByValue:function (newPosOrxValue, yValue) {
-        if (arguments.length == 2) {
+        if (arguments.length === 2) {
             this._position.x = newPosOrxValue;
             this._position.y = yValue;
-        } else if (arguments.length == 1) {
+        } else if (arguments.length === 1) {
             this._position.x = newPosOrxValue.x;
             this._position.y = newPosOrxValue.y;
         }

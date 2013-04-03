@@ -2641,18 +2641,12 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (this._texture) {
-            if(this._texture.isLoaded()){
-                if (this._shaderProgram) {
-                    gl.useProgram(this._shaderProgram._programObj);
-                    this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
-                }
+            if(this._texture._isLoaded){
+                gl.useProgram(this._shaderProgram._programObj);
+                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
 
-                //cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-                cc.setBlending(this._blendFunc.src, this._blendFunc.dst);
-                //cc.glBindTexture2D(this._texture._webTextureObj);
-                gl.activeTexture(gl.TEXTURE0);
-                gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
-
+                cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+                cc.glBindTexture2D(this._texture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
@@ -2663,13 +2657,13 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
                 gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
                 gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
                 gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+                gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
-            if (shaderProgram) {
-                gl.useProgram(shaderProgram._programObj);
-                shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
-            }
+            gl.useProgram(shaderProgram._programObj);
+            shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);
 
@@ -2682,8 +2676,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             }
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+            gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
-        gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box

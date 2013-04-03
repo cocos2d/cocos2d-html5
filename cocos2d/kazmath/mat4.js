@@ -46,8 +46,10 @@ cc.kmMat4 = function () {
  * @Return Returns pOut so that the call can be nested
  */
 cc.kmMat4Fill = function (pOut, pMat) {
-    for (var i = 0; i < 16; i++)
-        pOut.mat[i] = pMat;
+    pOut.mat[0] = pOut.mat[1] = pOut.mat[2] =pOut.mat[3] =
+        pOut.mat[4] =pOut.mat[5] =pOut.mat[6] =pOut.mat[7] =
+            pOut.mat[8] =pOut.mat[9] =pOut.mat[10] =pOut.mat[11] =
+                pOut.mat[12] =pOut.mat[13] =pOut.mat[14] =pOut.mat[15] =pMat;
 };
 
 /**
@@ -165,7 +167,6 @@ cc.kmMat4Inverse = function (pOut, pM) {
     var tmp = new cc.kmMat4();
 
     cc.kmMat4Assign(inv, pM);
-
     cc.kmMat4Identity(tmp);
 
     if (cc.kmMat4._gaussj(inv, tmp) == cc.KM_FALSE)
@@ -292,8 +293,25 @@ cc.getMat4MultiplyWithMat4 = function (pM1, pM2, swapMat) {
  */
 cc.kmMat4Assign = function (pOut, pIn) {
     //cc.Assert(pOut != pIn, "You have tried to self-assign!!");
-    for (var i = 0; i < 16; i++)
-        pOut.mat[i] = pIn.mat[i];
+    pOut.mat[0] = pIn.mat[0];
+    pOut.mat[1] = pIn.mat[1];
+    pOut.mat[2] = pIn.mat[2];
+    pOut.mat[3] = pIn.mat[3];
+
+    pOut.mat[4] = pIn.mat[4];
+    pOut.mat[5] = pIn.mat[5];
+    pOut.mat[6] = pIn.mat[6];
+    pOut.mat[7] = pIn.mat[7];
+
+    pOut.mat[8] = pIn.mat[8];
+    pOut.mat[9] = pIn.mat[9];
+    pOut.mat[10] = pIn.mat[10];
+    pOut.mat[11] = pIn.mat[11];
+
+    pOut.mat[12] = pIn.mat[12];
+    pOut.mat[13] = pIn.mat[13];
+    pOut.mat[14] = pIn.mat[14];
+    pOut.mat[15] = pIn.mat[15];
     return pOut;
 };
 
@@ -506,11 +524,14 @@ cc.kmMat4RotationTranslation = function (pOut, rotation, translation) {
 
 /** Builds a scaling matrix */
 cc.kmMat4Scaling = function (pOut, x, y, z) {
-    pOut.mat = new Float32Array(
-        [x, 0, 0, 0,
-            0, y, 0, 0,
-            0, 0, z, 0,
-            0, 0, 0, 1.0]);
+    pOut.mat[0] = x;
+    pOut.mat[5] = y;
+    pOut.mat[10] = z;
+    pOut.mat[15] = 1.0;
+    pOut.mat[1] = pOut.mat[2] = pOut.mat[3] =
+        pOut.mat[4] = pOut.mat[6] = pOut.mat[7] =
+            pOut.mat[8] = pOut.mat[9] = pOut.mat[11] =
+                pOut.mat[12] = pOut.mat[13] = pOut.mat[14] = 0;
     return pOut;
 };
 
@@ -519,12 +540,14 @@ cc.kmMat4Scaling = function (pOut, x, y, z) {
  * will be set to zero except for the diagonal which is set to 1.0
  */
 cc.kmMat4Translation = function (pOut, x, y, z) {
-//FIXME: Write a test for this
-    pOut.mat = new Float32Array(
-        [1.0, 0, 0, 0,
-            0, 1.0, 0, 0,
-            0, 0, 1.0, 0,
-            x, y, z, 1.0]);
+    //FIXME: Write a test for this
+    pOut.mat[0] = pOut.mat[5] = pOut.mat[10] = pOut.mat[15] = 1.0;
+    pOut.mat[1] = pOut.mat[2] = pOut.mat[3] =
+        pOut.mat[4] = pOut.mat[6] = pOut.mat[7] =
+            pOut.mat[8] = pOut.mat[9] = pOut.mat[11] = 0.0;
+    pOut.mat[12] = x;
+    pOut.mat[13] = y;
+    pOut.mat[14] = z;
     return pOut;
 };
 
@@ -697,8 +720,6 @@ cc.kmMat4ExtractRotation = function (pOut, pIn) {
 };
 
 cc.kmMat4ExtractPlane = function (pOut, pIn, plane) {
-    var t = 1.0;
-
     switch (plane) {
         case cc.KM_PLANE_RIGHT:
             pOut.a = pIn.mat[3] - pIn.mat[0];
@@ -740,7 +761,7 @@ cc.kmMat4ExtractPlane = function (pOut, pIn, plane) {
             cc.Assert(0, "Invalid plane index");
     }
 
-    t = Math.sqrt(pOut.a * pOut.a +
+    var t = Math.sqrt(pOut.a * pOut.a +
         pOut.b * pOut.b +
         pOut.c * pOut.c);
     pOut.a /= t;

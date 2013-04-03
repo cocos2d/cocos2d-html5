@@ -25,40 +25,31 @@
  */
 
 cc.km_mat4_stack = function(capacity, item_count, top, stack){
-    this.capacity = capacity || 0;      //The total item capacity
-    this.item_count = item_count || 0;  //The number of items
     this.top = top ;
     this.stack = stack ;
 };
 
 cc.km_mat4_stack.INITIAL_SIZE = 30;
-cc.km_mat4_stack.INCREMENT = 50;
 
 cc.km_mat4_stack_initialize = function(stack){
-    stack.stack = []; //allocate the memory
-    stack.capacity = cc.km_mat4_stack.INITIAL_SIZE;
-    stack.top = null; //Set the top to NULL
-    stack.item_count = 0;
+    stack.stack = [];                                   //allocate the memory
+    stack.top = null;                                   //Set the top to NULL
 };
 
 cc.km_mat4_stack_push = function(stack, item){
     stack.stack.push(stack.top);
     stack.top = new cc.kmMat4();
     cc.kmMat4Assign(stack.top, item);
-    stack.item_count++;
 };
 
 cc.km_mat4_stack_pop = function(stack, pOut){
     //cc.Assert(stack.item_count , "Cannot pop an empty stack");
-    stack.item_count--;
     stack.top = stack.stack.pop();
 };
 
 cc.km_mat4_stack_release = function(stack){
     stack.stack = null;
     stack.top = null;
-    stack.item_count = 0;
-    stack.capacity = 0;
     stack = null;
 };
 

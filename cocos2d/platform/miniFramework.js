@@ -80,7 +80,7 @@ cc.Browser = {};
     }
 })();
 
-cc.RenderDoesnotSuppot = function(){
+cc.RenderDoesnotSupport = function(){
     if(cc.__renderDoesnotSupport === "undefined")
         return false;
     return cc.__renderDoesnotSupport;
