@@ -206,7 +206,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
             cc.kmGLTranslatef(-offset.x, -offset.y, 0);
         }
 
-        cc.glBindTexture2D(this._texture._webTextureObj);
+        cc.glBindTexture2D(this._texture);
 
         // restore projection for default FBO .fixed bug #543 #544
         //TODO:         CCDirector::sharedDirector().setProjection(CCDirector::sharedDirector().getProjection());
