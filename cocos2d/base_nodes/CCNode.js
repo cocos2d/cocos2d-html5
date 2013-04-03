@@ -3276,3 +3276,135 @@ cc.NodeCanvas.create = function () {
 };
 
 cc.Node = cc.Browser.supportWebGL ? cc.NodeWebGL : cc.NodeCanvas;
+
+/**
+ * <p>
+ *     cc.NodeRGBA is a subclass of cc.Node that implements the CCRGBAProtocol protocol.                       <br/>
+ *     <br/>
+ *     All features from CCNode are valid, plus the following new features:                                     <br/>
+ *      - opacity                                                                                               <br/>
+ *      - RGB colors                                                                                            <br/>
+ *     <br/>
+ *     Opacity/Color propagates into children that conform to the CCRGBAProtocol if cascadeOpacity/cascadeColor is enabled.   <br/>
+ * </p>
+ *
+ * @class
+ * @extends cc.Node
+ */
+cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
+    RGBAProtocol:true,
+    _displayedOpacity:0,
+    _realOpacity:0,
+    _displayedColor:null,
+    _realColor:null,
+    _cascadeColorEnabled:false,
+    _cascadeOpacityEnabled:false,
+
+    ctor:function(){
+        this._super();
+        this._displayedOpacity = 255;
+        this._realOpacity = 255;
+        this._displayedColor = cc.WHITE;
+        this._realColor = cc.WHITE;
+        this._cascadeColorEnabled = false;
+        this._cascadeOpacityEnabled = false;
+    },
+
+    init:function(){
+        if(this._super()){
+            this._displayedOpacity = this._realOpacity = 255;
+            this._displayedColor = cc.WHITE;
+            this._realColor = cc.WHITE;
+            this._cascadeOpacityEnabled = this._cascadeColorEnabled = false;
+            return true;
+        }
+        return false;
+    },
+
+    getOpacity:function(){
+        return this._realOpacity;
+    },
+
+    getDisplayedOpacity:function(){
+        return this._displayedOpacity;
+    },
+
+    setOpacity:function(opacity){
+        this._displayedOpacity = this._realOpacity = opacity;
+
+        if (this._cascadeOpacityEnabled) {
+            var parentOpacity = 255;
+            if (this._parent && this._parent.RGBAProtocol && this._parent.isCascadeOpacityEnabled())
+                parentOpacity = this._parent.getDisplayedOpacity();
+            this.updateDisplayedOpacity(parentOpacity);
+        }
+    },
+
+    updateDisplayedOpacity:function(parentOpacity){
+        this._displayedOpacity = this._realOpacity * parentOpacity/255.0;
+        if (this._cascadeOpacityEnabled) {
+            var selChildren = this._children;
+            for(var i = 0; i< selChildren.length;i++){
+                var item = selChildren[i];
+                if(item && item.RGBAProtocol)
+                    item.updateDisplayedOpacity(this._displayedOpacity);
+            }
+        }
+    },
+
+    isCascadeOpacityEnabled:function(){
+        return this._cascadeOpacityEnabled;
+    },
+
+    setCascadeOpacityEnabled:function(cascadeOpacityEnabled){
+        this._cascadeOpacityEnabled = cascadeOpacityEnabled;
+    },
+
+    getColor:function(){
+        return this._realColor;
+    },
+
+    getDisplayedColor:function(){
+        return this._displayedColor;
+    },
+
+    setColor:function(color){
+        this._displayedColor = this._realColor = color;
+
+        if (this._cascadeColorEnabled) {
+            var parentColor = cc.WHITE;
+            if (this._parent && this._parent.RGBAProtocol &&  this._parent.isCascadeColorEnabled())
+                parentColor = this._parent.getDisplayedColor();
+            this.updateDisplayedColor(parentColor);
+        }
+    },
+
+    updateDisplayedColor:function(parentColor){
+        this._displayedColor.r = this._realColor.r * parentColor.r/255.0;
+        this._displayedColor.g = this._realColor.g * parentColor.g/255.0;
+        this._displayedColor.b = this._realColor.b * parentColor.b/255.0;
+
+        if (this._cascadeColorEnabled){
+            var selChildren = this._children;
+            for(var i = 0; i< selChildren.length;i++){
+                var item = selChildren[i];
+                if(item && item.RGBAProtocol)
+                    item.updateDisplayedColor(this._displayedColor);
+            }
+        }
+    },
+
+    isCascadeColorEnabled:function(){
+        return this._cascadeColorEnabled;
+    },
+
+    setCascadeColorEnabled:function(cascadeColorEnabled){
+        this._cascadeColorEnabled = cascadeColorEnabled;
+    },
+
+    setOpacityModifyRGB:function(opacityValue){},
+
+    isOpacityModifyRGB:function(){
+        return false;
+    }
+});
