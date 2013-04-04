@@ -1,4 +1,30 @@
-Cocos2d-html5-v2.1.1 @ Jan.22, 2013
+Cocos2d-html5-v2.1.2-beta @ Mar.20, 2013
+* WebGL rendering mode implemented - blazing fast on supported browsers
+* Added many WegGL test to testbed
+* cc.Loader now supports multiple stage preloading - all tests now preload by multi resource groups
+* Now warns the user if their browser does not support html5
+* cc.Node now uses transform matrix - better performance
+* Accelerometer implemented - Also works on Javascript binding (JSB) for Cocos2d-x & Cocos2d-iPhone
+* Supports MP4 and M4a Audio format now
+* Designer resolution for multi resolution support - Also works on Javascript binding for Cocos2d-x
+* Faster Particle - thanks to Ivo Wetzel
+* Bug fixes:
+    1. File utility fixed
+    2. Audio support bug fixed
+    3. Removed some trailing coma which prevents blocks closure compiler
+    4. Local storage bug fixed
+    5. cc.MenuItemImage and cc.MenuItemToggle bugs fixed
+    6. Fixed compatibility with some UIWebView
+    7. Fixed rounding errors on ease actions
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. particle system can't load texture from plist
+     3. EditBox doesn't work on WebGL mode
+     4. Particle System has some weird behavior when load from CCBReader
+     5. RenderTextureTest RenderTextureIssue937 & Issue1464 doesn't work properly
+     6. ClipNodeTest effects varies in different browsers
+
+Cocos2d-html5-v2.1.1 @ Jan.28, 2013
 * Fixed bugs
 * Added mouse button to MouseDispatcher, supports right-click
 * Changed  preload audio type from "bgm" and "effect" to "sound"
@@ -6,6 +32,7 @@ Cocos2d-html5-v2.1.1 @ Jan.22, 2013
 * Improved cc.BuilderReader to support .ccbi extension auto-completion
 * Improved TMXXMLParser to support XML, CSV and zlib compression
 * Changed cc.Time.gettimeofdayCocos2d to Date.now which is more javascript friendly.
+* Added support for stackable actions
 
 Cocos2d-html5-v2.1.0 @ Dec.4, 2012
 * Improved cc.Class and add Release Mode

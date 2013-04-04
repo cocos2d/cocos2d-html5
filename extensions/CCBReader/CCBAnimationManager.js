@@ -35,6 +35,7 @@ cc.BuilderAnimationManager = cc.Class.extend({
     _autoPlaySequenceId:0,
 
     _rootNode:null,
+    _owner:null,
     _rootContainerSize:null,
 
     _delegate:null,
@@ -46,9 +47,12 @@ cc.BuilderAnimationManager = cc.Class.extend({
     _documentCallbackNodes:null,
     _documentControllerName:"",
     _lastCompletedSequenceName:"",
+    _keyframeCallbacks:null,
+    _keyframeCallFuncs:null,
 
     _animationCompleteCallbackFunc:null,
     _target:null,
+    _jsControlled:false,
 
     ctor:function () {
         this._rootContainerSize = cc.size(0, 0);
@@ -65,11 +69,18 @@ cc.BuilderAnimationManager = cc.Class.extend({
         this._documentCallbackNames = [];
         this._documentCallbackNodes = [];
 
+        this._keyframeCallbacks = [];
+        this._keyframeCallFuncs = {};
+
         return true;
     },
 
     getSequences:function () {
         return this._sequences;
+    },
+
+    setSequences:function(seqs){
+        this._sequences = seqs;
     },
 
     getAutoPlaySequenceId:function () {
@@ -84,6 +95,13 @@ cc.BuilderAnimationManager = cc.Class.extend({
     },
     setRootNode:function (rootNode) {
         this._rootNode = rootNode;
+    },
+
+    getOwner:function () {
+        return this._owner;
+    },
+    setOwner:function (owner) {
+        this._owner = owner;
     },
 
     addDocumentCallbackNode:function(node){
@@ -128,6 +146,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
     getLastCompletedSequenceName:function(){
         return this._lastCompletedSequenceName;
+    },
+
+    getKeyframeCallbacks:function(){
+        return this._keyframeCallbacks;
     },
 
     getRootContainerSize:function () {
@@ -183,6 +205,87 @@ cc.BuilderAnimationManager = cc.Class.extend({
         }
     },
 
+    getActionForCallbackChannel:function(channel) {
+        var lastKeyframeTime = 0;
+
+        var actions = [];
+        var keyframes = channel.getKeyframes();
+        var numKeyframes = keyframes.length;
+
+        for (var i = 0; i < numKeyframes; ++i) {
+            var keyframe = keyframes[i];
+            var timeSinceLastKeyframe = keyframe.getTime() - lastKeyframeTime;
+            lastKeyframeTime = keyframe.getTime();
+            if(timeSinceLastKeyframe > 0) {
+                actions.push(cc.DelayTime.create(timeSinceLastKeyframe));
+            }
+
+            var keyVal = keyframe.getValue();
+            var selectorName = keyVal[0];
+            var selectorTarget = keyVal[1];
+
+            if(this._jsControlled) {
+                var callbackName = selectorTarget + ":" + selectorName;    //add number to the stream
+                var callback = this._keyframeCallFuncs[callbackName];
+
+                if(callback != null)
+                    actions.push(callback);
+            } else {
+                var target;
+                if(selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT)
+                    target = this._rootNode;
+                else if (selectorTarget == CCB_TARGETTYPE_OWNER)
+                    target = this._owner;
+
+                if(target != null) {
+                    if(selectorName.length > 0) {
+                        var selCallFunc = 0;
+
+                        var targetAsCCBSelectorResolver = target;
+
+                        if(target.onResolveCCBCCCallFuncSelector != null)
+                            selCallFunc = targetAsCCBSelectorResolver.onResolveCCBCCCallFuncSelector(target, selectorName);
+                        if(selCallFunc == 0)
+                            cc.log("Skipping selector '" + selectorName + "' since no CCBSelectorResolver is present.");
+                        else
+                            actions.push(cc.CallFunc.create(selCallFunc,target));
+                    } else {
+                        cc.log("Unexpected empty selector.");
+                    }
+                }
+            }
+        }
+        if(actions.length < 1)
+            return null;
+
+        return cc.Sequence.create(actions);
+    },
+    getActionForSoundChannel:function(channel) {
+        var lastKeyframeTime = 0;
+
+        var actions = [];
+        var keyframes = channel.getKeyframes();
+        var numKeyframes = keyframes.length;
+
+        for (var i = 0; i < numKeyframes; ++i) {
+            var keyframe = keyframes[i];
+            var timeSinceLastKeyframe = keyframe.getTime() - lastKeyframeTime;
+            lastKeyframeTime = keyframe.getTime();
+            if(timeSinceLastKeyframe > 0) {
+                actions.push(cc.DelayTime.create(timeSinceLastKeyframe));
+            }
+
+            var keyVal = keyframe.getValue();
+            var soundFile = cc.BuilderReader.getResourcePath() + keyVal[0];
+            var pitch = parseFloat(keyVal[1]), pan = parseFloat(keyVal[2]), gain = parseFloat(keyVal[3]);
+            actions.push(cc.BuilderSoundEffect.create(soundFile, pitch, pan, gain));
+        }
+
+        if(actions.length < 1)
+            return null;
+
+        return cc.Sequence.create(actions);
+    },
     runAnimationsForSequenceNamed:function(name){
         this.runAnimations(name);
     },
@@ -239,7 +342,24 @@ cc.BuilderAnimationManager = cc.Class.extend({
         var completeAction = cc.Sequence.create(cc.DelayTime.create(seq.getDuration() + tweenDuration),
             cc.CallFunc.create(this._sequenceCompleted,this));
         this._rootNode.runAction(completeAction);
-        // Set the running scene
+
+     // Playback callbacks and sounds
+        if (seq.getCallbackChannel()) {
+            // Build sound actions for channel
+            var action = this.getActionForCallbackChannel(seq.getCallbackChannel());
+            if (action) {
+                this._rootNode.runAction(action);
+            }
+        }
+
+        if (seq.getSoundChannel()) {
+            // Build sound actions for channel
+            var action = this.getActionForSoundChannel(seq.getSoundChannel());
+            if (action) {
+                this._rootNode.runAction(action);
+            }
+        }
+            // Set the running scene
         this._runningSequence = this._getSequence(nSeqId);
     },
 
@@ -251,7 +371,9 @@ cc.BuilderAnimationManager = cc.Class.extend({
     setCompletedAnimationCallback:function(target,callbackFunc){
         this.setAnimationCompletedCallback(target,callbackFunc);
     },
-
+    setCallFunc:function(callFunc, callbackNamed) {
+        this._keyframeCallFuncs[callbackNamed] = callFunc;
+    },
     debug:function () {
     },
 
@@ -288,6 +410,10 @@ cc.BuilderAnimationManager = cc.Class.extend({
 
         if (propName === "rotation") {
             return cc.BuilderRotateTo.create(duration, keyframe1.getValue());
+        } else if (propName === "rotationX") {
+            return cc.BuilderRotateXTo.create(duration, keyframe1.getValue());
+        } else if (propName === "rotationY") {
+            return cc.BuilderRotateYTo.create(duration, keyframe1.getValue());
         } else if (propName === "opacity") {
             return cc.FadeTo.create(duration, keyframe1.getValue());
         } else if (propName === "color") {
@@ -328,6 +454,12 @@ cc.BuilderAnimationManager = cc.Class.extend({
             if(type == CCB_SCALETYPE_MULTIPLY_RESOLUTION)
                  var resolutionScale = cc.BuilderReader.getResolutionScale();
             return cc.ScaleTo.create(duration,x,y);
+        } else if( propName === "skew") {
+            //get relative position
+            getValueArr = keyframe1.getValue();
+            x = getValueArr[0];
+            y = getValueArr[1];
+            return cc.SkewTo.create(duration,x,y);
         } else {
             cc.log("BuilderReader: Failed to create animation for property: " + propName);
         }
@@ -363,6 +495,13 @@ cc.BuilderAnimationManager = cc.Class.extend({
                 y = value[1];
 
                 cc.setRelativeScale(node,x,y,nType,propName);
+            } else if( propName === "skew") {
+                getArr = this._getBaseValue(node,propName);
+                nType = getArr[2];
+                x = value[0];
+                y = value[1];
+                node.setSkewX(x);
+                node.setSkewY(y);
             }else {
                 // [node setValue:value forKey:name];
                 // TODO only handle rotation, opacity, displayFrame, color
@@ -485,87 +624,6 @@ cc.BuilderAnimationManager = cc.Class.extend({
     }
 });
 
-cc._Dictionary = cc.Class.extend({
-    _keyMapTb:null,
-    _valueMapTb:null,
-    __currId:0,
-
-    ctor:function () {
-        this._keyMapTb = {};
-        this._valueMapTb = {};
-        this.__currId = 2 << (0 | (Math.random() * 10));
-    },
-
-    __getKey:function () {
-        this.__currId++;
-        return "key_" + this.__currId;
-    },
-
-    setObject:function (value, key) {
-        if (key == null) {
-            return;
-        }
-
-        var keyId = this.__getKey();
-        this._keyMapTb[keyId] = key;
-        this._valueMapTb[keyId] = value;
-    },
-
-    objectForKey:function (key) {
-        if (key == null)
-            return null;
-
-        for (var keyId in this._keyMapTb) {
-            if (this._keyMapTb[keyId] === key) {
-                return this._valueMapTb[keyId];
-            }
-        }
-        return null;
-    },
-
-    valueForKey:function (key) {
-        return this.objectForKey(key);
-    },
-
-    removeObjectForKey:function (key) {
-        if (key == null)
-            return;
-
-        for (var keyId in this._keyMapTb) {
-            if (this._keyMapTb[keyId] === key) {
-                delete this._valueMapTb[keyId];
-                delete this._keyMapTb[keyId];
-                return;
-            }
-        }
-    },
-
-    removeObjectsForKeys:function (keys) {
-        if (keys == null)
-            return;
-
-        for (var i = 0; i < keys.length; i++) {
-            this.removeObjectForKey(keys[i]);
-        }
-    },
-
-    allKeys:function () {
-        var keyArr = [];
-        for (var key in this._keyMapTb) {
-            keyArr.push(this._keyMapTb[key]);
-        }
-        return keyArr;
-    },
-
-    removeAllObjects:function () {
-        this._keyMapTb = {};
-        this._valueMapTb = {};
-    },
-
-    count:function(){
-        return this.allKeys().length;
-    }
-});
 
 cc.BuilderSetSpriteFrame = cc.ActionInstant.extend({
     _spriteFrame:null,
@@ -588,6 +646,9 @@ cc.BuilderSetSpriteFrame.create = function (spriteFrame) {
     return null;
 };
 
+//
+// cc.BuilderRotateTo
+//
 cc.BuilderRotateTo = cc.ActionInterval.extend({
     _startAngle:0,
     _dstAngle:0,
@@ -620,3 +681,48 @@ cc.BuilderRotateTo.create = function (duration, angle) {
     }
     return null;
 };
+
+//
+// cc.BuilderRotateXTo
+//
+cc.BuilderRotateXTo = cc.ActionInterval.extend({
+    // TODO: rotationX is not implemented in HTML5
+});
+
+cc.BuilderRotateXTo.create = function (duration, angle) {
+    cc.Assert(false, "rotationX not implemented in cocos2d-html5");
+    return null;
+};
+
+//
+// cc.BuilderRotateYTo
+//
+cc.BuilderRotateYTo = cc.ActionInterval.extend({
+    // TODO: rotationX is not implemented in HTML5
+});
+
+cc.BuilderRotateYTo.create = function (duration, angle) {
+    cc.Assert(false, "rotationY not implemented in cocos2d-html5");
+    return null;
+};
+
+//
+// cc.BuilderSoundEffect
+//
+cc.BuilderSoundEffect = cc.ActionInstant.extend({
+    init:function(file) {
+        this._file = file;
+        return true;
+    },
+    update:function(dt) {
+        cc.AudioEngine.getInstance().playEffect(this._file);
+    }
+});
+cc.BuilderSoundEffect.create = function (file, pitch, pan, gain) {
+    var ret = new cc.BuilderSoundEffect();
+    if (ret && ret.init(file)) {
+            return ret;
+    }
+    return null;
+};
+

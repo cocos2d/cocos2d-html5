@@ -142,16 +142,15 @@ cc.MessageBox = function (message) {
  * @param {String} message
  */
 cc.Assert = function (cond, message) {
-    if ((typeof console.assert) == "function") {
+    if (console.assert)
         console.assert(cond, message);
-    } else {
+    else {
         if (!cond) {
-            if (message) {
+            if (message)
                 alert(message);
-            }
         }
     }
-}
+};
 
 /**
  * Update Debug setting.
