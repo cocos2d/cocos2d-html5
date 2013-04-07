@@ -2642,7 +2642,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
         if (this._texture) {
             if(this._texture._isLoaded){
-                gl.useProgram(this._shaderProgram._programObj);
+                this._shaderProgram.use();
                 this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
 
                 cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
@@ -2661,7 +2661,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             }
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
-            gl.useProgram(shaderProgram._programObj);
+            shaderProgram.use();
             shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);

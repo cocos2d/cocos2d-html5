@@ -1065,7 +1065,104 @@ if(cc.Browser.supportWebGL){
     });
     cc.V3F_C4B_T2F_QuadZero = function(){
         return new cc.V3F_C4B_T2F_Quad();
-    }
+    };
+
+    //redefine cc.V2F_C4B_T2F
+    cc.V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
+        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
+        this._offset = offset || 0;
+
+        this._vertices = vertices ? new cc.Vertex2F(vertices.x, vertices.y, this._arrayBuffer, this._offset) :
+            new cc.Vertex2F(0, 0, this._arrayBuffer, this._offset);
+        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT) :
+            new cc.Color4B(0, 0, 0, 0, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT);
+        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT) :
+            new cc.Tex2F(0, 0, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT);
+    };
+    cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20;
+    Object.defineProperties(cc.V2F_C4B_T2F.prototype, {
+        vertices: {
+            get: function () {
+                return this._vertices;
+            },
+            set: function (verticesValue) {
+                this._vertices.x = verticesValue.x;
+                this._vertices.y = verticesValue.y;
+            },
+            enumerable: true
+        },
+        colors: {
+            get: function () {
+                return this._colors;
+            },
+            set: function (colorValue) {
+                this._colors.r = colorValue.r;
+                this._colors.g = colorValue.g;
+                this._colors.b = colorValue.b;
+                this._colors.a = colorValue.a;
+            },
+            enumerable: true
+        },
+        texCoords: {
+            get: function () {
+                return this._texCoords;
+            },
+            set: function (texValue) {
+                this._texCoords.u = texValue.u;
+                this._texCoords.v = texValue.v;
+            },
+            enumerable: true
+        }
+    });
+
+    //redefine cc.V2F_C4B_T2F_Triangle
+    cc.V2F_C4B_T2F_Triangle = function (a, b, c, arrayBuffer, offset) {
+        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT);
+        this._offset = offset || 0;
+
+        this._a = a ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, this._arrayBuffer, this._offset) :
+            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset);
+        this._b = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT) :
+            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
+        this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT * 2) :
+            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT * 2);
+    };
+    cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60;
+    Object.defineProperties(cc.V2F_C4B_T2F_Triangle.prototype, {
+        a:{
+            get: function () {
+                return this._a;
+            },
+            set: function (aValue) {
+                this._a.vertices = aValue.vertices;
+                this._a.colors = aValue.colors;
+                this._a.texCoords = aValue.texCoords;
+            },
+            enumerable: true
+        },
+        b:{
+            get: function () {
+                return this._b;
+            },
+            set: function (bValue) {
+                this._b.vertices = bValue.vertices;
+                this._b.colors = bValue.colors;
+                this._b.texCoords = bValue.texCoords;
+            },
+            enumerable: true
+        },
+        c:{
+            get: function () {
+                return this._c;
+            },
+            set: function (cValue) {
+                this._c.vertices = cValue.vertices;
+                this._c.colors = cValue.colors;
+                this._c.texCoords = cValue.texCoords;
+            },
+            enumerable: true
+        }
+    });
 }
 
 /**
