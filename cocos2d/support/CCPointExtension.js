@@ -201,7 +201,7 @@ cc.pDistance = function (v1, v2) {
 /**
  * Returns point multiplied to a length of 1.
  * @param {cc.Point} v
- * @return {cc.pMult}
+ * @return {cc.Point}
  */
 cc.pNormalize = function (v) {
     return cc.pMult(v, 1.0 / cc.pLength(v));
