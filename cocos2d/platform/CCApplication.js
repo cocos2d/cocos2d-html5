@@ -291,7 +291,7 @@ cc.setContextMenuEnable = function (enabled) {
     cc._isContextMenuEnable = enabled;
     if (!cc._isContextMenuEnable) {
         cc.canvas.oncontextmenu = function () {
-            event.returnValue = false;
+            return false;
         };
     } else {
         cc.canvas.oncontextmenu = function () {

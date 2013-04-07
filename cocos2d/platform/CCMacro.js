@@ -165,8 +165,8 @@ cc.BLEND_DST = 0x0303;
 cc.NODE_DRAW_SETUP = function (node) {
     //cc.glEnable(node._glServerState);
     if (node._shaderProgram) {
-        cc.renderContext.useProgram(node._shaderProgram._programObj);
-        //node._shaderProgram.use();
+        //cc.renderContext.useProgram(node._shaderProgram._programObj);
+        node._shaderProgram.use();
         node._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(node._mvpMatrix);
     }
 };
