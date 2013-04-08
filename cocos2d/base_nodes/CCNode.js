@@ -1261,6 +1261,58 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
+     *<p>  Sets the additional transform.<br/>
+     *  The additional transform will be concatenated at the end of nodeToParentTransform.<br/>
+     *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
+     * // create a batchNode<br/>
+     * var batch= cc.SpriteBatchNode.create("Icon-114.png");<br/>
+     * this.addChild(batch);<br/>
+     *<br/>
+     * // create two sprites, spriteA will be added to batchNode, they are using different textures.<br/>
+     * var spriteA = cc.Sprite.createWithTexture(batch->getTexture());<br/>
+     * var spriteB = cc.Sprite.create("Icon-72.png");<br/>
+     *<br/>
+     * batch.addChild(spriteA);<br/>
+     *<br/>
+     * // We can't make spriteB as spriteA's child since they use different textures. So just add it to layer.<br/>
+     * // But we want to simulate `parent-child` relationship for these two node.<br/>
+     * this.addChild(spriteB);<br/>
+     *<br/>
+     * //position<br/>
+     * spriteA.setPosition(ccp(200, 200));<br/>
+     *<br/>
+     * // Gets the spriteA's transform.<br/>
+     * var t = spriteA.nodeToParentTransform();<br/>
+     *<br/>
+     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA. <br/>
+     * spriteB.setAdditionalTransform(t);<br/>
+     *<br/>
+     * //scale<br/>
+     * spriteA.setScale(2);<br/>
+     *<br/>
+     // Gets the spriteA's transform.<br/>
+     * * t = spriteA.nodeToParentTransform();<br/>
+     *<br/>
+     * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA. <br/>
+     * spriteB.setAdditionalTransform(t);<br/>
+     *<br/>
+     * //rotation<br/>
+     * spriteA.setRotation(20);<br/>
+     *<br/>
+     * // Gets the spriteA's transform.<br/>
+     * t = spriteA.nodeToParentTransform();<br/>
+     *<br/>
+     * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA. <br/>
+     * spriteB.setAdditionalTransform(t);<br/>
+     </p>
+     */
+    setAdditionalTransform:function (additionalTransform) {
+        this._additionalTransform = additionalTransform;
+        this._transformDirty = true;
+        this._additionalTransformDirty = true;
+    },
+
+    /**
      * Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.<br/>
      * The matrix is in Pixels.
      * @return {Number}
@@ -1515,6 +1567,11 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
                 if (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0)
                     this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
             }
+
+            if (this._additionalTransformDirty) {
+                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
+                this._additionalTransformDirty = false;
+            }
             this._transformDirty = false;
         }
         return this._transform;
@@ -1705,6 +1762,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     _scheduler:null,
 
     _initializedNode:false,
+    _additionalTransformDirty:false,
+    _additionalTransform:null,
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
@@ -2808,125 +2867,6 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         this.getActionManager().pauseTarget(this);
     },
 
-    /** Returns the matrix that transform the node's (local) space coordinates into the parent's space coordinates.<br/>
-     * The matrix is in Pixels.
-     * @return {cc.AffineTransform}
-     */
-    nodeToParentTransform:function () {
-/*        if (this._transformDirty) {
-            // Translate values
-            var x = this._position.x;
-            var y = this._position.y;
-
-            if (this._ignoreAnchorPointForPosition) {
-                x -= this._anchorPointInPoints.x;
-                y -= this._anchorPointInPoints.y;
-            }
-
-            // Rotation values
-            var c = 1, s = 0;
-            if (this._rotation) {
-                //var radians = -cc.DEGREES_TO_RADIANS(this._rotation);
-                c = Math.cos(-this._rotationRadians);
-                s = Math.sin(-this._rotationRadians);
-            }
-
-            var needsSkewMatrix = ( this._skewX || this._skewY );
-
-            // optimization:
-            // inline anchor point calculation if skew is not needed
-            if (!needsSkewMatrix && !cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
-                x += c * -this._anchorPointInPoints.x * this._scaleX + -s * -this._anchorPointInPoints.y * this._scaleY;
-                y += s * -this._anchorPointInPoints.x * this._scaleX + c * -this._anchorPointInPoints.y * this._scaleY;
-            }
-
-            // Build Transform Matrix
-            this._transform = cc.AffineTransformMake(c * this._scaleX, s * this._scaleX,
-                -s * this._scaleY, c * this._scaleY, x, y);
-
-            // XXX: Try to inline skew
-            // If skew is needed, apply skew and then anchor point
-            if (needsSkewMatrix) {
-                var skewMatrix = cc.AffineTransformMake(1.0, Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
-                    Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), 1.0, 0.0, 0.0);
-                this._transform = cc.AffineTransformConcat(skewMatrix, this._transform);
-
-                // adjust anchor point
-                if (!cc.Point.CCPointEqualToPoint(this._anchorPointInPoints, cc.p(0, 0))) {
-                    this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
-                }
-            }
-
-            this._transformDirty = false;
-        }
-
-        return this._transform;*/
-        if(!this._transform){
-            this._transform = {a:1,b:0,c:0,d:1,tx:0,ty:0};
-        }
-        if(this._transformDirty){
-            var t = this._transform;// quick reference
-            // base position
-            t.tx = this._position.x;
-            t.ty = this._position.y;
-
-            // rotation Cos and Sin
-            var Cos = 1, Sin = 0;
-            if(this._rotation){
-                Cos = Math.cos(this._rotationRadians);
-                Sin = Math.sin(this._rotationRadians);
-            }
-
-            // base abcd
-            t.a = t.d = Cos;
-            t.c = -Sin;
-            t.b = Sin;
-
-            // skew
-            if(this._skewX || this._skewY){
-                // offset the anchorpoint
-                var skx = Math.tan(-this._skewX*Math.PI/180);
-                var sky = Math.tan(-this._skewY*Math.PI/180);
-                var xx = this._anchorPointInPoints.y*skx*this._scaleX;
-                var yy = this._anchorPointInPoints.x*sky*this._scaleY;
-                t.a = Cos + -Sin*sky;
-                t.c = Cos * skx + -Sin;
-                t.b = Sin + Cos*sky;
-                t.d = Sin*skx + Cos;
-                t.tx += Cos*xx + -Sin*yy;
-                t.ty += Sin*xx + Cos*yy;
-            }
-
-            // scale
-            if(this._scaleX !== 1 || this._scaleY !== 1){
-                t.a *= this._scaleX;
-                t.b *= this._scaleX;
-                t.c *= this._scaleY;
-                t.d *= this._scaleY;
-            }
-
-            // adjust anchorPoint
-            t.tx += Cos*-this._anchorPointInPoints.x*this._scaleX + -Sin*this._anchorPointInPoints.y*this._scaleY;
-            t.ty -= Sin*-this._anchorPointInPoints.x*this._scaleX + Cos*this._anchorPointInPoints.y*this._scaleY;
-
-            // if ignore anchorPoint
-            if(this._ignoreAnchorPointForPosition){
-                t.tx += this._anchorPointInPoints.x;
-                t.ty += this._anchorPointInPoints.y;
-            }
-            if (this._additionalTransformDirty) {
-                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
-                //Because the cartesian coordination is inverted in html5 canvas, these needs to be inverted as well
-                this._transform.b *= -1;
-                this._transform.c *= -1;
-
-                this._additionalTransformDirty = false;
-            }
-            this._transformDirty = false;
-        }
-        return this._transform;
-    },
-
     /**
      *<p>  Sets the additional transform.<br/>
      *  The additional transform will be concatenated at the end of nodeToParentTransform.<br/>
@@ -3212,6 +3152,16 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
                 t.tx += this._anchorPointInPoints.x;
                 t.ty += this._anchorPointInPoints.y;
             }
+
+            if (this._additionalTransformDirty) {
+                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
+                //Because the cartesian coordination is inverted in html5 canvas, these needs to be inverted as well
+                this._transform.b *= -1;
+                this._transform.c *= -1;
+
+                this._additionalTransformDirty = false;
+            }
+
             this._transformDirty = false;
         }
         return this._transform;
