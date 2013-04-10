@@ -61,6 +61,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _maxTouches:5,
     _resolutionPolicy:cc.RESOLUTION_POLICY.UNKNOWN,
     _initialize:false,
+    _contentTranslateLeftTop:{left: 0, top: 0},
 
     /**
      * init
@@ -68,8 +69,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     initialize:function () {
         this._initialize = true;
         this._adjustSize();
-        this._contentTranslateLeftTop = {left: 0, top: 0};
-
         var adjustSize = this._adjustSize.bind(this);
         window.addEventListener('resize', adjustSize, false);
     },
