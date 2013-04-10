@@ -46,28 +46,6 @@ cc.ProgressTo = cc.ActionInterval.extend(/** @lends cc.ProgressTo# */{
     },
 
     /**
-     * @deprecated It is not needed anymore.
-     * @param zone
-     */
-    copyWithZone:function (zone) {
-        var newZone = null;
-        var copy = null;
-        if (zone && zone._copyObject) {
-            //in case of being called at sub class
-            copy = zone._copyObject;
-        } else {
-            copy = new cc.ProgressTo();
-            zone = newZone = new cc.Zone(copy);
-        }
-
-        this._super(zone);
-
-        copy.initWithDuration(this._duration, this._to);
-
-        return copy;
-    },
-
-    /**
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
@@ -128,26 +106,6 @@ cc.ProgressFromTo = cc.ActionInterval.extend(/** @lends cc.ProgressFromTo# */{
             return true;
         }
         return false;
-    },
-
-    /**
-     * @deprecated It is not needed anymore.
-     * @param zone
-     */
-    copyWithZone:function (zone) {
-        var newZone = null;
-        var copy = null;
-        if (zone && zone._copyObject) {
-            //in case of being called at sub class
-            copy = zone._copyObject;
-        } else {
-            copy = new cc.ProgressFromTo();
-            zone = newZone = new cc.Zone(copy);
-        }
-
-        this._super(zone);
-        copy.initWithDuration(this._duration, this._from, this._to);
-        return copy;
     },
 
     /**

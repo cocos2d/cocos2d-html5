@@ -23,6 +23,28 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+/**
+ * create a webgl context
+ * @param {HTMLCanvasElement} canvas
+ * @param {Object} opt_attribs
+ * @return {WebGLRenderingContext}
+ */
+cc.create3DContext = function (canvas, opt_attribs) {
+    var names = ["webgl", "experimental-webgl", "webkit-3d", "moz-webgl"];
+    var context = null;
+    for (var ii = 0; ii < names.length; ++ii) {
+        try {
+            context = canvas.getContext(names[ii], opt_attribs);
+        } catch (e) {
+        }
+        if (context) {
+            break;
+        }
+    }
+    return context;
+};
+
 /**
  * Browser detection, based on mootools<br/>
  * platform will print out win32, mac, etc<br/>
@@ -37,7 +59,32 @@ cc.Browser = {};
     cc.Browser.mode = cc.Browser.UA[1] == 'ie' && document.documentMode;
     cc.Browser.type = (cc.Browser.UA[1] == 'version') ? cc.Browser.UA[3] : cc.Browser.UA[1];
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
+
+    var c = document.ccConfig;
+    // check supportWebGL item
+    cc._userRenderMode = parseInt(c["renderMode"]) || 0;
+
+    if(cc._userRenderMode === 1) {
+         //canvas only
+        cc.Browser.supportWebGL = false;
+    } else{
+        // WebGL first
+        cc.Browser.supportWebGL = !(window.WebGLRenderingContext == null);
+        var tempCanvas = document.createElement("Canvas");
+        var tempContext = cc.create3DContext(tempCanvas, {'stencil':true, 'preserveDrawingBuffer':true });
+        cc.Browser.supportWebGL = !(tempContext == null)
+    }
+    if(cc._userRenderMode === 2 && !cc.Browser.supportWebGL){
+        // WebGL render only, but browser doesn't support WebGL.
+        cc.__renderDoesnotSupport = true;
+    }
 })();
+
+cc.RenderDoesnotSupport = function(){
+    if(cc.__renderDoesnotSupport === "undefined")
+        return false;
+    return cc.__renderDoesnotSupport;
+};
 
 
 /**

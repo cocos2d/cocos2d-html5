@@ -25,3 +25,15 @@ CSSProperties.prototype.Inflate;
  * @type {string}
  */
 CSSProperties.prototype.decompress;
+
+/**
+ * Accelerometer api
+ * cocos2d-html5-only.
+ * @type {string}
+ */
+CSSProperties.prototype.DeviceOrientationEvent;
+CSSProperties.prototype.DeviceMotionEvent;
+CSSProperties.prototype.accelerationIncludingGravity;
+CSSProperties.prototype.gamma;
+CSSProperties.prototype.beta;
+CSSProperties.prototype.alpha;

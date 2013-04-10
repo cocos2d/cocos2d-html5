@@ -98,7 +98,7 @@ cc.reverseControlPointsInline = function (controlPoints) {
         controlPoints[i] = controlPoints[len - i - 1];
         controlPoints[len - i - 1] = temp;
     }
-},
+};
 
 
 /**
@@ -145,7 +145,8 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
      */
     startWithTarget:function (target) {
         this._super(target);
-        this._deltaT = 1 / this._points.length;
+        // Issue #1441 from cocos2d-iphone
+        this._deltaT = 1 / (this._points.length-1);
 
         this._previousPosition = this._target.getPosition();
         this._accumulatedDiff = cc.p(0, 0);
@@ -157,7 +158,10 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
     update:function (time) {
         var p, lt;
 
-        // border
+        // eg.
+        // p..p..p..p..p..p..p
+        // 1..2..3..4..5..6..7
+        // want p to be 1, 2, 3, 4, 5, 6
         if (time == 1) {
             p = this._points.length - 1;
             lt = 1;
@@ -179,7 +183,7 @@ cc.CardinalSplineTo = cc.ActionInterval.extend(/** @lends cc.CardinalSplineTo# *
             this._accumulatedDiff = cc.pAdd(this._accumulatedDiff, diff);
             newPos = cc.pAdd(newPos, this._accumulatedDiff);
         }
- 
+
         this.updatePosition(newPos);
     },
 

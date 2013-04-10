@@ -134,8 +134,7 @@ cc.ActionManager = cc.Class.extend({
             element.actions = [];
             if (this._currentTarget == element) {
                 this._currentTargetSalvaged = true;
-            }
-            else {
+            } else {
                 this._deleteHashElement(element);
             }
         } else {

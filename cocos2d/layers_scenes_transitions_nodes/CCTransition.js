@@ -188,13 +188,15 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
         this._inScene.setPosition(cc.p(0, 0));
         this._inScene.setScale(1.0);
         this._inScene.setRotation(0.0);
-        this._inScene.getCamera().restore();
+        if(cc.renderContextType === cc.WEBGL)
+            this._inScene.getCamera().restore();
 
         this._outScene.setVisible(false);
         this._outScene.setPosition(cc.p(0, 0));
         this._outScene.setScale(1.0);
         this._outScene.setRotation(0.0);
-        this._outScene.getCamera().restore();
+        if(cc.renderContextType === cc.WEBGL)
+            this._outScene.getCamera().restore();
 
         //[self schedule:@selector(setNewScene:) interval:0];
         this.schedule(this._setNewScene, 0);
@@ -289,14 +291,14 @@ cc.TransitionRotoZoom = cc.TransitionScene.extend(/** @lends cc.TransitionRotoZo
         this._inScene.setAnchorPoint(cc.p(0.5, 0.5));
         this._outScene.setAnchorPoint(cc.p(0.5, 0.5));
 
-        var rotozoom = cc.Sequence.create(
+        var rotoZoom = cc.Sequence.create(
             cc.Spawn.create(cc.ScaleBy.create(this._duration / 2, 0.001),
                 cc.RotateBy.create(this._duration / 2, 360 * 2)),
             cc.DelayTime.create(this._duration / 2));
 
-        this._outScene.runAction(rotozoom);
+        this._outScene.runAction(rotoZoom);
         this._inScene.runAction(
-            cc.Sequence.create(rotozoom.reverse(),
+            cc.Sequence.create(rotoZoom.reverse(),
                 cc.CallFunc.create(this.finish, this)));
     }
 });
@@ -329,16 +331,14 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZo
      */
     onEnter:function () {
         this._super();
-
-        var s = cc.Director.getInstance().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
 
         this._inScene.setScale(0.5);
-        this._inScene.setPosition(cc.p(s.width, 0));
+        this._inScene.setPosition(cc.p(winSize.width, 0));
         this._inScene.setAnchorPoint(cc.p(0.5, 0.5));
         this._outScene.setAnchorPoint(cc.p(0.5, 0.5));
 
-        //TODO
-        var jump = cc.JumpBy.create(this._duration / 4, cc.p(-s.width, 0), s.width / 4, 2);
+        var jump = cc.JumpBy.create(this._duration / 4, cc.p(-winSize.width, 0), winSize.width / 4, 2);
         var scaleIn = cc.ScaleTo.create(this._duration / 4, 1.0);
         var scaleOut = cc.ScaleTo.create(this._duration / 4, 0.5);
 
@@ -347,8 +347,7 @@ cc.TransitionJumpZoom = cc.TransitionScene.extend(/** @lends cc.TransitionJumpZo
 
         var delay = cc.DelayTime.create(this._duration / 2);
         this._outScene.runAction(jumpZoomOut);
-        this._inScene.runAction(cc.Sequence.create(delay, jumpZoomIn,
-            cc.CallFunc.create(this.finish, this)));
+        this._inScene.runAction(cc.Sequence.create(delay, jumpZoomIn, cc.CallFunc.create(this.finish, this)));
     }
 });
 
@@ -380,15 +379,9 @@ cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL
         this._super();
         this.initScenes();
 
-        var a = this.action();
-
+        var action = this.action();
         this._inScene.runAction(
-            cc.Sequence.create
-                (
-                    this.easeActionWithAction(a),
-                    cc.CallFunc.create(this.finish, this),
-                    null
-                )
+            cc.Sequence.create(this.easeActionWithAction(action), cc.CallFunc.create(this.finish, this))
         );
     },
 
@@ -412,7 +405,6 @@ cc.TransitionMoveInL = cc.TransitionScene.extend(/** @lends cc.TransitionMoveInL
      * @return {cc.EaseOut}
      */
     easeActionWithAction:function (action) {
-        //TODO need implement
         return cc.EaseOut.create(action, 2.0);
     }
 });
@@ -445,8 +437,7 @@ cc.TransitionMoveInR = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * Init
      */
     initScenes:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        this._inScene.setPosition(cc.p(s.width, 0));
+        this._inScene.setPosition(cc.p(cc.Director.getInstance().getWinSize().width, 0));
     }
 });
 
@@ -478,8 +469,7 @@ cc.TransitionMoveInT = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * init
      */
     initScenes:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        this._inScene.setPosition(cc.p(s.height, 0));
+        this._inScene.setPosition(cc.p(0, cc.Director.getInstance().getWinSize().height));
     }
 });
 
@@ -511,8 +501,7 @@ cc.TransitionMoveInB = cc.TransitionMoveInL.extend(/** @lends cc.TransitionMoveI
      * init
      */
     initScenes:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        this._inScene.setPosition(cc.p(0, -s.height));
+        this._inScene.setPosition(cc.p(0, -cc.Director.getInstance().getWinSize().height));
     }
 });
 
@@ -570,12 +559,7 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
         var outA = this.action();
 
         var inAction = this.easeActionWithAction(inA);
-        var outAction = cc.Sequence.create
-            (
-                this.easeActionWithAction(outA),
-                cc.CallFunc.create(this.finish, this),
-                null
-            );
+        var outAction = cc.Sequence.create(this.easeActionWithAction(outA), cc.CallFunc.create(this.finish, this));
         this._inScene.runAction(inAction);
         this._outScene.runAction(outAction);
     },
@@ -584,16 +568,14 @@ cc.TransitionSlideInL = cc.TransitionScene.extend(/** @lends cc.TransitionSlideI
      * initializes the scenes
      */
     initScenes:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        this._inScene.setPosition(cc.p(-(s.width - cc.ADJUST_FACTOR), 0));
+        this._inScene.setPosition(cc.p(-(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR), 0));
     },
     /**
      * returns the action that will be performed by the incomming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        return cc.MoveBy.create(this._duration, cc.p(s.width - cc.ADJUST_FACTOR, 0));
+        return cc.MoveBy.create(this._duration, cc.p(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR, 0));
     },
 
     /**
@@ -635,16 +617,14 @@ cc.TransitionSlideInR = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        this._inScene.setPosition(cc.p(s.width - cc.ADJUST_FACTOR, 0));
+        this._inScene.setPosition(cc.p(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR, 0));
     },
     /**
      *  returns the action that will be performed by the incomming and outgoing scene
      * @return {cc.MoveBy}
      */
     action:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        return cc.MoveBy.create(this._duration, cc.p(-(s.width - cc.ADJUST_FACTOR), 0));
+        return cc.MoveBy.create(this._duration, cc.p(-(cc.Director.getInstance().getWinSize().width - cc.ADJUST_FACTOR), 0));
     }
 });
 
@@ -679,8 +659,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        this._inScene.setPosition(cc.p(0, s.height - cc.ADJUST_FACTOR));
+        this._inScene.setPosition(cc.p(0, cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR));
     },
 
     /**
@@ -688,8 +667,7 @@ cc.TransitionSlideInB = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        return cc.MoveBy.create(this._duration, cc.p(0, -(s.height - cc.ADJUST_FACTOR)));
+        return cc.MoveBy.create(this._duration, cc.p(0, -(cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR)));
     }
 });
 
@@ -724,8 +702,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * initializes the scenes
      */
     initScenes:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        this._inScene.setPosition(cc.p(0, -(s.height - cc.ADJUST_FACTOR)));
+        this._inScene.setPosition(cc.p(0, -(cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR)));
     },
 
     /**
@@ -733,8 +710,7 @@ cc.TransitionSlideInT = cc.TransitionSlideInL.extend(/** @lends cc.TransitionSli
      * @return {cc.MoveBy}
      */
     action:function () {
-        var s = cc.Director.getInstance().getWinSize();
-        return cc.MoveBy.create(this._duration, cc.p(0, s.height - cc.ADJUST_FACTOR));
+        return cc.MoveBy.create(this._duration, cc.p(0, cc.Director.getInstance().getWinSize().height - cc.ADJUST_FACTOR));
     }
 });
 
@@ -779,10 +755,7 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
 
         this._inScene.runAction(this.easeActionWithAction(scaleIn));
         this._outScene.runAction(
-            cc.Sequence.create(
-                this.easeActionWithAction(scaleOut),
-                cc.CallFunc.create(this.finish, this)
-            )
+            cc.Sequence.create(this.easeActionWithAction(scaleOut), cc.CallFunc.create(this.finish, this))
         );
     },
 
@@ -791,7 +764,6 @@ cc.TransitionShrinkGrow = cc.TransitionScene.extend(/** @lends cc.TransitionShri
      * @return {cc.EaseOut}
      */
     easeActionWithAction:function (action) {
-        //TODO
         return cc.EaseOut.create(action, 2.0);
     }
 });
@@ -830,10 +802,9 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         var inA, outA;
         this._inScene.setVisible(false);
 
-        var inDeltaZ, inAngleZ;
-        var outDeltaZ, outAngleZ;
+        var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
+        if (this._orientation === cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -845,21 +816,16 @@ cc.TransitionFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
             outAngleZ = 0;
         }
 
-        inA = cc.Sequence.create
-            (
-                cc.DelayTime.create(this._duration / 2),
-                cc.Show.create(),
-                //TODO
-                cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
-                cc.CallFunc.create(this.finish, this)
-            );
+        inA = cc.Sequence.create(
+            cc.DelayTime.create(this._duration / 2), cc.Show.create(),
+            cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
+            cc.CallFunc.create(this.finish, this)
+        );
 
-        outA = cc.Sequence.create
-            (
-                cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
-                cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2)
-            );
+        outA = cc.Sequence.create(
+            cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 0, 0),
+            cc.Hide.create(), cc.DelayTime.create(this._duration / 2)
+        );
 
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
@@ -886,7 +852,6 @@ cc.TransitionFlipX.create = function (t, scene, o) {
 
     var tempScene = new cc.TransitionFlipX();
     tempScene.initWithDuration(t, scene, o);
-
     return tempScene;
 };
 
@@ -907,8 +872,7 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
         var inA, outA;
         this._inScene.setVisible(false);
 
-        var inDeltaZ, inAngleZ;
-        var outDeltaZ, outAngleZ;
+        var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
         if (this._orientation == cc.TRANSITION_ORIENTATION_UP_OVER) {
             inDeltaZ = 90;
@@ -922,20 +886,15 @@ cc.TransitionFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.TransitionF
             outAngleZ = 0;
         }
 
-        //TODO
-        inA = cc.Sequence.create
-            (
-                cc.DelayTime.create(this._duration / 2),
-                cc.Show.create(),
-                cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-                cc.CallFunc.create(this.finish, this)
-            );
-        outA = cc.Sequence.create
-            (
-                cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
-                cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2)
-            );
+        inA = cc.Sequence.create(
+            cc.DelayTime.create(this._duration / 2), cc.Show.create(),
+            cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
+            cc.CallFunc.create(this.finish, this)
+        );
+        outA = cc.Sequence.create(
+            cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
+            cc.Hide.create(), cc.DelayTime.create(this._duration / 2)
+        );
 
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
@@ -982,10 +941,9 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
         var inA, outA;
         this._inScene.setVisible(false);
 
-        var inDeltaZ, inAngleZ;
-        var outDeltaZ, outAngleZ;
+        var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
+        if (this._orientation === cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -997,20 +955,15 @@ cc.TransitionFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.Trans
             outAngleZ = 0;
         }
 
-        //TODO
-        inA = cc.Sequence.create
-            (
-                cc.DelayTime.create(this._duration / 2),
-                cc.Show.create(),
-                cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
-                cc.CallFunc.create(this.finish, this)
-            );
-        outA = cc.Sequence.create
-            (
-                cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
-                cc.Hide.create(),
-                cc.DelayTime.create(this._duration / 2)
-            );
+        inA = cc.Sequence.create(
+            cc.DelayTime.create(this._duration / 2), cc.Show.create(),
+            cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
+            cc.CallFunc.create(this.finish, this)
+        );
+        outA = cc.Sequence.create(
+            cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
+            cc.Hide.create(), cc.DelayTime.create(this._duration / 2)
+        );
 
         this._inScene.runAction(inA);
         this._outScene.runAction(outA);
@@ -1058,10 +1011,9 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         var inA, outA;
         this._inScene.setVisible(false);
 
-        var inDeltaZ, inAngleZ;
-        var outDeltaZ, outAngleZ;
+        var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
+        if (this._orientation === cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1072,13 +1024,12 @@ cc.TransitionZoomFlipX = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
             outDeltaZ = -90;
             outAngleZ = 0;
         }
-        //TODO
+
         inA = cc.Sequence.create(
             cc.DelayTime.create(this._duration / 2),
             cc.Spawn.create(
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 0, 0),
-                cc.ScaleTo.create(this._duration / 2, 1),
-                cc.Show.create()),
+                cc.ScaleTo.create(this._duration / 2, 1), cc.Show.create()),
             cc.CallFunc.create(this.finish, this)
         );
         outA = cc.Sequence.create(
@@ -1136,10 +1087,9 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
         var inA, outA;
         this._inScene.setVisible(false);
 
-        var inDeltaZ, inAngleZ;
-        var outDeltaZ, outAngleZ;
+        var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
 
-        if (this._orientation == cc.TRANSITION_ORIENTATION_UP_OVER) {
+        if (this._orientation === cc.TRANSITION_ORIENTATION_UP_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1151,21 +1101,18 @@ cc.TransitionZoomFlipY = cc.TransitionSceneOriented.extend(/** @lends cc.Transit
             outAngleZ = 0;
         }
 
-        //TODO
         inA = cc.Sequence.create(
             cc.DelayTime.create(this._duration / 2),
             cc.Spawn.create(
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, 90, 0),
-                cc.ScaleTo.create(this._duration / 2, 1),
-                cc.Show.create()),
+                cc.ScaleTo.create(this._duration / 2, 1), cc.Show.create()),
             cc.CallFunc.create(this.finish, this));
 
         outA = cc.Sequence.create(
             cc.Spawn.create(
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 90, 0),
                 cc.ScaleTo.create(this._duration / 2, 0.5)),
-            cc.Hide.create(),
-            cc.DelayTime.create(this._duration / 2));
+            cc.Hide.create(), cc.DelayTime.create(this._duration / 2));
 
         this._inScene.setScale(0.5);
         this._inScene.runAction(inA);
@@ -1214,10 +1161,8 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
         var inA, outA;
         this._inScene.setVisible(false);
 
-        var inDeltaZ, inAngleZ;
-        var outDeltaZ, outAngleZ;
-
-        if (this._orientation == cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
+        var inDeltaZ, inAngleZ, outDeltaZ, outAngleZ;
+        if (this._orientation === cc.TRANSITION_ORIENTATION_RIGHT_OVER) {
             inDeltaZ = 90;
             inAngleZ = 270;
             outDeltaZ = 90;
@@ -1229,21 +1174,18 @@ cc.TransitionZoomFlipAngular = cc.TransitionSceneOriented.extend(/** @lends cc.T
             outAngleZ = 0;
         }
 
-        //TODO
         inA = cc.Sequence.create(
             cc.DelayTime.create(this._duration / 2),
             cc.Spawn.create(
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, inAngleZ, inDeltaZ, -45, 0),
-                cc.ScaleTo.create(this._duration / 2, 1),
-                cc.Show.create()),
+                cc.ScaleTo.create(this._duration / 2, 1), cc.Show.create()),
             cc.Show.create(),
             cc.CallFunc.create(this.finish, this));
         outA = cc.Sequence.create(
             cc.Spawn.create(
                 cc.OrbitCamera.create(this._duration / 2, 1, 0, outAngleZ, outDeltaZ, 45, 0),
                 cc.ScaleTo.create(this._duration / 2, 0.5)),
-            cc.Hide.create(),
-            cc.DelayTime.create(this._duration / 2));
+            cc.Hide.create(), cc.DelayTime.create(this._duration / 2));
 
         this._inScene.setScale(0.5);
         this._inScene.runAction(inA);
@@ -1281,12 +1223,14 @@ cc.TransitionZoomFlipAngular.create = function (t, scene, o) {
  * @extends cc.TransitionScene
  */
 cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
-    _color:new cc.Color3B(),
+    _color:null,
 
     /**
      * Constructor
      */
     ctor:function () {
+        this._super();
+        this._color = new cc.Color3B()
     },
 
     /**
@@ -1301,7 +1245,6 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
         this.addChild(l, 2, cc.SCENE_FADE);
         var f = this.getChildByTag(cc.SCENE_FADE);
 
-        //TODO
         var a = cc.Sequence.create(
             cc.FadeIn.create(this._duration / 2),
             cc.CallFunc.create(this.hideOutShowIn, this), //CCCallFunc.actionWithTarget:self selector:@selector(hideOutShowIn)],
@@ -1327,10 +1270,7 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
      * @return {Boolean}
      */
     initWithDuration:function (t, scene, color) {
-        if ((color == 'undefined') || (color == null)) {
-            color = cc.black();
-        }
-
+        color = color || cc.black();
         if (this._super(t, scene)) {
             this._color.r = color.r;
             this._color.g = color.g;
@@ -1355,7 +1295,6 @@ cc.TransitionFade = cc.TransitionScene.extend(/** @lends cc.TransitionFade# */{
 cc.TransitionFade.create = function (t, scene, color) {
     var transition = new cc.TransitionFade();
     transition.initWithDuration(t, scene, color);
-
     return transition;
 };
 
@@ -1365,7 +1304,6 @@ cc.TransitionFade.create = function (t, scene, color) {
  * @extends cc.TransitionScene
  */
 cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCrossFade# */{
-
     /**
      * custom on enter
      */
@@ -1375,18 +1313,17 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         // create a transparent color layer
         // in which we are going to add our rendertextures
         var color = new cc.Color4B(0, 0, 0, 0);
-        var size = cc.Director.getInstance().getWinSize();
+        var winSize = cc.Director.getInstance().getWinSize();
         var layer = cc.LayerColor.create(color);
 
         // create the first render texture for inScene
-        var inTexture = cc.RenderTexture.create(size.width, size.height);
+        var inTexture = cc.RenderTexture.create(winSize.width, winSize.height);
 
-        if (null == inTexture) {
+        if (null == inTexture)
             return;
-        }
 
         inTexture.getSprite().setAnchorPoint(cc.p(0.5, 0.5));
-        inTexture.setPosition(cc.p(size.width / 2, size.height / 2));
+        inTexture.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
         inTexture.setAnchorPoint(cc.p(0.5, 0.5));
 
         // render inScene to its texturebuffer
@@ -1395,9 +1332,9 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         inTexture.end();
 
         // create the second render texture for outScene
-        var outTexture = cc.RenderTexture.create(size.width, size.height);
+        var outTexture = cc.RenderTexture.create(winSize.width, winSize.height);
         outTexture.getSprite().setAnchorPoint(cc.p(0.5, 0.5));
-        outTexture.setPosition(cc.p(size.width / 2, size.height / 2));
+        outTexture.setPosition(cc.p(winSize.width / 2, winSize.height / 2));
         outTexture.setAnchorPoint(cc.p(0.5, 0.5));
 
         // render outScene to its texturebuffer
@@ -1405,10 +1342,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         this._outScene.visit();
         outTexture.end();
 
-        // inScene will lay on background and will not be used with alpha
-        inTexture.getSprite().setBlendFunc(gl.ONE, gl.ONE);
-        // we are going to blend outScene via alpha
-        outTexture.getSprite().setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        inTexture.getSprite().setBlendFunc(gl.ONE, gl.ONE);                                             // inScene will lay on background and will not be used with alpha
+        outTexture.getSprite().setBlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);                      // we are going to blend outScene via alpha
 
         // add render textures to the layer
         layer.addChild(inTexture);
@@ -1419,10 +1354,8 @@ cc.TransitionCrossFade = cc.TransitionScene.extend(/** @lends cc.TransitionCross
         outTexture.getSprite().setOpacity(255);
 
         // create the blend action
-        //TODO
         var layerAction = cc.Sequence.create(
-            cc.FadeTo.create(this._duration, 0),
-            cc.CallFunc.create(this.hideOutShowIn, this),
+            cc.FadeTo.create(this._duration, 0), cc.CallFunc.create(this.hideOutShowIn, this),
             cc.CallFunc.create(this.finish, this)
         );
 
@@ -1479,13 +1412,12 @@ cc.TransitionTurnOffTiles = cc.TransitionScene.extend(/** @lends cc.TransitionTu
      */
     onEnter:function () {
         this._super();
-        var s = cc.Director.getInstance().getWinSize();
-        var aspect = s.width / s.height;
-        var x = 12 * aspect;
+        var winSize = cc.Director.getInstance().getWinSize();
+        var aspect = winSize.width / winSize.height;
+        var x = 0 | (12 * aspect);
         var y = 12;
-        var toff = cc.TurnOffTiles.create(cc.g(x, y), this._duration);
+        var toff = cc.TurnOffTiles.create(this._duration, cc.SizeMake(x, y));
         var action = this.easeActionWithAction(toff);
-        //TODO
         this._outScene.runAction(cc.Sequence.create(action, cc.CallFunc.create(this.finish, this), cc.StopGrid.create()));
     },
 
@@ -1530,18 +1462,12 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
         this._inScene.setVisible(false);
 
         var split = this.action();
-        //TODO
         var seq = cc.Sequence.create(
-            split,
-            cc.CallFunc.create(this.hideOutShowIn, this),
-            split.reverse());
+            split, cc.CallFunc.create(this.hideOutShowIn, this), split.reverse());
 
         this.runAction(
-            cc.Sequence.create(
-                this.easeActionWithAction(seq),
-                cc.CallFunc.create(this.finish, this),
-                cc.StopGrid.create()
-            ));
+            cc.Sequence.create(this.easeActionWithAction(seq), cc.CallFunc.create(this.finish, this), cc.StopGrid.create())
+        );
     },
 
     /**
@@ -1556,8 +1482,7 @@ cc.TransitionSplitCols = cc.TransitionScene.extend(/** @lends cc.TransitionSplit
      * @return {*}
      */
     action:function () {
-        //TODO
-        return cc.SplitCols.create(3, this._duration / 2.0);
+        return cc.SplitCols.create(this._duration / 2.0, 3);
     }
 });
 
@@ -1589,7 +1514,7 @@ cc.TransitionSplitRows = cc.TransitionSplitCols.extend(/** @lends cc.TransitionS
      * @return {*}
      */
     action:function () {
-        return cc.SplitRows.actionWithRows(3, this._duration / 2.0);
+        return cc.SplitRows.create(this._duration / 2.0, 3);
     }
 });
 
@@ -1626,17 +1551,14 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
     onEnter:function () {
         this._super();
 
-        var s = cc.Director.getInstance().getWinSize();
-        var aspect = s.width / s.height;
-        var x = (12 * aspect);
+        var winSize = cc.Director.getInstance().getWinSize();
+        var aspect = winSize.width / winSize.height;
+        var x = 0 | (12 * aspect);
         var y = 12;
 
-        var action = this.actionWithSize(cc.g(x, y));
-
+        var action = this.actionWithSize(cc.SizeMake(x, y));
         this._outScene.runAction(
-            cc.Sequence.create(
-                this.easeActionWithAction(action),
-                cc.CallFunc.create(this.finish, this),
+            cc.Sequence.create(this.easeActionWithAction(action), cc.CallFunc.create(this.finish, this),
                 cc.StopGrid.create())
         );
     },
@@ -1654,7 +1576,7 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
      * @return {*}
      */
     actionWithSize:function (size) {
-        return cc.FadeOutTRTiles.create(size, this._duration);
+        return cc.FadeOutTRTiles.create(this._duration, size);
     }
 });
 
@@ -1687,7 +1609,7 @@ cc.TransitionFadeBL = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeBL#
      * @return {*}
      */
     actionWithSize:function (size) {
-        return cc.FadeOutBLTiles.create(size, this._duration);
+        return cc.FadeOutBLTiles.create(this._duration, size);
     }
 });
 
@@ -1720,7 +1642,7 @@ cc.TransitionFadeUp = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeUp#
      * @return {*}
      */
     actionWithSize:function (size) {
-        return cc.FadeOutUpTiles.create(size, this._duration);
+        return cc.FadeOutUpTiles.create(this._duration, size);
     }
 });
 
@@ -1753,7 +1675,7 @@ cc.TransitionFadeDown = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeD
      * @return {*}
      */
     actionWithSize:function (size) {
-        return cc.FadeOutDownTiles.create(size, this._duration);
+        return cc.FadeOutDownTiles.create( this._duration, size);
     }
 });
 

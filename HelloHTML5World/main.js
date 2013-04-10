@@ -35,6 +35,11 @@ var cocos2dApp = cc.Application.extend({
         cc.AppController.shareAppController().didFinishLaunchingWithOptions();
     },
     applicationDidFinishLaunching:function () {
+        if(cc.RenderDoesnotSupport()){
+            //show Information to user
+            alert("Browser doesn't support WebGL");
+            return false;
+        }
         // initialize director
         var director = cc.Director.getInstance();
 

@@ -31,9 +31,12 @@
  * Renamed and added some changes for cocos2d
  *
  */
+cc.v2fzero = function () {
+    return {x: 0, y: 0};
+};
 
 cc.v2f = function (x, y) {
-    return new cc.Vertex2F(x, y);
+    return {x: x, y: y};
 };
 
 cc.v2fadd = function (v0, v1) {
@@ -74,60 +77,37 @@ cc.__v2f = function (v) {
 };
 
 cc.__t = function (v) {
-    return new cc.Tex2F(v.x, v.y);
+    return {u: v.x, v: v.y};
 };
 
-/** CCDrawNode
- Node that draws dots, segments and polygons.
- Faster than the "drawing primitives" since they it draws everything in one single batch.
+/**
+ * <p>CCDrawNode for Canvas                                             <br/>
+ * Node that draws dots, segments and polygons.                        <br/>
+ * Faster than the "drawing primitives" since they it draws everything in one single batch.</p>
+ * @class
+ * @extends cc.Node
  */
-cc.DrawNode = cc.Node.extend({
-    _vao:0,
-    _vbo:0,
-
-    _bufferCapacity:0,
-    _bufferCount:0,
+cc.DrawNodeCanvas = cc.Node.extend(/** @lends cc.DrawNodeCanvas# */{
     _buffer:null,
-
     _blendFunc:null,
 
-    _dirty:false,
+    // ----common function start ----
+    getBlendFunc:function () {
+        return this._blendFunc;
+    },
+
+    setBlendFunc:function (blendFunc) {
+        this._blendFunc = blendFunc;
+    },
+    // ----common function end ----
 
     ctor:function () {
+        this._super();
         this._buffer = [];
-    },
-
-    ensureCapacity:function (count) {
-    },
-
-    init:function () {
-        if (this._super()) {
-            this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
-            //this.ensureCapacity(512);
-            this._dirty = true;
-            return true;
-        }
-        return false;
-    },
-
-    render:function () {
-        /*if( this._dirty ) {
-         glBindBuffer(GL_ARRAY_BUFFER, _vbo);
-         glBufferData(GL_ARRAY_BUFFER, sizeof(ccV2F_C4B_T2F)*_bufferCapacity, _buffer, GL_STREAM_DRAW);
-         glBindBuffer(GL_ARRAY_BUFFER, 0);
-         this._dirty = false;
-         }
-
-         ccGLBindVAO(_vao);
-         glDrawArrays(GL_TRIANGLES, 0, _bufferCount);
-
-         CC_INCREMENT_GL_DRAWS(1);
-
-         CHECK_GL_ERROR();*/
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
     },
 
     draw:function (ctx) {
-
         var context = ctx || cc.renderContext;
 
         if ((this._blendFunc && (this._blendFunc.src == gl.SRC_ALPHA) && (this._blendFunc.dst == gl.ONE)))
@@ -136,39 +116,115 @@ cc.DrawNode = cc.Node.extend({
         for (var i = 0; i < this._buffer.length; i++) {
             var element = this._buffer[i];
             if (element.type === cc.DRAWNODE_TYPE_DOT) {
-                context.fillStyle = "rgba(" + (0|(element.color.r * 255)) + "," + (0|(element.color.g * 255)) + "," + (0|(element.color.b * 255)) + "," + element.color.a + ")";
+                context.fillStyle = "rgba(" + (0 | (element.color.r * 255)) + "," + (0 | (element.color.g * 255)) + "," + (0 | (element.color.b * 255)) + "," + element.color.a + ")";
                 cc.drawingUtil.drawPoint(element.position, element.radius);
             }
 
             if (element.type === cc.DRAWNODE_TYPE_SEGMENT) {
-                context.strokeStyle = "rgba(" + (0|(element.color.r * 255)) + "," + (0|(element.color.g * 255)) + "," + (0|(element.color.b * 255)) + "," + element.color.a + ")";
+                context.strokeStyle = "rgba(" + (0 | (element.color.r * 255)) + "," + (0 | (element.color.g * 255)) + "," + (0 | (element.color.b * 255)) + "," + element.color.a + ")";
                 context.lineWidth = element.radius * 2;
                 context.lineCap = "round";
                 cc.drawingUtil.drawLine(element.from, element.to);
             }
 
             if (element.type === cc.DRAWNODE_TYPE_POLY) {
-                context.fillStyle = "rgba(" + (0|(element.fillColor.r * 255)) + "," + (0|(element.fillColor.g * 255)) + ","
-                    + (0|(element.fillColor.b * 255)) + "," + element.fillColor.a + ")";
+                context.fillStyle = "rgba(" + (0 | (element.fillColor.r * 255)) + "," + (0 | (element.fillColor.g * 255)) + ","
+                    + (0 | (element.fillColor.b * 255)) + "," + element.fillColor.a + ")";
                 cc.drawingUtil.drawPoly(element.verts, element.count, false, true);
                 context.lineWidth = element.borderWidth * 2;
                 context.lineCap = "round";
-                context.strokeStyle = "rgba(" + (0|(element.borderColor.r * 255)) + "," + (0|(element.borderColor.g * 255)) + ","
-                    + (0|(element.borderColor.b * 255)) + "," + element.borderColor.a + ")";
+                context.strokeStyle = "rgba(" + (0 | (element.borderColor.r * 255)) + "," + (0 | (element.borderColor.g * 255)) + ","
+                    + (0 | (element.borderColor.b * 255)) + "," + element.borderColor.a + ")";
                 cc.drawingUtil.drawPoly(element.verts, element.count, true, false);
             }
         }
-
-        //TODO WEBGL
-        /*this.render();
-         ccGLBlendFunc(_blendFunc.src, _blendFunc.dst);
-
-         [shaderProgram_ use];
-         [shaderProgram_ setUniformsForBuiltins];
-
-         [self render];*/
     },
 
+    /**
+     *  draw a dot at a position, with a given radius and color
+     * @param {cc.Point} pos
+     * @param {Number} radius
+     * @param {cc.Color4F} color
+     */
+    drawDot:function (pos, radius, color) {
+        var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_DOT);
+        element.position = pos;
+        element.radius = radius;
+        element.color = color;
+        this._buffer.push(element);
+    },
+
+    /**
+     * draw a segment with a radius and color
+     * @param {cc.Point} from
+     * @param {cc.Point} to
+     * @param {Number} radius
+     * @param {cc.Color4F} color
+     */
+    drawSegment:function (from, to, radius, color) {
+        var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_SEGMENT);
+        element.from = from;
+        element.to = to;
+        element.radius = radius;
+        element.color = color;
+        this._buffer.push(element);
+    },
+
+    /**
+     * draw a polygon with a fill color and line color
+     * @param {Array} verts
+     * @param {cc.Color4F} fillColor
+     * @param {Number} borderWidth
+     * @param {cc.Color4F} borderColor
+     */
+    drawPoly:function (verts, fillColor, borderWidth, borderColor) {
+        var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_POLY);
+        element.verts = verts;
+        element.count = verts.length;
+        element.fillColor = fillColor;
+        element.borderWidth = borderWidth;
+        element.borderColor = borderColor;
+        this._buffer.push(element);
+    },
+
+    /**
+     * Clear the geometry in the node's buffer.
+     */
+    clear:function () {
+        this._buffer.length = 0;
+    }
+});
+
+/**
+ * Creates a DrawNodeCanvas
+ * @return {cc.DrawNodeCanvas}
+ */
+cc.DrawNodeCanvas.create = function () {
+    var ret = new cc.DrawNodeCanvas();
+    if (ret && ret.init())
+        return ret;
+    return null;
+};
+
+/**
+ * <p>CCDrawNode for WebGL                                             <br/>
+ * Node that draws dots, segments and polygons.                        <br/>
+ * Faster than the "drawing primitives" since they it draws everything in one single batch.</p>
+ * @class
+ * @extends cc.Node
+ */
+cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
+    _bufferCapacity:0,
+    _buffer:null,
+
+    _trianglesArrayBuffer:null,
+    _trianglesWebBuffer:null,
+    _trianglesReader:null,
+
+    _blendFunc:null,
+    _dirty:false,
+
+    // ----common function start ----
     getBlendFunc:function () {
         return this._blendFunc;
     },
@@ -176,217 +232,243 @@ cc.DrawNode = cc.Node.extend({
     setBlendFunc:function (blendFunc) {
         this._blendFunc = blendFunc;
     },
+    // ----common function end ----
 
-    /** draw a dot at a position, with a given radius and color */
+    ctor:function () {
+        this._super();
+        this._buffer = [];
+        this._blendFunc = new cc.BlendFunc(cc.BLEND_SRC, cc.BLEND_DST);
+    },
+
+    init:function () {
+        if (this._super()) {
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_LENGTHTEXTURECOLOR));
+            this._ensureCapacity(512);
+            this._trianglesWebBuffer = cc.renderContext.createBuffer();
+            this._dirty = true;
+            return true;
+        }
+        return false;
+    },
+
+    _render:function () {
+        var gl = cc.renderContext;
+
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this._trianglesWebBuffer);
+        if (this._dirty) {
+            gl.bufferData(gl.ARRAY_BUFFER, this._trianglesArrayBuffer, gl.STREAM_DRAW);
+            this._dirty = false;
+        }
+        var triangleSize = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+
+        // vertex
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, gl.FLOAT, false, triangleSize, 0);
+        // color
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, triangleSize, 8);
+        // texcood
+        gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, triangleSize, 12);
+
+        gl.drawArrays(gl.TRIANGLES, 0, this._buffer.length * 3);
+        cc.INCREMENT_GL_DRAWS(1);
+        //cc.CHECK_GL_ERROR_DEBUG();
+    },
+
+    _ensureCapacity:function(count){
+        if(this._buffer.length + count > this._bufferCapacity){
+            this._bufferCapacity += Math.max(this._bufferCapacity, count);
+            //re alloc
+            if((this._buffer == null) || (this._buffer.length === 0)){
+                //init
+                this._buffer = [];
+                this._trianglesArrayBuffer = new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT * this._bufferCapacity);
+                this._trianglesReader = new Uint8Array(this._trianglesArrayBuffer);
+            } else {
+                var newTriangles = [];
+                var newArrayBuffer = new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT * this._bufferCapacity);
+
+                for(var i = 0; i < this._buffer.length;i++){
+                    newTriangles[i] = new cc.V2F_C4B_T2F_Triangle(this._buffer[i].a,this._buffer[i].b,this._buffer[i].c,
+                        newArrayBuffer,i * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT);
+                }
+                this._trianglesReader = new Uint8Array(newArrayBuffer);
+                this._buffer = newTriangles;
+                this._trianglesArrayBuffer = newArrayBuffer;
+            }
+        }
+    },
+
+    draw:function () {
+        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        this._shaderProgram.use();
+        this._shaderProgram.setUniformsForBuiltins();
+        this._render();
+    },
+
+    /**
+     *  draw a dot at a position, with a given radius and color
+     * @param {cc.Point} pos
+     * @param {Number} radius
+     * @param {cc.Color4F} color
+     */
     drawDot:function (pos, radius, color) {
-        var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_DOT);
-        element.position = pos;
-        element.radius = radius;
-        element.color = color;
-        this._buffer.push(element);
-
-        //TODO WEBGL
-        /* var vertex_count = 2*3;
-         this.ensureCapacity(vertex_count);
-
-         ccV2F_C4B_T2F a = {{pos.x - radius, pos.y - radius}, ccc4BFromccc4F(color), {-1.0, -1.0} };
-         ccV2F_C4B_T2F b = {{pos.x - radius, pos.y + radius}, ccc4BFromccc4F(color), {-1.0,  1.0} };
-         ccV2F_C4B_T2F c = {{pos.x + radius, pos.y + radius}, ccc4BFromccc4F(color), { 1.0,  1.0} };
-         ccV2F_C4B_T2F d = {{pos.x + radius, pos.y - radius}, ccc4BFromccc4F(color), { 1.0, -1.0} };
-
-         ccV2F_C4B_T2F_Triangle *triangles = (ccV2F_C4B_T2F_Triangle *)(_buffer + _bufferCount);
-         triangles[0] = (ccV2F_C4B_T2F_Triangle){a, b, c};
-         triangles[1] = (ccV2F_C4B_T2F_Triangle){a, c, d};
-
-
-         this._bufferCount += vertex_count;*/
+        var c4bColor = {r: 0 | (color.r * 255), g: 0 | (color.g * 255), b: 0 | (color.b * 255), a: 0 | (color.a * 255)};
+        var a = {vertices: {x: pos.x - radius, y: pos.y - radius}, colors: c4bColor, texCoords: {u: -1.0, v: -1.0}};
+        var b = {vertices: {x: pos.x - radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: -1.0, v: 1.0}};
+        var c = {vertices: {x: pos.x + radius, y: pos.y + radius}, colors: c4bColor, texCoords: {u: 1.0, v: 1.0}};
+        var d = {vertices: {x: pos.x + radius, y: pos.y - radius}, colors: c4bColor, texCoords: {u: 1.0, v: -1.0}};
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle(a, b, c, this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle(a, c, d, this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+        this._dirty = true;
     },
 
-    /** draw a segment with a radius and color */
-    drawSegment:function (a, b, radius, color) {
-        var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_SEGMENT);
-        element.from = a;
-        element.to = b;
-        element.radius = radius;
-        element.color = color;
-        this._buffer.push(element);
+    /**
+     * draw a segment with a radius and color
+     * @param {cc.Point} from
+     * @param {cc.Point} to
+     * @param {Number} radius
+     * @param {cc.Color4F} color
+     */
+    drawSegment:function (from, to, radius, color) {
+        var vertexCount = 6*3;
+        this._ensureCapacity(vertexCount);
 
-        //TODO WEBGL
-        /*
-         var vertex_count = 6*3;
-         this.ensureCapacity(vertex_count);
+        var c4bColor = {r: 0 | (color.r * 255), g: 0 | (color.g * 255), b: 0 | (color.b * 255), a: 0 | (color.a * 255)};
+        var a = cc.__v2f(from);
+        var b = cc.__v2f(to);
 
-         ccVertex2F a = __v2f(_a);
-         ccVertex2F b = __v2f(_b);
+        var n = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(b, a)));
+        var t = cc.v2fperp(n);
 
+        var nw = cc.v2fmult(n, radius);
+        var tw = cc.v2fmult(t, radius);
+        var v0 = cc.v2fsub(b, cc.v2fadd(nw, tw));
+        var v1 = cc.v2fadd(b, cc.v2fsub(nw, tw));
+        var v2 = cc.v2fsub(b, nw);
+        var v3 = cc.v2fadd(b, nw);
+        var v4 = cc.v2fsub(a, nw);
+        var v5 = cc.v2fadd(a, nw);
+        var v6 = cc.v2fsub(a, cc.v2fsub(nw, tw));
+        var v7 = cc.v2fadd(a, cc.v2fadd(nw, tw));
 
-         ccVertex2F n = v2fnormalize(v2fperp(v2fsub(b, a)));
-         ccVertex2F t = v2fperp(n);
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v0, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(cc.v2fadd(n, t)))},
+            {vertices: v1, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(n, t))}, {vertices: v2, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))},
+            this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
 
-         ccVertex2F nw = v2fmult(n, radius);
-         ccVertex2F tw = v2fmult(t, radius);
-         ccVertex2F v0 = v2fsub(b, v2fadd(nw, tw));
-         ccVertex2F v1 = v2fadd(b, v2fsub(nw, tw));
-         ccVertex2F v2 = v2fsub(b, nw);
-         ccVertex2F v3 = v2fadd(b, nw);
-         ccVertex2F v4 = v2fsub(a, nw);
-         ccVertex2F v5 = v2fadd(a, nw);
-         ccVertex2F v6 = v2fsub(a, v2fsub(nw, tw));
-         ccVertex2F v7 = v2fadd(a, v2fadd(nw, tw));
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
+            {vertices: v1, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(n, t))}, {vertices: v2, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))},
+            this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
 
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
+            {vertices: v4, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))}, {vertices: v2, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))},
+            this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
 
-         ccV2F_C4B_T2F_Triangle *triangles = (ccV2F_C4B_T2F_Triangle *)(_buffer + _bufferCount);
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v3, colors: c4bColor, texCoords: cc.__t(n)},
+            {vertices: v4, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))}, {vertices: v5, colors: c4bColor, texCoords: cc.__t(n)},
+            this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
 
-         triangles[0] = (ccV2F_C4B_T2F_Triangle) {
-         {v0, ccc4BFromccc4F(color), __t(v2fneg(v2fadd(n, t))) },
-         {v1, ccc4BFromccc4F(color), __t(v2fsub(n, t)) },
-         {v2, ccc4BFromccc4F(color), __t(v2fneg(n)) },
-         };
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v6, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(t, n))},
+            {vertices: v4, colors: c4bColor, texCoords: cc.__t(cc.v2fneg(n))}, {vertices: v5, colors: c4bColor, texCoords: cc.__t(n)},
+            this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
 
-         triangles[1] = (ccV2F_C4B_T2F_Triangle){
-         {v3, ccc4BFromccc4F(color), __t(n)},
-         {v1, ccc4BFromccc4F(color), __t(v2fsub(n, t)) },
-         {v2, ccc4BFromccc4F(color), __t(v2fneg(n)) },
-         };
-
-         triangles[2] = (ccV2F_C4B_T2F_Triangle){
-         {v3, ccc4BFromccc4F(color), __t(n)},
-         {v4, ccc4BFromccc4F(color), __t(v2fneg(n)) },
-         {v2, ccc4BFromccc4F(color), __t(v2fneg(n)) },
-         };
-         triangles[3] = (ccV2F_C4B_T2F_Triangle){
-         {v3, ccc4BFromccc4F(color), __t(n) },
-         {v4, ccc4BFromccc4F(color), __t(v2fneg(n)) },
-         {v5, ccc4BFromccc4F(color), __t(n) },
-         };
-         triangles[4] = (ccV2F_C4B_T2F_Triangle){
-         {v6, ccc4BFromccc4F(color), __t(v2fsub(t, n))},
-         {v4, ccc4BFromccc4F(color), __t(v2fneg(n)) },
-         {v5, ccc4BFromccc4F(color), __t(n)},
-         };
-         triangles[5] = (ccV2F_C4B_T2F_Triangle){
-         {v6, ccc4BFromccc4F(color), __t(v2fsub(t, n)) },
-         {v7, ccc4BFromccc4F(color), __t(v2fadd(n, t)) },
-         {v5, ccc4BFromccc4F(color), __t(n)},
-         };
-
-         this._bufferCount += vertex_count;
-         this._dirty = true; */
+        this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v6, colors: c4bColor, texCoords: cc.__t(cc.v2fsub(t, n))},
+            {vertices: v7, colors: c4bColor, texCoords: cc.__t(cc.v2fadd(n, t))}, {vertices: v5, colors: c4bColor, texCoords: cc.__t(n)},
+            this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+        this._dirty = true;
     },
 
-    /** draw a polygon with a fill color and line color */
-    drawPoly:function (verts, fillColor, width, borderColor) {
-        var element = new cc._DrawNodeElement(cc.DRAWNODE_TYPE_POLY);
-        element.verts = verts;
-        element.count = verts.length;
-        element.fillColor = fillColor;
-        element.borderWidth = width;
-        element.borderColor = borderColor;
-        this._buffer.push(element);
+    /**
+     * draw a polygon with a fill color and line color
+     * @param {Array} verts
+     * @param {cc.Color4F} fillColor
+     * @param {Number} borderWidth
+     * @param {cc.Color4F} borderColor
+     */
+    drawPoly:function (verts, fillColor, borderWidth, borderColor) {
+        var c4bFillColor = {r: 0 | (fillColor.r * 255), g: 0 | (fillColor.g * 255), b: 0 | (fillColor.b * 255), a: 0 | (fillColor.a * 255)};
+        var c4bBorderColor = {r: 0 | (borderColor.r * 255), g: 0 | (borderColor.g * 255), b: 0 | (borderColor.b * 255), a: 0 | (borderColor.a * 255)};
+        var extrude = [], i;
+        var v0, v1, v2;
+        var count = verts.length;
+        for (i = 0; i < count; i++) {
+            v0 = cc.__v2f(verts[(i - 1 + count) % count]);
+            v1 = cc.__v2f(verts[i]);
+            v2 = cc.__v2f(verts[(i + 1) % count]);
+            var n1 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v1, v0)));
+            var n2 = cc.v2fnormalize(cc.v2fperp(cc.v2fsub(v2, v1)));
+            var offset = cc.v2fmult(cc.v2fadd(n1, n2), 1.0 / (cc.v2fdot(n1, n2) + 1.0));
+            extrude[i] = {offset: offset, n: n2};
+        }
+        var outline = (fillColor.a > 0.0 && borderWidth > 0.0);
 
-        //TODO WEBGL
-        /* struct ExtrudeVerts {ccVertex2F offset, n;};
-         struct ExtrudeVerts extrude[count];
-         bzero(extrude, sizeof(extrude) );
+        var triangleCount = 3 * count -2;
+        var vertexCount = 3 * triangleCount;
+        this._ensureCapacity(vertexCount);
 
-         for(int i=0; i<count; i++){
-         ccVertex2F v0 = __v2f( verts[(i-1+count)%count] );
-         ccVertex2F v1 = __v2f( verts[i] );
-         ccVertex2F v2 = __v2f( verts[(i+1)%count] );
+        var inset = (outline == false ? 0.5 : 0.0);
+        for (i = 0; i < count - 2; i++) {
+            v0 = cc.v2fsub(cc.__v2f(verts[0]), cc.v2fmult(extrude[0].offset, inset));
+            v1 = cc.v2fsub(cc.__v2f(verts[i + 1]), cc.v2fmult(extrude[i + 1].offset, inset));
+            v2 = cc.v2fsub(cc.__v2f(verts[i + 2]), cc.v2fmult(extrude[i + 2].offset, inset));
+            this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: v0, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())},
+                {vertices: v1, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())}, {vertices: v2, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())},
+                this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+        }
 
-         ccVertex2F n1 = v2fnormalize(v2fperp(v2fsub(v1, v0)));
-         ccVertex2F n2 = v2fnormalize(v2fperp(v2fsub(v2, v1)));
+        for (i = 0; i < count; i++) {
+            var j = (i + 1) % count;
+            v0 = cc.__v2f(verts[i]);
+            v1 = cc.__v2f(verts[j]);
 
-         ccVertex2F offset = v2fmult(v2fadd(n1, n2), 1.0/(v2fdot(n1, n2) + 1.0));
-         extrude[i] = (struct ExtrudeVerts){offset, n2};
-         }
+            var n0 = extrude[i].n;
+            var offset0 = extrude[i].offset;
+            var offset1 = extrude[j].offset;
+            var inner0 = outline ? cc.v2fsub(v0, cc.v2fmult(offset0, borderWidth)) : cc.v2fsub(v0, cc.v2fmult(offset0, 0.5));
+            var inner1 = outline ? cc.v2fsub(v1, cc.v2fmult(offset1, borderWidth)) : cc.v2fsub(v1, cc.v2fmult(offset1, 0.5));
+            var outer0 = outline ? cc.v2fadd(v0, cc.v2fmult(offset0, borderWidth)) : cc.v2fadd(v0, cc.v2fmult(offset0, 0.5));
+            var outer1 = outline ? cc.v2fadd(v1, cc.v2fmult(offset1, borderWidth)) : cc.v2fadd(v1, cc.v2fmult(offset1, 0.5));
 
-         var outline = (line.a > 0.0 && width > 0.0);
-
-         var triangle_count = 3*count - 2;
-         var vertex_count = 3*triangle_count;
-
-         this.ensureCapacity(vertex_count);
-
-         ccV2F_C4B_T2F_Triangle *triangles = (ccV2F_C4B_T2F_Triangle *)(_buffer + _bufferCount);
-         ccV2F_C4B_T2F_Triangle *cursor = triangles;
-
-         var inset = (outline == 0.0 ? 0.5 : 0.0);
-         for(int i=0; i<count-2; i++){
-         ccVertex2F v0 = v2fsub( __v2f(verts[0  ]), v2fmult(extrude[0  ].offset, inset));
-         ccVertex2F v1 = v2fsub( __v2f(verts[i+1]), v2fmult(extrude[i+1].offset, inset));
-         ccVertex2F v2 = v2fsub( __v2f(verts[i+2]), v2fmult(extrude[i+2].offset, inset));
-
-         *cursor++ = (ccV2F_C4B_T2F_Triangle){
-         {v0, ccc4BFromccc4F(fill), __t(v2fzero) },
-         {v1, ccc4BFromccc4F(fill), __t(v2fzero) },
-         {v2, ccc4BFromccc4F(fill), __t(v2fzero) },
-         };
-         }
-
-         for(int i=0; i<count; i++){
-         int j = (i+1)%count;
-         ccVertex2F v0 = __v2f( verts[i] );
-         ccVertex2F v1 = __v2f( verts[j] );
-
-         ccVertex2F n0 = extrude[i].n;
-
-         ccVertex2F offset0 = extrude[i].offset;
-         ccVertex2F offset1 = extrude[j].offset;
-
-         if(outline){
-         ccVertex2F inner0 = v2fsub(v0, v2fmult(offset0, width));
-         ccVertex2F inner1 = v2fsub(v1, v2fmult(offset1, width));
-         ccVertex2F outer0 = v2fadd(v0, v2fmult(offset0, width));
-         ccVertex2F outer1 = v2fadd(v1, v2fmult(offset1, width));
-
-         *cursor++ = (ccV2F_C4B_T2F_Triangle){
-         {inner0, ccc4BFromccc4F(line), __t(v2fneg(n0))},
-         {inner1, ccc4BFromccc4F(line), __t(v2fneg(n0))},
-         {outer1, ccc4BFromccc4F(line), __t(n0)}
-         };
-         *cursor++ = (ccV2F_C4B_T2F_Triangle){
-         {inner0, ccc4BFromccc4F(line), __t(v2fneg(n0))},
-         {outer0, ccc4BFromccc4F(line), __t(n0)},
-         {outer1, ccc4BFromccc4F(line), __t(n0)}
-         };
-         } else {
-         ccVertex2F inner0 = v2fsub(v0, v2fmult(offset0, 0.5));
-         ccVertex2F inner1 = v2fsub(v1, v2fmult(offset1, 0.5));
-         ccVertex2F outer0 = v2fadd(v0, v2fmult(offset0, 0.5));
-         ccVertex2F outer1 = v2fadd(v1, v2fmult(offset1, 0.5));
-
-         *cursor++ = (ccV2F_C4B_T2F_Triangle){
-         {inner0, ccc4BFromccc4F(fill), __t(v2fzero)},
-         {inner1, ccc4BFromccc4F(fill), __t(v2fzero)},
-         {outer1, ccc4BFromccc4F(fill), __t(n0)}
-         };
-         *cursor++ = (ccV2F_C4B_T2F_Triangle){
-         {inner0, ccc4BFromccc4F(fill), __t(v2fzero)},
-         {outer0, ccc4BFromccc4F(fill), __t(n0)},
-         {outer1, ccc4BFromccc4F(fill), __t(n0)}
-         };
-         }
-         }
-
-         this._bufferCount += vertex_count;
-         this._dirty = true; */
+            if (outline) {
+                this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: inner0, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))},
+                    {vertices: inner1, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))}, {vertices: outer1, colors: c4bBorderColor, texCoords: cc.__t(n0)},
+                    this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+                this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: inner0, colors: c4bBorderColor, texCoords: cc.__t(cc.v2fneg(n0))},
+                    {vertices: outer0, colors: c4bBorderColor, texCoords: cc.__t(n0)}, {vertices: outer1, colors: c4bBorderColor, texCoords: cc.__t(n0)},
+                    this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+            } else {
+                this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: inner0, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())},
+                    {vertices: inner1, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())}, {vertices: outer1, colors: c4bFillColor, texCoords: cc.__t(n0)},
+                    this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+                this._buffer.push(new cc.V2F_C4B_T2F_Triangle({vertices: inner0, colors: c4bFillColor, texCoords: cc.__t(cc.v2fzero())},
+                    {vertices: outer0, colors: c4bFillColor, texCoords: cc.__t(n0)}, {vertices: outer1, colors: c4bFillColor, texCoords: cc.__t(n0)},
+                    this._trianglesArrayBuffer, this._buffer.length * cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT));
+            }
+        }
+        extrude = null;
+        this._dirty = true;
     },
 
-    /** Clear the geometry in the node's buffer. */
+    /**
+     * Clear the geometry in the node's buffer.
+     */
     clear:function () {
         this._buffer.length = 0;
-        this._bufferCount = 0;
         this._dirty = true;
     }
 });
 
-cc.DrawNode.create = function(){
-   var ret = new cc.DrawNode();
-    if(ret && ret.init())
+/**
+ * Creates a DrawNodeCanvas
+ * @return {cc.DrawNodeWebGL}
+ */
+cc.DrawNodeWebGL.create = function () {
+    var ret = new cc.DrawNodeWebGL();
+    if (ret && ret.init())
         return ret;
     return null;
 };
+
+cc.DrawNode = cc.Browser.supportWebGL ? cc.DrawNodeWebGL : cc.DrawNodeCanvas;
 
 cc._DrawNodeElement = function (type) {
     this.type = type;

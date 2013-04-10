@@ -125,6 +125,7 @@ cc.Scale9Sprite = cc.Node.extend({
     },
 
     ctor:function () {
+        this._super();
         this._spriteRect = cc.RectZero();
         this._capInsetsInternal = cc.RectZero();
 
@@ -169,7 +170,7 @@ cc.Scale9Sprite = cc.Node.extend({
         var scaleChildren = this._scale9Image.getChildren();
         if (scaleChildren && scaleChildren.length != 0) {
             for (var i = 0; i < scaleChildren.length; i++) {
-                if (scaleChildren[i] && scaleChildren.RGBAProtocol) {
+                if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
                     scaleChildren[i].setColor(this._color);
                 }
             }
@@ -334,7 +335,7 @@ cc.Scale9Sprite = cc.Node.extend({
         var scaleChildren = this._scale9Image.getChildren();
         if (scaleChildren && scaleChildren.length != 0) {
             for (var i = 0; i < scaleChildren.length; i++) {
-                if (scaleChildren[i] && scaleChildren.RGBAProtocol) {
+                if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
                     scaleChildren[i].setOpacityModifyRGB(this._isOpacityModifyRGB);
                 }
             }
@@ -363,7 +364,7 @@ cc.Scale9Sprite = cc.Node.extend({
         // If there is no given rect
         if (cc.Rect.CCRectEqualToRect(rect, cc.RectZero())) {
             // Get the texture size as original
-            var selTexture  = this._scale9Image.getTextureAtlas().getTexture();
+            var selTexture  = this._scale9Image.getTexture();
             if(selTexture instanceof  cc.Texture2D){
                 var textureSize = selTexture.getContentSize();
                 rect = cc.RectMake(0, 0, textureSize.width, textureSize.height);

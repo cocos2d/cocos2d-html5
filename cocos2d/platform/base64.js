@@ -69,7 +69,6 @@ cc.Codec.Base64.decode = function Jacob__Codec__Base64__decode(input) {
  * var decodeArr = cc.Codec.Base64.decodeAsArray("U29tZSBTdHJpbmc=");
  */
 cc.Codec.Base64.decodeAsArray = function Jacob__Codec__Base64___decodeAsArray(input, bytes) {
-    bytes = bytes || 4;
     var dec = this.decode(input),
         ar = [], i, j, len;
     for (i = 0, len = dec.length / bytes; i < len; i++) {
@@ -82,47 +81,12 @@ cc.Codec.Base64.decodeAsArray = function Jacob__Codec__Base64___decodeAsArray(in
     return ar;
 };
 
-cc.Codec.Base64.encode = function Jacob__Codec__Base64__encode(input) {
-    input = encodeURIComponent(input);
-    var output = "";
-    var chr1, chr2, chr3 = "";
-    var enc1, enc2, enc3, enc4 = "";
-    var i = 0;
-
-    do {
-        chr1 = input.charCodeAt(i++);
-        chr2 = input.charCodeAt(i++);
-        chr3 = input.charCodeAt(i++);
-
-        enc1 = chr1 >> 2;
-        enc2 = ((chr1 & 3) << 4) | (chr2 >> 4);
-        enc3 = ((chr2 & 15) << 2) | (chr3 >> 6);
-        enc4 = chr3 & 63;
-
-        if (isNaN(chr2)) {
-            enc3 = enc4 = 64;
-        } else if (isNaN(chr3)) {
-            enc4 = 64;
-        }
-
-        output = output +
-            this._keyStr.charAt(enc1) +
-            this._keyStr.charAt(enc2) +
-            this._keyStr.charAt(enc3) +
-            this._keyStr.charAt(enc4);
-        chr1 = chr2 = chr3 = "";
-        enc1 = enc2 = enc3 = enc4 = "";
-    } while (i < input.length);
-
-    return output;
-};
-
 cc.uint8ArrayToUint32Array = function(uint8Arr){
     if(uint8Arr.length % 4 != 0)
         return null;
 
     var arrLen = uint8Arr.length /4;
-    var retArr = window.Uint8Array? new Uint32Array(arrLen) : [];
+    var retArr = window.Uint32Array? new Uint32Array(arrLen) : [];
     for(var i = 0; i < arrLen; i++){
         var offset = i * 4;
         retArr[i] = uint8Arr[offset]  + uint8Arr[offset + 1] * (1 << 8) + uint8Arr[offset + 2] * (1 << 16) + uint8Arr[offset + 3] * (1<<24);

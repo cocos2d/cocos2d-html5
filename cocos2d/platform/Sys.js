@@ -48,6 +48,8 @@ Object.defineProperties(sys,
 
 			// if (window.DeviceOrientationEvent!==undefined || window.OrientationEvent!==undefined)
 			//   capabilities["accelerometer"] = true;
+            if(cc.Browser.supportWebGL)
+                capabilities["opengl"] = true;
 
 			if( 'ontouchstart' in document.documentElement || window.navigator.msPointerEnabled)
 				capabilities["touches"] = true;

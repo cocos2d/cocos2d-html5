@@ -41,7 +41,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     _soundEnable:false,
     _effectList:{},
     _soundList:{},
-    _isMusicPlaying:false,
     _playingMusic:null,
     _effectsVolume:1,
     _maxAudioInstance:10,
@@ -86,7 +85,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
 
         var ua = navigator.userAgent;
-        if(/Mobile/.test(ua) && (/Safari/.test(ua)||/Firefox/.test(ua))){
+        if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
             this._canPlay = false;
         }
     },
@@ -111,26 +110,25 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
             if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
-                var sfxCache = new cc.SFX();
-                sfxCache.ext = extName;
-                sfxCache.audio = new Audio(path);
+                if(this._canPlay){
+                    var sfxCache = new cc.SFX();
+                    sfxCache.ext = extName;
+                    sfxCache.audio = new Audio(path);
+                    sfxCache.audio.preload = 'auto';
+                    sfxCache.audio.addEventListener('canplaythrough', function (e) {
+                        cc.Loader.getInstance().onResLoaded();
+                        this.removeEventListener('canplaythrough', arguments.callee, false);
+                    }, false);
 
-                sfxCache.audio.preload = 'auto';
+                    sfxCache.audio.addEventListener("error", function (e) {
+                        cc.Loader.getInstance().onResLoadingErr(e.srcElement.src);
+                        this.removeEventListener('error', arguments.callee, false);
+                    }, false);
 
-                sfxCache.audio.addEventListener('canplaythrough', function (e) {
-                    cc.Loader.getInstance().onResLoaded();
-                    this.removeEventListener('canplaythrough', arguments.callee, false);
-                }, false);
-
-                sfxCache.audio.addEventListener("error", function (e) {
-                    cc.Loader.getInstance().onResLoadingErr(e.srcElement.src);
-                    this.removeEventListener('error', arguments.callee, false);
-                }, false);
-
-                this._soundList[keyname] = sfxCache;
-                sfxCache.audio.load();
-
-                if(!this._canPlay){
+                    this._soundList[keyname] = sfxCache;
+                    sfxCache.audio.load();
+                }
+                else{
                     cc.Loader.getInstance().onResLoaded();
                 }
             }
@@ -172,16 +170,16 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             sfxCache.audio.load();
         }
 
-        au.addEventListener("playing", function (e) {
-            cc.AudioEngine._instance._isMusicPlaying = true;
-        }, false);
-
-        au.addEventListener("pause", function (e) {
-            cc.AudioEngine._instance._isMusicPlaying = false;
-        }, false);
+        au.addEventListener("pause", this._musicListener , false);
 
         au.loop = loop || false;
         au.play();
+        cc.AudioEngine.isMusicPlaying = true;
+    },
+
+    _musicListener:function(e){
+        cc.AudioEngine.isMusicPlaying = false;
+        this.removeEventListener('pause', arguments.callee, false);
     },
 
     /**
@@ -199,6 +197,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             if (releaseData) {
                 delete this._soundList[this._playingMusic];
             }
+            cc.AudioEngine.isMusicPlaying = false;
         }
     },
 
@@ -210,7 +209,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     pauseMusic:function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            this._soundList[this._playingMusic].audio.pause();
+            var au = this._soundList[this._playingMusic].audio;
+            au.pause();
+            cc.AudioEngine.isMusicPlaying = false;
         }
     },
 
@@ -222,7 +223,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      */
     resumeMusic:function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            this._soundList[this._playingMusic].audio.play();
+            var au = this._soundList[this._playingMusic].audio;
+            au.play();
+            au.addEventListener("pause", this._musicListener , false);
+            cc.AudioEngine.isMusicPlaying = true;
         }
     },
 
@@ -237,6 +241,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             var au = this._soundList[this._playingMusic].audio;
             au.currentTime = 0;
             au.play();
+            au.addEventListener("pause", this._musicListener , false);
+            cc.AudioEngine.isMusicPlaying = true;
         }
     },
 
@@ -257,7 +263,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      *  }
      */
     isMusicPlaying:function () {
-        return this._isMusicPlaying;
+        return cc.AudioEngine.isMusicPlaying;
     },
 
     /**
@@ -331,6 +337,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 return path;
             }
             au = new Audio(keyname + "." + actExt);
+            au.volume = this._effectsVolume;
             reclaim.push(au);
         }
 
@@ -529,17 +536,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
     },
 
-    /**
-     *  Stop all music and sound effects
-     * @example
-     * //example
-     * cc.AudioEngine.getInstance().end();
-     */
-    end:function () {
-        this.stopMusic();
-        this.stopAllEffects();
-    },
-
     _getEffectList:function (elt) {
         if (this._effectList.hasOwnProperty(elt)) {
             return this._effectList[elt];
@@ -615,6 +611,8 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
 cc.AudioEngine._instance = null;
 
+cc.AudioEngine.isMusicPlaying = false;
+
 /**
  * Get the shared Engine object, it will new one when first time be called.
  * @return {cc.AudioEngine}
@@ -625,4 +623,19 @@ cc.AudioEngine.getInstance = function () {
         this._instance.init();
     }
     return this._instance;
+};
+
+
+/**
+ *  Stop all music and sound effects
+ * @example
+ * //example
+ * cc.AudioEngine.end();
+ */
+cc.AudioEngine.end = function () {
+    if (this._instance) {
+        this._instance.stopMusic();
+        this._instance.stopAllEffects();
+    }
+    this._instance = null;
 };

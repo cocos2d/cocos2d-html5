@@ -28,7 +28,6 @@
  * @constant
  * @type {Number}
  */
-
 cc.ACTION_TAG_INVALID = -1;
 
 /**

@@ -26,6 +26,7 @@
 
 var PROPERTY_POSITION = "position";
 var PROPERTY_CONTENTSIZE = "contentSize";
+var PROPERTY_SKEW = "skew";
 var PROPERTY_ANCHORPOINT = "anchorPoint";
 var PROPERTY_SCALE = "scale";
 var PROPERTY_ROTATION = "rotation";
@@ -55,6 +56,12 @@ function BlockCCControlData(selCCControlHandler, target, controlEvents) {
 }
 
 cc.NodeLoader = cc.Class.extend({
+    _customProperties:null,
+
+    ctor:function(){
+        this._customProperties = new cc._Dictionary();
+    },
+
     loadCCNode:function (parent, ccbReader) {
         return this._createCCNode(parent, ccbReader);
         //this.parseProperties(node, parent, ccbReader);
@@ -136,6 +143,15 @@ cc.NodeLoader = cc.Class.extend({
                     }
                     break;
                 }
+                case CCB_PROPTYPE_FLOATXY:
+                {
+                    var xy = this.parsePropTypeFloatXY(node, parent, ccbReader);
+                    if (setProp) {
+                        this.onHandlePropTypeFloatXY(node, parent, propertyName, xy, ccbReader);
+                    }
+                    break;
+                }
+
                 case CCB_PROPTYPE_FLOAT:
                 {
                     var f = this.parsePropTypeFloat(node, parent, ccbReader);
@@ -319,6 +335,10 @@ cc.NodeLoader = cc.Class.extend({
         }
     },
 
+    getCustomProperties:function(){
+        return this._customProperties;
+    },
+
     _createCCNode:function (parent, ccbReader) {
         return cc.Node.create();
     },
@@ -331,7 +351,7 @@ cc.NodeLoader = cc.Class.extend({
 
         var containerSize = ccbReader.getAnimationManager().getContainerSize(parent);
         var pt = cc.getAbsolutePosition(cc.p(x,y),type,containerSize,propertyName);
-        node.setPosition(cc.getAbsolutePosition(pt,type,containerSize,propertyName));
+        node.setPosition(cc.getAbsolutePosition(pt,type,containerSize,propertyName));   //different to -x    node.setPosition(pt);
 
         if(ccbReader.getAnimatedProperties().indexOf(propertyName) > -1){
             var baseValue = [x,y,type];
@@ -387,6 +407,7 @@ cc.NodeLoader = cc.Class.extend({
                 height *= resolutionScale;
                 break;
             default:
+                cc.log("Unknown CCB type.");
                 break;
         }
 
@@ -715,12 +736,13 @@ cc.NodeLoader = cc.Class.extend({
         var myCCBReader = new cc.BuilderReader(ccbReader);
 
         var size ;
-        var bytes = cc.FileUtils.getInstance().getFileData(path,"rb", size);
+        var bytes = cc.FileUtils.getInstance().getByteArrayFromFile(path,"rb", size);
 
         myCCBReader.initWithData(bytes,ccbReader.getOwner());
         myCCBReader.getAnimationManager().setRootContainerSize(parent.getContentSize());
         myCCBReader.setAnimationManagers(ccbReader.getAnimationManagers());
 
+        myCCBReader.getAnimationManager().setOwner(ccbReader.getOwner());
         var ccbFileNode = myCCBReader.readFileWithCleanUp(false);
 
         ccbReader.setAnimationManagers(myCCBReader.getAnimationManagers());
@@ -729,6 +751,12 @@ cc.NodeLoader = cc.Class.extend({
             myCCBReader.getAnimationManager().runAnimations(myCCBReader.getAnimationManager().getAutoPlaySequenceId(),0);
 
         return ccbFileNode;
+    },
+
+    parsePropTypeFloatXY:function(node, parent, ccbReader){
+        var x = ccbReader.readFloat();
+        var y = ccbReader.readFloat();
+        return [x,y];
     },
 
     onHandlePropTypePosition:function (node, parent, propertyName, position, ccbReader) {
@@ -767,9 +795,24 @@ cc.NodeLoader = cc.Class.extend({
             ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
         }
     },
-
+    onHandlePropTypeFloatXY: function (node, parent, propertyName, xy, ccbReader) {
+        if (propertyName === PROPERTY_SKEW) {
+            node.setSkewX(xy[0]);
+            node.setSkewY(xy[1]);
+        } else {
+            var nameX = propertyName + "X";
+            var nameY = propertyName + "Y";
+            if (!node[nameX] || !node[nameY])
+                ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+            //TODO throw an error when source code was confused
+            node[nameX](xy[0]);
+            node[nameY](xy[1]);
+        }
+    },
     onHandlePropTypeFloat:function (node, parent, propertyName, floatValue, ccbReader) {
-        ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+        //ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+        // It may be a custom property, add it to custom property dictionary.
+        this._customProperties.setObject(floatValue, propertyName);
     },
 
     onHandlePropTypeDegrees:function (node, parent, propertyName, degrees, ccbReader) {
@@ -840,7 +883,9 @@ cc.NodeLoader = cc.Class.extend({
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     },
     onHandlePropTypeString:function (node, parent, propertyName, strValue, ccbReader) {
-        ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+        //ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+        // It may be a custom property, add it to custom property dictionary.
+        this._customProperties.setObject(strValue, propertyName);
     },
     onHandlePropTypeText:function (node, parent, propertyName, textValue, ccbReader) {
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);

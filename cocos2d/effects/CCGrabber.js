@@ -24,59 +24,60 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var cc = cc = cc || {};
-
 /** FBO class that grabs the the contents of the screen */
 cc.Grabber = cc.Class.extend({
-    _fbo:0,
-    _oldFBO:0,
-    _glesVersion:null,
+    _fbo:null,
+    _oldFBO:null,
+    _oldClearColor:null,
+
+    _gl:null,
+
     ctor:function () {
+        this._gl = cc.renderContext;
+        this._oldClearColor = [0, 0, 0, 0];
         // generate FBO
-        //todo gl
-        //ccglGenFramebuffers(1, this._fbo);
+        this._fbo = this._gl.createFramebuffer();
     },
+
     grab:function (texture) {
-        //todo gl
-        /*glGetIntegerv(CC_GL_FRAMEBUFFER_BINDING, this._oldFBO);
+        this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
+        // bind
+        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
+        // associate texture with FBO
+        this._gl.framebufferTexture2D(this._gl.FRAMEBUFFER, this._gl.COLOR_ATTACHMENT0, this._gl.TEXTURE_2D, texture._webTextureObj, 0);
 
-         // bind
-         ccglBindFramebuffer(CC_GL_FRAMEBUFFER, this._fbo);
-
-         // associate texture with FBO
-         ccglFramebufferTexture2D(CC_GL_FRAMEBUFFER, CC_GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
-         texture.getName(), 0);
-
-         // check if it worked (probably worth doing :) )
-         var status = ccglCheckFramebufferStatus(CC_GL_FRAMEBUFFER);
-         if (status != CC_GL_FRAMEBUFFER_COMPLETE) {
-         cc.log("Frame Grabber: could not attach texture to frmaebuffer");
-         }
-
-         ccglBindFramebuffer(CC_GL_FRAMEBUFFER, this._oldFBO);*/
+        // check if it worked (probably worth doing :) )
+        var status = this._gl.checkFramebufferStatus(this._gl.FRAMEBUFFER);
+        if (status != this._gl.FRAMEBUFFER_COMPLETE)
+            cc.log("Frame Grabber: could not attach texture to frmaebuffer");
+        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
     },
+
     beforeRender:function (texture) {
-        //todo gl
-        /*glGetIntegerv(CC_GL_FRAMEBUFFER_BINDING, this._oldFBO);
-         ccglBindFramebuffer(CC_GL_FRAMEBUFFER, this._fbo);
+        this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
+        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
 
-         // BUG XXX: doesn't work with RGB565.
+        // save clear color
+        this._oldClearColor = this._gl.getParameter(this._gl.COLOR_CLEAR_VALUE);
 
-         */
-        /*glClearColor(0, 0, 0, 0);*/
-        /*
+        // BUG XXX: doesn't work with RGB565.
+        this._gl.clearColor(0, 0, 0, 0);
 
-         // BUG #631: To fix #631, uncomment the lines with #631
-         // Warning: But it CCGrabber won't work with 2 effects at the same time
-         glClearColor(0.0, 0.0, 0.0, 1.0);	// #631
+        // BUG #631: To fix #631, uncomment the lines with #631
+        // Warning: But it CCGrabber won't work with 2 effects at the same time
+        //  glClearColor(0.0f,0.0f,0.0f,1.0f);    // #631
 
-         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
 
-         glColorMask(true, true, true, false);	// #631*/
+        //  glColorMask(true, true, true, false);    // #631
     },
+
     afterRender:function (texture) {
-        //todo gl
-        /* ccglBindFramebuffer(CC_GL_FRAMEBUFFER, this._oldFBO);
-         glColorMask(true, true, true, true);	// #631*/
+        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
+        this._gl.colorMask(true, true, true, true);      // #631
+    },
+
+    destroy:function(){
+        this._gl.deleteFramebuffer(this._fbo);
     }
 });
