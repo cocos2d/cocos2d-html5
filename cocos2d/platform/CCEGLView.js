@@ -61,7 +61,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _maxTouches:5,
     _resolutionPolicy:cc.RESOLUTION_POLICY.UNKNOWN,
     _initialize:false,
-    _contentTranslateLeftTop:null,
 
     _captured:false,
     _wnd:null,
