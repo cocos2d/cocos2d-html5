@@ -562,8 +562,9 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            if(arg.length !== 0)
-                this.setString(strInfo);
+            this.setString(strInfo);
+            this._updateTexture();
+
             return true;
         }
         return false;
@@ -581,8 +582,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._string = text + "";
 
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -595,8 +595,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._hAlignment = alignment;
 
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -609,8 +608,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._vAlignment = verticalAlignment;
 
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -623,8 +621,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._dimensions = dim;
 
             // Force udpate
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -637,8 +634,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -647,12 +643,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {String} fontName
      */
     setFontName:function (fontName) {
-        if (this._fontName != fontName) {
-            this._fontName = new String(fontName);
+        if (this._fontName && this._fontName != fontName) {
+            this._fontName = fontName;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -841,6 +836,16 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         this.setTextureRect(cc.rect(0, 0, this._labelCanvas.width, this._labelCanvas.height));
         return true;
     },
+
+    _needUpdateTexture:false,
+    visit:function(){
+        if(this._needUpdateTexture && this._string.length > 0){
+            this._needUpdateTexture = false;
+            this._updateTexture();
+        }
+        this._super();
+    },
+
     /**
      * draw sprite to canvas
      * @param {WebGLRenderContext} ctx 3d context of canvas
