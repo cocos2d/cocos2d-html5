@@ -620,7 +620,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             this._shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_UCOLOR);
             this._colorLocation = this._renderContext.getUniformLocation(this._shader.getProgram(), "u_color");
             this._pointSizeLocation = this._renderContext.getUniformLocation(this._shader.getProgram(), "u_pointSize");
-            cc.CHECK_GL_ERROR_DEBUG();
+            //cc.CHECK_GL_ERROR_DEBUG();
 
             this._initialized = true;
         }
@@ -709,7 +709,6 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
         this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, this._pointsToTypeArray([origin, destination]), this._renderContext.STATIC_DRAW);
         this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
-        cc.CHECK_GL_ERROR_DEBUG();
 
         this._renderContext.drawArrays(this._renderContext.LINES, 0, 2);
         cc.INCREMENT_GL_DRAWS(1);

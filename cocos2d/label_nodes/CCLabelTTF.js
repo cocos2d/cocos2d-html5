@@ -161,7 +161,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @return {Boolean} return false on error
      */
     initWithString:function (arg) {
-        var strInfo = new String(arg[0]), fontName, fontSize, dimensions, hAlignment, vAlignment;
+        var strInfo = arg[0] + "", fontName, fontSize, dimensions, hAlignment, vAlignment;
         cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
         if (arg.length == 6) {
             fontName = arg[1];
@@ -176,8 +176,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
             hAlignment = arg[4];
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         } else {
-            fontName = arg[1];
-            fontSize = arg[2];
+            fontName = arg[1] || "Arial";
+            fontSize = arg[2] || 16;
             dimensions = cc.size(0, arg[2]);
             hAlignment = cc.TEXT_ALIGNMENT_LEFT;
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
@@ -532,7 +532,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @return {Boolean} return false on error
      */
     initWithString:function (arg) {
-        var strInfo = new String(arg[0]), fontName, fontSize, dimensions, hAlignment, vAlignment;
+        var strInfo = (arg[0] == undefined ) ? " " : arg[0] + "", fontName, fontSize, dimensions, hAlignment, vAlignment;
         cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
         if (arg.length == 6) {
             fontName = arg[1];
@@ -547,8 +547,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             hAlignment = arg[4];
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         } else {
-            fontName = arg[1];
-            fontSize = arg[2];
+            fontName = arg[1] || "Arial";
+            fontSize = arg[2] || 16;
             dimensions = cc.size(0, arg[2]);
             hAlignment = cc.TEXT_ALIGNMENT_LEFT;
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
@@ -562,7 +562,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            this.setString(strInfo);
+            if(arg.length !== 0)
+                this.setString(strInfo);
             return true;
         }
         return false;
