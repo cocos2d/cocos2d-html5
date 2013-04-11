@@ -64,7 +64,7 @@
         'support/CCTGAlib.js',
         'shaders/ccShaders.js',
         'shaders/ccShaderCache.js',
-        'shaders/CCGLProgram.js',
+        'shaders/ccGLProgram.js',
         'shaders/ccGLStateCache.js',
         'base_nodes/CCNode.js',
         'base_nodes/CCAtlasNode.js',
