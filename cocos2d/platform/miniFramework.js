@@ -60,7 +60,7 @@ cc.Browser = {};
     cc.Browser.type = (cc.Browser.UA[1] == 'version') ? cc.Browser.UA[3] : cc.Browser.UA[1];
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
 
-    var c = document.ccConfig;
+    var c = document["ccConfig"];
     // check supportWebGL item
     cc._userRenderMode = parseInt(c["renderMode"]) || 0;
 

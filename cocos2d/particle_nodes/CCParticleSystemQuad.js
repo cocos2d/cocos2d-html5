@@ -479,7 +479,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
             gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-            cc.CHECK_GL_ERROR_DEBUG();
+            //cc.CHECK_GL_ERROR_DEBUG();
         }
     },
 
@@ -658,7 +658,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         //}
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
         cc.INCREMENT_GL_DRAWS(1);
     },
 
@@ -819,7 +819,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     _allocMemory:function () {

@@ -161,7 +161,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @return {Boolean} return false on error
      */
     initWithString:function (arg) {
-        var strInfo = new String(arg[0]), fontName, fontSize, dimensions, hAlignment, vAlignment;
+        var strInfo = arg[0] + "", fontName, fontSize, dimensions, hAlignment, vAlignment;
         cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
         if (arg.length == 6) {
             fontName = arg[1];
@@ -176,8 +176,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
             hAlignment = arg[4];
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         } else {
-            fontName = arg[1];
-            fontSize = arg[2];
+            fontName = arg[1] || "Arial";
+            fontSize = arg[2] || 16;
             dimensions = cc.size(0, arg[2]);
             hAlignment = cc.TEXT_ALIGNMENT_LEFT;
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
@@ -532,7 +532,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @return {Boolean} return false on error
      */
     initWithString:function (arg) {
-        var strInfo = new String(arg[0]), fontName, fontSize, dimensions, hAlignment, vAlignment;
+        var strInfo = (arg[0] == undefined ) ? " " : arg[0] + "", fontName, fontSize, dimensions, hAlignment, vAlignment;
         cc.Assert(strInfo != null, "cc.LabelTTF.initWithString() label is null");
         if (arg.length == 6) {
             fontName = arg[1];
@@ -547,8 +547,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             hAlignment = arg[4];
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
         } else {
-            fontName = arg[1];
-            fontSize = arg[2];
+            fontName = arg[1] || "Arial";
+            fontSize = arg[2] || 16;
             dimensions = cc.size(0, arg[2]);
             hAlignment = cc.TEXT_ALIGNMENT_LEFT;
             vAlignment = cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM;
@@ -563,6 +563,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             this.setString(strInfo);
+            this._updateTexture();
+
             return true;
         }
         return false;
@@ -580,8 +582,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._string = text + "";
 
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -594,8 +595,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._hAlignment = alignment;
 
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -608,8 +608,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._vAlignment = verticalAlignment;
 
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -622,8 +621,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._dimensions = dim;
 
             // Force udpate
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -636,8 +634,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -646,12 +643,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {String} fontName
      */
     setFontName:function (fontName) {
-        if (this._fontName != fontName) {
-            this._fontName = new String(fontName);
+        if (this._fontName && this._fontName != fontName) {
+            this._fontName = fontName;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
             // Force update
-            if (this._string.length > 0)
-                this._updateTexture();
+            this._needUpdateTexture = true;
         }
     },
 
@@ -840,6 +836,16 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         this.setTextureRect(cc.rect(0, 0, this._labelCanvas.width, this._labelCanvas.height));
         return true;
     },
+
+    _needUpdateTexture:false,
+    visit:function(){
+        if(this._needUpdateTexture && this._string.length > 0){
+            this._needUpdateTexture = false;
+            this._updateTexture();
+        }
+        this._super();
+    },
+
     /**
      * draw sprite to canvas
      * @param {WebGLRenderContext} ctx 3d context of canvas
