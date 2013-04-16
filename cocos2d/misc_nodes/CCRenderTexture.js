@@ -305,7 +305,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if (cc.Configuration.getInstance().checkForGLExtension("GL_QCOM")) {
             // -- bind a temporary texture so we can clear the render buffer without losing our texture
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._textureCopy._webTextureObj, 0);
-            cc.CHECK_GL_ERROR_DEBUG();
+            //cc.CHECK_GL_ERROR_DEBUG();
             gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
         }

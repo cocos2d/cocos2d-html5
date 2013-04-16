@@ -241,7 +241,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
      * @param {cc.Point} pos
      * @return {cc.Sprite}
      */
-    getTileAt:function (pos) {
+    getTileAt: function (pos) {
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
 
@@ -249,25 +249,26 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         var gid = this.getTileGIDAt(pos);
 
         // if GID == 0, then no tile is present
-        if (gid != null) {
-            var z = 0 | (pos.x + pos.y * this._layerSize.width);
-            tile = this.getChildByTag(z);
-            // tile not created yet. create it
-            if (!tile) {
-                var rect = this._tileSet.rectForGID(gid);
-                rect = cc.RECT_PIXELS_TO_POINTS(rect);
+        if (gid === 0)
+            return tile;
 
-                tile = new cc.Sprite();
-                tile.initWithTexture(this.getTexture(), rect);
-                tile.setBatchNode(this);
-                tile.setPosition(this.getPositionAt(pos));
-                tile.setVertexZ(this._vertexZForPos(pos));
-                tile.setAnchorPoint(cc.PointZero());
-                tile.setOpacity(this._opacity);
+        var z = 0 | (pos.x + pos.y * this._layerSize.width);
+        tile = this.getChildByTag(z);
+        // tile not created yet. create it
+        if (!tile) {
+            var rect = this._tileSet.rectForGID(gid);
+            rect = cc.RECT_PIXELS_TO_POINTS(rect);
 
-                var indexForZ = this._atlasIndexForExistantZ(z);
-                this.addSpriteWithoutQuad(tile, indexForZ, z);
-            }
+            tile = new cc.Sprite();
+            tile.initWithTexture(this.getTexture(), rect);
+            tile.setBatchNode(this);
+            tile.setPosition(this.getPositionAt(pos));
+            tile.setVertexZ(this._vertexZForPos(pos));
+            tile.setAnchorPoint(cc.PointZero());
+            tile.setOpacity(this._opacity);
+
+            var indexForZ = this._atlasIndexForExistantZ(z);
+            this.addSpriteWithoutQuad(tile, indexForZ, z);
         }
         return tile;
     },
@@ -362,11 +363,10 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
         cc.Assert(pos.x < this._layerSize.width && pos.y < this._layerSize.height && pos.x >= 0 && pos.y >= 0, "TMXLayer: invalid position");
         cc.Assert(this._tiles && this._atlasIndexArray, "TMXLayer: the tiles map has been released");
 
-        if (cc.renderContextType === cc.CANVAS)
-            this._setNodeDirtyForCache();
-
         var gid = this.getTileGIDAt(pos);
-        if (gid != null) {
+        if (gid !== 0) {
+            if (cc.renderContextType === cc.CANVAS)
+                this._setNodeDirtyForCache();
             var z = 0 | (pos.x + pos.y * this._layerSize.width);
             var atlasIndex = this._atlasIndexForExistantZ(z);
             // remove tile from GID map
@@ -379,7 +379,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
             var sprite = this.getChildByTag(z);
 
             if (sprite)
-                this.removeChild(sprite, true);
+                cc.SpriteBatchNode.prototype.removeChild.call(this,sprite,true);           //this.removeChild(sprite, true);
             else {
                 if(cc.renderContextType === cc.WEBGL)
                     this._textureAtlas.removeQuadAtIndex(atlasIndex);
@@ -461,7 +461,7 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
                 var gid = this._tiles[pos];
 
                 // XXX: gid == 0 -. empty tile
-                if (gid != 0) {
+                if (gid !== 0) {
                     this._appendTileForGID(gid, cc.p(x, y));
                     // Optimization: update min and max GID rendered by the layer
                     this._minGID = Math.min(gid, this._minGID);

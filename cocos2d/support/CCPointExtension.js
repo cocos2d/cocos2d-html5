@@ -447,7 +447,7 @@ cc.pIntersectPoint = function (A, B, C, D) {
  * @return {Boolean} the true if both ccp are same
  */
 cc.pSameAs = function (A, B) {
-    if (A.x && B.x) {
+    if ((A != null) && (B != null)) {
         return (A.x == B.x && A.y == B.y);
     }
     return false;

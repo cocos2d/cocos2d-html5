@@ -662,7 +662,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         else
             cc.glBlendFunc(cc.renderContext.ONE, cc.renderContext.ZERO);
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**
@@ -696,7 +696,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         } else {
             cc.renderContext.disable(cc.renderContext.DEPTH_TEST);
         }
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**

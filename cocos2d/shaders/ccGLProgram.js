@@ -310,7 +310,7 @@ cc.GLProgram = cc.Class.extend({
      */
     initWithVertexShaderByteArray: function (vertShaderStr, fragShaderStr) {
         this._programObj = cc.renderContext.createProgram();
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
 
         this._vertShader = null;
         this._fragShader = null;
