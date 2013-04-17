@@ -1377,46 +1377,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         }
 
                         var imageFormat = cc.getImageFormatByData(buffer);
-                        //if(cc.renderContextType === cc.CANVAS){
-                        if(imageFormat === cc.FMT_PNG){
-                            cc.log("Image format:PNG");
-                            var newImageData = cc.encodeToBase64(buffer);
-                            if (!newImageData)
-                                return false;
-
-                            var img = new Image();
-                            img.src = "data:image/png;base64," + newImageData;
-
-                            // Manually decode the base 64 image size since the browser will only do so asynchronously
-                            var w = (buffer[16] << 24) + (buffer[17] << 16) + (buffer[18] << 8) + (buffer[19]),
-                                h = (buffer[20] << 24) + (buffer[21] << 16) + (buffer[22] << 8) + (buffer[23]);
-
-                            // Patch this on so we can correctly create the draw rect later on
-                            img.textureWidth = w;
-                            img.textureHeight = h;
-
-                            cc.TextureCache.getInstance().cacheImage(fullpath, img);
-                            this._texture = cc.TextureCache.getInstance().textureForKey(textureName);
-
-                            cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
-                            this.setTexture(this._texture);
-
-                        } else {
-                            if(imageFormat === cc.FMT_TIFF)
-                                cc.log("Image format:TIFF");
-                            else
-                                cc.log("Image format:UNKNOWN");
-
-                            //this.setTexture(cc.TextureCache.getInstance().textureForKey(s_stars1));
-
-                            /*var uiImage = new cc.Image();
-                            var isOK = uiImage.initWithImageData(buffer,buffer.length);
-                            if(!isOK){
-                                cc.log("cc.ParticleSystem: error init image with Data");
-                                return false;
-                            }
-                            this.setTexture(cc.TextureCache.getInstance().addUIImage(uiImage,fullpath));*/
+                        if(imageFormat !== cc.FMT_TIFF && imageFormat !== cc.FMT_PNG){
+                            cc.log("cc.ParticleSystem: unknown image format with Data");
+                            return false;
                         }
+
+                        var canvasObj = document.createElement("canvas");
+                        if(imageFormat === cc.FMT_PNG){
+                            var myPngObj = new cc.PngReader(buffer);
+                            myPngObj.render(canvasObj);
+                        } else {
+                            var myTIFFObj = new TIFFParser();
+                            myTIFFObj.parseTIFF(buffer,canvasObj);
+                        }
+                        cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
+                        var addTexture = cc.TextureCache.getInstance().textureForKey(fullpath);
+                        cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
+                        this.setTexture(addTexture);
                     }
                 }
 

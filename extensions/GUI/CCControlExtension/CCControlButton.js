@@ -47,6 +47,7 @@ cc.ControlButton = cc.Control.extend({
     _marginH:0,
 
     ctor:function () {
+        this._super();
         this._preferredSize = new cc.Size(0, 0);
         this._labelAnchorPoint = new cc.Point(0, 0);
 
