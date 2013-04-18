@@ -1,6 +1,8 @@
 /****************************************************************************
- Copyright (c) 2010-2013 cocos2d-x.org
+ Copyright (c) 2011 Gordon P. Hemsley
+ http://gphemsley.org/
 
+ Copyright (c) 2010-2013 cocos2d-x.org
  http://www.cocos2d-x.org
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
