@@ -62,6 +62,8 @@
         'support/CCVertex.js',
         'support/TransformUtils.js',
         'support/CCTGAlib.js',
+        'support/PNGReader.js',
+        'support/TIFFReader.js',
         'shaders/ccShaders.js',
         'shaders/ccShaderCache.js',
         'shaders/CCGLProgram.js',

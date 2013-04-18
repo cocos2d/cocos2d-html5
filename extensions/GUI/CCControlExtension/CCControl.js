@@ -142,6 +142,7 @@ cc.Control = cc.Layer.extend({
     },
 
     ctor:function () {
+        this._super();
         this._dispatchTable = {};
         this._color = cc.white();
     },
