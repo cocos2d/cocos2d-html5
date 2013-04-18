@@ -24,7 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.PngReader = cc.Class.extend({
+cc.PNGReader = cc.Class.extend({
     ctor:function(data){
         var chunkSize, colors, delayDen, delayNum, frame, i, index, key, section, short, text, _i, _j, _ref;
         this.data = data;

@@ -1369,7 +1369,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         this.setTexture(tex);
                     } else {
-                        //TODO need implement parse image data for cc.Image
                         buffer = cc.unzipBase64AsArray(textureData, 1);
                         if (!buffer) {
                             cc.log("cc.ParticleSystem: error decoding or ungzipping textureImageData");
@@ -1384,10 +1383,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
                         var canvasObj = document.createElement("canvas");
                         if(imageFormat === cc.FMT_PNG){
-                            var myPngObj = new cc.PngReader(buffer);
+                            var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
                         } else {
-                            var myTIFFObj = new TIFFParser();
+                            var myTIFFObj = cc.TIFFReader.getInstance();
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
                         cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
@@ -1828,11 +1827,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.create = function (plistFile) {
-    // return cc.ParticleSystemQuad.create(plistFile);
-    var particle = new cc.ParticleSystem();
+    return cc.ParticleSystemQuad.create(plistFile);
+    /*var particle = new cc.ParticleSystem();
     if (particle && particle.initWithFile(plistFile))
         return particle;
-    return null;
+    return null;*/
 };
 
 /**
@@ -1841,12 +1840,12 @@ cc.ParticleSystem.create = function (plistFile) {
  * @return {cc.ParticleSystem}
  */
 cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    //return cc.ParticleSystemQuad.create(number_of_particles);
-    //emitter.initWithTotalParticles(number_of_particles);
+    return cc.ParticleSystemQuad.create(number_of_particles);
+    /*//emitter.initWithTotalParticles(number_of_particles);
     var particle = new cc.ParticleSystem();
     if (particle && particle.initWithTotalParticles(number_of_particles))
         return particle;
-    return null;
+    return null;*/
 };
 
 // Different modes
