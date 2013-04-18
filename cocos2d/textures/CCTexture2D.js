@@ -626,11 +626,12 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @param texParams
      */
     setTexParameters:function (texParams) {
+        var gl = cc.renderContext;
+
         cc.Assert((this._pixelsWide == cc.NextPOT(this._pixelsWide) && this._pixelsHigh == cc.NextPOT(this._pixelsHigh)) ||
             (texParams.wrapS == gl.CLAMP_TO_EDGE && texParams.wrapT == gl.CLAMP_TO_EDGE),
             "WebGLRenderingContext.CLAMP_TO_EDGE should be used in NPOT textures");
 
-        var gl = cc.renderContext;
         cc.glBindTexture2D(this);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, texParams.minFilter);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, texParams.magFilter);
