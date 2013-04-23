@@ -579,29 +579,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             return;
         }
 
-        // check for OGG/Vorbis
-        if (this._capabilities.ogg) {
-            this._supportedFormat.push("ogg");
-        }
-
-        // check for MP3
-        if (this._capabilities.mp3) {
-            this._supportedFormat.push("mp3");
-        }
-
-        // check for WAV
-        if (this._capabilities.wav) {
-            this._supportedFormat.push("wav");
-        }
-
-        // check for MP4
-        if (this._capabilities.mp4) {
-            this._supportedFormat.push("mp4");
-        }
-
-        // check for M4A
-        if (this._capabilities.m4a) {
-            this._supportedFormat.push("m4a");
+        var formats = ['ogg', 'mp3', 'wav', 'mp4', 'm4a'];
+        for (var idx in formats) {
+            var name = formats[idx];
+            if (this._capabilities[name]) {
+                this._supportedFormat.push(name);
+            }
         }
     }
 });
