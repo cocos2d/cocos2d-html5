@@ -61,22 +61,19 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         // init audio
         var au = document.createElement('audio');
         if (au.canPlayType) {
-            this._capabilities.mp3 = ("no" != au.canPlayType("audio/mpeg"))
-                && ("" != au.canPlayType("audio/mpeg"));
+            /**
+             * helper function for checking if audio element can play a particular type
+             */
+            function _checkCanPlay(typeStr) {
+                var result = au.canPlayType(typeStr);
+                return result != "no" && result != "";
+            }
 
-            this._capabilities.mp4 = ("no" != au.canPlayType("audio/mp4"))
-                && ("" != au.canPlayType("audio/mp4"));
-
-            this._capabilities.m4a = (("no" != au.canPlayType("audio/x-m4a"))
-                && ("" != au.canPlayType("audio/x-m4a")))
-                || (("no" != au.canPlayType("audio/aac"))
-                && ("" != au.canPlayType("audio/aac")));
-
-            this._capabilities.ogg = ("no" != au.canPlayType('audio/ogg; codecs="vorbis"'))
-                && ("" != au.canPlayType('audio/ogg; codecs="vorbis"'));
-
-            this._capabilities.wav = ("no" != au.canPlayType('audio/wav; codecs="1"'))
-                && ("" != au.canPlayType('audio/wav; codecs="1"'));
+            this._capabilities.mp3 = _checkCanPlay("audio/mpeg");
+            this._capabilities.mp4 = _checkCanPlay("audio/mp4");
+            this._capabilities.m4a = _checkCanPlay("audio/x-m4a") || _checkCanPlay("audio/aac");
+            this._capabilities.ogg = _checkCanPlay('audio/ogg; codecs="vorbis"');
+            this._capabilities.wav = _checkCanPlay('audio/wav; codecs="1"');
 
             // enable sound if any of the audio format is supported
             this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
