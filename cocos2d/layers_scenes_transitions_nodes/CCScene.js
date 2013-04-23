@@ -48,6 +48,7 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
         this.setContentSize(cc.Director.getInstance().getWinSize());
     }
 });
+
 /**
  * creates a scene
  * @return {cc.Scene}

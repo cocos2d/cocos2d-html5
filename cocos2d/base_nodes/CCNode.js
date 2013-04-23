@@ -852,7 +852,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
-            if (cleanup === null)
+            if (cleanup == null)
                 cleanup = true;
             this._parent.removeChild(this, cleanup);
         }
@@ -882,7 +882,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         if (this._children == null)
             return;
 
-        if (cleanup === null)
+        if (cleanup == null)
             cleanup = true;
         if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
@@ -925,7 +925,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
-            if (cleanup === null)
+            if (cleanup == null)
                 cleanup = true;
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];
@@ -2462,7 +2462,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
-            if (cleanup === null)
+            if (cleanup == null)
                 cleanup = true;
             this._parent.removeChild(this, cleanup);
         }
@@ -2492,7 +2492,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         if (this._children == null)
             return;
 
-        if (cleanup === null)
+        if (cleanup == null)
             cleanup = true;
         if (this._children.indexOf(child) > -1) {
             this._detachChild(child, cleanup);
@@ -2535,7 +2535,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
         if (this._children != null) {
-            if (cleanup === null)
+            if (cleanup == null)
                 cleanup = true;
             for (var i = 0; i < this._children.length; i++) {
                 var node = this._children[i];

@@ -1097,9 +1097,9 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      */
     addChild:function (child, zOrder, tag) {
         cc.Assert(child != null, "Argument must be non-NULL");
-        if (zOrder === null)
+        if (zOrder == null)
             zOrder = child._zOrder;
-        if (tag === null)
+        if (tag == null)
             tag = child._tag;
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
@@ -2381,9 +2381,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      */
     addChild:function (child, zOrder, tag) {
         cc.Assert(child != null, "Argument must be non-NULL");
-        if (zOrder === null)
+        if (zOrder == null)
             zOrder = child._zOrder;
-        if (tag === null)
+        if (tag == null)
             tag = child._tag;
 
         if (this._batchNode) {
