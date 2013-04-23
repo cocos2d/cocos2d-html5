@@ -99,7 +99,7 @@
                 <file name="keyboard_dispatcher/CCKeyboardDispatcher.js"/>
                 <file name="text_input_node/CCIMEDispatcher.js"/>
                 <file name="text_input_node/CCTextFieldTTF.js"/>
-                <file name="draw_nodes/CCDrawNode.js" />
+                <file name="Draw_Nodes/CCDrawNode.js" />
                 <file name="physics_nodes/CCPhysicsDebugNode.js" />
                 <file name="physics_nodes/CCPhysicsSprite.js" />
                 <file name="CCConfiguration.js"/>
