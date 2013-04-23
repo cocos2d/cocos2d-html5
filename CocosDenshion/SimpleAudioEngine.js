@@ -67,7 +67,11 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
 
 
-cc.SFX = function (audio, ext) {
+/**
+ * the entity stored in soundList and effectList, containing the audio element and the extension name.
+ * used in cc.SimpleAudioEngine
+ */
+cc.SimpleSFX = function (audio, ext) {
     this.audio = audio;
     this.ext = ext || ".ogg";
 };
@@ -149,7 +153,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             var keyname = this._getPathWithoutExt(path);
             if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
                 if(this._canPlay){
-                    var sfxCache = new cc.SFX();
+                    var sfxCache = new cc.SimpleSFX();
                     sfxCache.ext = extName;
                     sfxCache.audio = new Audio(path);
                     sfxCache.audio.preload = 'auto';
@@ -200,7 +204,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             au = this._soundList[this._playingMusic].audio;
         }
         else {
-            var sfxCache = new cc.SFX();
+            var sfxCache = new cc.SimpleSFX();
             sfxCache.ext = extName;
             au = sfxCache.audio = new Audio(path);
             sfxCache.audio.preload = 'auto';
