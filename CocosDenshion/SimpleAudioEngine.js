@@ -646,55 +646,56 @@ cc.WebAudioSFX = function (buffer, ext, srcNode, gainNode) {
  * @extends   cc.AudioEngine
  */
 cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
+    // the Web Audio Context
+    _ctx: null,
+    // may be: mp3, ogg, wav, mp4, m4a
     _supportedFormat: [],
+    // if sound is not enabled, this engine's init() will return false
     _soundEnable: false,
+    // TODO do I really know what this is?
+    _canPlay: true,
+
     _effectList: {},
     _soundList: {},
     _playingMusic: null,
     _effectsVolume: 1,
     _maxAudioInstance: 10,
-    _canPlay: true,
-    _capabilities: {
-        mp3:false,
-        ogg:false,
-        wav:false,
-        mp4:false,
-        m4a:false
-    },
-    _ctx: null,     // the Web Audio Context
 
     /**
      * Constructor
      */
-    ctor: function () {
-        // enable sound if any of the audio format is supported
-        this._checkCanPlay(this._capabilities);
+    ctor: function() {},
 
-        this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
-            || this._capabilities.m4a || this._capabilities.ogg
-            || this._capabilities.wav;
+    /**
+     * Initialization
+     * @return {Boolean}
+     */
+    init: function() {
+        /*
+         * browser has proved to support Web Audio API in miniFramework.js
+         * only in that case will cc.WebAudioEngine be chosen to run, thus the following is guaranteed to work
+         */
+        this._ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
 
-        // TODO check if the latest code still need these lines
+        // gather capabilities information, enable sound if any of the audio format is supported
+        var capabilities = {};
+        this._checkCanPlay(capabilities);
+
+        var formats = ['ogg', 'mp3', 'wav', 'mp4', 'm4a'];
+        for (var idx in formats) {
+            var name = formats[idx];
+            if (capabilities[name]) {
+                this._supportedFormat.push(name);
+            }
+        }
+        this._soundEnable = this._supportedFormat.length > 0;
+
+        // TODO check if the following this._canPlay is still required
         var ua = navigator.userAgent;
         if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
             this._canPlay = false;
         }
-    },
 
-    /**
-     * Initialize sound type
-     * @return {Boolean}
-     */
-    init: function () {
-        if (this._soundEnable) {
-            /*
-             * browser has proved to support Web Audio API in miniFramework.js
-             * only in that case will cc.WebAudioEngine be chosen to run, thus it is guaranteed to work
-             */
-            this._ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
-
-            this._getSupportedAudioFormat();
-        }
         return this._soundEnable;
     },
 
@@ -1153,21 +1154,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             }
         }
         return false;
-    },
-
-    _getSupportedAudioFormat: function () {
-        // check for sound support by the browser
-        if (!this._soundEnable) {
-            return;
-        }
-
-        var formats = ['ogg', 'mp3', 'wav', 'mp4', 'm4a'];
-        for (var idx in formats) {
-            var name = formats[idx];
-            if (this._capabilities[name]) {
-                this._supportedFormat.push(name);
-            }
-        }
     }
 });
 
