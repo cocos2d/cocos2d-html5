@@ -35,11 +35,39 @@ var cc = cc || {};
 cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
+     * Check each type to see if it can be played by current browser
+     * @param capabilities: the results are filled into this dict
+     * @protected
+     */
+    _checkCanPlay: function(capabilities) {
+        var au = document.createElement('audio');
+        if (au.canPlayType) {
+            // <audio> tag is supported, go on
+            function _check(typeStr) {
+                var result = au.canPlayType(typeStr);
+                return result != "no" && result != "";
+            }
+
+            capabilities.mp3 = _check("audio/mpeg");
+            capabilities.mp4 = _check("audio/mp4");
+            capabilities.m4a = _check("audio/x-m4a") || _check("audio/aac");
+            capabilities.ogg = _check('audio/ogg; codecs="vorbis"');
+            capabilities.wav = _check('audio/wav; codecs="1"');
+        } else {
+            // <audio> tag is not supported, nothing is supported
+            var formats = ['mp3', 'mp4', 'm4a', 'ogg', 'wav'];
+            for (var idx in formats) {
+                capabilities[formats[idx]] = false;
+            }
+        }
+    },
+
+    /**
      * Helper function for cutting out the extension from the path
      * @param {string} fullpath
      * @protected
      */
-    _getPathWithoutExt:function (fullpath) {
+    _getPathWithoutExt: function (fullpath) {
         if (typeof(fullpath) != "string") {
             return;
         }
@@ -55,7 +83,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * @param {string} fullpath
      * @protected
      */
-    _getExtFromFullPath:function (fullpath) {
+    _getExtFromFullPath: function (fullpath) {
         var startPos = fullpath.lastIndexOf(".");
         if (startPos != -1) {
             return fullpath.substring(startPos + 1, fullpath.length);
@@ -103,28 +131,13 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      */
     ctor:function () {
         this._supportedFormat = [];
-        // init audio
-        var au = document.createElement('audio');
-        if (au.canPlayType) {
-            /**
-             * helper function for checking if audio element can play a particular type
-             */
-            function _checkCanPlay(typeStr) {
-                var result = au.canPlayType(typeStr);
-                return result != "no" && result != "";
-            }
 
-            this._capabilities.mp3 = _checkCanPlay("audio/mpeg");
-            this._capabilities.mp4 = _checkCanPlay("audio/mp4");
-            this._capabilities.m4a = _checkCanPlay("audio/x-m4a") || _checkCanPlay("audio/aac");
-            this._capabilities.ogg = _checkCanPlay('audio/ogg; codecs="vorbis"');
-            this._capabilities.wav = _checkCanPlay('audio/wav; codecs="1"');
+        this._checkCanPlay(this._capabilities);
 
-            // enable sound if any of the audio format is supported
-            this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
-                || this._capabilities.m4a || this._capabilities.ogg
-                || this._capabilities.wav;
-        }
+        // enable sound if any of the audio format is supported
+        this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
+            || this._capabilities.m4a || this._capabilities.ogg
+            || this._capabilities.wav;
 
         var ua = navigator.userAgent;
         if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
@@ -616,13 +629,15 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 });
 
 
+
 /**
  * the entity stored in soundList and effectList, used in cc.WebAudioEngine
  */
-cc.WebAudioSFX = function (audio, ext) {
-    // TODO change attributes here
-    this.audio = audio;
-    this.ext = ext || ".ogg";
+cc.WebAudioSFX = function (buffer, ext, srcNode, gainNode) {
+    this.buffer = buffer;
+    this.ext = ext;
+    this.srcNode = srcNode;
+    this.gainNode = gainNode;
 };
 
 /**
@@ -631,50 +646,35 @@ cc.WebAudioSFX = function (audio, ext) {
  * @extends   cc.AudioEngine
  */
 cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
-    _supportedFormat:[],
-    _soundEnable:false,
-    _effectList:{},
-    _soundList:{},
-    _playingMusic:null,
-    _effectsVolume:1,
-    _maxAudioInstance:10,
-    _canPlay:true,
-    _capabilities:{
+    _supportedFormat: [],
+    _soundEnable: false,
+    _effectList: {},
+    _soundList: {},
+    _playingMusic: null,
+    _effectsVolume: 1,
+    _maxAudioInstance: 10,
+    _canPlay: true,
+    _capabilities: {
         mp3:false,
         ogg:false,
         wav:false,
         mp4:false,
         m4a:false
     },
+    _ctx: null,     // the Web Audio Context
 
     /**
      * Constructor
      */
-    ctor:function () {
-        this._supportedFormat = [];
-        // init audio
-        var au = document.createElement('audio');
-        if (au.canPlayType) {
-            /**
-             * helper function for checking if audio element can play a particular type
-             */
-            function _checkCanPlay(typeStr) {
-                var result = au.canPlayType(typeStr);
-                return result != "no" && result != "";
-            }
+    ctor: function () {
+        // enable sound if any of the audio format is supported
+        this._checkCanPlay(this._capabilities);
 
-            this._capabilities.mp3 = _checkCanPlay("audio/mpeg");
-            this._capabilities.mp4 = _checkCanPlay("audio/mp4");
-            this._capabilities.m4a = _checkCanPlay("audio/x-m4a") || _checkCanPlay("audio/aac");
-            this._capabilities.ogg = _checkCanPlay('audio/ogg; codecs="vorbis"');
-            this._capabilities.wav = _checkCanPlay('audio/wav; codecs="1"');
+        this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
+            || this._capabilities.m4a || this._capabilities.ogg
+            || this._capabilities.wav;
 
-            // enable sound if any of the audio format is supported
-            this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
-                || this._capabilities.m4a || this._capabilities.ogg
-                || this._capabilities.wav;
-        }
-
+        // TODO check if the latest code still need these lines
         var ua = navigator.userAgent;
         if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
             this._canPlay = false;
@@ -685,9 +685,16 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * Initialize sound type
      * @return {Boolean}
      */
-    init:function () {
-        // detect the prefered audio format
-        this._getSupportedAudioFormat();
+    init: function () {
+        if (this._soundEnable) {
+            /*
+             * browser has proved to support Web Audio API in miniFramework.js
+             * only in that case will cc.WebAudioEngine be chosen to run, thus it is guaranteed to work
+             */
+            this._ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+
+            this._getSupportedAudioFormat();
+        }
         return this._soundEnable;
     },
 
@@ -696,7 +703,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the music file with filename extension.
      */
-    preloadSound:function (path) {
+    preloadSound: function (path) {
         if (this._soundEnable) {
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
@@ -739,7 +746,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().playMusic(path, false);
      */
-    playMusic:function (path, loop) {
+    playMusic: function (path, loop) {
         var keyname = this._getPathWithoutExt(path);
         var extName = this._getExtFromFullPath(path);
         var au;
@@ -768,7 +775,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         cc.AudioEngine.isMusicPlaying = true;
     },
 
-    _musicListener:function(e){
+    _musicListener: function(e){
         cc.AudioEngine.isMusicPlaying = false;
         this.removeEventListener('pause', arguments.callee, false);
     },
@@ -780,7 +787,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().stopMusic();
      */
-    stopMusic:function (releaseData) {
+    stopMusic: function (releaseData) {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
             au.pause();
@@ -798,7 +805,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().pauseMusic();
      */
-    pauseMusic:function () {
+    pauseMusic: function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
             au.pause();
@@ -812,7 +819,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().resumeMusic();
      */
-    resumeMusic:function () {
+    resumeMusic: function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
             au.play();
@@ -827,7 +834,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().rewindMusic();
      */
-    rewindMusic:function () {
+    rewindMusic: function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var au = this._soundList[this._playingMusic].audio;
             au.currentTime = 0;
@@ -837,7 +844,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
     },
 
-    willPlayMusic:function () {
+    willPlayMusic: function () {
         return false;
     },
 
@@ -853,7 +860,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      *      cc.log("music is not playing");
      *  }
      */
-    isMusicPlaying:function () {
+    isMusicPlaying: function () {
         return cc.AudioEngine.isMusicPlaying;
     },
 
@@ -864,7 +871,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * var volume = cc.AudioEngine.getInstance().getMusicVolume();
      */
-    getMusicVolume:function () {
+    getMusicVolume: function () {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             return this._soundList[this._playingMusic].audio.volume;
         }
@@ -878,7 +885,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().setMusicVolume(0.5);
      */
-    setMusicVolume:function (volume) {
+    setMusicVolume: function (volume) {
         if (this._soundList.hasOwnProperty(this._playingMusic)) {
             var music = this._soundList[this._playingMusic].audio;
             if (volume > 1) {
@@ -901,7 +908,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * var soundId = cc.AudioEngine.getInstance().playEffect(path);
      */
-    playEffect:function (path, loop) {
+    playEffect: function (path, loop) {
         var keyname = this._getPathWithoutExt(path), actExt;
         if (this._soundList.hasOwnProperty(keyname)) {
             actExt = this._soundList[keyname].ext;
@@ -947,7 +954,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * var effectVolume = cc.AudioEngine.getInstance().getEffectsVolume();
      */
-    getEffectsVolume:function () {
+    getEffectsVolume: function () {
         return this._effectsVolume;
     },
 
@@ -958,7 +965,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().setEffectsVolume(0.5);
      */
-    setEffectsVolume:function (volume) {
+    setEffectsVolume: function (volume) {
         if (volume > 1) {
             this._effectsVolume = 1;
         }
@@ -988,7 +995,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().pauseEffect(path);
      */
-    pauseEffect:function (path) {
+    pauseEffect: function (path) {
         if (!path) return;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
@@ -1008,7 +1015,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().pauseAllEffects();
      */
-    pauseAllEffects:function () {
+    pauseAllEffects: function () {
         var tmpArr, au;
         for (var i in this._effectList) {
             tmpArr = this._effectList[i];
@@ -1028,7 +1035,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().resumeEffect(path);
      */
-    resumeEffect:function (path) {
+    resumeEffect: function (path) {
         if (!path) return;
         var tmpArr, au;
         var keyname = this._getPathWithoutExt(path);
@@ -1051,7 +1058,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().resumeAllEffects();
      */
-    resumeAllEffects:function () {
+    resumeAllEffects: function () {
         var tmpArr, au;
         for (var i in this._effectList) {
             tmpArr = this._effectList[i];
@@ -1073,7 +1080,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().stopEffect(path);
      */
-    stopEffect:function (path) {
+    stopEffect: function (path) {
         if (!path) return;
         var tmpArr, au;
         var keyname = this._getPathWithoutExt(path);
@@ -1097,7 +1104,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().stopAllEffects();
      */
-    stopAllEffects:function () {
+    stopAllEffects: function () {
         var tmpArr, au;
         for (var i in this._effectList) {
             tmpArr = this._effectList[i];
@@ -1118,7 +1125,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * //example
      * cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
      */
-    unloadEffect:function (path) {
+    unloadEffect: function (path) {
         if (!path) return;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
@@ -1127,7 +1134,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
     },
 
-    _getEffectList:function (elt) {
+    _getEffectList: function (elt) {
         if (this._effectList.hasOwnProperty(elt)) {
             return this._effectList[elt];
         }
@@ -1137,7 +1144,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
     },
 
-    _checkAudioFormatSupported:function (ext) {
+    _checkAudioFormatSupported: function (ext) {
         var tmpExt;
         for (var i = 0; i < this._supportedFormat.length; i++) {
             tmpExt = this._supportedFormat[i];
@@ -1148,7 +1155,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         return false;
     },
 
-    _getSupportedAudioFormat:function () {
+    _getSupportedAudioFormat: function () {
         // check for sound support by the browser
         if (!this._soundEnable) {
             return;
