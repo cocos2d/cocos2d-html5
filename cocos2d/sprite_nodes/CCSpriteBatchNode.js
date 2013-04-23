@@ -347,7 +347,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
      */
     removeChild:function (child, cleanup) {
         // explicit null handling
-        if (child === null)
+        if (child == null)
             return;
 
         cc.Assert(this._children.indexOf(child) > -1, "SpriteBatchNode.addChild():sprite batch node should contain the child");
@@ -1006,7 +1006,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
      */
     removeChild:function (child, cleanup) {
         // explicit null handling
-        if (child === null)
+        if (child == null)
             return;
 
         cc.Assert(this._children.indexOf(child) > -1, "SpriteBatchNode.addChild():sprite batch node should contain the child");
