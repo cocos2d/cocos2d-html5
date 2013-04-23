@@ -26,17 +26,58 @@
 
 var cc = cc || {};
 
+
+/**
+ * A simple Audio Engine engine API.
+ * @class
+ * @extends   cc.Class
+ */
+cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
+
+    /**
+     * Helper function for cutting out the extension from the path
+     * @param {string} fullpath
+     * @protected
+     */
+    _getPathWithoutExt:function (fullpath) {
+        if (typeof(fullpath) != "string") {
+            return;
+        }
+        var endPos = fullpath.lastIndexOf(".");
+        if (endPos != -1) {
+            return fullpath.substring(0, endPos);
+        }
+        return fullpath;
+    },
+
+    /**
+     * Helper function for extracting the extension from the path
+     * @param {string} fullpath
+     * @protected
+     */
+    _getExtFromFullPath:function (fullpath) {
+        var startPos = fullpath.lastIndexOf(".");
+        if (startPos != -1) {
+            return fullpath.substring(startPos + 1, fullpath.length);
+        }
+        return -1;
+    }
+
+});
+
+
+
 cc.SFX = function (audio, ext) {
     this.audio = audio;
     this.ext = ext || ".ogg";
 };
 
 /**
- * Offer a VERY simple interface to play music & sound effect.
+ * The Audio Engine implementation via <audio> tag in HTML5.
  * @class
- * @extends   cc.Class
+ * @extends   cc.AudioEngine
  */
-cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
+cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */{
     _supportedFormat:[],
     _soundEnable:false,
     _effectList:{},
@@ -543,25 +584,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
     },
 
-    _getPathWithoutExt:function (fullpath) {
-        if (typeof(fullpath) != "string") {
-            return;
-        }
-        var endPos = fullpath.lastIndexOf(".");
-        if (endPos != -1) {
-            return fullpath.substring(0, endPos);
-        }
-        return fullpath;
-    },
-
-    _getExtFromFullPath:function (fullpath) {
-        var startPos = fullpath.lastIndexOf(".");
-        if (startPos != -1) {
-            return fullpath.substring(startPos + 1, fullpath.length);
-        }
-        return -1;
-    },
-
     _checkAudioFormatSupported:function (ext) {
         var tmpExt;
         for (var i = 0; i < this._supportedFormat.length; i++) {
@@ -589,6 +611,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     }
 });
 
+
 cc.AudioEngine._instance = null;
 
 cc.AudioEngine.isMusicPlaying = false;
@@ -599,7 +622,7 @@ cc.AudioEngine.isMusicPlaying = false;
  */
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
-        this._instance = new cc.AudioEngine();
+        this._instance = new cc.SimpleAudioEngine();
         this._instance.init();
     }
     return this._instance;
