@@ -79,6 +79,7 @@
         'misc_nodes/CCClippingNode.js',
         'effects/CCGrid.js',
         'effects/CCGrabber.js',
+        'draw_nodes/CCDrawNode.js',
         'actions/CCAction.js',
         'actions/CCActionInterval.js',
         'actions/CCActionInstant.js',
@@ -176,7 +177,6 @@
     }
     else {
         if(c.box2d || c.chipmunk){
-            engine.push('Draw_Nodes/CCDrawNode.js');
             engine.push('physics_nodes/CCPhysicsSprite.js');
             engine.push('physics_nodes/CCPhysicsDebugNode.js');
             if (c.box2d)
