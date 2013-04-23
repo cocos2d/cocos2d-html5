@@ -166,13 +166,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
-        this.getActionManager = function () {
-            return this._actionManager;
-        };
         this._scheduler = director.getScheduler();
-        this.getScheduler = function () {
-            return this._scheduler;
-        };
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         this._additionalTransformDirty = false;
@@ -190,7 +184,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @private
      */
     _arrayMakeObjectsPerformSelector:function (array, callbackType) {
-        if (!array || array.length == 0)
+        if (!array || array.length === 0)
             return;
 
         var i;
@@ -1454,45 +1448,46 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     /**
      * recursive method that visit its children and draw them
-     * @param {WebGLRenderingContext } ctx
      */
-    visit:function (ctx) {
+    visit:function () {
         // quick return if not visible
         if (!this._visible)
             return;
 
-        var context = ctx || cc.renderContext, i;
+        var context = cc.renderContext, i;
         this._stackMatrix = this._stackMatrix || new cc.kmMat4();
         cc.kmGLPushMatrixWitMat4(this._stackMatrix);
 
-        if (this._grid && this._grid._active)
-            this._grid.beforeDraw();
+        var locGrid = this._grid;
+        if (locGrid && locGrid._active)
+            locGrid.beforeDraw();
 
         this.transform();
-        if (this._children && this._children.length > 0) {
+
+        var locChildren = this._children;
+        if (locChildren && locChildren.length > 0) {
+            var childLen = locChildren.length;
             this.sortAllChildren();
             // draw children zOrder < 0
-            for (i = 0; i < this._children.length; i++) {
-                if (this._children[i] && this._children[i]._zOrder < 0)
-                    this._children[i].visit(context);
+            for (i = 0; i < childLen; i++) {
+                if (locChildren[i] && locChildren[i]._zOrder < 0)
+                    locChildren[i].visit();
                 else
                     break;
             }
-
             this.draw(context);
-
             // draw children zOrder >= 0
-            for (; i < this._children.length; i++) {
-                if (this._children[i]) {
-                    this._children[i].visit(context);
+            for (; i < childLen; i++) {
+                if (locChildren[i]) {
+                    locChildren[i].visit();
                 }
             }
         } else
             this.draw(context);
 
         this._orderOfArrival = 0;
-        if (this._grid && this._grid.isActive())
-            this._grid.afterDraw(this);
+        if (locGrid && locGrid.isActive())
+            locGrid.afterDraw(this);
 
         cc.kmGLPopMatrix();
     },
@@ -1504,16 +1499,18 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
         // Update Z vertex manually
         this._transform4x4.mat[14] = this._vertexZ;
-        cc.kmGLMultMatrix(this._transform4x4);
+        //optimize performance
+        cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, this._transform4x4); // = cc.kmGLMultMatrix(this._transform4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
-            var translate = (this._anchorPointInPoints.x != 0.0 || this._anchorPointInPoints.y != 0.0);
+            var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
+            var translate = (apx !== 0.0 || apy !== 0.0);
             if (translate)
-                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(this._anchorPointInPoints.x), cc.RENDER_IN_SUBPIXEL(this._anchorPointInPoints.y), 0);
+                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
             this._camera.locate();
             if (translate)
-                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.x), cc.RENDER_IN_SUBPIXEL(-this._anchorPointInPoints.y), 0);
+                cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(-apx), cc.RENDER_IN_SUBPIXEL(-apy), 0);
         }
     },
 

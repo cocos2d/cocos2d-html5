@@ -250,8 +250,13 @@ cc.TransformValues = function (pos, scale, rotation, skew, ap, visible) {
 };
 
 cc.RENDER_IN_SUBPIXEL = function (A) {
-    return (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) ? A : (0 | A);
+    return (0 | A);
 };
+if(cc.SPRITEBATCHNODE_RENDER_SUBPIXEL){
+    cc.RENDER_IN_SUBPIXEL = function (A) {
+        return A;
+    };
+}
 
 /**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) (Canvas implement) <br/>
@@ -2634,10 +2639,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     },
     /**
      * draw sprite to canvas
-     * @param {WebGLRenderContext} ctx 3d context of canvas
      */
-    draw:function (ctx) {
-        var gl = ctx || cc.renderContext;
+    draw:function () {
+        var gl = cc.renderContext;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
         if (this._texture) {
