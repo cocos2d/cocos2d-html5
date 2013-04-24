@@ -819,6 +819,15 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
+     * Personally, I have no idea why isMusicPlaying would be a property in cc.AudioEngine,
+     * so extract this to a separate method. More convenient once it is changed
+     * @private
+     */
+    _setMusicPlaying: function(playing) {
+        cc.AudioEngine.isMusicPlaying = playing;
+    },
+
+    /**
      * Play music.
      * @param {String} path The path of the music file without filename extension.
      * @param {Boolean} loop Whether the music loop or not.
@@ -839,7 +848,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (keyName in this._audioData) {
             // already loaded, just play it
             this._musicPlaying = this._beginSound(keyName, loop);
-            cc.AudioEngine.isMusicPlaying = true;
+            this._setMusicPlaying(true);
         } else {
             // not loaded, have to load first
             var engine = this;
@@ -847,7 +856,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
                 // resource fetched, in @param buffer
                 engine._audioData[keyName] = buffer;
                 engine._musicPlaying = engine._beginSound(keyName, loop);
-                cc.AudioEngine.isMusicPlaying = true;
+                engine._setMusicPlaying(true);
             }, function() {
                 // resource fetching failed, doing nothing here
             });
@@ -858,7 +867,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     _musicListener: function(e){
         // TODO is this function still required?
-        cc.AudioEngine.isMusicPlaying = false;
+        this._setMusicPlaying(false);
         this.removeEventListener('pause', arguments.callee, false);
     },
 
@@ -887,7 +896,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var key = this._musicPlaying.key;
         this._endSound(this._musicPlaying);
         this._musicPlaying = null;
-        cc.AudioEngine.isMusicPlaying = false;
+        this._setMusicPlaying(false);
 
         if (releaseData) {
             delete this._audioData[key];
@@ -907,7 +916,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         this._musicPlaying.pauseTime = this._ctx.currentTime;
         this._endSound(this._musicPlaying);
-        cc.AudioEngine.isMusicPlaying = false;
+        this._setMusicPlaying(false);
     },
 
     /**
@@ -927,7 +936,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var offset = this._musicPlaying.pauseTime - this._musicPlaying.startTime;
 
         this._musicPlaying = this._beginSound(key, loop, volume, offset);
-        cc.AudioEngine.isMusicPlaying = true;
+        this._setMusicPlaying(true);
 
         // TODO is the following line meaningful anymore?
         // au.addEventListener("pause", this._musicListener , false);
@@ -950,10 +959,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         this._endSound(this._musicPlaying);
         this._musicPlaying = null;
-        cc.AudioEngine.isMusicPlaying = false;
+        this._setMusicPlaying(false);
 
         this._musicPlaying = this._beginSound(key, loop, volume);
-        cc.AudioEngine.isMusicPlaying = true;
+        this._setMusicPlaying(true);
 
         // TODO
         // au.addEventListener("pause", this._musicListener , false);
