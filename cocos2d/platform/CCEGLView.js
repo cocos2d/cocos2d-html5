@@ -119,6 +119,13 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
         this.setDesignResolutionSize();
     },
+    // hack
+    _adjustSizeKeepCanvasSize:function(){
+        if(!("opengl" in sys.capabilities))
+            cc.renderContext.translate(0, cc.canvas.height);
+        this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
+        this.setDesignResolutionSize();
+    },
 
     /**
      * Force destroying EGL view, subclass must implement this method.
