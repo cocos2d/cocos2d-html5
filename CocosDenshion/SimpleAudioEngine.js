@@ -90,7 +90,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
         return -1;
     }
-
 });
 
 
@@ -633,11 +632,13 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 /**
  * the entity stored in soundList and effectList, used in cc.WebAudioEngine
  */
-cc.WebAudioSFX = function (buffer, ext, srcNode, gainNode) {
-    this.buffer = buffer;
-    this.ext = ext;
-    this.srcNode = srcNode;
-    this.gainNode = gainNode;
+cc.WebAudioSFX = function(key, sourceNode, volumeNode) {
+    // the name of the relevant audio resource
+    this.key = key;
+    // the node used in Web Audio API in charge of the source data
+    this.sourceNode = sourceNode;
+    // the node used in Web Audio API in charge of volume
+    this.volumeNode = volumeNode;
 };
 
 /**
@@ -654,11 +655,15 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _soundEnable: false,
     // TODO do I really know what this is?
     _canPlay: true,
+    // containing all binary buffers of loaded audio resources
+    _audioData: {},
+    // the music being played now, cc.WebAudioSFX, null => no music is currently being played
+    _musicPlaying: null,
+    // the effects being played now, { key => cc.WebAudioSFX }, empty => no effects are currently being played
+    _effectsPlaying: {},
 
-    _effectList: {},
-    _soundList: {},
-    _playingMusic: null,
     _effectsVolume: 1,
+    // TODO following?
     _maxAudioInstance: 10,
 
     /**
@@ -700,46 +705,102 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
+     * search in this._supportedFormat if @param ext is there
+     * @returns {boolean}
+     * @private
+     */
+    _isFormatSupported: function(ext) {
+        for (var idx in this._supportedFormat) {
+            if (ext === this._supportedFormat[idx]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Using XMLHttpRequest to retrieve the resource data from server.
+     * Not using cc.FileUtils.getByteArrayFromFile() because it is synchronous,
+     * so doing the retrieving here is more handful.
+     * @param url: the url to retrieve data
+     * @param onSuccess: the callback to run when retrieving succeeds, the binary data array is passed into it
+     * @param onError: the callback to run when retrieving fails
+     * @private
+     */
+    _fetchData: function(url, onSuccess, onError) {
+        // currently, only the webkit browsers support Web Audio API, so it should be fine just writing like this.
+        var req = new window.XMLHttpRequest();
+        req.open('GET', url, true);
+        req.responseType = 'arraybuffer';
+        var engine = this;
+        req.onload = function() {
+            // when context decodes the array buffer successfully, call onSuccess
+            engine._ctx.decodeAudioData(req.response, onSuccess, onError);
+        };
+        req.onerror = onError;
+        req.send();
+    },
+
+    /**
      * Preload music resource.<br />
      * This method is called when cc.Loader preload  resources.
      * @param {String} path The path of the music file with filename extension.
      */
-    preloadSound: function (path) {
-        if (this._soundEnable) {
-            var extName = this._getExtFromFullPath(path);
-            var keyname = this._getPathWithoutExt(path);
-            if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
-                if(this._canPlay){
-                    var sfxCache = new cc.SimpleSFX();
-                    sfxCache.ext = extName;
-                    sfxCache.audio = new Audio(path);
-                    sfxCache.audio.preload = 'auto';
-                    sfxCache.audio.addEventListener('canplaythrough', function (e) {
-                        cc.Loader.getInstance().onResLoaded();
-                        this.removeEventListener('canplaythrough', arguments.callee, false);
-                    }, false);
-
-                    sfxCache.audio.addEventListener("error", function (e) {
-                        cc.Loader.getInstance().onResLoadingErr(e.srcElement.src);
-                        this.removeEventListener('error', arguments.callee, false);
-                    }, false);
-
-                    this._soundList[keyname] = sfxCache;
-                    sfxCache.audio.load();
-                }
-                else{
-                    cc.Loader.getInstance().onResLoaded();
-                }
-            }
-            else {
-                cc.Loader.getInstance().onResLoaded();
-            }
+    preloadSound: function(path) {
+        if (!this._soundEnable) {
+            return;
         }
 
-        //cc.Loader.getInstance().onResLoaded();
+        var extName = this._getExtFromFullPath(path);
+        var keyName = this._getPathWithoutExt(path);
+
+        if (!this._isFormatSupported(extName) || keyName in this._audioData) {
+            cc.Loader.getInstance().onResLoaded();
+            return;
+        }
+
+        if (!this._canPlay) {
+            // TODO not sure what this._canPlay means
+            cc.Loader.getInstance().onResLoaded();
+            return;
+        }
+
+        var engine = this;
+        this._fetchData(path, function(buffer) {
+            // resource fetched, in @param buffer
+            engine._audioData[keyName] = buffer;
+            cc.Loader.getInstance().onResLoaded();
+        }, function() {
+            // resource fetching failed
+            cc.Loader.getInstance().onResLoadingErr(path);
+        });
     },
 
     /**
+     * Helper method, init a new WebAudioSFX, set it to this._musicPlaying, and start playing
+     * assuming that @param key exists in this._audioData
+     * @param key {String}
+     * @param loop {Boolean}
+     * @param volume {float}: 0.0 - 1.0, default value is 1.0
+     * @private
+     */
+    _beginMusic: function(key, loop, volume) {
+        var sfxCache = new cc.WebAudioSFX();
+        sfxCache.key = key;
+        sfxCache.sourceNode = this._ctx.createBufferSource();
+        sfxCache.sourceNode.buffer = this._audioData[key];
+        sfxCache.sourceNode.loop = loop;
+        sfxCache.volumeNode = this._ctx.createGainNode();
+        sfxCache.volumeNode.gain.value = volume || 1;
+
+        sfxCache.sourceNode.connect(sfxCache.volumeNode);
+        sfxCache.volumeNode.connect(this._ctx.destination);
+
+        sfxCache.sourceNode.noteOn(0);
+        this._musicPlaying = sfxCache;
+    },
+
+/**
      * Play music.
      * @param {String} path The path of the music file without filename extension.
      * @param {Boolean} loop Whether the music loop or not.
@@ -748,35 +809,37 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().playMusic(path, false);
      */
     playMusic: function (path, loop) {
-        var keyname = this._getPathWithoutExt(path);
+        var keyName = this._getPathWithoutExt(path);
         var extName = this._getExtFromFullPath(path);
-        var au;
+        loop = loop || false;
 
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            this._soundList[this._playingMusic].audio.pause();
+        if (this._musicPlaying) {
+            // there is a music being played currently, stop it
+            this.stopMusic();
         }
 
-        this._playingMusic = keyname;
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            au = this._soundList[this._playingMusic].audio;
+        if (keyName in this._audioData) {
+            // already loaded, just play it
+            this._beginMusic(keyName, loop);
+            cc.AudioEngine.isMusicPlaying = true;
+        } else {
+            // not loaded, have to load first
+            var engine = this;
+            this._fetchData(path, function(buffer) {
+                // resource fetched, in @param buffer
+                engine._audioData[keyName] = buffer;
+                engine._beginMusic(keyName, loop);
+                cc.AudioEngine.isMusicPlaying = true;
+            }, function() {
+                // resource fetching failed, doing nothing here
+            });
         }
-        else {
-            var sfxCache = new cc.SimpleSFX();
-            sfxCache.ext = extName;
-            au = sfxCache.audio = new Audio(path);
-            sfxCache.audio.preload = 'auto';
-            this._soundList[keyname] = sfxCache;
-            sfxCache.audio.load();
-        }
-
-        au.addEventListener("pause", this._musicListener , false);
-
-        au.loop = loop || false;
-        au.play();
-        cc.AudioEngine.isMusicPlaying = true;
+        // TODO is the following line required?
+//        au.addEventListener("pause", this._musicListener , false);
     },
 
     _musicListener: function(e){
+        // TODO is this function still required?
         cc.AudioEngine.isMusicPlaying = false;
         this.removeEventListener('pause', arguments.callee, false);
     },
@@ -789,14 +852,17 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().stopMusic();
      */
     stopMusic: function (releaseData) {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            var au = this._soundList[this._playingMusic].audio;
-            au.pause();
-            au.currentTime = au.duration;
-            if (releaseData) {
-                delete this._soundList[this._playingMusic];
-            }
-            cc.AudioEngine.isMusicPlaying = false;
+        if (!this._musicPlaying) {
+            return;
+        }
+
+        var key = this._musicPlaying.key;
+        this._musicPlaying.sourceNode.noteOff(0);
+        this._musicPlaying = null;
+        cc.AudioEngine.isMusicPlaying = false;
+
+        if (releaseData) {
+            delete this._audioData[key];
         }
     },
 
@@ -807,11 +873,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().pauseMusic();
      */
     pauseMusic: function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            var au = this._soundList[this._playingMusic].audio;
-            au.pause();
-            cc.AudioEngine.isMusicPlaying = false;
+        if (!this._musicPlaying) {
+            return;
         }
+
+        this._musicPlaying.sourceNode.noteOff(0);
+        cc.AudioEngine.isMusicPlaying = false;
     },
 
     /**
@@ -821,12 +888,15 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().resumeMusic();
      */
     resumeMusic: function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            var au = this._soundList[this._playingMusic].audio;
-            au.play();
-            au.addEventListener("pause", this._musicListener , false);
-            cc.AudioEngine.isMusicPlaying = true;
+        if (!this._musicPlaying) {
+            return;
         }
+
+        this._musicPlaying.sourceNode.noteOn(0);
+        cc.AudioEngine.isMusicPlaying = true;
+
+        // TODO is the following line meaningful anymore?
+        // au.addEventListener("pause", this._musicListener , false);
     },
 
     /**
@@ -836,16 +906,26 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().rewindMusic();
      */
     rewindMusic: function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            var au = this._soundList[this._playingMusic].audio;
-            au.currentTime = 0;
-            au.play();
-            au.addEventListener("pause", this._musicListener , false);
-            cc.AudioEngine.isMusicPlaying = true;
+        if (!this._musicPlaying) {
+            return;
         }
+
+        var key = this._musicPlaying.key;
+        var loop = this._musicPlaying.sourceNode.loop;
+        var volume = this.getMusicVolume();
+        this._musicPlaying.sourceNode.noteOff(0);
+        this._musicPlaying = null;
+        cc.AudioEngine.isMusicPlaying = false;
+
+        this._beginMusic(key, loop, volume);
+        cc.AudioEngine.isMusicPlaying = true;
+
+        // TODO
+        // au.addEventListener("pause", this._musicListener , false);
     },
 
     willPlayMusic: function () {
+        // TODO what is the purpose of this method?
         return false;
     },
 
@@ -873,10 +953,11 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * var volume = cc.AudioEngine.getInstance().getMusicVolume();
      */
     getMusicVolume: function () {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            return this._soundList[this._playingMusic].audio.volume;
+        if (!this._musicPlaying) {
+            return 0;
         }
-        return 0;
+
+        return this._musicPlaying.volumeNode.gain.value;
     },
 
     /**
@@ -887,18 +968,17 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().setMusicVolume(0.5);
      */
     setMusicVolume: function (volume) {
-        if (this._soundList.hasOwnProperty(this._playingMusic)) {
-            var music = this._soundList[this._playingMusic].audio;
-            if (volume > 1) {
-                music.volume = 1;
-            }
-            else if (volume < 0) {
-                music.volume = 0;
-            }
-            else {
-                music.volume = volume;
-            }
+        if (!this._musicPlaying) {
+            return;
         }
+
+        if (volume > 1) {
+            volume = 1;
+        } else if (volume < 0) {
+            volume = 0;
+        }
+
+        this._musicPlaying.volumeNode.gain.value = volume;
     },
 
     /**
@@ -910,6 +990,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * var soundId = cc.AudioEngine.getInstance().playEffect(path);
      */
     playEffect: function (path, loop) {
+        // TODO
+        return
+
         var keyname = this._getPathWithoutExt(path), actExt;
         if (this._soundList.hasOwnProperty(keyname)) {
             actExt = this._soundList[keyname].ext;
@@ -956,6 +1039,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * var effectVolume = cc.AudioEngine.getInstance().getEffectsVolume();
      */
     getEffectsVolume: function () {
+        // TODO
+        return 0;
         return this._effectsVolume;
     },
 
@@ -967,6 +1052,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().setEffectsVolume(0.5);
      */
     setEffectsVolume: function (volume) {
+        // TODO
+        return;
+
         if (volume > 1) {
             this._effectsVolume = 1;
         }
@@ -997,6 +1085,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().pauseEffect(path);
      */
     pauseEffect: function (path) {
+        // TODO
+        return;
+
         if (!path) return;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
@@ -1017,6 +1108,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().pauseAllEffects();
      */
     pauseAllEffects: function () {
+        // TODO
+        return;
+
         var tmpArr, au;
         for (var i in this._effectList) {
             tmpArr = this._effectList[i];
@@ -1037,6 +1131,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().resumeEffect(path);
      */
     resumeEffect: function (path) {
+        // TODO
+        return;
+
         if (!path) return;
         var tmpArr, au;
         var keyname = this._getPathWithoutExt(path);
@@ -1060,6 +1157,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().resumeAllEffects();
      */
     resumeAllEffects: function () {
+        // TODO
+        return;
+
         var tmpArr, au;
         for (var i in this._effectList) {
             tmpArr = this._effectList[i];
@@ -1082,6 +1182,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().stopEffect(path);
      */
     stopEffect: function (path) {
+        // TODO
+        return;
+
         if (!path) return;
         var tmpArr, au;
         var keyname = this._getPathWithoutExt(path);
@@ -1106,6 +1209,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().stopAllEffects();
      */
     stopAllEffects: function () {
+        // TODO
+        return;
+
         var tmpArr, au;
         for (var i in this._effectList) {
             tmpArr = this._effectList[i];
@@ -1127,6 +1233,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
      */
     unloadEffect: function (path) {
+        // TODO
+        return;
+
         if (!path) return;
         var keyname = this._getPathWithoutExt(path);
         if (this._effectList.hasOwnProperty(keyname)) {
@@ -1136,6 +1245,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     _getEffectList: function (elt) {
+        // TODO
+        return;
+
         if (this._effectList.hasOwnProperty(elt)) {
             return this._effectList[elt];
         }
@@ -1143,17 +1255,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             this._effectList[elt] = [];
             return this._effectList[elt];
         }
-    },
-
-    _checkAudioFormatSupported: function (ext) {
-        var tmpExt;
-        for (var i = 0; i < this._supportedFormat.length; i++) {
-            tmpExt = this._supportedFormat[i];
-            if (tmpExt == ext) {
-                return true;
-            }
-        }
-        return false;
     }
 });
 
@@ -1170,10 +1271,8 @@ cc.AudioEngine.isMusicPlaying = false;
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
         if (cc.Browser.supportWebAudio) {
-            alert("Using Web Audio");
             this._instance = new cc.WebAudioEngine();
         } else {
-            alert("Using Audio tag");
             this._instance = new cc.SimpleAudioEngine();
         }
         this._instance.init();
