@@ -669,6 +669,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _audioData: {},
     // the music being played now, cc.WebAudioSFX, when null, no music is being played; when not null, it may be paused
     _musicPlaying: null,
+    // the volume applied to the music
+    _musicVolume: 1,
     // the effects being played now, { key => cc.WebAudioSFX }, empty => no effects are currently being played
     _effectsPlaying: {},
     // the volume applied to all effects
@@ -852,6 +854,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
         return this._musicPlaying.isPlaying;
     },
+
     /**
      * Play music.
      * @param {String} path The path of the music file without filename extension.
@@ -872,7 +875,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         if (keyName in this._audioData) {
             // already loaded, just play it
-            this._musicPlaying = this._beginSound(keyName, loop);
+            this._musicPlaying = this._beginSound(keyName, loop, this._musicVolume);
             this._setMusicPlaying(true);
         } else if (this._isFormatSupported(extName)) {
             // if the resource type is not supported, there is no need to download it
@@ -880,7 +883,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             this._fetchData(path, function(buffer) {
                 // resource fetched, in @param buffer
                 engine._audioData[keyName] = buffer;
-                engine._musicPlaying = engine._beginSound(keyName, loop);
+                engine._musicPlaying = engine._beginSound(keyName, loop, this._musicVolume);
                 engine._setMusicPlaying(true);
             }, function() {
                 // resource fetching failed, doing nothing here
@@ -1015,11 +1018,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * var volume = cc.AudioEngine.getInstance().getMusicVolume();
      */
     getMusicVolume: function () {
-        if (!this._musicPlaying) {
-            return 0;
-        }
-
-        return this._musicPlaying.volumeNode.gain.value;
+        return this._musicVolume;
     },
 
     /**
@@ -1030,17 +1029,21 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().setMusicVolume(0.5);
      */
     setMusicVolume: function (volume) {
-        if (!this._musicPlaying) {
-            return;
-        }
-
         if (volume > 1) {
             volume = 1;
         } else if (volume < 0) {
             volume = 0;
         }
 
-        this._musicPlaying.volumeNode.gain.value = volume;
+        if (this.getMusicVolume() == volume) {
+            // it is the same, no need to update
+            return;
+        }
+
+        this._musicVolume = volume;
+        if (this._musicPlaying) {
+            this._musicPlaying.volumeNode.gain.value = volume;
+        }
     },
 
     /**
@@ -1117,7 +1120,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         } else if (volume < 0) {
             volume = 0;
         }
-        if (this._effectsVolume == volume) {
+        if (this.getEffectsVolume() == volume) {
             // it is the same, no need to update
             return;
         }
