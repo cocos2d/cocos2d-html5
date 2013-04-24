@@ -880,13 +880,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
                 // resource fetching failed, doing nothing here
             });
         }
-        // TODO is the following line required?
-//        au.addEventListener("pause", this._musicListener , false);
-    },
-
-    _musicListener: function(e){
-        // TODO is this function still required?
-        this.removeEventListener('pause', arguments.callee, false);
     },
 
     /**
@@ -960,9 +953,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var offset = this._musicPlaying.pauseTime - this._musicPlaying.startTime;
 
         this._musicPlaying = this._beginSound(key, loop, volume, offset);
-
-        // TODO is the following line meaningful anymore?
-        // au.addEventListener("pause", this._musicListener , false);
     },
 
     /**
@@ -983,9 +973,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         this._endSound(this._musicPlaying);
         this._musicPlaying = this._beginSound(key, loop, volume);
-
-        // TODO
-        // au.addEventListener("pause", this._musicListener , false);
     },
 
     willPlayMusic: function () {
