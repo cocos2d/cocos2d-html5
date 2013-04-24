@@ -2162,8 +2162,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         } else {
             if (texture) {
                 if (!rect) {
-                    rect = cc.rect(0, 0, 0, 0);
-                    rect.size = texture.getContentSize();
+                    var size = texture.getContentSize();
+                    rect = cc.rect(0, 0, size.width, size.height);
                 }
                 return this.initWithTexture(texture, rect);
             }
