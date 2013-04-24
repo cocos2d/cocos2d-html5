@@ -99,7 +99,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     _adjustSize:function () {
-        var ele = document.documentElement;
+        var ele = (cc.container.parentNode === document.body)? document.documentElement : cc.container.parentNode;
         cc.canvas.width = ele.clientWidth;
         cc.canvas.height = ele.clientHeight;
         if(!("opengl" in sys.capabilities))
