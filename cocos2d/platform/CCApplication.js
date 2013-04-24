@@ -167,8 +167,8 @@ cc.setup = function (el, width, height) {
         if (element.tagName != "DIV") {
             cc.log("Warning: target element is not a DIV or CANVAS");
         }
-        width = width || parseInt(element.style.width);
-        height = height || parseInt(element.style.height);
+        width = width || element.clientWidth;
+        height = height || element.clientHeight;
 
         cc.canvas = cc.$new("CANVAS");
         cc.canvas.addClass("gameCanvas");
