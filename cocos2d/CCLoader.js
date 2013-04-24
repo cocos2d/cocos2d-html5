@@ -25,12 +25,6 @@
  ****************************************************************************/
 
 /**
- * loading interval
- * @type {Number}
- */
-cc.LOADING_INTERVAL = 1 / 20;
-
-/**
  * resource type
  * @constant
  * @type Object
@@ -57,12 +51,15 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     _resouces:null,
     _animationInterval:1 / 60,
     _interval:null,
+    _isAsync:false,
+
     /**
      * Constructor
      */
     ctor:function () {
         this._resouces = [];
     },
+
     /**
      * init with resources
      * @param {Array} resources
@@ -92,6 +89,47 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
         //load resources
         this._schedulePreload();
+    },
+
+    setAsync:function(isAsync){
+        this._isAsync = isAsync;
+    },
+
+    /**
+     * Callback when a resource file load failed.
+     * @example
+     * //example
+     * cc.Loader.getInstance().onResLoaded();
+     */
+    onResLoadingErr:function (name) {
+        cc.log("cocos2d:Failed loading resource: " + name);
+    },
+
+    /**
+     * Callback when a resource file loaded.
+     * @example
+     * //example
+     * cc.Loader.getInstance().onResLoaded();
+     */
+    onResLoaded:function () {
+        this._loadedNumber++;
+    },
+
+    /**
+     * Get loading percentage
+     * @return {Number}
+     * @example
+     * //example
+     * cc.log(cc.Loader.getInstance().getPercentage() + "%");
+     */
+    getPercentage:function () {
+        var percent = 0;
+        if (this._totalNumber == 0) {
+            percent = 100;
+        } else {
+            percent = (0 | (this._loadedNumber / this._totalNumber * 100));
+        }
+        return percent;
     },
 
     /**
@@ -136,54 +174,19 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
         }
     },
 
-    /**
-     * Callback when a resource file load failed.
-     * @example
-     * //example
-     * cc.Loader.getInstance().onResLoaded();
-     */
-    onResLoadingErr:function (name) {
-        cc.log("cocos2d:Failed loading resource: " + name);
-    },
-
-    /**
-     * Callback when a resource file loaded.
-     * @example
-     * //example
-     * cc.Loader.getInstance().onResLoaded();
-     */
-    onResLoaded:function () {
-        this._loadedNumber++;
-    },
-
-    /**
-     * Get loading percentage
-     * @return {Number}
-     * @example
-     * //example
-     * cc.log(cc.Loader.getInstance().getPercentage() + "%");
-     */
-    getPercentage:function () {
-        var percent = 0;
-        if (this._totalNumber == 0) {
-            percent = 100;
-        } else {
-            percent = (0 | (this._loadedNumber / this._totalNumber * 100));
-        }
-        return percent;
-    },
-
-    _preload:function (dt) {
+    _preload:function () {
         this._updatePercent();
-        if (dt >= cc.LOADING_INTERVAL) {
-            cc.log("cocos2d: interval more than 50ms, skip frame.");
-            return;
+        if(this._isAsync){
+            var frameRate = cc.Director.getInstance()._frameRate;
+            if (frameRate != null && frameRate < 20) {
+                cc.log("cocos2d: frame rate less than 20 fps, skip frame.");
+                return;
+            }
         }
 
         if (this._curNumber < this._totalNumber) {
             this._loadOneResource();
             this._curNumber++;
-            //cc.log("cocos2d: interval less than 50ms, continue loading, idx = " + this._curNumber + ", total = " + this._totalNumber);
         }
     },
 
@@ -339,10 +342,18 @@ cc.Loader.preload = function (resources, selector, target) {
     return this._instance;
 };
 
+/**
+ * Preload resources async
+ * @param {Array} resources
+ * @param {Function|String} selector
+ * @param {Object} target
+ * @return {cc.Loader}
+ */
 cc.Loader.preloadAsync = function (resources, selector, target) {
     if (!this._instance) {
         this._instance = new cc.Loader();
     }
+    this._instance.setAsync(true);
     this._instance.initWithResources(resources, selector, target);
     return this._instance;
 };
