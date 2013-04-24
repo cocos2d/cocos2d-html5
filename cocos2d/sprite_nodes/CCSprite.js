@@ -2087,6 +2087,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {Boolean}
      */
     init:function () {
+        if(arguments.length > 0)
+            return this.initWithFile(arguments[0], arguments[1]);
+
         this._super();
 
         this._dirty = this._recursiveDirty = false;
@@ -2765,24 +2768,15 @@ cc.SpriteWebGL.create = function (fileName, rect) {
     if (argnum === 0) {
         if (sprite.init())
             return sprite;
-        return null;
-    } else if (argnum < 2) {
+    } else {
         /** Creates an sprite with an image filename.
-         The rect used will be the size of the image.
+         If the rect equal undefined, the rect used will be the size of the image.
          The offset will be (0,0).
          */
-        if (sprite && sprite.initWithFile(fileName)) {
+        if (sprite && sprite.init(fileName, rect))
             return sprite;
-        }
-        return null;
-    } else {
-        /** Creates an sprite with an CCBatchNode and a rect
-         */
-        if (sprite && sprite.initWithFile(fileName, rect)) {
-            return sprite;
-        }
-        return null;
     }
+    return null;
 };
 
 /**
