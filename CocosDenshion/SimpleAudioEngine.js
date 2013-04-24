@@ -35,22 +35,6 @@ var cc = cc || {};
 cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
-     * Whether the music is playing.
-     * @return {Boolean} If is playing return true,or return false.
-     * @example
-     * //example
-     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
-     *      cc.log("music is playing");
-     *  }
-     *  else {
-     *      cc.log("music is not playing");
-     *  }
-     */
-    isMusicPlaying: function () {
-        return cc.AudioEngine.isMusicPlaying;
-    },
-
-    /**
      * Check each type to see if it can be played by current browser
      * @param capabilities: the results are filled into this dict
      * @protected
@@ -357,6 +341,22 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
     },
 
     /**
+     * Whether the music is playing.
+     * @return {Boolean} If is playing return true,or return false.
+     * @example
+     * //example
+     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
+     *      cc.log("music is playing");
+     *  }
+     *  else {
+     *      cc.log("music is not playing");
+     *  }
+     */
+    isMusicPlaying: function () {
+        return cc.AudioEngine.isMusicPlaying;
+    },
+
+    /**
      * Play sound effect.
      * @param {String} path The path of the sound effect with filename extension.
      * @param {Boolean} loop Whether to loop the effect playing, default value is false
@@ -639,6 +639,8 @@ cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
     this.sourceNode = sourceNode;
     // the node used in Web Audio API in charge of volume
     this.volumeNode = volumeNode;
+    // playing => set to true; stopped, paused, finished => false
+    this.isPlaying = false;
     /*
      * when playing started from beginning, startTime is set to the current time of AudioContext.currentTime
      * when paused, pauseTime is set to the current time of AudioContext.currentTime
@@ -669,8 +671,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _musicPlaying: null,
     // the effects being played now, { key => cc.WebAudioSFX }, empty => no effects are currently being played
     _effectsPlaying: {},
-
+    // the volume applied to all effects
     _effectsVolume: 1,
+
     // TODO following?
     _maxAudioInstance: 10,
 
@@ -811,6 +814,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         // starting from offset means resuming from where it paused last time
         sfxCache.sourceNode.start(0, offset);
+        sfxCache.isPlaying = true;
         // currentTime - offset is necessary for pausing multiple times!
         sfxCache.startTime = this._ctx.currentTime - offset;
         sfxCache.pauseTime = sfxCache.startTime;
@@ -824,9 +828,30 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _setMusicPlaying: function(playing) {
-        cc.AudioEngine.isMusicPlaying = playing;
+        if (this._musicPlaying) {
+            this._musicPlaying.isPlaying = playing;
+        }
     },
 
+    /**
+     * Whether it is playing.any music
+     * @return {Boolean} If is playing return true,or return false.
+     * @example
+     * //example
+     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
+     *      cc.log("music is playing");
+     *  }
+     *  else {
+     *      cc.log("music is not playing");
+     *  }
+     */
+    isMusicPlaying: function () {
+        // Not going to use cc.AudioEngine.isMusicPlaying, that is only used in cc.SimpleAudioEngine
+        if (!this._musicPlaying) {
+            return false;
+        }
+        return this._musicPlaying.isPlaying;
+    },
     /**
      * Play music.
      * @param {String} path The path of the music file without filename extension.
@@ -841,7 +866,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         loop = loop || false;
 
         if (this._musicPlaying) {
-            // there is a music being played currently, stop it
+            // there is a music being played currently, stop it (may be paused)
             this.stopMusic();
         }
 
@@ -881,6 +906,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         sfxCache.sourceNode.stop(0);
+        sfxCache.isPlaying = false;
         sfxCache.sourceNode.disconnect();
         sfxCache.volumeNode.disconnect();
     },
@@ -916,7 +942,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     pauseMusic: function () {
         // can pause only when it's playing
-        if (!this._musicPlaying || !this.isMusicPlaying()) {
+        if (!this.isMusicPlaying()) {
             return;
         }
 
@@ -1075,8 +1101,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * var effectVolume = cc.AudioEngine.getInstance().getEffectsVolume();
      */
     getEffectsVolume: function () {
-        // TODO
-        return 0;
         return this._effectsVolume;
     },
 
@@ -1088,18 +1112,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().setEffectsVolume(0.5);
      */
     setEffectsVolume: function (volume) {
-        // TODO
-        return;
-
         if (volume > 1) {
-            this._effectsVolume = 1;
+            volume = 1;
+        } else if (volume < 0) {
+            volume = 0;
         }
-        else if (volume < 0) {
-            this._effectsVolume = 0;
+        if (this._effectsVolume == volume) {
+            // it is the same, no need to update
+            return;
         }
-        else {
-            this._effectsVolume = volume;
-        }
+
+        this._effectsVolume = volume;
+        // TODO update volume in each effect
 
         var tmpArr, au;
         for (var i in this._effectList) {
