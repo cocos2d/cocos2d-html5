@@ -639,8 +639,6 @@ cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
     this.sourceNode = sourceNode;
     // the node used in Web Audio API in charge of volume
     this.volumeNode = volumeNode;
-    // playing => set to true; stopped, paused, finished => false
-    this.isPlaying = false;
     /*
      * when playing started from beginning, startTime is set to the current time of AudioContext.currentTime
      * when paused, pauseTime is set to the current time of AudioContext.currentTime
@@ -816,7 +814,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         // starting from offset means resuming from where it paused last time
         sfxCache.sourceNode.start(0, offset);
-        sfxCache.isPlaying = true;
         // currentTime - offset is necessary for pausing multiple times!
         sfxCache.startTime = this._ctx.currentTime - offset;
         sfxCache.pauseTime = sfxCache.startTime;
@@ -825,18 +822,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     * Personally, I have no idea why isMusicPlaying would be a property in cc.AudioEngine,
-     * so extract this to a separate method. More convenient once it is changed
-     * @private
-     */
-    _setMusicPlaying: function(playing) {
-        if (this._musicPlaying) {
-            this._musicPlaying.isPlaying = playing;
-        }
-    },
-
-    /**
-     * Whether it is playing.any music
+     * Whether it is playing any music
      * @return {Boolean} If is playing return true,or return false.
      * @example
      * //example
@@ -848,11 +834,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      *  }
      */
     isMusicPlaying: function () {
-        // Not going to use cc.AudioEngine.isMusicPlaying, that is only used in cc.SimpleAudioEngine
-        if (!this._musicPlaying) {
-            return false;
-        }
-        return this._musicPlaying.isPlaying;
+        /*
+         * cc.AudioEngine.isMusicPlaying property is not going to be used here in cc.WebAudioEngine
+         * that is only used in cc.SimpleAudioEngine
+         * WebAudioEngine uses Web Audio API which contains a playbackState property in AudioBufferSourceNode
+         * So there is also no need to be any method like setMusicPlaying(), it is done automatically
+         * According to the spec: dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+         *      const unsigned short UNSCHEDULED_STATE = 0;
+         *      const unsigned short SCHEDULED_STATE = 1;
+         *      const unsigned short PLAYING_STATE = 2;     // this means it is playing
+         *      const unsigned short FINISHED_STATE = 3;
+         */
+        return this._musicPlaying && this._musicPlaying.sourceNode.playbackState == 2;
     },
 
     /**
@@ -876,7 +869,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (keyName in this._audioData) {
             // already loaded, just play it
             this._musicPlaying = this._beginSound(keyName, loop, this._musicVolume);
-            this._setMusicPlaying(true);
         } else if (this._isFormatSupported(extName)) {
             // if the resource type is not supported, there is no need to download it
             var engine = this;
@@ -884,7 +876,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
                 // resource fetched, in @param buffer
                 engine._audioData[keyName] = buffer;
                 engine._musicPlaying = engine._beginSound(keyName, loop, this._musicVolume);
-                engine._setMusicPlaying(true);
             }, function() {
                 // resource fetching failed, doing nothing here
             });
@@ -895,7 +886,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     _musicListener: function(e){
         // TODO is this function still required?
-        this._setMusicPlaying(false);
         this.removeEventListener('pause', arguments.callee, false);
     },
 
@@ -909,9 +899,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         sfxCache.sourceNode.stop(0);
-        sfxCache.isPlaying = false;
-        sfxCache.sourceNode.disconnect();
-        sfxCache.volumeNode.disconnect();
+        // Do not call disconnect()! Otherwise the sourceNode's playbackState may not be updated correctly
+        // sfxCache.sourceNode.disconnect();
+        // sfxCache.volumeNode.disconnect();
     },
 
     /**
@@ -930,7 +920,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var key = this._musicPlaying.key;
         this._endSound(this._musicPlaying);
         this._musicPlaying = null;
-        this._setMusicPlaying(false);
 
         if (releaseData) {
             delete this._audioData[key];
@@ -951,7 +940,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         this._musicPlaying.pauseTime = this._ctx.currentTime;
         this._endSound(this._musicPlaying);
-        this._setMusicPlaying(false);
     },
 
     /**
@@ -972,7 +960,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var offset = this._musicPlaying.pauseTime - this._musicPlaying.startTime;
 
         this._musicPlaying = this._beginSound(key, loop, volume, offset);
-        this._setMusicPlaying(true);
 
         // TODO is the following line meaningful anymore?
         // au.addEventListener("pause", this._musicListener , false);
@@ -995,11 +982,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var volume = this.getMusicVolume();
 
         this._endSound(this._musicPlaying);
-        this._musicPlaying = null;
-        this._setMusicPlaying(false);
-
         this._musicPlaying = this._beginSound(key, loop, volume);
-        this._setMusicPlaying(true);
 
         // TODO
         // au.addEventListener("pause", this._musicListener , false);
