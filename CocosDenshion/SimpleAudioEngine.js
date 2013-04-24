@@ -665,7 +665,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _canPlay: true,
     // containing all binary buffers of loaded audio resources
     _audioData: {},
-    // the music being played now, cc.WebAudioSFX, null => no music is currently being played
+    // the music being played now, cc.WebAudioSFX, when null, no music is being played; when not null, it may be paused
     _musicPlaying: null,
     // the effects being played now, { key => cc.WebAudioSFX }, empty => no effects are currently being played
     _effectsPlaying: {},
@@ -876,6 +876,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _endSound: function(sfxCache) {
+        if (!sfxCache) {
+            return;
+        }
+
         sfxCache.sourceNode.stop(0);
         sfxCache.sourceNode.disconnect();
         sfxCache.volumeNode.disconnect();
@@ -889,6 +893,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().stopMusic();
      */
     stopMusic: function (releaseData) {
+        // can stop when it's playing/paused
         if (!this._musicPlaying) {
             return;
         }
@@ -910,7 +915,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().pauseMusic();
      */
     pauseMusic: function () {
-        if (!this._musicPlaying) {
+        // can pause only when it's playing
+        if (!this._musicPlaying || !this.isMusicPlaying()) {
             return;
         }
 
@@ -926,7 +932,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().resumeMusic();
      */
     resumeMusic: function () {
-        if (!this._musicPlaying) {
+        // can resume only when it's paused
+        if (!this._musicPlaying || this.isMusicPlaying()) {
             return;
         }
 
@@ -949,6 +956,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().rewindMusic();
      */
     rewindMusic: function () {
+        // can rewind when it's playing or paused
         if (!this._musicPlaying) {
             return;
         }
