@@ -632,13 +632,21 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 /**
  * the entity stored in soundList and effectList, used in cc.WebAudioEngine
  */
-cc.WebAudioSFX = function(key, sourceNode, volumeNode) {
+cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
     // the name of the relevant audio resource
     this.key = key;
     // the node used in Web Audio API in charge of the source data
     this.sourceNode = sourceNode;
     // the node used in Web Audio API in charge of volume
     this.volumeNode = volumeNode;
+    /*
+     * when playing started from beginning, startTime is set to the current time of AudioContext.currentTime
+     * when paused, pauseTime is set to the current time of AudioContext.currentTime
+     * so how long the music has been played can be calculated
+     * these won't be used in other cases
+     */
+    this.startTime = startTime || 0;
+    this.pauseTime = pauseTime || 0;
 };
 
 /**
@@ -777,30 +785,40 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     * Helper method, init a new WebAudioSFX, set it to this._musicPlaying, and start playing
+     * Init a new WebAudioSFX and play it, return this WebAudioSFX object
      * assuming that @param key exists in this._audioData
      * @param key {String}
-     * @param loop {Boolean}
-     * @param volume {float}: 0.0 - 1.0, default value is 1.0
+     * @param loop {Boolean}, default value: false
+     * @param volume {float}: 0.0 - 1.0, default value: 1.0
+     * @param offset {Long/Integer}: where to start playing (unit: seconds)
      * @private
      */
-    _beginMusic: function(key, loop, volume) {
+    _beginSound: function(key, loop, volume, offset) {
         var sfxCache = new cc.WebAudioSFX();
+        loop = loop || false;
+        volume = volume || 1;
+        offset = offset || 0;
+
         sfxCache.key = key;
         sfxCache.sourceNode = this._ctx.createBufferSource();
         sfxCache.sourceNode.buffer = this._audioData[key];
         sfxCache.sourceNode.loop = loop;
         sfxCache.volumeNode = this._ctx.createGainNode();
-        sfxCache.volumeNode.gain.value = volume || 1;
+        sfxCache.volumeNode.gain.value = volume;
 
         sfxCache.sourceNode.connect(sfxCache.volumeNode);
         sfxCache.volumeNode.connect(this._ctx.destination);
 
-        sfxCache.sourceNode.noteOn(0);
-        this._musicPlaying = sfxCache;
+        // starting from offset means resuming from where it paused last time
+        sfxCache.sourceNode.start(0, offset);
+        // currentTime - offset is necessary for pausing multiple times!
+        sfxCache.startTime = this._ctx.currentTime - offset;
+        sfxCache.pauseTime = sfxCache.startTime;
+
+        return sfxCache;
     },
 
-/**
+    /**
      * Play music.
      * @param {String} path The path of the music file without filename extension.
      * @param {Boolean} loop Whether the music loop or not.
@@ -820,7 +838,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         if (keyName in this._audioData) {
             // already loaded, just play it
-            this._beginMusic(keyName, loop);
+            this._musicPlaying = this._beginSound(keyName, loop);
             cc.AudioEngine.isMusicPlaying = true;
         } else {
             // not loaded, have to load first
@@ -828,7 +846,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             this._fetchData(path, function(buffer) {
                 // resource fetched, in @param buffer
                 engine._audioData[keyName] = buffer;
-                engine._beginMusic(keyName, loop);
+                engine._musicPlaying = engine._beginSound(keyName, loop);
                 cc.AudioEngine.isMusicPlaying = true;
             }, function() {
                 // resource fetching failed, doing nothing here
@@ -845,6 +863,16 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
+     * In addition to stop() or noteOff(), also disconnect the previously connected nodes
+     * @private
+     */
+    _endSound: function(sfxCache) {
+        sfxCache.sourceNode.stop(0);
+        sfxCache.sourceNode.disconnect();
+        sfxCache.volumeNode.disconnect();
+    },
+
+    /**
      * Stop playing music.
      * @param {Boolean} releaseData If release the music data or not.As default value is false.
      * @example
@@ -857,7 +885,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         var key = this._musicPlaying.key;
-        this._musicPlaying.sourceNode.noteOff(0);
+        this._endSound(this._musicPlaying);
         this._musicPlaying = null;
         cc.AudioEngine.isMusicPlaying = false;
 
@@ -877,7 +905,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        this._musicPlaying.sourceNode.noteOff(0);
+        this._musicPlaying.pauseTime = this._ctx.currentTime;
+        this._endSound(this._musicPlaying);
         cc.AudioEngine.isMusicPlaying = false;
     },
 
@@ -892,7 +921,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        this._musicPlaying.sourceNode.noteOn(0);
+        var key = this._musicPlaying.key;
+        var loop = this._musicPlaying.sourceNode.loop;
+        var volume = this.getMusicVolume();
+        var offset = this._musicPlaying.pauseTime - this._musicPlaying.startTime;
+
+        this._musicPlaying = this._beginSound(key, loop, volume, offset);
         cc.AudioEngine.isMusicPlaying = true;
 
         // TODO is the following line meaningful anymore?
@@ -913,11 +947,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var key = this._musicPlaying.key;
         var loop = this._musicPlaying.sourceNode.loop;
         var volume = this.getMusicVolume();
-        this._musicPlaying.sourceNode.noteOff(0);
+
+        this._endSound(this._musicPlaying);
         this._musicPlaying = null;
         cc.AudioEngine.isMusicPlaying = false;
 
-        this._beginMusic(key, loop, volume);
+        this._musicPlaying = this._beginSound(key, loop, volume);
         cc.AudioEngine.isMusicPlaying = true;
 
         // TODO
