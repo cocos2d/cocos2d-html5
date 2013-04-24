@@ -849,8 +849,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             // already loaded, just play it
             this._musicPlaying = this._beginSound(keyName, loop);
             this._setMusicPlaying(true);
-        } else {
-            // not loaded, have to load first
+        } else if (this._isFormatSupported(extName)) {
+            // if the resource type is not supported, there is no need to download it
             var engine = this;
             this._fetchData(path, function(buffer) {
                 // resource fetched, in @param buffer
