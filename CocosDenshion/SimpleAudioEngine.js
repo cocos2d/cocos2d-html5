@@ -35,6 +35,22 @@ var cc = cc || {};
 cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
+     * Whether the music is playing.
+     * @return {Boolean} If is playing return true,or return false.
+     * @example
+     * //example
+     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
+     *      cc.log("music is playing");
+     *  }
+     *  else {
+     *      cc.log("music is not playing");
+     *  }
+     */
+    isMusicPlaying: function () {
+        return cc.AudioEngine.isMusicPlaying;
+    },
+
+    /**
      * Check each type to see if it can be played by current browser
      * @param capabilities: the results are filled into this dict
      * @protected
@@ -302,22 +318,6 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
     willPlayMusic:function () {
         return false;
-    },
-
-    /**
-     * Whether the music is playing.
-     * @return {Boolean} If is playing return true,or return false.
-     * @example
-     * //example
-     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
-     *      cc.log("music is playing");
-     *  }
-     *  else {
-     *      cc.log("music is not playing");
-     *  }
-     */
-    isMusicPlaying:function () {
-        return cc.AudioEngine.isMusicPlaying;
     },
 
     /**
@@ -971,22 +971,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     willPlayMusic: function () {
         // TODO what is the purpose of this method?
         return false;
-    },
-
-    /**
-     * Whether the music is playing.
-     * @return {Boolean} If is playing return true,or return false.
-     * @example
-     * //example
-     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
-     *      cc.log("music is playing");
-     *  }
-     *  else {
-     *      cc.log("music is not playing");
-     *  }
-     */
-    isMusicPlaying: function () {
-        return cc.AudioEngine.isMusicPlaying;
     },
 
     /**
