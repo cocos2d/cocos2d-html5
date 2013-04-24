@@ -154,7 +154,7 @@ cc.setBlending = function (sfactor, dfactor) {
     }
 };
 
-if(cc.ENABLE_GL_STATE_CACHE){
+if(!cc.ENABLE_GL_STATE_CACHE){
     cc.glBlendFunc = cc.setBlending;
 };
 
@@ -239,7 +239,7 @@ cc.glBindTexture2D = function (textureId) {
  * @param {cc.Texture2D} textureId
  */
 cc.glBindTexture2DN = function (textureUnit, textureId) {
-    if (cc._currentBoundTexture[textureUnit] === textureId)
+    if (cc._currentBoundTexture[textureUnit] == textureId)
         return;
     cc._currentBoundTexture[textureUnit] = textureId;
 

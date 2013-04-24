@@ -1432,7 +1432,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /// ---- common properties end  ----
 
     _transform4x4:null,
-    _mvpMatrix:null,
     _stackMatrix:null,
     _glServerState:null,
     _camera:null,
@@ -1440,23 +1439,29 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     ctor:function () {
         this._initNode();
-        this._transform4x4 = new cc.kmMat4();
+        var mat4 = new cc.kmMat4();
+        mat4.mat[2] = mat4.mat[3] = mat4.mat[6] = mat4.mat[7] = mat4.mat[8] = mat4.mat[9] = mat4.mat[11] = mat4.mat[14] = 0.0;
+        mat4.mat[10] = mat4.mat[15] = 1.0;
+        this._transform4x4 = mat4;
         this._glServerState = 0;
-        this._mvpMatrix = new cc.kmMat4();
         this._stackMatrix = new cc.kmMat4();
     },
 
     /**
      * recursive method that visit its children and draw them
      */
-    visit:function () {
+    visit: function () {
         // quick return if not visible
         if (!this._visible)
             return;
 
-        var context = cc.renderContext, i;
+        var context = cc.renderContext, i, currentStack = cc.current_stack;
         this._stackMatrix = this._stackMatrix || new cc.kmMat4();
-        cc.kmGLPushMatrixWitMat4(this._stackMatrix);
+        //cc.kmGLPushMatrixWitMat4(this._stackMatrix);
+        //optimize performance for javascript
+        currentStack.stack.push(currentStack.top);
+        cc.kmMat4Assign(this._stackMatrix, currentStack.top);
+        currentStack.top = this._stackMatrix;
 
         var locGrid = this._grid;
         if (locGrid && locGrid._active)
@@ -1489,18 +1494,38 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         if (locGrid && locGrid.isActive())
             locGrid.afterDraw(this);
 
-        cc.kmGLPopMatrix();
+        //cc.kmGLPopMatrix();
+        //optimize performance for javascript
+        currentStack.top = currentStack.stack.pop();
     },
 
     transform:function () {
-        this._transform4x4 = this._transform4x4 || new cc.kmMat4();
+        //optimize performance for javascript
+        var t4x4 = this._transform4x4,  topMat4 = cc.current_stack.top;
+        if(!t4x4){
+            t4x4 = new cc.kmMat4();
+            t4x4.mat[2] = t4x4.mat[3] = t4x4.mat[6] = t4x4.mat[7] = t4x4.mat[8] = t4x4.mat[9] = t4x4.mat[11] = t4x4.mat[14] = 0.0;
+            t4x4.mat[10] = t4x4.mat[15] = 1.0;
+            this._transform4x4 = t4x4;
+        }
+
         // Convert 3x3 into 4x4 matrix
-        cc.CGAffineToGL(this.nodeToParentTransform(), this._transform4x4.mat);
+        //cc.CGAffineToGL(this.nodeToParentTransform(), this._transform4x4.mat);
+        var trans = this.nodeToParentTransform();
+        var t4x4Mat = t4x4.mat;
+        t4x4Mat[0] = trans.a;
+        t4x4Mat[4] = trans.c;
+        t4x4Mat[12] = trans.tx;
+        t4x4Mat[1] = trans.b;
+        t4x4Mat[5] = trans.d;
+        t4x4Mat[13] = trans.ty;
 
         // Update Z vertex manually
-        this._transform4x4.mat[14] = this._vertexZ;
-        //optimize performance
-        cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, this._transform4x4); // = cc.kmGLMultMatrix(this._transform4x4);
+        //this._transform4x4.mat[14] = this._vertexZ;
+        t4x4Mat[14] = this._vertexZ;
+
+        //optimize performance for Javascript
+        cc.kmMat4Multiply(topMat4, topMat4, t4x4); // = cc.kmGLMultMatrix(this._transform4x4);
 
         // XXX: Expensive calls. Camera should be integrated into the cached affine matrix
         if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
@@ -1523,10 +1548,13 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             // Translate values
             var x = this._position.x;
             var y = this._position.y;
+            var apx = this._anchorPointInPoints.x, napx = -apx;
+            var apy = this._anchorPointInPoints.y, napy = -apy;
+            var scx = this._scaleX, scy = this._scaleY;
 
             if (this._ignoreAnchorPointForPosition) {
-                x += this._anchorPointInPoints.x;
-                y += this._anchorPointInPoints.y;
+                x += apx;
+                y += apy;
             }
 
             // Rotation values
@@ -1544,31 +1572,31 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
             // optimization:
             // inline anchor point calculation if skew is not needed
             // Adjusted transform calculation for rotational skew
-            if (!needsSkewMatrix && (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0)) {
-                x += cy * -this._anchorPointInPoints.x * this._scaleX + -sx * -this._anchorPointInPoints.y * this._scaleY;
-                y += sy * -this._anchorPointInPoints.x * this._scaleX + cx * -this._anchorPointInPoints.y * this._scaleY;
+            if (!needsSkewMatrix && (apx !== 0 || apy !== 0)) {
+                x += cy * napx * scx + -sx * napy * scy;
+                y += sy * napx * scx + cx * napy * scy;
             }
 
             // Build Transform Matrix
             // Adjusted transform calculation for rotational skew
-            this._transform = {a: cy * this._scaleX, b: sy * this._scaleX, c: -sx * this._scaleY, d: cx * this._scaleY, tx: x, ty: y};
+            var t = {a: cy * scx, b: sy * scx, c: -sx * scy, d: cx * scy, tx: x, ty: y};
 
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
-                var skewMatrix = {a: 1.0, b: Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
-                    c: Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), d: 1.0, tx: 0.0, ty: 0.0};
-                this._transform = cc.AffineTransformConcat(skewMatrix, this._transform);
+                t = cc.AffineTransformConcat({a: 1.0, b: Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
+                    c: Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
 
                 // adjust anchor point
-                if (this._anchorPointInPoints.x !== 0 || this._anchorPointInPoints.y !== 0)
-                    this._transform = cc.AffineTransformTranslate(this._transform, -this._anchorPointInPoints.x, -this._anchorPointInPoints.y);
+                if (apx !== 0 || apy !== 0)
+                    t = cc.AffineTransformTranslate(t, napx, napy);
             }
 
             if (this._additionalTransformDirty) {
-                this._transform = cc.AffineTransformConcat(this._transform, this._additionalTransform);
+                t = cc.AffineTransformConcat(t, this._additionalTransform);
                 this._additionalTransformDirty = false;
             }
+            this._transform = t;
             this._transformDirty = false;
         }
         return this._transform;

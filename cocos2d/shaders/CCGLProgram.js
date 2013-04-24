@@ -635,7 +635,7 @@ cc.GLProgram = cc.Class.extend({
             cc.getMat4MultiplyValue(cc.projection_matrix_stack.top, cc.modelview_matrix_stack.top));
     },
 
-    setUniformForModelViewProjectionMatrixWithMat4: function (swapMat4) {
+    setUniformForModelViewProjectionMatrixWithMat4: function () {
         //cc.kmMat4Multiply(swapMat4, cc.projection_matrix_stack.top, cc.modelview_matrix_stack.top);
         //this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX], false, swapMat4.mat);
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], false, cc.modelview_matrix_stack.top.mat);

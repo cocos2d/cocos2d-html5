@@ -2641,16 +2641,17 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * draw sprite to canvas
      */
     draw:function () {
-        var gl = cc.renderContext;
+        var gl = cc.renderContext, locTexture = this._texture;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        if (this._texture) {
-            if(this._texture._isLoaded){
+        if (locTexture) {
+            if(locTexture._isLoaded){
                 this._shaderProgram.use();
-                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4();
 
                 cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-                cc.glBindTexture2D(this._texture);
+                //optimize performance for javascript
+                cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
@@ -2666,7 +2667,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
             shaderProgram.use();
-            shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            shaderProgram.setUniformForModelViewProjectionMatrixWithMat4();
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);
@@ -2777,7 +2778,7 @@ cc.SpriteWebGL.createWithTexture = function (texture, rect, offset) {
  */
 cc.SpriteWebGL.create = function (fileName, rect) {
     var argnum = arguments.length;
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     if (argnum === 0) {
         if (sprite.init())
             return sprite;
@@ -2822,7 +2823,7 @@ cc.SpriteWebGL.createWithSpriteFrameName = function (spriteFrameName) {
         cc.log("Invalid argument. Expecting string.");
         return null;
     }
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
         return sprite;
     }
@@ -2841,7 +2842,7 @@ cc.SpriteWebGL.createWithSpriteFrameName = function (spriteFrameName) {
  * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
  */
 cc.SpriteWebGL.createWithSpriteFrame = function (spriteFrame) {
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
         return sprite;
     }

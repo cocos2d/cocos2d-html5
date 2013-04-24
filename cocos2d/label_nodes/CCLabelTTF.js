@@ -851,17 +851,18 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {WebGLRenderContext} ctx 3d context of canvas
      */
     draw:function (ctx) {
-        var gl = ctx || cc.renderContext;
+        var gl = ctx || cc.renderContext, locTexture = this._texture;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        if (this._texture && this._texture.isLoaded()) {
+        if (locTexture && locTexture._isLoaded) {
             this._shaderProgram.use();
-            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4();
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            cc.glBindTexture2D(this._texture);
+            //cc.glBindTexture2D(locTexture);
+            cc._currentBoundTexture[0] = locTexture;
             gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
+            gl.bindTexture(gl.TEXTURE_2D, locTexture._webTextureObj);
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
