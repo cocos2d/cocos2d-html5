@@ -890,14 +890,14 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         if (keyName in this._audioData) {
             // already loaded, just play it
-            this._music = this._beginSound(keyName, loop, this._musicVolume);
+            this._music = this._beginSound(keyName, loop, this.getMusicVolume());
         } else if (this._isFormatSupported(extName)) {
             // if the resource type is not supported, there is no need to download it
             var engine = this;
             this._fetchData(path, function(buffer) {
-                // resource fetched, in @param buffer
+                // resource fetched, save it and call playMusic() again, this time it should be alright
                 engine._audioData[keyName] = buffer;
-                engine._music = engine._beginSound(keyName, loop, engine._musicVolume);
+                engine.playMusic(path, loop);
             }, function() {
                 // resource fetching failed, doing nothing here
                 /*
@@ -1082,21 +1082,29 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var extName = this._getExtFromFullPath(path);
         loop = loop || false;
 
-        if (keyName in this._effects) {
-            // the effect is currently being played (or paused), stop it
-            this.stopEffect(path);
-        }
-
         if (keyName in this._audioData) {
-            // already loaded, just play it
-            this._effects[keyName] = this._beginSound(keyName, loop, this._effectsVolume);
+            // the resource has been loaded, just play it
+            if (!(keyName in this._effects)) {
+                this._effects[keyName] = [];
+            }
+            var effectList = this._effects[keyName];
+            for (var idx in effectList) {
+                var sfxCache = effectList[idx];
+                if (!this._isSoundPlaying(sfxCache) && !this._isSoundPaused(sfxCache)) {
+                    // not playing && not paused => it is finished, this position can be reused
+                    effectList[idx] = this._beginSound(keyName, loop, this.getEffectsVolume());
+                    return path;
+                }
+            }
+            // no new sound was created to replace an old one in the list, then just append one
+            effectList.push(this._beginSound(keyName, loop, this.getEffectsVolume()));
         } else if (this._isFormatSupported(extName)) {
             // if the resource type is not supported, there is no need to download it
             var engine = this;
             this._fetchData(path, function(buffer) {
-                // resource fetched, in @param buffer
+                // resource fetched, save it and call playEffect() again, this time it should be alright
                 engine._audioData[keyName] = buffer;
-                engine._effects[keyName] = engine._beginSound(keyName, loop, engine._effectsVolume);
+                engine.playEffect(path, loop);
             }, function() {
                 // resource fetching failed, doing nothing here
                 /*
@@ -1107,12 +1115,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
         // cc.SimpleAudioEngine returns path, just do the same for backward compatibility. DO NOT rely on this, though!
         return path;
-
-        /*
-         * In cc.SimpleAudioEngine, there is something called reclaim here.
-         * cc.WebAudioEngine won't use that variable because in Web Audio API, once a node has finished playing,
-         * it cannot replay. Instead, developer have to create a new node (that is in fact very efficient)
-         */
     },
 
     /**
@@ -1146,7 +1148,25 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         this._effectsVolume = volume;
         for (var key in this._effects) {
-            this._setSoundVolume(this._effects[key], volume);
+            var effectList = this._effects[key];
+            // have to update each sfxCache in the list
+            for (var idx in effectList) {
+                this._setSoundVolume(effectList[idx], volume);
+            }
+        }
+    },
+
+    /**
+     * Used in pauseEffect() and pauseAllEffects()
+     * @param effectList: a list of sounds, each sound may be playing/paused/finished
+     * @private
+     */
+    _pauseSoundList: function(effectList) {
+        for (var idx in effectList) {
+            var sfxCache = effectList[idx];
+            if (this._isSoundPlaying(sfxCache)) {
+                this._pauseSound(sfxCache);
+            }
         }
     },
 
@@ -1168,13 +1188,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        var sfxCache = this._effects[keyName];
-        if (!this._isSoundPlaying(sfxCache)) {
-            // it is paused or finished, cannot pause
-            return;
-        }
-
-        this._pauseSound(sfxCache);
+        this._pauseSoundList(this._effects[keyName]);
     },
 
     /**
@@ -1185,9 +1199,20 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     pauseAllEffects: function() {
         for (var key in this._effects) {
-            var sfxCache = this._effects[key];
-            if (this._isSoundPlaying(sfxCache)) {
-                this._pauseSound(sfxCache);
+            this._pauseSoundList(this._effects[key]);
+        }
+    },
+
+    /**
+     * Used in resumeEffect() and resumeAllEffects()
+     * @param effectList: a list of sounds, each sound may be playing/paused/finished
+     * @private
+     */
+    _resumeSoundList: function(effectList, volume) {
+        for (var idx in effectList) {
+            var sfxCache = effectList[idx];
+            if (this._isSoundPaused(sfxCache)) {
+                effectList[idx] = this._resumeSound(sfxCache, volume);
             }
         }
     },
@@ -1210,13 +1235,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        var sfxCache = this._effects[keyName];
-        if (!this._isSoundPaused(sfxCache)) {
-            // it is currently playing, cannot resume
-            return;
-        }
-
-        this._effects[keyName] = this._resumeSound(sfxCache, this.getEffectsVolume());
+        this._resumeSoundList(this._effects[keyName], this.getEffectsVolume());
     },
 
     /**
@@ -1227,10 +1246,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     resumeAllEffects: function() {
         for (var key in this._effects) {
-            var sfxCache = this._effects[key];
-            if (this._isSoundPaused(sfxCache)) {
-                this._effects[key] = this._resumeSound(sfxCache, this.getEffectsVolume());
-            }
+            this._resumeSoundList(this._effects[key], this.getEffectsVolume());
         }
     },
 
@@ -1252,8 +1268,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        var sfxCache = this._effects[keyName];
-        this._endSound(sfxCache);
+        var effectList = this._effects[keyName];
+        for (var idx in effectList) {
+            this._endSound(effectList[idx]);
+        }
         delete this._effects[keyName];
     },
 
@@ -1265,11 +1283,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     stopAllEffects: function() {
         for (var key in this._effects) {
-            var sfxCache = this._effects[key];
-            this._endSound(sfxCache);
+            var effectList = this._effects[key];
+            for (var idx in effectList) {
+                this._endSound(effectList[idx]);
+            }
+            /*
+             * Another way is to set this._effects = {} outside this for loop.
+             * However, the cc.Class.extend() put all properties in the prototype.
+             * If I reassign a new {} to it, that will be appear in the instance.
+             * In other words, the dict in prototype won't release its children.
+             */
+            delete this._effects[key];
         }
-        // create a new one, no need to delete each one in the previous dict
-        this._effects = {};
     },
 
     /**
