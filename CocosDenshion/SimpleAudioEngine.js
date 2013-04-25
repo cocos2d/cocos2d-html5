@@ -930,6 +930,16 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
+     * Used in pauseMusic() & pauseEffect() & pauseAllEffects()
+     * @param sfxCache: assuming not null
+     * @private
+     */
+    _pauseSound: function(sfxCache) {
+        sfxCache.pauseTime = this._ctx.currentTime;
+        this._endSound(sfxCache);
+    },
+
+    /**
      * Pause playing music.
      * @example
      * //example
@@ -941,8 +951,22 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        this._musicPlaying.pauseTime = this._ctx.currentTime;
-        this._endSound(this._musicPlaying);
+        this._pauseSound(this._musicPlaying);
+    },
+
+    /**
+     * Used in resumeMusic() & resumeEffect() & resumeAllEffects()
+     * @param paused: the paused WebAudioSFX, assuming not null
+     * @param volume: can be getMusicVolume() or getEffectsVolume()
+     * @returns a new WebAudioSFX object representing the resumed sound
+     * @private
+     */
+    _resumeSound: function(paused, volume) {
+        var key = paused.key;
+        var loop = paused.sourceNode.loop;
+        var offset = paused.pauseTime - paused.startTime;
+
+        return this._beginSound(key, loop, volume, offset);
     },
 
     /**
@@ -957,12 +981,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        var key = this._musicPlaying.key;
-        var loop = this._musicPlaying.sourceNode.loop;
-        var volume = this.getMusicVolume();
-        var offset = this._musicPlaying.pauseTime - this._musicPlaying.startTime;
-
-        this._musicPlaying = this._beginSound(key, loop, volume, offset);
+        this._musicPlaying = this._resumeSound(this._musicPlaying, this.getMusicVolume());
     },
 
     /**
@@ -1141,8 +1160,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        sfxCache.pauseTime = this._ctx.currentTime;
-        this._endSound(sfxCache);
+        this._pauseSound(sfxCache);
     },
 
     /**
@@ -1191,11 +1209,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        var key = sfxCache.key;
-        var loop = sfxCache.sourceNode.loop;
-        var volume = this.getEffectsVolume();
-        var offset = sfxCache.pauseTime - sfxCache.startTime;
-        this._effectsPlaying[keyName] = this._beginSound(key, loop, volume, offset);
+        this._effectsPlaying[keyName] = this._resumeSound(sfxCache, this.getEffectsVolume());
     },
 
     /**
