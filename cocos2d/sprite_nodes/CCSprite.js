@@ -164,36 +164,35 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
 
     var selColor;
     if (color instanceof cc.Color3B) {
-        // Optimization for the particel system which mainly uses c4f colors
+        // Optimization for the particle system which mainly uses c4f colors
         selColor = cc.c4f(color.r / 255.0, color.g / 255.0, color.b / 255, 1);
 
     } else {
         selColor = color;
     }
 
+    var w = Math.min(rect.size.width, tintedImgCache[0].width);
+    var h = Math.min(rect.size.height, tintedImgCache[0].height);
     var buff = renderCanvas;
+    var ctx;
 
     // Create a new buffer if required
     if (!buff) {
         buff = document.createElement("canvas");
-        buff.width = rect.size.width;
-        buff.height = rect.size.height;
+        buff.width = w;
+        buff.height = h;
+        ctx = buff.getContext("2d");
 
-        // Unless overdraw is active, resize and clear the renderCanvas
-    } else if (!overdraw) {
-        buff.width = rect.size.width;
-        buff.height = rect.size.height;
+    } else {
+        ctx = buff.getContext("2d");
+        ctx.clearRect(0, 0, w, h);
     }
 
-    var ctx = buff.getContext("2d");
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-
     // Make sure to keep the renderCanvas alpha in mind in case of overdraw
     var a = ctx.globalAlpha;
-    var w = rect.size.width;
-    var h = rect.size.height;
     if (selColor.r > 0) {
         ctx.globalAlpha = selColor.r * a;
         ctx.drawImage(tintedImgCache[0], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);

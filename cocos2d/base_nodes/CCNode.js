@@ -3120,13 +3120,18 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             t.c = -Sin;
             t.b = Sin;
 
+            // Firefox on Vista and XP crashes
+            // GPU thread in case of scale(0.0, 0.0)
+            var sx = Math.max(Math.round(this._scaleX * 1000) / 1000, 0.000001),
+                sy = Math.max(Math.round(this._scaleY * 1000) / 1000, 0.000001);
+
             // skew
             if (this._skewX || this._skewY) {
                 // offset the anchorpoint
                 var skx = Math.tan(-this._skewX * Math.PI / 180);
                 var sky = Math.tan(-this._skewY * Math.PI / 180);
-                var xx = this._anchorPointInPoints.y * skx * this._scaleX;
-                var yy = this._anchorPointInPoints.x * sky * this._scaleY;
+                var xx = this._anchorPointInPoints.y * skx * sx;
+                var yy = this._anchorPointInPoints.x * sky * sy;
                 t.a = Cos + -Sin * sky;
                 t.c = Cos * skx + -Sin;
                 t.b = Sin + Cos * sky;
@@ -3137,15 +3142,15 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
             // scale
             if (this._scaleX !== 1 || this._scaleY !== 1) {
-                t.a *= this._scaleX;
-                t.b *= this._scaleX;
-                t.c *= this._scaleY;
-                t.d *= this._scaleY;
+                t.a *= sx;
+                t.b *= sx;
+                t.c *= sy;
+                t.d *= sy;
             }
 
             // adjust anchorPoint
-            t.tx += Cos * -this._anchorPointInPoints.x * this._scaleX + -Sin * this._anchorPointInPoints.y * this._scaleY;
-            t.ty -= Sin * -this._anchorPointInPoints.x * this._scaleX + Cos * this._anchorPointInPoints.y * this._scaleY;
+            t.tx += Cos * -this._anchorPointInPoints.x * sx + -Sin * this._anchorPointInPoints.y * sy;
+            t.ty -= Sin * -this._anchorPointInPoints.x * sx + Cos * this._anchorPointInPoints.y * sy;
 
             // if ignore anchorPoint
             if (this._ignoreAnchorPointForPosition) {
@@ -3162,6 +3167,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
                 this._additionalTransformDirty = false;
             }
 
+            t.tx = t.tx | 0;
+            t.ty = t.ty | 0;
             this._transformDirty = false;
         }
         return this._transform;
