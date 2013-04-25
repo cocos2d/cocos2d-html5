@@ -192,6 +192,7 @@ cc.setup = function (el, width, height) {
         cc.renderContextType = cc.WEBGL;
         window.gl = cc.renderContext;
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
+        cc.TextureCache.getInstance()._initializingRenderer();
     } else {
         cc.renderContext = cc.canvas.getContext("2d");
         cc.renderContextType = cc.CANVAS;
