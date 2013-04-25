@@ -1170,17 +1170,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().pauseAllEffects();
      */
     pauseAllEffects: function() {
-        // TODO extract a _pauseSound() method
-        return;
-
-        var tmpArr, au;
-        for (var i in this._effectList) {
-            tmpArr = this._effectList[i];
-            for (var j = 0; j < tmpArr.length; j++) {
-                au = tmpArr[j];
-                if (!au.ended) {
-                    au.pause();
-                }
+        for (var key in this._effectsPlaying) {
+            var sfxCache = this._effectsPlaying[key];
+            if (this._isSoundPlaying(sfxCache)) {
+                this._pauseSound(sfxCache);
             }
         }
     },
@@ -1219,19 +1212,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().resumeAllEffects();
      */
     resumeAllEffects: function() {
-        // TODO extract a resumeSound() method
-        return;
-
-        var tmpArr, au;
-        for (var i in this._effectList) {
-            tmpArr = this._effectList[i];
-            if (tmpArr.length > 0) {
-                for (var j = 0; j < tmpArr.length; j++) {
-                    au = tmpArr[j];
-                    if (!au.ended) {
-                        au.play();
-                    }
-                }
+        for (var key in this._effectsPlaying) {
+            var sfxCache = this._effectsPlaying[key];
+            if (!this._isSoundPlaying(sfxCache)) {
+                this._effectsPlaying[key] = this._resumeSound(sfxCache, this.getEffectsVolume());
             }
         }
     },
