@@ -647,6 +647,8 @@ cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
      */
     this.startTime = startTime || 0;
     this.pauseTime = pauseTime || 0;
+    // by only sourceNode's playbackState, it cannot distinguish finished state from paused state
+    this.isPaused = false;
 };
 
 /**
@@ -817,6 +819,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         // currentTime - offset is necessary for pausing multiple times!
         sfxCache.startTime = this._ctx.currentTime - offset;
         sfxCache.pauseTime = sfxCache.startTime;
+        sfxCache.isPaused = false;
 
         return sfxCache;
     },
@@ -833,6 +836,16 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     _isSoundPlaying: function(sfxCache) {
         return sfxCache.sourceNode.playbackState == 2;
+    },
+
+    /**
+     * To distinguish 3 kinds of status for each sound (PLAYING, PAUSED, FINISHED), _isSoundPlaying() is not enough
+     * @param sfxCache: assuming not null
+     * @private
+     */
+    _isSoundPaused: function(sfxCache) {
+        // checking _isSoundPlaying() won't hurt
+        return this._isSoundPlaying(sfxCache) ? false : sfxCache.isPaused;
     },
 
     /**
@@ -936,6 +949,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     _pauseSound: function(sfxCache) {
         sfxCache.pauseTime = this._ctx.currentTime;
+        sfxCache.isPaused = true;
         this._endSound(sfxCache);
     },
 
@@ -977,7 +991,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     resumeMusic: function() {
         // can resume only when it's paused
-        if (!this._musicPlaying || this.isMusicPlaying()) {
+        if (!this._musicPlaying || !this._isSoundPaused(this._musicPlaying)) {
             return;
         }
 
@@ -1197,7 +1211,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         var sfxCache = this._effectsPlaying[keyName];
-        if (this._isSoundPlaying(sfxCache)) {
+        if (!this._isSoundPaused(sfxCache)) {
             // it is currently playing, cannot resume
             return;
         }
@@ -1214,7 +1228,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     resumeAllEffects: function() {
         for (var key in this._effectsPlaying) {
             var sfxCache = this._effectsPlaying[key];
-            if (!this._isSoundPlaying(sfxCache)) {
+            if (this._isSoundPaused(sfxCache)) {
                 this._effectsPlaying[key] = this._resumeSound(sfxCache, this.getEffectsVolume());
             }
         }
@@ -1272,7 +1286,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
         var keyName = this._getPathWithoutExt(path);
         if (keyName in this._effectsPlaying) {
-            var sfxCache = this._effectsPlaying[keyName];
             this.stopEffect(path);
         }
 
