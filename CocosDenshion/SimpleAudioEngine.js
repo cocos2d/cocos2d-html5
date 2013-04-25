@@ -630,7 +630,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
 
 /**
- * the entity stored in soundList and effectList, used in cc.WebAudioEngine
+ * The entity stored in cc.WebAudioEngine, representing a sound object
  */
 cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
     // the name of the relevant audio resource
@@ -667,12 +667,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _canPlay: true,
     // containing all binary buffers of loaded audio resources
     _audioData: {},
-    // the music being played now, cc.WebAudioSFX, when null, no music is being played; when not null, it may be paused
-    _musicPlaying: null,
+    // the music being played, cc.WebAudioSFX, when null, no music is being played; when not null, it may be playing or paused
+    _music: null,
     // the volume applied to the music
     _musicVolume: 1,
-    // the effects being played now, { key => cc.WebAudioSFX }, it may be playing or paused
-    _effectsPlaying: {},
+    // the effects being played: { key => [cc.WebAudioSFX] }, many effects of the same resource may be played simultaneously
+    _effects: {},
     // the volume applied to all effects
     _effectsVolume: 1,
 
@@ -867,7 +867,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
          * WebAudioEngine uses Web Audio API which contains a playbackState property in AudioBufferSourceNode
          * So there is also no need to be any method like setMusicPlaying(), it is done automatically
          */
-        return this._musicPlaying ? this._isSoundPlaying(this._musicPlaying) : false;
+        return this._music ? this._isSoundPlaying(this._music) : false;
     },
 
     /**
@@ -883,21 +883,21 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var extName = this._getExtFromFullPath(path);
         loop = loop || false;
 
-        if (this._musicPlaying) {
+        if (this._music) {
             // there is a music being played currently, stop it (may be paused)
             this.stopMusic();
         }
 
         if (keyName in this._audioData) {
             // already loaded, just play it
-            this._musicPlaying = this._beginSound(keyName, loop, this._musicVolume);
+            this._music = this._beginSound(keyName, loop, this._musicVolume);
         } else if (this._isFormatSupported(extName)) {
             // if the resource type is not supported, there is no need to download it
             var engine = this;
             this._fetchData(path, function(buffer) {
                 // resource fetched, in @param buffer
                 engine._audioData[keyName] = buffer;
-                engine._musicPlaying = engine._beginSound(keyName, loop, engine._musicVolume);
+                engine._music = engine._beginSound(keyName, loop, engine._musicVolume);
             }, function() {
                 // resource fetching failed, doing nothing here
                 /*
@@ -929,13 +929,13 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     stopMusic: function(releaseData) {
         // can stop when it's playing/paused
-        if (!this._musicPlaying) {
+        if (!this._music) {
             return;
         }
 
-        var key = this._musicPlaying.key;
-        this._endSound(this._musicPlaying);
-        this._musicPlaying = null;
+        var key = this._music.key;
+        this._endSound(this._music);
+        this._music = null;
 
         if (releaseData) {
             delete this._audioData[key];
@@ -965,7 +965,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        this._pauseSound(this._musicPlaying);
+        this._pauseSound(this._music);
     },
 
     /**
@@ -991,11 +991,11 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     resumeMusic: function() {
         // can resume only when it's paused
-        if (!this._musicPlaying || !this._isSoundPaused(this._musicPlaying)) {
+        if (!this._music || !this._isSoundPaused(this._music)) {
             return;
         }
 
-        this._musicPlaying = this._resumeSound(this._musicPlaying, this.getMusicVolume());
+        this._music = this._resumeSound(this._music, this.getMusicVolume());
     },
 
     /**
@@ -1006,16 +1006,16 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      */
     rewindMusic: function() {
         // can rewind when it's playing or paused
-        if (!this._musicPlaying) {
+        if (!this._music) {
             return;
         }
 
-        var key = this._musicPlaying.key;
-        var loop = this._musicPlaying.sourceNode.loop;
+        var key = this._music.key;
+        var loop = this._music.sourceNode.loop;
         var volume = this.getMusicVolume();
 
-        this._endSound(this._musicPlaying);
-        this._musicPlaying = this._beginSound(key, loop, volume);
+        this._endSound(this._music);
+        this._music = this._beginSound(key, loop, volume);
     },
 
     willPlayMusic: function() {
@@ -1064,8 +1064,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         this._musicVolume = volume;
-        if (this._musicPlaying) {
-            this._setSoundVolume(this._musicPlaying, volume);
+        if (this._music) {
+            this._setSoundVolume(this._music, volume);
         }
     },
 
@@ -1082,21 +1082,21 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var extName = this._getExtFromFullPath(path);
         loop = loop || false;
 
-        if (keyName in this._effectsPlaying) {
+        if (keyName in this._effects) {
             // the effect is currently being played (or paused), stop it
             this.stopEffect(path);
         }
 
         if (keyName in this._audioData) {
             // already loaded, just play it
-            this._effectsPlaying[keyName] = this._beginSound(keyName, loop, this._effectsVolume);
+            this._effects[keyName] = this._beginSound(keyName, loop, this._effectsVolume);
         } else if (this._isFormatSupported(extName)) {
             // if the resource type is not supported, there is no need to download it
             var engine = this;
             this._fetchData(path, function(buffer) {
                 // resource fetched, in @param buffer
                 engine._audioData[keyName] = buffer;
-                engine._effectsPlaying[keyName] = engine._beginSound(keyName, loop, engine._effectsVolume);
+                engine._effects[keyName] = engine._beginSound(keyName, loop, engine._effectsVolume);
             }, function() {
                 // resource fetching failed, doing nothing here
                 /*
@@ -1145,8 +1145,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         this._effectsVolume = volume;
-        for (var key in this._effectsPlaying) {
-            this._setSoundVolume(this._effectsPlaying[key], volume);
+        for (var key in this._effects) {
+            this._setSoundVolume(this._effects[key], volume);
         }
     },
 
@@ -1163,12 +1163,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         var keyName = this._getPathWithoutExt(path);
-        if (!(keyName in this._effectsPlaying)) {
+        if (!(keyName in this._effects)) {
             // the effect is not even in the playing list
             return;
         }
 
-        var sfxCache = this._effectsPlaying[keyName];
+        var sfxCache = this._effects[keyName];
         if (!this._isSoundPlaying(sfxCache)) {
             // it is paused or finished, cannot pause
             return;
@@ -1184,8 +1184,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().pauseAllEffects();
      */
     pauseAllEffects: function() {
-        for (var key in this._effectsPlaying) {
-            var sfxCache = this._effectsPlaying[key];
+        for (var key in this._effects) {
+            var sfxCache = this._effects[key];
             if (this._isSoundPlaying(sfxCache)) {
                 this._pauseSound(sfxCache);
             }
@@ -1205,18 +1205,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         var keyName = this._getPathWithoutExt(path);
-        if (!(keyName in this._effectsPlaying)) {
+        if (!(keyName in this._effects)) {
             // the effect is not even in the playing list
             return;
         }
 
-        var sfxCache = this._effectsPlaying[keyName];
+        var sfxCache = this._effects[keyName];
         if (!this._isSoundPaused(sfxCache)) {
             // it is currently playing, cannot resume
             return;
         }
 
-        this._effectsPlaying[keyName] = this._resumeSound(sfxCache, this.getEffectsVolume());
+        this._effects[keyName] = this._resumeSound(sfxCache, this.getEffectsVolume());
     },
 
     /**
@@ -1226,10 +1226,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().resumeAllEffects();
      */
     resumeAllEffects: function() {
-        for (var key in this._effectsPlaying) {
-            var sfxCache = this._effectsPlaying[key];
+        for (var key in this._effects) {
+            var sfxCache = this._effects[key];
             if (this._isSoundPaused(sfxCache)) {
-                this._effectsPlaying[key] = this._resumeSound(sfxCache, this.getEffectsVolume());
+                this._effects[key] = this._resumeSound(sfxCache, this.getEffectsVolume());
             }
         }
     },
@@ -1247,14 +1247,14 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         var keyName = this._getPathWithoutExt(path);
-        if (!(keyName in this._effectsPlaying)) {
+        if (!(keyName in this._effects)) {
             // can stop only when it's playing/paused, in other words, when it's on the list
             return;
         }
 
-        var sfxCache = this._effectsPlaying[keyName];
+        var sfxCache = this._effects[keyName];
         this._endSound(sfxCache);
-        delete this._effectsPlaying[keyName];
+        delete this._effects[keyName];
     },
 
     /**
@@ -1264,12 +1264,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().stopAllEffects();
      */
     stopAllEffects: function() {
-        for (var key in this._effectsPlaying) {
-            var sfxCache = this._effectsPlaying[key];
+        for (var key in this._effects) {
+            var sfxCache = this._effects[key];
             this._endSound(sfxCache);
         }
         // create a new one, no need to delete each one in the previous dict
-        this._effectsPlaying = {};
+        this._effects = {};
     },
 
     /**
@@ -1285,7 +1285,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         }
 
         var keyName = this._getPathWithoutExt(path);
-        if (keyName in this._effectsPlaying) {
+        if (keyName in this._effects) {
             this.stopEffect(path);
         }
 
