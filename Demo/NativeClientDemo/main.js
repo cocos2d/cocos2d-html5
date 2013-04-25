@@ -48,8 +48,8 @@ var cocos2dApp = cc.Application.extend({
         director.setAnimationInterval(1.0 / this.config['frameRate']);
 
         //load resources
-        cc.Loader.preload(g_ressources, function(){
-            cc.Director.getInstance().replaceScene(new this.startScene());
+        cc.LoaderScene.preload(g_ressources, function(){
+            director.replaceScene(new this.startScene());
         }, this);
 
         return true;
