@@ -854,7 +854,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
          * WebAudioEngine uses Web Audio API which contains a playbackState property in AudioBufferSourceNode
          * So there is also no need to be any method like setMusicPlaying(), it is done automatically
          */
-        return this._musicPlaying && this._isSoundPlaying(this._musicPlaying);
+        return this._musicPlaying ? this._isSoundPlaying(this._musicPlaying) : false;
     },
 
     /**
