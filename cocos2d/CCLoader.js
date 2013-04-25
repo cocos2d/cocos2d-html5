@@ -457,7 +457,7 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
         this._logoFadeIn();
 
         //load resources
-        this.schedule(this._startLoading, 0.5);
+        this.schedule(this._startLoading, 0.3);
     },
 
     /**
