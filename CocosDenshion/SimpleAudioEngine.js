@@ -1250,20 +1250,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().stopAllEffects();
      */
     stopAllEffects: function() {
-        // TODO stop all, the reassign a new {} to this._effectsPlaying
-        return;
-
-        var tmpArr, au;
-        for (var i in this._effectList) {
-            tmpArr = this._effectList[i];
-            for (var j = 0; j < tmpArr.length; j++) {
-                au = tmpArr[j];
-                if (!au.ended) {
-                    au.loop = false;
-                    au.currentTime = au.duration;
-                }
-            }
+        for (var key in this._effectsPlaying) {
+            var sfxCache = this._effectsPlaying[key];
+            this._endSound(sfxCache);
         }
+        // create a new one, no need to delete each one in the previous dict
+        this._effectsPlaying = {};
     },
 
     /**
@@ -1274,14 +1266,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
      */
     unloadEffect: function(path) {
-        // TODO
-        return;
+        if (!path) {
+            return;
+        }
 
-        if (!path) return;
-        var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
+        var keyName = this._getPathWithoutExt(path);
+        if (keyName in this._effectsPlaying) {
+            var sfxCache = this._effectsPlaying[keyName];
             this.stopEffect(path);
-            delete this._effectList[keyname];
+        }
+
+        if (keyName in this._audioData) {
+            delete this._audioData[keyName];
         }
     }
 });
