@@ -903,8 +903,10 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      * @return {Boolean}
      */
     init:function () {
-        this._super();
+        if(arguments.length > 0)
+            return this.initWithFile(arguments[0], arguments[1]);
 
+        this._super();
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
         this._opacity = 255;
@@ -930,6 +932,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
         return true;
     },
+
     /**
      * Initializes a sprite with a texture's filename and a rect in texture
      * @param {String} filename
@@ -942,7 +945,6 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     initWithFile:function (filename, rect) {
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
-
         var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
         if (!texture) {
             this._visible = false;
@@ -963,8 +965,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         } else {
             if (texture) {
                 if (!rect) {
-                    rect = cc.rect(0, 0, 0, 0);
-                    rect.size = cc.size(texture.width, texture.height);
+                    rect = cc.rect(0, 0, texture.width, texture.height);
                 }
                 return this.initWithTexture(texture, rect);
             }
@@ -1309,7 +1310,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
  */
 cc.SpriteCanvas.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteCanvas();
     switch (argnum) {
         case 1:
             /** Creates an sprite with a texture.
@@ -1364,24 +1365,11 @@ cc.SpriteCanvas.create = function (fileName, rect) {
     if (argnum === 0) {
         if (sprite.init())
             return sprite;
-        return null;
-    } else if (argnum < 2) {
-        /** Creates an sprite with an image filename.
-         The rect used will be the size of the image.
-         The offset will be (0,0).
-         */
-        if (sprite && sprite.initWithFile(fileName)) {
-            return sprite;
-        }
-        return null;
     } else {
-        /** Creates an sprite with an CCBatchNode and a rect
-         */
-        if (sprite && sprite.initWithFile(fileName, rect)) {
+        if (sprite && sprite.init(fileName, rect))
             return sprite;
-        }
-        return null;
     }
+    return null;
 };
 
 /**
@@ -2098,6 +2086,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {Boolean}
      */
     init:function () {
+        if(arguments.length > 0)
+            return this.initWithFile(arguments[0], arguments[1]);
+
         this._super();
 
         this._dirty = this._recursiveDirty = false;
@@ -2170,8 +2161,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         } else {
             if (texture) {
                 if (!rect) {
-                    rect = cc.rect(0, 0, 0, 0);
-                    rect.size = texture.getContentSize();
+                    var size = texture.getContentSize();
+                    rect = cc.rect(0, 0, size.width, size.height);
                 }
                 return this.initWithTexture(texture, rect);
             }
@@ -2721,7 +2712,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
  */
 cc.SpriteWebGL.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     switch (argnum) {
         case 1:
             /** Creates an sprite with a texture.
@@ -2772,28 +2763,19 @@ cc.SpriteWebGL.createWithTexture = function (texture, rect, offset) {
  */
 cc.SpriteWebGL.create = function (fileName, rect) {
     var argnum = arguments.length;
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     if (argnum === 0) {
         if (sprite.init())
             return sprite;
-        return null;
-    } else if (argnum < 2) {
+    } else {
         /** Creates an sprite with an image filename.
-         The rect used will be the size of the image.
+         If the rect equal undefined, the rect used will be the size of the image.
          The offset will be (0,0).
          */
-        if (sprite && sprite.initWithFile(fileName)) {
+        if (sprite && sprite.init(fileName, rect))
             return sprite;
-        }
-        return null;
-    } else {
-        /** Creates an sprite with an CCBatchNode and a rect
-         */
-        if (sprite && sprite.initWithFile(fileName, rect)) {
-            return sprite;
-        }
-        return null;
     }
+    return null;
 };
 
 /**
@@ -2817,7 +2799,7 @@ cc.SpriteWebGL.createWithSpriteFrameName = function (spriteFrameName) {
         cc.log("Invalid argument. Expecting string.");
         return null;
     }
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
         return sprite;
     }
@@ -2836,7 +2818,7 @@ cc.SpriteWebGL.createWithSpriteFrameName = function (spriteFrameName) {
  * var sprite = cc.Sprite.createWithSpriteFrameName(spriteFrame);
  */
 cc.SpriteWebGL.createWithSpriteFrame = function (spriteFrame) {
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     if (sprite && sprite.initWithSpriteFrame(spriteFrame)) {
         return sprite;
     }
