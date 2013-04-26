@@ -713,6 +713,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
             this._canPlay = false;
         }
+        // TODO testing, on iOS, this will become false
+        this._canPlay = true;
 
         return this._soundEnable;
     },
@@ -814,8 +816,26 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         sfxCache.sourceNode.connect(sfxCache.volumeNode);
         sfxCache.volumeNode.connect(this._ctx.destination);
 
-        // starting from offset means resuming from where it paused last time
-        sfxCache.sourceNode.start(0, offset);
+        /*
+         * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
+         * The latest version of chrome has supported start() and stop()
+         * start() & stop() are specified in the latest specification (written on 04/26/2013)
+         * Reference: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+         * noteOn(), noteGrainOn(), and noteOff() are specified in Draft 13 version (03/13/2012)
+         * Reference: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
+         */
+        if (sfxCache.sourceNode.start) {
+            // starting from offset means resuming from where it paused last time
+            sfxCache.sourceNode.start(0, offset);
+        } else if (sfxCache.sourceNode.noteGrainOn) {
+            // starting from offset means resuming from where it paused last time
+            var duration = sfxCache.sourceNode.buffer.duration;
+            sfxCache.sourceNode.noteGrainOn(0, offset, duration - offset);
+        } else {
+            // if only noteOn() is supported, resuming sound WON'T work
+            sfxCache.sourceNode.noteOn(0);
+        }
+
         // currentTime - offset is necessary for pausing multiple times!
         sfxCache.startTime = this._ctx.currentTime - offset;
         sfxCache.pauseTime = sfxCache.startTime;
@@ -914,7 +934,11 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @private
      */
     _endSound: function(sfxCache) {
-        sfxCache.sourceNode.stop(0);
+        if (sfxCache.sourceNode.stop) {
+            sfxCache.sourceNode.stop(0);
+        } else {
+            sfxCache.sourceNode.noteOff(0);
+        }
         // Do not call disconnect()! Otherwise the sourceNode's playbackState may not be updated correctly
         // sfxCache.sourceNode.disconnect();
         // sfxCache.volumeNode.disconnect();
