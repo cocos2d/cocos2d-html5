@@ -130,8 +130,19 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
      * @param {Number} eyeX
      * @param {Number} eyeY
      * @param {Number} eyeZ
+     * @deprecated This function will be deprecated sooner or later.
      */
     setEyeXYZ:function (eyeX, eyeY, eyeZ) {
+        this.setEye(eyeX,eyeY,eyeZ);
+    },
+
+    /**
+     * sets the eye values in points
+     * @param {Number} eyeX
+     * @param {Number} eyeY
+     * @param {Number} eyeZ
+     */
+    setEye:function (eyeX, eyeY, eyeZ) {
         this._eyeX = eyeX ;
         this._eyeY = eyeY ;
         this._eyeZ = eyeZ ;
@@ -143,12 +154,23 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
      * sets the center values in points
      * @param {Number} centerX
      * @param {Number} centerY
-     * @param {Number} fenterZ
+     * @param {Number} centerZ
+     * @deprecated  This function will be deprecated sooner or later.
      */
-    setCenterXYZ:function (centerX, centerY, fenterZ) {
+    setCenterXYZ:function (centerX, centerY, centerZ) {
+        this.setCenter(centerX,centerY,centerZ);
+    },
+
+    /**
+     * sets the center values in points
+     * @param {Number} centerX
+     * @param {Number} centerY
+     * @param {Number} centerZ
+     */
+    setCenter:function (centerX, centerY, centerZ) {
         this._centerX = centerX ;
         this._centerY = centerY ;
-        this._centerZ = fenterZ ;
+        this._centerZ = centerZ ;
 
         this._dirty = true;
     },
@@ -158,8 +180,19 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
      * @param {Number} upX
      * @param {Number} upY
      * @param {Number} upZ
+     * @deprecated This function will be deprecated sooner or later.
      */
     setUpXYZ:function (upX, upY, upZ) {
+        this.setUp(upX, upY, upZ);
+    },
+
+    /**
+     * sets the up values
+     * @param {Number} upX
+     * @param {Number} upY
+     * @param {Number} upZ
+     */
+    setUp:function (upX, upY, upZ) {
         this._upX = upX;
         this._upY = upY;
         this._upZ = upZ;
@@ -173,8 +206,17 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
      * @param {Number} eyeY
      * @param {Number} eyeZ
      * @return {Object}
+     * @deprecated This function will be deprecated sooner or later.
      */
     getEyeXYZ:function (eyeX, eyeY, eyeZ) {
+        return {x:this._eyeX , y:this._eyeY , z: this._eyeZ };
+    },
+
+    /**
+     * get the eye vector values in points  (return an object like {x:1,y:1,z:1} in HTML5)
+     * @return {Object}
+     */
+    getEye:function () {
         return {x:this._eyeX , y:this._eyeY , z: this._eyeZ };
     },
 
@@ -184,8 +226,17 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
      * @param {Number} centerY
      * @param {Number} centerZ
      * @return {Object}
+     * @deprecated This function will be deprecated sooner or later.
      */
     getCenterXYZ:function (centerX, centerY, centerZ) {
+        return {x:this._centerX ,y:this._centerY ,z:this._centerZ };
+    },
+
+    /**
+     * get the center vector values int points (return an object like {x:1,y:1,z:1} in HTML5)
+     * @return {Object}
+     */
+    getCenter:function () {
         return {x:this._centerX ,y:this._centerY ,z:this._centerZ };
     },
 
@@ -195,8 +246,17 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
      * @param {Number} upY
      * @param {Number} upZ
      * @return {Object}
+     * @deprecated This function will be deprecated sooner or later.
      */
     getUpXYZ:function (upX, upY, upZ) {
+        return {x:this._upX,y:this._upY,z:this._upZ};
+    },
+
+    /**
+     * get the up vector values (return an object like {x:1,y:1,z:1} in HTML5)
+     * @return {Object}
+     */
+    getUp:function () {
         return {x:this._upX,y:this._upY,z:this._upZ};
     },
 

@@ -24,17 +24,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels<br/>
- * All features from cc.TextureNode are valid in cc.LabelTTF<br/>
- * cc.LabelTTF objects are slow for js-binding on mobile devices.<br/>
- * Consider using cc.LabelAtlas or cc.LabelBMFont instead.<br/>
- * @class
- * @extends cc.Sprite
- */
-//cc.LabelTTF = cc.Sprite.extend(/** @lends cc.LabelTTF# */{
-cc._LabelTTFBaseProperties = ({
-});
 
 /**
  * cc.LabelTTF is a subclass of cc.TextureNode that knows how to render text labels (Canvas implement)<br/>
@@ -562,6 +551,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             this._vAlignment = vAlignment;
             this._fontSize = fontSize * cc.CONTENT_SCALE_FACTOR();
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+            this._fontClientHeight = cc.LabelTTFWebGL.__getFontHeightByDiv(this._fontName,this._fontSize);
             this.setString(strInfo);
             this._updateTexture();
 
@@ -571,6 +561,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     },
     /// ---- common properties end  ----
 
+    _fontClientHeight:18,
     /**
      * changes the string to render
      * @warning Changing the string is as expensive as creating a new cc.LabelTTF. To obtain better performance use cc.LabelAtlas
@@ -633,6 +624,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         if (this._fontSize != fontSize) {
             this._fontSize = fontSize;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+            this._fontClientHeight = cc.LabelTTFWebGL.__getFontHeightByDiv(this._fontName,this._fontSize);
             // Force update
             this._needUpdateTexture = true;
         }
@@ -646,6 +638,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         if (this._fontName && this._fontName != fontName) {
             this._fontName = fontName;
             this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
+            this._fontClientHeight = cc.LabelTTFWebGL.__getFontHeightByDiv(this._fontName,this._fontSize);
             // Force update
             this._needUpdateTexture = true;
         }
@@ -676,7 +669,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     },
 
     _multiLineText:function (context) {
-        var rowHeight = this._fontSize * 1.2;
+        var rowHeight = this._fontClientHeight;
         var tmpWords = this._string.split("\n");
         var lineHeight = tmpWords.length;
         var splitStrWidthArr = [];
@@ -754,7 +747,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
                 this._dimensions.height * 0.5,
                 this._dimensions.width,
                 this._dimensions.height,
-                this._fontSize * 1.2);
+                this._fontClientHeight);
         } else if (this._dimensions.width == 0) {
             context.textBaseline = "bottom";
             context.textAlign = "left";
@@ -798,11 +791,11 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     },
 
     _computeLabelSizeForWebGL:function () {
-        var dim, rowHeight = this._fontSize * 1.2, i, tmpWords, maxLineWidth, rowCount;
+        var dim, rowHeight = this._fontClientHeight, i, tmpWords, maxLineWidth, rowCount;
         if (this._dimensions.width == 0) {
             if (this._string.indexOf("\n") === -1) {
                 dim = this._labelContext.measureText(this._string);
-                return cc.size(dim.width === 0 ? 1 : dim.width, this._fontSize);
+                return cc.size(dim.width === 0 ? 1 : dim.width, rowHeight);
             } else {
                 tmpWords = this._string.split("\n");
                 rowCount = tmpWords.length;
@@ -921,5 +914,23 @@ cc.LabelTTFWebGL.create = function (/* Multi arguments */) {
 };
 
 cc.LabelTTF = (cc.Browser.supportWebGL) ? cc.LabelTTFWebGL : cc.LabelTTFCanvas;
+
+if(cc.Browser.supportWebGL){
+    var labelDiv = document.createElement("div");
+    labelDiv.style.fontFamily = "Arial";
+    labelDiv.innerHTML = "ajghl~!";
+    labelDiv.style.position = "absolute";
+    labelDiv.style.left = "-100px";
+    labelDiv.style.top = "-100px";
+    document.body.appendChild(labelDiv);
+    cc.LabelTTFWebGL.__labelHeightDiv = labelDiv;
+
+    cc.LabelTTFWebGL.__getFontHeightByDiv = function(fontName, fontSize){
+        var labelDiv = cc.LabelTTFWebGL.__labelHeightDiv;
+        labelDiv.style.fontFamily = fontName;
+        labelDiv.style.fontSize = fontSize + "px";
+        return labelDiv.clientHeight ;
+    };
+};
 
 
