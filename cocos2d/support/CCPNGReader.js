@@ -27,7 +27,7 @@
 
 cc.PNGReader = cc.Class.extend({
     ctor:function(data){
-        var chunkSize, colors, delayDen, delayNum, frame, i, index, key, section, short, text, _i, _j, _ref;
+        var chunkSize, colors, delayDen, delayNum, frame, i, index, key, section, ccshort, text, _i, _j, _ref;
         this.data = data;
         this.pos = 8;
         this.palette = [];
@@ -100,9 +100,9 @@ cc.PNGReader = cc.Class.extend({
                     switch (this.colorType) {
                         case 3:
                             this.transparency.indexed = this.read(chunkSize);
-                            short = 255 - this.transparency.indexed.length;
-                            if (short > 0) {
-                                for (i = _j = 0; 0 <= short ? _j < short : _j > short; i = 0 <= short ? ++_j : --_j) {
+                            ccshort = 255 - this.transparency.indexed.length;
+                            if (ccshort > 0) {
+                                for (i = _j = 0; 0 <= ccshort ? _j < ccshort : _j > ccshort; i = 0 <= ccshort ? ++_j : --_j) {
                                     this.transparency.indexed.push(255);
                                 }
                             }
@@ -181,7 +181,7 @@ cc.PNGReader = cc.Class.extend({
         return b1 | b2;
     },
     decodePixels:function(data){
-        var byte, c, col, i, left, length, p, pa, paeth, pb, pc, pixelBytes, pixels, pos, row, scanlineLength, upper, upperLeft, _i, _j, _k, _l, _m;
+        var ccbyte, c, col, i, left, length, p, pa, paeth, pb, pc, pixelBytes, pixels, pos, row, scanlineLength, upper, upperLeft, _i, _j, _k, _l, _m;
         if (data == null) {
             data = this.imgData;
         }
@@ -207,31 +207,31 @@ cc.PNGReader = cc.Class.extend({
                     break;
                 case 1:
                     for (i = _j = 0; _j < scanlineLength; i = _j += 1) {
-                        byte = data[pos++];
+                        ccbyte = data[pos++];
                         left = i < pixelBytes ? 0 : pixels[c - pixelBytes];
-                        pixels[c++] = (byte + left) % 256;
+                        pixels[c++] = (ccbyte + left) % 256;
                     }
                     break;
                 case 2:
                     for (i = _k = 0; _k < scanlineLength; i = _k += 1) {
-                        byte = data[pos++];
+                        ccbyte = data[pos++];
                         col = (i - (i % pixelBytes)) / pixelBytes;
                         upper = row && pixels[(row - 1) * scanlineLength + col * pixelBytes + (i % pixelBytes)];
-                        pixels[c++] = (upper + byte) % 256;
+                        pixels[c++] = (upper + ccbyte) % 256;
                     }
                     break;
                 case 3:
                     for (i = _l = 0; _l < scanlineLength; i = _l += 1) {
-                        byte = data[pos++];
+                        ccbyte = data[pos++];
                         col = (i - (i % pixelBytes)) / pixelBytes;
                         left = i < pixelBytes ? 0 : pixels[c - pixelBytes];
                         upper = row && pixels[(row - 1) * scanlineLength + col * pixelBytes + (i % pixelBytes)];
-                        pixels[c++] = (byte + Math.floor((left + upper) / 2)) % 256;
+                        pixels[c++] = (ccbyte + Math.floor((left + upper) / 2)) % 256;
                     }
                     break;
                 case 4:
                     for (i = _m = 0; _m < scanlineLength; i = _m += 1) {
-                        byte = data[pos++];
+                        ccbyte = data[pos++];
                         col = (i - (i % pixelBytes)) / pixelBytes;
                         left = i < pixelBytes ? 0 : pixels[c - pixelBytes];
                         if (row === 0) {
@@ -251,7 +251,7 @@ cc.PNGReader = cc.Class.extend({
                         } else {
                             paeth = upperLeft;
                         }
-                        pixels[c++] = (byte + paeth) % 256;
+                        pixels[c++] = (ccbyte + paeth) % 256;
                     }
                     break;
                 default:

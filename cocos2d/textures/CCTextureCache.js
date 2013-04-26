@@ -404,6 +404,10 @@ cc.TextureCacheWebGL = cc.Class.extend({
     _textureColorsCache:null,
     _textureKeySeq:1000,
 
+    _rendererInitialized:false,
+    _loadedTexturesBefore:null,
+    _loadingTexturesBefore:null,
+
     /**
      * Constructor
      */
@@ -412,6 +416,8 @@ cc.TextureCacheWebGL = cc.Class.extend({
         this._textureKeySeq += (0 | Math.random() * 1000);
         this._textures = {};
         this._textureColorsCache = {};
+        this._loadedTexturesBefore = {};
+        this._loadingTexturesBefore = {};
     },
 
     _addImageAsyncCallBack:function (target, selector) {
@@ -420,6 +426,28 @@ cc.TextureCacheWebGL = cc.Class.extend({
         } else if (target && (typeof(selector) == "function")) {
             selector.call(target);
         }
+    },
+
+    _initializingRenderer : function(){
+        this._rendererInitialized = true;
+
+        var selPath;
+        //init texture from _loadedTexturesBefore
+        for(selPath in this._loadedTexturesBefore){
+            var htmlImage = this._loadedTexturesBefore[selPath];
+
+            var texture2d = new cc.Texture2D();
+            texture2d.initWithElement(htmlImage);
+            texture2d.handleLoadedTexture();
+            this._textures[selPath] = texture2d;
+        }
+        this._loadedTexturesBefore = {};
+
+        //init texture from _loadingTexturesBefore
+        for(selPath in this._loadedTexturesBefore){
+            this.addImage(selPath);
+        }
+        this._loadedTexturesBefore = {};
     },
 
     /**
@@ -611,6 +639,23 @@ cc.TextureCacheWebGL = cc.Class.extend({
         return this._textures[path];
     },
 
+    _addImageBeforeRenderer:function(path){
+        var texture = new Image();
+        texture.crossOrigin = "Anonymous";
+        var that = this;
+        texture.addEventListener("load", function () {
+            cc.Loader.getInstance().onResLoaded();
+            that._loadedTexturesBefore[path] = texture;
+            delete that._loadingTexturesBefore[path];
+        });
+        texture.addEventListener("error", function () {
+            cc.Loader.getInstance().onResLoadingErr(path);
+            delete that._loadingTexturesBefore[path];
+        });
+        texture.src = path;
+        this._loadingTexturesBefore[path] = texture;
+    },
+
     /**
      * <p>Returns a Texture2D object given an file image <br />
      * If the file image was not previously loaded, it will create a new Texture2D <br />
@@ -625,6 +670,8 @@ cc.TextureCacheWebGL = cc.Class.extend({
      */
     addImage:function (path) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
+        if(!this._rendererInitialized)
+            return this._addImageBeforeRenderer(path);
 
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
 
