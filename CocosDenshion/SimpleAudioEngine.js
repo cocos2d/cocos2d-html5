@@ -654,7 +654,7 @@ cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
 /**
  * The Audio Engine implementation via Web Audio API.
  * @class
- * @extends   cc.AudioEngine
+ * @extends cc.AudioEngine
  */
 cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     // the Web Audio Context
@@ -663,8 +663,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _supportedFormat: [],
     // if sound is not enabled, this engine's init() will return false
     _soundEnable: false,
-    // TODO do I really know what this is?
-    _canPlay: true,
     // containing all binary buffers of loaded audio resources
     _audioData: {},
     // the music being played, cc.WebAudioSFX, when null, no music is being played; when not null, it may be playing or paused
@@ -676,8 +674,16 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     // the volume applied to all effects
     _effectsVolume: 1,
 
-    // TODO following?
-    _maxAudioInstance: 10,
+    /*
+     * _canPlay is a property in cc.SimpleAudioEngine, but not used in cc.WebAudioEngine.
+     * Only those which support Web Audio API will be using this cc.WebAudioEngine, so no need to add an extra check.
+     */
+    // _canPlay: true,
+    /*
+     * _maxAudioInstance is also a property in cc.SimpleAudioEngine, but not used here
+     */
+    // _maxAudioInstance: 10,
+
 
     /**
      * Constructor
@@ -707,14 +713,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             }
         }
         this._soundEnable = this._supportedFormat.length > 0;
-
-        // TODO check if the following this._canPlay is still required
-        var ua = navigator.userAgent;
-        if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
-            this._canPlay = false;
-        }
-        // TODO testing, on iOS, this will become false
-        this._canPlay = true;
 
         return this._soundEnable;
     },
@@ -774,12 +772,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             return;
         }
 
-        if (!this._canPlay) {
-            // TODO not sure what this._canPlay means
-            cc.Loader.getInstance().onResLoaded();
-            return;
-        }
-
         var engine = this;
         this._fetchData(path, function(buffer) {
             // resource fetched, in @param buffer
@@ -797,7 +789,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * @param key {String}
      * @param loop {Boolean}, default value: false
      * @param volume {float}: 0.0 - 1.0, default value: 1.0
-     * @param offset {Long/Integer}: where to start playing (unit: seconds)
+     * @param offset {Number}: where to start playing (unit: seconds)
      * @private
      */
     _beginSound: function(key, loop, volume, offset) {
@@ -820,9 +812,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
          * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
          * The latest version of chrome has supported start() and stop()
          * start() & stop() are specified in the latest specification (written on 04/26/2013)
-         * Reference: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+         *      Reference: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
          * noteOn(), noteGrainOn(), and noteOff() are specified in Draft 13 version (03/13/2012)
-         * Reference: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
+         *      Reference: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
          */
         if (sfxCache.sourceNode.start) {
             // starting from offset means resuming from where it paused last time
@@ -841,7 +833,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
                 sfxCache.sourceNode.noteGrainOn(0, offset, duration - offset);
             }
         } else {
-            // if only noteOn() is supported, resuming sound WON'T work
+            // if only noteOn() is supported, resuming sound will NOT work
             sfxCache.sourceNode.noteOn(0);
         }
 
@@ -859,6 +851,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      *      const unsigned short SCHEDULED_STATE = 1;
      *      const unsigned short PLAYING_STATE = 2;     // this means it is playing
      *      const unsigned short FINISHED_STATE = 3;
+     * However, the older specification doesn't include this property, such as this one: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
      * @param sfxCache: assuming not null
      * @returns {boolean}: whether @param sfxCache is playing or not
      * @private
@@ -938,7 +931,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     * In addition to stop() or noteOff(), also disconnect the previously connected nodes
+     * Ends a sound, call stop() or noteOff() accordingly
      * @param sfxCache: assuming not null
      * @private
      */
@@ -1053,7 +1046,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     willPlayMusic: function() {
-        // TODO what is the purpose of this method?
+        // TODO what is the purpose of this method? This is just a copy from cc.SimpleAudioEngine
         return false;
     },
 
@@ -1121,6 +1114,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             if (!(keyName in this._effects)) {
                 this._effects[keyName] = [];
             }
+            // a list of sound objects from the same resource
             var effectList = this._effects[keyName];
             for (var idx in effectList) {
                 var sfxCache = effectList[idx];
@@ -1183,7 +1177,6 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         this._effectsVolume = volume;
         for (var key in this._effects) {
             var effectList = this._effects[key];
-            // have to update each sfxCache in the list
             for (var idx in effectList) {
                 this._setSoundVolume(effectList[idx], volume);
             }
