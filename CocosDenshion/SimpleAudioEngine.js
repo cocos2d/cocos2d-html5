@@ -43,10 +43,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         var au = document.createElement('audio');
         if (au.canPlayType) {
             // <audio> tag is supported, go on
-            function _check(typeStr) {
+            var _check = function(typeStr) {
                 var result = au.canPlayType(typeStr);
                 return result != "no" && result != "";
-            }
+            };
 
             capabilities.mp3 = _check("audio/mpeg");
             capabilities.mp4 = _check("audio/mp4");
