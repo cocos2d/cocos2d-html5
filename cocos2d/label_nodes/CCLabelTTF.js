@@ -361,8 +361,10 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         } else {
             if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
                 context.fillText(this._string, xoffset, 0);
+            else if(this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP)
+                context.fillText(this._string, xoffset, -this._contentSize.height);
             else
-                context.fillText(this._string, xoffset, -this._fontSize);
+                context.fillText(this._string, xoffset, -this._contentSize.height/2);
         }
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
