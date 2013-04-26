@@ -51,7 +51,7 @@ cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
     _textureAtlas:null,
 
     // protocol variables
-    _isOpacityModifyRGB:false,
+    _opacityModifyRGB:false,
     _blendFunc:null,
 
     _opacity:0,
@@ -79,7 +79,7 @@ cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @return {cc.Color3B}
      */
     getColor:function () {
-        if (this._isOpacityModifyRGB)
+        if (this._opacityModifyRGB)
             return this._colorUnmodified;
         return this._color;
     },
@@ -96,7 +96,7 @@ cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
      */
     setOpacityModifyRGB:function (value) {
         var oldColor = this.getColor();
-        this._isOpacityModifyRGB = value;
+        this._opacityModifyRGB = value;
         this.setColor(oldColor);
     },
 
@@ -104,7 +104,7 @@ cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
      * @return {Boolean}
      */
     isOpacityModifyRGB:function () {
-        return this._isOpacityModifyRGB;
+        return this._opacityModifyRGB;
     },
 
     /** cc.AtlasNode - CocosNodeTexture protocol
@@ -171,7 +171,7 @@ cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
         this._itemWidth = tileWidth;
         this._itemHeight = tileHeight;
 
-        this._isOpacityModifyRGB = true;
+        this._opacityModifyRGB = true;
         this._originalTexture = cc.TextureCache.getInstance().addImage(tile);
         if (!this._originalTexture) {
             cc.log("cocos2d: Could not initialize cc.AtlasNode. Invalid Texture.");
@@ -201,7 +201,7 @@ cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
             }
         }
 
-        if (this._isOpacityModifyRGB) {
+        if (this._opacityModifyRGB) {
             this._color.r = color3.r * this._opacity / 255;
             this._color.g = color3.g * this._opacity / 255;
             this._color.b = color3.b * this._opacity / 255;
@@ -214,7 +214,7 @@ cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
     setOpacity:function (opacity) {
         this._opacity = opacity;
         // special opacity for premultiplied textures
-        if (this._isOpacityModifyRGB) {
+        if (this._opacityModifyRGB) {
             this.setColor(this._colorUnmodified);
         }
     },
@@ -288,7 +288,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
     _textureAtlas:null,
 
     // protocol variables
-    _isOpacityModifyRGB:false,
+    _opacityModifyRGB:false,
     _blendFunc:null,
 
     _opacity:0,
@@ -316,7 +316,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
      * @return {cc.Color3B}
      */
     getColor:function () {
-        if (this._isOpacityModifyRGB)
+        if (this._opacityModifyRGB)
             return this._colorUnmodified;
         return this._color;
     },
@@ -333,7 +333,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
      */
     setOpacityModifyRGB:function (value) {
         var oldColor = this.getColor();
-        this._isOpacityModifyRGB = value;
+        this._opacityModifyRGB = value;
         this.setColor(oldColor);
     },
 
@@ -341,7 +341,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
      * @return {Boolean}
      */
     isOpacityModifyRGB:function () {
-        return this._isOpacityModifyRGB;
+        return this._opacityModifyRGB;
     },
 
     /** cc.AtlasNode - CocosNodeTexture protocol
@@ -405,7 +405,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
         cc.Assert(tile != null, "title should not be null");
         this._itemWidth = tileWidth;
         this._itemHeight = tileHeight;
-        this._isOpacityModifyRGB = true;
+        this._opacityModifyRGB = true;
 
         this._colorF32Array = new Float32Array([this._color.r / 255.0, this._color.g / 255.0, this._color.b / 255.0, this._opacity / 255.0]);
         var newAtlas = new cc.TextureAtlas();
@@ -446,7 +446,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
             return;
         this._color = this._colorUnmodified = color3;
 
-        if (this._isOpacityModifyRGB) {
+        if (this._opacityModifyRGB) {
             this._color.r = color3.r * this._opacity / 255;
             this._color.g = color3.g * this._opacity / 255;
             this._color.b = color3.b * this._opacity / 255;
@@ -460,7 +460,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
     setOpacity:function (opacity) {
         this._opacity = opacity;
         // special opacity for premultiplied textures
-        if (this._isOpacityModifyRGB) {
+        if (this._opacityModifyRGB) {
             this.setColor(this._colorUnmodified);
         } else {
             this._colorF32Array = new Float32Array([this._color.r / 255.0, this._color.g / 255.0, this._color.b / 255.0, this._opacity / 255.0]);
@@ -501,7 +501,7 @@ cc.AtlasNodeWebGL = cc.Node.extend({
     },
 
     _updateOpacityModifyRGB:function () {
-        this._isOpacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
+        this._opacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
     }
 });
 

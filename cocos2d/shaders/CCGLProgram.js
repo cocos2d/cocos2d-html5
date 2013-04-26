@@ -740,7 +740,7 @@ cc.GLProgram = cc.Class.extend({
  */
 cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
     var program = new cc.GLProgram();
-    if (program.initWithVertexShaderFilename(vShaderFileName, fShaderFileName))
+    if (program.init(vShaderFileName, fShaderFileName))
         return program;
     return null;
 };

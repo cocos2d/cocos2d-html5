@@ -589,7 +589,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this.setAnchorPoint(cc.p(0.5, 0.5));
 
             if (cc.renderContextType === cc.WEBGL) {
-                this._isOpacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
+                this._opacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
 
                 this._reusedChar = new cc.Sprite();
                 this._reusedChar.initWithTexture(this._textureAtlas.getTexture(), cc.RectMake(0, 0, 0, 0), false);
