@@ -828,9 +828,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             // starting from offset means resuming from where it paused last time
             sfxCache.sourceNode.start(0, offset);
         } else if (sfxCache.sourceNode.noteGrainOn) {
-            // starting from offset means resuming from where it paused last time
             var duration = sfxCache.sourceNode.buffer.duration;
-            sfxCache.sourceNode.noteGrainOn(0, offset, duration - offset);
+            if (loop) {
+                /*
+                 * On Safari on iOS 6, if loop == true, the passed in @param duration will be the duration from now on.
+                 * In other words, the sound will keep playing the rest of the music all the time.
+                 * On latest chrome desktop version, the passed in duration will only be the duration in this cycle.
+                 * Now that latest chrome would have start() method, it is prepared for iOS here.
+                 */
+                sfxCache.sourceNode.noteGrainOn(0, offset, duration);
+            } else {
+                sfxCache.sourceNode.noteGrainOn(0, offset, duration - offset);
+            }
         } else {
             // if only noteOn() is supported, resuming sound WON'T work
             sfxCache.sourceNode.noteOn(0);
@@ -1002,7 +1011,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _resumeSound: function(paused, volume) {
         var key = paused.key;
         var loop = paused.sourceNode.loop;
-        var offset = paused.pauseTime - paused.startTime;
+        // the paused sound may have been playing several loops, (pauseTime - startTime) may be too large
+        var offset = (paused.pauseTime - paused.startTime) % paused.sourceNode.buffer.duration;
 
         return this._beginSound(key, loop, volume, offset);
     },
