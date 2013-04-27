@@ -674,7 +674,8 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
     setSpriteFrame: function (spriteFrame) {
         var batchNode = cc.SpriteBatchNode.createWithTexture(spriteFrame.getTexture(), 9);
-        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), spriteFrame.isRotated(), cc.RectZero());
+        // the texture is rotated on Canvas render mode, so isRotated always is false.
+        this.updateWithBatchNode(batchNode, spriteFrame.getRect(), cc.Browser.supportWebGL ? spriteFrame.isRotated() : false, cc.RectZero());
 
         // Reset insets
         this._insetLeft = 0;
