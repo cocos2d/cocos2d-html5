@@ -31,7 +31,7 @@
 /**
  * @namespace
  */
-var cc = cc = cc || {};
+var cc = cc || {};
 
 //
 function ClassManager(){
@@ -214,4 +214,14 @@ cc.base = function(me, opt_methodName, var_args) {
                     'cc.base called from a method of one name ' +
                     'to a method of a different name');
     }
+};
+
+cc.concatObjectProperties = function(dstObject, srcObject){
+    if(!dstObject)
+        dstObject = {};
+
+    for(var selKey in srcObject){
+        dstObject[selKey] = srcObject[selKey];
+    }
+    return dstObject;
 };

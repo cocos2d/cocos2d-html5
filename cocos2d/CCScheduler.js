@@ -136,6 +136,24 @@ cc.ArrayAppendObjectToIndex = function (arr, addObj, index) {
 };
 
 /**
+ * Inserts some objects at index
+ * @function
+ * @param {Array} arr
+ * @param {Array} addObjs
+ * @param {Number} index
+ * @return {Array}
+ */
+cc.ArrayAppendObjectsToIndex = function(arr, addObjs,index){
+    var part1 = arr.slice(0, index);
+    var part2 = arr.slice(index);
+    for(var i = 0; i< addObjs.length;i++){
+        part1.push(addObjs[i]);
+    }
+    arr = (part1.concat(part2));
+    return arr;
+};
+
+/**
  * Returns index of first occurence of object, -1 if value not found.
  * @function
  * @param {Array} arr Source Array
@@ -229,7 +247,7 @@ cc.HashUpdateEntry = function (list, entry, target, hh) {
  * @param {Boolean} paused
  * @param {Array} hh
  */
-cc.HashSelectorEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
+cc.HashTimerEntry = function (timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused, hh) {
     this.timers = timers;
     this.target = target;
     this.timerIndex = timerIndex;
@@ -246,7 +264,7 @@ cc.HashSelectorEntry = function (timers, target, timerIndex, currentTimer, curre
  */
 cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
     _interval:0.0,
-    _selector:"",
+    _selector:null,
 
     _target:null,
     _elapsed:0.0,
@@ -273,6 +291,22 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
     },
 
     /**
+     * set interval in seconds
+     * @param {Number} interval
+     */
+    setInterval:function(interval){
+
+    },
+
+    /**
+     * returns selector
+     * @return {String|function}
+     */
+    getSelector:function(){
+       return this._selector;
+    },
+
+    /**
      * Initializes a timer with a target, a selector and an interval in seconds.
      * @param {cc.Class} target target
      * @param {String|function} selector Selector
@@ -295,6 +329,13 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
         }
     },
 
+    _callSelector:function(){
+        if (typeof(this._selector) == "string")
+            this._target[this._selector](this._elapsed);
+         else // if (typeof(this._selector) == "function") {
+            this._selector.call(this._target, this._elapsed);
+    },
+
     /**
      * triggers the timer
      * @param {Number} dt delta time
@@ -309,13 +350,8 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 this._elapsed += dt;
 
                 if (this._elapsed >= this._interval) {
-                    if (this._selector) {
-                        if (typeof(this._selector) == "string") {
-                            this._target[this._selector](this._elapsed);
-                        } else{ // if (typeof(this._selector) == "function") {
-                            this._selector.call(this._target, this._elapsed);
-                        }
-                    }
+                    if (this._selector)
+                       this._callSelector();
                     this._elapsed = 0;
                 }
             } else {
@@ -323,34 +359,25 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
                 this._elapsed += dt;
                 if (this._useDelay) {
                     if (this._elapsed >= this._delay) {
-                        if (this._target && this._selector) {
-                            if (typeof(this._selector) == "string") {
-                                this._target[this._selector](this._elapsed);
-                            } else{ // if (typeof(this._selector) == "function") {
-                                this._selector.call(this._target, this._elapsed);
-                            }
-                        }
+                        if (this._target && this._selector)
+                            this._callSelector();
+
                         this._elapsed = this._elapsed - this._delay;
                         this._timesExecuted += 1;
                         this._useDelay = false;
                     }
                 } else {
                     if (this._elapsed >= this._interval) {
-                        if (this._target && this._selector) {
-                            if (typeof(this._selector) == "string") {
-                                this._target[this._selector](this._elapsed);
-                            } else{  //if (typeof(this._selector) == "function") {
-                                this._selector.call(this._target, this._elapsed);
-                            }
-                        }
+                        if (this._target && this._selector)
+                            this._callSelector();
+
                         this._elapsed = 0;
                         this._timesExecuted += 1;
                     }
                 }
 
-                if (this._timesExecuted > this._repeat) {
-                    cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget( this._target, this._selector);
-                }
+                if (this._timesExecuted > this._repeat)
+                    cc.Director.getInstance().getScheduler().unscheduleCallbackForTarget(this._target, this._selector);
             }
         }
     }
@@ -403,7 +430,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _updatesPosList:null, // list priority > 0
     _hashForUpdates:null, // hash used to fetch quickly the list entries for pause,delete,etc
 
-    _hashForSelectors:null, //Used for "selectors with interval"
+    _hashForTimers:null, //Used for "selectors with interval"
 
     _currentTarget:null,
     _currentTargetSalvaged:false,
@@ -420,7 +447,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         this._updatesPosList = [];
 
         this._hashForUpdates = [];
-        this._hashForSelectors = [];
+        this._hashForTimers = [];
 
         this._currentTarget = null;
         this._currentTargetSalvaged = false;
@@ -431,7 +458,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     _removeHashElement:function (element) {
         element.Timer = null;
         element.target = null;
-        cc.ArrayRemoveObject(this._hashForSelectors, element);
+        cc.ArrayRemoveObject(this._hashForTimers, element);
         element = null;
     },
 
@@ -565,8 +592,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         //Interate all over the custom selectors
         var elt;
-        for (i = 0; i < this._hashForSelectors.length; i++) {
-            this._currentTarget = this._hashForSelectors[i];
+        for (i = 0; i < this._hashForTimers.length; i++) {
+            this._currentTarget = this._hashForTimers[i];
             elt = this._currentTarget;
             this._currentTargetSalvaged = false;
 
@@ -641,12 +668,12 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         delay = delay || 0;
         paused = paused || false;
 
-        var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
+        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
 
         if (!element) {
             // Is this the 1st element ? Then set the pause level to all the callback_fns of this target
-            element = new cc.HashSelectorEntry(null, target, 0, null, null, paused, null);
-            this._hashForSelectors.push(element);
+            element = new cc.HashTimerEntry(null, target, 0, null, null, paused, null);
+            this._hashForTimers.push(element);
         } else {
             cc.Assert(element.paused == paused, "Sheduler.scheduleCallbackForTarget()");
         }
@@ -725,7 +752,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             return;
         }
 
-        var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
+        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
         if (element != null) {
             for (var i = 0; i < element.timers.length; i++) {
                 var timer = element.timers[i];
@@ -785,7 +812,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
             return;
         }
 
-        var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
+        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
         if (element) {
             if ((!element.currentTimerSalvaged) && (cc.ArrayContainsObject(element.timers, element.currentTimer))) {
                 element.currentTimerSalvaged = true;
@@ -822,9 +849,9 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
     unscheduleAllCallbacksWithMinPriority:function (minPriority) {
         // Custom Selectors
         var i;
-        for (i = 0; i < this._hashForSelectors.length; i++) {
+        for (i = 0; i < this._hashForTimers.length; i++) {
             // element may be removed in unscheduleAllCallbacksForTarget
-            this.unscheduleAllCallbacksForTarget(this._hashForSelectors[i].target);
+            this.unscheduleAllCallbacksForTarget(this._hashForTimers[i].target);
         }
 
         //updates selectors
@@ -867,8 +894,8 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
 
         var i, element;
         // Custom Selectors
-        for (i = 0; i < this._hashForSelectors.length; i++) {
-            element = this._hashForSelectors[i];
+        for (i = 0; i < this._hashForTimers.length; i++) {
+            element = this._hashForTimers[i];
             if (element) {
                 element.paused = true;
                 idsWithSelectors.push(element.target);
@@ -933,7 +960,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         cc.Assert(target != null, "Scheduler.pauseTarget():entry must be non nil");
 
         //customer selectors
-        var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
+        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
         if (element) {
             element.paused = true;
         }
@@ -956,7 +983,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         cc.Assert(target != null, "");
 
         // custom selectors
-        var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
+        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
 
         if (element) {
             element.paused = false;
@@ -980,7 +1007,7 @@ cc.Scheduler = cc.Class.extend(/** @lends cc.Scheduler# */{
         cc.Assert(target != null, "Scheduler.isTargetPaused():target must be non nil");
 
         // Custom selectors
-        var element = cc.HASH_FIND_INT(this._hashForSelectors, target);
+        var element = cc.HASH_FIND_INT(this._hashForTimers, target);
         if (element) {
             return element.paused;
         }

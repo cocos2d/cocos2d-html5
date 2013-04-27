@@ -575,6 +575,13 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
         mouse.setWheelDelta(event.wheelDelta);
         cc.Director.getInstance().getMouseDispatcher().mouseHandle(mouse, event, cc.SCROLL_WHEEL);
     }, false);
+    
+    /* firefox fix */
+    element.addEventListener("DOMMouseScroll", function(event) {
+    	var mouse = getMouseByEvent(event);
+        mouse.setWheelDelta(event.detail * -120);
+        cc.Director.getInstance().getMouseDispatcher().mouseHandle(mouse, event, cc.SCROLL_WHEEL);
+    });
 
     element.addEventListener("mouseout", function (event) {
         cc.Director.getInstance().getMouseDispatcher().mouseHandle(getMouseByEvent(event), event, cc.MOUSE_EXITED);
@@ -584,6 +591,5 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
         cc.Director.getInstance().getMouseDispatcher().mouseHandle(getMouseByEvent(event), event, cc.MOUSE_ENTERED);
     }, false);
 };
-
 
 

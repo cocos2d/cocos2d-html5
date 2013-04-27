@@ -29,12 +29,12 @@
 cc.CONTROL_EVENT_TOTAL_NUMBER = 9;
 
 cc.CONTROL_EVENT_TOUCH_DOWN = 1 << 0;    // A touch-down event in the control.
-cc.CONTROL_EVENT_TOUCH_DRAGINSIDE = 1 << 1;    // An event where a finger is dragged inside the bounds of the control.
-cc.CONTROL_EVENT_TOUCH_DRAGOUTSIDE = 1 << 2;    // An event where a finger is dragged just outside the bounds of the control.
-cc.CONTROL_EVENT_TOUCH_DRAGENTER = 1 << 3;    // An event where a finger is dragged into the bounds of the control.
-cc.CONTROL_EVENT_TOUCH_DRAGEXIT = 1 << 4;    // An event where a finger is dragged from within a control to outside its bounds.
-cc.CONTROL_EVENT_TOUCH_UPINSIDE = 1 << 5;    // A touch-up event in the control where the finger is inside the bounds of the control.
-cc.CONTROL_EVENT_TOUCH_UPOUTSIDE = 1 << 6;    // A touch-up event in the control where the finger is outside the bounds of the control.
+cc.CONTROL_EVENT_TOUCH_DRAG_INSIDE = 1 << 1;    // An event where a finger is dragged inside the bounds of the control.
+cc.CONTROL_EVENT_TOUCH_DRAG_OUTSIDE = 1 << 2;    // An event where a finger is dragged just outside the bounds of the control.
+cc.CONTROL_EVENT_TOUCH_DRAG_ENTER = 1 << 3;    // An event where a finger is dragged into the bounds of the control.
+cc.CONTROL_EVENT_TOUCH_DRAG_EXIT = 1 << 4;    // An event where a finger is dragged from within a control to outside its bounds.
+cc.CONTROL_EVENT_TOUCH_UP_INSIDE = 1 << 5;    // A touch-up event in the control where the finger is inside the bounds of the control.
+cc.CONTROL_EVENT_TOUCH_UP_OUTSIDE = 1 << 6;    // A touch-up event in the control where the finger is outside the bounds of the control.
 cc.CONTROL_EVENT_TOUCH_CANCEL = 1 << 7;    // A system event canceling the current touches for the control.
 cc.CONTROL_EVENT_VALUECHANGED = 1 << 8;    // A touch dragging or otherwise manipulating a control; causing it to emit a series of different values.
 
@@ -49,13 +49,13 @@ cc.Control = cc.Layer.extend({
     RGBAProtocol:true,
     _opacity:0,
     _color:null,
-    _isOpacityModifyRGB:false,
+    _opacityModifyRGB:false,
 
     isOpacityModifyRGB:function () {
-        return this._isOpacityModifyRGB;
+        return this._opacityModifyRGB;
     },
     setOpacityModifyRGB:function (opacityModifyRGB) {
-        this._isOpacityModifyRGB = opacityModifyRGB;
+        this._opacityModifyRGB = opacityModifyRGB;
 
         var children = this.getChildren();
         for (var i = 0; i < children.length; i++) {
@@ -142,6 +142,7 @@ cc.Control = cc.Layer.extend({
     },
 
     ctor:function () {
+        this._super();
         this._dispatchTable = {};
         this._color = cc.white();
     },

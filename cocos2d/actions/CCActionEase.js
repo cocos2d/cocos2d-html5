@@ -528,7 +528,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
      */
     initWithAction:function (action, period) {
         this._super(action);
-        this._period = (period == null) ? 3.0 : period;
+        this._period = (period == null) ? 0.3 : period;
         return true;
     },
 
@@ -553,14 +553,9 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
  */
 cc.EaseElastic.create = function (action, period) {
     var ret = new cc.EaseElastic();
-    if (ret) {
-        if (period == null) {
-            ret.initWithAction(action);
-        } else {
-            ret.initWithAction(action, period);
-        }
-    }
-    return ret;
+    if (ret && ret.initWithAction(action, period))
+        return ret;
+    return null;
 };
 
 
@@ -576,14 +571,13 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
      */
     update:function (time1) {
         var newT = 0;
-        if (time1 === 0 || time1 == 1) {
+        if (time1 === 0 || time1 === 1) {
             newT = time1;
         } else {
             var s = this._period / 4;
             time1 = time1 - 1;
             newT = -Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
         }
-
         this._other.update(newT);
     },
 
@@ -606,14 +600,9 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
  */
 cc.EaseElasticIn.create = function (action, period) {
     var ret = new cc.EaseElasticIn();
-    if (ret) {
-        if (period == null) {
-            ret.initWithAction(action);
-        } else {
-            ret.initWithAction(action, period);
-        }
-    }
-    return ret;
+    if (ret && ret.initWithAction(action, period))
+        return ret;
+    return null;
 };
 
 /**
