@@ -279,7 +279,7 @@ cc.EaseExponentialIn = cc.ActionEase.extend(/** @lends cc.EaseExponentialIn# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(time1 == 0 ? 0 : Math.pow(2, 10 * (time1 - 1)) - 0.001);
+        this._other.update(time1 === 0 ? 0 : Math.pow(2, 10 * (time1 - 1)));
     },
 
     /**
@@ -315,7 +315,7 @@ cc.EaseExponentialOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialOut# *
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1 )) + 1));
+        this._other.update(time1 == 1 ? 1 : (-(Math.pow(2, -10 * time1)) + 1));
     },
 
     /**
@@ -351,11 +351,13 @@ cc.EaseExponentialInOut = cc.ActionEase.extend(/** @lends cc.EaseExponentialInOu
      * @param {Number} time
      */
     update:function (time) {
-        time /= 0.5;
-        if (time < 1)
-            time = 0.5 * Math.pow(2, 10 * (time - 1));
-        else
-            time = 0.5 * (-Math.pow(2, -10 * (time - 1)) + 2);
+        if( time != 1 && time !== 0) {
+            time *= 2;
+            if (time < 1)
+                time = 0.5 * Math.pow(2, 10 * (time - 1));
+            else
+                time = 0.5 * (-Math.pow(2, -10 * (time - 1)) + 2);
+        }
 
         this._other.update(time);
     },
@@ -394,7 +396,8 @@ cc.EaseSineIn = cc.ActionEase.extend(/** @lends cc.EaseSineIn# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(-1 * Math.cos(time1 * Math.PI / 2) + 1);
+        time1 = time1===0 || time1==1 ? time1 : -1 * Math.cos(time1 * Math.PI / 2) + 1;
+        this._other.update(time1);
     },
 
     /**
@@ -429,7 +432,8 @@ cc.EaseSineOut = cc.ActionEase.extend(/** @lends cc.EaseSineOut# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(Math.sin(time1 * Math.PI / 2));
+        time1 = time1===0 || time1==1 ? time1 : Math.sin(time1 * Math.PI / 2);
+        this._other.update(time1);
     },
 
     /**
@@ -468,7 +472,8 @@ cc.EaseSineInOut = cc.ActionEase.extend(/** @lends cc.EaseSineInOut# */{
      * @param {Number} time1
      */
     update:function (time1) {
-        this._other.update(-0.5 * (Math.cos(Math.PI * time1) - 1));
+        time1 = time1===0 || time1==1 ? time1 : -0.5 * (Math.cos(Math.PI * time1) - 1);
+        this._other.update(time1);
 
     },
 
@@ -523,7 +528,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
      */
     initWithAction:function (action, period) {
         this._super(action);
-        this._period = (period == null) ? 3.0 : period;
+        this._period = (period == null) ? 0.3 : period;
         return true;
     },
 
@@ -548,14 +553,9 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
  */
 cc.EaseElastic.create = function (action, period) {
     var ret = new cc.EaseElastic();
-    if (ret) {
-        if (period == null) {
-            ret.initWithAction(action);
-        } else {
-            ret.initWithAction(action, period);
-        }
-    }
-    return ret;
+    if (ret && ret.initWithAction(action, period))
+        return ret;
+    return null;
 };
 
 
@@ -571,14 +571,13 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
      */
     update:function (time1) {
         var newT = 0;
-        if (time1 == 0 || time1 == 1) {
+        if (time1 === 0 || time1 === 1) {
             newT = time1;
         } else {
             var s = this._period / 4;
             time1 = time1 - 1;
             newT = -Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
         }
-
         this._other.update(newT);
     },
 
@@ -601,19 +600,14 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
  */
 cc.EaseElasticIn.create = function (action, period) {
     var ret = new cc.EaseElasticIn();
-    if (ret) {
-        if (period == null) {
-            ret.initWithAction(action);
-        } else {
-            ret.initWithAction(action, period);
-        }
-    }
-    return ret;
+    if (ret && ret.initWithAction(action, period))
+        return ret;
+    return null;
 };
 
 /**
  * Ease Elastic Out action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseElastic
  */
@@ -623,7 +617,7 @@ cc.EaseElasticOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticOut# */{
      */
     update:function (time1) {
         var newT = 0;
-        if (time1 == 0 || time1 == 1) {
+        if (time1 === 0 || time1 == 1) {
             newT = time1;
         } else {
             var s = this._period / 4;
@@ -664,7 +658,7 @@ cc.EaseElasticOut.create = function (action, period) {
 
 /**
  * Ease Elastic InOut action.
- * @warning This action doesn't use a bijective fucntion. Actions like Sequence might have an unexpected result when used with this action.
+ * @warning This action doesn't use a bijective function. Actions like Sequence might have an unexpected result when used with this action.
  * @class
  * @extends cc.EaseElastic
  */
@@ -674,24 +668,20 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
      */
     update:function (time1) {
         var newT = 0;
-        if (time1 == 0 || time1 == 1) {
+        if (time1 === 0 || time1 == 1) {
             newT = time1;
         } else {
             time1 = time1 * 2;
-            if (!this._period) {
+            if (!this._period)
                 this._period = 0.3 * 1.5;
-            }
 
             var s = this._period / 4;
-
             time1 = time1 - 1;
-            if (time1 < 0) {
+            if (time1 < 0)
                 newT = -0.5 * Math.pow(2, 10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period);
-            } else {
+            else
                 newT = Math.pow(2, -10 * time1) * Math.sin((time1 - s) * Math.PI * 2 / this._period) * 0.5 + 1;
-            }
         }
-
         this._other.update(newT);
     },
 
@@ -699,7 +689,7 @@ cc.EaseElasticInOut = cc.EaseElastic.extend(/** @lends cc.EaseElasticInOut# */{
      * @return {cc.ActionInterval}
      */
     reverse:function () {
-        return cc.EaseInOut.create(this._other.reverse(), this._period);
+        return cc.EaseElasticInOut.create(this._other.reverse(), this._period);
     }
 });
 
@@ -907,8 +897,8 @@ cc.EaseBackIn = cc.ActionEase.extend(/** @lends cc.EaseBackIn# */{
      */
     update:function (time1) {
         var overshoot = 1.70158;
-        this._other.update(time1 * time1 * ((overshoot + 1) * time1 - overshoot));
-
+        time1 = time1===0 || time1==1 ? time1 : time1 * time1 * ((overshoot + 1) * time1 - overshoot);
+        this._other.update(time1);
     },
 
     /**

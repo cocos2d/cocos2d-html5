@@ -136,7 +136,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
                 }
 
-                if (spriteFrame.isRotated()) {
+                if(cc.renderContextType === cc.CANVAS && spriteFrame.isRotated()){
                     //clip to canvas
                     var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(), spriteFrame.getRect());
                     var rect = spriteFrame.getRect();

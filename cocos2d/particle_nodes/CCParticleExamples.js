@@ -38,8 +38,7 @@ cc.ParticleFire = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFire# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles(150);
-        //return this.initWithTotalParticles(250);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 300 : 150);
     },
 
     /**
@@ -143,8 +142,7 @@ cc.ParticleFireworks = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFirewo
      * @return {Boolean}
      */
     init:function () {
-        //return this.initWithTotalParticles(1500);
-        return this.initWithTotalParticles(150);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 1500 : 150);
     },
 
     /**
@@ -246,8 +244,7 @@ cc.ParticleSun = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSun# */{
      * @return {Boolean}
      */
     init:function () {
-        //return this.initWithTotalParticles(350);
-        return this.initWithTotalParticles(150);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 350 : 150);
     },
 
     /**
@@ -354,7 +351,7 @@ cc.ParticleGalaxy = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleGalaxy# *
      */
     init:function () {
         //return this.initWithTotalParticles(200);
-        return this.initWithTotalParticles(100);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 200 : 100);
     },
 
     /**
@@ -460,8 +457,7 @@ cc.ParticleFlower = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleFlower# *
      * @return {Boolean}
      */
     init:function () {
-        //return this.initWithTotalParticles(250);
-        return this.initWithTotalParticles(100);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 250 : 100);
     },
 
     /**
@@ -569,8 +565,7 @@ cc.ParticleMeteor = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleMeteor# *
      * @return {Boolean}
      */
     init:function () {
-        //return this.initWithTotalParticles(150);
-        return this.initWithTotalParticles(100);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 150 : 100);
     },
 
     /**
@@ -677,8 +672,7 @@ cc.ParticleSpiral = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSpiral# *
      * @return {Boolean}
      */
     init:function () {
-        //return this.initWithTotalParticles(500);
-        return this.initWithTotalParticles(100);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 500 : 100);
     },
 
     /**
@@ -786,7 +780,7 @@ cc.ParticleExplosion = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleExplos
      */
     init:function () {
         //return this.initWithTotalParticles(700);
-        return this.initWithTotalParticles(300);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 700 : 300);
     },
 
     /**
@@ -893,7 +887,7 @@ cc.ParticleSmoke = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSmoke# */{
      */
     init:function () {
         //return this.initWithTotalParticles(200);
-        return this.initWithTotalParticles(100);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 200 : 100);
     },
 
     /**
@@ -996,8 +990,7 @@ cc.ParticleSnow = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleSnow# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles(250);
-        //return this.initWithTotalParticles(700);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 700 : 250);
     },
 
     /**
@@ -1105,8 +1098,7 @@ cc.ParticleRain = cc.ParticleSystemQuad.extend(/** @lends cc.ParticleRain# */{
      * @return {Boolean}
      */
     init:function () {
-        return this.initWithTotalParticles(300);
-        //return this.initWithTotalParticles(1000);
+        return this.initWithTotalParticles((cc.renderContextType === cc.WEBGL) ? 1000 : 300);
     },
 
     /**

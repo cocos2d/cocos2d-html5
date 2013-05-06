@@ -98,7 +98,6 @@ cc.ActionManager = cc.Class.extend({
         }
         //creates a array for that eleemnt to hold the actions
         this._actionAllocWithHashElement(element);
-        cc.Assert((element.actions.indexOf(action) == -1), "ActionManager.addAction(),");
 
         element.actions.push(action);
         action.startWithTarget(target);
@@ -135,8 +134,7 @@ cc.ActionManager = cc.Class.extend({
             element.actions = [];
             if (this._currentTarget == element) {
                 this._currentTargetSalvaged = true;
-            }
-            else {
+            } else {
                 this._deleteHashElement(element);
             }
         } else {

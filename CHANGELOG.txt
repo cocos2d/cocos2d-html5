@@ -1,44 +1,101 @@
+Cocos2d-html5-v2.1.3 @ May.1, 2013
+* CCEditbox now implemented for WebGL and JSB
+* Updated CCBReader to latest version
+* Performance optimization on Firefox 20%
+* Added render mode flag to switch between WebGL and canvas2d
+* Added support for Tizen
+* Now able to load embedded texture file in a plist
+* EGLView now works if canvas is placed inside another DOM element
+* Added a Simulator which can be found in MoonWarriors Directory
+
+*Bug fix:
+  1. Preloading on some mobile browsers
+  2. CCLoader for WebGL
+  3. ccNode memory leak
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. Particle System has some weird behavior when load from CCBReader
+     3. RenderTextureTest RenderTextureIssue937 & Issue1464 doesn't work properly
+     4. ClipNodeTest effects varies in different browsers
+
+
+Cocos2d-html5-v2.1.2-beta @ Mar.20, 2013
+* WebGL rendering mode implemented - blazing fast on supported browsers
+* Added many WegGL test to testbed
+* cc.Loader now supports multiple stage preloading - all tests now preload by multi resource groups
+* Now warns the user if their browser does not support html5
+* cc.Node now uses transform matrix - better performance
+* Accelerometer implemented - Also works on Javascript binding (JSB) for Cocos2d-x & Cocos2d-iPhone
+* Supports MP4 and M4a Audio format now
+* Designer resolution for multi resolution support - Also works on Javascript binding for Cocos2d-x
+* Faster Particle - thanks to Ivo Wetzel
+* Bug fixes:
+    1. File utility fixed
+    2. Audio support bug fixed
+    3. Removed some trailing coma which prevents blocks closure compiler
+    4. Local storage bug fixed
+    5. cc.MenuItemImage and cc.MenuItemToggle bugs fixed
+    6. Fixed compatibility with some UIWebView
+    7. Fixed rounding errors on ease actions
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. particle system can't load texture from plist
+     3. EditBox doesn't work on WebGL mode
+     4. Particle System has some weird behavior when load from CCBReader
+     5. RenderTextureTest RenderTextureIssue937 & Issue1464 doesn't work properly
+     6. ClipNodeTest effects varies in different browsers
+
+Cocos2d-html5-v2.1.1 @ Jan.28, 2013
+* Fixed bugs
+* Added mouse button to MouseDispatcher, supports right-click
+* Changed  preload audio type from "bgm" and "effect" to "sound"
+* Added "Sys" class for system capabilities
+* Improved cc.BuilderReader to support .ccbi extension auto-completion
+* Improved TMXXMLParser to support XML, CSV and zlib compression
+* Changed cc.Time.gettimeofdayCocos2d to Date.now which is more javascript friendly.
+* Added support for stackable actions
+
 Cocos2d-html5-v2.1.0 @ Dec.4, 2012
-* Improved cc.Class and add Release Mode.
-* All tests and games can now be run on Cocos2d-html5, Cocos2d-iPhone and Cocos2d-x.
-* Added support for google.base.
-* Added support for CocosBuilder and Bone Animation.
-* Updated API for Javascript Binding.
-* Integrated Chipmunk physical engine and chipmunk tests.
-* Added physicsDebugNode, physicsSprite, drawNode.
-* Built cocos2d-js-tests repo for tests.
-* Fixed support for mouse/touch/keyboard.
-* Fixed bugs.
-* Added WaterMelon with me and CocosDragon games for sample.
-* Added Edit Box for input.
+* Improved cc.Class and add Release Mode
+* All tests and games can now be run on Cocos2d-html5, Cocos2d-iPhone and Cocos2d-x
+* Added support for google.base
+* Added support for CocosBuilder and Bone Animation
+* Updated API for Javascript Binding
+* Integrated Chipmunk physical engine and chipmunk tests
+* Added physicsDebugNode, physicsSprite, drawNode
+* Built cocos2d-js-tests repo for tests
+* Fixed support for mouse/touch/keyboard
+* Fixed bugs
+* Added WaterMelon with me and CocosDragon games for sample
+* Added Edit Box for input
 
 Cocos2d-html5-v2.0.0 @ Aug.28, 2012
-* Updated API to Cocos2d-x V2.0.
-* Updated template and directory name.
-* Improved JS files loader.
-* Added support for Dom rendering.
-* Updated JSDoc comments and shell.
-* Added TileMap property process and flip.
-* Improved BMFont.
-* Added Actions spline paths and cc.AnimationFrame.
-* Added support for multi-touch.
-* Added mini-framework for Dom manipulation.
-* Changed cc.Animation, cc.AudioEngine, cc.LableTTF and cc.Sprite API.
+* Updated API to Cocos2d-x V2.0
+* Updated template and directory name
+* Improved JS files loader
+* Added support for Dom rendering
+* Updated JSDoc comments and shell
+* Added TileMap property process and flip
+* Improved BMFont
+* Added Actions spline paths and cc.AnimationFrame
+* Added support for multi-touch
+* Added mini-framework for Dom manipulation
+* Changed cc.Animation, cc.AudioEngine, cc.LableTTF and cc.Sprite API
 
 
 Cocos2d-html5-v0.5.0-alpha2 @ Jun.18, 2012
-* Changed API, use "create" to construct all objects.
-* Fixed naming of variables.
-* Added JSDoc comments and shell.
-* Fixed Dom Menu flicker bug.
-* Changed code for closure compiler Advance optional.
-* Added version control.
+* Changed API, use "create" to construct all objects
+* Fixed naming of variables
+* Added JSDoc comments and shell
+* Fixed Dom Menu flicker bug
+* Changed code for closure compiler Advance optional
+* Added version control
 
 Cocos2d-html5-v0.5.0-alpha @ May.28, 2012
-* supports canvas and Dom Menu.
-* part of test cases were added and tested in chrome.
-* porting from cocos2d-x is not finished.
-* files must load from http server.
+* supports canvas and Dom Menu
+* part of test cases were added and tested in chrome
+* porting from cocos2d-x is not finished
+* files must load from http server
 
 Cocos2d-html5-v0.1.0 @ Jan.29, 2012
 * Build the directory structure of Engine

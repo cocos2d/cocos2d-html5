@@ -59,6 +59,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         } else {
             this._position = x;
         }
+        this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
     },
     /**
@@ -67,6 +68,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setPositionY:function (y) {
         this._position.y = y;
+        this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
     },
 
@@ -76,6 +78,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setPositionX:function (x) {
         this._position.x = x;
+        this.setNodeDirty();
         this.dom.translates(this._position.x, -this._position.y);
     },
 
@@ -93,6 +96,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 
         //save dirty region when after changed
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+        this.setNodeDirty();
         this.dom.resize(this._scaleX, this._scaleY);
     },
 
@@ -102,6 +106,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setScaleX:function (x) {
         this._scaleX = x;
+        this.setNodeDirty();
         this.dom.resize(this._scaleX, this._scaleY);
     },
 
@@ -111,6 +116,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setScaleY:function (y) {
         this._scaleY = y;
+        this.setNodeDirty();
         this.dom.resize(this._scaleX, this._scaleY);
     },
 
@@ -131,6 +137,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
             this.dom.style.marginLeft = (this.isToggler) ? 0 : -this._anchorPointInPoints.x + 'px';
             this.dom.style.marginBottom = -this._anchorPointInPoints.y + 'px';
         }
+        this.setNodeDirty();
     },
 
     /**
@@ -144,7 +151,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
                 this._contentSize.height * this._anchorPoint.y);
             this.dom.width = size.width;
             this.dom.height = size.height;
-            this.setAnchorpoint(this.getAnchorPoint());
+            this.setAnchorPoint(this.getAnchorPoint());
         }
         if (this.canvas) {
             this.canvas.width = this._contentSize.width;
@@ -155,6 +162,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
             this.dom.style.height = this._contentSize.height + 'px';
             this.dom.addClass('CCDOMEdit');
         }
+        this.setNodeDirty();
         this.redraw();
     },
 
@@ -170,6 +178,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
 
         this._rotation = newRotation;
         this._rotationRadians = this._rotation * (Math.PI / 180);
+        this.setNodeDirty();
         this.dom.rotate(newRotation);
     },
 
@@ -179,6 +188,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setSkewX:function (x) {
         this._skewX = x;
+        this.setNodeDirty();
         this.dom.setSkew(this._skewX, this._skewY);
     },
 
@@ -188,6 +198,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setSkewY:function (y) {
         this._skewY = y;
+        this.setNodeDirty();
         this.dom.setSkew(this._skewX, this._skewY);
     },
 
@@ -197,11 +208,13 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setVisible:function (x) {
         this._visible = x;
+        this.setNodeDirty();
         if (this.dom)
             this.dom.style.visibility = (x) ? 'visible' : 'hidden';
     },
     _setZOrder:function (z) {
-        this._zOrder = z;
+        this._zOrder = z
+        this.setNodeDirty();
         if (this.dom)
             this.dom.zIndex = z;
     },
@@ -212,6 +225,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      */
     setParent:function (p) {
         this._parent = p;
+        this.setNodeDirty();
         cc.DOM.parentDOM(this);
     },
 
@@ -342,15 +356,15 @@ cc.DOM.setTransform = function (x) {
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
-        if (x.setAnchorpoint)
-            x.setAnchorpoint(x.getAnchorPoint());
+        if (x.setAnchorPoint)
+            x.setAnchorPoint(x.getAnchorPoint());
         x.dom.transforms();
         x.dom.position.y = -x.getPosition().y;
         x.dom.rotation = x.getRotation();
         x.dom.scale = {x:x.getScaleX(), y:x.getScaleY()};
         x.dom.skew = {x:x.getSkewX(), y:x.getSkewY()};
-        if (x.setAnchorpoint)
-            x.setAnchorpoint(x.getAnchorPoint());
+        if (x.setAnchorPoint)
+            x.setAnchorPoint(x.getAnchorPoint());
         x.dom.transforms();
     }
 
@@ -551,17 +565,13 @@ cc.DOM.convert = function () {
             // create a canvas
             if (!args[i].dom)
                 cc.DOM.forSprite(args[i]);
-        }
-        else if (args[i] instanceof cc.MenuItemToggle) {
+        } else if (args[i] instanceof cc.MenuItemToggle) {
             if (!args[i].dom)
                 cc.DOM.forMenuToggler(args[i]);
-        }
-
-        else if (args[i] instanceof cc.MenuItem) {
+        } else if (args[i] instanceof cc.MenuItem) {
             if (!args[i].dom)
                 cc.DOM.forMenuItem(args[i]);
-        }
-        else {
+        } else {
             cc.log('DOM converter only supports sprite and menuitems yet');
         }
         cc.DOM.addMethods(args[i]);

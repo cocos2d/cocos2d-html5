@@ -96,6 +96,25 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
     },
 
     /**
+     * draws a rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
+    drawRect:function (origin, destination) {
+        cc.log("DrawingPrimitive.drawRect() not implement!");
+    },
+
+    /**
+     * draws a solid rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     * @param {cc.Color4F} color
+     */
+    drawSolidRect:function (origin, destination, color) {
+        cc.log("DrawingPrimitive.drawSolidRect() not implement!");
+    },
+
+    /**
      * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
      * @param {Array} vertices a pointer to cc.Point coordiantes
      * @param {Number} numOfVertices the number of vertices measured in points
@@ -107,6 +126,16 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
     },
 
     /**
+     * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
+     * @param {Array} poli
+     * @param {Number} numberOfPoints
+     * @param {cc.Color4F} color
+     */
+    drawSolidPoly:function (poli, numberOfPoints, color) {
+        cc.log("DrawingPrimitive.drawSolidPoly() not implement!");
+    },
+
+    /**
      * draws a circle given the center, radius and number of segments.
      * @param {cc.Point} center center of circle
      * @param {Number} radius
@@ -115,33 +144,7 @@ cc.DrawingPrimitive = cc.Class.extend(/** @lends cc.DrawingPrimitive# */{
      * @param {Boolean} drawLineToCenter
      */
     drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
-        //WEBGL version
-        if ((segments == "undefined") || (segments == 0)) {
-            return;
-        }
-        var additionalSegment = 1;
-        if (drawLineToCenter) {
-            ++additionalSegment;
-        }
-
-        var coef = 2.0 * Math.PI / segments;
-
-        var vertices = [];
-
-        for (var i = 0; i <= segments; i++) {
-            var rads = i * coef;
-            var j = radius * Math.cos(rads + angle) + center.x;
-            var k = radius * Math.sin(rads + angle) + center.y;
-            var addPoint = cc.p(j * cc.CONTENT_SCALE_FACTOR(), k * cc.CONTENT_SCALE_FACTOR());
-            vertices.push(addPoint);
-        }
-
-        if (drawLineToCenter) {
-            var lastPoint = cc.p(center.x * cc.CONTENT_SCALE_FACTOR(), center.y * cc.CONTENT_SCALE_FACTOR());
-            vertices.push(lastPoint);
-        }
-
-        this.drawPoly(vertices, segments + 2, true, false);
+        cc.log("DrawingPrimitive.drawCircle() not implement!");
     },
 
     /**
@@ -247,6 +250,35 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
     },
 
     /**
+     * draws a rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
+    drawRect:function (origin, destination) {
+        this.drawLine(cc.p(origin.x, origin.y), cc.p(destination.x, origin.y));
+        this.drawLine(cc.p(destination.x, origin.y), cc.p(destination.x, destination.y));
+        this.drawLine(cc.p(destination.x, destination.y), cc.p(origin.x, destination.y));
+        this.drawLine(cc.p(origin.x, destination.y), cc.p(origin.x, origin.y));
+    },
+
+    /**
+     * draws a solid rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     * @param {cc.Color4F} color
+     */
+    drawSolidRect:function (origin, destination, color) {
+        var vertices = [
+            origin,
+            cc.p(destination.x, origin.y),
+            destination,
+            cc.p(origin.x, destination.y)
+        ];
+
+        this.drawSolidPoly(vertices, 4, color);
+    },
+
+    /**
      * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
      * @override
      * @param {Array} vertices a pointer to cc.Point coordiantes
@@ -281,6 +313,17 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
         } else {
             this._renderContext.stroke();
         }
+    },
+
+    /**
+     * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
+     * @param {Array} poli
+     * @param {Number} numberOfPoints
+     * @param {cc.Color4F} color
+     */
+    drawSolidPoly:function (poli, numberOfPoints, color) {
+        this.setDrawColor4F(color.r, color.g, color.b, color.a);
+        this.drawPoly(poli, numberOfPoints, true, true);
     },
 
     /**
@@ -389,10 +432,10 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
 
             // Interpolate
             var newPos = cc.CardinalSplineAt(
-                cc.getControlPointAt( config, p - 1),
-                cc.getControlPointAt( config, p - 0),
-                cc.getControlPointAt( config, p + 1),
-                cc.getControlPointAt( config, p + 2),
+                cc.getControlPointAt(config, p - 1),
+                cc.getControlPointAt(config, p - 0),
+                cc.getControlPointAt(config, p + 1),
+                cc.getControlPointAt(config, p + 2),
                 tension, lt);
             points.push(newPos);
         }
@@ -503,6 +546,475 @@ cc.DrawingPrimitiveCanvas = cc.DrawingPrimitive.extend(/** @lends cc.DrawingPrim
      */
     fillText:function (strText, x, y) {
         this._renderContext.fillText(strText, x, -y);
+    },
+
+    /**
+     * set the drawing color with 4 unsigned bytes
+     * @param {Number} r red value (0 to 255)
+     * @param {Number} r green value (0 to 255)
+     * @param {Number} r blue value (0 to 255)
+     * @param {Number} a Alpha value (0 to 255)
+     */
+    setDrawColor4B:function (r, g, b, a) {
+        this._renderContext.fillStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
+        this._renderContext.strokeStyle = "rgba(" + r + "," + g + "," + b + "," + a / 255 + ")";
+    },
+
+    /**
+     * set the drawing color with 4 floats
+     * @param {Number} r red value (0 to 1)
+     * @param {Number} r green value (0 to 1)
+     * @param {Number} r blue value (0 to 1)
+     * @param {Number} a Alpha value (0 to 1)
+     */
+    setDrawColor4F:function (r, g, b, a) {
+        this._renderContext.fillStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
+        this._renderContext.strokeStyle = "rgba(" + (0 | (r * 255)) + "," + (0 | (g * 255)) + "," + (0 | (b * 255)) + "," + a + ")";
+    },
+
+    /**
+     * set the point size in points. Default 1.
+     * @param {Number} pointSize
+     */
+    setPointSize:function (pointSize) {
+    },
+
+    /**
+     * set the line width. Default 1.
+     * @param {Number} width
+     */
+    setLineWidth:function (width) {
+        this._renderContext.lineWidth = width;
+    }
+});
+
+/**
+ * Canvas of DrawingPrimitive implement version
+ * @class
+ * @extends cc.DrawingPrimitive
+ */
+cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
+    _initialized:false,
+    _shader: null,
+    _colorLocation:-1,
+    _color: null,
+    _pointSizeLocation:-1,
+    _pointSize:-1,
+
+    ctor:function (ctx) {
+        if (ctx == null)
+            ctx = cc.renderContext;
+
+        if (!ctx instanceof  WebGLRenderingContext)
+            throw "Can't initialise DrawingPrimitiveWebGL. context need is WebGLRenderingContext";
+
+        this._super(ctx);
+        this._color = new cc.Color4F(1.0, 1.0, 1.0, 1.0);
+    },
+
+    lazy_init:function () {
+        if (!this._initialized) {
+            //
+            // Position and 1 color passed as a uniform (to similate glColor4ub )
+            //
+            this._shader = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_UCOLOR);
+            this._colorLocation = this._renderContext.getUniformLocation(this._shader.getProgram(), "u_color");
+            this._pointSizeLocation = this._renderContext.getUniformLocation(this._shader.getProgram(), "u_pointSize");
+            //cc.CHECK_GL_ERROR_DEBUG();
+
+            this._initialized = true;
+        }
+    },
+
+    /**
+     * initlialize context
+     */
+    drawInit:function () {
+        this._initialized = false;
+    },
+
+    /**
+     * draws a point given x and y coordinate measured in points
+     * @param {cc.Point} point
+     */
+    drawPoint:function (point) {
+        this.lazy_init();
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, new Float32Array([point.x, point.y]), this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+
+        this._renderContext.drawArrays(this._renderContext.POINTS, 0, 1);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * draws an array of points.
+     * @param {Array} points point of array
+     * @param {Number} numberOfPoints
+     */
+    drawPoints:function (points, numberOfPoints) {
+        if (!points || points.length == 0)
+            return;
+
+        this.lazy_init();
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+        this._shader.setUniformLocationWith1f(this._pointSizeLocation, this._pointSize);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, this._pointsToTypeArray(points), this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+
+        this._renderContext.drawArrays(this._renderContext.POINTS, 0, points.length);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    _pointsToTypeArray:function (points) {
+        var typeArr = new Float32Array(points.length * 2);
+        for (var i = 0; i < points.length; i++) {
+            typeArr[i * 2] = points[i].x;
+            typeArr[i * 2 + 1] = points[i].y;
+        }
+        return typeArr;
+    },
+
+    /**
+     * draws a line given the origin and destination point measured in points
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
+    drawLine:function (origin, destination) {
+        this.lazy_init();
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, this._pointsToTypeArray([origin, destination]), this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+
+        this._renderContext.drawArrays(this._renderContext.LINES, 0, 2);
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * draws a rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     */
+    drawRect:function (origin, destination) {
+        this.drawLine(cc.p(origin.x, origin.y), cc.p(destination.x, origin.y));
+        this.drawLine(cc.p(destination.x, origin.y), cc.p(destination.x, destination.y));
+        this.drawLine(cc.p(destination.x, destination.y), cc.p(origin.x, destination.y));
+        this.drawLine(cc.p(origin.x, destination.y), cc.p(origin.x, origin.y));
+    },
+
+    /**
+     * draws a solid rectangle given the origin and destination point measured in points.
+     * @param {cc.Point} origin
+     * @param {cc.Point} destination
+     * @param {cc.Color4F} color
+     */
+    drawSolidRect:function (origin, destination, color) {
+        var vertices = [
+            origin,
+            cc.p(destination.x, origin.y),
+            destination,
+            cc.p(origin.x, destination.y)
+        ];
+
+        this.drawSolidPoly(vertices, 4, color);
+    },
+
+    /**
+     * draws a poligon given a pointer to cc.Point coordiantes and the number of vertices measured in points.
+     * @param {Array} vertices a pointer to cc.Point coordiantes
+     * @param {Number} numOfVertices the number of vertices measured in points
+     * @param {Boolean} closePolygon The polygon can be closed or open
+     */
+    drawPoly:function (vertices, numOfVertices, closePolygon) {
+        this.lazy_init();
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, this._pointsToTypeArray(vertices), this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+
+        if (closePolygon)
+            this._renderContext.drawArrays(this._renderContext.LINE_LOOP, 0, vertices.length);
+        else
+            this._renderContext.drawArrays(this._renderContext.LINE_STRIP, 0, vertices.length);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * draws a solid polygon given a pointer to CGPoint coordiantes, the number of vertices measured in points, and a color.
+     * @param {Array} poli
+     * @param {Number} numberOfPoints
+     * @param {cc.Color4F} color
+     */
+    drawSolidPoly:function (poli, numberOfPoints, color) {
+        this.lazy_init();
+        if (!color)
+            color = this._color;
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(color._arrayBuffer,0,4), 1);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, this._pointsToTypeArray(poli), this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+        this._renderContext.drawArrays(this._renderContext.TRIANGLE_FAN, 0, poli.length);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * draws a circle given the center, radius and number of segments.
+     * @param {cc.Point} center center of circle
+     * @param {Number} radius
+     * @param {Number} angle angle in radians
+     * @param {Number} segments
+     * @param {Boolean} drawLineToCenter
+     */
+    drawCircle:function (center, radius, angle, segments, drawLineToCenter) {
+        this.lazy_init();
+
+        var additionalSegment = 1;
+        if (drawLineToCenter)
+            additionalSegment++;
+
+        var coef = 2.0 * Math.PI / segments;
+
+        var vertices = new Float32Array((segments + 2) * 2);
+        if (!vertices)
+            return;
+
+        for (var i = 0; i <= segments; i++) {
+            var rads = i * coef;
+            var j = radius * Math.cos(rads + angle) + center.x;
+            var k = radius * Math.sin(rads + angle) + center.y;
+
+            vertices[i * 2] = j;
+            vertices[i * 2 + 1] = k;
+        }
+        vertices[(segments + 1) * 2] = center.x;
+        vertices[(segments + 1) * 2 + 1] = center.y;
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, vertices, this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+
+        this._renderContext.drawArrays(this._renderContext.LINE_STRIP, 0, segments + additionalSegment);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * draws a quad bezier path
+     * @param {cc.Point} origin
+     * @param {cc.Point} control
+     * @param {cc.Point} destination
+     * @param {Number} segments
+     */
+    drawQuadBezier:function (origin, control, destination, segments) {
+        this.lazy_init();
+
+        var vertices = new Float32Array((segments + 1) * 2);
+
+        var t = 0.0;
+        for (var i = 0; i < segments; i++) {
+            vertices[i * 2] = Math.pow(1 - t, 2) * origin.x + 2.0 * (1 - t) * t * control.x + t * t * destination.x;
+            vertices[i * 2 + 1] = Math.pow(1 - t, 2) * origin.y + 2.0 * (1 - t) * t * control.y + t * t * destination.y;
+            t += 1.0 / segments;
+        }
+        vertices[segments * 2] = destination.x;
+        vertices[segments * 2 + 1] = destination.y;
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, vertices, this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+
+        this._renderContext.drawArrays(this._renderContext.LINE_STRIP, 0, segments + 1);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * draws a cubic bezier path
+     * @param {cc.Point} origin
+     * @param {cc.Point} control1
+     * @param {cc.Point} control2
+     * @param {cc.Point} destination
+     * @param {Number} segments
+     */
+    drawCubicBezier:function (origin, control1, control2, destination, segments) {
+        this.lazy_init();
+
+        var vertices = new Float32Array((segments + 1) * 2);
+
+        var t = 0;
+        for (var i = 0; i < segments; i++) {
+            vertices[i * 2] = Math.pow(1 - t, 3) * origin.x + 3.0 * Math.pow(1 - t, 2) * t * control1.x + 3.0 * (1 - t) * t * t * control2.x + t * t * t * destination.x;
+            vertices[i * 2 + 1] = Math.pow(1 - t, 3) * origin.y + 3.0 * Math.pow(1 - t, 2) * t * control1.y + 3.0 * (1 - t) * t * t * control2.y + t * t * t * destination.y;
+            t += 1.0 / segments;
+        }
+        vertices[segments * 2] = destination.x;
+        vertices[segments * 2 + 1] = destination.y;
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, vertices, this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+        this._renderContext.drawArrays(this._renderContext.LINE_STRIP, 0, segments + 1);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * draw a catmull rom line
+     * @param {Array} points
+     * @param {Number} segments
+     */
+    drawCatmullRom:function (points, segments) {
+        this.drawCardinalSpline(points, 0.5, segments);
+    },
+
+    /**
+     * draw a cardinal spline path
+     * @param {Array} config
+     * @param {Number} tension
+     * @param {Number} segments
+     */
+    drawCardinalSpline:function (config, tension, segments) {
+        this.lazy_init();
+
+        var vertices = new Float32Array((segments + 1) * 2);
+        var p, lt, deltaT = 1.0 / config.length;
+        for (var i = 0; i < segments + 1; i++) {
+            var dt = i / segments;
+
+            // border
+            if (dt == 1) {
+                p = config.length - 1;
+                lt = 1;
+            } else {
+                p = 0 | (dt / deltaT);
+                lt = (dt - deltaT * p) / deltaT;
+            }
+
+            var newPos = cc.CardinalSplineAt(
+                cc.getControlPointAt(config, p - 1),
+                cc.getControlPointAt(config, p),
+                cc.getControlPointAt(config, p + 1),
+                cc.getControlPointAt(config, p + 2),
+                tension, lt);
+            // Interpolate
+
+            vertices[i * 2] = newPos.x;
+            vertices[i * 2 + 1] = newPos.y;
+        }
+
+        this._shader.use();
+        this._shader.setUniformForModelViewProjectionMatrix();
+        cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSITION);
+        this._shader.setUniformLocationWith4fv(this._colorLocation, new Float32Array(this._color._arrayBuffer,0,4), 1);
+
+        var pointBuffer = this._renderContext.createBuffer();
+        this._renderContext.bindBuffer(this._renderContext.ARRAY_BUFFER, pointBuffer);
+        this._renderContext.bufferData(this._renderContext.ARRAY_BUFFER, vertices, this._renderContext.STATIC_DRAW);
+        this._renderContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, this._renderContext.FLOAT, false, 0, 0);
+        this._renderContext.drawArrays(this._renderContext.LINE_STRIP, 0, segments + 1);
+
+        cc.INCREMENT_GL_DRAWS(1);
+    },
+
+    /**
+     * set the drawing color with 4 unsigned bytes
+     * @param {Number} r red value (0 to 255)
+     * @param {Number} r green value (0 to 255)
+     * @param {Number} r blue value (0 to 255)
+     * @param {Number} a Alpha value (0 to 255)
+     */
+    setDrawColor4B:function (r, g, b, a) {
+        this._color.r = r / 255.0;
+        this._color.g = g / 255.0;
+        this._color.b = b / 255.0;
+        this._color.a = a / 255.0;
+    },
+
+    /**
+     * set the drawing color with 4 floats
+     * @param {Number} r red value (0 to 1)
+     * @param {Number} r green value (0 to 1)
+     * @param {Number} r blue value (0 to 1)
+     * @param {Number} a Alpha value (0 to 1)
+     */
+    setDrawColor4F:function (r, g, b, a) {
+        this._color.r = r;
+        this._color.g = g;
+        this._color.b = b;
+        this._color.a = a;
+    },
+
+    /**
+     * set the point size in points. Default 1.
+     * @param {Number} pointSize
+     */
+    setPointSize:function (pointSize) {
+        this._pointSize = pointSize * cc.CONTENT_SCALE_FACTOR();
+    },
+
+    /**
+     * set the line width. Default 1.
+     * @param {Number} width
+     */
+    setLineWidth:function (width) {
+        if(this._renderContext.lineWidth)
+            this._renderContext.lineWidth(width);
     }
 });
 

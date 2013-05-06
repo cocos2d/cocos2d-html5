@@ -15,8 +15,63 @@ Core Developers:
     Ricardo Quesada
 
 
-Developers:
-   
+Contributors:
+Name                GithubID    Main contribution
+
+Dali Kilani         @dadilcool  added instruction to read me
+
+Chris               @hannon235	added node.js api for box2d
+
+Jason Aeschliman    @jaeschliman  fixed cc.Node setposition
+
+Sun Zhuoshi(Intel)  @sunzhuoshi	engine loader fixed
+
+Alejandro Reyero    @KaTXi      fixed error message
+
+Long Xiang          @seanlong   resource loader count
+
+Timm Drevensek(Zynga)  @timmjd  cc.Class fixed
+                                add CCScale9Sprite test
+
+Lzzy Chen           @czizzy     audio engine fixed
+			                    cleanup comments
+
+Mcscooter           @mcscooter  tilempapxml fixed
+
+Roed                @roed       Mouse rightclick api
+                                Mouse scroll fix for firefox
+
+Surith Thekkiam(Zynga)  @folecr  match Cocos2dx api
+
+Robert Boyd         @rboyd       fixed stackable actions
+
+Ivo Wetzel(Zynga Germany) @BonsaiDen Fixes for Audio Support Detection,
+                                     Texture Support in Particle System,
+                                     and Performance improvements
+
+
+Mario Adrian        @many20        Code review, multi touch improvements,
+                                   ccbi bugs fixed
+
+keisuke hata(Square)  @Seasons7    Code review, bug fix
+
+Marat Yakupov	    @moadib        Various bug fixes
+
+Wu Liang            @akira-cn      Touch location fix for designResolution
+
+Jimmy Sambuo        @jsambuo       AudioEngine improvements
+
+Jose Antonio Andujar Clavell	   Scale9Sprite improvements
+
+TadeuszWlodarkiewic  @TadeuszWlodarkiewic  Tizen Compatibility
+
+smshuja              @smshuja      Parallax node bug fix
+
+rickms               @rickms	   EGLView Optimizations
+
+Szymon Piłkowski     @ardcore      CCTexture Bug fix
+
+Tomasz Tunik         @tomasztunik   CCNode Memory leak fix
 
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.

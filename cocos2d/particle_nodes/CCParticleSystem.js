@@ -255,7 +255,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     modeB:null,
 
     //private POINTZERO for ParticleSystem
-    _pointZeroForParticle:cc.p(0,0),
+    _pointZeroForParticle:cc.p(0, 0),
 
     //! Array of particles
     _particles:null,
@@ -846,6 +846,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} startColor
      */
     setStartColor:function (startColor) {
+        if (startColor instanceof cc.Color3B)
+            startColor = cc.c4FFromccc3B(startColor);
         this._startColor = startColor;
     },
 
@@ -863,6 +865,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} startColorVar
      */
     setStartColorVar:function (startColorVar) {
+        if (startColorVar instanceof cc.Color3B)
+            startColorVar = cc.c4FFromccc3B(startColorVar);
         this._startColorVar = startColorVar;
     },
 
@@ -881,6 +885,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} endColor
      */
     setEndColor:function (endColor) {
+        if (endColor instanceof cc.Color3B)
+            endColor = cc.c4FFromccc3B(endColor);
         this._endColor = endColor;
     },
 
@@ -898,6 +904,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Color4F} endColorVar
      */
     setEndColorVar:function (endColorVar) {
+        if (endColorVar instanceof cc.Color3B)
+            endColorVar = cc.c4FFromccc3B(endColorVar);
         this._endColorVar = endColorVar;
     },
 
@@ -1018,7 +1026,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {cc.Texture2D | HTMLImageElement | HTMLCanvasElement} texture
      */
     setTexture:function (texture) {
-        //TODO
         if (this._texture != texture) {
             this._texture = texture;
             this._updateBlendFunc();
@@ -1026,7 +1033,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /** conforms to CocosNodeTexture protocol */
-    _blendFunc: {src:gl.ONE, dst:gl.ONE},
+    _blendFunc: null,
     /**
      * get BlendFunc of Particle System
      * @return {cc.BlendFunc}
@@ -1041,12 +1048,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Number} dst
      */
     setBlendFunc:function (src, dst) {
-        if(arguments.length == 1){
-            if (this._blendFunc != src ) {
+        if (arguments.length == 1) {
+            if (this._blendFunc != src) {
                 this._blendFunc = src;
                 this._updateBlendFunc();
             }
-        }else{
+        } else {
             if (this._blendFunc.src != src || this._blendFunc.dst != dst) {
                 this._blendFunc = {src:src, dst:dst};
                 this._updateBlendFunc();
@@ -1072,7 +1079,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._opacityModifyRGB = newValue;
     },
 
-    _isBlendAdditive:false,
     /**
      * <p>whether or not the particles are using blend additive.<br/>
      *     If enabled, the following blending function will be used.<br/>
@@ -1083,7 +1089,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      *    dest blend function = GL_ONE;
      */
     isBlendAdditive:function () {
-        //return this._isBlendAdditive;
         return (( this._blendFunc.src == gl.SRC_ALPHA && this._blendFunc.dst == gl.ONE) || (this._blendFunc.src == gl.ONE && this._blendFunc.dst == gl.ONE));
     },
 
@@ -1094,21 +1099,22 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @param {Boolean} isBlendAdditive
      */
     setBlendAdditive:function (isBlendAdditive) {
-        //TODO
-        this._isBlendAdditive = isBlendAdditive;
         if (isBlendAdditive) {
             this._blendFunc.src = gl.SRC_ALPHA;
             this._blendFunc.dst = gl.ONE;
         } else {
-            this._blendFunc.src = cc.BLEND_SRC;
-            this._blendFunc.dst = cc.BLEND_DST;
-            /*if (this._texture && !this._texture.hasPremultipliedAlpha()) {
-             this._blendFunc.src = gl.SRC_ALPHA;
-             this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
-             } else {
-             this._blendFunc.src = cc.BLEND_SRC;
-             this._blendFunc.dst = cc.BLEND_DST;
-             }*/
+            if (cc.renderContextType === cc.WEBGL) {
+                if (this._texture && !this._texture.hasPremultipliedAlpha()) {
+                    this._blendFunc.src = gl.SRC_ALPHA;
+                    this._blendFunc.dst = gl.ONE_MINUS_SRC_ALPHA;
+                } else {
+                    this._blendFunc.src = cc.BLEND_SRC;
+                    this._blendFunc.dst = cc.BLEND_DST;
+                }
+            } else {
+                this._blendFunc.src = cc.BLEND_SRC;
+                this._blendFunc.dst = cc.BLEND_DST;
+            }
         }
     },
 
@@ -1182,13 +1188,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
 
         this._particles = [];
-        this._sourcePosition = new cc.Point(0,0);
-        this._posVar = new cc.Point(0,0);
+        this._sourcePosition = new cc.Point(0, 0);
+        this._posVar = new cc.Point(0, 0);
 
-        this._startColor = new cc.Color4F(1,1,1,1);
-        this._startColorVar = new cc.Color4F(1,1,1,1);
-        this._endColor = new cc.Color4F(1,1,1,1);
-        this._endColorVar = new cc.Color4F(1,1,1,1);
+        this._startColor = new cc.Color4F(1, 1, 1, 1);
+        this._startColorVar = new cc.Color4F(1, 1, 1, 1);
+        this._endColor = new cc.Color4F(1, 1, 1, 1);
+        this._endColorVar = new cc.Color4F(1, 1, 1, 1);
 
         this._particlePool = [];
     },
@@ -1201,20 +1207,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * <p> initializes a CCParticleSystem from a plist file. <br/>
+     * <p>
+     *     initializes a CCParticleSystem from a plist file. <br/>
      *      This plist files can be creted manually or with Particle Designer:<br/>
-     *      http://particledesigner.71squared.com/<br/></p>
+     *      http://particledesigner.71squared.com/
+     * </p>
      * @param {String} plistFile
      * @return {cc.ParticleSystem}
      */
     initWithFile:function (plistFile) {
-        var ret = false;
         //TODO
         this._plistFile = plistFile;
         var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(this._plistFile);
 
         cc.Assert(dict != null, "Particles: file not found");
-        return this.initWithDictionary(dict);
+
+        // XXX compute path from a path, should define a function somewhere to do it
+        return this.initWithDictionary(dict, "");
     },
 
     /**
@@ -1226,14 +1235,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * initializes a CCQuadParticleSystem from a CCDictionary.
+     * initializes a particle system from a NSDictionary and the path from where to load the png
      * @param {object} dictionary
+     * @param {String} dirname
      * @return {Boolean}
      */
-    initWithDictionary:function (dictionary) {
+    initWithDictionary:function (dictionary, dirname) {
         var ret = false;
         var buffer = null;
-        var deflated = null;
         var image = null;
 
         var maxParticles = parseInt(this._valueForKey("maxParticles", dictionary));
@@ -1349,7 +1358,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 var tex = cc.TextureCache.getInstance().textureForKey(fullpath);
 
                 if (tex) {
-                    this._texture = tex;
+                    this.setTexture(tex);
                 } else {
                     var textureData = this._valueForKey("textureImageData", dictionary);
 
@@ -1358,24 +1367,35 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         tex = cc.TextureCache.getInstance().addImage(fullpath);
                         if (!tex)
                             return false;
-                        this._texture = tex;
+                        this.setTexture(tex);
                     } else {
                         buffer = cc.unzipBase64AsArray(textureData, 1);
-                        if (!buffer)
+                        if (!buffer) {
+                            cc.log("cc.ParticleSystem: error decoding or ungzipping textureImageData");
                             return false;
-                        var newImageData = cc.encodeToBase64(buffer);
-                        if (!newImageData)
+                        }
+
+                        var imageFormat = cc.getImageFormatByData(buffer);
+                        if(imageFormat !== cc.FMT_TIFF && imageFormat !== cc.FMT_PNG){
+                            cc.log("cc.ParticleSystem: unknown image format with Data");
                             return false;
+                        }
 
-                        var img = new Image();
-                        img.src = "data:image/png;base64," + newImageData;
-                        this._texture = img;
-
-                        //save image to TextureCache
-                        cc.TextureCache.getInstance().cacheImage(fullpath, img);
+                        var canvasObj = document.createElement("canvas");
+                        if(imageFormat === cc.FMT_PNG){
+                            var myPngObj = new cc.PNGReader(buffer);
+                            myPngObj.render(canvasObj);
+                        } else {
+                            var myTIFFObj = cc.TIFFReader.getInstance();
+                            myTIFFObj.parseTIFF(buffer,canvasObj);
+                        }
+                        cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
+                        var addTexture = cc.TextureCache.getInstance().textureForKey(fullpath);
+                        cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
+                        this.setTexture(addTexture);
                     }
                 }
-                cc.Assert(this._texture != null, "cc.ParticleSystem: error loading the texture");
+
             }
             ret = true;
         }
@@ -1439,8 +1459,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this.unscheduleUpdate();
     },
 
-    _getParticleObject:function(){
-        if(this._particlePool.length > 0)
+    _getParticleObject:function () {
+        if (this._particlePool.length > 0)
             return this._particlePool.pop();
         return new cc.Particle();
     },
@@ -1590,7 +1610,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * should be overriden by subclasses
+     * should be overridden by subclasses
      * @param {cc.Particle} particle
      * @param {cc.Point} newPosition
      */
@@ -1599,7 +1619,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     /**
-     * should be overriden by subclasses
+     * should be overridden by subclasses
      */
     postStep:function () {
         // should be overriden
@@ -1798,60 +1818,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     }
 });
 
-//Compatibility with IE9
-(function () {
-    var
-        object = typeof window != 'undefined' ? window : exports,
-        chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=',
-        INVALID_CHARACTER_ERR = (function () {
-            try { document.createElement('$'); }
-            catch (error) { return error; }}());
-
-    object.btoa || (
-        object.btoa = function (input) {
-            for (
-                // initialize result and counter
-                var block, charCode, idx = 0, map = chars, output = '';
-                // if the next input index does not exist:
-                //   change the mapping table to "="
-                //   check if d has no fractional digits
-                input.charAt(idx | 0) || (map = '=', idx % 1);
-                // "8 - idx % 1 * 8" generates the sequence 2, 4, 6, 8
-                output += map.charAt(63 & block >> 8 - idx % 1 * 8)
-                ) {
-                charCode = input.charCodeAt(idx += 3/4);
-                if (charCode > 0xFF) throw INVALID_CHARACTER_ERR;
-                block = block << 8 | charCode;
-            }
-            return output;
-        });
-
-    object.atob || (
-        object.atob = function (input) {
-            input = input.replace(/=+$/, '')
-            if (input.length % 4 == 1) throw INVALID_CHARACTER_ERR;
-            for (
-                // initialize result and counters
-                var bc = 0, bs, buffer, idx = 0, output = '';
-                // get next character
-                buffer = input.charAt(idx++);
-                // character found in table? initialize bit storage and add its ascii value;
-                ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
-                    // and if not first of each 4 characters,
-                    // convert the first 8 bits to one ascii character
-                    bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
-                ) {
-                // try to find character in table (0-63, not found => -1)
-                buffer = chars.indexOf(buffer);
-            }
-            return output;
-        });
-}());
-
-cc.encodeToBase64 = function (data) {
-    return btoa(String.fromCharCode.apply(data, data)).replace(/.{76}(?=.)/g, '$&\n');
-};
-
 /**
  * <p> return the string found by key in dict. <br/>
  *    This plist files can be creted manually or with Particle Designer:<br/>
@@ -1862,12 +1828,24 @@ cc.encodeToBase64 = function (data) {
  */
 cc.ParticleSystem.create = function (plistFile) {
     return cc.ParticleSystemQuad.create(plistFile);
+    /*var particle = new cc.ParticleSystem();
+    if (particle && particle.initWithFile(plistFile))
+        return particle;
+    return null;*/
 };
 
+/**
+ * create a system with a fixed number of particles
+ * @param {Number} number_of_particles
+ * @return {cc.ParticleSystem}
+ */
 cc.ParticleSystem.createWithTotalParticles = function (number_of_particles) {
-    var emitter = cc.ParticleSystemQuad.create(number_of_particles);
-    //emitter.initWithTotalParticles(number_of_particles);
-    return emitter;
+    return cc.ParticleSystemQuad.create(number_of_particles);
+    /*//emitter.initWithTotalParticles(number_of_particles);
+    var particle = new cc.ParticleSystem();
+    if (particle && particle.initWithTotalParticles(number_of_particles))
+        return particle;
+    return null;*/
 };
 
 // Different modes
@@ -1925,3 +1903,57 @@ cc.ParticleSystem.ModeB = function (startRadius, startRadiusVar, endRadius, endR
     /** Variance in degrees for rotatePerSecond. Only available in 'Radius' mode. */
     this.rotatePerSecondVar = rotatePerSecondVar || 0;
 };
+
+
+cc.encodeToBase64 = function (bytes) {
+
+    //return btoa(String.fromCharCode.apply(data, data)).replace(/.{76}(?=.)/g, '$&\n');
+
+    var padding = '=',
+        chrTable = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/',
+        binTable = [
+            -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+            -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,-1,
+            -1,-1,-1,-1, -1,-1,-1,-1, -1,-1,-1,62, -1,-1,-1,63,
+            52,53,54,55, 56,57,58,59, 60,61,-1,-1, -1, 0,-1,-1,
+            -1, 0, 1, 2,  3, 4, 5, 6,  7, 8, 9,10, 11,12,13,14,
+            15,16,17,18, 19,20,21,22, 23,24,25,-1, -1,-1,-1,-1,
+            -1,26,27,28, 29,30,31,32, 33,34,35,36, 37,38,39,40,
+            41,42,43,44, 45,46,47,48, 49,50,51,-1, -1,-1,-1,-1
+        ];
+
+    var result = '',
+        length = bytes.length,
+        i;
+
+    // Convert every three bytes to 4 ascii characters.
+    for(i = 0; i < (length - 2); i += 3) {
+        result += chrTable[bytes[i] >> 2];
+        result += chrTable[((bytes[i] & 0x03) << 4) + (bytes[i + 1] >> 4)];
+        result += chrTable[((bytes[i + 1] & 0x0f) << 2) + (bytes[i + 2] >> 6)];
+        result += chrTable[bytes[i + 2] & 0x3f];
+    }
+
+    // Convert the remaining 1 or 2 bytes, pad out to 4 characters.
+    if (length % 3) {
+
+        i = length - (length % 3);
+
+        result += chrTable[bytes[i] >> 2];
+        if ((length % 3) === 2) {
+
+            result += chrTable[((bytes[i] & 0x03) << 4) + (bytes[i + 1] >> 4)];
+            result += chrTable[(bytes[i + 1] & 0x0f) << 2];
+            result += padding;
+
+        } else {
+            result += chrTable[(bytes[i] & 0x03) << 4];
+            result += padding + padding;
+        }
+
+    }
+
+    return result;
+
+};
+

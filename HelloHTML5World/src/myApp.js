@@ -25,24 +25,21 @@
  ****************************************************************************/
 
 var CircleSprite = cc.Sprite.extend({
-    _radians:0,
+    _degree:0,
     ctor:function () {
         this._super();
     },
     draw:function () {
-        cc.renderContext.fillStyle = "rgba(255,255,255,1)";
-        cc.renderContext.strokeStyle = "rgba(255,255,255,1)";
+        cc.drawingUtil.setDrawColor4B(255,255,255,255);
 
-        if (this._radians < 0)
-            this._radians = 360;
-        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._radians), 60, true);
+        if (this._degree < 0)
+            this._degree = 360;
+        cc.drawingUtil.drawCircle(cc.PointZero(), 30, cc.DEGREES_TO_RADIANS(this._degree), 60, true);
     },
     myUpdate:function (dt) {
-        this._radians -= 6;
-        //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
+        this._degree -= 6;
     }
 });
-
 
 var Helloworld = cc.Layer.extend({
     isMouseDown:false,
@@ -87,7 +84,7 @@ var Helloworld = cc.Layer.extend({
         // add the label as a child to this layer
         this.addChild(this.helloLabel, 5);
 
-        var lazyLayer = new cc.LazyLayer();
+        var lazyLayer = cc.Layer.create();
         this.addChild(lazyLayer);
 
         // add "HelloWorld" splash screen"
@@ -108,45 +105,10 @@ var Helloworld = cc.Layer.extend({
         this.addChild(this.circle, 2);
         this.circle.schedule(this.circle.myUpdate, 1 / 60);
 
-        this.helloLabel.runAction(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)));
+        this.helloLabel.runAction(cc.Spawn.create(cc.MoveBy.create(2.5, cc.p(0, size.height - 40)),cc.TintTo.create(2.5,255,125,0)));
 
         this.setTouchEnabled(true);
-        this.adjustSizeForWindow();
-        lazyLayer.adjustSizeForCanvas();
-        window.addEventListener("resize", function (event) {
-            selfPointer.adjustSizeForWindow();
-        });
         return true;
-    },
-
-    adjustSizeForWindow:function () {
-        var margin = document.documentElement.clientWidth - document.body.clientWidth;
-        if (document.documentElement.clientWidth < cc.originalCanvasSize.width) {
-            cc.canvas.width = cc.originalCanvasSize.width;
-        } else {
-            cc.canvas.width = document.documentElement.clientWidth - margin;
-        }
-        if (document.documentElement.clientHeight < cc.originalCanvasSize.height) {
-            cc.canvas.height = cc.originalCanvasSize.height;
-        } else {
-            cc.canvas.height = document.documentElement.clientHeight - margin;
-        }
-
-        var xScale = cc.canvas.width / cc.originalCanvasSize.width;
-        var yScale = cc.canvas.height / cc.originalCanvasSize.height;
-        if (xScale > yScale) {
-            xScale = yScale;
-        }
-        cc.canvas.width = cc.originalCanvasSize.width * xScale;
-        cc.canvas.height = cc.originalCanvasSize.height * xScale;
-        var parentDiv = document.getElementById("Cocos2dGameContainer");
-        if (parentDiv) {
-            parentDiv.style.width = cc.canvas.width + "px";
-            parentDiv.style.height = cc.canvas.height + "px";
-        }
-        cc.renderContext.translate(0, cc.canvas.height);
-        cc.renderContext.scale(xScale, xScale);
-        cc.Director.getInstance().setContentScaleFactor(xScale);
     },
     // a selector callback
     menuCloseCallback:function (sender) {

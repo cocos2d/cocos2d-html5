@@ -28,7 +28,7 @@
  * @constant
  * @type Number
  */
-cc.INVALID_INDEX = 0xffffffff;
+cc.INVALID_INDEX = -1;
 
 /**
  * PI is the ratio of a circle's circumference to its diameter.
@@ -79,9 +79,8 @@ cc.SWAP = function (x, y, ref) {
         var tmp = ref[x];
         ref[x] = ref[y];
         ref[y] = tmp;
-    } else {
+    } else
         cc.Assert(false, "CC_SWAP is being modified from original macro, please check usage");
-    }
 };
 
 /**
@@ -164,11 +163,11 @@ cc.BLEND_DST = 0x0303;
  * @function
  */
 cc.NODE_DRAW_SETUP = function (node) {
-    ccGLEnable(node._glServerState);
-    cc.Assert(node.getShaderProgram(), "No shader program set for this node");
-    {
-        node.getShaderProgram().use();
-        node.getShaderProgram().setUniformForModelViewProjectionMatrix();
+    //cc.glEnable(node._glServerState);
+    if (node._shaderProgram) {
+        //cc.renderContext.useProgram(node._shaderProgram._programObj);
+        node._shaderProgram.use();
+        node._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(node._mvpMatrix);
     }
 };
 
@@ -305,102 +304,47 @@ cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
     return p;
 };
 
+if (!cc.Browser.supportWebGL) {
+    /**
+     * WebGL constants
+     * @type {object}
+     */
+    var gl = gl || {};
 
-/**
- * WebGL constants
- * @type {object}
- */
-var gl = gl || {};
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ONE = 1;
 
-/**
- * @constant
- * @type Number
- */
-gl.NEAREST = 0x2600;
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ZERO = 0;
 
-/**
- * @constant
- * @type Number
- */
-gl.LINEAR = 0x2601;
-/**
- * @constant
- * @type Number
- */
-gl.REPEAT = 0x2901;
-/**
- * @constant
- * @type Number
- */
-gl.CLAMP_TO_EDGE = 0x812F;
-/**
- * @constant
- * @type Number
- */
-gl.CLAMP_TO_BORDER = 0x812D;
-/**
- * @constant
- * @type Number
- */
-gl.LINEAR_MIPMAP_NEAREST = 0x2701;
-/**
- * @constant
- * @type Number
- */
-gl.NEAREST_MIPMAP_NEAREST = 0x2700;
-/**
- * @constant
- * @type Number
- */
-gl.ZERO = 0;
-/**
- * @constant
- * @type Number
- */
-gl.ONE = 1;
-/**
- * @constant
- * @type Number
- */
-gl.SRC_COLOR = 0x0300;
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_SRC_COLOR = 0x0301;
-/**
- * @constant
- * @type Number
- */
-gl.SRC_ALPHA = 0x0302;
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_SRC_ALPHA = 0x0303;
-/**
- * @constant
- * @type Number
- */
-gl.DST_ALPHA = 0x0304;
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_DST_ALPHA = 0x0305;
-/**
- * @constant
- * @type Number
- */
-gl.DST_COLOR = 0x0306;
-/**
- * @constant
- * @type Number
- */
-gl.ONE_MINUS_DST_COLOR = 0x0307;
-/**
- * @constant
- * @type Number
- */
-gl.SRC_ALPHA_SATURATE = 0x0308;
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.SRC_ALPHA = 0x0302;
 
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ONE_MINUS_SRC_ALPHA = 0x0303;
+
+    /**
+     * @constant
+     * @type Number
+     */
+    gl.ONE_MINUS_DST_COLOR = 0x0307;
+}
+
+cc.CHECK_GL_ERROR_DEBUG = function () {
+    var _error = cc.renderContext.getError();
+    if (_error) {
+        cc.log("WebGL error " + _error);
+    }
+};

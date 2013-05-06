@@ -210,6 +210,10 @@ cc.SpriteFrame = cc.Class.extend(/** @lends cc.SpriteFrame# */{
         return copy;
     },
 
+    copy:function () {
+        return this.copyWithZone();
+    },
+
     /**
      * Initializes SpriteFrame with Texture, rect, rotated, offset and originalSize in pixels.
      * @param {cc.Texture2D|HTMLImageElement} texture
