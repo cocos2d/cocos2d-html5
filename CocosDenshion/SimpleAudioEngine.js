@@ -665,6 +665,14 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     _soundEnable: false,
     // containing all binary buffers of loaded audio resources
     _audioData: {},
+    /*
+     *   Issue: When loading two resources with different suffixes asynchronously, the second one might start loading
+     * when the first one is already loading!
+     *   To avoid this duplication, loading synchronously somehow doesn't work. _ctx.decodeAudioData() would throw an
+     * exception "DOM exception 12", it should be a bug of the browser.
+     *   So just add something to mark some audios as LOADING so as to avoid duplication.
+     */
+    _audiosLoading: {},
     // the music being played, cc.WebAudioSFX, when null, no music is being played; when not null, it may be playing or paused
     _music: null,
     // the volume applied to the music
@@ -767,18 +775,22 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var extName = this._getExtFromFullPath(path);
         var keyName = this._getPathWithoutExt(path);
 
-        if (!this._isFormatSupported(extName) || keyName in this._audioData) {
+        // not supported, already loaded, already loading
+        if (!this._isFormatSupported(extName) || keyName in this._audioData || keyName in this._audiosLoading) {
             cc.Loader.getInstance().onResLoaded();
             return;
         }
 
+        this._audiosLoading[keyName] = true;
         var engine = this;
         this._fetchData(path, function(buffer) {
             // resource fetched, in @param buffer
             engine._audioData[keyName] = buffer;
+            delete engine._audiosLoading[keyName];
             cc.Loader.getInstance().onResLoaded();
         }, function() {
             // resource fetching failed
+            delete engine._audiosLoading[keyName];
             cc.Loader.getInstance().onResLoadingErr(path);
         });
     },
@@ -913,15 +925,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (keyName in this._audioData) {
             // already loaded, just play it
             this._music = this._beginSound(keyName, loop, this.getMusicVolume());
-        } else if (this._isFormatSupported(extName)) {
-            // if the resource type is not supported, there is no need to download it
+        } else if (this._isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+            // load now only if the type is supported and it is not being loaded currently
+            this._audiosLoading[keyName] = true;
             var engine = this;
             this._fetchData(path, function(buffer) {
                 // resource fetched, save it and call playMusic() again, this time it should be alright
                 engine._audioData[keyName] = buffer;
+                delete engine._audiosLoading[keyName];
                 engine.playMusic(path, loop);
             }, function() {
                 // resource fetching failed, doing nothing here
+                delete engine._audiosLoading[keyName];
                 /*
                  * Potential Bug: if fetching data fails every time, loading will be tried again and again.
                  * Preloading would prevent this issue: if it fails to fetch, preloading procedure will not achieve 100%.
@@ -1126,15 +1141,18 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             }
             // no new sound was created to replace an old one in the list, then just append one
             effectList.push(this._beginSound(keyName, loop, this.getEffectsVolume()));
-        } else if (this._isFormatSupported(extName)) {
-            // if the resource type is not supported, there is no need to download it
+        } else if (this._isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+            // load now only if the type is supported and it is not being loaded currently
+            this._audiosLoading[keyName] = true;
             var engine = this;
             this._fetchData(path, function(buffer) {
                 // resource fetched, save it and call playEffect() again, this time it should be alright
                 engine._audioData[keyName] = buffer;
+                delete engine._audiosLoading[keyName];
                 engine.playEffect(path, loop);
             }, function() {
                 // resource fetching failed, doing nothing here
+                delete engine._audiosLoading[keyName];
                 /*
                  * Potential Bug: if fetching data fails every time, loading will be tried again and again.
                  * Preloading would prevent this issue: if it fails to fetch, preloading procedure will not achieve 100%.
