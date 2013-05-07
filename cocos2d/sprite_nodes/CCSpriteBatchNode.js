@@ -1060,7 +1060,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
     _swap:function (oldIndex, newIndex) {
         var quads = this._textureAtlas.getQuads();
         var tempItem = this._descendants[oldIndex];
-        var tempIteQuad = quads[oldIndex];
+        var tempIteQuad = cc.V3F_C4B_T2F_QuadCopy(quads[oldIndex]);
 
         //update the index of other swapped item
         this._descendants[newIndex].setAtlasIndex(oldIndex);
@@ -1108,7 +1108,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
             count = pArray.length;
 
         var oldIndex = 0;
-        if (count == 0) {
+        if (count === 0) {
             oldIndex = sprite.getAtlasIndex();
             sprite.setAtlasIndex(curIndex);
             sprite.setOrderOfArrival(0);
@@ -1378,31 +1378,32 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
 
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
-            var i = 0, j = 0, length = this._children.length;
+            var childrenArr = this._children;
+            var i, j = 0, length = childrenArr.length;
             //insertion sort
             for (i = 1; i < length; i++) {
-                var tempItem = this._children[i];
+                var tempItem = childrenArr[i];
                 j = i - 1;
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but orderOfArrival is smaller
-                while (j >= 0 && (tempItem.getZOrder() < this._children[j].getZOrder() ||
-                    (tempItem.getZOrder() == this._children[j].getZOrder() && tempItem.getOrderOfArrival() < this._children[j].getOrderOfArrival()))) {
-                    this._children[j + 1] = this._children[j];
+                while (j >= 0 && (tempItem.getZOrder() < childrenArr[j].getZOrder() ||
+                    (tempItem.getZOrder() == childrenArr[j].getZOrder() && tempItem.getOrderOfArrival() < childrenArr[j].getOrderOfArrival()))) {
+                    childrenArr[j + 1] = childrenArr[j];
                     j--;
                 }
-                this._children[j + 1] = tempItem;
+                childrenArr[j + 1] = tempItem;
             }
 
             //sorted now check all children
-            if (this._children.length > 0) {
+            if (childrenArr.length > 0) {
                 //first sort all children recursively based on zOrder
-                this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.sortAllChildren);
+                this._arrayMakeObjectsPerformSelector(childrenArr, cc.Node.StateCallbackType.sortAllChildren);
 
                 var index = 0;
                 //fast dispatch, give every child a new atlasIndex based on their relative zOrder (keep parent -> child relations intact)
                 // and at the same time reorder descedants and the quads to the right index
-                for (i = 0; i < this._children.length; i++)
-                    index = this._updateAtlasIndex(this._children[i], index);
+                for (i = 0; i < childrenArr.length; i++)
+                    index = this._updateAtlasIndex(childrenArr[i], index);
             }
             this._reorderChildDirty = false;
         }
