@@ -64,7 +64,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
      * Helper function for cutting out the extension from the path
-     * @param {string} fullpath
+     * @param {String} fullpath
      * @protected
      */
     _getPathWithoutExt: function (fullpath) {
@@ -80,7 +80,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
      * Helper function for extracting the extension from the path
-     * @param {string} fullpath
+     * @param {String} fullpath
      * @protected
      */
     _getExtFromFullPath: function (fullpath) {
@@ -786,10 +786,10 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     /**
      * Init a new WebAudioSFX and play it, return this WebAudioSFX object
      * assuming that @param key exists in this._audioData
-     * @param key {String}
-     * @param loop {Boolean}, default value: false
-     * @param volume {float}: 0.0 - 1.0, default value: 1.0
-     * @param offset {Number}: where to start playing (unit: seconds)
+     * @param {String} key
+     * @param {Boolean} loop: default value is false
+     * @param {Number} volume: 0.0 - 1.0, default value is 1.0
+     * @param {Number} offset: where to start playing (unit: seconds)
      * @private
      */
     _beginSound: function(key, loop, volume, offset) {
