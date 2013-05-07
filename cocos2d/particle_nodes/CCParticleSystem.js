@@ -25,16 +25,16 @@
  ****************************************************************************/
 
 // ideas taken from:
-//	 . The ocean spray in your face [Jeff Lander]
-//		http://www.double.co.nz/dust/col0798.pdf
-//	 . Building an Advanced Particle System [John van der Burg]
-//		http://www.gamasutra.com/features/20000623/vanderburg_01.htm
+//   . The ocean spray in your face [Jeff Lander]
+//      http://www.double.co.nz/dust/col0798.pdf
+//   . Building an Advanced Particle System [John van der Burg]
+//      http://www.gamasutra.com/features/20000623/vanderburg_01.htm
 //   . LOVE game engine
-//		http://love2d.org/
+//      http://love2d.org/
 //
 //
 // Radius mode support, from 71 squared
-//		http://particledesigner.71squared.com/
+//      http://particledesigner.71squared.com/
 //
 // IMPORTANT: Particle Designer is supported by cocos2d, but
 // 'Radius Mode' in Particle Designer uses a fixed emit rate of 30 hz. Since that can't be guarateed in cocos2d,
@@ -264,7 +264,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _particlePool:null,
 
     // color modulate
-    //	BOOL colorModulate;
+    //  BOOL colorModulate;
 
     //! How many particles can be emitted per second
     _emitCounter:0,
@@ -1375,7 +1375,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         }
 
-                        var imageFormat = cc.getImageFormatByData(buffer);
+
+                        var imageFormat = cc.FMT_PNG;
+                        //var imageFormat = cc.getImageFormatByData(buffer); NOT WORKING!
+
                         if(imageFormat !== cc.FMT_TIFF && imageFormat !== cc.FMT_PNG){
                             cc.log("cc.ParticleSystem: unknown image format with Data");
                             return false;
@@ -1385,14 +1388,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         if(imageFormat === cc.FMT_PNG){
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
+
                         } else {
                             var myTIFFObj = cc.TIFFReader.getInstance();
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
+
                         cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
+
                         var addTexture = cc.TextureCache.getInstance().textureForKey(fullpath);
+
                         cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
-                        this.setTexture(addTexture);
+
+                        if (cc.renderContextType === cc.CANVAS)
+                            this.setTexture(canvasObj);
+                        else
+                            this.setTexture(addTexture);
+
                     }
                 }
 
@@ -1438,7 +1450,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         // default: modulate
         // XXX: not used
-        //	colorModulate = YES;
+        //  colorModulate = YES;
         this._isAutoRemoveOnFinish = false;
 
         // Optimization: compile udpateParticle method
