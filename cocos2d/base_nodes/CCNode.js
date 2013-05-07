@@ -3122,8 +3122,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
-            var sx = Math.max(Math.round(this._scaleX * 1000) / 1000, 0.000001),
-                sy = Math.max(Math.round(this._scaleY * 1000) / 1000, 0.000001);
+            var sx = (this._scaleX < 0.000001 && this._scaleX > -0.000001)?  0.000001 :this._scaleX,
+                sy = (this._scaleY < 0.000001 && this._scaleY > -0.000001)? 0.000001 : this._scaleY;
 
             // skew
             if (this._skewX || this._skewY) {
