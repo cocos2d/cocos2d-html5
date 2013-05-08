@@ -36,7 +36,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
      * Check each type to see if it can be played by current browser
-     * @param capabilities: the results are filled into this dict
+     * @param {Object} capabilities The results are filled into this dict
      * @protected
      */
     _checkCanPlay: function(capabilities) {
@@ -727,7 +727,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * search in this._supportedFormat if @param ext is there
-     * @returns {boolean}
+     * @param {String} ext
+     * @returns {Boolean}
      * @private
      */
     _isFormatSupported: function(ext) {
@@ -743,9 +744,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * Using XMLHttpRequest to retrieve the resource data from server.
      * Not using cc.FileUtils.getByteArrayFromFile() because it is synchronous,
      * so doing the retrieving here is more handful.
-     * @param url: the url to retrieve data
-     * @param onSuccess: the callback to run when retrieving succeeds, the binary data array is passed into it
-     * @param onError: the callback to run when retrieving fails
+     * @param {String} url The url to retrieve data
+     * @param {Object} onSuccess The callback to run when retrieving succeeds, the binary data array is passed into it
+     * @param {Object} onError The callback to run when retrieving fails
      * @private
      */
     _fetchData: function(url, onSuccess, onError) {
@@ -799,9 +800,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * Init a new WebAudioSFX and play it, return this WebAudioSFX object
      * assuming that @param key exists in this._audioData
      * @param {String} key
-     * @param {Boolean} loop: default value is false
-     * @param {Number} volume: 0.0 - 1.0, default value is 1.0
-     * @param {Number} offset: where to start playing (unit: seconds)
+     * @param {Boolean} loop Default value is false
+     * @param {Number} volume 0.0 - 1.0, default value is 1.0
+     * @param {Number} offset Where to start playing (in seconds)
      * @private
      */
     _beginSound: function(key, loop, volume, offset) {
@@ -864,8 +865,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      *      const unsigned short PLAYING_STATE = 2;     // this means it is playing
      *      const unsigned short FINISHED_STATE = 3;
      * However, the older specification doesn't include this property, such as this one: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
-     * @param sfxCache: assuming not null
-     * @returns {boolean}: whether @param sfxCache is playing or not
+     * @param {Object} sfxCache Assuming not null
+     * @returns {Boolean} Whether @param sfxCache is playing or not
      * @private
      */
     _isSoundPlaying: function(sfxCache) {
@@ -874,7 +875,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * To distinguish 3 kinds of status for each sound (PLAYING, PAUSED, FINISHED), _isSoundPlaying() is not enough
-     * @param sfxCache: assuming not null
+     * @param {Object} sfxCache Assuming not null
+     * @returns {Boolean}
      * @private
      */
     _isSoundPaused: function(sfxCache) {
@@ -947,7 +949,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Ends a sound, call stop() or noteOff() accordingly
-     * @param sfxCache: assuming not null
+     * @param {Object} sfxCache Assuming not null
      * @private
      */
     _endSound: function(sfxCache) {
@@ -985,7 +987,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Used in pauseMusic() & pauseEffect() & pauseAllEffects()
-     * @param sfxCache: assuming not null
+     * @param {Object} sfxCache Assuming not null
      * @private
      */
     _pauseSound: function(sfxCache) {
@@ -1011,9 +1013,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Used in resumeMusic() & resumeEffect() & resumeAllEffects()
-     * @param paused: the paused WebAudioSFX, assuming not null
-     * @param volume: can be getMusicVolume() or getEffectsVolume()
-     * @returns a new WebAudioSFX object representing the resumed sound
+     * @param {Object} paused The paused WebAudioSFX, assuming not null
+     * @param {Number} volume Can be getMusicVolume() or getEffectsVolume()
+     * @returns {Object} A new WebAudioSFX object representing the resumed sound
      * @private
      */
     _resumeSound: function(paused, volume) {
@@ -1078,8 +1080,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * update volume, used in setMusicVolume() or setEffectsVolume()
-     * @param sfxCache: assuming not null
-     * @param volume
+     * @param {Object} sfxCache Assuming not null
+     * @param {Number} volume
      * @private
      */
     _setSoundVolume: function(sfxCache, volume) {
@@ -1164,7 +1166,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     },
 
     /**
-     *The volume of the effects max value is 1.0,the min value is 0.0 .
+     * The volume of the effects max value is 1.0,the min value is 0.0 .
      * @return {Number}
      * @example
      * //example
@@ -1203,7 +1205,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Used in pauseEffect() and pauseAllEffects()
-     * @param effectList: a list of sounds, each sound may be playing/paused/finished
+     * @param {Object} effectList A list of sounds, each sound may be playing/paused/finished
      * @private
      */
     _pauseSoundList: function(effectList) {
@@ -1250,7 +1252,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Used in resumeEffect() and resumeAllEffects()
-     * @param effectList: a list of sounds, each sound may be playing/paused/finished
+     * @param {Object} effectList A list of sounds, each sound may be playing/paused/finished
      * @private
      */
     _resumeSoundList: function(effectList, volume) {
