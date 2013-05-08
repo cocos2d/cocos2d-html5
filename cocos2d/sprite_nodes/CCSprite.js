@@ -1149,6 +1149,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             this._originalTexture = pNewTexture;
 
         this.setTextureRect(newFrame.getRect(), this._rectRotated, newFrame.getOriginalSize());
+        this._colorized = false;
         if (this._color.r !== 255 || this._color.g !== 255 || this._color.b !== 255)
             this._changeTextureColor();
     },
