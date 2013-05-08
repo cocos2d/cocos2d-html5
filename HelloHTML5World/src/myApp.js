@@ -100,24 +100,6 @@ var Helloworld = cc.Layer.extend({
 
         this.sprite.runAction(cc.Sequence.create(rotateToA, scaleToA));
 
-        //grossoni
-        var spriteFrameCache = cc.SpriteFrameCache.getInstance();
-        spriteFrameCache.addSpriteFrames("res/grossini.plist");
-        var grossiniSprite = cc.Sprite.createWithSpriteFrameName("grossini_dance_01.png");
-        grossiniSprite.setPosition(cc.p(size.width / 2, size.height / 2));
-        lazyLayer.addChild(grossiniSprite, 0);
-        var spriteFrame = spriteFrameCache.getSpriteFrame("grossini_dance_06.png");
-
-        grossiniSprite.runAction(cc.Sequence.create(
-            cc.DelayTime.create(2),
-            cc.CallFunc.create(function(){
-                grossiniSprite.setColor(cc.c3b(255,0,0));
-            },grossiniSprite),
-            cc.DelayTime.create(2),
-            cc.CallFunc.create(function(){
-                grossiniSprite.setDisplayFrame(spriteFrame);
-            },grossiniSprite)));
-
         this.circle = new CircleSprite();
         this.circle.setPosition(cc.p(40, size.height - 60));
         this.addChild(this.circle, 2);
