@@ -1041,6 +1041,10 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         this.setVertexRect(rect);
 
         var relativeOffset = this._unflippedOffsetPositionFromCenter;
+        if (this._flipX)
+            relativeOffset.x = -relativeOffset.x;
+        if (this._flipY)
+            relativeOffset.y = -relativeOffset.y;
         this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.size.width) / 2;
         this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.size.height) / 2;
 
