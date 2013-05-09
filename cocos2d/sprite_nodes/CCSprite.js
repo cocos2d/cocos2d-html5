@@ -46,6 +46,7 @@ cc.generateTextureCacheForColor = function (texture) {
     var textureCache = [
         document.createElement("canvas"),
         document.createElement("canvas"),
+        document.createElement("canvas"),
         document.createElement("canvas")
     ];
 
@@ -61,6 +62,8 @@ cc.generateTextureCacheForColor = function (texture) {
         textureCache[1].height = h;
         textureCache[2].width = w;
         textureCache[2].height = h;
+        textureCache[3].width = w;
+        textureCache[3].height = h;
 
         ref.canvas.width = w;
         ref.canvas.height = h;
@@ -73,7 +76,7 @@ cc.generateTextureCacheForColor = function (texture) {
 
         var pixels = ctx.getImageData(0, 0, w, h).data;
 
-        for (var rgbI = 0; rgbI < 3; rgbI++) {
+        for (var rgbI = 0; rgbI < 4; rgbI++) {
             var cacheCtx = textureCache[rgbI].getContext('2d');
             cacheCtx.getImageData(0, 0, w, h).data;
             ref.tempCtx.drawImage(texture, 0, 0);
@@ -204,6 +207,11 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
     if (selColor.b > 0) {
         ctx.globalAlpha = selColor.b * a;
         ctx.drawImage(tintedImgCache[2], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+    }
+
+    if((selColor.r === 0) && (selColor.g === 0) &&(selColor.b === 0)){
+        ctx.globalAlpha = a;
+        ctx.drawImage(tintedImgCache[3], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
     }
 
     ctx.restore();
