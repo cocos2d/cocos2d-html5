@@ -78,6 +78,23 @@ cc.Browser = {};
         // WebGL render only, but browser doesn't support WebGL.
         cc.__renderDoesnotSupport = true;
     }
+
+    // check if browser supports Web Audio
+    cc.Browser.supportWebAudio = (function(){
+        // check <audio> tag first
+        var ele = document.createElement('audio');
+        if (!ele) {
+            return false;
+        }
+
+        // check Web Audio's context
+        try {
+            var ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+            return ctx ? true : false;
+        } catch (e) {
+            return false;
+        }
+    })();
 })();
 
 cc.RenderDoesnotSupport = function(){
