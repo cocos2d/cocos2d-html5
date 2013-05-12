@@ -1,3 +1,24 @@
+Cocos2d-html5-v2.1.3 @ May.1, 2013
+* CCEditbox now implemented for WebGL and JSB
+* Updated CCBReader to latest version
+* Performance optimization on Firefox 20%
+* Added render mode flag to switch between WebGL and canvas2d
+* Added support for Tizen
+* Now able to load embedded texture file in a plist
+* EGLView now works if canvas is placed inside another DOM element
+* Added a Simulator which can be found in MoonWarriors Directory
+
+*Bug fix:
+  1. Preloading on some mobile browsers
+  2. CCLoader for WebGL
+  3. ccNode memory leak
+* Known Issues:
+     1. Effect Advanced Lens3D doesn't work
+     2. Particle System has some weird behavior when load from CCBReader
+     3. RenderTextureTest RenderTextureIssue937 & Issue1464 doesn't work properly
+     4. ClipNodeTest effects varies in different browsers
+
+
 Cocos2d-html5-v2.1.2-beta @ Mar.20, 2013
 * WebGL rendering mode implemented - blazing fast on supported browsers
 * Added many WegGL test to testbed

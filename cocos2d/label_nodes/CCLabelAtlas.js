@@ -41,26 +41,29 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
      *  It accepts two groups of parameters:
      * a) string, fntFile
      * b) label, textureFilename, width, height, startChar
+     * @param {String} strText
+     * @param {String} charMapFile  charMapFile or fntFile
+     * @param {Number} itemWidth
+     * @param {Number} itemHeight
+     * @param {Number} startCharMap
      * @return {Boolean} returns true on success
      */
-    initWithString:function (arg) {
-        var label, textureFilename, width, height, startChar;
-        if (arg.length == 2) {
-            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(arg[1]);
+    initWithString:function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
+        var label = strText + "", textureFilename, width, height, startChar;
+        cc.Assert(label !== null, "Label must be non-nil");
+        if (arguments.length === 2) {
+            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(charMapFile);
             cc.Assert(parseInt(dict["version"], 10) == 1, "Unsupported version. Upgrade cocos2d version");
 
-            label = arg[0].toString();
-            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
+            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], charMapFile);
             width = parseInt(dict["itemWidth"], 10) / cc.CONTENT_SCALE_FACTOR();
             height = parseInt(dict["itemHeight"], 10) / cc.CONTENT_SCALE_FACTOR();
             startChar = String.fromCharCode(parseInt(dict["firstChar"], 10));
         } else {
-            label = arg[0].toString();
-            textureFilename = arg[1];
-            width = arg[2];
-            height = arg[3];
-            startChar = arg[4];
-            cc.Assert(label !== null, "Label must be non-nil");
+            textureFilename = charMapFile;
+            width = itemWidth || 0;
+            height = itemHeight || 0;
+            startChar = startCharMap || " ";
         }
 
         if (this.initWithTileFile(textureFilename, width, height, label.length)) {
@@ -182,9 +185,9 @@ cc.LabelAtlasCanvas = cc.AtlasNode.extend(/** @lends cc.LabelAtlasCanvas# */{
  * //creates the cc.LabelAtlas with a string, a fnt file
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
-cc.LabelAtlasCanvas.create = function (/* Multi arguments */) {
+cc.LabelAtlasCanvas.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
     var ret = new cc.LabelAtlasCanvas();
-    if (ret && ret.initWithString(arguments)) {
+    if (ret && cc.LabelAtlasCanvas.prototype.initWithString.apply(ret,arguments)) {
         return ret;
     }
     return null;
@@ -207,26 +210,29 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
      *  It accepts two groups of parameters:
      * a) string, fntFile
      * b) label, textureFilename, width, height, startChar
+     * @param {String} strText
+     * @param {String} charMapFile  charMapFile or fntFile
+     * @param {Number} itemWidth
+     * @param {Number} itemHeight
+     * @param {Number} startCharMap
      * @return {Boolean} returns true on success
      */
-    initWithString:function (arg) {
-        var label, textureFilename, width, height, startChar;
-        if (arg.length == 2) {
-            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(arg[1]);
+    initWithString:function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
+        var label = strText + "", textureFilename, width, height, startChar;
+        cc.Assert(label !== null, "Label must be non-nil");
+        if (arguments.length === 2) {
+            var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(charMapFile);
             cc.Assert(parseInt(dict["version"], 10) == 1, "Unsupported version. Upgrade cocos2d version");
 
-            label = arg[0].toString();
-            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], arg[1]);
+            textureFilename = cc.FileUtils.getInstance().fullPathFromRelativeFile(dict["textureFilename"], charMapFile);
             width = parseInt(dict["itemWidth"], 10) / cc.CONTENT_SCALE_FACTOR();
             height = parseInt(dict["itemHeight"], 10) / cc.CONTENT_SCALE_FACTOR();
             startChar = String.fromCharCode(parseInt(dict["firstChar"], 10));
         } else {
-            label = arg[0].toString();
-            textureFilename = arg[1];
-            width = arg[2];
-            height = arg[3];
-            startChar = arg[4];
-            cc.Assert(label !== null, "Label must be non-nil");
+            textureFilename = charMapFile;
+            width = itemWidth || 0;
+            height = itemHeight || 0;
+            startChar = startCharMap || " ";
         }
 
         if (this.initWithTileFile(textureFilename, width, height, label.length)) {
@@ -352,6 +358,11 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
  *  It accepts two groups of parameters:
  * a) string, fntFile
  * b) label, textureFilename, width, height, startChar
+ * @param {String} strText
+ * @param {String} charMapFile  charMapFile or fntFile
+ * @param {Number} itemWidth
+ * @param {Number} itemHeight
+ * @param {Number} startCharMap
  * @return {cc.LabelAtlas|Null} returns the LabelAtlas object on success
  * @example
  * //Example
@@ -361,9 +372,9 @@ cc.LabelAtlasWebGL = cc.AtlasNode.extend(/** @lends cc.LabelAtlasWebGL# */{
  * //creates the cc.LabelAtlas with a string, a fnt file
  * var myLabel = cc.LabelAtlas.create('Text to display', 'CharMapFile.plist‘);
  */
-cc.LabelAtlasWebGL.create = function (/* Multi arguments */) {
+cc.LabelAtlasWebGL.create = function (strText, charMapFile, itemWidth, itemHeight, startCharMap) {
     var ret = new cc.LabelAtlasWebGL();
-    if (ret && ret.initWithString(arguments)) {
+    if (ret && cc.LabelAtlasWebGL.prototype.initWithString.apply(ret,arguments)) {
         return ret;
     }
     return null;

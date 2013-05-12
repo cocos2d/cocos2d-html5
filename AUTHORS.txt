@@ -38,7 +38,8 @@ Lzzy Chen           @czizzy     audio engine fixed
 
 Mcscooter           @mcscooter  tilempapxml fixed
 
-Roed                @roed       mouse rightclick api
+Roed                @roed       Mouse rightclick api
+                                Mouse scroll fix for firefox
 
 Surith Thekkiam(Zynga)  @folecr  match Cocos2dx api
 
@@ -51,6 +52,26 @@ Ivo Wetzel(Zynga Germany) @BonsaiDen Fixes for Audio Support Detection,
 
 Mario Adrian        @many20        Code review, multi touch improvements,
                                    ccbi bugs fixed
+
+keisuke hata(Square)  @Seasons7    Code review, bug fix
+
+Marat Yakupov	    @moadib        Various bug fixes
+
+Wu Liang            @akira-cn      Touch location fix for designResolution
+
+Jimmy Sambuo        @jsambuo       AudioEngine improvements
+
+Jose Antonio Andujar Clavell	   Scale9Sprite improvements
+
+TadeuszWlodarkiewic  @TadeuszWlodarkiewic  Tizen Compatibility
+
+smshuja              @smshuja      Parallax node bug fix
+
+rickms               @rickms	   EGLView Optimizations
+
+Szymon Piłkowski     @ardcore      CCTexture Bug fix
+
+Tomasz Tunik         @tomasztunik   CCNode Memory leak fix
 
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.

@@ -49,13 +49,13 @@ cc.Control = cc.Layer.extend({
     RGBAProtocol:true,
     _opacity:0,
     _color:null,
-    _isOpacityModifyRGB:false,
+    _opacityModifyRGB:false,
 
     isOpacityModifyRGB:function () {
-        return this._isOpacityModifyRGB;
+        return this._opacityModifyRGB;
     },
     setOpacityModifyRGB:function (opacityModifyRGB) {
-        this._isOpacityModifyRGB = opacityModifyRGB;
+        this._opacityModifyRGB = opacityModifyRGB;
 
         var children = this.getChildren();
         for (var i = 0; i < children.length; i++) {
@@ -142,6 +142,7 @@ cc.Control = cc.Layer.extend({
     },
 
     ctor:function () {
+        this._super();
         this._dispatchTable = {};
         this._color = cc.white();
     },

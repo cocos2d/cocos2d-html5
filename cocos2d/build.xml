@@ -6,7 +6,7 @@
 
     <target name="compile_Canvas">
         <jscomp compilationLevel="simple" warning="quiet"
-                debug="false" output="../lib/Cocos2d-html5-v2.1.2.beta.min.js">
+                debug="false" output="../lib/Cocos2d-html5-v2.1.3.min.js">
             <externs dir="${basedir}">
                 <file name="cocos2d_externs.js"/>
             </externs>
@@ -22,6 +22,7 @@
                 <file name="platform/CCTypes.js"/>
                 <file name="platform/CCAccelerometer.js"/>
                 <file name="platform/CCEGLView.js"/>
+                <file name="platform/CCImage.js"/>
                 <file name="platform/zlib.min.js"/>
                 <file name="cocoa/CCGeometry.js"/>
                 <file name="platform/Sys.js"/>
@@ -42,13 +43,15 @@
                 <file name="kazmath/GL/matrix.js"/>
                 <file name="cocoa/CCAffineTransform.js"/>
                 <file name="support/CCPointExtension.js"/>
+                <file name="support/CCPNGReader.js"/>
+                <file name="support/CCTIFFReader.js"/>
                 <file name="support/CCUserDefault.js"/>
                 <file name="support/CCVertex.js"/>
                 <file name="support/TransformUtils.js"/>
-                <file name="shaders/ccShaders.js"/>
+                <file name="shaders/CCShaders.js"/>
                 <file name="shaders/CCGLProgram.js"/>
-                <file name="shaders/ccGLStateCache.js"/>
-                <file name="shaders/ccShaderCache.js"/>
+                <file name="shaders/CCGLStateCache.js"/>
+                <file name="shaders/CCShaderCache.js"/>
                 <file name="base_nodes/CCNode.js"/>
                 <file name="base_nodes/CCdomNode.js"/>
                 <file name="base_nodes/CCAtlasNode.js"/>

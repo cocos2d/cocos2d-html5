@@ -479,7 +479,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
             gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-            cc.CHECK_GL_ERROR_DEBUG();
+            //cc.CHECK_GL_ERROR_DEBUG();
         }
     },
 
@@ -565,14 +565,16 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
                 context.save();
                 context.globalAlpha = particle.color.a;
-                context.translate((0 | particle.drawPos.x),
-                    -(0 | particle.drawPos.y));
+                context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
                 var w = this._pointRect.size.width;
                 var h = this._pointRect.size.height;
 
-                context.scale((1 / w) * size, (1 / h) * size);
+                context.scale(
+                    Math.max((1 / w) * size, 0.000001),
+                    Math.max((1 / h) * size, 0.000001)
+                );
 
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
@@ -580,12 +582,34 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.translate(-(0 | (w / 2)), -(0 | (h / 2)));
 
                 if (particle.isChangeColor) {
+
                     var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
-                    if (cacheTextureForColor)
-                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, context.canvas, true);
-                } else {
-                    context.drawImage(drawTexture,0,0);
+                    if (cacheTextureForColor) {
+
+                        // Create another cache for the tinted version
+                        // This speeds up things by a fair bit
+                        if (!cacheTextureForColor.tintCache) {
+                            cacheTextureForColor.tintCache = document.createElement('canvas');
+                            cacheTextureForColor.tintCache.width = drawTexture.width;
+                            cacheTextureForColor.tintCache.height = drawTexture.height;
+                        }
+
+                        cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, cacheTextureForColor.tintCache);
+                        drawTexture = cacheTextureForColor.tintCache;
+
+                    }
+
                 }
+
+                context.drawImage(drawTexture, 0, 0);
+
+                //if (particle.isChangeColor) {
+                    //var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
+                    //if (cacheTextureForColor)
+                        //cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, context.canvas, true);
+                //} else {
+                    //context.drawImage(drawTexture,0,0);
+                //}
 
                 context.restore();
             } else {
@@ -658,7 +682,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
         //}
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
         cc.INCREMENT_GL_DRAWS(1);
     },
 
@@ -819,7 +843,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, this._indices, gl.STATIC_DRAW);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     _allocMemory:function () {

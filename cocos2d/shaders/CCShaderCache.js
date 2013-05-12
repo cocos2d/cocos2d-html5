@@ -145,7 +145,7 @@ cc.ShaderCache = cc.Class.extend({
         program.link();
         program.updateUniforms();
 
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     /**

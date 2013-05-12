@@ -167,8 +167,8 @@ cc.setup = function (el, width, height) {
         if (element.tagName != "DIV") {
             cc.log("Warning: target element is not a DIV or CANVAS");
         }
-        width = width || parseInt(element.style.width);
-        height = height || parseInt(element.style.height);
+        width = width || element.clientWidth;
+        height = height || element.clientHeight;
 
         cc.canvas = cc.$new("CANVAS");
         cc.canvas.addClass("gameCanvas");
@@ -192,6 +192,7 @@ cc.setup = function (el, width, height) {
         cc.renderContextType = cc.WEBGL;
         window.gl = cc.renderContext;
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
+        cc.TextureCache.getInstance()._initializingRenderer();
     } else {
         cc.renderContext = cc.canvas.getContext("2d");
         cc.renderContextType = cc.CANVAS;
@@ -291,7 +292,7 @@ cc.setContextMenuEnable = function (enabled) {
     cc._isContextMenuEnable = enabled;
     if (!cc._isContextMenuEnable) {
         cc.canvas.oncontextmenu = function () {
-            event.returnValue = false;
+            return false;
         };
     } else {
         cc.canvas.oncontextmenu = function () {

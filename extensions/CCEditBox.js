@@ -217,6 +217,7 @@ cc.EditBox = cc.ControlButton.extend({
         this._domInputSprite = new cc.Sprite();
         this._domInputSprite.setColor(cc.BLUE);
         this._domInputSprite.setContentSize(cc.size(boxSize.width - 10, boxSize.height - 10));
+        this._domInputSprite.draw = function(){ };                           //redefine draw function
         this.addChild(this._domInputSprite);
         var selfPointer = this;
         this._edTxt = document.createElement("input");
@@ -268,6 +269,8 @@ cc.EditBox = cc.ControlButton.extend({
         //this._domInputSprite.dom.style.borderStyle = "solid";
         //this._domInputSprite.dom.style.borderRadius = "8px";
         this._domInputSprite.canvas.remove();
+
+
     },
 
     /**

@@ -201,7 +201,7 @@ cc.pDistance = function (v1, v2) {
 /**
  * Returns point multiplied to a length of 1.
  * @param {cc.Point} v
- * @return {cc.pMult}
+ * @return {cc.Point}
  */
 cc.pNormalize = function (v) {
     return cc.pMult(v, 1.0 / cc.pLength(v));
@@ -447,7 +447,7 @@ cc.pIntersectPoint = function (A, B, C, D) {
  * @return {Boolean} the true if both ccp are same
  */
 cc.pSameAs = function (A, B) {
-    if (A.x && B.x) {
+    if ((A != null) && (B != null)) {
         return (A.x == B.x && A.y == B.y);
     }
     return false;

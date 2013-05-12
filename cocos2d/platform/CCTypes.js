@@ -1065,7 +1065,125 @@ if(cc.Browser.supportWebGL){
     });
     cc.V3F_C4B_T2F_QuadZero = function(){
         return new cc.V3F_C4B_T2F_Quad();
-    }
+    };
+
+    cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
+        if (!sourceQuad)
+            return  cc.V3F_C4B_T2F_QuadZero();
+
+        //return new cc.V3F_C4B_T2F_Quad(sourceQuad,tl,sourceQuad,bl,sourceQuad.tr,sourceQuad.br,null,0);
+        return {
+            tl: {vertices: {x: sourceQuad.tl.vertices.x, y: sourceQuad.tl.vertices.y, z: sourceQuad.tl.vertices.z},
+                colors: {r: sourceQuad.tl.colors.r, g: sourceQuad.tl.colors.g, b: sourceQuad.tl.colors.b, a: sourceQuad.tl.colors.a},
+                texCoords: {u: sourceQuad.tl.texCoords.u, v: sourceQuad.tl.texCoords.v}},
+            bl: {vertices: {x: sourceQuad.bl.vertices.x, y: sourceQuad.bl.vertices.y, z: sourceQuad.bl.vertices.z},
+                colors: {r: sourceQuad.bl.colors.r, g: sourceQuad.bl.colors.g, b: sourceQuad.bl.colors.b, a: sourceQuad.bl.colors.a},
+                texCoords: {u: sourceQuad.bl.texCoords.u, v: sourceQuad.bl.texCoords.v}},
+            tr: {vertices: {x: sourceQuad.tr.vertices.x, y: sourceQuad.tr.vertices.y, z: sourceQuad.tr.vertices.z},
+                colors: {r: sourceQuad.tr.colors.r, g: sourceQuad.tr.colors.g, b: sourceQuad.tr.colors.b, a: sourceQuad.tr.colors.a},
+                texCoords: {u: sourceQuad.tr.texCoords.u, v: sourceQuad.tr.texCoords.v}},
+            br: {vertices: {x: sourceQuad.br.vertices.x, y: sourceQuad.br.vertices.y, z: sourceQuad.br.vertices.z},
+                colors: {r: sourceQuad.br.colors.r, g: sourceQuad.br.colors.g, b: sourceQuad.br.colors.b, a: sourceQuad.br.colors.a},
+                texCoords: {u: sourceQuad.br.texCoords.u, v: sourceQuad.br.texCoords.v}}
+        };
+    };
+
+    //redefine cc.V2F_C4B_T2F
+    cc.V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
+        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
+        this._offset = offset || 0;
+
+        this._vertices = vertices ? new cc.Vertex2F(vertices.x, vertices.y, this._arrayBuffer, this._offset) :
+            new cc.Vertex2F(0, 0, this._arrayBuffer, this._offset);
+        this._colors = colors ? new cc.Color4B(colors.r, colors.g, colors.b, colors.a, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT) :
+            new cc.Color4B(0, 0, 0, 0, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT);
+        this._texCoords = texCoords ? new cc.Tex2F(texCoords.u, texCoords.v, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT) :
+            new cc.Tex2F(0, 0, this._arrayBuffer, this._offset + cc.Vertex2F.BYTES_PER_ELEMENT + cc.Color4B.BYTES_PER_ELEMENT);
+    };
+    cc.V2F_C4B_T2F.BYTES_PER_ELEMENT = 20;
+    Object.defineProperties(cc.V2F_C4B_T2F.prototype, {
+        vertices: {
+            get: function () {
+                return this._vertices;
+            },
+            set: function (verticesValue) {
+                this._vertices.x = verticesValue.x;
+                this._vertices.y = verticesValue.y;
+            },
+            enumerable: true
+        },
+        colors: {
+            get: function () {
+                return this._colors;
+            },
+            set: function (colorValue) {
+                this._colors.r = colorValue.r;
+                this._colors.g = colorValue.g;
+                this._colors.b = colorValue.b;
+                this._colors.a = colorValue.a;
+            },
+            enumerable: true
+        },
+        texCoords: {
+            get: function () {
+                return this._texCoords;
+            },
+            set: function (texValue) {
+                this._texCoords.u = texValue.u;
+                this._texCoords.v = texValue.v;
+            },
+            enumerable: true
+        }
+    });
+
+    //redefine cc.V2F_C4B_T2F_Triangle
+    cc.V2F_C4B_T2F_Triangle = function (a, b, c, arrayBuffer, offset) {
+        this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT);
+        this._offset = offset || 0;
+
+        this._a = a ? new cc.V2F_C4B_T2F(a.vertices, a.colors, a.texCoords, this._arrayBuffer, this._offset) :
+            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset);
+        this._b = b ? new cc.V2F_C4B_T2F(b.vertices, b.colors, b.texCoords, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT) :
+            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);
+        this._c = c ? new cc.V2F_C4B_T2F(c.vertices, c.colors, c.texCoords, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT * 2) :
+            new cc.V2F_C4B_T2F(null, null, null, this._arrayBuffer, this._offset + cc.V2F_C4B_T2F.BYTES_PER_ELEMENT * 2);
+    };
+    cc.V2F_C4B_T2F_Triangle.BYTES_PER_ELEMENT = 60;
+    Object.defineProperties(cc.V2F_C4B_T2F_Triangle.prototype, {
+        a:{
+            get: function () {
+                return this._a;
+            },
+            set: function (aValue) {
+                this._a.vertices = aValue.vertices;
+                this._a.colors = aValue.colors;
+                this._a.texCoords = aValue.texCoords;
+            },
+            enumerable: true
+        },
+        b:{
+            get: function () {
+                return this._b;
+            },
+            set: function (bValue) {
+                this._b.vertices = bValue.vertices;
+                this._b.colors = bValue.colors;
+                this._b.texCoords = bValue.texCoords;
+            },
+            enumerable: true
+        },
+        c:{
+            get: function () {
+                return this._c;
+            },
+            set: function (cValue) {
+                this._c.vertices = cValue.vertices;
+                this._c.colors = cValue.colors;
+                this._c.texCoords = cValue.texCoords;
+            },
+            enumerable: true
+        }
+    });
 }
 
 /**

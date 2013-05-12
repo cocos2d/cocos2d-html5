@@ -62,10 +62,12 @@
         'support/CCVertex.js',
         'support/TransformUtils.js',
         'support/CCTGAlib.js',
-        'shaders/ccShaders.js',
-        'shaders/ccShaderCache.js',
+        'support/CCPNGReader.js',
+        'support/CCTIFFReader.js',
+        'shaders/CCShaders.js',
+        'shaders/CCShaderCache.js',
         'shaders/CCGLProgram.js',
-        'shaders/ccGLStateCache.js',
+        'shaders/CCGLStateCache.js',
         'base_nodes/CCNode.js',
         'base_nodes/CCAtlasNode.js',
         'textures/CCTexture2D.js',
@@ -77,6 +79,7 @@
         'misc_nodes/CCClippingNode.js',
         'effects/CCGrid.js',
         'effects/CCGrabber.js',
+        'draw_nodes/CCDrawNode.js',
         'actions/CCAction.js',
         'actions/CCActionInterval.js',
         'actions/CCActionInstant.js',
@@ -174,7 +177,6 @@
     }
     else {
         if(c.box2d || c.chipmunk){
-            engine.push('Draw_Nodes/CCDrawNode.js');
             engine.push('physics_nodes/CCPhysicsSprite.js');
             engine.push('physics_nodes/CCPhysicsDebugNode.js');
             if (c.box2d)

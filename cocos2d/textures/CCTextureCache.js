@@ -187,10 +187,9 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
         if (!texture)
             return;
 
-        for (var key in this._textures) {
-            if (this._textures[key] == texture) {
-                delete(this._textures[key]);
-                return;
+        for (var selKey in this._textures) {
+            if (this._textures[selKey] == texture) {
+                delete(this._textures[selKey]);
             }
         }
     },
@@ -205,9 +204,9 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
     removeTextureForKey:function (textureKeyName) {
         if (textureKeyName == null)
             return;
-
-        if (this._textures[textureKeyName])
-            delete(this._textures[textureKeyName]);
+        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
+        if (this._textures[fullPath])
+            delete(this._textures[fullPath]);
     },
 
     /**
@@ -220,7 +219,7 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
     addPVRImage:function (path) {
         cc.Assert(path != null, "TextureCache: file image MUST not be null");
 
-        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
+        path = cc.FileUtils.getInstance().fullPathForFilename(path);
 
         var key = path;
 
@@ -251,7 +250,7 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
      */
     addImageAsync:function (path, target, selector) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
-        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
+        path = cc.FileUtils.getInstance().fullPathForFilename(path);
         var texture = this._textures[path];
 
         if (texture) {
@@ -404,6 +403,10 @@ cc.TextureCacheWebGL = cc.Class.extend({
     _textureColorsCache:null,
     _textureKeySeq:1000,
 
+    _rendererInitialized:false,
+    _loadedTexturesBefore:null,
+    _loadingTexturesBefore:null,
+
     /**
      * Constructor
      */
@@ -412,6 +415,8 @@ cc.TextureCacheWebGL = cc.Class.extend({
         this._textureKeySeq += (0 | Math.random() * 1000);
         this._textures = {};
         this._textureColorsCache = {};
+        this._loadedTexturesBefore = {};
+        this._loadingTexturesBefore = {};
     },
 
     _addImageAsyncCallBack:function (target, selector) {
@@ -420,6 +425,28 @@ cc.TextureCacheWebGL = cc.Class.extend({
         } else if (target && (typeof(selector) == "function")) {
             selector.call(target);
         }
+    },
+
+    _initializingRenderer : function(){
+        this._rendererInitialized = true;
+
+        var selPath;
+        //init texture from _loadedTexturesBefore
+        for(selPath in this._loadedTexturesBefore){
+            var htmlImage = this._loadedTexturesBefore[selPath];
+
+            var texture2d = new cc.Texture2D();
+            texture2d.initWithElement(htmlImage);
+            texture2d.handleLoadedTexture();
+            this._textures[selPath] = texture2d;
+        }
+        this._loadedTexturesBefore = {};
+
+        //init texture from _loadingTexturesBefore
+        for(selPath in this._loadedTexturesBefore){
+            this.addImage(selPath);
+        }
+        this._loadedTexturesBefore = {};
     },
 
     /**
@@ -518,10 +545,9 @@ cc.TextureCacheWebGL = cc.Class.extend({
         if (!texture)
             return;
 
-        for (var key in this._textures) {
-            if (this._textures[key] == texture) {
-                delete(this._textures[key]);
-                return;
+        for (var selKey in this._textures) {
+            if (this._textures[selKey] == texture) {
+                delete(this._textures[selKey]);
             }
         }
     },
@@ -536,9 +562,9 @@ cc.TextureCacheWebGL = cc.Class.extend({
     removeTextureForKey:function (textureKeyName) {
         if (textureKeyName == null)
             return;
-
-        if (this._textures[textureKeyName])
-            delete(this._textures[textureKeyName]);
+        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
+        if (this._textures[fullPath])
+            delete(this._textures[fullPath]);
     },
 
     /**
@@ -551,7 +577,7 @@ cc.TextureCacheWebGL = cc.Class.extend({
     addPVRImage:function (path) {
         cc.Assert(path != null, "TextureCache: file image MUST not be null");
 
-        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
+        path = cc.FileUtils.getInstance().fullPathForFilename(path);
 
         var key = path;
 
@@ -582,7 +608,7 @@ cc.TextureCacheWebGL = cc.Class.extend({
      */
     addImageAsync:function (path, target, selector) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
-        path = cc.FileUtils.getInstance().fullPathFromRelativePath(path);
+        path = cc.FileUtils.getInstance().fullPathForFilename(path);
         var texture = this._textures[path];
 
         if (texture) {
@@ -611,6 +637,23 @@ cc.TextureCacheWebGL = cc.Class.extend({
         return this._textures[path];
     },
 
+    _addImageBeforeRenderer:function(path){
+        var texture = new Image();
+        texture.crossOrigin = "Anonymous";
+        var that = this;
+        texture.addEventListener("load", function () {
+            cc.Loader.getInstance().onResLoaded();
+            that._loadedTexturesBefore[path] = texture;
+            delete that._loadingTexturesBefore[path];
+        });
+        texture.addEventListener("error", function () {
+            cc.Loader.getInstance().onResLoadingErr(path);
+            delete that._loadingTexturesBefore[path];
+        });
+        texture.src = path;
+        this._loadingTexturesBefore[path] = texture;
+    },
+
     /**
      * <p>Returns a Texture2D object given an file image <br />
      * If the file image was not previously loaded, it will create a new Texture2D <br />
@@ -625,6 +668,8 @@ cc.TextureCacheWebGL = cc.Class.extend({
      */
     addImage:function (path) {
         cc.Assert(path != null, "TextureCache: path MUST not be null");
+        if(!this._rendererInitialized)
+            return this._addImageBeforeRenderer(path);
 
         path = cc.FileUtils.getInstance().fullPathForFilename(path);
 

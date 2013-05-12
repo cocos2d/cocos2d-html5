@@ -310,7 +310,7 @@ cc.GLProgram = cc.Class.extend({
      */
     initWithVertexShaderByteArray: function (vertShaderStr, fragShaderStr) {
         this._programObj = cc.renderContext.createProgram();
-        cc.CHECK_GL_ERROR_DEBUG();
+        //cc.CHECK_GL_ERROR_DEBUG();
 
         this._vertShader = null;
         this._fragShader = null;
@@ -740,7 +740,7 @@ cc.GLProgram = cc.Class.extend({
  */
 cc.GLProgram.create = function (vShaderFileName, fShaderFileName) {
     var program = new cc.GLProgram();
-    if (program.initWithVertexShaderFilename(vShaderFileName, fShaderFileName))
+    if (program.init(vShaderFileName, fShaderFileName))
         return program;
     return null;
 };

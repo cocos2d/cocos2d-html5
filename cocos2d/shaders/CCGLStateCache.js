@@ -147,9 +147,9 @@ cc.setBlending = function (sfactor, dfactor) {
         cc.renderContext.disable(cc.renderContext.BLEND);
     } else {
         cc.renderContext.enable(cc.renderContext.BLEND);
-        cc.renderContext.blendFunc(sfactor,dfactor);
+        //cc.renderContext.blendFunc(sfactor,dfactor);
         //TODO need fix for WebGL
-        //cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
+        cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
     }
 };
 
@@ -240,12 +240,18 @@ cc.glBindTexture2DN = function (textureUnit, textureId) {
         return;
     cc._currentBoundTexture[textureUnit] = textureId;
     cc.renderContext.activeTexture(cc.renderContext.TEXTURE0 + textureUnit);
-    cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
+    if(textureId)
+        cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
+    else
+        cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, null);
 };
 if (!cc.ENABLE_GL_STATE_CACHE){
     cc.glBindTexture2DN = function (textureUnit, textureId) {
         cc.renderContext.activeTexture(cc.renderContext.TEXTURE0 + textureUnit);
-        cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
+        if(textureId)
+            cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
+        else
+            cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, null);
     };
 }
 
