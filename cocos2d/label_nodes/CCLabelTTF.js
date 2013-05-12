@@ -863,6 +863,7 @@ cc.LabelTTF.__getFontHeightByDiv = function(fontName, fontSize){
     var labelDiv = cc.LabelTTF.__labelHeightDiv;
     labelDiv.style.fontFamily = fontName;
     labelDiv.style.fontSize = fontSize + "px";
+    labelDiv.style.lineHeight = fontSize + "px";
     return labelDiv.clientHeight ;
 };
 
