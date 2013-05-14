@@ -153,7 +153,7 @@ cc.setBlending = function (sfactor, dfactor) {
     }
 };
 
-if(cc.ENABLE_GL_STATE_CACHE){
+if(!cc.ENABLE_GL_STATE_CACHE){
     cc.glBlendFunc = cc.setBlending;
 };
 
