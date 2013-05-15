@@ -629,21 +629,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
                 }
 
-<<<<<<< HEAD
                 context.drawImage(drawTexture, 0, 0);
-
-                //if (particle.isChangeColor) {
-                    //var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
-                    //if (cacheTextureForColor)
-                        //cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, context.canvas, true);
-                //} else {
-                    //context.drawImage(drawTexture,0,0);
-                //}
-=======
-                context.drawImage(drawTexture,0,0);
->>>>>>> 74e8afd... Fix GC issues by directly modifying the colors of existing particles instead of create new cc.Color4B instances on every update of a particle
-
                 context.restore();
+
             } else {
                 context.save();
                 context.globalAlpha = particle.color.a;
