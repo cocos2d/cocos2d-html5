@@ -116,6 +116,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             }
         }
 
+        if(cc.renderContextType === cc.CANVAS)
+            return;
+
         var left, bottom, right, top;
         if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
             left = (rect.origin.x * 2 + 1) / (wide * 2);
@@ -373,15 +376,38 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         } else
             quad = this._quads[this._particleIdx];
 
-        var color = (this._opacityModifyRGB) ?
-            {r: 0 | (particle.color.r * particle.color.a * 255), g: 0 | (particle.color.g * particle.color.a * 255),
-                b: 0 | (particle.color.b * particle.color.a * 255), a: 0 | (particle.color.a * 255)} :
-            {r: 0 | (particle.color.r * 255), g: 0 | (particle.color.g * 255), b: 0 | (particle.color.b * 255), a: 0 | (particle.color.a * 255)};
+        var r, g, b,a;
+        if(this._opacityModifyRGB){
+            r = 0 | (particle.color.r * particle.color.a * 255);
+            g = 0 | (particle.color.g * particle.color.a * 255);
+            b = 0 | (particle.color.b * particle.color.a * 255);
+            a = 0 | (particle.color.a * 255);
+        }else{
+            r = 0 | (particle.color.r * 255);
+            g = 0 | (particle.color.g * 255);
+            b = 0 | (particle.color.b * 255);
+            a = 0 | (particle.color.a * 255);
+        }
 
-        quad.bl.colors = color;
-        quad.br.colors = color;
-        quad.tl.colors = color;
-        quad.tr.colors = color;
+        quad.bl.colors.r = r;
+        quad.bl.colors.g = g;
+        quad.bl.colors.b = b;
+        quad.bl.colors.a = a;
+
+        quad.br.colors.r = r;
+        quad.br.colors.g = g;
+        quad.br.colors.b = b;
+        quad.br.colors.a = a;
+
+        quad.tl.colors.r = r;
+        quad.tl.colors.g = g;
+        quad.tl.colors.b = b;
+        quad.tl.colors.a = a;
+
+        quad.tr.colors.r = r;
+        quad.tr.colors.g = g;
+        quad.tr.colors.b = b;
+        quad.tr.colors.a = a;
 
         // vertices
         var size_2 = particle.size / 2;
@@ -591,17 +617,17 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 this._allocMemory();
                 this.initIndices();
                 this.setTexture(oldBatch.getTexture());
-                if (cc.TEXTURE_ATLAS_USE_VAO)
-                    this._setupVBOandVAO();
-                else
-                    this._setupVBO();
+                //if (cc.TEXTURE_ATLAS_USE_VAO)
+                //    this._setupVBOandVAO();
+                //else
+                this._setupVBO();
             } else if (!oldBatch) {
-                // OLD: was it self render ? cleanup
+                // OLD: was it self render cleanup  ?
                 // copy current state to batch
-                this._batchNode.getTextureAtlas().insertQuads(this._quads, this._atlasIndex, this._quads.length);
+                this._batchNode.getTextureAtlas()._copyQuadsToTextureAtlas(this._quads, this._atlasIndex);
 
                 //delete buffer
-                cc.renderContext.deleteBuffer(this._buffersVBO[1]);
+                cc.renderContext.deleteBuffer(this._buffersVBO[1]);     //where is re-bindBuffer code?
 
                 //if (cc.TEXTURE_ATLAS_USE_VAO)
                 //    glDeleteVertexArrays(1, this._VAOname);
@@ -638,12 +664,15 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 for (var i = 0; i < this._totalParticles; i++)
                     this._particles[i].atlasIndex = i;
             }
-
             this.initIndices();
             //if (cc.TEXTURE_ATLAS_USE_VAO)
             //    this._setupVBOandVAO();
             //else
             this._setupVBO();
+
+            //set the texture coord
+            var size = this._texture.getContentSize();
+            this.initTexCoordsWithRect(cc.rect(0, 0, size.width, size.height));
         } else
             this._totalParticles = tp;
         this.resetSystem();

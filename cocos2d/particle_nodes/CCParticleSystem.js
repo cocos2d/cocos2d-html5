@@ -260,9 +260,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //! Array of particles
     _particles:null,
 
-    //particle pool
-    _particlePool:null,
-
     // color modulate
     //	BOOL colorModulate;
 
@@ -1195,8 +1192,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._startColorVar = new cc.Color4F(1, 1, 1, 1);
         this._endColor = new cc.Color4F(1, 1, 1, 1);
         this._endColorVar = new cc.Color4F(1, 1, 1, 1);
-
-        this._particlePool = [];
     },
 
     /**
@@ -1216,7 +1211,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @return {cc.ParticleSystem}
      */
     initWithFile:function (plistFile) {
-        //TODO
         this._plistFile = plistFile;
         var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(this._plistFile);
 
@@ -1410,8 +1404,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     initWithTotalParticles:function (numberOfParticles) {
         this._totalParticles = numberOfParticles;
 
+        var i;
         this._particles = [];
-        this._particlePool = [];
+        for(i = 0; i< numberOfParticles; i++){
+            this._particles[i] = new cc.Particle();
+        }
 
         if (!this._particles) {
             cc.log("Particle system: not enough memory");
@@ -1420,7 +1417,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._allocatedParticles = numberOfParticles;
 
         if (this._batchNode)
-            for (var i = 0; i < this._totalParticles; i++)
+            for (i = 0; i < this._totalParticles; i++)
                 this._particles[i].atlasIndex = i;
 
         // default, active
@@ -1455,14 +1452,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     },
 
     destroyParticleSystem:function () {
-        this._particlePool = null;
         this.unscheduleUpdate();
-    },
-
-    _getParticleObject:function () {
-        if (this._particlePool.length > 0)
-            return this._particlePool.pop();
-        return new cc.Particle();
     },
 
     /**
@@ -1473,11 +1463,9 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         if (this.isFull())
             return false;
 
-        var particle = this._getParticleObject();
+        var particle =this._particles[this._particleCount];
         this.initParticle(particle);
-        this._particles.push(particle);
         ++this._particleCount;
-
         return true;
     },
 
@@ -1496,19 +1484,34 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         particle.pos.y = this._sourcePosition.y + this._posVar.y * cc.RANDOM_MINUS1_1();
 
         // Color
-        var start = new cc.Color4F(
-            cc.clampf(this._startColor.r + this._startColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._startColor.g + this._startColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._startColor.b + this._startColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._startColor.a + this._startColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
-        );
-
-        var end = new cc.Color4F(
-            cc.clampf(this._endColor.r + this._endColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._endColor.g + this._endColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._endColor.b + this._endColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
-            cc.clampf(this._endColor.a + this._endColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
-        );
+        var start, end;
+        if (cc.renderContextType === cc.CANVAS) {
+            start = new cc.Color4F(
+                cc.clampf(this._startColor.r + this._startColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
+                cc.clampf(this._startColor.g + this._startColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
+                cc.clampf(this._startColor.b + this._startColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
+                cc.clampf(this._startColor.a + this._startColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+            );
+            end = new cc.Color4F(
+                cc.clampf(this._endColor.r + this._endColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
+                cc.clampf(this._endColor.g + this._endColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
+                cc.clampf(this._endColor.b + this._endColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
+                cc.clampf(this._endColor.a + this._endColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+            );
+        } else {
+            start = {
+                r: cc.clampf(this._startColor.r + this._startColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
+                g: cc.clampf(this._startColor.g + this._startColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
+                b: cc.clampf(this._startColor.b + this._startColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
+                a: cc.clampf(this._startColor.a + this._startColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+            };
+            end = {
+                r: cc.clampf(this._endColor.r + this._endColorVar.r * cc.RANDOM_MINUS1_1(), 0, 1),
+                g: cc.clampf(this._endColor.g + this._endColorVar.g * cc.RANDOM_MINUS1_1(), 0, 1),
+                b: cc.clampf(this._endColor.b + this._endColorVar.b * cc.RANDOM_MINUS1_1(), 0, 1),
+                a: cc.clampf(this._endColor.a + this._endColorVar.a * cc.RANDOM_MINUS1_1(), 0, 1)
+            };
+        }
 
         particle.color = start;
         particle.deltaColor.r = (end.r - start.r) / particle.timeToLive;
@@ -1521,8 +1524,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         startS = Math.max(0, startS); // No negative value
 
         particle.size = startS;
-
-        if (this._endSize == cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE) {
+        if (this._endSize === cc.PARTICLE_START_SIZE_EQUAL_TO_END_SIZE) {
             particle.deltaSize = 0;
         } else {
             var endS = this._endSize + this._endSizeVar * cc.RANDOM_MINUS1_1();
@@ -1546,7 +1548,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         var a = cc.DEGREES_TO_RADIANS(this._angle + this._angleVar * cc.RANDOM_MINUS1_1());
 
         // Mode Gravity: A
-        if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
+        if (this._emitterMode === cc.PARTICLE_MODE_GRAVITY) {
             var v = cc.p(Math.cos(a), Math.sin(a));
             var s = this.modeA.speed + this.modeA.speedVar * cc.RANDOM_MINUS1_1();
 
@@ -1566,8 +1568,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
             var endRadius = this.modeB.endRadius + this.modeB.endRadiusVar * cc.RANDOM_MINUS1_1();
 
             particle.modeB.radius = startRadius;
-
-            if (this.modeB.endRadius == cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS) {
+            if (this.modeB.endRadius === cc.PARTICLE_START_RADIUS_EQUAL_TO_END_RADIUS) {
                 particle.modeB.deltaRadius = 0;
             } else {
                 particle.modeB.deltaRadius = (endRadius - startRadius) / particle.timeToLive;
@@ -1585,8 +1586,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         this._isActive = false;
         this._elapsed = this._duration;
         this._emitCounter = 0;
-
-        this._particlePool = [];
     },
 
     /**
@@ -1595,10 +1594,8 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     resetSystem:function () {
         this._isActive = true;
         this._elapsed = 0;
-        for (this._particleIdx = 0; this._particleIdx < this._particleCount; ++this._particleIdx) {
-            var p = this._particles[this._particleIdx];
-            p.timeToLive = 0;
-        }
+        for (this._particleIdx = 0; this._particleIdx < this._particleCount; ++this._particleIdx)
+            this._particles[this._particleIdx].timeToLive = 0 ;
     },
 
     /**
@@ -1690,13 +1687,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         selParticle.pos = cc.pAdd(selParticle.pos, tmp);
                     } else {
                         // Mode B: radius movement
-
+                        var selModeB = selParticle.modeB;
                         // Update the angle and radius of the particle.
-                        selParticle.modeB.angle += selParticle.modeB.degreesPerSecond * dt;
-                        selParticle.modeB.radius += selParticle.modeB.deltaRadius * dt;
+                        selModeB.angle += selModeB.degreesPerSecond * dt;
+                        selModeB.radius += selModeB.deltaRadius * dt;
 
-                        selParticle.pos.x = -Math.cos(selParticle.modeB.angle) * selParticle.modeB.radius;
-                        selParticle.pos.y = -Math.sin(selParticle.modeB.angle) * selParticle.modeB.radius;
+                        selParticle.pos.x = -Math.cos(selModeB.angle) * selModeB.radius;
+                        selParticle.pos.y = -Math.sin(selModeB.angle) * selModeB.radius;
                     }
 
                     // color
@@ -1745,11 +1742,11 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 } else {
                     // life < 0
                     var currentIndex = selParticle.atlasIndex;
-                    cc.ArrayRemoveObject(this._particles, selParticle);
-
-                    //cache particle to pool
-                    this._particlePool.push(selParticle);
-
+                    if(this._particleIdx !== this._particleCount -1){
+                         var deadParticle = this._particles[this._particleIdx];
+                        this._particles[this._particleIdx] = this._particles[this._particleCount -1];
+                        this._particles[this._particleCount -1] = deadParticle;
+                    }
                     if (this._batchNode) {
                         //disable the switched particle
                         this._batchNode.disableParticle(this._atlasIndex + currentIndex);
