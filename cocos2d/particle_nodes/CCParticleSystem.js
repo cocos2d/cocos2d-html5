@@ -25,16 +25,16 @@
  ****************************************************************************/
 
 // ideas taken from:
-//	 . The ocean spray in your face [Jeff Lander]
-//		http://www.double.co.nz/dust/col0798.pdf
-//	 . Building an Advanced Particle System [John van der Burg]
-//		http://www.gamasutra.com/features/20000623/vanderburg_01.htm
+//   . The ocean spray in your face [Jeff Lander]
+//      http://www.double.co.nz/dust/col0798.pdf
+//   . Building an Advanced Particle System [John van der Burg]
+//      http://www.gamasutra.com/features/20000623/vanderburg_01.htm
 //   . LOVE game engine
-//		http://love2d.org/
+//      http://love2d.org/
 //
 //
 // Radius mode support, from 71 squared
-//		http://particledesigner.71squared.com/
+//      http://particledesigner.71squared.com/
 //
 // IMPORTANT: Particle Designer is supported by cocos2d, but
 // 'Radius Mode' in Particle Designer uses a fixed emit rate of 30 hz. Since that can't be guarateed in cocos2d,
@@ -131,7 +131,6 @@ cc.PARTICLE_TYPE_GROUPED = 2;
 cc.PARTICLE_TYPE_FREE = cc.PARTICLE_TYPE_FREE;
 cc.PARTICLE_TYPE_GROUPED = cc.PARTICLE_TYPE_GROUPED;
 
-
 /**
  * Structure that contains the values of each particle
  * @Class
@@ -195,6 +194,15 @@ cc.Particle.ModeB = function (angle, degreesPerSecond, radius, deltaRadius) {
     this.deltaRadius = deltaRadius || 0;
 };
 
+/**
+  * Array of Point instances used to optimize particle updates
+  */
+cc.Particle.TemporaryPoints = [
+    cc.p(),
+    cc.p(),
+    cc.p(),
+    cc.p()
+];
 
 /**
  * <p>
@@ -264,7 +272,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     _particlePool:null,
 
     // color modulate
-    //	BOOL colorModulate;
+    //  BOOL colorModulate;
 
     //! How many particles can be emitted per second
     _emitCounter:0,
@@ -1375,7 +1383,10 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         }
 
-                        var imageFormat = cc.getImageFormatByData(buffer);
+
+                        var imageFormat = cc.FMT_PNG;
+                        //var imageFormat = cc.getImageFormatByData(buffer); NOT WORKING!
+
                         if(imageFormat !== cc.FMT_TIFF && imageFormat !== cc.FMT_PNG){
                             cc.log("cc.ParticleSystem: unknown image format with Data");
                             return false;
@@ -1385,14 +1396,23 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                         if(imageFormat === cc.FMT_PNG){
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
+
                         } else {
                             var myTIFFObj = cc.TIFFReader.getInstance();
                             myTIFFObj.parseTIFF(buffer,canvasObj);
                         }
+
                         cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
+
                         var addTexture = cc.TextureCache.getInstance().textureForKey(fullpath);
+
                         cc.Assert(addTexture != null, "cc.ParticleSystem: error loading the texture");
-                        this.setTexture(addTexture);
+
+                        if (cc.renderContextType === cc.CANVAS)
+                            this.setTexture(canvasObj);
+                        else
+                            this.setTexture(addTexture);
+
                     }
                 }
 
@@ -1438,7 +1458,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         // default: modulate
         // XXX: not used
-        //	colorModulate = YES;
+        //  colorModulate = YES;
         this._isAutoRemoveOnFinish = false;
 
         // Optimization: compile udpateParticle method
@@ -1547,11 +1567,14 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
 
         // Mode Gravity: A
         if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
-            var v = cc.p(Math.cos(a), Math.sin(a));
+            //var v = cc.p(Math.cos(a), Math.sin(a));
             var s = this.modeA.speed + this.modeA.speedVar * cc.RANDOM_MINUS1_1();
 
             // direction
-            particle.modeA.dir = cc.pMult(v, s);
+            particle.modeA.dir.x = Math.cos(a);
+            particle.modeA.dir.y = Math.sin(a);
+            cc.pMultIn(particle.modeA.dir, s);
+            //particle.modeA.dir.y = cc.pMult(v, s);
 
             // radial accel
             particle.modeA.radialAccel = this.modeA.radialAccel + this.modeA.radialAccelVar * cc.RANDOM_MINUS1_1();
@@ -1648,15 +1671,29 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
         }
         this._particleIdx = 0;
 
-        var currentPosition; // = cc.PointZero();
+        var currentPosition = cc.Particle.TemporaryPoints[0];
         if (this._positionType == cc.PARTICLE_TYPE_FREE) {
-            currentPosition = this.convertToWorldSpace(this._pointZeroForParticle);
+            cc.pIn(currentPosition, this.convertToWorldSpace(this._pointZeroForParticle));
+
         } else if (this._positionType == cc.PARTICLE_TYPE_RELATIVE) {
-            currentPosition = cc.p(this._position.x, this._position.y);
+            currentPosition.x = this._position.x;
+            currentPosition.y = this._position.y;
         }
 
         if (this._visible) {
+
+            // Used to reduce memory allocation / creation within the loop
+            var tpa = cc.Particle.TemporaryPoints[1],
+                tpb = cc.Particle.TemporaryPoints[2],
+                tpc = cc.Particle.TemporaryPoints[3];
+
             while (this._particleIdx < this._particleCount) {
+
+                // Reset the working particles
+                cc.pZeroIn(tpa);
+                cc.pZeroIn(tpb);
+                cc.pZeroIn(tpc);
+
                 var selParticle = this._particles[this._particleIdx];
 
                 // life
@@ -1665,29 +1702,39 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                 if (selParticle.timeToLive > 0) {
                     // Mode A: gravity, direction, tangential accel & radial accel
                     if (this._emitterMode == cc.PARTICLE_MODE_GRAVITY) {
-                        var tmp, radial, tangential;
+
+                        var tmp = tpc, radial = tpa, tangential = tpb;
 
                         // radial acceleration
-                        if (selParticle.pos.x || selParticle.pos.y)
-                            radial = cc.pNormalize(selParticle.pos);
-                        else
-                            radial = cc.PointZero();
+                        if (selParticle.pos.x || selParticle.pos.y) {
+                            cc.pIn(radial, selParticle.pos);
+                            cc.pNormalizeIn(radial);
 
-                        tangential = radial;
-                        radial = cc.pMult(radial, selParticle.modeA.radialAccel);
+                        } else {
+                            cc.pZeroIn(radial);
+                        }
+
+                        cc.pIn(tangential, radial);
+                        cc.pMultIn(radial, selParticle.modeA.radialAccel);
 
                         // tangential acceleration
                         var newy = tangential.x;
                         tangential.x = -tangential.y;
                         tangential.y = newy;
-                        tangential = cc.pMult(tangential, selParticle.modeA.tangentialAccel);
 
-                        // (gravity + radial + tangential) * dt
-                        tmp = cc.pAdd(cc.pAdd(radial, tangential), this.modeA.gravity);
-                        tmp = cc.pMult(tmp, dt);
-                        selParticle.modeA.dir = cc.pAdd(selParticle.modeA.dir, tmp);
-                        tmp = cc.pMult(selParticle.modeA.dir, dt);
-                        selParticle.pos = cc.pAdd(selParticle.pos, tmp);
+                        cc.pMultIn(tangential, selParticle.modeA.tangentialAccel);
+
+                        cc.pIn(tmp, radial);
+                        cc.pAddIn(tmp, tangential);
+                        cc.pAddIn(tmp, this.modeA.gravity);
+                        cc.pMultIn(tmp, dt);
+                        cc.pAddIn(selParticle.modeA.dir, tmp);
+
+
+                        cc.pIn(tmp, selParticle.modeA.dir);
+                        cc.pMultIn(tmp, dt);
+                        cc.pAddIn(selParticle.pos, tmp);
+
                     } else {
                         // Mode B: radius movement
 
@@ -1718,12 +1765,18 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     //
                     // update values in quad
                     //
-                    var newPos;
+                    var newPos = tpa;
                     if (this._positionType == cc.PARTICLE_TYPE_FREE || this._positionType == cc.PARTICLE_TYPE_RELATIVE) {
-                        var diff = cc.pSub(currentPosition, selParticle.startPos);
-                        newPos = cc.pSub(selParticle.pos, diff);
+
+                        var diff = tpb;
+                        cc.pIn(diff, currentPosition);
+                        cc.pSubIn(diff, selParticle.startPos);
+
+                        cc.pIn(newPos, selParticle.pos);
+                        cc.pSubIn(newPos, diff);
+
                     } else {
-                        newPos = selParticle.pos;
+                        cc.pIn(newPos, selParticle.pos);
                     }
 
                     // translate newPos to correct position, since matrix transform isn't performed in batchnode
@@ -1734,9 +1787,12 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                     }
 
                     if (cc.renderContextType == cc.WEBGL) {
+                        // IMPORTANT: newPos may not be used as a reference here! (as it is just the temporary tpa point)
+                        // the implementation of updateQuadWithParticle must use
+                        // the x and y values directly
                         this.updateQuadWithParticle(selParticle, newPos);
                     } else {
-                        selParticle.drawPos = newPos;
+                        cc.pIn(selParticle.drawPos, newPos);
                     }
                     //updateParticleImp(self, updateParticleSel, p, newPos);
 

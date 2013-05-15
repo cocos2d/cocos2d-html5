@@ -368,25 +368,53 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @param {cc.Point} newPosition
      */
     updateQuadWithParticle:function (particle, newPosition) {
-        //TODO need Optimization
-        // colors
+
         var quad = null;
         if (this._batchNode) {
             var batchQuads = this._batchNode.getTextureAtlas().getQuads();
             quad = batchQuads[this._atlasIndex + particle.atlasIndex];
             this._batchNode.getTextureAtlas()._dirty = true;
+
         } else
             quad = this._quads[this._particleIdx];
 
-        var color = (this._opacityModifyRGB) ?
-            new cc.Color4B(0 | (particle.color.r * particle.color.a * 255), 0 | (particle.color.g * particle.color.a * 255),
-                0 | (particle.color.b * particle.color.a * 255), 0 | (particle.color.a * 255)) :
-            new cc.Color4B(0 | (particle.color.r * 255), 0 | (particle.color.g * 255), 0 | (particle.color.b * 255), 0 | (particle.color.a * 255));
+        // Optimized color application, this heavly reduces the load on the GC
+        // which previously had to deal with a extreme number of cc.Color4B objects
+        // being created here
+        var r, g, b, a;
+        if (this._opacityModifyRGB) {
+            r = 0 | (particle.color.r * particle.color.a * 255);
+            g = 0 | (particle.color.g * particle.color.a * 255);
+            b = 0 | (particle.color.b * particle.color.a * 255);
+            a = 0 | (particle.color.a * 255);
 
-        quad.bl.colors = color;
-        quad.br.colors = color;
-        quad.tl.colors = color;
-        quad.tr.colors = color;
+        } else {
+            r = 0 | (particle.color.r * 255);
+            g = 0 | (particle.color.g * 255);
+            b = 0 | (particle.color.b * 255);
+            a = 0 | (particle.color.a * 255);
+        }
+
+        // Direct access into the existing color values
+        quad.bl.colors._rU8[0] = r;
+        quad.bl.colors._gU8[0] = g;
+        quad.bl.colors._bU8[0] = b;
+        quad.bl.colors._aU8[0] = a;
+
+        quad.br.colors._rU8[0] = r;
+        quad.br.colors._gU8[0] = g;
+        quad.br.colors._bU8[0] = b;
+        quad.br.colors._aU8[0] = a;
+
+        quad.tl.colors._rU8[0] = r;
+        quad.tl.colors._gU8[0] = g;
+        quad.tl.colors._bU8[0] = b;
+        quad.tl.colors._aU8[0] = a;
+
+        quad.tr.colors._rU8[0] = r;
+        quad.tr.colors._gU8[0] = g;
+        quad.tr.colors._bU8[0] = b;
+        quad.tr.colors._aU8[0] = a;
 
         // vertices
         var size_2 = particle.size / 2;
@@ -399,9 +427,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             var x = newPosition.x;
             var y = newPosition.y;
 
-            var r = -cc.DEGREES_TO_RADIANS(particle.rotation);
-            var cr = Math.cos(r);
-            var sr = Math.sin(r);
+            var rad = -cc.DEGREES_TO_RADIANS(particle.rotation);
+            var cr = Math.cos(rad);
+            var sr = Math.sin(rad);
             var ax = x1 * cr - y1 * sr + x;
             var ay = x1 * sr + y1 * cr + y;
             var bx = x2 * cr - y1 * sr + x;
@@ -556,7 +584,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             var particle = this._particles[i];
             var lpx = (0 | (particle.size * 0.5));
 
-            if (this._drawMode == cc.PARTICLE_TEXTURE_MODE) {
+            if (this._drawMode == cc.PARTICLE_TEXTURE_MODE || true) {
+
                 var drawTexture = this.getTexture();
 
                 // Delay drawing until the texture is fully loaded by the browser
@@ -565,7 +594,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
                 context.save();
                 context.globalAlpha = particle.color.a;
-                context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
+                context.translate((0 | particle.drawPos.x),
+                    -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
                 var w = this._pointRect.size.width;
@@ -575,6 +605,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                     Math.max((1 / w) * size, 0.000001),
                     Math.max((1 / h) * size, 0.000001)
                 );
+
 
                 if (particle.rotation)
                     context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
@@ -601,20 +632,13 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
                 }
 
-                context.drawImage(drawTexture, 0, 0);
-
-                //if (particle.isChangeColor) {
-                    //var cacheTextureForColor = cc.TextureCache.getInstance().getTextureColors(drawTexture);
-                    //if (cacheTextureForColor)
-                        //cc.generateTintImage(drawTexture, cacheTextureForColor, particle.color, this._pointRect, context.canvas, true);
-                //} else {
-                    //context.drawImage(drawTexture,0,0);
-                //}
+                context.drawImage(drawTexture,0,0);
 
                 context.restore();
             } else {
                 context.save();
                 context.globalAlpha = particle.color.a;
+
                 context.translate(0 | particle.drawPos.x, -(0 | particle.drawPos.y));
 
                 if (this._shapeType == cc.PARTICLE_STAR_SHAPE) {
@@ -622,7 +646,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                         context.rotate(cc.DEGREES_TO_RADIANS(particle.rotation));
                     cc.drawingUtil.drawStar(context, lpx, particle.color);
                 } else
-                    cc.drawingUtil.drawColorBall(context, lpx, particle.color);
+                    cc.drawingUtil.drawColorBall(context, lpx, {a:1, r:255, g:0, b:0});
                 context.restore();
             }
         }
@@ -630,7 +654,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     },
 
     _drawForWebGL:function (ctx) {
-        if(!this._texture || !this._texture.isLoaded())
+        if(!this._texture)
             return;
 
         var gl = ctx || cc.renderContext;
