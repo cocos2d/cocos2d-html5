@@ -589,7 +589,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             this.setAnchorPoint(cc.p(0.5, 0.5));
 
             if (cc.renderContextType === cc.WEBGL) {
-                this._isOpacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
+                this._opacityModifyRGB = this._textureAtlas.getTexture().hasPremultipliedAlpha();
 
                 this._reusedChar = new cc.Sprite();
                 this._reusedChar.initWithTexture(this._textureAtlas.getTexture(), cc.RectMake(0, 0, 0, 0), false);
@@ -1098,7 +1098,7 @@ cc.LabelBMFont.create = function (str, fntFile, width, alignment, imageOffset) {
  * shared instance of configuration
  * @type cc.BMFontConfiguration
  */
-cc.configurations = null;
+cc.LabelBMFont._configurations = null;
 
 /**
  * Load the .fnt file
@@ -1107,12 +1107,13 @@ cc.configurations = null;
  * Constructor
  */
 cc.FNTConfigLoadFile = function (fntFile) {
-    if (!cc.configurations) {
-        cc.configurations = {};
+    if (!cc.LabelBMFont._configurations) {
+        cc.LabelBMFont._configurations = {};
     }
-    var ret = cc.configurations[fntFile];
+    var ret = cc.LabelBMFont._configurations[fntFile];
     if (!ret) {
         ret = cc.BMFontConfiguration.create(fntFile);
+        cc.LabelBMFont._configurations[fntFile] = ret;
     }
     return ret;
 };
@@ -1120,7 +1121,7 @@ cc.FNTConfigLoadFile = function (fntFile) {
 /**
  * Purges the cached .fnt data
  */
-cc.purgeCachedData = function () {
+cc.LabelBMFont.purgeCachedData = function () {
     cc.FNTConfigRemoveCache();
 };
 
@@ -1128,8 +1129,8 @@ cc.purgeCachedData = function () {
  * Purges the FNT config cache
  */
 cc.FNTConfigRemoveCache = function () {
-    if (cc.configurations) {
-        cc.configurations = null;
+    if (cc.LabelBMFont._configurations) {
+        cc.LabelBMFont._configurations = null;
     }
 };
 

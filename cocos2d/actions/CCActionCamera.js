@@ -44,17 +44,17 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
         var camera = target.getCamera();
-        var centerXYZ = camera.getCenterXYZ();
+        var centerXYZ = camera.getCenter();
         this._centerXOrig = centerXYZ.x;
         this._centerYOrig = centerXYZ.y;
         this._centerZOrig = centerXYZ.z;
 
-        var eyeXYZ = camera.getEyeXYZ();
+        var eyeXYZ = camera.getEye();
         this._eyeXOrig = eyeXYZ.x;
         this._eyeYOrig = eyeXYZ.y;
         this._eyeZOrig = eyeXYZ.z;
 
-        var upXYZ = camera.getUpXYZ();
+        var upXYZ = camera.getUp();
         this._upXOrig = upXYZ.x;
         this._upYOrig = upXYZ.y;
         this._upZOrig = upXYZ.z;
@@ -116,8 +116,8 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
     sphericalRadius:function () {
         var newRadius, zenith, azimuth;
         var camera = this._target.getCamera();
-        var eyeXYZ = camera.getEyeXYZ();
-        var centerXYZ = camera.getCenterXYZ();
+        var eyeXYZ = camera.getEye();
+        var centerXYZ = camera.getCenter();
 
         var x = eyeXYZ.x - centerXYZ.x;
         var y = eyeXYZ.y - centerXYZ.y;
@@ -164,7 +164,7 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
         var j = Math.sin(za) * Math.sin(xa) * r + this._centerYOrig;
         var k = Math.cos(za) * r + this._centerZOrig;
 
-        this._target.getCamera().setEyeXYZ(i, j, k);
+        this._target.getCamera().setEye(i, j, k);
     }
 });
 

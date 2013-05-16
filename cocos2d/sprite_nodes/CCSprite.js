@@ -164,36 +164,35 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
 
     var selColor;
     if (color instanceof cc.Color3B) {
-        // Optimization for the particel system which mainly uses c4f colors
+        // Optimization for the particle system which mainly uses c4f colors
         selColor = cc.c4f(color.r / 255.0, color.g / 255.0, color.b / 255, 1);
 
     } else {
         selColor = color;
     }
 
+    var w = Math.min(rect.size.width, tintedImgCache[0].width);
+    var h = Math.min(rect.size.height, tintedImgCache[0].height);
     var buff = renderCanvas;
+    var ctx;
 
     // Create a new buffer if required
     if (!buff) {
         buff = document.createElement("canvas");
-        buff.width = rect.size.width;
-        buff.height = rect.size.height;
+        buff.width = w;
+        buff.height = h;
+        ctx = buff.getContext("2d");
 
-        // Unless overdraw is active, resize and clear the renderCanvas
-    } else if (!overdraw) {
-        buff.width = rect.size.width;
-        buff.height = rect.size.height;
+    } else {
+        ctx = buff.getContext("2d");
+        ctx.clearRect(0, 0, w, h);
     }
 
-    var ctx = buff.getContext("2d");
     ctx.save();
     ctx.globalCompositeOperation = 'lighter';
 
-
     // Make sure to keep the renderCanvas alpha in mind in case of overdraw
     var a = ctx.globalAlpha;
-    var w = rect.size.width;
-    var h = rect.size.height;
     if (selColor.r > 0) {
         ctx.globalAlpha = selColor.r * a;
         ctx.drawImage(tintedImgCache[0], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
@@ -909,8 +908,10 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      * @return {Boolean}
      */
     init:function () {
-        this._super();
+        if(arguments.length > 0)
+            return this.initWithFile(arguments[0], arguments[1]);
 
+        this._super();
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
         this._opacity = 255;
@@ -936,6 +937,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         this.setTextureRect(cc.RectZero(), false, cc.SizeZero());
         return true;
     },
+
     /**
      * Initializes a sprite with a texture's filename and a rect in texture
      * @param {String} filename
@@ -948,7 +950,6 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     initWithFile:function (filename, rect) {
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
-
         var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
         if (!texture) {
             this._visible = false;
@@ -969,8 +970,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         } else {
             if (texture) {
                 if (!rect) {
-                    rect = cc.rect(0, 0, 0, 0);
-                    rect.size = cc.size(texture.width, texture.height);
+                    rect = cc.rect(0, 0, texture.width, texture.height);
                 }
                 return this.initWithTexture(texture, rect);
             }
@@ -1315,7 +1315,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
  */
 cc.SpriteCanvas.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteCanvas();
     switch (argnum) {
         case 1:
             /** Creates an sprite with a texture.
@@ -1370,24 +1370,11 @@ cc.SpriteCanvas.create = function (fileName, rect) {
     if (argnum === 0) {
         if (sprite.init())
             return sprite;
-        return null;
-    } else if (argnum < 2) {
-        /** Creates an sprite with an image filename.
-         The rect used will be the size of the image.
-         The offset will be (0,0).
-         */
-        if (sprite && sprite.initWithFile(fileName)) {
-            return sprite;
-        }
-        return null;
     } else {
-        /** Creates an sprite with an CCBatchNode and a rect
-         */
-        if (sprite && sprite.initWithFile(fileName, rect)) {
+        if (sprite && sprite.init(fileName, rect))
             return sprite;
-        }
-        return null;
     }
+    return null;
 };
 
 /**
@@ -2104,6 +2091,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {Boolean}
      */
     init:function () {
+        if(arguments.length > 0)
+            return this.initWithFile(arguments[0], arguments[1]);
+
         this._super();
 
         this._dirty = this._recursiveDirty = false;
@@ -2176,8 +2166,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         } else {
             if (texture) {
                 if (!rect) {
-                    rect = cc.rect(0, 0, 0, 0);
-                    rect.size = texture.getContentSize();
+                    var size = texture.getContentSize();
+                    rect = cc.rect(0, 0, size.width, size.height);
                 }
                 return this.initWithTexture(texture, rect);
             }
@@ -2727,7 +2717,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
  */
 cc.SpriteWebGL.createWithTexture = function (texture, rect, offset) {
     var argnum = arguments.length;
-    var sprite = new cc.Sprite();
+    var sprite = new cc.SpriteWebGL();
     switch (argnum) {
         case 1:
             /** Creates an sprite with a texture.
@@ -2782,24 +2772,15 @@ cc.SpriteWebGL.create = function (fileName, rect) {
     if (argnum === 0) {
         if (sprite.init())
             return sprite;
-        return null;
-    } else if (argnum < 2) {
+    } else {
         /** Creates an sprite with an image filename.
-         The rect used will be the size of the image.
+         If the rect equal undefined, the rect used will be the size of the image.
          The offset will be (0,0).
          */
-        if (sprite && sprite.initWithFile(fileName)) {
+        if (sprite && sprite.init(fileName, rect))
             return sprite;
-        }
-        return null;
-    } else {
-        /** Creates an sprite with an CCBatchNode and a rect
-         */
-        if (sprite && sprite.initWithFile(fileName, rect)) {
-            return sprite;
-        }
-        return null;
     }
+    return null;
 };
 
 /**
