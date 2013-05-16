@@ -857,6 +857,7 @@ cc.LabelTTF.__labelHeightDiv.innerHTML = "ajghl~!";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";
 cc.LabelTTF.__labelHeightDiv.style.left = "-100px";
 cc.LabelTTF.__labelHeightDiv.style.top = "-100px";
+cc.LabelTTF.__labelHeightDiv.style.lineHeight = "normal";
 document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
 
 
