@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/miniFramework", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
 
  http://www.cocos2d-html5.org
@@ -120,3 +121,4 @@ sys.dumpRoot = function() {
 sys.restartVM = function() {
 	// N/A in cocos2d-html5
 };
+});

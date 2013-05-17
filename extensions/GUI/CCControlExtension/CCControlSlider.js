@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlUtils", "cocos2d/menu_nodes/CCMenuItem", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /*
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
@@ -247,4 +248,4 @@ cc.ControlSlider.create = function (bgFile, progressFile, thumbFile) {
     pRet.initWithSprites(bgFile, progressFile, thumbFile);
     return pRet;
 
-};
+};});

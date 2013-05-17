@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCScrollView/CCSorting", "cocos2d/platform/CCClass", "cocos2d/platform/CCMacro", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry", "extensions/GUI/CCScrollView/CCScrollView", "cocos2d/cocoa/CCSet", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
  Copyright (c) 2010 Sangwoo Im
@@ -529,3 +530,4 @@ cc.TableView.create = function (dataSource, size, container) {
     table._updateContentSize();
     return table;
 };
+});

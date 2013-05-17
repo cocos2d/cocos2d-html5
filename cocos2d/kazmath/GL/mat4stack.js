@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/kazmath/mat4"], function(cc, sys) {
 /*
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
@@ -56,3 +57,4 @@ cc.km_mat4_stack_release = function(stack){
 
 
 
+});

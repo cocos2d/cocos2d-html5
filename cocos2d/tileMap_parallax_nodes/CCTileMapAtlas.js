@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/base_nodes/CCAtlasNode", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/platform/CCConfig", "cocos2d/platform/CCFileUtils", "cocos2d/support/CCTGAlib", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -272,3 +273,4 @@ cc.TileMapAtlas.create = function (tile, mapFile, tileWidth, tileHeight) {
     }
     return null;
 };
+});

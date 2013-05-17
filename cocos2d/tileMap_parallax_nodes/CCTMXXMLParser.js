@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/platform/ZipUtils", "cocos2d/platform/base64", "cocos2d/platform/CCFileUtils", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCSAXParser", "cocos2d/tileMap_parallax_nodes/CCTMXObjectGroup", "cocos2d/tileMap_parallax_nodes/CCTMXTiledMap"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -801,3 +802,4 @@ cc.TMXMapInfo.createWithXML = function (tmxString, resourcePath) {
         return ret;
     return null;
 };
+});

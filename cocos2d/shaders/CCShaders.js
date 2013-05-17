@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -331,4 +332,4 @@ cc.SHADEREX_SWITCHMASK_FRAG =
         + "    vec4 maskColor  = texture2D(u_mask, v_texCoord);             \n"
         + "    vec4 finalColor = vec4(texColor.r, texColor.g, texColor.b, maskColor.a * texColor.a);        \n"
         + "    gl_FragColor    = v_fragmentColor * finalColor;              \n"
-        + "}";
+        + "}";});

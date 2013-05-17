@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCAction", "cocos2d/actions/CCActionInstant", "cocos2d/sprite_nodes/CCAnimation", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCTypes", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -2133,3 +2134,4 @@ cc.TargetedAction.create = function (target, action) {
     retObj.initWithTarget(target, action);
     return retObj;
 };
+});

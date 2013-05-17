@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/Sys"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -296,4 +297,4 @@ cc.dumpConfig = function() {
 
  @since v2.0.0
  */
-cc.ENABLE_GL_STATE_CACHE = 1;
+cc.ENABLE_GL_STATE_CACHE = 1;});

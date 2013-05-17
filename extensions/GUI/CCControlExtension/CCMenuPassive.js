@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/menu_nodes/CCMenu", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
 
@@ -379,4 +380,4 @@ cc.MenuPassive.create = function (item) {
  */
 cc.MenuPassive.createWithItem = function (item) {
     return cc.MenuPassive.create(item, null);
-};
+};});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2011 Gordon P. Hemsley
  http://gphemsley.org/
@@ -687,3 +688,4 @@ cc.TIFFReader.getInstance = function () {
         cc.TIFFReader.__instance = new cc.TIFFReader();
     return cc.TIFFReader.__instance;
 };
+});

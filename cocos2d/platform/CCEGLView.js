@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/cocoa/CCGeometry", "cocos2d/touch_dispatcher/CCTouchDelegateProtocol"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -662,3 +663,4 @@ cc.EGLView.getInstance = function () {
     }
     return this._instance;
 };
+});

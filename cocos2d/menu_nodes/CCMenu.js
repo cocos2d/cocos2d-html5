@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCTypes", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/menu_nodes/CCMenuItem", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -543,3 +544,4 @@ cc.Menu.create = function (/*Multiple Arguments*/) {
     ret.initWithItems(arguments);
     return ret;
 };
+});

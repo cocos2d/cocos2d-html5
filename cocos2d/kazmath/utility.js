@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
 /*
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
@@ -69,3 +70,4 @@ cc.kmMax = function(lhs,rhs){
 cc.kmAlmostEqual = function(lhs,rhs){
     return (lhs + cc.kmEpsilon > rhs && lhs - cc.kmEpsilon < rhs);
 };
+});

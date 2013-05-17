@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCMacro", "cocos2d/platform/CCClass", "cocos2d/platform/CCConfig", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -175,4 +176,4 @@ cc.Configuration.getInstance = function () {
  */
 cc.Configuration.purgeConfiguration = function () {
     cc.Configuration._sharedConfiguration = null;
-};
+};});

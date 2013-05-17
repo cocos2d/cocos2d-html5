@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/platform/CCFileUtils", "cocos2d/cocoa/CCNS", "cocos2d/sprite_nodes/CCSpriteFrame", "cocos2d/textures/CCTexture2D", "cocos2d/sprite_nodes/CCSprite", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -411,3 +412,4 @@ cc.SpriteFrameCache.getInstance = function () {
 cc.SpriteFrameCache.purgeSharedSpriteFrameCache = function () {
     cc.s_sharedSpriteFrameCache = null;
 };
+});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/base_nodes/CCAtlasNode", "cocos2d/platform/miniFramework", "cocos2d/platform/CCMacro", "cocos2d/platform/CCConfig", "cocos2d/platform/CCFileUtils", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -382,3 +383,4 @@ cc.LabelAtlasWebGL.create = function (strText, charMapFile, itemWidth, itemHeigh
 
 cc.LabelAtlas = cc.Browser.supportWebGL ? cc.LabelAtlasWebGL : cc.LabelAtlasCanvas;
 
+});

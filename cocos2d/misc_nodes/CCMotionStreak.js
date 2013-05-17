@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCTypes", "cocos2d/platform/CCMacro", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/shaders/CCGLStateCache", "cocos2d/support/CCPointExtension", "cocos2d/support/CCVertex"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -421,3 +422,4 @@ cc.MotionStreak.create = function (fade, minSeg, stroke, color, texture) {
         return ret;
     return null;
 };
+});

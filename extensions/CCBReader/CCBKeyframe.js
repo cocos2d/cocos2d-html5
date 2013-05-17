@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -57,4 +58,5 @@ cc.BuilderKeyframe = cc.Class.extend({
     setEasingOpt:function(easingOpt){
         this._easingOpt = easingOpt;
     }
+});
 });

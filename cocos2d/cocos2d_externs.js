@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
 /**
  * @fileoverview Java Script Builtins for windows properties.
  *
@@ -37,3 +38,4 @@ CSSProperties.prototype.accelerationIncludingGravity;
 CSSProperties.prototype.gamma;
 CSSProperties.prototype.beta;
 CSSProperties.prototype.alpha;
+});

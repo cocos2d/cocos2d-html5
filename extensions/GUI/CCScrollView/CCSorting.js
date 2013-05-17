@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/platform/CCMacro"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
  Copyright (c) 2010 Sangwoo Im
@@ -212,4 +213,5 @@ cc.ArrayForObjectSorting = cc.Class.extend({
         this._saveObjectArr = cc.ArrayAppendObjectToIndex(this._saveObjectArr, addObj, idx);
         this._saveObjectArr.sort(_compareObject);
     }
+});
 });

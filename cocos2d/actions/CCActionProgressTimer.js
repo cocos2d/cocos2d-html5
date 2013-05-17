@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/misc_nodes/CCProgressTimer"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (C) 2010      Lam Pham
@@ -146,3 +147,4 @@ cc.ProgressFromTo.create = function (duration, fromPercentage, toPercentage) {
     progressFromTo.initWithDuration(duration, fromPercentage, toPercentage);
     return progressFromTo;
 };
+});

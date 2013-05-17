@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/platform/CCImage", "cocos2d/platform/CCFileUtils", "cocos2d/base_nodes/CCNode", "cocos2d/support/CCPNGReader", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCTIFFReader", "cocos2d/platform/CCEGLView", "cocos2d/support/CCPointExtension", "cocos2d/platform/ZipUtils"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -1900,3 +1901,4 @@ cc.ParticleSystem.ModeB = function (startRadius, startRadiusVar, endRadius, endR
     /** Variance in degrees for rotatePerSecond. Only available in 'Radius' mode. */
     this.rotatePerSecondVar = rotatePerSecondVar || 0;
 };
+});

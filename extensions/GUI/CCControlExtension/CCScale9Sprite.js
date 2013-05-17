@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/platform/CCCommon", "cocos2d/platform/miniFramework", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/textures/CCTexture2D", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2012 Neofect. All rights reserved.
@@ -760,3 +761,4 @@ cc.Scale9Sprite.createWithSpriteFrameName = function (spriteFrameName, capInsets
     }
     return null;
 };
+});

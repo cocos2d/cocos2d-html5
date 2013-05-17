@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/touch_dispatcher/CCTouchDelegateProtocol", "cocos2d/touch_dispatcher/CCTouchDispatcher", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -591,3 +592,4 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
 };
 
 
+});

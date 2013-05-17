@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/ZipUtils"], function(cc, sys) {
 /*--
  Copyright 2009-2010 by Stefan Rusterholz.
  All rights reserved.
@@ -729,3 +730,4 @@ cc.Codec.GZip.prototype.skipdir = function () {
 
     if (this.modeZIP) this.nextFile();
 };
+});

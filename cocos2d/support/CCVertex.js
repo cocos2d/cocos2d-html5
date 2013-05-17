@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2009      Valentin Milea
@@ -147,4 +148,4 @@ cc.vertexLineIntersect = function (Ax, Ay, Bx, By, Cx, Cy, Dx, Dy) {
 
     // Success.
     return {isSuccess:true, value:t};
-};
+};});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInstant", "cocos2d/actions/CCActionPageTurn3D", "cocos2d/actions/CCActionInterval", "cocos2d/cocoa/CCGeometry", "cocos2d/actions/CCActionGrid", "cocos2d/layers_scenes_transitions_nodes/CCTransition"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -121,3 +122,4 @@ cc.TransitionPageTurn.create = function (t, scene, backwards) {
     transition.initWithDuration(t, scene, backwards);
     return transition;
 };
+});

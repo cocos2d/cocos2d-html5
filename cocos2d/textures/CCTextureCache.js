@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/miniFramework", "cocos2d/platform/CCClass", "cocos2d/platform/CCImage", "cocos2d/platform/CCFileUtils", "cocos2d/CCLoader", "cocos2d/textures/CCTexture2D", "cocos2d/sprite_nodes/CCSprite"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -787,3 +788,4 @@ cc.TextureCacheWebGL.purgeSharedTextureCache = function () {
 cc.TextureCache = cc.Browser.supportWebGL ? cc.TextureCacheWebGL : cc.TextureCacheCanvas;
 
 
+});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/kazmath/utility"], function(cc, sys) {
 /*
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
@@ -103,3 +104,4 @@ cc.kmVec2AreEqual = function (p1, p2) {
             (p1.y < p2.y + cc.kmEpsilon && p1.y > p2.y - cc.kmEpsilon)
         );
 };
+});

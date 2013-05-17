@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCTypes", "cocos2d/label_nodes/CCLabelAtlas", "cocos2d/label_nodes/CCLabelTTF", "cocos2d/base_nodes/CCNode", "cocos2d/actions/CCActionInterval", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -1157,3 +1158,4 @@ cc.MenuItemToggle.create = function (/*Multiple arguments follow*/) {
     ret.initWithItems(arguments);
     return ret;
 };
+});
