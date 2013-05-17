@@ -55,6 +55,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     _buffersVBO:null,
 
     _pointRect:null,
+    _mvpMatrix:null,
     /**
      * Constructor
      * @override
@@ -68,6 +69,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         if (cc.renderContextType === cc.WEBGL) {
             this._quadsArrayBuffer = null;
+            this._mvpMatrix = new cc.kmMat4();
         }
     },
 
@@ -282,7 +284,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @param {cc.SpriteFrame} spriteFrame
      */
     setDisplayFrame:function (spriteFrame) {
-        cc.Assert(cc.Point.CCPointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
+        cc.Assert(cc.pointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
 
         // update texture before updating texture rect
         if (cc.renderContextType === cc.WEBGL)
@@ -334,7 +336,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             //else
             this._setupVBO();
 
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE));
             return true;
         }
         return false;

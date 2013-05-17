@@ -375,7 +375,7 @@ cc.Follow = cc.Action.extend(/** @lends cc.Follow# */{
         rect = rect || cc.RectZero();
         this._followedNode = followedNode;
 
-        this._boundarySet = !cc.Rect.CCRectEqualToRect(rect, cc.RectZero());
+        this._boundarySet = !cc.rectEqualToRect(rect, cc.RectZero());
 
         this._boundaryFullyCovered = false;
 

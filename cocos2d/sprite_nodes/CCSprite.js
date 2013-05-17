@@ -1179,7 +1179,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     isFrameDisplayed:function (frame) {
         if (frame.getTexture() != this._texture)
             return false;
-        return cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect);
+        return cc.rectEqualToRect(frame.getRect(), this._rect);
     },
 
     /**
@@ -2477,8 +2477,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {Boolean}
      */
     isFrameDisplayed:function (frame) {
-        return (cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
-            && cc.Point.CCPointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
+        return (cc.rectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
+            && cc.pointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
     },
 
     /**
@@ -2643,7 +2643,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if (locTexture) {
             if(locTexture._isLoaded){
                 this._shaderProgram.use();
-                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4();
+                this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
                 cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
                 //optimize performance for javascript
@@ -2652,18 +2652,19 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if(this._quadDirty){
-                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
                     this._quadDirty = false;
                 }
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
             shaderProgram.use();
-            shaderProgram.setUniformForModelViewProjectionMatrixWithMat4();
+            shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);

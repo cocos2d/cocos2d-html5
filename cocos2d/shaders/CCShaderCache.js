@@ -64,11 +64,18 @@ cc.SHADERTYPE_POSITION_UCOLOR = 6;
  * @type {Number}
  */
 cc.SHADERTYPE_POSITION_LENGTH_TEXTURECOLOR = 7;
+
 /**
  * @constant
  * @type {Number}
  */
-cc.SHADERTYPE_MAX = 8;
+cc.SHADERTYPE_POSITION_TEXTURECOLOR_BATCHNODE = 8;
+
+/**
+ * @constant
+ * @type {Number}
+ */
+cc.SHADERTYPE_MAX = 9;
 
 cc._sharedShaderCache = null;
 
@@ -136,6 +143,13 @@ cc.ShaderCache = cc.Class.extend({
                 program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
                 program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
+                break;
+            case cc.SHADERTYPE_POSITION_TEXTURECOLOR_BATCHNODE:
+                program.initWithVertexShaderByteArray(cc.SHADER_POSITION_TEXTURE_COLOR_BATCHNODE_VERT, cc.SHADER_POSITION_TEXTURE_COLOR_BATCHNODE_FRAG);
+
+                program.addAttribute(cc.ATTRIBUTE_NAME_POSITION, cc.VERTEX_ATTRIB_POSITION);
+                program.addAttribute(cc.ATTRIBUTE_NAME_COLOR, cc.VERTEX_ATTRIB_COLOR);
+                program.addAttribute(cc.ATTRIBUTE_NAME_TEX_COORD, cc.VERTEX_ATTRIB_TEX_COORDS);
                 break;
             default:
                 cc.log("cocos2d: cc.ShaderCache._loadDefaultShader, error shader type");
@@ -219,6 +233,12 @@ cc.ShaderCache = cc.Class.extend({
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_LENGTH_TEXTURECOLOR);
         this._programs[cc.SHADER_POSITION_LENGTHTEXTURECOLOR] = program;
         this._programs["ShaderPositionLengthTextureColor"] = program;
+
+        // Position Texture Color for BatchNode shader
+        program = new cc.GLProgram();
+        this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURECOLOR_BATCHNODE);
+        this._programs[cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE] = program;
+        this._programs["ShaderPositionTextureColorBatchNode"] = program;
     },
 
     /**
@@ -271,6 +291,13 @@ cc.ShaderCache = cc.Class.extend({
         program = this.programForKey(cc.SHADER_POSITION_UCOLOR);
         program.reset();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_UCOLOR);
+
+        //
+        // Position Texture Color for BatchNode shader
+        //
+        program = this.programForKey(cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE);
+        program.reset();
+        this._loadDefaultShader(program, cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE);
     },
 
     /** returns a GL program for a given key */

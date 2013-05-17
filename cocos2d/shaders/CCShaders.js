@@ -290,6 +290,45 @@ cc.SHADER_POSITION_TEXTURE_COLOR_VERT =
         + "    v_texCoord = a_texCoord;                 \n"
         + "}";
 
+// ------------------------Shader_PositionTextureColor_BatchNode Shader source------------------------------------
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_TEXTURE_COLOR_BATCHNODE_FRAG =
+    "                                               \n"
+        + "precision lowp float;                        \n"
+        + "                                             \n"
+        + "varying vec4 v_fragmentColor;                \n"
+        + "varying vec2 v_texCoord;                     \n"
+        + "uniform sampler2D CC_Texture0;               \n"
+        + "                                             \n"
+        + "void main()                                  \n"
+        + "{                                            \n"
+        + "    gl_FragColor = v_fragmentColor * texture2D(CC_Texture0, v_texCoord);         \n"
+        + "}";
+
+/**
+ * @constant
+ * @type {String}
+ */
+cc.SHADER_POSITION_TEXTURE_COLOR_BATCHNODE_VERT =
+    "                                               \n"
+        + "attribute vec4 a_position;                   \n"
+        + "attribute vec2 a_texCoord;                   \n"
+        + "attribute vec4 a_color;                      \n"
+        + "                                             \n"
+        + "varying lowp vec4 v_fragmentColor;           \n"
+        + "varying mediump vec2 v_texCoord;             \n"
+        + "                                             \n"
+        + "void main()                                  \n"
+        + "{                                            \n"
+        + "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        //+ "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
+        + "    v_fragmentColor = a_color;               \n"
+        + "    v_texCoord = a_texCoord;                 \n"
+        + "}";
+
 
 //-----------------------Shader_PositionTextureColorAlphaTest_frag Shader Source----------------------------
 /**

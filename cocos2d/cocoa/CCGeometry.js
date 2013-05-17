@@ -273,8 +273,8 @@ cc.RectZero = function () {
 cc.rectEqualToRect = function (rect1, rect2) {
     if(!rect1 || !rect2)
         return false;
-    return ((cc.Point.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
-        (cc.Size.CCSizeEqualToSize(rect1.size, rect2.size)));
+    return ((cc.pointEqualToPoint(rect1.origin, rect2.origin)) &&
+        (cc.sizeEqualToSize(rect1.size, rect2.size)));
 };
 
 /**

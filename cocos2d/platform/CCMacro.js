@@ -167,7 +167,7 @@ cc.NODE_DRAW_SETUP = function (node) {
     if (node._shaderProgram) {
         //cc.renderContext.useProgram(node._shaderProgram._programObj);
         node._shaderProgram.use();
-        node._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4();
+        node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
     }
 };
 

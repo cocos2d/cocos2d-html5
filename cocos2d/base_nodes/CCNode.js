@@ -554,7 +554,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @param {cc.Point} point
      */
     setAnchorPoint:function (point) {
-        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
+        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
             this._anchorPoint = new cc.Point(point.x, point.y);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
             this.setNodeDirty();
@@ -583,7 +583,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @param {cc.Size} size
      */
     setContentSize:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
+        if (!cc.sizeEqualToSize(size, this._contentSize)) {
             this._contentSize = new cc.Size(size.width, size.height);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
             this.setNodeDirty();
@@ -705,11 +705,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     getActionManager:function () {
         if (!this._actionManager) {
             this._actionManager = cc.Director.getInstance().getActionManager();
-            this.getActionManager = function () {
-                return this._actionManager;
-            };
         }
-
         return this._actionManager;
     },
 
@@ -735,9 +731,6 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     getScheduler:function () {
         if (!this._scheduler) {
             this._scheduler = cc.Director.getInstance().getScheduler();
-            this.getScheduler = function () {
-                return this._scheduler;
-            };
         }
         return this._scheduler;
     },
@@ -1798,13 +1791,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
         var director = cc.Director.getInstance();
         this._actionManager = director.getActionManager();
-        this.getActionManager = function () {
-            return this._actionManager;
-        };
         this._scheduler = director.getScheduler();
-        this.getScheduler = function () {
-            return this._scheduler;
-        };
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         this._additionalTransformDirty = false;
@@ -2192,7 +2179,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {cc.Point} point
      */
     setAnchorPoint:function (point) {
-        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
+        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
             this._anchorPoint = new cc.Point(point.x, point.y);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
             this.setNodeDirty();
@@ -2221,7 +2208,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {cc.Size} size
      */
     setContentSize:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
+        if (!cc.sizeEqualToSize(size, this._contentSize)) {
             this._contentSize = new cc.Size(size.width, size.height);
             this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
             this.setNodeDirty();
@@ -2343,11 +2330,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     getActionManager:function () {
         if (!this._actionManager) {
             this._actionManager = cc.Director.getInstance().getActionManager();
-            this.getActionManager = function () {
-                return this._actionManager;
-            };
         }
-
         return this._actionManager;
     },
 
@@ -2373,9 +2356,6 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     getScheduler:function () {
         if (!this._scheduler) {
             this._scheduler = cc.Director.getInstance().getScheduler();
-            this.getScheduler = function () {
-                return this._scheduler;
-            };
         }
         return this._scheduler;
     },
@@ -3087,23 +3067,23 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
         //visit for canvas
         var context = ctx || cc.renderContext, i;
+        var children = this._children;
         context.save();
         this.transform(context);
-        if (this._children && this._children.length > 0) {
+        if (children && children.length > 0) {
+            var len = children.length;
             this.sortAllChildren();
             // draw children zOrder < 0
-            for (i = 0; i < this._children.length; i++) {
-                if (this._children[i] && this._children[i]._zOrder < 0)
-                    this._children[i].visit(context);
+            for (i = 0; i < len; i++) {
+                if (children[i] && children[i]._zOrder < 0)
+                    children[i].visit(context);
                 else
                     break;
             }
-
             this.draw(context);
-
-            for (; i < this._children.length; i++) {
-                if (this._children[i] && this._children[i]._zOrder >= 0)
-                    this._children[i].visit(context);
+            for (; i < len; i++) {
+                if (children[i] && children[i]._zOrder >= 0)
+                    children[i].visit(context);
             }
 
         } else
