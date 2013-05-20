@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/CCFileUtils"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2013 cocos2d-x.org
 
@@ -456,4 +457,5 @@ cc.BinaryStreamReader = cc.Class.extend({
     getOffset:function () {
         return this._offset;
     }
+});
 });

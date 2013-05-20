@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlUtils", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /*
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
@@ -154,4 +155,4 @@ cc.ControlHuePicker.create = function (target, pos) {
     var pRet = new cc.ControlHuePicker();
     pRet.initWithTargetAndPos(target, pos);
     return pRet;
-};
+};});

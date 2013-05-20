@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCApplication", "cocos2d/CCLoader", "cocos2d/platform/AppControl", "cocos2d/menu_nodes/CCMenu", "src/resource"], function(cc) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -132,12 +133,13 @@ var Helloworld = cc.Layer.extend({
     }
 });
 
-var HelloWorldScene = cc.Scene.extend({
+return cc.Scene.extend({
     onEnter:function () {
         this._super();
         var layer = new Helloworld();
         layer.init();
         this.addChild(layer);
     }
+});
 });
 

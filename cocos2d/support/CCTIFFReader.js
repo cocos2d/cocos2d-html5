@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2011 Gordon P. Hemsley
  http://gphemsley.org/
@@ -687,22 +688,4 @@ cc.TIFFReader.getInstance = function () {
         cc.TIFFReader.__instance = new cc.TIFFReader();
     return cc.TIFFReader.__instance;
 };
-
-cc.TIFFReader.isTIFFFile = function(buffer) {
-
-    // Byte order
-    var version = 0;
-
-    // Little endian (Intel)
-    if (buffer[0] === 73 && buffer[1] === 73) {
-        version = buffer[3] + (buffer[2] << 8);
-
-    // Big endian (Motorola)
-    } else if (buffer[0] === 77 && buffer[1] === 77) {
-        version = buffer[2] + (buffer[3] << 8);
-    }
-
-    return version === 42;
-
-};
-
+});

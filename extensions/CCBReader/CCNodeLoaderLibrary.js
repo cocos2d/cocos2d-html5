@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/CCBReader/CCControlLoader", "cocos2d/platform/CCClass", "extensions/CCBReader/CCSpriteLoader", "extensions/CCBReader/CCNodeLoader"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -99,3 +100,4 @@ cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary = function(){
 
 
 
+});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
 /*--
  Copyright 2009-2010 by Stefan Rusterholz.
  All rights reserved.
@@ -80,3 +81,4 @@ cc.StringToArray = function (input) {
     }
     return ar;
 };
+});

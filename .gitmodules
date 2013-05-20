@@ -1,3 +1,3 @@
 [submodule "samples"]
 	path = samples
-	url = https://github.com/cocos2d/cocos2d-js-tests.git
+url=https://github.com/zynga/cocos2d-js-tests/tree/requirejs_samples

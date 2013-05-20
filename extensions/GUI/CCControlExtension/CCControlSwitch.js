@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionTween", "cocos2d/platform/CCCommon", "extensions/GUI/CCControlExtension/CCControl", "cocos2d/platform/CCMacro", "cocos2d/misc_nodes/CCRenderTexture", "cocos2d/platform/CCTypes", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /*
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
@@ -342,4 +343,4 @@ cc.ControlSwitchSprite = cc.Sprite.extend({
 
     setOffLabel:function(offLabel){this._offLabel = offLabel;},
     getOffLabel:function(){return this._offLabel;}
-});
+});});

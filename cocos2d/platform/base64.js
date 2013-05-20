@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/ZipUtils"], function(cc, sys) {
 /*--
  Copyright 2009-2010 by Stefan Rusterholz.
  All rights reserved.
@@ -93,3 +94,4 @@ cc.uint8ArrayToUint32Array = function(uint8Arr){
     }
     return retArr;
 };
+});

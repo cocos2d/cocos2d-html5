@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/actions/CCActionGrid", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -871,3 +872,4 @@ cc.Twirl.create = function (duration, gridSize, position, twirls, amplitude) {
     action.initWithDuration(duration, gridSize, position, twirls, amplitude);
     return action;
 };
+});

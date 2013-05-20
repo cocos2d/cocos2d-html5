@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/Sys"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -263,4 +264,4 @@ cc.UserDefault.purgeInstanceUserDefault = function () {
 };
 
 cc.UserDefault._sUserDefault = null;
-cc.UserDefault._isFilePathInitialized = false;
+cc.UserDefault._isFilePathInitialized = false;});

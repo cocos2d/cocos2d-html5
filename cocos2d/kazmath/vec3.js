@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/kazmath/utility", "cocos2d/kazmath/vec4"], function(cc, sys) {
 /*
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
@@ -201,3 +202,4 @@ cc.kmVec3ToTypeArray = function(vecValue){
 
 
 
+});

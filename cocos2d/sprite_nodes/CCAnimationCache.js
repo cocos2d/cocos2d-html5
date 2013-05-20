@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/sprite_nodes/CCAnimation", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/platform/CCFileUtils"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -246,3 +247,4 @@ cc.AnimationCache.getInstance = function () {
 };
 
 cc.s_sharedAnimationCache = null;
+});

@@ -73,6 +73,8 @@ Szymon Piłkowski     @ardcore      CCTexture Bug fix
 
 Tomasz Tunik         @tomasztunik   CCNode Memory leak fix
 
+Frederic Schimmelpfennig	@fschimmelpfennig	added support for require.js
+
 
 Cocos2d-x and cocos2d-html5 can not grow so fast without the active community.
 

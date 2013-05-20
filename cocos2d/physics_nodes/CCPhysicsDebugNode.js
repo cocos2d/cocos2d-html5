@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/draw_nodes/CCDrawNode", "cocos2d/platform/CCTypes", "cocos2d/platform/CCMacro"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -164,3 +165,4 @@ cc.PhysicsDebugNode.debugNodeForCPSpace = function (space) {
 
 cc.PhysicsDebugNode.create = cc.PhysicsDebugNode.debugNodeForCPSpace;
 
+});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
 
@@ -165,4 +166,4 @@ cc.ControlUtils.RGBfromHSV = function(hsvValue){
 
 cc.ControlUtils.CCRectUnion = function(rect1, rect2){
     return cc.Rect.CCRectUnion(rect1,rect2);
-};
+};});

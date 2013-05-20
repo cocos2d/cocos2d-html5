@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCClass", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrame", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -392,3 +393,4 @@ cc.Animation.createWithAnimationFrames = function (arrayOfAnimationFrameNames, d
     return animation;
 };
 
+});

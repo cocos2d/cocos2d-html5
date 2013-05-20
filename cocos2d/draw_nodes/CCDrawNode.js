@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/platform/miniFramework", "cocos2d/base_nodes/CCNode", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/shaders/CCGLStateCache", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -477,3 +478,4 @@ cc._DrawNodeElement = function (type) {
 cc.DRAWNODE_TYPE_DOT = 0;
 cc.DRAWNODE_TYPE_SEGMENT = 1;
 cc.DRAWNODE_TYPE_POLY = 2;
+});

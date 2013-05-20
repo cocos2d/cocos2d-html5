@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /* Copyright (c) 2012 Scott Lembcke and Howling Moon Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -302,3 +303,4 @@
 
 
 })();
+});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInstant", "cocos2d/actions/CCActionInterval", "cocos2d/platform/CCCommon", "cocos2d/effects/CCGrid"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2013 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -258,3 +259,4 @@ cc.ReuseGrid = cc.ActionInstant.extend(/** @lends cc.ReuseGrid# */{
 cc.ReuseGrid.create = function (times) {
     return new cc.ReuseGrid();
 };
+});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/CCConfiguration", "cocos2d/platform/CCImage", "cocos2d/base_nodes/CCNode", "cocos2d/textures/CCTexture2D", "cocos2d/platform/CCTypes", "cocos2d/kazmath/GL/matrix", "cocos2d/kazmath/mat4"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2009      Jason Booth
@@ -709,3 +710,4 @@ cc.RenderTexture.create = function (width, height, format, depthStencilFormat) {
         return ret;
     return null;
 };
+});

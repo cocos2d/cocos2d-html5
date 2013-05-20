@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCControlExtension/CCControl", "cocos2d/platform/CCClass", "cocos2d/platform/CCTypes", "extensions/GUI/CCControlExtension/CCControlButton", "cocos2d/base_nodes/CCdomNode", "cocos2d/keyboard_dispatcher/CCKeyboardDispatcher", "cocos2d/cocoa/CCAffineTransform", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2012 James Chen
@@ -526,3 +527,4 @@ cc.EditBox.create = function (size, normal9SpriteBg, press9SpriteBg, disabled9Sp
 
 
 
+});

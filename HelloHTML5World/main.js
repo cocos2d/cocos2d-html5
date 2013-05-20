@@ -1,3 +1,4 @@
+define(["../cocos2d", "src/myApp", "cocos2d/platform/CCApplication"], function(cc, scene) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -53,11 +54,12 @@ var cocos2dApp = cc.Application.extend({
         director.setAnimationInterval(1.0 / this.config['frameRate']);
 
         //load resources
-        cc.LoaderScene.preload(g_ressources, function () {
-            director.replaceScene(new this.startScene());
+        cc.Loader.preload(g_ressources, function () {
+            cc.Director.getInstance().replaceScene(new this.startScene());
         }, this);
 
         return true;
     }
 });
-var myApp = new cocos2dApp(HelloWorldScene);
+var myApp = new cocos2dApp(scene);
+});

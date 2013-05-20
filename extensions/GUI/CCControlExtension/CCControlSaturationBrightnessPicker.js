@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlUtils", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /*
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
@@ -189,4 +190,4 @@ cc.ControlSaturationBrightnessPicker.create = function (target, pos) {
     var pRet = new cc.ControlSaturationBrightnessPicker();
     pRet.initWithTargetAndPos(target, pos);
     return pRet;
-};
+};});

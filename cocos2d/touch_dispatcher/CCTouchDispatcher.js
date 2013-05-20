@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/miniFramework", "cocos2d/platform/CCClass", "cocos2d/platform/CCEGLView", "cocos2d/cocoa/CCGeometry", "cocos2d/touch_dispatcher/CCTouchHandler", "cocos2d/touch_dispatcher/CCTouchDelegateProtocol"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -1032,3 +1033,4 @@ cc.TouchDispatcher._preTouchPool = [];
  * @type {Number}
  */
 cc.TouchDispatcher._preTouchPoolPointer = 0;
+});

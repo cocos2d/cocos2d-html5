@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/kazmath/utility", "cocos2d/kazmath/vec2"], function(cc, sys) {
 /*
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
@@ -159,4 +160,4 @@ cc.kmRay2IntersectTriangle = function(ray, p1, p2, p3, intersection, normal_out)
 cc.kmRay2IntersectCircle = function(ray, centre, radius, intersection) {
     cc.Assert(0 , "Not implemented");
     return 0;
-};
+};});

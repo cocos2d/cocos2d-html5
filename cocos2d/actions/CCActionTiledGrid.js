@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCTypes", "cocos2d/cocoa/CCGeometry", "cocos2d/actions/CCActionGrid", "cocos2d/support/CCPointExtension", "cocos2d/actions/CCActionGrid3D"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -912,3 +913,4 @@ cc.SplitCols.create = function (duration, cols) {
     return action;
 };
 
+});

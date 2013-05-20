@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2009      Valentin Milea
@@ -46,3 +47,4 @@ cc.GLToCGAffine = function (mat, trans) {
     trans.d = mat[5];
     trans.ty = mat[13];
 };
+});

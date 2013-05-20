@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2011 Devon Govett
  Copyright (c) 2010-2012 cocos2d-x.org
@@ -323,11 +324,4 @@ cc.PNGReader = cc.Class.extend({
     }
 });
 
-cc.PNGReader.isPNGFile = function(buffer) {
-    return buffer[0] === 0x89 &&
-           buffer[1] === 0x50 && buffer[2] === 0x4E && buffer[3] === 0x47 && // PNG
-           buffer[4] === 0x0D && buffer[5] === 0x0A && // CR LF
-           buffer[6] === 0x1A && // End of file
-           buffer[7] === 0x0A; // LF
-};
-
+});

@@ -1,3 +1,4 @@
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlUtils", "cocos2d/label_nodes/CCLabelBMFont", "cocos2d/label_nodes/CCLabelTTF", "cocos2d/cocoa/CCGeometry", "extensions/GUI/CCControlExtension/CCScale9Sprite", "cocos2d/actions/CCActionInterval", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /*
  * CCControlButton.m
  *
@@ -615,3 +616,4 @@ cc.ControlButton.create = function (label, backgroundSprite) {
 };
 
 
+});
