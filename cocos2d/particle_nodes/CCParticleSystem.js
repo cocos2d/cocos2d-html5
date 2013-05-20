@@ -1377,19 +1377,21 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             return false;
                         }
 
-                        var canvasObj = document.createElement("canvas");
+                        var imageFormat = cc.getImageFormatByData(buffer);
 
-                        if(cc.PNGReader.isPNGFile(buffer)){
+                        if(imageFormat !== cc.FMT_TIFF && imageFormat !== cc.FMT_PNG){
+                            cc.log("cc.ParticleSystem: unknown image format with Data");
+                            return false;
+                        }
+
+                        var canvasObj = document.createElement("canvas");
+                        if(imageFormat === cc.FMT_PNG){
                             var myPngObj = new cc.PNGReader(buffer);
                             myPngObj.render(canvasObj);
 
-                        } else if (cc.TIFFReader.isTIFFFile(buffer)){
+                        } else {
                             var myTIFFObj = cc.TIFFReader.getInstance();
                             myTIFFObj.parseTIFF(buffer,canvasObj);
-
-                        } else {
-                            cc.log("cc.ParticleSystem: unknown image format with Data");
-                            return false;
                         }
 
                         cc.TextureCache.getInstance().cacheImage(fullpath, canvasObj);
