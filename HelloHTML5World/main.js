@@ -1,4 +1,4 @@
-define(["../cocos2d", "src/myApp", "cocos2d/platform/CCApplication"], function(cc, scene) {
+define(["cocos2d", "src/myApp", "cocos2d/platform/CCApplication"], function(cc, scene) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
