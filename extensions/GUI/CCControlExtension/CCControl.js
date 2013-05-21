@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "extensions/GUI/CCControlExtension/CCInvocation", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/menu_nodes/CCMenu", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /*
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
@@ -26,6 +25,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "e
  *
  * converted to Javascript / cocos2d-x by Angus C
  */
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "extensions/GUI/CCControlExtension/CCInvocation", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/menu_nodes/CCMenu", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes"], function(cc, sys) {
 
 cc.CONTROL_EVENT_TOTAL_NUMBER = 9;
 

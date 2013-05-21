@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/kazmath/mat4"], function(cc, sys) {
 /*
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/kazmath/mat4"], 
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/kazmath/mat4"], function(cc, sys) {
 
 cc.km_mat4_stack = function(capacity, item_count, top, stack){
     this.top = top ;

@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCClass", "cocos2d/effects/CCGrabber", "cocos2d/kazmath/GL/matrix", "cocos2d/misc_nodes/CCRenderTexture", "cocos2d/platform/CCTypes", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/textures/CCTexture2D", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/mat4", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2013 cocos2d-x.org
  Copyright (c) 2009      On-Core
@@ -25,6 +24,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommo
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCClass", "cocos2d/effects/CCGrabber", "cocos2d/kazmath/GL/matrix", "cocos2d/misc_nodes/CCRenderTexture", "cocos2d/platform/CCTypes", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/textures/CCTexture2D", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/mat4", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 
 /**
  * Base class for cc.Grid

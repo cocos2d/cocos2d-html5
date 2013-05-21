@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/platform/miniFramework", "cocos2d/base_nodes/CCNode", "cocos2d/misc_nodes/CCRenderTexture", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/textures/CCTextureAtlas", "cocos2d/platform/CCEGLView", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/GL/matrix", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "c
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/platform/miniFramework", "cocos2d/base_nodes/CCNode", "cocos2d/misc_nodes/CCRenderTexture", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/textures/CCTextureAtlas", "cocos2d/platform/CCEGLView", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/GL/matrix", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 
 /**
  * @constant

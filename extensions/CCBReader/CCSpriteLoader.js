@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/label_nodes/CCLabelBMFont", "cocos2d/label_nodes/CCLabelTTF", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/menu_nodes/CCMenu", "cocos2d/menu_nodes/CCMenuItem", "extensions/CCBReader/CCNodeLoader", "cocos2d/particle_nodes/CCParticleSystemQuad", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/label_nodes/CCLa
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/label_nodes/CCLabelBMFont", "cocos2d/label_nodes/CCLabelTTF", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/menu_nodes/CCMenu", "cocos2d/menu_nodes/CCMenuItem", "extensions/CCBReader/CCNodeLoader", "cocos2d/particle_nodes/CCParticleSystemQuad", "cocos2d/platform/CCCommon"], function(cc, sys) {
 
 var PROPERTY_FLIP = "flip";
 var PROPERTY_DISPLAYFRAME = "displayFrame";

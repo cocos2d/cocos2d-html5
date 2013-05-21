@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionTween", "cocos2d/actions/CCActionInstant", "cocos2d/platform/CCClass", "cocos2d/platform/CCEGLView", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/actions/CCActionInterval", "cocos2d/cocoa/CCGeometry", "cocos2d/kazmath/GL/matrix", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2013 cocos2d-x.org
  Copyright (c) 2010 Sangwoo Im
@@ -23,6 +22,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCAction
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionTween", "cocos2d/actions/CCActionInstant", "cocos2d/platform/CCClass", "cocos2d/platform/CCEGLView", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/actions/CCActionInterval", "cocos2d/cocoa/CCGeometry", "cocos2d/kazmath/GL/matrix", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 cc.SCROLLVIEW_DIRECTION_NONE = -1;
 

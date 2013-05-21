@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/base_nodes/CCAtlasNode", "cocos2d/platform/miniFramework", "cocos2d/platform/CCMacro", "cocos2d/platform/CCConfig", "cocos2d/platform/CCFileUtils", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommo
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/base_nodes/CCAtlasNode", "cocos2d/platform/miniFramework", "cocos2d/platform/CCMacro", "cocos2d/platform/CCConfig", "cocos2d/platform/CCFileUtils", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes"], function(cc, sys) {
 
 /**
  * using image file to print text label on the screen, might be a bit slower than cc.Label, similar to cc.LabelBMFont   (Canvas version)

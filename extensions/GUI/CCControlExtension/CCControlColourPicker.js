@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlHuePicker", "extensions/GUI/CCControlExtension/CCControlSaturationBrightnessPicker", "extensions/GUI/CCControlExtension/CCControlUtils", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/platform/CCTypes", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /*
  *
  * Copyright (c) 2010-2012 cocos2d-x.org
@@ -30,6 +29,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCControl
  *
  * converted to Javascript / cocos2d-x by Angus C
  */
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlHuePicker", "extensions/GUI/CCControlExtension/CCControlSaturationBrightnessPicker", "extensions/GUI/CCControlExtension/CCControlUtils", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/platform/CCTypes", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 
 cc.ControlColourPicker = cc.Control.extend({

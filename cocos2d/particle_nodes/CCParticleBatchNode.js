@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/base_nodes/CCNode", "cocos2d/particle_nodes/CCParticleSystem", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/textures/CCTextureAtlas", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/GL/matrix"], function(cc, sys) {
 /**
  * Copyright (c) 2010-2012 cocos2d-x.org
  * Copyright (C) 2009 Matt Oswald
@@ -27,6 +26,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "c
  * THE SOFTWARE.
  *
  */
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/base_nodes/CCNode", "cocos2d/particle_nodes/CCParticleSystem", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/textures/CCTextureAtlas", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/GL/matrix"], function(cc, sys) {
 
 /**
  * paticle default capacity

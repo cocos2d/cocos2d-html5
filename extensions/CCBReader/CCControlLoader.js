@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/CCBReader/CCBReader", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlButton", "extensions/CCBReader/CCNodeLoader", "extensions/GUI/CCControlExtension/CCScale9Sprite", "extensions/GUI/CCScrollView/CCScrollView"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/CCBReader/CCB
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/CCBReader/CCBReader", "extensions/GUI/CCControlExtension/CCControl", "extensions/GUI/CCControlExtension/CCControlButton", "extensions/CCBReader/CCNodeLoader", "extensions/GUI/CCControlExtension/CCScale9Sprite", "extensions/GUI/CCScrollView/CCScrollView"], function(cc, sys) {
 
 var PROPERTY_CCBFILE = "ccbFile";
 

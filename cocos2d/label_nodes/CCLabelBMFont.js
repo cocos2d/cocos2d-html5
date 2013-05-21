@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCClass", "cocos2d/CCConfiguration", "cocos2d/platform/CCFileUtils", "cocos2d/platform/CCConfig", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCSAXParser", "cocos2d/platform/CCTypes", "cocos2d/textures/CCTexture2D", "cocos2d/sprite_nodes/CCSprite", "cocos2d/support/CCPointExtension", "cocos2d/sprite_nodes/CCSprite", "cocos2d/sprite_nodes/CCSpriteBatchNode"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -30,6 +29,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommo
  http://slick.cokeandcode.com/demos/hiero.jnlp (Free, Java)
  http://www.angelcode.com/products/bmfont/ (Free, Windows only)
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCClass", "cocos2d/CCConfiguration", "cocos2d/platform/CCFileUtils", "cocos2d/platform/CCConfig", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCSAXParser", "cocos2d/platform/CCTypes", "cocos2d/textures/CCTexture2D", "cocos2d/sprite_nodes/CCSprite", "cocos2d/support/CCPointExtension", "cocos2d/sprite_nodes/CCSprite", "cocos2d/sprite_nodes/CCSpriteBatchNode"], function(cc, sys) {
 /**
  * @constant
  * @type Number

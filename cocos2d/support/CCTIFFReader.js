@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2011 Gordon P. Hemsley
  http://gphemsley.org/
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/CCCommon"], function(cc, sys) {
 
 cc.TIFFReader = cc.Class.extend({
     _littleEndian: false,
