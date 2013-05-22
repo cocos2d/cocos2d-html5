@@ -675,8 +675,10 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             this._setupVBO();
 
             //set the texture coord
-            var size = this._texture.getContentSize();
-            this.initTexCoordsWithRect(cc.rect(0, 0, size.width, size.height));
+            if(this._texture){
+                var size = this._texture.getContentSize();
+                this.initTexCoordsWithRect(cc.rect(0, 0, size.width, size.height));
+            }
         } else
             this._totalParticles = tp;
         this.resetSystem();
