@@ -524,8 +524,7 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
     window.addEventListener('mousedown', function (event) {
         if (event.button == cc.MOUSE_RIGHTBUTTON) {
             cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(true);	       
-        }
-        else {
+        } else {
             cc.Director.getInstance().getMouseDispatcher()._setMousePressed(true);
         }
     });
@@ -533,8 +532,7 @@ cc.MouseDispatcher._registerHtmlElementEvent = function (element) {
     window.addEventListener('mouseup', function (event) {
         if (event.button == cc.MOUSE_RIGHTBUTTON) {
             cc.Director.getInstance().getMouseDispatcher()._setRightMousePressed(false);	       
-        }
-        else {
+        } else {
             cc.Director.getInstance().getMouseDispatcher()._setMousePressed(false);
         }
     });
