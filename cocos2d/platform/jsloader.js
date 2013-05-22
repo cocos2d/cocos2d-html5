@@ -179,14 +179,23 @@
         if(c.box2d || c.chipmunk){
             engine.push('physics_nodes/CCPhysicsSprite.js');
             engine.push('physics_nodes/CCPhysicsDebugNode.js');
-            if (c.box2d)
+            if (c.box2d === true)
                 engine.push('../box2d/box2d.js');
-            if (c.chipmunk)
+            if (c.chipmunk === true)
                 engine.push('../chipmunk/chipmunk.js');
         }
         engine.forEach(function (e, i) {
             engine[i] = c.engineDir + e;
         });
+        if(typeof c.box2d === "string")
+        {
+            engine.push(c.box2d);
+        }
+        if(typeof c.chipmunk === "string")
+        {
+            engine.push(c.chipmunk);
+        }
+
     }
 
     var loaded = 0;
