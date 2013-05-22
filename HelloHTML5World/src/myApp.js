@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/platform/CCApplication", "cocos2d/CCLoader", "cocos2d/platform/AppControl", "cocos2d/menu_nodes/CCMenu", "src/resource"], function(cc) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -25,6 +24,7 @@ define(["cocos2d/CCNamespace", "cocos2d/platform/CCApplication", "cocos2d/CCLoad
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCApplication", "cocos2d/CCLoader", "cocos2d/platform/AppControl", "cocos2d/menu_nodes/CCMenu", "src/resource"], function(cc) {
 var CircleSprite = cc.Sprite.extend({
     _degree:0,
     ctor:function () {
