@@ -1007,19 +1007,19 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
             var i, j, length = this._children.length;
-
+            var localChildren = this._children;
             // insertion sort
             for (i = 0; i < length; i++) {
-                var tempItem = this._children[i];
+                var tempItem = localChildren[i];
                 j = i - 1;
 
                 //continue moving element downwards while zOrder is smaller or when zOrder is the same but mutatedIndex is smaller
-                while (j >= 0 && ( tempItem._zOrder < this._children[j]._zOrder ||
-                    ( tempItem._zOrder == this._children[j]._zOrder && tempItem._orderOfArrival < this._children[j]._orderOfArrival ))) {
-                    this._children[j + 1] = this._children[j];
+                while (j >= 0 && ( tempItem._zOrder < localChildren[j]._zOrder ||
+                    ( tempItem._zOrder == localChildren[j]._zOrder && tempItem._orderOfArrival < localChildren[j]._orderOfArrival ))) {
+                    localChildren[j + 1] = localChildren[j];
                     j = j - 1;
                 }
-                this._children[j + 1] = tempItem;
+                localChildren[j + 1] = tempItem;
             }
 
             //don't need to check children recursively, that's done in visit of each child

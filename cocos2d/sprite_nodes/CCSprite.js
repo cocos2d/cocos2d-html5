@@ -919,7 +919,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if(arguments.length > 0)
             return this.initWithFile(arguments[0], arguments[1]);
 
-        this._super();
+        cc.NodeCanvas.prototype.init.call(this);
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
         this._opacity = 255;
@@ -1255,9 +1255,10 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             context.globalCompositeOperation = 'lighter';
 
         context.globalAlpha = this._opacity / 255;
-        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - this._rect.size.height;
+        var locRect = this._rect;
+        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.size.height;
         if (this._flipX) {
-            flipXOffset = -this._offsetPosition.x - this._rect.size.width;
+            flipXOffset = -this._offsetPosition.x - locRect.size.width;
             context.scale(-1, 1);
         }
         if (this._flipY) {
@@ -1267,12 +1268,12 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if (this._texture) {
             if (this._colorized) {
                 context.drawImage(this._texture,
-                    0, 0, this._rect.size.width, this._rect.size.height,
-                    flipXOffset, flipYOffset, this._rect.size.width, this._rect.size.height);
+                    0, 0, locRect.size.width, locRect.size.height,
+                    flipXOffset, flipYOffset, locRect.size.width, locRect.size.height);
             } else {
                 context.drawImage(this._texture,
-                    this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height,
-                    flipXOffset, flipYOffset, this._rect.size.width, this._rect.size.height);
+                    locRect.origin.x, locRect.origin.y, locRect.size.width, locRect.size.height,
+                    flipXOffset, flipYOffset, locRect.size.width, locRect.size.height);
             }
         } else if (this._contentSize.width !== 0) {
             context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";
@@ -1283,8 +1284,8 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             // draw bounding box
             context.strokeStyle = "rgba(0,255,0,1)";
             flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + this._rect.size.width, flipYOffset), cc.p(flipXOffset + this._rect.size.width, flipYOffset - this._rect.size.height),
-                cc.p(flipXOffset, flipYOffset - this._rect.size.height)];
+            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.size.width, flipYOffset), cc.p(flipXOffset + locRect.size.width, flipYOffset - locRect.size.height),
+                cc.p(flipXOffset, flipYOffset - locRect.size.height)];
             cc.drawingUtil.drawPoly(vertices1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
@@ -2100,7 +2101,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if(arguments.length > 0)
             return this.initWithFile(arguments[0], arguments[1]);
 
-        this._super();
+        cc.NodeWebGL.prototype.init.call(this);
 
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
