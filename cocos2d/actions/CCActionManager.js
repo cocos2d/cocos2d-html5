@@ -113,15 +113,16 @@ cc.ActionManager = cc.Class.extend({
         for (var i = 0; i < this._targets.length; i++) {
             var element = this._targets[i];
             if (element) {
-                this.removeAllActionsFromTarget(element.target);
+                this.removeAllActionsFromTarget(element.target, true);
             }
         }
     },
     /** Removes all actions from a certain target. <br/>
      * All the actions that belongs to the target will be removed.
      * @param {object} target
+     * @param {boolean} forceDelete
      */
-    removeAllActionsFromTarget:function (target) {
+    removeAllActionsFromTarget:function (target, forceDelete) {
         // explicit null handling
         if (target == null) {
             return;
@@ -130,12 +131,12 @@ cc.ActionManager = cc.Class.extend({
 
         //var element = (target in this._targets)? this._targets[ptarget]: null;
         if (element) {
-            if (element.currentAction in element.actions && !(element.currentActionSalvaged)) {
+            if (element.actions.indexOf(element.currentAction) !== -1 && !(element.currentActionSalvaged)) {
                 element.currentActionSalvaged = true;
             }
 
             element.actions = [];
-            if (this._currentTarget == element) {
+            if (this._currentTarget == element && !forceDelete) {
                 this._currentTargetSalvaged = true;
             } else {
                 this._deleteHashElement(element);
