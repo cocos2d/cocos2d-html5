@@ -166,7 +166,7 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         if (this._soundEnable) {
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
-            if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
+            if (this.isFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
                 if(this._canPlay){
                     var sfxCache = new cc.SimpleSFX();
                     sfxCache.ext = extName;
@@ -603,7 +603,12 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         }
     },
 
-    _checkAudioFormatSupported:function (ext) {
+    /**
+     * search in this._supportedFormat if @param ext is there
+     * @param {String} ext
+     * @returns {Boolean}
+     */
+    isFormatSupported:function (ext) {
         var tmpExt;
         for (var i = 0; i < this._supportedFormat.length; i++) {
             tmpExt = this._supportedFormat[i];
@@ -732,9 +737,8 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
      * search in this._supportedFormat if @param ext is there
      * @param {String} ext
      * @returns {Boolean}
-     * @private
      */
-    _isFormatSupported: function(ext) {
+    isFormatSupported: function(ext) {
         for (var idx in this._supportedFormat) {
             if (ext === this._supportedFormat[idx]) {
                 return true;
@@ -780,7 +784,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         var keyName = this._getPathWithoutExt(path);
 
         // not supported, already loaded, already loading
-        if (!this._isFormatSupported(extName) || keyName in this._audioData || keyName in this._audiosLoading) {
+        if (!this.isFormatSupported(extName) || keyName in this._audioData || keyName in this._audiosLoading) {
             cc.Loader.getInstance().onResLoaded();
             return;
         }
@@ -930,7 +934,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
         if (keyName in this._audioData) {
             // already loaded, just play it
             this._music = this._beginSound(keyName, loop, this.getMusicVolume());
-        } else if (this._isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+        } else if (this.isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;
@@ -1146,7 +1150,7 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
             }
             // no new sound was created to replace an old one in the list, then just append one
             effectList.push(this._beginSound(keyName, loop, this.getEffectsVolume()));
-        } else if (this._isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+        } else if (this.isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
             // load now only if the type is supported and it is not being loaded currently
             this._audiosLoading[keyName] = true;
             var engine = this;
