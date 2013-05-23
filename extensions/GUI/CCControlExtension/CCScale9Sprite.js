@@ -180,6 +180,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
     setOpacity: function (opacity) {
         this._opacity = opacity;
+        var scaleChildren = this._scale9Image.getChildren();
+        for (var i = 0; i < scaleChildren.length; i++) {
+            if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
+                scaleChildren[i].setOpacity(this._opacity);
+            }
+        }
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -189,11 +195,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     setColor: function (color) {
         this._color = color;
         var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren && scaleChildren.length != 0) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
-                    scaleChildren[i].setColor(this._color);
-                }
+        for (var i = 0; i < scaleChildren.length; i++) {
+            if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
+                scaleChildren[i].setColor(this._color);
             }
         }
     },
@@ -682,26 +686,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
-    },
-
-    setColor: function (color) {
-        this._color = color;
-        var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                scaleChildren[i].setColor(this._color);
-            }
-        }
-    },
-
-    setOpacity: function (opacity) {
-        this._opacity = opacity;
-        var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                scaleChildren[i].setOpacity(this._color);
-            }
-        }
     }
 });
 
