@@ -942,7 +942,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     initWithFile:function (filename, rect) {
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
-        var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
+        var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             this._visible = false;
             var loadImg = new Image();
@@ -2134,7 +2134,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
 
-        var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
+        var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             this._visible = false;
             var loadImg = new Image();
