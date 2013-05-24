@@ -187,46 +187,47 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         if (!array || array.length === 0)
             return;
 
-        var i;
+        var i, len = array.length;
+        var nodeCallbackType = cc.Node.StateCallbackType;
         switch (callbackType) {
-            case cc.Node.StateCallbackType.onEnter:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onEnter:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onEnter();
                 }
                 break;
-            case cc.Node.StateCallbackType.onExit:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onExit:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onExit();
                 }
                 break;
-            case cc.Node.StateCallbackType.onEnterTransitionDidFinish:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onEnterTransitionDidFinish:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onEnterTransitionDidFinish();
                 }
                 break;
-            case cc.Node.StateCallbackType.cleanup:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.cleanup:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].cleanup();
                 }
                 break;
-            case cc.Node.StateCallbackType.updateTransform:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.updateTransform:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].updateTransform();
                 }
                 break;
-            case cc.Node.StateCallbackType.onExitTransitionDidStart:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onExitTransitionDidStart:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onExitTransitionDidStart();
                 }
                 break;
-            case cc.Node.StateCallbackType.sortAllChildren:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.sortAllChildren:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].sortAllChildren();
                 }
@@ -336,19 +337,19 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         return this._rotationX;
     },
 
-    _rotationRadiansX:0,
-        _rotationRadiansY:0,
-/**
- * rotation setter
- * @param {Number} newRotation
- */
-    setRotation:function (newRotation) {
-    this._rotationX = this._rotationY = newRotation;
-    this._rotationRadiansX = this._rotationX * (Math.PI / 180);
-    this._rotationRadiansY = this._rotationY * (Math.PI / 180);
+    _rotationRadiansX: 0,
+    _rotationRadiansY: 0,
+    /**
+     * rotation setter
+     * @param {Number} newRotation
+     */
+    setRotation: function (newRotation) {
+        this._rotationX = this._rotationY = newRotation;
+        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
+        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
 
-    this.setNodeDirty();
-},
+        this.setNodeDirty();
+    },
 
     /**
      * The rotation (angle) of the node in degrees. 0 is the default rotation angle. <br/>
@@ -556,7 +557,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     setAnchorPoint:function (point) {
         if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
             this._anchorPoint = new cc.Point(point.x, point.y);
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+            this._anchorPointInPoints = new cc.Point(this._contentSize.width * point.x, this._contentSize.height * point.y);
             this.setNodeDirty();
         }
     },
@@ -788,9 +789,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     getChildByTag:function (aTag) {
         //cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
-        if (this._children != null) {
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+        var __children = this._children;
+        if (__children != null) {
+            for (var i = 0; i < __children.length; i++) {
+                var node = __children[i];
                 if (node && node._tag == aTag)
                     return node;
             }
@@ -903,7 +905,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
      * @deprecated
-     * @param {Boolean} cleanup
+     * @param {Boolean | null} cleanup
      */
     removeAllChildrenWithCleanup:function (cleanup) {
         cc.log("removeAllChildrenWithCleanup is deprecated. Use removeAllChildren instead");
@@ -913,15 +915,16 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Boolean} cleanup
+     * @param {Boolean | null } cleanup
      */
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
-        if (this._children != null) {
+        var __children = this._children;
+        if (__children != null) {
             if (cleanup == null)
                 cleanup = true;
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+            for (var i = 0; i < __children.length; i++) {
+                var node = __children[i];
                 if (node) {
                     // IMPORTANT:
                     //  -1st do onExit
@@ -972,14 +975,15 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     _insertChild:function (child, z) {
         this._reorderChildDirty = true;
-        var a = this._children[this._children.length - 1];
+        var __children = this._children;
+        var a = __children[__children.length - 1];
         if (!a || a.getZOrder() <= z)
-            this._children.push(child);
+            __children.push(child);
         else {
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+            for (var i = 0; i < __children.length; i++) {
+                var node = __children[i];
                 if (node && (node.getZOrder() > z )) {
-                    this._children = cc.ArrayAppendObjectToIndex(this._children, child, i);
+                    this._children = cc.ArrayAppendObjectToIndex(__children, child, i);
                     break;
                 }
             }
@@ -1524,11 +1528,13 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         if (this._camera != null && !(this._grid != null && this._grid.isActive())) {
             var apx = this._anchorPointInPoints.x, apy = this._anchorPointInPoints.y;
             var translate = (apx !== 0.0 || apy !== 0.0);
-            if (translate)
+            if (translate){
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(apx), cc.RENDER_IN_SUBPIXEL(apy), 0);
-            this._camera.locate();
-            if (translate)
+                this._camera.locate();
                 cc.kmGLTranslatef(cc.RENDER_IN_SUBPIXEL(-apx), cc.RENDER_IN_SUBPIXEL(-apy), 0);
+            } else {
+                this._camera.locate();
+            }
         }
     },
 
@@ -1809,49 +1815,50 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @private
      */
     _arrayMakeObjectsPerformSelector:function (array, callbackType) {
-        if (!array || array.length == 0)
+        if (!array || array.length === 0)
             return;
 
-        var i;
+        var i, len = array.length;
+        var nodeCallbackType = cc.Node.StateCallbackType;
         switch (callbackType) {
-            case cc.Node.StateCallbackType.onEnter:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onEnter:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onEnter();
                 }
                 break;
-            case cc.Node.StateCallbackType.onExit:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onExit:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onExit();
                 }
                 break;
-            case cc.Node.StateCallbackType.onEnterTransitionDidFinish:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onEnterTransitionDidFinish:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onEnterTransitionDidFinish();
                 }
                 break;
-            case cc.Node.StateCallbackType.cleanup:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.cleanup:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].cleanup();
                 }
                 break;
-            case cc.Node.StateCallbackType.updateTransform:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.updateTransform:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].updateTransform();
                 }
                 break;
-            case cc.Node.StateCallbackType.onExitTransitionDidStart:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.onExitTransitionDidStart:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].onExitTransitionDidStart();
                 }
                 break;
-            case cc.Node.StateCallbackType.sortAllChildren:
-                for (i = 0; i < array.length; i++) {
+            case nodeCallbackType.sortAllChildren:
+                for (i = 0; i < len; i++) {
                     if (array[i])
                         array[i].sortAllChildren();
                 }
@@ -2181,7 +2188,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     setAnchorPoint:function (point) {
         if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
             this._anchorPoint = new cc.Point(point.x, point.y);
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+            this._anchorPointInPoints = new cc.Point(this._contentSize.width * point.x, this._contentSize.height * point.y);
             this.setNodeDirty();
         }
     },
@@ -2413,9 +2420,10 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     getChildByTag:function (aTag) {
         //cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
-        if (this._children != null) {
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+        var __children = this._children;
+        if (__children != null) {
+            for (var i = 0; i < __children.length; i++) {
+                var node = __children[i];
                 if (node && node._tag == aTag)
                     return node;
             }
@@ -2528,7 +2536,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter.
      * @deprecated
-     * @param {Boolean} cleanup
+     * @param {Boolean | null } cleanup
      */
     removeAllChildrenWithCleanup:function (cleanup) {
         cc.log("removeAllChildrenWithCleanup is deprecated. Use removeAllChildren instead");
@@ -2538,15 +2546,16 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Boolean} cleanup
+     * @param {Boolean | null } cleanup
      */
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
-        if (this._children != null) {
+        var __children = this._children;
+        if (__children != null) {
             if (cleanup == null)
                 cleanup = true;
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+            for (var i = 0; i < __children.length; i++) {
+                var node = __children[i];
                 if (node) {
                     // IMPORTANT:
                     //  -1st do onExit
@@ -2597,14 +2606,15 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      */
     _insertChild:function (child, z) {
         this._reorderChildDirty = true;
-        var a = this._children[this._children.length - 1];
+        var __children = this._children;
+        var a = __children[__children.length - 1];
         if (!a || a.getZOrder() <= z)
-            this._children.push(child);
+            __children.push(child);
         else {
-            for (var i = 0; i < this._children.length; i++) {
-                var node = this._children[i];
+            for (var i = 0; i < __children.length; i++) {
+                var node = __children[i];
                 if (node && (node.getZOrder() > z )) {
-                    this._children = cc.ArrayAppendObjectToIndex(this._children, child, i);
+                    this._children = cc.ArrayAppendObjectToIndex(__children, child, i);
                     break;
                 }
             }
@@ -3125,18 +3135,21 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             t.c = -Sin;
             t.b = Sin;
 
+            var lScaleX = this._scaleX, lScaleY = this._scaleY;
+            var appX = this._anchorPointInPoints.x, appY = this._anchorPointInPoints.y;
+
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
-            var sx = (this._scaleX < 0.000001 && this._scaleX > -0.000001)?  0.000001 :this._scaleX,
-                sy = (this._scaleY < 0.000001 && this._scaleY > -0.000001)? 0.000001 : this._scaleY;
+            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001)?  0.000001 : lScaleX,
+                sy = (lScaleY < 0.000001 && lScaleY > -0.000001)? 0.000001 : lScaleY;
 
             // skew
             if (this._skewX || this._skewY) {
                 // offset the anchorpoint
                 var skx = Math.tan(-this._skewX * Math.PI / 180);
                 var sky = Math.tan(-this._skewY * Math.PI / 180);
-                var xx = this._anchorPointInPoints.y * skx * sx;
-                var yy = this._anchorPointInPoints.x * sky * sy;
+                var xx = appY * skx * sx;
+                var yy = appX * sky * sy;
                 t.a = Cos + -Sin * sky;
                 t.c = Cos * skx + -Sin;
                 t.b = Sin + Cos * sky;
@@ -3146,7 +3159,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             }
 
             // scale
-            if (this._scaleX !== 1 || this._scaleY !== 1) {
+            if (lScaleX !== 1 || lScaleY !== 1) {
                 t.a *= sx;
                 t.b *= sx;
                 t.c *= sy;
@@ -3154,13 +3167,13 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
             }
 
             // adjust anchorPoint
-            t.tx += Cos * -this._anchorPointInPoints.x * sx + -Sin * this._anchorPointInPoints.y * sy;
-            t.ty -= Sin * -this._anchorPointInPoints.x * sx + Cos * this._anchorPointInPoints.y * sy;
+            t.tx += Cos * -appX * sx + -Sin * appY * sy;
+            t.ty -= Sin * -appX * sx + Cos * appY * sy;
 
             // if ignore anchorPoint
             if (this._ignoreAnchorPointForPosition) {
-                t.tx += this._anchorPointInPoints.x;
-                t.ty += this._anchorPointInPoints.y;
+                t.tx += appX
+                t.ty += appY;
             }
 
             if (this._additionalTransformDirty) {
@@ -3205,13 +3218,13 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         if (!this._children)
             return rect;
 
-        for (var i = 0; i < this._children.length; i++) {
-            var child = this._children[i];
+        var locChildren = this._children;
+        for (var i = 0; i < locChildren.length; i++) {
+            var child = locChildren[i];
             if (child && child._visible) {
                 var childRect = child.getBoundingBoxToWorld();
-                if (childRect) {
-                    rect = cc.Rect.CCRectUnion(rect, childRect);
-                }
+                if (childRect)
+                    rect = cc.rectUnion(rect, childRect);
             }
         }
         return rect;
@@ -3263,7 +3276,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     _cascadeOpacityEnabled:false,
 
     ctor:function(){
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._displayedOpacity = 255;
         this._realOpacity = 255;
         this._displayedColor = cc.WHITE;
@@ -3273,7 +3286,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     init:function(){
-        if(this._super()){
+        if(cc.Node.prototype.init.call(this)){
             this._displayedOpacity = this._realOpacity = 255;
             this._displayedColor = cc.WHITE;
             this._realColor = cc.WHITE;

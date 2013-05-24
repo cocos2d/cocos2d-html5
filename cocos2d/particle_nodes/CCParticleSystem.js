@@ -747,22 +747,22 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     //don't use a transform matrix, this is faster
     setScale:function (scale, scaleY) {
         this._transformSystemDirty = true;
-        this._super(scale, scaleY);
+        cc.Node.prototype.setScale.call(this, scale, scaleY);
     },
 
     setRotation:function (newRotation) {
         this._transformSystemDirty = true;
-        this._super(newRotation);
+        cc.Node.prototype.setRotation.call(this, newRotation);
     },
 
     setScaleX:function (newScaleX) {
         this._transformSystemDirty = true;
-        this._super(newScaleX);
+        cc.Node.prototype.setScaleX.call(this, newScaleX);
     },
 
     setScaleY:function (newScaleY) {
         this._transformSystemDirty = true;
-        this._super(newScaleY);
+        cc.Node.prototype.setScaleY.call(this, newScaleY);
     },
 
 
@@ -1186,7 +1186,7 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * @override
      */
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._emitterMode = cc.PARTICLE_MODE_GRAVITY;
         this.modeA = new cc.ParticleSystem.ModeA();
         this.modeB = new cc.ParticleSystem.ModeB();

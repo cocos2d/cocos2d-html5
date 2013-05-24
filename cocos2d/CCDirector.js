@@ -404,7 +404,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._dirtyRegion = cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
             return;
         }
-        this._dirtyRegion = cc.Rect.CCRectUnion(this._dirtyRegion,
+        this._dirtyRegion = cc.rectUnion(this._dirtyRegion,
             cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
     },
 
@@ -412,7 +412,7 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         if (!rect || !this._fullRect)
             return false;
 
-        return cc.Rect.CCRectIntersectsRect(this._fullRect, rect);
+        return cc.rectIntersectsRect(this._fullRect, rect);
     },
 
     /**

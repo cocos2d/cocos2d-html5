@@ -353,7 +353,7 @@ cc.ScrollView = cc.Layer.extend({
 
         //dispatcher does not know about clipping. reject touches outside visible bounds.
         var locPoint = this._container.convertToWorldSpace(this._container.convertTouchToNodeSpace(touch));
-        if (this._touches.length > 2 || this._touchMoved || !cc.Rect.CCRectContainsPoint(frame, locPoint))
+        if (this._touches.length > 2 || this._touchMoved || !cc.rectContainsPoint(frame, locPoint))
             return false;
 
         //if (!cc.ArrayContainsObject(this._touches, touch)) {
@@ -390,7 +390,7 @@ cc.ScrollView = cc.Layer.extend({
             var moveDistance = cc.pSub(newPoint, this._touchPoint);
             this._touchPoint = newPoint;
 
-            if (cc.Rect.CCRectContainsPoint(frame, this.convertToWorldSpace(newPoint))) {
+            if (cc.rectContainsPoint(frame, this.convertToWorldSpace(newPoint))) {
                 switch (this._direction) {
                     case cc.SCROLLVIEW_DIRECTION_VERTICAL:
                         moveDistance = cc.p(0.0, moveDistance.y);

@@ -117,10 +117,10 @@ cc.AffineTransformIdentity = function () {
  * Constructor
  */
 cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
-    var top = cc.Rect.CCRectGetMinY(rect);
-    var left = cc.Rect.CCRectGetMinX(rect);
-    var right = cc.Rect.CCRectGetMaxX(rect);
-    var bottom = cc.Rect.CCRectGetMaxY(rect);
+    var top = cc.rectGetMinY(rect);
+    var left = cc.rectGetMinX(rect);
+    var right = cc.rectGetMaxX(rect);
+    var bottom = cc.rectGetMaxY(rect);
 
     var topLeft = cc.PointApplyAffineTransform(cc.p(left, top), anAffineTransform);
     var topRight = cc.PointApplyAffineTransform(cc.p(right, top), anAffineTransform);

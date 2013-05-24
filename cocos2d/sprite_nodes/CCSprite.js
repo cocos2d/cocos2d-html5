@@ -413,22 +413,6 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     },
 
     /**
-     * return the SpriteBatchNode of the cc.Sprite
-     * @return {cc.SpriteBatchNode}
-     */
-    getSpriteBatchNode:function () {
-        return this._batchNode;
-    },
-
-    /**
-     * set the SpriteBatchNode of the cc.Sprite
-     * @param {cc.SpriteBatchNode} spriteBatchNode
-     */
-    setSpriteBatchNode:function (spriteBatchNode) {
-        this._batchNode = spriteBatchNode;
-    },
-
-    /**
      * Get offset position of the sprite. Calculated automatically by editors like Zwoptex.
      * @return {cc.Point}
      */
@@ -541,7 +525,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
     },
 
     /**
@@ -553,7 +537,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     removeChild:function (child, cleanup) {
         if (this._batchNode)
             this._batchNode.removeSpriteFromAtlas(child);
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -565,14 +549,14 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if (this._batchNode) {
             if (this._children != null) {
                 for (var i = 0; i < this._children.length; i++) {
-                    if (this._children[i] instanceof cc.Sprite) {
-                        this._batchNode.removeSpriteFromAtlas(this._children[i]);
-                    }
+                    //if (this._children[i] instanceof cc.Sprite) {
+                    this._batchNode.removeSpriteFromAtlas(this._children[i]);
+                    //}
                 }
             }
         }
 
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._hasChildren = false;
     },
 
@@ -731,7 +715,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      */
     ignoreAnchorPointForPosition:function (relative) {
         cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
-        this._super(relative);
+        cc.Node.prototype.ignoreAnchorPointForPosition.call(this,relative);
     },
 
     /**
@@ -871,7 +855,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement} fileName sprite construct parameter
      */
     ctor:function (fileName) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -1115,7 +1099,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             tag = child._tag;
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this._hasChildren = true;
     },
 
@@ -1707,7 +1691,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
     },
 
     /**
@@ -1719,7 +1703,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     removeChild:function (child, cleanup) {
         if (this._batchNode)
             this._batchNode.removeSpriteFromAtlas(child);
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -1731,14 +1715,14 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if (this._batchNode) {
             if (this._children != null) {
                 for (var i = 0; i < this._children.length; i++) {
-                    if (this._children[i] instanceof cc.Sprite) {
-                        this._batchNode.removeSpriteFromAtlas(this._children[i]);
-                    }
+                    //if (this._children[i] instanceof cc.Sprite) {
+                    this._batchNode.removeSpriteFromAtlas(this._children[i]);
+                    //}
                 }
             }
         }
 
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._hasChildren = false;
     },
 
@@ -1897,7 +1881,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      */
     ignoreAnchorPointForPosition:function (relative) {
         cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
-        this._super(relative);
+        cc.Node.prototype.ignoreAnchorPointForPosition.call(this,relative);
     },
 
     /**
@@ -2037,7 +2021,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
      */
     ctor:function (fileName) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -2394,7 +2378,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         }
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this._hasChildren = true;
     },
     /**
