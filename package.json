@@ -1,0 +1,25 @@
+{
+  "name": "cocos2d-html5",
+  "version": "2.1.3",
+  "description": "html5 port of cocos2d-x game engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/junxiong/cocos2d-html5.git"
+  },
+  "keywords": [
+    "html5",
+    "game",
+    "engine"
+  ],
+  "author": "",
+  "license": "BSD",
+  "gitHead": "7231a035214f492d0c2e0d9acccc116b0115b871",
+  "readmeFilename": "README.mdown",
+  "devDependencies": {
+    "grunt": "~0.4.1"
+  }
+}

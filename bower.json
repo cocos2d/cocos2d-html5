@@ -1,0 +1,10 @@
+{
+  "name": "cocos2d-html5",
+  "version": "2.1.3",
+  "main": "index.js",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "components"
+  ]
+}
