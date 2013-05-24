@@ -77,7 +77,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
 
     ctor:function(){
         this._viewName = "Cocos2dHTML5";
-        this._screenSize = cc.SizeZero();
+        this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
         this._designResolutionSize = cc.SizeZero();
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
