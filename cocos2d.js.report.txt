@@ -1,0 +1,77 @@
+cocos2d\label_nodes\CCLabelBMFont.js:202: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+        if (line) {
+        ^
+
+cocos2d\physics_nodes\CCPhysicsDebugNode.js:106: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+    } else if (constraint instanceof cp.DampedSpring) {
+           ^
+
+cocos2d\platform\CCEGLView.js:164: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+        if (isOpen) {
+        ^
+
+cocos2d\platform\gzip.js:44: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+    if (string.constructor === Array) {
+    ^
+
+cocos2d\platform\gzip.js:45: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+    } else if (string.constructor === String) {
+           ^
+
+cocos2d\platform\gzip.js:298: WARNING - unreachable code
+    return -1;
+    ^
+
+cocos2d\platform\zlib.min.js:14: WARNING - If this if/for/while really shouldnt have a body, use {}
+1,v);x.d(B,2,v);k=sa(this,f);W=ta(this.L,15);Ma=ua(W);ea=ta(this.K,7);Na=ua(ea);for(p=286;257<p&&0===W[p-1];p--);for(D=30;1<D&&0===ea[D-1];D--);var Qa=p,Ra=D,M=new (H?Uint32Array:Array)(Qa+Ra),u,O,w,fa,L=new (H?Uint32Array:Array)(316),I,G,P=new (H?Uint8Array:Array)(19);for(u=O=0;u<Qa;u++)M[O++]=W[u];for(u=0;u<Ra;u++)M[O++]=ea[u];if(!H){u=0;for(fa=P.length;u<fa;++u)P[u]=0}u=I=0;for(fa=M.length;u<fa;u+=O){for(O=1;u+O<fa&&M[u+O]===M[u];++O);w=O;if(0===M[u])if(3>w)for(;0<w--;)L[I++]=0,P[0]++;else for(;0<
+                                                                                                                ^
+
+cocos2d\platform\zlib.min.js:14: WARNING - If this if/for/while really shouldnt have a body, use {}
+1,v);x.d(B,2,v);k=sa(this,f);W=ta(this.L,15);Ma=ua(W);ea=ta(this.K,7);Na=ua(ea);for(p=286;257<p&&0===W[p-1];p--);for(D=30;1<D&&0===ea[D-1];D--);var Qa=p,Ra=D,M=new (H?Uint32Array:Array)(Qa+Ra),u,O,w,fa,L=new (H?Uint32Array:Array)(316),I,G,P=new (H?Uint8Array:Array)(19);for(u=O=0;u<Qa;u++)M[O++]=W[u];for(u=0;u<Ra;u++)M[O++]=ea[u];if(!H){u=0;for(fa=P.length;u<fa;++u)P[u]=0}u=I=0;for(fa=M.length;u<fa;u+=O){for(O=1;u+O<fa&&M[u+O]===M[u];++O);w=O;if(0===M[u])if(3>w)for(;0<w--;)L[I++]=0,P[0]++;else for(;0<
+                                                                                                                                               ^
+
+cocos2d\platform\zlib.min.js:14: WARNING - If this if/for/while really shouldnt have a body, use {}
+1,v);x.d(B,2,v);k=sa(this,f);W=ta(this.L,15);Ma=ua(W);ea=ta(this.K,7);Na=ua(ea);for(p=286;257<p&&0===W[p-1];p--);for(D=30;1<D&&0===ea[D-1];D--);var Qa=p,Ra=D,M=new (H?Uint32Array:Array)(Qa+Ra),u,O,w,fa,L=new (H?Uint32Array:Array)(316),I,G,P=new (H?Uint8Array:Array)(19);for(u=O=0;u<Qa;u++)M[O++]=W[u];for(u=0;u<Ra;u++)M[O++]=ea[u];if(!H){u=0;for(fa=P.length;u<fa;++u)P[u]=0}u=I=0;for(fa=M.length;u<fa;u+=O){for(O=1;u+O<fa&&M[u+O]===M[u];++O);w=O;if(0===M[u])if(3>w)for(;0<w--;)L[I++]=0,P[0]++;else for(;0<
+                                                                                                                                                                                                                                                                                                                                                                                                                                                         ^
+
+cocos2d\platform\zlib.min.js:15: WARNING - If this if/for/while really shouldnt have a body, use {}
+w;)G=138>w?w:138,G>w-3&&G<w&&(G=w-3),10>=G?(L[I++]=17,L[I++]=G-3,P[17]++):(L[I++]=18,L[I++]=G-11,P[18]++),w-=G;else if(L[I++]=M[u],P[M[u]]++,w--,3>w)for(;0<w--;)L[I++]=M[u],P[M[u]]++;else for(;0<w;)G=6>w?w:6,G>w-3&&G<w&&(G=w-3),L[I++]=16,L[I++]=G-3,P[16]++,w-=G}a=H?L.subarray(0,I):L.slice(0,I);na=ta(P,7);for(F=0;19>F;F++)va[F]=na[da[F]];for(C=19;4<C&&0===va[C-1];C--);Oa=ua(na);x.d(p-257,5,v);x.d(D-1,5,v);x.d(C-4,4,v);for(F=0;F<C;F++)x.d(va[F],3,v);F=0;for(Pa=a.length;F<Pa;F++)if($=a[F],x.d(Oa[$],
+                                                                                                                                                                                                                                                                                                                                                                                 ^
+
+cocos2d\shaders\CCGLStateCache.js:307: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+    if (cc.ENABLE_GL_STATE_CACHE) {
+    ^
+
+cocos2d\sprite_nodes\CCSprite.js:78: WARNING - Suspicious code. The result of the 'getprop' operator is not being used.
+            cacheCtx.getImageData(0, 0, w, h).data;
+            ^
+
+cocos2d\support\CCTIFFReader.js:74: WARNING - unreachable code
+            return false;
+            ^
+
+cocos2d\support\CCTIFFReader.js:478: WARNING - Suspicious code. The result of the 'lt' operator is not being used.
+                for (var y = 0, j = 0; y < numRowsInStrip, j < numPixels; y++) {
+                                       ^
+
+cocos2d\text_input_node\CCIMEDispatcher.js:475: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+            } else if (keyCode == cc.KEY.tab) {
+                   ^
+
+cocos2d\text_input_node\CCIMEDispatcher.js:477: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+            } else if (keyCode == cc.KEY.escape) {
+                   ^
+
+extensions\CCBReader\CCBReader.js:423: WARNING - If this if/for/while really shouldnt have a body, use {}
+        for (++b; --b; a = ((a %= 0x7fffffff + 1) & 0x40000000) == 0x40000000 ? a * 2 : (a - 0x40000000) * 2 + 0x7fffffff + 1);
+                                                                                                                              ^
+
+extensions\CCBReader\CCBValue.js:80: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+    if(ret){
+    ^
+
+extensions\CCBReader\CCBValue.js:81: WARNING - Suspicious code. This code lacks side-effects. Is there a bug?
+        if(typeof(value) == "number"){
+        ^
+
+0 error(s), 19 warning(s)
