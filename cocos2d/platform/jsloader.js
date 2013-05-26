@@ -139,7 +139,7 @@
     ];
 
     var d = document;
-    var c = d.ccConfig;
+    var c = d["ccConfig"];
 
     if (c.loadExtension != null && c.loadExtension == true) {
         engine = engine.concat([
