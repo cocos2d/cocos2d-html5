@@ -154,6 +154,7 @@ module.exports = (grunt) ->
         jsOutputFile: 'cocos2d.js'
         options:
           compilation_level: 'SIMPLE_OPTIMIZATIONS'
+          warning_level: 'QUIET'
           debug: false
           externs: [
             'cocos2d/cocos2d_externs.js'
