@@ -136,11 +136,6 @@ cc.SHADER_POSITION_UCOLOR = "ShaderPosition_uColor";
  * @type {String}
  */
 cc.SHADER_POSITION_LENGTHTEXTURECOLOR = "ShaderPositionLengthTextureColor";
-/**
- * @constant
- * @type {String}
- */
-cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE = "ShaderPositionTextureColorBatchNode";
 
 //------------uniform names----------------
 /**

@@ -55,7 +55,6 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
     _buffersVBO:null,
 
     _pointRect:null,
-    _mvpMatrix:null,
     /**
      * Constructor
      * @override
@@ -69,7 +68,6 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         if (cc.renderContextType === cc.WEBGL) {
             this._quadsArrayBuffer = null;
-            this._mvpMatrix = new cc.kmMat4();
         }
     },
 
@@ -336,7 +334,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             //else
             this._setupVBO();
 
-            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE));
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
             return true;
         }
         return false;
@@ -590,7 +588,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var gl = ctx || cc.renderContext;
 
         this._shaderProgram.use();
-        this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+        this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
         cc.glBindTexture2D(this._texture);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);

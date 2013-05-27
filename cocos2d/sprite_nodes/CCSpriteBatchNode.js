@@ -1183,8 +1183,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         this._textureAtlas = new cc.TextureAtlas();
         this._textureAtlas.initWithTexture(tex, capacity);
         this._updateBlendFunc();
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE));
-        //this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
         return true;
     },
     /**
@@ -1420,8 +1419,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
 
         //cc.NODE_DRAW_SETUP(this);
         this._shaderProgram.use();
-        this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
-        //this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
+        this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
