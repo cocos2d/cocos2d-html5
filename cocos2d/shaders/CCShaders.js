@@ -324,7 +324,6 @@ cc.SHADER_POSITION_TEXTURE_COLOR_BATCHNODE_VERT =
         + "void main()                                  \n"
         + "{                                            \n"
         + "    gl_Position = CC_MVPMatrix * a_position;  \n"
-        //+ "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "    v_fragmentColor = a_color;               \n"
         + "    v_texCoord = a_texCoord;                 \n"
         + "}";

@@ -180,6 +180,12 @@ cc.ShaderCache = cc.Class.extend({
         this._programs[cc.SHADER_POSITION_TEXTURECOLOR] = program;
         this._programs["ShaderPositionTextureColor"] = program;
 
+        // Position Texture Color for BatchNode shader
+        program = new cc.GLProgram();
+        this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURECOLOR_BATCHNODE);
+        this._programs[cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE] = program;
+        this._programs["ShaderPositionTextureColorBatchNode"] = program;
+
         // Position Texture Color alpha test
         program = new cc.GLProgram();
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURECOLOR_ALPHATEST);
@@ -233,12 +239,6 @@ cc.ShaderCache = cc.Class.extend({
         this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_LENGTH_TEXTURECOLOR);
         this._programs[cc.SHADER_POSITION_LENGTHTEXTURECOLOR] = program;
         this._programs["ShaderPositionLengthTextureColor"] = program;
-
-        // Position Texture Color for BatchNode shader
-        program = new cc.GLProgram();
-        this._loadDefaultShader(program, cc.SHADERTYPE_POSITION_TEXTURECOLOR_BATCHNODE);
-        this._programs[cc.SHADER_POSITION_TEXTURECOLOR_BATCHNODE] = program;
-        this._programs["ShaderPositionTextureColorBatchNode"] = program;
     },
 
     /**
