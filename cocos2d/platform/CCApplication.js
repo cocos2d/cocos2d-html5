@@ -24,6 +24,15 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Device type
+ * @constant
+ * @type {Object}
+ */
+cc.TARGET_PLATFORM = {
+    MOBILE:0,
+    PC:1
+};
 
 /**
  * Device oriented vertically, home button on the bottom
@@ -306,6 +315,7 @@ cc.setContextMenuEnable = function (enabled) {
  * @extends cc.Class
  */
 cc.Application = cc.Class.extend(/** @lends cc.Application# */{
+    _animationInterval:null,
     /**
      * Constructor
      */
@@ -335,6 +345,10 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         }
     },
 
+    getTargetPlatform:function(){
+        return cc.Browser.isMobile ? cc.TARGET_PLATFORM.MOBILE : cc.TARGET_PLATFORM.PC;
+    },
+
     /**
      * Run the message loop.
      * @return {Number}
@@ -344,7 +358,6 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         if (!this.applicationDidFinishLaunching())
             return 0;
 
-        // TODO, need to be fixed.
         var callback;
         if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
             callback = function () {
@@ -360,8 +373,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             setInterval(callback, this._animationInterval * 1000);
         }
         return 0;
-    },
-    _animationInterval:null
+    }
 });
 
 /**

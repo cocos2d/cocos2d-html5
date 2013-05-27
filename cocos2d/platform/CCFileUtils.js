@@ -683,7 +683,7 @@ cc.FileUtils = cc.Class.extend({
         this._searchPathArray.push(path);
     },
     isAbsolutePath:function (strPath) {
-        return strPath[0] == '/' ? true : false;
+        return (strPath[0] == '/');
     }
 });
 
