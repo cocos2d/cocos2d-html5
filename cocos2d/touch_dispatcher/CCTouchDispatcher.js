@@ -589,7 +589,6 @@ cc.getHTMLElementPosition = function (element) {
     var box = null;
     if (typeof element.getBoundingClientRect === 'function') {
         box = element.getBoundingClientRect();
-
     } else {
         if (element instanceof HTMLCanvasElement) {
             box = {
@@ -619,7 +618,7 @@ cc.ProcessMouseupEvent = function (element, event) {
     var pos = cc.getHTMLElementPosition(element);
 
     var tx, ty;
-    if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+    if (event.pageX != null) { //not avalable in <= IE8
         tx = event.pageX;
         ty = event.pageY;
     } else {
@@ -659,7 +658,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if (event.pageX != null) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
@@ -688,7 +687,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if (event.pageX != null) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
@@ -718,7 +717,7 @@ cc.TouchDispatcher.registerHtmlElementEvent = function (element) {
             var pos = cc.getHTMLElementPosition(element);
 
             var tx, ty;
-            if (event.hasOwnProperty("pageX")) { //not avalable in <= IE8
+            if (event.pageX != null) { //not avalable in <= IE8
                 tx = event.pageX;
                 ty = event.pageY;
             } else {
