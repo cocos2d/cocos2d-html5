@@ -106,19 +106,16 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     setQuads:function (quads) {
         this._quads = quads;
-        this._resetQuadsToTypeArray(0);
+        //TODO need re-binding
     },
 
-    _resetQuadsToTypeArray:function (startIndex) {
-        if (this._quads.length > this._capacity)
-            throw "out capacity";
-        if (startIndex > this._quads.length)
-            throw "out length";
+    _copyQuadsToTextureAtlas:function(quads, index){
+        if(!quads)
+            return;
 
-        for (var i = startIndex; i < this._quads.length; i++) {
-            this._setQuadToArray(this._quads[i], i);
+        for(var i = 0; i < quads.length ; i++){
+            this._setQuadToArray(quads[i], index + i);
         }
-        this._dirty = true;
     },
 
     _setQuadToArray: function (quad, index) {
@@ -274,12 +271,13 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._totalQuads++;
         cc.Assert(this._totalQuads <= this._capacity, "invalid totalQuads");
 
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         // issue #575. index can be > totalQuads
         var remaining = (this._totalQuads-1) - index;
-        var startOffset = index * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-        var moveLength = remaining * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-        this._quads[this._totalQuads -1] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, (this._totalQuads -1) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
-        this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+        var startOffset = index * quadSize;
+        var moveLength = remaining * quadSize;
+        this._quads[this._totalQuads -1] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, (this._totalQuads -1) * quadSize);
+        this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + quadSize);
 
         this._setQuadToArray(quad, index);
         this._dirty = true;
@@ -297,6 +295,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     insertQuads:function (quads, index, amount) {
         amount = amount || quads.length;
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
 
         cc.Assert(index + amount <= this._capacity, "insertQuadWithTexture: Invalid index + amount");
         this._totalQuads += amount;
@@ -304,14 +303,14 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         // issue #575. index can be > totalQuads
         var remaining = (this._totalQuads-1) - index - amount;
-        var startOffset = index * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-        var moveLength = remaining * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var startOffset = index * quadSize;
+        var moveLength = remaining * quadSize;
         var lastIndex = (this._totalQuads-1)  - amount;
 
         var i;
         for(i = 0; i < amount;i++)
-            this._quads[lastIndex + i] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, (this._totalQuads -1) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
-        this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT * amount);
+            this._quads[lastIndex + i] = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, (this._totalQuads -1) * quadSize);
+        this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset + quadSize * amount);
         for(i = 0; i < amount; i++)
             this._setQuadToArray(quads[i], index + i);
 
@@ -330,18 +329,19 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (fromIndex === newIndex)
             return;
 
-        var sourceArr = this._quadsReader.subarray(fromIndex * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT,cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var sourceArr = this._quadsReader.subarray(fromIndex * quadSize,quadSize);
         var startOffset, moveLength;
         if(fromIndex > newIndex){
-            startOffset = newIndex * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            moveLength = (fromIndex - newIndex) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset + cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+            startOffset = newIndex * quadSize;
+            moveLength = (fromIndex - newIndex) * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset + quadSize);
             this._quadsReader.set(sourceArr,startOffset);
         }else{
-            startOffset = (fromIndex + 1) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            moveLength = (newIndex - fromIndex) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset - cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
-            this._quadsReader.set(sourceArr, newIndex * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+            startOffset = (fromIndex + 1) * quadSize;
+            moveLength = (newIndex - fromIndex) * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength),startOffset - quadSize);
+            this._quadsReader.set(sourceArr, newIndex * quadSize);
         }
         this._dirty = true;
     },
@@ -353,13 +353,14 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     removeQuadAtIndex:function (index) {
         cc.Assert(index < this._totalQuads, "removeQuadAtIndex: Invalid index");
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         this._totalQuads--;
         this._quads.length = this._totalQuads;
         if(index !== this._totalQuads){
             //move data
-            var startOffset = (index + 1) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            var moveLength = (this._totalQuads - index) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset - cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+            var startOffset = (index + 1) * quadSize;
+            var moveLength = (this._totalQuads - index) * quadSize;
+            this._quadsReader.set(this._quadsReader.subarray(startOffset, startOffset + moveLength), startOffset - quadSize);
         }
         this._dirty = true;
     },
@@ -370,9 +371,10 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
 
         if(index !== this._totalQuads){
             //move data
-            var srcOffset = (index + amount) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            var moveLength = (this._totalQuads - index) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            var dstOffset = index * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            var srcOffset = (index + amount) * quadSize;
+            var moveLength = (this._totalQuads - index) * quadSize;
+            var dstOffset = index * quadSize;
             this._quadsReader.set(this._quadsReader.subarray(srcOffset,srcOffset + moveLength),dstOffset);
         }
         this._dirty = true;
@@ -401,36 +403,37 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (newCapacity == this._capacity)
             return true;
 
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
         var oldCapacity = this._capacity;
         // update capacity and totolQuads
         this._totalQuads = Math.min(this._totalQuads, newCapacity);
         this._capacity = 0 | newCapacity;
-        var i;
+        var i, capacity = this._capacity;
 
         if (this._quads == null) {
             this._quads = [];
-            this._quadsArrayBuffer = new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT * this._capacity);
+            this._quadsArrayBuffer = new ArrayBuffer(quadSize * capacity);
             this._quadsReader = new Uint8Array(this._quadsArrayBuffer);
         } else {
-            var newQuads, newArrayBuffer;
-            if (this._capacity > oldCapacity) {
+            var newQuads, newArrayBuffer, quads = this._quads;
+            if (capacity > oldCapacity) {
                 newQuads = [];
-                newArrayBuffer = new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT * this._capacity);
+                newArrayBuffer = new ArrayBuffer(quadSize * capacity);
 
                 for(i = 0; i < this._totalQuads;i++){
-                     newQuads[i] = new cc.V3F_C4B_T2F_Quad(this._quads[i].tl,this._quads[i].bl,this._quads[i].tr,this._quads[i].br,
-                         newArrayBuffer,i * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+                     newQuads[i] = new cc.V3F_C4B_T2F_Quad(quads[i].tl,quads[i].bl,quads[i].tr,quads[i].br,
+                         newArrayBuffer,i * quadSize);
                 }
                 this._quadsReader = new Uint8Array(newArrayBuffer);
                 this._quads = newQuads;
                 this._quadsArrayBuffer = newArrayBuffer;
             } else {
-                var count = Math.max(this._totalQuads, this._capacity);
+                var count = Math.max(this._totalQuads, capacity);
                 newQuads = [];
-                newArrayBuffer = new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT * this._capacity);
+                newArrayBuffer = new ArrayBuffer(quadSize * capacity);
                 for(i = 0; i < count;i++){
-                    newQuads[i] = new cc.V3F_C4B_T2F_Quad(this._quads[i].tl,this._quads[i].bl,this._quads[i].tr,this._quads[i].br,
-                        newArrayBuffer,i * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT);
+                    newQuads[i] = new cc.V3F_C4B_T2F_Quad(quads[i].tl,quads[i].bl,quads[i].tr,quads[i].br,
+                        newArrayBuffer,i * quadSize);
                 }
                 this._quadsReader = new Uint8Array(newArrayBuffer);
                 this._quads = newQuads;
@@ -439,14 +442,14 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         }
 
         if (this._indices == null) {
-            this._indices = new Uint16Array(this._capacity * 6);
+            this._indices = new Uint16Array(capacity * 6);
         } else {
-            if (this._capacity > oldCapacity) {
-                var tempIndices = new Uint16Array(this._capacity * 6);
+            if (capacity > oldCapacity) {
+                var tempIndices = new Uint16Array(capacity * 6);
                 tempIndices.set(this._indices, 0);
                 this._indices = tempIndices;
             } else {
-                this._indices = this._indices.subarray(0, this._capacity * 6);
+                this._indices = this._indices.subarray(0, capacity * 6);
             }
         }
 
@@ -475,25 +478,30 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         if (arguments.length == 2) {
             newIndex = amount;
             amount = this._totalQuads - oldIndex;
+            cc.Assert(newIndex + (this._totalQuads - oldIndex) <= this._capacity, "moveQuadsFromIndex move is out of bounds");
+            if(amount === 0)
+                return;
+        }else{
+            cc.Assert(newIndex + amount <= this._totalQuads, "moveQuadsFromIndex:newIndex: Invalid index");
+            cc.Assert(oldIndex < this._totalQuads, "moveQuadsFromIndex:oldIndex: Invalid index");
+
+            if (oldIndex == newIndex)
+                return;
         }
-        cc.Assert(newIndex + amount <= this._totalQuads, "moveQuadsFromIndex:newIndex: Invalid index");
-        cc.Assert(oldIndex < this._totalQuads, "moveQuadsFromIndex:oldIndex: Invalid index");
 
-        if (oldIndex == newIndex)
-            return;
-
-        var srcOffset = oldIndex * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-        var srcLength = amount * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var srcOffset = oldIndex * quadSize;
+        var srcLength = amount * quadSize;
         var sourceArr = this._quadsReader.subarray(srcOffset, srcOffset + srcLength);
-        var dstOffset = newIndex * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        var dstOffset = newIndex * quadSize;
         var moveLength, moveStart;
         if (newIndex < oldIndex) {
-            moveLength = (oldIndex - newIndex) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            moveStart = newIndex * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            moveLength = (oldIndex - newIndex) * quadSize;
+            moveStart = newIndex * quadSize;
             this._quadsReader.set(this._quadsReader.subarray(moveStart, moveStart + moveLength), moveStart + srcLength)
         } else {
-            moveLength = (newIndex - oldIndex) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
-            moveStart = (oldIndex + amount) * cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+            moveLength = (newIndex - oldIndex) * quadSize;
+            moveStart = (oldIndex + amount) * quadSize;
             this._quadsReader.set(this._quadsReader.subarray(moveStart, moveStart + moveLength), srcOffset);
         }
         this._quadsReader.set(sourceArr, dstOffset);

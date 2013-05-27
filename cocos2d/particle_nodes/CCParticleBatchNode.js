@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2010-2012 cocos2d-x.org
  * Copyright (C) 2009 Matt Oswald
  * Copyright (c) 2009-2010 Ricardo Quesada
@@ -124,7 +124,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
             this.setBlendFunc(child.getBlendFunc());
 
         cc.Assert(this._blendFunc.src == child.getBlendFunc().src && this._blendFunc.dst == child.getBlendFunc().dst,
-            "Can't add a PaticleSystem that uses a differnt blending function");
+            "Can't add a ParticleSystem that uses a different blending function");
 
         //no lazy sorting, so don't call super addChild, call helper instead
         var pos = this._addChildHelper(child, zOrder, tag);
@@ -150,20 +150,21 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      * @param {Number} index
      */
     insertChild:function (pSystem, index) {
+        var totalParticles = pSystem.getTotalParticles();
+        var totalQuads = this._textureAtlas.getTotalQuads();
         pSystem.setAtlasIndex(index);
-
-        if (this._textureAtlas.getTotalQuads() + pSystem.getTotalParticles() > this._textureAtlas.getCapacity()) {
-            this._increaseAtlasCapacityTo(this._textureAtlas.getTotalQuads() + pSystem.getTotalParticles());
+        if (totalQuads + totalParticles > this._textureAtlas.getCapacity()) {
+            this._increaseAtlasCapacityTo(totalQuads + totalParticles);
             // after a realloc empty quads of textureAtlas can be filled with gibberish (realloc doesn't perform calloc), insert empty quads to prevent it
-            this._textureAtlas.fillWithEmptyQuadsFromIndex(this._textureAtlas.getCapacity() - pSystem.getTotalParticles(), pSystem.getTotalParticles());
+            this._textureAtlas.fillWithEmptyQuadsFromIndex(this._textureAtlas.getCapacity() - totalParticles, totalParticles);
         }
 
         // make room for quads, not necessary for last child
-        if (pSystem.getAtlasIndex() + pSystem.getTotalParticles() != this._textureAtlas.getTotalQuads())
-            this._textureAtlas.moveQuadsFromIndex(index, index + pSystem.getTotalParticles());
+        if (pSystem.getAtlasIndex() + totalParticles != totalQuads)
+            this._textureAtlas.moveQuadsFromIndex(index, index + totalParticles);
 
         // increase totalParticles here for new particles, update method of particlesystem will fill the quads
-        this._textureAtlas.increaseTotalQuadsWith(pSystem.getTotalParticles());
+        this._textureAtlas.increaseTotalQuadsWith(totalParticles);
         this._updateAllAtlasIndexes();
     },
 
@@ -333,7 +334,7 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
     // override visit.
     // Don't call visit on it's children
     visit:function (ctx) {
-        if (cc.renderContextType === cc.WEBGL) {
+        if (cc.renderContextType === cc.CANVAS) {
             this._super(ctx);
             return;
         }

@@ -55,11 +55,15 @@ cc.PointMake = function (x, y) {
  * Helper macro that creates a cc.Point.
  * @param {Number} x
  * @param {Number} y
- * @return {}
+ * Constructor
  */
 cc.p = function (x, y) {
-    // optimization
-    return {x:x, y:y};
+    // This can actually make use of "hidden classes" in JITs and thus decrease
+    // memory usage and overall peformance drastically
+    return new cc.Point(x, y);
+    // but this one will instead flood the heap with newly allocated hash maps
+    // giving little room for optimization by the JIT
+    // return {x:x, y:y};
 };
 
 // JSB compatbility: in JSB, cc._p reuses objects instead of creating new ones
@@ -148,8 +152,12 @@ cc.SizeMake = function (width, height) {
  * Constructor
  */
 cc.size = function (w, h) {
-    // optimization
-    return {width:w, height:h};
+    // This can actually make use of "hidden classes" in JITs and thus decrease
+    // memory usage and overall peformance drastically
+    return new cc.Size(w, h);
+    // but this one will instead flood the heap with newly allocated hash maps
+    // giving little room for optimization by the JIT
+    //return {width:w, height:h};
 };
 
 // JSB compatbility: in JSB, cc._size reuses objects instead of creating new ones
@@ -245,8 +253,6 @@ cc.RectMake = function (x, y, width, height) {
 
 // backward compatible
 cc.rect = function (x, y, w, h) {
-    // XXX: We can't do optimization here, since the cc.Rect class has some instance methods.
-    // return { origin:{x:x, y:y}, size:{width:w, height:h} };
     return new cc.Rect(x,y,w,h);
 };
 
