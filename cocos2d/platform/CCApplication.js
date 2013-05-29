@@ -30,8 +30,17 @@
  * @type {Object}
  */
 cc.TARGET_PLATFORM = {
-    MOBILE:0,
-    PC:1
+    WINDOWS:0,
+    LINUX:1,
+    MACOS:2,
+    ANDROID:3,
+    IPHONE:4,
+    IPAD:5,
+    BLACKBERRY:6,
+    NACL:7,
+    EMSCRIPTEN:8,
+    MOBILE_BROWSER:100,
+    PC_BROWSER:101
 };
 
 /**
@@ -346,7 +355,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
     },
 
     getTargetPlatform:function(){
-        return cc.Browser.isMobile ? cc.TARGET_PLATFORM.MOBILE : cc.TARGET_PLATFORM.PC;
+        return cc.Browser.isMobile ? cc.TARGET_PLATFORM.MOBILE_BROWSER : cc.TARGET_PLATFORM.PC_BROWSER;
     },
 
     /**
@@ -380,7 +389,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
  * Get current applicaiton instance.
  * @return {cc.Application}  Current application instance pointer.
  */
-cc.Application.sharedApplication = function () {
+cc.Application.getInstance = function () {
     cc.Assert(cc._sharedApplication, "sharedApplication");
     return cc._sharedApplication;
 };
