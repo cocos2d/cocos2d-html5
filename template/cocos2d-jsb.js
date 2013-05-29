@@ -26,20 +26,6 @@
 // boot code needed for cocos2d + JS bindings.
 // Not needed by cocos2d-html5
 
-cc.TARGET_PLATFORM = {
-    WINDOWS:0,
-    LINUX:1,
-    MACOS:2,
-    ANDROID:3,
-    IPHONE:4,
-    IPAD:5,
-    BLACKBERRY:6,
-    NACL:7,
-    EMSCRIPTEN:8,
-    MOBILE_BROWSER:100,
-    PC_BROWSER:101
-};
-
 require("jsb.js");
 
 var appFiles = [
