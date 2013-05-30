@@ -87,7 +87,7 @@ cc.ScrollView = cc.Layer.extend({
     },
 
     registerWithTouchDispatcher:function () {
-        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, false);
+        cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this.getTouchPriority(), false);
     },
 
     /**

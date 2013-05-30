@@ -165,7 +165,8 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
     },
 
     _parseConfigFile:function (controlFile) {
-        var data = cc.SAXParser.getInstance().getList(controlFile);
+        var fullpath = cc.FileUtils.getInstance().fullPathForFilename(controlFile);
+        var data = cc.SAXParser.getInstance().getList(fullpath);
         cc.Assert(data, "cc.BMFontConfiguration._parseConfigFile | Open file error.");
 
         if (!data) {

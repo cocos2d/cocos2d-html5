@@ -1113,7 +1113,7 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
     startAnimation:function () {
         this._nextDeltaTimeZero = true;
         this.invalid = false;
-        cc.Application.sharedApplication().setAnimationInterval(this._animationInterval);
+        cc.Application.getInstance().setAnimationInterval(this._animationInterval);
     },
 
     /**
