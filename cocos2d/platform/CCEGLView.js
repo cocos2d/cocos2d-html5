@@ -76,8 +76,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _frameZoomFactor:1.0,
 
     ctor:function(){
+        var ele = (cc.container.parentNode === document.body)? document.documentElement : cc.container.parentNode;
         this._viewName = "Cocos2dHTML5";
-        this._screenSize = cc.SizeZero();
+        this._screenSize = cc.size(ele.clientWidth, ele.clientHeight);
         this._designResolutionSize = cc.SizeZero();
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
@@ -99,11 +100,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     _adjustSize:function () {
-        var ele = (cc.container.parentNode === document.body)? document.documentElement : cc.container.parentNode;
-        cc.canvas.width = ele.clientWidth;
-        cc.canvas.height = ele.clientHeight;
+        cc.canvas.width = this._screenSize.width;
+        cc.canvas.height = this._screenSize.height;
+
         if(!("opengl" in sys.capabilities))
             cc.renderContext.translate(0, cc.canvas.height);
+
         var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
         if (parent) {
             parent.style.width = cc.canvas.width + "px";
@@ -116,7 +118,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             body.style.margin = 0 + "px";
         }
 
-        this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
         this.setDesignResolutionSize();
     },
     // hack
