@@ -123,13 +123,14 @@ cc.FileUtils = cc.Class.extend({
     _filenameLookupDict:null,
     _searchResolutionsOrderArray:null,
     _searchPathArray:null,
+    _defaultResRootPath:"",
 
     ctor:function () {
         this._fileDataCache = {};
         this._textFileCache = {};
 
         this._searchPathArray = [];
-        this._searchPathArray.push("");
+        this._searchPathArray.push(this._defaultResRootPath);
 
         this._searchResolutionsOrderArray = [];
         this._searchResolutionsOrderArray.push("");
@@ -156,7 +157,7 @@ cc.FileUtils = cc.Class.extend({
         }
     },
 
-    unloadBinaryFileData:function(fileUrl){
+    unloadBinaryFileData:function (fileUrl) {
         if (this._fileDataCache.hasOwnProperty(fileUrl))
             delete this._fileDataCache[fileUrl];
     },
@@ -233,12 +234,12 @@ cc.FileUtils = cc.Class.extend({
         return arrData;
     },
 
-    unloadTextFileData:function(fileUrl){
+    unloadTextFileData:function (fileUrl) {
         if (this._textFileCache.hasOwnProperty(fileUrl))
             delete this._textFileCache[fileUrl];
     },
 
-    preloadTextFileData:function(fileUrl){
+    preloadTextFileData:function (fileUrl) {
         fileUrl = this.fullPathFromRelativePath(fileUrl);
         var selfPointer = this;
 
@@ -270,7 +271,7 @@ cc.FileUtils = cc.Class.extend({
         xhr.send(null);
     },
 
-    _loadTextFileData:function(fileUrl){
+    _loadTextFileData:function (fileUrl) {
         var req = this._getXMLHttpRequest();
         req.open('GET', fileUrl, false);
         var arrayInfo = null;
@@ -298,7 +299,7 @@ cc.FileUtils = cc.Class.extend({
         return arrayInfo;
     },
 
-    getTextFileData:function(fileUrl){
+    getTextFileData:function (fileUrl) {
         if (this._textFileCache.hasOwnProperty(fileUrl))
             return this._textFileCache[fileUrl];
         return this._loadTextFileData(fileUrl);
@@ -641,6 +642,48 @@ cc.FileUtils = cc.Class.extend({
         path += file;
         ret += path;
         return ret;
+    },
+    setSearchPaths:function (searchPaths) {
+        var existDefaultRootPath = false;
+
+        this._searchPathArray = [];
+        for (var i = 0; i < searchPaths.length; i++) {
+            var iter = searchPaths[i];
+
+            var strPrefix;
+            var path;
+            if (!this.isAbsolutePath(iter)) { // Not an absolute path
+                strPrefix = this._defaultResRootPath;
+            }
+            path = strPrefix + iter;
+            if (path.length > 0 && path[path.length - 1] != '/') {
+                path += "/";
+            }
+            if (!existDefaultRootPath && path == this._defaultResRootPath) {
+                existDefaultRootPath = true;
+            }
+            this._searchPathArray.push(path);
+        }
+
+        if (!existDefaultRootPath) {
+            //cc.log("Default root path doesn't exist, adding it.");
+            this._searchPathArray.push(this._defaultResRootPath);
+        }
+
+    },
+    addSearchPath:function (path) {
+        var strPrefix;
+        if (!this.isAbsolutePath(path)) { // Not an absolute path
+            strPrefix = this._defaultResRootPath;
+        }
+        path = strPrefix + path;
+        if (path.length > 0 && path[path.length - 1] != '/') {
+            path += "/";
+        }
+        this._searchPathArray.push(path);
+    },
+    isAbsolutePath:function (strPath) {
+        return (strPath[0] == '/');
     }
 });
 
