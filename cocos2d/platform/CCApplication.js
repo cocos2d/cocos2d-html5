@@ -313,6 +313,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         this._animationInterval = 0;
         cc.Assert(!cc._sharedApplication, "CCApplication ctor");
         cc._sharedApplication = this;
+        cc.AppController.getInstance().didFinishLaunchingWithOptions();
     },
 
     /**
@@ -368,7 +369,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
  * Get current applicaiton instance.
  * @return {cc.Application}  Current application instance pointer.
  */
-cc.Application.sharedApplication = function () {
+cc.Application.getInstance = function () {
     cc.Assert(cc._sharedApplication, "sharedApplication");
     return cc._sharedApplication;
 };

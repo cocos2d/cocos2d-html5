@@ -24,24 +24,21 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cocos2dApp = cc.Application.extend({
-    config:document['ccConfig'],
+
+
+
+var cocos2dApp = cc.Class.extend({
+    config:document1,
     ctor:function (scene) {
-        this._super();
+        //this._super();
         this.startScene = scene;
         cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
-        cc.initDebugSetting();
-        cc.setup(this.config['tag']);
-        cc.AppController.shareAppController().didFinishLaunchingWithOptions();
-    },
-    applicationDidFinishLaunching:function () {
+        //cc.initDebugSetting();
+        //cc.setup(this.config['tag']);
+        //cc.AppController.getInstance().didFinishLaunchingWithOptions();
+
         // initialize director
         var director = cc.Director.getInstance();
-
-        cc.EGLView.getInstance().setDesignResolutionSize(800,450,cc.RESOLUTION_POLICY.SHOW_ALL);
-
-        // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
-        //director.enableRetinaDisplay(true);
 
         // turn on display FPS
         director.setDisplayStats(this.config['showFPS']);
@@ -51,10 +48,11 @@ var cocos2dApp = cc.Application.extend({
 
         //load resources
         cc.LoaderScene.preload(g_ressources, function () {
-            director.replaceScene(new this.startScene());
+            director.runWithScene(new this.startScene());
         }, this);
 
         return true;
     }
 });
+
 var myApp = new cocos2dApp(MyScene);

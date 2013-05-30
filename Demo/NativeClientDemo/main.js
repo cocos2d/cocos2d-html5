@@ -32,7 +32,7 @@ var cocos2dApp = cc.Application.extend({
         cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
         cc.initDebugSetting();
         cc.setup(this.config['tag']);
-        cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+        cc.AppController.getInstance().didFinishLaunchingWithOptions();
     },
     applicationDidFinishLaunching:function () {
         // initialize director

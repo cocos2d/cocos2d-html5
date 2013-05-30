@@ -36,10 +36,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      */
     didFinishLaunchingWithOptions:function () {
         // Override point for customization after application launch.
-        //var app = new cc.AppDelegate();
-        cc.Application.sharedApplication().run();
-
-        return true;
+        cc.Application.getInstance().run();
     },
 
     /**
@@ -73,7 +70,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      * </p>
      */
     applicationDidEnterBackground:function () {
-        cc.Application.sharedApplication().applicationDidEnterBackground();
+        cc.Application.getInstance().applicationDidEnterBackground();
     },
 
     /**
@@ -83,7 +80,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      * </p>
      */
     applicationWillEnterForeground:function () {
-        cc.Application.sharedApplication().applicationWillEnterForeground();
+        cc.Application.getInstance().applicationWillEnterForeground();
     },
 
     /**
@@ -97,7 +94,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
  * Return Controller of Game Application
  * @return {cc.AppController}
  */
-cc.AppController.shareAppController = function () {
+cc.AppController.getInstance = function () {
     if (cc.sharedAppController == null) {
         cc.sharedAppController = new cc.AppController();
     }
