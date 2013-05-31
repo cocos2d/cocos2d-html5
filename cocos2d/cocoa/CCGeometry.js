@@ -109,7 +109,7 @@ Object.defineProperties(cc, {
 cc.pointEqualToPoint = function (point1, point2) {
     if (!point1 || !point2)
         return false;
-    return ((point1.x == point2.x) && (point1.y == point2.y));
+    return ((point1.x === point2.x) && (point1.y === point2.y));
 };
 
 // deprecated
@@ -279,8 +279,8 @@ cc.RectZero = function () {
 cc.rectEqualToRect = function (rect1, rect2) {
     if(!rect1 || !rect2)
         return false;
-    return ((cc.Point.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
-        (cc.Size.CCSizeEqualToSize(rect1.size, rect2.size)));
+    return ((cc.pointEqualToPoint(rect1.origin, rect2.origin)) &&
+        (cc.sizeEqualToSize(rect1.size, rect2.size)));
 };
 
 /**
@@ -374,8 +374,8 @@ cc.rectGetMinY = function (rect) {
  */
 cc.rectContainsPoint = function (rect, point) {
     var ret = false;
-    if (point.x >= cc.Rect.CCRectGetMinX(rect) && point.x <= cc.Rect.CCRectGetMaxX(rect) &&
-        point.y >= cc.Rect.CCRectGetMinY(rect) && point.y <= cc.Rect.CCRectGetMaxY(rect)) {
+    if (point.x >= cc.rectGetMinX(rect) && point.x <= cc.rectGetMaxX(rect) &&
+        point.y >= cc.rectGetMinY(rect) && point.y <= cc.rectGetMaxY(rect)) {
         ret = true;
     }
     return ret;
@@ -389,10 +389,10 @@ cc.rectContainsPoint = function (rect, point) {
  * Constructor
  */
 cc.rectIntersectsRect = function (rectA, rectB) {
-    return !(cc.Rect.CCRectGetMaxX(rectA) < cc.Rect.CCRectGetMinX(rectB) ||
-        cc.Rect.CCRectGetMaxX(rectB) < cc.Rect.CCRectGetMinX(rectA) ||
-        cc.Rect.CCRectGetMaxY(rectA) < cc.Rect.CCRectGetMinY(rectB) ||
-        cc.Rect.CCRectGetMaxY(rectB) < cc.Rect.CCRectGetMinY(rectA));
+    return !(cc.rectGetMaxX(rectA) < cc.rectGetMinX(rectB) ||
+        cc.rectGetMaxX(rectB) < cc.rectGetMinX(rectA) ||
+        cc.rectGetMaxY(rectA) < cc.rectGetMinY(rectB) ||
+        cc.rectGetMaxY(rectB) < cc.rectGetMinY(rectA));
 };
 
 /**
@@ -445,12 +445,12 @@ cc.rectUnion = function (rectA, rectB) {
  */
 cc.rectIntersection = function (rectA, rectB) {
     var intersection = cc.rect(
-        Math.max(cc.Rect.CCRectGetMinX(rectA), cc.Rect.CCRectGetMinX(rectB)),
-        Math.max(cc.Rect.CCRectGetMinY(rectA), cc.Rect.CCRectGetMinY(rectB)),
+        Math.max(cc.rectGetMinX(rectA), cc.rectGetMinX(rectB)),
+        Math.max(cc.rectGetMinY(rectA), cc.rectGetMinY(rectB)),
         0, 0);
 
-    intersection.size.width = Math.min(cc.Rect.CCRectGetMaxX(rectA), cc.Rect.CCRectGetMaxX(rectB)) - cc.Rect.CCRectGetMinX(intersection);
-    intersection.size.height = Math.min(cc.Rect.CCRectGetMaxY(rectA), cc.Rect.CCRectGetMaxY(rectB)) - cc.Rect.CCRectGetMinY(intersection);
+    intersection.size.width = Math.min(cc.rectGetMaxX(rectA), cc.rectGetMaxX(rectB)) - cc.rectGetMinX(intersection);
+    intersection.size.height = Math.min(cc.rectGetMaxY(rectA), cc.rectGetMaxY(rectB)) - cc.rectGetMinY(intersection);
     return intersection;
 };
 

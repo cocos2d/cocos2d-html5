@@ -164,5 +164,5 @@ cc.ControlUtils.RGBfromHSV = function(hsvValue){
 };
 
 cc.ControlUtils.CCRectUnion = function(rect1, rect2){
-    return cc.Rect.CCRectUnion(rect1,rect2);
+    return cc.rectUnion(rect1,rect2);
 };

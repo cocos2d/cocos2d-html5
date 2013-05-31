@@ -1017,13 +1017,14 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         this._super(child, cleanup);
     },
     /// ---- common properties end   ----
-
+    _mvpMatrix:null,
     /**
      * Constructor
      * @param {String} fileImage
      */
     ctor:function (fileImage) {
         this._super();
+        this._mvpMatrix = new cc.kmMat4();
         if (fileImage)
             this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
     },
@@ -1410,14 +1411,15 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
     },
     /**
      * draw cc.SpriteBatchNode (override draw of cc.Node)
-     * @param {CanvasContext} ctx
      */
-    draw:function (ctx) {
+    draw:function () {
         // Optimization: Fast Dispatch
         if (this._textureAtlas.getTotalQuads() === 0)
             return;
 
-        cc.NODE_DRAW_SETUP(this);
+        //cc.NODE_DRAW_SETUP(this);
+        this._shaderProgram.use();
+        this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.updateTransform);
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 

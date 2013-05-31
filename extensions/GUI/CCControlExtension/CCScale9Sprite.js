@@ -436,7 +436,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         var rectZero = cc.RectZero();
         // If there is no given rect
-        if (cc.Rect.CCRectEqualToRect(rect, rectZero)) {
+        if (cc.rectEqualToRect(rect, rectZero)) {
             // Get the texture size as original
             if (selTexture instanceof  cc.Texture2D) {
                 var textureSize = selTexture.getContentSize();
@@ -456,7 +456,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var h = rectSize.height;
 
         // If there is no specified center region
-        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, rectZero)) {
+        if (cc.rectEqualToRect(this._capInsetsInternal, rectZero)) {
             // CCLog("... cap insets not specified : using default cap insets ...");
             this._capInsetsInternal = cc.rect(w / 3, h / 3, w / 3, h / 3);
         }

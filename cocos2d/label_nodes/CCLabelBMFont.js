@@ -1033,7 +1033,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {cc.Point} point
      */
     setAnchorPoint:function (point) {
-        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
+        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
             this._super(point);
             this.updateLabel();
         }

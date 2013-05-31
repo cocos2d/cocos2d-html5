@@ -60,7 +60,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @override
      */
     ctor:function () {
-        this._super();
+        cc.ParticleSystem.prototype.ctor.call(this);
         this._buffersVBO = [0, 0];
         //this._quads = [];
         //this._indices = [];
@@ -282,7 +282,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @param {cc.SpriteFrame} spriteFrame
      */
     setDisplayFrame:function (spriteFrame) {
-        cc.Assert(cc.Point.CCPointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
+        cc.Assert(cc.pointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
 
         // update texture before updating texture rect
         if (cc.renderContextType === cc.WEBGL)
@@ -320,7 +320,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     initWithTotalParticles:function (numberOfParticles) {
         // base initialization
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             if (cc.renderContextType === cc.CANVAS)
                 return true;
 
@@ -348,7 +348,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     setTexture:function (texture, isCallSuper) {
         if (isCallSuper != null && isCallSuper === true) {
-            this._super(texture);
+            cc.ParticleSystem.prototype.setTexture.call(this, texture);
             return;
         }
         var size = null;
@@ -588,12 +588,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var gl = ctx || cc.renderContext;
 
         this._shaderProgram.use();
-        this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+        this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
         cc.glBindTexture2D(this._texture);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
 
-        cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
+        //cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
 
         //
         // Using VBO without VAO
@@ -607,14 +607,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.drawElements(gl.TRIANGLES, this._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
-
-        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     setBatchNode:function (batchNode) {
         if (this._batchNode != batchNode) {
             var oldBatch = this._batchNode;
-            this._super(batchNode);
+            cc.ParticleSystem.prototype.setBatchNode.call(this, batchNode);
 
             // NEW: is self render ?
             if (!batchNode) {

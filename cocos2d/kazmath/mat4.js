@@ -192,10 +192,10 @@ cc.kmMat4IsIdentity = function (pIn) {
  * Sets pOut to the transpose of pIn, returns pOut
  */
 cc.kmMat4Transpose = function (pOut, pIn) {
-    var x, z;
+    var x, z, outArr = pOut.mat,inArr = pIn.mat;
     for (z = 0; z < 4; ++z) {
         for (x = 0; x < 4; ++x)
-            pOut.mat[(z * 4) + x] = pIn.mat[(x * 4) + z];
+            outArr[(z * 4) + x] = inArr[(x * 4) + z];
     }
     return pOut;
 };
@@ -205,6 +205,7 @@ cc.kmMat4Transpose = function (pOut, pIn) {
  */
 cc.kmMat4Multiply = function (pOut, pM1, pM2) {
     // Cache the matrix values (makes for huge speed increases!)
+    var  outArray = pOut.mat;
     var a00 = pM1.mat[0], a01 = pM1.mat[1], a02 = pM1.mat[2], a03 = pM1.mat[3];
     var a10 = pM1.mat[4], a11 = pM1.mat[5], a12 = pM1.mat[6], a13 = pM1.mat[7];
     var a20 = pM1.mat[8], a21 = pM1.mat[9], a22 = pM1.mat[10], a23 = pM1.mat[11];
@@ -215,22 +216,22 @@ cc.kmMat4Multiply = function (pOut, pM1, pM2) {
     var b20 = pM2.mat[8], b21 = pM2.mat[9], b22 = pM2.mat[10], b23 = pM2.mat[11];
     var b30 = pM2.mat[12], b31 = pM2.mat[13], b32 = pM2.mat[14], b33 = pM2.mat[15];
 
-    pOut.mat[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
-    pOut.mat[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
-    pOut.mat[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
-    pOut.mat[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
-    pOut.mat[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
-    pOut.mat[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
-    pOut.mat[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
-    pOut.mat[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
-    pOut.mat[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
-    pOut.mat[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
-    pOut.mat[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
-    pOut.mat[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
-    pOut.mat[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
-    pOut.mat[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
-    pOut.mat[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
-    pOut.mat[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
+    outArray[0] = b00 * a00 + b01 * a10 + b02 * a20 + b03 * a30;
+    outArray[1] = b00 * a01 + b01 * a11 + b02 * a21 + b03 * a31;
+    outArray[2] = b00 * a02 + b01 * a12 + b02 * a22 + b03 * a32;
+    outArray[3] = b00 * a03 + b01 * a13 + b02 * a23 + b03 * a33;
+    outArray[4] = b10 * a00 + b11 * a10 + b12 * a20 + b13 * a30;
+    outArray[5] = b10 * a01 + b11 * a11 + b12 * a21 + b13 * a31;
+    outArray[6] = b10 * a02 + b11 * a12 + b12 * a22 + b13 * a32;
+    outArray[7] = b10 * a03 + b11 * a13 + b12 * a23 + b13 * a33;
+    outArray[8] = b20 * a00 + b21 * a10 + b22 * a20 + b23 * a30;
+    outArray[9] = b20 * a01 + b21 * a11 + b22 * a21 + b23 * a31;
+    outArray[10] = b20 * a02 + b21 * a12 + b22 * a22 + b23 * a32;
+    outArray[11] = b20 * a03 + b21 * a13 + b22 * a23 + b23 * a33;
+    outArray[12] = b30 * a00 + b31 * a10 + b32 * a20 + b33 * a30;
+    outArray[13] = b30 * a01 + b31 * a11 + b32 * a21 + b33 * a31;
+    outArray[14] = b30 * a02 + b31 * a12 + b32 * a22 + b33 * a32;
+    outArray[15] = b30 * a03 + b31 * a13 + b32 * a23 + b33 * a33;
     return pOut;
 };
 
@@ -293,25 +294,30 @@ cc.getMat4MultiplyWithMat4 = function (pM1, pM2, swapMat) {
  */
 cc.kmMat4Assign = function (pOut, pIn) {
     //cc.Assert(pOut != pIn, "You have tried to self-assign!!");
-    pOut.mat[0] = pIn.mat[0];
-    pOut.mat[1] = pIn.mat[1];
-    pOut.mat[2] = pIn.mat[2];
-    pOut.mat[3] = pIn.mat[3];
+    if(pOut == pIn)
+        return;
+    var outArr = pOut.mat;
+    var inArr = pIn.mat;
 
-    pOut.mat[4] = pIn.mat[4];
-    pOut.mat[5] = pIn.mat[5];
-    pOut.mat[6] = pIn.mat[6];
-    pOut.mat[7] = pIn.mat[7];
+    outArr[0] = inArr[0];
+    outArr[1] = inArr[1];
+    outArr[2] = inArr[2];
+    outArr[3] = inArr[3];
 
-    pOut.mat[8] = pIn.mat[8];
-    pOut.mat[9] = pIn.mat[9];
-    pOut.mat[10] = pIn.mat[10];
-    pOut.mat[11] = pIn.mat[11];
+    outArr[4] = inArr[4];
+    outArr[5] = inArr[5];
+    outArr[6] = inArr[6];
+    outArr[7] = inArr[7];
 
-    pOut.mat[12] = pIn.mat[12];
-    pOut.mat[13] = pIn.mat[13];
-    pOut.mat[14] = pIn.mat[14];
-    pOut.mat[15] = pIn.mat[15];
+    outArr[8] = inArr[8];
+    outArr[9] = inArr[9];
+    outArr[10] = inArr[10];
+    outArr[11] = inArr[11];
+
+    outArr[12] = inArr[12];
+    outArr[13] = inArr[13];
+    outArr[14] = inArr[14];
+    outArr[15] = inArr[15];
     return pOut;
 };
 
