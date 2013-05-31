@@ -113,7 +113,7 @@ cc.pointEqualToPoint = function (point1, point2) {
 };
 
 // deprecated
-cc.Point.CCPointEqualToPoint = cc.pointEqualToPoint;
+//cc.Point.CCPointEqualToPoint = cc.pointEqualToPoint;
 
 
 //--------------------------------------------------------
@@ -188,7 +188,7 @@ cc.sizeEqualToSize = function (size1, size2) {
 };
 
 // deprecated
-cc.Size.CCSizeEqualToSize = cc.sizeEqualToSize;
+//cc.Size.CCSizeEqualToSize = cc.sizeEqualToSize;
 
 //--------------------------------------------------------
 //
@@ -531,7 +531,7 @@ Object.defineProperties(cc.Rect.prototype,
 
 
 // Deprecated
-cc.Rect.CCRectEqualToRect = cc.rectEqualToRect;
+/*cc.Rect.CCRectEqualToRect = cc.rectEqualToRect;
 cc.Rect.CCRectContainsRect = cc.rectContainsRect;
 cc.Rect.CCRectGetMaxX = cc.rectGetMaxX;
 cc.Rect.CCRectGetMidX = cc.rectGetMidX;
@@ -542,5 +542,5 @@ cc.Rect.CCRectGetMinY = cc.rectGetMinY;
 cc.Rect.CCRectContainsPoint = cc.rectContainsPoint;
 cc.Rect.CCRectIntersectsRect = cc.rectIntersectsRect;
 cc.Rect.CCRectUnion = cc.rectUnion;
-cc.Rect.CCRectIntersection = cc.rectIntersection;
+cc.Rect.CCRectIntersection = cc.rectIntersection;*/
 
