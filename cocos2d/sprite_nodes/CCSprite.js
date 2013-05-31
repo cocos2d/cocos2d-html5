@@ -2665,6 +2665,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
+        cc.g_NumberOfDraws++;
+        if(cc.SPRITE_DEBUG_DRAW === 0)
+            return;
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
@@ -2683,7 +2686,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
-        cc.g_NumberOfDraws++;
     }
 });
 

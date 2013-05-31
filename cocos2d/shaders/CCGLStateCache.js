@@ -147,10 +147,25 @@ cc.setBlending = function (sfactor, dfactor) {
     if ((sfactor === ctx.ONE) && (dfactor === ctx.ZERO)) {
         ctx.disable(ctx.BLEND);
     } else {
-        cc.renderContext.enable(cc.renderContext.BLEND);
-        //cc.renderContext.blendFunc(sfactor,dfactor);
+        ctx.enable(ctx.BLEND);
+        cc.renderContext.blendFunc(sfactor,dfactor);
         //TODO need fix for WebGL
-        cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
+        //ctx.blendFuncSeparate(ctx.SRC_ALPHA, dfactor, sfactor, dfactor);
+    }
+};
+
+cc.glBlendFuncForParticle = function(sfactor, dfactor) {
+    if ((sfactor !== cc._blendingSource) || (dfactor !== cc._blendingDest)) {
+        cc._blendingSource = sfactor;
+        cc._blendingDest = dfactor;
+        var ctx = cc.renderContext;
+        if ((sfactor === ctx.ONE) && (dfactor === ctx.ZERO)) {
+            ctx.disable(ctx.BLEND);
+        } else {
+            ctx.enable(ctx.BLEND);
+            //TODO need fix for WebGL
+            ctx.blendFuncSeparate(ctx.SRC_ALPHA, dfactor, sfactor, dfactor);
+        }
     }
 };
 

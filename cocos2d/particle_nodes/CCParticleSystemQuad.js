@@ -591,9 +591,9 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
         cc.glBindTexture2D(this._texture);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
 
-        cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
+        //cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
 
         //
         // Using VBO without VAO
@@ -607,8 +607,6 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.drawElements(gl.TRIANGLES, this._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
-
-        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     setBatchNode:function (batchNode) {

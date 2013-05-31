@@ -271,7 +271,6 @@ cc.Speed = cc.Action.extend(/** @lends cc.Speed# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.Action.prototype.startWithTarget.call(this, target);
         this._innerAction.startWithTarget(target);
     },
