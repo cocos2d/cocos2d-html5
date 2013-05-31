@@ -257,8 +257,13 @@ cc.TransformValues = function (pos, scale, rotation, skew, ap, visible) {
 };
 
 cc.RENDER_IN_SUBPIXEL = function (A) {
-    return (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) ? A : (0 | A);
+    return (0 | A);
 };
+if(cc.SPRITEBATCHNODE_RENDER_SUBPIXEL){
+    cc.RENDER_IN_SUBPIXEL = function (A) {
+        return A;
+    };
+}
 
 /**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) (Canvas implement) <br/>
@@ -408,22 +413,6 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     },
 
     /**
-     * return the SpriteBatchNode of the cc.Sprite
-     * @return {cc.SpriteBatchNode}
-     */
-    getSpriteBatchNode:function () {
-        return this._batchNode;
-    },
-
-    /**
-     * set the SpriteBatchNode of the cc.Sprite
-     * @param {cc.SpriteBatchNode} spriteBatchNode
-     */
-    setSpriteBatchNode:function (spriteBatchNode) {
-        this._batchNode = spriteBatchNode;
-    },
-
-    /**
      * Get offset position of the sprite. Calculated automatically by editors like Zwoptex.
      * @return {cc.Point}
      */
@@ -536,7 +525,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
     },
 
     /**
@@ -548,7 +537,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     removeChild:function (child, cleanup) {
         if (this._batchNode)
             this._batchNode.removeSpriteFromAtlas(child);
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -560,14 +549,14 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if (this._batchNode) {
             if (this._children != null) {
                 for (var i = 0; i < this._children.length; i++) {
-                    if (this._children[i] instanceof cc.Sprite) {
-                        this._batchNode.removeSpriteFromAtlas(this._children[i]);
-                    }
+                    //if (this._children[i] instanceof cc.Sprite) {
+                    this._batchNode.removeSpriteFromAtlas(this._children[i]);
+                    //}
                 }
             }
         }
 
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._hasChildren = false;
     },
 
@@ -726,7 +715,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      */
     ignoreAnchorPointForPosition:function (relative) {
         cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
-        this._super(relative);
+        cc.Node.prototype.ignoreAnchorPointForPosition.call(this,relative);
     },
 
     /**
@@ -866,7 +855,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement} fileName sprite construct parameter
      */
     ctor:function (fileName) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -914,7 +903,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if(arguments.length > 0)
             return this.initWithFile(arguments[0], arguments[1]);
 
-        this._super();
+        cc.NodeCanvas.prototype.init.call(this);
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
         this._opacity = 255;
@@ -1110,7 +1099,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             tag = child._tag;
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this._hasChildren = true;
     },
 
@@ -1174,7 +1163,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     isFrameDisplayed:function (frame) {
         if (frame.getTexture() != this._texture)
             return false;
-        return cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect);
+        return cc.rectEqualToRect(frame.getRect(), this._rect);
     },
 
     /**
@@ -1250,9 +1239,10 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             context.globalCompositeOperation = 'lighter';
 
         context.globalAlpha = this._opacity / 255;
-        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - this._rect.size.height;
+        var locRect = this._rect;
+        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.size.height;
         if (this._flipX) {
-            flipXOffset = -this._offsetPosition.x - this._rect.size.width;
+            flipXOffset = -this._offsetPosition.x - locRect.size.width;
             context.scale(-1, 1);
         }
         if (this._flipY) {
@@ -1262,12 +1252,12 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if (this._texture) {
             if (this._colorized) {
                 context.drawImage(this._texture,
-                    0, 0, this._rect.size.width, this._rect.size.height,
-                    flipXOffset, flipYOffset, this._rect.size.width, this._rect.size.height);
+                    0, 0, locRect.size.width, locRect.size.height,
+                    flipXOffset, flipYOffset, locRect.size.width, locRect.size.height);
             } else {
                 context.drawImage(this._texture,
-                    this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height,
-                    flipXOffset, flipYOffset, this._rect.size.width, this._rect.size.height);
+                    locRect.origin.x, locRect.origin.y, locRect.size.width, locRect.size.height,
+                    flipXOffset, flipYOffset, locRect.size.width, locRect.size.height);
             }
         } else if (this._contentSize.width !== 0) {
             context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";
@@ -1278,8 +1268,8 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             // draw bounding box
             context.strokeStyle = "rgba(0,255,0,1)";
             flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + this._rect.size.width, flipYOffset), cc.p(flipXOffset + this._rect.size.width, flipYOffset - this._rect.size.height),
-                cc.p(flipXOffset, flipYOffset - this._rect.size.height)];
+            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.size.width, flipYOffset), cc.p(flipXOffset + locRect.size.width, flipYOffset - locRect.size.height),
+                cc.p(flipXOffset, flipYOffset - locRect.size.height)];
             cc.drawingUtil.drawPoly(vertices1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
@@ -1701,7 +1691,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
     },
 
     /**
@@ -1713,7 +1703,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     removeChild:function (child, cleanup) {
         if (this._batchNode)
             this._batchNode.removeSpriteFromAtlas(child);
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -1725,14 +1715,14 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if (this._batchNode) {
             if (this._children != null) {
                 for (var i = 0; i < this._children.length; i++) {
-                    if (this._children[i] instanceof cc.Sprite) {
-                        this._batchNode.removeSpriteFromAtlas(this._children[i]);
-                    }
+                    //if (this._children[i] instanceof cc.Sprite) {
+                    this._batchNode.removeSpriteFromAtlas(this._children[i]);
+                    //}
                 }
             }
         }
 
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._hasChildren = false;
     },
 
@@ -1891,7 +1881,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      */
     ignoreAnchorPointForPosition:function (relative) {
         cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
-        this._super(relative);
+        cc.Node.prototype.ignoreAnchorPointForPosition.call(this,relative);
     },
 
     /**
@@ -2031,7 +2021,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
      */
     ctor:function (fileName) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -2095,7 +2085,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if(arguments.length > 0)
             return this.initWithFile(arguments[0], arguments[1]);
 
-        this._super();
+        cc.NodeWebGL.prototype.init.call(this);
 
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
@@ -2388,7 +2378,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         }
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this._hasChildren = true;
     },
     /**
@@ -2472,8 +2462,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {Boolean}
      */
     isFrameDisplayed:function (frame) {
-        return (cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
-            && cc.Point.CCPointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
+        return (cc.rectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
+            && cc.pointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
     },
 
     /**
@@ -2630,35 +2620,36 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     },
     /**
      * draw sprite to canvas
-     * @param {WebGLRenderContext} ctx 3d context of canvas
      */
-    draw:function (ctx) {
-        var gl = ctx || cc.renderContext;
+    draw:function () {
+        var gl = cc.renderContext, locTexture = this._texture;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        if (this._texture) {
-            if(this._texture._isLoaded){
+        if (locTexture) {
+            if(locTexture._isLoaded){
                 this._shaderProgram.use();
-                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+                this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
                 cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-                cc.glBindTexture2D(this._texture);
+                //optimize performance for javascript
+                cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if(this._quadDirty){
-                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
                     this._quadDirty = false;
                 }
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
             shaderProgram.use();
-            shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);
@@ -2674,6 +2665,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
+        cc.g_NumberOfDraws++;
+        if(cc.SPRITE_DEBUG_DRAW === 0)
+            return;
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
@@ -2692,7 +2686,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
-        cc.g_NumberOfDraws++;
     }
 });
 
