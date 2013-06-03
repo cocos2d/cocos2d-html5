@@ -606,8 +606,8 @@ cc.TMXLayer = cc.SpriteBatchNode.extend(/** @lends cc.TMXLayer# */{
 
     _updateTileForGID:function (gid, pos) {
         var rect = this._tileSet.rectForGID(gid);
-        rect = cc.rect(rect.origin.x / this._contentScaleFactor, rect.origin.y / this._contentScaleFactor,
-            rect.size.width / this._contentScaleFactor, rect.size.height / this._contentScaleFactor);
+        rect = cc.rect(rect.x / this._contentScaleFactor, rect.y / this._contentScaleFactor,
+            rect.width / this._contentScaleFactor, rect.height / this._contentScaleFactor);
         var z = pos.x + pos.y * this._layerSize.width;
 
         var tile = this._reusedTileWithRect(rect);

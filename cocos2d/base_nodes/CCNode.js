@@ -3213,7 +3213,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     getBoundingBoxToWorld:function () {
         var rect = cc.rect(0, 0, this._contentSize.width, this._contentSize.height);
         rect = cc.RectApplyAffineTransform(rect, this.nodeToWorldTransform());
-        rect = cc.rect(0 | rect.origin.x - 4, 0 | rect.origin.y - 4, 0 | rect.size.width + 8, 0 | rect.size.height + 8);
+        rect = cc.rect(0 | rect.x - 4, 0 | rect.y - 4, 0 | rect.width + 8, 0 | rect.height + 8);
         //query child's BoundingBox
         if (!this._children)
             return rect;
