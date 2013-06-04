@@ -145,7 +145,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
      * @param {cc.Size} size
      */
     setContentSize:function (size) {
-        if (!cc.Size.CCSizeEqualToSize(size, this._contentSize)) {
+        if (!cc.sizeEqualToSize(size, this._contentSize)) {
             this._contentSize = size;
             this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
                 this._contentSize.height * this._anchorPoint.y);

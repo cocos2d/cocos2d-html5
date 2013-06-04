@@ -407,7 +407,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         if (cc.renderContextType === cc.CANVAS) {
             var rect = r;
             if (rect)
-                this.context.clearRect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
+                this.context.clearRect(rect.x, rect.y, rect.width, rect.height);
             else
                 this.context.clearRect(0, 0, this.canvas.width, -this.canvas.height);
         } else {

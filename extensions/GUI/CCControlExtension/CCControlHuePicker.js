@@ -57,11 +57,11 @@ cc.ControlHuePicker = cc.Control.extend({
         var backgroundBox = this._background.getBoundingBox();
 
         // Get the center point of the background image
-        var centerX = this._startPos.x + backgroundBox.size.width * 0.5;
-        var centerY = this._startPos.y + backgroundBox.size.height * 0.5;
+        var centerX = this._startPos.x + backgroundBox.width * 0.5;
+        var centerY = this._startPos.y + backgroundBox.height * 0.5;
 
         // Work out the limit to the distance of the picker when moving around the hue bar
-        var limit = backgroundBox.size.width * 0.5 - 15.0;
+        var limit = backgroundBox.width * 0.5 - 15.0;
 
         // Update angle
         var angleDeg = this._huePercentage * 360.0 - 180.0;
@@ -90,7 +90,7 @@ cc.ControlHuePicker = cc.Control.extend({
             this._background = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("huePickerBackground.png", target, pos, cc.p(0.0, 0.0));
             this._slider = cc.ControlUtils.addSpriteToTargetWithPosAndAnchor("colourPicker.png", target, pos, cc.p(0.5, 0.5));
 
-            this._slider.setPosition(cc.p(pos.x, pos.y + this._background.getBoundingBox().size.height * 0.5));
+            this._slider.setPosition(cc.p(pos.x, pos.y + this._background.getBoundingBox().height * 0.5));
             this._startPos = pos;
 
             // Sets the default value
@@ -106,8 +106,8 @@ cc.ControlHuePicker = cc.Control.extend({
         var backgroundBox = this._background.getBoundingBox();
 
         // Get the center point of the background image
-        var centerX = this._startPos.x + backgroundBox.size.width * 0.5;
-        var centerY = this._startPos.y + backgroundBox.size.height * 0.5;
+        var centerX = this._startPos.x + backgroundBox.width * 0.5;
+        var centerY = this._startPos.y + backgroundBox.height * 0.5;
 
         // Work out the distance difference between the location and center
         var dx = location.x - centerX;
@@ -125,7 +125,7 @@ cc.ControlHuePicker = cc.Control.extend({
     },
     _checkSliderPosition:function (location) {
         // check that the touch location is within the bounding rectangle before sending updates
-        if (cc.Rect.CCRectContainsPoint(this._background.getBoundingBox(), location)) {
+        if (cc.rectContainsPoint(this._background.getBoundingBox(), location)) {
             this._updateSliderPosition(location);
             return true;
         }

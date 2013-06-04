@@ -115,7 +115,7 @@ cc.ControlButton = cc.Control.extend({
 
         // Set the content size
         var maxRect = cc.ControlUtils.CCRectUnion(this._titleLabel.getBoundingBox(), this._backgroundSprite.getBoundingBox());
-        this.setContentSize(cc.SizeMake(maxRect.size.width, maxRect.size.height));
+        this.setContentSize(cc.SizeMake(maxRect.width, maxRect.height));
 
         this._titleLabel.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));
         this._backgroundSprite.setPosition(cc.p(this.getContentSize().width / 2, this.getContentSize().height / 2));

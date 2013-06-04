@@ -60,7 +60,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @override
      */
     ctor:function () {
-        this._super();
+        cc.ParticleSystem.prototype.ctor.call(this);
         this._buffersVBO = [0, 0];
         //this._quads = [];
         //this._indices = [];
@@ -98,13 +98,13 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var scaleFactor = cc.CONTENT_SCALE_FACTOR();
         // convert to pixels coords
         var rect = cc.rect(
-            pointRect.origin.x * scaleFactor,
-            pointRect.origin.y * scaleFactor,
-            pointRect.size.width * scaleFactor,
-            pointRect.size.height * scaleFactor);
+            pointRect.x * scaleFactor,
+            pointRect.y * scaleFactor,
+            pointRect.width * scaleFactor,
+            pointRect.height * scaleFactor);
 
-        var wide = pointRect.size.width;
-        var high = pointRect.size.height;
+        var wide = pointRect.width;
+        var high = pointRect.height;
 
         if (this._texture) {
             if ((this._texture instanceof HTMLImageElement) || (this._texture instanceof HTMLCanvasElement)) {
@@ -121,15 +121,15 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         var left, bottom, right, top;
         if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-            left = (rect.origin.x * 2 + 1) / (wide * 2);
-            bottom = (rect.origin.y * 2 + 1) / (high * 2);
-            right = left + (rect.size.width * 2 - 2) / (wide * 2);
-            top = bottom + (rect.size.height * 2 - 2) / (high * 2);
+            left = (rect.x * 2 + 1) / (wide * 2);
+            bottom = (rect.y * 2 + 1) / (high * 2);
+            right = left + (rect.width * 2 - 2) / (wide * 2);
+            top = bottom + (rect.height * 2 - 2) / (high * 2);
         } else {
-            left = rect.origin.x / wide;
-            bottom = rect.origin.y / high;
-            right = left + rect.size.width / wide;
-            top = bottom + rect.size.height / high;
+            left = rect.x / wide;
+            bottom = rect.y / high;
+            right = left + rect.width / wide;
+            top = bottom + rect.height / high;
         }
 
         // Important. Texture in cocos2d are inverted, so the Y component should be inverted
@@ -282,7 +282,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      * @param {cc.SpriteFrame} spriteFrame
      */
     setDisplayFrame:function (spriteFrame) {
-        cc.Assert(cc.Point.CCPointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
+        cc.Assert(cc.pointEqualToPoint(spriteFrame.getOffsetInPixels(), cc.PointZero()), "QuadParticle only supports SpriteFrames with no offsets");
 
         // update texture before updating texture rect
         if (cc.renderContextType === cc.WEBGL)
@@ -320,7 +320,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     initWithTotalParticles:function (numberOfParticles) {
         // base initialization
-        if (this._super(numberOfParticles)) {
+        if (cc.ParticleSystem.prototype.initWithTotalParticles.call(this, numberOfParticles)) {
             if (cc.renderContextType === cc.CANVAS)
                 return true;
 
@@ -348,7 +348,7 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
      */
     setTexture:function (texture, isCallSuper) {
         if (isCallSuper != null && isCallSuper === true) {
-            this._super(texture);
+            cc.ParticleSystem.prototype.setTexture.call(this, texture);
             return;
         }
         var size = null;
@@ -531,8 +531,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
-                var w = this._pointRect.size.width;
-                var h = this._pointRect.size.height;
+                var w = this._pointRect.width;
+                var h = this._pointRect.height;
 
                 context.scale(
                     Math.max((1 / w) * size, 0.000001),
@@ -588,12 +588,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var gl = ctx || cc.renderContext;
 
         this._shaderProgram.use();
-        this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+        this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
         cc.glBindTexture2D(this._texture);
-        cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
+        cc.glBlendFuncForParticle(this._blendFunc.src, this._blendFunc.dst);
 
-        cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
+        //cc.Assert(this._particleIdx == this._particleCount, "Abnormal error in particle quad");
 
         //
         // Using VBO without VAO
@@ -607,14 +607,12 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this._buffersVBO[1]);
         gl.drawElements(gl.TRIANGLES, this._particleIdx * 6, gl.UNSIGNED_SHORT, 0);
-
-        //cc.CHECK_GL_ERROR_DEBUG();
     },
 
     setBatchNode:function (batchNode) {
         if (this._batchNode != batchNode) {
             var oldBatch = this._batchNode;
-            this._super(batchNode);
+            cc.ParticleSystem.prototype.setBatchNode.call(this, batchNode);
 
             // NEW: is self render ?
             if (!batchNode) {

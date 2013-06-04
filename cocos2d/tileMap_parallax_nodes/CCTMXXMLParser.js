@@ -464,8 +464,6 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         var mapXML = cc.SAXParser.getInstance().tmxParse(tmxFile, isXmlString);
         var i, j;
 
-        var i, j;
-
         // PARSE <map>
         var map = mapXML.documentElement;
 
@@ -533,12 +531,13 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
 
                 var image = selTileset.getElementsByTagName('image')[0];
                 var imagename = image.getAttribute('source');
-                var num = this._TMXFileName.lastIndexOf("/");
-                if (num != -1) {
+                var num = -1;
+                if(this._TMXFileName)
+                    num  = this._TMXFileName.lastIndexOf("/");
+                if (num !== -1) {
                     var dir = this._TMXFileName.substr(0, num + 1);
                     tileset.sourceImage = dir + imagename;
-                }
-                else {
+                } else {
                     tileset.sourceImage = this._resources + (this._resources ? "/" : "") + imagename;
                 }
                 this.setTilesets(tileset);

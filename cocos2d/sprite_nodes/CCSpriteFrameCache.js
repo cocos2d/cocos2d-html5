@@ -127,7 +127,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     spriteFrame = new cc.SpriteFrame();
                     if (frameDict.hasOwnProperty("spriteSize")) {
                         spriteFrame.initWithTexture(texture,
-                            cc.rect(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
+                            cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height),
                             textureRotated,
                             spriteOffset,
                             spriteSourceSize);
@@ -140,7 +140,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     //clip to canvas
                     var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(), spriteFrame.getRect());
                     var rect = spriteFrame.getRect();
-                    spriteFrame.setRect(cc.rect(0, 0, rect.size.width, rect.size.height));
+                    spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
                     spriteFrame.setTexture(tempTexture);
                 }
 

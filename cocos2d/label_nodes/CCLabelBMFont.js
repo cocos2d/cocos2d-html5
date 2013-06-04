@@ -246,19 +246,19 @@ cc.BMFontConfiguration = cc.Class.extend(/** @lends cc.BMFontConfiguration# */{
 
         // Character x
         value = /x=([\-\d]+)/gi.exec(line)[1];
-        characterDefinition.rect.origin.x = parseInt(value);
+        characterDefinition.rect.x = parseInt(value);
 
         // Character y
         value = /y=([\-\d]+)/gi.exec(line)[1];
-        characterDefinition.rect.origin.y = parseInt(value);
+        characterDefinition.rect.y = parseInt(value);
 
         // Character width
         value = /width=([\-\d]+)/gi.exec(line)[1];
-        characterDefinition.rect.size.width = parseInt(value);
+        characterDefinition.rect.width = parseInt(value);
 
         // Character height
         value = /height=([\-\d]+)/gi.exec(line)[1];
-        characterDefinition.rect.size.height = parseInt(value);
+        characterDefinition.rect.height = parseInt(value);
 
         // Character xoffset
         value = /xoffset=([\-\d]+)/gi.exec(line)[1];
@@ -657,10 +657,10 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
 
             var fontDef = element.fontDef;
 
-            var rect = cc.rect(fontDef.rect.origin.x, fontDef.rect.origin.y, fontDef.rect.size.width, fontDef.rect.size.height);
+            var rect = cc.rect(fontDef.rect.x, fontDef.rect.y, fontDef.rect.width, fontDef.rect.height);
             rect = cc.RECT_PIXELS_TO_POINTS(rect);
-            rect.origin.x += this._imageOffset.x;
-            rect.origin.y += this._imageOffset.y;
+            rect.x += this._imageOffset.x;
+            rect.y += this._imageOffset.y;
 
             var fontChar = this.getChildByTag(i);
             if (!fontChar) {
@@ -689,8 +689,8 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
             }
 
             var yOffset = this._configuration.commonHeight - fontDef.yOffset;
-            var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.size.width * 0.5 + kerningAmount,
-                nextFontPositionY + yOffset - rect.size.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
+            var fontPos = cc.p(nextFontPositionX + fontDef.xOffset + fontDef.rect.width * 0.5 + kerningAmount,
+                nextFontPositionY + yOffset - rect.height * 0.5 * cc.CONTENT_SCALE_FACTOR());
             fontChar.setPosition(cc.POINT_PIXELS_TO_POINTS(fontPos));
 
             // update kerning
@@ -1033,7 +1033,7 @@ cc.LabelBMFont = cc.SpriteBatchNode.extend(/** @lends cc.LabelBMFont# */{
      * @param {cc.Point} point
      */
     setAnchorPoint:function (point) {
-        if (!cc.Point.CCPointEqualToPoint(point, this._anchorPoint)) {
+        if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
             this._super(point);
             this.updateLabel();
         }

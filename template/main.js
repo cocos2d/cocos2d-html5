@@ -33,7 +33,8 @@ var cocos2dApp = cc.Class.extend({
         // initialize director
         var director = cc.Director.getInstance();
 
-        var screenSize = cc.EGLView.getInstance().getFrameSize();
+        //var screenSize = cc.EGLView.getInstance().getFrameSize();
+        var screenSize = cc.size(800, 450);
         var resourceSize = cc.size(800, 450);
         var designSize = cc.size(800, 450);
 
@@ -68,7 +69,7 @@ var cocos2dApp = cc.Class.extend({
 
         director.setContentScaleFactor(resourceSize.width / designSize.width);
 
-        cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
+        //cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
 
         // turn on display FPS
         director.setDisplayStats(ccConfig['showFPS']);
@@ -78,7 +79,12 @@ var cocos2dApp = cc.Class.extend({
 
         //load resources
         cc.LoaderScene.preload(g_ressources, function () {
-            director.runWithScene(new scene);
+            var sc = new scene;
+            if (director.getRunningScene()) {
+                director.replaceScene(sc);
+            } else {
+                director.runWithScene(sc);
+            }
         }, this);
     }
 });
