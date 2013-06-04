@@ -33,8 +33,7 @@ var cocos2dApp = cc.Class.extend({
         // initialize director
         var director = cc.Director.getInstance();
 
-        //var screenSize = cc.EGLView.getInstance().getFrameSize();
-        var screenSize = cc.size(800, 450);
+        var screenSize = cc.EGLView.getInstance().getFrameSize();
         var resourceSize = cc.size(800, 450);
         var designSize = cc.size(800, 450);
 
@@ -69,7 +68,7 @@ var cocos2dApp = cc.Class.extend({
 
         director.setContentScaleFactor(resourceSize.width / designSize.width);
 
-        //cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
+        cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
 
         // turn on display FPS
         director.setDisplayStats(ccConfig['showFPS']);
