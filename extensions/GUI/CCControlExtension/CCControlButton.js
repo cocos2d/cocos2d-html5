@@ -58,9 +58,7 @@ cc.ControlButton = cc.Control.extend({
         this._backgroundSpriteDispatchTable = {};
     },
 
-    init:function (isDirectCall) {
-        if ((isDirectCall != null) && (isDirectCall == true))
-            return this._super();
+    init:function(){
         return this.initWithLabelAndBackgroundSprite(cc.LabelTTF.create("", "Helvetica", 12), cc.Scale9Sprite.create());
     },
 
@@ -126,7 +124,7 @@ cc.ControlButton = cc.Control.extend({
     },
 
     initWithLabelAndBackgroundSprite:function (label, backgroundSprite) {
-        if (this.init(true)) {
+        if (cc.Control.prototype.init.call(this, true)) {
             cc.Assert(label != null, "node must not be nil");
             cc.Assert(label != null || label.RGBAProtocol || backgroundSprite != null, "");
 
