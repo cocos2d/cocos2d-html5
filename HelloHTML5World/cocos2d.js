@@ -49,7 +49,8 @@ var ccConfig = {
     //singleEngineFile:'',
     appFiles:[
         'src/resource.js',
-        'src/myApp.js'
+        'src/myApp.js',
+        'main.js'
         //add your own files in order here
     ]
 };
@@ -92,6 +93,5 @@ var ccConfig = {
         for (var i = 0; i < appFiles.length; i++) {
             require(appFiles[i]);
         }
-        require("main.js");
     }
 })();

@@ -200,7 +200,6 @@
 
     var loaded = 0;
     var que = engine.concat(c.appFiles);
-    que.push('main.js');
     if (navigator.userAgent.indexOf("Trident/5") > -1) {
         //ie9
         this.serial = -1;
