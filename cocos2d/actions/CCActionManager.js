@@ -325,8 +325,8 @@ cc.ActionManager = cc.Class.extend({
      * @param {Number} dt delta time in seconds
      */
     update:function (dt) {
-        var locTargets = this._targets, locLen = locTargets.length, locCurrTarget;
-        for (var elt = 0; elt < locLen; elt++) {
+        var locTargets = this._targets , locCurrTarget;
+        for (var elt = 0; elt < locTargets.length; elt++) {
             this._currentTarget = locTargets[elt];
             locCurrTarget = this._currentTarget;
             this._currentTargetSalvaged = false;
