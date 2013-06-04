@@ -133,16 +133,16 @@ cc.generateTintImage2 = function (texture, color, rect) {
     var buff = document.createElement("canvas");
     var ctx = buff.getContext("2d");
 
-    if (buff.width != rect.size.width) buff.width = rect.size.width;
-    if (buff.height != rect.size.height) buff.height = rect.size.height;
+    if (buff.width != rect.width) buff.width = rect.width;
+    if (buff.height != rect.height) buff.height = rect.height;
     ctx.save();
 
-    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
+    ctx.drawImage(texture, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
 
     ctx.globalCompositeOperation = "source-in";
     ctx.globalAlpha = selColor.a / 255.0;
     ctx.fillStyle = "rgb(" + selColor.r + "," + selColor.g + "," + selColor.b + ")";
-    ctx.fillRect(0, 0, rect.size.width, rect.size.height);
+    ctx.fillRect(0, 0, rect.width, rect.height);
     ctx.restore();
 
     return buff;
@@ -174,8 +174,8 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         selColor = color;
     }
 
-    var w = Math.min(rect.size.width, tintedImgCache[0].width);
-    var h = Math.min(rect.size.height, tintedImgCache[0].height);
+    var w = Math.min(rect.width, tintedImgCache[0].width);
+    var h = Math.min(rect.height, tintedImgCache[0].height);
     var buff = renderCanvas;
     var ctx;
 
@@ -198,20 +198,20 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
     var a = ctx.globalAlpha;
     if (selColor.r > 0) {
         ctx.globalAlpha = selColor.r * a;
-        ctx.drawImage(tintedImgCache[0], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
     }
     if (selColor.g > 0) {
         ctx.globalAlpha = selColor.g * a;
-        ctx.drawImage(tintedImgCache[1], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
     }
     if (selColor.b > 0) {
         ctx.globalAlpha = selColor.b * a;
-        ctx.drawImage(tintedImgCache[2], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
     }
 
     if((selColor.r === 0) && (selColor.g === 0) &&(selColor.b === 0)){
         ctx.globalAlpha = a;
-        ctx.drawImage(tintedImgCache[3], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
     }
 
     ctx.restore();
@@ -226,13 +226,13 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
         return texture;
 
     var nCanvas = document.createElement("canvas");
-    nCanvas.width = rect.size.width;
-    nCanvas.height = rect.size.height;
+    nCanvas.width = rect.width;
+    nCanvas.height = rect.height;
 
     var ctx = nCanvas.getContext("2d");
     ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
     ctx.rotate(-1.5707963267948966);
-    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height / 2, -rect.size.width / 2, rect.size.height, rect.size.width);
+    ctx.drawImage(texture, rect.x, rect.y, rect.height, rect.width, -rect.height / 2, -rect.width / 2, rect.height, rect.width);
     return nCanvas;
 };
 
@@ -392,7 +392,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return cc.rect(this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height);
+        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
     },
 
     /**
@@ -1042,8 +1042,8 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             relativeOffset.x = -relativeOffset.x;
         if (this._flipY)
             relativeOffset.y = -relativeOffset.y;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.size.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.size.height) / 2;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1240,9 +1240,9 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
 
         context.globalAlpha = this._opacity / 255;
         var locRect = this._rect;
-        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.size.height;
+        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.height;
         if (this._flipX) {
-            flipXOffset = -this._offsetPosition.x - locRect.size.width;
+            flipXOffset = -this._offsetPosition.x - locRect.width;
             context.scale(-1, 1);
         }
         if (this._flipY) {
@@ -1252,12 +1252,12 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if (this._texture) {
             if (this._colorized) {
                 context.drawImage(this._texture,
-                    0, 0, locRect.size.width, locRect.size.height,
-                    flipXOffset, flipYOffset, locRect.size.width, locRect.size.height);
+                    0, 0, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(this._texture,
-                    locRect.origin.x, locRect.origin.y, locRect.size.width, locRect.size.height,
-                    flipXOffset, flipYOffset, locRect.size.width, locRect.size.height);
+                    locRect.x, locRect.y, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (this._contentSize.width !== 0) {
             context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";
@@ -1268,8 +1268,8 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             // draw bounding box
             context.strokeStyle = "rgba(0,255,0,1)";
             flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.size.width, flipYOffset), cc.p(flipXOffset + locRect.size.width, flipYOffset - locRect.size.height),
-                cc.p(flipXOffset, flipYOffset - locRect.size.height)];
+            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
+                cc.p(flipXOffset, flipYOffset - locRect.height)];
             cc.drawingUtil.drawPoly(vertices1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
@@ -1542,7 +1542,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return cc.rect(this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height);
+        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
     },
 
     /**
@@ -2246,8 +2246,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if (this._flipY)
             relativeOffset.y = -relativeOffset.y;
 
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.size.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.size.height) / 2;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -2259,8 +2259,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             // Atlas: Vertex
             var x1 = 0 + this._offsetPosition.x;
             var y1 = 0 + this._offsetPosition.y;
-            var x2 = x1 + this._rect.size.width;
-            var y2 = y1 + this._rect.size.height;
+            var x2 = x1 + this._rect.width;
+            var y2 = y1 + this._rect.height;
 
             // Don't update Z.
             this._quad.bl.vertices = {x:x1, y:y1, z:0};
@@ -2490,8 +2490,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
             var x1 = this._offsetPosition.x;
             var y1 = this._offsetPosition.y;
-            var x2 = x1 + this._rect.size.width;
-            var y2 = y1 + this._rect.size.height;
+            var x2 = x1 + this._rect.width;
+            var y2 = y1 + this._rect.height;
             this._quad.bl.vertices = {x:x1, y:y1, z:0};
             this._quad.br.vertices = {x:x2, y:y1, z:0};
             this._quad.tl.vertices = {x:x1, y:y2, z:0};
@@ -2551,15 +2551,15 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         var left, right, top, bottom, tempSwap;
         if (this._rectRotated) {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.size.width * 2 - 2) / (2 * atlasHeight);
+                left = (2 * rect.x + 1) / (2 * atlasWidth);
+                right = left + (rect.height * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.width * 2 - 2) / (2 * atlasHeight);
             } else {
-                left = rect.origin.x / atlasWidth;
-                right = (rect.origin.x + rect.size.height) / atlasWidth;
-                top = rect.origin.y / atlasHeight;
-                bottom = (rect.origin.y + rect.size.width) / atlasHeight;
+                left = rect.x / atlasWidth;
+                right = (rect.x + rect.height) / atlasWidth;
+                top = rect.y / atlasHeight;
+                bottom = (rect.y + rect.width) / atlasHeight;
             }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
             if (this._flipX) {
@@ -2584,15 +2584,15 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._quad.tr.texCoords.v = bottom;
         } else {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.size.height * 2 - 2) / (2 * atlasHeight);
+                left = (2 * rect.x + 1) / (2 * atlasWidth);
+                right = left + (rect.width * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.height * 2 - 2) / (2 * atlasHeight);
             } else {
-                left = rect.origin.x / atlasWidth;
-                right = (rect.origin.x + rect.size.width) / atlasWidth;
-                top = rect.origin.y / atlasHeight;
-                bottom = (rect.origin.y + rect.size.height) / atlasHeight;
+                left = rect.x / atlasWidth;
+                right = (rect.x + rect.width) / atlasWidth;
+                top = rect.y / atlasHeight;
+                bottom = (rect.y + rect.height) / atlasHeight;
             } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
             if (this._flipX) {

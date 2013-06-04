@@ -392,10 +392,10 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
             0.0, 0.0,
             this._maxS, 0.0];
 
-        var vertices = [    rect.origin.x, rect.origin.y, /*0.0,*/
-            rect.origin.x + rect.size.width, rect.origin.y, /*0.0,*/
-            rect.origin.x, rect.origin.y + rect.size.height, /*0.0,*/
-            rect.origin.x + rect.size.width, rect.origin.y + rect.size.height        /*0.0*/ ];
+        var vertices = [    rect.x, rect.y, /*0.0,*/
+            rect.x + rect.width, rect.y, /*0.0,*/
+            rect.x, rect.y + rect.height, /*0.0,*/
+            rect.x + rect.width, rect.y + rect.height        /*0.0*/ ];
 
         cc.glEnableVertexAttribs( cc.VERTEX_ATTRIB_FLAG_POSITION | cc.VERTEX_ATTRIB_FLAG_TEXCOORDS );
         this._shaderProgram.use();

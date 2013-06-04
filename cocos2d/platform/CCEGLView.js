@@ -357,8 +357,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} h height
      */
     setViewPortInPoints:function (x, y, w, h) {
-        cc.renderContext.viewport((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
-            (y * this._scaleY  * this._frameZoomFactor + this._viewPortRect.origin.y * this._frameZoomFactor),
+        cc.renderContext.viewport((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
+            (y * this._scaleY  * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
             (w * this._scaleX * this._frameZoomFactor),
             (h * this._scaleY * this._frameZoomFactor));
     },
@@ -371,8 +371,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} h
      */
     setScissorInPoints:function (x, y, w, h) {
-        cc.renderContext.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
-            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.origin.y * this._frameZoomFactor),
+        cc.renderContext.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
+            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
             (w * this._scaleX * this._frameZoomFactor),
             (h * this._scaleY * this._frameZoomFactor));
     },
@@ -468,8 +468,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 }
 
                 var touch = cc.Touches[unusedIndex] = new cc.Touch();
-                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
 
                 //cc.log("x ="+x+" y = "+y, touches[key].getLocation().x, touches[key].getLocation().y);
 
@@ -508,8 +508,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             //cc.log("Moving touches with id: " + id + ", x=" + x + ", y=" + y);
             var touch = cc.Touches[index];
             if (touch) {
-                touch.setTouchInfo(index, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
                 arr.push(touch);
             }
             else {
@@ -573,8 +573,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             var touch = cc.Touches[index];
             if (touch) {
                 //cc.log("Ending touches with id: " + id + ", x=" + x + ", y=" + y);
-                touch.setTouchInfo(index, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
 
                 arr.push(touch);
 

@@ -98,13 +98,13 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
         var scaleFactor = cc.CONTENT_SCALE_FACTOR();
         // convert to pixels coords
         var rect = cc.rect(
-            pointRect.origin.x * scaleFactor,
-            pointRect.origin.y * scaleFactor,
-            pointRect.size.width * scaleFactor,
-            pointRect.size.height * scaleFactor);
+            pointRect.x * scaleFactor,
+            pointRect.y * scaleFactor,
+            pointRect.width * scaleFactor,
+            pointRect.height * scaleFactor);
 
-        var wide = pointRect.size.width;
-        var high = pointRect.size.height;
+        var wide = pointRect.width;
+        var high = pointRect.height;
 
         if (this._texture) {
             if ((this._texture instanceof HTMLImageElement) || (this._texture instanceof HTMLCanvasElement)) {
@@ -121,15 +121,15 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
 
         var left, bottom, right, top;
         if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-            left = (rect.origin.x * 2 + 1) / (wide * 2);
-            bottom = (rect.origin.y * 2 + 1) / (high * 2);
-            right = left + (rect.size.width * 2 - 2) / (wide * 2);
-            top = bottom + (rect.size.height * 2 - 2) / (high * 2);
+            left = (rect.x * 2 + 1) / (wide * 2);
+            bottom = (rect.y * 2 + 1) / (high * 2);
+            right = left + (rect.width * 2 - 2) / (wide * 2);
+            top = bottom + (rect.height * 2 - 2) / (high * 2);
         } else {
-            left = rect.origin.x / wide;
-            bottom = rect.origin.y / high;
-            right = left + rect.size.width / wide;
-            top = bottom + rect.size.height / high;
+            left = rect.x / wide;
+            bottom = rect.y / high;
+            right = left + rect.width / wide;
+            top = bottom + rect.height / high;
         }
 
         // Important. Texture in cocos2d are inverted, so the Y component should be inverted
@@ -531,8 +531,8 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
                 context.translate((0 | particle.drawPos.x), -(0 | particle.drawPos.y));
 
                 var size = Math.floor(particle.size / 4) * 4;
-                var w = this._pointRect.size.width;
-                var h = this._pointRect.size.height;
+                var w = this._pointRect.width;
+                var h = this._pointRect.height;
 
                 context.scale(
                     Math.max((1 / w) * size, 0.000001),

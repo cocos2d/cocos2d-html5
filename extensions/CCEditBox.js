@@ -458,7 +458,7 @@ cc.EditBox = cc.ControlButton.extend({
     keyboardWillShow: function (info) {
         var rectTracked = cc.EditBox.getRect(this);
         // some adjustment for margin between the keyboard and the edit box.
-        rectTracked.origin.y -= 4;
+        rectTracked.y -= 4;
         // if the keyboard area doesn't intersect with the tracking node area, nothing needs to be done.
         if (!rectTracked.intersectsRect(info.end)) {
             cc.log("needn't to adjust view layout.");
