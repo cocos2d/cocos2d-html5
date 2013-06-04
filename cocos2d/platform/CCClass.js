@@ -83,7 +83,8 @@ ClassManager.getNewID=function(){
 
 (function () {
     var initializing = false, fnTest = /\b_super\b/;
-    var releaseMode = (document['ccConfig'] && document['ccConfig']['CLASS_RELEASE_MODE']) ? document['ccConfig']['CLASS_RELEASE_MODE'] : null;
+    var config = window['ccConfig'];
+    var releaseMode = (config && config['CLASS_RELEASE_MODE']) ? config['CLASS_RELEASE_MODE'] : null;
     if(releaseMode)
     {
         console.log("release Mode");

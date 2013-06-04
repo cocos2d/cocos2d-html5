@@ -24,6 +24,24 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Device type
+ * @constant
+ * @type {Object}
+ */
+cc.TARGET_PLATFORM = {
+    WINDOWS:0,
+    LINUX:1,
+    MACOS:2,
+    ANDROID:3,
+    IPHONE:4,
+    IPAD:5,
+    BLACKBERRY:6,
+    NACL:7,
+    EMSCRIPTEN:8,
+    MOBILE_BROWSER:100,
+    PC_BROWSER:101
+};
 
 /**
  * Device oriented vertically, home button on the bottom
@@ -147,12 +165,14 @@ cc.isAddedHiddenEvent = false;
  * // declare like this: <div id="Cocos2dGameContainer" width="800" height="450"></div>
  * cc.setup("Cocos2dGameContainer");
  */
-cc.setup = function (el, width, height) {
+cc.setup = function () {
+    var c = window['ccConfig'], el = c['tag'],size = c['size'];
     var element = cc.$(el) || cc.$('#' + el);
-    if (element.tagName == "CANVAS") {
-        width = width || element.width;
-        height = height || element.height;
+    if(size){
+        var width = size['width'] || element.width, height = size['height'] || element.height;
+    }
 
+    if (element.tagName == "CANVAS") {
         //it is already a canvas, we wrap it around with a div
         cc.container = cc.$new("DIV");
         cc.canvas = element;
@@ -167,8 +187,6 @@ cc.setup = function (el, width, height) {
         if (element.tagName != "DIV") {
             cc.log("Warning: target element is not a DIV or CANVAS");
         }
-        width = width || element.clientWidth;
-        height = height || element.clientHeight;
 
         cc.canvas = cc.$new("CANVAS");
         cc.canvas.addClass("gameCanvas");
@@ -183,12 +201,12 @@ cc.setup = function (el, width, height) {
     cc.container.style.overflow = 'hidden';
     cc.container.top = '100%';
 
-    if(cc.__renderDoesnotSupport)
+    if (cc.__renderDoesnotSupport)
         return;
 
     if (cc.Browser.supportWebGL)
-        cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas,{'stencil': true, 'preserveDrawingBuffer': true, 'alpha': false });
-    if(cc.renderContext){
+        cc.renderContext = cc.webglContext = cc.create3DContext(cc.canvas, {'stencil':true, 'preserveDrawingBuffer':true, 'alpha':false });
+    if (cc.renderContext) {
         cc.renderContextType = cc.WEBGL;
         window.gl = cc.renderContext;
         cc.drawingUtil = new cc.DrawingPrimitiveWebGL(cc.renderContext);
@@ -216,7 +234,7 @@ cc.setup = function (el, width, height) {
      }
      }, true);
      */
-    if(cc.Browser.isMobile)
+    if (cc.Browser.isMobile)
         cc._addUserSelectStatus();
 
     var hidden, visibilityChange;
@@ -248,39 +266,39 @@ cc.setup = function (el, width, height) {
     }
 };
 
-cc._addUserSelectStatus = function(){
+cc._addUserSelectStatus = function () {
     var fontStyle = document.createElement("style");
     fontStyle.type = "text/css";
     document.body.appendChild(fontStyle);
 
     fontStyle.textContent = "body,canvas,div{ -moz-user-select: none;-webkit-user-select: none;-ms-user-select: none;-khtml-user-select: none;"
-        +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
+        + "-webkit-tap-highlight-color:rgba(0,0,0,0);}";
 };
 
-cc.bindingRendererClass = function(renderType){
-     if(renderType === cc.WEBGL){
-         cc.Node = cc.NodeWebGL;
-         cc.Sprite = cc.SpriteWebGL;
-         cc.SpriteBatchNode = cc.SpriteBatchNodeWebGL;
-         cc.TextureCache = cc.TextureCacheWebGL;
-         cc.ProgressTimer = cc.ProgressTimerWebGL;
-         cc.AtlasNode = cc.AtlasNodeWebGL;
-         cc.LabelTTF = cc.LabelTTFWebGL;
-         cc.LayerColor = cc.LayerColorWebGL;
-         cc.DrawNode = cc.DrawNodeWebGL;
-         cc.LabelAtlas = cc.LabelAtlasWebGL;
-     } else {
-         cc.Node = cc.NodeCanvas;
-         cc.Sprite = cc.SpriteCanvas;
-         cc.SpriteBatchNode = cc.SpriteBatchNodeCanvas;
-         cc.TextureCache = cc.TextureCacheCanvas;
-         cc.ProgressTimer = cc.ProgressTimerCanvas;
-         cc.AtlasNode = cc.AtlasNodeCanvas;
-         cc.LabelTTF = cc.LabelTTFCanvas;
-         cc.LayerColor = cc.LayerColorCanvas;
-         cc.DrawNode = cc.DrawNodeCanvas;
-         cc.LabelAtlas = cc.LabelAtlasCanvas;
-     }
+cc.bindingRendererClass = function (renderType) {
+    if (renderType === cc.WEBGL) {
+        cc.Node = cc.NodeWebGL;
+        cc.Sprite = cc.SpriteWebGL;
+        cc.SpriteBatchNode = cc.SpriteBatchNodeWebGL;
+        cc.TextureCache = cc.TextureCacheWebGL;
+        cc.ProgressTimer = cc.ProgressTimerWebGL;
+        cc.AtlasNode = cc.AtlasNodeWebGL;
+        cc.LabelTTF = cc.LabelTTFWebGL;
+        cc.LayerColor = cc.LayerColorWebGL;
+        cc.DrawNode = cc.DrawNodeWebGL;
+        cc.LabelAtlas = cc.LabelAtlasWebGL;
+    } else {
+        cc.Node = cc.NodeCanvas;
+        cc.Sprite = cc.SpriteCanvas;
+        cc.SpriteBatchNode = cc.SpriteBatchNodeCanvas;
+        cc.TextureCache = cc.TextureCacheCanvas;
+        cc.ProgressTimer = cc.ProgressTimerCanvas;
+        cc.AtlasNode = cc.AtlasNodeCanvas;
+        cc.LabelTTF = cc.LabelTTFCanvas;
+        cc.LayerColor = cc.LayerColorCanvas;
+        cc.DrawNode = cc.DrawNodeCanvas;
+        cc.LabelAtlas = cc.LabelAtlasCanvas;
+    }
 };
 
 cc._isContextMenuEnable = false;
@@ -306,14 +324,12 @@ cc.setContextMenuEnable = function (enabled) {
  * @extends cc.Class
  */
 cc.Application = cc.Class.extend(/** @lends cc.Application# */{
+    _animationInterval:0,
     /**
      * Constructor
      */
     ctor:function () {
         this._animationInterval = 0;
-        cc.Assert(!cc._sharedApplication, "CCApplication ctor");
-        cc._sharedApplication = this;
-        cc.AppController.getInstance().didFinishLaunchingWithOptions();
     },
 
     /**
@@ -336,16 +352,21 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         }
     },
 
+    getTargetPlatform:function () {
+        return cc.Browser.isMobile ? cc.TARGET_PLATFORM.MOBILE_BROWSER : cc.TARGET_PLATFORM.PC_BROWSER;
+    },
+
     /**
      * Run the message loop.
      * @return {Number}
      */
     run:function () {
         // Initialize instance and cocos2d.
-        if (!this.applicationDidFinishLaunching())
-            return 0;
 
-        // TODO, need to be fixed.
+        //cc.AppController.getInstance().didFinishLaunchingWithOptions();
+        /*if (!this.applicationDidFinishLaunching())
+            return 0;*/
+
         var callback;
         if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
             callback = function () {
@@ -361,8 +382,7 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             setInterval(callback, this._animationInterval * 1000);
         }
         return 0;
-    },
-    _animationInterval:null
+    }
 });
 
 /**
@@ -370,6 +390,9 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
  * @return {cc.Application}  Current application instance pointer.
  */
 cc.Application.getInstance = function () {
+    if (!cc._sharedApplication) {
+        cc._sharedApplication = new cc.Application();
+    }
     cc.Assert(cc._sharedApplication, "sharedApplication");
     return cc._sharedApplication;
 };
@@ -382,9 +405,9 @@ cc.Application.getCurrentLanguage = function () {
     var ret = cc.LANGUAGE_ENGLISH;
 
     var currentLang = navigator.language;
-    if(!currentLang)
+    if (!currentLang)
         currentLang = navigator.browserLanguage || navigator.userLanguage;
-    if(!currentLang)
+    if (!currentLang)
         return ret;
 
     currentLang = currentLang.toLowerCase();
