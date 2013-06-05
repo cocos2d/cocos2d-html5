@@ -213,7 +213,7 @@ cc.EditBox = cc.ControlButton.extend({
 
         this._textColor = cc.WHITE;
         this._placeholderColor = cc.GRAY;
-
+        this.setContentSize(boxSize);
         this._domInputSprite = new cc.Sprite();
         this._domInputSprite.setColor(cc.BLUE);
         this._domInputSprite.setContentSize(cc.size(boxSize.width - 10, boxSize.height - 10));

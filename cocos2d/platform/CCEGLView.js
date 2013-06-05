@@ -34,8 +34,18 @@ cc.RESOLUTION_POLICY = {
     // The entire application is visible in the specified area without distortion while maintaining the original
     // aspect ratio of the application. Borders can appear on two sides of the application.
     SHOW_ALL:2,
+    // The application takes the height of the design resolution size and modifies the width of the internal
+    // canvas so that it fits the aspect ratio of the device
+    // no distortion will occur however you must make sure your application works on different
+    // aspect ratios
+    HEIGHT:3,
+    // The application takes the width of the design resolution size and modifies the height of the internal
+    // canvas so that it fits the aspect ratio of the device
+    // no distortion will occur however you must make sure your application works on different
+    // aspect ratios
+    WIDTH:4,
 
-    UNKNOWN:3
+    UNKNOWN:5
 };
 
 cc.Touches = [];
@@ -170,16 +180,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     /**
-     * @param {Number} scaleFactor
-     * @return {Boolean}
-     */
-    setContentScaleFactor:function (scaleFactor) {
-        cc.Assert(this._resolutionPolicy == cc.RESOLUTION_POLICY.UNKNOWN); // cannot enable retina mode
-        this._scaleX = this._scaleY = scaleFactor;
-        return true;
-    },
-
-    /**
      * <p>
      *   The resolution translate on EGLView
      * </p>
@@ -286,12 +286,20 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._scaleX = this._screenSize.width / this._designResolutionSize.width;
         this._scaleY = this._screenSize.height / this._designResolutionSize.height;
 
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER)
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
+
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
+            this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
+
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.HEIGHT){
+            this._scaleX = this._scaleY;
+            this._designResolutionSize.width = Math.ceil(this._screenSize.width/ this._scaleX);
         }
 
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-            this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
+        if ( this._resolutionPolicy == cc.RESOLUTION_POLICY.WIDTH) {
+            this._scaleY = this._scaleX;
+            this._designResolutionSize.height = Math.ceil(this._screenSize.height/this._scaleY);
         }
 
         // calculate the rect of viewport
@@ -367,6 +375,24 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
             (w * this._scaleX * this._frameZoomFactor),
             (h * this._scaleY * this._frameZoomFactor));
+    },
+
+    /**
+     * Get whether GL_SCISSOR_TEST is enable
+     */
+    isScissorEnabled:function(){
+        var gl = cc.renderContext;
+        return gl.isEnabled(gl.SCISSOR_TEST);
+    },
+
+    /**
+     * Get the current scissor rectangle
+     */
+    getScissorRect:function(){
+        var gl = cc.renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
+        var boxArr = gl.getParameter(gl.SCISSOR_BOX);
+        return cc.RectMake((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / this._scaleY,
+            boxArr[2] / scaleX, boxArr[3] / scaleY);
     },
 
     /**
