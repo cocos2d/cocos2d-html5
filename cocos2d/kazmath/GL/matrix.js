@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/kazmath/utility", "cocos2d/kazmath/mat4", "cocos2d/kazmath/vec3", "cocos2d/kazmath/GL/mat4stack"], function(cc, sys) {
 /*
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008, Luke Benstead.
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommo
  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/kazmath/utility", "cocos2d/kazmath/mat4", "cocos2d/kazmath/vec3", "cocos2d/kazmath/GL/mat4stack"], function(cc, sys) {
 
 cc.KM_GL_MODELVIEW = 0x1700;
 

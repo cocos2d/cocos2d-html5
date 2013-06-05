@@ -24,7 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
 define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
+
 /**
  * copy an new object
  * @function

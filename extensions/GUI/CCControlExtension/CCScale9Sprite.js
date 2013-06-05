@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/platform/CCCommon", "cocos2d/platform/miniFramework", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/textures/CCTexture2D", "cocos2d/platform/CCTypes"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2012 Neofect. All rights reserved.
@@ -25,6 +24,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTr
 
  Created by Jung Sang-Taik on 2012-03-16
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/platform/CCCommon", "cocos2d/platform/miniFramework", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/textures/CCTexture2D", "cocos2d/platform/CCTypes"], function(cc, sys) {
 
 cc.POSITIONS_CENTRE = 0;
 cc.POSITIONS_TOP = 1;
@@ -181,6 +183,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
     setOpacity: function (opacity) {
         this._opacity = opacity;
+        var scaleChildren = this._scale9Image.getChildren();
+        for (var i = 0; i < scaleChildren.length; i++) {
+            if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
+                scaleChildren[i].setOpacity(this._opacity);
+            }
+        }
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -190,11 +198,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     setColor: function (color) {
         this._color = color;
         var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren && scaleChildren.length != 0) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
-                    scaleChildren[i].setColor(this._color);
-                }
+        for (var i = 0; i < scaleChildren.length; i++) {
+            if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
+                scaleChildren[i].setColor(this._color);
             }
         }
     },
@@ -683,26 +689,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
-    },
-
-    setColor: function (color) {
-        this._color = color;
-        var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                scaleChildren[i].setColor(this._color);
-            }
-        }
-    },
-
-    setOpacity: function (opacity) {
-        this._opacity = opacity;
-        var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                scaleChildren[i].setOpacity(this._color);
-            }
-        }
     }
 });
 

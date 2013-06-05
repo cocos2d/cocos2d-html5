@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /* Copyright (c) 2012 Scott Lembcke and Howling Moon Software
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -19,6 +18,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTr
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
  */
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/platform/CCCommon"], function(cc, sys) {
 
 /** A CCSprite subclass that is bound to a physics body.
  It works with:

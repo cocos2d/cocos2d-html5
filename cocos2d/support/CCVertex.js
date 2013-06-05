@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2009      Valentin Milea
@@ -23,6 +22,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCMacro
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCMacro", "cocos2d/platform/CCTypes", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 /**
  * converts a line to a polygon

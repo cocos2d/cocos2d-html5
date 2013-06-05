@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/misc_nodes/CCProgressTimer"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (C) 2010      Lam Pham
@@ -23,6 +22,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCAction
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/misc_nodes/CCProgressTimer"], function(cc, sys) {
 
 /**
  * Progress to percentage

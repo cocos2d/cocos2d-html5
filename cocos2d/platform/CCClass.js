@@ -23,6 +23,9 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
 /* Managed JavaScript Inheritance
  * Based on John Resig's Simple JavaScript Inheritance http://ejohn.org/blog/simple-javascript-inheritance/
  * MIT Licensed.

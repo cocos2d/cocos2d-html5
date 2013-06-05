@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/miniFramework", "cocos2d/platform/CCCommon"], function(cc, sys) {
 /****************************************************************************
 
  http://www.cocos2d-html5.org
@@ -23,6 +22,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/miniFra
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/miniFramework", "cocos2d/platform/CCCommon"], function(cc, sys) {
 
 var sys = sys || {};
 

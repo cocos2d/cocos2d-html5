@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -25,6 +24,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry
  THE SOFTWARE.
  ****************************************************************************/
 
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
+
 /**
  * first, judge whether the form of the string like this: {x,y}  <br/>
  * if the form is right,the string will be splited into the parameter strs;<br/>
@@ -36,33 +38,38 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry
  * @return {String}
  */
 cc.splitWithForm = function (content, strs) {
-    do {
-        if (!content) break;
 
-        // string is empty
-        if (content.length == 0) break;
+    if (!content)
+        return strs;
 
-        var posLeft = content.indexOf('{');
-        var posRight = content.indexOf('}');
+    // string is empty
+    if (content.length == 0)
+        return strs;
 
-        // don't have '{' and '}'
-        if (posLeft == -1 || posRight == -1) break;
-        // '}' is before '{'
-        if (posLeft > posRight) break;
+    var posLeft = content.indexOf('{');
+    var posRight = content.indexOf('}');
 
-        var pointStr = content.substr(posLeft + 1, posRight - posLeft - 1);
-        // nothing between '{' and '}'
-        if (pointStr.length == 0) break;
+    // don't have '{' and '}'
+    if (posLeft == -1 || posRight == -1)
+        return strs;
+    // '}' is before '{'
+    if (posLeft > posRight)
+        return strs;
 
-        var nPos1 = pointStr.indexOf('{');
-        var nPos2 = pointStr.indexOf('}');
-        // contain '{' or '}'
-        if (nPos1 != -1 || nPos2 != -1) break;
-        strs = pointStr.split(",");
-        if (strs.length != 2 || strs[0] != null || strs[1] != null) {
-            break;
-        }
-    } while (0);
+    var pointStr = content.substr(posLeft + 1, posRight - posLeft - 1);
+    // nothing between '{' and '}'
+    if (pointStr.length == 0)
+        return strs;
+
+    var nPos1 = pointStr.indexOf('{');
+    var nPos2 = pointStr.indexOf('}');
+    // contain '{' or '}'
+    if (nPos1 != -1 || nPos2 != -1)
+        return strs;
+    strs = pointStr.split(",");
+    if (strs.length != 2 || strs[0] != null || strs[1] != null) {
+        return strs;
+    }
 
     return strs;
 };
@@ -83,34 +90,38 @@ cc.splitWithForm = function (content, strs) {
  */
 cc.RectFromString = function (content) {
     var result = cc.RectZero();
-    do {
-        if (!content) break;
 
-        // find the first '{' and the third '}'
-        var posLeft = content.indexOf('{') + 1;
-        var posRight = content.lastIndexOf('}', content.length);
-        if (posLeft == -1 || posRight == -1) break;
+    if (!content)
+        return result;
 
-        content = content.substring(posLeft, posRight);
-        var nPointEnd = content.indexOf('}');
-        if (nPointEnd == -1) break;
-        nPointEnd = content.indexOf(',', nPointEnd);
-        if (nPointEnd == -1) break;
-        // get the point string and size string
-        var pointStr = content.substr(0, nPointEnd);
-        var sizeStr = content.substr(nPointEnd + 1, content.length - nPointEnd);
+    // find the first '{' and the third '}'
+    var posLeft = content.indexOf('{') + 1;
+    var posRight = content.lastIndexOf('}', content.length);
+    if (posLeft == -1 || posRight == -1)
+        return result;
 
-        // split the string with ','
-        var pointInfo = cc.splitWithForm(pointStr);
-        var sizeInfo = cc.splitWithForm(sizeStr);
+    content = content.substring(posLeft, posRight);
+    var nPointEnd = content.indexOf('}');
+    if (nPointEnd == -1)
+        return result;
+    nPointEnd = content.indexOf(',', nPointEnd);
+    if (nPointEnd == -1)
+        return result;
+    // get the point string and size string
+    var pointStr = content.substr(0, nPointEnd);
+    var sizeStr = content.substr(nPointEnd + 1, content.length - nPointEnd);
 
-        var x = parseFloat(pointInfo[0]);
-        var y = parseFloat(pointInfo[1]);
-        var width = parseFloat(sizeInfo[0]);
-        var height = parseFloat(sizeInfo[1]);
+    // split the string with ','
+    var pointInfo = cc.splitWithForm(pointStr);
+    var sizeInfo = cc.splitWithForm(sizeStr);
 
-        result = cc.rect(x, y, width, height);
-    } while (0);
+    var x = parseFloat(pointInfo[0]);
+    var y = parseFloat(pointInfo[1]);
+    var width = parseFloat(sizeInfo[0]);
+    var height = parseFloat(sizeInfo[1]);
+
+    result = cc.rect(x, y, width, height);
+
     return result;
 };
 

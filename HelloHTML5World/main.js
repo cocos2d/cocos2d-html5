@@ -1,3 +1,4 @@
+define(["cocos2d", "src/myApp", "cocos2d/platform/CCApplication"], function(cc, scene) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,8 +25,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-
-define(["cocos2d/CCNamespace", "src/myApp", "cocos2d/platform/CCApplication"], function(cc, scene) {
 var cocos2dApp = cc.Application.extend({
     config:document['ccConfig'],
     ctor:function (scene) {

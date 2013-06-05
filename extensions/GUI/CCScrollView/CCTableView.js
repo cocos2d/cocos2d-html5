@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCScrollView/CCSorting", "cocos2d/platform/CCClass", "cocos2d/platform/CCMacro", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry", "extensions/GUI/CCScrollView/CCScrollView", "cocos2d/cocoa/CCSet", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2012 cocos2d-x.org
  Copyright (c) 2010 Sangwoo Im
@@ -23,6 +22,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCScrollV
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/GUI/CCScrollView/CCSorting", "cocos2d/platform/CCClass", "cocos2d/platform/CCMacro", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry", "extensions/GUI/CCScrollView/CCScrollView", "cocos2d/cocoa/CCSet", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 cc.TABLEVIEW_FILL_TOPDOWN = 0;
 cc.TABLEVIEW_FILL_BOTTOMUP = 1;

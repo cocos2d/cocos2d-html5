@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCAccelerometer", "cocos2d/actions/CCActionManager", "cocos2d/sprite_nodes/CCAnimationCache", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCClass", "cocos2d/platform/CCConfig", "cocos2d/platform/CCEGLView", "cocos2d/kazmath/GL/matrix", "cocos2d/keyboard_dispatcher/CCKeyboardDispatcher", "cocos2d/label_nodes/CCLabelBMFont", "cocos2d/label_nodes/CCLabelTTF", "cocos2d/touch_dispatcher/CCMouseDispatcher", "cocos2d/CCScheduler", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/touch_dispatcher/CCTouchDispatcher", "cocos2d/layers_scenes_transitions_nodes/CCTransition", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/mat4", "cocos2d/kazmath/vec3", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCAccel
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCAccelerometer", "cocos2d/actions/CCActionManager", "cocos2d/sprite_nodes/CCAnimationCache", "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/CCClass", "cocos2d/platform/CCConfig", "cocos2d/platform/CCEGLView", "cocos2d/kazmath/GL/matrix", "cocos2d/keyboard_dispatcher/CCKeyboardDispatcher", "cocos2d/label_nodes/CCLabelBMFont", "cocos2d/label_nodes/CCLabelTTF", "cocos2d/touch_dispatcher/CCMouseDispatcher", "cocos2d/CCScheduler", "cocos2d/cocoa/CCGeometry", "cocos2d/sprite_nodes/CCSpriteFrameCache", "cocos2d/touch_dispatcher/CCTouchDispatcher", "cocos2d/layers_scenes_transitions_nodes/CCTransition", "cocos2d/shaders/CCGLStateCache", "cocos2d/kazmath/mat4", "cocos2d/kazmath/vec3", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 cc.g_NumberOfDraws = 0;
 

@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/platform/CCCommon", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -32,6 +31,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCAction
 
  Adapted from cocos2d-x to cocos2d-iphone by Ricardo Quesada
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/platform/CCCommon", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 /**
  * <p>Returns the Cardinal Spline position for a given set of control points, tension and time CatmullRom Spline formula: <br/>

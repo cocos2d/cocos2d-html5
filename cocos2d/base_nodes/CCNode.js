@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/miniFramework", "cocos2d/support/TransformUtils", "cocos2d/CCCamera", "cocos2d/platform/CCClass", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry", "cocos2d/kazmath/GL/matrix", "cocos2d/kazmath/mat4", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTr
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/CCScheduler", "cocos2d/platform/CCCommon", "cocos2d/platform/miniFramework", "cocos2d/support/TransformUtils", "cocos2d/CCCamera", "cocos2d/platform/CCClass", "cocos2d/platform/CCMacro", "cocos2d/cocoa/CCGeometry", "cocos2d/kazmath/GL/matrix", "cocos2d/kazmath/mat4", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 /**
  * Default Node tag

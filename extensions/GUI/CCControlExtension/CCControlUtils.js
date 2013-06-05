@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
 
@@ -28,6 +27,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 
 cc.RGBA = function(r,g,b,a){
     this.r = r ;    // percent

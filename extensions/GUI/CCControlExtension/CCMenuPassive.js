@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/menu_nodes/CCMenu", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
 
@@ -22,6 +21,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommo
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/menu_nodes/CCMenu", "cocos2d/layers_scenes_transitions_nodes/CCLayer", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 
 cc.Spacer = cc.Layer.extend({});
 

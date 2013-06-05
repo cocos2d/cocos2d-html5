@@ -1,9 +1,11 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
 /**
  * @fileoverview Java Script Builtins for windows properties.
  *
  * @externs
  */
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
  
  /**
  * @see https://cocos2d-x.org

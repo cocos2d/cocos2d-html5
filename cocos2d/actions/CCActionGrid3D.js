@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/actions/CCActionGrid", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommo
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/actions/CCActionGrid", "cocos2d/cocoa/CCGeometry", "cocos2d/platform/CCTypes", "cocos2d/support/CCPointExtension"], function(cc, sys) {
 
 cc.RAND_MAX = 0xffffff;
 cc.rand = function(){

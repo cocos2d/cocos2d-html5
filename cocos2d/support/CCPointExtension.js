@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
 
 /**
  * <p>cc.Point extensions based on Chipmunk's cpVect file.<br />
@@ -453,4 +455,56 @@ cc.pSameAs = function (A, B) {
     }
     return false;
 };
+
+
+
+// High Perfomance In Place Operationrs ---------------------------------------
+
+/**
+  * sets the position of the point to 0
+  */
+cc.pZeroIn = function(v) {
+    v.x = 0;
+    v.y = 0;
+};
+
+/**
+  * copies the position of one point to another
+  */
+cc.pIn = function(v1, v2) {
+    v1.x = v2.x;
+    v1.y = v2.y;
+};
+
+/**
+  * multiplies the point with the given factor (inplace)
+  */
+cc.pMultIn = function(point, floatVar) {
+    point.x *= floatVar;
+    point.y *= floatVar;
+};
+
+/**
+  * subtracts one point from another (inplace)
+  */
+cc.pSubIn = function(v1, v2) {
+    v1.x -= v2.x;
+    v1.y -= v2.y;
+};
+
+/**
+  * adds one point to another (inplace)
+  */
+cc.pAddIn = function(v1, v2) {
+    v1.x += v2.x;
+    v1.y += v2.y;
+};
+
+/**
+  * normalizes the point (inplace)
+  */
+cc.pNormalizeIn = function(v) {
+    cc.pMultIn(v, 1.0 / Math.sqrt(v.x * v.x + v.y * v.y));
+};
+
 });

@@ -1,4 +1,3 @@
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/platform/CCConfig", "cocos2d/platform/CCTypes", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCGLStateCache"], function(cc, sys) {
 /****************************************************************************
  Copyright (c) 2010-2012 cocos2d-x.org
  Copyright (c) 2008-2010 Ricardo Quesada
@@ -24,6 +23,9 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommo
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
+
+
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/platform/CCConfig", "cocos2d/platform/CCTypes", "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCGLStateCache"], function(cc, sys) {
 
 /**
  * <p>A class that implements a Texture Atlas. <br />
