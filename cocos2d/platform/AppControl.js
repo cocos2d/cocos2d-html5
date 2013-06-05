@@ -36,10 +36,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      */
     didFinishLaunchingWithOptions:function () {
         // Override point for customization after application launch.
-        //var app = new cc.AppDelegate();
         cc.Application.getInstance().run();
-
-        return true;
     },
 
     /**
@@ -97,7 +94,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
  * Return Controller of Game Application
  * @return {cc.AppController}
  */
-cc.AppController.shareAppController = function () {
+cc.AppController.getInstance = function () {
     if (cc.sharedAppController == null) {
         cc.sharedAppController = new cc.AppController();
     }

@@ -254,7 +254,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _storingCharacters:false,
     _properties:null,
     // tmx filename
-    _TMXFileName:null,
+    _TMXFileName:"",
     //current string
     _currentString:null,
     // tile properties
@@ -759,7 +759,9 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._layers = [];
 
         //this._TMXFileName = cc.FileUtils.getInstance().fullPathForFilename(tmxFileName);
-        this._TMXFileName = tmxFileName;
+        if(tmxFileName !== null){
+            this._TMXFileName = tmxFileName;
+        }
 
         if (resourcePath) {
             this._resources = resourcePath;

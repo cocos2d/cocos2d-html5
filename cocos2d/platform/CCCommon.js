@@ -158,6 +158,8 @@ cc.Assert = function (cond, message) {
  */
 cc.initDebugSetting = function () {
     // cocos2d debug
+    cc.COCOS2D_DEBUG = window['ccConfig']['debug'];
+
     if (cc.COCOS2D_DEBUG == 0) {
         cc.log = function () {
         };
@@ -177,7 +179,13 @@ cc.initDebugSetting = function () {
         cc.logINFO = cc.log;
         cc.logERROR = cc.log;
     }// COCOS2D_DEBUG
-}
+};
+
+cc.initConfig = function () {
+    cc.initDebugSetting();
+    cc.setup();
+    cc.AppController.getInstance().didFinishLaunchingWithOptions();
+};
 
 // Enum the language type supportted now
 /**
