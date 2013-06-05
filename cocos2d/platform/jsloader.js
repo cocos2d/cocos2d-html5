@@ -139,7 +139,7 @@
     ];
 
     var d = document;
-    var c = d["ccConfig"];
+    var c = window["ccConfig"];
 
     if (c.loadExtension != null && c.loadExtension == true) {
         engine = engine.concat([
@@ -200,7 +200,6 @@
 
     var loaded = 0;
     var que = engine.concat(c.appFiles);
-    que.push('main.js');
     if (navigator.userAgent.indexOf("Trident/5") > -1) {
         //ie9
         this.serial = -1;

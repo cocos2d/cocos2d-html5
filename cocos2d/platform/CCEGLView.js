@@ -116,7 +116,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         if(!("opengl" in sys.capabilities))
             cc.renderContext.translate(0, cc.canvas.height);
 
-        var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
+        var parent = document.querySelector("#" + window['ccConfig']['tag']).parentNode;
         if (parent) {
             parent.style.width = cc.canvas.width + "px";
             parent.style.height = cc.canvas.height + "px";

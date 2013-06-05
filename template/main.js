@@ -24,17 +24,12 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cocos2dApp = cc.Application.extend({
-    config:document['ccConfig'],
+
+var cocos2dApp = cc.Class.extend({
     ctor:function (scene) {
-        this._super();
-        this.startScene = scene;
-        cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
-        cc.initDebugSetting();
-        cc.setup(this.config['tag']);
-        cc.AppController.shareAppController().didFinishLaunchingWithOptions();
-    },
-    applicationDidFinishLaunching:function () {
+        cc.initConfig();
+        cc.dumpConfig();
+
         // initialize director
         var director = cc.Director.getInstance();
 
@@ -62,6 +57,12 @@ var cocos2dApp = cc.Application.extend({
         else if (platform == cc.TARGET_PLATFORM.PC_BROWSER) {
             resDirOrders.push("HD");
         }
+        else if (platform == cc.TARGET_PLATFORM.IPHONE) {
+            resDirOrders.push("Normal");
+        }
+        else if (platform == cc.TARGET_PLATFORM.IPAD) {
+            resDirOrders.push("HD");
+        }
 
         cc.FileUtils.getInstance().setSearchResolutionsOrder(resDirOrders);
 
@@ -70,17 +71,20 @@ var cocos2dApp = cc.Application.extend({
         cc.EGLView.getInstance().setDesignResolutionSize(designSize.width, designSize.height, cc.RESOLUTION_POLICY.SHOW_ALL);
 
         // turn on display FPS
-        director.setDisplayStats(this.config['showFPS']);
+        director.setDisplayStats(ccConfig['showFPS']);
 
         // set FPS. the default value is 1.0/60 if you don't call this
-        director.setAnimationInterval(1.0 / this.config['frameRate']);
+        director.setAnimationInterval(1.0 / ccConfig['frameRate']);
 
         //load resources
         cc.LoaderScene.preload(g_ressources, function () {
-            director.replaceScene(new this.startScene());
+            var sc = new scene;
+            if (director.getRunningScene()) {
+                director.replaceScene(sc);
+            } else {
+                director.runWithScene(sc);
+            }
         }, this);
-
-        return true;
     }
 });
 
