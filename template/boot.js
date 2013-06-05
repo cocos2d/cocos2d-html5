@@ -54,14 +54,11 @@ var cocos2dApp = cc.Class.extend({
                 resDirOrders.push("Normal");
             }
         }
-        else if (platform == cc.TARGET_PLATFORM.PC_BROWSER) {
-            resDirOrders.push("HD");
-        }
-        else if (platform == cc.TARGET_PLATFORM.IPHONE) {
-            resDirOrders.push("Normal");
-        }
         else if (platform == cc.TARGET_PLATFORM.IPAD) {
             resDirOrders.push("HD");
+        }
+        else {
+            resDirOrders.push("Normal");
         }
 
         cc.FileUtils.getInstance().setSearchResolutionsOrder(resDirOrders);
