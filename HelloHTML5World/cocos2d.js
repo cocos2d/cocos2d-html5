@@ -50,8 +50,10 @@ var ccConfig = {
     appFiles:[
         'src/resource.js',
         'src/myApp.js',
-        'main.js'
         //add your own files in order here
+
+        'boot.js'
+
     ]
 };
 
