@@ -111,15 +111,16 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
 
     /**
      * Returns an already created texture. Returns null if the texture doesn't exist.
-     * @param {String} key
+     * @param {String} textureKeyName
      * @return {HTMLImageElement|cc.Texture2D|Null}
      * @example
      * //example
      * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
      */
-    textureForKey:function (key) {
-        if (this._textures.hasOwnProperty(key))
-            return this._textures[key];
+    textureForKey:function (textureKeyName) {
+        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
+        if (this._textures.hasOwnProperty(fullPath))
+            return this._textures[fullPath];
         return null;
     },
 
@@ -469,15 +470,16 @@ cc.TextureCacheWebGL = cc.Class.extend({
 
     /**
      * Returns an already created texture. Returns null if the texture doesn't exist.
-     * @param {String} key
+     * @param {String} textureKeyName
      * @return {HTMLImageElement|cc.Texture2D|Null}
      * @example
      * //example
      * var key = cc.TextureCache.getInstance().textureForKey("hello.png");
      */
-    textureForKey:function (key) {
-        if (this._textures.hasOwnProperty(key))
-            return this._textures[key];
+    textureForKey:function (textureKeyName) {
+        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
+        if (this._textures.hasOwnProperty(fullPath))
+            return this._textures[fullPath];
         return null;
     },
 

@@ -136,16 +136,16 @@ cc.generateTintImage2 = function (texture, color, rect) {
     var buff = document.createElement("canvas");
     var ctx = buff.getContext("2d");
 
-    if (buff.width != rect.size.width) buff.width = rect.size.width;
-    if (buff.height != rect.size.height) buff.height = rect.size.height;
+    if (buff.width != rect.width) buff.width = rect.width;
+    if (buff.height != rect.height) buff.height = rect.height;
     ctx.save();
 
-    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.width, rect.size.height, 0, 0, rect.size.width, rect.size.height);
+    ctx.drawImage(texture, rect.x, rect.y, rect.width, rect.height, 0, 0, rect.width, rect.height);
 
     ctx.globalCompositeOperation = "source-in";
     ctx.globalAlpha = selColor.a / 255.0;
     ctx.fillStyle = "rgb(" + selColor.r + "," + selColor.g + "," + selColor.b + ")";
-    ctx.fillRect(0, 0, rect.size.width, rect.size.height);
+    ctx.fillRect(0, 0, rect.width, rect.height);
     ctx.restore();
 
     return buff;
@@ -177,8 +177,8 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
         selColor = color;
     }
 
-    var w = Math.min(rect.size.width, tintedImgCache[0].width);
-    var h = Math.min(rect.size.height, tintedImgCache[0].height);
+    var w = Math.min(rect.width, tintedImgCache[0].width);
+    var h = Math.min(rect.height, tintedImgCache[0].height);
     var buff = renderCanvas;
     var ctx;
 
@@ -201,20 +201,20 @@ cc.generateTintImage = function (texture, tintedImgCache, color, rect, renderCan
     var a = ctx.globalAlpha;
     if (selColor.r > 0) {
         ctx.globalAlpha = selColor.r * a;
-        ctx.drawImage(tintedImgCache[0], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[0], rect.x, rect.y, w, h, 0, 0, w, h);
     }
     if (selColor.g > 0) {
         ctx.globalAlpha = selColor.g * a;
-        ctx.drawImage(tintedImgCache[1], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[1], rect.x, rect.y, w, h, 0, 0, w, h);
     }
     if (selColor.b > 0) {
         ctx.globalAlpha = selColor.b * a;
-        ctx.drawImage(tintedImgCache[2], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[2], rect.x, rect.y, w, h, 0, 0, w, h);
     }
 
     if((selColor.r === 0) && (selColor.g === 0) &&(selColor.b === 0)){
         ctx.globalAlpha = a;
-        ctx.drawImage(tintedImgCache[3], rect.origin.x, rect.origin.y, w, h, 0, 0, w, h);
+        ctx.drawImage(tintedImgCache[3], rect.x, rect.y, w, h, 0, 0, w, h);
     }
 
     ctx.restore();
@@ -229,13 +229,13 @@ cc.cutRotateImageToCanvas = function (texture, rect) {
         return texture;
 
     var nCanvas = document.createElement("canvas");
-    nCanvas.width = rect.size.width;
-    nCanvas.height = rect.size.height;
+    nCanvas.width = rect.width;
+    nCanvas.height = rect.height;
 
     var ctx = nCanvas.getContext("2d");
     ctx.translate(nCanvas.width / 2, nCanvas.height / 2);
     ctx.rotate(-1.5707963267948966);
-    ctx.drawImage(texture, rect.origin.x, rect.origin.y, rect.size.height, rect.size.width, -rect.size.height / 2, -rect.size.width / 2, rect.size.height, rect.size.width);
+    ctx.drawImage(texture, rect.x, rect.y, rect.height, rect.width, -rect.height / 2, -rect.width / 2, rect.height, rect.width);
     return nCanvas;
 };
 
@@ -260,8 +260,13 @@ cc.TransformValues = function (pos, scale, rotation, skew, ap, visible) {
 };
 
 cc.RENDER_IN_SUBPIXEL = function (A) {
-    return (cc.SPRITEBATCHNODE_RENDER_SUBPIXEL) ? A : (0 | A);
+    return (0 | A);
 };
+if(cc.SPRITEBATCHNODE_RENDER_SUBPIXEL){
+    cc.RENDER_IN_SUBPIXEL = function (A) {
+        return A;
+    };
+}
 
 /**
  * <p>cc.Sprite is a 2d image ( http://en.wikipedia.org/wiki/Sprite_(computer_graphics) ) (Canvas implement) <br/>
@@ -390,7 +395,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return cc.rect(this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height);
+        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
     },
 
     /**
@@ -408,22 +413,6 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      */
     setTextureAtlas:function (textureAtlas) {
         this._textureAtlas = textureAtlas;
-    },
-
-    /**
-     * return the SpriteBatchNode of the cc.Sprite
-     * @return {cc.SpriteBatchNode}
-     */
-    getSpriteBatchNode:function () {
-        return this._batchNode;
-    },
-
-    /**
-     * set the SpriteBatchNode of the cc.Sprite
-     * @param {cc.SpriteBatchNode} spriteBatchNode
-     */
-    setSpriteBatchNode:function (spriteBatchNode) {
-        this._batchNode = spriteBatchNode;
     },
 
     /**
@@ -539,7 +528,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
     },
 
     /**
@@ -551,7 +540,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     removeChild:function (child, cleanup) {
         if (this._batchNode)
             this._batchNode.removeSpriteFromAtlas(child);
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -563,14 +552,14 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if (this._batchNode) {
             if (this._children != null) {
                 for (var i = 0; i < this._children.length; i++) {
-                    if (this._children[i] instanceof cc.Sprite) {
-                        this._batchNode.removeSpriteFromAtlas(this._children[i]);
-                    }
+                    //if (this._children[i] instanceof cc.Sprite) {
+                    this._batchNode.removeSpriteFromAtlas(this._children[i]);
+                    //}
                 }
             }
         }
 
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._hasChildren = false;
     },
 
@@ -729,7 +718,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      */
     ignoreAnchorPointForPosition:function (relative) {
         cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
-        this._super(relative);
+        cc.Node.prototype.ignoreAnchorPointForPosition.call(this,relative);
     },
 
     /**
@@ -869,7 +858,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement} fileName sprite construct parameter
      */
     ctor:function (fileName) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -917,7 +906,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if(arguments.length > 0)
             return this.initWithFile(arguments[0], arguments[1]);
 
-        this._super();
+        cc.NodeCanvas.prototype.init.call(this);
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
         this._opacity = 255;
@@ -956,7 +945,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     initWithFile:function (filename, rect) {
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
-        var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
+        var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             this._visible = false;
             var loadImg = new Image();
@@ -1056,8 +1045,8 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             relativeOffset.x = -relativeOffset.x;
         if (this._flipY)
             relativeOffset.y = -relativeOffset.y;
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.size.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.size.height) / 2;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -1113,7 +1102,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             tag = child._tag;
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this._hasChildren = true;
     },
 
@@ -1177,7 +1166,7 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
     isFrameDisplayed:function (frame) {
         if (frame.getTexture() != this._texture)
             return false;
-        return cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect);
+        return cc.rectEqualToRect(frame.getRect(), this._rect);
     },
 
     /**
@@ -1253,9 +1242,10 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             context.globalCompositeOperation = 'lighter';
 
         context.globalAlpha = this._opacity / 255;
-        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - this._rect.size.height;
+        var locRect = this._rect;
+        var flipXOffset = 0 | (this._offsetPosition.x), flipYOffset = -this._offsetPosition.y - locRect.height;
         if (this._flipX) {
-            flipXOffset = -this._offsetPosition.x - this._rect.size.width;
+            flipXOffset = -this._offsetPosition.x - locRect.width;
             context.scale(-1, 1);
         }
         if (this._flipY) {
@@ -1265,12 +1255,12 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
         if (this._texture) {
             if (this._colorized) {
                 context.drawImage(this._texture,
-                    0, 0, this._rect.size.width, this._rect.size.height,
-                    flipXOffset, flipYOffset, this._rect.size.width, this._rect.size.height);
+                    0, 0, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             } else {
                 context.drawImage(this._texture,
-                    this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height,
-                    flipXOffset, flipYOffset, this._rect.size.width, this._rect.size.height);
+                    locRect.x, locRect.y, locRect.width, locRect.height,
+                    flipXOffset, flipYOffset, locRect.width, locRect.height);
             }
         } else if (this._contentSize.width !== 0) {
             context.fillStyle = "rgba(" + this._color.r + "," + this._color.g + "," + this._color.b + ",1)";
@@ -1281,8 +1271,8 @@ cc.SpriteCanvas = cc.Node.extend(/** @lends cc.SpriteCanvas# */{
             // draw bounding box
             context.strokeStyle = "rgba(0,255,0,1)";
             flipYOffset = -flipYOffset;
-            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + this._rect.size.width, flipYOffset), cc.p(flipXOffset + this._rect.size.width, flipYOffset - this._rect.size.height),
-                cc.p(flipXOffset, flipYOffset - this._rect.size.height)];
+            var vertices1 = [cc.p(flipXOffset, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset), cc.p(flipXOffset + locRect.width, flipYOffset - locRect.height),
+                cc.p(flipXOffset, flipYOffset - locRect.height)];
             cc.drawingUtil.drawPoly(vertices1, 4, true);
         } else if (cc.SPRITE_DEBUG_DRAW === 2) {
             // draw texture box
@@ -1555,7 +1545,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {cc.Rect}
      */
     getTextureRect:function () {
-        return cc.rect(this._rect.origin.x, this._rect.origin.y, this._rect.size.width, this._rect.size.height);
+        return cc.rect(this._rect.x, this._rect.y, this._rect.width, this._rect.height);
     },
 
     /**
@@ -1704,7 +1694,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._setReorderChildDirtyRecursively();
             this._batchNode.reorderBatch(true);
         }
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
     },
 
     /**
@@ -1716,7 +1706,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     removeChild:function (child, cleanup) {
         if (this._batchNode)
             this._batchNode.removeSpriteFromAtlas(child);
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
 
     /**
@@ -1728,14 +1718,14 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if (this._batchNode) {
             if (this._children != null) {
                 for (var i = 0; i < this._children.length; i++) {
-                    if (this._children[i] instanceof cc.Sprite) {
-                        this._batchNode.removeSpriteFromAtlas(this._children[i]);
-                    }
+                    //if (this._children[i] instanceof cc.Sprite) {
+                    this._batchNode.removeSpriteFromAtlas(this._children[i]);
+                    //}
                 }
             }
         }
 
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._hasChildren = false;
     },
 
@@ -1894,7 +1884,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      */
     ignoreAnchorPointForPosition:function (relative) {
         cc.Assert(!this._batchNode, "ignoreAnchorPointForPosition is invalid in cc.Sprite");
-        this._super(relative);
+        cc.Node.prototype.ignoreAnchorPointForPosition.call(this,relative);
     },
 
     /**
@@ -2034,7 +2024,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @param {String|cc.SpriteFrame|cc.SpriteBatchNode|HTMLImageElement|cc.Texture2D} fileName sprite construct parameter
      */
     ctor:function (fileName) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._shouldBeHidden = false;
         this._offsetPosition = cc.p(0, 0);
         this._unflippedOffsetPositionFromCenter = cc.p(0, 0);
@@ -2098,7 +2088,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if(arguments.length > 0)
             return this.initWithFile(arguments[0], arguments[1]);
 
-        this._super();
+        cc.NodeWebGL.prototype.init.call(this);
 
         this._dirty = this._recursiveDirty = false;
         this._opacityModifyRGB = true;
@@ -2147,7 +2137,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         cc.Assert(filename != null, "Sprite#initWithFile():Invalid filename for sprite");
         var selfPointer = this;
 
-        var texture = cc.TextureCache.getInstance().textureForKey(cc.FileUtils.getInstance().fullPathForFilename(filename));
+        var texture = cc.TextureCache.getInstance().textureForKey(filename);
         if (!texture) {
             this._visible = false;
             var loadImg = new Image();
@@ -2259,8 +2249,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         if (this._flipY)
             relativeOffset.y = -relativeOffset.y;
 
-        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.size.width) / 2;
-        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.size.height) / 2;
+        this._offsetPosition.x = relativeOffset.x + (this._contentSize.width - this._rect.width) / 2;
+        this._offsetPosition.y = relativeOffset.y + (this._contentSize.height - this._rect.height) / 2;
 
         // rendering using batch node
         if (this._batchNode) {
@@ -2272,8 +2262,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             // Atlas: Vertex
             var x1 = 0 + this._offsetPosition.x;
             var y1 = 0 + this._offsetPosition.y;
-            var x2 = x1 + this._rect.size.width;
-            var y2 = y1 + this._rect.size.height;
+            var x2 = x1 + this._rect.width;
+            var y2 = y1 + this._rect.height;
 
             // Don't update Z.
             this._quad.bl.vertices = {x:x1, y:y1, z:0};
@@ -2391,7 +2381,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         }
 
         //cc.Node already sets isReorderChildDirty_ so this needs to be after batchNode check
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this._hasChildren = true;
     },
     /**
@@ -2475,8 +2465,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * @return {Boolean}
      */
     isFrameDisplayed:function (frame) {
-        return (cc.Rect.CCRectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
-            && cc.Point.CCPointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
+        return (cc.rectEqualToRect(frame.getRect(), this._rect) && frame.getTexture().getName() == this._texture.getName()
+            && cc.pointEqualToPoint(frame.getOffset(), this._unflippedOffsetPositionFromCenter));
     },
 
     /**
@@ -2503,8 +2493,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
 
             var x1 = this._offsetPosition.x;
             var y1 = this._offsetPosition.y;
-            var x2 = x1 + this._rect.size.width;
-            var y2 = y1 + this._rect.size.height;
+            var x2 = x1 + this._rect.width;
+            var y2 = y1 + this._rect.height;
             this._quad.bl.vertices = {x:x1, y:y1, z:0};
             this._quad.br.vertices = {x:x2, y:y1, z:0};
             this._quad.tl.vertices = {x:x1, y:y2, z:0};
@@ -2564,15 +2554,15 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         var left, right, top, bottom, tempSwap;
         if (this._rectRotated) {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                right = left + (rect.size.height * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.size.width * 2 - 2) / (2 * atlasHeight);
+                left = (2 * rect.x + 1) / (2 * atlasWidth);
+                right = left + (rect.height * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.width * 2 - 2) / (2 * atlasHeight);
             } else {
-                left = rect.origin.x / atlasWidth;
-                right = (rect.origin.x + rect.size.height) / atlasWidth;
-                top = rect.origin.y / atlasHeight;
-                bottom = (rect.origin.y + rect.size.width) / atlasHeight;
+                left = rect.x / atlasWidth;
+                right = (rect.x + rect.height) / atlasWidth;
+                top = rect.y / atlasHeight;
+                bottom = (rect.y + rect.width) / atlasHeight;
             }// CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
             if (this._flipX) {
@@ -2597,15 +2587,15 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             this._quad.tr.texCoords.v = bottom;
         } else {
             if (cc.FIX_ARTIFACTS_BY_STRECHING_TEXEL) {
-                left = (2 * rect.origin.x + 1) / (2 * atlasWidth);
-                right = left + (rect.size.width * 2 - 2) / (2 * atlasWidth);
-                top = (2 * rect.origin.y + 1) / (2 * atlasHeight);
-                bottom = top + (rect.size.height * 2 - 2) / (2 * atlasHeight);
+                left = (2 * rect.x + 1) / (2 * atlasWidth);
+                right = left + (rect.width * 2 - 2) / (2 * atlasWidth);
+                top = (2 * rect.y + 1) / (2 * atlasHeight);
+                bottom = top + (rect.height * 2 - 2) / (2 * atlasHeight);
             } else {
-                left = rect.origin.x / atlasWidth;
-                right = (rect.origin.x + rect.size.width) / atlasWidth;
-                top = rect.origin.y / atlasHeight;
-                bottom = (rect.origin.y + rect.size.height) / atlasHeight;
+                left = rect.x / atlasWidth;
+                right = (rect.x + rect.width) / atlasWidth;
+                top = rect.y / atlasHeight;
+                bottom = (rect.y + rect.height) / atlasHeight;
             } // ! CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
 
             if (this._flipX) {
@@ -2633,35 +2623,36 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
     },
     /**
      * draw sprite to canvas
-     * @param {WebGLRenderContext} ctx 3d context of canvas
      */
-    draw:function (ctx) {
-        var gl = ctx || cc.renderContext;
+    draw:function () {
+        var gl = cc.renderContext, locTexture = this._texture;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        if (this._texture) {
-            if(this._texture._isLoaded){
+        if (locTexture) {
+            if(locTexture._isLoaded){
                 this._shaderProgram.use();
-                this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+                this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
                 cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-                cc.glBindTexture2D(this._texture);
+                //optimize performance for javascript
+                cc.glBindTexture2DN(0, locTexture);                   // = cc.glBindTexture2D(locTexture);
                 cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
                 gl.bindBuffer(gl.ARRAY_BUFFER, this._quadWebBuffer);
                 if(this._quadDirty){
-                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.STATIC_DRAW);
+                    gl.bufferData(gl.ARRAY_BUFFER, this._quad.arrayBuffer, gl.DYNAMIC_DRAW);
                     this._quadDirty = false;
                 }
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 3, gl.FLOAT, false, 24, 0);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, gl.FLOAT, false, 24, 16);
-                gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
+                gl.vertexAttribPointer(0, 3, gl.FLOAT, false, 24, 0);                   //cc.VERTEX_ATTRIB_POSITION
+                gl.vertexAttribPointer(1, 4, gl.UNSIGNED_BYTE, true, 24, 12);           //cc.VERTEX_ATTRIB_COLOR
+                gl.vertexAttribPointer(2, 2, gl.FLOAT, false, 24, 16);                  //cc.VERTEX_ATTRIB_TEX_COORDS
+
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
             var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
             shaderProgram.use();
-            shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);
@@ -2677,6 +2668,9 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
             gl.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, gl.UNSIGNED_BYTE, true, 24, 12);
             gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
         }
+        cc.g_NumberOfDraws++;
+        if(cc.SPRITE_DEBUG_DRAW === 0)
+            return;
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             // draw bounding box
@@ -2695,7 +2689,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
-        cc.g_NumberOfDraws++;
     }
 });
 

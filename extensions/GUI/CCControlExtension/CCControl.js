@@ -269,9 +269,7 @@ cc.Control = cc.Layer.extend({
      * @return YES whether a touch is inside the receiver抯 rect.
      */
     isTouchInside:function (touch) {
-        var touchLocation = this.getTouchLocation(touch);
-        var bBox = this.getBoundingBox();
-        return cc.Rect.CCRectContainsPoint(bBox, touchLocation);
+        return cc.rectContainsPoint(this.getBoundingBox(), this.getTouchLocation(touch));
     },
 
     /**

@@ -142,7 +142,7 @@ define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
     ];
 
     var d = document;
-    var c = d.ccConfig;
+    var c = d["ccConfig"];
 
     if (c.loadExtension != null && c.loadExtension == true) {
         engine = engine.concat([

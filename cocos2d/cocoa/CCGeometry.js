@@ -48,7 +48,6 @@ cc.Point = function (_x, _y) {
  * @param {Number} x
  * @param {Number} y
  * @return {cc.Point}
- * Constructor
  */
 cc.PointMake = function (x, y) {
     return new cc.Point(x, y);
@@ -58,7 +57,6 @@ cc.PointMake = function (x, y) {
  * Helper macro that creates a cc.Point.
  * @param {Number} x
  * @param {Number} y
- * Constructor
  */
 cc.p = function (x, y) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
@@ -76,7 +74,6 @@ cc._p = cc.p;
  * The "left bottom" point -- equivalent to cc.p(0, 0).
  * @function
  * @return {cc.Point}
- * Constructor
  */
 cc.PointZero = function () {
     return cc.p(0, 0);
@@ -107,16 +104,15 @@ Object.defineProperties(cc, {
  * @param {cc.Point} point1
  * @param {cc.Point} point2
  * @return {Boolean}
- * Constructor
  */
 cc.pointEqualToPoint = function (point1, point2) {
     if (!point1 || !point2)
         return false;
-    return ((point1.x == point2.x) && (point1.y == point2.y));
+    return ((point1.x === point2.x) && (point1.y === point2.y));
 };
 
 // deprecated
-cc.Point.CCPointEqualToPoint = cc.pointEqualToPoint;
+//cc.Point.CCPointEqualToPoint = cc.pointEqualToPoint;
 
 
 //--------------------------------------------------------
@@ -141,7 +137,6 @@ cc.Size = function (_width, _height) {
  * @param {Number} width
  * @param {Number} height
  * @return {cc.Size}
- * Constructor
  */
 cc.SizeMake = function (width, height) {
     return cc.size(width, height);
@@ -149,10 +144,9 @@ cc.SizeMake = function (width, height) {
 
 /**
  * @function
- * @param {Number} width
- * @param {Number} height
- * @return {Number, Number}
- * Constructor
+ * @param {Number} w width
+ * @param {Number} h height
+ * @return {cc.Size}
  */
 cc.size = function (w, h) {
     // This can actually make use of "hidden classes" in JITs and thus decrease
@@ -170,7 +164,6 @@ cc._size = cc.size;
  * The "zero" size -- equivalent to cc.size(0, 0).
  * @function
  * @return {cc.Size}
- * Constructor
  */
 cc.SizeZero = function () {
     return cc.size(0, 0);
@@ -182,7 +175,6 @@ cc.SizeZero = function () {
  * @param {cc.Size} size1
  * @param {cc.Size} size2
  * @return {Boolean}
- * Constructor
  */
 cc.sizeEqualToSize = function (size1, size2) {
     if (!size1 || !size2)
@@ -191,7 +183,7 @@ cc.sizeEqualToSize = function (size1, size2) {
 };
 
 // deprecated
-cc.Size.CCSizeEqualToSize = cc.sizeEqualToSize;
+//cc.Size.CCSizeEqualToSize = cc.sizeEqualToSize;
 
 //--------------------------------------------------------
 //
@@ -248,7 +240,6 @@ cc.Rect = function (x1, y1, width1, height1) {
  * @param {Number} width
  * @param {Number} height
  * @return {cc.Rect}
- * Constructor
  */
 cc.RectMake = function (x, y, width, height) {
     return cc.rect(x, y, width, height);
@@ -266,7 +257,6 @@ cc._rect = cc.rect;
  * The "zero" rectangle -- equivalent to cc.rect(0, 0, 0, 0).
  * @function
  * @return {cc.Rect}
- * Constructor
  */
 cc.RectZero = function () {
     return cc.rect(0, 0, 0, 0);
@@ -277,13 +267,12 @@ cc.RectZero = function () {
  * @param {cc.Rect} rect1
  * @param {cc.Rect} rect2
  * @return {Boolean}
- * Constructor
  */
 cc.rectEqualToRect = function (rect1, rect2) {
     if(!rect1 || !rect2)
         return false;
-    return ((cc.Point.CCPointEqualToPoint(rect1.origin, rect2.origin)) &&
-        (cc.Size.CCSizeEqualToSize(rect1.size, rect2.size)));
+    return ((cc.pointEqualToPoint(rect1.origin, rect2.origin)) &&
+        (cc.sizeEqualToSize(rect1.size, rect2.size)));
 };
 
 /**
@@ -296,11 +285,9 @@ cc.rectContainsRect = function (rect1, rect2) {
     if (!rect1 || !rect2)
         return false;
 
-    if ((rect1.origin.x >= rect2.origin.x) || (rect1.origin.y >= rect2.origin.y) ||
-        ( rect1.origin.x + rect1.size.width <= rect2.origin.x + rect2.size.width) ||
-        ( rect1.origin.y + rect1.size.height <= rect2.origin.y + rect2.size.height))
-        return false;
-    return true;
+    return !((rect1.x >= rect2.x) || (rect1.y >= rect2.y) ||
+        ( rect1.x + rect1.width <= rect2.x + rect2.width) ||
+        ( rect1.y + rect1.height <= rect2.y + rect2.height));
 };
 
 /**
@@ -308,10 +295,9 @@ cc.rectContainsRect = function (rect1, rect2) {
  * @function
  * @param {cc.Rect} rect
  * @return {Number}
- * Constructor
  */
 cc.rectGetMaxX = function (rect) {
-    return (rect.origin.x + rect.size.width);
+    return (rect.x + rect.width);
 };
 
 /**
@@ -319,20 +305,18 @@ cc.rectGetMaxX = function (rect) {
  * @function
  * @param {cc.Rect} rect
  * @return {Number}
- * Constructor
  */
 cc.rectGetMidX = function (rect) {
-    return (rect.origin.x + rect.size.width / 2.0);
+    return (rect.x + rect.width / 2.0);
 };
 /**
  * return the leftmost x-value of 'rect'
  * @function
  * @param {cc.Rect} rect
  * @return {Number}
- * Constructor
  */
 cc.rectGetMinX = function (rect) {
-    return rect.origin.x;
+    return rect.x;
 };
 
 /**
@@ -340,10 +324,9 @@ cc.rectGetMinX = function (rect) {
  * @function
  * @param {cc.Rect} rect
  * @return {Number}
- * Constructor
  */
 cc.rectGetMaxY = function (rect) {
-    return(rect.origin.y + rect.size.height);
+    return(rect.y + rect.height);
 };
 
 /**
@@ -351,10 +334,9 @@ cc.rectGetMaxY = function (rect) {
  * @function
  * @param {cc.Rect} rect
  * @return {Number}
- * Constructor
  */
 cc.rectGetMidY = function (rect) {
-    return rect.origin.y + rect.size.height / 2.0;
+    return rect.y + rect.height / 2.0;
 };
 
 /**
@@ -362,10 +344,9 @@ cc.rectGetMidY = function (rect) {
  * @function
  * @param {cc.Rect} rect
  * @return {Number}
- * Constructor
  */
 cc.rectGetMinY = function (rect) {
-    return rect.origin.y;
+    return rect.y;
 };
 
 /**
@@ -373,15 +354,10 @@ cc.rectGetMinY = function (rect) {
  * @param {cc.Rect} rect
  * @param {cc.Point} point
  * @return {Boolean}
- * Constructor
  */
 cc.rectContainsPoint = function (rect, point) {
-    var ret = false;
-    if (point.x >= cc.Rect.CCRectGetMinX(rect) && point.x <= cc.Rect.CCRectGetMaxX(rect) &&
-        point.y >= cc.Rect.CCRectGetMinY(rect) && point.y <= cc.Rect.CCRectGetMaxY(rect)) {
-        ret = true;
-    }
-    return ret;
+    return (point.x >= cc.rectGetMinX(rect) && point.x <= cc.rectGetMaxX(rect) &&
+        point.y >= cc.rectGetMinY(rect) && point.y <= cc.rectGetMaxY(rect)) ;
 };
 
 /**
@@ -389,13 +365,12 @@ cc.rectContainsPoint = function (rect, point) {
  * @param {cc.Rect} rectA
  * @param {cc.Rect} rectB
  * @return {Boolean}
- * Constructor
  */
 cc.rectIntersectsRect = function (rectA, rectB) {
-    return !(cc.Rect.CCRectGetMaxX(rectA) < cc.Rect.CCRectGetMinX(rectB) ||
-        cc.Rect.CCRectGetMaxX(rectB) < cc.Rect.CCRectGetMinX(rectA) ||
-        cc.Rect.CCRectGetMaxY(rectA) < cc.Rect.CCRectGetMinY(rectB) ||
-        cc.Rect.CCRectGetMaxY(rectB) < cc.Rect.CCRectGetMinY(rectA));
+    return !(cc.rectGetMaxX(rectA) < cc.rectGetMinX(rectB) ||
+        cc.rectGetMaxX(rectB) < cc.rectGetMinX(rectA) ||
+        cc.rectGetMaxY(rectA) < cc.rectGetMinY(rectB) ||
+        cc.rectGetMaxY(rectB) < cc.rectGetMinY(rectA));
 };
 
 /**
@@ -403,38 +378,27 @@ cc.rectIntersectsRect = function (rectA, rectB) {
  * @param {cc.Rect} rectA
  * @param {cc.Rect} rectB
  * @return {Boolean}
- * Constructor
  */
 cc.rectOverlapsRect = function (rectA, rectB) {
-    if (rectA.origin.x + rectA.size.width < rectB.origin.x) {
-        return false;
-    }
-    if (rectB.origin.x + rectB.size.width < rectA.origin.x) {
-        return false;
-    }
-    if (rectA.origin.y + rectA.size.height < rectB.origin.y) {
-        return false;
-    }
-    if (rectB.origin.y + rectB.size.height < rectA.origin.y) {
-        return false;
-    }
-    return true;
+    return !((rectA.x + rectA.width < rectB.x) ||
+        (rectB.x + rectB.width < rectA.x) ||
+        (rectA.y + rectA.height < rectB.y) ||
+        (rectB.y + rectB.height < rectA.y));
 };
 
 /**
  * Returns the smallest rectangle that contains the two source rectangles.
  * @function
- * @param {cc.Rect}　rectA
- * @param {cc.Rect}　rectB
+ * @param {cc.Rect} rectA
+ * @param {cc.Rect} rectB
  * @return {cc.Rect}
- * Constructor
  */
 cc.rectUnion = function (rectA, rectB) {
     var rect = cc.rect(0, 0, 0, 0);
-    rect.origin.x = Math.min(rectA.origin.x, rectB.origin.x);
-    rect.origin.y = Math.min(rectA.origin.y, rectB.origin.y);
-    rect.size.width = Math.max(rectA.origin.x + rectA.size.width, rectB.origin.x + rectB.size.width) - rect.origin.x;
-    rect.size.height = Math.max(rectA.origin.y + rectA.size.height, rectB.origin.y + rectB.size.height) - rect.origin.y;
+    rect.x = Math.min(rectA.x, rectB.x);
+    rect.y = Math.min(rectA.y, rectB.y);
+    rect.width = Math.max(rectA.x + rectA.width, rectB.x + rectB.width) - rect.x;
+    rect.height = Math.max(rectA.y + rectA.height, rectB.y + rectB.height) - rect.y;
     return rect;
 };
 
@@ -444,16 +408,15 @@ cc.rectUnion = function (rectA, rectB) {
  * @param {cc.Rect} rectA
  * @param {cc.Rect} rectB
  * @return {cc.Rect}
- * Constructor
  */
 cc.rectIntersection = function (rectA, rectB) {
     var intersection = cc.rect(
-        Math.max(cc.Rect.CCRectGetMinX(rectA), cc.Rect.CCRectGetMinX(rectB)),
-        Math.max(cc.Rect.CCRectGetMinY(rectA), cc.Rect.CCRectGetMinY(rectB)),
+        Math.max(cc.rectGetMinX(rectA), cc.rectGetMinX(rectB)),
+        Math.max(cc.rectGetMinY(rectA), cc.rectGetMinY(rectB)),
         0, 0);
 
-    intersection.size.width = Math.min(cc.Rect.CCRectGetMaxX(rectA), cc.Rect.CCRectGetMaxX(rectB)) - cc.Rect.CCRectGetMinX(intersection);
-    intersection.size.height = Math.min(cc.Rect.CCRectGetMaxY(rectA), cc.Rect.CCRectGetMaxY(rectB)) - cc.Rect.CCRectGetMinY(intersection);
+    intersection.width = Math.min(cc.rectGetMaxX(rectA), cc.rectGetMaxX(rectB)) - cc.rectGetMinX(intersection);
+    intersection.height = Math.min(cc.rectGetMaxY(rectA), cc.rectGetMaxY(rectB)) - cc.rectGetMinY(intersection);
     return intersection;
 };
 
@@ -534,7 +497,7 @@ Object.defineProperties(cc.Rect.prototype,
 
 
 // Deprecated
-cc.Rect.CCRectEqualToRect = cc.rectEqualToRect;
+/*cc.Rect.CCRectEqualToRect = cc.rectEqualToRect;
 cc.Rect.CCRectContainsRect = cc.rectContainsRect;
 cc.Rect.CCRectGetMaxX = cc.rectGetMaxX;
 cc.Rect.CCRectGetMidX = cc.rectGetMidX;
@@ -545,6 +508,6 @@ cc.Rect.CCRectGetMinY = cc.rectGetMinY;
 cc.Rect.CCRectContainsPoint = cc.rectContainsPoint;
 cc.Rect.CCRectIntersectsRect = cc.rectIntersectsRect;
 cc.Rect.CCRectUnion = cc.rectUnion;
-cc.Rect.CCRectIntersection = cc.rectIntersection;
+cc.Rect.CCRectIntersection = cc.rectIntersection;*/
 
 });

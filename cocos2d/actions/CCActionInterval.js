@@ -99,7 +99,6 @@ cc.ActionInterval = cc.FiniteTimeAction.extend(/** @lends cc.ActionInterval# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.Action.prototype.startWithTarget.call(this, target);
         this._elapsed = 0;
         this._firstTick = true;
@@ -170,9 +169,6 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
         cc.Assert(actionOne != null, "Sequence.initOneTwo");
         cc.Assert(actionTwo != null, "Sequence.initOneTwo");
 
-        var one = actionOne.getDuration();
-        var two = actionTwo.getDuration();
-
         var d = actionOne.getDuration() + actionTwo.getDuration();
         this.initWithDuration(d);
 
@@ -187,7 +183,6 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
-        //this._super(target);
         this._split = this._actions[0].getDuration() / this._duration;
         this._last = -1;
     },
@@ -197,7 +192,7 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     stop:function () {
         // Issue #1305
-        if (this._last != -1) {
+        if (this._last !== -1) {
             this._actions[this._last].stop();
         }
         cc.Action.prototype.stop.call(this);
@@ -208,36 +203,37 @@ cc.Sequence = cc.ActionInterval.extend(/** @lends cc.Sequence# */{
      */
     update:function (time) {
         var new_t, found = 0;
-        if (time < this._split) {
+        var locSplit = this._split, locActions = this._actions, locLast = this._last;
+        if (time < locSplit) {
             // action[0]
-            new_t = (this._split) ? time / this._split : 1;
+            new_t = (locSplit) ? time / locSplit : 1;
         } else {
             // action[1]
             found = 1;
-            new_t = (this._split === 1) ? 1 : (time - this._split) / (1 - this._split);
+            new_t = (locSplit === 1) ? 1 : (time - locSplit) / (1 - locSplit);
 
-            if (this._last === -1) {
+            if (locLast === -1) {
                 // action[0] was skipped, execute it.
-                this._actions[0].startWithTarget(this._target);
-                this._actions[0].update(1);
-                this._actions[0].stop();
+                locActions[0].startWithTarget(this._target);
+                locActions[0].update(1);
+                locActions[0].stop();
             }
-            if (!this._last) {
+            if (!locLast) {
                 // switching to action 1. stop action 0.
-                this._actions[0].update(1);
-                this._actions[0].stop();
+                locActions[0].update(1);
+                locActions[0].stop();
             }
         }
 
         // Last action found and it is done.
-        if(this._last === found && this._actions[found].isDone())
+        if(locLast === found && locActions[found].isDone())
             return;
 
         // Last action found and it is done
-        if (this._last != found)
-            this._actions[found].startWithTarget(this._target);
+        if (locLast !== found)
+            locActions[found].startWithTarget(this._target);
 
-        this._actions[found].update(new_t);
+        locActions[found].update(new_t);
         this._last = found;
     },
 
@@ -331,7 +327,6 @@ cc.Repeat = cc.ActionInterval.extend(/** @lends cc.Repeat# */{
     startWithTarget:function (target) {
         this._total = 0;
         this._nextDt = this._innerAction.getDuration() / this._duration;
-        //this._super(target);
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._innerAction.startWithTarget(target);
     },
@@ -447,7 +442,6 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._innerAction.startWithTarget(target);
     },
@@ -1426,7 +1420,6 @@ cc.ScaleBy = cc.ScaleTo.extend(/** @lends cc.ScaleBy# */{
      * @param {Number} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.ScaleTo.prototype.startWithTarget.call(this, target);
         this._deltaX = this._startScaleX * this._endScaleX - this._startScaleX;
         this._deltaY = this._startScaleY * this._endScaleY - this._startScaleY;
@@ -1486,18 +1479,18 @@ cc.Blink = cc.ActionInterval.extend(/** @lends cc.Blink# */{
         if (this._target && !this.isDone()) {
             var slice = 1.0 / this._times;
             var m = time % slice;
-            this._target.setVisible(m > slice / 2 ? true : false);
+            this._target.setVisible(m > (slice / 2));
         }
     },
 
     startWithTarget:function(target){
-        this._super(target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._originalState = target.isVisible();
     },
 
     stop:function(){
         this._target.setVisible(this._originalState);
-        this._super();
+        cc.ActionInterval.prototype.stop.call(this);
     },
 
     /**
@@ -1675,7 +1668,6 @@ cc.TintTo = cc.ActionInterval.extend(/** @lends cc.TintTo# */{
      * @param {cc.Sprite} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._from = this._target.getColor();
     },
@@ -1723,7 +1715,6 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, deltaRed, deltaGreen, deltaBlue) {
-        //if (this._super(duration)) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this._deltaR = deltaRed;
             this._deltaG = deltaGreen;
@@ -1739,7 +1730,6 @@ cc.TintBy = cc.ActionInterval.extend(/** @lends cc.TintBy# */{
      * @param {cc.Sprite} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
         if (target.RGBAProtocol) {
@@ -1849,7 +1839,6 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
         cc.Assert(action != null, "");
         cc.Assert(action != this._other, "");
 
-        //if (this._super(action.getDuration())) {
         if (cc.ActionInterval.prototype.initWithDuration.call(this, action.getDuration())) {
             // Don't leak if action is reused
             this._other = action;
@@ -1863,7 +1852,6 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         this._other.startWithTarget(target);
     },
@@ -1889,7 +1877,6 @@ cc.ReverseTime = cc.ActionInterval.extend(/** @lends cc.ReverseTime# */{
      */
     stop:function () {
         this._other.stop();
-        //this._super();
         cc.Action.prototype.stop.call(this);
     },
     _other:null
@@ -1973,7 +1960,6 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
      * @param {cc.Sprite} target
      */
     startWithTarget:function (target) {
-        //this._super(target);
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
         if (this._animation.getRestoreOriginalFrame()) {
@@ -2046,7 +2032,6 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
         if (this._animation.getRestoreOriginalFrame() && this._target) {
             this._target.setDisplayFrame(this._origFrame);
         }
-        //this._super();
         cc.Action.prototype.stop.call(this);
     }
 });
@@ -2094,7 +2079,6 @@ cc.TargetedAction = cc.ActionInterval.extend(/** @lends cc.TargetedAction# */{
     },
 
     startWithTarget:function (target) {
-        //this._super(this._forcedTarget);
         cc.ActionInterval.prototype.startWithTarget.call(this, this._forcedTarget);
         this._action.startWithTarget(this._forcedTarget);
     },

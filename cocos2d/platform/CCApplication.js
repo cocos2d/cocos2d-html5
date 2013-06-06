@@ -24,6 +24,24 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Device type
+ * @constant
+ * @type {Object}
+ */
+cc.TARGET_PLATFORM = {
+    WINDOWS:0,
+    LINUX:1,
+    MACOS:2,
+    ANDROID:3,
+    IPHONE:4,
+    IPAD:5,
+    BLACKBERRY:6,
+    NACL:7,
+    EMSCRIPTEN:8,
+    MOBILE_BROWSER:100,
+    PC_BROWSER:101
+};
 
 define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/miniFramework", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/CCConfiguration", "cocos2d/CCDrawingPrimitives", "cocos2d/platform/CCConfig", "cocos2d/base_nodes/CCNode", "cocos2d/textures/CCTextureCache", "cocos2d/cocoa/CCGeometry", "cocos2d/CCDirector", "cocos2d/platform/CCClass"], function(cc, sys) {
 
@@ -309,6 +327,7 @@ cc.setContextMenuEnable = function (enabled) {
  * @extends cc.Class
  */
 cc.Application = cc.Class.extend(/** @lends cc.Application# */{
+    _animationInterval:null,
     /**
      * Constructor
      */
@@ -338,6 +357,10 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         }
     },
 
+    getTargetPlatform:function(){
+        return cc.Browser.isMobile ? cc.TARGET_PLATFORM.MOBILE_BROWSER : cc.TARGET_PLATFORM.PC_BROWSER;
+    },
+
     /**
      * Run the message loop.
      * @return {Number}
@@ -347,7 +370,6 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
         if (!this.applicationDidFinishLaunching())
             return 0;
 
-        // TODO, need to be fixed.
         var callback;
         if (window.requestAnimFrame && this._animationInterval == 1 / 60) {
             callback = function () {
@@ -363,15 +385,14 @@ cc.Application = cc.Class.extend(/** @lends cc.Application# */{
             setInterval(callback, this._animationInterval * 1000);
         }
         return 0;
-    },
-    _animationInterval:null
+    }
 });
 
 /**
  * Get current applicaiton instance.
  * @return {cc.Application}  Current application instance pointer.
  */
-cc.Application.sharedApplication = function () {
+cc.Application.getInstance = function () {
     cc.Assert(cc._sharedApplication, "sharedApplication");
     return cc._sharedApplication;
 };

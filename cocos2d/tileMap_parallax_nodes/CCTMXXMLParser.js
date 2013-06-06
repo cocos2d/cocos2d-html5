@@ -262,7 +262,7 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
     _currentString:null,
     // tile properties
     _tileProperties:null,
-    _resources:null,
+    _resources:"",
 
     ctor:function () {
         this._tileSets = [];
@@ -463,9 +463,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
      */
     parseXMLFile:function (tmxFile, isXmlString) {
         isXmlString = isXmlString || false;
+        tmxFile = cc.FileUtils.getInstance().fullPathForFilename(tmxFile);
         var mapXML = cc.SAXParser.getInstance().tmxParse(tmxFile, isXmlString);
-        var i, j;
-
         var i, j;
 
         // PARSE <map>
@@ -534,14 +533,16 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
                 tileset._tileSize = tilesetSize;
 
                 var image = selTileset.getElementsByTagName('image')[0];
-                var imgSource = image.getAttribute('source');
-                if (imgSource) {
-                    if (this._resources)
-                        imgSource = this._resources + "/" + imgSource;
-                    else
-                        imgSource = cc.FileUtils.getInstance().fullPathFromRelativeFile(imgSource, tmxFile);
+                var imagename = image.getAttribute('source');
+                var num = -1;
+                if(this._TMXFileName)
+                    num  = this._TMXFileName.lastIndexOf("/");
+                if (num !== -1) {
+                    var dir = this._TMXFileName.substr(0, num + 1);
+                    tileset.sourceImage = dir + imagename;
+                } else {
+                    tileset.sourceImage = this._resources + (this._resources ? "/" : "") + imagename;
                 }
-                tileset.sourceImage = imgSource;
                 this.setTilesets(tileset);
             }
         }
@@ -760,7 +761,8 @@ cc.TMXMapInfo = cc.SAXParser.extend(/** @lends cc.TMXMapInfo# */{
         this._tileSets = [];
         this._layers = [];
 
-        this._TMXFileName = cc.FileUtils.getInstance().fullPathFromRelativePath(tmxFileName);
+        //this._TMXFileName = cc.FileUtils.getInstance().fullPathForFilename(tmxFileName);
+        this._TMXFileName = tmxFileName;
 
         if (resourcePath) {
             this._resources = resourcePath;

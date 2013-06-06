@@ -57,7 +57,8 @@ cc.SHADER_POSITION_UCOLOR_VERT =
         + "                                         \n"
         + "void main(void)                          \n"
         + "{                                        \n"
-        + "    gl_Position = CC_MVPMatrix * a_position; \n"
+        //+ "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "    gl_PointSize = u_pointSize;          \n"
         + "    v_fragmentColor = u_color;           \n"
         + "}";
@@ -92,7 +93,8 @@ cc.SHADER_POSITION_COLOR_VERT =
         + "                                          \n"
         + "void main()                               \n"
         + "{                                         \n"
-        + "   gl_Position = CC_MVPMatrix * a_position; \n"
+        //+ "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "    v_fragmentColor = a_color;             \n"
         + "}";
 
@@ -135,7 +137,8 @@ cc.SHADER_POSITION_COLOR_LENGTH_TEXTURE_VERT =
         + "     v_color = a_color;//vec4(a_color.rgb * a_color.a, a_color.a);				\n"
         + "     v_texcoord = a_texcoord;										\n"
         + "																        \n"
-        + "     gl_Position = CC_MVPMatrix * a_position;						\n"
+        //+ "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "}";
 
 // ----------------------Shader_PositionTexture Shader Source-------------------------------------
@@ -168,7 +171,8 @@ cc.SHADER_POSITION_TEXTURE_VERT =
         + "                                           \n"
         + "void main()                                \n"
         + "{                                          \n"
-        + "    gl_Position = CC_MVPMatrix * a_position; \n"
+        //+ "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "    v_texCoord = a_texCoord;               \n"
         + "}";
 
@@ -204,7 +208,8 @@ cc.SHADER_POSITION_TEXTURE_UCOLOR_VERT =
         + "                                             \n"
         + "void main()                                  \n"
         + "{                                            \n"
-        + "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        //+ "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "    v_texCoord = a_texCoord;                 \n"
         + "}";
 
@@ -243,7 +248,8 @@ cc.SHADER_POSITION_TEXTURE_A8COLOR_VERT =
         + "                                             \n"
         + "void main()                                  \n"
         + "{                                            \n"
-        + "    gl_Position = CC_MVPMatrix * a_position; \n"
+        //+ "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "    v_fragmentColor = a_color;               \n"
         + "    v_texCoord = a_texCoord;                 \n"
         + "}";
@@ -281,11 +287,11 @@ cc.SHADER_POSITION_TEXTURE_COLOR_VERT =
         + "                                             \n"
         + "void main()                                  \n"
         + "{                                            \n"
-        + "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        //+ "    gl_Position = CC_MVPMatrix * a_position;  \n"
+        + "    gl_Position = (CC_PMatrix * CC_MVMatrix) * a_position;  \n"
         + "    v_fragmentColor = a_color;               \n"
         + "    v_texCoord = a_texCoord;                 \n"
         + "}";
-
 
 //-----------------------Shader_PositionTextureColorAlphaTest_frag Shader Source----------------------------
 /**

@@ -340,7 +340,7 @@ cc.Lens3D = cc.Grid3DAction.extend(/** @lends cc.Lens3D# */{
      * @param {cc.Point} position
      */
     setPosition:function (position) {
-        if (!cc.Point.CCPointEqualToPoint(position, this._position)) {
+        if (!cc.pointEqualToPoint(position, this._position)) {
             this._position = position;
             this._dirty = true;
         }

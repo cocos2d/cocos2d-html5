@@ -326,7 +326,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         return cc.p(glSize.width * (clipCoord.x * 0.5 + 0.5), glSize.height * (-clipCoord.y * 0.5 + 0.5));
     },
 
-    //_fullRect:null,
     /**
      *  Draw the scene. This method is called every frame. Don't call it manually.
      */
@@ -397,25 +396,6 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
             this._showStats();
 
         cc.kmGLPopMatrix();
-    },
-
-    addRegionToDirtyRegion:function (rect) {
-        if (!rect)
-            return;
-
-        if (!this._dirtyRegion) {
-            this._dirtyRegion = cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height);
-            return;
-        }
-        this._dirtyRegion = cc.Rect.CCRectUnion(this._dirtyRegion,
-            cc.rect(rect.origin.x, rect.origin.y, rect.size.width, rect.size.height));
-    },
-
-    rectIsInDirtyRegion:function (rect) {
-        if (!rect || !this._fullRect)
-            return false;
-
-        return cc.Rect.CCRectIntersectsRect(this._fullRect, rect);
     },
 
     /**
@@ -1116,7 +1096,7 @@ cc.DisplayLinkDirector = cc.Director.extend(/** @lends cc.DisplayLinkDirector# *
     startAnimation:function () {
         this._nextDeltaTimeZero = true;
         this.invalid = false;
-        cc.Application.sharedApplication().setAnimationInterval(this._animationInterval);
+        cc.Application.getInstance().setAnimationInterval(this._animationInterval);
     },
 
     /**

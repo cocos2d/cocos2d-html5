@@ -276,7 +276,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _registerFaceFont:function (fontRes) {
-        var srcArr = fontRes.src;
+        var srcArr = cc.FileUtils.getInstance().fullPathForFilename(fontRes.src);
         if (srcArr && srcArr.length > 0) {
             var fontStyle = document.createElement("style");
             fontStyle.type = "text/css";

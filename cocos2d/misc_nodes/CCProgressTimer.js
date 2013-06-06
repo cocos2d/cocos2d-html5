@@ -299,7 +299,7 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
             if (this._sprite._texture instanceof HTMLImageElement) {
                 if ((this._originSize.width != 0) && (this._originSize.height != 0)) {
                     context.drawImage(this._sprite._texture,
-                        this._sprite._rect.origin.x + this._origin.x, this._sprite._rect.origin.y + this._origin.y,
+                        this._sprite._rect.x + this._origin.x, this._sprite._rect.y + this._origin.y,
                         this._originSize.width, this._originSize.height,
                         pos.x, -(pos.y + this._drawSize.height),
                         this._originSize.width, this._originSize.height);
@@ -326,16 +326,16 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
 
             if (this._sprite._texture instanceof HTMLImageElement) {
                 context.drawImage(this._sprite._texture,
-                    this._sprite._rect.origin.x, this._sprite._rect.origin.y,
-                    this._sprite._rect.size.width, this._sprite._rect.size.height,
-                    pos.x, -(pos.y + this._sprite._rect.size.height),
-                    this._sprite._rect.size.width, this._sprite._rect.size.height);
+                    this._sprite._rect.x, this._sprite._rect.y,
+                    this._sprite._rect.width, this._sprite._rect.height,
+                    pos.x, -(pos.y + this._sprite._rect.height),
+                    this._sprite._rect.width, this._sprite._rect.height);
             } else if (this._sprite._texture instanceof  HTMLCanvasElement) {
                 context.drawImage(this._sprite._texture,
                     0, 0,
-                    this._sprite._rect.size.width, this._sprite._rect.size.height,
-                    pos.x, -(pos.y + this._sprite._rect.size.height),
-                    this._sprite._rect.size.width, this._sprite._rect.size.height);
+                    this._sprite._rect.width, this._sprite._rect.height,
+                    pos.x, -(pos.y + this._sprite._rect.height),
+                    this._sprite._rect.width, this._sprite._rect.height);
             }
         }
         cc.INCREMENT_GL_DRAWS(1);

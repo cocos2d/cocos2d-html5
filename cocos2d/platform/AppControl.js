@@ -40,7 +40,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
     didFinishLaunchingWithOptions:function () {
         // Override point for customization after application launch.
         //var app = new cc.AppDelegate();
-        cc.Application.sharedApplication().run();
+        cc.Application.getInstance().run();
 
         return true;
     },
@@ -76,7 +76,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      * </p>
      */
     applicationDidEnterBackground:function () {
-        cc.Application.sharedApplication().applicationDidEnterBackground();
+        cc.Application.getInstance().applicationDidEnterBackground();
     },
 
     /**
@@ -86,7 +86,7 @@ cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
      * </p>
      */
     applicationWillEnterForeground:function () {
-        cc.Application.sharedApplication().applicationWillEnterForeground();
+        cc.Application.getInstance().applicationWillEnterForeground();
     },
 
     /**

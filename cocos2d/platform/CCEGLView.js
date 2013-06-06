@@ -37,8 +37,18 @@ cc.RESOLUTION_POLICY = {
     // The entire application is visible in the specified area without distortion while maintaining the original
     // aspect ratio of the application. Borders can appear on two sides of the application.
     SHOW_ALL:2,
+    // The application takes the height of the design resolution size and modifies the width of the internal
+    // canvas so that it fits the aspect ratio of the device
+    // no distortion will occur however you must make sure your application works on different
+    // aspect ratios
+    HEIGHT:3,
+    // The application takes the width of the design resolution size and modifies the height of the internal
+    // canvas so that it fits the aspect ratio of the device
+    // no distortion will occur however you must make sure your application works on different
+    // aspect ratios
+    WIDTH:4,
 
-    UNKNOWN:3
+    UNKNOWN:5
 };
 
 cc.Touches = [];
@@ -79,8 +89,9 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     _frameZoomFactor:1.0,
 
     ctor:function(){
+        var ele = (cc.container.parentNode === document.body)? document.documentElement : cc.container.parentNode;
         this._viewName = "Cocos2dHTML5";
-        this._screenSize = cc.SizeZero();
+        this._screenSize = cc.size(ele.clientWidth, ele.clientHeight);
         this._designResolutionSize = cc.SizeZero();
         this._viewPortRect = cc.RectZero();
         this._delegate = cc.Director.getInstance().getTouchDispatcher();
@@ -102,11 +113,12 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
     },
 
     _adjustSize:function () {
-        var ele = (cc.container.parentNode === document.body)? document.documentElement : cc.container.parentNode;
-        cc.canvas.width = ele.clientWidth;
-        cc.canvas.height = ele.clientHeight;
+        cc.canvas.width = this._screenSize.width;
+        cc.canvas.height = this._screenSize.height;
+
         if(!("opengl" in sys.capabilities))
             cc.renderContext.translate(0, cc.canvas.height);
+
         var parent = document.querySelector("#" + document['ccConfig']['tag']).parentNode;
         if (parent) {
             parent.style.width = cc.canvas.width + "px";
@@ -119,7 +131,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             body.style.margin = 0 + "px";
         }
 
-        this._screenSize = cc.size(cc.canvas.width, cc.canvas.height);
         this.setDesignResolutionSize();
     },
     // hack
@@ -169,16 +180,6 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         } else {
             //  [EAGLView sharedEGLView] resignFirstResponder
         }
-    },
-
-    /**
-     * @param {Number} scaleFactor
-     * @return {Boolean}
-     */
-    setContentScaleFactor:function (scaleFactor) {
-        cc.Assert(this._resolutionPolicy == cc.RESOLUTION_POLICY.UNKNOWN); // cannot enable retina mode
-        this._scaleX = this._scaleY = scaleFactor;
-        return true;
     },
 
     /**
@@ -288,12 +289,20 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._scaleX = this._screenSize.width / this._designResolutionSize.width;
         this._scaleY = this._screenSize.height / this._designResolutionSize.height;
 
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER) {
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.NOBORDER)
             this._scaleX = this._scaleY = Math.max(this._scaleX, this._scaleY);
+
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL)
+            this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
+
+        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.HEIGHT){
+            this._scaleX = this._scaleY;
+            this._designResolutionSize.width = Math.ceil(this._screenSize.width/ this._scaleX);
         }
 
-        if (this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL) {
-            this._scaleX = this._scaleY = Math.min(this._scaleX, this._scaleY);
+        if ( this._resolutionPolicy == cc.RESOLUTION_POLICY.WIDTH) {
+            this._scaleY = this._scaleX;
+            this._designResolutionSize.height = Math.ceil(this._screenSize.height/this._scaleY);
         }
 
         // calculate the rect of viewport
@@ -351,8 +360,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} h height
      */
     setViewPortInPoints:function (x, y, w, h) {
-        cc.renderContext.viewport((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
-            (y * this._scaleY  * this._frameZoomFactor + this._viewPortRect.origin.y * this._frameZoomFactor),
+        cc.renderContext.viewport((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
+            (y * this._scaleY  * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
             (w * this._scaleX * this._frameZoomFactor),
             (h * this._scaleY * this._frameZoomFactor));
     },
@@ -365,10 +374,28 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * @param {Number} h
      */
     setScissorInPoints:function (x, y, w, h) {
-        cc.renderContext.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.origin.x * this._frameZoomFactor),
-            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.origin.y * this._frameZoomFactor),
+        cc.renderContext.scissor((x * this._scaleX * this._frameZoomFactor + this._viewPortRect.x * this._frameZoomFactor),
+            (y * this._scaleY * this._frameZoomFactor + this._viewPortRect.y * this._frameZoomFactor),
             (w * this._scaleX * this._frameZoomFactor),
             (h * this._scaleY * this._frameZoomFactor));
+    },
+
+    /**
+     * Get whether GL_SCISSOR_TEST is enable
+     */
+    isScissorEnabled:function(){
+        var gl = cc.renderContext;
+        return gl.isEnabled(gl.SCISSOR_TEST);
+    },
+
+    /**
+     * Get the current scissor rectangle
+     */
+    getScissorRect:function(){
+        var gl = cc.renderContext, scaleX = this._scaleX, scaleY = this._scaleY;
+        var boxArr = gl.getParameter(gl.SCISSOR_BOX);
+        return cc.RectMake((boxArr[0] - this._viewPortRect.x) / scaleX, (boxArr[1] - this._viewPortRect.y) / this._scaleY,
+            boxArr[2] / scaleX, boxArr[3] / scaleY);
     },
 
     /**
@@ -444,8 +471,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
                 }
 
                 var touch = cc.Touches[unusedIndex] = new cc.Touch();
-                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(unusedIndex, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
 
                 //cc.log("x ="+x+" y = "+y, touches[key].getLocation().x, touches[key].getLocation().y);
 
@@ -484,8 +511,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             //cc.log("Moving touches with id: " + id + ", x=" + x + ", y=" + y);
             var touch = cc.Touches[index];
             if (touch) {
-                touch.setTouchInfo(index, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
                 arr.push(touch);
             }
             else {
@@ -549,8 +576,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
             var touch = cc.Touches[index];
             if (touch) {
                 //cc.log("Ending touches with id: " + id + ", x=" + x + ", y=" + y);
-                touch.setTouchInfo(index, (x - this._viewPortRect.origin.x) / this._scaleX,
-                    (y - this._viewPortRect.origin.y) / this._scaleY);
+                touch.setTouchInfo(index, (x - this._viewPortRect.x) / this._scaleX,
+                    (y - this._viewPortRect.y) / this._scaleY);
 
                 arr.push(touch);
 

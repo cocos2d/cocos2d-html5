@@ -198,7 +198,7 @@ cc.ParallaxNode = cc.Node.extend(/** @lends cc.ParallaxNode# */{
      */
     visit:function () {
         var pos = this._absolutePosition();
-        if (!cc.Point.CCPointEqualToPoint(pos, this._lastPosition)) {
+        if (!cc.pointEqualToPoint(pos, this._lastPosition)) {
             for (var i = 0; i < this._parallaxArray.length; i++) {
                 var point = this._parallaxArray[i];
                 var x = -pos.x + pos.x * point.getRatio().x + point.getOffset().x;
