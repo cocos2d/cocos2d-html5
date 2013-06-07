@@ -24,113 +24,111 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
-
-/**
- * cc.TMXObjectGroup represents the TMX object group.
- * @class
- * @extends cc.Class
- */
-cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
-    //name of the group
-    _groupName:"",
-    _positionOffset:null,
-    _properties:null,
-    _objects:null,
-
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCClass", "cocos2d/cocoa/CCGeometry"], function (cc) {
     /**
-     *  Constructor
+     * cc.TMXObjectGroup represents the TMX object group.
+     * @class
+     * @extends cc.Class
      */
-    ctor:function () {
-        this._properties = [];
-        this._objects = [];
-        this._positionOffset = cc.PointZero();
-    },
+    cc.TMXObjectGroup = cc.Class.extend(/** @lends cc.TMXObjectGroup# */{
+        //name of the group
+        _groupName: "",
+        _positionOffset: null,
+        _properties: null,
+        _objects: null,
 
-    /**
-     * Offset position of child objects
-     * @return {cc.Point}
-     */
-    getPositionOffset:function () {
-        return this._positionOffset;
-    },
+        /**
+         *  Constructor
+         */
+        ctor: function () {
+            this._properties = [];
+            this._objects = [];
+            this._positionOffset = cc.PointZero();
+        },
 
-    /**
-     * @param {cc.Point} Var
-     */
-    setPositionOffset:function (Var) {
-        this._positionOffset = Var;
-    },
+        /**
+         * Offset position of child objects
+         * @return {cc.Point}
+         */
+        getPositionOffset: function () {
+            return this._positionOffset;
+        },
 
-    /**
-     * List of properties stored in a dictionary
-     * @return {Array}
-     */
-    getProperties:function () {
-        return this._properties;
-    },
+        /**
+         * @param {cc.Point} Var
+         */
+        setPositionOffset: function (Var) {
+            this._positionOffset = Var;
+        },
 
-    /**
-     * @param {object} Var
-     */
-    setProperties:function (Var) {
-        this._properties.push(Var);
-    },
+        /**
+         * List of properties stored in a dictionary
+         * @return {Array}
+         */
+        getProperties: function () {
+            return this._properties;
+        },
 
-    /**
-     * @return {String}
-     */
-    getGroupName:function () {
-        return this._groupName.toString();
-    },
+        /**
+         * @param {object} Var
+         */
+        setProperties: function (Var) {
+            this._properties.push(Var);
+        },
 
-    /**
-     * @param {String} groupName
-     */
-    setGroupName:function (groupName) {
-        this._groupName = groupName;
-    },
+        /**
+         * @return {String}
+         */
+        getGroupName: function () {
+            return this._groupName.toString();
+        },
 
-    /**
-     * Return the value for the specific property name
-     * @param {String} propertyName
-     * @return {object}
-     */
-    propertyNamed:function (propertyName) {
-        return this._properties[propertyName];
-    },
+        /**
+         * @param {String} groupName
+         */
+        setGroupName: function (groupName) {
+            this._groupName = groupName;
+        },
 
-    /**
-     * <p>Return the dictionary for the specific object name. <br />
-     * It will return the 1st object found on the array for the given name.</p>
-     * @param {String} objectName
-     * @return {object|Null}
-     */
-    objectNamed:function (objectName) {
-        if (this._objects && this._objects.length > 0) {
-            for (var i = 0, len = this._objects.length; i < len; i++) {
-                var name = this._objects[i]["name"];
-                if (name && name == objectName)
-                    return this._objects[i];
+        /**
+         * Return the value for the specific property name
+         * @param {String} propertyName
+         * @return {object}
+         */
+        propertyNamed: function (propertyName) {
+            return this._properties[propertyName];
+        },
+
+        /**
+         * <p>Return the dictionary for the specific object name. <br />
+         * It will return the 1st object found on the array for the given name.</p>
+         * @param {String} objectName
+         * @return {object|Null}
+         */
+        objectNamed: function (objectName) {
+            if (this._objects && this._objects.length > 0) {
+                for (var i = 0, len = this._objects.length; i < len; i++) {
+                    var name = this._objects[i]["name"];
+                    if (name && name == objectName)
+                        return this._objects[i];
+                }
             }
+            // object not found
+            return null;
+        },
+
+        /**
+         * @return {Array}
+         */
+        getObjects: function () {
+            return this._objects;
+        },
+
+        /**
+         * @param {object} objects
+         */
+        setObjects: function (objects) {
+            this._objects.push(objects);
         }
-        // object not found
-        return null;
-    },
-
-    /**
-     * @return {Array}
-     */
-    getObjects:function () {
-        return this._objects;
-    },
-
-    /**
-     * @param {object} objects
-     */
-    setObjects:function (objects) {
-        this._objects.push(objects);
-    }
-});
+    });
 });

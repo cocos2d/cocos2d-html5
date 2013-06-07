@@ -24,82 +24,78 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "extensions/CCBReader/CCControlLoader", "cocos2d/platform/CCClass", "extensions/CCBReader/CCSpriteLoader",
+    "extensions/CCBReader/CCNodeLoader"], function (cc) {
+    cc.NodeLoaderLibrary = cc.Class.extend({
+        _ccNodeLoaders: null,
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "extensions/CCBReader/CCControlLoader", "cocos2d/platform/CCClass", "extensions/CCBReader/CCSpriteLoader", "extensions/CCBReader/CCNodeLoader"], function(cc, sys) {
+        ctor: function () {
+            this._ccNodeLoaders = {};
+        },
 
-cc.NodeLoaderLibrary = cc.Class.extend({
-    _ccNodeLoaders:null,
+        registerDefaultCCNodeLoaders: function () {
+            this.registerCCNodeLoader("CCNode", cc.NodeLoader.loader());
+            this.registerCCNodeLoader("CCLayer", cc.LayerLoader.loader());
+            this.registerCCNodeLoader("CCLayerColor", cc.LayerColorLoader.loader());
+            this.registerCCNodeLoader("CCLayerGradient", cc.LayerGradientLoader.loader());
+            this.registerCCNodeLoader("CCSprite", cc.SpriteLoader.loader());
+            this.registerCCNodeLoader("CCLabelBMFont", cc.LabelBMFontLoader.loader());
+            this.registerCCNodeLoader("CCLabelTTF", cc.LabelTTFLoader.loader());
+            this.registerCCNodeLoader("CCScale9Sprite", cc.Scale9SpriteLoader.loader());
+            this.registerCCNodeLoader("CCScrollView", cc.ScrollViewLoader.loader());
+            this.registerCCNodeLoader("CCBFile", cc.BuilderFileLoader.loader());
+            this.registerCCNodeLoader("CCMenu", cc.MenuLoader.loader());
+            this.registerCCNodeLoader("CCMenuItemImage", cc.MenuItemImageLoader.loader());
+            this.registerCCNodeLoader("CCControlButton", cc.ControlButtonLoader.loader());
+            this.registerCCNodeLoader("CCParticleSystemQuad", cc.ParticleSystemQuadLoader.loader());
+        },
 
-    ctor:function(){
-        this._ccNodeLoaders = {};
-    },
+        registerCCNodeLoader: function (className, ccNodeLoader) {
+            this._ccNodeLoaders[className] = ccNodeLoader;
+        },
 
-    registerDefaultCCNodeLoaders:function(){
-        this.registerCCNodeLoader("CCNode", cc.NodeLoader.loader());
-        this.registerCCNodeLoader("CCLayer", cc.LayerLoader.loader());
-        this.registerCCNodeLoader("CCLayerColor", cc.LayerColorLoader.loader());
-        this.registerCCNodeLoader("CCLayerGradient", cc.LayerGradientLoader.loader());
-        this.registerCCNodeLoader("CCSprite", cc.SpriteLoader.loader());
-        this.registerCCNodeLoader("CCLabelBMFont", cc.LabelBMFontLoader.loader());
-        this.registerCCNodeLoader("CCLabelTTF", cc.LabelTTFLoader.loader());
-        this.registerCCNodeLoader("CCScale9Sprite", cc.Scale9SpriteLoader.loader());
-        this.registerCCNodeLoader("CCScrollView", cc.ScrollViewLoader.loader());
-        this.registerCCNodeLoader("CCBFile", cc.BuilderFileLoader.loader());
-        this.registerCCNodeLoader("CCMenu", cc.MenuLoader.loader());
-        this.registerCCNodeLoader("CCMenuItemImage", cc.MenuItemImageLoader.loader());
-        this.registerCCNodeLoader("CCControlButton", cc.ControlButtonLoader.loader());
-        this.registerCCNodeLoader("CCParticleSystemQuad", cc.ParticleSystemQuadLoader.loader());
-    },
-
-    registerCCNodeLoader:function(className,ccNodeLoader){
-        this._ccNodeLoaders[className] =  ccNodeLoader;
-    },
-
-    unregisterCCNodeLoader:function(className){
-        if(this._ccNodeLoaders.hasOwnProperty(className)){
-           delete this._ccNodeLoaders[className];
-        }
-    },
-
-    getCCNodeLoader:function(className){
-        if(this._ccNodeLoaders.hasOwnProperty(className))
-            return this._ccNodeLoaders[className];
-        return null;
-    },
-
-    purge:function(releaseCCNodeLoaders){
-        if(releaseCCNodeLoaders) {
-            for(var className in this._ccNodeLoaders) {
+        unregisterCCNodeLoader: function (className) {
+            if (this._ccNodeLoaders.hasOwnProperty(className)) {
                 delete this._ccNodeLoaders[className];
             }
+        },
+
+        getCCNodeLoader: function (className) {
+            if (this._ccNodeLoaders.hasOwnProperty(className))
+                return this._ccNodeLoaders[className];
+            return null;
+        },
+
+        purge: function (releaseCCNodeLoaders) {
+            if (releaseCCNodeLoaders) {
+                for (var className in this._ccNodeLoaders) {
+                    delete this._ccNodeLoaders[className];
+                }
+            }
+            this._ccNodeLoaders = {};
         }
-        this._ccNodeLoaders = {};
-    }
-});
+    });
 
-cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary = null;
-cc.NodeLoaderLibrary.library = function(){
-    return new cc.NodeLoaderLibrary();
-};
-
-cc.NodeLoaderLibrary.sharedCCNodeLoaderLibrary = function(){
-    if(cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary == null) {
-        cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary = new cc.NodeLoaderLibrary();
-        cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary.registerDefaultCCNodeLoaders();
-    }
-    return cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary;
-};
-
-cc.NodeLoaderLibrary.purgeSharedCCNodeLoaderLibrary = function(){
     cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary = null;
-};
+    cc.NodeLoaderLibrary.library = function () {
+        return new cc.NodeLoaderLibrary();
+    };
 
-cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary = function(){
-    var ccNodeLoaderLibrary = cc.NodeLoaderLibrary.library();
-    ccNodeLoaderLibrary.registerDefaultCCNodeLoaders();
-    return ccNodeLoaderLibrary;
-};
+    cc.NodeLoaderLibrary.sharedCCNodeLoaderLibrary = function () {
+        if (cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary == null) {
+            cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary = new cc.NodeLoaderLibrary();
+            cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary.registerDefaultCCNodeLoaders();
+        }
+        return cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary;
+    };
 
+    cc.NodeLoaderLibrary.purgeSharedCCNodeLoaderLibrary = function () {
+        cc.NodeLoaderLibrary.sSharedCCNodeLoaderLibrary = null;
+    };
 
-
+    cc.NodeLoaderLibrary.newDefaultCCNodeLoaderLibrary = function () {
+        var ccNodeLoaderLibrary = cc.NodeLoaderLibrary.library();
+        ccNodeLoaderLibrary.registerDefaultCCNodeLoaders();
+        return ccNodeLoaderLibrary;
+    };
 });

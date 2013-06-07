@@ -24,44 +24,43 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "extensions/CCBReader/CCBReader", "cocos2d/cocoa/CCGeometry"], function (cc) {
+    cc.getAbsolutePosition = function (pt, type, containerSize, propName) {
+        var absPt = cc.p(0, 0);
+        if (type == cc.BUILDER_POSITIONTYPE_RELATIVE_BOTTOM_LEFT)
+            absPt = pt;
+        else if (type == cc.BUILDER_POSITIONTYPE_RELATIVE_TOP_LEFT) {
+            absPt.x = pt.x;
+            absPt.y = containerSize.height - pt.y;
+        } else if (type == cc.BUILDER_POSITIONTYPE_RELATIVE_TOP_RIGHT) {
+            absPt.x = containerSize.width - pt.x;
+            absPt.y = containerSize.height - pt.y;
+        } else if (type == cc.BUILDER_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT) {
+            absPt.x = containerSize.width - pt.x;
+            absPt.y = pt.y;
+        } else if (type == cc.BUILDER_POSITIONTYPE_PERCENT) {
+            absPt.x = (containerSize.width * pt.x / 100.0);
+            absPt.y = (containerSize.height * pt.y / 100.0);
+        } else if (type == cc.BUILDER_POSITIONTYPE_MULTIPLY_RESOLUTION) {
+            var resolutionScale = cc.BuilderReader.getResolutionScale();
+            absPt.x = pt.x * resolutionScale;
+            absPt.y = pt.y * resolutionScale;
+        }
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "extensions/CCBReader/CCBReader", "cocos2d/cocoa/CCGeometry"], function(cc, sys) {
+        return absPt;
+    };
 
-cc.getAbsolutePosition = function(pt, type, containerSize, propName){
-    var absPt = cc.p(0,0);
-    if(type == CCB_POSITIONTYPE_RELATIVE_BOTTOM_LEFT)
-        absPt = pt;
-    else if(type == CCB_POSITIONTYPE_RELATIVE_TOP_LEFT){
-        absPt.x = pt.x;
-        absPt.y = containerSize.height - pt.y;
-    } else if(type == CCB_POSITIONTYPE_RELATIVE_TOP_RIGHT){
-        absPt.x = containerSize.width - pt.x;
-        absPt.y = containerSize.height - pt.y;
-    } else if (type == CCB_POSITIONTYPE_RELATIVE_BOTTOM_RIGHT) {
-        absPt.x = containerSize.width - pt.x;
-        absPt.y = pt.y;
-    } else if (type == CCB_POSITIONTYPE_PERCENT) {
-        absPt.x = (containerSize.width * pt.x / 100.0);
-        absPt.y = (containerSize.height * pt.y / 100.0);
-    } else if (type == CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
-        var resolutionScale = cc.BuilderReader.getResolutionScale();
-        absPt.x = pt.x * resolutionScale;
-        absPt.y = pt.y * resolutionScale;
-    }
+    cc.setRelativeScale = function (node, scaleX, scaleY, type, propName) {
+        cc.Assert(node, "pNode should not be null");
 
-    return absPt;
-};
+        if (type == cc.BUILDER_POSITIONTYPE_MULTIPLY_RESOLUTION) {
+            var resolutionScale = cc.BuilderReader.getResolutionScale();
 
-cc.setRelativeScale = function(node,scaleX, scaleY, type, propName){
-    cc.Assert(node, "pNode should not be null");
+            scaleX *= resolutionScale;
+            scaleY *= resolutionScale;
+        }
 
-    if (type == CCB_POSITIONTYPE_MULTIPLY_RESOLUTION) {
-        var resolutionScale = cc.BuilderReader.getResolutionScale();
-
-        scaleX *= resolutionScale;
-        scaleY *= resolutionScale;
-    }
-
-    node.setScaleX(scaleX);
-    node.setScaleY(scaleY);
-};});
+        node.setScaleX(scaleX);
+        node.setScaleY(scaleY);
+    };
+});

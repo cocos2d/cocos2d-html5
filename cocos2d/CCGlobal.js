@@ -143,8 +143,6 @@ define("cocos2d/CCGlobal", ["cocos2d/CCNamespace", "cocos2d/SysNamespace",
 	"chipmunk/chipmunk",
 	"box2d/box2d"
 ], function(cc, sys) {
-
 	window.cc = cc;
 	window.sys = sys;
-
 });

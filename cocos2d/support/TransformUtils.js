@@ -23,30 +23,28 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace"], function (cc) {
+    cc.CGAffineToGL = function (trans, mat) {
+        // | m[0] m[4] m[8]  m[12] |     | m11 m21 m31 m41 |     | a c 0 tx |
+        // | m[1] m[5] m[9]  m[13] |     | m12 m22 m32 m42 |     | b d 0 ty |
+        // | m[2] m[6] m[10] m[14] | <=> | m13 m23 m33 m43 | <=> | 0 0 1  0 |
+        // | m[3] m[7] m[11] m[15] |     | m14 m24 m34 m44 |     | 0 0 0  1 |
+        mat[2] = mat[3] = mat[6] = mat[7] = mat[8] = mat[9] = mat[11] = mat[14] = 0.0;
+        mat[10] = mat[15] = 1.0;
+        mat[0] = trans.a;
+        mat[4] = trans.c;
+        mat[12] = trans.tx;
+        mat[1] = trans.b;
+        mat[5] = trans.d;
+        mat[13] = trans.ty;
+    };
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
-
-cc.CGAffineToGL = function (trans, mat) {
-    // | m[0] m[4] m[8]  m[12] |     | m11 m21 m31 m41 |     | a c 0 tx |
-    // | m[1] m[5] m[9]  m[13] |     | m12 m22 m32 m42 |     | b d 0 ty |
-    // | m[2] m[6] m[10] m[14] | <=> | m13 m23 m33 m43 | <=> | 0 0 1  0 |
-    // | m[3] m[7] m[11] m[15] |     | m14 m24 m34 m44 |     | 0 0 0  1 |
-    mat[2] = mat[3] = mat[6] = mat[7] = mat[8] = mat[9] = mat[11] = mat[14] = 0.0;
-    mat[10] = mat[15] = 1.0;
-    mat[0] = trans.a;
-    mat[4] = trans.c;
-    mat[12] = trans.tx;
-    mat[1] = trans.b;
-    mat[5] = trans.d;
-    mat[13] = trans.ty;
-};
-
-cc.GLToCGAffine = function (mat, trans) {
-    trans.a = mat[0];
-    trans.c = mat[4];
-    trans.tx = mat[12];
-    trans.b = mat[1];
-    trans.d = mat[5];
-    trans.ty = mat[13];
-};
+    cc.GLToCGAffine = function (mat, trans) {
+        trans.a = mat[0];
+        trans.c = mat[4];
+        trans.tx = mat[12];
+        trans.b = mat[1];
+        trans.d = mat[5];
+        trans.ty = mat[13];
+    };
 });

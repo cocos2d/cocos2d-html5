@@ -22,41 +22,38 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCClass"], function (cc) {
+    cc.Invocation = cc.Class.extend({
+        _action: null,
+        _target: null,
+        _controlEvent: null,
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass"], function(cc, sys) {
+        ctor: function (target, action, controlEvent) {
+            this._target = target;
+            this._action = action;
+            this._controlEvent = controlEvent;
+        },
 
-cc.Invocation = cc.Class.extend({
-    _action:null,
-    _target:null,
-    _controlEvent:null,
+        getAction: function () {
+            return this._action;
+        },
 
-    ctor:function(target,action,controlEvent){
-        this._target=target;
-        this._action=action;
-        this._controlEvent=controlEvent;
-    },
+        getTarget: function () {
+            return this._target;
+        },
 
-    getAction:function(){
-       return this._action;
-    },
+        getControlEvent: function () {
+            return this._controlEvent;
+        },
 
-    getTarget:function(){
-       return this._target ;
-    },
-
-    getControlEvent:function(){
-       return this._controlEvent;
-    },
-
-    invoke:function(sender){
-        if (this._target && this._action) {
-            if (typeof(this._action) == "string") {
-                this._target[this._action](sender, this._controlEvent);
-            } else{
-                this._action.call(this._target, sender, this._controlEvent);
+        invoke: function (sender) {
+            if (this._target && this._action) {
+                if (typeof(this._action) == "string") {
+                    this._target[this._action](sender, this._controlEvent);
+                } else {
+                    this._action.call(this._target, sender, this._controlEvent);
+                }
             }
         }
-    }
-});
-
+    });
 });

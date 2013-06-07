@@ -25,51 +25,50 @@
  */
 
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace"], function(cc, sys) {
+define(["cocos2d/CCNamespace"], function (cc) {
+    cc.kmScalar = Number;
 
-cc.kmScalar = Number;
+    cc.kmBool = Number;
 
-cc.kmBool = Number;
+    cc.kmEnum = Number;
 
-cc.kmEnum = Number;
+    cc.KM_FALSE = 0;
 
-cc.KM_FALSE = 0;
+    cc.KM_TRUE = 1;
 
-cc.KM_TRUE = 1;
+    cc.kmPI = 3.141592;
 
-cc.kmPI = 3.141592;
+    cc.kmPIOver180 = 0.017453;
 
-cc.kmPIOver180 = 0.017453;
+    cc.kmPIUnder180 = 57.295779;
 
-cc.kmPIUnder180 = 57.295779;
+    cc.kmEpsilon = 1.0 / 64.0;
 
-cc.kmEpsilon = 1.0 / 64.0;
+    /**
+     * Returns the square of s (e.g. s*s)
+     * @param {Number} s
+     */
+    cc.kmSQR = function (s) {
+        return s * s;
+    };
 
-/**
- * Returns the square of s (e.g. s*s)
- * @param {Number} s
- */
-cc.kmSQR = function(s){
-    return s*s;
-};
+    cc.kmDegreesToRadians = function (degrees) {
+        return degrees * cc.kmPIOver180;
+    };
 
-cc.kmDegreesToRadians = function(degrees){
-    return degrees * cc.kmPIOver180;
-};
+    cc.kmRadiansToDegrees = function (radians) {
+        return radians * cc.kmPIUnder180;
+    };
 
-cc.kmRadiansToDegrees = function(radians){
-    return radians * cc.kmPIUnder180;
-};
+    cc.kmMin = function (lhs, rhs) {
+        return (lhs < rhs) ? lhs : rhs;
+    };
 
-cc.kmMin = function(lhs,rhs){
-    return (lhs < rhs)? lhs : rhs;
-};
+    cc.kmMax = function (lhs, rhs) {
+        return (lhs > rhs) ? lhs : rhs;
+    };
 
-cc.kmMax = function(lhs,rhs){
-    return (lhs > rhs)? lhs : rhs;
-};
-
-cc.kmAlmostEqual = function(lhs,rhs){
-    return (lhs + cc.kmEpsilon > rhs && lhs - cc.kmEpsilon < rhs);
-};
+    cc.kmAlmostEqual = function (lhs, rhs) {
+        return (lhs + cc.kmEpsilon > rhs && lhs - cc.kmEpsilon < rhs);
+    };
 });

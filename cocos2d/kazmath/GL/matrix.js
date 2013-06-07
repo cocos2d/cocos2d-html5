@@ -25,148 +25,148 @@
  */
 
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/kazmath/utility", "cocos2d/kazmath/mat4", "cocos2d/kazmath/vec3", "cocos2d/kazmath/GL/mat4stack"], function(cc, sys) {
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "cocos2d/kazmath/utility", "cocos2d/kazmath/mat4",
+    "cocos2d/kazmath/vec3", "cocos2d/kazmath/GL/mat4stack"], function (cc) {
+    cc.KM_GL_MODELVIEW = 0x1700;
 
-cc.KM_GL_MODELVIEW = 0x1700;
+    cc.KM_GL_PROJECTION = 0x1701;
 
-cc.KM_GL_PROJECTION = 0x1701;
+    cc.KM_GL_TEXTURE = 0x1702;
 
-cc.KM_GL_TEXTURE = 0x1702;
+    cc.modelview_matrix_stack = new cc.km_mat4_stack();
+    cc.projection_matrix_stack = new cc.km_mat4_stack();
+    cc.texture_matrix_stack = new cc.km_mat4_stack();
 
-cc.modelview_matrix_stack = new cc.km_mat4_stack();
-cc.projection_matrix_stack = new cc.km_mat4_stack();
-cc.texture_matrix_stack = new cc.km_mat4_stack();
+    cc.current_stack = null;
 
-cc.current_stack = null;
+    cc.initialized = false;
 
-cc.initialized = false;
+    cc.lazyInitialize = function () {
+        if (!cc.initialized) {
+            var identity = new cc.kmMat4(); //Temporary identity matrix
 
-cc.lazyInitialize = function () {
-    if (!cc.initialized) {
-        var identity = new cc.kmMat4(); //Temporary identity matrix
+            //Initialize all 3 stacks
+            cc.km_mat4_stack_initialize(cc.modelview_matrix_stack);
+            cc.km_mat4_stack_initialize(cc.projection_matrix_stack);
+            cc.km_mat4_stack_initialize(cc.texture_matrix_stack);
 
-        //Initialize all 3 stacks
-        cc.km_mat4_stack_initialize(cc.modelview_matrix_stack);
-        cc.km_mat4_stack_initialize(cc.projection_matrix_stack);
-        cc.km_mat4_stack_initialize(cc.texture_matrix_stack);
-
-        cc.current_stack = cc.modelview_matrix_stack;
-        cc.initialized = true;
-        cc.kmMat4Identity(identity);
-
-        //Make sure that each stack has the identity matrix
-        cc.km_mat4_stack_push(cc.modelview_matrix_stack, identity);
-        cc.km_mat4_stack_push(cc.projection_matrix_stack, identity);
-        cc.km_mat4_stack_push(cc.texture_matrix_stack, identity);
-    }
-};
-
-cc.lazyInitialize();
-
-cc.kmGLFreeAll = function () {
-    //Clear the matrix stacks
-    cc.km_mat4_stack_release(cc.modelview_matrix_stack);
-    cc.km_mat4_stack_release(cc.projection_matrix_stack);
-    cc.km_mat4_stack_release(cc.texture_matrix_stack);
-
-    //Delete the matrices
-    cc.initialized = false; //Set to uninitialized
-    cc.current_stack = null; //Set the current stack to point nowhere
-};
-
-cc.kmGLPushMatrix = function () {
-    cc.km_mat4_stack_push(cc.current_stack, cc.current_stack.top);
-};
-
-cc.kmGLPushMatrixWitMat4 = function (saveMat) {
-    cc.current_stack.stack.push(cc.current_stack.top);
-    cc.kmMat4Assign(saveMat, cc.current_stack.top);
-    cc.current_stack.top = saveMat;
-};
-
-cc.kmGLPopMatrix = function () {
-    //cc.Assert(cc.initialized , "Cannot Pop empty matrix stack");
-    //No need to lazy initialize, you shouldnt be popping first anyway!
-    //cc.km_mat4_stack_pop(cc.current_stack, null);
-    cc.current_stack.top = cc.current_stack.stack.pop();
-};
-
-cc.kmGLMatrixMode = function (mode) {
-    //cc.lazyInitialize();
-    switch (mode) {
-        case cc.KM_GL_MODELVIEW:
             cc.current_stack = cc.modelview_matrix_stack;
-            break;
-        case cc.KM_GL_PROJECTION:
-            cc.current_stack = cc.projection_matrix_stack;
-            break;
-        case cc.KM_GL_TEXTURE:
-            cc.current_stack = cc.texture_matrix_stack;
-            break;
-        default:
-            cc.Assert(0, "Invalid matrix mode specified"); //TODO: Proper error handling
-            break;
-    }
-};
+            cc.initialized = true;
+            cc.kmMat4Identity(identity);
 
-cc.kmGLLoadIdentity = function () {
-    //cc.lazyInitialize();
-    cc.kmMat4Identity(cc.current_stack.top); //Replace the top matrix with the identity matrix
-};
+            //Make sure that each stack has the identity matrix
+            cc.km_mat4_stack_push(cc.modelview_matrix_stack, identity);
+            cc.km_mat4_stack_push(cc.projection_matrix_stack, identity);
+            cc.km_mat4_stack_push(cc.texture_matrix_stack, identity);
+        }
+    };
 
-cc.kmGLLoadMatrix = function (pIn) {
-    //cc.lazyInitialize();
-    cc.kmMat4Assign(cc.current_stack.top, pIn);
-};
+    cc.lazyInitialize();
 
-cc.kmGLMultMatrix = function (pIn) {
-    //cc.lazyInitialize();
-    cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, pIn);
-};
+    cc.kmGLFreeAll = function () {
+        //Clear the matrix stacks
+        cc.km_mat4_stack_release(cc.modelview_matrix_stack);
+        cc.km_mat4_stack_release(cc.projection_matrix_stack);
+        cc.km_mat4_stack_release(cc.texture_matrix_stack);
 
-cc.kmGLTranslatef = function (x, y, z) {
-    var translation = new cc.kmMat4();
+        //Delete the matrices
+        cc.initialized = false; //Set to uninitialized
+        cc.current_stack = null; //Set the current stack to point nowhere
+    };
 
-    //Create a rotation matrix using the axis and the angle
-    cc.kmMat4Translation(translation, x, y, z);
+    cc.kmGLPushMatrix = function () {
+        cc.km_mat4_stack_push(cc.current_stack, cc.current_stack.top);
+    };
 
-    //Multiply the rotation matrix by the current matrix
-    cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, translation);
-};
+    cc.kmGLPushMatrixWitMat4 = function (saveMat) {
+        cc.current_stack.stack.push(cc.current_stack.top);
+        cc.kmMat4Assign(saveMat, cc.current_stack.top);
+        cc.current_stack.top = saveMat;
+    };
 
-cc.kmGLRotatef = function (angle, x, y, z) {
-    var axis = new cc.kmVec3(x, y, z);
-    var rotation = new cc.kmMat4();
+    cc.kmGLPopMatrix = function () {
+        //cc.Assert(cc.initialized , "Cannot Pop empty matrix stack");
+        //No need to lazy initialize, you shouldnt be popping first anyway!
+        //cc.km_mat4_stack_pop(cc.current_stack, null);
+        cc.current_stack.top = cc.current_stack.stack.pop();
+    };
 
-    //Create a rotation matrix using the axis and the angle
-    cc.kmMat4RotationAxisAngle(rotation, axis, cc.kmDegreesToRadians(angle));
+    cc.kmGLMatrixMode = function (mode) {
+        //cc.lazyInitialize();
+        switch (mode) {
+            case cc.KM_GL_MODELVIEW:
+                cc.current_stack = cc.modelview_matrix_stack;
+                break;
+            case cc.KM_GL_PROJECTION:
+                cc.current_stack = cc.projection_matrix_stack;
+                break;
+            case cc.KM_GL_TEXTURE:
+                cc.current_stack = cc.texture_matrix_stack;
+                break;
+            default:
+                cc.Assert(0, "Invalid matrix mode specified"); //TODO: Proper error handling
+                break;
+        }
+    };
 
-    //Multiply the rotation matrix by the current matrix
-    cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, rotation);
-};
+    cc.kmGLLoadIdentity = function () {
+        //cc.lazyInitialize();
+        cc.kmMat4Identity(cc.current_stack.top); //Replace the top matrix with the identity matrix
+    };
 
-cc.kmGLScalef = function (x, y, z) {
-    var scaling = new cc.kmMat4();
-    cc.kmMat4Scaling(scaling, x, y, z);
-    cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, scaling);
-};
+    cc.kmGLLoadMatrix = function (pIn) {
+        //cc.lazyInitialize();
+        cc.kmMat4Assign(cc.current_stack.top, pIn);
+    };
 
-cc.kmGLGetMatrix = function (mode, pOut) {
-    //cc.lazyInitialize();
+    cc.kmGLMultMatrix = function (pIn) {
+        //cc.lazyInitialize();
+        cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, pIn);
+    };
 
-    switch (mode) {
-        case cc.KM_GL_MODELVIEW:
-            cc.kmMat4Assign(pOut, cc.modelview_matrix_stack.top);
-            break;
-        case cc.KM_GL_PROJECTION:
-            cc.kmMat4Assign(pOut, cc.projection_matrix_stack.top);
-            break;
-        case cc.KM_GL_TEXTURE:
-            cc.kmMat4Assign(pOut, cc.texture_matrix_stack.top);
-            break;
-        default:
-            cc.Assert(1, "Invalid matrix mode specified"); //TODO: Proper error handling
-            break;
-    }
-};
+    cc.kmGLTranslatef = function (x, y, z) {
+        var translation = new cc.kmMat4();
+
+        //Create a rotation matrix using the axis and the angle
+        cc.kmMat4Translation(translation, x, y, z);
+
+        //Multiply the rotation matrix by the current matrix
+        cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, translation);
+    };
+
+    cc.kmGLRotatef = function (angle, x, y, z) {
+        var axis = new cc.kmVec3(x, y, z);
+        var rotation = new cc.kmMat4();
+
+        //Create a rotation matrix using the axis and the angle
+        cc.kmMat4RotationAxisAngle(rotation, axis, cc.kmDegreesToRadians(angle));
+
+        //Multiply the rotation matrix by the current matrix
+        cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, rotation);
+    };
+
+    cc.kmGLScalef = function (x, y, z) {
+        var scaling = new cc.kmMat4();
+        cc.kmMat4Scaling(scaling, x, y, z);
+        cc.kmMat4Multiply(cc.current_stack.top, cc.current_stack.top, scaling);
+    };
+
+    cc.kmGLGetMatrix = function (mode, pOut) {
+        //cc.lazyInitialize();
+
+        switch (mode) {
+            case cc.KM_GL_MODELVIEW:
+                cc.kmMat4Assign(pOut, cc.modelview_matrix_stack.top);
+                break;
+            case cc.KM_GL_PROJECTION:
+                cc.kmMat4Assign(pOut, cc.projection_matrix_stack.top);
+                break;
+            case cc.KM_GL_TEXTURE:
+                cc.kmMat4Assign(pOut, cc.texture_matrix_stack.top);
+                break;
+            default:
+                cc.Assert(1, "Invalid matrix mode specified"); //TODO: Proper error handling
+                break;
+        }
+    };
 });

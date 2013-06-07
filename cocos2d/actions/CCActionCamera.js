@@ -25,7 +25,7 @@
  ****************************************************************************/
 
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/CCCamera", "cocos2d/platform/CCMacro"], function(cc, sys) {
+define(["cocos2d/CCNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/CCCamera", "cocos2d/platform/CCMacro"], function(cc) {
 
 /**
  * Base class for cc.Camera actions

@@ -25,81 +25,79 @@
  ****************************************************************************/
 
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass"], function(cc, sys) {
-
-
-/**
- * you must extend the keyboardDelegate and
- * implement your own game logic in
- * keydown and keyup functions
- * @class
- * @extends cc.Class
- */
-cc.KeyboardDelegate = cc.Class.extend(/** @lends cc.KeyboardDelegate# */{
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass"], function (cc) {
     /**
-     * Call back when a key is pressed down
-     * @param {Integer} keyCode
-     * @example
-     * // example
-     * if(keyCode == cc.KEY.w){}
+     * you must extend the keyboardDelegate and
+     * implement your own game logic in
+     * keydown and keyup functions
+     * @class
+     * @extends cc.Class
      */
-    onKeyDown:function (keyCode) {
-    },
+    cc.KeyboardDelegate = cc.Class.extend(/** @lends cc.KeyboardDelegate# */{
+        /**
+         * Call back when a key is pressed down
+         * @param {Integer} keyCode
+         * @example
+         * // example
+         * if(keyCode == cc.KEY.w){}
+         */
+        onKeyDown: function (keyCode) {
+        },
 
-    /**
-     * Call back when a key is released
-     * @param {Integer} keyCode
-     * @example
-     * // example
-     * if(keyCode == cc.KEY.w){}
-     */
-    onKeyUp:function (keyCode) {
-    }
-});
-
-/**
- * KeyboardHandler is an object that contains KeyboardDelegate
- * @class
- * @extends cc.Class
- */
-cc.KeyboardHandler = cc.Class.extend(/** @lends cc.KeyboardHandler# */{
-    /**
-     * returns the keyboard delegate
-     * @return {cc.KeyboardDelegate}
-     */
-    getDelegate:function () {
-        return this._delegate;
-    },
+        /**
+         * Call back when a key is released
+         * @param {Integer} keyCode
+         * @example
+         * // example
+         * if(keyCode == cc.KEY.w){}
+         */
+        onKeyUp: function (keyCode) {
+        }
+    });
 
     /**
-     * set the keyboard delegate
-     * @param {cc.KeyboardDelegate} delegate
+     * KeyboardHandler is an object that contains KeyboardDelegate
+     * @class
+     * @extends cc.Class
      */
-    setDelegate:function (delegate) {
-        this._delegate = delegate;
-    },
+    cc.KeyboardHandler = cc.Class.extend(/** @lends cc.KeyboardHandler# */{
+        /**
+         * returns the keyboard delegate
+         * @return {cc.KeyboardDelegate}
+         */
+        getDelegate: function () {
+            return this._delegate;
+        },
+
+        /**
+         * set the keyboard delegate
+         * @param {cc.KeyboardDelegate} delegate
+         */
+        setDelegate: function (delegate) {
+            this._delegate = delegate;
+        },
+        /**
+         * initializes a cc.KeyboardHandler with a delegate
+         * @param {cc.KeyboardDelegate} delegate
+         * @return {Boolean}
+         */
+        initWithDelegate: function (delegate) {
+            cc.Assert(delegate != null, "It's a wrong delegate!");
+
+            this._delegate = delegate;
+
+            return true;
+        },
+        _delegate: null
+    });
     /**
-     * initializes a cc.KeyboardHandler with a delegate
-     * @param {cc.KeyboardDelegate} delegate
-     * @return {Boolean}
+     * Create a KeyboardHandler with KeyboardDelegate
+     * @param delegate
+     * @return {cc.KeyboardHandler}
      */
-    initWithDelegate:function (delegate) {
-        cc.Assert(delegate != null, "It's a wrong delegate!");
-
-        this._delegate = delegate;
-
-        return true;
-    },
-    _delegate:null
-});
-/**
- * Create a KeyboardHandler with KeyboardDelegate
- * @param delegate
- * @return {cc.KeyboardHandler}
- */
-cc.KeyboardHandler.create = function (delegate) {
-    var handler = new cc.KeyboardHandler();
-    handler.initWithDelegate(delegate);
-    return handler;
-};
+    cc.KeyboardHandler.create = function (delegate) {
+        var handler = new cc.KeyboardHandler();
+        handler.initWithDelegate(delegate);
+        return handler;
+    };
 });

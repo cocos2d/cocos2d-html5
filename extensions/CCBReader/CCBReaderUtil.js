@@ -24,42 +24,47 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCClass"], function (cc) {
+    cc.NodeLoaderListener = cc.Class.extend({
+        onNodeLoaded: function (node, nodeLoader) {
+        }
+    });
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass"], function(cc, sys) {
+    cc.BuilderSelectorResolver = cc.Class.extend({
+        onResolveCCBCCMenuItemSelector: function (target, selectorName) {
+        },
+        onResolveCCBCCCallFuncSelector: function (target, selectorName) {
+        },
+        onResolveCCBCCControlSelector: function (target, selectorName) {
+        }
+    });
 
-cc.NodeLoaderListener = cc.Class.extend({
-    onNodeLoaded:function(node,nodeLoader){}
-});
+    cc.BuilderScriptOwnerProtocol = cc.Class.extend({
+        createNew: function () {
+        }
+    });
 
-cc.BuilderSelectorResolver = cc.Class.extend({
-    onResolveCCBCCMenuItemSelector:function(target, selectorName){},
-    onResolveCCBCCCallFuncSelector:function(target, selectorName){},
-    onResolveCCBCCControlSelector:function(target,selectorName){}
-});
+    cc.BuilderMemberVariableAssigner = cc.Class.extend({
+        /**
+         * The callback function of assigning member variable.          <br/>
+         * @note The member variable must be CCNode or its subclass.
+         * @param {Object} target The custom class
+         * @param {string} memberVariableName The name of the member variable.
+         * @param {cc.Node} node The member variable.
+         * @return Whether the assignment was successful.
+         */
+        onAssignCCBMemberVariable: function (target, memberVariableName, node) {
+        },
 
-cc.BuilderScriptOwnerProtocol = cc.Class.extend({
-    createNew:function(){}
-});
-
-cc.BuilderMemberVariableAssigner = cc.Class.extend({
-    /**
-     * The callback function of assigning member variable.          <br/>
-     * @note The member variable must be CCNode or its subclass.
-     * @param {Object} target The custom class
-     * @param {string} memberVariableName The name of the member variable.
-     * @param {cc.Node} node The member variable.
-     * @return Whether the assignment was successful.
-     */
-    onAssignCCBMemberVariable:function(target,memberVariableName, node){},
-
-    /**
-     * The callback function of assigning custom properties.
-     * @note The member variable must be Integer, Float, Boolean or String.
-     * @param {Object} target The custom class.
-     * @param {string} memberVariableName The name of the member variable.
-     * @param {*} value The value of the property.
-     * @return Whether the assignment was successful.
-     */
-    onAssignCCBCustomProperty:function(target, memberVariableName, value){}
-});
+        /**
+         * The callback function of assigning custom properties.
+         * @note The member variable must be Integer, Float, Boolean or String.
+         * @param {Object} target The custom class.
+         * @param {string} memberVariableName The name of the member variable.
+         * @param {*} value The value of the property.
+         * @return Whether the assignment was successful.
+         */
+        onAssignCCBCustomProperty: function (target, memberVariableName, value) {
+        }
+    });
 });

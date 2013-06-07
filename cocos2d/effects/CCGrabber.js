@@ -25,63 +25,63 @@
  ****************************************************************************/
 
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/CCCommon"], function(cc, sys) {
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCClass", "cocos2d/platform/CCCommon"], function (cc) {
 
-/** FBO class that grabs the the contents of the screen */
-cc.Grabber = cc.Class.extend({
-    _fbo:null,
-    _oldFBO:null,
-    _oldClearColor:null,
+    /** FBO class that grabs the the contents of the screen */
+    cc.Grabber = cc.Class.extend({
+        _fbo: null,
+        _oldFBO: null,
+        _oldClearColor: null,
 
-    _gl:null,
+        _gl: null,
 
-    ctor:function () {
-        this._gl = cc.renderContext;
-        this._oldClearColor = [0, 0, 0, 0];
-        // generate FBO
-        this._fbo = this._gl.createFramebuffer();
-    },
+        ctor: function () {
+            this._gl = cc.renderContext;
+            this._oldClearColor = [0, 0, 0, 0];
+            // generate FBO
+            this._fbo = this._gl.createFramebuffer();
+        },
 
-    grab:function (texture) {
-        this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
-        // bind
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
-        // associate texture with FBO
-        this._gl.framebufferTexture2D(this._gl.FRAMEBUFFER, this._gl.COLOR_ATTACHMENT0, this._gl.TEXTURE_2D, texture._webTextureObj, 0);
+        grab: function (texture) {
+            this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
+            // bind
+            this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
+            // associate texture with FBO
+            this._gl.framebufferTexture2D(this._gl.FRAMEBUFFER, this._gl.COLOR_ATTACHMENT0, this._gl.TEXTURE_2D, texture._webTextureObj, 0);
 
-        // check if it worked (probably worth doing :) )
-        var status = this._gl.checkFramebufferStatus(this._gl.FRAMEBUFFER);
-        if (status != this._gl.FRAMEBUFFER_COMPLETE)
-            cc.log("Frame Grabber: could not attach texture to frmaebuffer");
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
-    },
+            // check if it worked (probably worth doing :) )
+            var status = this._gl.checkFramebufferStatus(this._gl.FRAMEBUFFER);
+            if (status != this._gl.FRAMEBUFFER_COMPLETE)
+                cc.log("Frame Grabber: could not attach texture to frmaebuffer");
+            this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
+        },
 
-    beforeRender:function (texture) {
-        this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
+        beforeRender: function (texture) {
+            this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
+            this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
 
-        // save clear color
-        this._oldClearColor = this._gl.getParameter(this._gl.COLOR_CLEAR_VALUE);
+            // save clear color
+            this._oldClearColor = this._gl.getParameter(this._gl.COLOR_CLEAR_VALUE);
 
-        // BUG XXX: doesn't work with RGB565.
-        this._gl.clearColor(0, 0, 0, 0);
+            // BUG XXX: doesn't work with RGB565.
+            this._gl.clearColor(0, 0, 0, 0);
 
-        // BUG #631: To fix #631, uncomment the lines with #631
-        // Warning: But it CCGrabber won't work with 2 effects at the same time
-        //  glClearColor(0.0f,0.0f,0.0f,1.0f);    // #631
+            // BUG #631: To fix #631, uncomment the lines with #631
+            // Warning: But it CCGrabber won't work with 2 effects at the same time
+            //  glClearColor(0.0f,0.0f,0.0f,1.0f);    // #631
 
-        this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
+            this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
 
-        //  glColorMask(true, true, true, false);    // #631
-    },
+            //  glColorMask(true, true, true, false);    // #631
+        },
 
-    afterRender:function (texture) {
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
-        this._gl.colorMask(true, true, true, true);      // #631
-    },
+        afterRender: function (texture) {
+            this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
+            this._gl.colorMask(true, true, true, true);      // #631
+        },
 
-    destroy:function(){
-        this._gl.deleteFramebuffer(this._fbo);
-    }
-});
+        destroy: function () {
+            this._gl.deleteFramebuffer(this._fbo);
+        }
+    });
 });

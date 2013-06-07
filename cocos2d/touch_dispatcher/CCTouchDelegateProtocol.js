@@ -24,258 +24,255 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCClass", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function (cc) {
+    /**
+     * @class
+     * @extends cc.Class
+     */
+    cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
+        _point: null,
+        _prevPoint: cc.PointZero(),
+        _id: 0,
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass", "cocos2d/cocoa/CCGeometry", "cocos2d/support/CCPointExtension"], function(cc, sys) {
+        /**
+         * Constructor
+         */
+        ctor: function (x, y, id) {
+            this._point = cc.p(x || 0, y || 0);
+            this._id = id || 0;
+        },
 
-/**
- * @class
- * @extends cc.Class
- */
-cc.Touch = cc.Class.extend(/** @lends cc.Touch# */{
-    _point:null,
-    _prevPoint:cc.PointZero(),
-    _id:0,
+        /**
+         * get point of touch
+         * @return {cc.Point}
+         */
+        getLocation: function () {
+            return this._point;
+        },
+
+        /**
+         * @return {cc.Point}
+         */
+        getPreviousLocation: function () {
+            return this._prevPoint;
+        },
+
+        /**
+         * @return {cc.Point}
+         */
+        getDelta: function () {
+            return cc.pSub(this._point, this._prevPoint);
+        },
+
+        /**
+         * @return {Number}
+         */
+        getID: function () {
+            return this._id;
+        },
+
+        /**
+         * @return {Number}
+         */
+        getId: function () {
+            return this._id;
+        },
+
+        /**
+         * set information to touch
+         * @param {Number} id
+         * @param  {Number} x
+         * @param  {Number} y
+         */
+        setTouchInfo: function (id, x, y) {
+            this._prevPoint = this._point;
+            this._point = cc.p(x || 0, y || 0);
+            this._id = id;
+        },
+
+        _setPrevPoint: function (x, y) {
+            this._prevPoint = cc.p(x || 0, y || 0);
+        }
+    });
 
     /**
-     * Constructor
+     * @class
+     * @extends cc.Class
      */
-    ctor:function (x, y, id) {
-        this._point = cc.p(x || 0, y || 0);
-        this._id = id || 0;
-    },
+    cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
+        _eventTypeFuncMap: null,
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touch
+         * @param {event} event
+         * @return {Boolean}
+         */
+        onTouchBegan: function (touch, event) {
+            return false;
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touch
+         * @param {event} event
+         */
+        onTouchMoved: function (touch, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touch
+         * @param {event} event
+         */
+        onTouchEnded: function (touch, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touch
+         * @param {event} event
+         */
+        onTouchCancelled: function (touch, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touches
+         * @param {event} event
+         */
+        onTouchesBegan: function (touches, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touches
+         * @param {event} event
+         */
+        onTouchesMoved: function (touches, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touches
+         * @param {event} event
+         */
+        onTouchesEnded: function (touches, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touches
+         * @param {event} event
+         */
+        onTouchesCancelled: function (touches, event) {
+        },
+
+        /*
+         * In TouchesTest, class Padle inherits from cc.Sprite and cc.TargetedTouchDelegate.
+         * When it invoke  cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true),
+         * it will crash in cc.TouchHandler.initWithDelegate() because of dynamic_cast() on android.
+         * I don't know why, so add these functions for the subclass to invoke it's own retain() and  release
+         *Virtual function
+         */
+        touchDelegateRetain: function () {
+        },
+
+        /**
+         * Virtual function
+         */
+        touchDelegateRelease: function () {
+        }
+    });
 
     /**
-     * get point of touch
-     * @return {cc.Point}
+     * Using this type of delegate results in two benefits:
+     * - 1. You don't need to deal with cc.Sets, the dispatcher does the job of splitting
+     * them. You get exactly one UITouch per call.
+     * - 2. You can *claim* a UITouch by returning YES in onTouchBegan. Updates of claimed
+     * touches are sent only to the delegate(s) that claimed them. So if you get a move/
+     * ended/cancelled update you're sure it's your touch. This frees you from doing a
+     * lot of checks when doing multi-touch.
+     *
+     * (The name TargetedTouchDelegate relates to updates "targeting" their specific
+     * handler, without bothering the other handlers.)
+     * @class
+     * @extends cc.Class
      */
-    getLocation:function () {
-        return this._point;
-    },
+    cc.TargetedTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.TargetedTouchDelegate# */{
+
+        /**
+         * Return YES to claim the touch.
+         * @param {cc.Touch} touch
+         * @param {event} event
+         * @return {Boolean}
+         */
+        onTouchBegan: function (touch, event) {
+            return false;
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touch
+         * @param {event} event
+         */
+        onTouchMoved: function (touch, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touch
+         * @param {event} event
+         */
+        onTouchEnded: function (touch, event) {
+        },
+
+        /**
+         * Virtual function
+         * @param {cc.Touch} touch
+         * @param {event} event
+         */
+        onTouchCancelled: function (touch, event) {
+        }
+    });
 
     /**
-     * @return {cc.Point}
+     * This type of delegate is the same one used by CocoaTouch. You will receive all the events (Began,Moved,Ended,Cancelled).
+     * @class
+     * @extends cc.Class
      */
-    getPreviousLocation:function () {
-        return this._prevPoint;
-    },
+    cc.StandardTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.StandardTouchDelegate# */{
 
-    /**
-     * @return {cc.Point}
-     */
-    getDelta:function () {
-        return cc.pSub(this._point, this._prevPoint);
-    },
+        /**
+         * Virtual function
+         * @param {Array} touches
+         * @param {event} event
+         */
+        onTouchesBegan: function (touches, event) {
+        },
 
-    /**
-     * @return {Number}
-     */
-    getID:function () {
-        return this._id;
-    },
+        /**
+         * Virtual function
+         * @param {Array} touches
+         * @param {event} event
+         */
+        onTouchesMoved: function (touches, event) {
+        },
 
-    /**
-     * @return {Number}
-     */
-    getId:function () {
-        return this._id;
-    },
+        /**
+         * Virtual function
+         * @param {Array} touches
+         * @param {event} event
+         */
+        onTouchesEnded: function (touches, event) {
+        },
 
-    /**
-     * set information to touch
-     * @param {Number} id
-     * @param  {Number} x
-     * @param  {Number} y
-     */
-    setTouchInfo:function (id, x, y) {
-        this._prevPoint = this._point;
-        this._point = cc.p(x || 0, y || 0);
-        this._id = id;
-    },
-
-    _setPrevPoint:function (x, y) {
-        this._prevPoint = cc.p(x || 0, y || 0);
-    }
-});
-
-/**
- * @class
- * @extends cc.Class
- */
-cc.TouchDelegate = cc.Class.extend(/** @lends cc.TouchDelegate# */{
-    _eventTypeFuncMap:null,
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     * @return {Boolean}
-     */
-    onTouchBegan:function (touch, event) {
-        return false;
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchMoved:function (touch, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchEnded:function (touch, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchCancelled:function (touch, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchesBegan:function (touches, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchesMoved:function (touches, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchesEnded:function (touches, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchesCancelled:function (touches, event) {
-    },
-
-    /*
-     * In TouchesTest, class Padle inherits from cc.Sprite and cc.TargetedTouchDelegate.
-     * When it invoke  cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, 0, true),
-     * it will crash in cc.TouchHandler.initWithDelegate() because of dynamic_cast() on android.
-     * I don't know why, so add these functions for the subclass to invoke it's own retain() and  release
-     *Virtual function
-     */
-    touchDelegateRetain:function () {
-    },
-
-    /**
-     * Virtual function
-     */
-    touchDelegateRelease:function () {
-    }
-});
-
-/**
- * Using this type of delegate results in two benefits:
- * - 1. You don't need to deal with cc.Sets, the dispatcher does the job of splitting
- * them. You get exactly one UITouch per call.
- * - 2. You can *claim* a UITouch by returning YES in onTouchBegan. Updates of claimed
- * touches are sent only to the delegate(s) that claimed them. So if you get a move/
- * ended/cancelled update you're sure it's your touch. This frees you from doing a
- * lot of checks when doing multi-touch.
- *
- * (The name TargetedTouchDelegate relates to updates "targeting" their specific
- * handler, without bothering the other handlers.)
- * @class
- * @extends cc.Class
- */
-cc.TargetedTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.TargetedTouchDelegate# */{
-
-    /**
-     * Return YES to claim the touch.
-     * @param {cc.Touch} touch
-     * @param {event} event
-     * @return {Boolean}
-     */
-    onTouchBegan:function (touch, event) {
-        return false;
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchMoved:function (touch, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchEnded:function (touch, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {cc.Touch} touch
-     * @param {event} event
-     */
-    onTouchCancelled:function (touch, event) {
-    }
-});
-
-/**
- * This type of delegate is the same one used by CocoaTouch. You will receive all the events (Began,Moved,Ended,Cancelled).
- * @class
- * @extends cc.Class
- */
-cc.StandardTouchDelegate = cc.TouchDelegate.extend(/** @lends cc.StandardTouchDelegate# */{
-
-    /**
-     * Virtual function
-     * @param {Array} touches
-     * @param {event} event
-     */
-    onTouchesBegan:function (touches, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {Array} touches
-     * @param {event} event
-     */
-    onTouchesMoved:function (touches, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {Array} touches
-     * @param {event} event
-     */
-    onTouchesEnded:function (touches, event) {
-    },
-
-    /**
-     * Virtual function
-     * @param {Array} touches
-     * @param {event} event
-     */
-    onTouchesCancelled:function (touches, event) {
-    }
-});
-
+        /**
+         * Virtual function
+         * @param {Array} touches
+         * @param {event} event
+         */
+        onTouchesCancelled: function (touches, event) {
+        }
+    });
 });

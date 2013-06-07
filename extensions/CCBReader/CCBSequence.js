@@ -24,95 +24,93 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass"], function (cc) {
+    cc.BuilderSequence = cc.Class.extend({
+        _duration: 0,
+        _name: "",
+        _sequenceId: 0,
+        _chainedSequenceId: 0,
+        _callbackChannel: null,
+        _soundChannel: null,
 
-define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCClass"], function(cc, sys) {
+        ctor: function () {
+            this._name = "";
+        },
 
-cc.BuilderSequence = cc.Class.extend({
-    _duration:0,
-    _name:"",
-    _sequenceId:0,
-    _chainedSequenceId:0,
-    _callbackChannel:null,
-    _soundChannel:null,
+        getDuration: function () {
+            return this._duration;
+        },
+        setDuration: function (duration) {
+            this._duration = duration;
+        },
 
-    ctor:function(){
-        this._name = "";
-    },
+        getName: function () {
+            return this._name;
+        },
+        setName: function (name) {
+            this._name = name;
+        },
 
-    getDuration:function(){
-        return this._duration;
-    },
-    setDuration:function(duration){
-        this._duration = duration;
-    },
+        getSequenceId: function () {
+            return this._sequenceId;
+        },
+        setSequenceId: function (sequenceId) {
+            this._sequenceId = sequenceId;
+        },
 
-    getName:function(){
-        return this._name;
-    },
-    setName:function(name){
-        this._name = name;
-    },
+        getChainedSequenceId: function () {
+            return this._chainedSequenceId;
+        },
+        setChainedSequenceId: function (chainedSequenceId) {
+            this._chainedSequenceId = chainedSequenceId;
+        },
 
-    getSequenceId:function(){
-        return this._sequenceId;
-    },
-    setSequenceId:function(sequenceId){
-        this._sequenceId = sequenceId;
-    },
+        getCallbackChannel: function () {
+            return this._callbackChannel;
+        },
+        setCallbackChannel: function (channel) {
+            this._callbackChannel = channel;
+        },
 
-    getChainedSequenceId:function(){
-        return this._chainedSequenceId;
-    },
-    setChainedSequenceId:function(chainedSequenceId){
-        this._chainedSequenceId = chainedSequenceId;
-    },
+        getSoundChannel: function () {
+            return this._soundChannel;
+        },
+        setSoundChannel: function (channel) {
+            this._soundChannel = channel;
+        }
+    });
 
-    getCallbackChannel:function() {
-        return this._callbackChannel;
-    },
-    setCallbackChannel:function(channel) {
-        this._callbackChannel = channel;
-    },
+    cc.BuilderSequenceProperty = cc.Class.extend({
+        _name: null,
+        _type: 0,
+        _keyFrames: null,
 
-    getSoundChannel:function() {
-        return this._soundChannel;
-    },
-    setSoundChannel:function(channel) {
-        this._soundChannel = channel;
-    }
+        ctor: function () {
+            this.init();
+        },
 
+        init: function () {
+            this._keyFrames = [];
+            this._name = "";
+        },
+
+        getName: function () {
+            return this._name;
+        },
+
+        setName: function (name) {
+            this._name = name;
+        },
+
+        getType: function () {
+            return this._type;
+        },
+        setType: function (type) {
+            this._type = type;
+        },
+
+        getKeyframes: function () {
+            return this._keyFrames;
+        }
+    });
 });
-
-cc.BuilderSequenceProperty = cc.Class.extend({
-    _name : null,
-    _type:0,
-    _keyFrames:null,
-
-    ctor:function(){
-        this.init();
-    },
-
-    init:function(){
-        this._keyFrames = [];
-        this._name = "";
-    },
-
-    getName:function(){
-        return this._name;
-    },
-
-    setName :function(name){
-        this._name = name;
-    },
-
-    getType:function(){
-        return this._type;
-    },
-    setType :function(type){
-        this._type = type;
-    },
-
-    getKeyframes:function(){
-        return this._keyFrames;
-    }
-});});

@@ -35,7 +35,7 @@ define(["cocos2d/CCNamespace"], function (cc) {
      */
     var cc = cc || {};
 
-//
+    //
     function ClassManager() {
         //tells own name
         return arguments.callee.name || (arguments.callee.toString()).match(/^function ([^(]+)/)[1];
@@ -168,10 +168,10 @@ define(["cocos2d/CCNamespace"], function (cc) {
         };
     })();
 
-//
-// Another way to subclass: Using Google Closure.
-// The following code was copied + pasted from goog.base / goog.inherits
-//
+    //
+    // Another way to subclass: Using Google Closure.
+    // The following code was copied + pasted from goog.base / goog.inherits
+    //
     cc.inherits = function (childCtor, parentCtor) {
         /** @constructor */
         function tempCtor() {
