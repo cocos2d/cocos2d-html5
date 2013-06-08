@@ -149,7 +149,7 @@ define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/mi
      * @constant
      * @type Number
      */
-    cc.BLEND_SRC = cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
+    cc.BLEND_SRC = 0x0302;                         //cc.OPTIMIZE_BLEND_FUNC_FOR_PREMULTIPLIED_ALPHA ? 1 : 0x0302;
 
     /**
      * default gl blend dst function. Compatible with premultiplied alpha images.
