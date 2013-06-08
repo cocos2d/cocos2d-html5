@@ -7,7 +7,7 @@ Cocos2d-html5-v2.1.4 @ Jun.12, 2013
 * Added support for particle batch node
 
 *Bug fix:
-  1. PreLoading on iOS5.1.1
+  1. PreLoading issue on iOS5.1.1
   2. cc.Menu / cc.MenuItemImage remain touchable after replaceScene
   3. Box2d and chipmunk path error for single file mode
   4. cc.EditBox that position of Dom Element is wrong when cc.EditBox skewed
