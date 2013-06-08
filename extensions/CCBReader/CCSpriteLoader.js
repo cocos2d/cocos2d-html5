@@ -78,28 +78,31 @@ cc.SpriteLoader.loader = function () {
 };
 
 var PROPERTY_TOUCH_ENABLED = "touchEnabled";
+var PROPERTY_IS_TOUCH_ENABLED = "isTouchEnabled";
 var PROPERTY_ACCELEROMETER_ENABLED = "accelerometerEnabled";
+var PROPERTY_IS_ACCELEROMETER_ENABLED = "isAccelerometerEnabled";
 var PROPERTY_IS_MOUSE_ENABLED = "isMouseEnabled";
 var PROPERTY_MOUSE_ENABLED = "mouseEnabled";
 var PROPERTY_KEYBOARD_ENABLED = "keyboardEnabled";
+var PROPERTY_IS_KEYBOARD_ENABLED = "isKeyboardEnabled";
 
 cc.LayerLoader = cc.NodeLoader.extend({
     _createCCNode:function (parent, ccbReader) {
         return cc.Layer.create();
     },
     onHandlePropTypeCheck:function (node, parent, propertyName, check, ccbReader) {
-        if (propertyName == PROPERTY_TOUCH_ENABLED) {
+        if (propertyName == PROPERTY_TOUCH_ENABLED || propertyName == PROPERTY_IS_TOUCH_ENABLED) {
             node.setTouchEnabled(check);
-        } else if (propertyName == PROPERTY_ACCELEROMETER_ENABLED) {
+        } else if (propertyName == PROPERTY_ACCELEROMETER_ENABLED || propertyName == PROPERTY_IS_ACCELEROMETER_ENABLED) {
             node.setAccelerometerEnabled(check);
-        } else if (propertyName == PROPERTY_IS_MOUSE_ENABLED || propertyName == PROPERTY_MOUSE_ENABLED ) {
+        } else if (propertyName == PROPERTY_MOUSE_ENABLED || propertyName == PROPERTY_IS_MOUSE_ENABLED ) {
             node.setMouseEnabled(check);
-        } else if (propertyName == PROPERTY_KEYBOARD_ENABLED) {
+        } else if (propertyName == PROPERTY_KEYBOARD_ENABLED || propertyName == PROPERTY_IS_KEYBOARD_ENABLED) {
             // TODO XXX
             if(node.setKeyboardEnabled && sys.platform == "browser") {
                 node.setKeyboardEnabled(check);
             } else {
-                cc.log("The property '" + PROPERTY_KEYBOARD_ENABLED + "' is not supported!");
+                cc.log("The property '" + PROPERTY_IS_KEYBOARD_ENABLED + "' is not supported!");
                 // This comes closest: ((CCLayer *)pNode).setKeypadEnabled(pCheck);
             }
         } else {
