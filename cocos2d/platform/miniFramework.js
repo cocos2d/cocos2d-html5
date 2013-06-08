@@ -86,12 +86,11 @@ cc.Browser = {};
     cc.Browser.supportWebAudio = (function(){
         // check Web Audio's context
         try {
-            new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+            var ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+            return ctx ? true : false;
         } catch (e) {
             return false;
         }
-
-        return true;
     })();
 })();
 
