@@ -228,9 +228,12 @@ define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "CocosDenshion/Simpl
         },
 
 
-        _schedulePreload: function () {
-            this._interval = setInterval(this._preload.bind(this), this._animationInterval * 1000);
-        },
+    _schedulePreload:function () {
+        var _self = this;
+        this._interval = setInterval(function(){
+            _self._preload();
+        }, this._animationInterval * 1000);
+    },
 
         _unschedulePreload: function () {
             clearInterval(this._interval);
