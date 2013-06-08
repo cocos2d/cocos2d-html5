@@ -1376,7 +1376,6 @@ cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
         var ua = navigator.userAgent;
         if (cc.Browser.supportWebAudio && (/iPhone OS/.test(ua)||/iPad/.test(ua))) {
-            alert("web Audio")
             this._instance = new cc.WebAudioEngine();
         } else {
             this._instance = new cc.SimpleAudioEngine();
