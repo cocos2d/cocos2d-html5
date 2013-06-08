@@ -33,7 +33,11 @@ var cc = cc || {};
  * @extends   cc.Class
  */
 cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
-
+    _audioID:0,
+    _audioIDList:null,
+    ctor:function(){
+        this._audioIDList = {};
+    },
     /**
      * Check each type to see if it can be played by current browser
      * @param {Object} capabilities The results are filled into this dict
@@ -129,8 +133,9 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
      * Constructor
      */
     ctor:function () {
-        this._supportedFormat = [];
+        cc.AudioEngine.prototype.ctor.call(this);
 
+        this._supportedFormat = [];
         this._checkCanPlay(this._capabilities);
 
         // enable sound if any of the audio format is supported
@@ -399,8 +404,10 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
             au.loop = loop;
         }
         au.play();
+        var audioID = this._audioID++;
+        this._audioIDList[audioID] = au;
 
-        return path;
+        return audioID;
     },
 
     /**
@@ -446,21 +453,18 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
     /**
      * Pause playing sound effect.
-     * @param {String} path The return value of function playEffect.
+     * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().pauseEffect(path);
+     * cc.AudioEngine.getInstance().pauseEffect(audioID);
      */
-    pauseEffect:function (path) {
-        if (!path) return;
-        var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
-            var tmpArr = this._effectList[keyname], au;
-            for (var i = tmpArr.length - 1; i >= 0; i--) {
-                au = tmpArr[i];
-                if (!au.ended) {
-                    au.pause();
-                }
+    pauseEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended) {
+                au.pause();
             }
         }
     },
@@ -486,24 +490,18 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
     /**
      * Resume playing sound effect.
-     * @param {String} path The return value of function playEffect.
-     * @example
+     * @param {Number} audioID The return value of function playEffect.
+     * @audioID
      * //example
-     * cc.AudioEngine.getInstance().resumeEffect(path);
+     * cc.AudioEngine.getInstance().resumeEffect(audioID);
      */
-    resumeEffect:function (path) {
-        if (!path) return;
-        var tmpArr, au;
-        var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
-            tmpArr = this._effectList[keyname];
-            if (tmpArr.length > 0) {
-                for (var i = 0; i < tmpArr.length; i++) {
-                    au = tmpArr[i];
-                    if (!au.ended) {
-                        au.play();
-                    }
-                }
+    resumeEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended) {
+                au.play();
             }
         }
     },
@@ -531,25 +529,19 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
 
     /**
      * Stop playing sound effect.
-     * @param {String} path The return value of function playEffect.
+     * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().stopEffect(path);
+     * cc.AudioEngine.getInstance().stopEffect(audioID);
      */
-    stopEffect:function (path) {
-        if (!path) return;
-        var tmpArr, au;
-        var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
-            tmpArr = this._effectList[keyname];
-            if (tmpArr.length > 0) {
-                for (var i = 0; i < tmpArr.length; i++) {
-                    au = tmpArr[i];
-                    if (!au.ended) {
-                        au.loop = false;
-                        au.currentTime = au.duration;
-                    }
-                }
+    stopEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended) {
+                au.loop = false;
+                au.currentTime = au.duration;
             }
         }
     },
@@ -587,6 +579,15 @@ cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */
         if (this._effectList.hasOwnProperty(keyname)) {
             this.stopEffect(path);
             delete this._effectList[keyname];
+        }
+
+        var au,pathName;
+        for (var k in this._audioIDList) {
+            au = this._audioIDList[k];
+            pathName  = this._getPathWithoutExt(au.src);
+            if(pathName == keyname){
+                delete this._audioIDList[k];
+            }
         }
     },
 
@@ -701,7 +702,9 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
     /**
      * Constructor
      */
-    ctor: function() {},
+    ctor: function() {
+        cc.AudioEngine.prototype.ctor.call(this);
+    },
 
     /**
      * Initialization
@@ -1165,8 +1168,12 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
                  */
             });
         }
+
         // cc.SimpleAudioEngine returns path, just do the same for backward compatibility. DO NOT rely on this, though!
-        return path;
+        var audioID = this._audioID++;
+        this._audioIDList[audioID] = this._effects[keyName];
+
+        return audioID;
     },
 
     /**
@@ -1223,23 +1230,19 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Pause playing sound effect.
-     * @param {String} path The return value of function playEffect.
+     * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().pauseEffect(path);
+     * cc.AudioEngine.getInstance().pauseEffect(audioID);
      */
-    pauseEffect: function(path) {
-        if (!path) {
+    pauseEffect: function(audioID) {
+        if (audioID == null) {
             return;
         }
 
-        var keyName = this._getPathWithoutExt(path);
-        if (!(keyName in this._effects)) {
-            // the effect is not even in the playing list
-            return;
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            this._pauseSoundList(this._audioIDList[audioID]);
         }
-
-        this._pauseSoundList(this._effects[keyName]);
     },
 
     /**
@@ -1270,23 +1273,19 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Resume playing sound effect.
-     * @param {String} path The return value of function playEffect.
+     * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().resumeEffect(path);
+     * cc.AudioEngine.getInstance().resumeEffect(audioID);
      */
-    resumeEffect: function(path) {
-        if (!path) {
+    resumeEffect: function(audioID) {
+        if (audioID == null) {
             return;
         }
 
-        var keyName = this._getPathWithoutExt(path);
-        if (!(keyName in this._effects)) {
-            // the effect is not even in the playing list
-            return;
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            this._resumeSoundList(this._audioIDList[audioID], this.getEffectsVolume());
         }
-
-        this._resumeSoundList(this._effects[keyName], this.getEffectsVolume());
     },
 
     /**
@@ -1303,27 +1302,19 @@ cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
 
     /**
      * Stop playing sound effect.
-     * @param {String} path The return value of function playEffect.
+     * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().stopEffect(path);
+     * cc.AudioEngine.getInstance().stopEffect(audioID);
      */
-    stopEffect: function(path) {
-        if (!path) {
+    stopEffect: function(audioID) {
+        if (audioID == null) {
             return;
         }
 
-        var keyName = this._getPathWithoutExt(path);
-        if (!(keyName in this._effects)) {
-            // can stop only when it's playing/paused, in other words, when it's on the list
-            return;
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            this._endSound(this._audioIDList[audioID]);
         }
-
-        var effectList = this._effects[keyName];
-        for (var idx in effectList) {
-            this._endSound(effectList[idx]);
-        }
-        delete this._effects[keyName];
     },
 
     /**
@@ -1383,7 +1374,9 @@ cc.AudioEngine.isMusicPlaying = false;
  */
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
-        if (cc.Browser.supportWebAudio) {
+        var ua = navigator.userAgent;
+        if (cc.Browser.supportWebAudio && (/iPhone OS/.test(ua)||/iPad/.test(ua))) {
+            alert("web Audio")
             this._instance = new cc.WebAudioEngine();
         } else {
             this._instance = new cc.SimpleAudioEngine();
