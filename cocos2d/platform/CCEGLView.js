@@ -24,6 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass", "cocos2d/cocoa/CCGeometry",
+    "cocos2d/touch_dispatcher/CCTouchDelegateProtocol"], function(cc, sys) {
+
 cc.RESOLUTION_POLICY = {
     // The entire application is visible in the specified area without trying to preserve the original aspect ratio.
     // Distortion can occur, and the application may appear stretched or compressed.
@@ -689,3 +692,4 @@ cc.EGLView.getInstance = function () {
     }
     return this._instance;
 };
+});

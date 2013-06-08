@@ -24,42 +24,43 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-
-/**
- * <p>cc.Scene is a subclass of cc.Node that is used only as an abstract concept.</p>
- *  <p>cc.Scene an cc.Node are almost identical with the difference that cc.Scene has it's
- * anchor point (by default) at the center of the screen.</p>
- *
- * <p>For the moment cc.Scene has no other logic than that, but in future releases it might have
- * additional logic.</p>
- *
- * <p>It is a good practice to use and cc.Scene as the parent of all your nodes.</p>
- * @class
- * @extends cc.Node
- */
-cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
+define(["cocos2d/CCNamespace", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry"], function (cc) {
     /**
-     * Constructor
+     * <p>cc.Scene is a subclass of cc.Node that is used only as an abstract concept.</p>
+     *  <p>cc.Scene an cc.Node are almost identical with the difference that cc.Scene has it's
+     * anchor point (by default) at the center of the screen.</p>
+     *
+     * <p>For the moment cc.Scene has no other logic than that, but in future releases it might have
+     * additional logic.</p>
+     *
+     * <p>It is a good practice to use and cc.Scene as the parent of all your nodes.</p>
+     * @class
+     * @extends cc.Node
      */
-    ctor:function () {
-        this._super();
-        this._ignoreAnchorPointForPosition = true;
-        this.setAnchorPoint(cc.p(0.5, 0.5));
-        this.setContentSize(cc.Director.getInstance().getWinSize());
-    }
-});
+    cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
+        /**
+         * Constructor
+         */
+        ctor: function () {
+            this._super();
+            this._ignoreAnchorPointForPosition = true;
+            this.setAnchorPoint(cc.p(0.5, 0.5));
+            this.setContentSize(cc.Director.getInstance().getWinSize());
+        }
+    });
 
-/**
- * creates a scene
- * @return {cc.Scene}
- * @example
- * // Example
- * var aScene = cc.Scene.create();
- * //OR
- * var aScene = new cc.Scene();
- */
-cc.Scene.create = function () {
-    var scene = new cc.Scene();
-    scene.init();
-    return scene;
-};
+    /**
+     * creates a scene
+     * @return {cc.Scene}
+     * @example
+     * // Example
+     * var aScene = cc.Scene.create();
+     * //OR
+     * var aScene = new cc.Scene();
+     */
+    cc.Scene.create = function () {
+        var scene = new cc.Scene();
+        scene.init();
+        return scene;
+    };
+});

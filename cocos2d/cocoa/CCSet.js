@@ -24,121 +24,127 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * @class
- * @extends cc.Class
- */
-cc.Set = cc.Class.extend(/** @lends cc.Set# */{
-    /**
-     * Constructor
-     * @param {cc.Set} setObject
-     */
-    ctor:function (setObject) {
-        if (setObject) {
-            this._set = [].concat(setObject._set);
-        } else {
-            this._set = [];
-        }
-    },
+
+define(["cocos2d/CCNamespace", "cocos2d/CCScheduler", "cocos2d/platform/CCClass"], function (cc) {
 
     /**
-     * Return a copy of the cc.Set, it will copy all the elelments.
-     * @return {cc.Set}
+     * @class
+     * @extends cc.Class
      */
-    copy:function () {
-        return new cc.Set(this);
-    },
-
-    /**
-     * It is the same as copy().
-     * @return {cc.Set}
-     */
-    mutableCopy:function () {
-        return this.copy();
-    },
-
-    /**
-     * Return the number of elements the cc.Set contains.
-     * @return {Number}
-     */
-    count:function () {
-        return this._set.length;
-    },
-
-    /**
-     * Add a element into cc.Set, it will retain the element.
-     * @param {object} obj
-     */
-    addObject:function (obj) {
-        if(cc.ArrayContainsObject(this._set,obj))
-            return;
-        this._set.push(obj);
-        //sort
-        this._set.sort(function(a,b){return a-b;});
-    },
-
-    /**
-     * Remove the given element, nothing todo if no element equals obj.
-     * @param {object} obj
-     */
-    removeObject:function (obj) {
-        var k = 0;
-        for (var i = 0, n = 0; i < this._set.length; i++) {
-            if (this._set[i] != obj) {
-                this._set[n++] = this._set[i];
-                k++;
+    cc.Set = cc.Class.extend(/** @lends cc.Set# */{
+        /**
+         * Constructor
+         * @param {cc.Set} setObject
+         */
+        ctor: function (setObject) {
+            if (setObject) {
+                this._set = [].concat(setObject._set);
+            } else {
+                this._set = [];
             }
-        }
-        this._set.length = k;
-    },
+        },
 
-    /**
-     * Return the iterator that points to the first element.
-     * @reture Object
-     */
-    begin:function(){
-        if(this._set && this._set.length > 0)
-            return this._set[0];
-        return null;
-    },
+        /**
+         * Return a copy of the cc.Set, it will copy all the elelments.
+         * @return {cc.Set}
+         */
+        copy: function () {
+            return new cc.Set(this);
+        },
 
-    /**
-     * Return the iterator that points to the poisition after the last element.
-     * @reture Object
-     */
-    end:function(){
-        if(this._set && this._set.length > 0)
-            return this._set[this._set.length -1];
-        return null;
-    },
+        /**
+         * It is the same as copy().
+         * @return {cc.Set}
+         */
+        mutableCopy: function () {
+            return this.copy();
+        },
 
-    /**
-     * Check if cc.Set contains a element equals obj.
-     * @param {object} obj
-     * @return {Boolean}
-     */
-    containsObject:function (obj) {
-        return cc.ArrayContainsObject(this._set,obj);
-    },
+        /**
+         * Return the number of elements the cc.Set contains.
+         * @return {Number}
+         */
+        count: function () {
+            return this._set.length;
+        },
 
-    /**
-     * Return the first element if it contains elements, or null if it doesn't contain any element.
-     * @return {object|Null}
-     */
-    anyObject:function () {
-        if (this._set && this._set.length > 0) {
-            return this._set[0];
-        } else {
+        /**
+         * Add a element into cc.Set, it will retain the element.
+         * @param {object} obj
+         */
+        addObject: function (obj) {
+            if (cc.ArrayContainsObject(this._set, obj))
+                return;
+            this._set.push(obj);
+            //sort
+            this._set.sort(function (a, b) {
+                return a - b;
+            });
+        },
+
+        /**
+         * Remove the given element, nothing todo if no element equals obj.
+         * @param {object} obj
+         */
+        removeObject: function (obj) {
+            var k = 0;
+            for (var i = 0, n = 0; i < this._set.length; i++) {
+                if (this._set[i] != obj) {
+                    this._set[n++] = this._set[i];
+                    k++;
+                }
+            }
+            this._set.length = k;
+        },
+
+        /**
+         * Return the iterator that points to the first element.
+         * @reture Object
+         */
+        begin: function () {
+            if (this._set && this._set.length > 0)
+                return this._set[0];
             return null;
-        }
-    },
+        },
 
-    _set:null
+        /**
+         * Return the iterator that points to the poisition after the last element.
+         * @reture Object
+         */
+        end: function () {
+            if (this._set && this._set.length > 0)
+                return this._set[this._set.length - 1];
+            return null;
+        },
+
+        /**
+         * Check if cc.Set contains a element equals obj.
+         * @param {object} obj
+         * @return {Boolean}
+         */
+        containsObject: function (obj) {
+            return cc.ArrayContainsObject(this._set, obj);
+        },
+
+        /**
+         * Return the first element if it contains elements, or null if it doesn't contain any element.
+         * @return {object|Null}
+         */
+        anyObject: function () {
+            if (this._set && this._set.length > 0) {
+                return this._set[0];
+            } else {
+                return null;
+            }
+        },
+
+        _set: null
+    });
+
+    /**
+     * cc.NSMutableSet is the same as cc.Set
+     * @class
+     * @extends cc.Set
+     */
+    cc.NSMutableSet = cc.Set;
 });
-
-/**
- * cc.NSMutableSet is the same as cc.Set
- * @class
- * @extends cc.Set
- */
-cc.NSMutableSet = cc.Set;

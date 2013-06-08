@@ -24,44 +24,46 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/**
- * A struture that represents an axis-aligned
- * bounding box.
- */
-cc.kmAABB = function (min, max) {
-    /** The max corner of the box */
-    this.min = min || new cc.kmVec3();
-    /** The min corner of the box */
-    this.max = max || new cc.kmVec3();
-};
 
-/**
- * Returns KM_TRUE if point is in the specified AABB, returns
- * KM_FALSE otherwise.
- */
-cc.kmAABBContainsPoint = function (pPoint, pBox) {
-    if (pPoint.x >= pBox.min.x && pPoint.x <= pBox.max.x &&
-        pPoint.y >= pBox.min.y && pPoint.y <= pBox.max.y &&
-        pPoint.z >= pBox.min.z && pPoint.z <= pBox.max.z) {
-        return cc.KM_TRUE;
-    }
-    return cc.KM_FALSE;
-};
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "cocos2d/kazmath/utility", "cocos2d/kazmath/vec3"], function (cc) {
+    /**
+     * A struture that represents an axis-aligned
+     * bounding box.
+     */
+    cc.kmAABB = function (min, max) {
+        /** The max corner of the box */
+        this.min = min || new cc.kmVec3();
+        /** The min corner of the box */
+        this.max = max || new cc.kmVec3();
+    };
 
-/**
- * Assigns pIn to pOut, returns pOut.
- */
-cc.kmAABBAssign = function (pOut, pIn) {
-    cc.kmVec3Assign(pOut.min, pIn.min);
-    cc.kmVec3Assign(pOut.max, pIn.max);
-    return pOut;
-};
+    /**
+     * Returns KM_TRUE if point is in the specified AABB, returns
+     * KM_FALSE otherwise.
+     */
+    cc.kmAABBContainsPoint = function (pPoint, pBox) {
+        if (pPoint.x >= pBox.min.x && pPoint.x <= pBox.max.x &&
+            pPoint.y >= pBox.min.y && pPoint.y <= pBox.max.y &&
+            pPoint.z >= pBox.min.z && pPoint.z <= pBox.max.z) {
+            return cc.KM_TRUE;
+        }
+        return cc.KM_FALSE;
+    };
 
-/**
- * Scales pIn by s, stores the resulting AABB in pOut. Returns pOut
- */
-cc.kmAABBScale = function (pOut, pIn, s) {
-    cc.Assert(0, "Not implemented");
-    return 0;
-};
+    /**
+     * Assigns pIn to pOut, returns pOut.
+     */
+    cc.kmAABBAssign = function (pOut, pIn) {
+        cc.kmVec3Assign(pOut.min, pIn.min);
+        cc.kmVec3Assign(pOut.max, pIn.max);
+        return pOut;
+    };
 
+    /**
+     * Scales pIn by s, stores the resulting AABB in pOut. Returns pOut
+     */
+    cc.kmAABBScale = function (pOut, pIn, s) {
+        cc.Assert(0, "Not implemented");
+        return 0;
+    };
+});

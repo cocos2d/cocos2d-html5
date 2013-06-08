@@ -24,35 +24,34 @@
  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-cc.km_mat4_stack = function(capacity, item_count, top, stack){
-    this.top = top ;
-    this.stack = stack ;
-};
 
-cc.km_mat4_stack.INITIAL_SIZE = 30;
+define(["cocos2d/CCNamespace", "cocos2d/kazmath/mat4"], function (cc) {
+    cc.km_mat4_stack = function (capacity, item_count, top, stack) {
+        this.top = top;
+        this.stack = stack;
+    };
 
-cc.km_mat4_stack_initialize = function(stack){
-    stack.stack = [];                                   //allocate the memory
-    stack.top = null;                                   //Set the top to NULL
-};
+    cc.km_mat4_stack.INITIAL_SIZE = 30;
 
-cc.km_mat4_stack_push = function(stack, item){
-    stack.stack.push(stack.top);
-    stack.top = new cc.kmMat4();
-    cc.kmMat4Assign(stack.top, item);
-};
+    cc.km_mat4_stack_initialize = function (stack) {
+        stack.stack = [];                                   //allocate the memory
+        stack.top = null;                                   //Set the top to NULL
+    };
 
-cc.km_mat4_stack_pop = function(stack, pOut){
-    //cc.Assert(stack.item_count , "Cannot pop an empty stack");
-    stack.top = stack.stack.pop();
-};
+    cc.km_mat4_stack_push = function (stack, item) {
+        stack.stack.push(stack.top);
+        stack.top = new cc.kmMat4();
+        cc.kmMat4Assign(stack.top, item);
+    };
 
-cc.km_mat4_stack_release = function(stack){
-    stack.stack = null;
-    stack.top = null;
-    stack = null;
-};
+    cc.km_mat4_stack_pop = function (stack, pOut) {
+        //cc.Assert(stack.item_count , "Cannot pop an empty stack");
+        stack.top = stack.stack.pop();
+    };
 
-
-
-
+    cc.km_mat4_stack_release = function (stack) {
+        stack.stack = null;
+        stack.top = null;
+        stack = null;
+    };
+});

@@ -1,5 +1,4 @@
 /****************************************************************************
-
  http://www.cocos2d-html5.org
  http://www.cocos2d-iphone.org
  http://www.cocos2d-x.org
@@ -23,100 +22,103 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-var sys = sys || {};
+define(["cocos2d/CCNamespace", "cocos2d/SysNamespace", "cocos2d/platform/miniFramework", "cocos2d/platform/CCCommon"], function (cc, sys) {
+    var sys = sys || {};
 
-/** LocalStorage is a local storage component.
-*/
-try{
-	sys.localStorage = window.localStorage;
+    /** LocalStorage is a local storage component.
+     */
+    try {
+        sys.localStorage = window.localStorage;
 
-}catch(e){
+    } catch (e) {
 
-	if( e.name === "SECURITY_ERR" ) {
-		cc.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
-	}
-	sys.localStorage = function(){};
-}
+        if (e.name === "SECURITY_ERR") {
+            cc.log("Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option");
+        }
+        sys.localStorage = function () {
+        };
+    }
 
-/** Capabilities
-*/
-Object.defineProperties(sys,
-{
-	"capabilities" : {
-		get : function(){
-			var capabilities = {"canvas":true};
+    /** Capabilities
+     */
+    Object.defineProperties(sys,
+        {
+            "capabilities": {
+                get: function () {
+                    var capabilities = {"canvas": true};
 
-			// if (window.DeviceOrientationEvent!==undefined || window.OrientationEvent!==undefined)
-			//   capabilities["accelerometer"] = true;
-            if(cc.Browser.supportWebGL)
-                capabilities["opengl"] = true;
+                    // if (window.DeviceOrientationEvent!==undefined || window.OrientationEvent!==undefined)
+                    //   capabilities["accelerometer"] = true;
+                    if (cc.Browser.supportWebGL)
+                        capabilities["opengl"] = true;
 
-			if( 'ontouchstart' in document.documentElement )
-				capabilities["touches"] = true;
+                    if ('ontouchstart' in document.documentElement)
+                        capabilities["touches"] = true;
 
-			else if( 'onmouseup' in document.documentElement )
-				capabilities["mouse"] = true;
+                    else if ('onmouseup' in document.documentElement)
+                        capabilities["mouse"] = true;
 
-			if( 'onkeyup' in document.documentElement )
-				capabilities["keyboard"] = true;
+                    if ('onkeyup' in document.documentElement)
+                        capabilities["keyboard"] = true;
 
-            if(window.DeviceMotionEvent || window.DeviceOrientationEvent)
-                capabilities["accelerometer"] = true;
+                    if (window.DeviceMotionEvent || window.DeviceOrientationEvent)
+                        capabilities["accelerometer"] = true;
 
-			return capabilities;
-        },
-		enumerable : true,
-		configurable : true
-	},
-	"os" : {
-		get : function() {
-			var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false );
-			var isAndroid = navigator.userAgent.match(/android/i) || navigator.platform.match(/android/i) ? true : false;
-			var OSName=navigator.appVersion;
-			if (navigator.appVersion.indexOf("Win")!=-1)
-				OSName="Windows";
-			else if (navigator.appVersion.indexOf("Mac")!=-1)
-				OSName="OS X";
-			else if (navigator.appVersion.indexOf("X11")!=-1)
-				OSName="UNIX";
-			else if (navigator.appVersion.indexOf("Linux")!=-1)
-				OSName="Linux";
-			else if( iOS )
-				OSName = "iOS";
-			else if( isAndroid )
-				OSName = "Android";
-			return OSName;
-		},
-		enumerable : true,
-		configurable : true
-	},
-	"platform" : {
-		get : function(){
-			return "browser";
-		},
-		enumerable : true,
-		configurable : true
-	},
-	"version" : {
-		get : function(){
-			return cc.ENGINE_VERSION;
-		},
-		enumerable : true,
-		configurable : true
-	}
-});
+                    return capabilities;
+                },
+                enumerable: true,
+                configurable: true
+            },
+            "os": {
+                get: function () {
+                    var iOS = ( navigator.userAgent.match(/(iPad|iPhone|iPod)/i) ? true : false );
+                    var isAndroid = navigator.userAgent.match(/android/i) || navigator.platform.match(/android/i) ? true : false;
+                    var OSName = navigator.appVersion;
+                    if (navigator.appVersion.indexOf("Win") != -1)
+                        OSName = "Windows";
+                    else if (navigator.appVersion.indexOf("Mac") != -1)
+                        OSName = "OS X";
+                    else if (navigator.appVersion.indexOf("X11") != -1)
+                        OSName = "UNIX";
+                    else if (navigator.appVersion.indexOf("Linux") != -1)
+                        OSName = "Linux";
+                    else if (iOS)
+                        OSName = "iOS";
+                    else if (isAndroid)
+                        OSName = "Android";
+                    return OSName;
+                },
+                enumerable: true,
+                configurable: true
+            },
+            "platform": {
+                get: function () {
+                    return "browser";
+                },
+                enumerable: true,
+                configurable: true
+            },
+            "version": {
+                get: function () {
+                    return cc.ENGINE_VERSION;
+                },
+                enumerable: true,
+                configurable: true
+            }
+        });
 
 // Forces the garbage collector
-sys.garbageCollect = function() {
-	// N/A in cocos2d-html5
-};
+    sys.garbageCollect = function () {
+        // N/A in cocos2d-html5
+    };
 
 // Dumps rooted objects
-sys.dumpRoot = function() {
-	// N/A in cocos2d-html5
-};
+    sys.dumpRoot = function () {
+        // N/A in cocos2d-html5
+    };
 
 // restarts the JS VM
-sys.restartVM = function() {
-	// N/A in cocos2d-html5
-};
+    sys.restartVM = function () {
+        // N/A in cocos2d-html5
+    };
+});

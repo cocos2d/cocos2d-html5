@@ -24,6 +24,7 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCApplication", "cocos2d/CCLoader", "cocos2d/platform/AppControl", "cocos2d/menu_nodes/CCMenu", "src/resource"], function(cc) {
 var CircleSprite = cc.Sprite.extend({
     _degree:0,
     ctor:function () {
@@ -132,12 +133,13 @@ var Helloworld = cc.Layer.extend({
     }
 });
 
-var HelloWorldScene = cc.Scene.extend({
+return cc.Scene.extend({
     onEnter:function () {
         this._super();
         var layer = new Helloworld();
         layer.init();
         this.addChild(layer);
     }
+});
 });
 

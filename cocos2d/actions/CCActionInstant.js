@@ -24,6 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
+define(["cocos2d/CCNamespace", "cocos2d/actions/CCAction"], function(cc) {
+
 /**
  * Instant actions are immediate actions. They don't have a duration like
  * the CCIntervalAction actions.
@@ -357,3 +360,4 @@ cc.CallFunc.create = function (selector, selectorTarget, data) {
     }
     return null;
 };
+});

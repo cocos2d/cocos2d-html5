@@ -24,6 +24,13 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
+define(["cocos2d/CCNamespace", "cocos2d/cocoa/CCAffineTransform", "cocos2d/sprite_nodes/CCAnimationCache",
+    "cocos2d/platform/CCCommon", "cocos2d/platform/CCMacro", "cocos2d/platform/miniFramework", "cocos2d/platform/CCTypes",
+    "cocos2d/platform/CCConfig", "cocos2d/platform/CCFileUtils", "cocos2d/base_nodes/CCNode", "cocos2d/cocoa/CCGeometry",
+    "cocos2d/shaders/CCGLProgram", "cocos2d/shaders/CCShaderCache", "cocos2d/sprite_nodes/CCSpriteFrame",
+    "cocos2d/textures/CCTexture2D", "cocos2d/shaders/CCGLStateCache"], function(cc) {
+
 /**
  * cc.Sprite invalid index on the cc.SpriteBatchode
  * @constant
@@ -2825,3 +2832,4 @@ cc.SpriteWebGL.createWithSpriteFrame = function (spriteFrame) {
 };
 
 cc.Sprite = cc.Browser.supportWebGL ? cc.SpriteWebGL : cc.SpriteCanvas;
+});

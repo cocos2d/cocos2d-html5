@@ -24,89 +24,91 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * Controller of Game Application
- * @class
- * @extends cc.Class
- */
-cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "cocos2d/platform/CCClass"], function (cc) {
     /**
-     * did something when Finish Launching
-     * @return {Boolean}
+     * Controller of Game Application
+     * @class
+     * @extends cc.Class
      */
-    didFinishLaunchingWithOptions:function () {
-        // Override point for customization after application launch.
-        //var app = new cc.AppDelegate();
-        cc.Application.getInstance().run();
+    cc.AppController = cc.Class.extend(/** @lends cc.AppController# */{
+        /**
+         * did something when Finish Launching
+         * @return {Boolean}
+         */
+        didFinishLaunchingWithOptions: function () {
+            // Override point for customization after application launch.
+            //var app = new cc.AppDelegate();
+            cc.Application.getInstance().run();
 
-        return true;
-    },
+            return true;
+        },
+
+        /**
+         * <p>
+         *  Sent when the application is about to move from active to inactive state. <br/>
+         *  This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) <br/>
+         *  or when the user quits the application and it begins the transition to the background state.     <br/>
+         *  Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. <br/>
+         *  Games should use this method to pause the game.
+         * </p>
+         */
+        applicationWillResignActive: function () {
+            cc.Director.getInstance().pause();
+        },
+
+        /**
+         * <p>
+         * Restart any tasks that were paused (or not yet started) while the application was inactive. <br/>
+         * If the application was previously in the background, optionally refresh the user interface.
+         * </p>
+         */
+        applicationDidBecomeActive: function () {
+            cc.Director.getInstance().resume();
+        },
+
+        /**
+         * <p>
+         *   Use this method to release shared resources, save user data, invalidate timers, and store enough application state information <br/>
+         *   to restore your application to its current state in case it is terminated later.<br/>
+         *   If your application supports background execution, called instead of applicationWillTerminate: when the user quits.
+         * </p>
+         */
+        applicationDidEnterBackground: function () {
+            cc.Application.getInstance().applicationDidEnterBackground();
+        },
+
+        /**
+         * <p>
+         *     Called as part of  transition from the background to the inactive state: <br/>
+         *      here you can undo many of the changes made on entering the background.
+         * </p>
+         */
+        applicationWillEnterForeground: function () {
+            cc.Application.getInstance().applicationWillEnterForeground();
+        },
+
+        /**
+         * Called when the application is about to terminate. See also applicationDidEnterBackground.
+         */
+        applicationWillTerminate: function () {
+        }
+    });
 
     /**
-     * <p>
-     *  Sent when the application is about to move from active to inactive state. <br/>
-     *  This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) <br/>
-     *  or when the user quits the application and it begins the transition to the background state.     <br/>
-     *  Use this method to pause ongoing tasks, disable timers, and throttle down OpenGL ES frame rates. <br/>
-     *  Games should use this method to pause the game.
-     * </p>
+     * Return Controller of Game Application
+     * @return {cc.AppController}
      */
-    applicationWillResignActive:function () {
-        cc.Director.getInstance().pause();
-    },
+    cc.AppController.shareAppController = function () {
+        if (cc.sharedAppController == null) {
+            cc.sharedAppController = new cc.AppController();
+        }
+        cc.Assert(cc.sharedAppController, "shareAppController");
+        return cc.sharedAppController;
+    };
 
     /**
-     * <p>
-     * Restart any tasks that were paused (or not yet started) while the application was inactive. <br/>
-     * If the application was previously in the background, optionally refresh the user interface.
-     * </p>
+     * cocos2d application instance
+     * @type cc.AppController
      */
-    applicationDidBecomeActive:function () {
-        cc.Director.getInstance().resume();
-    },
-
-    /**
-     * <p>
-     *   Use this method to release shared resources, save user data, invalidate timers, and store enough application state information <br/>
-     *   to restore your application to its current state in case it is terminated later.<br/>
-     *   If your application supports background execution, called instead of applicationWillTerminate: when the user quits.
-     * </p>
-     */
-    applicationDidEnterBackground:function () {
-        cc.Application.getInstance().applicationDidEnterBackground();
-    },
-
-    /**
-     * <p>
-     *     Called as part of  transition from the background to the inactive state: <br/>
-     *      here you can undo many of the changes made on entering the background.
-     * </p>
-     */
-    applicationWillEnterForeground:function () {
-        cc.Application.getInstance().applicationWillEnterForeground();
-    },
-
-    /**
-     * Called when the application is about to terminate. See also applicationDidEnterBackground.
-     */
-    applicationWillTerminate:function () {
-    }
+    cc.sharedAppController = null;
 });
-
-/**
- * Return Controller of Game Application
- * @return {cc.AppController}
- */
-cc.AppController.shareAppController = function () {
-    if (cc.sharedAppController == null) {
-        cc.sharedAppController = new cc.AppController();
-    }
-    cc.Assert(cc.sharedAppController, "shareAppController");
-    return cc.sharedAppController;
-};
-
-/**
- * cocos2d application instance
- * @type cc.AppController
- */
-cc.sharedAppController = null;

@@ -22,37 +22,38 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.Invocation = cc.Class.extend({
-    _action:null,
-    _target:null,
-    _controlEvent:null,
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCClass"], function (cc) {
+    cc.Invocation = cc.Class.extend({
+        _action: null,
+        _target: null,
+        _controlEvent: null,
 
-    ctor:function(target,action,controlEvent){
-        this._target=target;
-        this._action=action;
-        this._controlEvent=controlEvent;
-    },
+        ctor: function (target, action, controlEvent) {
+            this._target = target;
+            this._action = action;
+            this._controlEvent = controlEvent;
+        },
 
-    getAction:function(){
-       return this._action;
-    },
+        getAction: function () {
+            return this._action;
+        },
 
-    getTarget:function(){
-       return this._target ;
-    },
+        getTarget: function () {
+            return this._target;
+        },
 
-    getControlEvent:function(){
-       return this._controlEvent;
-    },
+        getControlEvent: function () {
+            return this._controlEvent;
+        },
 
-    invoke:function(sender){
-        if (this._target && this._action) {
-            if (typeof(this._action) == "string") {
-                this._target[this._action](sender, this._controlEvent);
-            } else{
-                this._action.call(this._target, sender, this._controlEvent);
+        invoke: function (sender) {
+            if (this._target && this._action) {
+                if (typeof(this._action) == "string") {
+                    this._target[this._action](sender, this._controlEvent);
+                } else {
+                    this._action.call(this._target, sender, this._controlEvent);
+                }
             }
         }
-    }
+    });
 });
-

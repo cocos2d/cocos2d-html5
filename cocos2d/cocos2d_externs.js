@@ -3,7 +3,7 @@
  *
  * @externs
  */
- 
+
  /**
  * @see https://cocos2d-x.org
  */

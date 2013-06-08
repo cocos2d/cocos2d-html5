@@ -25,142 +25,145 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/*
- IMPORTANT - READ ME!
 
- This file sets pokes around in the private API a lot to provide efficient
- debug rendering given nothing more than reference to a Chipmunk space.
- It is not recommended to write rendering code like this in your own games
- as the private API may change with little or no warning.
- */
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCCommon", "cocos2d/draw_nodes/CCDrawNode", "cocos2d/platform/CCTypes", "cocos2d/platform/CCMacro"], function (cc) {
 
-// Helper. Converts an array of numbers into an array of vectors(x,y)
-cc.__convertVerts = function (verts) {
-    var ret = [];
-    for (var i = 0; i < verts.length / 2; i++) {
-        ret[i] = {x:verts[i * 2], y:verts[i * 2 + 1]};
-    }
-    return ret;
-};
+    /*
+     IMPORTANT - READ ME!
 
-cc.ColorForBody = function (body) {
-    if (body.isRogue() || body.isSleeping()) {
-        return cc.c4f(0.5, 0.5, 0.5, 0.5);
-    } else if (body.nodeIdleTime > body.space.sleepTimeThreshold) {
-        return cc.c4f(0.33, 0.33, 0.33, 0.5);
-    } else {
-        return cc.c4f(1, 0, 0, 0.5);
-    }
-};
+     This file sets pokes around in the private API a lot to provide efficient
+     debug rendering given nothing more than reference to a Chipmunk space.
+     It is not recommended to write rendering code like this in your own games
+     as the private API may change with little or no warning.
+     */
 
-cc.DrawShape = function (shape, renderer) {
-    var body = shape.body;
-    var color = cc.ColorForBody(body);
-    switch (shape.collisionCode) {
-        case cp.CircleShape.prototype.collisionCode:
-            this.drawDot(shape.tc, Math.max(shape.r, 1.0), color);
-            this.drawSegment(shape.tc, cp.v.add(shape.tc, cp.v.mult(body.rot, shape.r)), 1.0, color);
-            break;
-        case cp.SegmentShape.prototype.collisionCode:
-            this.drawSegment(shape.ta, shape.tb, Math.max(shape.r, 2.0), color);
-            break;
-        case cp.PolyShape.prototype.collisionCode:
-            var line = cc.c4f(color.r, color.g, color.b, cc.lerp(color.a, 1.0, 0.5));
-            this.drawPoly(cc.__convertVerts(shape.tVerts), color, 1.0, line);
-            break;
-        default:
-            cc.Assert(false, "Bad assertion in DrawShape()");
-    }
-};
+    // Helper. Converts an array of numbers into an array of vectors(x,y)
+    cc.__convertVerts = function (verts) {
+        var ret = [];
+        for (var i = 0; i < verts.length / 2; i++) {
+            ret[i] = {x: verts[i * 2], y: verts[i * 2 + 1]};
+        }
+        return ret;
+    };
 
-cc.DrawConstraint = function (constraint, renderer) {
-    var body_a = constraint.a;
-    var body_b = constraint.b;
-    var a, b;
+    cc.ColorForBody = function (body) {
+        if (body.isRogue() || body.isSleeping()) {
+            return cc.c4f(0.5, 0.5, 0.5, 0.5);
+        } else if (body.nodeIdleTime > body.space.sleepTimeThreshold) {
+            return cc.c4f(0.33, 0.33, 0.33, 0.5);
+        } else {
+            return cc.c4f(1, 0, 0, 0.5);
+        }
+    };
 
-    if (constraint instanceof cp.PinJoint) {
-        a = body_a.local2World(constraint.anchr1);
-        b = body_b.local2World(constraint.anchr2);
-        this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
-    } else if (constraint instanceof cp.SlideJoint) {
-        a = body_a.local2World(constraint.anchr1);
-        b = body_b.local2World(constraint.anchr2);
+    cc.DrawShape = function (shape, renderer) {
+        var body = shape.body;
+        var color = cc.ColorForBody(body);
+        switch (shape.collisionCode) {
+            case cp.CircleShape.prototype.collisionCode:
+                this.drawDot(shape.tc, Math.max(shape.r, 1.0), color);
+                this.drawSegment(shape.tc, cp.v.add(shape.tc, cp.v.mult(body.rot, shape.r)), 1.0, color);
+                break;
+            case cp.SegmentShape.prototype.collisionCode:
+                this.drawSegment(shape.ta, shape.tb, Math.max(shape.r, 2.0), color);
+                break;
+            case cp.PolyShape.prototype.collisionCode:
+                var line = cc.c4f(color.r, color.g, color.b, cc.lerp(color.a, 1.0, 0.5));
+                this.drawPoly(cc.__convertVerts(shape.tVerts), color, 1.0, line);
+                break;
+            default:
+                cc.Assert(false, "Bad assertion in DrawShape()");
+        }
+    };
 
-        this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
-    } else if (constraint instanceof cp.PivotJoint) {
-        a = body_a.local2World(constraint.anchr1);
-        b = body_b.local2World(constraint.anchr2);
-        this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
-    } else if (constraint instanceof cp.GrooveJoint) {
-        a = body_a.local2World(constraint.grv_a);
-        b = body_a.local2World(constraint.grv_b);
-        var c = body_b.local2World(constraint.anchr2);
+    cc.DrawConstraint = function (constraint, renderer) {
+        var body_a = constraint.a;
+        var body_b = constraint.b;
+        var a, b;
 
-        this.drawDot(c, 3.0, cc.CONSTRAINT_COLOR);
-        this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
-    } else if (constraint instanceof cp.DampedSpring) {
-        // TODO
-    } else {
-        //printf("Cannot draw constraint\n");
-    }
-};
+        if (constraint instanceof cp.PinJoint) {
+            a = body_a.local2World(constraint.anchr1);
+            b = body_b.local2World(constraint.anchr2);
+            this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
+            this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
+            this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
+        } else if (constraint instanceof cp.SlideJoint) {
+            a = body_a.local2World(constraint.anchr1);
+            b = body_b.local2World(constraint.anchr2);
 
-cc.CONSTRAINT_COLOR = cc.c4f(0, 1, 0, 0.5);
+            this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
+            this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
+            this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
+        } else if (constraint instanceof cp.PivotJoint) {
+            a = body_a.local2World(constraint.anchr1);
+            b = body_b.local2World(constraint.anchr2);
+            this.drawDot(a, 3.0, cc.CONSTRAINT_COLOR);
+            this.drawDot(b, 3.0, cc.CONSTRAINT_COLOR);
+        } else if (constraint instanceof cp.GrooveJoint) {
+            a = body_a.local2World(constraint.grv_a);
+            b = body_a.local2World(constraint.grv_b);
+            var c = body_b.local2World(constraint.anchr2);
 
-/**
- A Node that draws the components of a physics engine.
- Supported physics engines:
- - Chipmunk
- - Objective-Chipmunk
- */
-cc.PhysicsDebugNode = cc.DrawNode.extend({
-    _spaceObj:null,
-    _spacePtr:null,
+            this.drawDot(c, 3.0, cc.CONSTRAINT_COLOR);
+            this.drawSegment(a, b, 1.0, cc.CONSTRAINT_COLOR);
+        } else if (constraint instanceof cp.DampedSpring) {
+            // TODO
+        } else {
+            //printf("Cannot draw constraint\n");
+        }
+    };
 
-    getSpace:function () {
-        return this._spacePtr;
-    },
+    cc.CONSTRAINT_COLOR = cc.c4f(0, 1, 0, 0.5);
 
-    setSpace:function (space) {
-        this._spacePtr = space;
-    },
+    /**
+     A Node that draws the components of a physics engine.
+     Supported physics engines:
+     - Chipmunk
+     - Objective-Chipmunk
+     */
+    cc.PhysicsDebugNode = cc.DrawNode.extend({
+        _spaceObj: null,
+        _spacePtr: null,
 
-    draw:function (context) {
-        if (!this._spacePtr)
-            return;
+        getSpace: function () {
+            return this._spacePtr;
+        },
 
-        this._spacePtr.eachShape(cc.DrawShape.bind(this));
-        this._spacePtr.eachConstraint(cc.DrawConstraint.bind(this));
-        this._super();
-        this.clear();
-    }
+        setSpace: function (space) {
+            this._spacePtr = space;
+        },
+
+        draw: function (context) {
+            if (!this._spacePtr)
+                return;
+
+            this._spacePtr.eachShape(cc.DrawShape.bind(this));
+            this._spacePtr.eachConstraint(cc.DrawConstraint.bind(this));
+            this._super();
+            this.clear();
+        }
+    });
+
+    /** Create a debug node for an Objective-Chipmunk space. */
+    cc.PhysicsDebugNode.debugNodeForChipmunkSpace = function (space) {
+        var node = new cc.PhysicsDebugNode();
+        if (node.init()) {
+            node._spaceObj = space;
+            node._spacePtr = space.space;
+            return node;
+        }
+        return null;
+    };
+
+    /** Create a debug node for a regular Chipmunk space. */
+    cc.PhysicsDebugNode.debugNodeForCPSpace = function (space) {
+        var node = new cc.PhysicsDebugNode();
+        if (node.init()) {
+            node._spacePtr = space;
+            return node;
+        }
+        return null;
+    };
+
+    cc.PhysicsDebugNode.create = cc.PhysicsDebugNode.debugNodeForCPSpace;
 });
-
-/** Create a debug node for an Objective-Chipmunk space. */
-cc.PhysicsDebugNode.debugNodeForChipmunkSpace = function (space) {
-    var node = new cc.PhysicsDebugNode();
-    if (node.init()) {
-        node._spaceObj = space;
-        node._spacePtr = space.space;
-        return node;
-    }
-    return null;
-};
-
-/** Create a debug node for a regular Chipmunk space. */
-cc.PhysicsDebugNode.debugNodeForCPSpace = function (space) {
-    var node = new cc.PhysicsDebugNode();
-    if (node.init()) {
-        node._spacePtr = space;
-        return node;
-    }
-    return null;
-};
-
-cc.PhysicsDebugNode.create = cc.PhysicsDebugNode.debugNodeForCPSpace;
-

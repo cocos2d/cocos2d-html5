@@ -24,78 +24,82 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * <p>
- *     This action simulates a page turn from the bottom right hand corner of the screen.     <br/>
- *     It's not much use by itself but is used by the PageTurnTransition.                     <br/>
- *                                                                                            <br/>
- *     Based on an original paper by L Hong et al.                                            <br/>
- *     http://www.parc.com/publication/1638/turning-pages-of-3d-electronic-books.html
- * </p>
- * @class
- * @extends cc.Grid3DAction
- */
-cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
+
+define(["cocos2d/CCNamespace", "cocos2d/actions/CCActionGrid", "cocos2d/cocoa/CCGeometry"], function (cc) {
+
     /**
-     * Update each tick                                         <br/>
-     * Time is the percentage of the way through the duration
+     * <p>
+     *     This action simulates a page turn from the bottom right hand corner of the screen.     <br/>
+     *     It's not much use by itself but is used by the PageTurnTransition.                     <br/>
+     *                                                                                            <br/>
+     *     Based on an original paper by L Hong et al.                                            <br/>
+     *     http://www.parc.com/publication/1638/turning-pages-of-3d-electronic-books.html
+     * </p>
+     * @class
+     * @extends cc.Grid3DAction
      */
-    update:function (time) {
-        var tt = Math.max(0, time - 0.25);
-        var deltaAy = (tt * tt * 500);
-        var ay = -100 - deltaAy;
+    cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
+        /**
+         * Update each tick                                         <br/>
+         * Time is the percentage of the way through the duration
+         */
+        update: function (time) {
+            var tt = Math.max(0, time - 0.25);
+            var deltaAy = (tt * tt * 500);
+            var ay = -100 - deltaAy;
 
-        var deltaTheta = -Math.PI / 2 * Math.sqrt(time);
-        var theta = /*0.01f */ +Math.PI / 2 + deltaTheta;
+            var deltaTheta = -Math.PI / 2 * Math.sqrt(time);
+            var theta = /*0.01f */ +Math.PI / 2 + deltaTheta;
 
-        var sinTheta = Math.sin(theta);
-        var cosTheta = Math.cos(theta);
+            var sinTheta = Math.sin(theta);
+            var cosTheta = Math.cos(theta);
 
-        for (var i = 0; i <= this._gridSize.width; ++i) {
-            for (var j = 0; j <= this._gridSize.height; ++j) {
-                // Get original vertex
-                var p = this.originalVertex(cc.p(i, j));
+            for (var i = 0; i <= this._gridSize.width; ++i) {
+                for (var j = 0; j <= this._gridSize.height; ++j) {
+                    // Get original vertex
+                    var p = this.originalVertex(cc.p(i, j));
 
-                var R = Math.sqrt((p.x * p.x) + ((p.y - ay) * (p.y - ay)));
-                var r = R * sinTheta;
-                var alpha = Math.asin(p.x / R);
-                var beta = alpha / sinTheta;
-                var cosBeta = Math.cos(beta);
+                    var R = Math.sqrt((p.x * p.x) + ((p.y - ay) * (p.y - ay)));
+                    var r = R * sinTheta;
+                    var alpha = Math.asin(p.x / R);
+                    var beta = alpha / sinTheta;
+                    var cosBeta = Math.cos(beta);
 
-                // If beta > PI then we've wrapped around the cone
-                // Reduce the radius to stop these points interfering with others
-                if (beta <= Math.PI)
-                    p.x = ( r * Math.sin(beta));
-                else
-                    p.x = 0;     //Force X = 0 to stop wrapped points
+                    // If beta > PI then we've wrapped around the cone
+                    // Reduce the radius to stop these points interfering with others
+                    if (beta <= Math.PI)
+                        p.x = ( r * Math.sin(beta));
+                    else
+                        p.x = 0;     //Force X = 0 to stop wrapped points
 
-                p.y = ( R + ay - ( r * (1 - cosBeta) * sinTheta));
+                    p.y = ( R + ay - ( r * (1 - cosBeta) * sinTheta));
 
-                // We scale z here to avoid the animation being
-                // too much bigger than the screen due to perspectve transform
-                p.z = (r * ( 1 - cosBeta ) * cosTheta) / 7;// "100" didn't work for
+                    // We scale z here to avoid the animation being
+                    // too much bigger than the screen due to perspectve transform
+                    p.z = (r * ( 1 - cosBeta ) * cosTheta) / 7;// "100" didn't work for
 
-                //	Stop z coord from dropping beneath underlying page in a transition
-                // issue #751
-                if (p.z < 0.5)
-                    p.z = 0.5;
+                    //	Stop z coord from dropping beneath underlying page in a transition
+                    // issue #751
+                    if (p.z < 0.5)
+                        p.z = 0.5;
 
-                // Set new coords
-                this.setVertex(cc.p(i, j), p);
+                    // Set new coords
+                    this.setVertex(cc.p(i, j), p);
+                }
             }
         }
-    }
-});
+    });
 
-/**  */
-/**
- * create PageTurn3D action
- * @param {Number} duration
- * @param {cc.Size} gridSize
- * @return {cc.PageTurn3D}
- */
-cc.PageTurn3D.create = function (duration, gridSize) {
-    var action = new cc.PageTurn3D();
-    action.initWithDuration(duration, gridSize);
-    return action;
-};
+    /**  */
+    /**
+     * create PageTurn3D action
+     * @param {Number} duration
+     * @param {cc.Size} gridSize
+     * @return {cc.PageTurn3D}
+     */
+    cc.PageTurn3D.create = function (duration, gridSize) {
+        var action = new cc.PageTurn3D();
+        action.initWithDuration(duration, gridSize);
+        return action;
+    };
+});

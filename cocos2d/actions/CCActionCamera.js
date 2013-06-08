@@ -24,6 +24,9 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+
+define(["cocos2d/CCNamespace", "cocos2d/actions/CCActionInterval", "cocos2d/CCCamera", "cocos2d/platform/CCMacro"], function(cc) {
+
 /**
  * Base class for cc.Camera actions
  * @class
@@ -185,3 +188,4 @@ cc.OrbitCamera.create = function (t, radius, deltaRadius, angleZ, deltaAngleZ, a
         return ret;
     return null;
 };
+});

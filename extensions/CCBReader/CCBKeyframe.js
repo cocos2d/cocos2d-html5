@@ -24,37 +24,39 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-cc.BuilderKeyframe = cc.Class.extend({
-    _value:null,
-    _time:0,
-    _easingType:0,
-    _easingOpt:0,
+define(["cocos2d/CCNamespace", "cocos2d/platform/CCClass"], function (cc) {
+    cc.BuilderKeyframe = cc.Class.extend({
+        _value: null,
+        _time: 0,
+        _easingType: 0,
+        _easingOpt: 0,
 
-    getValue:function(){
-        return this._value;
-    },
-    setValue:function(value){
-        this._value = value;
-    },
+        getValue: function () {
+            return this._value;
+        },
+        setValue: function (value) {
+            this._value = value;
+        },
 
-    getTime:function(){
-        return this._time;
-    },
-    setTime:function(time){
-        this._time = time;
-    },
+        getTime: function () {
+            return this._time;
+        },
+        setTime: function (time) {
+            this._time = time;
+        },
 
-    getEasingType:function(){
-        return this._easingType;
-    },
-    setEasingType:function(easingType){
-        this._easingType = easingType;
-    },
+        getEasingType: function () {
+            return this._easingType;
+        },
+        setEasingType: function (easingType) {
+            this._easingType = easingType;
+        },
 
-    getEasingOpt:function(){
-        return this._easingOpt;
-    },
-    setEasingOpt:function(easingOpt){
-        this._easingOpt = easingOpt;
-    }
+        getEasingOpt: function () {
+            return this._easingOpt;
+        },
+        setEasingOpt: function (easingOpt) {
+            this._easingOpt = easingOpt;
+        }
+    });
 });

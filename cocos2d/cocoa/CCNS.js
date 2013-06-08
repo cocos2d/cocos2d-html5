@@ -24,77 +24,87 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-/**
- * first, judge whether the form of the string like this: {x,y}  <br/>
- * if the form is right,the string will be splited into the parameter strs;<br/>
- * or the parameter strs will be empty. <br/>
- * if the form is right return true,else return false.<br/>
- * @function
- * @param {String} content
- * @param {String} strs
- * @return {String}
- */
-cc.splitWithForm = function (content, strs) {
-    do {
-        if (!content) break;
+
+define(["cocos2d/CCNamespace", "cocos2d/cocoa/CCGeometry"], function (cc) {
+    /**
+     * first, judge whether the form of the string like this: {x,y}  <br/>
+     * if the form is right,the string will be splited into the parameter strs;<br/>
+     * or the parameter strs will be empty. <br/>
+     * if the form is right return true,else return false.<br/>
+     * @function
+     * @param {String} content
+     * @param {String} strs
+     * @return {String}
+     */
+    cc.splitWithForm = function (content, strs) {
+        if (!content)
+            return strs;
 
         // string is empty
-        if (content.length == 0) break;
+        if (content.length == 0)
+            return strs;
 
         var posLeft = content.indexOf('{');
         var posRight = content.indexOf('}');
 
         // don't have '{' and '}'
-        if (posLeft == -1 || posRight == -1) break;
+        if (posLeft == -1 || posRight == -1)
+            return strs;
         // '}' is before '{'
-        if (posLeft > posRight) break;
+        if (posLeft > posRight)
+            return strs;
 
         var pointStr = content.substr(posLeft + 1, posRight - posLeft - 1);
         // nothing between '{' and '}'
-        if (pointStr.length == 0) break;
+        if (pointStr.length == 0)
+            return strs;
 
         var nPos1 = pointStr.indexOf('{');
         var nPos2 = pointStr.indexOf('}');
         // contain '{' or '}'
-        if (nPos1 != -1 || nPos2 != -1) break;
+        if (nPos1 != -1 || nPos2 != -1)
+            return strs;
         strs = pointStr.split(",");
         if (strs.length != 2 || strs[0] != null || strs[1] != null) {
-            break;
+            return strs;
         }
-    } while (0);
 
-    return strs;
-};
+        return strs;
+    };
 
-/**
- * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
- * The string is not localized, so items are always separated with a comma. <br/>
- * If the string is not well-formed, the function returns cc.RectZero.
- * @function
- * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
- * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
- * These components can represent integer or float values.
- * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
- * Constructor
- * @example
- * // example
- * var rect = cc.RectFromString("{{3,2},{4,5}}");
- */
-cc.RectFromString = function (content) {
-    var result = cc.RectZero();
-    do {
-        if (!content) break;
+    /**
+     * Returns a Core Graphics rectangle structure corresponding to the data in a given string. <br/>
+     * The string is not localized, so items are always separated with a comma. <br/>
+     * If the string is not well-formed, the function returns cc.RectZero.
+     * @function
+     * @param {String} content content A string object whose contents are of the form "{{x,y},{w, h}}",<br/>
+     * where x is the x coordinate, y is the y coordinate, w is the width, and h is the height. <br/>
+     * These components can represent integer or float values.
+     * @return {cc.Rect} A Core Graphics structure that represents a rectangle.
+     * Constructor
+     * @example
+     * // example
+     * var rect = cc.RectFromString("{{3,2},{4,5}}");
+     */
+    cc.RectFromString = function (content) {
+        var result = cc.RectZero();
+
+        if (!content)
+            return result;
 
         // find the first '{' and the third '}'
         var posLeft = content.indexOf('{') + 1;
         var posRight = content.lastIndexOf('}', content.length);
-        if (posLeft == -1 || posRight == -1) break;
+        if (posLeft == -1 || posRight == -1)
+            return result;
 
         content = content.substring(posLeft, posRight);
         var nPointEnd = content.indexOf('}');
-        if (nPointEnd == -1) break;
+        if (nPointEnd == -1)
+            return result;
         nPointEnd = content.indexOf(',', nPointEnd);
-        if (nPointEnd == -1) break;
+        if (nPointEnd == -1)
+            return result;
         // get the point string and size string
         var pointStr = content.substr(0, nPointEnd);
         var sizeStr = content.substr(nPointEnd + 1, content.length - nPointEnd);
@@ -109,63 +119,64 @@ cc.RectFromString = function (content) {
         var height = parseFloat(sizeInfo[1]);
 
         result = cc.rect(x, y, width, height);
-    } while (0);
-    return result;
-};
 
-/**
- * Returns a Core Graphics point structure corresponding to the data in a given string.
- * @function
- * @param {String} content   A string object whose contents are of the form "{x,y}",
- * where x is the x coordinate and y is the y coordinate.<br/>
- * The x and y values can represent integer or float values. <br/>
- * The string is not localized, so items are always separated with a comma.<br/>
- * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
- * If the string is not well-formed, the function returns cc.PointZero.
- * Constructor
- * @example
- * //example
- * var point = cc.PointFromString("{3.0,2.5}");
- */
-cc.PointFromString = function (content) {
-    var ret = cc.PointZero();
-    try {
-        if (content == "")
-            return ret;
+        return result;
+    };
 
-        var strs = cc.splitWithForm(content);
-        var x = parseFloat(strs[0]);
-        var y = parseFloat(strs[1]);
-        ret = cc.p(x, y);
-    } catch (e) {
-    }
-    return ret;
-};
+    /**
+     * Returns a Core Graphics point structure corresponding to the data in a given string.
+     * @function
+     * @param {String} content   A string object whose contents are of the form "{x,y}",
+     * where x is the x coordinate and y is the y coordinate.<br/>
+     * The x and y values can represent integer or float values. <br/>
+     * The string is not localized, so items are always separated with a comma.<br/>
+     * @return {cc.Point} A Core Graphics structure that represents a point.<br/>
+     * If the string is not well-formed, the function returns cc.PointZero.
+     * Constructor
+     * @example
+     * //example
+     * var point = cc.PointFromString("{3.0,2.5}");
+     */
+    cc.PointFromString = function (content) {
+        var ret = cc.PointZero();
+        try {
+            if (content == "")
+                return ret;
 
-/**
- * Returns a Core Graphics size structure corresponding to the data in a given string.
- * @function
- * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
- * where w is the width and h is the height.<br/>
- * The w and h values can be integer or float values. <br/>
- * The string is not localized, so items are always separated with a comma.<br/>
- * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
- * If the string is not well-formed, the function returns cc.SizeZero.
- * @example
- * // example
- * var size = cc.SizeFromString("{3.0,2.5}");
- */
-cc.SizeFromString = function (content) {
-    var ret = cc.SizeZero();
-    try {
-        if (content == "")
-            return ret;
+            var strs = cc.splitWithForm(content);
+            var x = parseFloat(strs[0]);
+            var y = parseFloat(strs[1]);
+            ret = cc.p(x, y);
+        } catch (e) {
+        }
+        return ret;
+    };
 
-        var strs = cc.splitWithForm(content);
-        var width = parseFloat(strs[0]);
-        var height = parseFloat(strs[1]);
-        ret = cc.size(width, height);
-    } catch (e) {
-    }
-    return ret;
-};
+    /**
+     * Returns a Core Graphics size structure corresponding to the data in a given string.
+     * @function
+     * @param {String} content   A string object whose contents are of the form "{w, h}",<br/>
+     * where w is the width and h is the height.<br/>
+     * The w and h values can be integer or float values. <br/>
+     * The string is not localized, so items are always separated with a comma.<br/>
+     * @return {cc.Size} A Core Graphics structure that represents a size.<br/>
+     * If the string is not well-formed, the function returns cc.SizeZero.
+     * @example
+     * // example
+     * var size = cc.SizeFromString("{3.0,2.5}");
+     */
+    cc.SizeFromString = function (content) {
+        var ret = cc.SizeZero();
+        try {
+            if (content == "")
+                return ret;
+
+            var strs = cc.splitWithForm(content);
+            var width = parseFloat(strs[0]);
+            var height = parseFloat(strs[1]);
+            ret = cc.size(width, height);
+        } catch (e) {
+        }
+        return ret;
+    };
+});
