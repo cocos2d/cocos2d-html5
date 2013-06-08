@@ -139,9 +139,7 @@ define("cocos2d/CCGlobal", ["cocos2d/CCNamespace", "cocos2d/SysNamespace",
 	"extensions/GUI/CCControlExtension/CCScale9Sprite",
 	"extensions/GUI/CCScrollView/CCScrollView",
 	"extensions/GUI/CCScrollView/CCSorting",
-	"extensions/GUI/CCScrollView/CCTableView",
-	"chipmunk/chipmunk",
-	"box2d/box2d"
+	"extensions/GUI/CCScrollView/CCTableView"
 ], function(cc, sys) {
 	window.cc = cc;
 	window.sys = sys;
