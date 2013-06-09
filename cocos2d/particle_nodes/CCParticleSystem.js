@@ -1476,15 +1476,19 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
      * Add a particle to the emitter
      * @return {Boolean}
      */
-    addParticle:function () {
+    addParticle: function () {
         if (this.isFull())
             return false;
         var particle, particles = this._particles;
-        if(cc.renderContextType === cc.CANVAS && this._particleCount < particles.length){
-            particle =particles[this._particleCount];
-        }else{
-            particle = new cc.Particle();
-            particles.push(particle);
+        if (cc.renderContextType === cc.CANVAS) {
+            if (this._particleCount < particles.length) {
+                particle = particles[this._particleCount];
+            } else {
+                particle = new cc.Particle();
+                particles.push(particle);
+            }
+        } else {
+            particle = particles[this._particleCount];
         }
         this.initParticle(particle);
         ++this._particleCount;
