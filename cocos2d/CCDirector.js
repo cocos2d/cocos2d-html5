@@ -592,10 +592,15 @@ cc.Director = cc.Class.extend(/** @lends cc.Director# */{
         cc.Assert(scene != null, "the scene should not be null");
 
         var i = this._scenesStack.length;
-
-        this._sendCleanupToScene = true;
-        this._scenesStack[i - 1] = scene;
-        this._nextScene = scene;
+        if(i === 0){
+            this._sendCleanupToScene = true;
+            this._scenesStack[i] = scene;
+            this._nextScene = scene;
+        } else {
+            this._sendCleanupToScene = true;
+            this._scenesStack[i - 1] = scene;
+            this._nextScene = scene;
+        }
     },
 
     /**
