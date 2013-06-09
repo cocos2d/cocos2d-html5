@@ -757,6 +757,13 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     _updateTexture:function () {
         this._labelContext = this._getLabelContext();
 
+        if(this._string.length === 0){
+            this._labelCanvas.width = 1;
+            this._labelCanvas.height = this._contentSize.height;
+            this.setTextureRect(cc.rect(0, 0, 1, this._contentSize.height));
+            return true;
+        }
+
         //set size for labelCanvas
         this._labelContext.font = this._fontStyleStr;
         this._updateTTF();
@@ -774,7 +781,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
     _needUpdateTexture:false,
     visit:function(){
-        if(this._needUpdateTexture && this._string.length > 0){
+        if(this._needUpdateTexture ){
             this._needUpdateTexture = false;
             this._updateTexture();
         }
