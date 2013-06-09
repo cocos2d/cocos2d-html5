@@ -87,11 +87,11 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             insets = cc.RectZero();
         } else {
             insets = this._spriteFrameRotated ? cc.RectMake(this._insetBottom, this._insetLeft,
-                this._spriteRect.size.width - this._insetRight - this._insetLeft,
-                this._spriteRect.size.height - this._insetTop - this._insetBottom) :
+                this._spriteRect.width - this._insetRight - this._insetLeft,
+                this._spriteRect.height - this._insetTop - this._insetBottom) :
                 cc.RectMake(this._insetLeft, this._insetTop,
-                    this._spriteRect.size.width - this._insetLeft - this._insetRight,
-                    this._spriteRect.size.height - this._insetTop - this._insetBottom);
+                    this._spriteRect.width - this._insetLeft - this._insetRight,
+                    this._spriteRect.height - this._insetTop - this._insetBottom);
         }
         this.setCapInsets(insets);
     },
@@ -180,6 +180,12 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     },
     setOpacity: function (opacity) {
         this._opacity = opacity;
+        var scaleChildren = this._scale9Image.getChildren();
+        for (var i = 0; i < scaleChildren.length; i++) {
+            if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
+                scaleChildren[i].setOpacity(this._opacity);
+            }
+        }
     },
 
     /** Color: conforms to CCRGBAProtocol protocol */
@@ -189,11 +195,9 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
     setColor: function (color) {
         this._color = color;
         var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren && scaleChildren.length != 0) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
-                    scaleChildren[i].setColor(this._color);
-                }
+        for (var i = 0; i < scaleChildren.length; i++) {
+            if (scaleChildren[i] && scaleChildren[i].RGBAProtocol) {
+                scaleChildren[i].setColor(this._color);
             }
         }
     },
@@ -432,7 +436,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
 
         var rectZero = cc.RectZero();
         // If there is no given rect
-        if (cc.Rect.CCRectEqualToRect(rect, rectZero)) {
+        if (cc.rectEqualToRect(rect, rectZero)) {
             // Get the texture size as original
             if (selTexture instanceof  cc.Texture2D) {
                 var textureSize = selTexture.getContentSize();
@@ -452,17 +456,17 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         var h = rectSize.height;
 
         // If there is no specified center region
-        if (cc.Rect.CCRectEqualToRect(this._capInsetsInternal, rectZero)) {
+        if (cc.rectEqualToRect(this._capInsetsInternal, rectZero)) {
             // CCLog("... cap insets not specified : using default cap insets ...");
             this._capInsetsInternal = cc.rect(w / 3, h / 3, w / 3, h / 3);
         }
 
-        var left_w = this._capInsetsInternal.origin.x;
-        var center_w = this._capInsetsInternal.size.width;
+        var left_w = this._capInsetsInternal.x;
+        var center_w = this._capInsetsInternal.width;
         var right_w = w - (left_w + center_w);
 
-        var top_h = this._capInsetsInternal.origin.y;
-        var center_h = this._capInsetsInternal.size.height;
+        var top_h = this._capInsetsInternal.y;
+        var center_h = this._capInsetsInternal.height;
         var bottom_h = h - (top_h + center_h);
 
         // calculate rects
@@ -517,7 +521,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         if (!rotated) {
             // CCLog("!rotated");
             var t = cc.AffineTransformMakeIdentity();
-            t = cc.AffineTransformTranslate(t, rect.origin.x, rect.origin.y);
+            t = cc.AffineTransformTranslate(t, rect.x, rect.y);
 
             centerbounds = cc.RectApplyAffineTransform(centerbounds, t);
             rightbottombounds = cc.RectApplyAffineTransform(rightbottombounds, t);
@@ -591,7 +595,7 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             var rotatedcenterbottombounds = centerbottombounds;
             var rotatedcentertopbounds = centertopbounds;
 
-            t = cc.AffineTransformTranslate(t, rect.size.height + rect.origin.x, rect.origin.y);
+            t = cc.AffineTransformTranslate(t, rect.height + rect.x, rect.y);
             t = cc.AffineTransformRotate(t, 1.57079633);
 
             centerbounds = cc.RectApplyAffineTransform(centerbounds, t);
@@ -604,15 +608,15 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
             centerbottombounds = cc.RectApplyAffineTransform(centerbottombounds, t);
             centertopbounds = cc.RectApplyAffineTransform(centertopbounds, t);
 
-            rotatedcenterbounds.origin = {x: centerbounds.origin.x, y: centerbounds.origin.y};
-            rotatedrightbottombounds.origin = {x: rightbottombounds.origin.x, y: rightbottombounds.origin.y};
-            rotatedleftbottombounds.origin = {x: leftbottombounds.origin.x, y: leftbottombounds.origin.y};
-            rotatedrighttopbounds.origin = {x: righttopbounds.origin.x, y: righttopbounds.origin.y};
-            rotatedlefttopbounds.origin = {x: lefttopbounds.origin.x, y: lefttopbounds.origin.y};
-            rotatedrightcenterbounds.origin = {x: rightcenterbounds.origin.x, y: rightcenterbounds.origin.y};
-            rotatedleftcenterbounds.origin = {x: leftcenterbounds.origin.x, y: leftcenterbounds.origin.y};
-            rotatedcenterbottombounds.origin = {x: centerbottombounds.origin.x, y: centerbottombounds.origin.y};
-            rotatedcentertopbounds.origin = {x: centertopbounds.origin.x, y: centertopbounds.origin.y};
+            rotatedcenterbounds.origin = {x: centerbounds.x, y: centerbounds.y};
+            rotatedrightbottombounds.origin = {x: rightbottombounds.x, y: rightbottombounds.y};
+            rotatedleftbottombounds.origin = {x: leftbottombounds.x, y: leftbottombounds.y};
+            rotatedrighttopbounds.origin = {x: righttopbounds.x, y: righttopbounds.y};
+            rotatedlefttopbounds.origin = {x: lefttopbounds.x, y: lefttopbounds.y};
+            rotatedrightcenterbounds.origin = {x: rightcenterbounds.x, y: rightcenterbounds.y};
+            rotatedleftcenterbounds.origin = {x: leftcenterbounds.x, y: leftcenterbounds.y};
+            rotatedcenterbottombounds.origin = {x: centerbottombounds.x, y: centerbottombounds.y};
+            rotatedcentertopbounds.origin = {x: centertopbounds.x, y: centertopbounds.y};
 
             // Centre
             this._centre = new cc.Sprite();
@@ -682,26 +686,6 @@ cc.Scale9Sprite = cc.Node.extend(/** @lends cc.Scale9Sprite# */{
         this._insetTop = 0;
         this._insetRight = 0;
         this._insetBottom = 0;
-    },
-
-    setColor: function (color) {
-        this._color = color;
-        var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                scaleChildren[i].setColor(this._color);
-            }
-        }
-    },
-
-    setOpacity: function (opacity) {
-        this._opacity = opacity;
-        var scaleChildren = this._scale9Image.getChildren();
-        if (scaleChildren) {
-            for (var i = 0; i < scaleChildren.length; i++) {
-                scaleChildren[i].setOpacity(this._color);
-            }
-        }
     }
 });
 

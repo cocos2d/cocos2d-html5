@@ -1067,6 +1067,27 @@ if(cc.Browser.supportWebGL){
         return new cc.V3F_C4B_T2F_Quad();
     };
 
+    cc.V3F_C4B_T2F_QuadCopy = function (sourceQuad) {
+        if (!sourceQuad)
+            return  cc.V3F_C4B_T2F_QuadZero();
+
+        //return new cc.V3F_C4B_T2F_Quad(sourceQuad,tl,sourceQuad,bl,sourceQuad.tr,sourceQuad.br,null,0);
+        return {
+            tl: {vertices: {x: sourceQuad.tl.vertices.x, y: sourceQuad.tl.vertices.y, z: sourceQuad.tl.vertices.z},
+                colors: {r: sourceQuad.tl.colors.r, g: sourceQuad.tl.colors.g, b: sourceQuad.tl.colors.b, a: sourceQuad.tl.colors.a},
+                texCoords: {u: sourceQuad.tl.texCoords.u, v: sourceQuad.tl.texCoords.v}},
+            bl: {vertices: {x: sourceQuad.bl.vertices.x, y: sourceQuad.bl.vertices.y, z: sourceQuad.bl.vertices.z},
+                colors: {r: sourceQuad.bl.colors.r, g: sourceQuad.bl.colors.g, b: sourceQuad.bl.colors.b, a: sourceQuad.bl.colors.a},
+                texCoords: {u: sourceQuad.bl.texCoords.u, v: sourceQuad.bl.texCoords.v}},
+            tr: {vertices: {x: sourceQuad.tr.vertices.x, y: sourceQuad.tr.vertices.y, z: sourceQuad.tr.vertices.z},
+                colors: {r: sourceQuad.tr.colors.r, g: sourceQuad.tr.colors.g, b: sourceQuad.tr.colors.b, a: sourceQuad.tr.colors.a},
+                texCoords: {u: sourceQuad.tr.texCoords.u, v: sourceQuad.tr.texCoords.v}},
+            br: {vertices: {x: sourceQuad.br.vertices.x, y: sourceQuad.br.vertices.y, z: sourceQuad.br.vertices.z},
+                colors: {r: sourceQuad.br.colors.r, g: sourceQuad.br.colors.g, b: sourceQuad.br.colors.b, a: sourceQuad.br.colors.a},
+                texCoords: {u: sourceQuad.br.texCoords.u, v: sourceQuad.br.texCoords.v}}
+        };
+    };
+
     //redefine cc.V2F_C4B_T2F
     cc.V2F_C4B_T2F = function (vertices, colors, texCoords, arrayBuffer, offset) {
         this._arrayBuffer = arrayBuffer || new ArrayBuffer(cc.V2F_C4B_T2F.BYTES_PER_ELEMENT);

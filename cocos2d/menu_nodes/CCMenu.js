@@ -494,16 +494,16 @@ cc.Menu = cc.Layer.extend(/** @lends cc.Menu# */{
 
     _itemForTouch:function (touch) {
         var touchLocation = touch.getLocation();
-
-        if (this._children && this._children.length > 0) {
-            for (var i = 0; i < this._children.length; i++) {
-                if (this._children[i].isVisible() && this._children[i].isEnabled()) {
-                    var local = this._children[i].convertToNodeSpace(touchLocation);
-                    var r = this._children[i].rect();
-                    r.origin = cc.p(0,0);
-                    if (cc.Rect.CCRectContainsPoint(r, local)) {
-                        return this._children[i];
-                    }
+        var itemChildren = this._children;
+        if (itemChildren && itemChildren.length > 0) {
+            for (var i = 0; i < itemChildren.length; i++) {
+                if (itemChildren[i].isVisible() && itemChildren[i].isEnabled()) {
+                    var local = itemChildren[i].convertToNodeSpace(touchLocation);
+                    var r = itemChildren[i].rect();
+                    r.x = 0;
+                    r.y = 0;
+                    if (cc.rectContainsPoint(r, local))
+                        return itemChildren[i];
                 }
             }
         }

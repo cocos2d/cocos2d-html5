@@ -127,7 +127,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     spriteFrame = new cc.SpriteFrame();
                     if (frameDict.hasOwnProperty("spriteSize")) {
                         spriteFrame.initWithTexture(texture,
-                            cc.rect(textureRect.origin.x, textureRect.origin.y, spriteSize.width, spriteSize.height),
+                            cc.rect(textureRect.x, textureRect.y, spriteSize.width, spriteSize.height),
                             textureRotated,
                             spriteOffset,
                             spriteSourceSize);
@@ -140,7 +140,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     //clip to canvas
                     var tempTexture = cc.cutRotateImageToCanvas(spriteFrame.getTexture(), spriteFrame.getRect());
                     var rect = spriteFrame.getRect();
-                    spriteFrame.setRect(cc.rect(0, 0, rect.size.width, rect.size.height));
+                    spriteFrame.setRect(cc.rect(0, 0, rect.width, rect.height));
                     spriteFrame.setTexture(tempTexture);
                 }
 
@@ -187,7 +187,8 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
      */
     addSpriteFrames:function (plist, texture) {
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(plist);
+        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(plist);
+        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(fullPath);
 
         switch (arguments.length) {
             case 1:
@@ -201,9 +202,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
                     if (texturePath != "") {
                         // build texture path relative to plist file
-                        var getIndex = plist.lastIndexOf('/'), pszPath;
-                        pszPath = getIndex ? plist.substring(0, getIndex + 1) : "";
-                        texturePath = pszPath + texturePath;
+                        texturePath = cc.FileUtils.getInstance().fullPathFromRelativeFile(texturePath, plist);
                     } else {
                         // build texture path by replacing file extension
                         texturePath = plist;

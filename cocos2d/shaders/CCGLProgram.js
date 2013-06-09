@@ -261,7 +261,7 @@ cc.GLProgram = cc.Class.extend({
         var preStr = (type == this._glContext.VERTEX_SHADER) ? "precision highp float;\n" : "precision mediump float;\n";
 
         source = preStr
-            + "uniform mat4 CC_PMatrix;          \n"
+            + "uniform mat4 CC_PMatrix;         \n"
             + "uniform mat4 CC_MVMatrix;        \n"
             + "uniform mat4 CC_MVPMatrix;       \n"
             + "uniform vec4 CC_Time;            \n"
@@ -633,14 +633,18 @@ cc.GLProgram = cc.Class.extend({
     setUniformForModelViewProjectionMatrix: function () {
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX], false,
             cc.getMat4MultiplyValue(cc.projection_matrix_stack.top, cc.modelview_matrix_stack.top));
-        //this.setUniformLocationwithMatrix4fv(this._uniforms[cc.kCCUniformMVPMatrix],
-        //cc.getMat4MultiplyValue(cc.projection_matrix_stack.top, cc.modelview_matrix_stack.top), 1);
     },
 
     setUniformForModelViewProjectionMatrixWithMat4: function (swapMat4) {
         cc.kmMat4Multiply(swapMat4, cc.projection_matrix_stack.top, cc.modelview_matrix_stack.top);
         this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVPMATRIX], false, swapMat4.mat);
     },
+
+    setUniformForModelViewAndProjectionMatrixWithMat4: function () {
+        this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_MVMATRIX], false, cc.modelview_matrix_stack.top.mat);
+        this._glContext.uniformMatrix4fv(this._uniforms[cc.UNIFORM_PMATRIX], false, cc.projection_matrix_stack.top.mat);
+    },
+
 
     /**
      * returns the vertexShader error log

@@ -48,7 +48,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * Constructor
      */
     ctor:function () {
-        this._super();
+        cc.Sprite.prototype.ctor.call(this);
         this._dimensions = cc.SizeZero();
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
@@ -58,10 +58,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         this._setColorStyleStr();
     },
 
-    init:function (callsuper) {
-        if (callsuper) {
-            return this._super();
-        }
+    init:function () {
         return this.initWithString([" ", this._fontName, this._fontSize]);
     },
     /**
@@ -75,8 +72,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     setColor:function (color3) {
         if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b))
             return;
-
-        this._super(color3);
+        cc.Sprite.prototype.setColor.call(this,color3);
         this._setColorStyleStr();
         this.setNodeDirty();
     },
@@ -84,7 +80,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     setOpacity:function (opacity) {
         if (this._opacity === opacity)
             return;
-        this._super(opacity);
+        cc.Sprite.prototype.setOpacity.call(this, opacity);
         this._setColorStyleStr();
     },
 
@@ -210,7 +206,7 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
      * @param {cc.TEXT_ALIGNMENT_LEFT|cc.TEXT_ALIGNMENT_CENTER|cc.TEXT_ALIGNMENT_RIGHT} alignment Horizontal Alignment
      */
     setHorizontalAlignment:function (alignment) {
-        if (alignment != this._hAlignment) {
+        if (alignment !== this._hAlignment) {
             this._hAlignment = alignment;
 
             // Force update
@@ -278,17 +274,18 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     },
 
     _updateTTF:function () {
-        if (cc.renderContext.font != this._fontStyleStr)
-            cc.renderContext.font = this._fontStyleStr;
+        var context = cc.renderContext;
+        if (context.font != this._fontStyleStr)
+            context.font = this._fontStyleStr;
         // we need to find out if the label needs multiline, if its automatic new line or specified newline
-        var stringWidth = cc.renderContext.measureText(this._string).width;
-
-        if (this._string.indexOf('\n') !== -1 || (this._dimensions.width !== 0 && stringWidth > this._dimensions.width && this._string.indexOf(" ") !== -1)) {
+        var stringWidth = context.measureText(this._string).width;
+        var locDimensionsWidth = this._dimensions.width;
+        if (this._string.indexOf('\n') !== -1 || (locDimensionsWidth !== 0 && stringWidth > locDimensionsWidth && this._string.indexOf(" ") !== -1)) {
             var strings = this._strings = this._string.split('\n');
             var lineWidths = this._lineWidths = [];
             for (var i = 0; i < strings.length; i++) {
-                if (strings[i].indexOf(" ") !== -1 && this._dimensions.width > 0) {
-                    var percent = this._dimensions.width / cc.renderContext.measureText(this._strings[i]).width;
+                if (strings[i].indexOf(" ") !== -1 && locDimensionsWidth > 0) {
+                    var percent = locDimensionsWidth / context.measureText(this._strings[i]).width;
                     var startSearch = 0 | (percent * strings[i].length + 1);
                     var cutoff = startSearch;
                     var tempLineWidth = 0;
@@ -296,18 +293,18 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
                         do {
                             cutoff = strings[i].lastIndexOf(" ", cutoff - 1);
                             var str = strings[i].substring(0, cutoff);
-                            tempLineWidth = cc.renderContext.measureText(str).width;
+                            tempLineWidth = context.measureText(str).width;
                             if (cutoff === -1) {
                                 cutoff = strings[i].indexOf(" ", startSearch);
                                 break;
                             }
-                        } while (tempLineWidth > this._dimensions.width);
+                        } while (tempLineWidth > locDimensionsWidth);
                         var newline = strings[i].substr(cutoff + 1);
                         strings.splice(i + 1, 0, newline);
                         strings[i] = str;
                     }
                 }
-                lineWidths[i] = tempLineWidth || cc.renderContext.measureText(strings[i]).width;
+                lineWidths[i] = tempLineWidth || context.measureText(strings[i]).width;
             }
             this._isMultiLine = true;
         } else
@@ -315,16 +312,18 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
 
         // we will need to change contentSize to cater this
         //if dimension is not set, set contentSize according to actual size
-        if (this._dimensions.width === 0) {
+        if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
                 this.setContentSize(cc.size(Math.max.apply(Math, this._lineWidths), this._fontClientHeight * this._strings.length));
             else
                 this.setContentSize(cc.size(stringWidth, this._fontClientHeight));
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x ;
+            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
         } else {
             //dimension is already set, contentSize must be same as dimension
-            this.setContentSize(cc.size(this._dimensions.width, this._dimensions.height));
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+            this.setContentSize(cc.size(locDimensionsWidth, this._dimensions.height));
+            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
+            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
         }
     },
     /**
@@ -344,36 +343,40 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
         if (context.font != this._fontStyleStr)
             context.font = this._fontStyleStr;
 
-        context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
-        context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
-        var xoffset = 0;
-        if (this._hAlignment === cc.TEXT_ALIGNMENT_RIGHT)
-            xoffset = this._contentSize.width;
-        else if (this._hAlignment === cc.TEXT_ALIGNMENT_CENTER)
-            xoffset = this._contentSize.width / 2;
-        if (this._isMultiLine) {
-            var yOffset = 0;
-            if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
-                yOffset = this._fontSize + this._contentSize.height - this._fontSize * this._strings.length;
-            else if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
-                yOffset = this._fontSize / 2 + (this._contentSize.height - this._fontSize * this._strings.length) / 2;
+        var locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
+            locContentSizeWidth = this._contentSize.width, locContentSizeHeight = this._contentSize.height;
+        var locFontSize = this._fontSize;
 
-            for (var i = 0; i < this._strings.length; i++) {
+        context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
+        context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
+        var xoffset = 0;
+        if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
+            xoffset = locContentSizeWidth;
+        else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
+            xoffset = locContentSizeWidth / 2;
+        if (this._isMultiLine) {
+            var yOffset = 0, strLen = this._strings.length;
+            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+                yOffset = locFontSize + locContentSizeHeight - locFontSize * strLen;
+            else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
+                yOffset = locFontSize / 2 + (locContentSizeHeight - locFontSize * strLen) / 2;
+
+            for (var i = 0; i < strLen; i++) {
                 var line = this._strings[i];
-                context.fillText(line, xoffset, -this._contentSize.height + (this._fontSize * i) + yOffset);
+                context.fillText(line, xoffset, -locContentSizeHeight + (locFontSize * i) + yOffset);
             }
         } else {
-            if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
                 context.fillText(this._string, xoffset, 0);
-            else if(this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP)
-                context.fillText(this._string, xoffset, -this._contentSize.height);
+            else if(locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP)
+                context.fillText(this._string, xoffset, -locContentSizeHeight);
             else
-                context.fillText(this._string, xoffset, -this._contentSize.height/2);
+                context.fillText(this._string, xoffset, -locContentSizeHeight/2);
         }
 
         if (cc.SPRITE_DEBUG_DRAW === 1) {
             context.fillStyle = "rgba(255,0,0,0.2)";
-            context.fillRect(this._offsetPosition.x, this._offsetPosition.y, this._contentSize.width, -this._contentSize.height);
+            context.fillRect(this._offsetPosition.x, this._offsetPosition.y, locContentSizeWidth, -locContentSizeHeight);
         }
         cc.INCREMENT_GL_DRAWS(1);
     }
@@ -415,7 +418,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     _dimensions:null,
     _hAlignment:cc.TEXT_ALIGNMENT_CENTER,
     _vAlignment:cc.VERTICAL_TEXT_ALIGNMENT_TOP,
-    _fontName:"Arial",
+    _fontName : null,
     _fontSize:0.0,
     _string:"",
     _isMultiLine:false,
@@ -425,20 +428,18 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * Constructor
      */
     ctor:function () {
-        this._super();
+        cc.Sprite.prototype.ctor.call(this);
         this._dimensions = cc.SizeZero();
         this._opacityModifyRGB = false;
         this._fontStyleStr = "";
         this._colorStyleStr = "";
+        this._fontName = "Arial";
         this._opacity = 255;
         this._color = cc.white();
         this._setColorStyleStr();
     },
 
-    init:function (callsuper) {
-        if (callsuper) {
-            return this._super();
-        }
+    init:function () {
         return this.initWithString([" ", this._fontName, this._fontSize]);
     },
     /**
@@ -453,7 +454,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b))
             return;
 
-        this._super(color3);
+        cc.Sprite.prototype.setColor.call(this, color3);
         this._setColorStyleStr();
         this.setNodeDirty();
     },
@@ -461,7 +462,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     setOpacity:function (opacity) {
         if (this._opacity === opacity)
             return;
-        this._super(opacity);
+        cc.Sprite.prototype.setOpacity.call(this, opacity);
         this._setColorStyleStr();
     },
 
@@ -629,8 +630,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     setFontSize:function (fontSize) {
         if (this._fontSize != fontSize) {
             this._fontSize = fontSize;
-            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
+            this._fontStyleStr = fontSize + "px '" + this._fontName + "'";
+            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,fontSize);
             // Force update
             this._needUpdateTexture = true;
         }
@@ -643,8 +644,8 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     setFontName:function (fontName) {
         if (this._fontName && this._fontName != fontName) {
             this._fontName = fontName;
-            this._fontStyleStr = this._fontSize + "px '" + this._fontName + "'";
-            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(this._fontName,this._fontSize);
+            this._fontStyleStr = this._fontSize + "px '" + fontName + "'";
+            this._fontClientHeight = cc.LabelTTF.__getFontHeightByDiv(fontName,this._fontSize);
             // Force update
             this._needUpdateTexture = true;
         }
@@ -653,38 +654,42 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
     _drawTTFInCanvasForWebGL:function (context) {
         if (!context)
             return;
-        context.setTransform(1,0,0,1,0, this._contentSize.height);
+
+        var locContentSizeHeight = this._contentSize.height, locVAlignment = this._vAlignment, locHAlignment = this._hAlignment,
+            locFontSize = this._fontSize;
+
+        context.setTransform(1,0,0,1,0, locContentSizeHeight);
         //this is fillText for canvas
         if (context.font != this._fontStyleStr)
             context.font = this._fontStyleStr;
         context.fillStyle = "rgba(255,255,255,1)";
 
-        context.textBaseline = cc.LabelTTF._textBaseline[this._vAlignment];
-        context.textAlign = cc.LabelTTF._textAlign[this._hAlignment];
+        context.textBaseline = cc.LabelTTF._textBaseline[locVAlignment];
+        context.textAlign = cc.LabelTTF._textAlign[locHAlignment];
 
         var xoffset = 0;
-        if (this._hAlignment === cc.TEXT_ALIGNMENT_RIGHT)
+        if (locHAlignment === cc.TEXT_ALIGNMENT_RIGHT)
             xoffset = this._contentSize.width;
-        else if (this._hAlignment === cc.TEXT_ALIGNMENT_CENTER)
+        else if (locHAlignment === cc.TEXT_ALIGNMENT_CENTER)
             xoffset = this._contentSize.width / 2;
         if (this._isMultiLine) {
-            var yOffset = 0;
-            if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
-                yOffset = this._fontSize + this._contentSize.height - this._fontSize * this._strings.length;
-            else if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
-                yOffset = this._fontSize / 2 + (this._contentSize.height - this._fontSize * this._strings.length) / 2;
+            var yOffset = 0, locStrLen = this._strings.length;
+            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+                yOffset = locFontSize + locContentSizeHeight - locFontSize * locStrLen;
+            else if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_CENTER)
+                yOffset = locFontSize / 2 + (locContentSizeHeight - locFontSize * locStrLen) / 2;
 
-            for (var i = 0; i < this._strings.length; i++) {
+            for (var i = 0; i < locStrLen; i++) {
                 var line = this._strings[i];
-                context.fillText(line, xoffset, -this._contentSize.height + (this._fontSize * i) + yOffset);
+                context.fillText(line, xoffset, -locContentSizeHeight + (locFontSize * i) + yOffset);
             }
         } else {
-            if (this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
+            if (locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_BOTTOM)
                 context.fillText(this._string, xoffset, 0);
-            else if(this._vAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP)
-                context.fillText(this._string, xoffset, -this._contentSize.height);
+            else if(locVAlignment === cc.VERTICAL_TEXT_ALIGNMENT_TOP)
+                context.fillText(this._string, xoffset, -locContentSizeHeight);
             else
-                context.fillText(this._string, xoffset, -this._contentSize.height/2);
+                context.fillText(this._string, xoffset, -locContentSizeHeight/2);
         }
     },
 
@@ -701,14 +706,17 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         this._labelContext = this._labelCanvas.getContext("2d");
         return this._labelContext;
     },
+
     _updateTTF:function () {
-        var stringWidth = this._labelContext.measureText(this._string).width;
-        if(this._string.indexOf('\n') !== -1 || (this._dimensions.width !== 0 && stringWidth > this._dimensions.width && this._string.indexOf(" ") !== -1)) {
+        var locDimensionsWidth = this._dimensions.width, locLabelContext = this._labelContext;
+
+        var stringWidth = locLabelContext.measureText(this._string).width;
+        if(this._string.indexOf('\n') !== -1 || (locDimensionsWidth !== 0 && stringWidth > locDimensionsWidth && this._string.indexOf(" ") !== -1)) {
             var strings = this._strings = this._string.split('\n');
             var lineWidths = this._lineWidths = [];
             for (var i = 0; i < strings.length; i++) {
-                if (strings[i].indexOf(" ") !== -1 && this._dimensions.width > 0) {
-                    var percent = this._dimensions.width / this._labelContext.measureText(this._strings[i]).width;
+                if (strings[i].indexOf(" ") !== -1 && locDimensionsWidth > 0) {
+                    var percent = locDimensionsWidth / locLabelContext.measureText(this._strings[i]).width;
                     var startSearch = 0 | (percent * strings[i].length + 1);
                     var cutoff = startSearch;
                     var tempLineWidth = 0;
@@ -716,62 +724,68 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
                         do {
                             cutoff = strings[i].lastIndexOf(" ", cutoff - 1);
                             var str = strings[i].substring(0, cutoff);
-                            tempLineWidth = this._labelContext.measureText(str).width;
+                            tempLineWidth = locLabelContext.measureText(str).width;
                             if (cutoff === -1) {
                                 cutoff = strings[i].indexOf(" ", startSearch);
                                 break;
                             }
-                        } while (tempLineWidth > this._dimensions.width);
+                        } while (tempLineWidth > locDimensionsWidth);
                         var newline = strings[i].substr(cutoff + 1);
                         strings.splice(i + 1, 0, newline);
                         strings[i] = str;
                     }
                 }
-                lineWidths[i] = tempLineWidth || this._labelContext.measureText(strings[i]).width;
+                lineWidths[i] = tempLineWidth || locLabelContext.measureText(strings[i]).width;
             }
             this._isMultiLine = true;
         } else
             this._isMultiLine = false;
 
-        if (this._dimensions.width === 0) {
+        if (locDimensionsWidth === 0) {
             if (this._isMultiLine)
                 this.setContentSize(cc.size(Math.max.apply(Math, this._lineWidths), this._fontClientHeight * this._strings.length));
             else
                 this.setContentSize(cc.size(stringWidth, this._fontClientHeight));
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
         } else {
             //dimension is already set, contentSize must be same as dimension
-            this.setContentSize(cc.size(this._dimensions.width, this._dimensions.height));
-            this._anchorPointInPoints = new cc.Point(this._contentSize.width * this._anchorPoint.x, this._contentSize.height * this._anchorPoint.y);
+            this.setContentSize(cc.size(locDimensionsWidth, this._dimensions.height));
         }
+        this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
+        this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
     },
 
     _updateTexture:function () {
         this._labelContext = this._getLabelContext();
 
+        if(this._string.length === 0){
+            this._labelCanvas.width = 1;
+            this._labelCanvas.height = this._contentSize.height;
+            this.setTextureRect(cc.rect(0, 0, 1, this._contentSize.height));
+            return true;
+        }
+
         //set size for labelCanvas
         this._labelContext.font = this._fontStyleStr;
         this._updateTTF();
-
-        this._labelCanvas.width = this._contentSize.width;
-        this._labelCanvas.height = this._contentSize.height;
-
+        var width = this._contentSize.width, height = this._contentSize.height;
+        this._labelCanvas.width = width;
+        this._labelCanvas.height = height;
 
         //draw text to labelCanvas
         this._drawTTFInCanvasForWebGL(this._labelContext);
         this._texture.handleLoadedTexture();
 
-        this.setTextureRect(cc.rect(0, 0, this._labelCanvas.width, this._labelCanvas.height));
+        this.setTextureRect(cc.rect(0, 0, width, height));
         return true;
     },
 
     _needUpdateTexture:false,
     visit:function(){
-        if(this._needUpdateTexture && this._string.length > 0){
+        if(this._needUpdateTexture ){
             this._needUpdateTexture = false;
             this._updateTexture();
         }
-        this._super();
+        cc.Sprite.prototype.visit.call(this);
     },
 
     /**
@@ -779,17 +793,18 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
      * @param {WebGLRenderContext} ctx 3d context of canvas
      */
     draw:function (ctx) {
-        var gl = ctx || cc.renderContext;
+        var gl = ctx || cc.renderContext, locTexture = this._texture;
         //cc.Assert(!this._batchNode, "If cc.Sprite is being rendered by cc.SpriteBatchNode, cc.Sprite#draw SHOULD NOT be called");
 
-        if (this._texture && this._texture.isLoaded()) {
+        if (locTexture && locTexture._isLoaded) {
             this._shaderProgram.use();
-            this._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(this._mvpMatrix);
+            this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
-            cc.glBindTexture2D(this._texture);
+            //cc.glBindTexture2D(locTexture);
+            cc._currentBoundTexture[0] = locTexture;
             gl.activeTexture(gl.TEXTURE0);
-            gl.bindTexture(gl.TEXTURE_2D, this._texture._webTextureObj);
+            gl.bindTexture(gl.TEXTURE_2D, locTexture._webTextureObj);
 
             cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
@@ -856,8 +871,8 @@ cc.LabelTTF.__labelHeightDiv.innerHTML = "ajghl~!";
 cc.LabelTTF.__labelHeightDiv.style.position = "absolute";
 cc.LabelTTF.__labelHeightDiv.style.left = "-100px";
 cc.LabelTTF.__labelHeightDiv.style.top = "-100px";
+cc.LabelTTF.__labelHeightDiv.style.lineHeight = "normal";
 document.body.appendChild(cc.LabelTTF.__labelHeightDiv);
-
 
 cc.LabelTTF.__getFontHeightByDiv = function(fontName, fontSize){
     var labelDiv = cc.LabelTTF.__labelHeightDiv;

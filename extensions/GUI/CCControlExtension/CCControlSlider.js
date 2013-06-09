@@ -66,7 +66,7 @@ cc.ControlSlider = cc.Control.extend({
 
         // Stretches content proportional to newLevel
         var textureRect = this._progressSprite.getTextureRect();
-        textureRect = cc.RectMake(textureRect.origin.x, textureRect.origin.y, percent * this._backgroundSprite.getContentSize().width, textureRect.size.height);
+        textureRect = cc.RectMake(textureRect.x, textureRect.y, percent * this._backgroundSprite.getContentSize().width, textureRect.height);
         this._progressSprite.setTextureRect(textureRect, this._progressSprite.isTextureRectRotated(), textureRect.size);
         this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
     },
@@ -143,7 +143,7 @@ cc.ControlSlider = cc.Control.extend({
 
             // Defines the content size
             var maxRect = cc.ControlUtils.CCRectUnion(backgroundSprite.getBoundingBox(), thumbItem.getBoundingBox());
-            var size = cc.SizeMake(maxRect.size.width + 2 * cc.SLIDER_MARGIN_H, maxRect.size.height + 2 * cc.SLIDER_MARGIN_V);
+            var size = cc.SizeMake(maxRect.width + 2 * cc.SLIDER_MARGIN_H, maxRect.height + 2 * cc.SLIDER_MARGIN_V);
             this.setContentSize(size);
             //setContentSize(CCSizeMake(backgroundSprite.getContentSize().width, thumbItem.getContentSize().height));
             // Add the slider background

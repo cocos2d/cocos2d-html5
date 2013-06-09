@@ -168,7 +168,7 @@ cc.SAXParser = cc.Class.extend(/** @lends cc.SAXParser# */{
      * @param {String} filePath
      */
     preloadPlist:function (filePath) {
-        filePath = cc.FileUtils.getInstance().fullPathFromRelativePath(filePath);
+        filePath = cc.FileUtils.getInstance().fullPathForFilename(filePath);
 
         if (window.XMLHttpRequest) {
             // for IE7+, Firefox, Chrome, Opera, Safari brower

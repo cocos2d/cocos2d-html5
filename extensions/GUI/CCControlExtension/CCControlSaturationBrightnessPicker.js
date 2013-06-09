@@ -106,8 +106,8 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         // Clamp the position of the icon within the circle
 
         // Get the center point of the bkgd image
-        var centerX = this._startPos.x + this._background.getBoundingBox().size.width * 0.5;
-        var centerY = this._startPos.y + this._background.getBoundingBox().size.height * 0.5;
+        var centerX = this._startPos.x + this._background.getBoundingBox().width * 0.5;
+        var centerY = this._startPos.y + this._background.getBoundingBox().height * 0.5;
 
         // Work out the distance difference between the location and center
         var dx = sliderPosition.x - centerX;
@@ -118,7 +118,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         var angle = Math.atan2(dy, dx);
 
         // Set the limit to the slider movement within the colour picker
-        var limit = this._background.getBoundingBox().size.width * 0.5;
+        var limit = this._background.getBoundingBox().width * 0.5;
 
         // Check distance doesn't exceed the bounds of the circle
         if (dist > limit) {
@@ -148,8 +148,8 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
     _checkSliderPosition:function (location) {
         // Clamp the position of the icon within the circle
         // get the center point of the bkgd image
-        var centerX = this._startPos.x + this._background.getBoundingBox().size.width * 0.5;
-        var centerY = this._startPos.y + this._background.getBoundingBox().size.height * 0.5;
+        var centerX = this._startPos.x + this._background.getBoundingBox().width * 0.5;
+        var centerY = this._startPos.y + this._background.getBoundingBox().height * 0.5;
 
         // work out the distance difference between the location and center
         var dx = location.x - centerX;
@@ -157,7 +157,7 @@ cc.ControlSaturationBrightnessPicker = cc.Control.extend({
         var dist = Math.sqrt(dx * dx + dy * dy);
 
         // check that the touch location is within the bounding rectangle before sending updates
-        if (dist <= this._background.getBoundingBox().size.width * .5) {
+        if (dist <= this._background.getBoundingBox().width * .5) {
             this._updateSliderPosition(location);
             this.sendActionsForControlEvents(cc.CONTROL_EVENT_VALUECHANGED);
             return true;

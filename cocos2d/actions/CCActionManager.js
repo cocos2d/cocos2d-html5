@@ -110,15 +110,16 @@ cc.ActionManager = cc.Class.extend({
         for (var i = 0; i < this._targets.length; i++) {
             var element = this._targets[i];
             if (element) {
-                this.removeAllActionsFromTarget(element.target);
+                this.removeAllActionsFromTarget(element.target, true);
             }
         }
     },
     /** Removes all actions from a certain target. <br/>
      * All the actions that belongs to the target will be removed.
      * @param {object} target
+     * @param {boolean} forceDelete
      */
-    removeAllActionsFromTarget:function (target) {
+    removeAllActionsFromTarget:function (target, forceDelete) {
         // explicit null handling
         if (target == null) {
             return;
@@ -127,12 +128,12 @@ cc.ActionManager = cc.Class.extend({
 
         //var element = (target in this._targets)? this._targets[ptarget]: null;
         if (element) {
-            if (element.currentAction in element.actions && !(element.currentActionSalvaged)) {
+            if (element.actions.indexOf(element.currentAction) !== -1 && !(element.currentActionSalvaged)) {
                 element.currentActionSalvaged = true;
             }
 
             element.actions = [];
-            if (this._currentTarget == element) {
+            if (this._currentTarget == element && !forceDelete) {
                 this._currentTargetSalvaged = true;
             } else {
                 this._deleteHashElement(element);
@@ -200,11 +201,8 @@ cc.ActionManager = cc.Class.extend({
             if (element.actions != null) {
                 for (var i = 0; i < element.actions.length; ++i) {
                     var action = element.actions[i];
-                    if (action) {
-                        if (action.getTag() == tag) {
-                            return action;
-                        }
-                    }
+                    if (action && action.getTag() == tag)
+                        return action;
                 }
             }
         }
@@ -327,37 +325,39 @@ cc.ActionManager = cc.Class.extend({
      * @param {Number} dt delta time in seconds
      */
     update:function (dt) {
-        for (var elt = 0; elt < this._targets.length; elt++) {
-            this._currentTarget = this._targets[elt];
+        var locTargets = this._targets , locCurrTarget;
+        for (var elt = 0; elt < locTargets.length; elt++) {
+            this._currentTarget = locTargets[elt];
+            locCurrTarget = this._currentTarget;
             this._currentTargetSalvaged = false;
-            if (!this._currentTarget.paused) {
+            if (!locCurrTarget.paused) {
                 // The 'actions' CCMutableArray may change while inside this loop.
-                for (this._currentTarget.actionIndex = 0; this._currentTarget.actionIndex < this._currentTarget.actions.length;
-                     this._currentTarget.actionIndex++) {
-                    this._currentTarget.currentAction = this._currentTarget.actions[this._currentTarget.actionIndex];
-                    if (!this._currentTarget.currentAction) {
+                for (locCurrTarget.actionIndex = 0; locCurrTarget.actionIndex < locCurrTarget.actions.length;
+                     locCurrTarget.actionIndex++) {
+                    locCurrTarget.currentAction = locCurrTarget.actions[locCurrTarget.actionIndex];
+                    if (!locCurrTarget.currentAction) {
                         continue;
                     }
 
-                    this._currentTarget.currentActionSalvaged = false;
+                    locCurrTarget.currentActionSalvaged = false;
 
-                    this._currentTarget.currentAction.step(dt);
+                    locCurrTarget.currentAction.step(dt);
 
-                    if (this._currentTarget.currentActionSalvaged) {
+                    if (locCurrTarget.currentActionSalvaged) {
                         // The currentAction told the node to remove it. To prevent the action from
                         // accidentally deallocating itself before finishing its step, we retained
                         // it. Now that step is done, it's safe to release it.
-                        this._currentTarget.currentAction = null;//release
-                    } else if (this._currentTarget.currentAction.isDone()) {
-                        this._currentTarget.currentAction.stop();
+                        locCurrTarget.currentAction = null;//release
+                    } else if (locCurrTarget.currentAction.isDone()) {
+                        locCurrTarget.currentAction.stop();
 
-                        var action = this._currentTarget.currentAction;
+                        var action = locCurrTarget.currentAction;
                         // Make currentAction nil to prevent removeAction from salvaging it.
-                        this._currentTarget.currentAction = null;
+                        locCurrTarget.currentAction = null;
                         this.removeAction(action);
                     }
 
-                    this._currentTarget.currentAction = null;
+                    locCurrTarget.currentAction = null;
                 }
             }
 
@@ -365,8 +365,8 @@ cc.ActionManager = cc.Class.extend({
             // so it is safe to ask this here (issue #490)
 
             // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
-            if (this._currentTargetSalvaged && this._currentTarget.actions.length == 0) {
-                this._deleteHashElement(this._currentTarget);
+            if (this._currentTargetSalvaged && locCurrTarget.actions.length == 0) {
+                this._deleteHashElement(locCurrTarget);
             }
         }
     }

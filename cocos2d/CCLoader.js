@@ -225,7 +225,10 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
 
     _schedulePreload:function () {
-        this._interval = setInterval(this._preload.bind(this), this._animationInterval * 1000);
+        var _self = this;
+        this._interval = setInterval(function(){
+            _self._preload();
+        }, this._animationInterval * 1000);
     },
 
     _unschedulePreload:function () {
@@ -273,7 +276,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
     },
 
     _registerFaceFont:function (fontRes) {
-        var srcArr = fontRes.src;
+        var srcArr = cc.FileUtils.getInstance().fullPathForFilename(fontRes.src);
         if (srcArr && srcArr.length > 0) {
             var fontStyle = document.createElement("style");
             fontStyle.type = "text/css";
