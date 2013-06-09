@@ -105,13 +105,13 @@ cc.glInvalidateStateCache = function () {
 cc.glUseProgram = function (program) {
     if (program !== cc._currentShaderProgram) {
         cc._currentShaderProgram = program;
-        cc.renderContext.useProgram(program);
+        gl.useProgram(program);
     }
 };
 
 if(!cc.ENABLE_GL_STATE_CACHE){
     cc.glUseProgram = function (program) {
-        cc.renderContext.useProgram(program);
+        gl.useProgram(program);
     }
 }
 
@@ -125,7 +125,7 @@ cc.glDeleteProgram = function (program) {
         if (program === cc._currentShaderProgram)
             cc._currentShaderProgram = -1;
     }
-    cc.renderContext.deleteProgram(program);
+    gl.deleteProgram(program);
 };
 
 /**
@@ -143,17 +143,33 @@ cc.glBlendFunc = function (sfactor, dfactor) {
 };
 
 cc.setBlending = function (sfactor, dfactor) {
-    if ((sfactor === cc.renderContext.ONE) && (dfactor === cc.renderContext.ZERO)) {
-        cc.renderContext.disable(cc.renderContext.BLEND);
+    var ctx = cc.renderContext;
+    if ((sfactor === ctx.ONE) && (dfactor === ctx.ZERO)) {
+        ctx.disable(ctx.BLEND);
     } else {
-        cc.renderContext.enable(cc.renderContext.BLEND);
-        //cc.renderContext.blendFunc(sfactor,dfactor);
+        ctx.enable(ctx.BLEND);
+        cc.renderContext.blendFunc(sfactor,dfactor);
         //TODO need fix for WebGL
-        cc.renderContext.blendFuncSeparate(gl.SRC_ALPHA, dfactor, sfactor, dfactor);
+        //ctx.blendFuncSeparate(ctx.SRC_ALPHA, dfactor, sfactor, dfactor);
     }
 };
 
-if(cc.ENABLE_GL_STATE_CACHE){
+cc.glBlendFuncForParticle = function(sfactor, dfactor) {
+    if ((sfactor !== cc._blendingSource) || (dfactor !== cc._blendingDest)) {
+        cc._blendingSource = sfactor;
+        cc._blendingDest = dfactor;
+        var ctx = cc.renderContext;
+        if ((sfactor === ctx.ONE) && (dfactor === ctx.ZERO)) {
+            ctx.disable(ctx.BLEND);
+        } else {
+            ctx.enable(ctx.BLEND);
+            //TODO need fix for WebGL
+            ctx.blendFuncSeparate(ctx.SRC_ALPHA, dfactor, sfactor, dfactor);
+        }
+    }
+};
+
+if(!cc.ENABLE_GL_STATE_CACHE){
     cc.glBlendFunc = cc.setBlending;
 };
 
@@ -162,11 +178,12 @@ if(cc.ENABLE_GL_STATE_CACHE){
  * If CC_ENABLE_GL_STATE_CACHE is disabled, it will just set the default blending mode using GL_FUNC_ADD.
  */
 cc.glBlendResetToCache = function () {
-    cc.renderContext.blendEquation(cc.renderContext.FUNC_ADD);
+    var ctx = cc.renderContext;
+    ctx.blendEquation(ctx.FUNC_ADD);
     if (cc.ENABLE_GL_STATE_CACHE)
         cc.setBlending(cc._blendingSource, cc._blendingDest);
     else
-        cc.setBlending(cc.renderContext.BLEND_SRC, cc.renderContext.BLEND_DST);
+        cc.setBlending(ctx.BLEND_SRC, ctx.BLEND_DST);
 };
 
 /**
@@ -190,12 +207,13 @@ cc.setProjectionMatrixDirty = function () {
  */
 cc.glEnableVertexAttribs = function (flags) {
     /* Position */
+    var ctx = cc.renderContext;
     var enablePosition = ( flags & cc.VERTEX_ATTRIB_FLAG_POSITION );
     if (enablePosition !== cc._vertexAttribPosition) {
         if (enablePosition)
-            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+            ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         else
-            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
+            ctx.disableVertexAttribArray(cc.VERTEX_ATTRIB_POSITION);
         cc._vertexAttribPosition = enablePosition;
     }
 
@@ -203,9 +221,9 @@ cc.glEnableVertexAttribs = function (flags) {
     var enableColor = (flags & cc.VERTEX_ATTRIB_FLAG_COLOR);
     if (enableColor !== cc._vertexAttribColor) {
         if (enableColor)
-            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+            ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         else
-            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
+            ctx.disableVertexAttribArray(cc.VERTEX_ATTRIB_COLOR);
         cc._vertexAttribColor = enableColor;
     }
 
@@ -213,9 +231,9 @@ cc.glEnableVertexAttribs = function (flags) {
     var enableTexCoords = (flags & cc.VERTEX_ATTRIB_FLAG_TEXCOORDS);
     if (enableTexCoords !== cc._vertexAttribTexCoords) {
         if (enableTexCoords)
-            cc.renderContext.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
+            ctx.enableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
         else
-            cc.renderContext.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
+            ctx.disableVertexAttribArray(cc.VERTEX_ATTRIB_TEX_COORDS);
         cc._vertexAttribTexCoords = enableTexCoords;
     }
 };
@@ -236,22 +254,25 @@ cc.glBindTexture2D = function (textureId) {
  * @param {cc.Texture2D} textureId
  */
 cc.glBindTexture2DN = function (textureUnit, textureId) {
-    if (cc._currentBoundTexture[textureUnit] === textureId)
+    if (cc._currentBoundTexture[textureUnit] == textureId)
         return;
     cc._currentBoundTexture[textureUnit] = textureId;
-    cc.renderContext.activeTexture(cc.renderContext.TEXTURE0 + textureUnit);
+
+    var ctx = cc.renderContext;
+    ctx.activeTexture(ctx.TEXTURE0 + textureUnit);
     if(textureId)
-        cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
+        ctx.bindTexture(ctx.TEXTURE_2D, textureId._webTextureObj);
     else
-        cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, null);
+        ctx.bindTexture(ctx.TEXTURE_2D, null);
 };
 if (!cc.ENABLE_GL_STATE_CACHE){
     cc.glBindTexture2DN = function (textureUnit, textureId) {
-        cc.renderContext.activeTexture(cc.renderContext.TEXTURE0 + textureUnit);
+        var ctx = cc.renderContext;
+        ctx.activeTexture(ctx.TEXTURE0 + textureUnit);
         if(textureId)
-            cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, textureId._webTextureObj);
+            ctx.bindTexture(ctx.TEXTURE_2D, textureId._webTextureObj);
         else
-            cc.renderContext.bindTexture(cc.renderContext.TEXTURE_2D, null);
+            ctx.bindTexture(ctx.TEXTURE_2D, null);
     };
 }
 

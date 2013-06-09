@@ -133,7 +133,7 @@ cc.AccelerometerDispatcher = cc.Class.extend(/** @lends cc.AccelerometerDispatch
             this._acceleration.z = (eventData.alpha / 90) * 0.981;
         }
 
-        this._acceleration.timestamp = (new Date()).getTime();
+        this._acceleration.timestamp = Date.now();
 
         var tmp = this._acceleration.x;
         switch (window.orientation) {

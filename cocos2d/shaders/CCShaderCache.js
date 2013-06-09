@@ -64,6 +64,7 @@ cc.SHADERTYPE_POSITION_UCOLOR = 6;
  * @type {Number}
  */
 cc.SHADERTYPE_POSITION_LENGTH_TEXTURECOLOR = 7;
+
 /**
  * @constant
  * @type {Number}

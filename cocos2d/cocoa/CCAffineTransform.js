@@ -117,10 +117,10 @@ cc.AffineTransformIdentity = function () {
  * Constructor
  */
 cc.RectApplyAffineTransform = function (rect, anAffineTransform) {
-    var top = cc.Rect.CCRectGetMinY(rect);
-    var left = cc.Rect.CCRectGetMinX(rect);
-    var right = cc.Rect.CCRectGetMaxX(rect);
-    var bottom = cc.Rect.CCRectGetMaxY(rect);
+    var top = cc.rectGetMinY(rect);
+    var left = cc.rectGetMinX(rect);
+    var right = cc.rectGetMaxX(rect);
+    var bottom = cc.rectGetMaxY(rect);
 
     var topLeft = cc.PointApplyAffineTransform(cc.p(left, top), anAffineTransform);
     var topRight = cc.PointApplyAffineTransform(cc.p(right, top), anAffineTransform);
@@ -186,10 +186,12 @@ cc.AffineTransformRotate = function (aTransform, anAngle) {
  * Constructor
  */
 cc.AffineTransformConcat = function (t1, t2) {
-    return {a: t1.a * t2.a + t1.b * t2.c, b: t1.a * t2.b + t1.b * t2.d, //a,b
-        c: t1.c * t2.a + t1.d * t2.c, d: t1.c * t2.b + t1.d * t2.d, //c,d
+    return {a: t1.a * t2.a + t1.b * t2.c,                          //a
+        b: t1.a * t2.b + t1.b * t2.d,                               //b
+        c: t1.c * t2.a + t1.d * t2.c,                               //c
+        d: t1.c * t2.b + t1.d * t2.d,                               //d
         tx: t1.tx * t2.a + t1.ty * t2.c + t2.tx,                    //tx
-        ty: t1.tx * t2.b + t1.ty * t2.d + t2.ty};				  //ty
+        ty: t1.tx * t2.b + t1.ty * t2.d + t2.ty};				    //ty
 };
 
 /**

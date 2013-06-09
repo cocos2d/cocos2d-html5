@@ -122,7 +122,7 @@ cc.Camera = cc.Class.extend(/** @lends cc.Action# */{
 
             this._dirty = false;
         }
-        cc.kmGLMultMatrix( this._lookupMatrix );
+        cc.kmGLMultMatrix( this._lookupMatrix);
     },
 
     /**

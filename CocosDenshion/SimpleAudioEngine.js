@@ -26,17 +26,93 @@
 
 var cc = cc || {};
 
-cc.SFX = function (audio, ext) {
+
+/**
+ * A simple Audio Engine engine API.
+ * @class
+ * @extends   cc.Class
+ */
+cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
+    _audioID:0,
+    _audioIDList:null,
+    ctor:function(){
+        this._audioIDList = {};
+    },
+    /**
+     * Check each type to see if it can be played by current browser
+     * @param {Object} capabilities The results are filled into this dict
+     * @protected
+     */
+    _checkCanPlay: function(capabilities) {
+        var au = document.createElement('audio');
+        if (au.canPlayType) {
+            // <audio> tag is supported, go on
+            var _check = function(typeStr) {
+                var result = au.canPlayType(typeStr);
+                return result != "no" && result != "";
+            };
+
+            capabilities.mp3 = _check("audio/mpeg");
+            capabilities.mp4 = _check("audio/mp4");
+            capabilities.m4a = _check("audio/x-m4a") || _check("audio/aac");
+            capabilities.ogg = _check('audio/ogg; codecs="vorbis"');
+            capabilities.wav = _check('audio/wav; codecs="1"');
+        } else {
+            // <audio> tag is not supported, nothing is supported
+            var formats = ['mp3', 'mp4', 'm4a', 'ogg', 'wav'];
+            for (var idx in formats) {
+                capabilities[formats[idx]] = false;
+            }
+        }
+    },
+
+    /**
+     * Helper function for cutting out the extension from the path
+     * @param {String} fullpath
+     * @protected
+     */
+    _getPathWithoutExt: function (fullpath) {
+        if (typeof(fullpath) != "string") {
+            return;
+        }
+        var endPos = fullpath.lastIndexOf(".");
+        if (endPos != -1) {
+            return fullpath.substring(0, endPos);
+        }
+        return fullpath;
+    },
+
+    /**
+     * Helper function for extracting the extension from the path
+     * @param {String} fullpath
+     * @protected
+     */
+    _getExtFromFullPath: function (fullpath) {
+        var startPos = fullpath.lastIndexOf(".");
+        if (startPos != -1) {
+            return fullpath.substring(startPos + 1, fullpath.length);
+        }
+        return -1;
+    }
+});
+
+
+
+/**
+ * the entity stored in soundList and effectList, containing the audio element and the extension name.
+ * used in cc.SimpleAudioEngine
+ */
+cc.SimpleSFX = function (audio, ext) {
     this.audio = audio;
     this.ext = ext || ".ogg";
 };
 
 /**
- * Offer a VERY simple interface to play music & sound effect.
+ * The Audio Engine implementation via <audio> tag in HTML5.
  * @class
- * @extends   cc.Class
+ * @extends   cc.AudioEngine
  */
-cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
+cc.SimpleAudioEngine = cc.AudioEngine.extend(/** @lends cc.SimpleAudioEngine# */{
     _supportedFormat:[],
     _soundEnable:false,
     _effectList:{},
@@ -57,32 +133,15 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
      * Constructor
      */
     ctor:function () {
+        cc.AudioEngine.prototype.ctor.call(this);
+
         this._supportedFormat = [];
-        // init audio
-        var au = document.createElement('audio');
-        if (au.canPlayType) {
-            this._capabilities.mp3 = ("no" != au.canPlayType("audio/mpeg"))
-                && ("" != au.canPlayType("audio/mpeg"));
+        this._checkCanPlay(this._capabilities);
 
-            this._capabilities.mp4 = ("no" != au.canPlayType("audio/mp4"))
-                && ("" != au.canPlayType("audio/mp4"));
-
-            this._capabilities.m4a = (("no" != au.canPlayType("audio/x-m4a"))
-                && ("" != au.canPlayType("audio/x-m4a")))
-                || (("no" != au.canPlayType("audio/aac"))
-                && ("" != au.canPlayType("audio/aac")));
-
-            this._capabilities.ogg = ("no" != au.canPlayType('audio/ogg; codecs="vorbis"'))
-                && ("" != au.canPlayType('audio/ogg; codecs="vorbis"'));
-
-            this._capabilities.wav = ("no" != au.canPlayType('audio/wav; codecs="1"'))
-                && ("" != au.canPlayType('audio/wav; codecs="1"'));
-
-            // enable sound if any of the audio format is supported
-            this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
-                || this._capabilities.m4a || this._capabilities.ogg
-                || this._capabilities.wav;
-        }
+        // enable sound if any of the audio format is supported
+        this._soundEnable = this._capabilities.mp3 || this._capabilities.mp4
+            || this._capabilities.m4a || this._capabilities.ogg
+            || this._capabilities.wav;
 
         var ua = navigator.userAgent;
         if(/Mobile/.test(ua) && (/iPhone OS/.test(ua)||/iPad/.test(ua)||/Firefox/.test(ua)) || /MSIE/.test(ua)){
@@ -109,9 +168,9 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         if (this._soundEnable) {
             var extName = this._getExtFromFullPath(path);
             var keyname = this._getPathWithoutExt(path);
-            if (this._checkAudioFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
+            if (this.isFormatSupported(extName) && !this._soundList.hasOwnProperty(keyname)) {
                 if(this._canPlay){
-                    var sfxCache = new cc.SFX();
+                    var sfxCache = new cc.SimpleSFX();
                     sfxCache.ext = extName;
                     sfxCache.audio = new Audio(path);
                     sfxCache.audio.preload = 'auto';
@@ -162,7 +221,7 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             au = this._soundList[this._playingMusic].audio;
         }
         else {
-            var sfxCache = new cc.SFX();
+            var sfxCache = new cc.SimpleSFX();
             sfxCache.ext = extName;
             au = sfxCache.audio = new Audio(path);
             sfxCache.audio.preload = 'auto';
@@ -251,22 +310,6 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
     },
 
     /**
-     * Whether the music is playing.
-     * @return {Boolean} If is playing return true,or return false.
-     * @example
-     * //example
-     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
-     *      cc.log("music is playing");
-     *  }
-     *  else {
-     *      cc.log("music is not playing");
-     *  }
-     */
-    isMusicPlaying:function () {
-        return cc.AudioEngine.isMusicPlaying;
-    },
-
-    /**
      * The volume of the music max value is 1.0,the min value is 0.0 .
      * @return {Number}
      * @example
@@ -300,6 +343,22 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
                 music.volume = volume;
             }
         }
+    },
+
+    /**
+     * Whether the music is playing.
+     * @return {Boolean} If is playing return true,or return false.
+     * @example
+     * //example
+     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
+     *      cc.log("music is playing");
+     *  }
+     *  else {
+     *      cc.log("music is not playing");
+     *  }
+     */
+    isMusicPlaying: function () {
+        return cc.AudioEngine.isMusicPlaying;
     },
 
     /**
@@ -345,8 +404,10 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             au.loop = loop;
         }
         au.play();
+        var audioID = this._audioID++;
+        this._audioIDList[audioID] = au;
 
-        return path;
+        return audioID;
     },
 
     /**
@@ -392,21 +453,18 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
      * Pause playing sound effect.
-     * @param {String} path The return value of function playEffect.
+     * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().pauseEffect(path);
+     * cc.AudioEngine.getInstance().pauseEffect(audioID);
      */
-    pauseEffect:function (path) {
-        if (!path) return;
-        var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
-            var tmpArr = this._effectList[keyname], au;
-            for (var i = tmpArr.length - 1; i >= 0; i--) {
-                au = tmpArr[i];
-                if (!au.ended) {
-                    au.pause();
-                }
+    pauseEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended) {
+                au.pause();
             }
         }
     },
@@ -432,24 +490,18 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
      * Resume playing sound effect.
-     * @param {String} path The return value of function playEffect.
-     * @example
+     * @param {Number} audioID The return value of function playEffect.
+     * @audioID
      * //example
-     * cc.AudioEngine.getInstance().resumeEffect(path);
+     * cc.AudioEngine.getInstance().resumeEffect(audioID);
      */
-    resumeEffect:function (path) {
-        if (!path) return;
-        var tmpArr, au;
-        var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
-            tmpArr = this._effectList[keyname];
-            if (tmpArr.length > 0) {
-                for (var i = 0; i < tmpArr.length; i++) {
-                    au = tmpArr[i];
-                    if (!au.ended) {
-                        au.play();
-                    }
-                }
+    resumeEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended) {
+                au.play();
             }
         }
     },
@@ -477,25 +529,19 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
 
     /**
      * Stop playing sound effect.
-     * @param {String} path The return value of function playEffect.
+     * @param {Number} audioID The return value of function playEffect.
      * @example
      * //example
-     * cc.AudioEngine.getInstance().stopEffect(path);
+     * cc.AudioEngine.getInstance().stopEffect(audioID);
      */
-    stopEffect:function (path) {
-        if (!path) return;
-        var tmpArr, au;
-        var keyname = this._getPathWithoutExt(path);
-        if (this._effectList.hasOwnProperty(keyname)) {
-            tmpArr = this._effectList[keyname];
-            if (tmpArr.length > 0) {
-                for (var i = 0; i < tmpArr.length; i++) {
-                    au = tmpArr[i];
-                    if (!au.ended) {
-                        au.loop = false;
-                        au.currentTime = au.duration;
-                    }
-                }
+    stopEffect:function (audioID) {
+        if (audioID == null) return;
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            var au = this._audioIDList[audioID];
+            if (!au.ended) {
+                au.loop = false;
+                au.currentTime = au.duration;
             }
         }
     },
@@ -534,6 +580,15 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             this.stopEffect(path);
             delete this._effectList[keyname];
         }
+
+        var au,pathName;
+        for (var k in this._audioIDList) {
+            au = this._audioIDList[k];
+            pathName  = this._getPathWithoutExt(au.src);
+            if(pathName == keyname){
+                delete this._audioIDList[k];
+            }
+        }
     },
 
     _getEffectList:function (elt) {
@@ -546,26 +601,12 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
         }
     },
 
-    _getPathWithoutExt:function (fullpath) {
-        if (typeof(fullpath) != "string") {
-            return;
-        }
-        var endPos = fullpath.lastIndexOf(".");
-        if (endPos != -1) {
-            return fullpath.substring(0, endPos);
-        }
-        return fullpath;
-    },
-
-    _getExtFromFullPath:function (fullpath) {
-        var startPos = fullpath.lastIndexOf(".");
-        if (startPos != -1) {
-            return fullpath.substring(startPos + 1, fullpath.length);
-        }
-        return -1;
-    },
-
-    _checkAudioFormatSupported:function (ext) {
+    /**
+     * search in this._supportedFormat if @param ext is there
+     * @param {String} ext
+     * @returns {Boolean}
+     */
+    isFormatSupported:function (ext) {
         var tmpExt;
         for (var i = 0; i < this._supportedFormat.length; i++) {
             tmpExt = this._supportedFormat[i];
@@ -582,32 +623,746 @@ cc.AudioEngine = cc.Class.extend(/** @lends cc.AudioEngine# */{
             return;
         }
 
-        // check for OGG/Vorbis
-        if (this._capabilities.ogg) {
-            this._supportedFormat.push("ogg");
-        }
-
-        // check for MP3
-        if (this._capabilities.mp3) {
-            this._supportedFormat.push("mp3");
-        }
-
-        // check for WAV
-        if (this._capabilities.wav) {
-            this._supportedFormat.push("wav");
-        }
-
-        // check for MP4
-        if (this._capabilities.mp4) {
-            this._supportedFormat.push("mp4");
-        }
-
-        // check for M4A
-        if (this._capabilities.m4a) {
-            this._supportedFormat.push("m4a");
+        var formats = ['ogg', 'mp3', 'wav', 'mp4', 'm4a'];
+        for (var idx in formats) {
+            var name = formats[idx];
+            if (this._capabilities[name]) {
+                this._supportedFormat.push(name);
+            }
         }
     }
 });
+
+
+
+/**
+ * The entity stored in cc.WebAudioEngine, representing a sound object
+ */
+cc.WebAudioSFX = function(key, sourceNode, volumeNode, startTime, pauseTime) {
+    // the name of the relevant audio resource
+    this.key = key;
+    // the node used in Web Audio API in charge of the source data
+    this.sourceNode = sourceNode;
+    // the node used in Web Audio API in charge of volume
+    this.volumeNode = volumeNode;
+    /*
+     * when playing started from beginning, startTime is set to the current time of AudioContext.currentTime
+     * when paused, pauseTime is set to the current time of AudioContext.currentTime
+     * so how long the music has been played can be calculated
+     * these won't be used in other cases
+     */
+    this.startTime = startTime || 0;
+    this.pauseTime = pauseTime || 0;
+    // by only sourceNode's playbackState, it cannot distinguish finished state from paused state
+    this.isPaused = false;
+};
+
+/**
+ * The Audio Engine implementation via Web Audio API.
+ * @class
+ * @extends cc.AudioEngine
+ */
+cc.WebAudioEngine = cc.AudioEngine.extend(/** @lends cc.WebAudioEngine# */{
+    // the Web Audio Context
+    _ctx: null,
+    // may be: mp3, ogg, wav, mp4, m4a
+    _supportedFormat: [],
+    // if sound is not enabled, this engine's init() will return false
+    _soundEnable: false,
+    // containing all binary buffers of loaded audio resources
+    _audioData: {},
+    /*
+     *   Issue: When loading two resources with different suffixes asynchronously, the second one might start loading
+     * when the first one is already loading!
+     *   To avoid this duplication, loading synchronously somehow doesn't work. _ctx.decodeAudioData() would throw an
+     * exception "DOM exception 12", it should be a bug of the browser.
+     *   So just add something to mark some audios as LOADING so as to avoid duplication.
+     */
+    _audiosLoading: {},
+    // the music being played, cc.WebAudioSFX, when null, no music is being played; when not null, it may be playing or paused
+    _music: null,
+    // the volume applied to the music
+    _musicVolume: 1,
+    // the effects being played: { key => [cc.WebAudioSFX] }, many effects of the same resource may be played simultaneously
+    _effects: {},
+    // the volume applied to all effects
+    _effectsVolume: 1,
+
+    /*
+     * _canPlay is a property in cc.SimpleAudioEngine, but not used in cc.WebAudioEngine.
+     * Only those which support Web Audio API will be using this cc.WebAudioEngine, so no need to add an extra check.
+     */
+    // _canPlay: true,
+    /*
+     * _maxAudioInstance is also a property in cc.SimpleAudioEngine, but not used here
+     */
+    // _maxAudioInstance: 10,
+
+
+    /**
+     * Constructor
+     */
+    ctor: function() {
+        cc.AudioEngine.prototype.ctor.call(this);
+    },
+
+    /**
+     * Initialization
+     * @return {Boolean}
+     */
+    init: function() {
+        /*
+         * browser has proved to support Web Audio API in miniFramework.js
+         * only in that case will cc.WebAudioEngine be chosen to run, thus the following is guaranteed to work
+         */
+        this._ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
+
+        // gather capabilities information, enable sound if any of the audio format is supported
+        var capabilities = {};
+        this._checkCanPlay(capabilities);
+
+        var formats = ['ogg', 'mp3', 'wav', 'mp4', 'm4a'];
+        for (var idx in formats) {
+            var name = formats[idx];
+            if (capabilities[name]) {
+                this._supportedFormat.push(name);
+            }
+        }
+        this._soundEnable = this._supportedFormat.length > 0;
+
+        return this._soundEnable;
+    },
+
+    /**
+     * search in this._supportedFormat if @param ext is there
+     * @param {String} ext
+     * @returns {Boolean}
+     */
+    isFormatSupported: function(ext) {
+        for (var idx in this._supportedFormat) {
+            if (ext === this._supportedFormat[idx]) {
+                return true;
+            }
+        }
+        return false;
+    },
+
+    /**
+     * Using XMLHttpRequest to retrieve the resource data from server.
+     * Not using cc.FileUtils.getByteArrayFromFile() because it is synchronous,
+     * so doing the retrieving here is more handful.
+     * @param {String} url The url to retrieve data
+     * @param {Object} onSuccess The callback to run when retrieving succeeds, the binary data array is passed into it
+     * @param {Object} onError The callback to run when retrieving fails
+     * @private
+     */
+    _fetchData: function(url, onSuccess, onError) {
+        // currently, only the webkit browsers support Web Audio API, so it should be fine just writing like this.
+        var req = new window.XMLHttpRequest();
+        req.open('GET', url, true);
+        req.responseType = 'arraybuffer';
+        var engine = this;
+        req.onload = function() {
+            // when context decodes the array buffer successfully, call onSuccess
+            engine._ctx.decodeAudioData(req.response, onSuccess, onError);
+        };
+        req.onerror = onError;
+        req.send();
+    },
+
+    /**
+     * Preload music resource.<br />
+     * This method is called when cc.Loader preload  resources.
+     * @param {String} path The path of the music file with filename extension.
+     */
+    preloadSound: function(path) {
+        if (!this._soundEnable) {
+            return;
+        }
+
+        var extName = this._getExtFromFullPath(path);
+        var keyName = this._getPathWithoutExt(path);
+
+        // not supported, already loaded, already loading
+        if (!this.isFormatSupported(extName) || keyName in this._audioData || keyName in this._audiosLoading) {
+            cc.Loader.getInstance().onResLoaded();
+            return;
+        }
+
+        this._audiosLoading[keyName] = true;
+        var engine = this;
+        this._fetchData(path, function(buffer) {
+            // resource fetched, in @param buffer
+            engine._audioData[keyName] = buffer;
+            delete engine._audiosLoading[keyName];
+            cc.Loader.getInstance().onResLoaded();
+        }, function() {
+            // resource fetching failed
+            delete engine._audiosLoading[keyName];
+            cc.Loader.getInstance().onResLoadingErr(path);
+        });
+    },
+
+    /**
+     * Init a new WebAudioSFX and play it, return this WebAudioSFX object
+     * assuming that @param key exists in this._audioData
+     * @param {String} key
+     * @param {Boolean} loop Default value is false
+     * @param {Number} volume 0.0 - 1.0, default value is 1.0
+     * @param {Number} offset Where to start playing (in seconds)
+     * @private
+     */
+    _beginSound: function(key, loop, volume, offset) {
+        var sfxCache = new cc.WebAudioSFX();
+        loop = loop || false;
+        volume = volume || 1;
+        offset = offset || 0;
+
+        sfxCache.key = key;
+        sfxCache.sourceNode = this._ctx.createBufferSource();
+        sfxCache.sourceNode.buffer = this._audioData[key];
+        sfxCache.sourceNode.loop = loop;
+        sfxCache.volumeNode = this._ctx.createGainNode();
+        sfxCache.volumeNode.gain.value = volume;
+
+        sfxCache.sourceNode.connect(sfxCache.volumeNode);
+        sfxCache.volumeNode.connect(this._ctx.destination);
+
+        /*
+         * Safari on iOS 6 only supports noteOn(), noteGrainOn(), and noteOff() now.(iOS 6.1.3)
+         * The latest version of chrome has supported start() and stop()
+         * start() & stop() are specified in the latest specification (written on 04/26/2013)
+         *      Reference: https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+         * noteOn(), noteGrainOn(), and noteOff() are specified in Draft 13 version (03/13/2012)
+         *      Reference: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
+         */
+        if (sfxCache.sourceNode.start) {
+            // starting from offset means resuming from where it paused last time
+            sfxCache.sourceNode.start(0, offset);
+        } else if (sfxCache.sourceNode.noteGrainOn) {
+            var duration = sfxCache.sourceNode.buffer.duration;
+            if (loop) {
+                /*
+                 * On Safari on iOS 6, if loop == true, the passed in @param duration will be the duration from now on.
+                 * In other words, the sound will keep playing the rest of the music all the time.
+                 * On latest chrome desktop version, the passed in duration will only be the duration in this cycle.
+                 * Now that latest chrome would have start() method, it is prepared for iOS here.
+                 */
+                sfxCache.sourceNode.noteGrainOn(0, offset, duration);
+            } else {
+                sfxCache.sourceNode.noteGrainOn(0, offset, duration - offset);
+            }
+        } else {
+            // if only noteOn() is supported, resuming sound will NOT work
+            sfxCache.sourceNode.noteOn(0);
+        }
+
+        // currentTime - offset is necessary for pausing multiple times!
+        sfxCache.startTime = this._ctx.currentTime - offset;
+        sfxCache.pauseTime = sfxCache.startTime;
+        sfxCache.isPaused = false;
+
+        return sfxCache;
+    },
+
+    /**
+     * According to the spec: dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html
+     *      const unsigned short UNSCHEDULED_STATE = 0;
+     *      const unsigned short SCHEDULED_STATE = 1;
+     *      const unsigned short PLAYING_STATE = 2;     // this means it is playing
+     *      const unsigned short FINISHED_STATE = 3;
+     * However, the older specification doesn't include this property, such as this one: http://www.w3.org/2011/audio/drafts/2WD/Overview.html
+     * @param {Object} sfxCache Assuming not null
+     * @returns {Boolean} Whether @param sfxCache is playing or not
+     * @private
+     */
+    _isSoundPlaying: function(sfxCache) {
+        return sfxCache.sourceNode.playbackState == 2;
+    },
+
+    /**
+     * To distinguish 3 kinds of status for each sound (PLAYING, PAUSED, FINISHED), _isSoundPlaying() is not enough
+     * @param {Object} sfxCache Assuming not null
+     * @returns {Boolean}
+     * @private
+     */
+    _isSoundPaused: function(sfxCache) {
+        // checking _isSoundPlaying() won't hurt
+        return this._isSoundPlaying(sfxCache) ? false : sfxCache.isPaused;
+    },
+
+    /**
+     * Whether it is playing any music
+     * @return {Boolean} If is playing return true,or return false.
+     * @example
+     * //example
+     *  if (cc.AudioEngine.getInstance().isMusicPlaying()) {
+     *      cc.log("music is playing");
+     *  }
+     *  else {
+     *      cc.log("music is not playing");
+     *  }
+     */
+    isMusicPlaying: function () {
+        /*
+         * cc.AudioEngine.isMusicPlaying property is not going to be used here in cc.WebAudioEngine
+         * that is only used in cc.SimpleAudioEngine
+         * WebAudioEngine uses Web Audio API which contains a playbackState property in AudioBufferSourceNode
+         * So there is also no need to be any method like setMusicPlaying(), it is done automatically
+         */
+        return this._music ? this._isSoundPlaying(this._music) : false;
+    },
+
+    /**
+     * Play music.
+     * @param {String} path The path of the music file without filename extension.
+     * @param {Boolean} loop Whether the music loop or not.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().playMusic(path, false);
+     */
+    playMusic: function (path, loop) {
+        var keyName = this._getPathWithoutExt(path);
+        var extName = this._getExtFromFullPath(path);
+        loop = loop || false;
+
+        if (this._music) {
+            // there is a music being played currently, stop it (may be paused)
+            this.stopMusic();
+        }
+
+        if (keyName in this._audioData) {
+            // already loaded, just play it
+            this._music = this._beginSound(keyName, loop, this.getMusicVolume());
+        } else if (this.isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+            // load now only if the type is supported and it is not being loaded currently
+            this._audiosLoading[keyName] = true;
+            var engine = this;
+            this._fetchData(path, function(buffer) {
+                // resource fetched, save it and call playMusic() again, this time it should be alright
+                engine._audioData[keyName] = buffer;
+                delete engine._audiosLoading[keyName];
+                engine.playMusic(path, loop);
+            }, function() {
+                // resource fetching failed, doing nothing here
+                delete engine._audiosLoading[keyName];
+                /*
+                 * Potential Bug: if fetching data fails every time, loading will be tried again and again.
+                 * Preloading would prevent this issue: if it fails to fetch, preloading procedure will not achieve 100%.
+                 */
+            });
+        }
+    },
+
+    /**
+     * Ends a sound, call stop() or noteOff() accordingly
+     * @param {Object} sfxCache Assuming not null
+     * @private
+     */
+    _endSound: function(sfxCache) {
+        if (sfxCache.sourceNode.stop) {
+            sfxCache.sourceNode.stop(0);
+        } else {
+            sfxCache.sourceNode.noteOff(0);
+        }
+        // Do not call disconnect()! Otherwise the sourceNode's playbackState may not be updated correctly
+        // sfxCache.sourceNode.disconnect();
+        // sfxCache.volumeNode.disconnect();
+    },
+
+    /**
+     * Stop playing music.
+     * @param {Boolean} releaseData If release the music data or not.As default value is false.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().stopMusic();
+     */
+    stopMusic: function(releaseData) {
+        // can stop when it's playing/paused
+        if (!this._music) {
+            return;
+        }
+
+        var key = this._music.key;
+        this._endSound(this._music);
+        this._music = null;
+
+        if (releaseData) {
+            delete this._audioData[key];
+        }
+    },
+
+    /**
+     * Used in pauseMusic() & pauseEffect() & pauseAllEffects()
+     * @param {Object} sfxCache Assuming not null
+     * @private
+     */
+    _pauseSound: function(sfxCache) {
+        sfxCache.pauseTime = this._ctx.currentTime;
+        sfxCache.isPaused = true;
+        this._endSound(sfxCache);
+    },
+
+    /**
+     * Pause playing music.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().pauseMusic();
+     */
+    pauseMusic: function() {
+        // can pause only when it's playing
+        if (!this.isMusicPlaying()) {
+            return;
+        }
+
+        this._pauseSound(this._music);
+    },
+
+    /**
+     * Used in resumeMusic() & resumeEffect() & resumeAllEffects()
+     * @param {Object} paused The paused WebAudioSFX, assuming not null
+     * @param {Number} volume Can be getMusicVolume() or getEffectsVolume()
+     * @returns {Object} A new WebAudioSFX object representing the resumed sound
+     * @private
+     */
+    _resumeSound: function(paused, volume) {
+        var key = paused.key;
+        var loop = paused.sourceNode.loop;
+        // the paused sound may have been playing several loops, (pauseTime - startTime) may be too large
+        var offset = (paused.pauseTime - paused.startTime) % paused.sourceNode.buffer.duration;
+
+        return this._beginSound(key, loop, volume, offset);
+    },
+
+    /**
+     * Resume playing music.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().resumeMusic();
+     */
+    resumeMusic: function() {
+        // can resume only when it's paused
+        if (!this._music || !this._isSoundPaused(this._music)) {
+            return;
+        }
+
+        this._music = this._resumeSound(this._music, this.getMusicVolume());
+    },
+
+    /**
+     * Rewind playing music.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().rewindMusic();
+     */
+    rewindMusic: function() {
+        // can rewind when it's playing or paused
+        if (!this._music) {
+            return;
+        }
+
+        var key = this._music.key;
+        var loop = this._music.sourceNode.loop;
+        var volume = this.getMusicVolume();
+
+        this._endSound(this._music);
+        this._music = this._beginSound(key, loop, volume);
+    },
+
+    willPlayMusic: function() {
+        // TODO what is the purpose of this method? This is just a copy from cc.SimpleAudioEngine
+        return false;
+    },
+
+    /**
+     * The volume of the music max value is 1.0,the min value is 0.0 .
+     * @return {Number}
+     * @example
+     * //example
+     * var volume = cc.AudioEngine.getInstance().getMusicVolume();
+     */
+    getMusicVolume: function() {
+        return this._musicVolume;
+    },
+
+    /**
+     * update volume, used in setMusicVolume() or setEffectsVolume()
+     * @param {Object} sfxCache Assuming not null
+     * @param {Number} volume
+     * @private
+     */
+    _setSoundVolume: function(sfxCache, volume) {
+        sfxCache.volumeNode.gain.value = volume;
+    },
+
+    /**
+     * Set the volume of music.
+     * @param {Number} volume Volume must be in 0.0~1.0 .
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().setMusicVolume(0.5);
+     */
+    setMusicVolume: function(volume) {
+        if (volume > 1) {
+            volume = 1;
+        } else if (volume < 0) {
+            volume = 0;
+        }
+
+        if (this.getMusicVolume() == volume) {
+            // it is the same, no need to update
+            return;
+        }
+
+        this._musicVolume = volume;
+        if (this._music) {
+            this._setSoundVolume(this._music, volume);
+        }
+    },
+
+    /**
+     * Play sound effect.
+     * @param {String} path The path of the sound effect with filename extension.
+     * @param {Boolean} loop Whether to loop the effect playing, default value is false
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().playEffect(path);
+     */
+    playEffect: function(path, loop) {
+        var keyName = this._getPathWithoutExt(path);
+        var extName = this._getExtFromFullPath(path);
+        loop = loop || false;
+
+        if (keyName in this._audioData) {
+            // the resource has been loaded, just play it
+            if (!(keyName in this._effects)) {
+                this._effects[keyName] = [];
+            }
+            // a list of sound objects from the same resource
+            var effectList = this._effects[keyName];
+            for (var idx in effectList) {
+                var sfxCache = effectList[idx];
+                if (!this._isSoundPlaying(sfxCache) && !this._isSoundPaused(sfxCache)) {
+                    // not playing && not paused => it is finished, this position can be reused
+                    effectList[idx] = this._beginSound(keyName, loop, this.getEffectsVolume());
+                    return path;
+                }
+            }
+            // no new sound was created to replace an old one in the list, then just append one
+            effectList.push(this._beginSound(keyName, loop, this.getEffectsVolume()));
+        } else if (this.isFormatSupported(extName) && !(keyName in this._audiosLoading)) {
+            // load now only if the type is supported and it is not being loaded currently
+            this._audiosLoading[keyName] = true;
+            var engine = this;
+            this._fetchData(path, function(buffer) {
+                // resource fetched, save it and call playEffect() again, this time it should be alright
+                engine._audioData[keyName] = buffer;
+                delete engine._audiosLoading[keyName];
+                engine.playEffect(path, loop);
+            }, function() {
+                // resource fetching failed, doing nothing here
+                delete engine._audiosLoading[keyName];
+                /*
+                 * Potential Bug: if fetching data fails every time, loading will be tried again and again.
+                 * Preloading would prevent this issue: if it fails to fetch, preloading procedure will not achieve 100%.
+                 */
+            });
+        }
+
+        // cc.SimpleAudioEngine returns path, just do the same for backward compatibility. DO NOT rely on this, though!
+        var audioID = this._audioID++;
+        this._audioIDList[audioID] = this._effects[keyName];
+
+        return audioID;
+    },
+
+    /**
+     * The volume of the effects max value is 1.0,the min value is 0.0 .
+     * @return {Number}
+     * @example
+     * //example
+     * var effectVolume = cc.AudioEngine.getInstance().getEffectsVolume();
+     */
+    getEffectsVolume: function() {
+        return this._effectsVolume;
+    },
+
+    /**
+     * Set the volume of sound effects.
+     * @param {Number} volume Volume must be in 0.0~1.0 .
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().setEffectsVolume(0.5);
+     */
+    setEffectsVolume: function(volume) {
+        if (volume > 1) {
+            volume = 1;
+        } else if (volume < 0) {
+            volume = 0;
+        }
+        if (this.getEffectsVolume() == volume) {
+            // it is the same, no need to update
+            return;
+        }
+
+        this._effectsVolume = volume;
+        for (var key in this._effects) {
+            var effectList = this._effects[key];
+            for (var idx in effectList) {
+                this._setSoundVolume(effectList[idx], volume);
+            }
+        }
+    },
+
+    /**
+     * Used in pauseEffect() and pauseAllEffects()
+     * @param {Object} effectList A list of sounds, each sound may be playing/paused/finished
+     * @private
+     */
+    _pauseSoundList: function(effectList) {
+        for (var idx in effectList) {
+            var sfxCache = effectList[idx];
+            if (this._isSoundPlaying(sfxCache)) {
+                this._pauseSound(sfxCache);
+            }
+        }
+    },
+
+    /**
+     * Pause playing sound effect.
+     * @param {Number} audioID The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().pauseEffect(audioID);
+     */
+    pauseEffect: function(audioID) {
+        if (audioID == null) {
+            return;
+        }
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            this._pauseSoundList(this._audioIDList[audioID]);
+        }
+    },
+
+    /**
+     * Pause all playing sound effect.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().pauseAllEffects();
+     */
+    pauseAllEffects: function() {
+        for (var key in this._effects) {
+            this._pauseSoundList(this._effects[key]);
+        }
+    },
+
+    /**
+     * Used in resumeEffect() and resumeAllEffects()
+     * @param {Object} effectList A list of sounds, each sound may be playing/paused/finished
+     * @private
+     */
+    _resumeSoundList: function(effectList, volume) {
+        for (var idx in effectList) {
+            var sfxCache = effectList[idx];
+            if (this._isSoundPaused(sfxCache)) {
+                effectList[idx] = this._resumeSound(sfxCache, volume);
+            }
+        }
+    },
+
+    /**
+     * Resume playing sound effect.
+     * @param {Number} audioID The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().resumeEffect(audioID);
+     */
+    resumeEffect: function(audioID) {
+        if (audioID == null) {
+            return;
+        }
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            this._resumeSoundList(this._audioIDList[audioID], this.getEffectsVolume());
+        }
+    },
+
+    /**
+     * Resume all playing sound effect
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().resumeAllEffects();
+     */
+    resumeAllEffects: function() {
+        for (var key in this._effects) {
+            this._resumeSoundList(this._effects[key], this.getEffectsVolume());
+        }
+    },
+
+    /**
+     * Stop playing sound effect.
+     * @param {Number} audioID The return value of function playEffect.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().stopEffect(audioID);
+     */
+    stopEffect: function(audioID) {
+        if (audioID == null) {
+            return;
+        }
+
+        if (this._audioIDList.hasOwnProperty(audioID)) {
+            this._endSound(this._audioIDList[audioID]);
+        }
+    },
+
+    /**
+     * Stop all playing sound effects.
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().stopAllEffects();
+     */
+    stopAllEffects: function() {
+        for (var key in this._effects) {
+            var effectList = this._effects[key];
+            for (var idx in effectList) {
+                this._endSound(effectList[idx]);
+            }
+            /*
+             * Another way is to set this._effects = {} outside this for loop.
+             * However, the cc.Class.extend() put all properties in the prototype.
+             * If I reassign a new {} to it, that will be appear in the instance.
+             * In other words, the dict in prototype won't release its children.
+             */
+            delete this._effects[key];
+        }
+    },
+
+    /**
+     * Unload the preloaded effect from internal buffer
+     * @param {String} path
+     * @example
+     * //example
+     * cc.AudioEngine.getInstance().unloadEffect(EFFECT_FILE);
+     */
+    unloadEffect: function(path) {
+        if (!path) {
+            return;
+        }
+
+        var keyName = this._getPathWithoutExt(path);
+        if (keyName in this._effects) {
+            this.stopEffect(path);
+        }
+
+        if (keyName in this._audioData) {
+            delete this._audioData[keyName];
+        }
+    }
+});
+
+
 
 cc.AudioEngine._instance = null;
 
@@ -619,7 +1374,12 @@ cc.AudioEngine.isMusicPlaying = false;
  */
 cc.AudioEngine.getInstance = function () {
     if (!this._instance) {
-        this._instance = new cc.AudioEngine();
+        var ua = navigator.userAgent;
+        if (cc.Browser.supportWebAudio && (/iPhone OS/.test(ua)||/iPad/.test(ua))) {
+            this._instance = new cc.WebAudioEngine();
+        } else {
+            this._instance = new cc.SimpleAudioEngine();
+        }
         this._instance.init();
     }
     return this._instance;

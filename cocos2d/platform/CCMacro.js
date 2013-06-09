@@ -167,7 +167,7 @@ cc.NODE_DRAW_SETUP = function (node) {
     if (node._shaderProgram) {
         //cc.renderContext.useProgram(node._shaderProgram._programObj);
         node._shaderProgram.use();
-        node._shaderProgram.setUniformForModelViewProjectionMatrixWithMat4(node._mvpMatrix);
+        node._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
     }
 };
 
@@ -286,8 +286,8 @@ cc.POINT_PIXELS_TO_POINTS = function (pixels) {
  * @function
  */
 cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
-    return cc.rect(pixel.origin.x / cc.CONTENT_SCALE_FACTOR(), pixel.origin.y / cc.CONTENT_SCALE_FACTOR(),
-        pixel.size.width / cc.CONTENT_SCALE_FACTOR(), pixel.size.height / cc.CONTENT_SCALE_FACTOR());
+    return cc.rect(pixel.x / cc.CONTENT_SCALE_FACTOR(), pixel.y / cc.CONTENT_SCALE_FACTOR(),
+        pixel.width / cc.CONTENT_SCALE_FACTOR(), pixel.height / cc.CONTENT_SCALE_FACTOR());
 } : function (p) {
     return p;
 };
@@ -298,8 +298,8 @@ cc.RECT_PIXELS_TO_POINTS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (pixel) {
  * @function
  */
 cc.RECT_POINTS_TO_PIXELS = cc.IS_RETINA_DISPLAY_SUPPORTED ? function (point) {
-    return cc.rect(point.origin.x * cc.CONTENT_SCALE_FACTOR(), point.origin.y * cc.CONTENT_SCALE_FACTOR(),
-        point.size.width * cc.CONTENT_SCALE_FACTOR(), point.size.height * cc.CONTENT_SCALE_FACTOR());
+    return cc.rect(point.x * cc.CONTENT_SCALE_FACTOR(), point.y * cc.CONTENT_SCALE_FACTOR(),
+        point.width * cc.CONTENT_SCALE_FACTOR(), point.height * cc.CONTENT_SCALE_FACTOR());
 } : function (p) {
     return p;
 };
