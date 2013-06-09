@@ -1404,7 +1404,6 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
                             this.setTexture(canvasObj);
                         else
                             this.setTexture(addTexture);
-
                     }
                 }
 
@@ -1480,8 +1479,13 @@ cc.ParticleSystem = cc.Node.extend(/** @lends cc.ParticleSystem# */{
     addParticle:function () {
         if (this.isFull())
             return false;
-
-        var particle =this._particles[this._particleCount];
+        var particle, particles = this._particles;
+        if(cc.renderContextType === cc.CANVAS && this._particleCount < particles.length){
+            particle =particles[this._particleCount];
+        }else{
+            particle = new cc.Particle();
+            particles.push(particle);
+        }
         this.initParticle(particle);
         ++this._particleCount;
         return true;
