@@ -533,6 +533,10 @@ cc.TextureCacheWebGL = cc.Class.extend({
      * cc.TextureCache.getInstance().removeAllTextures();
      */
     removeAllTextures:function () {
+        for (var selKey in this._textures) {
+            if(this._textures[selKey])
+                this._textures[selKey].releaseTexture();
+        }
         this._textures = {};
     },
 
@@ -549,6 +553,7 @@ cc.TextureCacheWebGL = cc.Class.extend({
 
         for (var selKey in this._textures) {
             if (this._textures[selKey] == texture) {
+                this._textures[selKey].releaseTexture();
                 delete(this._textures[selKey]);
             }
         }
@@ -565,8 +570,10 @@ cc.TextureCacheWebGL = cc.Class.extend({
         if (textureKeyName == null)
             return;
         var fullPath = cc.FileUtils.getInstance().fullPathForFilename(textureKeyName);
-        if (this._textures[fullPath])
+        if (this._textures[fullPath]){
+            this._textures[fullPath].releaseTexture();
             delete(this._textures[fullPath]);
+        }
     },
 
     /**
