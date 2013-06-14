@@ -2114,7 +2114,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         this._quad.tl.colors = new cc.Color4B(255, 255, 255, 255);
         this._quad.tr.colors = new cc.Color4B(255, 255, 255, 255);
         this._quadDirty = true;
-        this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
 
         // updated in "useSelfRender"
         // Atlas: TexCoords
@@ -2517,6 +2516,11 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
         // If batchnode, then texture id should be the same
         cc.Assert(!this._batchNode, "cc.Sprite: Batched sprites should use the same texture as the batchnode");
 
+        if(texture)
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
+        else
+            this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR));
+
         if (!this._batchNode && this._texture != texture) {
             this._texture = texture;
             this._updateBlendFunc();
@@ -2647,9 +2651,8 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
                 gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
             }
         } else {
-            var shaderProgram = cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_COLOR);
-            shaderProgram.use();
-            shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
+            this._shaderProgram.use();
+            this._shaderProgram.setUniformForModelViewAndProjectionMatrixWithMat4();
 
             cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
             cc.glBindTexture2D(null);
