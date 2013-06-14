@@ -653,6 +653,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
 
         glContext.drawArrays(glContext.POINTS, 0, 1);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -681,6 +682,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
 
         glContext.drawArrays(glContext.POINTS, 0, points.length);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -714,6 +716,8 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
 
         glContext.drawArrays(glContext.LINES, 0, 2);
+        glContext.deleteBuffer(pointBuffer);
+
         cc.INCREMENT_GL_DRAWS(1);
     },
 
@@ -770,6 +774,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
             glContext.drawArrays(glContext.LINE_LOOP, 0, vertices.length);
         else
             glContext.drawArrays(glContext.LINE_STRIP, 0, vertices.length);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -796,6 +801,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.bufferData(glContext.ARRAY_BUFFER, this._pointsToTypeArray(poli), glContext.STATIC_DRAW);
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
         glContext.drawArrays(glContext.TRIANGLE_FAN, 0, poli.length);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -844,6 +850,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
 
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + additionalSegment);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -881,6 +888,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
 
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + 1);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -918,6 +926,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + 1);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },
@@ -977,6 +986,7 @@ cc.DrawingPrimitiveWebGL = cc.DrawingPrimitive.extend({
         glContext.bufferData(glContext.ARRAY_BUFFER, vertices, glContext.STATIC_DRAW);
         glContext.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, glContext.FLOAT, false, 0, 0);
         glContext.drawArrays(glContext.LINE_STRIP, 0, segments + 1);
+        glContext.deleteBuffer(pointBuffer);
 
         cc.INCREMENT_GL_DRAWS(1);
     },

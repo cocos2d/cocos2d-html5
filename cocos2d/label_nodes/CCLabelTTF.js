@@ -837,6 +837,16 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
         cc.g_NumberOfDraws++;
+    },
+
+    onExit:function(){
+        this.releaseTexture();
+        cc.Sprite.prototype.onExit.call(this);
+    },
+
+    releaseTexture:function(){
+        if(this._texture)
+            this._texture.releaseTexture();
     }
 });
 

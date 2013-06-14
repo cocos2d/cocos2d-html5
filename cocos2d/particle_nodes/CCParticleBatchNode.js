@@ -483,6 +483,12 @@ cc.ParticleBatchNode = cc.Node.extend(/** @lends cc.ParticleBatchNode# */{
      */
     setTextureAtlas:function (textureAtlas) {
         this._textureAtlas = textureAtlas;
+    },
+
+    onExit:function(){
+        cc.Node.prototype.onExit.call(this);
+        if(this._textureAtlas)
+            this._textureAtlas._releaseBuffer();
     }
 });
 

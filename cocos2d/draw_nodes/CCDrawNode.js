@@ -448,6 +448,11 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
         this._dirty = true;
     },
 
+    onExit:function(){
+        cc.Node.prototype.onExit.call(this);
+        cc.renderContext.deleteBuffer(this._trianglesWebBuffer);
+    },
+
     /**
      * Clear the geometry in the node's buffer.
      */

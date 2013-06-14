@@ -984,6 +984,12 @@ cc.LayerColorWebGL = cc.Layer.extend(/** @lends cc.LayerColorCanvas# */{
         var glContext = cc.renderContext;
         glContext.bindBuffer(glContext.ARRAY_BUFFER, this._colorsUint8Buffer);
         glContext.bufferData(glContext.ARRAY_BUFFER, this._squareColorsAB, glContext.STATIC_DRAW);
+    },
+
+    onExit:function(){
+        cc.Layer.prototype.onExit.call(this);
+        cc.renderContext.deleteBuffer(this._verticesFloat32Buffer);
+        cc.renderContext.deleteBuffer(this._colorsUint8Buffer);
     }
 });
 
