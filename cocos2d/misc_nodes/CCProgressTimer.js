@@ -67,15 +67,6 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
     _barChangeRate:null,
     _reverseDirection:false,
 
-    ctor:function () {
-        this._super();
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
-        this._percentage = 0.0;
-        this._midPoint = cc.p(0, 0);
-        this._barChangeRate = cc.p(0, 0);
-        this._reverseDirection = false;
-    },
-
     /**
      *    Midpoint is used to modify the progress start position.
      *    If you're using radials type then the midpoint changes the center point
@@ -189,6 +180,15 @@ cc.ProgressTimerCanvas = cc.Node.extend(/** @lends cc.ProgressTimerCanvas# */{
         return cc.PointZero();
     },
     /// ---- common properties end   ----
+
+    ctor:function () {
+        this._super();
+        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._percentage = 0.0;
+        this._midPoint = cc.p(0, 0);
+        this._barChangeRate = cc.p(0, 0);
+        this._reverseDirection = false;
+    },
 
     /**
      * @param {Boolean} reverse
@@ -430,15 +430,6 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
     _barChangeRate:null,
     _reverseDirection:false,
 
-    ctor:function () {
-        this._super();
-        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
-        this._percentage = 0.0;
-        this._midPoint = cc.p(0, 0);
-        this._barChangeRate = cc.p(0, 0);
-        this._reverseDirection = false;
-    },
-
     /**
      *    Midpoint is used to modify the progress start position.
      *    If you're using radials type then the midpoint changes the center point
@@ -555,9 +546,25 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
     _vertexDataCount:0,
     _vertexData:null,
-    _verticesFloat32Buffer:null,
-    _textureCoordsFloat32Buffer:null,
-    _colorsUint8Buffer:null,
+    _vertexArrayBuffer:null,
+    _vertexWebGLBuffer:null,
+    _vertexDataDirty:false,
+
+    ctor:function () {
+        this._super();
+        this._type = cc.PROGRESS_TIMER_TYPE_RADIAL;
+        this._percentage = 0.0;
+        this._midPoint = cc.p(0, 0);
+        this._barChangeRate = cc.p(0, 0);
+        this._reverseDirection = false;
+        this._vertexWebGLBuffer = cc.renderContext.createBuffer();
+    },
+
+    onExit:function(){
+        cc.Node.prototype.onExit.call(this);
+        if(this._vertexWebGLBuffer)
+            cc.renderContext.deleteBuffer(this._vertexWebGLBuffer);
+    },
 
     /**
      * @param {Boolean} reverse
@@ -568,6 +575,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
             //    release all previous information
             this._vertexData = null;
+            this._vertexArrayBuffer = null;
             this._vertexDataCount = 0;
         }
     },
@@ -583,6 +591,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             //	Everytime we set a new sprite, we free the current vertex data
             if (this._vertexData) {
                 this._vertexData = null;
+                this._vertexArrayBuffer = null;
                 this._vertexDataCount = 0;
             }
         }
@@ -597,6 +606,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             //	release all previous information
             if (this._vertexData) {
                 this._vertexData = null;
+                this._vertexArrayBuffer = null;
                 this._vertexDataCount = 0;
             }
 
@@ -630,18 +640,19 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             this._reverseDirection = reverse;
             //release all previous information
             this._vertexData = null;
+            this._vertexArrayBuffer = null;
             this._vertexDataCount = 0;
         }
     },
 
     /**
      * @param {cc.Point} alpha
-     * @return {cc.Vertex2F} the vertex position from the texture coordinate
+     * @return {cc.Vertex2F | Object} the vertex position from the texture coordinate
      * @private
      */
     _textureCoordFromAlphaPoint:function (alpha) {
         if (!this._sprite) {
-            return new cc.Tex2F(0, 0);
+            return {u:0, v:0}; //new cc.Tex2F(0, 0);
         }
         var quad = this._sprite.getQuad();
         var min = cc.p(quad.bl.texCoords.u, quad.bl.texCoords.v);
@@ -653,20 +664,17 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             alpha.x = alpha.y;
             alpha.y = temp;
         }
-        return new cc.Tex2F(min.x * (1 - alpha.x) + max.x * alpha.x, min.y * (1 - alpha.y) + max.y * alpha.y);
+        return {u: min.x * (1 - alpha.x) + max.x * alpha.x, v: min.y * (1 - alpha.y) + max.y * alpha.y};
     },
 
     _vertexFromAlphaPoint:function (alpha) {
-        var ret = new cc.Tex2F(0, 0);
         if (!this._sprite) {
-            return ret;
+            return {x: 0, y: 0};
         }
         var quad = this._sprite.getQuad();
         var min = cc.p(quad.bl.vertices.x, quad.bl.vertices.y);
         var max = cc.p(quad.tr.vertices.x, quad.tr.vertices.y);
-        ret.x = min.x * (1 - alpha.x) + max.x * alpha.x;
-        ret.y = min.y * (1 - alpha.y) + max.y * alpha.y;
-        return ret;
+        return {x: min.x * (1 - alpha.x) + max.x * alpha.x, y: min.y * (1 - alpha.y) + max.y * alpha.y};
     },
     /**
      * Initializes a progress timer with the sprite as the shape the timer goes through
@@ -676,6 +684,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
     initWithSprite:function (sprite) {
         this.setPercentage(0);
         this._vertexData = null;
+        this._vertexArrayBuffer = null;
         this._vertexDataCount = 0;
         this.setAnchorPoint(cc.p(0.5, 0.5));
 
@@ -687,47 +696,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
         //shader program
         this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
-
         return true;
-    },
-
-    _getProgressTimerVertexArray:function () {
-        var vertexBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
-        var vertiesArray = new Float32Array(2 * this._vertexDataCount);
-        for (var i = 0; i < this._vertexDataCount; i++) {
-            vertiesArray[i * 2] = this._vertexData[i].vertices.x;
-            vertiesArray[i * 2 + 1] = this._vertexData[i].vertices.y;
-        }
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, vertiesArray, cc.renderContext.STATIC_DRAW);
-        return vertexBuffer;
-    },
-
-    _getProgressTimerColorArray:function () {
-        var colorsBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, colorsBuffer);
-        var verticesArray = new Uint8Array(4 * this._vertexDataCount);
-        for (var i = 0; i < this._vertexDataCount; i++) {
-            verticesArray[i * 4] = this._vertexData[i].colors.r;
-            verticesArray[i * 4 + 1] = this._vertexData[i].colors.g;
-            verticesArray[i * 4 + 2] = this._vertexData[i].colors.b;
-            verticesArray[i * 4 + 3] = this._vertexData[i].colors.a;
-        }
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, verticesArray, cc.renderContext.STATIC_DRAW);
-        return colorsBuffer;
-    },
-
-    _getProgressTimerTexCoodsArray:function () {
-        var vertexBuffer = cc.renderContext.createBuffer();
-        cc.renderContext.bindBuffer(cc.renderContext.ARRAY_BUFFER, vertexBuffer);
-        var vertiesArray = new Float32Array(2 * this._vertexDataCount);
-        for (var i = 0; i < this._vertexDataCount; i++) {
-            vertiesArray[i * 2] = this._vertexData[i].texCoords.u;
-            vertiesArray[i * 2 + 1] = this._vertexData[i].texCoords.v;
-        }
-
-        cc.renderContext.bufferData(cc.renderContext.ARRAY_BUFFER, vertiesArray, cc.renderContext.STATIC_DRAW);
-        return vertexBuffer;
     },
 
     /**
@@ -741,7 +710,8 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
 
         cc.NODE_DRAW_SETUP(this);
 
-        cc.glBlendFunc(this._sprite.getBlendFunc().src, this._sprite.getBlendFunc().dst);
+        var blendFunc = this._sprite.getBlendFunc();
+        cc.glBlendFunc(blendFunc.src, blendFunc.dst);
         cc.glEnableVertexAttribs(cc.VERTEX_ATTRIB_FLAG_POSCOLORTEX);
 
         if (this._sprite.getTexture())
@@ -749,14 +719,15 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         else
             cc.glBindTexture2D(null);
 
-        context.bindBuffer(context.ARRAY_BUFFER, this._verticesFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._textureCoordsFloat32Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, 0, 0);
-
-        context.bindBuffer(context.ARRAY_BUFFER, this._colorsUint8Buffer);
-        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, 0, 0);
+        context.bindBuffer(context.ARRAY_BUFFER, this._vertexWebGLBuffer);
+        if(this._vertexDataDirty){
+            context.bufferData(context.ARRAY_BUFFER, this._vertexArrayBuffer, context.DYNAMIC_DRAW);
+            this._vertexDataDirty = false;
+        }
+        var locVertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_POSITION, 2, context.FLOAT, false, locVertexDataLen, 0);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, context.UNSIGNED_BYTE, true, locVertexDataLen, 8);
+        context.vertexAttribPointer(cc.VERTEX_ATTRIB_TEX_COORDS, 2, context.FLOAT, false, locVertexDataLen, 12);
 
         if (this._type === cc.PROGRESS_TIMER_TYPE_RADIAL)
             context.drawArrays(context.TRIANGLE_FAN, 0, this._vertexDataCount);
@@ -767,10 +738,10 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
                 context.drawArrays(context.TRIANGLE_STRIP, 0, this._vertexDataCount / 2);
                 context.drawArrays(context.TRIANGLE_STRIP, 4, this._vertexDataCount / 2);
                 // 2 draw calls
-                cc.INCREMENT_GL_DRAWS(1);
+                cc.g_NumberOfDraws++;
             }
         }
-        cc.INCREMENT_GL_DRAWS(1);
+        cc.g_NumberOfDraws++;
     },
 
     _updateColor:function () {
@@ -780,7 +751,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         var sc = this._sprite.getQuad().tl.colors;
         for (var i = 0; i < this._vertexDataCount; ++i)
             this._vertexData[i].colors = sc;
-        this._colorsUint8Buffer = this._getProgressTimerColorArray();
+        this._vertexDataDirty = true;
     },
 
     /**
@@ -874,15 +845,18 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         if (this._vertexDataCount != index + 3) {
             sameIndexCount = false;
             this._vertexData = null;
+            this._vertexArrayBuffer = null;
             this._vertexDataCount = 0;
         }
 
         if (!this._vertexData) {
             this._vertexDataCount = index + 3;
+            var locCount = this._vertexDataCount, vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT;
+            this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
             this._vertexData = [];
-            for (i = 0; i < this._vertexDataCount; i++) {
-                this._vertexData[i] = new cc.V2F_C4B_T2F();
-            }
+            for (i = 0; i < locCount; i++)
+                this._vertexData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
+
             cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
         }
 
@@ -906,8 +880,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         this._vertexData[this._vertexDataCount - 1].texCoords = this._textureCoordFromAlphaPoint(hit);
         this._vertexData[this._vertexDataCount - 1].vertices = this._vertexFromAlphaPoint(hit);
 
-        this._verticesFloat32Buffer = this._getProgressTimerVertexArray();
-        this._textureCoordsFloat32Buffer = this._getProgressTimerTexCoodsArray();
+        this._vertexDataDirty = true;
         this._updateColor();
     },
 
@@ -956,9 +929,11 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         if (!this._reverseDirection) {
             if (!this._vertexData) {
                 this._vertexDataCount = 4;
+                var vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, locCount = 4;
+                this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
                 this._vertexData = [];
-                for (i = 0; i < this._vertexDataCount; i++) {
-                    this._vertexData[i] = new cc.V2F_C4B_T2F();
+                for (i = 0; i < locCount; i++) {
+                    this._vertexData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
                 }
                 cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
             }
@@ -981,9 +956,11 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
         } else {
             if (!this._vertexData) {
                 this._vertexData = 8;
+                var vertexDataLen = cc.V2F_C4B_T2F.BYTES_PER_ELEMENT, locCount = 8;
+                this._vertexArrayBuffer = new ArrayBuffer(locCount * vertexDataLen);
                 this._vertexData = [];
-                for (i = 0; i < this._vertexDataCount; i++) {
-                    this._vertexData[i] = new cc.V2F_C4B_T2F();
+                for (i = 0; i < locCount; i++) {
+                    this._vertexData[i] = new cc.V2F_C4B_T2F(null, null, null, this._vertexArrayBuffer, i * vertexDataLen);
                 }
                 cc.Assert(this._vertexData, "cc.ProgressTimer. Not enough memory");
                 //    TOPLEFT 1
@@ -1019,8 +996,7 @@ cc.ProgressTimerWebGL = cc.Node.extend(/** @lends cc.ProgressTimerWebGL# */{
             this._vertexData[5].texCoords = this._textureCoordFromAlphaPoint(cc.p(max.x, min.y));
             this._vertexData[5].vertices = this._vertexFromAlphaPoint(cc.p(max.x, min.y));
         }
-        this._verticesFloat32Buffer = this._getProgressTimerVertexArray();
-        this._textureCoordsFloat32Buffer = this._getProgressTimerTexCoodsArray();
+        this._vertexDataDirty = true;
         this._updateColor();
     },
 
