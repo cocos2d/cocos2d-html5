@@ -1424,6 +1424,12 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
         this._textureAtlas.drawQuads();
+    },
+
+    onExit:function(){
+        cc.Node.prototype.onExit.call(this);
+        if(this._textureAtlas)
+            this._textureAtlas._releaseBuffer();
     }
 });
 
@@ -1435,7 +1441,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
  * </p>
  * @param {String} fileImage
  * @param {Number} capacity
- * @return {cc.SpriteBatchNodeCanvas}
+ * @return {cc.SpriteBatchNodeWebGL}
  * @example
  * //create a SpriteBatchNode
  * var parent2 = cc.SpriteBatchNode.create("res/animations/grossini.png", 50);
@@ -1454,7 +1460,7 @@ cc.SpriteBatchNodeWebGL.create = function (fileImage, capacity) {
  * </p>
  * @param {cc.Texture2D} texture
  * @param {Number} capacity
- * @return {cc.SpriteBatchNodeCanvas}
+ * @return {cc.SpriteBatchNodeWebGL}
  */
 cc.SpriteBatchNodeWebGL.createWithTexture = function (texture, capacity) {
     capacity = capacity || cc.DEFAULT_SPRITE_BATCH_CAPACITY;

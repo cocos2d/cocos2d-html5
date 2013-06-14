@@ -164,6 +164,34 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
     },
 
     /**
+     * <p>Returns a Texture2D object given an PVR filename<br />
+     * If the file image was not previously loaded, it will create a new Texture2D<br />
+     *  object and it will return it. Otherwise it will return a reference of a previously loaded image </p>
+     * @param {String} path
+     * @return {cc.Texture2D}
+     */
+    addPVRImage:function (path) {
+        cc.Assert(path != null, "TextureCache: file image MUST not be null");
+
+        path = cc.FileUtils.getInstance().fullPathForFilename(path);
+
+        var key = path;
+
+        if (this._textures[key] != null) {
+            return this._textures[key];
+        }
+
+        // Split up directory and filename
+        var tex = new cc.Texture2D();
+        if (tex.initWithPVRFile(key)) {
+            this._textures[key] = tex;
+        } else {
+            cc.log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
+        }
+        return tex;
+    },
+    /// ---- common properties end   ----
+    /**
      * <p>Purges the dictionary of loaded textures. <br />
      * Call this method if you receive the "Memory Warning"  <br />
      * In the short term: it will free some resources preventing your app from being killed  <br />
@@ -209,35 +237,6 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
         if (this._textures[fullPath])
             delete(this._textures[fullPath]);
     },
-
-    /**
-     * <p>Returns a Texture2D object given an PVR filename<br />
-     * If the file image was not previously loaded, it will create a new Texture2D<br />
-     *  object and it will return it. Otherwise it will return a reference of a previously loaded image </p>
-     * @param {String} path
-     * @return {cc.Texture2D}
-     */
-    addPVRImage:function (path) {
-        cc.Assert(path != null, "TextureCache: file image MUST not be null");
-
-        path = cc.FileUtils.getInstance().fullPathForFilename(path);
-
-        var key = path;
-
-        if (this._textures[key] != null) {
-            return this._textures[key];
-        }
-
-        // Split up directory and filename
-        var tex = new cc.Texture2D();
-        if (tex.initWithPVRFile(key)) {
-            this._textures[key] = tex;
-        } else {
-            cc.log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
-        }
-        return tex;
-    },
-    /// ---- common properties end   ----
 
     /**
      *  Loading the images asynchronously
@@ -523,6 +522,35 @@ cc.TextureCacheWebGL = cc.Class.extend({
     },
 
     /**
+     * <p>Returns a Texture2D object given an PVR filename<br />
+     * If the file image was not previously loaded, it will create a new Texture2D<br />
+     *  object and it will return it. Otherwise it will return a reference of a previously loaded image </p>
+     * @param {String} path
+     * @return {cc.Texture2D}
+     */
+    addPVRImage:function (path) {
+        cc.Assert(path != null, "TextureCache: file image MUST not be null");
+
+        path = cc.FileUtils.getInstance().fullPathForFilename(path);
+
+        var key = path;
+
+        if (this._textures[key] != null) {
+            return this._textures[key];
+        }
+
+        // Split up directory and filename
+        var tex = new cc.Texture2D();
+        if (tex.initWithPVRFile(key)) {
+            this._textures[key] = tex;
+        } else {
+            cc.log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
+        }
+        return tex;
+    },
+    /// ---- common properties end   ----
+
+    /**
      * <p>Purges the dictionary of loaded textures. <br />
      * Call this method if you receive the "Memory Warning"  <br />
      * In the short term: it will free some resources preventing your app from being killed  <br />
@@ -575,35 +603,6 @@ cc.TextureCacheWebGL = cc.Class.extend({
             delete(this._textures[fullPath]);
         }
     },
-
-    /**
-     * <p>Returns a Texture2D object given an PVR filename<br />
-     * If the file image was not previously loaded, it will create a new Texture2D<br />
-     *  object and it will return it. Otherwise it will return a reference of a previously loaded image </p>
-     * @param {String} path
-     * @return {cc.Texture2D}
-     */
-    addPVRImage:function (path) {
-        cc.Assert(path != null, "TextureCache: file image MUST not be null");
-
-        path = cc.FileUtils.getInstance().fullPathForFilename(path);
-
-        var key = path;
-
-        if (this._textures[key] != null) {
-            return this._textures[key];
-        }
-
-        // Split up directory and filename
-        var tex = new cc.Texture2D();
-        if (tex.initWithPVRFile(key)) {
-            this._textures[key] = tex;
-        } else {
-            cc.log("cocos2d: Couldn't add PVRImage:" + key + " in TextureCache");
-        }
-        return tex;
-    },
-    /// ---- common properties end   ----
 
     /**
      *  Loading the images asynchronously
