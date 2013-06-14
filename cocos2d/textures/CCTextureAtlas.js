@@ -572,6 +572,18 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     drawQuads:function () {
         this.drawNumberOfQuads(this._totalQuads, 0);
+    },
+
+    _releaseBuffer: function () {
+        var gl = cc.renderContext;
+        if (this._buffersVBO) {
+            if (this._buffersVBO[0])
+                gl.deleteBuffer(this._buffersVBO[0]);
+            if (this._buffersVBO[1])
+                gl.deleteBuffer(this._buffersVBO[1])
+        }
+        if (this._quadsWebBuffer)
+            gl.deleteBuffer(this._quadsWebBuffer);
     }
 });
 

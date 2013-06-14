@@ -163,6 +163,11 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
         this._pixelFormat = cc.Texture2D.defaultAlphaPixelFormat();
     },
 
+    releaseTexture:function(){
+         if(this._webTextureObj)
+             cc.renderContext.deleteTexture(this._webTextureObj);
+    },
+
     /**
      * pixel format of the texture
      * @return {Number}
