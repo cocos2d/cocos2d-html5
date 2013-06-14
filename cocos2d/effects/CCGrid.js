@@ -362,8 +362,14 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
         this._texCoordinates = new Float32Array(numOfPoints * 2);
         this._indices = new Uint16Array(this._gridSize.width * this._gridSize.height * 6);
 
+        if(this._verticesBuffer)
+            gl.deleteBuffer(this._verticesBuffer);
         this._verticesBuffer = gl.createBuffer();
+        if(this._texCoordinateBuffer)
+            gl.deleteBuffer(this._texCoordinateBuffer);
         this._texCoordinateBuffer = gl.createBuffer();
+        if(this._indicesBuffer)
+            gl.deleteBuffer(this._indicesBuffer);
         this._indicesBuffer = gl.createBuffer();
 
         var x, y, i;
@@ -388,10 +394,10 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
                 this._indices[idx * 6 + 5] = d;
 
                 var l1 = [a * 3, b * 3, c * 3, d * 3];
-                var e = new cc.Vertex3F(x1, y1, 0);
-                var f = new cc.Vertex3F(x2, y1, 0);
-                var g = new cc.Vertex3F(x2, y2, 0);
-                var h = new cc.Vertex3F(x1, y2, 0);
+                var e = {x:x1, y:y1, z:0};   //new cc.Vertex3F(x1, y1, 0);
+                var f = {x:x2, y:y1, z:0};   //new cc.Vertex3F(x2, y1, 0);
+                var g = {x:x2, y:y2, z:0};   // new cc.Vertex3F(x2, y2, 0);
+                var h = {x:x1, y:y2, z:0};   //new cc.Vertex3F(x1, y2, 0);
 
                 var l2 = [e, f, g, h];
                 var tex1 = [a * 2, b * 2, c * 2, d * 2];
@@ -555,8 +561,14 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
         this._indices = new Uint16Array(numQuads * 6);
 
         var gl = cc.renderContext;
+        if(this._verticesBuffer)
+            gl.deleteBuffer(this._verticesBuffer);
         this._verticesBuffer = gl.createBuffer();
+        if(this._texCoordinateBuffer)
+            gl.deleteBuffer(this._texCoordinateBuffer);
         this._texCoordinateBuffer = gl.createBuffer();
+        if(this._indicesBuffer)
+            gl.deleteBuffer(this._indicesBuffer);
         this._indicesBuffer = gl.createBuffer();
 
         var x, y, i = 0;

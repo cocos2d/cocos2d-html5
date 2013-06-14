@@ -243,7 +243,7 @@ cc.clampf = function (value, min_inclusive, max_inclusive) {
 
 /**
  * Clamp a point between from and to.
- * @param {Number} p
+ * @param {Point} p
  * @param {Number} min_inclusive
  * @param {Number} max_inclusive
  * @return {cc.Point}
