@@ -53,12 +53,22 @@ cc.create3DContext = function (canvas, opt_attribs) {
  */
 cc.Browser = {};
 (function () {
-    cc.Browser.ua = navigator.userAgent.toLowerCase();
+    var ua = navigator.userAgent;
+    cc.Browser.ua = ua.toLowerCase();
     cc.Browser.platform = navigator.platform.toLowerCase();
-    cc.Browser.UA = cc.Browser.ua.match(/(opera|ie|firefox|chrome|version)[\s\/:]([\w\d\.]+)?.*?(safari|version[\s\/:]([\w\d\.]+)|$)/) || [null, 'unknown', 0];
-    cc.Browser.mode = cc.Browser.UA[1] == 'ie' && document.documentMode;
-    cc.Browser.type = (cc.Browser.UA[1] == 'version') ? cc.Browser.UA[3] : cc.Browser.UA[1];
     cc.Browser.isMobile = (cc.Browser.ua.indexOf('mobile') != -1 || cc.Browser.ua.indexOf('android') != -1);
+    cc.Browser.type = (function () {
+        var browserTypes = cc.Browser.ua.match(/micromessenger|qqbrowser|mqqbrowser|ucbrowser|360browser|baidubrowser|maxthon|ie|opera|firefox/) || cc.Browser.ua.match(/chrome|safari/);
+        if (browserTypes.length > 0) {
+            var el = browserTypes[0];
+            if(el == 'micromessenger'){
+                return 'wechat';
+            }
+            return el;
+        }
+        return "unknow";
+    })();
+    cc.Browser.mode = cc.Browser.type == 'ie' && document.documentMode;
 
     if (!document["ccConfig"])
         document["ccConfig"] = {};
@@ -67,23 +77,23 @@ cc.Browser = {};
     // check supportWebGL item
     cc._userRenderMode = parseInt(c["renderMode"]) || 0;
 
-    if(cc._userRenderMode === 1) {
-         //canvas only
+    if (cc._userRenderMode === 1) {
+        //canvas only
         cc.Browser.supportWebGL = false;
-    } else{
+    } else {
         // WebGL first
         cc.Browser.supportWebGL = !(window.WebGLRenderingContext == null);
         var tempCanvas = document.createElement("Canvas");
         var tempContext = cc.create3DContext(tempCanvas, {'stencil':true, 'preserveDrawingBuffer':true });
         cc.Browser.supportWebGL = !(tempContext == null)
     }
-    if(cc._userRenderMode === 2 && !cc.Browser.supportWebGL){
+    if (cc._userRenderMode === 2 && !cc.Browser.supportWebGL) {
         // WebGL render only, but browser doesn't support WebGL.
         cc.__renderDoesnotSupport = true;
     }
 
     // check if browser supports Web Audio
-    cc.Browser.supportWebAudio = (function(){
+    cc.Browser.supportWebAudio = (function () {
         // check Web Audio's context
         try {
             var ctx = new (window.AudioContext || window.webkitAudioContext || window.mozAudioContext)();
@@ -94,8 +104,8 @@ cc.Browser = {};
     })();
 })();
 
-cc.RenderDoesnotSupport = function(){
-    if(cc.__renderDoesnotSupport === "undefined")
+cc.RenderDoesnotSupport = function () {
+    if (cc.__renderDoesnotSupport === "undefined")
         return false;
     return cc.__renderDoesnotSupport;
 };
