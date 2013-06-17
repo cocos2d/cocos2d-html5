@@ -247,7 +247,7 @@ cc.FileUtils = cc.Class.extend({
         xhr.open("GET", fileUrl, true);
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
             // IE-specific logic here
-            xhr.setRequestHeader("Accept-Charset", "x-user-defined");
+            xhr.setRequestHeader("Accept-Charset", "utf-8");
             xhr.onreadystatechange = function (event) {
                 if (xhr.readyState == 4) {
                     if (xhr.status == 200) {
@@ -260,7 +260,7 @@ cc.FileUtils = cc.Class.extend({
             };
         } else {
             if (xhr.overrideMimeType)
-                xhr.overrideMimeType("text\/plain; charset=x-user-defined");
+                xhr.overrideMimeType("text\/plain; charset=utf-8");
             xhr.onload = function (e) {
                 if (xhr.responseText) {
                     cc.Loader.getInstance().onResLoaded();
@@ -276,7 +276,7 @@ cc.FileUtils = cc.Class.extend({
         req.open('GET', fileUrl, false);
         var arrayInfo = null;
         if (/msie/i.test(navigator.userAgent) && !/opera/i.test(navigator.userAgent)) {
-            req.setRequestHeader("Accept-Charset", "x-user-defined");
+            req.setRequestHeader("Accept-Charset", "utf-8");
             req.send(null);
             if (req.status != 200)
                 return null;
@@ -288,7 +288,7 @@ cc.FileUtils = cc.Class.extend({
             }
         } else {
             if (req.overrideMimeType)
-                req.overrideMimeType('text\/plain; charset=x-user-defined');
+                req.overrideMimeType('text\/plain; charset=utf-8');
             req.send(null);
             if (req.status != 200)
                 return null;
