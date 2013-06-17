@@ -231,6 +231,8 @@ cc.EditBox = cc.ControlButton.extend({
         this._edTxt.style.height = "100%";
         this._edTxt.style.active = 0;
         this._edTxt.style.outline = "medium";
+
+        // TODO the event listener will be remove when EditBox removes from parent.
         this._edTxt.addEventListener("input", function () {
             if (selfPointer._delegate && selfPointer._delegate.editBoxTextChanged)
                 selfPointer._delegate.editBoxTextChanged(selfPointer, this.value);
@@ -264,13 +266,11 @@ cc.EditBox = cc.ControlButton.extend({
         cc.DOM.convert(this._domInputSprite);
         this._domInputSprite.dom.appendChild(this._edTxt);
         this._domInputSprite.dom.showTooltipDiv = false;
-        this._domInputSprite.dom.className = "";
+
         //this._domInputSprite.dom.style.borderWidth = "1px";
         //this._domInputSprite.dom.style.borderStyle = "solid";
         //this._domInputSprite.dom.style.borderRadius = "8px";
         this._domInputSprite.canvas.remove();
-
-
     },
 
     /**
