@@ -111,7 +111,8 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
         }
     },
 
-    destroyRenderTexture:function () {
+    onExit:function () {
+        cc.Node.prototype.onExit.call(this);
         if (cc.renderContextType === cc.WEBGL) {
             this._sprite = null;
             this._textureCopy = null;
@@ -120,8 +121,9 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             gl.deleteFramebuffer(this._fBO);
             if (this._depthRenderBuffer)
                 gl.deleteRenderbuffer(this._depthRenderBuffer);
-
             this._uITextureImage = null;
+            if(this._texture)
+                this._texture.releaseTexture();
         }
     },
 
@@ -234,7 +236,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             // associate texture with FBO
             gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this._texture._webTextureObj, 0);
 
-            if (this._depthRenderBuffer != 0) {
+            if (depthStencilFormat != 0) {
                 //create and attach depth buffer
                 this._depthRenderBuffer = gl.createRenderbuffer();
                 gl.bindRenderbuffer(gl.RENDERBUFFER, this._depthRenderBuffer);
