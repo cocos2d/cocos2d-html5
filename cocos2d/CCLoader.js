@@ -277,6 +277,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
     _registerFaceFont:function (fontRes) {
         var srcArr = fontRes.src;
+        var fileUtils = cc.FileUtils.getInstance();
         if (srcArr && srcArr.length > 0) {
             var fontStyle = document.createElement("style");
             fontStyle.type = "text/css";
@@ -284,7 +285,7 @@ cc.Loader = cc.Class.extend(/** @lends cc.Loader# */{
 
             var fontStr = "@font-face { font-family:" + fontRes.fontName + "; src:";
             for (var i = 0; i < srcArr.length; i++) {
-                fontStr += "url('" + encodeURI(srcArr[i].src) + "') format('" + srcArr[i].type + "')";
+                fontStr += "url('" + fileUtils.fullPathForFilename(encodeURI(srcArr[i].src)) + "') format('" + srcArr[i].type + "')";
                 fontStr += (i == (srcArr.length - 1)) ? ";" : ",";
             }
             fontStyle.textContent += fontStr + "};";
