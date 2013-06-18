@@ -35,7 +35,7 @@
  * @class
  * @extends cc.Node
  */
-cc.AtlasNodeCanvas = cc.Node.extend(/** @lends cc.AtlasNode# */{
+cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     /// ----    common properties start    ----
     RGBAProtocol:true,
     //! chars per row

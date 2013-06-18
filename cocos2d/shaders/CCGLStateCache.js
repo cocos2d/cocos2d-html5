@@ -105,13 +105,13 @@ cc.glInvalidateStateCache = function () {
 cc.glUseProgram = function (program) {
     if (program !== cc._currentShaderProgram) {
         cc._currentShaderProgram = program;
-        gl.useProgram(program);
+        cc.renderContext.useProgram(program);
     }
 };
 
 if(!cc.ENABLE_GL_STATE_CACHE){
     cc.glUseProgram = function (program) {
-        gl.useProgram(program);
+        cc.renderContext.useProgram(program);
     }
 }
 

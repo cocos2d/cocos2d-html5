@@ -157,6 +157,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     _initializedNode:false,
     _additionalTransformDirty:false,
     _additionalTransform:null,
+    _componentContainer:null,
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
@@ -172,6 +173,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         this._additionalTransformDirty = false;
     },
 
+    /**
+     * Initializes the instance of cc.Node
+     * @returns {boolean} Whether the initialization was successful.
+     */
     init:function () {
         if (this._initializedNode === false)
             this._initNode();
@@ -252,15 +257,21 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
      *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
      *  </p>
-     * @return {Number}
+     * @return {Number} The X skew angle of the node in degrees.
      */
     getSkewX:function () {
         return this._skewX;
     },
 
     /**
-     * set the skew degrees in X
-     * @param {Number} newSkewX
+     * <p>
+     *     Changes the X skew angle of the node in degrees.                                                    <br/>
+     *                                                                                                         <br/>
+     *      This angle describes the shear distortion in the X direction.                                      <br/>
+     *      Thus, it is the angle between the Y axis and the left edge of the shape                            <br/>
+     *      The default skewX angle is 0. Positive values distort the node in a CW direction.
+     * </p>
+     * @param {Number} newSkewX The X skew angle of the node in degrees.
      */
     setSkewX:function (newSkewX) {
         this._skewX = newSkewX;
@@ -274,15 +285,21 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * Thus, it is the angle between the X axis and the bottom edge of the shape       <br/>
      * The default skewY angle is 0. Positive values distort the node in a CCW direction.    <br/>
      * </p>
-     * @return {Number}
+     * @return {Number} The Y skew angle of the node in degrees.
      */
     getSkewY:function () {
         return this._skewY;
     },
 
     /**
-     * set the skew degrees in Y
-     * @param {Number} newSkewY
+     * <p>
+     * Changes the Y skew angle of the node in degrees.
+     *
+     * This angle describes the shear distortion in the Y direction.
+     * Thus, it is the angle between the X axis and the bottom edge of the shape
+     * The default skewY angle is 0. Positive values distort the node in a CCW direction.
+     * </p>
+     * @param {Number} newSkewY  The Y skew angle of the node in degrees.
      */
     setSkewY:function (newSkewY) {
         this._skewY = newSkewY;
@@ -297,8 +314,15 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         return this._zOrder;
     },
 
-    /** zOrder setter : private method
-     * used internally to alter the zOrder variable. DON'T call this method manually
+    /**
+     * <p>
+     *     Sets the z order which stands for the drawing order                                                     <br/>
+     *                                                                                                             <br/>
+     *     This is an internal method. Don't call it outside the framework.                                        <br/>
+     *     The difference between setZOrder(int) and _setOrder(int) is:                                            <br/>
+     *        - _setZOrder(int) is a pure setter for m_nZOrder memeber variable                                    <br/>
+     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's chilren array.
+     * </p>
      * @param {Number} z
      * @private
      */
@@ -306,6 +330,17 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         this._zOrder = z;
     },
 
+    /**
+     * <p>
+     *     Sets the Z order which stands for the drawing order, and reorder this node in its parent's children array.     <br/>
+     *                                                                                                                    <br/>
+     *      The Z order of node is relative to its "brothers": children of the same parent.                               <br/>
+     *      It's nothing to do with OpenGL's z vertex. This one only affects the draw order of nodes in cocos2d.          <br/>
+     *      The larger number it is, the later this node will be drawn in each message loop.                              <br/>
+     *      Please refer to setVertexZ(float) for the difference.
+     * </p>
+     * @param {Number} z Z order of this node.
+     */
     setZOrder:function (z) {
         this._setZOrder(z);
         if (this._parent)
@@ -313,15 +348,24 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * ertexZ getter
-     * @return {Number}
+     * Gets WebGL Z vertex of this node.
+     * @return {Number} WebGL Z vertex of this node
      */
     getVertexZ:function () {
         return this._vertexZ;
     },
 
     /**
-     * vertexZ setter
+     * <p>
+     *     Sets the real WebGL Z vertex.                                                                          <br/>
+     *                                                                                                            <br/>
+     *      Differences between openGL Z vertex and cocos2d Z order:                                              <br/>
+     *      - OpenGL Z modifies the Z vertex, and not the Z order in the relation between parent-children         <br/>
+     *      - OpenGL Z might require to set 2D projection                                                         <br/>
+     *      - cocos2d Z order works OK if all the nodes uses the same openGL Z vertex. eg: vertexZ = 0            <br/>
+     *                                                                                                            <br/>
+     *      @warning Use it at your own risk since it might break the cocos2d parent-children z order
+     * </p>
      * @param {Number} Var
      */
     setVertexZ:function (Var) {
@@ -330,7 +374,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     /**
      * The rotation (angle) of the node in degrees. 0 is the default rotation angle. Positive values rotate node CW.
-     * @return {Number}
+     * @return {Number} The rotation of the node in degrees.
      */
     getRotation:function () {
         cc.Assert(this._rotationX == this._rotationY, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
@@ -340,8 +384,13 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     _rotationRadiansX: 0,
     _rotationRadiansY: 0,
     /**
-     * rotation setter
-     * @param {Number} newRotation
+     * <p>
+     *     Sets the rotation (angle) of the node in degrees.                                             <br/>
+     *                                                                                                   <br/>
+     *      0 is the default rotation angle.                                                             <br/>
+     *      Positive values rotate node clockwise, and negative values for anti-clockwise.
+     * </p>
+     * @param {Number} newRotation The rotation of the node in degrees.
      */
     setRotation: function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
@@ -355,15 +404,20 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * The rotation (angle) of the node in degrees. 0 is the default rotation angle. <br/>
      * Positive values rotate node CW. It only modifies the X rotation performing a horizontal rotational skew .
      * (support only in WebGl rendering mode)
-     * @return {Number}
+     * @return {Number} The X rotation in degrees.
      */
     getRotationX:function () {
         return this._rotationX;
     },
 
     /**
-     * rotationX setter
-     * @param {Number} rotationX
+     * <p>
+     *     Sets the X rotation (angle) of the node in degrees which performs a horizontal rotational skew.        <br/>
+     *                                                                                                            <br/>
+     *     0 is the default rotation angle.                                                                       <br/>
+     *     Positive values rotate node clockwise, and negative values for anti-clockwise.
+     * </p>
+     * @param {Number} rotationX The X rotation in degrees which performs a horizontal rotational skew.
      */
     setRotationX:function (rotationX) {
         this._rotationX = rotationX;
@@ -374,12 +428,21 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      * The rotation (angle) of the node in degrees. 0 is the default rotation angle.  <br/>
      * Positive values rotate node CW. It only modifies the Y rotation performing a vertical rotational skew .
-     * @return {Number}
+     * @return {Number} The Y rotation in degrees.
      */
     getRotationY:function () {
         return this._rotationY;
     },
 
+    /**
+     * <p>
+     *    Sets the Y rotation (angle) of the node in degrees which performs a vertical rotational skew.         <br/>
+     *                                                                                                          <br/>
+     *      0 is the default rotation angle.                                                                    <br/>
+     *      Positive values rotate node clockwise, and negative values for anti-clockwise.
+     * </p>
+     * @param rotationY The Y rotation in degrees.
+     */
     setRotationY:function (rotationY) {
         this._rotationY = rotationY;
         this._rotationRadiansY = this._rotationY * (Math.PI / 180);
@@ -407,16 +470,20 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * scaleX getter
-     * @return {Number}
+     * Gets the scale factor of the node,  when X and Y have the same scale factor.
+     * @warning Assert when m_fScaleX != m_fScaleY.
+     * @return {Number} The scale factor on X axis.
      */
     getScaleX:function () {
         return this._scaleX;
     },
 
     /**
-     * scaleX setter
-     * @param {Number} newScaleX
+     * <p>
+     *     Changes the scale factor on X axis of this node                                   <br/>
+     *     The deafult value is 1.0 if you haven't changed it before
+     * </p>
+     * @param {Number} newScaleX The scale factor on X axis.
      */
     setScaleX:function (newScaleX) {
         this._scaleX = newScaleX;
@@ -432,8 +499,11 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * scaleY setter
-     * @param {Number} newScaleY
+     * <p>
+     *     Changes the scale factor on Y axis of this node                                            <br/>
+     *     The Default value is 1.0 if you haven't changed it before.
+     * </p>
+     * @param {Number} newScaleY The scale factor on Y axis.
      */
     setScaleY:function (newScaleY) {
         this._scaleY = newScaleY;
@@ -441,9 +511,17 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * position setter
-     * @param {cc.Point|Number} newPosOrxValue
-     * @param {Number}  yValue
+     * <p>
+     *     Changes the position (x,y) of the node in OpenGL coordinates
+     *     Usually we use ccp(x,y) to compose CCPoint object.
+     *     The original point (0,0) is at the left-bottom corner of screen.
+     *     and Passing two numbers (x,y) is much efficient than passing CCPoint object.
+     * </p>
+     * @param {cc.Point|Number} newPosOrxValue The position (x,y) of the node in coordinates or  X coordinate for position
+     * @param {Number} yValue Y coordinate for position
+     * @example
+     *    var size = cc.Director.getInstance().getWinSize();
+     *    node.setPosition( cc.p(size.width/2, size.height/2) )
      */
     setPosition:function (newPosOrxValue, yValue) {
         if (arguments.length == 2) {
@@ -504,17 +582,23 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * Get children count
-     * @return {Number}
+     * Get the amount of children.
+     * @return {Number} The amount of children.
      */
-
     getChildrenCount:function () {
         return this._children ? this._children.length : 0;
     },
 
     /**
-     * children getter
-     * @return {object}
+     * Return an array of children  <br/>
+     * Composing a "tree" structure is a very important feature of CCNode
+     * @return {Array} An array of children
+     * @example
+     *  //This sample code traverses all children nodes, and set theie position to (0,0)
+     *  var allChildren = parent.getChildren();
+     * for(var i = 0; i< allChildren.length; i++) {
+     *     allChildren[i].setPosition(0,0);
+     * }
      */
     getChildren:function () {
         if (!this._children)
@@ -523,16 +607,18 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * isVisible getter
-     * @return {Boolean}
+     * Determines if the node is visible
+     * @see setVisible(bool)
+     * @return {Boolean} true if the node is visible, false if the node is hidden.
      */
     isVisible:function () {
         return this._visible;
     },
 
     /**
-     * isVisible setter
-     * @param {Boolean} Var
+     * Sets whether the node is visible <br/>
+     * The default value is true, a node is default to visible
+     * @param {Boolean} Var true if the node is visible, false if the node is hidden.
      */
     setVisible:function (Var) {
         this._visible = Var;
@@ -545,14 +631,23 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *  The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
      *  But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
      *  The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
-     * @return {cc.Point}
+     * @return {cc.Point} The anchor point of node.
      */
     getAnchorPoint:function () {
         return cc.p(this._anchorPoint.x, this._anchorPoint.y);
     },
 
     /**
-     * @param {cc.Point} point
+     * <p>
+     *     Sets the anchor point in percent.                                                                                              <br/>
+     *                                                                                                                                    <br/>
+     *     anchorPoint is the point around which all transformations and positioning manipulations take place.                            <br/>
+     *     It's like a pin in the node where it is "attached" to its parent.                                                              <br/>
+     *     The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner.     <br/>
+     *     But you can use values higher than (1,1) and lower than (0,0) too.                                                             <br/>
+     *     The default anchorPoint is (0.5,0.5), so it starts in the center of the node.
+     * </p>
+     * @param {cc.Point} point The anchor point of node.
      */
     setAnchorPoint:function (point) {
         if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
@@ -565,23 +660,31 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      *  The anchorPoint in absolute pixels.  <br/>
      *  you can only read it. If you wish to modify it, use anchorPoint instead
-     * @return {cc.Point}
+     *  @see getAnchorPoint()
+     * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
         return cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
     },
 
-    /** <p>The untransformed size of the node. <br/>
-     The contentSize remains the same no matter the node is scaled or rotated.<br/>
-     All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
-     * @return {cc.Size}
+    /**
+     * <p>The untransformed size of the node. <br/>
+     * The contentSize remains the same no matter the node is scaled or rotated.<br/>
+     * All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
+     * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
         return cc.size(this._contentSize.width, this._contentSize.height);
     },
 
     /**
-     * @param {cc.Size} size
+     * <p>
+     *     Sets the untransformed size of the node.                                             <br/>
+     *                                                                                          <br/>
+     *     The contentSize remains the same no matter the node is scaled or rotated.            <br/>
+     *     All nodes has a size. Layer and Scene has the same size of the screen.
+     * </p>
+     * @param {cc.Size} size The untransformed size of the node.
      */
     setContentSize:function (size) {
         if (!cc.sizeEqualToSize(size, this._contentSize)) {
@@ -592,39 +695,49 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * whether or not the node is running
-     * @return {Boolean}
+     * <p>
+     *     Returns whether or not the node accepts event callbacks.                                     <br/>
+     *     Running means the node accept event callbacks like onEnter(), onExit(), update()
+     * </p>
+     * @return {Boolean} Whether or not the node is running.
      */
     isRunning:function () {
         return this._running;
     },
 
-    /** A weak reference to the parent
-     * @return {cc.Node}
+    /**
+     * Returns a pointer to the parent node
+     * @return {cc.Node} A pointer to the parnet node
      */
     getParent:function () {
         return this._parent;
     },
 
-    /** parent setter
-     * @param {cc.Node} Var
+    /**
+     * Sets the parent node
+     * @param {cc.Node} Var A pointer to the parnet node
      */
     setParent:function (Var) {
         this._parent = Var;
     },
 
     /**
-     * If true, the Anchor Point will be (0,0) when you position the CCNode.<br/>
-     * Used by CCLayer and CCScene
-     * @return {Boolean}
+     * Gets whether the anchor point will be (0,0) when you position this node.
+     * @see ignoreAnchorPointForPosition(bool)
+     * @return {Boolean} true if the anchor point will be (0,0) when you position this node.
      */
     isIgnoreAnchorPointForPosition:function () {
         return this._ignoreAnchorPointForPosition;
     },
 
     /**
-     * ignoreAnchorPointForPosition setter
-     * @param {Boolean} newValue
+     * <p>
+     *     Sets whether the anchor point will be (0,0) when you position this node.                              <br/>
+     *                                                                                                           <br/>
+     *     This is an internal method, only used by CCLayer and CCScene. Don't call it outside framework.        <br/>
+     *     The default value is false, while in CCLayer and CCScene are true
+     * </p>
+     * @param {Boolean} newValue true if anchor point will be (0,0) when you position this node
      */
     ignoreAnchorPointForPosition:function (newValue) {
         if (newValue != this._ignoreAnchorPointForPosition) {
@@ -634,46 +747,84 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * A tag used to identify the node easily
-     * @return {Number}
+     * Returns a tag that is used to identify the node easily.
+     *
+     * @return {Number} A interger that identifies the node.
+     * @example
+     *  //You can set tags to node then identify them easily.
+     * // set tags
+     * node1.setTag(TAG_PLAYER);
+     * node2.setTag(TAG_MONSTER);
+     * node3.setTag(TAG_BOSS);
+     * parent.addChild(node1);
+     * parent.addChild(node2);
+     * parent.addChild(node3);
+     * // identify by tags
+     * var allChildren = parent.getChildren();
+     * for(var i = 0; i < allChildren.length; i++){
+     *     switch(node.getTag()) {
+     *         case TAG_PLAYER:
+     *             break;
+     *         case TAG_MONSTER:
+     *             break;
+     *         case TAG_BOSS:
+     *             break;
+     *     }
+     * }
      */
     getTag:function () {
         return this._tag;
     },
 
-    /** tag setter
-     * @param {Number} Var
+    /**
+     * Changes the tag that is used to identify the node easily. <br/>
+     * Please refer to getTag for the sample code.
+     * @param {Number} Var A interger that indentifies the node.
      */
     setTag:function (Var) {
         this._tag = Var;
     },
 
     /**
-     * A custom user data pointer
-     * @return {object}
+     * <p>
+     *     Returns a custom user data pointer                                                               <br/>
+     *     You can set everything in UserData pointer, a data block, a structure or an object.
+     * </p>
+     * @return {object}  A custom user data pointer
      */
     getUserData:function () {
         return this._userData;
     },
 
     /**
-     * @param {object} Var
+     * <p>
+     *    Sets a custom user data pointer                                                                   <br/>
+     *    You can set everything in UserData pointer, a data block, a structure or an object, etc.
+     * </p>
+     * @warning Don't forget to relfease the memroy manually,especially before you change this data pointer, and before this node is autoreleased.
+     * @param {object} Var A custom user data
      */
     setUserData:function (Var) {
         this._userData = Var;
     },
 
     /**
+     * Returns a user assigned CCObject.                             <br/>
      * Similar to userData, but instead of holding a void* it holds an id
-     * @return {object}
+     * @return {object} A user assigned CCObject
      */
     getUserObject:function () {
         return this._userObject;
     },
 
     /**
-     * Similar to userData, but instead of holding a void* it holds an id
-     * @param {object} newValue
+     * <p>
+     *      Returns a user assigned CCObject                                                                                       <br/>
+     *      Similar to UserData, but instead of holding a void* it holds an object.                                               <br/>
+     *      The UserObject will be retained once in this method, and the previous UserObject (if existed) will be relese.         <br/>
+     *      The UserObject will be released in CCNode's destructure.
+     * </p>
+     * @param {object} newValue A user assigned CCObject
      */
     setUserObject:function (newValue) {
         if (this._userObject != newValue) {
@@ -683,25 +834,32 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
 
     /**
-     * used internally for zOrder sorting, don't change this manually
-     * @return {Number}
+     * Returns the arrival order, indecates which children is added previously.
+     * @return {Number} The arrival order.
      */
     getOrderOfArrival:function () {
         return this._orderOfArrival;
     },
 
     /**
-     * used internally for zOrder sorting, don't change this manually
-     * @param {Number} Var
+     * <p>
+     *     Sets the arrival order when this node has a same ZOrder with other children.                             <br/>
+     *                                                                                                              <br/>
+     *     A node which called addChild subsequently will take a larger arrival order,                              <br/>
+     *     If two children have the same Z order, the child with larger arrival order will be drawn later.
+     * </p>
+     * @warning This method is used internally for zOrder sorting, don't change this manually
+     * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival:function (Var) {
         this._orderOfArrival = Var;
     },
 
     /**
-     * <p>cc.ActionManager used by all the actions. <br/>
+     * <p>Gets the CCActionManager object that is used by all actions.<br/>
      * (IMPORTANT: If you set a new cc.ActionManager, then previously created actions are going to be removed.)</p>
-     * @return {cc.ActionManager}
+     * @see setActionManager()
+     * @return {cc.ActionManager} A CCActionManager object.
      */
     getActionManager:function () {
         if (!this._actionManager) {
@@ -711,9 +869,9 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * <p>cc.ActionManager used by all the actions. <br/>
-     * (IMPORTANT: If you set a new cc.ActionManager, then previously created actions are going to be removed.)</p>
-     * @param {cc.ActionManager} actionManager
+     * <p>Sets the cc.ActionManager object that is used by all actions. </p>
+     * @warning If you set a new CCActionManager, then previously created actions will be removed.
+     * @param {cc.ActionManager} actionManager A CCActionManager object that is used by all actions.
      */
     setActionManager:function (actionManager) {
         if (this._actionManager != actionManager) {
@@ -727,7 +885,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *   cc.Scheduler used to schedule all "updates" and timers.<br/>
      *   IMPORTANT: If you set a new cc.Scheduler, then previously created timers/update are going to be removed.
      * </p>
-     * @return {cc.Scheduler}
+     * @return {cc.Scheduler} A CCScheduler object.
      */
     getScheduler:function () {
         if (!this._scheduler) {
@@ -738,9 +896,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     /**
      * <p>
-     *   cc.Scheduler used to schedule all "updates" and timers.<br/>
-     *   IMPORTANT: If you set a new cc.Scheduler, then previously created timers/update are going to be removed.
+     *   Sets a CCScheduler object that is used to schedule all "updates" and timers.           <br/>
      * </p>
+     * @warning If you set a new CCScheduler, then previously created timers/update are going to be removed.
+     * @param scheduler A cc.Shdeduler object that is used to schedule all "update" and timers.
      */
     setScheduler:function (scheduler) {
         if (this._scheduler != scheduler) {
@@ -749,8 +908,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         }
     },
 
-    /** returns a "local" axis aligned bounding box of the node. <br/>
+    /**
+     * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
+     * @note This method returns a temporaty variable, so it can't returns const CCRect&
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
@@ -784,8 +945,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     // composition: GET
     /**
      * Gets a child from the container given its tag
-     * @param {Number} aTag
-     * @return {cc.Node}
+     * @param {Number} aTag An identifier to find the child node.
+     * @return {cc.Node} a CCNode object whose tag equals to the input parameter
      */
     getChildByTag:function (aTag) {
         //cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
@@ -804,12 +965,11 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     /** <p>"add" logic MUST only be on this method <br/> </p>
      *
-     * <p>If a class want's to extend the 'addChild' behaviour it only needs  <br/>
-     * to override this method </p>
+     * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
      *
-     * @param {cc.Node} child
-     * @param {Number} zOrder
-     * @param {Number} tag
+     * @param {cc.Node} child  A child node
+     * @param {Number} zOrder  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} tag  A interger to identify the node easily. Please refer to setTag(int)
      */
     addChild:function (child, zOrder, tag) {
         if (child === this) {
@@ -843,7 +1003,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * Remove itself from its parent node. If cleanup is true, then also remove all actions and callbacks. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * If the node orphan, then nothing happens.
-     * @param {Boolean} cleanup
+     * @param {Boolean} cleanup true if all actions and callbacks on this node should be removed, false otherwise.
+     * @see removeFromParentAndCleanup(bool)
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
@@ -854,9 +1015,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * Remove itself from its parent node.
+     * Removes this node itself from its parent node.  <br/>
+     * If the node orphan, then nothing happens.
      * @deprecated
-     * @param {Boolean} cleanup
+     * @param {Boolean} cleanup  true if all actions and callbacks on this node should be removed, false otherwise.
      */
     removeFromParentAndCleanup:function (cleanup) {
         cc.log("removeFromParentAndCleanup is deprecated. Use removeFromParent instead");
@@ -869,8 +1031,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * If a class wants to extend the 'removeChild' behavior it only needs <br/>
      * to override this method </p>
      *
-     * @param {cc.Node} child
-     * @param {Boolean} cleanup
+     * @param {cc.Node} child  The child node which will be removed.
+     * @param {Boolean} cleanup  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      */
     removeChild:function (child, cleanup) {
         // explicit nil handling
@@ -889,8 +1051,9 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Number} tag
-     * @param {Boolean} cleanup
+     * @param {Number} tag An integer number that identifies a child node
+     * @param {Boolean} cleanup true if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     * @see removeChildByTag(int, bool)
      */
     removeChildByTag:function (tag, cleanup) {
         cc.Assert(tag != cc.NODE_TAG_INVALID, "Invalid tag");
@@ -915,7 +1078,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Boolean | null } cleanup
+     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false oterwise.
      */
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
@@ -1005,8 +1168,11 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * <p>performance improvement, Sort the children array once before drawing, instead of every time when a child is added or reordered <br/>
-     * don't call this manually unless a child added needs to be removed in the same frame </p>
+     * <p>
+     *     Sorts the children array once before drawing, instead of every time when a child is added or reordered.    <br/>
+     *     This appraoch can improves the performance massively.
+     * </p>
+     * @note Don't call this manually unless a child added needs to be removed in the same frame
      */
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
@@ -1064,9 +1230,12 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     //scene managment
     /**
-     * callback that is called every time the cc.Node enters the 'stage'.<br/>
-     * If the cc.Node enters the 'stage' with a transition, this callback is called when the transition starts.
-     * During onEnter you can't a "sister/brother" node.
+     * <p>
+     *     Event callback that is invoked every time when CCNode enters the 'stage'.                                   <br/>
+     *     If the CCNode enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
+     *     During onEnter you can't access a "sister/brother" node.                                                    <br/>
+     *     If you override onEnter, you shall call its parent's one, e.g., CCNode::onEnter().
+     * </p>
      */
     onEnter:function () {
         this._running = true;//should be running before resumeSchedule
@@ -1075,8 +1244,11 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * <p>callback that is called when the cc.Node enters in the 'stage'.  <br/>
-     * If the cc.Node enters the 'stage' with a transition, this callback is called when the transition finishes.</p>
+     * <p>
+     *     Event callback that is invoked when the CCNode enters in the 'stage'.                                                        <br/>
+     *     If the CCNode enters the 'stage' with a transition, this event is called when the transition finishes.                       <br/>
+     *     If you override onEnterTransitionDidFinish, you shall call its parent's one, e.g. CCNode::onEnterTransitionDidFinish()
+     * </p>
      */
     onEnterTransitionDidFinish:function () {
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
@@ -1091,9 +1263,12 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * callback that is called every time the cc.Node leaves the 'stage'.<br/>
+     * <p>
+     * callback that is called every time the cc.Node leaves the 'stage'.                                         <br/>
      * If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes. <br/>
-     * During onExit you can't access a sibling node.
+     * During onExit you can't access a sibling node.                                                             <br/>
+     * If you override onExit, you shall call its parent's one, e.g., CCNode::onExit().
+     * </p>
      */
     onExit:function () {
         this._running = false;
@@ -1104,10 +1279,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     // actions
     /**
      * Executes an action, and returns the action that is executed.<br/>
-     * The node becomes the action's target.
+     * The node becomes the action's target. Refer to CCAction::getTarget()
      * @warning Starting from v0.8 actions don't retain their target anymore.
      * @param {cc.Action} action
-     * @return {cc.Action}
+     * @return {cc.Action} An Action pointer
      */
     runAction:function (action) {
         cc.Assert(action != null, "Argument must be non-nil");
@@ -1116,23 +1291,23 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * Removes all actions from the running action list
+     * Stops and removes all actions from the running action list .
      */
     stopAllActions:function () {
         this.getActionManager().removeAllActionsFromTarget(this);
     },
 
     /**
-     * Removes an action from the running action list
-     * @param {cc.Action} action
+     * Stops and removes an action from the running action list.
+     * @param {cc.Action} action An action object to be removed.
      */
     stopAction:function (action) {
         this.getActionManager().removeAction(action);
     },
 
     /**
-     * Removes an action from the running action list given its tag
-     * @param {Number} tag
+     * Removes an action from the running action list by its tag.
+     * @param {Number} tag A tag that indicates the action to be removed.
      */
     stopActionByTag:function (tag) {
         cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
@@ -1140,9 +1315,10 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * Gets an action from the running action list given its tag
+     * Gets an action from the running action list by its tag.
+     * @see setTag(int), getTag().
      * @param {Number} tag
-     * @return {cc.Action}
+     * @return {cc.Action} The action object with the given tag.
      */
     getActionByTag:function (tag) {
         cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
@@ -1153,7 +1329,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *    Composable actions are counted as 1 action. Example:<br/>
      *    If you are running 1 Sequence of 7 actions, it will return 1. <br/>
      *    If you are running 7 Sequences of 2 actions, it will return 7.
-     * @return {Number}
+     * @return {Number} The number of actions that are running plus the ones that are schedule to run
      */
     numberOfRunningActions:function () {
         return this.getActionManager().numberOfRunningActionsInTarget(this);
@@ -1162,7 +1338,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     // cc.Node - Callbacks
     // timers
     /**
-     * schedules the "update" method. It will use the order number 0. This method will be called every frame.<br/>
+     * schedules the "update" method.                                                                           <br/>
+     * It will use the order number 0. This method will be called every frame.                                  <br/>
      * Scheduled methods with a lower order value will be called before the ones that have a higher order value.<br/>
      * Only one "update" method could be scheduled per node.
      */
@@ -1171,9 +1348,12 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * schedules the "update" callback function with a custom priority. This callback function will be called every frame.<br/>
+     * <p>
+     * schedules the "update" callback function with a custom priority.
+     * This callback function will be called every frame.<br/>
      * Scheduled callback functions with a lower priority will be called before the ones that have a higher value.<br/>
      * Only one "update" callback function could be scheduled per node (You can't have 2 'update' callback functions).<br/>
+     * </p>
      * @param {Number} priority
      */
     scheduleUpdateWithPriority:function (priority) {
@@ -1182,15 +1362,20 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     /**
      * unschedules the "update" method.
+     * @see scheduleUpdate();
      */
     unscheduleUpdate:function () {
         this.getScheduler().unscheduleUpdateForTarget(this);
     },
 
     /**
-     * schedules a callback function with interval, repeat and delay.
+     * Schedules a custom selector.         <br/>
+     * If the selector is already scheduled, then the interval parameter will be updated without scheduling it again.
+     *
      * @param {function} callback_fn
-     * @param {Number} interval
+     * @param {Number} interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
+     * @param {Number} repeat    The selector will be excuted (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
+     * @param {Number} delay     The amount of time that the first tick will wait before execution.
      */
     schedule:function (callback_fn, interval, repeat, delay) {
         interval = interval || 0;
@@ -1206,8 +1391,9 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     /**
      * Schedules a callback function that runs only once, with a delay of 0 or larger
-     * @param {cc.Class} callback_fn
-     * @param {Number} delay
+     * @see schedule(SEL_SCHEDULE, float, unsigned int, float)
+     * @param {function} callback_fn  A function wrapped as a selector
+     * @param {Number} delay  The amount of time that the first tick will wait before execution.
      */
     scheduleOnce:function (callback_fn, delay) {
         this.schedule(callback_fn, 0.0, 0, delay);
@@ -1215,7 +1401,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
     /**
      * unschedules a custom callback function.
-     * @param {function} callback_fn
+     * @see schedule(SEL_SCHEDULE, float, unsigned int, float)
+     * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule:function (callback_fn) {
         // explicit nil handling
@@ -1234,8 +1421,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * resumes all scheduled callback functions and actions.<br/>
-     * Called internally by onEnter
+     * Resumes all scheduled selectors and actions.<br/>
+     * This method is called internally by onEnter
      */
     resumeSchedulerAndActions:function () {
         this.getScheduler().resumeTarget(this);
@@ -1243,8 +1430,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * pauses all scheduled selectors and actions.<br/>
-     * Called internally by onExit
+     * Pauses all scheduled selectors and actions.<br/>
+     * This method is called internally by onExit
      */
     pauseSchedulerAndActions:function () {
         this.getScheduler().pauseTarget(this);
@@ -1255,47 +1442,48 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      *<p>  Sets the additional transform.<br/>
      *  The additional transform will be concatenated at the end of nodeToParentTransform.<br/>
      *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
-     * // create a batchNode<br/>
-     * var batch= cc.SpriteBatchNode.create("Icon-114.png");<br/>
-     * this.addChild(batch);<br/>
-     *<br/>
-     * // create two sprites, spriteA will be added to batchNode, they are using different textures.<br/>
-     * var spriteA = cc.Sprite.createWithTexture(batch->getTexture());<br/>
-     * var spriteB = cc.Sprite.create("Icon-72.png");<br/>
-     *<br/>
-     * batch.addChild(spriteA);<br/>
-     *<br/>
-     * // We can't make spriteB as spriteA's child since they use different textures. So just add it to layer.<br/>
-     * // But we want to simulate `parent-child` relationship for these two node.<br/>
-     * this.addChild(spriteB);<br/>
-     *<br/>
-     * //position<br/>
-     * spriteA.setPosition(ccp(200, 200));<br/>
-     *<br/>
-     * // Gets the spriteA's transform.<br/>
-     * var t = spriteA.nodeToParentTransform();<br/>
-     *<br/>
-     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA. <br/>
-     * spriteB.setAdditionalTransform(t);<br/>
-     *<br/>
-     * //scale<br/>
-     * spriteA.setScale(2);<br/>
-     *<br/>
-     // Gets the spriteA's transform.<br/>
-     * * t = spriteA.nodeToParentTransform();<br/>
-     *<br/>
-     * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA. <br/>
-     * spriteB.setAdditionalTransform(t);<br/>
-     *<br/>
-     * //rotation<br/>
-     * spriteA.setRotation(20);<br/>
-     *<br/>
-     * // Gets the spriteA's transform.<br/>
-     * t = spriteA.nodeToParentTransform();<br/>
-     *<br/>
-     * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA. <br/>
-     * spriteB.setAdditionalTransform(t);<br/>
-     </p>
+     *  </p>
+     *  @example
+     * // create a batchNode
+     * var batch= cc.SpriteBatchNode.create("Icon-114.png");
+     * this.addChild(batch);
+     *
+     * // create two sprites, spriteA will be added to batchNode, they are using different textures.
+     * var spriteA = cc.Sprite.createWithTexture(batch->getTexture());
+     * var spriteB = cc.Sprite.create("Icon-72.png");
+     *
+     * batch.addChild(spriteA);
+     *
+     * // We can't make spriteB as spriteA's child since they use different textures. So just add it to layer.
+     * // But we want to simulate `parent-child` relationship for these two node.
+     * this.addChild(spriteB);
+     *
+     * //position
+     * spriteA.setPosition(ccp(200, 200));
+     *
+     * // Gets the spriteA's transform.
+     * var t = spriteA.nodeToParentTransform();
+     *
+     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA.
+     * spriteB.setAdditionalTransform(t);
+     *
+     * //scale
+     * spriteA.setScale(2);
+     *
+     * // Gets the spriteA's transform.
+     * t = spriteA.nodeToParentTransform();
+     *
+     * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA.
+     * spriteB.setAdditionalTransform(t);
+     *
+     * //rotation
+     * spriteA.setRotation(20);
+     *
+     * // Gets the spriteA's transform.
+     * t = spriteA.nodeToParentTransform();
+     *
+     * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA.
+     * spriteB.setAdditionalTransform(t);
      */
     setAdditionalTransform:function (additionalTransform) {
         this._additionalTransform = additionalTransform;
@@ -1306,7 +1494,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      * Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.<br/>
      * The matrix is in Pixels.
-     * @return {Number}
+     * @return {cc.AffineTransform}
      */
     parentToNodeTransform:function () {
         if (this._inverseDirty) {
@@ -1410,7 +1598,13 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * updates the quad according the the rotation, position, scale values.
+     * <p>
+     * Calls children's updateTransform() method recursively.                                        <br/>
+     *                                                                                               <br/>
+     * This method is moved from CCSprite, so it's no longer specific to CCSprite.                   <br/>
+     * As the result, you apply CCSpriteBatchNode's optimization on your customed CCNode.            <br/>
+     * e.g., batchNode->addChild(myCustomNode), while you can only addChild(sprite) before.
+     * </p>
      */
     updateTransform:function () {
         // Recursively iterate over children
@@ -1425,6 +1619,38 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     retain:function () {
     },
     release:function () {
+    },
+
+    /**
+     * gets a component by its name
+     * @param {String} name
+     * @return {cc.Component} gets a component by its name
+     */
+    getComponent:function(name){
+
+    },
+
+    /**
+     * adds a component
+     * @param {cc.Component} component
+     */
+    addComponent:function(component){
+
+    },
+
+    /**
+     * removes a component by its name
+     * @param {String} name
+     */
+    removeComponent:function(name){
+
+    },
+
+    /**
+     * removes all components
+     */
+    removeAllComponents:function(){
+
     },
     /// ---- common properties end  ----
 
@@ -1496,6 +1722,9 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         currentStack.top = currentStack.stack.pop();
     },
 
+    /**
+     * Performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes.
+     */
     transform:function () {
         //optimize performance for javascript
         var t4x4 = this._transform4x4,  topMat4 = cc.current_stack.top;
@@ -1609,8 +1838,12 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * A CCCamera object that lets you move the node using a gluLookAt
-     * @return {cc.Camera}
+     * Returns a camera object that lets you move the node using a gluLookAt
+     * @return {cc.Camera} A CCCamera object that lets you move the node using a gluLookAt
+     * @example
+     * var camera = node.getCamera();
+     * camera.setEye(0, 0, 415/2);
+     * camera.setCenter(0, 0, 0);
      */
     getCamera:function () {
         if (!this._camera) {
@@ -1620,49 +1853,55 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     },
 
     /**
-     * grid getter
-     * A CCGrid object that is used when applying effects
-     * @return {cc.GridBase}
+     * Returns a grid object that is used when applying effects
+     * @return {cc.GridBase} A CCGrid object that is used when applying effects
      */
     getGrid:function () {
         return this._grid;
     },
 
     /**
-     * grid setter
-     * @param {cc.GridBase} grid
+     * Changes a grid object that is used when applying effects
+     * @param {cc.GridBase} grid A CCGrid object that is used when applying effects
      */
     setGrid:function (grid) {
         this._grid = grid;
     },
 
     /**
-     * Shader Program getter
-     * @return {object}
+     * Return the shader program currently used for this node
+     * @return {cc.GLProgram} The shader program currelty used for this node
      */
     getShaderProgram:function () {
         return this._shaderProgram;
     },
 
     /**
-     * Shader Program setter
-     * @param {object} newShaderProgram
+     * <p>
+     *     Sets the shader program for this node
+     *
+     *     Since v2.0, each rendering node must set its shader program.
+     *     It should be set in initialize phase.
+     * </p>
+     * @param {cc.GLProgram} newShaderProgram The shader program which fetchs from CCShaderCache.
+     * @example
+     *  node.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURECOLOR));
      */
     setShaderProgram:function (newShaderProgram) {
         this._shaderProgram = newShaderProgram;
     },
 
     /**
-     * GL server side state getter
-     * @return {Number}
+     * Returns the state of OpenGL server side.
+     * @return {Number} The state of OpenGL server side.
      */
     getGLServerState:function () {
         return this._glServerState;
     },
 
     /**
-     * GL server side state setter
-     * @param {Number} state
+     * Sets the state of OpenGL server side.
+     * @param {Number} state The state of OpenGL server side.
      */
     setGLServerState:function (state) {
         this._glServerState = state;
@@ -1788,6 +2027,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     _initializedNode:false,
     _additionalTransformDirty:false,
     _additionalTransform:null,
+    _componentContainer:null,
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
@@ -1803,6 +2043,10 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         this._additionalTransformDirty = false;
     },
 
+    /**
+     * Initializes the instance of cc.Node
+     * @returns {boolean} Whether the initialization was successful.
+     */
     init:function () {
         if (this._initializedNode === false)
             this._initNode();
@@ -1883,15 +2127,21 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *  Thus, it is the angle between the Y axis and the left edge of the shape </br>
      *  The default skewX angle is 0. Positive values distort the node in a CW direction.</br>
      *  </p>
-     * @return {Number}
+     * @return {Number} The X skew angle of the node in degrees.
      */
     getSkewX:function () {
         return this._skewX;
     },
 
     /**
-     * set the skew degrees in X
-     * @param {Number} newSkewX
+     * <p>
+     *     Changes the X skew angle of the node in degrees.                                                    <br/>
+     *                                                                                                         <br/>
+     *      This angle describes the shear distortion in the X direction.                                      <br/>
+     *      Thus, it is the angle between the Y axis and the left edge of the shape                            <br/>
+     *      The default skewX angle is 0. Positive values distort the node in a CW direction.
+     * </p>
+     * @param {Number} newSkewX The X skew angle of the node in degrees.
      */
     setSkewX:function (newSkewX) {
         this._skewX = newSkewX;
@@ -1905,15 +2155,21 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * Thus, it is the angle between the X axis and the bottom edge of the shape       <br/>
      * The default skewY angle is 0. Positive values distort the node in a CCW direction.    <br/>
      * </p>
-     * @return {Number}
+     * @return {Number} The Y skew angle of the node in degrees.
      */
     getSkewY:function () {
         return this._skewY;
     },
 
     /**
-     * set the skew degrees in Y
-     * @param {Number} newSkewY
+     * <p>
+     * Changes the Y skew angle of the node in degrees.
+     *
+     * This angle describes the shear distortion in the Y direction.
+     * Thus, it is the angle between the X axis and the bottom edge of the shape
+     * The default skewY angle is 0. Positive values distort the node in a CCW direction.
+     * </p>
+     * @param {Number} newSkewY  The Y skew angle of the node in degrees.
      */
     setSkewY:function (newSkewY) {
         this._skewY = newSkewY;
@@ -1928,8 +2184,15 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         return this._zOrder;
     },
 
-    /** zOrder setter : private method
-     * used internally to alter the zOrder variable. DON'T call this method manually
+    /**
+     * <p>
+     *     Sets the z order which stands for the drawing order                                                     <br/>
+     *                                                                                                             <br/>
+     *     This is an internal method. Don't call it outside the framework.                                        <br/>
+     *     The difference between setZOrder(int) and _setOrder(int) is:                                            <br/>
+     *        - _setZOrder(int) is a pure setter for m_nZOrder memeber variable                                    <br/>
+     *        - setZOrder(int) firstly changes m_nZOrder, then recorder this node in its parent's chilren array.
+     * </p>
      * @param {Number} z
      * @private
      */
@@ -1937,6 +2200,17 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         this._zOrder = z;
     },
 
+    /**
+     * <p>
+     *     Sets the Z order which stands for the drawing order, and reorder this node in its parent's children array.     <br/>
+     *                                                                                                                    <br/>
+     *      The Z order of node is relative to its "brothers": children of the same parent.                               <br/>
+     *      It's nothing to do with OpenGL's z vertex. This one only affects the draw order of nodes in cocos2d.          <br/>
+     *      The larger number it is, the later this node will be drawn in each message loop.                              <br/>
+     *      Please refer to setVertexZ(float) for the difference.
+     * </p>
+     * @param {Number} z Z order of this node.
+     */
     setZOrder:function (z) {
         this._setZOrder(z);
         if (this._parent)
@@ -1944,15 +2218,24 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * ertexZ getter
-     * @return {Number}
+     * Gets WebGL Z vertex of this node.
+     * @return {Number} WebGL Z vertex of this node
      */
     getVertexZ:function () {
         return this._vertexZ;
     },
 
     /**
-     * vertexZ setter
+     * <p>
+     *     Sets the real WebGL Z vertex.                                                                          <br/>
+     *                                                                                                            <br/>
+     *      Differences between openGL Z vertex and cocos2d Z order:                                              <br/>
+     *      - OpenGL Z modifies the Z vertex, and not the Z order in the relation between parent-children         <br/>
+     *      - OpenGL Z might require to set 2D projection                                                         <br/>
+     *      - cocos2d Z order works OK if all the nodes uses the same openGL Z vertex. eg: vertexZ = 0            <br/>
+     *                                                                                                            <br/>
+     *      @warning Use it at your own risk since it might break the cocos2d parent-children z order
+     * </p>
      * @param {Number} Var
      */
     setVertexZ:function (Var) {
@@ -1961,7 +2244,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /**
      * The rotation (angle) of the node in degrees. 0 is the default rotation angle. Positive values rotate node CW.
-     * @return {Number}
+     * @return {Number} The rotation of the node in degrees.
      */
     getRotation:function () {
         cc.Assert(this._rotationX == this._rotationY, "CCNode#rotation. RotationX != RotationY. Don't know which one to return");
@@ -1971,8 +2254,13 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     _rotationRadiansX:0,
     _rotationRadiansY:0,
     /**
-     * rotation setter
-     * @param {Number} newRotation
+     * <p>
+     *     Sets the rotation (angle) of the node in degrees.                                             <br/>
+     *                                                                                                   <br/>
+     *      0 is the default rotation angle.                                                             <br/>
+     *      Positive values rotate node clockwise, and negative values for anti-clockwise.
+     * </p>
+     * @param {Number} newRotation The rotation of the node in degrees.
      */
     setRotation:function (newRotation) {
         this._rotationX = this._rotationY = newRotation;
@@ -1986,15 +2274,20 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * The rotation (angle) of the node in degrees. 0 is the default rotation angle. <br/>
      * Positive values rotate node CW. It only modifies the X rotation performing a horizontal rotational skew .
      * (support only in WebGl rendering mode)
-     * @return {Number}
+     * @return {Number} The X rotation in degrees.
      */
     getRotationX:function () {
         return this._rotationX;
     },
 
     /**
-     * rotationX setter
-     * @param {Number} rotationX
+     * <p>
+     *     Sets the X rotation (angle) of the node in degrees which performs a horizontal rotational skew.        <br/>
+     *                                                                                                            <br/>
+     *     0 is the default rotation angle.                                                                       <br/>
+     *     Positive values rotate node clockwise, and negative values for anti-clockwise.
+     * </p>
+     * @param {Number} rotationX The X rotation in degrees which performs a horizontal rotational skew.
      */
     setRotationX:function (rotationX) {
         this._rotationX = rotationX;
@@ -2005,12 +2298,21 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     /**
      * The rotation (angle) of the node in degrees. 0 is the default rotation angle.  <br/>
      * Positive values rotate node CW. It only modifies the Y rotation performing a vertical rotational skew .
-     * @return {Number}
+     * @return {Number} The Y rotation in degrees.
      */
     getRotationY:function () {
         return this._rotationY;
     },
 
+    /**
+     * <p>
+     *    Sets the Y rotation (angle) of the node in degrees which performs a vertical rotational skew.         <br/>
+     *                                                                                                          <br/>
+     *      0 is the default rotation angle.                                                                    <br/>
+     *      Positive values rotate node clockwise, and negative values for anti-clockwise.
+     * </p>
+     * @param rotationY The Y rotation in degrees.
+     */
     setRotationY:function (rotationY) {
         this._rotationY = rotationY;
         this._rotationRadiansY = this._rotationY * 0.017453292519943295;  //(Math.PI / 180);
@@ -2038,16 +2340,19 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * scaleX getter
-     * @return {Number}
+     * Returns the scale factor on X axis of this node
+     * @return {Number} The scale factor on X axis.
      */
     getScaleX:function () {
         return this._scaleX;
     },
 
     /**
-     * scaleX setter
-     * @param {Number} newScaleX
+     * <p>
+     *     Changes the scale factor on X axis of this node                                   <br/>
+     *     The deafult value is 1.0 if you haven't changed it before
+     * </p>
+     * @param {Number} newScaleX The scale factor on X axis.
      */
     setScaleX:function (newScaleX) {
         this._scaleX = newScaleX;
@@ -2055,16 +2360,19 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * scaleY getter
-     * @return {Number}
+     * Returns the scale factor on Y axis of this node
+     * @return {Number} The scale factor on Y axis.
      */
     getScaleY:function () {
         return this._scaleY;
     },
 
     /**
-     * scaleY setter
-     * @param {Number} newScaleY
+     * <p>
+     *     Changes the scale factor on Y axis of this node                                            <br/>
+     *     The Default value is 1.0 if you haven't changed it before.
+     * </p>
+     * @param {Number} newScaleY The scale factor on Y axis.
      */
     setScaleY:function (newScaleY) {
         this._scaleY = newScaleY;
@@ -2072,9 +2380,17 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * position setter
-     * @param {cc.Point|Number} newPosOrxValue
-     * @param {Number}  yValue
+     * <p>
+     *     Changes the position (x,y) of the node in OpenGL coordinates
+     *     Usually we use ccp(x,y) to compose CCPoint object.
+     *     The original point (0,0) is at the left-bottom corner of screen.
+     *     and Passing two numbers (x,y) is much efficient than passing CCPoint object.
+     * </p>
+     * @param {cc.Point|Number} newPosOrxValue The position (x,y) of the node in coordinates or  X coordinate for position
+     * @param {Number} yValue Y coordinate for position
+     * @example
+     *    var size = cc.Director.getInstance().getWinSize();
+     *    node.setPosition( cc.p(size.width/2, size.height/2) )
      */
     setPosition:function (newPosOrxValue, yValue) {
         if (arguments.length === 2) {
@@ -2098,7 +2414,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /**
      * <p>Position (x,y) of the node in OpenGL coordinates. (0,0) is the left-bottom corner. </p>
-     * @return {cc.Point}
+     * @return {cc.Point} The position (x,y) of the node in OpenGL coordinates
      */
     getPosition:function () {
         return cc.p(this._position.x, this._position.y);
@@ -2135,17 +2451,23 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * Get children count
-     * @return {Number}
+     * Get the amount of children.
+     * @return {Number} The amount of children.
      */
-
     getChildrenCount:function () {
         return this._children ? this._children.length : 0;
     },
 
     /**
-     * children getter
-     * @return {object}
+     * Return an array of children  <br/>
+     * Composing a "tree" structure is a very important feature of CCNode
+     * @return {Array} An array of children
+     * @example
+     *  //This sample code traverses all children nodes, and set theie position to (0,0)
+     *  var allChildren = parent.getChildren();
+     * for(var i = 0; i< allChildren.length; i++) {
+     *     allChildren[i].setPosition(0,0);
+     * }
      */
     getChildren:function () {
         if (!this._children)
@@ -2154,16 +2476,18 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * isVisible getter
-     * @return {Boolean}
+     * Determines if the node is visible
+     * @see setVisible(bool)
+     * @return {Boolean} true if the node is visible, false if the node is hidden.
      */
     isVisible:function () {
         return this._visible;
     },
 
     /**
-     * isVisible setter
-     * @param {Boolean} Var
+     * Sets whether the node is visible <br/>
+     * The default value is true, a node is default to visible
+     * @param {Boolean} Var true if the node is visible, false if the node is hidden.
      */
     setVisible:function (Var) {
         this._visible = Var;
@@ -2176,14 +2500,23 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *  The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner. <br/>
      *  But you can use values higher than (1,1) and lower than (0,0) too.  <br/>
      *  The default anchorPoint is (0.5,0.5), so it starts in the center of the node. <br/></p>
-     * @return {cc.Point}
+     * @return {cc.Point}  The anchor point of node.
      */
     getAnchorPoint:function () {
         return cc.p(this._anchorPoint.x, this._anchorPoint.y);
     },
 
     /**
-     * @param {cc.Point} point
+     * <p>
+     *     Sets the anchor point in percent.                                                                                              <br/>
+     *                                                                                                                                    <br/>
+     *     anchorPoint is the point around which all transformations and positioning manipulations take place.                            <br/>
+     *     It's like a pin in the node where it is "attached" to its parent.                                                              <br/>
+     *     The anchorPoint is normalized, like a percentage. (0,0) means the bottom-left corner and (1,1) means the top-right corner.     <br/>
+     *     But you can use values higher than (1,1) and lower than (0,0) too.                                                             <br/>
+     *     The default anchorPoint is (0.5,0.5), so it starts in the center of the node.
+     * </p>
+     * @param {cc.Point} point The anchor point of node.
      */
     setAnchorPoint:function (point) {
         if (!cc.pointEqualToPoint(point, this._anchorPoint)) {
@@ -2196,23 +2529,31 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     /**
      *  The anchorPoint in absolute pixels.  <br/>
      *  you can only read it. If you wish to modify it, use anchorPoint instead
-     * @return {cc.Point}
+     *  @see getAnchorPoint()
+     * @return {cc.Point} The anchor point in absolute pixels.
      */
     getAnchorPointInPoints:function () {
         return cc.p(this._anchorPointInPoints.x, this._anchorPointInPoints.y);
     },
 
-    /** <p>The untransformed size of the node. <br/>
-     The contentSize remains the same no matter the node is scaled or rotated.<br/>
-     All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
-     * @return {cc.Size}
+    /**
+     * <p>The untransformed size of the node. <br/>
+     * The contentSize remains the same no matter the node is scaled or rotated.<br/>
+     * All nodes has a size. Layer and Scene has the same size of the screen. <br/></p>
+     * @return {cc.Size} The untransformed size of the node.
      */
     getContentSize:function () {
         return cc.size(this._contentSize.width, this._contentSize.height);
     },
 
     /**
-     * @param {cc.Size} size
+     * <p>
+     *     Sets the untransformed size of the node.                                             <br/>
+     *                                                                                          <br/>
+     *     The contentSize remains the same no matter the node is scaled or rotated.            <br/>
+     *     All nodes has a size. Layer and Scene has the same size of the screen.
+     * </p>
+     * @param {cc.Size} size The untransformed size of the node.
      */
     setContentSize:function (size) {
         if (!cc.sizeEqualToSize(size, this._contentSize)) {
@@ -2223,39 +2564,49 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * whether or not the node is running
-     * @return {Boolean}
+     * <p>
+     *     Returns whether or not the node accepts event callbacks.                                     <br/>
+     *     Running means the node accept event callbacks like onEnter(), onExit(), update()
+     * </p>
+     * @return {Boolean} Whether or not the node is running.
      */
     isRunning:function () {
         return this._running;
     },
 
-    /** A weak reference to the parent
-     * @return {cc.Node}
+    /**
+     * Returns a pointer to the parent node
+     * @return {cc.Node} A pointer to the parnet node
      */
     getParent:function () {
         return this._parent;
     },
 
-    /** parent setter
-     * @param {cc.Node} Var
+    /**
+     * Sets the parent node
+     * @param {cc.Node} Var A pointer to the parnet node
      */
     setParent:function (Var) {
         this._parent = Var;
     },
 
     /**
-     * If true, the Anchor Point will be (0,0) when you position the CCNode.<br/>
-     * Used by CCLayer and CCScene
-     * @return {Boolean}
+     * Gets whether the anchor point will be (0,0) when you position this node.
+     * @see ignoreAnchorPointForPosition(bool)
+     * @return {Boolean} true if the anchor point will be (0,0) when you position this node.
      */
     isIgnoreAnchorPointForPosition:function () {
         return this._ignoreAnchorPointForPosition;
     },
 
     /**
-     * ignoreAnchorPointForPosition setter
-     * @param {Boolean} newValue
+     * <p>
+     *     Sets whether the anchor point will be (0,0) when you position this node.                              <br/>
+     *                                                                                                           <br/>
+     *     This is an internal method, only used by CCLayer and CCScene. Don't call it outside framework.        <br/>
+     *     The default value is false, while in CCLayer and CCScene are true
+     * </p>
+     * @param {Boolean} newValue true if anchor point will be (0,0) when you position this node
      */
     ignoreAnchorPointForPosition:function (newValue) {
         if (newValue != this._ignoreAnchorPointForPosition) {
@@ -2265,46 +2616,84 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * A tag used to identify the node easily
-     * @return {Number}
+     * Returns a tag that is used to identify the node easily.
+     *
+     * @return {Number} A interger that identifies the node.
+     * @example
+     *  //You can set tags to node then identify them easily.
+     * // set tags
+     * node1.setTag(TAG_PLAYER);
+     * node2.setTag(TAG_MONSTER);
+     * node3.setTag(TAG_BOSS);
+     * parent.addChild(node1);
+     * parent.addChild(node2);
+     * parent.addChild(node3);
+     * // identify by tags
+     * var allChildren = parent.getChildren();
+     * for(var i = 0; i < allChildren.length; i++){
+     *     switch(node.getTag()) {
+     *         case TAG_PLAYER:
+     *             break;
+     *         case TAG_MONSTER:
+     *             break;
+     *         case TAG_BOSS:
+     *             break;
+     *     }
+     * }
      */
     getTag:function () {
         return this._tag;
     },
 
-    /** tag setter
-     * @param {Number} Var
+    /**
+     * Changes the tag that is used to identify the node easily. <br/>
+     * Please refer to getTag for the sample code.
+     * @param {Number} Var A interger that indentifies the node.
      */
     setTag:function (Var) {
         this._tag = Var;
     },
 
     /**
-     * A custom user data pointer
-     * @return {object}
+     * <p>
+     *     Returns a custom user data pointer                                                               <br/>
+     *     You can set everything in UserData pointer, a data block, a structure or an object.
+     * </p>
+     * @return {object}  A custom user data pointer
      */
     getUserData:function () {
         return this._userData;
     },
 
     /**
-     * @param {object} Var
+     * <p>
+     *    Sets a custom user data pointer                                                                   <br/>
+     *    You can set everything in UserData pointer, a data block, a structure or an object, etc.
+     * </p>
+     * @warning Don't forget to relfease the memroy manually,especially before you change this data pointer, and before this node is autoreleased.
+     * @param {object} Var A custom user data
      */
     setUserData:function (Var) {
         this._userData = Var;
     },
 
     /**
+     * Returns a user assigned CCObject.                             <br/>
      * Similar to userData, but instead of holding a void* it holds an id
-     * @return {object}
+     * @return {object} A user assigned CCObject
      */
     getUserObject:function () {
         return this._userObject;
     },
 
     /**
-     * Similar to userData, but instead of holding a void* it holds an id
-     * @param {object} newValue
+     * <p>
+     *      Returns a user assigned CCObject                                                                                       <br/>
+     *      Similar to UserData, but instead of holding a void* it holds an object.                                               <br/>
+     *      The UserObject will be retained once in this method, and the previous UserObject (if existed) will be relese.         <br/>
+     *      The UserObject will be released in CCNode's destructure.
+     * </p>
+     * @param {object} newValue A user assigned CCObject
      */
     setUserObject:function (newValue) {
         if (this._userObject != newValue) {
@@ -2314,25 +2703,32 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
 
     /**
-     * used internally for zOrder sorting, don't change this manually
-     * @return {Number}
+     * Returns the arrival order, indecates which children is added previously.
+     * @return {Number} The arrival order.
      */
     getOrderOfArrival:function () {
         return this._orderOfArrival;
     },
 
     /**
-     * used internally for zOrder sorting, don't change this manually
-     * @param {Number} Var
+     * <p>
+     *     Sets the arrival order when this node has a same ZOrder with other children.                             <br/>
+     *                                                                                                              <br/>
+     *     A node which called addChild subsequently will take a larger arrival order,                              <br/>
+     *     If two children have the same Z order, the child with larger arrival order will be drawn later.
+     * </p>
+     * @warning This method is used internally for zOrder sorting, don't change this manually
+     * @param {Number} Var  The arrival order.
      */
     setOrderOfArrival:function (Var) {
         this._orderOfArrival = Var;
     },
 
     /**
-     * <p>cc.ActionManager used by all the actions. <br/>
+     * <p>Gets the CCActionManager object that is used by all actions.<br/>
      * (IMPORTANT: If you set a new cc.ActionManager, then previously created actions are going to be removed.)</p>
-     * @return {cc.ActionManager}
+     * @see setActionManager()
+     * @return {cc.ActionManager} A CCActionManager object.
      */
     getActionManager:function () {
         if (!this._actionManager) {
@@ -2342,9 +2738,9 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * <p>cc.ActionManager used by all the actions. <br/>
-     * (IMPORTANT: If you set a new cc.ActionManager, then previously created actions are going to be removed.)</p>
-     * @param {cc.ActionManager} actionManager
+     * <p>Sets the cc.ActionManager object that is used by all actions. </p>
+     * @warning If you set a new CCActionManager, then previously created actions will be removed.
+     * @param {cc.ActionManager} actionManager A CCActionManager object that is used by all actions.
      */
     setActionManager:function (actionManager) {
         if (this._actionManager != actionManager) {
@@ -2358,7 +2754,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *   cc.Scheduler used to schedule all "updates" and timers.<br/>
      *   IMPORTANT: If you set a new cc.Scheduler, then previously created timers/update are going to be removed.
      * </p>
-     * @return {cc.Scheduler}
+     * @return {cc.Scheduler} A CCScheduler object.
      */
     getScheduler:function () {
         if (!this._scheduler) {
@@ -2369,9 +2765,10 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /**
      * <p>
-     *   cc.Scheduler used to schedule all "updates" and timers.<br/>
-     *   IMPORTANT: If you set a new cc.Scheduler, then previously created timers/update are going to be removed.
+     *   Sets a CCScheduler object that is used to schedule all "updates" and timers.           <br/>
      * </p>
+     * @warning If you set a new CCScheduler, then previously created timers/update are going to be removed.
+     * @param scheduler A cc.Shdeduler object that is used to schedule all "update" and timers.
      */
     setScheduler:function (scheduler) {
         if (this._scheduler != scheduler) {
@@ -2380,8 +2777,10 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         }
     },
 
-    /** returns a "local" axis aligned bounding box of the node. <br/>
+    /**
+     * Returns a "local" axis aligned bounding box of the node. <br/>
      * The returned box is relative only to its parent.
+     * @note This method returns a temporaty variable, so it can't returns const CCRect&
      * @return {cc.Rect}
      */
     getBoundingBox:function () {
@@ -2401,7 +2800,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.cleanup);
     },
 
-    /** Node description
+    /**
+     * Gets the description string. It makes debugging easier.
      * @return {String}
      */
     description:function () {
@@ -2415,8 +2815,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     // composition: GET
     /**
      * Gets a child from the container given its tag
-     * @param {Number} aTag
-     * @return {cc.Node}
+     * @param {Number} aTag An identifier to find the child node.
+     * @return {cc.Node} a CCNode object whose tag equals to the input parameter
      */
     getChildByTag:function (aTag) {
         //cc.Assert(aTag != cc.NODE_TAG_INVALID, "Invalid tag");
@@ -2435,12 +2835,11 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /** <p>"add" logic MUST only be on this method <br/> </p>
      *
-     * <p>If a class want's to extend the 'addChild' behaviour it only needs  <br/>
-     * to override this method </p>
+     * <p>If the child is added to a 'running' node, then 'onEnter' and 'onEnterTransitionDidFinish' will be called immediately.</p>
      *
-     * @param {cc.Node} child
-     * @param {Number} zOrder
-     * @param {Number} tag
+     * @param {cc.Node} child  A child node
+     * @param {Number} zOrder  Z order for drawing priority. Please refer to setZOrder(int)
+     * @param {Number} tag  A interger to identify the node easily. Please refer to setTag(int)
      */
     addChild:function (child, zOrder, tag) {
         if (child === this) {
@@ -2475,6 +2874,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
      * If the node orphan, then nothing happens.
      * @param {Boolean} cleanup
+     * @see removeFromParentAndCleanup(bool)
      */
     removeFromParent:function (cleanup) {
         if (this._parent) {
@@ -2500,8 +2900,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * If a class wants to extend the 'removeChild' behavior it only needs <br/>
      * to override this method </p>
      *
-     * @param {cc.Node} child
-     * @param {Boolean} cleanup
+     * @param {cc.Node} child  The child node which will be removed.
+     * @param {Boolean} cleanup  true if all running actions and callbacks on the child node will be cleanup, false otherwise.
      */
     removeChild:function (child, cleanup) {
         // explicit nil handling
@@ -2520,8 +2920,9 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     /**
      * Removes a child from the container by tag value. It will also cleanup all running actions depending on the cleanup parameter.
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Number} tag
-     * @param {Boolean} cleanup
+     * @param {Number} tag An integer number that identifies a child node
+     * @param {Boolean} cleanup true if all running actions and callbacks on the child node will be cleanup, false otherwise.
+     * @see removeChildByTag(int, bool)
      */
     removeChildByTag:function (tag, cleanup) {
         cc.Assert(tag != cc.NODE_TAG_INVALID, "Invalid tag");
@@ -2546,7 +2947,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     /**
      * Removes all children from the container and do a cleanup all running actions depending on the cleanup parameter. <br/>
      * If the cleanup parameter is not passed, it will force a cleanup. <br/>
-     * @param {Boolean | null } cleanup
+     * @param {Boolean | null } cleanup true if all running actions on all children nodes should be cleanup, false oterwise.
      */
     removeAllChildren:function (cleanup) {
         // not using detachChild improves speed here
@@ -2624,8 +3025,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /** Reorders a child according to a new z value. <br/>
      * The child MUST be already added.
-     * @param {cc.Node} child
-     * @param {Number} zOrder
+     * @param {cc.Node} child An already added child node. It MUST be already added.
+     * @param {Number} zOrder Z order for drawing priority. Please refer to setZOrder(int)
      */
     reorderChild:function (child, zOrder) {
         cc.Assert(child != null, "Child must be non-nil");
@@ -2636,8 +3037,11 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * <p>performance improvement, Sort the children array once before drawing, instead of every time when a child is added or reordered <br/>
-     * don't call this manually unless a child added needs to be removed in the same frame </p>
+     * <p>
+     *     Sorts the children array once before drawing, instead of every time when a child is added or reordered.    <br/>
+     *     This appraoch can improves the performance massively.
+     * </p>
+     * @note Don't call this manually unless a child added needs to be removed in the same frame
      */
     sortAllChildren:function () {
         if (this._reorderChildDirty) {
@@ -2695,9 +3099,12 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     //scene managment
     /**
-     * callback that is called every time the cc.Node enters the 'stage'.<br/>
-     * If the cc.Node enters the 'stage' with a transition, this callback is called when the transition starts.
-     * During onEnter you can't a "sister/brother" node.
+     * <p>
+     *     Event callback that is invoked every time when CCNode enters the 'stage'.                                   <br/>
+     *     If the CCNode enters the 'stage' with a transition, this event is called when the transition starts.        <br/>
+     *     During onEnter you can't access a "sister/brother" node.                                                    <br/>
+     *     If you override onEnter, you shall call its parent's one, e.g., CCNode::onEnter().
+     * </p>
      */
     onEnter:function () {
         this._running = true;//should be running before resumeSchedule
@@ -2706,8 +3113,11 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * <p>callback that is called when the cc.Node enters in the 'stage'.  <br/>
-     * If the cc.Node enters the 'stage' with a transition, this callback is called when the transition finishes.</p>
+     * <p>
+     *     Event callback that is invoked when the CCNode enters in the 'stage'.                                                        <br/>
+     *     If the CCNode enters the 'stage' with a transition, this event is called when the transition finishes.                       <br/>
+     *     If you override onEnterTransitionDidFinish, you shall call its parent's one, e.g. CCNode::onEnterTransitionDidFinish()
+     * </p>
      */
     onEnterTransitionDidFinish:function () {
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
@@ -2722,9 +3132,12 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * callback that is called every time the cc.Node leaves the 'stage'.<br/>
+     * <p>
+     * callback that is called every time the cc.Node leaves the 'stage'.                                         <br/>
      * If the cc.Node leaves the 'stage' with a transition, this callback is called when the transition finishes. <br/>
-     * During onExit you can't access a sibling node.
+     * During onExit you can't access a sibling node.                                                             <br/>
+     * If you override onExit, you shall call its parent's one, e.g., CCNode::onExit().
+     * </p>
      */
     onExit:function () {
         this._running = false;
@@ -2735,10 +3148,10 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     // actions
     /**
      * Executes an action, and returns the action that is executed.<br/>
-     * The node becomes the action's target.
+     * The node becomes the action's target. Refer to CCAction::getTarget()
      * @warning Starting from v0.8 actions don't retain their target anymore.
      * @param {cc.Action} action
-     * @return {cc.Action}
+     * @return {cc.Action} An Action pointer
      */
     runAction:function (action) {
         cc.Assert(action != null, "Argument must be non-nil");
@@ -2747,23 +3160,23 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * Removes all actions from the running action list
+     * Stops and removes all actions from the running action list .
      */
     stopAllActions:function () {
         this.getActionManager().removeAllActionsFromTarget(this);
     },
 
     /**
-     * Removes an action from the running action list
-     * @param {cc.Action} action
+     * Stops and removes an action from the running action list.
+     * @param {cc.Action} action An action object to be removed.
      */
     stopAction:function (action) {
         this.getActionManager().removeAction(action);
     },
 
     /**
-     * Removes an action from the running action list given its tag
-     * @param {Number} tag
+     * Removes an action from the running action list by its tag.
+     * @param {Number} tag A tag that indicates the action to be removed.
      */
     stopActionByTag:function (tag) {
         cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
@@ -2771,9 +3184,10 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * Gets an action from the running action list given its tag
+     * Gets an action from the running action list by its tag.
+     * @see setTag(int), getTag().
      * @param {Number} tag
-     * @return {cc.Action}
+     * @return {cc.Action} The action object with the given tag.
      */
     getActionByTag:function (tag) {
         cc.Assert(tag != cc.ACTION_TAG_INVALID, "Invalid tag");
@@ -2784,7 +3198,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *    Composable actions are counted as 1 action. Example:<br/>
      *    If you are running 1 Sequence of 7 actions, it will return 1. <br/>
      *    If you are running 7 Sequences of 2 actions, it will return 7.
-     * @return {Number}
+     * @return {Number} The number of actions that are running plus the ones that are schedule to run
      */
     numberOfRunningActions:function () {
         return this.getActionManager().numberOfRunningActionsInTarget(this);
@@ -2793,7 +3207,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     // cc.Node - Callbacks
     // timers
     /**
-     * schedules the "update" method. It will use the order number 0. This method will be called every frame.<br/>
+     * schedules the "update" method.                                                                           <br/>
+     * It will use the order number 0. This method will be called every frame.                                  <br/>
      * Scheduled methods with a lower order value will be called before the ones that have a higher order value.<br/>
      * Only one "update" method could be scheduled per node.
      */
@@ -2802,9 +3217,12 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * schedules the "update" callback function with a custom priority. This callback function will be called every frame.<br/>
+     * <p>
+     * schedules the "update" callback function with a custom priority.
+     * This callback function will be called every frame.<br/>
      * Scheduled callback functions with a lower priority will be called before the ones that have a higher value.<br/>
      * Only one "update" callback function could be scheduled per node (You can't have 2 'update' callback functions).<br/>
+     * </p>
      * @param {Number} priority
      */
     scheduleUpdateWithPriority:function (priority) {
@@ -2813,15 +3231,20 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /**
      * unschedules the "update" method.
+     * @see scheduleUpdate();
      */
     unscheduleUpdate:function () {
         this.getScheduler().unscheduleUpdateForTarget(this);
     },
 
     /**
-     * schedules a callback function with interval, repeat and delay.
-     * @param {function} callback_fn
-     * @param {Number} interval
+     * Schedules a custom selector.         <br/>
+     * If the selector is already scheduled, then the interval parameter will be updated without scheduling it again.
+     *
+     * @param {function} callback_fn A function wrapped as a selector
+     * @param {Number} interval  Tick interval in seconds. 0 means tick every frame. If interval = 0, it's recommended to use scheduleUpdate() instead.
+     * @param {Number} repeat    The selector will be excuted (repeat + 1) times, you can use kCCRepeatForever for tick infinitely.
+     * @param {Number} delay     The amount of time that the first tick will wait before execution.
      */
     schedule:function (callback_fn, interval, repeat, delay) {
         interval = interval || 0;
@@ -2837,8 +3260,9 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /**
      * Schedules a callback function that runs only once, with a delay of 0 or larger
-     * @param {cc.Class} callback_fn
-     * @param {Number} delay
+     * @see schedule(SEL_SCHEDULE, float, unsigned int, float)
+     * @param {function} callback_fn  A function wrapped as a selector
+     * @param {Number} delay  The amount of time that the first tick will wait before execution.
      */
     scheduleOnce:function (callback_fn, delay) {
         this.schedule(callback_fn, 0.0, 0, delay);
@@ -2846,7 +3270,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
 
     /**
      * unschedules a custom callback function.
-     * @param {function} callback_fn
+     * @see schedule(SEL_SCHEDULE, float, unsigned int, float)
+     * @param {function} callback_fn  A function wrapped as a selector
      */
     unschedule:function (callback_fn) {
         // explicit nil handling
@@ -2865,8 +3290,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * resumes all scheduled callback functions and actions.<br/>
-     * Called internally by onEnter
+     * Resumes all scheduled selectors and actions.<br/>
+     * This method is called internally by onEnter
      */
     resumeSchedulerAndActions:function () {
         this.getScheduler().resumeTarget(this);
@@ -2874,8 +3299,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * pauses all scheduled selectors and actions.<br/>
-     * Called internally by onExit
+     * Pauses all scheduled selectors and actions.<br/>
+     * This method is called internally by onExit
      */
     pauseSchedulerAndActions:function () {
         this.getScheduler().pauseTarget(this);
@@ -2886,47 +3311,48 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      *<p>  Sets the additional transform.<br/>
      *  The additional transform will be concatenated at the end of nodeToParentTransform.<br/>
      *  It could be used to simulate `parent-child` relationship between two nodes (e.g. one is in BatchNode, another isn't).<br/>
-     * // create a batchNode<br/>
-     * var batch= cc.SpriteBatchNode.create("Icon-114.png");<br/>
-     * this.addChild(batch);<br/>
-     *<br/>
-     * // create two sprites, spriteA will be added to batchNode, they are using different textures.<br/>
-     * var spriteA = cc.Sprite.createWithTexture(batch->getTexture());<br/>
-     * var spriteB = cc.Sprite.create("Icon-72.png");<br/>
-     *<br/>
-     * batch.addChild(spriteA);<br/>
-     *<br/>
-     * // We can't make spriteB as spriteA's child since they use different textures. So just add it to layer.<br/>
-     * // But we want to simulate `parent-child` relationship for these two node.<br/>
-     * this.addChild(spriteB);<br/>
-     *<br/>
-     * //position<br/>
-     * spriteA.setPosition(ccp(200, 200));<br/>
-     *<br/>
-     * // Gets the spriteA's transform.<br/>
-     * var t = spriteA.nodeToParentTransform();<br/>
-     *<br/>
-     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA. <br/>
-     * spriteB.setAdditionalTransform(t);<br/>
-     *<br/>
-     * //scale<br/>
-     * spriteA.setScale(2);<br/>
-     *<br/>
-     // Gets the spriteA's transform.<br/>
-     * * t = spriteA.nodeToParentTransform();<br/>
-     *<br/>
-     * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA. <br/>
-     * spriteB.setAdditionalTransform(t);<br/>
-     *<br/>
-     * //rotation<br/>
-     * spriteA.setRotation(20);<br/>
-     *<br/>
-     * // Gets the spriteA's transform.<br/>
-     * t = spriteA.nodeToParentTransform();<br/>
-     *<br/>
-     * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA. <br/>
-     * spriteB.setAdditionalTransform(t);<br/>
-     </p>
+     *  </p>
+     *  @example
+     * // create a batchNode
+     * var batch= cc.SpriteBatchNode.create("Icon-114.png");
+     * this.addChild(batch);
+     *
+     * // create two sprites, spriteA will be added to batchNode, they are using different textures.
+     * var spriteA = cc.Sprite.createWithTexture(batch->getTexture());
+     * var spriteB = cc.Sprite.create("Icon-72.png");
+     *
+     * batch.addChild(spriteA);
+     *
+     * // We can't make spriteB as spriteA's child since they use different textures. So just add it to layer.
+     * // But we want to simulate `parent-child` relationship for these two node.
+     * this.addChild(spriteB);
+     *
+     * //position
+     * spriteA.setPosition(ccp(200, 200));
+     *
+     * // Gets the spriteA's transform.
+     * var t = spriteA.nodeToParentTransform();
+     *
+     * // Sets the additional transform to spriteB, spriteB's postion will based on its pseudo parent i.e. spriteA.
+     * spriteB.setAdditionalTransform(t);
+     *
+     * //scale
+     * spriteA.setScale(2);
+     *
+     * // Gets the spriteA's transform.
+     * t = spriteA.nodeToParentTransform();
+     *
+     * // Sets the additional transform to spriteB, spriteB's scale will based on its pseudo parent i.e. spriteA.
+     * spriteB.setAdditionalTransform(t);
+     *
+     * //rotation
+     * spriteA.setRotation(20);
+     *
+     * // Gets the spriteA's transform.
+     * t = spriteA.nodeToParentTransform();
+     *
+     * // Sets the additional transform to spriteB, spriteB's rotation will based on its pseudo parent i.e. spriteA.
+     * spriteB.setAdditionalTransform(t);
      */
     setAdditionalTransform:function (additionalTransform) {
         this._additionalTransform = additionalTransform;
@@ -2937,7 +3363,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     /**
      * Returns the matrix that transform parent's space coordinates to the node's (local) space coordinates.<br/>
      * The matrix is in Pixels.
-     * @return {Number}
+     * @return {cc.AffineTransform}
      */
     parentToNodeTransform:function () {
         if (this._inverseDirty) {
@@ -3041,7 +3467,13 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
 
     /**
-     * updates the quad according the the rotation, position, scale values.
+     * <p>
+     * Calls children's updateTransform() method recursively.                                        <br/>
+     *                                                                                               <br/>
+     * This method is moved from CCSprite, so it's no longer specific to CCSprite.                   <br/>
+     * As the result, you apply CCSpriteBatchNode's optimization on your customed CCNode.            <br/>
+     * e.g., batchNode->addChild(myCustomNode), while you can only addChild(sprite) before.
+     * </p>
      */
     updateTransform:function () {
         // Recursively iterate over children
@@ -3057,6 +3489,39 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     },
     release:function () {
     },
+
+    /**
+     * gets a component by its name
+     * @param {String} name
+     * @return {cc.Component} gets a component by its name
+     */
+    getComponent:function(name){
+
+    },
+
+    /**
+     * adds a component
+     * @param {cc.Component} component
+     */
+    addComponent:function(component){
+
+    },
+
+    /**
+     * removes a component by its name
+     * @param {String} name
+     */
+    removeComponent:function(name){
+
+    },
+
+    /**
+     * removes all components
+     */
+    removeAllComponents:function(){
+
+    },
+
     /// ---- common properties end  ----
 
     /**
@@ -3103,6 +3568,9 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         context.restore();
     },
 
+    /**
+     * Performs OpenGL view-matrix transformation based on position, scale, rotation and other attributes.
+     */
     transform:function (ctx) {
         // transform for canvas
         var context = ctx || cc.renderContext;
@@ -3284,6 +3752,7 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
         this._cascadeColorEnabled = false;
         this._cascadeOpacityEnabled = false;
     },
+
 
     init:function(){
         if(cc.Node.prototype.init.call(this)){
