@@ -183,8 +183,8 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * <p>
      *   The resolution translate on EGLView
      * </p>
-     * @param {Number} translateX
-     * @param {Number} translateY
+     * @param {Number} offsetLeft
+     * @param {Number} offsetTop
      */
     setContentTranslateLeftTop: function(offsetLeft, offsetTop){
         this._contentTranslateLeftTop = {left : offsetLeft, top : offsetTop};
@@ -194,8 +194,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
      * <p>
      *   get the resolution translate on EGLView
      * </p>
-     * @param {Number} translateX
-     * @param {Number} translateY
+     * @return {cc.Size|Object}
      */
     getContentTranslateLeftTop: function(){
         return this._contentTranslateLeftTop;
@@ -309,26 +308,26 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         this._viewPortRect = cc.rect((this._screenSize.width - viewPortW) / 2, (this._screenSize.height - viewPortH) / 2, viewPortW, viewPortH);
 
         // reset director's member variables to fit visible rect
-        var diretor = cc.Director.getInstance();
-        diretor._winSizeInPoints = this.getDesignResolutionSize();
+        var director = cc.Director.getInstance();
+        director._winSizeInPoints = this.getDesignResolutionSize();
 
         if (cc.renderContextType === cc.CANVAS) {
-            var width = 0, height= 0;
+            var locWidth = 0, locHeight= 0;
             if(this._resolutionPolicy === cc.RESOLUTION_POLICY.SHOW_ALL){
-                width = (this._screenSize.width - viewPortW) / 2;
-                height = -(this._screenSize.height - viewPortH) / 2;
+                locWidth = (this._screenSize.width - viewPortW) / 2;
+                locHeight = -(this._screenSize.height - viewPortH) / 2;
                 var context = cc.renderContext;
                 context.beginPath();
-                context.rect(width, -viewPortH + height, viewPortW, viewPortH);
+                context.rect(locWidth, -viewPortH + locHeight, viewPortW, viewPortH);
                 context.clip();
                 context.closePath();
             }
-            cc.renderContext.translate(width, height);
+            cc.renderContext.translate(locWidth, locHeight);
             cc.renderContext.scale(this._scaleX, this._scaleY);
         } else {
             // reset director's member variables to fit visible rect
-            cc.Director.getInstance()._createStatsLabel();
-            cc.Director.getInstance().setGLDefaultValues();
+            director._createStatsLabel();
+            director.setGLDefaultValues();
         }
     },
 
@@ -636,6 +635,7 @@ cc.EGLView = cc.Class.extend(/** @lends cc.EGLView# */{
         }
         this.handleTouchesBegin(i, ids, xs, ys);
     },
+
     touchesMoved:function (touches, event) {
         var ids = [];
         var xs = [];
