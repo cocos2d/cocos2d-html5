@@ -216,7 +216,6 @@ cc.EditBox = cc.ControlButton.extend({
         this.setContentSize(boxSize);
         this._domInputSprite = new cc.Sprite();
         this._domInputSprite.setColor(cc.BLUE);
-        this._domInputSprite.setContentSize(cc.size(boxSize.width - 10, boxSize.height - 10));
         this._domInputSprite.draw = function(){ };                           //redefine draw function
         this.addChild(this._domInputSprite);
         var selfPointer = this;
@@ -226,7 +225,7 @@ cc.EditBox = cc.ControlButton.extend({
         this._edTxt.style.color = "#000000";
         this._edTxt.style.border = 0;
         this._edTxt.style.background = "transparent";
-        this._edTxt.style.paddingLeft = "2px";
+        //this._edTxt.style.paddingLeft = "2px";
         this._edTxt.style.width = "100%";
         this._edTxt.style.height = "100%";
         this._edTxt.style.active = 0;
@@ -266,6 +265,8 @@ cc.EditBox = cc.ControlButton.extend({
         cc.DOM.convert(this._domInputSprite);
         this._domInputSprite.dom.appendChild(this._edTxt);
         this._domInputSprite.dom.showTooltipDiv = false;
+        this._domInputSprite.dom.style.width = (boxSize.width - 6) +"px";
+        this._domInputSprite.dom.style.height = (boxSize.height - 6) +"px";
 
         //this._domInputSprite.dom.style.borderWidth = "1px";
         //this._domInputSprite.dom.style.borderStyle = "solid";

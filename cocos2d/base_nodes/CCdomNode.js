@@ -123,7 +123,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this._anchorPoint = point;
         this._anchorPointInPoints = cc.p(this._contentSize.width * this._anchorPoint.x,
             this._contentSize.height * this._anchorPoint.y);
-        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + this._anchorPointInPoints.x + 'px ' + this._anchorPointInPoints.y + 'px';
+        this.dom.style[cc.$.pfx + 'TransformOrigin'] = '' + this._anchorPointInPoints.x + 'px ' + -this._anchorPointInPoints.y + 'px';
         if (this.isIgnoreAnchorPointForPosition()) {
             this.dom.style.marginLeft = 0;
             this.dom.style.marginBottom = 0;
@@ -166,8 +166,10 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         //save dirty region when before change
         //this._addDirtyRegionToDirector(this.getBoundingBoxToWorld());
 
-        this._rotation = newRotation;
-        this._rotationRadians = this._rotation * (Math.PI / 180);
+        this._rotationX = this._rotationY = newRotation;
+        this._rotationRadiansX = this._rotationX * (Math.PI / 180);
+        this._rotationRadiansY = this._rotationY * (Math.PI / 180);
+
         this.setNodeDirty();
         this.dom.rotate(newRotation);
     },
@@ -200,7 +202,7 @@ cc.DOM.methods = /** @lends cc.DOM# */{
         this._visible = x;
         this.setNodeDirty();
         if (this.dom)
-            this.dom.style.visibility = (x) ? 'visible' : 'hidden';
+            this.dom.style.display = (x) ? 'block' : 'none';
     },
     _setZOrder:function (z) {
         this._zOrder = z
@@ -309,16 +311,41 @@ cc.DOM.parentDOM = function (x) {
     }
     //if parent have dom, attach self to parent
     x.dom.appendTo(p.dom);
+    p.setAnchorPoint(p.getAnchorPoint());
 
     if (p.getParent()) {
         cc.DOM.parentDOM(p);
     } else {
         //parent has no more parent, if its running, then add it to the container
         if (p.isRunning()) {
-            var eglViewer = cc.EGLView.getInstance();
-            p.setNodeDirty();
-            p.dom.resize(eglViewer.getScaleX(), eglViewer.getScaleX());
-            p.dom.appendTo(cc.container);
+            //find EGLView div
+            var eglViewDiv = cc.$("#EGLViewDiv");
+            if(eglViewDiv){
+                p.dom.appendTo(eglViewDiv);
+            } else {
+                eglViewDiv = cc.$new("div");
+                eglViewDiv.id = "EGLViewDiv";
+
+                var eglViewer = cc.EGLView.getInstance();
+                var designSize = eglViewer.getDesignResolutionSize();
+                var viewPortRect = eglViewer.getViewPortRect();
+                var screenSize = eglViewer.getFrameSize();
+
+                eglViewDiv.style.position = 'absolute';
+                eglViewDiv.style.bottom = 0;
+                //x.dom.style.display='block';
+                eglViewDiv.style.width = designSize.width + "px";
+                eglViewDiv.style.maxHeight = designSize.height + "px";
+                eglViewDiv.style.margin = 0;
+
+                eglViewDiv.resize(eglViewer.getScaleX(), eglViewer.getScaleX());
+                eglViewDiv.style.left = ((viewPortRect.size.width - designSize.width) /2
+                    + (screenSize.width -viewPortRect.size.width )/2) + "px";
+                eglViewDiv.style.bottom =  ((screenSize.height -viewPortRect.size.height )/2) + "px";
+
+                p.dom.appendTo(eglViewDiv);
+                eglViewDiv.appendTo(cc.container);
+            }
         }
     }
     return true;
