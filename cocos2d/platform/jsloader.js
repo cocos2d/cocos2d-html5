@@ -64,6 +64,8 @@
         'support/CCTGAlib.js',
         'support/CCPNGReader.js',
         'support/CCTIFFReader.js',
+        'support/component/CCComponent.js',
+        'support/component/CCComponentContainer.js',
         'shaders/CCShaders.js',
         'shaders/CCShaderCache.js',
         'shaders/CCGLProgram.js',

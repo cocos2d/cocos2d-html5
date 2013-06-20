@@ -158,6 +158,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     _additionalTransformDirty:false,
     _additionalTransform:null,
     _componentContainer:null,
+    _isTransitionFinished:false,
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
@@ -171,6 +172,8 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         this._additionalTransformDirty = false;
+        this._componentContainer = new cc.ComponentContainer(this);
+        this._isTransitionFinished = false;
     },
 
     /**
@@ -994,7 +997,9 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         child.setParent(this);
         if (this._running) {
             child.onEnter();
-            child.onEnterTransitionDidFinish();
+            // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
+            if(this._isTransitionFinished)
+                child.onEnterTransitionDidFinish();
         }
     },
 
@@ -1060,7 +1065,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
 
         var child = this.getChildByTag(tag);
         if (child == null)
-            cc.log("cocos2d: removeChildByTag: child not found!");
+            cc.log("cocos2d: removeChildByTag(tag = " + tag + "): child not found!");
         else
             this.removeChild(child, cleanup);
     },
@@ -1238,6 +1243,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * </p>
      */
     onEnter:function () {
+        this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
         this.resumeSchedulerAndActions();
@@ -1251,6 +1257,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * </p>
      */
     onEnterTransitionDidFinish:function () {
+        this._isTransitionFinished = true;
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
     },
 
@@ -1274,6 +1281,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
         this._running = false;
         this.pauseSchedulerAndActions();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
+        this._componentContainer.removeAll();
     },
 
     // actions
@@ -1592,9 +1600,11 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
     /**
      * Update will be called automatically every frame if "scheduleUpdate" is called, and the node is "live" <br/>
      * (override me)
-     * @param {Number} dt
+     * @param {Number} dt deltaTime
      */
     update:function (dt) {
+        if(this._componentContainer && !this._componentContainer.isEmpty())
+            this._componentContainer.visit(dt);
     },
 
     /**
@@ -1627,7 +1637,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @return {cc.Component} gets a component by its name
      */
     getComponent:function(name){
-
+        return this._componentContainer.getComponent(name);
     },
 
     /**
@@ -1635,7 +1645,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @param {cc.Component} component
      */
     addComponent:function(component){
-
+        this._componentContainer.add(component);
     },
 
     /**
@@ -1643,14 +1653,14 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      * @param {String} name
      */
     removeComponent:function(name){
-
+        return this._componentContainer.remove(name);
     },
 
     /**
      * removes all components
      */
     removeAllComponents:function(){
-
+        this._componentContainer.removeAll();
     },
     /// ---- common properties end  ----
 
@@ -2028,6 +2038,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
     _additionalTransformDirty:false,
     _additionalTransform:null,
     _componentContainer:null,
+    _isTransitionFinished:false,
 
     _initNode:function () {
         this._anchorPoint = cc.p(0, 0);
@@ -2041,6 +2052,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         this._initializedNode = true;
         this._additionalTransform = cc.AffineTransformMakeIdentity();
         this._additionalTransformDirty = false;
+        this._componentContainer = new cc.ComponentContainer(this);
+        this._isTransitionFinished = false;
     },
 
     /**
@@ -2864,7 +2877,9 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         child.setParent(this);
         if (this._running) {
             child.onEnter();
-            child.onEnterTransitionDidFinish();
+            // prevent onEnterTransitionDidFinish to be called twice when a node is added in onEnter
+            if(this._isTransitionFinished)
+                child.onEnterTransitionDidFinish();
         }
     },
 
@@ -3107,6 +3122,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * </p>
      */
     onEnter:function () {
+        this._isTransitionFinished = false;
         this._running = true;//should be running before resumeSchedule
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnter);
         this.resumeSchedulerAndActions();
@@ -3120,6 +3136,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * </p>
      */
     onEnterTransitionDidFinish:function () {
+        this._isTransitionFinished = true;
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onEnterTransitionDidFinish);
     },
 
@@ -3143,6 +3160,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
         this._running = false;
         this.pauseSchedulerAndActions();
         this._arrayMakeObjectsPerformSelector(this._children, cc.Node.StateCallbackType.onExit);
+        this._componentContainer.removeAll();
     },
 
     // actions
@@ -3464,6 +3482,8 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {Number} dt
      */
     update:function (dt) {
+        if(this._componentContainer && !this._componentContainer.isEmpty())
+            this._componentContainer.visit(dt);
     },
 
     /**
@@ -3496,7 +3516,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @return {cc.Component} gets a component by its name
      */
     getComponent:function(name){
-
+        return this._componentContainer.getComponent(name);
     },
 
     /**
@@ -3504,7 +3524,7 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {cc.Component} component
      */
     addComponent:function(component){
-
+        this._componentContainer.add(component);
     },
 
     /**
@@ -3512,16 +3532,15 @@ cc.NodeCanvas = cc.Class.extend(/** @lends cc.NodeCanvas# */{
      * @param {String} name
      */
     removeComponent:function(name){
-
+        return this._componentContainer.remove(name);
     },
 
     /**
      * removes all components
      */
     removeAllComponents:function(){
-
+        this._componentContainer.removeAll();
     },
-
     /// ---- common properties end  ----
 
     /**
