@@ -1837,6 +1837,7 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
      * <p>The scale factor of the node. 1.0 is the default scale factor. <br/>
      * It modifies the X and Y scale at the same time. (override cc.Node ) <p/>
      * @param {Number} scale
+     * @param {Number|null} scaleY
      * @override
      */
     setScale:function (scale, scaleY) {

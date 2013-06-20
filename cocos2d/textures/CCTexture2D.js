@@ -287,11 +287,25 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     initWithData:function (data, pixelFormat, pixelsWide, pixelsHigh, contentSize) {
         var gl = cc.renderContext;
-        // XXX: 32 bits or POT textures uses UNPACK of 4 (is this correct ??? )
-        if( pixelFormat === cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888 || ( cc.NextPOT(pixelsWide)==pixelsWide && cc.NextPOT(pixelsHigh)==pixelsHigh) )
+
+        var bitsPerPixel = 0;
+        //Hack: bitsPerPixelForFormat returns wrong number for RGB_888 textures. See function.
+        if(pixelFormat === cc.TEXTURE_2D_PIXEL_FORMAT_RGBA8888){
+            bitsPerPixel = 24;
+        }else{
+            bitsPerPixel = this.bitsPerPixelForFormat(pixelFormat);
+        }
+
+        var bytesPerRow = pixelsWide * bitsPerPixel/8;
+        if(bytesPerRow % 8 === 0){
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT,8);
+        } else if(bytesPerRow % 4 === 0){
             gl.pixelStorei(gl.UNPACK_ALIGNMENT,4);
-        else
+        } else if(bytesPerRow % 2 === 0){
+            gl.pixelStorei(gl.UNPACK_ALIGNMENT,2);
+        } else {
             gl.pixelStorei(gl.UNPACK_ALIGNMENT,1);
+        }
 
         this._webTextureObj = gl.createTexture();
         gl.bindTexture(gl.TEXTURE_2D, this._webTextureObj);
@@ -501,7 +515,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     /**
      * Initializes a texture from a string with dimensions, alignment, font name and font size
      * @param {String} text
-     * @param {String} fontName
+     * @param {String | cc.FontDefinition} fontName or fontDefinition
      * @param {Number} fontSize
      * @param {cc.Size} dimensions
      * @param {Number} hAlignment
@@ -509,6 +523,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
+        //TODO need refactor code
         if (arguments.length == 3) {
             fontName = arguments[1];
             fontSize = arguments[2];
@@ -542,6 +557,16 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
             return false;
 
         return this.initWithImage(image);
+    },
+
+    /**
+     * Initializes a texture from a ETC file
+     * @note Compatible to Cocos2d-x
+     * @param {String} file
+     * @return {Boolean}
+     */
+    initWithETCFile:function(file){
+        return false;
     },
 
     /**
@@ -581,6 +606,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      */
     /**
      * Initializes a texture from a PVRTC buffer
+     * @note compatible to cocos2d-iphone interface.
      * @param {Array} data
      * @param {Number} level
      * @param {Number} bpp
@@ -594,34 +620,6 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
             cc.log("cocos2d: WARNING: PVRTC images is not supported.");
             return false;
         }
-
-        var gl = cc.renderContext;
-        this._webTextureObj = gl.createTexture();
-        gl.bindTexture(gl.TEXTURE_2D, this._webTextureObj);
-
-        this.setAntiAliasTexParameters();
-
-        var format;
-        var size = length * length * bpp / 8;
-        if (hasAlpha) {
-            format = (bpp == 4) ? gl.COMPRESSED_RGBA_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGBA_PVRTC_2BPPV1_IMG;
-        } else {
-            format = (bpp == 4) ? gl.COMPRESSED_RGB_PVRTC_4BPPV1_IMG : gl.COMPRESSED_RGB_PVRTC_2BPPV1_IMG;
-        }
-        if (size < 32) {
-            size = 32;
-        }
-        //TODO
-        gl.compressedTexImage2D(gl.TEXTURE_2D, level, format, length, length, 0, size, data);
-
-        this._contentSize = cc.size(length, length);
-        this._pixelsWide = length;
-        this._pixelsHigh = length;
-        this._maxS = 1.0;
-        this._maxT = 1.0;
-        this._hasPremultipliedAlpha = cc.PVRHaveAlphaPremultiplied_;
-        this._pixelFormat = pixelFormat;
-
         return true;
     },
 
