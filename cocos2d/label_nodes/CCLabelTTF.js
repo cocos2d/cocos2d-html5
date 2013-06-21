@@ -839,11 +839,6 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
         cc.g_NumberOfDraws++;
     },
 
-    onExit:function(){
-        this.releaseTexture();
-        cc.Sprite.prototype.onExit.call(this);
-    },
-
     releaseTexture:function(){
         if(this._texture)
             this._texture.releaseTexture();

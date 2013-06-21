@@ -769,16 +769,6 @@ cc.ParticleSystemQuad = cc.ParticleSystem.extend(/** @lends cc.ParticleSystemQua
             return false;
         }
         return true;
-    },
-
-    onExit: function () {
-        cc.Node.prototype.onExit.call(this);
-        if (this._buffersVBO) {
-            if (this._buffersVBO[0])
-                cc.renderContext.deleteBuffer(this._buffersVBO[0]);
-            if (this._buffersVBO[1])
-                cc.renderContext.deleteBuffer(this._buffersVBO[1]);
-        }
     }
 });
 

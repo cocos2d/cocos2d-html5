@@ -2689,10 +2689,6 @@ cc.SpriteWebGL = cc.Node.extend(/** @lends cc.SpriteWebGL# */{
                 cc.p(offsetPixG2.x + drawSizeG2.width, offsetPixG2.y + drawSizeG2.height), cc.p(offsetPixG2.x, offsetPixG2.y + drawSizeG2.height)];
             cc.drawingUtil.drawPoly(verticesG2, 4, true);
         } // CC_SPRITE_DEBUG_DRAW
-    },
-    onExit:function(){
-        cc.Node.prototype.onExit.call(this);
-        cc.renderContext.deleteBuffer(this._quadWebBuffer);
     }
 });
 
