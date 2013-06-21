@@ -1424,12 +1424,6 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         cc.glBlendFunc(this._blendFunc.src, this._blendFunc.dst);
 
         this._textureAtlas.drawQuads();
-    },
-
-    onExit:function(){
-        cc.Node.prototype.onExit.call(this);
-        if(this._textureAtlas)
-            this._textureAtlas._releaseBuffer();
     }
 });
 
