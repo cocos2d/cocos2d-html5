@@ -62,6 +62,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
     _vertices:null,
     _colorPointer:null,
     _texCoords:null,
+
     _verticesBuffer:null,
     _colorPointerBuffer:null,
     _texCoordsBuffer:null,
@@ -133,6 +134,17 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         this._positionR = cc.PointZero();
         this._color = cc.c3(0, 0, 0);
         this._blendFunc = new cc.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        this._vertexWebGLBuffer = cc.renderContext.createBuffer();
+    },
+
+    onExit:function(){
+        cc.Node.prototype.onExit.call(this);
+        if(this._verticesBuffer)
+            cc.renderContext.deleteBuffer(this._verticesBuffer);
+        if(this._texCoordsBuffer)
+            cc.renderContext.deleteBuffer(this._texCoordsBuffer);
+        if(this._colorPointerBuffer)
+            cc.renderContext.deleteBuffer(this._colorPointerBuffer);
     },
 
     isFastMode:function () {
@@ -216,7 +228,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
         gl.bufferData(gl.ARRAY_BUFFER, this._texCoords, gl.DYNAMIC_DRAW);
         gl.bindBuffer(gl.ARRAY_BUFFER, this._colorPointerBuffer);
         gl.bufferData(gl.ARRAY_BUFFER, this._colorPointer, gl.DYNAMIC_DRAW);
-        this._isDirty = true;
 
         return true;
     },
@@ -234,7 +245,6 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             this._colorPointer[i * 4 + 1] = colors.g;
             this._colorPointer[i * 4 + 2] = colors.b;
         }
-        this._isDirty = true;
     },
 
     /**
@@ -285,7 +295,7 @@ cc.MotionStreak = cc.Node.extend(/** @lends cc.MotionStreak# */{
             ctx.vertexAttribPointer(cc.VERTEX_ATTRIB_COLOR, 4, ctx.UNSIGNED_BYTE, true, 0, 0);
 
             ctx.drawArrays(ctx.TRIANGLE_STRIP, 0, this._nuPoints * 2);
-            cc.INCREMENT_GL_DRAWS(1);
+            cc.g_NumberOfDraws ++;
         }
     },
 
