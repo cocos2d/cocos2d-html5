@@ -135,6 +135,20 @@ cc.FileUtils = cc.Class.extend({
         this._searchResolutionsOrderArray = [];
         this._searchResolutionsOrderArray.push("");
     },
+
+    /**
+     * <p>
+     *      Purges the file searching cache.                                                                           <br/>
+     *                                                                                                                 <br/>
+     *      @note It should be invoked after the resources were updated.                                              <br/>
+     *           For instance, in the CocosPlayer sample, every time you run application from CocosBuilder,            <br/>
+     *           All the resources will be downloaded to the writable folder, before new js app launchs,               <br/>
+     *           this method should be invoked to clean the file search cache.
+     * </p>
+     */
+    purgeCachedEntries:function(){
+        this._searchPathArray = [];
+    },
     /**
      * Get Byte Array from file
      * @function
@@ -299,6 +313,11 @@ cc.FileUtils = cc.Class.extend({
         return arrayInfo;
     },
 
+    /**
+     *  Gets resource file data
+     * @param {String} fileUrl The resource file name which contains the path.
+     * @returns {Array}
+     */
     getTextFileData:function (fileUrl) {
         if (this._textFileCache.hasOwnProperty(fileUrl))
             return this._textFileCache[fileUrl];
@@ -352,22 +371,47 @@ cc.FileUtils = cc.Class.extend({
     /**
      * <p>
      *      Returns the fullpath for a given filename.                                                                                                                             </br>
-     *      First it will try to get a new filename from the "filenameLookup" dictionary. If a new filename can't be found on the dictionary, it will use the original filename.   </br>
-     *      Then it will try obtain the full path of the filename using the CCFileUtils search rules:  resources directory                                                         </br>
+     *      First it will try to get a new filename from the "filenameLookup" dictionary.                                                                                          </br>
+     *      If a new filename can't be found on the dictionary, it will use the original filename.                                                                                 </br>
+     *      Then it will try obtain the full path of the filename using the CCFileUtils search rules:  resources directory and search paths.                                       </br>
+     *      The file search is based on the array element order of search paths and resolution directories.                                                                        </br>
      *                                                                                                                                                                             </br>
-     *      If the filename can't be found on resource directory(e.g. Resources/iphone-hd), it will go back to the root of asset folder(e.g. Resources/) to find the filename.     </br>
+     *      For instance:                                                                                                                                                          </br>
      *                                                                                                                                                                             </br>
-     *      If the filename can't be found on the file system, it will return the filename directly.                                                                               </br>
+     *          We set two elements("/mnt/sdcard/", "internal_dir/") to search paths vector by setSearchPaths,                                                                     </br>
+     *          and set three elements("resources-ipadhd/", "resources-ipad/", "resources-iphonehd")                                                                               </br>
+     *          to resolutions vector by setSearchResolutionsOrder. The "internal_dir" is relative to "Resources/".                                                                </br>
      *                                                                                                                                                                             </br>
-     *      This method was added to simplify multiplatform support. Whether you are using cocos2d-js or any cross-compilation toolchain like StellaSDK or Apportable,             </br>
-     *      you might need to load differerent resources for a given file in the different platforms.                                                                              </br>
+     *          If we have a file named 'sprite.png', the mapping in fileLookup dictionary contains `key: sprite.png -> value: sprite.pvr.gz`.                                     </br>
+     *          Firstly, it will replace 'sprite.png' with 'sprite.pvr.gz', then searching the file sprite.pvr.gz as follows:                                                      </br>
+     *              /mnt/sdcard/resources-ipadhd/sprite.pvr.gz      (if not found, search next)                                                                                    </br>
+     *              /mnt/sdcard/resources-ipad/sprite.pvr.gz        (if not found, search next)                                                                                    </br>
+     *              /mnt/sdcard/resources-iphonehd/sprite.pvr.gz    (if not found, search next)                                                                                    </br>
+     *              /mnt/sdcard/sprite.pvr.gz                       (if not found, search next)                                                                                    </br>
+     *              internal_dir/resources-ipadhd/sprite.pvr.gz     (if not found, search next)                                                                                    </br>
+     *              internal_dir/resources-ipad/sprite.pvr.gz       (if not found, search next)                                                                                    </br>
+     *              internal_dir/resources-iphonehd/sprite.pvr.gz   (if not found, search next)                                                                                    </br>
+     *              internal_dir/sprite.pvr.gz                      (if not found, return "sprite.png")                                                                            </br>
      *                                                                                                                                                                             </br>
-     *      Examples:                                                                                                                                                              </br>
-     *      * In iOS: "image.png" -> "image.pvr" -> "/full/path/res_dir/image.pvr"                                                                                                 </br>
-     *      * In Android: "image.png" -> "image.png" -> "/full/path/res_dir/image.png"                                                                                             </br>
+     *         If the filename contains relative path like "gamescene/uilayer/sprite.png",                                                                                         </br>
+     *         and the mapping in fileLookup dictionary contains `key: gamescene/uilayer/sprite.png -> value: gamescene/uilayer/sprite.pvr.gz`.                                    </br>
+     *         The file search order will be:                                                                                                                                      </br>
+     *              /mnt/sdcard/gamescene/uilayer/resources-ipadhd/sprite.pvr.gz      (if not found, search next)                                                                  </br>
+     *              /mnt/sdcard/gamescene/uilayer/resources-ipad/sprite.pvr.gz        (if not found, search next)                                                                  </br>
+     *              /mnt/sdcard/gamescene/uilayer/resources-iphonehd/sprite.pvr.gz    (if not found, search next)                                                                  </br>
+     *              /mnt/sdcard/gamescene/uilayer/sprite.pvr.gz                       (if not found, search next)                                                                  </br>
+     *              internal_dir/gamescene/uilayer/resources-ipadhd/sprite.pvr.gz     (if not found, search next)                                                                  </br>
+     *              internal_dir/gamescene/uilayer/resources-ipad/sprite.pvr.gz       (if not found, search next)                                                                  </br>
+     *              internal_dir/gamescene/uilayer/resources-iphonehd/sprite.pvr.gz   (if not found, search next)                                                                  </br>
+     *              internal_dir/gamescene/uilayer/sprite.pvr.gz                      (if not found, return "gamescene/uilayer/sprite.png")                                        </br>
+     *                                                                                                                                                                             </br>
+     *         If the new file can't be found on the file system, it will return the parameter pszFileName directly.                                                               </br>
+     *                                                                                                                                                                             </br>
+     *         This method was added to simplify multiplatform support. Whether you are using cocos2d-js or any cross-compilation toolchain like StellaSDK or Apportable,          </br>
+     *         you might need to load different resources for a given file in the different platforms.
      * </p>
      * @param {String} filename
-     * @return {String} fullpath for a given filename.
+     * @return {String} full path for a given filename.
      */
     fullPathForFilename:function (filename) {
         var found = false;
@@ -437,16 +481,19 @@ cc.FileUtils = cc.Class.extend({
         }
     },
 
+    /**
+     * Sets the filenameLookup dictionary.
+     * @param {Object} filenameLookupDict The dictionary for replacing filename.
+     */
     setFilenameLookupDictionary:function (filenameLookupDict) {
         this._filenameLookupDict = filenameLookupDict;
     },
 
     /**
-     * Generate the relative path of the file.
-     * @function
-     * @param {String} filename
-     * @param {String} relativeFile
-     * @return {String}
+     * Gets full path from a file name and the path of the reletive file.
+     * @param {String} filename The file name.
+     * @param {String} relativeFile The path of the relative file.
+     * @return {String} The full path.
      */
     fullPathFromRelativeFile:function (filename, relativeFile) {
         var tmpPath;
@@ -463,19 +510,9 @@ cc.FileUtils = cc.Class.extend({
 
     /**
      * <p>
-     *     Array that contains the search order of the resources based for the device.
-     *     By default it will try to load resources in the following order until one is found:
-     *     - On iPad HD: iPad HD resources, iPad resources, resources not associated with any device
-     *     - On iPad: iPad resources, resources not associated with any device
-     *     - On iPhone 5 HD: iPhone 5 HD resources, iPhone HD resouces, iPhone 5 resources, iPhone resources, resources not associated with any device
-     *     - On iPhone HD: iPhone HD resources, iPhone resouces, resources not associated with any device
-     *     - On iPhone: iPhone resources, resources not associated with any device
-     *
-     *     - On Mac HD: Mac HD resources, Mac resources, resources not associated with any device
-     *     - On Mac: Mac resources, resources not associated with any device
-     *
-     *     If the property "enableiPhoneResourcesOniPad" is enabled, it will also search for iPhone resources if you are in an iPad.
+     *     Sets the array that contains the search order of the resources.
      * </p>
+     * @see getSearchResolutionsOrder(void), fullPathForFilename(const char*).
      * @param {Array} searchResolutionsOrder
      */
     setSearchResolutionsOrder:function (searchResolutionsOrder) {
@@ -483,7 +520,8 @@ cc.FileUtils = cc.Class.extend({
     },
 
     /**
-     * return Array that contains the search order of the resources based for the device.
+     * Gets the array that contains the search order of the resources.
+     * @see setSearchResolutionsOrder(), fullPathForFilename(const char*).
      * @return {Array}
      */
     getSearchResolutionsOrder:function () {
@@ -564,17 +602,15 @@ cc.FileUtils = cc.Class.extend({
 
     /**
      * Get the writeable path
-     * @function
-     * @return  The path that can write/read file
+     * @return {String}  The path that can write/read file
      * @deprecated
      */
-    getWriteablePath:function () {
+    getWritablePath:function () {
         return "";
     },
 
     /**
      * Set whether pop-up a message box when the image load failed
-     * @function
      * @param {Boolean} notify
      */
     setPopupNotify:function (notify) {
@@ -583,7 +619,6 @@ cc.FileUtils = cc.Class.extend({
 
     /**
      * Get whether pop-up a message box when the image load failed
-     * @function
      * @return {Boolean}
      */
     isPopupNotify:function () {
@@ -599,6 +634,12 @@ cc.FileUtils = cc.Class.extend({
         this._resourceRootPath = resourceRootPath;
     },
 
+    /**
+     * Gets the new filename from the filename lookup dictionary.
+     * @param {String} filename
+     * @return {String|null}  The new filename after searching in the filename lookup dictionary. If the original filename wasn't in the dictionary, it will return the original filename.
+     * @private
+     */
     _getNewFilename:function (filename) {
         var newFileName = null;
         var fileNameFound = this._filenameLookupDict ? this._filenameLookupDict[filename] : null;
@@ -611,6 +652,14 @@ cc.FileUtils = cc.Class.extend({
         return newFileName;
     },
 
+    /**
+     * Gets full path for filename, resolution directory and search path.
+     * @param {String} filename
+     * @param {String} resourceDirectory
+     * @param {String} searchPath
+     * @return {String} The full path of the file. It will return an empty string if the full path of the file doesn't exist.
+     * @private
+     */
     _getPathForFilename:function (filename, resourceDirectory, searchPath) {
         var ret;
         var resourceRootPath = this.getResourceRootPath(); //cc.Application.getInstance().getResourceRootPath();
@@ -643,6 +692,35 @@ cc.FileUtils = cc.Class.extend({
         ret += path;
         return ret;
     },
+
+    /**
+     * Gets full path for the directory and the filename.
+     * @param {String} directory The directory contains the file we are looking for.
+     * @param {String} fileName The name of the file.
+     * @return {Boolean} The full path of the file, if the file can't be found, it will return an empty string.
+     * @private
+     */
+    _getFullPathForDirectoryAndFilename:function(directory, fileName){
+
+    },
+
+    /**
+     * <p>
+     *     Sets the array of search paths.                                                                                                                 <br/>
+     *                                                                                                                                                     <br/>
+     *     You can use this array to modify the search path of the resources.                                                                              <br/>
+     *     If you want to use "themes" or search resources in the "cache", you can do it easily by adding new entries in this array.                       <br/>
+     *                                                                                                                                                     <br/>
+     *     @note This method could access relative path and absolute path.                                                                                <br/>
+     *            If the relative path was passed to the vector, CCFileUtils will add the default resource directory before the relative path.             <br/>
+     *            For instance:                                                                                                                            <br/>
+     *              On Android, the default resource root path is "assets/".                                                                               <br/>
+     *              If "/mnt/sdcard/" and "resources-large" were set to the search paths vector,                                                           <br/>
+     *              "resources-large" will be converted to "assets/resources-large" since it was a relative path.
+     * </p>
+     * @see fullPathForFilename(const char*)
+     * @param {Array} searchPaths The array contains search paths.
+     */
     setSearchPaths:function (searchPaths) {
         var existDefaultRootPath = false;
 
@@ -671,6 +749,11 @@ cc.FileUtils = cc.Class.extend({
         }
 
     },
+
+    /**
+     * Add search path.
+     * @param {String} path
+     */
     addSearchPath:function (path) {
         var strPrefix;
         if (!this.isAbsolutePath(path)) { // Not an absolute path
@@ -682,12 +765,31 @@ cc.FileUtils = cc.Class.extend({
         }
         this._searchPathArray.push(path);
     },
+
+    /**
+     *  Gets the array of search paths.
+     *  @see fullPathForFilename(const char*).
+     *  @return {Array} The array of search paths.
+     */
+    getSearchPaths:function(){
+
+    },
+
+    /**
+     * Checks whether the path is an absolute path.
+     * @param {String} strPath The path that needs to be checked.
+     * @returns {boolean} true if it's an absolute path, otherwise it will return false.
+     */
     isAbsolutePath:function (strPath) {
         return (strPath[0] == '/');
     }
 });
 
 cc.s_SharedFileUtils = null;
+/**
+ * Gets the instance of CCFileUtils.
+ * @returns {cc.FileUtils}
+ */
 cc.FileUtils.getInstance = function () {
     if (cc.s_SharedFileUtils == null) {
         cc.s_SharedFileUtils = new cc.FileUtils();

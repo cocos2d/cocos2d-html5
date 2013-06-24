@@ -427,6 +427,27 @@ cc.Application.getCurrentLanguage = function () {
         case "ru":
             ret = cc.LANGUAGE_RUSSIAN;
             break;
+        case "ko":
+            ret = cc.LANGUAGE_KOREAN;
+            break;
+        case "ja":
+            ret = cc.LANGUAGE_JAPANESE;
+            break;
+        case "hu":
+            ret = cc.LANGUAGE_HUNGARIAN;
+            break;
+        case "pt":
+            ret = cc.LANGUAGE_PORTUGUESE;
+            break;
+        case "ar":
+            ret = cc.LANGUAGE_ARABIC;
+            break;
+        case "no":
+            ret = cc.LANGUAGE_NORWEGIAN;
+            break;
+        case "pl":
+            ret = cc.LANGUAGE_POLISH;
+            break;
     }
 
     return ret;
