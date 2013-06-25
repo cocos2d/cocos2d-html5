@@ -133,6 +133,10 @@ cc.Set = cc.Class.extend(/** @lends cc.Set# */{
         }
     },
 
+    acceptVisitor:function(visitor){
+        visitor.visit(this);
+    },
+
     _set:null
 });
 
@@ -142,3 +146,11 @@ cc.Set = cc.Class.extend(/** @lends cc.Set# */{
  * @extends cc.Set
  */
 cc.NSMutableSet = cc.Set;
+
+/**
+ * Create and return a new empty set.
+ * @returns {cc.Set}
+ */
+cc.Set.create = function(){
+     return new cc.Set();
+};

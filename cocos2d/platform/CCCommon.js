@@ -167,17 +167,15 @@ cc.initDebugSetting = function () {
         };
         cc.Assert = function () {
         };
-    }
-    else if (cc.COCOS2D_DEBUG == 1) {
+    } else if (cc.COCOS2D_DEBUG == 1) {
         cc.logINFO = cc.log;
         cc.logERROR = function () {
         };
-    }
-    else if (cc.COCOS2D_DEBUG > 1) {
+    } else if (cc.COCOS2D_DEBUG > 1) {
         cc.logINFO = cc.log;
         cc.logERROR = cc.log;
     }// COCOS2D_DEBUG
-}
+};
 
 // Enum the language type supportted now
 /**
@@ -228,3 +226,54 @@ cc.LANGUAGE_SPANISH = 5;
  * @type Number
  */
 cc.LANGUAGE_RUSSIAN = 6;
+
+/**
+ * Korean language code
+ * @constant
+ * @type Number
+ */
+cc.LANGUAGE_KOREAN = 7;
+
+/**
+ * Japanese language code
+ * @constant
+ * @type Number
+ */
+cc.LANGUAGE_JAPANESE = 8;
+
+/**
+ * Hungarian language code
+ * @constant
+ * @type Number
+ */
+cc.LANGUAGE_HUNGARIAN = 9;
+
+/**
+ * Portuguese language code
+ * @constant
+ * @type Number
+ */
+cc.LANGUAGE_PORTUGUESE = 10;
+
+/**
+ * Arabic language code
+ * @constant
+ * @type Number
+ */
+cc.LANGUAGE_ARABIC = 11;
+
+/**
+ * Norwegian language code
+ * @constant
+ * @type Number
+ */
+cc.LANGUAGE_NORWEGIAN = 12;
+
+/**
+ * Polish language code
+ * @constant
+ * @type Number
+ */
+cc.LANGUAGE_POLISH = 13;
+
+

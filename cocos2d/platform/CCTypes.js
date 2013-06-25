@@ -96,6 +96,15 @@ cc.integerToColor3B = function (intValue) {
 // compatibility
 cc.c3 = cc.c3b;
 
+/**
+ * returns true if both ccColor3B are equal. Otherwise it returns false.
+ * @param {cc.Color3B} color1
+ * @param {cc.Color3B} color2
+ * @return {Boolean}  true if both ccColor3B are equal. Otherwise it returns false.
+ */
+cc.c3BEqual = function(color1, color2){
+    return color1.r === color2.r && color1.g === color2.g && color1.b === color2.b;
+};
 
 //ccColor3B predefined colors
 Object.defineProperties(cc, {
@@ -462,6 +471,7 @@ cc.Quad3 = function (bl1, br1, tl1, tr1) {
  * @Construct
  * @param {Number} x1
  * @param {Number} y1
+ * @deprecated
  */
 cc.GridSize = function (x1, y1) {
     this.x = x1;
@@ -474,6 +484,7 @@ cc.GridSize = function (x1, y1) {
  * @param {Number} x
  * @param {Number} y
  * @return {cc.GridSize}
+ * @deprecated
  */
 cc.g = function (x, y) {
     return new cc.GridSize(x, y);
@@ -655,6 +666,34 @@ cc.BlendFunc = function (src1, dst1) {
 
 cc.BlendFuncDisable = function () {
     return new cc.BlendFunc(gl.ONE, gl.ZERO);
+};
+
+/**
+ * texture coordinates for a quad
+ * @param {cc.Tex2F} bl
+ * @param {cc.Tex2F} br
+ * @param {cc.Tex2F} tl
+ * @param {cc.Tex2F} tr
+ * @constructor
+ */
+cc.T2F_Quad = function(bl, br, tl, tr){
+    this.bl = bl;
+    this.br = br;
+    this.tl = tl;
+    this.tr = tr;
+};
+
+/**
+ * struct that holds the size in pixels, texture coordinates and delays for animated cc.ParticleSystemQuad
+ * @param {cc.T2F_Quad} texCoords
+ * @param delay
+ * @param size
+ * @constructor
+ */
+cc.AnimationFrameData = function(texCoords, delay, size){
+    this.texCoords = texCoords;
+    this.delay = delay;
+    this.size = size;
 };
 
 /**
@@ -1190,7 +1229,7 @@ if(cc.Browser.supportWebGL){
  * convert a string of color for style to Color3B.
  * e.g. "#ff06ff"  to : Color3B(255,6,255)
  * @param {String} clrSt
- * @return {String}
+ * @return {cc.Color3B}
  */
 cc.convertHexNumToColor3B = function (clrSt) {
     var nAr = clrSt.substr(1).split("");
@@ -1316,7 +1355,25 @@ cc._Dictionary = cc.Class.extend({
         this._valueMapTb = {};
     },
 
-    count: function () {
+    count: function() {
         return this.allKeys().length;
     }
 });
+
+cc.fontDefinition = function(){
+    this.fontName = "Arial";
+    this.fontSize = 12;
+    this.fontAlignmentH = cc.TEXT_ALIGNMENT_CENTER;
+    this.fontAlignmentV = cc.VERTICAL_TEXT_ALIGNMENT_TOP;
+    this.fontFillColor = cc.WHITE;
+    this.fontDimensions = cc.size(0,0);
+
+    this.strokeEnabled = false;
+    this.strokeColor = cc.WHITE;
+    this.strokeSize = 1;
+
+    this.shadowEnabled = false;
+    this.shadowOffset = cc.size(0,0);
+    this.shadowBlur = 0;
+    this.shadowOpacity = 1.0;
+};

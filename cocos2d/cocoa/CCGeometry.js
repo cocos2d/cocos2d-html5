@@ -94,8 +94,6 @@ Object.defineProperties(cc, {
     }
 });
 
-
-
 /**
  * @function
  * @param {cc.Point} point1
@@ -448,50 +446,51 @@ cc.Rect.prototype.getHeight = function(){
 cc.Rect.prototype.setHeight = function(h){
     this.size.height = h;
 };
-Object.defineProperties(cc.Rect.prototype,
-                {
-                    "x" : {
-                        get : function(){
-                            return this.getX();
-                        },
-                        set : function(newValue){
-                            this.setX(newValue);
-                        },
-                        enumerable : true,
-                        configurable : true
-                    },
-                    "y" : {
-                        get : function(){
-                            return this.getY();
-                        },
-                        set : function(newValue){
-                            this.setY(newValue);
-                        },
-                        enumerable : true,
-                        configurable : true
-                    },
-                    "width" : {
-                        get : function(){
-                            return this.getWidth();
-                        },
-                        set : function(newValue){
-                            this.setWidth(newValue);
-                        },
-                        enumerable : true,
-                        configurable : true
-                    },
-                    "height" : {
-                        get : function(){
-                            return this.getHeight();
-                        },
-                        set : function(newValue){
-                            this.setHeight(newValue);
-                        },
-                        enumerable : true,
-                        configurable : true
-                    }
-                });
 
+Object.defineProperties(cc.Rect.prototype,
+    {
+        "x": {
+            get: function () {
+                return this.getX();
+            },
+            set: function (newValue) {
+                this.setX(newValue);
+            },
+            enumerable: true,
+            configurable: true
+        },
+        "y": {
+            get: function () {
+                return this.getY();
+            },
+            set: function (newValue) {
+                this.setY(newValue);
+            },
+            enumerable: true,
+            configurable: true
+        },
+        "width": {
+            get: function () {
+                return this.getWidth();
+            },
+            set: function (newValue) {
+                this.setWidth(newValue);
+            },
+            enumerable: true,
+            configurable: true
+        },
+        "height": {
+            get: function () {
+                return this.getHeight();
+            },
+            set: function (newValue) {
+                this.setHeight(newValue);
+            },
+            enumerable: true,
+            configurable: true
+        }
+    }
+);
 
 // Deprecated
 /*cc.Rect.CCRectEqualToRect = cc.rectEqualToRect;

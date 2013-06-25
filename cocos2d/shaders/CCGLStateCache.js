@@ -71,7 +71,8 @@ if (cc.ENABLE_GL_STATE_CACHE) {
     cc._blendingSource = -1;
     cc._blendingDest = -1;
     cc._GLServerState = 0;
-    cc._uVAO = 0;
+    if(cc.TEXTURE_ATLAS_USE_VAO)
+        cc._uVAO = 0;
 }
 
 // GL State Cache functions
