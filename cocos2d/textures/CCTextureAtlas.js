@@ -386,7 +386,7 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * The total number of quads to be drawn will be 0</p>
      */
     removeAllQuads:function () {
-        //this._quads.length = 0;
+        this._quads.length = 0;
         this._totalQuads = 0;
     },
 
