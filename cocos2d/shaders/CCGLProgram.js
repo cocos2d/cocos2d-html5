@@ -359,8 +359,9 @@ cc.GLProgram = cc.Class.extend({
      * @return {Boolean}
      */
     initWithVertexShaderFilename: function (vShaderFilename, fShaderFileName) {
-        var vertexSource = cc.FileUtils.getInstance().getTextFileData(vShaderFilename);
-        var fragmentSource = cc.FileUtils.getInstance().getTextFileData(fShaderFileName);
+        var fileUtils = cc.FileUtils.getInstance();
+        var vertexSource = fileUtils.getTextFileData(fileUtils.fullPathForFilename(vShaderFilename));
+        var fragmentSource = fileUtils.getTextFileData(fileUtils.fullPathForFilename(fShaderFileName));
         return this.initWithVertexShaderByteArray(vertexSource, fragmentSource);
     },
 
@@ -445,6 +446,18 @@ cc.GLProgram = cc.Class.extend({
         this.setUniformLocationWith1i(this._uniforms[cc.UNIFORM_SAMPLER], 0);
     },
 
+    /**
+     * calls retrieves the named uniform location for this shader program.
+     * @param {String} name
+     * @returns {Number}
+     */
+    getUniformLocationForName:function(name){
+        cc.Assert(name != null, "Invalid uniform name" );
+        cc.Assert(this._programObj != 0, "Invalid operation. Cannot get uniform location when program is not initialized");
+
+        return this._glContext.getUniformLocation(this._programObj, name);
+    },
+
     getUniformMVPMatrix: function () {
         return this._uniforms[cc.UNIFORM_MVPMATRIX];
     },
@@ -462,6 +475,90 @@ cc.GLProgram = cc.Class.extend({
         var updated = this._updateUniformLocation(location, i1);
         if (updated)
             this._glContext.uniform1i(location, i1);
+    },
+
+    /**
+     * calls glUniform2i only if the values are different than the previous call for this same shader program.
+     * @param {WebGLUniformLocation} location
+     * @param {Number} i1
+     * @param {Number} i2
+     */
+    setUniformLocationWith2i:function(location, i1,i2){
+        var intArray= [i1,i2];
+        var updated =  this._updateUniformLocation(location, intArray);
+
+        if( updated )
+            this._glContext.uniform2i(location, i1, i2);
+    },
+
+    /**
+     * calls glUniform3i only if the values are different than the previous call for this same shader program.
+     * @param {WebGLUniformLocation} location
+     * @param {Number} i1
+     * @param {Number} i2
+     * @param {Number} i3
+     */
+    setUniformLocationWith3i:function(location, i1, i2, i3){
+        var intArray = [i1,i2,i3];
+        var updated =  this._updateUniformLocation(location, intArray);
+
+        if( updated )
+            this._glContext.uniform3i(location, i1, i2, i3);
+    },
+
+    /**
+     * calls glUniform4i only if the values are different than the previous call for this same shader program.
+     * @param {WebGLUniformLocation} location
+     * @param {Number} i1
+     * @param {Number} i2
+     * @param {Number} i3
+     * @param {Number} i4
+     */
+    setUniformLocationWith4i:function(location, i1, i2, i3, i4){
+        var intArray = [i1,i2,i3,i4];
+        var updated =  this._updateUniformLocation(location, intArray);
+
+        if( updated )
+            this._glContext.uniform4i(location, i1, i2, i3, i4);
+    },
+
+    /**
+     * calls glUniform2iv only if the values are different than the previous call for this same shader program.
+     * @param {WebGLUniformLocation} location
+     * @param {Int32Array} intArray
+     * @param {Number} numberOfArrays
+     */
+    setUniformLocationWith2iv:function(location, intArray, numberOfArrays){
+        var updated =  this._updateUniformLocation(location, intArray);
+
+        if( updated )
+            this._glContext.uniform2iv(location, intArray);
+    },
+
+    /**
+     * calls glUniform3iv only if the values are different than the previous call for this same shader program.
+     * @param {WebGLUniformLocation} location
+     * @param {Int32Array} intArray
+     * @param {Number} numberOfArrays
+     */
+    setUniformLocationWith3iv:function(location, intArray, numberOfArrays){
+        var updated =  this._updateUniformLocation(location, intArray);
+
+        if( updated )
+            this._glContext.uniform3iv(location, intArray);
+    },
+
+    /**
+     * calls glUniform4iv only if the values are different than the previous call for this same shader program.
+     * @param {WebGLUniformLocation} location
+     * @param {Int32Array} intArray
+     * @param {Number} numberOfArrays
+     */
+    setUniformLocationWith4iv:function(location, intArray, numberOfArrays){
+        var updated =  this._updateUniformLocation(location, intArray);
+
+        if( updated )
+            this._glContext.uniform4iv(location, intArray);
     },
 
     /**
