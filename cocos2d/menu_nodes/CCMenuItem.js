@@ -1144,7 +1144,7 @@ cc.MenuItemToggle = cc.MenuItem.extend(/** @lends cc.MenuItemToggle# */{
  * // Example
  *
  * //create a toggle item with 2 menu items (which you can then toggle between them later)
- * var toggler = cc.MenuItemToggle.create(this, this.callback, cc.MenuItemFont.create("On"), cc.MenuItemFont.create("Off"))
+ * var toggler = cc.MenuItemToggle.create( cc.MenuItemFont.create("On"), cc.MenuItemFont.create("Off"), this.callback, this)
  * //Note: the first param is the target, the second is the callback function, afterwards, you can pass in any number of menuitems
  *
  * //if you pass only 1 variable, then it must be a cc.MenuItem
