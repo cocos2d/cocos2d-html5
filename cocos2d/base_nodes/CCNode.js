@@ -3832,10 +3832,11 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     setColor:function(color){
-        this._displayedColor = this._realColor = color;
+        this._displayedColor = cc.c3b(color.r, color.g, color.b);
+        this._realColor = cc.c3b(color.r, color.g, color.b);
 
         if (this._cascadeColorEnabled) {
-            var parentColor = cc.WHITE;
+            var parentColor = cc.white();
             if (this._parent && this._parent.RGBAProtocol &&  this._parent.isCascadeColorEnabled())
                 parentColor = this._parent.getDisplayedColor();
             this.updateDisplayedColor(parentColor);

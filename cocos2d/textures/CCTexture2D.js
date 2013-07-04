@@ -153,14 +153,21 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     /*public:*/
     ctor:function () {
         this._pixelsWide = 0;
-        this._pixelsWide = 0;
+        this._pixelsHigh = 0;
         this._name = "";
         this._maxS = 0;
         this._maxT = 0;
         this._hasPremultipliedAlpha = false;
+        this._contentSize = null;
+
         this._hasMipmaps = false;
         this._pVRHaveAlphaPremultiplied = true;
         this._pixelFormat = cc.Texture2D.defaultAlphaPixelFormat();
+
+        this._shaderProgram = null;
+        this._isLoaded = false;
+        this._htmlElementObj = null;
+        this._webTextureObj = null;
     },
 
     releaseTexture:function(){
@@ -513,7 +520,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      Note that the generated textures are of type A8 - use the blending mode (gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA).
      */
     /**
-     * Initializes a texture from a string with dimensions, alignment, font name and font size
+     * Initializes a texture from a string with dimensions, alignment, font name and font size (note: initWithString does not support on HTML5)
      * @param {String} text
      * @param {String | cc.FontDefinition} fontName or fontDefinition
      * @param {Number} fontSize
@@ -523,7 +530,6 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
      * @return {Boolean}
      */
     initWithString:function (text, fontName, fontSize, dimensions, hAlignment, vAlignment) {
-        //TODO need refactor code
         if (arguments.length == 3) {
             fontName = arguments[1];
             fontSize = arguments[2];
@@ -560,7 +566,7 @@ cc.Texture2D = cc.Class.extend(/** @lends cc.Texture2D# */{
     },
 
     /**
-     * Initializes a texture from a ETC file
+     * Initializes a texture from a ETC file  (note: initWithETCFile does not support on HTML5)
      * @note Compatible to Cocos2d-x
      * @param {String} file
      * @return {Boolean}

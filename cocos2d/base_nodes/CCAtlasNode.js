@@ -54,19 +54,14 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     _opacityModifyRGB:false,
     _blendFunc:null,
 
-    _opacity:0,
-    _color:null,
-
     // quads to draw
     _quadsToDraw:0,
     _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
 
     ctor:function () {
         this._super();
-        this._colorUnmodified = cc.WHITE;
-        this._color = cc.white();
+        this._colorUnmodified = cc.white();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
-        this._opacity = 255;
         this._ignoreContentScaleFactor = false;
     },
 
@@ -84,13 +79,6 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
         if (this._opacityModifyRGB)
             return this._colorUnmodified;
         return cc.NodeRGBA.prototype.getColor.call(this);
-    },
-
-    /**
-     * @return {Number}
-     */
-    getOpacity:function () {
-        return this._opacity;
     },
 
     /**
@@ -155,11 +143,10 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     setQuadsToDraw:function (quadsToDraw) {
         this._quadsToDraw = quadsToDraw;
     },
-    /// ----    common properties end      ----
 
+    /// ----    common properties end      ----
     _textureForCanvas:null,
     _originalTexture:null,
-    _colorF32Array:null,
 
     /** initializes an cc.AtlasNode  with an Atlas file the width and height of each item and the quantity of items to render
      * @param {String} tile
@@ -203,9 +190,9 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b))
+        if ((this._realColor.r == color3.r) && (this._realColor.g == color3.g) && (this._realColor.b == color3.b))
             return;
-        var temp = cc.Color3B(color3.r,color3.g,color3.b);
+        var temp = new cc.Color3B(color3.r,color3.g,color3.b);
         this._colorUnmodified = color3;
 
         if (this._opacityModifyRGB) {
@@ -219,7 +206,7 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
             if (cacheTextureForColor) {
                 var tx = this._originalTexture;
                 var textureRect = cc.rect(0, 0, tx.width, tx.height);
-                var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._color, textureRect);
+                var colorTexture = cc.generateTintImage(tx, cacheTextureForColor, this._realColor, textureRect);
                 this.setTexture(colorTexture);
             }
         }
@@ -266,23 +253,6 @@ cc.AtlasNodeCanvas = cc.NodeRGBA.extend(/** @lends cc.AtlasNode# */{
     }
 });
 
-/** creates a cc.AtlasNodeCanvas  with an Atlas file the width and height of each item and the quantity of items to render
- * @param {String} tile
- * @param {Number} tileWidth
- * @param {Number} tileHeight
- * @param {Number} itemsToRender
- * @return {cc.AtlasNode}
- * @example
- * // example
- * var node = cc.AtlasNode.create("pathOfTile", 16, 16, 1);
- */
-cc.AtlasNodeCanvas.create = function (tile, tileWidth, tileHeight, itemsToRender) {
-    var ret = new cc.AtlasNodeCanvas();
-    if (ret.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender))
-        return ret;
-    return null;
-};
-
 /** <p> cc.AtlasNode is a subclass of cc.Node that implements the cc.RGBAProtocol and<br/>
  * cc.TextureProtocol protocol (WebGL implement)</p>
  *
@@ -294,7 +264,7 @@ cc.AtlasNodeCanvas.create = function (tile, tileWidth, tileHeight, itemsToRender
  * @class
  * @extends cc.Node
  */
-cc.AtlasNodeWebGL = cc.Node.extend({
+cc.AtlasNodeWebGL = cc.NodeRGBA.extend({
     /// ----    common properties start    ----
     RGBAProtocol:true,
     //! chars per row
@@ -313,19 +283,14 @@ cc.AtlasNodeWebGL = cc.Node.extend({
     _opacityModifyRGB:false,
     _blendFunc:null,
 
-    _opacity:0,
-    _color:null,
-
     // quads to draw
     _quadsToDraw:0,
     _ignoreContentScaleFactor:false,                               // This variable is only used for CCLabelAtlas FPS display. So plz don't modify its value.
 
     ctor:function () {
         this._super();
-        this._colorUnmodified = cc.WHITE;
-        this._color = cc.white();
+        this._colorUnmodified = cc.white();
         this._blendFunc = {src:cc.BLEND_SRC, dst:cc.BLEND_DST};
-        this._opacity = 255;
         this._ignoreContentScaleFactor = false;
     },
 
@@ -343,13 +308,6 @@ cc.AtlasNodeWebGL = cc.Node.extend({
         if (this._opacityModifyRGB)
             return this._colorUnmodified;
         return cc.NodeRGBA.prototype.getColor.call(this);
-    },
-
-    /**
-     * @return {Number}
-     */
-    getOpacity:function () {
-        return this._opacity;
     },
 
     /**
@@ -448,7 +406,8 @@ cc.AtlasNodeWebGL = cc.Node.extend({
         this._blendFunc.src = cc.BLEND_SRC;
         this._blendFunc.dst = cc.BLEND_DST;
 
-        this._colorF32Array = new Float32Array([this._color.r / 255.0, this._color.g / 255.0, this._color.b / 255.0, this._opacity / 255.0]);
+        var locRealColor = this._realColor;
+        this._colorF32Array = new Float32Array([locRealColor.r / 255.0, locRealColor.g / 255.0, locRealColor.b / 255.0, this._realOpacity / 255.0]);
         this._textureAtlas = new cc.TextureAtlas();
         this._textureAtlas.initWithTexture(texture, itemsToRender);
 
@@ -483,8 +442,6 @@ cc.AtlasNodeWebGL = cc.Node.extend({
      * @param {cc.Color3B} color3
      */
     setColor:function (color3) {
-        if ((this._color.r == color3.r) && (this._color.g == color3.g) && (this._color.b == color3.b))
-            return;
         var temp = cc.Color3B(color3.r,color3.g,color3.b);
         this._colorUnmodified = color3;
 
@@ -507,7 +464,8 @@ cc.AtlasNodeWebGL = cc.Node.extend({
         if (this._opacityModifyRGB) {
             this.setColor(this._colorUnmodified);
         } else {
-            this._colorF32Array = new Float32Array([this._color.r / 255.0, this._color.g / 255.0, this._color.b / 255.0, this._opacity / 255.0]);
+            var locDisplayedColor = this._displayedColor;
+            this._colorF32Array = new Float32Array([locDisplayedColor.r / 255.0, locDisplayedColor.g / 255.0, locDisplayedColor.b / 255.0, this._displayedOpacity / 255.0]);
         }
     },
 
@@ -556,7 +514,9 @@ cc.AtlasNodeWebGL = cc.Node.extend({
     }
 });
 
-/** creates a cc.AtlasNodeWebGL  with an Atlas file the width and height of each item and the quantity of items to render
+cc.AtlasNode = cc.Browser.supportWebGL ? cc.AtlasNodeWebGL : cc.AtlasNodeCanvas;
+
+/** creates a cc.AtlasNode with an Atlas file the width and height of each item and the quantity of items to render
  * @param {String} tile
  * @param {Number} tileWidth
  * @param {Number} tileHeight
@@ -566,13 +526,10 @@ cc.AtlasNodeWebGL = cc.Node.extend({
  * // example
  * var node = cc.AtlasNode.create("pathOfTile", 16, 16, 1);
  */
-cc.AtlasNodeWebGL.create = function (tile, tileWidth, tileHeight, itemsToRender) {
-    var ret = new cc.AtlasNodeWebGL();
+cc.AtlasNode.create = function (tile, tileWidth, tileHeight, itemsToRender) {
+    var ret = new cc.AtlasNode();
     if (ret.initWithTileFile(tile, tileWidth, tileHeight, itemsToRender))
         return ret;
     return null;
 };
-
-cc.AtlasNode = cc.Browser.supportWebGL ? cc.AtlasNodeWebGL : cc.AtlasNodeCanvas;
-
 

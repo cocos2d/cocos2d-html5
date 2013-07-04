@@ -59,7 +59,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      * @return {Number}
      */
     getTotalQuads:function () {
-        return this._quads.length;
+        //return this._quads.length;
+        return this._totalQuads;
     },
 
     /**
@@ -85,11 +86,19 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         this._texture = texture;
     },
 
+    /**
+     * specify if the array buffer of the VBO needs to be updated
+     * @param {Boolean} dirty
+     */
     setDirty:function (dirty) {
         this._dirty = dirty;
     },
 
-    getDirty:function () {
+    /**
+     * whether or not the array buffer of the VBO needs to be updated
+     * @returns {boolean}
+     */
+    isDirty:function () {
         return this._dirty;
     },
 
@@ -223,7 +232,8 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
      */
     initWithTexture:function (texture, capacity) {
         //cc.Assert(texture != null, "TextureAtlas.initWithTexture():texture should not be null");
-        this._capacity = 0 | (capacity);
+        capacity = 0 | (capacity);
+        this._capacity = capacity;
         this._totalQuads = 0;
 
         // retained in property
@@ -233,12 +243,17 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         cc.Assert(this._quads == null && this._indices == null, "TextureAtlas.initWithTexture():_quads and _indices should not be null");
 
         this._quads = [];
-        this._indices = new Uint16Array(this._capacity * 6);
-        this._quadsArrayBuffer = new ArrayBuffer(cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT * this._capacity);
+        this._indices = new Uint16Array(capacity * 6);
+        var quadSize = cc.V3F_C4B_T2F_Quad.BYTES_PER_ELEMENT;
+        this._quadsArrayBuffer = new ArrayBuffer(quadSize * capacity);
         this._quadsReader = new Uint8Array(this._quadsArrayBuffer);
 
-        if (!( this._quads && this._indices) && this._capacity > 0)
+        if (!( this._quads && this._indices) && capacity > 0)
             return false;
+
+        var locQuads = this._quads;
+        for(var i = 0; i< capacity; i++)
+            locQuads[i] =new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer, i * quadSize);
 
         this._setupIndices();
         this._setupVBO();
@@ -412,27 +427,31 @@ cc.TextureAtlas = cc.Class.extend(/** @lends cc.TextureAtlas# */{
         // update capacity and totolQuads
         this._totalQuads = Math.min(this._totalQuads, newCapacity);
         this._capacity = 0 | newCapacity;
-        var i, capacity = this._capacity;
+        var i, capacity = this._capacity, locTotalQuads = this._totalQuads;
 
         if (this._quads == null) {
             this._quads = [];
             this._quadsArrayBuffer = new ArrayBuffer(quadSize * capacity);
             this._quadsReader = new Uint8Array(this._quadsArrayBuffer);
+            for(i = 0; i< capacity; i++)
+                this._quads = new cc.V3F_C4B_T2F_Quad(null, null, null, null, this._quadsArrayBuffer,i * quadSize);
         } else {
             var newQuads, newArrayBuffer, quads = this._quads;
             if (capacity > oldCapacity) {
                 newQuads = [];
                 newArrayBuffer = new ArrayBuffer(quadSize * capacity);
-
-                for(i = 0; i < this._totalQuads;i++){
+                for(i = 0; i < locTotalQuads;i++){
                      newQuads[i] = new cc.V3F_C4B_T2F_Quad(quads[i].tl,quads[i].bl,quads[i].tr,quads[i].br,
                          newArrayBuffer,i * quadSize);
                 }
+                for(;i<capacity; i ++)
+                    newQuads[i] = new cc.V3F_C4B_T2F_Quad(null,null,null,null, newArrayBuffer,i * quadSize);
+
                 this._quadsReader = new Uint8Array(newArrayBuffer);
                 this._quads = newQuads;
                 this._quadsArrayBuffer = newArrayBuffer;
             } else {
-                var count = Math.max(this._totalQuads, capacity);
+                var count = Math.max(locTotalQuads, capacity);
                 newQuads = [];
                 newArrayBuffer = new ArrayBuffer(quadSize * capacity);
                 for(i = 0; i < count;i++){

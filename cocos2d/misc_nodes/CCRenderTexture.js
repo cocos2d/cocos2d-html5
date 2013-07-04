@@ -420,7 +420,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
     /**
      * clears the texture with a specified depth value
-     * @param {Number} dep
+     * @param {Number} depthValue
      */
     clearDepth:function (depthValue) {
         if (cc.renderContextType === cc.CANVAS)

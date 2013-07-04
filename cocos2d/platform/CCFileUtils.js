@@ -316,7 +316,7 @@ cc.FileUtils = cc.Class.extend({
     /**
      *  Gets resource file data
      * @param {String} fileUrl The resource file name which contains the path.
-     * @returns {Array}
+     * @returns {String}
      */
     getTextFileData:function (fileUrl) {
         if (this._textFileCache.hasOwnProperty(fileUrl))
@@ -586,7 +586,7 @@ cc.FileUtils = cc.Class.extend({
      * @return {String}
      */
     getStringFromFile:function (fileName) {
-        return cc.SAXParser.getInstance().getList(fileName);
+        return this.getTextFileData(fileName); //cc.SAXParser.getInstance().getList(fileName);
     },
 
     /**

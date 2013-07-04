@@ -214,8 +214,8 @@
                 f.serial = s;
                 f.onload = loadNext;
                 d.body.appendChild(f);
-                p = s / (que.length - 1);
                 //TODO: code for updating progress bar
+                //p = s / (que.length - 1);
             }
         };
         loadNext();
@@ -227,8 +227,8 @@
             s.src = f;
             s.onload = function () {
                 loaded++;
-                p = loaded / que.length;
                 //TODO: code for updating progress bar
+                //p = loaded / que.length;
             };
             d.body.appendChild(s);
             que[i] = s;
