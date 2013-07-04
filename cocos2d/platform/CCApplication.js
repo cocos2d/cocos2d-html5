@@ -275,32 +275,6 @@ cc._addUserSelectStatus = function(){
         +"-webkit-tap-highlight-color:rgba(0,0,0,0);}";
 };
 
-cc.bindingRendererClass = function(renderType){
-     if(renderType === cc.WEBGL){
-         cc.Node = cc.NodeWebGL;
-         cc.Sprite = cc.SpriteWebGL;
-         cc.SpriteBatchNode = cc.SpriteBatchNodeWebGL;
-         cc.TextureCache = cc.TextureCacheWebGL;
-         cc.ProgressTimer = cc.ProgressTimerWebGL;
-         cc.AtlasNode = cc.AtlasNodeWebGL;
-         cc.LabelTTF = cc.LabelTTFWebGL;
-         cc.LayerColor = cc.LayerColorWebGL;
-         cc.DrawNode = cc.DrawNodeWebGL;
-         cc.LabelAtlas = cc.LabelAtlasWebGL;
-     } else {
-         cc.Node = cc.NodeCanvas;
-         cc.Sprite = cc.SpriteCanvas;
-         cc.SpriteBatchNode = cc.SpriteBatchNodeCanvas;
-         cc.TextureCache = cc.TextureCacheCanvas;
-         cc.ProgressTimer = cc.ProgressTimerCanvas;
-         cc.AtlasNode = cc.AtlasNodeCanvas;
-         cc.LabelTTF = cc.LabelTTFCanvas;
-         cc.LayerColor = cc.LayerColorCanvas;
-         cc.DrawNode = cc.DrawNodeCanvas;
-         cc.LabelAtlas = cc.LabelAtlasCanvas;
-     }
-};
-
 cc._isContextMenuEnable = false;
 /**
  * enable/disable contextMenu for Canvas

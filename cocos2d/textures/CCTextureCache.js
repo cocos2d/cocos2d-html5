@@ -58,7 +58,10 @@ cc.computeImageFormatType = function (filename) {
         return cc.FMT_JPG;
     } else if (filename.toLowerCase().indexOf('.png') > 0) {
         return cc.FMT_PNG;
+    } else if (filename.toLowerCase().indexOf('.webp') > 0) {
+        return cc.FMT_WEBP;
     }
+
     return cc.FMT_UNKNOWN;
 };
 
@@ -92,10 +95,32 @@ cc.TextureCacheCanvas = cc.Class.extend(/** @lends cc.TextureCacheCanvas# */{
     },
 
     /**
-     * AddPVRTCImage does not support
+     * <p>
+     *     Returns a Texture2D object given an PVR filename                                                              <br/>
+     *     If the file image was not previously loaded, it will create a new CCTexture2D                                 <br/>
+     *     object and it will return it. Otherwise it will return a reference of a previously loaded image              <br/>
+     *     note: AddPVRTCImage does not support on HTML5
+     * </p>
+     * @param {String} filename
+     * @return {cc.Texture2D}
      */
-    addPVRTCImage:function () {
-        cc.Assert(0, "TextureCache:addPVRTCImage does not support");
+    addPVRTCImage:function (filename) {
+        cc.Assert(0, "TextureCache:addPVRTCImage does not support on HTML5");
+    },
+
+
+    /**
+     * <p>
+     *     Returns a Texture2D object given an ETC filename                                                               <br/>
+     *     If the file image was not previously loaded, it will create a new CCTexture2D                                  <br/>
+     *     object and it will return it. Otherwise it will return a reference of a previously loaded image                <br/>
+     *    note:addETCImage does not support on HTML5
+     * </p>
+     * @param {String} filename
+     * @return {cc.Texture2D}
+     */
+    addETCImage:function (filename) {
+        cc.Assert(0, "TextureCache:addPVRTCImage does not support on HTML5");
     },
 
     /**
@@ -450,10 +475,31 @@ cc.TextureCacheWebGL = cc.Class.extend({
     },
 
     /**
-     * AddPVRTCImage does not support
+     * <p>
+     *     Returns a Texture2D object given an PVR filename                                                              <br/>
+     *     If the file image was not previously loaded, it will create a new CCTexture2D                                 <br/>
+     *     object and it will return it. Otherwise it will return a reference of a previously loaded image              <br/>
+     *     note: AddPVRTCImage does not support on HTML5
+     * </p>
+     * @param {String} filename
+     * @return {cc.Texture2D}
      */
-    addPVRTCImage:function () {
-        cc.Assert(0, "TextureCache:addPVRTCImage does not support");
+    addPVRTCImage:function (filename) {
+        cc.Assert(0, "TextureCache:addPVRTCImage does not support on HTML5");
+    },
+
+    /**
+     * <p>
+     *     Returns a Texture2D object given an ETC filename                                                               <br/>
+     *     If the file image was not previously loaded, it will create a new CCTexture2D                                  <br/>
+     *     object and it will return it. Otherwise it will return a reference of a previously loaded image                <br/>
+     *    note:addETCImage does not support on HTML5
+     * </p>
+     * @param {String} filename
+     * @return {cc.Texture2D}
+     */
+    addETCImage:function (filename) {
+        cc.Assert(0, "TextureCache:addPVRTCImage does not support on HTML5");
     },
 
     /**

@@ -399,7 +399,7 @@ cc.DrawNodeWebGL = cc.Node.extend(/** @lends cc.DrawNodeWebGL# */{
             var offset = cc.v2fmult(cc.v2fadd(n1, n2), 1.0 / (cc.v2fdot(n1, n2) + 1.0));
             extrude[i] = {offset: offset, n: n2};
         }
-        var outline = (fillColor.a > 0.0 && borderWidth > 0.0);
+        var outline = (borderColor.a > 0.0 && borderWidth > 0.0);
 
         var triangleCount = 3 * count -2;
         var vertexCount = 3 * triangleCount;

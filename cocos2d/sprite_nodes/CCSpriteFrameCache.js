@@ -187,8 +187,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * cc.SpriteFrameCache.getInstance().addSpriteFrames(s_grossiniPlist);
      */
     addSpriteFrames:function (plist, texture) {
-        var fullPath = cc.FileUtils.getInstance().fullPathForFilename(plist);
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(fullPath);
+        var fileUtils = cc.FileUtils.getInstance();
+        var fullPath = fileUtils.fullPathForFilename(plist);
+        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
 
         switch (arguments.length) {
             case 1:
@@ -202,7 +203,7 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
                     }
                     if (texturePath != "") {
                         // build texture path relative to plist file
-                        texturePath = cc.FileUtils.getInstance().fullPathFromRelativeFile(texturePath, plist);
+                        texturePath = fileUtils.fullPathFromRelativeFile(texturePath, plist);
                     } else {
                         // build texture path by replacing file extension
                         texturePath = plist;
@@ -304,8 +305,9 @@ cc.SpriteFrameCache = cc.Class.extend(/** @lends cc.SpriteFrameCache# */{
      * @param {String} plist plist filename
      */
     removeSpriteFramesFromFile:function (plist) {
-        var path = cc.FileUtils.getInstance().fullPathFromRelativePath(plist);
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(path);
+        var fileUtils = cc.FileUtils.getInstance();
+        var path = fileUtils.fullPathForFilename(plist);
+        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
 
         this._removeSpriteFramesFromDictionary(dict);
 

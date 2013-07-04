@@ -712,7 +712,7 @@ cc.NodeLoader = cc.Class.extend({
                 }
             } else {
                 if(selectorTarget == CCB_TARGETTYPE_DOCUMENTROOT){
-                    ccbReader.addDocumentCallbackName(node);
+                    ccbReader.addDocumentCallbackNode(node);
                     ccbReader.addDocumentCallbackName(selectorName);
                 } else {
                     ccbReader.addOwnerCallbackNode(node);
@@ -720,7 +720,6 @@ cc.NodeLoader = cc.Class.extend({
                 }
             }
         }
-
         return null;
     },
 

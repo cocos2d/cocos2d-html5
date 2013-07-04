@@ -81,12 +81,9 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
     //private
     _setNewScene:function (dt) {
-        // [self unschedule:_cmd];
-        // "_cmd" is a local variable automatically defined in a method
-        // that contains the selector for the method
         this.unschedule(this._setNewScene);
-        var director = cc.Director.getInstance();
         // Before replacing, save the "send cleanup to scene"
+        var director = cc.Director.getInstance();
         this._isSendCleanupToScene = director.isSendCleanupToScene();
         director.replaceScene(this._inScene);
 
@@ -120,7 +117,15 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * custom onEnter
      */
     onEnter:function () {
-        this._super();
+        cc.Scene.prototype.onEnter.call(this);
+
+        // disable events while transitions
+        cc.Director.getInstance().getTouchDispatcher().setDispatchEvents(false);
+
+        // outScene should not receive the onEnter callback
+        // only the onExitTransitionDidStart
+        this._outScene.onExitTransitionDidStart();
+
         this._inScene.onEnter();
     },
 
@@ -128,10 +133,14 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
      * custom onExit
      */
     onExit:function () {
-        this._super();
+        cc.Scene.prototype.onExit.call(this);
+
+        // enable events while transitions
+        cc.Director.getInstance().getTouchDispatcher().setDispatchEvents(true);
+
         this._outScene.onExit();
 
-        // inScene should not receive the onExit callback
+        // _inScene should not receive the onEnter callback
         // only the onEnterTransitionDidFinish
         this._inScene.onEnterTransitionDidFinish();
     },
@@ -169,8 +178,6 @@ cc.TransitionScene = cc.Scene.extend(/** @lends cc.TransitionScene# */{
 
             cc.Assert(this._inScene != this._outScene, "CCTransitionScene.initWithDuration() Incoming scene must be different from the outgoing scene");
 
-            // disable events while transitions
-            cc.Director.getInstance().getTouchDispatcher().setDispatchEvents(false);
             this._sceneOrder();
 
             return true;
@@ -1509,7 +1516,6 @@ cc.TransitionSplitCols.create = function (t, scene) {
  * @extends cc.TransitionSplitCols
  */
 cc.TransitionSplitRows = cc.TransitionSplitCols.extend(/** @lends cc.TransitionSplitRows# */{
-
     /**
      * @return {*}
      */
@@ -1591,9 +1597,8 @@ cc.TransitionFadeTR = cc.TransitionScene.extend(/** @lends cc.TransitionFadeTR# 
  */
 cc.TransitionFadeTR.create = function (t, scene) {
     var tempScene = new cc.TransitionFadeTR();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
+    if ((tempScene != null) && (tempScene.initWithDuration(t, scene)))
         return tempScene;
-    }
     return null;
 };
 
@@ -1624,9 +1629,8 @@ cc.TransitionFadeBL = cc.TransitionFadeTR.extend(/** @lends cc.TransitionFadeBL#
  */
 cc.TransitionFadeBL.create = function (t, scene) {
     var tempScene = new cc.TransitionFadeBL();
-    if ((tempScene != null) && (tempScene.initWithDuration(t, scene))) {
+    if ((tempScene != null) && (tempScene.initWithDuration(t, scene)))
         return tempScene;
-    }
     return null;
 };
 
