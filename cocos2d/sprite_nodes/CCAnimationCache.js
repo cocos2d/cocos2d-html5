@@ -119,10 +119,11 @@ cc.AnimationCache = cc.Class.extend(/** @lends cc.AnimationCache# */{
      * @param {String} plist
      */
     addAnimations:function (plist) {
-        cc.Assert(plist, "Invalid texture file name");
+        cc.Assert(plist, "Invalid texture file name")
+        var fileUtils = cc.FileUtils.getInstance();
 
-        var path = cc.FileUtils.getInstance().fullPathFromRelativePath(plist);
-        var dict = cc.FileUtils.getInstance().dictionaryWithContentsOfFileThreadSafe(path);
+        var path = fileUtils.fullPathForFilename(plist);
+        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(path);
 
         cc.Assert(dict, "cc.AnimationCache: File could not be found");
 

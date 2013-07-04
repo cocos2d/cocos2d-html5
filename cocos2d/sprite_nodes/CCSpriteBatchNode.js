@@ -336,7 +336,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
             return;
 
         //set the z-order and sort later
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
         this.setNodeDirty();
     },
 
@@ -354,8 +354,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
 
         // cleanup before removing
         this.removeSpriteFromAtlas(child);
-
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
     /// ---- common properties end   ----
 
@@ -369,7 +368,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
      * @param {String} fileImage
      */
     ctor:function (fileImage) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         if (fileImage)
             this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
 
@@ -430,7 +429,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
     setContentSize:function (size) {
         if (!size)
             return;
-        this._super(size);
+        cc.Node.prototype.setContentSize.call(this, size);
         this._renderTexture.setContentSize(size);
     },
 
@@ -579,7 +578,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
 
         if (arguments.length === 4)
             if (arguments[3] == true) {
-                this._super(child, zOrder, tag);
+                cc.Node.prototype.addChild.call(this, child, zOrder, tag);
                 this.setNodeDirty();
                 return;
             }
@@ -590,7 +589,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
         cc.Assert(child != null, "SpriteBatchNode.addChild():child should not be null");
         cc.Assert((child instanceof cc.Sprite), "cc.SpriteBatchNode only supports cc.Sprites as children");
 
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
         this.setNodeDirty();
     },
@@ -610,7 +609,7 @@ cc.SpriteBatchNodeCanvas = cc.Node.extend(/** @lends cc.SpriteBatchNodeCanvas# *
             }
         }
 
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._descendants = [];
     },
 
@@ -995,7 +994,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
             return;
 
         //set the z-order and sort later
-        this._super(child, zOrder);
+        cc.Node.prototype.reorderChild.call(this, child, zOrder);
         this.setNodeDirty();
     },
 
@@ -1014,7 +1013,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         // cleanup before removing
         this.removeSpriteFromAtlas(child);
 
-        this._super(child, cleanup);
+        cc.Node.prototype.removeChild.call(this, child, cleanup);
     },
     /// ---- common properties end   ----
     _mvpMatrix:null,
@@ -1023,7 +1022,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
      * @param {String} fileImage
      */
     ctor:function (fileImage) {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._mvpMatrix = new cc.kmMat4();
         if (fileImage)
             this.init(fileImage, cc.DEFAULT_SPRITE_BATCH_CAPACITY);
@@ -1339,7 +1338,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
 
         if (arguments.length === 4)
             if (arguments[3] == true) {
-                this._super(child, zOrder, tag);
+                cc.Node.prototype.addChild.call(this, child, zOrder, tag);
                 this.setNodeDirty();
                 return;
             }
@@ -1353,7 +1352,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
         // check cc.Sprite is using the same texture id
         cc.Assert(child.getTexture()._webTextureObj == this._textureAtlas.getTexture()._webTextureObj,
             "SpriteBatchNode.addChild():cc.Sprite is not using the same texture id");
-        this._super(child, zOrder, tag);
+        cc.Node.prototype.addChild.call(this, child, zOrder, tag);
         this.appendChild(child);
         this.setNodeDirty();
     },
@@ -1372,7 +1371,7 @@ cc.SpriteBatchNodeWebGL = cc.Node.extend(/** @lends cc.SpriteBatchNodeWebGL# */{
                     this._descendants[i].setBatchNode(null);
             }
         }
-        this._super(cleanup);
+        cc.Node.prototype.removeAllChildren.call(this, cleanup);
         this._descendants = [];
         this._textureAtlas.removeAllQuads();
     },
