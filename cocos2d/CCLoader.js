@@ -398,17 +398,21 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
     _texture2d: null,
     _bgLayer: null,
     _label: null,
+    _winSize:null,
 
     /**
      * Constructor
      */
     ctor: function () {
         this._super();
+        this._winSize = cc.Director.getInstance().getWinSize();
+    },
+    init:function(){
+        cc.Scene.prototype.init.call(this);
 
         //logo
         var logoHeight = 200;
-        var winSize = cc.Director.getInstance().getWinSize();
-        var centerPos = cc.p(winSize.width / 2, winSize.height / 2);
+        var centerPos = cc.p(this._winSize.width / 2, this._winSize.height / 2);
 
         this._logoTexture = new Image();
         var _this = this;
