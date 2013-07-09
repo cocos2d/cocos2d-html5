@@ -386,13 +386,6 @@ cc.Loader.getInstance = function () {
 
 cc.Loader._instance = null;
 
-
-
-
-
-
-
-
 /**
  * Used to display the loading screen
  * @class

@@ -328,7 +328,8 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
     },
     /**
      * renders the label
-     * @param {CanvasContext|Null} ctx
+     * @param {CanvasRenderingContext2D|Null} ctx
+     * @param {Number} renderType
      */
     draw:function (ctx, renderType) {
         var context = ctx || cc.renderContext;

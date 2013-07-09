@@ -41,6 +41,12 @@ cc.HashElement = cc.Class.extend(/** @lends cc.HashElement# */{
      */
     ctor:function () {
         this.actions = [];
+        this._target = null;
+        this.actionIndex = 0;
+        this.currentAction = null; //CCAction
+        this.currentActionSalvaged = false;
+        this.paused = false;
+        this.hh = null; //ut hash handle
     }
 });
 
@@ -62,9 +68,8 @@ cc.ActionManager = cc.Class.extend({
 
     _searchElementByTarget:function (arr, target) {
         for (var k = 0; k < arr.length; k++) {
-            if (target == arr[k].target) {
+            if (target == arr[k].target)
                 return arr[k];
-            }
         }
         return null;
     },
@@ -74,6 +79,8 @@ cc.ActionManager = cc.Class.extend({
      */
     ctor:function () {
         this._targets = [];
+        this._currentTarget = null;
+        this._currentTargetSalvaged = false;
     },
 
     /** Adds an action with a target.
@@ -107,11 +114,11 @@ cc.ActionManager = cc.Class.extend({
      * Removes all actions from all the targets.
      */
     removeAllActions:function () {
-        for (var i = 0; i < this._targets.length; i++) {
-            var element = this._targets[i];
-            if (element) {
+        var locTargets = this._targets;
+        for (var i = 0; i < locTargets.length; i++) {
+            var element = locTargets[i];
+            if (element)
                 this.removeAllActionsFromTarget(element.target, true);
-            }
         }
     },
     /** Removes all actions from a certain target. <br/>
@@ -121,16 +128,14 @@ cc.ActionManager = cc.Class.extend({
      */
     removeAllActionsFromTarget:function (target, forceDelete) {
         // explicit null handling
-        if (target == null) {
+        if (target == null)
             return;
-        }
         var element = this._searchElementByTarget(this._targets, target);
 
         //var element = (target in this._targets)? this._targets[ptarget]: null;
         if (element) {
-            if (element.actions.indexOf(element.currentAction) !== -1 && !(element.currentActionSalvaged)) {
+            if (element.actions.indexOf(element.currentAction) !== -1 && !(element.currentActionSalvaged))
                 element.currentActionSalvaged = true;
-            }
 
             element.actions = [];
             if (this._currentTarget == element && !forceDelete) {
@@ -138,18 +143,17 @@ cc.ActionManager = cc.Class.extend({
             } else {
                 this._deleteHashElement(element);
             }
-        } else {
+        } //else {
             //cc.log("cocos2d: removeAllActionsFromTarget: Target not found");
-        }
+        //}
     },
     /** Removes an action given an action reference.
      * @param {cc.Action} action
      */
     removeAction:function (action) {
         // explicit null handling
-        if (action == null) {
+        if (action == null)
             return;
-        }
         var target = action.getOriginalTarget();
         var element = this._searchElementByTarget(this._targets, target);
 
@@ -180,7 +184,7 @@ cc.ActionManager = cc.Class.extend({
             for (var i = 0; i < limit; ++i) {
                 var action = element.actions[i];
                 if (action) {
-                    if (action.getTag() == tag && action.getOriginalTarget() == target) {
+                    if (action.getTag() === tag && action.getOriginalTarget() == target) {
                         this._removeActionAtIndex(i, element);
                         break;
                     }
@@ -201,12 +205,12 @@ cc.ActionManager = cc.Class.extend({
             if (element.actions != null) {
                 for (var i = 0; i < element.actions.length; ++i) {
                     var action = element.actions[i];
-                    if (action && action.getTag() == tag)
+                    if (action && action.getTag() === tag)
                         return action;
                 }
             }
+            cc.log("cocos2d : getActionByTag(tag =" + tag + "): Action not found");
         }
-
         return null;
     },
 
@@ -221,9 +225,8 @@ cc.ActionManager = cc.Class.extend({
      */
     numberOfRunningActionsInTarget:function (target) {
         var element = this._searchElementByTarget(this._targets, target);
-        if (element) {
+        if (element)
             return (element.actions) ? element.actions.length : 0;
-        }
 
         return 0;
     },
@@ -232,18 +235,16 @@ cc.ActionManager = cc.Class.extend({
      */
     pauseTarget:function (target) {
         var element = this._searchElementByTarget(this._targets, target);
-        if (element) {
+        if (element)
             element.paused = true;
-        }
     },
     /** Resumes the target. All queued actions will be resumed.
      * @param {object} target
      */
     resumeTarget:function (target) {
         var element = this._searchElementByTarget(this._targets, target);
-        if (element) {
+        if (element)
             element.paused = false;
-        }
     },
 
     /**
@@ -251,8 +252,9 @@ cc.ActionManager = cc.Class.extend({
      */
     pauseAllRunningActions:function(){
         var idsWithActions = [];
-        for(var i = 0; i< this._targets.length; i++){
-            var element = this._targets[i];
+        var locTargets = this._targets;
+        for(var i = 0; i< locTargets.length; i++){
+            var element = locTargets[i];
             if(element && !element.paused){
                 element.paused = true;
                 idsWithActions.push(element.target);
@@ -266,9 +268,9 @@ cc.ActionManager = cc.Class.extend({
      * @param {Array} targetsToResume
      */
     resumeTargets:function(targetsToResume){
-        if(!targetsToResume){
+        if(!targetsToResume)
             return;
-        }
+
         for(var i = 0 ; i< targetsToResume.length; i++){
             if(targetsToResume[i])
                 this.resumeTarget(targetsToResume[i]);
@@ -286,16 +288,14 @@ cc.ActionManager = cc.Class.extend({
     _removeActionAtIndex:function (index, element) {
         var action = element.actions[index];
 
-        if ((action == element.currentAction) && (!element.currentActionSalvaged)) {
+        if ((action == element.currentAction) && (!element.currentActionSalvaged))
             element.currentActionSalvaged = true;
-        }
 
         cc.ArrayRemoveObjectAtIndex(element.actions,index);
 
         // update actionIndex in case we are in tick. looping over the actions
-        if (element.actionIndex >= index) {
+        if (element.actionIndex >= index)
             element.actionIndex--;
-        }
 
         if (element.actions.length == 0) {
             if (this._currentTarget == element) {
@@ -335,14 +335,11 @@ cc.ActionManager = cc.Class.extend({
                 for (locCurrTarget.actionIndex = 0; locCurrTarget.actionIndex < locCurrTarget.actions.length;
                      locCurrTarget.actionIndex++) {
                     locCurrTarget.currentAction = locCurrTarget.actions[locCurrTarget.actionIndex];
-                    if (!locCurrTarget.currentAction) {
+                    if (!locCurrTarget.currentAction)
                         continue;
-                    }
 
                     locCurrTarget.currentActionSalvaged = false;
-
                     locCurrTarget.currentAction.step(dt);
-
                     if (locCurrTarget.currentActionSalvaged) {
                         // The currentAction told the node to remove it. To prevent the action from
                         // accidentally deallocating itself before finishing its step, we retained
@@ -350,7 +347,6 @@ cc.ActionManager = cc.Class.extend({
                         locCurrTarget.currentAction = null;//release
                     } else if (locCurrTarget.currentAction.isDone()) {
                         locCurrTarget.currentAction.stop();
-
                         var action = locCurrTarget.currentAction;
                         // Make currentAction nil to prevent removeAction from salvaging it.
                         locCurrTarget.currentAction = null;
@@ -365,7 +361,7 @@ cc.ActionManager = cc.Class.extend({
             // so it is safe to ask this here (issue #490)
 
             // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
-            if (this._currentTargetSalvaged && locCurrTarget.actions.length == 0) {
+            if (this._currentTargetSalvaged && locCurrTarget.actions.length === 0) {
                 this._deleteHashElement(locCurrTarget);
             }
         }

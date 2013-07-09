@@ -310,23 +310,21 @@ cc.Timer = cc.Class.extend(/** @lends cc.Timer# */{
      * Initializes a timer with a target, a selector and an interval in seconds.
      * @param {cc.Class} target target
      * @param {String|function} selector Selector
-     * @param {Number} seconds second
-     * @return {Boolean} <tt>true</tt> if inintialized
+     * @param {Number} [seconds=0] second
+     * @param {Number} [repeat=cc.REPEAT_FOREVER] repeat times
+     * @param {Number} [delay=0] delay
+     * @return {Boolean} <tt>true</tt> if initialized
      * * */
-    initWithTarget:function (target, selector, seconds, repeat, delay) {
-        try {
-            this._target = target;
-            this._selector = selector;
-            this._elapsed = -1;
-            this._interval = seconds || 0;
-            this._delay = delay || 0;
-            this._useDelay = this._delay > 0;
-            this._repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
-            this._runForever = (this._repeat == cc.REPEAT_FOREVER);
-            return true;
-        } catch (e) {
-            return false;
-        }
+    initWithTarget: function (target, selector, seconds, repeat, delay) {
+        this._target = target;
+        this._selector = selector;
+        this._elapsed = -1;
+        this._interval = seconds || 0;
+        this._delay = delay || 0;
+        this._useDelay = this._delay > 0;
+        this._repeat = (repeat == null) ? cc.REPEAT_FOREVER : repeat;
+        this._runForever = (this._repeat == cc.REPEAT_FOREVER);
+        return true;
     },
 
     _callSelector:function(){
