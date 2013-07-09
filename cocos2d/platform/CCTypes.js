@@ -1360,7 +1360,7 @@ cc._Dictionary = cc.Class.extend({
     }
 });
 
-cc.fontDefinition = function(){
+cc.FontDefinition = function(){
     this.fontName = "Arial";
     this.fontSize = 12;
     this.fontAlignmentH = cc.TEXT_ALIGNMENT_CENTER;
