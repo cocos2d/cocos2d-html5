@@ -358,7 +358,7 @@ cc.CardinalSplineBy = cc.CardinalSplineTo.extend(/** @lends cc.CardinalSplineBy#
  * creates an action with a Cardinal Spline array of points and tension
  * @function
  * @param {Number} duration
- * @param {cc.PointArray} points
+ * @param {Array} points
  * @param {Number} tension
  * @return {cc.CardinalSplineBy}
  */

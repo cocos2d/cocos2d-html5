@@ -33,6 +33,11 @@
 cc.ActionEase = cc.ActionInterval.extend(/** @lends cc.ActionEase# */{
     _inner:null,
 
+    ctor:function(){
+        cc.ActionInterval.prototype.ctor.call(this);
+        this._inner = null;
+    },
+
     /** initializes the action
      * @param {cc.ActionInterval} action
      * @return {Boolean}
@@ -108,6 +113,12 @@ cc.ActionEase.create = function (action) {
  * @extends cc.ActionEase
  */
 cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
+    _rate:0,
+    ctor:function(){
+        cc.ActionEase.prototype.ctor.call(this);
+        this._rate = 0;
+    },
+
     /** set rate value for the actions
      * @param {Number} rate
      */
@@ -129,7 +140,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
      * @return {Boolean}
      */
     initWithAction:function (action, rate) {
-        if (this._super(action)) {
+        if (cc.ActionEase.prototype.initWithAction.call(this, action)) {
             this._rate = rate;
             return true;
         }
@@ -147,9 +158,7 @@ cc.EaseRateAction = cc.ActionEase.extend(/** @lends cc.EaseRateAction# */{
      */
     reverse:function () {
         return cc.EaseRateAction.create(this._inner.reverse(), 1 / this._rate);
-    },
-
-    _rate:0
+    }
 });
 
 /** Creates the action with the inner action and the rate parameter
@@ -560,6 +569,11 @@ cc.EaseSineInOut.create = function (action) {
  * @extends cc.ActionEase
  */
 cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
+    _period:null,
+    ctor:function(){
+        cc.ActionEase.prototype.ctor.call(this);
+        this._period = 0.3;
+    },
 
     /** get period of the wave in radians. default is 0.3
      * @return {Number}
@@ -581,7 +595,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
      * @return {Boolean}
      */
     initWithAction:function (action, period) {
-        this._super(action);
+        cc.ActionEase.prototype.initWithAction.call(this, action);
         this._period = (period == null) ? 0.3 : period;
         return true;
     },
@@ -598,9 +612,7 @@ cc.EaseElastic = cc.ActionEase.extend(/** @lends cc.EaseElastic# */{
         var action = new cc.EaseElastic();
         action.initWithAction(this._inner.clone(), this._period);
         return action;
-    },
-
-    _period:null
+    }
 });
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
@@ -657,7 +669,7 @@ cc.EaseElasticIn = cc.EaseElastic.extend(/** @lends cc.EaseElasticIn# */{
 
 /** Creates the action with the inner action and the period in radians (default is 0.3)
  * @param {cc.ActionInterval} action
- * @param {Number} period
+ * @param {Number} [period=]
  * @return {cc.EaseElasticIn}
  * @example
  * // example

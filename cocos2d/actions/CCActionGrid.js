@@ -45,7 +45,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
     },
 
     startWithTarget:function (target) {
-        this._super(target);
+        cc.ActionInterval.prototype.startWithTarget.call(this, target);
         var newGrid = this.getGrid();
         var t = this._target;
         var targetGrid = t.getGrid();
@@ -74,7 +74,7 @@ cc.GridAction = cc.ActionInterval.extend(/** @lends cc.GridAction# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, gridSize) {
-        if (this._super(duration)) {
+        if (cc.ActionInterval.prototype.initWithDuration.call(this, duration)) {
             this._gridSize = gridSize;
             return true;
         }
@@ -225,7 +225,7 @@ cc.TiledGrid3DAction.create = function (duration, gridSize) {
  */
 cc.StopGrid = cc.ActionInstant.extend(/** @lends cc.StopGrid# */{
     startWithTarget:function (target) {
-        this._super(target);
+        cc.ActionInstant.prototype.startWithTarget.call(this, target);
         var grid = this._target.getGrid();
         if (grid && grid.isActive())
             grid.setActive(false);

@@ -519,7 +519,7 @@ cc.RepeatForever = cc.ActionInterval.extend(/** @lends cc.RepeatForever# */{
         var locInnerAction = this._innerAction;
         locInnerAction.step(dt);
         if (locInnerAction.isDone()) {
-            //var diff = this._innerAction.getElapsed() - this._innerAction.getDuration();
+            //var diff = locInnerAction.getElapsed() - locInnerAction.getDuration();
             locInnerAction.startWithTarget(this._target);
             // to prevent jerk. issue #390 ,1247
             //this._innerAction.step(0);
@@ -650,12 +650,10 @@ cc.Spawn = cc.ActionInterval.extend(/** @lends cc.Spawn# */{
      * @param {Number} time time in seconds
      */
     update:function (time) {
-        if (this._one) {
+        if (this._one)
             this._one.update(time);
-        }
-        if (this._two) {
+        if (this._two)
             this._two.update(time);
-        }
     },
 
     /**
@@ -795,7 +793,7 @@ cc.RotateTo = cc.ActionInterval.extend(/** @lends cc.RotateTo# */{
  * creates the action with separate rotation angles
  * @param {Number} duration duration in seconds
  * @param {Number} deltaAngleX deltaAngleX in degrees.
- * @param {Number} deltaAngleY deltaAngleY in degrees.
+ * @param {Number} [deltaAngleY=] deltaAngleY in degrees.
  * @return {cc.RotateTo}
  * @example
  * // example
@@ -1012,7 +1010,7 @@ cc.MoveTo = cc.MoveBy.extend(/** @lends cc.MoveTo# */{
      * @return {Boolean}
      */
     initWithDuration:function (duration, position) {
-        if (cc.MoveTo.prototype.initWithDuration.call(this, duration, position)) {
+        if (cc.MoveBy.prototype.initWithDuration.call(this, duration, position)) {
             this._endPosition = position;
             return true;
         }
@@ -1427,8 +1425,8 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
         var locPos = target.getPosition();
-        this._previousPosition = cc.p(locPos.x, locPos,y);
-        this._startPosition = cc.p(locPos.x, locPos,y);
+        this._previousPosition = cc.p(locPos.x, locPos.y);
+        this._startPosition = cc.p(locPos.x, locPos.y);
     },
 
     /**
@@ -1473,7 +1471,6 @@ cc.BezierBy = cc.ActionInterval.extend(/** @lends cc.BezierBy# */{
             cc.pAdd(locConfig[1], cc.pNeg(locConfig[2]) ),
             cc.pAdd(locConfig[0], cc.pNeg(locConfig[2]) ),
             cc.pNeg(locConfig[2]) ];
-
         return cc.BezierBy.create(this._duration, r);
     }
 });
@@ -1513,12 +1510,8 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      * @return {Boolean}
      */
     initWithDuration:function (t, c) {
-        if(cc.BezierBy.prototype.initWithDuration.call(this, t, c)){
-            var locToConf = [];
-            locToConf[0] = cc.p(c[0].x, c[0].y);
-            locToConf[1] = cc.p(c[1].x, c[1].y);
-            locToConf[2] = cc.p(c[2].x, c[2].y);
-            this._toConfig = locToConf;
+        if(cc.ActionInterval.prototype.initWithDuration.call(this, t)){
+            this._toConfig = c;
             return true;
         }
         return false;
@@ -1530,12 +1523,7 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
      */
     clone: function () {
         var action = new cc.BezierTo();
-        var newConfigs = [];
-        for(var i = 0; i < this._config.length; i++){
-            var selConf = this._config[i];
-            newConfigs.push(cc.p(selConf.x, selConf.y));
-        }
-        action.initWithDuration(this._duration,newConfigs)
+        action.initWithDuration(this._duration, this._toConfig);
         return action;
     },
 
@@ -1545,10 +1533,11 @@ cc.BezierTo = cc.BezierBy.extend(/** @lends cc.BezierTo# */{
     startWithTarget:function (target) {
         cc.BezierBy.prototype.startWithTarget.call(this, target);
         var locStartPos = this._startPosition;
+        var locToConfig = this._toConfig;
         var locConfig = this._config;
-        locConfig[0] = cc.pSub(locConfig[0], locStartPos);
-        locConfig[1] = cc.pSub(locConfig[1], locStartPos);
-        locConfig[2] = cc.pSub(locConfig[2], locStartPos);
+        locConfig[0] = cc.pSub(locToConfig[0], locStartPos);
+        locConfig[1] = cc.pSub(locToConfig[1], locStartPos);
+        locConfig[2] = cc.pSub(locToConfig[2], locStartPos);
     }
 });
 /**
@@ -1811,7 +1800,9 @@ cc.FadeIn = cc.ActionInterval.extend(/** @lends cc.FadeIn# */{
      * @returns {cc.FadeIn}
      */
     clone: function () {
-        return new cc.FadeIn();
+        var action = new cc.FadeIn();
+        action.initWithDuration(this._duration);
+        return action;
     }
 });
 
@@ -1854,7 +1845,9 @@ cc.FadeOut = cc.ActionInterval.extend(/** @lends cc.FadeOut# */{
      * @returns {cc.FadeOut}
      */
     clone: function(){
-        return new cc.FadeOut();
+        var action = new cc.FadeOut();
+        action.initWithDuration(this._duration);
+        return action;
     }
 });
 
@@ -2136,7 +2129,9 @@ cc.DelayTime = cc.ActionInterval.extend(/** @lends cc.DelayTime# */{
      * @returns {cc.DelayTime}
      */
     clone: function(){
-        return new cc.DelayTime();
+        var action =  new cc.DelayTime();
+        action.initWithDuration(this._duration);
+        return action;
     }
 });
 
@@ -2375,7 +2370,7 @@ cc.Animate = cc.ActionInterval.extend(/** @lends cc.Animate# */{
                 var element = oldArray[i];
                 if (!element)
                     break;
-                newArray.push(element.copy());
+                newArray.push(element.clone());
             }
         }
         var newAnim = cc.Animation.createWithAnimationFrames(newArray, locAnimation.getDelayPerUnit(), locAnimation.getLoops());

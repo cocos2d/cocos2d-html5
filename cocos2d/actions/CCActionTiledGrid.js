@@ -588,7 +588,7 @@ cc.TurnOffTiles = cc.TiledGrid3DAction.extend(/** @lends cc.TurnOffTiles# */{
      * @param {cc.Node} target
      */
     startWithTarget:function (target) {
-        cc.TiledGrid3DAction.prototype.startWithTarget.call(target);
+        cc.TiledGrid3DAction.prototype.startWithTarget.call(this, target);
 
         this._tilesCount = this._gridSize.width * this._gridSize.height;
         var locTilesOrder = [];
@@ -703,7 +703,7 @@ cc.WavesTiles3D = cc.TiledGrid3DAction.extend(/** @lends cc.WavesTiles3D# */{
     },
 
     update:function (time) {
-        var locGridSize = locGridSize, locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
+        var locGridSize = this._gridSize, locWaves = this._waves, locAmplitude = this._amplitude, locAmplitudeRate = this._amplitudeRate;
         for (var i = 0; i < locGridSize.width; i++) {
             for (var j = 0; j < locGridSize.height; j++) {
                 var coords = this.originalTile(cc.p(i, j));
@@ -870,7 +870,7 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
     },
 
     update:function (time) {
-        var locGridSize = this._gridSize;
+        var locGridSize = this._gridSize, locWinSizeWidth = this._winSize.width;
         for (var j = 0; j < locGridSize.height; ++j) {
             var coords = this.originalTile(cc.p(0, j));
             var direction = 1;
@@ -878,10 +878,10 @@ cc.SplitRows = cc.TiledGrid3DAction.extend(/** @lends cc.SplitRows# */{
             if ((j % 2 ) == 0)
                 direction = -1;
 
-            coords.bl.x += direction * locGridSize.width * time;
-            coords.br.x += direction * locGridSize.width * time;
-            coords.tl.x += direction * locGridSize.width * time;
-            coords.tr.x += direction * locGridSize.width * time;
+            coords.bl.x += direction * locWinSizeWidth * time;
+            coords.br.x += direction * locWinSizeWidth * time;
+            coords.tl.x += direction * locWinSizeWidth * time;
+            coords.tr.x += direction * locWinSizeWidth * time;
 
             this.setTile(cc.p(0, j), coords);
         }
@@ -931,18 +931,18 @@ cc.SplitCols = cc.TiledGrid3DAction.extend(/** @lends cc.SplitCols# */{
     },
 
     update:function (time) {
-        var locGridSize = this._gridSize;
-        for (var i = 0; i < locGridSize.width; ++i) {
+        var locGridSizeWidth = this._gridSize.width, locWinSizeHeight = this._winSize.height;
+        for (var i = 0; i < locGridSizeWidth; ++i) {
             var coords = this.originalTile(cc.p(i, 0));
             var direction = 1;
 
             if ((i % 2 ) == 0)
                 direction = -1;
 
-            coords.bl.y += direction * locGridSize.height * time;
-            coords.br.y += direction * locGridSize.height * time;
-            coords.tl.y += direction * locGridSize.height * time;
-            coords.tr.y += direction * locGridSize.height * time;
+            coords.bl.y += direction * locWinSizeHeight * time;
+            coords.br.y += direction * locWinSizeHeight * time;
+            coords.tl.y += direction * locWinSizeHeight * time;
+            coords.tr.y += direction * locWinSizeHeight * time;
 
             this.setTile(cc.p(i, 0), coords);
         }
