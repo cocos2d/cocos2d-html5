@@ -342,6 +342,15 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
             }
         }
         return true;
+    },
+    /**
+     * Currently JavaScript Bindigns (JSB), in some cases, needs to use retain and release. This is a bug in JSB,
+     * and the ugly workaround is to use retain/release. So, these 2 methods were added to be compatible with JSB.
+     * This is a hack, and should be removed once JSB fixes the retain/release bug
+     */
+    retain:function () {
+    },
+    release:function () {
     }
 });
 
