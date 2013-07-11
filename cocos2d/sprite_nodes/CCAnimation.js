@@ -44,13 +44,19 @@ cc.AnimationFrame = cc.Class.extend(/** @lends cc.AnimationFrame# */{
         this._delayPerUnit = 0;
     },
 
+    clone: function(){
+        var frame = new cc.AnimationFrame();
+        frame.initWithSpriteFrame(this._spriteFrame.clone(), this._delayPerUnit, this._userInfo);
+        return frame;
+    },
+
     copyWithZone:function (pZone) {
         return cc.clone(this);
     },
 
     copy:function (pZone) {
         var newFrame = new cc.AnimationFrame();
-        newFrame.initWithSpriteFrame(this._spriteFrame.copy(), this._delayPerUnit, this._userInfo);
+        newFrame.initWithSpriteFrame(this._spriteFrame.clone(), this._delayPerUnit, this._userInfo);
         return newFrame;
     },
 
@@ -234,6 +240,13 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
         return true;
     },
 
+    clone: function(){
+        var animation = new cc.Animation();
+        animation.initWithAnimationFrames(this._copyFrames(), this._delayPerUnit, this._loops);
+        animation.setRestoreOriginalFrame(this._restoreOriginalFrame);
+        return animation;
+    },
+
     /**
      * @param {cc.Animation} pZone
      */
@@ -247,7 +260,7 @@ cc.Animation = cc.Class.extend(/** @lends cc.Animation# */{
     _copyFrames:function(){
        var copyFrames = [];
         for(var i = 0; i< this._frames.length;i++)
-            copyFrames.push(this._frames[i].copy());
+            copyFrames.push(this._frames[i].clone());
         return copyFrames;
     },
 

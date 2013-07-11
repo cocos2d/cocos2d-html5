@@ -40,6 +40,21 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
     _upYOrig:0,
     _upZOrig:0,
 
+    ctor:function(){
+        cc.ActionInterval.prototype.ctor.call(this);
+
+        this._centerXOrig=0;
+        this._centerYOrig=0;
+        this._centerZOrig=0;
+        this._eyeXOrig=0;
+        this._eyeYOrig=0;
+        this._eyeZOrig=0;
+        this._upXOrig=0;
+        this._upYOrig=0;
+        this._upZOrig=0;
+    },
+
+
     startWithTarget:function (target) {
         cc.ActionInterval.prototype.startWithTarget.call(this, target);
 
@@ -58,6 +73,14 @@ cc.ActionCamera = cc.ActionInterval.extend(/** @lends cc.ActionCamera# */{
         this._upXOrig = upXYZ.x;
         this._upYOrig = upXYZ.y;
         this._upZOrig = upXYZ.z;
+    },
+
+    /**
+     * returns a new clone of the action
+     * @returns {cc.ActionCamera}
+     */
+    clone:function(){
+       return new cc.ActionCamera();
     },
 
     reverse:function () {
@@ -81,6 +104,21 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
     _radDeltaZ:0.0,
     _radX:0.0,
     _radDeltaX:0.0,
+
+    ctor:function(){
+        cc.ActionCamera.prototype.ctor.call(this);
+
+        this._radius=0.0;
+        this._deltaRadius=0.0;
+        this._angleZ=0.0;
+        this._deltaAngleZ=0.0;
+        this._angleX=0.0;
+        this._deltaAngleX=0.0;
+        this._radZ=0.0;
+        this._radDeltaZ=0.0;
+        this._radX=0.0;
+        this._radDeltaX=0.0;
+    },
 
     /**
      * initializes a cc.OrbitCamera action with radius, delta-radius,  z, deltaZ, x, deltaX
@@ -153,6 +191,12 @@ cc.OrbitCamera = cc.ActionCamera.extend(/** @lends cc.OrbitCamera# */{
 
         this._radZ = cc.DEGREES_TO_RADIANS(this._angleZ);
         this._radX = cc.DEGREES_TO_RADIANS(this._angleX);
+    },
+
+    clone:function(){
+        var a = new cc.OrbitCamera();
+        a.initWithDuration(this._duration, this._radius, this._deltaRadius, this._angleZ, this._deltaAngleZ, this._angleX, this._deltaAngleX);
+        return a;
     },
 
     update:function (dt) {
