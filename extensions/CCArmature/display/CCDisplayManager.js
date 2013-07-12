@@ -1,10 +1,27 @@
-/**
- * Created with JetBrains WebStorm.
- * User: Administrator
- * Date: 13-6-20
- * Time: 下午2:57
- * To change this template use File | Settings | File Templates.
- */
+/****************************************************************************
+ Copyright (c) 2010-2012 cocos2d-x.org
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
 cc.DisplayManager = cc.Class.extend({
     _decoDisplayList:[],
     _currentDecoDisplay:null,
@@ -58,7 +75,7 @@ cc.DisplayManager = cc.Class.extend({
     },
 
     changeDisplayByIndex:function (index, force) {
-        if(index < -1 || index > this._decoDisplayList.length ){
+        if (index < -1 || index > this._decoDisplayList.length) {
             cc.log("the index value is out of range");
             return;
         }
@@ -97,7 +114,7 @@ cc.DisplayManager = cc.Class.extend({
 
         var displayRenderNode = this._currentDecoDisplay == null ? null : this._currentDecoDisplay.getDisplay();
         if (this._displayRenderNode) {
-            if(this._displayRenderNode instanceof cc.Armature){
+            if (this._displayRenderNode instanceof cc.Armature) {
                 this._bone.setChildArmature(null);
             }
             this._displayRenderNode.removeFromParent(true);
@@ -107,7 +124,7 @@ cc.DisplayManager = cc.Class.extend({
         this._displayRenderNode = displayRenderNode;
 
         if (this._displayRenderNode) {
-            if(this._displayRenderNode instanceof cc.Armature){
+            if (this._displayRenderNode instanceof cc.Armature) {
                 this._bone.setChildArmature(this._displayRenderNode);
             }
             this._displayRenderNode.retain();
@@ -126,7 +143,7 @@ cc.DisplayManager = cc.Class.extend({
         return this._currentDecoDisplay;
     },
 
-    getDecorativeDisplayByIndex:function(index){
+    getDecorativeDisplayByIndex:function (index) {
         return this._decoDisplayList[index];
     },
 
@@ -148,7 +165,7 @@ cc.DisplayManager = cc.Class.extend({
     },
 
     containPoint:function (point) {
-        if (!this._visible||this._displayIndex < 0) {
+        if (!this._visible || this._displayIndex < 0) {
             return false;
         }
 
@@ -191,28 +208,28 @@ cc.DisplayManager = cc.Class.extend({
 
     getContentSize:function () {
         if (!this._displayRenderNode) {
-            return  cc.size(0,0);
+            return  cc.size(0, 0);
         }
         return this._displayRenderNode.getContentSize();
     },
 
     getBoundingBox:function () {
         if (!this._displayRenderNode) {
-            return cc.rect(0,0,0,0);
+            return cc.rect(0, 0, 0, 0);
         }
         return this._displayRenderNode.getBoundingBox();
     },
 
     getAnchorPoint:function () {
         if (!this._displayRenderNode) {
-            return  cc.p(0,0);
+            return  cc.p(0, 0);
         }
         return this._displayRenderNode.getAnchorPoint();
     },
 
     getAnchorPointInPoints:function () {
         if (!this._displayRenderNode) {
-            return  cc.p(0,0);
+            return  cc.p(0, 0);
         }
         return this._displayRenderNode.getAnchorPointInPoints();
     },

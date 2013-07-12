@@ -1,10 +1,27 @@
-/**
- * Created with JetBrains WebStorm.
- * User: Administrator
- * Date: 13-6-19
- * Time: 上午10:04
- * To change this template use File | Settings | File Templates.
- */
+/****************************************************************************
+ Copyright (c) 2010-2012 cocos2d-x.org
+
+ http://www.cocos2d-x.org
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+ ****************************************************************************/
+
 cc.Bone = cc.NodeRGBA.extend({
     _boneData:null,
     _armature:null,
@@ -57,7 +74,7 @@ cc.Bone = cc.NodeRGBA.extend({
         return true;
     },
     setBoneData:function (boneData) {
-        if(!boneData){
+        if (!boneData) {
             cc.log("boneData must not be null");
             return;
         }
@@ -107,10 +124,10 @@ cc.Bone = cc.NodeRGBA.extend({
         this._selfTransformDirty = false;
     },
     old_NumberOfDraws:0,
-    visit:function(){
+    visit:function () {
         this.old_NumberOfDraws = cc.g_NumberOfDraws++;
         var node = this.getDisplayManager().getDisplayRenderNode();
-        if (node){
+        if (node) {
             node.visit(ctx);
         }
         cc.g_NumberOfDraws = this.old_NumberOfDraws;
@@ -131,11 +148,11 @@ cc.Bone = cc.NodeRGBA.extend({
         }
     },
     addChildBone:function (child) {
-        if(!child){
+        if (!child) {
             cc.log("Argument must be non-nil");
             return;
         }
-        if(child._parentBone){
+        if (child._parentBone) {
             cc.log("child already added. It can't be added again");
             return;
         }
