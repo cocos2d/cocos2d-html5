@@ -53,10 +53,17 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     _alphaThreshold:0,
     _inverted:false,
 
+    ctor:function(){
+        cc.Node.prototype.ctor.call(this);
+        this._stencil = null;
+        this._alphaThreshold = 0;
+        this._inverted = false;
+    },
+
     /**
      * Initializes a clipping node with an other node as its stencil.                          <br/>
      * The stencil node will be retained, and its parent will be set to this clipping node.
-     * @param {cc.Node} stencil
+     * @param {cc.Node} [stencil=null]
      */
     init:function(stencil){
         this._stencil = stencil;
@@ -75,23 +82,23 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
     },
 
     onEnter:function(){
-        this._super();
+        cc.Node.prototype.onEnter.call(this);
         this._stencil.onEnter();
     },
 
     onEnterTransitionDidFinish:function(){
-        this._super();
+        cc.Node.prototype.onEnterTransitionDidFinish.call(this);
         this._stencil.onEnterTransitionDidFinish();
     },
 
     onExitTransitionDidStart:function(){
         this._stencil.onExitTransitionDidStart();
-        this._super();
+        cc.Node.prototype.onExitTransitionDidStart.call(this);
     },
 
     onExit:function(){
         this._stencil.onExit();
-        this._super();
+        cc.Node.prototype.onExit.call(this);
     },
 
     visit:function(ctx){
@@ -100,7 +107,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // if stencil buffer disabled
         if (cc.stencilBits < 1) {
             // draw everything, as if there where no stencil
-            this._super(ctx);
+            cc.Node.prototype.visit.call(this, ctx);
             return;
         }
 
@@ -109,7 +116,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         // - or stencil node invisible:
         if (!this._stencil || !this._stencil.isVisible()) {
             if (this._inverted)
-                this._super(ctx);    // draw everything
+                cc.Node.prototype.visit.call(this, ctx);   // draw everything
             return;
         }
 
@@ -127,7 +134,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
                 cc.ClippingNode._visit_once = false;
             }
             // draw everything, as if there where no stencil
-            this._super();
+            cc.Node.prototype.visit.call(this, ctx);
             return;
         }
 
@@ -247,7 +254,7 @@ cc.ClippingNode = cc.Node.extend(/** @lends cc.ClippingNode# */{
         gl.stencilOp(gl.KEEP, gl.KEEP, gl.KEEP);
 
         // draw (according to the stencil test func) this node and its childs
-        this._super();
+        cc.Node.prototype.visit.call(this, ctx);
 
         ///////////////////////////////////
         // CLEANUP
@@ -329,7 +336,7 @@ cc.ClippingNode._layer = null;
 /**
  * Creates and initializes a clipping node with an other node as its stencil.                               <br/>
  * The stencil node will be retained.
- * @param {cc.Node} stencil
+ * @param {cc.Node} [stencil=null]
  * @return {cc.ClippingNode}
  */
 cc.ClippingNode.create = function(stencil){
