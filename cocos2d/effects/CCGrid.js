@@ -429,8 +429,8 @@ cc.Grid3D = cc.GridBase.extend(/** @lends cc.Grid3D# */{
 /**
  * create one Grid3D object
  * @param {cc.GridSize} gridSize
- * @param {cc.Texture2D} texture
- * @param {Boolean} flipped
+ * @param {cc.Texture2D} [texture=]
+ * @param {Boolean} [flipped=false]
  * @return {cc.Grid3D}
  */
 cc.Grid3D.create = function (gridSize, texture, flipped) {

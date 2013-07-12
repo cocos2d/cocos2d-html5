@@ -487,10 +487,9 @@ cc.LoaderScene = cc.Scene.extend(/** @lends cc.LoaderScene# */{
             cc.EaseBounce.create(cc.MoveBy.create(0.25, cc.p(0, 10))),
             cc.FadeIn.create(0.5));
 
-
         var labelAction = cc.Sequence.create(
             cc.DelayTime.create(0.15),
-            logoAction.copy());
+            logoAction.clone());
 
         this._logo.runAction(logoAction);
         this._label.runAction(labelAction);
