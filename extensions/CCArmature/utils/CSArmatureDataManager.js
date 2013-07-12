@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * format and manage armature configuration and armature animation
+ * @class
+ * @extends cc.Class
+ */
 cc.ArmatureDataManager = cc.Class.extend({
     _animationDatas:null,
     _armarureDatas:null,
@@ -34,11 +39,23 @@ cc.ArmatureDataManager = cc.Class.extend({
     init:function () {
 
     },
+
+    /**
+     * Add armature data
+     * @param {string} id The id of the armature data
+     * @param {cc.ArmatureData} armatureData
+     */
     addArmatureData:function (id, armatureData) {
         if (this._armarureDatas) {
             this._armarureDatas[id] = armatureData;
         }
     },
+
+    /**
+     * get armatureData by id
+     * @param {String} id
+     * @return {cc.ArmatureData}
+     */
     getArmatureData:function (id) {
         var armatureData = null;
         if (this._armarureDatas) {
@@ -46,11 +63,23 @@ cc.ArmatureDataManager = cc.Class.extend({
         }
         return armatureData;
     },
+
+    /**
+     * add animation data
+     * @param {String} id
+     * @param {cc.AnimationData} animationData
+     */
     addAnimationData:function (id, animationData) {
         if (this._animationDatas) {
             this._animationDatas[id] = animationData;
         }
     },
+
+    /**
+     * get animationData by id
+     * @param {String} id
+     * @return {cc.AnimationData}
+     */
     getAnimationData:function (id) {
         var animationData = null;
         if (this._animationDatas[id]) {
@@ -58,11 +87,23 @@ cc.ArmatureDataManager = cc.Class.extend({
         }
         return animationData;
     },
+
+    /**
+     * add texture data
+     * @param {String} id
+     * @param {cc.TextureData} textureData
+     */
     addTextureData:function (id, textureData) {
         if (this._textureDatas) {
             this._textureDatas[id] = textureData;
         }
     },
+
+    /**
+     * get animationData by id
+     * @param {String} id
+     * @return {cc.TextureData}
+     */
     getTextureData:function (id) {
         var textureData = null;
         if (this._textureDatas) {
@@ -70,24 +111,27 @@ cc.ArmatureDataManager = cc.Class.extend({
         }
         return textureData;
     },
-    addArmatureFileInfo:function () {
-        var imagePath, plistPath, configFilePath;
-        if (arguments.length == 3) {
-            imagePath = arguments[0];
-            plistPath = arguments[1];
-            configFilePath = arguments[2];
-        } else if (arguments.length == 5) {
-            imagePath = arguments[2];
-            plistPath = arguments[3];
-            configFilePath = arguments[4];
-        }
+
+    /**
+     * Add ArmatureFileInfo, it is managed by CCArmatureDataManager.
+     * @param {String} imagePath
+     * @param {String} plistPath
+     * @param {String} configFilePath
+     */
+    addArmatureFileInfo:function (imagePath, plistPath, configFilePath) {
         cc.DataReaderHelper.addDataFromFile(configFilePath);
         this.addSpriteFrameFromFile(plistPath, imagePath);
     },
 
+    /**
+     * Add sprite frame to CCSpriteFrameCache, it will save display name and it's relative image name
+     * @param {String} plistPath
+     * @param {String} imagePath
+     */
     addSpriteFrameFromFile:function (plistPath, imagePath) {
         cc.SpriteFrameCacheHelper.getInstance().addSpriteFrameFromFile(plistPath, imagePath);
     },
+
     removeAll:function () {
         this._animationDatas = null;
         this._armarureDatas = null;

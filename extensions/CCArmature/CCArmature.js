@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.Armature objects.
+ * @class
+ * @extends cc.NodeRGBA
+ */
 cc.Armature = cc.NodeRGBA.extend({
     _animation:null,
     _armatureData:null,
@@ -46,6 +51,13 @@ cc.Armature = cc.NodeRGBA.extend({
         this._armatureIndexDic = {};
         this._offsetPoint = cc.p(0, 0);
     },
+
+    /**
+     * Initializes a CCArmature with the specified name and CCBone
+     * @param {String} name
+     * @param {cc.Bone} parentBone
+     * @return {Boolean}
+     */
     init:function (name, parentBone) {
         cc.NodeRGBA.prototype.init.call(this);
         if (parentBone) {
@@ -109,7 +121,7 @@ cc.Armature = cc.NodeRGBA.extend({
 
             this._animation.setAnimationData(animationData);
         }
-        if (cc.renderContextType === cc.WEBGL){
+        if (cc.renderContextType === cc.WEBGL) {
             this.setShaderProgram(cc.ShaderCache.getInstance().programForKey(cc.SHADER_POSITION_TEXTURE_UCOLOR));
         }
 
@@ -120,6 +132,12 @@ cc.Armature = cc.NodeRGBA.extend({
         this.setCascadeColorEnabled(true);
         return true;
     },
+
+    /**
+     * create a bone
+     * @param {String} boneName
+     * @return {cc.Bone}
+     */
     createBone:function (boneName) {
         var existedBone = this.getBone(boneName);
         if (existedBone) {
@@ -141,6 +159,12 @@ cc.Armature = cc.NodeRGBA.extend({
         bone.getDisplayManager().changeDisplayByIndex(-1, false);
         return bone;
     },
+
+    /**
+     * add a bone
+     * @param {cc.Bone} bone
+     * @param {String} parentName
+     */
     addBone:function (bone, parentName) {
         if (!bone) {
             cc.log("Argument must be non-nil");
@@ -173,6 +197,12 @@ cc.Armature = cc.NodeRGBA.extend({
         this._boneDic[bone.getName()] = bone;
         this.addChild(bone);
     },
+
+    /**
+     * remove a bone
+     * @param {cc.Bone} bone
+     * @param {Boolean} recursion
+     */
     removeBone:function (bone, recursion) {
         if (!bone) {
             cc.log("bone must be added to the bone dictionary!");
@@ -185,9 +215,21 @@ cc.Armature = cc.NodeRGBA.extend({
         delete  this._boneDic[bone.getName()];
         this.removeChild(bone, true);
     },
+
+    /**
+     * get a bone by name
+     * @param {String} name
+     * @return {cc.Bone}
+     */
     getBone:function (name) {
         return this._boneDic[name];
     },
+
+    /**
+     * Change a bone's parent with the specified parent name.
+     * @param {cc.Bone} bone
+     * @param {String} parentName
+     */
     changeBoneParent:function (bone, parentName) {
         if (!bone) {
             cc.log("bone must be added to the bone dictionary!");
@@ -201,9 +243,18 @@ cc.Armature = cc.NodeRGBA.extend({
             }
         }
     },
+
+    /**
+     * Get CCArmature's bone dictionary
+     * @return {Object}
+     */
     getBoneDic:function () {
         return this._boneDic;
     },
+
+    /**
+     * Set contentSize and Calculate anchor point.
+     */
     updateOffsetPoint:function () {
         // Set contentsize and Calculate anchor point.
         var rect = this.boundingBox();
@@ -211,15 +262,18 @@ cc.Armature = cc.NodeRGBA.extend({
         this._offsetPoint = cc.p(-rect.origin.x, -rect.origin.y);
         this.setAnchorPoint(cc.p(this._offsetPoint.x / rect.size.width, this._offsetPoint.y / rect.size.height));
     },
+
     update:function (dt) {
         this._animation.update(dt);
         for (var i = 0; i < this._topBoneList.length; i++) {
             this._topBoneList[i].update(dt);
         }
     },
+
     nodeToParentTransform:function () {
-        return cc.Browser.supportWebGL ?this.nodeToParentTransformWEBGL():this.nodeToParentTransformCanvas();
+        return cc.Browser.supportWebGL ? this.nodeToParentTransformWEBGL() : this.nodeToParentTransformCanvas();
     },
+
     nodeToParentTransformWEBGL:function () {
         if (this._transformDirty) {
             // Translate values
@@ -261,13 +315,13 @@ cc.Armature = cc.NodeRGBA.extend({
 
             // Build Transform Matrix
             // Adjusted transform calculation for rotational skew
-            var t = {a: cy * scx, b: sy * scx, c: -sx * scy, d: cx * scy, tx: x, ty: y};
+            var t = {a:cy * scx, b:sy * scx, c:-sx * scy, d:cx * scy, tx:x, ty:y};
 
             // XXX: Try to inline skew
             // If skew is needed, apply skew and then anchor point
             if (needsSkewMatrix) {
-                t = cc.AffineTransformConcat({a: 1.0, b: Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
-                    c: Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), d: 1.0, tx: 0.0, ty: 0.0}, t);
+                t = cc.AffineTransformConcat({a:1.0, b:Math.tan(cc.DEGREES_TO_RADIANS(this._skewY)),
+                    c:Math.tan(cc.DEGREES_TO_RADIANS(this._skewX)), d:1.0, tx:0.0, ty:0.0}, t);
 
                 // adjust anchor point
                 if (apx !== 0 || apy !== 0)
@@ -283,6 +337,7 @@ cc.Armature = cc.NodeRGBA.extend({
         }
         return this._transform;
     },
+
     nodeToParentTransformCanvas:function () {
         if (!this._transform)
             this._transform = {a:1, b:0, c:0, d:1, tx:0, ty:0};
@@ -309,8 +364,8 @@ cc.Armature = cc.NodeRGBA.extend({
 
             // Firefox on Vista and XP crashes
             // GPU thread in case of scale(0.0, 0.0)
-            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001)?  0.000001 : lScaleX,
-                sy = (lScaleY < 0.000001 && lScaleY > -0.000001)? 0.000001 : lScaleY;
+            var sx = (lScaleX < 0.000001 && lScaleX > -0.000001) ? 0.000001 : lScaleX,
+                sy = (lScaleY < 0.000001 && lScaleY > -0.000001) ? 0.000001 : lScaleY;
 
 
             // Add offset point
@@ -366,9 +421,15 @@ cc.Armature = cc.NodeRGBA.extend({
         }
         return this._transform;
     },
-    draw:function(){
+
+    draw:function () {
         cc.g_NumberOfDraws++;
     },
+
+    /**
+     * This boundingBox will calculate all bones' boundingBox every time
+     * @return {cc.rect}
+     */
     boundingBox:function () {
         var minx, miny, maxx, maxy = 0;
         var first = true;
@@ -394,25 +455,35 @@ cc.Armature = cc.NodeRGBA.extend({
         }
         return boundingBox;
     },
-    getBoneAtPoint:function (x, y) {
-        var length = this._children.length;
-        var bs = this._children;
-        for (var i = length - 1; i >= 0; i--) {
-            if (bs[i].getDisplayManager().containPoint(x, y)) {
-                return bs[i];
-            }
-        }
-        return null;
-    },
+
+    /**
+     * armatureAnimation getter
+     * @return {cc.ArmatureAnimation}
+     */
     getAnimation:function () {
         return this._animation;
     },
+
+    /**
+     * armatureAnimation setter
+     * @param {cc.ArmatureAnimation} animation
+     */
     setAnimation:function (animation) {
         this._animation = animation;
     },
+
+    /**
+     * armatureData getter
+     * @return {cc.ArmatureData}
+     */
     getArmatureData:function () {
         return this._armatureData;
     },
+
+    /**
+     * armatureData setter
+     * @param {cc.ArmatureData} armatureData
+     */
     setArmatureData:function (armatureData) {
         this._armatureData = armatureData;
     },
@@ -435,6 +506,15 @@ cc.Armature = cc.NodeRGBA.extend({
         this._parentBone = parentBone;
     }
 });
+
+/**
+ * allocates and initializes a armature.
+ * @constructs
+ * @return {cc.Armature}
+ * @example
+ * // example
+ * var armature = cc.Armature.create();
+ */
 cc.Armature.create = function (name, parentBone) {
     var armature = new cc.Armature();
     if (armature && armature.init(name, parentBone)) {

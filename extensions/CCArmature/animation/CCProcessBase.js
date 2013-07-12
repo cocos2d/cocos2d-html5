@@ -32,6 +32,11 @@ CC_ANIMATION_TYPE_LOOP_FRONT = 0;//the animation loop from front
 CC_ANIMATION_TYPE_LOOP_BACK = 1;//the animation loop from back
 CC_ANIMATION_TYPE_MAX = 2;//the animation max
 
+/**
+ * Base class for cc.ProcessBase objects.
+ * @class
+ * @extends cc.Class
+ */
 cc.ProcessBase = cc.Class.extend({
     _animationScale:1,
     _isComplete:true,
@@ -80,6 +85,28 @@ cc.ProcessBase = cc.Class.extend({
         this._currentPercent = 0;
     },
 
+    /**
+     * play animation by animation name.
+     * @param {Number} animationName The animation name you want to play
+     * @param {Number} durationTo
+     *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
+     *         -1 : use the value from CCMovementData get from flash design panel
+     * @param {Number} durationTween he
+     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
+     *         -1 : use the value from CCMovementData get from flash design panel
+     * @param {Number} loop
+     *          Whether the animation is loop.
+     *         loop < 0 : use the value from CCMovementData get from flash design panel
+     *         loop = 0 : this animation is not loop
+     *         loop > 0 : this animation is loop
+     * @param {Number} tweenEasing
+     *          CCTween easing is used for calculate easing effect
+     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
+     *         -1 : fade out
+     *         0  : line
+     *         1  : fade in
+     *         2  : fade in and out
+     */
     play:function (animation, durationTo, durationTween, loop, tweenEasing) {
         this._isComplete = false;
         this._isPause = false;
@@ -120,16 +147,26 @@ cc.ProcessBase = cc.Class.extend({
         this._currentFrame = cc.fmodf(this._currentFrame, this._nextFrameIndex);
         this.updateHandler();
     },
-    updateHandler:function () {
 
+    /**
+     * update will call this handler, you can handle your logic here
+     */
+    updateHandler:function () {
+        //override
     },
     gotoFrame:function (keyFrameIndex) {
         this._curFrameIndex = keyFrameIndex;
         this.stop();
     },
+
+    /**
+     * get currentFrameIndex
+     * @return {Number}
+     */
     getCurrentFrameIndex:function () {
         return this._curFrameIndex;
     },
+
     isPause:function () {
         return this._isPause;
     },

@@ -109,10 +109,10 @@ cc.DisplayFactory.createSpriteDisplay = function (bone, decoDisplay) {
     /*var atlas = cc.SpriteFrameCacheHelper.getInstance().getTextureAtlas(textureName + ".png");
      skin.setTextureAtlas(atlas);*/
     //todo
-    var batchNode = cc.SpriteFrameCacheHelper.getInstance().getBatchNode(textureName + ".png");
+    /*var batchNode = cc.SpriteFrameCacheHelper.getInstance().getBatchNode(textureName + ".png");
 
     skin.setBatchNode(batchNode);
-    skin.setTextureAtlas(batchNode.getTextureAtlas());
+    skin.setTextureAtlas(batchNode.getTextureAtlas());*/
 
     var textureData = cc.ArmatureDataManager.getInstance().getTextureData(textureName);
     if (textureData) {

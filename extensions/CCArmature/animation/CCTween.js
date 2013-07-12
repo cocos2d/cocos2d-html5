@@ -22,6 +22,11 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+/**
+ * Base class for cc.Tween objects.
+ * @class
+ * @extends cc.ProcessBase
+ */
 cc.Tween = cc.ProcessBase.extend({
     _tweenData:null,
     _to:null,
@@ -52,6 +57,11 @@ cc.Tween = cc.ProcessBase.extend({
         this._animation = null;
     },
 
+    /**
+     * init with a CCBone
+     * @param {cc.Bone} bone
+     * @return {Boolean}
+     */
     init:function (bone) {
         this._from = new cc.FrameData();
         this._between = new cc.FrameData();
@@ -62,6 +72,28 @@ cc.Tween = cc.ProcessBase.extend({
         return true;
     },
 
+    /**
+     * play animation by animation name.
+     * @param {Number} animationName The animation name you want to play
+     * @param {Number} durationTo
+     *         he frames between two animation changing-over.It's meaning is changing to this animation need how many frames
+     *         -1 : use the value from CCMovementData get from flash design panel
+     * @param {Number} durationTween he
+     *         frame count you want to play in the game.if  _durationTween is 80, then the animation will played 80 frames in a loop
+     *         -1 : use the value from CCMovementData get from flash design panel
+     * @param {Number} loop
+     *          Whether the animation is loop.
+     *         loop < 0 : use the value from CCMovementData get from flash design panel
+     *         loop = 0 : this animation is not loop
+     *         loop > 0 : this animation is loop
+     * @param {Number} tweenEasing
+     *          CCTween easing is used for calculate easing effect
+     *         TWEEN_EASING_MAX : use the value from CCMovementData get from flash design panel
+     *         -1 : fade out
+     *         0  : line
+     *         1  : fade in
+     *         2  : fade in and out
+     */
     play:function (movementBoneData, durationTo, durationTween, loop, tweenEasing) {
         cc.ProcessBase.prototype.play.call(this, null, durationTo, durationTween, loop, tweenEasing);
         this._loopType = loop;
@@ -111,6 +143,9 @@ cc.Tween = cc.ProcessBase.extend({
         }
     },
 
+    /**
+     * update will call this handler, you can handle your logic here
+     */
     updateHandler:function () {
         if (this._currentPercent >= 1) {
             switch (this._loopType) {
@@ -185,6 +220,12 @@ cc.Tween = cc.ProcessBase.extend({
         }
 
     },
+
+    /**
+     * Calculate the between value of _from and _to, and give it to between frame data
+     * @param {cc.FrameData} from
+     * @param {cc.FrameData} to
+     */
     setBetween:function (from, to) {
         do
         {
@@ -202,6 +243,11 @@ cc.Tween = cc.ProcessBase.extend({
         } while (0);
         this.arriveKeyFrame(from);
     },
+
+    /**
+     * Update display index and process the key frame event when arrived a key frame
+     * @param {cc.FrameData} keyFrameData
+     */
     arriveKeyFrame:function (keyFrameData) {
         if (keyFrameData) {
             var displayIndex = keyFrameData.displayIndex;
@@ -223,6 +269,13 @@ cc.Tween = cc.ProcessBase.extend({
             }
         }
     },
+
+    /**
+     * According to the percent to calculate current CCFrameData with tween effect
+     * @param {Number} percent
+     * @param {cc.FrameData} node
+     * @return {cc.FrameData}
+     */
     tweenNodeTo:function (percent, node) {
         if (!node) {
             node = this._tweenData;
@@ -244,6 +297,12 @@ cc.Tween = cc.ProcessBase.extend({
         return node;
     },
 
+    /**
+     * Calculate which frame arrived, and if current frame have event, then call the event listener
+     * @param {Number} currentPercent
+     * @param {Boolean} activeFrame
+     * @return {Number}
+     */
     updateFrameData:function (currentPercent, activeFrame) {
         var playedTime = this._rawDuration * currentPercent;
         var from;
@@ -293,18 +352,38 @@ cc.Tween = cc.ProcessBase.extend({
         }
         return currentPercent;
     },
+
+    /**
+     * animation setter
+     * @param {cc.ArmatureAnimation} animation
+     */
     setAnimation:function (animation) {
         this._animation = animation;
     },
+
+    /**
+     * animation getter
+     * @return {cc.ArmatureAnimation}
+     */
     getAnimation:function () {
         return this._animation;
     },
+
     release:function () {
         this._from = null;
         this._between = null;
     }
 });
 
+/**
+ * allocates and initializes a ArmatureAnimation.
+ * @constructs
+ * @param {cc.Bone} bone
+ * @return {cc.ArmatureAnimation}
+ * @example
+ * // example
+ * var animation = cc.ArmatureAnimation.create();
+ */
 cc.Tween.create = function (bone) {
     var tween = new cc.Tween();
     if (tween && tween.init(bone)) {

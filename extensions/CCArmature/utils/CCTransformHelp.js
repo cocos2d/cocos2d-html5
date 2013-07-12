@@ -29,6 +29,12 @@ cc.TransformHelp.helpMatrix2 = cc.AffineTransformMake(1, 0, 0, 1, 0, 0);
 cc.TransformHelp.helpPoint1 = cc.p(0, 0);
 cc.TransformHelp.helpPoint2 = cc.p(0, 0);
 
+/**
+ * @function
+ * @param {cc.BaseData} bone
+ * @return {cc.AffineTransform}
+ * Constructor
+ */
 cc.TransformHelp.transformFromParent = function (bone, parentBone) {
     this.nodeToMatrix(bone, this.helpMatrix1);
     this.nodeToMatrix(parentBone, this.helpMatrix2);
@@ -39,6 +45,11 @@ cc.TransformHelp.transformFromParent = function (bone, parentBone) {
     this.matrixToNode(this.helpMatrix1, bone);
 };
 
+/**
+ * @function
+ * @param {cc.BaseData} node
+ * @param {cc.AffineTransform} matrix
+ */
 cc.TransformHelp.nodeToMatrix = function (node, matrix) {
     matrix.a = node.scaleX * Math.cos(node.skewY);
     matrix.b = node.scaleX * Math.sin(node.skewY);
@@ -48,6 +59,11 @@ cc.TransformHelp.nodeToMatrix = function (node, matrix) {
     matrix.ty = node.y;
 };
 
+/**
+ * @function
+ * @param {cc.AffineTransform} matrix
+ * @param {cc.BaseData} node
+ */
 cc.TransformHelp.matrixToNode = function (matrix, node) {
     /*
      *  In as3 language, there is a function called "deltaTransformPoint", it calculate a point used give Transform
@@ -73,6 +89,12 @@ cc.TransformHelp.matrixToNode = function (matrix, node) {
     node.x = matrix.tx;
     node.y = matrix.ty;
 };
+
+/**
+ * @function
+ * @param {cc.BaseData} target
+ * @param {cc.BaseData} source
+ */
 cc.TransformHelp.nodeConcat = function (target, source) {
     target.x += source.x;
     target.y += source.y;
