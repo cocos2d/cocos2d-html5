@@ -550,14 +550,19 @@ cc.LabelTTFCanvas = cc.Sprite.extend(/** @lends cc.LabelTTFCanvas# */{
                 this.setContentSize(cc.size(Math.max.apply(Math, this._lineWidths), this._fontClientHeight * this._strings.length));
             else
                 this.setContentSize(cc.size(stringWidth, this._fontClientHeight));
-            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x ;
-            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
         } else {
-            //dimension is already set, contentSize must be same as dimension
-            this.setContentSize(cc.size(locDimensionsWidth, this._dimensions.height));
-            this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
-            this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
+            if(this._dimensions.height === 0) {
+                if (this._isMultiLine)
+                    this.setContentSize(cc.size(locDimensionsWidth, this._fontClientHeight * this._strings.length));
+                else
+                    this.setContentSize(cc.size(locDimensionsWidth, this._fontClientHeight));
+            } else {
+                //dimension is already set, contentSize must be same as dimension
+                this.setContentSize(cc.size(locDimensionsWidth, this._dimensions.height));
+            }
         }
+        this._anchorPointInPoints.x = this._contentSize.width * this._anchorPoint.x;
+        this._anchorPointInPoints.y = this._contentSize.height * this._anchorPoint.y;
     },
     /**
      * renders the label
@@ -1326,8 +1331,15 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
             else
                 locSize = cc.size(stringWidth + locStrokeShadowOffsetX, this._fontClientHeight + locStrokeShadowOffsetY);
         } else {
-            //dimension is already set, contentSize must be same as dimension
-            locSize = cc.size(locDimensionsWidth + locStrokeShadowOffsetX, this._dimensions.height + locStrokeShadowOffsetY);
+            if(this._dimensions.height === 0){
+                if (this._isMultiLine)
+                    locSize = cc.size(locDimensionsWidth + locStrokeShadowOffsetX, (this._fontClientHeight * this._strings.length) + locStrokeShadowOffsetY);
+                else
+                    locSize = cc.size(locDimensionsWidth + locStrokeShadowOffsetX, this._fontClientHeight + locStrokeShadowOffsetY);
+            } else {
+                //dimension is already set, contentSize must be same as dimension
+                locSize = cc.size(locDimensionsWidth + locStrokeShadowOffsetX, this._dimensions.height + locStrokeShadowOffsetY);
+            }
         }
         this.setContentSize(locSize);
         this._strokeShadowOffsetX = locStrokeShadowOffsetX;

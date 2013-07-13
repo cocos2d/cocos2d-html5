@@ -42,7 +42,7 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
      * Constructor
      */
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
         this._ignoreAnchorPointForPosition = true;
         this.setAnchorPoint(cc.p(0.5, 0.5));
         this.setContentSize(cc.Director.getInstance().getWinSize());
@@ -59,7 +59,5 @@ cc.Scene = cc.Node.extend(/** @lends cc.Scene# */{
  * var aScene = new cc.Scene();
  */
 cc.Scene.create = function () {
-    var scene = new cc.Scene();
-    scene.init();
-    return scene;
+    return new cc.Scene();
 };
