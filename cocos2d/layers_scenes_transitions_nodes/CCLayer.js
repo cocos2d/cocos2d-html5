@@ -47,26 +47,15 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isMouseEnabled:false,
     _mousePriority:0,
 
-    _initLayer:function () {
-        this.setAnchorPoint(cc.p(0.5, 0.5));
-        this._ignoreAnchorPointForPosition = true;
-
-        var director = cc.Director.getInstance();
-        this.setContentSize(director.getWinSize());
-        this._isTouchEnabled = false;
-        this._isAccelerometerEnabled = false;
-        this._isMouseEnabled = false;
-        this._touchMode = cc.TOUCH_ALL_AT_ONCE;
-        this._touchPriority = 0;
-    },
-
     /**
      *
      * @return {Boolean}
      */
     init:function () {
         cc.Node.prototype.init.call(this);
-        this._initLayer();
+        this._ignoreAnchorPointForPosition = true;
+        this.setAnchorPoint(cc.p(0.5, 0.5));
+        this.setContentSize(cc.Director.getInstance().getWinSize());
         return true;
     },
 
