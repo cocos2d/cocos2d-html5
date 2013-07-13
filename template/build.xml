@@ -45,6 +45,8 @@
                 <file name="support/CCUserDefault.js"/>
                 <file name="support/CCVertex.js"/>
                 <file name="support/TransformUtils.js"/>
+                <file name="support/component/CCComponent.js"/>
+                <file name="support/component/CCComponentContainer.js"/>
                 <file name="shaders/CCShaders.js"/>
                 <file name="shaders/CCGLProgram.js"/>
                 <file name="shaders/CCGLStateCache.js"/>

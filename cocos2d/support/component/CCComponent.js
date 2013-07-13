@@ -1,10 +1,7 @@
 /****************************************************************************
- Copyright (c) 2010-2012 cocos2d-x.org
- Copyright (c) 2008-2010 Ricardo Quesada
- Copyright (c) 2011      Zynga Inc.
+ Copyright (c) 2013 cocos2d-x.org
 
  http://www.cocos2d-x.org
-
 
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
@@ -24,35 +21,60 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
  ****************************************************************************/
-var cocos2dApp = cc.Application.extend({
-    config:document['ccConfig'],
-    ctor:function (scene) {
-        this._super();
-        this.startScene = scene;
-        cc.COCOS2D_DEBUG = this.config['COCOS2D_DEBUG'];
-        cc.initDebugSetting();
-        cc.setup(this.config['tag']);
-        cc.AppController.shareAppController().didFinishLaunchingWithOptions();
+
+cc.Component = cc.Class.extend({
+    _owner: null,
+    _name: null,
+    _enabled:null,
+
+    ctor:function(){
+        this._owner = null;
+        this._name = "";
+        this._enabled = true;
     },
-    applicationDidFinishLaunching:function () {
-        // initialize director
-        var director = cc.Director.getInstance();
 
-        // enable High Resource Mode(2x, such as iphone4) and maintains low resource on other devices.
-        //director.enableRetinaDisplay(true);
+    init:function(){
+       return true;
+    },
 
-        // turn on display FPS
-        director.setDisplayStats(this.config['showFPS']);
+    onEnter:function(){
 
-        // set FPS. the default value is 1.0/60 if you don't call this
-        director.setAnimationInterval(1.0 / this.config['frameRate']);
+    },
 
-        //load resources
-        cc.LoaderScene.preload(g_ressources, function(){
-            director.replaceScene(new this.startScene());
-        }, this);
+    onExit:function(){
 
-        return true;
+    },
+
+    update:function(delta){
+
+    },
+
+    serialize:function( reader){
+
+    },
+
+    isEnabled:function(){
+        return this._enabled;
+    },
+
+    setEnabled:function(enable){
+        this._enabled = enable;
+    },
+
+    getName:function(){
+        return this._name;
+    } ,
+
+    setOwner:function(owner){
+        this._owner = owner;
+    },
+
+    getOwner:function(){
+        return this._owner;
     }
 });
-var myApp = new cocos2dApp(HelloWorldScene);
+
+cc.Component.create = function(){
+    return new cc.Component();
+};
+

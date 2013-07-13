@@ -51,8 +51,9 @@ cc.PageTurn3D = cc.Grid3DAction.extend(/** @lends cc.PageTurn3D# */{
         var sinTheta = Math.sin(theta);
         var cosTheta = Math.cos(theta);
 
-        for (var i = 0; i <= this._gridSize.width; ++i) {
-            for (var j = 0; j <= this._gridSize.height; ++j) {
+        var locGridSize = this._gridSize;
+        for (var i = 0; i <= locGridSize.width; ++i) {
+            for (var j = 0; j <= locGridSize.height; ++j) {
                 // Get original vertex
                 var p = this.originalVertex(cc.p(i, j));
 
