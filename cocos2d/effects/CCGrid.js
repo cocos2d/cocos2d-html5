@@ -148,7 +148,7 @@ cc.GridBase = cc.Class.extend(/** @lends cc.GridBase# */{
      *
      * @param {cc.Size} gridSize
      * @param {cc.Texture2D} [texture=]
-     * @param {Boolean} [flipped=]
+     * @param {Boolean} [flipped=false]
      * @returns {boolean}
      */
     initWithSize:function (gridSize, texture, flipped) {
@@ -685,7 +685,7 @@ cc.TiledGrid3D = cc.GridBase.extend(/** @lends cc.TiledGrid3D# */{
 
 /**
  * create one TiledGrid3D object
- * @param {cc.Point} gridSize
+ * @param {cc.Size} gridSize
  * @param {cc.Texture2D} [texture=]
  * @param {Boolean} [flipped=]
  * @return {cc.TiledGrid3D}
