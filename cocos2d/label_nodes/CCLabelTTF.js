@@ -1398,7 +1398,7 @@ cc.LabelTTFWebGL = cc.Sprite.extend(/** @lends cc.LabelTTFWebGL# */{
 
     /**
      * draw sprite to canvas
-     * @param {WebGLRenderContext} ctx 3d context of canvas
+     * @param {WebGLRenderingContext} ctx 3d context of canvas
      */
     draw:function (ctx) {
         var gl = ctx || cc.renderContext, locTexture = this._texture;
