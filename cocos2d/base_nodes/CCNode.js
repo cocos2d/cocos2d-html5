@@ -468,7 +468,7 @@ cc.NodeWebGL = cc.Class.extend(/** @lends cc.NodeWebGL# */{
      */
     setScale:function (scale, scaleY) {
         this._scaleX = scale;
-        this._scaleY = scaleY || scale;
+        this._scaleY = (scaleY || scaleY === 0) ? scaleY : scale;
         this.setNodeDirty();
     },
 
