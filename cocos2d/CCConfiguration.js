@@ -24,6 +24,8 @@
  THE SOFTWARE.
  ****************************************************************************/
 
+cc.ConfigurationType = {ConfigurationError:0, ConfigurationString:1, ConfigurationInt:2, ConfigurationDouble:3, ConfigurationBoolean:4};
+
 /**
  * cc.Configuration contains some openGL variables
  * @class
@@ -40,6 +42,21 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
     _maxSamplesAllowed:0,
     _maxTextureUnits:0,
     _GlExtensions:"",
+    _valueDict:null,
+
+    ctor: function () {
+        this._maxTextureSize = 0;
+        this._maxModelviewStackDepth = 0;
+        this._supportsPVRTC = false;
+        this._supportsNPOT = false;
+        this._supportsBGRA8888 = false;
+        this._supportsDiscardFramebuffer = false;
+        this._supportsShareableVAO = false;
+        this._maxSamplesAllowed = 0;
+        this._maxTextureUnits = 0;
+        this._GlExtensions = "";
+        this._valueDict = {};
+    },
 
     /**
      * OpenGL Max texture size.
@@ -115,43 +132,150 @@ cc.Configuration = cc.Class.extend(/** @lends cc.Configuration# */{
     },
 
     init:function () {
+        var locValueDict = this._valueDict;
+        locValueDict["cocos2d.x.version"] = cc.ENGINE_VERSION;
+        locValueDict["cocos2d.x.compiled_with_profiler"] = false;
+        locValueDict["cocos2d.x.compiled_with_gl_state_cache"] = cc.ENABLE_GL_STATE_CACHE;
+        return true;
+    },
+
+    /**
+     * returns the value of a given key as a string.  If the key is not found, it will return the default value
+     * @param {String} key
+     * @param {String} [default_value=null]
+     * @returns {String}
+     */
+    getCString:function(key, default_value){
+       var locValueDict = this._valueDict;
+        if(locValueDict.hasOwnProperty(key))
+            return locValueDict[key];
+        return default_value;
+    },
+
+    /**
+     * returns the value of a given key as a boolean. If the key is not found, it will return the default value
+     * @param {string} key
+     * @param {boolean|null} [default_value=false]
+     * @returns {boolean}
+     */
+    getBool: function(key, default_value){
+        if(default_value == null)
+            default_value = false;
+        var locValueDict = this._valueDict;
+        if(locValueDict.hasOwnProperty(key))
+            return locValueDict[key];
+        return default_value;
+    },
+
+    /**
+     * returns the value of a given key as a double. If the key is not found, it will return the default value
+     * @param {string} key
+     * @param {number} [default_value=0]
+     * @returns {number}
+     */
+    getNumber: function(key, default_value){
+        if(default_value == null)
+            default_value = 0;
+        var locValueDict = this._valueDict;
+        if(locValueDict.hasOwnProperty(key))
+            return locValueDict[key];
+        return default_value;
+    },
+
+    /**
+     * returns the value of a given key as a double
+     * @param {string} key
+     * @returns {Object|null}
+     */
+    getObject:function(key){
+        var locValueDict = this._valueDict;
+        if(locValueDict.hasOwnProperty(key))
+            return locValueDict[key];
+        return null;
+    },
+
+    /**
+     * sets a new key/value pair  in the configuration dictionary
+     * @param {string} key
+     * @param {Object} value
+     */
+    setObject: function(key, value){
+        this._valueDict[key] = value;
+    },
+
+    /**
+     * dumps the current configuration on the console
+     */
+    dumpInfo: function(){
+         if(cc.ENABLE_GL_STATE_CACHE === 0){
+             cc.log("");
+             cc.log("cocos2d: **** WARNING **** CC_ENABLE_PROFILERS is defined. Disable it when you finish profiling (from ccConfig.js)");
+             cc.log("")
+         }
+    },
+
+    /**
+     * gathers OpenGL / GPU information
+     */
+    gatherGPUInfo: function(){
         if(cc.renderContextType === cc.CANVAS)
-            return true;
+            return;
 
         var gl = cc.renderContext;
-        cc.log("cocos2d: GL_VENDOR:     " + gl.getParameter(gl.VENDOR));
-        cc.log("cocos2d: GL_RENDERER:   " + gl.getParameter(gl.RENDERER));
-        cc.log("cocos2d: GL_VERSION:    " + gl.getParameter(gl.VERSION));
+        var locValueDict = this._valueDict;
+        locValueDict["gl.vendor"] = gl.getParameter(gl.VENDOR);
+        locValueDict["gl.renderer"] = gl.getParameter(gl.RENDERER);
+        locValueDict["gl.version"] = gl.getParameter(gl.VERSION);
 
         this._GlExtensions = "";
         var extArr = gl.getSupportedExtensions();
         for (var i = 0; i < extArr.length; i++)
             this._GlExtensions += extArr[i] + " ";
-        cc.log("cocos2d: GL_EXTENSIONS:  " + this._GlExtensions);
 
         this._maxTextureSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+        locValueDict["gl.max_texture_size"] = this._maxTextureSize;
         this._maxTextureUnits = gl.getParameter(gl.MAX_COMBINED_TEXTURE_IMAGE_UNITS);
+        locValueDict["gl.max_texture_units"] = this._maxTextureUnits;
 
         this._supportsPVRTC = this.checkForGLExtension("GL_IMG_texture_compression_pvrtc");
-        this._supportsNPOT = true;
+        locValueDict["gl.supports_PVRTC"] = this._supportsPVRTC;
+
+        this._supportsNPOT = false; //true;
+        locValueDict["gl.supports_NPOT"] = this._supportsNPOT;
+
         this._supportsBGRA8888 = this.checkForGLExtension("GL_IMG_texture_format_BGRA888");
+        locValueDict["gl.supports_BGRA8888"] = this._supportsBGRA8888;
+
         this._supportsDiscardFramebuffer = this.checkForGLExtension("GL_EXT_discard_framebuffer");
+        locValueDict["gl.supports_discard_framebuffer"] = this._supportsDiscardFramebuffer;
 
         this._supportsShareableVAO = this.checkForGLExtension("vertex_array_object");
-
-        cc.log("cocos2d: GL_MAX_TEXTURE_SIZE: " + this._maxTextureSize);
-        cc.log("cocos2d: GL_MAX_TEXTURE_UNITS: " + this._maxTextureUnits);
-        cc.log("cocos2d: GL supports PVRTC: " + (this._supportsPVRTC ? "YES" : "NO"));
-        cc.log("cocos2d: GL supports BGRA8888 textures: " + (this._supportsBGRA8888 ? "YES" : "NO"));
-        cc.log("cocos2d: GL supports NPOT textures: " + (this._supportsNPOT ? "YES" : "NO"));
-        cc.log("cocos2d: GL supports discard_framebuffer: " + (this._supportsDiscardFramebuffer ? "YES" : "NO"));
-        cc.log("cocos2d: GL supports shareable VAO: " + (this._supportsShareableVAO ? "YES" : "NO"));
-
-        if (cc.ENABLE_GL_STATE_CACHE == 0)
-            cc.log("cocos2d: **** WARNING **** CC_ENABLE_GL_STATE_CACHE is disabled. To improve performance, enable it by editing ccConfig.h");
+        locValueDict["gl.supports_vertex_array_object"] = this._supportsShareableVAO;
 
         cc.CHECK_GL_ERROR_DEBUG();
-        return true;
+    },
+
+    /**
+     * Loads a config file. If the keys are already present, then they are going to be replaced. Otherwise the new keys are added.
+     * @param {string} filename
+     */
+    loadConfigFile: function( filename){
+        var fileUtils = cc.FileUtils.getInstance();
+        var fullPath = fileUtils.fullPathForFilename(filename);
+        var dict = fileUtils.dictionaryWithContentsOfFileThreadSafe(fullPath);
+
+        if(dict == null)
+            return;
+
+        var getDatas = dict["data"];
+        if(!getDatas){
+            cc.log("Expected 'data' dict, but not found. Config file: " + filename);
+            return;
+        }
+
+        // Add all keys in the existing dictionary
+        for(var selKey in getDatas)
+            this._valueDict[selKey] = getDatas[selKey];
     }
 });
 
