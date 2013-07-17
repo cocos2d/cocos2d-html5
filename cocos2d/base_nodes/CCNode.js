@@ -3844,16 +3844,17 @@ cc.NodeRGBA = cc.Node.extend(/** @lends cc.NodeRGBA# */{
     },
 
     updateDisplayedColor:function(parentColor){
-        this._displayedColor.r = this._realColor.r * parentColor.r/255.0;
-        this._displayedColor.g = this._realColor.g * parentColor.g/255.0;
-        this._displayedColor.b = this._realColor.b * parentColor.b/255.0;
+        var locDispColor = this._displayedColor, locRealColor = this._realColor;
+        locDispColor.r = locRealColor.r * parentColor.r/255.0;
+        locDispColor.g = locRealColor.g * parentColor.g/255.0;
+        locDispColor.b = locRealColor.b * parentColor.b/255.0;
 
         if (this._cascadeColorEnabled){
             var selChildren = this._children;
             for(var i = 0; i< selChildren.length;i++){
                 var item = selChildren[i];
                 if(item && item.RGBAProtocol)
-                    item.updateDisplayedColor(this._displayedColor);
+                    item.updateDisplayedColor(locDispColor);
             }
         }
     },

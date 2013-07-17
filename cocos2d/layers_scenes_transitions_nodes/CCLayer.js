@@ -47,17 +47,23 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
     _isMouseEnabled:false,
     _mousePriority:0,
 
+    ctor: function () {
+        cc.Node.prototype.ctor.call(this);
+        this._isTouchEnabled = false;
+        this._isAccelerometerEnabled = false;
+        this._isKeyboardEnabled = false;
+        this._touchPriority = 0;
+        this._touchMode = cc.TOUCH_ALL_AT_ONCE;
+        this._isMouseEnabled = false;
+        this._mousePriority = 0;
+    },
+
     _initLayer:function () {
         this.setAnchorPoint(cc.p(0.5, 0.5));
         this._ignoreAnchorPointForPosition = true;
 
         var director = cc.Director.getInstance();
         this.setContentSize(director.getWinSize());
-        this._isTouchEnabled = false;
-        this._isAccelerometerEnabled = false;
-        this._isMouseEnabled = false;
-        this._touchMode = cc.TOUCH_ALL_AT_ONCE;
-        this._touchPriority = 0;
     },
 
     /**
@@ -75,7 +81,7 @@ cc.Layer = cc.Node.extend(/** @lends cc.Layer# */{
      */
     registerWithTouchDispatcher:function () {
         if (this._touchMode === cc.TOUCH_ALL_AT_ONCE)
-            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, this._touchPriority);
+            cc.Director.getInstance().getTouchDispatcher().addStandardDelegate(this, 0);
         else
             cc.Director.getInstance().getTouchDispatcher().addTargetedDelegate(this, this._touchPriority, true);
     },
@@ -574,6 +580,7 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     _cascadeColorEnabled: false,
 
     ctor: function () {
+        cc.Layer.prototype.ctor.call(this);
         this.RGBAProtocol = true;
         this._displayedOpacity = 255;
         this._realOpacity = 255;
@@ -673,16 +680,17 @@ cc.LayerRGBA = cc.Layer.extend(/** @lends cc.LayerRGBA# */{
     },
 
     updateDisplayedColor: function (parentColor) {
-        this._displayedColor.r = this._realColor.r * parentColor.r/255.0;
-        this._displayedColor.g = this._realColor.g * parentColor.g/255.0;
-        this._displayedColor.b = this._realColor.b * parentColor.b/255.0;
+        var locDispColor = this._displayedColor, locRealColor = this._realColor;
+        locDispColor.r = locRealColor.r * parentColor.r/255.0;
+        locDispColor.g = locRealColor.g * parentColor.g/255.0;
+        locDispColor.b = locRealColor.b * parentColor.b/255.0;
 
         if (this._cascadeColorEnabled){
-            var locChildren = this._children;
-            for(var i = 0; i < locChildren.length; i++){
-                var selItem = locChildren[i];
-                if(selItem && selItem.RGBAProtocol)
-                    selItem.updateDisplayedColor(this._displayedColor);
+            var selChildren = this._children;
+            for(var i = 0; i< selChildren.length;i++){
+                var item = selChildren[i];
+                if(item && item.RGBAProtocol)
+                    item.updateDisplayedColor(locDispColor);
             }
         }
     },
