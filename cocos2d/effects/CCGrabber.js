@@ -26,7 +26,7 @@
 
 /** FBO class that grabs the the contents of the screen */
 cc.Grabber = cc.Class.extend({
-    _fbo:null,
+    _FBO:null,
     _oldFBO:null,
     _oldClearColor:null,
 
@@ -35,49 +35,53 @@ cc.Grabber = cc.Class.extend({
     ctor:function () {
         this._gl = cc.renderContext;
         this._oldClearColor = [0, 0, 0, 0];
+        this._oldFBO = null;
         // generate FBO
-        this._fbo = this._gl.createFramebuffer();
+        this._FBO = this._gl.createFramebuffer();
     },
 
     grab:function (texture) {
-        this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
+        var locGL = this._gl;
+        this._oldFBO = locGL.getParameter(locGL.FRAMEBUFFER_BINDING);
         // bind
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
+        locGL.bindFramebuffer(locGL.FRAMEBUFFER, this._FBO);
         // associate texture with FBO
-        this._gl.framebufferTexture2D(this._gl.FRAMEBUFFER, this._gl.COLOR_ATTACHMENT0, this._gl.TEXTURE_2D, texture._webTextureObj, 0);
+        locGL.framebufferTexture2D(locGL.FRAMEBUFFER, locGL.COLOR_ATTACHMENT0, locGL.TEXTURE_2D, texture._webTextureObj, 0);
 
         // check if it worked (probably worth doing :) )
-        var status = this._gl.checkFramebufferStatus(this._gl.FRAMEBUFFER);
-        if (status != this._gl.FRAMEBUFFER_COMPLETE)
+        var status = locGL.checkFramebufferStatus(locGL.FRAMEBUFFER);
+        if (status != locGL.FRAMEBUFFER_COMPLETE)
             cc.log("Frame Grabber: could not attach texture to frmaebuffer");
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
+        locGL.bindFramebuffer(locGL.FRAMEBUFFER, this._oldFBO);
     },
 
     beforeRender:function (texture) {
-        this._oldFBO = this._gl.getParameter(this._gl.FRAMEBUFFER_BINDING);
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._fbo);
+        var locGL = this._gl;
+        this._oldFBO = locGL.getParameter(locGL.FRAMEBUFFER_BINDING);
+        locGL.bindFramebuffer(locGL.FRAMEBUFFER, this._FBO);
 
         // save clear color
-        this._oldClearColor = this._gl.getParameter(this._gl.COLOR_CLEAR_VALUE);
+        this._oldClearColor = locGL.getParameter(locGL.COLOR_CLEAR_VALUE);
 
         // BUG XXX: doesn't work with RGB565.
-        this._gl.clearColor(0, 0, 0, 0);
+        locGL.clearColor(0, 0, 0, 0);
 
         // BUG #631: To fix #631, uncomment the lines with #631
         // Warning: But it CCGrabber won't work with 2 effects at the same time
         //  glClearColor(0.0f,0.0f,0.0f,1.0f);    // #631
 
-        this._gl.clear(this._gl.COLOR_BUFFER_BIT | this._gl.DEPTH_BUFFER_BIT);
+        locGL.clear(locGL.COLOR_BUFFER_BIT | locGL.DEPTH_BUFFER_BIT);
 
         //  glColorMask(true, true, true, false);    // #631
     },
 
     afterRender:function (texture) {
-        this._gl.bindFramebuffer(this._gl.FRAMEBUFFER, this._oldFBO);
-        this._gl.colorMask(true, true, true, true);      // #631
+        var locGL = this._gl;
+        locGL.bindFramebuffer(locGL.FRAMEBUFFER, this._oldFBO);
+        locGL.colorMask(true, true, true, true);      // #631
     },
 
     destroy:function(){
-        this._gl.deleteFramebuffer(this._fbo);
+        this._gl.deleteFramebuffer(this._FBO);
     }
 });

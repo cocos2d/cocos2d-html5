@@ -100,7 +100,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
      * Constructor
      */
     ctor:function () {
-        this._super();
+        cc.Node.prototype.ctor.call(this);
 
         if (cc.renderContextType === cc.CANVAS) {
             this.canvas = document.createElement('canvas');
@@ -183,7 +183,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
 
             return true;
         } else {
-            cc.Assert(this._pixelFormat != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
+            cc.Assert(format != cc.TEXTURE_2D_PIXEL_FORMAT_A8, "only RGB and RGBA formats are valid for a render texture");
 
             var gl = cc.renderContext;
 
@@ -277,7 +277,13 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return;
 
         // Save the current matrix
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
         cc.kmGLPushMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
+        cc.kmGLPushMatrix();
+
+        var director = cc.Director.getInstance();
+        director.setProjection(director.getProjection());
 
         var texSize = this._texture.getContentSizeInPixels();
 
@@ -380,12 +386,17 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             return;
 
         var gl = cc.renderContext;
+        var director = cc.Director.getInstance();
         gl.bindFramebuffer(gl.FRAMEBUFFER, this._oldFBO);
+
+        //restore viewport
+        director.setViewport();
+        cc.kmGLMatrixMode(cc.KM_GL_PROJECTION);
+        cc.kmGLPopMatrix();
+        cc.kmGLMatrixMode(cc.KM_GL_MODELVIEW);
         cc.kmGLPopMatrix();
 
-        var director = cc.Director.getInstance();
-
-        var size = director.getWinSizeInPixels();
+        /* var size = director.getWinSizeInPixels();
 
         // restore viewport
         gl.viewport(0, 0, size.width * cc.CONTENT_SCALE_FACTOR(), size.height * cc.CONTENT_SCALE_FACTOR());
@@ -395,7 +406,7 @@ cc.RenderTexture = cc.Node.extend(/** @lends cc.RenderTexture# */{
             gl.viewport((-size.width / 2), (-size.height / 2), (size.width * cc.CONTENT_SCALE_FACTOR()), (size.height * cc.CONTENT_SCALE_FACTOR()));
         }
 
-        director.setProjection(director.getProjection());
+        director.setProjection(director.getProjection());*/
     },
 
     /**
